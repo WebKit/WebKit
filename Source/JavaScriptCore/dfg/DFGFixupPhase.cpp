@@ -271,7 +271,7 @@ private:
         case ArithMod: {
             if (Node::shouldSpeculateInt32OrBooleanForArithmetic(node->child1().node(), node->child2().node())
                 && node->canSpeculateInt32(FixupPass)) {
-                if (optimizeForX86() || optimizeForARM64() || optimizeForARMv7s()) {
+                if (optimizeForX86() || optimizeForARM64() || optimizeForARMv7IDIVSupported()) {
                     fixIntOrBooleanEdge(node->child1());
                     fixIntOrBooleanEdge(node->child2());
                     if (bytecodeCanTruncateInteger(node->arithNodeFlags()))

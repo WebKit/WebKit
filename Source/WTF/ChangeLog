@@ -1,3 +1,12 @@
+2015-03-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Enable generating idiv instructions if it is supported
+        https://bugs.webkit.org/show_bug.cgi?id=142725
+
+        Reviewed by Michael Saboff.
+
+        * wtf/Platform.h: Set HAVE_ARM_IDIV_INSTRUCTIONS based on GCC macro too.
+
 2015-03-16  Max Stepin  <maxstepin@gmail.com>
 
         Add APNG support

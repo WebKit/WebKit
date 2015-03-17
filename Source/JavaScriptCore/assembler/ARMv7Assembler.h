@@ -708,7 +708,7 @@ private:
         OP_ROR_reg_T2   = 0xFA60,
         OP_CLZ          = 0xFAB0,
         OP_SMULL_T1     = 0xFB80,
-#if CPU(APPLE_ARMV7S)
+#if HAVE(ARM_IDIV_INSTRUCTIONS)
         OP_SDIV_T1      = 0xFB90,
         OP_UDIV_T1      = 0xFBB0,
 #endif
@@ -1499,7 +1499,7 @@ public:
         m_formatter.twoWordOp16Imm16(OP_PUSH_T2, registerList);
     }
 
-#if CPU(APPLE_ARMV7S)
+#if HAVE(ARM_IDIV_INSTRUCTIONS)
     template<int datasize>
     ALWAYS_INLINE void sdiv(RegisterID rd, RegisterID rn, RegisterID rm)
     {
@@ -1847,7 +1847,7 @@ public:
         m_formatter.twoWordOp12Reg40Imm3Reg4Imm20Imm5(OP_UBFX_T1, rd, rn, (lsb & 0x1c) << 10, (lsb & 0x3) << 6, (width - 1) & 0x1f);
     }
 
-#if CPU(APPLE_ARMV7S)
+#if HAVE(ARM_IDIV_INSTRUCTIONS)
     ALWAYS_INLINE void udiv(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         ASSERT(!BadReg(rd));

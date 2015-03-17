@@ -3218,7 +3218,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
         
         done.link(&m_jit);
         int32Result(eax.gpr(), node);
-#elif CPU(APPLE_ARMV7S) || CPU(ARM64)
+#elif HAVE(ARM_IDIV_INSTRUCTIONS) || CPU(ARM64)
         SpeculateInt32Operand op1(this, node->child1());
         SpeculateInt32Operand op2(this, node->child2());
         GPRReg op1GPR = op1.gpr();
@@ -3471,7 +3471,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
         done.link(&m_jit);
         int32Result(edx.gpr(), node);
 
-#elif CPU(ARM64) || CPU(APPLE_ARMV7S)
+#elif HAVE(ARM_IDIV_INSTRUCTIONS) || CPU(ARM64)
         GPRTemporary temp(this);
         GPRTemporary quotientThenRemainder(this);
         GPRTemporary multiplyAnswer(this);
@@ -3496,7 +3496,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
         // arithMode() == Arith::Unchecked?
         // https://bugs.webkit.org/show_bug.cgi?id=126444
         speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotientThenRemainderGPR, divisorGPR, multiplyAnswerGPR));
-#if CPU(APPLE_ARMV7S)
+#if HAVE(ARM_IDIV_INSTRUCTIONS)
         m_jit.assembler().sub(quotientThenRemainderGPR, dividendGPR, multiplyAnswerGPR);
 #else
         m_jit.assembler().sub<32>(quotientThenRemainderGPR, dividendGPR, multiplyAnswerGPR);

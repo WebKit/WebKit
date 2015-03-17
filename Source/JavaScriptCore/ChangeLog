@@ -1,3 +1,25 @@
+2015-03-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Enable generating idiv instructions if it is supported
+        https://bugs.webkit.org/show_bug.cgi?id=142725
+
+        Reviewed by Michael Saboff.
+
+        * assembler/ARMAssembler.h: Added sdiv and udiv implementation for ARM Traditional instruction set.
+        (JSC::ARMAssembler::sdiv):
+        (JSC::ARMAssembler::udiv):
+        * assembler/ARMv7Assembler.h: Use HAVE(ARM_IDIV_INSTRUCTIONS) instead of CPU(APPLE_ARMV7S).
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::isARMv7IDIVSupported):
+        (JSC::optimizeForARMv7IDIVSupported):
+        (JSC::isARMv7s): Renamed to isARMv7IDIVSupported().
+        (JSC::optimizeForARMv7s): Renamed to optimizeForARMv7IDIVSupported().
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithDiv):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+
 2015-03-13  Filip Pizlo  <fpizlo@apple.com>
 
         Object allocation sinking phase shouldn't re-decorate previously sunken allocations on each fixpoint operation
