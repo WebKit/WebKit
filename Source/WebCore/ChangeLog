@@ -1,3 +1,9 @@
+2015-03-16  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed fix for crash after r181608.
+
+        * WebCore.xcodeproj/project.pbxproj: Include it in the WebCore framework.
+
 2015-03-16  Simon Fraser  <simon.fraser@apple.com>
 
         Generalize the Document code that maintains a set of nodes with event handlers
