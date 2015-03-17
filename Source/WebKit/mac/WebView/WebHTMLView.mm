@@ -106,6 +106,7 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
+#import <WebCore/NSMenuSPI.h>
 #import <WebCore/NSURLFileTypeMappingsSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/Range.h>
@@ -5387,10 +5388,12 @@ static BOOL writingDirectionKeyBindingsEnabled()
 #if !PLATFORM(IOS)
 - (void)otherMouseDown:(NSEvent *)event
 {
-    if ([event buttonNumber] == 2)
-        [self mouseDown:event];
-    else
+    if ([event buttonNumber] != 2 || [NSMenu menuTypeForEvent:event] == NSMenuTypeActionMenu) {
         [super otherMouseDown:event];
+        return;
+    }
+
+    [self mouseDown:event];
 }
 
 - (void)otherMouseDragged:(NSEvent *)event

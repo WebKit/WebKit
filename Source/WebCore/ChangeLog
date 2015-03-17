@@ -1,3 +1,14 @@
+2015-03-17  Tim Horton  <timothy_horton@apple.com>
+
+        Cannot invoke action menus anymore
+        https://bugs.webkit.org/show_bug.cgi?id=142797
+        <rdar://problem/20032670>
+
+        Reviewed by Beth Dakin.
+
+        * platform/spi/mac/NSMenuSPI.h:
+        Add additional NSMenu SPI.
+
 2015-03-17  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Split fragments on renderer boundary on the fly.

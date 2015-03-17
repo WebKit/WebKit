@@ -1,3 +1,17 @@
+2015-03-17  Tim Horton  <timothy_horton@apple.com>
+
+        Cannot invoke action menus anymore
+        https://bugs.webkit.org/show_bug.cgi?id=142797
+        <rdar://problem/20032670>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/mac/WKView.mm:
+        Don't process mouse events that would make an action menu; call super
+        and let AppKit take care of it. We have to duplicate the macro so that
+        we can avoid calling super for the internal-only methods.
+        Also, otherMouseMoved is simply not a thing, so remove it.
+
 2015-03-17  Beth Dakin  <bdakin@apple.com>
 
         DOM mouse events have weird timing for force clickable elements in Safari 8.0.3 on 
