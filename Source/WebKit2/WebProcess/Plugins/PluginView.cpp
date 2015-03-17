@@ -1738,8 +1738,6 @@ static bool isAlmostSolidColor(BitmapImage* bitmap)
 
 void PluginView::pluginSnapshotTimerFired()
 {
-    ASSERT(m_plugin);
-
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*m_pluginElement);
     bool isPlugInOnScreen = m_webPage->plugInIntersectsSearchRect(plugInImageElement);
@@ -1747,7 +1745,7 @@ void PluginView::pluginSnapshotTimerFired()
     bool snapshotFound = false;
 #endif
 
-    if (m_plugin->supportsSnapshotting()) {
+    if (m_plugin && m_plugin->supportsSnapshotting()) {
         // Snapshot might be 0 if plugin size is 0x0.
         RefPtr<ShareableBitmap> snapshot = m_plugin->snapshot();
         RefPtr<Image> snapshotImage;
