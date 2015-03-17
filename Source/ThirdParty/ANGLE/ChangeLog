@@ -1,3 +1,13 @@
+2015-03-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Use a forwarding header for ANGLE's ShaderLang.h to avoid picking up ANGLE's EGL headers
+        https://bugs.webkit.org/show_bug.cgi?id=142530
+
+        Reviewed by Darin Adler.
+
+        * ANGLE/ShaderLang.h: Added. Includes include/GLSLANG/ShaderLang.h. Used in WebCore
+        so we can avoid using ANGLE's EGL headers and use the system-default headers instead.
+
 2015-01-28  Dana Burkart  <dburkart@apple.com>
 
         Move ASan flag settings from DebugRelease.xcconfig to Base.xcconfig

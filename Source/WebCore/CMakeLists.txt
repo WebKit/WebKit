@@ -2969,10 +2969,8 @@ if (WTF_USE_3D_GRAPHICS)
     endif ()
 
     list(APPEND WebCore_INCLUDE_DIRECTORIES
-        "${THIRDPARTY_DIR}/ANGLE/src"
-        "${THIRDPARTY_DIR}/ANGLE/include/"
+        "${THIRDPARTY_DIR}/ANGLE/"
         "${THIRDPARTY_DIR}/ANGLE/include/KHR"
-        "${THIRDPARTY_DIR}/ANGLE/include/GLSLANG"
         "${WEBCORE_DIR}/platform/graphics/gpu"
     )
 
@@ -3500,6 +3498,7 @@ if (WTF_USE_3D_GRAPHICS)
         APPEND
         PROPERTY INCLUDE_DIRECTORIES
             "${THIRDPARTY_DIR}/ANGLE/include"
+            "${THIRDPARTY_DIR}/ANGLE/src"
     )
     list(APPEND WebCore_LIBRARIES ANGLESupport)
     WEBKIT_SET_EXTRA_COMPILER_FLAGS(ANGLESupport IGNORECXX_WARNINGS)

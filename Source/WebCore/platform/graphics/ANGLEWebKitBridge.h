@@ -34,7 +34,7 @@
 #elif PLATFORM(WIN)
 #include "GLSLANG/ShaderLang.h"
 #else
-#include "ShaderLang.h"
+#include <ANGLE/ShaderLang.h>
 #endif
 
 namespace WebCore {

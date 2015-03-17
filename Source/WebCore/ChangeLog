@@ -1,3 +1,23 @@
+2015-03-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Use a forwarding header for ANGLE's ShaderLang.h to avoid picking up ANGLE's EGL headers
+        https://bugs.webkit.org/show_bug.cgi?id=142530
+
+        Reviewed by Darin Adler.
+
+        Include the ANGLE's ShaderLang.h through the new forwarding header. This allows
+        us to not list Source/ThirdParty/ANGLE/include in the list of inclusion directories
+        and thus avoid ANGLE's EGL and GLES2/GLES3 headers, defaulting to the system-provided
+        headers instead.
+
+        Source/ThirdParty/ANGLE/include/KHR is still used because ANGLE's khrplatform.h is
+        required by the ShaderLang.h header. Source/ThirdParty/ANGLE/src is not used for the
+        whole WebCore library anymore, only the ANGLESupport library.
+
+        * CMakeLists.txt:
+        * platform/graphics/ANGLEWebKitBridge.h:
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+
 2015-03-16  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Crash viewing http://www.last.fm/

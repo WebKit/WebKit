@@ -1,3 +1,14 @@
+2015-03-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Use a forwarding header for ANGLE's ShaderLang.h to avoid picking up ANGLE's EGL headers
+        https://bugs.webkit.org/show_bug.cgi?id=142530
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt: Replace the Source/ThirdParty/ANGLE/include/GLSLANG entry
+        in the list of inclusion directories for WebKit2 with Source/ThirdParty/ANGLE,
+        possible due to the new forwarding header for ANGLE's ShaderLang.h.
+
 2015-03-17  Gwang Yoon Hwang  <yoon@igalia.com>
 
         REGRESSION(r180924): Unable to build WebKitGTK+ with threaded compositor
