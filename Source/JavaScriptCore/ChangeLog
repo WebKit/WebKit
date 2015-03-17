@@ -1,3 +1,31 @@
+2015-03-17  Mark Lam  <mark.lam@apple.com>
+
+        Refactor execution time limit tests out of testapi.c.
+        <https://webkit.org/b/142798>
+
+        Rubber stamped by Michael Saboff.
+
+        These tests were sometimes failing to time out on C loop builds.  Let's
+        refactor them out of the big monolith that is testapi.c so that we can
+        reason more easily about them and make adjustments if needed.
+
+        * API/tests/ExecutionTimeLimitTest.cpp: Added.
+        (currentCPUTime):
+        (currentCPUTimeAsJSFunctionCallback):
+        (shouldTerminateCallback):
+        (cancelTerminateCallback):
+        (extendTerminateCallback):
+        (testExecutionTimeLimit):
+        * API/tests/ExecutionTimeLimitTest.h: Added.
+        * API/tests/testapi.c:
+        (main):
+        (currentCPUTime): Deleted.
+        (currentCPUTime_callAsFunction): Deleted.
+        (shouldTerminateCallback): Deleted.
+        (cancelTerminateCallback): Deleted.
+        (extendTerminateCallback): Deleted.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2015-03-17  Geoffrey Garen  <ggaren@apple.com>
 
         Built-in functions should know that they use strict mode
