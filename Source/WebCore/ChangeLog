@@ -1,3 +1,16 @@
+2015-03-17  Jeremy Jones  <jeremyj@apple.com>
+
+        When tab hides, pause fullscreen and exit normally.
+        https://bugs.webkit.org/show_bug.cgi?id=142685
+
+        Reviewed by Eric Carlson.
+
+        Pause fullscreen playback when switching tabs. Exit fullscreen is not necessary and even prevents
+        the normal flow of teardown. This allows the normal exit fullscreen call to succeed and call its callback.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen):
+
 2015-03-17  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Video position is incorrect when located inside a frame.

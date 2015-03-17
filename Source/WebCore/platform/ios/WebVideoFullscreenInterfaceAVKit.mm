@@ -1154,12 +1154,12 @@ void WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
     RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
     dispatch_async(dispatch_get_main_queue(), [strongThis] {
         [strongThis->m_window setHidden:YES];
-        [strongThis->m_playerViewController exitFullScreenAnimated:NO completionHandler:[strongThis] (BOOL, NSError*) {
-        }];
     });
 
-    if (m_videoFullscreenModel && !m_exitRequested)
+    if (m_videoFullscreenModel && !m_exitRequested) {
+        m_videoFullscreenModel->pause();
         m_videoFullscreenModel->requestExitFullscreen();
+    }
 }
 
 void WebVideoFullscreenInterfaceAVKit::preparedToReturnToInline(bool visible, const IntRect& inlineRect)
