@@ -1,3 +1,21 @@
+2015-03-16  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Update missing image UI
+        https://bugs.webkit.org/show_bug.cgi?id=142592
+
+        Reviewed by Darin Adler.
+
+        Update the broken image glyphs with new art (including a 3x image).
+
+        Test: fast/hidpi/broken-image-icon-very-hidpi.html
+
+        * Resources/missingImage.png:
+        * Resources/missingImage@2x.png:
+        * Resources/missingImage@3x.png: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::brokenImage):
+
 2015-03-16  Dean Jackson  <dino@apple.com>
 
         Parsing and Style Resolution of Container-based Animation Triggers

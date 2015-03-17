@@ -170,6 +170,11 @@ void CachedImage::allClientsRemoved()
 
 std::pair<Image*, float> CachedImage::brokenImage(float deviceScaleFactor) const
 {
+    if (deviceScaleFactor >= 3) {
+        static NeverDestroyed<Image*> brokenImageVeryHiRes(Image::loadPlatformResource("missingImage@3x").leakRef());
+        return std::make_pair(brokenImageVeryHiRes, 3);
+    }
+
     if (deviceScaleFactor >= 2) {
         static NeverDestroyed<Image*> brokenImageHiRes(Image::loadPlatformResource("missingImage@2x").leakRef());
         return std::make_pair(brokenImageHiRes, 2);
