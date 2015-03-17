@@ -3709,11 +3709,6 @@ void FrameView::didPaintContents(GraphicsContext* context, const IntRect& dirtyR
 
 void FrameView::paintContents(GraphicsContext* context, const IntRect& dirtyRect)
 {
-    if (m_layoutPhase == InViewSizeAdjust)
-        return;
-
-    ASSERT(m_layoutPhase == InPostLayerPositionsUpdatedAfterLayout || m_layoutPhase == OutsideLayout);
-
 #ifndef NDEBUG
     bool fillWithRed;
     if (frame().document()->printing())
@@ -3733,6 +3728,11 @@ void FrameView::paintContents(GraphicsContext* context, const IntRect& dirtyRect
         context->fillRect(dirtyRect, Color(0xFF, 0, 0), ColorSpaceDeviceRGB);
 #endif
 
+    if (m_layoutPhase == InViewSizeAdjust)
+        return;
+    
+    ASSERT(m_layoutPhase == InPostLayerPositionsUpdatedAfterLayout || m_layoutPhase == OutsideLayout);
+    
     RenderView* renderView = this->renderView();
     if (!renderView) {
         LOG_ERROR("called FrameView::paint with nil renderer");

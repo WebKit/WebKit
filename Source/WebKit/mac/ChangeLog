@@ -1,3 +1,22 @@
+2015-03-16  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r181587.
+
+    2015-03-16  Brent Fulgham  <bfulgham@apple.com>
+
+            WebKit1 Clients Are Not Reliably Repainted
+            https://bugs.webkit.org/show_bug.cgi?id=142750
+            <rdar://problem/20042453>
+
+            Reviewed by Simon Fraser.
+
+            Check with the FrameView to see if we are in an immediately paintable state. If we are not,
+            mark the view as dirty once the _immediateScrollToPoint operation is complete so that the
+            region will be painted properly.
+
+            * WebView/WebClipView.mm:
+            (-[WebClipView _immediateScrollToPoint:]): 
+
 2015-02-10  Lucas Forschler  <lforschler@apple.com>
 
         Merge r177849
