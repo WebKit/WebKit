@@ -1,3 +1,15 @@
+2015-03-17  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r181423): Crash @ generatedcontent.org at com.apple.WebCore: WebCore::MediaPlayer::maximumDurationToCacheMediaTime const + 4
+        https://bugs.webkit.org/show_bug.cgi?id=142787
+
+        Reviewed by Eric Carlson.
+
+        Null check m_player before derefencing.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
 2015-03-17  Beth Dakin  <bdakin@apple.com>
 
         DOM mouse events have weird timing for force clickable elements in Safari 8.0.3 on 

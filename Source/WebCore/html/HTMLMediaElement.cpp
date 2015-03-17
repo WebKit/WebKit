@@ -2474,7 +2474,7 @@ void HTMLMediaElement::refreshCachedTime() const
 
 void HTMLMediaElement::invalidateCachedTime() const
 {
-    if (!m_player->maximumDurationToCacheMediaTime())
+    if (!m_player || !m_player->maximumDurationToCacheMediaTime())
         return;
 
 #if !LOG_DISABLED
