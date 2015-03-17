@@ -44,7 +44,7 @@ DisplayRefreshMonitorManager& DisplayRefreshMonitorManager::sharedManager()
     return manager.get();
 }
 
-DisplayRefreshMonitor* DisplayRefreshMonitorManager::ensureMonitorForClient(DisplayRefreshMonitorClient* client)
+DisplayRefreshMonitor* DisplayRefreshMonitorManager::createMonitorForClient(DisplayRefreshMonitorClient* client)
 {
     PlatformDisplayID clientDisplayID = client->displayID();
     for (const RefPtr<DisplayRefreshMonitor>& monitor : m_monitors) {
@@ -55,6 +55,8 @@ DisplayRefreshMonitor* DisplayRefreshMonitorManager::ensureMonitorForClient(Disp
     }
 
     RefPtr<DisplayRefreshMonitor> monitor = DisplayRefreshMonitor::create(client);
+    if (!monitor)
+        return nullptr;
     monitor->addClient(client);
     DisplayRefreshMonitor* result = monitor.get();
     m_monitors.append(monitor.release());
@@ -66,7 +68,7 @@ void DisplayRefreshMonitorManager::registerClient(DisplayRefreshMonitorClient* c
     if (!client->hasDisplayID())
         return;
 
-    ensureMonitorForClient(client);
+    createMonitorForClient(client);
 }
 
 void DisplayRefreshMonitorManager::unregisterClient(DisplayRefreshMonitorClient* client)
@@ -92,7 +94,9 @@ bool DisplayRefreshMonitorManager::scheduleAnimation(DisplayRefreshMonitorClient
     if (!client->hasDisplayID())
         return false;
 
-    DisplayRefreshMonitor* monitor = ensureMonitorForClient(client);
+    DisplayRefreshMonitor* monitor = createMonitorForClient(client);
+    if (!monitor)
+        return false;
 
     client->setIsScheduled(true);
     return monitor->requestRefreshCallback();

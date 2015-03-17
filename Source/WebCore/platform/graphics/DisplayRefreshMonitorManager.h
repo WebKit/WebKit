@@ -54,7 +54,7 @@ private:
     DisplayRefreshMonitorManager() { }
     virtual ~DisplayRefreshMonitorManager();
 
-    DisplayRefreshMonitor* ensureMonitorForClient(DisplayRefreshMonitorClient*);
+    DisplayRefreshMonitor* createMonitorForClient(DisplayRefreshMonitorClient*);
 
     Vector<RefPtr<DisplayRefreshMonitor>> m_monitors;
 };

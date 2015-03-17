@@ -1,0 +1,22 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = function () {
+    var frame = document.getElementById("frame");
+    var frameWindow = frame.contentWindow;
+    var rAF = frameWindow.requestAnimationFrame;
+
+    frame.parentElement.removeChild(frame);
+    rAF.call(frameWindow, function () { });
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+<body>
+<iframe id="frame"></iframe>
+This test passes if it does not crash.
+</body>

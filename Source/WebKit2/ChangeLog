@@ -1,3 +1,16 @@
+2015-03-17  Timothy Horton  <timothy_horton@apple.com>
+
+        Reproducible null deref under ScriptedAnimationController::createDisplayRefreshMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=142776
+        <rdar://problem/18921338>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createDisplayRefreshMonitor):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Adjust to the new signature.
+
 2015-03-17  Antti Koivisto  <antti@apple.com>
 
         Disk cache should support Vary: Cookie

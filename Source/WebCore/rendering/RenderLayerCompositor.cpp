@@ -4150,14 +4150,14 @@ void RenderLayerCompositor::paintRelatedMilestonesTimerFired()
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-PassRefPtr<DisplayRefreshMonitor> RenderLayerCompositor::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
+Optional<RefPtr<DisplayRefreshMonitor>> RenderLayerCompositor::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
 {
     Frame& frame = m_renderView.frameView().frame();
     Page* page = frame.page();
     if (!page)
-        return nullptr;
+        return Optional<RefPtr<DisplayRefreshMonitor>>(nullptr);
 
-    return page->chrome().client().createDisplayRefreshMonitor(displayID);
+    return Optional<RefPtr<DisplayRefreshMonitor>>(page->chrome().client().createDisplayRefreshMonitor(displayID));
 }
 #endif
 

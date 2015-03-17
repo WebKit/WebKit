@@ -38,7 +38,7 @@ public:
     virtual ~GraphicsLayerUpdaterClient() { }
     virtual void flushLayersSoon(GraphicsLayerUpdater*) = 0;
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    virtual PassRefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const = 0;
+    virtual Optional<RefPtr<DisplayRefreshMonitor>> createDisplayRefreshMonitor(PlatformDisplayID) const = 0;
 #endif
 };
 
@@ -55,7 +55,7 @@ public:
     void screenDidChange(PlatformDisplayID);
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    virtual PassRefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
+    virtual Optional<RefPtr<DisplayRefreshMonitor>> createDisplayRefreshMonitor(PlatformDisplayID) const override;
 #endif
 
 private:
