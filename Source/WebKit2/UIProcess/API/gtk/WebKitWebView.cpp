@@ -948,7 +948,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             WEBKIT_PARAM_READABLE));
 
     /**
-     * WebKitWebView::is-playing-audio:
+     * WebKitWebView:is-playing-audio:
      *
      * Whether the #WebKitWebView is currently playing audio from a page.
      * This property becomes %TRUE as soon as web content starts playing any
@@ -1694,7 +1694,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     /**
      * WebKitWebView::show-notification:
      * @web_view: the #WebKitWebView
-     * @notification: a #WebKitNofication
+     * @notification: a #WebKitNotification
      *
      * This signal is emitted when a notification should be presented to the
      * user. The @notification is kept alive until either: 1) the web page cancels it
@@ -2509,7 +2509,7 @@ gboolean webkit_web_view_is_loading(WebKitWebView* webView)
  * webkit_web_view_is_playing_audio:
  * @web_view: a #WebKitWebView
  *
- * Gets the value of the #WebKitWebView::is-playing-audio property.
+ * Gets the value of the #WebKitWebView:is-playing-audio property.
  * You can monitor when a page in a #WebKitWebView is playing audio by
  * connecting to the notify::is-playing-audio signal of @web_view. This
  * is useful when the application wants to provide visual feedback when a

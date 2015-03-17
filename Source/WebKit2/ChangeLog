@@ -1,3 +1,16 @@
+2015-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add new Notification classes to GTK+ API documentation.
+
+        Add WebKitNotification and WebKitNotificationPermissionRequest to
+        the documentation and fix some other typos causing warnings when
+        generating HTML documentation.
+
+        * UIProcess/API/gtk/WebKitUserContent.cpp:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+
 2015-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not look for child processes in the UI process binary path
