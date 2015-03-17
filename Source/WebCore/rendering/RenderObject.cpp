@@ -693,11 +693,11 @@ RenderBlock* RenderObject::containingBlock() const
 
     const RenderStyle& style = this->style();
     if (!is<RenderText>(*this) && style.position() == FixedPosition)
-        parent = containingBlockForFixedPosition(parent);
+        parent = parent->containingBlockForFixedPosition();
     else if (!is<RenderText>(*this) && style.position() == AbsolutePosition)
-        parent = containingBlockForAbsolutePosition(parent);
+        parent = parent->containingBlockForAbsolutePosition();
     else
-        parent = containingBlockForObjectInFlow(parent);
+        parent = parent->containingBlockForObjectInFlow();
 
     if (!is<RenderBlock>(parent))
         return nullptr; // This can still happen in case of an orphaned tree

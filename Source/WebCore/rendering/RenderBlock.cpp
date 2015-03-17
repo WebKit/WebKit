@@ -90,11 +90,11 @@ struct SameSizeAsRenderBlock : public RenderBox {
 
 COMPILE_ASSERT(sizeof(RenderBlock) == sizeof(SameSizeAsRenderBlock), RenderBlock_should_stay_small);
 
-static TrackedDescendantsMap* gPositionedDescendantsMap = 0;
-static TrackedDescendantsMap* gPercentHeightDescendantsMap = 0;
+static TrackedDescendantsMap* gPositionedDescendantsMap;
+static TrackedDescendantsMap* gPercentHeightDescendantsMap;
 
-static TrackedContainerMap* gPositionedContainerMap = 0;
-static TrackedContainerMap* gPercentHeightContainerMap = 0;
+static TrackedContainerMap* gPositionedContainerMap;
+static TrackedContainerMap* gPercentHeightContainerMap;
 
 typedef HashMap<RenderBlock*, std::unique_ptr<ListHashSet<RenderInline*>>> ContinuationOutlineTableMap;
 
@@ -2144,7 +2144,7 @@ TrackedRendererListHashSet* RenderBlock::positionedObjects() const
 {
     if (gPositionedDescendantsMap)
         return gPositionedDescendantsMap->get(this);
-    return 0;
+    return nullptr;
 }
 
 void RenderBlock::insertPositionedObject(RenderBox& o)

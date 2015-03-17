@@ -1,3 +1,36 @@
+2015-03-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Move some code from LogicalSelectionOffsetCaches into RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=142758
+
+        Reviewed by Myles C. Maxfield.
+
+        LogicalSelectionOffsetCaches had some useful code regarding containing blocks etc
+        that should be used in more places, so move it into RenderElement.
+        
+        No behavior change.
+
+        * rendering/LogicalSelectionOffsetCaches.h:
+        (WebCore::LogicalSelectionOffsetCaches::LogicalSelectionOffsetCaches):
+        (WebCore::isContainingBlockCandidateForAbsolutelyPositionedObject): Deleted.
+        (WebCore::isNonRenderBlockInline): Deleted.
+        (WebCore::containingBlockForFixedPosition): Deleted.
+        (WebCore::containingBlockForAbsolutePosition): Deleted.
+        (WebCore::containingBlockForObjectInFlow): Deleted.
+        * rendering/RenderBlock.cpp: No need to initialize static data.
+        (WebCore::RenderBlock::positionedObjects): nullptr
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::containingBlockForFixedPosition):
+        (WebCore::RenderElement::containingBlockForAbsolutePosition):
+        (WebCore::isNonRenderBlockInline):
+        (WebCore::RenderElement::containingBlockForObjectInFlow):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::canContainAbsolutelyPositionedObjects):
+        * rendering/RenderLayer.cpp:
+        (WebCore::isContainerForPositioned):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+
 2015-03-17  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Unreviewed build fix after r181640.

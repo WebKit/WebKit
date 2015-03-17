@@ -77,7 +77,6 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InspectorInstrumentation.h"
-#include "LogicalSelectionOffsetCaches.h"
 #include "OverflowEvent.h"
 #include "OverlapTestRequestClient.h"
 #include "Page.h"
@@ -1434,7 +1433,7 @@ static inline bool isContainerForPositioned(RenderLayer& layer, EPosition positi
         return layer.renderer().canContainFixedPositionObjects();
 
     case AbsolutePosition:
-        return isContainingBlockCandidateForAbsolutelyPositionedObject(layer.renderer());
+        return layer.renderer().canContainAbsolutelyPositionedObjects();
     
     default:
         ASSERT_NOT_REACHED();

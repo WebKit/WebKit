@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class ControlStates;
+class RenderBlock;
 
 class RenderElement : public RenderObject {
 public:
@@ -63,6 +64,11 @@ public:
     virtual bool isEmpty() const override { return !firstChild(); }
 
     bool canContainFixedPositionObjects() const;
+    bool canContainAbsolutelyPositionedObjects() const;
+
+    RenderBlock* containingBlockForFixedPosition() const;
+    RenderBlock* containingBlockForAbsolutePosition() const;
+    RenderBlock* containingBlockForObjectInFlow() const;
 
     Color selectionColor(int colorProperty) const;
     PassRefPtr<RenderStyle> selectionPseudoStyle() const;
@@ -391,6 +397,14 @@ inline bool RenderElement::canContainFixedPositionObjects() const
         || (hasTransform() && isRenderBlock())
         || isSVGForeignObject()
         || isOutOfFlowRenderFlowThread();
+}
+
+inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
+{
+    return style().position() != StaticPosition
+        || (isRenderBlock() && hasTransformRelatedProperty())
+        || isSVGForeignObject()
+        || isRenderView();
 }
 
 inline bool RenderObject::isRenderLayerModelObject() const
