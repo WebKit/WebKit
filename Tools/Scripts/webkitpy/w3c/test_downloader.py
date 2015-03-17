@@ -78,8 +78,11 @@ class TestDownloader(object):
             import_expectations_path = webkit_finder.path_from_webkit_base('LayoutTests', 'imported', 'w3c', 'resources', 'ImportExpectations')
             self._init_paths_from_expectations(import_expectations_path)
 
+    def git(self, test_repository):
+        return Git(test_repository, None, executive=self._host.executive, filesystem=self._filesystem)
+
     def checkout_test_repository(self, revision, url, directory):
-        git = Git('.', None)
+        git = self.git('.')
         if not self._filesystem.exists(directory):
             _log.info('Cloning %s into %s...' % (url, directory))
             git._run_git(['clone', '-v', url, directory])

@@ -1,3 +1,30 @@
+2015-03-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C test parser and converter should use test importer host
+        https://bugs.webkit.org/show_bug.cgi?id=142729
+
+        Reviewed by Bem Jones-Bey.
+
+        When instantiated by TestImporter, TestParser and TestConverter are now using the same host.
+        This enables adding more TestImporter unit testing.
+        This patch also ensures that the git object instantiated by TestDownloader is using the
+        same Executive and FileSystem object as TestDownloader, again to enable TestImporter/TestDownloader unit testing.
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.copytree): Fixes implementation as it creates a runtime error.
+        * Scripts/webkitpy/w3c/test_downloader.py:
+        (TestDownloader.git): Set the executive of the git object to the one of TestDownloader. Refactoring in a new git function for future reuse.
+        (TestDownloader.checkout_test_repository): Making use of the new git function.
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.find_importable_tests): Adding host as parameter to the parser.
+        (TestImporter.import_tests): Adding host as parameter to the converter.
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.create_test_download_importer): Creating a test downloader mock, to be reused by other tests.
+        (TestImporterTest):
+        (TestImporterTest.test_harnesslinks_conversion): Adding test to check that test harness links are converted for CSS tests but not WPT tests. 
+        * Scripts/webkitpy/w3c/test_parser.py:
+        (TestParser.__init__): Adding host as parameter constructor.
+
 2015-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitDOM objects leaking

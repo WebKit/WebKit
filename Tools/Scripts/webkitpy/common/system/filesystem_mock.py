@@ -400,7 +400,7 @@ class MockFileSystem(object):
         source = self.normpath(source)
         destination = self.normpath(destination)
 
-        for source_file in self.files:
+        for source_file in list(self.files):
             if source_file.startswith(source):
                 destination_path = self.join(destination, self.relpath(source_file, source))
                 self.maybe_make_directory(self.dirname(destination_path))

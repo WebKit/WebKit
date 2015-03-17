@@ -240,7 +240,7 @@ class TestImporter(object):
                     copy_list.append({'src': fullpath, 'dest': filename})
                     continue
 
-                test_parser = TestParser(vars(self.options), filename=fullpath)
+                test_parser = TestParser(vars(self.options), filename=fullpath, host=self.host)
                 test_info = test_parser.analyze_test()
                 if test_info is None:
                     # If html file is in a "resources" folder, it should be copied anyway
@@ -351,7 +351,7 @@ class TestImporter(object):
                 mimetype = mimetypes.guess_type(orig_filepath)
                 if 'html' in str(mimetype[0]) or 'xml' in str(mimetype[0])  or 'css' in str(mimetype[0]):
                     try:
-                        converted_file = convert_for_webkit(new_path, filename=orig_filepath, reference_support_info=reference_support_info, convert_test_harness_links=self.should_convert_test_harness_links(subpath))
+                        converted_file = convert_for_webkit(new_path, filename=orig_filepath, reference_support_info=reference_support_info, host=self.host, convert_test_harness_links=self.should_convert_test_harness_links(subpath))
                     except:
                         _log.warn('Failed converting %s', orig_filepath)
                         failed_conversion_files.append(orig_filepath)
