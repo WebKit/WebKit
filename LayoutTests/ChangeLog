@@ -1,3 +1,12 @@
+2015-03-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Unreviewed EFL gardening on 17th Mar.
+
+        Register new crash, flaky, and timeout tests to EFL TestExpectations files.
+        Additionally some test related to video, form, accessibility tests are marked as failure.
+
+        * platform/efl/TestExpectations:
+
 2015-03-16  Dean Jackson  <dino@apple.com>
 
         Parsing and Style Resolution of Container-based Animation Triggers

@@ -99,6 +99,7 @@ http/tests/history/back-with-fragment-change.php
 http/tests/loading/bad-scheme-subframe.html
 http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
+http/tests/media/video-play-waiting.html
 http/tests/security/feed-urls-from-remote.html
 
 # ------------------------------
@@ -246,6 +247,7 @@ http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml
 http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
 http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
+http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-invalidstaterror.html
 
 # There are no expected result set yet.
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
@@ -524,6 +526,10 @@ webkit.org/b/131044 media [ Skip ]
 # A lot of crash happen since buildbot bagan to use Ubuntu 13.10.
 webkit.org/b/131729 fast/events/touch [ Skip ]
 
+webkit.org/b/142766 fast/overflow/overflow-height-float-not-removed-crash2.html [ Crash ]
+
+webkit.org/b/142767 pageoverlay/overlay-large-document.html [ Crash ]
+
 # REGRESSION(r174107): [EFL] WebGL broken
 # https://bugs.webkit.org/show_bug.cgi?id=137842
 fast/canvas/webgl [ Skip ]
@@ -796,11 +802,12 @@ webkit.org/b/95428 media/video-controls-captions.html [ Timeout ]
 webkit.org/b/113106 media/track/track-prefer-captions.html [ Timeout ]
 
 # Failures after r130363.
-webkit.org/b/98573 fast/forms/multiple-form-submission-protection-mouse.html [ Failure Pass ]
+webkit.org/b/98573 fast/forms/multiple-form-submission-protection-mouse.html [ Failure Timeout Pass ]
 
 webkit.org/b/103115 http/tests/loading/remove-child-triggers-parser.html [ Failure Pass ]
 
 webkit.org/b/102201 fast/dom/Window/window-resize.html [ Failure Pass ]
+webkit.org/b/102201 fast/dom/Window/window-resize-contents.html [ Timeout Pass ]
 
 webkit.org/b/103396 [ Debug ] fast/forms/state-restore-per-form.html [ Failure Pass ]
 webkit.org/b/103399 [ Debug ] fast/forms/basic-buttons.html [ Failure Pass ]
@@ -827,6 +834,7 @@ webkit.org/b/119042 animations/resume-after-page-cache.html [ Failure Pass Crash
 
 webkit.org/b/124655 css3/masking/clip-path-animation.html [ Failure Pass ]
 
+webkit.org/b/124664 media/video-duration-known-after-eos.html [ Failure Timeout Pass ]
 webkit.org/b/124664 media/video-seek-with-negative-playback.html [ Failure Crash Pass ]
 
 webkit.org/b/124665 media/video-ended-event-negative-playback.html [ Failure Pass ]
@@ -2176,3 +2184,6 @@ webkit.org/b/142561 svg/animations/smil-leak-elements.svg [ Failure ]
 webkit.org/b/142570 fast/css/outline-auto-empty-rects.html [ Failure ]
 
 webkit.org/b/142571 fast/css/vertical-text-overflow-ellipsis-text-align-center.html [ Failure ]
+
+webkit.org/b/142763 fast/images/animated-gif-window-resizing.html [ Timeout ]
+webkit.org/b/142764 accessibility/content-editable-as-textarea.html [ Timeout ]
