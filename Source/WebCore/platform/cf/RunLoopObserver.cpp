@@ -49,7 +49,7 @@ void RunLoopObserver::runLoopObserverFired()
     m_callback();
 }
 
-void RunLoopObserver::schedule(CFRunLoopRef runLoop)
+void RunLoopObserver::schedule(CFRunLoopRef runLoop, CFRunLoopActivity activity)
 {
     if (!runLoop)
         runLoop = CFRunLoopGetCurrent();
@@ -61,7 +61,7 @@ void RunLoopObserver::schedule(CFRunLoopRef runLoop)
         return;
 
     CFRunLoopObserverContext context = { 0, this, 0, 0, 0 };
-    m_runLoopObserver = adoptCF(CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting | kCFRunLoopExit, true, m_order, runLoopObserverFired, &context));
+    m_runLoopObserver = adoptCF(CFRunLoopObserverCreate(0, activity, true, m_order, runLoopObserverFired, &context));
 
     CFRunLoopAddObserver(runLoop, m_runLoopObserver.get(), kCFRunLoopCommonModes);
 }

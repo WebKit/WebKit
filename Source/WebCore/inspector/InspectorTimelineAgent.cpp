@@ -54,9 +54,36 @@
 #include <profiler/LegacyProfiler.h>
 #include <wtf/CurrentTime.h>
 
+#if PLATFORM(IOS)
+#include "RuntimeApplicationChecksIOS.h"
+#include <WebCore/WebCoreThread.h>
+#endif
+
+#if PLATFORM(COCOA)
+#include <WebCore/RunLoopObserver.h>
+#endif
+
 using namespace Inspector;
 
 namespace WebCore {
+
+#if PLATFORM(COCOA)
+static const CFIndex frameStopRunLoopOrder = (CFIndex)RunLoopObserver::WellKnownRunLoopOrders::CoreAnimationCommit + 1;
+
+static CFRunLoopRef currentRunLoop()
+{
+#if PLATFORM(IOS)
+    // A race condition during WebView deallocation can lead to a crash if the layer sync run loop
+    // observer is added to the main run loop <rdar://problem/9798550>. However, for responsiveness,
+    // we still allow this, see <rdar://problem/7403328>. Since the race condition and subsequent
+    // crash are especially troublesome for iBooks, we never allow the observer to be added to the
+    // main run loop in iBooks.
+    if (applicationIsIBooksOnIOS())
+        return WebThreadRunLoop();
+#endif
+    return CFRunLoopGetCurrent();
+}
+#endif
 
 InspectorTimelineAgent::~InspectorTimelineAgent()
 {
@@ -122,6 +149,33 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
 
     m_enabled = true;
 
+    // FIXME: Abstract away platform-specific code once https://bugs.webkit.org/show_bug.cgi?id=142748 is fixed.
+
+#if PLATFORM(COCOA)
+    m_frameStartObserver = RunLoopObserver::create(0, [this]() {
+        if (!m_enabled || m_didStartRecordingRunLoop)
+            return;
+
+        pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RunLoop, false, nullptr);
+        m_didStartRecordingRunLoop = true;
+    });
+
+    m_frameStopObserver = RunLoopObserver::create(frameStopRunLoopOrder, [this]() {
+        if (!m_enabled || !m_didStartRecordingRunLoop)
+            return;
+
+        didCompleteCurrentRecord(TimelineRecordType::RunLoop);
+        m_didStartRecordingRunLoop = false;
+    });
+
+    m_frameStartObserver->schedule(currentRunLoop(), kCFRunLoopAfterWaiting | kCFRunLoopBeforeTimers);
+    m_frameStopObserver->schedule(currentRunLoop(), kCFRunLoopBeforeWaiting | kCFRunLoopExit);
+
+    // Create a runloop record immediately in order to capture the rest of the current runloop.
+    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RunLoop, false, nullptr);
+    m_didStartRecordingRunLoop = true;
+#endif
+
     if (m_frontendDispatcher)
         m_frontendDispatcher->recordingStarted();
 }
@@ -140,6 +194,11 @@ void InspectorTimelineAgent::internalStop()
 
     if (m_scriptDebugServer)
         m_scriptDebugServer->removeListener(this, true);
+
+#if PLATFORM(COCOA)
+    m_frameStartObserver = nullptr;
+    m_frameStopObserver = nullptr;
+#endif
 
     clearRecordStack();
 
@@ -539,6 +598,8 @@ static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType ty
         return Inspector::Protocol::Timeline::EventType::Layout;
     case TimelineRecordType::Paint:
         return Inspector::Protocol::Timeline::EventType::Paint;
+    case TimelineRecordType::RunLoop:
+        return Inspector::Protocol::Timeline::EventType::RunLoop;
     case TimelineRecordType::ScrollLayer:
         return Inspector::Protocol::Timeline::EventType::ScrollLayer;
 
@@ -654,6 +715,7 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
     , m_client(client)
     , m_enabled(false)
     , m_enabledFromFrontend(false)
+    , m_didStartRecordingRunLoop(false)
 {
 }
 

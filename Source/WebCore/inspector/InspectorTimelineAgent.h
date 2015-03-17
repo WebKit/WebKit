@@ -61,6 +61,7 @@ class PageScriptDebugServer;
 class RenderObject;
 class ResourceRequest;
 class ResourceResponse;
+class RunLoopObserver;
 
 typedef String ErrorString;
 
@@ -71,6 +72,7 @@ enum class TimelineRecordType {
     InvalidateLayout,
     Layout,
     Paint,
+    RunLoop,
     ScrollLayer,
 
     ParseHTML,
@@ -244,6 +246,12 @@ private:
 
     bool m_enabled;
     bool m_enabledFromFrontend;
+
+#if PLATFORM(COCOA)
+    std::unique_ptr<WebCore::RunLoopObserver> m_frameStartObserver;
+    std::unique_ptr<WebCore::RunLoopObserver> m_frameStopObserver;
+#endif
+    bool m_didStartRecordingRunLoop;
 };
 
 } // namespace WebCore

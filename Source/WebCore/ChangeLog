@@ -1,3 +1,30 @@
+2015-03-17  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Show rendering frames (and FPS) in Layout and Rendering timeline
+        https://bugs.webkit.org/show_bug.cgi?id=142029
+
+        Reviewed by Timothy Hatcher.
+
+        Add new functionality to the Inspector timelines backend to add runloop data to timeline recordings.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::currentRunLoop):
+        (WebCore::InspectorTimelineAgent::internalStart):
+        (WebCore::InspectorTimelineAgent::internalStop):
+        (WebCore::toProtocol):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        Install observers for the begining and end of the runloop when recording begins. All other
+        instrumented timeline events get added as children of the current runloop record, which is
+        sent to the frontend once the runloop completes.
+
+        * inspector/InspectorTimelineAgent.h:
+
+        * platform/cf/RunLoopObserver.cpp:
+        (WebCore::RunLoopObserver::schedule):
+        Wrapper changed to allow observing arbitrary runloop activities.
+
+        * platform/cf/RunLoopObserver.h:
+
 2015-03-17  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] basic OpenWebRTC build support
