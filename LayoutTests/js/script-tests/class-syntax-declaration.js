@@ -1,4 +1,5 @@
-//@ skip
+
+description('Tests for ES6 class syntax declarations');
 
 var constructorCallCount = 0;
 const staticMethodValue = [1];
@@ -29,7 +30,7 @@ shouldBe("A.prototype.constructor", "A");
 shouldThrow("class", "'SyntaxError: Unexpected end of script'");
 shouldThrow("class X {", "'SyntaxError: Unexpected end of script'");
 shouldThrow("class X { ( }", "'SyntaxError: Unexpected token \\'(\\'. Expected an indentifier.'");
-shouldThrow("class X {}", "'SyntaxError: Class declaration without a constructor is not supported yet.'");
+shouldNotThrow("class X {}");
 shouldThrow("class X { constructor() {} constructor() {} }", "'SyntaxError: Cannot declare multiple constructors in a single class.'");
 shouldNotThrow("class X { constructor() {} static constructor() { return staticMethodValue; } }");
 shouldBe("X.constructor()", "staticMethodValue");

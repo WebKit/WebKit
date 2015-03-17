@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected use of reserved word 'super'
+CONSOLE MESSAGE: line 76: SyntaxError: Cannot reference super.
 S7.5.3_A1.27
 
 PASS Expected parsing failure

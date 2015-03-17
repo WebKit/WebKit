@@ -1047,36 +1047,36 @@ PASS "use strict";({ with: 42 }.with === 42) is true
 PASS (function(){"use strict";({ with: 42 }.with === 42)}); true is true
 PASS "use strict";({ get with(){}, set with(){}, parsedOkay: 42 }.parsedOkay === 42) is true
 PASS (function(){"use strict";({ get with(){}, set with(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
-PASS var class; true threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS (function(){var class; true}); true threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS var class = 42; class === 42 threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS (function(){var class = 42; class === 42}); true threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS function g(class){  }; true threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS (function(){function g(class){  }; true}); true threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS /class/.test(function g(class){  }) threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS (function(){/class/.test(function g(class){  })}); true threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS try{}catch(class){}; true threw exception SyntaxError: Cannot use the reserved word 'class' as a catch variable name..
-PASS (function(){try{}catch(class){}; true}); true threw exception SyntaxError: Cannot use the reserved word 'class' as a catch variable name..
-PASS function class(){  }; true threw exception SyntaxError: Cannot use the reserved word 'class' as a function name..
-PASS (function(){function class(){  }; true}); true threw exception SyntaxError: Cannot use the reserved word 'class' as a function name..
+PASS var class; true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS (function(){var class; true}); true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS var class = 42; class === 42 threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS (function(){var class = 42; class === 42}); true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS function g(class){  }; true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS (function(){function g(class){  }; true}); true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS /class/.test(function g(class){  }) threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS (function(){/class/.test(function g(class){  })}); true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS try{}catch(class){}; true threw exception SyntaxError: Cannot use the keyword 'class' as a catch variable name..
+PASS (function(){try{}catch(class){}; true}); true threw exception SyntaxError: Cannot use the keyword 'class' as a catch variable name..
+PASS function class(){  }; true threw exception SyntaxError: Cannot use the keyword 'class' as a function name..
+PASS (function(){function class(){  }; true}); true threw exception SyntaxError: Cannot use the keyword 'class' as a function name..
 PASS ({ "class": 42 }.class === 42) is true
 PASS (function(){({ "class": 42 }.class === 42)}); true is true
 PASS ({ class: 42 }.class === 42) is true
 PASS (function(){({ class: 42 }.class === 42)}); true is true
 PASS ({ get class(){}, set class(){}, parsedOkay: 42 }.parsedOkay === 42) is true
 PASS (function(){({ get class(){}, set class(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
-PASS "use strict";var class; true threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS (function(){"use strict";var class; true}); true threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS "use strict";var class = 42; class === 42 threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS (function(){"use strict";var class = 42; class === 42}); true threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS "use strict";function g(class){ "use strict"; }; true threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS (function(){"use strict";function g(class){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS "use strict";/class/.test(function g(class){ "use strict"; }) threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS (function(){"use strict";/class/.test(function g(class){ "use strict"; })}); true threw exception SyntaxError: Cannot use the reserved word 'class' as a variable name..
-PASS "use strict";try{}catch(class){}; true threw exception SyntaxError: Cannot use the reserved word 'class' as a catch variable name..
-PASS (function(){"use strict";try{}catch(class){}; true}); true threw exception SyntaxError: Cannot use the reserved word 'class' as a catch variable name..
-PASS "use strict";function class(){ "use strict"; }; true threw exception SyntaxError: Cannot use the reserved word 'class' as a function name..
-PASS (function(){"use strict";function class(){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the reserved word 'class' as a function name..
+PASS "use strict";var class; true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS (function(){"use strict";var class; true}); true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS "use strict";var class = 42; class === 42 threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS (function(){"use strict";var class = 42; class === 42}); true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS "use strict";function g(class){ "use strict"; }; true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS (function(){"use strict";function g(class){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS "use strict";/class/.test(function g(class){ "use strict"; }) threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS (function(){"use strict";/class/.test(function g(class){ "use strict"; })}); true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
+PASS "use strict";try{}catch(class){}; true threw exception SyntaxError: Cannot use the keyword 'class' as a catch variable name..
+PASS (function(){"use strict";try{}catch(class){}; true}); true threw exception SyntaxError: Cannot use the keyword 'class' as a catch variable name..
+PASS "use strict";function class(){ "use strict"; }; true threw exception SyntaxError: Cannot use the keyword 'class' as a function name..
+PASS (function(){"use strict";function class(){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the keyword 'class' as a function name..
 PASS "use strict";({ "class": 42 }.class === 42) is true
 PASS (function(){"use strict";({ "class": 42 }.class === 42)}); true is true
 PASS "use strict";({ class: 42 }.class === 42) is true
@@ -1191,36 +1191,36 @@ PASS "use strict";({ export: 42 }.export === 42) is true
 PASS (function(){"use strict";({ export: 42 }.export === 42)}); true is true
 PASS "use strict";({ get export(){}, set export(){}, parsedOkay: 42 }.parsedOkay === 42) is true
 PASS (function(){"use strict";({ get export(){}, set export(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
-PASS var extends; true threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS (function(){var extends; true}); true threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS var extends = 42; extends === 42 threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS (function(){var extends = 42; extends === 42}); true threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS function g(extends){  }; true threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS (function(){function g(extends){  }; true}); true threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS /extends/.test(function g(extends){  }) threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS (function(){/extends/.test(function g(extends){  })}); true threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS try{}catch(extends){}; true threw exception SyntaxError: Cannot use the reserved word 'extends' as a catch variable name..
-PASS (function(){try{}catch(extends){}; true}); true threw exception SyntaxError: Cannot use the reserved word 'extends' as a catch variable name..
-PASS function extends(){  }; true threw exception SyntaxError: Cannot use the reserved word 'extends' as a function name..
-PASS (function(){function extends(){  }; true}); true threw exception SyntaxError: Cannot use the reserved word 'extends' as a function name..
+PASS var extends; true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS (function(){var extends; true}); true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS var extends = 42; extends === 42 threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS (function(){var extends = 42; extends === 42}); true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS function g(extends){  }; true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS (function(){function g(extends){  }; true}); true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS /extends/.test(function g(extends){  }) threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS (function(){/extends/.test(function g(extends){  })}); true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS try{}catch(extends){}; true threw exception SyntaxError: Cannot use the keyword 'extends' as a catch variable name..
+PASS (function(){try{}catch(extends){}; true}); true threw exception SyntaxError: Cannot use the keyword 'extends' as a catch variable name..
+PASS function extends(){  }; true threw exception SyntaxError: Cannot use the keyword 'extends' as a function name..
+PASS (function(){function extends(){  }; true}); true threw exception SyntaxError: Cannot use the keyword 'extends' as a function name..
 PASS ({ "extends": 42 }.extends === 42) is true
 PASS (function(){({ "extends": 42 }.extends === 42)}); true is true
 PASS ({ extends: 42 }.extends === 42) is true
 PASS (function(){({ extends: 42 }.extends === 42)}); true is true
 PASS ({ get extends(){}, set extends(){}, parsedOkay: 42 }.parsedOkay === 42) is true
 PASS (function(){({ get extends(){}, set extends(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
-PASS "use strict";var extends; true threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS (function(){"use strict";var extends; true}); true threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS "use strict";var extends = 42; extends === 42 threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS (function(){"use strict";var extends = 42; extends === 42}); true threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS "use strict";function g(extends){ "use strict"; }; true threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS (function(){"use strict";function g(extends){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS "use strict";/extends/.test(function g(extends){ "use strict"; }) threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS (function(){"use strict";/extends/.test(function g(extends){ "use strict"; })}); true threw exception SyntaxError: Cannot use the reserved word 'extends' as a variable name..
-PASS "use strict";try{}catch(extends){}; true threw exception SyntaxError: Cannot use the reserved word 'extends' as a catch variable name..
-PASS (function(){"use strict";try{}catch(extends){}; true}); true threw exception SyntaxError: Cannot use the reserved word 'extends' as a catch variable name..
-PASS "use strict";function extends(){ "use strict"; }; true threw exception SyntaxError: Cannot use the reserved word 'extends' as a function name..
-PASS (function(){"use strict";function extends(){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the reserved word 'extends' as a function name..
+PASS "use strict";var extends; true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS (function(){"use strict";var extends; true}); true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS "use strict";var extends = 42; extends === 42 threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS (function(){"use strict";var extends = 42; extends === 42}); true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS "use strict";function g(extends){ "use strict"; }; true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS (function(){"use strict";function g(extends){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS "use strict";/extends/.test(function g(extends){ "use strict"; }) threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS (function(){"use strict";/extends/.test(function g(extends){ "use strict"; })}); true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
+PASS "use strict";try{}catch(extends){}; true threw exception SyntaxError: Cannot use the keyword 'extends' as a catch variable name..
+PASS (function(){"use strict";try{}catch(extends){}; true}); true threw exception SyntaxError: Cannot use the keyword 'extends' as a catch variable name..
+PASS "use strict";function extends(){ "use strict"; }; true threw exception SyntaxError: Cannot use the keyword 'extends' as a function name..
+PASS (function(){"use strict";function extends(){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the keyword 'extends' as a function name..
 PASS "use strict";({ "extends": 42 }.extends === 42) is true
 PASS (function(){"use strict";({ "extends": 42 }.extends === 42)}); true is true
 PASS "use strict";({ extends: 42 }.extends === 42) is true
@@ -1263,36 +1263,36 @@ PASS "use strict";({ import: 42 }.import === 42) is true
 PASS (function(){"use strict";({ import: 42 }.import === 42)}); true is true
 PASS "use strict";({ get import(){}, set import(){}, parsedOkay: 42 }.parsedOkay === 42) is true
 PASS (function(){"use strict";({ get import(){}, set import(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
-PASS var super; true threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS (function(){var super; true}); true threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS var super = 42; super === 42 threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS (function(){var super = 42; super === 42}); true threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS function g(super){  }; true threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS (function(){function g(super){  }; true}); true threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS /super/.test(function g(super){  }) threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS (function(){/super/.test(function g(super){  })}); true threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS try{}catch(super){}; true threw exception SyntaxError: Cannot use the reserved word 'super' as a catch variable name..
-PASS (function(){try{}catch(super){}; true}); true threw exception SyntaxError: Cannot use the reserved word 'super' as a catch variable name..
-PASS function super(){  }; true threw exception SyntaxError: Cannot use the reserved word 'super' as a function name..
-PASS (function(){function super(){  }; true}); true threw exception SyntaxError: Cannot use the reserved word 'super' as a function name..
+PASS var super; true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS (function(){var super; true}); true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS var super = 42; super === 42 threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS (function(){var super = 42; super === 42}); true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS function g(super){  }; true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS (function(){function g(super){  }; true}); true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS /super/.test(function g(super){  }) threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS (function(){/super/.test(function g(super){  })}); true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS try{}catch(super){}; true threw exception SyntaxError: Cannot use the keyword 'super' as a catch variable name..
+PASS (function(){try{}catch(super){}; true}); true threw exception SyntaxError: Cannot use the keyword 'super' as a catch variable name..
+PASS function super(){  }; true threw exception SyntaxError: Cannot use the keyword 'super' as a function name..
+PASS (function(){function super(){  }; true}); true threw exception SyntaxError: Cannot use the keyword 'super' as a function name..
 PASS ({ "super": 42 }.super === 42) is true
 PASS (function(){({ "super": 42 }.super === 42)}); true is true
 PASS ({ super: 42 }.super === 42) is true
 PASS (function(){({ super: 42 }.super === 42)}); true is true
 PASS ({ get super(){}, set super(){}, parsedOkay: 42 }.parsedOkay === 42) is true
 PASS (function(){({ get super(){}, set super(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
-PASS "use strict";var super; true threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS (function(){"use strict";var super; true}); true threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS "use strict";var super = 42; super === 42 threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS (function(){"use strict";var super = 42; super === 42}); true threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS "use strict";function g(super){ "use strict"; }; true threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS (function(){"use strict";function g(super){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS "use strict";/super/.test(function g(super){ "use strict"; }) threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS (function(){"use strict";/super/.test(function g(super){ "use strict"; })}); true threw exception SyntaxError: Cannot use the reserved word 'super' as a variable name..
-PASS "use strict";try{}catch(super){}; true threw exception SyntaxError: Cannot use the reserved word 'super' as a catch variable name..
-PASS (function(){"use strict";try{}catch(super){}; true}); true threw exception SyntaxError: Cannot use the reserved word 'super' as a catch variable name..
-PASS "use strict";function super(){ "use strict"; }; true threw exception SyntaxError: Cannot use the reserved word 'super' as a function name..
-PASS (function(){"use strict";function super(){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the reserved word 'super' as a function name..
+PASS "use strict";var super; true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS (function(){"use strict";var super; true}); true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS "use strict";var super = 42; super === 42 threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS (function(){"use strict";var super = 42; super === 42}); true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS "use strict";function g(super){ "use strict"; }; true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS (function(){"use strict";function g(super){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS "use strict";/super/.test(function g(super){ "use strict"; }) threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS (function(){"use strict";/super/.test(function g(super){ "use strict"; })}); true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
+PASS "use strict";try{}catch(super){}; true threw exception SyntaxError: Cannot use the keyword 'super' as a catch variable name..
+PASS (function(){"use strict";try{}catch(super){}; true}); true threw exception SyntaxError: Cannot use the keyword 'super' as a catch variable name..
+PASS "use strict";function super(){ "use strict"; }; true threw exception SyntaxError: Cannot use the keyword 'super' as a function name..
+PASS (function(){"use strict";function super(){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the keyword 'super' as a function name..
 PASS "use strict";({ "super": 42 }.super === 42) is true
 PASS (function(){"use strict";({ "super": 42 }.super === 42)}); true is true
 PASS "use strict";({ super: 42 }.super === 42) is true

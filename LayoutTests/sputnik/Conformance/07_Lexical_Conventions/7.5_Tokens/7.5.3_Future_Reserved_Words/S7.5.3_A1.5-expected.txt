@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected use of reserved word 'class'
+CONSOLE MESSAGE: line 76: SyntaxError: Unexpected keyword 'class'. Class declaration is not allowed in a lexically nested statement.
 S7.5.3_A1.5
 
 PASS Expected parsing failure

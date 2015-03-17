@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected use of reserved word 'extends'
+CONSOLE MESSAGE: line 76: SyntaxError: Unexpected keyword 'extends'
 S7.5.3_A1.11
 
 PASS Expected parsing failure

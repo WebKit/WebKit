@@ -1,4 +1,3 @@
-//@ skip
 
 description('Tests for ES6 class syntax "super"');
 
@@ -17,9 +16,9 @@ class Derived extends Base {
     chainMethod() { return [super.chainMethod(), 'derived']; }
     callBaseMethod() { return super.baseMethod(); }
     get callBaseMethodInGetter() { return super['baseMethod'](); }
-    set callBaseMethodInSetter() { window.valueInSetter = super.baseMethod(); }
+    set callBaseMethodInSetter() { valueInSetter = super.baseMethod(); }
     get baseMethodInGetterSetter() { return super.baseMethod; }
-    set baseMethodInGetterSetter() { window.valueInSetter = super['baseMethod']; }
+    set baseMethodInGetterSetter() { valueInSetter = super['baseMethod']; }
     static staticMethod() { return super.staticMethod(); }
 }
 
@@ -53,12 +52,12 @@ shouldBeTrue('new (class { constructor() { return 1; } }) instanceof Object');
 shouldBe('new (class extends Base { constructor() { return undefined } })', 'undefined');
 shouldBe('x = { }; new (class extends Base { constructor() { return x } });', 'x');
 shouldBeFalse('x instanceof Base');
-shouldThrow('new (class extends Base { constructor() { } })', '"TypeError: Cannot return a non-object type in the constructor of a derived class."');
+shouldThrow('new (class extends Base { constructor() { } })', '"ReferenceError: Cannot access uninitialized variable."');
 shouldThrow('new (class extends Base { constructor() { return 1; } })', '"TypeError: Cannot return a non-object type in the constructor of a derived class."');
 shouldBe('new (class extends null { constructor() { return undefined } })', 'undefined');
 shouldBe('x = { }; new (class extends null { constructor() { return x } });', 'x');
 shouldBeTrue('x instanceof Object');
-shouldThrow('new (class extends null { constructor() { } })', '"TypeError: Cannot return a non-object type in the constructor of a derived class."');
+shouldThrow('new (class extends null { constructor() { } })', '"ReferenceError: Cannot access uninitialized variable."');
 shouldThrow('new (class extends null { constructor() { return 1; } })', '"TypeError: Cannot return a non-object type in the constructor of a derived class."');
 shouldNotThrow('new (class extends null { constructor() { super() } })');
 shouldThrow('new (class { constructor() { super() } })', '"SyntaxError: Cannot call super() in a base class constructor."');

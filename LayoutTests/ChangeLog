@@ -1,3 +1,32 @@
+2015-03-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable ES6 classes by default
+        https://bugs.webkit.org/show_bug.cgi?id=142774
+
+        Reviewed by Gavin Barraclough.
+
+        Unskipped tests and also fixed tests so that they can run under run-javascript-tests.
+
+        * TestExpectations: Unskipped tests.
+        * js/class-syntax-call-expected.txt:
+        * js/class-syntax-declaration-expected.txt:
+        * js/class-syntax-default-constructor-expected.txt:
+        * js/class-syntax-expression-expected.txt:
+        * js/class-syntax-extends-expected.txt:
+        * js/class-syntax-super-expected.txt:
+        * js/dom/reserved-words-as-property-expected.txt: Rebaselined now that "class" is a non-reserved keyword.
+        * js/script-tests/class-syntax-call.js: Don't refer to "window" object as it doesn't exit when ran inside jsc.
+        * js/script-tests/class-syntax-declaration.js: Rebaselined after r181611, which added default constructor support.
+        * js/script-tests/class-syntax-default-constructor.js: Don't refer to "window" object. Also replaced shouldNotBe
+        by an explicit !== check as the former is not supported when ran inside jsc.
+        * js/script-tests/class-syntax-expression.js: Rebaselined after r181611.
+        * js/script-tests/class-syntax-extends.js: Ditto. Also replaced evalAndLog by shouldNotThrow as the former is not
+        supported inside jsc.
+        * js/script-tests/class-syntax-super.js: Don't refer to "window" object as it doesn't exist inside jsc.
+        * sputnik/Conformance/07_Lexical_Conventions/7.5_Tokens/7.5.3_Future_Reserved_Words/S7.5.3_A1.11-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.5_Tokens/7.5.3_Future_Reserved_Words/S7.5.3_A1.27-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.5_Tokens/7.5.3_Future_Reserved_Words/S7.5.3_A1.5-expected.txt:
+
 2015-03-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Better Console Previews for Arrays / Small Objects

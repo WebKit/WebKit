@@ -1,3 +1,12 @@
+2015-03-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable ES6 classes by default
+        https://bugs.webkit.org/show_bug.cgi?id=142774
+
+        Reviewed by Gavin Barraclough.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2015-03-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMake][EFL] Rearrange OptionEFL.cmake to improve readability 

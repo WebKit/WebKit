@@ -1,3 +1,8 @@
+Tests for ES6 class syntax expressions
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS constructorCallCount is 0
 PASS A.someStaticMethod() is staticMethodValue
 PASS (new A).someInstanceMethod() is instanceMethodValue
@@ -13,7 +18,7 @@ PASS A.prototype.constructor is A
 PASS x = class threw exception SyntaxError: Unexpected end of script.
 PASS x = class { threw exception SyntaxError: Unexpected end of script.
 PASS x = class { ( } threw exception SyntaxError: Unexpected token '('. Expected an indentifier..
-PASS x = class {} threw exception SyntaxError: Class declaration without a constructor is not supported yet..
+PASS x = class {} did not throw exception.
 PASS x = class { constructor() {} constructor() {} } threw exception SyntaxError: Cannot declare multiple constructors in a single class..
 PASS x = class { constructor() {} static constructor() { return staticMethodValue; } } did not throw exception.
 PASS x.constructor() is staticMethodValue

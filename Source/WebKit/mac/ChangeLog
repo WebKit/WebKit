@@ -1,3 +1,12 @@
+2015-03-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable ES6 classes by default
+        https://bugs.webkit.org/show_bug.cgi?id=142774
+
+        Reviewed by Gavin Barraclough.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2015-03-16  Brent Fulgham  <bfulgham@apple.com>
 
         WebKit1 Clients Are Not Reliably Repainted

@@ -1,4 +1,3 @@
-//@ skip
 
 class A {
     constructor() { }

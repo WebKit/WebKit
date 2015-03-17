@@ -1,3 +1,24 @@
+2015-03-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable ES6 classes by default
+        https://bugs.webkit.org/show_bug.cgi?id=142774
+
+        Reviewed by Gavin Barraclough.
+
+        Enabled the feature and unskipped tests.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * tests/stress/class-syntax-no-loop-tdz.js:
+        * tests/stress/class-syntax-no-tdz-in-catch.js:
+        * tests/stress/class-syntax-no-tdz-in-conditional.js:
+        * tests/stress/class-syntax-no-tdz-in-loop-no-inline-super.js:
+        * tests/stress/class-syntax-no-tdz-in-loop.js:
+        * tests/stress/class-syntax-no-tdz.js:
+        * tests/stress/class-syntax-tdz-in-catch.js:
+        * tests/stress/class-syntax-tdz-in-conditional.js:
+        * tests/stress/class-syntax-tdz-in-loop.js:
+        * tests/stress/class-syntax-tdz.js:
+
 2015-03-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Better Console Previews for Arrays / Small Objects

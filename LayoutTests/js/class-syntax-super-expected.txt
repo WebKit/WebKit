@@ -27,12 +27,12 @@ PASS new (class { constructor() { return 1; } }) instanceof Object is true
 PASS new (class extends Base { constructor() { return undefined } }) is undefined
 PASS x = { }; new (class extends Base { constructor() { return x } }); is x
 PASS x instanceof Base is false
-PASS new (class extends Base { constructor() { } }) threw exception TypeError: Cannot return a non-object type in the constructor of a derived class..
+PASS new (class extends Base { constructor() { } }) threw exception ReferenceError: Cannot access uninitialized variable..
 PASS new (class extends Base { constructor() { return 1; } }) threw exception TypeError: Cannot return a non-object type in the constructor of a derived class..
 PASS new (class extends null { constructor() { return undefined } }) is undefined
 PASS x = { }; new (class extends null { constructor() { return x } }); is x
 PASS x instanceof Object is true
-PASS new (class extends null { constructor() { } }) threw exception TypeError: Cannot return a non-object type in the constructor of a derived class..
+PASS new (class extends null { constructor() { } }) threw exception ReferenceError: Cannot access uninitialized variable..
 PASS new (class extends null { constructor() { return 1; } }) threw exception TypeError: Cannot return a non-object type in the constructor of a derived class..
 PASS new (class extends null { constructor() { super() } }) did not throw exception.
 PASS new (class { constructor() { super() } }) threw exception SyntaxError: Cannot call super() in a base class constructor..
