@@ -48,7 +48,7 @@ WebInspector.LogManager.prototype = {
         // Called from WebInspector.ConsoleObserver.
 
         // FIXME: Pass a request. We need a way to get it from the request ID.
-        var consoleMessage = WebInspector.ConsoleMessage.create(source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, null);
+        var consoleMessage = WebInspector.LegacyConsoleMessage.create(source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, null);
 
         this.dispatchEventToListeners(WebInspector.LogManager.Event.MessageAdded, {message: consoleMessage});
 
