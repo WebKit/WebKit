@@ -270,7 +270,16 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
                     }
                 }
             }
-        }        
+
+            // Native DOM constructor.
+            if (this._propertyPath.object.description.endsWith("Constructor")) {
+                var name = this._propertyPath.object.description;
+                if (WebInspector.NativeConstructorFunctionParameters[name]) {
+                    var params = WebInspector.NativeConstructorFunctionParameters[name][this._property.name];
+                    return params ? "(" + params + ")" : "()";
+                }
+            }
+        }
 
         var match = resolvedValue.description.match(/^function.*?(\([^)]+?\))/);
         return match ? match[1] : "()";
