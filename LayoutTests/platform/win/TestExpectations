@@ -243,6 +243,8 @@ inspector-protocol/indexeddb/basics.html [ Skip ]
 fast/history/page-cache-indexed-closed-db.html [ Skip ]
 fast/history/page-cache-indexed-opened-db.html [ Skip ]
 fast/history/page-cache-webdatabase-opened-db.html [ Skip ]
+fast/history/page-cache-webdatabase-no-transaction-db.html [ Skip ]
+fast/history/page-cache-webdatabase-pending-transaction.html [ Skip ]
 
 # Neither this port nor the mac port support DeviceMotion or DeviceOrientation.
 fast/dom/DeviceMotion/ [ Skip ]

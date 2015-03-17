@@ -1,3 +1,9 @@
+2015-03-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Skip some IndexDB tests that don't apply on Windows.
+
+        * platform/win/TestExpectations:
+
 2015-03-17  Antti Koivisto  <antti@apple.com>
 
         Disk cache should support Vary: Cookie
