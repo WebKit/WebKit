@@ -1,3 +1,18 @@
+2015-03-17  Chris Dumez  <cdumez@apple.com>
+
+        'pageLoaded' diagnostic logging is too verbose
+        https://bugs.webkit.org/show_bug.cgi?id=142727
+        <rdar://problem/18937048>
+
+        Reviewed by Eric Carlson.
+
+        Make 'pageLoaded' diagnostic logging less verbose:
+        - Log once per main frame instead of once for subframe
+        - Apply sampling
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+
 2015-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Wrong transfer annotations used in GObject DOM bindings
