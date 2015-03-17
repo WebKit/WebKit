@@ -1,3 +1,13 @@
+2015-03-16  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=142747
+
+        Reviewed by Chris Dumez.
+
+        * PlatformMac.cmake:
+        Started adding Mac-specific directories and headers.
+
 2015-03-16  Alexey Proskuryakov  <ap@apple.com>
 
         ASSERT(m_plugin) on plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image.html

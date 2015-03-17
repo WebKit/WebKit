@@ -2,6 +2,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/mac"
     "${WEBCORE_DIR}/bindings/objc"
     "${WEBCORE_DIR}/bridge/objc"
+    "${WEBCORE_DIR}/editing/mac"
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/loader/cf"
     "${WEBCORE_DIR}/loader/mac"
@@ -144,7 +145,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/WebCoreNSURLExtras.mm
     platform/mac/WebCoreObjCExtras.mm
     platform/mac/WebCoreSystemInterface.mm
-    platform/mac/WebCoreView.m
     platform/mac/WebNSAttributedStringExtras.mm
     platform/mac/WebVideoFullscreenController.mm
     platform/mac/WebVideoFullscreenHUDWindowController.mm
@@ -209,28 +209,88 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 )
 
 set(WebCore_FORWARDING_HEADERS_FILES
-    html/HTMLMediaElement.h
+    bindings/js/SerializedScriptValue.h
     bindings/objc/WebKitAvailability.h
+
+    bridge/IdentifierRep.h
+    bridge/npruntime_internal.h
+
+    contentextensions/CompiledContentExtension.h
+
+    editing/FindOptions.h
+
+    html/HTMLMediaElement.h
+
+    loader/FrameLoaderTypes.h
+    loader/LoaderStrategy.h
+    loader/ResourceLoaderOptions.h
+
+    Modules/indexeddb/IDBKeyData.h
+    Modules/indexeddb/IDBKeyPath.h
+    Modules/webdatabase/DatabaseDetails.h
+
+    page/ContextMenuContext.h
+    page/SecurityOrigin.h
+    page/SessionID.h
+    page/TextIndicator.h
+    page/UserScript.h
+    page/UserStyleSheet.h
+
+    platform/PlatformExportMacros.h
     platform/DisplaySleepDisabler.h
+
+    platform/audio/AudioHardwareListener.h
+
+    platform/cocoa/MachSendRight.h
+
+    platform/graphics/Color.h
+    platform/graphics/FloatPoint.h
+    platform/graphics/FloatRect.h
+    platform/graphics/FloatSize.h
+    platform/graphics/GraphicsContext.h
+    platform/graphics/GraphicsLayer.h
+    platform/graphics/IntPoint.h
+    platform/graphics/IntRect.h
+    platform/graphics/IntSize.h
+    platform/graphics/NativeImagePtr.h
+
+    platform/graphics/cocoa/IOSurface.h
+
+    platform/graphics/transforms/AffineTransform.h
+
     platform/mac/SoftLinking.h
+    platform/mac/WebCoreSystemInterface.h
+
+    platform/network/BlobDataFileReference.h
+    platform/network/BlobRegistryImpl.h
+    platform/network/HTTPHeaderMap.h
+    platform/network/NetworkStorageSession.h
+    platform/network/ResourceHandle.h
+
+    platform/network/cf/CertificateInfo.h
     platform/network/cf/ResourceResponse.h
+
     platform/spi/cg/CoreGraphicsSPI.h
+
+    plugins/PluginData.h
+    plugins/npruntime.h
 )
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebCore DIRECTORIES ${WebCore_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebCore_FORWARDING_HEADERS_FILES})
 
-set(FEATURE_DEFINES_OBJECTIVE_C "LANGUAGE_OBJECTIVE_C=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
-set(ADDITIONAL_BINDINGS_DEPENDENCIES
-    ${WINDOW_CONSTRUCTORS_FILE}
-    ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
-    ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
-)
-GENERATE_BINDINGS(WebCore_SOURCES
-    "${WebCore_NON_SVG_IDL_FILES}"
-    "${WEBCORE_DIR}"
-    "${IDL_INCLUDES}"
-    "${FEATURE_DEFINES_OBJECTIVE_C}"
-    ${DERIVED_SOURCES_WEBCORE_DIR} DOM ObjC mm
-    ${IDL_ATTRIBUTES_FILE}
-    ${SUPPLEMENTAL_DEPENDENCY_FILE}
-    ${ADDITIONAL_BINDINGS_DEPENDENCIES})
+# FIXME: Get Objective C bindings working.
+#set(FEATURE_DEFINES_OBJECTIVE_C "LANGUAGE_OBJECTIVE_C=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
+#set(ADDITIONAL_BINDINGS_DEPENDENCIES
+#    ${WINDOW_CONSTRUCTORS_FILE}
+#    ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+#    ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+#)
+#GENERATE_BINDINGS(WebCore_SOURCES
+#    "${WebCore_NON_SVG_IDL_FILES}"
+#    "${WEBCORE_DIR}"
+#    "${IDL_INCLUDES}"
+#    "${FEATURE_DEFINES_OBJECTIVE_C}"
+#    ${DERIVED_SOURCES_WEBCORE_DIR} DOM ObjC mm
+#    ${IDL_ATTRIBUTES_FILE}
+#    ${SUPPLEMENTAL_DEPENDENCY_FILE}
+#    ${ADDITIONAL_BINDINGS_DEPENDENCIES})
