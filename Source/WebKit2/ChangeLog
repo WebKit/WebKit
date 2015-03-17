@@ -1,3 +1,18 @@
+2015-03-16  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Don't pass nil as a fireDate for NSTimer
+        https://bugs.webkit.org/show_bug.cgi?id=142765
+
+        Reviewed by Dan Bernstein.
+
+        While we're here, switch to a selector that conforms to documented NSTimer API.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController cancelOperation:]):
+        Set the timer's fireDate as the future date matching the former interval; update the selector.
+        (-[WKFullScreenWindowController _watchdogTimerFired:]):
+        Timer callback; wrap -exitFullScreen.
+
 2015-03-16  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac

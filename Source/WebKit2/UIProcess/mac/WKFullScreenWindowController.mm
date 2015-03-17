@@ -154,7 +154,7 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     // the WebProcess has hung, so exit anyway.
     if (!_watchdogTimer) {
         [self _manager]->requestExitFullScreen();
-        _watchdogTimer = adoptNS([[NSTimer alloc] initWithFireDate:nil interval:DefaultWatchdogTimerInterval target:self selector:@selector(exitFullScreen) userInfo:nil repeats:NO]);
+        _watchdogTimer = adoptNS([[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:DefaultWatchdogTimerInterval] interval:0 target:self selector:@selector(_watchdogTimerFired:) userInfo:nil repeats:NO]);
         [[NSRunLoop mainRunLoop] addTimer:_watchdogTimer.get() forMode:NSDefaultRunLoopMode];
     }
 }
@@ -671,6 +671,12 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
     [[self window] displayIfNeeded];
     NSEnableScreenUpdates();
 }
+
+- (void)_watchdogTimerFired:(NSTimer *)timer
+{
+    [self exitFullScreen];
+}
+
 @end
 
 #endif // ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)
