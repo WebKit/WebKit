@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
- * All rights reserved.
+ * Copyright (C) 2006, 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,40 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SharedTimer.h"
+#ifndef PowerObserverMac_h
+#define PowerObserverMac_h
 
-#include <wtf/gobject/GMainLoopSource.h>
+#import <IOKit/IOMessage.h>
+#import <IOKit/pwr_mgt/IOPMLib.h>
+#import <functional>
+#import <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-static GMainLoopSource gSharedTimer;
-static void (*sharedTimerFiredFunction)();
+class PowerObserver {
+    WTF_MAKE_NONCOPYABLE(PowerObserver);
 
-void setSharedTimerFiredFunction(void (*f)())
-{
-    sharedTimerFiredFunction = f;
-    if (!sharedTimerFiredFunction)
-        gSharedTimer.cancel();
-}
+public:
+    PowerObserver(const std::function<void()>& powerOnHander);
+    ~PowerObserver();
 
-void setSharedTimerFireInterval(double interval)
-{
-    ASSERT(sharedTimerFiredFunction);
+private:
+    void didReceiveSystemPowerNotification(io_service_t, uint32_t messageType, void* messageArgument);
 
-    // This is GDK_PRIORITY_REDRAW, but we don't want to depend on GDK here just to use a constant.
-    static const int priority = G_PRIORITY_HIGH_IDLE + 20;
-    gSharedTimer.scheduleAfterDelay("[WebKit] sharedTimerTimeoutCallback", std::function<void()>(sharedTimerFiredFunction),
-        std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(interval)), priority);
-}
+    std::function<void()> m_powerOnHander;
+    io_connect_t m_powerConnection;
+    IONotificationPortRef m_notificationPort;
+    io_object_t m_notifierReference;
+    dispatch_queue_t m_dispatchQueue;
+};
 
-void stopSharedTimer()
-{
-    gSharedTimer.cancel();
-}
+} // namespace WebCore
 
-void invalidateSharedTimer()
-{
-}
+#endif // PowerObserverMac_h
 
-}

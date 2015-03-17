@@ -1638,6 +1638,9 @@
 		4689F1AF1267BAE100E8D380 /* FileMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 4689F1AE1267BAE100E8D380 /* FileMetadata.h */; };
 		46C83EFD1A9BBE2900A79A41 /* GeoNotifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46C83EFB1A9BBE2900A79A41 /* GeoNotifier.cpp */; };
 		46C83EFE1A9BBE2900A79A41 /* GeoNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C83EFC1A9BBE2900A79A41 /* GeoNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		46D791141AB89A9B001B696B /* SharedTimerCF.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46D791131AB89A9B001B696B /* SharedTimerCF.mm */; };
+		46DBB6501AB8C96F00D9A813 /* PowerObserverMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DBB64E1AB8C96F00D9A813 /* PowerObserverMac.h */; };
+		46DBB6511AB8C96F00D9A813 /* PowerObserverMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46DBB64F1AB8C96F00D9A813 /* PowerObserverMac.mm */; };
 		46FCB6181A70820E00C5A21E /* DiagnosticLoggingKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = CD37B37515C1A7E1006DC898 /* DiagnosticLoggingKeys.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */; };
 		490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */; };
@@ -3308,7 +3311,6 @@
 		93309E20099E64920056E581 /* VisiblePosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DD1099E64910056E581 /* VisiblePosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309E23099E64920056E581 /* WrapContentsInDummySpanCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DD4099E64910056E581 /* WrapContentsInDummySpanCommand.cpp */; };
 		93309E24099E64920056E581 /* WrapContentsInDummySpanCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DD5099E64910056E581 /* WrapContentsInDummySpanCommand.h */; };
-		93309EA2099EB78C0056E581 /* SharedTimerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93309E9F099EB78C0056E581 /* SharedTimerMac.mm */; };
 		93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309EA0099EB78C0056E581 /* SharedTimer.h */; };
 		93309EA4099EB78C0056E581 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309EA1099EB78C0056E581 /* Timer.cpp */; };
 		93354A3C0B24F8C9003F6DEA /* UIEventWithKeyState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93354A3B0B24F8C9003F6DEA /* UIEventWithKeyState.cpp */; };
@@ -6234,7 +6236,6 @@
 		E453901E0EAFCACA003695C8 /* PasteboardIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390190EAFCACA003695C8 /* PasteboardIOS.mm */; };
 		E45390430EAFD637003695C8 /* PlatformScreenIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390320EAFD637003695C8 /* PlatformScreenIOS.mm */; };
 		E45390450EAFD637003695C8 /* ScrollViewIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390340EAFD637003695C8 /* ScrollViewIOS.mm */; };
-		E45390460EAFD637003695C8 /* SharedTimerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390350EAFD637003695C8 /* SharedTimerIOS.mm */; };
 		E45390470EAFD637003695C8 /* SoundIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390360EAFD637003695C8 /* SoundIOS.mm */; };
 		E45390490EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390380EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm */; };
 		E453904D0EAFD637003695C8 /* WidgetIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E453903C0EAFD637003695C8 /* WidgetIOS.mm */; };
@@ -8767,6 +8768,9 @@
 		4689F1AE1267BAE100E8D380 /* FileMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMetadata.h; path = platform/FileMetadata.h; sourceTree = "<group>"; };
 		46C83EFB1A9BBE2900A79A41 /* GeoNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeoNotifier.cpp; sourceTree = "<group>"; };
 		46C83EFC1A9BBE2900A79A41 /* GeoNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoNotifier.h; sourceTree = "<group>"; };
+		46D791131AB89A9B001B696B /* SharedTimerCF.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedTimerCF.mm; sourceTree = "<group>"; };
+		46DBB64E1AB8C96F00D9A813 /* PowerObserverMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PowerObserverMac.h; sourceTree = "<group>"; };
+		46DBB64F1AB8C96F00D9A813 /* PowerObserverMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PowerObserverMac.mm; sourceTree = "<group>"; };
 		490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ANGLEWebKitBridge.cpp; sourceTree = "<group>"; };
 		490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANGLEWebKitBridge.h; sourceTree = "<group>"; };
 		49291E4A134172C800E753DE /* ImageRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageRenderingMode.h; sourceTree = "<group>"; };
@@ -10519,7 +10523,6 @@
 		93309DD1099E64910056E581 /* VisiblePosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisiblePosition.h; sourceTree = "<group>"; };
 		93309DD4099E64910056E581 /* WrapContentsInDummySpanCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WrapContentsInDummySpanCommand.cpp; sourceTree = "<group>"; };
 		93309DD5099E64910056E581 /* WrapContentsInDummySpanCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WrapContentsInDummySpanCommand.h; sourceTree = "<group>"; };
-		93309E9F099EB78C0056E581 /* SharedTimerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedTimerMac.mm; sourceTree = "<group>"; };
 		93309EA0099EB78C0056E581 /* SharedTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedTimer.h; sourceTree = "<group>"; };
 		93309EA1099EB78C0056E581 /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Timer.cpp; sourceTree = "<group>"; };
 		9332AB3D16515D7700D827EC /* GraphicsContext3DNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContext3DNEON.h; sourceTree = "<group>"; };
@@ -13813,7 +13816,6 @@
 		E45390190EAFCACA003695C8 /* PasteboardIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PasteboardIOS.mm; path = ios/PasteboardIOS.mm; sourceTree = "<group>"; };
 		E45390320EAFD637003695C8 /* PlatformScreenIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformScreenIOS.mm; path = ios/PlatformScreenIOS.mm; sourceTree = "<group>"; };
 		E45390340EAFD637003695C8 /* ScrollViewIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ScrollViewIOS.mm; path = ios/ScrollViewIOS.mm; sourceTree = "<group>"; };
-		E45390350EAFD637003695C8 /* SharedTimerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SharedTimerIOS.mm; path = ios/SharedTimerIOS.mm; sourceTree = "<group>"; };
 		E45390360EAFD637003695C8 /* SoundIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SoundIOS.mm; path = ios/SoundIOS.mm; sourceTree = "<group>"; };
 		E45390380EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebCoreSystemInterfaceIOS.mm; path = ios/WebCoreSystemInterfaceIOS.mm; sourceTree = "<group>"; };
 		E453903C0EAFD637003695C8 /* WidgetIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WidgetIOS.mm; path = ios/WidgetIOS.mm; sourceTree = "<group>"; };
@@ -15205,6 +15207,7 @@
 				2D76BB8319456F8100CFD29A /* RunLoopObserver.cpp */,
 				2D76BB801945632400CFD29A /* RunLoopObserver.h */,
 				512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */,
+				46D791131AB89A9B001B696B /* SharedTimerCF.mm */,
 				1A98956A0AA78F80005EF5EF /* URLCF.cpp */,
 				5CBC8DAA1AAA302200E1C803 /* MediaAccessibilitySoftLink.cpp */,
 				5CBC8DAB1AAA302200E1C803 /* MediaAccessibilitySoftLink.h */,
@@ -16659,6 +16662,8 @@
 				C5F765BA14E1ECF4006C899B /* PlatformPasteboardMac.mm */,
 				BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */,
 				29E4D8E016B0959800C84704 /* PlatformSpeechSynthesizerMac.mm */,
+				46DBB64E1AB8C96F00D9A813 /* PowerObserverMac.h */,
+				46DBB64F1AB8C96F00D9A813 /* PowerObserverMac.mm */,
 				0081FEFE16B0A2B6008AAA7A /* PublicSuffixMac.mm */,
 				BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */,
 				BC51156D12B1749C00C96754 /* ScrollAnimatorMac.mm */,
@@ -16668,7 +16673,6 @@
 				077AF14118F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.h */,
 				077AF14218F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.mm */,
 				1A4A95510B4EDCFF002D8C3C /* SharedBufferMac.mm */,
-				93309E9F099EB78C0056E581 /* SharedTimerMac.mm */,
 				0A4844980CA44CB200B7BD48 /* SoftLinking.h */,
 				4B3043C80AE0371D00A82647 /* SoundMac.mm */,
 				84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.cpp */,
@@ -18729,7 +18733,6 @@
 				E45390340EAFD637003695C8 /* ScrollViewIOS.mm */,
 				BEA807C60F714A0300524199 /* SelectionRect.cpp */,
 				BEA807C70F714A0300524199 /* SelectionRect.h */,
-				E45390350EAFD637003695C8 /* SharedTimerIOS.mm */,
 				E45390360EAFD637003695C8 /* SoundIOS.mm */,
 				4476531A133170990006B789 /* SSLKeyGeneratorIOS.cpp */,
 				0F03C0731884695E00A5F8CA /* SystemMemory.h */,
@@ -26831,6 +26834,7 @@
 				BCA257151293C010007A263D /* VerticalPositionCache.h in Headers */,
 				CDE83DB2183C44060031EAA3 /* VideoPlaybackQuality.h in Headers */,
 				07C59B5717F4AC15000FBCBB /* VideoStreamTrack.h in Headers */,
+				46DBB6501AB8C96F00D9A813 /* PowerObserverMac.h in Headers */,
 				BE88E0DF1715D2A200658D98 /* VideoTrack.h in Headers */,
 				BE88E0E21715D2A200658D98 /* VideoTrackList.h in Headers */,
 				CD8B5A46180DFF4E008B8E65 /* VideoTrackMediaSource.h in Headers */,
@@ -27968,6 +27972,7 @@
 				9BAB6C6D12550631001626D4 /* EditingStyle.cpp in Sources */,
 				4B3043CC0AE0373B00A82647 /* Editor.cpp in Sources */,
 				93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */,
+				46D791141AB89A9B001B696B /* SharedTimerCF.mm in Sources */,
 				0760C17A1AA8FC7D009ED7B8 /* MediaPlaybackTargetMac.mm in Sources */,
 				FED13D3A0CEA934600D89466 /* EditorIOS.mm in Sources */,
 				ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */,
@@ -29335,6 +29340,7 @@
 				B27535630B053814002CE64F /* PathCG.cpp in Sources */,
 				A88DD4890B4629B000C02990 /* PathTraversalState.cpp in Sources */,
 				A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */,
+				46DBB6511AB8C96F00D9A813 /* PowerObserverMac.mm in Sources */,
 				A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */,
 				B27535640B053814002CE64F /* PDFDocumentImage.cpp in Sources */,
 				2D6E468417D660F500ECF8BB /* PDFDocumentImageMac.mm in Sources */,
@@ -29692,8 +29698,6 @@
 				512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */,
 				97B1F02E13B025CA00F5103F /* SharedBufferChunkReader.cpp in Sources */,
 				1A4A95520B4EDCFF002D8C3C /* SharedBufferMac.mm in Sources */,
-				E45390460EAFD637003695C8 /* SharedTimerIOS.mm in Sources */,
-				93309EA2099EB78C0056E581 /* SharedTimerMac.mm in Sources */,
 				B2C3DA640D006CD600EF6F26 /* Font.cpp in Sources */,
 				163E88F7118A39D200ED9231 /* SimpleFontDataCoreText.cpp in Sources */,
 				E48944A2180B57D800F165D8 /* SimpleLineLayout.cpp in Sources */,

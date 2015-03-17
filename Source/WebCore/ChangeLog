@@ -1,3 +1,77 @@
+2015-03-17  Chris Dumez  <cdumez@apple.com>
+
+        [Mac][iOS] setSharedTimerFireInterval() / stopSharedTimer() are expensive
+        https://bugs.webkit.org/show_bug.cgi?id=142752
+        <rdar://problem/20176731>
+
+        Reviewed by Antti Koivisto.
+
+        setSharedTimerFireInterval() / stopSharedTimer() are expensive on Mac
+        and iOS on pages using a lot of timers.
+
+        For example, on bing.com / iOS, ~15.4% of the CPU time is spent in
+        setSharedTimerFireInterval() and ~14.7% of the CPU time is spent in
+        stopSharedTimer(). The expensive calls are CFRunLoopAddTimer (11.4%),
+        CFRunLoopTimerInvalidate (14.1%), CFRunLoopTimerCreate (3.3%).
+
+        The issue is that we keep creating, adding to run loop modes, and then
+        destroying the sharedTimer for each firing event. This is very
+        expensive. In such case, the CFRunLoopTimerRef documentation advises to
+        """
+        ... create a repeating timer with an initial firing time in the distant
+        future (or the initial firing time) and a very large repeat interval—on
+        the order of decades or more—and add it to all the necessary run loop
+        modes. Then, when you know when the timer should fire next, you reset
+        the firing time with CFRunLoopTimerSetNextFireDate, perhaps from the
+        timer’s own callback function. This technique effectively produces a
+        reusable, asynchronous timer.
+        """ [1].
+
+        Doing so greatly decreases CPU time spend in:
+        - setSharedTimerFireInterval(): 15.4% -> 4.6%
+        - stopSharedTimer(): 14.6% -> 8.6%
+
+        Overall CPU time spent on bing.com in timerFired() goes down from
+        ~61.2% to ~49.5%.
+
+        This patch also refactors the SharedTimer code to share as much as
+        possible between Mac and iOS.
+
+        This patch is based in part on the following patch:
+        http://trac.webkit.org/changeset/143210
+
+        [1] https://developer.apple.com/library/prerelease/ios/documentation/CoreFoundation/Reference/CFRunLoopTimerRef/index.html#//apple_ref/c/func/CFRunLoopTimerSetNextFireDate
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/SharedTimer.h:
+        (WebCore::SharedTimer::invalidate):
+        (WebCore::MainThreadSharedTimer::setFiredFunction): Deleted.
+        (WebCore::MainThreadSharedTimer::setFireInterval): Deleted.
+        (WebCore::MainThreadSharedTimer::stop): Deleted.
+        * platform/ThreadTimers.cpp:
+        (WebCore::ThreadTimers::fireTimersInNestedEventLoop):
+        * platform/cf/SharedTimerCF.mm: Added.
+        (WebCore::applicationDidBecomeActive):
+        (WebCore::setupPowerObserver):
+        (WebCore::setSharedTimerFiredFunction):
+        (WebCore::timerFired):
+        (WebCore::restartSharedTimer):
+        (WebCore::invalidateSharedTimer):
+        (WebCore::setSharedTimerFireInterval):
+        (WebCore::stopSharedTimer):
+        * platform/efl/SharedTimerEfl.cpp:
+        (WebCore::invalidateSharedTimer):
+        * platform/gtk/SharedTimerGtk.cpp:
+        (WebCore::invalidateSharedTimer):
+        * platform/ios/SharedTimerIOS.mm: Removed.
+        * platform/mac/PowerObserverMac.h: Copied from Source/WebCore/platform/efl/SharedTimerEfl.cpp.
+        * platform/mac/PowerObserverMac.mm: Renamed from Source/WebCore/platform/mac/SharedTimerMac.mm.
+        (WebCore::PowerObserver::PowerObserver):
+        (WebCore::PowerObserver::~PowerObserver):
+        (WebCore::PowerObserver::didReceiveSystemPowerNotification):
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::removeSharedTimer):
+
 2015-03-17  Tim Horton  <timothy_horton@apple.com>
 
         Cannot invoke action menus anymore

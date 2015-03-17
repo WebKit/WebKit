@@ -74,5 +74,9 @@ void setSharedTimerFireInterval(double interval)
     addNewTimer(interval);
 }
 
+void invalidateSharedTimer()
+{
+}
+
 }
 

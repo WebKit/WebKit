@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,45 +20,19 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import "config.h"
-#import "SharedTimer.h"
 
-#import <IOKit/IOMessage.h>
-#import <IOKit/pwr_mgt/IOPMLib.h>
-#import <stdio.h>
-#import <wtf/Assertions.h>
-#import <wtf/Noncopyable.h>
-#import <wtf/PassOwnPtr.h>
+#if PLATFORM(MAC)
+#import "PowerObserverMac.h"
 
 namespace WebCore {
 
-static CFRunLoopTimerRef sharedTimer;
-static void (*sharedTimerFiredFunction)();
-static void timerFired(CFRunLoopTimerRef, void*);
-
-class PowerObserver {
-    WTF_MAKE_NONCOPYABLE(PowerObserver);
-    
-public:
-    PowerObserver();
-    ~PowerObserver();
-
-private:
-    void didReceiveSystemPowerNotification(io_service_t, uint32_t messageType, void* messageArgument);
-
-    void restartSharedTimer();
-
-    io_connect_t m_powerConnection;
-    IONotificationPortRef m_notificationPort;
-    io_object_t m_notifierReference;
-    dispatch_queue_t m_dispatchQueue;
-};
-
-PowerObserver::PowerObserver()
-    : m_powerConnection(0)
+PowerObserver::PowerObserver(const std::function<void()>& powerOnHander)
+    : m_powerOnHander(powerOnHander)
+    , m_powerConnection(0)
     , m_notificationPort(nullptr)
     , m_notifierReference(0)
     , m_dispatchQueue(dispatch_queue_create("com.apple.WebKit.PowerObserver", 0))
@@ -94,61 +68,10 @@ void PowerObserver::didReceiveSystemPowerNotification(io_service_t, uint32_t mes
 
     // We need to restart the timer on the main thread.
     CFRunLoopPerformBlock(CFRunLoopGetMain(), kCFRunLoopCommonModes, ^() {
-        restartSharedTimer();
+        m_powerOnHander();
     });
 }
 
-void PowerObserver::restartSharedTimer()
-{
-    ASSERT(CFRunLoopGetCurrent() == CFRunLoopGetMain());
-
-    if (!sharedTimer)
-        return;
-
-    stopSharedTimer();
-    timerFired(0, 0);
-}
-
-static PowerObserver* powerObserver;
-
-void setSharedTimerFiredFunction(void (*f)())
-{
-    ASSERT(!sharedTimerFiredFunction || sharedTimerFiredFunction == f);
-
-    sharedTimerFiredFunction = f;
-}
-
-static void timerFired(CFRunLoopTimerRef, void*)
-{
-    @autoreleasepool {
-        sharedTimerFiredFunction();
-    }
-}
-
-void setSharedTimerFireInterval(double interval)
-{
-    ASSERT(sharedTimerFiredFunction);
-
-    if (sharedTimer) {
-        CFRunLoopTimerInvalidate(sharedTimer);
-        CFRelease(sharedTimer);
-    }
-
-    CFAbsoluteTime fireDate = CFAbsoluteTimeGetCurrent() + interval;
-    sharedTimer = CFRunLoopTimerCreate(0, fireDate, 0, 0, 0, timerFired, 0);
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(), sharedTimer, kCFRunLoopCommonModes);
-    
-    if (!powerObserver)
-        powerObserver = std::make_unique<PowerObserver>().release();
-}
-
-void stopSharedTimer()
-{
-    if (sharedTimer) {
-        CFRunLoopTimerInvalidate(sharedTimer);
-        CFRelease(sharedTimer);
-        sharedTimer = 0;
-    }
-}
-
 } // namespace WebCore
+
+#endif

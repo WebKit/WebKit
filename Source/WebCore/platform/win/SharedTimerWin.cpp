@@ -198,4 +198,8 @@ void stopSharedTimer()
     }
 }
 
+void invalidateSharedTimer()
+{
+}
+
 }

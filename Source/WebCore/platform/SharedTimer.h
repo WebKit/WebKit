@@ -44,6 +44,8 @@ namespace WebCore {
         // The fire interval is in seconds relative to the current monotonic clock time.
         virtual void setFireInterval(double) = 0;
         virtual void stop() = 0;
+
+        virtual void invalidate() { }
     };
 
 
@@ -52,23 +54,29 @@ namespace WebCore {
     void setSharedTimerFiredFunction(void (*)());
     void setSharedTimerFireInterval(double);
     void stopSharedTimer();
+    void invalidateSharedTimer();
 
     // Implementation of SharedTimer for the main thread.
-    class MainThreadSharedTimer : public SharedTimer {
+    class MainThreadSharedTimer final : public SharedTimer {
     public:
-        virtual void setFiredFunction(void (*function)())
+        void setFiredFunction(void (*function)()) override
         {
             setSharedTimerFiredFunction(function);
         }
         
-        virtual void setFireInterval(double interval)
+        void setFireInterval(double interval) override
         {
             setSharedTimerFireInterval(interval);
         }
         
-        virtual void stop()
+        void stop() override
         {
             stopSharedTimer();
+        }
+
+        void invalidate() override
+        {
+            invalidateSharedTimer();
         }
     };
 
