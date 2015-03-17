@@ -39,7 +39,7 @@
 #include "NotImplemented.h"
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
-#include <GLSLANG/ShaderLang.h>
+#include <ANGLE/ShaderLang.h>
 #include <cairo.h>
 
 #if USE(OPENGL_ES_2)
