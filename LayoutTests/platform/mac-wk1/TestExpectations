@@ -94,6 +94,7 @@ compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
 # Disk cache is WK2 only
 http/tests/cache/disk-cache-validation.html
 http/tests/cache/disk-cache-disable.html
+http/tests/cache/disk-cache-vary-cookie.html
 
 ### END OF (2) Failures without bug reports
 ########################################

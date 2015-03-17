@@ -1,0 +1,38 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="resources/cache-test.js"></script>
+<body>
+<script>
+
+var tests =
+[
+  { responseHeaders: {'Cache-control': 'max-age=100'} },
+  { responseHeaders: {'Vary': 'Cookie', 'Cache-control': 'max-age=100'} },
+];
+
+description("Test that Vary: Cookie in response is handled by the disk cache.");
+
+debug("Setting cookie and loading");
+document.cookie = "cookie=value";
+loadResources(tests, function () {
+    printResults(tests);
+    internals.clearMemoryCache();
+    debug("Loading again");
+    loadResources(tests, function () {
+        printResults(tests);
+        internals.clearMemoryCache();
+        debug("Changing cookie and loading");
+        document.cookie = "cookie=othervalue";
+        loadResources(tests, function () {
+            printResults(tests);
+            internals.clearMemoryCache()
+            debug("Loading again");
+            loadResources(tests, function () {
+               printResults(tests);
+               finishJSTest();
+            });
+        });
+    });
+});
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>

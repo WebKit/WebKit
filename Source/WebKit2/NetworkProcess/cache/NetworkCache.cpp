@@ -38,6 +38,8 @@
 #include <WebCore/CacheValidation.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/HTTPHeaderNames.h>
+#include <WebCore/NetworkStorageSession.h>
+#include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/NeverDestroyed.h>
@@ -97,6 +99,17 @@ static Key makeCacheKey(const WebCore::ResourceRequest& request)
     return { request.httpMethod(), partition, request.url().string()  };
 }
 
+static String headerValueForVary(const WebCore::ResourceRequest& request, const String& headerName)
+{
+    // Explicit handling for cookies is needed because they are added magically by the networking layer.
+    // FIXME: The value might have changed between making the request and retrieving the cookie here.
+    // We could fetch the cookie when making the request but that seems overkill as the case is very rare and it
+    // is a blocking operation. This should be sufficient to cover reasonable cases.
+    if (headerName == httpHeaderNameString(WebCore::HTTPHeaderName::Cookie))
+        return WebCore::cookieRequestHeaderFieldValue(WebCore::NetworkStorageSession::defaultStorageSession(), request.firstPartyForCookies(), request.url());
+    return request.httpHeaderField(headerName);
+}
+
 static Storage::Entry encodeStorageEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PassRefPtr<WebCore::SharedBuffer> responseData)
 {
     Encoder encoder;
@@ -114,7 +127,8 @@ static Storage::Entry encodeStorageEntry(const WebCore::ResourceRequest& request
         Vector<std::pair<String, String>> varyingRequestHeaders;
         for (auto& varyHeaderName : varyingHeaderNames) {
             String headerName = varyHeaderName.stripWhiteSpace();
-            varyingRequestHeaders.append(std::make_pair(headerName, request.httpHeaderField(headerName)));
+            String headerValue = headerValueForVary(request, headerName);
+            varyingRequestHeaders.append(std::make_pair(headerName, headerValue));
         }
         encoder << varyingRequestHeaders;
     }
@@ -135,8 +149,8 @@ static bool verifyVaryingRequestHeaders(const Vector<std::pair<String, String>>&
         // FIXME: Vary: * in response would ideally trigger a cache delete instead of a store.
         if (varyingRequestHeader.first == "*")
             return false;
-        String requestValue = request.httpHeaderField(varyingRequestHeader.first);
-        if (requestValue != varyingRequestHeader.second)
+        String headerValue = headerValueForVary(request, varyingRequestHeader.first);
+        if (headerValue != varyingRequestHeader.second)
             return false;
     }
     return true;

@@ -1,3 +1,23 @@
+2015-03-17  Antti Koivisto  <antti@apple.com>
+
+        Disk cache should support Vary: Cookie
+        https://bugs.webkit.org/show_bug.cgi?id=142770
+        rdar://problem/19764945
+
+        Reviewed by Anders Carlsson.
+
+        Cookies are not part of the original request but are added by the networking layer when submitting the request.
+        Fetch them explicitly when resolving Vary: Cookie.
+
+        The implementation is not perfect as it fetches the cookie for the cache entry when saving a Vary:Cookie response,
+        not when making the request. In principle the cookie may have changed in-between. This should be enough to handle
+        reasonable cases though. Fetching cookies for every request might be too expensive for this rarely used feature.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::headerValueForVary):
+        (WebKit::NetworkCache::encodeStorageEntry):
+        (WebKit::NetworkCache::verifyVaryingRequestHeaders):
+
 2015-03-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Use C++ lambdas in IPC::Connection
