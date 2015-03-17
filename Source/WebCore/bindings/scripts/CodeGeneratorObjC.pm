@@ -224,7 +224,6 @@ sub new
     my $reference = { };
 
     $codeGenerator = shift;
-    shift; # $useLayerOnTop
     shift; # $preprocessor
     $writeDependencies = shift;
 

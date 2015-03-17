@@ -36,8 +36,6 @@ use Hasher;
 
 my $codeGenerator;
 
-my $writeDependencies = 0;
-
 my @headerContentHeader = ();
 my @headerContent = ();
 my %headerIncludes = ();
@@ -114,9 +112,6 @@ sub new
     my $reference = { };
 
     $codeGenerator = shift;
-    shift; # $useLayerOnTop
-    shift; # $preprocessor
-    $writeDependencies = shift;
 
     bless($reference, $object);
     return $reference;
