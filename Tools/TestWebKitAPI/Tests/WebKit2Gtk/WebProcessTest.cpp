@@ -64,7 +64,14 @@ static JSValueRef runTest(JSContextRef context, JSObjectRef function, JSObjectRe
 
     WebKitWebPage* webPage = WEBKIT_WEB_PAGE(JSObjectGetPrivate(thisObject));
     g_assert(WEBKIT_IS_WEB_PAGE(webPage));
-    WebProcessTest::assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webPage));
+    // Test /WebKitDOMNode/dom-cache is an exception, because it's called 3 times, so
+    // the WebPage is destroyed after the third time.
+    if (g_str_equal(testPath.get(), "WebKitDOMNode/dom-cache")) {
+        static unsigned domCacheTestRunCount = 0;
+        if (++domCacheTestRunCount == 3)
+            WebProcessTest::assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webPage));
+    } else
+        WebProcessTest::assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webPage));
 
     std::unique_ptr<WebProcessTest> test = WebProcessTest::create(String::fromUTF8(testPath.get()));
     return JSValueMakeBoolean(context, test->runTest(g_strrstr(testPath.get(), "/") + 1, webPage));

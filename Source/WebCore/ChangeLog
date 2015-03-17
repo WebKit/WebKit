@@ -1,3 +1,16 @@
+2015-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitDOM objects leaking
+        https://bugs.webkit.org/show_bug.cgi?id=118788
+
+        Reviewed by Darin Adler and Sergio Villar Senin.
+
+        Use a DOMwindowObserver class, derived from DOMWindowProperty to
+        be notified when the window object is detached from the frame to
+        clear the DOM objects associated to that frame in that case too.
+
+        * bindings/gobject/DOMObjectCache.cpp:
+
 2015-03-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [CMake] Use a forwarding header for ANGLE's ShaderLang.h to avoid picking up ANGLE's EGL headers
