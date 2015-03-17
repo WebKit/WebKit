@@ -32,7 +32,9 @@
 
 #include "CodeProfiling.h"
 #include <errno.h>
+#if !PLATFORM(WIN)
 #include <unistd.h>
+#endif
 #include <wtf/MetaAllocator.h>
 #include <wtf/PageReservation.h>
 #include <wtf/VMTags.h>

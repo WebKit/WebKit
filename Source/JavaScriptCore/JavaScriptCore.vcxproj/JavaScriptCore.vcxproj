@@ -599,6 +599,7 @@
     <ClCompile Include="..\jit\AssemblyHelpers.cpp" />
     <ClCompile Include="..\jit\BinarySwitch.cpp" />
     <ClCompile Include="..\jit\ExecutableAllocator.cpp" />
+    <ClCompile Include="..\jit\ExecutableAllocatorFixedVMPool.cpp" />
     <ClCompile Include="..\jit\GCAwareJITStubRoutine.cpp" />
     <ClCompile Include="..\jit\HostCallReturnValue.cpp" />
     <ClCompile Include="..\jit\JIT.cpp" />
