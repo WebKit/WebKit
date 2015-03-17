@@ -2552,6 +2552,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('AnEnum a : 30;', errmsg)
         self.assert_lint('mutable AnEnum a : 14;', errmsg)
         self.assert_lint('const AnEnum a : 6;', errmsg)
+        self.assert_lint('bool a : 1;', '')
 
     # Integral bitfields must be declared with either signed or unsigned keyword.
     def test_plain_integral_bitfields(self):
@@ -2562,7 +2563,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('const char a : 6;', errmsg)
         self.assert_lint('long int a : 30;', errmsg)
         self.assert_lint('int a = 1 ? 0 : 30;', '')
-
+        self.assert_lint('bool a : 1;', '')
 
 class CleansedLinesTest(unittest.TestCase):
     def test_init(self):

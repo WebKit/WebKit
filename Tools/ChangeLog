@@ -1,3 +1,24 @@
+2015-03-17  Dean Jackson  <dino@apple.com>
+
+        check-webkit-style should allow "bool a : 1"
+        https://bugs.webkit.org/show_bug.cgi?id=142794
+
+        Reviewed by Brent Fulgham.
+
+        We should allow member bitfields of the form:
+
+        bool m_var : 1;
+
+        It seems that Visual Studio 8 was the last compiler that
+        wasn't happy about not using unsigned here. We already have
+        about 500 cases (in WebCore) where people were ignoring this rule.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_language): Allow "bool".
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Add tests.
+        (CppStyleTest.test_enum_bitfields):
+        (CppStyleTest.test_plain_integral_bitfields):
+
 2015-03-17  Benjamin Poulain  <bpoulain@apple.com>
 
         Compile character ranges targeting the same state as range check in the bytecode
