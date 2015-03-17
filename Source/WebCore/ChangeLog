@@ -72,6 +72,15 @@
         Implement Scroll Container Animation Triggers
         https://bugs.webkit.org/show_bug.cgi?id=142732
 
+        Attempt to fix the build.
+
+        * css/CSSComputedStyleDeclaration.cpp: Add an #if ENABLE guard.
+
+2015-03-17  Dean Jackson  <dino@apple.com>
+
+        Implement Scroll Container Animation Triggers
+        https://bugs.webkit.org/show_bug.cgi?id=142732
+
         Reviewed by Simon Fraser.
 
         Test: animations/trigger-container-scroll-simple.html

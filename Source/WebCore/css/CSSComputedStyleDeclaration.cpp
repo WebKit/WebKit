@@ -245,7 +245,9 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitAnimationName,
     CSSPropertyWebkitAnimationPlayState,
     CSSPropertyWebkitAnimationTimingFunction,
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     CSSPropertyWebkitAnimationTrigger,
+#endif
     CSSPropertyWebkitAppearance,
     CSSPropertyWebkitBackfaceVisibility,
     CSSPropertyWebkitBackgroundClip,
