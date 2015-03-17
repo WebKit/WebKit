@@ -1,3 +1,9 @@
+2015-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.7.92 release.
+
+        * gtk/NEWS: Add release notes for 2.7.92.
+
 2015-03-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [CMake] Use a forwarding header for ANGLE's ShaderLang.h to avoid picking up ANGLE's EGL headers

@@ -1,4 +1,29 @@
 =================
+WebKitGTK+ 2.7.92
+=================
+
+What's new in WebKitGTK+ 2.7.92?
+
+  - Add APNG support.
+  - Disable RC4 support in networking backend.
+  - Add a configure option to build with OpenGL ES 2.
+  - Add an option to enable MiniBrowser for non developer builds and always install it.
+  - Check TLS errors as soon as they are set in the SoupMessage to prevent any data
+    from being sent to the server in case of invalid certificate.
+  - Make WebKitWebView always hold a reference on WebKitWebContext now that it's
+    possible to create new web contexts.
+  - Fix a crash when entering accelerated compositing mode before the WebView is
+    realized.
+  - Fix some transfer annotations used in GObject DOM bindings.
+  - Fix GObject DOM objects leaked when the web view contents are updated.
+  - Fix a crash viewing http://www.last.fm/.
+  - Fix an infinite loop in ARM Linux when parallel GC is enabled it again.
+  - Fix the build with older versions of GStreamer.
+  - Fix the build when NEON_INTRINSICS is enabled.
+  - Fix the build with video enabled but WebAudio disabled.
+  - Translation updates: Hebrew, Polish.
+
+=================
 WebKitGTK+ 2.7.91
 =================
 
