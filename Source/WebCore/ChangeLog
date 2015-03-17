@@ -1,3 +1,26 @@
+2015-03-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Update the debug overlays after layout
+        https://bugs.webkit.org/show_bug.cgi?id=142768
+
+        Reviewed by Zalan Bujtas.
+
+        The debug overlays need to be updated after layout, in case elements with wheel event handlers
+        moved around.
+        
+        DebugPageOverlays::didLayout() is cheap if there are no overlays.
+        
+        Call DebugPageOverlays::didLayout() for all frames, not just the main frame, since subframes can contribute
+        to the main frame's event handler region.
+
+        * page/DebugPageOverlays.cpp:
+        (WebCore::DebugPageOverlays::regionChanged):
+        * page/DebugPageOverlays.h:
+        (WebCore::DebugPageOverlays::didLayout):
+        (WebCore::DebugPageOverlays::didChangeEventHandlers):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2015-03-16  Jon Lee  <jonlee@apple.com>
 
         Unreviewed fix for crash after r181608.

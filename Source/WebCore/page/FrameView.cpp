@@ -1404,8 +1404,7 @@ void FrameView::layout(bool allowSubtree)
     }
 
     InspectorInstrumentation::didLayout(cookie, root);
-    if (frame().isMainFrame())
-        DebugPageOverlays::didLayout(frame().mainFrame());
+    DebugPageOverlays::didLayout(frame());
 
     --m_nestedLayoutCount;
 }

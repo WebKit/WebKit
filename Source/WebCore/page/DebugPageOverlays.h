@@ -26,6 +26,7 @@
 #ifndef DebugPageOverlays_h
 #define DebugPageOverlays_h
 
+#include "Frame.h"
 #include "Settings.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -45,7 +46,9 @@ public:
     };
     static const unsigned NumberOfRegionTypes = NonFastScrollableRegion + 1;
 
-    static void didLayout(MainFrame&);
+    static void didLayout(Frame&);
+    static void didChangeEventHandlers(Frame&);
+
     WEBCORE_EXPORT static void settingsChanged(MainFrame&);
 
 private:
@@ -54,7 +57,7 @@ private:
     void showRegionOverlay(MainFrame&, RegionType);
     void hideRegionOverlay(MainFrame&, RegionType);
 
-    void regionChanged(MainFrame&, RegionType);
+    void regionChanged(Frame&, RegionType);
 
     bool hasOverlaysForFrame(MainFrame& frame) const
     {
@@ -81,9 +84,17 @@ inline bool DebugPageOverlays::hasOverlays(MainFrame& frame)
     return sharedDebugOverlays->hasOverlaysForFrame(frame);
 }
 
-inline void DebugPageOverlays::didLayout(MainFrame& frame)
+inline void DebugPageOverlays::didLayout(Frame& frame)
 {
-    FAST_RETURN_IF_NO_OVERLAYS(frame);
+    FAST_RETURN_IF_NO_OVERLAYS(frame.mainFrame());
+
+    sharedDebugOverlays->regionChanged(frame, RegionType::WheelEventHandlers);
+    sharedDebugOverlays->regionChanged(frame, RegionType::NonFastScrollableRegion);
+}
+
+inline void DebugPageOverlays::didChangeEventHandlers(Frame& frame)
+{
+    FAST_RETURN_IF_NO_OVERLAYS(frame.mainFrame());
 
     sharedDebugOverlays->regionChanged(frame, RegionType::WheelEventHandlers);
     sharedDebugOverlays->regionChanged(frame, RegionType::NonFastScrollableRegion);

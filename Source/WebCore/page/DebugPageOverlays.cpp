@@ -262,9 +262,9 @@ void DebugPageOverlays::hideRegionOverlay(MainFrame& frame, RegionType regionTyp
     }
 }
 
-void DebugPageOverlays::regionChanged(MainFrame& frame, RegionType regionType)
+void DebugPageOverlays::regionChanged(Frame& frame, RegionType regionType)
 {
-    if (RegionOverlay* visualizer = regionOverlayForFrame(frame, regionType))
+    if (RegionOverlay* visualizer = regionOverlayForFrame(frame.mainFrame(), regionType))
         visualizer->recomputeRegion();
 }
 
