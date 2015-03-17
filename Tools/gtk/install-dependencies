@@ -121,9 +121,13 @@ function installDependenciesWithApt {
         libegl1-mesa-dev \
         libgcrypt11-dev \
         libgpg-error-dev \
+        libjson-glib-dev \
+        liborc-0.4-dev \
         libp11-kit-dev \
         libpciaccess-dev \
+        libssl-dev \
         libtiff5-dev \
+        libv4l-dev \
         libxcb-xfixes0-dev \
         libxfont-dev \
         libxkbfile-dev \

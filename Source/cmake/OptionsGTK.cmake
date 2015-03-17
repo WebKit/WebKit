@@ -304,6 +304,13 @@ if (ENABLE_GEOLOCATION)
     endif ()
 endif ()
 
+if (ENABLE_MEDIA_STREAM)
+    find_package(OpenWebRTC)
+    if (OPENWEBRTC_FOUND)
+        add_definitions(-DWTF_USE_OPENWEBRTC)
+    endif ()
+endif ()
+
 find_package(GTKUnixPrint)
 if (GTK_UNIX_PRINT_FOUND)
     set(HAVE_GTK_UNIX_PRINTING 1)

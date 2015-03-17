@@ -1,3 +1,14 @@
+2015-03-17  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] basic OpenWebRTC build support
+        https://bugs.webkit.org/show_bug.cgi?id=142393
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/jhbuild.modules: Add OpenWebRTC and its dependencies. This
+        is not the upstream OpenWebRTC repository. This temporary fork
+        contains a few patches needed by WebKit for audio/video rendering.
+
 2015-03-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMake][EFL] Build test tools only for developer mode

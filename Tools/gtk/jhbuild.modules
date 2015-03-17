@@ -30,6 +30,7 @@
       <dep package="gst-libav"/>
       <dep package="xserver"/>
       <dep package="mesa"/>
+      <dep package="openwebrtc"/>
     </dependencies>
   </metamodule>
 
@@ -57,7 +58,10 @@
       href="http://gstreamer.freedesktop.org/src/"/>
   <repository type="tarball" name="savannah.gnu.org"
       href="http://download.savannah.gnu.org/releases/"/>
-
+  <repository type="git" name="freedesktop-git"
+      href="http://anongit.freedesktop.org/git"/>
+  <repository type="svn" name="sctp-refimpl-google"
+      href="http://sctp-refimpl.googlecode.com/svn/"/>
 
   <autotools id="cairo"
              autogenargs="--enable-gl=yes --enable-egl=yes --enable-glx=yes ac_cv_func_rsvg_pixbuf_from_file=no --disable-lto"
@@ -358,6 +362,33 @@
             hash="sha256:461277909207da689d8152cfbf9e182ea6f70e1e672ab64c67df83725c8d2b54">
       <patch file="mesa-gallivm-Fix-build-after-LLVM-commit-211259.patch" strip="1"/>
     </branch>
+  </autotools>
+
+   <autotools id="libusrsctp" autogen-sh="./bootstrap; ./configure">
+     <branch repo="sctp-refimpl-google" module="trunk/KERN/usrsctp/" revision="r9168"/>
+   </autotools>
+
+   <autotools id="gst-plugins-openwebrtc" supports-parallel-builds="no" autogen-sh="./autogen.sh; ./configure">
+     <dependencies>
+       <dep package="gst-plugins-base"/>
+       <dep package="libusrsctp"/>
+     </dependencies>
+    <branch repo="github.com" module="EricssonResearch/openwebrtc-gst-plugins.git" checkoutdir="gst-plugins-openwebrtc" tag="master"/>
+   </autotools>
+
+   <autotools id="libnice">
+    <dependencies>
+      <dep package="gstreamer"/>
+    </dependencies>
+    <branch repo="freedesktop-git" module="libnice/libnice.git" tag="0.1.10" checkoutdir="libnice"/>
+  </autotools>
+
+  <autotools id="openwebrtc" autogenargs="--enable-bridge=no">
+    <dependencies>
+      <dep package="gst-plugins-openwebrtc"/>
+      <dep package="libnice"/>
+     </dependencies>
+    <branch repo="github.com" module="WebRTCinWebKit/openwebrtc.git" checkoutdir="openwebrtc" tag="configurable-sinks"/>
   </autotools>
 
 </moduleset>
