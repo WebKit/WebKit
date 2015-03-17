@@ -1,3 +1,13 @@
+2015-03-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C test importer default import folder should be LayoutTests/imported/w3c
+        https://bugs.webkit.org/show_bug.cgi?id=142728
+
+        Reviewed by Bem Jones-Bey.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (parse_args): Updating the default destination option value to 'imported/w3c'.
+
 2015-03-17  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] basic OpenWebRTC build support

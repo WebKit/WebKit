@@ -33,7 +33,7 @@
 
  This script will import the tests into WebKit following these rules:
 
-    - All tests are by default imported into LayoutTests/w3c
+    - All tests are by default imported into LayoutTests/imported/w3c
 
     - Tests will be imported into a directory tree that
       mirrors the CSS and WPT repositories. For example, <csswg_repo_root>/css2.1 should be brought in
@@ -132,8 +132,9 @@ def parse_args(args):
 
     parser.add_argument('-a', '--all', action='store_true', default=False,
         help='Import all tests including reftests, JS tests, and manual/pixel tests. By default, only reftests and JS tests are imported')
-    parser.add_argument('-d', '--dest-dir', dest='destination', default='w3c',
-        help='Import into a specified directory relative to the LayoutTests root. By default, imports into w3c')
+    fs = FileSystem()
+    parser.add_argument('-d', '--dest-dir', dest='destination', default=fs.join('imported', 'w3c'),
+        help='Import into a specified directory relative to the LayoutTests root. By default, imports into imported/w3c')
 
     list_of_repositories = ' or '.join([test_repository['name'] for test_repository in TestDownloader.load_test_repositories()])
     parser.add_argument('-t', '--test-path', action='append', dest='test_paths', default=[],
