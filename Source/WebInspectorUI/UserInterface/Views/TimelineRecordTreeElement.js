@@ -99,6 +99,11 @@ WebInspector.TimelineRecordTreeElement = function(timelineRecord, subtitleNameSt
 
         break;
 
+    case WebInspector.TimelineRecord.Type.RunLoop:
+        title = WebInspector.UIString("Runloop Executed");
+        iconStyleClass = WebInspector.TimelineRecordTreeElement.RunLoopRecordIconStyleClass;
+        break;
+
     default:
         console.error("Unknown TimelineRecord type: " + timelineRecord.type, timelineRecord);
     }
@@ -114,6 +119,7 @@ WebInspector.TimelineRecordTreeElement = function(timelineRecord, subtitleNameSt
 WebInspector.TimelineRecordTreeElement.StyleRecordIconStyleClass = "style-record";
 WebInspector.TimelineRecordTreeElement.LayoutRecordIconStyleClass = "layout-record";
 WebInspector.TimelineRecordTreeElement.PaintRecordIconStyleClass = "paint-record";
+WebInspector.TimelineRecordTreeElement.RunLoopRecordIconStyleClass = "runloop-record";
 WebInspector.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass = "evaluated-record";
 WebInspector.TimelineRecordTreeElement.EventRecordIconStyleClass = "event-record";
 WebInspector.TimelineRecordTreeElement.TimerRecordIconStyleClass = "timer-record";

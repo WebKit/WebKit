@@ -139,6 +139,7 @@ WebInspector.TimelineSidebarPanel.StopwatchIconStyleClass = "stopwatch-icon";
 WebInspector.TimelineSidebarPanel.NetworkIconStyleClass = "network-icon";
 WebInspector.TimelineSidebarPanel.ColorsIconStyleClass = "colors-icon";
 WebInspector.TimelineSidebarPanel.ScriptIconStyleClass = "script-icon";
+WebInspector.TimelineSidebarPanel.RunLoopIconStyleClass = "runloop-icon";
 WebInspector.TimelineSidebarPanel.TimelineRecordingContentViewShowingStyleClass = "timeline-recording-content-view-showing";
 
 WebInspector.TimelineSidebarPanel.ShowingTimelineRecordingContentViewCookieKey = "timeline-sidebar-panel-showing-timeline-recording-content-view";

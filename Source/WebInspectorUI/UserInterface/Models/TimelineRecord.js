@@ -46,7 +46,8 @@ WebInspector.TimelineRecord.Event = {
 WebInspector.TimelineRecord.Type = {
     Network: "timeline-record-type-network",
     Layout: "timeline-record-type-layout",
-    Script: "timeline-record-type-script"
+    Script: "timeline-record-type-script",
+    RunLoop: "timeline-record-type-runloop"
 };
 
 WebInspector.TimelineRecord.TypeIdentifier = "timeline-record";

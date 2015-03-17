@@ -525,6 +525,10 @@
     <None Include="..\UserInterface\Images\FolderGeneric.png" />
     <None Include="..\UserInterface\Images\ForwardArrow.svg" />
     <None Include="..\UserInterface\Images\ForwardArrowLegacy.svg" />
+    <None Include="..\UserInterface\Images\Frames.png" />
+    <None Include="..\UserInterface\Images\Frames%402x.png" />
+    <None Include="..\UserInterface\Images\FramesLarge.png" />
+    <None Include="..\UserInterface\Images\FramesLarge%402x.png" />
     <None Include="..\UserInterface\Images\Function.svg" />
     <None Include="..\UserInterface\Images\GoToArrow.svg" />
     <None Include="..\UserInterface\Images\HierarchicalNavigationItemChevron.svg" />
@@ -747,6 +751,9 @@
     <None Include="..\UserInterface\Revision.js" />
     <None Include="..\UserInterface\RulesStyleDetailsPanel.css" />
     <None Include="..\UserInterface\RulesStyleDetailsPanel.js" />
+    <None Include="..\UserInterface\RunLoopTimelineOverviewGraph.css" />
+    <None Include="..\UserInterface\RunLoopTimelineOverviewGraph.js" />
+    <None Include="..\UserInterface\RunLoopTimelineRecord.js" />
     <None Include="..\UserInterface\RuntimeObserver.js" />
     <None Include="..\UserInterface\ScopeBar.css" />
     <None Include="..\UserInterface\ScopeBar.js" />
@@ -808,6 +815,8 @@
     <None Include="..\UserInterface\TimelineOverview.css" />
     <None Include="..\UserInterface\TimelineOverview.js" />
     <None Include="..\UserInterface\TimelineRecord.js" />
+    <None Include="..\UserInterface\TimelineRecordFrame.css" />
+    <None Include="..\UserInterface\TimelineRecordFrame.js" />
     <None Include="..\UserInterface\TimelinesContentView.css" />
     <None Include="..\UserInterface\TimelinesContentView.js" />
     <None Include="..\UserInterface\TimelinesObject.js" />

@@ -825,6 +825,15 @@
     <None Include="..\UserInterface\RulesStyleDetailsPanel.js">
       <Filter>UserInterface</Filter>
     </None>
+    <None Include="..\UserInterface\RunLoopTimelineOverviewGraph.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RunLoopTimelineOverviewGraph.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RunLoopTimelineRecord.js">
+      <Filter>UserInterface</Filter>
+    </None>
     <None Include="..\UserInterface\RuntimeObserver.js">
       <Filter>UserInterface</Filter>
     </None>
@@ -1006,6 +1015,12 @@
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\TimelineRecord.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelineRecordFrame.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelineRecordFrame.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\TimelinesContentView.css">

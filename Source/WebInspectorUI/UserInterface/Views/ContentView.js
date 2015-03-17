@@ -47,7 +47,7 @@ WebInspector.ContentView = function(representedObject)
             if (timelineType === WebInspector.TimelineRecord.Type.Network)
                 return new WebInspector.NetworkTimelineView(representedObject);
 
-            if (timelineType === WebInspector.TimelineRecord.Type.Layout)
+            if (timelineType === WebInspector.TimelineRecord.Type.Layout || timelineType === WebInspector.TimelineRecord.Type.RunLoop)
                 return new WebInspector.LayoutTimelineView(representedObject);
 
             if (timelineType === WebInspector.TimelineRecord.Type.Script)

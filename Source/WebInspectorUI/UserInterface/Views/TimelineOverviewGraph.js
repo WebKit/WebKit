@@ -40,6 +40,9 @@ WebInspector.TimelineOverviewGraph = function(timeline)
         if (timelineType === WebInspector.TimelineRecord.Type.Script)
             return new WebInspector.ScriptTimelineOverviewGraph(timeline);
 
+        if (timelineType === WebInspector.TimelineRecord.Type.RunLoop)
+            return new WebInspector.RunLoopTimelineOverviewGraph(timeline);
+
         throw Error("Can't make a graph for an unknown timeline.");
     }
 

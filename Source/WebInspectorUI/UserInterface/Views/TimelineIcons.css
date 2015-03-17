@@ -63,6 +63,14 @@ body.mac-platform.legacy .colors-icon.large .icon {
     content: -webkit-image-set(url(../Images/ScriptLarge.png) 1x, url(../Images/ScriptLarge@2x.png) 2x);
 }
 
+.runloop-icon .icon {
+    content: -webkit-image-set(url(../Images/Frames.png) 1x, url(../Images/Frames@2x.png) 2x);
+}
+
+.runloop-icon.large .icon {
+    content: -webkit-image-set(url(../Images/FramesLarge.png) 1x, url(../Images/FramesLarge@2x.png) 2x);
+}
+
 .stopwatch-icon .icon {
     content: -webkit-image-set(url(../Images/Stopwatch.png) 1x, url(../Images/Stopwatch@2x.png) 2x);
 }
@@ -81,6 +89,10 @@ body.mac-platform.legacy .colors-icon.large .icon {
 
 .paint-record .icon {
     content: url(../Images/TimelineRecordPaint.svg);
+}
+
+.runloop-record .icon {
+    content: -webkit-image-set(url(../Images/Frames.png) 1x, url(../Images/Frames@2x.png) 2x);
 }
 
 .evaluated-record .icon {

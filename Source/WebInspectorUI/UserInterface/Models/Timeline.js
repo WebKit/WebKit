@@ -80,6 +80,8 @@ WebInspector.Timeline.prototype = {
             return WebInspector.UIString("Layout & Rendering");
         if (this._type === WebInspector.TimelineRecord.Type.Script)
             return WebInspector.UIString("JavaScript & Events");
+        if (this._type === WebInspector.TimelineRecord.Type.RunLoop)
+            return WebInspector.UIString("Frames");
 
         console.error("Timeline has unknown type:", this._type, this);
     },
@@ -90,6 +92,8 @@ WebInspector.Timeline.prototype = {
             return WebInspector.TimelineSidebarPanel.NetworkIconStyleClass;
         if (this._type === WebInspector.TimelineRecord.Type.Layout)
             return WebInspector.TimelineSidebarPanel.ColorsIconStyleClass;
+        if (this._type === WebInspector.TimelineRecord.Type.RunLoop)
+            return WebInspector.TimelineSidebarPanel.RunLoopIconStyleClass;
         if (this._type === WebInspector.TimelineRecord.Type.Script)
             return WebInspector.TimelineSidebarPanel.ScriptIconStyleClass;
 

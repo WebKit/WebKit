@@ -1,3 +1,109 @@
+2015-03-17  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Show rendering frames (and FPS) in Layout and Rendering timeline
+        https://bugs.webkit.org/show_bug.cgi?id=142029
+
+        Reviewed by Timothy Hatcher.
+
+        Add UI for showing runloop records and their child records as a frame histogram,
+        with the recording time on the x-axis and the frame duration on the y-axis. Each frame
+        is comprised of colored regions representing the time spent in various activities (script,
+        layout, etc).
+
+        Eventually the Frames timeline will replace the Layout & Rendering timeline. Until the views
+        for the new timeline are finalized the Layout & Rendering timeline will remain in place.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New string and files.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.eventRecorded):
+        (WebInspector.TimelineManager.prototype.pageDidLoad):
+        (WebInspector.TimelineManager.prototype._processNestedRecords):
+        (WebInspector.TimelineManager.prototype._processRecord):
+        (WebInspector.TimelineManager.prototype._processEvent):
+        (WebInspector.TimelineManager.prototype._loadNewRecording):
+        (WebInspector.TimelineManager.prototype.eventRecorded.processRecord): Deleted.
+        Added support for new runloop record type and nested record handling.
+
+        * UserInterface/Images/Frames.png: Added.
+        * UserInterface/Images/Frames@2x.png: Added.
+        * UserInterface/Images/FramesLarge.png: Added.
+        * UserInterface/Images/FramesLarge@2x.png: Added.
+        New images for runloop timeline overview graph and runloop tree records.
+
+        * UserInterface/Models/RunLoopTimelineRecord.js: Added.
+        (WebInspector.RunLoopTimelineRecord):
+        (WebInspector.RunLoopTimelineRecord.prototype.get children):
+        (WebInspector.RunLoopTimelineRecord.prototype.get durationRemainder):
+        (WebInspector.RunLoopTimelineRecord.prototype.durationForRecords.get var):
+        Extends TimelineRecord to add child records and subframe duration details.
+
+        * UserInterface/Models/Timeline.js:
+        (WebInspector.Timeline.prototype.get displayName):
+        (WebInspector.Timeline.prototype.get iconClassName):
+        New UI strings and icons.
+
+        * UserInterface/Models/TimelineRecord.js:
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView):
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView.prototype._layoutTimelineRecordAdded):
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement):
+        Added support for new runloop record type.
+
+        * UserInterface/Views/RunLoopTimelineOverviewGraph.css: Added.
+        (.timeline-overview-graph.runloop > .divider):
+        (.timeline-overview-graph.runloop > .divider > span):
+        New styles for runloop timeline graph.
+
+        * UserInterface/Views/RunLoopTimelineOverviewGraph.js: Added.
+        (WebInspector.RunLoopTimelineOverviewGraph):
+        (WebInspector.RunLoopTimelineOverviewGraph.prototype.updateLayout.createFrame):
+        (WebInspector.RunLoopTimelineOverviewGraph.prototype.get graphHeightSeconds.this):
+        (WebInspector.RunLoopTimelineOverviewGraph.prototype.get graphHeightSeconds):
+        (WebInspector.RunLoopTimelineOverviewGraph.prototype._updateDividers.createDividerAtPosition.get if):
+        New overview graph for displaying TimelineRecordFrames and horizontal frame budget dividers.
+
+        * UserInterface/Views/TimelineIcons.css:
+        (.runloop-icon .icon):
+        (.runloop-icon.large .icon):
+        (.runloop-record .icon):
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        New runloop icon styles.
+
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WebInspector.TimelineOverviewGraph):
+        Updated factory to support creation of the new overview graph.
+
+        * UserInterface/Views/TimelineRecordFrame.css: Added.
+        (.timeline-record-frame):
+        (.timeline-record-frame > .frame):
+        (.timeline-record-frame > .dropped):
+        (.timeline-record-frame > .frame > .duration):
+        (.timeline-record-frame > .frame > .duration:first-child):
+        (.timeline-record-frame > .frame > .duration:last-child):
+        (.timeline-record-frame > .frame > .duration.timeline-record-type-network):
+        (.timeline-record-frame > .frame > .duration.timeline-record-type-layout):
+        (.timeline-record-frame > .frame > .duration.timeline-record-type-script):
+        New styles for frame bars in the runloop timeline graph.
+
+        * UserInterface/Views/TimelineRecordFrame.js: Added.
+        (WebInspector.TimelineRecordFrame):
+        (WebInspector.TimelineRecordFrame.createCombinedFrames):
+        (WebInspector.TimelineRecordFrame.prototype.get element):
+        (WebInspector.TimelineRecordFrame.prototype.get duration):
+        (WebInspector.TimelineRecordFrame.prototype.get records):
+        (WebInspector.TimelineRecordFrame.prototype.set records):
+        (WebInspector.TimelineRecordFrame.prototype._updateChildElements.createDurationElement):
+        New view representing a single frame within the runloop overview graph.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+        New files.
+
 2015-03-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add more DOM Native Function parameter strings
