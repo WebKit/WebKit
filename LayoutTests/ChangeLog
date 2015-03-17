@@ -1,3 +1,18 @@
+2015-03-17  Dean Jackson  <dino@apple.com>
+
+        Implement Scroll Container Animation Triggers
+        https://bugs.webkit.org/show_bug.cgi?id=142732
+
+        Unreviewed attempt to make the test reproducible. Also skip the tests
+        on the platforms that do not support animation triggers.
+
+        * animations/trigger-container-scroll-simple.html: Add a step-start timing
+        function so the animation instantly moves to the end position.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
+
 2015-03-17  Timothy Horton  <timothy_horton@apple.com>
 
         Reproducible null deref under ScriptedAnimationController::createDisplayRefreshMonitor

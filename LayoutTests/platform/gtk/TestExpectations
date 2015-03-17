@@ -463,6 +463,7 @@ css3/scroll-snap
 # TODO Animation triggers not supported
 animations/trigger-computed-style.html [ Skip ]
 animations/trigger-parsing.html [ Skip ]
+animations/trigger-container-scroll-simple.html [ Skip ]
 
 # ENABLE(SHADOW_DOM) is disabled.
 Bug(GTK) fast/dom/shadow [ Skip ]

@@ -65,6 +65,7 @@ css3/scroll-snap [ Skip ]
 # TODO Animation triggers not supported
 animations/trigger-computed-style.html [ Skip ]
 animations/trigger-parsing.html [ Skip ]
+animations/trigger-container-scroll-simple.html [ Skip ]
 
 # ----------------------------------------
 # Tests which also fail in other platforms
