@@ -594,6 +594,11 @@ webkit.org/b/142260 fast/attachment [ Skip ]
 
 # TODO APNG is not supported
 webkit.org/b/142731 fast/images/animated-png.html [ Skip ]
+
+# TODO Animation triggers not supported
+animations/trigger-computed-style.html [ Skip ]
+animations/trigger-parsing.html [ Skip ]
+
 ################################################################################
 ###########    End Missing Functionality Prevents Testing         ##############
 ################################################################################

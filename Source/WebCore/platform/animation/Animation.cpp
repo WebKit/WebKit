@@ -32,6 +32,9 @@ Animation::Animation()
     , m_delay(initialDelay())
     , m_duration(initialDuration())
     , m_timingFunction(initialTimingFunction())
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    , m_trigger(initialTrigger())
+#endif
     , m_direction(initialDirection())
     , m_fillMode(initialFillMode())
     , m_playState(initialPlayState())
@@ -44,6 +47,9 @@ Animation::Animation()
     , m_playStateSet(false)
     , m_propertySet(false)
     , m_timingFunctionSet(false)
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    , m_triggerSet(false)
+#endif
     , m_isNone(false)
 {
 }
@@ -57,6 +63,9 @@ Animation::Animation(const Animation& o)
     , m_delay(o.m_delay)
     , m_duration(o.m_duration)
     , m_timingFunction(o.m_timingFunction)
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    , m_trigger(o.m_trigger)
+#endif
     , m_direction(o.m_direction)
     , m_fillMode(o.m_fillMode)
     , m_playState(o.m_playState)
@@ -69,6 +78,9 @@ Animation::Animation(const Animation& o)
     , m_playStateSet(o.m_playStateSet)
     , m_propertySet(o.m_propertySet)
     , m_timingFunctionSet(o.m_timingFunctionSet)
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    , m_triggerSet(o.m_triggerSet)
+#endif
     , m_isNone(o.m_isNone)
 {
 }
@@ -85,6 +97,9 @@ Animation& Animation::operator=(const Animation& o)
     m_direction = o.m_direction;
     m_fillMode = o.m_fillMode;
     m_playState = o.m_playState;
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    m_trigger = o.m_trigger;
+#endif
 
     m_delaySet = o.m_delaySet;
     m_directionSet = o.m_directionSet;
@@ -95,6 +110,9 @@ Animation& Animation::operator=(const Animation& o)
     m_playStateSet = o.m_playStateSet;
     m_propertySet = o.m_propertySet;
     m_timingFunctionSet = o.m_timingFunctionSet;
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    m_triggerSet = o.m_triggerSet;
+#endif
     m_isNone = o.m_isNone;
 
     return *this;
@@ -116,6 +134,9 @@ bool Animation::animationsMatch(const Animation* o, bool matchPlayStates) const
                   && m_delay == o->m_delay
                   && m_duration == o->m_duration
                   && *(m_timingFunction.get()) == *(o->m_timingFunction.get())
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+                  && *(m_trigger.get()) == *(o->m_trigger.get())
+#endif
                   && m_direction == o->m_direction
                   && m_fillMode == o->m_fillMode
                   && m_delaySet == o->m_delaySet
@@ -126,6 +147,9 @@ bool Animation::animationsMatch(const Animation* o, bool matchPlayStates) const
                   && m_nameSet == o->m_nameSet
                   && m_propertySet == o->m_propertySet
                   && m_timingFunctionSet == o->m_timingFunctionSet
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+                  && m_triggerSet == o->m_triggerSet
+#endif
                   && m_isNone == o->m_isNone;
 
     if (!result)
