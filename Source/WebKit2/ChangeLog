@@ -1,5 +1,30 @@
 2015-03-17  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WK2] Use C++ lambdas in IPC::Connection
+        https://bugs.webkit.org/show_bug.cgi?id=138018
+
+        Reviewed by Anders Carlsson.
+
+        Replace uses of WTF::bind() in the IPC::Connection class with C++ lambdas.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchWorkQueueMessageReceiverMessage):
+        (IPC::Connection::invalidate):
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::processIncomingMessage): Simplify the error messages so we
+        don't have to format strings on-the-fly, removing the issues of cross-thread
+        string copying altogether.
+        (IPC::Connection::dispatchDidReceiveInvalidMessage): The parameters are now
+        of the StringReference type.
+        (IPC::Connection::enqueueIncomingMessage):
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::receiveSourceEventHandler):
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::open):
+
+2015-03-17  Zan Dobersek  <zdobersek@igalia.com>
+
         [CMake] Use a forwarding header for ANGLE's ShaderLang.h to avoid picking up ANGLE's EGL headers
         https://bugs.webkit.org/show_bug.cgi?id=142530
 

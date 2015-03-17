@@ -213,7 +213,7 @@ private:
     void processIncomingMessage(std::unique_ptr<MessageDecoder>);
     void processIncomingSyncReply(std::unique_ptr<MessageDecoder>);
 
-    void dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceiver*, MessageDecoder*);
+    void dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceiver&, MessageDecoder&);
 
     bool canSendOutgoingMessages() const;
     bool platformCanSendOutgoingMessages() const;

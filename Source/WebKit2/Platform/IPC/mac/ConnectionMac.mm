@@ -510,7 +510,14 @@ void Connection::receiveSourceEventHandler()
     if (decoder->messageReceiverName() == "IPC" && decoder->messageName() == "SetExceptionPort") {
         if (m_isServer) {
             // Server connections aren't supposed to have their exception ports overriden. Treat this as an invalid message.
-            m_clientRunLoop.dispatch(bind(&Connection::dispatchDidReceiveInvalidMessage, this, decoder->messageReceiverName().toString(), decoder->messageName().toString()));
+            RefPtr<Connection> protectedThis(this);
+            StringReference messageReceiverName = decoder->messageReceiverName();
+            StringCapture capturedMessageReceiverName(String(messageReceiverName.data(), messageReceiverName.size()));
+            StringReference messageName = decoder->messageName();
+            StringCapture capturedMessageName(String(messageName.data(), messageName.size()));
+            m_clientRunLoop.dispatch([protectedThis, capturedMessageReceiverName, capturedMessageName] {
+                protectedThis->dispatchDidReceiveInvalidMessage(capturedMessageReceiverName.string().utf8(), capturedMessageName.string().utf8());
+            });
             return;
         }
         MachPort exceptionPort;
