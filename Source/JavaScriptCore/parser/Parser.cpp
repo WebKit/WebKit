@@ -190,7 +190,7 @@ void Parser<LexerType>::logError(bool shouldPrintToken, const A& value1, const B
 }
 
 template <typename LexerType>
-Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode)
+Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, ConstructorKind defaultConstructorKind)
     : m_vm(vm)
     , m_source(&source)
     , m_hasStackOverflow(false)
@@ -204,6 +204,7 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* 
     , m_lastFunctionName(nullptr)
     , m_sourceElements(0)
     , m_parsingBuiltin(strictness == JSParseBuiltin)
+    , m_defaultConstructorKind(defaultConstructorKind)
 {
     m_lexer = std::make_unique<LexerType>(vm, strictness);
     m_lexer->setCode(source, &m_parserArena);
@@ -1325,6 +1326,10 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
     // BytecodeGenerator emits code to throw TypeError when a class constructor is "call"ed.
     // Set ConstructorKind to None for non-constructor methods of classes.
     bool isClassConstructor = mode == MethodMode && info.name && *info.name == m_vm->propertyNames->constructor;
+    if (m_defaultConstructorKind != ConstructorKind::None) {
+        ownerClassKind = m_defaultConstructorKind;
+        isClassConstructor = true;
+    }
     ConstructorKind constructorKind = isClassConstructor ? ownerClassKind : ConstructorKind::None;
 
     info.openBraceOffset = m_token.m_data.offset;
@@ -1548,9 +1553,6 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
                 instanceMethods = tail;
         }
     }
-
-    // FIXME: Create a Miranda function instead.
-    semanticFailIfFalse(constructor, "Class declaration without a constructor is not supported yet");
 
     failIfFalse(popScope(classScope, TreeBuilder::NeedsFreeVariableInfo), "Parser error");
     consumeOrFail(CLOSEBRACE, "Expected a closing '}' after a class body");

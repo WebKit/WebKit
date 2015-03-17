@@ -1,0 +1,19 @@
+Tests for ES6 class syntax default constructor
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS class A { }; window.A = A; new A instanceof A is true
+PASS A() threw exception TypeError: Cannot call a class constructor.
+PASS A.prototype.constructor instanceof Function is true
+PASS A.prototype.constructor.name is "A"
+PASS class B extends A { }; new B instanceof A; new B instanceof A is true
+PASS B() threw exception TypeError: Cannot call a class constructor.
+PASS B.prototype.constructor.name is "B"
+PASS A is not B
+FAIL A.prototype.constructor should be function B() { super(...arguments); }. Was function A() { }.
+PASS new (class extends (class { constructor(a, b) { return [a, b]; } }) {})(1, 2) is [1, 2]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -103,9 +103,10 @@ public:
     friend class CodeCache;
     friend class VM;
     typedef JSCell Base;
-    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionBodyNode* node, UnlinkedFunctionKind unlinkedFunctionKind)
+    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionBodyNode* node, UnlinkedFunctionKind unlinkedFunctionKind, RefPtr<SourceProvider>&& sourceOverride = nullptr)
     {
-        UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm->heap)) UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, node, unlinkedFunctionKind);
+        UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm->heap))
+            UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, WTF::move(sourceOverride), node, unlinkedFunctionKind);
         instance->finishCreation(*vm);
         return instance;
     }
@@ -173,7 +174,7 @@ public:
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
 
 private:
-    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, FunctionBodyNode*, UnlinkedFunctionKind);
+    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionBodyNode*, UnlinkedFunctionKind);
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
 
@@ -197,6 +198,7 @@ private:
     unsigned m_sourceLength;
     unsigned m_typeProfilingStartOffset;
     unsigned m_typeProfilingEndOffset;
+    RefPtr<SourceProvider> m_sourceOverride;
 
     CodeFeatures m_features;
 

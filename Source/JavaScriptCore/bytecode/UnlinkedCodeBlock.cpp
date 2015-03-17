@@ -80,7 +80,7 @@ unsigned UnlinkedCodeBlock::addOrFindConstant(JSValue v)
     return addConstant(v);
 }
 
-UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& source, FunctionBodyNode* node, UnlinkedFunctionKind kind)
+UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& source, RefPtr<SourceProvider>&& sourceOverride, FunctionBodyNode* node, UnlinkedFunctionKind kind)
     : Base(*vm, structure)
     , m_isInStrictContext(node->isInStrictContext())
     , m_hasCapturedVariables(false)
@@ -98,6 +98,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_sourceLength(node->source().length())
     , m_typeProfilingStartOffset(node->functionKeywordStart())
     , m_typeProfilingEndOffset(node->startStartOffset() + node->source().length() - 1)
+    , m_sourceOverride(sourceOverride)
     , m_features(0)
     , m_functionMode(node->functionMode())
 {
@@ -121,8 +122,9 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     visitor.append(&thisObject->m_symbolTableForConstruct);
 }
 
-FunctionExecutable* UnlinkedFunctionExecutable::linkInsideExecutable(VM& vm, const SourceCode& source)
+FunctionExecutable* UnlinkedFunctionExecutable::linkInsideExecutable(VM& vm, const SourceCode& ownerSource)
 {
+    SourceCode source = m_sourceOverride ? SourceCode(m_sourceOverride) : ownerSource;
     unsigned firstLine = source.firstLine() + m_firstLineOffset;
     unsigned startOffset = source.startOffset() + m_startOffset;
 
@@ -137,6 +139,7 @@ FunctionExecutable* UnlinkedFunctionExecutable::linkInsideExecutable(VM& vm, con
 
 FunctionExecutable* UnlinkedFunctionExecutable::linkGlobalCode(VM& vm, const SourceCode& source)
 {
+    ASSERT(!m_sourceOverride);
     unsigned firstLine = source.firstLine() + m_firstLineOffset;
     unsigned startOffset = source.startOffset() + m_startOffset;
 

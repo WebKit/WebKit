@@ -2885,9 +2885,18 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         generator.emitNode(superclass.get(), m_classHeritage);
     }
 
-    RefPtr<RegisterID> constructor = generator.emitNode(dst, m_constructorExpression);
+    RefPtr<RegisterID> constructor;
+    RefPtr<RegisterID> prototype;
+
     // FIXME: Make the prototype non-configurable & non-writable.
-    RefPtr<RegisterID> prototype = generator.emitGetById(generator.newTemporary(), constructor.get(), generator.propertyNames().prototype);
+    if (m_constructorExpression)
+        constructor = generator.emitNode(dst, m_constructorExpression);
+    else {
+        constructor = generator.emitNewDefaultConstructor(generator.finalDestination(dst),
+            m_classHeritage ? ConstructorKind::Derived : ConstructorKind::Base, m_name);
+    }
+
+    prototype = generator.emitGetById(generator.newTemporary(), constructor.get(), generator.propertyNames().prototype);
 
     if (superclass) {
         RefPtr<RegisterID> tempRegister = generator.newTemporary();

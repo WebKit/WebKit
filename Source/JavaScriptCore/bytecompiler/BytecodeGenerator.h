@@ -466,6 +466,7 @@ namespace JSC {
         RegisterID* emitLazyNewFunction(RegisterID* dst, FunctionBodyNode* body);
         RegisterID* emitNewFunctionInternal(RegisterID* dst, unsigned index, bool shouldNullCheck);
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode* func);
+        RegisterID* emitNewDefaultConstructor(RegisterID* dst, ConstructorKind, const Identifier& name);
         RegisterID* emitNewRegExp(RegisterID* dst, RegExp*);
 
         RegisterID* emitMove(RegisterID* dst, RegisterID* src);

@@ -426,7 +426,8 @@ class Parser {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Parser(VM*, const SourceCode&, FunctionParameters*, const Identifier&, JSParserStrictness, JSParserMode);
+    Parser(VM*, const SourceCode&, FunctionParameters*, const Identifier&, JSParserStrictness, JSParserMode,
+        ConstructorKind defaultConstructorKind = ConstructorKind::None);
     ~Parser();
 
     template <class ParsedNode>
@@ -872,6 +873,7 @@ private:
     RefPtr<SourceProviderCache> m_functionCache;
     SourceElements* m_sourceElements;
     bool m_parsingBuiltin;
+    ConstructorKind m_defaultConstructorKind;
     DeclarationStacks::VarStack m_varDeclarations;
     DeclarationStacks::FunctionStack m_funcDeclarations;
     IdentifierSet m_capturedVariables;
@@ -979,13 +981,15 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, bool ne
 }
 
 template <class ParsedNode>
-std::unique_ptr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, ParserError& error, JSTextPosition* positionBeforeLastNewline = 0, bool needReparsingAdjustment = false)
+std::unique_ptr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name,
+    JSParserStrictness strictness, JSParserMode parserMode, ParserError& error, JSTextPosition* positionBeforeLastNewline = 0,
+    bool needReparsingAdjustment = false, ConstructorKind defaultConstructorKind = ConstructorKind::None)
 {
     SamplingRegion samplingRegion("Parsing");
 
     ASSERT(!source.provider()->source().isNull());
     if (source.provider()->source().is8Bit()) {
-        Parser<Lexer<LChar>> parser(vm, source, parameters, name, strictness, parserMode);
+        Parser<Lexer<LChar>> parser(vm, source, parameters, name, strictness, parserMode, defaultConstructorKind);
         std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error, needReparsingAdjustment);
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();

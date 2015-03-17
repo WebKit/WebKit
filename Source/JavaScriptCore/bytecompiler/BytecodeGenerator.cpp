@@ -31,6 +31,7 @@
 #include "config.h"
 #include "BytecodeGenerator.h"
 
+#include "BuiltinExecutables.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSLexicalEnvironment.h"
@@ -1690,6 +1691,19 @@ RegisterID* BytecodeGenerator::emitNewFunctionExpression(RegisterID* r0, FuncExp
     instructions().append(scopeRegister()->index());
     instructions().append(index);
     return r0;
+}
+
+RegisterID* BytecodeGenerator::emitNewDefaultConstructor(RegisterID* dst, ConstructorKind constructorKind, const Identifier& name)
+{
+    UnlinkedFunctionExecutable* executable = m_vm->builtinExecutables()->createDefaultConstructor(constructorKind, name);
+
+    unsigned index = m_codeBlock->addFunctionExpr(executable);
+
+    emitOpcode(op_new_func_exp);
+    instructions().append(dst->index());
+    instructions().append(scopeRegister()->index());
+    instructions().append(index);
+    return dst;
 }
 
 RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction expectedFunction, CallArguments& callArguments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
