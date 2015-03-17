@@ -56,6 +56,7 @@
 namespace JSC { namespace DFG {
 
 class Graph;
+class PromotedLocationDescriptor;
 struct BasicBlock;
 
 struct StorageAccessData {
@@ -557,24 +558,10 @@ struct Node {
         m_op = MultiPutByOffset;
     }
     
-    void convertToPutByOffsetHint()
-    {
-        ASSERT(m_op == PutByOffset);
-        m_opInfo = storageAccessData().identifierNumber;
-        m_op = PutByOffsetHint;
-        child1() = child2();
-        child2() = child3();
-        child3() = Edge();
-    }
+    void convertToPutHint(const PromotedLocationDescriptor&, Node* base, Node* value);
     
-    void convertToPutStructureHint(Node* structure)
-    {
-        ASSERT(m_op == PutStructure);
-        ASSERT(structure->castConstant<Structure*>() == transition()->next);
-        m_op = PutStructureHint;
-        m_opInfo = 0;
-        child2() = Edge(structure, KnownCellUse);
-    }
+    void convertToPutByOffsetHint();
+    void convertToPutStructureHint(Node* structure);
     
     void convertToPhantomNewObject()
     {
@@ -830,7 +817,6 @@ struct Node {
         case PutById:
         case PutByIdFlush:
         case PutByIdDirect:
-        case PutByOffsetHint:
             return true;
         default:
             return false;
@@ -842,6 +828,13 @@ struct Node {
         ASSERT(hasIdentifier());
         return m_opInfo;
     }
+    
+    bool hasPromotedLocationDescriptor()
+    {
+        return op() == PutHint;
+    }
+    
+    PromotedLocationDescriptor promotedLocationDescriptor();
     
     // This corrects the arithmetic node flags, so that irrelevant bits are
     // ignored. In particular, anything other than ArithMul does not need

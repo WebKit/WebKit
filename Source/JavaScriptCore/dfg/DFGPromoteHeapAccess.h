@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,6 @@
 
 namespace JSC { namespace DFG {
 
-// Note that the write functor is really the useful thing here. The read functor is only useful
-// for the object allocation sinking phase.
 template<typename WriteFunctor, typename ReadFunctor>
 void promoteHeapAccess(Node* node, const WriteFunctor& write, const ReadFunctor& read)
 {
@@ -61,18 +59,11 @@ void promoteHeapAccess(Node* node, const WriteFunctor& write, const ReadFunctor&
         }
         break;
     }
-
-    case PutStructureHint: {
+        
+    case PutHint: {
         ASSERT(node->child1()->isPhantomObjectAllocation());
-        write(PromotedHeapLocation(StructurePLoc, node->child1()), node->child2());
-        break;
-    }
-
-    case PutByOffsetHint: {
-        ASSERT(node->child1()->isPhantomObjectAllocation());
-        unsigned identifierNumber = node->identifierNumber();
         write(
-            PromotedHeapLocation(NamedPropertyPLoc, node->child1(), identifierNumber),
+            PromotedHeapLocation(node->child1().node(), node->promotedLocationDescriptor()),
             node->child2());
         break;
     }

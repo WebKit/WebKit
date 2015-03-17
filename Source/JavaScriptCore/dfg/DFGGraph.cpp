@@ -222,6 +222,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, "global", globalObjectFor(node->origin.semantic)->findRegisterIndex(node->registerPointer()), "(", RawPointer(node->registerPointer()), ")");
     if (node->hasIdentifier())
         out.print(comma, "id", node->identifierNumber(), "{", identifiers()[node->identifierNumber()], "}");
+    if (node->hasPromotedLocationDescriptor())
+        out.print(comma, node->promotedLocationDescriptor());
     if (node->hasStructureSet())
         out.print(comma, inContext(node->structureSet(), context));
     if (node->hasStructure())
@@ -585,8 +587,7 @@ void Graph::mergeRelevantToOSR()
                 node->child1()->mergeFlags(NodeRelevantToOSR);
                 break;
                 
-            case PutStructureHint:
-            case PutByOffsetHint:
+            case PutHint:
                 node->child2()->mergeFlags(NodeRelevantToOSR);
                 break;
                 

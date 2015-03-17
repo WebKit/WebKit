@@ -177,9 +177,8 @@ inline CapabilityLevel canCompile(Node* node)
     case ToIndexString:
     case BottomValue:
     case PhantomNewObject:
-    case PutByOffsetHint:
+    case PutHint:
     case CheckStructureImmediate:
-    case PutStructureHint:
     case MaterializeNewObject:
         // These are OK.
         break;

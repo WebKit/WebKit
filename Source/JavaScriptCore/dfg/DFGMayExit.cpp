@@ -76,8 +76,7 @@ bool mayExit(Graph& graph, Node* node)
     case Upsilon:
     case ZombieHint:
     case BottomValue:
-    case PutStructureHint:
-    case PutByOffsetHint:
+    case PutHint:
     case PhantomNewObject:
     case PutStack:
     case KillStack:

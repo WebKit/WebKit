@@ -1068,9 +1068,8 @@ private:
         case Identity: // This should have been cleaned up.
         case BooleanToNumber:
         case PhantomNewObject:
-        case PutByOffsetHint:
+        case PutHint:
         case CheckStructureImmediate:
-        case PutStructureHint:
         case MaterializeNewObject:
         case PutStack:
         case KillStack:

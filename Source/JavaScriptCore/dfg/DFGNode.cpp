@@ -30,6 +30,7 @@
 
 #include "DFGGraph.h"
 #include "DFGNodeAllocator.h"
+#include "DFGPromotedHeapLocation.h"
 #include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
@@ -91,6 +92,36 @@ void Node::convertToIdentity()
     NodeFlags result = canonicalResultRepresentation(this->result());
     setOpAndDefaultFlags(Identity);
     setResult(result);
+}
+
+void Node::convertToPutHint(const PromotedLocationDescriptor& descriptor, Node* base, Node* value)
+{
+    m_op = PutHint;
+    m_opInfo = descriptor.imm1().m_value;
+    m_opInfo2 = descriptor.imm2().m_value;
+    child1() = base->defaultEdge();
+    child2() = value->defaultEdge();
+    child3() = Edge();
+}
+
+void Node::convertToPutStructureHint(Node* structure)
+{
+    ASSERT(m_op == PutStructure);
+    ASSERT(structure->castConstant<Structure*>() == transition()->next);
+    convertToPutHint(StructurePLoc, child1().node(), structure);
+}
+
+void Node::convertToPutByOffsetHint()
+{
+    ASSERT(m_op == PutByOffset);
+    convertToPutHint(
+        PromotedLocationDescriptor(NamedPropertyPLoc, storageAccessData().identifierNumber),
+        child2().node(), child3().node());
+}
+
+PromotedLocationDescriptor Node::promotedLocationDescriptor()
+{
+    return PromotedLocationDescriptor(static_cast<PromotedLocationKind>(m_opInfo), m_opInfo2);
 }
 
 } } // namespace JSC::DFG

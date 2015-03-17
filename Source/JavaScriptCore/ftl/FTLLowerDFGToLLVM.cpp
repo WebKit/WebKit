@@ -829,8 +829,7 @@ private:
         case MovHint:
         case ZombieHint:
         case PhantomNewObject:
-        case PutByOffsetHint:
-        case PutStructureHint:
+        case PutHint:
         case BottomValue:
         case KillStack:
             break;

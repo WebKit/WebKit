@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,10 +72,10 @@ public:
         //   that would see any other escape. Note that Upsilons constitute escaping sites. Then we
         //   insert additional MaterializeNewObject nodes on Upsilons that feed into Phis that mix
         //   materializations and the original PhantomNewObject. We then turn each PutByOffset over a
-        //   PhantomNewObject into a PutByOffsetHint.
+        //   PhantomNewObject into a PutHint.
         //
         // - We perform the same optimization for MaterializeNewObject. This allows us to cover
-        //   cases where we had MaterializeNewObject flowing into a PutByOffsetHint.
+        //   cases where we had MaterializeNewObject flowing into a PutHint.
         //
         // We could also add this rule:
         //
@@ -527,9 +527,10 @@ private:
                     if (m_sinkCandidates.contains(node)) {
                         Node* structure = m_insertionSet.insertConstant(
                             nodeIndex + 1, node->origin, JSValue(node->structure()));
-                        m_insertionSet.insertNode(
-                            nodeIndex + 1, SpecNone, PutStructureHint, node->origin,
-                            Edge(node, KnownCellUse), Edge(structure, KnownCellUse));
+                        m_insertionSet.insert(
+                            nodeIndex + 1,
+                            PromotedHeapLocation(StructurePLoc, node).createHint(
+                                m_graph, node->origin, structure));
                         node->convertToPhantomNewObject();
                     }
                     break;
@@ -537,13 +538,19 @@ private:
                     
                 case MaterializeNewObject: {
                     if (m_sinkCandidates.contains(node)) {
-                        m_insertionSet.insertNode(
-                            nodeIndex + 1, SpecNone, PutStructureHint, node->origin,
-                            Edge(node, KnownCellUse), m_graph.varArgChild(node, 0));
+                        m_insertionSet.insert(
+                            nodeIndex + 1,
+                            PromotedHeapLocation(StructurePLoc, node).createHint(
+                                m_graph, node->origin, m_graph.varArgChild(node, 0).node()));
                         for (unsigned i = 0; i < node->objectMaterializationData().m_properties.size(); ++i) {
-                            m_insertionSet.insertNode(
-                                nodeIndex + 1, SpecNone, PutByOffsetHint, node->origin,
-                                Edge(node, KnownCellUse), m_graph.varArgChild(node, i + 1));
+                            unsigned identifierNumber =
+                                node->objectMaterializationData().m_properties[i].m_identifierNumber;
+                            m_insertionSet.insert(
+                                nodeIndex + 1,
+                                PromotedHeapLocation(
+                                    NamedPropertyPLoc, node, identifierNumber).createHint(
+                                    m_graph, node->origin,
+                                    m_graph.varArgChild(node, i + 1).node()));
                         }
                         node->convertToPhantomNewObject();
                     }
@@ -762,7 +769,7 @@ private:
         case HardPhantom:
         case StoreBarrier:
         case StoreBarrierWithNullCheck:
-        case PutByOffsetHint:
+        case PutHint:
             break;
             
         case PutByOffset:

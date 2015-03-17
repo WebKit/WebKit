@@ -166,16 +166,16 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
         break;
     }
         
+    case PutHint: {
+        m_availability.m_heap.set(
+            PromotedHeapLocation(node->child1().node(), node->promotedLocationDescriptor()),
+            Availability(node->child2().node()));
+        break;
+    }
+        
     default:
         break;
     }
-    
-    promoteHeapAccess(
-        node,
-        [&] (PromotedHeapLocation location, Edge value) {
-            m_availability.m_heap.set(location, Availability(value.node()));
-        },
-        [&] (PromotedHeapLocation) { });
 }
 
 } } // namespace JSC::DFG

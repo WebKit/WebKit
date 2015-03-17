@@ -40,23 +40,9 @@ void PromotedLocationDescriptor::dump(PrintStream& out) const
 
 Node* PromotedHeapLocation::createHint(Graph& graph, NodeOrigin origin, Node* value)
 {
-    switch (kind()) {
-    case StructurePLoc:
-        return graph.addNode(
-            SpecNone, PutStructureHint, origin,
-            Edge(base(), KnownCellUse), Edge(value, KnownCellUse));
-        
-    case NamedPropertyPLoc:
-        return graph.addNode(
-            SpecNone, PutByOffsetHint, origin,
-            OpInfo(info()), Edge(base(), KnownCellUse), Edge(value, UntypedUse));
-        
-    case InvalidPromotedLocationKind:
-        return nullptr;
-    }
-    
-    RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
+    return graph.addNode(
+        SpecNone, PutHint, origin, OpInfo(descriptor().imm1()), OpInfo(descriptor().imm2()),
+        base()->defaultEdge(), value->defaultEdge());
 }
 
 void PromotedHeapLocation::dump(PrintStream& out) const

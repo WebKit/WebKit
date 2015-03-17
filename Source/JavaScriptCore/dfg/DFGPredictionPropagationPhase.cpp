@@ -542,9 +542,8 @@ private:
         case Identity:
         case BooleanToNumber:
         case PhantomNewObject:
-        case PutByOffsetHint:
+        case PutHint:
         case CheckStructureImmediate:
-        case PutStructureHint:
         case MaterializeNewObject:
         case PutStack:
         case KillStack:

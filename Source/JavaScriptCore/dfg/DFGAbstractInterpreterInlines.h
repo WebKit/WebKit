@@ -1308,8 +1308,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // This claims to return bottom.
         break;
         
-    case PutByOffsetHint:
-    case PutStructureHint:
+    case PutHint:
         break;
         
     case MaterializeNewObject: {
