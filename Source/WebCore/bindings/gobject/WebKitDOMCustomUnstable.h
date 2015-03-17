@@ -29,7 +29,7 @@ G_BEGIN_DECLS
  * webkit_dom_dom_window_get_webkit_namespace:
  * @self: A #WebKitDOMDOMWindow
  *
- * Returns: (transfer none): A #WebKitDOMWebKitNamespace
+ * Returns: (transfer full): A #WebKitDOMWebKitNamespace
  *
  * Stability: Unstable
  * Since: 2.8
@@ -42,7 +42,7 @@ webkit_dom_dom_window_get_webkit_namespace(WebKitDOMDOMWindow* self);
  * @self: A #WebKitDOMUserMessageHandlersNamespace
  * @name: a #gchar
  *
- * Returns: (transfer none): A #WebKitDOMUserMessageHandler
+ * Returns: (transfer full): A #WebKitDOMUserMessageHandler
  *
  * Stability: Unstable
  * Since: 2.8
