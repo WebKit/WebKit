@@ -426,7 +426,9 @@ class Parser {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Parser(VM*, const SourceCode&, FunctionParameters*, const Identifier&, JSParserStrictness, JSParserMode,
+    Parser(
+        VM*, const SourceCode&, FunctionParameters*, const Identifier&, 
+        JSParserBuiltinMode, JSParserStrictMode, JSParserCodeType,
         ConstructorKind defaultConstructorKind = ConstructorKind::None);
     ~Parser();
 
@@ -981,19 +983,23 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, bool ne
 }
 
 template <class ParsedNode>
-std::unique_ptr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name,
-    JSParserStrictness strictness, JSParserMode parserMode, ParserError& error, JSTextPosition* positionBeforeLastNewline = 0,
-    bool needReparsingAdjustment = false, ConstructorKind defaultConstructorKind = ConstructorKind::None)
+std::unique_ptr<ParsedNode> parse(
+    VM* vm, const SourceCode& source, FunctionParameters* parameters,
+    const Identifier& name, JSParserBuiltinMode builtinMode,
+    JSParserStrictMode strictMode, JSParserCodeType codeType,
+    ParserError& error, JSTextPosition* positionBeforeLastNewline = 0, 
+    bool needReparsingAdjustment = false, 
+    ConstructorKind defaultConstructorKind = ConstructorKind::None)
 {
     SamplingRegion samplingRegion("Parsing");
 
     ASSERT(!source.provider()->source().isNull());
     if (source.provider()->source().is8Bit()) {
-        Parser<Lexer<LChar>> parser(vm, source, parameters, name, strictness, parserMode, defaultConstructorKind);
+        Parser<Lexer<LChar>> parser(vm, source, parameters, name, builtinMode, strictMode, codeType, defaultConstructorKind);
         std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error, needReparsingAdjustment);
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
-        if (strictness == JSParseBuiltin) {
+        if (builtinMode == JSParserBuiltinMode::Builtin) {
             if (!result)
                 WTF::dataLog("Error compiling builtin: ", error.message(), "\n");
             RELEASE_ASSERT(result);
@@ -1001,7 +1007,7 @@ std::unique_ptr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionPara
         }
         return result;
     }
-    Parser<Lexer<UChar>> parser(vm, source, parameters, name, strictness, parserMode);
+    Parser<Lexer<UChar>> parser(vm, source, parameters, name, builtinMode, strictMode, codeType);
     std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error, needReparsingAdjustment);
     if (positionBeforeLastNewline)
         *positionBeforeLastNewline = parser.positionBeforeLastNewline();

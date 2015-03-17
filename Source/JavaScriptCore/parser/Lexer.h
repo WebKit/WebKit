@@ -71,7 +71,7 @@ class Lexer {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Lexer(VM*, JSParserStrictness);
+    Lexer(VM*, JSParserBuiltinMode);
     ~Lexer();
 
     // Character manipulation functions.

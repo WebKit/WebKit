@@ -49,9 +49,16 @@ const ClassInfo UnlinkedProgramCodeBlock::s_info = { "UnlinkedProgramCodeBlock",
 const ClassInfo UnlinkedEvalCodeBlock::s_info = { "UnlinkedEvalCodeBlock", &Base::s_info, 0, CREATE_METHOD_TABLE(UnlinkedEvalCodeBlock) };
 const ClassInfo UnlinkedFunctionCodeBlock::s_info = { "UnlinkedFunctionCodeBlock", &Base::s_info, 0, CREATE_METHOD_TABLE(UnlinkedFunctionCodeBlock) };
 
-static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(VM& vm, UnlinkedFunctionExecutable* executable, const SourceCode& source, CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode, UnlinkedFunctionKind functionKind, bool bodyIncludesBraces, ParserError& error)
+static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(
+    VM& vm, UnlinkedFunctionExecutable* executable, const SourceCode& source,
+    CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode,
+    UnlinkedFunctionKind functionKind, bool bodyIncludesBraces, ParserError& error)
 {
-    std::unique_ptr<FunctionNode> function = parse<FunctionNode>(&vm, source, executable->parameters(), executable->name(), executable->toStrictness(), JSParseFunctionCode, error, 0, bodyIncludesBraces);
+    JSParserBuiltinMode builtinMode = executable->isBuiltinFunction() ? JSParserBuiltinMode::Builtin : JSParserBuiltinMode::NotBuiltin;
+    JSParserStrictMode strictMode = executable->isInStrictContext() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
+    std::unique_ptr<FunctionNode> function = parse<FunctionNode>(
+        &vm, source, executable->parameters(), executable->name(), builtinMode,
+        strictMode, JSParserCodeType::Function, error, 0, bodyIncludesBraces);
 
     if (!function) {
         ASSERT(error.isValid());
@@ -177,7 +184,10 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(const Ide
     return executable;
 }
 
-UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(VM& vm, const SourceCode& source, CodeSpecializationKind specializationKind, DebuggerMode debuggerMode, ProfilerMode profilerMode, bool bodyIncludesBraces, ParserError& error)
+UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(
+    VM& vm, const SourceCode& source, CodeSpecializationKind specializationKind, 
+    DebuggerMode debuggerMode, ProfilerMode profilerMode, bool bodyIncludesBraces, 
+    ParserError& error)
 {
     switch (specializationKind) {
     case CodeForCall:
@@ -190,7 +200,10 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(VM& vm, cons
         break;
     }
 
-    UnlinkedFunctionCodeBlock* result = generateFunctionCodeBlock(vm, this, source, specializationKind, debuggerMode, profilerMode, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, bodyIncludesBraces, error);
+    UnlinkedFunctionCodeBlock* result = generateFunctionCodeBlock(
+        vm, this, source, specializationKind, debuggerMode, profilerMode, 
+        isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, 
+        bodyIncludesBraces, error);
     
     if (error.isValid())
         return nullptr;

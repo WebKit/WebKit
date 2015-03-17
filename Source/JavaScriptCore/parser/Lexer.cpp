@@ -488,10 +488,10 @@ static const LChar singleCharacterEscapeValuesForASCII[128] = {
 };
 
 template <typename T>
-Lexer<T>::Lexer(VM* vm, JSParserStrictness strictness)
+Lexer<T>::Lexer(VM* vm, JSParserBuiltinMode builtinMode)
     : m_isReparsing(false)
     , m_vm(vm)
-    , m_parsingBuiltinFunction(strictness == JSParseBuiltin)
+    , m_parsingBuiltinFunction(builtinMode == JSParserBuiltinMode::Builtin)
 {
 }
 

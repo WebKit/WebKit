@@ -394,7 +394,10 @@ void ProgramExecutable::destroy(JSCell* cell)
 
 const ClassInfo FunctionExecutable::s_info = { "FunctionExecutable", &ScriptExecutable::s_info, 0, CREATE_METHOD_TABLE(FunctionExecutable) };
 
-FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, unsigned lastLine, unsigned startColumn, unsigned endColumn, bool bodyIncludesBraces)
+FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, 
+    UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, 
+    unsigned lastLine, unsigned startColumn, unsigned endColumn, 
+    bool bodyIncludesBraces)
     : ScriptExecutable(vm.functionExecutableStructure.get(), vm, source, unlinkedExecutable->isInStrictContext())
     , m_unlinkedExecutable(vm, this, unlinkedExecutable)
     , m_bodyIncludesBraces(bodyIncludesBraces)
@@ -465,7 +468,9 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     ParserError error;
     VM* vm = &exec->vm();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    std::unique_ptr<ProgramNode> programNode = parse<ProgramNode>(vm, m_source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error);
+    std::unique_ptr<ProgramNode> programNode = parse<ProgramNode>(
+        vm, m_source, 0, Identifier(), JSParserBuiltinMode::NotBuiltin, 
+        JSParserStrictMode::NotStrict, JSParserCodeType::Program, error);
     if (programNode)
         return 0;
     ASSERT(error.isValid());

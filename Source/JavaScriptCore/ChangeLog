@@ -1,3 +1,69 @@
+2015-03-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Built-in functions should know that they use strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=142788
+
+        Reviewed by Mark Lam.
+
+        Even though all of our builtin functions use strict mode, the parser
+        thinks that they don't. This is because Executable::toStrictness treats
+        builtin-ness and strict-ness as mutually exclusive.
+
+        The fix is to disambiguate builtin-ness from strict-ness.
+
+        This bug is currently unobservable because of some other parser bugs. But
+        it causes lots of test failures once those other bugs are fixed.
+
+        * API/JSScriptRef.cpp:
+        (parseScript):
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createBuiltinExecutable): Adopt the new API
+        for a separate value to indicate builtin-ness vs strict-ness.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::codeBlockFor): Ditto.
+
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedFunctionExecutable::toStrictness): Deleted. This function
+        was misleading since it pretended that no builtin function was ever
+        strict, which is the opposite of true.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::Lexer):
+        * parser/Lexer.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        * parser/Parser.h:
+        (JSC::parse): Adopt the new API.
+
+        * parser/ParserModes.h: Added JSParserBuiltinMode, and tried to give
+        existing modes clearer names.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getProgramCodeBlock):
+        (JSC::CodeCache::getEvalCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode): Adopt the new API.
+
+        * runtime/CodeCache.h:
+        (JSC::SourceCodeKey::SourceCodeKey): Be sure to treat strict-ness and
+        bulitin-ness as separate pieces of the code cache key. We would not want
+        a user function to match a built-in function in the cache, even if they
+        agreed about strictness, since builtin functions have different lexing
+        rules.
+
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::ProgramExecutable::checkSyntax):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::create):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createProgramCodeBlock):
+        (JSC::JSGlobalObject::createEvalCodeBlock): Adopt the new API.
+
 2015-03-16  Filip Pizlo  <fpizlo@apple.com>
 
         DFG IR shouldn't have a separate node for every kind of put hint that could be described using PromotedLocationDescriptor

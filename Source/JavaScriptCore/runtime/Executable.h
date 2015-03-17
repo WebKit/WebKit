@@ -541,7 +541,10 @@ class FunctionExecutable : public ScriptExecutable {
 public:
     typedef ScriptExecutable Base;
 
-    static FunctionExecutable* create(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, unsigned lastLine, unsigned startColumn, unsigned endColumn, bool bodyIncludesBraces = true)
+    static FunctionExecutable* create(
+        VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, 
+        unsigned firstLine, unsigned lastLine, unsigned startColumn, unsigned endColumn, 
+        bool bodyIncludesBraces = true)
     {
         FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(vm.heap)) FunctionExecutable(vm, source, unlinkedExecutable, firstLine, lastLine, startColumn, endColumn, bodyIncludesBraces);
         executable->finishCreation(vm);
@@ -643,7 +646,10 @@ public:
     bool bodyIncludesBraces() const { return m_bodyIncludesBraces; }
 
 private:
-    FunctionExecutable(VM&, const SourceCode&, UnlinkedFunctionExecutable*, unsigned firstLine, unsigned lastLine, unsigned startColumn, unsigned endColumn, bool bodyIncludesBraces);
+    FunctionExecutable(
+        VM&, const SourceCode&, UnlinkedFunctionExecutable*, unsigned firstLine, 
+        unsigned lastLine, unsigned startColumn, unsigned endColumn, 
+        bool bodyIncludesBraces);
 
     bool isCompiling()
     {
