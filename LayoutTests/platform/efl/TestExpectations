@@ -2181,8 +2181,6 @@ webkit.org/b/142561 svg/animations/smil-leak-element-instances-noBaseValRef.svg 
 webkit.org/b/142561 svg/animations/smil-leak-element-instances.svg [ Failure ]
 webkit.org/b/142561 svg/animations/smil-leak-elements.svg [ Failure ]
 
-webkit.org/b/142570 fast/css/outline-auto-empty-rects.html [ Failure ]
-
 webkit.org/b/142571 fast/css/vertical-text-overflow-ellipsis-text-align-center.html [ Failure ]
 
 webkit.org/b/142763 fast/images/animated-gif-window-resizing.html [ Timeout ]
