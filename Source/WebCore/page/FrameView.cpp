@@ -4374,6 +4374,9 @@ void FrameView::sendScrollEvent()
 {
     frame().eventHandler().sendScrollEvent();
     frame().eventHandler().dispatchFakeMouseMoveEventSoon();
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    frame().animation().scrollWasUpdated();
+#endif
 }
 
 void FrameView::removeChild(Widget& widget)

@@ -40,6 +40,7 @@
 #include "Logging.h"
 #include "RenderBox.h"
 #include "RenderStyle.h"
+#include "RenderView.h"
 #include "UnitBezier.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
@@ -198,6 +199,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
     switch (m_animationState) {
         case AnimationState::New:
             ASSERT(input == AnimationStateInput::StartAnimation || input == AnimationStateInput::PlayStateRunning || input == AnimationStateInput::PlayStatePaused);
+
             if (input == AnimationStateInput::StartAnimation || input == AnimationStateInput::PlayStateRunning) {
                 m_requestedStartTime = beginAnimationUpdateTime();
                 LOG(Animations, "%p AnimationState %s -> StartWaitTimer", this, nameForState(m_animationState));
@@ -457,12 +459,29 @@ void AnimationBase::fireAnimationEventsIfNeeded()
     
     // Check for start timeout
     if (m_animationState == AnimationState::StartWaitTimer) {
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+        if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger()) {
+            if (m_object) {
+                LayoutSize offset = m_object->view().frameView().scrollOffsetForFixedPosition();
+                ScrollAnimationTrigger* scrollTrigger = static_cast<ScrollAnimationTrigger*>(m_animation->trigger().get());
+                if (offset.height().toFloat() > scrollTrigger->startValue().value())
+                    updateStateMachine(AnimationStateInput::StartTimerFired, 0);
+            }
+
+            return;
+        }
+#endif
         if (beginAnimationUpdateTime() - m_requestedStartTime >= m_animation->delay())
             updateStateMachine(AnimationStateInput::StartTimerFired, 0);
         return;
     }
     
     double elapsedDuration = beginAnimationUpdateTime() - m_startTime;
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger())
+        elapsedDuration = getElapsedTime();
+#endif
+
     // FIXME: we need to ensure that elapsedDuration is never < 0. If it is, this suggests that
     // we had a recalcStyle() outside of beginAnimationUpdate()/endAnimationUpdate().
     // Also check in getTimeToNextEvent().
@@ -521,6 +540,17 @@ double AnimationBase::timeToNextService()
         return -1;
     
     if (m_animationState == AnimationState::StartWaitTimer) {
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+        if (m_animation->trigger()->isScrollAnimationTrigger()) {
+            if (m_object) {
+                float currentScrollOffset = m_object->view().frameView().scrollOffsetForFixedPosition().height().toFloat();
+                ScrollAnimationTrigger* scrollTrigger = static_cast<ScrollAnimationTrigger*>(m_animation->trigger().get());
+                if (currentScrollOffset >= scrollTrigger->startValue().value() && (!scrollTrigger->hasEndValue() || currentScrollOffset <= scrollTrigger->endValue().value()))
+                    return 0;
+            }
+            return -1;
+        }
+#endif
         double timeFromNow = m_animation->delay() - (beginAnimationUpdateTime() - m_requestedStartTime);
         return std::max(timeFromNow, 0.0);
     }
@@ -672,7 +702,7 @@ double AnimationBase::beginAnimationUpdateTime() const
 
 double AnimationBase::getElapsedTime() const
 {
-    if (paused())    
+    if (paused())
         return m_pauseTime - m_startTime;
     if (m_startTime <= 0)
         return 0;

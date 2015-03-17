@@ -1,3 +1,47 @@
+2015-03-17  Dean Jackson  <dino@apple.com>
+
+        Implement Scroll Container Animation Triggers
+        https://bugs.webkit.org/show_bug.cgi?id=142732
+
+        Reviewed by Simon Fraser.
+
+        Test: animations/trigger-container-scroll-simple.html
+
+        Basic implementation of container-scroll. It only checks
+        the page scroll position for trigger values (not the scrolling
+        container in an overflow).
+
+        * css/CSSComputedStyleDeclaration.cpp: Add CSSPropertyWebkitAnimationTrigger
+        so that this property will appear in the inspector.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::sendScrollEvent): If the page has scrolled, let the animation
+        controller know about it.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine): Whitespace fix.
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded): If there is a trigger,
+        and the scroll position is past it, then tell the state machine that
+        we should start.
+        (WebCore::AnimationBase::timeToNextService): Use the scroll position as
+        an input to the update timer if a trigger is involved.
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::ensureCompositeAnimation): Add whitespace.
+        (WebCore::AnimationControllerPrivate::scrollWasUpdated): Call updateAnimations.
+        (WebCore::AnimationController::scrollWasUpdated): Call into AnimationControllerPrivate.
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h:
+
+        * page/animation/CompositeAnimation.cpp: Keep a record of whether we have a scroll
+        triggered animation.
+        (WebCore::CompositeAnimation::CompositeAnimation):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        * page/animation/CompositeAnimation.h:
+        (WebCore::CompositeAnimation::hasScrollTriggeredAnimation):
+        * platform/animation/Animation.cpp:
+        (WebCore::Animation::operator=):
+
 2015-03-17  Simon Fraser  <simon.fraser@apple.com>
 
         Move some code from LogicalSelectionOffsetCaches into RenderElement

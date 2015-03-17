@@ -86,6 +86,10 @@ public:
     
     static bool supportsAcceleratedAnimationOfProperty(CSSPropertyID);
 
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    void scrollWasUpdated();
+#endif
+
 private:
     const std::unique_ptr<AnimationControllerPrivate> m_data;
 };

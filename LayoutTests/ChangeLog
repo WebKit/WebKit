@@ -1,3 +1,16 @@
+2015-03-17  Dean Jackson  <dino@apple.com>
+
+        Implement Scroll Container Animation Triggers
+        https://bugs.webkit.org/show_bug.cgi?id=142732
+
+        Reviewed by Simon Fraser.
+
+        Test that checks if an animation only triggers when the page
+        is scrolled.
+
+        * animations/trigger-container-scroll-simple-expected.txt: Added.
+        * animations/trigger-container-scroll-simple.html: Added.
+
 2015-03-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Skip some IndexDB tests that don't apply on Windows.

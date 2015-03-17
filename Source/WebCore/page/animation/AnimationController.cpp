@@ -92,6 +92,7 @@ CompositeAnimation& AnimationControllerPrivate::ensureCompositeAnimation(RenderE
         result.iterator->value = CompositeAnimation::create(this);
         renderer.setIsCSSAnimating(true);
     }
+
     return *result.iterator->value;
 }
 
@@ -514,6 +515,13 @@ void AnimationControllerPrivate::animationWillBeRemoved(AnimationBase* animation
     removeFromAnimationsWaitingForStartTimeResponse(animation);
 }
 
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+void AnimationControllerPrivate::scrollWasUpdated()
+{
+    updateAnimations(CallSetChanged);
+}
+#endif
+
 AnimationController::AnimationController(Frame& frame)
     : m_data(std::make_unique<AnimationControllerPrivate>(frame))
 {
@@ -699,5 +707,12 @@ bool AnimationController::supportsAcceleratedAnimationOfProperty(CSSPropertyID p
 {
     return CSSPropertyAnimation::animationOfPropertyIsAccelerated(property);
 }
+
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+void AnimationController::scrollWasUpdated()
+{
+    m_data->scrollWasUpdated();
+}
+#endif
 
 } // namespace WebCore

@@ -80,6 +80,10 @@ public:
     bool pauseTransitionAtTime(CSSPropertyID, double);
     unsigned numberOfActiveAnimations() const;
 
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    bool hasScrollTriggeredAnimation() const { return m_hasScrollTriggeredAnimation; }
+#endif
+
 private:
     CompositeAnimation(AnimationControllerPrivate*);
 
@@ -87,13 +91,16 @@ private:
     void updateKeyframeAnimations(RenderElement*, RenderStyle* currentStyle, RenderStyle* targetStyle);
     
     typedef HashMap<int, RefPtr<ImplicitAnimation>> CSSPropertyTransitionsMap;
-    typedef HashMap<AtomicStringImpl*, RefPtr<KeyframeAnimation>>  AnimationNameMap;
+    typedef HashMap<AtomicStringImpl*, RefPtr<KeyframeAnimation>> AnimationNameMap;
 
     AnimationControllerPrivate* m_animationController;
     CSSPropertyTransitionsMap m_transitions;
     AnimationNameMap m_keyframeAnimations;
     Vector<AtomicStringImpl*> m_keyframeAnimationOrderMap;
     bool m_suspended;
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    bool m_hasScrollTriggeredAnimation;
+#endif
 };
 
 } // namespace WebCore

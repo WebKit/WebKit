@@ -94,6 +94,9 @@ Animation& Animation::operator=(const Animation& o)
     m_delay = o.m_delay;
     m_duration = o.m_duration;
     m_timingFunction = o.m_timingFunction;
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    m_trigger = o.m_trigger;
+#endif
     m_direction = o.m_direction;
     m_fillMode = o.m_fillMode;
     m_playState = o.m_playState;
