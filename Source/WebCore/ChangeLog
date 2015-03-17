@@ -1,3 +1,20 @@
+2015-03-16  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Crash viewing http://www.last.fm/
+        https://bugs.webkit.org/show_bug.cgi?id=142309
+
+        Reviewed by Chris Fleizach.
+
+        The crash occurs when a not-yet-rendered object emits a children-changed
+        signal. If an assistive technology is listening, AT-SPI2 will attempt to
+        create and cache the state set for the child being added and the creation
+        of the state set assumes a rendered object.
+
+        Test: platform/gtk/accessibility/no-notification-for-unrendered-iframe-children.html
+
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::attachWrapper):
+
 2015-03-16  Brady Eidson  <beidson@apple.com>
 
         Addressing additional review feedback after http://trac.webkit.org/changeset/181565
