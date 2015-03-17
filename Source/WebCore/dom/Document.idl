@@ -211,7 +211,7 @@
 #endif
 
     // HTML 5
-    NodeList getElementsByClassName([Default=Undefined] optional DOMString tagname);
+    NodeList getElementsByClassName([Default=Undefined] optional DOMString classNames);
 
     readonly attribute Element activeElement;
     boolean hasFocus();
