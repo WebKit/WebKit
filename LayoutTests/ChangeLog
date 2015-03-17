@@ -1,3 +1,17 @@
+2015-03-17  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Split fragments on renderer boundary on the fly.
+        https://bugs.webkit.org/show_bug.cgi?id=142579
+
+        Reviewed by Antti Koivisto.
+
+        Fragment splitting at renderers' boundary at the end of the line is no longer needed.
+        This patch ensures that TextFragmentIterator::nextTextFragment() does not concatenate
+        fragments across renderer boundary.
+
+        * fast/text/simple-line-with-multiple-renderers-expected.html: Added.
+        * fast/text/simple-line-with-multiple-renderers.html: Added.
+
 2015-03-17  Dean Jackson  <dino@apple.com>
 
         Implement Scroll Container Animation Triggers

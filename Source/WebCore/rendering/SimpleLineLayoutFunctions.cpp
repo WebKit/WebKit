@@ -84,6 +84,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
             continue;
         TextRun textRun(run.text());
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
+        textRun.setXPos(run.rect().x());
         FloatPoint textOrigin = run.baseline() + paintOffset;
         textOrigin.setY(roundToDevicePixel(LayoutUnit(textOrigin.y()), flow.document().deviceScaleFactor()));
         context.drawText(font, textRun, textOrigin);
