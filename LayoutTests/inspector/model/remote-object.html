@@ -91,6 +91,7 @@ function test()
         {expression: "({a: 1})"},
         {expression: "({a: 1, b: 0, c: -0})"},
         {expression: "({a: 1, b: \"string\", c: /regex/, d: Symbol('sym')})"},
+        {expression: "o = {a:1}; o.b = o; o"}, // Cyclic.
         {expression: "({a:function a(){}, b:function b(){}, get getter(){}, set setter(v){}})"},
         {expression: "function Foo() {}; new Foo"},
         {expression: "var Foo2 = function() {}; new Foo2"},

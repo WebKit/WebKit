@@ -211,7 +211,10 @@ WebInspector.ObjectPreviewView.prototype = {
                 element.appendChild(document.createTextNode(": "));
             }
 
-            element.appendChild(WebInspector.FormattedValue.createElementForPropertyPreview(property));
+            if (property.valuePreview)
+                this._appendPreview(element, property.valuePreview);
+            else
+                element.appendChild(WebInspector.FormattedValue.createElementForPropertyPreview(property));
         }
 
         if (preview.overflow)

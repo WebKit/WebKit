@@ -49,7 +49,7 @@ WebInspector.ObjectTreeView = function(object, mode, propertyPath, forceExpandin
         this._previewView.element.addEventListener("click", this._handlePreviewOrTitleElementClick.bind(this));
         this._element.appendChild(this._previewView.element);
 
-        if (this._previewView.lossless && !forceExpanding) {
+        if (this._previewView.lossless && !this._propertyPath.parent && !forceExpanding) {
             this._hasLosslessPreview = true;
             this.element.classList.add("lossless-preview");
         }

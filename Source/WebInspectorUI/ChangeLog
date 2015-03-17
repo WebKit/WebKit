@@ -1,3 +1,19 @@
+2015-03-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Better Console Previews for Arrays / Small Objects
+        https://bugs.webkit.org/show_bug.cgi?id=142322
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        If there is a sub-preview, show the sub-preview.
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView):
+        For an ObjectTree that is not a root (e.g. one inside of
+        an array/set/map property tree element) allow it to be
+        expanded even if the preview is lossless.
+
 2015-03-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Rename ConsoleMessage and ConsoleMessageImpl to LegacyConsoleMessage and LegacyConsoleMessageImpl respectively
