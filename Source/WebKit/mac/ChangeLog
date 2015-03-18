@@ -1,5 +1,11 @@
 2015-03-17  Tim Horton  <timothy_horton@apple.com>
 
+        Fix the iOS build
+
+        * WebView/WebHTMLView.mm:
+
+2015-03-17  Tim Horton  <timothy_horton@apple.com>
+
         Cannot invoke action menus anymore
         https://bugs.webkit.org/show_bug.cgi?id=142797
         <rdar://problem/20032670>

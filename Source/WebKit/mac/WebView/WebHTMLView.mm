@@ -106,7 +106,6 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
-#import <WebCore/NSMenuSPI.h>
 #import <WebCore/NSURLFileTypeMappingsSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/Range.h>
@@ -137,9 +136,10 @@
 #if !PLATFORM(IOS)
 #import <AppKit/NSAccessibility.h>
 #import <ApplicationServices/ApplicationServices.h>
+#import <WebCore/NSMenuSPI.h>
+#import <WebCore/PlatformEventFactoryMac.h>
 #import "WebNSEventExtras.h"
 #import "WebNSPasteboardExtras.h"
-#import <WebCore/PlatformEventFactoryMac.h>
 #endif
 
 #import <QuartzCore/QuartzCore.h>
