@@ -313,6 +313,11 @@ String DiagnosticLoggingKeys::reloadKey()
     return ASCIILiteral("reload");
 }
 
+String DiagnosticLoggingKeys::retrievalRequestKey()
+{
+    return ASCIILiteral("retrievalRequest");
+}
+
 String DiagnosticLoggingKeys::resourceKey()
 {
     return ASCIILiteral("resource");

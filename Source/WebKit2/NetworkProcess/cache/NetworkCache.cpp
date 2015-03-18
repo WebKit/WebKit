@@ -263,6 +263,9 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t w
 
     LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %u", originalRequest.url().string().ascii().data(), originalRequest.priority());
 
+    if (m_statistics)
+        m_statistics->recordRetrievalRequest(webPageID);
+
     Key storageKey = makeCacheKey(originalRequest);
     RetrieveDecision retrieveDecision = canRetrieve(originalRequest);
     if (retrieveDecision != RetrieveDecision::Yes) {

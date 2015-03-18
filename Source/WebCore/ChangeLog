@@ -1,3 +1,17 @@
+2015-03-18  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Log total number of network cache queries using diagnostic logging
+        https://bugs.webkit.org/show_bug.cgi?id=142803
+        <rdar://problem/19632130>
+
+        Reviewed by Antti Koivisto.
+
+        Add diagnostic logging key needed for network efficacy logging.
+
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::retrievalRequestKey):
+        * page/DiagnosticLoggingKeys.h:
+
 2015-03-18  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r181660

@@ -1,5 +1,21 @@
 2015-03-18  Chris Dumez  <cdumez@apple.com>
 
+        [WK2] Log total number of network cache queries using diagnostic logging
+        https://bugs.webkit.org/show_bug.cgi?id=142803
+        <rdar://problem/19632130>
+
+        Reviewed by Antti Koivisto.
+
+        Log total number of network cache queries using diagnostic logging.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        * NetworkProcess/cache/NetworkCacheStatistics.h:
+        * NetworkProcess/cache/NetworkCacheStatisticsCocoa.mm:
+        (WebKit::NetworkCache::Statistics::recordCacheRetrievalRequest):
+
+2015-03-18  Chris Dumez  <cdumez@apple.com>
+
         [WK2] We should not even try the network cache for non-HTTP protocol requests
         https://bugs.webkit.org/show_bug.cgi?id=142802
         <rdar://problem/19632130>

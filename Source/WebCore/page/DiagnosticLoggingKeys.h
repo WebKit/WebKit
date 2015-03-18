@@ -99,6 +99,7 @@ public:
     static String resourceRequestKey();
     static String resourceResponseKey();
     WEBCORE_EXPORT static String retrievalKey();
+    WEBCORE_EXPORT static String retrievalRequestKey();
     static String revalidatingKey();
     static String sameLoadKey();
     static String scriptKey();

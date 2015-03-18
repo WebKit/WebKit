@@ -178,6 +178,11 @@ void Statistics::shrinkIfNeeded()
     });
 }
 
+void Statistics::recordRetrievalRequest(uint64_t webPageID)
+{
+    NetworkProcess::singleton().logDiagnosticMessage(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::retrievalRequestKey(), WebCore::ShouldSample::Yes);
+}
+
 void Statistics::recordNotCachingResponse(const Key& key, StoreDecision storeDecision)
 {
     ASSERT(storeDecision != StoreDecision::Yes);

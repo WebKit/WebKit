@@ -47,6 +47,7 @@ public:
 
     void clear();
 
+    void recordRetrievalRequest(uint64_t webPageID);
     void recordNotCachingResponse(const Key&, StoreDecision);
     void recordNotUsingCacheForRequest(uint64_t webPageID, const Key&, const WebCore::ResourceRequest&, RetrieveDecision);
     void recordRetrievalFailure(uint64_t webPageID, const Key&, const WebCore::ResourceRequest&);
