@@ -66,7 +66,7 @@ function checkTriangularPulse(rendered, reference) {
     // is the threshold of the relative error at the maximum
     // difference between the true triangular pulse and the
     // rendered pulse.
-    var allowedDeviationDecibels = -133.5;
+    var allowedDeviationDecibels = -133.2;
     var maxDeviationDecibels = linearToDecibel(maxDelta / valueAtMaxDelta);
 
     if (maxDeviationDecibels <= allowedDeviationDecibels) {

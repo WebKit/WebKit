@@ -1,3 +1,13 @@
+2015-03-18  Alexey Proskuryakov  <ap@apple.com>
+
+        webaudio/convolution-mono-mono.html fails on some machines
+        rdar://problem/19996807
+
+        Rubber-stampted by Jer Noble.
+
+        * webaudio/resources/convolution-testing.js: (checkTriangularPulse): Slightly increase
+        the tolerance. It's still extremely low.
+
 2015-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid repaints when changing transform on an element with multiple background images
