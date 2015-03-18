@@ -309,6 +309,9 @@ webkit.org/b/141364 [ Yosemite ] fullscreen/full-screen-plugin.html [ Pass Timeo
 webkit.org/b/139828 svg/animations/animateMotion-additive-2a.svg [ Pass ImageOnlyFailure ]
 webkit.org/b/139828 svg/animations/animateMotion-additive-2b.svg [ Pass ImageOnlyFailure ]
 
+# This test crashes every time in WebKit2 on Yosemite
+webkit.org/b/142726 [ Yosemite ] fast/images/animated-png.html [ Skip ]
+
 ### END OF (3) Unclassified failures
 ########################################
 

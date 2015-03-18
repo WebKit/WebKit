@@ -1,3 +1,13 @@
+2015-03-17  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/images/animated-png.html is crashing / failing on Yosemite
+        https://bugs.webkit.org/show_bug.cgi?id=142726
+
+        Further tweaked test expectations.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2015-03-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.

@@ -1242,8 +1242,7 @@ webkit.org/b/141601 inspector/css/stylesheet-with-mutations.html [ Skip ]
 
 webkit.org/b/141534 [ Yosemite ] media/video-load-networkState.html [ Pass Crash ]
 
-# Introduced in r181553 and crashing / failing on Yosemite.
-webkit.org/b/142726 [ Yosemite ] fast/images/animated-png.html [ Crash ImageOnlyFailure ]
+webkit.org/b/142726 [ Yosemite+ ] fast/images/animated-png.html [ ImageOnlyFailure ]
 
 # Skip media control tests until new controls are finalized
 webkit.org/b/142142 media/video-no-audio.html [ Skip ]
