@@ -45,15 +45,21 @@ public:
     void readSync(size_t offset, size_t, std::function<void (Data&, int error)>);
     void write(size_t offset, const Data&, std::function<void (int error)>);
 
+    const String& path() const { return m_path; }
+    Type type() const { return m_type; }
+
     int fileDescriptor() const { return m_fileDescriptor; }
 
 private:
-    IOChannel(int fd);
+    IOChannel(const String& filePath, IOChannel::Type);
 
+    String m_path;
+    Type m_type;
+
+    int m_fileDescriptor { 0 };
 #if PLATFORM(COCOA)
     DispatchPtr<dispatch_io_t> m_dispatchIO;
 #endif
-    int m_fileDescriptor { 0 };
 };
 
 }

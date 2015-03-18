@@ -1,3 +1,56 @@
+2015-03-17  Antti Koivisto  <antti@apple.com>
+
+        Prune least valuable cache entries first
+        https://bugs.webkit.org/show_bug.cgi?id=142810
+        rdar://problem/19632130
+
+        Reviewed by Darin Adler.
+
+        When pruning the cache estimate relative value of each entry using formula
+
+        age = current time - creation time
+        accessAge = last access time - creation time
+        value = accessAge / age
+
+        That is, we value entries that have been accessed recently and survived in the cache longest.
+
+        The most valuable entries don't get deleted at all while the deletion probablity ramps up for
+        lower value entries.
+
+        * NetworkProcess/cache/NetworkCacheFileSystemPosix.h:
+        (WebKit::NetworkCache::fileTimes):
+
+            Get the creation time and access time for a file.
+
+        (WebKit::NetworkCache::updateFileAccessTimeIfNeeded):
+
+            Update access time manually if the file system doesn't do it automatically.
+
+        * NetworkProcess/cache/NetworkCacheIOChannel.h:
+        (WebKit::NetworkCache::IOChannel::path):
+        (WebKit::NetworkCache::IOChannel::type):
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        (WebKit::NetworkCache::IOChannel::IOChannel):
+        (WebKit::NetworkCache::IOChannel::open):
+
+            Remember the file path and move most of the work to constructor.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::Storage):
+        (WebKit::NetworkCache::Storage::remove):
+        (WebKit::NetworkCache::Storage::updateFileAccessTime):
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::deletionProbability):
+
+            Compute the probability based on entry age and access time.
+
+        (WebKit::NetworkCache::Storage::shrinkIfNeeded):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::serialBackgroundIOQueue):
+        (WebKit::NetworkCache::Storage::deleteQueue): Deleted.
+
+            More generic name.
+
 2015-03-18  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Log total number of network cache queries using diagnostic logging

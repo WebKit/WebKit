@@ -40,6 +40,8 @@
 namespace WebKit {
 namespace NetworkCache {
 
+class IOChannel;
+
 class Storage {
     WTF_MAKE_NONCOPYABLE(Storage);
 public:
@@ -95,9 +97,11 @@ private:
     void dispatchHeaderWriteOperation(const WriteOperation&);
     void dispatchPendingWriteOperations();
 
+    void updateFileAccessTime(IOChannel&);
+
     WorkQueue& ioQueue() { return m_ioQueue.get(); }
     WorkQueue& backgroundIOQueue() { return m_backgroundIOQueue.get(); }
-    WorkQueue& deleteQueue() { return m_deleteQueue.get(); }
+    WorkQueue& serialBackgroundIOQueue() { return m_serialBackgroundIOQueue.get(); }
 
     const String m_baseDirectoryPath;
     const String m_directoryPath;
@@ -117,7 +121,7 @@ private:
 
     Ref<WorkQueue> m_ioQueue;
     Ref<WorkQueue> m_backgroundIOQueue;
-    Ref<WorkQueue> m_deleteQueue;
+    Ref<WorkQueue> m_serialBackgroundIOQueue;
 };
 
 }

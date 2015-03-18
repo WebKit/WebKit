@@ -39,23 +39,14 @@
 namespace WebKit {
 namespace NetworkCache {
 
-IOChannel::IOChannel(int fd)
-    : m_fileDescriptor(fd)
-{
-    m_dispatchIO = adoptDispatch(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_main_queue(), [fd](int) {
-        close(fd);
-    }));
-    ASSERT(m_dispatchIO.get());
-    // This makes the channel read/write all data before invoking the handlers.
-    dispatch_io_set_low_water(m_dispatchIO.get(), std::numeric_limits<size_t>::max());
-}
-
-Ref<IOChannel> IOChannel::open(const String& filePath, IOChannel::Type type)
+IOChannel::IOChannel(const String& filePath, Type type)
+    : m_path(filePath)
+    , m_type(type)
 {
     int oflag;
     mode_t mode;
 
-    switch (type) {
+    switch (m_type) {
     case Type::Create:
         oflag = O_RDWR | O_CREAT | O_TRUNC | O_NONBLOCK;
         mode = S_IRUSR | S_IWUSR;
@@ -71,8 +62,19 @@ Ref<IOChannel> IOChannel::open(const String& filePath, IOChannel::Type type)
 
     CString path = WebCore::fileSystemRepresentation(filePath);
     int fd = ::open(path.data(), oflag, mode);
+    m_fileDescriptor = fd;
 
-    return adoptRef(*new IOChannel(fd));
+    m_dispatchIO = adoptDispatch(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_main_queue(), [fd](int) {
+        close(fd);
+    }));
+    ASSERT(m_dispatchIO.get());
+    // This makes the channel read/write all data before invoking the handlers.
+    dispatch_io_set_low_water(m_dispatchIO.get(), std::numeric_limits<size_t>::max());
+}
+
+Ref<IOChannel> IOChannel::open(const String& filePath, IOChannel::Type type)
+{
+    return adoptRef(*new IOChannel(filePath, type));
 }
 
 void IOChannel::read(size_t offset, size_t size, std::function<void (Data&, int error)> completionHandler)

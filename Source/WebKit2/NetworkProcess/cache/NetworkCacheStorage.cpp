@@ -65,7 +65,7 @@ Storage::Storage(const String& baseDirectoryPath)
     , m_directoryPath(makeVersionedDirectoryPath(baseDirectoryPath))
     , m_ioQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage", WorkQueue::Type::Concurrent))
     , m_backgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage.background", WorkQueue::Type::Concurrent, WorkQueue::QOS::Background))
-    , m_deleteQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage.delete", WorkQueue::Type::Serial, WorkQueue::QOS::Background))
+    , m_serialBackgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage.serialBackground", WorkQueue::Type::Serial, WorkQueue::QOS::Background))
 {
     deleteOldVersions();
     initialize();
@@ -282,8 +282,16 @@ void Storage::remove(const Key& key)
         m_contentsFilter.remove(key.shortHash());
 
     StringCapture filePathCapture(filePathForKey(key, m_directoryPath));
-    deleteQueue().dispatch([this, filePathCapture] {
+    serialBackgroundIOQueue().dispatch([this, filePathCapture] {
         WebCore::deleteFile(filePathCapture.string());
+    });
+}
+
+void Storage::updateFileAccessTime(IOChannel& channel)
+{
+    StringCapture filePathCapture(channel.path());
+    serialBackgroundIOQueue().dispatch([filePathCapture] {
+        updateFileAccessTimeIfNeeded(filePathCapture.string());
     });
 }
 
@@ -294,16 +302,17 @@ void Storage::dispatchReadOperation(const ReadOperation& read)
 
     StringCapture cachePathCapture(m_directoryPath);
     ioQueue().dispatch([this, &read, cachePathCapture] {
-        auto channel = openFileForKey(read.key, IOChannel::Type::Read, cachePathCapture.string());
-        int fd = channel->fileDescriptor();
-        channel->read(0, std::numeric_limits<size_t>::max(), [this, &read, fd](Data& fileData, int error) {
+        RefPtr<IOChannel> channel = openFileForKey(read.key, IOChannel::Type::Read, cachePathCapture.string());
+        channel->read(0, std::numeric_limits<size_t>::max(), [this, channel, &read](Data& fileData, int error) {
             if (error) {
                 remove(read.key);
                 read.completionHandler(nullptr);
             } else {
-                auto entry = decodeEntry(fileData, fd, read.key);
+                auto entry = decodeEntry(fileData, channel->fileDescriptor(), read.key);
                 bool success = read.completionHandler(WTF::move(entry));
-                if (!success)
+                if (success)
+                    updateFileAccessTime(*channel);
+                else
                     remove(read.key);
             }
 
@@ -569,11 +578,30 @@ void Storage::clear()
     });
 }
 
+static double deletionProbability(FileTimes times)
+{
+    static const double maximumProbability { 0.33 };
+
+    using namespace std::chrono;
+    auto age = system_clock::now() - times.creation;
+    auto accessAge = times.access - times.creation;
+
+    // For sanity.
+    if (age <= seconds::zero() || accessAge < seconds::zero() || accessAge > age)
+        return maximumProbability;
+
+    // We like old entries that have been accessed recently.
+    auto relativeValue = duration<double>(accessAge) / age;
+
+    // Adjust a bit so the most valuable entries don't get deleted at all.
+    auto effectiveValue = std::min(1.1 * relativeValue, 1.);
+
+    return (1 - effectiveValue) * maximumProbability;
+}
+
 void Storage::shrinkIfNeeded()
 {
     ASSERT(RunLoop::isMain());
-
-    static const double deletionProbability { 0.25 };
 
     if (m_approximateSize <= m_maximumSize)
         return;
@@ -591,7 +619,12 @@ void Storage::shrinkIfNeeded()
         traverseCacheFiles(cachePath, [this](const String& fileName, const String& partitionPath) {
             auto filePath = WebCore::pathByAppendingComponent(partitionPath, fileName);
 
-            bool shouldDelete = randomNumber() < deletionProbability;
+            auto times = fileTimes(filePath);
+            auto probability = deletionProbability(times);
+            bool shouldDelete = randomNumber() < probability;
+
+            LOG(NetworkCacheStorage, "Deletion probability=%f shouldDelete=%d", probability, shouldDelete);
+
             if (!shouldDelete) {
                 long long fileSize = 0;
                 WebCore::getFileSize(filePath, fileSize);
