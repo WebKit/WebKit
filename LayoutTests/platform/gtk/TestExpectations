@@ -620,6 +620,15 @@ webkit.org/b/142289 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
 
 webkit.org/b/141074 accessibility/auto-filled-value.html [ Missing ]
 
+webkit.org/b/142818 http/tests/cache/disk-cache-vary-cookie.html [ Failure ]
+webkit.org/b/142819 fast/text/baseline-inline-block.html [ ImageOnlyFailure ]
+
+webkit.org/b/142823 fast/attachment/attachment-progress.html [ Missing ]
+webkit.org/b/142823 fast/attachment/attachment-select-on-click-inside-user-select-all.html [ Missing ]
+webkit.org/b/142823 fast/attachment/attachment-select-on-click.html [ Missing ]
+webkit.org/b/142823 fast/attachment/attachment-subtitle.html [ Missing ]
+webkit.org/b/142823 fast/attachment/attachment-title.html [ Missing ]
+
 # TODO Scroll snap points
 css3/scroll-snap [ Skip ]
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1310,6 +1319,8 @@ webkit.org/b/142490 inspector/css/selector-dynamic-specificity.html [ Timeout ]
 webkit.org/b/142491 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
 
 webkit.org/b/142670 media/video-background-tab-playback.html [ Timeout ]
+webkit.org/b/142820 fast/images/animated-gif-body-outside-viewport.html [ Timeout ]
+webkit.org/b/142821 http/tests/cache/disk-cache-validation.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
