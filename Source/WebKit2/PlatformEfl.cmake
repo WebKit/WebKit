@@ -179,6 +179,7 @@ list(APPEND WebKit2_SOURCES
     WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
 
     WebProcess/InjectedBundle/API/efl/ewk_extension.cpp
+    WebProcess/InjectedBundle/API/efl/ewk_page.cpp
 
     WebProcess/InjectedBundle/efl/InjectedBundleEfl.cpp
 
@@ -406,10 +407,11 @@ set(EWebKit2_HEADERS
 set(EWebKit2_Extension_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/WebProcess/InjectedBundle/API/efl/EWebKit_Extension.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/WebProcess/InjectedBundle/API/efl/ewk_extension.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/WebProcess/InjectedBundle/API/efl/ewk_page.h"
 )
 
-install(FILES ${EWebKit2_HEADERS} DESTINATION include/${WebKit2_OUTPUT_NAME}-${PROJECT_VERSION_MAJOR})
-install(FILES ${EWebKit2_Extension_HEADERS} DESTINATION include/${WebKit2_OUTPUT_NAME}-${PROJECT_VERSION_MAJOR}/extension)
+install(FILES ${EWebKit2_HEADERS} DESTINATION ${HEADER_INSTALL_DIR})
+install(FILES ${EWebKit2_Extension_HEADERS} DESTINATION ${HEADER_INSTALL_DIR}/extension)
 
 install(FILES ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc DESTINATION lib/pkgconfig)
 install(FILES ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2-extension.pc DESTINATION lib/pkgconfig)
@@ -510,6 +512,7 @@ set(EWK2UnitTests_BINARIES
     test_ewk2_eina_shared_string
     test_ewk2_favicon_database
     test_ewk2_file_chooser_request
+    test_ewk2_javascript_binding
     test_ewk2_object
     test_ewk2_page_group
     test_ewk2_popup_menu

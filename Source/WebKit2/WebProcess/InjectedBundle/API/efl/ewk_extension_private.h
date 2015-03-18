@@ -26,11 +26,15 @@
 #ifndef ewk_extension_private_h
 #define ewk_extension_private_h
 
+#include "ewk_page_private.h"
 #include <wtf/Vector.h>
 
 namespace WebKit {
 class InjectedBundle;
+class WebPage;
 }
+
+class EwkPage;
 
 class EwkExtension {
 public:
@@ -51,6 +55,7 @@ private:
     WebKit::InjectedBundle* m_bundle;
 
     Vector<Ewk_Extension_Client*> m_clients;
+    HashMap<WebKit::WebPage*, std::unique_ptr<EwkPage>> m_pageMap;
 };
 
 #endif // ewk_extension_private_h

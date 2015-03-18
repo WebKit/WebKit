@@ -31,7 +31,9 @@
 #include "WKBundle.h"
 #include "WKBundleAPICast.h"
 #include "WKRetainPtr.h"
+#include "WebPage.h"
 #include "ewk_extension_private.h"
+#include "ewk_page_private.h"
 #include <WebKit/WKString.h>
 #include <WebKit/WKType.h>
 #include <wtf/text/CString.h>
@@ -70,14 +72,30 @@ void EwkExtension::remove(Ewk_Extension_Client* client)
     m_clients.removeFirst(client);
 }
 
-void EwkExtension::didCreatePage(WKBundleRef, WKBundlePageRef, const void*)
+void EwkExtension::didCreatePage(WKBundleRef, WKBundlePageRef wkPage, const void* clientInfo)
 {
-    notImplemented();
+    EwkExtension* self = toEwkExtendion(clientInfo);
+    WebPage* page = toImpl(wkPage);
+
+    auto ewkPage = std::make_unique<EwkPage>(page);
+    for (auto& it : self->m_clients) {
+        if (it->page_add)
+            it->page_add(ewkPage.get(), it->data);
+    }
+
+    self->m_pageMap.add(page, WTF::move(ewkPage));
 }
 
-void EwkExtension::willDestroyPage(WKBundleRef, WKBundlePageRef, const void*)
+void EwkExtension::willDestroyPage(WKBundleRef, WKBundlePageRef wkPage, const void* clientInfo)
 {
-    notImplemented();
+    EwkExtension* self = toEwkExtendion(clientInfo);
+    WebPage* page = toImpl(wkPage);
+
+    for (auto& it : self->m_clients) {
+        if (it->page_del)
+            it->page_del(self->m_pageMap.get(page), it->data);
+    }
+    self->m_pageMap.remove(page);
 }
 
 void EwkExtension::didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)

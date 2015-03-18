@@ -1,3 +1,36 @@
+2015-03-17  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Expose JavaScript binding interface through ewk_extension
+        https://bugs.webkit.org/show_bug.cgi?id=142033
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/tests/extensions/extension_sample.cpp: Registered test object for new test case.
+        * UIProcess/API/efl/tests/test_ewk2_javascript_binding.cpp: Added simple binding API test case.
+        (EWK2ContextTestWithExtension::messageReceivedCallback):
+        (EWK2ContextTestWithExtension::EWK2ContextTestWithExtension):
+        (TEST_F):
+        * WebProcess/InjectedBundle/API/efl/EWebKit_Extension.h:
+        * WebProcess/InjectedBundle/API/efl/ewk_extension.cpp:
+        (EwkExtension::didCreatePage):
+        (EwkExtension::willDestroyPage):
+        * WebProcess/InjectedBundle/API/efl/ewk_extension.h:
+        * WebProcess/InjectedBundle/API/efl/ewk_extension_private.h:
+        * WebProcess/InjectedBundle/API/efl/ewk_page.cpp: Added.
+        (toEwkPage):
+        (EwkPage::EwkPage):
+        (EwkPage::append):
+        (EwkPage::remove):
+        (EwkPage::didFinishDocumentLoadForFrame):
+        (ewk_page_js_global_context_get):
+        (ewk_page_client_register):
+        (ewk_page_client_unregister):
+        * WebProcess/InjectedBundle/API/efl/ewk_page.h: Added.
+        * WebProcess/InjectedBundle/API/efl/ewk_page_private.h: Added.
+        (EwkPage::page):
+        * efl/ewebkit2-extension.pc.in:
+
 2015-03-17  Tim Horton  <timothy_horton@apple.com>
 
         Cannot invoke action menus anymore

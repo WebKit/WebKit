@@ -38,6 +38,11 @@ extern "C" {
 #endif
 
 /**
+ * Declare Ewk_Page.
+ */
+typedef struct EwkPage Ewk_Page;
+
+/**
  * Declare Ewk_Extension.
  */
 typedef struct EwkExtension Ewk_Extension;
@@ -58,10 +63,27 @@ struct EwkExtensionClient {
     void *data;
 
     /**
+     * Callbacks to report page added.
+     *
+     * @param page page to be finished
+     * @param data data of a extension client
+     */
+    void (*page_add)(Ewk_Page* page, void *data);
+
+    /**
+     * Callbacks to report page will be removed.
+     *
+     * @param page page to be finished
+     * @param data data of a extension client
+     */
+    void (*page_del)(Ewk_Page* page, void *data);
+
+    /**
      * Callbacks to receive message from ewk_context.
      *
      * @param name name of message from ewk_context
      * @param body body of message from ewk_context
+     * @param data data of a extension client
      */
     void (*message_received)(const char *name, const Eina_Value *body, void *data);
 };

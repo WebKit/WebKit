@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Ryuan Choi <ryuan.choi@gmail.com>.  All rights reserved.
+ * Copyright (C) 2015 Ryuan Choi <ryuan.choi@gmail.com>.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @file    EWebKit_Extension.h
- * @brief   Contains the header files that are required by ewebkit2-extension.
- *
- * EWebKit_Extension is the way to extend WebProcess of ewebkit2.
- *
- * In order to create the extension,
- * First, ewk_extension_init must be implemented in the shared object like below:
- *
- * @code
- * #include "EWebKit_Extension.h"
- *
- * void ewk_extension_init(Ewk_Extension *extension)
- * {
- *    // provide Ewk_Extension_Client callbacks as client.
- *    ewk_extension_client_add(extension, &client);
- * }
- * @endcode
- *
- * And compiles C or C++ files as shared object like below:
- *
- * @verbatim gcc -o libsample.so sample.c -shared -fPIC `pkg-config --cflags --libs eina ewebkit2-extension` @endverbatim
- *
- * Then, install that object into the path which ewk_context_new_with_extensions_path() specifies.
- *
- * @see ewk_context_new_with_extensions_path
- * @see ewk_extension_client_set
- * @see Ewk_Extension_Initialize_Function
- */
+#include "config.h"
 
-#ifndef EWebKit_Extension_h
-#define EWebKit_Extension_h
+#include "EwkView.h"
+#include "UnitTestUtils/EWK2UnitTestBase.h"
 
-#include "ewk_extension.h"
-#include "ewk_page.h"
+using namespace EWK2UnitTest;
 
-#endif // EWebKit_Extension_h
+extern EWK2UnitTestEnvironment* environment;
+
+static constexpr double testTimeoutSeconds = 2.0;
+
+class EWK2ContextTestWithExtension : public EWK2UnitTestBase {
+public:
+    static void messageReceivedCallback(const char* name, const Eina_Value* body, void* userData)
+    {
+        bool* handled = static_cast<bool*>(userData);
+        ASSERT_STREQ("hello", name);
+
+        *handled = true;
+    }
+
+protected:
+    EWK2ContextTestWithExtension()
+    {
+        m_withExtension = true;
+    }
+};
+
+TEST_F(EWK2ContextTestWithExtension, ewk_javascript_binding)
+{
+    bool received = false;
+    Ewk_Context* context = ewk_view_context_get(webView());
+
+    ewk_context_message_from_extensions_callback_set(context, messageReceivedCallback, &received);
+
+    ewk_view_url_set(webView(), environment->defaultTestPageUrl());
+    ASSERT_TRUE(waitUntilLoadFinished());
+
+    ewk_view_script_execute(webView(), "test.hello();", nullptr, nullptr);
+
+    ASSERT_TRUE(waitUntilTrue(received, testTimeoutSeconds));
+}
+
