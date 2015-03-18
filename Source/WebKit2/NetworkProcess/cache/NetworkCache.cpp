@@ -244,8 +244,6 @@ static std::unique_ptr<Entry> decodeStorageEntry(const Storage::Entry& storageEn
 
 static RetrieveDecision canRetrieve(const WebCore::ResourceRequest& request)
 {
-    if (!request.url().protocolIsInHTTPFamily())
-        return RetrieveDecision::NoDueToProtocol;
     // FIXME: Support HEAD and OPTIONS requests.
     if (request.httpMethod() != "GET")
         return RetrieveDecision::NoDueToHTTPMethod;
@@ -261,6 +259,7 @@ static RetrieveDecision canRetrieve(const WebCore::ResourceRequest& request)
 void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t webPageID, std::function<void (std::unique_ptr<Entry>)> completionHandler)
 {
     ASSERT(isEnabled());
+    ASSERT(originalRequest.url().protocolIsInHTTPFamily());
 
     LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %u", originalRequest.url().string().ascii().data(), originalRequest.priority());
 

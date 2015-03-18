@@ -190,8 +190,6 @@ void Statistics::recordNotCachingResponse(const Key& key, StoreDecision storeDec
 static String retrieveDecisionToDiagnosticKey(RetrieveDecision retrieveDecision)
 {
     switch (retrieveDecision) {
-    case RetrieveDecision::NoDueToProtocol:
-        return WebCore::DiagnosticLoggingKeys::notHTTPFamilyKey();
     case RetrieveDecision::NoDueToHTTPMethod:
         return WebCore::DiagnosticLoggingKeys::unsupportedHTTPMethodKey();
     case RetrieveDecision::NoDueToConditionalRequest:

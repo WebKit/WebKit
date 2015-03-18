@@ -66,7 +66,6 @@ struct Entry {
 
 enum class RetrieveDecision {
     Yes,
-    NoDueToProtocol,
     NoDueToHTTPMethod,
     NoDueToConditionalRequest,
     NoDueToReloadIgnoringCache

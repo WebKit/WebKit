@@ -135,7 +135,7 @@ void NetworkResourceLoader::start()
     m_currentRequest = originalRequest();
 
 #if ENABLE(NETWORK_CACHE)
-    if (!NetworkCache::singleton().isEnabled() || sessionID().isEphemeral()) {
+    if (!NetworkCache::singleton().isEnabled() || sessionID().isEphemeral() || !originalRequest().url().protocolIsInHTTPFamily()) {
         startNetworkLoad();
         return;
     }
