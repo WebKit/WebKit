@@ -993,7 +993,11 @@ static void setDefaultsToConsistentValuesForTesting()
     NSDictionary *processInstanceDefaults = @{
         WebDatabaseDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"Databases"],
         WebStorageDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalStorage"],
-        WebKitLocalCacheDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalCache"]
+        WebKitLocalCacheDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalCache"],
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 101000
+        // This needs to also be added to argument domain because of <rdar://problem/20210002>.
+        @"AppleSystemFontOSSubversion": @(10),
+#endif
     };
 
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:processInstanceDefaults forName:NSArgumentDomain];
