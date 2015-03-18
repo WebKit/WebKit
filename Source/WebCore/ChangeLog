@@ -1,3 +1,10 @@
+2015-03-18  Tim Horton  <timothy_horton@apple.com>
+
+        Temporarily fix the !ENABLE(CSS_SELECTOR_JIT) and assertions-enabled build
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::execute):
+
 2015-03-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Call CTFontSetRenderingParameters before rendering text
