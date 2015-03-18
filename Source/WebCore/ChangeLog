@@ -1,3 +1,25 @@
+2015-03-17  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Change FlowContents::segmentForPosition() to segmentForRun().
+        https://bugs.webkit.org/show_bug.cgi?id=142785
+
+        Reviewed by Antti Koivisto.
+
+        This is in transition to support <br>. A particular position could point to multiple
+        segments when <br> is directly followed by text.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayoutFlowContents.cpp:
+        (WebCore::SimpleLineLayout::FlowContents::segmentIndexForRunSlow):
+        (WebCore::SimpleLineLayout::FlowContents::segmentIndexForPositionSlow): Deleted.
+        * rendering/SimpleLineLayoutFlowContents.h:
+        (WebCore::SimpleLineLayout::FlowContents::segmentForRun):
+        (WebCore::SimpleLineLayout::FlowContents::segmentIndexForPosition): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::segmentForPosition): Deleted.
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::Run::text):
+
 2015-03-17  Chris Dumez  <cdumez@apple.com>
 
         [Mac][iOS] setSharedTimerFireInterval() / stopSharedTimer() are expensive
