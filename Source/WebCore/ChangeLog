@@ -1,3 +1,15 @@
+2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unused "preprocessor" parameter to sub-CodeGenerators
+        https://bugs.webkit.org/show_bug.cgi?id=142793
+
+        Reviewed by Darin Adler.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (ProcessDocument):
+        (FileNamePrefix):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+
 2015-03-18  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Split fragments on renderer boundary on the fly.

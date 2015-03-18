@@ -30,7 +30,7 @@ package CodeGeneratorTestRunner;
 
 sub new
 {
-    my ($class, $codeGenerator, $preprocessor, $writeDependencies, $verbose, $idlFilePath) = @_;
+    my ($class, $codeGenerator, $writeDependencies, $verbose, $idlFilePath) = @_;
 
     my $reference = {
         codeGenerator => $codeGenerator,

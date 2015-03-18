@@ -224,7 +224,6 @@ sub new
     my $reference = { };
 
     $codeGenerator = shift;
-    shift; # $preprocessor
     $writeDependencies = shift;
 
     bless($reference, $object);
