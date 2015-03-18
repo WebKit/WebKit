@@ -35,8 +35,7 @@ namespace WTR {
 
 void InjectedBundle::platformInitialize(WKTypeRef)
 {
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-        nil];
+    NSDictionary *dict = [NSDictionary dictionary];
 
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];
 

@@ -1,3 +1,10 @@
+2015-03-17  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the iOS build.
+
+        * WebKitTestRunner/InjectedBundle/ios/InjectedBundleIOS.mm:
+        (WTR::InjectedBundle::platformInitialize):
+
 2015-03-17  Dean Jackson  <dino@apple.com>
 
         check-webkit-style should allow "bool a : 1"
