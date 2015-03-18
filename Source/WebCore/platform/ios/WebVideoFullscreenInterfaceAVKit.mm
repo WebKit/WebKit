@@ -207,7 +207,7 @@ SOFT_LINK_CLASS(UIKit, UIColor)
     self.fullscreenInterface->fullscreenMayReturnToInline();
 }
 
-- (void)playerViewControllerWillCancelOptimizedFullscree:(AVPlayerViewController *)playerViewController
+- (void)playerViewControllerWillCancelOptimizedFullscreen:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
     if (!self.delegate)

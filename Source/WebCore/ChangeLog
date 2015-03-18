@@ -1,3 +1,14 @@
+2015-03-18  Jeremy Jones  <jeremyj@apple.com>
+
+        Fix typo in playerViewControllerWillCancelOptimizedFullscree.
+        https://bugs.webkit.org/show_bug.cgi?id=142745
+
+        Reviewed by Darin Adler.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController playerViewControllerWillCancelOptimizedFullscreen:]):
+        (-[WebAVPlayerController playerViewControllerWillCancelOptimizedFullscree:]): Deleted.
+
 2015-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid repaints when changing transform on an element with multiple background images
