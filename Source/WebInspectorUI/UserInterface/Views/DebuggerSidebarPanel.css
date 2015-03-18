@@ -37,3 +37,7 @@ body.mac-platform.legacy .sidebar > .panel.navigation.debugger > .content {
     left: 0;
     right: 0;
 }
+
+.sidebar > .panel.navigation.debugger .details-section {
+    font-size: 11px;
+}
