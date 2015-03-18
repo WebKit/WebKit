@@ -161,18 +161,24 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const Font* font, CG
             position.x += advances[i].width;
             position.y += advances[i].height;
         }
-        if (!platformData.isColorBitmapFont())
+        if (!platformData.isColorBitmapFont()) {
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 101000
+            CTFontSetRenderingParameters(platformData.ctFont(), context);
+#endif
             CGContextShowGlyphsAtPositions(context, glyphs, positions.data(), count);
-        else
+        } else
             CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
         CGContextSetTextMatrix(context, savedMatrix);
     } else {
-        if (!platformData.isColorBitmapFont())
+        if (!platformData.isColorBitmapFont()) {
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 101000
+            CTFontSetRenderingParameters(platformData.ctFont(), context);
+#endif
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
             CGContextShowGlyphsWithAdvances(context, glyphs, advances, count);
 #pragma clang diagnostic pop
-        else
+        } else
             CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
     }
 }

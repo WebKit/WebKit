@@ -1,3 +1,16 @@
+2015-03-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Call CTFontSetRenderingParameters before rendering text
+        https://bugs.webkit.org/show_bug.cgi?id=142816
+
+        Reviewed by Darin Adler.
+
+        No new tests.
+
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::showGlyphsWithAdvances):
+        * platform/spi/cocoa/CoreTextSPI.h:
+
 2015-03-18  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Log the number of network cache requests that we have never seen before
