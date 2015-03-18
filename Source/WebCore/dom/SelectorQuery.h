@@ -86,7 +86,7 @@ private:
     template <typename SelectorQueryTrait> void executeFastPathForIdSelector(const ContainerNode& rootNode, const SelectorData&, const CSSSelector* idSelector, typename SelectorQueryTrait::OutputType&) const;
     template <typename SelectorQueryTrait> void executeSingleTagNameSelectorData(const ContainerNode& rootNode, const SelectorData&, typename SelectorQueryTrait::OutputType&) const;
     template <typename SelectorQueryTrait> void executeSingleClassNameSelectorData(const ContainerNode& rootNode, const SelectorData&, typename SelectorQueryTrait::OutputType&) const;
-    template <typename SelectorQueryTrait> void executeSingleSelectorData(const ContainerNode& rootNode, const SelectorData&, typename SelectorQueryTrait::OutputType&) const;
+    template <typename SelectorQueryTrait> void executeSingleSelectorData(const ContainerNode& rootNode, const ContainerNode& searchRootNode, const SelectorData&, typename SelectorQueryTrait::OutputType&) const;
     template <typename SelectorQueryTrait> void executeSingleMultiSelectorData(const ContainerNode& rootNode, typename SelectorQueryTrait::OutputType&) const;
 #if ENABLE(CSS_SELECTOR_JIT)
     template <typename SelectorQueryTrait> void executeCompiledSimpleSelectorChecker(const ContainerNode& searchRootNode, SelectorCompiler::QuerySelectorSimpleSelectorChecker, typename SelectorQueryTrait::OutputType&, const SelectorData&) const;
@@ -104,6 +104,7 @@ private:
         CompiledSingleWithRootFilter,
         CompiledMultipleSelectorMatch,
         SingleSelector,
+        SingleSelectorWithRootFilter,
         RightMostWithIdMatch,
         TagNameMatch,
         ClassNameMatch,

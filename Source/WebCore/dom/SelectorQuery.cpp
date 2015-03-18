@@ -240,7 +240,6 @@ ALWAYS_INLINE void SelectorDataList::executeFastPathForIdSelector(const Containe
         SelectorQueryTrait::appendOutputForElement(output, element);
 }
 
-#if ENABLE(CSS_SELECTOR_JIT)
 static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector& firstSelector)
 {
     if (!rootNode.inDocument())
@@ -280,7 +279,6 @@ static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector&
     }
     return rootNode;
 }
-#endif
 
 static ALWAYS_INLINE bool localNameMatches(const Element& element, const AtomicString& localName, const AtomicString& lowercaseLocalName)
 {
@@ -371,11 +369,11 @@ ALWAYS_INLINE void SelectorDataList::executeSingleClassNameSelectorData(const Co
 }
 
 template <typename SelectorQueryTrait>
-ALWAYS_INLINE void SelectorDataList::executeSingleSelectorData(const ContainerNode& rootNode, const SelectorData& selectorData, typename SelectorQueryTrait::OutputType& output) const
+ALWAYS_INLINE void SelectorDataList::executeSingleSelectorData(const ContainerNode& rootNode, const ContainerNode& searchRootNode, const SelectorData& selectorData, typename SelectorQueryTrait::OutputType& output) const
 {
     ASSERT(m_selectors.size() == 1);
 
-    for (auto& element : elementDescendants(const_cast<ContainerNode&>(rootNode))) {
+    for (auto& element : elementDescendants(const_cast<ContainerNode&>(searchRootNode))) {
         if (selectorMatches(selectorData, element, rootNode)) {
             SelectorQueryTrait::appendOutputForElement(output, &element);
             if (SelectorQueryTrait::shouldOnlyMatchFirstElement)
@@ -502,12 +500,11 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
 #if ENABLE(CSS_SELECTOR_JIT)
         if (compileSelector(selectorData, *searchRootNode))
             goto CompiledSingleCase;
+#endif // ENABLE(CSS_SELECTOR_JIT)
         goto SingleSelectorCase;
         ASSERT_NOT_REACHED();
-#else
-        FALLTHROUGH;
-#endif // ENABLE(CSS_SELECTOR_JIT)
         }
+
     case CompilableSingleWithRootFilter:
     case CompilableSingle:
         {
@@ -519,27 +516,28 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
             if (m_matchType == CompilableSingle) {
                 m_matchType = CompiledSingle;
                 goto CompiledSingleCase;
-            } else {
-                ASSERT(m_matchType == CompilableSingleWithRootFilter);
-                m_matchType = CompiledSingleWithRootFilter;
-                goto CompiledSingleWithRootFilterCase;
             }
+            ASSERT(m_matchType == CompilableSingleWithRootFilter);
+            m_matchType = CompiledSingleWithRootFilter;
+            goto CompiledSingleWithRootFilterCase;
         }
-        m_matchType = SingleSelector;
-        goto SingleSelectorCase;
-        ASSERT_NOT_REACHED();
-#else
-        FALLTHROUGH;
 #endif // ENABLE(CSS_SELECTOR_JIT)
+        if (m_matchType == CompilableSingle) {
+            m_matchType = SingleSelector;
+            goto SingleSelectorCase;
         }
-    case CompiledSingleWithRootFilter:
+        ASSERT(m_matchType == CompilableSingleWithRootFilter);
+        m_matchType = SingleSelectorWithRootFilter;
+        goto SingleSelectorWithRootFilterCase;
+        ASSERT_NOT_REACHED();
+        }
+
 #if ENABLE(CSS_SELECTOR_JIT)
+    case CompiledSingleWithRootFilter:
         CompiledSingleWithRootFilterCase:
         searchRootNode = &filterRootById(*searchRootNode, *m_selectors.first().selector);
-#endif // ENABLE(CSS_SELECTOR_JIT)
         FALLTHROUGH;
     case CompiledSingle:
-#if ENABLE(CSS_SELECTOR_JIT)
         {
         CompiledSingleCase:
         const SelectorData& selectorData = m_selectors.first();
@@ -555,14 +553,21 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
         break;
         }
 #else
+    case CompiledSingleWithRootFilter:
+    case CompiledSingle:
+        ASSERT_NOT_REACHED();
         FALLTHROUGH;
 #endif // ENABLE(CSS_SELECTOR_JIT)
+
+    case SingleSelectorWithRootFilter:
+        SingleSelectorWithRootFilterCase:
+        searchRootNode = &filterRootById(*searchRootNode, *m_selectors.first().selector);
+        FALLTHROUGH;
     case SingleSelector:
-#if ENABLE(CSS_SELECTOR_JIT)
         SingleSelectorCase:
-#endif
-        executeSingleSelectorData<SelectorQueryTrait>(*searchRootNode, m_selectors.first(), output);
+        executeSingleSelectorData<SelectorQueryTrait>(rootNode, *searchRootNode, m_selectors.first(), output);
         break;
+
     case TagNameMatch:
         executeSingleTagNameSelectorData<SelectorQueryTrait>(*searchRootNode, m_selectors.first(), output);
         break;
