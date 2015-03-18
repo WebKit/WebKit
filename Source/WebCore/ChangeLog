@@ -1,3 +1,61 @@
+2015-03-18  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Split fragments on renderer boundary on the fly.
+        https://bugs.webkit.org/show_bug.cgi?id=142579
+
+        Reviewed by Antti Koivisto.
+
+        Fragment splitting at renderers' boundary at the end of the line is no longer needed.
+        This patch ensures that TextFragmentIterator::nextTextFragment() does not concatenate
+        fragments across renderer boundary.
+
+        Test: fast/text/simple-line-with-multiple-renderers.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::revertRuns):
+        (WebCore::SimpleLineLayout::LineState::isEmpty):
+        (WebCore::SimpleLineLayout::LineState::appendFragmentAndCreateRunIfNeeded): Check if fragments need a new run and
+        whether neighboring fragments need collapsing.
+        (WebCore::SimpleLineLayout::LineState::revertUncommitted): Revert fragments over multiple renderers if they form
+        a fragment continuation.
+        (WebCore::SimpleLineLayout::LineState::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::forceFragmentToLine): Ensure that if a fragment has continuation across multiple renderers,
+        they all get added to the current line.
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::LineState::appendFragment): Deleted.
+        (WebCore::SimpleLineLayout::FragmentForwardIterator::FragmentForwardIterator): Deleted.
+        (WebCore::SimpleLineLayout::FragmentForwardIterator::operator++): Deleted.
+        (WebCore::SimpleLineLayout::FragmentForwardIterator::operator!=): Deleted.
+        (WebCore::SimpleLineLayout::FragmentForwardIterator::operator*): Deleted.
+        (WebCore::SimpleLineLayout::begin): Deleted.
+        (WebCore::SimpleLineLayout::end): Deleted.
+        (WebCore::SimpleLineLayout::preWrap): Deleted.
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace): Deleted.
+        (WebCore::SimpleLineLayout::updateLineConstrains): Deleted.
+        (WebCore::SimpleLineLayout::splitRunsAtRendererBoundary): Deleted.
+        (WebCore::SimpleLineLayout::createTextRuns): Deleted.
+        (WebCore::SimpleLineLayout::create): Deleted.
+        (WebCore::SimpleLineLayout::Layout::create): Deleted.
+        * rendering/SimpleLineLayoutFlowContents.h:
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::operator+):
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::operator*):
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::operator->):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow): Unrelated fix on non-collapsed tab position.
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragmentIterator):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::nextTextFragment):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::revertToFragment):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::textWidth):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::skipToNextPosition):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::TextFragment):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::overlapsToNextRenderer):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::isCollapsible):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::operator==):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::isLineBreak):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::split): Deleted.
+
 2015-03-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Flex and grid items should be painted as inline-blocks

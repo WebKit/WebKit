@@ -55,9 +55,11 @@ public:
         }
 
         Iterator& operator++();
+        Iterator& operator--();
         bool operator==(const Iterator& other) const;
         bool operator!=(const Iterator& other) const;
-        const Segment& operator*() const { return m_flowContents.m_segments[m_segmentIndex]; }
+        const Segment& operator*() const;
+        const Segment* operator->() const;
 
     private:
         const FlowContents& m_flowContents;
@@ -67,21 +69,23 @@ public:
     Iterator begin() const { return Iterator(*this, 0); }
     Iterator end() const { return Iterator(*this, m_segments.size()); }
 
-    unsigned length() const { return m_segments.last().end; };
-
     unsigned segmentIndexForPosition(unsigned position) const;
 
 private:
     unsigned segmentIndexForPositionSlow(unsigned position) const;
-
     const Vector<Segment, 8> m_segments;
-
     mutable unsigned m_lastSegmentIndex;
 };
 
 inline FlowContents::Iterator& FlowContents::Iterator::operator++()
 {
     ++m_segmentIndex;
+    return *this;
+}
+
+inline FlowContents::Iterator& FlowContents::Iterator::operator--()
+{
+    --m_segmentIndex;
     return *this;
 }
 
@@ -93,6 +97,18 @@ inline bool FlowContents::Iterator::operator==(const FlowContents::Iterator& oth
 inline bool FlowContents::Iterator::operator!=(const FlowContents::Iterator& other) const
 {
     return !(*this == other);
+}
+
+inline const FlowContents::Segment& FlowContents::Iterator::operator*() const
+{
+    ASSERT(m_segmentIndex < m_flowContents.m_segments.size());
+    return m_flowContents.m_segments[m_segmentIndex];
+}
+
+inline const FlowContents::Segment* FlowContents::Iterator::operator->() const
+{
+    ASSERT(m_segmentIndex < m_flowContents.m_segments.size());
+    return &(m_flowContents.m_segments[m_segmentIndex]);
 }
 
 inline unsigned FlowContents::segmentIndexForPosition(unsigned position) const

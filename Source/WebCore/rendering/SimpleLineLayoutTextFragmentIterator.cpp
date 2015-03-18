@@ -48,7 +48,8 @@ TextFragmentIterator::Style::Style(const RenderStyle& style)
 
 TextFragmentIterator::TextFragmentIterator(const RenderBlockFlow& flow)
     : m_flowContents(flow)
-    , m_lineBreakIterator((*m_flowContents.begin()).text, flow.style().locale())
+    , m_currentSegment(m_flowContents.begin())
+    , m_lineBreakIterator(m_currentSegment->text, flow.style().locale())
     , m_style(flow.style())
 {
 }
@@ -60,115 +61,136 @@ TextFragmentIterator::TextFragment TextFragmentIterator::nextTextFragment(float 
     // 2. whitespace (collasped, non-collapsed multi or single) or
     // 3. non-whitespace characters.
     // 4. empty, indicating content end.
-    if (isEnd(m_position))
+    ASSERT(m_currentSegment != m_flowContents.end());
+    if (m_position == m_currentSegment->end)
+        ++m_currentSegment;
+    // Is it content end?
+    if (m_currentSegment == m_flowContents.end())
         return TextFragment(m_position, m_position, 0, TextFragment::ContentEnd);
-    if (isLineBreak(m_position)) {
-        TextFragment fragment(m_position, m_position + 1, 0, TextFragment::LineBreak);
-        ++m_position;
-        return fragment;
-    }
+    unsigned segmentEndPosition = m_currentSegment->end;
     unsigned startPosition = m_position;
-    unsigned endPosition = skipToNextPosition(PositionType::NonWhitespace, startPosition);
+    if (isLineBreak(m_position)) {
+        unsigned endPosition = ++m_position;
+        return TextFragment(startPosition, endPosition, 0, TextFragment::LineBreak);
+    }
+    float width = 0;
+    bool overlappingFragment = false;
+    unsigned endPosition = skipToNextPosition(PositionType::NonWhitespace, startPosition, width, xPosition, overlappingFragment);
     ASSERT(startPosition <= endPosition);
-    if (endPosition > startPosition) {
+    if (startPosition < endPosition) {
         bool multipleWhitespace = startPosition + 1 < endPosition;
         bool isCollapsed = multipleWhitespace && m_style.collapseWhitespace;
         bool isBreakable = !isCollapsed && multipleWhitespace;
-        float width = isCollapsed ? m_style.spaceWidth : textWidth(startPosition, endPosition, xPosition);
         m_position = endPosition;
-        return TextFragment(startPosition, endPosition, width, TextFragment::Whitespace, isCollapsed, isBreakable);
+        return TextFragment(startPosition, endPosition, width, TextFragment::Whitespace, endPosition == segmentEndPosition, false, isCollapsed, m_style.collapseWhitespace, isBreakable);
     }
-    endPosition = skipToNextPosition(PositionType::Breakable, startPosition + 1);
+    endPosition = skipToNextPosition(PositionType::Breakable, startPosition, width, xPosition, overlappingFragment);
     m_position = endPosition;
-    return TextFragment(startPosition, endPosition, textWidth(startPosition, endPosition, xPosition), TextFragment::NonWhitespace, false, m_style.breakWordOnOverflow);
+    return TextFragment(startPosition, endPosition, width, TextFragment::NonWhitespace, endPosition == segmentEndPosition, overlappingFragment, false, false, m_style.breakWordOnOverflow);
 }
 
-float TextFragmentIterator::textWidth(unsigned from, unsigned to, float xPosition) const
+void TextFragmentIterator::revertToFragment(const TextFragment& fragment)
 {
-    const auto& fromSegment = m_flowContents.segmentForPosition(from);
-    ASSERT(is<RenderText>(fromSegment.renderer));
-    if ((m_style.font.isFixedPitch() && fromSegment.end >= to) || (from == fromSegment.start && to == fromSegment.end))
-        return downcast<RenderText>(fromSegment.renderer).width(from - fromSegment.start, to - from, m_style.font, xPosition, nullptr, nullptr);
-
-    const auto* segment = &fromSegment;
-    float textWidth = 0;
-    unsigned fragmentEnd = 0;
-    while (true) {
-        fragmentEnd = std::min(to, segment->end);
-        textWidth += segment->text.is8Bit() ? runWidth<LChar>(segment->text, from - segment->start, fragmentEnd - segment->start, xPosition + textWidth) :
-            runWidth<UChar>(segment->text, from - segment->start, fragmentEnd - segment->start, xPosition + textWidth);
-        if (fragmentEnd == to)
-            break;
-        from = fragmentEnd;
-        segment = &m_flowContents.segmentForPosition(fragmentEnd);
-    };
-
-    return textWidth;
+    ASSERT(m_position >= fragment.end());
+    ASSERT(fragment.start() >= 0);
+    // Revert segment first.
+    while (m_currentSegment->start > fragment.start())
+        --m_currentSegment;
+    // TODO: It reverts to the last fragment on the same position, but that's ok for now as we don't need to
+    // differentiate multiple renderers on the same position.
+    m_position = fragment.start();
 }
 
 template <typename CharacterType>
-static unsigned nextBreakablePosition(LazyLineBreakIterator& lineBreakIterator, const FlowContents::Segment& segment, unsigned startPosition)
+unsigned TextFragmentIterator::nextBreakablePosition(const FlowContents::Segment& segment, unsigned startPosition)
 {
-    return nextBreakablePositionNonLoosely<CharacterType, NBSPBehavior::IgnoreNBSP>(lineBreakIterator, segment.text.characters<CharacterType>(), segment.end - segment.start, startPosition);
+    ASSERT(startPosition < segment.end);
+    if (segment.text.impl() != m_lineBreakIterator.string().impl()) {
+        const String& currentText = m_lineBreakIterator.string();
+        unsigned textLength = currentText.length();
+        UChar lastCharacter = textLength > 0 ? currentText[textLength - 1] : 0;
+        UChar secondToLastCharacter = textLength > 1 ? currentText[textLength - 2] : 0;
+        m_lineBreakIterator.setPriorContext(lastCharacter, secondToLastCharacter);
+        m_lineBreakIterator.resetStringAndReleaseIterator(segment.text, m_style.locale, LineBreakIteratorModeUAX14);
+    }
+    const auto* characters = segment.text.characters<CharacterType>();
+    unsigned segmentLength = segment.end - segment.start;
+    unsigned segmentPosition = startPosition - segment.start;
+    return segment.start + nextBreakablePositionNonLoosely<CharacterType, NBSPBehavior::IgnoreNBSP>(m_lineBreakIterator, characters, segmentLength, segmentPosition);
 }
 
 template <typename CharacterType>
-static unsigned nextNonWhitespacePosition(const FlowContents::Segment& segment, unsigned startPosition, const TextFragmentIterator::Style& style)
+unsigned TextFragmentIterator::nextNonWhitespacePosition(const FlowContents::Segment& segment, unsigned startPosition)
 {
+    ASSERT(startPosition < segment.end);
     const auto* text = segment.text.characters<CharacterType>();
     unsigned position = startPosition;
-    unsigned length = segment.end - segment.start;
-    for (; position < length; ++position) {
-        auto character = text[position];
-        bool isWhitespace = character == ' ' || character == '\t' || (!style.preserveNewline && character == '\n');
+    for (; position < segment.end; ++position) {
+        auto character = text[position - segment.start];
+        bool isWhitespace = character == ' ' || character == '\t' || (!m_style.preserveNewline && character == '\n');
         if (!isWhitespace)
             return position;
     }
     return position;
 }
 
-unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, unsigned startPosition) const
+float TextFragmentIterator::textWidth(unsigned from, unsigned to, float xPosition) const
 {
-    if (isEnd(startPosition))
-        return startPosition;
+    auto& segment = *m_currentSegment;
+    ASSERT(segment.start <= from && from <= segment.end && segment.start <= to && to <= segment.end);
+    ASSERT(is<RenderText>(segment.renderer));
+    if (m_style.font.isFixedPitch() || (from == segment.start && to == segment.end))
+        return downcast<RenderText>(segment.renderer).width(from - segment.start, to - from, m_style.font, xPosition, nullptr, nullptr);
+    return segment.text.is8Bit() ? runWidth<LChar>(segment, from, to, xPosition) : runWidth<UChar>(segment, from, to, xPosition);
+}
 
+unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, unsigned startPosition, float& width, float xPosition, bool& overlappingFragment)
+{
+    overlappingFragment = false;
     unsigned currentPosition = startPosition;
-    FlowContents::Iterator it(m_flowContents, m_flowContents.segmentIndexForPosition(currentPosition));
-    for (auto end = m_flowContents.end(); it != end; ++it) {
-        auto& segment = *it;
-        unsigned currentPositonRelativeToSegment = currentPosition - segment.start;
-        unsigned nextPositionRelativeToSegment = 0;
-        if (positionType == NonWhitespace) {
-            nextPositionRelativeToSegment = segment.text.is8Bit() ? nextNonWhitespacePosition<LChar>(segment, currentPositonRelativeToSegment, m_style) :
-                nextNonWhitespacePosition<UChar>(segment, currentPositonRelativeToSegment, m_style);
-        } else if (positionType == Breakable) {
-            if (segment.text.impl() != m_lineBreakIterator.string().impl()) {
-                UChar lastCharacter = segment.start > 0 ? characterAt(segment.start - 1) : 0;
-                UChar secondToLastCharacter = segment.start > 1 ? characterAt(segment.start - 2) : 0;
-                m_lineBreakIterator.setPriorContext(lastCharacter, secondToLastCharacter);
-                m_lineBreakIterator.resetStringAndReleaseIterator(segment.text, m_style.locale, LineBreakIteratorModeUAX14);
-            }
-            nextPositionRelativeToSegment = segment.text.is8Bit() ? nextBreakablePosition<LChar>(m_lineBreakIterator, segment, currentPositonRelativeToSegment) :
-                nextBreakablePosition<UChar>(m_lineBreakIterator, segment, currentPositonRelativeToSegment);
-        } else
-            ASSERT_NOT_REACHED();
-        currentPosition = segment.start + nextPositionRelativeToSegment;
-        if (currentPosition < segment.end)
-            break;
+    unsigned nextPosition = currentPosition;
+    // Collapsed whitespace has constant width. Do not measure it.
+    if (positionType == NonWhitespace)
+        nextPosition = m_currentSegment->text.is8Bit() ? nextNonWhitespacePosition<LChar>(*m_currentSegment, currentPosition) : nextNonWhitespacePosition<UChar>(*m_currentSegment, currentPosition);
+    else if (positionType == Breakable) {
+        // nextBreakablePosition returns the same position for certain characters such as hyphens. Call next again with modified position unless it's the end of the segment.
+        nextPosition = m_currentSegment->text.is8Bit() ? nextBreakablePosition<LChar>(*m_currentSegment, currentPosition) : nextBreakablePosition<UChar>(*m_currentSegment, currentPosition);
+        // We need to know whether the word actually finishes at the end of this renderer or not.
+        if (nextPosition == m_currentSegment->end) {
+            auto nextSegment = m_currentSegment;
+            ++nextSegment;
+            if (nextSegment != m_flowContents.end())
+                overlappingFragment = nextPosition < (nextSegment->text.is8Bit() ? nextBreakablePosition<LChar>(*nextSegment, nextPosition) : nextBreakablePosition<UChar>(*nextSegment, nextPosition));
+        } else if (nextPosition == currentPosition) {
+            if (++nextPosition < m_currentSegment->end)
+                nextPosition = m_currentSegment->text.is8Bit() ? nextBreakablePosition<LChar>(*m_currentSegment, currentPosition + 1) : nextBreakablePosition<UChar>(*m_currentSegment, currentPosition + 1);
+        }
     }
-    return currentPosition;
+    width = 0;
+    if (nextPosition == currentPosition)
+        return currentPosition;
+    bool measureText = positionType != NonWhitespace || !m_style.collapseWhitespace;
+    if (measureText) {
+        float textWidth = this->textWidth(currentPosition, nextPosition, xPosition);
+        xPosition += textWidth;
+        width += textWidth;
+    } else if (startPosition < nextPosition)
+        width = m_style.spaceWidth;
+    return nextPosition;
 }
 
 template <typename CharacterType>
-float TextFragmentIterator::runWidth(const String& text, unsigned from, unsigned to, float xPosition) const
+float TextFragmentIterator::runWidth(const FlowContents::Segment& segment, unsigned startPosition, unsigned endPosition, float xPosition) const
 {
-    ASSERT(from <= to);
-    if (from == to)
+    ASSERT(startPosition <= endPosition);
+    if (startPosition == endPosition)
         return 0;
-    bool measureWithEndSpace = m_style.collapseWhitespace && to < text.length() && text[to] == ' ';
+    unsigned segmentFrom = startPosition - segment.start;
+    unsigned segmentTo = endPosition - segment.start;
+    bool measureWithEndSpace = m_style.collapseWhitespace && segmentTo < segment.text.length() && segment.text[segmentTo] == ' ';
     if (measureWithEndSpace)
-        ++to;
-    TextRun run(text.characters<CharacterType>() + from, to - from);
+        ++segmentTo;
+    TextRun run(segment.text.characters<CharacterType>() + segmentFrom, segmentTo - segmentFrom);
     run.setXPos(xPosition);
     run.setTabSize(!!m_style.tabWidth, m_style.tabWidth);
     float width = m_style.font.width(run);
