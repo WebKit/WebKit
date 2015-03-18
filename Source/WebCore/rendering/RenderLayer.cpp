@@ -4319,7 +4319,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
             paintFlowThreadIfRegionForFragments(layerFragments, context, localPaintingInfo, localPaintFlags);
     }
 
-    if (isPaintingOverlayScrollbars)
+    if (isPaintingOverlayScrollbars && hasScrollbars())
         paintOverflowControlsForFragments(layerFragments, context, localPaintingInfo);
 
     if (filterPainter) {
@@ -4615,8 +4615,7 @@ void RenderLayer::paintBackgroundForFragments(const LayerFragments& layerFragmen
     const LayoutRect& transparencyPaintDirtyRect, bool haveTransparency, const LayerPaintingInfo& localPaintingInfo, PaintBehavior paintBehavior,
     RenderObject* subtreePaintRootForRenderer)
 {
-    for (size_t i = 0; i < layerFragments.size(); ++i) {
-        const LayerFragment& fragment = layerFragments.at(i);
+    for (const auto& fragment : layerFragments) {
         if (!fragment.shouldPaintContent)
             continue;
 
@@ -4646,8 +4645,7 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
 {
     // Begin transparency if we have something to paint.
     if (haveTransparency) {
-        for (size_t i = 0; i < layerFragments.size(); ++i) {
-            const LayerFragment& fragment = layerFragments.at(i);
+        for (const auto& fragment : layerFragments) {
             if (fragment.shouldPaintContent && !fragment.foregroundRect.isEmpty()) {
                 beginTransparencyLayers(transparencyLayerContext, localPaintingInfo, transparencyPaintDirtyRect);
                 break;
@@ -4703,8 +4701,7 @@ void RenderLayer::paintForegroundForFragmentsWithPhase(PaintPhase phase, const L
 {
     bool shouldClip = localPaintingInfo.clipToDirtyRect && layerFragments.size() > 1;
 
-    for (size_t i = 0; i < layerFragments.size(); ++i) {
-        const LayerFragment& fragment = layerFragments.at(i);
+    for (const auto& fragment : layerFragments) {
         if (!fragment.shouldPaintContent || fragment.foregroundRect.isEmpty())
             continue;
         
@@ -4724,8 +4721,7 @@ void RenderLayer::paintForegroundForFragmentsWithPhase(PaintPhase phase, const L
 void RenderLayer::paintOutlineForFragments(const LayerFragments& layerFragments, GraphicsContext* context, const LayerPaintingInfo& localPaintingInfo,
     PaintBehavior paintBehavior, RenderObject* subtreePaintRootForRenderer)
 {
-    for (size_t i = 0; i < layerFragments.size(); ++i) {
-        const LayerFragment& fragment = layerFragments.at(i);
+    for (const auto& fragment : layerFragments) {
         if (fragment.outlineRect.isEmpty())
             continue;
     
@@ -4740,8 +4736,7 @@ void RenderLayer::paintOutlineForFragments(const LayerFragments& layerFragments,
 void RenderLayer::paintMaskForFragments(const LayerFragments& layerFragments, GraphicsContext* context, const LayerPaintingInfo& localPaintingInfo,
     RenderObject* subtreePaintRootForRenderer)
 {
-    for (size_t i = 0; i < layerFragments.size(); ++i) {
-        const LayerFragment& fragment = layerFragments.at(i);
+    for (const auto& fragment : layerFragments) {
         if (!fragment.shouldPaintContent)
             continue;
 
@@ -4761,8 +4756,7 @@ void RenderLayer::paintMaskForFragments(const LayerFragments& layerFragments, Gr
 void RenderLayer::paintChildClippingMaskForFragments(const LayerFragments& layerFragments, GraphicsContext* context, const LayerPaintingInfo& localPaintingInfo,
     RenderObject* subtreePaintRootForRenderer)
 {
-    for (size_t i = 0; i < layerFragments.size(); ++i) {
-        const LayerFragment& fragment = layerFragments.at(i);
+    for (const auto& fragment : layerFragments) {
         if (!fragment.shouldPaintContent)
             continue;
 
@@ -4780,8 +4774,9 @@ void RenderLayer::paintChildClippingMaskForFragments(const LayerFragments& layer
 
 void RenderLayer::paintOverflowControlsForFragments(const LayerFragments& layerFragments, GraphicsContext* context, const LayerPaintingInfo& localPaintingInfo)
 {
-    for (size_t i = 0; i < layerFragments.size(); ++i) {
-        const LayerFragment& fragment = layerFragments.at(i);
+    for (const auto& fragment : layerFragments) {
+        if (fragment.backgroundRect.isEmpty())
+            continue;
         clipToRect(localPaintingInfo, context, fragment.backgroundRect);
         paintOverflowControls(context, roundedIntPoint(toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subpixelAccumulation)),
             snappedIntRect(fragment.backgroundRect.rect()), true);

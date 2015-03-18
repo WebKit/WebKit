@@ -1,3 +1,22 @@
+2015-03-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Skip trying to paint overlay scrollbars when there are none or they are clipped out
+        https://bugs.webkit.org/show_bug.cgi?id=142811
+        rdar://problem/20200725
+
+        Reviewed by Darin Adler.
+
+        In some content with lots of layers and overflow:scroll, we could spend 20% of
+        the time under paintOverflowControlsForFragments() setting up an (empty) clip,
+        and then trying to draw scrollbars that we don't have.
+        
+        Avoid calling paintOverflowControlsForFragments() if there are no scrollbars,
+        and don't both setting up an empty clip just to paint nothing.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintOverflowControlsForFragments):
+
 2015-03-18  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Unreviewed build fix after r181665.
