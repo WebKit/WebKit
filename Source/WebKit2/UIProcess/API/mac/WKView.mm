@@ -1177,7 +1177,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
             }]; \
             return; \
         } \
-        if ([NSMenu menuTypeForEvent:theEvent] == NSMenuTypeActionMenu) { \
+        if ([NSMenu respondsToSelector:@selector(menuTypeForEvent:)] && [NSMenu menuTypeForEvent:theEvent] == NSMenuTypeActionMenu) { \
             [super Selector:theEvent]; \
             return; \
         } \

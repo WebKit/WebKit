@@ -5388,7 +5388,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 #if !PLATFORM(IOS)
 - (void)otherMouseDown:(NSEvent *)event
 {
-    if ([event buttonNumber] != 2 || [NSMenu menuTypeForEvent:event] == NSMenuTypeActionMenu) {
+    if ([event buttonNumber] != 2 || ([NSMenu respondsToSelector:@selector(menuTypeForEvent:)] && [NSMenu menuTypeForEvent:event] == NSMenuTypeActionMenu)) {
         [super otherMouseDown:event];
         return;
     }
