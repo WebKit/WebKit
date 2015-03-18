@@ -118,6 +118,11 @@ String DiagnosticLoggingKeys::networkKey()
     return ASCIILiteral("network");
 }
 
+String DiagnosticLoggingKeys::neverSeenBeforeKey()
+{
+    return ASCIILiteral("neverSeenBefore");
+}
+
 String DiagnosticLoggingKeys::noCacheKey()
 {
     return ASCIILiteral("noCache");
@@ -311,6 +316,11 @@ String DiagnosticLoggingKeys::diskCacheAfterValidationKey()
 String DiagnosticLoggingKeys::reloadKey()
 {
     return ASCIILiteral("reload");
+}
+
+String DiagnosticLoggingKeys::requestKey()
+{
+    return ASCIILiteral("request");
 }
 
 String DiagnosticLoggingKeys::retrievalRequestKey()

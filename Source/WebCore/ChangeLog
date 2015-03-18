@@ -1,3 +1,18 @@
+2015-03-18  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Log the number of network cache requests that we have never seen before
+        https://bugs.webkit.org/show_bug.cgi?id=142828
+        <rdar://problem/19632130>
+
+        Reviewed by Antti Koivisto.
+
+        Add diagnostic logging key for network cache efficacy logging.
+
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::neverSeenBeforeKey):
+        (WebCore::DiagnosticLoggingKeys::requestKey):
+        * page/DiagnosticLoggingKeys.h:
+
 2015-03-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use filterRootId in SelectorQuery even if CSS JIT is not enabled
