@@ -1,5 +1,29 @@
 2015-03-17  Zalan Bujtas  <zalan@apple.com>
 
+        Simple line layout: Use Vector<>::const_iterator instead of custom FlowContents::Iterator.
+        https://bugs.webkit.org/show_bug.cgi?id=142809
+
+        Reviewed by Antti Koivisto.
+
+        FlowContents::Iterator simply iterates on a vector<>. No need to custom implement it.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayoutFlowContents.h:
+        (WebCore::SimpleLineLayout::FlowContents::begin):
+        (WebCore::SimpleLineLayout::FlowContents::end):
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::Iterator): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::operator++): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::operator--): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::operator==): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::operator!=): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::operator*): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::operator->): Deleted.
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::skipToNextPosition):
+
+2015-03-17  Zalan Bujtas  <zalan@apple.com>
+
         Simple line layout: Change FlowContents::segmentForPosition() to segmentForRun().
         https://bugs.webkit.org/show_bug.cgi?id=142785
 

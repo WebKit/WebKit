@@ -157,8 +157,7 @@ unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, uns
         nextPosition = m_currentSegment->text.is8Bit() ? nextBreakablePosition<LChar>(*m_currentSegment, currentPosition) : nextBreakablePosition<UChar>(*m_currentSegment, currentPosition);
         // We need to know whether the word actually finishes at the end of this renderer or not.
         if (nextPosition == m_currentSegment->end) {
-            auto nextSegment = m_currentSegment;
-            ++nextSegment;
+            const auto nextSegment = m_currentSegment + 1;
             if (nextSegment != m_flowContents.end())
                 overlappingFragment = nextPosition < (nextSegment->text.is8Bit() ? nextBreakablePosition<LChar>(*nextSegment, nextPosition) : nextBreakablePosition<UChar>(*nextSegment, nextPosition));
         } else if (nextPosition == currentPosition) {

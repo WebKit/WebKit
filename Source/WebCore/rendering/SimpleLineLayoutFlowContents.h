@@ -46,68 +46,15 @@ public:
     const Segment& segmentForRun(unsigned start, unsigned end) const;
     const Segment& segmentForRenderer(const RenderObject&) const;
 
-    class Iterator {
-    public:
-        Iterator(const FlowContents& flowContents, unsigned segmentIndex)
-            : m_flowContents(flowContents)
-            , m_segmentIndex(segmentIndex)
-        {
-        }
-
-        Iterator& operator++();
-        Iterator& operator--();
-        bool operator==(const Iterator& other) const;
-        bool operator!=(const Iterator& other) const;
-        const Segment& operator*() const;
-        const Segment* operator->() const;
-
-    private:
-        const FlowContents& m_flowContents;
-        unsigned m_segmentIndex;
-    };
-
-    Iterator begin() const { return Iterator(*this, 0); }
-    Iterator end() const { return Iterator(*this, m_segments.size()); }
+    typedef Vector<Segment, 8>::const_iterator Iterator;
+    Iterator begin() const { return m_segments.begin(); }
+    Iterator end() const { return m_segments.end(); }
 
 private:
     unsigned segmentIndexForRunSlow(unsigned start, unsigned end) const;
     const Vector<Segment, 8> m_segments;
     mutable unsigned m_lastSegmentIndex;
 };
-
-inline FlowContents::Iterator& FlowContents::Iterator::operator++()
-{
-    ++m_segmentIndex;
-    return *this;
-}
-
-inline FlowContents::Iterator& FlowContents::Iterator::operator--()
-{
-    --m_segmentIndex;
-    return *this;
-}
-
-inline bool FlowContents::Iterator::operator==(const FlowContents::Iterator& other) const
-{
-    return m_segmentIndex == other.m_segmentIndex;
-}
-
-inline bool FlowContents::Iterator::operator!=(const FlowContents::Iterator& other) const
-{
-    return !(*this == other);
-}
-
-inline const FlowContents::Segment& FlowContents::Iterator::operator*() const
-{
-    ASSERT(m_segmentIndex < m_flowContents.m_segments.size());
-    return m_flowContents.m_segments[m_segmentIndex];
-}
-
-inline const FlowContents::Segment* FlowContents::Iterator::operator->() const
-{
-    ASSERT(m_segmentIndex < m_flowContents.m_segments.size());
-    return &(m_flowContents.m_segments[m_segmentIndex]);
-}
 
 inline const FlowContents::Segment& FlowContents::segmentForRun(unsigned start, unsigned end) const
 {
