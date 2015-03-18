@@ -42,6 +42,11 @@ RefPtr<WebsiteDataStore> WebsiteDataStore::createNonPersistentDataStore()
     return adoptRef(new WebsiteDataStore);
 }
 
+RefPtr<WebsiteDataStore> WebsiteDataStore::create(WebKit::WebsiteDataStore::Configuration configuration)
+{
+    return adoptRef(new WebsiteDataStore(WTF::move(configuration)));
+}
+
 WebsiteDataStore::WebsiteDataStore()
     : m_websiteDataStore(WebKit::WebsiteDataStore::createNonPersistent())
 {

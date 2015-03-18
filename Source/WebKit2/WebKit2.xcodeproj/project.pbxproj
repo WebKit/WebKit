@@ -274,6 +274,8 @@
 		1A53C2A21A323004004E8C70 /* InjectedBundleCSSStyleDeclarationHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4ED3261A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.cpp */; };
 		1A53C2A91A32572B004E8C70 /* WebsiteDataStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A53C2A41A32569F004E8C70 /* WebsiteDataStore.cpp */; };
 		1A53C2AA1A325730004E8C70 /* WebsiteDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A53C2A51A32569F004E8C70 /* WebsiteDataStore.h */; };
+		1A57109E1ABA0027002FABBE /* WKWebsiteDataStoreRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A57109C1ABA0027002FABBE /* WKWebsiteDataStoreRef.cpp */; };
+		1A57109F1ABA0027002FABBE /* WKWebsiteDataStoreRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A57109D1ABA0027002FABBE /* WKWebsiteDataStoreRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A5B1C501898606F004FCF9B /* WKNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A5B1C4E1898606F004FCF9B /* WKNavigation.mm */; };
 		1A5B1C511898606F004FCF9B /* WKNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5B1C4F1898606F004FCF9B /* WKNavigation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A5B1C5418987EDF004FCF9B /* WebDocumentLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A5B1C5218987EDF004FCF9B /* WebDocumentLoader.cpp */; };
@@ -2382,6 +2384,8 @@
 		1A52C0F61A38CDC70016160A /* WebStorageNamespaceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebStorageNamespaceProvider.h; sourceTree = "<group>"; };
 		1A53C2A41A32569F004E8C70 /* WebsiteDataStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebsiteDataStore.cpp; sourceTree = "<group>"; };
 		1A53C2A51A32569F004E8C70 /* WebsiteDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteDataStore.h; sourceTree = "<group>"; };
+		1A57109C1ABA0027002FABBE /* WKWebsiteDataStoreRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWebsiteDataStoreRef.cpp; sourceTree = "<group>"; };
+		1A57109D1ABA0027002FABBE /* WKWebsiteDataStoreRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebsiteDataStoreRef.h; sourceTree = "<group>"; };
 		1A5B1C4E1898606F004FCF9B /* WKNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNavigation.mm; sourceTree = "<group>"; };
 		1A5B1C4F1898606F004FCF9B /* WKNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigation.h; sourceTree = "<group>"; };
 		1A5B1C5218987EDF004FCF9B /* WebDocumentLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDocumentLoader.cpp; sourceTree = "<group>"; };
@@ -6428,6 +6432,8 @@
 				7C89D2BE1A6B11EF003A5FDE /* WKUserContentFilterRef.h */,
 				7C89D2A11A678875003A5FDE /* WKUserScriptRef.cpp */,
 				7C89D2A21A678875003A5FDE /* WKUserScriptRef.h */,
+				1A57109C1ABA0027002FABBE /* WKWebsiteDataStoreRef.cpp */,
+				1A57109D1ABA0027002FABBE /* WKWebsiteDataStoreRef.h */,
 			);
 			path = C;
 			sourceTree = "<group>";
@@ -7876,6 +7882,7 @@
 				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				8372DB251A674C8F00C697C5 /* WKPageDiagnosticLoggingClient.h in Headers */,
+				1A57109F1ABA0027002FABBE /* WKWebsiteDataStoreRef.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
 				753E3E0E1887398900188496 /* SessionTracker.h in Headers */,
 				1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */,
@@ -9623,6 +9630,7 @@
 				1AB16AE9164B3A8800290D62 /* RemoteLayerTreeContext.mm in Sources */,
 				2D29ECD1192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.mm in Sources */,
 				1AB16ADD1648598400290D62 /* RemoteLayerTreeDrawingArea.mm in Sources */,
+				1A57109E1ABA0027002FABBE /* WKWebsiteDataStoreRef.cpp in Sources */,
 				1AB16AE11648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.mm in Sources */,
 				0FF24A2D1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp in Sources */,
 				1AA3D75B1651B44F008713D0 /* RemoteLayerTreeHost.mm in Sources */,

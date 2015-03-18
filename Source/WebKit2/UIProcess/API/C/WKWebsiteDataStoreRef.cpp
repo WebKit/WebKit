@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIWebsiteDataStore_h
-#define APIWebsiteDataStore_h
+#include "config.h"
+#include "WKWebsiteDataStoreRef.h"
 
-#include "APIObject.h"
-#include "WebsiteDataStore.h"
-#include <WebCore/SessionID.h>
-#include <wtf/text/WTFString.h>
+#include "APIWebsiteDataStore.h"
+#include "WKAPICast.h"
 
-namespace API {
-
-class WebsiteDataStore final : public ObjectImpl<Object::Type::WebsiteDataStore> {
-public:
-    static RefPtr<WebsiteDataStore> defaultDataStore();
-    static RefPtr<WebsiteDataStore> createNonPersistentDataStore();
-    static RefPtr<WebsiteDataStore> create(WebKit::WebsiteDataStore::Configuration);
-    virtual ~WebsiteDataStore();
-
-    bool isNonPersistent();
-
-    WebKit::WebsiteDataStore& websiteDataStore() { return *m_websiteDataStore; }
-
-    static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName);
-
-private:
-    WebsiteDataStore(WebKit::WebsiteDataStore::Configuration);
-    WebsiteDataStore();
-
-    static WebKit::WebsiteDataStore::Configuration defaultDataStoreConfiguration();
-
-    RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
-};
-
+WKTypeID WKWebsiteDataStoreGetTypeID()
+{
+    return WebKit::toAPI(API::WebsiteDataStore::APIType);
 }
-
-#endif // APIWebsiteDataStore_h

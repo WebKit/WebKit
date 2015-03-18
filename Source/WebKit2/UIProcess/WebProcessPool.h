@@ -28,6 +28,7 @@
 
 #include "APIDictionary.h"
 #include "APIObject.h"
+#include "APIWebsiteDataStore.h"
 #include "DownloadProxyMap.h"
 #include "GenericCallback.h"
 #include "MessageReceiver.h"
@@ -164,7 +165,7 @@ public:
     // Disconnect the process from the context.
     void disconnectProcess(WebProcessProxy*);
 
-    WebsiteDataStore& websiteDataStore() const { return *m_websiteDataStore; }
+    API::WebsiteDataStore& websiteDataStore() const { return *m_websiteDataStore; }
 
     PassRefPtr<WebPageProxy> createWebPage(PageClient&, WebPageConfiguration);
 
@@ -483,7 +484,7 @@ private:
     RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
 #endif
 
-    RefPtr<WebsiteDataStore> m_websiteDataStore;
+    RefPtr<API::WebsiteDataStore> m_websiteDataStore;
 
     typedef HashMap<const char*, RefPtr<WebContextSupplement>, PtrHash<const char*>> WebContextSupplementMap;
     WebContextSupplementMap m_supplements;

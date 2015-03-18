@@ -157,7 +157,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_cacheModel(m_configuration->cacheModel())
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
-    , m_websiteDataStore(WebsiteDataStore::create(websiteDataStoreConfiguration(m_configuration.get())))
+    , m_websiteDataStore(API::WebsiteDataStore::create(websiteDataStoreConfiguration(m_configuration.get())))
 #if USE(SOUP)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
 #endif
@@ -850,7 +850,7 @@ PassRefPtr<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, W
         configuration.visitedLinkProvider = m_visitedLinkProvider.ptr();
     if (!configuration.websiteDataStore) {
         ASSERT(!configuration.sessionID.isValid());
-        configuration.websiteDataStore = m_websiteDataStore.get();
+        configuration.websiteDataStore = &m_websiteDataStore->websiteDataStore();
         configuration.sessionID = configuration.preferences->privateBrowsingEnabled() ? SessionID::legacyPrivateSessionID() : SessionID::defaultSessionID();
     }
 

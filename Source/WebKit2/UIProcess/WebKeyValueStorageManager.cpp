@@ -28,11 +28,11 @@
 
 #include "APIArray.h"
 #include "APISecurityOrigin.h"
+#include "APIWebsiteDataStore.h"
 #include "LocalStorageDetails.h"
 #include "SecurityOriginData.h"
 #include "StorageManager.h"
 #include "WebProcessPool.h"
-#include "WebsiteDataStore.h"
 #include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
@@ -90,7 +90,7 @@ void WebKeyValueStorageManager::derefWebContextSupplement()
 
 void WebKeyValueStorageManager::getKeyValueStorageOrigins(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    StorageManager* storageManager = processPool()->websiteDataStore().storageManager();
+    StorageManager* storageManager = processPool()->websiteDataStore().websiteDataStore().storageManager();
     if (!storageManager) {
         RunLoop::main().dispatch([callbackFunction] {
             callbackFunction(API::Array::create().get(), CallbackBase::Error::None);
@@ -110,7 +110,7 @@ void WebKeyValueStorageManager::getKeyValueStorageOrigins(std::function<void (AP
 
 void WebKeyValueStorageManager::getStorageDetailsByOrigin(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    StorageManager* storageManager = processPool()->websiteDataStore().storageManager();
+    StorageManager* storageManager = processPool()->websiteDataStore().websiteDataStore().storageManager();
     if (!storageManager) {
         RunLoop::main().dispatch([callbackFunction] {
             callbackFunction(API::Array::create().get(), CallbackBase::Error::None);
@@ -143,7 +143,7 @@ void WebKeyValueStorageManager::getStorageDetailsByOrigin(std::function<void (AP
 
 void WebKeyValueStorageManager::deleteEntriesForOrigin(API::SecurityOrigin* origin)
 {
-    StorageManager* storageManager = processPool()->websiteDataStore().storageManager();
+    StorageManager* storageManager = processPool()->websiteDataStore().websiteDataStore().storageManager();
     if (!storageManager)
         return;
 
@@ -152,7 +152,7 @@ void WebKeyValueStorageManager::deleteEntriesForOrigin(API::SecurityOrigin* orig
 
 void WebKeyValueStorageManager::deleteAllEntries()
 {
-    StorageManager* storageManager = processPool()->websiteDataStore().storageManager();
+    StorageManager* storageManager = processPool()->websiteDataStore().websiteDataStore().storageManager();
     if (!storageManager)
         return;
 

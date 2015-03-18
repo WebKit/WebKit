@@ -131,6 +131,8 @@ WK_EXPORT unsigned WKContextGetMaximumNumberOfProcesses(WKContextRef context);
 WK_EXPORT void WKContextStartMemorySampler(WKContextRef context, WKDoubleRef interval);
 WK_EXPORT void WKContextStopMemorySampler(WKContextRef context);
 
+WK_EXPORT WKWebsiteDataStoreRef WKContextGetWebsiteDataStore(WKContextRef context);
+
 WK_EXPORT WKApplicationCacheManagerRef WKContextGetApplicationCacheManager(WKContextRef context);
 WK_EXPORT WKBatteryManagerRef WKContextGetBatteryManager(WKContextRef context);
 WK_EXPORT WKCookieManagerRef WKContextGetCookieManager(WKContextRef context);

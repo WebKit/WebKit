@@ -63,6 +63,7 @@ class SessionState;
 class UserContentExtension;
 class UserContentExtensionStore;
 class UserScript;
+class WebsiteDataStore;
 }
 
 namespace WebKit {
@@ -139,6 +140,7 @@ WK_ADD_API_MAPPING(WKGeolocationPositionRef, WebGeolocationPosition)
 WK_ADD_API_MAPPING(WKGrammarDetailRef, WebGrammarDetail)
 WK_ADD_API_MAPPING(WKHitTestResultRef, WebHitTestResult)
 WK_ADD_API_MAPPING(WKIconDatabaseRef, WebIconDatabase)
+WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorProxy)
 WK_ADD_API_MAPPING(WKKeyValueStorageManagerRef, WebKeyValueStorageManager)
 WK_ADD_API_MAPPING(WKMediaCacheManagerRef, WebMediaCacheManagerProxy)
 WK_ADD_API_MAPPING(WKNavigationActionRef, API::NavigationAction)
@@ -169,7 +171,7 @@ WK_ADD_API_MAPPING(WKUserMediaPermissionRequestRef, UserMediaPermissionRequestPr
 WK_ADD_API_MAPPING(WKUserScriptRef, API::UserScript)
 WK_ADD_API_MAPPING(WKVibrationRef, WebVibrationProxy)
 WK_ADD_API_MAPPING(WKViewportAttributesRef, WebViewportAttributes)
-WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorProxy)
+WK_ADD_API_MAPPING(WKWebsiteDataStoreRef, API::WebsiteDataStore)
 
 /* Enum conversions */
 

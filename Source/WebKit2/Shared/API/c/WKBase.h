@@ -139,6 +139,7 @@ typedef const struct OpaqueWKUserMediaPermissionRequest* WKUserMediaPermissionRe
 typedef const struct OpaqueWKUserScript* WKUserScriptRef;
 typedef const struct OpaqueWKVibration* WKVibrationRef;
 typedef const struct OpaqueWKViewportAttributes* WKViewportAttributesRef;
+typedef const struct OpaqueWKWebsiteDataStore* WKWebsiteDataStoreRef;
 
 /* WebKit2 Bundle types */
 
