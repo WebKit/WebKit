@@ -62,12 +62,12 @@ namespace WebCore {
     };
 
     struct CookieHash {
-        static unsigned hash(Cookie key)
+        static unsigned hash(const Cookie& key)
         { 
             return StringHash::hash(key.name) + StringHash::hash(key.domain) + StringHash::hash(key.path) + key.secure;
         }
 
-        static bool equal(Cookie a, Cookie b)
+        static bool equal(const Cookie& a, const Cookie& b)
         {
             return a.name == b.name && a.domain == b.domain && a.path == b.path && a.secure == b.secure;
         }
