@@ -1,3 +1,10 @@
+2015-03-18  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Unreviewed build fix after r181665.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::setSize):
+
 2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused "preprocessor" parameter to sub-CodeGenerators

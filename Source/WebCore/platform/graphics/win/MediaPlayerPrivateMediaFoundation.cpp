@@ -212,7 +212,7 @@ void MediaPlayerPrivateMediaFoundation::setSize(const IntSize& size)
 
     if (view) {
         scrollOffset = view->scrollOffsetForFixedPosition();
-        positionInWindow = view->convertToContainingWindow(m_lastPaintRect.location());
+        positionInWindow = view->convertToContainingWindow(IntPoint(m_lastPaintRect.location()));
     }
 
     positionInWindow.move(-scrollOffset.width().toInt(), -scrollOffset.height().toInt());
