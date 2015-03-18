@@ -358,7 +358,7 @@ void NetworkProcess::deleteWebsiteData(SessionID sessionID, uint64_t websiteData
         parentProcessConnection()->send(Messages::NetworkProcessProxy::DidDeleteWebsiteData(callbackID), 0);
     };
 
-    if ((websiteDataTypes & WebsiteDataTypeDiskCache) & !sessionID.isEphemeral()) {
+    if ((websiteDataTypes & WebsiteDataTypeDiskCache) && !sessionID.isEphemeral()) {
         clearDiskCache(modifiedSince, WTF::move(completionHandler));
         return;
     }
