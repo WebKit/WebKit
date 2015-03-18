@@ -1213,7 +1213,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
             LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
             return; \
         } \
-        if ([NSMenu menuTypeForEvent:theEvent] == NSMenuTypeActionMenu) { \
+        if ([NSMenu respondsToSelector:@selector(menuTypeForEvent:)] && [NSMenu menuTypeForEvent:theEvent] == NSMenuTypeActionMenu) { \
             [super Selector:theEvent]; \
             return; \
         } \
