@@ -760,7 +760,6 @@
     <None Include="..\UserInterface\ScopeBarItem.js" />
     <None Include="..\UserInterface\ScopeChainDetailsSidebarPanel.js" />
     <None Include="..\UserInterface\ScopeChainNode.js" />
-    <None Include="..\UserInterface\ScopeVariableTreeElement.js" />
     <None Include="..\UserInterface\Script.js" />
     <None Include="..\UserInterface\ScriptContentView.css" />
     <None Include="..\UserInterface\ScriptContentView.js" />

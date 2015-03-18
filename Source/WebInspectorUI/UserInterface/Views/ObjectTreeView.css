@@ -56,6 +56,10 @@
     background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-normal);
 }
 
+.object-tree.properties-only > :matches(.title, .object-preview) {
+    display: none;
+}
+
 .object-tree.expanded .object-preview {
     font-style: normal;
 }
@@ -79,6 +83,14 @@
     list-style: none;
     min-height: 18px;
     outline: none;
+}
+
+.object-tree.properties-only .object-tree-outline {
+    padding-left: 0;
+}
+
+.object-tree.properties-only .object-tree-property .property-name {
+    opacity: 1;
 }
 
 .object-tree-outline li {

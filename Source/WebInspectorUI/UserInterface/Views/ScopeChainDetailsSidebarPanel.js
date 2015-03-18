@@ -33,13 +33,15 @@ WebInspector.ScopeChainDetailsSidebarPanel = function()
     WebInspector.runtimeManager.addEventListener(WebInspector.RuntimeManager.Event.DidEvaluate, this.needsRefresh, this);
 };
 
+WebInspector.ScopeChainDetailsSidebarPanel.autoExpandProperties = new Set;
+
 WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
     constructor: WebInspector.ScopeChainDetailsSidebarPanel,
     __proto__: WebInspector.DetailsSidebarPanel.prototype,
 
     // Public
 
-    inspect: function(objects)
+    inspect(objects)
     {
         // Convert to a single item array if needed.
         if (!(objects instanceof Array))
@@ -75,7 +77,7 @@ WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
         this.needsRefresh();
     },
 
-    refresh: function()
+    refresh()
     {
         var callFrame = this.callFrame;
         if (!callFrame)
@@ -93,7 +95,7 @@ WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
             var scope = scopeChain[i];
 
             var title = null;
-            var extraProperties = null;
+            var extraPropertyDescriptor = null;
             var collapsedByDefault = false;
             var dontHighlightNonEnumerableProperties = true;
 
@@ -108,7 +110,7 @@ WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
                     title = WebInspector.UIString("Local Variables");
 
                     if (callFrame.thisObject)
-                        extraProperties = [new WebInspector.RemoteObjectProperty("this", callFrame.thisObject)];
+                        extraPropertyDescriptor = new WebInspector.PropertyDescriptor({name: "this", value: callFrame.thisObject});
                     break;
 
                 case WebInspector.ScopeChainNode.Type.Closure:
@@ -144,12 +146,21 @@ WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
 
             var detailsSectionIdentifier = scope.type + "-" + sectionCountByType[scope.type];
 
-            var section = new WebInspector.ObjectPropertiesSection(scope.object, null, null, null, true, extraProperties, WebInspector.ScopeVariableTreeElement);
-            section.dontHighlightNonEnumerablePropertiesAtTopLevel = dontHighlightNonEnumerableProperties;
-            section.__propertyIdentifierPrefix = detailsSectionIdentifier;
+            var scopePropertyPath = WebInspector.PropertyPath.emptyPropertyPathForScope(scope.object);
+            var objectTree = new WebInspector.ObjectTreeView(scope.object, WebInspector.ObjectTreeView.Mode.Properties, scopePropertyPath);
+
+            objectTree.showOnlyProperties();
+
+            if (extraPropertyDescriptor)
+                objectTree.appendExtraPropertyDescriptor(extraPropertyDescriptor);
+
+            var treeOutline = objectTree.treeOutline;
+            treeOutline.onadd = this._objectTreeAddHandler.bind(this, detailsSectionIdentifier);
+            treeOutline.onexpand = this._objectTreeExpandHandler.bind(this, detailsSectionIdentifier);
+            treeOutline.oncollapse = this._objectTreeCollapseHandler.bind(this, detailsSectionIdentifier);
 
             var detailsSection = new WebInspector.DetailsSection(detailsSectionIdentifier, title, null, null, collapsedByDefault);
-            detailsSection.groups[0].rows = [new WebInspector.DetailsSectionPropertiesRow(section)];
+            detailsSection.groups[0].rows = [new WebInspector.DetailsSectionPropertiesRow(objectTree)];
             detailsSections.push(detailsSection);
         }
 
@@ -170,10 +181,51 @@ WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
         // We need a timeout in place in case there are long running, pending backend dispatches. This can happen
         // if the debugger is paused in code that was executed from the console. The console will be waiting for
         // the result of the execution and without a timeout we would never update the scope variables.
-        var timeout = setTimeout(delayedWork.bind(this), 50);
+        var delay = WebInspector.ScopeChainDetailsSidebarPanel.autoExpandProperties.size === 0 ? 50 : 250;
+        var timeout = setTimeout(delayedWork.bind(this), delay);
 
-        // Since ObjectPropertiesSection populates asynchronously, we want to wait to replace the existing content
+        // Since ObjectTreeView populates asynchronously, we want to wait to replace the existing content
         // until after all the pending asynchronous requests are completed. This prevents severe flashing while stepping.
         InspectorBackend.runAfterPendingDispatches(delayedWork.bind(this));
+    },
+
+    _propertyPathIdentifierForTreeElement(identifier, objectPropertyTreeElement)
+    {
+        if (!objectPropertyTreeElement.property)
+            return null;
+
+        var propertyPath = objectPropertyTreeElement.thisPropertyPath();
+        if (propertyPath.isFullPathImpossible())
+            return null;
+
+        return identifier + "-" + propertyPath.fullPath;
+    },
+
+    _objectTreeAddHandler(identifier, treeElement)
+    {
+        var propertyPathIdentifier = this._propertyPathIdentifierForTreeElement(identifier, treeElement);
+        if (!propertyPathIdentifier)
+            return;
+
+        if (WebInspector.ScopeChainDetailsSidebarPanel.autoExpandProperties.has(propertyPathIdentifier))
+            treeElement.expand();
+    },
+
+    _objectTreeExpandHandler(identifier, treeElement)
+    {
+        var propertyPathIdentifier = this._propertyPathIdentifierForTreeElement(identifier, treeElement);
+        if (!propertyPathIdentifier)
+            return;
+
+        WebInspector.ScopeChainDetailsSidebarPanel.autoExpandProperties.add(propertyPathIdentifier);
+    },
+
+    _objectTreeCollapseHandler(identifier, treeElement)
+    {
+        var propertyPathIdentifier = this._propertyPathIdentifierForTreeElement(identifier, treeElement);
+        if (!propertyPathIdentifier)
+            return;
+
+        WebInspector.ScopeChainDetailsSidebarPanel.autoExpandProperties.delete(propertyPathIdentifier);
     }
 };

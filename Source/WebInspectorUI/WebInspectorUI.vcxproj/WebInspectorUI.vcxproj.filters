@@ -852,9 +852,6 @@
     <None Include="..\UserInterface\ScopeChainNode.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\ScopeVariableTreeElement.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\Script.js">
       <Filter>UserInterface</Filter>
     </None>

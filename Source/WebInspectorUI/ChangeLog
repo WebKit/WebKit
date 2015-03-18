@@ -1,3 +1,52 @@
+2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Scopes sidebar should use new ObjectTreeView and not ObjectPropertiesSection
+        https://bugs.webkit.org/show_bug.cgi?id=142808
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/PropertyPath.js:
+        (WebInspector.PropertyPath):
+        (WebInspector.PropertyPath.emptyPropertyPathForScope):
+        Allow a special property empty path for "Scopes". This way for a
+        "<scopeObject>.property" we can show just the tooltip "property".
+
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree.properties-only > :matches(.title, .object-preview)):
+        (.object-tree.properties-only .object-tree-outline):
+        (.object-tree.properties-only .object-tree-property .property-name):
+        Tweak styles for only properties view, which won't have a top-level
+        preview and doesn't fade out enumerable properties.
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView.prototype.get treeOutline):
+        Access the TreeOutline.
+
+        (WebInspector.ObjectTreeView.prototype.showOnlyProperties):
+        Properties only view modifies the display slightly.
+
+        (WebInspector.ObjectTreeView.prototype.appendExtraPropertyDescriptor):
+        (WebInspector.ObjectTreeView.prototype._updateProperties):
+        Allow the client to add its own property descriptors to display
+        as a property in this ObjectTreeView.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype.refresh):
+        Switch to using an ObjectTreeView.
+
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._propertyPathIdentifierForTreeElement):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._objectTreeAddHandler):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._objectTreeExpandHandler):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._objectTreeCollapseHandler):
+        Keep track of what properties were expanded so we can auto-expand
+        them again when the sidebar refreshes.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/ScopeVariableTreeElement.js: Removed.
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+        Remove the now unused ScopeVariableTreeElement.js.
+
 2015-03-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Debugger Sidebar Icons Misaligned

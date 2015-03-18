@@ -38,7 +38,7 @@ WebInspector.PropertyPath = function(object, pathComponent, parent, isPrototype)
         throw new Error("Attempted to append to a PropertyPath with null object.");
 
     this._object = object;
-    this._pathComponent = pathComponent || null;
+    this._pathComponent = typeof pathComponent === "string" ? pathComponent : null;
     this._parent = parent || null;
     this._isPrototype = isPrototype || false;
 };
@@ -49,6 +49,7 @@ WebInspector.PropertyPath.SpecialPathComponent = {
     MapKey: "@mapkey",
     MapValue: "@mapvalue",
     SetIndex: "@setindex",
+    EmptyPathComponentForScope: "",
 };
 
 WebInspector.PropertyPath.Type = {
@@ -56,6 +57,11 @@ WebInspector.PropertyPath.Type = {
     Getter: "getter",
     Setter: "setter",
 };
+
+WebInspector.PropertyPath.emptyPropertyPathForScope = function(object)
+{
+    return new WebInspector.PropertyPath(object, WebInspector.PropertyPath.SpecialPathComponent.EmptyPathComponentForScope);
+}
 
 WebInspector.PropertyPath.prototype = {
     constructor: WebInspector.PropertyPath,
@@ -148,6 +154,11 @@ WebInspector.PropertyPath.prototype = {
         return !this._parent;
     },
 
+    isScope()
+    {
+        return this._pathComponent === WebInspector.PropertyPath.SpecialPathComponent.EmptyPathComponentForScope;
+    },
+
     isPathComponentImpossible()
     {
         return this._pathComponent && this._pathComponent.startsWith("@");
@@ -167,6 +178,10 @@ WebInspector.PropertyPath.prototype = {
     appendPropertyName(object, propertyName)
     {
         var isPrototype = propertyName === "__proto__";
+
+        if (this.isScope())
+            return new WebInspector.PropertyPath(object, propertyName, this, isPrototype);
+
         var component = this._canPropertyNameBeDotAccess(propertyName) ? "." + propertyName : "[" + doubleQuotedString(propertyName) + "]";
         return new WebInspector.PropertyPath(object, component, this, isPrototype);
     },
