@@ -237,7 +237,7 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
     ProfilerMode profilerMode = globalObject->hasProfiler() ? ProfilerOn : ProfilerOff;
     UnlinkedFunctionCodeBlock* unlinkedCodeBlock =
         executable->m_unlinkedExecutable->codeBlockFor(
-            *vm, executable->m_source, kind, debuggerMode, profilerMode, executable->bodyIncludesBraces(), error);
+            *vm, executable->m_source, kind, debuggerMode, profilerMode, error);
     recordParse(executable->m_unlinkedExecutable->features(), executable->m_unlinkedExecutable->hasCapturedVariables(), lineNo(), lastLine(), startColumn(), endColumn()); 
     if (!unlinkedCodeBlock) {
         exception = vm->throwException(
@@ -396,11 +396,9 @@ const ClassInfo FunctionExecutable::s_info = { "FunctionExecutable", &ScriptExec
 
 FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, 
     UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, 
-    unsigned lastLine, unsigned startColumn, unsigned endColumn, 
-    bool bodyIncludesBraces)
+    unsigned lastLine, unsigned startColumn, unsigned endColumn)
     : ScriptExecutable(vm.functionExecutableStructure.get(), vm, source, unlinkedExecutable->isInStrictContext())
     , m_unlinkedExecutable(vm, this, unlinkedExecutable)
-    , m_bodyIncludesBraces(bodyIncludesBraces)
 {
     RELEASE_ASSERT(!source.isNull());
     ASSERT(source.length());
@@ -508,7 +506,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
 
     for (size_t i = 0; i < functionDeclarations.size(); ++i) {
         UnlinkedFunctionExecutable* unlinkedFunctionExecutable = functionDeclarations[i].second.get();
-        JSValue value = JSFunction::create(vm, unlinkedFunctionExecutable->linkInsideExecutable(vm, m_source), scope);
+        JSValue value = JSFunction::create(vm, unlinkedFunctionExecutable->link(vm, m_source), scope);
         globalObject->addFunction(callFrame, functionDeclarations[i].first, value);
         if (vm.typeProfiler() || vm.controlFlowProfiler()) {
             vm.functionHasExecutedCache()->insertUnexecutedRange(sourceID(), 
@@ -614,7 +612,7 @@ FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, E
     UnlinkedFunctionExecutable* unlinkedExecutable = UnlinkedFunctionExecutable::fromGlobalCode(name, exec, source, exception);
     if (!unlinkedExecutable)
         return nullptr;
-    return unlinkedExecutable->linkGlobalCode(exec.vm(), source);
+    return unlinkedExecutable->link(exec.vm(), source);
 }
 
 String FunctionExecutable::paramString() const

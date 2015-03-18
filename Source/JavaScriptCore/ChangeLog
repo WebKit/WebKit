@@ -1,3 +1,55 @@
+2015-03-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Function bodies should always include braces
+        https://bugs.webkit.org/show_bug.cgi?id=142795
+
+        Reviewed by Michael Saboff.
+
+        Having a mode for excluding the opening and closing braces from a function
+        body was unnecessary and confusing.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock): Adopt the new one true linking function.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::link):
+        (JSC::UnlinkedFunctionExecutable::codeBlockFor): No need to pass through
+        a boolean: there is only one kind of function now.
+
+        (JSC::UnlinkedFunctionExecutable::linkInsideExecutable): Deleted.
+        (JSC::UnlinkedFunctionExecutable::linkGlobalCode): Deleted. Let's only
+        have one way to do things. This removes the old mode that would pretend
+        that a function always started at column 1. That pretense was not true:
+        an attribute event listener does not necessarily start at column 1.
+
+        * bytecode/UnlinkedCodeBlock.h:
+        * generate-js-builtins: Adopt the new one true linking function.
+
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse): needsReparsingAdjustment is always true now, so I removed it.
+
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        (JSC::FunctionExecutable::fromGlobalCode):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::create):
+        (JSC::FunctionExecutable::bodyIncludesBraces): Deleted. Removed unused stuff.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck): Always provide a
+        leading space because that's what this function's comment says is required
+        for web compatibility. We used to fake this up after the fact when
+        stringifying, based on the bodyIncludesBraces flag, but that flag is gone now.
+
+        * runtime/FunctionPrototype.cpp:
+        (JSC::insertSemicolonIfNeeded):
+        (JSC::functionProtoFuncToString): No need to add braces and/or a space
+        after the fact -- we always have them now.
+
 2015-03-17  Mark Lam  <mark.lam@apple.com>
 
         Refactor execution time limit tests out of testapi.c.

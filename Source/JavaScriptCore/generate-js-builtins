@@ -267,7 +267,7 @@ builtinsImplementation.write("""
 #define JSC_DEFINE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \\
 FunctionExecutable* codeName##Generator(VM& vm) \\
 { \\
-    return vm.builtinExecutables()->codeName##Executable()->linkGlobalCode(vm, vm.builtinExecutables()->codeName##Source()); \\
+    return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source()); \\
 }
 
 JSC_FOREACH_BUILTIN(JSC_DEFINE_BUILTIN_GENERATOR)

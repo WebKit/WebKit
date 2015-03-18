@@ -1753,7 +1753,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
         if (vm()->typeProfiler() || vm()->controlFlowProfiler())
             vm()->functionHasExecutedCache()->insertUnexecutedRange(m_ownerExecutable->sourceID(), unlinkedExecutable->typeProfilingStartOffset(), unlinkedExecutable->typeProfilingEndOffset());
-        m_functionDecls[i].set(*m_vm, ownerExecutable, unlinkedExecutable->linkInsideExecutable(*m_vm, ownerExecutable->source()));
+        m_functionDecls[i].set(*m_vm, ownerExecutable, unlinkedExecutable->link(*m_vm, ownerExecutable->source()));
     }
 
     m_functionExprs.resizeToFit(unlinkedCodeBlock->numberOfFunctionExprs());
@@ -1761,7 +1761,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionExpr(i);
         if (vm()->typeProfiler() || vm()->controlFlowProfiler())
             vm()->functionHasExecutedCache()->insertUnexecutedRange(m_ownerExecutable->sourceID(), unlinkedExecutable->typeProfilingStartOffset(), unlinkedExecutable->typeProfilingEndOffset());
-        m_functionExprs[i].set(*m_vm, ownerExecutable, unlinkedExecutable->linkInsideExecutable(*m_vm, ownerExecutable->source()));
+        m_functionExprs[i].set(*m_vm, ownerExecutable, unlinkedExecutable->link(*m_vm, ownerExecutable->source()));
     }
 
     if (unlinkedCodeBlock->hasRareData()) {

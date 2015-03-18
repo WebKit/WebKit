@@ -1,3 +1,27 @@
+2015-03-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Function bodies should always include braces
+        https://bugs.webkit.org/show_bug.cgi?id=142795
+
+        Reviewed by Michael Saboff.
+
+        Updated these test results to reflect the fact that JavaScriptCore now
+        honors the source code text positions provided by WebCore, even for 
+        attribute event handlers.
+
+        Unfortunately, the column numbers we used to report were wrong, and they
+        are still wrong now. The old column numbers were wrong because we would
+        always pretend that they started on column 1. The new column numbers
+        are wrong because WebCore records the column number after it finishes
+        parsing the element, rather than while it is parsing the event listener
+        attribute.
+
+        * fast/events/window-onerror2-expected.txt:
+        * fast/profiler/dead-time-expected.txt:
+        * fast/profiler/inline-event-handler-expected.txt:
+        * fast/profiler/stop-profiling-after-setTimeout-expected.txt:
+        * js/dom/script-start-end-locations-expected.txt:
+
 2015-03-17  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Split fragments on renderer boundary on the fly.

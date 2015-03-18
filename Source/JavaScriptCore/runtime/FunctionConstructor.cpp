@@ -93,9 +93,9 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState* exec, JSGlobalObj
     // We also need \n before the closing } to handle // comments at the end of the last line
     String program;
     if (args.isEmpty())
-        program = ASCIILiteral("(function() {\n})");
+        program = ASCIILiteral("(function() { \n})");
     else if (args.size() == 1)
-        program = makeString("(function() {", args.at(0).toString(exec)->value(exec), "\n})");
+        program = makeString("(function() { ", args.at(0).toString(exec)->value(exec), "\n})");
     else {
         StringBuilder builder;
         builder.appendLiteral("(function(");
@@ -104,7 +104,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState* exec, JSGlobalObj
             builder.append(',');
             builder.append(args.at(i).toString(exec)->value(exec));
         }
-        builder.appendLiteral(") {");
+        builder.appendLiteral(") { ");
         builder.append(args.at(args.size() - 1).toString(exec)->value(exec));
         builder.appendLiteral("\n})");
         program = builder.toString();

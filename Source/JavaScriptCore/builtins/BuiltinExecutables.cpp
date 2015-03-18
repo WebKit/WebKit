@@ -72,7 +72,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutableInternal(const S
         &m_vm, source, 0, Identifier(), builtinMode, 
         JSParserStrictMode::NotStrict, 
         JSParserCodeType::Program,
-        error, &positionBeforeLastNewline, false, constructorKind);
+        error, &positionBeforeLastNewline, constructorKind);
 
     if (!program) {
         dataLog("Fatal error compiling builtin function '", name.string(), "': ", error.message());
