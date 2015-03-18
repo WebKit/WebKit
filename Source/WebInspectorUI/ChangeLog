@@ -1,3 +1,18 @@
+2015-03-17  Tobias Reiss  <tobi+webkit@basecode.de>
+
+        Web Inspector: Removal of multiline completion hint broken in Details sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=142796
+
+        Reviewed by Joseph Pecoraro.
+
+        Prioritize CodeMirrorCompletionController over CSSStyleDeclarationTextEditor.
+        Both classes control the current CodeMirror instance of the Details Sidebar.
+        This change prevents possible race conditions during complete or delete-complete phases,
+        especially during operations on multiple styles in one line.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor):
+
 2015-03-17  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Show rendering frames (and FPS) in Layout and Rendering timeline

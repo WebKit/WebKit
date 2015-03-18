@@ -53,9 +53,6 @@ WebInspector.CSSStyleDeclarationTextEditor = function(delegate, style, element)
         autoCloseBrackets: true
     });
 
-    this._codeMirror.on("change", this._contentChanged.bind(this));
-    this._codeMirror.on("blur", this._editorBlured.bind(this));
-
     this._completionController = new WebInspector.CodeMirrorCompletionController(this._codeMirror, this);
     this._tokenTrackingController = new WebInspector.CodeMirrorTokenTrackingController(this._codeMirror, this);
 
@@ -64,6 +61,11 @@ WebInspector.CSSStyleDeclarationTextEditor = function(delegate, style, element)
     this._tokenTrackingController.mouseOverDelayDuration = 0;
     this._tokenTrackingController.mouseOutReleaseDelayDuration = 0;
     this._tokenTrackingController.mode = WebInspector.CodeMirrorTokenTrackingController.Mode.NonSymbolTokens;
+
+    // Make sure CompletionController adds event listeners first.
+    // Otherwise we end up in race conditions during complete or delete-complete phases.
+    this._codeMirror.on("change", this._contentChanged.bind(this));
+    this._codeMirror.on("blur", this._editorBlured.bind(this));
 
     this.style = style;
 };
