@@ -1,3 +1,13 @@
+2015-03-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        Tracked down the tests that were leaving the page cache in a bad state.
+        By skipping those tests, we can run all the others. These bugs are being
+        investigated in Bug 140871.
+
+        * platform/win/TestExpectations:
+
 2015-03-17  Geoffrey Garen  <ggaren@apple.com>
 
         Function bodies should always include braces

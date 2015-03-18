@@ -242,7 +242,6 @@ crypto/subtle/rsa-indexeddb.html [ Skip ]
 inspector-protocol/indexeddb/basics.html [ Skip ]
 fast/history/page-cache-indexed-closed-db.html [ Skip ]
 fast/history/page-cache-indexed-opened-db.html [ Skip ]
-fast/history/page-cache-webdatabase-opened-db.html [ Skip ]
 fast/history/page-cache-webdatabase-no-transaction-db.html [ Skip ]
 fast/history/page-cache-webdatabase-pending-transaction.html [ Skip ]
 
@@ -558,8 +557,8 @@ compositing/overflow/scrolling-without-painting.html [ Skip ]
 compositing/overflow/updating-scrolling-content.html [ Skip ]
 
 # TODO Enable when support drag-and-drop autoscrolling
-webkit.org/b/39725 [ Debug ] fast/events/drag-and-drop-autoscroll.html [ Skip ]  # Crashing
-webkit.org/b/39725 [ Release ] fast/events/drag-and-drop-autoscroll.html [ Failure ]
+webkit.org/b/140518 [ Debug ] fast/events/drag-and-drop-autoscroll.html [ Skip ]  # Crashing
+webkit.org/b/140518 [ Release ] fast/events/drag-and-drop-autoscroll.html [ Failure ]
 
 # Disable document.register tests, ENABLE_CUSTOM_ELEMENT disabled
 fast/dom/custom/ [ Skip ]
@@ -1117,8 +1116,9 @@ editing/pasteboard/ [ Pass Failure ]
 [ Debug ] editing/selection/4983858.html [ Skip ] # Debug Assertion
 [ Debug ] editing/selection/4975120.html [ Skip ] # Debug Assertion
 
-webkit.org/b/140783 editing/pasteboard/copy-standalone-image.html [ Failure ]
-webkit.org/b/140786 editing/pasteboard/copy-backslash-with-euc.html [ Failure ]
+webkit.org/b/140783 [ Release ] editing/pasteboard/copy-standalone-image.html [ Failure ]
+webkit.org/b/140783 [ Debug ] editing/pasteboard/copy-standalone-image.html [ Skip ] # Debug Assertion
+webkit.org/b/140786 editing/pasteboard/copy-backslash-with-euc.html [ Skip ] # Causes later tests to fail
 editing/pasteboard/paste-RTFD.html [ Failure ]
 editing/pasteboard/paste-TIFF.html [ Failure ]
 editing/pasteboard/paste-and-sanitize.html [ Failure ]
@@ -1152,10 +1152,12 @@ editing/pasteboard/get-data-text-plain-drop.html [ Skip ]
 editing/pasteboard/drag-files-to-editable-element.html [ Skip ]
 # TODO FileInputType::receiveDroppedFiles receive relative path
 webkit.org/b/90426 editing/pasteboard/file-input-files-access.html [ Failure ]
-webkit.org/b/90425 editing/pasteboard/dataTransfer-setData-getData.html [ Failure ]
+webkit.org/b/90425 [ Release ] editing/pasteboard/dataTransfer-setData-getData.html [ Failure ]
+webkit.org/b/90425 [ Debug ] editing/pasteboard/dataTransfer-setData-getData.html [ Skip ] # Debug Assertion
 # TODO DOM ClipboardData.setData does not allow writes during clipboard events
 # https://bugs.webkit.org/show_bug.cgi?id=17645
-webkit.org/b/17645 editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Failure ]
+webkit.org/b/17645 [ Release ] editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Failure ]
+webkit.org/b/17645 [ Debug ] editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Skip ] # Debug Assertion
 webkit.org/b/17645 editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Failure ]
 webkit.org/b/17645 editing/pasteboard/can-read-in-copy-and-cut-events.html [ Failure ]
 # emacs key bindings <rdar://problem/4883609> Support for kill rings
@@ -1644,6 +1646,8 @@ webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 [ Debug ] accessibility/textbox-role-on-contenteditable-crash.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/textbox-role-reports-selection.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/updating-attribute-in-table-causes-crash.html [ Skip ] # Debug assertion
+
+[ Debug ] platform/win/accessibility/option-element-selection-and-focus-events.html [ Skip ] # Debug Assertion
 ################################################################################
 #######################   End Accessibility Issues   ###########################
 ################################################################################
@@ -1816,7 +1820,9 @@ webkit.org/b/97026 svg/text/bidi-tspans.svg [ Failure ]
 webkit.org/b/97026 svg/text/non-bmp-positioning-lists.svg [ Failure ]
 webkit.org/b/97026 svg/W3C-SVG-1.1/paths-data-03-f.svg	[ Failure ]
 webkit.org/b/97026 svg/css/svg-resource-fragment-identifier-img-src.html [ ImageOnlyFailure ]
-webkit.org/b/97026 svg/custom/composited-svg-with-opacity.html [ ImageOnlyFailure ]
+webkit.org/b/97026 [ Release ] svg/custom/composited-svg-with-opacity.html [ ImageOnlyFailure ]
+webkit.org/b/97026 [ Debug ] svg/custom/composited-svg-with-opacity.html [ Skip ] # Debug Assertion
+
 webkit.org/b/97026 svg/custom/remove-subtree-including-use-with-child-textpath-that-references-earlier-path.html [ Failure ]
 svg/W3C-SVG-1.1-SE/painting-control-04-f.svg [ Failure ]
 svg/W3C-SVG-1.1-SE/text-intro-02-b.svg [ Failure ]
@@ -1857,7 +1863,8 @@ webkit.org/b/140770 svg/custom/scrolling-embedded-svg-file-image-repaint-problem
 svg/custom/relative-sized-shadow-tree-content-with-symbol.xhtml	 [ Failure ]
 
 # Tiny image diff. Why!?!?
-svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ ImageOnlyFailure ]
+[ Release ] svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ ImageOnlyFailure ]
+[ Debug ] svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ Skip ] # Debug Assertion
 
 svg/animations/animate-text-nested-transforms.html [ Failure ]
 svg/repaint/text-mask-update.svg [ ImageOnlyFailure ]
@@ -2199,8 +2206,7 @@ http/tests/navigation/anchor-frames.html
 
 # Sometimes times out
 webkit.org/b/63806 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html [ Skip ] # Timeout
-webkit.org/b/25189 [ Release ] http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
-webkit.org/b/25189 [ Debug ] http/tests/incremental/slow-utf8-text.pl [ Skip ] # Crashing
+webkit.org/b/25189 http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
 webkit.org/b/25483 http/tests/navigation/redirect-cycle.html [ Pass Timeout ]
 webkit.org/b/28467 [ Release ] http/tests/loading/preload-img-test.html [ Pass Timeout ]
 webkit.org/b/28467 [ Debug ] http/tests/loading/preload-img-test.html [ Skip ] # Crashing
@@ -2240,7 +2246,7 @@ http/tests/dom/document-contentType.html [ Failure ]
 http/tests/globalhistory/history-delegate-basic-refresh-redirect.html [ Failure ]
 http/tests/globalhistory/history-delegate-basic-visited-links.html [ Failure ]
 http/tests/loading/pdf-commit-load-callbacks.html [ Failure ]
-http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
+[ Release ] http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
 [ Release ] http/tests/loading/sizes/preload-image-sizes-2x.html [ Failure ]
 [ Debug ] http/tests/loading/sizes/preload-image-sizes-2x.html [ Skip ] # Debug Assertion
 http/tests/misc/acid3.html [ Failure ]
@@ -2298,7 +2304,6 @@ http/tests/xmlhttprequest/web-apps/013.html
 # Assertion failures: Not investigated
 [ Debug ] http/tests/loading/preload-append-scan.php [ Skip ]
 [ Debug ] http/tests/misc/isindex-with-no-form.html [ Skip ]
-[ Debug ] http/tests/incremental/pause-in-script-element.pl [ Skip ]
 [ Debug ] http/tests/security/isolatedWorld/storage-properties.html [ Skip ]
 [ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom.html [ Skip ]
 [ Debug ] http/tests/security/listener/xss-window-onclick-shortcut.html [ Skip ]
@@ -2318,7 +2323,8 @@ webkit.org/b/141118 inspector/css/selector-dynamic-specificity.html [ Skip ]
 webkit.org/b/137157 inspector/event-listener-set.html [ Skip ]
 webkit.org/b/137157 inspector/event-listener.html [ Skip ]
 webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Skip ]
-webkit.org/b/137157 inspector/model/remote-object-get-properties.html [ Pass Timeout ]
+webkit.org/b/137157 [ Release ] inspector/model/remote-object-get-properties.html [ Pass Timeout ]
+webkit.org/b/137157 [ Debug ] inspector/model/remote-object-get-properties.html [ Skip ] # Debug Assertion
 webkit.org/b/137157 inspector/page/main-frame-resource.html [ Skip ]
 webkit.org/b/137157 inspector/protocol-promise-result.html [ Skip ]
 inspector/test-harness-trivially-works.html [ Skip ]
@@ -2338,7 +2344,8 @@ webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertie
 [ Release ] inspector-protocol/layers/layers-blending-compositing-reasons.html [ Failure ]
 [ Debug ] inspector-protocol/layers/layers-blending-compositing-reasons.html [ Skip ]
 [ Release ] inspector-protocol/layers/layers-reflected-content.html [ Pass Timeout ]
-inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure ]
+[ Release ] inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure ]
+[ Debug ] inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Skip ] # Debug Assertion
 inspector-protocol/debugger/removeBreakpoint.html [ Skip ] # Crashing
 ################################################################################
 #################        End Inspector Issues               ####################
@@ -2482,645 +2489,59 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 [ Debug ] transforms/3d/point-mapping [ Skip ]
 
 # These failures all seem to be related to the page cache being in a bad state.
-[ Debug ] editing/pasteboard/copy-cut-paste-events-fired-when-disabled.html [ Skip ] # Crashing
-[ Debug ] editing/pasteboard/copy-display-none.html [ Skip ] # Crashing
-[ Debug ] editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html [ Skip ] # Crashing
-[ Debug ] editing/pasteboard/undoable-fragment-removes.html [ Skip ] # Crashing
-[ Debug ] editing/pasteboard/unrendered-br.html [ Skip ] # Crashing
-[ Debug ] editing/pasteboard/copy-image-with-alt-text.html [ Skip ] # Debug Assertion
-[ Debug ] editing/pasteboard/copy-in-password-field.html [ Skip ] # Debug Assertion
-[ Debug ] editing/pasteboard/copy-inside-h1-preserves-h1.html [ Skip ] # Debug Assertion
-[ Debug ] editing/pasteboard/copy-null-characters.html [ Skip ] # Debug Assertion
-[ Debug ] editing/pasteboard/copy-paste-attachment.html [ Skip ] # Debug Assertion
-[ Debug ] editing/pasteboard/copy-paste-bidi.html [ Skip ] # Debug Assertion
-[ Debug ] editing/pasteboard/copy-paste-content-starting-and-ending-canvas.html [ Skip ] # Debug Assertion
-[ Debug ] editing/pasteboard/copy-paste-converts-fixed.html [ Skip ] # Debug Assertion
-[ Debug ] editing/pasteboard/copy-paste-converts-sticky.html [ Skip ] # Debug Assertion
-[ Debug ] editing/pasteboard/copy-paste-doesnt-convert-sticky-and-fixed-during-partial-copy.html [ Skip ] # Debug Assertion
-[ Debug ] editing/pasteboard/copy-paste-first-line-in-textarea.html [ Skip ] # Debug Assertion
-[ Debug ] editing/pasteboard/copy-paste-float.html [ Skip ] # Debug Assertion
-[ Debug ] editing/pasteboard/copy-paste-inserts-clearing-div.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/14971.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/3690703.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/3690703-2.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/3690719.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/4397952.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/4402375.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/4776665.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/4818145.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/4866671.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/4889598.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/5007143-2.html [ Skip ] # Crashing
-[ Debug ] editing/selection/5007143.html [ Skip ] # Crashing
-[ Debug ] editing/selection/5076323-1.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/5076323-2.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/5076323-3.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/5081257-1.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/5081257-2.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/5099303.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/51344.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/5131716-1.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/5131716-2.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/5131716-3.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/5131716-4.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/5136696.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/5195166-1.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/6476.html [ Skip ] # Crashing
-[ Debug ] editing/selection/7152-1.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/7152-2.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/focus_editable_html.html [ Skip ] # Crashing
-[ Debug ] editing/selection/getRangeAt.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/hit-test-anonymous.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/hit-test-on-text-with-line-height.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/home-end.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/home-inside-noneditable-table.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/iframe.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/image-before-linebreak.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/inactive-selection.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/inline-closest-leaf-child.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/inline-table.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/internal-caret-rect.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/invalid-in-RenderView.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/last-empty-inline.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/select-all-textarea.html [ Skip ] # Crashing
-[ Debug ] editing/selection/select-all-user-select-none.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/select-bidi-run.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/select-box.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/select-crash-001.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/select-crash-002.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/select-element-paragraph-boundary.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/select-from-textfield-outwards.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/select-line-break-with-opposite-directionality.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/select-line.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/select-missing-image.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/select-out-of-editable.html [ Skip ] # Debug Assertion
-[ Debug ] editing/selection/select-out-of-floated-contenteditable.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/adopt-node-crash.html [ Skip ] # Crashing
-[ Debug ] fast/dom/adopt-node-prevented.html [ Skip ] # Crashing
-[ Debug ] fast/dom/allowed-children.html [ Skip ] # Crashing
-[ Debug ] fast/dom/anchor-backslash.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/anchor-origin.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/anchor-text.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/anchor-toString.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/array-special-accessors-should-ignore-items.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/assign-to-prototype-accessor-on-prototype-should-be-silent.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/assign-to-window-status.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/attr-style-too-lazy.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/attribute-case-sensitivity2.xhtml [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/attr_dead_doc.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/attribute-case-sensitivity.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/attribute-change-on-mutate.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/attribute-downcast-right.html [ Skip ] # Debug Assertion
+[ Debug ] editing/pasteboard/drag-drop-dead-frame.html [ Skip ] # Timeout
+[ Debug ] editing/pasteboard/subframe-dragndrop-1.html [ Skip ] # Causes later tests to fail
+[ Debug ] editing/selection/4960137.html [ Skip ] # Causes later tests to fail.
+[ Debug ] fast/canvas/canvas-toDataURL-jpeg-crash.html [ Skip ] # Debug Assertion
+[ Debug ] fast/canvas/image-potential-subsample.html [ Skip ] # Debug Assertion
+[ Debug ] fast/css/css-properties-case-insensitive.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/dom/access-key-iframe.html [ Skip ] # Causes later tests to fail with a Debug assertion.
+[ Debug ] fast/dom/HTMLDocument/active-element-frames.html [ Skip ] # Causes later tests to fail.
+[ Debug ] fast/dom/html-link-element-activation-behavior-on-mouse-click.html [ Skip ] # Causes later tests to fail
 [ Debug ] fast/dom/htmlallcollection-detached-node-children.html [ Skip ] # Crashing
-[ Debug ] fast/dom/htmlallcollection-reachable.html [ Skip ] # Crashing
-[ Debug ] fast/dom/htmlcollection-children-mutation.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/htmlcollection-namedItem.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/htmlcollection-reachable.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/htmlcollection-selectedOptions-namedItem-crash.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLAnchorElement/get-href-attribute-port.html [ Skip ] # Crashing
-[ Debug ] fast/dom/HTMLAnchorElement/remove-rel-attribute.html [ Skip ] # Crashing
-[ Debug ] fast/dom/HTMLAnchorElement/set-href-attribute-hash.html [ Skip ] # Crashing
-[ Debug ] fast/dom/HTMLAnchorElement/set-href-attribute-host.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLAnchorElement/set-href-attribute-hostname.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLAnchorElement/set-href-attribute-pathname.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLAnchorElement/set-href-attribute-port.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLAnchorElement/set-href-attribute-prevents-rebase.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLAnchorElement/set-href-attribute-rebase.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLAnchorElement/set-href-attribute-search.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLAnchorElement/set-href-attribute-whitespace.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLAreaElement/area-islink-focus-null-ptr-crash.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLBaseElement/href-attribute-resolves-with-respect-to-document.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLBaseElement/multiple-base-elements.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLButtonElement/change-type.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLDocument/document-all.html [ Skip ] # Crashing
-[ Debug ] fast/dom/HTMLDocument/document-open-return-value.html [ Skip ] # Crashing
-[ Debug ] fast/dom/HTMLDocument/document-plugins.html [ Skip ] # Crashing
-[ Debug ] fast/dom/HTMLDocument/document-special-properties.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLDocument/frameless-location-bugzilla10837.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLDocument/get-iframe-with-integer-name.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLDocument/hasFocus-frameless-crash.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLDocument/named-item.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLDocument/named-item-multiple-match.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLDocument/object-by-name-or-id.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLDocument/object-by-name-unknown-child-element.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLDocument/object-with-same-id-and-name.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLDocument/set-focus-on-valid-element.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLDocument/title-get.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/HTMLDocument/title-set.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/htmlcollection-backwards-subtree-iteration.html [ Skip ] # Crashing
-[ Debug ] fast/dom/htmlcollection-conversion-throws-exception.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/htmlcollection-detectability.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/htmlcollection-length-after-item.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/htmlcollection-non-html.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/htmlcollection-protects-base.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/icon-size-property.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/icon-url-change.html [ Skip ] # Debug Assertion
-[ Debug ] fast/dom/icon-url-list-apple-touch.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/autoscroll-in-textarea.html [ Skip ]
-[ Debug ] fast/events/autoscroll-in-textfield.html [ Skip ]
-[ Debug ] fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html [ Skip ] # Crashing
-[ Debug ] fast/events/autoscroll-overflow-hidden-longhands.html [ Skip ]
-[ Debug ] fast/events/autoscroll-should-not-stop-on-keypress.html [ Skip ]
-[ Debug ] fast/events/autoscroll-upwards-propagation.html [ Skip ] # Crashing
-[ Debug ] fast/events/autoscroll-with-non-scrollable-parent.html [ Skip ] # Crashing
-[ Debug ] fast/events/backspace-navigates-back.html [ Skip ]
-[ Debug ] fast/events/before-unload-adopt-subframe-to-outside.html [ Skip ]
-[ Debug ] fast/events/before-unload-adopt-within-subframes.html [ Skip ] # Crashing
-[ Debug ] fast/events/before-unload-forbidden-navigation.html [ Skip ] # Crashing
-[ Debug ] fast/events/before-unload-in-multiple-subframes.html [ Skip ] # Crashing
-[ Debug ] fast/events/before-unload-in-subframe.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/before-unload-javascript-navigation.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/before-unload-remove-and-add-subframe.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/before-unload-remove-itself.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/before-unload-returnValue.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/before-unload-with-subframes.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/beforeload-assertion.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/beforeload-iframe-crash.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/beforeload-input-time-crash.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/blur-focus-window-should-blur-focus-element.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/blur-remove-parent-crash.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/bogus-dropEffect-effectAllowed.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/bogus-event-listener-invalidation.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/change-overflow-on-overflow-change.html [ Skip ]
-[ Debug ] fast/events/check-defocus-event-order-when-triggered-by-mouse-click.html [ Skip ]
-[ Debug ] fast/events/check-defocus-event-order-when-triggered-by-tab.html [ Skip ] # Crashing
-[ Debug ] fast/events/clear-drag-state.html [ Skip ] # Crashing
-[ Debug ] fast/events/clear-edit-drag-state.html [ Skip ] # Crashing
-[ Debug ] fast/events/click-count.html [ Skip ] # Crashing
-[ Debug ] fast/events/click-focus-anchor.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/click-focus-control.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/click-range-slider.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/clientXY-in-zoom-and-scroll.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/content-changed-during-drop.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/context-no-deselect.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/context-nodrag.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/context-onmousedown-event.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/contextmenu-scrolled-page-with-frame.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/controlclick-no-onclick.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/crash-on-mutate-during-drop.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/create-document-crash-on-attach-event.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/custom-event-uninitialized.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/drag-parent-node.html [ Skip ]
-[ Debug ] fast/events/drag-selects-image.html [ Skip ]
-[ Debug ] fast/events/drag-text-with-clear.html [ Skip ] # Crashing
-[ Debug ] fast/events/dropzone-001.html [ Skip ] # Crashing
-[ Debug ] fast/events/dropzone-002.html [ Skip ] # Crashing
-[ Debug ] fast/events/dropzone-003.html [ Skip ] # Crashing
-[ Debug ] fast/events/dropzone-005.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/event-attribute.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/event-attributes-after-exception.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/event-creation.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/event-fire-order.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/event-fired-after-removal.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/event-function-toString.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/event-input-contentEditable.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/event-listener-html-non-html-confusion.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/event-listener-list-mutation.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/event-listener-map-rehash-crash.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/event-listener-moving-documents.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/event-listener-on-link.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/gc-freeze-with-attribute-listeners.html [ Skip ]
-[ Debug ] fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
-[ Debug ] fast/events/iframe-object-onload.html [ Skip ] # Crashing
-[ Debug ] fast/events/iframe-onmousemove.html [ Skip ] # Crashing
-[ Debug ] fast/events/imagemap-norender-crash.html [ Skip ] # Crashing
-[ Debug ] fast/events/ime-composition-events-001.html [ Skip ] # Crashing
-[ Debug ] fast/events/init-event-after-dispatch.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/init-event-null-view.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/init-events.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/initkeyboardevent-crash.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/input-element-display-none-in-dragleave-crash.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/input-focus-no-duplicate-events.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/input-image-scrolled-x-y.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/input-tab-focus-no-duplicate-events.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/invalid-001.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/invalid-002.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/invalid-003.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/invalid-004.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/keydown-keypress-focus-change.html [ Skip ] # Crashing
-[ Debug ] fast/events/keydown-keypress-preventDefault.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/keydown-remove-frame.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/keyevent-iframe-removed-crash.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/keypress-focus-change.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/keypress-insert-tab.html [ Skip ]
-[ Debug ] fast/events/keypress-removed-node.html [ Skip ]
-[ Debug ] fast/events/label-focus.html [ Skip ] # Crashing
-[ Debug ] fast/events/media-element-focus-tab.html [ Skip ] # Crashing
-[ Debug ] fast/events/media-focus-in-standalone-media-document.html [ Skip ] # Crashing
-[ Debug ] fast/events/menu-keydown-on-hidden-element.html [ Skip ] # Crashing
-[ Debug ] fast/events/message-channel-gc.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/message-channel-gc-2.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/message-channel-gc-3.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/message-channel-gc-4.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/message-channel-listener-circular-ownership.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/message-port-clone.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/message-port-close.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/message-port-constructor-for-deleted-document.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/message-port-context-destroyed.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/message-port-deleted-document.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/message-port-deleted-frame.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/message-port-inactive-document.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/mousedown_in_scrollbar.html [ Skip ]
-[ Debug ] fast/events/mousedown-inside-dragstart-should-not-cause-crash.html [ Skip ]
-[ Debug ] fast/events/mouseenter-mouseleave-capture.html [ Skip ] # Crashing
-[ Debug ] fast/events/mouseenter-mouseleave.html [ Skip ] # Crashing
-[ Debug ] fast/events/mouseenterleave-on-subframe.html [ Skip ] # Crashing
-[ Debug ] fast/events/mousemove-after-drag-over-scrollbar.html [ Skip ] # Crashing
-[ Debug ] fast/events/mouseout-dead-node.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/mouseout-dead-subframe.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/mouseout-on-window.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/mouseover-mouseout.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/mouseover-mouseout2.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/mouseup-from-button2.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/mouseup-outside-button.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/mouseup-outside-document.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/move-element-with-wheel-and-touch-event-listeners.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/moving-text-should-fire-drop-and-dragend-events-2.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/moving-text-should-fire-drop-and-dragend-events.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/multiline-link-arrow-navigation.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/mutation-during-append-child.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/onblur-remove.html [ Skip ]
-[ Debug ] fast/events/onchange-click-hang.html [ Skip ]
-[ Debug ] fast/events/onchange-passwordfield.html [ Skip ] # Crashing
-[ Debug ] fast/events/onchange-range-slider.html [ Skip ] # Crashing
-[ Debug ] fast/events/onchange-searchfield.html [ Skip ] # Crashing
-[ Debug ] fast/events/onchange-select-popup.html [ Skip ] # Crashing
-[ Debug ] fast/events/onchange-setvalue.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/onchange-text-form-field.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/onchange-textfield.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/onclick-list-marker.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/ondragenter.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/onerror-bubbling.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/onerror-img-after-gc.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/onerror-no-constructor.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/onload-after-document-close-no-subresource.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/onload-after-document-close-with-subresource.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/onload-fires-twice.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/onload-name-collision.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/page-scaled-mouse-click.html [ Skip ]
-[ Debug ] fast/events/page-visibility-null-view.html [ Skip ]
-[ Debug ] fast/events/pagehide-timeout.html [ Skip ] # Crashing
-[ Debug ] fast/events/pagehide-xhr-open.html [ Skip ] # Crashing
-[ Debug ] fast/events/pageshow-pagehide-on-back-cached.html [ Skip ] # Crashing
-[ Debug ] fast/events/pageshow-pagehide-on-back-cached-with-frames.html [ Skip ] # Crashing
-[ Debug ] fast/events/pageshow-pagehide.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/pointer-events.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/pointer-events-2.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/popup-allowed-from-gesture-initiated-event.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/popup-allowed-from-gesture-initiated-form-submit.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/popup-blocked-from-fake-button-click.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/popup-blocked-from-fake-focus.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/popup-blocked-from-fake-user-gesture.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/popup-blocked-from-history-reload.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/popup-blocked-from-iframe-script.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/popup-blocked-from-iframe-src.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/popup-blocked-from-mousemove.html [ Skip ] # Debug Assertion
-[ Debug ] fast/events/popup-blocked-from-untrusted-click-event-on-anchor.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/autofocus-input-css-style-change.html [ Skip ]
-[ Debug ] fast/forms/autofocus-keygen.html [ Skip ]
-[ Debug ] fast/forms/autofocus-opera-001.html [ Skip ] # Crashing
-[ Debug ] fast/forms/autofocus-opera-002.html [ Skip ] # Crashing
-[ Debug ] fast/forms/autofocus-opera-003.html [ Skip ] # Crashing
-[ Debug ] fast/forms/autofocus-opera-004.html [ Skip ] # Crashing
-[ Debug ] fast/forms/autofocus-opera-005.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/autofocus-opera-006.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/autofocus-opera-007.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/autofocus-opera-008.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/autofocus-readonly-attribute.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/basic-buttons.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/basic-inputs.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/basic-selects.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/basic-textareas-quirks-simple-lines.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/basic-textareas-quirks.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/basic-textareas-simple-lines.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/basic-textareas.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/blankbuttons.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/number/number-stepup-stepdown-from-renderer.html [ Skip ]
-[ Debug ] fast/forms/number/number-type-update-by-change-event.html [ Skip ]
-[ Debug ] fast/forms/number/number-validity-badinput.html [ Skip ] # Crashing
-[ Debug ] fast/forms/number/number-validation-message.html [ Skip ] # Crashing
-[ Debug ] fast/forms/number/number-validity-rangeoverflow.html [ Skip ] # Crashing
-[ Debug ] fast/forms/number/number-validity-rangeunderflow.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/number/number-validity-stepmismatch.html [ Skip ] # Crashing
-[ Debug ] fast/forms/number/number-validity-typemismatch.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/number/number-valueasnumber.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/number/number-wheel-event.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/radio/ValidityState-valueMissing-radio.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/radio/indeterminate-radio.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/radio/input-radio-checked-tab.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/radio/interactive-validation-required-radio.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/radio/radio-attr-order.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/radio/radio-button-no-change-event.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/radio/radio-default-value.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/radio/radio-group-document-destruction.html [ Skip ] # Debug Assertion
-[ Debug ] fast/forms/radio/radio-check-click-and-drag.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/flattening/iframe-flattening-simple.html [ Skip ]
-[ Debug ] fast/frames/flattening/iframe-tiny.html [ Skip ] # Crashing
-[ Debug ] fast/frames/flattening/scrollable-flexbox-inside-iframe-with-zero-height-and-needs-full-repaint-crash.html [ Skip ] # Crashing
-[ Debug ] fast/frames/flattening/scrollable-flexbox-inside-iframe-with-zero-height-assertion-failure.html [ Skip ] # Crashing
-[ Debug ] fast/frames/frame-deep-nested-resize.html [ Skip ]
-[ Debug ] fast/frames/frame-display-none-focus.html [ Skip ]
-[ Debug ] fast/frames/frame-element-name.html [ Skip ]
-[ Debug ] fast/frames/frame-focus-blurs-active-element.html [ Skip ] # Crashing
-[ Debug ] fast/frames/frame-inherit-noresize-from-frameset.html [ Skip ]
-[ Debug ] fast/frames/frame-js-url-clientWidth.html [ Skip ]
-[ Debug ] fast/frames/frame-length-fractional.html [ Skip ] # Crashing
-[ Debug ] fast/frames/frame-limit.html [ Skip ] # Crashing
-[ Debug ] fast/frames/frame-name-reset.html [ Skip ] # Crashing
-[ Debug ] fast/frames/frame-programmatic-noresize.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/frame-scrolling-attribute.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/frame-set-rotation-hit.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/frame-set-same-location.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/frame-set-same-src.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/frame-set-scaling-3d.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/frame-set-scaling-centered.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/frame-set-scaling-hit.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/frame-set-scaling-rotate.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/frame-set-scaling-skew.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/frame-set-scaling.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/frame-set-whitespace-attributes.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/frame-src-attribute.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/iframe-with-frameborder.html [ Skip ]
-[ Debug ] fast/frames/inline-object-inside-frameset.html [ Skip ]
-[ Debug ] fast/frames/invalid-frameset-compute-edge.html [ Skip ] # Crashing
-[ Debug ] fast/frames/invalid-frameset.html [ Skip ] # Crashing
-[ Debug ] fast/frames/invalid.html [ Skip ] # Crashing
-[ Debug ] fast/frames/javascript-url-as-framesrc-crash.html [ Skip ] # Crashing
-[ Debug ] fast/frames/javascript-url-for-deleted-frame.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/layout-after-destruction.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/location-change.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/location-change-no-file-access.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/location-put-after-removal.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/lots-of-iframes.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/lots-of-objects.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/modifications-in-subtree-unload.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/negative-remaining-length-crash.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/no-frame-borders.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/onload-remove-iframe-crash.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/onlyCommentInIFrame.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/out-of-document-iframe-has-child-frame.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/srcdoc/reloading-a-srcdoc-document-loads-it-again.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/srcdoc/setting-src-does-nothing.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/srcdoc/setting-srcdoc-reloads-document.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/srcdoc/srcdoc-beats-src.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/srcdoc/srcdoc-beats-src-dom.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/srcdoc/srcdoc-can-be-in-qurks-mode.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/srcdoc/srcdoc-can-navigate.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/srcdoc/srcdoc-defaults-to-standards-mode.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/srcdoc/srcdoc-loads-content.html [ Skip ] # Debug Assertion
-[ Debug ] fast/frames/srcdoc/srcdoc-urls.html [ Skip ] # Debug Assertion
-[ Debug ] fast/gradients/background-clipped.html [ Skip ] # Debug Assertion
-[ Debug ] fast/gradients/border-image-gradient-sides-and-corners.html [ Skip ] # Debug Assertion
-[ Debug ] fast/gradients/border-image-gradient.html [ Skip ] # Debug Assertion
-[ Debug ] fast/history/form-submit-in-frame.html [ Skip ]
-[ Debug ] fast/history/forward-during-load.html [ Skip ]
-[ Debug ] fast/history/gesture-before-onload-form-submit.html [ Skip ] # Crashing
-[ Debug ] fast/history/gesture-before-onload-location-href.html [ Skip ] # Crashing
-[ Debug ] fast/history/go-back-to-changed-name.html [ Skip ] # Crashing
-[ Debug ] fast/history/history-back-forward-within-subframe-hash.html [ Skip ] # Crashing
-[ Debug ] fast/history/history-back-twice-with-subframes-assert.html [ Skip ] # Debug Assertion
-[ Debug ] fast/history/history-back-within-subframe-hash.html [ Skip ] # Debug Assertion
-[ Debug ] fast/history/history-back-within-subframe-url.html [ Skip ] # Debug Assertion
-[ Debug ] fast/history/history-replace-updates-current-item.html [ Skip ] # Debug Assertion
-[ Debug ] fast/history/history-traversal-is-asynchronous.html [ Skip ] # Debug Assertion
-[ Debug ] fast/history/history_reload.html [ Skip ] # Debug Assertion
-[ Debug ] fast/history/link-inside-any.html [ Skip ] # Debug Assertion
-[ Debug ] fast/history/link-inside-not-inside-any.html [ Skip ] # Debug Assertion
-[ Debug ] fast/history/link-inside-not.html [ Skip ] # Debug Assertion
-[ Debug ] fast/history/multiple-classes-visited.html [ Skip ] # Debug Assertion
-[ Debug ] fast/history/nested-visited-test-complex.html [ Skip ] # Debug Assertion
-[ Debug ] fast/history/nested-visited-test-override.html [ Skip ] # Debug Assertion
-[ Debug ] fast/history/nested-visited-test.html [ Skip ] # Debug Assertion
-[ Debug ] fast/images/animated-gif-webkit-transform.html [ Skip ]
-[ Debug ] fast/images/animated-gif-iframe-webkit-transform.html [ Skip ]
-[ Debug ] fast/line-grid/line-align-left-edges.html [ Skip ]
-[ Debug ] fast/line-grid/line-align-parsing.html [ Skip ]
-[ Debug ] fast/line-grid/line-align-right-edges.html [ Skip ] # Crashing
-[ Debug ] fast/line-grid/line-grid-contains-value.html [ Skip ] # Crashing
-[ Debug ] fast/line-grid/line-grid-floating.html [ Skip ] # Crashing
-[ Debug ] fast/line-grid/line-grid-inside-columns.html [ Skip ] # Crashing
-[ Debug ] fast/line-grid/line-grid-into-columns.html [ Skip ] # Debug Assertion
-[ Debug ] fast/line-grid/line-grid-into-floats.html [ Skip ] # Debug Assertion
-[ Debug ] fast/line-grid/line-grid-nested.html [ Skip ] # Debug Assertion
-[ Debug ] fast/line-grid/line-grid-parsing.html [ Skip ] # Debug Assertion
-[ Debug ] fast/line-grid/line-grid-positioned.html [ Skip ] # Debug Assertion
-[ Debug ] fast/line-grid/line-snap-parsing.html [ Skip ] # Debug Assertion
-[ Debug ] fast/lists/001.html [ Skip ] # Debug Assertion
-[ Debug ] fast/lists/001-vertical.html [ Skip ] # Debug Assertion
-[ Debug ] fast/lists/002.html [ Skip ] # Debug Assertion
-[ Debug ] fast/lists/002-vertical.html [ Skip ] # Debug Assertion
-[ Debug ] fast/lists/003-vertical.html [ Skip ] # Debug Assertion
-[ Debug ] fast/lists/003.html [ Skip ] # Debug Assertion
-[ Debug ] fast/lists/004.html [ Skip ] # Debug Assertion
-[ Debug ] fast/loader/empty-embed-src-attribute.html [ Skip ]
-[ Debug ] fast/loader/external-script-URL-location.html [ Skip ]
-[ Debug ] fast/loader/file-URL-with-port-number.html [ Skip ] # Crashing
-[ Debug ] fast/loader/font-face-empty.html [ Skip ] # Crashing
-[ Debug ] fast/loader/for-window-event-onload-scripts.html [ Skip ] # Debug Assertion
-[ Debug ] fast/loader/form-state-restore-with-locked-back-forward-list.html [ Skip ] # Debug Assertion
-[ Debug ] fast/loader/form-submission-after-beforeunload-cancel.html [ Skip ] # Debug Assertion
-[ Debug ] fast/loader/form-submission-before-load-get.html [ Skip ] # Debug Assertion
-[ Debug ] fast/loader/form-submission-before-load-post.html [ Skip ] # Debug Assertion
-[ Debug ] fast/loader/form-submit-aborts-parsing.html [ Skip ] # Debug Assertion
-[ Debug ] fast/loader/frame-creation-removal.html [ Skip ] # Debug Assertion
-[ Debug ] fast/loader/frame-location-change-not-added-to-history.html [ Skip ] # Debug Assertion
-[ Debug ] fast/loader/frame-src-change-added-to-history.html [ Skip ] # Debug Assertion
-[ Debug ] fast/loader/frame-src-change-not-added-to-history.html [ Skip ] # Debug Assertion
-[ Debug ] fast/loader/frames-with-unload-handlers-in-page-cache.html [ Skip ] # Debug Assertion
-[ Debug ] fast/loader/goto-anchor-infinite-layout.html [ Skip ] # Debug Assertion
-[ Debug ] fast/overflow/setting-scrollTop-after-hide-show.html [ Skip ] # Crashing
-[ Debug ] fast/overflow/scrollbar-click-retains-focus.html [ Skip ]
-[ Debug ] fast/overflow/scrollbar-position-update.html [ Skip ]
-[ Debug ] fast/overflow/scrollbar-restored.html [ Skip ] # Crashing
-[ Debug ] fast/overflow/start-end-overflow-hidden-horizontal-writing-mode-tb.html [ Skip ] # Crashing
-[ Debug ] fast/overflow/start-end-overflow-hidden-vertical-writing-mode-rl.html [ Skip ] # Crashing
-[ Debug ] fast/overflow/table-overflow-float.html [ Skip ] # Debug Assertion
-[ Debug ] fast/overflow/trailing-float-linebox.html [ Skip ] # Debug Assertion
-[ Debug ] fast/overflow/unreachable-content-test.html [ Skip ] # Debug Assertion
-[ Debug ] fast/overflow/unreachable-overflow-rtl-bug.html [ Skip ] # Debug Assertion
-[ Debug ] fast/parser/001.html [ Skip ] # Debug Assertion
-[ Debug ] fast/parser/adoption-agency-crash-01.html [ Skip ] # Debug Assertion
-[ Debug ] fast/parser/adoption-agency-crash-02.html [ Skip ] # Debug Assertion
-[ Debug ] fast/parser/adoption-agency-crash-03.html [ Skip ] # Debug Assertion
-[ Debug ] fast/parser/ampersand-escaped-parseXMLFragment.xhtml [ Skip ] # Debug Assertion
-[ Debug ] fast/parser/append-child-followed-by-document-write.html [ Skip ] # Debug Assertion
-[ Debug ] fast/parser/area-in-div.html [ Skip ] # Debug Assertion
-[ Debug ] fast/parser/assertion-empty-attribute.html [ Skip ] # Debug Assertion
-[ Debug ] fast/parser/attributes-on-close-script.html [ Skip ] # Debug Assertion
-[ Debug ] fast/regions/subtree-with-vert-lr.html [ Skip ]
-[ Debug ] fast/regions/hover-content-inside-iframe-in-region.html [ Skip ]
-[ Debug ] fast/regions/subtree-with-vert-rl.html [ Skip ]
-[ Debug ] fast/repaint/4776765.html [ Skip ]
-[ Debug ] fast/repaint/absolute-position-change-containing-block.html [ Skip ]
-[ Debug ] fast/repaint/absolute-position-changed.html [ Skip ] # Crashing
-[ Debug ] fast/repaint/absolute-position-moved.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/add-table-overpaint.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/animation-after-layer-scroll.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/background-clip-text.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/fixed.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/fixed-move-after-scroll.html [ Skip ]
-[ Debug ] fast/repaint/fixed-position-transparency-with-overflow.html [ Skip ]
-[ Debug ] fast/repaint/fixed-right-bottom-in-page-scale.html [ Skip ] # Crashing
-[ Debug ] fast/repaint/fixed-right-in-page-scale.html [ Skip ] # Crashing
-[ Debug ] fast/repaint/fixed-scale.html [ Skip ] # Crashing
-[ Debug ] fast/repaint/fixed-scroll-simple.html [ Skip ] # Crashing
-[ Debug ] fast/repaint/fixed-table-cell.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/fixed-table-overflow.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/fixed-table-overflow-zindex.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/fixed-to-relative-position-with-absolute-child.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/fixed-tranformed.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/flexible-box-overflow-horizontal.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/flexible-box-overflow.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/float-in-new-block-with-layout-delta.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/float-move-during-layout.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/float-new-in-block.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/float-overflow-right.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/float-overflow.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/text-selection-rect-in-overflow.html [ Skip ]
-[ Debug ] fast/repaint/text-shadow-horizontal.html [ Skip ]
-[ Debug ] fast/repaint/text-shadow.html [ Skip ] # Crashing
-[ Debug ] fast/repaint/textarea-set-disabled.html [ Skip ] # Crashing
-[ Debug ] fast/repaint/trailing-floats-root-line-box-overflow.html [ Skip ] # Crashing
-[ Debug ] fast/repaint/transform-absolute-child.html [ Skip ] # Crashing
-[ Debug ] fast/repaint/transform-absolute-in-positioned-container.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/transform-disable-layoutstate.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/transform-layout-repaint.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/transform-relative-position.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/transform-repaint-descendants.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/transform-replaced-shadows.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/transform-rotate-and-remove.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/transform-table-layout.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/transform-translate.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/vertical-overflow-child.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/vertical-overflow-parent.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/vertical-overflow-same.html [ Skip ] # Debug Assertion
-[ Debug ] fast/repaint/view-background-from-body-1.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/cache/network-error-during-revalidation.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ]
-[ Debug ] http/tests/incremental/slow-utf8-css.html [ Skip ]
-[ Debug ] http/tests/incremental/slow-utf8-html.pl [ Skip ] # Crashing
-[ Debug ] http/tests/incremental/split-hex-entities.pl [ Skip ] # Crashing
-[ Debug ] http/tests/inspector-protocol/access-inspected-object.html [ Skip ] # Crashing
-[ Debug ] http/tests/inspector-protocol/loading-iframe-document-node.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/bad-scheme-subframe.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/bad-server-subframe.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/basic.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/empty-subframe.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/fire-error-event-empty-404-script.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/fire-error-event-script-no-content-type.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/preload-css-test.html [ Skip ]
-[ Debug ] http/tests/loading/preload-slow-loading.php [ Skip ] # Crashing
-[ Debug ] http/tests/loading/redirect-with-no-location-crash.html [ Skip ] # Crashing
-[ Debug ] http/tests/loading/remove-child-triggers-parser.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/simple-subframe.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/sizes/preload-image-sizes.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/slow-parsing-subframe.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/state-object-security-exception.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/text-content-type-with-binary-extension.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/unfinished-load-back-to-cached-page-callbacks.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/unfinished-main-resource-back-to-cached-page-callbacks.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/load-javascript-after-many-xhrs.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/location-hash-reload-cycle.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/loading/nested_bad_objects.php [ Skip ] # Debug Assertion
-[ Debug ] http/tests/local/absolute-url-strip-whitespace.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/local/drag-over-remote-content.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/local/link-stylesheet-preferred.html [ Skip ] # Crashing
-[ Debug ] http/tests/local/style-access-before-stylesheet-loaded.html [ Skip ] # Crashing
-[ Debug ] http/tests/local/stylesheet-and-script-load-order-http.html [ Skip ] # Crashing
-[ Debug ] http/tests/local/stylesheet-and-script-load-order-media-print.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/local/stylesheet-and-script-load-order.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/messaging/cross-domain-message-event-dispatch.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/messaging/cross-domain-message-send.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/mime/quoted-charset.php [ Skip ] # Debug Assertion
-[ Debug ] http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-and-css-extension.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/mime/standard-mode-loads-stylesheet-with-charset-and-css-extension.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/mime/standard-mode-loads-stylesheet-with-charset.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/mime/standard-mode-loads-stylesheet-with-empty-content-type.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/mime/uppercase-mime-type.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/misc/javascript-url-stop-loaders.html [ Skip ]
-[ Debug ] http/tests/misc/last-modified-parsing.html [ Skip ] # Crashing
-[ Debug ] http/tests/misc/location-origin.html [ Skip ] # Crashing
-[ Debug ] http/tests/misc/location-replace-crossdomain.html [ Skip ] # Crashing
-[ Debug ] http/tests/misc/location-test-xsl-style-sheet.xml [ Skip ] # Debug Assertion
-[ Debug ] http/tests/misc/location-with-space.php [ Skip ] # Debug Assertion
-[ Debug ] http/tests/misc/meta-refresh-stray-single-quote.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/misc/missing-style-sheet.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/misc/multiple-submit.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/misc/no-last-modified.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/misc/non-utf8-header-name.php [ Skip ] # Debug Assertion
-[ Debug ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Skip ] # Debug Assertion
-[ Debug ] http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml [ Skip ] # Debug Assertion
-[ Debug ] http/tests/misc/object-image-error-with-onload.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/misc/object-image-error.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/misc/object-image-load-outlives-gc-without-crashing.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/misc/onload-remove-iframe-crash-2.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/navigation/location-assign-adds-history-item.html [ Skip ] # Crashing
-[ Debug ] http/tests/security/isolatedWorld/storage-prototype.html [ Skip ]
-[ Debug ] http/tests/security/isolatedWorld/string-prototype.html [ Skip ] # Crashing
-[ Debug ] http/tests/security/isolatedWorld/top-properties.html [ Skip ] # Crashing
-[ Debug ] http/tests/security/isolatedWorld/userGestureEvents.html [ Skip ] # Crashing
-[ Debug ] http/tests/security/isolatedWorld/window-properties.html [ Skip ] # Crashing
-[ Debug ] http/tests/security/isolatedWorld/window-setTimeout-function.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/isolatedWorld/window-setTimeout-string.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/isolatedWorld/world-reuse.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom.html [ Skip ] # Crashing
-[ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute.html [ Skip ] # Crashing
-[ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS.html [ Skip ] # Crashing
-[ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode.html [ Skip ] # Crashing
-[ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-htmldom.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttribute.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/javascriptURL/javascriptURL-in-new-iframe.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-2-level.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame.html [ Skip ] # Debug Assertion
+[ Debug ] fast/events/change-frame-focus.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/events/drag-outside-window.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/events/keypress-focus-change.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/events/mousedown-in-subframe-scrollbar.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/events/onbeforeunload-focused-iframe.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/events/selectstart-by-arrow-keys.html # Causes later tests to fail
+[ Debug ] fast/events/selectstart-by-double-triple-clicks.html [ Failure ]
+[ Debug ] fast/events/selectstart-by-drag.html [ Failure ]
+[ Debug ] fast/forms/autofocus-in-sandbox-with-allow-scripts.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/forms/number/number-spinbutton-state.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/frames/frame-dead-region.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/frames/frame-display-none-focus.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/frames/frame-focus-blurs-active-element.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/frames/iframe-window-focus.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/frames/flattening/iframe-flattening-selection-crash.html
+[ Debug ] fast/frames/lots-of-objects.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/frames/take-focus-from-iframe.html [ Failure ]
+[ Debug ] fast/history/form-submit-in-frame.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/history/form-submit-in-frame-via-onclick.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/images/png-suite/test.html [ Skip ] # Debug Assertion
+[ Debug ] fast/loader/early-load-cancel.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/multicol/newmulticol/multicol-inside-multicol.html [ Skip ] # Debug Assertion
+[ Debug ] fast/regions/hover-content-inside-iframe-in-region.html [ Skip ] # Debug Assertion
+[ Debug ] fast/repaint/4774354.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/repaint/text-selection-rect-in-overflow-2.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/workers/constructor-proto.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/workers/wrapper-map-gc.html [ Skip ] # Timeout
+[ Debug ] http/tests/incremental/frame-focus-before-load.html [ Skip ] # Causes later tests to fail
+[ Debug ] http/tests/loading/post-in-iframe-with-back-navigation.html [ Skip ] # Causes later tests to fail
+[ Debug ] http/tests/local/drag-over-remote-content.html [ Skip ] # Causes later tests to fail
+[ Debug ] http/tests/misc/isindex-with-no-form-base-href.html [ Skip ] # Causes later tests to fail
+[ Debug ] http/tests/navigation/javascriptlink-subframeload.html [ Skip ] # Causes later tests to fail
+[ Debug ] http/tests/security/isolatedWorld/sandboxed-iframe.html [ Skip ] # Causes later tests to fail
+[ Debug ] http/tests/security/isolatedWorld/world-reuse.html [ Skip ] # Causes later tests to fail
 [ Debug ] http/tests/security/mixedContent/data-url-script-in-iframe.html [ Skip ]
-[ Debug ] http/tests/security/originHeader/origin-header-for-data.html [ Skip ] # Crashing
-[ Debug ] http/tests/security/originHeader/origin-header-for-empty.html [ Skip ] # Crashing
-[ Debug ] http/tests/security/originHeader/origin-header-for-get.html [ Skip ] # Crashing
-[ Debug ] http/tests/security/originHeader/origin-header-for-post.html [ Skip ] # Crashing
-[ Debug ] http/tests/security/postMessage/data-url-sends-null-origin.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/postMessage/delivery-order.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/postMessage/invalid-origin-throws-exception.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/postMessage/javascript-page-still-sends-origin.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/postMessage/origin-unaffected-by-base-tag.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/postMessage/origin-unaffected-by-document-domain.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/postMessage/target-origin.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/xssAuditor/anchor-url-dom-write-location2.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event-null-char.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/xssAuditor/anchor-url-dom-write-location-javascript-URL.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/xssAuditor/anchor-url-dom-write-location.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/security/xssAuditor/base-href-control-char.html [ Skip ] # Debug Assertion
-[ Debug ] http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
-[ Debug ] http/tests/webgl/1.0.2/texImage2DHTML.html [ Skip ]
-[ Debug ] ietestcenter/css3/valuesandunits/units-000.htm [ Skip ]
-[ Debug ] platform/win/fast/events/panScroll-preventDefault.html [ Skip ]
-[ Debug ] platform/win/fast/forms/file/drag-and-drop-files.html [ Skip ] # Crashing
-[ Debug ] platform/win/fast/text/uniscribe-item-boundary-crash.html [ Skip ] # Crashing
-[ Debug ] platform/win/inverted-colors/non-composited.html [ Skip ] # Crashing
-[ Debug ] platform/win/plugins/draws-gradient.html [ Skip ] # Debug Assertion
-[ Debug ] platform/win/plugins/get-value-netscape-window.html [ Skip ] # Debug Assertion
-[ Debug ] platform/win/plugins/npn-invalidate-rect-invalidates-window.html [ Skip ] # Debug Assertion
-[ Debug ] platform/win/plugins/visibility-hidden.html [ Skip ] # Debug Assertion
-[ Debug ] platform/win/plugins/window-geometry-initialized-before-set-window.html [ Skip ] # Debug Assertion
-[ Debug ] printing/allowed-page-breaks.html [ Skip ] # Debug Assertion
-[ Debug ] printing/iframe-print.html [ Skip ] # Debug Assertion
-[ Debug ] printing/no-content-empty-pages.html [ Skip ] # Debug Assertion
-[ Debug ] printing/numberOfPages.html [ Skip ] # Debug Assertion
-[ Debug ] printing/page-break-after-avoid.html [ Skip ] # Debug Assertion
-[ Debug ] printing/page-break-always.html [ Skip ] # Debug Assertion
-[ Debug ] printing/page-break-avoid.html [ Skip ] # Debug Assertion
-[ Debug ] printing/page-break-before-avoid.html [ Skip ] # Debug Assertion
-[ Debug ] svg/custom/list-items-with-svg-font-family.html [ Skip ] # Debug Assertion
-[ Debug ] transforms/3d/general/perspective-non-layer.html [ Skip ]
+[ Debug ] http/tests/security/listener/xss-window-onclick-addEventListener.html [ Skip ] # Causes later tests to fail
+[ Debug ] ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
+[ Debug ] mathml/roots-removeChild.html [ Failure ]
+[ Debug ] mathml/presentation/dynamic.html [ Failure ]
+[ Debug ] sputnik/Unicode/Unicode_320/S7.6_A3.1.html [ Skip ] # Debug Assertion
+[ Debug ] sputnik/Unicode/Unicode_320/S7.6_A3.2.html [ Skip ] # Debug Assertion
+[ Debug ] svg/custom/list-items-with-svg-font-family.html [ Skip ] # Causes later tests to fail
+[ Debug ] transforms/3d/general/perspective-non-layer.html [ Failure ]
 
 # These don't seem to be running.
 webkit.org/b/113946 compositing/contents-opaque/control-layer.html [ Failure ]
@@ -3155,7 +2576,8 @@ fast/dom/MutationObserver/inline-event-listener.html [ Skip ] #  [ Timeout ]
 webkit.org/b/121509 fast/dom/MutationObserver/database-callback-delivery.html [ Skip ] #  [ Timeout ]
 webkit.org/b/116564 fast/dom/Window/window-onFocus.html [ Failure ]
 webkit.org/b/116564 fast/dom/Window/window-postmessage-clone.html [ Pass Failure ]
-fast/dom/attribute-empty-value-no-children.html	[ Pass Timeout ]
+[ Release ] fast/dom/attribute-empty-value-no-children.html	[ Pass Timeout ]
+[ Debug ] fast/dom/attribute-empty-value-no-children.html [ Skip ] # Debug Assertion
 fast/dom/DOMImplementation/implementation-identity.html [ Pass Timeout ]
 fast/dom/getElementsByClassName/004.html [ Pass Timeout ]
 [ Release ] fast/dom/HTMLDocument/hasFocus.html	[ Pass Failure ]
@@ -3188,10 +2610,10 @@ webkit.org/b/121509 fast/events/page-visibility-iframe-move-test.html	[ Skip ] #
 fast/events/special-key-events-in-input-text.html [ Failure ]
 fast/events/attribute-listener-cloned-from-frameless-doc-context.html [ Pass Failure ]
 fast/events/drag-outside-window.html [ Pass Timeout ]
-fast/events/event-sender-mouse-moved.html [ Pass Timeout ]
+[ Release ] fast/events/event-sender-mouse-moved.html [ Pass Timeout ]
+[ Debug ] fast/events/event-sender-mouse-moved.html [ Skip ] # Debug Assertion
 [ Release ] fast/events/inputText-never-fired-on-keydown-cancel.html [ Pass Timeout ]
 [ Debug ] fast/events/inputText-never-fired-on-keydown-cancel.html [ Skip ] # Debug Assertion
-webkit.org/b/140518 [ Debug ] fast/events/drag-and-drop-autoscroll.html [ Skip ]  # Crashing
 [ Release ] fast/events/ondrop-text-html.html [ Failure ]
 [ Debug ] fast/events/ondrop-text-html.html [ Skip ] # Debug Assertion
 fast/events/shadow-event-path.html [ Failure ]
@@ -3218,7 +2640,8 @@ fast/history/history-length.html [ Skip ]
 fast/history/history-subframe-with-name.html [ Skip ]
 fast/history/location-replace-hash.html [ Skip ]
 fast/history/saves-state-after-fragment-nav.html [ Skip ]
-webkit.org/b/140871 fast/history/page-cache-clearing.html [ Failure ]
+webkit.org/b/140871 [ Release ] fast/history/page-cache-clearing.html [ Failure ]
+webkit.org/b/140871 [ Debug ] fast/history/page-cache-clearing.html [ Skip ] # Debug Assertion
 
 fast/html/marquee-scrollamount.html [ Failure ]
 
