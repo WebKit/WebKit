@@ -4012,4 +4012,9 @@ void EventHandler::setLastKnownMousePosition(const PlatformMouseEvent& event)
     m_lastKnownMouseGlobalPosition = event.globalPosition();
 }
 
+void EventHandler::setImmediateActionStage(ImmediateActionStage stage)
+{
+    m_immediateActionStage = stage;
+}
+
 } // namespace WebCore

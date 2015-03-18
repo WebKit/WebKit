@@ -1,3 +1,14 @@
+2015-03-18  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build after r181660
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::setImmediateActionStage):
+        * page/EventHandler.h:
+        (WebCore::EventHandler::setImmediateActionStage):
+        Un-inline setImmediateActionStage, because it is exported to WebCore, and
+        exporting inline thing causes random weak symbol errors on some platforms.
+
 2015-03-17  Conrad Shultz  <conrad_shultz@apple.com>
 
         Ignore some deprecation warnings

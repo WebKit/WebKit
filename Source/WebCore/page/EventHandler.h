@@ -312,7 +312,7 @@ public:
 
     bool isHandlingWheelEvent() const { return m_isHandlingWheelEvent; }
 
-    WEBCORE_EXPORT void setImmediateActionStage(ImmediateActionStage stage) { m_immediateActionStage = stage; }
+    WEBCORE_EXPORT void setImmediateActionStage(ImmediateActionStage stage);
 
 private:
 #if ENABLE(DRAG_SUPPORT)
