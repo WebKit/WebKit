@@ -1,3 +1,28 @@
+2015-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid repaints when changing transform on an element with multiple background images
+        https://bugs.webkit.org/show_bug.cgi?id=142841
+
+        Reviewed by Zalan Bujtas.
+        
+        Replace the cheap test for changed images in RenderElement::updateFillImages()
+        with an exhaustive test that walks the entire list of background images,
+        since any ensuing repaint is way more expensive than a slightly more expensive check here.
+        
+        Test: fast/repaint/multiple-backgrounds-style-change.html
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::updateFillImages):
+        * rendering/style/FillLayer.cpp:
+        (WebCore::layerImagesIdentical): See if both images are the same (either none
+        or both mask images, and same image pointer).
+        (WebCore::FillLayer::imagesIdentical): Walk the two FillLayer lists, checking the images
+        on each one. Returns false if we reach the end of one list before the other, or the images
+        are different.
+        * rendering/style/FillLayer.h: New static function; static because
+        it compares two FillLayer lists, and I think that makes more sense than
+        a member function.
+
 2015-03-18  Anders Carlsson  <andersca@apple.com>
 
         Pass cookies by reference in CookieHash functions
