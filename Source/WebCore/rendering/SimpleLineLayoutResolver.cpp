@@ -76,8 +76,7 @@ StringView RunResolver::Run::text() const
 {
     auto& resolver = m_iterator.resolver();
     auto& run = m_iterator.simpleRun();
-    ASSERT(run.start < run.end);
-    auto& segment = resolver.m_flowContents.segmentForRun(run.start, run.end);
+    auto& segment = resolver.m_flowContents.segmentForPosition(run.start);
     // We currently split runs on segment boundaries (different RenderObject).
     ASSERT(run.end <= segment.end);
     if (segment.text.is8Bit())

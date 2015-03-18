@@ -43,26 +43,69 @@ public:
         String text;
         const RenderObject& renderer;
     };
-    const Segment& segmentForRun(unsigned start, unsigned end) const;
+    const Segment& segmentForPosition(unsigned) const;
     const Segment& segmentForRenderer(const RenderObject&) const;
 
-    typedef Vector<Segment, 8>::const_iterator Iterator;
-    Iterator begin() const { return m_segments.begin(); }
-    Iterator end() const { return m_segments.end(); }
+    class Iterator {
+    public:
+        Iterator(const FlowContents& flowContents, unsigned segmentIndex)
+            : m_flowContents(flowContents)
+            , m_segmentIndex(segmentIndex)
+        {
+        }
+
+        Iterator& operator++();
+        bool operator==(const Iterator& other) const;
+        bool operator!=(const Iterator& other) const;
+        const Segment& operator*() const { return m_flowContents.m_segments[m_segmentIndex]; }
+
+    private:
+        const FlowContents& m_flowContents;
+        unsigned m_segmentIndex;
+    };
+
+    Iterator begin() const { return Iterator(*this, 0); }
+    Iterator end() const { return Iterator(*this, m_segments.size()); }
+
+    unsigned length() const { return m_segments.last().end; };
+
+    unsigned segmentIndexForPosition(unsigned position) const;
 
 private:
-    unsigned segmentIndexForRunSlow(unsigned start, unsigned end) const;
+    unsigned segmentIndexForPositionSlow(unsigned position) const;
+
     const Vector<Segment, 8> m_segments;
+
     mutable unsigned m_lastSegmentIndex;
 };
 
-inline const FlowContents::Segment& FlowContents::segmentForRun(unsigned start, unsigned end) const
+inline FlowContents::Iterator& FlowContents::Iterator::operator++()
 {
-    ASSERT(start < end);
+    ++m_segmentIndex;
+    return *this;
+}
+
+inline bool FlowContents::Iterator::operator==(const FlowContents::Iterator& other) const
+{
+    return m_segmentIndex == other.m_segmentIndex;
+}
+
+inline bool FlowContents::Iterator::operator!=(const FlowContents::Iterator& other) const
+{
+    return !(*this == other);
+}
+
+inline unsigned FlowContents::segmentIndexForPosition(unsigned position) const
+{
     auto& lastSegment = m_segments[m_lastSegmentIndex];
-    if (lastSegment.start <= start && end <= lastSegment.end)
-        return m_segments[m_lastSegmentIndex];
-    return m_segments[segmentIndexForRunSlow(start, end)];
+    if (lastSegment.start <= position && position < lastSegment.end)
+        return m_lastSegmentIndex;
+    return segmentIndexForPositionSlow(position);
+}
+
+inline const FlowContents::Segment& FlowContents::segmentForPosition(unsigned position) const
+{
+    return m_segments[segmentIndexForPosition(position)];
 }
 
 }

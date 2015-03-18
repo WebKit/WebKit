@@ -43,15 +43,12 @@ public:
     public:
         enum Type { ContentEnd, LineBreak, Whitespace, NonWhitespace };
         TextFragment() = default;
-        TextFragment(unsigned start, unsigned end, float width, Type type, bool isLastInRenderer = false, bool overlapsToNextRenderer = false, bool isCollapsed = false, bool isCollapsible = false, bool isBreakable = false)
+        TextFragment(unsigned start, unsigned end, float width, Type type, bool isCollapsed = false, bool isBreakable = false)
             : m_start(start)
             , m_end(end)
-            , m_width(width)
             , m_type(type)
-            , m_isLastInRenderer(isLastInRenderer)
-            , m_overlapsToNextRenderer(overlapsToNextRenderer)
+            , m_width(width)
             , m_isCollapsed(isCollapsed)
-            , m_isCollapsible(isCollapsible)
             , m_isBreakable(isBreakable)
         {
         }
@@ -60,41 +57,22 @@ public:
         unsigned end() const { return m_end; }
         float width() const { return m_width; }
         Type type() const { return m_type; }
-        bool isLastInRenderer() const { return m_isLastInRenderer; }
-        bool overlapsToNextRenderer() const { return m_overlapsToNextRenderer; }
         bool isCollapsed() const { return m_isCollapsed; }
-        bool isCollapsible() const { return m_isCollapsible; }
         bool isBreakable() const { return m_isBreakable; }
 
         bool isEmpty() const { return start() == end(); }
         TextFragment split(unsigned splitPosition, const TextFragmentIterator&);
-        bool operator==(const TextFragment& other) const
-        {
-            return m_start == other.m_start
-                && m_end == other.m_end
-                && m_width == other.m_width
-                && m_type == other.m_type
-                && m_isLastInRenderer == other.m_isLastInRenderer
-                && m_overlapsToNextRenderer == other.m_overlapsToNextRenderer
-                && m_isCollapsed == other.m_isCollapsed
-                && m_isCollapsible == other.m_isCollapsible
-                && m_isBreakable == other.m_isBreakable;
-        }
 
     private:
         unsigned m_start { 0 };
         unsigned m_end { 0 };
-        float m_width { 0 };
         Type m_type { NonWhitespace };
-        bool m_isLastInRenderer { false };
-        bool m_overlapsToNextRenderer { false };
+        float m_width { 0 };
         bool m_isCollapsed { false };
-        bool m_isCollapsible { false };
         bool m_isBreakable { false };
     };
     TextFragment nextTextFragment(float xPosition = 0);
-    void revertToFragment(const TextFragment&);
-    float textWidth(unsigned startPosition, unsigned endPosition, float xPosition) const;
+    float textWidth(unsigned from, unsigned to, float xPosition) const;
 
     struct Style {
         explicit Style(const RenderStyle&);
@@ -110,18 +88,19 @@ public:
         AtomicString locale;
     };
     const Style& style() const { return m_style; }
+    // FIXME: remove splitRunsAtRendererBoundary()
+    const FlowContents::Segment& segmentForPosition(unsigned position) const { return m_flowContents.segmentForPosition(position); };
 
 private:
     enum PositionType { Breakable, NonWhitespace };
-    unsigned skipToNextPosition(PositionType, unsigned startPosition, float& width, float xPosition, bool& overlappingFragment);
+    unsigned skipToNextPosition(PositionType, unsigned startPosition) const;
+    UChar characterAt(unsigned position) const;
     bool isLineBreak(unsigned position) const;
-    template <typename CharacterType> unsigned nextBreakablePosition(const FlowContents::Segment&, unsigned startPosition);
-    template <typename CharacterType> unsigned nextNonWhitespacePosition(const FlowContents::Segment&, unsigned startPosition);
-    template <typename CharacterType> float runWidth(const FlowContents::Segment&, unsigned startPosition, unsigned endPosition, float xPosition) const;
+    bool isEnd(unsigned position) const;
+    template <typename CharacterType> float runWidth(const String&, unsigned from, unsigned to, float xPosition) const;
 
     FlowContents m_flowContents;
-    FlowContents::Iterator m_currentSegment;
-    LazyLineBreakIterator m_lineBreakIterator;
+    mutable LazyLineBreakIterator m_lineBreakIterator;
     const Style m_style;
     unsigned m_position { 0 };
 };
@@ -148,11 +127,22 @@ inline TextFragmentIterator::TextFragment TextFragmentIterator::TextFragment::sp
     return newFragment;
 }
 
+inline UChar TextFragmentIterator::characterAt(unsigned position) const
+{
+    auto& segment = m_flowContents.segmentForPosition(position);
+    return segment.text[position - segment.start];
+}
+
 inline bool TextFragmentIterator::isLineBreak(unsigned position) const
 {
-    const auto& segment = *m_currentSegment;
-    ASSERT(segment.start <= position && position < segment.end);
-    return m_style.preserveNewline && segment.text[position - segment.start] == '\n';
+    if (isEnd(position))
+        return false;
+    return m_style.preserveNewline && characterAt(position) == '\n';
+}
+
+inline bool TextFragmentIterator::isEnd(unsigned position) const
+{
+    return position >= m_flowContents.length();
 }
 
 }
