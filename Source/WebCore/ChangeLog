@@ -1,3 +1,15 @@
+2015-03-17  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Ignore some deprecation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=142813
+
+        Reviewed by Mark Rowe.
+
+        Fixing the deprecations is tracked by: <rdar://problem/20201450>
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_processElement):
+
 2015-03-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r181667, r181682, and r181683.
