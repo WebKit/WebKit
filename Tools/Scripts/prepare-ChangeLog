@@ -697,6 +697,7 @@ sub get_function_line_ranges_for_cpp($$)
     my $in_macro = 0;
     my $in_method_declaration = 0;
     my $in_parentheses = 0;
+    my $quotation_mark;
     my $in_braces = 0;
     my $in_toplevel_array_brace = 0;
     my $brace_start = 0;
@@ -723,6 +724,18 @@ sub get_function_line_ranges_for_cpp($$)
     my @all_namespaces;
 
     while (<$file_handle>) {
+        # Handle continued quoted string.
+        if ($quotation_mark) {
+            if (!s-([^\\]|\\.)*$quotation_mark--) {
+                if (!m-\\$-) {
+                    warn "mismatched quotes at line $. in $file_name\n";
+                    undef $quotation_mark;
+                }
+                next;
+            }
+            undef $quotation_mark;
+        }
+
         # Handle continued multi-line comment.
         if ($in_comment) {
             next unless s-.*\*/--;
@@ -753,8 +766,12 @@ sub get_function_line_ranges_for_cpp($$)
                 s-//.*--;
             } else { # ' or "
                 if (!s-$match([^\\]|\\.)*?$match--) {
-                    warn "mismatched quotes at line $. in $file_name\n";
-                    s-$match.*--;
+                    if (!s-$match.*\\$--) {
+                        warn "mismatched quotes at line $. in $file_name\n";
+                        s-$match.*--;
+                    } else {
+                        $quotation_mark = $match;
+                    }
                 }
             }
         }

@@ -1,3 +1,16 @@
+2015-03-18  Dan Bernstein  <mitz@apple.com>
+
+        prepare-ChangeLog doesn't understand C string literals split across multiple lines with \
+        https://bugs.webkit.org/show_bug.cgi?id=142815
+
+        Reviewed by Darin Adler.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_cpp): If the line ends with a backslash instead of a matching
+        quotation mark, use new variable $quotation_mark to remember what we are looking for, and
+        keep consuming the quoted text until the matching quotation mark is reached. Emit the
+        warning only if a line ends without a backslash before the matching quotation mark was found.
+
 2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused "preprocessor" parameter to sub-CodeGenerators
