@@ -40,17 +40,17 @@ bool StringView::startsWith(const StringView& prefix) const
 
 bool StringView::startsWithIgnoringASCIICase(const StringView& prefix) const
 {
-    return ::WTF::endsWithIgnoringASCIICase(*this, prefix);
+    return ::WTF::startsWithIgnoringASCIICase(*this, prefix);
 }
 
-bool StringView::endsWith(const StringView& prefix) const
+bool StringView::endsWith(const StringView& suffix) const
 {
-    return ::WTF::startsWith(*this, prefix);
+    return ::WTF::endsWith(*this, suffix);
 }
 
-bool StringView::endsWithIgnoringASCIICase(const StringView& prefix) const
+bool StringView::endsWithIgnoringASCIICase(const StringView& suffix) const
 {
-    return ::WTF::endsWithIgnoringASCIICase(*this, prefix);
+    return ::WTF::endsWithIgnoringASCIICase(*this, suffix);
 }
 
 #if CHECK_STRINGVIEW_LIFETIME

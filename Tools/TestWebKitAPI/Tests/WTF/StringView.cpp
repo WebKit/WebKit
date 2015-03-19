@@ -215,4 +215,321 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseWithLatin1Characters)
     ASSERT_TRUE(equalIgnoringASCIICase(stringViewC, stringViewD));
 }
 
+StringView stringViewFromLiteral(const char* characters)
+{
+    return StringView(reinterpret_cast<const LChar*>(characters), strlen(characters));
+}
+
+StringView stringViewFromUTF8(String &ref, const char* characters)
+{
+    ref = String::fromUTF8(characters);
+    return ref;
+}
+
+TEST(WTF, StringViewStartsWithBasic)
+{
+    StringView reference = stringViewFromLiteral("abcdefg");
+    String referenceUTF8Ref;
+    StringView referenceUTF8 = stringViewFromUTF8(referenceUTF8Ref, "àîûèô");
+
+    StringView oneLetterPrefix = stringViewFromLiteral("a");
+    StringView shortPrefix = stringViewFromLiteral("abc");
+    StringView longPrefix = stringViewFromLiteral("abcdef");
+    StringView upperCasePrefix = stringViewFromLiteral("ABC");
+    StringView empty = stringViewFromLiteral("");
+    StringView notPrefix = stringViewFromLiteral("bc");
+
+    String oneLetterPrefixUTF8Ref;
+    StringView oneLetterPrefixUTF8 = stringViewFromUTF8(oneLetterPrefixUTF8Ref, "à");
+    String shortPrefixUTF8Ref;
+    StringView shortPrefixUTF8 = stringViewFromUTF8(shortPrefixUTF8Ref, "àî");
+    String longPrefixUTF8Ref;
+    StringView longPrefixUTF8 = stringViewFromUTF8(longPrefixUTF8Ref, "àîûè");
+    String upperCasePrefixUTF8Ref;
+    StringView upperCasePrefixUTF8 = stringViewFromUTF8(upperCasePrefixUTF8Ref, "ÀÎ");
+    String notPrefixUTF8Ref;
+    StringView notPrefixUTF8 = stringViewFromUTF8(notPrefixUTF8Ref, "îû");
+
+    EXPECT_TRUE(reference.startsWith(reference));
+    EXPECT_TRUE(reference.startsWith(oneLetterPrefix));
+    EXPECT_TRUE(reference.startsWith(shortPrefix));
+    EXPECT_TRUE(reference.startsWith(longPrefix));
+    EXPECT_TRUE(reference.startsWith(empty));
+
+    EXPECT_TRUE(referenceUTF8.startsWith(referenceUTF8));
+    EXPECT_TRUE(referenceUTF8.startsWith(oneLetterPrefixUTF8));
+    EXPECT_TRUE(referenceUTF8.startsWith(shortPrefixUTF8));
+    EXPECT_TRUE(referenceUTF8.startsWith(longPrefixUTF8));
+    EXPECT_TRUE(referenceUTF8.startsWith(empty));
+
+    EXPECT_FALSE(reference.startsWith(notPrefix));
+    EXPECT_FALSE(reference.startsWith(upperCasePrefix));
+    EXPECT_FALSE(reference.startsWith(notPrefixUTF8));
+    EXPECT_FALSE(reference.startsWith(upperCasePrefixUTF8));
+    EXPECT_FALSE(referenceUTF8.startsWith(notPrefix));
+    EXPECT_FALSE(referenceUTF8.startsWith(upperCasePrefix));
+    EXPECT_FALSE(referenceUTF8.startsWith(notPrefixUTF8));
+    EXPECT_FALSE(referenceUTF8.startsWith(upperCasePrefixUTF8));
+}
+
+TEST(WTF, StringViewStartsWithEmpty)
+{
+    StringView a = stringViewFromLiteral("");
+    String refB;
+    StringView b = stringViewFromUTF8(refB, "");
+
+    EXPECT_TRUE(a.startsWith(a));
+    EXPECT_TRUE(a.startsWith(b));
+    EXPECT_TRUE(b.startsWith(a));
+    EXPECT_TRUE(b.startsWith(b));
+}
+
+TEST(WTF, StringViewStartsWithIgnoringASCIICaseBasic)
+{
+    StringView reference = stringViewFromLiteral("abcdefg");
+
+    String referenceUTF8Ref;
+    StringView referenceUTF8 = stringViewFromUTF8(referenceUTF8Ref, "àîûèô");
+
+    StringView oneLetterPrefix = stringViewFromLiteral("a");
+    StringView shortPrefix = stringViewFromLiteral("abc");
+    StringView longPrefix = stringViewFromLiteral("abcdef");
+    StringView upperCasePrefix = stringViewFromLiteral("ABC");
+    StringView mixedCasePrefix = stringViewFromLiteral("aBcDe");
+    StringView empty = stringViewFromLiteral("");
+    StringView notPrefix = stringViewFromLiteral("bc");
+
+    String oneLetterPrefixUTF8Ref;
+    StringView oneLetterPrefixUTF8 = stringViewFromUTF8(oneLetterPrefixUTF8Ref, "à");
+    String shortPrefixUTF8Ref;
+    StringView shortPrefixUTF8 = stringViewFromUTF8(shortPrefixUTF8Ref, "àî");
+    String longPrefixUTF8Ref;
+    StringView longPrefixUTF8 = stringViewFromUTF8(longPrefixUTF8Ref, "àîûè");
+    String upperCasePrefixUTF8Ref;
+    StringView upperCasePrefixUTF8 = stringViewFromUTF8(upperCasePrefixUTF8Ref, "ÀÎ");
+    String notPrefixUTF8Ref;
+    StringView notPrefixUTF8 = stringViewFromUTF8(notPrefixUTF8Ref, "îû");
+
+    EXPECT_TRUE(reference.startsWithIgnoringASCIICase(reference));
+    EXPECT_TRUE(reference.startsWithIgnoringASCIICase(oneLetterPrefix));
+    EXPECT_TRUE(reference.startsWithIgnoringASCIICase(shortPrefix));
+    EXPECT_TRUE(reference.startsWithIgnoringASCIICase(longPrefix));
+    EXPECT_TRUE(reference.startsWithIgnoringASCIICase(empty));
+    EXPECT_TRUE(reference.startsWithIgnoringASCIICase(upperCasePrefix));
+    EXPECT_TRUE(reference.startsWithIgnoringASCIICase(mixedCasePrefix));
+
+    EXPECT_TRUE(referenceUTF8.startsWithIgnoringASCIICase(referenceUTF8));
+    EXPECT_TRUE(referenceUTF8.startsWithIgnoringASCIICase(oneLetterPrefixUTF8));
+    EXPECT_TRUE(referenceUTF8.startsWithIgnoringASCIICase(shortPrefixUTF8));
+    EXPECT_TRUE(referenceUTF8.startsWithIgnoringASCIICase(longPrefixUTF8));
+    EXPECT_TRUE(referenceUTF8.startsWithIgnoringASCIICase(empty));
+
+    EXPECT_FALSE(reference.startsWithIgnoringASCIICase(notPrefix));
+    EXPECT_FALSE(reference.startsWithIgnoringASCIICase(notPrefixUTF8));
+    EXPECT_FALSE(reference.startsWithIgnoringASCIICase(upperCasePrefixUTF8));
+    EXPECT_FALSE(referenceUTF8.startsWithIgnoringASCIICase(notPrefix));
+    EXPECT_FALSE(referenceUTF8.startsWithIgnoringASCIICase(notPrefixUTF8));
+    EXPECT_FALSE(referenceUTF8.startsWithIgnoringASCIICase(upperCasePrefix));
+    EXPECT_FALSE(referenceUTF8.startsWithIgnoringASCIICase(upperCasePrefixUTF8));
+}
+
+
+TEST(WTF, StringViewStartsWithIgnoringASCIICaseEmpty)
+{
+    StringView a = stringViewFromLiteral("");
+    String refB;
+    StringView b = stringViewFromUTF8(refB, "");
+
+    EXPECT_TRUE(a.startsWithIgnoringASCIICase(a));
+    EXPECT_TRUE(a.startsWithIgnoringASCIICase(b));
+    EXPECT_TRUE(b.startsWithIgnoringASCIICase(a));
+    EXPECT_TRUE(b.startsWithIgnoringASCIICase(b));
+}
+
+TEST(WTF, StringViewStartsWithIgnoringASCIICaseWithLatin1Characters)
+{
+    StringView reference = stringViewFromLiteral("aBcéeFG");
+    String referenceUTF8Ref;
+    StringView referenceUTF8 = stringViewFromUTF8(referenceUTF8Ref, "aBcéeFG");
+
+    StringView a = stringViewFromLiteral("aBcéeF");
+    StringView b = stringViewFromLiteral("ABCéEF");
+    StringView c = stringViewFromLiteral("abcéef");
+    StringView d = stringViewFromLiteral("Abcéef");
+
+    String refE;
+    StringView e = stringViewFromUTF8(refE, "aBcéeF");
+    String refF;
+    StringView f = stringViewFromUTF8(refF, "ABCéEF");
+    String refG;
+    StringView g = stringViewFromUTF8(refG, "abcéef");
+    String refH;
+    StringView h = stringViewFromUTF8(refH, "Abcéef");
+    
+    EXPECT_TRUE(reference.startsWithIgnoringASCIICase(a));
+    EXPECT_TRUE(reference.startsWithIgnoringASCIICase(b));
+    EXPECT_TRUE(reference.startsWithIgnoringASCIICase(c));
+    EXPECT_TRUE(reference.startsWithIgnoringASCIICase(d));
+
+    EXPECT_TRUE(referenceUTF8.startsWithIgnoringASCIICase(e));
+    EXPECT_TRUE(referenceUTF8.startsWithIgnoringASCIICase(f));
+    EXPECT_TRUE(referenceUTF8.startsWithIgnoringASCIICase(g));
+    EXPECT_TRUE(referenceUTF8.startsWithIgnoringASCIICase(h));
+
+    EXPECT_FALSE(reference.endsWithIgnoringASCIICase(referenceUTF8));
+    EXPECT_FALSE(referenceUTF8.endsWithIgnoringASCIICase(reference));
+}
+
+TEST(WTF, StringViewEndsWithBasic)
+{
+    StringView reference = stringViewFromLiteral("abcdefg");
+    String referenceUTF8Ref;
+    StringView referenceUTF8 = stringViewFromUTF8(referenceUTF8Ref, "àîûèô");
+
+    StringView oneLetterSuffix = stringViewFromLiteral("g");
+    StringView shortSuffix = stringViewFromLiteral("efg");
+    StringView longSuffix = stringViewFromLiteral("cdefg");
+    StringView upperCaseSuffix = stringViewFromLiteral("EFG");
+    StringView empty = stringViewFromLiteral("");
+    StringView notSuffix = stringViewFromLiteral("bc");
+
+    String oneLetterSuffixUTF8Ref;
+    StringView oneLetterSuffixUTF8 = stringViewFromUTF8(oneLetterSuffixUTF8Ref, "ô");
+    String shortSuffixUTF8Ref;
+    StringView shortSuffixUTF8 = stringViewFromUTF8(shortSuffixUTF8Ref, "èô");
+    String longSuffixUTF8Ref;
+    StringView longSuffixUTF8 = stringViewFromUTF8(longSuffixUTF8Ref, "îûèô");
+    String upperCaseSuffixUTF8Ref;
+    StringView upperCaseSuffixUTF8 = stringViewFromUTF8(upperCaseSuffixUTF8Ref, "ÈÔ");
+    String notSuffixUTF8Ref;
+    StringView notSuffixUTF8 = stringViewFromUTF8(notSuffixUTF8Ref, "îû");
+
+    EXPECT_TRUE(reference.endsWith(reference));
+    EXPECT_TRUE(reference.endsWith(oneLetterSuffix));
+    EXPECT_TRUE(reference.endsWith(shortSuffix));
+    EXPECT_TRUE(reference.endsWith(longSuffix));
+    EXPECT_TRUE(reference.endsWith(empty));
+
+    EXPECT_TRUE(referenceUTF8.endsWith(referenceUTF8));
+    EXPECT_TRUE(referenceUTF8.endsWith(oneLetterSuffixUTF8));
+    EXPECT_TRUE(referenceUTF8.endsWith(shortSuffixUTF8));
+    EXPECT_TRUE(referenceUTF8.endsWith(longSuffixUTF8));
+    EXPECT_TRUE(referenceUTF8.endsWith(empty));
+
+    EXPECT_FALSE(reference.endsWith(notSuffix));
+    EXPECT_FALSE(reference.endsWith(upperCaseSuffix));
+    EXPECT_FALSE(reference.endsWith(notSuffixUTF8));
+    EXPECT_FALSE(reference.endsWith(upperCaseSuffixUTF8));
+    EXPECT_FALSE(referenceUTF8.endsWith(notSuffix));
+    EXPECT_FALSE(referenceUTF8.endsWith(upperCaseSuffix));
+    EXPECT_FALSE(referenceUTF8.endsWith(notSuffixUTF8));
+    EXPECT_FALSE(referenceUTF8.endsWith(upperCaseSuffixUTF8));
+}
+
+TEST(WTF, StringViewEndsWithEmpty)
+{
+    StringView a = stringViewFromLiteral("");
+    String refB;
+    StringView b = stringViewFromUTF8(refB, "");
+
+    EXPECT_TRUE(a.endsWith(a));
+    EXPECT_TRUE(a.endsWith(b));
+    EXPECT_TRUE(b.endsWith(a));
+    EXPECT_TRUE(b.endsWith(b));
+}
+
+TEST(WTF, StringViewEndsWithIgnoringASCIICaseBasic)
+{
+    StringView reference = stringViewFromLiteral("abcdefg");
+    String referenceUTF8Ref;
+    StringView referenceUTF8 = stringViewFromUTF8(referenceUTF8Ref, "àîûèô");
+
+    StringView oneLetterSuffix = stringViewFromLiteral("g");
+    StringView shortSuffix = stringViewFromLiteral("efg");
+    StringView longSuffix = stringViewFromLiteral("bcdefg");
+    StringView upperCaseSuffix = stringViewFromLiteral("EFG");
+    StringView mixedCaseSuffix = stringViewFromLiteral("bCdeFg");
+    StringView empty = stringViewFromLiteral("");
+    StringView notSuffix = stringViewFromLiteral("bc");
+
+    String oneLetterSuffixUTF8Ref;
+    StringView oneLetterSuffixUTF8 = stringViewFromUTF8(oneLetterSuffixUTF8Ref, "ô");
+    String shortSuffixUTF8Ref;
+    StringView shortSuffixUTF8 = stringViewFromUTF8(shortSuffixUTF8Ref, "èô");
+    String longSuffixUTF8Ref;
+    StringView longSuffixUTF8 = stringViewFromUTF8(longSuffixUTF8Ref, "îûèô");
+    String upperCaseSuffixUTF8Ref;
+    StringView upperCaseSuffixUTF8 = stringViewFromUTF8(upperCaseSuffixUTF8Ref, "ÈÔ");
+    String notSuffixUTF8Ref;
+    StringView notSuffixUTF8 = stringViewFromUTF8(notSuffixUTF8Ref, "îû");
+
+    EXPECT_TRUE(reference.endsWithIgnoringASCIICase(reference));
+    EXPECT_TRUE(reference.endsWithIgnoringASCIICase(oneLetterSuffix));
+    EXPECT_TRUE(reference.endsWithIgnoringASCIICase(shortSuffix));
+    EXPECT_TRUE(reference.endsWithIgnoringASCIICase(longSuffix));
+    EXPECT_TRUE(reference.endsWithIgnoringASCIICase(empty));
+    EXPECT_TRUE(reference.endsWithIgnoringASCIICase(upperCaseSuffix));
+    EXPECT_TRUE(reference.endsWithIgnoringASCIICase(mixedCaseSuffix));
+
+    EXPECT_TRUE(referenceUTF8.endsWithIgnoringASCIICase(referenceUTF8));
+    EXPECT_TRUE(referenceUTF8.endsWithIgnoringASCIICase(oneLetterSuffixUTF8));
+    EXPECT_TRUE(referenceUTF8.endsWithIgnoringASCIICase(shortSuffixUTF8));
+    EXPECT_TRUE(referenceUTF8.endsWithIgnoringASCIICase(longSuffixUTF8));
+    EXPECT_TRUE(referenceUTF8.endsWithIgnoringASCIICase(empty));
+
+    EXPECT_FALSE(reference.endsWithIgnoringASCIICase(notSuffix));
+    EXPECT_FALSE(reference.endsWithIgnoringASCIICase(notSuffixUTF8));
+    EXPECT_FALSE(reference.endsWithIgnoringASCIICase(upperCaseSuffixUTF8));
+    EXPECT_FALSE(referenceUTF8.endsWithIgnoringASCIICase(notSuffix));
+    EXPECT_FALSE(referenceUTF8.endsWithIgnoringASCIICase(notSuffixUTF8));
+    EXPECT_FALSE(referenceUTF8.endsWithIgnoringASCIICase(upperCaseSuffix));
+    EXPECT_FALSE(referenceUTF8.endsWithIgnoringASCIICase(upperCaseSuffixUTF8));
+}
+
+TEST(WTF, StringViewEndsWithIgnoringASCIICaseEmpty)
+{
+    StringView a = stringViewFromLiteral("");
+    String refB;
+    StringView b = stringViewFromUTF8(refB, "");
+
+    EXPECT_TRUE(a.endsWithIgnoringASCIICase(a));
+    EXPECT_TRUE(a.endsWithIgnoringASCIICase(b));
+    EXPECT_TRUE(b.endsWithIgnoringASCIICase(a));
+    EXPECT_TRUE(b.endsWithIgnoringASCIICase(b));
+}
+
+TEST(WTF, StringViewEndsWithIgnoringASCIICaseWithLatin1Characters)
+{
+    StringView reference = stringViewFromLiteral("aBcéeFG");
+    String referenceUTF8Ref;
+    StringView referenceUTF8 = stringViewFromUTF8(referenceUTF8Ref, "aBcéeFG");
+
+    StringView a = stringViewFromLiteral("BcéeFG");
+    StringView b = stringViewFromLiteral("BCéEFG");
+    StringView c = stringViewFromLiteral("bcéefG");
+    StringView d = stringViewFromLiteral("bcéefg");
+
+    String refE;
+    StringView e = stringViewFromUTF8(refE, "bcéefG");
+    String refF;
+    StringView f = stringViewFromUTF8(refF, "BCéEFG");
+    String refG;
+    StringView g = stringViewFromUTF8(refG, "bcéefG");
+    String refH;
+    StringView h = stringViewFromUTF8(refH, "bcéefg");
+    
+    EXPECT_TRUE(reference.endsWithIgnoringASCIICase(a));
+    EXPECT_TRUE(reference.endsWithIgnoringASCIICase(b));
+    EXPECT_TRUE(reference.endsWithIgnoringASCIICase(c));
+    EXPECT_TRUE(reference.endsWithIgnoringASCIICase(d));
+
+    EXPECT_TRUE(referenceUTF8.endsWithIgnoringASCIICase(e));
+    EXPECT_TRUE(referenceUTF8.endsWithIgnoringASCIICase(f));
+    EXPECT_TRUE(referenceUTF8.endsWithIgnoringASCIICase(g));
+    EXPECT_TRUE(referenceUTF8.endsWithIgnoringASCIICase(h));
+
+    EXPECT_FALSE(reference.endsWithIgnoringASCIICase(referenceUTF8));
+    EXPECT_FALSE(referenceUTF8.endsWithIgnoringASCIICase(reference));
+}
+
 } // namespace TestWebKitAPI

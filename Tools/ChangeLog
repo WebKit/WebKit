@@ -1,3 +1,17 @@
+2015-03-18  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Fix StringView typos after r181525 and r181558
+        https://bugs.webkit.org/show_bug.cgi?id=142772
+
+        Reviewed by Darin Adler.
+
+        Add some tests in [1] to cover the StringView::startsWith, 
+        StringView::startsWithIgnoringASCIICase, StringView::endsWith and 
+        StringView::endsWithIgnoringASCIICase implementations.
+
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-03-18  Dana Burkart  <dburkart@apple.com>
 
         Remove extraneous import to fix the build.

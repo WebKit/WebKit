@@ -1,3 +1,24 @@
+2015-03-18  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Fix StringView misplaced implementations after r181525 and r181558
+        https://bugs.webkit.org/show_bug.cgi?id=142772
+
+        Reviewed by Darin Adler.
+
+        Fix misplaced implementations in StringView::startsWithIgnoringASCIICase and 
+        StringView::endsWith. 
+
+        Add some tests in [1] to cover the StringView::startsWith, 
+        StringView::startsWithIgnoringASCIICase, StringView::endsWith and 
+        StringView::endsWithIgnoringASCIICase implementations.
+
+        [1] Tools/TestWebKitAPI/Tests/WTF/StringView.cpp.
+
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::startsWithIgnoringASCIICase):
+        (WTF::StringView::endsWith):
+        (WTF::StringView::endsWithIgnoringASCIICase):
+
 2015-03-17  Michael Saboff  <msaboff@apple.com>
 
         Windows X86-64 should use the fixed executable allocator
