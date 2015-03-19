@@ -73,6 +73,7 @@ public:
     URL(const URL& base, const String& relative, const TextEncoding&);
 
     static URL fakeURLWithRelativePart(const String&);
+    static URL fileURLWithFileSystemPath(const String&);
 
     String strippedForUseAsReferrer() const;
 

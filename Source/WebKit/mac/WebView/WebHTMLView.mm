@@ -3962,12 +3962,12 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
 {
     NSFileWrapper *wrapper = nil;
-    NSURL *draggingImageURL = nil;
+    NSURL *draggingElementURL = nil;
     
     if (WebCore::CachedImage* tiffResource = [self promisedDragTIFFDataSource]) {
         if (auto* buffer = tiffResource->resourceBuffer()) {
             NSURLResponse *response = tiffResource->response().nsURLResponse();
-            draggingImageURL = [response URL];
+            draggingElementURL = [response URL];
             wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:buffer->createNSData().get()] autorelease];
             NSString* filename = [response suggestedFilename];
             NSString* trueExtension(tiffResource->image()->filenameExtension());
@@ -3988,10 +3988,14 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
             return nil; 
         
         const URL& imageURL = page->dragController().draggingImageURL();
-        ASSERT(!imageURL.isEmpty());
-        draggingImageURL = imageURL;
+        if (!imageURL.isEmpty())
+            draggingElementURL = imageURL;
+#if ENABLE(ATTACHMENT_ELEMENT)
+        else
+            draggingElementURL = page->dragController().draggingAttachmentURL();
+#endif
 
-        wrapper = [[self _dataSource] _fileWrapperForURL:draggingImageURL];
+        wrapper = [[self _dataSource] _fileWrapperForURL:draggingElementURL];
     }
     
     if (wrapper == nil) {
@@ -4005,8 +4009,8 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
     if (![wrapper writeToURL:[NSURL fileURLWithPath:path] options:NSFileWrapperWritingWithNameUpdating originalContentsURL:nil error:nullptr])
         LOG_ERROR("Failed to create image file via -[NSFileWrapper writeToURL:options:originalContentsURL:error:]");
     
-    if (draggingImageURL)
-        [[NSFileManager defaultManager] _webkit_setMetadataURL:[draggingImageURL absoluteString] referrer:nil atPath:path];
+    if (draggingElementURL)
+        [[NSFileManager defaultManager] _webkit_setMetadataURL:[draggingElementURL absoluteString] referrer:nil atPath:path];
     
     return [NSArray arrayWithObject:[path lastPathComponent]];
 }

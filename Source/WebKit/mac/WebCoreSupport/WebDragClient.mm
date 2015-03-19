@@ -127,11 +127,17 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const 
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& title, WebCore::Frame* frame)
 {
     ASSERT(pasteboardName);
-    WebHTMLView *source = getTopHTMLView(frame);
-    WebArchive *archive = [kit(&element) webArchive];
-    
-    [[NSPasteboard pasteboardWithName:pasteboardName] _web_declareAndWriteDragImageForElement:kit(&element) URL:url title:title archive:archive source:source];
+    [[NSPasteboard pasteboardWithName:pasteboardName] _web_declareAndWriteDragImageForElement:kit(&element) URL:url title:title archive:[kit(&element) webArchive] source:getTopHTMLView(frame)];
 }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+void WebDragClient::declareAndWriteAttachment(const String& pasteboardName, Element& element, const URL& url, const String& path, WebCore::Frame* frame)
+{
+    ASSERT(pasteboardName);
+    
+    [[NSPasteboard pasteboardWithName:pasteboardName] _web_declareAndWriteDragImageForElement:kit(&element) URL:url title:path archive:nil source:getTopHTMLView(frame)];
+}
+#endif
 
 void WebDragClient::dragControllerDestroyed() 
 {

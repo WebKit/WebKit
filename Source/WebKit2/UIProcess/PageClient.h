@@ -191,8 +191,13 @@ public:
 #endif
 
 #if USE(APPKIT)
-    virtual void setPromisedData(const String& pasteboardName, PassRefPtr<WebCore::SharedBuffer> imageBuffer, const String& filename, const String& extension, const String& title,
+    virtual void setPromisedDataForImage(const String& pasteboardName, PassRefPtr<WebCore::SharedBuffer> imageBuffer, const String& filename, const String& extension, const String& title,
                                  const String& url, const String& visibleUrl, PassRefPtr<WebCore::SharedBuffer> archiveBuffer) = 0;
+#if ENABLE(ATTACHMENT_ELEMENT)
+    virtual void setPromisedDataForAttachment(const String& pasteboardName, const String& filename, const String& extension, const String& title,
+                                         const String& url, const String& visibleUrl) = 0;
+
+#endif
 #endif
 
 #if PLATFORM(GTK)

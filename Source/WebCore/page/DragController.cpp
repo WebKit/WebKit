@@ -49,6 +49,7 @@
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "HTMLAnchorElement.h"
+#include "HTMLAttachmentElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -623,6 +624,14 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
     state.type = (sourceFrame->selection().contains(dragOrigin)) ? DragSourceActionSelection : DragSourceActionNone;
     if (!startElement)
         return nullptr;
+#if ENABLE(ATTACHMENT_ELEMENT)
+    // Unlike image elements, attachment elements are immediately selected upon mouse down,
+    // but for those elements we still want to use the single element drag behavior as long as
+    // the element is the only content of the selection.
+    const VisibleSelection& selection = sourceFrame->selection().selection();
+    if (selection.isRange() && is<HTMLAttachmentElement>(selection.start().anchorNode()) && selection.start().anchorNode() == selection.end().anchorNode())
+        state.type = DragSourceActionNone;
+#endif
 
     for (auto renderer = startElement->renderer(); renderer; renderer = renderer->parent()) {
         Element* element = renderer->nonPseudoElement();
@@ -649,6 +658,14 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
                 state.type = static_cast<DragSourceAction>(state.type | DragSourceActionLink);
                 return element;
             }
+#if ENABLE(ATTACHMENT_ELEMENT)
+            if ((m_dragSourceAction & DragSourceActionAttachment)
+                && is<HTMLAttachmentElement>(*element)
+                && downcast<HTMLAttachmentElement>(*element).file()) {
+                state.type = static_cast<DragSourceAction>(state.type | DragSourceActionAttachment);
+                return element;
+            }
+#endif
         }
     }
 
@@ -738,6 +755,10 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         return false;
     URL linkURL = hitTestResult.absoluteLinkURL();
     URL imageURL = hitTestResult.absoluteImageURL();
+#if ENABLE(ATTACHMENT_ELEMENT)
+    URL attachmentURL = hitTestResult.absoluteAttachmentURL();
+    m_draggingAttachmentURL = URL();
+#endif
 
     IntPoint mouseDraggedPoint = src.view()->windowToContents(dragEvent.position());
 
@@ -853,6 +874,23 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             dragImage = scaleDragImage(dragImage, FloatSize(m_page.deviceScaleFactor(), m_page.deviceScaleFactor()));
         }
         doSystemDrag(dragImage, dragLoc, mouseDraggedPoint, dataTransfer, src, true);
+#if ENABLE(ATTACHMENT_ELEMENT)
+    } else if (!attachmentURL.isEmpty() && (m_dragSourceAction & DragSourceActionAttachment)) {
+        if (!dataTransfer.pasteboard().hasData()) {
+            m_draggingAttachmentURL = attachmentURL;
+            selectElement(element);
+            declareAndWriteAttachment(dataTransfer, element, attachmentURL);
+        }
+        
+        m_client.willPerformDragSourceAction(DragSourceActionAttachment, dragOrigin, dataTransfer);
+        
+        if (!dragImage) {
+            dragImage = dissolveDragImageToFraction(createDragImageForSelection(src), DragImageAlpha);
+            dragLoc = dragLocForSelectionDrag(src);
+            m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
+        }
+        doSystemDrag(dragImage, dragLoc, dragOrigin, dataTransfer, src, false);
+#endif
     } else if (state.type == DragSourceActionDHTML) {
         if (dragImage) {
             ASSERT(m_dragSourceAction & DragSourceActionDHTML);

@@ -3308,6 +3308,9 @@ bool EventHandler::dragHysteresisExceeded(const FloatPoint& dragViewportLocation
         threshold = TextDragHysteresis;
         break;
     case DragSourceActionImage:
+#if ENABLE(ATTACHMENT_ELEMENT)
+    case DragSourceActionAttachment:
+#endif
         threshold = ImageDragHysteresis;
         break;
     case DragSourceActionLink:
@@ -3430,6 +3433,9 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         ASSERT((dragState().type & DragSourceActionSelection));
         ASSERT((dragState().type & ~DragSourceActionSelection) == DragSourceActionDHTML
             || (dragState().type & ~DragSourceActionSelection) == DragSourceActionImage
+#if ENABLE(ATTACHMENT_ELEMENT)
+            || (dragState().type & ~DragSourceActionSelection) == DragSourceActionAttachment
+#endif
             || (dragState().type & ~DragSourceActionSelection) == DragSourceActionLink);
         dragState().type = DragSourceActionSelection;
     }

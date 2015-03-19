@@ -1,3 +1,37 @@
+2015-03-19  Enrica Casucci  <enrica@apple.com>
+
+        <attachment> should put URLs on the pasteboard so that Finder can accept drops.
+        https://bugs.webkit.org/show_bug.cgi?id=142801
+        rdar://problem/19982527
+
+        Reviewed by Tim Horton.
+
+        This patch adds all the necessary support to write attachment elements into
+        the pasteboard, including the promised type in WK2.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setPromisedDataForImage:withFileName:withExtension:withTitle:withURL:withVisibleURL:withArchive:forPasteboard:]):
+        (-[WKView _setPromisedDataForAttachment:withExtension:withTitle:withURL:withVisibleURL:forPasteboard:]):
+        (-[WKView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WKView _setPromisedData:withFileName:withExtension:withTitle:withURL:withVisibleURL:withArchive:forPasteboard:]): Deleted.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setPromisedDataForImage):
+        (WebKit::PageClientImpl::setPromisedDataForAttachment):
+        (WebKit::PageClientImpl::setPromisedData): Deleted.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setPromisedDataForImage):
+        (WebKit::WebPageProxy::setPromisedDataForAttachment):
+        (WebKit::WebPageProxy::setPromisedData): Deleted.
+        * WebProcess/WebCoreSupport/WebDragClient.h:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteAttachment):
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+
 2015-03-19  Anders Carlsson  <andersca@apple.com>
 
         Cache::remove should take a Key instead of an entry

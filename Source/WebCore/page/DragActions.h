@@ -46,6 +46,9 @@ namespace WebCore {
         DragSourceActionImage        = 2,
         DragSourceActionLink         = 4,
         DragSourceActionSelection    = 8,
+#if ENABLE(ATTACHMENT_ELEMENT)
+        DragSourceActionAttachment   = 16,
+#endif
         DragSourceActionAny          = UINT_MAX
     } DragSourceAction;
     

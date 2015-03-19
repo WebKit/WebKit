@@ -69,6 +69,12 @@ void DragController::cleanupAfterSystemDrag()
 {
 }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+void DragController::declareAndWriteAttachment(DataTransfer&, Element&, const URL&)
+{
+}
+#endif
+
 void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Element& element, const URL& url, const String& label)
 {
     Pasteboard& pasteboard = dataTransfer.pasteboard();

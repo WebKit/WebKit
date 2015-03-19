@@ -60,6 +60,7 @@
 @end
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
+#define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(m_process->checkURLReceivedFromWebProcess(url), m_process->connection())
 
 using namespace WebCore;
 
@@ -407,9 +408,11 @@ void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const S
     process().send(Messages::WebPage::DidStartDrag(), m_pageID);
 }
 
-void WebPageProxy::setPromisedData(const String& pasteboardName, const SharedMemory::Handle& imageHandle, uint64_t imageSize, const String& filename, const String& extension,
+void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const SharedMemory::Handle& imageHandle, uint64_t imageSize, const String& filename, const String& extension,
                                    const String& title, const String& url, const String& visibleURL, const SharedMemory::Handle& archiveHandle, uint64_t archiveSize)
 {
+    MESSAGE_CHECK_URL(url);
+    MESSAGE_CHECK_URL(visibleURL);
     RefPtr<SharedMemory> sharedMemoryImage = SharedMemory::create(imageHandle, SharedMemory::ReadOnly);
     RefPtr<SharedBuffer> imageBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryImage->data()), imageSize);
     RefPtr<SharedBuffer> archiveBuffer;
@@ -418,8 +421,17 @@ void WebPageProxy::setPromisedData(const String& pasteboardName, const SharedMem
         RefPtr<SharedMemory> sharedMemoryArchive = SharedMemory::create(archiveHandle, SharedMemory::ReadOnly);;
         archiveBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryArchive->data()), archiveSize);
     }
-    m_pageClient.setPromisedData(pasteboardName, imageBuffer, filename, extension, title, url, visibleURL, archiveBuffer);
+    m_pageClient.setPromisedDataForImage(pasteboardName, imageBuffer, filename, extension, title, url, visibleURL, archiveBuffer);
 }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+void WebPageProxy::setPromisedDataForAttachment(const String& pasteboardName, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL)
+{
+    MESSAGE_CHECK_URL(url);
+    MESSAGE_CHECK_URL(visibleURL);
+    m_pageClient.setPromisedDataForAttachment(pasteboardName, filename, extension, title, url, visibleURL);
+}
+#endif
 #endif
 
 void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)

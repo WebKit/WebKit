@@ -42,6 +42,7 @@
 #import <WebCore/Element.h>
 #import <WebCore/Image.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/RenderAttachment.h>
 #import <WebCore/RenderImage.h>
 #import <WebKitLegacy/DOMExtensions.h>
 #import <WebKitLegacy/DOMPrivate.h>
@@ -271,21 +272,30 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     ASSERT(self == [NSPasteboard pasteboardWithName:NSDragPboard]);
 
     NSString *extension = @"";
+    RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil]);
     if (auto* renderer = core(element)->renderer()) {
         if (is<RenderImage>(*renderer)) {
             if (CachedImage* image = downcast<RenderImage>(*renderer).cachedImage()) {
                 extension = image->image()->filenameExtension();
                 if (![extension length])
                     return nullptr;
+                [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImageIncludingArchive:(archive != nil)]];
+                [self declareTypes:types.get() owner:source];
             }
         }
+#if ENABLE(ATTACHMENT_ELEMENT)
+        else if (is<RenderAttachment>(*renderer)) {
+            extension = URL.pathExtension;
+            [types addObjectsFromArray:[NSPasteboard _web_dragTypesForURL]];
+            [self declareTypes:types.get() owner:source];
+            RetainPtr<NSMutableArray> paths = adoptNS([[NSMutableArray alloc] init]);
+            [paths.get() addObject:title];
+            [self setPropertyList:paths.get() forType:NSFilenamesPboardType];
+        }
+#endif
     }
 
-    NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil];
-    [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImageIncludingArchive:(archive != nil)]];
-    [self declareTypes:types owner:source];    
-    [self _web_writeImage:nil element:element URL:URL title:title archive:archive types:types source:source];
-    [types release];
+    [self _web_writeImage:nil element:element URL:URL title:title archive:archive types:types.get() source:source];
 
     NSArray *extensions = [[NSArray alloc] initWithObjects:extension, nil];
     [self setPropertyList:extensions forType:NSFilesPromisePboardType];

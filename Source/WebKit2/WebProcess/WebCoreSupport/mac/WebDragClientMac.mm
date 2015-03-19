@@ -97,6 +97,16 @@ static WebCore::CachedImage* cachedImage(Element& element)
     return image;
 }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+void WebDragClient::declareAndWriteAttachment(const String& pasteboardName, Element& element, const URL& url, const String& path, WebCore::Frame* frame)
+{
+    ASSERT(pasteboardName == String(NSDragPboard));
+    
+    NSURL* nsURL = (NSURL *)url;
+    m_page->send(Messages::WebPageProxy::SetPromisedDataForAttachment(pasteboardName, String(nsURL.lastPathComponent), String(nsURL.pathExtension), path, String(nsURL.absoluteString), userVisibleString(nsURL)));
+}
+#endif
+
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, Frame*)
 {
     ASSERT(pasteboardName == String(NSDragPboard));
@@ -143,7 +153,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
         memcpy(archiveSharedMemoryBuffer->data(), archiveBuffer->data(), archiveSize);
         archiveSharedMemoryBuffer->createHandle(archiveHandle, SharedMemory::ReadOnly);
     }
-    m_page->send(Messages::WebPageProxy::SetPromisedData(pasteboardName, imageHandle, imageSize, String([response suggestedFilename]), extension, title, String([[response URL] absoluteString]), userVisibleString((NSURL *)url), archiveHandle, archiveSize));
+    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, imageHandle, imageSize, String([response suggestedFilename]), extension, title, String([[response URL] absoluteString]), userVisibleString((NSURL *)url), archiveHandle, archiveSize));
 }
 
 } // namespace WebKit

@@ -1,3 +1,15 @@
+2015-03-19  Enrica Casucci  <enrica@apple.com>
+
+        <attachment> should put URLs on the pasteboard so that Finder can accept drops.
+        https://bugs.webkit.org/show_bug.cgi?id=142801
+        rdar://problem/19982527
+
+        Reviewed by Tim Horton.
+
+        * editing/pasteboard/drag-and-drop-attachment-contenteditable-expected.txt: Added.
+        * editing/pasteboard/drag-and-drop-attachment-contenteditable.html: Added.
+        * platform/mac-wk2/TestExpectations: Skipping new test on WK2 since it uses eventSender.
+
 2015-03-19  Dean Jackson  <dino@apple.com>
 
         http://webkit.org/b/142790
@@ -122,6 +134,7 @@
         * fast/repaint/multiple-backgrounds-style-change-expected.txt: Added.
         * fast/repaint/multiple-backgrounds-style-change.html: Added.
 
+>>>>>>> .r181712
 2015-03-18  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         Unreviewed GTK Gardening 18th March

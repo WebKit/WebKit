@@ -25,11 +25,13 @@
 #include "CachedImage.h"
 #include "DocumentMarkerController.h"
 #include "Editor.h"
+#include "File.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLAreaElement.h"
+#include "HTMLAttachmentElement.h"
 #include "HTMLAudioElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
@@ -309,6 +311,25 @@ IntRect HitTestResult::imageRect() const
         return IntRect();
     return m_innerNonSharedNode->renderBox()->absoluteContentQuad().enclosingBoundingBox();
 }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+URL HitTestResult::absoluteAttachmentURL() const
+{
+    if (!m_innerNonSharedNode)
+        return URL();
+    
+    if (!(m_innerNonSharedNode->renderer() && m_innerNonSharedNode->renderer()->isAttachment()))
+        return URL();
+    
+    if (!is<HTMLAttachmentElement>(*m_innerNonSharedNode))
+        return URL();
+    File* attachmentFile = downcast<HTMLAttachmentElement>(*m_innerNonSharedNode).file();
+    if (!attachmentFile)
+        return URL();
+    
+    return URL::fileURLWithFileSystemPath(attachmentFile->path());
+}
+#endif
 
 URL HitTestResult::absoluteImageURL() const
 {

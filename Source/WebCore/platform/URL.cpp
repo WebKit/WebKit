@@ -2119,4 +2119,9 @@ URL URL::fakeURLWithRelativePart(const String& relativePart)
     return URL(URL(), "webkit-fake-url://" + createCanonicalUUIDString() + '/' + relativePart);
 }
 
+URL URL::fileURLWithFileSystemPath(const String& filePath)
+{
+    return URL(URL(), "file:///" + filePath);
+}
+
 }

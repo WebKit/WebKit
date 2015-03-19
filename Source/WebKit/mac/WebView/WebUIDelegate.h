@@ -112,6 +112,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
     WebDragSourceActionImage        = 2,
     WebDragSourceActionLink         = 4,
     WebDragSourceActionSelection    = 8,
+    WebDragSourceActionAttachment   = 16,
     WebDragSourceActionAny          = UINT_MAX
 };
 

@@ -1,3 +1,39 @@
+2015-03-19  Enrica Casucci  <enrica@apple.com>
+
+        <attachment> should put URLs on the pasteboard so that Finder can accept drops.
+        https://bugs.webkit.org/show_bug.cgi?id=142801
+        rdar://problem/19982527
+
+        Reviewed by Tim Horton.
+
+        Test: editing/pasteboard/drag-and-drop-attachment-contenteditable.html
+
+        This patch adds all the necessary support to write attachment elements into
+        the pasteboard, including the promised type.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DragActions.h:
+        * page/DragClient.h:
+        (WebCore::DragClient::declareAndWriteAttachment):
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableElement):
+        (WebCore::DragController::startDrag):
+        * page/DragController.h:
+        (WebCore::DragController::draggingAttachmentURL):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dragHysteresisExceeded):
+        (WebCore::EventHandler::handleDrag):
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::declareAndWriteAttachment):
+        * page/win/DragControllerWin.cpp:
+        (WebCore::DragController::declareAndWriteAttachment):
+        * platform/URL.cpp:
+        (WebCore::URL::fileURLWithFileSystemPath):
+        * platform/URL.h:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absoluteAttachmentURL):
+        * rendering/HitTestResult.h:
+
 2015-03-19  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix linking error after r181753.
