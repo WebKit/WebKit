@@ -1,3 +1,13 @@
+2015-03-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix linking error after r181753.
+
+        Drop WEBCORE_EXPORT for Settings::minimumDOMTimerInterval() as it is
+        now inlined.
+
+        * page/Settings.h:
+        (WebCore::Settings::minimumDOMTimerInterval):
+
 2015-03-19  Brady Eidson  <beidson@apple.com>
 
         Part of content extensions should apply css selectors

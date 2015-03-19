@@ -164,7 +164,7 @@ public:
     bool needsAcrobatFrameReloadingQuirk() const { return m_needsAdobeFrameReloadingQuirk; }
 
     WEBCORE_EXPORT void setMinimumDOMTimerInterval(double); // Initialized to DOMTimer::defaultMinimumInterval().
-    WEBCORE_EXPORT double minimumDOMTimerInterval() const { return m_minimumDOMTimerInterval; }
+    double minimumDOMTimerInterval() const { return m_minimumDOMTimerInterval; }
 
     void setDOMTimerAlignmentInterval(double);
     double domTimerAlignmentInterval() const { return m_domTimerAlignmentInterval; }
