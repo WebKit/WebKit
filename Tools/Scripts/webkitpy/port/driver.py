@@ -38,7 +38,6 @@ import os
 from webkitpy.common.system import path
 from webkitpy.common.system.profiler import ProfilerFactory
 from webkitpy.layout_tests.servers.web_platform_test_server import WebPlatformTestServer
-from webkitpy.common.asan.utils import ASanUtility
 
 
 _log = logging.getLogger(__name__)

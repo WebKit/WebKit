@@ -1,5 +1,13 @@
 2015-03-18  Dana Burkart  <dburkart@apple.com>
 
+        Remove extraneous import to fix the build.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/port/driver.py:
+
+2015-03-18  Dana Burkart  <dburkart@apple.com>
+
         ASAN_OPTIONS=allocator_may_return_null=1 needs to be set 
         https://bugs.webkit.org/show_bug.cgi?id=142547
 
