@@ -257,14 +257,6 @@ body.mac-platform.legacy .details-section > .content > .group:matches(:nth-child
     padding: 5px 4px 2px;
 }
 
-.details-section > .content > .group:first-child > .row.simple:first-child > * {
-    padding: 0px 4px 2px 4px;
-}
-
-body.mac-platform.legacy .details-section > .content > .group:first-child > .row.simple:first-child > * {
-    padding: 5px 4px 2px;
-}
-
 .details-section > .content > .group > .row.simple > .label {
     color: rgb(51, 51, 51);
 
@@ -309,10 +301,6 @@ body.mac-platform.legacy .details-section > .content > .group > .row:matches(.em
 }
 
 .details-section > .content > .group > .row.properties:not(.empty) {
-    padding: 0 4px 6px 4px;
-}
-
-body.mac-platform.legacy .details-section > .content > .group > .row.properties:not(.empty) {
     padding: 4px 6px;
 }
 

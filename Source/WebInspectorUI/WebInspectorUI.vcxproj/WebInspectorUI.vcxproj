@@ -716,7 +716,6 @@
     <None Include="..\UserInterface\NetworkObserver.js" />
     <None Include="..\UserInterface\NetworkTimeline.css" />
     <None Include="..\UserInterface\Object.js" />
-    <None Include="..\UserInterface\ObjectPropertiesSection.js" />
     <None Include="..\UserInterface\PageObserver.js" />
     <None Include="..\UserInterface\PathComponentIcons.css" />
     <None Include="..\UserInterface\Popover.css" />

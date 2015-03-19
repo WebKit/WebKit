@@ -203,10 +203,13 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 else if (title === "Object")
                     title = title + WebInspector.UIString(" (Prototype)");
 
-                var propertiesSection = new WebInspector.ObjectPropertiesSection(prototype);
+                // FIXME: <https://webkit.org/b/142833> Web Inspector: Node Details Sidebar Properties Section has "undefined" for all prototype properties
+
+                var objectTree = new WebInspector.ObjectTreeView(prototype, WebInspector.ObjectTreeView.Mode.Properties);
+                objectTree.showOnlyProperties();
 
                 var detailsSection = new WebInspector.DetailsSection(prototype.description.hash + "-prototype-properties", title, null, null, true);
-                detailsSection.groups[0].rows = [new WebInspector.DetailsSectionPropertiesRow(propertiesSection)];
+                detailsSection.groups[0].rows = [new WebInspector.DetailsSectionPropertiesRow(objectTree)];
 
                 element.appendChild(detailsSection.element);
             }

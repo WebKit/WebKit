@@ -79,7 +79,7 @@ WebInspector.TypePropertiesSection.prototype = {
     }
 };
 
-// This is mostly identical to ObjectPropertiesSection.compareProperties.
+// This is mostly identical to ObjectTreeView.compareProperties.
 // But this checks for equality because we can have two objects named the same thing.
 WebInspector.TypePropertiesSection.PropertyComparator = function(propertyA, propertyB)
 {

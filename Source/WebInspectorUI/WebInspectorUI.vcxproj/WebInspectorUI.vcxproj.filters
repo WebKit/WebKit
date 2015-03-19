@@ -720,9 +720,6 @@
     <None Include="..\UserInterface\Object.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\ObjectPropertiesSection.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\PageObserver.js">
       <Filter>UserInterface</Filter>
     </None>

@@ -1,5 +1,34 @@
 2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Replace last use of ObjectPropertiesSection with ObjectTreeView
+        https://bugs.webkit.org/show_bug.cgi?id=142834
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshProperties):
+        Use properties only ObjectTreeView instead of ObjectPropertiesSection.
+        This doesn't fix the functionality issues, but fixes the appearance.
+
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section > .content > .group:first-child > .row.simple:first-child > *): Deleted.
+        (body.mac-platform.legacy .details-section > .content > .group:first-child > .row.simple:first-child > *): Deleted.
+        (.details-section > .content > .group > .row.properties:not(.empty)): Deleted.
+        (body.mac-platform.legacy .details-section > .content > .group > .row.properties:not(.empty)): Deleted.
+        Re-add back the small padding at the top of sections. This actually
+        broke padding in a few sections (Event Listeners) at the expense
+        of eliminating a few pixels of whitespace at the top of other sections.
+        We should focus on addressing the extra whitespace separately.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/ObjectPropertiesSection.js: Removed.
+        * UserInterface/Views/TypePropertiesSection.js:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+        Remove new unused class.
+
+2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Debugger Popovers and Probes should use FormattedValue/ObjectTreeView instead of Custom/ObjectPropertiesSection
         https://bugs.webkit.org/show_bug.cgi?id=142830
 
