@@ -1,3 +1,13 @@
+2015-03-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [GTK] Fix inspector userinterface related incremental build issue
+        https://bugs.webkit.org/show_bug.cgi?id=142849
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitdirs.pm:
+        (shouldRemoveCMakeCache):
+
 2015-03-18  Alex Christensen  <achristensen@webkit.org>
 
         [ContentExtensions] Prepare for compiling stylesheets of selectors to be used on every page.

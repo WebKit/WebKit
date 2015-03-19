@@ -1780,6 +1780,11 @@ sub shouldRemoveCMakeCache(@)
         return 1;
     }
 
+    my $inspectorUserInterfaceDircetory = File::Spec->catdir(sourceDir(), "Source", "WebInspectorUI", "UserInterface");
+    if ($cacheFileModifiedTime < stat($inspectorUserInterfaceDircetory)->mtime) {
+        return 1;
+    }
+
     return 0;
 }
 
