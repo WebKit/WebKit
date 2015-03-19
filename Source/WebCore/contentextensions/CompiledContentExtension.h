@@ -44,6 +44,7 @@ public:
     virtual unsigned bytecodeLength() const = 0;
     virtual const SerializedActionByte* actions() const = 0;
     virtual unsigned actionsLength() const = 0;
+    Vector<String> globalDisplayNoneSelectors();
 };
 
 } // namespace ContentExtensions

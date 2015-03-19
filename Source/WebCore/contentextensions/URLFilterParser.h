@@ -39,11 +39,31 @@ class NFA;
 
 struct PrefixTreeEntry;
 
-class URLFilterParser {
+class WEBCORE_EXPORT URLFilterParser {
 public:
+    enum ParseStatus {
+        Ok,
+        MatchesEverything,
+        UnclosedGroups,
+        CannotMatchAnything,
+        NonASCII,
+        UnsupportedCharacterClass,
+        MisplacedQuantifier,
+        BackReference,
+        MisplacedStartOfLine,
+        WordBoundary,
+        AtomCharacter,
+        Group,
+        Disjunction,
+        MisplacedEndOfLine,
+        EmptyPattern,
+        YarrError,
+        InvalidQuantifier,
+    };
+    static String statusString(ParseStatus);
     explicit URLFilterParser(NFA&);
     ~URLFilterParser();
-    String addPattern(const String& pattern, bool patternIsCaseSensitive, uint64_t patternId);
+    ParseStatus addPattern(const String& pattern, bool patternIsCaseSensitive, uint64_t patternId);
 
 private:
     NFA& m_nfa;

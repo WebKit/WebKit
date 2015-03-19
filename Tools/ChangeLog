@@ -1,3 +1,15 @@
+2015-03-18  Alex Christensen  <achristensen@webkit.org>
+
+        [ContentExtensions] Prepare for compiling stylesheets of selectors to be used on every page.
+        https://bugs.webkit.org/show_bug.cgi?id=142799
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::testPattern):
+        (TestWebKitAPI::TEST_F):
+        Start testing regex failures.
+
 2015-03-18  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Fix StringView typos after r181525 and r181558

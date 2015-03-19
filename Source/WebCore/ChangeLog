@@ -1,3 +1,53 @@
+2015-03-18  Alex Christensen  <achristensen@webkit.org>
+
+        [ContentExtensions] Prepare for compiling stylesheets of selectors to be used on every page.
+        https://bugs.webkit.org/show_bug.cgi?id=142799
+
+        Reviewed by Brady Eidson.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Make private headers to use with API tests.
+        * contentextensions/CompiledContentExtension.cpp:
+        (WebCore::ContentExtensions::CompiledContentExtension::globalDisplayNoneSelectors):
+        * contentextensions/CompiledContentExtension.h:
+        Added method to get only the selectors from the root of the DFA, which apply to all URLs.
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        Added checking if the trigger will match everything.
+        These actions can be put directly on the root of the DFA without adding extra epsilon transitions to the NFA.
+        * contentextensions/DFA.h:
+        (WebCore::ContentExtensions::DFA::nodeAt):
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::actionsFromDFARoot):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+        * contentextensions/DFABytecodeInterpreter.h:
+        * contentextensions/NFA.h:
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::Term::quantifier):
+        Sink terms to a vector then add nodes to NFA when finalizing after checking for regexes that match everything.
+        (WebCore::ContentExtensions::GraphBuilder::GraphBuilder):
+        (WebCore::ContentExtensions::GraphBuilder::finalize):
+        (WebCore::ContentExtensions::GraphBuilder::parseStatus):
+        (WebCore::ContentExtensions::GraphBuilder::atomPatternCharacter):
+        (WebCore::ContentExtensions::GraphBuilder::atomBuiltInCharacterClass):
+        (WebCore::ContentExtensions::GraphBuilder::quantifyAtom):
+        (WebCore::ContentExtensions::GraphBuilder::atomBackReference):
+        (WebCore::ContentExtensions::GraphBuilder::assertionBOL):
+        (WebCore::ContentExtensions::GraphBuilder::assertionWordBoundary):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassAtom):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassRange):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassBuiltIn):
+        (WebCore::ContentExtensions::GraphBuilder::atomParentheticalAssertionBegin):
+        (WebCore::ContentExtensions::GraphBuilder::disjunction):
+        (WebCore::ContentExtensions::GraphBuilder::hasError):
+        (WebCore::ContentExtensions::GraphBuilder::fail):
+        (WebCore::ContentExtensions::GraphBuilder::sinkFloatingTermIfNecessary):
+        (WebCore::ContentExtensions::URLFilterParser::addPattern):
+        (WebCore::ContentExtensions::URLFilterParser::statusString):
+        (WebCore::ContentExtensions::GraphBuilder::errorMessage): Deleted.
+        * contentextensions/URLFilterParser.h:
+        Use an enum instead of strings for the status to avoid checking strings when we have a regex that matches everything.
+
 2015-03-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Fix build failure due to FALLTHROUGH in unreachable code

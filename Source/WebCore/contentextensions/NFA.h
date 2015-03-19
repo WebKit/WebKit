@@ -42,7 +42,7 @@ class NFAToDFA;
 // The nodes are accessed through an identifier.
 class NFA {
 public:
-    NFA();
+    WEBCORE_EXPORT NFA();
     unsigned root() const { return m_root; }
     unsigned createNode();
 

@@ -40,7 +40,18 @@ static inline IntType getBits(const DFABytecode* bytecode, unsigned bytecodeLeng
     ASSERT_UNUSED(bytecodeLength, index + sizeof(IntType) <= bytecodeLength);
     return *reinterpret_cast<const IntType*>(&bytecode[index]);
 }
-
+    
+DFABytecodeInterpreter::Actions DFABytecodeInterpreter::actionsFromDFARoot()
+{
+    unsigned programCounter = 0;
+    DFABytecodeInterpreter::Actions globalActionLocations;
+    while (static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) == DFABytecodeInstruction::AppendAction) {
+        globalActionLocations.add(static_cast<uint64_t>(getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode))));
+        programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
+    }
+    return globalActionLocations;
+}
+    
 DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString& urlCString, uint16_t flags)
 {
     const char* url = urlCString.data();
@@ -50,6 +61,8 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
     unsigned urlIndex = 0;
     bool urlIndexIsAfterEndOfString = false;
     Actions actions;
+    
+    // FIXME: Skip the actions from the root once they are used through actionsFromDFARoot. Change AppendAction to AppendActions to make this faster.
     
     // This should always terminate if interpreting correctly compiled bytecode.
     while (true) {

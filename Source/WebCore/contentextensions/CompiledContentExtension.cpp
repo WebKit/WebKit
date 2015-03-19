@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "CompiledContentExtension.h"
+#include "DFABytecodeInterpreter.h"
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -35,6 +36,24 @@ CompiledContentExtension::~CompiledContentExtension()
 {
 }
 
+Vector<String> CompiledContentExtension::globalDisplayNoneSelectors()
+{
+    DFABytecodeInterpreter interpreter(bytecode(), bytecodeLength());
+    DFABytecodeInterpreter::Actions actionLocations = interpreter.actionsFromDFARoot();
+    
+    Vector<Action> globalActions;
+    for (uint64_t actionLocation : actionLocations)
+        globalActions.append(Action::deserialize(actions(), actionsLength(), static_cast<unsigned>(actionLocation)));
+    
+    Vector<String> selectors;
+    for (Action& action : globalActions) {
+        if (action.cssSelector().length())
+            selectors.append(action.cssSelector());
+    }
+    
+    return selectors;
+}
+    
 } // namespace ContentExtensions
 } // namespace WebCore
 

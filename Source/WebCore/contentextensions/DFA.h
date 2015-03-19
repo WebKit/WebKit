@@ -48,6 +48,7 @@ public:
     unsigned root() const { return m_root; }
     unsigned size() const { return m_nodes.size(); }
     const DFANode& nodeAt(unsigned i) const { return m_nodes[i]; }
+    DFANode& nodeAt(unsigned i) { return m_nodes[i]; }
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
     void debugPrintDot() const;

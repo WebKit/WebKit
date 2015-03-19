@@ -29,10 +29,13 @@
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/ContentExtensionCompiler.h>
 #include <WebCore/ContentExtensionsBackend.h>
+#include <WebCore/NFA.h>
 #include <WebCore/ResourceLoadInfo.h>
 #include <WebCore/URL.h>
+#include <WebCore/URLFilterParser.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 namespace ContentExtensions {
@@ -333,6 +336,21 @@ TEST_F(ContentExtensionTest, ResourceType)
     testRequest(backend, mainDocumentRequest("http://block_all_types.org", ResourceType::Media), { ContentExtensions::ActionType::BlockLoad });
     testRequest(backend, mainDocumentRequest("http://block_only_images.org", ResourceType::Image), { ContentExtensions::ActionType::BlockLoad });
     testRequest(backend, mainDocumentRequest("http://block_only_images.org", ResourceType::Document), { });
+}
+
+static void testPatternStatus(const char* pattern, ContentExtensions::URLFilterParser::ParseStatus status)
+{
+    ContentExtensions::NFA nfa;
+    ContentExtensions::URLFilterParser parser(nfa);
+    EXPECT_EQ(status, parser.addPattern(ASCIILiteral(pattern), false, 0));
+}
+    
+TEST_F(ContentExtensionTest, ParsingFailures)
+{
+    testPatternStatus("a*b?.*.?[a-z]?[a-z]*", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("a*b?.*.?[a-z]?[a-z]+", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("a*b?.*.?[a-z]?[a-z]", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    // FIXME: Add regexes that cause each parse status.
 }
 
 } // namespace TestWebKitAPI

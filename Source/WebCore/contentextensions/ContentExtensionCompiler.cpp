@@ -108,19 +108,29 @@ CompiledContentExtensionData compileRuleList(const String& ruleList)
 
     Vector<SerializedActionByte> actions;
     Vector<unsigned> actionLocations = serializeActions(parsedRuleList, actions);
+    Vector<uint64_t> universalActionLocations;
 
     NFA nfa;
     URLFilterParser urlFilterParser(nfa);
+    bool nonUniversalActionSeen = false;
     for (unsigned ruleIndex = 0; ruleIndex < parsedRuleList.size(); ++ruleIndex) {
         const ContentExtensionRule& contentExtensionRule = parsedRuleList[ruleIndex];
         const Trigger& trigger = contentExtensionRule.trigger();
         ASSERT(trigger.urlFilter.length());
 
         // High bits are used for flags. This should match how they are used in DFABytecodeCompiler::compileNode.
-        String error = urlFilterParser.addPattern(trigger.urlFilter, trigger.urlFilterIsCaseSensitive, (static_cast<uint64_t>(trigger.flags) << 32) | static_cast<uint64_t>(actionLocations[ruleIndex]));
+        uint64_t actionLocationAndFlags =(static_cast<uint64_t>(trigger.flags) << 32) | static_cast<uint64_t>(actionLocations[ruleIndex]);
+        URLFilterParser::ParseStatus status = urlFilterParser.addPattern(trigger.urlFilter, trigger.urlFilterIsCaseSensitive, actionLocationAndFlags);
 
-        if (!error.isNull()) {
-            dataLogF("Error while parsing %s: %s\n", trigger.urlFilter.utf8().data(), error.utf8().data());
+        if (status == URLFilterParser::MatchesEverything) {
+            if (nonUniversalActionSeen)
+                dataLogF("Trigger matching everything found not at beginning.  This may cause incorrect behavior with ignore-previous-rules");
+            universalActionLocations.append(actionLocationAndFlags);
+        } else
+            nonUniversalActionSeen = true;
+        
+        if (status != URLFilterParser::Ok && status != URLFilterParser::MatchesEverything) {
+            dataLogF("Error while parsing %s: %s\n", trigger.urlFilter.utf8().data(), URLFilterParser::statusString(status).utf8().data());
             continue;
         }
     }
@@ -138,7 +148,9 @@ CompiledContentExtensionData compileRuleList(const String& ruleList)
     double dfaBuildTimeStart = monotonicallyIncreasingTime();
 #endif
 
-    const DFA dfa = NFAToDFA::convert(nfa);
+    DFA dfa = NFAToDFA::convert(nfa);
+    for (uint64_t actionLocation : universalActionLocations)
+        dfa.nodeAt(dfa.root()).actions.append(actionLocation);
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double dfaBuildTimeEnd = monotonicallyIncreasingTime();

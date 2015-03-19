@@ -32,6 +32,7 @@
 #include <JavaScriptCore/YarrParser.h>
 #include <wtf/BitVector.h>
 #include <wtf/Deque.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -174,6 +175,7 @@ public:
         ASSERT_WITH_MESSAGE(m_quantifier == AtomQuantifier::One, "Transition to quantified term should only happen once.");
         m_quantifier = quantifier;
     }
+    AtomQuantifier quantifier() const { return m_quantifier; }
 
     unsigned generateGraph(NFA& nfa, uint64_t patternId, unsigned start) const
     {
@@ -428,6 +430,7 @@ public:
         , m_subtreeStart(nfa.root())
         , m_subtreeEnd(nfa.root())
         , m_lastPrefixTreeEntry(&prefixTreeRoot)
+        , m_parseStatus(URLFilterParser::Ok)
     {
     }
 
@@ -438,20 +441,56 @@ public:
 
         sinkFloatingTermIfNecessary();
 
+        // Check to see if there are any terms without ? or *.
+        bool matchesEverything = true;
+        for (const auto& term : m_sunkTerms) {
+            if (term.quantifier() == AtomQuantifier::One || term.quantifier() == AtomQuantifier::OneOrMore) {
+                matchesEverything = false;
+                break;
+            }
+        }
+        if (matchesEverything)
+            fail(URLFilterParser::MatchesEverything);
+
+        for (const auto& term : m_sunkTerms) {
+            ASSERT(m_lastPrefixTreeEntry);
+            auto nextEntry = m_lastPrefixTreeEntry->nextPattern.find(term);
+            if (nextEntry != m_lastPrefixTreeEntry->nextPattern.end()) {
+                m_lastPrefixTreeEntry = nextEntry->value.get();
+                m_nfa.addRuleId(m_lastPrefixTreeEntry->nfaNode, m_patternId);
+            } else {
+                std::unique_ptr<PrefixTreeEntry> nextPrefixTreeEntry = std::make_unique<PrefixTreeEntry>();
+                
+                unsigned newEnd = term.generateGraph(m_nfa, m_patternId, m_lastPrefixTreeEntry->nfaNode);
+                nextPrefixTreeEntry->nfaNode = newEnd;
+                
+                auto addResult = m_lastPrefixTreeEntry->nextPattern.set(term, WTF::move(nextPrefixTreeEntry));
+                ASSERT(addResult.isNewEntry);
+                
+                if (!m_newPrefixSubtreeRoot) {
+                    m_newPrefixSubtreeRoot = m_lastPrefixTreeEntry;
+                    m_newPrefixStaringPoint = term;
+                }
+                
+                m_lastPrefixTreeEntry = addResult.iterator->value.get();
+            }
+            m_subtreeEnd = m_lastPrefixTreeEntry->nfaNode;
+        }
+        
         if (!m_openGroups.isEmpty()) {
-            fail(ASCIILiteral("The expression has unclosed groups."));
+            fail(URLFilterParser::UnclosedGroups);
             return;
         }
 
         if (m_subtreeStart != m_subtreeEnd)
             m_nfa.setFinal(m_subtreeEnd, m_patternId);
         else
-            fail(ASCIILiteral("The pattern cannot match anything."));
+            fail(URLFilterParser::CannotMatchAnything);
     }
 
-    const String& errorMessage() const
+    URLFilterParser::ParseStatus parseStatus() const
     {
-        return m_errorMessage;
+        return m_parseStatus;
     }
 
     void atomPatternCharacter(UChar character)
@@ -460,7 +499,7 @@ public:
             return;
 
         if (!isASCII(character)) {
-            fail(ASCIILiteral("Only ASCII characters are supported in pattern."));
+            fail(URLFilterParser::NonASCII);
             return;
         }
 
@@ -482,7 +521,7 @@ public:
         if (builtInCharacterClassID == JSC::Yarr::NewlineClassID && inverted)
             m_floatingTerm = Term(Term::UniversalTransition);
         else
-            fail(ASCIILiteral("Character class is not supported."));
+            fail(URLFilterParser::UnsupportedCharacterClass);
     }
 
     void quantifyAtom(unsigned minimum, unsigned maximum, bool)
@@ -491,7 +530,7 @@ public:
             return;
 
         if (!m_floatingTerm.isValid())
-            fail(ASCIILiteral("Quantifier without corresponding term to quantify."));
+            fail(URLFilterParser::MisplacedQuantifier);
 
         if (!minimum && maximum == 1)
             m_floatingTerm.quantify(AtomQuantifier::ZeroOrOne);
@@ -500,12 +539,12 @@ public:
         else if (minimum == 1 && maximum == JSC::Yarr::quantifyInfinite)
             m_floatingTerm.quantify(AtomQuantifier::OneOrMore);
         else
-            fail(ASCIILiteral("Arbitrary atom repetitions are not supported."));
+            fail(URLFilterParser::InvalidQuantifier);
     }
 
     void atomBackReference(unsigned)
     {
-        fail(ASCIILiteral("Patterns cannot contain backreferences."));
+        fail(URLFilterParser::BackReference);
     }
 
     void assertionBOL()
@@ -514,7 +553,7 @@ public:
             return;
 
         if (m_subtreeStart != m_subtreeEnd || m_floatingTerm.isValid() || !m_openGroups.isEmpty())
-            fail(ASCIILiteral("Start of line assertion can only appear as the first term in a filter."));
+            fail(URLFilterParser::MisplacedStartOfLine);
     }
 
     void assertionEOL()
@@ -530,7 +569,7 @@ public:
 
     void assertionWordBoundary(bool)
     {
-        fail(ASCIILiteral("Word boundaries assertions are not supported yet."));
+        fail(URLFilterParser::WordBoundary);
     }
 
     void atomCharacterClassBegin(bool inverted = false)
@@ -549,10 +588,7 @@ public:
         if (hasError())
             return;
 
-        if (!isASCII(character)) {
-            fail(ASCIILiteral("Non ASCII Character in a character set."));
-            return;
-        }
+        ASSERT(isASCII(character));
 
         m_floatingTerm.addCharacter(character, m_patternIsCaseSensitive);
     }
@@ -562,10 +598,10 @@ public:
         if (hasError())
             return;
 
-        if (!a || !b || !isASCII(a) || !isASCII(b)) {
-            fail(ASCIILiteral("Non ASCII Character in a character range of a character set."));
-            return;
-        }
+        ASSERT(a);
+        ASSERT(b);
+        ASSERT(isASCII(a));
+        ASSERT(isASCII(b));
 
         for (unsigned i = a; i <= b; ++i)
             m_floatingTerm.addCharacter(static_cast<UChar>(i), m_patternIsCaseSensitive);
@@ -578,7 +614,7 @@ public:
 
     void atomCharacterClassBuiltIn(JSC::Yarr::BuiltInCharacterClassID, bool)
     {
-        fail(ASCIILiteral("Builtins character class atoms are not supported yet."));
+        fail(URLFilterParser::AtomCharacter);
     }
 
     void atomParenthesesSubpatternBegin(bool = true)
@@ -593,7 +629,7 @@ public:
 
     void atomParentheticalAssertionBegin(bool = false)
     {
-        fail(ASCIILiteral("Groups are not supported yet."));
+        fail(URLFilterParser::Group);
     }
 
     void atomParenthesesEnd()
@@ -609,16 +645,16 @@ public:
 
     void disjunction()
     {
-        fail(ASCIILiteral("Disjunctions are not supported yet."));
+        fail(URLFilterParser::Disjunction);
     }
 
 private:
     bool hasError() const
     {
-        return !m_errorMessage.isNull();
+        return m_parseStatus != URLFilterParser::Ok;
     }
 
-    void fail(const String& errorMessage)
+    void fail(URLFilterParser::ParseStatus reason)
     {
         if (hasError())
             return;
@@ -626,7 +662,7 @@ private:
         if (m_newPrefixSubtreeRoot)
             m_newPrefixSubtreeRoot->nextPattern.remove(m_newPrefixStaringPoint);
 
-        m_errorMessage = errorMessage;
+        m_parseStatus = reason;
     }
 
     void sinkFloatingTermIfNecessary()
@@ -634,10 +670,8 @@ private:
         if (!m_floatingTerm.isValid())
             return;
 
-        ASSERT(m_lastPrefixTreeEntry);
-
         if (m_hasProcessedEndOfLineAssertion) {
-            fail(ASCIILiteral("The end of line assertion must be the last term in an expression."));
+            fail(URLFilterParser::MisplacedEndOfLine);
             m_floatingTerm = Term();
             return;
         }
@@ -651,30 +685,8 @@ private:
             return;
         }
 
-        auto nextEntry = m_lastPrefixTreeEntry->nextPattern.find(m_floatingTerm);
-        if (nextEntry != m_lastPrefixTreeEntry->nextPattern.end()) {
-            m_lastPrefixTreeEntry = nextEntry->value.get();
-            m_nfa.addRuleId(m_lastPrefixTreeEntry->nfaNode, m_patternId);
-        } else {
-            std::unique_ptr<PrefixTreeEntry> nextPrefixTreeEntry = std::make_unique<PrefixTreeEntry>();
-
-            unsigned newEnd = m_floatingTerm.generateGraph(m_nfa, m_patternId, m_lastPrefixTreeEntry->nfaNode);
-            nextPrefixTreeEntry->nfaNode = newEnd;
-
-            auto addResult = m_lastPrefixTreeEntry->nextPattern.set(m_floatingTerm, WTF::move(nextPrefixTreeEntry));
-            ASSERT(addResult.isNewEntry);
-
-            if (!m_newPrefixSubtreeRoot) {
-                m_newPrefixSubtreeRoot = m_lastPrefixTreeEntry;
-                m_newPrefixStaringPoint = m_floatingTerm;
-            }
-
-            m_lastPrefixTreeEntry = addResult.iterator->value.get();
-        }
-        m_subtreeEnd = m_lastPrefixTreeEntry->nfaNode;
-
+        m_sunkTerms.append(m_floatingTerm);
         m_floatingTerm = Term();
-        ASSERT(m_lastPrefixTreeEntry);
     }
 
     NFA& m_nfa;
@@ -686,13 +698,14 @@ private:
 
     PrefixTreeEntry* m_lastPrefixTreeEntry;
     Deque<Term> m_openGroups;
+    Vector<Term> m_sunkTerms;
     Term m_floatingTerm;
     bool m_hasProcessedEndOfLineAssertion { false };
 
     PrefixTreeEntry* m_newPrefixSubtreeRoot = nullptr;
     Term m_newPrefixStaringPoint;
 
-    String m_errorMessage;
+    URLFilterParser::ParseStatus m_parseStatus;
 };
 
 URLFilterParser::URLFilterParser(NFA& nfa)
@@ -706,33 +719,74 @@ URLFilterParser::~URLFilterParser()
 {
 }
 
-String URLFilterParser::addPattern(const String& pattern, bool patternIsCaseSensitive, uint64_t patternId)
+URLFilterParser::ParseStatus URLFilterParser::addPattern(const String& pattern, bool patternIsCaseSensitive, uint64_t patternId)
 {
     if (!pattern.containsOnlyASCII())
-        return ASCIILiteral("URLFilterParser only supports ASCII patterns.");
+        return NonASCII;
     ASSERT(!pattern.isEmpty());
 
     if (pattern.isEmpty())
-        return ASCIILiteral("Empty pattern.");
+        return EmptyPattern;
 
     unsigned oldSize = m_nfa.graphSize();
 
-    String error;
-
+    ParseStatus status = Ok;
     GraphBuilder graphBuilder(m_nfa, *m_prefixTreeRoot, patternIsCaseSensitive, patternId);
-    error = String(JSC::Yarr::parse(graphBuilder, pattern, 0));
+    String error = String(JSC::Yarr::parse(graphBuilder, pattern, 0));
     if (error.isNull())
         graphBuilder.finalize();
+    else
+        status = YarrError;
+    
+    if (status == Ok)
+        status = graphBuilder.parseStatus();
 
-    if (error.isNull())
-        error = graphBuilder.errorMessage();
-
-    if (!error.isNull())
+    if (status != Ok)
         m_nfa.restoreToGraphSize(oldSize);
 
-    return error;
+    return status;
 }
 
+String URLFilterParser::statusString(ParseStatus status)
+{
+    switch (status) {
+    case Ok:
+        return "Ok";
+    case MatchesEverything:
+        return "Matches everything.";
+    case UnclosedGroups:
+        return "The expression has unclosed groups.";
+    case CannotMatchAnything:
+        return "The pattern cannot match anything.";
+    case NonASCII:
+        return "Only ASCII characters are supported in pattern.";
+    case UnsupportedCharacterClass:
+        return "Character class is not supported.";
+    case MisplacedQuantifier:
+        return "Quantifier without corresponding term to quantify.";
+    case BackReference:
+        return "Patterns cannot contain backreferences.";
+    case MisplacedStartOfLine:
+        return "Start of line assertion can only appear as the first term in a filter.";
+    case WordBoundary:
+        return "Word boundaries assertions are not supported yet.";
+    case AtomCharacter:
+        return "Builtins character class atoms are not supported yet.";
+    case Group:
+        return "Groups are not supported yet.";
+    case Disjunction:
+        return "Disjunctions are not supported yet.";
+    case MisplacedEndOfLine:
+        return "The end of line assertion must be the last term in an expression.";
+    case EmptyPattern:
+        return "Empty pattern.";
+    case YarrError:
+        return "Internal error in YARR.";
+    case InvalidQuantifier:
+        return "Arbitrary atom repetitions are not supported.";
+    }
+}
+    
 } // namespace ContentExtensions
 } // namespace WebCore
 
