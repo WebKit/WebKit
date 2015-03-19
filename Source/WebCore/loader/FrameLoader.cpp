@@ -2558,6 +2558,9 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
     } else if (loadType == FrameLoadType::Reload || loadType == FrameLoadType::ReloadFromOrigin || request.isConditional())
         request.setCachePolicy(ReloadIgnoringCacheData);
 
+    if (m_overrideCachePolicyForTesting)
+        request.setCachePolicy(m_overrideCachePolicyForTesting.value());
+
     if (request.cachePolicy() == ReloadIgnoringCacheData) {
         if (loadType == FrameLoadType::Reload)
             request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");

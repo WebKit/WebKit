@@ -12,11 +12,6 @@ var testMatrix =
   ],
  [
   {},
-  { responseHeaders: {'Expires': 'now(0)' } },
-  { responseHeaders: {'Expires': 'now(100)' } },
-  ],
- [
-  {},
   { responseHeaders: {'Cache-control': 'no-store' } },
   { responseHeaders: {'Cache-control': 'no-cache' } },
   ],
@@ -27,12 +22,14 @@ var testMatrix =
   ],
  [
   {},
-  { responseHeaders: {'Vary': 'Accept-Language' }, requestHeaders: { 'Accept-Language': 'en' } },
-  { responseHeaders: {'Vary': 'Accept-Language' }, requestHeaders: { 'Accept-Language': 'unique()' } },
+  { responseHeaders: {'Cache-control': 'must-revalidate' } },
   ],
  ];
 
-description("Test permutations of various cache headers");
+description("Test permutations of various cache headers when using back navigation cache policy");
+
+// Simulate cache behavior on back navigation.
+internals.setOverrideCachePolicy("ReturnCacheDataElseLoad");
 
 var tests = generateTests(testMatrix);
 

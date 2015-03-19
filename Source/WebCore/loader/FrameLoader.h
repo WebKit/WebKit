@@ -41,10 +41,12 @@
 #include "PageThrottler.h"
 #include "ResourceHandleTypes.h"
 #include "ResourceLoadNotifier.h"
+#include "ResourceRequestBase.h"
 #include "SecurityContext.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -287,6 +289,9 @@ public:
 
     void forcePageTransitionIfNeeded();
 
+    void setOverrideCachePolicyForTesting(ResourceRequestCachePolicy policy) { m_overrideCachePolicyForTesting = policy; }
+    void clearOverrideCachePolicyForTesting() { m_overrideCachePolicyForTesting = Nullopt; }
+
 private:
     enum FormSubmissionCacheLoadPolicy {
         MayAttemptCacheOnlyLoadForFormSubmissionItem,
@@ -435,6 +440,8 @@ private:
     SandboxFlags m_forcedSandboxFlags;
 
     RefPtr<FrameNetworkingContext> m_networkingContext;
+
+    Optional<ResourceRequestCachePolicy> m_overrideCachePolicyForTesting;
 
     URL m_previousURL;
     RefPtr<HistoryItem> m_requestedHistoryItem;

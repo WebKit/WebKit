@@ -1,3 +1,18 @@
+2015-03-18  Antti Koivisto  <antti@apple.com>
+
+        Test disk cache behavior when using back navigation cache policy
+        https://bugs.webkit.org/show_bug.cgi?id=142848
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/cache/disk-cache-validation-back-navigation-policy-expected.txt: Added.
+        * http/tests/cache/disk-cache-validation-back-navigation-policy.html: Added.
+
+            Test permutations of cache headers on reload including Cache-control: must-revalidate.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         ES6 Classes: Extends should accept an expression without parenthesis

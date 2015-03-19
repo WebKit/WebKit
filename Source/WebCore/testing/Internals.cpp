@@ -308,6 +308,7 @@ void Internals::resetToConsistentState(Page* page)
         page->mainFrame().editor().toggleContinuousSpellChecking();
     if (page->mainFrame().editor().isOverwriteModeEnabled())
         page->mainFrame().editor().toggleOverwriteModeEnabled();
+    page->mainFrame().loader().clearOverrideCachePolicyForTesting();
     ApplicationCacheStorage::singleton().setDefaultOriginQuota(ApplicationCacheStorage::noQuota());
 #if ENABLE(VIDEO)
     MediaSessionManager::sharedManager().resetRestrictions();
@@ -423,6 +424,25 @@ String Internals::xhrResponseSource(XMLHttpRequest* xhr)
     }
     ASSERT_NOT_REACHED();
     return "Error";
+}
+
+static ResourceRequestCachePolicy stringToResourceRequestCachePolicy(const String& policy)
+{
+    if (policy == "UseProtocolCachePolicy")
+        return UseProtocolCachePolicy;
+    if (policy == "ReloadIgnoringCacheData")
+        return ReloadIgnoringCacheData;
+    if (policy == "ReturnCacheDataElseLoad")
+        return ReturnCacheDataElseLoad;
+    if (policy == "ReturnCacheDataDontLoad")
+        return ReturnCacheDataDontLoad;
+    ASSERT_NOT_REACHED();
+    return UseProtocolCachePolicy;
+}
+
+void Internals::setOverrideCachePolicy(const String& policy)
+{
+    frame()->loader().setOverrideCachePolicyForTesting(stringToResourceRequestCachePolicy(policy));
 }
 
 void Internals::clearMemoryCache()

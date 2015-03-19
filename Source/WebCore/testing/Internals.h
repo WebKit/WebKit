@@ -89,6 +89,7 @@ public:
     bool isPreloaded(const String& url);
     bool isLoadingFromMemoryCache(const String& url);
     String xhrResponseSource(XMLHttpRequest*);
+    void setOverrideCachePolicy(const String&);
 
     void clearMemoryCache();
     void pruneMemoryCacheToSize(unsigned size);

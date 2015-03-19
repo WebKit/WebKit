@@ -1,3 +1,23 @@
+2015-03-18  Antti Koivisto  <antti@apple.com>
+
+        Test disk cache behavior when using back navigation cache policy
+        https://bugs.webkit.org/show_bug.cgi?id=142848
+
+        Reviewed by Chris Dumez.
+
+        Add a way to override the normal cache policy so we can test reload behavior of cache without actually reloading.
+
+        Test: http/tests/cache/disk-cache-validation-back-navigation-policy.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::setOverrideCachePolicyForTesting):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setOverrideCachePolicy):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2015-03-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         TextFragment#start() is always >= 0 since its type is unsigned

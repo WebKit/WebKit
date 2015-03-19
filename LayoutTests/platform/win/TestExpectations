@@ -2230,6 +2230,7 @@ webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 
 # Disk cache is WK2 only
 http/tests/cache/disk-cache-validation.html
+http/tests/cache/disk-cache-validation-back-navigation-policy.html
 http/tests/cache/disk-cache-disable.html
 http/tests/cache/disk-cache-vary-cookie.html
 
