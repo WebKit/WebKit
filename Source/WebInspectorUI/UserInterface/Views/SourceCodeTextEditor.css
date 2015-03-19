@@ -138,7 +138,7 @@
     min-height: 250px;
 }
 
-.popover .debugger-popover-content .title {
+.popover .debugger-popover-content > .title {
     font-weight: bold;
     padding-left: 10px;
 
@@ -147,14 +147,14 @@
     white-space: nowrap;
 }
 
-.popover .debugger-popover-content .body {
+.popover .debugger-popover-content > .body {
     border-top: 1px solid rgb(194, 194, 147);
     overflow: auto;
     margin-top: 5px;
     padding-top: 5px;
 }
 
-.popover .debugger-popover-content.function .body {
+.popover .debugger-popover-content.function > .body {
     padding-left: 10px;
     padding-right: 10px;
 }

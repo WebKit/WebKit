@@ -727,7 +727,7 @@ void InspectorDebuggerAgent::breakpointActionSound(int breakpointActionIdentifie
 void InspectorDebuggerAgent::breakpointActionProbe(JSC::ExecState* scriptState, const ScriptBreakpointAction& action, unsigned batchId, unsigned sampleId, const Deprecated::ScriptValue& sample)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
-    RefPtr<Protocol::Runtime::RemoteObject> payload = injectedScript.wrapObject(sample, objectGroupForBreakpointAction(action));
+    RefPtr<Protocol::Runtime::RemoteObject> payload = injectedScript.wrapObject(sample, objectGroupForBreakpointAction(action), true);
     auto result = Protocol::Debugger::ProbeSample::create()
         .setProbeId(action.identifier)
         .setBatchId(batchId)

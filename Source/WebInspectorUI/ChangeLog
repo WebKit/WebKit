@@ -1,5 +1,39 @@
 2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Debugger Popovers and Probes should use FormattedValue/ObjectTreeView instead of Custom/ObjectPropertiesSection
+        https://bugs.webkit.org/show_bug.cgi?id=142830
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ProbeSetDataGrid.css:
+        (.details-section.probe-set .data-grid .object-tree > :matches(.title, .object-preview)::before):
+        Another line-height fix for object tree disclosure triangles.
+
+        * UserInterface/Views/ProbeSetDataGridNode.js:
+        (WebInspector.ProbeSetDataGridNode.prototype.createCellContent):
+        Create an ObjectTree / FormattedValue for the RemoteObject.
+
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.popover .debugger-popover-content > .title):
+        (.popover .debugger-popover-content > .body):
+        (.popover .debugger-popover-content.function > .body):
+        Be more specific and don't accidentally style ".title" within the body.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForObject):
+        Show a properties only ObjectTree instead of an ObjectPropertiesSection.
+
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForString): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForRegExp): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForNumber): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForBoolean): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForNull): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForUndefined): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverWithFormattedValue):
+        Reduce most of these to a single popover for formatted values.
+
+2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Scopes sidebar should use new ObjectTreeView and not ObjectPropertiesSection
         https://bugs.webkit.org/show_bug.cgi?id=142808
 

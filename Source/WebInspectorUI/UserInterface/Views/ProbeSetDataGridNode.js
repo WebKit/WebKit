@@ -85,22 +85,8 @@ WebInspector.ProbeSetDataGridNode.prototype = {
             return sample;
         }
 
-        if (sample instanceof WebInspector.RemoteObject) {
-            switch (sample.type) {
-            case "function": // FIXME: is there a better way to visualize functions?
-            case "object":
-                return new WebInspector.ObjectPropertiesSection(sample, WebInspector.ProbeSet.SampleObjectTitle).element;
-            case "string":
-            case "number":
-            case "boolean":
-            case "undefined":
-            case "null":
-                return document.createTextNode(sample.value);
-            case "array":
-            // FIXME: reuse existing visualization of arrays here.
-            default: console.log("Don't know how to represent sample:", sample);
-            }
-        }
+        if (sample instanceof WebInspector.RemoteObject)
+            return WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject(sample, null);
 
         return sample;
     },

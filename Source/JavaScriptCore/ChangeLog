@@ -1,3 +1,14 @@
+2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Debugger Popovers and Probes should use FormattedValue/ObjectTreeView instead of Custom/ObjectPropertiesSection
+        https://bugs.webkit.org/show_bug.cgi?id=142830
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::breakpointActionProbe):
+        Give Probe Samples object previews.
+
 2015-03-17  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Expose JavaScript binding interface through ewk_extension

@@ -1391,22 +1391,17 @@ WebInspector.SourceCodeTextEditor.prototype = {
                 this._showPopoverForFunction(data);
                 break;
             case "object":
-                if (data.subtype === "regexp") 
-                    this._showPopoverForRegExp(data);
+                if (data.subtype === "null" || data.subtype === "regexp")
+                    this._showPopoverWithFormattedValue(data);
                 else
                     this._showPopoverForObject(data);
                 break;
             case "string":
-                this._showPopoverForString(data);
-                break;
             case "number":
-                this._showPopoverForNumber(data);
-                break;
             case "boolean":
-                this._showPopoverForBoolean(data);
-                break;
             case "undefined":
-                this._showPopoverForUndefined(data);
+            case "symbol":
+                this._showPopoverWithFormattedValue(data);
                 break;
             }
         }
@@ -1520,11 +1515,6 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
     _showPopoverForObject: function(data)
     {
-        if (data.subtype === "null") {
-            this._showPopoverForNull(data);
-            return;
-        }
-
         var content = document.createElement("div");
         content.className = "object expandable";
 
@@ -1533,65 +1523,21 @@ WebInspector.SourceCodeTextEditor.prototype = {
         titleElement.textContent = data.description;
         content.appendChild(titleElement);
 
-        var section = new WebInspector.ObjectPropertiesSection(data);
-        section.expanded = true;
-        section.element.classList.add("body");
-        content.appendChild(section.element);
+        // FIXME: If this is a variable, it would be nice to put the variable name in the PropertyPath.
+        var objectTree = new WebInspector.ObjectTreeView(data, WebInspector.ObjectTreeView.Mode.Properties, null);
+        objectTree.showOnlyProperties();
+        objectTree.expand();
+
+        var bodyElement = content.appendChild(document.createElement("div"));
+        bodyElement.className = "body";
+        bodyElement.appendChild(objectTree.element);
 
         this._showPopover(content);
     },
 
-    _showPopoverForString: function(data)
+    _showPopoverWithFormattedValue: function(remoteObject)
     {
-        var content = document.createElement("div");
-        content.className = "string formatted-string";
-        content.textContent = "\"" + data.description + "\"";
-
-        this._showPopover(content);
-    },
-
-    _showPopoverForRegExp: function(data)
-    {
-        var content = document.createElement("div");
-        content.className = "regexp formatted-regexp";
-        content.textContent = data.description;
-
-        this._showPopover(content);
-    },
-
-    _showPopoverForNumber: function(data)
-    {
-        var content = document.createElement("span");
-        content.className = "number formatted-number";
-        content.textContent = data.description;
-
-        this._showPopover(content);
-    },
-
-    _showPopoverForBoolean: function(data)
-    {
-        var content = document.createElement("span");
-        content.className = "boolean formatted-boolean";
-        content.textContent = data.description;
-
-        this._showPopover(content);
-    },
-
-    _showPopoverForNull: function(data)
-    {
-        var content = document.createElement("span");
-        content.className = "boolean formatted-null";
-        content.textContent = data.description;
-
-        this._showPopover(content);
-    },
-
-    _showPopoverForUndefined: function(data)
-    {
-        var content = document.createElement("span");
-        content.className = "boolean formatted-undefined";
-        content.textContent = data.description;
-
+        var content = WebInspector.FormattedValue.createElementForRemoteObject(remoteObject);
         this._showPopover(content);
     },
 
