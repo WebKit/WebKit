@@ -1,3 +1,20 @@
+2015-03-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Scrollbars look bad with GTK+ 3.16
+        https://bugs.webkit.org/show_bug.cgi?id=140800
+
+        Reviewed by Sergio Villar Senin.
+
+        Take margin into account when rendering scrollbars. This fixes the
+        huge scrollbars rendered with GTK+ 3.16. We don't need to check
+        the GTK+ version because in previous versions the marging were 0,
+        so the same code just works.
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::adjustRectAccordingToMargin):
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground):
+        (WebCore::ScrollbarThemeGtk::paintThumb):
+
 2015-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Wrong transfer annotations used in GObject DOM bindings
