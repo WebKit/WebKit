@@ -33,6 +33,11 @@ namespace WebCore {
 class HTMLAreaElement;
 class HTMLMapElement;
 
+enum ImageSizeChangeType {
+    ImageSizeChangeNone,
+    ImageSizeChangeForAltText
+};
+
 class RenderImage : public RenderReplaced {
 public:
     RenderImage(Element&, Ref<RenderStyle>&&, StyleImage* = nullptr, const float = 1.0f);
@@ -43,7 +48,7 @@ public:
     const RenderImageResource& imageResource() const { return *m_imageResource; }
     CachedImage* cachedImage() const { return imageResource().cachedImage(); }
 
-    bool setImageSizeForAltText(CachedImage* newImage = 0);
+    ImageSizeChangeType setImageSizeForAltText(CachedImage* newImage = nullptr);
 
     void updateAltText();
 
@@ -74,7 +79,7 @@ protected:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle*) override final;
 
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
 
     void paintIntoRect(GraphicsContext*, const FloatRect&);
     virtual void paint(PaintInfo&, const LayoutPoint&) override final;
@@ -107,8 +112,8 @@ private:
     virtual bool shadowControlsNeedCustomLayoutMetrics() const { return false; }
 
     IntSize imageSizeForError(CachedImage*) const;
-    void imageDimensionsChanged(bool imageSizeChanged, const IntRect* = 0);
-    bool updateIntrinsicSizeIfNeeded(const LayoutSize&, bool imageSizeChanged);
+    void repaintOrMarkForLayout(ImageSizeChangeType, const IntRect* = nullptr);
+    void updateIntrinsicSizeIfNeeded(const LayoutSize&);
     // Update the size of the image to be rendered. Object-fit may cause this to be different from the CSS box's content rect.
     void updateInnerContentRect();
 
