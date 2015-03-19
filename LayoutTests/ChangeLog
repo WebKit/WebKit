@@ -1,3 +1,12 @@
+2015-03-19  Dean Jackson  <dino@apple.com>
+
+        http://webkit.org/b/142790
+
+        Temporarily skip animations/trigger-container-scroll-simple.html
+        while it is crashing.
+
+        * platform/mac/TestExpectations:
+
 2015-03-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Test gardening.
