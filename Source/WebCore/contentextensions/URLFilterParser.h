@@ -44,11 +44,8 @@ public:
     enum ParseStatus {
         Ok,
         MatchesEverything,
-        UnclosedGroups,
-        CannotMatchAnything,
         NonASCII,
         UnsupportedCharacterClass,
-        MisplacedQuantifier,
         BackReference,
         MisplacedStartOfLine,
         WordBoundary,

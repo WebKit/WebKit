@@ -1,5 +1,17 @@
 2015-03-19  Alex Christensen  <achristensen@webkit.org>
 
+        [Content Extensions] Test regular expression parse failures.
+        https://bugs.webkit.org/show_bug.cgi?id=142872
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::testPatternStatus):
+        (TestWebKitAPI::TEST_F):
+        Added tests for each parsing status.
+
+2015-03-19  Alex Christensen  <achristensen@webkit.org>
+
         Fix API tests after r181754.
 
         * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:

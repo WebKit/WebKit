@@ -341,11 +341,11 @@ TEST_F(ContentExtensionTest, ResourceType)
     testRequest(backend, mainDocumentRequest("http://block_only_images.org", ResourceType::Document), { });
 }
 
-static void testPatternStatus(const char* pattern, ContentExtensions::URLFilterParser::ParseStatus status)
+static void testPatternStatus(String pattern, ContentExtensions::URLFilterParser::ParseStatus status)
 {
     ContentExtensions::NFA nfa;
     ContentExtensions::URLFilterParser parser(nfa);
-    EXPECT_EQ(status, parser.addPattern(ASCIILiteral(pattern), false, 0));
+    EXPECT_EQ(status, parser.addPattern(pattern, false, 0));
 }
     
 TEST_F(ContentExtensionTest, ParsingFailures)
@@ -353,7 +353,55 @@ TEST_F(ContentExtensionTest, ParsingFailures)
     testPatternStatus("a*b?.*.?[a-z]?[a-z]*", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
     testPatternStatus("a*b?.*.?[a-z]?[a-z]+", ContentExtensions::URLFilterParser::ParseStatus::Ok);
     testPatternStatus("a*b?.*.?[a-z]?[a-z]", ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    // FIXME: Add regexes that cause each parse status.
+    testPatternStatus(".*?a", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus(".*a", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    
+    testPatternStatus("(?!)", ContentExtensions::URLFilterParser::ParseStatus::Group);
+    testPatternStatus("(?=)", ContentExtensions::URLFilterParser::ParseStatus::Group);
+    testPatternStatus("(?!a)", ContentExtensions::URLFilterParser::ParseStatus::Group);
+    testPatternStatus("(?=a)", ContentExtensions::URLFilterParser::ParseStatus::Group);
+    testPatternStatus("(regex)", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("(regex", ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("((regex)", ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("(?:regex)", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("(?:regex", ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("[^.]+", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    
+    testPatternStatus("a++", ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("[a]++", ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("+", ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    
+    testPatternStatus("[", ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("[a}", ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    
+    // FIXME: Look into why these do not cause YARR parsing errors.  They probably should.
+    testPatternStatus("a]", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("{", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("{[a]", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("{0", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("{0,", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("{0,1", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("a{0,1", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("a{a,b}", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+
+    const char nonASCII[2] = {-1, '\0'};
+    testPatternStatus(nonASCII, ContentExtensions::URLFilterParser::ParseStatus::NonASCII);
+    testPatternStatus("\\xff", ContentExtensions::URLFilterParser::ParseStatus::NonASCII);
+    
+    testPatternStatus("\\x\\r\\n", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("\\b", ContentExtensions::URLFilterParser::ParseStatus::WordBoundary);
+    testPatternStatus("[\\d]", ContentExtensions::URLFilterParser::ParseStatus::AtomCharacter);
+    testPatternStatus("\\d\\D\\w\\s\\v\\h\\i\\c", ContentExtensions::URLFilterParser::ParseStatus::UnsupportedCharacterClass);
+    
+    testPatternStatus("this|that", ContentExtensions::URLFilterParser::ParseStatus::Disjunction);
+    testPatternStatus("a{0,1}b", ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("a{0,2}b", ContentExtensions::URLFilterParser::ParseStatus::InvalidQuantifier);
+    testPatternStatus("", ContentExtensions::URLFilterParser::ParseStatus::EmptyPattern);
+    testPatternStatus("$$", ContentExtensions::URLFilterParser::ParseStatus::MisplacedEndOfLine);
+    testPatternStatus("a^", ContentExtensions::URLFilterParser::ParseStatus::MisplacedStartOfLine);
+    testPatternStatus("(^)", ContentExtensions::URLFilterParser::ParseStatus::MisplacedStartOfLine);
+    
+    testPatternStatus("(a)\\1", ContentExtensions::URLFilterParser::ParseStatus::Ok); // This should be BackReference, right?
 }
 
 } // namespace TestWebKitAPI

@@ -1,3 +1,18 @@
+2015-03-19  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Test regular expression parse failures.
+        https://bugs.webkit.org/show_bug.cgi?id=142872
+
+        Reviewed by Benjamin Poulain.
+
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::GraphBuilder::finalize):
+        (WebCore::ContentExtensions::GraphBuilder::quantifyAtom):
+        (WebCore::ContentExtensions::URLFilterParser::addPattern):
+        (WebCore::ContentExtensions::URLFilterParser::statusString):
+        * contentextensions/URLFilterParser.h:
+        Changed failures that can never happen to assertions.
+
 2015-03-19  Enrica Casucci  <enrica@apple.com>
 
         <attachment> should put URLs on the pasteboard so that Finder can accept drops.
