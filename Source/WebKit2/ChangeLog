@@ -1,3 +1,14 @@
+2015-03-19  Anders Carlsson  <andersca@apple.com>
+
+        Cache::remove should take a Key instead of an entry
+        https://bugs.webkit.org/show_bug.cgi?id=142878
+
+        Reviewed by Antti Koivisto.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::remove):
+        * NetworkProcess/cache/NetworkCache.h:
+
 2015-03-19  Chris Dumez  <cdumez@apple.com>
 
         Clean up DOMTimer related settings
