@@ -124,7 +124,7 @@ WebInspector.DebuggerSidebarPanel = function()
     breakpointsRow.element.appendChild(this._breakpointsContentTreeOutline.element);
 
     var breakpointsGroup = new WebInspector.DetailsSectionGroup([breakpointsRow]);
-    var breakpointsSection = new WebInspector.DetailsSection("breakpoints", WebInspector.UIString("Breakpoints"), [breakpointsGroup]);
+    var breakpointsSection = new WebInspector.DetailsSection("scripts", WebInspector.UIString("Scripts"), [breakpointsGroup]);
     this.contentElement.appendChild(breakpointsSection.element);
 
     this._callStackContentTreeOutline = this.createContentTreeOutline(true);
@@ -148,6 +148,7 @@ WebInspector.DebuggerSidebarPanel = function()
 };
 
 WebInspector.DebuggerSidebarPanel.OffsetSectionsStyleClassName = "offset-sections";
+WebInspector.DebuggerSidebarPanel.DebuggerPausedStyleClassName = "paused";
 WebInspector.DebuggerSidebarPanel.ExceptionIconStyleClassName = "breakpoint-exception-icon";
 WebInspector.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName = "breakpoint-paused-icon";
 WebInspector.DebuggerSidebarPanel.GlobalIconStyleClassName = "global-breakpoints-icon";
@@ -253,6 +254,8 @@ WebInspector.DebuggerSidebarPanel.prototype = {
         this._debuggerPauseResumeButtonItem.toggled = true;
         this._debuggerStepOverButtonItem.enabled = true;
         this._debuggerStepIntoButtonItem.enabled = true;
+
+        this.element.classList.add(WebInspector.DebuggerSidebarPanel.DebuggerPausedStyleClassName);
     },
 
     _debuggerDidResume: function(event)
@@ -265,6 +268,8 @@ WebInspector.DebuggerSidebarPanel.prototype = {
         this._debuggerStepOverButtonItem.enabled = false;
         this._debuggerStepIntoButtonItem.enabled = false;
         this._debuggerStepOutButtonItem.enabled = false;
+
+        this.element.classList.remove(WebInspector.DebuggerSidebarPanel.DebuggerPausedStyleClassName);
     },
 
     _breakpointsEnabledDidChange: function(event)

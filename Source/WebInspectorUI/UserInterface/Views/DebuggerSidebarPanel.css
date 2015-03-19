@@ -41,3 +41,27 @@ body.mac-platform.legacy .sidebar > .panel.navigation.debugger > .content {
 .sidebar > .panel.navigation.debugger .details-section {
     font-size: 11px;
 }
+
+.sidebar > .panel.navigation.debugger .details-section.scripts {
+    border-bottom: none;
+}
+
+.sidebar > .panel.navigation.debugger .details-section.scripts .header {
+    display: none;
+}
+
+.sidebar > .panel.navigation.debugger .details-section.scripts.collapsed > .content {
+    display: block;
+}
+
+.sidebar > .panel.navigation.debugger.paused .details-section.scripts {
+    border-bottom: 1px solid rgb(179, 179, 179);
+}
+
+.sidebar > .panel.navigation.debugger.paused .details-section.scripts .header {
+    display: block;
+}
+
+.sidebar > .panel.navigation.debugger.paused .details-section.scripts.collapsed > .content {
+    display: none;
+}

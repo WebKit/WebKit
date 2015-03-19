@@ -1,5 +1,32 @@
 2015-03-19  Jono Wells  <jonowells@apple.com>
 
+        Web Inspector: Debugger sidebar header should say "Scripts" instead of "Breakpoints", appear only on pause
+        https://bugs.webkit.org/show_bug.cgi?id=142847
+
+        Reviewed by Timothy Hatcher.
+
+        Add a `paused` class on the debugger sidebar panel. Use that class to adjust the sidebar styles so that, when
+        the debugger is not paused: there is no header for the scripts section, there is no border beneath the scripts
+        section, and the scripts section cannot be collapsed (which could be done while the debugger is paused). The
+        header has changed to say "Scripts" instead of "Breakpoints" when it is showing.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger .details-section.scripts):
+        (.sidebar > .panel.navigation.debugger .details-section.scripts .header):
+        (.sidebar > .panel.navigation.debugger .details-section.scripts.collapsed > .content):
+        (.sidebar > .panel.navigation.debugger.paused .details-section.scripts):
+        (.sidebar > .panel.navigation.debugger.paused .details-section.scripts .header):
+        (.sidebar > .panel.navigation.debugger.paused .details-section.scripts.collapsed > .content):
+        Adjust styles to hide header and border.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerDidPause):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerDidResume):
+        Add a `paused` class to the debugger sidebar when it is paused.
+
+2015-03-19  Jono Wells  <jonowells@apple.com>
+
         Web Inspector: FilterBar for debugger sidebar hides breakpoints for displayed resources
         https://bugs.webkit.org/show_bug.cgi?id=142777
 
