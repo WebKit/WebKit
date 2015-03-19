@@ -42,63 +42,15 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSReadableStream::read(ExecState* exec)
-{
-    JSValue error = createError(exec, ASCIILiteral("read is not implemented"));
-    return exec->vm().throwException(exec, error);
-}
-
-static JSPromiseDeferred* getOrCreatePromiseDeferredFromObject(ExecState* exec, JSValue thisObject, JSGlobalObject* globalObject, PrivateName &name)
-{
-    JSValue slot = getInternalSlotFromObject(exec, thisObject, name);
-    JSPromiseDeferred* promiseDeferred = slot ? jsDynamicCast<JSPromiseDeferred*>(slot) : nullptr;
-
-    if (!promiseDeferred) {
-        promiseDeferred = JSPromiseDeferred::create(exec, globalObject);
-        setInternalSlotToObject(exec, thisObject, name, promiseDeferred);
-    }
-    return promiseDeferred;
-}
-
-static JSC::PrivateName& readyPromiseSlotName()
-{
-    static NeverDestroyed<JSC::PrivateName> readyPromiseSlotName("readyPromise");
-    return readyPromiseSlotName;
-}
-
-JSValue JSReadableStream::ready(ExecState* exec) const
-{
-    JSPromiseDeferred* promiseDeferred = getOrCreatePromiseDeferredFromObject(exec, this, globalObject(), readyPromiseSlotName());
-    DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
-    auto successCallback = [wrapper, this]() mutable {
-        wrapper.resolve(&impl());
-    };
-    impl().ready(WTF::move(successCallback));
-
-    return wrapper.promise();
-}
-
-static JSC::PrivateName& closedPromiseSlotName()
-{
-    static NeverDestroyed<JSC::PrivateName> closedPromiseSlotName("closedPromise");
-    return closedPromiseSlotName;
-}
-
-JSValue JSReadableStream::closed(ExecState* exec) const
-{
-    JSPromiseDeferred* promiseDeferred = getOrCreatePromiseDeferredFromObject(exec, this, globalObject(), closedPromiseSlotName());
-    DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
-    auto successCallback = [wrapper, this]() mutable {
-        wrapper.resolve(&impl());
-    };
-    impl().closed(WTF::move(successCallback));
-
-    return wrapper.promise();
-}
-
 JSValue JSReadableStream::cancel(ExecState* exec)
 {
     JSValue error = createError(exec, ASCIILiteral("cancel is not implemented"));
+    return exec->vm().throwException(exec, error);
+}
+
+JSValue JSReadableStream::getReader(ExecState* exec)
+{
+    JSValue error = createError(exec, ASCIILiteral("getReader is not implemented"));
     return exec->vm().throwException(exec, error);
 }
 

@@ -1,3 +1,17 @@
+2015-03-19  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Update ReadableStream API according new version of the specification
+        https://bugs.webkit.org/show_bug.cgi?id=142822
+
+        Reviewed by Benjamin Poulain.
+
+        Removing tests checking ready and closed.
+        Removing assertions checking read(), ready, closed and state.
+        Adding assertions to test getReader() and parameters of remaining methods.
+
+        * streams/readablestream-constructor-expected.txt:
+        * streams/readablestream-constructor.html:
+
 2015-03-19  Chris Dumez  <cdumez@apple.com>
 
         The network cache should ignore "cache-control: no-cache, must-revalidate" on history navigation

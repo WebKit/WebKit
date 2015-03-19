@@ -1,7 +1,5 @@
 
 PASS ReadableStream constructor should get an object as argument 
-PASS ReadableStream instances should have the correct list of properties 
 PASS ReadableStream can be constructed with no arguments 
-PASS ReadableStream instances have the correct methods and properties 
-PASS ReadableStream ready and closed should always return the same promise object 
+PASS ReadableStream instances should have the correct list of properties 
 

@@ -1,3 +1,33 @@
+2015-03-19  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Update ReadableStream API according new version of the specification
+        https://bugs.webkit.org/show_bug.cgi?id=142822
+
+        Reviewed by Benjamin Poulain.
+
+        This patch updates the IDL of ReadableStream according the new version of the spec, which splits functionality between ReadableStream and ReadableStreamReader.
+        In particular, this patch removes read(), ready, closed and state from ReadableStream and it adds the getReader method.
+
+        Covered by updated readablestream-constructor.html test.
+
+        * Modules/streams/ReadableStream.cpp:
+        (WebCore::ReadableStream::ReadableStream):
+        (WebCore::ReadableStream::state): Deleted.
+        (WebCore::ReadableStream::closed): Deleted.
+        (WebCore::ReadableStream::ready): Deleted.
+        * Modules/streams/ReadableStream.h:
+        (WebCore::ReadableStream::internalState): Added to make mac build system happy, to be used by ReadableStreamReader.
+        * Modules/streams/ReadableStream.idl:
+        * bindings/js/JSReadableStreamCustom.cpp:
+        (WebCore::JSReadableStream::cancel):
+        (WebCore::JSReadableStream::getReader):
+        (WebCore::JSReadableStream::read): Deleted.
+        (WebCore::getOrCreatePromiseDeferredFromObject): Deleted.
+        (WebCore::readyPromiseSlotName): Deleted.
+        (WebCore::JSReadableStream::ready): Deleted.
+        (WebCore::closedPromiseSlotName): Deleted.
+        (WebCore::JSReadableStream::closed): Deleted.
+
 2015-03-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Unreviewed. GTK build fix after r181720.

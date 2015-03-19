@@ -33,16 +33,9 @@ enum ReadableStreamStateType { "readable", "waiting", "closed", "errored" };
     CustomConstructor(any properties),
     Conditional=STREAMS_API
 ] interface ReadableStream {
-    readonly attribute ReadableStreamStateType state;
-
-    [Custom, RaisesException] Object read();
-    // FIXME: Remove RaisesException once cancel is implemented.
+    // FIXME: Remove RaisesException once methods are actually implemented.
     [Custom, RaisesException] Promise cancel(DOMString reason);
-    // FIXME: Remove RaisesException once pipeTo is implemented.
+    [Custom, RaisesException] Object getReader();
     [Custom, RaisesException] Promise pipeTo(any streams, any options);
     [Custom, RaisesException] Object pipeThrough(any dest, any options);
-
-    [CustomGetter] readonly attribute Promise closed;
-    [CustomGetter] readonly attribute Promise ready;
-
 };

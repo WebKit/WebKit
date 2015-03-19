@@ -49,7 +49,7 @@ Ref<ReadableStream> ReadableStream::create(ScriptExecutionContext& scriptExecuti
 
 ReadableStream::ReadableStream(ScriptExecutionContext& scriptExecutionContext, Ref<ReadableStreamSource>&& source)
     : ActiveDOMObject(&scriptExecutionContext)
-    , m_state(State::Waiting)
+    , m_state(State::Readable)
     , m_source(WTF::move(source))
 {
 #ifndef NDEBUG
@@ -62,32 +62,6 @@ ReadableStream::~ReadableStream()
 #ifndef NDEBUG
     readableStreamCounter.decrement();
 #endif
-}
-
-String ReadableStream::state() const
-{
-    switch (m_state) {
-    case State::Waiting:
-        return ASCIILiteral("waiting");
-    case State::Closed:
-        return ASCIILiteral("closed");
-    case State::Readable:
-        return ASCIILiteral("readable");
-    case State::Errored:
-        return ASCIILiteral("errored");
-    }
-    ASSERT_NOT_REACHED();
-    return ASCIILiteral("");
-}
-
-void ReadableStream::closed(SuccessCallback)
-{
-    notImplemented();
-}
-
-void ReadableStream::ready(SuccessCallback)
-{
-    notImplemented();
 }
 
 const char* ReadableStream::activeDOMObjectName() const

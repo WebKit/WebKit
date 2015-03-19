@@ -10,26 +10,21 @@ test(function() {
 }, 'ReadableStream constructor should get an object as argument');
 
 test(function() {
+    new ReadableStream();
+}, 'ReadableStream can be constructed with no arguments');
+
+test(function() {
     rs = new ReadableStream();
-    assert_array_equals(Object.getOwnPropertyNames(rs), ['closed', 'ready']);
-    assert_array_equals(Object.getOwnPropertyNames(Object.getPrototypeOf(rs)), ['constructor','state', 'read', 'cancel', 'pipeTo', 'pipeThrough']);
-
-    assert_true(Object.getOwnPropertyDescriptor(rs, 'closed').enumerable);
-    assert_false(Object.getOwnPropertyDescriptor(rs, 'closed').configurable);
-
-    assert_true(Object.getOwnPropertyDescriptor(rs, 'ready').enumerable);
-    assert_false(Object.getOwnPropertyDescriptor(rs, 'ready').configurable);
-
-    assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'state').enumerable);
-    assert_false(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'state').configurable);
-
-    assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'read').enumerable);
-    assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'read').configurable);
-    assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'read').writable);
+    assert_array_equals(Object.getOwnPropertyNames(rs), []);
+    assert_array_equals(Object.getOwnPropertyNames(Object.getPrototypeOf(rs)), ['constructor','cancel', 'getReader', 'pipeTo', 'pipeThrough']);
 
     assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'cancel').enumerable);
     assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'cancel').configurable);
     assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'cancel').writable);
+
+    assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'getReader').enumerable);
+    assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'getReader').configurable);
+    assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'getReader').writable);
 
     assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'pipeTo').enumerable);
     assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'pipeTo').configurable);
@@ -38,37 +33,16 @@ test(function() {
     assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'pipeThrough').enumerable);
     assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'pipeThrough').configurable);
     assert_true(Object.getOwnPropertyDescriptor(Object.getPrototypeOf(rs), 'pipeThrough').writable);
-}, 'ReadableStream instances should have the correct list of properties');
 
-// The following two tests are derived from https://github.com/whatwg/streams/blob/master/reference-implementation/test/readable-stream.js
-test(function() {
-    new ReadableStream();
-}, 'ReadableStream can be constructed with no arguments');
-
-test(function() {
-    rs = new ReadableStream();
-    assert_equals(typeof rs.read, 'function', 'has a read method');
     assert_equals(typeof rs.cancel, 'function', 'has an cancel method');
+    assert_equals(rs.cancel.length, 1);
+    assert_equals(typeof rs.getReader, 'function', 'has a getReader method');
+    assert_equals(rs.getReader.length, 0);
     assert_equals(typeof rs.pipeTo, 'function', 'has a pipeTo method');
+    assert_equals(rs.pipeTo.length, 2);
     assert_equals(typeof rs.pipeThrough, 'function', 'has a pipeThrough method');
-    assert_equals(rs.state, 'waiting', 'state starts out waiting');
-    assert_exists(rs, 'ready', 'has a ready property');
-    assert_equals(typeof rs.ready.then, 'function', 'ready property is a thenable');
-    assert_exists(rs, 'closed', 'has a closed property');
-    assert_equals(typeof rs.closed.then, 'function', 'closed property is thenable');
-}, 'ReadableStream instances have the correct methods and properties');
+    assert_equals(rs.pipeThrough.length, 2);
 
-test(function() {
-    rs = new ReadableStream();
-    readyPromise = rs.ready;
-    closedPromise = rs.closed;
-
-    assert_equals(readyPromise, rs.ready);
-    assert_equals(closedPromise, rs.closed);
-
-    // We check ReadableStream properties here as ready and closed promises are persistent and need to be stored in some way that is not observable.
-    assert_array_equals(Object.keys(rs), ['closed', 'ready']);
-    assert_array_equals(Object.getOwnPropertyNames(rs), ['closed', 'ready']);
-}, 'ReadableStream ready and closed should always return the same promise object');
+}, 'ReadableStream instances should have the correct list of properties');
 
 </script>

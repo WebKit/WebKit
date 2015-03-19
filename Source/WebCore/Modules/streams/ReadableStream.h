@@ -49,21 +49,15 @@ class ScriptExecutionContext;
 class ReadableStream : public ActiveDOMObject, public ScriptWrappable, public RefCounted<ReadableStream> {
 public:
     enum class State {
-        Waiting,
-        Closed,
         Readable,
+        Closed,
         Errored
     };
 
     static Ref<ReadableStream> create(ScriptExecutionContext&, Ref<ReadableStreamSource>&&);
     virtual ~ReadableStream();
 
-    // JS API implementation.
-    String state() const;
-
-    typedef std::function<void()> SuccessCallback;
-    void closed(SuccessCallback);
-    void ready(SuccessCallback);
+    State internalState() { return m_state; }
 
 private:
     ReadableStream(ScriptExecutionContext&, Ref<ReadableStreamSource>&&);
