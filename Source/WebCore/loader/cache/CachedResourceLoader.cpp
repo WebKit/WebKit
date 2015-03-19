@@ -519,15 +519,24 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
 
     bool willBlockLoad = false;
     for (const auto& action : actions) {
-        if (action.type() == ContentExtensions::ActionType::BlockLoad)
+        switch (action.type()) {
+        case ContentExtensions::ActionType::BlockLoad:
             willBlockLoad = true;
-        else if (action.type() == ContentExtensions::ActionType::BlockCookies)
+            break;
+        case ContentExtensions::ActionType::BlockCookies:
             request.mutableResourceRequest().setAllowCookies(false);
-        else if (action.type() == ContentExtensions::ActionType::CSSDisplayNone) {
+            break;
+        case ContentExtensions::ActionType::CSSDisplayNoneSelector:
             // action.cssSelector() is the css to use here.
             // FIXME: That css selector should be used to apply display:none.
-        } else
+            break;
+        case ContentExtensions::ActionType::CSSDisplayNoneStyleSheet:
+            // FIXME: Apply cached stylesheet here
+            break;
+        case ContentExtensions::ActionType::IgnorePreviousRules:
+        case ContentExtensions::ActionType::InvalidAction:
             RELEASE_ASSERT_NOT_REACHED();
+        }
     }
     if (willBlockLoad)
         return nullptr;

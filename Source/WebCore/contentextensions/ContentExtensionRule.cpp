@@ -48,9 +48,7 @@ Action Action::deserialize(const SerializedActionByte* actions, const unsigned a
         return ActionType::BlockLoad;
     case ActionType::IgnorePreviousRules:
         return ActionType::IgnorePreviousRules;
-    case ActionType::InvalidAction:
-        RELEASE_ASSERT_NOT_REACHED();
-    case ActionType::CSSDisplayNone: {
+    case ActionType::CSSDisplayNoneSelector: {
         unsigned stringStartIndex = location + sizeof(ActionType) + sizeof(unsigned) + sizeof(bool);
         RELEASE_ASSERT(actionsLength >= stringStartIndex);
         unsigned selectorLength = *reinterpret_cast<const unsigned*>(&actions[location + sizeof(ActionType)]);
@@ -58,11 +56,14 @@ Action Action::deserialize(const SerializedActionByte* actions, const unsigned a
         
         if (wideCharacters) {
             RELEASE_ASSERT(actionsLength >= stringStartIndex + selectorLength * sizeof(UChar));
-            return Action(ActionType::CSSDisplayNone, String(reinterpret_cast<const UChar*>(&actions[stringStartIndex]), selectorLength));
+            return Action(ActionType::CSSDisplayNoneSelector, String(reinterpret_cast<const UChar*>(&actions[stringStartIndex]), selectorLength));
         }
         RELEASE_ASSERT(actionsLength >= stringStartIndex + selectorLength * sizeof(LChar));
-        return Action(ActionType::CSSDisplayNone, String(reinterpret_cast<const LChar*>(&actions[stringStartIndex]), selectorLength));
+        return Action(ActionType::CSSDisplayNoneSelector, String(reinterpret_cast<const LChar*>(&actions[stringStartIndex]), selectorLength));
     }
+    case ActionType::CSSDisplayNoneStyleSheet:
+    case ActionType::InvalidAction:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 

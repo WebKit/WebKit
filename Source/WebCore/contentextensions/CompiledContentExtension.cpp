@@ -47,8 +47,9 @@ Vector<String> CompiledContentExtension::globalDisplayNoneSelectors()
     
     Vector<String> selectors;
     for (Action& action : globalActions) {
-        if (action.cssSelector().length())
-            selectors.append(action.cssSelector());
+        ASSERT(action.type() == ActionType::CSSDisplayNoneSelector);
+        if (action.stringArgument().length())
+            selectors.append(action.stringArgument());
     }
     
     return selectors;

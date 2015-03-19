@@ -142,7 +142,7 @@ static bool loadAction(ExecState& exec, JSObject& ruleObject, Action& action)
             WTFLogAlways("css-display-none action type requires a selector");
             return false;
         }
-        action = Action(ActionType::CSSDisplayNone, selector.toWTFString(&exec));
+        action = Action(ActionType::CSSDisplayNoneSelector, selector.toWTFString(&exec));
     } else {
         WTFLogAlways("Unrecognized action: \"%s\"", actionType.utf8().data());
         return false;

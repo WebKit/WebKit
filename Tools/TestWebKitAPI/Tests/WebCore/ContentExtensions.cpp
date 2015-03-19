@@ -46,8 +46,10 @@ inline std::ostream& operator<<(std::ostream& os, const ActionType& action)
         return os << "ContentFilterAction::BlockLoad";
     case ActionType::BlockCookies:
         return os << "ContentFilterAction::BlockCookies";
-    case ActionType::CSSDisplayNone:
+    case ActionType::CSSDisplayNoneSelector:
         return os << "ContentFilterAction::CSSDisplayNone";
+    case ActionType::CSSDisplayNoneStyleSheet:
+        return os << "ContentFilterAction::CSSDisplayNoneStyleSheet";
     case ActionType::IgnorePreviousRules:
         return os << "ContentFilterAction::IgnorePreviousRules";
     case ActionType::InvalidAction:

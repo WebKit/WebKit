@@ -70,12 +70,12 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
 
     Vector<Action> finalActions;
     ResourceFlags flags = resourceLoadInfo.getResourceFlags();
-    for (auto& compiledContentExtension : m_contentExtensions.values()) {
-        DFABytecodeInterpreter interpreter(compiledContentExtension->bytecode(), compiledContentExtension->bytecodeLength());
+    for (auto& compiledContentExtension : m_contentExtensions) {
+        DFABytecodeInterpreter interpreter(compiledContentExtension.value->bytecode(), compiledContentExtension.value->bytecodeLength());
         DFABytecodeInterpreter::Actions triggeredActions = interpreter.interpret(urlCString, flags);
         
-        const SerializedActionByte* actions = compiledContentExtension->actions();
-        const unsigned actionsLength = compiledContentExtension->actionsLength();
+        const SerializedActionByte* actions = compiledContentExtension.value->actions();
+        const unsigned actionsLength = compiledContentExtension.value->actionsLength();
         
         if (!triggeredActions.isEmpty()) {
             Vector<unsigned> actionLocations;
@@ -83,14 +83,21 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
             for (auto actionLocation : triggeredActions)
                 actionLocations.append(static_cast<unsigned>(actionLocation));
             std::sort(actionLocations.begin(), actionLocations.end());
-            
+
+            bool sawIgnorePreviousRules = false;
+
             // Add actions in reverse order to properly deal with IgnorePreviousRules.
             for (unsigned i = actionLocations.size(); i; i--) {
                 Action action = Action::deserialize(actions, actionsLength, actionLocations[i - 1]);
-                if (action.type() == ActionType::IgnorePreviousRules)
+                if (action.type() == ActionType::IgnorePreviousRules) {
+                    sawIgnorePreviousRules = true;
                     break;
+                }
                 finalActions.append(action);
             }
+
+            if (!sawIgnorePreviousRules)
+                finalActions.append(Action(ActionType::CSSDisplayNoneStyleSheet, compiledContentExtension.key));
         }
     }
     return finalActions;

@@ -37,7 +37,8 @@ typedef uint8_t SerializedActionByte;
 enum class ActionType : uint8_t {
     BlockLoad,
     BlockCookies,
-    CSSDisplayNone,
+    CSSDisplayNoneSelector,
+    CSSDisplayNoneStyleSheet,
     IgnorePreviousRules,
     InvalidAction,
 };

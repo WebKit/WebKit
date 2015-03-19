@@ -61,6 +61,7 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
         actionLocations.append(actions.size());
         
         switch (rule.action().type()) {
+        case ActionType::CSSDisplayNoneStyleSheet:
         case ActionType::InvalidAction:
             RELEASE_ASSERT_NOT_REACHED();
 
@@ -70,10 +71,10 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
             actions.append(static_cast<SerializedActionByte>(rule.action().type()));
             break;
 
-        case ActionType::CSSDisplayNone: {
-            const String& selector = rule.action().cssSelector();
+        case ActionType::CSSDisplayNoneSelector: {
+            const String& selector = rule.action().stringArgument();
             // Append action type (1 byte).
-            actions.append(static_cast<SerializedActionByte>(ActionType::CSSDisplayNone));
+            actions.append(static_cast<SerializedActionByte>(ActionType::CSSDisplayNoneSelector));
             // Append Selector length (4 bytes).
             unsigned selectorLength = selector.length();
             actions.resize(actions.size() + sizeof(unsigned));
