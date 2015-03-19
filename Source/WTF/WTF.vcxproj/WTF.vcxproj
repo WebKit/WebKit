@@ -113,7 +113,6 @@
     <ClCompile Include="..\wtf\NumberOfCores.cpp" />
     <ClCompile Include="..\wtf\OSAllocatorWin.cpp" />
     <ClCompile Include="..\wtf\OSRandomSource.cpp" />
-    <ClCompile Include="..\wtf\PageAllocationAligned.cpp" />
     <ClCompile Include="..\wtf\PageBlock.cpp" />
     <ClCompile Include="..\wtf\ParallelJobsGeneric.cpp" />
     <ClCompile Include="..\wtf\PrintStream.cpp" />
@@ -242,7 +241,6 @@
     <ClInclude Include="..\wtf\OwnPtrCommon.h" />
     <ClInclude Include="..\wtf\PackedIntVector.h" />
     <ClInclude Include="..\wtf\PageAllocation.h" />
-    <ClInclude Include="..\wtf\PageAllocationAligned.h" />
     <ClInclude Include="..\wtf\PageBlock.h" />
     <ClInclude Include="..\wtf\PageReservation.h" />
     <ClInclude Include="..\wtf\ParallelJobs.h" />

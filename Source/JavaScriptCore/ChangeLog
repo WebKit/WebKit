@@ -1,3 +1,19 @@
+2015-03-19  Andreas Kling  <akling@apple.com>
+
+        DFGAllocator should use bmalloc's aligned allocator.
+        <https://webkit.org/b/142871>
+
+        Reviewed by Geoffrey Garen.
+
+        Switch DFGAllocator to using bmalloc through fastAlignedMalloc().
+
+        * dfg/DFGAllocator.h:
+        (JSC::DFG::Allocator<T>::allocateSlow):
+        (JSC::DFG::Allocator<T>::freeRegionsStartingAt):
+        * heap/CopiedSpace.h:
+        * heap/MarkedBlock.h:
+        * heap/MarkedSpace.h:
+
 2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         ES6 Classes: Extends should accept an expression without parenthesis

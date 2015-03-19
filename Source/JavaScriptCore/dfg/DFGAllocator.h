@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"
-#include <wtf/PageAllocationAligned.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace DFG {
@@ -70,7 +69,7 @@ private:
         bool isInThisRegion(const T* pointer) { return static_cast<unsigned>(pointer - data()) < numberOfThingsPerRegion(); }
         static Region* regionFor(const T* pointer) { return bitwise_cast<Region*>(bitwise_cast<uintptr_t>(pointer) & ~(size() - 1)); }
         
-        PageAllocationAligned m_allocation;
+        void* m_allocation;
         Allocator* m_allocator;
         Region* m_next;
     };
@@ -201,11 +200,9 @@ void* Allocator<T>::allocateSlow()
     
     if (logCompilationChanges())
         dataLog("Allocating another allocator region.\n");
-    
-    PageAllocationAligned allocation = PageAllocationAligned::allocate(Region::size(), Region::size(), OSAllocator::JSGCHeapPages);
-    if (!static_cast<bool>(allocation))
-        CRASH();
-    Region* region = static_cast<Region*>(allocation.base());
+
+    void* allocation = fastAlignedMalloc(Region::size(), Region::size());
+    Region* region = static_cast<Region*>(allocation);
     region->m_allocation = allocation;
     region->m_allocator = this;
     startBumpingIn(region);
@@ -222,7 +219,7 @@ void Allocator<T>::freeRegionsStartingAt(typename Allocator<T>::Region* region)
 {
     while (region) {
         Region* nextRegion = region->m_next;
-        region->m_allocation.deallocate();
+        fastAlignedFree(region->m_allocation);
         region = nextRegion;
     }
 }

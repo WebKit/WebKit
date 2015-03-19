@@ -1,3 +1,19 @@
+2015-03-19  Andreas Kling  <akling@apple.com>
+
+        DFGAllocator should use bmalloc's aligned allocator.
+        <https://webkit.org/b/142871>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove PageAllocationAligned since it has no more clients.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/PageAllocationAligned.cpp: Removed.
+        * wtf/PageAllocationAligned.h: Removed.
+
 2015-03-18  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Fix StringView misplaced implementations after r181525 and r181558

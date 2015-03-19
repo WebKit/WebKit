@@ -27,7 +27,6 @@
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
 #include <array>
-#include <wtf/PageAllocationAligned.h>
 #include <wtf/Bitmap.h>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/HashSet.h>

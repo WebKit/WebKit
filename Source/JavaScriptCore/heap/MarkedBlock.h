@@ -30,7 +30,6 @@
 #include <wtf/DataLog.h>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/HashFunctions.h>
-#include <wtf/PageAllocationAligned.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 

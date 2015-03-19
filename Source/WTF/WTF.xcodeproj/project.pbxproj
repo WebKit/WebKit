@@ -189,8 +189,6 @@
 		A8A473FD151A825B004123FF /* OwnPtrCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472DE151A825B004123FF /* OwnPtrCommon.h */; };
 		A8A473FE151A825B004123FF /* PackedIntVector.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472DF151A825B004123FF /* PackedIntVector.h */; };
 		A8A473FF151A825B004123FF /* PageAllocation.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472E0151A825B004123FF /* PageAllocation.h */; };
-		A8A47400151A825B004123FF /* PageAllocationAligned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472E1151A825B004123FF /* PageAllocationAligned.cpp */; };
-		A8A47401151A825B004123FF /* PageAllocationAligned.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472E2151A825B004123FF /* PageAllocationAligned.h */; };
 		A8A47402151A825B004123FF /* PageBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472E3151A825B004123FF /* PageBlock.cpp */; };
 		A8A47403151A825B004123FF /* PageBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472E4151A825B004123FF /* PageBlock.h */; };
 		A8A47404151A825B004123FF /* PageReservation.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472E5151A825B004123FF /* PageReservation.h */; };
@@ -482,8 +480,6 @@
 		A8A472DE151A825B004123FF /* OwnPtrCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnPtrCommon.h; sourceTree = "<group>"; };
 		A8A472DF151A825B004123FF /* PackedIntVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PackedIntVector.h; sourceTree = "<group>"; };
 		A8A472E0151A825B004123FF /* PageAllocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageAllocation.h; sourceTree = "<group>"; };
-		A8A472E1151A825B004123FF /* PageAllocationAligned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageAllocationAligned.cpp; sourceTree = "<group>"; };
-		A8A472E2151A825B004123FF /* PageAllocationAligned.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageAllocationAligned.h; sourceTree = "<group>"; };
 		A8A472E3151A825B004123FF /* PageBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageBlock.cpp; sourceTree = "<group>"; };
 		A8A472E4151A825B004123FF /* PageBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageBlock.h; sourceTree = "<group>"; };
 		A8A472E5151A825B004123FF /* PageReservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageReservation.h; sourceTree = "<group>"; };
@@ -804,8 +800,6 @@
 				A8A472DE151A825B004123FF /* OwnPtrCommon.h */,
 				A8A472DF151A825B004123FF /* PackedIntVector.h */,
 				A8A472E0151A825B004123FF /* PageAllocation.h */,
-				A8A472E1151A825B004123FF /* PageAllocationAligned.cpp */,
-				A8A472E2151A825B004123FF /* PageAllocationAligned.h */,
 				A8A472E3151A825B004123FF /* PageBlock.cpp */,
 				A8A472E4151A825B004123FF /* PageBlock.h */,
 				A8A472E5151A825B004123FF /* PageReservation.h */,
@@ -1143,7 +1137,6 @@
 				0FB14E1B1810E1DC009B6B4D /* BagToHashMap.h in Headers */,
 				A8A473FE151A825B004123FF /* PackedIntVector.h in Headers */,
 				A8A473FF151A825B004123FF /* PageAllocation.h in Headers */,
-				A8A47401151A825B004123FF /* PageAllocationAligned.h in Headers */,
 				A8A47403151A825B004123FF /* PageBlock.h in Headers */,
 				A8A47404151A825B004123FF /* PageReservation.h in Headers */,
 				A8A47405151A825B004123FF /* ParallelJobs.h in Headers */,
@@ -1364,7 +1357,6 @@
 				A8A473F7151A825B004123FF /* OSAllocatorPosix.cpp in Sources */,
 				93F1993E19D7958D00C2390B /* StringView.cpp in Sources */,
 				A8A473F9151A825B004123FF /* OSRandomSource.cpp in Sources */,
-				A8A47400151A825B004123FF /* PageAllocationAligned.cpp in Sources */,
 				A8A47402151A825B004123FF /* PageBlock.cpp in Sources */,
 				0F9D3362165DBA73005AD387 /* PrintStream.cpp in Sources */,
 				143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */,
