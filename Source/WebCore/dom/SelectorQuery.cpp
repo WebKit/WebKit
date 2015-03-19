@@ -555,10 +555,10 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
 #else
     case CompiledSingleWithRootFilter:
     case CompiledSingle:
-        // FIXME: ASSERT_NOT_REACHED and FALLTHROUGH combine to "error: fallthrough annotation in unreachable code"
-        // We should figure out what should really happen here and put the ASSERT back.
-        // ASSERT_NOT_REACHED();
+        ASSERT_NOT_REACHED();
+#if ASSERT_DISABLED
         FALLTHROUGH;
+#endif
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
     case SingleSelectorWithRootFilter:
