@@ -83,6 +83,11 @@ WebInspector.BreakpointTreeElement.prototype = {
         return this._breakpoint;
     },
 
+    get filterableData()
+    {
+        return {text: this.breakpoint.url};
+    },
+
     ondelete: function()
     {
         if (!WebInspector.debuggerManager.isBreakpointRemovable(this._breakpoint))

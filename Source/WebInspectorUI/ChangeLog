@@ -1,3 +1,16 @@
+2015-03-19  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: FilterBar for debugger sidebar hides breakpoints for displayed resources
+        https://bugs.webkit.org/show_bug.cgi?id=142777
+
+        Reviewed by Brian Burg.
+
+        Typing into the text input on the filter bar for the debugger sidebar no longer incorrectly hides the
+        breakpoints for scripts that match the text input.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WebInspector.BreakpointTreeElement.prototype.get filterableData): Added.
+
 2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Replace last use of ObjectPropertiesSection with ObjectTreeView
