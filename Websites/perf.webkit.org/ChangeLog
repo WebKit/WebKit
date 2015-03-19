@@ -1,3 +1,15 @@
+2015-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fixes.
+
+        * public/include/manifest.php:
+        (Manifest::generate): These should be {} instead of [] when they're empty.
+        * public/v2/data.js:
+        (Measurement.prototype.formattedRevisions): Don't assume previousRevisions[repositoryId] exits.
+        * public/v2/manifest.js:
+        (App.Metric.fullName): Fixed the typo.
+        * tests/admin-regenerate-manifest.js: Fixed the test.
+
 2015-02-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Commit the erroneously reverted change.

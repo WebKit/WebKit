@@ -34,7 +34,7 @@ App.Metric = App.NameLabelModel.extend({
     }.property('name', 'test'),
     fullName: function ()
     {
-        return this.get('path').join(' \u220b ') /* &in; */
+        return this.get('path').join(' \u220b ') /* &ni; */
             + ' : ' + this.get('label');
     }.property('path', 'label'),
 });

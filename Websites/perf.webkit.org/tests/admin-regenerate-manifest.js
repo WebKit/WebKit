@@ -8,14 +8,15 @@ describe("/admin/regenerate-manifest", function () {
                 var manifest = JSON.parse(response.responseText);
                 delete manifest.defaultDashboard;
                 delete manifest.dashboards;
+                delete manifest.elapsedTime;
                 assert.deepEqual(manifest, {
-                    all: [],
-                    bugTrackers: [],
-                    builders: [],
-                    dashboard: [],
-                    metrics: [],
-                    repositories: [],
-                    tests: []});
+                    all: {},
+                    bugTrackers: {},
+                    builders: {},
+                    dashboard: {},
+                    metrics: {},
+                    repositories: {},
+                    tests: {}});
                 notifyDone();
             });
         });

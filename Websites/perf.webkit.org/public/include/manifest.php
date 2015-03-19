@@ -27,14 +27,14 @@ class ManifestGenerator {
             $row = $row['commit_repository'];
 
         $this->manifest = array(
-            'tests' => $this->tests(),
-            'metrics' => $this->metrics(),
-            'all' => $this->platforms($config_table, $platform_table, false),
-            'dashboard' => $this->platforms($config_table, $platform_table, true),
-            'repositories' => $this->repositories($repositories_table, $repositories_with_commit),
-            'builders' => $this->builders(),
-            'bugTrackers' => $this->bug_trackers($repositories_table),
-            'dashboards' => config('dashboards'),
+            'tests' => (object)$this->tests(),
+            'metrics' => (object)$this->metrics(),
+            'all' => (object)$this->platforms($config_table, $platform_table, false),
+            'dashboard' => (object)$this->platforms($config_table, $platform_table, true),
+            'repositories' => (object)$this->repositories($repositories_table, $repositories_with_commit),
+            'builders' => (object)$this->builders(),
+            'bugTrackers' => (object)$this->bug_trackers($repositories_table),
+            'dashboards' => (object)config('dashboards'),
         );
 
         $this->manifest['elapsedTime'] = (microtime(true) - $start_time) * 1000;

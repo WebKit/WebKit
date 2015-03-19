@@ -173,7 +173,7 @@ Measurement.prototype.formattedRevisions = function (previousMeasurement)
     var formattedRevisions = {};
     for (var repositoryId in revisions) {
         var currentRevision = revisions[repositoryId][0];
-        var previousRevision = previousRevisions ? previousRevisions[repositoryId][0] : null;
+        var previousRevision = previousRevisions && previousRevisions[repositoryId] ? previousRevisions[repositoryId][0] : null;
         var formatttedRevision = Measurement.formatRevisionRange(currentRevision, previousRevision);
         formattedRevisions[repositoryId] = formatttedRevision;
     }
