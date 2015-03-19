@@ -90,7 +90,7 @@ public:
     }
 
 protected:
-    const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesGetPropertyNames | JSObject::StructureFlags;
+    const static unsigned StructureFlags = ImplementsHasInstance | JSObject::StructureFlags;
 
     JS_EXPORT_PRIVATE JSCallee(VM&, JSGlobalObject*, Structure*);
     JSCallee(VM&, JSScope*, Structure*);
@@ -99,12 +99,6 @@ protected:
     using Base::finishCreation;
 
     static void visitChildren(JSCell*, SlotVisitor&);
-
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode = ExcludeDontEnumProperties);
-    static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
 
 private:
     friend class LLIntOffsetsExtractor;
