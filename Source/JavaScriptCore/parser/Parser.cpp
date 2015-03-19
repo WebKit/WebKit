@@ -1485,7 +1485,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
 
     TreeExpression parentClass = 0;
     if (consume(EXTENDS)) {
-        parentClass = parsePrimaryExpression(context);
+        parentClass = parseMemberExpression(context);
         failIfFalse(parentClass, "Cannot parse the parent class name");
     }
     const ConstructorKind constructorKind = parentClass ? ConstructorKind::Derived : ConstructorKind::Base;

@@ -25,6 +25,28 @@ PASS x = class extends baseWithBadPrototype { constructor() { } } threw exceptio
 PASS baseWithBadPrototype.prototype = "abc" did not throw exception.
 PASS x = class extends baseWithBadPrototype { constructor() { } } threw exception TypeError: The superclass's prototype is not an object..
 PASS baseWithBadPrototype.prototype = null; x = class extends baseWithBadPrototype { constructor() { } } did not throw exception.
+PASS x = 1; c = class extends ++x { constructor() { } }; threw exception SyntaxError: Unexpected token '++'.
+PASS x = 1; c = class extends x++ { constructor() { } }; threw exception SyntaxError: Unexpected token '++'. Expected opening '{' at the start of a class body..
+PASS x = 1; c = class extends (++x) { constructor() { } }; threw exception TypeError: The superclass is not an object..
+PASS x = 1; c = class extends (x++) { constructor() { } }; threw exception TypeError: The superclass is not an object..
+PASS x = 1; try { c = class extends (++x) { constructor() { } } } catch (e) { }; x is 2
+PASS x = 1; try { c = class extends (x++) { constructor() { } } } catch (e) { }; x is 2
+PASS namespace = {}; namespace.A = class { }; namespace.B = class extends namespace.A { } did not throw exception.
+PASS namespace = {}; namespace.A = class A { }; namespace.B = class B extends namespace.A { } did not throw exception.
+PASS namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends namespace.A { constructor() { } } did not throw exception.
+PASS namespace = {}; namespace.A = class A { constructor() { } }; namespace.B = class B extends namespace.A { constructor() { } } did not throw exception.
+PASS namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends (namespace.A) { constructor() { } } did not throw exception.
+PASS namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends namespace["A"] { constructor() { } } did not throw exception.
+PASS namespace = {}; namespace.A = class { constructor() { } }; function getClassA() { return namespace.A }; namespace.B = class extends getClassA() { constructor() { } } did not throw exception.
+PASS namespace = {}; namespace.A = class { constructor() { } }; function getClass(prop) { return namespace[prop] }; namespace.B = class extends getClass("A") { constructor() { } } did not throw exception.
+PASS namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends (false||null||namespace.A) { constructor() { } } did not throw exception.
+PASS namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends false||null||namespace.A { constructor() { } } threw exception SyntaxError: Unexpected token '||'. Expected opening '{' at the start of a class body..
+PASS x = 1; namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends (x++, namespace.A) { constructor() { } }; did not throw exception.
+PASS x = 1; namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends (namespace.A, x++) { constructor() { } }; threw exception TypeError: The superclass is not an object..
+PASS namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends new namespace.A { constructor() { } } threw exception TypeError: The superclass's prototype is not an object..
+PASS namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends new namespace.A() { constructor() { } } threw exception TypeError: The superclass's prototype is not an object..
+PASS x = 1; namespace = {}; namespace.A = class { constructor() { } }; try { namespace.B = class extends (x++, namespace.A) { constructor() { } } } catch (e) { } x is 2
+PASS x = 1; namespace = {}; namespace.A = class { constructor() { } }; try { namespace.B = class extends (namespace.A, x++) { constructor() { } } } catch (e) { } x is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

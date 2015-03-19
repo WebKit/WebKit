@@ -1,3 +1,14 @@
+2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ES6 Classes: Extends should accept an expression without parenthesis
+        https://bugs.webkit.org/show_bug.cgi?id=142840
+
+        Reviewed by Ryosuke Niwa.
+
+        * js/class-syntax-extends-expected.txt:
+        * js/script-tests/class-syntax-extends.js:
+        Extend the test to test cases of extends with different types of expressions.
+
 2015-03-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Switching between two SVG images with no intrinsic sizes causes them to get the default SVG size instead of the container size.

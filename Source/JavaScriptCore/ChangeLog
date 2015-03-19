@@ -1,5 +1,18 @@
 2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
+        ES6 Classes: Extends should accept an expression without parenthesis
+        https://bugs.webkit.org/show_bug.cgi?id=142840
+
+        Reviewed by Ryosuke Niwa.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        "extends" allows a LeftHandExpression (new expression / call expression,
+        which includes a member expression), not a primary expression. Our
+        parseMemberExpression does all of these.
+
+2015-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Debugger Popovers and Probes should use FormattedValue/ObjectTreeView instead of Custom/ObjectPropertiesSection
         https://bugs.webkit.org/show_bug.cgi?id=142830
 
