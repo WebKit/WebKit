@@ -86,7 +86,7 @@ public:
         size_t bytesReserved;
         size_t bytesCommitted;
     };
-    Statistics currentStatistics();
+    WTF_EXPORT_PRIVATE Statistics currentStatistics();
 
     // Add more free space to the allocator. Call this directly from
     // the constructor if you wish to operate the allocator within a
