@@ -222,7 +222,7 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         && (oldStyle->imageResolution() != style().imageResolution()
             || oldStyle->imageResolutionSnap() != style().imageResolutionSnap()
             || oldStyle->imageResolutionSource() != style().imageResolutionSource()))
-        repaintOrMarkForLayout(ImageSizeChangeForAltText;
+        repaintOrMarkForLayout(ImageSizeChangeForAltText);
 #endif
 }
 
