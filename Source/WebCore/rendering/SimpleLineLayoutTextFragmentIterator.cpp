@@ -92,7 +92,6 @@ TextFragmentIterator::TextFragment TextFragmentIterator::nextTextFragment(float 
 void TextFragmentIterator::revertToFragment(const TextFragment& fragment)
 {
     ASSERT(m_position >= fragment.end());
-    ASSERT(fragment.start() >= 0);
     // Revert segment first.
     while (m_currentSegment->start > fragment.start())
         --m_currentSegment;

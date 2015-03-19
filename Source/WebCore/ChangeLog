@@ -1,3 +1,17 @@
+2015-03-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        TextFragment#start() is always >= 0 since its type is unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=142860
+
+        Reviewed by Andreas Kling.
+
+        Since TextFragment::m_start is unsigned, the result of
+        TextFragment::start() is always >= 0 and assertion is not effective.
+        This patch removes this assertion to suppress warnings.
+
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::revertToFragment):
+
 2015-03-18  Alex Christensen  <achristensen@webkit.org>
 
         [ContentExtensions] Prepare for compiling stylesheets of selectors to be used on every page.
