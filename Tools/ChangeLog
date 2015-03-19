@@ -1,3 +1,10 @@
+2015-03-19  Alex Christensen  <achristensen@webkit.org>
+
+        Fix API tests after r181754.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::testRequest):
+
 2015-03-19  Brady Eidson  <beidson@apple.com>
 
         Part of content extensions should apply css selectors

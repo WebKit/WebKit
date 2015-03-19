@@ -101,8 +101,9 @@ private:
 void static testRequest(ContentExtensions::ContentExtensionsBackend contentExtensionsBackend, const ResourceLoadInfo& resourceLoadInfo, Vector<ContentExtensions::ActionType> expectedActions)
 {
     auto actions = contentExtensionsBackend.actionsForResourceLoad(resourceLoadInfo);
-    EXPECT_EQ(expectedActions.size(), actions.size());
-    if (expectedActions.size() != actions.size())
+    // The last action is applying the compiled stylesheet.
+    EXPECT_EQ(expectedActions.size(), actions.size() ? actions.size() - 1 : 0);
+    if (expectedActions.size() != (actions.size() ? actions.size() - 1 : 0))
         return;
 
     for (unsigned i = 0; i < expectedActions.size(); ++i)
