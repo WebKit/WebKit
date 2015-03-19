@@ -3433,8 +3433,10 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         ASSERT((dragState().type & DragSourceActionSelection));
         ASSERT((dragState().type & ~DragSourceActionSelection) == DragSourceActionDHTML
             || (dragState().type & ~DragSourceActionSelection) == DragSourceActionImage
+#ifndef NDEBUG
 #if ENABLE(ATTACHMENT_ELEMENT)
             || (dragState().type & ~DragSourceActionSelection) == DragSourceActionAttachment
+#endif
 #endif
             || (dragState().type & ~DragSourceActionSelection) == DragSourceActionLink);
         dragState().type = DragSourceActionSelection;

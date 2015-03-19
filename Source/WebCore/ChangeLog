@@ -15,6 +15,15 @@
 
 2015-03-19  Enrica Casucci  <enrica@apple.com>
 
+        Release build fix after https://trac.webkit.org/r181760.
+
+        Unreviewed.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleDrag):
+
+2015-03-19  Enrica Casucci  <enrica@apple.com>
+
         <attachment> should put URLs on the pasteboard so that Finder can accept drops.
         https://bugs.webkit.org/show_bug.cgi?id=142801
         rdar://problem/19982527
