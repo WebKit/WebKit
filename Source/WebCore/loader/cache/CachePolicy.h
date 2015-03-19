@@ -29,7 +29,6 @@
 namespace WebCore {
 
     enum CachePolicy {
-        CachePolicyCache,
         CachePolicyVerify,
         CachePolicyRevalidate,
         CachePolicyReload,

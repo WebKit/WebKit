@@ -43,11 +43,6 @@ String DiagnosticLoggingKeys::missingValidatorFieldsKey()
     return ASCIILiteral("missingValidatorFields");
 }
 
-String DiagnosticLoggingKeys::mustRevalidateIsExpiredKey()
-{
-    return ASCIILiteral("mustRevalidateIsExpired");
-}
-
 String DiagnosticLoggingKeys::pluginLoadedKey()
 {
     return ASCIILiteral("pluginLoaded");

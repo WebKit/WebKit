@@ -65,7 +65,6 @@ public:
     static String mediaLoadedKey();
     static String mediaLoadingFailedKey();
     WEBCORE_EXPORT static String missingValidatorFieldsKey();
-    static String mustRevalidateIsExpiredKey();
     static String navigationKey();
     WEBCORE_EXPORT static String networkCacheKey();
     static String networkKey();
