@@ -2471,7 +2471,7 @@ def parseAndDisplayResults(results)
     outp.puts createVMsString
   end
   
-  def summaryStats(outp, json, jsonKey, accumulators, name, decimalShift, &proc)
+  def summaryStats(outp, json, accumulators, name, decimalShift, &proc)
     resultingJson = {}
     outp.print "   " if $allSuites.size > 1
     outp.print rpad(name, $benchpad + $weightpad)
@@ -2488,31 +2488,14 @@ def parseAndDisplayResults(results)
       outp.print("    "+accumulators[-1].stats(&proc).compareTo(accumulators[0].stats(&proc)).longForm)
     end
     outp.puts
-    json[jsonKey] = resultingJson
+    json[name] = resultingJson
   end
-  
-  def meanName(currentMean, preferredMean)
-    result = "<#{currentMean}>"
-    if "#{currentMean}Mean" == preferredMean.to_s
-      result += " *"
-    end
-    result
-  end
-  
+
   def allSummaryStats(outp, json, accumulators, preferredMean, decimalShift)
-    summaryStats(outp, json, "<arithmetic>", accumulators, meanName("arithmetic", preferredMean), decimalShift) {
+    meanLabel = '<' + preferredMean.to_s.sub(/Mean$/, '') + '>'
+    summaryStats(outp, json, accumulators, meanLabel, decimalShift) {
       | stat |
-      stat.arithmeticMean
-    }
-    
-    summaryStats(outp, json, "<geometric>", accumulators, meanName("geometric", preferredMean), decimalShift) {
-      | stat |
-      stat.geometricMean
-    }
-    
-    summaryStats(outp, json, "<harmonic>", accumulators, meanName("harmonic", preferredMean), decimalShift) {
-      | stat |
-      stat.harmonicMean
+      stat.send(preferredMean)
     }
   end
   
