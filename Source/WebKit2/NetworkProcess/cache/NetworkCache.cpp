@@ -206,12 +206,13 @@ static std::unique_ptr<Entry> decodeStorageEntry(const Storage::Entry& storageEn
         return nullptr;
     }
 
-    bool allowExpired = cachePolicyAllowsExpired(request.cachePolicy()) && !cachedResponse.cacheControlContainsMustRevalidate();
+    bool allowExpired = cachePolicyAllowsExpired(request.cachePolicy());
     auto timeStamp = std::chrono::duration_cast<std::chrono::duration<double>>(storageEntry.timeStamp);
     double age = WebCore::computeCurrentAge(cachedResponse, timeStamp.count());
     double lifetime = WebCore::computeFreshnessLifetimeForHTTPFamily(cachedResponse, timeStamp.count());
     bool isExpired = age > lifetime;
-    bool needsRevalidation = (isExpired && !allowExpired) || cachedResponse.cacheControlContainsNoCache();
+    // We never revalidate in the case of a history navigation (i.e. allowExpired is true).
+    bool needsRevalidation = !allowExpired && (cachedResponse.cacheControlContainsNoCache() || isExpired);
 
     if (needsRevalidation) {
         bool hasValidatorFields = cachedResponse.hasCacheValidatorFields();

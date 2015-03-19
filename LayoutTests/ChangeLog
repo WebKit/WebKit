@@ -1,3 +1,17 @@
+2015-03-19  Chris Dumez  <cdumez@apple.com>
+
+        The network cache should ignore "cache-control: no-cache, must-revalidate" on history navigation
+        https://bugs.webkit.org/show_bug.cgi?id=142831
+        <rdar://problem/20209957>
+
+        Reviewed by Antti Koivisto.
+
+        Rebaseline disk-cache-validation-back-navigation-policy.html test now
+        that we ignore "cache-control: no-cache, must-revalidate" on history
+        navigation. This is a progression.
+
+        * http/tests/cache/disk-cache-validation-back-navigation-policy-expected.txt:
+
 2015-03-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Windows gardening for debug bots.

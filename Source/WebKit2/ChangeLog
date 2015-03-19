@@ -1,3 +1,41 @@
+2015-03-19  Chris Dumez  <cdumez@apple.com>
+
+        The network cache should ignore "cache-control: no-cache, must-revalidate" on history navigation
+        https://bugs.webkit.org/show_bug.cgi?id=142831
+        <rdar://problem/20209957>
+
+        Reviewed by Antti Koivisto.
+
+        The network cache should ignore "no-cache" and "must-revalidate" as
+        Cache-Control policy for history navigations to avoid unnecessary
+        revalidation in this case. Our memory cache already behaves this way.
+
+        On history navigation, our disk cache implementation currently
+        revalidates unconditionally resources if "cache-control: no-cache" is
+        used. It also revalidates expired resources if "cache-control:
+        must-revalidate" is used. This is sub-optimal.
+
+        RFC 7234 does not require us to do so [1]:
+        """
+          User agents often have history mechanisms, such as "Back" buttons and
+          history lists, that can be used to redisplay a representation
+          retrieved earlier in a session.
+
+          The freshness model (Section 4.2) does not necessarily apply to
+          history mechanisms.  That is, a history mechanism can display a
+          previous representation even if it has expired.
+        """
+
+        Chrome and IE9+ [2] already ignore "cache-control: must-revalidate" on history navigation.
+
+        [1] https://tools.ietf.org/html/rfc7234#page-32
+        [2] http://blogs.msdn.com/b/ie/archive/2010/07/14/caching-improvements-in-internet-explorer-9.aspx
+
+        Test: http/tests/cache/disk-cache-validation-back-navigation-policy.html
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::decodeStorageEntry):
+
 2015-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         Don't paint PDFs on every scroll
