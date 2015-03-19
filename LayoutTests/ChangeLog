@@ -1,3 +1,16 @@
+2015-03-19  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+        [GTK] Skip Legacy WebNotifications test
+        https://bugs.webkit.org/show_bug.cgi?id=141962
+
+        The revision r177073 skips all legacy tests for notifications except from
+        http/tests/notifications/legacy/notification-request-permission-then-navigate.html
+        which was failing. We skip this test now too.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations:
+
 2015-03-19  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Update ReadableStream API according new version of the specification

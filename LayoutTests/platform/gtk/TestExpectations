@@ -158,6 +158,7 @@ http/tests/notifications/legacy/request-no-callback.html
 http/tests/notifications/legacy/events.html
 http/tests/notifications/legacy/show.html
 http/tests/notifications/legacy/double-show.html
+http/tests/notifications/legacy/notification-request-permission-then-navigate.html
 
 # Datalist is not yet enabled.
 webkit.org/b/98934 fast/forms/datalist [ Skip ]
@@ -599,7 +600,6 @@ webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01c.svg [ ImageOnlyFailur
 webkit.org/b/141458 imported/mozilla/svg/symbol-01.svg [ ImageOnlyFailure ]
 
 webkit.org/b/141961 fast/multicol/span/span-as-immediate-columns-child.html [ Failure ]
-webkit.org/b/141962 http/tests/notifications/legacy/notification-request-permission-then-navigate.html [ Failure ]
 webkit.org/b/141591 inspector-protocol/debugger/breakpoint-eval-with-exception.html [ Failure ]
 
 webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
