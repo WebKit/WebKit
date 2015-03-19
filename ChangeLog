@@ -1,3 +1,9 @@
+2015-03-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, kick the GTK bots to regenerate makefile.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2015-03-17  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Expose JavaScript binding interface through ewk_extension
