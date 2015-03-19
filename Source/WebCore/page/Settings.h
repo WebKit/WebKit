@@ -163,19 +163,11 @@ public:
     WEBCORE_EXPORT void setNeedsAdobeFrameReloadingQuirk(bool);
     bool needsAcrobatFrameReloadingQuirk() const { return m_needsAdobeFrameReloadingQuirk; }
 
-    WEBCORE_EXPORT static void setDefaultMinDOMTimerInterval(double); // Interval specified in seconds.
-    WEBCORE_EXPORT static double defaultMinDOMTimerInterval();
-        
-    static void setHiddenPageDOMTimerAlignmentInterval(double); // Interval specified in seconds.
-    static double hiddenPageDOMTimerAlignmentInterval();
+    WEBCORE_EXPORT void setMinimumDOMTimerInterval(double); // Initialized to DOMTimer::defaultMinimumInterval().
+    WEBCORE_EXPORT double minimumDOMTimerInterval() const { return m_minimumDOMTimerInterval; }
 
-    WEBCORE_EXPORT void setMinDOMTimerInterval(double); // Per-page; initialized to default value.
-    WEBCORE_EXPORT double minDOMTimerInterval();
-
-    static void setDefaultDOMTimerAlignmentInterval(double);
-    WEBCORE_EXPORT static double defaultDOMTimerAlignmentInterval();
-
-    double domTimerAlignmentInterval() const;
+    void setDOMTimerAlignmentInterval(double);
+    double domTimerAlignmentInterval() const { return m_domTimerAlignmentInterval; }
 
     WEBCORE_EXPORT void setLayoutInterval(std::chrono::milliseconds);
     std::chrono::milliseconds layoutInterval() const { return m_layoutInterval; }
@@ -283,6 +275,9 @@ private:
     const std::unique_ptr<FontGenericFamilies> m_fontGenericFamilies;
     SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
     std::chrono::milliseconds m_layoutInterval;
+    double m_minimumDOMTimerInterval;
+    double m_domTimerAlignmentInterval;
+
 #if ENABLE(TEXT_AUTOSIZING)
     float m_textAutosizingFontScaleFactor;
     IntSize m_textAutosizingWindowSizeOverride;
@@ -320,9 +315,6 @@ private:
     bool m_hiddenPageCSSAnimationSuspensionEnabled : 1;
     bool m_fontFallbackPrefersPictographs : 1;
 
-    static double gDefaultMinDOMTimerInterval;
-    static double gDefaultDOMTimerAlignmentInterval;
-
 #if USE(AVFOUNDATION)
     WEBCORE_EXPORT static bool gAVFoundationEnabled;
 #endif
@@ -348,8 +340,6 @@ private:
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     String m_mediaKeysStorageDirectory;
 #endif
-
-    static double gHiddenPageDOMTimerAlignmentInterval;
 
     static bool gLowPowerVideoAudioBufferSizeEnabled;
 };

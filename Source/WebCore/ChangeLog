@@ -1,3 +1,61 @@
+2015-03-19  Chris Dumez  <cdumez@apple.com>
+
+        Clean up DOMTimer related settings
+        https://bugs.webkit.org/show_bug.cgi?id=142837
+
+        Reviewed by Darin Adler.
+
+        Clean up DOMTimer related settings:
+        - Make default minimum timer interval 4ms instead of 10ms as all ports
+          were setting it to 4ms and the specifications says 4ms.
+        - Get rid of setters for default DOMTimer interval values as they are
+          not set anymore.
+        - Move default DOMTimer interval values from Settings to DOMTimer as
+          those are global (not per-page) and not really settings.
+        - Stop using abbreviations in the names (e.g. min -> minimum).
+        - Move DOMTimer settings members from Page to Settings. There is no
+          reason for those to be stored on the Page. The getters were private
+          so call-sites had to go via Settings anyway. Also, call-sites already
+          had to do a null check on the page to get the settings. It seems
+          unfortunate for the settings to do another null-check on the page for
+          retrieving the setting value from the page.
+        - Inline the DOMTimer settings getters as these are trivial.
+
+        * dom/Document.cpp:
+        (WebCore::Document::minimumTimerInterval):
+        (WebCore::Document::timerAlignmentInterval):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::minimumTimerInterval):
+        (WebCore::ScriptExecutionContext::timerAlignmentInterval):
+        * page/DOMTimer.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setTimerThrottlingEnabled):
+        (WebCore::Page::setMinimumTimerInterval): Deleted.
+        (WebCore::Page::minimumTimerInterval): Deleted.
+        * page/Page.h:
+        (WebCore::Page::timerAlignmentInterval): Deleted.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setMinimumDOMTimerInterval):
+        (WebCore::Settings::setDOMTimerAlignmentInterval):
+        (WebCore::Settings::setHiddenPageDOMTimerAlignmentInterval): Deleted.
+        (WebCore::Settings::hiddenPageDOMTimerAlignmentInterval): Deleted.
+        (WebCore::Settings::setDefaultMinDOMTimerInterval): Deleted.
+        (WebCore::Settings::defaultMinDOMTimerInterval): Deleted.
+        (WebCore::Settings::setMinDOMTimerInterval): Deleted.
+        (WebCore::Settings::minDOMTimerInterval): Deleted.
+        (WebCore::Settings::setDefaultDOMTimerAlignmentInterval): Deleted.
+        (WebCore::Settings::defaultDOMTimerAlignmentInterval): Deleted.
+        (WebCore::Settings::domTimerAlignmentInterval): Deleted.
+        * page/Settings.h:
+        (WebCore::Settings::minimumDOMTimerInterval):
+        (WebCore::Settings::domTimerAlignmentInterval):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setMinimumTimerInterval):
+
 2015-03-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Scrollbars look bad with GTK+ 3.16

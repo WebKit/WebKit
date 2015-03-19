@@ -434,7 +434,7 @@ double ScriptExecutionContext::minimumTimerInterval() const
     // workers, we will have to override it in the appropriate
     // subclass, and provide a way to enumerate a Document's dedicated
     // workers so we can update them all.
-    return Settings::defaultMinDOMTimerInterval();
+    return DOMTimer::defaultMinimumInterval();
 }
 
 void ScriptExecutionContext::didChangeTimerAlignmentInterval()
@@ -445,7 +445,7 @@ void ScriptExecutionContext::didChangeTimerAlignmentInterval()
 
 double ScriptExecutionContext::timerAlignmentInterval() const
 {
-    return Settings::defaultDOMTimerAlignmentInterval();
+    return DOMTimer::defaultAlignmentInterval();
 }
 
 JSC::VM& ScriptExecutionContext::vm()

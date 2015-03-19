@@ -2788,7 +2788,6 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 
         WebKitInitializeWebDatabasesIfNecessary();
         WebKitSetApplicationCachePathIfNecessary();
-        Settings::setDefaultMinDOMTimerInterval(0.004);
 
         didOneTimeInitialization = true;
      }
@@ -6823,13 +6822,13 @@ HRESULT WebView::defaultMinimumTimerInterval(double* interval)
 {
     if (!interval)
         return E_POINTER;
-    *interval = Settings::defaultMinDOMTimerInterval();
+    *interval = DOMTimer::defaultMinimumInterval();
     return S_OK;
 }
 
 HRESULT WebView::setMinimumTimerInterval(double interval)
 {
-    page()->settings().setMinDOMTimerInterval(interval);
+    page()->settings().setMinimumDOMTimerInterval(interval);
     return S_OK;
 }
 

@@ -454,11 +454,6 @@ private:
 
     MediaCanStartListener* takeAnyMediaCanStartListener();
 
-    void setMinimumTimerInterval(double);
-    double minimumTimerInterval() const;
-
-    double timerAlignmentInterval() const { return m_timerAlignmentInterval; }
-
     Vector<Ref<PluginViewBase>> pluginViews();
 
     void hiddenPageDOMTimerThrottlingStateChanged();
@@ -546,10 +541,7 @@ private:
     ViewMode m_viewMode;
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
-    double m_minimumTimerInterval;
-
     bool m_timerThrottlingEnabled;
-    double m_timerAlignmentInterval;
 
     bool m_isEditable;
     bool m_isPrerender;

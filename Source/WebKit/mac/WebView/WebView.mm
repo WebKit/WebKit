@@ -926,8 +926,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebKitInitializeGamepadProviderIfNecessary();
 #endif
         
-        Settings::setDefaultMinDOMTimerInterval(0.004);
-        
         Settings::setShouldRespectPriorityInCSSAttributeSetters(shouldRespectPriorityInCSSAttributeSetters());
 
 #if PLATFORM(IOS)

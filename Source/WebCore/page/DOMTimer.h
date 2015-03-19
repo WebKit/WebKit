@@ -48,6 +48,10 @@ namespace WebCore {
     public:
         virtual ~DOMTimer();
 
+        static double defaultMinimumInterval() { return 0.004; } // 4 milliseconds.
+        static double defaultAlignmentInterval() { return 0; }
+        static double hiddenPageAlignmentInterval() { return 1.0; } // 1 second.
+
         // Creates a new timer owned by specified ScriptExecutionContext, starts it
         // and returns its Id.
         static int install(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, int timeout, bool singleShot);

@@ -187,9 +187,7 @@ Page::Page(PageConfiguration& pageConfiguration)
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
     , m_viewMode(ViewModeWindowed)
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
-    , m_minimumTimerInterval(Settings::defaultMinDOMTimerInterval())
     , m_timerThrottlingEnabled(false)
-    , m_timerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval())
     , m_isEditable(false)
     , m_isPrerender(false)
     , m_viewState(PageInitialViewState)
@@ -1128,21 +1126,6 @@ void Page::setMemoryCacheClientCallsEnabled(bool enabled)
         frame->loader().tellClientAboutPastMemoryCacheLoads();
 }
 
-void Page::setMinimumTimerInterval(double minimumTimerInterval)
-{
-    double oldTimerInterval = m_minimumTimerInterval;
-    m_minimumTimerInterval = minimumTimerInterval;
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNextWithWrap(false)) {
-        if (frame->document())
-            frame->document()->adjustMinimumTimerInterval(oldTimerInterval);
-    }
-}
-
-double Page::minimumTimerInterval() const
-{
-    return m_minimumTimerInterval;
-}
-
 void Page::hiddenPageDOMTimerThrottlingStateChanged()
 {
     setTimerThrottlingEnabled(m_viewState & ViewState::IsVisuallyIdle);
@@ -1159,9 +1142,9 @@ void Page::setTimerThrottlingEnabled(bool enabled)
         return;
 
     m_timerThrottlingEnabled = enabled;
-    m_timerAlignmentInterval = enabled ? Settings::hiddenPageDOMTimerAlignmentInterval() : Settings::defaultDOMTimerAlignmentInterval();
+    m_settings->setDOMTimerAlignmentInterval(enabled ? DOMTimer::hiddenPageAlignmentInterval() : DOMTimer::defaultAlignmentInterval());
     
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNextWithWrap(false)) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->didChangeTimerAlignmentInterval();
     }

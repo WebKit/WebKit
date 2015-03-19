@@ -2728,18 +2728,18 @@ void Document::writeln(const String& text, Document* ownerDocument)
 
 double Document::minimumTimerInterval() const
 {
-    Page* p = page();
-    if (!p)
+    Page* page = this->page();
+    if (!page)
         return ScriptExecutionContext::minimumTimerInterval();
-    return p->settings().minDOMTimerInterval();
+    return page->settings().minimumDOMTimerInterval();
 }
 
 double Document::timerAlignmentInterval() const
 {
-    Page* p = page();
-    if (!p)
+    Page* page = this->page();
+    if (!page)
         return ScriptExecutionContext::timerAlignmentInterval();
-    return p->settings().domTimerAlignmentInterval();
+    return page->settings().domTimerAlignmentInterval();
 }
 
 EventTarget* Document::errorEventTarget()

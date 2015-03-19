@@ -69,10 +69,6 @@ static void invalidateAfterGenericFamilyChange(Page* page)
         page->setNeedsRecalcStyleInAllFrames();
 }
 
-double Settings::gDefaultMinDOMTimerInterval = 0.010; // 10 milliseconds
-double Settings::gDefaultDOMTimerAlignmentInterval = 0;
-double Settings::gHiddenPageDOMTimerAlignmentInterval = 1.0;
-
 #if USE(AVFOUNDATION)
 bool Settings::gAVFoundationEnabled = false;
 #endif
@@ -163,6 +159,8 @@ Settings::Settings(Page* page)
     , m_fontGenericFamilies(std::make_unique<FontGenericFamilies>())
     , m_storageBlockingPolicy(SecurityOrigin::AllowAllStorage)
     , m_layoutInterval(layoutScheduleThreshold)
+    , m_minimumDOMTimerInterval(DOMTimer::defaultMinimumInterval())
+    , m_domTimerAlignmentInterval(DOMTimer::defaultAlignmentInterval())
 #if ENABLE(TEXT_AUTOSIZING)
     , m_textAutosizingFontScaleFactor(1)
 #if HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP
@@ -214,16 +212,6 @@ PassRefPtr<Settings> Settings::create(Page* page)
 }
 
 SETTINGS_SETTER_BODIES
-
-void Settings::setHiddenPageDOMTimerAlignmentInterval(double hiddenPageDOMTimerAlignmentinterval)
-{
-    gHiddenPageDOMTimerAlignmentInterval = hiddenPageDOMTimerAlignmentinterval;
-}
-
-double Settings::hiddenPageDOMTimerAlignmentInterval()
-{
-    return gHiddenPageDOMTimerAlignmentInterval;
-}
 
 #if !PLATFORM(COCOA)
 void Settings::initializeDefaultFontFamilies()
@@ -450,44 +438,23 @@ void Settings::setNeedsAdobeFrameReloadingQuirk(bool shouldNotReloadIFramesForUn
     m_needsAdobeFrameReloadingQuirk = shouldNotReloadIFramesForUnchangedSRC;
 }
 
-void Settings::setDefaultMinDOMTimerInterval(double interval)
+void Settings::setMinimumDOMTimerInterval(double interval)
 {
-    gDefaultMinDOMTimerInterval = interval;
-}
+    double oldTimerInterval = m_minimumDOMTimerInterval;
+    m_minimumDOMTimerInterval = interval;
 
-double Settings::defaultMinDOMTimerInterval()
-{
-    return gDefaultMinDOMTimerInterval;
-}
-
-void Settings::setMinDOMTimerInterval(double interval)
-{
-    if (m_page)
-        m_page->setMinimumTimerInterval(interval);
-}
-
-double Settings::minDOMTimerInterval()
-{
     if (!m_page)
-        return 0;
-    return m_page->minimumTimerInterval();
+        return;
+
+    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (frame->document())
+            frame->document()->adjustMinimumTimerInterval(oldTimerInterval);
+    }
 }
 
-void Settings::setDefaultDOMTimerAlignmentInterval(double interval)
+void Settings::setDOMTimerAlignmentInterval(double alignmentInterval)
 {
-    gDefaultDOMTimerAlignmentInterval = interval;
-}
-
-double Settings::defaultDOMTimerAlignmentInterval()
-{
-    return gDefaultDOMTimerAlignmentInterval;
-}
-
-double Settings::domTimerAlignmentInterval() const
-{
-    if (!m_page)
-        return 0;
-    return m_page->timerAlignmentInterval();
+    m_domTimerAlignmentInterval = alignmentInterval;
 }
 
 void Settings::setLayoutInterval(std::chrono::milliseconds layoutInterval)
