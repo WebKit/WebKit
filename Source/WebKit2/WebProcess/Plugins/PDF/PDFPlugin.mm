@@ -1030,7 +1030,8 @@ void PDFPlugin::updatePageAndDeviceScaleFactors()
     if (!handlesPageScaleFactor())
         newScaleFactor *= webFrame()->page()->pageScaleFactor();
 
-    [m_pdfLayerController setDeviceScaleFactor:newScaleFactor];
+    if (newScaleFactor != [m_pdfLayerController deviceScaleFactor])
+        [m_pdfLayerController setDeviceScaleFactor:newScaleFactor];
 }
 
 void PDFPlugin::contentsScaleFactorChanged(float)

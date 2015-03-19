@@ -1,3 +1,17 @@
+2015-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't paint PDFs on every scroll
+        https://bugs.webkit.org/show_bug.cgi?id=142857
+        rdar://problem/20130207
+
+        Reviewed by Tim Horton.
+        
+        Don't push a scale factor onto the PDF layer controller if it hasn't
+        changed, since doing so causes a repaint.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::updatePageAndDeviceScaleFactors):
+
 2015-03-18  Anders Carlsson  <andersca@apple.com>
 
         Use && instead of & when deciding if the network cache should be cleared
