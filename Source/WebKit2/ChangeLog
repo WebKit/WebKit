@@ -1,3 +1,17 @@
+2015-03-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Properly guard X11-specific code in BackingStore::createBackend()
+        https://bugs.webkit.org/show_bug.cgi?id=142875
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::createBackend): Guard the GTK- and X11-specific
+        bit of code with PLATFORM(GTK) and PLATFORM(X11). Testing GDK_WINDOWING_X11
+        ensures that the GTK+ dependency has X11 support, but does not ensure
+        that WebKitGTK+ has been configured to build for X11 environments (which
+        is what PLATFORM(X11) ensures).
+
 2015-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.7.92 release.

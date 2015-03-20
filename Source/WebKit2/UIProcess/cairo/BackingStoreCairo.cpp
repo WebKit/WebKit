@@ -47,7 +47,7 @@ namespace WebKit {
 
 std::unique_ptr<BackingStoreBackendCairo> BackingStore::createBackend()
 {
-#if PLATFORM(GTK) && defined(GDK_WINDOWING_X11)
+#if PLATFORM(GTK) && PLATFORM(X11)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
     if (GDK_IS_X11_DISPLAY(display)) {
         GdkVisual* visual = gtk_widget_get_visual(m_webPageProxy.viewWidget());
