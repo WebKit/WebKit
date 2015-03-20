@@ -82,7 +82,7 @@ inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
     if (propName.getUInt32(i))
         return baseObj->hasProperty(exec, i);
 
-    PropertyName property = propName.toPropertyKey(exec);
+    auto property = propName.toPropertyKey(exec);
     if (exec->vm().exception())
         return false;
     return baseObj->hasProperty(exec, property);

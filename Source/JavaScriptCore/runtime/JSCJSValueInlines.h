@@ -610,14 +610,14 @@ ALWAYS_INLINE bool JSValue::getUInt32(uint32_t& v) const
     return false;
 }
 
-ALWAYS_INLINE PropertyName JSValue::toPropertyKey(ExecState* exec) const
+ALWAYS_INLINE Identifier JSValue::toPropertyKey(ExecState* exec) const
 {
     if (isString())
         return asString(*this)->toIdentifier(exec);
 
     JSValue primitive = toPrimitive(exec, PreferString);
     if (primitive.isSymbol())
-        return asSymbol(primitive)->privateName();
+        return Identifier::from(asSymbol(primitive)->privateName());
     return primitive.toString(exec)->toIdentifier(exec);
 }
 

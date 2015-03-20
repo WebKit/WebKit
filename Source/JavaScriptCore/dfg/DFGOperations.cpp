@@ -111,7 +111,7 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
     }
 
     // Don't put to an object if toString throws an exception.
-    PropertyName propertyName = property.toPropertyKey(exec);
+    auto propertyName = property.toPropertyKey(exec);
     if (!vm->exception()) {
         PutPropertySlot slot(baseValue, strict);
         if (direct) {
@@ -296,7 +296,7 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
         }
     }
 
-    PropertyName propertyName = property.toPropertyKey(exec);
+    auto propertyName = property.toPropertyKey(exec);
     return JSValue::encode(baseValue.get(exec, propertyName));
 }
 
@@ -324,7 +324,7 @@ EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
         }
     }
 
-    PropertyName propertyName = property.toPropertyKey(exec);
+    auto propertyName = property.toPropertyKey(exec);
     return JSValue::encode(JSValue(base).get(exec, propertyName));
 }
 
