@@ -56,7 +56,7 @@ private:
 
     // Message handlers.
     virtual void didUpdateGeometry() override;
-    virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& newIntrinsicContentSize) override;
+    virtual void intrinsicContentSizeDidChange(const WebCore::IntSize&) override;
 
     void sendUpdateGeometry();
 

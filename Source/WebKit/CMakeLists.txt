@@ -1,9 +1,16 @@
-# FIXME: Put Windows and Mac build files here.
-
 set(WebKit_SOURCES
 )
 
 set(WebKit_INCLUDE_DIRECTORIES
+    "${DERIVED_SOURCES_DIR}"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy"
+    "${JAVASCRIPTCORE_DIR}"
+    "${JAVASCRIPTCORE_DIR}/disassembler"
+    "${CMAKE_SOURCE_DIR}/Source"
+    "${WTF_DIR}"
 )
 
 set(WebKit_LIBRARIES

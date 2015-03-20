@@ -130,7 +130,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/ScrollbarThemeMac.mm
     platform/mac/SerializedPlatformRepresentationMac.mm
     platform/mac/SharedBufferMac.mm
-    platform/mac/SharedTimerMac.mm
     platform/mac/SoundMac.mm
     platform/mac/SuddenTermination.mm
     platform/mac/SystemSleepListenerMac.mm
@@ -200,59 +199,117 @@ list(APPEND WebCore_SOURCES
     platform/text/mac/TextCodecMac.cpp
 )
 
+# FIXME: We do not need everything from all of these directories.
+# Move some to WebCore_FORWARDING_HEADERS_FILES once people start actually maintaining this.
 set(WebCore_FORWARDING_HEADERS_DIRECTORIES
-    html
+    accessibility
+    bindings/js
     bindings/objc
+    bindings/generic
+    bridge
+    contentextensions
+    crypto
+    css
+    dom
+    editing
+    editing/cocoa
+    editing/mac
+    history
+    html
+    html/forms
+    html/parser
+    html/shadow
+    inspector
+    loader
+    loader/appcache
+    loader/archive
+    loader/archive/cf
+    loader/cache
+    Modules/indexeddb
+    Modules/geolocation
+    Modules/notifications
+    Modules/webdatabase
+    page
     platform
+    plugins
+    rendering
+    storage
+    style
+    svg
+
+    page/animation
+    page/mac
+    page/scrolling
+
+    platform/animation
+    platform/graphics
     platform/mac
+    platform/mock
+    platform/network
+    platform/sql
+    platform/text
+
+    platform/graphics/ca
+    platform/graphics/filters
+    platform/graphics/mac
+    platform/graphics/transforms
+
     platform/network/cf
+    platform/network/cocoa
+    platform/network/mac
+
+    platform/spi/cf
+    platform/spi/cg
+    platform/spi/cocoa
+    platform/spi/mac
+
+    rendering/line
+    rendering/style
+
+    svg/graphics
+    svg/properties
 )
 
 set(WebCore_FORWARDING_HEADERS_FILES
-    bindings/js/SerializedScriptValue.h
-    bindings/objc/WebKitAvailability.h
-
     bridge/IdentifierRep.h
+    bridge/npruntime_impl.h
     bridge/npruntime_internal.h
 
     contentextensions/CompiledContentExtension.h
 
+    editing/EditAction.h
+    editing/EditingBehaviorTypes.h
+    editing/EditingBoundary.h
     editing/FindOptions.h
+    editing/FrameSelection.h
+    editing/TextAffinity.h
+
+    editing/mac/TextAlternativeWithRange.h
+
+    history/BackForwardList.h
+    history/HistoryItem.h
+    history/PageCache.h
 
     html/HTMLMediaElement.h
 
-    loader/FrameLoaderTypes.h
-    loader/LoaderStrategy.h
-    loader/ResourceLoaderOptions.h
+    loader/appcache/ApplicationCacheStorage.h
 
-    Modules/indexeddb/IDBKeyData.h
-    Modules/indexeddb/IDBKeyPath.h
+    loader/icon/IconDatabase.h
+    loader/icon/IconDatabaseBase.h
+    loader/icon/IconDatabaseClient.h
+
+    loader/mac/LoaderNSURLExtras.h
+
     Modules/webdatabase/DatabaseDetails.h
 
-    page/ContextMenuContext.h
-    page/SecurityOrigin.h
-    page/SessionID.h
-    page/TextIndicator.h
-    page/UserScript.h
-    page/UserStyleSheet.h
-
-    platform/PlatformExportMacros.h
     platform/DisplaySleepDisabler.h
+    platform/PlatformExportMacros.h
 
     platform/audio/AudioHardwareListener.h
 
-    platform/cocoa/MachSendRight.h
+    platform/cf/RunLoopObserver.h
 
-    platform/graphics/Color.h
-    platform/graphics/FloatPoint.h
-    platform/graphics/FloatRect.h
-    platform/graphics/FloatSize.h
-    platform/graphics/GraphicsContext.h
-    platform/graphics/GraphicsLayer.h
-    platform/graphics/IntPoint.h
-    platform/graphics/IntRect.h
-    platform/graphics/IntSize.h
-    platform/graphics/NativeImagePtr.h
+    platform/cocoa/MachSendRight.h
 
     platform/graphics/cocoa/IOSurface.h
 
@@ -261,36 +318,36 @@ set(WebCore_FORWARDING_HEADERS_FILES
     platform/mac/SoftLinking.h
     platform/mac/WebCoreSystemInterface.h
 
-    platform/network/BlobDataFileReference.h
-    platform/network/BlobRegistryImpl.h
-    platform/network/HTTPHeaderMap.h
-    platform/network/NetworkStorageSession.h
-    platform/network/ResourceHandle.h
+    platform/network/mac/AuthenticationMac.h
 
     platform/network/cf/CertificateInfo.h
     platform/network/cf/ResourceResponse.h
 
-    platform/spi/cg/CoreGraphicsSPI.h
+    platform/sql/SQLiteDatabase.h
 
-    plugins/PluginData.h
-    plugins/npruntime.h
+    rendering/style/RenderStyleConstants.h
+)
+
+set(OBJC_BINDINGS_IDL_FILES
+    dom/EventListener.idl
+    ${WebCore_NON_SVG_IDL_FILES}
 )
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebCore DIRECTORIES ${WebCore_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebCore_FORWARDING_HEADERS_FILES})
 
-# FIXME: Get Objective C bindings working.
-#set(FEATURE_DEFINES_OBJECTIVE_C "LANGUAGE_OBJECTIVE_C=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
-#set(ADDITIONAL_BINDINGS_DEPENDENCIES
-#    ${WINDOW_CONSTRUCTORS_FILE}
-#    ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
-#    ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
-#)
-#GENERATE_BINDINGS(WebCore_SOURCES
-#    "${WebCore_NON_SVG_IDL_FILES}"
-#    "${WEBCORE_DIR}"
-#    "${IDL_INCLUDES}"
-#    "${FEATURE_DEFINES_OBJECTIVE_C}"
-#    ${DERIVED_SOURCES_WEBCORE_DIR} DOM ObjC mm
-#    ${IDL_ATTRIBUTES_FILE}
-#    ${SUPPLEMENTAL_DEPENDENCY_FILE}
-#    ${ADDITIONAL_BINDINGS_DEPENDENCIES})
+set(FEATURE_DEFINES_OBJECTIVE_C "LANGUAGE_OBJECTIVE_C=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
+set(ADDITIONAL_BINDINGS_DEPENDENCIES
+    ${WINDOW_CONSTRUCTORS_FILE}
+    ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+    ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+)
+GENERATE_BINDINGS(OBJC_BINDINGS
+    "${OBJC_BINDINGS_IDL_FILES}"
+    "${WEBCORE_DIR}"
+    "${IDL_INCLUDES}"
+    "${FEATURE_DEFINES_OBJECTIVE_C}"
+    ${DERIVED_SOURCES_WEBCORE_DIR} DOM ObjC mm
+    ${IDL_ATTRIBUTES_FILE}
+    ${SUPPLEMENTAL_DEPENDENCY_FILE}
+    ${ADDITIONAL_BINDINGS_DEPENDENCIES})
+# FIXME: Add the needed ObjC bindings to WebCore_SOURCES.

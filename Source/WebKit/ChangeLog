@@ -1,3 +1,13 @@
+2015-03-20  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=136003
+
+        Reviewed by Chris Dumez.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake: Added.
+
 2015-03-13  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.
