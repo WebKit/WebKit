@@ -3,6 +3,14 @@
         Unreviewed, kick the GTK bots to regenerate makefile.
         https://bugs.webkit.org/show_bug.cgi?id=137394
 
+        * Source/cmake/OptionsEfl.cmake: Revert my last accidenatal change.
+        * Source/cmake/OptionsGTK.cmake: Really kick the GTK bots.
+
+2015-03-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, kick the GTK bots to regenerate makefile.
+        https://bugs.webkit.org/show_bug.cgi?id=137394
+
         * Source/cmake/OptionsEfl.cmake:
 
 2015-03-19  Csaba Osztrogonác  <ossy@webkit.org>

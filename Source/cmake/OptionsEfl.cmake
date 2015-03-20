@@ -287,4 +287,3 @@ endif ()
 if (ENABLE_SUBTLE_CRYPTO)
     find_package(GnuTLS 3.0.0 REQUIRED)
 endif ()
-
