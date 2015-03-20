@@ -1,3 +1,10 @@
+2015-03-19  Enrica Casucci  <enrica@apple.com>
+
+        One more build fix after r181760.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleDrag):
+
 2015-03-19  Jessie Berlin  <jberlin@webkit.org>
 
         Build fix after r181760.
