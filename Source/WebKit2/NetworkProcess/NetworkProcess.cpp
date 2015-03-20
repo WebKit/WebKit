@@ -297,7 +297,6 @@ static void fetchDiskCacheEntries(SessionID sessionID, std::function<void (Vecto
     Vector<WebsiteData::Entry> entries;
 
 #if USE(CFURLCACHE)
-    auto origins = cfURLCacheOrigins();
     for (auto& origin : cfURLCacheOrigins())
         entries.append(WebsiteData::Entry { WTF::move(origin), WebsiteDataTypeDiskCache });
 #endif
@@ -366,6 +365,52 @@ void NetworkProcess::deleteWebsiteData(SessionID sessionID, uint64_t websiteData
     completionHandler();
 }
 
+static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, std::function<void ()> completionHandler)
+{
+#if ENABLE(NETWORK_CACHE)
+    if (NetworkCache::singleton().isEnabled()) {
+        auto* originsToDelete = new HashSet<RefPtr<SecurityOrigin>>();
+
+        for (auto& origin : origins)
+            originsToDelete->add(origin.securityOrigin());
+
+        auto* cacheKeysToDelete = new Vector<NetworkCache::Key>;
+
+        NetworkCache::singleton().traverse([completionHandler, originsToDelete, cacheKeysToDelete](const NetworkCache::Entry *entry) {
+
+            if (entry) {
+                if (originsToDelete->contains(SecurityOrigin::create(entry->response.url())))
+                    cacheKeysToDelete->append(entry->storageEntry.key);
+                return;
+            }
+
+            delete originsToDelete;
+
+            for (auto& key : *cacheKeysToDelete)
+                NetworkCache::singleton().remove(key);
+
+            delete cacheKeysToDelete;
+
+            RunLoop::main().dispatch(completionHandler);
+            return;
+        });
+
+        return;
+    }
+#endif
+
+#if USE(CFURLCACHE)
+    auto hostNames = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks));
+    for (auto& origin : origins)
+        CFArrayAppendValue(hostNames.get(), origin.host.createCFString().get());
+
+    CFShow(hostNames.get());
+    WebResourceCacheManager::clearCFURLCacheForHostNames(hostNames.get());
+#endif
+
+    RunLoop::main().dispatch(WTF::move(completionHandler));
+}
+
 void NetworkProcess::deleteWebsiteDataForOrigins(SessionID sessionID, uint64_t websiteDataTypes, const Vector<SecurityOriginData>& origins, const Vector<String>& cookieHostNames, uint64_t callbackID)
 {
     if (websiteDataTypes & WebsiteDataTypeCookies) {
@@ -378,6 +423,11 @@ void NetworkProcess::deleteWebsiteDataForOrigins(SessionID sessionID, uint64_t w
     auto completionHandler = [this, callbackID] {
         parentProcessConnection()->send(Messages::NetworkProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);
     };
+
+    if ((websiteDataTypes & WebsiteDataTypeDiskCache) && !sessionID.isEphemeral()) {
+        clearDiskCacheEntries(origins, WTF::move(completionHandler));
+        return;
+    }
 
     completionHandler();
 }

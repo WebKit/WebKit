@@ -1,3 +1,20 @@
+2015-03-19  Anders Carlsson  <andersca@apple.com>
+
+        Add support for deleting individual cache entries
+        https://bugs.webkit.org/show_bug.cgi?id=142886
+
+        Reviewed by Antti Koivisto.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDiskCacheEntries):
+        Remove an unnecessary call to cfURLCacheOrigins().
+
+        (WebKit::clearDiskCacheEntries):
+        Helper function for clearing disk cache entries. This handles both the old and new cache implementations.
+
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        Call clearDiskCacheEntries if needed.
+
 2015-03-19  Jer Noble  <jer.noble@apple.com>
 
         [WK2][Mac] Fullscreen animations with mismatched aspect ratios are "squished".
