@@ -24,17 +24,23 @@
  */
 
 #import "config.h"
-#import "WebMediaPlaybackTargetPickerProxyMac.h"
+#import "MediaPlaybackTargetPickerMac.h"
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
-#import <AVFoundation/AVOutputDevicePickerContext.h>
-#import <AVKit/AVOutputDevicePickerMenuController.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/MediaPlaybackTarget.h>
 #import <WebCore/SoftLinking.h>
 #import <objc/runtime.h>
 #import <wtf/MainThread.h>
+
+@class AVOutputDevicePickerContext;
+@interface AVOutputDevicePickerMenuController : NSObject
+@property (readonly) AVOutputDevicePickerContext * outputDevicePickerContext;
+@property (readonly, getter = isExternalOutputDeviceAvailable) BOOL externalOutputDeviceAvailable;
+- (instancetype)initWithOutputDevicePickerContext:(AVOutputDevicePickerContext *)outputDevicePickerContext NS_DESIGNATED_INITIALIZER;
+- (void)showMenuForRect:(NSRect)screenRect appearanceName:(NSString *)appearanceName;
+@end
 
 typedef AVOutputDevicePickerContext AVOutputDevicePickerContextType;
 typedef AVOutputDevicePickerMenuController AVOutputDevicePickerMenuControllerType;
@@ -46,47 +52,47 @@ SOFT_LINK_CLASS(AVFoundation, AVOutputDevicePickerContext)
 SOFT_LINK_CLASS(AVKit, AVOutputDevicePickerMenuController)
 SOFT_LINK_CLASS(AVKit, AVOutputDevicePickerDelegate)
 
-using namespace WebKit;
+using namespace WebCore;
 
 static NSString *externalOutputDeviceAvailableKeyName = @"externalOutputDeviceAvailable";
 static NSString *externalOutputDevicePickedKeyName = @"externalOutputDevicePicked";
 
 @interface WebAVOutputDevicePickerMenuControllerHelper : NSObject {
-    WebMediaPlaybackTargetPickerProxyMac* m_callback;
+    MediaPlaybackTargetPickerMac* m_callback;
 }
 
-- (instancetype)initWithCallback:(WebMediaPlaybackTargetPickerProxyMac*)callback;
+- (instancetype)initWithCallback:(MediaPlaybackTargetPickerMac*)callback;
 - (void)clearCallback;
 - (void)observeValueForKeyPath:(id)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context;
 @end
 
-namespace WebKit {
+namespace WebCore {
 
-std::unique_ptr<WebMediaPlaybackTargetPickerProxyMac> WebMediaPlaybackTargetPickerProxyMac::create(WebMediaPlaybackTargetPickerProxy::Client& client)
+std::unique_ptr<MediaPlaybackTargetPickerMac> MediaPlaybackTargetPickerMac::create(MediaPlaybackTargetPicker::Client& client)
 {
-    return std::unique_ptr<WebMediaPlaybackTargetPickerProxyMac>(new WebMediaPlaybackTargetPickerProxyMac(client));
+    return std::unique_ptr<MediaPlaybackTargetPickerMac>(new MediaPlaybackTargetPickerMac(client));
 }
 
-WebMediaPlaybackTargetPickerProxyMac::WebMediaPlaybackTargetPickerProxyMac(WebMediaPlaybackTargetPickerProxy::Client& client)
-    : WebMediaPlaybackTargetPickerProxy(client)
+MediaPlaybackTargetPickerMac::MediaPlaybackTargetPickerMac(MediaPlaybackTargetPicker::Client& client)
+    : MediaPlaybackTargetPicker(client)
     , m_devicePickerMenuControllerDelegate(adoptNS([[WebAVOutputDevicePickerMenuControllerHelper alloc] initWithCallback:this]))
-    , m_deviceChangeTimer(RunLoop::main(), this, &WebMediaPlaybackTargetPickerProxyMac::outputeDeviceAvailabilityChangedTimerFired)
+    , m_deviceChangeTimer(RunLoop::main(), this, &MediaPlaybackTargetPickerMac::outputeDeviceAvailabilityChangedTimerFired)
 {
 }
 
-WebMediaPlaybackTargetPickerProxyMac::~WebMediaPlaybackTargetPickerProxyMac()
+MediaPlaybackTargetPickerMac::~MediaPlaybackTargetPickerMac()
 {
     m_deviceChangeTimer.stop();
     [m_devicePickerMenuControllerDelegate clearCallback];
 
     if (m_devicePickerMenuController) {
-        [m_devicePickerMenuController.get() removeObserver:m_devicePickerMenuControllerDelegate.get() forKeyPath:externalOutputDeviceAvailableKeyName];
-        [m_devicePickerMenuController.get() removeObserver:m_devicePickerMenuControllerDelegate.get() forKeyPath:externalOutputDevicePickedKeyName];
+        [m_devicePickerMenuController removeObserver:m_devicePickerMenuControllerDelegate.get() forKeyPath:externalOutputDeviceAvailableKeyName];
+        [m_devicePickerMenuController removeObserver:m_devicePickerMenuControllerDelegate.get() forKeyPath:externalOutputDevicePickedKeyName];
         m_devicePickerMenuController = nil;
     }
 }
 
-void WebMediaPlaybackTargetPickerProxyMac::outputeDeviceAvailabilityChangedTimerFired()
+void MediaPlaybackTargetPickerMac::outputeDeviceAvailabilityChangedTimerFired()
 {
     if (!m_devicePickerMenuController || !m_client)
         return;
@@ -94,7 +100,7 @@ void WebMediaPlaybackTargetPickerProxyMac::outputeDeviceAvailabilityChangedTimer
     m_client->externalOutputDeviceAvailableDidChange(devicePicker().externalOutputDeviceAvailable);
 }
 
-void WebMediaPlaybackTargetPickerProxyMac::availableDevicesDidChange()
+void MediaPlaybackTargetPickerMac::availableDevicesDidChange()
 {
     if (!m_client)
         return;
@@ -103,14 +109,14 @@ void WebMediaPlaybackTargetPickerProxyMac::availableDevicesDidChange()
     m_deviceChangeTimer.startOneShot(0);
 }
 
-AVOutputDevicePickerMenuControllerType *WebMediaPlaybackTargetPickerProxyMac::devicePicker()
+AVOutputDevicePickerMenuControllerType *MediaPlaybackTargetPickerMac::devicePicker()
 {
     if (!m_devicePickerMenuController) {
         RetainPtr<AVOutputDevicePickerContextType> context = adoptNS([[getAVOutputDevicePickerContextClass() alloc] init]);
         m_devicePickerMenuController = adoptNS([[getAVOutputDevicePickerMenuControllerClass() alloc] initWithOutputDevicePickerContext:context.get()]);
 
-        [m_devicePickerMenuController.get() addObserver:m_devicePickerMenuControllerDelegate.get() forKeyPath:externalOutputDeviceAvailableKeyName options:NSKeyValueObservingOptionNew context:nullptr];
-        [m_devicePickerMenuController.get() addObserver:m_devicePickerMenuControllerDelegate.get() forKeyPath:externalOutputDevicePickedKeyName options:NSKeyValueObservingOptionNew context:nullptr];
+        [m_devicePickerMenuController addObserver:m_devicePickerMenuControllerDelegate.get() forKeyPath:externalOutputDeviceAvailableKeyName options:NSKeyValueObservingOptionNew context:nil];
+        [m_devicePickerMenuController addObserver:m_devicePickerMenuControllerDelegate.get() forKeyPath:externalOutputDevicePickedKeyName options:NSKeyValueObservingOptionNew context:nil];
 
         if (devicePicker().externalOutputDeviceAvailable)
             availableDevicesDidChange();
@@ -119,7 +125,7 @@ AVOutputDevicePickerMenuControllerType *WebMediaPlaybackTargetPickerProxyMac::de
     return m_devicePickerMenuController.get();
 }
 
-void WebMediaPlaybackTargetPickerProxyMac::showPlaybackTargetPicker(const WebCore::FloatRect& location, bool)
+void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& location, bool)
 {
     if (!m_client)
         return;
@@ -127,27 +133,27 @@ void WebMediaPlaybackTargetPickerProxyMac::showPlaybackTargetPicker(const WebCor
     [devicePicker() showMenuForRect:location appearanceName:NSAppearanceNameVibrantLight];
 }
 
-void WebMediaPlaybackTargetPickerProxyMac::currentDeviceDidChange()
+void MediaPlaybackTargetPickerMac::currentDeviceDidChange()
 {
     if (!m_client)
         return;
 
-    m_client->didChoosePlaybackTarget(WebCore::MediaPlaybackTarget([devicePicker() outputDevicePickerContext]));
+    m_client->didChoosePlaybackTarget(MediaPlaybackTarget([devicePicker() outputDevicePickerContext]));
 }
 
-void WebMediaPlaybackTargetPickerProxyMac::startingMonitoringPlaybackTargets()
+void MediaPlaybackTargetPickerMac::startingMonitoringPlaybackTargets()
 {
     devicePicker();
 }
 
-void WebMediaPlaybackTargetPickerProxyMac::stopMonitoringPlaybackTargets()
+void MediaPlaybackTargetPickerMac::stopMonitoringPlaybackTargets()
 {
 }
 
-} // namespace WebKit
+} // namespace WebCore
 
 @implementation WebAVOutputDevicePickerMenuControllerHelper
-- (instancetype)initWithCallback:(WebMediaPlaybackTargetPickerProxyMac*)callback
+- (instancetype)initWithCallback:(MediaPlaybackTargetPickerMac*)callback
 {
     if (!(self = [super init]))
         return nil;
@@ -164,6 +170,10 @@ void WebMediaPlaybackTargetPickerProxyMac::stopMonitoringPlaybackTargets()
 
 - (void)observeValueForKeyPath:(id)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(change);
+    UNUSED_PARAM(context);
+
     if (!m_callback)
         return;
 
@@ -173,7 +183,7 @@ void WebMediaPlaybackTargetPickerProxyMac::stopMonitoringPlaybackTargets()
     RetainPtr<WebAVOutputDevicePickerMenuControllerHelper> strongSelf = self;
     RetainPtr<NSString> strongKeyPath = keyPath;
     callOnMainThread([strongSelf, strongKeyPath] {
-        WebMediaPlaybackTargetPickerProxyMac* callback = strongSelf->m_callback;
+        MediaPlaybackTargetPickerMac* callback = strongSelf->m_callback;
         if (!callback)
             return;
 

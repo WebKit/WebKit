@@ -209,7 +209,7 @@ private:
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    virtual std::unique_ptr<WebMediaPlaybackTargetPickerProxy> createPlaybackTargetPicker(WebPageProxy*) override;
+    virtual std::unique_ptr<WebCore::MediaPlaybackTargetPicker> createPlaybackTargetPicker(WebPageProxy*) override;
 #endif
 };
 

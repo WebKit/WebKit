@@ -1,3 +1,19 @@
+2015-03-19  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Move MediaPlaybackTargetPicker
+        https://bugs.webkit.org/show_bug.cgi?id=142889
+
+        Move WebMediaPlaybackTargetPickerProxy from WK2 and rename as MediaPlaybackTargetPicker so it
+        can be used by both WK2 and WK1.
+
+        Reviewed by Tim Horton.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/MediaPlaybackTargetPicker.cpp: Copied from Source/WebKit2/UIProcess/WebMediaPlaybackTargetPickerProxy.cpp.
+        * platform/graphics/MediaPlaybackTargetPicker.h: Copied from Source/WebKit2/UIProcess/WebMediaPlaybackTargetPickerProxy.h.
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.h: Copied from Source/WebKit2/UIProcess/mac/WebMediaPlaybackTargetPickerProxyMac.h.
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm: Copied from Source/WebKit2/UIProcess/mac/WebMediaPlaybackTargetPickerProxyMac.mm.
+
 2015-03-19  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (r109593): Clicking after last inline element could cause a crash.

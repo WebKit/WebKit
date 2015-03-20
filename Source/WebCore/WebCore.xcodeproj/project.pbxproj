@@ -270,6 +270,10 @@
 		078E094717D16E1C00420AA1 /* RTCVoidRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BB017CF0AD400848E51 /* RTCVoidRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E094B17D1709600420AA1 /* MediaStreamAudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 078E094817D1709600420AA1 /* MediaStreamAudioDestinationNode.cpp */; };
 		078E094C17D1709600420AA1 /* MediaStreamAudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 078E094917D1709600420AA1 /* MediaStreamAudioDestinationNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		078E43D91ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 078E43D71ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.cpp */; };
+		078E43DA1ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 078E43D81ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		078E43DD1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 078E43DB1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		078E43DE1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 078E43DC1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.mm */; };
 		079216551AA560AA00A3C049 /* MediaPlaybackTargetPickerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 079216531AA560AA00A3C049 /* MediaPlaybackTargetPickerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07941791166E855F009416C2 /* InbandTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0794178F166E855F009416C2 /* InbandTextTrack.cpp */; };
 		07941792166E855F009416C2 /* InbandTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07941790166E855F009416C2 /* InbandTextTrack.h */; };
@@ -7273,6 +7277,10 @@
 		078E094817D1709600420AA1 /* MediaStreamAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamAudioDestinationNode.cpp; sourceTree = "<group>"; };
 		078E094917D1709600420AA1 /* MediaStreamAudioDestinationNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamAudioDestinationNode.h; sourceTree = "<group>"; };
 		078E094A17D1709600420AA1 /* MediaStreamAudioDestinationNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamAudioDestinationNode.idl; sourceTree = "<group>"; };
+		078E43D71ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlaybackTargetPicker.cpp; sourceTree = "<group>"; };
+		078E43D81ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlaybackTargetPicker.h; sourceTree = "<group>"; };
+		078E43DB1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaPlaybackTargetPickerMac.h; path = objc/MediaPlaybackTargetPickerMac.h; sourceTree = "<group>"; };
+		078E43DC1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MediaPlaybackTargetPickerMac.mm; path = objc/MediaPlaybackTargetPickerMac.mm; sourceTree = "<group>"; };
 		079216531AA560AA00A3C049 /* MediaPlaybackTargetPickerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaPlaybackTargetPickerClient.h; path = graphics/MediaPlaybackTargetPickerClient.h; sourceTree = "<group>"; };
 		0794178F166E855F009416C2 /* InbandTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InbandTextTrack.cpp; sourceTree = "<group>"; };
 		07941790166E855F009416C2 /* InbandTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrack.h; sourceTree = "<group>"; };
@@ -14691,6 +14699,9 @@
 				07E9E12D18F5E2760011A3A4 /* InbandMetadataTextTrackPrivateAVF.h */,
 				07B442D4166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp */,
 				07B442D5166C70B000556CAD /* InbandTextTrackPrivateAVF.h */,
+				078E43DB1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.h */,
+				078E43DC1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.mm */,
+				07E3DFD21A9E78A500764CA8 /* MediaPlaybackTargetMac.mm */,
 				076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */,
 				076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */,
 				CD641EBD1819B35900EE4C41 /* MediaTimeAVFoundation.cpp */,
@@ -20566,7 +20577,6 @@
 		B27535490B053814002CE64F /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				07E3DFD21A9E78A500764CA8 /* MediaPlaybackTargetMac.mm */,
 				EDE3A4FF0C7A430600956A37 /* ColorMac.h */,
 				B275354A0B053814002CE64F /* ColorMac.mm */,
 				37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */,
@@ -20736,6 +20746,8 @@
 				141DC04E164834B900371E5A /* LayoutSize.h */,
 				6C568CAE19DAFEA000430CA2 /* MaskImageOperation.cpp */,
 				6C568CAF19DAFEA000430CA2 /* MaskImageOperation.h */,
+				078E43D71ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.cpp */,
+				078E43D81ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.h */,
 				E4B41E0C0CBF90BD00AF2ECE /* MediaPlayer.cpp */,
 				E4B41E0D0CBF90BD00AF2ECE /* MediaPlayer.h */,
 				079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */,
@@ -26034,6 +26046,7 @@
 				BC3BE9940E9C1C7C00835588 /* RenderScrollbar.h in Headers */,
 				BC3BE9950E9C1C7C00835588 /* RenderScrollbarPart.h in Headers */,
 				BC3BE9990E9C1E5D00835588 /* RenderScrollbarTheme.h in Headers */,
+				078E43DD1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.h in Headers */,
 				458FE40A1589DF0B005609E6 /* RenderSearchField.h in Headers */,
 				0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */,
 				AB247A6D0AFD6383003FA5FD /* RenderSlider.h in Headers */,
@@ -26884,6 +26897,7 @@
 				3140379B124BEA7F00AF40E4 /* WebCoreMotionManager.h in Headers */,
 				934D9BA70B8C1175007B42A9 /* WebCoreNSStringExtras.h in Headers */,
 				C5B4C24D1509236C00A6EF37 /* WebCoreNSURLExtras.h in Headers */,
+				078E43DA1ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.h in Headers */,
 				DD05FE0D0B8BA3C6009ACDFE /* WebCoreObjCExtras.h in Headers */,
 				EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */,
 				E180810F16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.h in Headers */,
@@ -30117,6 +30131,7 @@
 				7C73FB07191EF417007DE061 /* UserMessageHandlersNamespace.cpp in Sources */,
 				BCDF317B11F8D683003C5BF8 /* UserTypingGestureIndicator.cpp in Sources */,
 				7C74D43718823B1900E5ED57 /* UTextProvider.cpp in Sources */,
+				078E43DE1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.mm in Sources */,
 				7C74D43318823A9300E5ED57 /* UTextProviderLatin1.cpp in Sources */,
 				7C74D43B1882400400E5ED57 /* UTextProviderUTF16.cpp in Sources */,
 				1FAFBF1815A5FA6E00083A20 /* UTIUtilities.mm in Sources */,
@@ -30311,6 +30326,7 @@
 				1AB7FC810A8B92EC00D9D37B /* XPathStep.cpp in Sources */,
 				1AB7FC830A8B92EC00D9D37B /* XPathUtil.cpp in Sources */,
 				1AB7FC850A8B92EC00D9D37B /* XPathValue.cpp in Sources */,
+				078E43D91ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.cpp in Sources */,
 				1AB7FC870A8B92EC00D9D37B /* XPathVariableReference.cpp in Sources */,
 				85217E020A5ECD4700DB8D00 /* XSLImportRule.cpp in Sources */,
 				93F19B0308245E59001E9ABC /* XSLStyleSheetLibxslt.cpp in Sources */,

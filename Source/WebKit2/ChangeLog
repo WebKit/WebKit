@@ -1,3 +1,26 @@
+2015-03-19  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Move MediaPlaybackTargetPicker
+        https://bugs.webkit.org/show_bug.cgi?id=142889
+
+        Move WebMediaPlaybackTargetPickerProxy to WebCore so it can be used by
+        both WK2 and WK1.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebMediaPlaybackTargetPickerProxy.cpp: Removed.
+        * UIProcess/WebMediaPlaybackTargetPickerProxy.h: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::devicePickerProxy):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createPlaybackTargetPicker):
+        * UIProcess/mac/WebMediaPlaybackTargetPickerProxyMac.h: Removed.
+        * UIProcess/mac/WebMediaPlaybackTargetPickerProxyMac.mm: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-03-19  Jessie Berlin  <jberlin@webkit.org>
 
         32-bit build fix after r181770.

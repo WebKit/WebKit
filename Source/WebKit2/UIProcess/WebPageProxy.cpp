@@ -5609,7 +5609,7 @@ void WebPageProxy::handleAutoFillButtonClick(const UserData& userData)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
-WebMediaPlaybackTargetPickerProxy& WebPageProxy::devicePickerProxy()
+WebCore::MediaPlaybackTargetPicker& WebPageProxy::devicePickerProxy()
 {
     if (!m_playbackTargetPicker)
         m_playbackTargetPicker = m_pageClient.createPlaybackTargetPicker(this);

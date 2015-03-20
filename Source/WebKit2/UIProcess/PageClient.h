@@ -35,7 +35,7 @@
 #include <wtf/Forward.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#include "WebMediaPlaybackTargetPickerProxy.h"
+#include <WebCore/MediaPlaybackTargetPicker.h>
 #endif
 
 #if PLATFORM(COCOA)
@@ -324,7 +324,7 @@ public:
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
-    virtual std::unique_ptr<WebMediaPlaybackTargetPickerProxy> createPlaybackTargetPicker(WebPageProxy*) = 0;
+    virtual std::unique_ptr<WebCore::MediaPlaybackTargetPicker> createPlaybackTargetPicker(WebPageProxy*) = 0;
 #endif
 
 };

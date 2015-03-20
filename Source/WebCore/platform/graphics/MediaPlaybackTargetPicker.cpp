@@ -24,40 +24,40 @@
  */
 
 #include "config.h"
-#include "WebMediaPlaybackTargetPickerProxy.h"
+#include "MediaPlaybackTargetPicker.h"
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-namespace WebKit {
+namespace WebCore {
 
-WebMediaPlaybackTargetPickerProxy::WebMediaPlaybackTargetPickerProxy(Client& client)
+MediaPlaybackTargetPicker::MediaPlaybackTargetPicker(Client& client)
     : m_client(&client)
 {
 }
 
-WebMediaPlaybackTargetPickerProxy::~WebMediaPlaybackTargetPickerProxy()
+MediaPlaybackTargetPicker::~MediaPlaybackTargetPicker()
 {
     m_client = nullptr;
 }
 
-void WebMediaPlaybackTargetPickerProxy::showPlaybackTargetPicker(const WebCore::FloatRect&, bool)
+void MediaPlaybackTargetPicker::showPlaybackTargetPicker(const FloatRect&, bool)
 {
     ASSERT_NOT_REACHED();
     return;
 }
 
-void WebMediaPlaybackTargetPickerProxy::startingMonitoringPlaybackTargets()
+void MediaPlaybackTargetPicker::startingMonitoringPlaybackTargets()
 {
     ASSERT_NOT_REACHED();
     return;
 }
 
-void WebMediaPlaybackTargetPickerProxy::stopMonitoringPlaybackTargets()
+void MediaPlaybackTargetPicker::stopMonitoringPlaybackTargets()
 {
     ASSERT_NOT_REACHED();
     return;
 }
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)

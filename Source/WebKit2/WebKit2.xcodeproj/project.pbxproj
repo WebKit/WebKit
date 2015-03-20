@@ -76,10 +76,6 @@
 		00B9661918E25AE100CE1F88 /* FindClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 00B9661718E25AE100CE1F88 /* FindClient.mm */; };
 		00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9661818E25AE100CE1F88 /* FindClient.h */; };
 		076E884E1A13CADF005E90FC /* APIContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 076E884D1A13CADF005E90FC /* APIContextMenuClient.h */; };
-		0792164C1AA5501900A3C049 /* WebMediaPlaybackTargetPickerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 079216481AA54E9D00A3C049 /* WebMediaPlaybackTargetPickerProxy.cpp */; };
-		0792164D1AA5501F00A3C049 /* WebMediaPlaybackTargetPickerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 079216491AA54E9D00A3C049 /* WebMediaPlaybackTargetPickerProxy.h */; };
-		079216501AA5528A00A3C049 /* WebMediaPlaybackTargetPickerProxyMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 0792164E1AA5528A00A3C049 /* WebMediaPlaybackTargetPickerProxyMac.h */; };
-		079216511AA5528A00A3C049 /* WebMediaPlaybackTargetPickerProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0792164F1AA5528A00A3C049 /* WebMediaPlaybackTargetPickerProxyMac.mm */; };
 		0F0C365818C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C365718C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm */; };
 		0F0C365A18C0555800F607D7 /* LayerRepresentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0C365918C0555800F607D7 /* LayerRepresentation.h */; };
 		0F0C365C18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C365B18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm */; };
@@ -2164,10 +2160,6 @@
 		00B9661818E25AE100CE1F88 /* FindClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindClient.h; sourceTree = "<group>"; };
 		076E884D1A13CADF005E90FC /* APIContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIContextMenuClient.h; sourceTree = "<group>"; };
 		076E884F1A13CBC6005E90FC /* APIInjectedBundlePageContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundlePageContextMenuClient.h; sourceTree = "<group>"; };
-		079216481AA54E9D00A3C049 /* WebMediaPlaybackTargetPickerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaPlaybackTargetPickerProxy.cpp; sourceTree = "<group>"; };
-		079216491AA54E9D00A3C049 /* WebMediaPlaybackTargetPickerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaPlaybackTargetPickerProxy.h; sourceTree = "<group>"; };
-		0792164E1AA5528A00A3C049 /* WebMediaPlaybackTargetPickerProxyMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaPlaybackTargetPickerProxyMac.h; sourceTree = "<group>"; };
-		0792164F1AA5528A00A3C049 /* WebMediaPlaybackTargetPickerProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMediaPlaybackTargetPickerProxyMac.mm; sourceTree = "<group>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0F0C365718C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RemoteLayerTreeHostIOS.mm; path = ios/RemoteLayerTreeHostIOS.mm; sourceTree = "<group>"; };
@@ -6157,8 +6149,6 @@
 				512E3520130B550100ABD19A /* WebApplicationCacheManagerProxy.cpp */,
 				512E3521130B550100ABD19A /* WebApplicationCacheManagerProxy.h */,
 				512E35F0130B638C00ABD19A /* WebApplicationCacheManagerProxy.messages.in */,
-				079216481AA54E9D00A3C049 /* WebMediaPlaybackTargetPickerProxy.cpp */,
-				079216491AA54E9D00A3C049 /* WebMediaPlaybackTargetPickerProxy.h */,
 				BC72BA1B11E64907001EB4EA /* WebBackForwardList.cpp */,
 				BC72BA1C11E64907001EB4EA /* WebBackForwardList.h */,
 				F036978715F4BF0500C3A80E /* WebColorPicker.cpp */,
@@ -7019,8 +7009,6 @@
 				2D125C5D1857EA05003BA3CB /* ViewGestureControllerMac.mm */,
 				2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */,
 				2D6CD118189058A500E5A4A0 /* ViewSnapshotStore.mm */,
-				0792164E1AA5528A00A3C049 /* WebMediaPlaybackTargetPickerProxyMac.h */,
-				0792164F1AA5528A00A3C049 /* WebMediaPlaybackTargetPickerProxyMac.mm */,
 				728E86EF1795188C0087879E /* WebColorPickerMac.h */,
 				728E86F01795188C0087879E /* WebColorPickerMac.mm */,
 				51ACBB9E127A8F2C00D203B9 /* WebContextMenuProxyMac.h */,
@@ -8114,7 +8102,6 @@
 				7C361D79192803BD0036A59D /* WebUserContentControllerProxyMessages.h in Headers */,
 				3F889D15188778C900FEADAF /* WebVideoFullscreenManagerProxy.h in Headers */,
 				29CD55AA128E294F00133C85 /* WKAccessibilityWebPageObjectBase.h in Headers */,
-				0792164D1AA5501F00A3C049 /* WebMediaPlaybackTargetPickerProxy.h in Headers */,
 				29232DF418B29D6800D0596F /* WKAccessibilityWebPageObjectMac.h in Headers */,
 				2D0730A319F9C7DA00E9D9C4 /* WKActionMenuController.h in Headers */,
 				934B724419F5B9BE00AE96D6 /* WKActionMenuItemTypes.h in Headers */,
@@ -8304,7 +8291,6 @@
 				1AB8A1F418400B8F00E9AE69 /* WKPageFindClient.h in Headers */,
 				1AB8A1F618400B9D00E9AE69 /* WKPageFindMatchesClient.h in Headers */,
 				1AB8A1F018400B0000E9AE69 /* WKPageFormClient.h in Headers */,
-				079216501AA5528A00A3C049 /* WebMediaPlaybackTargetPickerProxyMac.h in Headers */,
 				BC7B633712A45ABA00D174A4 /* WKPageGroup.h in Headers */,
 				1AB8A1EC1840080900E9AE69 /* WKPageLoaderClient.h in Headers */,
 				BC2D021912AC426C00E732A3 /* WKPageLoadTypes.h in Headers */,
@@ -9570,7 +9556,6 @@
 				0FCB4E6318BBE3D9000FCFC9 /* PageClientImpl.mm in Sources */,
 				0FCB4E4718BBE044000FCFC9 /* PageClientImplIOS.mm in Sources */,
 				1AC7537B183A9FDB0072CB15 /* PageLoadState.cpp in Sources */,
-				079216511AA5528A00A3C049 /* WebMediaPlaybackTargetPickerProxyMac.mm in Sources */,
 				C574A58212E66681002DFE98 /* PasteboardTypes.mm in Sources */,
 				E19582D6153CC05400B60875 /* PDFKitImports.mm in Sources */,
 				2D870D1016234FFE000A3F20 /* PDFPlugin.mm in Sources */,
@@ -9769,7 +9754,6 @@
 				BC111A5E112F4FBB00337BAB /* WebEditorClient.cpp in Sources */,
 				2D28F3E61885CCC1004B9EAE /* WebEditorClientIOS.mm in Sources */,
 				C5237F6012441CA300780472 /* WebEditorClientMac.mm in Sources */,
-				0792164C1AA5501900A3C049 /* WebMediaPlaybackTargetPickerProxy.cpp in Sources */,
 				BC111AE0112F5BC200337BAB /* WebErrorsMac.mm in Sources */,
 				C0337DAE127A24FE008FF4F4 /* WebEvent.cpp in Sources */,
 				BC032DBA10F4380F0058C15A /* WebEventConversion.cpp in Sources */,

@@ -112,7 +112,7 @@
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
-#include "WebMediaPlaybackTargetPickerProxy.h"
+#include <WebCore/MediaPlaybackTargetPicker.h>
 #endif
 
 namespace API {
@@ -263,7 +263,7 @@ class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
     , public WebColorPicker::Client
 #endif
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
-    , public WebMediaPlaybackTargetPickerProxy::Client
+    , public WebCore::MediaPlaybackTargetPicker::Client
 #endif
     , public WebPopupMenuProxy::Client
     , public IPC::MessageReceiver
@@ -1013,12 +1013,12 @@ public:
     void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value, bool shouldSample);
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
-    WebMediaPlaybackTargetPickerProxy& devicePickerProxy();
+    WebCore::MediaPlaybackTargetPicker& devicePickerProxy();
     void showPlaybackTargetPicker(const WebCore::FloatRect&, bool hasVideo);
     void startingMonitoringPlaybackTargets();
     void stopMonitoringPlaybackTargets();
 
-    // WebMediaPlaybackTargetPickerProxy::Client
+    // WebCore::MediaPlaybackTargetPicker::Client
     virtual void didChoosePlaybackTarget(const WebCore::MediaPlaybackTarget&) override;
     virtual void externalOutputDeviceAvailableDidChange(bool) override;
 #endif
@@ -1689,7 +1689,7 @@ private:
     Vector<uint64_t> m_nextViewStateChangeCallbacks;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
-    std::unique_ptr<WebMediaPlaybackTargetPickerProxy> m_playbackTargetPicker;
+    std::unique_ptr<WebCore::MediaPlaybackTargetPicker> m_playbackTargetPicker;
 #endif
 
     bool m_isPlayingAudio;

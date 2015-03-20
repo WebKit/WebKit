@@ -23,50 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebMediaPlaybackTargetPickerProxy_h
-#define WebMediaPlaybackTargetPickerProxy_h
+#ifndef MediaPlaybackTargetPicker_h
+#define MediaPlaybackTargetPicker_h
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
+
 class FloatRect;
 class MediaPlaybackTarget;
-}
 
-namespace WebKit {
-
-class WebPageProxy;
-
-class WebMediaPlaybackTargetPickerProxy {
+class MediaPlaybackTargetPicker {
 public:
     class Client {
     protected:
         virtual ~Client() { }
 
     public:
-        virtual void didChoosePlaybackTarget(const WebCore::MediaPlaybackTarget&) = 0;
+        virtual void didChoosePlaybackTarget(const MediaPlaybackTarget&) = 0;
         virtual void externalOutputDeviceAvailableDidChange(bool) = 0;
 
         void invalidate();
     };
 
-    virtual ~WebMediaPlaybackTargetPickerProxy();
+    virtual ~MediaPlaybackTargetPicker();
 
-    virtual void showPlaybackTargetPicker(const WebCore::FloatRect&, bool);
+    virtual void showPlaybackTargetPicker(const FloatRect&, bool);
     virtual void startingMonitoringPlaybackTargets();
     virtual void stopMonitoringPlaybackTargets();
 
 protected:
-    explicit WebMediaPlaybackTargetPickerProxy(Client&);
+    explicit MediaPlaybackTargetPicker(Client&);
 
     Client* m_client;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#endif // WebMediaPlaybackTargetPickerProxy_h
+#endif // MediaPlaybackTargetPicker_h

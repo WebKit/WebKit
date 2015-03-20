@@ -23,28 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebMediaPlaybackTargetPickerProxyMac_h
-#define WebMediaPlaybackTargetPickerProxyMac_h
+#ifndef MediaPlaybackTargetPickerMac_h
+#define MediaPlaybackTargetPickerMac_h
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
-#import "WebMediaPlaybackTargetPickerProxy.h"
+#import "MediaPlaybackTargetPicker.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
 
 OBJC_CLASS AVOutputDevicePickerMenuController;
 OBJC_CLASS WebAVOutputDevicePickerMenuControllerHelper;
 
-namespace WebKit {
+namespace WebCore {
 
-class WebMediaPlaybackTargetPickerProxyMac final : public WebMediaPlaybackTargetPickerProxy {
-    WTF_MAKE_NONCOPYABLE(WebMediaPlaybackTargetPickerProxyMac);
+class MediaPlaybackTargetPickerMac final : public MediaPlaybackTargetPicker {
+    WTF_MAKE_NONCOPYABLE(MediaPlaybackTargetPickerMac);
 public:
-    virtual ~WebMediaPlaybackTargetPickerProxyMac();
+    virtual ~MediaPlaybackTargetPickerMac();
 
-    static std::unique_ptr<WebMediaPlaybackTargetPickerProxyMac> create(WebMediaPlaybackTargetPickerProxy::Client&);
+    WEBCORE_EXPORT static std::unique_ptr<MediaPlaybackTargetPickerMac> create(MediaPlaybackTargetPicker::Client&);
 
-    virtual void showPlaybackTargetPicker(const WebCore::FloatRect&, bool) override;
+    virtual void showPlaybackTargetPicker(const FloatRect&, bool) override;
     virtual void startingMonitoringPlaybackTargets() override;
     virtual void stopMonitoringPlaybackTargets() override;
     
@@ -52,14 +52,14 @@ public:
     void currentDeviceDidChange();
 
 private:
-    explicit WebMediaPlaybackTargetPickerProxyMac(WebMediaPlaybackTargetPickerProxy::Client&);
+    explicit MediaPlaybackTargetPickerMac(MediaPlaybackTargetPicker::Client&);
 
     AVOutputDevicePickerMenuController *devicePicker();
     void outputeDeviceAvailabilityChangedTimerFired();
 
     RetainPtr<AVOutputDevicePickerMenuController> m_devicePickerMenuController;
     RetainPtr<WebAVOutputDevicePickerMenuControllerHelper> m_devicePickerMenuControllerDelegate;
-    RunLoop::Timer<WebMediaPlaybackTargetPickerProxyMac> m_deviceChangeTimer;
+    RunLoop::Timer<MediaPlaybackTargetPickerMac> m_deviceChangeTimer;
 };
 
 } // namespace WebKit
