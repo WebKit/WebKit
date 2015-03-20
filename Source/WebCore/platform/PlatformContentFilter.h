@@ -23,43 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MockContentFilter_h
-#define MockContentFilter_h
+#ifndef PlatformContentFilter_h
+#define PlatformContentFilter_h
 
-#include "MockContentFilterSettings.h"
-#include "PlatformContentFilter.h"
+#include "ContentFilterUnblockHandler.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class MockContentFilter final : public PlatformContentFilter {
-    friend std::unique_ptr<MockContentFilter> std::make_unique<MockContentFilter>(const ResourceResponse&);
+class ResourceResponse;
+
+class PlatformContentFilter {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(PlatformContentFilter);
+
+protected:
+    PlatformContentFilter() = default;
 
 public:
-    static void ensureInstalled();
-    static bool canHandleResponse(const ResourceResponse&);
-    static std::unique_ptr<MockContentFilter> create(const ResourceResponse&);
-
-    void addData(const char* data, int length) override;
-    void finishedAddingData() override;
-    bool needsMoreData() const override;
-    bool didBlockData() const override;
-    const char* getReplacementData(int& length) const override;
-    ContentFilterUnblockHandler unblockHandler() const override;
-
-private:
-    enum class Status {
-        NeedsMoreData,
-        Allowed,
-        Blocked
-    };
-
-    explicit MockContentFilter(const ResourceResponse&);
-    void maybeDetermineStatus(MockContentFilterSettings::DecisionPoint);
-
-    Vector<char> m_replacementData;
-    Status m_status { Status::NeedsMoreData };
+    virtual ~PlatformContentFilter() { }
+    virtual void addData(const char* data, int length) = 0;
+    virtual void finishedAddingData() = 0;
+    virtual bool needsMoreData() const = 0;
+    virtual bool didBlockData() const = 0;
+    virtual const char* getReplacementData(int& length) const = 0;
+    virtual ContentFilterUnblockHandler unblockHandler() const = 0;
 };
 
 } // namespace WebCore
 
-#endif // MockContentFilter_h
+#endif // PlatformContentFilter_h

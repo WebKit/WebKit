@@ -26,7 +26,7 @@
 #ifndef ParentalControlsContentFilter_h
 #define ParentalControlsContentFilter_h
 
-#include "ContentFilter.h"
+#include "PlatformContentFilter.h"
 #include <wtf/Compiler.h>
 #include <wtf/RetainPtr.h>
 
@@ -35,9 +35,7 @@ OBJC_CLASS WebFilterEvaluator;
 
 namespace WebCore {
 
-class ParentalControlsContentFilter final : public ContentFilter {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(ParentalControlsContentFilter);
+class ParentalControlsContentFilter final : public PlatformContentFilter {
     friend std::unique_ptr<ParentalControlsContentFilter> std::make_unique<ParentalControlsContentFilter>(const ResourceResponse&);
 
 public:

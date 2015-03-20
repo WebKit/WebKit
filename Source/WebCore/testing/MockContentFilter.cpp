@@ -28,6 +28,7 @@
 
 #if ENABLE(CONTENT_FILTERING)
 
+#include "ContentFilter.h"
 #include <mutex>
 #include <wtf/text/CString.h>
 

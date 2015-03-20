@@ -1,3 +1,33 @@
+2015-03-19  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Move ContentFilter to from platform/ to loader/
+        https://bugs.webkit.org/show_bug.cgi?id=142897
+
+        Reviewed by Dan Bernstein.
+
+        ContentFilterCollection never contained any platform code, so it doesn't make sense for it to be in platform.
+        Move it to loader/, since ContentFilters are owned by DocumentLoaders, and just call it ContentFilter. Extract
+        the abstract part of ContentFilter into a new base class called PlatformContentFilter that each of the
+        individual filters inherit from.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/ContentFilter.cpp: Renamed from Source/WebCore/platform/ContentFilter.cpp.
+        (WebCore::ContentFilter::types): Moved from ContentFilterCollection.
+        (WebCore::ContentFilter::createIfNeeded): Ditto.
+        (WebCore::ContentFilter::ContentFilter): Ditto.
+        (WebCore::ContentFilter::addData): Ditto.
+        (WebCore::ContentFilter::finishedAddingData): Ditto.
+        (WebCore::ContentFilter::needsMoreData): Ditto.
+        (WebCore::ContentFilter::didBlockData): Ditto.
+        (WebCore::ContentFilter::getReplacementData): Ditto.
+        (WebCore::ContentFilter::unblockHandler): Ditto.
+        * loader/ContentFilter.h: Copied from Source/WebCore/platform/ContentFilter.h.
+        (WebCore::ContentFilter::type): Replaced a use of ContentFilterCollection.
+        * platform/PlatformContentFilter.h: Renamed from Source/WebCore/platform/ContentFilter.h.
+        * platform/cocoa/NetworkExtensionContentFilter.h: Inherited from PlatformContentFilter.
+        * platform/cocoa/ParentalControlsContentFilter.h: Ditto.
+        * testing/MockContentFilter.h: Ditto.
+
 2015-03-19  Dean Jackson  <dino@apple.com>
 
         CSS Animations with triggers should map scroll position to duration

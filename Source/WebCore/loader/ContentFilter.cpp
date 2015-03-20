@@ -31,7 +31,6 @@
 #include "NetworkExtensionContentFilter.h"
 #include "ParentalControlsContentFilter.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -48,26 +47,9 @@ Vector<ContentFilter::Type>& ContentFilter::types()
     return types;
 }
 
-class ContentFilterCollection final : public ContentFilter {
-public:
-    using Container = Vector<std::unique_ptr<ContentFilter>>;
-
-    explicit ContentFilterCollection(Container);
-
-    void addData(const char* data, int length) override;
-    void finishedAddingData() override;
-    bool needsMoreData() const override;
-    bool didBlockData() const override;
-    const char* getReplacementData(int& length) const override;
-    ContentFilterUnblockHandler unblockHandler() const override;
-
-private:
-    Container m_contentFilters;
-};
-
 std::unique_ptr<ContentFilter> ContentFilter::createIfNeeded(const ResourceResponse& response)
 {
-    ContentFilterCollection::Container filters;
+    Container filters;
     for (auto& type : types()) {
         if (type.canHandleResponse(response))
             filters.append(type.create(response));
@@ -76,16 +58,16 @@ std::unique_ptr<ContentFilter> ContentFilter::createIfNeeded(const ResourceRespo
     if (filters.isEmpty())
         return nullptr;
 
-    return std::make_unique<ContentFilterCollection>(WTF::move(filters));
+    return std::make_unique<ContentFilter>(WTF::move(filters));
 }
 
-ContentFilterCollection::ContentFilterCollection(Container contentFilters)
+ContentFilter::ContentFilter(Container contentFilters)
     : m_contentFilters { WTF::move(contentFilters) }
 {
     ASSERT(!m_contentFilters.isEmpty());
 }
 
-void ContentFilterCollection::addData(const char* data, int length)
+void ContentFilter::addData(const char* data, int length)
 {
     ASSERT(needsMoreData());
 
@@ -93,7 +75,7 @@ void ContentFilterCollection::addData(const char* data, int length)
         contentFilter->addData(data, length);
 }
     
-void ContentFilterCollection::finishedAddingData()
+void ContentFilter::finishedAddingData()
 {
     ASSERT(needsMoreData());
 
@@ -103,7 +85,7 @@ void ContentFilterCollection::finishedAddingData()
     ASSERT(!needsMoreData());
 }
 
-bool ContentFilterCollection::needsMoreData() const
+bool ContentFilter::needsMoreData() const
 {
     for (auto& contentFilter : m_contentFilters) {
         if (contentFilter->needsMoreData())
@@ -113,7 +95,7 @@ bool ContentFilterCollection::needsMoreData() const
     return false;
 }
 
-bool ContentFilterCollection::didBlockData() const
+bool ContentFilter::didBlockData() const
 {
     for (auto& contentFilter : m_contentFilters) {
         if (contentFilter->didBlockData())
@@ -123,7 +105,7 @@ bool ContentFilterCollection::didBlockData() const
     return false;
 }
 
-const char* ContentFilterCollection::getReplacementData(int& length) const
+const char* ContentFilter::getReplacementData(int& length) const
 {
     ASSERT(!needsMoreData());
 
@@ -135,7 +117,7 @@ const char* ContentFilterCollection::getReplacementData(int& length) const
     return m_contentFilters[0]->getReplacementData(length);
 }
 
-ContentFilterUnblockHandler ContentFilterCollection::unblockHandler() const
+ContentFilterUnblockHandler ContentFilter::unblockHandler() const
 {
     ASSERT(didBlockData());
 

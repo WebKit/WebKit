@@ -26,7 +26,7 @@
 #ifndef NetworkExtensionContentFilter_h
 #define NetworkExtensionContentFilter_h
 
-#include "ContentFilter.h"
+#include "PlatformContentFilter.h"
 #include "SharedBuffer.h"
 #include <objc/NSObjCRuntime.h>
 #include <wtf/Compiler.h>
@@ -45,9 +45,7 @@ OBJC_CLASS NSMutableData;
 
 namespace WebCore {
 
-class NetworkExtensionContentFilter final : public ContentFilter {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(NetworkExtensionContentFilter);
+class NetworkExtensionContentFilter final : public PlatformContentFilter {
     friend std::unique_ptr<NetworkExtensionContentFilter> std::make_unique<NetworkExtensionContentFilter>(const ResourceResponse&);
 
 public:

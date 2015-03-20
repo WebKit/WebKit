@@ -28,35 +28,46 @@
 
 #if ENABLE(CONTENT_FILTERING)
 
-#include "ContentFilterUnblockHandler.h"
+#include "PlatformContentFilter.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class ResourceResponse;
 
-class ContentFilter {
+class ContentFilter final : public PlatformContentFilter {
 public:
     template <typename T> static void addType() { types().append(type<T>()); }
-
     static std::unique_ptr<ContentFilter> createIfNeeded(const ResourceResponse&);
 
-    virtual ~ContentFilter() { }
-    virtual void addData(const char* data, int length) = 0;
-    virtual void finishedAddingData() = 0;
-    virtual bool needsMoreData() const = 0;
-    virtual bool didBlockData() const = 0;
-    virtual const char* getReplacementData(int& length) const = 0;
-    virtual ContentFilterUnblockHandler unblockHandler() const = 0;
+    void addData(const char* data, int length) override;
+    void finishedAddingData() override;
+    bool needsMoreData() const override;
+    bool didBlockData() const override;
+    const char* getReplacementData(int& length) const override;
+    ContentFilterUnblockHandler unblockHandler() const override;
 
 private:
     struct Type {
         const std::function<bool(const ResourceResponse&)> canHandleResponse;
-        const std::function<std::unique_ptr<ContentFilter>(const ResourceResponse&)> create;
+        const std::function<std::unique_ptr<PlatformContentFilter>(const ResourceResponse&)> create;
     };
-    template <typename T> static Type type() { return { T::canHandleResponse, T::create }; }
+    template <typename T> static Type type();
     WEBCORE_EXPORT static Vector<Type>& types();
+
+    using Container = Vector<std::unique_ptr<PlatformContentFilter>>;
+    friend std::unique_ptr<ContentFilter> std::make_unique<ContentFilter>(Container&&);
+    explicit ContentFilter(Container);
+
+    Container m_contentFilters;
 };
+
+template <typename T>
+ContentFilter::Type ContentFilter::type()
+{
+    static_assert(std::is_base_of<PlatformContentFilter, T>::value, "Type must be a PlatformContentFilter.");
+    return { T::canHandleResponse, T::create };
+}
 
 } // namespace WebCore
 
