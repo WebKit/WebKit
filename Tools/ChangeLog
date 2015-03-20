@@ -1,3 +1,13 @@
+2015-03-20  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][jhbuild] Fix flakey failures due to unstable googlecode repository
+        https://bugs.webkit.org/show_bug.cgi?id=142867
+
+        Rubber-stamped by Csaba Osztrogon.
+
+        * gtk/jhbuild.modules: Use Ossy's libusrsctp Github fork. Also use
+        a fixed revision for the openwebrtc-gst-plugins.
+
 2015-03-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix. Don't try to report stats for all benchmarks.

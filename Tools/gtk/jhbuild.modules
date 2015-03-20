@@ -60,8 +60,6 @@
       href="http://download.savannah.gnu.org/releases/"/>
   <repository type="git" name="freedesktop-git"
       href="http://anongit.freedesktop.org/git"/>
-  <repository type="svn" name="sctp-refimpl-google"
-      href="http://sctp-refimpl.googlecode.com/svn/"/>
 
   <autotools id="cairo"
              autogenargs="--enable-gl=yes --enable-egl=yes --enable-glx=yes ac_cv_func_rsvg_pixbuf_from_file=no --disable-lto"
@@ -364,8 +362,8 @@
     </branch>
   </autotools>
 
-   <autotools id="libusrsctp" autogen-sh="./bootstrap; ./configure">
-     <branch repo="sctp-refimpl-google" module="trunk/KERN/usrsctp/" revision="r9168"/>
+  <autotools id="libusrsctp" autogen-sh="./bootstrap; ./configure">
+    <branch repo="github.com" module="ossy-szeged/sctp-refimpl.git" checkoutdir="libusrsctp" tag="libusrsctp-r9168"/>
    </autotools>
 
    <autotools id="gst-plugins-openwebrtc" supports-parallel-builds="no" autogen-sh="./autogen.sh; ./configure">
@@ -373,7 +371,7 @@
        <dep package="gst-plugins-base"/>
        <dep package="libusrsctp"/>
      </dependencies>
-    <branch repo="github.com" module="EricssonResearch/openwebrtc-gst-plugins.git" checkoutdir="gst-plugins-openwebrtc" tag="master"/>
+    <branch repo="github.com" module="EricssonResearch/openwebrtc-gst-plugins.git" checkoutdir="gst-plugins-openwebrtc" tag="e359b67484af90f416ea35e301205d2b53c77a14"/>
    </autotools>
 
    <autotools id="libnice">
