@@ -7,6 +7,7 @@ function runTest(test)
     test = "(" + test + ")"
     shouldBeTrue(test);
     shouldBeTrue("'use strict';"+test);
+    shouldBeTrue("(function(){'use strict';return "+test+"})()");
 }
 runTest("{[a]: true}.propertyName")
 runTest("{[a+1]: true}.propertyName1")

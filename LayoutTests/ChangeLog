@@ -1,3 +1,16 @@
+2015-03-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        SyntaxChecker assertion is trapped with computed property name and getter
+        https://bugs.webkit.org/show_bug.cgi?id=142863
+
+        Reviewed by Ryosuke Niwa.
+
+        * js/basic-computed-property-name-expected.txt:
+        * js/script-tests/basic-computed-property-name.js:
+        (a.string_appeared_here.runTest):
+        Add tests that wrap the expression in a function, this
+        will test the syntax checker.
+
 2015-03-20  Alexey Proskuryakov  <ap@apple.com>
 
         platform/mac/fast/loader/file-url-mimetypes-3.html fails when MS Office is installed

@@ -1,3 +1,17 @@
+2015-03-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        SyntaxChecker assertion is trapped with computed property name and getter
+        https://bugs.webkit.org/show_bug.cgi?id=142863
+
+        Reviewed by Ryosuke Niwa.
+
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::getName):
+        Remove invalid assert. Computed properties will not have a name
+        and the calling code is checking for null expecting it. The
+        AST path (non-CheckingPath) already does this without the assert
+        so it is well tested.
+
 2015-03-19  Mark Lam  <mark.lam@apple.com>
 
         JSCallbackObject<JSGlobalObject> should not destroy its JSCallbackObjectData before all its finalizers have been called.
