@@ -161,7 +161,20 @@ const char* NetworkExtensionContentFilter::getReplacementData(int& length) const
 
 ContentFilterUnblockHandler NetworkExtensionContentFilter::unblockHandler() const
 {
+#if HAVE(MODERN_NE_FILTER_SOURCE)
+    using DecisionHandlerFunction = ContentFilterUnblockHandler::DecisionHandlerFunction;
+
+    RetainPtr<NEFilterSource> neFilterSource { m_neFilterSource };
+    return ContentFilterUnblockHandler {
+        ASCIILiteral("nefilter-unblock"), [neFilterSource](DecisionHandlerFunction decisionHandler) {
+            [neFilterSource remediateWithDecisionHandler:[decisionHandler](NEFilterSourceStatus status, NSDictionary *) {
+                decisionHandler(status == NEFilterSourceStatusPass);
+            }];
+        }
+    };
+#else
     return { };
+#endif
 }
 
 void NetworkExtensionContentFilter::handleDecision(NEFilterSourceStatus status, NSData *replacementData)

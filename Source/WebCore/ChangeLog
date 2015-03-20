@@ -1,3 +1,16 @@
+2015-03-20  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Adopt NEFilterSource unblock handling
+        https://bugs.webkit.org/show_bug.cgi?id=142904
+
+        Reviewed by Andreas Kling.
+
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::unblockHandler):
+        Returned an unblock handler that calls -[NEFilterSource remediateWithDecisionHandler:].
+        * platform/cocoa/ParentalControlsContentFilter.mm:
+        (WebCore::ParentalControlsContentFilter::unblockHandler): Used ASCIILiteral.
+
 2015-03-19  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Add tests for unblock requests

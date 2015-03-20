@@ -94,7 +94,7 @@ const char* ParentalControlsContentFilter::getReplacementData(int& length) const
 ContentFilterUnblockHandler ParentalControlsContentFilter::unblockHandler() const
 {
 #if PLATFORM(IOS)
-    return ContentFilterUnblockHandler { "unblock", m_webFilterEvaluator };
+    return ContentFilterUnblockHandler { ASCIILiteral("unblock"), m_webFilterEvaluator };
 #else
     return { };
 #endif
