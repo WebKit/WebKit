@@ -51,7 +51,7 @@ private:
 
     virtual void layout() override;
 
-    virtual int baselinePosition(FontBaseline, bool, LineDirectionMode, LinePositionMode) const;
+    virtual int baselinePosition(FontBaseline, bool, LineDirectionMode, LinePositionMode) const override;
 };
 
 } // namespace WebCore

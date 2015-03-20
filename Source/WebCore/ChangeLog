@@ -1,3 +1,9 @@
+2015-03-19  Jessie Berlin  <jberlin@webkit.org>
+
+        Build fix after r181760.
+
+        * rendering/RenderAttachment.h:
+
 2015-03-19  Jer Noble  <jer.noble@apple.com>
 
         [WK2][Mac] Fullscreen animations with mismatched aspect ratios are "squished".
