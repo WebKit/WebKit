@@ -3254,8 +3254,6 @@ void FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad()
 {
     ASSERT(m_state == FrameStateProvisional);
     ASSERT(!m_loadingFromCachedPage);
-    // We only use cache-only loads to avoid resubmitting forms.
-    ASSERT(isBackForwardLoadType(m_loadType));
     ASSERT(history().provisionalItem());
     ASSERT(history().provisionalItem()->formData());
     ASSERT(history().provisionalItem() == m_requestedHistoryItem.get());

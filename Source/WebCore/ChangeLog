@@ -1,3 +1,29 @@
+2015-03-20  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r181782): Caused WebKit2.RestoreSessionStateContainingFormData API test to crash
+        https://bugs.webkit.org/show_bug.cgi?id=142911
+
+        Reviewed by Antti Koivisto.
+
+        Drop the isBackForwardLoadType(m_loadType) assertion in
+        FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad(). This assertion
+        used to hold true when goToBackForwardItem() was only called with
+        history navigation load types. However, after r181782, we use a Standard
+        load in the cases where we do not wish to display stale content (e.g.
+        restoring session state).
+
+        The assertion comment says "We only use cache-only loads to avoid
+        resubmitting forms". However, we then call loadDifferentDocumentItem()
+        which already takes care of using the ReturnCacheDataElseLoad cache
+        policy as the HistoryItem has form data and we pass
+        MayNotAttemptCacheOnlyLoadForFormSubmissionItem as parameter.
+
+        No new tests, covered by WebKit2.RestoreSessionStateContainingFormData
+        API test.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad):
+
 2015-03-20  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Adopt NEFilterSource unblock handling
