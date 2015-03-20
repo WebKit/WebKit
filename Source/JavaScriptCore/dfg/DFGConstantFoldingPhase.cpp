@@ -568,20 +568,19 @@ private:
             propertyStorage = Edge(reallocatePropertyStorage);
         }
 
-        if (variant.kind() == PutByIdVariant::Transition) {
-            Node* putStructure = m_graph.addNode(SpecNone, PutStructure, origin, OpInfo(transition), childEdge);
-            m_insertionSet.insertNode(indexInBlock, SpecNone, StoreBarrier, origin, Edge(node->child1().node(), KnownCellUse));
-            m_insertionSet.insert(indexInBlock, putStructure);
-        }
-
         StorageAccessData& data = *m_graph.m_storageAccessData.add();
         data.offset = variant.offset();
         data.identifierNumber = identifierNumber;
         
         node->convertToPutByOffset(data, propertyStorage);
-        m_insertionSet.insertNode(
-            indexInBlock, SpecNone, StoreBarrier, origin, 
-            Edge(node->child2().node(), KnownCellUse));
+
+        if (variant.kind() == PutByIdVariant::Transition) {
+            // FIXME: PutStructure goes last until we fix either
+            // https://bugs.webkit.org/show_bug.cgi?id=142921 or
+            // https://bugs.webkit.org/show_bug.cgi?id=142924.
+            m_insertionSet.insertNode(
+                indexInBlock + 1, SpecNone, PutStructure, origin, OpInfo(transition), childEdge);
+        }
     }
     
     void addBaseCheck(

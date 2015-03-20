@@ -2422,8 +2422,6 @@ void ByteCodeParser::handlePutById(
                 propertyStorage = addToGraph(GetButterfly, base);
         }
 
-        addToGraph(PutStructure, OpInfo(transition), base);
-
         StorageAccessData* data = m_graph.m_storageAccessData.add();
         data->offset = variant.offset();
         data->identifierNumber = identifierNumber;
@@ -2434,6 +2432,11 @@ void ByteCodeParser::handlePutById(
             propertyStorage,
             base,
             value);
+
+        // FIXME: PutStructure goes last until we fix either
+        // https://bugs.webkit.org/show_bug.cgi?id=142921 or
+        // https://bugs.webkit.org/show_bug.cgi?id=142924.
+        addToGraph(PutStructure, OpInfo(transition), base);
 
         if (m_graph.compilation())
             m_graph.compilation()->noticeInlinedPutById();

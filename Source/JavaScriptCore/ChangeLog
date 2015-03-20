@@ -1,3 +1,87 @@
+2015-03-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Observably effectful nodes in DFG IR should come last in their bytecode instruction (i.e. forExit section), except for Hint nodes
+        https://bugs.webkit.org/show_bug.cgi?id=142920
+
+        Reviewed by Oliver Hunt, Geoffrey Garen, and Mark Lam.
+        
+        Observably effectful, n.: If we reexecute the bytecode instruction after this node has
+        executed, then something other than the bytecode instruction's specified outcome will
+        happen.
+
+        We almost never had observably effectful nodes except at the end of the bytecode
+        instruction.  The exception is a lowered transitioning PutById:
+
+        PutStructure(@o, S1 -> S2)
+        PutByOffset(@o, @o, @v)
+
+        The PutStructure is observably effectful: if you try to reexecute the bytecode after
+        doing the PutStructure, then we'll most likely crash.  The generic PutById handling means
+        first checking what the old structure of the object is; but if we reexecute, the old
+        structure will seem to be the new structure.  But the property ensured by the new
+        structure hasn't been stored yet, so any attempt to load it or scan it will crash.
+
+        Intriguingly, however, none of the other operations involved in the PutById are
+        observably effectful.  Consider this example:
+
+        PutByOffset(@o, @o, @v)
+        PutStructure(@o, S1 -> S2)
+
+        Note that the PutStructure node doesn't reallocate property storage; see further below
+        for an example that does that. Because no property storage is happening, we know that we
+        already had room for the new property.  This means that the PutByOffset is no observable
+        until the PutStructure executes and "reveals" the property.  Hence, PutByOffset is not
+        observably effectful.
+
+        Now consider this:
+
+        b: AllocatePropertyStorage(@o)
+        PutByOffset(@b, @o, @v)
+        PutStructure(@o, S1 -> S2)
+
+        Surprisingly, this is also safe, because the AllocatePropertyStorage is not observably
+        effectful. It *does* reallocate the property storage and the new property storage pointer
+        is stored into the object. But until the PutStructure occurs, the world will just think
+        that the reallocation didn't happen, in the sense that we'll think that the property
+        storage is using less memory than what we just allocated. That's harmless.
+
+        The AllocatePropertyStorage is safe in other ways, too. Even if we GC'd after the
+        AllocatePropertyStorage but before the PutByOffset (or before the PutStructure),
+        everything could be expected to be fine, so long as all of @o, @v and @b are on the
+        stack. If they are all on the stack, then the GC will leave the property storage alone
+        (so the extra memory we just allocated would be safe). The GC will not scan the part of
+        the property storage that contains @v, but that's fine, so long as @v is on the stack.
+        
+        The better long-term solution is probably bug 142921.
+        
+        But for now, this:
+        
+        - Fixes an object materialization bug, exemplified by the two tests, that previously
+          crashed 100% of the time with FTL enabled and concurrent JIT disabled.
+        
+        - Allows us to remove the workaround introduced in r174856.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::insertCheck):
+        (JSC::DFG::FixupPhase::indexOfNode): Deleted.
+        (JSC::DFG::FixupPhase::indexOfFirstNodeOfExitOrigin): Deleted.
+        * dfg/DFGInsertionSet.h:
+        (JSC::DFG::InsertionSet::insertOutOfOrder): Deleted.
+        (JSC::DFG::InsertionSet::insertOutOfOrderNode): Deleted.
+        * tests/stress/materialize-past-butterfly-allocation.js: Added.
+        (bar):
+        (foo0):
+        (foo1):
+        (foo2):
+        (foo3):
+        (foo4):
+        * tests/stress/materialize-past-put-structure.js: Added.
+        (foo):
+
 2015-03-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION (r179429): Potential Use after free in JavaScriptCore`WTF::StringImpl::ref + 83
