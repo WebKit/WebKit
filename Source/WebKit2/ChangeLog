@@ -1,3 +1,16 @@
+2015-03-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMake] Remove duplicated cmake function calls in WebKit2/CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=142901
+
+        Reviewed by Csaba Osztrogonác.
+
+        add_depencencies(), install() can support multiple targets or location.
+        We don't need to call it twice.
+
+        * CMakeLists.txt: Additionaly move -DBUILDING_WEBKIT to PlatformGTK.cmake,
+        because it is only used by GTK port.
+
 2015-03-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Disable accelerated compositing on Wayland

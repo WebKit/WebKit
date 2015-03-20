@@ -768,12 +768,10 @@ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 GENERATE_WEBKIT2_MESSAGE_SOURCES(WebKit2_DERIVED_SOURCES "${WebKit2_MESSAGES_IN_FILES}")
 
-add_definitions(-DBUILDING_WEBKIT)
 include_directories(${WebKit2_INCLUDE_DIRECTORIES})
 add_library(WebKit2 ${WebKit2_LIBRARY_TYPE} ${WebKit2_SOURCES} ${WebKit2_DERIVED_SOURCES})
 
-add_dependencies(WebKit2 WebCore)
-add_dependencies(WebKit2 ${WEBKIT2_EXTRA_DEPENDENCIES})
+add_dependencies(WebKit2 WebCore ${WEBKIT2_EXTRA_DEPENDENCIES})
 add_webkit2_prefix_header(WebKit2)
 target_link_libraries(WebKit2 ${WebKit2_LIBRARIES})
 set_target_properties(WebKit2 PROPERTIES FOLDER "WebKit")
@@ -836,5 +834,7 @@ endif ()
 POPULATE_LIBRARY_VERSION(WEBKIT2)
 set_target_properties(WebKit2 PROPERTIES VERSION ${WEBKIT2_VERSION} SOVERSION ${WEBKIT2_VERSION_MAJOR})
 
-install(TARGETS WebKit2 DESTINATION "${LIB_INSTALL_DIR}")
-install(TARGETS WebProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
+install(TARGETS WebKit2 WebProcess
+        LIBRARY DESTINATION "${LIB_INSTALL_DIR}"
+        RUNTIME DESTINATION "${LIBEXEC_INSTALL_DIR}"
+)
