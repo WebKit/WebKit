@@ -58,9 +58,6 @@
 #include <WebCore/Region.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
-#if defined(GDK_WINDOWING_X11)
-#include <gdk/gdkx.h>
-#endif
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/gobject/GRefPtr.h>
@@ -68,6 +65,13 @@
 
 #if ENABLE(FULLSCREEN_API)
 #include "WebFullScreenManagerProxy.h"
+#endif
+
+#if PLATFORM(X11)
+#include <gdk/gdkx.h>
+#endif
+#if PLATFORM(WAYLAND)
+#include <gdk/gdkwayland.h>
 #endif
 
 // gtk_widget_get_scale_factor() appeared in GTK 3.10, but we also need
@@ -1114,6 +1118,14 @@ static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
 void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebProcessPool* context, WebPreferences* preferences, WebPageGroup* pageGroup, WebUserContentControllerProxy* userContentController, WebPageProxy* relatedPage)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+
+#if PLATFORM(WAYLAND)
+    // FIXME: Accelerated compositing under Wayland is not yet supported.
+    // https://bugs.webkit.org/show_bug.cgi?id=115803
+    GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
+    if (GDK_IS_WAYLAND_DISPLAY(display))
+        preferences->setAcceleratedCompositingEnabled(false);
+#endif
 
     WebPageConfiguration webPageConfiguration;
     webPageConfiguration.preferences = preferences;

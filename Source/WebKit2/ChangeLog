@@ -1,5 +1,16 @@
 2015-03-20  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK] Disable accelerated compositing on Wayland
+        https://bugs.webkit.org/show_bug.cgi?id=142877
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreateWebPage): As was done in the past, we should disable
+        accelerated compositing on Wayland until the proper support for it lands.
+
+2015-03-20  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK] Properly guard X11-specific code in BackingStore::createBackend()
         https://bugs.webkit.org/show_bug.cgi?id=142875
 
