@@ -1560,7 +1560,11 @@ namespace JSC {
     public:
         using ParserArenaDeletable::operator new;
 
-        FunctionBodyNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, bool isInStrictContext, ConstructorKind);
+        FunctionBodyNode(
+            ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, 
+            unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
+            int functionNameStart, int parametersStart, bool isInStrictContext, 
+            ConstructorKind);
 
         FunctionParameters* parameters() const { return m_parameters.get(); }
 
@@ -1575,9 +1579,7 @@ namespace JSC {
 
         FunctionMode functionMode() { return m_functionMode; }
 
-        void setFunctionNameStart(int functionNameStart) { m_functionNameStart = functionNameStart; }
         int functionNameStart() const { return m_functionNameStart; }
-        void setFunctionKeywordStart(int functionKeywordStart) { m_functionKeywordStart = functionKeywordStart; }
         int functionKeywordStart() const { return m_functionKeywordStart; }
         unsigned startColumn() const { return m_startColumn; }
         unsigned endColumn() const { return m_endColumn; }
@@ -1595,10 +1597,11 @@ namespace JSC {
         Identifier m_inferredName;
         FunctionMode m_functionMode;
         RefPtr<FunctionParameters> m_parameters;
-        int m_functionNameStart;
-        int m_functionKeywordStart;
         unsigned m_startColumn;
         unsigned m_endColumn;
+        int m_functionKeywordStart;
+        int m_functionNameStart;
+        int m_parametersStart;
         SourceCode m_source;
         int m_startStartOffset;
         unsigned m_isInStrictContext : 1;

@@ -1,3 +1,56 @@
+2015-03-20  Geoffrey Garen  <ggaren@apple.com>
+
+        FunctionBodyNode should known where its parameters started
+        https://bugs.webkit.org/show_bug.cgi?id=142926
+
+        Reviewed by Ryosuke Niwa.
+
+        This will allow us to re-parse parameters instead of keeping the
+        parameters piece of the AST around forever.
+
+        I also took the opportunity to initialize most FunctionBodyNode data
+        members at construction time, to help clarify that they are set right.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionExpr): No need to pass
+        functionKeywordStart here; we now provide it at FunctionBodyNode
+        creation time.
+
+        (JSC::ASTBuilder::createFunctionBody): Require everything we need at
+        construction time, including the start of our parameters.
+
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createFuncDeclStatement):  No need to pass
+        functionKeywordStart here; we now provide it at FunctionBodyNode
+        creation time.
+
+        (JSC::ASTBuilder::setFunctionNameStart): Deleted.
+
+        * parser/Nodes.cpp:
+        (JSC::FunctionBodyNode::FunctionBodyNode): Initialize everything at
+        construction time.
+
+        * parser/Nodes.h: Added a field for the location of our parameters.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        * parser/Parser.h: Refactored to match above interface changes.
+
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createFunctionExpr):
+        (JSC::SyntaxChecker::createFunctionBody):
+        (JSC::SyntaxChecker::createFuncDeclStatement):
+        (JSC::SyntaxChecker::createGetterOrSetterProperty): Refactored to match
+        above interface changes.
+
+        (JSC::SyntaxChecker::setFunctionNameStart): Deleted.
+
 2015-03-20  Filip Pizlo  <fpizlo@apple.com>
 
         Observably effectful nodes in DFG IR should come last in their bytecode instruction (i.e. forExit section), except for Hint nodes

@@ -293,42 +293,41 @@ public:
     }
 #endif
 
-    ExpressionNode* createFunctionExpr(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& info, unsigned functionKeywordStart)
+    ExpressionNode* createFunctionExpr(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& info)
     {
         FuncExprNode* result = new (m_parserArena) FuncExprNode(location, *info.name, info.body,
             m_sourceCode->subExpression(info.openBraceOffset, info.closeBraceOffset, info.bodyStartLine, info.bodyStartColumn), info.parameters);
         info.body->setLoc(info.bodyStartLine, info.bodyEndLine, location.startOffset, location.lineStartOffset);
-        info.body->setFunctionKeywordStart(functionKeywordStart);
         return result;
     }
 
-    FunctionBodyNode* createFunctionBody(const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, bool inStrictContext, ConstructorKind constructorKind)
+    FunctionBodyNode* createFunctionBody(
+        const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, 
+        unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
+        int functionNameStart, int parametersStart, bool inStrictContext, 
+        ConstructorKind constructorKind)
     {
-        return new (m_parserArena) FunctionBodyNode(m_parserArena, startLocation, endLocation, startColumn, endColumn, inStrictContext, constructorKind);
+        return new (m_parserArena) FunctionBodyNode(
+            m_parserArena, startLocation, endLocation, startColumn, endColumn, 
+            functionKeywordStart, functionNameStart, parametersStart, 
+            inStrictContext, constructorKind);
     }
 
-    void setFunctionNameStart(FunctionBodyNode* body, int functionNameStart)
-    {
-        body->setFunctionNameStart(functionNameStart);
-    }
-    
     NEVER_INLINE PropertyNode* createGetterOrSetterProperty(const JSTokenLocation& location, PropertyNode::Type type, bool,
-        const Identifier* name, const ParserFunctionInfo<ASTBuilder>& info, unsigned getOrSetStartOffset, SuperBinding superBinding)
+        const Identifier* name, const ParserFunctionInfo<ASTBuilder>& info, SuperBinding superBinding)
     {
         ASSERT(name);
         info.body->setLoc(info.bodyStartLine, info.bodyEndLine, location.startOffset, location.lineStartOffset);
         info.body->setInferredName(*name);
-        info.body->setFunctionKeywordStart(getOrSetStartOffset);
         SourceCode source = m_sourceCode->subExpression(info.openBraceOffset, info.closeBraceOffset, info.bodyStartLine, info.bodyStartColumn);
         FuncExprNode* funcExpr = new (m_parserArena) FuncExprNode(location, m_vm->propertyNames->nullIdentifier, info.body, source, info.parameters);
         return new (m_parserArena) PropertyNode(*name, funcExpr, type, PropertyNode::Unknown, superBinding);
     }
     
     NEVER_INLINE PropertyNode* createGetterOrSetterProperty(VM* vm, ParserArena& parserArena, const JSTokenLocation& location, PropertyNode::Type type, bool,
-        double name, const ParserFunctionInfo<ASTBuilder>& info, unsigned getOrSetStartOffset, SuperBinding superBinding)
+        double name, const ParserFunctionInfo<ASTBuilder>& info, SuperBinding superBinding)
     {
         info.body->setLoc(info.bodyStartLine, info.bodyEndLine, location.startOffset, location.lineStartOffset);
-        info.body->setFunctionKeywordStart(getOrSetStartOffset);
         const Identifier& ident = parserArena.identifierArena().makeNumericIdentifier(vm, name);
         SourceCode source = m_sourceCode->subExpression(info.openBraceOffset, info.closeBraceOffset, info.bodyStartLine, info.bodyStartColumn);
         FuncExprNode* funcExpr = new (m_parserArena) FuncExprNode(location, vm->propertyNames->nullIdentifier, info.body, source, info.parameters);
@@ -364,7 +363,7 @@ public:
     ClauseListNode* createClauseList(CaseClauseNode* clause) { return new (m_parserArena) ClauseListNode(clause); }
     ClauseListNode* createClauseList(ClauseListNode* tail, CaseClauseNode* clause) { return new (m_parserArena) ClauseListNode(tail, clause); }
 
-    StatementNode* createFuncDeclStatement(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& info, unsigned functionKeywordStart)
+    StatementNode* createFuncDeclStatement(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& info)
     {
         FuncDeclNode* decl = new (m_parserArena) FuncDeclNode(location, *info.name, info.body,
             m_sourceCode->subExpression(info.openBraceOffset, info.closeBraceOffset, info.bodyStartLine, info.bodyStartColumn), info.parameters);
@@ -372,7 +371,6 @@ public:
             usesArguments();
         m_scope.m_funcDeclarations.append(decl->body());
         info.body->setLoc(info.bodyStartLine, info.bodyEndLine, location.startOffset, location.lineStartOffset);
-        info.body->setFunctionKeywordStart(functionKeywordStart);
         return decl;
     }
 

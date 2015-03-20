@@ -167,13 +167,20 @@ FunctionParameters::~FunctionParameters()
         patterns()[i]->deref();
 }
 
-FunctionBodyNode::FunctionBodyNode(ParserArena&, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, bool isInStrictContext, ConstructorKind constructorKind)
-    : StatementNode(endLocation)
-    , m_startColumn(startColumn)
-    , m_endColumn(endColumn)
-    , m_startStartOffset(startLocation.startOffset)
-    , m_isInStrictContext(isInStrictContext)
-    , m_constructorKind(static_cast<unsigned>(constructorKind))
+FunctionBodyNode::FunctionBodyNode(
+    ParserArena&, const JSTokenLocation& startLocation, 
+    const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, 
+    int functionKeywordStart, int functionNameStart, int parametersStart,
+    bool isInStrictContext, ConstructorKind constructorKind)
+        : StatementNode(endLocation)
+        , m_startColumn(startColumn)
+        , m_endColumn(endColumn)
+        , m_functionKeywordStart(functionKeywordStart)
+        , m_functionNameStart(functionNameStart)
+        , m_parametersStart(parametersStart)
+        , m_startStartOffset(startLocation.startOffset)
+        , m_isInStrictContext(isInStrictContext)
+        , m_constructorKind(static_cast<unsigned>(constructorKind))
 {
     ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
 }
