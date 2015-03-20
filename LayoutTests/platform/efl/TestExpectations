@@ -457,19 +457,17 @@ Bug(EFL) css3/filters/backdrop [ Skip ]
 Bug(EFL) editing/selection/doubleclick-crash.html [ Failure ]
 Bug(EFL) editing/selection/move-by-word-visually-mac.html [ Failure ]
 
-# EFL port doesn't support attachment feature yet. It was added by r180193.
+# EFL port doesn't support attachment feature yet. It was added by r180193, r181056, r181114, r181118 and r181418.
 webkit.org/b/141894 fast/attachment/attachment-disabled-rendering.html [ Failure ]
+webkit.org/b/141894 fast/attachment/attachment-progress.html [ Failure ]
 webkit.org/b/141894 fast/attachment/attachment-rendering.html [ Failure ]
+webkit.org/b/141894 fast/attachment/attachment-select-on-click-inside-user-select-all.html [ Failure ]
+webkit.org/b/141894 fast/attachment/attachment-select-on-click.html [ Failure ]
+webkit.org/b/141894 fast/attachment/attachment-subtitle.html [ Failure ]
+webkit.org/b/141894 fast/attachment/attachment-title.html [ Failure ]
 
 # EFL port doesn't fully support EME yet.
 webkit.org/b/141959 http/tests/media/clearkey/clear-key-hls-aes128.html [ Timeout ]
-
-# Need to have baseline since r181114 and r181418.
-Bug(EFL) fast/attachment/attachment-progress.html [ Missing ]
-Bug(EFL) fast/attachment/attachment-subtitle.html [ Missing ]
-Bug(EFL) fast/attachment/attachment-title.html [ Missing ]
-Bug(EFL) fast/attachment/attachment-select-on-click-inside-user-select-all.html [ Missing ]
-Bug(EFL) fast/attachment/attachment-select-on-click.html [ Missing ]
 
 # Need a new baseline for EFL port. It was added by r72173.
 Bug(EFL) fast/css/line-height-determined-by-primary-font.html [ Failure ]
