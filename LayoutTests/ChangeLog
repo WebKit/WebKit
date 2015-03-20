@@ -1,5 +1,11 @@
 2015-03-19  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Try to get the Debug bots green.
+
+        * platform/win/TestExpectations:
+
+2015-03-19  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Skip an <attachment> test that times out on Windows.
 
         Also mark two flakes I noticed on the test bots.
