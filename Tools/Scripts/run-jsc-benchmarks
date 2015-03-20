@@ -2568,9 +2568,7 @@ def parseAndDisplayResults(results)
   
   if $suites.size > 1
     printVMs(outp)
-    outp.puts "All benchmarks:"
-    allSummaryStats(outp, json, vmStatses, nil, 0)
-    
+
     scaledResultJson = {}
     
     outp.puts

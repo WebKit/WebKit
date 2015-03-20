@@ -1,5 +1,12 @@
 2015-03-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed build fix. Don't try to report stats for all benchmarks.
+        Just report the geometric mean of preferred means.
+
+        * Scripts/run-jsc-benchmarks:
+
+2015-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         run-jsc-benchmarks should only report preferred mean
         https://bugs.webkit.org/show_bug.cgi?id=142874
 
