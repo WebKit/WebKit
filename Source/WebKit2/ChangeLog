@@ -1,3 +1,33 @@
+2015-03-20  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Allow stale content when restoring the browser's session state
+        https://bugs.webkit.org/show_bug.cgi?id=142916
+        <rdar://problem/20243493>
+
+        Reviewed by Darin Adler.
+
+        Allow stale content when restoring the browser's session state
+        (restoring all tabs from previous session), e.g.
+        - Via History > Reopen All windows from previous session on Safari
+        - Happens on startup for MobileSafari
+
+        I have verified that using "Open in tabs" on a bookmarks folder
+        still does fresh loads (rdar://problem/8131355) as it is not using
+        the restoreFromSessionState() code path.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcessForReload):
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem):
+        (WebKit::WebPageProxy::goForward):
+        (WebKit::WebPageProxy::goBack):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        (WebKit::WebPageProxy::restoreFromSessionState):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::goToBackForwardItem):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-03-20  Beth Dakin  <bdakin@apple.com>
 
         [Immediate Actions] Should re-enable immediate actions for iBooks

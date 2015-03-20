@@ -656,13 +656,13 @@ RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessForReload()
     auto navigation = m_navigationState->createReloadNavigation();
 
     // We allow stale content when reloading a WebProcess that's been killed or crashed.
-    m_process->send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), m_backForwardList->currentItem()->itemID(), true /* allowStale */), m_pageID);
+    m_process->send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), m_backForwardList->currentItem()->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
 
     return WTF::move(navigation);
 }
 
-RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item, AllowStaleContent allowStaleContent)
+RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
 {
     if (m_isClosed)
         return nullptr;
@@ -678,7 +678,7 @@ RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessWithItem(WebBackForwar
 
     auto navigation = m_navigationState->createBackForwardNavigation();
 
-    m_process->send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), item->itemID(), allowStaleContent == AllowStaleContent::Yes), m_pageID);
+    m_process->send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), item->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
 
     return WTF::move(navigation);
@@ -1026,7 +1026,7 @@ RefPtr<API::Navigation> WebPageProxy::goForward()
     m_pageLoadState.setPendingAPIRequestURL(transaction, forwardItem->url());
 
     if (!isValid())
-        return reattachToWebProcessWithItem(forwardItem, AllowStaleContent::Yes);
+        return reattachToWebProcessWithItem(forwardItem);
 
     RefPtr<API::Navigation> navigation;
     if (!m_backForwardList->currentItem()->itemIsInSameDocument(*forwardItem))
@@ -1049,7 +1049,7 @@ RefPtr<API::Navigation> WebPageProxy::goBack()
     m_pageLoadState.setPendingAPIRequestURL(transaction, backItem->url());
 
     if (!isValid())
-        return reattachToWebProcessWithItem(backItem, AllowStaleContent::Yes);
+        return reattachToWebProcessWithItem(backItem);
 
     RefPtr<API::Navigation> navigation;
     if (!m_backForwardList->currentItem()->itemIsInSameDocument(*backItem))
@@ -1061,10 +1061,10 @@ RefPtr<API::Navigation> WebPageProxy::goBack()
     return navigation;
 }
 
-RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item, AllowStaleContent allowStaleContent)
+RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
 {
     if (!isValid())
-        return reattachToWebProcessWithItem(item, allowStaleContent);
+        return reattachToWebProcessWithItem(item);
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -1074,7 +1074,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem
     if (!m_backForwardList->currentItem()->itemIsInSameDocument(*item))
         navigation = m_navigationState->createBackForwardNavigation();
 
-    m_process->send(Messages::WebPage::GoToBackForwardItem(navigation ? navigation->navigationID() : 0, item->itemID(), allowStaleContent == AllowStaleContent::Yes), m_pageID);
+    m_process->send(Messages::WebPage::GoToBackForwardItem(navigation ? navigation->navigationID() : 0, item->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
 
     return navigation;
@@ -2095,10 +2095,8 @@ RefPtr<API::Navigation> WebPageProxy::restoreFromSessionState(SessionState sessi
 
         if (hasBackForwardList) {
             // FIXME: Do we have to null check the back forward list item here?
-            if (WebBackForwardListItem* item = m_backForwardList->currentItem()) {
-                // We forbid stale content when restoring the session state and do a fresh load (rdar://problem/8131355).
-                return goToBackForwardItem(item, AllowStaleContent::No);
-            }
+            if (WebBackForwardListItem* item = m_backForwardList->currentItem())
+                return goToBackForwardItem(item);
         }
     }
 

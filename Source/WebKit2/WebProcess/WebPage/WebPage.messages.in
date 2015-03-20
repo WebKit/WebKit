@@ -119,7 +119,7 @@ messages -> WebPage LegacyReceiver {
 
     GoBack(uint64_t navigationID, uint64_t backForwardItemID)
     GoForward(uint64_t navigationID, uint64_t backForwardItemID)
-    GoToBackForwardItem(uint64_t navigationID, uint64_t backForwardItemID, bool allowStaleContent)
+    GoToBackForwardItem(uint64_t navigationID, uint64_t backForwardItemID)
     TryRestoreScrollPosition()
 
     LoadURLInFrame(String url, uint64_t frameID)
