@@ -104,7 +104,7 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     [_clipView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     CALayer *maskLayer = [CALayer layer];
     maskLayer.anchorPoint = CGPointZero;
-    maskLayer.frame = contentView.bounds;
+    maskLayer.frame = NSRectToCGRect(contentView.bounds);
     maskLayer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
     [_clipView layer].mask = maskLayer;
     [contentView addSubview:_clipView.get()];

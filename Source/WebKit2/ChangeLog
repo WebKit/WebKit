@@ -1,3 +1,10 @@
+2015-03-19  Jessie Berlin  <jberlin@webkit.org>
+
+        32-bit build fix after r181770.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController initWithWindow:webView:]):
+
 2015-03-19  Anders Carlsson  <andersca@apple.com>
 
         Add support for deleting individual cache entries
