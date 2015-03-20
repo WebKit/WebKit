@@ -1,3 +1,29 @@
+2015-03-20  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Crash when leaving page while video is playing.
+        https://bugs.webkit.org/show_bug.cgi?id=142578
+
+        Reviewed by Alex Christensen.
+
+        This can happen when there is an asynchronous event invoked from a video worker
+        thread, accessing the media player object after it has been deleted.
+        This is solved by resetting the media player pointer in the event object,
+        when the media player is deleted.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::~MediaPlayerPrivateMediaFoundation):
+        (WebCore::MediaPlayerPrivateMediaFoundation::addListener):
+        (WebCore::MediaPlayerPrivateMediaFoundation::removeListener):
+        (WebCore::MediaPlayerPrivateMediaFoundation::notifyDeleted):
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::AsyncCallback):
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::~AsyncCallback):
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::Invoke):
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::onMediaPlayerDeleted):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+        (WebCore::MediaPlayerPrivateMediaFoundation::MediaPlayerListener::MediaPlayerListener):
+        (WebCore::MediaPlayerPrivateMediaFoundation::MediaPlayerListener::~MediaPlayerListener):
+        (WebCore::MediaPlayerPrivateMediaFoundation::MediaPlayerListener::onMediaPlayerDeleted):
+
 2015-03-20  Chris Dumez  <cdumez@apple.com>
 
         Regression(r181782): Caused WebKit2.RestoreSessionStateContainingFormData API test to crash

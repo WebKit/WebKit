@@ -31,6 +31,8 @@
 #include <Mfidl.h>
 #include <evr.h>
 
+#include <wtf/ThreadingPrimitives.h>
+
 namespace WebCore {
 
 class MediaPlayerPrivateMediaFoundation : public MediaPlayerPrivateInterface {
@@ -83,6 +85,10 @@ private:
     MediaPlayer::ReadyState m_readyState;
     FloatRect m_lastPaintRect;
 
+    class MediaPlayerListener;
+    HashSet<MediaPlayerListener*> m_listeners;
+    Mutex m_mutexListeners;
+
     COMPtr<IMFMediaSession> m_mediaSession;
     COMPtr<IMFSourceResolver> m_sourceResolver;
     COMPtr<IMFMediaSource> m_mediaSource;
@@ -107,9 +113,21 @@ private:
     void createVideoWindow();
     void destroyVideoWindow();
 
+    void addListener(MediaPlayerListener*);
+    void removeListener(MediaPlayerListener*);
+    void notifyDeleted();
+
     static LRESULT CALLBACK VideoViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-    class AsyncCallback : public IMFAsyncCallback {
+    class MediaPlayerListener {
+    public:
+        MediaPlayerListener() { }
+        virtual ~MediaPlayerListener() { }
+
+        virtual void onMediaPlayerDeleted() { }
+    };
+
+    class AsyncCallback : public IMFAsyncCallback, public MediaPlayerListener {
     public:
         AsyncCallback(MediaPlayerPrivateMediaFoundation*, bool event);
         ~AsyncCallback();
@@ -121,10 +139,13 @@ private:
         virtual HRESULT STDMETHODCALLTYPE GetParameters(__RPC__out DWORD *pdwFlags, __RPC__out DWORD *pdwQueue) override;
         virtual HRESULT STDMETHODCALLTYPE Invoke(__RPC__in_opt IMFAsyncResult *pAsyncResult) override;
 
+        virtual void onMediaPlayerDeleted() override;
+
     private:
         ULONG m_refCount;
         MediaPlayerPrivateMediaFoundation* m_mediaPlayer;
         bool m_event;
+        Mutex m_mutex;
     };
 
 };

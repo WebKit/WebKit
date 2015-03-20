@@ -75,6 +75,7 @@ MediaPlayerPrivateMediaFoundation::MediaPlayerPrivateMediaFoundation(MediaPlayer
 
 MediaPlayerPrivateMediaFoundation::~MediaPlayerPrivateMediaFoundation()
 {
+    notifyDeleted();
     destroyVideoWindow();
     endSession();
 }
@@ -480,6 +481,28 @@ void MediaPlayerPrivateMediaFoundation::destroyVideoWindow()
     }
 }
 
+void MediaPlayerPrivateMediaFoundation::addListener(MediaPlayerListener* listener)
+{
+    MutexLocker locker(m_mutexListeners);
+
+    m_listeners.add(listener);
+}
+
+void MediaPlayerPrivateMediaFoundation::removeListener(MediaPlayerListener* listener)
+{
+    MutexLocker locker(m_mutexListeners);
+
+    m_listeners.remove(listener);
+}
+
+void MediaPlayerPrivateMediaFoundation::notifyDeleted()
+{
+    MutexLocker locker(m_mutexListeners);
+
+    for (HashSet<MediaPlayerListener*>::const_iterator it = m_listeners.begin(); it != m_listeners.end(); ++it)
+        (*it)->onMediaPlayerDeleted();
+}
+
 bool MediaPlayerPrivateMediaFoundation::createOutputNode(COMPtr<IMFStreamDescriptor> sourceSD, COMPtr<IMFTopologyNode>& node)
 {
     if (!MFCreateTopologyNodePtr() || !MFCreateAudioRendererActivatePtr() || !MFCreateVideoRendererActivatePtr())
@@ -596,10 +619,14 @@ MediaPlayerPrivateMediaFoundation::AsyncCallback::AsyncCallback(MediaPlayerPriva
     , m_mediaPlayer(mediaPlayer)
     , m_event(event)
 {
+    if (m_mediaPlayer)
+        m_mediaPlayer->addListener(this);
 }
 
 MediaPlayerPrivateMediaFoundation::AsyncCallback::~AsyncCallback()
 {
+    if (m_mediaPlayer)
+        m_mediaPlayer->removeListener(this);
 }
 
 HRESULT MediaPlayerPrivateMediaFoundation::AsyncCallback::QueryInterface(REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject)
@@ -636,12 +663,24 @@ HRESULT STDMETHODCALLTYPE MediaPlayerPrivateMediaFoundation::AsyncCallback::GetP
 
 HRESULT STDMETHODCALLTYPE MediaPlayerPrivateMediaFoundation::AsyncCallback::Invoke(__RPC__in_opt IMFAsyncResult *pAsyncResult)
 {
+    MutexLocker locker(m_mutex);
+
+    if (!m_mediaPlayer)
+        return S_OK;
+
     if (m_event)
         m_mediaPlayer->endGetEvent(pAsyncResult);
     else
         m_mediaPlayer->endCreatedMediaSource(pAsyncResult);
 
     return S_OK;
+}
+
+void MediaPlayerPrivateMediaFoundation::AsyncCallback::onMediaPlayerDeleted()
+{
+    MutexLocker locker(m_mutex);
+
+    m_mediaPlayer = nullptr;
 }
 
 }
