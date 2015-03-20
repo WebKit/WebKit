@@ -1,3 +1,24 @@
+2015-03-19  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] We should allow stale content when restoring a killed / crashed WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=142893
+        <rdar://problem/19633737>
+        <rdar://problem/19869257>
+
+        Reviewed by Antti Koivisto.
+
+        Always use ReturnCacheDataElseLoad cache policy for history navigations.
+        Previously, we would use the default protocol cache policy for history
+        navigations if m_stateMachine.committedFirstRealDocumentLoad() returned
+        false so that we do not display stale content when restoring the session
+        state of Safari statup (rdar://problem/8131355). This is now handled
+        before reaching this method by no longer using "IndexedBackForward"
+        FrameLoadType when restoring session tabs, and using "Standard" load
+        type instead.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+
 2015-03-19  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Move ContentFilter to from platform/ to loader/

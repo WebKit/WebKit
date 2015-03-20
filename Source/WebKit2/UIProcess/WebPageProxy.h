@@ -358,7 +358,8 @@ public:
     RefPtr<API::Navigation> goForward();
     RefPtr<API::Navigation> goBack();
 
-    RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListItem*);
+    enum class AllowStaleContent { No, Yes };
+    RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListItem*, AllowStaleContent = AllowStaleContent::Yes);
     void tryRestoreScrollPosition();
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<RefPtr<WebBackForwardListItem>> removed);
     void willGoToBackForwardListItem(uint64_t itemID, const UserData&);
@@ -1162,7 +1163,7 @@ private:
 
     void reattachToWebProcess();
     RefPtr<API::Navigation> reattachToWebProcessForReload();
-    RefPtr<API::Navigation> reattachToWebProcessWithItem(WebBackForwardListItem*);
+    RefPtr<API::Navigation> reattachToWebProcessWithItem(WebBackForwardListItem*, AllowStaleContent);
 
     void requestNotificationPermission(uint64_t notificationID, const String& originString);
     void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID);

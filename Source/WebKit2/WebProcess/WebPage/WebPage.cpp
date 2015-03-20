@@ -1161,7 +1161,7 @@ void WebPage::goBack(uint64_t navigationID, uint64_t backForwardItemID)
     m_page->goToItem(*item, FrameLoadType::Back);
 }
 
-void WebPage::goToBackForwardItem(uint64_t navigationID, uint64_t backForwardItemID)
+void WebPage::goToBackForwardItem(uint64_t navigationID, uint64_t backForwardItemID, bool allowStaleContent)
 {
     SendStopResponsivenessTimer stopper(this);
 
@@ -1174,7 +1174,7 @@ void WebPage::goToBackForwardItem(uint64_t navigationID, uint64_t backForwardIte
     if (!item->isInPageCache())
         m_pendingNavigationID = navigationID;
 
-    m_page->goToItem(*item, FrameLoadType::IndexedBackForward);
+    m_page->goToItem(*item, allowStaleContent ? FrameLoadType::IndexedBackForward : FrameLoadType::Standard);
 }
 
 void WebPage::tryRestoreScrollPosition()

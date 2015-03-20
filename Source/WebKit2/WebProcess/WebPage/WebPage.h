@@ -926,7 +926,7 @@ private:
     void reload(uint64_t navigationID, bool reloadFromOrigin, const SandboxExtension::Handle&);
     void goForward(uint64_t navigationID, uint64_t);
     void goBack(uint64_t navigationID, uint64_t);
-    void goToBackForwardItem(uint64_t navigationID, uint64_t);
+    void goToBackForwardItem(uint64_t navigationID, uint64_t, bool allowStaleContent);
     void tryRestoreScrollPosition();
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&);
     void setWindowResizerSize(const WebCore::IntSize&);

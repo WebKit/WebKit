@@ -1,3 +1,66 @@
+2015-03-19  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] We should allow stale content when restoring a killed / crashed WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=142893
+        <rdar://problem/19633737>
+        <rdar://problem/19869257>
+
+        Reviewed by Antti Koivisto.
+
+        Allow stale content when restoring a killed / crashed WebProcess
+        (similarly to a history navigation). This is actually what was intended
+        as we call WebPage::goToBackForwardItem() in this case, which uses
+        IndexedBackForward load type. However, this value was then ignored in
+        FrameLoader::loadDifferentDocumentItem().
+
+        This patch gets rid of the special casing in
+        FrameLoader::loadDifferentDocumentItem() and makes it clear at call
+        sites when calling goToBackForwardItem() if we should allow stale
+        content or not. If goToBackForwardItem() is called with the
+        allowStaleContent flag off, we'll keep using the IndexedBackForward
+        frame load type. However, if the flag is on, we'll use the Standard
+        frame load type and do a fresh load.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcessForReload):
+        Set allowStaleContent flag to true as we want to allow stale content
+        when reloading a WebProcess after it crashed or was killed (behavior
+        change).
+
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem):
+        Add allowStaleContent parameter so that call sites can decide which
+        policy to use.
+
+        (WebKit::WebPageProxy::goForward):
+        (WebKit::WebPageProxy::goBack):
+        Set allowStaleContent flag to true as this is our policy for history
+        navigations.
+
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        Add allowStaleContent parameter so that the call site can let us know
+        what to do. This is useful as this is called not only for indexed
+        back / forward navigations (allowing stale content) but also for
+        restoring session state (forbidding state content:
+        <rdar://problem/8131355>).
+
+        (WebKit::WebPageProxy::restoreFromSessionState):
+        Call goToBackForwardItem() with allowStaleContent flag set to false
+        as users expect fresh contents in this case. This method is called
+        when:
+        - Tabs are restored on Safari / MobileSafari startup
+        - Tabs are restored via "History > Reopen All windows from last session"
+
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::goToBackForwardItem):
+        Add allowStaleContent parameter and use "Standard" frame load type
+        instead of "IndexedBackForward" if it is false. This is needed as
+        "IndexedBackForward" frame load type allows using stale content.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add allowStaleContent flag to GoToBackForwardItem message.
+
 2015-03-19  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Move MediaPlaybackTargetPicker
