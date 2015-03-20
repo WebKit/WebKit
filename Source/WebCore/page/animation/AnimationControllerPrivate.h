@@ -119,6 +119,7 @@ public:
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     void scrollWasUpdated();
+    float scrollPosition() const { return m_scrollPosition; }
 #endif
 
 private:
@@ -159,6 +160,10 @@ private:
     // behavior of allowing new transitions and animations to
     // run even when this object is suspended.
     bool m_allowsNewAnimationsWhileSuspended;
+
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    float m_scrollPosition = 0;
+#endif
 };
 
 } // namespace WebCore

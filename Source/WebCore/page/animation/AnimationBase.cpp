@@ -462,9 +462,9 @@ void AnimationBase::fireAnimationEventsIfNeeded()
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
         if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger()) {
             if (m_object) {
-                LayoutSize offset = m_object->view().frameView().scrollOffsetForFixedPosition();
-                ScrollAnimationTrigger* scrollTrigger = static_cast<ScrollAnimationTrigger*>(m_animation->trigger().get());
-                if (offset.height().toFloat() > scrollTrigger->startValue().value())
+                float offset = m_compositeAnimation->animationController()->scrollPosition();
+                ScrollAnimationTrigger& scrollTrigger = downcast<ScrollAnimationTrigger>(*m_animation->trigger().get());
+                if (offset > scrollTrigger.startValue().value())
                     updateStateMachine(AnimationStateInput::StartTimerFired, 0);
             }
 
@@ -475,9 +475,11 @@ void AnimationBase::fireAnimationEventsIfNeeded()
             updateStateMachine(AnimationStateInput::StartTimerFired, 0);
         return;
     }
-    
+
     double elapsedDuration = beginAnimationUpdateTime() - m_startTime;
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    // If we are a triggered animation that depends on scroll, our elapsed
+    // time is determined by the scroll position.
     if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger())
         elapsedDuration = getElapsedTime();
 #endif
@@ -544,8 +546,8 @@ double AnimationBase::timeToNextService()
         if (m_animation->trigger()->isScrollAnimationTrigger()) {
             if (m_object) {
                 float currentScrollOffset = m_object->view().frameView().scrollOffsetForFixedPosition().height().toFloat();
-                ScrollAnimationTrigger* scrollTrigger = static_cast<ScrollAnimationTrigger*>(m_animation->trigger().get());
-                if (currentScrollOffset >= scrollTrigger->startValue().value() && (!scrollTrigger->hasEndValue() || currentScrollOffset <= scrollTrigger->endValue().value()))
+                ScrollAnimationTrigger& scrollTrigger = downcast<ScrollAnimationTrigger>(*m_animation->trigger().get());
+                if (currentScrollOffset >= scrollTrigger.startValue().value() && (!scrollTrigger.hasEndValue() || currentScrollOffset <= scrollTrigger.endValue().value()))
                     return 0;
             }
             return -1;
@@ -682,7 +684,7 @@ void AnimationBase::freezeAtTime(double t)
         onAnimationStartResponse(monotonicallyIncreasingTime());
     }
 
-    ASSERT(m_startTime);        // if m_startTime is zero, we haven't started yet, so we'll get a bad pause time.
+    ASSERT(m_startTime); // If m_startTime is zero, we haven't started yet, so we'll get a bad pause time.
     if (t <= m_animation->delay())
         m_pauseTime = m_startTime;
     else
@@ -702,6 +704,22 @@ double AnimationBase::beginAnimationUpdateTime() const
 
 double AnimationBase::getElapsedTime() const
 {
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger()) {
+        ScrollAnimationTrigger& scrollTrigger = downcast<ScrollAnimationTrigger>(*m_animation->trigger().get());
+        if (scrollTrigger.hasEndValue() && m_object) {
+            float offset = m_compositeAnimation->animationController()->scrollPosition();
+            float startValue = scrollTrigger.startValue().value();
+            if (offset < startValue)
+                return 0;
+            float endValue = scrollTrigger.endValue().value();
+            if (offset > endValue)
+                return m_animation->duration();
+            return m_animation->duration() * (offset - startValue) / (endValue - startValue);
+        }
+    }
+#endif
+
     if (paused())
         return m_pauseTime - m_startTime;
     if (m_startTime <= 0)

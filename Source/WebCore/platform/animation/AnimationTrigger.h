@@ -31,6 +31,7 @@
 #include "Length.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -89,9 +90,9 @@ private:
 
 class ScrollAnimationTrigger : public AnimationTrigger {
 public:
-    static PassRefPtr<ScrollAnimationTrigger> create(Length startValue, Length endValue , bool hasEndValue = false)
+    static PassRefPtr<ScrollAnimationTrigger> create(Length startValue, Length endValue)
     {
-        return adoptRef(new ScrollAnimationTrigger(startValue, endValue, hasEndValue));
+        return adoptRef(new ScrollAnimationTrigger(startValue, endValue));
     }
 
     virtual ~ScrollAnimationTrigger() { }
@@ -121,25 +122,20 @@ public:
         m_endValue = value;
     }
 
-    bool hasEndValue() const { return m_hasEndValue; }
-
-    void setHasEndValue(bool value)
-    {
-        m_hasEndValue = value;
-    }
+    bool hasEndValue() const { return !m_endValue.isAuto() && m_endValue.value() > m_startValue.value(); }
 
 private:
-    explicit ScrollAnimationTrigger(Length startValue, Length endValue, bool hasEndValue)
+    explicit ScrollAnimationTrigger(Length startValue, Length endValue)
         : AnimationTrigger(AnimationTriggerType::ScrollAnimationTriggerType)
         , m_startValue(startValue)
-        , m_endValue(endValue)
-        , m_hasEndValue(hasEndValue)
     {
+        if (!endValue.isAuto() && endValue.value() > startValue.value())
+            m_endValue = endValue;
     }
 
     virtual PassRefPtr<AnimationTrigger> clone() const override
     {
-        return adoptRef(new ScrollAnimationTrigger(m_startValue, m_endValue, m_hasEndValue));
+        return adoptRef(new ScrollAnimationTrigger(m_startValue, m_endValue));
     }
 
     Length m_startValue;
@@ -148,6 +144,14 @@ private:
 };
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_ANIMATION_TRIGGER(ToClassName, TriggerTest) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
+static bool isType(const WebCore::AnimationTrigger& trigger) { return trigger.TriggerTest(); } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_ANIMATION_TRIGGER(AutoAnimationTrigger, isAutoAnimationTrigger);
+SPECIALIZE_TYPE_TRAITS_ANIMATION_TRIGGER(ScrollAnimationTrigger, isScrollAnimationTrigger);
 
 #endif
 

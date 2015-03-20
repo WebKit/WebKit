@@ -1,3 +1,55 @@
+2015-03-19  Dean Jackson  <dino@apple.com>
+
+        CSS Animations with triggers should map scroll position to duration
+        https://bugs.webkit.org/show_bug.cgi?id=142870
+        <rdar://problem/20227244>
+
+        Reviewed by Simon Fraser.
+
+        Expose a prototype implementation of what will eventually be called
+        animation-timebase, mapping the scroll location to the duration of an
+        animation. This only applies if the animation has a start and end
+        trigger.
+
+        Test: animations/trigger-container-scroll-boundaries.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createAnimationTriggerValue): Change to downcast.
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapAnimationTrigger): Fix a bug where I wasn't
+        telling the ScrollAnimationTrigger object whether or not it had
+        an end value. This wasn't visible before because we were not using
+        the end value.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded): Add a comment and
+        change to using a downcast.
+        (WebCore::AnimationBase::timeToNextService): Change to downcast.
+        (WebCore::AnimationBase::freezeAtTime): Whitespace cleanup.
+        (WebCore::AnimationBase::getElapsedTime): Calculate the elapsedTime based
+        on the scroll position relative to the start and end trigger spots.
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateAnimations): Since this
+        can potentially call into beginAnimationUpdateTime, it should have
+        an update blocker. This fixes the assert we were seeing in tests.
+        (WebCore::AnimationControllerPrivate::scrollWasUpdated): Keep track of the scroll
+        position so we don't need to ask for it all the time.
+        * page/animation/AnimationControllerPrivate.h:
+        (WebCore::AnimationControllerPrivate::scrollPosition): New accessor.
+
+        * platform/animation/AnimationTrigger.h: Add downcast macros.
+        (WebCore::ScrollAnimationTrigger::create): Calculate hasEndValue from the passed
+        parameters rather than a separate value.
+        (WebCore::ScrollAnimationTrigger::hasEndValue):
+        (WebCore::ScrollAnimationTrigger::ScrollAnimationTrigger):
+        (WebCore::ScrollAnimationTrigger::setHasEndValue): Deleted.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::animationCanBeAccelerated): If we have an
+        animation of this sort, we can't use a CAAnimation.
+
 2015-03-19  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Move MediaPlaybackTargetPicker

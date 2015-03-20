@@ -600,6 +600,7 @@ webkit.org/b/142731 fast/images/animated-png.html [ Skip ]
 animations/trigger-computed-style.html [ Skip ]
 animations/trigger-parsing.html [ Skip ]
 animations/trigger-container-scroll-simple.html [ Skip ]
+animations/trigger-container-scroll-boundaries.html [ Skip ]
 
 ################################################################################
 ###########    End Missing Functionality Prevents Testing         ##############

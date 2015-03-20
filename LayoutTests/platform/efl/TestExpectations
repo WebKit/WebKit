@@ -66,6 +66,7 @@ css3/scroll-snap [ Skip ]
 animations/trigger-computed-style.html [ Skip ]
 animations/trigger-parsing.html [ Skip ]
 animations/trigger-container-scroll-simple.html [ Skip ]
+animations/trigger-container-scroll-boundaries.html [ Skip ]
 
 # ----------------------------------------
 # Tests which also fail in other platforms

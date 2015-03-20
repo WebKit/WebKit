@@ -1234,12 +1234,11 @@ static Ref<CSSValue> createAnimationTriggerValue(const AnimationTrigger* trigger
 {
     switch (trigger->type()) {
     case AnimationTrigger::AnimationTriggerType::ScrollAnimationTriggerType: {
-        const ScrollAnimationTrigger* scrollAnimationTrigger = static_cast<const ScrollAnimationTrigger*>(trigger);
-        if (scrollAnimationTrigger->endValue().isAuto())
-            return CSSAnimationTriggerScrollValue::create(zoomAdjustedPixelValueForLength(scrollAnimationTrigger->startValue(), style));
-        else
-            return CSSAnimationTriggerScrollValue::create(zoomAdjustedPixelValueForLength(scrollAnimationTrigger->startValue(), style),
-                                                          zoomAdjustedPixelValueForLength(scrollAnimationTrigger->endValue(), style));
+        auto& scrollAnimationTrigger = downcast<ScrollAnimationTrigger>(*trigger);
+        if (scrollAnimationTrigger.endValue().isAuto())
+            return CSSAnimationTriggerScrollValue::create(zoomAdjustedPixelValueForLength(scrollAnimationTrigger.startValue(), style));
+        return CSSAnimationTriggerScrollValue::create(zoomAdjustedPixelValueForLength(scrollAnimationTrigger.startValue(), style),
+                                                      zoomAdjustedPixelValueForLength(scrollAnimationTrigger.endValue(), style));
     }
     default:
         ASSERT(trigger->type() == AnimationTrigger::AnimationTriggerType::AutoAnimationTriggerType);

@@ -111,6 +111,7 @@ bool AnimationControllerPrivate::clear(RenderElement& renderer)
 
 double AnimationControllerPrivate::updateAnimations(SetChanged callSetChanged/* = DoNotCallSetChanged*/)
 {
+    AnimationPrivateUpdateBlock updateBlock(*this);
     double timeToNextService = -1;
     bool calledSetChanged = false;
 
@@ -518,6 +519,8 @@ void AnimationControllerPrivate::animationWillBeRemoved(AnimationBase* animation
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
 void AnimationControllerPrivate::scrollWasUpdated()
 {
+    m_scrollPosition = m_frame.view()->scrollOffsetForFixedPosition().height().toFloat();
+
     updateAnimations(CallSetChanged);
 }
 #endif
