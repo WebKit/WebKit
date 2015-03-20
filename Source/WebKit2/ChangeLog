@@ -1,3 +1,58 @@
+2015-03-19  Jer Noble  <jer.noble@apple.com>
+
+        [WK2][Mac] Fullscreen animations with mismatched aspect ratios are "squished".
+        https://bugs.webkit.org/show_bug.cgi?id=142132
+
+        Reviewed by Tim Horton.
+
+        Use CALayer animations for the transition into and out of fullscreen.
+
+        The fullscreen transition consists of three separate animations:
+        1. An opacity animation for the black backdrop behind the fullscreen content
+        2. A scale/translation animation from fullscreen element's initial screen to its final one.
+        3. A clip animation from the fullscreen element's initial aspect ratio to its final one.
+
+        The opacity animation will apply to the fullscreen window's content view's layer's
+        background color. To separately animate the transform and mask of the web view's content, a
+        layer-backed subview is added to the content view, and the scale/translation & clip
+        animations are applied to its transform property and mask layer respectively.
+
+        Utility methods to create each animation have been added, and each includes a parameter for
+        the direction of the animation, so that the same methods can be used for entering and
+        exiting fullscreen transitions.
+
+        The user-visible changes to this new transition are when the aspect ratios of the initial
+        and final screen locations are different: previously the transition would use a scale
+        transform to "squish" the fullscreen content into the initial aspect ratio. The new
+        transition instead "clips" the fullscreen content to the initial aspect ratio. For common
+        operations such a <video> element with a different aspect ratio than the screen, this makes
+        the black letterbox "grow" during the transition, and makes the transition overall much
+        smoother.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController initWithWindow:webView:]): Create and initialze the clipping view.
+        (-[WKFullScreenWindowController applicationDidChangeScreenParameters:]): _backgroundWindow was removed.
+        (-[WKFullScreenWindowController enterFullScreen:]): Add the webView to the _clipView, not the contentView.
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]): _backgroundWindow,
+                _fadeAnimation, and _scaleAnimation are all removed.
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]): Ditto.
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]): Ditto.  Hide the contentView's
+                layer. Pause visibility updates.
+        (-[WKFullScreenWindowController completeFinishExitFullScreenAnimationAfterRepaint]): Resume visibility updates.
+        (-[WKFullScreenWindowController close]): _fadeAnimation and _scaleAnimation are removed.
+        (-[WKFullScreenWindowController customWindowsToEnterFullScreenForWindow:]): Return only the fullscreen
+                window.
+        (-[WKFullScreenWindowController customWindowsToExitFullScreenForWindow:]): Ditto.
+        (zoomAnimation): Added.
+        (maskAnimation): Added.
+        (fadeAnimation): Added.
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]): Use the utility
+                methods above to set up the animation.
+        (-[WKFullScreenWindowController _startExitFullScreenAnimationWithDuration:]): Ditto.
+        (createBackgroundFullscreenWindow): Deleted.
+        (windowFrameFromApparentFrames): Deleted.
+
 2015-03-19  Enrica Casucci  <enrica@apple.com>
 
         <attachment> should put URLs on the pasteboard so that Finder can accept drops.

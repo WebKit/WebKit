@@ -132,4 +132,18 @@ FloatRect boundsOfRotatingRect(const FloatRect& r)
     return FloatRect(-maxCornerDistance, -maxCornerDistance, 2 * maxCornerDistance, 2 * maxCornerDistance);
 }
 
+FloatRect smallestRectWithAspectRatioAroundRect(float aspectRatio, const FloatRect& srcRect)
+{
+    FloatRect destRect = srcRect;
+
+    if (aspectRatio < srcRect.size().aspectRatio()) {
+        float dy = destRect.width() / aspectRatio - destRect.height();
+        destRect.inflateY(dy / 2);
+    } else {
+        float dx = destRect.height() * aspectRatio - destRect.width();
+        destRect.inflateX(dx / 2);
+    }
+    return destRect;
+}
+
 }

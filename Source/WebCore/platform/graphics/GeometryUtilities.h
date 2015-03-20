@@ -46,6 +46,7 @@ WEBCORE_EXPORT FloatRect unionRect(const Vector<FloatRect>&);
 FloatRect mapRect(const FloatRect&, const FloatRect& srcRect, const FloatRect& destRect);
 
 WEBCORE_EXPORT FloatRect largestRectWithAspectRatioInsideRect(float aspectRatio, const FloatRect&);
+WEBCORE_EXPORT FloatRect smallestRectWithAspectRatioAroundRect(float aspectRatio, const FloatRect&);
 
 // Compute a rect that encloses all points covered by the given rect if it were rotated a full turn around (0,0).
 FloatRect boundsOfRotatingRect(const FloatRect&);

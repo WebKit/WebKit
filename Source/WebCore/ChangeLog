@@ -1,3 +1,16 @@
+2015-03-19  Jer Noble  <jer.noble@apple.com>
+
+        [WK2][Mac] Fullscreen animations with mismatched aspect ratios are "squished".
+        https://bugs.webkit.org/show_bug.cgi?id=142132
+
+        Reviewed by Tim Horton.
+
+        Add a new utility method to calculate a rect with a specific aspect ratio wrapping a smaller one.
+
+        * platform/graphics/GeometryUtilities.cpp:
+        (WebCore::smallestRectWithAspectRatioAroundRect):
+        * platform/graphics/GeometryUtilities.h:
+
 2015-03-19  Chris Dumez  <cdumez@apple.com>
 
         Get rid of "CachePolicyCache" cache policy

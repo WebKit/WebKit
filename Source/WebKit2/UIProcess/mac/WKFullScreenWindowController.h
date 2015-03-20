@@ -39,8 +39,6 @@ class IntRect;
 
 @class WKView;
 @class WebCoreFullScreenPlaceholderView;
-@class WebWindowScaleAnimation;
-@class WebWindowFadeAnimation;
 
 typedef enum FullScreenState : NSInteger FullScreenState;
 
@@ -48,9 +46,7 @@ typedef enum FullScreenState : NSInteger FullScreenState;
 @private
     WKView *_webView; // Cannot be retained, see <rdar://problem/14884666>.
     RetainPtr<WebCoreFullScreenPlaceholderView> _webViewPlaceholder;
-    RetainPtr<WebWindowScaleAnimation> _scaleAnimation;
-    RetainPtr<WebWindowFadeAnimation> _fadeAnimation;
-    RetainPtr<NSWindow> _backgroundWindow;
+    RetainPtr<NSView> _clipView;
     NSRect _initialFrame;
     NSRect _finalFrame;
     RetainPtr<NSTimer> _watchdogTimer;
