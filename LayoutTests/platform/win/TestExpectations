@@ -592,6 +592,7 @@ webkit.org/b/35013 svg/zoom/text/ [ Skip ]
 
 # TODO Attachment elements do not provide a custom renderer
 webkit.org/b/142260 fast/attachment [ Skip ]
+webkit.org/b/142260 editing/pasteboard/drag-and-drop-attachment-contenteditable.html [ Skip ]
 
 # TODO APNG is not supported
 webkit.org/b/142731 fast/images/animated-png.html [ Skip ]
@@ -2305,6 +2306,10 @@ http/tests/xmlhttprequest/web-apps/013.html
 [ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom.html [ Skip ]
 [ Debug ] http/tests/security/listener/xss-window-onclick-shortcut.html [ Skip ]
 [ Debug ] http/tests/local/file-url-sent-as-referer.html [ Skip ]
+
+# Flaky
+http/tests/cache/network-error-during-revalidation.html [ Pass Crash ]
+http/tests/xmlhttprequest/workers/methods.html [ Pass Crash ]
 ################################################################################
 #################            End HTTP Issues             #######################
 ################################################################################
@@ -2344,6 +2349,7 @@ webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertie
 [ Release ] inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure ]
 [ Debug ] inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Skip ] # Debug Assertion
 inspector-protocol/debugger/removeBreakpoint.html [ Skip ] # Crashing
+inspector-protocol/debugger/searchInContent-linebreaks.html [ Pass Crash ] # Flaky
 ################################################################################
 #################        End Inspector Issues               ####################
 ################################################################################
