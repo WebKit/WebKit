@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-struct JSCallbackObjectData : WeakHandleOwner {
+struct JSCallbackObjectData {
     JSCallbackObjectData(void* privateData, JSClassRef jsClass)
         : privateData(privateData)
         , jsClass(jsClass)
@@ -41,7 +41,7 @@ struct JSCallbackObjectData : WeakHandleOwner {
         JSClassRetain(jsClass);
     }
     
-    virtual ~JSCallbackObjectData()
+    ~JSCallbackObjectData()
     {
         JSClassRelease(jsClass);
     }
@@ -109,7 +109,6 @@ struct JSCallbackObjectData : WeakHandleOwner {
         PrivatePropertyMap m_propertyMap;
     };
     std::unique_ptr<JSPrivatePropertyMap> m_privateProperties;
-    virtual void finalize(Handle<Unknown>, void*) override;
 };
 
     
@@ -124,6 +123,8 @@ protected:
 
 public:
     typedef Parent Base;
+
+    ~JSCallbackObject();
 
     static JSCallbackObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, void* data)
     {

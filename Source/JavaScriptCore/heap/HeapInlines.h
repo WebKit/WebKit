@@ -29,6 +29,8 @@
 #include "Heap.h"
 #include "JSCell.h"
 #include "Structure.h"
+#include <type_traits>
+#include <wtf/Assertions.h>
 
 namespace JSC {
 
@@ -237,6 +239,9 @@ inline void* Heap::allocateWithoutDestructor(size_t bytes)
 template<typename ClassType>
 void* Heap::allocateObjectOfType(size_t bytes)
 {
+    // JSCell::classInfo() expects objects allocated with normal destructor to derive from JSDestructibleObject.
+    ASSERT((!ClassType::needsDestruction || ClassType::hasImmortalStructure || std::is_convertible<ClassType, JSDestructibleObject>::value));
+
     if (ClassType::needsDestruction && ClassType::hasImmortalStructure)
         return allocateWithImmortalStructureDestructor(bytes);
     if (ClassType::needsDestruction)
@@ -247,6 +252,9 @@ void* Heap::allocateObjectOfType(size_t bytes)
 template<typename ClassType>
 MarkedSpace::Subspace& Heap::subspaceForObjectOfType()
 {
+    // JSCell::classInfo() expects objects allocated with normal destructor to derive from JSDestructibleObject.
+    ASSERT((!ClassType::needsDestruction || ClassType::hasImmortalStructure || std::is_convertible<ClassType, JSDestructibleObject>::value));
+    
     if (ClassType::needsDestruction && ClassType::hasImmortalStructure)
         return subspaceForObjectsWithImmortalStructure();
     if (ClassType::needsDestruction)
@@ -257,6 +265,9 @@ MarkedSpace::Subspace& Heap::subspaceForObjectOfType()
 template<typename ClassType>
 MarkedAllocator& Heap::allocatorForObjectOfType(size_t bytes)
 {
+    // JSCell::classInfo() expects objects allocated with normal destructor to derive from JSDestructibleObject.
+    ASSERT((!ClassType::needsDestruction || ClassType::hasImmortalStructure || std::is_convertible<ClassType, JSDestructibleObject>::value));
+    
     if (ClassType::needsDestruction && ClassType::hasImmortalStructure)
         return allocatorForObjectWithImmortalStructureDestructor(bytes);
     if (ClassType::needsDestruction)

@@ -1,3 +1,52 @@
+2015-03-19  Mark Lam  <mark.lam@apple.com>
+
+        JSCallbackObject<JSGlobalObject> should not destroy its JSCallbackObjectData before all its finalizers have been called.
+        <https://webkit.org/b/142846>
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, JSCallbackObject<JSGlobalObject> registers weak finalizers via 2 mechanisms:
+        1. JSCallbackObject<Parent>::init() registers a weak finalizer for all JSClassRef
+           that a JSCallbackObject references.
+        2. JSCallbackObject<JSGlobalObject>::create() registers a finalizer via
+           vm.heap.addFinalizer() which destroys the JSCallbackObject.
+
+        The first finalizer is implemented as a virtual function of a JSCallbackObjectData
+        instance that will be destructed if the 2nd finalizer is called.  Hence, if the
+        2nd finalizer if called first, the later invocation of the 1st finalizer will
+        result in a crash.
+
+        This patch fixes the issue by eliminating the finalizer registration in init().
+        Instead, we'll have the JSCallbackObject destructor call all the JSClassRef finalizers
+        if needed.  This ensures that these finalizers are called before the JSCallbackObject
+        is destructor.
+
+        Also added assertions to a few Heap functions because JSCell::classInfo() expects
+        all objects that are allocated from MarkedBlock::Normal blocks to be derived from
+        JSDestructibleObject.  These assertions will help us catch violations of this
+        expectation earlier.
+
+        * API/JSCallbackObject.cpp:
+        (JSC::JSCallbackObjectData::finalize): Deleted.
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObjectData::~JSCallbackObjectData):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::~JSCallbackObject):
+        (JSC::JSCallbackObject<Parent>::init):
+        * API/tests/GlobalContextWithFinalizerTest.cpp: Added.
+        (finalize):
+        (testGlobalContextWithFinalizer):
+        * API/tests/GlobalContextWithFinalizerTest.h: Added.
+        * API/tests/testapi.c:
+        (main):
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj:
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/HeapInlines.h:
+        (JSC::Heap::allocateObjectOfType):
+        (JSC::Heap::subspaceForObjectOfType):
+        (JSC::Heap::allocatorForObjectOfType):
+
 2015-03-19  Andreas Kling  <akling@apple.com>
 
         JSCallee unnecessarily overrides a bunch of things in the method table.
