@@ -76,6 +76,10 @@ if (ENABLE_X11_TARGET)
     endif ()
 endif ()
 
+if (ENABLE_WAYLAND_TARGET)
+    find_package(Wayland REQUIRED)
+endif ()
+
 WEBKIT_OPTION_BEGIN()
 WEBKIT_OPTION_DEFINE(ENABLE_PLUGIN_PROCESS_GTK2 "Whether to build WebKitPluginProcess2 to load GTK2 based plugins." ON)
 WEBKIT_OPTION_DEFINE(ENABLE_MINIBROWSER "Whether to enable MiniBrowser compilation." OFF)

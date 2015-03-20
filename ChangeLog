@@ -1,3 +1,15 @@
+2015-03-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Search for the Wayland dependency when enabling Wayland target
+        https://bugs.webkit.org/show_bug.cgi?id=142876
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake: The Wayland dependency isn't a public
+        requirement of either the GTK+ or GDK pkg-config files, so we have to
+        search for it ourselves when WebKitGTK+ has been configured to support
+        the Wayland windowing target.
+
 2015-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.7.92 release.
