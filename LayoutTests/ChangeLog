@@ -1,3 +1,24 @@
+2015-03-20  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] svg/text/non-bmp-positioning-lists.svg fails when MS Office is installed
+        https://bugs.webkit.org/show_bug.cgi?id=142861
+
+        Reviewed by Tim Horton.
+
+        Converted into a reftest. It would be nice to make tests not depend on installed
+        fonts in general, but that doesn't seem very feasible (rdar://problem/20000350).
+
+        * platform/efl/svg/text/non-bmp-positioning-lists-expected.png: Removed.
+        * platform/efl/svg/text/non-bmp-positioning-lists-expected.txt: Removed.
+        * platform/gtk/svg/text/non-bmp-positioning-lists-expected.png: Removed.
+        * platform/gtk/svg/text/non-bmp-positioning-lists-expected.txt: Removed.
+        * platform/ios-sim-deprecated/svg/text/non-bmp-positioning-lists-expected.txt: Removed.
+        * platform/ios-simulator/svg/text/non-bmp-positioning-lists-expected.txt: Removed.
+        * platform/mac/svg/text/non-bmp-positioning-lists-expected.png: Removed.
+        * platform/mac/svg/text/non-bmp-positioning-lists-expected.txt: Removed.
+        * platform/win/svg/text/non-bmp-positioning-lists-expected.txt: Removed.
+        * svg/text/non-bmp-positioning-lists-expected.svg: Added.
+
 2015-03-20  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Unreviewed EFL gardening. Update attachment-foo tests to failure. 
