@@ -4,7 +4,7 @@ To run this test manually, load it in the browser then load the WebInspector and
 
 Profile title: Dead time in profile.
 Thread_1 (no file) (line 0:0)
-   onload dead-time.html (line 21:45)
+   onload dead-time.html (line 20:52)
       startTest dead-time.html (line 13:1)
          setTimeout (no file) (line 0:0)
    (program) dead-time.html (line 1:1)

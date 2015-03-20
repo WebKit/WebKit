@@ -4,7 +4,7 @@ To run this test manually, load it in the browser then load the WebInspector and
 
 Profile title: Stop profiling from a timeout
 Thread_1 (no file) (line 0:0)
-   onload stop-profiling-after-setTimeout.html (line 21:45)
+   onload stop-profiling-after-setTimeout.html (line 20:52)
       startTest stop-profiling-after-setTimeout.html (line 13:1)
          setTimeout (no file) (line 0:0)
    (program) stop-profiling-after-setTimeout.html (line 1:1)

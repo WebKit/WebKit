@@ -625,7 +625,6 @@ public:
     const Identifier& inferredName() { return m_unlinkedExecutable->inferredName(); }
     JSString* nameValue() const { return m_unlinkedExecutable->nameValue(); }
     size_t parameterCount() const { return m_unlinkedExecutable->parameterCount(); } // Excluding 'this'!
-    String paramString() const;
     SymbolTable* symbolTable(CodeSpecializationKind);
 
     void clearCodeIfNotCompiling();

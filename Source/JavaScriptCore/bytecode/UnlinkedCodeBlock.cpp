@@ -200,18 +200,6 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(
     return result;
 }
 
-String UnlinkedFunctionExecutable::paramString() const
-{
-    FunctionParameters& parameters = *m_parameters;
-    StringBuilder builder;
-    for (size_t pos = 0; pos < parameters.size(); ++pos) {
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        parameters.at(pos)->toString(builder);
-    }
-    return builder.toString();
-}
-
 UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType codeType, const ExecutableInfo& info)
     : Base(*vm, structure)
     , m_numVars(0)

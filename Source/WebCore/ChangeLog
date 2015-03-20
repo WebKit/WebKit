@@ -1,3 +1,19 @@
+2015-03-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Function.prototype.toString should not decompile the AST
+        https://bugs.webkit.org/show_bug.cgi?id=142853
+
+        Reviewed by Sam Weinig.
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction): Adjust the line
+        number of attribute event listeners to account for the leading newline
+        now added by JavaScriptCore.
+
+        This solution is not perfect, but there are a lot of pre-existing problems
+        with line and column reporting for attribute event listeners, and this
+        preserves existing behavior with reasonable reliability.
+
 2015-03-20  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.

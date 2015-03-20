@@ -1,3 +1,84 @@
+2015-03-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Function.prototype.toString should not decompile the AST
+        https://bugs.webkit.org/show_bug.cgi?id=142853
+
+        Reviewed by Sam Weinig.
+
+        To recover the function parameter string, Function.prototype.toString
+        decompiles the function parameters from the AST. This is bad for a few
+        reasons:
+
+        (1) It requires us to keep pieces of the AST live forever. This is an
+        awkward design and a waste of memory.
+
+        (2) It doesn't match Firefox or Chrome (because it changes whitespace
+        and ES6 destructuring expressions).
+
+        (3) It doesn't scale to ES6 default argument parameters, which require
+        arbitrarily complex decompilation.
+
+        (4) It can counterfeit all the line numbers in a function (because
+        whitespace can include newlines).
+
+        (5) It's expensive, and we've seen cases where websites invoke
+        Function.prototype.toString a lot by accident.
+
+        The fix is to do what we do for the rest of the function: Just quote the
+        original source text.
+
+        Since this change inevitably changes some function stringification, I
+        took the opportunity to make our stringification match Firefox's and
+        Chrome's.
+
+        * API/tests/testapi.c:
+        (assertEqualsAsUTF8String): Be more informative when this fails.
+
+        (main): Updated to match new stringification rules.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::paramString): Deleted. Yay!
+        * bytecode/UnlinkedCodeBlock.h:
+
+        * parser/Nodes.h:
+        (JSC::StatementNode::isFuncDeclNode): New helper for constructing
+        anonymous functions.
+
+        * parser/SourceCode.h:
+        (JSC::SourceCode::SourceCode): Allow zero because WebCore wants it.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode): Updated for use
+        of function declaration over function expression.
+
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::paramString): Deleted. Yay!
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::parameterCount):
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck): Added a newline after
+        the opening brace to match Firefox and Chrome, and a space after the comma
+        to match Firefox and WebKit coding style. Added the function name to
+        the text of the function so it would look right when stringify-ing. Switched
+        from parentheses to braces to produce a function declaration instead of
+        a function expression because we are required to exclude the function's
+        name from its scope, and that's what a function declaration does.
+
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString): Removed an old workaround because the
+        library it worked around doesn't really exist anymore, and the behavior
+        doesn't match Firefox or Chrome. Use type profiling offsets instead of
+        function body offsets because we want to include the function name and
+        the parameter string, rather than stitching them in manually by
+        decompiling the AST.
+
+        (JSC::insertSemicolonIfNeeded): Deleted.
+
+        * tests/mozilla/js1_2/function/tostring-1.js:
+        * tests/mozilla/js1_5/Scope/regress-185485.js:
+        (with.g): Updated these test results for formatting changes.
+
 2015-03-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         SyntaxChecker assertion is trapped with computed property name and getter

@@ -1,3 +1,84 @@
+2015-03-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Function.prototype.toString should not decompile the AST
+        https://bugs.webkit.org/show_bug.cgi?id=142853
+
+        Reviewed by Sam Weinig.
+
+        Updated test results to match new rules for Function.prototype.toString.
+
+        * fast/dom/TreeWalker/acceptNode-filter-expected.txt: Removed a space
+        because it was not in the original source.
+
+        * fast/events/window-onerror2-expected.txt: Column number changed because
+        the event listener body starts on its own line now. This was a bit wrong
+        before and is still a bit wrong now in a different way.
+
+        * fast/profiler/dead-time-expected.txt:
+        * fast/profiler/inline-event-handler-expected.txt:
+        * fast/profiler/stop-profiling-after-setTimeout-expected.txt: Line number
+        changed because WebCore shifts line nubmers on attribute event listeners
+        by one.
+
+        * js/class-syntax-default-constructor-expected.txt: Constructor name 
+        is not present now because it is not present in the source text. This
+        test failed before and it still fails now in a slightly different way.
+
+        * js/destructuring-assignment-expected.txt: Destructuring arguments now
+        match their source text faithfully.
+
+        * js/dfg-redundant-load-of-captured-variable-proven-constant-expected.txt:
+        Removed a space because it was not present in the original source text.
+
+        * js/dfg-resolve-global-specific-dictionary-expected.txt: Ditto.
+
+        * js/function-toString-semicolon-insertion-expected.txt: Removed.
+        * js/script-tests/function-toString-semicolon-insertion.js: Removed.
+        * js/function-toString-semicolon-insertion.html: Removed. This test checked
+        for a work-around that I have removed.
+
+        * js/object-literal-computed-methods-expected.txt:
+        * js/object-literal-methods-expected.txt: These tests fail because object
+        literal methods do not register their function names appropriately. This
+        was a pre-existing failure that is now more explicit.
+
+        * js/dom/JSON-parse-expected.txt:
+        * js/dom/JSON-stringify-expected.txt: Whitespace removed because it was
+        not present in the original.
+
+        * js/dom/dfg-strcat-over-objects-then-exit-on-it-expected.txt: Ditto.
+
+        * js/dom/function-prototype-expected.txt:
+        * js/dom/function-prototype.html: Ditto.
+
+        * js/dom/parse-error-external-script-in-new-Function-expected.txt: Line
+        changed by one due to new extra newline.
+
+        * js/dom/script-start-end-locations-expected.txt: Lines and columns
+        changed due to new extra newline.
+
+        * js/dom/toString-and-valueOf-override-expected.txt: Whitespace removed
+        because it was not present in the original.
+
+        * js/dom/script-tests/dfg-strcat-over-objects-then-exit-on-it.js: Ditto.
+
+        * js/kde/lval-exceptions-expected.txt: Ditto.
+
+        * js/script-tests/dfg-redundant-load-of-captured-variable-proven-constant.js: Ditto.
+
+        * js/script-tests/dfg-resolve-global-specific-dictionary.js: Ditto.
+
+        * platform/mac/http/tests/media/media-source/mediasource-sourcebuffer-mode-expected.txt: Ditto.
+
+        * storage/domstorage/localstorage/string-conversion-expected.txt: Ditto.
+
+        * storage/domstorage/sessionstorage/string-conversion-expected.txt: Ditto.
+
+        * userscripts/window-onerror-for-isolated-world-1-expected.txt:
+        * userscripts/window-onerror-for-isolated-world-2-expected.txt: Line numbers
+        changed because of new anonymous function formatting. These line numbers
+        were wrong before and they are still wrong now.
+
 2015-03-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Add some skips to support EWS use.

@@ -131,8 +131,6 @@ public:
     unsigned typeProfilingStartOffset() const { return m_typeProfilingStartOffset; }
     unsigned typeProfilingEndOffset() const { return m_typeProfilingEndOffset; }
 
-    String paramString() const;
-
     UnlinkedFunctionCodeBlock* codeBlockFor(
         VM&, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, 
         ParserError&);

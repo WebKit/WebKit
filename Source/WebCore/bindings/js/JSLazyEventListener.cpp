@@ -103,7 +103,16 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
     args.append(jsNontrivialString(exec, m_eventParameterName));
     args.append(jsStringWithCache(exec, m_code));
 
-    JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(exec, exec->lexicalGlobalObject(), args, Identifier(exec, m_functionName), m_sourceURL, m_position); // FIXME: is globalExec ok?
+    // Move our text position backward one line. Creating an anonymous function
+    // will add a line for a function declaration, but we want our line number
+    // to match up with where the attribute was declared.
+    TextPosition position(
+        OrdinalNumber::fromOneBasedInt(
+            m_position.m_line.oneBasedInt() - 1), m_position.m_column);
+    JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(
+        exec, exec->lexicalGlobalObject(), args, Identifier(exec, m_functionName), 
+        m_sourceURL, position);
+
     if (exec->hadException()) {
         reportCurrentException(exec);
         exec->clearException();

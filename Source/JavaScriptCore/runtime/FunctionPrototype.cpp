@@ -79,24 +79,6 @@ CallType FunctionPrototype::getCallData(JSCell*, CallData& callData)
     return CallTypeHost;
 }
 
-// Functions
-
-// Compatibility hack for the Optimost JavaScript library. (See <rdar://problem/6595040>.)
-static inline void insertSemicolonIfNeeded(String& functionBody)
-{
-    ASSERT(functionBody[0] == '{');
-    ASSERT(functionBody[functionBody.length() - 1] == '}');
-
-    for (size_t i = functionBody.length() - 2; i > 0; --i) {
-        UChar ch = functionBody[i];
-        if (!Lexer<UChar>::isWhiteSpace(ch) && !Lexer<UChar>::isLineTerminator(ch)) {
-            if (ch != ';' && ch != '}')
-                functionBody = makeString(functionBody.substringSharingImpl(0, i + 1), ';', functionBody.substringSharingImpl(i + 1, functionBody.length() - (i + 1)));
-            return;
-        }
-    }
-}
-
 EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
@@ -104,10 +86,12 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         JSFunction* function = jsCast<JSFunction*>(thisValue);
         if (function->isHostOrBuiltinFunction())
             return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "() {\n    [native code]\n}"));
+
         FunctionExecutable* executable = function->jsExecutable();
-        String sourceString = executable->source().toString();
-        insertSemicolonIfNeeded(sourceString);
-        return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "(", executable->paramString(), ") ", sourceString));
+        String source = executable->source().provider()->getRange(
+            executable->typeProfilingStartOffset(),
+            executable->typeProfilingEndOffset() + 1); // Type profiling end offset is the character before the '}'.
+        return JSValue::encode(jsMakeNontrivialString(exec, source));
     }
 
     if (thisValue.inherits(InternalFunction::info())) {

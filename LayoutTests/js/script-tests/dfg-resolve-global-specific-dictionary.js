@@ -8,7 +8,7 @@ function foo() {
 
 x = function() { };
 
-var expected = "\"function () { }\"";
+var expected = "\"function() { }\"";
 
 for (var i = 0; i < 1000; ++i) {
     eval("i" + i + " = " + i);

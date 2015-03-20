@@ -65,7 +65,7 @@ function simplify(str)
 
     t5 = new TestFunction( "anonymous", "", tab+"return \"hello!\";" );
 
-    var f = new Function( "return \"hello!\"");
+    var f = new Function( "return \"hello!\";");
 
     testcases[tc++] = new TestCase( SECTION,
                                     "stub.toString()",

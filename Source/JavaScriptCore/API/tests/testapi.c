@@ -84,11 +84,13 @@ static void assertEqualsAsUTF8String(JSValueRef value, const char* expectedValue
     size_t jsSize = JSStringGetMaximumUTF8CStringSize(valueAsString);
     char* jsBuffer = (char*)malloc(jsSize);
     JSStringGetUTF8CString(valueAsString, jsBuffer, jsSize);
-    
+
     unsigned i;
     for (i = 0; jsBuffer[i]; i++) {
         if (jsBuffer[i] != expectedValue[i]) {
             fprintf(stderr, "assertEqualsAsUTF8String failed at character %d: %c(%d) != %c(%d)\n", i, jsBuffer[i], jsBuffer[i], expectedValue[i], expectedValue[i]);
+            fprintf(stderr, "value: %s\n", jsBuffer);
+            fprintf(stderr, "expectedValue: %s\n", expectedValue);
             failed = 1;
         }
     }
@@ -1590,7 +1592,7 @@ int main(int argc, char* argv[])
     ASSERT(!JSObjectMakeFunction(context, NULL, 0, NULL, functionBody, NULL, 1, &exception));
     ASSERT(JSValueIsObject(context, exception));
     v = JSObjectGetProperty(context, JSValueToObject(context, exception, NULL), line, NULL);
-    assertEqualsAsNumber(v, 1);
+    assertEqualsAsNumber(v, 2);
     JSStringRelease(functionBody);
     JSStringRelease(line);
 
@@ -1600,7 +1602,7 @@ int main(int argc, char* argv[])
     ASSERT(!JSObjectMakeFunction(context, NULL, 0, NULL, functionBody, NULL, -42, &exception));
     ASSERT(JSValueIsObject(context, exception));
     v = JSObjectGetProperty(context, JSValueToObject(context, exception, NULL), line, NULL);
-    assertEqualsAsNumber(v, 1);
+    assertEqualsAsNumber(v, 2);
     JSStringRelease(functionBody);
     JSStringRelease(line);
 
@@ -1610,7 +1612,7 @@ int main(int argc, char* argv[])
     ASSERT(!JSObjectMakeFunction(context, NULL, 0, NULL, functionBody, NULL, 1, &exception));
     ASSERT(JSValueIsObject(context, exception));
     v = JSObjectGetProperty(context, JSValueToObject(context, exception, NULL), line, NULL);
-    assertEqualsAsNumber(v, 2);
+    assertEqualsAsNumber(v, 3);
     JSStringRelease(functionBody);
     JSStringRelease(line);
 
@@ -1644,7 +1646,7 @@ int main(int argc, char* argv[])
     JSStringRelease(functionBody);
     
     string = JSValueToStringCopy(context, function, NULL);
-    assertEqualsAsUTF8String(JSValueMakeString(context, string), "function foo(foo) { return foo;\n}");
+    assertEqualsAsUTF8String(JSValueMakeString(context, string), "function foo(foo) {\nreturn foo;\n}");
     JSStringRelease(string);
 
     JSStringRef print = JSStringCreateWithUTF8CString("print");

@@ -2,13 +2,13 @@ Test that window.onerror and "error" event listeners from main world are invoked
 
 Main world window.onerror: Error: Error in main world inline script. at window-onerror-for-isolated-world-1.html:55
 Main world error event listener: Error: Error in main world inline script. at window-onerror-for-isolated-world-1.html:55
-Main world window.onerror: Error: Error in user script inline script. at undefined:11
-Main world error event listener: Error: Error in user script inline script. at undefined:11
+Main world window.onerror: Error: Error in user script inline script. at undefined:12
+Main world error event listener: Error: Error in user script inline script. at undefined:12
 Main world window.onerror: Error: Error in main world load handler. at window-onerror-for-isolated-world-1.html:51
 Main world error event listener: Error: Error in main world load handler. at window-onerror-for-isolated-world-1.html:51
-Main world window.onerror: Error: Error in user script load handler. at undefined:7
-Main world error event listener: Error: Error in user script load handler. at undefined:7
+Main world window.onerror: Error: Error in user script load handler. at undefined:8
+Main world error event listener: Error: Error in user script load handler. at undefined:8
 Main world window.onerror: Error: Error in main world setTimeout callback. at window-onerror-for-isolated-world-1.html:49
 Main world error event listener: Error: Error in main world setTimeout callback. at window-onerror-for-isolated-world-1.html:49
-Main world window.onerror: Error: Error in user script setTimeout callback. at undefined:5
-Main world error event listener: Error: Error in user script setTimeout callback. at undefined:5
+Main world window.onerror: Error: Error in user script setTimeout callback. at undefined:6
+Main world error event listener: Error: Error in user script setTimeout callback. at undefined:6

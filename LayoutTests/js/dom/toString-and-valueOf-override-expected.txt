@@ -15,7 +15,7 @@ span : valueOf
 [span] : toString
 String(span) : toString
 String([span]) : toString
-span.toString : function () { return "toString"; }
+span.toString : function() { return "toString" }
 span.toString() (cached in variable) : toString
 span.toString() : toString
 [span].toString() : toString
@@ -27,7 +27,7 @@ span : valueOf
 [span] : valueOf
 String(span) : valueOf
 String([span]) : valueOf
-span.toString : function () { return new Object(); }
+span.toString : function() { return new Object(); }
 span.toString() (cached in variable) : [object Object]
 span.toString() : [object Object]
 [span].toString() : valueOf
@@ -39,7 +39,7 @@ span : toString
 [span] : toString
 String(span) : toString
 String([span]) : toString
-span.toString : function () { return 'toString'; }
+span.toString : function() { return 'toString'; }
 span.toString() (cached in variable) : toString
 span.toString() : toString
 [span].toString() : toString
@@ -51,7 +51,7 @@ TypeError: No default value
 TypeError: No default value
 TypeError: No default value
 TypeError: No default value
-span.toString : function () { return new Object(); }
+span.toString : function() { return new Object(); }
 span.toString() (cached in variable) : [object Object]
 span.toString() : [object Object]
 TypeError: No default value
@@ -63,7 +63,7 @@ span : valueOf
 Exception
 Exception
 Exception
-span.toString : function () { throw "Exception"; }
+span.toString : function() { throw "Exception"; }
 Exception
 Exception
 Exception
@@ -75,7 +75,7 @@ Exception
 [span] : toString
 String(span) : toString
 String([span]) : toString
-span.toString : function () { return 'toString'; }
+span.toString : function() { return 'toString'; }
 span.toString() (cached in variable) : toString
 span.toString() : toString
 [span].toString() : toString
@@ -87,7 +87,7 @@ Exception
 Exception
 Exception
 Exception
-span.toString : function () { throw "Exception"; }
+span.toString : function() { throw "Exception"; }
 Exception
 Exception
 Exception
@@ -112,7 +112,7 @@ window : valueOf
 [window] : toString
 String(window) : toString
 String([window]) : toString
-window.toString : function () { return "toString"; }
+window.toString : function() { return "toString" }
 window.toString() (cached in variable) : toString
 window.toString() : toString
 [window].toString() : toString
@@ -124,7 +124,7 @@ window : valueOf
 [window] : valueOf
 String(window) : valueOf
 String([window]) : valueOf
-window.toString : function () { return new Object(); }
+window.toString : function() { return new Object(); }
 window.toString() (cached in variable) : [object Object]
 window.toString() : [object Object]
 [window].toString() : valueOf
@@ -136,7 +136,7 @@ window : toString
 [window] : toString
 String(window) : toString
 String([window]) : toString
-window.toString : function () { return 'toString'; }
+window.toString : function() { return 'toString'; }
 window.toString() (cached in variable) : toString
 window.toString() : toString
 [window].toString() : toString
@@ -148,7 +148,7 @@ TypeError: No default value
 TypeError: No default value
 TypeError: No default value
 TypeError: No default value
-window.toString : function () { return new Object(); }
+window.toString : function() { return new Object(); }
 window.toString() (cached in variable) : [object Object]
 window.toString() : [object Object]
 TypeError: No default value
@@ -160,7 +160,7 @@ window : valueOf
 Exception
 Exception
 Exception
-window.toString : function () { throw "Exception"; }
+window.toString : function() { throw "Exception"; }
 Exception
 Exception
 Exception
@@ -172,7 +172,7 @@ Exception
 [window] : toString
 String(window) : toString
 String([window]) : toString
-window.toString : function () { return 'toString'; }
+window.toString : function() { return 'toString'; }
 window.toString() (cached in variable) : toString
 window.toString() : toString
 [window].toString() : toString
@@ -184,7 +184,7 @@ Exception
 Exception
 Exception
 Exception
-window.toString : function () { throw "Exception"; }
+window.toString : function() { throw "Exception"; }
 Exception
 Exception
 Exception
@@ -209,7 +209,7 @@ Navigator : valueOf
 [Navigator] : toString
 String(Navigator) : toString
 String([Navigator]) : toString
-Navigator.toString : function () { return "toString"; }
+Navigator.toString : function() { return "toString" }
 Navigator.toString() (cached in variable) : toString
 Navigator.toString() : toString
 [Navigator].toString() : toString
@@ -221,7 +221,7 @@ Navigator : valueOf
 [Navigator] : valueOf
 String(Navigator) : valueOf
 String([Navigator]) : valueOf
-Navigator.toString : function () { return new Object(); }
+Navigator.toString : function() { return new Object(); }
 Navigator.toString() (cached in variable) : [object Object]
 Navigator.toString() : [object Object]
 [Navigator].toString() : valueOf
@@ -233,7 +233,7 @@ Navigator : toString
 [Navigator] : toString
 String(Navigator) : toString
 String([Navigator]) : toString
-Navigator.toString : function () { return 'toString'; }
+Navigator.toString : function() { return 'toString'; }
 Navigator.toString() (cached in variable) : toString
 Navigator.toString() : toString
 [Navigator].toString() : toString
@@ -245,7 +245,7 @@ TypeError: No default value
 TypeError: No default value
 TypeError: No default value
 TypeError: No default value
-Navigator.toString : function () { return new Object(); }
+Navigator.toString : function() { return new Object(); }
 Navigator.toString() (cached in variable) : [object Object]
 Navigator.toString() : [object Object]
 TypeError: No default value
@@ -257,7 +257,7 @@ Navigator : valueOf
 Exception
 Exception
 Exception
-Navigator.toString : function () { throw "Exception"; }
+Navigator.toString : function() { throw "Exception"; }
 Exception
 Exception
 Exception
@@ -269,7 +269,7 @@ Exception
 [Navigator] : toString
 String(Navigator) : toString
 String([Navigator]) : toString
-Navigator.toString : function () { return 'toString'; }
+Navigator.toString : function() { return 'toString'; }
 Navigator.toString() (cached in variable) : toString
 Navigator.toString() : toString
 [Navigator].toString() : toString
@@ -281,7 +281,7 @@ Exception
 Exception
 Exception
 Exception
-Navigator.toString : function () { throw "Exception"; }
+Navigator.toString : function() { throw "Exception"; }
 Exception
 Exception
 Exception
@@ -306,7 +306,7 @@ History : valueOf
 [History] : toString
 String(History) : toString
 String([History]) : toString
-History.toString : function () { return "toString"; }
+History.toString : function() { return "toString" }
 History.toString() (cached in variable) : toString
 History.toString() : toString
 [History].toString() : toString
@@ -318,7 +318,7 @@ History : valueOf
 [History] : valueOf
 String(History) : valueOf
 String([History]) : valueOf
-History.toString : function () { return new Object(); }
+History.toString : function() { return new Object(); }
 History.toString() (cached in variable) : [object Object]
 History.toString() : [object Object]
 [History].toString() : valueOf
@@ -330,7 +330,7 @@ History : toString
 [History] : toString
 String(History) : toString
 String([History]) : toString
-History.toString : function () { return 'toString'; }
+History.toString : function() { return 'toString'; }
 History.toString() (cached in variable) : toString
 History.toString() : toString
 [History].toString() : toString
@@ -342,7 +342,7 @@ TypeError: No default value
 TypeError: No default value
 TypeError: No default value
 TypeError: No default value
-History.toString : function () { return new Object(); }
+History.toString : function() { return new Object(); }
 History.toString() (cached in variable) : [object Object]
 History.toString() : [object Object]
 TypeError: No default value
@@ -354,7 +354,7 @@ History : valueOf
 Exception
 Exception
 Exception
-History.toString : function () { throw "Exception"; }
+History.toString : function() { throw "Exception"; }
 Exception
 Exception
 Exception
@@ -366,7 +366,7 @@ Exception
 [History] : toString
 String(History) : toString
 String([History]) : toString
-History.toString : function () { return 'toString'; }
+History.toString : function() { return 'toString'; }
 History.toString() (cached in variable) : toString
 History.toString() : toString
 [History].toString() : toString
@@ -378,7 +378,7 @@ Exception
 Exception
 Exception
 Exception
-History.toString : function () { throw "Exception"; }
+History.toString : function() { throw "Exception"; }
 Exception
 Exception
 Exception
@@ -403,7 +403,7 @@ Selection : valueOf
 [Selection] : toString
 String(Selection) : toString
 String([Selection]) : toString
-Selection.toString : function () { return "toString"; }
+Selection.toString : function() { return "toString" }
 Selection.toString() (cached in variable) : toString
 Selection.toString() : toString
 [Selection].toString() : toString
@@ -415,7 +415,7 @@ Selection : valueOf
 [Selection] : valueOf
 String(Selection) : valueOf
 String([Selection]) : valueOf
-Selection.toString : function () { return new Object(); }
+Selection.toString : function() { return new Object(); }
 Selection.toString() (cached in variable) : [object Object]
 Selection.toString() : [object Object]
 [Selection].toString() : valueOf
@@ -427,7 +427,7 @@ Selection : toString
 [Selection] : toString
 String(Selection) : toString
 String([Selection]) : toString
-Selection.toString : function () { return 'toString'; }
+Selection.toString : function() { return 'toString'; }
 Selection.toString() (cached in variable) : toString
 Selection.toString() : toString
 [Selection].toString() : toString
@@ -439,7 +439,7 @@ TypeError: No default value
 TypeError: No default value
 TypeError: No default value
 TypeError: No default value
-Selection.toString : function () { return new Object(); }
+Selection.toString : function() { return new Object(); }
 Selection.toString() (cached in variable) : [object Object]
 Selection.toString() : [object Object]
 TypeError: No default value
@@ -451,7 +451,7 @@ Selection : valueOf
 Exception
 Exception
 Exception
-Selection.toString : function () { throw "Exception"; }
+Selection.toString : function() { throw "Exception"; }
 Exception
 Exception
 Exception
@@ -463,7 +463,7 @@ Exception
 [Selection] : toString
 String(Selection) : toString
 String([Selection]) : toString
-Selection.toString : function () { return 'toString'; }
+Selection.toString : function() { return 'toString'; }
 Selection.toString() (cached in variable) : toString
 Selection.toString() : toString
 [Selection].toString() : toString
@@ -475,7 +475,7 @@ Exception
 Exception
 Exception
 Exception
-Selection.toString : function () { throw "Exception"; }
+Selection.toString : function() { throw "Exception"; }
 Exception
 Exception
 Exception

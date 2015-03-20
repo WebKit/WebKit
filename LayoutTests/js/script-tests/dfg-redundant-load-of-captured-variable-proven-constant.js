@@ -18,8 +18,8 @@ var o = {f:function() { return 32; }};
 for (var i = 0; i < 100; ++i) {
     var expected;
     if (i % 2)
-        expected = "\"function () { return x; }\"";
+        expected = "\"function() { return x; }\"";
     else
-        expected = "\"function () { return 32; },function () { return 32; }\"";
+        expected = "\"function() { return 32; },function() { return 32; }\"";
     shouldBe("\"\" + foo(o, i % 2)", expected);
 }

@@ -63,8 +63,8 @@ namespace JSC {
             : m_provider(provider)
             , m_startChar(0)
             , m_endChar(m_provider->source().length())
-            , m_firstLine(std::max(firstLine, 1))
-            , m_startColumn(std::max(startColumn, 1))
+            , m_firstLine(std::max(firstLine, 0))
+            , m_startColumn(std::max(startColumn, 0))
         {
         }
 
@@ -72,8 +72,8 @@ namespace JSC {
             : m_provider(provider)
             , m_startChar(start)
             , m_endChar(end)
-            , m_firstLine(std::max(firstLine, 1))
-            , m_startColumn(std::max(startColumn, 1))
+            , m_firstLine(std::max(firstLine, 0))
+            , m_startColumn(std::max(startColumn, 0))
         {
         }
 
