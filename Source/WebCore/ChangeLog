@@ -1,3 +1,23 @@
+2015-03-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Log the slow-scrolling reasons (if any) on first commit of a ScrollingTreeFrameScrollingNodeMac
+        https://bugs.webkit.org/show_bug.cgi?id=142917
+
+        Reviewed by Beth Dakin.
+        
+        The scrollperf test would fail to detect transitions between slow and fast scrolling
+        for new pages, because there was no logging when slow-scrolling scrolling tree was
+        torn down, and a new fast-scrolling tree constructed.
+        
+        Fix by always logging the slow-scrolling reasons in the first update of the
+        ScrollingTreeFrameScrollingNodeMac, even when the slow-scrolling reasons haven't
+        changed.
+
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren):
+
 2015-03-19  Geoffrey Garen  <ggaren@apple.com>
 
         Function.prototype.toString should not decompile the AST

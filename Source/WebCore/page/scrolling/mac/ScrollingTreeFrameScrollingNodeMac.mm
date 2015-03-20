@@ -61,6 +61,7 @@ ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac(Scrolling
     , m_verticalScrollbarPainter(0)
     , m_horizontalScrollbarPainter(0)
     , m_lastScrollHadUnfilledPixels(false)
+    , m_hadFirstUpdate(false)
 {
 }
 
@@ -111,6 +112,7 @@ void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingSta
         m_horizontalScrollbarPainter = scrollingStateNode.horizontalScrollbarPainter();
     }
 
+    bool logScrollingMode = !m_hadFirstUpdate;
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::ReasonsForSynchronousScrolling)) {
         if (shouldUpdateScrollLayerPositionSynchronously()) {
             // We're transitioning to the slow "update scroll layer position on the main thread" mode.
@@ -123,6 +125,10 @@ void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingSta
             }
         }
 
+        logScrollingMode = true;
+    }
+
+    if (logScrollingMode) {
         if (scrollingTree().scrollingPerformanceLoggingEnabled())
             logThreadedScrollingMode(synchronousScrollingReasons());
     }
@@ -139,6 +145,8 @@ void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingSta
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::VerticalSnapOffsets))
         m_scrollController.updateScrollSnapPoints(ScrollEventAxis::Vertical, convertToLayoutUnits(scrollingStateNode.verticalSnapOffsets()));
 #endif
+
+    m_hadFirstUpdate = true;
 }
 
 void ScrollingTreeFrameScrollingNodeMac::updateAfterChildren(const ScrollingStateNode& stateNode)

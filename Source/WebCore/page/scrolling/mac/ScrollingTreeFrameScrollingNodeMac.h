@@ -100,6 +100,7 @@ private:
     RetainPtr<ScrollbarPainter> m_horizontalScrollbarPainter;
     FloatPoint m_probableMainThreadScrollPosition;
     bool m_lastScrollHadUnfilledPixels;
+    bool m_hadFirstUpdate;
 };
 
 } // namespace WebCore
