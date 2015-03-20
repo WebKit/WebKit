@@ -169,11 +169,6 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         this._implicitSuffix = "";
         this._forced = false;
 
-        if (this._completionDelayTimeout) {
-            clearTimeout(this._completionDelayTimeout);
-            delete this._completionDelayTimeout;
-        }
-
         delete this._currentCompletion;
         delete this._ignoreNextCursorActivity;
     },
@@ -441,11 +436,6 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         if (this._codeMirror.somethingSelected()) {
             this.hideCompletions();
             return;
-        }
-
-        if (this._completionDelayTimeout) {
-            clearTimeout(this._completionDelayTimeout);
-            delete this._completionDelayTimeout;
         }
 
         this._removeCompletionHint(true, true);
@@ -787,15 +777,7 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         if (change.origin === "+delete" && !this._hasPendingCompletion())
             return;
 
-        if (this._completionDelayTimeout) {
-            clearTimeout(this._completionDelayTimeout);
-            delete this._completionDelayTimeout;
-        }
-
-        if (this._hasPendingCompletion())
-            this._completeAtCurrentPosition(false);
-        else
-            this._completionDelayTimeout = setTimeout(this._completeAtCurrentPosition.bind(this, false), WebInspector.CodeMirrorCompletionController.CompletionTypingDelay);
+        this._completeAtCurrentPosition(false);
     },
 
     _handleCursorActivity: function(codeMirror)
