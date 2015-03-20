@@ -3035,6 +3035,7 @@ webkit.org/b/139968 fast/regions/overflow/overflow-first-and-last-regions.html [
 contentfiltering [ Skip ]
 
 # The following are flaky on EWS bots. Revisit after next Windows update
+[ Release ] animations/trigger-container-scroll-empty.html [ Pass Failure ]
 [ Release ] css3/filters/filtered-compositing-descendant.html [ Pass Failure ]
 [ Release ] fast/images/animated-gif-iframe-webkit-transform.html [ Skip ] # Timeout
 [ Release ] fast/images/animated-gif-restored-from-bfcache.html [ Skip ] # Timeout
@@ -3046,3 +3047,13 @@ contentfiltering [ Skip ]
 [ Release ] fast/regions/repaint/region-painting-in-composited-view.html [ Pass ImageOnlyFailure ]
 [ Release ] fast/repaint/animation-after-layer-scroll.html [ Pass Failure ]
 [ Release ] fast/text/international/float-as-only-child-of-isolate-crash.html [ Pass Failure ]
+[ Release ] js/slow-stress/emscripten-memops.html [ Pass Failure ]
+[ Release ] js/slow-stress/fold-strict-eq.html [ Skip ] # Crashes on EWS
+[ Release ] inspector-protocol/layers/layers-anonymous.html [ Skip ] # Timeouts
+[ Release ] inspector-protocol/layers/layers-blending-compositing-reasons.html [ Skip ] # Timeouts
+[ Release ] inspector-protocol/layers/layers-compositing-reasons.html [ Skip ] # Timeouts
+[ Release ] inspector-protocol/layers/layers-for-node.html [ Skip ] # Timeouts
+[ Release ] inspector-protocol/layers/layers-generated-content.html  [ Skip ] # Timeouts
+
+
+
