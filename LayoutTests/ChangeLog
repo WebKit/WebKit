@@ -1,3 +1,9 @@
+2015-03-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Add some skips to support EWS use.
+
+        * platform/win/TestExpectations:
+
 2015-03-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         SyntaxChecker assertion is trapped with computed property name and getter
