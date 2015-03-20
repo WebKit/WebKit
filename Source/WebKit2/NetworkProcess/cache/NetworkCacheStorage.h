@@ -103,12 +103,16 @@ private:
     WorkQueue& backgroundIOQueue() { return m_backgroundIOQueue.get(); }
     WorkQueue& serialBackgroundIOQueue() { return m_serialBackgroundIOQueue.get(); }
 
+    bool cacheMayContain(unsigned shortHash) { return !m_hasPopulatedContentsFilter || m_contentsFilter.mayContain(shortHash); }
+
     const String m_baseDirectoryPath;
     const String m_directoryPath;
 
     size_t m_maximumSize { std::numeric_limits<size_t>::max() };
 
     BloomFilter<20> m_contentsFilter;
+    std::atomic<bool> m_hasPopulatedContentsFilter { false };
+
     std::atomic<size_t> m_approximateSize { 0 };
     std::atomic<bool> m_shrinkInProgress { false };
 

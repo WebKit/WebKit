@@ -1,5 +1,35 @@
 2015-03-20  Chris Dumez  <cdumez@apple.com>
 
+        [WK2] NetworkCache retrievals sometimes fail on browser startup
+        https://bugs.webkit.org/show_bug.cgi?id=142925
+        <rdar://problem/20245368>
+
+        Reviewed by Antti Koivisto.
+
+        NetworkCache retrievals sometimes fail on browser startup for resources
+        that are actually cached. The reason is that we are using a bloom filter
+        for performance reasons to avoid unnecessary disk I/O and this bloom
+        filter is populated on start up in a background thread by traversing the
+        cache files on disk. However, when restoring the tabs on start-up we
+        sometimes query this bloom filter before it is completely populated and
+        we thus fail to retrieve cached entries because we think they don't
+        exist and don't check the disk.
+
+        This patch adds an "isPopulatingContentsFilter" flag that is turned ON
+        on start up while we are populating the bloon filter. We then bypass
+        the bloom filter and send queries directly to disk on start up if this
+        flag is ON.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::initialize):
+        (WebKit::NetworkCache::Storage::retrieve):
+        (WebKit::NetworkCache::Storage::dispatchPendingWriteOperations):
+        (WebKit::NetworkCache::Storage::dispatchHeaderWriteOperation):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::cacheMayContain):
+
+2015-03-20  Chris Dumez  <cdumez@apple.com>
+
         [WK2] Allow stale content when restoring the browser's session state
         https://bugs.webkit.org/show_bug.cgi?id=142916
         <rdar://problem/20243493>
