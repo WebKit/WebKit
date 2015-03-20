@@ -1,3 +1,15 @@
+2015-03-20  Beth Dakin  <bdakin@apple.com>
+
+        [Immediate Actions] Should re-enable immediate actions for iBooks
+        https://bugs.webkit.org/show_bug.cgi?id=142915
+        -and corresponding-
+        rdar://problem/19585689
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+
 2015-03-20  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.
