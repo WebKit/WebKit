@@ -1,3 +1,9 @@
+2015-03-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Temporarily turn of EWS Windows tests while I debug the test failure.
+
+        * Scripts/webkitpy/common/config/ews.json:
+
 2015-03-20  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][jhbuild] Fix flakey failures due to unstable googlecode repository
