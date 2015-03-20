@@ -36,7 +36,7 @@
 #include "ScrollTypes.h"
 #include "UserScriptTypes.h"
 #include <memory>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(IOS)
 #include "ViewportArguments.h"
@@ -113,7 +113,7 @@ namespace WebCore {
     };
     typedef unsigned LayerTreeFlags;
 
-    class Frame : public RefCounted<Frame> {
+    class Frame : public ThreadSafeRefCounted<Frame> {
     public:
         WEBCORE_EXPORT static Ref<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
 

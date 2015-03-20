@@ -33,12 +33,13 @@
 
 namespace WebCore {
 
+class DocumentLoader;
 class ResourceResponse;
 
 class ContentFilter final : public PlatformContentFilter {
 public:
     template <typename T> static void addType() { types().append(type<T>()); }
-    static std::unique_ptr<ContentFilter> createIfNeeded(const ResourceResponse&);
+    static std::unique_ptr<ContentFilter> createIfNeeded(const ResourceResponse&, DocumentLoader&);
 
     void addData(const char* data, int length) override;
     void finishedAddingData() override;
@@ -56,10 +57,11 @@ private:
     WEBCORE_EXPORT static Vector<Type>& types();
 
     using Container = Vector<std::unique_ptr<PlatformContentFilter>>;
-    friend std::unique_ptr<ContentFilter> std::make_unique<ContentFilter>(Container&&);
-    explicit ContentFilter(Container);
+    friend std::unique_ptr<ContentFilter> std::make_unique<ContentFilter>(Container&&, DocumentLoader&);
+    explicit ContentFilter(Container, DocumentLoader&);
 
     Container m_contentFilters;
+    DocumentLoader& m_documentLoader;
 };
 
 template <typename T>

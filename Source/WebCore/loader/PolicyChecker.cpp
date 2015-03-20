@@ -56,6 +56,13 @@ PolicyChecker::PolicyChecker(Frame& frame)
 {
 }
 
+void PolicyChecker::prepareForLoadStart()
+{
+#if ENABLE(CONTENT_FILTERING)
+    m_contentFilterUnblockHandler = { };
+#endif
+}
+
 void PolicyChecker::checkNavigationPolicy(const ResourceRequest& newRequest, NavigationPolicyDecisionFunction function)
 {
     checkNavigationPolicy(newRequest, m_frame.loader().activeDocumentLoader(), nullptr, WTF::move(function));
@@ -102,6 +109,17 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, Docume
     if (!request.isNull() && request.url().protocolIs(QLPreviewProtocol())) {
         continueAfterNavigationPolicy(PolicyUse);
         return;
+    }
+#endif
+
+#if ENABLE(CONTENT_FILTERING)
+    if (m_contentFilterUnblockHandler.canHandleRequest(request)) {
+        RefPtr<Frame> frame { &m_frame };
+        m_contentFilterUnblockHandler.requestUnblockAsync([frame](bool unblocked) {
+            if (unblocked)
+                frame->loader().reload();
+        });
+        continueAfterNavigationPolicy(PolicyIgnore);
     }
 #endif
 

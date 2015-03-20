@@ -1,3 +1,99 @@
+2015-03-19  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Add tests for unblock requests
+        https://bugs.webkit.org/show_bug.cgi?id=142900
+
+        Reviewed by Andreas Kling.
+
+        Currently the iOS Parental Controls content filter has a mechanism for requesting that a page be unblocked.
+        WebKit implements this by listening for navigations originating from the filter's error page to a special URL,
+        and requesting the page be unblocked via platform API, which might cause UI to be displayed. If the unblock is
+        successful then we schedule a reload of the frame in order to display the unblocked document.
+
+        NetworkExtension also supports unblock requests, so in preparation for adopting its API, this patch allows
+        content filters to specify their own unblock request method, teaches MockContentFilter to provide such a method,
+        and writes tests to cover both allowed and denied unblock requests.
+
+        The content filter that blocks a load creates a ContentFilterUnblockHandler, passing it a lambda that is executed
+        when a navigation matches the filter's special unblock URL. Filters can also specify that a script be executed in
+        the context of its error page if the unblock is denied.
+
+        All platform content filters can handle unblock requests like this with the exception of iOS Parental Controls in WebKit2.
+        Since UI can be displayed by the system in this case, the request must be made from within the UI process. Therefore the
+        existing method is retained of serializing a WebFilterEvaluator and intercepting navigation policy calls in the UI process.
+
+        Tests: contentfiltering/allow-after-unblock-request.html
+               contentfiltering/block-after-unblock-request.html
+
+        * bindings/js/JSMockContentFilterSettingsCustom.cpp:
+        (WebCore::JSMockContentFilterSettings::decisionPoint): Added some using statements for clarity.
+        (WebCore::JSMockContentFilterSettings::setDecisionPoint): Ditto.
+        (WebCore::toJSValue): Returns a JSValue from a Decision.
+        (WebCore::toDecision): Returns a Decision from a JSValue.
+        (WebCore::JSMockContentFilterSettings::decision): Used toJSValue.
+        (WebCore::JSMockContentFilterSettings::setDecision): Used toDecision.
+        (WebCore::JSMockContentFilterSettings::unblockRequestDecision): Used toJSValue.
+        (WebCore::JSMockContentFilterSettings::setUnblockRequestDecision): Used toDecision.
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::createIfNeeded): Passed a reference to the owning DocumentLoader.
+        (WebCore::ContentFilter::ContentFilter): Ditto.
+        (WebCore::ContentFilter::unblockHandler): If the unblockHandler requests that a script be executed when an
+        unblock request is denied, create a wrapper unblockHandler that executes that script in m_documentLoader's frame.
+        * loader/ContentFilter.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived): Passed this to ContentFilter::createIfNeeded.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::prepareForLoadStart): Called PolicyChecker::prepareForLoadStart.
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::prepareForLoadStart): Reset m_contentFilterUnblockHandler.
+        (WebCore::PolicyChecker::checkNavigationPolicy): Moved logic to here from WebKit1's WebFrameLoaderClient.
+        Placing it here allows it to be shared between WebKit1 and WebKit2 (when the unblock handler does not need to
+        be called in the UI process).
+        * loader/PolicyChecker.h:
+        (WebCore::PolicyChecker::setContentFilterUnblockHandler): Added.
+        * page/Frame.h: Made Frame ThreadSafeRefCounted, since RefPtr<Frames> are captured in lambdas that can be
+        copied by background threads managed by the underlying platform.
+        * platform/ContentFilterUnblockHandler.h:
+        (WebCore::ContentFilterUnblockHandler::unblockURLScheme): Returned the Apple content filter scheme.
+        (WebCore::ContentFilterUnblockHandler::unblockURLHost): Returned the unblock URL host.
+        (WebCore::ContentFilterUnblockHandler::clear): Deleted.
+        * platform/PlatformContentFilter.h:
+        (WebCore::PlatformContentFilter::unblockRequestDeniedScript): Returned the unblock request denied script.
+        * platform/cocoa/ContentFilterUnblockHandlerCocoa.mm:
+        (WebCore::ContentFilterUnblockHandler::ContentFilterUnblockHandler): Added a constructor that takes an
+        unblockURLHost and a UnblockRequesterFunction. Added an alternate constructor for iOS Parental Controls on
+        WebKit2 that takes an unblockURLHost and a WebFilterEvaluator.
+        (WebCore::ContentFilterUnblockHandler::needsUIProcess): Returned true if m_webFilterEvaluator is non-null.
+        (WebCore::ContentFilterUnblockHandler::encode): Encoded m_unblockURLHost in addition to m_webFilterEvaluator.
+        (WebCore::ContentFilterUnblockHandler::decode): Decoded m_unblockURLHost in addition to m_webFilterEvaluator.
+        (WebCore::ContentFilterUnblockHandler::canHandleRequest): Returned true if there is a either a m_unblockRequester
+        or a m_webFilterEvaluator and the request's host and scheme match those of the unblock request URL.
+        (WebCore::dispatchToMainThread): Added a helper to dispatch a block to the main thread. Then if the web thread
+        is enabled on iOS, dispatch it there.
+        (WebCore::ContentFilterUnblockHandler::requestUnblockAsync): Renamed from handleUnblockRequestAndDispatchIfSuccessful.
+        Requested an unblock using either m_unblockRequester or m_webFilterEvaluator, then called decisionHandler with the response.
+        (WebCore::scheme): Moved to ContentFilterUnblockHandler::unblockURLScheme.
+        (WebCore::ContentFilterUnblockHandler::handleUnblockRequestAndDispatchIfSuccessful): Renamed to requestUnblockAsync.
+        * platform/cocoa/ParentalControlsContentFilter.mm:
+        (WebCore::ParentalControlsContentFilter::unblockHandler): Returned an unblock handler using the WebFilterEvaluator constructor.
+        * testing/MockContentFilter.cpp: Added using statments for clarity.
+        (WebCore::settings): Added a helper to get MockContentFilterSettings::singleton().
+        (WebCore::MockContentFilter::canHandleResponse): Used the helper.
+        (WebCore::MockContentFilter::MockContentFilter): Took advantage of the using statements.
+        (WebCore::MockContentFilter::addData): Ditto.
+        (WebCore::MockContentFilter::finishedAddingData): Ditto.
+        (WebCore::MockContentFilter::unblockHandler): Returned a ContentFilterUnblockHandler that checks settings() for its decision.
+        (WebCore::MockContentFilter::unblockRequestDeniedScript): Returned the script to execute in MockContentFilter's
+        error page when an unblock request is denied.
+        (WebCore::MockContentFilter::maybeDetermineStatus): Took advantage of settings() and using statements.
+        * testing/MockContentFilterSettings.cpp:
+        (WebCore::MockContentFilterSettings::unblockRequestURL): Constructed a static unblock URL and returned it.
+        * testing/MockContentFilterSettings.h:
+        (WebCore::MockContentFilterSettings::unblockURLHost): Returned the filter's unblock URL host.
+        (WebCore::MockContentFilterSettings::unblockRequestDecision): Returns the decision to make for an unblock request.
+        (WebCore::MockContentFilterSettings::setUnblockRequestDecision): Sets the decision to make for an unblock request.
+        * testing/MockContentFilterSettings.idl: Added the unblockRequestDecision and unblockRequestURL attributes.
+
 2015-03-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash due to empty drag image during drag-and-drop

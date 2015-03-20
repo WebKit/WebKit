@@ -28,9 +28,14 @@
 
 #if ENABLE(CONTENT_FILTERING)
 
+#include "DocumentLoader.h"
+#include "Frame.h"
 #include "NetworkExtensionContentFilter.h"
 #include "ParentalControlsContentFilter.h"
+#include "ScriptController.h"
+#include <bindings/ScriptValue.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -47,7 +52,7 @@ Vector<ContentFilter::Type>& ContentFilter::types()
     return types;
 }
 
-std::unique_ptr<ContentFilter> ContentFilter::createIfNeeded(const ResourceResponse& response)
+std::unique_ptr<ContentFilter> ContentFilter::createIfNeeded(const ResourceResponse& response, DocumentLoader& documentLoader)
 {
     Container filters;
     for (auto& type : types()) {
@@ -58,11 +63,12 @@ std::unique_ptr<ContentFilter> ContentFilter::createIfNeeded(const ResourceRespo
     if (filters.isEmpty())
         return nullptr;
 
-    return std::make_unique<ContentFilter>(WTF::move(filters));
+    return std::make_unique<ContentFilter>(WTF::move(filters), documentLoader);
 }
 
-ContentFilter::ContentFilter(Container contentFilters)
+ContentFilter::ContentFilter(Container contentFilters, DocumentLoader& documentLoader)
     : m_contentFilters { WTF::move(contentFilters) }
+    , m_documentLoader { documentLoader }
 {
     ASSERT(!m_contentFilters.isEmpty());
 }
@@ -121,13 +127,32 @@ ContentFilterUnblockHandler ContentFilter::unblockHandler() const
 {
     ASSERT(didBlockData());
 
+    PlatformContentFilter* blockingFilter = nullptr;
     for (auto& contentFilter : m_contentFilters) {
-        if (contentFilter->didBlockData())
-            return contentFilter->unblockHandler();
+        if (contentFilter->didBlockData()) {
+            blockingFilter = contentFilter.get();
+            break;
+        }
     }
+    ASSERT(blockingFilter);
 
-    ASSERT_NOT_REACHED();
-    return { };
+    StringCapture unblockRequestDeniedScript { blockingFilter->unblockRequestDeniedScript() };
+    if (unblockRequestDeniedScript.string().isEmpty())
+        return blockingFilter->unblockHandler();
+
+    // It would be a layering violation for the unblock handler to access its frame,
+    // so we will execute the unblock denied script on its behalf.
+    ContentFilterUnblockHandler unblockHandler { blockingFilter->unblockHandler() };
+    RefPtr<Frame> frame { m_documentLoader.frame() };
+    return ContentFilterUnblockHandler {
+        unblockHandler.unblockURLHost(), [unblockHandler, frame, unblockRequestDeniedScript](ContentFilterUnblockHandler::DecisionHandlerFunction decisionHandler) {
+            unblockHandler.requestUnblockAsync([decisionHandler, frame, unblockRequestDeniedScript](bool unblocked) {
+                decisionHandler(unblocked);
+                if (!unblocked && frame)
+                    frame->script().executeScript(unblockRequestDeniedScript.string());
+            });
+        }
+    };
 }
 
 } // namespace WebCore

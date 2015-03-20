@@ -93,7 +93,11 @@ const char* ParentalControlsContentFilter::getReplacementData(int& length) const
 
 ContentFilterUnblockHandler ParentalControlsContentFilter::unblockHandler() const
 {
-    return ContentFilterUnblockHandler { m_webFilterEvaluator.get() };
+#if PLATFORM(IOS)
+    return ContentFilterUnblockHandler { "unblock", m_webFilterEvaluator };
+#else
+    return { };
+#endif
 }
 
 } // namespace WebCore

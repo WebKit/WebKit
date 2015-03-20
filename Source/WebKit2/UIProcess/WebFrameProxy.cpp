@@ -128,7 +128,7 @@ void WebFrameProxy::didStartProvisionalLoad(const String& url)
 {
     m_frameLoadState.didStartProvisionalLoad(url);
 #if ENABLE(CONTENT_FILTERING)
-    m_contentFilterUnblockHandler.clear();
+    m_contentFilterUnblockHandler = { };
 #endif
 }
 
@@ -234,16 +234,18 @@ void WebFrameProxy::setUnreachableURL(const String& unreachableURL)
 }
 
 #if ENABLE(CONTENT_FILTERING)
-bool WebFrameProxy::contentFilterDidHandleNavigationAction(const WebCore::ResourceRequest& request)
+bool WebFrameProxy::didHandleContentFilterUnblockNavigation(const WebCore::ResourceRequest& request)
 {
-#if PLATFORM(IOS)
-    RefPtr<WebPageProxy> retainedPage = m_page;
-    return m_contentFilterUnblockHandler.handleUnblockRequestAndDispatchIfSuccessful(request, [retainedPage] {
-        retainedPage->reload(false);
+    if (!m_contentFilterUnblockHandler.canHandleRequest(request))
+        return false;
+
+    RefPtr<WebPageProxy> page { m_page };
+    ASSERT(page);
+    m_contentFilterUnblockHandler.requestUnblockAsync([page](bool unblocked) {
+        if (unblocked)
+            page->reload(false);
     });
-#else
-    return false;
-#endif
+    return true;
 }
 #endif
 

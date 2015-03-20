@@ -1,3 +1,26 @@
+2015-03-19  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Add tests for unblock requests
+        https://bugs.webkit.org/show_bug.cgi?id=142900
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::contentFilterDidBlockLoadForFrame): Called WebFrameProxy::contentFilterDidBlockLoad.
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didStartProvisionalLoad): Assigned a default-constructed ContentFilterUnblockHandler instead of calling clear().
+        (WebKit::WebFrameProxy::didHandleContentFilterUnblockNavigation): Renamed from contentFilterDidHandleNavigationAction.
+        Updated to use ContentFilterUnblockHandler's new API.
+        (WebKit::WebFrameProxy::contentFilterDidHandleNavigationAction): Deleted.
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::contentFilterDidBlockLoad): Renamed from setContentFilterUnblockHandler.
+        (WebKit::WebFrameProxy::setContentFilterUnblockHandler): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction): Called WebFrameProxy::didHandleContentFilterUnblockNavigation.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::contentFilterDidBlockLoad): If the unblock handler needs the UI process,
+        send WebPageProxy::ContentFilterDidBlockLoadForFrame. Oterwise, call PolicyChecker::setContentFilterUnblockHandler.
+
 2015-03-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Properly guard X11-specific code in BackingStore::createBackend()

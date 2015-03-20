@@ -32,8 +32,8 @@
 namespace WebCore {
 
 class MockContentFilterSettings {
-    WTF_MAKE_FAST_ALLOCATED;
     friend class NeverDestroyed<MockContentFilterSettings>;
+
 public:
     enum class DecisionPoint {
         AfterResponse,
@@ -48,6 +48,7 @@ public:
 
     static MockContentFilterSettings& singleton();
     static void reset();
+    static const char* unblockURLHost() { return "mock-unblock"; }
 
     // Trick the generated bindings into thinking we're RefCounted.
     void ref() { }
@@ -65,6 +66,11 @@ public:
     Decision decision() const { return m_decision; }
     void setDecision(Decision decision) { m_decision = decision; }
 
+    Decision unblockRequestDecision() const { return m_unblockRequestDecision; }
+    void setUnblockRequestDecision(Decision unblockRequestDecision) { m_unblockRequestDecision = unblockRequestDecision; }
+
+    const String& unblockRequestURL() const;
+
 private:
     MockContentFilterSettings() = default;
     MockContentFilterSettings(const MockContentFilterSettings&) = delete;
@@ -73,6 +79,7 @@ private:
     bool m_enabled { false };
     DecisionPoint m_decisionPoint { DecisionPoint::AfterResponse };
     Decision m_decision { Decision::Allow };
+    Decision m_unblockRequestDecision { Decision::Block };
     String m_blockedString;
 };
 

@@ -1,3 +1,17 @@
+2015-03-19  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Add tests for unblock requests
+        https://bugs.webkit.org/show_bug.cgi?id=142900
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidStartProvisionalLoad): This now happens in PolicyChecker.
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Ditto.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _contentFilterDidHandleNavigationAction:]): Deleted.
+        * WebView/WebFrameInternal.h: Removed contentFilterUnblockHandler from WebFramePrivate.
+
 2015-03-19  Enrica Casucci  <enrica@apple.com>
 
         <attachment> should put URLs on the pasteboard so that Finder can accept drops.

@@ -48,6 +48,7 @@ public:
     virtual bool didBlockData() const = 0;
     virtual const char* getReplacementData(int& length) const = 0;
     virtual ContentFilterUnblockHandler unblockHandler() const = 0;
+    virtual String unblockRequestDeniedScript() const { return emptyString(); }
 };
 
 } // namespace WebCore

@@ -30,10 +30,13 @@
 
 #include <functional>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
-OBJC_CLASS NSKeyedArchiver;
-OBJC_CLASS NSKeyedUnarchiver;
+OBJC_CLASS NSCoder;
+
+#if PLATFORM(IOS)
 OBJC_CLASS WebFilterEvaluator;
+#endif
 
 namespace WebCore {
 
@@ -41,19 +44,31 @@ class ResourceRequest;
 
 class ContentFilterUnblockHandler {
 public:
+    using DecisionHandlerFunction = std::function<void(bool unblocked)>;
+    using UnblockRequesterFunction = std::function<void(DecisionHandlerFunction)>;
+
+    static const char* unblockURLScheme() { return "x-apple-content-filter"; }
+
     ContentFilterUnblockHandler() = default;
-    explicit ContentFilterUnblockHandler(WebFilterEvaluator *evaluator) : m_webFilterEvaluator { evaluator } { }
-
-    void clear() { m_webFilterEvaluator = nullptr; }
-    WEBCORE_EXPORT void encode(NSKeyedArchiver *) const;
-    WEBCORE_EXPORT static bool decode(NSKeyedUnarchiver *, ContentFilterUnblockHandler&);
-
+    WEBCORE_EXPORT ContentFilterUnblockHandler(String unblockURLHost, UnblockRequesterFunction);
 #if PLATFORM(IOS)
-    WEBCORE_EXPORT bool handleUnblockRequestAndDispatchIfSuccessful(const ResourceRequest&, std::function<void()>);
+    ContentFilterUnblockHandler(String unblockURLHost, RetainPtr<WebFilterEvaluator>);
 #endif
 
+    WEBCORE_EXPORT bool needsUIProcess() const;
+    WEBCORE_EXPORT void encode(NSCoder *) const;
+    WEBCORE_EXPORT static bool decode(NSCoder *, ContentFilterUnblockHandler&);
+    WEBCORE_EXPORT bool canHandleRequest(const ResourceRequest&) const;
+    WEBCORE_EXPORT void requestUnblockAsync(DecisionHandlerFunction) const;
+
+    const String& unblockURLHost() const { return m_unblockURLHost; }
+
 private:
+    String m_unblockURLHost;
+    UnblockRequesterFunction m_unblockRequester;
+#if PLATFORM(IOS)
     RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
+#endif
 };
 
 } // namespace WebCore

@@ -3092,7 +3092,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint64_t na
     }
 
 #if ENABLE(CONTENT_FILTERING)
-    if (frame->contentFilterDidHandleNavigationAction(request)) {
+    if (frame->didHandleContentFilterUnblockNavigation(request)) {
         receivedPolicyAction = true;
         policyAction = PolicyIgnore;
         return;

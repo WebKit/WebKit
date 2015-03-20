@@ -663,7 +663,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
-    m_contentFilter = ContentFilter::createIfNeeded(response);
+    m_contentFilter = ContentFilter::createIfNeeded(response, *this);
 #endif
 
     frameLoader()->policyChecker().checkContentPolicy(m_response, [this](PolicyAction policy) {

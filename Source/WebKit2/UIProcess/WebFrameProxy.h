@@ -123,8 +123,8 @@ public:
     WebFormSubmissionListenerProxy& setUpFormSubmissionListenerProxy(uint64_t listenerID);
 
 #if ENABLE(CONTENT_FILTERING)
-    void setContentFilterUnblockHandler(WebCore::ContentFilterUnblockHandler contentFilterUnblockHandler) { m_contentFilterUnblockHandler = WTF::move(contentFilterUnblockHandler); }
-    bool contentFilterDidHandleNavigationAction(const WebCore::ResourceRequest&);
+    void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler contentFilterUnblockHandler) { m_contentFilterUnblockHandler = WTF::move(contentFilterUnblockHandler); }
+    bool didHandleContentFilterUnblockNavigation(const WebCore::ResourceRequest&);
 #endif
 
 private:

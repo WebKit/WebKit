@@ -28,6 +28,8 @@
 
 #if ENABLE(CONTENT_FILTERING)
 
+#include "ContentFilterUnblockHandler.h"
+#include <mutex>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -41,6 +43,18 @@ MockContentFilterSettings& MockContentFilterSettings::singleton()
 void MockContentFilterSettings::reset()
 {
     singleton() = MockContentFilterSettings();
+}
+
+const String& MockContentFilterSettings::unblockRequestURL() const
+{
+    static LazyNeverDestroyed<String> unblockRequestURL;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        unblockRequestURL.construct(ContentFilterUnblockHandler::unblockURLScheme());
+        unblockRequestURL.get().append("://");
+        unblockRequestURL.get().append(unblockURLHost());
+    });
+    return unblockRequestURL;
 }
 
 }; // namespace WebCore

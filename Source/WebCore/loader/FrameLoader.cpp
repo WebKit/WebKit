@@ -1124,6 +1124,7 @@ void FrameLoader::started()
 
 void FrameLoader::prepareForLoadStart()
 {
+    policyChecker().prepareForLoadStart();
     m_progressTracker->progressStarted();
     m_client.dispatchDidStartProvisionalLoad();
 

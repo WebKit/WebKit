@@ -39,4 +39,7 @@
     const octet DECISION_ALLOW = 0;
     const octet DECISION_BLOCK = 1;
     [Custom] attribute octet decision;
+    [Custom] attribute octet unblockRequestDecision;
+
+    readonly attribute DOMString unblockRequestURL;
 };

@@ -1,5 +1,24 @@
 2015-03-19  Andy Estes  <aestes@apple.com>
 
+        [Content Filtering] Add tests for unblock requests
+        https://bugs.webkit.org/show_bug.cgi?id=142900
+
+        Reviewed by Andreas Kling.
+
+        Taught contentfiltering.js how to perform an unblock request test, and added tests for both allowed and blocked requests.
+
+        * contentfiltering/allow-after-unblock-request-expected.html: Added.
+        * contentfiltering/allow-after-unblock-request.html: Added.
+        * contentfiltering/block-after-unblock-request-expected.html: Added.
+        * contentfiltering/block-after-unblock-request.html: Added.
+        * contentfiltering/resources/contentfiltering.js:
+        (testContentFiltering): Added an argument specifying if the decision applies to the initial load or the unblock request.
+        (_doTest): When testing unblock handling, navigate the test iframe to settings.unblockRequestURL when the error page is displayed.
+        If the unblock is denied, the test harness will call window.unblockRequestDenied(). If the unblock is successful,
+        the iframe will reload, which we detect by listening for its load event.
+
+2015-03-19  Andy Estes  <aestes@apple.com>
+
         [Content Filtering] Give contentfiltering tests a JavaScript harness
         https://bugs.webkit.org/show_bug.cgi?id=142899
 

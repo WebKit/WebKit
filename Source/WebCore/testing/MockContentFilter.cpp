@@ -34,6 +34,9 @@
 
 namespace WebCore {
 
+using Decision = MockContentFilterSettings::Decision;
+using DecisionPoint = MockContentFilterSettings::DecisionPoint;
+
 void MockContentFilter::ensureInstalled()
 {
     static std::once_flag onceFlag;
@@ -42,9 +45,14 @@ void MockContentFilter::ensureInstalled()
     });
 }
 
+static inline MockContentFilterSettings& settings()
+{
+    return MockContentFilterSettings::singleton();
+}
+
 bool MockContentFilter::canHandleResponse(const ResourceResponse&)
 {
-    return MockContentFilterSettings::singleton().enabled();
+    return settings().enabled();
 }
 
 std::unique_ptr<MockContentFilter> MockContentFilter::create(const ResourceResponse& response)
@@ -54,18 +62,18 @@ std::unique_ptr<MockContentFilter> MockContentFilter::create(const ResourceRespo
 
 MockContentFilter::MockContentFilter(const ResourceResponse&)
 {
-    maybeDetermineStatus(MockContentFilterSettings::DecisionPoint::AfterResponse);
+    maybeDetermineStatus(DecisionPoint::AfterResponse);
 }
 
 void MockContentFilter::addData(const char* data, int length)
 {
     m_replacementData.append(data, length);
-    maybeDetermineStatus(MockContentFilterSettings::DecisionPoint::AfterAddData);
+    maybeDetermineStatus(DecisionPoint::AfterAddData);
 }
 
 void MockContentFilter::finishedAddingData()
 {
-    maybeDetermineStatus(MockContentFilterSettings::DecisionPoint::AfterFinishedAddingData);
+    maybeDetermineStatus(DecisionPoint::AfterFinishedAddingData);
 }
 
 bool MockContentFilter::needsMoreData() const
@@ -86,20 +94,34 @@ const char* MockContentFilter::getReplacementData(int& length) const
 
 ContentFilterUnblockHandler MockContentFilter::unblockHandler() const
 {
-    return { };
+    using DecisionHandlerFunction = ContentFilterUnblockHandler::DecisionHandlerFunction;
+
+    return ContentFilterUnblockHandler {
+        MockContentFilterSettings::unblockURLHost(), [](DecisionHandlerFunction decisionHandler) {
+            bool shouldAllow { settings().unblockRequestDecision() == Decision::Allow };
+            if (shouldAllow)
+                settings().setDecision(Decision::Allow);
+            decisionHandler(shouldAllow);
+        }
+    };
 }
 
-void MockContentFilter::maybeDetermineStatus(MockContentFilterSettings::DecisionPoint decisionPoint)
+String MockContentFilter::unblockRequestDeniedScript() const
 {
-    if (m_status != Status::NeedsMoreData || decisionPoint != MockContentFilterSettings::singleton().decisionPoint())
+    return ASCIILiteral("unblockRequestDenied()");
+}
+
+void MockContentFilter::maybeDetermineStatus(DecisionPoint decisionPoint)
+{
+    if (m_status != Status::NeedsMoreData || decisionPoint != settings().decisionPoint())
         return;
 
-    m_status = MockContentFilterSettings::singleton().decision() == MockContentFilterSettings::Decision::Allow ? Status::Allowed : Status::Blocked;
+    m_status = settings().decision() == Decision::Allow ? Status::Allowed : Status::Blocked;
     if (m_status != Status::Blocked)
         return;
 
     m_replacementData.clear();
-    const CString utf8BlockedString = MockContentFilterSettings::singleton().blockedString().utf8();
+    const CString utf8BlockedString = settings().blockedString().utf8();
     m_replacementData.append(utf8BlockedString.data(), utf8BlockedString.length());
 }
 

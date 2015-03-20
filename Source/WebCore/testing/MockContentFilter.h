@@ -45,6 +45,7 @@ public:
     bool didBlockData() const override;
     const char* getReplacementData(int& length) const override;
     ContentFilterUnblockHandler unblockHandler() const override;
+    String unblockRequestDeniedScript() const override;
 
 private:
     enum class Status {

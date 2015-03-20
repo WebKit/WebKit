@@ -1002,20 +1002,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     _private->coreFrame->loader().documentLoader()->commitData((const char *)[data bytes], [data length]);
 }
 
-- (BOOL)_contentFilterDidHandleNavigationAction:(const WebCore::ResourceRequest &)request
-{
-#if PLATFORM(IOS)
-    RetainPtr<WebFrame> retainedMainFrame = [[self webView] mainFrame];
-    return _private->contentFilterUnblockHandler.handleUnblockRequestAndDispatchIfSuccessful(request, [retainedMainFrame] {
-        WebThreadRun(^ {
-            [retainedMainFrame reload];
-        });
-    });
-#else
-    return NO;
-#endif
-}
-
 @end
 
 @implementation WebFrame (WebPrivate)

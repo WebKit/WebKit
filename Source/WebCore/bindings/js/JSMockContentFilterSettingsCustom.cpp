@@ -35,6 +35,9 @@ using namespace JSC;
 
 namespace WebCore {
 
+using Decision = MockContentFilterSettings::Decision;
+using DecisionPoint = MockContentFilterSettings::DecisionPoint;
+
 // Must be kept in sync with values in MockContentFilterSettings.idl.
 const uint8_t decisionPointAfterResponse = 0;
 const uint8_t decisionPointAfterAddData = 1;
@@ -42,22 +45,22 @@ const uint8_t decisionPointAfterFinishedAddingData = 2;
 const uint8_t decisionAllow = 0;
 const uint8_t decisionBlock = 1;
 
-JSC::JSValue JSMockContentFilterSettings::decisionPoint(JSC::ExecState*) const
+JSValue JSMockContentFilterSettings::decisionPoint(ExecState*) const
 {
     switch (impl().decisionPoint()) {
-    case MockContentFilterSettings::DecisionPoint::AfterResponse:
+    case DecisionPoint::AfterResponse:
         return jsNumber(decisionPointAfterResponse);
-    case MockContentFilterSettings::DecisionPoint::AfterAddData:
+    case DecisionPoint::AfterAddData:
         return jsNumber(decisionPointAfterAddData);
-    case MockContentFilterSettings::DecisionPoint::AfterFinishedAddingData:
+    case DecisionPoint::AfterFinishedAddingData:
         return jsNumber(decisionPointAfterFinishedAddingData);
     }
 
     ASSERT_NOT_REACHED();
-    return { };
+    return jsUndefined();
 }
 
-void JSMockContentFilterSettings::setDecisionPoint(JSC::ExecState* exec, JSC::JSValue value)
+void JSMockContentFilterSettings::setDecisionPoint(ExecState* exec, JSValue value)
 {
     uint8_t nativeValue { toUInt8(exec, value, EnforceRange) };
     if (exec->hadException())
@@ -65,48 +68,75 @@ void JSMockContentFilterSettings::setDecisionPoint(JSC::ExecState* exec, JSC::JS
 
     switch (nativeValue) {
     case decisionPointAfterResponse:
-        impl().setDecisionPoint(MockContentFilterSettings::DecisionPoint::AfterResponse);
+        impl().setDecisionPoint(DecisionPoint::AfterResponse);
         return;
     case decisionPointAfterAddData:
-        impl().setDecisionPoint(MockContentFilterSettings::DecisionPoint::AfterAddData);
+        impl().setDecisionPoint(DecisionPoint::AfterAddData);
         return;
     case decisionPointAfterFinishedAddingData:
-        impl().setDecisionPoint(MockContentFilterSettings::DecisionPoint::AfterFinishedAddingData);
+        impl().setDecisionPoint(DecisionPoint::AfterFinishedAddingData);
         return;
-    default:
-        throwTypeError(exec, String::format("%u is not a valid decisionPoint value.", nativeValue));
     }
+
+    throwTypeError(exec, String::format("%u is not a valid decisionPoint value.", nativeValue));
 }
 
-JSC::JSValue JSMockContentFilterSettings::decision(JSC::ExecState*) const
+static inline JSValue toJSValue(Decision decision)
 {
-    switch (impl().decision()) {
-    case MockContentFilterSettings::Decision::Allow:
+    switch (decision) {
+    case Decision::Allow:
         return jsNumber(decisionAllow);
-    case MockContentFilterSettings::Decision::Block:
+    case Decision::Block:
         return jsNumber(decisionBlock);
     }
 
     ASSERT_NOT_REACHED();
-    return { };
+    return jsUndefined();
 }
 
-void JSMockContentFilterSettings::setDecision(JSC::ExecState* exec, JSC::JSValue value)
+static inline Decision toDecision(ExecState* exec, JSValue value)
 {
     uint8_t nativeValue { toUInt8(exec, value, EnforceRange) };
     if (exec->hadException())
-        return;
+        return Decision::Allow;
 
     switch (nativeValue) {
     case decisionAllow:
-        impl().setDecision(MockContentFilterSettings::Decision::Allow);
-        return;
+        return Decision::Allow;
     case decisionBlock:
-        impl().setDecision(MockContentFilterSettings::Decision::Block);
-        return;
-    default:
-        throwTypeError(exec, String::format("%u is not a valid decision value.", nativeValue));
+        return Decision::Block;
     }
+
+    throwTypeError(exec, String::format("%u is not a valid decision value.", nativeValue));
+    return Decision::Allow;
+}
+
+JSValue JSMockContentFilterSettings::decision(ExecState*) const
+{
+    return toJSValue(impl().decision());
+}
+
+void JSMockContentFilterSettings::setDecision(ExecState* exec, JSValue value)
+{
+    Decision decision { toDecision(exec, value) };
+    if (exec->hadException())
+        return;
+
+    impl().setDecision(decision);
+}
+
+JSValue JSMockContentFilterSettings::unblockRequestDecision(ExecState*) const
+{
+    return toJSValue(impl().unblockRequestDecision());
+}
+
+void JSMockContentFilterSettings::setUnblockRequestDecision(ExecState* exec, JSValue value)
+{
+    Decision unblockRequestDecision { toDecision(exec, value) };
+    if (exec->hadException())
+        return;
+
+    impl().setUnblockRequestDecision(unblockRequestDecision);
 }
 
 }; // namespace WebCore

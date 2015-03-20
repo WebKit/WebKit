@@ -30,7 +30,6 @@
 
 #import "WebFramePrivate.h"
 #import "WebPreferencesPrivate.h"
-#import <WebCore/ContentFilterUnblockHandler.h>
 #import <WebCore/EditAction.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameSelection.h>
@@ -92,7 +91,6 @@ WebView *getWebView(WebFrame *webFrame);
 #if PLATFORM(IOS)
     BOOL isCommitting;
 #endif
-    WebCore::ContentFilterUnblockHandler contentFilterUnblockHandler;
 }
 @end
 
@@ -183,8 +181,6 @@ WebView *getWebView(WebFrame *webFrame);
 - (BOOL)_canSaveAsWebArchive;
 
 - (void)_commitData:(NSData *)data;
-
-- (BOOL)_contentFilterDidHandleNavigationAction:(const WebCore::ResourceRequest&)request;
 
 @end
 

@@ -1648,7 +1648,12 @@ PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext
 #if ENABLE(CONTENT_FILTERING)
 void WebFrameLoaderClient::contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler unblockHandler)
 {
-    if (WebPage* webPage = m_frame->page())
+    if (!unblockHandler.needsUIProcess()) {
+        m_frame->coreFrame()->loader().policyChecker().setContentFilterUnblockHandler(WTF::move(unblockHandler));
+        return;
+    }
+
+    if (WebPage* webPage { m_frame->page() })
         webPage->send(Messages::WebPageProxy::ContentFilterDidBlockLoadForFrame(unblockHandler, m_frame->frameID()));
 }
 #endif
