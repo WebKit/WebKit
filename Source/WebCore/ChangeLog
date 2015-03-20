@@ -1,3 +1,17 @@
+2015-03-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash due to empty drag image during drag-and-drop
+        https://bugs.webkit.org/show_bug.cgi?id=142671
+
+        Reviewed by Philippe Normand.
+
+        Return early from ImageBuffer constructor if an empty size is
+        given. This is a speculative fix for a crash while starting a drag
+        and drop operation, that I haven't been able to reproduce.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+
 2015-03-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Scrollbars look bad with GTK+ 3.16
