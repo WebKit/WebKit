@@ -85,7 +85,6 @@ example-xfdf.xfdf has MIME type application/vnd.adobe.xfdf
 example-xht.xht has MIME type application/xhtml+xml
 example-xhtm.xhtm has MIME type application/xhtml+xml
 example-xhtml.xhtml has MIME type application/xhtml+xml
-example-xls.xls has MIME type application/vnd.ms-excel
 example-xlsb.xlsb has MIME type application/vnd.ms-excel.sheet.binary.macroenabled.12
 example-xlsm.xlsm has MIME type application/vnd.ms-excel.sheet.macroenabled.12
 example-xlsx.xlsx has MIME type application/vnd.openxmlformats-officedocument.spreadsheetml.sheet

@@ -1,5 +1,18 @@
 2015-03-20  Alexey Proskuryakov  <ap@apple.com>
 
+        platform/mac/fast/loader/file-url-mimetypes-3.html fails when MS Office is installed
+        https://bugs.webkit.org/show_bug.cgi?id=142884
+
+        Reviewed by Tim Horton.
+
+        Disable a test for .xls until rdar://problem/20232251 is fixed. It is not particularly
+        relevant to a web browser which MIME type local Excel files get anyway.
+
+        * platform/mac/fast/loader/file-url-mimetypes-3-expected.txt:
+        * platform/mac/fast/loader/file-url-mimetypes-3.html:
+
+2015-03-20  Alexey Proskuryakov  <ap@apple.com>
+
         [Mac] svg/text/non-bmp-positioning-lists.svg fails when MS Office is installed
         https://bugs.webkit.org/show_bug.cgi?id=142861
 
