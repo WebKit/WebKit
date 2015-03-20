@@ -25,7 +25,8 @@
 
 WebInspector.TimelineRecordFrame = function(graphDataSource, records)
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this._element = document.createElement("div");
     this._element.classList.add(WebInspector.TimelineRecordFrame.StyleClassName);
@@ -34,7 +35,8 @@ WebInspector.TimelineRecordFrame = function(graphDataSource, records)
     this.records = records || [];
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.TimelineRecordFrame);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.TimelineRecordFrame);
 
 WebInspector.TimelineRecordFrame.StyleClassName = "timeline-record-frame";
 WebInspector.TimelineRecordFrame.SixtyFpsFrameBudget = 0.0166;

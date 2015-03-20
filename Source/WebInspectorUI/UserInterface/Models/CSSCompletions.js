@@ -31,142 +31,145 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSCompletions = function(properties, acceptEmptyPrefix)
+WebInspector.CSSCompletions = class CSSCompletions
 {
-    this._values = [];
-    this._longhands = {};
-    this._shorthands = {};
-
-    for (var i = 0; i < properties.length; ++i) {
-        // COMPATIBILITY (iOS 6): This used to be an array of strings,
-        // now it contains objects with a 'name' property. Support both here.
-        var property = properties[i];
-        if (typeof property === "string") {
-            this._values.push(property);
-            continue;
-        }
-
-        var propertyName = property.name;
-        this._values.push(propertyName);
-
-        var longhands = property.longhands;
-        if (longhands) {
-            this._longhands[propertyName] = longhands;
-
-            for (var j = 0; j < longhands.length; ++j) {
-                var longhandName = longhands[j];
-
-                var shorthands = this._shorthands[longhandName];
-                if (!shorthands) {
-                    shorthands = [];
-                    this._shorthands[longhandName] = shorthands;
-                }
-
-                shorthands.push(propertyName);
-            }
-        }
-    }
-
-    this._values.sort();
-
-    this._acceptEmptyPrefix = acceptEmptyPrefix;
-};
-
-WebInspector.CSSCompletions.cssNameCompletions = null;
-
-WebInspector.CSSCompletions.requestCSSNameCompletions = function()
-{
-    if (WebInspector.CSSCompletions.cssNameCompletions)
-        return;
-
-    function propertyNamesCallback(error, names)
+    constructor(properties, acceptEmptyPrefix)
     {
-        if (error)
-            return;
+        this._values = [];
+        this._longhands = {};
+        this._shorthands = {};
 
-        WebInspector.CSSCompletions.cssNameCompletions = new WebInspector.CSSCompletions(names, false);
-
-        WebInspector.CSSKeywordCompletions.addCustomCompletions(names);
-
-        // CodeMirror is not included by tests so we shouldn't assume it always exists.
-        // If it isn't available we skip MIME type associations.
-        if (!window.CodeMirror)
-            return;
-
-        var propertyNamesForCodeMirror = {};
-        var valueKeywordsForCodeMirror = {"inherit": true, "initial": true};
-        var colorKeywordsForCodeMirror = {};
-
-        function nameForCodeMirror(name)
-        {
-            // CodeMirror parses the vendor prefix separate from the property or keyword name,
-            // so we need to strip vendor prefixes from our names. Also strip function parenthesis.
-            return name.replace(/^-[^-]+-/, "").replace(/\(\)$/, "");
-        }
-
-        function collectPropertyNameForCodeMirror(propertyName)
-        {
-            // Properties can also be value keywords, like when used in a transition.
-            // So we add them to both lists.
-            var codeMirrorPropertyName = nameForCodeMirror(propertyName);
-            propertyNamesForCodeMirror[codeMirrorPropertyName] = true;
-            valueKeywordsForCodeMirror[codeMirrorPropertyName] = true;
-        }
-
-        for (var i = 0; i < names.length; ++i) {
+        for (var i = 0; i < properties.length; ++i) {
             // COMPATIBILITY (iOS 6): This used to be an array of strings,
             // now it contains objects with a 'name' property. Support both here.
-            var property = names[i];
-            if (typeof property === "string")
-                collectPropertyNameForCodeMirror(property);
-            else
-                collectPropertyNameForCodeMirror(property.name);
-        }
+            var property = properties[i];
+            if (typeof property === "string") {
+                this._values.push(property);
+                continue;
+            }
 
-        for (var propertyName in WebInspector.CSSKeywordCompletions._propertyKeywordMap) {
-            var keywords = WebInspector.CSSKeywordCompletions._propertyKeywordMap[propertyName];
-            for (var i = 0; i < keywords.length; ++i) {
-                // Skip numbers, like the ones defined for font-weight.
-                if (!isNaN(Number(keywords[i])))
-                    continue;
-                valueKeywordsForCodeMirror[nameForCodeMirror(keywords[i])] = true;
+            var propertyName = property.name;
+            this._values.push(propertyName);
+
+            var longhands = property.longhands;
+            if (longhands) {
+                this._longhands[propertyName] = longhands;
+
+                for (var j = 0; j < longhands.length; ++j) {
+                    var longhandName = longhands[j];
+
+                    var shorthands = this._shorthands[longhandName];
+                    if (!shorthands) {
+                        shorthands = [];
+                        this._shorthands[longhandName] = shorthands;
+                    }
+
+                    shorthands.push(propertyName);
+                }
             }
         }
 
-        WebInspector.CSSKeywordCompletions._colors.forEach(function(colorName) {
-            colorKeywordsForCodeMirror[nameForCodeMirror(colorName)] = true;
-        });
+        this._values.sort();
 
-        function updateCodeMirrorCSSMode(mimeType)
-        {
-            var modeSpec = CodeMirror.resolveMode(mimeType);
-
-            console.assert(modeSpec.propertyKeywords);
-            console.assert(modeSpec.valueKeywords);
-            console.assert(modeSpec.colorKeywords);
-
-            modeSpec.propertyKeywords = propertyNamesForCodeMirror;
-            modeSpec.valueKeywords = valueKeywordsForCodeMirror;
-            modeSpec.colorKeywords = colorKeywordsForCodeMirror;
-
-            CodeMirror.defineMIME(mimeType, modeSpec);
-        }
-
-        updateCodeMirrorCSSMode("text/css");
-        updateCodeMirrorCSSMode("text/x-scss");
+        this._acceptEmptyPrefix = acceptEmptyPrefix;
     }
 
-    if (window.CSSAgent)
-        CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
-};
+    // Static
 
-WebInspector.CSSCompletions.prototype = {
+    static requestCSSNameCompletions()
+    {
+        if (WebInspector.CSSCompletions.cssNameCompletions)
+            return;
+
+        function propertyNamesCallback(error, names)
+        {
+            if (error)
+                return;
+
+            WebInspector.CSSCompletions.cssNameCompletions = new WebInspector.CSSCompletions(names, false);
+
+            WebInspector.CSSKeywordCompletions.addCustomCompletions(names);
+
+            // CodeMirror is not included by tests so we shouldn't assume it always exists.
+            // If it isn't available we skip MIME type associations.
+            if (!window.CodeMirror)
+                return;
+
+            var propertyNamesForCodeMirror = {};
+            var valueKeywordsForCodeMirror = {"inherit": true, "initial": true};
+            var colorKeywordsForCodeMirror = {};
+
+            function nameForCodeMirror(name)
+            {
+                // CodeMirror parses the vendor prefix separate from the property or keyword name,
+                // so we need to strip vendor prefixes from our names. Also strip function parenthesis.
+                return name.replace(/^-[^-]+-/, "").replace(/\(\)$/, "");
+            }
+
+            function collectPropertyNameForCodeMirror(propertyName)
+            {
+                // Properties can also be value keywords, like when used in a transition.
+                // So we add them to both lists.
+                var codeMirrorPropertyName = nameForCodeMirror(propertyName);
+                propertyNamesForCodeMirror[codeMirrorPropertyName] = true;
+                valueKeywordsForCodeMirror[codeMirrorPropertyName] = true;
+            }
+
+            for (var i = 0; i < names.length; ++i) {
+                // COMPATIBILITY (iOS 6): This used to be an array of strings,
+                // now it contains objects with a 'name' property. Support both here.
+                var property = names[i];
+                if (typeof property === "string")
+                    collectPropertyNameForCodeMirror(property);
+                else
+                    collectPropertyNameForCodeMirror(property.name);
+            }
+
+            for (var propertyName in WebInspector.CSSKeywordCompletions._propertyKeywordMap) {
+                var keywords = WebInspector.CSSKeywordCompletions._propertyKeywordMap[propertyName];
+                for (var i = 0; i < keywords.length; ++i) {
+                    // Skip numbers, like the ones defined for font-weight.
+                    if (!isNaN(Number(keywords[i])))
+                        continue;
+                    valueKeywordsForCodeMirror[nameForCodeMirror(keywords[i])] = true;
+                }
+            }
+
+            WebInspector.CSSKeywordCompletions._colors.forEach(function(colorName) {
+                colorKeywordsForCodeMirror[nameForCodeMirror(colorName)] = true;
+            });
+
+            function updateCodeMirrorCSSMode(mimeType)
+            {
+                var modeSpec = CodeMirror.resolveMode(mimeType);
+
+                console.assert(modeSpec.propertyKeywords);
+                console.assert(modeSpec.valueKeywords);
+                console.assert(modeSpec.colorKeywords);
+
+                modeSpec.propertyKeywords = propertyNamesForCodeMirror;
+                modeSpec.valueKeywords = valueKeywordsForCodeMirror;
+                modeSpec.colorKeywords = colorKeywordsForCodeMirror;
+
+                CodeMirror.defineMIME(mimeType, modeSpec);
+            }
+
+            updateCodeMirrorCSSMode("text/css");
+            updateCodeMirrorCSSMode("text/x-scss");
+        }
+
+        if (window.CSSAgent)
+            CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
+    }
+
+    // Public
+
     get values()
     {
         return this._values;
-    },
+    }
 
-    startsWith: function(prefix)
+    startsWith(prefix)
     {
         var firstIndex = this._firstIndexOfPrefix(prefix);
         if (firstIndex === -1)
@@ -176,15 +179,15 @@ WebInspector.CSSCompletions.prototype = {
         while (firstIndex < this._values.length && this._values[firstIndex].startsWith(prefix))
             results.push(this._values[firstIndex++]);
         return results;
-    },
+    }
 
-    firstStartsWith: function(prefix)
+    firstStartsWith(prefix)
     {
         var foundIndex = this._firstIndexOfPrefix(prefix);
         return (foundIndex === -1 ? "" : this._values[foundIndex]);
-    },
+    }
 
-    _firstIndexOfPrefix: function(prefix)
+    _firstIndexOfPrefix(prefix)
     {
         if (!this._values.length)
             return -1;
@@ -214,26 +217,26 @@ WebInspector.CSSCompletions.prototype = {
             foundIndex--;
 
         return foundIndex;
-    },
+    }
 
-    keySet: function()
+    keySet()
     {
         if (!this._keySet)
             this._keySet = this._values.keySet();
         return this._keySet;
-    },
+    }
 
-    next: function(str, prefix)
+    next(str, prefix)
     {
         return this._closest(str, prefix, 1);
-    },
+    }
 
-    previous: function(str, prefix)
+    previous(str, prefix)
     {
         return this._closest(str, prefix, -1);
-    },
+    }
 
-    _closest: function(str, prefix, shift)
+    _closest(str, prefix, shift)
     {
         if (!str)
             return "";
@@ -251,25 +254,27 @@ WebInspector.CSSCompletions.prototype = {
         var j = propertiesWithPrefix.indexOf(str);
         j = (j + propertiesWithPrefix.length + shift) % propertiesWithPrefix.length;
         return propertiesWithPrefix[j];
-    },
+    }
 
-    isShorthandPropertyName: function(shorthand)
+    isShorthandPropertyName(shorthand)
     {
         return shorthand in this._longhands;
-    },
+    }
 
-    isLonghandPropertyName: function(longhand)
+    isLonghandPropertyName(longhand)
     {
         return longhand in this._shorthands;
-    },
+    }
 
-    longhandsForShorthand: function(shorthand)
+    longhandsForShorthand(shorthand)
     {
         return this._longhands[shorthand] || [];
-    },
+    }
 
-    shorthandsForLonghand: function(longhand)
+    shorthandsForLonghand(longhand)
     {
         return this._shorthands[longhand] || [];
     }
 };
+
+WebInspector.CSSCompletions.cssNameCompletions = null;

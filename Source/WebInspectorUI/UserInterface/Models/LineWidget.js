@@ -23,36 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LineWidget = function(codeMirrorLineWidget, widgetElement)
+WebInspector.LineWidget = class LineWidget extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(codeMirrorLineWidget, widgetElement)
+    {
+        super();
 
-    console.assert(widgetElement instanceof Element);
+        console.assert(widgetElement instanceof Element);
 
-    this._codeMirrorLineWidget = codeMirrorLineWidget;
-    this._widgetElement = widgetElement;
-};
-
-WebInspector.LineWidget.prototype = {
-    constructor: WebInspector.LineWidget,
-    __proto__: WebInspector.Object.prototype,
+        this._codeMirrorLineWidget = codeMirrorLineWidget;
+        this._widgetElement = widgetElement;
+    }
 
     // Public
 
     get codeMirrorLineWidget()
     {
         return this._codeMirrorLineWidget;
-    },
+    }
 
     get widgetElement()
     {
         return this._widgetElement;
-    },
+    }
 
     clear()
     {
         this._codeMirrorLineWidget.clear();
-    },
+    }
 
     update()
     {

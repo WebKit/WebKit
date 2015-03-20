@@ -23,20 +23,111 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineRecord = function(type, startTime, endTime, callFrames, sourceCodeLocation)
+WebInspector.TimelineRecord = class TimelineRecord extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(type, startTime, endTime, callFrames, sourceCodeLocation)
+    {
+        super();
 
-    console.assert(type);
+        console.assert(type);
 
-    if (type in WebInspector.TimelineRecord.Type)
-        type = WebInspector.TimelineRecord.Type[type];
+        if (type in WebInspector.TimelineRecord.Type)
+            type = WebInspector.TimelineRecord.Type[type];
 
-    this._type = type;
-    this._startTime = startTime || NaN;
-    this._endTime = endTime || NaN;
-    this._callFrames = callFrames || null;
-    this._sourceCodeLocation = sourceCodeLocation || null;
+        this._type = type;
+        this._startTime = startTime || NaN;
+        this._endTime = endTime || NaN;
+        this._callFrames = callFrames || null;
+        this._sourceCodeLocation = sourceCodeLocation || null;
+    }
+
+    // Public
+
+    get type()
+    {
+        return this._type;
+    }
+
+    get startTime()
+    {
+        // Implemented by subclasses if needed.
+        return this._startTime;
+    }
+
+    get activeStartTime()
+    {
+        // Implemented by subclasses if needed.
+        return this._startTime;
+    }
+
+    get endTime()
+    {
+        // Implemented by subclasses if needed.
+        return this._endTime;
+    }
+
+    get duration()
+    {
+        // Use the getters instead of the properties so this works for subclasses that override the getters.
+        return this.endTime - this.startTime;
+    }
+
+    get inactiveDuration()
+    {
+        // Use the getters instead of the properties so this works for subclasses that override the getters.
+        return this.activeStartTime - this.startTime;
+    }
+
+    get activeDuration()
+    {
+        // Use the getters instead of the properties so this works for subclasses that override the getters.
+        return this.endTime - this.activeStartTime;
+    }
+
+    get updatesDynamically()
+    {
+        // Implemented by subclasses if needed.
+        return false;
+    }
+
+    get usesActiveStartTime()
+    {
+        // Implemented by subclasses if needed.
+        return false;
+    }
+
+    get callFrames()
+    {
+        return this._callFrames;
+    }
+
+    get initiatorCallFrame()
+    {
+        if (!this._callFrames || !this._callFrames.length)
+            return null;
+
+        // Return the first non-native code call frame as the initiator.
+        for (var i = 0; i < this._callFrames.length; ++i) {
+            if (this._callFrames[i].nativeCode)
+                continue;
+            return this._callFrames[i];
+        }
+
+        return null;
+    }
+
+    get sourceCodeLocation()
+    {
+        return this._sourceCodeLocation;
+    }
+
+    saveIdentityToCookie(cookie)
+    {
+        cookie[WebInspector.TimelineRecord.SourceCodeURLCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.sourceCode.url ? this._sourceCodeLocation.sourceCode.url.hash : null : null;
+        cookie[WebInspector.TimelineRecord.SourceCodeLocationLineCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.lineNumber : null;
+        cookie[WebInspector.TimelineRecord.SourceCodeLocationColumnCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.columnNumber : null;
+        cookie[WebInspector.TimelineRecord.TypeCookieKey] = this._type || null;
+    }
 };
 
 WebInspector.TimelineRecord.Event = {
@@ -55,97 +146,3 @@ WebInspector.TimelineRecord.SourceCodeURLCookieKey = "timeline-record-source-cod
 WebInspector.TimelineRecord.SourceCodeLocationLineCookieKey = "timeline-record-source-code-location-line";
 WebInspector.TimelineRecord.SourceCodeLocationColumnCookieKey = "timeline-record-source-code-location-column";
 WebInspector.TimelineRecord.TypeCookieKey = "timeline-record-type";
-
-WebInspector.TimelineRecord.prototype = {
-    constructor: WebInspector.TimelineRecord,
-
-    // Public
-
-    get type()
-    {
-        return this._type;
-    },
-
-    get startTime()
-    {
-        // Implemented by subclasses if needed.
-        return this._startTime;
-    },
-
-    get activeStartTime()
-    {
-        // Implemented by subclasses if needed.
-        return this._startTime;
-    },
-
-    get endTime()
-    {
-        // Implemented by subclasses if needed.
-        return this._endTime;
-    },
-
-    get duration()
-    {
-        // Use the getters instead of the properties so this works for subclasses that override the getters.
-        return this.endTime - this.startTime;
-    },
-
-    get inactiveDuration()
-    {
-        // Use the getters instead of the properties so this works for subclasses that override the getters.
-        return this.activeStartTime - this.startTime;
-    },
-
-    get activeDuration()
-    {
-        // Use the getters instead of the properties so this works for subclasses that override the getters.
-        return this.endTime - this.activeStartTime;
-    },
-
-    get updatesDynamically()
-    {
-        // Implemented by subclasses if needed.
-        return false;
-    },
-
-    get usesActiveStartTime()
-    {
-        // Implemented by subclasses if needed.
-        return false;
-    },
-
-    get callFrames()
-    {
-        return this._callFrames;
-    },
-
-    get initiatorCallFrame()
-    {
-        if (!this._callFrames || !this._callFrames.length)
-            return null;
-
-        // Return the first non-native code call frame as the initiator.
-        for (var i = 0; i < this._callFrames.length; ++i) {
-            if (this._callFrames[i].nativeCode)
-                continue;
-            return this._callFrames[i];
-        }
-
-        return null;
-    },
-
-    get sourceCodeLocation()
-    {
-        return this._sourceCodeLocation;
-    },
-
-    saveIdentityToCookie: function(cookie)
-    {
-        cookie[WebInspector.TimelineRecord.SourceCodeURLCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.sourceCode.url ? this._sourceCodeLocation.sourceCode.url.hash : null : null;
-        cookie[WebInspector.TimelineRecord.SourceCodeLocationLineCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.lineNumber : null;
-        cookie[WebInspector.TimelineRecord.SourceCodeLocationColumnCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.columnNumber : null;
-        cookie[WebInspector.TimelineRecord.TypeCookieKey] = this._type || null;
-    }
-};
-
-WebInspector.TimelineRecord.prototype.__proto__ = WebInspector.Object.prototype;

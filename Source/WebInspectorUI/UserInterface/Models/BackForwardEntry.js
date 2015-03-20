@@ -24,35 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BackForwardEntry = function(contentView, cookie)
+WebInspector.BackForwardEntry = class BackForwardEntry extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
-    this._contentView = contentView;
-    // Cookies are compared with Object.shallowEqual, so should not store objects or arrays.
-    this._cookie = cookie || {};
-    this._scrollPositions = [];
+    constructor(contentView, cookie)
+    {
+        super();
 
-    contentView.saveToCookie(this._cookie);
-};
+        this._contentView = contentView;
 
-WebInspector.BackForwardEntry.prototype = {
-    constructor: WebInspector.BackForwardEntry,
-    __proto__: WebInspector.Object.prototype,
+        // Cookies are compared with Object.shallowEqual, so should not store objects or arrays.
+        this._cookie = cookie || {};
+        this._scrollPositions = [];
+
+        contentView.saveToCookie(this._cookie);
+    }
 
     // Public
 
     get contentView()
     {
         return this._contentView;
-    },
+    }
 
     get cookie()
     {
         // Cookies are immutable; they represent a specific navigation action.
         return Object.shallowCopy(this._cookie);
-    },
+    }
 
-    prepareToShow: function(shouldCallShown)
+    prepareToShow(shouldCallShown)
     {
         this._restoreFromCookie();
 
@@ -60,25 +60,25 @@ WebInspector.BackForwardEntry.prototype = {
         if (shouldCallShown)
             this.contentView.shown();
         this.contentView.updateLayout();
-    },
+    }
 
-    prepareToHide: function()
+    prepareToHide()
     {
         this.contentView.visible = false;
         this.contentView.hidden();
 
         this._saveScrollPositions();
-    },
+    }
 
     // Private
 
-    _restoreFromCookie: function()
+    _restoreFromCookie()
     {
         this._restoreScrollPositions();
         this.contentView.restoreFromCookie(this.cookie);
-    },
+    }
 
-    _restoreScrollPositions: function()
+    _restoreScrollPositions()
     {
         // If no scroll positions are saved, do nothing.
         if (!this._scrollPositions.length)
@@ -100,9 +100,9 @@ WebInspector.BackForwardEntry.prototype = {
             // the user won't be left in a weird horizontal position.
             element.scrollLeft = position.isScrolledToBottom ? 0 : position.scrollLeft;
         }
-    },
+    }
 
-    _saveScrollPositions: function()
+    _saveScrollPositions()
     {
         var scrollableElements = this.contentView.scrollableElements || [];
         var scrollPositions = [];

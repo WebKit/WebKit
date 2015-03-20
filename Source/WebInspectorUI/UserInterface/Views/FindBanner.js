@@ -24,7 +24,8 @@
  */
 
 WebInspector.FindBanner = function(delegate, element) {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this._delegate = delegate || null;
 
@@ -86,7 +87,8 @@ WebInspector.FindBanner = function(delegate, element) {
     this._generateButtonsGlyphsIfNeeded();
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.FindBanner);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.FindBanner);
 
 WebInspector.FindBanner.StyleClassName = "find-banner";
 WebInspector.FindBanner.SupportsFindBannerStyleClassName = "supports-find-banner";

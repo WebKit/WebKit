@@ -50,7 +50,8 @@ WebInspector.Toolbar = function(element, navigationItems) {
     this._element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.Toolbar);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.Toolbar);
 
 WebInspector.Toolbar.StyleClassName = "toolbar";
 WebInspector.Toolbar.ControlSectionStyleClassName = "control-section";

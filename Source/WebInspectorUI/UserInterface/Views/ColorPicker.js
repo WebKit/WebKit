@@ -25,7 +25,8 @@
 
 WebInspector.ColorPicker = function()
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this._colorWheel = new WebInspector.ColorWheel();
     this._colorWheel.delegate = this;

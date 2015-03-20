@@ -38,7 +38,8 @@ WebInspector.ProfileNodeDataGridNode = function(profileNode, baseStartTime, rang
     this._data.location = this._profileNode.sourceCodeLocation;
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.ProfileNodeDataGridNode);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.ProfileNodeDataGridNode);
 
 WebInspector.ProfileNodeDataGridNode.IconStyleClassName = "icon";
 

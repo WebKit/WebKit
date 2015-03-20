@@ -25,7 +25,8 @@
 
 WebInspector.BreakpointActionView = function(action, delegate, omitFocus)
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     console.assert(action);
     console.assert(delegate);

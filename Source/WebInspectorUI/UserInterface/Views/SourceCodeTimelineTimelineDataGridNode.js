@@ -31,7 +31,8 @@ WebInspector.SourceCodeTimelineTimelineDataGridNode = function(sourceCodeTimelin
     this._sourceCodeTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._timelineRecordAdded, this);
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.SourceCodeTimelineTimelineDataGridNode);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.SourceCodeTimelineTimelineDataGridNode);
 
 WebInspector.SourceCodeTimelineTimelineDataGridNode.prototype = {
     constructor: WebInspector.SourceCodeTimelineTimelineDataGridNode,

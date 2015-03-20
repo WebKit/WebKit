@@ -31,7 +31,8 @@ WebInspector.LayoutTimelineDataGridNode = function(layoutTimelineRecord, baseSta
     this._baseStartTime = baseStartTime || 0;
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.LayoutTimelineDataGridNode);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.LayoutTimelineDataGridNode);
 
 WebInspector.LayoutTimelineDataGridNode.IconStyleClassName = "icon";
 WebInspector.LayoutTimelineDataGridNode.SubtitleStyleClassName = "subtitle";

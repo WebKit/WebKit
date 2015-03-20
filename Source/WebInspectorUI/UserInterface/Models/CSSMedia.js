@@ -23,13 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSMedia = function(type, text, sourceCodeLocation)
+WebInspector.CSSMedia = class CSSMedia extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(type, text, sourceCodeLocation)
+    {
+        super();
 
-    this._type = type || null;
-    this._text = text || "";
-    this._sourceCodeLocation = sourceCodeLocation || null;
+        console.assert(!sourceCodeLocation || sourceCodeLocation instanceof WebInspector.SourceCodeLocation);
+
+        this._type = type || null;
+        this._text = text || "";
+        this._sourceCodeLocation = sourceCodeLocation || null;
+    }
+
+    // Public
+
+    get type()
+    {
+        return this._type;
+    }
+
+    get text()
+    {
+        return this._text;
+    }
+
+    get sourceCodeLocation()
+    {
+        return this._sourceCodeLocation;
+    }
 };
 
 WebInspector.CSSMedia.Type = {
@@ -38,26 +60,3 @@ WebInspector.CSSMedia.Type = {
     LinkedStyleSheet: "css-media-type-linked-stylesheet",
     InlineStyleSheet: "css-media-type-inline-stylesheet"
 };
-
-WebInspector.CSSMedia.prototype = {
-    constructor: WebInspector.CSSMedia,
-
-    // Public
-
-    get type()
-    {
-        return this._type;
-    },
-
-    get text()
-    {
-        return this._text;
-    },
-
-    get sourceCodeLocation()
-    {
-        return this._sourceCodeLocation;
-    }
-};
-
-WebInspector.CSSMedia.prototype.__proto__ = WebInspector.Object.prototype;

@@ -42,7 +42,8 @@ WebInspector.ResourceTimelineDataGridNode = function(resourceTimelineRecord, gra
     }
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.ResourceTimelineDataGridNode);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.ResourceTimelineDataGridNode);
 
 WebInspector.ResourceTimelineDataGridNode.IconStyleClassName = "icon";
 WebInspector.ResourceTimelineDataGridNode.ErrorStyleClassName = "error";

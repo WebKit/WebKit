@@ -23,30 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ExecutionContextList = function()
+WebInspector.ExecutionContextList = class ExecutionContextList extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    this._contexts = [];
-    this._pageExecutionContext = null;
-};
-
-WebInspector.ExecutionContextList.prototype = {
-    constructor: WebInspector.ExecutionContextList,
+        this._contexts = [];
+        this._pageExecutionContext = null;
+    }
 
     // Public
 
     get pageExecutionContext()
     {
         return this._pageExecutionContext;
-    },
+    }
 
     get contexts()
     {
         return this._contexts;
-    },
+    }
 
-    add: function(context)
+    add(context)
     {
         // FIXME: The backend sends duplicate page context execution contexts with the same id. Why?
         if (context.isPageContext && this._pageExecutionContext) {
@@ -63,13 +62,11 @@ WebInspector.ExecutionContextList.prototype = {
         }
 
         return false;
-    },
+    }
 
-    clear: function()
+    clear()
     {
         this._contexts = [];
         this._pageExecutionContext = null;
     }
 };
-
-WebInspector.ExecutionContextList.prototype.__proto__ = WebInspector.Object.prototype;

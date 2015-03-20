@@ -23,28 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodePosition = function(lineNumber, columNumber)
+WebInspector.SourceCodePosition = class SourceCodePosition extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(lineNumber, columNumber)
+    {
+        super();
 
-    this._lineNumber = lineNumber || 0;
-    this._columnNumber = columNumber || 0;
-};
-
-WebInspector.SourceCodePosition.prototype = {
-    constructor: WebInspector.SourceCodePosition,
+        this._lineNumber = lineNumber || 0;
+        this._columnNumber = columNumber || 0;
+    }
 
     // Public
 
     get lineNumber()
     {
         return this._lineNumber;
-    },
+    }
 
     get columnNumber()
     {
         return this._columnNumber;
     }
 };
-
-WebInspector.SourceCodePosition.prototype.__proto__ = WebInspector.Object.prototype;

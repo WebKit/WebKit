@@ -23,32 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSSelector = function(text, specificity, dynamic)
+WebInspector.CSSSelector = class CSSSelector extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(text, specificity, dynamic)
+    {
+        super();
 
-    console.assert(text);
+        console.assert(text);
 
-    this._text = text;
-    this._specificity = specificity || null;
-    this._dynamic = dynamic || false;
-};
-
-WebInspector.CSSSelector.prototype = {
-    constructor: WebInspector.CSSSelector,
-    __proto__: WebInspector.Object.prototype,
+        this._text = text;
+        this._specificity = specificity || null;
+        this._dynamic = dynamic || false;
+    }
 
     // Public
 
     get text()
     {
         return this._text;
-    },
+    }
 
     get specificity()
     {
         return this._specificity;
-    },
+    }
 
     get dynamic()
     {

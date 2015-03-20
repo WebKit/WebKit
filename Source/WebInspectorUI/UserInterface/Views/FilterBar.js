@@ -24,7 +24,8 @@
  */
 
 WebInspector.FilterBar = function(element) {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this._element = element || document.createElement("div");
     this._element.classList.add(WebInspector.FilterBar.StyleClassName);
@@ -37,7 +38,8 @@ WebInspector.FilterBar = function(element) {
     this._element.appendChild(this._inputField);
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.FilterBar);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.FilterBar);
 
 WebInspector.FilterBar.StyleClassName = "filter-bar";
 

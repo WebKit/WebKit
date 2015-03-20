@@ -23,15 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LogObject = function()
+WebInspector.LogObject = class LogObject extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    this._startDate = new Date();
-};
-
-WebInspector.LogObject.prototype = {
-    constructor: WebInspector.LogObject,
+        this._startDate = new Date;
+    }
 
     // Public
 
@@ -40,5 +39,3 @@ WebInspector.LogObject.prototype = {
         return this._startDate;
     }
 };
-
-WebInspector.LogObject.prototype.__proto__ = WebInspector.Object.prototype;

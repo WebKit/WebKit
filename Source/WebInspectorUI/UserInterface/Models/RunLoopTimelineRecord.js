@@ -23,27 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RunLoopTimelineRecord = function(startTime, endTime, children)
+WebInspector.RunLoopTimelineRecord = class RunLoopTimelineRecord extends WebInspector.TimelineRecord
 {
-    WebInspector.TimelineRecord.call(this, WebInspector.TimelineRecord.Type.RunLoop, startTime, endTime);
+    constructor(startTime, endTime, children)
+    {
+        super(WebInspector.TimelineRecord.Type.RunLoop, startTime, endTime);
 
-    this._children = children || [];
-    this._durationByRecordType = new Map;
-    this._durationRemainder = NaN;
-};
-
-WebInspector.RunLoopTimelineRecord.TypeIdentifier = "runloop-timeline-record";
-
-WebInspector.RunLoopTimelineRecord.prototype = {
-    constructor: WebInspector.RunLoopTimelineRecord,
-    __proto__: WebInspector.TimelineRecord.prototype,
+        this._children = children || [];
+        this._durationByRecordType = new Map;
+        this._durationRemainder = NaN;
+    }
 
     // Public
 
     get children()
     {
         return this._children.slice();
-    },
+    }
 
     get durationRemainder()
     {
@@ -51,11 +47,11 @@ WebInspector.RunLoopTimelineRecord.prototype = {
             return this._durationRemainder;
 
         this._durationRemainder = this.duration;
-        for (recordType in WebInspector.TimelineRecord.Type)
+        for (var recordType in WebInspector.TimelineRecord.Type)
             this._durationRemainder -= this.durationForRecords(WebInspector.TimelineRecord.Type[recordType]);
 
         return this._durationRemainder;
-    },
+    }
 
     durationForRecords(recordType)
     {
@@ -76,3 +72,5 @@ WebInspector.RunLoopTimelineRecord.prototype = {
         return duration;
     }
 };
+
+WebInspector.RunLoopTimelineRecord.TypeIdentifier = "runloop-timeline-record";

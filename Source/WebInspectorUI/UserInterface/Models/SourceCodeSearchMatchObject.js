@@ -23,52 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodeSearchMatchObject = function(sourceCode, lineText, searchTerm, textRange)
+WebInspector.SourceCodeSearchMatchObject = class SourceCodeSearchMatchObject extends WebInspector.Object
 {
-    console.assert(sourceCode instanceof WebInspector.SourceCode);
+    constructor(sourceCode, lineText, searchTerm, textRange)
+    {
+        super();
 
-    WebInspector.Object.call(this);
+        console.assert(sourceCode instanceof WebInspector.SourceCode);
 
-    this._sourceCode = sourceCode;
-    this._lineText = lineText;
-    this._searchTerm = searchTerm;
-    this._sourceCodeTextRange = sourceCode.createSourceCodeTextRange(textRange);
-};
+        this._sourceCode = sourceCode;
+        this._lineText = lineText;
+        this._searchTerm = searchTerm;
+        this._sourceCodeTextRange = sourceCode.createSourceCodeTextRange(textRange);
+    }
 
-WebInspector.SourceCodeSearchMatchObject.SourceCodeMatchIconStyleClassName = "source-code-match-icon";
-
-WebInspector.SourceCodeSearchMatchObject.TypeIdentifier = "source-code-search-match-object";
-WebInspector.SourceCodeSearchMatchObject.URLCookieKey = "source-code-url";
-WebInspector.SourceCodeSearchMatchObject.TextRangeKey = "text-range";
-
-WebInspector.SourceCodeSearchMatchObject.prototype = {
-    constructor: WebInspector.SourceCodeSearchMatchObject,
-    __proto__: WebInspector.Object.prototype,
+    // Public
 
     get sourceCode()
     {
         return this._sourceCode;
-    },
+    }
 
     get title()
     {
         return this._lineText;
-    },
+    }
 
     get className()
     {
         return WebInspector.SourceCodeSearchMatchObject.SourceCodeMatchIconStyleClassName;
-    },
+    }
 
     get searchTerm()
     {
         return this._searchTerm;
-    },
+    }
 
     get sourceCodeTextRange()
     {
         return this._sourceCodeTextRange;
-    },
+    }
 
     saveIdentityToCookie(cookie)
     {
@@ -79,3 +73,9 @@ WebInspector.SourceCodeSearchMatchObject.prototype = {
         cookie[WebInspector.SourceCodeSearchMatchObject.TextRangeKey] = [textRange.startLine, textRange.startColumn, textRange.endLine, textRange.endColumn].join();
     }
 };
+
+WebInspector.SourceCodeSearchMatchObject.SourceCodeMatchIconStyleClassName = "source-code-match-icon";
+
+WebInspector.SourceCodeSearchMatchObject.TypeIdentifier = "source-code-search-match-object";
+WebInspector.SourceCodeSearchMatchObject.URLCookieKey = "source-code-url";
+WebInspector.SourceCodeSearchMatchObject.TextRangeKey = "text-range";

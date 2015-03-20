@@ -33,7 +33,8 @@ WebInspector.ScriptTimelineDataGridNode = function(scriptTimelineRecord, baseSta
     this._rangeEndTime = typeof rangeEndTime === "number" ? rangeEndTime : Infinity;
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.ScriptTimelineDataGridNode);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.ScriptTimelineDataGridNode);
 
 WebInspector.ScriptTimelineDataGridNode.IconStyleClassName = "icon";
 

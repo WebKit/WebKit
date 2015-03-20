@@ -27,118 +27,186 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Color = function(format, components)
+WebInspector.Color = class Color
 {
-    this.format = format;
-    if (format === WebInspector.Color.Format.HSL || format === WebInspector.Color.Format.HSLA)
-        this._hsla = components;
-    else
-        this._rgba = components;
+    constructor(format, components)
+    {
+        this.format = format;
 
-    this.valid = !components.some(function(component) {
-        return isNaN(component);
-    });
-};
+        if (format === WebInspector.Color.Format.HSL || format === WebInspector.Color.Format.HSLA)
+            this._hsla = components;
+        else
+            this._rgba = components;
 
-WebInspector.Color.Format = {
-    Original: "color-format-original",
-    Nickname: "color-format-nickname",
-    HEX: "color-format-hex",
-    ShortHEX: "color-format-short-hex",
-    RGB: "color-format-rgb",
-    RGBA: "color-format-rgba",
-    HSL: "color-format-hsl",
-    HSLA: "color-format-hsla"
-};
-
-WebInspector.Color.fromString = function(colorString)
-{
-    var value = colorString.toLowerCase().replace(/%|\s+/g, "");
-    const transparentNicknames = ["transparent", "rgba(0,0,0,0)", "hsla(0,0,0,0)"];
-    if (transparentNicknames.contains(value)) {
-        var color = new WebInspector.Color(WebInspector.Color.Format.Nickname, [0, 0, 0, 0]);
-        color.nickname = "transparent";
-        color.original = colorString;
-        return color;
+        this.valid = !components.some(function(component) {
+            return isNaN(component);
+        });
     }
 
-    // Simple - #hex, rgb(), nickname, hsl()
-    var simple = /^(?:#([0-9a-f]{3,6})|rgb\(([^)]+)\)|(\w+)|hsl\(([^)]+)\))$/i;
-    var match = colorString.match(simple);
-    if (match) {
-        if (match[1]) { // hex
-            var hex = match[1].toUpperCase();
-            if (hex.length === 3) {
-                return new WebInspector.Color(WebInspector.Color.Format.ShortHEX, [
-                    parseInt(hex.charAt(0) + hex.charAt(0), 16),
-                    parseInt(hex.charAt(1) + hex.charAt(1), 16),
-                    parseInt(hex.charAt(2) + hex.charAt(2), 16),
+    // Static
+
+    static fromString(colorString)
+    {
+        var value = colorString.toLowerCase().replace(/%|\s+/g, "");
+        var transparentNicknames = ["transparent", "rgba(0,0,0,0)", "hsla(0,0,0,0)"];
+        if (transparentNicknames.contains(value)) {
+            var color = new WebInspector.Color(WebInspector.Color.Format.Nickname, [0, 0, 0, 0]);
+            color.nickname = "transparent";
+            color.original = colorString;
+            return color;
+        }
+
+        // Simple - #hex, rgb(), nickname, hsl()
+        var simple = /^(?:#([0-9a-f]{3,6})|rgb\(([^)]+)\)|(\w+)|hsl\(([^)]+)\))$/i;
+        var match = colorString.match(simple);
+        if (match) {
+            if (match[1]) { // hex
+                var hex = match[1].toUpperCase();
+                if (hex.length === 3) {
+                    return new WebInspector.Color(WebInspector.Color.Format.ShortHEX, [
+                        parseInt(hex.charAt(0) + hex.charAt(0), 16),
+                        parseInt(hex.charAt(1) + hex.charAt(1), 16),
+                        parseInt(hex.charAt(2) + hex.charAt(2), 16),
+                        1
+                    ]);
+                } else {
+                    return new WebInspector.Color(WebInspector.Color.Format.HEX, [
+                        parseInt(hex.substring(0, 2), 16),
+                        parseInt(hex.substring(2, 4), 16),
+                        parseInt(hex.substring(4, 6), 16),
+                        1
+                    ]);
+                }
+            } else if (match[2]) { // rgb
+                var rgb = match[2].split(/\s*,\s*/);
+                return new WebInspector.Color(WebInspector.Color.Format.RGB, [
+                    parseInt(rgb[0]),
+                    parseInt(rgb[1]),
+                    parseInt(rgb[2]),
                     1
                 ]);
-            } else {
-                return new WebInspector.Color(WebInspector.Color.Format.HEX, [
-                    parseInt(hex.substring(0, 2), 16),
-                    parseInt(hex.substring(2, 4), 16),
-                    parseInt(hex.substring(4, 6), 16),
+            } else if (match[3]) { // nickname
+                var nickname = match[3].toLowerCase();
+                if (WebInspector.Color.Nicknames.hasOwnProperty(nickname)) {
+                    var color = new WebInspector.Color(WebInspector.Color.Format.Nickname, WebInspector.Color.Nicknames[nickname].concat(1));
+                    color.nickname = nickname;
+                    color.original = colorString;
+                    return color;
+                } else
+                    return null;
+            } else if (match[4]) { // hsl
+                var hsl = match[4].replace(/%/g, "").split(/\s*,\s*/);
+                return new WebInspector.Color(WebInspector.Color.Format.HSL, [
+                    parseInt(hsl[0]),
+                    parseInt(hsl[1]),
+                    parseInt(hsl[2]),
                     1
                 ]);
             }
-        } else if (match[2]) { // rgb
-            var rgb = match[2].split(/\s*,\s*/);
-            return new WebInspector.Color(WebInspector.Color.Format.RGB, [
-                parseInt(rgb[0]),
-                parseInt(rgb[1]),
-                parseInt(rgb[2]),
-                1
-            ]);
-        } else if (match[3]) { // nickname
-            var nickname = match[3].toLowerCase();
-            if (WebInspector.Color.Nicknames.hasOwnProperty(nickname)) {
-                var color = new WebInspector.Color(WebInspector.Color.Format.Nickname, WebInspector.Color.Nicknames[nickname].concat(1));
-                color.nickname = nickname;
-                color.original = colorString;
-                return color;
-            } else
-                return null;
-        } else if (match[4]) { // hsl
-            var hsl = match[4].replace(/%/g, "").split(/\s*,\s*/);
-            return new WebInspector.Color(WebInspector.Color.Format.HSL, [
-                parseInt(hsl[0]),
-                parseInt(hsl[1]),
-                parseInt(hsl[2]),
-                1
-            ]);
         }
+
+        // Advanced - rgba(), hsla()
+        var advanced = /^(?:rgba\(([^)]+)\)|hsla\(([^)]+)\))$/;
+        match = colorString.match(advanced);
+        if (match) {
+            if (match[1]) { // rgba
+                var rgba = match[1].split(/\s*,\s*/);
+                return new WebInspector.Color(WebInspector.Color.Format.RGBA, [
+                    parseInt(rgba[0]),
+                    parseInt(rgba[1]),
+                    parseInt(rgba[2]),
+                    Number.constrain(parseFloat(rgba[3]), 0, 1)
+                ]);
+            } else if (match[2]) { // hsla
+                var hsla = match[2].replace(/%/g, "").split(/\s*,\s*/);
+                return new WebInspector.Color(WebInspector.Color.Format.HSLA, [
+                    parseInt(hsla[0]),
+                    parseInt(hsla[1]),
+                    parseInt(hsla[2]),
+                    Number.constrain(parseFloat(hsla[3]), 0, 1)
+                ]);
+            }
+        }
+
+        return null;
     }
 
-    // Advanced - rgba(), hsla()
-    var advanced = /^(?:rgba\(([^)]+)\)|hsla\(([^)]+)\))$/;
-    match = colorString.match(advanced);
-    if (match) {
-        if (match[1]) { // rgba
-            var rgba = match[1].split(/\s*,\s*/);
-            return new WebInspector.Color(WebInspector.Color.Format.RGBA, [
-                parseInt(rgba[0]),
-                parseInt(rgba[1]),
-                parseInt(rgba[2]),
-                Number.constrain(parseFloat(rgba[3]), 0, 1)
-            ]);
-        } else if (match[2]) { // hsla
-            var hsla = match[2].replace(/%/g, "").split(/\s*,\s*/);
-            return new WebInspector.Color(WebInspector.Color.Format.HSLA, [
-                parseInt(hsla[0]),
-                parseInt(hsla[1]),
-                parseInt(hsla[2]),
-                Number.constrain(parseFloat(hsla[3]), 0, 1)
-            ]);
-        }
+    static rgb2hsv(r, g, b)
+    {
+        r /= 255;
+        g /= 255;
+        b /= 255;
+
+        var min = Math.min(Math.min(r, g), b);
+        var max = Math.max(Math.max(r, g), b);
+        var delta = max - min;
+
+        var v = max;
+        var s, h;
+
+        if (max === min)
+            h = 0;
+        else if (max === r)
+            h = (60 * ((g - b) / delta)) % 360;
+        else if (max === g)
+            h = 60 * ((b - r) / delta) + 120;
+        else if (max === b)
+            h = 60 * ((r - g) / delta) + 240;
+
+        if (h < 0)
+            h += 360;
+
+        // Saturation
+        if (max === 0)
+            s = 0;
+        else
+            s = 1 - (min / max);
+
+        return [h, s, v];
     }
 
-    return null;
-};
+    static hsv2rgb(h, s, v)
+    {
+        if (s === 0)
+            return [v, v, v];
 
-WebInspector.Color.prototype = {
-    nextFormat: function(format)
+        h /= 60;
+        var i = Math.floor(h);
+        var data = [
+            v * (1 - s),
+            v * (1 - s * (h - i)),
+            v * (1 - s * (1 - (h - i)))
+        ];
+        var rgb;
+
+        switch (i) {
+        case 0:
+            rgb = [v, data[2], data[0]];
+            break;
+        case 1:
+            rgb = [data[1], v, data[0]];
+            break;
+        case 2:
+            rgb = [data[0], v, data[2]];
+            break;
+        case 3:
+            rgb = [data[0], data[1], v];
+            break;
+        case 4:
+            rgb = [data[2], data[0], v];
+            break;
+        default:
+            rgb = [v, data[0], data[1]];
+            break;
+        }
+
+        return rgb;
+    }
+
+
+    // Public
+
+    nextFormat(format)
     {
         format = format || this.format;
 
@@ -175,47 +243,47 @@ WebInspector.Color.prototype = {
             console.error("Unknown color format.");
             return null;
         }
-    },
+    }
 
     get alpha()
     {
         return this._rgba ? this._rgba[3] : this._hsla[3];
-    },
+    }
 
     get simple()
     {
         return this.alpha === 1;
-    },
+    }
 
     get rgb()
     {
         var rgb = this.rgba.slice();
         rgb.pop();
         return rgb;
-    },
+    }
 
     get hsl()
     {
         var hsl = this.hsla.slice();
         hsl.pop();
         return hsl;
-    },
+    }
 
     get rgba()
     {
         if (!this._rgba)
             this._rgba = this._hslaToRGBA(this._hsla);
         return this._rgba;
-    },
+    }
 
     get hsla()
     {
         if (!this._hsla)
             this._hsla = this._rgbaToHSLA(this.rgba);
         return this._hsla;
-    },
+    }
 
-    copy: function()
+    copy()
     {
         switch (this.format) {
         case WebInspector.Color.Format.RGB:
@@ -228,9 +296,9 @@ WebInspector.Color.prototype = {
         case WebInspector.Color.Format.HSLA:
             return new WebInspector.Color(this.format, this.hsla);
         }
-    },
+    }
 
-    toString: function(format)
+    toString(format)
     {
         if (!format)
             format = this.format;
@@ -255,14 +323,16 @@ WebInspector.Color.prototype = {
         }
 
         throw "invalid color format";
-    },
+    }
 
-    _toOriginalString: function()
+    // Private
+
+    _toOriginalString()
     {
         return this.original || this._toNicknameString();
-    },
+    }
 
-    _toNicknameString: function()
+    _toNicknameString()
     {
         if (this.nickname)
             return this.nickname;
@@ -285,9 +355,9 @@ WebInspector.Color.prototype = {
         }
 
         return this._toRGBString();
-    },
+    }
 
-    _toShortHEXString: function()
+    _toShortHEXString()
     {
         if (!this.simple)
             return this._toRGBAString();
@@ -301,9 +371,9 @@ WebInspector.Color.prototype = {
             return "#" + r[0] + g[0] + b[0];
         else
             return "#" + r + g + b;
-    },
+    }
 
-    _toHEXString: function()
+    _toHEXString()
     {
         if (!this.simple)
             return this._toRGBAString();
@@ -314,38 +384,38 @@ WebInspector.Color.prototype = {
         var b = this._componentToHexValue(rgba[2]);
 
         return "#" + r + g + b;
-    },
+    }
 
-    _toRGBString: function()
+    _toRGBString()
     {
         if (!this.simple)
             return this._toRGBAString();
 
         var rgba = this.rgba;
         return "rgb(" + [rgba[0], rgba[1], rgba[2]].join(", ") + ")";
-    },
+    }
 
-    _toRGBAString: function()
+    _toRGBAString()
     {
         return "rgba(" + this.rgba.join(", ") + ")";
-    },
+    }
 
-    _toHSLString: function()
+    _toHSLString()
     {
         if (!this.simple)
             return this._toHSLAString();
 
         var hsla = this.hsla;
         return "hsl(" + hsla[0] + ", " + hsla[1] + "%, " + hsla[2] + "%)";
-    },
+    }
 
-    _toHSLAString: function()
+    _toHSLAString()
     {
         var hsla = this.hsla;
         return "hsla(" + hsla[0] + ", " + hsla[1] + "%, " + hsla[2] + "%, " + hsla[3] + ")";
-    },
+    }
 
-    _canBeSerializedAsShortHEX: function()
+    _canBeSerializedAsShortHEX()
     {
         var rgba = this.rgba;
 
@@ -362,22 +432,22 @@ WebInspector.Color.prototype = {
             return false;
 
         return true;
-    },
+    }
 
-    _componentToNumber: function(value)
+    _componentToNumber(value)
     {
         return Number.constrain(value, 0, 255);
-    },
+    }
 
-    _componentToHexValue: function(value)
+    _componentToHexValue(value)
     {
         var hex = this._componentToNumber(value).toString(16);
         if (hex.length === 1)
             hex = "0" + hex;
         return hex;
-    },
+    }
 
-    _rgbToHSL: function(rgb)
+    _rgbToHSL(rgb)
     {
         var r = this._componentToNumber(rgb[0]) / 255;
         var g = this._componentToNumber(rgb[1]) / 255;
@@ -412,9 +482,9 @@ WebInspector.Color.prototype = {
         l = Math.round(l * 100);
 
         return [h, s, l];
-    },
+    }
 
-    _hslToRGB: function(hsl)
+    _hslToRGB(hsl)
     {
         var h = parseFloat(hsl[0]) / 360;
         var s = parseFloat(hsl[1]) / 100;
@@ -434,21 +504,32 @@ WebInspector.Color.prototype = {
             Math.round(sArray[ (h | 16) % 6 ] * 255),
             Math.round(sArray[ (h | 8)  % 6 ] * 255)
         ];
-    },
+    }
 
-    _rgbaToHSLA: function(rgba)
+    _rgbaToHSLA(rgba)
     {
         var hsl = this._rgbToHSL(rgba);
         hsl.push(rgba[3]);
         return hsl;
-    },
+    }
 
-    _hslaToRGBA: function(hsla)
+    _hslaToRGBA(hsla)
     {
         var rgba = this._hslToRGB(hsla);
         rgba.push(hsla[3]);
         return rgba;
     }
+};
+
+WebInspector.Color.Format = {
+    Original: "color-format-original",
+    Nickname: "color-format-nickname",
+    HEX: "color-format-hex",
+    ShortHEX: "color-format-short-hex",
+    RGB: "color-format-rgb",
+    RGBA: "color-format-rgba",
+    HSL: "color-format-hsl",
+    HSLA: "color-format-hsla"
 };
 
 WebInspector.Color.Nicknames = {
@@ -591,76 +672,4 @@ WebInspector.Color.Nicknames = {
     "whitesmoke": [245, 245, 245],
     "yellow": [255, 255, 0],
     "yellowgreen": [154, 205, 50]
-};
-
-WebInspector.Color.rgb2hsv = function(r, g, b)
-{
-    r /= 255;
-    g /= 255;
-    b /= 255;
-
-    var min = Math.min(Math.min(r, g), b);
-    var max = Math.max(Math.max(r, g), b);
-    var delta = max - min;
-
-    var v = max;
-    var s, h;
-
-    if (max === min)
-        h = 0;
-    else if (max === r)
-        h = (60 * ((g - b) / delta)) % 360;
-    else if (max === g)
-        h = 60 * ((b - r) / delta) + 120;
-    else if (max === b)
-        h = 60 * ((r - g) / delta) + 240;
-
-    if (h < 0)
-        h += 360;
-
-    // Saturation
-    if (max === 0)
-        s = 0;
-    else
-        s = 1 - (min / max);
-
-    return [h, s, v];
-};
-
-WebInspector.Color.hsv2rgb = function(h, s, v)
-{
-    if (s === 0)
-        return [v, v, v];
-
-    h /= 60;
-    var i = Math.floor(h);
-    var data = [
-        v * (1 - s),
-        v * (1 - s * (h - i)),
-        v * (1 - s * (1 - (h - i)))
-    ];
-    var rgb;
-
-    switch (i) {
-    case 0:
-        rgb = [v, data[2], data[0]];
-        break;
-    case 1:
-        rgb = [data[1], v, data[0]];
-        break;
-    case 2:
-        rgb = [data[0], v, data[2]];
-        break;
-    case 3:
-        rgb = [data[0], data[1], v];
-        break;
-    case 4:
-        rgb = [data[2], data[0], v];
-        break;
-    default:
-        rgb = [v, data[0], data[1]];
-        break;
-    }
-
-    return rgb;
 };

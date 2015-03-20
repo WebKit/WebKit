@@ -24,7 +24,8 @@
  */
 
 WebInspector.NavigationBar = function(element, navigationItems, role, label) {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this._element = element || document.createElement("div");
     this._element.classList.add(this.constructor.StyleClassName || WebInspector.NavigationBar.StyleClassName);
@@ -54,7 +55,8 @@ WebInspector.NavigationBar = function(element, navigationItems, role, label) {
     document.head.appendChild(this._styleElement);
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.NavigationBar);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.NavigationBar);
 
 WebInspector.NavigationBar.StyleClassName = "navigation-bar";
 WebInspector.NavigationBar.CollapsedStyleClassName = "collapsed";

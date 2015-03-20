@@ -23,50 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.UnitBezier = function(x1, y1, x2, y2)
+WebInspector.UnitBezier = class UnitBezier
 {
-    WebInspector.Object.call(this);
+    constructor(x1, y1, x2, y2)
+    {
+        // Calculate the polynomial coefficients, implicit first and last control points are (0,0) and (1,1).
+        this._cx = 3.0 * x1;
+        this._bx = 3.0 * (x2 - x1) - this._cx;
+        this._ax = 1.0 - this._cx - this._bx;
 
-    // Calculate the polynomial coefficients, implicit first and last control points are (0,0) and (1,1).
-    this._cx = 3.0 * x1;
-    this._bx = 3.0 * (x2 - x1) - this._cx;
-    this._ax = 1.0 - this._cx - this._bx;
-
-    this._cy = 3.0 * y1;
-    this._by = 3.0 * (y2 - y1) - this._cy;
-    this._ay = 1.0 - this._cy - this._by;
-};
-
-WebInspector.UnitBezier.prototype = {
-    constructor: WebInspector.UnitBezier,
+        this._cy = 3.0 * y1;
+        this._by = 3.0 * (y2 - y1) - this._cy;
+        this._ay = 1.0 - this._cy - this._by;
+    }
 
     // Public
 
-    solve: function(x, epsilon)
+    solve(x, epsilon)
     {
         return this._sampleCurveY(this._solveCurveX(x, epsilon));
-    },
+    }
 
     // Private
 
-    _sampleCurveX: function(t)
+    _sampleCurveX(t)
     {
         // `ax t^3 + bx t^2 + cx t' expanded using Horner's rule.
         return ((this._ax * t + this._bx) * t + this._cx) * t;
-    },
+    }
 
-    _sampleCurveY: function(t)
+    _sampleCurveY(t)
     {
         return ((this._ay * t + this._by) * t + this._cy) * t;
-    },
+    }
 
-    _sampleCurveDerivativeX: function(t)
+    _sampleCurveDerivativeX(t)
     {
         return (3.0 * this._ax * t + 2.0 * this._bx) * t + this._cx;
-    },
+    }
 
     // Given an x value, find a parametric value it came from.
-    _solveCurveX: function(x, epsilon)
+    _solveCurveX(x, epsilon)
     {
         var t0, t1, t2, x2, d2, i;
 

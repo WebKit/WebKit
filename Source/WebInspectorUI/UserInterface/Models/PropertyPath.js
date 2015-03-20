@@ -23,71 +23,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.PropertyPath = function(object, pathComponent, parent, isPrototype)
+WebInspector.PropertyPath = class PropertyPath extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(object, pathComponent, parent, isPrototype)
+    {
+        super();
 
-    console.assert(object instanceof WebInspector.RemoteObject || object === null);
-    console.assert(!pathComponent || typeof pathComponent === "string");
-    console.assert(!parent || parent instanceof WebInspector.PropertyPath);
-    console.assert(!parent || pathComponent.length);
+        console.assert(object instanceof WebInspector.RemoteObject || object === null);
+        console.assert(!pathComponent || typeof pathComponent === "string");
+        console.assert(!parent || parent instanceof WebInspector.PropertyPath);
+        console.assert(!parent || pathComponent.length);
 
-    // We allow property pathes with null objects as end-caps only.
-    // Disallow appending to a PropertyPath with null objects.
-    if (parent && !parent.object)
-        throw new Error("Attempted to append to a PropertyPath with null object.");
+        // We allow property pathes with null objects as end-caps only.
+        // Disallow appending to a PropertyPath with null objects.
+        if (parent && !parent.object)
+            throw new Error("Attempted to append to a PropertyPath with null object.");
 
-    this._object = object;
-    this._pathComponent = typeof pathComponent === "string" ? pathComponent : null;
-    this._parent = parent || null;
-    this._isPrototype = isPrototype || false;
-};
+        this._object = object;
+        this._pathComponent = typeof pathComponent === "string" ? pathComponent : null;
+        this._parent = parent || null;
+        this._isPrototype = isPrototype || false;
+    }
 
-WebInspector.PropertyPath.SpecialPathComponent = {
-    InternalPropertyName: "@internal",
-    SymbolPropertyName: "@symbol",
-    MapKey: "@mapkey",
-    MapValue: "@mapvalue",
-    SetIndex: "@setindex",
-    EmptyPathComponentForScope: "",
-};
+    // Static
 
-WebInspector.PropertyPath.Type = {
-    Value: "value",
-    Getter: "getter",
-    Setter: "setter",
-};
-
-WebInspector.PropertyPath.emptyPropertyPathForScope = function(object)
-{
-    return new WebInspector.PropertyPath(object, WebInspector.PropertyPath.SpecialPathComponent.EmptyPathComponentForScope);
-}
-
-WebInspector.PropertyPath.prototype = {
-    constructor: WebInspector.PropertyPath,
-    __proto__: WebInspector.Object.prototype,
+    static emptyPropertyPathForScope(object)
+    {
+        return new WebInspector.PropertyPath(object, WebInspector.PropertyPath.SpecialPathComponent.EmptyPathComponentForScope);
+    }
 
     // Public
 
     get object()
     {
         return this._object;
-    },
+    }
 
     get parent()
     {
         return this._parent;
-    },
+    }
 
     get isPrototype()
     {
         return this._isPrototype;
-    },
+    }
 
     get rootObject()
     {
         return this._parent ? this._parent.rootObject : this._object;
-    },
+    }
 
     get lastNonPrototypeObject()
     {
@@ -104,12 +89,12 @@ WebInspector.PropertyPath.prototype = {
         }
 
         return p.object;
-    },
+    }
 
     get pathComponent()
     {
         return this._pathComponent;
-    },
+    }
 
     get fullPath()
     {
@@ -118,7 +103,7 @@ WebInspector.PropertyPath.prototype = {
             components.push(p.pathComponent);
         components.reverse()
         return components.join("");
-    },
+    }
 
     get reducedPath()
     {
@@ -142,27 +127,27 @@ WebInspector.PropertyPath.prototype = {
 
         components.reverse();
         return components.join("");        
-    },
+    }
 
     displayPath(type)
     {
         return type === WebInspector.PropertyPath.Type.Value ? this.reducedPath : this.fullPath;
-    },
+    }
 
     isRoot()
     {
         return !this._parent;
-    },
+    }
 
     isScope()
     {
         return this._pathComponent === WebInspector.PropertyPath.SpecialPathComponent.EmptyPathComponentForScope;
-    },
+    }
 
     isPathComponentImpossible()
     {
         return this._pathComponent && this._pathComponent.startsWith("@");
-    },
+    }
 
     isFullPathImpossible()
     {
@@ -173,7 +158,7 @@ WebInspector.PropertyPath.prototype = {
             return this._parent.isFullPathImpossible();
 
         return false;
-    },
+    }
 
     appendPropertyName(object, propertyName)
     {
@@ -184,43 +169,43 @@ WebInspector.PropertyPath.prototype = {
 
         var component = this._canPropertyNameBeDotAccess(propertyName) ? "." + propertyName : "[" + doubleQuotedString(propertyName) + "]";
         return new WebInspector.PropertyPath(object, component, this, isPrototype);
-    },
+    }
 
     appendPropertySymbol(object, symbolName)
     {
         var component = WebInspector.PropertyPath.SpecialPathComponent.SymbolPropertyName + (symbolName.length ? "(" + symbolName + ")" : "");
         return new WebInspector.PropertyPath(object, component, this);
-    },
+    }
 
     appendInternalPropertyName(object, propertyName)
     {
         var component = WebInspector.PropertyPath.SpecialPathComponent.InternalPropertyName + "[" + propertyName + "]";
         return new WebInspector.PropertyPath(object, component, this);
-    },
+    }
 
     appendGetterPropertyName(object, propertyName)
     {
         var component = ".__lookupGetter__(" + doubleQuotedString(propertyName) + ")";
         return new WebInspector.PropertyPath(object, component, this);
-    },
+    }
 
     appendSetterPropertyName(object, propertyName)
     {
         var component = ".__lookupSetter__(" + doubleQuotedString(propertyName) + ")";
         return new WebInspector.PropertyPath(object, component, this);
-    },
+    }
 
     appendArrayIndex(object, indexString)
     {
         var component = "[" + indexString + "]";
         return new WebInspector.PropertyPath(object, component, this);
-    },
+    }
 
     appendMapKey(object)
     {
         var component = WebInspector.PropertyPath.SpecialPathComponent.MapKey;
         return new WebInspector.PropertyPath(object, component, this);
-    },
+    }
 
     appendMapValue(object, keyObject)
     {
@@ -238,13 +223,13 @@ WebInspector.PropertyPath.prototype = {
             
         var component = WebInspector.PropertyPath.SpecialPathComponent.MapValue;
         return new WebInspector.PropertyPath(object, component, this);
-    },
+    }
 
     appendSetIndex(object)
     {
         var component = WebInspector.PropertyPath.SpecialPathComponent.SetIndex;
         return new WebInspector.PropertyPath(object, component, this);
-    },
+    }
     
     appendPropertyDescriptor(object, descriptor, type)
     {
@@ -264,7 +249,7 @@ WebInspector.PropertyPath.prototype = {
             return this.appendArrayIndex(object, descriptor.name);
 
         return this.appendPropertyName(object, descriptor.name)
-    },
+    }
 
     // Private
 
@@ -272,4 +257,19 @@ WebInspector.PropertyPath.prototype = {
     {
         return /^(?![0-9])\w+$/.test(propertyName);
     }
+};
+
+WebInspector.PropertyPath.SpecialPathComponent = {
+    InternalPropertyName: "@internal",
+    SymbolPropertyName: "@symbol",
+    MapKey: "@mapkey",
+    MapValue: "@mapvalue",
+    SetIndex: "@setindex",
+    EmptyPathComponentForScope: "",
+};
+
+WebInspector.PropertyPath.Type = {
+    Value: "value",
+    Getter: "getter",
+    Setter: "setter",
 };

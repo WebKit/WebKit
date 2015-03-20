@@ -23,28 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Profile = function(topDownRootNodes)
+WebInspector.Profile = class Profile extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(topDownRootNodes)
+    {
+        super();
 
-    topDownRootNodes = topDownRootNodes || [];
+        topDownRootNodes = topDownRootNodes || [];
 
-    console.assert(topDownRootNodes instanceof Array);
-    console.assert(topDownRootNodes.reduce(function(previousValue, node) { return previousValue && node instanceof WebInspector.ProfileNode; }, true));
+        console.assert(topDownRootNodes instanceof Array);
+        console.assert(topDownRootNodes.reduce(function(previousValue, node) { return previousValue && node instanceof WebInspector.ProfileNode; }, true));
 
-    this._topDownRootNodes = topDownRootNodes;
-};
-
-WebInspector.Profile.prototype = {
-    constructor: WebInspector.Profile,
-    __proto__: WebInspector.Object.prototype,
+        this._topDownRootNodes = topDownRootNodes;
+    }
 
     // Public
 
     get topDownRootNodes()
     {
         return this._topDownRootNodes;
-    },
+    }
 
     get bottomUpRootNodes()
     {

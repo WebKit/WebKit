@@ -23,32 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkTimeline = function(type)
+WebInspector.NetworkTimeline = class NetworkTimeline extends WebInspector.Timeline
 {
-    WebInspector.Timeline.call(this, type);
-};
-
-WebInspector.NetworkTimeline.prototype = {
-    constructor: WebInspector.NetworkTimeline,
-    __proto__: WebInspector.Timeline.prototype,
+    constructor(type)
+    {
+        // FIXME: Remove once <https://webkit.org/b/142862> is fixed.
+        super(type);
+    }
 
     // Public
 
-    recordForResource: function(resource)
+    recordForResource(resource)
     {
         console.assert(resource instanceof WebInspector.Resource);
 
         return this._resourceRecordMap.get(resource) || null;
-    },
+    }
 
-    reset: function(suppressEvents)
+    reset(suppressEvents)
     {
         this._resourceRecordMap = new Map;
 
-        WebInspector.Timeline.prototype.reset.call(this, suppressEvents);
-    },
+        super.reset(suppressEvents);
+    }
 
-    addRecord: function(record)
+    addRecord(record)
     {
         console.assert(record instanceof WebInspector.ResourceTimelineRecord);
 
@@ -58,6 +57,6 @@ WebInspector.NetworkTimeline.prototype = {
 
         this._resourceRecordMap.set(record.resource, record);
 
-        WebInspector.Timeline.prototype.addRecord.call(this, record);
+        super.addRecord(record);
     }
 };

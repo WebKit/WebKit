@@ -23,65 +23,63 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IndexedDatabaseObjectStore = function(name, keyPath, autoIncrement, indexes)
+WebInspector.IndexedDatabaseObjectStore = class IndexedDatabaseObjectStore extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(name, keyPath, autoIncrement, indexes)
+    {
+        super();
 
-    this._name = name;
-    this._keyPath = keyPath;
-    this._autoIncrement = autoIncrement || false;
-    this._indexes = indexes || [];
-    this._parentDatabase = null;
+        this._name = name;
+        this._keyPath = keyPath;
+        this._autoIncrement = autoIncrement || false;
+        this._indexes = indexes || [];
+        this._parentDatabase = null;
 
-    for (var index of this._indexes)
-        index.establishRelationship(this);
-};
-
-WebInspector.IndexedDatabaseObjectStore.TypeIdentifier = "indexed-database-object-store";
-WebInspector.IndexedDatabaseObjectStore.NameCookieKey = "indexed-database-object-store-name";
-WebInspector.IndexedDatabaseObjectStore.KeyPathCookieKey = "indexed-database-object-store-key-path";
-
-WebInspector.IndexedDatabaseObjectStore.prototype = {
-    constructor: WebInspector.IndexedDatabaseObjectStore,
-    __proto__: WebInspector.Object.prototype,
+        for (var index of this._indexes)
+            index.establishRelationship(this);
+    }
 
     // Public
 
     get name()
     {
         return this._name;
-    },
+    }
 
     get keyPath()
     {
         return this._keyPath;
-    },
+    }
 
     get autoIncrement()
     {
         return this._autoIncrement;
-    },
+    }
 
     get parentDatabase()
     {
         return this._parentDatabase;
-    },
+    }
 
     get indexes()
     {
         return this._indexes;
-    },
+    }
 
-    saveIdentityToCookie: function(cookie)
+    saveIdentityToCookie(cookie)
     {
         cookie[WebInspector.IndexedDatabaseObjectStore.NameCookieKey] = this._name;
         cookie[WebInspector.IndexedDatabaseObjectStore.KeyPathCookieKey] = this._keyPath;
-    },
+    }
 
     // Protected
 
-    establishRelationship: function(parentDatabase)
+    establishRelationship(parentDatabase)
     {
         this._parentDatabase = parentDatabase || null;
     }
 };
+
+WebInspector.IndexedDatabaseObjectStore.TypeIdentifier = "indexed-database-object-store";
+WebInspector.IndexedDatabaseObjectStore.NameCookieKey = "indexed-database-object-store-name";
+WebInspector.IndexedDatabaseObjectStore.KeyPathCookieKey = "indexed-database-object-store-key-path";

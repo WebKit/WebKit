@@ -23,60 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BreakpointAction = function(breakpoint, typeOrInfo, data)
+WebInspector.BreakpointAction = class BreakpointAction extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(breakpoint, typeOrInfo, data)
+    {
+        super();
 
-    console.assert(breakpoint);
-    console.assert(typeOrInfo);
+        console.assert(breakpoint);
+        console.assert(typeOrInfo);
 
-    this._breakpoint = breakpoint;
+        this._breakpoint = breakpoint;
 
-    if (typeof typeOrInfo === "string") {
-        this._type = typeOrInfo;
-        this._data = data || null;
-    } else if (typeof typeOrInfo === "object") {
-        this._type = typeOrInfo.type;
-        this._data = typeOrInfo.data || null;
-    } else
-        console.error("Unexpected type passed to WebInspector.BreakpointAction");
+        if (typeof typeOrInfo === "string") {
+            this._type = typeOrInfo;
+            this._data = data || null;
+        } else if (typeof typeOrInfo === "object") {
+            this._type = typeOrInfo.type;
+            this._data = typeOrInfo.data || null;
+        } else
+            console.error("Unexpected type passed to WebInspector.BreakpointAction");
 
-    console.assert(typeof this._type === "string");
-    this._id = WebInspector.debuggerManager.nextBreakpointActionIdentifier;
-};
-
-WebInspector.BreakpointAction.Type = {
-    Log: "log",
-    Evaluate: "evaluate",
-    Sound: "sound",
-    Probe: "probe"
-};
-
-WebInspector.BreakpointAction.prototype = {
-    constructor: WebInspector.BreakpointAction,
-    __proto__: WebInspector.Object.prototype,
+        console.assert(typeof this._type === "string");
+        this._id = WebInspector.debuggerManager.nextBreakpointActionIdentifier;
+    }
 
     // Public
 
     get breakpoint()
     {
         return this._breakpoint;
-    },
+    }
 
     get id()
     {
         return this._id;
-    },
+    }
 
     get type()
     {
         return this._type;
-    },
+    }
 
     get data()
     {
         return this._data;
-    },
+    }
 
     set data(data)
     {
@@ -86,7 +77,7 @@ WebInspector.BreakpointAction.prototype = {
         this._data = data;
 
         this._breakpoint.breakpointActionDidChange(this);
-    },
+    }
 
     get info()
     {
@@ -95,4 +86,11 @@ WebInspector.BreakpointAction.prototype = {
             obj.data = this._data;
         return obj;
     }
+};
+
+WebInspector.BreakpointAction.Type = {
+    Log: "log",
+    Evaluate: "evaluate",
+    Sound: "sound",
+    Probe: "probe"
 };

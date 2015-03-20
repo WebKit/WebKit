@@ -30,91 +30,85 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMNode = function(domAgent, doc, isInShadowTree, payload) {
-    WebInspector.Object.call(this);
+WebInspector.DOMNode = class DOMNode extends WebInspector.Object
+{
+    constructor(domAgent, doc, isInShadowTree, payload)
+    {
+        super();
 
-    this._domAgent = domAgent;
-    this._isInShadowTree = isInShadowTree;
+        this._domAgent = domAgent;
+        this._isInShadowTree = isInShadowTree;
 
-    this.id = payload.nodeId;
-    domAgent._idToDOMNode[this.id] = this;
+        this.id = payload.nodeId;
+        domAgent._idToDOMNode[this.id] = this;
 
-    this._nodeType = payload.nodeType;
-    this._nodeName = payload.nodeName;
-    this._localName = payload.localName;
-    this._nodeValue = payload.nodeValue;
-    this._computedRole = payload.role;
+        this._nodeType = payload.nodeType;
+        this._nodeName = payload.nodeName;
+        this._localName = payload.localName;
+        this._nodeValue = payload.nodeValue;
+        this._computedRole = payload.role;
 
-    if (this._nodeType === Node.DOCUMENT_NODE)
-        this.ownerDocument = this;
-    else
-        this.ownerDocument = doc;
+        if (this._nodeType === Node.DOCUMENT_NODE)
+            this.ownerDocument = this;
+        else
+            this.ownerDocument = doc;
 
-    this._attributes = [];
-    this._attributesMap = {};
-    if (payload.attributes)
-        this._setAttributesPayload(payload.attributes);
+        this._attributes = [];
+        this._attributesMap = {};
+        if (payload.attributes)
+            this._setAttributesPayload(payload.attributes);
 
-    this._childNodeCount = payload.childNodeCount;
-    this._children = null;
-    this._filteredChildren = null;
-    this._filteredChildrenNeedsUpdating = true;
+        this._childNodeCount = payload.childNodeCount;
+        this._children = null;
+        this._filteredChildren = null;
+        this._filteredChildrenNeedsUpdating = true;
 
-    this._nextSibling = null;
-    this._previousSibling = null;
-    this.parentNode = null;
+        this._nextSibling = null;
+        this._previousSibling = null;
+        this.parentNode = null;
 
-    this._enabledPseudoClasses = [];
+        this._enabledPseudoClasses = [];
 
-    this._shadowRoots = [];
-    if (payload.shadowRoots) {
-        for (var i = 0; i < payload.shadowRoots.length; ++i) {
-            var root = payload.shadowRoots[i];
-            var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, true, root);
-            this._shadowRoots.push(node);
+        this._shadowRoots = [];
+        if (payload.shadowRoots) {
+            for (var i = 0; i < payload.shadowRoots.length; ++i) {
+                var root = payload.shadowRoots[i];
+                var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, true, root);
+                this._shadowRoots.push(node);
+            }
+        }
+
+        if (payload.children)
+            this._setChildrenPayload(payload.children);
+
+        if (payload.contentDocument) {
+            this._contentDocument = new WebInspector.DOMNode(domAgent, null, false, payload.contentDocument);
+            this._children = [this._contentDocument];
+            this._renumber();
+        }
+
+        if (this._nodeType === Node.ELEMENT_NODE) {
+            // HTML and BODY from internal iframes should not overwrite top-level ones.
+            if (this.ownerDocument && !this.ownerDocument.documentElement && this._nodeName === "HTML")
+                this.ownerDocument.documentElement = this;
+            if (this.ownerDocument && !this.ownerDocument.body && this._nodeName === "BODY")
+                this.ownerDocument.body = this;
+            if (payload.documentURL)
+                this.documentURL = payload.documentURL;
+        } else if (this._nodeType === Node.DOCUMENT_TYPE_NODE) {
+            this.publicId = payload.publicId;
+            this.systemId = payload.systemId;
+            this.internalSubset = payload.internalSubset;
+        } else if (this._nodeType === Node.DOCUMENT_NODE) {
+            this.documentURL = payload.documentURL;
+            this.xmlVersion = payload.xmlVersion;
+        } else if (this._nodeType === Node.ATTRIBUTE_NODE) {
+            this.name = payload.name;
+            this.value = payload.value;
         }
     }
 
-    if (payload.children)
-        this._setChildrenPayload(payload.children);
-
-    if (payload.contentDocument) {
-        this._contentDocument = new WebInspector.DOMNode(domAgent, null, false, payload.contentDocument);
-        this._children = [this._contentDocument];
-        this._renumber();
-    }
-
-    if (this._nodeType === Node.ELEMENT_NODE) {
-        // HTML and BODY from internal iframes should not overwrite top-level ones.
-        if (this.ownerDocument && !this.ownerDocument.documentElement && this._nodeName === "HTML")
-            this.ownerDocument.documentElement = this;
-        if (this.ownerDocument && !this.ownerDocument.body && this._nodeName === "BODY")
-            this.ownerDocument.body = this;
-        if (payload.documentURL)
-            this.documentURL = payload.documentURL;
-    } else if (this._nodeType === Node.DOCUMENT_TYPE_NODE) {
-        this.publicId = payload.publicId;
-        this.systemId = payload.systemId;
-        this.internalSubset = payload.internalSubset;
-    } else if (this._nodeType === Node.DOCUMENT_NODE) {
-        this.documentURL = payload.documentURL;
-        this.xmlVersion = payload.xmlVersion;
-    } else if (this._nodeType === Node.ATTRIBUTE_NODE) {
-        this.name = payload.name;
-        this.value = payload.value;
-    }
-};
-
-WebInspector.Object.addConstructorFunctions(WebInspector.DOMNode);
-
-WebInspector.DOMNode.Event = {
-    EnabledPseudoClassesChanged: "dom-node-enabled-pseudo-classes-did-change",
-    AttributeModified: "dom-node-attribute-modified",
-    AttributeRemoved: "dom-node-attribute-removed"
-};
-
-WebInspector.DOMNode.prototype = {
-    constructor: WebInspector.DOMNode,
+    // Public
 
     get children()
     {
@@ -132,7 +126,7 @@ WebInspector.DOMNode.prototype = {
         }
 
         return this._filteredChildren;
-    },
+    }
 
     get firstChild()
     {
@@ -142,7 +136,7 @@ WebInspector.DOMNode.prototype = {
             return children[0];
 
         return null;
-    },
+    }
 
     get lastChild()
     {
@@ -152,7 +146,7 @@ WebInspector.DOMNode.prototype = {
             return children.lastValue;
 
         return null;
-    },
+    }
 
     get nextSibling()
     {
@@ -166,7 +160,7 @@ WebInspector.DOMNode.prototype = {
             node = node._nextSibling;
         }
         return null;
-    },
+    }
 
     get previousSibling()
     {
@@ -180,7 +174,7 @@ WebInspector.DOMNode.prototype = {
             node = node._previousSibling;
         }
         return null;
-    },
+    }
 
     get childNodeCount()
     {
@@ -192,95 +186,95 @@ WebInspector.DOMNode.prototype = {
             return this._childNodeCount + this._shadowRoots.length;
 
         return this._childNodeCount;
-    },
+    }
 
     set childNodeCount(count)
     {
         this._childNodeCount = count;
-    },
+    }
 
-    computedRole: function()
+    computedRole()
     {
         return this._computedRole;
-    },
+    }
 
-    hasAttributes: function()
+    hasAttributes()
     {
         return this._attributes.length > 0;
-    },
+    }
 
-    hasChildNodes: function()
+    hasChildNodes()
     {
         return this.childNodeCount > 0;
-    },
+    }
 
-    hasShadowRoots: function()
+    hasShadowRoots()
     {
         return !!this._shadowRoots.length;
-    },
+    }
 
-    isInShadowTree: function()
+    isInShadowTree()
     {
         return this._isInShadowTree;
-    },
+    }
 
-    nodeType: function()
+    nodeType()
     {
         return this._nodeType;
-    },
+    }
 
-    nodeName: function()
+    nodeName()
     {
         return this._nodeName;
-    },
+    }
 
-    nodeNameInCorrectCase: function()
+    nodeNameInCorrectCase()
     {
         return this.isXMLNode() ? this.nodeName() : this.nodeName().toLowerCase();
-    },
+    }
 
-    setNodeName: function(name, callback)
+    setNodeName(name, callback)
     {
         DOMAgent.setNodeName(this.id, name, this._makeUndoableCallback(callback));
-    },
+    }
 
-    localName: function()
+    localName()
     {
         return this._localName;
-    },
+    }
 
-    nodeValue: function()
+    nodeValue()
     {
         return this._nodeValue;
-    },
+    }
 
-    setNodeValue: function(value, callback)
+    setNodeValue(value, callback)
     {
         DOMAgent.setNodeValue(this.id, value, this._makeUndoableCallback(callback));
-    },
+    }
 
-    getAttribute: function(name)
+    getAttribute(name)
     {
         var attr = this._attributesMap[name];
         return attr ? attr.value : undefined;
-    },
+    }
 
-    setAttribute: function(name, text, callback)
+    setAttribute(name, text, callback)
     {
         DOMAgent.setAttributesAsText(this.id, text, name, this._makeUndoableCallback(callback));
-    },
+    }
 
-    setAttributeValue: function(name, value, callback)
+    setAttributeValue(name, value, callback)
     {
         DOMAgent.setAttributeValue(this.id, name, value, this._makeUndoableCallback(callback));
-    },
+    }
 
-    attributes: function()
+    attributes()
     {
         return this._attributes;
-    },
+    }
 
-    removeAttribute: function(name, callback)
+    removeAttribute(name, callback)
     {
         function mycallback(error, success)
         {
@@ -297,9 +291,9 @@ WebInspector.DOMNode.prototype = {
             this._makeUndoableCallback(callback)(error);
         }
         DOMAgent.removeAttribute(this.id, name, mycallback.bind(this));
-    },
+    }
 
-    getChildNodes: function(callback)
+    getChildNodes(callback)
     {
         if (this.children) {
             if (callback)
@@ -313,9 +307,9 @@ WebInspector.DOMNode.prototype = {
         }
 
         DOMAgent.requestChildNodes(this.id, mycallback.bind(this));
-    },
+    }
 
-    getSubtree: function(depth, callback)
+    getSubtree(depth, callback)
     {
         function mycallback(error)
         {
@@ -324,24 +318,24 @@ WebInspector.DOMNode.prototype = {
         }
 
         DOMAgent.requestChildNodes(this.id, depth, mycallback.bind(this));
-    },
+    }
 
-    getOuterHTML: function(callback)
+    getOuterHTML(callback)
     {
         DOMAgent.getOuterHTML(this.id, callback);
-    },
+    }
 
-    setOuterHTML: function(html, callback)
+    setOuterHTML(html, callback)
     {
         DOMAgent.setOuterHTML(this.id, html, this._makeUndoableCallback(callback));
-    },
+    }
 
-    removeNode: function(callback)
+    removeNode(callback)
     {
         DOMAgent.removeNode(this.id, this._makeUndoableCallback(callback));
-    },
+    }
 
-    copyNode: function()
+    copyNode()
     {
         function copy(error, text)
         {
@@ -349,14 +343,14 @@ WebInspector.DOMNode.prototype = {
                 InspectorFrontendHost.copyText(text);
         }
         DOMAgent.getOuterHTML(this.id, copy);
-    },
+    }
 
-    eventListeners: function(callback)
+    eventListeners(callback)
     {
         DOMAgent.getEventListenersForNode(this.id, callback);
-    },
+    }
 
-    accessibilityProperties: function(callback)
+    accessibilityProperties(callback)
     {
         function accessibilityPropertiesCallback(error, accessibilityProperties)
         {
@@ -394,9 +388,9 @@ WebInspector.DOMNode.prototype = {
             }
         }
         DOMAgent.getAccessibilityPropertiesForNode(this.id, accessibilityPropertiesCallback.bind(this));
-    },
+    }
 
-    path: function()
+    path()
     {
         var path = [];
         var node = this;
@@ -406,9 +400,9 @@ WebInspector.DOMNode.prototype = {
         }
         path.reverse();
         return path.join(",");
-    },
+    }
 
-    appropriateSelectorFor: function(justSelector)
+    appropriateSelectorFor(justSelector)
     {
         var lowerCaseName = this.localName() || this.nodeName().toLowerCase();
 
@@ -432,9 +426,9 @@ WebInspector.DOMNode.prototype = {
             return lowerCaseName + "[type=\"" + this.getAttribute("type") + "\"]";
 
         return lowerCaseName;
-    },
+    }
 
-    isAncestor: function(node)
+    isAncestor(node)
     {
         if (!node)
             return false;
@@ -446,22 +440,22 @@ WebInspector.DOMNode.prototype = {
             currentNode = currentNode.parentNode;
         }
         return false;
-    },
+    }
 
-    isDescendant: function(descendant)
+    isDescendant(descendant)
     {
         return descendant !== null && descendant.isAncestor(this);
-    },
+    }
 
-    _setAttributesPayload: function(attrs)
+    _setAttributesPayload(attrs)
     {
         this._attributes = [];
         this._attributesMap = {};
         for (var i = 0; i < attrs.length; i += 2)
             this._addAttribute(attrs[i], attrs[i + 1]);
-    },
+    }
 
-    _insertChild: function(prev, payload)
+    _insertChild(prev, payload)
     {
         var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, this._isInShadowTree, payload);
         if (!prev) {
@@ -474,16 +468,16 @@ WebInspector.DOMNode.prototype = {
             this._children.splice(this._children.indexOf(prev) + 1, 0, node);
         this._renumber();
         return node;
-    },
+    }
 
-    _removeChild: function(node)
+    _removeChild(node)
     {
         this._children.splice(this._children.indexOf(node), 1);
         node.parentNode = null;
         this._renumber();
-    },
+    }
 
-    _setChildrenPayload: function(payloads)
+    _setChildrenPayload(payloads)
     {
         // We set children in the constructor.
         if (this._contentDocument)
@@ -496,9 +490,9 @@ WebInspector.DOMNode.prototype = {
             this._children.push(node);
         }
         this._renumber();
-    },
+    }
 
-    _renumber: function()
+    _renumber()
     {
         this._filteredChildrenNeedsUpdating = true;
 
@@ -513,49 +507,49 @@ WebInspector.DOMNode.prototype = {
             child._previousSibling = i - 1 >= 0 ? this._children[i - 1] : null;
             child.parentNode = this;
         }
-    },
+    }
 
-    _addAttribute: function(name, value)
+    _addAttribute(name, value)
     {
         var attr = {name, value, _node: this};
         this._attributesMap[name] = attr;
         this._attributes.push(attr);
-    },
+    }
 
-    _setAttribute: function(name, value)
+    _setAttribute(name, value)
     {
         var attr = this._attributesMap[name];
         if (attr)
             attr.value = value;
         else
             this._addAttribute(name, value);
-    },
+    }
 
-    _removeAttribute: function(name)
+    _removeAttribute(name)
     {
         var attr = this._attributesMap[name];
         if (attr) {
             this._attributes.remove(attr);
             delete this._attributesMap[name];
         }
-    },
+    }
 
-    moveTo: function(targetNode, anchorNode, callback)
+    moveTo(targetNode, anchorNode, callback)
     {
         DOMAgent.moveTo(this.id, targetNode.id, anchorNode ? anchorNode.id : undefined, this._makeUndoableCallback(callback));
-    },
+    }
 
-    isXMLNode: function()
+    isXMLNode()
     {
         return !!this.ownerDocument && !!this.ownerDocument.xmlVersion;
-    },
+    }
 
     get enabledPseudoClasses()
     {
         return this._enabledPseudoClasses;
-    },
+    }
 
-    setPseudoClassEnabled: function(pseudoClass, enabled)
+    setPseudoClassEnabled(pseudoClass, enabled)
     {
         var pseudoClasses = this._enabledPseudoClasses;
         if (enabled) {
@@ -575,9 +569,9 @@ WebInspector.DOMNode.prototype = {
         }
 
         CSSAgent.forcePseudoState(this.id, pseudoClasses, changed.bind(this));
-    },
+    }
 
-    _makeUndoableCallback: function(callback)
+    _makeUndoableCallback(callback)
     {
         return function(error)
         {
@@ -590,4 +584,8 @@ WebInspector.DOMNode.prototype = {
     }
 };
 
-WebInspector.DOMNode.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.DOMNode.Event = {
+    EnabledPseudoClassesChanged: "dom-node-enabled-pseudo-classes-did-change",
+    AttributeModified: "dom-node-attribute-modified",
+    AttributeRemoved: "dom-node-attribute-removed"
+};

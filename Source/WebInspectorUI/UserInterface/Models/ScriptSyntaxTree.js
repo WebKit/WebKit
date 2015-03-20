@@ -23,97 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptSyntaxTree = function(sourceText, script)
+WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Object
 {
-    console.assert(script && script instanceof WebInspector.Script, script);
+    constructor(sourceText, script)
+    {
+        super();
 
-    WebInspector.Object.call(this);
-    this._script = script;
+        console.assert(script && script instanceof WebInspector.Script, script);
 
-    try {
-        var esprimaSyntaxTree = esprima.parse(sourceText, {range: true});
-        this._syntaxTree = this._createInternalSyntaxTree(esprimaSyntaxTree);
-        this._parsedSuccessfully = true;
-    } catch (error) {
-        this._parsedSuccessfully = false;
-        this._syntaxTree = null;
-        console.error("Couldn't parse JavaScript File: " + script.url, error);
+        this._script = script;
+
+        try {
+            var esprimaSyntaxTree = esprima.parse(sourceText, {range: true});
+            this._syntaxTree = this._createInternalSyntaxTree(esprimaSyntaxTree);
+            this._parsedSuccessfully = true;
+        } catch (error) {
+            this._parsedSuccessfully = false;
+            this._syntaxTree = null;
+            console.error("Couldn't parse JavaScript File: " + script.url, error);
+        }
     }
-};
-
-// This should be kept in sync with an enum in JavaSciptCore/runtime/TypeProfiler.h
-WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor = {
-    NormalExpression: 1,
-    FunctionReturn: 2
-};
-
-WebInspector.ScriptSyntaxTree.NodeType = {
-    AssignmentExpression: Symbol("assignment-expression"),
-    ArrayExpression: Symbol("array-expression"),
-    ArrayPattern: Symbol("array-pattern"),
-    BlockStatement: Symbol("block-statement"),
-    BinaryExpression: Symbol("binary-expression"),
-    BreakStatement: Symbol("break-statement"),
-    CallExpression: Symbol("call-expression"),
-    CatchClause: Symbol("catch-clause"),
-    ConditionalExpression: Symbol("conditional-expression"),
-    ContinueStatement: Symbol("continue-statement"),
-    DoWhileStatement: Symbol("do-while-statement"),
-    DebuggerStatement: Symbol("debugger-statement"),
-    EmptyStatement: Symbol("empty-statement"),
-    ExpressionStatement: Symbol("expression-statement"),
-    ForStatement: Symbol("for-statement"),
-    ForInStatement: Symbol("for-in-statement"),
-    ForOfStatement: Symbol("for-of-statement"),
-    FunctionDeclaration: Symbol("function-declaration"),
-    FunctionExpression: Symbol("function-expression"),
-    Identifier: Symbol("identifier"),
-    IfStatement: Symbol("if-statement"),
-    Literal: Symbol("literal"),
-    LabeledStatement: Symbol("labeled-statement"),
-    LogicalExpression: Symbol("logical-expression"),
-    MemberExpression: Symbol("member-expression"),
-    NewExpression: Symbol("new-expression"),
-    ObjectExpression: Symbol("object-expression"),
-    ObjectPattern: Symbol("object-pattern"),
-    Program: Symbol("program"),
-    Property: Symbol("property"),
-    ReturnStatement: Symbol("return-statement"),
-    SequenceExpression: Symbol("sequence-expression"),
-    SwitchStatement: Symbol("switch-statement"),
-    SwitchCase: Symbol("switch-case"),
-    ThisExpression: Symbol("this-expression"),
-    ThrowStatement: Symbol("throw-statement"),
-    TryStatement: Symbol("try-statement"),
-    UnaryExpression: Symbol("unary-expression"),
-    UpdateExpression: Symbol("update-expression"),
-    VariableDeclaration: Symbol("variable-declaration"),
-    VariableDeclarator: Symbol("variable-declarator"),
-    WhileStatement: Symbol("while-statement"),
-    WithStatement: Symbol("with-statement")
-};
-
-WebInspector.ScriptSyntaxTree.prototype = {
-    constructor: WebInspector.ScriptSyntaxTree,
-    __proto__: WebInspector.Object.prototype,
 
     // Public
     
     get parsedSuccessfully()
     {
         return this._parsedSuccessfully;
-    },
+    }
 
-    forEachNode: function(callback)
+    forEachNode(callback)
     {
         console.assert(this._parsedSuccessfully);
         if (!this._parsedSuccessfully)
             return;
 
         this._recurse(this._syntaxTree, callback, this._defaultParserState());
-    },
+    }
 
-    filter: function(predicate, startNode) 
+    filter(predicate, startNode) 
     {
         console.assert(startNode && this._parsedSuccessfully);
         if (!this._parsedSuccessfully)
@@ -131,17 +78,17 @@ WebInspector.ScriptSyntaxTree.prototype = {
         this._recurse(startNode, filter, this._defaultParserState());
 
         return nodes;
-    },
+    }
 
-    filterByRange: function(startOffset, endOffset)
+    filterByRange(startOffset, endOffset)
     {
         console.assert(this._parsedSuccessfully);
         if (!this._parsedSuccessfully)
             return [];
         
         var allNodes = [];
-        const start = 0;
-        const end = 1;
+        var start = 0;
+        var end = 1;
         function filterForNodesInRange(node, state)
         {
             // program start        range            program end
@@ -167,9 +114,9 @@ WebInspector.ScriptSyntaxTree.prototype = {
         this.forEachNode(filterForNodesInRange);
 
         return allNodes;
-    },
+    }
 
-    containsNonEmptyReturnStatement: function(startNode)
+    containsNonEmptyReturnStatement(startNode)
     {
         console.assert(startNode && this._parsedSuccessfully);
         if (!this._parsedSuccessfully)
@@ -197,9 +144,9 @@ WebInspector.ScriptSyntaxTree.prototype = {
         startNode.attachments._hasNonEmptyReturnStatement = hasNonEmptyReturnStatement;
 
         return hasNonEmptyReturnStatement;
-    },
+    }
 
-    updateTypes: function(nodesToUpdate, callback)
+    updateTypes(nodesToUpdate, callback)
     {
         console.assert(RuntimeAgent.getRuntimeTypesForVariablesAtOffsets);
         console.assert(Array.isArray(nodesToUpdate) && this._parsedSuccessfully);
@@ -268,11 +215,11 @@ WebInspector.ScriptSyntaxTree.prototype = {
         }
 
         RuntimeAgent.getRuntimeTypesForVariablesAtOffsets(allRequests, handleTypes);
-    },
+    }
 
     // Private
 
-    _gatherIdentifiersInDeclaration: function(node)
+    _gatherIdentifiersInDeclaration(node)
     {
         function gatherIdentifiers(node) 
         {
@@ -304,17 +251,17 @@ WebInspector.ScriptSyntaxTree.prototype = {
         console.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier || node.type === WebInspector.ScriptSyntaxTree.NodeType.ObjectPattern || node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrayPattern);
 
         return gatherIdentifiers(node);
-    },
+    }
 
-    _defaultParserState: function() 
+    _defaultParserState() 
     {
         return {
             shouldStopEarly: false,
             skipChildNodes: false
         };
-    },
+    }
 
-    _recurse: function(node, callback, state) 
+    _recurse(node, callback, state) 
     {
         if (!node)
             return;
@@ -515,19 +462,19 @@ WebInspector.ScriptSyntaxTree.prototype = {
         }
 
         state.skipChildNodes = false;
-    },
+    }
 
-    _recurseArray: function(array, callback, state) 
+    _recurseArray(array, callback, state) 
     {
         for (var node of array)
             this._recurse(node, callback, state);
-    },
+    }
     
     // This function translates from esprima's Abstract Syntax Tree to ours. 
     // Mostly, this is just the identity function. We've added an extra isGetterOrSetter property for functions.
     // Our AST complies with the Mozilla parser API:
     // https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API
-    _createInternalSyntaxTree: function(node) 
+    _createInternalSyntaxTree(node) 
     {
         if (!node)
             return null;
@@ -848,4 +795,56 @@ WebInspector.ScriptSyntaxTree.prototype = {
 
         return result;
     }
+};
+
+// This should be kept in sync with an enum in JavaSciptCore/runtime/TypeProfiler.h
+WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor = {
+    NormalExpression: 1,
+    FunctionReturn: 2
+};
+
+WebInspector.ScriptSyntaxTree.NodeType = {
+    AssignmentExpression: Symbol("assignment-expression"),
+    ArrayExpression: Symbol("array-expression"),
+    ArrayPattern: Symbol("array-pattern"),
+    BlockStatement: Symbol("block-statement"),
+    BinaryExpression: Symbol("binary-expression"),
+    BreakStatement: Symbol("break-statement"),
+    CallExpression: Symbol("call-expression"),
+    CatchClause: Symbol("catch-clause"),
+    ConditionalExpression: Symbol("conditional-expression"),
+    ContinueStatement: Symbol("continue-statement"),
+    DoWhileStatement: Symbol("do-while-statement"),
+    DebuggerStatement: Symbol("debugger-statement"),
+    EmptyStatement: Symbol("empty-statement"),
+    ExpressionStatement: Symbol("expression-statement"),
+    ForStatement: Symbol("for-statement"),
+    ForInStatement: Symbol("for-in-statement"),
+    ForOfStatement: Symbol("for-of-statement"),
+    FunctionDeclaration: Symbol("function-declaration"),
+    FunctionExpression: Symbol("function-expression"),
+    Identifier: Symbol("identifier"),
+    IfStatement: Symbol("if-statement"),
+    Literal: Symbol("literal"),
+    LabeledStatement: Symbol("labeled-statement"),
+    LogicalExpression: Symbol("logical-expression"),
+    MemberExpression: Symbol("member-expression"),
+    NewExpression: Symbol("new-expression"),
+    ObjectExpression: Symbol("object-expression"),
+    ObjectPattern: Symbol("object-pattern"),
+    Program: Symbol("program"),
+    Property: Symbol("property"),
+    ReturnStatement: Symbol("return-statement"),
+    SequenceExpression: Symbol("sequence-expression"),
+    SwitchStatement: Symbol("switch-statement"),
+    SwitchCase: Symbol("switch-case"),
+    ThisExpression: Symbol("this-expression"),
+    ThrowStatement: Symbol("throw-statement"),
+    TryStatement: Symbol("try-statement"),
+    UnaryExpression: Symbol("unary-expression"),
+    UpdateExpression: Symbol("update-expression"),
+    VariableDeclaration: Symbol("variable-declaration"),
+    VariableDeclarator: Symbol("variable-declarator"),
+    WhileStatement: Symbol("while-statement"),
+    WithStatement: Symbol("with-statement")
 };

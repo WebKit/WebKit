@@ -23,92 +23,92 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectPreview = function(type, subtype, description, lossless, overflow, properties, entries, size)
+WebInspector.ObjectPreview = class ObjectPreview extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(type, subtype, description, lossless, overflow, properties, entries, size)
+    {
+        super();
 
-    console.assert(type);
-    console.assert(typeof lossless === "boolean");
-    console.assert(!properties || !properties.length || properties[0] instanceof WebInspector.PropertyPreview);
-    console.assert(!entries || !entries.length || entries[0] instanceof WebInspector.CollectionEntryPreview);
+        console.assert(type);
+        console.assert(typeof lossless === "boolean");
+        console.assert(!properties || !properties.length || properties[0] instanceof WebInspector.PropertyPreview);
+        console.assert(!entries || !entries.length || entries[0] instanceof WebInspector.CollectionEntryPreview);
 
-    this._type = type;
-    this._subtype = subtype;
-    this._description = description || "";
-    this._lossless = lossless;
-    this._overflow = overflow || false;
-    this._size = size;
+        this._type = type;
+        this._subtype = subtype;
+        this._description = description || "";
+        this._lossless = lossless;
+        this._overflow = overflow || false;
+        this._size = size;
 
-    this._properties = properties || null;
-    this._entries = entries || null;
-};
-
-// Runtime.ObjectPreview.
-WebInspector.ObjectPreview.fromPayload = function(payload)
-{
-    if (payload.properties)
-        payload.properties = payload.properties.map(function(property) { return WebInspector.PropertyPreview.fromPayload(property); });
-    if (payload.entries)
-        payload.entries = payload.entries.map(function(entry) { return WebInspector.CollectionEntryPreview.fromPayload(entry); });
-
-    if (payload.subtype === "array") {
-        // COMPATIBILITY (iOS 8): Runtime.ObjectPreview did not have size property,
-        // instead it was tacked onto the end of the description, like "Array[#]".
-        var match = payload.description.match(/\[(\d+)\]$/);
-        if (match) {
-            payload.size = parseInt(match[1]);
-            payload.description = payload.description.replace(/\[\d+\]$/, "");
-        }
+        this._properties = properties || null;
+        this._entries = entries || null;
     }
 
-    return new WebInspector.ObjectPreview(payload.type, payload.subtype, payload.description, payload.lossless, payload.overflow, payload.properties, payload.entries, payload.size);
-};
+    // Static
 
-WebInspector.ObjectPreview.prototype = {
-    constructor: WebInspector.ObjectPreview,
-    __proto__: WebInspector.Object.prototype,
+    // Runtime.ObjectPreview.
+    static fromPayload(payload)
+    {
+        if (payload.properties)
+            payload.properties = payload.properties.map(function(property) { return WebInspector.PropertyPreview.fromPayload(property); });
+        if (payload.entries)
+            payload.entries = payload.entries.map(function(entry) { return WebInspector.CollectionEntryPreview.fromPayload(entry); });
+
+        if (payload.subtype === "array") {
+            // COMPATIBILITY (iOS 8): Runtime.ObjectPreview did not have size property,
+            // instead it was tacked onto the end of the description, like "Array[#]".
+            var match = payload.description.match(/\[(\d+)\]$/);
+            if (match) {
+                payload.size = parseInt(match[1]);
+                payload.description = payload.description.replace(/\[\d+\]$/, "");
+            }
+        }
+
+        return new WebInspector.ObjectPreview(payload.type, payload.subtype, payload.description, payload.lossless, payload.overflow, payload.properties, payload.entries, payload.size);
+    }
 
     // Public
 
     get type()
     {
         return this._type;
-    },
+    }
 
     get subtype()
     {
         return this._subtype;
-    },
+    }
 
     get description()
     {
         return this._description;
-    },
+    }
 
     get lossless()
     {
         return this._lossless;
-    },
+    }
 
     get overflow()
     {
         return this._overflow;
-    },
+    }
 
     get propertyPreviews()
     {
         return this._properties;
-    },
+    }
 
     get collectionEntryPreviews()
     {
         return this._entries;
-    },
+    }
 
     get size()
     {
         return this._size;
-    },
+    }
 
     hasSize()
     {

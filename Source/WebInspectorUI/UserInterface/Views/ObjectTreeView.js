@@ -25,7 +25,8 @@
 
 WebInspector.ObjectTreeView = function(object, mode, propertyPath, forceExpanding)
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     console.assert(object instanceof WebInspector.RemoteObject);
     console.assert(!propertyPath || propertyPath instanceof WebInspector.PropertyPath);

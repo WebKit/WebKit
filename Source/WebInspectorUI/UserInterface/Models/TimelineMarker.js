@@ -23,14 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineMarker = function(time, type)
+WebInspector.TimelineMarker = class TimelineMarker extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(time, type)
+    {
+        super();
 
-    console.assert(type);
+        console.assert(type);
 
-    this._time = time || 0;
-    this._type = type;
+        this._time = time || 0;
+        this._type = type;
+    }
+
+    // Public
+
+    get time()
+    {
+        return this._time;
+    }
+
+    set time(x)
+    {
+        if (this._time === x)
+            return;
+
+        this._time = x || 0;
+
+        this.dispatchEventToListeners(WebInspector.TimelineMarker.Event.TimeChanged);
+    }
+
+    get type()
+    {
+        return this._type;
+    }
 };
 
 WebInspector.TimelineMarker.Event = {
@@ -42,31 +67,4 @@ WebInspector.TimelineMarker.Type = {
     LoadEvent: "load-event",
     DOMContentEvent: "dom-content-event",
     TimeStamp: "timestamp"
-};
-
-WebInspector.TimelineMarker.prototype = {
-    constructor: WebInspector.TimelineMarker,
-    __proto__: WebInspector.Object.prototype,
-
-    // Public
-
-    get time()
-    {
-        return this._time;
-    },
-
-    set time(x)
-    {
-        if (this._time === x)
-            return;
-
-        this._time = x || 0;
-
-        this.dispatchEventToListeners(WebInspector.TimelineMarker.Event.TimeChanged);
-    },
-
-    get type()
-    {
-        return this._type;
-    }
 };

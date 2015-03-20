@@ -27,26 +27,17 @@
  * SUCH DAMAGE.
  */
 
-WebInspector.ContentFlow = function(documentNodeIdentifier, name, overset, contentNodes)
+WebInspector.ContentFlow = class ContentFlow extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(documentNodeIdentifier, name, overset, contentNodes)
+    {
+        super();
 
-    this._documentNodeIdentifier = documentNodeIdentifier;
-    this._name = name;
-    this._overset = overset;
-    this._contentNodes = contentNodes;
-};
-
-WebInspector.ContentFlow.Event = {
-    OversetWasChanged: "content-flow-overset-was-changed",
-    ContentNodeWasAdded: "content-flow-content-node-was-added",
-    ContentNodeWasRemoved: "content-flow-content-node-was-removed"
-};
-
-WebInspector.ContentFlow.prototype = {
-
-    constructor: WebInspector.ContentFlow,
-    __proto__: WebInspector.Object.prototype,
+        this._documentNodeIdentifier = documentNodeIdentifier;
+        this._name = name;
+        this._overset = overset;
+        this._contentNodes = contentNodes;
+    }
 
     // Public
 
@@ -54,22 +45,22 @@ WebInspector.ContentFlow.prototype = {
     {
         // Use the flow node id, to avoid collisions when we change main document id.
         return this._documentNodeIdentifier + ":" + this._name;
-    },
+    }
 
     get documentNodeIdentifier()
     {
         return this._documentNodeIdentifier;
-    },
+    }
 
     get name()
     {
         return this._name;
-    },
+    }
 
     get overset()
     {
         return this._overset;
-    },
+    }
 
     set overset(overset)
     {
@@ -77,32 +68,38 @@ WebInspector.ContentFlow.prototype = {
             return;
         this._overset = overset;
         this.dispatchEventToListeners(WebInspector.ContentFlow.Event.FlowOversetWasChanged);
-    },
+    }
 
     get contentNodes()
     {
         return this._contentNodes;
-    },
+    }
 
-    insertContentNodeBefore: function(contentNode, referenceNode)
+    insertContentNodeBefore(contentNode, referenceNode)
     {
         var index = this._contentNodes.indexOf(referenceNode);
         console.assert(index !== -1);
         this._contentNodes.splice(index, 0, contentNode);
         this.dispatchEventToListeners(WebInspector.ContentFlow.Event.ContentNodeWasAdded, {node: contentNode, before: referenceNode});
-    },
+    }
 
-    appendContentNode: function(contentNode)
+    appendContentNode(contentNode)
     {
         this._contentNodes.push(contentNode);
         this.dispatchEventToListeners(WebInspector.ContentFlow.Event.ContentNodeWasAdded, {node: contentNode});
-    },
+    }
 
-    removeContentNode: function(contentNode)
+    removeContentNode(contentNode)
     {
         var index = this._contentNodes.indexOf(contentNode);
         console.assert(index !== -1);
         this._contentNodes.splice(index, 1);
         this.dispatchEventToListeners(WebInspector.ContentFlow.Event.ContentNodeWasRemoved, {node: contentNode});
     }
+};
+
+WebInspector.ContentFlow.Event = {
+    OversetWasChanged: "content-flow-overset-was-changed",
+    ContentNodeWasAdded: "content-flow-content-node-was-added",
+    ContentNodeWasRemoved: "content-flow-content-node-was-removed"
 };

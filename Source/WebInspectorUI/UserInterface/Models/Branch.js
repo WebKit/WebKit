@@ -23,26 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Branch = function(displayName, revisions, locked)
+WebInspector.Branch = class Branch extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(displayName, revisions, locked)
+    {
+        super();
 
-    console.assert(displayName);
+        console.assert(displayName);
 
-    this._displayName = displayName;
-    this._revisions = revisions instanceof Array ? revisions.slice() : [];
-    this._locked = locked || false;
-};
-
-WebInspector.Branch.prototype = {
-    constructor: WebInspector.Branch,
+        this._displayName = displayName;
+        this._revisions = revisions instanceof Array ? revisions.slice() : [];
+        this._locked = locked || false;
+    }
 
     // Public
 
     get displayName()
     {
         return this._displayName;
-    },
+    }
 
     set displayName(displayName)
     {
@@ -51,19 +50,19 @@ WebInspector.Branch.prototype = {
             return;
 
         this._displayName = displayName;
-    },
+    }
 
     get revisions()
     {
         return this._revisions;
-    },
+    }
 
     get locked()
     {
         return this._locked;
-    },
+    }
 
-    revisionForRepresentedObject: function(representedObject, doNotCreateIfNeeded)
+    revisionForRepresentedObject(representedObject, doNotCreateIfNeeded)
     {
         for (var i = 0; i < this._revisions.length; ++i) {
             var revision = this._revisions[i];
@@ -82,9 +81,9 @@ WebInspector.Branch.prototype = {
         }
 
         return null;
-    },
+    }
 
-    addRevision: function(revision)
+    addRevision(revision)
     {
         console.assert(revision instanceof WebInspector.Revision);
 
@@ -95,9 +94,9 @@ WebInspector.Branch.prototype = {
             return;
 
         this._revisions.push(revision);
-    },
+    }
 
-    removeRevision: function(revision)
+    removeRevision(revision)
     {
         console.assert(revision instanceof WebInspector.Revision);
 
@@ -105,45 +104,43 @@ WebInspector.Branch.prototype = {
             return;
 
         this._revisions.remove(revision);
-    },
+    }
 
-    reset: function()
+    reset()
     {
         if (this._locked)
             return;
 
         this._revisions = [];
-    },
+    }
 
-    fork: function(displayName)
+    fork(displayName)
     {
         var copiedRevisions = this._revisions.map(function(revision) { return revision.copy(); });
         return new WebInspector.Branch(displayName, copiedRevisions);
-    },
+    }
 
-    apply: function()
+    apply()
     {
         for (var i = 0; i < this._revisions.length; ++i)
             this._revisions[i].apply();
-    },
+    }
 
-    revert: function()
+    revert()
     {
         for (var i = this._revisions.length - 1; i >= 0; --i)
             this._revisions[i].revert();
-    },
+    }
 
-    lock: function()
+    lock()
     {
         console.assert(!this._locked);
         this._locked = true;
-    },
+    }
 
-    unlock: function()
+    unlock()
     {
         console.assert(this._locked);
         this._locked = false;
     }
 };
-
-WebInspector.Branch.prototype.__proto__ = WebInspector.Object.prototype;

@@ -23,87 +23,65 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodeLocation = function(sourceCode, lineNumber, columnNumber)
+WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(sourceCode, lineNumber, columnNumber)
+    {
+        super();
 
-    console.assert(sourceCode === null || sourceCode instanceof WebInspector.SourceCode);
-    console.assert(!(sourceCode instanceof WebInspector.SourceMapResource));
-    console.assert(typeof lineNumber === "number" && !isNaN(lineNumber) && lineNumber >= 0);
-    console.assert(typeof columnNumber === "number" && !isNaN(columnNumber) && columnNumber >= 0);
+        console.assert(sourceCode === null || sourceCode instanceof WebInspector.SourceCode);
+        console.assert(!(sourceCode instanceof WebInspector.SourceMapResource));
+        console.assert(typeof lineNumber === "number" && !isNaN(lineNumber) && lineNumber >= 0);
+        console.assert(typeof columnNumber === "number" && !isNaN(columnNumber) && columnNumber >= 0);
 
-    this._sourceCode = sourceCode || null;
-    this._lineNumber = lineNumber;
-    this._columnNumber = columnNumber;
-    this._resolveFormattedLocation();
+        this._sourceCode = sourceCode || null;
+        this._lineNumber = lineNumber;
+        this._columnNumber = columnNumber;
+        this._resolveFormattedLocation();
 
-    if (this._sourceCode) {
-        this._sourceCode.addEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
-        this._sourceCode.addEventListener(WebInspector.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
+        if (this._sourceCode) {
+            this._sourceCode.addEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
+            this._sourceCode.addEventListener(WebInspector.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
+        }
+
+        this._resetMappedLocation();
     }
-
-    this._resetMappedLocation();
-};
-
-WebInspector.SourceCodeLocation.DisplayLocationClassName = "display-location";
-
-WebInspector.SourceCodeLocation.LargeColumnNumber = 80;
-
-WebInspector.SourceCodeLocation.NameStyle = {
-    None: "none", // File name not included.
-    Short: "short", // Only the file name.
-    Full: "full" // Full URL is used.
-};
-
-WebInspector.SourceCodeLocation.ColumnStyle = {
-    Hidden: "hidden",             // column numbers are not included.
-    OnlyIfLarge: "only-if-large", // column numbers greater than 80 are shown.
-    Shown: "shown"                // non-zero column numbers are shown.
-};
-
-WebInspector.SourceCodeLocation.Event = {
-    LocationChanged: "source-code-location-location-changed",
-    DisplayLocationChanged: "source-code-location-display-location-changed"
-};
-
-WebInspector.SourceCodeLocation.prototype = {
-    constructor: WebInspector.SourceCodeLocation,
 
     // Public
 
-    isEqual: function(other)
+    isEqual(other)
     {
         if (!other)
             return false;
         return this._sourceCode === other._sourceCode && this._lineNumber === other._lineNumber && this._columnNumber === other._columnNumber;
-    },
+    }
 
     get sourceCode()
     {
         return this._sourceCode;
-    },
+    }
 
     set sourceCode(sourceCode)
     {
         this.setSourceCode(sourceCode);
-    },
+    }
 
     // Raw line and column in the original source code.
 
     get lineNumber()
     {
         return this._lineNumber;
-    },
+    }
 
     get columnNumber()
     {
         return this._columnNumber;
-    },
+    }
 
-    position: function()
+    position()
     {
         return new WebInspector.SourceCodePosition(this.lineNumber, this.columnNumber);
-    },
+    }
 
     // Formatted line and column if the original source code is pretty printed.
     // This is the same as the raw location if there is no formatter.
@@ -111,17 +89,17 @@ WebInspector.SourceCodeLocation.prototype = {
     get formattedLineNumber()
     {
         return this._formattedLineNumber;
-    },
+    }
 
     get formattedColumnNumber()
     {
         return this._formattedColumnNumber;
-    },
+    }
 
-    formattedPosition: function()
+    formattedPosition()
     {
         return new WebInspector.SourceCodePosition(this.formattedLineNumber, this.formattedColumnNumber);
-    },
+    }
 
     // Display line and column:
     //   - Mapped line and column if the original source code has a source map.
@@ -131,43 +109,43 @@ WebInspector.SourceCodeLocation.prototype = {
     {
         this.resolveMappedLocation();
         return this._mappedResource || this._sourceCode;
-    },
+    }
 
     get displayLineNumber()
     {
         this.resolveMappedLocation();
         return isNaN(this._mappedLineNumber) ? this._formattedLineNumber : this._mappedLineNumber;
-    },
+    }
 
     get displayColumnNumber()
     {
         this.resolveMappedLocation();
         return isNaN(this._mappedColumnNumber) ? this._formattedColumnNumber : this._mappedColumnNumber;
-    },
+    }
 
-    displayPosition: function()
+    displayPosition()
     {
         return new WebInspector.SourceCodePosition(this.displayLineNumber, this.displayColumnNumber);
-    },
+    }
 
     // User presentable location strings: "file:lineNumber:columnNumber".
 
-    originalLocationString: function(columnStyle, nameStyle, prefix)
+    originalLocationString(columnStyle, nameStyle, prefix)
     {
         return this._locationString(this.sourceCode, this.lineNumber, this.columnNumber, columnStyle, nameStyle, prefix);
-    },
+    }
 
-    formattedLocationString: function(columnStyle, nameStyle, prefix)
+    formattedLocationString(columnStyle, nameStyle, prefix)
     {
         return this._locationString(this.sourceCode, this.formattedLineNumber, this.formattedColumn, columnStyle, nameStyle, prefix);
-    },
+    }
 
-    displayLocationString: function(columnStyle, nameStyle, prefix)
+    displayLocationString(columnStyle, nameStyle, prefix)
     {
         return this._locationString(this.displaySourceCode, this.displayLineNumber, this.displayColumnNumber, columnStyle, nameStyle, prefix);
-    },
+    }
 
-    tooltipString: function()
+    tooltipString()
     {
         if (!this.hasDifferentDisplayLocation())
             return this.originalLocationString(WebInspector.SourceCodeLocation.ColumnStyle.Shown, WebInspector.SourceCodeLocation.NameStyle.Full);
@@ -175,25 +153,25 @@ WebInspector.SourceCodeLocation.prototype = {
         var tooltip = WebInspector.UIString("Located at %s").format(this.displayLocationString(WebInspector.SourceCodeLocation.ColumnStyle.Shown, WebInspector.SourceCodeLocation.NameStyle.Full));
         tooltip += "\n" + WebInspector.UIString("Originally %s").format(this.originalLocationString(WebInspector.SourceCodeLocation.ColumnStyle.Shown, WebInspector.SourceCodeLocation.NameStyle.Full));
         return tooltip;
-    },
+    }
 
-    hasMappedLocation: function()
+    hasMappedLocation()
     {
         this.resolveMappedLocation();
         return this._mappedResource !== null;
-    },
+    }
 
-    hasFormattedLocation: function()
+    hasFormattedLocation()
     {
         return this._formattedLineNumber !== this._lineNumber || this._formattedColumnNumber !== this._columnNumber;
-    },
+    }
 
-    hasDifferentDisplayLocation: function()
+    hasDifferentDisplayLocation()
     {
        return this.hasMappedLocation() || this.hasFormattedLocation();
-    },
+    }
 
-    update: function(sourceCode, lineNumber, columnNumber)
+    update(sourceCode, lineNumber, columnNumber)
     {
         console.assert(sourceCode === this._sourceCode || (this._mappedResource && sourceCode === this._mappedResource));
         console.assert(typeof lineNumber === "number" && !isNaN(lineNumber) && lineNumber >= 0);
@@ -217,9 +195,9 @@ WebInspector.SourceCodeLocation.prototype = {
                 this._mappedColumnNumber = newSourceCodeLocation._mappedColumnNumber;
             }
         });
-    },
+    }
 
-    populateLiveDisplayLocationTooltip: function(element, prefix)
+    populateLiveDisplayLocationTooltip(element, prefix)
     {
         prefix = prefix || "";
 
@@ -229,9 +207,9 @@ WebInspector.SourceCodeLocation.prototype = {
             if (this.sourceCode)
                 element.title = prefix + this.tooltipString();
         }, this);
-    },
+    }
 
-    populateLiveDisplayLocationString: function(element, propertyName, columnStyle, nameStyle, prefix)
+    populateLiveDisplayLocationString(element, propertyName, columnStyle, nameStyle, prefix)
     {
         var currentDisplay = undefined;
 
@@ -270,11 +248,11 @@ WebInspector.SourceCodeLocation.prototype = {
         element.addEventListener("mouseout", function(event) {
             updateDisplayString.call(this, false);
         }.bind(this));
-    },
+    }
 
     // Protected
 
-    setSourceCode: function(sourceCode)
+    setSourceCode(sourceCode)
     {
         console.assert((this._sourceCode === null && sourceCode instanceof WebInspector.SourceCode) || (this._sourceCode instanceof WebInspector.SourceCode && sourceCode === null));
 
@@ -294,9 +272,9 @@ WebInspector.SourceCodeLocation.prototype = {
                 this._sourceCode.addEventListener(WebInspector.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
             }
         });
-    },
+    }
 
-    resolveMappedLocation: function()
+    resolveMappedLocation()
     {
         if (this._mappedLocationIsResolved)
             return;
@@ -329,11 +307,11 @@ WebInspector.SourceCodeLocation.prototype = {
             this._mappedColumnNumber = entry[4];
             return;
         }
-    },
+    }
 
     // Private
 
-    _locationString: function(sourceCode, lineNumber, columnNumber, columnStyle, nameStyle, prefix)
+    _locationString(sourceCode, lineNumber, columnNumber, columnStyle, nameStyle, prefix)
     {
         console.assert(sourceCode);
         if (!sourceCode)
@@ -362,26 +340,26 @@ WebInspector.SourceCodeLocation.prototype = {
             console.error("Unknown nameStyle: " + nameStyle);
             return prefix + lineString;
         }
-    },
+    }
 
-    _resetMappedLocation: function()
+    _resetMappedLocation()
     {
         this._mappedLocationIsResolved = false;
         this._mappedResource = null;
         this._mappedLineNumber = NaN;
         this._mappedColumnNumber = NaN;
-    },
+    }
 
-    _setMappedLocation: function(mappedResource, mappedLineNumber, mappedColumnNumber)
+    _setMappedLocation(mappedResource, mappedLineNumber, mappedColumnNumber)
     {
         // Called by SourceMapResource when it creates a SourceCodeLocation and already knows the resolved location.
         this._mappedLocationIsResolved = true;
         this._mappedResource = mappedResource;
         this._mappedLineNumber = mappedLineNumber;
         this._mappedColumnNumber = mappedColumnNumber;
-    },
+    }
 
-    _resolveFormattedLocation: function()
+    _resolveFormattedLocation()
     {
         if (this._sourceCode && this._sourceCode.formatterSourceMap) {
             var formattedLocation = this._sourceCode.formatterSourceMap.originalToFormatted(this._lineNumber, this._columnNumber);
@@ -391,9 +369,9 @@ WebInspector.SourceCodeLocation.prototype = {
             this._formattedLineNumber = this._lineNumber;
             this._formattedColumnNumber = this._columnNumber;
         }
-    },
+    }
 
-    _makeChangeAndDispatchChangeEventIfNeeded: function(changeFunction)
+    _makeChangeAndDispatchChangeEventIfNeeded(changeFunction)
     {
         var oldSourceCode = this._sourceCode;
         var oldLineNumber = this._lineNumber;
@@ -448,17 +426,36 @@ WebInspector.SourceCodeLocation.prototype = {
             if (anyLocationChanged)
                 this.dispatchEventToListeners(WebInspector.SourceCodeLocation.Event.LocationChanged, oldData);
         }
-    },
+    }
 
-    _sourceCodeSourceMapAdded: function()
+    _sourceCodeSourceMapAdded()
     {
         this._makeChangeAndDispatchChangeEventIfNeeded(null);
-    },
+    }
 
-    _sourceCodeFormatterDidChange: function()
+    _sourceCodeFormatterDidChange()
     {
         this._makeChangeAndDispatchChangeEventIfNeeded(null);
     }
 };
 
-WebInspector.SourceCodeLocation.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.SourceCodeLocation.DisplayLocationClassName = "display-location";
+
+WebInspector.SourceCodeLocation.LargeColumnNumber = 80;
+
+WebInspector.SourceCodeLocation.NameStyle = {
+    None: "none", // File name not included.
+    Short: "short", // Only the file name.
+    Full: "full" // Full URL is used.
+};
+
+WebInspector.SourceCodeLocation.ColumnStyle = {
+    Hidden: "hidden",             // column numbers are not included.
+    OnlyIfLarge: "only-if-large", // column numbers greater than 80 are shown.
+    Shown: "shown"                // non-zero column numbers are shown.
+};
+
+WebInspector.SourceCodeLocation.Event = {
+    LocationChanged: "source-code-location-location-changed",
+    DisplayLocationChanged: "source-code-location-display-location-changed"
+};

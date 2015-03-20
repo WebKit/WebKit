@@ -23,64 +23,63 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CallFrame = function(id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode)
+WebInspector.CallFrame = class CallFrame extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode)
+    {
+        super();
 
-    console.assert(!sourceCodeLocation || sourceCodeLocation instanceof WebInspector.SourceCodeLocation);
-    console.assert(!thisObject || thisObject instanceof WebInspector.RemoteObject);
-    console.assert(!scopeChain || scopeChain instanceof Array);
+        console.assert(!sourceCodeLocation || sourceCodeLocation instanceof WebInspector.SourceCodeLocation);
+        console.assert(!thisObject || thisObject instanceof WebInspector.RemoteObject);
+        console.assert(!scopeChain || scopeChain instanceof Array);
 
-    this._id = id || null;
-    this._sourceCodeLocation = sourceCodeLocation || null;
-    this._functionName = functionName || null;
-    this._thisObject = thisObject || null;
-    this._scopeChain = scopeChain || [];
-    this._nativeCode = nativeCode || false;
-};
-
-WebInspector.CallFrame.prototype = {
-    constructor: WebInspector.CallFrame,
+        this._id = id || null;
+        this._sourceCodeLocation = sourceCodeLocation || null;
+        this._functionName = functionName || null;
+        this._thisObject = thisObject || null;
+        this._scopeChain = scopeChain || [];
+        this._nativeCode = nativeCode || false;
+    }
 
     // Public
 
     get id()
     {
         return this._id;
-    },
+    }
 
     get sourceCodeLocation()
     {
         return this._sourceCodeLocation;
-    },
+    }
 
     get functionName()
     {
         return this._functionName;
-    },
+    }
 
     get nativeCode()
     {
         return this._nativeCode;
-    },
+    }
 
     get thisObject()
     {
         return this._thisObject;
-    },
+    }
 
     get scopeChain()
     {
         return this._scopeChain;
-    },
+    }
 
-    saveIdentityToCookie: function()
+    saveIdentityToCookie()
     {
         // Do nothing. The call frame is torn down when the inspector closes, and
         // we shouldn't restore call frame content views across debugger pauses.
-    },
+    }
 
-    collectScopeChainVariableNames: function(callback)
+    collectScopeChainVariableNames(callback)
     {
         var result = {this: true};
 
@@ -101,5 +100,3 @@ WebInspector.CallFrame.prototype = {
             this._scopeChain[i].object.deprecatedGetAllProperties(propertiesCollected);
     }
 };
-
-WebInspector.CallFrame.prototype.__proto__ = WebInspector.Object.prototype;

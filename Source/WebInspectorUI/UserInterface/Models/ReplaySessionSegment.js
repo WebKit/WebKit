@@ -25,17 +25,17 @@
  */
 
 
-WebInspector.IncompleteSessionSegment = function(identifier)
+WebInspector.IncompleteSessionSegment = class IncompleteSessionSegment extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(identifier)
+    {
+        super();
 
-    this.identifier = identifier;
-    this._timestamp = Date.now();
-};
+        this.identifier = identifier;
+        this._timestamp = Date.now();
+    }
 
-WebInspector.IncompleteSessionSegment.prototype = {
-    constructor: WebInspector.IncompleteSessionSegment,
-    __proto__: WebInspector.Object.prototype,
+    // Public
 
     get isComplete()
     {
@@ -43,22 +43,22 @@ WebInspector.IncompleteSessionSegment.prototype = {
     }
 };
 
-WebInspector.ReplaySessionSegment = function(identifier, payload)
+WebInspector.ReplaySessionSegment = class ReplaySessionSegment extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(identifier, payload)
+    {
+        super();
 
-    var segment = payload.segment;
-    console.assert(identifier === segment.id);
+        var segment = payload.segment;
+        console.assert(identifier === segment.id);
 
-    this.identifier = identifier;
-    this._timestamp = segment.timestamp;
+        this.identifier = identifier;
+        this._timestamp = segment.timestamp;
 
-    this._queues = segment.queues;
-};
+        this._queues = segment.queues;
+    }
 
-WebInspector.ReplaySessionSegment.prototype = {
-    constructor: WebInspector.ReplaySessionSegment,
-    __proto__: WebInspector.Object.prototype,
+    // Public
 
     get isComplete()
     {

@@ -25,7 +25,8 @@
 
 WebInspector.Section = function(title, subtitle)
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this.element = document.createElement("div");
     this.element.className = "section";

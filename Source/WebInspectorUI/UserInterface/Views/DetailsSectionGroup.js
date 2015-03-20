@@ -24,7 +24,8 @@
  */
 
 WebInspector.DetailsSectionGroup = function(rows) {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this._element = document.createElement("div");
     this._element.className = WebInspector.DetailsSectionGroup.StyleClassName;

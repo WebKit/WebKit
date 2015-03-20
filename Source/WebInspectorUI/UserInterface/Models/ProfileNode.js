@@ -23,127 +23,113 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProfileNode = function(id, type, functionName, sourceCodeLocation, calls, childNodes)
+WebInspector.ProfileNode = class ProfileNode extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(id, type, functionName, sourceCodeLocation, calls, childNodes)
+    {
+        super();
 
-    childNodes = childNodes || [];
+        childNodes = childNodes || [];
 
-    console.assert(id);
-    console.assert(calls instanceof Array);
-    console.assert(calls.length >= 1);
-    console.assert(calls.reduce(function(previousValue, call) { return previousValue && call instanceof WebInspector.ProfileNodeCall; }, true));
-    console.assert(childNodes instanceof Array);
-    console.assert(childNodes.reduce(function(previousValue, node) { return previousValue && node instanceof WebInspector.ProfileNode; }, true));
+        console.assert(id);
+        console.assert(calls instanceof Array);
+        console.assert(calls.length >= 1);
+        console.assert(calls.reduce(function(previousValue, call) { return previousValue && call instanceof WebInspector.ProfileNodeCall; }, true));
+        console.assert(childNodes instanceof Array);
+        console.assert(childNodes.reduce(function(previousValue, node) { return previousValue && node instanceof WebInspector.ProfileNode; }, true));
 
-    this._id = id;
-    this._type = type || WebInspector.ProfileNode.Type.Function;
-    this._functionName = functionName || null;
-    this._sourceCodeLocation = sourceCodeLocation || null;
-    this._calls = calls;
-    this._childNodes = childNodes;
-    this._parentNode = null;
-    this._previousSibling = null;
-    this._nextSibling = null;
-    this._computedTotalTimes = false;
+        this._id = id;
+        this._type = type || WebInspector.ProfileNode.Type.Function;
+        this._functionName = functionName || null;
+        this._sourceCodeLocation = sourceCodeLocation || null;
+        this._calls = calls;
+        this._childNodes = childNodes;
+        this._parentNode = null;
+        this._previousSibling = null;
+        this._nextSibling = null;
+        this._computedTotalTimes = false;
 
-    for (var i = 0; i < this._childNodes.length; ++i)
-        this._childNodes[i].establishRelationships(this, this._childNodes[i - 1], this._childNodes[i + 1]);
+        for (var i = 0; i < this._childNodes.length; ++i)
+            this._childNodes[i].establishRelationships(this, this._childNodes[i - 1], this._childNodes[i + 1]);
 
-    for (var i = 0; i < this._calls.length; ++i)
-        this._calls[i].establishRelationships(this, this._calls[i - 1], this._calls[i + 1]);
-};
-
-WebInspector.ProfileNode.Type = {
-    Function: "profile-node-type-function",
-    Program: "profile-node-type-program"
-};
-
-WebInspector.ProfileNode.TypeIdentifier = "profile-node";
-WebInspector.ProfileNode.TypeCookieKey = "profile-node-type";
-WebInspector.ProfileNode.FunctionNameCookieKey = "profile-node-function-name";
-WebInspector.ProfileNode.SourceCodeURLCookieKey = "profile-node-source-code-url";
-WebInspector.ProfileNode.SourceCodeLocationLineCookieKey = "profile-node-source-code-location-line";
-WebInspector.ProfileNode.SourceCodeLocationColumnCookieKey = "profile-node-source-code-location-column";
-
-WebInspector.ProfileNode.prototype = {
-    constructor: WebInspector.ProfileNode,
-    __proto__: WebInspector.Object.prototype,
+        for (var i = 0; i < this._calls.length; ++i)
+            this._calls[i].establishRelationships(this, this._calls[i - 1], this._calls[i + 1]);
+    }
 
     // Public
 
     get id()
     {
         return this._id;
-    },
+    }
 
     get type()
     {
         return this._type;
-    },
+    }
 
     get functionName()
     {
         return this._functionName;
-    },
+    }
 
     get sourceCodeLocation()
     {
         return this._sourceCodeLocation;
-    },
+    }
 
     get startTime()
     {
         if (this._startTime === undefined)
             this._startTime =  Math.max(0, this._calls[0].startTime);
         return this._startTime;
-    },
+    }
 
     get endTime()
     {
         if (this._endTime === undefined)
             this._endTime = Math.min(this._calls.lastValue.endTime, Infinity);
         return this._endTime;
-    },
+    }
 
     get selfTime()
     {
         this._computeTotalTimesIfNeeded();
         return this._selfTime;
-    },
+    }
 
     get totalTime()
     {
         this._computeTotalTimesIfNeeded();
         return this._totalTime;
-    },
+    }
 
     get calls()
     {
         return this._calls;
-    },
+    }
 
     get previousSibling()
     {
         return this._previousSibling;
-    },
+    }
 
     get nextSibling()
     {
         return this._nextSibling;
-    },
+    }
 
     get parentNode()
     {
         return this._parentNode;
-    },
+    }
 
     get childNodes()
     {
         return this._childNodes;
-    },
+    }
 
-    computeCallInfoForTimeRange: function(rangeStartTime, rangeEndTime)
+    computeCallInfoForTimeRange(rangeStartTime, rangeEndTime)
     {
         console.assert(typeof rangeStartTime === "number");
         console.assert(typeof rangeEndTime === "number");
@@ -176,9 +162,9 @@ WebInspector.ProfileNode.prototype = {
         var averageTime = selfTime / callCount;
 
         return {startTime, endTime, totalTime, selfTime, callCount, averageTime};
-    },
+    }
 
-    traverseNextProfileNode: function(stayWithin)
+    traverseNextProfileNode(stayWithin)
     {
         var profileNode = this._childNodes[0];
         if (profileNode)
@@ -199,29 +185,29 @@ WebInspector.ProfileNode.prototype = {
             return null;
 
         return profileNode.nextSibling;
-    },
+    }
 
-    saveIdentityToCookie: function(cookie)
+    saveIdentityToCookie(cookie)
     {
         cookie[WebInspector.ProfileNode.TypeCookieKey] = this._type || null;
         cookie[WebInspector.ProfileNode.FunctionNameCookieKey] = this._functionName || null;
         cookie[WebInspector.ProfileNode.SourceCodeURLCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.sourceCode.url ? this._sourceCodeLocation.sourceCode.url.hash : null : null;
         cookie[WebInspector.ProfileNode.SourceCodeLocationLineCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.lineNumber : null;
         cookie[WebInspector.ProfileNode.SourceCodeLocationColumnCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.columnNumber : null;
-    },
+    }
 
     // Protected
 
-    establishRelationships: function(parentNode, previousSibling, nextSibling)
+    establishRelationships(parentNode, previousSibling, nextSibling)
     {
         this._parentNode = parentNode || null;
         this._previousSibling = previousSibling || null;
         this._nextSibling = nextSibling || null;
-    },
+    }
 
     // Private
 
-    _computeTotalTimes: function()
+    _computeTotalTimes()
     {
         if (this._computedTotalTimes)
             return;
@@ -235,3 +221,15 @@ WebInspector.ProfileNode.prototype = {
         this._totalTime = info.totalTime;
     }
 };
+
+WebInspector.ProfileNode.Type = {
+    Function: "profile-node-type-function",
+    Program: "profile-node-type-program"
+};
+
+WebInspector.ProfileNode.TypeIdentifier = "profile-node";
+WebInspector.ProfileNode.TypeCookieKey = "profile-node-type";
+WebInspector.ProfileNode.FunctionNameCookieKey = "profile-node-function-name";
+WebInspector.ProfileNode.SourceCodeURLCookieKey = "profile-node-source-code-url";
+WebInspector.ProfileNode.SourceCodeLocationLineCookieKey = "profile-node-source-code-location-line";
+WebInspector.ProfileNode.SourceCodeLocationColumnCookieKey = "profile-node-source-code-location-column";

@@ -26,60 +26,48 @@
 
 // A ProbeSet clusters Probes from the same Breakpoint and their samples.
 
-WebInspector.ProbeSet = function(breakpoint)
+WebInspector.ProbeSet = class ProbeSet extends WebInspector.Object
 {
-    console.assert(breakpoint instanceof WebInspector.Breakpoint, "Unknown breakpoint argument: ", breakpoint);
+    constructor(breakpoint)
+    {
+        super();
 
-    WebInspector.Object.call(this);
-    this._breakpoint = breakpoint;
-    this._probes = [];
-    this._probesByIdentifier = new Map;
+        console.assert(breakpoint instanceof WebInspector.Breakpoint, "Unknown breakpoint argument: ", breakpoint);
 
-    this._createDataTable();
+        this._breakpoint = breakpoint;
+        this._probes = [];
+        this._probesByIdentifier = new Map;
 
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceChanged, this);
-    WebInspector.Probe.addEventListener(WebInspector.Probe.Event.SampleAdded, this._sampleCollected, this);
-    WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._breakpointResolvedStateDidChange, this);
-}
+        this._createDataTable();
 
-WebInspector.Object.addConstructorFunctions(WebInspector.ProbeSet);
-
-WebInspector.ProbeSet.Event = {
-    ProbeAdded: "probe-set-probe-added",
-    ProbeRemoved: "probe-set-probe-removed",
-    ResolvedStateDidChange: "probe-set-resolved-state-did-change",
-    SamplesCleared: "probe-set-samples-cleared",
-};
-
-WebInspector.ProbeSet.SampleObjectTitle = "Object";
-
-WebInspector.ProbeSet.prototype = {
-    constructor: WebInspector.ProbeSet,
-    __proto__: WebInspector.Object.prototype,
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceChanged, this);
+        WebInspector.Probe.addEventListener(WebInspector.Probe.Event.SampleAdded, this._sampleCollected, this);
+        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._breakpointResolvedStateDidChange, this);
+    }
 
     // Public
 
-   get breakpoint()
-   {
-        return this._breakpoint;
-   },
+    get breakpoint()
+    {
+         return this._breakpoint;
+    }
 
     get probes()
     {
         return this._probes.slice();
-    },
+    }
 
     get dataTable()
     {
         return this._dataTable;
-    },
+    }
 
-    clear: function()
+    clear()
     {
         this._breakpoint.clearActions(WebInspector.BreakpointAction.Type.Probe);
-    },
+    }
 
-    clearSamples: function()
+    clearSamples()
     {
         for (var probe of this._probes)
             probe.clearSamples();
@@ -87,14 +75,14 @@ WebInspector.ProbeSet.prototype = {
         var oldTable = this._dataTable;
         this._createDataTable();
         this.dispatchEventToListeners(WebInspector.ProbeSet.Event.SamplesCleared, {oldTable});
-    },
+    }
 
-    createProbe: function(expression)
+    createProbe(expression)
     {
         this.breakpoint.createAction(WebInspector.BreakpointAction.Type.Probe, null, expression);
-    },
+    }
 
-    addProbe: function(probe)
+    addProbe(probe)
     {
         console.assert(probe instanceof WebInspector.Probe, "Tried to add non-probe ", probe, " to probe group", this);
         console.assert(probe.breakpoint === this.breakpoint, "Probe and ProbeSet must have same breakpoint.", probe, this);
@@ -104,9 +92,9 @@ WebInspector.ProbeSet.prototype = {
 
         this.dataTable.addProbe(probe);
         this.dispatchEventToListeners(WebInspector.ProbeSet.Event.ProbeAdded, probe);
-    },
+    }
 
-    removeProbe: function(probe)
+    removeProbe(probe)
     {
         console.assert(probe instanceof WebInspector.Probe, "Tried to remove non-probe ", probe, " to probe group", this);
         console.assert(this._probes.indexOf(probe) !== -1, "Tried to remove probe", probe, " not in group ", this);
@@ -116,33 +104,33 @@ WebInspector.ProbeSet.prototype = {
         this._probesByIdentifier.delete(probe.id);
         this.dataTable.removeProbe(probe);
         this.dispatchEventToListeners(WebInspector.ProbeSet.Event.ProbeRemoved, probe);
-    },
+    }
 
-    willRemove: function()
+    willRemove()
     {
         console.assert(!this._probes.length, "ProbeSet.willRemove called, but probes still associated with group: ", this._probes);
 
         WebInspector.Frame.removeEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceChanged, this);
         WebInspector.Probe.removeEventListener(WebInspector.Probe.Event.SampleAdded, this._sampleCollected, this);
         WebInspector.Breakpoint.removeEventListener(WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._breakpointResolvedStateDidChange, this);
-    },
+    }
 
     // Private
 
-    _mainResourceChanged: function()
+    _mainResourceChanged()
     {
         this.dataTable.mainResourceChanged();
-    },
+    }
 
-    _createDataTable: function()
+    _createDataTable()
     {
         if (this.dataTable)
             this.dataTable.willRemove();
 
         this._dataTable = new WebInspector.ProbeSetDataTable(this);
-    },
+    }
 
-    _sampleCollected: function(event)
+    _sampleCollected(event)
     {
         var sample = event.data;
         console.assert(sample instanceof WebInspector.ProbeSample, "Tried to add non-sample to probe group: ", sample);
@@ -153,10 +141,17 @@ WebInspector.ProbeSet.prototype = {
 
         console.assert(this.dataTable);
         this.dataTable.addSampleForProbe(probe, sample);
-    },
+    }
 
-    _breakpointResolvedStateDidChange: function(event)
+    _breakpointResolvedStateDidChange(event)
     {
         this.dispatchEventToListeners(WebInspector.ProbeSet.Event.ResolvedStateDidChange);
     }
+};
+
+WebInspector.ProbeSet.Event = {
+    ProbeAdded: "probe-set-probe-added",
+    ProbeRemoved: "probe-set-probe-removed",
+    ResolvedStateDidChange: "probe-set-resolved-state-did-change",
+    SamplesCleared: "probe-set-samples-cleared",
 };

@@ -25,7 +25,8 @@
 
 WebInspector.RuntimeManager = function()
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     // Enable the RuntimeAgent to receive notification of execution contexts.
     if (RuntimeAgent.enable)

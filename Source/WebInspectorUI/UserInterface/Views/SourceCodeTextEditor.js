@@ -81,7 +81,8 @@ WebInspector.SourceCodeTextEditor = function(sourceCode)
     new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, "G", this.showGoToLineDialog.bind(this), this.element);
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.SourceCodeTextEditor);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.SourceCodeTextEditor);
 
 WebInspector.SourceCodeTextEditor.StyleClassName = "source-code";
 WebInspector.SourceCodeTextEditor.LineErrorStyleClassName = "error";

@@ -7,7 +7,7 @@ function test()
 {
     function makeNode(text, isExpression)
     {
-        var script = new WebInspector.Script(1, WebInspector.TextRange(0, text.length));
+        var script = new WebInspector.Script(1, new WebInspector.TextRange(0, text.length));
         var scriptSyntaxTree = new WebInspector.ScriptSyntaxTree(text, script);
         var syntaxTree = scriptSyntaxTree._syntaxTree;
 

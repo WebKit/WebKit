@@ -25,7 +25,8 @@
 
 WebInspector.JavaScriptLogViewController = function(element, scrollElement, textPrompt, delegate, historySettingIdentifier)
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     console.assert(textPrompt instanceof WebInspector.ConsolePrompt);
     console.assert(historySettingIdentifier);

@@ -23,62 +23,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.PropertyPreview = function(name, type, subtype, value, valuePreview, isInternalProperty)
+WebInspector.PropertyPreview = class PropertyPreview extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(name, type, subtype, value, valuePreview, isInternalProperty)
+    {
+        super();
 
-    console.assert(name);
-    console.assert(type);
-    console.assert(!value || typeof value === "string");
-    console.assert(!valuePreview || valuePreview instanceof WebInspector.ObjectPreview);
+        console.assert(name);
+        console.assert(type);
+        console.assert(!value || typeof value === "string");
+        console.assert(!valuePreview || valuePreview instanceof WebInspector.ObjectPreview);
 
-    this._name = name;
-    this._type = type;
-    this._subtype = subtype;
-    this._value = value;
-    this._valuePreview = valuePreview;
-    this._internal = isInternalProperty;
-};
+        this._name = name;
+        this._type = type;
+        this._subtype = subtype;
+        this._value = value;
+        this._valuePreview = valuePreview;
+        this._internal = isInternalProperty;
+    }
 
-// Runtime.PropertyPreview.
-WebInspector.PropertyPreview.fromPayload = function(payload)
-{
-    if (payload.valuePreview)
-        payload.valuePreview = WebInspector.ObjectPreview.fromPayload(payload.valuePreview);
+    // Static
 
-    return new WebInspector.PropertyPreview(payload.name, payload.type, payload.subtype, payload.value, payload.valuePreview, payload.internal);
-};
+    // Runtime.PropertyPreview.
+    static fromPayload(payload)
+    {
+        if (payload.valuePreview)
+            payload.valuePreview = WebInspector.ObjectPreview.fromPayload(payload.valuePreview);
 
-WebInspector.PropertyPreview.prototype = {
-    constructor: WebInspector.PropertyPreview,
-    __proto__: WebInspector.Object.prototype,
+        return new WebInspector.PropertyPreview(payload.name, payload.type, payload.subtype, payload.value, payload.valuePreview, payload.internal);
+    }
 
     // Public
 
     get name()
     {
         return this._name;
-    },
+    }
 
     get type()
     {
         return this._type;
-    },
+    }
 
     get subtype()
     {
         return this._subtype;
-    },
+    }
 
     get value()
     {
         return this._value;
-    },
+    }
 
     get valuePreview()
     {
         return this._valuePreview;
-    },
+    }
 
     get internal()
     {

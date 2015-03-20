@@ -38,7 +38,8 @@ WebInspector.TimelineDataGridNode = function(graphOnly, graphDataSource, hasChil
     }
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.TimelineDataGridNode);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.TimelineDataGridNode);
 
 WebInspector.TimelineDataGridNode.prototype = {
     constructor: WebInspector.TimelineDataGridNode,

@@ -23,31 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCode = function()
+WebInspector.SourceCode = class SourceCode extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    this._originalRevision = new WebInspector.SourceCodeRevision(this, null, false);
-    this._currentRevision = this._originalRevision;
+        this._originalRevision = new WebInspector.SourceCodeRevision(this, null, false);
+        this._currentRevision = this._originalRevision;
 
-    this._sourceMaps = null;
-    this._formatterSourceMap = null;
-    this._requestContentPromise = null;
-};
-
-WebInspector.Object.addConstructorFunctions(WebInspector.SourceCode);
-
-WebInspector.SourceCode.Event = {
-    ContentDidChange: "source-code-content-did-change",
-    SourceMapAdded: "source-code-source-map-added",
-    FormatterDidChange: "source-code-formatter-did-change",
-    LoadingDidFinish: "source-code-loading-did-finish",
-    LoadingDidFail: "source-code-loading-did-fail"
-};
-
-WebInspector.SourceCode.prototype = {
-    constructor: WebInspector.SourceCode,
-    __proto__: WebInspector.Object.prototype,
+        this._sourceMaps = null;
+        this._formatterSourceMap = null;
+        this._requestContentPromise = null;
+    }
 
     // Public
 
@@ -56,17 +44,17 @@ WebInspector.SourceCode.prototype = {
         // Implemented by subclasses.
         console.error("Needs to be implemented by a subclass.");
         return "";
-    },
+    }
 
     get originalRevision()
     {
         return this._originalRevision;
-    },
+    }
 
     get currentRevision()
     {
         return this._currentRevision;
-    },
+    }
 
     set currentRevision(revision)
     {
@@ -81,19 +69,19 @@ WebInspector.SourceCode.prototype = {
         this._currentRevision = revision;
 
         this.dispatchEventToListeners(WebInspector.SourceCode.Event.ContentDidChange);
-    },
+    }
 
     get content()
     {
         return this._currentRevision.content;
-    },
+    }
 
     get sourceMaps()
     {
         return this._sourceMaps || [];
-    },
+    }
 
-    addSourceMap: function(sourceMap)
+    addSourceMap(sourceMap)
     {
         console.assert(sourceMap instanceof WebInspector.SourceMap);
 
@@ -103,12 +91,12 @@ WebInspector.SourceCode.prototype = {
         this._sourceMaps.push(sourceMap);
 
         this.dispatchEventToListeners(WebInspector.SourceCode.Event.SourceMapAdded);
-    },
+    }
 
     get formatterSourceMap()
     {
         return this._formatterSourceMap;
-    },
+    }
 
     set formatterSourceMap(formatterSourceMap)
     {
@@ -118,33 +106,33 @@ WebInspector.SourceCode.prototype = {
         this._formatterSourceMap = formatterSourceMap;
 
         this.dispatchEventToListeners(WebInspector.SourceCode.Event.FormatterDidChange);
-    },
+    }
 
-    requestContent: function()
+    requestContent()
     {
         this._requestContentPromise = this._requestContentPromise || this.requestContentFromBackend().then(this._processContent.bind(this));
 
         return this._requestContentPromise;
-    },
+    }
 
-    createSourceCodeLocation: function(lineNumber, columnNumber)
+    createSourceCodeLocation(lineNumber, columnNumber)
     {
         return new WebInspector.SourceCodeLocation(this, lineNumber, columnNumber);
-    },
+    }
 
-    createLazySourceCodeLocation: function(lineNumber, columnNumber)
+    createLazySourceCodeLocation(lineNumber, columnNumber)
     {
         return new WebInspector.LazySourceCodeLocation(this, lineNumber, columnNumber);
-    },
+    }
 
-    createSourceCodeTextRange: function(textRange)
+    createSourceCodeTextRange(textRange)
     {
         return new WebInspector.SourceCodeTextRange(this, textRange);
-    },
+    }
 
     // Protected
 
-    revisionContentDidChange: function(revision)
+    revisionContentDidChange(revision)
     {
         if (this._ignoreRevisionContentDidChangeEvent)
             return;
@@ -155,41 +143,41 @@ WebInspector.SourceCode.prototype = {
         this.handleCurrentRevisionContentChange();
 
         this.dispatchEventToListeners(WebInspector.SourceCode.Event.ContentDidChange);
-    },
+    }
 
-    handleCurrentRevisionContentChange: function()
+    handleCurrentRevisionContentChange()
     {
         // Implemented by subclasses if needed.
-    },
+    }
 
     get revisionForRequestedContent()
     {
         // Implemented by subclasses if needed.
         return this._originalRevision;
-    },
+    }
 
-    markContentAsStale: function()
+    markContentAsStale()
     {
         this._requestContentPromise = null;
         this._contentReceived = false;
-    },
+    }
 
-    requestContentFromBackend: function()
+    requestContentFromBackend()
     {
         // Implemented by subclasses.
         console.error("Needs to be implemented by a subclass.");
         return Promise.reject(new Error("Needs to be implemented by a subclass."));
-    },
+    }
 
     get mimeType()
     {
         // Implemented by subclasses.
         console.error("Needs to be implemented by a subclass.");
-    },
+    }
 
     // Private
 
-    _processContent: function(parameters)
+    _processContent(parameters)
     {
         // Different backend APIs return one of `content, `body`, `text`, or `scriptSource`.
         var content = parameters.content || parameters.body || parameters.text || parameters.scriptSource;
@@ -209,4 +197,12 @@ WebInspector.SourceCode.prototype = {
             content,
         });
     }
+};
+
+WebInspector.SourceCode.Event = {
+    ContentDidChange: "source-code-content-did-change",
+    SourceMapAdded: "source-code-source-map-added",
+    FormatterDidChange: "source-code-formatter-did-change",
+    LoadingDidFinish: "source-code-loading-did-finish",
+    LoadingDidFail: "source-code-loading-did-fail"
 };

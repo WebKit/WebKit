@@ -23,50 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSProperty = function(index, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, styleDeclarationTextRange)
+WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(index, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, styleDeclarationTextRange)
+    {
+        super();
 
-    this._ownerStyle = null;
-    this._index = index;
+        this._ownerStyle = null;
+        this._index = index;
 
-    this.update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, styleDeclarationTextRange, true);
-};
-
-WebInspector.Object.addConstructorFunctions(WebInspector.CSSProperty);
-
-WebInspector.CSSProperty.Event = {
-    Changed: "css-property-changed",
-    OverriddenStatusChanged: "css-property-overridden-status-changed"
-};
-
-WebInspector.CSSProperty.prototype = {
-    constructor: WebInspector.CSSProperty,
-    __proto__: WebInspector.Object.prototype,
+        this.update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, styleDeclarationTextRange, true);
+    }
 
     // Public
 
     get ownerStyle()
     {
         return this._ownerStyle;
-    },
+    }
 
     set ownerStyle(ownerStyle)
     {
         this._ownerStyle = ownerStyle || null;
-    },
+    }
 
     get index()
     {
         return this._index;
-    },
+    }
 
     set index(index)
     {
         this._index = index;
-    },
+    }
 
-    update: function(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, styleDeclarationTextRange, dontFireEvents)
+    update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, styleDeclarationTextRange, dontFireEvents)
     {
         text = text || "";
         name = name || "";
@@ -116,7 +107,7 @@ WebInspector.CSSProperty.prototype = {
 
         if (changed)
             this.dispatchEventToListeners(WebInspector.CSSProperty.Event.Changed);
-    },
+    }
 
     get synthesizedText()
     {
@@ -126,17 +117,17 @@ WebInspector.CSSProperty.prototype = {
 
         var priority = this.priority;
         return name + ": " + this.value.trim() + (priority ? " !" + priority : "") + ";";
-    },
+    }
 
     get text()
     {
         return this._text || this.synthesizedText;
-    },
+    }
 
     get name()
     {
         return this._name;
-    },
+    }
 
     get canonicalName()
     {
@@ -146,32 +137,32 @@ WebInspector.CSSProperty.prototype = {
         this._canonicalName = WebInspector.cssStyleManager.canonicalNameForPropertyName(this.name);
 
         return this._canonicalName;
-    },
+    }
 
     get value()
     {
         return this._value;
-    },
+    }
 
     get important()
     {
         return this.priority === "important";
-    },
+    }
 
     get priority()
     {
         return this._priority;
-    },
+    }
 
     get enabled()
     {
         return this._enabled && this._ownerStyle && (!isNaN(this._index) || this._ownerStyle.type === WebInspector.CSSStyleDeclaration.Type.Computed);
-    },
+    }
 
     get overridden()
     {
         return this._overridden;
-    },
+    }
 
     set overridden(overridden)
     {
@@ -198,32 +189,32 @@ WebInspector.CSSProperty.prototype = {
         }
 
         this._overriddenStatusChangedTimeout = setTimeout(delayed.bind(this), 0);
-    },
+    }
 
     get implicit()
     {
         return this._implicit;
-    },
+    }
 
     get anonymous()
     {
         return this._anonymous;
-    },
+    }
 
     get inherited()
     {
         return this._inherited;
-    },
+    }
 
     get valid()
     {
         return this._valid;
-    },
+    }
 
     get styleSheetTextRange()
     {
         return this._styleSheetTextRange;
-    },
+    }
 
     get styleDeclarationTextRange()
     {
@@ -251,34 +242,34 @@ WebInspector.CSSProperty.prototype = {
         this._styleDeclarationTextRange = new WebInspector.TextRange(startLine, startColumn, endLine, endColumn);
 
         return this._styleDeclarationTextRange;
-    },
+    }
 
     get relatedShorthandProperty()
     {
         return this._relatedShorthandProperty;
-    },
+    }
 
     set relatedShorthandProperty(property)
     {
         this._relatedShorthandProperty = property || null;
-    },
+    }
 
     get relatedLonghandProperties()
     {
         return this._relatedLonghandProperties;
-    },
+    }
 
-    addRelatedLonghandProperty: function(property)
+    addRelatedLonghandProperty(property)
     {
         this._relatedLonghandProperties.push(property);
-    },
+    }
 
-    clearRelatedLonghandProperties: function(property)
+    clearRelatedLonghandProperties(property)
     {
         this._relatedLonghandProperties = [];
-    },
+    }
 
-    hasOtherVendorNameOrKeyword: function()
+    hasOtherVendorNameOrKeyword()
     {
         if ("_hasOtherVendorNameOrKeyword" in this)
             return this._hasOtherVendorNameOrKeyword;
@@ -287,4 +278,9 @@ WebInspector.CSSProperty.prototype = {
 
         return this._hasOtherVendorNameOrKeyword;
     }
+};
+
+WebInspector.CSSProperty.Event = {
+    Changed: "css-property-changed",
+    OverriddenStatusChanged: "css-property-overridden-status-changed"
 };

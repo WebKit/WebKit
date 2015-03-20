@@ -25,7 +25,8 @@
 
 WebInspector.TextEditor = function(element, mimeType, delegate)
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     var text = (element ? element.textContent : "");
     this._element = element || document.createElement("div");
@@ -69,7 +70,8 @@ WebInspector.TextEditor = function(element, mimeType, delegate)
     this._delegate = delegate || null;
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.TextEditor);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.TextEditor);
 
 WebInspector.TextEditor.StyleClassName = "text-editor";
 WebInspector.TextEditor.HighlightedStyleClassName = "highlighted";

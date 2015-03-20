@@ -23,40 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceMapResource = function(url, sourceMap)
+WebInspector.SourceMapResource = class SourceMapResource extends WebInspector.Resource
 {
-    WebInspector.Resource.call(this, url, null);
+    constructor(url, sourceMap)
+    {
+        super(url, null);
 
-    console.assert(url);
-    console.assert(sourceMap);
+        console.assert(url);
+        console.assert(sourceMap);
 
-    this._sourceMap = sourceMap;
+        this._sourceMap = sourceMap;
 
-    var inheritedMIMEType = this._sourceMap.originalSourceCode instanceof WebInspector.Resource ? this._sourceMap.originalSourceCode.syntheticMIMEType : null;
+        var inheritedMIMEType = this._sourceMap.originalSourceCode instanceof WebInspector.Resource ? this._sourceMap.originalSourceCode.syntheticMIMEType : null;
 
-    var fileExtension = WebInspector.fileExtensionForURL(url);
-    var fileExtensionMIMEType = WebInspector.mimeTypeForFileExtension(fileExtension, true);
+        var fileExtension = WebInspector.fileExtensionForURL(url);
+        var fileExtensionMIMEType = WebInspector.mimeTypeForFileExtension(fileExtension, true);
 
-    // FIXME: This is a layering violation. It should use a helper function on the
-    // Resource base-class to set _mimeType and _type.
-    this._mimeType = fileExtensionMIMEType || inheritedMIMEType || "text/javascript";
-    this._type = WebInspector.Resource.typeFromMIMEType(this._mimeType);
+        // FIXME: This is a layering violation. It should use a helper function on the
+        // Resource base-class to set _mimeType and _type.
+        this._mimeType = fileExtensionMIMEType || inheritedMIMEType || "text/javascript";
+        this._type = WebInspector.Resource.typeFromMIMEType(this._mimeType);
 
-    // Mark the resource as loaded so it does not show a spinner in the sidebar.
-    // We will really load the resource the first time content is requested.
-    this.markAsFinished();
-};
-
-WebInspector.SourceMapResource.prototype = {
-    constructor: WebInspector.SourceMapResource,
-    __proto__: WebInspector.Resource.prototype,
+        // Mark the resource as loaded so it does not show a spinner in the sidebar.
+        // We will really load the resource the first time content is requested.
+        this.markAsFinished();
+    }
 
     // Public
 
     get sourceMap()
     {
         return this._sourceMap;
-    },
+    }
 
     get sourceMapDisplaySubpath()
     {
@@ -73,9 +71,9 @@ WebInspector.SourceMapResource.prototype = {
 
         // Same host. Just a subpath of the base.
         return resourceURLComponents.path.substring(sourceMappingBasePathURLComponents.path.length, resourceURLComponents.length);
-    },
+    }
 
-    requestContentFromBackend: function(callback)
+    requestContentFromBackend(callback)
     {
         // Revert the markAsFinished that was done in the constructor.
         this.revertMarkAsFinished();
@@ -111,7 +109,7 @@ WebInspector.SourceMapResource.prototype = {
         {
             var {error, content, mimeType, statusCode} = parameters;
 
-            const base64encoded = false;
+            var base64encoded = false;
 
             if (statusCode >= 400 || error)
                 return sourceMapResourceNotAvailable(error, content, mimeType, statusCode);
@@ -140,9 +138,9 @@ WebInspector.SourceMapResource.prototype = {
             frameIdentifier = WebInspector.frameResourceManager.mainFrame.id;
 
         return NetworkAgent.loadResource.promise(frameIdentifier, this.url).then(sourceMapResourceLoaded.bind(this)).catch(sourceMapResourceLoadError.bind(this));
-    },
+    }
 
-    createSourceCodeLocation: function(lineNumber, columnNumber)
+    createSourceCodeLocation(lineNumber, columnNumber)
     {
         // SourceCodeLocations are always constructed with raw resources and raw locations. Lookup the raw location.
         var entry = this._sourceMap.findEntryReversed(this.url, lineNumber);
@@ -161,9 +159,9 @@ WebInspector.SourceMapResource.prototype = {
         var location = originalSourceCode.createSourceCodeLocation(rawLineNumber, rawColumnNumber);
         location._setMappedLocation(this, lineNumber, columnNumber);
         return location;
-    },
+    }
 
-    createSourceCodeTextRange: function(textRange)
+    createSourceCodeTextRange(textRange)
     {
         // SourceCodeTextRanges are always constructed with raw resources and raw locations.
         // However, we can provide the most accurate mapped locations in construction.

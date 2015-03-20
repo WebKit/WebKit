@@ -41,7 +41,8 @@ WebInspector.DOMTreeManager = function() {
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.DOMTreeManager);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.DOMTreeManager);
 
 WebInspector.DOMTreeManager.Event = {
     AttributeModified: "dom-tree-manager-attribute-modified",

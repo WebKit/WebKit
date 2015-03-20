@@ -24,7 +24,8 @@
  */
 
 WebInspector.Sidebar = function(element, side, sidebarPanels, role, label) {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     console.assert(!side || side === WebInspector.Sidebar.Sides.Left || side === WebInspector.Sidebar.Sides.Right);
     this._side = side || WebInspector.Sidebar.Sides.Left;
@@ -51,7 +52,8 @@ WebInspector.Sidebar = function(element, side, sidebarPanels, role, label) {
     }
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.Sidebar);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.Sidebar);
 
 WebInspector.Sidebar.StyleClassName = "sidebar";
 WebInspector.Sidebar.CollapsedStyleClassName = "collapsed";

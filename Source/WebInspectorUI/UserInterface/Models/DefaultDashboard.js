@@ -23,118 +23,113 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DefaultDashboard = function() {
-    WebInspector.Object.call(this);
+WebInspector.DefaultDashboard = class DefaultDashboard extends WebInspector.Object
+{
+    constructor()
+    {
+        super();
 
-    this._waitingForFirstMainResourceToStartTrackingSize = true;
+        this._waitingForFirstMainResourceToStartTrackingSize = true;
 
-    // Necessary event required to track page load time and resource sizes.
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
+        // Necessary event required to track page load time and resource sizes.
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
 
-    // Necessary events required to track load of resources.
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
-    WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.FrameWasAdded, this._frameWasAdded, this);
+        // Necessary events required to track load of resources.
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
+        WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.FrameWasAdded, this._frameWasAdded, this);
 
-    // Necessary events required to track console messages.
-    var logManager = WebInspector.logManager;
-    logManager.addEventListener(WebInspector.LogManager.Event.Cleared, this._consoleWasCleared, this);
-    logManager.addEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._consoleWasCleared, this);
-    logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, this._consoleMessageAdded, this);
-    logManager.addEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, this._consoleMessageWasRepeated, this);
+        // Necessary events required to track console messages.
+        var logManager = WebInspector.logManager;
+        logManager.addEventListener(WebInspector.LogManager.Event.Cleared, this._consoleWasCleared, this);
+        logManager.addEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._consoleWasCleared, this);
+        logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, this._consoleMessageAdded, this);
+        logManager.addEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, this._consoleMessageWasRepeated, this);
 
-    this._resourcesCount = 0;
-    this._resourcesSize = 0;
-    this._time = 0;
-    this._logs = 0;
-    this._errors = 0;
-    this._issues = 0;
-};
-
-WebInspector.DefaultDashboard.Event = {
-    DataDidChange: "default-dashboard-data-did-change"
-};
-
-WebInspector.DefaultDashboard.prototype = {
-    constructor: WebInspector.DefaultDashboard,
-    __proto__: WebInspector.Object.prototype,
+        this._resourcesCount = 0;
+        this._resourcesSize = 0;
+        this._time = 0;
+        this._logs = 0;
+        this._errors = 0;
+        this._issues = 0;
+    }
 
     // Public
 
     get resourcesCount()
     {
         return this._resourcesCount;
-    },
+    }
 
     set resourcesCount(value)
     {
         this._resourcesCount = value;
         this._dataDidChange();
-    },
+    }
 
     get resourcesSize()
     {
         return this._resourcesSize;
-    },
+    }
 
     set resourcesSize(value)
     {
         this._resourcesSize = value;
         this._dataDidChange();
-    },
+    }
 
     get time()
     {
         return this._time;
-    },
+    }
 
     set time(value)
     {
         this._time = value;
         this._dataDidChange();
-    },
+    }
 
     get logs()
     {
         return this._logs;
-    },
+    }
 
     set logs(value)
     {
         this._logs = value;
         this._dataDidChange();
-    },
+    }
 
     get errors()
     {
         return this._errors;
-    },
+    }
 
     set errors(value)
     {
         this._errors = value;
         this._dataDidChange();
-    },
+    }
 
     get issues()
     {
         return this._issues;
-    },
+    }
 
     set issues(value)
     {
         this._issues = value;
         this._dataDidChange();
-    },
+    }
 
     // Private
 
-    _dataDidChange: function()
+    _dataDidChange()
     {
         this.dispatchEventToListeners(WebInspector.DefaultDashboard.Event.DataDidChange);
-    },
+    }
 
-    _mainResourceDidChange: function(event)
+    _mainResourceDidChange(event)
     {
         console.assert(event.target instanceof WebInspector.Frame);
 
@@ -158,30 +153,30 @@ WebInspector.DefaultDashboard.prototype = {
 
         this._dataDidChange();
         this._startUpdatingTime();
-    },
+    }
 
-    _capturingStopped: function(event)
+    _capturingStopped(event)
     {
         // If recording stops, we should stop the timer if it hasn't stopped already.
         this._stopUpdatingTime();
-    },
+    }
 
-    _resourceWasAdded: function(event)
+    _resourceWasAdded(event)
     {
         ++this.resourcesCount;
-    },
+    }
 
-    _frameWasAdded: function(event)
+    _frameWasAdded(event)
     {
         ++this.resourcesCount;
-    },
+    }
 
-    _resourceSizeDidChange: function(event)
+    _resourceSizeDidChange(event)
     {
         this.resourcesSize += event.target.size - event.data.previousSize;
-    },
+    }
 
-    _startUpdatingTime: function()
+    _startUpdatingTime()
     {
         this._stopUpdatingTime();
 
@@ -190,18 +185,18 @@ WebInspector.DefaultDashboard.prototype = {
         this._timelineBaseTime = Date.now();
         this._timeIntervalDelay = 50;
         this._timeIntervalIdentifier = setInterval(this._updateTime.bind(this), this._timeIntervalDelay);
-    },
+    }
 
-    _stopUpdatingTime: function()
+    _stopUpdatingTime()
     {
         if (!this._timeIntervalIdentifier)
             return;
 
         clearInterval(this._timeIntervalIdentifier);
         delete this._timeIntervalIdentifier;
-    },
+    }
 
-    _updateTime: function()
+    _updateTime()
     {
         var duration = Date.now() - this._timelineBaseTime;
 
@@ -232,21 +227,21 @@ WebInspector.DefaultDashboard.prototype = {
         this.time = mainFrameLoadEventTime - mainFrameStartTime;
 
         this._stopUpdatingTime();
-    },
+    }
 
-    _consoleMessageAdded: function(event)
+    _consoleMessageAdded(event)
     {
         var message = event.data.message;
         this._lastConsoleMessageType = message.level;
         this._incrementConsoleMessageType(message.level, message.totalRepeatCount);
-    },
+    }
 
-    _consoleMessageWasRepeated: function(event)
+    _consoleMessageWasRepeated(event)
     {
         this._incrementConsoleMessageType(this._lastConsoleMessageType, 1);
-    },
+    }
 
-    _incrementConsoleMessageType: function(type, increment)
+    _incrementConsoleMessageType(type, increment)
     {
         switch (type) {
         case WebInspector.LegacyConsoleMessage.MessageLevel.Log:
@@ -259,13 +254,17 @@ WebInspector.DefaultDashboard.prototype = {
             this.errors += increment;
             break;
         }
-    },
+    }
 
-    _consoleWasCleared: function(event)
+    _consoleWasCleared(event)
     {
         this._logs = 0;
         this._issues = 0;
         this._errors = 0;
         this._dataDidChange();
     }
+};
+
+WebInspector.DefaultDashboard.Event = {
+    DataDidChange: "default-dashboard-data-did-change"
 };

@@ -23,36 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.AnalyzerMessage = function(sourceCodeLocation, text, ruleIdentifier)
+WebInspector.AnalyzerMessage = class AnalyzerMessage extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(sourceCodeLocation, text, ruleIdentifier)
+    {
+        super();
 
-    console.assert(sourceCodeLocation instanceof WebInspector.SourceCodeLocation);
-    console.assert(typeof text === "string");
+        console.assert(sourceCodeLocation instanceof WebInspector.SourceCodeLocation);
+        console.assert(typeof text === "string");
 
-    this._sourceCodeLocation = sourceCodeLocation;
-    this._text = text;
-    this._ruleIdentifier = ruleIdentifier;
-};
+        this._sourceCodeLocation = sourceCodeLocation;
+        this._text = text;
+        this._ruleIdentifier = ruleIdentifier;
+    }
 
-WebInspector.AnalyzerMessage.prototype = {
-    constructor: WebInspector.AnalyzerMessage,
-    __proto__: WebInspector.Object.prototype,
+    // Public
 
     get sourceCodeLocation()
     {
         return this._sourceCodeLocation;
-    },
+    }
 
     get sourceCode()
     {
         return this._sourceCodeLocation.sourceCode;
-    },
+    }
 
     get text()
     {
         return this._text;
-    },
+    }
 
     get ruleIdentifier()
     {

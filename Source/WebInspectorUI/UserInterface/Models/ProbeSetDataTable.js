@@ -24,53 +24,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProbeSetDataTable = function(probeSet)
+WebInspector.ProbeSetDataTable = class ProbeSetDataTable extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(probeSet)
+    {
+        super();
 
-    this._probeSet = probeSet;
-    this._frames = [];
-    this._previousBatchIdentifier = WebInspector.ProbeSetDataTable.SentinelValue;
-};
-
-WebInspector.ProbeSetDataTable.Event = {
-    FrameInserted: "probe-set-data-table-frame-inserted",
-    SeparatorInserted: "probe-set-data-table-separator-inserted",
-    WillRemove: "probe-set-data-table-will-remove"
-};
-
-WebInspector.ProbeSetDataTable.SentinelValue = -1;
-WebInspector.ProbeSetDataTable.UnknownValue = "?";
-
-WebInspector.ProbeSetDataTable.prototype = {
-    constructor: WebInspector.ProbeSetDataTable,
-    __proto__: WebInspector.Object.prototype,
+        this._probeSet = probeSet;
+        this._frames = [];
+        this._previousBatchIdentifier = WebInspector.ProbeSetDataTable.SentinelValue;
+    }
 
     // Public
 
     get frames()
     {
         return this._frames.slice();
-    },
+    }
 
     get separators()
     {
         return this._frames.filter(function(frame) { return frame.isSeparator; });
-    },
+    }
 
-    willRemove: function()
+    willRemove()
     {
         this.dispatchEventToListeners(WebInspector.ProbeSetDataTable.Event.WillRemove);
         this._frames = [];
         delete this._probeSet;
-    },
+    }
 
-    mainResourceChanged: function()
+    mainResourceChanged()
     {
         this.addSeparator();
-    },
+    }
 
-    addSampleForProbe: function(probe, sample)
+    addSampleForProbe(probe, sample)
     {
         // Eagerly save the frame if the batch identifier differs, or we know the frame is full.
         // Create a new frame when the batch identifier differs.
@@ -89,35 +78,35 @@ WebInspector.ProbeSetDataTable.prototype = {
             this.addFrame(this._openFrame);
             this._openFrame = null;
         }
-    },
+    }
 
-    addProbe: function(probe)
+    addProbe(probe)
     {
         for (var frame of this.frames)
             if (!frame[probe.id])
                 frame[probe.id] = WebInspector.ProbeSetDataTable.UnknownValue;
-    },
+    }
 
-    removeProbe: function(probe)
+    removeProbe(probe)
     {
         for (var frame of this.frames)
             delete frame[probe.id];
-    },
+    }
 
     // Protected - can be overridden by subclasses.
 
-    createFrame: function()
+    createFrame()
     {
         return new WebInspector.ProbeSetDataFrame(this._frames.length);
-    },
+    }
 
-    addFrame: function(frame)
+    addFrame(frame)
     {
         this._frames.push(frame);
         this.dispatchEventToListeners(WebInspector.ProbeSetDataTable.Event.FrameInserted, frame);
-    },
+    }
 
-    addSeparator: function()
+    addSeparator()
     {
         // Separators must be associated with a frame.
         if (!this._frames.length)
@@ -132,3 +121,12 @@ WebInspector.ProbeSetDataTable.prototype = {
         this.dispatchEventToListeners(WebInspector.ProbeSetDataTable.Event.SeparatorInserted, previousFrame);
     }
 };
+
+WebInspector.ProbeSetDataTable.Event = {
+    FrameInserted: "probe-set-data-table-frame-inserted",
+    SeparatorInserted: "probe-set-data-table-separator-inserted",
+    WillRemove: "probe-set-data-table-will-remove"
+};
+
+WebInspector.ProbeSetDataTable.SentinelValue = -1;
+WebInspector.ProbeSetDataTable.UnknownValue = "?";

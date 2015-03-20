@@ -23,102 +23,76 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Breakpoint = function(sourceCodeLocationOrInfo, disabled, condition)
+WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(sourceCodeLocationOrInfo, disabled, condition)
+    {
+        super();
 
-    if (sourceCodeLocationOrInfo instanceof WebInspector.SourceCodeLocation) {
-        var sourceCode = sourceCodeLocationOrInfo.sourceCode;
-        var url = sourceCode ? sourceCode.url : null;
-        var scriptIdentifier = sourceCode instanceof WebInspector.Script ? sourceCode.id : null;
-        var location = sourceCodeLocationOrInfo;
-    } else if (sourceCodeLocationOrInfo && typeof sourceCodeLocationOrInfo === "object") {
-        var url = sourceCodeLocationOrInfo.url;
-        var lineNumber = sourceCodeLocationOrInfo.lineNumber || 0;
-        var columnNumber = sourceCodeLocationOrInfo.columnNumber || 0;
-        var location = new WebInspector.SourceCodeLocation(null, lineNumber, columnNumber);
-        var autoContinue = sourceCodeLocationOrInfo.autoContinue || false;
-        var actions = sourceCodeLocationOrInfo.actions || [];
-        for (var i = 0; i < actions.length; ++i)
-            actions[i] = new WebInspector.BreakpointAction(this, actions[i]);
-        disabled = sourceCodeLocationOrInfo.disabled;
-        condition = sourceCodeLocationOrInfo.condition;
-    } else
-        console.error("Unexpected type passed to WebInspector.Breakpoint", sourceCodeLocationOrInfo);
+        if (sourceCodeLocationOrInfo instanceof WebInspector.SourceCodeLocation) {
+            var sourceCode = sourceCodeLocationOrInfo.sourceCode;
+            var url = sourceCode ? sourceCode.url : null;
+            var scriptIdentifier = sourceCode instanceof WebInspector.Script ? sourceCode.id : null;
+            var location = sourceCodeLocationOrInfo;
+        } else if (sourceCodeLocationOrInfo && typeof sourceCodeLocationOrInfo === "object") {
+            var url = sourceCodeLocationOrInfo.url;
+            var lineNumber = sourceCodeLocationOrInfo.lineNumber || 0;
+            var columnNumber = sourceCodeLocationOrInfo.columnNumber || 0;
+            var location = new WebInspector.SourceCodeLocation(null, lineNumber, columnNumber);
+            var autoContinue = sourceCodeLocationOrInfo.autoContinue || false;
+            var actions = sourceCodeLocationOrInfo.actions || [];
+            for (var i = 0; i < actions.length; ++i)
+                actions[i] = new WebInspector.BreakpointAction(this, actions[i]);
+            disabled = sourceCodeLocationOrInfo.disabled;
+            condition = sourceCodeLocationOrInfo.condition;
+        } else
+            console.error("Unexpected type passed to WebInspector.Breakpoint", sourceCodeLocationOrInfo);
 
-    this._id = null;
-    this._url = url || null;
-    this._scriptIdentifier = scriptIdentifier || null;
-    this._disabled = disabled || false;
-    this._condition = condition || "";
-    this._autoContinue = autoContinue || false;
-    this._actions = actions || [];
-    this._resolved = false;
+        this._id = null;
+        this._url = url || null;
+        this._scriptIdentifier = scriptIdentifier || null;
+        this._disabled = disabled || false;
+        this._condition = condition || "";
+        this._autoContinue = autoContinue || false;
+        this._actions = actions || [];
+        this._resolved = false;
 
-    this._sourceCodeLocation = location;
-    this._sourceCodeLocation.addEventListener(WebInspector.SourceCodeLocation.Event.LocationChanged, this._sourceCodeLocationLocationChanged, this);
-    this._sourceCodeLocation.addEventListener(WebInspector.SourceCodeLocation.Event.DisplayLocationChanged, this._sourceCodeLocationDisplayLocationChanged, this);
-};
-
-WebInspector.Object.addConstructorFunctions(WebInspector.Breakpoint);
-
-WebInspector.Breakpoint.PopoverClassName = "edit-breakpoint-popover-content";
-WebInspector.Breakpoint.WidePopoverClassName = "wide";
-WebInspector.Breakpoint.PopoverConditionInputId = "edit-breakpoint-popover-condition";
-WebInspector.Breakpoint.PopoverOptionsAutoContinueInputId = "edit-breakpoint-popoover-auto-continue";
-WebInspector.Breakpoint.HiddenStyleClassName = "hidden";
-
-WebInspector.Breakpoint.DefaultBreakpointActionType = WebInspector.BreakpointAction.Type.Log;
-
-WebInspector.Breakpoint.TypeIdentifier = "breakpoint";
-WebInspector.Breakpoint.URLCookieKey = "breakpoint-url";
-WebInspector.Breakpoint.LineNumberCookieKey = "breakpoint-line-number";
-WebInspector.Breakpoint.ColumnNumberCookieKey = "breakpoint-column-number";
-
-WebInspector.Breakpoint.Event = {
-    DisabledStateDidChange: "breakpoint-disabled-state-did-change",
-    ResolvedStateDidChange: "breakpoint-resolved-state-did-change",
-    ConditionDidChange: "breakpoint-condition-did-change",
-    ActionsDidChange: "breakpoint-actions-did-change",
-    AutoContinueDidChange: "breakpoint-auto-continue-did-change",
-    LocationDidChange: "breakpoint-location-did-change",
-    DisplayLocationDidChange: "breakpoint-display-location-did-change",
-};
-
-WebInspector.Breakpoint.prototype = {
-    constructor: WebInspector.Breakpoint,
+        this._sourceCodeLocation = location;
+        this._sourceCodeLocation.addEventListener(WebInspector.SourceCodeLocation.Event.LocationChanged, this._sourceCodeLocationLocationChanged, this);
+        this._sourceCodeLocation.addEventListener(WebInspector.SourceCodeLocation.Event.DisplayLocationChanged, this._sourceCodeLocationDisplayLocationChanged, this);
+    }
 
     // Public
 
     get id()
     {
         return this._id;
-    },
+    }
 
     set id(id)
     {
         this._id = id || null;
-    },
+    }
 
     get url()
     {
         return this._url;
-    },
+    }
 
     get scriptIdentifier()
     {
         return this._scriptIdentifier;
-    },
+    }
 
     get sourceCodeLocation()
     {
         return this._sourceCodeLocation;
-    },
+    }
 
     get resolved()
     {
         return this._resolved;
-    },
+    }
 
     set resolved(resolved)
     {
@@ -135,12 +109,12 @@ WebInspector.Breakpoint.prototype = {
         this._resolved = resolved || false;
 
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ResolvedStateDidChange);
-    },
+    }
 
     get disabled()
     {
         return this._disabled;
-    },
+    }
 
     set disabled(disabled)
     {
@@ -150,12 +124,12 @@ WebInspector.Breakpoint.prototype = {
         this._disabled = disabled || false;
 
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.DisabledStateDidChange);
-    },
+    }
 
     get condition()
     {
         return this._condition;
-    },
+    }
 
     set condition(condition)
     {
@@ -165,12 +139,12 @@ WebInspector.Breakpoint.prototype = {
         this._condition = condition;
 
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ConditionDidChange);
-    },
+    }
 
     get autoContinue()
     {
         return this._autoContinue;
-    },
+    }
 
     set autoContinue(cont)
     {
@@ -180,12 +154,12 @@ WebInspector.Breakpoint.prototype = {
         this._autoContinue = cont;
 
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.AutoContinueDidChange);
-    },
+    }
 
     get actions()
     {
         return this._actions;
-    },
+    }
 
     get options()
     {
@@ -194,7 +168,7 @@ WebInspector.Breakpoint.prototype = {
             actions: this._serializableActions(),
             autoContinue: this._autoContinue
         };
-    },
+    }
 
     get info()
     {
@@ -208,16 +182,16 @@ WebInspector.Breakpoint.prototype = {
             actions: this._serializableActions(),
             autoContinue: this._autoContinue
         };
-    },
+    }
 
     get probeActions()
     {
         return this._actions.filter(function(action) {
             return action.type === WebInspector.BreakpointAction.Type.Probe;
         });
-    },
+    }
 
-    cycleToNextMode: function()
+    cycleToNextMode()
     {
         if (this.disabled) {
             // When cycling, clear auto-continue when going from disabled to enabled.
@@ -237,9 +211,9 @@ WebInspector.Breakpoint.prototype = {
         }
 
         this.disabled = true;
-    },
+    }
 
-    appendContextMenuItems: function(contextMenu, breakpointDisplayElement)
+    appendContextMenuItems(contextMenu, breakpointDisplayElement)
     {
         console.assert(document.body.contains(breakpointDisplayElement), "breakpoint popover display element must be in the DOM");
 
@@ -293,9 +267,9 @@ WebInspector.Breakpoint.prototype = {
             contextMenu.appendSeparator();
             contextMenu.appendItem(WebInspector.UIString("Reveal in Original Resource"), revealOriginalSourceCodeLocation.bind(this));
         }
-    },
+    }
 
-    createAction: function(type, precedingAction, data)
+    createAction(type, precedingAction, data)
     {
         var newAction = new WebInspector.BreakpointAction(this, type, data || null);
 
@@ -313,9 +287,9 @@ WebInspector.Breakpoint.prototype = {
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
 
         return newAction;
-    },
+    }
 
-    recreateAction: function(type, actionToReplace)
+    recreateAction(type, actionToReplace)
     {
         var newAction = new WebInspector.BreakpointAction(this, type, null);
 
@@ -329,9 +303,9 @@ WebInspector.Breakpoint.prototype = {
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
 
         return newAction;
-    },
+    }
 
-    removeAction: function(action)
+    removeAction(action)
     {
         var index = this._actions.indexOf(action);
         console.assert(index !== -1);
@@ -344,9 +318,9 @@ WebInspector.Breakpoint.prototype = {
             this.autoContinue = false;
 
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
-    },
+    }
 
-    clearActions: function(type)
+    clearActions(type)
     {
         if (!type)
             this._actions = [];
@@ -354,18 +328,18 @@ WebInspector.Breakpoint.prototype = {
             this._actions = this._actions.filter(function(action) { action.type !== type; });
 
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
-    },
+    }
 
-    saveIdentityToCookie: function(cookie)
+    saveIdentityToCookie(cookie)
     {
         cookie[WebInspector.Breakpoint.URLCookieKey] = this.url;
         cookie[WebInspector.Breakpoint.LineNumberCookieKey] = this.sourceCodeLocation.lineNumber;
         cookie[WebInspector.Breakpoint.ColumnNumberCookieKey] = this.sourceCodeLocation.columnNumber;
-    },
+    }
 
     // Protected (Called by BreakpointAction)
 
-    breakpointActionDidChange: function(action)
+    breakpointActionDidChange(action)
     {
         var index = this._actions.indexOf(action);
         console.assert(index !== -1);
@@ -373,43 +347,43 @@ WebInspector.Breakpoint.prototype = {
             return;
 
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
-    },
+    }
 
     // Private
 
-    _serializableActions: function()
+    _serializableActions()
     {
         var actions = [];
         for (var i = 0; i < this._actions.length; ++i)
             actions.push(this._actions[i].info);
         return actions;
-    },
+    }
 
-    _popoverToggleEnabledCheckboxChanged: function(event)
+    _popoverToggleEnabledCheckboxChanged(event)
     {
         this.disabled = !event.target.checked;
-    },
+    }
 
-    _popoverConditionInputChanged: function(event)
+    _popoverConditionInputChanged(event)
     {
         this.condition = event.target.value;
-    },
+    }
 
-    _popoverToggleAutoContinueCheckboxChanged: function(event)
+    _popoverToggleAutoContinueCheckboxChanged(event)
     {
         this.autoContinue = event.target.checked;
-    },
+    }
 
-    _popoverConditionInputKeyDown: function(event)
+    _popoverConditionInputKeyDown(event)
     {
         if (this._keyboardShortcutEsc.matchesEvent(event) || this._keyboardShortcutEnter.matchesEvent(event)) {
             this._popover.dismiss();
             event.stopPropagation();
             event.preventDefault();
         }
-    },
+    }
 
-    _editBreakpointPopoverContentElement: function()
+    _editBreakpointPopoverContentElement()
     {
         var content = this._popoverContentElement = document.createElement("div");
         content.className = WebInspector.Breakpoint.PopoverClassName;
@@ -478,9 +452,9 @@ WebInspector.Breakpoint.prototype = {
         content.appendChild(table);
 
         return content;
-    },
+    }
 
-    _popoverActionsCreateAddActionButton: function()
+    _popoverActionsCreateAddActionButton()
     {
         this._popoverContentElement.classList.remove(WebInspector.Breakpoint.WidePopoverClassName);
         this._actionsContainer.removeChildren();
@@ -488,9 +462,9 @@ WebInspector.Breakpoint.prototype = {
         var addActionButton = this._actionsContainer.appendChild(document.createElement("button"));
         addActionButton.textContent = WebInspector.UIString("Add Action");
         addActionButton.addEventListener("click", this._popoverActionsAddActionButtonClicked.bind(this));
-    },
+    }
 
-    _popoverActionsAddActionButtonClicked: function(event)
+    _popoverActionsAddActionButtonClicked(event)
     {
         this._popoverContentElement.classList.add(WebInspector.Breakpoint.WidePopoverClassName);
         this._actionsContainer.removeChildren();
@@ -500,9 +474,9 @@ WebInspector.Breakpoint.prototype = {
         this._popoverActionsInsertBreakpointActionView(newBreakpointActionView, -1);
         this._popoverOptionsRowElement.classList.remove(WebInspector.Breakpoint.HiddenStyleClassName);
         this._popover.update();
-    },
+    }
 
-    _popoverActionsInsertBreakpointActionView: function(breakpointActionView, index)
+    _popoverActionsInsertBreakpointActionView(breakpointActionView, index)
     {
         if (index === -1)
             this._actionsContainer.appendChild(breakpointActionView.element);
@@ -510,9 +484,9 @@ WebInspector.Breakpoint.prototype = {
             var nextElement = this._actionsContainer.children[index + 1] || null;
             this._actionsContainer.insertBefore(breakpointActionView.element, nextElement);
         }
-    },
+    }
 
-    breakpointActionViewAppendActionView: function(breakpointActionView, newAction)
+    breakpointActionViewAppendActionView(breakpointActionView, newAction)
     {
         var newBreakpointActionView = new WebInspector.BreakpointActionView(newAction, this);
 
@@ -529,9 +503,9 @@ WebInspector.Breakpoint.prototype = {
         this._popoverOptionsRowElement.classList.remove(WebInspector.Breakpoint.HiddenStyleClassName);
 
         this._popover.update();
-    },
+    }
 
-    breakpointActionViewRemoveActionView: function(breakpointActionView)
+    breakpointActionViewRemoveActionView(breakpointActionView)
     {
         breakpointActionView.element.remove();
 
@@ -542,14 +516,14 @@ WebInspector.Breakpoint.prototype = {
         }
 
         this._popover.update();
-    },
+    }
 
-    breakpointActionViewResized: function(breakpointActionView)
+    breakpointActionViewResized(breakpointActionView)
     {
         this._popover.update();
-    },
+    }
 
-    willDismissPopover: function(popover)
+    willDismissPopover(popover)
     {
         console.assert(this._popover === popover);
         delete this._popoverContentElement;
@@ -557,9 +531,9 @@ WebInspector.Breakpoint.prototype = {
         delete this._popoverOptionsCheckboxElement;
         delete this._actionsContainer;
         delete this._popover;
-    },
+    }
 
-    _showEditBreakpointPopover: function(boundingClientRect)
+    _showEditBreakpointPopover(boundingClientRect)
     {
         var bounds = WebInspector.Rect.rectFromClientRect(boundingClientRect);
         bounds.origin.x -= 1; // Move the anchor left one pixel so it looks more centered.
@@ -574,17 +548,38 @@ WebInspector.Breakpoint.prototype = {
         }
 
         document.getElementById(WebInspector.Breakpoint.PopoverConditionInputId).select();
-    },
+    }
 
-    _sourceCodeLocationLocationChanged: function(event)
+    _sourceCodeLocationLocationChanged(event)
     {
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.LocationDidChange, event.data);
-    },
+    }
 
-    _sourceCodeLocationDisplayLocationChanged: function(event)
+    _sourceCodeLocationDisplayLocationChanged(event)
     {
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.DisplayLocationDidChange, event.data);
     }
 };
 
-WebInspector.Breakpoint.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.Breakpoint.PopoverClassName = "edit-breakpoint-popover-content";
+WebInspector.Breakpoint.WidePopoverClassName = "wide";
+WebInspector.Breakpoint.PopoverConditionInputId = "edit-breakpoint-popover-condition";
+WebInspector.Breakpoint.PopoverOptionsAutoContinueInputId = "edit-breakpoint-popoover-auto-continue";
+WebInspector.Breakpoint.HiddenStyleClassName = "hidden";
+
+WebInspector.Breakpoint.DefaultBreakpointActionType = WebInspector.BreakpointAction.Type.Log;
+
+WebInspector.Breakpoint.TypeIdentifier = "breakpoint";
+WebInspector.Breakpoint.URLCookieKey = "breakpoint-url";
+WebInspector.Breakpoint.LineNumberCookieKey = "breakpoint-line-number";
+WebInspector.Breakpoint.ColumnNumberCookieKey = "breakpoint-column-number";
+
+WebInspector.Breakpoint.Event = {
+    DisabledStateDidChange: "breakpoint-disabled-state-did-change",
+    ResolvedStateDidChange: "breakpoint-resolved-state-did-change",
+    ConditionDidChange: "breakpoint-condition-did-change",
+    ActionsDidChange: "breakpoint-actions-did-change",
+    AutoContinueDidChange: "breakpoint-auto-continue-did-change",
+    LocationDidChange: "breakpoint-location-did-change",
+    DisplayLocationDidChange: "breakpoint-display-location-did-change",
+};

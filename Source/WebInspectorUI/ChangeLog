@@ -1,3 +1,31 @@
+2015-03-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Adopt ES6 Class Syntax for all Model Objects
+        https://bugs.webkit.org/show_bug.cgi?id=142858
+
+        Reviewed by Timothy Hatcher.
+
+          - Convert WebInspector.Object to a class
+          - Convert all UserInterface/Models objects to classes
+          - Convert constructor functions to constructor methods
+          - Convert "constructor.method" to class static methods where possible
+          - Convert all methods to method syntax, eliminate commas between methods
+          - Convert all superclass calls in classes to use "super"
+          - Workaround <https://webkit.org/b/142862> and add empty constructors
+          - Added "deprecated" prefix to addConstructorFunctions, since it is not needed with classes
+          - Added many missing calls to super in constructors
+          - Added FIXME to WebInspector.Object subclasses not yet moved to classes.
+          - Cleaned up SourceMap global properties, moved to constructor instead of prototype
+          - Cleaned up Timeline factory constructor to static "create" factory method
+          - Fixed any style issues noticed in the mass edit
+          - Fixed strict mode issues now that classes enforce strict mode
+              - RunLoopTimelineRecord.js was missing a `var` for a local variable
+              - "const" is not allowed, converted to "var"
+              - "arguments.callee" is not allowed in strict mode
+
+        * UserInterface/**/*.js:
+        Many files modified mostly mechanically.
+
 2015-03-19  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: Debugger sidebar header should say "Scripts" instead of "Breakpoints", appear only on pause

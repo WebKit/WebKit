@@ -24,7 +24,8 @@
  */
 
 WebInspector.Popover = function(delegate) {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this.delegate = delegate;
     this._edge = null;

@@ -23,64 +23,184 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.KeyboardShortcut = function(modifiers, key, callback, targetElement)
+WebInspector.KeyboardShortcut = class KeyboardShortcut extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(modifiers, key, callback, targetElement)
+    {
+        super();
 
-    console.assert(key);
-    console.assert(!callback || typeof callback === "function");
-    console.assert(!targetElement || targetElement instanceof Element);
+        console.assert(key);
+        console.assert(!callback || typeof callback === "function");
+        console.assert(!targetElement || targetElement instanceof Element);
 
-    if (typeof key === "string") {
-        key = key[0].toUpperCase();
-        key = new WebInspector.Key(key.charCodeAt(0), key);
+        if (typeof key === "string") {
+            key = key[0].toUpperCase();
+            key = new WebInspector.Key(key.charCodeAt(0), key);
+        }
+
+        if (callback && !targetElement)
+            targetElement = document;
+
+        this._modifiers = modifiers || WebInspector.KeyboardShortcut.Modifier.None;
+        this._key = key;
+        this._targetElement = targetElement;
+        this._callback = callback;
+        this._disabled = false;
+        this._implicitlyPreventsDefault = true;
+
+        if (targetElement) {
+            var targetKeyboardShortcuts = targetElement._keyboardShortcuts;
+            if (!targetKeyboardShortcuts)
+                targetKeyboardShortcuts = targetElement._keyboardShortcuts = [];
+
+            targetKeyboardShortcuts.push(this);
+
+            if (!WebInspector.KeyboardShortcut._registeredKeyDownListener) {
+                WebInspector.KeyboardShortcut._registeredKeyDownListener = true;
+                window.addEventListener("keydown", WebInspector.KeyboardShortcut._handleKeyDown);
+            }
+        }
     }
 
-    if (callback && !targetElement)
-        targetElement = document;
+    // Static
 
-    this._modifiers = modifiers || WebInspector.KeyboardShortcut.Modifier.None;
-    this._key = key;
-    this._targetElement = targetElement;
-    this._callback = callback;
-    this._disabled = false;
-    this._implicitlyPreventsDefault = true;
+    static _handleKeyDown(event)
+    {
+        if (event.defaultPrevented)
+            return;
 
-    if (targetElement) {
-        var targetKeyboardShortcuts = targetElement._keyboardShortcuts;
-        if (!targetKeyboardShortcuts)
-            targetKeyboardShortcuts = targetElement._keyboardShortcuts = [];
+        for (var targetElement = event.target; targetElement; targetElement = targetElement.parentNode) {
+            if (!targetElement._keyboardShortcuts)
+                continue;
 
-        targetKeyboardShortcuts.push(this);
+            for (var i = 0; i < targetElement._keyboardShortcuts.length; ++i) {
+                var keyboardShortcut = targetElement._keyboardShortcuts[i];
+                if (!keyboardShortcut.matchesEvent(event))
+                    continue;
 
-        if (!WebInspector.KeyboardShortcut._registeredKeyDownListener) {
-            WebInspector.KeyboardShortcut._registeredKeyDownListener = true;
-            window.addEventListener("keydown", WebInspector.KeyboardShortcut._handleKeyDown);
+                keyboardShortcut.callback(event, keyboardShortcut);
+
+                if (keyboardShortcut.implicitlyPreventsDefault)
+                    event.preventDefault();
+
+                return;
+            }
         }
+    }
+
+    // Public
+
+    get modifiers()
+    {
+        return this._modifiers;
+    }
+
+    get key()
+    {
+        return this._key;
+    }
+
+    get displayName()
+    {
+        var result = "";
+
+        if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Control)
+            result += "\u2303";
+        if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Option)
+            result += WebInspector.Platform.name === "mac" ? "\u2325" : "\u2387";
+        if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Shift)
+            result += "\u21e7";
+        if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Command)
+            result += "\u2318";
+
+        result += this._key.toString();
+
+        return result;
+    }
+
+    get callback()
+    {
+        return this._callback;
+    }
+
+    get disabled()
+    {
+        return this._disabled;
+    }
+
+    set disabled(disabled)
+    {
+        this._disabled = disabled || false;
+    }
+
+    get implicitlyPreventsDefault()
+    {
+        return this._implicitlyPreventsDefault;
+    }
+
+    set implicitlyPreventsDefault(implicitly)
+    {
+        this._implicitlyPreventsDefault = implicitly;
+    }
+
+    unbind()
+    {
+        this._disabled = true;
+
+        if (!this._targetElement)
+            return;
+
+        var targetKeyboardShortcuts = this._targetElement._keyboardShortcuts;
+        if (!targetKeyboardShortcuts)
+            return;
+
+        targetKeyboardShortcuts.remove(this);
+    }
+
+    matchesEvent(event)
+    {
+        if (this._disabled)
+            return false;
+
+        if (this._key.keyCode !== event.keyCode)
+            return false;
+
+        var eventModifiers = WebInspector.KeyboardShortcut.Modifier.None;
+        if (event.shiftKey)
+            eventModifiers |= WebInspector.KeyboardShortcut.Modifier.Shift;
+        if (event.ctrlKey)
+            eventModifiers |= WebInspector.KeyboardShortcut.Modifier.Control;
+        if (event.altKey)
+            eventModifiers |= WebInspector.KeyboardShortcut.Modifier.Option;
+        if (event.metaKey)
+            eventModifiers |= WebInspector.KeyboardShortcut.Modifier.Command;
+        return this._modifiers === eventModifiers;
     }
 };
 
-WebInspector.KeyboardShortcut._handleKeyDown = function(event)
+WebInspector.Key = class Key
 {
-    if (event.defaultPrevented)
-        return;
+    constructor(keyCode, displayName)
+    {
+        this._keyCode = keyCode;
+        this._displayName = displayName;
+    }
 
-    for (var targetElement = event.target; targetElement; targetElement = targetElement.parentNode) {
-        if (!targetElement._keyboardShortcuts)
-            continue;
+    // Public
 
-        for (var i = 0; i < targetElement._keyboardShortcuts.length; ++i) {
-            var keyboardShortcut = targetElement._keyboardShortcuts[i];
-            if (!keyboardShortcut.matchesEvent(event))
-                continue;
+    get keyCode()
+    {
+        return this._keyCode;
+    }
 
-            keyboardShortcut.callback(event, keyboardShortcut);
+    get displayName()
+    {
+        return this._displayName;
+    }
 
-            if (keyboardShortcut.implicitlyPreventsDefault)
-                event.preventDefault();
-
-            return;
-        }
+    toString()
+    {
+        return this._displayName;
     }
 };
 
@@ -94,29 +214,6 @@ WebInspector.KeyboardShortcut.Modifier = {
     get CommandOrControl()
     {
         return WebInspector.Platform.name === "mac" ? this.Command : this.Control;
-    }
-};
-
-WebInspector.Key = function(keyCode, displayName)
-{
-    this._keyCode = keyCode;
-    this._displayName = displayName;
-};
-
-WebInspector.Key.prototype = {
-    get keyCode()
-    {
-        return this._keyCode;
-    },
-
-    get displayName()
-    {
-        return this._displayName;
-    },
-
-    toString: function()
-    {
-        return this._displayName;
     }
 };
 
@@ -158,98 +255,3 @@ WebInspector.KeyboardShortcut.Key = {
     Apostrophe: new WebInspector.Key(192, "`"),
     SingleQuote: new WebInspector.Key(222, "\'")
 };
-
-WebInspector.KeyboardShortcut.prototype = {
-    constructor: WebInspector.KeyboardShortcut,
-
-    // Public
-
-    get modifiers()
-    {
-        return this._modifiers;
-    },
-
-    get key()
-    {
-        return this._key;
-    },
-
-    get displayName()
-    {
-        var result = "";
-
-        if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Control)
-            result += "\u2303";
-        if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Option)
-            result += WebInspector.Platform.name === "mac" ? "\u2325" : "\u2387";
-        if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Shift)
-            result += "\u21e7";
-        if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Command)
-            result += "\u2318";
-
-        result += this._key.toString();
-
-        return result;
-    },
-
-    get callback()
-    {
-        return this._callback;
-    },
-
-    get disabled()
-    {
-        return this._disabled;
-    },
-
-    set disabled(disabled)
-    {
-        this._disabled = disabled || false;
-    },
-
-    get implicitlyPreventsDefault()
-    {
-        return this._implicitlyPreventsDefault;
-    },
-
-    set implicitlyPreventsDefault(implicitly)
-    {
-        this._implicitlyPreventsDefault = implicitly;
-    },
-
-    unbind: function()
-    {
-        this._disabled = true;
-
-        if (!this._targetElement)
-            return;
-
-        var targetKeyboardShortcuts = this._targetElement._keyboardShortcuts;
-        if (!targetKeyboardShortcuts)
-            return;
-
-        targetKeyboardShortcuts.remove(this);
-    },
-
-    matchesEvent: function(event)
-    {
-        if (this._disabled)
-            return false;
-
-        if (this._key.keyCode !== event.keyCode)
-            return false;
-
-        var eventModifiers = WebInspector.KeyboardShortcut.Modifier.None;
-        if (event.shiftKey)
-            eventModifiers |= WebInspector.KeyboardShortcut.Modifier.Shift;
-        if (event.ctrlKey)
-            eventModifiers |= WebInspector.KeyboardShortcut.Modifier.Control;
-        if (event.altKey)
-            eventModifiers |= WebInspector.KeyboardShortcut.Modifier.Option;
-        if (event.metaKey)
-            eventModifiers |= WebInspector.KeyboardShortcut.Modifier.Command;
-        return this._modifiers === eventModifiers;
-    }
-};
-
-WebInspector.KeyboardShortcut.prototype.__proto__ = WebInspector.Object.prototype;

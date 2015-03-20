@@ -23,44 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodeTextRange = function(sourceCode) /* textRange || startLocation, endLocation */
+WebInspector.SourceCodeTextRange = class SourceCodeTextRange extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(sourceCode) /* textRange || startLocation, endLocation */
+    {
+        super();
 
-    console.assert(sourceCode instanceof WebInspector.SourceCode);
-    console.assert(arguments.length === 2 || arguments.length === 3);
+        console.assert(sourceCode instanceof WebInspector.SourceCode);
+        console.assert(arguments.length === 2 || arguments.length === 3);
 
-    this._sourceCode = sourceCode;
+        this._sourceCode = sourceCode;
 
-    if (arguments.length === 2) {
-        var textRange = arguments[1];
-        console.assert(textRange instanceof WebInspector.TextRange);
-        this._startLocation = sourceCode.createSourceCodeLocation(textRange.startLine, textRange.startColumn);
-        this._endLocation = sourceCode.createSourceCodeLocation(textRange.endLine, textRange.endColumn);
-    } else {
-        console.assert(arguments[1] instanceof WebInspector.SourceCodeLocation);
-        console.assert(arguments[2] instanceof WebInspector.SourceCodeLocation);
-        this._startLocation = arguments[1];
-        this._endLocation = arguments[2];
+        if (arguments.length === 2) {
+            var textRange = arguments[1];
+            console.assert(textRange instanceof WebInspector.TextRange);
+            this._startLocation = sourceCode.createSourceCodeLocation(textRange.startLine, textRange.startColumn);
+            this._endLocation = sourceCode.createSourceCodeLocation(textRange.endLine, textRange.endColumn);
+        } else {
+            console.assert(arguments[1] instanceof WebInspector.SourceCodeLocation);
+            console.assert(arguments[2] instanceof WebInspector.SourceCodeLocation);
+            this._startLocation = arguments[1];
+            this._endLocation = arguments[2];
+        }
+
+        this._startLocation.addEventListener(WebInspector.SourceCodeLocation.Event.LocationChanged, this._sourceCodeLocationChanged, this);
+        this._endLocation.addEventListener(WebInspector.SourceCodeLocation.Event.LocationChanged, this._sourceCodeLocationChanged, this);
     }
-
-    this._startLocation.addEventListener(WebInspector.SourceCodeLocation.Event.LocationChanged, this._sourceCodeLocationChanged, this);
-    this._endLocation.addEventListener(WebInspector.SourceCodeLocation.Event.LocationChanged, this._sourceCodeLocationChanged, this);
-};
-
-WebInspector.SourceCodeTextRange.Event = {
-    RangeChanged: "source-code-text-range-range-changed"
-};
-
-WebInspector.SourceCodeTextRange.prototype = {
-    constructor: WebInspector.SourceCodeTextRange,
 
     // Public
 
     get sourceCode()
     {
         return this._sourceCode;
-    },
+    }
 
     // Raw text range in the original source code.
 
@@ -71,7 +66,7 @@ WebInspector.SourceCodeTextRange.prototype = {
         var endLine = this._endLocation.lineNumber;
         var endColumn = this._endLocation.columnNumber;
         return new WebInspector.TextRange(startLine, startColumn, endLine, endColumn);
-    },
+    }
 
     // Formatted text range in the original source code if it is pretty printed.
     // This is the same as the raw text range if the source code has no formatter.
@@ -83,7 +78,7 @@ WebInspector.SourceCodeTextRange.prototype = {
         var endLine = this._endLocation.formattedLineNumber;
         var endColumn = this._endLocation.formattedColumnNumber;
         return new WebInspector.TextRange(startLine, startColumn, endLine, endColumn);
-    },
+    }
 
     // Display values:
     //   - Mapped resource and text range locations if the original source code has a
@@ -96,7 +91,7 @@ WebInspector.SourceCodeTextRange.prototype = {
             return this._sourceCode;
 
         return this._startLocation.displaySourceCode;
-    },
+    }
 
     get displayTextRange()
     {
@@ -108,19 +103,21 @@ WebInspector.SourceCodeTextRange.prototype = {
         var endLine = this._endLocation.displayLineNumber;
         var endColumn = this._endLocation.displayColumnNumber;
         return new WebInspector.TextRange(startLine, startColumn, endLine, endColumn);
-    },
+    }
 
     // Private
 
-    _startAndEndLocationsInSameMappedResource: function()
+    _startAndEndLocationsInSameMappedResource()
     {
         return this._startLocation.hasMappedLocation() && this._endLocation.hasMappedLocation() && this._startLocation.displaySourceCode === this._endLocation.displaySourceCode;
-    },
+    }
 
-    _sourceCodeLocationChanged: function(event)
+    _sourceCodeLocationChanged(event)
     {
         this.dispatchEventToListeners(WebInspector.SourceCodeLocation.Event.RangeChanged);
     }
 };
 
-WebInspector.SourceCodeTextRange.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.SourceCodeTextRange.Event = {
+    RangeChanged: "source-code-text-range-range-changed"
+};

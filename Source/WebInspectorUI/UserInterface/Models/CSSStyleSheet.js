@@ -23,62 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSStyleSheet = function(id, url, parentFrame)
+WebInspector.CSSStyleSheet = class CSSStyleSheet extends WebInspector.SourceCode
 {
-    WebInspector.SourceCode.call(this);
+    constructor(id, url, parentFrame)
+    {
+        super();
 
-    console.assert(id);
+        console.assert(id);
 
-    this._id = id || null;
+        this._id = id || null;
 
-    this.updateInfo(url, parentFrame);
-};
+        this.updateInfo(url, parentFrame);
+    }
 
-WebInspector.Object.addConstructorFunctions(WebInspector.CSSStyleSheet);
+    // Static
 
-WebInspector.CSSStyleSheet.resetUniqueDisplayNameNumbers = function()
-{
-    WebInspector.CSSStyleSheet._nextUniqueDisplayNameNumber = 1;
-};
-
-WebInspector.CSSStyleSheet._nextUniqueDisplayNameNumber = 1;
-
-WebInspector.CSSStyleSheet.Event = {
-    ContentDidChange: "stylesheet-content-did-change"
-};
-
-WebInspector.CSSStyleSheet.prototype = {
-    constructor: WebInspector.CSSStyleSheet,
-    __proto__: WebInspector.SourceCode.prototype,
+    static resetUniqueDisplayNameNumbers()
+    {
+        WebInspector.CSSStyleSheet._nextUniqueDisplayNameNumber = 1;
+    }
 
     // Public
 
     get id()
     {
         return this._id;
-    },
+    }
 
     get parentFrame()
     {
         return this._parentFrame;
-    },
+    }
 
     get url()
     {
         return this._url;
-    },
+    }
 
     get urlComponents()
     {
         if (!this._urlComponents)
             this._urlComponents = parseURL(this._url);
         return this._urlComponents;
-    },
+    }
 
     get mimeType()
     {
         return "text/css";
-    },
+    }
 
     get displayName()
     {
@@ -90,24 +82,24 @@ WebInspector.CSSStyleSheet.prototype = {
             this._uniqueDisplayNameNumber = this.constructor._nextUniqueDisplayNameNumber++;
 
         return WebInspector.UIString("Anonymous StyleSheet %d").format(this._uniqueDisplayNameNumber);
-    },
+    }
 
     // Protected
 
-    updateInfo: function(url, parentFrame)
+    updateInfo(url, parentFrame)
     {
         this._url = url || null;
         delete this._urlComponents;
 
         this._parentFrame = parentFrame || null;
-    },
+    }
 
     get revisionForRequestedContent()
     {
         return this.currentRevision;
-    },
+    }
 
-    handleCurrentRevisionContentChange: function()
+    handleCurrentRevisionContentChange()
     {
         if (!this._id)
             return;
@@ -125,9 +117,9 @@ WebInspector.CSSStyleSheet.prototype = {
         this._ignoreNextContentDidChangeNotification = true;
 
         CSSAgent.setStyleSheetText(this._id, this.currentRevision.content, contentDidChange.bind(this));
-    },
+    }
 
-    requestContentFromBackend: function()
+    requestContentFromBackend()
     {
         if (!this._id) {
             // There is no identifier to request content with. Reject the promise to cause the
@@ -136,9 +128,9 @@ WebInspector.CSSStyleSheet.prototype = {
         }
 
         return CSSAgent.getStyleSheetText(this._id);
-    },
+    }
 
-    noteContentDidChange: function()
+    noteContentDidChange()
     {
         if (this._ignoreNextContentDidChangeNotification) {
             delete this._ignoreNextContentDidChangeNotification;
@@ -149,4 +141,10 @@ WebInspector.CSSStyleSheet.prototype = {
         this.dispatchEventToListeners(WebInspector.CSSStyleSheet.Event.ContentDidChange);
         return true;
     }
+};
+
+WebInspector.CSSStyleSheet._nextUniqueDisplayNameNumber = 1;
+
+WebInspector.CSSStyleSheet.Event = {
+    ContentDidChange: "stylesheet-content-did-change"
 };

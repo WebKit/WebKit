@@ -23,62 +23,60 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IndexedDatabaseObjectStoreIndex = function(name, keyPath, unique, multiEntry)
+WebInspector.IndexedDatabaseObjectStoreIndex = class IndexedDatabaseObjectStoreIndex extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(name, keyPath, unique, multiEntry)
+    {
+        super();
 
-    this._name = name;
-    this._keyPath = keyPath;
-    this._unique = unique || false;
-    this._multiEntry = multiEntry || false;
-    this._parentObjectStore = null;
-};
-
-WebInspector.IndexedDatabaseObjectStoreIndex.TypeIdentifier = "indexed-database-object-store-index";
-WebInspector.IndexedDatabaseObjectStoreIndex.NameCookieKey = "indexed-database-object-store-index-name";
-WebInspector.IndexedDatabaseObjectStoreIndex.KeyPathCookieKey = "indexed-database-object-store-index-key-path";
-
-WebInspector.IndexedDatabaseObjectStoreIndex.prototype = {
-    constructor: WebInspector.IndexedDatabaseObjectStoreIndex,
-    __proto__: WebInspector.Object.prototype,
+        this._name = name;
+        this._keyPath = keyPath;
+        this._unique = unique || false;
+        this._multiEntry = multiEntry || false;
+        this._parentObjectStore = null;
+    }
 
     // Public
 
     get name()
     {
         return this._name;
-    },
+    }
 
     get keyPath()
     {
         return this._keyPath;
-    },
+    }
 
     get unique()
     {
         return this._unique;
-    },
+    }
 
     get multiEntry()
     {
         return this._multiEntry;
-    },
+    }
 
     get parentObjectStore()
     {
         return this._parentObjectStore;
-    },
+    }
 
-    saveIdentityToCookie: function(cookie)
+    saveIdentityToCookie(cookie)
     {
         cookie[WebInspector.IndexedDatabaseObjectStoreIndex.NameCookieKey] = this._name;
         cookie[WebInspector.IndexedDatabaseObjectStoreIndex.KeyPathCookieKey] = this._keyPath;
-    },
+    }
 
     // Protected
 
-    establishRelationship: function(parentObjectStore)
+    establishRelationship(parentObjectStore)
     {
         this._parentObjectStore = parentObjectStore || null;
     }
 };
+
+WebInspector.IndexedDatabaseObjectStoreIndex.TypeIdentifier = "indexed-database-object-store-index";
+WebInspector.IndexedDatabaseObjectStoreIndex.NameCookieKey = "indexed-database-object-store-index-name";
+WebInspector.IndexedDatabaseObjectStoreIndex.KeyPathCookieKey = "indexed-database-object-store-index-key-path";

@@ -26,7 +26,8 @@
 
 WebInspector.ReplayManager = function()
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this._sessionState = WebInspector.ReplayManager.SessionState.Inactive;
     this._segmentState = WebInspector.ReplayManager.SegmentState.Unloaded;

@@ -23,43 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProfileNodeCall = function(startTime, totalTime)
+WebInspector.ProfileNodeCall = class ProfileNodeCall extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(startTime, totalTime)
+    {
+        super();
 
-    console.assert(startTime);
+        console.assert(startTime);
 
-    this._startTime = startTime;
-    this._totalTime = totalTime || 0;
-    this._parentNode = null;
-    this._previousSibling = null;
-    this._nextSibling = null;
-};
-
-WebInspector.ProfileNodeCall.prototype = {
-    constructor: WebInspector.ProfileNodeCall,
-    __proto__: WebInspector.Object.prototype,
+        this._startTime = startTime;
+        this._totalTime = totalTime || 0;
+        this._parentNode = null;
+        this._previousSibling = null;
+        this._nextSibling = null;
+    }
 
     // Public
 
     get startTime()
     {
         return this._startTime;
-    },
+    }
 
     get totalTime()
     {
         return this._totalTime;
-    },
+    }
 
     get endTime()
     {
         return this._startTime + this._totalTime;
-    },
+    }
 
     // Protected
 
-    establishRelationships: function(parentNode, previousSibling, nextSibling)
+    establishRelationships(parentNode, previousSibling, nextSibling)
     {
         this._parentNode = parentNode || null;
         this._previousSibling = previousSibling || null;

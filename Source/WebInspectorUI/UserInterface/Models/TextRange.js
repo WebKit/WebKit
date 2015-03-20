@@ -23,80 +23,79 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TextRange = function(startLineOrStartOffset, startColumnOrEndOffset, endLine, endColumn)
+WebInspector.TextRange = class TextRange extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(startLineOrStartOffset, startColumnOrEndOffset, endLine, endColumn)
+    {
+        super();
 
-    if (arguments.length === 4) {
-        console.assert(startLineOrStartOffset <= endLine);
-        console.assert(startLineOrStartOffset !== endLine || startColumnOrEndOffset <= endColumn);
+        if (arguments.length === 4) {
+            console.assert(startLineOrStartOffset <= endLine);
+            console.assert(startLineOrStartOffset !== endLine || startColumnOrEndOffset <= endColumn);
 
-        this._startLine = typeof startLineOrStartOffset === "number" ? startLineOrStartOffset : NaN;
-        this._startColumn = typeof startColumnOrEndOffset === "number" ? startColumnOrEndOffset : NaN;
-        this._endLine = typeof endLine === "number" ? endLine : NaN;
-        this._endColumn = typeof endColumn === "number" ? endColumn : NaN;
+            this._startLine = typeof startLineOrStartOffset === "number" ? startLineOrStartOffset : NaN;
+            this._startColumn = typeof startColumnOrEndOffset === "number" ? startColumnOrEndOffset : NaN;
+            this._endLine = typeof endLine === "number" ? endLine : NaN;
+            this._endColumn = typeof endColumn === "number" ? endColumn : NaN;
 
-        this._startOffset = NaN;
-        this._endOffset = NaN;
-    } else if (arguments.length === 2) {
-        console.assert(startLineOrStartOffset <= startColumnOrEndOffset);
+            this._startOffset = NaN;
+            this._endOffset = NaN;
+        } else if (arguments.length === 2) {
+            console.assert(startLineOrStartOffset <= startColumnOrEndOffset);
 
-        this._startOffset = typeof startLineOrStartOffset === "number" ? startLineOrStartOffset : NaN;
-        this._endOffset = typeof startColumnOrEndOffset === "number" ? startColumnOrEndOffset : NaN;
+            this._startOffset = typeof startLineOrStartOffset === "number" ? startLineOrStartOffset : NaN;
+            this._endOffset = typeof startColumnOrEndOffset === "number" ? startColumnOrEndOffset : NaN;
 
-        this._startLine = NaN;
-        this._startColumn = NaN;
-        this._endLine = NaN;
-        this._endColumn = NaN;
+            this._startLine = NaN;
+            this._startColumn = NaN;
+            this._endLine = NaN;
+            this._endColumn = NaN;
+        }
     }
-};
-
-WebInspector.TextRange.prototype = {
-    constructor: WebInspector.TextRange,
 
     // Public
 
     get startLine()
     {
         return this._startLine;
-    },
+    }
 
     get startColumn()
     {
         return this._startColumn;
-    },
+    }
 
     get endLine()
     {
         return this._endLine;
-    },
+    }
 
     get endColumn()
     {
         return this._endColumn;
-    },
+    }
 
     get startOffset()
     {
         return this._startOffset;
-    },
+    }
 
     get endOffset()
     {
         return this._endOffset;
-    },
+    }
 
-    startPosition: function()
+    startPosition()
     {
         return new WebInspector.SourceCodePosition(this._startLine, this._startColumn);
-    },
+    }
 
-    endPosition: function()
+    endPosition()
     {
         return new WebInspector.SourceCodePosition(this._endLine, this._endColumn);
-    },
+    }
 
-    resolveLinesAndColumns: function(text)
+    resolveLinesAndColumns(text)
     {
         console.assert(typeof text === "string");
         if (typeof text !== "string")
@@ -130,9 +129,9 @@ WebInspector.TextRange.prototype = {
 
         if (this._startLine === this._endLine)
             this._endColumn += this._startColumn;
-    },
+    }
 
-    resolveOffsets: function(text)
+    resolveOffsets(text)
     {
         console.assert(typeof text === "string");
         if (typeof text !== "string")
@@ -157,5 +156,3 @@ WebInspector.TextRange.prototype = {
         this._endOffset = lastNewLineOffset + this._endColumn;
     }
 };
-
-WebInspector.TextRange.prototype.__proto__ = WebInspector.Object.prototype;

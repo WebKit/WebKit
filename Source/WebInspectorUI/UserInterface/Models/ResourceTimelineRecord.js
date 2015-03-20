@@ -23,55 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceTimelineRecord = function(resource)
+WebInspector.ResourceTimelineRecord = class ResourceTimelineRecord extends WebInspector.TimelineRecord
 {
-    WebInspector.TimelineRecord.call(this, WebInspector.TimelineRecord.Type.Network);
+    constructor(resource)
+    {
+        super(WebInspector.TimelineRecord.Type.Network);
 
-    this._resource = resource;
-    this._resource.addEventListener(WebInspector.Resource.Event.TimestampsDidChange, this._dispatchUpdatedEvent, this);
-};
-
-WebInspector.ResourceTimelineRecord.prototype = {
-    constructor: WebInspector.ResourceTimelineRecord,
+        this._resource = resource;
+        this._resource.addEventListener(WebInspector.Resource.Event.TimestampsDidChange, this._dispatchUpdatedEvent, this);
+    }
 
     // Public
 
     get resource()
     {
         return this._resource;
-    },
+    }
 
     get updatesDynamically()
     {
         return true;
-    },
+    }
 
     get usesActiveStartTime()
     {
         return true;
-    },
+    }
 
     get startTime()
     {
         return this._resource.requestSentTimestamp;
-    },
+    }
 
     get activeStartTime()
     {
         return this._resource.responseReceivedTimestamp;
-    },
+    }
 
     get endTime()
     {
         return this._resource.finishedOrFailedTimestamp;
-    },
+    }
 
     // Private
 
-    _dispatchUpdatedEvent: function()
+    _dispatchUpdatedEvent()
     {
         this.dispatchEventToListeners(WebInspector.TimelineRecord.Event.Updated);
     }
 };
-
-WebInspector.ResourceTimelineRecord.prototype.__proto__ = WebInspector.TimelineRecord.prototype;

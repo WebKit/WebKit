@@ -23,45 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceCollection = function()
+WebInspector.ResourceCollection = class ResourceCollection extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    this._resources = [];
-    this._resourceURLMap = new Map;
-    this._resourcesTypeMap = new Map;
-};
-
-WebInspector.ResourceCollection.prototype = {
-    constructor: WebInspector.ResourceCollection,
+        this._resources = [];
+        this._resourceURLMap = new Map;
+        this._resourcesTypeMap = new Map;
+    }
 
     // Public
 
     get resources()
     {
         return this._resources;
-    },
+    }
 
-    resourceForURL: function(url)
+    resourceForURL(url)
     {
         return this._resourceURLMap.get(url) || null;
-    },
+    }
 
-    resourcesWithType: function(type)
+    resourcesWithType(type)
     {
         return this._resourcesTypeMap.get(type) || [];
-    },
+    }
 
-    addResource: function(resource)
+    addResource(resource)
     {
         console.assert(resource instanceof WebInspector.Resource);
         if (!(resource instanceof WebInspector.Resource))
             return;
 
         this._associateWithResource(resource);
-    },
+    }
 
-    removeResource: function(resourceOrURL)
+    removeResource(resourceOrURL)
     {
         console.assert(resourceOrURL);
 
@@ -81,9 +80,9 @@ WebInspector.ResourceCollection.prototype = {
         this._disassociateWithResource(resource);
 
         return resource;
-    },
+    }
 
-    removeAllResources: function()
+    removeAllResources()
     {
         if (!this._resources.length)
             return;
@@ -94,11 +93,11 @@ WebInspector.ResourceCollection.prototype = {
         this._resources = [];
         this._resourceURLMap.clear();
         this._resourcesTypeMap.clear();
-    },
+    }
 
     // Private
 
-    _associateWithResource: function(resource)
+    _associateWithResource(resource)
     {
         this._resources.push(resource);
         this._resourceURLMap.set(resource.url, resource);
@@ -110,9 +109,9 @@ WebInspector.ResourceCollection.prototype = {
 
         resource.addEventListener(WebInspector.Resource.Event.URLDidChange, this._resourceURLDidChange, this);
         resource.addEventListener(WebInspector.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
-    },
+    }
 
-    _disassociateWithResource: function(resource, skipRemoval)
+    _disassociateWithResource(resource, skipRemoval)
     {
         if (skipRemoval) {
             this._resources.remove(resource);
@@ -123,9 +122,9 @@ WebInspector.ResourceCollection.prototype = {
 
         resource.removeEventListener(WebInspector.Resource.Event.URLDidChange, this._resourceURLDidChange, this);
         resource.removeEventListener(WebInspector.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
-    },
+    }
 
-    _resourceURLDidChange: function(event)
+    _resourceURLDidChange(event)
     {
         var resource = event.target;
         console.assert(resource instanceof WebInspector.Resource);
@@ -139,9 +138,9 @@ WebInspector.ResourceCollection.prototype = {
 
         this._resourceURLMap.set(resource.url, resource);
         this._resourceURLMap.delete(oldURL);
-    },
+    }
 
-    _resourceTypeDidChange: function(event)
+    _resourceTypeDidChange(event)
     {
         var resource = event.target;
         console.assert(resource instanceof WebInspector.Resource);
@@ -162,5 +161,3 @@ WebInspector.ResourceCollection.prototype = {
             this._resourcesTypeMap.get(oldType).remove(resource);
     }
 };
-
-WebInspector.ResourceCollection.prototype.__proto__ = WebInspector.Object.prototype;

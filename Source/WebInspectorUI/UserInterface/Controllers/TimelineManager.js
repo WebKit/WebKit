@@ -25,7 +25,8 @@
 
 WebInspector.TimelineManager = function()
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ProvisionalLoadStarted, this._startAutoCapturing, this);
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
@@ -431,10 +432,10 @@ WebInspector.TimelineManager.prototype = {
 
         var identifier = this._nextRecordingIdentifier++;
         var newRecording = new WebInspector.TimelineRecording(identifier, WebInspector.UIString("Timeline Recording %d").format(identifier));
-        newRecording.addTimeline(new WebInspector.Timeline(WebInspector.TimelineRecord.Type.Network, newRecording));
-        newRecording.addTimeline(new WebInspector.Timeline(WebInspector.TimelineRecord.Type.RunLoop, newRecording));
-        newRecording.addTimeline(new WebInspector.Timeline(WebInspector.TimelineRecord.Type.Layout, newRecording));
-        newRecording.addTimeline(new WebInspector.Timeline(WebInspector.TimelineRecord.Type.Script, newRecording));
+        newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.Network, newRecording));
+        newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.RunLoop, newRecording));
+        newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.Layout, newRecording));
+        newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.Script, newRecording));
 
         this._recordings.push(newRecording);
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordingCreated, {recording: newRecording});

@@ -23,51 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ExecutionContext = function(id, name, isPageContext, frame)
+WebInspector.ExecutionContext = class ExecutionContext extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(id, name, isPageContext, frame)
+    {
+        super();
 
-    console.assert(typeof id === "number" || id === WebInspector.QuickConsole.MainFrameContextExecutionIdentifier);
-    console.assert(typeof name === "string");
+        console.assert(typeof id === "number" || id === WebInspector.QuickConsole.MainFrameContextExecutionIdentifier);
+        console.assert(typeof name === "string");
 
-    this._id = id;
-    this._name = name;
-    this._isPageContext = isPageContext || false;
-    this._frame = frame || null;
-};
+        this._id = id;
+        this._name = name;
+        this._isPageContext = isPageContext || false;
+        this._frame = frame || null;
+    }
 
-WebInspector.ExecutionContext.supported = function()
-{
-    // Execution contexts were added to the Inspector protocol alongside RuntimeAgent.enable and
-    // disable methods, which turn on and off sending Runtime agent execution context created events.
-    // So we can feature detect support for execution contexts with these RuntimeAgent functions.
-    return typeof RuntimeAgent.enable === "function";
-};
+    // Static
 
-WebInspector.ExecutionContext.prototype = {
-    constructor: WebInspector.ExecutionContext,
+    static supported()
+    {
+        // Execution contexts were added to the Inspector protocol alongside RuntimeAgent.enable and
+        // disable methods, which turn on and off sending Runtime agent execution context created events.
+        // So we can feature detect support for execution contexts with these RuntimeAgent functions.
+        return typeof RuntimeAgent.enable === "function";
+    }
 
     // Public
 
     get id()
     {
         return this._id;
-    },
+    }
 
     get name()
     {
         return this._name;
-    },
+    }
 
     get isPageContext()
     {
         return this._isPageContext;
-    },
+    }
 
     get frame()
     {
         return this._frame;
     }
 };
-
-WebInspector.ExecutionContext.prototype.__proto__ = WebInspector.Object.prototype;

@@ -23,25 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CookieStorageObject = function(host)
+WebInspector.CookieStorageObject = class CookieStorageObject
 {
-    this._host = host;
-};
+    constructor(host)
+    {
+        this._host = host;
+    }
 
-WebInspector.CookieStorageObject.TypeIdentifier = "cookie-storage";
-WebInspector.CookieStorageObject.CookieHostCookieKey = "cookie-storage-host";
-
-WebInspector.CookieStorageObject.prototype = {
-    constructor: WebInspector.CookieStorageObject,
+    // Public
 
     get host()
     {
         return this._host;
-    },
-
-    saveIdentityToCookie: function(cookie)
-    {
-        cookie[WebInspector.CookieStorageObject.CookieHostCookieKey] = this.host;
     }
-    // FIXME: This class will need to look up cookies that are set for this host.
+
+    saveIdentityToCookie(cookie)
+    {
+        // FIXME: This class will need to look up cookies that are set for this host.
+        cookie[WebInspector.CookieStorageObject.CookieHostCookieKey] = this.host;
+    }    
 };
+
+WebInspector.CookieStorageObject.TypeIdentifier = "cookie-storage";
+WebInspector.CookieStorageObject.CookieHostCookieKey = "cookie-storage-host";

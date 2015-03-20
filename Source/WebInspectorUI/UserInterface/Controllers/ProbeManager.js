@@ -26,7 +26,8 @@
 
 WebInspector.ProbeManager = function()
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     // Used to detect deleted probe actions.
     this._knownProbeIdentifiersForBreakpoint = new Map;

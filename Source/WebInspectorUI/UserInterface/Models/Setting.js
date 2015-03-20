@@ -29,30 +29,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Setting = function(name, defaultValue)
+WebInspector.Setting = class Setting extends WebInspector.Object
 {
-    this._name = name;
-    this._localStorageKey = WebInspector.Setting.LocalStorageKeyPrefix + name;
-    this._defaultValue = defaultValue;
-};
+    constructor(name, defaultValue)
+    {
+        super();
 
-WebInspector.Object.addConstructorFunctions(WebInspector.Setting);
-
-WebInspector.Setting.Event = {
-    Changed: "setting-changed"
-};
-
-WebInspector.Setting.LocalStorageKeyPrefix = "com.apple.WebInspector.";
-
-WebInspector.Setting.prototype = {
-    constructor: WebInspector.Setting,
+        this._name = name;
+        this._localStorageKey = WebInspector.Setting.LocalStorageKeyPrefix + name;
+        this._defaultValue = defaultValue;
+    }
 
     // Public
 
     get name()
     {
         return this._name;
-    },
+    }
 
     get value()
     {
@@ -71,7 +64,7 @@ WebInspector.Setting.prototype = {
         }
 
         return this._value;
-    },
+    }
 
     set value(value)
     {
@@ -93,4 +86,8 @@ WebInspector.Setting.prototype = {
     }
 };
 
-WebInspector.Setting.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.Setting.LocalStorageKeyPrefix = "com.apple.WebInspector.";
+
+WebInspector.Setting.Event = {
+    Changed: "setting-changed"
+};

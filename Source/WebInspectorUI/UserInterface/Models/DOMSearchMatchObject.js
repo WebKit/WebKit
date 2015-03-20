@@ -23,52 +23,87 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMSearchMatchObject = function(resource, domNode, title, searchTerm, textRange)
+WebInspector.DOMSearchMatchObject = class DOMSearchMatchObject extends WebInspector.Object
 {
-    console.assert(resource instanceof WebInspector.Resource);
-    console.assert(domNode instanceof WebInspector.DOMNode);
+    constructor(resource, domNode, title, searchTerm, textRange)
+    {
+        super();
 
-    WebInspector.Object.call(this);
+        console.assert(resource instanceof WebInspector.Resource);
+        console.assert(domNode instanceof WebInspector.DOMNode);
 
-    this._resource = resource;
-    this._domNode = domNode;
-    this._title = title;
-    this._searchTerm = searchTerm;
-    this._sourceCodeTextRange = resource.createSourceCodeTextRange(textRange);
-};
+        this._resource = resource;
+        this._domNode = domNode;
+        this._title = title;
+        this._searchTerm = searchTerm;
+        this._sourceCodeTextRange = resource.createSourceCodeTextRange(textRange);
+    }
 
-WebInspector.DOMSearchMatchObject.DOMMatchElementIconStyleClassName = "dom-match-element-icon";
-WebInspector.DOMSearchMatchObject.DOMMatchTextNodeIconStyleClassName = "dom-match-text-node-icon";
-WebInspector.DOMSearchMatchObject.DOMMatchCommentIconStyleClassName = "dom-match-comment-icon";
-WebInspector.DOMSearchMatchObject.DOMMatchDocumentTypeIconStyleClassName = "dom-match-document-type-icon";
-WebInspector.DOMSearchMatchObject.DOMMatchCharacterDataIconStyleClassName = "dom-match-character-data-icon";
-WebInspector.DOMSearchMatchObject.DOMMatchNodeIconStyleClassName = "dom-match-node-icon";
+    // Static
 
-WebInspector.DOMSearchMatchObject.TypeIdentifier = "dom-search-match-object";
-WebInspector.DOMSearchMatchObject.URLCookieKey = "resource-url";
-WebInspector.DOMSearchMatchObject.TitleKey = "title";
-WebInspector.DOMSearchMatchObject.TextRangeKey = "text-range";
+    static titleForDOMNode(domNode)
+    {
+        switch (domNode.nodeType()) {
+        case Node.ELEMENT_NODE:
+            var title = "<" + domNode.nodeNameInCorrectCase();
+            for (var attribute of domNode.attributes()) {
+                title += " " + attribute.name;
+                if (attribute.value.length)
+                    title += "=\"" + attribute.value + "\"";
+            }
+            return title + ">";
 
-WebInspector.DOMSearchMatchObject.prototype = {
-    constructor: WebInspector.DOMSearchMatchObject,
-    __proto__: WebInspector.Object.prototype,
+        case Node.TEXT_NODE:
+            return "\"" + domNode.nodeValue() + "\"";
+
+        case Node.COMMENT_NODE:
+            return "<!--" + domNode.nodeValue() + "-->";
+
+        case Node.DOCUMENT_TYPE_NODE:
+            var title = "<!DOCTYPE " + domNode.nodeName();
+            if (domNode.publicId) {
+                title += " PUBLIC \"" + domNode.publicId + "\"";
+                if (domNode.systemId)
+                    title += " \"" + domNode.systemId + "\"";
+            } else if (domNode.systemId)
+                title += " SYSTEM \"" + domNode.systemId + "\"";
+
+            if (domNode.internalSubset)
+                title += " [" + domNode.internalSubset + "]";
+
+            return title + ">";
+
+        case Node.CDATA_SECTION_NODE:
+            return "<![CDATA[" + domNode + "]]>";
+
+        case Node.PROCESSING_INSTRUCTION_NODE:
+            var data = domNode.nodeValue();
+            var dataString = data.length ? " " + data : "";
+            var title = "<?" + domNode.nodeNameInCorrectCase() + dataString + "?>";
+            return title;
+
+        default:
+            console.error("Unknown DOM node type: ", domNode.nodeType());
+            return domNode.nodeNameInCorrectCase();
+        }
+    }
 
     // Public
 
     get resource()
     {
         return this._resource;
-    },
+    }
 
     get domNode()
     {
         return this._domNode;
-    },
+    }
 
     get title()
     {
         return this._title;
-    },
+    }
 
     get className()
     {
@@ -76,17 +111,17 @@ WebInspector.DOMSearchMatchObject.prototype = {
             this._className = this._generateClassName();
 
         return this._className;
-    },
+    }
 
     get searchTerm()
     {
         return this._searchTerm;
-    },
+    }
 
     get sourceCodeTextRange()
     {
         return this._sourceCodeTextRange;
-    },
+    }
 
     saveIdentityToCookie(cookie)
     {
@@ -94,7 +129,7 @@ WebInspector.DOMSearchMatchObject.prototype = {
         cookie[WebInspector.DOMSearchMatchObject.TitleKey] = this._title;
         var textRange = this._sourceCodeTextRange.textRange;
         cookie[WebInspector.DOMSearchMatchObject.TextRangeKey] = [textRange.startLine, textRange.startColumn, textRange.endLine, textRange.endColumn].join();
-    },
+    }
 
     // Private
 
@@ -127,49 +162,14 @@ WebInspector.DOMSearchMatchObject.prototype = {
     }
 };
 
-WebInspector.DOMSearchMatchObject.titleForDOMNode = function(domNode)
-{
-    switch (domNode.nodeType()) {
-    case Node.ELEMENT_NODE:
-        var title = "<" + domNode.nodeNameInCorrectCase();
-        for (var attribute of domNode.attributes()) {
-            title += " " + attribute.name;
-            if (attribute.value.length)
-                title += "=\"" + attribute.value + "\"";
-        }
-        return title + ">";
+WebInspector.DOMSearchMatchObject.DOMMatchElementIconStyleClassName = "dom-match-element-icon";
+WebInspector.DOMSearchMatchObject.DOMMatchTextNodeIconStyleClassName = "dom-match-text-node-icon";
+WebInspector.DOMSearchMatchObject.DOMMatchCommentIconStyleClassName = "dom-match-comment-icon";
+WebInspector.DOMSearchMatchObject.DOMMatchDocumentTypeIconStyleClassName = "dom-match-document-type-icon";
+WebInspector.DOMSearchMatchObject.DOMMatchCharacterDataIconStyleClassName = "dom-match-character-data-icon";
+WebInspector.DOMSearchMatchObject.DOMMatchNodeIconStyleClassName = "dom-match-node-icon";
 
-    case Node.TEXT_NODE:
-        return "\"" + domNode.nodeValue() + "\"";
-
-    case Node.COMMENT_NODE:
-        return "<!--" + domNode.nodeValue() + "-->";
-
-    case Node.DOCUMENT_TYPE_NODE:
-        var title = "<!DOCTYPE " + domNode.nodeName();
-        if (domNode.publicId) {
-            title += " PUBLIC \"" + domNode.publicId + "\"";
-            if (domNode.systemId)
-                title += " \"" + domNode.systemId + "\"";
-        } else if (domNode.systemId)
-            title += " SYSTEM \"" + domNode.systemId + "\"";
-
-        if (domNode.internalSubset)
-            title += " [" + domNode.internalSubset + "]";
-
-        return title + ">";
-
-    case Node.CDATA_SECTION_NODE:
-        return "<![CDATA[" + domNode + "]]>";
-
-    case Node.PROCESSING_INSTRUCTION_NODE:
-        var data = domNode.nodeValue();
-        var dataString = data.length ? " " + data : "";
-        var title = "<?" + domNode.nodeNameInCorrectCase() + dataString + "?>";
-        return title;
-
-    default:
-        console.error("Unknown DOM node type: ", domNode.nodeType());
-        return domNode.nodeNameInCorrectCase();
-    }
-};
+WebInspector.DOMSearchMatchObject.TypeIdentifier = "dom-search-match-object";
+WebInspector.DOMSearchMatchObject.URLCookieKey = "resource-url";
+WebInspector.DOMSearchMatchObject.TitleKey = "title";
+WebInspector.DOMSearchMatchObject.TextRangeKey = "text-range";

@@ -63,7 +63,8 @@ WebInspector.DOMTreeOutline = function(omitRootDOMNode, selectEnabled, showInEle
     WebInspector.showShadowDOMSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.DOMTreeOutline);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.DOMTreeOutline);
 
 WebInspector.DOMTreeOutline.StyleClassName = "dom-tree-outline";
 

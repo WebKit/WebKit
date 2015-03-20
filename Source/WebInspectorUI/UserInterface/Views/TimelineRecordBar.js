@@ -25,7 +25,8 @@
 
 WebInspector.TimelineRecordBar = function(records, renderMode)
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this._element = document.createElement("div");
     this._element.classList.add(WebInspector.TimelineRecordBar.StyleClassName);
@@ -34,7 +35,8 @@ WebInspector.TimelineRecordBar = function(records, renderMode)
     this.records = records;
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.TimelineRecordBar);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.TimelineRecordBar);
 
 WebInspector.TimelineRecordBar.StyleClassName = "timeline-record-bar";
 WebInspector.TimelineRecordBar.BarSegmentStyleClassName = "segment";

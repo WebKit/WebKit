@@ -28,7 +28,8 @@
 
 WebInspector.ConsoleSession = function()
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     var element = document.createElement("div");
     element.className = "console-session";

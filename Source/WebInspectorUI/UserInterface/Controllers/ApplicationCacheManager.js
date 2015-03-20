@@ -25,7 +25,8 @@
 
 WebInspector.ApplicationCacheManager = function()
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     if (window.ApplicationCacheAgent)
         ApplicationCacheAgent.enable();

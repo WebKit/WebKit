@@ -23,38 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CollectionEntry = function(key, value)
+WebInspector.CollectionEntry = class CollectionEntry extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(key, value)
+    {
+        super();
 
-    console.assert(value instanceof WebInspector.RemoteObject);
-    console.assert(!key || key instanceof WebInspector.RemoteObject);
+        console.assert(value instanceof WebInspector.RemoteObject);
+        console.assert(!key || key instanceof WebInspector.RemoteObject);
 
-    this._key = key;
-    this._value = value;
-};
+        this._key = key;
+        this._value = value;
+    }
 
-// Runtime.CollectionEntry.
-WebInspector.CollectionEntry.fromPayload = function(payload)
-{
-    if (payload.key)
-        payload.key = WebInspector.RemoteObject.fromPayload(payload.key);
-    if (payload.value)
-        payload.value = WebInspector.RemoteObject.fromPayload(payload.value);
+    // Static
 
-    return new WebInspector.CollectionEntry(payload.key, payload.value);
-};
+    // Runtime.CollectionEntry.
+    static fromPayload(payload)
+    {
+        if (payload.key)
+            payload.key = WebInspector.RemoteObject.fromPayload(payload.key);
+        if (payload.value)
+            payload.value = WebInspector.RemoteObject.fromPayload(payload.value);
 
-WebInspector.CollectionEntry.prototype = {
-    constructor: WebInspector.CollectionEntry,
-    __proto__: WebInspector.Object.prototype,
+        return new WebInspector.CollectionEntry(payload.key, payload.value);
+    }
 
     // Public
 
     get key()
     {
         return this._key;
-    },
+    }
 
     get value()
     {

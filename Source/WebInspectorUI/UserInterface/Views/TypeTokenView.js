@@ -27,7 +27,8 @@ WebInspector.TypeTokenView = function(tokenAnnotator, shouldHaveRightMargin, sho
 {
     console.assert(titleType === WebInspector.TypeTokenView.TitleType.Variable  || titleType === WebInspector.TypeTokenView.TitleType.ReturnStatement);
 
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     var span = document.createElement("span");
     span.classList.add("type-token");

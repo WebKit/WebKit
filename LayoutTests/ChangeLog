@@ -1,3 +1,14 @@
+2015-03-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Adopt ES6 Class Syntax for all Model Objects
+        https://bugs.webkit.org/show_bug.cgi?id=142858
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/parse-script-syntax-tree.html:
+        This test was calling a constructor without "new". Class
+        syntax enforces "new" and threw an exception.
+
 2015-03-19  Enrica Casucci  <enrica@apple.com>
 
         <attachment> should put URLs on the pasteboard so that Finder can accept drops.

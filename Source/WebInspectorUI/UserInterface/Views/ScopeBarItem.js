@@ -24,7 +24,8 @@
  */
 
 WebInspector.ScopeBarItem = function(id, label, isExclusive) {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this.id = id;
     this.label = label;

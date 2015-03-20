@@ -23,54 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSRule = function(nodeStyles, ownerStyleSheet, id, type, sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList)
+WebInspector.CSSRule = class CSSRule extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(nodeStyles, ownerStyleSheet, id, type, sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList)
+    {
+        super();
 
-    console.assert(nodeStyles);
-    this._nodeStyles = nodeStyles;
+        console.assert(nodeStyles);
+        this._nodeStyles = nodeStyles;
 
-    this._ownerStyleSheet = ownerStyleSheet || null;
-    this._id = id || null;
-    this._type = type || null;
+        this._ownerStyleSheet = ownerStyleSheet || null;
+        this._id = id || null;
+        this._type = type || null;
 
-    this.update(sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList, true);
-};
-
-WebInspector.Object.addConstructorFunctions(WebInspector.CSSRule);
-
-WebInspector.CSSRule.Event = {
-    Changed: "css-rule-changed"
-};
-
-WebInspector.CSSRule.Type = {
-    Author: "css-rule-type-author",
-    User: "css-rule-type-user",
-    UserAgent: "css-rule-type-user-agent",
-    Inspector: "css-rule-type-inspector"
-};
-
-WebInspector.CSSRule.prototype = {
-    constructor: WebInspector.CSSRule,
+        this.update(sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList, true);
+    }
 
     // Public
 
     get id()
     {
         return this._id;
-    },
+    }
 
     get ownerStyleSheet()
     {
         return this._ownerStyleSheet;
-    },
+    }
 
     get editable()
     {
         return !!this._id && (this._type === WebInspector.CSSRule.Type.Author || this._type === WebInspector.CSSRule.Type.Inspector);
-    },
+    }
 
-    update: function(sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList, dontFireEvents)
+    update(sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList, dontFireEvents)
     {
         sourceCodeLocation = sourceCodeLocation || null;
         selectorText = selectorText || "";
@@ -105,22 +91,22 @@ WebInspector.CSSRule.prototype = {
 
         if (changed)
             this.dispatchEventToListeners(WebInspector.CSSRule.Event.Changed);
-    },
+    }
 
     get type()
     {
         return this._type;
-    },
+    }
 
     get sourceCodeLocation()
     {
         return this._sourceCodeLocation;
-    },
+    }
 
     get selectorText()
     {
         return this._selectorText;
-    },
+    }
 
     set selectorText(selectorText)
     {
@@ -132,17 +118,17 @@ WebInspector.CSSRule.prototype = {
             return;
 
         this._nodeStyles.changeRuleSelector(this, selectorText);
-    },
+    }
 
     get selectors()
     {
         return this._selectors;
-    },
+    }
 
     get matchedSelectorIndices()
     {
         return this._matchedSelectorIndices;
-    },
+    }
 
     get matchedSelectors()
     {
@@ -160,7 +146,7 @@ WebInspector.CSSRule.prototype = {
         }, this);
 
         return this._matchedSelectors;
-    },
+    }
 
     get matchedSelectorText()
     {
@@ -176,25 +162,25 @@ WebInspector.CSSRule.prototype = {
         this._matchedSelectorText = this.matchedSelectors.map(function(x) { return x.text; }).join(", ");
 
         return this._matchedSelectorText;
-    },
+    }
 
     get style()
     {
         return this._style;
-    },
+    }
 
     get mediaList()
     {
         return this._mediaList;
-    },
+    }
 
-    isEqualTo: function(rule)
+    isEqualTo(rule)
     {
         if (!rule)
             return false;
 
         return Object.shallowEqual(this._id, rule.id);
-    },
+    }
 
     // Protected
 
@@ -204,4 +190,13 @@ WebInspector.CSSRule.prototype = {
     }
 };
 
-WebInspector.CSSRule.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.CSSRule.Event = {
+    Changed: "css-rule-changed"
+};
+
+WebInspector.CSSRule.Type = {
+    Author: "css-rule-type-author",
+    User: "css-rule-type-user",
+    UserAgent: "css-rule-type-user-agent",
+    Inspector: "css-rule-type-inspector"
+};

@@ -23,62 +23,66 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Point = function(x, y)
+WebInspector.Point = class Point
 {
-    this.x = x || 0;
-    this.y = y || 0;
-};
+    constructor(x, y)
+    {
+        this.x = x || 0;
+        this.y = y || 0;
+    }
 
-WebInspector.Point.fromEvent = function(event)
-{
-    return new WebInspector.Point(event.pageX, event.pageY);
-};
+    // Static
 
-WebInspector.Point.fromEventInElement = function(event, element)
-{
-    var wkPoint = window.webkitConvertPointFromPageToNode(element, new WebKitPoint(event.pageX, event.pageY));
-    return new WebInspector.Point(wkPoint.x, wkPoint.y);
-};
+    static fromEvent(event)
+    {
+        return new WebInspector.Point(event.pageX, event.pageY);
+    }
 
-WebInspector.Point.prototype = {
-    constructor: WebInspector.Point,
+    static fromEventInElement(event, element)
+    {
+        var wkPoint = window.webkitConvertPointFromPageToNode(element, new WebKitPoint(event.pageX, event.pageY));
+        return new WebInspector.Point(wkPoint.x, wkPoint.y);
+    }
 
-    toString : function()
+    // Public
+
+    toString()
     {
         return "WebInspector.Point[" + this.x + "," + this.y + "]";
-    },
+    }
 
-    copy: function()
+    copy()
     {
         return new WebInspector.Point(this.x, this.y);
-    },
+    }
 
-    equals: function(anotherPoint)
+    equals(anotherPoint)
     {
         return (this.x === anotherPoint.x && this.y === anotherPoint.y);
     }
 };
 
-WebInspector.Size = function(width, height)
+WebInspector.Size = class Size
 {
-    this.width = width || 0;
-    this.height = height || 0;
-};
+    constructor(width, height)
+    {
+        this.width = width || 0;
+        this.height = height || 0;
+    }
 
-WebInspector.Size.prototype = {
-    constructor: WebInspector.Size,
+    // Public
 
-    toString: function()
+    toString()
     {
         return "WebInspector.Size[" + this.width + "," + this.height + "]";
-    },
+    }
 
-    copy: function()
+    copy()
     {
         return new WebInspector.Size(this.width, this.height);
-    },
+    }
 
-    equals: function(anotherSize)
+    equals(anotherSize)
     {
         return (this.width === anotherSize.width && this.height === anotherSize.height);
     }
@@ -87,44 +91,47 @@ WebInspector.Size.prototype = {
 WebInspector.Size.ZERO_SIZE = new WebInspector.Size(0, 0);
 
 
-WebInspector.Rect = function(x, y, width, height)
+WebInspector.Rect = class Rect
 {
-    this.origin = new WebInspector.Point(x || 0, y || 0);
-    this.size = new WebInspector.Size(width || 0, height || 0);
-};
+    constructor(x, y, width, height)
+    {
+        this.origin = new WebInspector.Point(x || 0, y || 0);
+        this.size = new WebInspector.Size(width || 0, height || 0);
+    }
 
-WebInspector.Rect.rectFromClientRect = function(clientRect)
-{
-    return new WebInspector.Rect(clientRect.left, clientRect.top, clientRect.width, clientRect.height);
-};
+    // Static
 
-WebInspector.Rect.unionOfRects = function(rects)
-{
-    var union = rects[0];
-    for (var i = 1; i < rects.length; ++i)
-        union = union.unionWithRect(rects[i]);
-    return union;
-};
+    static rectFromClientRect(clientRect)
+    {
+        return new WebInspector.Rect(clientRect.left, clientRect.top, clientRect.width, clientRect.height);
+    }
 
-WebInspector.Rect.prototype = {
-    constructor: WebInspector.Rect,
+    static unionOfRects(rects)
+    {
+        var union = rects[0];
+        for (var i = 1; i < rects.length; ++i)
+            union = union.unionWithRect(rects[i]);
+        return union;
+    }
 
-    toString: function()
+    // Public
+
+    toString()
     {
         return "WebInspector.Rect[" + [this.origin.x, this.origin.y, this.size.width, this.size.height].join(", ") + "]";
-    },
+    }
 
-    copy: function()
+    copy()
     {
         return new WebInspector.Rect(this.origin.x, this.origin.y, this.size.width, this.size.height);
-    },
+    }
 
-    equals: function(anotherRect)
+    equals(anotherRect)
     {
         return (this.origin.equals(anotherRect.origin) && this.size.equals(anotherRect.size));
-    },
+    }
 
-    inset: function(insets)
+    inset(insets)
     {
         return new WebInspector.Rect(
             this.origin.x + insets.left,
@@ -132,9 +139,9 @@ WebInspector.Rect.prototype = {
             this.size.width - insets.left - insets.right,
             this.size.height - insets.top - insets.bottom
         );
-    },
+    }
 
-    pad: function(padding)
+    pad(padding)
     {
         return new WebInspector.Rect(
             this.origin.x - padding,
@@ -142,39 +149,39 @@ WebInspector.Rect.prototype = {
             this.size.width + padding * 2,
             this.size.height + padding * 2
         );
-    },
+    }
 
-    minX: function()
+    minX()
     {
         return this.origin.x;
-    },
+    }
 
-    minY: function()
+    minY()
     {
         return this.origin.y;
-    },
+    }
 
-    midX: function()
+    midX()
     {
         return this.origin.x + (this.size.width / 2);
-    },
+    }
 
-    midY: function()
+    midY()
     {
         return this.origin.y + (this.size.height / 2);
-    },
+    }
 
-    maxX: function()
+    maxX()
     {
         return this.origin.x + this.size.width;
-    },
+    }
 
-    maxY: function()
+    maxY()
     {
         return this.origin.y + this.size.height;
-    },
+    }
 
-    intersectionWithRect: function(rect)
+    intersectionWithRect(rect)
     {
         var x1 = Math.max(this.minX(), rect.minX());
         var x2 = Math.min(this.maxX(), rect.maxX());
@@ -190,18 +197,18 @@ WebInspector.Rect.prototype = {
         intersection.origin.y = y1;
         intersection.size.height = y2 - y1;
         return intersection;
-    },
+    }
 
-    unionWithRect: function(rect)
+    unionWithRect(rect)
     {
         var x = Math.min(this.minX(), rect.minX());
         var y = Math.min(this.minY(), rect.minY());
         var width = Math.max(this.maxX(), rect.maxX()) - x;
         var height = Math.max(this.maxY(), rect.maxY()) - y;
         return new WebInspector.Rect(x, y, width, height);
-    },
+    }
 
-    round: function()
+    round()
     {
         return new WebInspector.Rect(
             Math.floor(this.origin.x),
@@ -215,33 +222,34 @@ WebInspector.Rect.prototype = {
 WebInspector.Rect.ZERO_RECT = new WebInspector.Rect(0, 0, 0, 0);
 
 
-WebInspector.EdgeInsets = function(top, right, bottom, left)
+WebInspector.EdgeInsets = class EdgeInsets
 {
-    console.assert(arguments.length === 1 || arguments.length === 4);
+    constructor(top, right, bottom, left)
+    {
+        console.assert(arguments.length === 1 || arguments.length === 4);
 
-    if (arguments.length === 1) {
-        this.top = top;
-        this.right = top;
-        this.bottom = top;
-        this.left = top;
-    } else if (arguments.length === 4) {
-        this.top = top;
-        this.right = right;
-        this.bottom = bottom;
-        this.left = left;
+        if (arguments.length === 1) {
+            this.top = top;
+            this.right = top;
+            this.bottom = top;
+            this.left = top;
+        } else if (arguments.length === 4) {
+            this.top = top;
+            this.right = right;
+            this.bottom = bottom;
+            this.left = left;
+        }
     }
-};
 
-WebInspector.EdgeInsets.prototype = {
-    constructor: WebInspector.EdgeInsets,
+    // Public
 
-    equals: function(anotherInset)
+    equals(anotherInset)
     {
         return (this.top === anotherInset.top && this.right === anotherInset.right &&
                 this.bottom === anotherInset.bottom && this.left === anotherInset.left);
-    },
+    }
 
-    copy: function()
+    copy()
     {
         return new WebInspector.EdgeInsets(this.top, this.right, this.bottom, this.left);
     }
@@ -254,23 +262,24 @@ WebInspector.RectEdge = {
     MAX_Y : 3
 };
 
-WebInspector.Quad = function(quad)
+WebInspector.Quad = class Quad
 {
-    this.points = [
-        new WebInspector.Point(quad[0], quad[1]), // top left
-        new WebInspector.Point(quad[2], quad[3]), // top right
-        new WebInspector.Point(quad[4], quad[5]), // bottom right
-        new WebInspector.Point(quad[6], quad[7])  // bottom left
-    ];
+    constructor(quad)
+    {
+        this.points = [
+            new WebInspector.Point(quad[0], quad[1]), // top left
+            new WebInspector.Point(quad[2], quad[3]), // top right
+            new WebInspector.Point(quad[4], quad[5]), // bottom right
+            new WebInspector.Point(quad[6], quad[7])  // bottom left
+        ];
 
-    this.width = Math.round(Math.sqrt(Math.pow(quad[0] - quad[2], 2) + Math.pow(quad[1] - quad[3], 2)));
-    this.height = Math.round(Math.sqrt(Math.pow(quad[0] - quad[6], 2) + Math.pow(quad[1] - quad[7], 2)));
-};
+        this.width = Math.round(Math.sqrt(Math.pow(quad[0] - quad[2], 2) + Math.pow(quad[1] - quad[3], 2)));
+        this.height = Math.round(Math.sqrt(Math.pow(quad[0] - quad[6], 2) + Math.pow(quad[1] - quad[7], 2)));
+    }
 
-WebInspector.Quad.prototype = {
-    constructor: WebInspector.Quad,
+    // Public
 
-    toProtocol: function()
+    toProtocol()
     {
         return [
             this.points[0].x, this.points[0].y,
@@ -281,15 +290,16 @@ WebInspector.Quad.prototype = {
     }
 };
 
-WebInspector.Polygon = function(points)
+WebInspector.Polygon = class Polygon
 {
-    this.points = points;
-}
+    constructor(points)
+    {
+        this.points = points;
+    }
 
-WebInspector.Polygon.prototype = {
-    constructor: WebInspector.Polygon,
+    // Public
 
-    bounds: function()
+    bounds()
     {
         var minX = Number.MAX_VALUE;
         var minY = Number.MAX_VALUE;

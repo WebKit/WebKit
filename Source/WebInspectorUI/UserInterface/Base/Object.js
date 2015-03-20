@@ -23,108 +23,96 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Object = function()
+WebInspector.Object = class Object
 {
-};
-
-WebInspector.Object.addConstructorFunctions = function(subclassConstructor)
-{
-    // Copies the relevant functions the subclass constructor.
-    for (var property in WebInspector.Object) {
-        var value = WebInspector.Object[property];
-        if (typeof value !== "function")
-            continue;
-        if (value === arguments.callee)
-            continue;
-        subclassConstructor[property] = value;
+    constructor()
+    {
+        // FIXME: Remove once <https://webkit.org/b/142862> is fixed.
     }
-};
 
-WebInspector.Object.addEventListener = function(eventType, listener, thisObject)
-{
-    thisObject = thisObject || null;
+    // Static
 
-    console.assert(eventType, "Object.addEventListener: invalid event type ", eventType, "(listener: ", listener, "thisObject: ", thisObject, ")");
-    if (!eventType)
-        return;
+    static addEventListener(eventType, listener, thisObject)
+    {
+        thisObject = thisObject || null;
 
-    console.assert(listener, "Object.addEventListener: invalid listener ", listener, "(event type: ", eventType, "thisObject: ", thisObject, ")");
-    if (!listener)
-        return;
-
-    if (!this._listeners)
-        this._listeners = {};
-
-    var listeners = this._listeners[eventType];
-    if (!listeners)
-        listeners = this._listeners[eventType] = [];
-
-    // Prevent registering multiple times.
-    for (var i = 0; i < listeners.length; ++i) {
-        if (listeners[i].listener === listener && listeners[i].thisObject === thisObject)
+        console.assert(eventType, "Object.addEventListener: invalid event type ", eventType, "(listener: ", listener, "thisObject: ", thisObject, ")");
+        if (!eventType)
             return;
+
+        console.assert(listener, "Object.addEventListener: invalid listener ", listener, "(event type: ", eventType, "thisObject: ", thisObject, ")");
+        if (!listener)
+            return;
+
+        if (!this._listeners)
+            this._listeners = {};
+
+        var listeners = this._listeners[eventType];
+        if (!listeners)
+            listeners = this._listeners[eventType] = [];
+
+        // Prevent registering multiple times.
+        for (var i = 0; i < listeners.length; ++i) {
+            if (listeners[i].listener === listener && listeners[i].thisObject === thisObject)
+                return;
+        }
+
+        listeners.push({thisObject, listener});
     }
 
-    listeners.push({thisObject, listener});
-};
+    static removeEventListener(eventType, listener, thisObject)
+    {
+        eventType = eventType || null;
+        listener = listener || null;
+        thisObject = thisObject || null;
 
-WebInspector.Object.removeEventListener = function(eventType, listener, thisObject)
-{
-    eventType = eventType || null;
-    listener = listener || null;
-    thisObject = thisObject || null;
+        if (!this._listeners)
+            return;
 
-    if (!this._listeners)
-        return;
+        if (!eventType) {
+            for (eventType in this._listeners)
+                this.removeEventListener(eventType, listener, thisObject);
+            return;
+        }
 
-    if (!eventType) {
-        for (eventType in this._listeners)
-            this.removeEventListener(eventType, listener, thisObject);
-        return;
+        var listeners = this._listeners[eventType];
+        if (!listeners)
+            return;
+
+        for (var i = listeners.length - 1; i >= 0; --i) {
+            if (listener && listeners[i].listener === listener && listeners[i].thisObject === thisObject)
+                listeners.splice(i, 1);
+            else if (!listener && thisObject && listeners[i].thisObject === thisObject)
+                listeners.splice(i, 1);
+        }
+
+        if (!listeners.length)
+            delete this._listeners[eventType];
+
+        if (!Object.keys(this._listeners).length)
+            delete this._listeners;
     }
 
-    var listeners = this._listeners[eventType];
-    if (!listeners)
-        return;
-
-    for (var i = listeners.length - 1; i >= 0; --i) {
-        if (listener && listeners[i].listener === listener && listeners[i].thisObject === thisObject)
-            listeners.splice(i, 1);
-        else if (!listener && thisObject && listeners[i].thisObject === thisObject)
-            listeners.splice(i, 1);
-    }
-
-    if (!listeners.length)
-        delete this._listeners[eventType];
-
-    if (!Object.keys(this._listeners).length)
+    static removeAllListeners()
+    {
         delete this._listeners;
-};
+    }
 
-WebInspector.Object.removeAllListeners = function()
-{
-    delete this._listeners;
-};
+    static hasEventListeners(eventType)
+    {
+        if (!this._listeners || !this._listeners[eventType])
+            return false;
+        return true;
+    }
 
-WebInspector.Object.hasEventListeners = function(eventType)
-{
-    if (!this._listeners || !this._listeners[eventType])
-        return false;
-    return true;
-};
+    // Public
 
-WebInspector.Object.prototype = {
-    constructor: WebInspector.Object,
+    addEventListener() { return WebInspector.Object.addEventListener.apply(this, arguments); }
+    removeEventListener() { return WebInspector.Object.removeEventListener.apply(this, arguments); }
+    removeAllListeners() { return WebInspector.Object.removeAllListeners.apply(this, arguments); }
+    hasEventListeners() { return WebInspector.Object.hasEventListeners.apply(this, arguments); }
 
-    addEventListener: WebInspector.Object.addEventListener,
-
-    removeEventListener: WebInspector.Object.removeEventListener,
-
-    removeAllListeners: WebInspector.Object.removeAllListeners,
-
-    hasEventListeners: WebInspector.Object.hasEventListeners,
-
-    dispatchEventToListeners: function(eventType, eventData)
+    dispatchEventToListeners(eventType, eventData)
     {
         var event = new WebInspector.Event(this, eventType, eventData);
 
@@ -165,24 +153,38 @@ WebInspector.Object.prototype = {
     }
 };
 
-WebInspector.Event = function(target, type, data)
+// FIXME: Uses arguments.callee, so it cannot be in the class.
+WebInspector.Object.deprecatedAddConstructorFunctions = function(subclassConstructor)
 {
-    this.target = target;
-    this.type = type;
-    this.data = data;
-    this.defaultPrevented = false;
-    this._stoppedPropagation = false;
+    // Copies the relevant functions to the subclass constructor.
+    var list = ["addEventListener", "removeEventListener", "removeAllListeners", "hasEventListeners"];
+    for (var property of list) {
+        var value = WebInspector.Object[property];
+        if (typeof value !== "function")
+            continue;
+        if (value === arguments.callee)
+            continue;
+        subclassConstructor[property] = value;
+    }
 };
 
-WebInspector.Event.prototype = {
-    constructor: WebInspector.Event,
+WebInspector.Event = class Event
+{
+    constructor(target, type, data)
+    {
+        this.target = target;
+        this.type = type;
+        this.data = data;
+        this.defaultPrevented = false;
+        this._stoppedPropagation = false;
+    }
 
-    stopPropagation: function()
+    stopPropagation()
     {
         this._stoppedPropagation = true;
-    },
+    }
 
-    preventDefault: function()
+    preventDefault()
     {
         this.defaultPrevented = true;
     }

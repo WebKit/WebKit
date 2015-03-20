@@ -45,7 +45,8 @@ WebInspector.DashboardView = function(representedObject, identifier)
     console.assert(this.constructor !== WebInspector.DashboardView && this instanceof WebInspector.DashboardView);
     console.assert(identifier);
 
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this._representedObject = representedObject;
 

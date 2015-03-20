@@ -96,7 +96,8 @@ WebInspector.ContentView = function(representedObject)
     console.assert(this.constructor !== WebInspector.ContentView && this instanceof WebInspector.ContentView);
     console.assert(WebInspector.ContentView.isViewable(representedObject));
 
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this._representedObject = representedObject;
 
@@ -106,7 +107,8 @@ WebInspector.ContentView = function(representedObject)
     this._parentContainer = null;
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.ContentView);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.ContentView);
 
 WebInspector.ContentView.isViewable = function(representedObject)
 {

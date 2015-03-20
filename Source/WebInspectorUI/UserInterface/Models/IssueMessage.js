@@ -23,79 +23,178 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IssueMessage = function(source, level, text, url, lineNumber, columnNumber, parameters)
+WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(source, level, text, url, lineNumber, columnNumber, parameters)
+    {
+        super();
 
-    this._level = level;
-    this._text = text;
+        this._level = level;
+        this._text = text;
 
-    // FIXME: Move to a SourceCodeLocation.
+        // FIXME: Move to a SourceCodeLocation.
 
-    // FIXME <http://webkit.org/b/76404>: Remove the string equality checks for undefined
-    // once we don't get that value anymore from WebCore.
+        // FIXME <http://webkit.org/b/76404>: Remove the string equality checks for undefined
+        // once we don't get that value anymore from WebCore.
 
-    // FIXME: If the URL is undefined, get the URL from the stacktrace.
-    if (url && url !== "undefined")
-        this._url = url;
+        // FIXME: If the URL is undefined, get the URL from the stacktrace.
+        if (url && url !== "undefined")
+            this._url = url;
 
-    if (typeof lineNumber === "number" && lineNumber >= 0)
-        this._lineNumber = lineNumber;
+        if (typeof lineNumber === "number" && lineNumber >= 0)
+            this._lineNumber = lineNumber;
 
-    if (typeof columnNumber === "number" && columnNumber >= 0)
-        this._columnNumber = columnNumber;
+        if (typeof columnNumber === "number" && columnNumber >= 0)
+            this._columnNumber = columnNumber;
 
-    // FIXME: <https://webkit.org/b/142553> Web Inspector: Merge IssueMessage/ConsoleMessage - both attempt to modify the Console Messages parameter independently
+        // FIXME: <https://webkit.org/b/142553> Web Inspector: Merge IssueMessage/ConsoleMessage - both attempt to modify the Console Messages parameter independently
 
-    if (parameters && parameters !== "undefined") {
-        this._parameters = [];
-        for (var i = 0; i < parameters.length; ++i) {
-            if (parameters[i] instanceof WebInspector.RemoteObject) {
-                this._parameters.push(parameters[i]);
-                continue;
+        if (parameters && parameters !== "undefined") {
+            this._parameters = [];
+            for (var i = 0; i < parameters.length; ++i) {
+                if (parameters[i] instanceof WebInspector.RemoteObject) {
+                    this._parameters.push(parameters[i]);
+                    continue;
+                }
+
+                if (typeof parameters[i] === "object")
+                    this._parameters.push(WebInspector.RemoteObject.fromPayload(parameters[i]));
+                else
+                    this._parameters.push(WebInspector.RemoteObject.fromPrimitiveValue(parameters[i]));
             }
+        }
 
-            if (typeof parameters[i] === "object")
-                this._parameters.push(WebInspector.RemoteObject.fromPayload(parameters[i]));
-            else
-                this._parameters.push(WebInspector.RemoteObject.fromPrimitiveValue(parameters[i]));
+        this._formatTextIfNecessary();
+
+        switch (source) {
+        case "javascript":
+            // FIXME: It would be nice if we had this information (the specific type of JavaScript error)
+            // as part of the data passed from WebCore, instead of having to determine it ourselves.
+            var prefixRegex = /^([^:]+): (?:DOM Exception \d+: )?/;
+            var match = prefixRegex.exec(this._text);
+            if (match && match[1] in WebInspector.IssueMessage.Type._prefixTypeMap) {
+                this._type = WebInspector.IssueMessage.Type._prefixTypeMap[match[1]];
+                this._text = this._text.substring(match[0].length);
+            } else
+                this._type = WebInspector.IssueMessage.Type.OtherIssue;
+            break;
+
+        case "html":
+        case "css":
+        case "wml":
+        case "xml":
+            this._type = WebInspector.IssueMessage.Type.PageIssue;
+            break;
+
+        case "network":
+            this._type = WebInspector.IssueMessage.Type.NetworkIssue;
+            break;
+
+        case "console-api":
+        case "other":
+            this._type = WebInspector.IssueMessage.Type.OtherIssue;
+            break;
+
+        default:
+            console.error("Unknown issue source:", source);
+            this._type = WebInspector.IssueMessage.Type.OtherIssue;
         }
     }
 
-    this._formatTextIfNecessary();
+    // Static
 
-    switch (source) {
-    case "javascript":
-        // FIXME: It would be nice if we had this information (the specific type of JavaScript error)
-        // as part of the data passed from WebCore, instead of having to determine it ourselves.
-        var prefixRegex = /^([^:]+): (?:DOM Exception \d+: )?/;
-        var match = prefixRegex.exec(this._text);
-        if (match && match[1] in WebInspector.IssueMessage.Type._prefixTypeMap) {
-            this._type = WebInspector.IssueMessage.Type._prefixTypeMap[match[1]];
-            this._text = this._text.substring(match[0].length);
-        } else
-            this._type = WebInspector.IssueMessage.Type.OtherIssue;
-        break;
+    static displayName(type)
+    {
+        switch(type) {
+        case WebInspector.IssueMessage.Type.SemanticIssue:
+            return WebInspector.UIString("Semantic Issue");
+        case WebInspector.IssueMessage.Type.RangeIssue:
+            return WebInspector.UIString("Range Issue");
+        case WebInspector.IssueMessage.Type.ReferenceIssue:
+            return WebInspector.UIString("Reference Issue");
+        case WebInspector.IssueMessage.Type.TypeIssue:
+            return WebInspector.UIString("Type Issue");
+        case WebInspector.IssueMessage.Type.PageIssue:
+            return WebInspector.UIString("Page Issue");
+        case WebInspector.IssueMessage.Type.NetworkIssue:
+            return WebInspector.UIString("Network Issue");
+        case WebInspector.IssueMessage.Type.SecurityIssue:
+            return WebInspector.UIString("Security Issue");
+        case WebInspector.IssueMessage.Type.OtherIssue:
+            return WebInspector.UIString("Other Issue");
+        default:
+            console.error("Unknown issue message type:", type);
+            return WebInspector.UIString("Other Issue");
+        }
+    }
 
-    case "html":
-    case "css":
-    case "wml":
-    case "xml":
-        this._type = WebInspector.IssueMessage.Type.PageIssue;
-        break;
+    // Public
 
-    case "network":
-        this._type = WebInspector.IssueMessage.Type.NetworkIssue;
-        break;
+    get type()
+    {
+        return this._type;
+    }
 
-    case "console-api":
-    case "other":
-        this._type = WebInspector.IssueMessage.Type.OtherIssue;
-        break;
+    get level()
+    {
+        return this._level;
+    }
 
-    default:
-        console.error("Unknown issue source:", source);
-        this._type = WebInspector.IssueMessage.Type.OtherIssue;
+    get text()
+    {
+        return this._text;
+    }
+
+    get url()
+    {
+        return this._url;
+    }
+
+    get lineNumber()
+    {
+        return this._lineNumber;
+    }
+
+    get columnNumber()
+    {
+        return this._columnNumber;
+    }
+
+    // Private
+
+    _formatTextIfNecessary()
+    {
+        if (!this._parameters)
+            return;
+
+        if (WebInspector.RemoteObject.type(this._parameters[0]) !== "string")
+            return;
+
+        function valueFormatter(obj)
+        {
+            return obj.description;
+        }
+
+        var formatters = {};
+        formatters.o = valueFormatter;
+        formatters.s = valueFormatter;
+        formatters.f = valueFormatter;
+        formatters.i = valueFormatter;
+        formatters.d = valueFormatter;
+
+        function append(a, b)
+        {
+            a += b;
+            return a;
+        }
+
+        var result = String.format(this._parameters[0].description, this._parameters.slice(1), formatters, "", append);
+        var resultText = result.formattedResult;
+
+        for (var i = 0; i < result.unusedSubstitutions.length; ++i)
+            resultText += " " + result.unusedSubstitutions[i].description;
+
+        this._text = resultText;
     }
 };
 
@@ -153,101 +252,4 @@ WebInspector.IssueMessage.Type._prefixTypeMap = {
     "TIMEOUT_ERR": WebInspector.IssueMessage.Type.OtherIssue,
     "URL_MISMATCH_ERR": WebInspector.IssueMessage.Type.OtherIssue,
     "VALIDATION_ERR": WebInspector.IssueMessage.Type.OtherIssue
-};
-
-WebInspector.IssueMessage.Type.displayName = function(type)
-{
-    switch(type) {
-    case WebInspector.IssueMessage.Type.SemanticIssue:
-        return WebInspector.UIString("Semantic Issue");
-    case WebInspector.IssueMessage.Type.RangeIssue:
-        return WebInspector.UIString("Range Issue");
-    case WebInspector.IssueMessage.Type.ReferenceIssue:
-        return WebInspector.UIString("Reference Issue");
-    case WebInspector.IssueMessage.Type.TypeIssue:
-        return WebInspector.UIString("Type Issue");
-    case WebInspector.IssueMessage.Type.PageIssue:
-        return WebInspector.UIString("Page Issue");
-    case WebInspector.IssueMessage.Type.NetworkIssue:
-        return WebInspector.UIString("Network Issue");
-    case WebInspector.IssueMessage.Type.SecurityIssue:
-        return WebInspector.UIString("Security Issue");
-    case WebInspector.IssueMessage.Type.OtherIssue:
-        return WebInspector.UIString("Other Issue");
-    default:
-        console.error("Unknown issue message type:", type);
-        return WebInspector.UIString("Other Issue");
-    }
-};
-
-WebInspector.IssueMessage.prototype = {
-    constructor: WebInspector.IssueMessage,
-    __proto__: WebInspector.Object.prototype,
-
-    get type()
-    {
-        return this._type;
-    },
-
-    get level()
-    {
-        return this._level;
-    },
-
-    get text()
-    {
-        return this._text;
-    },
-
-    get url()
-    {
-        return this._url;
-    },
-
-    get lineNumber()
-    {
-        return this._lineNumber;
-    },
-
-    get columnNumber()
-    {
-        return this._columnNumber;
-    },
-
-    // Private
-
-    _formatTextIfNecessary()
-    {
-        if (!this._parameters)
-            return;
-
-        if (WebInspector.RemoteObject.type(this._parameters[0]) !== "string")
-            return;
-
-        function valueFormatter(obj)
-        {
-            return obj.description;
-        }
-
-        var formatters = {};
-        formatters.o = valueFormatter;
-        formatters.s = valueFormatter;
-        formatters.f = valueFormatter;
-        formatters.i = valueFormatter;
-        formatters.d = valueFormatter;
-
-        function append(a, b)
-        {
-            a += b;
-            return a;
-        }
-
-        var result = String.format(this._parameters[0].description, this._parameters.slice(1), formatters, "", append);
-        var resultText = result.formattedResult;
-
-        for (var i = 0; i < result.unusedSubstitutions.length; ++i)
-            resultText += " " + result.unusedSubstitutions[i].description;
-
-        this._text = resultText;
-    }
 };

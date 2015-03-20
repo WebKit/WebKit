@@ -23,70 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSStyleDeclaration = function(nodeStyles, ownerStyleSheet, id, type, node, inherited, text, properties, styleSheetTextRange)
+WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(nodeStyles, ownerStyleSheet, id, type, node, inherited, text, properties, styleSheetTextRange)
+    {
+        super();
 
-    console.assert(nodeStyles);
-    this._nodeStyles = nodeStyles;
+        console.assert(nodeStyles);
+        this._nodeStyles = nodeStyles;
 
-    this._ownerRule = null;
+        this._ownerRule = null;
 
-    this._ownerStyleSheet = ownerStyleSheet || null;
-    this._id = id || null;
-    this._type = type || null;
-    this._node = node || null;
-    this._inherited = inherited || false;
+        this._ownerStyleSheet = ownerStyleSheet || null;
+        this._id = id || null;
+        this._type = type || null;
+        this._node = node || null;
+        this._inherited = inherited || false;
 
-    this._pendingProperties = [];
-    this._propertyNameMap = {};
+        this._pendingProperties = [];
+        this._propertyNameMap = {};
 
-    this.update(text, properties, styleSheetTextRange, true);
-};
-
-WebInspector.Object.addConstructorFunctions(WebInspector.CSSStyleDeclaration);
-
-WebInspector.CSSStyleDeclaration.Event = {
-    PropertiesChanged: "css-style-declaration-properties-changed"
-};
-
-WebInspector.CSSStyleDeclaration.Type = {
-    Rule: "css-style-declaration-type-rule",
-    Inline: "css-style-declaration-type-inline",
-    Attribute: "css-style-declaration-type-attribute",
-    Computed: "css-style-declaration-type-computed"
-};
-
-WebInspector.CSSStyleDeclaration.prototype = {
-    constructor: WebInspector.CSSStyleDeclaration,
-    __proto__: WebInspector.Object.prototype,
+        this.update(text, properties, styleSheetTextRange, true);
+    }
 
     // Public
 
     get id()
     {
         return this._id;
-    },
+    }
 
     get ownerStyleSheet()
     {
         return this._ownerStyleSheet;
-    },
+    }
 
     get type()
     {
         return this._type;
-    },
+    }
 
     get inherited()
     {
         return this._inherited;
-    },
+    }
 
     get node()
     {
         return this._node;
-    },
+    }
 
     get editable()
     {
@@ -100,9 +85,9 @@ WebInspector.CSSStyleDeclaration.prototype = {
             return !this._node.isInShadowTree();
 
         return false;
-    },
+    }
 
-    update: function(text, properties, styleSheetTextRange, dontFireEvents)
+    update(text, properties, styleSheetTextRange, dontFireEvents)
     {
         text = text || "";
         properties = properties || [];
@@ -176,22 +161,22 @@ WebInspector.CSSStyleDeclaration.prototype = {
 
         // Delay firing the PropertiesChanged event so DOMNodeStyles has a chance to mark overridden and associated properties.
         setTimeout(delayed.bind(this), 0);
-    },
+    }
 
     get ownerRule()
     {
         return this._ownerRule;
-    },
+    }
 
     set ownerRule(rule)
     {
         this._ownerRule = rule || null;
-    },
+    }
 
     get text()
     {
         return this._text;
-    },
+    }
 
     set text(text)
     {
@@ -199,12 +184,12 @@ WebInspector.CSSStyleDeclaration.prototype = {
             return;
 
         this._nodeStyles.changeStyleText(this, text);
-    },
+    }
 
     get properties()
     {
         return this._properties;
-    },
+    }
 
     get visibleProperties()
     {
@@ -216,19 +201,19 @@ WebInspector.CSSStyleDeclaration.prototype = {
         });
 
         return this._visibleProperties;
-    },
+    }
 
     get pendingProperties()
     {
         return this._pendingProperties;
-    },
+    }
 
     get styleSheetTextRange()
     {
         return this._styleSheetTextRange;
-    },
+    }
 
-    propertyForName: function(name, dontCreateIfMissing)
+    propertyForName(name, dontCreateIfMissing)
     {
         console.assert(name);
         if (!name)
@@ -273,7 +258,7 @@ WebInspector.CSSStyleDeclaration.prototype = {
         this._pendingProperties.push(newProperty);
 
         return newProperty;
-    },
+    }
 
     // Protected
 
@@ -281,4 +266,15 @@ WebInspector.CSSStyleDeclaration.prototype = {
     {
         return this._nodeStyles;
     }
+};
+
+WebInspector.CSSStyleDeclaration.Event = {
+    PropertiesChanged: "css-style-declaration-properties-changed"
+};
+
+WebInspector.CSSStyleDeclaration.Type = {
+    Rule: "css-style-declaration-type-rule",
+    Inline: "css-style-declaration-type-inline",
+    Attribute: "css-style-declaration-type-attribute",
+    Computed: "css-style-declaration-type-computed"
 };

@@ -23,30 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodeRevision = function(sourceCode, content)
+WebInspector.SourceCodeRevision = class SourceCodeRevision extends WebInspector.Revision
 {
-    WebInspector.Revision.call(this);
+    constructor(sourceCode, content)
+    {
+        super();
 
-    console.assert(sourceCode instanceof WebInspector.SourceCode);
+        console.assert(sourceCode instanceof WebInspector.SourceCode);
 
-    this._sourceCode = sourceCode;
-    this._content = content || "";
-};
-
-WebInspector.SourceCodeRevision.prototype = {
-    constructor: WebInspector.SourceCodeRevision,
+        this._sourceCode = sourceCode;
+        this._content = content || "";
+    }
 
     // Public
 
     get sourceCode()
     {
         return this._sourceCode;
-    },
+    }
 
     get content()
     {
         return this._content;
-    },
+    }
 
     set content(content)
     {
@@ -58,22 +57,20 @@ WebInspector.SourceCodeRevision.prototype = {
         this._content = content;
 
         this._sourceCode.revisionContentDidChange(this);
-    },
+    }
 
-    apply: function()
+    apply()
     {
         this._sourceCode.currentRevision = this;
-    },
+    }
 
-    revert: function()
+    revert()
     {
         this._sourceCode.currentRevision = this._sourceCode.originalRevision;
-    },
+    }
 
-    copy: function()
+    copy()
     {
         return new WebInspector.SourceCodeRevision(this._sourceCode, this._content);
     }
 };
-
-WebInspector.SourceCodeRevision.prototype.__proto__ = WebInspector.Revision.prototype;

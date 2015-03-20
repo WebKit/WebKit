@@ -23,34 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceMap = function(sourceMappingURL, payload, originalSourceCode)
+WebInspector.SourceMap = class SourceMap extends WebInspector.Object
 {
-    if (!WebInspector.SourceMap.prototype._base64Map) {
-        const base64Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-        WebInspector.SourceMap.prototype._base64Map = {};
-        for (var i = 0; i < base64Digits.length; ++i)
-            WebInspector.SourceMap.prototype._base64Map[base64Digits.charAt(i)] = i;
+    constructor(sourceMappingURL, payload, originalSourceCode)
+    {
+        super();
+
+        if (!WebInspector.SourceMap._base64Map) {
+            var base64Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+            WebInspector.SourceMap._base64Map = {};
+            for (var i = 0; i < base64Digits.length; ++i)
+                WebInspector.SourceMap._base64Map[base64Digits.charAt(i)] = i;
+        }
+
+        this._originalSourceCode = originalSourceCode || null;
+        this._sourceMapResources = {};
+        this._sourceMapResourcesList = [];
+
+        this._sourceMappingURL = sourceMappingURL;
+        this._reverseMappingsBySourceURL = {};
+        this._mappings = [];
+        this._sources = {};
+        this._sourceRoot = null;
+        this._sourceContentByURL = {};
+        this._parseMappingPayload(payload);
     }
 
-    this._originalSourceCode = originalSourceCode || null;
-    this._sourceMapResources = {};
-    this._sourceMapResourcesList = [];
-
-    this._sourceMappingURL = sourceMappingURL;
-    this._reverseMappingsBySourceURL = {};
-    this._mappings = [];
-    this._sources = {};
-    this._sourceRoot = null;
-    this._sourceContentByURL = {};
-    this._parseMappingPayload(payload);
-};
-
-WebInspector.SourceMap.prototype = {
+    // Public
 
     get originalSourceCode()
     {
         return this._originalSourceCode;
-    },
+    }
 
     get sourceMappingBasePathURLComponents()
     {
@@ -74,52 +78,52 @@ WebInspector.SourceMap.prototype = {
         urlComponents.lastPathComponent = null;
         this._sourceMappingURLBasePathComponents = urlComponents;
         return this._sourceMappingURLBasePathComponents;
-    },
+    }
 
     get resources()
     {
         return this._sourceMapResourcesList;
-    },
+    }
 
-    addResource: function(resource)
+    addResource(resource)
     {
         console.assert(!(resource.url in this._sourceMapResources));
         this._sourceMapResources[resource.url] = resource;
         this._sourceMapResourcesList.push(resource);
-    },
+    }
 
-    resourceForURL: function(url)
+    resourceForURL(url)
     {
         return this._sourceMapResources[url];
-    },
+    }
 
-    sources: function()
+    sources()
     {
         return Object.keys(this._sources);
-    },
+    }
 
-    sourceContent: function(sourceURL)
+    sourceContent(sourceURL)
     {
         return this._sourceContentByURL[sourceURL];
-    },
+    }
 
-    _parseMappingPayload: function(mappingPayload)
+    _parseMappingPayload(mappingPayload)
     {
         if (mappingPayload.sections)
             this._parseSections(mappingPayload.sections);
         else
             this._parseMap(mappingPayload, 0, 0);
-    },
+    }
 
-    _parseSections: function(sections)
+    _parseSections(sections)
     {
         for (var i = 0; i < sections.length; ++i) {
             var section = sections[i];
             this._parseMap(section.map, section.offset.line, section.offset.column);
         }
-    },
+    }
 
-    findEntry: function(lineNumber, columnNumber)
+    findEntry(lineNumber, columnNumber)
     {
         var first = 0;
         var count = this._mappings.length;
@@ -138,9 +142,9 @@ WebInspector.SourceMap.prototype = {
         if (!first && entry && (lineNumber < entry[0] || (lineNumber === entry[0] && columnNumber < entry[1])))
             return null;
         return entry;
-    },
+    }
 
-    findEntryReversed: function(sourceURL, lineNumber)
+    findEntryReversed(sourceURL, lineNumber)
     {
         var mappings = this._reverseMappingsBySourceURL[sourceURL];
         for ( ; lineNumber < mappings.length; ++lineNumber) {
@@ -149,9 +153,9 @@ WebInspector.SourceMap.prototype = {
                 return mapping;
         }
         return this._mappings[0];
-    },
+    }
 
-    _parseMap: function(map, lineNumber, columnNumber)
+    _parseMap(map, lineNumber, columnNumber)
     {
         var sourceIndex = 0;
         var sourceLineNumber = 0;
@@ -223,53 +227,54 @@ WebInspector.SourceMap.prototype = {
             if (!reverseMappings[sourceLine])
                 reverseMappings[sourceLine] = [mapping[0], mapping[1]];
         }
-    },
+    }
 
-    _isSeparator: function(char)
+    _isSeparator(char)
     {
         return char === "," || char === ";";
-    },
+    }
 
-    _decodeVLQ: function(stringCharIterator)
+    _decodeVLQ(stringCharIterator)
     {
         // Read unsigned value.
         var result = 0;
         var shift = 0;
         do {
-            var digit = this._base64Map[stringCharIterator.next()];
-            result += (digit & this._VLQ_BASE_MASK) << shift;
-            shift += this._VLQ_BASE_SHIFT;
-        } while (digit & this._VLQ_CONTINUATION_MASK);
+            var digit = WebInspector.SourceMap._base64Map[stringCharIterator.next()];
+            result += (digit & WebInspector.SourceMap.VLQ_BASE_MASK) << shift;
+            shift += WebInspector.SourceMap.VLQ_BASE_SHIFT;
+        } while (digit & WebInspector.SourceMap.VLQ_CONTINUATION_MASK);
 
         // Fix the sign.
         var negative = result & 1;
         result >>= 1;
         return negative ? -result : result;
-    },
-
-    _VLQ_BASE_SHIFT: 5,
-    _VLQ_BASE_MASK: (1 << 5) - 1,
-    _VLQ_CONTINUATION_MASK: 1 << 5
+    }
 };
 
-WebInspector.SourceMap.StringCharIterator = function(string)
+WebInspector.SourceMap.VLQ_BASE_SHIFT = 5;
+WebInspector.SourceMap.VLQ_BASE_MASK = (1 << 5) - 1;
+WebInspector.SourceMap.VLQ_CONTINUATION_MASK = 1 << 5;
+
+WebInspector.SourceMap.StringCharIterator = class StringCharIterator
 {
-    this._string = string;
-    this._position = 0;
-};
+    constructor(string)
+    {
+        this._string = string;
+        this._position = 0;
+    }
 
-WebInspector.SourceMap.StringCharIterator.prototype = {
-    next: function()
+    next()
     {
         return this._string.charAt(this._position++);
-    },
+    }
 
-    peek: function()
+    peek()
     {
         return this._string.charAt(this._position);
-    },
+    }
 
-    hasNext: function()
+    hasNext()
     {
         return this._position < this._string.length;
     }

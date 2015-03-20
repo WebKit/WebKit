@@ -30,80 +30,79 @@
 //  - formatted information does require initialization, done by overriding public APIs.
 //  - display information does require initialization, done by overriding private funnel API resolveMappedLocation.
 
-WebInspector.LazySourceCodeLocation = function(sourceCode, lineNumber, columnNumber)
+WebInspector.LazySourceCodeLocation = class LazySourceCodeLocation extends WebInspector.SourceCodeLocation
 {
-    WebInspector.SourceCodeLocation.call(this, null, lineNumber, columnNumber);
+    constructor(sourceCode, lineNumber, columnNumber)
+    {
+        super(null, lineNumber, columnNumber);
 
-    console.assert(sourceCode);
+        console.assert(sourceCode);
 
-    this._initialized = false;
-    this._lazySourceCode = sourceCode;
-};
-
-WebInspector.LazySourceCodeLocation.prototype = {
-    constructor: WebInspector.LazySourceCodeLocation,
+        this._initialized = false;
+        this._lazySourceCode = sourceCode;
+    }
 
     // Public
 
-    isEqual: function(other)
+    isEqual(other)
     {
         if (!other)
             return false;
         return this._lazySourceCode === other._sourceCode && this._lineNumber === other._lineNumber && this._columnNumber === other._columnNumber;
-    },
+    }
 
     get sourceCode()
     {
         return this._lazySourceCode;
-    },
+    }
 
     set sourceCode(sourceCode)
     {
         // Getter and setter must be provided together.
         this.setSourceCode(sourceCode);
-    },
+    }
 
     get formattedLineNumber()
     {
         this._lazyInitialization();
         return this._formattedLineNumber;
-    },
+    }
 
     get formattedColumnNumber()
     {
         this._lazyInitialization();
         return this._formattedColumnNumber;
-    },
+    }
 
-    formattedPosition: function()
+    formattedPosition()
     {
         this._lazyInitialization();
         return new WebInspector.SourceCodePosition(this._formattedLineNumber, this._formattedColumnNumber);
-    },
+    }
 
-    hasFormattedLocation: function()
+    hasFormattedLocation()
     {
         this._lazyInitialization();
-        return WebInspector.SourceCodeLocation.prototype.hasFormattedLocation.call(this);
-    },
+        return super.hasFormattedLocation();
+    }
 
-    hasDifferentDisplayLocation: function()
+    hasDifferentDisplayLocation()
     {
         this._lazyInitialization();
-        return WebInspector.SourceCodeLocation.prototype.hasDifferentDisplayLocation.call(this);
-    },
+        return super.hasDifferentDisplayLocation();
+    }
 
     // Protected
 
-    resolveMappedLocation: function()
+    resolveMappedLocation()
     {
         this._lazyInitialization();
-        WebInspector.SourceCodeLocation.prototype.resolveMappedLocation.call(this);
-    },
+        super.resolveMappedLocation();
+    }
 
     // Private
 
-    _lazyInitialization: function()
+    _lazyInitialization()
     {
         if (!this._initialized) {
             this._initialized = true;
@@ -111,5 +110,3 @@ WebInspector.LazySourceCodeLocation.prototype = {
         }
     }
 };
-
-WebInspector.LazySourceCodeLocation.prototype.__proto__ = WebInspector.SourceCodeLocation.prototype;

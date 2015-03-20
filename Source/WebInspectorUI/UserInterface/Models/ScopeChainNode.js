@@ -23,18 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScopeChainNode = function(type, object)
+WebInspector.ScopeChainNode = class ScopeChainNode extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(type, object)
+    {
+        super();
 
-    console.assert(typeof type === "string");
-    console.assert(object instanceof WebInspector.RemoteObject);
+        console.assert(typeof type === "string");
+        console.assert(object instanceof WebInspector.RemoteObject);
 
-    if (type in WebInspector.ScopeChainNode.Type)
-        type = WebInspector.ScopeChainNode.Type[type];
+        if (type in WebInspector.ScopeChainNode.Type)
+            type = WebInspector.ScopeChainNode.Type[type];
 
-    this._type = type || null;
-    this._object = object || null;
+        this._type = type || null;
+        this._object = object || null;
+    }
+
+    // Public
+
+    get type()
+    {
+        return this._type;
+    }
+
+    get object()
+    {
+        return this._object;
+    }
 };
 
 WebInspector.ScopeChainNode.Type = {
@@ -45,21 +60,3 @@ WebInspector.ScopeChainNode.Type = {
     Catch: "scope-chain-type-catch",
     FunctionName: "scope-chain-type-functionName"
 };
-
-WebInspector.ScopeChainNode.prototype = {
-    constructor: WebInspector.ScopeChainNode,
-
-    // Public
-
-    get type()
-    {
-        return this._type;
-    },
-
-    get object()
-    {
-        return this._object;
-    }
-};
-
-WebInspector.ScopeChainNode.prototype.__proto__ = WebInspector.Object.prototype;

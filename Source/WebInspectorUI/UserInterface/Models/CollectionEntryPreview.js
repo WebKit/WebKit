@@ -23,38 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CollectionEntryPreview = function(keyPreview, valuePreview)
+WebInspector.CollectionEntryPreview = class CollectionEntryPreview extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(keyPreview, valuePreview)
+    {
+        super();
 
-    console.assert(valuePreview instanceof WebInspector.ObjectPreview);
-    console.assert(!keyPreview || keyPreview instanceof WebInspector.ObjectPreview);
+        console.assert(valuePreview instanceof WebInspector.ObjectPreview);
+        console.assert(!keyPreview || keyPreview instanceof WebInspector.ObjectPreview);
 
-    this._key = keyPreview;
-    this._value = valuePreview;
-};
+        this._key = keyPreview;
+        this._value = valuePreview;
+    }
 
-// Runtime.EntryPreview.
-WebInspector.CollectionEntryPreview.fromPayload = function(payload)
-{
-    if (payload.key)
-        payload.key = WebInspector.ObjectPreview.fromPayload(payload.key);
-    if (payload.value)
-        payload.value = WebInspector.ObjectPreview.fromPayload(payload.value);
+    // Static
 
-    return new WebInspector.CollectionEntryPreview(payload.key, payload.value);
-};
+    // Runtime.EntryPreview.
+    static fromPayload(payload)
+    {
+        if (payload.key)
+            payload.key = WebInspector.ObjectPreview.fromPayload(payload.key);
+        if (payload.value)
+            payload.value = WebInspector.ObjectPreview.fromPayload(payload.value);
 
-WebInspector.CollectionEntryPreview.prototype = {
-    constructor: WebInspector.CollectionEntryPreview,
-    __proto__: WebInspector.Object.prototype,
+        return new WebInspector.CollectionEntryPreview(payload.key, payload.value);
+    }
 
     // Public
 
     get keyPreview()
     {
         return this._key;
-    },
+    }
 
     get valuePreview()
     {

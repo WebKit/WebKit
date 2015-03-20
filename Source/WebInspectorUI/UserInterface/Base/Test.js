@@ -103,7 +103,8 @@ InspectorTest.dumpMessagesToConsole = false;
 // prototype, and prototype chain for the singleton InspectorTest.
 InspectorTest.EventDispatcher = function()
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 };
 
 InspectorTest.EventDispatcher.Event = {

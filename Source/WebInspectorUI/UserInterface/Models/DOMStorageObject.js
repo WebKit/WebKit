@@ -23,56 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMStorageObject = function(id, host, isLocalStorage)
+WebInspector.DOMStorageObject = class DOMStorageObject extends WebInspector.Object
 {
-    this._id = id;
-    this._host = host;
-    this._isLocalStorage = isLocalStorage;
-    this._entries = new Map;
-};
+    constructor(id, host, isLocalStorage)
+    {
+        super();
 
-WebInspector.DOMStorageObject.TypeIdentifier = "dom-storage";
-WebInspector.DOMStorageObject.HostCookieKey = "dom-storage-object-host";
-WebInspector.DOMStorageObject.LocalStorageCookieKey = "dom-storage-object-local-storage";
+        this._id = id;
+        this._host = host;
+        this._isLocalStorage = isLocalStorage;
+        this._entries = new Map;
+    }
 
-WebInspector.DOMStorageObject.Event = {
-    ItemsCleared: "dom-storage-object-items-cleared",
-    ItemAdded: "dom-storage-object-item-added",
-    ItemRemoved: "dom-storage-object-item-removed",
-    ItemUpdated: "dom-storage-object-updated",
-};
-
-WebInspector.DOMStorageObject.prototype = {
-    constructor: WebInspector.DOMStorageObject,
-    __proto__: WebInspector.Object.prototype,
+    // Public
 
     get id()
     {
         return this._id;
-    },
+    }
 
     get host()
     {
         return this._host;
-    },
+    }
 
     get entries()
     {
         return this._entries;
-    },
+    }
 
-    saveIdentityToCookie: function(cookie)
+    saveIdentityToCookie(cookie)
     {
         cookie[WebInspector.DOMStorageObject.HostCookieKey] = this.host;
         cookie[WebInspector.DOMStorageObject.LocalStorageCookieKey] = this.isLocalStorage();
-    },
+    }
 
-    isLocalStorage: function()
+    isLocalStorage()
     {
         return this._isLocalStorage;
-    },
+    }
 
-    getEntries: function(callback)
+    getEntries(callback)
     {
         function innerCallback(error, entries)
         {
@@ -93,40 +84,51 @@ WebInspector.DOMStorageObject.prototype = {
             DOMStorageAgent.getDOMStorageEntries(this._id, innerCallback.bind(this));
         else
             DOMStorageAgent.getDOMStorageItems(this._id, innerCallback.bind(this));
-    },
+    }
 
-    removeItem: function(key)
+    removeItem(key)
     {
         DOMStorageAgent.removeDOMStorageItem(this._id, key);
-    },
+    }
 
-    setItem: function(key, value)
+    setItem(key, value)
     {
         DOMStorageAgent.setDOMStorageItem(this._id, key, value);
-    },
+    }
 
-    itemsCleared: function()
+    itemsCleared()
     {
         this._entries.clear();
         this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemsCleared);
-    },
+    }
 
-    itemRemoved: function(key)
+    itemRemoved(key)
     {
         this._entries.delete(key);
         this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemRemoved, {key});
-    },
+    }
 
-    itemAdded: function(key, value)
+    itemAdded(key, value)
     {
         this._entries.set(key, value);
         this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemAdded, {key, value});
-    },
+    }
 
-    itemUpdated: function(key, oldValue, value)
+    itemUpdated(key, oldValue, value)
     {
         this._entries.set(key, value);
         var data = {key, oldValue, value};
         this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemUpdated, data);
     }
+};
+
+WebInspector.DOMStorageObject.TypeIdentifier = "dom-storage";
+WebInspector.DOMStorageObject.HostCookieKey = "dom-storage-object-host";
+WebInspector.DOMStorageObject.LocalStorageCookieKey = "dom-storage-object-local-storage";
+
+WebInspector.DOMStorageObject.Event = {
+    ItemsCleared: "dom-storage-object-items-cleared",
+    ItemAdded: "dom-storage-object-item-added",
+    ItemRemoved: "dom-storage-object-item-removed",
+    ItemUpdated: "dom-storage-object-updated",
 };

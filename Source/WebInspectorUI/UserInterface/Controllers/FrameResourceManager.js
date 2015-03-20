@@ -25,7 +25,8 @@
 
 WebInspector.FrameResourceManager = function()
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     if (window.PageAgent)
         PageAgent.enable();
@@ -37,7 +38,8 @@ WebInspector.FrameResourceManager = function()
     this.initialize();
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.FrameResourceManager);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.FrameResourceManager);
 
 WebInspector.FrameResourceManager.Event = {
     FrameWasAdded: "frame-resource-manager-frame-was-added",

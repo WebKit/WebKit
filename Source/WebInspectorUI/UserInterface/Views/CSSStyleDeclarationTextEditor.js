@@ -25,7 +25,8 @@
 
 WebInspector.CSSStyleDeclarationTextEditor = function(delegate, style, element)
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this._element = element || document.createElement("div");
     this._element.classList.add(WebInspector.CSSStyleDeclarationTextEditor.StyleClassName);
@@ -70,7 +71,8 @@ WebInspector.CSSStyleDeclarationTextEditor = function(delegate, style, element)
     this.style = style;
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.CSSStyleDeclarationTextEditor);
+// FIXME: Move to a WebInspector.Object subclass and we can remove this.
+WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.CSSStyleDeclarationTextEditor);
 
 WebInspector.CSSStyleDeclarationTextEditor.StyleClassName = "css-style-text-editor";
 WebInspector.CSSStyleDeclarationTextEditor.ReadOnlyStyleClassName = "read-only";

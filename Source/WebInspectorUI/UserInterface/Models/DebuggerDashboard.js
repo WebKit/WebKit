@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DebuggerDashboard = function() {
-    WebInspector.Object.call(this);
-};
-
-WebInspector.DebuggerDashboard.prototype = {
-    constructor: WebInspector.DebuggerDashboard,
-    __proto__: WebInspector.Object.prototype,
+WebInspector.DebuggerDashboard = class DebuggerDashboard extends WebInspector.Object
+{
+    constructor()
+    {
+        // FIXME: Remove once <https://webkit.org/b/142862> is fixed.
+        super();
+    }
 };

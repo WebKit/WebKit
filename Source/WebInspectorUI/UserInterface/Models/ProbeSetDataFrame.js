@@ -24,74 +24,78 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProbeSetDataFrame = function(index)
+WebInspector.ProbeSetDataFrame = class ProbeSetDataFrame extends WebInspector.Object
 {
-    this._count = 0;
-    this._index = index;
-    this._separator = false;
-};
+    constructor(index)
+    {
+        super();
 
-WebInspector.ProbeSetDataFrame.compare = function(a, b) {
-    console.assert(a instanceof WebInspector.ProbeSetDataFrame, a);
-    console.assert(b instanceof WebInspector.ProbeSetDataFrame, b);
+        this._count = 0;
+        this._index = index;
+        this._separator = false;
+    }
 
-    return a.index - b.index;
-}
+    // Static
 
-WebInspector.ProbeSetDataFrame.MissingValue = "?";
+    static compare(a, b)
+    {
+        console.assert(a instanceof WebInspector.ProbeSetDataFrame, a);
+        console.assert(b instanceof WebInspector.ProbeSetDataFrame, b);
 
-WebInspector.ProbeSetDataFrame.prototype = {
-    constructor: WebInspector.ProbeSetDataFrame,
+        return a.index - b.index;
+    }
 
     // Public
 
     get key()
     {
         return String(this._index);
-    },
+    }
 
     get count()
     {
         return this._count;
-    },
+    }
 
     get index()
     {
         return this._index;
-    },
+    }
 
     get isSeparator()
     {
         return this._separator;
-    },
+    }
 
     // The last data frame before a main frame navigation is marked as a "separator" frame.
     set isSeparator(value)
     {
         this._separator = !!value;
-    },
+    }
 
-    addSampleForProbe: function(probe, sample)
+    addSampleForProbe(probe, sample)
     {
         this[probe.id] = sample;
         this._count++;
-    },
+    }
 
-    missingKeys: function(probeSet)
+    missingKeys(probeSet)
     {
         return probeSet.probes.filter(function(probe) {
             return !this.hasOwnProperty(probe.id);
         }, this);
-    },
+    }
 
-    isComplete: function(probeSet)
+    isComplete(probeSet)
     {
         return !this.missingKeys(probeSet).length;
-    },
+    }
 
-    fillMissingValues: function(probeSet)
+    fillMissingValues(probeSet)
     {
         for (var key of this.missingKeys(probeSet))
             this[key] = WebInspector.ProbeSetDataFrame.MissingValue;
     }
 };
+
+WebInspector.ProbeSetDataFrame.MissingValue = "?";

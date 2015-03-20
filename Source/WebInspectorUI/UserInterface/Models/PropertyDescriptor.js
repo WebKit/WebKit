@@ -23,129 +23,129 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.PropertyDescriptor = function(descriptor, isOwnProperty, wasThrown, nativeGetter, isInternalProperty)
+WebInspector.PropertyDescriptor = class PropertyDescriptor extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(descriptor, isOwnProperty, wasThrown, nativeGetter, isInternalProperty)
+    {
+        super();
 
-    console.assert(descriptor);
-    console.assert(descriptor.name);
-    console.assert(!descriptor.value || descriptor.value instanceof WebInspector.RemoteObject);
-    console.assert(!descriptor.get || descriptor.get instanceof WebInspector.RemoteObject);
-    console.assert(!descriptor.set || descriptor.set instanceof WebInspector.RemoteObject);
+        console.assert(descriptor);
+        console.assert(descriptor.name);
+        console.assert(!descriptor.value || descriptor.value instanceof WebInspector.RemoteObject);
+        console.assert(!descriptor.get || descriptor.get instanceof WebInspector.RemoteObject);
+        console.assert(!descriptor.set || descriptor.set instanceof WebInspector.RemoteObject);
 
-    this._name = descriptor.name;
-    this._value = descriptor.value;
-    this._hasValue = "value" in descriptor;
-    this._get = descriptor.get;
-    this._set = descriptor.set;
+        this._name = descriptor.name;
+        this._value = descriptor.value;
+        this._hasValue = "value" in descriptor;
+        this._get = descriptor.get;
+        this._set = descriptor.set;
 
-    this._writable = descriptor.writable || false;
-    this._configurable = descriptor.configurable || false;
-    this._enumerable = descriptor.enumerable || false;
+        this._writable = descriptor.writable || false;
+        this._configurable = descriptor.configurable || false;
+        this._enumerable = descriptor.enumerable || false;
 
-    this._own = isOwnProperty || false;
-    this._wasThrown = wasThrown || false;
-    this._nativeGetterValue = nativeGetter || false;
-    this._internal = isInternalProperty || false;
-};
-
-// Runtime.PropertyDescriptor or Runtime.InternalPropertyDescriptor (second argument).
-WebInspector.PropertyDescriptor.fromPayload = function(payload, internal)
-{
-    if (payload.value)
-        payload.value = WebInspector.RemoteObject.fromPayload(payload.value);
-    if (payload.get)
-        payload.get = WebInspector.RemoteObject.fromPayload(payload.get);
-    if (payload.set)
-        payload.set = WebInspector.RemoteObject.fromPayload(payload.set);
-
-    if (internal) {
-        console.assert(payload.value);
-        payload.writable = payload.configurable = payload.enumerable = false;
-        payload.isOwn = true;
+        this._own = isOwnProperty || false;
+        this._wasThrown = wasThrown || false;
+        this._nativeGetterValue = nativeGetter || false;
+        this._internal = isInternalProperty || false;
     }
 
-    return new WebInspector.PropertyDescriptor(payload, payload.isOwn, payload.wasThrown, payload.nativeGetter, internal);
-};
+    // Static
 
-WebInspector.PropertyDescriptor.prototype = {
-    constructor: WebInspector.PropertyDescriptor,
-    __proto__: WebInspector.Object.prototype,
+    // Runtime.PropertyDescriptor or Runtime.InternalPropertyDescriptor (second argument).
+    static fromPayload(payload, internal)
+    {
+        if (payload.value)
+            payload.value = WebInspector.RemoteObject.fromPayload(payload.value);
+        if (payload.get)
+            payload.get = WebInspector.RemoteObject.fromPayload(payload.get);
+        if (payload.set)
+            payload.set = WebInspector.RemoteObject.fromPayload(payload.set);
+
+        if (internal) {
+            console.assert(payload.value);
+            payload.writable = payload.configurable = payload.enumerable = false;
+            payload.isOwn = true;
+        }
+
+        return new WebInspector.PropertyDescriptor(payload, payload.isOwn, payload.wasThrown, payload.nativeGetter, internal);
+    }
 
     // Public
 
     get name()
     {
         return this._name;
-    },
+    }
 
     get value()
     {
         return this._value;
-    },
+    }
 
     get get()
     {
         return this._get;
-    },
+    }
 
     get set()
     {
         return this._set;
-    },
+    }
 
     get writable()
     {
         return this._writable;
-    },
+    }
 
     get configurable()
     {
         return this._configurable;
-    },
+    }
 
     get enumerable()
     {
         return this._enumerable;
-    },
+    }
 
     get isOwnProperty()
     {
         return this._own;
-    },
+    }
 
     get wasThrown()
     {
         return this._wasThrown;
-    },
+    }
 
     get nativeGetter()
     {
         return this._nativeGetterValue;
-    },
+    }
 
     get isInternalProperty()
     {
         return this._internal;
-    },
+    }
 
     hasValue()
     {
         return this._hasValue;
-    },
+    }
 
     hasGetter()
     {
         return this._get && this._get.type === "function";
-    },
+    }
 
     hasSetter()
     {
         return this._set && this._set.type === "function";
-    },
+    }
 
     isIndexProperty()
     {
         return !isNaN(Number(this._name));
-    },
+    }
 };

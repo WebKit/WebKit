@@ -23,42 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TextMarker = function(codeMirrorTextMarker, type)
+WebInspector.TextMarker = class TextMarker extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(codeMirrorTextMarker, type)
+    {
+        super();
 
-    this._codeMirrorTextMarker = codeMirrorTextMarker;
-    codeMirrorTextMarker.__webInspectorTextMarker = this;
+        this._codeMirrorTextMarker = codeMirrorTextMarker;
+        codeMirrorTextMarker.__webInspectorTextMarker = this;
 
-    this._type = type || WebInspector.TextMarker.Type.Plain;
-};
+        this._type = type || WebInspector.TextMarker.Type.Plain;
+    }
 
-WebInspector.TextMarker.Type = {
-    Color: "text-marker-type-color",
-    Gradient: "text-marker-type-gradient",
-    Plain: "text-marker-type-plain"
-};
+    // Static
 
-WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker = function(codeMirrorTextMarker)
-{
-    return codeMirrorTextMarker.__webInspectorTextMarker || new WebInspector.TextMarker(codeMirrorTextMarker);
-};
-
-WebInspector.TextMarker.prototype = {
-    constructor: WebInspector.TextMarker,
-    __proto__: WebInspector.Object.prototype,
+    static textMarkerForCodeMirrorTextMarker(codeMirrorTextMarker)
+    {
+        return codeMirrorTextMarker.__webInspectorTextMarker || new WebInspector.TextMarker(codeMirrorTextMarker);
+    }
 
     // Public
 
     get codeMirrorTextMarker()
     {
         return this._codeMirrorTextMarker;
-    },
+    }
 
     get type()
     {
         return this._type;
-    },
+    }
 
     get range()
     {
@@ -66,7 +60,7 @@ WebInspector.TextMarker.prototype = {
         if (!range)
             return null;
         return new WebInspector.TextRange(range.from.line, range.from.ch, range.to.line, range.to.ch);
-    },
+    }
 
     get rects()
     {
@@ -77,10 +71,16 @@ WebInspector.TextMarker.prototype = {
             start: range.from,
             end: range.to
         });
-    },
+    }
 
-    clear: function()
+    clear()
     {
         this._codeMirrorTextMarker.clear();
     }
+};
+
+WebInspector.TextMarker.Type = {
+    Color: "text-marker-type-color",
+    Gradient: "text-marker-type-gradient",
+    Plain: "text-marker-type-plain"
 };

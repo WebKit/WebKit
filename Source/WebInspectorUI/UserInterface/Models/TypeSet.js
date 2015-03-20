@@ -24,58 +24,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TypeSet = function(runtimeTypeDescriptionPayload)
+WebInspector.TypeSet = class TypeSet extends WebInspector.Object
 {
-    this._types = runtimeTypeDescriptionPayload;
+    constructor(runtimeTypeDescriptionPayload)
+    {
+        super();
 
-    var typeSet = this._types.typeSet;
-    var bitString = 0x0;
-    if (typeSet.isFunction)
-        bitString |= WebInspector.TypeSet.TypeBit.Function;
-    if (typeSet.isUndefined)
-        bitString |= WebInspector.TypeSet.TypeBit.Undefined;
-    if (typeSet.isNull)
-        bitString |= WebInspector.TypeSet.TypeBit.Null;
-    if (typeSet.isBoolean)
-        bitString |= WebInspector.TypeSet.TypeBit.Boolean;
-    if (typeSet.isInteger)
-        bitString |= WebInspector.TypeSet.TypeBit.Integer;
-    if (typeSet.isNumber)
-        bitString |= WebInspector.TypeSet.TypeBit.Number;
-    if (typeSet.isString)
-        bitString |= WebInspector.TypeSet.TypeBit.String;
-    if (typeSet.isObject)
-        bitString |= WebInspector.TypeSet.TypeBit.Object;
+        this._types = runtimeTypeDescriptionPayload;
 
-    console.assert(bitString);
-    this._bitString = bitString;
+        var typeSet = this._types.typeSet;
+        var bitString = 0x0;
+        if (typeSet.isFunction)
+            bitString |= WebInspector.TypeSet.TypeBit.Function;
+        if (typeSet.isUndefined)
+            bitString |= WebInspector.TypeSet.TypeBit.Undefined;
+        if (typeSet.isNull)
+            bitString |= WebInspector.TypeSet.TypeBit.Null;
+        if (typeSet.isBoolean)
+            bitString |= WebInspector.TypeSet.TypeBit.Boolean;
+        if (typeSet.isInteger)
+            bitString |= WebInspector.TypeSet.TypeBit.Integer;
+        if (typeSet.isNumber)
+            bitString |= WebInspector.TypeSet.TypeBit.Number;
+        if (typeSet.isString)
+            bitString |= WebInspector.TypeSet.TypeBit.String;
+        if (typeSet.isObject)
+            bitString |= WebInspector.TypeSet.TypeBit.Object;
 
-    this._primitiveTypeNames = null;
-};
+        console.assert(bitString);
+        this._bitString = bitString;
 
-WebInspector.TypeSet.fromPayload = function(payload)
-{
-    return new WebInspector.TypeSet(payload);
-};
+        this._primitiveTypeNames = null;
+    }
 
-WebInspector.TypeSet.TypeBit = {
-    "Function"    :  0x1,
-    "Undefined"   :  0x2,
-    "Null"        :  0x4,
-    "Boolean"     :  0x8,
-    "Integer"     :  0x10,
-    "Number"      :  0x20,
-    "String"      :  0x40,
-    "Object"      :  0x80
-};
+    // Static
 
-WebInspector.TypeSet.NullOrUndefinedTypeBits = WebInspector.TypeSet.TypeBit.Null | WebInspector.TypeSet.TypeBit.Undefined;
+    static fromPayload(payload)
+    {
+        return new WebInspector.TypeSet(payload);
+    }
 
-WebInspector.TypeSet.prototype = {
-    constructor: WebInspector.TypeSet,
-    __proto__: WebInspector.Object.prototype,
+    // Public
 
-    isContainedIn: function(test)
+    isContainedIn(test)
     {
         // This function checks if types in bitString are contained in the types described by the 'test' bitstring. (i.e we haven't seen more types than 'test').
         // We have seen fewer or equal number of types as 'test' if ANDing bitString with test doesn't zero out any of our bits.
@@ -93,7 +84,7 @@ WebInspector.TypeSet.prototype = {
         // 0b0010 != bitString
 
         return this._bitString && (this._bitString & test) === this._bitString;
-    },
+    }
 
     get primitiveTypeNames()
     {
@@ -122,3 +113,16 @@ WebInspector.TypeSet.prototype = {
         return this._primitiveTypeNames;
     }
 };
+
+WebInspector.TypeSet.TypeBit = {
+    "Function"    :  0x1,
+    "Undefined"   :  0x2,
+    "Null"        :  0x4,
+    "Boolean"     :  0x8,
+    "Integer"     :  0x10,
+    "Number"      :  0x20,
+    "String"      :  0x40,
+    "Object"      :  0x80
+};
+
+WebInspector.TypeSet.NullOrUndefinedTypeBits = WebInspector.TypeSet.TypeBit.Null | WebInspector.TypeSet.TypeBit.Undefined;

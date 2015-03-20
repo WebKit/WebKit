@@ -25,7 +25,8 @@
 
 WebInspector.ContentViewContainer = function(element)
 {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this._element = element || document.createElement("div");
     this._element.classList.add(WebInspector.ContentViewContainer.StyleClassName);

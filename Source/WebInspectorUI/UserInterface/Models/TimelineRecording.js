@@ -23,75 +23,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineRecording = function(identifier, displayName)
+WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(identifier, displayName)
+    {
+        super();
 
-    this._identifier = identifier;
-    this._timelines = new Map;
-    this._displayName = displayName;
-    this._isWritable = true;
+        this._identifier = identifier;
+        this._timelines = new Map;
+        this._displayName = displayName;
+        this._isWritable = true;
 
-    // For legacy backends, we compute the elapsed time of records relative to this timestamp.
-    this._legacyFirstRecordedTimestamp = NaN;
+        // For legacy backends, we compute the elapsed time of records relative to this timestamp.
+        this._legacyFirstRecordedTimestamp = NaN;
 
-    this.reset(true);
-};
-
-WebInspector.TimelineRecording.Event = {
-    Reset: "timeline-recording-reset",
-    Unloaded: "timeline-recording-unloaded",
-    SourceCodeTimelineAdded: "timeline-recording-source-code-timeline-added",
-    TimelineAdded: "timeline-recording-timeline-added",
-    TimelineRemoved: "timeline-recording-timeline-removed",
-    TimesUpdated: "timeline-recording-times-updated"
-};
-
-WebInspector.TimelineRecording.TimestampThresholdForLegacyRecordConversion = 28800000; // Date.parse("Jan 1, 1970")
-
-WebInspector.TimelineRecording.prototype = {
-    constructor: WebInspector.TimelineRecording,
-    __proto__: WebInspector.Object.prototype,
+        this.reset(true);
+    }
 
     // Public
 
     get displayName()
     {
         return this._displayName;
-    },
+    }
 
     get identifier()
     {
         return this._identifier;
-    },
+    }
 
     get timelines()
     {
         return this._timelines;
-    },
+    }
 
     get startTime()
     {
         return this._startTime;
-    },
+    }
 
     get endTime()
     {
         return this._endTime;
-    },
+    }
 
-    saveIdentityToCookie: function()
+    saveIdentityToCookie()
     {
         // Do nothing. Timeline recordings are not persisted when the inspector is
         // re-opened, so do not attempt to restore by identifier or display name.
-    },
+    }
 
-    isWritable: function()
+    isWritable()
     {
         return this._isWritable;
-    },
+    }
 
-    isEmpty: function()
+    isEmpty()
     {
         for (var timeline of this._timelines.values()) {
             if (timeline.records.length)
@@ -99,18 +86,18 @@ WebInspector.TimelineRecording.prototype = {
         }
 
         return true;
-    },
+    }
 
-    unloaded: function()
+    unloaded()
     {
         console.assert(!this.isEmpty(), "Shouldn't unload an empty recording; it should be reused instead.");
 
         this._isWritable = false;
 
         this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.Unloaded);
-    },
+    }
 
-    reset: function(suppressEvents)
+    reset(suppressEvents)
     {
         console.assert(this._isWritable, "Can't reset a read-only recording.");
 
@@ -126,17 +113,17 @@ WebInspector.TimelineRecording.prototype = {
             this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.Reset);
             this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimesUpdated);
         }
-    },
+    }
 
-    sourceCodeTimelinesForSourceCode: function(sourceCode)
+    sourceCodeTimelinesForSourceCode(sourceCode)
     {
         var timelines = this._sourceCodeTimelinesMap.get(sourceCode);
         if (!timelines)
             return [];
         return [...timelines.values()];
-    },
+    }
 
-    addTimeline: function(timeline)
+    addTimeline(timeline)
     {
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
         console.assert(!this._timelines.has(timeline), this._timelines, timeline);
@@ -145,9 +132,9 @@ WebInspector.TimelineRecording.prototype = {
 
         timeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
         this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimelineAdded, {timeline});
-    },
+    }
 
-    removeTimeline: function(timeline)
+    removeTimeline(timeline)
     {
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
         console.assert(this._timelines.has(timeline.type), this._timelines, timeline);
@@ -157,14 +144,14 @@ WebInspector.TimelineRecording.prototype = {
 
         timeline.removeEventListener(WebInspector.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
         this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimelineRemoved, {timeline});
-    },
+    }
 
-    addEventMarker: function(eventMarker)
+    addEventMarker(eventMarker)
     {
         this._eventMarkers.push(eventMarker);
-    },
+    }
 
-    addRecord: function(record)
+    addRecord(record)
     {
         var hasCorrespondingTimeline = this._timelines.has(record.type);
         console.assert(hasCorrespondingTimeline, record, this._timelines);
@@ -201,9 +188,9 @@ WebInspector.TimelineRecording.prototype = {
 
         if (newTimeline)
             this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, {sourceCodeTimeline});
-    },
+    }
 
-    computeElapsedTime: function(timestamp)
+    computeElapsedTime(timestamp)
     {
         if (!timestamp || isNaN(timestamp))
             return NaN;
@@ -219,11 +206,11 @@ WebInspector.TimelineRecording.prototype = {
             return (timestamp - this._legacyFirstRecordedTimestamp) / 1000.0;
 
         return timestamp;
-    },
+    }
 
     // Private
 
-    _keyForRecord: function(record)
+    _keyForRecord(record)
     {
         var key = record.type;
         if (record instanceof WebInspector.ScriptTimelineRecord || record instanceof WebInspector.LayoutTimelineRecord)
@@ -233,9 +220,9 @@ WebInspector.TimelineRecording.prototype = {
         if (record.sourceCodeLocation)
             key += ":" + record.sourceCodeLocation.lineNumber + ":" + record.sourceCodeLocation.columnNumber;
         return key;
-    },
+    }
 
-    _timelineTimesUpdated: function(event)
+    _timelineTimesUpdated(event)
     {
         var timeline = event.target;
         var changed = false;
@@ -254,3 +241,14 @@ WebInspector.TimelineRecording.prototype = {
             this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimesUpdated);
     }
 };
+
+WebInspector.TimelineRecording.Event = {
+    Reset: "timeline-recording-reset",
+    Unloaded: "timeline-recording-unloaded",
+    SourceCodeTimelineAdded: "timeline-recording-source-code-timeline-added",
+    TimelineAdded: "timeline-recording-timeline-added",
+    TimelineRemoved: "timeline-recording-timeline-removed",
+    TimesUpdated: "timeline-recording-times-updated"
+};
+
+WebInspector.TimelineRecording.TimestampThresholdForLegacyRecordConversion = 28800000; // Date.parse("Jan 1, 1970")

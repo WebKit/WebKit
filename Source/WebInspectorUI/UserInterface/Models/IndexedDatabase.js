@@ -23,58 +23,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IndexedDatabase = function(name, securityOrigin, version, objectStores)
+WebInspector.IndexedDatabase = class IndexedDatabase extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(name, securityOrigin, version, objectStores)
+    {
+        super();
 
-    this._name = name;
-    this._securityOrigin = securityOrigin;
-    this._host = parseSecurityOrigin(securityOrigin).host;
-    this._version = version;
-    this._objectStores = objectStores || [];
+        this._name = name;
+        this._securityOrigin = securityOrigin;
+        this._host = parseSecurityOrigin(securityOrigin).host;
+        this._version = version;
+        this._objectStores = objectStores || [];
 
-    for (var objectStore of this._objectStores)
-        objectStore.establishRelationship(this);
-};
-
-WebInspector.IndexedDatabase.TypeIdentifier = "indexed-database";
-WebInspector.IndexedDatabase.NameCookieKey = "indexed-database-name";
-WebInspector.IndexedDatabase.HostCookieKey = "indexed-database-host";
-
-WebInspector.IndexedDatabase.prototype = {
-    constructor: WebInspector.IndexedDatabase,
-    __proto__: WebInspector.Object.prototype,
+        for (var objectStore of this._objectStores)
+            objectStore.establishRelationship(this);
+    }
 
     // Public
 
     get name()
     {
         return this._name;
-    },
+    }
 
     get securityOrigin()
     {
         return this._securityOrigin;
-    },
+    }
 
     get host()
     {
         return this._host;
-    },
+    }
 
     get version()
     {
         return this._version;
-    },
+    }
 
     get objectStores()
     {
         return this._objectStores;
-    },
+    }
 
-    saveIdentityToCookie: function(cookie)
+    saveIdentityToCookie(cookie)
     {
         cookie[WebInspector.IndexedDatabase.NameCookieKey] = this._name;
         cookie[WebInspector.IndexedDatabase.HostCookieKey] = this._host;
     }
 };
+
+WebInspector.IndexedDatabase.TypeIdentifier = "indexed-database";
+WebInspector.IndexedDatabase.NameCookieKey = "indexed-database-name";
+WebInspector.IndexedDatabase.HostCookieKey = "indexed-database-host";

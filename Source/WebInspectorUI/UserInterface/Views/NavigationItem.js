@@ -24,7 +24,8 @@
  */
 
 WebInspector.NavigationItem = function(identifier, role, label) {
-    WebInspector.Object.call(this);
+    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
+    // WebInspector.Object.call(this);
 
     this._identifier = identifier || null;
 

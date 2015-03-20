@@ -24,55 +24,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProbeSample = function(sampleId, batchId, elapsedTime, payload)
+WebInspector.ProbeSample = class ProbeSample extends WebInspector.Object
 {
-    this.sampleId = sampleId;
-    this.batchId = batchId;
-    this.timestamp = elapsedTime;
-    this.object = WebInspector.RemoteObject.fromPayload(payload);
+    constructor(sampleId, batchId, elapsedTime, payload)
+    {
+        super();
+
+        this.sampleId = sampleId;
+        this.batchId = batchId;
+        this.timestamp = elapsedTime;
+        this.object = WebInspector.RemoteObject.fromPayload(payload);
+    }
 };
 
-WebInspector.Probe = function(id, breakpoint, expression)
+WebInspector.Probe = class Probe extends WebInspector.Object
 {
-    WebInspector.Object.call(this);
+    constructor(id, breakpoint, expression)
+    {
+        super();
 
-    console.assert(id);
-    console.assert(breakpoint instanceof WebInspector.Breakpoint);
+        console.assert(id);
+        console.assert(breakpoint instanceof WebInspector.Breakpoint);
 
-    this._id = id;
-    this._breakpoint = breakpoint;
-    this._expression = expression;
-    this._samples = [];
-};
-
-WebInspector.Object.addConstructorFunctions(WebInspector.Probe);
-
-WebInspector.Probe.Event = {
-    ExpressionChanged: "probe-object-expression-changed",
-    SampleAdded: "probe-object-sample-added",
-    SamplesCleared: "probe-object-samples-cleared"
-};
-
-WebInspector.Probe.prototype = {
-    constructor: WebInspector.Probe,
-    __proto__: WebInspector.Object.prototype,
+        this._id = id;
+        this._breakpoint = breakpoint;
+        this._expression = expression;
+        this._samples = [];
+    }
 
     // Public
 
     get id()
     {
         return this._id;
-    },
+    }
 
     get breakpoint()
     {
         return this._breakpoint;
-    },
+    }
 
     get expression()
     {
         return this._expression;
-    },
+    }
 
     set expression(value)
     {
@@ -83,23 +78,29 @@ WebInspector.Probe.prototype = {
         this._expression = value;
         this.clearSamples();
         this.dispatchEventToListeners(WebInspector.Probe.Event.ExpressionChanged, data);
-    },
+    }
 
     get samples()
     {
         return this._samples.slice();
-    },
+    }
 
-    clearSamples: function()
+    clearSamples()
     {
         this._samples = [];
         this.dispatchEventToListeners(WebInspector.Probe.Event.SamplesCleared);
-    },
+    }
 
-    addSample: function(sample)
+    addSample(sample)
     {
         console.assert(sample instanceof WebInspector.ProbeSample, "Wrong object type passed as probe sample: ", sample);
         this._samples.push(sample);
         this.dispatchEventToListeners(WebInspector.Probe.Event.SampleAdded, sample);
     }
+};
+
+WebInspector.Probe.Event = {
+    ExpressionChanged: "probe-object-expression-changed",
+    SampleAdded: "probe-object-sample-added",
+    SamplesCleared: "probe-object-samples-cleared"
 };
