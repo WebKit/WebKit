@@ -5,7 +5,7 @@
 
         Reviewed by Andreas Kling.
 
-        Create a JavaScript function to run the contentfiltering/ tests. This consolodates shared logic and will make
+        Create a JavaScript function to run the contentfiltering/ tests. This consolidates shared logic and will make
         it easier to write new tests.
 
         * TestExpectations: Skipped a test that times out with the new harness (but it also failed before).
