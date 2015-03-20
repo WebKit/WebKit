@@ -490,3 +490,6 @@ webkit.org/b/114280 svg/animations/smil-leak-dynamically-added-element-instances
 webkit.org/b/114280 svg/animations/smil-leak-element-instances-noBaseValRef.svg [ Pass Failure ]
 webkit.org/b/114280 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
 webkit.org/b/114280 svg/animations/smil-leak-elements.svg [ Pass Failure ]
+
+# contentfiltering/block-after-add-data.html times out unexpectedly
+webkit.org/b/142894 contentfiltering/block-after-add-data.html [ Skip ]

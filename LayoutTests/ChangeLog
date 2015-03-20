@@ -1,3 +1,22 @@
+2015-03-19  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Give contentfiltering tests a JavaScript harness
+        https://bugs.webkit.org/show_bug.cgi?id=142899
+
+        Reviewed by Andreas Kling.
+
+        Create a JavaScript function to run the contentfiltering/ tests. This consolodates shared logic and will make
+        it easier to write new tests.
+
+        * TestExpectations: Skipped a test that times out with the new harness (but it also failed before).
+        * contentfiltering/allow-after-add-data.html: Called testContentFiltering().
+        * contentfiltering/allow-after-finished-adding-data.html: Ditto.
+        * contentfiltering/allow-after-response.html: Ditto.
+        * contentfiltering/block-after-add-data.html: Ditto.
+        * contentfiltering/block-after-finished-adding-data.html: Ditto.
+        * contentfiltering/block-after-response.html: Ditto.
+        * contentfiltering/resources/contentfiltering.js: Added.
+
 2015-03-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Try to get the Debug bots green.
