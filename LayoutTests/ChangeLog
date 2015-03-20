@@ -1,3 +1,10 @@
+2015-03-20  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed EFL gardening. Remove duplicate or ambiguous entry lines. 
+        https://bugs.webkit.org/show_bug.cgi?id=142775
+
+        * platform/efl/TestExpectations:
+
 2015-03-19  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Add tests for unblock requests

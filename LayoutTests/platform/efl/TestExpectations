@@ -249,7 +249,6 @@ http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml
 http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
 http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
-http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-invalidstaterror.html
 
 # There are no expected result set yet.
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
@@ -276,7 +275,6 @@ webkit.org/b/87661 crypto/subtle/rsa-indexeddb.html [ Skip ]
 webkit.org/b/87661 inspector-protocol/indexeddb/basics.html [ Skip ]
 webkit.org/b/87661 fast/history/page-cache-indexed-closed-db.html [ Skip ]
 webkit.org/b/87661 fast/history/page-cache-indexed-opened-db.html [ Skip ]
-webkit.org/b/87661 fast/history/page-cache-webdatabase-opened-db.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # TESTS EXPECTED TO FAIL
@@ -654,7 +652,6 @@ webkit.org/b/131729 http/tests/security/cross-origin-plugin-private-browsing-tog
 webkit.org/b/131729 http/tests/security/drag-drop-local-file.html [ Failure ]
 webkit.org/b/131729 http/tests/security/svg-image-with-cached-remote-image.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/131729 http/tests/xmlhttprequest/simple-cross-origin-denied-events.html [ Failure Pass ]
-webkit.org/b/131729 http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-invalidstaterror.html [ Failure Pass ]
 
 webkit.org/b/135498 css3/device-adapt/opera/constrain-009.xhtml [ Crash Timeout ]
 webkit.org/b/135498 css3/device-adapt/opera/constrain-023.xhtml [ Crash Timeout ]
@@ -680,7 +677,6 @@ Bug(EFL) fast/loader/child-frame-add-after-back-forward.html [ Failure Pass ]
 Bug(EFL) fast/events/backspace-navigates-back.html [ Failure Pass ]
 Bug(EFL) http/tests/loading/fire-error-event-empty-404-script.html [ Crash Failure Pass ]
 Bug(EFL) js/dom/create-lots-of-workers.html [ Crash Failure Pass ]
-Bug(EFL) media/track/track-cues-pause-on-exit.html [ Failure Timeout Pass ]
 Bug(EFL) media/track/track-element-load-event.html [ Crash Failure Pass ]
 
 webkit.org/b/85603 fast/forms/textarea-placeholder-set-attribute.html [ Failure ImageOnlyFailure Pass ]
@@ -717,7 +713,6 @@ webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure Pass ]
 
 # Tests that sometimes fail on the bot (for GTK or Mac ports as well)
 webkit.org/b/127550 media/audio-concurrent-supported.html [ Failure Pass ]
-webkit.org/b/127551 media/video-duration-known-after-eos.html [ Failure Pass ]
 webkit.org/b/122507 media/track/track-cue-rendering.html [ Failure Pass ]
 webkit.org/b/76280  media/W3C/video/networkState/networkState_during_progress.html [ Failure Pass ]
 webkit.org/b/128101 media/video-loop.html [ Pass Failure ]
@@ -1584,7 +1579,6 @@ webkit.org/b/141074 accessibility/auto-filled-value.html [ Missing ]
 webkit.org/b/141075 accessibility/math-multiscript-attributes.html [ Missing ]
 
 webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
-webkit.org/b/141073 accessibility/content-editable-as-textarea.html [ Failure ]
 webkit.org/b/137109 accessibility/legend-children-are-visible.html [ Failure ]
 webkit.org/b/139352 accessibility/inline-block-assertion.html [ Failure ]
 
@@ -2120,7 +2114,6 @@ webkit.org/b/141594 fast/text/empty-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/141592 fast/css/font-shorthand-line-height.html [ Failure ]
 
 # These tests need a rebaseline.
-webkit.org/b/139150 fast/forms/form-hides-table.html [ Failure ]
 webkit.org/b/141627 compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
 webkit.org/b/141628 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
 webkit.org/b/141628 compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
