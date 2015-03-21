@@ -1153,7 +1153,7 @@ bool CoordinatedGraphicsLayer::shouldHaveBackingStore() const
 
 bool CoordinatedGraphicsLayer::selfOrAncestorHasActiveTransformAnimation() const
 {
-    if (m_animations.hasActiveAnimationsOfType(AnimatedPropertyTransform))
+    if (m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitTransform))
         return true;
 
     if (!parent())
@@ -1164,7 +1164,7 @@ bool CoordinatedGraphicsLayer::selfOrAncestorHasActiveTransformAnimation() const
 
 bool CoordinatedGraphicsLayer::selfOrAncestorHaveNonAffineTransforms()
 {
-    if (m_animations.hasActiveAnimationsOfType(AnimatedPropertyTransform))
+    if (m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitTransform))
         return true;
 
     if (!m_layerTransform.combined().isAffine())
@@ -1180,13 +1180,13 @@ bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, 
 {
     ASSERT(!keyframesName.isEmpty());
 
-    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || (valueList.property() != AnimatedPropertyTransform && valueList.property() != AnimatedPropertyOpacity && valueList.property() != AnimatedPropertyWebkitFilter))
+    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || (valueList.property() != AnimatedPropertyWebkitTransform && valueList.property() != AnimatedPropertyOpacity && valueList.property() != AnimatedPropertyWebkitFilter))
         return false;
 
     bool listsMatch = false;
     bool ignoredHasBigRotation;
 
-    if (valueList.property() == AnimatedPropertyTransform)
+    if (valueList.property() == AnimatedPropertyWebkitTransform)
         listsMatch = validateTransformOperations(valueList, ignoredHasBigRotation) >= 0;
 
     m_lastAnimationStartTime = monotonicallyIncreasingTime() - delayAsNegativeTimeOffset;

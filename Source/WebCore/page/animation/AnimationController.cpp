@@ -425,7 +425,7 @@ bool AnimationControllerPrivate::computeExtentOfAnimation(RenderElement& rendere
     ASSERT(m_compositeAnimations.contains(&renderer));
 
     const CompositeAnimation& rendererAnimations = *m_compositeAnimations.get(&renderer);
-    if (!rendererAnimations.isAnimatingProperty(CSSPropertyTransform, false, AnimationBase::Running | AnimationBase::Paused))
+    if (!rendererAnimations.isAnimatingProperty(CSSPropertyWebkitTransform, false, AnimationBase::Running | AnimationBase::Paused))
         return true;
 
     return rendererAnimations.computeExtentOfTransformAnimation(bounds);

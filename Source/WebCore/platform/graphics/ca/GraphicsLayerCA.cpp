@@ -232,7 +232,7 @@ static PlatformCAAnimation::ValueFunctionType getValueFunctionNameForTransformOp
 static String propertyIdToString(AnimatedPropertyID property)
 {
     switch (property) {
-    case AnimatedPropertyTransform:
+    case AnimatedPropertyWebkitTransform:
         return "transform";
     case AnimatedPropertyOpacity:
         return "opacity";
@@ -609,10 +609,10 @@ void GraphicsLayerCA::moveOrCopyAnimations(MoveOrCopy operation, PlatformCALayer
         for (size_t i = 0; i < numAnimations; ++i) {
             const LayerPropertyAnimation& currAnimation = propertyAnimations[i];
 
-            if (currAnimation.m_property == AnimatedPropertyTransform
-                || currAnimation.m_property == AnimatedPropertyOpacity
-                || currAnimation.m_property == AnimatedPropertyBackgroundColor
-                || currAnimation.m_property == AnimatedPropertyWebkitFilter)
+            if (currAnimation.m_property == AnimatedPropertyWebkitTransform || currAnimation.m_property == AnimatedPropertyOpacity
+                    || currAnimation.m_property == AnimatedPropertyBackgroundColor
+                    || currAnimation.m_property == AnimatedPropertyWebkitFilter
+                )
                 moveOrCopyLayerAnimation(operation, animationIdentifier(currAnimation.m_name, currAnimation.m_property, currAnimation.m_index, currAnimation.m_subIndex), fromLayer, toLayer);
         }
     }
@@ -884,7 +884,7 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Flo
         return false;
 
     bool createdAnimations = false;
-    if (valueList.property() == AnimatedPropertyTransform)
+    if (valueList.property() == AnimatedPropertyWebkitTransform)
         createdAnimations = createTransformAnimationsFromKeyframes(valueList, anim, animationName, timeOffset, boxSize);
     else if (valueList.property() == AnimatedPropertyWebkitFilter) {
         if (supportsAcceleratedFilterAnimations())
@@ -2407,7 +2407,7 @@ bool GraphicsLayerCA::isRunningTransformAnimation() const
         size_t numAnimations = propertyAnimations.size();
         for (size_t i = 0; i < numAnimations; ++i) {
             const LayerPropertyAnimation& currAnimation = propertyAnimations[i];
-            if (currAnimation.m_property == AnimatedPropertyTransform)
+            if (currAnimation.m_property == AnimatedPropertyWebkitTransform)
                 return true;
         }
     }
@@ -2531,7 +2531,7 @@ void GraphicsLayerCA::updateContentsNeedsDisplay()
 
 bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset)
 {
-    ASSERT(valueList.property() != AnimatedPropertyTransform && (!supportsAcceleratedFilterAnimations() || valueList.property() != AnimatedPropertyWebkitFilter));
+    ASSERT(valueList.property() != AnimatedPropertyWebkitTransform && (!supportsAcceleratedFilterAnimations() || valueList.property() != AnimatedPropertyWebkitFilter));
 
     bool isKeyframe = valueList.size() > 2;
     bool valuesOK;
@@ -2582,7 +2582,7 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
 
 bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset, const FloatSize& boxSize)
 {
-    ASSERT(valueList.property() == AnimatedPropertyTransform);
+    ASSERT(valueList.property() == AnimatedPropertyWebkitTransform);
 
     bool hasBigRotation;
     int listIndex = validateTransformOperations(valueList, hasBigRotation);

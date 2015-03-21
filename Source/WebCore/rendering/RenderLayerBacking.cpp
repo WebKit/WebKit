@@ -674,7 +674,7 @@ void RenderLayerBacking::updateGeometry()
 
     // Set transform property, if it is not animating. We have to do this here because the transform
     // is affected by the layer dimensions.
-    if (!renderer().animation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform, AnimationBase::Running | AnimationBase::Paused | AnimationBase::FillingFowards))
+    if (!renderer().animation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyWebkitTransform, AnimationBase::Running | AnimationBase::Paused | AnimationBase::FillingFowards))
         updateTransform(style);
 
     // Set opacity, if it is not animating.
@@ -2443,13 +2443,13 @@ void RenderLayerBacking::verifyNotPainting()
 bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim, const KeyframeList& keyframes)
 {
     bool hasOpacity = keyframes.containsProperty(CSSPropertyOpacity);
-    bool hasTransform = renderer().isBox() && keyframes.containsProperty(CSSPropertyTransform);
+    bool hasTransform = renderer().isBox() && keyframes.containsProperty(CSSPropertyWebkitTransform);
     bool hasFilter = keyframes.containsProperty(CSSPropertyWebkitFilter);
 
     if (!hasOpacity && !hasTransform && !hasFilter)
         return false;
     
-    KeyframeValueList transformVector(AnimatedPropertyTransform);
+    KeyframeValueList transformVector(AnimatedPropertyWebkitTransform);
     KeyframeValueList opacityVector(AnimatedPropertyOpacity);
     KeyframeValueList filterVector(AnimatedPropertyWebkitFilter);
 
@@ -2465,7 +2465,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
         TimingFunction* tf = currentKeyframe.timingFunction(keyframes.animationName());
         
         bool isFirstOrLastKeyframe = key == 0 || key == 1;
-        if ((hasTransform && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyTransform))
+        if ((hasTransform && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyWebkitTransform))
             transformVector.insert(std::make_unique<TransformAnimationValue>(key, keyframeStyle->transform(), tf));
 
         if ((hasOpacity && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyOpacity))
@@ -2523,13 +2523,13 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
         }
     }
 
-    if (property == CSSPropertyTransform && m_owningLayer.hasTransform()) {
-        const Animation* transformAnim = toStyle->transitionForProperty(CSSPropertyTransform);
+    if (property == CSSPropertyWebkitTransform && m_owningLayer.hasTransform()) {
+        const Animation* transformAnim = toStyle->transitionForProperty(CSSPropertyWebkitTransform);
         if (transformAnim && !transformAnim->isEmptyOrZeroDuration()) {
-            KeyframeValueList transformVector(AnimatedPropertyTransform);
+            KeyframeValueList transformVector(AnimatedPropertyWebkitTransform);
             transformVector.insert(std::make_unique<TransformAnimationValue>(0, fromStyle->transform()));
             transformVector.insert(std::make_unique<TransformAnimationValue>(1, toStyle->transform()));
-            if (m_graphicsLayer->addAnimation(transformVector, downcast<RenderBox>(renderer()).pixelSnappedBorderBoxRect().size(), transformAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyTransform), timeOffset)) {
+            if (m_graphicsLayer->addAnimation(transformVector, downcast<RenderBox>(renderer()).pixelSnappedBorderBoxRect().size(), transformAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitTransform), timeOffset)) {
                 // To ensure that the correct transform is visible when the animation ends, also set the final transform.
                 updateTransform(*toStyle);
                 didAnimate = true;
@@ -2626,20 +2626,20 @@ CSSPropertyID RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedPropertyID 
 {
     CSSPropertyID cssProperty = CSSPropertyInvalid;
     switch (property) {
-    case AnimatedPropertyTransform:
-        cssProperty = CSSPropertyTransform;
-        break;
-    case AnimatedPropertyOpacity:
-        cssProperty = CSSPropertyOpacity;
-        break;
-    case AnimatedPropertyBackgroundColor:
-        cssProperty = CSSPropertyBackgroundColor;
-        break;
-    case AnimatedPropertyWebkitFilter:
-        cssProperty = CSSPropertyWebkitFilter;
-        break;
-    case AnimatedPropertyInvalid:
-        ASSERT_NOT_REACHED();
+        case AnimatedPropertyWebkitTransform:
+            cssProperty = CSSPropertyWebkitTransform;
+            break;
+        case AnimatedPropertyOpacity:
+            cssProperty = CSSPropertyOpacity;
+            break;
+        case AnimatedPropertyBackgroundColor:
+            cssProperty = CSSPropertyBackgroundColor;
+            break;
+        case AnimatedPropertyWebkitFilter:
+            cssProperty = CSSPropertyWebkitFilter;
+            break;
+        case AnimatedPropertyInvalid:
+            ASSERT_NOT_REACHED();
     }
     return cssProperty;
 }
@@ -2647,17 +2647,17 @@ CSSPropertyID RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedPropertyID 
 AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID cssProperty)
 {
     switch (cssProperty) {
-    case CSSPropertyTransform:
-        return AnimatedPropertyTransform;
-    case CSSPropertyOpacity:
-        return AnimatedPropertyOpacity;
-    case CSSPropertyBackgroundColor:
-        return AnimatedPropertyBackgroundColor;
-    case CSSPropertyWebkitFilter:
-        return AnimatedPropertyWebkitFilter;
-    default:
-        // It's fine if we see other css properties here; they are just not accelerated.
-        break;
+        case CSSPropertyWebkitTransform:
+            return AnimatedPropertyWebkitTransform;
+        case CSSPropertyOpacity:
+            return AnimatedPropertyOpacity;
+        case CSSPropertyBackgroundColor:
+            return AnimatedPropertyBackgroundColor;
+        case CSSPropertyWebkitFilter:
+            return AnimatedPropertyWebkitFilter;
+        default:
+            // It's fine if we see other css properties here; they are just not accelerated.
+            break;
     }
     return AnimatedPropertyInvalid;
 }

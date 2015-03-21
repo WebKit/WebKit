@@ -107,7 +107,7 @@ bool ImplicitAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) co
     if (!is<RenderBox>(m_object))
         return true; // Non-boxes don't get transformed;
 
-    ASSERT(m_animatingProperty == CSSPropertyTransform);
+    ASSERT(m_animatingProperty == CSSPropertyWebkitTransform);
 
     RenderBox& box = downcast<RenderBox>(*m_object);
     FloatRect rendererBox = snapRectToDevicePixels(box.borderBoxRect(), box.document().deviceScaleFactor());

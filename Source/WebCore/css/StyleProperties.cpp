@@ -199,10 +199,10 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getShorthandValue(webkitTextEmphasisShorthand());
     case CSSPropertyWebkitTextStroke:
         return getShorthandValue(webkitTextStrokeShorthand());
-    case CSSPropertyPerspectiveOrigin:
-        return getShorthandValue(perspectiveOriginShorthand());
-    case CSSPropertyTransformOrigin:
-        return getShorthandValue(transformOriginShorthand());
+    case CSSPropertyWebkitPerspectiveOrigin:
+        return getShorthandValue(webkitPerspectiveOriginShorthand());
+    case CSSPropertyWebkitTransformOrigin:
+        return getShorthandValue(webkitTransformOriginShorthand());
     case CSSPropertyWebkitTransition:
         return getLayeredShorthandValue(webkitTransitionShorthand());
     case CSSPropertyWebkitAnimation:
@@ -928,14 +928,14 @@ String StyleProperties::asText() const
         case CSSPropertyWebkitMaskOrigin:
             shorthandPropertyID = CSSPropertyWebkitMask;
             break;
-        case CSSPropertyPerspectiveOriginX:
-        case CSSPropertyPerspectiveOriginY:
-            shorthandPropertyID = CSSPropertyPerspectiveOrigin;
+        case CSSPropertyWebkitPerspectiveOriginX:
+        case CSSPropertyWebkitPerspectiveOriginY:
+            shorthandPropertyID = CSSPropertyWebkitPerspectiveOrigin;
             break;
-        case CSSPropertyTransformOriginX:
-        case CSSPropertyTransformOriginY:
-        case CSSPropertyTransformOriginZ:
-            shorthandPropertyID = CSSPropertyTransformOrigin;
+        case CSSPropertyWebkitTransformOriginX:
+        case CSSPropertyWebkitTransformOriginY:
+        case CSSPropertyWebkitTransformOriginZ:
+            shorthandPropertyID = CSSPropertyWebkitTransformOrigin;
             break;
         case CSSPropertyWebkitTransitionProperty:
         case CSSPropertyWebkitTransitionDuration:

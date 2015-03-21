@@ -8,28 +8,28 @@
       width: 100px;
       margin: 10px;
       background-color: blue;
-      transform: translate(0);
-      transition-property: transform;
-      transition-duration: 0.5s;
+      -webkit-transform: translate(0);
+      -webkit-transition-property: -webkit-transform;
+      -webkit-transition-duration: 0.5s;
     }
     
     .box1 {
-      transform: translate(50px);
+      -webkit-transform: translate(50px);
     }
     
     .box2 {
-      transform: translate(50px) scale(1.05);
-      transition-duration: 0.55s;
+      -webkit-transform: translate(50px) scale(1.05);
+      -webkit-transition-duration: 0.55s;
     }
     
     .box3 {
-      transform: translate(0); /* same as default */
-      transition-duration: 0.3s;
+      -webkit-transform: translate(0); /* same as default */
+      -webkit-transition-duration: 0.3s;
     }
 
     .box4 {
-      transform: translate(100px);
-      transition-duration: 0.4s;
+      -webkit-transform: translate(100px);
+      -webkit-transition-duration: 0.4s;
     }
 
     .box5 {
@@ -42,9 +42,9 @@
     
     var expectedEndEvents = [
       // [property-name, element-id, elapsed-time, listen]
-      ["transform", "box1", 0.5, false],
-      ["transform", "box2", 0.55, false],
-      ["transform", "box4", 0.4, false]
+      ["-webkit-transform", "box1", 0.5, false],
+      ["-webkit-transform", "box2", 0.55, false],
+      ["-webkit-transform", "box4", 0.4, false]
     ];
   
     function transitionElement(index)

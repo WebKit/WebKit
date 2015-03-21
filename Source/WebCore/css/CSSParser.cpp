@@ -1014,7 +1014,6 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
             return true;
         break;
 #endif
-    case CSSPropertyTransformStyle:
     case CSSPropertyWebkitTransformStyle:
         if (valueID == CSSValueFlat || valueID == CSSValuePreserve3d)
             return true;
@@ -1173,7 +1172,6 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitTextJustify:
 #endif // CSS3_TEXT
     case CSSPropertyWebkitTextSecurity:
-    case CSSPropertyTransformStyle:
     case CSSPropertyWebkitTransformStyle:
     case CSSPropertyWebkitUserDrag:
     case CSSPropertyWebkitUserModify:
@@ -1253,7 +1251,7 @@ static bool parseTransformTranslateArguments(WebKitCSSTransformValue& transformV
 
 static bool parseTranslateTransformValue(MutableStyleProperties* properties, CSSPropertyID propertyID, const String& string, bool important)
 {
-    if (propertyID != CSSPropertyTransform)
+    if (propertyID != CSSPropertyWebkitTransform)
         return false;
     static const unsigned shortestValidTransformStringLength = 12;
     static const unsigned likelyMultipartTransformStringLengthCutoff = 32;
@@ -1294,7 +1292,7 @@ static bool parseTranslateTransformValue(MutableStyleProperties* properties, CSS
         return false;
     RefPtr<CSSValueList> result = CSSValueList::createSpaceSeparated();
     result->append(transformValue.releaseNonNull());
-    properties->addParsedProperty(CSSProperty(CSSPropertyTransform, result.release(), important));
+    properties->addParsedProperty(CSSProperty(CSSPropertyWebkitTransform, result.release(), important));
     return true;
 }
 
@@ -2617,7 +2615,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             return false;
         return parseRegionThread(propId, important);
 #endif
-    case CSSPropertyTransform:
+    case CSSPropertyWebkitTransform:
         if (id == CSSValueNone)
             validPrimitive = true;
         else {
@@ -2629,10 +2627,10 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             return false;
         }
         break;
-    case CSSPropertyTransformOrigin:
-    case CSSPropertyTransformOriginX:
-    case CSSPropertyTransformOriginY:
-    case CSSPropertyTransformOriginZ: {
+    case CSSPropertyWebkitTransformOrigin:
+    case CSSPropertyWebkitTransformOriginX:
+    case CSSPropertyWebkitTransformOriginY:
+    case CSSPropertyWebkitTransformOriginZ: {
         RefPtr<CSSValue> val1;
         RefPtr<CSSValue> val2;
         RefPtr<CSSValue> val3;
@@ -2647,7 +2645,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         }
         return false;
     }
-    case CSSPropertyPerspective:
+    case CSSPropertyWebkitPerspective:
         if (id == CSSValueNone)
             validPrimitive = true;
         else {
@@ -2662,9 +2660,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             }
         }
         break;
-    case CSSPropertyPerspectiveOrigin:
-    case CSSPropertyPerspectiveOriginX:
-    case CSSPropertyPerspectiveOriginY: {
+    case CSSPropertyWebkitPerspectiveOrigin:
+    case CSSPropertyWebkitPerspectiveOriginX:
+    case CSSPropertyWebkitPerspectiveOriginY: {
         RefPtr<CSSValue> val1;
         RefPtr<CSSValue> val2;
         CSSPropertyID propId1, propId2;
@@ -3151,7 +3149,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitTextJustify:
 #endif // CSS3_TEXT
     case CSSPropertyWebkitTextSecurity:
-    case CSSPropertyTransformStyle:
     case CSSPropertyWebkitTransformStyle:
     case CSSPropertyWebkitUserDrag:
     case CSSPropertyWebkitUserModify:
@@ -9778,41 +9775,41 @@ bool CSSParser::parseTransformOrigin(CSSPropertyID propId, CSSPropertyID& propId
     propId1 = propId;
     propId2 = propId;
     propId3 = propId;
-    if (propId == CSSPropertyTransformOrigin) {
-        propId1 = CSSPropertyTransformOriginX;
-        propId2 = CSSPropertyTransformOriginY;
-        propId3 = CSSPropertyTransformOriginZ;
+    if (propId == CSSPropertyWebkitTransformOrigin) {
+        propId1 = CSSPropertyWebkitTransformOriginX;
+        propId2 = CSSPropertyWebkitTransformOriginY;
+        propId3 = CSSPropertyWebkitTransformOriginZ;
     }
 
     switch (propId) {
-    case CSSPropertyTransformOrigin:
-        if (!parseTransformOriginShorthand(value, value2, value3))
+        case CSSPropertyWebkitTransformOrigin:
+            if (!parseTransformOriginShorthand(value, value2, value3))
+                return false;
+            // parseTransformOriginShorthand advances the m_valueList pointer
+            break;
+        case CSSPropertyWebkitTransformOriginX: {
+            value = parsePositionX(*m_valueList);
+            if (value)
+                m_valueList->next();
+            break;
+        }
+        case CSSPropertyWebkitTransformOriginY: {
+            value = parsePositionY(*m_valueList);
+            if (value)
+                m_valueList->next();
+            break;
+        }
+        case CSSPropertyWebkitTransformOriginZ: {
+            ValueWithCalculation valueWithCalculation(*m_valueList->current());
+            if (validateUnit(valueWithCalculation, FLength))
+                value = createPrimitiveNumericValue(valueWithCalculation);
+            if (value)
+                m_valueList->next();
+            break;
+        }
+        default:
+            ASSERT_NOT_REACHED();
             return false;
-        // parseTransformOriginShorthand advances the m_valueList pointer
-        break;
-    case CSSPropertyTransformOriginX: {
-        value = parsePositionX(*m_valueList);
-        if (value)
-            m_valueList->next();
-        break;
-    }
-    case CSSPropertyTransformOriginY: {
-        value = parsePositionY(*m_valueList);
-        if (value)
-            m_valueList->next();
-        break;
-    }
-    case CSSPropertyTransformOriginZ: {
-        ValueWithCalculation valueWithCalculation(*m_valueList->current());
-        if (validateUnit(valueWithCalculation, FLength))
-            value = createPrimitiveNumericValue(valueWithCalculation);
-        if (value)
-            m_valueList->next();
-        break;
-    }
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
     }
 
     return value;
@@ -9822,32 +9819,32 @@ bool CSSParser::parsePerspectiveOrigin(CSSPropertyID propId, CSSPropertyID& prop
 {
     propId1 = propId;
     propId2 = propId;
-    if (propId == CSSPropertyPerspectiveOrigin) {
-        propId1 = CSSPropertyPerspectiveOriginX;
-        propId2 = CSSPropertyPerspectiveOriginY;
+    if (propId == CSSPropertyWebkitPerspectiveOrigin) {
+        propId1 = CSSPropertyWebkitPerspectiveOriginX;
+        propId2 = CSSPropertyWebkitPerspectiveOriginY;
     }
 
     switch (propId) {
-    case CSSPropertyPerspectiveOrigin:
-        if (m_valueList->size() > 2)
+        case CSSPropertyWebkitPerspectiveOrigin:
+            if (m_valueList->size() > 2)
+                return false;
+            parse2ValuesFillPosition(*m_valueList, value, value2);
+            break;
+        case CSSPropertyWebkitPerspectiveOriginX: {
+            value = parsePositionX(*m_valueList);
+            if (value)
+                m_valueList->next();
+            break;
+        }
+        case CSSPropertyWebkitPerspectiveOriginY: {
+            value = parsePositionY(*m_valueList);
+            if (value)
+                m_valueList->next();
+            break;
+        }
+        default:
+            ASSERT_NOT_REACHED();
             return false;
-        parse2ValuesFillPosition(*m_valueList, value, value2);
-        break;
-    case CSSPropertyPerspectiveOriginX: {
-        value = parsePositionX(*m_valueList);
-        if (value)
-            m_valueList->next();
-        break;
-    }
-    case CSSPropertyPerspectiveOriginY: {
-        value = parsePositionY(*m_valueList);
-        if (value)
-            m_valueList->next();
-        break;
-    }
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
     }
 
     return value;

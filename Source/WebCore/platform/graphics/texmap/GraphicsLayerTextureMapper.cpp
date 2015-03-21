@@ -561,13 +561,13 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
 {
     ASSERT(!keyframesName.isEmpty());
 
-    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || (valueList.property() != AnimatedPropertyTransform && valueList.property() != AnimatedPropertyOpacity))
+    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || (valueList.property() != AnimatedPropertyWebkitTransform && valueList.property() != AnimatedPropertyOpacity))
         return false;
 
     bool listsMatch = false;
     bool hasBigRotation;
 
-    if (valueList.property() == AnimatedPropertyTransform)
+    if (valueList.property() == AnimatedPropertyWebkitTransform)
         listsMatch = validateTransformOperations(valueList, hasBigRotation) >= 0;
 
     const double currentTime = monotonicallyIncreasingTime();

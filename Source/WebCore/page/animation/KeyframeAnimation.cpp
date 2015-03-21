@@ -201,7 +201,7 @@ void KeyframeAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
 
 bool KeyframeAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) const
 {
-    ASSERT(m_keyframes.containsProperty(CSSPropertyTransform));
+    ASSERT(m_keyframes.containsProperty(CSSPropertyWebkitTransform));
 
     if (!is<RenderBox>(m_object))
         return true; // Non-boxes don't get transformed;
@@ -215,7 +215,7 @@ bool KeyframeAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) co
     for (size_t i = 0; i < numKeyframes; ++i) {
         const KeyframeValue& currKeyFrame = m_keyframes[i];
 
-        if (!currKeyFrame.containsProperty(CSSPropertyTransform))
+        if (!currKeyFrame.containsProperty(CSSPropertyWebkitTransform))
             continue;
 
         LayoutRect keyframeBounds = bounds;
@@ -359,7 +359,7 @@ void KeyframeAnimation::validateTransformFunctionList()
 {
     m_transformFunctionListValid = false;
     
-    if (m_keyframes.size() < 2 || !m_keyframes.containsProperty(CSSPropertyTransform))
+    if (m_keyframes.size() < 2 || !m_keyframes.containsProperty(CSSPropertyWebkitTransform))
         return;
 
     // Empty transforms match anything, so find the first non-empty entry as the reference

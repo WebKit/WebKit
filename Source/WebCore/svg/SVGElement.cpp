@@ -158,7 +158,7 @@ static NEVER_INLINE void populateAttributeNameToCSSPropertyIDMap(HashMap<AtomicS
 
     // FIXME: When CSS supports "transform-origin" this special case can be removed,
     // and we can add transform_originAttr to the table above instead.
-    map.add(transform_originAttr.localName().impl(), CSSPropertyTransformOrigin);
+    map.add(transform_originAttr.localName().impl(), CSSPropertyWebkitTransformOrigin);
 }
 
 static NEVER_INLINE void populateAttributeNameToAnimatedPropertyTypeMap(HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& map)
