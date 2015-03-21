@@ -1,3 +1,12 @@
+2015-03-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Test gardening. Results are as expected based on code changes
+        on this branch.
+
+        * css3/blending/blend-mode-blended-element-overlapping-composited-sibling-should-have-compositing-layer-expected.txt:
+        * css3/blending/blend-mode-parent-of-composited-blended-has-layer-expected.txt:
+        * css3/blending/blend-mode-with-composited-descendant-should-have-layer-expected.txt:
+
 2015-03-10  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r181351.
