@@ -80,115 +80,125 @@ static type name arguments;
 
 struct GCTimer {
     GCTimer(const char* name)
-        : m_name(name)
+        : name(name)
     {
     }
     ~GCTimer()
     {
-        logData(m_allCollectionData, "(All)");
-        logData(m_edenCollectionData, "(Eden)");
-        logData(m_fullCollectionData, "(Full)");
+        logData(allCollectionData, "(All)");
+        logData(edenCollectionData, "(Eden)");
+        logData(fullCollectionData, "(Full)");
     }
 
     struct TimeRecord {
         TimeRecord()
-            : m_time(0)
-            , m_min(std::numeric_limits<double>::infinity())
-            , m_max(0)
-            , m_count(0)
+            : time(0)
+            , min(std::numeric_limits<double>::infinity())
+            , max(0)
+            , count(0)
         {
         }
 
-        double m_time;
-        double m_min;
-        double m_max;
-        size_t m_count;
+        double time;
+        double min;
+        double max;
+        size_t count;
     };
 
     void logData(const TimeRecord& data, const char* extra)
     {
-        dataLogF("[%d] %s %s: %.2lfms (avg. %.2lf, min. %.2lf, max. %.2lf, count %lu)\n", 
+        dataLogF("[%d] %s (Parent: %s) %s: %.2lfms (avg. %.2lf, min. %.2lf, max. %.2lf, count %lu)\n", 
             getCurrentProcessID(),
-            m_name, extra, 
-            data.m_time * 1000, 
-            data.m_time * 1000 / data.m_count, 
-            data.m_min * 1000, 
-            data.m_max * 1000,
-            data.m_count);
+            name,
+            parent ? parent->name : "nullptr",
+            extra, 
+            data.time * 1000, 
+            data.time * 1000 / data.count, 
+            data.min * 1000, 
+            data.max * 1000,
+            data.count);
     }
 
     void updateData(TimeRecord& data, double duration)
     {
-        if (duration < data.m_min)
-            data.m_min = duration;
-        if (duration > data.m_max)
-            data.m_max = duration;
-        data.m_count++;
-        data.m_time += duration;
+        if (duration < data.min)
+            data.min = duration;
+        if (duration > data.max)
+            data.max = duration;
+        data.count++;
+        data.time += duration;
     }
 
     void didFinishPhase(HeapOperation collectionType, double duration)
     {
-        TimeRecord& data = collectionType == EdenCollection ? m_edenCollectionData : m_fullCollectionData;
+        TimeRecord& data = collectionType == EdenCollection ? edenCollectionData : fullCollectionData;
         updateData(data, duration);
-        updateData(m_allCollectionData, duration);
+        updateData(allCollectionData, duration);
     }
 
-    TimeRecord m_allCollectionData;
-    TimeRecord m_fullCollectionData;
-    TimeRecord m_edenCollectionData;
-    const char* m_name;
+    static GCTimer* s_currentGlobalTimer;
+
+    TimeRecord allCollectionData;
+    TimeRecord fullCollectionData;
+    TimeRecord edenCollectionData;
+    const char* name;
+    GCTimer* parent { nullptr };
 };
 
+GCTimer* GCTimer::s_currentGlobalTimer = nullptr;
+
 struct GCTimerScope {
-    GCTimerScope(GCTimer* timer, HeapOperation collectionType)
-        : m_timer(timer)
-        , m_start(WTF::monotonicallyIncreasingTime())
-        , m_collectionType(collectionType)
+    GCTimerScope(GCTimer& timer, HeapOperation collectionType)
+        : timer(timer)
+        , start(WTF::monotonicallyIncreasingTime())
+        , collectionType(collectionType)
     {
+        timer.parent = GCTimer::s_currentGlobalTimer;
+        GCTimer::s_currentGlobalTimer = &timer;
     }
     ~GCTimerScope()
     {
-        double delta = WTF::monotonicallyIncreasingTime() - m_start;
-        m_timer->didFinishPhase(m_collectionType, delta);
+        double delta = WTF::monotonicallyIncreasingTime() - start;
+        timer.didFinishPhase(collectionType, delta);
+        GCTimer::s_currentGlobalTimer = timer.parent;
     }
-    GCTimer* m_timer;
-    double m_start;
-    HeapOperation m_collectionType;
+    GCTimer& timer;
+    double start;
+    HeapOperation collectionType;
 };
 
 struct GCCounter {
     GCCounter(const char* name)
-        : m_name(name)
-        , m_count(0)
-        , m_total(0)
-        , m_min(10000000)
-        , m_max(0)
+        : name(name)
+        , count(0)
+        , total(0)
+        , min(10000000)
+        , max(0)
     {
     }
     
-    void count(size_t amount)
+    void add(size_t amount)
     {
-        m_count++;
-        m_total += amount;
-        if (amount < m_min)
-            m_min = amount;
-        if (amount > m_max)
-            m_max = amount;
+        count++;
+        total += amount;
+        if (amount < min)
+            min = amount;
+        if (amount > max)
+            max = amount;
     }
     ~GCCounter()
     {
-        dataLogF("[%d] %s: %zu values (avg. %zu, min. %zu, max. %zu)\n", getCurrentProcessID(), m_name, m_total, m_total / m_count, m_min, m_max);
+        dataLogF("[%d] %s: %zu values (avg. %zu, min. %zu, max. %zu)\n", getCurrentProcessID(), name, total, total / count, min, max);
     }
-    const char* m_name;
-    size_t m_count;
-    size_t m_total;
-    size_t m_min;
-    size_t m_max;
+    const char* name;
+    size_t count;
+    size_t total;
+    size_t min;
+    size_t max;
 };
 
-#define GCPHASE(name) DEFINE_GC_LOGGING_GLOBAL(GCTimer, name##Timer, (#name)); GCTimerScope name##TimerScope(&name##Timer, m_operationInProgress)
-#define GCCOUNTER(name, value) do { DEFINE_GC_LOGGING_GLOBAL(GCCounter, name##Counter, (#name)); name##Counter.count(value); } while (false)
+#define GCPHASE(name) DEFINE_GC_LOGGING_GLOBAL(GCTimer, name##Timer, (#name)); GCTimerScope name##TimerScope(name##Timer, m_operationInProgress)
+#define GCCOUNTER(name, value) do { DEFINE_GC_LOGGING_GLOBAL(GCCounter, name##Counter, (#name)); name##Counter.add(value); } while (false)
     
 #else
 
