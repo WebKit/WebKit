@@ -52,7 +52,7 @@ typedef unsigned GraphicsLayerPaintingPhase;
 
 enum AnimatedPropertyID {
     AnimatedPropertyInvalid,
-    AnimatedPropertyWebkitTransform,
+    AnimatedPropertyTransform,
     AnimatedPropertyOpacity,
     AnimatedPropertyBackgroundColor,
     AnimatedPropertyWebkitFilter

@@ -1,3 +1,35 @@
+2015-03-20  Dean Jackson  <dino@apple.com>
+
+        Remove the prefix for CSS Transforms
+        https://bugs.webkit.org/show_bug.cgi?id=142927
+        <rdar://problem/11568151>
+
+        Reviewed by Simon Fraser.
+
+        Convert the helper functions for transforms to use the unprefixed
+        form, and copy some tests to make sure the prefixed form still works.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * svg/css/getComputedStyle-basic-expected.txt:
+        * transforms/2d/computed-style-origin-expected.txt:
+        * transforms/2d/computed-style-origin.html:
+        * transforms/2d/resources/prefixed-transform-test-utils.js: Copied from LayoutTests/transforms/2d/resources/transform-test-utils.js.
+        (floatingPointEqual):
+        (compareMatrices):
+        (testTransforms):
+        * transforms/2d/resources/transform-test-utils.js:
+        (testTransforms):
+        * transforms/2d/transform-2d-prefixed-expected.txt: Added.
+        * transforms/2d/transform-2d-prefixed.html: Added.
+        * transforms/3d/general/prefixed-3dtransform-values-expected.txt: Added.
+        * transforms/3d/general/prefixed-3dtransform-values.html: Added.
+        * transitions/transition-end-event-multiple-04-expected.txt:
+        * transitions/transition-end-event-multiple-04.html:
+        * transitions/transition-end-event-transform-expected.txt:
+        * transitions/transition-end-event-transform.html:
+
 2015-03-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Additional debug assertion documentation.

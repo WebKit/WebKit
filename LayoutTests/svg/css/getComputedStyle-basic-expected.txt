@@ -180,6 +180,12 @@ rect: style.getPropertyValue(text-transform) : none
 rect: style.getPropertyCSSValue(text-transform) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(top) : auto
 rect: style.getPropertyCSSValue(top) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(transform) : none
+rect: style.getPropertyCSSValue(transform) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(transform-origin) : 0px 0px
+rect: style.getPropertyCSSValue(transform-origin) : [object CSSValueList]
+rect: style.getPropertyValue(transform-style) : flat
+rect: style.getPropertyCSSValue(transform-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(unicode-bidi) : normal
 rect: style.getPropertyCSSValue(unicode-bidi) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(vertical-align) : baseline
@@ -386,10 +392,10 @@ rect: style.getPropertyValue(-webkit-nbsp-mode) : normal
 rect: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(order) : 0
 rect: style.getPropertyCSSValue(order) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-perspective) : none
-rect: style.getPropertyCSSValue(-webkit-perspective) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-perspective-origin) : 0px 0px
-rect: style.getPropertyCSSValue(-webkit-perspective-origin) : [object CSSValueList]
+rect: style.getPropertyValue(perspective) : none
+rect: style.getPropertyCSSValue(perspective) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(perspective-origin) : 0px 0px
+rect: style.getPropertyCSSValue(perspective-origin) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-print-color-adjust) : economy
 rect: style.getPropertyCSSValue(-webkit-print-color-adjust) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-rtl-ordering) : logical
@@ -414,10 +420,6 @@ rect: style.getPropertyValue(-webkit-text-stroke-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(-webkit-text-stroke-color) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-stroke-width) : 0px
 rect: style.getPropertyCSSValue(-webkit-text-stroke-width) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-transform) : none
-rect: style.getPropertyCSSValue(-webkit-transform) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-transform-origin) : 0px 0px
-rect: style.getPropertyCSSValue(-webkit-transform-origin) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-transform-style) : flat
 rect: style.getPropertyCSSValue(-webkit-transform-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-transition-delay) : 0s
@@ -692,6 +694,12 @@ g: style.getPropertyValue(text-transform) : none
 g: style.getPropertyCSSValue(text-transform) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(top) : auto
 g: style.getPropertyCSSValue(top) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(transform) : none
+g: style.getPropertyCSSValue(transform) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(transform-origin) : 0px 0px
+g: style.getPropertyCSSValue(transform-origin) : [object CSSValueList]
+g: style.getPropertyValue(transform-style) : flat
+g: style.getPropertyCSSValue(transform-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(unicode-bidi) : normal
 g: style.getPropertyCSSValue(unicode-bidi) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(vertical-align) : baseline
@@ -898,10 +906,10 @@ g: style.getPropertyValue(-webkit-nbsp-mode) : normal
 g: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(order) : 0
 g: style.getPropertyCSSValue(order) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-perspective) : none
-g: style.getPropertyCSSValue(-webkit-perspective) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-perspective-origin) : 0px 0px
-g: style.getPropertyCSSValue(-webkit-perspective-origin) : [object CSSValueList]
+g: style.getPropertyValue(perspective) : none
+g: style.getPropertyCSSValue(perspective) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(perspective-origin) : 0px 0px
+g: style.getPropertyCSSValue(perspective-origin) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-print-color-adjust) : economy
 g: style.getPropertyCSSValue(-webkit-print-color-adjust) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-rtl-ordering) : logical
@@ -926,10 +934,6 @@ g: style.getPropertyValue(-webkit-text-stroke-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(-webkit-text-stroke-color) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-stroke-width) : 0px
 g: style.getPropertyCSSValue(-webkit-text-stroke-width) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-transform) : none
-g: style.getPropertyCSSValue(-webkit-transform) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-transform-origin) : 0px 0px
-g: style.getPropertyCSSValue(-webkit-transform-origin) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-transform-style) : flat
 g: style.getPropertyCSSValue(-webkit-transform-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-transition-delay) : 0s

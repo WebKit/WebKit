@@ -43,9 +43,9 @@ function testTransforms()
   var resultsBox = document.getElementById('results');
 
   gTests.forEach(function(curTest) {
-    testBox.style.transform = 'none'; // reset the transform just in case the next step fails
-    testBox.style.transform = curTest.transform;
-    var computedTransform = window.getComputedStyle(testBox).transform;
+    testBox.style.webkitTransform = 'none'; // reset the transform just in case the next step fails
+    testBox.style.webkitTransform = curTest.transform;
+    var computedTransform = window.getComputedStyle(testBox).webkitTransform;
 
     var success = compareMatrices(computedTransform, curTest.result);
     var result;
