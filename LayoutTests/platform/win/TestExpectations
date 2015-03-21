@@ -2513,6 +2513,7 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 [ Debug ] editing/selection/4960137.html [ Skip ] # Causes later tests to fail.
 [ Debug ] editing/selection/clearselection-on-detached-subtree-crash.html [ Skip ] # Debug assertion
 [ Debug ] editing/selection/click-after-last-inline-crash.html [ Skip ] # Debug assertion
+[ Debug ] editing/selection/click-after-nested-block.html [ Skip ] # Debug assertion
 [ Debug ] editing/selection/focus-crash.html [ Skip ] # Causes later tests to fail
 [ Debug ] editing/selection/move-by-word-visually-crash-test-5.html [ Skip ] # Debug assertion
 [ Debug ] editing/selection/select-all-iframe.html [ Skip ] # Causes later tests to fail
@@ -2531,6 +2532,7 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 [ Debug ] fast/events/autoscroll-with-non-scrollable-parent.html [ Skip ] # Debug assertion
 [ Debug ] fast/events/backspace-navigates-back.html [ Skip ] # Debug assertion
 [ Debug ] fast/events/before-unload-adopt-subframe-to-outside.html [ Skip ] # Debug assertion
+[ Debug ] fast/events/before-unload-adopt-within-subframes.html [ Skip ] # Debug assertion
 [ Debug ] fast/events/change-frame-focus.html [ Skip ] # Causes later tests to fail
 [ Debug ] fast/events/keydown-1.html [ Skip ] # Causes later tests to fail?
 [ Debug ] fast/events/keypress-focus-change.html [ Skip ] # Causes later tests to fail
@@ -2563,6 +2565,8 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 [ Debug ] fast/repaint/fixed-position-transparency-with-overflow.html [ Skip ] # Debug assertion
 [ Debug ] fast/repaint/text-selection-rect-in-overflow-2.html [ Skip ] # Causes later tests to fail
 [ Debug ] fast/workers/constructor-proto.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/workers/empty-worker-nocrash.html [ Skip ] # Debug assertion
+[ Debug ] fast/workers/stress-js-execution.html [ Skip ] # Debug assertion
 [ Debug ] fast/workers/wrapper-map-gc.html [ Skip ] # Timeout
 [ Debug ] http/tests/incremental/frame-focus-before-load.html [ Skip ] # Causes later tests to fail
 [ Debug ] http/tests/loading/post-in-iframe-with-back-navigation.html [ Skip ] # Causes later tests to fail

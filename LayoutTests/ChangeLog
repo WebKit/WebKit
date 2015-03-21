@@ -1,5 +1,11 @@
 2015-03-20  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Additional debug assertion documentation.
+
+        * platform/win/TestExpectations:
+
+2015-03-20  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] More debug assertions. Almost there!
 
         * platform/win/TestExpectations:
