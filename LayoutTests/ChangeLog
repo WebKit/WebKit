@@ -1,5 +1,11 @@
 2015-03-20  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] More debug assertions. Almost there!
+
+        * platform/win/TestExpectations:
+
+2015-03-20  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Attempting to get EWS green.
 
         * platform/win/TestExpectations:
