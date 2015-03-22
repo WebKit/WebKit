@@ -120,7 +120,7 @@ public:
     }
     size_t parameterCount() const;
     bool isInStrictContext() const { return m_isInStrictContext; }
-    FunctionMode functionMode() const { return m_functionMode; }
+    FunctionMode functionMode() const { return static_cast<FunctionMode>(m_functionMode); }
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
 
     unsigned unlinkedFunctionNameStart() const { return m_unlinkedFunctionNameStart; }
@@ -169,17 +169,13 @@ private:
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
 
-    unsigned m_isInStrictContext : 1;
-    unsigned m_hasCapturedVariables : 1;
-    unsigned m_isBuiltinFunction : 1;
-    unsigned m_constructorKind : 2;
-
     Identifier m_name;
     Identifier m_inferredName;
     WriteBarrier<JSString> m_nameValue;
     WriteBarrier<SymbolTable> m_symbolTableForCall;
     WriteBarrier<SymbolTable> m_symbolTableForConstruct;
     RefPtr<FunctionParameters> m_parameters;
+    RefPtr<SourceProvider> m_sourceOverride;
     unsigned m_firstLineOffset;
     unsigned m_lineCount;
     unsigned m_unlinkedFunctionNameStart;
@@ -189,11 +185,14 @@ private:
     unsigned m_sourceLength;
     unsigned m_typeProfilingStartOffset;
     unsigned m_typeProfilingEndOffset;
-    RefPtr<SourceProvider> m_sourceOverride;
 
     CodeFeatures m_features;
 
-    FunctionMode m_functionMode;
+    unsigned m_isInStrictContext : 1;
+    unsigned m_hasCapturedVariables : 1;
+    unsigned m_isBuiltinFunction : 1;
+    unsigned m_constructorKind : 2;
+    unsigned m_functionMode : 1; // FunctionMode
 
 protected:
     void finishCreation(VM& vm)
