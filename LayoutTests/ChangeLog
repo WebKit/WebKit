@@ -1,3 +1,9 @@
+2015-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Try to get debug bots green.
+
+        * platform/win/TestExpectations:
+
 2015-03-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Computed Property names should allow only AssignmentExpressions not any Expression

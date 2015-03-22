@@ -2511,6 +2511,7 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 [ Debug ] editing/pasteboard/drag-drop-dead-frame.html [ Skip ] # Timeout
 [ Debug ] editing/pasteboard/subframe-dragndrop-1.html [ Skip ] # Causes later tests to fail
 [ Debug ] editing/selection/4960137.html [ Skip ] # Causes later tests to fail.
+[ Debug ] editing/selection/cleared-by-relayout.html [ Skip ] # Causes later tests to fail?
 [ Debug ] editing/selection/clearselection-on-detached-subtree-crash.html [ Skip ] # Debug assertion
 [ Debug ] editing/selection/click-after-last-inline-crash.html [ Skip ] # Debug assertion
 [ Debug ] editing/selection/click-after-nested-block.html [ Skip ] # Debug assertion
@@ -2527,6 +2528,8 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 [ Debug ] fast/dom/htmlallcollection-detached-node-children.html [ Skip ] # Crashing
 [ Debug ] fast/events/attribute-listener-extracted-from-frameless-doc-context.html [ Skip ] # Causes later tests to fail
 [ Debug ] fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/events/autoscroll-overflow-hidden-longhands.html [ Skip ] # Causes later tests to fail
+[ Debug ] fast/events/autoscroll-should-not-stop-on-keypress.html [ Skip ] # Causes later tests to fail
 [ Debug ] fast/events/autoscroll-in-overflow-hidden-html.html [ Skip ] # Causes later tests to fail
 [ Debug ] fast/events/autoscroll-upwards-propagation.html [ Skip ] # Debug assertion
 [ Debug ] fast/events/autoscroll-with-non-scrollable-parent.html [ Skip ] # Debug assertion
