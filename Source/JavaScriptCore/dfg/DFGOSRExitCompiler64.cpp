@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,12 +51,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         
         m_jit.debugCall(debugOperationPrintSpeculationFailure, debugInfo);
     }
-    
-    // Need to ensure that the stack pointer accounts for the worst-case stack usage at exit.
-    m_jit.addPtr(
-        CCallHelpers::TrustedImm32(
-            -m_jit.codeBlock()->jitCode()->dfgCommon()->requiredRegisterCountForExit * sizeof(Register)),
-        CCallHelpers::framePointerRegister, CCallHelpers::stackPointerRegister);
     
     // 2) Perform speculation recovery. This only comes into play when an operation
     //    starts mutating state before verifying the speculation it has already made.
@@ -250,6 +244,14 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             break;
         }
     }
+    
+    // Need to ensure that the stack pointer accounts for the worst-case stack usage at exit. This
+    // could toast some stack that the DFG used. We need to do it before storing to stack offsets
+    // used by baseline.
+    m_jit.addPtr(
+        CCallHelpers::TrustedImm32(
+            -m_jit.codeBlock()->jitCode()->dfgCommon()->requiredRegisterCountForExit * sizeof(Register)),
+        CCallHelpers::framePointerRegister, CCallHelpers::stackPointerRegister);
     
     // 7) Do all data format conversions and store the results into the stack.
     
