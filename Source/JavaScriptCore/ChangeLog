@@ -1,3 +1,15 @@
+2015-03-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Computed Property names should allow only AssignmentExpressions not any Expression
+        https://bugs.webkit.org/show_bug.cgi?id=142902
+
+        Reviewed by Ryosuke Niwa.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseProperty):
+        Limit computed expressions to just assignment expressions instead of
+        any expression (which allowed comma expressions).
+
 2015-03-21  Andreas Kling  <akling@apple.com>
 
         Make UnlinkedFunctionExecutable fit in a 128-byte cell.

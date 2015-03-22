@@ -9,7 +9,9 @@ function runTest(test)
     shouldBeTrue("'use strict';"+test);
     shouldBeTrue("(function(){'use strict';return "+test+"})()");
 }
+
 runTest("{[a]: true}.propertyName")
+runTest("{[(1,a)]: true}.propertyName")
 runTest("{[a+1]: true}.propertyName1")
 runTest("{propertyName: false, [a]: true}.propertyName")
 runTest("{[a]: false, propertyName: true}.propertyName")
@@ -25,3 +27,17 @@ runTest("{[a]: false, 0: true}[0]")
 runTest("{get '0'(){ return false; }, [a]: true}[0]")
 runTest("{[a]: true, get '0'(){ return false; }}[0]")
 runTest("{__proto__: {get '0'(){ return false; }}, [a]: true}[0]")
+
+function runTestThrow(test)
+{
+    test = "(" + test + ")"
+    shouldThrow(test);
+    shouldThrow("'use strict';"+test);
+    shouldThrow("(function(){'use strict';return "+test+"})()");
+}
+
+a = "propertyName"
+runTestThrow("{[1,a]: true}.propertyName")
+runTestThrow("{propertyName: false, [1,a]: true}.propertyName")
+runTestThrow("{[1,a]: false, propertyName: true}.propertyName")
+runTestThrow("{get propertyName(){ return false; }, [1,a]: true}.propertyName")

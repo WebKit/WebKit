@@ -1,3 +1,17 @@
+2015-03-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Computed Property names should allow only AssignmentExpressions not any Expression
+        https://bugs.webkit.org/show_bug.cgi?id=142902
+
+        Reviewed by Ryosuke Niwa.
+
+        * js/basic-computed-property-name-expected.txt:
+        * js/object-literal-computed-methods-expected.txt:
+        * js/script-tests/basic-computed-property-name.js:
+        (runTest.runTest.runTest.runTest.runTest.runTest.runTest.runTestThrow):
+        * js/script-tests/object-literal-computed-methods.js:
+        Test that comma expressions are not allowed in computed property/method names.
+
 2015-03-21  Benjamin Poulain  <bpoulain@apple.com>
 
         Import the blink test fast/css/currentcolor-strict-mode.html

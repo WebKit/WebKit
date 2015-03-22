@@ -2004,7 +2004,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
     }
     case OPENBRACKET: {
         next();
-        auto propertyName = parseExpression(context);
+        auto propertyName = parseAssignmentExpression(context);
         failIfFalse(propertyName, "Cannot parse computed property name");
         handleProductionOrFail(CLOSEBRACKET, "]", "end", "computed property name");
 

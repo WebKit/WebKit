@@ -62,6 +62,7 @@ shouldBe("o.set('hello', 'world')", "'helloworld'");
 shouldThrow("({ [](,,,){} })");
 shouldThrow("({ [1+](){} })");
 shouldThrow("({ [1,](){} })");
+shouldThrow("({ [1,'name'](){} })");
 shouldThrow("({ [[1](){} })");
 shouldThrow("({ [foo](,,,){} })");
 shouldThrow("({ [foo](a{}, bar(){} })");

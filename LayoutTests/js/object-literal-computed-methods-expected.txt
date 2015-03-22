@@ -50,7 +50,8 @@ PASS o = { ['set'](x, y) { return x + y; } }; did not throw exception.
 PASS o.set('hello', 'world') is 'helloworld'
 PASS ({ [](,,,){} }) threw exception SyntaxError: Unexpected token ']'.
 PASS ({ [1+](){} }) threw exception SyntaxError: Unexpected token ']'.
-PASS ({ [1,](){} }) threw exception SyntaxError: Unexpected token ']'.
+PASS ({ [1,](){} }) threw exception SyntaxError: Unexpected token ','. Expected ']' to end a computed property name..
+PASS ({ [1,'name'](){} }) threw exception SyntaxError: Unexpected token ','. Expected ']' to end a computed property name..
 PASS ({ [[1](){} }) threw exception SyntaxError: Unexpected token '{'. Expected ']' to end a computed property name..
 PASS ({ [foo](,,,){} }) threw exception SyntaxError: Unexpected token ','. Expected a parameter pattern or a ')' in parameter list..
 PASS ({ [foo](a{}, bar(){} }) threw exception SyntaxError: Unexpected token '{'. Expected a ')' or a ',' after a parameter declaration..
