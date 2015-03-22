@@ -330,7 +330,7 @@ static inline bool propertyChangeMayRepaintNonDescendants(CSSPropertyID property
     case CSSPropertyOpacity:
     case CSSPropertyRight:
     case CSSPropertyTop:
-    case CSSPropertyWebkitTransform:
+    case CSSPropertyTransform:
         return false;
     default:
         return true;

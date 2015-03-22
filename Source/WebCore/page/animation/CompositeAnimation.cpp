@@ -424,7 +424,7 @@ bool CompositeAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) c
     
     for (auto& it : m_keyframeAnimations) {
         if (KeyframeAnimation* anim = it.value.get()) {
-            if (!anim->hasAnimationForProperty(CSSPropertyWebkitTransform))
+            if (!anim->hasAnimationForProperty(CSSPropertyTransform))
                 continue;
 
             if (seenTransformAnimation)
@@ -439,7 +439,7 @@ bool CompositeAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) c
 
     for (auto& it : m_transitions) {
         if (ImplicitAnimation* anim = it.value.get()) {
-            if (anim->animatingProperty() != CSSPropertyWebkitTransform || !anim->hasStyle())
+            if (anim->animatingProperty() != CSSPropertyTransform || !anim->hasStyle())
                 continue;
 
             if (seenTransformAnimation)

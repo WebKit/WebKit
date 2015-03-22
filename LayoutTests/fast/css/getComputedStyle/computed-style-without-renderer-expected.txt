@@ -90,6 +90,9 @@ text-shadow: none
 text-overflow: clip
 text-transform: none
 top: auto
+transform: none
+transform-origin: 50% 50%
+transform-style: flat
 unicode-bidi: normal
 vertical-align: baseline
 visibility: visible
@@ -193,8 +196,8 @@ justify-content: flex-start
 -webkit-mask-size: auto
 -webkit-nbsp-mode: normal
 order: 0
--webkit-perspective: none
--webkit-perspective-origin: 50% 50%
+perspective: none
+perspective-origin: 50% 50%
 -webkit-print-color-adjust: economy
 -webkit-rtl-ordering: logical
 -webkit-text-combine: none
@@ -207,8 +210,6 @@ order: 0
 -webkit-text-security: none
 -webkit-text-stroke-color: rgb(0, 0, 0)
 -webkit-text-stroke-width: 0px
--webkit-transform: none
--webkit-transform-origin: 50% 50%
 -webkit-transform-style: flat
 -webkit-transition-delay: 0s
 -webkit-transition-duration: 0s

@@ -215,6 +215,9 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyTextOverflow,
     CSSPropertyTextTransform,
     CSSPropertyTop,
+    CSSPropertyTransform,
+    CSSPropertyTransformOrigin,
+    CSSPropertyTransformStyle,
     CSSPropertyTransitionDelay,
     CSSPropertyTransitionDuration,
     CSSPropertyTransitionProperty,
@@ -362,8 +365,8 @@ static const CSSPropertyID computedProperties[] = {
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     CSSPropertyWebkitOverflowScrolling,
 #endif
-    CSSPropertyWebkitPerspective,
-    CSSPropertyWebkitPerspectiveOrigin,
+    CSSPropertyPerspective,
+    CSSPropertyPerspectiveOrigin,
     CSSPropertyWebkitPrintColorAdjust,
     CSSPropertyWebkitRtlOrdering,
 #if PLATFORM(IOS)
@@ -388,8 +391,6 @@ static const CSSPropertyID computedProperties[] = {
 #endif
     CSSPropertyWebkitTextStrokeColor,
     CSSPropertyWebkitTextStrokeWidth,
-    CSSPropertyWebkitTransform,
-    CSSPropertyWebkitTransformOrigin,
     CSSPropertyWebkitTransformStyle,
     CSSPropertyWebkitTransitionDelay,
     CSSPropertyWebkitTransitionDuration,
@@ -1637,9 +1638,9 @@ static bool isLayoutDependent(CSSPropertyID propertyID, RenderStyle* style, Rend
     case CSSPropertyWebkitGridTemplateColumns:
     case CSSPropertyWebkitGridTemplateRows:
 #endif
-    case CSSPropertyWebkitPerspectiveOrigin:
-    case CSSPropertyWebkitTransformOrigin:
-    case CSSPropertyWebkitTransform:
+    case CSSPropertyPerspectiveOrigin:
+    case CSSPropertyTransformOrigin:
+    case CSSPropertyTransform:
     case CSSPropertyWebkitFilter:
 #if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyWebkitBackdropFilter:
@@ -2818,11 +2819,11 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
             return cssValuePool().createIdentifierValue(CSSValueTouch);
 #endif
-        case CSSPropertyWebkitPerspective:
+        case CSSPropertyPerspective:
             if (!style->hasPerspective())
                 return cssValuePool().createIdentifierValue(CSSValueNone);
             return zoomAdjustedPixelValue(style->perspective(), style.get());
-        case CSSPropertyWebkitPerspectiveOrigin: {
+        case CSSPropertyPerspectiveOrigin: {
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
             if (renderer) {
                 LayoutRect box;
@@ -2873,9 +2874,9 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         }
         case CSSPropertySpeak:
             return cssValuePool().createValue(style->speak());
-        case CSSPropertyWebkitTransform:
+        case CSSPropertyTransform:
             return computedTransform(renderer, style.get());
-        case CSSPropertyWebkitTransformOrigin: {
+        case CSSPropertyTransformOrigin: {
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
             if (renderer) {
                 LayoutRect box;
@@ -2894,6 +2895,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             }
             return list.release();
         }
+        case CSSPropertyTransformStyle:
         case CSSPropertyWebkitTransformStyle:
             return cssValuePool().createIdentifierValue((style->transformStyle3D() == TransformStyle3DPreserve3D) ? CSSValuePreserve3d : CSSValueFlat);
         case CSSPropertyTransitionDelay:
@@ -3185,12 +3187,12 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitMask:
         case CSSPropertyWebkitMaskRepeatX:
         case CSSPropertyWebkitMaskRepeatY:
-        case CSSPropertyWebkitPerspectiveOriginX:
-        case CSSPropertyWebkitPerspectiveOriginY:
+        case CSSPropertyPerspectiveOriginX:
+        case CSSPropertyPerspectiveOriginY:
         case CSSPropertyWebkitTextStroke:
-        case CSSPropertyWebkitTransformOriginX:
-        case CSSPropertyWebkitTransformOriginY:
-        case CSSPropertyWebkitTransformOriginZ:
+        case CSSPropertyTransformOriginX:
+        case CSSPropertyTransformOriginY:
+        case CSSPropertyTransformOriginZ:
             break;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
