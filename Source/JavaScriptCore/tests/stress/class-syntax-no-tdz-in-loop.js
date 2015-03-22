@@ -19,5 +19,5 @@ class B extends A {
 
 noInline(B);
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < 10000; ++i)
     new B();

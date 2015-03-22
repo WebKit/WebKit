@@ -1,3 +1,30 @@
+2015-03-22  Filip Pizlo  <fpizlo@apple.com>
+
+        tests/stress/*tdz* tests do 10x more iterations than necessary
+        https://bugs.webkit.org/show_bug.cgi?id=142946
+
+        Reviewed by Ryosuke Niwa.
+        
+        The stress test harness runs all of these tests in various configurations. This includes
+        no-cjit, which has tier-up heuristics locked in such a way that 10,000 iterations is
+        enough to get to the highest tier. The only exceptions are very large functions or
+        functions that have some reoptimizations. That happens rarely, and when it does happen,
+        usually 20,000 iterations is enough.
+        
+        Therefore, these tests use 10x too many iterations. This is bad, since these tests
+        allocate on each iteration, and so they run very slowly in debug mode.
+
+        * tests/stress/class-syntax-no-loop-tdz.js:
+        * tests/stress/class-syntax-no-tdz-in-catch.js:
+        * tests/stress/class-syntax-no-tdz-in-conditional.js:
+        * tests/stress/class-syntax-no-tdz-in-loop-no-inline-super.js:
+        * tests/stress/class-syntax-no-tdz-in-loop.js:
+        * tests/stress/class-syntax-no-tdz.js:
+        * tests/stress/class-syntax-tdz-in-catch.js:
+        * tests/stress/class-syntax-tdz-in-conditional.js:
+        * tests/stress/class-syntax-tdz-in-loop.js:
+        * tests/stress/class-syntax-tdz.js:
+
 2015-03-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix a typo in Parser error message
