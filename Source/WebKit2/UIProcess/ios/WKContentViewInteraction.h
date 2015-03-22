@@ -196,6 +196,7 @@ struct WKAutoCorrectionData {
 - (Vector<WebKit::OptionItem>&) assistedNodeSelectOptions;
 - (void)_enableInspectorNodeSearch;
 - (void)_disableInspectorNodeSearch;
+- (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler;
 @end
 
 #endif // PLATFORM(IOS)

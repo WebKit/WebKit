@@ -167,6 +167,7 @@
 #include <runtime/JSCJSValue.h>
 #include <runtime/JSLock.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TemporaryChange.h>
 
 #if ENABLE(MHTML)
 #include <WebCore/MHTMLArchive.h>
@@ -2207,10 +2208,14 @@ void WebPage::viewWillEndLiveResize()
         view->willEndLiveResize();
 }
 
-void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& event)
+void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& event, uint64_t callbackID)
 {
     if (!m_page)
         return;
+
+#if PLATFORM(IOS)
+    TemporaryChange<bool> userIsInteractingChange { m_userIsInteracting, true };
+#endif
 
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     frame.document()->setFocusedElement(0);
@@ -2219,10 +2224,13 @@ void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const Web
         PlatformKeyboardEvent platformEvent(platform(event));
         platformEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
         m_page->focusController().setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, &KeyboardEvent::create(platformEvent, frame.document()->defaultView()).get());
+
+        send(Messages::WebPageProxy::VoidCallback(callbackID));
         return;
     }
 
     m_page->focusController().setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, 0);
+    send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
 void WebPage::setWindowResizerSize(const IntSize& windowResizerSize)

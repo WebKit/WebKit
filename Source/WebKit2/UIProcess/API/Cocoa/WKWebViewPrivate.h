@@ -155,6 +155,8 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 // will not count as becoming inactive and unfocused. The returned block must be called to exit the state.
 - (void (^)(void))_retainActiveFocusedState WK_AVAILABLE(NA, WK_IOS_TBA);
 
+- (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler WK_AVAILABLE(NA, WK_IOS_TBA);
+
 #else
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
 @property (nonatomic, setter=_setDrawsTransparentBackground:) BOOL _drawsTransparentBackground;

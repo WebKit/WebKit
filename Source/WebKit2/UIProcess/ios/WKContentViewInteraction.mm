@@ -2053,6 +2053,16 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 }
 
+- (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler
+{
+    auto completionHandlerCopy = Block_copy(completionHandler);
+    _page->setInitialFocus(selectingForward, false, WebKit::WebKeyboardEvent(), [self, completionHandlerCopy](WebKit::CallbackBase::Error) {
+        BOOL didBecomeFirstResponder = _assistedNodeInformation.elementType != InputType::None && [self becomeFirstResponder];
+        completionHandlerCopy(didBecomeFirstResponder);
+        Block_release(completionHandlerCopy);
+    });
+}
+
 - (void)accessoryAutoFill
 {
     id <_WKFormDelegate> formDelegate = [_webView _formDelegate];

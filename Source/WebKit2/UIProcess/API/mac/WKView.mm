@@ -401,7 +401,7 @@ struct WKViewInterpretKeyEventsParameters {
         NSEvent *keyboardEvent = nil;
         if ([event type] == NSKeyDown || [event type] == NSKeyUp)
             keyboardEvent = event;
-        _data->_page->setInitialFocus(direction == NSSelectingNext, keyboardEvent != nil, NativeWebKeyboardEvent(keyboardEvent, false, Vector<KeypressCommand>()));
+        _data->_page->setInitialFocus(direction == NSSelectingNext, keyboardEvent != nil, NativeWebKeyboardEvent(keyboardEvent, false, Vector<KeypressCommand>()), [](CallbackBase::Error) { });
     }
     return YES;
 }

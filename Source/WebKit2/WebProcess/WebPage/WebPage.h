@@ -928,7 +928,7 @@ private:
     void goBack(uint64_t navigationID, uint64_t);
     void goToBackForwardItem(uint64_t navigationID, uint64_t);
     void tryRestoreScrollPosition();
-    void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&);
+    void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, uint64_t callbackID);
     void setWindowResizerSize(const WebCore::IntSize&);
     void updateIsInWindow(bool isInitialState = false);
     void setViewState(WebCore::ViewState::Flags, bool wantsDidUpdateViewState, const Vector<uint64_t>& callbackIDs);

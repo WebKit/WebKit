@@ -1419,11 +1419,15 @@ IntSize WebPageProxy::viewSize() const
     return m_pageClient.viewSize();
 }
 
-void WebPageProxy::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& keyboardEvent)
+void WebPageProxy::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& keyboardEvent, std::function<void (CallbackBase::Error)> callbackFunction)
 {
-    if (!isValid())
+    if (!isValid()) {
+        callbackFunction(CallbackBase::Error::OwnerWasInvalidated);
         return;
-    m_process->send(Messages::WebPage::SetInitialFocus(forward, isKeyboardEventValid, keyboardEvent), m_pageID);
+    }
+
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), m_process->throttler().backgroundActivityToken());
+    m_process->send(Messages::WebPage::SetInitialFocus(forward, isKeyboardEventValid, keyboardEvent, callbackID), m_pageID);
 }
 
 void WebPageProxy::setWindowResizerSize(const IntSize& windowResizerSize)

@@ -389,7 +389,7 @@ public:
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
 
-    void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&);
+    void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, std::function<void (CallbackBase::Error)>);
     void setWindowResizerSize(const WebCore::IntSize&);
     
     void clearSelection();

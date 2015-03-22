@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebPage LegacyReceiver {
-    SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event)
+    SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event, uint64_t callbackID)
     SetViewState(unsigned viewState, bool wantsDidUpdateViewState, Vector<uint64_t> callbackIDs)
     SetLayerHostingMode(unsigned layerHostingMode)
 

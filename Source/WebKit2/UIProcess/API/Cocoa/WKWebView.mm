@@ -90,6 +90,7 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "UIKitSPI.h"
+#import "WKContentViewInteraction.h"
 #import "WKPDFView.h"
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
@@ -1784,6 +1785,21 @@ static int32_t activeOrientation(WKWebView *webView)
     return [[[self] {
         --_activeFocusedStateRetainCount;
     } copy] autorelease];
+}
+
+- (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler
+{
+    typeof(completionHandler) completionHandlerCopy = nil;
+    if (completionHandler)
+        completionHandlerCopy = Block_copy(completionHandler);
+
+    [_contentView _becomeFirstResponderWithSelectionMovingForward:selectingForward completionHandler:[completionHandlerCopy](BOOL didBecomeFirstResponder) {
+        if (!completionHandlerCopy)
+            return;
+
+        completionHandlerCopy(didBecomeFirstResponder);
+        Block_release(completionHandlerCopy);
+    }];
 }
 
 #endif
