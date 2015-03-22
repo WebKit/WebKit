@@ -58,7 +58,7 @@ function test(func, iteration, object, outcome) {
         throw new Error("Bad result: " + result + " on iteration " + iteration);
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < 10000; ++i) {
     test(equalsNull, i, null, true);
     test(equalsNull, i, undefined, true);
     test(equalsNull, i, void 0, true);
@@ -66,7 +66,7 @@ for (var i = 0; i < 100000; ++i) {
     test(equalsNull, i, makeMasquerader(), true);
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < 10000; ++i) {
     test(notEqualsNull, i, null, false);
     test(notEqualsNull, i, undefined, false);
     test(notEqualsNull, i, void 0, false);
@@ -74,7 +74,7 @@ for (var i = 0; i < 100000; ++i) {
     test(notEqualsNull, i, makeMasquerader(), false);
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < 10000; ++i) {
     test(strictEqualsNull, i, null, true);
     test(strictEqualsNull, i, undefined, false);
     test(strictEqualsNull, i, void 0, false);
@@ -82,7 +82,7 @@ for (var i = 0; i < 100000; ++i) {
     test(strictEqualsNull, i, makeMasquerader(), false);
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < 10000; ++i) {
     test(strictNotEqualsNull, i, null, false);
     test(strictNotEqualsNull, i, undefined, true);
     test(strictNotEqualsNull, i, void 0, true);
@@ -90,7 +90,7 @@ for (var i = 0; i < 100000; ++i) {
     test(strictNotEqualsNull, i, makeMasquerader(), true);
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < 10000; ++i) {
     test(equalsUndefined, i, null, true);
     test(equalsUndefined, i, undefined, true);
     test(equalsUndefined, i, void 0, true);
@@ -98,7 +98,7 @@ for (var i = 0; i < 100000; ++i) {
     test(equalsUndefined, i, makeMasquerader(), true);
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < 10000; ++i) {
     test(notEqualsUndefined, i, null, false);
     test(notEqualsUndefined, i, undefined, false);
     test(notEqualsUndefined, i, void 0, false);
@@ -106,7 +106,7 @@ for (var i = 0; i < 100000; ++i) {
     test(notEqualsUndefined, i, makeMasquerader(), false);
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < 10000; ++i) {
     test(strictEqualsUndefined, i, null, false);
     test(strictEqualsUndefined, i, undefined, true);
     test(strictEqualsUndefined, i, void 0, true);
@@ -114,7 +114,7 @@ for (var i = 0; i < 100000; ++i) {
     test(strictEqualsUndefined, i, makeMasquerader(), false);
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < 10000; ++i) {
     test(strictNotEqualsUndefined, i, null, true);
     test(strictNotEqualsUndefined, i, undefined, false);
     test(strictNotEqualsUndefined, i, void 0, false);
@@ -122,7 +122,7 @@ for (var i = 0; i < 100000; ++i) {
     test(strictNotEqualsUndefined, i, makeMasquerader(), true);
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < 10000; ++i) {
     test(isFalsey, i, null, true);
     test(isFalsey, i, undefined, true);
     test(isFalsey, i, void 0, true);

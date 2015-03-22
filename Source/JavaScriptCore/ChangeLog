@@ -1,5 +1,13 @@
 2015-03-22  Filip Pizlo  <fpizlo@apple.com>
 
+        Shorten the number of iterations to 10,000 since that's enough to test all tiers.
+
+        Rubber stamped by Sam Weinig.
+
+        * tests/stress/equals-masquerader.js:
+
+2015-03-22  Filip Pizlo  <fpizlo@apple.com>
+
         tests/stress/*tdz* tests do 10x more iterations than necessary
         https://bugs.webkit.org/show_bug.cgi?id=142946
 
