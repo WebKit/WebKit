@@ -1,3 +1,43 @@
+2015-03-22  Anders Carlsson  <andersca@apple.com>
+
+        _WKWebsiteDataStore should clear WebSQL databases
+        https://bugs.webkit.org/show_bug.cgi?id=142947
+        rdar://problem/20242174
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebsiteData/WebsiteDataTypes.h:
+        Add WebsiteDataTypeWebSQLDatabases.
+
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+        Initialize configuration.webSQLDatabaseDirectory.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecord.h:
+        Add WKWebsiteDataTypeWebSQLDatabases.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecord.mm:
+        (dataTypesToString):
+        Handle WKWebsiteDataTypeWebSQLDatabases.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataTypes):
+        (WebKit::toWKWebsiteDataTypes):
+        Handle WKWebsiteDataTypeWebSQLDatabases and WebsiteDataTypes::WebsiteDataTypeWebSQLDatabases.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        Initialize m_webSQLDatabaseDirectory and add a queue member variable.
+
+        (WebKit::WebsiteDataStore::fetchData):
+        Fetch database origins.
+    
+        (WebKit::WebsiteDataStore::removeData):
+        Remove databases.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        Add new members.
+
 2015-03-22  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Expose WebPageProxy::setInitialFocus as SPI

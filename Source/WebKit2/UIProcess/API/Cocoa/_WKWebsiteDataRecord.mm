@@ -49,6 +49,8 @@ static NSString *dataTypesToString(WKWebsiteDataTypes dataTypes)
         [array addObject:@"Memory Cache"];
     if (dataTypes & WKWebsiteDataTypeLocalStorage)
         [array addObject:@"Local Storage"];
+    if (dataTypes & WKWebsiteDataTypeWebSQLDatabases)
+        [array addObject:@"Web SQL"];
 
     return [array componentsJoinedByString:@", "];
 }

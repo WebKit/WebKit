@@ -1,3 +1,23 @@
+2015-03-22  Anders Carlsson  <andersca@apple.com>
+
+        _WKWebsiteDataStore should clear WebSQL databases
+        https://bugs.webkit.org/show_bug.cgi?id=142947
+
+        Reviewed by Sam Weinig.
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::trackerWithDatabasePath):
+        Add a hack so we can get at a tracker from the UI process.
+
+        (WebCore::DatabaseTracker::deleteDatabasesModifiedSince):
+        New function that deletes all databases modified after a given time.
+
+        * Modules/webdatabase/DatabaseTracker.h:
+        Add new members and export the ones we want to call from WebKit2.
+
+        * Modules/webdatabase/OriginLock.h:
+        Export the destructor.
+
 2015-03-21  Dean Jackson  <dino@apple.com>
 
         Remove the prefix for CSS Transforms

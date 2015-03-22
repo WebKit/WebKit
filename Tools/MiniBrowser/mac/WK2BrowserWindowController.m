@@ -407,18 +407,20 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
 }
 
+static const WKWebsiteDataTypes dataTypes = WKWebsiteDataTypeAll;
+
 - (IBAction)fetchWebsiteData:(id)sender
 {
-    [_configuration._websiteDataStore fetchDataRecordsOfTypes:WKWebsiteDataTypeAll completionHandler:^(NSArray *websiteDataRecords) {
+    [_configuration._websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray *websiteDataRecords) {
         NSLog(@"did fetch website data %@.", websiteDataRecords);
     }];
 }
 
 - (IBAction)fetchAndClearWebsiteData:(id)sender
 {
-    [_configuration._websiteDataStore fetchDataRecordsOfTypes:WKWebsiteDataTypeAll completionHandler:^(NSArray *websiteDataRecords) {
-        [_configuration._websiteDataStore removeDataOfTypes:WKWebsiteDataTypeAll forDataRecords:websiteDataRecords completionHandler:^{
-            [_configuration._websiteDataStore fetchDataRecordsOfTypes:WKWebsiteDataTypeAll completionHandler:^(NSArray *websiteDataRecords) {
+    [_configuration._websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray *websiteDataRecords) {
+        [_configuration._websiteDataStore removeDataOfTypes:dataTypes forDataRecords:websiteDataRecords completionHandler:^{
+            [_configuration._websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray *websiteDataRecords) {
                 NSLog(@"did clear website data, after clearing data is %@.", websiteDataRecords);
             }];
         }];
@@ -427,7 +429,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (IBAction)clearWebsiteData:(id)sender
 {
-    [_configuration._websiteDataStore removeDataOfTypes:WKWebsiteDataTypeAll modifiedSince:[NSDate distantPast] completionHandler:^{
+    [_configuration._websiteDataStore removeDataOfTypes:dataTypes modifiedSince:[NSDate distantPast] completionHandler:^{
         NSLog(@"Did clear website data.");
     }];
 }

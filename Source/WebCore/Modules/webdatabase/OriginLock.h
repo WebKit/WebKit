@@ -37,7 +37,7 @@ class OriginLock : public ThreadSafeRefCounted<OriginLock> {
     WTF_MAKE_NONCOPYABLE(OriginLock); WTF_MAKE_FAST_ALLOCATED;
 public:
     OriginLock(String originPath);
-    ~OriginLock();
+    WEBCORE_EXPORT ~OriginLock();
 
     void lock();
     void unlock();

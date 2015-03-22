@@ -35,6 +35,8 @@ typedef NS_OPTIONS(NSUInteger, WKWebsiteDataTypes) {
     WKWebsiteDataTypeMemoryCache = 1 << 2,
 
     WKWebsiteDataTypeLocalStorage = 1 << 3,
+    WKWebsiteDataTypeWebSQLDatabases = 1 << 4,
+
     WKWebsiteDataTypeAll = NSUIntegerMax,
 } WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 

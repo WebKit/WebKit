@@ -33,6 +33,7 @@ enum WebsiteDataTypes {
     WebsiteDataTypeDiskCache = 1 << 1,
     WebsiteDataTypeMemoryCache = 1 << 2,
     WebsiteDataTypeLocalStorage = 1 << 3,
+    WebsiteDataTypeWebSQLDatabases = 1 << 4,
 };
 
 };

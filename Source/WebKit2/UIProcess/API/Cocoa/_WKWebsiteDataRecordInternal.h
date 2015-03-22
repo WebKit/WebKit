@@ -52,6 +52,8 @@ static inline WebKit::WebsiteDataTypes toWebsiteDataTypes(WKWebsiteDataTypes wkW
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeMemoryCache;
     if (wkWebsiteDataTypes & WKWebsiteDataTypeLocalStorage)
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeLocalStorage;
+    if (wkWebsiteDataTypes & WKWebsiteDataTypeWebSQLDatabases)
+        websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeWebSQLDatabases;
 
     return static_cast<WebsiteDataTypes>(websiteDataTypes);
 }
@@ -70,6 +72,8 @@ static inline WKWebsiteDataTypes toWKWebsiteDataTypes(int websiteDataTypes)
         wkWebsiteDataTypes |= WKWebsiteDataTypeMemoryCache;
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeLocalStorage)
         wkWebsiteDataTypes |= WKWebsiteDataTypeLocalStorage;
+    if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeWebSQLDatabases)
+        wkWebsiteDataTypes |= WKWebsiteDataTypeWebSQLDatabases;
 
     return wkWebsiteDataTypes;
 }

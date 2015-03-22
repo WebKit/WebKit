@@ -56,6 +56,11 @@
 
 namespace WebCore {
 
+std::unique_ptr<DatabaseTracker> DatabaseTracker::trackerWithDatabasePath(const String& databasePath)
+{
+    return std::unique_ptr<DatabaseTracker>(new DatabaseTracker(databasePath));
+}
+
 static DatabaseTracker* staticTracker = 0;
 
 void DatabaseTracker::initializeTracker(const String& databasePath)
@@ -823,6 +828,31 @@ void DatabaseTracker::deleteAllDatabases()
 
     for (unsigned i = 0; i < originsCopy.size(); ++i)
         deleteOrigin(originsCopy[i].get());
+}
+
+void DatabaseTracker::deleteDatabasesModifiedSince(std::chrono::system_clock::time_point time)
+{
+    Vector<RefPtr<SecurityOrigin>> originsCopy;
+    origins(originsCopy);
+
+    for (auto& origin : originsCopy) {
+        Vector<String> databaseNames;
+        if (!databaseNamesForOrigin(origin.get(), databaseNames))
+            continue;
+
+        for (auto& databaseName : databaseNames) {
+            auto fullPath = fullPathForDatabase(origin.get(), databaseName, false);
+
+            time_t modificationTime;
+            if (!getFileModificationTime(fullPath, modificationTime))
+                continue;
+
+            if (modificationTime < std::chrono::system_clock::to_time_t(time))
+                continue;
+
+            deleteDatabase(origin.get(), databaseName);
+        }
+    }
 }
 
 // It is the caller's responsibility to make sure that nobody is trying to create, delete, open, or close databases in this origin while the deletion is

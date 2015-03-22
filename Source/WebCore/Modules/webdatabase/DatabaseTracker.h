@@ -49,6 +49,9 @@ class SecurityOrigin;
 class DatabaseTracker {
     WTF_MAKE_NONCOPYABLE(DatabaseTracker); WTF_MAKE_FAST_ALLOCATED;
 public:
+    // FIXME: This is a hack so we can easily delete databases from the UI process in WebKit2.
+    WEBCORE_EXPORT static std::unique_ptr<DatabaseTracker> trackerWithDatabasePath(const String& databasePath);
+
     static void initializeTracker(const String& databasePath);
 
     WEBCORE_EXPORT static DatabaseTracker& tracker();
@@ -82,7 +85,7 @@ public:
     void setDatabaseDirectoryPath(const String&);
     String databaseDirectoryPath() const;
 
-    void origins(Vector<RefPtr<SecurityOrigin>>& result);
+    WEBCORE_EXPORT void origins(Vector<RefPtr<SecurityOrigin>>& result);
     bool databaseNamesForOrigin(SecurityOrigin*, Vector<String>& result);
 
     DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin*);
@@ -93,7 +96,8 @@ public:
     PassRefPtr<OriginLock> originLockFor(SecurityOrigin*);
 
     void deleteAllDatabases();
-    bool deleteOrigin(SecurityOrigin*);
+    WEBCORE_EXPORT void deleteDatabasesModifiedSince(std::chrono::system_clock::time_point);
+    WEBCORE_EXPORT bool deleteOrigin(SecurityOrigin*);
     bool deleteDatabase(SecurityOrigin*, const String& name);
 
 #if PLATFORM(IOS)

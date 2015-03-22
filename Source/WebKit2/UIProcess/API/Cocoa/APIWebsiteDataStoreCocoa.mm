@@ -65,6 +65,7 @@ WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfig
     WebKit::WebsiteDataStore::Configuration configuration;
 
     configuration.localStorageDirectory = websiteDataDirectoryFileSystemRepresentation("LocalStorage");
+    configuration.webSQLDatabaseDirectory = websiteDataDirectoryFileSystemRepresentation("WebSQL");
 
     return configuration;
 }

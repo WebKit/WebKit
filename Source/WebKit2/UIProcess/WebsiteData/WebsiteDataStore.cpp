@@ -30,6 +30,8 @@
 #include "StorageManager.h"
 #include "WebProcessPool.h"
 #include "WebsiteData.h"
+#include <WebCore/DatabaseTracker.h>
+#include <WebCore/OriginLock.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -62,7 +64,9 @@ RefPtr<WebsiteDataStore> WebsiteDataStore::create(Configuration configuration)
 WebsiteDataStore::WebsiteDataStore(Configuration configuration)
     : m_identifier(generateIdentifier())
     , m_sessionID(WebCore::SessionID::defaultSessionID())
+    , m_webSQLDatabaseDirectory(WTF::move(configuration.webSQLDatabaseDirectory))
     , m_storageManager(StorageManager::create(WTF::move(configuration.localStorageDirectory)))
+    , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 {
     platformInitialize();
 }
@@ -70,6 +74,7 @@ WebsiteDataStore::WebsiteDataStore(Configuration configuration)
 WebsiteDataStore::WebsiteDataStore(WebCore::SessionID sessionID)
     : m_identifier(generateIdentifier())
     , m_sessionID(sessionID)
+    , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 {
     platformInitialize();
 }
@@ -270,6 +275,25 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
         });
     }
 
+    if (dataTypes & WebsiteDataTypeWebSQLDatabases && !isNonPersistent()) {
+        StringCapture webSQLDatabaseDirectory { m_webSQLDatabaseDirectory };
+
+        callbackAggregator->addPendingCallback();
+
+        m_queue->dispatch([webSQLDatabaseDirectory, callbackAggregator] {
+            Vector<RefPtr<WebCore::SecurityOrigin>> origins;
+            WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory.string())->origins(origins);
+
+            RunLoop::main().dispatch([webSQLDatabaseDirectory, callbackAggregator, origins]() mutable {
+                WebsiteData websiteData;
+                for (auto& origin : origins)
+                    websiteData.entries.append(WebsiteData::Entry { WTF::move(origin), WebsiteDataTypeWebSQLDatabases });
+
+                callbackAggregator->removePendingCallback(WTF::move(websiteData));
+            });
+        });
+    }
+
     callbackAggregator->callIfNeeded();
 }
 
@@ -396,6 +420,20 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         });
     }
 
+    if (dataTypes & WebsiteDataTypeWebSQLDatabases && !isNonPersistent()) {
+        StringCapture webSQLDatabaseDirectory { m_webSQLDatabaseDirectory };
+
+        callbackAggregator->addPendingCallback();
+
+        m_queue->dispatch([webSQLDatabaseDirectory, callbackAggregator, modifiedSince] {
+            WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory.string())->deleteDatabasesModifiedSince(modifiedSince);
+
+            RunLoop::main().dispatch([callbackAggregator] {
+                callbackAggregator->removePendingCallback();
+            });
+        });
+    }
+
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
 }
@@ -409,7 +447,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
             origins.append(origin);
     }
 
-    struct CallbackAggregator : public RefCounted<CallbackAggregator> {
+    struct CallbackAggregator : public ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator (std::function<void ()> completionHandler)
             : completionHandler(WTF::move(completionHandler))
         {
@@ -505,6 +543,28 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
 
         m_storageManager->deleteEntriesForOrigins(origins, [callbackAggregator] {
             callbackAggregator->removePendingCallback();
+        });
+    }
+
+    if (dataTypes & WebsiteDataTypeWebSQLDatabases && !isNonPersistent()) {
+        StringCapture webSQLDatabaseDirectory { m_webSQLDatabaseDirectory };
+
+        HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
+        for (const auto& dataRecord : dataRecords) {
+            for (const auto& origin : dataRecord.origins)
+                origins.add(origin);
+        }
+
+        callbackAggregator->addPendingCallback();
+        m_queue->dispatch([origins, callbackAggregator, webSQLDatabaseDirectory] {
+            auto databaseTracker = WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory.string());
+
+            for (const auto& origin : origins)
+                databaseTracker->deleteOrigin(origin.get());
+
+            RunLoop::main().dispatch([callbackAggregator] {
+                callbackAggregator->removePendingCallback();
+            });
         });
     }
 
