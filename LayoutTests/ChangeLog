@@ -1,3 +1,17 @@
+2015-03-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix a typo in Parser error message
+        https://bugs.webkit.org/show_bug.cgi?id=142942
+
+        Reviewed by Alexey Proskuryakov.
+
+        * js/class-syntax-declaration-expected.txt:
+        * js/class-syntax-expression-expected.txt:
+        * js/class-syntax-super-expected.txt:
+        * js/script-tests/class-syntax-declaration.js:
+        * js/script-tests/class-syntax-expression.js:
+        * js/script-tests/class-syntax-super.js:
+
 2015-03-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Try to get debug bots green.

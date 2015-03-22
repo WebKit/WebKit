@@ -637,8 +637,8 @@ void JIT::emitSlow_op_resolve_scope(Instruction* currentInstruction, Vector<Slow
 
     linkSlowCase(iter);
     int32_t scope = currentInstruction[2].u.operand;
-    int32_t indentifierIndex = currentInstruction[3].u.operand;
-    callOperation(operationResolveScope, dst, scope, indentifierIndex);
+    int32_t identifierIndex = currentInstruction[3].u.operand;
+    callOperation(operationResolveScope, dst, scope, identifierIndex);
 }
 
 void JIT::emitLoadWithStructureCheck(int scope, Structure** structureSlot)

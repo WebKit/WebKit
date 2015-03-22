@@ -13,7 +13,7 @@ PASS (new Derived).baseMethodInGetterSetter is (new Base).baseMethod
 PASS (new Derived).baseMethodInGetterSetter = 1; valueInSetter is (new Base).baseMethod
 PASS Derived.staticMethod() is "base3"
 PASS (new SecondDerived).chainMethod() is ["base", "derived", "secondDerived"]
-PASS x = class extends Base { constructor() { super(); } super() {} } threw exception SyntaxError: Unexpected keyword 'super'. Expected an indentifier..
+PASS x = class extends Base { constructor() { super(); } super() {} } threw exception SyntaxError: Unexpected keyword 'super'. Expected an identifier..
 PASS x = class extends Base { constructor() { super(); } method() { super() } } threw exception SyntaxError: Cannot call super() outside of a class constructor..
 PASS x = class extends Base { constructor() { super(); } method() { super } } threw exception SyntaxError: Cannot reference super..
 PASS x = class extends Base { constructor() { super(); } method() { return new super } } did not throw exception.

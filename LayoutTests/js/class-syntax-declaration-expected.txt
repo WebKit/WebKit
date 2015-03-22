@@ -17,7 +17,7 @@ PASS (new A).__proto__ is A.prototype
 PASS A.prototype.constructor is A
 PASS class threw exception SyntaxError: Unexpected end of script.
 PASS class X { threw exception SyntaxError: Unexpected end of script.
-PASS class X { ( } threw exception SyntaxError: Unexpected token '('. Expected an indentifier..
+PASS class X { ( } threw exception SyntaxError: Unexpected token '('. Expected an identifier..
 PASS class X {} did not throw exception.
 PASS class X { constructor() {} constructor() {} } threw exception SyntaxError: Cannot declare multiple constructors in a single class..
 PASS class X { constructor() {} static constructor() { return staticMethodValue; } } did not throw exception.

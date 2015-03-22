@@ -1513,7 +1513,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
         if (isStaticMethod)
             next();
 
-        matchOrFail(IDENT, "Expected an indentifier");
+        matchOrFail(IDENT, "Expected an identifier");
 
         const CommonIdentifiers& propertyNames = *m_vm->propertyNames;
         const Identifier& ident = *m_token.m_data.ident;

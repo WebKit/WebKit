@@ -29,7 +29,7 @@ shouldBe("A.prototype.constructor", "A");
 
 shouldThrow("class", "'SyntaxError: Unexpected end of script'");
 shouldThrow("class X {", "'SyntaxError: Unexpected end of script'");
-shouldThrow("class X { ( }", "'SyntaxError: Unexpected token \\'(\\'. Expected an indentifier.'");
+shouldThrow("class X { ( }", "'SyntaxError: Unexpected token \\'(\\'. Expected an identifier.'");
 shouldNotThrow("class X {}");
 shouldThrow("class X { constructor() {} constructor() {} }", "'SyntaxError: Cannot declare multiple constructors in a single class.'");
 shouldNotThrow("class X { constructor() {} static constructor() { return staticMethodValue; } }");
