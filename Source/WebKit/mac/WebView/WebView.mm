@@ -8665,7 +8665,7 @@ bool LayerFlushController::flushLayers()
     if (!_private->page)
         return;
 
-    NSRect rectInWindowCoordinates = [self convertRect:[self _convertRectFromRootView:CGRectMake(location.x(), location.y(), 0, 0)] toView:nil];
+    NSRect rectInWindowCoordinates = [self convertRect:[self _convertRectFromRootView:NSMakeRect(location.x(), location.y(), 0, 0)] toView:nil];
     NSRect rectInScreenCoordinates = [self.window convertRectToScreen:rectInWindowCoordinates];
     [self _devicePicker]->showPlaybackTargetPicker(rectInScreenCoordinates, hasVideo);
 }
