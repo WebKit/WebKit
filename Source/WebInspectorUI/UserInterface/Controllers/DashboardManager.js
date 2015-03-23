@@ -23,19 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DashboardManager = function() {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+WebInspector.DashboardManager = class DashboardManager extends WebInspector.Object
+{
+    constructor()
+    {
+        super();
 
-    this._dashboards = {};
-    this._dashboards.default = new WebInspector.DefaultDashboard;
-    this._dashboards.debugger = new WebInspector.DebuggerDashboard;
-    this._dashboards.replay = new WebInspector.ReplayDashboard;
-};
-
-WebInspector.DashboardManager.prototype = {
-    constructor: WebInspector.DashboardManager,
-    __proto__: WebInspector.Object.prototype,
+        this._dashboards = {};
+        this._dashboards.default = new WebInspector.DefaultDashboard;
+        this._dashboards.debugger = new WebInspector.DebuggerDashboard;
+        this._dashboards.replay = new WebInspector.ReplayDashboard;
+    }
 
     get dashboards()
     {

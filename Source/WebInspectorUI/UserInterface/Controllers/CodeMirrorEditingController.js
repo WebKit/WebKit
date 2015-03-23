@@ -23,66 +23,63 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CodeMirrorEditingController = function(codeMirror, marker)
+WebInspector.CodeMirrorEditingController = class CodeMirrorEditingController extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(codeMirror, marker)
+    {
+        super();
 
-    this._codeMirror = codeMirror;
-    this._marker = marker;
-    this._delegate = null;
+        this._codeMirror = codeMirror;
+        this._marker = marker;
+        this._delegate = null;
 
-    this._range = marker.range;
+        this._range = marker.range;
 
-    // The value must support .toString() and .copy() methods.
-    this._value = this.initialValue;
+        // The value must support .toString() and .copy() methods.
+        this._value = this.initialValue;
 
-    this._keyboardShortcutEsc = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape);
-};
-
-WebInspector.CodeMirrorEditingController.prototype = {
-    constructor: WebInspector.CodeMirrorEditingController,
-    __proto__: WebInspector.Object.prototype,
+        this._keyboardShortcutEsc = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape);
+    }
 
     // Public
 
     get marker()
     {
         return this._marker;
-    },
+    }
 
     get range()
     {
         return this._range;
-    },
+    }
 
     get value()
     {
         return this._value;
-    },
+    }
 
     set value(value)
     {
         this.text = value.toString();
         this._value = value;
-    },
+    }
 
     get delegate()
     {
         return this._delegate;
-    },
+    }
 
     set delegate(delegate)
     {
         this._delegate = delegate;
-    },
+    }
 
     get text()
     {
         var from = {line: this._range.startLine, ch: this._range.startColumn};
         var to = {line: this._range.endLine, ch: this._range.endColumn};
         return this._codeMirror.getRange(from, to);
-    },
+    }
 
     set text(text)
     {
@@ -94,63 +91,63 @@ WebInspector.CodeMirrorEditingController.prototype = {
         var endLine = this._range.startLine + lines.length - 1;
         var endColumn = lines.length > 1 ? lines.lastValue.length : this._range.startColumn + text.length;
         this._range = new WebInspector.TextRange(this._range.startLine, this._range.startColumn, endLine, endColumn);
-    },
+    }
 
     get initialValue()
     {
         // Implemented by subclasses.
         return this.text;
-    },
+    }
 
     get cssClassName()
     {
         // Implemented by subclasses.
         return "";
-    },
+    }
 
     get popover()
     {
         return this._popover;
-    },
+    }
 
     get popoverPreferredEdges()
     {
         // Best to display the popover to the left or above the edited range since its end position may change, but not its start
         // position. This way we minimize the chances of overlaying the edited range as it changes.
         return [WebInspector.RectEdge.MIN_X, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MAX_X];
-    },
+    }
 
-    popoverTargetFrameWithRects: function(rects)
+    popoverTargetFrameWithRects(rects)
     {
         return WebInspector.Rect.unionOfRects(rects);
-    },
+    }
 
-    presentHoverMenu: function()
+    presentHoverMenu()
     {
         this._hoverMenu = new WebInspector.HoverMenu(this);
         this._hoverMenu.element.classList.add(this.cssClassName);
         this._rects = this._marker.rects;
         this._hoverMenu.present(this._rects);
-    },
+    }
 
-    dismissHoverMenu: function(discrete)
+    dismissHoverMenu(discrete)
     {
         this._hoverMenu.dismiss(discrete);
-    },
+    }
 
-    popoverWillPresent: function(popover)
+    popoverWillPresent(popover)
     {
         // Implemented by subclasses.
-    },
+    }
 
-    popoverDidPresent: function(popover)
+    popoverDidPresent(popover)
     {
         // Implemented by subclasses.
-    },
+    }
 
     // Protected
 
-    handleKeydownEvent: function(event)
+    handleKeydownEvent(event)
     {
         if (!this._keyboardShortcutEsc.matchesEvent(event) || !this._popover.visible)
             return false;
@@ -159,9 +156,9 @@ WebInspector.CodeMirrorEditingController.prototype = {
         this._popover.dismiss();
 
         return true;
-    },
+    }
 
-    hoverMenuButtonWasPressed: function(hoverMenu)
+    hoverMenuButtonWasPressed(hoverMenu)
     {
         this._popover = new WebInspector.Popover(this);
         this.popoverWillPresent(this._popover);
@@ -176,9 +173,9 @@ WebInspector.CodeMirrorEditingController.prototype = {
             this._delegate.editingControllerDidStartEditing(this);
 
         this._originalValue = this._value.copy();
-    },
+    }
 
-    didDismissPopover: function(popover)
+    didDismissPopover(popover)
     {
         delete this._popover;
         delete this._originalValue;

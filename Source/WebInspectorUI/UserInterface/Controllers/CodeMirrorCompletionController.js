@@ -23,79 +23,65 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CodeMirrorCompletionController = function(codeMirror, delegate, stopCharactersRegex)
+WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionController extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(codeMirror, delegate, stopCharactersRegex)
+    {
+        super();
 
-    console.assert(codeMirror);
+        console.assert(codeMirror);
 
-    this._codeMirror = codeMirror;
-    this._stopCharactersRegex = stopCharactersRegex || null;
-    this._delegate = delegate || null;
+        this._codeMirror = codeMirror;
+        this._stopCharactersRegex = stopCharactersRegex || null;
+        this._delegate = delegate || null;
 
-    this._startOffset = NaN;
-    this._endOffset = NaN;
-    this._lineNumber = NaN;
-    this._prefix = "";
-    this._completions = [];
-    this._extendedCompletionProviders = {};
+        this._startOffset = NaN;
+        this._endOffset = NaN;
+        this._lineNumber = NaN;
+        this._prefix = "";
+        this._completions = [];
+        this._extendedCompletionProviders = {};
 
-    this._suggestionsView = new WebInspector.CompletionSuggestionsView(this);
+        this._suggestionsView = new WebInspector.CompletionSuggestionsView(this);
 
-    this._keyMap = {
-        "Up": this._handleUpKey.bind(this),
-        "Down": this._handleDownKey.bind(this),
-        "Right": this._handleRightOrEnterKey.bind(this),
-        "Esc": this._handleEscapeKey.bind(this),
-        "Enter": this._handleRightOrEnterKey.bind(this),
-        "Tab": this._handleTabKey.bind(this),
-        "Cmd-A": this._handleHideKey.bind(this),
-        "Cmd-Z": this._handleHideKey.bind(this),
-        "Shift-Cmd-Z": this._handleHideKey.bind(this),
-        "Cmd-Y": this._handleHideKey.bind(this)
-    };
+        this._keyMap = {
+            "Up": this._handleUpKey.bind(this),
+            "Down": this._handleDownKey.bind(this),
+            "Right": this._handleRightOrEnterKey.bind(this),
+            "Esc": this._handleEscapeKey.bind(this),
+            "Enter": this._handleRightOrEnterKey.bind(this),
+            "Tab": this._handleTabKey.bind(this),
+            "Cmd-A": this._handleHideKey.bind(this),
+            "Cmd-Z": this._handleHideKey.bind(this),
+            "Shift-Cmd-Z": this._handleHideKey.bind(this),
+            "Cmd-Y": this._handleHideKey.bind(this)
+        };
 
-    this._handleChangeListener = this._handleChange.bind(this);
-    this._handleCursorActivityListener = this._handleCursorActivity.bind(this);
-    this._handleHideActionListener = this._handleHideAction.bind(this);
+        this._handleChangeListener = this._handleChange.bind(this);
+        this._handleCursorActivityListener = this._handleCursorActivity.bind(this);
+        this._handleHideActionListener = this._handleHideAction.bind(this);
 
-    this._codeMirror.addKeyMap(this._keyMap);
+        this._codeMirror.addKeyMap(this._keyMap);
 
-    this._codeMirror.on("change", this._handleChangeListener);
-    this._codeMirror.on("cursorActivity", this._handleCursorActivityListener);
-    this._codeMirror.on("blur", this._handleHideActionListener);
-    this._codeMirror.on("scroll", this._handleHideActionListener);
-};
-
-WebInspector.CodeMirrorCompletionController.GenericStopCharactersRegex = /[\s=:;,]/;
-WebInspector.CodeMirrorCompletionController.DefaultStopCharactersRegexModeMap = {"css": /[\s:;,{}()]/, "javascript": /[\s=:;,!+\-*/%&|^~?<>.{}()[\]]/};
-WebInspector.CodeMirrorCompletionController.BaseExpressionStopCharactersRegexModeMap = {"javascript": /[\s=:;,!+\-*/%&|^~?<>]/};
-WebInspector.CodeMirrorCompletionController.OpenBracketCharactersRegex = /[({[]/;
-WebInspector.CodeMirrorCompletionController.CloseBracketCharactersRegex = /[)}\]]/;
-WebInspector.CodeMirrorCompletionController.MatchingBrackets = {"{": "}", "(": ")", "[": "]", "}": "{", ")": "(", "]": "["};
-WebInspector.CodeMirrorCompletionController.CompletionHintStyleClassName = "completion-hint";
-WebInspector.CodeMirrorCompletionController.CompletionsHiddenDelay = 250;
-WebInspector.CodeMirrorCompletionController.CompletionTypingDelay = 250;
-WebInspector.CodeMirrorCompletionController.CompletionOrigin = "+completion";
-WebInspector.CodeMirrorCompletionController.DeleteCompletionOrigin = "+delete-completion";
-
-WebInspector.CodeMirrorCompletionController.prototype = {
-    constructor: WebInspector.CodeMirrorCompletionController,
+        this._codeMirror.on("change", this._handleChangeListener);
+        this._codeMirror.on("cursorActivity", this._handleCursorActivityListener);
+        this._codeMirror.on("blur", this._handleHideActionListener);
+        this._codeMirror.on("scroll", this._handleHideActionListener);
+    }
 
     // Public
 
     get delegate()
     {
         return this._delegate;
-    },
+    }
 
-    addExtendedCompletionProvider: function(modeName, provider)
+    addExtendedCompletionProvider(modeName, provider)
     {
         this._extendedCompletionProviders[modeName] = provider;
-    },
+    }
 
-    updateCompletions: function(completions, implicitSuffix)
+    updateCompletions(completions, implicitSuffix)
     {
         if (isNaN(this._startOffset) || isNaN(this._endOffset) || isNaN(this._lineNumber))
             return;
@@ -138,24 +124,24 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         }
 
         this._applyCompletionHint(completions[index]);
-    },
+    }
 
-    isCompletionChange: function(change)
+    isCompletionChange(change)
     {
         return this._ignoreChange || change.origin === WebInspector.CodeMirrorCompletionController.CompletionOrigin || change.origin === WebInspector.CodeMirrorCompletionController.DeleteCompletionOrigin;
-    },
+    }
 
-    isShowingCompletions: function()
+    isShowingCompletions()
     {
         return this._suggestionsView.visible || (this._completionHintMarker && this._completionHintMarker.find());
-    },
+    }
 
-    isHandlingClickEvent: function()
+    isHandlingClickEvent()
     {
         return this._suggestionsView.isHandlingClickEvent();
-    },
+    }
 
-    hideCompletions: function()
+    hideCompletions()
     {
         this._suggestionsView.hide();
 
@@ -171,9 +157,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
 
         delete this._currentCompletion;
         delete this._ignoreNextCursorActivity;
-    },
+    }
 
-    close: function()
+    close()
     {
         this._codeMirror.removeKeyMap(this._keyMap);
 
@@ -181,37 +167,37 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         this._codeMirror.off("cursorActivity", this._handleCursorActivityListener);
         this._codeMirror.off("blur", this._handleHideActionListener);
         this._codeMirror.off("scroll", this._handleHideActionListener);
-    },
+    }
 
     // Protected
 
-    completionSuggestionsSelectedCompletion: function(suggestionsView, completionText)
+    completionSuggestionsSelectedCompletion(suggestionsView, completionText)
     {
         this._applyCompletionHint(completionText);
-    },
+    }
 
-    completionSuggestionsClickedCompletion: function(suggestionsView, completionText)
+    completionSuggestionsClickedCompletion(suggestionsView, completionText)
     {
         // The clicked suggestion causes the editor to loose focus. Restore it so the user can keep typing.
         this._codeMirror.focus();
 
         this._applyCompletionHint(completionText);
         this._commitCompletionHint();
-    },
+    }
 
     // Private
 
     get _currentReplacementText()
     {
         return this._currentCompletion + this._implicitSuffix;
-    },
+    }
 
-    _hasPendingCompletion: function()
+    _hasPendingCompletion()
     {
         return !isNaN(this._startOffset) && !isNaN(this._endOffset) && !isNaN(this._lineNumber);
-    },
+    }
 
-    _notifyCompletionsHiddenSoon: function()
+    _notifyCompletionsHiddenSoon()
     {
         function notify()
         {
@@ -225,9 +211,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         if (this._notifyCompletionsHiddenIfNeededTimeout)
             clearTimeout(this._notifyCompletionsHiddenIfNeededTimeout);
         this._notifyCompletionsHiddenIfNeededTimeout = setTimeout(notify.bind(this), WebInspector.CodeMirrorCompletionController.CompletionsHiddenDelay);
-    },
+    }
 
-    _applyCompletionHint: function(completionText)
+    _applyCompletionHint(completionText)
     {
         console.assert(completionText);
         if (!completionText)
@@ -260,9 +246,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         this._codeMirror.operation(update.bind(this));
 
         delete this._ignoreChange;
-    },
+    }
 
-    _commitCompletionHint: function()
+    _commitCompletionHint()
     {
         function update()
         {
@@ -294,9 +280,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         this._codeMirror.operation(update.bind(this));
 
         delete this._ignoreChange;
-    },
+    }
 
-    _removeLastChangeFromHistory: function()
+    _removeLastChangeFromHistory()
     {
         var history = this._codeMirror.getHistory();
 
@@ -309,9 +295,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         history.done.pop();
 
         this._codeMirror.setHistory(history);
-    },
+    }
 
-    _removeCompletionHint: function(nonatomic, dontRestorePrefix)
+    _removeCompletionHint(nonatomic, dontRestorePrefix)
     {
         if (!this._completionHintMarker)
             return;
@@ -354,9 +340,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         this._codeMirror.operation(update.bind(this));
 
         delete this._ignoreChange;
-    },
+    }
 
-    _scanStringForExpression: function(modeName, string, startOffset, direction, allowMiddleAndEmpty, includeStopCharacter, ignoreInitialUnmatchedOpenBracket, stopCharactersRegex)
+    _scanStringForExpression(modeName, string, startOffset, direction, allowMiddleAndEmpty, includeStopCharacter, ignoreInitialUnmatchedOpenBracket, stopCharactersRegex)
     {
         console.assert(direction === -1 || direction === 1);
 
@@ -429,9 +415,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         }
 
         return {string: string.substring(startOffset, endOffset), startOffset, endOffset};
-    },
+    }
 
-    _completeAtCurrentPosition: function(force)
+    _completeAtCurrentPosition(force)
     {
         if (this._codeMirror.somethingSelected()) {
             this.hideCompletions();
@@ -505,9 +491,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
             this._delegate.completionControllerCompletionsNeeded(this, this._prefix, defaultCompletions, baseScanResult ? baseScanResult.string : null, suffix, force);
         else
             this.updateCompletions(defaultCompletions);
-    },
+    }
 
-    _generateCSSCompletions: function(mainToken, base, suffix)
+    _generateCSSCompletions(mainToken, base, suffix)
     {
         // We only support completion inside CSS block context.
         if (mainToken.state.state === "media" || mainToken.state.state === "top" || mainToken.state.state === "parens")
@@ -551,9 +537,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
 
         // Complete property names.
         return WebInspector.CSSCompletions.cssNameCompletions.startsWith(this._prefix);
-    },
+    }
 
-    _generateJavaScriptCompletions: function(mainToken, base, suffix)
+    _generateJavaScriptCompletions(mainToken, base, suffix)
     {
         // If there is a base expression then we should not attempt to match any keywords or variables.
         // Allow only open bracket characters at the end of the base, otherwise leave completions with
@@ -563,25 +549,25 @@ WebInspector.CodeMirrorCompletionController.prototype = {
 
         var matchingWords = [];
 
-        const prefix = this._prefix;
+        var prefix = this._prefix;
 
         var localState = mainToken.state.localState ? mainToken.state.localState : mainToken.state;
 
-        const declaringVariable = localState.lexical.type === "vardef";
-        const insideSwitch = localState.lexical.prev ? localState.lexical.prev.info === "switch" : false;
-        const insideBlock = localState.lexical.prev ? localState.lexical.prev.type === "}" : false;
-        const insideParenthesis = localState.lexical.type === ")";
-        const insideBrackets = localState.lexical.type === "]";
+        var declaringVariable = localState.lexical.type === "vardef";
+        var insideSwitch = localState.lexical.prev ? localState.lexical.prev.info === "switch" : false;
+        var insideBlock = localState.lexical.prev ? localState.lexical.prev.type === "}" : false;
+        var insideParenthesis = localState.lexical.type === ")";
+        var insideBrackets = localState.lexical.type === "]";
 
-        const allKeywords = ["break", "case", "catch", "const", "continue", "debugger", "default", "delete", "do", "else", "false", "finally", "for", "function", "if", "in",
+        var allKeywords = ["break", "case", "catch", "const", "continue", "debugger", "default", "delete", "do", "else", "false", "finally", "for", "function", "if", "in",
             "Infinity", "instanceof", "NaN", "new", "null", "return", "switch", "this", "throw", "true", "try", "typeof", "undefined", "var", "void", "while", "with"];
-        const valueKeywords = ["false", "Infinity", "NaN", "null", "this", "true", "undefined"];
+        var valueKeywords = ["false", "Infinity", "NaN", "null", "this", "true", "undefined"];
 
-        const allowedKeywordsInsideBlocks = allKeywords.keySet();
-        const allowedKeywordsWhenDeclaringVariable = valueKeywords.keySet();
-        const allowedKeywordsInsideParenthesis = valueKeywords.concat(["function"]).keySet();
-        const allowedKeywordsInsideBrackets = allowedKeywordsInsideParenthesis;
-        const allowedKeywordsOnlyInsideSwitch = ["case", "default"].keySet();
+        var allowedKeywordsInsideBlocks = allKeywords.keySet();
+        var allowedKeywordsWhenDeclaringVariable = valueKeywords.keySet();
+        var allowedKeywordsInsideParenthesis = valueKeywords.concat(["function"]).keySet();
+        var allowedKeywordsInsideBrackets = allowedKeywordsInsideParenthesis;
+        var allowedKeywordsOnlyInsideSwitch = ["case", "default"].keySet();
 
         function matchKeywords(keywords)
         {
@@ -663,9 +649,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         }
 
         return matchingWords;
-    },
+    }
 
-    _handleUpKey: function(codeMirror)
+    _handleUpKey(codeMirror)
     {
         if (!this._hasPendingCompletion())
             return CodeMirror.Pass;
@@ -674,9 +660,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
             return;
 
         this._suggestionsView.selectPrevious();
-    },
+    }
 
-    _handleDownKey: function(codeMirror)
+    _handleDownKey(codeMirror)
     {
         if (!this._hasPendingCompletion())
             return CodeMirror.Pass;
@@ -685,9 +671,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
             return;
 
         this._suggestionsView.selectNext();
-    },
+    }
 
-    _handleRightOrEnterKey: function(codeMirror)
+    _handleRightOrEnterKey(codeMirror)
     {
         if (!this._hasPendingCompletion())
             return CodeMirror.Pass;
@@ -696,9 +682,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
             return;
 
         this._commitCompletionHint();
-    },
+    }
 
-    _handleEscapeKey: function(codeMirror)
+    _handleEscapeKey(codeMirror)
     {
         var delegateImplementsShouldAllowEscapeCompletion = this._delegate && typeof this._delegate.completionControllerShouldAllowEscapeCompletion === "function";
         if (this._hasPendingCompletion())
@@ -709,9 +695,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
             this._completeAtCurrentPosition(true);
         else
             return CodeMirror.Pass;
-    },
+    }
 
-    _handleTabKey: function(codeMirror)
+    _handleTabKey(codeMirror)
     {
         if (!this._hasPendingCompletion())
             return CodeMirror.Pass;
@@ -759,9 +745,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         this._endOffset = this._startOffset + commonPrefix.length;
 
         this._applyCompletionHint(this._currentCompletion);
-    },
+    }
 
-    _handleChange: function(codeMirror, change)
+    _handleChange(codeMirror, change)
     {
         if (this.isCompletionChange(change))
             return;
@@ -778,9 +764,9 @@ WebInspector.CodeMirrorCompletionController.prototype = {
             return;
 
         this._completeAtCurrentPosition(false);
-    },
+    }
 
-    _handleCursorActivity: function(codeMirror)
+    _handleCursorActivity(codeMirror)
     {
         if (this._ignoreChange)
             return;
@@ -791,16 +777,16 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         }
 
         this.hideCompletions();
-    },
+    }
 
-    _handleHideKey: function(codeMirror)
+    _handleHideKey(codeMirror)
     {
         this.hideCompletions();
 
         return CodeMirror.Pass;
-    },
+    }
 
-    _handleHideAction: function(codeMirror)
+    _handleHideAction(codeMirror)
     {
         // Clicking a suggestion causes the editor to blur. We don't want to hide completions in this case.
         if (this.isHandlingClickEvent())
@@ -810,4 +796,14 @@ WebInspector.CodeMirrorCompletionController.prototype = {
     }
 };
 
-WebInspector.CodeMirrorCompletionController.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.CodeMirrorCompletionController.GenericStopCharactersRegex = /[\s=:;,]/;
+WebInspector.CodeMirrorCompletionController.DefaultStopCharactersRegexModeMap = {"css": /[\s:;,{}()]/, "javascript": /[\s=:;,!+\-*/%&|^~?<>.{}()[\]]/};
+WebInspector.CodeMirrorCompletionController.BaseExpressionStopCharactersRegexModeMap = {"javascript": /[\s=:;,!+\-*/%&|^~?<>]/};
+WebInspector.CodeMirrorCompletionController.OpenBracketCharactersRegex = /[({[]/;
+WebInspector.CodeMirrorCompletionController.CloseBracketCharactersRegex = /[)}\]]/;
+WebInspector.CodeMirrorCompletionController.MatchingBrackets = {"{": "}", "(": ")", "[": "]", "}": "{", ")": "(", "]": "["};
+WebInspector.CodeMirrorCompletionController.CompletionHintStyleClassName = "completion-hint";
+WebInspector.CodeMirrorCompletionController.CompletionsHiddenDelay = 250;
+WebInspector.CodeMirrorCompletionController.CompletionTypingDelay = 250;
+WebInspector.CodeMirrorCompletionController.CompletionOrigin = "+completion";
+WebInspector.CodeMirrorCompletionController.DeleteCompletionOrigin = "+delete-completion";

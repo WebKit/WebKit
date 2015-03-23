@@ -30,44 +30,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMTreeManager = function() {
-    this._idToDOMNode = {};
-    this._document = null;
-    this._attributeLoadNodeIds = {};
-    this._flows = new Map;
-    this._contentNodesToFlowsMap = new Map;
-    this._restoreSelectedNodeIsAllowed = true;
-
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-};
-
-// FIXME: Move to a WebInspector.Object subclass and we can remove this.
-WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.DOMTreeManager);
-
-WebInspector.DOMTreeManager.Event = {
-    AttributeModified: "dom-tree-manager-attribute-modified",
-    AttributeRemoved: "dom-tree-manager-attribute-removed",
-    CharacterDataModified: "dom-tree-manager-character-data-modified",
-    NodeInserted: "dom-tree-manager-node-inserted",
-    NodeRemoved: "dom-tree-manager-node-removed",
-    DocumentUpdated: "dom-tree-manager-document-updated",
-    ChildNodeCountUpdated: "dom-tree-manager-child-node-count-updated",
-    DOMNodeWasInspected: "dom-tree-manager-dom-node-was-inspected",
-    InspectModeStateChanged: "dom-tree-manager-inspect-mode-state-changed",
-    ContentFlowListWasUpdated: "dom-tree-manager-content-flow-list-was-updated",
-    ContentFlowWasAdded: "dom-tree-manager-content-flow-was-added",
-    ContentFlowWasRemoved: "dom-tree-manager-content-flow-was-removed",
-    RegionOversetChanged: "dom-tree-manager-region-overset-changed"
-};
-
-WebInspector.DOMTreeManager._flowPayloadHashKey = function(flowPayload)
+WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
 {
-    // Use the flow node id, to avoid collisions when we change main document id.
-    return flowPayload.documentNodeId + ":" + flowPayload.name;
-};
+    constructor()
+    {
+        super();
 
-WebInspector.DOMTreeManager.prototype = {
-    requestDocument: function(callback)
+        this._idToDOMNode = {};
+        this._document = null;
+        this._attributeLoadNodeIds = {};
+        this._flows = new Map;
+        this._contentNodesToFlowsMap = new Map;
+        this._restoreSelectedNodeIsAllowed = true;
+
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+    }
+
+    // Static
+
+    static _flowPayloadHashKey(flowPayload)
+    {
+        // Use the flow node id, to avoid collisions when we change main document id.
+        return flowPayload.documentNodeId + ":" + flowPayload.name;
+    }
+
+    // Public
+
+    requestDocument(callback)
     {
         if (this._document) {
             if (callback)
@@ -96,20 +85,22 @@ WebInspector.DOMTreeManager.prototype = {
         }
 
         DOMAgent.getDocument(onDocumentAvailable.bind(this));
-    },
+    }
 
-    pushNodeToFrontend: function(objectId, callback)
+    pushNodeToFrontend(objectId, callback)
     {
         this._dispatchWhenDocumentAvailable(DOMAgent.requestNode.bind(DOMAgent, objectId), callback);
-    },
+    }
 
-    pushNodeByPathToFrontend: function(path, callback)
+    pushNodeByPathToFrontend(path, callback)
     {
         var callbackCast = callback;
         this._dispatchWhenDocumentAvailable(DOMAgent.pushNodeByPathToFrontend.bind(DOMAgent, path), callbackCast);
-    },
+    }
 
-    _wrapClientCallback: function(callback)
+    // Private
+
+    _wrapClientCallback(callback)
     {
         if (!callback)
             return;
@@ -118,9 +109,9 @@ WebInspector.DOMTreeManager.prototype = {
                 console.error("Error during DOMAgent operation: " + error);
             callback(error ? null : result);
         };
-    },
+    }
 
-    _dispatchWhenDocumentAvailable: function(func, callback)
+    _dispatchWhenDocumentAvailable(func, callback)
     {
         var callbackWrapper = this._wrapClientCallback(callback);
 
@@ -134,9 +125,9 @@ WebInspector.DOMTreeManager.prototype = {
             }
         }
         this.requestDocument(onDocumentAvailable.bind(this));
-    },
+    }
 
-    _attributeModified: function(nodeId, name, value)
+    _attributeModified(nodeId, name, value)
     {
         var node = this._idToDOMNode[nodeId];
         if (!node)
@@ -144,9 +135,9 @@ WebInspector.DOMTreeManager.prototype = {
         node._setAttribute(name, value);
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.AttributeModified, {node, name});
         node.dispatchEventToListeners(WebInspector.DOMNode.Event.AttributeModified, {name});
-    },
+    }
 
-    _attributeRemoved: function(nodeId, name)
+    _attributeRemoved(nodeId, name)
     {
         var node = this._idToDOMNode[nodeId];
         if (!node)
@@ -154,18 +145,18 @@ WebInspector.DOMTreeManager.prototype = {
         node._removeAttribute(name);
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.AttributeRemoved, {node, name});
         node.dispatchEventToListeners(WebInspector.DOMNode.Event.AttributeRemoved, {name});
-    },
+    }
 
-    _inlineStyleInvalidated: function(nodeIds)
+    _inlineStyleInvalidated(nodeIds)
     {
         for (var i = 0; i < nodeIds.length; ++i)
             this._attributeLoadNodeIds[nodeIds[i]] = true;
         if ("_loadNodeAttributesTimeout" in this)
             return;
         this._loadNodeAttributesTimeout = setTimeout(this._loadNodeAttributes.bind(this), 0);
-    },
+    }
 
-    _loadNodeAttributes: function()
+    _loadNodeAttributes()
     {
         function callback(nodeId, error, attributes)
         {
@@ -188,26 +179,26 @@ WebInspector.DOMTreeManager.prototype = {
             DOMAgent.getAttributes(nodeIdAsNumber, callback.bind(this, nodeIdAsNumber));
         }
         this._attributeLoadNodeIds = {};
-    },
+    }
 
-    _characterDataModified: function(nodeId, newValue)
+    _characterDataModified(nodeId, newValue)
     {
         var node = this._idToDOMNode[nodeId];
         node._nodeValue = newValue;
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.CharacterDataModified, {node});
-    },
+    }
 
-    nodeForId: function(nodeId)
+    nodeForId(nodeId)
     {
         return this._idToDOMNode[nodeId];
-    },
+    }
 
-    _documentUpdated: function()
+    _documentUpdated()
     {
         this._setDocument(null);
-    },
+    }
 
-    _setDocument: function(payload)
+    _setDocument(payload)
     {
         this._idToDOMNode = {};
         if (payload && "nodeId" in payload)
@@ -215,14 +206,14 @@ WebInspector.DOMTreeManager.prototype = {
         else
             this._document = null;
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.DocumentUpdated, this._document);
-    },
+    }
 
-    _setDetachedRoot: function(payload)
+    _setDetachedRoot(payload)
     {
         new WebInspector.DOMNode(this, null, false, payload);
-    },
+    }
 
-    _setChildNodes: function(parentId, payloads)
+    _setChildNodes(parentId, payloads)
     {
         if (!parentId && payloads.length) {
             this._setDetachedRoot(payloads[0]);
@@ -231,48 +222,48 @@ WebInspector.DOMTreeManager.prototype = {
 
         var parent = this._idToDOMNode[parentId];
         parent._setChildrenPayload(payloads);
-    },
+    }
 
-    _childNodeCountUpdated: function(nodeId, newValue)
+    _childNodeCountUpdated(nodeId, newValue)
     {
         var node = this._idToDOMNode[nodeId];
         node.childNodeCount = newValue;
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.ChildNodeCountUpdated, node);
-    },
+    }
 
-    _childNodeInserted: function(parentId, prevId, payload)
+    _childNodeInserted(parentId, prevId, payload)
     {
         var parent = this._idToDOMNode[parentId];
         var prev = this._idToDOMNode[prevId];
         var node = parent._insertChild(prev, payload);
         this._idToDOMNode[node.id] = node;
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.NodeInserted, {node, parent});
-    },
+    }
 
-    _childNodeRemoved: function(parentId, nodeId)
+    _childNodeRemoved(parentId, nodeId)
     {
         var parent = this._idToDOMNode[parentId];
         var node = this._idToDOMNode[nodeId];
         parent._removeChild(node);
         this._unbind(node);
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.NodeRemoved, {node:node, parent});
-    },
+    }
 
-    _unbind: function(node)
+    _unbind(node)
     {
         this._removeContentNodeFromFlowIfNeeded(node);
 
         delete this._idToDOMNode[node.id];
         for (var i = 0; node.children && i < node.children.length; ++i)
             this._unbind(node.children[i]);
-    },
+    }
 
     get restoreSelectedNodeIsAllowed()
     {
         return this._restoreSelectedNodeIsAllowed;
-    },
+    }
 
-    inspectElement: function(nodeId)
+    inspectElement(nodeId)
     {
         var node = this._idToDOMNode[nodeId];
         if (node)
@@ -280,9 +271,9 @@ WebInspector.DOMTreeManager.prototype = {
 
         this._inspectModeEnabled = false;
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.InspectModeStateChanged);
-    },
+    }
 
-    inspectNodeObject: function(remoteObject)
+    inspectNodeObject(remoteObject)
     {
         this._restoreSelectedNodeIsAllowed = false;
 
@@ -298,9 +289,9 @@ WebInspector.DOMTreeManager.prototype = {
         }
 
         remoteObject.pushNodeToFrontend(nodeAvailable.bind(this));
-    },
+    }
 
-    performSearch: function(query, searchCallback)
+    performSearch(query, searchCallback)
     {
         this.cancelSearch();
 
@@ -310,49 +301,50 @@ WebInspector.DOMTreeManager.prototype = {
             searchCallback(resultsCount);
         }
         DOMAgent.performSearch(query, callback.bind(this));
-    },
+    }
 
-    searchResult: function(index, callback)
+    searchResult(index, callback)
     {
-        if (this._searchId) {
-            function mycallback(error, nodeIds)
-            {
-                if (error) {
-                    console.error(error);
-                    callback(null);
-                    return;
-                }
-                if (nodeIds.length !== 1)
-                    return;
-
-                callback(this._idToDOMNode[nodeIds[0]]);
+        function mycallback(error, nodeIds)
+        {
+            if (error) {
+                console.error(error);
+                callback(null);
+                return;
             }
-            DOMAgent.getSearchResults(this._searchId, index, index + 1, mycallback.bind(this));
-        } else
-            callback(null);
-    },
+            if (nodeIds.length !== 1)
+                return;
 
-    cancelSearch: function()
+            callback(this._idToDOMNode[nodeIds[0]]);
+        }
+
+        if (this._searchId)
+            DOMAgent.getSearchResults(this._searchId, index, index + 1, mycallback.bind(this));
+        else
+            callback(null);
+    }
+
+    cancelSearch()
     {
         if (this._searchId) {
             DOMAgent.discardSearchResults(this._searchId);
             delete this._searchId;
         }
-    },
+    }
 
-    querySelector: function(nodeId, selectors, callback)
+    querySelector(nodeId, selectors, callback)
     {
         var callbackCast = callback;
         DOMAgent.querySelector(nodeId, selectors, this._wrapClientCallback(callbackCast));
-    },
+    }
 
-    querySelectorAll: function(nodeId, selectors, callback)
+    querySelectorAll(nodeId, selectors, callback)
     {
         var callbackCast = callback;
         DOMAgent.querySelectorAll(nodeId, selectors, this._wrapClientCallback(callbackCast));
-    },
+    }
 
-    highlightDOMNode: function(nodeId, mode)
+    highlightDOMNode(nodeId, mode)
     {
         if (this._hideDOMNodeHighlightTimeout) {
             clearTimeout(this._hideDOMNodeHighlightTimeout);
@@ -364,9 +356,9 @@ WebInspector.DOMTreeManager.prototype = {
             DOMAgent.highlightNode.invoke({nodeId, highlightConfig: this._buildHighlightConfig(mode)});
         else
             DOMAgent.hideHighlight();
-    },
+    }
 
-    highlightRect: function(rect, usePageCoordinates)
+    highlightRect(rect, usePageCoordinates)
     {
         DOMAgent.highlightRect.invoke({
             x: rect.x,
@@ -377,23 +369,23 @@ WebInspector.DOMTreeManager.prototype = {
             outlineColor: {r: 255, g: 229, b: 153, a: 0.66},
             usePageCoordinates
         });
-    },
+    }
 
-    hideDOMNodeHighlight: function()
+    hideDOMNodeHighlight()
     {
         this.highlightDOMNode(0);
-    },
+    }
 
-    highlightDOMNodeForTwoSeconds: function(nodeId)
+    highlightDOMNodeForTwoSeconds(nodeId)
     {
         this.highlightDOMNode(nodeId);
         this._hideDOMNodeHighlightTimeout = setTimeout(this.hideDOMNodeHighlight.bind(this), 2000);
-    },
+    }
 
     get inspectModeEnabled()
     {
         return this._inspectModeEnabled;
-    },
+    }
 
     set inspectModeEnabled(enabled)
     {
@@ -404,9 +396,9 @@ WebInspector.DOMTreeManager.prototype = {
         }
 
         DOMAgent.setInspectModeEnabled(enabled, this._buildHighlightConfig(), callback.bind(this));
-    },
+    }
 
-    _buildHighlightConfig: function(mode)
+    _buildHighlightConfig(mode)
     {
         mode = mode || "all";
         var highlightConfig = { showInfo: mode === "all" };
@@ -423,9 +415,9 @@ WebInspector.DOMTreeManager.prototype = {
             highlightConfig.marginColor = {r: 246, g: 178, b: 107, a: 0.66};
 
         return highlightConfig;
-    },
+    }
 
-    _createContentFlowFromPayload: function(flowPayload)
+    _createContentFlowFromPayload(flowPayload)
     {
         // FIXME: Collect the regions from the payload.
         var flow = new WebInspector.ContentFlow(flowPayload.documentNodeId, flowPayload.name, flowPayload.overset, flowPayload.content.map(this.nodeForId.bind(this)));
@@ -436,18 +428,18 @@ WebInspector.DOMTreeManager.prototype = {
         }
 
         return flow;
-    },
+    }
 
-    _updateContentFlowFromPayload: function(contentFlow, flowPayload)
+    _updateContentFlowFromPayload(contentFlow, flowPayload)
     {
         console.assert(contentFlow.contentNodes.length === flowPayload.content.length);
         console.assert(contentFlow.contentNodes.every(function(node, i) { node.id === flowPayload.content[i]; }));
 
         // FIXME: Collect the regions from the payload.
         contentFlow.overset = flowPayload.overset;
-    },
+    }
 
-    getNamedFlowCollection: function(documentNodeIdentifier)
+    getNamedFlowCollection(documentNodeIdentifier)
     {
         function onNamedFlowCollectionAvailable(error, flows)
         {
@@ -474,18 +466,18 @@ WebInspector.DOMTreeManager.prototype = {
 
         if (window.CSSAgent && CSSAgent.getNamedFlowCollection)
             CSSAgent.getNamedFlowCollection(documentNodeIdentifier, onNamedFlowCollectionAvailable.bind(this));
-    },
+    }
 
-    namedFlowCreated: function(flowPayload)
+    namedFlowCreated(flowPayload)
     {
         var flowKey = WebInspector.DOMTreeManager._flowPayloadHashKey(flowPayload);
         console.assert(!this._flows.has(flowKey));
         var contentFlow = this._createContentFlowFromPayload(flowPayload);
         this._flows.set(flowKey, contentFlow);
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.ContentFlowWasAdded, {flow: contentFlow});
-    },
+    }
 
-    namedFlowRemoved: function(documentNodeIdentifier, flowName)
+    namedFlowRemoved(documentNodeIdentifier, flowName)
     {
         var flowKey = WebInspector.DOMTreeManager._flowPayloadHashKey({documentNodeId: documentNodeIdentifier, name: flowName});
         var contentFlow = this._flows.get(flowKey);
@@ -497,21 +489,21 @@ WebInspector.DOMTreeManager.prototype = {
             this._contentNodesToFlowsMap.delete(contentNode.id);
 
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.ContentFlowWasRemoved, {flow: contentFlow});
-    },
+    }
 
-    _sendNamedFlowUpdateEvents: function(flowPayload)
+    _sendNamedFlowUpdateEvents(flowPayload)
     {
         var flowKey = WebInspector.DOMTreeManager._flowPayloadHashKey(flowPayload);
         console.assert(this._flows.has(flowKey));
         this._updateContentFlowFromPayload(this._flows.get(flowKey), flowPayload);
-    },
+    }
 
-    regionOversetChanged: function(flowPayload)
+    regionOversetChanged(flowPayload)
     {
         this._sendNamedFlowUpdateEvents(flowPayload);
-    },
+    }
 
-    registeredNamedFlowContentElement: function(documentNodeIdentifier, flowName, contentNodeId, nextContentElementNodeId)
+    registeredNamedFlowContentElement(documentNodeIdentifier, flowName, contentNodeId, nextContentElementNodeId)
     {
         var flowKey = WebInspector.DOMTreeManager._flowPayloadHashKey({documentNodeId: documentNodeIdentifier, name: flowName});
         console.assert(this._flows.has(flowKey));
@@ -526,18 +518,18 @@ WebInspector.DOMTreeManager.prototype = {
             flow.insertContentNodeBefore(contentNode, this.nodeForId(nextContentElementNodeId));
         else
             flow.appendContentNode(contentNode);
-    },
+    }
 
-    _removeContentNodeFromFlowIfNeeded: function(node)
+    _removeContentNodeFromFlowIfNeeded(node)
     {
         if (!this._contentNodesToFlowsMap.has(node.id))
             return;
         var flow = this._contentNodesToFlowsMap.get(node.id);
         this._contentNodesToFlowsMap.delete(node.id);
         flow.removeContentNode(node);
-    },
+    }
 
-    unregisteredNamedFlowContentElement: function(documentNodeIdentifier, flowName, contentNodeId)
+    unregisteredNamedFlowContentElement(documentNodeIdentifier, flowName, contentNodeId)
     {
         console.assert(this._contentNodesToFlowsMap.has(contentNodeId));
 
@@ -546,9 +538,9 @@ WebInspector.DOMTreeManager.prototype = {
 
         this._contentNodesToFlowsMap.delete(contentNodeId);
         flow.removeContentNode(this.nodeForId(contentNodeId));
-    },
+    }
 
-    _coerceRemoteArrayOfDOMNodes: function(objectId, callback)
+    _coerceRemoteArrayOfDOMNodes(objectId, callback)
     {
         var length, nodes, received = 0, lastError = null, domTreeManager = this;
 
@@ -587,9 +579,9 @@ WebInspector.DOMTreeManager.prototype = {
                 DOMAgent.requestNode(nodeProperty.value.objectId, nodeRequested.bind(null, i));
             }
         });
-    },
+    }
 
-    getNodeContentFlowInfo: function(domNode, resultReadyCallback)
+    getNodeContentFlowInfo(domNode, resultReadyCallback)
     {
         DOMAgent.resolveNode(domNode.id, domNodeResolved.bind(this));
 
@@ -712,15 +704,29 @@ WebInspector.DOMTreeManager.prototype = {
 
             return result;
         }
-    },
+    }
 
     // Private
 
-    _mainResourceDidChange: function(event)
+    _mainResourceDidChange(event)
     {
         if (event.target.isMainFrame())
             this._restoreSelectedNodeIsAllowed = true;
     }
 };
 
-WebInspector.DOMTreeManager.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.DOMTreeManager.Event = {
+    AttributeModified: "dom-tree-manager-attribute-modified",
+    AttributeRemoved: "dom-tree-manager-attribute-removed",
+    CharacterDataModified: "dom-tree-manager-character-data-modified",
+    NodeInserted: "dom-tree-manager-node-inserted",
+    NodeRemoved: "dom-tree-manager-node-removed",
+    DocumentUpdated: "dom-tree-manager-document-updated",
+    ChildNodeCountUpdated: "dom-tree-manager-child-node-count-updated",
+    DOMNodeWasInspected: "dom-tree-manager-dom-node-was-inspected",
+    InspectModeStateChanged: "dom-tree-manager-inspect-mode-state-changed",
+    ContentFlowListWasUpdated: "dom-tree-manager-content-flow-list-was-updated",
+    ContentFlowWasAdded: "dom-tree-manager-content-flow-was-added",
+    ContentFlowWasRemoved: "dom-tree-manager-content-flow-was-removed",
+    RegionOversetChanged: "dom-tree-manager-region-overset-changed"
+};

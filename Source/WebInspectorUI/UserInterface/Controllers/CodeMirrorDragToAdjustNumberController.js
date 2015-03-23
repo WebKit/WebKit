@@ -23,22 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CodeMirrorDragToAdjustNumberController = function(codeMirror)
+WebInspector.CodeMirrorDragToAdjustNumberController = class CodeMirrorDragToAdjustNumberController extends WebInspector.Object
 {
-    this._codeMirror = codeMirror;
+    constructor(codeMirror)
+    {
+        super();
 
-    this._dragToAdjustController = new WebInspector.DragToAdjustController(this);
-};
+        this._codeMirror = codeMirror;
 
-WebInspector.CodeMirrorDragToAdjustNumberController.prototype = {
-    constructor: WebInspector.CodeMirrorDragToAdjustNumberController,
+        this._dragToAdjustController = new WebInspector.DragToAdjustController(this);
+    }
 
     // Public
 
     get enabled()
     {
         return this._dragToAdjustController.enabled;
-    },
+    }
 
     set enabled(enabled)
     {
@@ -47,38 +48,38 @@ WebInspector.CodeMirrorDragToAdjustNumberController.prototype = {
 
         this._dragToAdjustController.element = this._codeMirror.getWrapperElement();
         this._dragToAdjustController.enabled = enabled;
-    },
+    }
 
     // Protected
 
-    dragToAdjustControllerActiveStateChanged: function(dragToAdjustController)
+    dragToAdjustControllerActiveStateChanged(dragToAdjustController)
     {
         if (!dragToAdjustController.active)
             this._hoveredTokenInfo = null;
-    },
+    }
 
-    dragToAdjustControllerCanBeActivated: function(dragToAdjustController)
+    dragToAdjustControllerCanBeActivated(dragToAdjustController)
     {
         return !this._codeMirror.getOption("readOnly");
-    },
+    }
 
-    dragToAdjustControllerCanBeAdjusted: function(dragToAdjustController)
+    dragToAdjustControllerCanBeAdjusted(dragToAdjustController)
     {
 
         return this._hoveredTokenInfo && this._hoveredTokenInfo.containsNumber;
-    },
+    }
 
-    dragToAdjustControllerWasAdjustedByAmount: function(dragToAdjustController, amount)
+    dragToAdjustControllerWasAdjustedByAmount(dragToAdjustController, amount)
     {
         this._codeMirror.alterNumberInRange(amount, this._hoveredTokenInfo.startPosition, this._hoveredTokenInfo.endPosition, false);
-    },
+    }
 
-    dragToAdjustControllerDidReset: function(dragToAdjustController)
+    dragToAdjustControllerDidReset(dragToAdjustController)
     {
         this._hoveredTokenInfo = null;
-    },
+    }
 
-    dragToAdjustControllerCanAdjustObjectAtPoint: function(dragToAdjustController, point)
+    dragToAdjustControllerCanAdjustObjectAtPoint(dragToAdjustController, point)
     {
         var position = this._codeMirror.coordsChar({left: point.x, top: point.y});
         var token = this._codeMirror.getTokenAt(position);

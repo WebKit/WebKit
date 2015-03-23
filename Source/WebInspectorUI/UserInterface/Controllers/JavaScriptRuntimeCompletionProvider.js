@@ -23,16 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.JavaScriptRuntimeCompletionProvider = function()
-{
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
-
-    console.assert(!WebInspector.JavaScriptRuntimeCompletionProvider._instance);
-
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._clearLastProperties, this);
-};
-
 Object.defineProperty(WebInspector, "javaScriptRuntimeCompletionProvider",
 {
     get: function()
@@ -43,12 +33,20 @@ Object.defineProperty(WebInspector, "javaScriptRuntimeCompletionProvider",
     }
 });
 
-WebInspector.JavaScriptRuntimeCompletionProvider.prototype = {
-    constructor: WebInspector.JavaScriptRuntimeCompletionProvider,
+WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvider extends WebInspector.Object
+{
+    constructor()
+    {
+        super();
+
+        console.assert(!WebInspector.JavaScriptRuntimeCompletionProvider._instance);
+
+        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._clearLastProperties, this);
+    }
 
     // Protected
 
-    completionControllerCompletionsNeeded: function(completionController, defaultCompletions, base, prefix, suffix, forced)
+    completionControllerCompletionsNeeded(completionController, defaultCompletions, base, prefix, suffix, forced)
     {
         // Don't allow non-forced empty prefix completions unless the base is that start of property access.
         if (!forced && !prefix && !/[.[]$/.test(base)) {
@@ -231,11 +229,11 @@ WebInspector.JavaScriptRuntimeCompletionProvider.prototype = {
 
             completionController.updateCompletions(completions, implicitSuffix);
         }
-    },
+    }
 
     // Private
 
-    _clearLastProperties: function()
+    _clearLastProperties()
     {
         if (this._clearLastPropertiesTimeout) {
             clearTimeout(this._clearLastPropertiesTimeout);
@@ -247,5 +245,3 @@ WebInspector.JavaScriptRuntimeCompletionProvider.prototype = {
         this._lastPropertyNames = null;
     }
 };
-
-WebInspector.JavaScriptRuntimeCompletionProvider.prototype.__proto__ = WebInspector.Object.prototype;

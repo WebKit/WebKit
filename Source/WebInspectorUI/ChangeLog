@@ -1,3 +1,33 @@
+2015-03-22  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Adopt ES6 Class Syntax for all Controller Objects
+        https://bugs.webkit.org/show_bug.cgi?id=142890
+
+        Reviewed by Joseph Pecoraro.
+
+        - Convert all UserInterface/Controllers objects to classes
+        - Convert constructor functions to constructor methods
+        - Convert "constructor.method" to class static methods where possible
+        - Convert all methods to method syntax, eliminate commas between methods
+        - Convert all superclass calls in classes to use "super"
+        - Removed FIXME from WebInspector.Object subclasses, added calls to super.
+        - Fixed strict mode issues now that classes enforce strict mode (see below).
+
+        * Tools/PrettyPrinting/Formatter.js:
+        * Tools/PrettyPrinting/FormatterContentBuilder.js:
+        Updated to match corresponding files in UserInterface/Controllers.
+
+        * UserInterface/Controllers/*.js:
+        Many files modified mostly mechanically (regex find-replace).
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        * UserInterface/Controllers/FormatterContentBuilder.js:
+        Replaced const usage with var. Use of const is prohibited in strict mode, which is implicit within a class.
+
+        * UserInterface/Controllers/CodeMirrorTokenTrackingController.js:
+        * UserInterface/Controllers/DOMTreeManager.js:
+        Moved function declarations out of if statements. Strict mode does not allow function declarations in a lexically nested statement.
+
 2015-03-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Fast typing lags in the Styles sidebar or Console

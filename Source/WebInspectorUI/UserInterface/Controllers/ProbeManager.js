@@ -24,61 +24,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProbeManager = function()
+WebInspector.ProbeManager = class ProbeManager extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    // Used to detect deleted probe actions.
-    this._knownProbeIdentifiersForBreakpoint = new Map;
+        // Used to detect deleted probe actions.
+        this._knownProbeIdentifiersForBreakpoint = new Map;
 
-    // Main lookup tables for probes and probe sets.
-    this._probesByIdentifier = new Map;
-    this._probeSetsByBreakpoint = new Map;
+        // Main lookup tables for probes and probe sets.
+        this._probesByIdentifier = new Map;
+        this._probeSetsByBreakpoint = new Map;
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointAdded, this._breakpointAdded, this);
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointRemoved, this._breakpointRemoved, this);
-    WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ActionsDidChange, this._breakpointActionsChanged, this);
+        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointAdded, this._breakpointAdded, this);
+        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointRemoved, this._breakpointRemoved, this);
+        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ActionsDidChange, this._breakpointActionsChanged, this);
 
-    // Saved breakpoints should not be restored on the first event loop turn, because it
-    // makes manager initialization order very fragile. No breakpoints should be available.
-    console.assert(!WebInspector.debuggerManager.breakpoints.length, "No breakpoints should exist before all the managers are constructed.");
-}
-
-WebInspector.ProbeManager.Event = {
-    ProbeSetAdded: "probe-manager-probe-set-added",
-    ProbeSetRemoved: "probe-manager-probe-set-removed",
-};
-
-WebInspector.ProbeManager.prototype = {
-    constructor: WebInspector.ProbeManager,
-    __proto__: WebInspector.Object.prototype,
+        // Saved breakpoints should not be restored on the first event loop turn, because it
+        // makes manager initialization order very fragile. No breakpoints should be available.
+        console.assert(!WebInspector.debuggerManager.breakpoints.length, "No breakpoints should exist before all the managers are constructed.");
+    }
 
     // Public
 
     get probeSets()
     {
         return [...this._probeSetsByBreakpoint.values()];
-    },
+    }
 
-    probeForIdentifier: function(identifier)
+    probeForIdentifier(identifier)
     {
         return this._probesByIdentifier.get(identifier);
-    },
+    }
 
     // Protected (called by WebInspector.DebuggerObserver)
 
-    didSampleProbe: function(sample)
+    didSampleProbe(sample)
     {
         console.assert(this._probesByIdentifier.has(sample.probeId), "Unknown probe identifier specified for sample: ", sample);
         var probe = this._probesByIdentifier.get(sample.probeId);
         var elapsedTime = WebInspector.timelineManager.computeElapsedTime(sample.timestamp);
         probe.addSample(new WebInspector.ProbeSample(sample.sampleId, sample.batchId, elapsedTime, sample.payload));
-    },
+    }
 
     // Private
 
-    _breakpointAdded: function(breakpointOrEvent)
+    _breakpointAdded(breakpointOrEvent)
     {
         var breakpoint;
         if (breakpointOrEvent instanceof WebInspector.Breakpoint)
@@ -94,18 +86,18 @@ WebInspector.ProbeManager.prototype = {
         this._knownProbeIdentifiersForBreakpoint.set(breakpoint, new Set);
 
         this._breakpointActionsChanged(breakpoint);
-    },
+    }
 
-    _breakpointRemoved: function(event)
+    _breakpointRemoved(event)
     {
         var breakpoint = event.data.breakpoint;
         console.assert(this._knownProbeIdentifiersForBreakpoint.has(breakpoint));
 
         this._breakpointActionsChanged(breakpoint);
         this._knownProbeIdentifiersForBreakpoint.delete(breakpoint);
-    },
+    }
 
-    _breakpointActionsChanged: function(breakpointOrEvent)
+    _breakpointActionsChanged(breakpointOrEvent)
     {
         var breakpoint;
         if (breakpointOrEvent instanceof WebInspector.Breakpoint)
@@ -164,9 +156,9 @@ WebInspector.ProbeManager.prototype = {
                 this.dispatchEventToListeners(WebInspector.ProbeManager.Event.ProbeSetRemoved, {probeSet});
             }
         }, this);
-    },
+    }
 
-    _probeSetForBreakpoint: function(breakpoint)
+    _probeSetForBreakpoint(breakpoint)
     {
         if (this._probeSetsByBreakpoint.has(breakpoint))
             return this._probeSetsByBreakpoint.get(breakpoint);
@@ -176,4 +168,9 @@ WebInspector.ProbeManager.prototype = {
         this.dispatchEventToListeners(WebInspector.ProbeManager.Event.ProbeSetAdded, {probeSet: newProbeSet});
         return newProbeSet;
     }
+};
+
+WebInspector.ProbeManager.Event = {
+    ProbeSetAdded: "probe-manager-probe-set-added",
+    ProbeSetRemoved: "probe-manager-probe-set-removed",
 };

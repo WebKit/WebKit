@@ -23,58 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.AnalyzerManager = function()
+WebInspector.AnalyzerManager = class AnalyzerManager extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    this._eslintConfig = {
-        env: {
-            "browser": true,
-            "node": false
-        },
-        globals: {
-            "document": true
-        },
-        rules: {
-            "consistent-return": 2,
-            "curly": 0,
-            "eqeqeq": 0,
-            "new-parens": 0,
-            "no-comma-dangle": 0,
-            "no-console": 0,
-            "no-constant-condition": 0,
-            "no-extra-bind": 2,
-            "no-extra-semi": 2,
-            "no-proto": 0,
-            "no-return-assign": 2,
-            "no-trailing-spaces": 2,
-            "no-underscore-dangle": 0,
-            "no-unused-expressions": 2,
-            "no-wrap-func": 2,
-            "semi": 2,
-            "space-infix-ops": 2,
-            "space-return-throw-case": 2,
-            "strict": 0,
-            "valid-typeof": 2
-        }
-    };
+        this._eslintConfig = {
+            env: {
+                "browser": true,
+                "node": false
+            },
+            globals: {
+                "document": true
+            },
+            rules: {
+                "consistent-return": 2,
+                "curly": 0,
+                "eqeqeq": 0,
+                "new-parens": 0,
+                "no-comma-dangle": 0,
+                "no-console": 0,
+                "no-constant-condition": 0,
+                "no-extra-bind": 2,
+                "no-extra-semi": 2,
+                "no-proto": 0,
+                "no-return-assign": 2,
+                "no-trailing-spaces": 2,
+                "no-underscore-dangle": 0,
+                "no-unused-expressions": 2,
+                "no-wrap-func": 2,
+                "semi": 2,
+                "space-infix-ops": 2,
+                "space-return-throw-case": 2,
+                "strict": 0,
+                "valid-typeof": 2
+            }
+        };
 
-    this._sourceCodeMessagesMap = new WeakMap;
+        this._sourceCodeMessagesMap = new WeakMap;
 
-    WebInspector.SourceCode.addEventListener(WebInspector.SourceCode.Event.ContentDidChange, this._handleSourceCodeContentDidChange, this);
-};
-
-WebInspector.AnalyzerManager._typeAnalyzerMap = new Map;
-WebInspector.AnalyzerManager._typeAnalyzerMap.set(WebInspector.Resource.Type.Script, eslint);
-
-WebInspector.AnalyzerManager.prototype = {
-    constructor: WebInspector.AnalyzerManager,
-    __proto__: WebInspector.Object.prototype,
+        WebInspector.SourceCode.addEventListener(WebInspector.SourceCode.Event.ContentDidChange, this._handleSourceCodeContentDidChange, this);
+    }
 
     // Public
 
-    getAnalyzerMessagesForSourceCode: function(sourceCode)
+    getAnalyzerMessagesForSourceCode(sourceCode)
     {
         return new Promise(function(resolve, reject) {
             var analyzer = WebInspector.AnalyzerManager._typeAnalyzerMap.get(sourceCode.type);
@@ -104,16 +98,16 @@ WebInspector.AnalyzerManager.prototype = {
 
             sourceCode.requestContent().then(retrieveAnalyzerMessages.bind(this));
         }.bind(this));
-    },
+    }
 
-    sourceCodeCanBeAnalyzed: function(sourceCode)
+    sourceCodeCanBeAnalyzed(sourceCode)
     {
         return sourceCode.type === WebInspector.Resource.Type.Script;
-    },
+    }
 
     // Private
 
-    _handleSourceCodeContentDidChange: function(event)
+    _handleSourceCodeContentDidChange(event)
     {
         var sourceCode = event.target;
 
@@ -121,3 +115,6 @@ WebInspector.AnalyzerManager.prototype = {
         this._sourceCodeMessagesMap.delete(sourceCode);
     }
 };
+
+WebInspector.AnalyzerManager._typeAnalyzerMap = new Map;
+WebInspector.AnalyzerManager._typeAnalyzerMap.set(WebInspector.Resource.Type.Script, eslint);

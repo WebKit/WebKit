@@ -23,64 +23,60 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.JavaScriptLogViewController = function(element, scrollElement, textPrompt, delegate, historySettingIdentifier)
+WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(element, scrollElement, textPrompt, delegate, historySettingIdentifier)
+    {
+        super();
 
-    console.assert(textPrompt instanceof WebInspector.ConsolePrompt);
-    console.assert(historySettingIdentifier);
+        console.assert(textPrompt instanceof WebInspector.ConsolePrompt);
+        console.assert(historySettingIdentifier);
 
-    this._element = element;
-    this._scrollElement = scrollElement;
+        this._element = element;
+        this._scrollElement = scrollElement;
 
-    this._promptHistorySetting = new WebInspector.Setting(historySettingIdentifier, null);
+        this._promptHistorySetting = new WebInspector.Setting(historySettingIdentifier, null);
 
-    this._prompt = textPrompt;
-    this._prompt.delegate = this;
-    this._prompt.history = this._promptHistorySetting.value;
+        this._prompt = textPrompt;
+        this._prompt.delegate = this;
+        this._prompt.history = this._promptHistorySetting.value;
 
-    this.delegate = delegate;
+        this.delegate = delegate;
 
-    this._cleared = true;
-    this._previousMessage = null;
-    this._repeatCountWasInterrupted = false;
+        this._cleared = true;
+        this._previousMessage = null;
+        this._repeatCountWasInterrupted = false;
 
-    this._sessions = [];
+        this._sessions = [];
 
-    this.messagesClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "K", this._handleClearShortcut.bind(this));
-    this.messagesAlternateClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, "L", this._handleClearShortcut.bind(this), this._element);
+        this.messagesClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "K", this._handleClearShortcut.bind(this));
+        this.messagesAlternateClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, "L", this._handleClearShortcut.bind(this), this._element);
 
-    this._messagesFindKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "F", this._handleFindShortcut.bind(this), this._element);
-    this._messagesFindNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._handleFindNextShortcut.bind(this), this._element);
-    this._messagesFindPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "G", this._handleFindPreviousShortcut.bind(this), this._element);
+        this._messagesFindKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "F", this._handleFindShortcut.bind(this), this._element);
+        this._messagesFindNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._handleFindNextShortcut.bind(this), this._element);
+        this._messagesFindPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "G", this._handleFindPreviousShortcut.bind(this), this._element);
 
-    this._promptAlternateClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, "L", this._handleClearShortcut.bind(this), this._prompt.element);
-    this._promptFindKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "F", this._handleFindShortcut.bind(this), this._prompt.element);
-    this._promptFindNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._handleFindNextShortcut.bind(this), this._prompt.element);
-    this._promptFindPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "G", this._handleFindPreviousShortcut.bind(this), this._prompt.element);
+        this._promptAlternateClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, "L", this._handleClearShortcut.bind(this), this._prompt.element);
+        this._promptFindKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "F", this._handleFindShortcut.bind(this), this._prompt.element);
+        this._promptFindNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._handleFindNextShortcut.bind(this), this._prompt.element);
+        this._promptFindPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "G", this._handleFindPreviousShortcut.bind(this), this._prompt.element);
 
-    this.startNewSession();
-};
-
-WebInspector.JavaScriptLogViewController.CachedPropertiesDuration = 30000;
-
-WebInspector.JavaScriptLogViewController.prototype = {
-    constructor: WebInspector.JavaScriptLogViewController,
+        this.startNewSession();
+    }
 
     // Public
 
     get prompt()
     {
         return this._prompt;
-    },
+    }
 
     get currentConsoleGroup()
     {
         return this._currentConsoleGroup;
-    },
+    }
 
-    clear: function()
+    clear()
     {
         this._cleared = true;
 
@@ -90,9 +86,9 @@ WebInspector.JavaScriptLogViewController.prototype = {
 
         if (this.delegate && typeof this.delegate.didClearMessages === "function")
             this.delegate.didClearMessages();
-    },
+    }
 
-    startNewSession: function(clearPreviousSessions)
+    startNewSession(clearPreviousSessions)
     {
         if (this._sessions.length && clearPreviousSessions) {
             for (var i = 0; i < this._sessions.length; ++i)
@@ -122,9 +118,9 @@ WebInspector.JavaScriptLogViewController.prototype = {
 
         // Make sure the new session is visible.
         consoleSession.element.scrollIntoView();
-    },
+    }
 
-    appendImmediateExecutionWithResult: function(text, result)
+    appendImmediateExecutionWithResult(text, result)
     {
         console.assert(result instanceof WebInspector.RemoteObject);
 
@@ -138,9 +134,9 @@ WebInspector.JavaScriptLogViewController.prototype = {
         }
 
         WebInspector.runtimeManager.saveResult(result, saveResultCallback.bind(this));
-    },
+    }
 
-    appendConsoleMessage: function(consoleMessage)
+    appendConsoleMessage(consoleMessage)
     {
         // Clone the message since there might be multiple clients using the message,
         // and since the message has a DOM element it can't be two places at once.
@@ -149,9 +145,9 @@ WebInspector.JavaScriptLogViewController.prototype = {
         this._appendConsoleMessage(messageClone);
 
         return messageClone;
-    },
+    }
 
-    updatePreviousMessageRepeatCount: function(count)
+    updatePreviousMessageRepeatCount(count)
     {
         console.assert(this._previousMessage);
         if (!this._previousMessage)
@@ -172,15 +168,15 @@ WebInspector.JavaScriptLogViewController.prototype = {
 
             this._appendConsoleMessage(newMessage);
         }
-    },
+    }
 
-    isScrolledToBottom: function()
+    isScrolledToBottom()
     {
         // Lie about being scrolled to the bottom if we have a pending request to scroll to the bottom soon.
         return this._scrollToBottomTimeout || this._scrollElement.isScrolledToBottom();
-    },
+    }
 
-    scrollToBottom: function()
+    scrollToBottom()
     {
         if (this._scrollToBottomTimeout)
             return;
@@ -194,16 +190,16 @@ WebInspector.JavaScriptLogViewController.prototype = {
         // Don't scroll immediately so we are not causing excessive layouts when there
         // are many messages being added at once.
         this._scrollToBottomTimeout = setTimeout(delayedWork.bind(this), 0);
-    },
+    }
 
     // Protected
 
-    consolePromptHistoryDidChange: function(prompt)
+    consolePromptHistoryDidChange(prompt)
     {
         this._promptHistorySetting.value = this.prompt.history;
-    },
+    }
 
-    consolePromptShouldCommitText: function(prompt, text, cursorIsAtLastPosition, handler)
+    consolePromptShouldCommitText(prompt, text, cursorIsAtLastPosition, handler)
     {
         // Always commit the text if we are not at the last position.
         if (!cursorIsAtLastPosition) {
@@ -223,9 +219,9 @@ WebInspector.JavaScriptLogViewController.prototype = {
         }
 
         RuntimeAgent.parse(text, parseFinished.bind(this));
-    },
+    }
 
-    consolePromptTextCommitted: function(prompt, text)
+    consolePromptTextCommitted(prompt, text)
     {
         console.assert(text);
 
@@ -243,31 +239,31 @@ WebInspector.JavaScriptLogViewController.prototype = {
         text += "\n//# sourceURL=__WebInspectorConsole__\n";
 
         WebInspector.runtimeManager.evaluateInInspectedWindow(text, "console", true, false, false, true, true, printResult.bind(this));
-    },
+    }
 
     // Private
 
-    _handleClearShortcut: function()
+    _handleClearShortcut()
     {
         this.clear();
-    },
+    }
 
-    _handleFindShortcut: function()
+    _handleFindShortcut()
     {
         this.delegate.focusSearchBar();
-    },
+    }
 
-    _handleFindNextShortcut: function()
+    _handleFindNextShortcut()
     {
         this.delegate.highlightNextSearchMatch();
-    },
+    }
 
-    _handleFindPreviousShortcut: function()
+    _handleFindPreviousShortcut()
     {
         this.delegate.highlightPreviousSearchMatch();
-    },
+    }
 
-    _appendConsoleMessage: function(msg, repeatCountWasInterrupted)
+    _appendConsoleMessage(msg, repeatCountWasInterrupted)
     {
         var wasScrolledToBottom = this.isScrolledToBottom();
 
@@ -299,4 +295,4 @@ WebInspector.JavaScriptLogViewController.prototype = {
     }
 };
 
-WebInspector.JavaScriptLogViewController.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.JavaScriptLogViewController.CachedPropertiesDuration = 30000;

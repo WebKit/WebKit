@@ -24,38 +24,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BasicBlockAnnotator = function(sourceCodeTextEditor, script)
+WebInspector.BasicBlockAnnotator = class BasicBlockAnnotator extends WebInspector.Annotator
 {
-    WebInspector.Annotator.call(this, sourceCodeTextEditor);
+    constructor(sourceCodeTextEditor, script)
+    {
+        super(sourceCodeTextEditor);
 
-    this._script = script;
-    this._basicBlockMarkers = new Map; // Only contains unexecuted basic blocks.
-};
-
-WebInspector.BasicBlockAnnotator.HasNotExecutedClassName = "basic-block-has-not-executed";
-
-WebInspector.BasicBlockAnnotator.prototype = {
-    constructor: WebInspector.BasicBlockAnnotator,
-    __proto__: WebInspector.Annotator.prototype,
+        this._script = script;
+        this._basicBlockMarkers = new Map; // Only contains unexecuted basic blocks.
+    }
 
     // Protected
 
-    clearAnnotations: function()
+    clearAnnotations()
     {
         for (var key of this._basicBlockMarkers.keys())
             this._clearRangeForBasicBlockMarker(key);
-    },
+    }
 
-    insertAnnotations: function()
+    insertAnnotations()
     {
         if (!this.isActive())
             return;
         this._annotateBasicBlockExecutionRanges();
-    },
+    }
 
     // Private
 
-    _annotateBasicBlockExecutionRanges: function()
+    _annotateBasicBlockExecutionRanges()
     {
         var sourceID = this._script.id;
         var startTime = Date.now();
@@ -90,9 +86,9 @@ WebInspector.BasicBlockAnnotator.prototype = {
             var timeoutTime = Math.min(Math.max(6500, totalTime), 30 * totalTime);
             this._timeoutIdentifier = setTimeout(this.insertAnnotations.bind(this), timeoutTime);
         }.bind(this));
-    },
+    }
 
-    _highlightTextForBasicBlock: function(basicBlock)
+    _highlightTextForBasicBlock(basicBlock)
     {
         console.assert(basicBlock.startOffset <= basicBlock.endOffset && basicBlock.startOffset >= 0 && basicBlock.endOffset >= 0, "" + basicBlock.startOffset + ":" + basicBlock.endOffset);
         console.assert(!basicBlock.hasExecuted);
@@ -104,15 +100,15 @@ WebInspector.BasicBlockAnnotator.prototype = {
 
         var marker = this.sourceCodeTextEditor.addStyleToTextRange(startPosition, endPosition, WebInspector.BasicBlockAnnotator.HasNotExecutedClassName);
         return marker;
-    },
+    }
 
-    _isTextRangeOnlyClosingBrace: function(startPosition, endPosition)
+    _isTextRangeOnlyClosingBrace(startPosition, endPosition)
     {
         var isOnlyClosingBrace = /^\s*\}$/;
         return isOnlyClosingBrace.test(this.sourceCodeTextEditor.getTextInRange(startPosition, endPosition));
-    },
+    }
 
-    _clearRangeForBasicBlockMarker: function(key)
+    _clearRangeForBasicBlockMarker(key)
     {
         console.assert(this._basicBlockMarkers.has(key));
         var marker = this._basicBlockMarkers.get(key);
@@ -121,3 +117,5 @@ WebInspector.BasicBlockAnnotator.prototype = {
         this._basicBlockMarkers.delete(key);
     }
 };
+
+WebInspector.BasicBlockAnnotator.HasNotExecutedClassName = "basic-block-has-not-executed";

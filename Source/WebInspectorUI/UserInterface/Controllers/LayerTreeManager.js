@@ -23,31 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayerTreeManager = function() {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+WebInspector.LayerTreeManager = class LayerTreeManager extends WebInspector.Object
+{
+    constructor()
+    {
+        super();
 
-    this._supported = !!window.LayerTreeAgent;
+        this._supported = !!window.LayerTreeAgent;
 
-    if (this._supported)
-        LayerTreeAgent.enable();
-};
-
-WebInspector.LayerTreeManager.Event = {
-    LayerTreeDidChange: "layer-tree-did-change"
-};
-
-WebInspector.LayerTreeManager.prototype = {
-    constructor: WebInspector.LayerTreeManager,
+        if (this._supported)
+            LayerTreeAgent.enable();
+    }
 
     // Public
 
     get supported()
     {
         return this._supported;
-    },
+    }
 
-    layerTreeMutations: function(previousLayers, newLayers)
+    layerTreeMutations(previousLayers, newLayers)
     {
         console.assert(this.supported);
 
@@ -121,9 +116,9 @@ WebInspector.LayerTreeManager.prototype = {
         });
 
         return {preserved, additions, removals};
-    },
+    }
 
-    layersForNode: function(node, callback)
+    layersForNode(node, callback)
     {
         console.assert(this.supported);
 
@@ -137,21 +132,23 @@ WebInspector.LayerTreeManager.prototype = {
             var layerForNode = firstLayer.nodeId === node.id && !firstLayer.isGeneratedContent ? layers.shift() : null;
             callback(layerForNode, layers);
         });
-    },
+    }
 
-    reasonsForCompositingLayer: function(layer, callback)
+    reasonsForCompositingLayer(layer, callback)
     {
         console.assert(this.supported);
 
         LayerTreeAgent.reasonsForCompositingLayer(layer.layerId, function(error, reasons) {
             callback(error ? 0 : reasons);
         });
-    },
+    }
 
-    layerTreeDidChange: function()
+    layerTreeDidChange()
     {
         this.dispatchEventToListeners(WebInspector.LayerTreeManager.Event.LayerTreeDidChange);
     }
 };
 
-WebInspector.LayerTreeManager.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.LayerTreeManager.Event = {
+    LayerTreeDidChange: "layer-tree-did-change"
+};

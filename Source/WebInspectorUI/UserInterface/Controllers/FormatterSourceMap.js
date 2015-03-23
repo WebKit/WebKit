@@ -23,61 +23,61 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FormatterSourceMap = function(originalLineEndings, formattedLineEndings, mapping)
+WebInspector.FormatterSourceMap = class FormatterSourceMap extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(originalLineEndings, formattedLineEndings, mapping)
+    {
+        super();
 
-    this._originalLineEndings = originalLineEndings;
-    this._formattedLineEndings = formattedLineEndings;
-    this._mapping = mapping;
-};
+        this._originalLineEndings = originalLineEndings;
+        this._formattedLineEndings = formattedLineEndings;
+        this._mapping = mapping;
+    }
 
-WebInspector.FormatterSourceMap.fromBuilder = function(builder)
-{
-    return new WebInspector.FormatterSourceMap(builder.originalLineEndings, builder.formattedLineEndings, builder.mapping);
-};
+    // Static
 
-WebInspector.FormatterSourceMap.prototype = {
-    constructor: WebInspector.FormatterSourceMap,
+    static fromBuilder(builder)
+    {
+        return new WebInspector.FormatterSourceMap(builder.originalLineEndings, builder.formattedLineEndings, builder.mapping);
+    }
 
     // Public
 
-    originalToFormatted: function(lineNumber, columnNumber)
+    originalToFormatted(lineNumber, columnNumber)
     {
         var originalPosition = this._locationToPosition(this._originalLineEndings, lineNumber || 0, columnNumber || 0);
         return this.originalPositionToFormatted(originalPosition);
-    },
+    }
 
-    originalPositionToFormatted: function(originalPosition)
+    originalPositionToFormatted(originalPosition)
     {
         var formattedPosition = this._convertPosition(this._mapping.original, this._mapping.formatted, originalPosition);
         return this._positionToLocation(this._formattedLineEndings, formattedPosition);
-    },
+    }
 
 
-    formattedToOriginal: function(lineNumber, columnNumber)
+    formattedToOriginal(lineNumber, columnNumber)
     {
         var originalPosition = this.formattedToOriginalOffset(lineNumber, columnNumber);
         return this._positionToLocation(this._originalLineEndings, originalPosition);
-    },
+    }
 
-    formattedToOriginalOffset: function(lineNumber, columnNumber)
+    formattedToOriginalOffset(lineNumber, columnNumber)
     {
         var formattedPosition = this._locationToPosition(this._formattedLineEndings, lineNumber || 0, columnNumber || 0);
         var originalPosition = this._convertPosition(this._mapping.formatted, this._mapping.original, formattedPosition);
         return originalPosition;
-    },
+    }
 
     // Private
 
-    _locationToPosition: function(lineEndings, lineNumber, columnNumber)
+    _locationToPosition(lineEndings, lineNumber, columnNumber)
     {
         var lineOffset = lineNumber ? lineEndings[lineNumber - 1] + 1 : 0;
         return lineOffset + columnNumber;
-    },
+    }
 
-    _positionToLocation: function(lineEndings, position)
+    _positionToLocation(lineEndings, position)
     {
         var lineNumber = lineEndings.upperBound(position - 1);
         if (!lineNumber)
@@ -85,9 +85,9 @@ WebInspector.FormatterSourceMap.prototype = {
         else
             var columnNumber = position - lineEndings[lineNumber - 1] - 1;
         return {lineNumber, columnNumber};
-    },
+    }
 
-    _convertPosition: function(positions1, positions2, positionInPosition1)
+    _convertPosition(positions1, positions2, positionInPosition1)
     {
         var index = positions1.upperBound(positionInPosition1) - 1;
         var convertedPosition = positions2[index] + positionInPosition1 - positions1[index];
@@ -96,5 +96,3 @@ WebInspector.FormatterSourceMap.prototype = {
         return convertedPosition;
     }
 };
-
-WebInspector.FormatterSourceMap.__proto__ = WebInspector.Object;

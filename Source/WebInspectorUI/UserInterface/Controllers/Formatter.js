@@ -23,24 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function Formatter(codeMirror, builder)
+class Formatter
 {
-    console.assert(codeMirror);
-    console.assert(builder);
+    constructor(codeMirror, builder)
+    {
+        console.assert(codeMirror);
+        console.assert(builder);
 
-    this._codeMirror = codeMirror;
-    this._builder = builder;
+        this._codeMirror = codeMirror;
+        this._builder = builder;
 
-    this._lastToken = null;
-    this._lastContent = "";
-}
-
-Formatter.prototype = {
-    constructor: Formatter,
+        this._lastToken = null;
+        this._lastContent = "";
+    }
 
     // Public
 
-    format: function(from, to)
+    format(from, to)
     {
         console.assert(this._builder.originalContent === null);
         if (this._builder.originalContent !== null)
@@ -77,11 +76,11 @@ Formatter.prototype = {
         }
 
         this._builder.finish();
-    },
+    }
 
     // Private
 
-    _handleToken: function(mode, token, state, stream, originalPosition, isWhiteSpace, startOfNewLine, firstTokenOnLine)
+    _handleToken(mode, token, state, stream, originalPosition, isWhiteSpace, startOfNewLine, firstTokenOnLine)
     {
         // String content of the token.
         var content = stream.current();
@@ -146,17 +145,17 @@ Formatter.prototype = {
         // Record this token as the last token.
         this._lastToken = token;
         this._lastContent = content;
-    },
+    }
 
-    _handleEmptyLine: function()
+    _handleEmptyLine()
     {
         // Preserve original whitespace only lines by adding a newline.
         // However, don't do this if the builder just added multiple newlines.
         if (!(this._builder.lastTokenWasNewline && this._builder.lastNewlineAppendWasMultiple))
             this._builder.appendNewline(true);
-    },
+    }
 
-    _handleLineEnding: function(originalNewLinePosition)
+    _handleLineEnding(originalNewLinePosition)
     {
         // Record the original line ending.
         this._builder.addOriginalLineEnding(originalNewLinePosition);

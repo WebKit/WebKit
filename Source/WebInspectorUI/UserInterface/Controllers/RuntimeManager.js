@@ -23,26 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RuntimeManager = function()
+WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    // Enable the RuntimeAgent to receive notification of execution contexts.
-    if (RuntimeAgent.enable)
-        RuntimeAgent.enable();
-};
-
-WebInspector.RuntimeManager.Event = {
-    DidEvaluate: "runtime-manager-did-evaluate"
-};
-
-WebInspector.RuntimeManager.prototype = {
-    constructor: WebInspector.RuntimeManager,
+        // Enable the RuntimeAgent to receive notification of execution contexts.
+        if (RuntimeAgent.enable)
+            RuntimeAgent.enable();
+    }
 
     // Public
 
-    evaluateInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult, callback)
+    evaluateInInspectedWindow(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult, callback)
     {
         if (!expression) {
             // There is no expression, so the completion should happen against global properties.
@@ -78,9 +72,9 @@ WebInspector.RuntimeManager.prototype = {
         // COMPATIBILITY (iOS 8): "saveResult" did not exist.
         var contextId = WebInspector.quickConsole.executionContextIdentifier;
         RuntimeAgent.evaluate.invoke({expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, contextId, frameId: contextId, returnByValue, generatePreview, saveResult}, evalCallback.bind(this));
-    },
+    }
 
-    saveResult: function(remoteObject, callback)
+    saveResult(remoteObject, callback)
     {
         console.assert(remoteObject instanceof WebInspector.RemoteObject);
 
@@ -98,9 +92,9 @@ WebInspector.RuntimeManager.prototype = {
             RuntimeAgent.saveResult(remoteObject.asCallArgument(), mycallback);
         else
             RuntimeAgent.saveResult(remoteObject.asCallArgument(), WebInspector.quickConsole.executionContextIdentifier, mycallback);
-    },
+    }
 
-    getPropertiesForRemoteObject: function(objectId, callback)
+    getPropertiesForRemoteObject(objectId, callback)
     {
         RuntimeAgent.getProperties(objectId, function(error, result) {
             if (error) {
@@ -117,4 +111,6 @@ WebInspector.RuntimeManager.prototype = {
     }
 };
 
-WebInspector.RuntimeManager.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.RuntimeManager.Event = {
+    DidEvaluate: "runtime-manager-did-evaluate"
+};

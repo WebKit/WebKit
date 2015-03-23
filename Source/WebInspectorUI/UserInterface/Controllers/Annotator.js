@@ -24,48 +24,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Annotator = function(sourceCodeTextEditor)
+WebInspector.Annotator = class Annotator extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(sourceCodeTextEditor)
+    {
+        super();
 
-    console.assert(sourceCodeTextEditor instanceof WebInspector.SourceCodeTextEditor, sourceCodeTextEditor);
+        console.assert(sourceCodeTextEditor instanceof WebInspector.SourceCodeTextEditor, sourceCodeTextEditor);
 
-    this._sourceCodeTextEditor = sourceCodeTextEditor;
-    this._timeoutIdentifier = null;
-    this._isActive = false;
-};
-
-WebInspector.Annotator.prototype = {
-    constructor: WebInspector.Annotator,
-    __proto__: WebInspector.Object.prototype,
+        this._sourceCodeTextEditor = sourceCodeTextEditor;
+        this._timeoutIdentifier = null;
+        this._isActive = false;
+    }
 
     // Public
 
     get sourceCodeTextEditor()
     {
         return this._sourceCodeTextEditor;
-    },
+    }
 
-    isActive: function()
+    isActive()
     {
         return this._isActive;
-    },
+    }
 
-    pause: function()
+    pause()
     {
         this._clearTimeoutIfNeeded();
         this._isActive = false;
-    },
+    }
 
-    resume: function()
+    resume()
     {
         this._clearTimeoutIfNeeded();
         this._isActive = true;
         this.insertAnnotations();
-    },
+    }
 
-    refresh: function()
+    refresh()
     {
         console.assert(this._isActive);
         if (!this._isActive)
@@ -73,37 +70,37 @@ WebInspector.Annotator.prototype = {
 
         this._clearTimeoutIfNeeded();
         this.insertAnnotations();
-    },
+    }
 
-    reset: function()
+    reset()
     {
         this._clearTimeoutIfNeeded();
         this._isActive = true;
         this.clearAnnotations();
         this.insertAnnotations();
-    },
+    }
 
-    clear: function()
+    clear()
     {
         this.pause();
         this.clearAnnotations();
-    },
+    }
 
     // Protected
 
-    insertAnnotations: function()
+    insertAnnotations()
     {
         // Implemented by subclasses.
-    },
+    }
 
-    clearAnnotations: function()
+    clearAnnotations()
     {
         // Implemented by subclasses.
-    },
+    }
 
     // Private
 
-    _clearTimeoutIfNeeded: function()
+    _clearTimeoutIfNeeded()
     {
         if (this._timeoutIdentifier) {
             clearTimeout(this._timeoutIdentifier);

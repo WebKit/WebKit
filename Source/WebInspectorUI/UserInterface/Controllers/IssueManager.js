@@ -23,35 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IssueManager = function()
+WebInspector.IssueManager = class IssueManager extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._activeLogCleared, this);
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._activeLogCleared, this);
 
-    this.initialize();
-};
-
-WebInspector.IssueManager.Event = {
-    IssueWasAdded: "issue-manager-issue-was-added",
-    Cleared: "issue-manager-cleared"
-};
-
-WebInspector.IssueManager.prototype = {
-    constructor: WebInspector.IssueManager,
+        this.initialize();
+    }
 
     // Public
 
-    initialize: function()
+    initialize()
     {
         this._issues = [];
 
         this.dispatchEventToListeners(WebInspector.IssueManager.Event.Cleared);
-    },
+    }
 
-    issueWasAdded: function(source, level, text, url, lineNumber, columnNumber, parameters)
+    issueWasAdded(source, level, text, url, lineNumber, columnNumber, parameters)
     {
         var modifiedLineNumber;
         if (lineNumber) {
@@ -63,9 +56,9 @@ WebInspector.IssueManager.prototype = {
         this._issues.push(issue);
 
         this.dispatchEventToListeners(WebInspector.IssueManager.Event.IssueWasAdded, {issue});
-    },
+    }
 
-    issuesForSourceCode: function(sourceCode)
+    issuesForSourceCode(sourceCode)
     {
         var issues = [];
 
@@ -77,16 +70,16 @@ WebInspector.IssueManager.prototype = {
         }
 
         return issues;
-    },
+    }
 
     // Private
 
-    _activeLogCleared: function(event)
+    _activeLogCleared(event)
     {
         this.initialize();
-    },
+    }
 
-    _mainResourceDidChange: function(event)
+    _mainResourceDidChange(event)
     {
         console.assert(event.target instanceof WebInspector.Frame);
 
@@ -97,4 +90,7 @@ WebInspector.IssueManager.prototype = {
     }
 };
 
-WebInspector.IssueManager.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.IssueManager.Event = {
+    IssueWasAdded: "issue-manager-issue-was-added",
+    Cleared: "issue-manager-cleared"
+};

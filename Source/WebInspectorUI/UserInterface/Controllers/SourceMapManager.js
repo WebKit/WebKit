@@ -23,28 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceMapManager = function()
+WebInspector.SourceMapManager = class SourceMapManager extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    this._sourceMapURLMap = {};
-    this._downloadingSourceMaps = {};
+        this._sourceMapURLMap = {};
+        this._downloadingSourceMaps = {};
 
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-};
-
-WebInspector.SourceMapManager.prototype = {
-    constructor: WebInspector.SourceMapManager,
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+    }
 
     // Public
 
-    sourceMapForURL: function(sourceMapURL)
+    sourceMapForURL(sourceMapURL)
     {
         return this._sourceMapURLMap[sourceMapURL];
-    },
+    }
 
-    downloadSourceMap: function(sourceMapURL, baseURL, originalSourceCode)
+    downloadSourceMap(sourceMapURL, baseURL, originalSourceCode)
     {
         sourceMapURL = absoluteURL(sourceMapURL, baseURL);
         if (!sourceMapURL)
@@ -75,11 +73,11 @@ WebInspector.SourceMapManager.prototype = {
         }
 
         loadAndParseSourceMap.call(this);
-    },
+    }
 
     // Private
 
-    _loadAndParseSourceMap: function(sourceMapURL, baseURL, originalSourceCode)
+    _loadAndParseSourceMap(sourceMapURL, baseURL, originalSourceCode)
     {
         this._downloadingSourceMaps[sourceMapURL] = true;
 
@@ -119,14 +117,14 @@ WebInspector.SourceMapManager.prototype = {
 
         if (NetworkAgent.loadResource)
             NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded.bind(this));
-    },
+    }
 
-    _loadAndParseFailed: function(sourceMapURL)
+    _loadAndParseFailed(sourceMapURL)
     {
         delete this._downloadingSourceMaps[sourceMapURL];
-    },
+    }
 
-    _loadAndParseSucceeded: function(sourceMapURL, sourceMap)
+    _loadAndParseSucceeded(sourceMapURL, sourceMap)
     {
         if (!(sourceMapURL in this._downloadingSourceMaps))
             return;
@@ -152,9 +150,9 @@ WebInspector.SourceMapManager.prototype = {
             if (resource)
                 resource.addSourceMap(sourceMap);
         }
-    },
+    }
 
-    _mainResourceDidChange: function(event)
+    _mainResourceDidChange(event)
     {
         if (!event.target.isMainFrame())
             return;
@@ -163,5 +161,3 @@ WebInspector.SourceMapManager.prototype = {
         this._downloadingSourceMaps = {};
     }
 };
-
-WebInspector.SourceMapManager.prototype.__proto__ = WebInspector.Object.prototype;

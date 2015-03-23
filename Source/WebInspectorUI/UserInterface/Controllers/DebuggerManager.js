@@ -23,98 +23,73 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DebuggerManager = function()
+WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    if (window.DebuggerAgent)
-        DebuggerAgent.enable();
+        if (window.DebuggerAgent)
+            DebuggerAgent.enable();
 
-    WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisplayLocationDidChange, this._breakpointDisplayLocationDidChange, this);
-    WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisabledStateDidChange, this._breakpointDisabledStateDidChange, this);
-    WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ConditionDidChange, this._breakpointEditablePropertyDidChange, this);
-    WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.AutoContinueDidChange, this._breakpointEditablePropertyDidChange, this);
-    WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ActionsDidChange, this._breakpointEditablePropertyDidChange, this);
+        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisplayLocationDidChange, this._breakpointDisplayLocationDidChange, this);
+        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisabledStateDidChange, this._breakpointDisabledStateDidChange, this);
+        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ConditionDidChange, this._breakpointEditablePropertyDidChange, this);
+        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.AutoContinueDidChange, this._breakpointEditablePropertyDidChange, this);
+        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ActionsDidChange, this._breakpointEditablePropertyDidChange, this);
 
-    window.addEventListener("pagehide", this._inspectorClosing.bind(this));
+        window.addEventListener("pagehide", this._inspectorClosing.bind(this));
 
-    this._allExceptionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-exceptions", false);
-    this._allUncaughtExceptionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-uncaught-exceptions", false);
+        this._allExceptionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-exceptions", false);
+        this._allUncaughtExceptionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-uncaught-exceptions", false);
 
-    var specialBreakpointLocation = new WebInspector.SourceCodeLocation(null, Infinity, Infinity);
+        var specialBreakpointLocation = new WebInspector.SourceCodeLocation(null, Infinity, Infinity);
 
-    this._allExceptionsBreakpoint = new WebInspector.Breakpoint(specialBreakpointLocation, !this._allExceptionsBreakpointEnabledSetting.value);
-    this._allExceptionsBreakpoint.resolved = true;
+        this._allExceptionsBreakpoint = new WebInspector.Breakpoint(specialBreakpointLocation, !this._allExceptionsBreakpointEnabledSetting.value);
+        this._allExceptionsBreakpoint.resolved = true;
 
-    this._allUncaughtExceptionsBreakpoint = new WebInspector.Breakpoint(specialBreakpointLocation, !this._allUncaughtExceptionsBreakpointEnabledSetting.value);
+        this._allUncaughtExceptionsBreakpoint = new WebInspector.Breakpoint(specialBreakpointLocation, !this._allUncaughtExceptionsBreakpointEnabledSetting.value);
 
-    this._breakpoints = [];
-    this._breakpointURLMap = {};
-    this._breakpointScriptIdentifierMap = {};
-    this._breakpointIdMap = {};
+        this._breakpoints = [];
+        this._breakpointURLMap = {};
+        this._breakpointScriptIdentifierMap = {};
+        this._breakpointIdMap = {};
 
-    this._nextBreakpointActionIdentifier = 1;
+        this._nextBreakpointActionIdentifier = 1;
 
-    this._paused = false;
-    this._pauseReason = null;
-    this._pauseData = null;
+        this._paused = false;
+        this._pauseReason = null;
+        this._pauseData = null;
 
-    this._scriptIdMap = {};
-    this._scriptURLMap = {};
+        this._scriptIdMap = {};
+        this._scriptURLMap = {};
 
-    this._breakpointsSetting = new WebInspector.Setting("breakpoints", []);
-    this._breakpointsEnabledSetting = new WebInspector.Setting("breakpoints-enabled", true);
+        this._breakpointsSetting = new WebInspector.Setting("breakpoints", []);
+        this._breakpointsEnabledSetting = new WebInspector.Setting("breakpoints-enabled", true);
 
-    if (window.DebuggerAgent)
-        DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
+        if (window.DebuggerAgent)
+            DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
 
-    this._updateBreakOnExceptionsState();
+        this._updateBreakOnExceptionsState();
 
-    function restoreBreakpointsSoon() {
-        this._restoringBreakpoints = true;
-        for (var cookie of this._breakpointsSetting.value)
-            this.addBreakpoint(new WebInspector.Breakpoint(cookie));
-        delete this._restoringBreakpoints;
+        function restoreBreakpointsSoon() {
+            this._restoringBreakpoints = true;
+            for (var cookie of this._breakpointsSetting.value)
+                this.addBreakpoint(new WebInspector.Breakpoint(cookie));
+            delete this._restoringBreakpoints;
+        }
+
+        // Ensure that all managers learn about restored breakpoints,
+        // regardless of their initialization order.
+        setTimeout(restoreBreakpointsSoon.bind(this), 0);
     }
-
-    // Ensure that all managers learn about restored breakpoints,
-    // regardless of their initialization order.
-    setTimeout(restoreBreakpointsSoon.bind(this), 0);
-};
-
-WebInspector.DebuggerManager.Event = {
-    BreakpointAdded: "debugger-manager-breakpoint-added",
-    BreakpointRemoved: "debugger-manager-breakpoint-removed",
-    BreakpointMoved: "debugger-manager-breakpoint-moved",
-    Paused: "debugger-manager-paused",
-    Resumed: "debugger-manager-resumed",
-    CallFramesDidChange: "debugger-manager-call-frames-did-change",
-    ActiveCallFrameDidChange: "debugger-manager-active-call-frame-did-change",
-    ScriptAdded: "debugger-manager-script-added",
-    ScriptsCleared: "debugger-manager-scripts-cleared",
-    BreakpointsEnabledDidChange: "debugger-manager-breakpoints-enabled-did-change"
-};
-
-WebInspector.DebuggerManager.PauseReason = {
-    Assertion: "assertion",
-    Breakpoint: "breakpoint",
-    CSPViolation: "CSP-violation",
-    DebuggerStatement: "debugger-statement",
-    Exception: "exception",
-    PauseOnNextStatement: "pause-on-next-statement",
-    Other: "other",
-}
-
-WebInspector.DebuggerManager.prototype = {
-    constructor: WebInspector.DebuggerManager,
 
     // Public
 
     get breakpointsEnabled()
     {
         return this._breakpointsEnabledSetting.value;
-    },
+    }
 
     set breakpointsEnabled(enabled)
     {
@@ -128,32 +103,32 @@ WebInspector.DebuggerManager.prototype = {
         DebuggerAgent.setBreakpointsActive(enabled);
 
         this._updateBreakOnExceptionsState();
-    },
+    }
 
     get paused()
     {
         return this._paused;
-    },
+    }
 
     get pauseReason()
     {
         return this._pauseReason;
-    },
+    }
 
     get pauseData()
     {
         return this._pauseData;
-    },
+    }
 
     get callFrames()
     {
         return this._callFrames;
-    },
+    }
 
     get activeCallFrame()
     {
         return this._activeCallFrame;
-    },
+    }
 
     set activeCallFrame(callFrame)
     {
@@ -163,9 +138,9 @@ WebInspector.DebuggerManager.prototype = {
         this._activeCallFrame = callFrame || null;
 
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange);
-    },
+    }
 
-    pause: function()
+    pause()
     {
         if (this._paused)
             return Promise.resolve();
@@ -184,9 +159,9 @@ WebInspector.DebuggerManager.prototype = {
             });
 
         return Promise.all([managerResult, protocolResult]);
-    },
+    }
 
-    resume: function()
+    resume()
     {
         if (!this._paused)
             return Promise.resolve();
@@ -205,9 +180,9 @@ WebInspector.DebuggerManager.prototype = {
             });
 
         return Promise.all([managerResult, protocolResult]);
-    },
+    }
 
-    stepOver: function()
+    stepOver()
     {
         if (!this._paused)
             return Promise.reject(new Error("Cannot step over because debugger is not paused."));
@@ -226,9 +201,9 @@ WebInspector.DebuggerManager.prototype = {
             });
 
         return Promise.all([managerResult, protocolResult]);
-    },
+    }
 
-    stepInto: function()
+    stepInto()
     {
         if (!this._paused)
             return Promise.reject(new Error("Cannot step into because debugger is not paused."));
@@ -247,9 +222,9 @@ WebInspector.DebuggerManager.prototype = {
             });
 
         return Promise.all([managerResult, protocolResult]);
-    },
+    }
 
-    stepOut: function()
+    stepOut()
     {
         if (!this._paused)
             return Promise.reject(new Error("Cannot step out because debugger is not paused."));
@@ -268,24 +243,24 @@ WebInspector.DebuggerManager.prototype = {
             });
 
         return Promise.all([managerResult, protocolResult]);
-    },
+    }
 
     get allExceptionsBreakpoint()
     {
         return this._allExceptionsBreakpoint;
-    },
+    }
 
     get allUncaughtExceptionsBreakpoint()
     {
         return this._allUncaughtExceptionsBreakpoint;
-    },
+    }
 
     get breakpoints()
     {
         return this._breakpoints;
-    },
+    }
 
-    breakpointsForSourceCode: function(sourceCode)
+    breakpointsForSourceCode(sourceCode)
     {
         console.assert(sourceCode instanceof WebInspector.Resource || sourceCode instanceof WebInspector.Script);
 
@@ -310,30 +285,30 @@ WebInspector.DebuggerManager.prototype = {
         }
 
         return [];
-    },
+    }
 
-    breakpointForIdentifier: function(id)
+    breakpointForIdentifier(id)
     {
         return this._breakpointIdMap[id];
-    },
+    }
 
-    scriptForIdentifier: function(id)
+    scriptForIdentifier(id)
     {
         return this._scriptIdMap[id] || null;
-    },
+    }
 
-    scriptsForURL: function(url)
+    scriptsForURL(url)
     {
         // FIXME: This may not be safe. A Resource's URL may differ from a Script's URL.
         return this._scriptURLMap[url] || [];
-    },
+    }
 
-    continueToLocation: function(scriptIdentifier, lineNumber, columnNumber)
+    continueToLocation(scriptIdentifier, lineNumber, columnNumber)
     {
         DebuggerAgent.continueToLocation({scriptId: scriptIdentifier, lineNumber, columnNumber});
-    },
+    }
 
-    addBreakpoint: function(breakpoint, skipEventDispatch, shouldSpeculativelyResolve)
+    addBreakpoint(breakpoint, skipEventDispatch, shouldSpeculativelyResolve)
     {
         console.assert(breakpoint instanceof WebInspector.Breakpoint, "Bad argument to DebuggerManger.addBreakpoint: ", breakpoint);
         if (!breakpoint)
@@ -364,9 +339,9 @@ WebInspector.DebuggerManager.prototype = {
 
         if (!skipEventDispatch)
             this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointAdded, {breakpoint});
-    },
+    }
 
-    removeBreakpoint: function(breakpoint)
+    removeBreakpoint(breakpoint)
     {
         console.assert(breakpoint);
         if (!breakpoint)
@@ -404,9 +379,9 @@ WebInspector.DebuggerManager.prototype = {
         breakpoint.clearActions();
 
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointRemoved, {breakpoint});
-    },
+    }
 
-    breakpointResolved: function(breakpointIdentifier, location)
+    breakpointResolved(breakpointIdentifier, location)
     {
         // Called from WebInspector.DebuggerObserver.
 
@@ -423,9 +398,9 @@ WebInspector.DebuggerManager.prototype = {
         }
 
         breakpoint.resolved = true;
-    },
+    }
 
-    reset: function()
+    reset()
     {
         // Called from WebInspector.DebuggerObserver.
 
@@ -457,9 +432,9 @@ WebInspector.DebuggerManager.prototype = {
 
         if (wasPaused)
             this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.Resumed);
-    },
+    }
 
-    debuggerDidPause: function(callFramesPayload, reason, data)
+    debuggerDidPause(callFramesPayload, reason, data)
     {
         // Called from WebInspector.DebuggerObserver.
 
@@ -499,9 +474,9 @@ WebInspector.DebuggerManager.prototype = {
             this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.Paused);
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.CallFramesDidChange);
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange);
-    },
+    }
 
-    debuggerDidResume: function()
+    debuggerDidResume()
     {
         // Called from WebInspector.DebuggerObserver.
 
@@ -521,14 +496,14 @@ WebInspector.DebuggerManager.prototype = {
         // We delay clearing the state and firing events so the user interface does not flash
         // between brief steps or successive breakpoints.
         this._delayedResumeTimeout = setTimeout(delayedWork.bind(this), 50);
-    },
+    }
 
-    playBreakpointActionSound: function(breakpointActionIdentifier)
+    playBreakpointActionSound(breakpointActionIdentifier)
     {
         InspectorFrontendHost.beep();
-    },
+    }
 
-    scriptDidParse: function(scriptIdentifier, url, isContentScript, startLine, startColumn, endLine, endColumn, sourceMapURL)
+    scriptDidParse(scriptIdentifier, url, isContentScript, startLine, startColumn, endLine, endColumn, sourceMapURL)
     {
         // Don't add the script again if it is already known.
         if (this._scriptIdMap[scriptIdentifier]) {
@@ -552,26 +527,26 @@ WebInspector.DebuggerManager.prototype = {
         }
 
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.ScriptAdded, {script});
-    },
+    }
 
-    isBreakpointRemovable: function(breakpoint)
+    isBreakpointRemovable(breakpoint)
     {
         return breakpoint !== this._allExceptionsBreakpoint && breakpoint !== this._allUncaughtExceptionsBreakpoint;
-    },
+    }
 
-    isBreakpointEditable: function(breakpoint)
+    isBreakpointEditable(breakpoint)
     {
         return this.isBreakpointRemovable(breakpoint);
-    },
+    }
 
     get nextBreakpointActionIdentifier()
     {
         return this._nextBreakpointActionIdentifier++;
-    },
+    }
 
     // Private
 
-    _sourceCodeLocationFromPayload: function(payload)
+    _sourceCodeLocationFromPayload(payload)
     {
         var script = this._scriptIdMap[payload.scriptId];
         console.assert(script);
@@ -579,17 +554,17 @@ WebInspector.DebuggerManager.prototype = {
             return null;
 
         return script.createSourceCodeLocation(payload.lineNumber, payload.columnNumber);
-    },
+    }
 
-    _scopeChainFromPayload: function(payload)
+    _scopeChainFromPayload(payload)
     {
         var scopeChain = [];
         for (var i = 0; i < payload.length; ++i)
             scopeChain.push(this._scopeChainNodeFromPayload(payload[i]));
         return scopeChain;
-    },
+    }
 
-    _scopeChainNodeFromPayload: function(payload)
+    _scopeChainNodeFromPayload(payload)
     {
         var type = null;
         switch (payload.type) {
@@ -617,9 +592,9 @@ WebInspector.DebuggerManager.prototype = {
 
         var object = WebInspector.RemoteObject.fromPayload(payload.object);
         return new WebInspector.ScopeChainNode(type, object);
-    },
+    }
 
-    _pauseReasonFromPayload: function(payload)
+    _pauseReasonFromPayload(payload)
     {
         // FIXME: Handle other backend pause seasons.
         switch (payload) {
@@ -638,9 +613,9 @@ WebInspector.DebuggerManager.prototype = {
         default:
             return WebInspector.DebuggerManager.PauseReason.Other;
         }
-    },
+    }
 
-    _debuggerBreakpointActionType: function(type)
+    _debuggerBreakpointActionType(type)
     {
         switch (type) {
         case WebInspector.BreakpointAction.Type.Log:
@@ -655,9 +630,9 @@ WebInspector.DebuggerManager.prototype = {
             console.assert(false);
             return DebuggerAgent.BreakpointActionType.Log;
         }
-    },
+    }
 
-    _setBreakpoint: function(breakpoint, callback)
+    _setBreakpoint(breakpoint, callback)
     {
         console.assert(!breakpoint.identifier);
         console.assert(!breakpoint.disabled);
@@ -724,9 +699,9 @@ WebInspector.DebuggerManager.prototype = {
                 options
             }, didSetBreakpoint.bind(this));
         }
-    },
+    }
 
-    _removeBreakpoint: function(breakpoint, callback)
+    _removeBreakpoint(breakpoint, callback)
     {
         if (!breakpoint.identifier)
             return;
@@ -748,9 +723,9 @@ WebInspector.DebuggerManager.prototype = {
         }
 
         DebuggerAgent.removeBreakpoint(breakpoint.identifier, didRemoveBreakpoint.bind(this));
-    },
+    }
 
-    _breakpointDisplayLocationDidChange: function(event)
+    _breakpointDisplayLocationDidChange(event)
     {
         if (this._ignoreBreakpointDisplayLocationDidChangeEvent)
             return;
@@ -769,9 +744,9 @@ WebInspector.DebuggerManager.prototype = {
 
             this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointMoved, {breakpoint});
         }
-    },
+    }
 
-    _breakpointDisabledStateDidChange: function(event)
+    _breakpointDisabledStateDidChange(event)
     {
         var breakpoint = event.target;
 
@@ -795,9 +770,9 @@ WebInspector.DebuggerManager.prototype = {
             this._removeBreakpoint(breakpoint);
         else
             this._setBreakpoint(breakpoint);
-    },
+    }
 
-    _breakpointEditablePropertyDidChange: function(event)
+    _breakpointEditablePropertyDidChange(event)
     {
         var breakpoint = event.target;
         if (breakpoint.disabled)
@@ -815,9 +790,9 @@ WebInspector.DebuggerManager.prototype = {
             // Add the breakpoint with its new condition and get a new id.
             this._setBreakpoint(breakpoint);
         }
-    },
+    }
 
-    _updateBreakOnExceptionsState: function()
+    _updateBreakOnExceptionsState()
     {
         var state = "none";
 
@@ -842,14 +817,14 @@ WebInspector.DebuggerManager.prototype = {
         }
 
         DebuggerAgent.setPauseOnExceptions(state);
-    },
+    }
 
-    _inspectorClosing: function(event)
+    _inspectorClosing(event)
     {
         this._saveBreakpoints();
-    },
+    }
 
-    _saveBreakpoints: function()
+    _saveBreakpoints()
     {
         var savedBreakpoints = [];
 
@@ -864,9 +839,9 @@ WebInspector.DebuggerManager.prototype = {
         }
 
         this._breakpointsSetting.value = savedBreakpoints;
-    },
+    }
 
-    _associateBreakpointsWithSourceCode: function(breakpoints, sourceCode)
+    _associateBreakpointsWithSourceCode(breakpoints, sourceCode)
     {
         this._ignoreBreakpointDisplayLocationDidChangeEvent = true;
 
@@ -882,4 +857,25 @@ WebInspector.DebuggerManager.prototype = {
     }
 };
 
-WebInspector.DebuggerManager.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.DebuggerManager.Event = {
+    BreakpointAdded: "debugger-manager-breakpoint-added",
+    BreakpointRemoved: "debugger-manager-breakpoint-removed",
+    BreakpointMoved: "debugger-manager-breakpoint-moved",
+    Paused: "debugger-manager-paused",
+    Resumed: "debugger-manager-resumed",
+    CallFramesDidChange: "debugger-manager-call-frames-did-change",
+    ActiveCallFrameDidChange: "debugger-manager-active-call-frame-did-change",
+    ScriptAdded: "debugger-manager-script-added",
+    ScriptsCleared: "debugger-manager-scripts-cleared",
+    BreakpointsEnabledDidChange: "debugger-manager-breakpoints-enabled-did-change"
+};
+
+WebInspector.DebuggerManager.PauseReason = {
+    Assertion: "assertion",
+    Breakpoint: "breakpoint",
+    CSPViolation: "CSP-violation",
+    DebuggerStatement: "debugger-statement",
+    Exception: "exception",
+    PauseOnNextStatement: "pause-on-next-statement",
+    Other: "other",
+};

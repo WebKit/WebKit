@@ -23,45 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineManager = function()
+WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
-
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ProvisionalLoadStarted, this._startAutoCapturing, this);
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
-
-    this._recordings = [];
-    this._activeRecording = null;
-    this._isCapturing = false;
-
-    this._nextRecordingIdentifier = 1;
-
-    this._boundStopCapturing = this.stopCapturing.bind(this);
-
-    function delayedWork()
+    constructor()
     {
-        this._loadNewRecording();
+        super();
+
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ProvisionalLoadStarted, this._startAutoCapturing, this);
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
+
+        this._recordings = [];
+        this._activeRecording = null;
+        this._isCapturing = false;
+
+        this._nextRecordingIdentifier = 1;
+
+        this._boundStopCapturing = this.stopCapturing.bind(this);
+
+        function delayedWork()
+        {
+            this._loadNewRecording();
+        }
+
+        // Allow other code to set up listeners before firing the initial RecordingLoaded event.
+        setTimeout(delayedWork.bind(this), 0);
     }
-
-    // Allow other code to set up listeners before firing the initial RecordingLoaded event.
-    setTimeout(delayedWork.bind(this), 0);
-};
-
-WebInspector.TimelineManager.Event = {
-    RecordingCreated: "timeline-manager-recording-created",
-    RecordingLoaded: "timeline-manager-recording-loaded",
-    CapturingStarted: "timeline-manager-capturing-started",
-    CapturingStopped: "timeline-manager-capturing-stopped"
-};
-
-WebInspector.TimelineManager.MaximumAutoRecordDuration = 90000; // 90 seconds
-WebInspector.TimelineManager.MaximumAutoRecordDurationAfterLoadEvent = 10000; // 10 seconds
-WebInspector.TimelineManager.DeadTimeRequiredToStopAutoRecordingEarly = 2000; // 2 seconds
-
-WebInspector.TimelineManager.prototype = {
-    constructor: WebInspector.TimelineManager,
 
     // Public
 
@@ -70,19 +57,19 @@ WebInspector.TimelineManager.prototype = {
     {
         console.assert(this._activeRecording || !this._isCapturing);
         return this._activeRecording;
-    },
+    }
 
     get recordings()
     {
         return this._recordings.slice();
-    },
+    }
 
-    isCapturing: function()
+    isCapturing()
     {
         return this._isCapturing;
-    },
+    }
 
-    startCapturing: function(shouldCreateRecording)
+    startCapturing(shouldCreateRecording)
     {
         console.assert(!this._isCapturing, "TimelineManager is already capturing.");
 
@@ -97,9 +84,9 @@ WebInspector.TimelineManager.prototype = {
                 WebInspector.timelineManager.capturingStarted();
             });
         }
-    },
+    }
 
-    stopCapturing: function()
+    stopCapturing()
     {
         console.assert(this._isCapturing, "TimelineManager is not capturing.");
 
@@ -108,9 +95,9 @@ WebInspector.TimelineManager.prototype = {
         // NOTE: Always stop immediately instead of waiting for a Timeline.recordingStopped event.
         // This way the UI feels as responsive to a stop as possible.
         this.capturingStopped();
-    },
+    }
 
-    unloadRecording: function()
+    unloadRecording()
     {
         if (!this._activeRecording)
             return;
@@ -120,19 +107,19 @@ WebInspector.TimelineManager.prototype = {
 
         this._activeRecording.unloaded();
         this._activeRecording = null;
-    },
+    }
 
-    computeElapsedTime: function(timestamp)
+    computeElapsedTime(timestamp)
     {
         if (!this._activeRecording)
             return 0;
 
         return this._activeRecording.computeElapsedTime(timestamp);
-    },
+    }
 
     // Protected
 
-    capturingStarted: function()
+    capturingStarted()
     {
         if (this._isCapturing)
             return;
@@ -140,9 +127,9 @@ WebInspector.TimelineManager.prototype = {
         this._isCapturing = true;
 
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.CapturingStarted);
-    },
+    }
 
-    capturingStopped: function()
+    capturingStopped()
     {
         if (!this._isCapturing)
             return;
@@ -161,9 +148,9 @@ WebInspector.TimelineManager.prototype = {
         this._autoCapturingMainResource = null;
 
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.CapturingStopped);
-    },
+    }
 
-    eventRecorded: function(recordPayload)
+    eventRecorded(recordPayload)
     {
         // Called from WebInspector.TimelineObserver.
 
@@ -174,17 +161,17 @@ WebInspector.TimelineManager.prototype = {
         records.forEach(function(currentValue) {
             this._addRecord(currentValue);
         }.bind(this));
-    },
+    }
 
-    pageDidLoad: function(timestamp)
+    pageDidLoad(timestamp)
     {
         if (isNaN(WebInspector.frameResourceManager.mainFrame.loadEventTimestamp))
             WebInspector.frameResourceManager.mainFrame.markLoadEvent(this.activeRecording.computeElapsedTime(timestamp));
-    },
+    }
 
     // Private
 
-    _processNestedRecords: function(childRecordPayloads, parentRecordPayload)
+    _processNestedRecords(childRecordPayloads, parentRecordPayload)
     {
         // Convert to a single item array if needed.
         if (!(childRecordPayloads instanceof Array))
@@ -213,9 +200,9 @@ WebInspector.TimelineManager.prototype = {
         }
 
         return records;
-    },
+    }
 
-    _processRecord: function(recordPayload, parentRecordPayload)
+    _processRecord(recordPayload, parentRecordPayload)
     {
         var startTime = this.activeRecording.computeElapsedTime(recordPayload.startTime);
         var endTime = this.activeRecording.computeElapsedTime(recordPayload.endTime);
@@ -369,9 +356,9 @@ WebInspector.TimelineManager.prototype = {
         }
 
         return null;
-    },
+    }
 
-    _processEvent: function(recordPayload, parentRecordPayload)
+    _processEvent(recordPayload, parentRecordPayload)
     {
         var startTime = this.activeRecording.computeElapsedTime(recordPayload.startTime);
         var endTime = this.activeRecording.computeElapsedTime(recordPayload.endTime);
@@ -423,9 +410,9 @@ WebInspector.TimelineManager.prototype = {
         }
 
         return null;
-    },
+    }
 
-    _loadNewRecording: function()
+    _loadNewRecording()
     {
         if (this._activeRecording && this._activeRecording.isEmpty())
             return;
@@ -452,9 +439,9 @@ WebInspector.TimelineManager.prototype = {
         this._legacyFirstRecordedTimestamp = NaN;
         this._activeRecording = newRecording;
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordingLoaded, {oldRecording});
-    },
+    }
 
-    _callFramesFromPayload: function(payload)
+    _callFramesFromPayload(payload)
     {
         if (!payload)
             return null;
@@ -483,18 +470,18 @@ WebInspector.TimelineManager.prototype = {
         }
 
         return payload.map(createCallFrame);
-    },
+    }
 
-    _addRecord: function(record)
+    _addRecord(record)
     {
         this._activeRecording.addRecord(record);
 
         // Only worry about dead time after the load event.
         if (!isNaN(WebInspector.frameResourceManager.mainFrame.loadEventTimestamp))
             this._resetAutoRecordingDeadTimeTimeout();
-    },
+    }
 
-    _startAutoCapturing: function(event)
+    _startAutoCapturing(event)
     {
         if (!event.target.isMainFrame() || (this._isCapturing && !this._autoCapturingMainResource))
             return false;
@@ -519,9 +506,9 @@ WebInspector.TimelineManager.prototype = {
         this._stopCapturingTimeout = setTimeout(this._boundStopCapturing, WebInspector.TimelineManager.MaximumAutoRecordDuration);
 
         return true;
-    },
+    }
 
-    _stopAutoRecordingSoon: function()
+    _stopAutoRecordingSoon()
     {
         // Only auto stop when auto capturing.
         if (!this._isCapturing || !this._autoCapturingMainResource)
@@ -530,9 +517,9 @@ WebInspector.TimelineManager.prototype = {
         if (this._stopCapturingTimeout)
             clearTimeout(this._stopCapturingTimeout);
         this._stopCapturingTimeout = setTimeout(this._boundStopCapturing, WebInspector.TimelineManager.MaximumAutoRecordDurationAfterLoadEvent);
-    },
+    }
 
-    _resetAutoRecordingDeadTimeTimeout: function()
+    _resetAutoRecordingDeadTimeTimeout()
     {
         // Only monitor dead time when auto capturing.
         if (!this._isCapturing || !this._autoCapturingMainResource)
@@ -541,9 +528,9 @@ WebInspector.TimelineManager.prototype = {
         if (this._deadTimeTimeout)
             clearTimeout(this._deadTimeTimeout);
         this._deadTimeTimeout = setTimeout(this._boundStopCapturing, WebInspector.TimelineManager.DeadTimeRequiredToStopAutoRecordingEarly);
-    },
+    }
 
-    _mainResourceDidChange: function(event)
+    _mainResourceDidChange(event)
     {
         // Ignore resource events when there isn't a main frame yet. Those events are triggered by
         // loading the cached resources when the inspector opens, and they do not have timing information.
@@ -561,9 +548,9 @@ WebInspector.TimelineManager.prototype = {
             return;
 
         this._addRecord(new WebInspector.ResourceTimelineRecord(mainResource));
-    },
+    }
 
-    _resourceWasAdded: function(event)
+    _resourceWasAdded(event)
     {
         // Ignore resource events when there isn't a main frame yet. Those events are triggered by
         // loading the cached resources when the inspector opens, and they do not have timing information.
@@ -577,4 +564,13 @@ WebInspector.TimelineManager.prototype = {
     }
 };
 
-WebInspector.TimelineManager.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.TimelineManager.Event = {
+    RecordingCreated: "timeline-manager-recording-created",
+    RecordingLoaded: "timeline-manager-recording-loaded",
+    CapturingStarted: "timeline-manager-capturing-started",
+    CapturingStopped: "timeline-manager-capturing-stopped"
+};
+
+WebInspector.TimelineManager.MaximumAutoRecordDuration = 90000; // 90 seconds
+WebInspector.TimelineManager.MaximumAutoRecordDurationAfterLoadEvent = 10000; // 10 seconds
+WebInspector.TimelineManager.DeadTimeRequiredToStopAutoRecordingEarly = 2000; // 2 seconds

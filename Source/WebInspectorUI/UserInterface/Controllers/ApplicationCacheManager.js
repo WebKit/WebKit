@@ -23,74 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ApplicationCacheManager = function()
+WebInspector.ApplicationCacheManager = class ApplicationCacheManager extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    if (window.ApplicationCacheAgent)
-        ApplicationCacheAgent.enable();
+        if (window.ApplicationCacheAgent)
+            ApplicationCacheAgent.enable();
 
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
 
-    this._online = true;
+        this._online = true;
 
-    this.initialize();
-};
-
-WebInspector.ApplicationCacheManager.Event = {
-    Cleared: "application-cache-manager-cleared",
-    FrameManifestAdded: "application-cache-manager-frame-manifest-added",
-    FrameManifestRemoved: "application-cache-manager-frame-manifest-removed",
-    FrameManifestStatusChanged: "application-cache-manager-frame-manifest-status-changed",
-    NetworkStateUpdated: "application-cache-manager-network-state-updated"
-};
-
-WebInspector.ApplicationCacheManager.Status = {
-    Uncached: 0,
-    Idle: 1,
-    Checking: 2,
-    Downloading: 3,
-    UpdateReady: 4,
-    Obsolete: 5
-};
-
-WebInspector.ApplicationCacheManager.prototype = {
-    constructor: WebInspector.ApplicationCacheManager,
+        this.initialize();
+    }
 
     // Public
 
-    initialize: function()
+    initialize()
     {
         this._applicationCacheObjects = [];
 
         if (window.ApplicationCacheAgent)
             ApplicationCacheAgent.getFramesWithManifests(this._framesWithManifestsLoaded.bind(this));
-    },
+    }
 
-    networkStateUpdated: function(isNowOnline)
+    networkStateUpdated(isNowOnline)
     {
         this._online = isNowOnline;
 
         this.dispatchEventToListeners(WebInspector.ApplicationCacheManager.Event.NetworkStateUpdated, {online: this._online});
-    },
+    }
 
     get online()
     {
         return this._online;
-    },
+    }
 
-    applicationCacheStatusUpdated: function(frameId, manifestURL, status)
+    applicationCacheStatusUpdated(frameId, manifestURL, status)
     {
         var frame = WebInspector.frameResourceManager.frameForIdentifier(frameId);
         if (!frame)
             return;
 
         this._frameManifestUpdated(frame, manifestURL, status);
-    },
+    }
 
-    requestApplicationCache: function(frame, callback)
+    requestApplicationCache(frame, callback)
     {
         function callbackWrapper(error, applicationCache)
         {
@@ -103,11 +84,11 @@ WebInspector.ApplicationCacheManager.prototype = {
         }
 
         ApplicationCacheAgent.getApplicationCacheForFrame(frame.id, callbackWrapper);
-    },
+    }
 
     // Private
 
-    _mainResourceDidChange: function(event)
+    _mainResourceDidChange(event)
     {
         console.assert(event.target instanceof WebInspector.Frame);
 
@@ -122,14 +103,14 @@ WebInspector.ApplicationCacheManager.prototype = {
 
         if (window.ApplicationCacheAgent)
             ApplicationCacheAgent.getManifestForFrame(event.target.id, this._manifestForFrameLoaded.bind(this, event.target.id));
-    },
+    }
 
-    _childFrameWasRemoved: function(event)
+    _childFrameWasRemoved(event)
     {
         this._frameManifestRemoved(event.data.childFrame);
-    },
+    }
 
-    _manifestForFrameLoaded: function(frameId, error, manifestURL)
+    _manifestForFrameLoaded(frameId, error, manifestURL)
     {
         if (error)
             return;
@@ -140,9 +121,9 @@ WebInspector.ApplicationCacheManager.prototype = {
 
         if (!manifestURL)
             this._frameManifestRemoved(frame);
-    },
+    }
 
-    _framesWithManifestsLoaded: function(error, framesWithManifests)
+    _framesWithManifestsLoaded(error, framesWithManifests)
     {
         if (error)
             return;
@@ -154,9 +135,9 @@ WebInspector.ApplicationCacheManager.prototype = {
 
             this._frameManifestUpdated(frame, framesWithManifests[i].manifestURL, framesWithManifests[i].status);
         }
-    },
+    }
 
-    _frameManifestUpdated: function(frame, manifestURL, status)
+    _frameManifestUpdated(frame, manifestURL, status)
     {
         if (status === WebInspector.ApplicationCacheManager.Status.Uncached) {
             this._frameManifestRemoved(frame);
@@ -184,9 +165,9 @@ WebInspector.ApplicationCacheManager.prototype = {
 
         if (statusChanged)
             this.dispatchEventToListeners(WebInspector.ApplicationCacheManager.Event.FrameManifestStatusChanged, {frameManifest: this._applicationCacheObjects[frame.id]});
-    },
+    }
 
-    _frameManifestRemoved: function(frame)
+    _frameManifestRemoved(frame)
     {
         if (!this._applicationCacheObjects[frame.id])
             return;
@@ -197,4 +178,19 @@ WebInspector.ApplicationCacheManager.prototype = {
     }
 };
 
-WebInspector.ApplicationCacheManager.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.ApplicationCacheManager.Event = {
+    Cleared: "application-cache-manager-cleared",
+    FrameManifestAdded: "application-cache-manager-frame-manifest-added",
+    FrameManifestRemoved: "application-cache-manager-frame-manifest-removed",
+    FrameManifestStatusChanged: "application-cache-manager-frame-manifest-status-changed",
+    NetworkStateUpdated: "application-cache-manager-network-state-updated"
+};
+
+WebInspector.ApplicationCacheManager.Status = {
+    Uncached: 0,
+    Idle: 1,
+    Checking: 2,
+    Downloading: 3,
+    UpdateReady: 4,
+    Obsolete: 5
+};

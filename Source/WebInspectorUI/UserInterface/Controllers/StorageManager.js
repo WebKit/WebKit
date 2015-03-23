@@ -24,117 +24,104 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.StorageManager = function()
+WebInspector.StorageManager = class StorageManager extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    if (window.DOMStorageAgent)
-        DOMStorageAgent.enable();
-    if (window.DatabaseAgent)
-        DatabaseAgent.enable();
-    if (window.IndexedDBAgent)
-        IndexedDBAgent.enable();
+        if (window.DOMStorageAgent)
+            DOMStorageAgent.enable();
+        if (window.DatabaseAgent)
+            DatabaseAgent.enable();
+        if (window.IndexedDBAgent)
+            IndexedDBAgent.enable();
 
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
-    WebInspector.notifications.addEventListener(WebInspector.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
+        WebInspector.notifications.addEventListener(WebInspector.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
 
-    // COMPATIBILITY (iOS 6): DOMStorage was discovered via a DOMStorageObserver event. Now DOM Storage
-    // is added whenever a new securityOrigin is discovered. Check for DOMStorageAgent.getDOMStorageItems,
-    // which was renamed at the same time the change to start using securityOrigin was made.
-    if (window.DOMStorageAgent && DOMStorageAgent.getDOMStorageItems)
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
+        // COMPATIBILITY (iOS 6): DOMStorage was discovered via a DOMStorageObserver event. Now DOM Storage
+        // is added whenever a new securityOrigin is discovered. Check for DOMStorageAgent.getDOMStorageItems,
+        // which was renamed at the same time the change to start using securityOrigin was made.
+        if (window.DOMStorageAgent && DOMStorageAgent.getDOMStorageItems)
+            WebInspector.Frame.addEventListener(WebInspector.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
 
-    this.initialize();
-};
-
-WebInspector.StorageManager.Event = {
-    CookieStorageObjectWasAdded: "storage-manager-cookie-storage-object-was-added",
-    DOMStorageObjectWasAdded: "storage-manager-dom-storage-object-was-added",
-    DOMStorageObjectWasInspected: "storage-dom-object-was-inspected",
-    DatabaseWasAdded: "storage-manager-database-was-added",
-    DatabaseWasInspected: "storage-object-was-inspected",
-    IndexedDatabaseWasAdded: "storage-manager-indexed-database-was-added",
-    Cleared: "storage-manager-cleared"
-};
-
-WebInspector.StorageManager.prototype = {
-    constructor: WebInspector.StorageManager,
-    __proto__: WebInspector.Object.prototype,
+        this.initialize();
+    }
 
     // Public
 
-    initialize: function()
+    initialize()
     {
         this._domStorageObjects = [];
         this._databaseObjects = [];
         this._indexedDatabases = [];
         this._cookieStorageObjects = {};
-    },
+    }
 
-    domStorageWasAdded: function(id, host, isLocalStorage)
+    domStorageWasAdded(id, host, isLocalStorage)
     {
         var domStorage = new WebInspector.DOMStorageObject(id, host, isLocalStorage);
 
         this._domStorageObjects.push(domStorage);
         this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageObjectWasAdded, {domStorage});
-    },
+    }
 
-    databaseWasAdded: function(id, host, name, version)
+    databaseWasAdded(id, host, name, version)
     {
         var database = new WebInspector.DatabaseObject(id, host, name, version);
 
         this._databaseObjects.push(database);
         this.dispatchEventToListeners(WebInspector.StorageManager.Event.DatabaseWasAdded, {database});
-    },
+    }
 
-    domStorageWasUpdated: function(id)
+    domStorageWasUpdated(id)
     {
         this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageWasUpdated, id);
-    },
+    }
 
-    itemsCleared: function(storageId)
+    itemsCleared(storageId)
     {
         this._domStorageForIdentifier(storageId).itemsCleared(storageId);
-    },
+    }
 
-    itemRemoved: function(storageId, key)
+    itemRemoved(storageId, key)
     {
         this._domStorageForIdentifier(storageId).itemRemoved(key);
-    },
+    }
 
-    itemAdded: function(storageId, key, value)
+    itemAdded(storageId, key, value)
     {
         this._domStorageForIdentifier(storageId).itemAdded(key, value);
-    },
+    }
 
-    itemUpdated: function(storageId, key, oldValue, value)
+    itemUpdated(storageId, key, oldValue, value)
     {
         this._domStorageForIdentifier(storageId).itemUpdated(key, oldValue, value);
-    },
+    }
 
-    inspectDatabase: function(id)
+    inspectDatabase(id)
     {
         var database = this._databaseForIdentifier(id);
         console.assert(database);
         if (!database)
             return;
         this.dispatchEventToListeners(WebInspector.StorageManager.Event.DatabaseWasInspected, {database});
-    },
+    }
 
-    inspectDOMStorage: function(id)
+    inspectDOMStorage(id)
     {
         var domStorage = this._domStorageForIdentifier(id);
         console.assert(domStorage);
         if (!domStorage)
             return;
         this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageObjectWasInspected, {domStorage});
-    },
+    }
 
     // Protected
 
-    requestIndexedDatabaseData: function(objectStore, objectStoreIndex, startEntryIndex, maximumEntryCount, callback)
+    requestIndexedDatabaseData(objectStore, objectStoreIndex, startEntryIndex, maximumEntryCount, callback)
     {
         console.assert(window.IndexedDBAgent);
         console.assert(objectStore);
@@ -170,11 +157,11 @@ WebInspector.StorageManager.prototype = {
         };
 
         IndexedDBAgent.requestData.invoke(requestArguments, processData);
-    },
+    }
 
     // Private
 
-    _domStorageForIdentifier: function(id)
+    _domStorageForIdentifier(id)
     {
         for (var storageObject of this._domStorageObjects) {
             // The id is an object, so we need to compare the properties using Object.shallowEqual.
@@ -184,9 +171,9 @@ WebInspector.StorageManager.prototype = {
         }
 
         return null;
-    },
+    }
 
-    _mainResourceDidChange: function(event)
+    _mainResourceDidChange(event)
     {
         console.assert(event.target instanceof WebInspector.Frame);
 
@@ -209,9 +196,9 @@ WebInspector.StorageManager.prototype = {
 
         this._cookieStorageObjects[host] = new WebInspector.CookieStorageObject(host);
         this.dispatchEventToListeners(WebInspector.StorageManager.Event.CookieStorageObjectWasAdded, {cookieStorage: this._cookieStorageObjects[host]});
-    },
+    }
 
-    _addDOMStorageIfNeeded: function(frame)
+    _addDOMStorageIfNeeded(frame)
     {
         // Don't show storage if we don't have a security origin (about:blank).
         if (!frame.securityOrigin || frame.securityOrigin === "://")
@@ -226,9 +213,9 @@ WebInspector.StorageManager.prototype = {
         var sessionStorageIdentifier = {securityOrigin: frame.securityOrigin, isLocalStorage: false};
         if (!this._domStorageForIdentifier(sessionStorageIdentifier))
             this.domStorageWasAdded(sessionStorageIdentifier, frame.mainResource.urlComponents.host, false);
-    },
+    }
 
-    _addIndexedDBDatabasesIfNeeded: function(frame)
+    _addIndexedDBDatabasesIfNeeded(frame)
     {
         if (!window.IndexedDBAgent)
             return;
@@ -289,17 +276,17 @@ WebInspector.StorageManager.prototype = {
         }
 
         IndexedDBAgent.requestDatabaseNames(securityOrigin, processDatabaseNames.bind(this));
-    },
+    }
 
-    _securityOriginDidChange: function(event)
+    _securityOriginDidChange(event)
     {
         console.assert(event.target instanceof WebInspector.Frame);
 
         this._addDOMStorageIfNeeded(event.target);
         this._addIndexedDBDatabasesIfNeeded(event.target);
-    },
+    }
 
-    _databaseForIdentifier: function(id)
+    _databaseForIdentifier(id)
     {
         for (var i = 0; i < this._databaseObjects.length; ++i) {
             if (this._databaseObjects[i].id === id)
@@ -307,12 +294,22 @@ WebInspector.StorageManager.prototype = {
         }
 
         return null;
-    },
+    }
 
-    _extraDomainsActivated: function(event)
+    _extraDomainsActivated(event)
     {
         
         if (event.data.domains.contains("DOMStorage") && window.DOMStorageAgent && DOMStorageAgent.getDOMStorageItems)
             WebInspector.Frame.addEventListener(WebInspector.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
     }
+};
+
+WebInspector.StorageManager.Event = {
+    CookieStorageObjectWasAdded: "storage-manager-cookie-storage-object-was-added",
+    DOMStorageObjectWasAdded: "storage-manager-dom-storage-object-was-added",
+    DOMStorageObjectWasInspected: "storage-dom-object-was-inspected",
+    DatabaseWasAdded: "storage-manager-database-was-added",
+    DatabaseWasInspected: "storage-object-was-inspected",
+    IndexedDatabaseWasAdded: "storage-manager-indexed-database-was-added",
+    Cleared: "storage-manager-cleared"
 };

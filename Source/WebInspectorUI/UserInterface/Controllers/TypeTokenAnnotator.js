@@ -23,22 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TypeTokenAnnotator = function(sourceCodeTextEditor, script)
+WebInspector.TypeTokenAnnotator = class TypeTokenAnnotator extends WebInspector.Annotator
 {
-    WebInspector.Annotator.call(this, sourceCodeTextEditor);
+    constructor(sourceCodeTextEditor, script)
+    {
+        super(sourceCodeTextEditor);
 
-    this._script = script;
-    this._typeTokenNodes = [];
-    this._typeTokenBookmarks = [];
-};
-
-WebInspector.TypeTokenAnnotator.prototype = {
-    constructor: WebInspector.TypeTokenAnnotator,
-    __proto__: WebInspector.Annotator.prototype,
+        this._script = script;
+        this._typeTokenNodes = [];
+        this._typeTokenBookmarks = [];
+    }
 
     // Protected
 
-    insertAnnotations: function()
+    insertAnnotations()
     {
         if (!this.isActive())
             return;
@@ -77,16 +75,16 @@ WebInspector.TypeTokenAnnotator.prototype = {
                 this.insertAnnotations();
             }.bind(this), timeoutTime);
         }.bind(this));
-    },
+    }
 
-    clearAnnotations: function()
+    clearAnnotations()
     {
         this._clearTypeTokens();
-    },
+    }
 
     // Private
 
-    _insertTypeToken: function(node)
+    _insertTypeToken(node)
     {
         if (node.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier) {
             if (!node.attachments.__typeToken && node.attachments.types && node.attachments.types.isValid)
@@ -115,9 +113,9 @@ WebInspector.TypeTokenAnnotator.prototype = {
 
         if (node.attachments.__typeToken)
             node.attachments.__typeToken.update(node.attachments.returnTypes);
-    },
+    }
 
-    _insertToken: function(originalOffset, node, shouldTranslateOffsetToAfterParameterList, typeTokenTitleType, functionOrVariableName)
+    _insertToken(originalOffset, node, shouldTranslateOffsetToAfterParameterList, typeTokenTitleType, functionOrVariableName)
     {
         var tokenPosition = this.sourceCodeTextEditor.originalOffsetToCurrentPosition(originalOffset);
         var currentOffset = this.sourceCodeTextEditor.currentPositionToCurrentOffset(tokenPosition);
@@ -140,9 +138,9 @@ WebInspector.TypeTokenAnnotator.prototype = {
         node.attachments.__typeToken = typeToken;
         this._typeTokenNodes.push(node);
         this._typeTokenBookmarks.push(bookmark);
-    },
+    }
 
-    _translateToOffsetAfterFunctionParameterList: function(node, offset, sourceString)
+    _translateToOffsetAfterFunctionParameterList(node, offset, sourceString)
     {
         // The assumption here is that we get the offset starting at the function keyword (or after the get/set keywords).
         // We will return the offset for the closing parenthesis in the function declaration.
@@ -183,9 +181,9 @@ WebInspector.TypeTokenAnnotator.prototype = {
         }
 
         return offset + 1;
-    },
+    }
 
-    _clearTypeTokens: function()
+    _clearTypeTokens()
     {
         this._typeTokenNodes.forEach(function(node) {
             node.attachments.__typeToken = null;

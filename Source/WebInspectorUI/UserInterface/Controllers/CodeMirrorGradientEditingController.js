@@ -23,78 +23,68 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CodeMirrorGradientEditingController = function(codeMirror, marker)
+WebInspector.CodeMirrorGradientEditingController = class CodeMirrorGradientEditingController extends WebInspector.CodeMirrorEditingController
 {
-    WebInspector.CodeMirrorEditingController.call(this, codeMirror, marker);
+    constructor(codeMirror, marker)
+    {
+        super(codeMirror, marker);
 
-    if (!WebInspector.CodeMirrorGradientEditingController.GradientTypes) {
-        WebInspector.CodeMirrorGradientEditingController.GradientTypes = {
-            "linear-gradient": {
-                type: WebInspector.LinearGradient,
-                label: WebInspector.UIString("Linear Gradient"),
-                repeats: false
-            },
+        if (!WebInspector.CodeMirrorGradientEditingController.GradientTypes) {
+            WebInspector.CodeMirrorGradientEditingController.GradientTypes = {
+                "linear-gradient": {
+                    type: WebInspector.LinearGradient,
+                    label: WebInspector.UIString("Linear Gradient"),
+                    repeats: false
+                },
 
-            "radial-gradient": {
-                type: WebInspector.RadialGradient,
-                label: WebInspector.UIString("Radial Gradient"),
-                repeats: false
-            },
+                "radial-gradient": {
+                    type: WebInspector.RadialGradient,
+                    label: WebInspector.UIString("Radial Gradient"),
+                    repeats: false
+                },
 
-            "repeating-linear-gradient": {
-                type: WebInspector.LinearGradient,
-                label: WebInspector.UIString("Repeating Linear Gradient"),
-                repeats: true
-            },
+                "repeating-linear-gradient": {
+                    type: WebInspector.LinearGradient,
+                    label: WebInspector.UIString("Repeating Linear Gradient"),
+                    repeats: true
+                },
 
-            "repeating-radial-gradient": {
-                type: WebInspector.RadialGradient,
-                label: WebInspector.UIString("Repeating Radial Gradient"),
-                repeats: true
-            }
-        };
+                "repeating-radial-gradient": {
+                    type: WebInspector.RadialGradient,
+                    label: WebInspector.UIString("Repeating Radial Gradient"),
+                    repeats: true
+                }
+            };
+        }
     }
-};
-
-WebInspector.CodeMirrorGradientEditingController.StyleClassName = "gradient-editing-controller";
-WebInspector.CodeMirrorGradientEditingController.EditsColorClassName = "edits-color";
-WebInspector.CodeMirrorGradientEditingController.RadialGradientClassName = "radial-gradient";
-
-// Lazily populated in the WebInspector.CodeMirrorGradientEditingController constructor.
-// It needs to be lazy to use UIString after Main.js and localizedStrings.js loads.
-WebInspector.CodeMirrorGradientEditingController.GradientTypes = null;
-
-WebInspector.CodeMirrorGradientEditingController.prototype = {
-    constructor: WebInspector.CodeMirrorGradientEditingController,
-    __proto__: WebInspector.CodeMirrorEditingController.prototype,
 
     // Public
 
     get initialValue()
     {
         return WebInspector.Gradient.fromString(this.text);
-    },
+    }
 
     get cssClassName()
     {
         return "gradient";
-    },
+    }
 
     get popoverPreferredEdges()
     {
         // Since the gradient editor can resize to be quite tall, let's avoid displaying the popover
         // above the edited value so that it may not change which edge it attaches to upon editing a stop.
         return [WebInspector.RectEdge.MIN_X, WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MAX_X];
-    },
+    }
 
-    popoverTargetFrameWithRects: function(rects)
+    popoverTargetFrameWithRects(rects)
     {
         // If a gradient is defined across several lines, we probably want to use the first line only
         // as a target frame for the editor since we may reformat the gradient value to fit on a single line.
         return rects[0];
-    },
+    }
 
-    popoverWillPresent: function(popover)
+    popoverWillPresent(popover)
     {
         this._container = document.createElement("div");
         this._container.className = WebInspector.CodeMirrorGradientEditingController.StyleClassName;
@@ -130,9 +120,9 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
         this._updateCSSClassForGradientType();
 
         popover.content = this._container;
-    },
+    }
 
-    popoverDidPresent: function(popover)
+    popoverDidPresent(popover)
     {
         this._gradientSlider.stops = this.value.stops;
 
@@ -143,24 +133,24 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
             this._gradientTypePicker.value = this.value.repeats ? "repeating-radial-gradient" : "radial-gradient";
 
         this._gradientSlider.delegate = this;
-    },
+    }
 
     // Protected
 
-    handleEvent: function(event)
+    handleEvent(event)
     {
         if (event.type === "input")
             this._handleInputEvent(event);
         else if (event.type === "change")
             this._handleChangeEvent(event);
-    },
+    }
 
-    gradientSliderStopsDidChange: function(gradientSlider)
+    gradientSliderStopsDidChange(gradientSlider)
     {
         this.text = this.value.toString();
-    },
+    }
 
-    gradientSliderStopWasSelected: function(gradientSlider, stop)
+    gradientSliderStopWasSelected(gradientSlider, stop)
     {
         var selectedStop = gradientSlider.selectedStop;
 
@@ -178,9 +168,9 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
         this._angleInput.blur();
 
         this.popover.update();
-    },
+    }
 
-    dragToAdjustControllerWasAdjustedByAmount: function(dragToAdjustController, amount)
+    dragToAdjustControllerWasAdjustedByAmount(dragToAdjustController, amount)
     {
         var angle = parseFloat(this._angleInput.value) + amount;
         if (Math.round(angle) !== angle)
@@ -188,20 +178,20 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
 
         this._angleInput.value = angle;
         this._angleInputValueDidChange(angle);
-    },
+    }
 
     // Private
 
-    _handleInputEvent: function(event)
+    _handleInputEvent(event)
     {
         var angle = parseFloat(this._angleInput.value);
         if (isNaN(angle))
             return;
 
         this._angleInputValueDidChange(angle);
-    },
+    }
 
-    _angleInputValueDidChange: function(angle)
+    _angleInputValueDidChange(angle)
     {
         this.value.angle = angle;
         this.text = this.value.toString();
@@ -213,9 +203,9 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
             this._angleInput.selectionStart = selectionStart;
             this._angleInput.selectionEnd = selectionStart;
         }
-    },
+    }
 
-    _handleChangeEvent: function(event)
+    _handleChangeEvent(event)
     {
         var descriptor = WebInspector.CodeMirrorGradientEditingController.GradientTypes[this._gradientTypePicker.value];
         if (!(this.value instanceof descriptor.type)) {
@@ -230,16 +220,16 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
         }
         this.value.repeats = descriptor.repeats;
         this.text = this.value.toString();
-    },
+    }
 
-    _colorPickerColorChanged: function(event)
+    _colorPickerColorChanged(event)
     {
         this._gradientSlider.selectedStop.color = event.target.color;
         this._gradientSlider.stops = this.value.stops;
         this.text = this.value.toString();
-    },
+    }
 
-    _updateCSSClassForGradientType: function()
+    _updateCSSClassForGradientType()
     {
         if (this.value instanceof WebInspector.LinearGradient)
             this._container.classList.remove(WebInspector.CodeMirrorGradientEditingController.RadialGradientClassName);
@@ -247,3 +237,11 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
             this._container.classList.add(WebInspector.CodeMirrorGradientEditingController.RadialGradientClassName);
     }
 };
+
+WebInspector.CodeMirrorGradientEditingController.StyleClassName = "gradient-editing-controller";
+WebInspector.CodeMirrorGradientEditingController.EditsColorClassName = "edits-color";
+WebInspector.CodeMirrorGradientEditingController.RadialGradientClassName = "radial-gradient";
+
+// Lazily populated in the WebInspector.CodeMirrorGradientEditingController constructor.
+// It needs to be lazy to use UIString after Main.js and localizedStrings.js loads.
+WebInspector.CodeMirrorGradientEditingController.GradientTypes = null;

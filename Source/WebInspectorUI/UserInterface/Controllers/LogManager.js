@@ -23,28 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LogManager = function()
+WebInspector.LogManager = class LogManager extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-};
-
-WebInspector.LogManager.Event = {
-    SessionStarted: "log-manager-session-was-started",
-    Cleared: "log-manager-cleared",
-    MessageAdded: "log-manager-message-added",
-    ActiveLogCleared: "log-manager-current-log-cleared",
-    PreviousMessageRepeatCountUpdated: "log-manager-previous-message-repeat-count-updated"
-};
-
-WebInspector.LogManager.prototype = {
-    constructor: WebInspector.LogManager,
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+    }
 
     // Public
 
-    messageWasAdded: function(source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, requestId)
+    messageWasAdded(source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, requestId)
     {
         // Called from WebInspector.ConsoleObserver.
 
@@ -54,9 +44,9 @@ WebInspector.LogManager.prototype = {
         this.dispatchEventToListeners(WebInspector.LogManager.Event.MessageAdded, {message: consoleMessage});
 
         console.assert(!consoleMessage._element || !consoleMessage._element.parentNode, "This console message shouldn't be added to a view. To add it you need to use clone().");
-    },
+    }
 
-    messagesCleared: function()
+    messagesCleared()
     {
         // Called from WebInspector.ConsoleObserver.
 
@@ -70,23 +60,23 @@ WebInspector.LogManager.prototype = {
                 this.dispatchEventToListeners(WebInspector.LogManager.Event.ActiveLogCleared);
             delete this._shouldClearMessages;
         }.bind(this), 0);
-    },
+    }
 
-    messageRepeatCountUpdated: function(count)
+    messageRepeatCountUpdated(count)
     {
         // Called from WebInspector.ConsoleObserver.
 
         this.dispatchEventToListeners(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, {count});
-    },
+    }
 
-    requestClearMessages: function()
+    requestClearMessages()
     {
         ConsoleAgent.clearMessages();
-    },
+    }
 
     // Private
 
-    _mainResourceDidChange: function(event)
+    _mainResourceDidChange(event)
     {
         console.assert(event.target instanceof WebInspector.Frame);
 
@@ -106,4 +96,10 @@ WebInspector.LogManager.prototype = {
     }
 };
 
-WebInspector.LogManager.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.LogManager.Event = {
+    SessionStarted: "log-manager-session-was-started",
+    Cleared: "log-manager-cleared",
+    MessageAdded: "log-manager-message-added",
+    ActiveLogCleared: "log-manager-current-log-cleared",
+    PreviousMessageRepeatCountUpdated: "log-manager-previous-message-repeat-count-updated"
+};
