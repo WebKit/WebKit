@@ -1,3 +1,54 @@
+2015-03-17  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: Debugger sidebar should have a filter button for breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=142779
+
+        Reviewed by Timothy Hatcher.
+
+        Add the infrastructure for activation filter buttons that can appear next to the text filters at the bottom
+        of any navigation sidebar panel. These filter bar buttons have defined within them a function that returns
+        a boolean value that indicates whether the input, typically a tree element, should be filtered or not.
+
+        This infrastructure is then used to create a filter for the debugger sidebar that, when applied, only shows
+        scripts that have breakpoints set on them.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+        * UserInterface/Main.html: Files added.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.showResourcesWithChildrenOnlyFilterFunction):
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._addBreakpoint): Drive-by fix.
+        Add filter button to filter bar.
+
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar > .navigation-bar > .item):
+        Style filter button.
+
+        * UserInterface/Views/FilterBar.js:
+        (WebInspector.FilterBar):
+        (WebInspector.FilterBar.prototype.get filters):
+        (WebInspector.FilterBar.prototype.set filters):
+        (WebInspector.FilterBar.prototype.hasActiveFilters):
+        (WebInspector.FilterBar.prototype._handleFilterChanged):
+        (WebInspector.FilterBar.prototype._inputFieldChanged): Deleted.
+        Create space for filter bar buttons and set up event handlers to deal with them.
+
+        * UserInterface/Views/FilterBarButton.js: Copied from Source/WebInspectorUI/UserInterface/Views/FilterBar.css.
+        (WebInspector.FilterBarButton):
+        (WebInspector.FilterBarButton.prototype.get filterFunction):
+        (WebInspector.FilterBarButton.prototype.toggle):
+        Create class for a filter bar button that stores a filter function.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel):
+        (WebInspector.NavigationSidebarPanel.prototype.matchTreeElementAgainstFilterFunctions):
+        (WebInspector.NavigationSidebarPanel.prototype.applyFiltersToTreeElement):
+        (WebInspector.NavigationSidebarPanel.prototype._filterDidChange):
+        (WebInspector.NavigationSidebarPanel.prototype._updateFilter):
+        (WebInspector.NavigationSidebarPanel.prototype._textFilterDidChange): Deleted.
+        Add functionality to support button filters and process their corresponding functions correctly when filtering.
+
 2015-03-22  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Adopt ES6 Class Syntax for all Controller Objects

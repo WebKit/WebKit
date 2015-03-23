@@ -30,11 +30,16 @@ WebInspector.FilterBar = function(element) {
     this._element = element || document.createElement("div");
     this._element.classList.add(WebInspector.FilterBar.StyleClassName);
 
+    this._filtersNavigationBar = new WebInspector.NavigationBar;
+    this._element.appendChild(this._filtersNavigationBar.element);
+
+    this._filterFunctionsMap = new Map;
+
     this._inputField = document.createElement("input");
     this._inputField.type = "search";
     this._inputField.spellcheck = false;
     this._inputField.incremental = true;
-    this._inputField.addEventListener("search", this._inputFieldChanged.bind(this), false);
+    this._inputField.addEventListener("search", this._handleFilterChanged.bind(this), false);
     this._element.appendChild(this._inputField);
 };
 
@@ -44,11 +49,12 @@ WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.FilterBar);
 WebInspector.FilterBar.StyleClassName = "filter-bar";
 
 WebInspector.FilterBar.Event = {
-    TextFilterDidChange: "filter-bar-text-filter-did-change"
+    FilterDidChange: "filter-bar-text-filter-did-change"
 };
 
 WebInspector.FilterBar.prototype = {
     constructor: WebInspector.FilterBar,
+    __proto__: WebInspector.Object.prototype,
 
     // Public
 
@@ -74,7 +80,7 @@ WebInspector.FilterBar.prototype = {
 
     get filters()
     {
-        return {text: this._inputField.value};
+        return {text: this._inputField.value, functions: [...this._filterFunctionsMap.values()]};
     },
 
     set filters(filters)
@@ -84,22 +90,46 @@ WebInspector.FilterBar.prototype = {
         var oldTextValue = this._inputField.value;
         this._inputField.value = filters.text || "";
         if (oldTextValue !== this._inputField.value)
-            this._inputFieldChanged();
+            this._handleFilterChanged();
+    },
+
+    addFilterBarButton: function(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss)
+    {
+        var filterBarButton = new WebInspector.FilterBarButton(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss);
+        filterBarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._handleFilterBarButtonClicked, this);
+        filterBarButton.addEventListener(WebInspector.FilterBarButton.Event.ActivatedStateToggled, this._handleFilterButtonToggled, this);
+        this._filtersNavigationBar.addNavigationItem(filterBarButton);
+        if (filterBarButton.activated) {
+            this._filterFunctionsMap.set(filterBarButton.identifier, filterBarButton.filterFunction);
+            this._handleFilterChanged();
+        }
     },
 
     hasActiveFilters: function()
     {
-        if (this._inputField.value)
-            return true;
-        return false;
+        return !!this._inputField.value || !!this._filterFunctionsMap.size;
     },
 
     // Private
 
-    _inputFieldChanged: function(event)
+    _handleFilterBarButtonClicked(event)
     {
-        this.dispatchEventToListeners(WebInspector.FilterBar.Event.TextFilterDidChange);
+        var filterBarButton = event.target;
+        filterBarButton.toggle();
+    },
+
+    _handleFilterButtonToggled: function(event)
+    {
+        var filterBarButton = event.target;
+        if (filterBarButton.activated)
+            this._filterFunctionsMap.set(filterBarButton.identifier, filterBarButton.filterFunction);
+        else
+            this._filterFunctionsMap.delete(filterBarButton.identifier);
+        this._handleFilterChanged();
+    },
+
+    _handleFilterChanged: function()
+    {
+        this.dispatchEventToListeners(WebInspector.FilterBar.Event.FilterDidChange);
     }
 };
-
-WebInspector.FilterBar.prototype.__proto__ = WebInspector.Object.prototype;

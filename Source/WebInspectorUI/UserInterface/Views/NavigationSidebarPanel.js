@@ -52,7 +52,7 @@ WebInspector.NavigationSidebarPanel = function(identifier, displayName, image, k
     this._contentTreeOutline = this.createContentTreeOutline(true);
 
     this._filterBar = new WebInspector.FilterBar();
-    this._filterBar.addEventListener(WebInspector.FilterBar.Event.TextFilterDidChange, this._textFilterDidChange, this);
+    this._filterBar.addEventListener(WebInspector.FilterBar.Event.FilterDidChange, this._filterDidChange, this);
     this.element.appendChild(this._filterBar.element);
 
     this._bottomOverflowShadowElement = document.createElement("div");
@@ -312,6 +312,15 @@ WebInspector.NavigationSidebarPanel.prototype = {
         return true;
     },
 
+    matchTreeElementAgainstFilterFunctions: function(treeElement)
+    {
+        for (var filterFunction of this._filterFunctions) {
+            if (filterFunction(treeElement))
+                return true;
+        }
+        return false;
+    },
+
     applyFiltersToTreeElement: function(treeElement)
     {
         if (!this._filterBar.hasActiveFilters() && !this.hasCustomFilters()) {
@@ -375,7 +384,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
             }
         }
 
-        if (matchTextFilter(filterableData.text) && this.matchTreeElementAgainstCustomFilters(treeElement)) {
+        if (matchTextFilter(filterableData.text) && this.matchTreeElementAgainstFilterFunctions(treeElement) && this.matchTreeElementAgainstCustomFilters(treeElement)) {
             // Make this element visible since it matches.
             makeVisible();
 
@@ -490,7 +499,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
         this._emptyFilterResults = true;
     },
 
-    _textFilterDidChange: function()
+    _filterDidChange: function()
     {
         this._updateFilter();
     },
@@ -503,6 +512,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
         var filters = this._filterBar.filters;
         this._textFilterRegex = simpleGlobStringToRegExp(filters.text, "i");
         this._filtersSetting.value = filters;
+        this._filterFunctions = filters.functions;
 
         // Don't populate if we don't have any active filters.
         // We only need to populate when a filter needs to reveal.

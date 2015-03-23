@@ -36,6 +36,10 @@ body.mac-platform.legacy .filter-bar {
     height: 21px;
 }
 
+.filter-bar > .navigation-bar > .item {
+    padding: 0 0 3px 8px;
+}
+
 .filter-bar > input[type="search"] {
     display: flex;
     flex: 1;
