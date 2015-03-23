@@ -1,4 +1,15 @@
 =================
+WebKitGTK+  2.8.0
+=================
+
+What's new in WebKitGTK+ 2.8.0?
+
+  - Fix scrollbars rendering with GTK+ 3.16.
+  - Fix a crash during a drag and drop operation started by JavaScript.
+  - Fix the build with Wayland target enabled.
+  - Properly search for Wayland dependency when enabling Wayland target.
+
+=================
 WebKitGTK+ 2.7.92
 =================
 

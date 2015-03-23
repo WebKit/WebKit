@@ -1,5 +1,11 @@
 2015-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.8.0 release.
+
+        * gtk/NEWS: Add release notes for 2.8.0.
+
+2015-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add a configure option to build without Redirected XComposite Window
         https://bugs.webkit.org/show_bug.cgi?id=142865
 
