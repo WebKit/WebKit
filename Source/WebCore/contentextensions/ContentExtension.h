@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionsBackend_h
-#define ContentExtensionsBackend_h
+#ifndef ContentExtension_h
+#define ContentExtension_h
+
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtension.h"
-#include "ContentExtensionRule.h"
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
+#include "StyleSheetContents.h"
 
 namespace WebCore {
-
-class URL;
-
-struct ResourceLoadInfo;
 
 namespace ContentExtensions {
 
 class CompiledContentExtension;
 
-// The ContentExtensionsBackend is the internal model of all the content extensions.
-//
-// It provides two services:
-// 1) It stores the rules for each content extension.
-// 2) It provides APIs for the WebCore interfaces to use those rules efficiently.
-class ContentExtensionsBackend {
+class ContentExtension : public RefCounted<ContentExtension> {
 public:
-    // - Rule management interface. This can be used by upper layer.
+    static RefPtr<ContentExtension> create(const String& identifier, Ref<CompiledContentExtension>&&);
 
-    // Set a list of rules for a given name. If there were existing rules for the name, they are overriden.
-    // The identifier cannot be empty.
-    WEBCORE_EXPORT void addContentExtension(const String& identifier, RefPtr<CompiledContentExtension>);
-    WEBCORE_EXPORT void removeContentExtension(const String& identifier);
-    WEBCORE_EXPORT void removeAllContentExtensions();
-
-    // - Internal WebCore Interface.
-    WEBCORE_EXPORT Vector<Action> actionsForResourceLoad(const ResourceLoadInfo&) const;
-    StyleSheetContents* globalDisplayNoneStyleSheet(const String& identifier) const;
+    const String& identifier() const { return m_identifier; }
+    const CompiledContentExtension& compiledExtension() const { return m_compiledExtension.get(); }
+    StyleSheetContents* globalDisplayNoneStyleSheet();
 
 private:
-    HashMap<String, RefPtr<ContentExtension>> m_contentExtensions;
+    ContentExtension(const String& identifier, Ref<CompiledContentExtension>&&);
+
+    String m_identifier;
+    Ref<CompiledContentExtension> m_compiledExtension;
+    RefPtr<StyleSheetContents> m_globalDisplayNoneStyleSheet;
+    bool m_parsedGlobalDisplayNoneStyleSheet;
 };
 
 } // namespace ContentExtensions
-
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // ContentExtensionsBackend_h
+#endif // ContentExtension_h

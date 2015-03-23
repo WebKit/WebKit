@@ -1,3 +1,54 @@
+2015-03-23  Brady Eidson  <beidson@apple.com>
+
+        Content extensions should apply css selectors
+        https://bugs.webkit.org/show_bug.cgi?id=142604
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/contentextensions/css-display-none.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * contentextensions/ContentExtension.cpp:
+        (WebCore::ContentExtensions::ContentExtension::create):
+        (WebCore::ContentExtensions::ContentExtension::ContentExtension):
+        (WebCore::ContentExtensions::ContentExtension::globalDisplayNoneStyleSheet):
+        * contentextensions/ContentExtension.h:
+        (WebCore::ContentExtensions::ContentExtension::identifier):
+        (WebCore::ContentExtensions::ContentExtension::compiledExtension):
+
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::addContentExtension):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::globalDisplayNoneStyleSheet):
+        * contentextensions/ContentExtensionsBackend.h:
+
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::maybeAddContentExtensionSheet):
+        * dom/DocumentStyleSheetCollection.h:
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitData):
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        (WebCore::DocumentLoader::addPendingContentExtensionSheet):
+        * loader/DocumentLoader.h:
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::setInitiator):
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore::CachedResourceRequest::initiatingDocumentLoader):
+
+        * page/UserContentController.cpp:
+        (WebCore::UserContentController::globalDisplayNoneStyleSheet):
+        (WebCore::UserContentController::displayNoneCSSRule):
+        * page/UserContentController.h:
+
 2015-03-23  Anders Carlsson  <andersca@apple.com>
 
         -[_WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:] doesn't remove cookies

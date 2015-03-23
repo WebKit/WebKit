@@ -41,6 +41,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "StringWithDirection.h"
+#include "StyleSheetContents.h"
 #include "SubstituteData.h"
 #include "Timer.h"
 #include <wtf/HashSet.h>
@@ -267,6 +268,11 @@ namespace WebCore {
         QuickLookHandle* quickLookHandle() const { return m_quickLookHandle.get(); }
 #endif
 
+#if ENABLE(CONTENT_EXTENSIONS)
+        void addPendingContentExtensionSheet(const String& identifier, StyleSheetContents&);
+        void addPendingContentExtensionSheet(StyleSheetContents&);
+#endif
+
     protected:
         WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -424,6 +430,12 @@ namespace WebCore {
 #if USE(QUICK_LOOK)
         std::unique_ptr<QuickLookHandle> m_quickLookHandle;
 #endif
+
+#if ENABLE(CONTENT_EXTENSIONS)
+        HashMap<String, RefPtr<StyleSheetContents>> m_pendingNamedContentExtensionStyleSheets;
+        HashSet<RefPtr<StyleSheetContents>> m_pendingUnnamedContentExtensionStyleSheets;
+#endif
+
     };
 
     inline void DocumentLoader::recordMemoryCacheLoadForFutureClientNotification(const ResourceRequest& request)

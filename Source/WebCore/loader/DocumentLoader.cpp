@@ -840,6 +840,19 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
 
         m_writer.setEncoding(encoding, userChosen);
     }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    DocumentStyleSheetCollection& styleSheetCollection = m_frame->document()->styleSheetCollection();
+
+    for (auto& pendingStyleSheet : m_pendingNamedContentExtensionStyleSheets)
+        styleSheetCollection.maybeAddContentExtensionSheet(pendingStyleSheet.key, *pendingStyleSheet.value);
+    for (auto& pendingStyleSheet : m_pendingUnnamedContentExtensionStyleSheets)
+        styleSheetCollection.addUserSheet(*pendingStyleSheet);
+
+    m_pendingNamedContentExtensionStyleSheets.clear();
+    m_pendingUnnamedContentExtensionStyleSheets.clear();
+#endif
+
     ASSERT(m_frame->document()->parsing());
     m_writer.addData(bytes, length);
 }
@@ -1441,6 +1454,7 @@ void DocumentLoader::startLoadingMainResource()
     ResourceRequest request(m_request);
     static NeverDestroyed<ResourceLoaderOptions> mainResourceLoadOptions(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForAllCredentials, SkipSecurityCheck, UseDefaultOriginRestrictionsForType, IncludeCertificateInfo);
     CachedResourceRequest cachedResourceRequest(request, mainResourceLoadOptions);
+    cachedResourceRequest.setInitiator(*this);
     m_mainResource = m_cachedResourceLoader->requestMainResource(cachedResourceRequest);
     if (!m_mainResource) {
         setRequest(ResourceRequest());
@@ -1571,5 +1585,19 @@ void DocumentLoader::handledOnloadEvents()
     m_wasOnloadHandled = true;
     applicationCacheHost()->stopDeferringEvents();
 }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+void DocumentLoader::addPendingContentExtensionSheet(const String& identifier, StyleSheetContents& sheet)
+{
+    ASSERT(!m_gotFirstByte);
+    m_pendingNamedContentExtensionStyleSheets.set(identifier, &sheet);
+}
+
+void DocumentLoader::addPendingContentExtensionSheet(StyleSheetContents& sheet)
+{
+    ASSERT(!m_gotFirstByte);
+    m_pendingUnnamedContentExtensionStyleSheets.add(&sheet);
+}
+#endif
 
 } // namespace WebCore

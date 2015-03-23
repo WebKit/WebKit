@@ -4,11 +4,5 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 492x18
-          text run at (0,0) width 492: "This text should not be visible once the css selector is applied (not done yet)."
-      RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 522x18
-          text run at (0,0) width 522: "This text should also not be visible once the css selector is applied (not done yet)."
-      RenderBlock {P} at (0,68) size 784x18
         RenderText {#text} at (0,0) size 173x18
           text run at (0,0) width 173: "This text should be visible."

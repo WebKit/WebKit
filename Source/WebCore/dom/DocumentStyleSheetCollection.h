@@ -30,6 +30,7 @@
 
 #include <memory>
 #include <wtf/FastMalloc.h>
+#include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -69,6 +70,7 @@ public:
 
     WEBCORE_EXPORT void addAuthorSheet(Ref<StyleSheetContents>&& authorSheet);
     WEBCORE_EXPORT void addUserSheet(Ref<StyleSheetContents>&& userSheet);
+    void maybeAddContentExtensionSheet(const String& identifier, StyleSheetContents&);
 
     enum UpdateFlag { NoUpdate = 0, OptimizedUpdate, FullUpdate };
 
@@ -146,6 +148,7 @@ private:
 
     Vector<RefPtr<CSSStyleSheet>> m_userStyleSheets;
     Vector<RefPtr<CSSStyleSheet>> m_authorStyleSheets;
+    HashMap<String, RefPtr<CSSStyleSheet>> m_contentExtensionSheets;
 
     bool m_hadActiveLoadingStylesheet;
     UpdateFlag m_pendingUpdateType;

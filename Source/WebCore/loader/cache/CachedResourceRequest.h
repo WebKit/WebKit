@@ -26,6 +26,7 @@
 #ifndef CachedResourceRequest_h
 #define CachedResourceRequest_h
 
+#include "DocumentLoader.h"
 #include "Element.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceLoaderOptions.h"
@@ -60,6 +61,9 @@ public:
     void setInitiator(const AtomicString& name);
     const AtomicString& initiatorName() const;
 
+    void setInitiator(DocumentLoader&);
+    DocumentLoader* initiatingDocumentLoader() const { return m_initiatingDocumentLoader.get(); }
+
 private:
     ResourceRequest m_resourceRequest;
     String m_charset;
@@ -69,6 +73,7 @@ private:
     DeferOption m_defer;
     RefPtr<Element> m_initiatorElement;
     AtomicString m_initiatorName;
+    RefPtr<DocumentLoader> m_initiatingDocumentLoader;
 };
 
 } // namespace WebCore

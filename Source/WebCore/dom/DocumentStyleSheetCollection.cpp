@@ -191,6 +191,18 @@ void DocumentStyleSheetCollection::addUserSheet(Ref<StyleSheetContents>&& userSh
     m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
+void DocumentStyleSheetCollection::maybeAddContentExtensionSheet(const String& identifier, StyleSheetContents& sheet)
+{
+    ASSERT(sheet.isUserStyleSheet());
+
+    if (m_contentExtensionSheets.contains(identifier))
+        return;
+
+    Ref<CSSStyleSheet> cssSheet = CSSStyleSheet::create(sheet, &m_document);
+    m_contentExtensionSheets.set(identifier, &cssSheet.get());
+    m_userStyleSheets.append(adoptRef(cssSheet.leakRef()));
+}
+
 // This method is called whenever a top-level stylesheet has finished loading.
 void DocumentStyleSheetCollection::removePendingSheet(RemovePendingSheetNotificationType notification)
 {

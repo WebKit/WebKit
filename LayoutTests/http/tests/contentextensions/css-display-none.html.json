@@ -16,5 +16,14 @@
         "trigger": {
             "url-filter": ".*css-display-none.html"
         }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden_global"
+        },
+        "trigger": {
+            "url-filter": ".*"
+        }
     }
 ]

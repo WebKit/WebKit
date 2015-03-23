@@ -40,6 +40,7 @@ namespace WebCore {
 
 class DOMWrapperWorld;
 class Page;
+class StyleSheetContents;
 class URL;
 class UserScript;
 class UserStyleSheet;
@@ -87,6 +88,8 @@ public:
     WEBCORE_EXPORT void removeAllUserContentExtensions();
     
     Vector<ContentExtensions::Action> actionsForResourceLoad(const ResourceLoadInfo&);
+    StyleSheetContents* globalDisplayNoneStyleSheet(const String& identifier) const;
+    static const String& displayNoneCSSRule();
 #endif
 
 private:

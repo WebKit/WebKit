@@ -62,8 +62,9 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
     bool urlIndexIsAfterEndOfString = false;
     Actions actions;
     
-    // FIXME: Skip the actions from the root once they are used through actionsFromDFARoot. Change AppendAction to AppendActions to make this faster.
-    
+    while (static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) == DFABytecodeInstruction::AppendAction)
+        programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
+
     // This should always terminate if interpreting correctly compiled bytecode.
     while (true) {
         ASSERT(programCounter <= m_bytecodeLength);

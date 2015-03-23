@@ -64,7 +64,9 @@
 #include "SecurityOrigin.h"
 #include "SessionID.h"
 #include "Settings.h"
+#include "StyleSheetContents.h"
 #include "UserContentController.h"
+#include "UserStyleSheet.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -506,17 +508,21 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         return nullptr;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    Vector<ContentExtensions::Action> actions;
-
     URL mainDocumentURL;
     if (frame() && frame()->mainFrame().document())
         mainDocumentURL = frame()->mainFrame().document()->url();
-    
-    ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, toResourceType(type) };
-    
-    if (frame() && frame()->mainFrame().page() && frame()->mainFrame().page()->userContentController())
-        actions = frame()->mainFrame().page()->userContentController()->actionsForResourceLoad(resourceLoadInfo);
 
+    ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, toResourceType(type) };
+
+    Vector<ContentExtensions::Action> actions;
+    UserContentController* userContentController = nullptr;
+    if (frame() && frame()->mainFrame().page())
+        userContentController = frame()->mainFrame().page()->userContentController();
+
+    if (userContentController)
+        actions = userContentController->actionsForResourceLoad(resourceLoadInfo);
+
+    StringBuilder css;
     bool willBlockLoad = false;
     for (const auto& action : actions) {
         switch (action.type()) {
@@ -527,17 +533,38 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
             request.mutableResourceRequest().setAllowCookies(false);
             break;
         case ContentExtensions::ActionType::CSSDisplayNoneSelector:
-            // action.cssSelector() is the css to use here.
-            // FIXME: That css selector should be used to apply display:none.
+            css.append(action.stringArgument());
+            css.append(UserContentController::displayNoneCSSRule());
             break;
-        case ContentExtensions::ActionType::CSSDisplayNoneStyleSheet:
-            // FIXME: Apply cached stylesheet here
+        case ContentExtensions::ActionType::CSSDisplayNoneStyleSheet: {
+            StyleSheetContents* styleSheetContents = userContentController->globalDisplayNoneStyleSheet(action.stringArgument());
+            RELEASE_ASSERT(styleSheetContents);
+
+            if (type == CachedResource::MainResource && request.initiatingDocumentLoader())
+                request.initiatingDocumentLoader()->addPendingContentExtensionSheet(action.stringArgument(), *styleSheetContents);
+            else if (m_document)
+                m_document->styleSheetCollection().maybeAddContentExtensionSheet(action.stringArgument(), *styleSheetContents);
+
             break;
+        }
         case ContentExtensions::ActionType::IgnorePreviousRules:
         case ContentExtensions::ActionType::InvalidAction:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
+
+    if (css.length()) {
+        Ref<StyleSheetContents> styleSheet = StyleSheetContents::create();
+        styleSheet->setIsUserStyleSheet(true);
+
+        if (styleSheet->parseString(css.toString())) {
+            if (type == CachedResource::MainResource && request.initiatingDocumentLoader())
+                request.initiatingDocumentLoader()->addPendingContentExtensionSheet(styleSheet);
+            else if (m_document)
+                m_document->styleSheetCollection().addUserSheet(WTF::move(styleSheet));
+        }
+    }
+
     if (willBlockLoad)
         return nullptr;
 #endif
