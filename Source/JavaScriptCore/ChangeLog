@@ -1,3 +1,17 @@
+2015-03-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix DO_PROPERTYMAP_CONSTENCY_CHECK enabled build
+        https://bugs.webkit.org/show_bug.cgi?id=142952
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/Structure.cpp:
+        (JSC::PropertyTable::checkConsistency):
+        The check offset method doesn't exist in PropertyTable, it exists in Structure.
+
+        (JSC::Structure::checkConsistency):
+        So move it here, and always put it at the start to match normal behavior.
+
 2015-03-22  Filip Pizlo  <fpizlo@apple.com>
 
         Remove DFG::ValueRecoveryOverride; it's been dead since we removed forward speculations

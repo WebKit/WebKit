@@ -828,15 +828,6 @@ PropertyMapStatisticsExitLogger::~PropertyMapStatisticsExitLogger()
 
 #endif
 
-#if !DO_PROPERTYMAP_CONSTENCY_CHECK
-
-inline void Structure::checkConsistency()
-{
-    checkOffsetConsistency();
-}
-
-#endif
-
 PropertyTable* Structure::copyPropertyTable(VM& vm)
 {
     if (!propertyTable())
@@ -1133,7 +1124,6 @@ void Structure::dumpContextHeader(PrintStream& out)
 
 void PropertyTable::checkConsistency()
 {
-    checkOffsetConsistency();
     ASSERT(m_indexSize >= PropertyTable::MinimumTableSize);
     ASSERT(m_indexMask);
     ASSERT(m_indexSize == m_indexMask + 1);
@@ -1191,6 +1181,8 @@ void PropertyTable::checkConsistency()
 
 void Structure::checkConsistency()
 {
+    checkOffsetConsistency();
+
     if (!propertyTable())
         return;
 
@@ -1202,6 +1194,13 @@ void Structure::checkConsistency()
     }
 
     propertyTable()->checkConsistency();
+}
+
+#else
+
+inline void Structure::checkConsistency()
+{
+    checkOffsetConsistency();
 }
 
 #endif // DO_PROPERTYMAP_CONSTENCY_CHECK
