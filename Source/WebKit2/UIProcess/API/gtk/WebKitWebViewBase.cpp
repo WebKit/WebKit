@@ -115,8 +115,8 @@ public:
         }
 
         if ((event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS)
-            || ((abs(buttonEvent->x - previousClickPoint.x()) < doubleClickDistance)
-                && (abs(buttonEvent->y - previousClickPoint.y()) < doubleClickDistance)
+            || ((std::abs(buttonEvent->x - previousClickPoint.x()) < doubleClickDistance)
+                && (std::abs(buttonEvent->y - previousClickPoint.y()) < doubleClickDistance)
                 && (eventTime - previousClickTime < static_cast<unsigned>(doubleClickTime))
                 && (buttonEvent->button == previousClickButton)))
             currentClickCount++;
