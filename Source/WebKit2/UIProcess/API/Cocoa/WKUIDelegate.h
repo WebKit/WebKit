@@ -105,7 +105,7 @@ WK_ASSUME_NONNULL_BEGIN
 
  If you do not implement this method, the web view will behave as if the user selected the Cancel button.
  */
-- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(WK_NULLABLE NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(WK_NULLABLE_SPECIFIER NSString *result))completionHandler;
+- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(WK_NULLABLE NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString * WK_NULLABLE_SPECIFIER result))completionHandler;
 
 @end
 

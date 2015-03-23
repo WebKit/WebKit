@@ -1,3 +1,15 @@
+2015-03-23  Anders Carlsson  <andersca@apple.com>
+
+        Put the WK_NULLABLE_SPECIFIER in the right place for block parameters
+        https://bugs.webkit.org/show_bug.cgi?id=142975
+        rdar://problem/19863930
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+
 2015-03-23  Tim Horton  <timothy_horton@apple.com>
 
         Add a share item to the link action menu

@@ -212,7 +212,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @param completionHandler A block to invoke when script evaluation completes or fails.
  @discussion The completionHandler is passed the result of the script evaluation or an error.
 */
-- (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^ WK_NULLABLE_SPECIFIER)(WK_NULLABLE_SPECIFIER id, WK_NULLABLE_SPECIFIER NSError *))completionHandler;
+- (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^ WK_NULLABLE_SPECIFIER)(WK_NULLABLE_SPECIFIER id, NSError * WK_NULLABLE_SPECIFIER error))completionHandler;
 
 /*! @abstract A Boolean value indicating whether horizontal swipe gestures
  will trigger back-forward list navigations.
