@@ -1,3 +1,14 @@
+2015-03-23  Anders Carlsson  <andersca@apple.com>
+
+        Make platform/mac-wk2/plugins/destroy-during-async-npp-new.html work again
+        https://bugs.webkit.org/show_bug.cgi?id=133692
+        rdar://problem/17255947
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac-wk2/TestExpectations:
+        Unskip test.
+
 2015-03-23  Alexey Proskuryakov  <ap@apple.com>
 
         accessibility/textarea-selected-text-range.html is flaky
