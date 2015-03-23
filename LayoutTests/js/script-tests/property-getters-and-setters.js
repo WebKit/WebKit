@@ -99,3 +99,27 @@ var o13 = new Object()
 
 shouldBe("o13.__lookupGetter__('b')", "void 0");
 shouldBe("o13.__lookupSetter__('b')", "void 0");
+
+debug("__defineGetter__ and __defineSetter__ should throw exceptions when acting on sealed objects");
+var o14 = {a:14};
+Object.seal(o14);
+shouldThrow("o14.__defineGetter__('a', function(){})");
+shouldThrow("o14.__defineGetter__('b', function(){})");
+shouldThrow("o14.__defineSetter__('a', function(){})");
+shouldThrow("o14.__defineSetter__('b', function(){})");
+
+debug("__defineGetter__ and __defineSetter__ should throw exceptions when acting on frozen objects");
+var o15 = {a:15};
+Object.freeze(o15);
+shouldThrow("o15.__defineGetter__('a', function(){})");
+shouldThrow("o15.__defineGetter__('b', function(){})");
+shouldThrow("o15.__defineSetter__('a', function(){})");
+shouldThrow("o15.__defineSetter__('b', function(){})");
+
+debug("__defineGetter__ and __defineSetter__ should throw exceptions when acting on unconfigurable properties");
+var o16 = {a:16};
+Object.defineProperty(o16, "b", {value: 16, configurable: false});
+shouldNotThrow("o16.__defineGetter__('a', function(){})");
+shouldNotThrow("o16.__defineSetter__('a', function(){})");
+shouldThrow("o16.__defineSetter__('b', function(){})");
+shouldThrow("o16.__defineSetter__('b', function(){})");

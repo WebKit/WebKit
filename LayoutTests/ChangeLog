@@ -1,3 +1,13 @@
+2015-03-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        __defineGetter__/__defineSetter__ should throw exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=142934
+
+        Reviewed by Geoffrey Garen.
+
+        * js/property-getters-and-setters-expected.txt:
+        * js/script-tests/property-getters-and-setters.js:
+
 2015-03-23  Anders Carlsson  <andersca@apple.com>
 
         Make platform/mac-wk2/plugins/destroy-during-async-npp-new.html work again

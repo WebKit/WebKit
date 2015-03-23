@@ -1,5 +1,17 @@
 2015-03-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        __defineGetter__/__defineSetter__ should throw exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=142934
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        Throw exceptions when these functions are used directly.
+
+2015-03-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Fix DO_PROPERTYMAP_CONSTENCY_CHECK enabled build
         https://bugs.webkit.org/show_bug.cgi?id=142952
 
