@@ -58,7 +58,7 @@ public:
     bool imageComplete() const { return m_imageComplete; }
 
     CachedImage* image() const { return m_image.get(); }
-    void setImage(CachedImage*); // Cancels pending beforeload and load events, and doesn't dispatch new ones.
+    void clearImage(); // Cancels pending beforeload and load events, and doesn't dispatch new ones.
 
     void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
 
@@ -88,7 +88,7 @@ private:
     RenderImageResource* renderImageResource();
     void updateRenderer();
 
-    void setImageWithoutConsideringPendingLoadEvent(CachedImage*);
+    void clearImageWithoutConsideringPendingLoadEvent();
     void clearFailedLoadURL();
 
     void timerFired();

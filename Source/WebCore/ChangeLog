@@ -1,3 +1,28 @@
+2015-03-23  Yoav Weiss  <yoav@yoav.ws>
+
+        Refactor ImageLoader's setting of CachedImage
+        https://bugs.webkit.org/show_bug.cgi?id=142825
+
+        Reviewed by Chris Dumez.
+
+        No new tests, since there's no functional change.
+
+        setImage and setImageWithoutConsideringPendingLoadEvent were not called with new
+        CachedImages and were not used as originally intended. That resulted in some dead code,
+        and confusion when going over the code.
+        This patch renames these methods into equivalent clearImage* methods, and deletes resulting dead code.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderFallbackContent): Changed setImage call to clearImage.
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::clearImage):
+        (WebCore::ImageLoader::clearImageWithoutConsideringPendingLoadEvent):
+        (WebCore::ImageLoader::notifyFinished):
+        (WebCore::ImageLoader::elementDidMoveToNewDocument):
+        (WebCore::ImageLoader::setImage): Deleted.
+        (WebCore::ImageLoader::setImageWithoutConsideringPendingLoadEvent): Deleted.
+        * loader/ImageLoader.h:
+
 2015-03-22  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS Selectors: fix attribute case-insensitive matching of Contain and List

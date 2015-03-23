@@ -382,7 +382,7 @@ void HTMLObjectElement::renderFallbackContent()
         m_serviceType = loader->image()->response().mimeType();
         if (!isImageType()) {
             // If we don't think we have an image type anymore, then clear the image from the loader.
-            loader->setImage(nullptr);
+            loader->clearImage();
             return;
         }
     }
