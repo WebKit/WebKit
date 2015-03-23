@@ -117,6 +117,7 @@ const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, &arrayProto
   keys           arrayProtoFuncKeys           DontEnum|Function 0
   find           arrayProtoFuncFind           DontEnum|Function 1
   findIndex      arrayProtoFuncFindIndex      DontEnum|Function 1
+  includes       arrayProtoFuncIncludes       DontEnum|Function 1
 @end
 */
 

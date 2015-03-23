@@ -1,3 +1,16 @@
+2015-03-23  Dean Jackson  <dino@apple.com>
+
+        ES7: Implement Array.prototype.includes
+        https://bugs.webkit.org/show_bug.cgi?id=142707
+
+        Reviewed by Geoffrey Garen.
+
+        * js/array-includes-expected.txt: Added.
+        * js/array-includes.html: Added.
+        * js/script-tests/array-includes.js: Added.
+        * js/script-tests/Object-getOwnPropertyNames.js: Add 'includes'.
+        * js/Object-getOwnPropertyNames-expected.txt: Add 'includes'.
+
 2015-03-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         __defineGetter__/__defineSetter__ should throw exceptions

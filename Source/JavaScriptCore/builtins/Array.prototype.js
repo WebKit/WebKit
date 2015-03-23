@@ -236,3 +236,40 @@ function findIndex(callback /*, thisArg */) {
     }
     return -1;
 }
+
+function includes(searchElement /*, fromIndex*/) {
+    "use strict";
+    if (this === null)
+        throw new @TypeError("Array.prototype.includes requires that |this| not be null");
+
+    if (this === undefined)
+        throw new @TypeError("Array.prototype.includes requires that |this| not be undefined");
+
+    var array = @Object(this);
+    var length = array.length >>> 0;
+
+    if (length === 0)
+        return false;
+
+    var fromIndex = 0;
+    if (arguments.length > 1 && arguments[1] !== undefined)
+        fromIndex = arguments[1] | 0;
+
+    var index;
+    if (fromIndex >= 0)
+        index = fromIndex;
+    else
+        index = length + fromIndex;
+
+    if (index < 0)
+        index = 0;
+
+    var currentElement;
+    for (; index < length; ++index) {
+        currentElement = array[index];
+        // Use SameValueZero comparison, rather than just StrictEquals.
+        if (searchElement === currentElement || (searchElement !== searchElement && currentElement !== currentElement))
+            return true;
+    }
+    return false;
+}
