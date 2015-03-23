@@ -128,10 +128,7 @@ set(test_webkit2_api_fail_BINARIES
     WillLoad
 )
 
-# Seccomp filters is an internal API and its symbols
-# are not (and should not) be exposed by default. We
-# can only test it when building shared core.
-if (ENABLE_SECCOMP_FILTERS AND SHARED_CORE)
+if (ENABLE_SECCOMP_FILTERS)
     list(APPEND test_webkit2_api_fail_BINARIES
         SeccompFilters
     )

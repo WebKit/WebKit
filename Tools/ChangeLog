@@ -1,3 +1,15 @@
+2015-03-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMake][EFL] Put failure API test excutables into failure directory
+        https://bugs.webkit.org/show_bug.cgi?id=142965
+
+        Reviewed by Csaba Osztrogonác.
+
+        Move failing WK2 API test executables to *bin/TestWebKitAPI/WebKit2/failure* directory.
+
+        * TestWebKitAPI/CMakeLists.txt: Fix a typo. Change *testBaseName* with *testName*.
+        * TestWebKitAPI/PlatformEfl.cmake: Additionally remove unnecessary SHARED_CORE and comment for SeccompFilters test.
+
 2015-03-22  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS Selectors: fix attribute case-insensitive matching of Contain and List

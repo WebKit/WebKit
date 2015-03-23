@@ -213,11 +213,10 @@ endforeach ()
 # We don't run tests that are expected to fail. We could use the WILL_FAIL
 # property, but it reports failure when the test crashes or timeouts and would
 # make the bot red.
-
 foreach (testName ${test_webkit2_api_fail_BINARIES})
     add_executable(${testName} ${TESTWEBKITAPI_DIR}/Tests/WebKit2/${testName}.cpp)
     target_link_libraries(${testName} ${test_webkit2_api_LIBRARIES})
-    set_target_properties(${testBaseName} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit2
+    set_target_properties(${testName} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit2/failure
     )
 endforeach ()
