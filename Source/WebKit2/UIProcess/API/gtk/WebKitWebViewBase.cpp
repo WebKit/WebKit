@@ -67,9 +67,10 @@
 #include "WebFullScreenManagerProxy.h"
 #endif
 
-#if PLATFORM(X11)
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
 #include <gdk/gdkx.h>
 #endif
+
 #if PLATFORM(WAYLAND)
 #include <gdk/gdkwayland.h>
 #endif
@@ -184,7 +185,7 @@ struct _WebKitWebViewBasePrivate {
     WebFullScreenClientGtk fullScreenClient;
 #endif
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     std::unique_ptr<RedirectedXCompositeWindow> redirectedWindow;
 #endif
 
@@ -318,7 +319,7 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webView->priv;
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
     if (GDK_IS_X11_DISPLAY(display)) {
         priv->redirectedWindow = RedirectedXCompositeWindow::create(
@@ -368,6 +369,11 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     GdkWindow* window = gdk_window_new(gtk_widget_get_parent_window(widget), &attributes, attributesMask);
     gtk_widget_set_window(widget, window);
     gdk_window_set_user_data(window, widget);
+
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+    DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
+    drawingArea->setNativeSurfaceHandleForCompositing(GDK_WINDOW_XID(window));
+#endif
 
     gtk_style_context_set_background(gtk_widget_get_style_context(widget), window);
 
@@ -517,7 +523,7 @@ static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* 
     if (!drawingArea->isInAcceleratedCompositingMode())
         return false;
 
-#if PLATFORM(X11)
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     // To avoid flashes when initializing accelerated compositing for the first
     // time, we wait until we know there's a frame ready before rendering.
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -630,7 +636,7 @@ static void resizeWebKitWebViewBaseFromAllocation(WebKitWebViewBase* webViewBase
 
     DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (sizeChanged && priv->redirectedWindow && drawingArea && drawingArea->isInAcceleratedCompositingMode())
         priv->redirectedWindow->resize(viewRect.size());
 #endif
@@ -1323,7 +1329,7 @@ void webkitWebViewBaseResetClickCounter(WebKitWebViewBase* webkitWebViewBase)
 
 void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase)
 {
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
     if (!priv->redirectedWindow)
         return;
@@ -1341,7 +1347,7 @@ void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase* webkitW
 
 void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase)
 {
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
     if (priv->redirectedWindow)
         priv->redirectedWindow->resize(IntSize());

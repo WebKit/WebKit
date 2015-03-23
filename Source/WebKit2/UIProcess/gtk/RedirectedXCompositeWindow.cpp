@@ -27,7 +27,7 @@
 #include "config.h"
 #include "RedirectedXCompositeWindow.h"
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
 
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xdamage.h>
@@ -282,4 +282,4 @@ cairo_surface_t* RedirectedXCompositeWindow::surface()
 
 } // namespace WebCore
 
-#endif // USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
+#endif // USE(REDIRECTED_XCOMPOSITE_WINDOW)

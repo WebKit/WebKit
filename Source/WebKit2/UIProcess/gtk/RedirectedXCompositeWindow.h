@@ -27,7 +27,7 @@
 #ifndef  RedirectedXCompositeWindow_h
 #define  RedirectedXCompositeWindow_h
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
 
 #include <WebCore/IntSize.h>
 #include <WebCore/RefPtrCairo.h>
@@ -64,6 +64,6 @@ private:
 
 } // namespace WebKit
 
-#endif // USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
+#endif // USE(REDIRECTED_XCOMPOSITE_WINDOW)
 
 #endif // RedirectedXCompositeWindow_h
