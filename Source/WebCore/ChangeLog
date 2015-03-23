@@ -1,5 +1,12 @@
 2015-03-23  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed test fix.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseScrollSnapDestination): Remove new assertion.
+
+2015-03-23  Brent Fulgham  <bfulgham@apple.com>
+
         scroll-snap-destination and scroll-snap-coordinate do not seem to work together properly
         https://bugs.webkit.org/show_bug.cgi?id=142552
         <rdar://problem/20114743>

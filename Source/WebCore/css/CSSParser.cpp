@@ -3353,7 +3353,6 @@ bool CSSParser::parseScrollSnapPositions(RefPtr<CSSValue>& cssValueX, RefPtr<CSS
 bool CSSParser::parseScrollSnapDestination(CSSPropertyID propId, bool important)
 {
     RefPtr<CSSValueList> position = CSSValueList::createSpaceSeparated();
-    ASSERT(m_valueList->size() == 2);
     if (m_valueList->size() != 2)
         return false;
 
