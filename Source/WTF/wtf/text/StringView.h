@@ -104,7 +104,12 @@ public:
     StringView substring(unsigned start, unsigned length = std::numeric_limits<unsigned>::max()) const;
 
     size_t find(UChar, unsigned start = 0) const;
+    WTF_EXPORT_STRING_API size_t findIgnoringASCIICase(const StringView&) const;
+    WTF_EXPORT_STRING_API size_t findIgnoringASCIICase(const StringView&, unsigned startOffset) const;
+
     bool contains(UChar) const;
+    WTF_EXPORT_STRING_API bool containsIgnoringASCIICase(const StringView&) const;
+    WTF_EXPORT_STRING_API bool containsIgnoringASCIICase(const StringView&, unsigned startOffset) const;
 
     WTF_EXPORT_STRING_API bool startsWith(const StringView&) const;
     WTF_EXPORT_STRING_API bool startsWithIgnoringASCIICase(const StringView&) const;

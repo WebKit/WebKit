@@ -115,14 +115,22 @@ public:
     bool contains(UChar c) const { return m_string.contains(c); }
     bool contains(const LChar* s, bool caseSensitive = true) const
         { return m_string.contains(s, caseSensitive); }
-    bool contains(const String& s, bool caseSensitive = true) const
+    bool contains(const String& s) const
+        { return m_string.contains(s); }
+    bool contains(const String& s, bool caseSensitive) const
         { return m_string.contains(s, caseSensitive); }
+    bool containsIgnoringASCIICase(const String& s) const
+        { return m_string.containsIgnoringASCIICase(s); }
 
     size_t find(UChar c, unsigned start = 0) const { return m_string.find(c, start); }
     size_t find(const LChar* s, unsigned start = 0, bool caseSentitive = true) const
         { return m_string.find(s, start, caseSentitive); }
     size_t find(const String& s, unsigned start = 0, bool caseSentitive = true) const
         { return m_string.find(s, start, caseSentitive); }
+    size_t findIgnoringASCIICase(const String& s) const
+        { return m_string.findIgnoringASCIICase(s); }
+    size_t findIgnoringASCIICase(const String& s, unsigned startOffset) const
+        { return m_string.findIgnoringASCIICase(s, startOffset); }
     size_t find(CharacterMatchFunctionPtr matchFunction, unsigned start = 0) const
         { return m_string.find(matchFunction, start); }
 

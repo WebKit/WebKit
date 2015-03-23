@@ -1,3 +1,24 @@
+2015-03-22  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS Selectors: fix attribute case-insensitive matching of Contain and List
+        https://bugs.webkit.org/show_bug.cgi?id=142932
+
+        Reviewed by Darin Adler.
+
+        Fix the last two attribute selectors that were using full case-insensitive
+        match:
+            -Contain ([foo*=bar]).
+            -List (foo~=bar]).
+
+        Tests: fast/selectors/attribute-contains-value-matching-is-ascii-case-insensitive.html
+               fast/selectors/attribute-list-value-matching-is-ascii-case-insensitive.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::attributeValueMatches):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::attributeValueContains):
+        (WebCore::SelectorCompiler::attributeValueSpaceSeparetedListContains):
+
 2015-03-22  Benjamin Poulain  <bpoulain@apple.com>
 
         Detect when url filter pattern with groups match the empty string

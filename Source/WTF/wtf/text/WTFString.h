@@ -220,6 +220,10 @@ public:
         { return m_impl ? m_impl->find(str.impl()) : notFound; }
     size_t find(const String& str, unsigned start) const
         { return m_impl ? m_impl->find(str.impl(), start) : notFound; }
+    size_t findIgnoringASCIICase(const String& str) const
+        { return m_impl ? m_impl->findIgnoringASCIICase(str.impl()) : notFound; }
+    size_t findIgnoringASCIICase(const String& str, unsigned startOffset) const
+        { return m_impl ? m_impl->findIgnoringASCIICase(str.impl(), startOffset) : notFound; }
 
     size_t find(CharacterMatchFunctionPtr matchFunction, unsigned start = 0) const
         { return m_impl ? m_impl->find(matchFunction, start) : notFound; }
@@ -258,8 +262,14 @@ public:
     bool contains(UChar c) const { return find(c) != notFound; }
     bool contains(const LChar* str, bool caseSensitive = true, unsigned startOffset = 0) const 
         { return find(str, startOffset, caseSensitive) != notFound; }
-    bool contains(const String& str, bool caseSensitive = true, unsigned startOffset = 0) const 
+    bool contains(const String& str) const
+        { return find(str) != notFound; }
+    bool contains(const String& str, bool caseSensitive, unsigned startOffset = 0) const
         { return find(str, startOffset, caseSensitive) != notFound; }
+    bool containsIgnoringASCIICase(const String& str) const
+        { return findIgnoringASCIICase(str) != notFound; }
+    bool containsIgnoringASCIICase(const String& str, unsigned startOffset) const
+        { return findIgnoringASCIICase(str, startOffset) != notFound; }
 
     bool startsWith(const String& s) const
         { return m_impl ? m_impl->startsWith(s.impl()) : s.isEmpty(); }

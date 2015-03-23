@@ -226,6 +226,171 @@ StringView stringViewFromUTF8(String &ref, const char* characters)
     return ref;
 }
 
+TEST(WTF, StringViewFindIgnoringASCIICaseBasic)
+{
+    String referenceAHolder;
+    StringView referenceA = stringViewFromUTF8(referenceAHolder, "aBcéeFG");
+    String referenceBHolder;
+    StringView referenceB = stringViewFromUTF8(referenceBHolder, "ABCÉEFG");
+
+    // Search the exact string.
+    EXPECT_EQ(static_cast<size_t>(0), referenceA.findIgnoringASCIICase(referenceA));
+    EXPECT_EQ(static_cast<size_t>(0), referenceB.findIgnoringASCIICase(referenceB));
+
+    // A and B are distinct by the non-ascii character é/É.
+    EXPECT_EQ(static_cast<size_t>(notFound), referenceA.findIgnoringASCIICase(referenceB));
+    EXPECT_EQ(static_cast<size_t>(notFound), referenceB.findIgnoringASCIICase(referenceA));
+
+    String tempStringHolder;
+    // Find the prefix.
+    EXPECT_EQ(static_cast<size_t>(0), referenceA.findIgnoringASCIICase(stringViewFromLiteral("a")));
+    EXPECT_EQ(static_cast<size_t>(0), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "abcé")));
+    EXPECT_EQ(static_cast<size_t>(0), referenceA.findIgnoringASCIICase(stringViewFromLiteral("A")));
+    EXPECT_EQ(static_cast<size_t>(0), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABCé")));
+    EXPECT_EQ(static_cast<size_t>(0), referenceB.findIgnoringASCIICase(stringViewFromLiteral("a")));
+    EXPECT_EQ(static_cast<size_t>(0), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "abcÉ")));
+    EXPECT_EQ(static_cast<size_t>(0), referenceB.findIgnoringASCIICase(stringViewFromLiteral("A")));
+    EXPECT_EQ(static_cast<size_t>(0), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABCÉ")));
+
+    // Not a prefix.
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromLiteral("x")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "accé")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "abcÉ")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromLiteral("X")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABDé")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABCÉ")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromLiteral("y")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "accÉ")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "abcé")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromLiteral("Y")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABdÉ")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABCé")));
+
+    // Find the infix.
+    EXPECT_EQ(static_cast<size_t>(2), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "cée")));
+    EXPECT_EQ(static_cast<size_t>(3), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ée")));
+    EXPECT_EQ(static_cast<size_t>(2), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "cé")));
+    EXPECT_EQ(static_cast<size_t>(2), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "c")));
+    EXPECT_EQ(static_cast<size_t>(3), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "é")));
+    EXPECT_EQ(static_cast<size_t>(2), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "Cée")));
+    EXPECT_EQ(static_cast<size_t>(3), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "éE")));
+    EXPECT_EQ(static_cast<size_t>(2), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "Cé")));
+    EXPECT_EQ(static_cast<size_t>(2), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "C")));
+
+    EXPECT_EQ(static_cast<size_t>(2), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "cÉe")));
+    EXPECT_EQ(static_cast<size_t>(3), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "Ée")));
+    EXPECT_EQ(static_cast<size_t>(2), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "cÉ")));
+    EXPECT_EQ(static_cast<size_t>(2), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "c")));
+    EXPECT_EQ(static_cast<size_t>(3), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "É")));
+    EXPECT_EQ(static_cast<size_t>(2), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "CÉe")));
+    EXPECT_EQ(static_cast<size_t>(3), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ÉE")));
+    EXPECT_EQ(static_cast<size_t>(2), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "CÉ")));
+    EXPECT_EQ(static_cast<size_t>(2), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "C")));
+
+    // Not an infix.
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "céd")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "Ée")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "bé")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "x")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "É")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "CÉe")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "éd")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "CÉ")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "Y")));
+
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "cée")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "Éc")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "cé")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "W")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "é")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "bÉe")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "éE")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "BÉ")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "z")));
+
+    // Find the suffix.
+    EXPECT_EQ(static_cast<size_t>(6), referenceA.findIgnoringASCIICase(stringViewFromLiteral("g")));
+    EXPECT_EQ(static_cast<size_t>(4), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "efg")));
+    EXPECT_EQ(static_cast<size_t>(3), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "éefg")));
+    EXPECT_EQ(static_cast<size_t>(6), referenceA.findIgnoringASCIICase(stringViewFromLiteral("G")));
+    EXPECT_EQ(static_cast<size_t>(4), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "EFG")));
+    EXPECT_EQ(static_cast<size_t>(3), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "éEFG")));
+
+    EXPECT_EQ(static_cast<size_t>(6), referenceB.findIgnoringASCIICase(stringViewFromLiteral("g")));
+    EXPECT_EQ(static_cast<size_t>(4), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "efg")));
+    EXPECT_EQ(static_cast<size_t>(3), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "Éefg")));
+    EXPECT_EQ(static_cast<size_t>(6), referenceB.findIgnoringASCIICase(stringViewFromLiteral("G")));
+    EXPECT_EQ(static_cast<size_t>(4), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "EFG")));
+    EXPECT_EQ(static_cast<size_t>(3), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ÉEFG")));
+
+    // Not a suffix.
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromLiteral("X")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "edg")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "Éefg")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromLiteral("w")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "dFG")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ÉEFG")));
+
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromLiteral("Z")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ffg")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "éefg")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromLiteral("r")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "EgG")));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "éEFG")));
+}
+
+TEST(WTF, StringViewFindIgnoringASCIICaseWithValidOffset)
+{
+    String referenceHolder;
+    StringView reference = stringViewFromUTF8(referenceHolder, "ABCÉEFGaBcéeFG");
+    String tempStringHolder;
+
+    EXPECT_EQ(static_cast<size_t>(0), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABC"), 0));
+    EXPECT_EQ(static_cast<size_t>(7), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABC"), 1));
+    EXPECT_EQ(static_cast<size_t>(0), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABCÉ"), 0));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABCÉ"), 1));
+    EXPECT_EQ(static_cast<size_t>(7), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABCé"), 0));
+    EXPECT_EQ(static_cast<size_t>(7), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABCé"), 1));
+}
+
+TEST(WTF, StringViewFindIgnoringASCIICaseWithInvalidOffset)
+{
+    String referenceHolder;
+    StringView reference = stringViewFromUTF8(referenceHolder, "ABCÉEFGaBcéeFG");
+    String tempStringHolder;
+
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABC"), 15));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABC"), 16));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABCÉ"), 17));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABCÉ"), 42));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABCÉ"), std::numeric_limits<unsigned>::max()));
+}
+
+TEST(WTF, StringViewFindIgnoringASCIICaseOnEmpty)
+{
+    String referenceHolder;
+    StringView reference = stringViewFromUTF8(referenceHolder, "ABCÉEFG");
+    StringView empty = stringViewFromLiteral("");
+    EXPECT_EQ(static_cast<size_t>(0), reference.findIgnoringASCIICase(empty));
+    EXPECT_EQ(static_cast<size_t>(0), reference.findIgnoringASCIICase(empty, 0));
+    EXPECT_EQ(static_cast<size_t>(3), reference.findIgnoringASCIICase(empty, 3));
+    EXPECT_EQ(static_cast<size_t>(7), reference.findIgnoringASCIICase(empty, 7));
+    EXPECT_EQ(static_cast<size_t>(7), reference.findIgnoringASCIICase(empty, 8));
+    EXPECT_EQ(static_cast<size_t>(7), reference.findIgnoringASCIICase(empty, 42));
+    EXPECT_EQ(static_cast<size_t>(7), reference.findIgnoringASCIICase(empty, std::numeric_limits<unsigned>::max()));
+}
+
+TEST(WTF, StringViewFindIgnoringASCIICaseWithPatternLongerThanReference)
+{
+    String referenceHolder;
+    StringView reference = stringViewFromUTF8(referenceHolder, "ABCÉEFG");
+    String patternHolder;
+    StringView pattern = stringViewFromUTF8(referenceHolder, "ABCÉEFGA");
+
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference.findIgnoringASCIICase(pattern));
+    EXPECT_EQ(static_cast<size_t>(0), pattern.findIgnoringASCIICase(reference));
+}
+
 TEST(WTF, StringViewStartsWithBasic)
 {
     StringView reference = stringViewFromLiteral("abcdefg");

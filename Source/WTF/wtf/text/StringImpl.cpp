@@ -1226,6 +1226,30 @@ size_t StringImpl::findIgnoringCase(StringImpl* matchString, unsigned index)
     return findIgnoringCaseInner(characters16() + index, matchString->characters16(), index, searchLength, matchLength);
 }
 
+size_t StringImpl::findIgnoringASCIICase(const StringImpl& matchString) const
+{
+    return ::WTF::findIgnoringASCIICase(*this, matchString, 0);
+}
+
+size_t StringImpl::findIgnoringASCIICase(const StringImpl& matchString, unsigned startOffset) const
+{
+    return ::WTF::findIgnoringASCIICase(*this, matchString, startOffset);
+}
+
+size_t StringImpl::findIgnoringASCIICase(const StringImpl* matchString) const
+{
+    if (!matchString)
+        return notFound;
+    return ::WTF::findIgnoringASCIICase(*this, *matchString, 0);
+}
+
+size_t StringImpl::findIgnoringASCIICase(const StringImpl* matchString, unsigned startOffset) const
+{
+    if (!matchString)
+        return notFound;
+    return ::WTF::findIgnoringASCIICase(*this, *matchString, startOffset);
+}
+
 size_t StringImpl::findNextLineStart(unsigned index)
 {
     if (is8Bit())

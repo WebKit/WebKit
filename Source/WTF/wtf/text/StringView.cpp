@@ -33,6 +33,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace WTF {
 
+bool StringView::containsIgnoringASCIICase(const StringView& matchString) const
+{
+    return findIgnoringASCIICase(matchString) != notFound;
+}
+
+bool StringView::containsIgnoringASCIICase(const StringView& matchString, unsigned startOffset) const
+{
+    return findIgnoringASCIICase(matchString, startOffset) != notFound;
+}
+
+size_t StringView::findIgnoringASCIICase(const StringView& matchString) const
+{
+    return ::WTF::findIgnoringASCIICase(*this, matchString, 0);
+}
+
+size_t StringView::findIgnoringASCIICase(const StringView& matchString, unsigned startOffset) const
+{
+    return ::WTF::findIgnoringASCIICase(*this, matchString, startOffset);
+}
+
 bool StringView::startsWith(const StringView& prefix) const
 {
     return ::WTF::startsWith(*this, prefix);

@@ -1,3 +1,36 @@
+2015-03-22  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS Selectors: fix attribute case-insensitive matching of Contain and List
+        https://bugs.webkit.org/show_bug.cgi?id=142932
+
+        Reviewed by Darin Adler.
+
+        Add some utility functions to the string classes to find substrings
+        using ASCII case-insensitive comparisons.
+
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::contains):
+        Add the light version that only lock one register.
+
+        (WTF::AtomicString::containsIgnoringASCIICase):
+        (WTF::AtomicString::findIgnoringASCIICase):
+
+        * wtf/text/StringCommon.h:
+        (WTF::findIgnoringASCIICase):
+        This is the common implementation used by StringView and StringImpl.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::findIgnoringASCIICase):
+        * wtf/text/StringImpl.h:
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::containsIgnoringASCIICase):
+        (WTF::StringView::findIgnoringASCIICase):
+        * wtf/text/StringView.h:
+        * wtf/text/WTFString.h:
+        (WTF::String::findIgnoringASCIICase):
+        (WTF::String::contains):
+        (WTF::String::containsIgnoringASCIICase):
+
 2015-03-19  Andreas Kling  <akling@apple.com>
 
         DFGAllocator should use bmalloc's aligned allocator.

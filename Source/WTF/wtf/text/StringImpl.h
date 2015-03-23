@@ -661,6 +661,10 @@ public:
     size_t findIgnoringCase(const LChar*, unsigned index = 0);
     ALWAYS_INLINE size_t findIgnoringCase(const char* s, unsigned index = 0) { return findIgnoringCase(reinterpret_cast<const LChar*>(s), index); }
     WTF_EXPORT_STRING_API size_t findIgnoringCase(StringImpl*, unsigned index = 0);
+    WTF_EXPORT_STRING_API size_t findIgnoringASCIICase(const StringImpl&) const;
+    WTF_EXPORT_STRING_API size_t findIgnoringASCIICase(const StringImpl&, unsigned startOffset) const;
+    WTF_EXPORT_STRING_API size_t findIgnoringASCIICase(const StringImpl*) const;
+    WTF_EXPORT_STRING_API size_t findIgnoringASCIICase(const StringImpl*, unsigned startOffset) const;
 
     WTF_EXPORT_STRING_API size_t findNextLineStart(unsigned index = UINT_MAX);
 

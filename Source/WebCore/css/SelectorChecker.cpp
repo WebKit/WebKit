@@ -431,7 +431,11 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
 
             unsigned startSearchAt = 0;
             while (true) {
-                size_t foundPos = value.find(selectorValue, startSearchAt, caseSensitive);
+                size_t foundPos;
+                if (caseSensitive)
+                    foundPos = value.find(selectorValue, startSearchAt);
+                else
+                    foundPos = value.findIgnoringASCIICase(selectorValue, startSearchAt);
                 if (foundPos == notFound)
                     return false;
                 if (!foundPos || isHTMLSpace(value[foundPos - 1])) {
@@ -445,10 +449,18 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
             }
             break;
         }
-    case CSSSelector::Contain:
-        if (!value.contains(selectorValue, caseSensitive) || selectorValue.isEmpty())
+    case CSSSelector::Contain: {
+        bool valueContainsSelectorValue;
+        if (caseSensitive)
+            valueContainsSelectorValue = value.contains(selectorValue);
+        else
+            valueContainsSelectorValue = value.containsIgnoringASCIICase(selectorValue);
+
+        if (!valueContainsSelectorValue || selectorValue.isEmpty())
             return false;
+
         break;
+    }
     case CSSSelector::Begin:
         if (selectorValue.isEmpty())
             return false;

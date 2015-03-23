@@ -142,12 +142,17 @@ TEST(WTF, StringImplEqualIgnoringASCIICaseWithEmpty)
     ASSERT_TRUE(equalIgnoringASCIICase(b.get(), a.get()));
 }
 
+static RefPtr<StringImpl> stringFromUTF8(const char* characters)
+{
+    return String::fromUTF8(characters).impl();
+}
+
 TEST(WTF, StringImplEqualIgnoringASCIICaseWithLatin1Characters)
 {
-    RefPtr<StringImpl> a = StringImpl::create(reinterpret_cast<const LChar*>("aBcéeFG"));
-    RefPtr<StringImpl> b = StringImpl::create(reinterpret_cast<const LChar*>("ABCÉEFG"));
-    RefPtr<StringImpl> c = StringImpl::create(reinterpret_cast<const LChar*>("ABCéEFG"));
-    RefPtr<StringImpl> d = StringImpl::create(reinterpret_cast<const LChar*>("abcéefg"));
+    RefPtr<StringImpl> a = stringFromUTF8("aBcéeFG");
+    RefPtr<StringImpl> b = stringFromUTF8("ABCÉEFG");
+    RefPtr<StringImpl> c = stringFromUTF8("ABCéEFG");
+    RefPtr<StringImpl> d = stringFromUTF8("abcéefg");
 
     // Identity.
     ASSERT_TRUE(equalIgnoringASCIICase(a.get(), a.get()));
@@ -164,10 +169,174 @@ TEST(WTF, StringImplEqualIgnoringASCIICaseWithLatin1Characters)
     ASSERT_TRUE(equalIgnoringASCIICase(c.get(), d.get()));
 }
 
+TEST(WTF, StringImplFindIgnoringASCIICaseBasic)
+{
+    RefPtr<StringImpl> referenceA = stringFromUTF8("aBcéeFG");
+    RefPtr<StringImpl> referenceB = stringFromUTF8("ABCÉEFG");
+
+    // Search the exact string.
+    EXPECT_EQ(static_cast<size_t>(0), referenceA->findIgnoringASCIICase(referenceA.get()));
+    EXPECT_EQ(static_cast<size_t>(0), referenceB->findIgnoringASCIICase(referenceB.get()));
+
+    // A and B are distinct by the non-ascii character é/É.
+    EXPECT_EQ(static_cast<size_t>(notFound), referenceA->findIgnoringASCIICase(referenceB.get()));
+    EXPECT_EQ(static_cast<size_t>(notFound), referenceB->findIgnoringASCIICase(referenceA.get()));
+
+    // Find the prefix.
+    EXPECT_EQ(static_cast<size_t>(0), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("a").get()));
+    EXPECT_EQ(static_cast<size_t>(0), referenceA->findIgnoringASCIICase(stringFromUTF8("abcé").get()));
+    EXPECT_EQ(static_cast<size_t>(0), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("A").get()));
+    EXPECT_EQ(static_cast<size_t>(0), referenceA->findIgnoringASCIICase(stringFromUTF8("ABCé").get()));
+    EXPECT_EQ(static_cast<size_t>(0), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("a").get()));
+    EXPECT_EQ(static_cast<size_t>(0), referenceB->findIgnoringASCIICase(stringFromUTF8("abcÉ").get()));
+    EXPECT_EQ(static_cast<size_t>(0), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("A").get()));
+    EXPECT_EQ(static_cast<size_t>(0), referenceB->findIgnoringASCIICase(stringFromUTF8("ABCÉ").get()));
+
+    // Not a prefix.
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("x").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("accé").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("abcÉ").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("X").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("ABDé").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("ABCÉ").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("y").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("accÉ").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("abcé").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("Y").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("ABdÉ").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("ABCé").get()));
+
+    // Find the infix.
+    EXPECT_EQ(static_cast<size_t>(2), referenceA->findIgnoringASCIICase(stringFromUTF8("cée").get()));
+    EXPECT_EQ(static_cast<size_t>(3), referenceA->findIgnoringASCIICase(stringFromUTF8("ée").get()));
+    EXPECT_EQ(static_cast<size_t>(2), referenceA->findIgnoringASCIICase(stringFromUTF8("cé").get()));
+    EXPECT_EQ(static_cast<size_t>(2), referenceA->findIgnoringASCIICase(stringFromUTF8("c").get()));
+    EXPECT_EQ(static_cast<size_t>(3), referenceA->findIgnoringASCIICase(stringFromUTF8("é").get()));
+    EXPECT_EQ(static_cast<size_t>(2), referenceA->findIgnoringASCIICase(stringFromUTF8("Cée").get()));
+    EXPECT_EQ(static_cast<size_t>(3), referenceA->findIgnoringASCIICase(stringFromUTF8("éE").get()));
+    EXPECT_EQ(static_cast<size_t>(2), referenceA->findIgnoringASCIICase(stringFromUTF8("Cé").get()));
+    EXPECT_EQ(static_cast<size_t>(2), referenceA->findIgnoringASCIICase(stringFromUTF8("C").get()));
+
+    EXPECT_EQ(static_cast<size_t>(2), referenceB->findIgnoringASCIICase(stringFromUTF8("cÉe").get()));
+    EXPECT_EQ(static_cast<size_t>(3), referenceB->findIgnoringASCIICase(stringFromUTF8("Ée").get()));
+    EXPECT_EQ(static_cast<size_t>(2), referenceB->findIgnoringASCIICase(stringFromUTF8("cÉ").get()));
+    EXPECT_EQ(static_cast<size_t>(2), referenceB->findIgnoringASCIICase(stringFromUTF8("c").get()));
+    EXPECT_EQ(static_cast<size_t>(3), referenceB->findIgnoringASCIICase(stringFromUTF8("É").get()));
+    EXPECT_EQ(static_cast<size_t>(2), referenceB->findIgnoringASCIICase(stringFromUTF8("CÉe").get()));
+    EXPECT_EQ(static_cast<size_t>(3), referenceB->findIgnoringASCIICase(stringFromUTF8("ÉE").get()));
+    EXPECT_EQ(static_cast<size_t>(2), referenceB->findIgnoringASCIICase(stringFromUTF8("CÉ").get()));
+    EXPECT_EQ(static_cast<size_t>(2), referenceB->findIgnoringASCIICase(stringFromUTF8("C").get()));
+
+    // Not an infix.
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("céd").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("Ée").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("bé").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("x").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("É").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("CÉe").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("éd").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("CÉ").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("Y").get()));
+
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("cée").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("Éc").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("cé").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("W").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("é").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("bÉe").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("éE").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("BÉ").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("z").get()));
+
+    // Find the suffix.
+    EXPECT_EQ(static_cast<size_t>(6), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("g").get()));
+    EXPECT_EQ(static_cast<size_t>(4), referenceA->findIgnoringASCIICase(stringFromUTF8("efg").get()));
+    EXPECT_EQ(static_cast<size_t>(3), referenceA->findIgnoringASCIICase(stringFromUTF8("éefg").get()));
+    EXPECT_EQ(static_cast<size_t>(6), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("G").get()));
+    EXPECT_EQ(static_cast<size_t>(4), referenceA->findIgnoringASCIICase(stringFromUTF8("EFG").get()));
+    EXPECT_EQ(static_cast<size_t>(3), referenceA->findIgnoringASCIICase(stringFromUTF8("éEFG").get()));
+
+    EXPECT_EQ(static_cast<size_t>(6), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("g").get()));
+    EXPECT_EQ(static_cast<size_t>(4), referenceB->findIgnoringASCIICase(stringFromUTF8("efg").get()));
+    EXPECT_EQ(static_cast<size_t>(3), referenceB->findIgnoringASCIICase(stringFromUTF8("Éefg").get()));
+    EXPECT_EQ(static_cast<size_t>(6), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("G").get()));
+    EXPECT_EQ(static_cast<size_t>(4), referenceB->findIgnoringASCIICase(stringFromUTF8("EFG").get()));
+    EXPECT_EQ(static_cast<size_t>(3), referenceB->findIgnoringASCIICase(stringFromUTF8("ÉEFG").get()));
+
+    // Not a suffix.
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("X").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("edg").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("Éefg").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("w").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("dFG").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("ÉEFG").get()));
+
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("Z").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("ffg").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("éefg").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("r").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("EgG").get()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("éEFG").get()));
+}
+
+TEST(WTF, StringImplFindIgnoringASCIICaseWithValidOffset)
+{
+    RefPtr<StringImpl> reference = stringFromUTF8("ABCÉEFGaBcéeFG");
+    EXPECT_EQ(static_cast<size_t>(0), reference->findIgnoringASCIICase(stringFromUTF8("ABC").get(), 0));
+    EXPECT_EQ(static_cast<size_t>(7), reference->findIgnoringASCIICase(stringFromUTF8("ABC").get(), 1));
+    EXPECT_EQ(static_cast<size_t>(0), reference->findIgnoringASCIICase(stringFromUTF8("ABCÉ").get(), 0));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(stringFromUTF8("ABCÉ").get(), 1));
+    EXPECT_EQ(static_cast<size_t>(7), reference->findIgnoringASCIICase(stringFromUTF8("ABCé").get(), 0));
+    EXPECT_EQ(static_cast<size_t>(7), reference->findIgnoringASCIICase(stringFromUTF8("ABCé").get(), 1));
+}
+
+TEST(WTF, StringImplFindIgnoringASCIICaseWithInvalidOffset)
+{
+    RefPtr<StringImpl> reference = stringFromUTF8("ABCÉEFGaBcéeFG");
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(stringFromUTF8("ABC").get(), 15));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(stringFromUTF8("ABC").get(), 16));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(stringFromUTF8("ABCÉ").get(), 17));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(stringFromUTF8("ABCÉ").get(), 42));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(stringFromUTF8("ABCÉ").get(), std::numeric_limits<unsigned>::max()));
+}
+
+TEST(WTF, StringImplFindIgnoringASCIICaseOnNull)
+{
+    RefPtr<StringImpl> reference = stringFromUTF8("ABCÉEFG");
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(nullptr));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(nullptr, 0));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(nullptr, 3));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(nullptr, 7));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(nullptr, 8));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(nullptr, 42));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(nullptr, std::numeric_limits<unsigned>::max()));
+}
+
+TEST(WTF, StringImplFindIgnoringASCIICaseOnEmpty)
+{
+    RefPtr<StringImpl> reference = stringFromUTF8("ABCÉEFG");
+    RefPtr<StringImpl> empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
+    EXPECT_EQ(static_cast<size_t>(0), reference->findIgnoringASCIICase(empty.get()));
+    EXPECT_EQ(static_cast<size_t>(0), reference->findIgnoringASCIICase(empty.get(), 0));
+    EXPECT_EQ(static_cast<size_t>(3), reference->findIgnoringASCIICase(empty.get(), 3));
+    EXPECT_EQ(static_cast<size_t>(7), reference->findIgnoringASCIICase(empty.get(), 7));
+    EXPECT_EQ(static_cast<size_t>(7), reference->findIgnoringASCIICase(empty.get(), 8));
+    EXPECT_EQ(static_cast<size_t>(7), reference->findIgnoringASCIICase(empty.get(), 42));
+    EXPECT_EQ(static_cast<size_t>(7), reference->findIgnoringASCIICase(empty.get(), std::numeric_limits<unsigned>::max()));
+}
+
+TEST(WTF, StringImplFindIgnoringASCIICaseWithPatternLongerThanReference)
+{
+    RefPtr<StringImpl> reference = stringFromUTF8("ABCÉEFG");
+    RefPtr<StringImpl> pattern = stringFromUTF8("XABCÉEFG");
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(pattern.get()));
+    EXPECT_EQ(static_cast<size_t>(1), pattern->findIgnoringASCIICase(reference.get()));
+}
+
 TEST(WTF, StringImplStartsWithIgnoringASCIICaseBasic)
 {
-    RefPtr<StringImpl> reference = StringImpl::create(reinterpret_cast<const LChar*>("aBcéX"));
-    RefPtr<StringImpl> referenceEquivalent = StringImpl::create(reinterpret_cast<const LChar*>("AbCéx"));
+    RefPtr<StringImpl> reference = stringFromUTF8("aBcéX");
+    RefPtr<StringImpl> referenceEquivalent = stringFromUTF8("AbCéx");
 
     // Identity.
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(reference.get()));
@@ -194,23 +363,23 @@ TEST(WTF, StringImplStartsWithIgnoringASCIICaseBasic)
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(abcUpper.get()));
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(*abcUpper.get()));
 
-    RefPtr<StringImpl> abcAccentLower = StringImpl::create(reinterpret_cast<const LChar*>("abcé"));
+    RefPtr<StringImpl> abcAccentLower = stringFromUTF8("abcé");
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(abcAccentLower.get()));
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(*abcAccentLower.get()));
-    RefPtr<StringImpl> abcAccentUpper = StringImpl::create(reinterpret_cast<const LChar*>("ABCé"));
+    RefPtr<StringImpl> abcAccentUpper = stringFromUTF8("ABCé");
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(abcAccentUpper.get()));
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(*abcAccentUpper.get()));
 
     // Negative cases.
-    RefPtr<StringImpl> differentFirstChar = StringImpl::create(reinterpret_cast<const LChar*>("bBcéX"));
-    RefPtr<StringImpl> differentFirstCharProperPrefix = StringImpl::create(reinterpret_cast<const LChar*>("CBcé"));
+    RefPtr<StringImpl> differentFirstChar = stringFromUTF8("bBcéX");
+    RefPtr<StringImpl> differentFirstCharProperPrefix = stringFromUTF8("CBcé");
     ASSERT_FALSE(reference->startsWithIgnoringASCIICase(differentFirstChar.get()));
     ASSERT_FALSE(reference->startsWithIgnoringASCIICase(*differentFirstChar.get()));
     ASSERT_FALSE(reference->startsWithIgnoringASCIICase(differentFirstCharProperPrefix.get()));
     ASSERT_FALSE(reference->startsWithIgnoringASCIICase(*differentFirstCharProperPrefix.get()));
 
-    RefPtr<StringImpl> uppercaseAccent = StringImpl::create(reinterpret_cast<const LChar*>("aBcÉX"));
-    RefPtr<StringImpl> uppercaseAccentProperPrefix = StringImpl::create(reinterpret_cast<const LChar*>("aBcÉX"));
+    RefPtr<StringImpl> uppercaseAccent = stringFromUTF8("aBcÉX");
+    RefPtr<StringImpl> uppercaseAccentProperPrefix = stringFromUTF8("aBcÉX");
     ASSERT_FALSE(reference->startsWithIgnoringASCIICase(uppercaseAccent.get()));
     ASSERT_FALSE(reference->startsWithIgnoringASCIICase(*uppercaseAccent.get()));
     ASSERT_FALSE(reference->startsWithIgnoringASCIICase(uppercaseAccentProperPrefix.get()));
@@ -240,8 +409,8 @@ TEST(WTF, StringImplStartsWithIgnoringASCIICaseWithEmpty)
 
 TEST(WTF, StringImplEndsWithIgnoringASCIICaseBasic)
 {
-    RefPtr<StringImpl> reference = StringImpl::create(reinterpret_cast<const LChar*>("XÉCbA"));
-    RefPtr<StringImpl> referenceEquivalent = StringImpl::create(reinterpret_cast<const LChar*>("xÉcBa"));
+    RefPtr<StringImpl> reference = stringFromUTF8("XÉCbA");
+    RefPtr<StringImpl> referenceEquivalent = stringFromUTF8("xÉcBa");
 
     // Identity.
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(reference.get()));
@@ -268,23 +437,23 @@ TEST(WTF, StringImplEndsWithIgnoringASCIICaseBasic)
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(abcUpper.get()));
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(*abcUpper.get()));
 
-    RefPtr<StringImpl> abcAccentLower = StringImpl::create(reinterpret_cast<const LChar*>("Écba"));
+    RefPtr<StringImpl> abcAccentLower = stringFromUTF8("Écba");
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(abcAccentLower.get()));
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(*abcAccentLower.get()));
-    RefPtr<StringImpl> abcAccentUpper = StringImpl::create(reinterpret_cast<const LChar*>("ÉCBA"));
+    RefPtr<StringImpl> abcAccentUpper = stringFromUTF8("ÉCBA");
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(abcAccentUpper.get()));
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(*abcAccentUpper.get()));
 
     // Negative cases.
-    RefPtr<StringImpl> differentLastChar = StringImpl::create(reinterpret_cast<const LChar*>("XÉCbB"));
-    RefPtr<StringImpl> differentLastCharProperSuffix = StringImpl::create(reinterpret_cast<const LChar*>("ÉCbb"));
+    RefPtr<StringImpl> differentLastChar = stringFromUTF8("XÉCbB");
+    RefPtr<StringImpl> differentLastCharProperSuffix = stringFromUTF8("ÉCbb");
     ASSERT_FALSE(reference->endsWithIgnoringASCIICase(differentLastChar.get()));
     ASSERT_FALSE(reference->endsWithIgnoringASCIICase(*differentLastChar.get()));
     ASSERT_FALSE(reference->endsWithIgnoringASCIICase(differentLastCharProperSuffix.get()));
     ASSERT_FALSE(reference->endsWithIgnoringASCIICase(*differentLastCharProperSuffix.get()));
 
-    RefPtr<StringImpl> lowercaseAccent = StringImpl::create(reinterpret_cast<const LChar*>("aBcéX"));
-    RefPtr<StringImpl> loweraseAccentProperSuffix = StringImpl::create(reinterpret_cast<const LChar*>("aBcéX"));
+    RefPtr<StringImpl> lowercaseAccent = stringFromUTF8("aBcéX");
+    RefPtr<StringImpl> loweraseAccentProperSuffix = stringFromUTF8("aBcéX");
     ASSERT_FALSE(reference->endsWithIgnoringASCIICase(lowercaseAccent.get()));
     ASSERT_FALSE(reference->endsWithIgnoringASCIICase(*lowercaseAccent.get()));
     ASSERT_FALSE(reference->endsWithIgnoringASCIICase(loweraseAccentProperSuffix.get()));

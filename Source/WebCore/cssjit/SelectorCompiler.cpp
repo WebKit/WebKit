@@ -2817,7 +2817,7 @@ static bool attributeValueContains(const Attribute* attribute, AtomicStringImpl*
     AtomicStringImpl& valueImpl = *attribute->value().impl();
     if (caseSensitivity == CaseSensitive)
         return valueImpl.find(expectedString) != notFound;
-    return valueImpl.findIgnoringCase(expectedString) != notFound;
+    return valueImpl.findIgnoringASCIICase(expectedString) != notFound;
 }
 
 template<CaseSensitivity caseSensitivity>
@@ -2863,7 +2863,7 @@ static bool attributeValueSpaceSeparetedListContains(const Attribute* attribute,
         if (caseSensitivity == CaseSensitive)
             foundPos = value.find(expectedString, startSearchAt);
         else
-            foundPos = value.findIgnoringCase(expectedString, startSearchAt);
+            foundPos = value.findIgnoringASCIICase(expectedString, startSearchAt);
         if (foundPos == notFound)
             return false;
         if (!foundPos || isHTMLSpace(value[foundPos - 1])) {

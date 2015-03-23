@@ -1,3 +1,17 @@
+2015-03-22  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS Selectors: fix attribute case-insensitive matching of Contain and List
+        https://bugs.webkit.org/show_bug.cgi?id=142932
+
+        Reviewed by Darin Adler.
+
+        Add tests for the new features and fix some existing tests using the 
+        stringFromUTF8() utility recently added by Dhi.
+
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        (TestWebKitAPI::stringFromUTF8):
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+
 2015-03-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] install-dependencies should install orc

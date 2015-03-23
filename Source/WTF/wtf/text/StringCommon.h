@@ -417,6 +417,50 @@ bool endsWithIgnoringASCIICase(const StringClassA& reference, const StringClassB
     return equalIgnoringASCIICase(reference.characters16() + startOffset, suffix.characters16(), suffixLength);
 }
 
+template <typename SearchCharacterType, typename MatchCharacterType>
+size_t findIgnoringASCIICase(const SearchCharacterType* source, const MatchCharacterType* matchCharacters, unsigned startOffset, unsigned searchLength, unsigned matchLength)
+{
+    ASSERT(searchLength >= matchLength);
+
+    const SearchCharacterType* startSearchedCharacters = source + startOffset;
+
+    // delta is the number of additional times to test; delta == 0 means test only once.
+    unsigned delta = searchLength - matchLength;
+
+    for (unsigned i = 0; i <= delta; ++i) {
+        if (equalIgnoringASCIICase(startSearchedCharacters + i, matchCharacters, matchLength))
+            return startOffset + i;
+    }
+    return notFound;
+}
+
+template<typename StringClassA, typename StringClassB>
+size_t findIgnoringASCIICase(const StringClassA& source, const StringClassB& stringToFind, unsigned startOffset)
+{
+    unsigned sourceStringLength = source.length();
+    unsigned matchLength = stringToFind.length();
+    if (!matchLength)
+        return std::min(startOffset, sourceStringLength);
+
+    // Check startOffset & matchLength are in range.
+    if (startOffset > sourceStringLength)
+        return notFound;
+    unsigned searchLength = sourceStringLength - startOffset;
+    if (matchLength > searchLength)
+        return notFound;
+
+    if (source.is8Bit()) {
+        if (stringToFind.is8Bit())
+            return findIgnoringASCIICase(source.characters8(), stringToFind.characters8(), startOffset, searchLength, matchLength);
+        return findIgnoringASCIICase(source.characters8(), stringToFind.characters16(), startOffset, searchLength, matchLength);
+    }
+
+    if (stringToFind.is8Bit())
+        return findIgnoringASCIICase(source.characters16(), stringToFind.characters8(), startOffset, searchLength, matchLength);
+
+    return findIgnoringASCIICase(source.characters16(), stringToFind.characters16(), startOffset, searchLength, matchLength);
+}
+
 }
 
 #endif // StringCommon_h
