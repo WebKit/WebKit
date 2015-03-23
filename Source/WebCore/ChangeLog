@@ -1,3 +1,16 @@
+2015-03-23  Anders Carlsson  <andersca@apple.com>
+
+        -[_WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:] doesn't remove cookies
+        https://bugs.webkit.org/show_bug.cgi?id=142990
+        rdar://problem/20241645
+
+        Reviewed by Andreas Kling.
+
+        Use the Mac version of deleteAllCookiesModifiedSince on iOS as well.
+
+        * platform/network/cf/CookieJarCFNet.cpp:
+        * platform/network/mac/CookieJarMac.mm:
+
 2015-03-23  Conrad Shultz  <conrad_shultz@apple.com>
 
         Replace uses of kCTFontSystemFontType

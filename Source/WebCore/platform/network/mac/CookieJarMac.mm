@@ -217,6 +217,12 @@ void deleteAllCookies(const NetworkStorageSession& session)
     wkDeleteAllHTTPCookies(session.cookieStorage().get());
 }
 
+}
+
+#endif // !USE(CFNETWORK)
+
+namespace WebCore {
+
 static NSHTTPCookieStorage *cookieStorage(const NetworkStorageSession& session)
 {
     auto cookieStorage = session.cookieStorage();
@@ -238,5 +244,3 @@ void deleteAllCookiesModifiedSince(const NetworkStorageSession& session, std::ch
 }
 
 }
-
-#endif // !USE(CFNETWORK)
