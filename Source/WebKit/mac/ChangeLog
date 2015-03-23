@@ -1,3 +1,25 @@
+2015-03-23  Tim Horton  <timothy_horton@apple.com>
+
+        Add a share item to the link action menu
+        https://bugs.webkit.org/show_bug.cgi?id=142961
+        <rdar://problem/19198374>
+
+        Reviewed by Beth Dakin.
+
+        * WebView/WebActionMenuController.mm:
+        (-[WebActionMenuController _defaultMenuItemsForImage]):
+        (-[WebActionMenuController _defaultMenuItemsForVideo]):
+        (-[WebActionMenuController _createActionMenuItemForTag:]):
+        (-[WebActionMenuController _createShareActionMenuItemForTag:withItems:]):
+        Adopt -[NSMenuItem standardShareMenuItemWithItems].
+        All of the null-checking is unnecessary as it's impossible to enter
+        these functions with a null image/etc.
+        Also, remove a duplicate isDownloadableMedia check for the 'save to downloads' item.
+
+        (-[WebActionMenuController _defaultMenuItemsForLink]):
+        * WebView/WebUIDelegatePrivate.h:
+        Add a 'Share' item to the link menu.
+
 2015-03-22  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.

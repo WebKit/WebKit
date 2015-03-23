@@ -39,4 +39,5 @@ typedef NS_ENUM(NSInteger, NSMenuType) {
 
 @interface NSMenuItem (Private)
 + (QLPreviewMenuItem *)standardQuickLookMenuItem;
++ (NSMenuItem *)standardShareMenuItemWithItems:(NSArray *)items;
 @end

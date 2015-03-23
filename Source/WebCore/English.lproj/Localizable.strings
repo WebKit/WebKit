@@ -1093,9 +1093,6 @@
 /* "Save to Downloads" action menu item in image menu */
 "Save to Downloads (image action menu item)" = "Save to Downloads";
 
-/* "Share" action menu item in image menu */
-"Share (image action menu item)" = "Share";
-
 /* "Copy" action menu item in text menu */
 "Copy (text action menu item)" = "Copy";
 
@@ -1110,9 +1107,6 @@
 
 /* "Copy" action menu item in video menu */
 "Copy (video action menu item)" = "Copy";
-
-/* "Share" action menu item in video menu */
-"Share (video action menu item)" = "Share";
 
 /* "Save to Downloads" action menu item in video menu */
 "Save to Downloads (video action menu item)" = "Save to Downloads";

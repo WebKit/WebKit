@@ -1,3 +1,17 @@
+2015-03-23  Tim Horton  <timothy_horton@apple.com>
+
+        Add a share item to the link action menu
+        https://bugs.webkit.org/show_bug.cgi?id=142961
+        <rdar://problem/19198374>
+
+        Reviewed by Beth Dakin.
+
+        * English.lproj/Localizable.strings:
+        Remove some now-unused strings.
+
+        * platform/spi/mac/NSMenuSPI.h:
+        Add some SPI.
+
 2015-03-23  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Build fix: CoreText deprecated kCTFontSystemFontType

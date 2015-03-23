@@ -180,25 +180,30 @@ using namespace WebKit;
 
 #pragma mark Link actions
 
+- (NSURL *)_hitLinkURL
+{
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
+    return [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()];
+}
+
 - (NSArray *)_defaultMenuItemsForLink
 {
     RetainPtr<NSMenuItem> openLinkItem = [self _createActionMenuItemForTag:kWKContextActionItemTagOpenLinkInDefaultBrowser];
     RetainPtr<NSMenuItem> readingListItem = [self _createActionMenuItemForTag:kWKContextActionItemTagAddLinkToSafariReadingList];
+    RetainPtr<NSMenuItem> shareItem = [self _createShareActionMenuItemForTag:kWKContextActionItemTagShareLink withItems:@[ [self _hitLinkURL] ]];
 
-    return @[ openLinkItem.get(), [NSMenuItem separatorItem], [NSMenuItem separatorItem], readingListItem.get() ];
+    return @[ openLinkItem.get(), shareItem.get(), [NSMenuItem separatorItem], readingListItem.get() ];
 }
 
 - (void)_openURLFromActionMenu:(id)sender
 {
-    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()]];
+    [[NSWorkspace sharedWorkspace] openURL:[self _hitLinkURL]];
 }
 
 - (void)_addToReadingListFromActionMenu:(id)sender
 {
-    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
     NSSharingService *service = [NSSharingService sharingServiceNamed:NSSharingServiceNameAddToSafariReadingList];
-    [service performWithItems:@[ [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()] ]];
+    [service performWithItems:@[ [self _hitLinkURL] ]];
 }
 
 #pragma mark Video actions
@@ -206,22 +211,11 @@ using namespace WebKit;
 - (NSArray *)_defaultMenuItemsForVideo
 {
     RetainPtr<NSMenuItem> copyVideoURLItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyVideoURL];
+    RetainPtr<NSMenuItem> saveToDownloadsItem = [self _createActionMenuItemForTag:kWKContextActionItemTagSaveVideoToDownloads];
 
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
-    RetainPtr<NSMenuItem> saveToDownloadsItem = [self _createActionMenuItemForTag:kWKContextActionItemTagSaveVideoToDownloads];
-    RetainPtr<NSMenuItem> shareItem = [self _createActionMenuItemForTag:kWKContextActionItemTagShareVideo];
-
-    String urlToShare = hitTestResult->absoluteMediaURL();
-    if (!hitTestResult->isDownloadableMedia()) {
-        [saveToDownloadsItem setEnabled:NO];
-        urlToShare = _page->mainFrame()->url();
-    }
-
-    if (!urlToShare.isEmpty()) {
-        _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ urlToShare ]]);
-        [_sharingServicePicker setDelegate:self];
-        [shareItem setSubmenu:[_sharingServicePicker menu]];
-    }
+    String urlToShare = hitTestResult->isDownloadableMedia() ? hitTestResult->absoluteMediaURL() : _page->mainFrame()->url();
+    RetainPtr<NSMenuItem> shareItem = [self _createShareActionMenuItemForTag:kWKContextActionItemTagShareVideo withItems:@[ urlToShare ]];
 
     return @[ copyVideoURLItem.get(), [NSMenuItem separatorItem], saveToDownloadsItem.get(), shareItem.get() ];
 }
@@ -264,13 +258,7 @@ using namespace WebKit;
     else
         addToPhotosItem = [NSMenuItem separatorItem];
     RetainPtr<NSMenuItem> saveToDownloadsItem = [self _createActionMenuItemForTag:kWKContextActionItemTagSaveImageToDownloads];
-    RetainPtr<NSMenuItem> shareItem = [self _createActionMenuItemForTag:kWKContextActionItemTagShareImage];
-
-    if (RetainPtr<NSImage> image = [self _hitTestResultImage]) {
-        _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ image.get() ]]);
-        [_sharingServicePicker setDelegate:self];
-        [shareItem setSubmenu:[_sharingServicePicker menu]];
-    }
+    RetainPtr<NSMenuItem> shareItem = [self _createShareActionMenuItemForTag:kWKContextActionItemTagShareImage withItems:@[ [self _hitTestResultImage] ]];
 
     return @[ copyImageItem.get(), addToPhotosItem.get(), saveToDownloadsItem.get(), shareItem.get() ];
 }
@@ -604,11 +592,6 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
         break;
 
-    case kWKContextActionItemTagShareImage:
-        title = WEB_UI_STRING_KEY("Share (image action menu item)", "Share (image action menu item)", "image action menu item");
-        image = [NSImage imageNamed:@"NSActionMenuShare"];
-        break;
-
     case kWKContextActionItemTagCopyText:
         selector = @selector(_copySelection:);
         title = WEB_UI_STRING_KEY("Copy", "Copy (text action menu item)", "text action menu item");
@@ -639,11 +622,6 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
         break;
 
-    case kWKContextActionItemTagShareVideo:
-        title = WEB_UI_STRING_KEY("Share", "Share (video action menu item)", "video action menu item");
-        image = [NSImage imageNamed:@"NSActionMenuShare"];
-        break;
-
     default:
         ASSERT_NOT_REACHED();
         return nil;
@@ -655,6 +633,17 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     [item setTag:tag];
     [item setEnabled:enabled];
     return item;
+}
+
+- (RetainPtr<NSMenuItem>)_createShareActionMenuItemForTag:(uint32_t)tag withItems:(NSArray *)items
+{
+    RetainPtr<NSMenuItem> shareItem = [NSMenuItem standardShareMenuItemWithItems:items];
+    [shareItem setTag:tag];
+
+    NSSharingServicePicker *sharingServicePicker = [shareItem representedObject];
+    sharingServicePicker.delegate = self;
+
+    return shareItem;
 }
 
 - (PassRefPtr<WebHitTestResult>)_webHitTestResult

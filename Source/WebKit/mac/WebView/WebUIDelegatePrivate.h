@@ -127,7 +127,8 @@ enum {
     WebActionMenuItemTagShareImage,
     WebActionMenuItemTagCopyVideoURL,
     WebActionMenuItemTagSaveVideoToDownloads,
-    WebActionMenuItemTagShareVideo
+    WebActionMenuItemTagShareVideo,
+    WebActionMenuItemTagShareLink
 };
 
 typedef enum {

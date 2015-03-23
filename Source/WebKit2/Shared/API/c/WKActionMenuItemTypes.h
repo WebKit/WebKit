@@ -47,7 +47,8 @@ enum {
     kWKContextActionItemTagTextSuggestions,
     kWKContextActionItemTagCopyVideoURL,
     kWKContextActionItemTagSaveVideoToDownloads,
-    kWKContextActionItemTagShareVideo
+    kWKContextActionItemTagShareVideo,
+    kWKContextActionItemTagShareLink
 };
 
 #ifdef __cplusplus

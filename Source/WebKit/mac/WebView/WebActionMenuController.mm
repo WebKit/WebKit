@@ -266,7 +266,10 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     RetainPtr<NSMenuItem> openLinkItem = [self _createActionMenuItemForTag:WebActionMenuItemTagOpenLinkInDefaultBrowser];
     RetainPtr<NSMenuItem> readingListItem = [self _createActionMenuItemForTag:WebActionMenuItemTagAddLinkToSafariReadingList];
 
-    return @[ openLinkItem.get(), [NSMenuItem separatorItem], [NSMenuItem separatorItem], readingListItem.get() ];
+    NSURL *url = _hitTestResult.absoluteLinkURL();
+    RetainPtr<NSMenuItem> shareItem = [self _createShareActionMenuItemForTag:WebActionMenuItemTagShareLink withItems:@[ url ]];
+
+    return @[ openLinkItem.get(), shareItem.get(), [NSMenuItem separatorItem], readingListItem.get() ];
 }
 
 #pragma mark mailto: and tel: Link actions
@@ -306,18 +309,9 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     if (!_webView.downloadDelegate)
         [saveToDownloadsItem setEnabled:NO];
 
-    RetainPtr<NSMenuItem> shareItem = [self _createActionMenuItemForTag:WebActionMenuItemTagShareImage];
-    if (Image* image = _hitTestResult.image()) {
-        RefPtr<SharedBuffer> buffer = image->data();
-        if (buffer) {
-            RetainPtr<NSData> nsData = [NSData dataWithBytes:buffer->data() length:buffer->size()];
-            RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithData:nsData.get()]);
-            _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ nsImage.get() ]]);
-            [_sharingServicePicker setDelegate:self];
-            [shareItem setSubmenu:[_sharingServicePicker menu]];
-        } else
-            [shareItem setEnabled:NO];
-    }
+    RefPtr<SharedBuffer> buffer = _hitTestResult.image()->data();
+    RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:buffer->data() length:buffer->size()]]);
+    RetainPtr<NSMenuItem> shareItem = [self _createShareActionMenuItemForTag:WebActionMenuItemTagShareImage withItems:@[ nsImage.get() ]];
 
     return @[ copyImageItem.get(), addToPhotosItem.get(), saveToDownloadsItem.get(), shareItem.get() ];
 }
@@ -428,15 +422,8 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     if (!_hitTestResult.isDownloadableMedia() || !_webView.downloadDelegate)
         [saveToDownloadsItem setEnabled:NO];
 
-    RetainPtr<NSMenuItem> shareItem = [self _createActionMenuItemForTag:WebActionMenuItemTagShareVideo];
-    NSString *urlToShare = _hitTestResult.absoluteMediaURL();
-    if (!_hitTestResult.isDownloadableMedia()) {
-        [saveToDownloadsItem setEnabled:NO];
-        urlToShare = [_webView mainFrameURL];
-    }
-    _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ urlToShare ]]);
-    [_sharingServicePicker setDelegate:self];
-    [shareItem setSubmenu:[_sharingServicePicker menu]];
+    String urlToShare = _hitTestResult.isDownloadableMedia() ? _hitTestResult.absoluteMediaURL() : [_webView mainFrameURL];
+    RetainPtr<NSMenuItem> shareItem = [self _createShareActionMenuItemForTag:WebActionMenuItemTagShareImage withItems:@[ urlToShare ]];
 
     return @[ copyVideoURLItem.get(), [NSMenuItem separatorItem], saveToDownloadsItem.get(), shareItem.get() ];
 }
@@ -701,11 +688,6 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
         break;
 
-    case WebActionMenuItemTagShareImage:
-        title = WEB_UI_STRING_KEY("Share (image action menu item)", "Share (image action menu item)", "image action menu item");
-        image = [NSImage imageNamed:@"NSActionMenuShare"];
-        break;
-
     case WebActionMenuItemTagCopyVideoURL:
         selector = @selector(_copyVideoURL:);
         title = WEB_UI_STRING_KEY("Copy", "Copy (video action menu item)", "video action menu item");
@@ -716,11 +698,6 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         selector = @selector(_saveVideoToDownloads:);
         title = WEB_UI_STRING_KEY("Save to Downloads", "Save to Downloads (video action menu item)", "video action menu item");
         image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
-        break;
-
-    case WebActionMenuItemTagShareVideo:
-        title = WEB_UI_STRING_KEY("Share", "Share (video action menu item)", "video action menu item");
-        image = [NSImage imageNamed:@"NSActionMenuShare"];
         break;
 
     default:
@@ -734,6 +711,17 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     [item setTag:tag];
     [item setEnabled:enabled];
     return item;
+}
+
+- (RetainPtr<NSMenuItem>)_createShareActionMenuItemForTag:(uint32_t)tag withItems:(NSArray *)items
+{
+    RetainPtr<NSMenuItem> shareItem = [NSMenuItem standardShareMenuItemWithItems:items];
+    [shareItem setTag:tag];
+
+    NSSharingServicePicker *sharingServicePicker = [shareItem representedObject];
+    sharingServicePicker.delegate = self;
+
+    return shareItem;
 }
 
 - (NSArray *)_defaultMenuItems
