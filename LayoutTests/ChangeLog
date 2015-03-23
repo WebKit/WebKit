@@ -1,3 +1,12 @@
+2015-03-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Unreviewed EFL gradening on 23th Mar.
+
+        Skip attachment tests, unskip passing tests related with writing, webaudio.
+        Add new flaky tests.
+
+        * platform/efl/TestExpectations:
+
 2015-03-21  Dean Jackson  <dino@apple.com>
 
         Remove the prefix for CSS Transforms
