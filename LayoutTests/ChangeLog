@@ -1,3 +1,20 @@
+2015-03-23  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Fix up a few mistakes in LayoutTests/contentfiltering/
+        https://bugs.webkit.org/show_bug.cgi?id=142991
+
+        Reviewed by Andreas Kling.
+
+        * contentfiltering/allow-after-add-data-expected.html: Added HTML5 doctype.
+        * contentfiltering/allow-after-finished-adding-data-expected.html: Ditto.
+        * contentfiltering/allow-after-response-expected.html: Ditto.
+        * contentfiltering/allow-after-unblock-request-expected.html: Ditto.
+        * contentfiltering/block-after-add-data-expected.html: Ditto.
+        * contentfiltering/block-after-finished-adding-data-expected.html: Ditto.
+        * contentfiltering/block-after-response-expected.html: Ditto.
+        * contentfiltering/block-after-unblock-request-expected.html: Ditto.
+        * contentfiltering/resources/contentfiltering.js: Added a newline at the end of the file.
+
 2015-03-23  Brady Eidson  <beidson@apple.com>
 
         Content extensions should apply css selectors
