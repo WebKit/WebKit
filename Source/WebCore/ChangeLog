@@ -1,3 +1,30 @@
+2015-03-23  Brent Fulgham  <bfulgham@apple.com>
+
+        scroll-snap-destination and scroll-snap-coordinate do not seem to work together properly
+        https://bugs.webkit.org/show_bug.cgi?id=142552
+        <rdar://problem/20114743>
+
+        Reviewed by Dean Jackson.
+
+        Revise the snap point logic as follows:
+        (1) Put the snap point destination handling in a helper function to make the rest of the code
+            easier to read.
+        (2) Make sure we always have a left-hand snap point (i.e., position 0), but don't add multiple
+            left-hand snap points.
+        (3) Create a helper function to determine if we should be working with the scroll snap 'elements'
+            behavior. We want to use this for scroll-snap-destination/scroll-snap-coordinate markup.
+        (4) Create per-element snap point offsets when using scroll-snap-destination/scroll-snap-coordinate.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseScrollSnapDestination): Add assertion to try to catch bad parser state.
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        (WebCore::destinationOffsetForViewSize): Added helper function to consolidate logic for handling
+        destination coordinates.
+        (WebCore::updateFromStyle): Make sure a left-hand snap point is always provided.
+        (WebCore::styleUsesElements): Added helper function.
+        (WebCore::updateSnapOffsetsForScrollableArea): Revise logic to generate 'per-element' snap point
+        offsets.
+
 2015-03-23  Yoav Weiss  <yoav@yoav.ws>
 
         Refactor ImageLoader's setting of CachedImage
