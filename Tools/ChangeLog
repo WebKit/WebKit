@@ -1,3 +1,17 @@
+2015-03-23  Brent Fulgham  <bfulgham@apple.com>
+
+        Regression(r181257): WTF_WorkQueue.Simple is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=142560
+
+        Remove the check that the refCount has returned to one after the
+        individual tasks have completed. It's too nondeterministic when
+        the reference count will be reduced.
+
+        Reviewed by Alexey Proskuryakov
+
+        * TestWebKitAPI/Tests/WTF/WorkQueue.cpp:
+        (TestWebKitAPI::TEST): Remove test that refCount is back to 1.
+
 2015-03-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMake][EFL] Put failure API test excutables into failure directory

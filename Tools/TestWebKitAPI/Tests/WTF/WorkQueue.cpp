@@ -87,7 +87,6 @@ TEST(WTF_WorkQueue, Simple)
     EXPECT_TRUE(calledSimpleTest);
     EXPECT_TRUE(calledLongTest);
     EXPECT_TRUE(calledThirdTest);
-    EXPECT_EQ(1, queue->refCount());
 
     EXPECT_EQ(static_cast<size_t>(3), m_functionCallOrder.size());
     EXPECT_STREQ(simpleTestLabel, m_functionCallOrder[0].c_str());
@@ -108,10 +107,8 @@ TEST(WTF_WorkQueue, TwoQueues)
     auto queue1 = WorkQueue::create("com.apple.WebKit.Test.twoQueues1");
     auto queue2 = WorkQueue::create("com.apple.WebKit.Test.twoQueues2");
 
-    int initialQueue1RefCount = queue1->refCount();
-    int initialQueue2RefCount = queue2->refCount();
-    EXPECT_EQ(1, initialQueue1RefCount);
-    EXPECT_EQ(1, initialQueue2RefCount);
+    EXPECT_EQ(1, queue1->refCount());
+    EXPECT_EQ(1, queue2->refCount());
 
     MutexLocker locker(m_lock);
     
@@ -146,14 +143,12 @@ TEST(WTF_WorkQueue, TwoQueues)
     EXPECT_TRUE(calledSimpleTest);
     EXPECT_FALSE(calledLongTest);
     EXPECT_TRUE(calledThirdTest);
-    EXPECT_EQ(1, queue1->refCount());
 
     m_testQueue2Completed.wait(m_lock);
 
     EXPECT_TRUE(calledSimpleTest);
     EXPECT_TRUE(calledLongTest);
     EXPECT_TRUE(calledThirdTest);
-    EXPECT_EQ(1, queue2->refCount());
 
     EXPECT_EQ(static_cast<size_t>(3), m_functionCallOrder.size());
     EXPECT_STREQ(simpleTestLabel, m_functionCallOrder[0].c_str());
