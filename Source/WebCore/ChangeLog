@@ -1,3 +1,16 @@
+2015-03-23  Alex Christensen  <achristensen@webkit.org>
+
+        [MediaFoundation] Implement seek.
+        https://bugs.webkit.org/show_bug.cgi?id=142594
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::seeking):
+        (WebCore::MediaPlayerPrivateMediaFoundation::seekDouble):
+        (WebCore::MediaPlayerPrivateMediaFoundation::durationDouble):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
 2015-03-23  Dan Bernstein  <mitz@apple.com>
 
         Fixed the build.

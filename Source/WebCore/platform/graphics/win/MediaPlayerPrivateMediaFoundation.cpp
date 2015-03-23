@@ -166,8 +166,39 @@ void MediaPlayerPrivateMediaFoundation::setVisible(bool visible)
 
 bool MediaPlayerPrivateMediaFoundation::seeking() const
 {
-    notImplemented();
+    // We assume seeking is immediately complete.
     return false;
+}
+
+void MediaPlayerPrivateMediaFoundation::seekDouble(double time)
+{
+    const double tenMegahertz = 10000000;
+    PROPVARIANT propVariant;
+    PropVariantInit(&propVariant);
+    propVariant.vt = VT_I8;
+    propVariant.hVal.QuadPart = static_cast<__int64>(time * tenMegahertz);
+    
+    HRESULT hr = m_mediaSession->Start(&GUID_NULL, &propVariant);
+    ASSERT(SUCCEEDED(hr));
+    PropVariantClear(&propVariant);
+}
+
+double MediaPlayerPrivateMediaFoundation::durationDouble() const
+{
+    const double tenMegahertz = 10000000;
+    if (!m_mediaSource)
+        return 0;
+
+    IMFPresentationDescriptor* descriptor;
+    if (!SUCCEEDED(m_mediaSource->CreatePresentationDescriptor(&descriptor)))
+        return 0;
+    
+    UINT64 duration;
+    if (!SUCCEEDED(descriptor->GetUINT64(MF_PD_DURATION, &duration)))
+        duration = 0;
+    descriptor->Release();
+    
+    return static_cast<double>(duration) / tenMegahertz;
 }
 
 bool MediaPlayerPrivateMediaFoundation::paused() const

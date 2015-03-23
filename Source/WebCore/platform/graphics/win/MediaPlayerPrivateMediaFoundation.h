@@ -59,6 +59,8 @@ public:
     virtual void setVisible(bool);
 
     virtual bool seeking() const;
+    virtual void seekDouble(double) override;
+    virtual double durationDouble() const override;
 
     virtual bool paused() const;
 
