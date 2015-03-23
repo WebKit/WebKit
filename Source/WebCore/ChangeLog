@@ -1,3 +1,14 @@
+2015-03-23  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Replace uses of kCTFontSystemFontType
+        https://bugs.webkit.org/show_bug.cgi?id=142984
+
+        Reviewed by Tim Horton.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::AttachmentLayout::layOutTitle):
+        (WebCore::AttachmentLayout::layOutSubtitle):
+
 2015-03-23  Dean Jackson  <dino@apple.com>
 
         kCTFontSystemFontType is deprecated in CoreText
