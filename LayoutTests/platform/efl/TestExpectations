@@ -459,12 +459,7 @@ Bug(EFL) editing/selection/move-by-word-visually-mac.html [ Failure ]
 
 # EFL port doesn't support attachment feature yet. It was added by r180193, r181056, r181114, r181118 and r181418.
 webkit.org/b/141894 fast/attachment/attachment-disabled-rendering.html [ Failure ]
-webkit.org/b/141894 fast/attachment/attachment-progress.html [ Failure ]
 webkit.org/b/141894 fast/attachment/attachment-rendering.html [ Failure ]
-webkit.org/b/141894 fast/attachment/attachment-select-on-click-inside-user-select-all.html [ Failure ]
-webkit.org/b/141894 fast/attachment/attachment-select-on-click.html [ Failure ]
-webkit.org/b/141894 fast/attachment/attachment-subtitle.html [ Failure ]
-webkit.org/b/141894 fast/attachment/attachment-title.html [ Failure ]
 webkit.org/b/141894 fast/attachment/attachment-progress.html [ Missing ]
 webkit.org/b/141894 fast/attachment/attachment-select-on-click-inside-user-select-all.html [ Missing ]
 webkit.org/b/141894 fast/attachment/attachment-select-on-click.html [ Missing ]
@@ -646,9 +641,9 @@ webkit.org/b/131729 http/tests/loading/sizes/preload-image-sizes-2x.html [ Failu
 webkit.org/b/131729 http/tests/misc/acid3.html [ Failure Pass ]
 webkit.org/b/131729 http/tests/misc/image-blocked-src-change.html [ Failure Pass ]
 webkit.org/b/131729 http/tests/misc/slow-loading-image-in-pattern.html [ Failure ]
-webkit.org/b/131729 http/tests/media/video-error-abort.html [ Crash ]
+webkit.org/b/131729 http/tests/media/video-error-abort.html [ Crash Pass ]
 webkit.org/b/131729 http/tests/media/video-load-twice.html [ Failure Pass ]
-webkit.org/b/131729 http/tests/media/video-redirect.html [ Crash ]
+webkit.org/b/131729 http/tests/media/video-redirect.html [ Crash Pass ]
 webkit.org/b/131729 http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
 webkit.org/b/131729 http/tests/security/drag-drop-local-file.html [ Failure ]
 webkit.org/b/131729 http/tests/security/svg-image-with-cached-remote-image.html [ Failure ImageOnlyFailure Pass ]
@@ -922,6 +917,30 @@ webkit.org/b/142157 fast/profiler/stop-profiling-after-setTimeout.html [ Failure
 
 webkit.org/b/95551 fast/forms/datalist/update-range-with-datalist.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-006.svg [ Pass ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-007.svg [ Pass ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-008.svg [ Pass ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-009.svg [ Pass ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-010.svg [ Pass ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-objectboundingbox-content-clip-transform.svg [ Pass ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-objectboundingbox-content-clip.svg [ Pass ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-userspaceonuse-content-clip-transform.svg [ Pass ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-userspaceonuse-content-clip.svg [ Pass ImageOnlyFailure ]
+
+webkit.org/b/102097 svg/text/hidpi-text-selection-rect-position.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/141458 imported/mozilla/svg/image/image-filter-01.svg [ Failure Pass ImageOnlyFailure ]
+webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01a.svg [ Failure Pass ImageOnlyFailure ]
+webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01b.svg [ Failure Pass ImageOnlyFailure ]
+webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01c.svg [ Failure Pass ImageOnlyFailure ]
+webkit.org/b/141458 imported/mozilla/svg/stroke-width-percentage-02a.svg [ Failure Pass ImageOnlyFailure ]
+webkit.org/b/141458 imported/mozilla/svg/switch-01.svg [ Failure Pass ImageOnlyFailure ]
+webkit.org/b/141458 imported/mozilla/svg/symbol-01.svg [ Failure Pass ImageOnlyFailure ]
+webkit.org/b/141458 imported/mozilla/svg/text-layout-01.svg [ Failure Pass ImageOnlyFailure ]
+webkit.org/b/141458 imported/mozilla/svg/text-layout-05.svg [ Failure Pass ImageOnlyFailure ]
+webkit.org/b/141458 imported/mozilla/svg/text-white-space-01.svg [ Failure Pass ImageOnlyFailure ]
+webkit.org/b/141458 imported/w3c/canvas/2d.line.cap.round.html [ Failure Pass ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1182,7 +1201,7 @@ webkit.org/b/86187 media/media-fullscreen-not-in-document.html [ Timeout ]
 Bug(EFL) media/video-does-not-loop.html
 
 # This test fails if mixer is not at 100%
-webkit.org/b/83704 media/event-attributes.html [ Failure Crash ]
+webkit.org/b/83704 media/event-attributes.html [ Failure Crash Pass ]
 
 # EFL's LayoutTestController does not implement setAutomaticLinkDetectionEnabled
 webkit.org/b/85463 editing/inserting/typing-space-to-trigger-smart-link.html
@@ -1865,7 +1884,6 @@ webkit.org/b/128973 fast/multicol/span/span-as-immediate-columns-child-dynamic.h
 webkit.org/b/102097 compositing/hidpi-transform-with-render-layer-on-fractional-pixel-value.html [ ImageOnlyFailure ]
 webkit.org/b/102097 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/102097 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
-webkit.org/b/102097 svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
 
 # Failing after r150802
 webkit.org/b/125577 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
@@ -1899,16 +1917,6 @@ webkit.org/b/128734 plugins/nested-plugin-objects.html [ Failure ]
 webkit.org/b/128734 plugins/netscape-destroy-plugin-script-objects.html [ Failure ]
 
 webkit.org/b/129735 fast/regions/box-decorations-over-region-padding.html [ ImageOnlyFailure ]
-
-webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-006.svg [ ImageOnlyFailure ]
-webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-007.svg [ ImageOnlyFailure ]
-webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-008.svg [ ImageOnlyFailure ]
-webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-009.svg [ ImageOnlyFailure ]
-webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-010.svg [ ImageOnlyFailure ]
-webkit.org/b/129820 svg/clip-path/mask-objectboundingbox-content-clip-transform.svg [ ImageOnlyFailure ]
-webkit.org/b/129820 svg/clip-path/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
-webkit.org/b/129820 svg/clip-path/mask-userspaceonuse-content-clip-transform.svg [ ImageOnlyFailure ]
-webkit.org/b/129820 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
 
 webkit.org/b/129821 svg/css/svg-resource-fragment-identifier-img-src.html [ ImageOnlyFailure ]
 
@@ -2058,11 +2066,6 @@ webkit.org/b/141458 imported/mozilla/svg/blend-multiply.svg [ ImageOnlyFailure ]
 webkit.org/b/141458 imported/mozilla/svg/blend-overlay.svg [ ImageOnlyFailure ]
 webkit.org/b/141458 imported/mozilla/svg/blend-screen.svg [ ImageOnlyFailure ]
 webkit.org/b/141458 imported/mozilla/svg/dynamic-small-object-scaled-up-01.svg [ ImageOnlyFailure ]
-webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01a.svg [ ImageOnlyFailure ]
-webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01b.svg [ ImageOnlyFailure ]
-webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01c.svg [ ImageOnlyFailure ]
-webkit.org/b/141458 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure ]
-webkit.org/b/141458 imported/mozilla/svg/symbol-01.svg [ ImageOnlyFailure ]
 
 # Started failing since r167808
 webkit.org/b/141496 fast/multicol/client-rects-spanners-complex.html [ Failure ]

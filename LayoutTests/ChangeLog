@@ -1,5 +1,14 @@
 2015-03-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        [EFL] Update new flaky tests and remove duplicated failure test.
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations:
+        Remove duplicted attachment tests, and add new flaky tests regarding svg clip-path, pattern scale.
+
+2015-03-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         [EFL] Unreviewed EFL gradening on 23th Mar.
 
         Skip attachment tests, unskip passing tests related with writing, webaudio.
