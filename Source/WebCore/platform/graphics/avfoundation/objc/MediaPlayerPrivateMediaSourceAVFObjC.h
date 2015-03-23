@@ -104,6 +104,8 @@ private:
     virtual PlatformMedia platformMedia() const override;
     virtual PlatformLayer* platformLayer() const override;
 
+    virtual bool supportsFullscreen() const { return true; }
+
     virtual void play() override;
     void playInternal();
 

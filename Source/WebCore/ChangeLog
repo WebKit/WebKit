@@ -1,3 +1,13 @@
+2015-03-23  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Enable fullscreen for MSE-based videos
+        https://bugs.webkit.org/show_bug.cgi?id=142971
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsFullscreen): Return true;
+
 2015-03-23  Alex Christensen  <achristensen@webkit.org>
 
         [MediaFoundation] Implement seek.
