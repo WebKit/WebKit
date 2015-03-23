@@ -101,7 +101,8 @@ bool WKInspectorIsAttached(WKInspectorRef inspectorRef)
 
 void WKInspectorAttach(WKInspectorRef inspectorRef)
 {
-    toImpl(inspectorRef)->attach();
+    auto inspector = toImpl(inspectorRef);
+    inspector->attach(inspector->attachmentSide());
 }
 
 void WKInspectorDetach(WKInspectorRef inspectorRef)

@@ -481,7 +481,7 @@ void WebInspectorProxy::createInspectorPage(IPC::Attachment connectionIdentifier
     m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(m_connectionIdentifier, m_inspectedPage->pageID(), m_underTest), m_inspectorPage->pageID());
 
     if (!m_underTest) {
-        m_canAttach = canAttach;
+        m_canAttach = platformCanAttach(canAttach);
         m_isAttached = shouldOpenAttached();
         m_attachmentSide = static_cast<AttachmentSide>(inspectorPagePreferences().inspectorAttachmentSide());
 
@@ -555,9 +555,14 @@ void WebInspectorProxy::bringToFront()
 
 void WebInspectorProxy::attachAvailabilityChanged(bool available)
 {
-    m_canAttach = available;
+    bool previousCanAttach = m_canAttach;
 
-    platformAttachAvailabilityChanged(available);
+    m_canAttach = platformCanAttach(available);
+
+    if (previousCanAttach == m_canAttach)
+        return;
+
+    platformAttachAvailabilityChanged(m_canAttach);
 }
 
 void WebInspectorProxy::inspectedURLChanged(const String& urlString)

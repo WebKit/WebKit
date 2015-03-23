@@ -1,3 +1,41 @@
+2015-03-19  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Support attaching to another view other than the WKView
+        https://bugs.webkit.org/show_bug.cgi?id=142892
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/C/WKInspector.cpp:
+        (WKInspectorAttach): Drive by fix so it used the last attachment side.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _inspectorAttachmentView]): Added.
+        (-[WKView _setInspectorAttachmentView:]): Added.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        (WebKit::WebInspectorProxy::attachAvailabilityChanged):
+        Use platformCanAttach as a final check incase there is a different
+        attachment view that the platform knows about.
+
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::attachmentSide): Added.
+        (WebKit::WebInspectorProxy::platformCanAttach): Added.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::attachmentViewDidChange): Added.
+        (WebKit::WebInspectorProxy::closeTimerFired):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::platformCanAttach):
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight):
+        (WebKit::WebInspectorProxy::platformInspectedWindowWidth):
+        (WebKit::WebInspectorProxy::platformAttach):
+        (WebKit::WebInspectorProxy::platformDetach):
+        Use the _inspectorAttachmentView and change how the frame change notification
+        is observed and follow the attachment view as it changes.
+
 2015-03-23  Tim Horton  <timothy_horton@apple.com>
 
         Images shared to photos via action menu are padded with zeroes at the end

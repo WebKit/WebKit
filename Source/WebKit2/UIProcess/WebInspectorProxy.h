@@ -42,6 +42,7 @@
 
 OBJC_CLASS NSButton;
 OBJC_CLASS NSURL;
+OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
 OBJC_CLASS WKWebInspectorProxyObjCAdapter;
 OBJC_CLASS WKWebInspectorWKWebView;
@@ -106,6 +107,8 @@ public:
     WKRect inspectorWindowFrame();
 
     void closeTimerFired();
+
+    void attachmentViewDidChange(NSView *oldView, NSView *newView);
 #endif
 
 #if PLATFORM(GTK)
@@ -117,6 +120,7 @@ public:
     void showResources();
     void showMainResourceForFrame(WebFrameProxy*);
 
+    AttachmentSide attachmentSide() const { return m_attachmentSide; }
     bool isAttached() const { return m_isAttached; }
     void attachRight();
     void attachBottom();
@@ -172,6 +176,12 @@ private:
     void platformSetToolbarHeight(unsigned);
     void platformSave(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void platformAppend(const String& filename, const String& content);
+
+#if PLATFORM(MAC)
+    bool platformCanAttach(bool webProcessCanAttach);
+#else
+    bool platformCanAttach(bool webProcessCanAttach) { return webProcessCanAttach; }
+#endif
 
     // Called by WebInspectorProxy messages
     void createInspectorPage(IPC::Attachment, bool canAttach, bool underTest);

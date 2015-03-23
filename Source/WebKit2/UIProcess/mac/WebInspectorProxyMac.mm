@@ -290,6 +290,15 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     }];
 }
 
+void WebInspectorProxy::attachmentViewDidChange(NSView *oldView, NSView *newView)
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:m_inspectorProxyObjCAdapter.get() name:NSViewFrameDidChangeNotification object:oldView];
+    [[NSNotificationCenter defaultCenter] addObserver:m_inspectorProxyObjCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:newView];
+
+    if (m_isAttached)
+        attach(m_attachmentSide);
+}
+
 void WebInspectorProxy::setInspectorWindowFrame(WKRect& frame)
 {
     if (m_isAttached)
@@ -317,6 +326,8 @@ void WebInspectorProxy::closeTimerFired()
         [m_inspectorView setInspectorProxyObjCAdapter:nil];
         m_inspectorView = nil;
     }
+
+    [[NSNotificationCenter defaultCenter] removeObserver:m_inspectorProxyObjCAdapter.get()];
 
     [m_inspectorProxyObjCAdapter close];
     m_inspectorProxyObjCAdapter = nil;
@@ -459,9 +470,11 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     ASSERT(!m_inspectorView);
     ASSERT(!m_inspectorProxyObjCAdapter);
 
+    NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
+
     NSRect initialRect;
     if (m_isAttached) {
-        NSRect inspectedViewFrame = inspectedPage()->wkView().frame;
+        NSRect inspectedViewFrame = inspectedView.frame;
 
         switch (m_attachmentSide) {
         case AttachmentSide::Bottom:
@@ -507,6 +520,8 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     ASSERT(m_inspectorProxyObjCAdapter);
 
     [m_inspectorView setInspectorProxyObjCAdapter:m_inspectorProxyObjCAdapter.get()];
+
+    [[NSNotificationCenter defaultCenter] addObserver:m_inspectorProxyObjCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:inspectedView];
 
     WebPageProxy* inspectorPage = m_inspectorView->_page.get();
     ASSERT(inspectorPage);
@@ -564,6 +579,22 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     WKPageSetPageUIClient(toAPI(inspectorPage), &uiClient.base);
 
     return inspectorPage;
+}
+
+bool WebInspectorProxy::platformCanAttach(bool webProcessCanAttach)
+{
+    NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
+    if ([inspectedView isKindOfClass:[WKView class]])
+        return webProcessCanAttach;
+
+    static const float minimumAttachedHeight = 250;
+    static const float maximumAttachedHeightRatio = 0.75;
+    static const float minimumAttachedWidth = 750;
+
+    NSRect inspectedViewFrame = inspectedView.frame;
+
+    float maximumAttachedHeight = NSHeight(inspectedViewFrame) * maximumAttachedHeightRatio;
+    return minimumAttachedHeight <= maximumAttachedHeight && minimumAttachedWidth <= NSWidth(inspectedViewFrame);
 }
 
 void WebInspectorProxy::platformOpen()
@@ -727,10 +758,17 @@ void WebInspectorProxy::windowFrameDidChange()
 
 void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
 {
-    if (!m_isAttached || !m_isVisible)
+    if (!m_isVisible)
         return;
 
-    WKView *inspectedView = inspectedPage()->wkView();
+    if (!m_isAttached) {
+        // Check if the attach avaibility changed. We need to do this here in case
+        // the attachment view is not the WKView.
+        attachAvailabilityChanged(platformCanAttach(canAttach()));
+        return;
+    }
+
+    NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
     NSRect inspectedViewFrame = [inspectedView frame];
     NSRect inspectorFrame = NSZeroRect;
     NSRect parentBounds = [[inspectedView superview] bounds];
@@ -760,7 +798,9 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
         // Preserve the top position of the inspected view so banners in Safari still work. But don't use that
         // top position for the inspector view since the banners only stretch as wide as the the inspected view.
         inspectedViewFrame = NSMakeRect(0, 0, parentWidth - inspectorWidth, inspectedViewTop);
-        CGFloat insetExcludingBanners = inspectedView._topContentInset - inspectedView._totalHeightOfBanners;
+        CGFloat insetExcludingBanners = 0;
+        if ([inspectedView isKindOfClass:[WKView class]])
+            insetExcludingBanners = ((WKView *)inspectedView)._topContentInset - ((WKView *)inspectedView)._totalHeightOfBanners;
         inspectorFrame = NSMakeRect(parentWidth - inspectorWidth, 0, inspectorWidth, NSHeight(parentBounds) - insetExcludingBanners);
         break;
     }
@@ -780,22 +820,21 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
 
 unsigned WebInspectorProxy::platformInspectedWindowHeight()
 {
-    WKView *inspectedView = inspectedPage()->wkView();
+    NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
     NSRect inspectedViewRect = [inspectedView frame];
     return static_cast<unsigned>(inspectedViewRect.size.height);
 }
 
 unsigned WebInspectorProxy::platformInspectedWindowWidth()
 {
-    WKView *inspectedView = inspectedPage()->wkView();
+    NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
     NSRect inspectedViewRect = [inspectedView frame];
     return static_cast<unsigned>(inspectedViewRect.size.width);
 }
 
 void WebInspectorProxy::platformAttach()
 {
-    WKView *inspectedView = inspectedPage()->wkView();
-    [[NSNotificationCenter defaultCenter] addObserver:m_inspectorProxyObjCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:inspectedView];
+    NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
 
     if (m_inspectorWindow) {
         [m_inspectorWindow setDelegate:nil];
@@ -827,8 +866,7 @@ void WebInspectorProxy::platformAttach()
 
 void WebInspectorProxy::platformDetach()
 {
-    WKView *inspectedView = inspectedPage()->wkView();
-    [[NSNotificationCenter defaultCenter] removeObserver:m_inspectorProxyObjCAdapter.get() name:NSViewFrameDidChangeNotification object:inspectedView];
+    NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
 
     [m_inspectorView removeFromSuperview];
 

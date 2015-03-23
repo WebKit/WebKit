@@ -68,6 +68,7 @@
 #import "WKViewPrivate.h"
 #import "WebBackForwardList.h"
 #import "WebEventFactory.h"
+#import "WebInspectorProxy.h"
 #import "WebKit2Initialize.h"
 #import "WebPage.h"
 #import "WebPageGroup.h"
@@ -191,7 +192,9 @@ struct WKViewInterpretKeyEventsParameters {
     RetainPtr<NSView> _layerHostingView;
 
     RetainPtr<id> _remoteAccessibilityChild;
-    
+
+    RetainPtr<NSView> _inspectorAttachmentView;
+
     // For asynchronous validation.
     ValidationMap _validationMap;
 
@@ -4130,6 +4133,22 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)setUnderlayColor:(NSColor *)underlayColor
 {
     _data->_page->setUnderlayColor(colorFromNSColor(underlayColor));
+}
+
+- (NSView *)_inspectorAttachmentView
+{
+    NSView *attachmentView = _data->_inspectorAttachmentView.get();
+    return attachmentView ? attachmentView : self;
+}
+
+- (void)_setInspectorAttachmentView:(NSView *)newView
+{
+    NSView *oldView = _data->_inspectorAttachmentView.get();
+    if (oldView == newView)
+        return;
+
+    _data->_inspectorAttachmentView = newView;
+    _data->_page->inspector()->attachmentViewDidChange(oldView ? oldView : self, newView ? newView : self);
 }
 
 - (NSView *)fullScreenPlaceholderView
