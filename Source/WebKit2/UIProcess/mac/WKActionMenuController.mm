@@ -245,7 +245,7 @@ using namespace WebKit;
     if (!imageSharedMemory)
         return nil;
 
-    RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:imageSharedMemory->data() length:imageSharedMemory->size()]]);
+    RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:imageSharedMemory->data() length:_hitTestResult.imageSize]]);
     return nsImage.autorelease();
 }
 
@@ -335,10 +335,10 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         return;
 
     RefPtr<SharedMemory> imageSharedMemory = _hitTestResult.imageSharedMemory;
-    if (!imageSharedMemory->size() || _hitTestResult.imageExtension.isEmpty())
+    if (!imageSharedMemory->data() || _hitTestResult.imageExtension.isEmpty() || !_hitTestResult.imageSize)
         return;
 
-    RetainPtr<NSData> imageData = adoptNS([[NSData alloc] initWithBytes:imageSharedMemory->data() length:imageSharedMemory->size()]);
+    RetainPtr<NSData> imageData = adoptNS([[NSData alloc] initWithBytes:imageSharedMemory->data() length:_hitTestResult.imageSize]);
     RetainPtr<NSString> suggestedFilename = [[[NSProcessInfo processInfo] globallyUniqueString] stringByAppendingPathExtension:_hitTestResult.imageExtension];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{

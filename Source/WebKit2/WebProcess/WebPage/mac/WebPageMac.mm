@@ -1062,6 +1062,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
                 actionMenuResult.imageSharedMemory = SharedMemory::create(buffer->size());
                 memcpy(actionMenuResult.imageSharedMemory->data(), buffer->data(), buffer->size());
                 actionMenuResult.imageExtension = imageExtension;
+                actionMenuResult.imageSize = buffer->size();
             }
         }
     }

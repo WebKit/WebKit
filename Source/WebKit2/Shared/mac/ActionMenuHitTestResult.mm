@@ -45,9 +45,10 @@ void ActionMenuHitTestResult::encode(IPC::ArgumentEncoder& encoder) const
     encoder << imageExtension;
 
     SharedMemory::Handle imageHandle;
-    if (imageSharedMemory && imageSharedMemory->size())
+    if (imageSharedMemory && imageSharedMemory->data())
         imageSharedMemory->createHandle(imageHandle, SharedMemory::ReadOnly);
     encoder << imageHandle;
+    encoder << imageSize;
 
     bool hasActionContext = actionContext;
     encoder << hasActionContext;
@@ -97,6 +98,9 @@ bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHi
 
     if (!imageHandle.isNull())
         actionMenuHitTestResult.imageSharedMemory = SharedMemory::create(imageHandle, SharedMemory::ReadOnly);
+
+    if (!decoder.decode(actionMenuHitTestResult.imageSize))
+        return false;
 
     bool hasActionContext;
     if (!decoder.decode(hasActionContext))

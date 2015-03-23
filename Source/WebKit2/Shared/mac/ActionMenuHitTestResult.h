@@ -54,6 +54,7 @@ struct ActionMenuHitTestResult {
 
     String lookupText;
     RefPtr<SharedMemory> imageSharedMemory;
+    uint64_t imageSize;
     String imageExtension;
 
     RetainPtr<DDActionContext> actionContext;
