@@ -13,6 +13,8 @@
 		06693DDD0BFBA85200216072 /* WebInspectorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06693DDB0BFBA85200216072 /* WebInspectorClient.mm */; };
 		070F549B17F1E42B00169E04 /* WebUserMediaClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 070F549917F1E42B00169E04 /* WebUserMediaClient.h */; };
 		070F549C17F1E42B00169E04 /* WebUserMediaClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 070F549A17F1E42B00169E04 /* WebUserMediaClient.mm */; };
+		072E5F451ABF88750003B164 /* WebMediaPlaybackTargetPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 072E5F431ABF88750003B164 /* WebMediaPlaybackTargetPicker.h */; };
+		072E5F461ABF88750003B164 /* WebMediaPlaybackTargetPicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = 072E5F441ABF88750003B164 /* WebMediaPlaybackTargetPicker.mm */; };
 		0AB752370FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AB752350FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h */; };
 		0AB752380FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0AB752360FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm */; };
 		0AEBFF630F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AEBFF610F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -476,6 +478,8 @@
 		06693DDB0BFBA85200216072 /* WebInspectorClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorClient.mm; sourceTree = "<group>"; };
 		070F549917F1E42B00169E04 /* WebUserMediaClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUserMediaClient.h; sourceTree = "<group>"; };
 		070F549A17F1E42B00169E04 /* WebUserMediaClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebUserMediaClient.mm; sourceTree = "<group>"; };
+		072E5F431ABF88750003B164 /* WebMediaPlaybackTargetPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaPlaybackTargetPicker.h; sourceTree = "<group>"; };
+		072E5F441ABF88750003B164 /* WebMediaPlaybackTargetPicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMediaPlaybackTargetPicker.mm; sourceTree = "<group>"; };
 		0AB752350FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapeContainerCheckContextInfo.h; sourceTree = "<group>"; };
 		0AB752360FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapeContainerCheckContextInfo.mm; sourceTree = "<group>"; };
 		0AEBFF610F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = WebNetscapeContainerCheckPrivate.h; sourceTree = "<group>"; };
@@ -1336,6 +1340,8 @@
 		9C7CABBB0190A37C0ECA16EA /* WebView */ = {
 			isa = PBXGroup;
 			children = (
+				072E5F431ABF88750003B164 /* WebMediaPlaybackTargetPicker.h */,
+				072E5F441ABF88750003B164 /* WebMediaPlaybackTargetPicker.mm */,
 				F52CA6BD02DF9D0F018635CA /* HTML */,
 				51E94C0706C02CA300A9B09E /* PDF */,
 				A10C1D79182030190036883A /* ios */,
@@ -1977,6 +1983,7 @@
 				DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */,
 				939810750824BF01008DF038 /* WebUIDelegate.h in Headers */,
 				A10C1D6B1820300E0036883A /* WebFrameIOS.h in Headers */,
+				072E5F451ABF88750003B164 /* WebMediaPlaybackTargetPicker.h in Headers */,
 				939810830824BF01008DF038 /* WebUIDelegatePrivate.h in Headers */,
 				A10C1D3418202FC50036883A /* WebGeolocationCoreLocationProvider.h in Headers */,
 				939810150824BF01008DF038 /* WebURLsWithTitles.h in Headers */,
@@ -2293,6 +2300,7 @@
 				5185F62810712B97007AA393 /* WebNavigationData.mm in Sources */,
 				0AB752380FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm in Sources */,
 				0AEBFF640F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm in Sources */,
+				072E5F461ABF88750003B164 /* WebMediaPlaybackTargetPicker.mm in Sources */,
 				1AEA66D50DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm in Sources */,
 				A10C1D651820300E0036883A /* WebChromeClientIOS.mm in Sources */,
 				A10C1D3518202FC50036883A /* WebGeolocationCoreLocationProvider.mm in Sources */,

@@ -430,7 +430,7 @@ public:
     MediaPlaybackTarget& playbackTarget() const { return *m_playbackTarget.get(); }
     void configurePlaybackTargetMonitoring();
 
-    WEBCORE_EXPORT void didChoosePlaybackTarget(MediaPlaybackTarget&);
+    WEBCORE_EXPORT void didChoosePlaybackTarget(const MediaPlaybackTarget&);
     WEBCORE_EXPORT void playbackTargetAvailabilityDidChange(bool);
 #endif
 

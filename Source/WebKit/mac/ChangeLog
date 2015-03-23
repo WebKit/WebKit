@@ -1,3 +1,40 @@
+2015-03-22  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Enable WIRELESS_PLAYBACK_TARGET for WK1
+        https://bugs.webkit.org/show_bug.cgi?id=142940
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::showPlaybackTargetPicker): New.
+        (WebChromeClient::startingMonitoringPlaybackTargets): New.
+        (WebChromeClient::stopMonitoringPlaybackTargets): New.
+
+        * WebView/WebView.mm:
+        (-[WebView _close]): Invalidate and free the target picker.
+        (-[WebView _devicePicker]): New.
+        (-[WebView _showPlaybackTargetPicker:hasVideo:]): New.
+        (-[WebView _startingMonitoringPlaybackTargets]): New.
+        (-[WebView _stopMonitoringPlaybackTargets]): New.
+
+        * WebView/WebMediaPlaybackTargetPicker.h:
+        * WebView/WebMediaPlaybackTargetPicker.mm:
+        (WebMediaPlaybackTargetPicker::create): New.
+        (WebMediaPlaybackTargetPicker::WebMediaPlaybackTargetPicker): New.
+        (WebMediaPlaybackTargetPicker::showPlaybackTargetPicker): New.
+        (WebMediaPlaybackTargetPicker::startingMonitoringPlaybackTargets): New.
+        (WebMediaPlaybackTargetPicker::stopMonitoringPlaybackTargets): New.
+        (WebMediaPlaybackTargetPicker::didChoosePlaybackTarget): New.
+        (WebMediaPlaybackTargetPicker::externalOutputDeviceAvailableDidChange): New.
+        (WebMediaPlaybackTargetPicker::invalidate): New.
+        (WebMediaPlaybackTargetPicker::targetPicker): New.
+
+        * WebView/WebViewData.h:
+        (WebMediaPlaybackTargetPicker::~WebMediaPlaybackTargetPicker):
+        * WebView/WebViewData.mm:
+        * WebView/WebViewInternal.h:
+
 2015-03-19  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Add tests for unblock requests

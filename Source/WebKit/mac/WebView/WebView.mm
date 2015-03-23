@@ -291,6 +291,10 @@
 #import <WebCore/HIDGamepadProvider.h>
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#import "WebMediaPlaybackTargetPicker.h"
+#endif
+
 #if PLATFORM(MAC)
 SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUTermOptionDisableSearchTermIndicator, NSString *)
@@ -1779,6 +1783,13 @@ static bool fastDocumentTeardownEnabled()
     [preferences release];
 
     [self _closePluginDatabases];
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+    if (_private->m_playbackTargetPicker) {
+        _private->m_playbackTargetPicker->invalidate();
+        _private->m_playbackTargetPicker = nullptr;
+    }
+#endif
 
 #ifndef NDEBUG
     // Need this to make leak messages accurate.
@@ -8639,6 +8650,42 @@ bool LayerFlushController::flushLayers()
     [self _setTextIndicator:nullptr fadeOut:NO];
 }
 #endif // PLATFORM(MAC)
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+- (WebMediaPlaybackTargetPicker *) _devicePicker
+{
+    if (!_private->m_playbackTargetPicker)
+        _private->m_playbackTargetPicker = WebMediaPlaybackTargetPicker::create(*_private->page);
+
+    return _private->m_playbackTargetPicker.get();
+}
+
+- (void)_showPlaybackTargetPicker:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo
+{
+    if (!_private->page)
+        return;
+
+    NSRect rectInWindowCoordinates = [self convertRect:[self _convertRectFromRootView:CGRectMake(location.x(), location.y(), 0, 0)] toView:nil];
+    NSRect rectInScreenCoordinates = [self.window convertRectToScreen:rectInWindowCoordinates];
+    [self _devicePicker]->showPlaybackTargetPicker(rectInScreenCoordinates, hasVideo);
+}
+
+- (void)_startingMonitoringPlaybackTargets
+{
+    if (!_private->page)
+        return;
+
+    [self _devicePicker]->startingMonitoringPlaybackTargets();
+}
+
+- (void)_stopMonitoringPlaybackTargets
+{
+    if (!_private->page)
+        return;
+
+    [self _devicePicker]->stopMonitoringPlaybackTargets();
+}
+#endif
 
 @end
 

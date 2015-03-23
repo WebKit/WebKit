@@ -1034,3 +1034,20 @@ bool WebChromeClient::hasRelevantSelectionServices(bool isTextOnly) const
 }
 
 #endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+void WebChromeClient::showPlaybackTargetPicker(const WebCore::IntPoint& location, bool hasVideo)
+{
+    [m_webView _showPlaybackTargetPicker:location hasVideo:hasVideo];
+}
+
+void WebChromeClient::startingMonitoringPlaybackTargets()
+{
+    [m_webView _startingMonitoringPlaybackTargets];
+}
+
+void WebChromeClient::stopMonitoringPlaybackTargets()
+{
+    [m_webView _stopMonitoringPlaybackTargets];
+}
+#endif

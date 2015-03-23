@@ -275,7 +275,7 @@ void HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners(const HTMLMedia
 #endif
 }
 
-void HTMLMediaSession::didChoosePlaybackTarget(MediaPlaybackTarget& device)
+void HTMLMediaSession::didChoosePlaybackTarget(const MediaPlaybackTarget& device)
 {
     m_haveRequestedPlaybackTargetPicker = false;
     client().setWirelessPlaybackTarget(device);

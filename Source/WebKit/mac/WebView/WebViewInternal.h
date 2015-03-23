@@ -60,6 +60,7 @@ struct DictationAlternative;
 }
 
 struct DictionaryPopupInfo;
+class WebMediaPlaybackTargetPicker;
 class WebSelectionServiceController;
 #endif
 
@@ -266,6 +267,13 @@ OBJC_CLASS NSTextAlternatives;
 - (WebActionMenuController *)_actionMenuController;
 - (WebImmediateActionController *)_immediateActionController;
 #endif
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS) && defined(__cplusplus)
+- (WebMediaPlaybackTargetPicker *) _devicePicker;
+- (void)_showPlaybackTargetPicker:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo;
+- (void)_startingMonitoringPlaybackTargets;
+- (void)_stopMonitoringPlaybackTargets;
 #endif
 
 @end

@@ -213,6 +213,12 @@ public:
     WebView* webView() { return m_webView; }
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+    virtual void showPlaybackTargetPicker(const WebCore::IntPoint&, bool /* hasVideo */) override;
+    virtual void startingMonitoringPlaybackTargets() override;
+    virtual void stopMonitoringPlaybackTargets() override;
+#endif
+
 private:
     WebView *m_webView;
 };

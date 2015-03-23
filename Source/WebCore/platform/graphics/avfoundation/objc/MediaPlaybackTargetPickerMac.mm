@@ -118,7 +118,7 @@ AVOutputDevicePickerMenuControllerType *MediaPlaybackTargetPickerMac::devicePick
         [m_devicePickerMenuController addObserver:m_devicePickerMenuControllerDelegate.get() forKeyPath:externalOutputDeviceAvailableKeyName options:NSKeyValueObservingOptionNew context:nil];
         [m_devicePickerMenuController addObserver:m_devicePickerMenuControllerDelegate.get() forKeyPath:externalOutputDevicePickedKeyName options:NSKeyValueObservingOptionNew context:nil];
 
-        if (devicePicker().externalOutputDeviceAvailable)
+        if (m_devicePickerMenuController.get().externalOutputDeviceAvailable)
             availableDevicesDidChange();
     }
 

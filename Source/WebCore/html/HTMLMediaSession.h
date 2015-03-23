@@ -98,7 +98,7 @@ private:
     void targetAvailabilityChangedTimerFired();
 
     // MediaPlaybackTargetPickerClient
-    virtual void didChoosePlaybackTarget(MediaPlaybackTarget&) override;
+    virtual void didChoosePlaybackTarget(const MediaPlaybackTarget&) override;
     virtual void externalOutputDeviceAvailableDidChange(bool) const override;
     virtual bool requiresPlaybackTargetRouteMonitoring() const override;
     virtual bool requestedPlaybackTargetPicker() const override { return m_haveRequestedPlaybackTargetPicker; }

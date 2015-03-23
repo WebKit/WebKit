@@ -6517,7 +6517,7 @@ void Document::playbackTargetAvailabilityDidChange(bool available)
         client->externalOutputDeviceAvailableDidChange(available);
 }
 
-void Document::didChoosePlaybackTarget(MediaPlaybackTarget& device)
+void Document::didChoosePlaybackTarget(const MediaPlaybackTarget& device)
 {
     MediaPlaybackTargetPickerClient* clientThatRequestedPicker = nullptr;
 

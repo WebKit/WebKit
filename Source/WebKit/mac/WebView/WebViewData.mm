@@ -46,6 +46,10 @@
 #import "WebGeolocationProviderIOS.h"
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#import "WebMediaPlaybackTargetPicker.h"
+#endif
+
 BOOL applicationIsTerminating = NO;
 int pluginDatabaseClientCount = 0;
 

@@ -1223,7 +1223,7 @@ public:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void showPlaybackTargetPicker(const HTMLMediaElement&);
-    void didChoosePlaybackTarget(MediaPlaybackTarget&);
+    void didChoosePlaybackTarget(const MediaPlaybackTarget&);
     void addPlaybackTargetPickerClient(MediaPlaybackTargetPickerClient&);
     void removePlaybackTargetPickerClient(MediaPlaybackTargetPickerClient&);
     bool requiresPlaybackTargetRouteMonitoring();

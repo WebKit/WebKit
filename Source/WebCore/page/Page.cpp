@@ -1694,7 +1694,7 @@ void Page::showPlaybackTargetPicker(Document* document, const WebCore::IntPoint&
 #endif
 }
 
-void Page::didChoosePlaybackTarget(MediaPlaybackTarget& target)
+void Page::didChoosePlaybackTarget(const MediaPlaybackTarget& target)
 {
     Document* documentThatRequestedPicker = nullptr;
 

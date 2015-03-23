@@ -1207,8 +1207,7 @@ void WebPage::setFont(const String& fontFamily, double fontSize, uint64_t fontTr
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 void WebPage::playbackTargetSelected(const WebCore::MediaPlaybackTarget& playbackTarget) const
 {
-    MediaPlaybackTarget nonConstTarget(playbackTarget.devicePickerContext());
-    m_page->didChoosePlaybackTarget(nonConstTarget);
+    m_page->didChoosePlaybackTarget(playbackTarget);
 }
 
 void WebPage::playbackTargetAvailabilityDidChange(bool changed)

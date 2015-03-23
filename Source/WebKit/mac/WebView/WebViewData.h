@@ -80,6 +80,10 @@ class TextIndicatorWindow;
 @class WebFixedPositionContent;
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+class WebMediaPlaybackTargetPicker;
+#endif
+
 extern BOOL applicationIsTerminating;
 extern int pluginDatabaseClientCount;
 
@@ -303,5 +307,9 @@ private:
     RetainPtr<NSData> sourceApplicationAuditData;
 
     BOOL _didPerformFirstNavigation;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+    std::unique_ptr<WebMediaPlaybackTargetPicker> m_playbackTargetPicker;
+#endif
 }
 @end

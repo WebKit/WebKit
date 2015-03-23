@@ -1,3 +1,13 @@
+2015-03-22  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Enable WIRELESS_PLAYBACK_TARGET for WK1
+        https://bugs.webkit.org/show_bug.cgi?id=142940
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::playbackTargetSelected): Argument to didChoosePlaybackTarget is now const.
+
 2015-03-22  Anders Carlsson  <andersca@apple.com>
 
         _WKWebsiteDataStore should clear WebSQL databases
