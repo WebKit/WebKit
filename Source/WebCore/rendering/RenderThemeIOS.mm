@@ -1262,15 +1262,7 @@ void RenderThemeIOS::updateCachedSystemFontDescription(CSSValueID valueID, FontD
 
     default:
         textStyle = kCTFontDescriptorTextStyleEmphasized;
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif
-        // <rdar://problem/20261171> kCTFontSystemFontType is deprecated in CoreText
-        fontDescriptor = adoptCF(CTFontDescriptorCreateForUIType(kCTFontSystemFontType, 0, nullptr));
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
+        fontDescriptor = adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, 0, nullptr));
     }
 
     ASSERT(fontDescriptor);

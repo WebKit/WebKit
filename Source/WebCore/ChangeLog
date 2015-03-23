@@ -1,3 +1,16 @@
+2015-03-23  Dean Jackson  <dino@apple.com>
+
+        kCTFontSystemFontType is deprecated in CoreText
+        https://bugs.webkit.org/show_bug.cgi?id=142981
+        <rdar://problem/20261171>
+
+        Reviewed by Beth Dakin.
+
+        Update to the non-deprecated version.
+
+        * rendering/RenderThemeIOS.mm: kCTFontSystemFontType -> kCTFontUIFontSystem
+        (WebCore::RenderThemeIOS::updateCachedSystemFontDescription):
+
 2015-03-23  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Enable fullscreen for MSE-based videos
