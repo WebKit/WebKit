@@ -879,6 +879,10 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
     _private->includesFlattenedCompositingLayersWhenDrawingToBitmap = YES;
 
+#if PLATFORM(MAC)
+    _private->windowVisibilityObserver = adoptNS([[WebWindowVisibilityObserver alloc] initWithView:self]);
+#endif
+
     NSRect f = [self frame];
     WebFrameView *frameView = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
     [frameView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -1173,7 +1177,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->mainFrameDocumentReady = NO;
     _private->drawsBackground = YES;
     _private->backgroundColor = CGColorRetain(cachedCGColor(Color::white, ColorSpaceDeviceRGB));
-    
+
     WebFrameView *frameView = nil;
     frameView = [[WebFrameView alloc] initWithFrame: CGRectMake(0,0,frame.size.width,frame.size.height)];
     [frameView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -5186,10 +5190,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
             name:NSWindowDidMiniaturizeNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowVisibilityChanged:)
             name:NSWindowDidDeminiaturizeNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowVisibilityChanged:) 
-            name:@"NSWindowDidOrderOffScreenNotification" object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowVisibilityChanged:) 
-            name:@"_NSWindowDidBecomeVisible" object:window];
+        [_private->windowVisibilityObserver startObserving:window];
     }
 }
 
@@ -5213,10 +5214,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
             name:NSWindowDidMiniaturizeNotification object:window];
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:NSWindowDidDeminiaturizeNotification object:window];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:@"NSWindowDidOrderOffScreenNotification" object:window];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:@"_NSWindowDidBecomeVisible" object:window];
+        [_private->windowVisibilityObserver stopObserving:window];
     }
 }
 
@@ -5225,9 +5223,9 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     // Don't do anything if the WebView isn't initialized.
     // This happens when decoding a WebView in a nib.
     // FIXME: What sets up the observer of NSWindowWillCloseNotification in this case?
-    if (!_private || _private->closed)
+    if (!_private)
         return;
-    
+
     if ([self window] && [self window] != [self hostWindow])
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:[self window]];
 
@@ -5239,7 +5237,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         // and over, so do them when we move into a window.
         [window setAcceptsMouseMovedEvents:YES];
         WKSetNSWindowShouldPostEventNotifications(window, YES);
-    } else {
+    } else if (!_private->closed) {
         _private->page->setCanStartMedia(false);
         _private->page->setIsInWindow(false);
     }

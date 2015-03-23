@@ -77,6 +77,44 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
 {
 }
 
+#if PLATFORM(MAC)
+
+@implementation WebWindowVisibilityObserver
+
+- (instancetype)initWithView:(WebView *)view
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _view = view;
+    return self;
+}
+
+- (void)startObserving:(NSWindow *)window
+{
+    // An NSView derived object such as WebView cannot observe these notifications, because NSView itself observes them.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowVisibilityChanged:)
+                                                 name:@"NSWindowDidOrderOffScreenNotification" object:window];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowVisibilityChanged:)
+                                                 name:@"_NSWindowDidBecomeVisible" object:window];
+}
+
+- (void)stopObserving:(NSWindow *)window
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NSWindowDidOrderOffScreenNotification" object:window];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidBecomeVisible" object:window];
+}
+
+- (void)_windowVisibilityChanged:(NSNotification *)notification
+{
+    [_view _windowVisibilityChanged:notification];
+}
+
+@end
+
+#endif // PLATFORM(MAC)
+
 @implementation WebViewPrivate
 
 + (void)initialize

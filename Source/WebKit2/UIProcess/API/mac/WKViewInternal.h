@@ -129,6 +129,9 @@ struct WebPageConfiguration;
 - (void)_reparentLayerTreeInThumbnailView;
 #endif
 
+- (void)_windowDidOrderOnScreen:(NSNotification *)notification;
+- (void)_windowDidOrderOffScreen:(NSNotification *)notification;
+
 // FullScreen
 
 @property (readonly) BOOL _hasFullScreenWindowController;

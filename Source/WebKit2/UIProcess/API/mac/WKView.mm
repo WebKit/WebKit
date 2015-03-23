@@ -170,6 +170,8 @@ struct WKViewInterpretKeyEventsParameters {
 };
 #endif
 
+@class WKWindowVisibilityObserver;
+
 @interface WKViewData : NSObject {
 @public
     std::unique_ptr<PageClientImpl> _pageClient;
@@ -252,6 +254,8 @@ struct WKViewInterpretKeyEventsParameters {
     BOOL _useContentPreparationRectForVisibleRect;
     BOOL _windowOcclusionDetectionEnabled;
 
+    RetainPtr<WKWindowVisibilityObserver> _windowVisibilityObserver;
+
     std::unique_ptr<ViewGestureController> _gestureController;
     BOOL _allowsMagnification;
     BOOL _ignoresNonWheelEvents;
@@ -281,6 +285,54 @@ struct WKViewInterpretKeyEventsParameters {
 @end
 
 @implementation WKViewData
+@end
+
+@interface WKWindowVisibilityObserver : NSObject {
+    WKView *_view;
+}
+
+- (instancetype)initWithView:(WKView *)view;
+- (void)startObserving:(NSWindow *)window;
+- (void)stopObserving:(NSWindow *)window;
+@end
+
+@implementation WKWindowVisibilityObserver
+
+- (instancetype)initWithView:(WKView *)view
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _view = view;
+    return self;
+}
+
+- (void)startObserving:(NSWindow *)window
+{
+    // An NSView derived object such as WKView cannot observe these notifications, because NSView itself observes them.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidOrderOffScreen:)
+                                                 name:@"NSWindowDidOrderOffScreenNotification" object:window];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidOrderOnScreen:) 
+                                                 name:@"_NSWindowDidBecomeVisible" object:window];
+}
+
+- (void)stopObserving:(NSWindow *)window
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NSWindowDidOrderOffScreenNotification" object:window];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidBecomeVisible" object:window];
+}
+
+- (void)_windowDidOrderOnScreen:(NSNotification *)notification
+{
+    [_view _windowDidOrderOnScreen:notification];
+}
+
+- (void)_windowDidOrderOffScreen:(NSNotification *)notification
+{
+    [_view _windowDidOrderOffScreen:notification];
+}
+
 @end
 
 @interface WKResponderChainSink : NSResponder {
@@ -2546,10 +2598,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
                                                      name:NSWindowDidMoveNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidResize:) 
                                                      name:NSWindowDidResizeNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidOrderOffScreen:) 
-                                                     name:@"NSWindowDidOrderOffScreenNotification" object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidOrderOnScreen:) 
-                                                     name:@"_NSWindowDidBecomeVisible" object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeBackingProperties:)
                                                      name:NSWindowDidChangeBackingPropertiesNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeScreen:)
@@ -2566,6 +2614,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         [window addObserver:self forKeyPath:@"contentLayoutRect" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
         [window addObserver:self forKeyPath:@"titlebarAppearsTransparent" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
 #endif
+        [_data->_windowVisibilityObserver startObserving:window];
     }
 }
 
@@ -2581,9 +2630,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidDeminiaturizeNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidMoveNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResizeNotification object:window];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NSWindowWillOrderOffScreenNotification" object:window];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NSWindowDidOrderOffScreenNotification" object:window];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidBecomeVisible" object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeBackingPropertiesNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeScreenNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidChangeContentsHostedInLayerSurfaceNotification" object:window];
@@ -2593,6 +2639,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [window removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
     [window removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
 #endif
+    [_data->_windowVisibilityObserver stopObserving:window];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
@@ -3696,10 +3743,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_useContentPreparationRectForVisibleRect = NO;
     _data->_windowOcclusionDetectionEnabled = YES;
 
+    _data->_windowVisibilityObserver = adoptNS([[WKWindowVisibilityObserver alloc] initWithView:self]);
+
     _data->_intrinsicContentSize = NSMakeSize(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric);
 
     _data->_needsViewFrameInWindowCoordinates = _data->_page->preferences().pluginsEnabled();
-    
+
     [self _registerDraggedTypes];
 
     self.wantsLayer = YES;

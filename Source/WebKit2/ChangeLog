@@ -1,3 +1,25 @@
+2015-03-23  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (Yosemite): WKView visibility notifications are messed up
+        https://bugs.webkit.org/show_bug.cgi?id=142945
+
+        Reviewed by Tim Horton.
+
+        As these notifications cannot be used by NSView subclasses, create a separate
+        object for observing them.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKWindowVisibilityObserver initWithView:]):
+        (-[WKWindowVisibilityObserver startObserving:]):
+        (-[WKWindowVisibilityObserver stopObserving:]):
+        (-[WKWindowVisibilityObserver _windowDidOrderOnScreen:]):
+        (-[WKWindowVisibilityObserver _windowDidOrderOffScreen:]):
+        (-[WKView addWindowObserversForWindow:]):
+        (-[WKView removeWindowObservers]): Also, don't try to remove NSWindowWillOrderOffScreenNotification,
+        which we never start to observe.
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+
 2015-03-23  Anders Carlsson  <andersca@apple.com>
 
         Make platform/mac-wk2/plugins/destroy-during-async-npp-new.html work again.

@@ -1,3 +1,27 @@
+2015-03-23  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (Yosemite): WKView visibility notifications are messed up
+        https://bugs.webkit.org/show_bug.cgi?id=142945
+
+        Reviewed by Tim Horton.
+
+        As these notifications cannot be used by NSView subclasses, create a separate
+        object for observing them.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        (-[WebView addWindowObserversForWindow:]):
+        (-[WebView removeWindowObservers]):
+        (-[WebView viewWillMoveToWindow:]): Make sure that observers are removed even
+        if -[WebView close] is called manually.
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (-[WebWindowVisibilityObserver initWithView:]):
+        (-[WebWindowVisibilityObserver startObserving:]):
+        (-[WebWindowVisibilityObserver stopObserving:]):
+        (-[WebWindowVisibilityObserver _windowVisibilityChanged:]):
+
 2015-03-23  Tim Horton  <timothy_horton@apple.com>
 
         Add a share item to the link action menu
