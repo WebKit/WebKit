@@ -1,3 +1,11 @@
+2015-03-23  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build.
+
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformBoundsForGlyph): Switched to non-deprecated CTFontOrientation values.
+        (WebCore::Font::platformWidthForGlyph): Ditto.
+
 2015-03-23  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Accessibility crashing because MediaPlayer is laying out UI off the main thread
