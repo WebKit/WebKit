@@ -1,3 +1,46 @@
+2015-03-23  Brent Fulgham  <bfulgham@apple.com>
+
+        Scroll latching logic can get stuck in 'scrollable="no"' iframes
+        https://bugs.webkit.org/show_bug.cgi?id=142789
+        <rdar://problem/20129494>
+
+        Reviewed by Dean Jackson.
+
+        Clean up the EventHandler and latching code as follows:
+        (1) Do not handle iframe elements as part of the normal latching logic. Instead, iframes should
+            be evaluated during the 'platformCompleteWheelEvent' phase of processing as top-level scrolling
+            frames.
+        (2) Get rid of the ill-conceived notation that we should process non-mainframe and main-frame frames
+            different.
+        (3) Modify code to reflect that the scroll latching code really deals with overflow scrolling. Consequently,
+            the 'findEnclosingScrollableContainer' was renamed to 'findEnclosingOverflowScroll' and does not
+            treat iframe as a suitable target.
+        (4) Do not create a latching state object when the container being evaluated is already scrolled to the
+            extreme position in the direction of the mouse gesture. In this case, we want the enclosing frame
+            to be the latching target.
+        (5) Do not treat the state where the mouse wheel gesture has ended manual scrolling, but has not ended
+            momentum scrolling, as an appropriate time to select a latching target.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::platformCompleteWheelEvent): Modify signature to remove unneeded argument.
+        (WebCore::EventHandler::handleWheelEvent): Modify call to 'platformCompleteWheelEvent' to remove unused argument.
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::findEnclosingOverflowScroll): Renamed from 'findEnclosingScrollableContainer' and revised per the
+        notes above.
+        (WebCore::EventHandler::platformPrepareForWheelEvents): Remove mainFrame vs. non-mainFrame code paths and
+        consolidate logic.
+        (WebCore::EventHandler::platformCompleteWheelEvent): Remove unused argument. The wheel event target is no
+        longer needed here, now that iframes are not processed by this code.
+        (WebCore::findEnclosingScrollableContainer): Deleted.
+        * page/scrolling/ScrollLatchingState.cpp:
+        (WebCore::ScrollLatchingState::setPreviousWheelScrolledElement:) Switch to move operator for passing
+        a temporary RefPtr to the the function.
+        * page/scrolling/ScrollLatchingState.h:
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::useLatchedEventElement): Recognize 'phase=ended, momentum=none' as a state
+        that should not cause latching state to be revised.
+
 2015-03-23  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the iOS build.

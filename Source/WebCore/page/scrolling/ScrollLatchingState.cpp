@@ -60,7 +60,7 @@ void ScrollLatchingState::setWidgetIsLatched(bool isOverWidget)
     m_widgetIsLatched = isOverWidget;
 }
 
-void ScrollLatchingState::setPreviousWheelScrolledElement(PassRefPtr<Element> element)
+void ScrollLatchingState::setPreviousWheelScrolledElement(RefPtr<Element>&& element)
 {
     m_previousWheelScrolledElement = element;
 }

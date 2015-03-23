@@ -50,7 +50,7 @@ public:
     void setWidgetIsLatched(bool isOverWidget);
 
     Element* previousWheelScrolledElement() { return m_previousWheelScrolledElement.get(); }
-    void setPreviousWheelScrolledElement(PassRefPtr<Element>);
+    void setPreviousWheelScrolledElement(RefPtr<Element>&&);
     
     ContainerNode* scrollableContainer() { return m_scrollableContainer.get(); }
     void setScrollableContainer(PassRefPtr<ContainerNode>);
