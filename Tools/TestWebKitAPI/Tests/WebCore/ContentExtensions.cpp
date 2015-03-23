@@ -404,4 +404,30 @@ TEST_F(ContentExtensionTest, ParsingFailures)
     testPatternStatus("(a)\\1", ContentExtensions::URLFilterParser::ParseStatus::Ok); // This should be BackReference, right?
 }
 
+TEST_F(ContentExtensionTest, PatternMatchingTheEmptyString)
+{
+    // Simple atoms.
+    testPatternStatus(".*", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("a*", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus(".?", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("a?", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+
+    // Character sets.
+    testPatternStatus("[a-z]*", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("[a-z]?", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+
+    // Groups.
+    testPatternStatus("(foobar)*", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(foobar)?", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(.*)", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(a*)", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(.?)", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(a?)", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("([a-z]*)", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("([a-z]?)", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+
+    // Nested groups.
+    testPatternStatus("((foo)?((.)*)(bar)*)", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+}
+
 } // namespace TestWebKitAPI
