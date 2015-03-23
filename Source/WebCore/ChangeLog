@@ -1,3 +1,13 @@
+2015-03-23  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Build fix: CoreText deprecated kCTFontSystemFontType
+
+        Fix tracked by:  <rdar://problem/20261171>
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::updateCachedSystemFontDescription):
+        Add clang pragmas.
+
 2015-03-23  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix.
