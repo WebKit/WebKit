@@ -66,12 +66,6 @@ void compileOSRExit(ExecState* exec)
     Operands<ValueRecovery> operands;
     codeBlock->jitCode()->dfg()->variableEventStream.reconstruct(codeBlock, exit.m_codeOrigin, codeBlock->jitCode()->dfg()->minifiedDFG, exit.m_streamIndex, operands);
     
-    // There may be an override, for forward speculations.
-    if (!!exit.m_valueRecoveryOverride) {
-        operands.setOperand(
-            exit.m_valueRecoveryOverride->operand, exit.m_valueRecoveryOverride->recovery);
-    }
-    
     SpeculationRecovery* recovery = 0;
     if (exit.m_recoveryIndex != UINT_MAX)
         recovery = &codeBlock->jitCode()->dfg()->speculationRecovery[exit.m_recoveryIndex];

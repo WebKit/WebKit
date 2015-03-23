@@ -1159,7 +1159,6 @@
     <ClInclude Include="..\dfg\DFGUnificationPhase.h" />
     <ClInclude Include="..\dfg\DFGUseKind.h" />
     <ClInclude Include="..\dfg\DFGValidate.h" />
-    <ClInclude Include="..\dfg\DFGValueRecoveryOverride.h" />
     <ClInclude Include="..\dfg\DFGValueSource.h" />
     <ClInclude Include="..\dfg\DFGValueStrength.h" />
     <ClInclude Include="..\dfg\DFGVariableAccessData.h" />
