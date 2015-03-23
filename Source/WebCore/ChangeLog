@@ -1,3 +1,9 @@
+2015-03-23  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the iOS build.
+
+        * platform/network/mac/CookieJarMac.mm:
+
 2015-03-23  Brady Eidson  <beidson@apple.com>
 
         Content extensions should apply css selectors
