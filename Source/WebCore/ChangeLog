@@ -1,3 +1,16 @@
+2015-03-23  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Accessibility crashing because MediaPlayer is laying out UI off the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=142970
+
+        Reviewed by Eric Carlson.
+
+        Return early after synchronously calling to the main thread to allocate the volume
+        view, to avoid re-allocating the volume view again on the web thread.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (-[WebMediaSessionHelper allocateVolumeView]):
+
 2015-03-23  Tim Horton  <timothy_horton@apple.com>
 
         Add a share item to the link action menu

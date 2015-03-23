@@ -251,8 +251,8 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
         RetainPtr<WebMediaSessionHelper> strongSelf = self;
         dispatch_sync(dispatch_get_main_queue(), [strongSelf]() {
             [strongSelf allocateVolumeView];
-            return;
         });
+        return;
     }
 
     _volumeView = adoptNS([allocMPVolumeViewInstance() init]);
