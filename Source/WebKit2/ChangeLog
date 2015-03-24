@@ -1,3 +1,29 @@
+2015-03-24  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] The WebKit network cache does not cache responses with "Content-Disposition: attachment" header
+        https://bugs.webkit.org/show_bug.cgi?id=142989
+        <rdar://problem/20265992>
+
+        Reviewed by Antti Koivisto.
+
+        Update our WebKit network cache policy to cache responses with
+        "Content-Disposition: attachment" header. There is no reason we cannot
+        cache these and our memory cache already does.
+
+        This was causing a decent amount of cache misses in the wild. I have
+        noticed for example that when loading disney.com, we fail to cache the
+        following resources because of this policy:
+        http://pagead2.googlesyndication.com/pagead/osd.js
+        http://pagead2.googlesyndication.com/pagead/show_companion_ad.js
+
+        Those resources have Cache-Control headers that indicate they are meant
+        to be cacheable.
+
+        Test: http/tests/cache/disk-cache-validation-attachment.html
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::canStore):
+
 2015-03-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed, another attempt to fix 32-bit build after r181881.

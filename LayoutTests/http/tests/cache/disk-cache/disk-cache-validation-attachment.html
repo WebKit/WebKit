@@ -1,0 +1,29 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="resources/cache-test.js"></script>
+<body>
+<script>
+
+var testMatrix =
+[
+ [
+  {},
+  { responseHeaders: {'Cache-control': 'max-age=0' } },
+  { responseHeaders: {'Cache-control': 'max-age=100' } },
+  ],
+ [
+  {},
+  { responseHeaders: {'Content-Disposition': 'attachment; filename="f.txt"' } },
+  ],
+ ];
+
+description("Tests that responses with 'content-disposition: attachment' are cacheable");
+
+var tests = generateTests(testMatrix);
+
+debug("running " + tests.length + " tests");
+debug("");
+
+runTests(tests);
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>

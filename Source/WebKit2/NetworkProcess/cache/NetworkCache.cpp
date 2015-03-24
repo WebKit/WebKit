@@ -317,10 +317,6 @@ static StoreDecision canStore(const WebCore::ResourceRequest& originalRequest, c
         LOG(NetworkCache, "(NetworkProcess) method %s", originalRequest.httpMethod().utf8().data());
         return StoreDecision::NoDueToHTTPMethod;
     }
-    if (response.isAttachment()) {
-        LOG(NetworkCache, "(NetworkProcess) attachment");
-        return StoreDecision::NoDueToAttachmentResponse;
-    }
 
     switch (response.httpStatusCode()) {
     case 200: // OK

@@ -1,3 +1,37 @@
+2015-03-24  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] The WebKit network cache does not cache responses with "Content-Disposition: attachment" header
+        https://bugs.webkit.org/show_bug.cgi?id=142989
+        <rdar://problem/20265992>
+
+        Reviewed by Antti Koivisto.
+
+        Add layout test to check that resources whose response has the
+        "Content-Disposition: attachment" header are cacheable.
+
+        Also move all disk cache layout tests to a disk-cache sub-folder to
+        facilitate skipping on platforms that don't have the WebKit network
+        disk cache.
+
+        * http/tests/cache/disk-cache/disk-cache-disable-expected.txt: Renamed from LayoutTests/http/tests/cache/disk-cache-disable-expected.txt.
+        * http/tests/cache/disk-cache/disk-cache-disable.html: Renamed from LayoutTests/http/tests/cache/disk-cache-disable.html.
+        * http/tests/cache/disk-cache/disk-cache-redirect-to-data-expected.txt: Renamed from LayoutTests/http/tests/cache/disk-cache-redirect-to-data-expected.txt.
+        * http/tests/cache/disk-cache/disk-cache-redirect-to-data.html: Renamed from LayoutTests/http/tests/cache/disk-cache-redirect-to-data.html.
+        * http/tests/cache/disk-cache/disk-cache-validation-attachment-expected.txt: Added.
+        * http/tests/cache/disk-cache/disk-cache-validation-attachment.html: Added.
+        * http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy-expected.txt: Renamed from LayoutTests/http/tests/cache/disk-cache-validation-back-navigation-policy-expected.txt.
+        * http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html: Renamed from LayoutTests/http/tests/cache/disk-cache-validation-back-navigation-policy.html.
+        * http/tests/cache/disk-cache/disk-cache-validation-expected.txt: Renamed from LayoutTests/http/tests/cache/disk-cache-validation-expected.txt.
+        * http/tests/cache/disk-cache/disk-cache-validation.html: Renamed from LayoutTests/http/tests/cache/disk-cache-validation.html.
+        * http/tests/cache/disk-cache/disk-cache-vary-cookie-expected.txt: Renamed from LayoutTests/http/tests/cache/disk-cache-vary-cookie-expected.txt.
+        * http/tests/cache/disk-cache/disk-cache-vary-cookie.html: Renamed from LayoutTests/http/tests/cache/disk-cache-vary-cookie.html.
+        * http/tests/cache/disk-cache/resources/cache-test.js: Renamed from LayoutTests/http/tests/cache/resources/cache-test.js.
+        * http/tests/cache/disk-cache/resources/generate-response.cgi: Renamed from LayoutTests/http/tests/cache/resources/generate-response.cgi.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-03-24  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (172175-172177): Change in for...in processing causes properties added in loop to be enumerated

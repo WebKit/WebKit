@@ -2123,9 +2123,7 @@ webkit.org/b/141628 compositing/layer-creation/fixed-position-out-of-view-scaled
 webkit.org/b/141628 compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
 
 # Disk cache isn't supported by EFL port yet.
-webkit.org/b/141891 http/tests/cache/disk-cache-disable.html [ Failure ]
-webkit.org/b/141891 http/tests/cache/disk-cache-redirect-to-data.html [ Failure ]
-webkit.org/b/141891 http/tests/cache/disk-cache-validation.html [ Failure ]
+webkit.org/b/141891 http/tests/cache/disk-cache [ Skip ]
 
 webkit.org/b/141892 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
 webkit.org/b/141892 fast/sub-pixel/inline-block-with-padding.html [ Failure ]
