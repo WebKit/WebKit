@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Igalia S.L. All rights reserved.
+ * Copyright (C) 2015 Metrological. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,15 +31,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamCenterGStreamer_h
-#define MediaStreamCenterGStreamer_h
+#ifndef RealtimeMediaSourceCenterOwr_h
+#define RealtimeMediaSourceCenterOwr_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) && USE(OPENWEBRTC)
 
 #include "RealtimeMediaSourceCenter.h"
 
+#include "RealtimeMediaSourceOwr.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -45,18 +47,25 @@ class MediaStreamPrivate;
 class RealtimeMediaSource;
 class MediaStreamSourcesQueryClient;
 
-class MediaStreamCenterGStreamer : public RealtimeMediaSourceCenter {
+class RealtimeMediaSourceCenterOwr final : public RealtimeMediaSourceCenter {
 public:
-    MediaStreamCenterGStreamer();
-    ~MediaStreamCenterGStreamer();
+    RealtimeMediaSourceCenterOwr();
+    ~RealtimeMediaSourceCenterOwr();
 
     virtual void validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints);
     virtual void createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints);
     virtual bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) override;
+
+    void mediaSourcesAvailable(GList* sources);
+
+private:
+    PassRefPtr<RealtimeMediaSource> firstSource(RealtimeMediaSource::Type);
+    RealtimeMediaSourceOwrMap m_sourceMap;
+    RefPtr<MediaStreamCreationClient> m_client;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_STREAM) && USE(OPENWEBRTC)
 
-#endif // MediaStreamCenterGStreamer_h
+#endif // RealtimeMediaSourceCenterOwr_h

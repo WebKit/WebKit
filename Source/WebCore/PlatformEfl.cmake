@@ -18,7 +18,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/texmap"
     "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
     "${WEBCORE_DIR}/platform/linux"
-    "${WEBCORE_DIR}/platform/mediastream/gstreamer"
+    "${WEBCORE_DIR}/platform/mediastream/openwebrtc"
     "${WEBCORE_DIR}/platform/mock/mediasource"
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/efl"
@@ -213,7 +213,8 @@ list(APPEND WebCore_SOURCES
     platform/linux/GamepadDeviceLinux.cpp
     platform/linux/MemoryPressureHandlerLinux.cpp
 
-    platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp
+    platform/mediastream/openwebrtc/OpenWebRTCUtilities.cpp
+    platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp
 
     platform/network/efl/NetworkStateNotifierEfl.cpp
 

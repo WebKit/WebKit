@@ -1,3 +1,44 @@
+2015-03-17  Philippe Normand  <pnormand@igalia.com>
+
+        [OpenWebRTC] RealtimeMediaSourceCenter implementation
+        https://bugs.webkit.org/show_bug.cgi?id=142476
+
+        Reviewed by Eric Carlson.
+
+        The old GStreamer MediaStreamCenter is replaced by the OpenWebRTC
+        RealtimeMediaSourceCenter. It is not yet able to correctly assess
+        MediaConstraints so it selects the first audio/video sources
+        available through OpenWebRTC.
+
+        * PlatformEfl.cmake: Add new files to the build.
+        * PlatformGTK.cmake: Ditto.
+        * platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp: Removed.
+        * platform/mediastream/openwebrtc/OpenWebRTCUtilities.cpp: Added.
+        (WebCore::initializeOpenWebRTC): Simple function to initialize the
+        framework, it is going to be used by the PeerConnection backend as well.
+        * platform/mediastream/openwebrtc/OpenWebRTCUtilities.h: Added.
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp: Added.
+        (WebCore::mediaSourcesAvailableCallback): Function invoked once
+        the media sources discovery succeeded within OpenWebRTC.
+        (WebCore::RealtimeMediaSourceCenter::platformCenter): Instantiate
+        the OpenWebRTC RealtimeMediaSourceCenter.
+        (WebCore::RealtimeMediaSourceCenterOwr::RealtimeMediaSourceCenterOwr):
+        (WebCore::RealtimeMediaSourceCenterOwr::~RealtimeMediaSourceCenterOwr):
+        (WebCore::RealtimeMediaSourceCenterOwr::validateRequestConstraints):
+        Schedule a discovery process for the capture sources.
+        (WebCore::RealtimeMediaSourceCenterOwr::createMediaStream): Pick
+        the first audio/video sources and create a MediaStream accordingly.
+        (WebCore::RealtimeMediaSourceCenterOwr::getMediaStreamTrackSources):
+        Not yet implemented.
+        (WebCore::RealtimeMediaSourceCenterOwr::mediaSourcesAvailable):
+        Method invoked once the capture sources process succeeded. Parse
+        them and create an internal cache of RealtimeMediaSources accordingly.
+        (WebCore::RealtimeMediaSourceCenterOwr::firstSource): Utility
+        function to fetch the first source of the given type from the
+        RealtimeMediaSources cache.
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.h: Renamed from Source/WebCore/platform/mediastream/gstreamer/MediaStreamCenterGStreamer.h.
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.h: Added.
+
 2015-03-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Add OpenWebRTC in jhbuild
