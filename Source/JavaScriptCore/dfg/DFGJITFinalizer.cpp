@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include "CodeBlockWithJITType.h"
 #include "DFGCommon.h"
 #include "DFGPlan.h"
 #include "JSCInlines.h"
@@ -56,7 +57,9 @@ size_t JITFinalizer::codeSize()
 bool JITFinalizer::finalize()
 {
     m_jitCode->initializeCodeRef(
-        m_linkBuffer->finalizeCodeWithoutDisassembly(), MacroAssemblerCodePtr());
+        FINALIZE_DFG_CODE(*m_linkBuffer, ("DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::DFGJIT)).data())),
+        MacroAssemblerCodePtr());
+    
     m_plan.codeBlock->setJITCode(m_jitCode);
     
     finalizeCommon();
@@ -68,7 +71,8 @@ bool JITFinalizer::finalizeFunction()
 {
     RELEASE_ASSERT(!m_withArityCheck.isEmptyValue());
     m_jitCode->initializeCodeRef(
-        m_linkBuffer->finalizeCodeWithoutDisassembly(), m_withArityCheck);
+        FINALIZE_DFG_CODE(*m_linkBuffer, ("DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::DFGJIT)).data())),
+        m_withArityCheck);
     m_plan.codeBlock->setJITCode(m_jitCode);
     
     finalizeCommon();

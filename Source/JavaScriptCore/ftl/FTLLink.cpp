@@ -131,10 +131,10 @@ void link(State& state)
             if (state.codeSectionNames[i] != SECTION_NAME("text"))
                 continue;
             
-                ExecutableMemoryHandle* handle = state.jitCode->handles()[i].get();
-                disassemble(
-                    MacroAssemblerCodePtr(handle->start()), handle->sizeInBytes(),
-                    "      ", out, LLVMSubset);
+            ExecutableMemoryHandle* handle = state.jitCode->handles()[i].get();
+            disassemble(
+                MacroAssemblerCodePtr(handle->start()), handle->sizeInBytes(),
+                "      ", out, LLVMSubset);
         }
         compilation->addDescription(Profiler::OriginStack(), out.toCString());
         out.reset();

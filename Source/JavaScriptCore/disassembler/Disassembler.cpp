@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,11 @@
 
 #include "MacroAssemblerCodeRef.h"
 #include <wtf/DataLog.h>
+#include <wtf/Deque.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/StringPrintStream.h>
+#include <wtf/Threading.h>
+#include <wtf/ThreadingPrimitives.h>
 
 namespace JSC {
 
@@ -37,6 +42,113 @@ void disassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* 
         return;
     
     out.printf("%sdisassembly not available for range %p...%p\n", prefix, codePtr.executableAddress(), static_cast<char*>(codePtr.executableAddress()) + size);
+}
+
+namespace {
+
+// This is really a struct, except that it should be a class because that's what the WTF_* macros
+// expect.
+class DisassemblyTask {
+    WTF_MAKE_NONCOPYABLE(DisassemblyTask);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    DisassemblyTask()
+    {
+    }
+    
+    ~DisassemblyTask()
+    {
+        if (header)
+            free(header); // free() because it would have been copied by strdup.
+    }
+    
+    char* header { nullptr };
+    MacroAssemblerCodeRef codeRef;
+    size_t size { 0 };
+    const char* prefix { nullptr };
+    InstructionSubsetHint subsetHint { MacroAssemblerSubset };
+};
+
+class AsynchronousDisassembler {
+public:
+    AsynchronousDisassembler()
+    {
+        createThread("Asynchronous Disassembler", [&] () { run(); });
+    }
+    
+    void enqueue(std::unique_ptr<DisassemblyTask> task)
+    {
+        MutexLocker locker(m_lock);
+        m_queue.append(WTF::move(task));
+        m_condition.broadcast();
+    }
+    
+    void waitUntilEmpty()
+    {
+        MutexLocker locker(m_lock);
+        while (!m_queue.isEmpty() || m_working)
+            m_condition.wait(m_lock);
+    }
+    
+private:
+    NO_RETURN void run()
+    {
+        for (;;) {
+            std::unique_ptr<DisassemblyTask> task;
+            {
+                MutexLocker locker(m_lock);
+                m_working = false;
+                m_condition.broadcast();
+                while (m_queue.isEmpty())
+                    m_condition.wait(m_lock);
+                task = m_queue.takeFirst();
+                m_working = true;
+            }
+
+            dataLog(task->header);
+            disassemble(
+                task->codeRef.code(), task->size, task->prefix, WTF::dataFile(),
+                task->subsetHint);
+        }
+    }
+    
+    Mutex m_lock;
+    ThreadCondition m_condition;
+    Deque<std::unique_ptr<DisassemblyTask>> m_queue;
+    bool m_working { false };
+};
+
+bool hadAnyAsynchronousDisassembly = false;
+
+AsynchronousDisassembler& asynchronousDisassembler()
+{
+    static NeverDestroyed<AsynchronousDisassembler> disassembler;
+    hadAnyAsynchronousDisassembly = true;
+    return disassembler.get();
+}
+
+} // anonymous namespace
+
+void disassembleAsynchronously(
+    const CString& header, const MacroAssemblerCodeRef& codeRef, size_t size, const char* prefix,
+    InstructionSubsetHint subsetHint)
+{
+    std::unique_ptr<DisassemblyTask> task = std::make_unique<DisassemblyTask>();
+    task->header = strdup(header.data()); // Yuck! We need this because CString does racy refcounting.
+    task->codeRef = codeRef;
+    task->size = size;
+    task->prefix = prefix;
+    task->subsetHint = subsetHint;
+    
+    asynchronousDisassembler().enqueue(WTF::move(task));
+}
+
+void waitForAsynchronousDisassembly()
+{
+    if (!hadAnyAsynchronousDisassembly)
+        return;
+    
+    asynchronousDisassembler().waitUntilEmpty();
 }
 
 } // namespace JSC

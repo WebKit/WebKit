@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -254,6 +254,9 @@ public:
     {
         return m_size;
     }
+    
+    bool wasAlreadyDisassembled() const { return m_alreadyDisassembled; }
+    void didAlreadyDisassemble() { m_alreadyDisassembled = true; }
 
 private:
 #if ENABLE(BRANCH_COMPACTION)
@@ -310,6 +313,7 @@ private:
 #ifndef NDEBUG
     bool m_completed;
 #endif
+    bool m_alreadyDisassembled { false };
 };
 
 #define FINALIZE_CODE_IF(condition, linkBufferReference, dataLogFArgumentsForHeading)  \
@@ -320,7 +324,7 @@ private:
 bool shouldShowDisassemblyFor(CodeBlock*);
 
 #define FINALIZE_CODE_FOR(codeBlock, linkBufferReference, dataLogFArgumentsForHeading)  \
-    FINALIZE_CODE_IF(shouldShowDisassemblyFor(codeBlock), linkBufferReference, dataLogFArgumentsForHeading)
+    FINALIZE_CODE_IF(shouldShowDisassemblyFor(codeBlock) || Options::asyncDisassembly(), linkBufferReference, dataLogFArgumentsForHeading)
 
 // Use this to finalize code, like so:
 //
@@ -339,10 +343,10 @@ bool shouldShowDisassemblyFor(CodeBlock*);
 // is true, so you can hide expensive disassembly-only computations inside there.
 
 #define FINALIZE_CODE(linkBufferReference, dataLogFArgumentsForHeading)  \
-    FINALIZE_CODE_IF(JSC::Options::showDisassembly(), linkBufferReference, dataLogFArgumentsForHeading)
+    FINALIZE_CODE_IF(JSC::Options::asyncDisassembly() || JSC::Options::showDisassembly(), linkBufferReference, dataLogFArgumentsForHeading)
 
 #define FINALIZE_DFG_CODE(linkBufferReference, dataLogFArgumentsForHeading)  \
-    FINALIZE_CODE_IF((JSC::Options::showDisassembly() || Options::showDFGDisassembly()), linkBufferReference, dataLogFArgumentsForHeading)
+    FINALIZE_CODE_IF(JSC::Options::asyncDisassembly() || JSC::Options::showDisassembly() || Options::showDFGDisassembly(), linkBufferReference, dataLogFArgumentsForHeading)
 
 } // namespace JSC
 

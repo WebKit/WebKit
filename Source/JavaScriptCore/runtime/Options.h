@@ -116,6 +116,7 @@ typedef const char* optionString;
     \
     /* showDisassembly implies showDFGDisassembly. */ \
     v(bool, showDisassembly, false) \
+    v(bool, asyncDisassembly, false) \
     v(bool, showDFGDisassembly, false) \
     v(bool, showFTLDisassembly, false) \
     v(bool, showAllDFGNodes, false) \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 
 #include "ArityCheckFailReturnThunks.h"
 #include "CodeBlock.h"
+#include "CodeBlockWithJITType.h"
 #include "DFGCapabilities.h"
 #include "Interpreter.h"
 #include "JITInlines.h"
@@ -682,14 +683,18 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     if (m_codeBlock->codeType() == FunctionCode)
         withArityCheck = patchBuffer.locationOf(arityCheck);
 
-    if (Options::showDisassembly())
+    if (Options::showDisassembly()) {
         m_disassembler->dump(patchBuffer);
+        patchBuffer.didAlreadyDisassemble();
+    }
     if (m_compilation) {
         m_disassembler->reportToProfiler(m_compilation.get(), patchBuffer);
         m_vm->m_perBytecodeProfiler->addCompilation(m_compilation);
     }
     
-    CodeRef result = patchBuffer.finalizeCodeWithoutDisassembly();
+    CodeRef result = FINALIZE_CODE(
+        patchBuffer,
+        ("Baseline JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITCode::BaselineJIT)).data()));
     
     m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT.add(
         static_cast<double>(result.size()) /

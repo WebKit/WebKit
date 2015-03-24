@@ -1,3 +1,61 @@
+2015-03-23  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should have a low-cost asynchronous disassembler
+        https://bugs.webkit.org/show_bug.cgi?id=142997
+
+        Reviewed by Mark Lam.
+        
+        This adds a JSC_asyncDisassembly option that disassembles on a thread. Disassembly
+        doesn't block execution. Some code will live a little longer because of this, since the
+        work tasks hold a ref to the code, but other than that there is basically no overhead.
+        
+        At present, this isn't really a replacement for JSC_showDisassembly, since it doesn't
+        provide contextual IR information for Baseline and DFG disassemblies, and it doesn't do
+        the separate IR dumps for FTL. Using JSC_showDisassembly and friends along with
+        JSC_asyncDisassembly has bizarre behavior - so just choose one.
+        
+        A simple way of understanding how great this is, is to run a small benchmark like
+        V8Spider/earley-boyer.
+        
+        Performance without any disassembly flags: 60ms
+        Performance with JSC_showDisassembly=true: 477ms
+        Performance with JSC_asyncDisassembly=true: 65ms
+        
+        So, the overhead of disassembly goes from 8x to 8%.
+        
+        Note that JSC_asyncDisassembly=true does make it incorrect to run "time" as a way of
+        measuring benchmark performance. This is because at VM exit, we wait for all async
+        disassembly requests to finish. For example, for earley-boyer, we spend an extra ~130ms
+        after the benchmark completely finishes to finish the disassemblies. This small weirdness
+        should be OK for the intended use-cases, since all you have to do to get around it is to
+        measure the execution time of the benchmark payload rather than the end-to-end time of
+        launching the VM.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::wasAlreadyDisassembled):
+        (JSC::LinkBuffer::didAlreadyDisassemble):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::disassemble):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        * disassembler/Disassembler.cpp:
+        (JSC::disassembleAsynchronously):
+        (JSC::waitForAsynchronousDisassembly):
+        * disassembler/Disassembler.h:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jsc.cpp:
+        * runtime/Options.h:
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+
 2015-03-23  Dean Jackson  <dino@apple.com>
 
         ES7: Implement Array.prototype.includes

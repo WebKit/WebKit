@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,19 +59,28 @@ LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(const char* format, 
 {
     CodeRef result = finalizeCodeWithoutDisassembly();
 
-#if ENABLE(DISASSEMBLER)
-    dataLogF("Generated JIT code for ");
+    if (m_alreadyDisassembled)
+        return result;
+    
+    StringPrintStream out;
+    out.printf("Generated JIT code for ");
     va_list argList;
     va_start(argList, format);
-    WTF::dataLogFV(format, argList);
+    out.vprintf(format, argList);
     va_end(argList);
-    dataLogF(":\n");
+    out.printf(":\n");
+
+    out.printf("    Code at [%p, %p):\n", result.code().executableAddress(), static_cast<char*>(result.code().executableAddress()) + result.size());
     
-    dataLogF("    Code at [%p, %p):\n", result.code().executableAddress(), static_cast<char*>(result.code().executableAddress()) + result.size());
+    CString header = out.toCString();
+    
+    if (Options::asyncDisassembly()) {
+        disassembleAsynchronously(header, result, m_size, "    ");
+        return result;
+    }
+    
+    dataLog(header);
     disassemble(result.code(), m_size, "    ", WTF::dataFile());
-#else
-    UNUSED_PARAM(format);
-#endif // ENABLE(DISASSEMBLER)
     
     return result;
 }

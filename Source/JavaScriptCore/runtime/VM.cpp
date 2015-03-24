@@ -40,6 +40,7 @@
 #include "CustomGetterSetter.h"
 #include "DFGLongLivedState.h"
 #include "DFGWorklist.h"
+#include "Disassembler.h"
 #include "ErrorInstance.h"
 #include "FTLThunks.h"
 #include "FunctionConstructor.h"
@@ -304,6 +305,8 @@ VM::~VM()
         }
     }
 #endif // ENABLE(DFG_JIT)
+    
+    waitForAsynchronousDisassembly();
     
     // Clear this first to ensure that nobody tries to remove themselves from it.
     m_perBytecodeProfiler = nullptr;

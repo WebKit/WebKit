@@ -454,8 +454,10 @@ void JITCompiler::linkFunction()
 
 void JITCompiler::disassemble(LinkBuffer& linkBuffer)
 {
-    if (shouldShowDisassembly())
+    if (shouldShowDisassembly()) {
         m_disassembler->dump(linkBuffer);
+        linkBuffer.didAlreadyDisassemble();
+    }
     
     if (m_graph.m_plan.compilation)
         m_disassembler->reportToProfiler(m_graph.m_plan.compilation.get(), linkBuffer);

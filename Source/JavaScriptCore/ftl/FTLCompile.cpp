@@ -803,17 +803,27 @@ void compile(State& state, Safepoint::Result& safepointResult)
             state, state.graph.m_codeBlock, state.jitCode.get(), state.generatedFunction,
             recordMap, didSeeUnwindInfo);
         
-        if (shouldShowDisassembly()) {
+        if (shouldShowDisassembly() || Options::asyncDisassembly()) {
             for (unsigned i = 0; i < state.jitCode->handles().size(); ++i) {
                 if (state.codeSectionNames[i] != SECTION_NAME("text"))
                     continue;
                 
                 ExecutableMemoryHandle* handle = state.jitCode->handles()[i].get();
-                dataLog(
+                
+                CString header = toCString(
                     "Generated LLVM code after stackmap-based fix-up for ",
                     CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT),
                     " in ", state.graph.m_plan.mode, " #", i, ", ",
                     state.codeSectionNames[i], ":\n");
+                
+                if (Options::asyncDisassembly()) {
+                    disassembleAsynchronously(
+                        header, MacroAssemblerCodeRef(handle), handle->sizeInBytes(), "    ",
+                        LLVMSubset);
+                    continue;
+                }
+                
+                dataLog(header);
                 disassemble(
                     MacroAssemblerCodePtr(handle->start()), handle->sizeInBytes(),
                     "    ", WTF::dataFile(), LLVMSubset);
