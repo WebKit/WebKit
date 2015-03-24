@@ -245,7 +245,7 @@ static std::unique_ptr<Entry> decodeStorageEntry(const Storage::Entry& storageEn
 
 static RetrieveDecision canRetrieve(const WebCore::ResourceRequest& request)
 {
-    // FIXME: Support HEAD and OPTIONS requests.
+    // FIXME: Support HEAD requests.
     if (request.httpMethod() != "GET")
         return RetrieveDecision::NoDueToHTTPMethod;
     // FIXME: We should be able to validate conditional requests using cache.

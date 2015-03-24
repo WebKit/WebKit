@@ -1,5 +1,21 @@
 2015-03-24  Chris Dumez  <cdumez@apple.com>
 
+        [WK2] Remove NetworkCache FIXME comment about caching responses to OPTIONS requests
+        https://bugs.webkit.org/show_bug.cgi?id=143009
+
+        Reviewed by Andreas Kling.
+
+        Remove NetworkCache FIXME comment about caching responses to OPTIONS
+        method as RFC 7234 says "Responses to the OPTIONS method are not
+        cacheable" [1].
+
+        [1] http://tools.ietf.org/html/rfc7231#page-31
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::canRetrieve):
+
+2015-03-24  Chris Dumez  <cdumez@apple.com>
+
         [WK2] NetworkCache retrievals fail for entries with no body
         https://bugs.webkit.org/show_bug.cgi?id=142979
         <rdar://problem/20264100>
