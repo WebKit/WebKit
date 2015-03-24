@@ -231,9 +231,9 @@ bool doesGC(Graph& graph, Node* node)
     case NewFunctionExpression:
     case NewTypedArray:
     case ThrowReferenceError:
-    case GetStructurePropertyEnumerator:
-    case GetGenericPropertyEnumerator:
-    case GetEnumeratorPname:
+    case GetPropertyEnumerator:
+    case GetEnumeratorStructurePname:
+    case GetEnumeratorGenericPname:
     case ToIndexString:
     case MaterializeNewObject:
         return true;

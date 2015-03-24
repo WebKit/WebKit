@@ -1,5 +1,135 @@
 2015-03-24  Michael Saboff  <msaboff@apple.com>
 
+        REGRESSION (172175-172177): Change in for...in processing causes properties added in loop to be enumerated
+        https://bugs.webkit.org/show_bug.cgi?id=142856
+
+        Reviewed by Filip Pizlo.
+
+        Refactored the way the for .. in enumeration over objects is done.  We used to make three C++ calls to
+        get info for three loops to iterate over indexed properties, structure properties and other properties,
+        respectively.  We still have the three loops, but now we make one C++ call to get all the info needed
+        for all loops before we exectue any enumeration.
+
+        The JSPropertyEnumerator has a count of the indexed properties and a list of named properties.
+        The named properties are one list, with structured properties in the range [0,m_endStructurePropertyIndex)
+        and the generic properties in the range [m_endStructurePropertyIndex, m_endGenericPropertyIndex);
+
+        Eliminated the bytecodes op_get_structure_property_enumerator, op_get_generic_property_enumerator and
+        op_next_enumerator_pname.
+        Added the bytecodes op_get_property_enumerator, op_enumerator_structure_pname and op_enumerator_generic_pname.
+        The bytecodes op_enumerator_structure_pname and op_enumerator_generic_pname are similar except for what
+        end value we stop iterating on.
+
+        Made corresponding node changes to the DFG and FTL for the bytecode changes.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetPropertyEnumerator):
+        (JSC::BytecodeGenerator::emitEnumeratorStructurePropertyName):
+        (JSC::BytecodeGenerator::emitEnumeratorGenericPropertyName):
+        (JSC::BytecodeGenerator::emitGetStructurePropertyEnumerator): Deleted.
+        (JSC::BytecodeGenerator::emitGetGenericPropertyEnumerator): Deleted.
+        (JSC::BytecodeGenerator::emitNextEnumeratorPropertyName): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitMultiLoopBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetEnumerableLength):
+        (JSC::FTL::LowerDFGToLLVM::compileGetPropertyEnumerator):
+        (JSC::FTL::LowerDFGToLLVM::compileGetEnumeratorStructurePname):
+        (JSC::FTL::LowerDFGToLLVM::compileGetEnumeratorGenericPname):
+        (JSC::FTL::LowerDFGToLLVM::compileGetStructurePropertyEnumerator): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::compileGetGenericPropertyEnumerator): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::compileGetEnumeratorPname): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_enumerator_structure_pname):
+        (JSC::JIT::emit_op_enumerator_generic_pname):
+        (JSC::JIT::emit_op_get_property_enumerator):
+        (JSC::JIT::emit_op_next_enumerator_pname): Deleted.
+        (JSC::JIT::emit_op_get_structure_property_enumerator): Deleted.
+        (JSC::JIT::emit_op_get_generic_property_enumerator): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_enumerator_structure_pname):
+        (JSC::JIT::emit_op_enumerator_generic_pname):
+        (JSC::JIT::emit_op_next_enumerator_pname): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::create):
+        (JSC::JSPropertyNameEnumerator::finishCreation):
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::JSPropertyNameEnumerator::indexedLength):
+        (JSC::JSPropertyNameEnumerator::endStructurePropertyIndex):
+        (JSC::JSPropertyNameEnumerator::endGenericPropertyIndex):
+        (JSC::JSPropertyNameEnumerator::indexedLengthOffset):
+        (JSC::JSPropertyNameEnumerator::endStructurePropertyIndexOffset):
+        (JSC::JSPropertyNameEnumerator::endGenericPropertyIndexOffset):
+        (JSC::JSPropertyNameEnumerator::cachedInlineCapacityOffset):
+        (JSC::propertyNameEnumerator):
+        (JSC::JSPropertyNameEnumerator::cachedPropertyNamesLengthOffset): Deleted.
+        (JSC::structurePropertyNameEnumerator): Deleted.
+        (JSC::genericPropertyNameEnumerator): Deleted.
+        * runtime/Structure.cpp:
+        (JSC::Structure::setCachedPropertyNameEnumerator):
+        (JSC::Structure::cachedPropertyNameEnumerator):
+        (JSC::Structure::canCachePropertyNameEnumerator):
+        (JSC::Structure::setCachedStructurePropertyNameEnumerator): Deleted.
+        (JSC::Structure::cachedStructurePropertyNameEnumerator): Deleted.
+        (JSC::Structure::setCachedGenericPropertyNameEnumerator): Deleted.
+        (JSC::Structure::cachedGenericPropertyNameEnumerator): Deleted.
+        (JSC::Structure::canCacheStructurePropertyNameEnumerator): Deleted.
+        (JSC::Structure::canCacheGenericPropertyNameEnumerator): Deleted.
+        * runtime/Structure.h:
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::visitChildren):
+        (JSC::StructureRareData::cachedPropertyNameEnumerator):
+        (JSC::StructureRareData::setCachedPropertyNameEnumerator):
+        (JSC::StructureRareData::cachedStructurePropertyNameEnumerator): Deleted.
+        (JSC::StructureRareData::setCachedStructurePropertyNameEnumerator): Deleted.
+        (JSC::StructureRareData::cachedGenericPropertyNameEnumerator): Deleted.
+        (JSC::StructureRareData::setCachedGenericPropertyNameEnumerator): Deleted.
+        * runtime/StructureRareData.h:
+        * tests/stress/for-in-delete-during-iteration.js:
+
+2015-03-24  Michael Saboff  <msaboff@apple.com>
+
         Unreviewed build fix for debug builds.
 
         * runtime/ExceptionHelpers.cpp:

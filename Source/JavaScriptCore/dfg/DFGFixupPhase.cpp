@@ -1091,7 +1091,7 @@ private:
             break;
         }
         case HasGenericProperty: {
-            fixEdge<StringUse>(node->child2());
+            fixEdge<CellUse>(node->child2());
             break;
         }
         case HasStructureProperty: {
@@ -1123,18 +1123,16 @@ private:
             fixEdge<KnownCellUse>(enumerator);
             break;
         }
-        case GetStructurePropertyEnumerator: {
+        case GetPropertyEnumerator: {
             fixEdge<CellUse>(node->child1());
+            break;
+        }
+        case GetEnumeratorStructurePname: {
+            fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownInt32Use>(node->child2());
             break;
         }
-        case GetGenericPropertyEnumerator: {
-            fixEdge<CellUse>(node->child1());
-            fixEdge<KnownInt32Use>(node->child2());
-            fixEdge<KnownCellUse>(node->child3());
-            break;
-        }
-        case GetEnumeratorPname: {
+        case GetEnumeratorGenericPname: {
             fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownInt32Use>(node->child2());
             break;

@@ -37,18 +37,18 @@ JSPropertyNameEnumerator* JSPropertyNameEnumerator::create(VM& vm)
 {
     if (!vm.emptyPropertyNameEnumerator.get()) {
         PropertyNameArray propertyNames(&vm);
-        vm.emptyPropertyNameEnumerator = Strong<JSCell>(vm, create(vm, 0, propertyNames));
+        vm.emptyPropertyNameEnumerator = Strong<JSCell>(vm, create(vm, 0, 0, 0, propertyNames));
     }
     return jsCast<JSPropertyNameEnumerator*>(vm.emptyPropertyNameEnumerator.get());
 }
 
-JSPropertyNameEnumerator* JSPropertyNameEnumerator::create(VM& vm, Structure* structure, PropertyNameArray& propertyNames)
+JSPropertyNameEnumerator* JSPropertyNameEnumerator::create(VM& vm, Structure* structure, uint32_t indexedLength, uint32_t numberStructureProperties, PropertyNameArray& propertyNames)
 {
     StructureID structureID = structure ? structure->id() : 0;
     uint32_t inlineCapacity = structure ? structure->inlineCapacity() : 0;
     JSPropertyNameEnumerator* enumerator = new (NotNull, 
         allocateCell<JSPropertyNameEnumerator>(vm.heap)) JSPropertyNameEnumerator(vm, structureID, inlineCapacity, propertyNames.identifierSet());
-    enumerator->finishCreation(vm, propertyNames.data());
+    enumerator->finishCreation(vm, indexedLength, numberStructureProperties, propertyNames.data());
     return enumerator;
 }
 
@@ -60,12 +60,17 @@ JSPropertyNameEnumerator::JSPropertyNameEnumerator(VM& vm, StructureID structure
 {
 }
 
-void JSPropertyNameEnumerator::finishCreation(VM& vm, PassRefPtr<PropertyNameArrayData> idents)
+void JSPropertyNameEnumerator::finishCreation(VM& vm, uint32_t indexedLength, uint32_t endStructurePropertyIndex, PassRefPtr<PropertyNameArrayData> idents)
 {
     Base::finishCreation(vm);
 
     RefPtr<PropertyNameArrayData> identifiers = idents;
     PropertyNameArrayData::PropertyNameVector& vector = identifiers->propertyNameVector();
+
+    m_indexedLength = indexedLength;
+    m_endStructurePropertyIndex = endStructurePropertyIndex;
+    m_endGenericPropertyIndex = vector.size();
+
     m_propertyNames.resize(vector.size());
     for (unsigned i = 0; i < vector.size(); ++i) {
         const Identifier& identifier = vector[i];

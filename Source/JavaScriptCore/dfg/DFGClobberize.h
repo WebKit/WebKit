@@ -162,8 +162,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case HasGenericProperty:
     case HasStructureProperty:
     case GetEnumerableLength:
-    case GetStructurePropertyEnumerator:
-    case GetGenericPropertyEnumerator: {
+    case GetPropertyEnumerator: {
         read(Heap);
         write(SideState);
         return;
@@ -178,7 +177,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     }
 
     case ToIndexString:
-    case GetEnumeratorPname: {
+    case GetEnumeratorStructurePname:
+    case GetEnumeratorGenericPname: {
         def(PureValue(node));
         return;
     }

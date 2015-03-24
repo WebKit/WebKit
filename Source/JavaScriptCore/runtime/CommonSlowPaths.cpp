@@ -520,12 +520,13 @@ SLOW_PATH_DECL(slow_path_enter)
 SLOW_PATH_DECL(slow_path_get_enumerable_length)
 {
     BEGIN();
-    JSValue baseValue = OP(2).jsValue();
-    if (baseValue.isUndefinedOrNull())
+    JSValue enumeratorValue = OP(2).jsValue();
+    if (enumeratorValue.isUndefinedOrNull())
         RETURN(jsNumber(0));
 
-    JSObject* base = baseValue.toObject(exec);
-    RETURN(jsNumber(base->methodTable(vm)->getEnumerableLength(exec, base)));
+    JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(enumeratorValue.asCell());
+
+    RETURN(jsNumber(enumerator->indexedLength()));
 }
 
 SLOW_PATH_DECL(slow_path_has_indexed_property)
@@ -574,39 +575,39 @@ SLOW_PATH_DECL(slow_path_get_direct_pname)
     RETURN(baseValue.get(exec, property.toPropertyKey(exec)));
 }
 
-SLOW_PATH_DECL(slow_path_get_structure_property_enumerator)
+SLOW_PATH_DECL(slow_path_get_property_enumerator)
 {
     BEGIN();
     JSValue baseValue = OP(2).jsValue();
     if (baseValue.isUndefinedOrNull())
         RETURN(JSPropertyNameEnumerator::create(vm));
-        
-    JSObject* base = baseValue.toObject(exec);
-    uint32_t length = OP(3).jsValue().asUInt32();
 
-    RETURN(structurePropertyNameEnumerator(exec, base, length));
+    JSObject* base = baseValue.toObject(exec);
+
+    RETURN(propertyNameEnumerator(exec, base));
 }
 
-SLOW_PATH_DECL(slow_path_get_generic_property_enumerator)
-{
-    BEGIN();
-    JSValue baseValue = OP(2).jsValue();
-    if (baseValue.isUndefinedOrNull())
-        RETURN(JSPropertyNameEnumerator::create(vm));
-    
-    JSObject* base = baseValue.toObject(exec);
-    uint32_t length = OP(3).jsValue().asUInt32();
-    JSPropertyNameEnumerator* structureEnumerator = jsCast<JSPropertyNameEnumerator*>(OP(4).jsValue().asCell());
-
-    RETURN(genericPropertyNameEnumerator(exec, base, length, structureEnumerator));
-}
-
-SLOW_PATH_DECL(slow_path_next_enumerator_pname)
+SLOW_PATH_DECL(slow_path_next_structure_enumerator_pname)
 {
     BEGIN();
     JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(OP(2).jsValue().asCell());
     uint32_t index = OP(3).jsValue().asUInt32();
-    JSString* propertyName = enumerator->propertyNameAtIndex(index);
+
+    JSString* propertyName = nullptr;
+    if (index < enumerator->endStructurePropertyIndex())
+        propertyName = enumerator->propertyNameAtIndex(index);
+    RETURN(propertyName ? propertyName : jsNull());
+}
+
+SLOW_PATH_DECL(slow_path_next_generic_enumerator_pname)
+{
+    BEGIN();
+    JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(OP(2).jsValue().asCell());
+    uint32_t index = OP(3).jsValue().asUInt32();
+
+    JSString* propertyName = nullptr;
+    if (enumerator->endStructurePropertyIndex() <= index && index < enumerator->endGenericPropertyIndex())
+        propertyName = enumerator->propertyNameAtIndex(index);
     RETURN(propertyName ? propertyName : jsNull());
 }
 

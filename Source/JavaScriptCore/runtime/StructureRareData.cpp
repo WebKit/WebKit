@@ -66,28 +66,18 @@ void StructureRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSCell::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_previous);
     visitor.append(&thisObject->m_objectToStringValue);
-    visitor.append(&thisObject->m_cachedStructurePropertyNameEnumerator);
+    visitor.append(&thisObject->m_cachedPropertyNameEnumerator);
     visitor.append(&thisObject->m_cachedGenericPropertyNameEnumerator);
 }
 
-JSPropertyNameEnumerator* StructureRareData::cachedStructurePropertyNameEnumerator() const
+JSPropertyNameEnumerator* StructureRareData::cachedPropertyNameEnumerator() const
 {
-    return m_cachedStructurePropertyNameEnumerator.get();
+    return m_cachedPropertyNameEnumerator.get();
 }
 
-void StructureRareData::setCachedStructurePropertyNameEnumerator(VM& vm, JSPropertyNameEnumerator* enumerator)
+void StructureRareData::setCachedPropertyNameEnumerator(VM& vm, JSPropertyNameEnumerator* enumerator)
 {
-    m_cachedStructurePropertyNameEnumerator.set(vm, this, enumerator);
-}
-
-JSPropertyNameEnumerator* StructureRareData::cachedGenericPropertyNameEnumerator() const
-{
-    return m_cachedGenericPropertyNameEnumerator.get();
-}
-
-void StructureRareData::setCachedGenericPropertyNameEnumerator(VM& vm, JSPropertyNameEnumerator* enumerator)
-{
-    m_cachedGenericPropertyNameEnumerator.set(vm, this, enumerator);
+    m_cachedPropertyNameEnumerator.set(vm, this, enumerator);
 }
 
 } // namespace JSC

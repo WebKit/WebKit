@@ -272,9 +272,9 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case HasStructureProperty:
     case HasIndexedProperty:
     case GetDirectPname:
-    case GetStructurePropertyEnumerator:
-    case GetGenericPropertyEnumerator:
-    case GetEnumeratorPname:
+    case GetPropertyEnumerator:
+    case GetEnumeratorStructurePname:
+    case GetEnumeratorGenericPname:
     case ToIndexString:
     case PhantomNewObject:
     case PutHint:

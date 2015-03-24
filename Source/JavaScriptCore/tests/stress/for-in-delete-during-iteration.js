@@ -36,8 +36,7 @@
     };
     noInline(foo);
     for (var i = 0; i < 10000; ++i) {
-        // Note: it's undefined whether we visit o.a or not. Currently we do.
-        if (foo() !== "xza")
+        if (foo() !== "xz")
             throw new Error("bad result");
     }
 })();

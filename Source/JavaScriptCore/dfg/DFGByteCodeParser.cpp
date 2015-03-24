@@ -3770,28 +3770,26 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_get_direct_pname);
         }
 
-        case op_get_structure_property_enumerator: {
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(GetStructurePropertyEnumerator, 
+        case op_get_property_enumerator: {
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(GetPropertyEnumerator, 
+                get(VirtualRegister(currentInstruction[2].u.operand))));
+            NEXT_OPCODE(op_get_property_enumerator);
+        }
+
+        case op_enumerator_structure_pname: {
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(GetEnumeratorStructurePname,
                 get(VirtualRegister(currentInstruction[2].u.operand)),
                 get(VirtualRegister(currentInstruction[3].u.operand))));
-            NEXT_OPCODE(op_get_structure_property_enumerator);
+            NEXT_OPCODE(op_enumerator_structure_pname);
         }
 
-        case op_get_generic_property_enumerator: {
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(GetGenericPropertyEnumerator, 
-                get(VirtualRegister(currentInstruction[2].u.operand)),
-                get(VirtualRegister(currentInstruction[3].u.operand)),
-                get(VirtualRegister(currentInstruction[4].u.operand))));
-            NEXT_OPCODE(op_get_generic_property_enumerator);
-        }
-
-        case op_next_enumerator_pname: {
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(GetEnumeratorPname, 
+        case op_enumerator_generic_pname: {
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(GetEnumeratorGenericPname,
                 get(VirtualRegister(currentInstruction[2].u.operand)),
                 get(VirtualRegister(currentInstruction[3].u.operand))));
-            NEXT_OPCODE(op_next_enumerator_pname);
+            NEXT_OPCODE(op_enumerator_generic_pname);
         }
-
+            
         case op_to_index_string: {
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(ToIndexString, 
                 get(VirtualRegister(currentInstruction[2].u.operand))));

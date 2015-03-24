@@ -583,12 +583,15 @@ private:
             changed |= setPrediction(SpecBoolean);
             break;
         }
-        case GetStructurePropertyEnumerator:
-        case GetGenericPropertyEnumerator: {
+        case GetPropertyEnumerator: {
             changed |= setPrediction(SpecCell);
             break;
         }
-        case GetEnumeratorPname: {
+        case GetEnumeratorStructurePname: {
+            changed |= setPrediction(SpecCell | SpecOther);
+            break;
+        }
+        case GetEnumeratorGenericPname: {
             changed |= setPrediction(SpecCell | SpecOther);
             break;
         }

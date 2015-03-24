@@ -306,9 +306,9 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_has_structure_property)
         DEFINE_OP(op_has_indexed_property)
         DEFINE_OP(op_get_direct_pname)
-        DEFINE_OP(op_get_structure_property_enumerator)
-        DEFINE_OP(op_get_generic_property_enumerator)
-        DEFINE_OP(op_next_enumerator_pname)
+        DEFINE_OP(op_get_property_enumerator)
+        DEFINE_OP(op_enumerator_structure_pname)
+        DEFINE_OP(op_enumerator_generic_pname)
         DEFINE_OP(op_to_index_string)
         default:
             RELEASE_ASSERT_NOT_REACHED();

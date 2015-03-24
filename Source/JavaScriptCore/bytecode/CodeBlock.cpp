@@ -1408,31 +1408,30 @@ void CodeBlock::dumpBytecode(
             break;
 
         }
-        case op_get_structure_property_enumerator: {
+        case op_get_property_enumerator: {
             int dst = it[1].u.operand;
             int base = it[2].u.operand;
-            printLocationAndOp(out, exec, location, it, "op_get_structure_property_enumerator");
+            printLocationAndOp(out, exec, location, it, "op_get_property_enumerator");
             out.printf("%s, %s", registerName(dst).data(), registerName(base).data());
-            it += OPCODE_LENGTH(op_get_structure_property_enumerator) - 1;
+            it += OPCODE_LENGTH(op_get_property_enumerator) - 1;
             break;
         }
-        case op_get_generic_property_enumerator: {
-            int dst = it[1].u.operand;
-            int base = it[2].u.operand;
-            int length = it[3].u.operand;
-            int structureEnumerator = it[4].u.operand;
-            printLocationAndOp(out, exec, location, it, "op_get_generic_property_enumerator");
-            out.printf("%s, %s, %s, %s", registerName(dst).data(), registerName(base).data(), registerName(length).data(), registerName(structureEnumerator).data());
-            it += OPCODE_LENGTH(op_get_generic_property_enumerator) - 1;
-            break;
-        }
-        case op_next_enumerator_pname: {
+        case op_enumerator_structure_pname: {
             int dst = it[1].u.operand;
             int enumerator = it[2].u.operand;
             int index = it[3].u.operand;
-            printLocationAndOp(out, exec, location, it, "op_next_enumerator_pname");
+            printLocationAndOp(out, exec, location, it, "op_enumerator_structure_pname");
             out.printf("%s, %s, %s", registerName(dst).data(), registerName(enumerator).data(), registerName(index).data());
-            it += OPCODE_LENGTH(op_next_enumerator_pname) - 1;
+            it += OPCODE_LENGTH(op_enumerator_structure_pname) - 1;
+            break;
+        }
+        case op_enumerator_generic_pname: {
+            int dst = it[1].u.operand;
+            int enumerator = it[2].u.operand;
+            int index = it[3].u.operand;
+            printLocationAndOp(out, exec, location, it, "op_enumerator_generic_pname");
+            out.printf("%s, %s, %s", registerName(dst).data(), registerName(enumerator).data(), registerName(index).data());
+            it += OPCODE_LENGTH(op_enumerator_generic_pname) - 1;
             break;
         }
         case op_to_index_string: {

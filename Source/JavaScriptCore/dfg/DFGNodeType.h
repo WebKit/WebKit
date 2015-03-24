@@ -322,9 +322,9 @@ namespace JSC { namespace DFG {
     macro(HasStructureProperty, NodeResultBoolean) \
     macro(HasGenericProperty, NodeResultBoolean) \
     macro(GetDirectPname, NodeMustGenerate | NodeHasVarArgs | NodeResultJS) \
-    macro(GetStructurePropertyEnumerator, NodeMustGenerate | NodeResultJS) \
-    macro(GetGenericPropertyEnumerator, NodeMustGenerate | NodeResultJS) \
-    macro(GetEnumeratorPname, NodeMustGenerate | NodeResultJS) \
+    macro(GetPropertyEnumerator, NodeMustGenerate | NodeResultJS) \
+    macro(GetEnumeratorStructurePname, NodeMustGenerate | NodeResultJS) \
+    macro(GetEnumeratorGenericPname, NodeMustGenerate | NodeResultJS) \
     macro(ToIndexString, NodeResultJS)
 
 // This enum generates a monotonically increasing id for all Node types,

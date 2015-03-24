@@ -4772,12 +4772,11 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case GetEnumerableLength: {
-        SpeculateCellOperand base(this, node->child1());
+        SpeculateCellOperand enumerator(this, node->child1());
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
 
-        flushRegisters();
-        callOperation(operationGetEnumerableLength, resultGPR, base.gpr());
+        m_jit.load32(MacroAssembler::Address(enumerator.gpr(), JSPropertyNameEnumerator::indexedLengthOffset()), resultGPR);
         int32Result(resultGPR, node);
         break;
     }
@@ -4948,30 +4947,18 @@ void SpeculativeJIT::compile(Node* node)
         jsValueResult(resultGPR, node);
         break;
     }
-    case GetStructurePropertyEnumerator: {
+    case GetPropertyEnumerator: {
         SpeculateCellOperand base(this, node->child1());
-        SpeculateInt32Operand length(this, node->child2());
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
 
         flushRegisters();
-        callOperation(operationGetStructurePropertyEnumerator, resultGPR, base.gpr(), length.gpr());
+        callOperation(operationGetPropertyEnumerator, resultGPR, base.gpr());
         cellResult(resultGPR, node);
         break;
     }
-    case GetGenericPropertyEnumerator: {
-        SpeculateCellOperand base(this, node->child1());
-        SpeculateInt32Operand length(this, node->child2());
-        SpeculateCellOperand enumerator(this, node->child3());
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
-
-        flushRegisters();
-        callOperation(operationGetGenericPropertyEnumerator, resultGPR, base.gpr(), length.gpr(), enumerator.gpr());
-        cellResult(resultGPR, node);
-        break;
-    }
-    case GetEnumeratorPname: {
+    case GetEnumeratorStructurePname:
+    case GetEnumeratorGenericPname: {
         SpeculateCellOperand enumerator(this, node->child1());
         SpeculateStrictInt32Operand index(this, node->child2());
         GPRTemporary scratch1(this);
@@ -4982,8 +4969,10 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg scratch1GPR = scratch1.gpr();
         GPRReg resultGPR = result.gpr();
 
-        MacroAssembler::Jump inBounds = m_jit.branch32(MacroAssembler::Below, 
-            indexGPR, MacroAssembler::Address(enumeratorGPR, JSPropertyNameEnumerator::cachedPropertyNamesLengthOffset()));
+        MacroAssembler::Jump inBounds = m_jit.branch32(MacroAssembler::Below, indexGPR,
+            MacroAssembler::Address(enumeratorGPR, (op == GetEnumeratorStructurePname)
+                ? JSPropertyNameEnumerator::endStructurePropertyIndexOffset()
+                : JSPropertyNameEnumerator::endGenericPropertyIndexOffset()));
 
         m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsNull())), resultGPR);
 

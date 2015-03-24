@@ -1966,15 +1966,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).makeHeapTop();
         break;
     }
-    case GetStructurePropertyEnumerator: {
+    case GetPropertyEnumerator: {
         forNode(node).setType(SpecCell);
         break;
     }
-    case GetGenericPropertyEnumerator: {
-        forNode(node).setType(SpecCell);
+    case GetEnumeratorStructurePname: {
+        forNode(node).setType(SpecString | SpecOther);
         break;
     }
-    case GetEnumeratorPname: {
+    case GetEnumeratorGenericPname: {
         forNode(node).setType(SpecString | SpecOther);
         break;
     }

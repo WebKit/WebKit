@@ -1284,7 +1284,7 @@ void JIT::emitSlow_op_get_direct_pname(Instruction* currentInstruction, Vector<S
     slowPathCall.call();
 }
 
-void JIT::emit_op_next_enumerator_pname(Instruction* currentInstruction)
+void JIT::emit_op_enumerator_structure_pname(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
     int enumerator = currentInstruction[2].u.operand;
@@ -1292,7 +1292,7 @@ void JIT::emit_op_next_enumerator_pname(Instruction* currentInstruction)
 
     emitGetVirtualRegister(index, regT0);
     emitGetVirtualRegister(enumerator, regT1);
-    Jump inBounds = branch32(Below, regT0, Address(regT1, JSPropertyNameEnumerator::cachedPropertyNamesLengthOffset()));
+    Jump inBounds = branch32(Below, regT0, Address(regT1, JSPropertyNameEnumerator::endStructurePropertyIndexOffset()));
 
     move(TrustedImm64(JSValue::encode(jsNull())), regT0);
 
@@ -1303,6 +1303,29 @@ void JIT::emit_op_next_enumerator_pname(Instruction* currentInstruction)
     signExtend32ToPtr(regT0, regT0);
     load64(BaseIndex(regT1, regT0, TimesEight), regT0);
 
+    done.link(this);
+    emitPutVirtualRegister(dst);
+}
+
+void JIT::emit_op_enumerator_generic_pname(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int enumerator = currentInstruction[2].u.operand;
+    int index = currentInstruction[3].u.operand;
+
+    emitGetVirtualRegister(index, regT0);
+    emitGetVirtualRegister(enumerator, regT1);
+    Jump inBounds = branch32(Below, regT0, Address(regT1, JSPropertyNameEnumerator::endGenericPropertyIndexOffset()));
+
+    move(TrustedImm64(JSValue::encode(jsNull())), regT0);
+
+    Jump done = jump();
+    inBounds.link(this);
+
+    loadPtr(Address(regT1, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset()), regT1);
+    signExtend32ToPtr(regT0, regT0);
+    load64(BaseIndex(regT1, regT0, TimesEight), regT0);
+    
     done.link(this);
     emitPutVirtualRegister(dst);
 }
@@ -1392,15 +1415,9 @@ void JIT::emit_op_has_generic_property(Instruction* currentInstruction)
     slowPathCall.call();
 }
 
-void JIT::emit_op_get_structure_property_enumerator(Instruction* currentInstruction)
+void JIT::emit_op_get_property_enumerator(Instruction* currentInstruction)
 {
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_get_structure_property_enumerator);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_get_generic_property_enumerator(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_get_generic_property_enumerator);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_get_property_enumerator);
     slowPathCall.call();
 }
 

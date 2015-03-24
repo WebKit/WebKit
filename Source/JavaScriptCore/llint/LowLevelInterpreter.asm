@@ -1334,19 +1334,19 @@ _llint_op_get_direct_pname:
     callSlowPath(_slow_path_get_direct_pname)
     dispatch(7)
 
-_llint_op_get_structure_property_enumerator:
+_llint_op_get_property_enumerator:
     traceExecution()
-    callSlowPath(_slow_path_get_structure_property_enumerator)
+    callSlowPath(_slow_path_get_property_enumerator)
+    dispatch(3)
+
+_llint_op_enumerator_structure_pname:
+    traceExecution()
+    callSlowPath(_slow_path_next_structure_enumerator_pname)
     dispatch(4)
 
-_llint_op_get_generic_property_enumerator:
+_llint_op_enumerator_generic_pname:
     traceExecution()
-    callSlowPath(_slow_path_get_generic_property_enumerator)
-    dispatch(5)
-
-_llint_op_next_enumerator_pname:
-    traceExecution()
-    callSlowPath(_slow_path_next_enumerator_pname)
+    callSlowPath(_slow_path_next_generic_enumerator_pname)
     dispatch(4)
 
 _llint_op_to_index_string:

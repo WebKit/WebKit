@@ -1847,14 +1847,6 @@ void JIT_OPERATION operationExceptionFuzz()
 #endif // COMPILER(CLANG)
 }
 
-int32_t JIT_OPERATION operationGetEnumerableLength(ExecState* exec, JSCell* baseCell)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    JSObject* base = baseCell->toObject(exec, exec->lexicalGlobalObject());
-    return base->methodTable(vm)->getEnumerableLength(exec, base);
-}
-
 EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState* exec, EncodedJSValue encodedBaseValue, JSCell* propertyName)
 {
     VM& vm = exec->vm();
@@ -1875,26 +1867,14 @@ EncodedJSValue JIT_OPERATION operationHasIndexedProperty(ExecState* exec, JSCell
     return JSValue::encode(jsBoolean(object->hasProperty(exec, subscript)));
 }
     
-JSCell* JIT_OPERATION operationGetStructurePropertyEnumerator(ExecState* exec, JSCell* cell, int32_t length)
+JSCell* JIT_OPERATION operationGetPropertyEnumerator(ExecState* exec, JSCell* cell)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-        
+
     JSObject* base = cell->toObject(exec, exec->lexicalGlobalObject());
-    ASSERT(length >= 0);
 
-    return structurePropertyNameEnumerator(exec, base, static_cast<uint32_t>(length));
-}
-
-JSCell* JIT_OPERATION operationGetGenericPropertyEnumerator(ExecState* exec, JSCell* baseCell, int32_t length, JSCell* structureEnumeratorCell)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    
-    JSObject* base = baseCell->toObject(exec, exec->lexicalGlobalObject());
-    ASSERT(length >= 0);
-
-    return genericPropertyNameEnumerator(exec, base, length, jsCast<JSPropertyNameEnumerator*>(structureEnumeratorCell));
+    return propertyNameEnumerator(exec, base);
 }
 
 EncodedJSValue JIT_OPERATION operationNextEnumeratorPname(ExecState* exec, JSCell* enumeratorCell, int32_t index)

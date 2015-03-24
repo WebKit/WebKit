@@ -315,12 +315,9 @@ public:
         return !JSC::isValidOffset(m_offset);
     }
 
-    void setCachedStructurePropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
-    void setCachedGenericPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
-    JSPropertyNameEnumerator* cachedStructurePropertyNameEnumerator() const;
-    JSPropertyNameEnumerator* cachedGenericPropertyNameEnumerator() const;
-    bool canCacheStructurePropertyNameEnumerator() const;
-    bool canCacheGenericPropertyNameEnumerator() const;
+    void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
+    JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
+    bool canCachePropertyNameEnumerator() const;
     bool canAccessPropertiesQuickly() const;
 
     void getPropertyNamesFromStructure(VM&, PropertyNameArray&, EnumerationMode);

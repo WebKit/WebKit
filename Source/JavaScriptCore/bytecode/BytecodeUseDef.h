@@ -113,6 +113,7 @@ void computeUsesForBytecodeOffset(
         return;
     }
     case op_create_lexical_environment:
+    case op_get_property_enumerator:
     case op_get_enumerable_length:
     case op_new_func_exp:
     case op_to_index_string:
@@ -149,9 +150,9 @@ void computeUsesForBytecodeOffset(
         return;
     }
     case op_has_generic_property:
-    case op_get_structure_property_enumerator:
     case op_has_indexed_property:
-    case op_next_enumerator_pname:
+    case op_enumerator_structure_pname:
+    case op_enumerator_generic_pname:
     case op_get_by_val:
     case op_in:
     case op_instanceof:
@@ -182,7 +183,6 @@ void computeUsesForBytecodeOffset(
     }
     case op_has_structure_property:
     case op_get_argument_by_val:
-    case op_get_generic_property_enumerator:
     case op_construct_varargs:
     case op_call_varargs: {
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
@@ -291,14 +291,14 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
         return;
     // These all have a single destination for the first argument.
     case op_to_index_string:
-    case op_get_generic_property_enumerator:
     case op_get_enumerable_length:
     case op_has_indexed_property:
     case op_has_structure_property:
     case op_has_generic_property:
     case op_get_direct_pname:
-    case op_get_structure_property_enumerator:
-    case op_next_enumerator_pname:
+    case op_get_property_enumerator:
+    case op_enumerator_structure_pname:
+    case op_enumerator_generic_pname:
     case op_pop_scope:
     case op_push_name_scope:
     case op_push_with_scope:

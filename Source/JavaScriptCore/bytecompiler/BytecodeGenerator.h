@@ -531,10 +531,12 @@ namespace JSC {
         RegisterID* emitHasIndexedProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName);
         RegisterID* emitHasStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator);
         RegisterID* emitHasGenericProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName);
+        RegisterID* emitGetPropertyEnumerator(RegisterID* dst, RegisterID* base);
         RegisterID* emitGetEnumerableLength(RegisterID* dst, RegisterID* base);
         RegisterID* emitGetStructurePropertyEnumerator(RegisterID* dst, RegisterID* base, RegisterID* length);
         RegisterID* emitGetGenericPropertyEnumerator(RegisterID* dst, RegisterID* base, RegisterID* length, RegisterID* structureEnumerator);
-        RegisterID* emitNextEnumeratorPropertyName(RegisterID* dst, RegisterID* enumerator, RegisterID* index);
+        RegisterID* emitEnumeratorStructurePropertyName(RegisterID* dst, RegisterID* enumerator, RegisterID* index);
+        RegisterID* emitEnumeratorGenericPropertyName(RegisterID* dst, RegisterID* enumerator, RegisterID* index);
         RegisterID* emitToIndexString(RegisterID* dst, RegisterID* index);
 
         RegisterID* emitIsObject(RegisterID* dst, RegisterID* src);

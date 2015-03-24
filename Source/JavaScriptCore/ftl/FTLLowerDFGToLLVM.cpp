@@ -803,14 +803,14 @@ private:
         case GetEnumerableLength:
             compileGetEnumerableLength();
             break;
-        case GetStructurePropertyEnumerator:
-            compileGetStructurePropertyEnumerator();
+        case GetPropertyEnumerator:
+            compileGetPropertyEnumerator();
             break;
-        case GetGenericPropertyEnumerator:
-            compileGetGenericPropertyEnumerator();
+        case GetEnumeratorStructurePname:
+            compileGetEnumeratorStructurePname();
             break;
-        case GetEnumeratorPname:
-            compileGetEnumeratorPname();
+        case GetEnumeratorGenericPname:
+            compileGetEnumeratorGenericPname();
             break;
         case ToIndexString:
             compileToIndexString();
@@ -4526,35 +4526,26 @@ private:
 
     void compileGetEnumerableLength()
     {
-        LValue base = lowCell(m_node->child1());
-        setInt32(vmCall(m_out.operation(operationGetEnumerableLength), m_callFrame, base));
+        LValue enumerator = lowCell(m_node->child1());
+        setInt32(m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_indexLength));
     }
 
-    void compileGetStructurePropertyEnumerator()
+    void compileGetPropertyEnumerator()
     {
         LValue base = lowCell(m_node->child1());
-        LValue length = lowInt32(m_node->child2());
-        setJSValue(vmCall(m_out.operation(operationGetStructurePropertyEnumerator), m_callFrame, base, length));
+        setJSValue(vmCall(m_out.operation(operationGetPropertyEnumerator), m_callFrame, base));
     }
 
-    void compileGetGenericPropertyEnumerator()
-    {
-        LValue base = lowCell(m_node->child1());
-        LValue length = lowInt32(m_node->child2());
-        LValue enumerator = lowCell(m_node->child3());
-        setJSValue(vmCall(m_out.operation(operationGetGenericPropertyEnumerator), m_callFrame, base, length, enumerator));
-    }
-
-    void compileGetEnumeratorPname()
+    void compileGetEnumeratorStructurePname()
     {
         LValue enumerator = lowCell(m_node->child1());
         LValue index = lowInt32(m_node->child2());
 
-        LBasicBlock inBounds = FTL_NEW_BLOCK(m_out, ("GetEnumeratorPname in bounds"));
-        LBasicBlock outOfBounds = FTL_NEW_BLOCK(m_out, ("GetEnumeratorPname out of bounds"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("GetEnumeratorPname continuation"));
+        LBasicBlock inBounds = FTL_NEW_BLOCK(m_out, ("GetEnumeratorStructurePname in bounds"));
+        LBasicBlock outOfBounds = FTL_NEW_BLOCK(m_out, ("GetEnumeratorStructurePname out of bounds"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("GetEnumeratorStructurePname continuation"));
 
-        m_out.branch(m_out.below(index, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedPropertyNamesLength)),
+        m_out.branch(m_out.below(index, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_endStructurePropertyIndex)),
             usually(inBounds), rarely(outOfBounds));
 
         LBasicBlock lastNext = m_out.appendTo(inBounds, outOfBounds);
@@ -4572,6 +4563,33 @@ private:
         setJSValue(m_out.phi(m_out.int64, inBoundsResult, outOfBoundsResult));
     }
 
+    void compileGetEnumeratorGenericPname()
+    {
+        LValue enumerator = lowCell(m_node->child1());
+        LValue index = lowInt32(m_node->child2());
+
+        LBasicBlock inBounds = FTL_NEW_BLOCK(m_out, ("GetEnumeratorGenericPname in bounds"));
+        LBasicBlock outOfBounds = FTL_NEW_BLOCK(m_out, ("GetEnumeratorGenericPname out of bounds"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("GetEnumeratorGenericPname continuation"));
+
+        m_out.branch(m_out.below(index, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_endGenericPropertyIndex)),
+            usually(inBounds), rarely(outOfBounds));
+
+        LBasicBlock lastNext = m_out.appendTo(inBounds, outOfBounds);
+        LValue storage = m_out.loadPtr(enumerator, m_heaps.JSPropertyNameEnumerator_cachedPropertyNamesVector);
+        ValueFromBlock inBoundsResult = m_out.anchor(
+            m_out.load64(m_out.baseIndex(m_heaps.JSPropertyNameEnumerator_cachedPropertyNamesVector,
+                storage, m_out.signExt(index, m_out.int64), ScaleEight)));
+        m_out.jump(continuation);
+
+        m_out.appendTo(outOfBounds, continuation);
+        ValueFromBlock outOfBoundsResult = m_out.anchor(m_out.constInt64(ValueNull));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(m_out.int64, inBoundsResult, outOfBoundsResult));
+    }
+    
     void compileToIndexString()
     {
         LValue index = lowInt32(m_node->child1());

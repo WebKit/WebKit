@@ -2183,19 +2183,23 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
 
     RefPtr<RegisterID> base = generator.newTemporary();
     RefPtr<RegisterID> length;
-    RefPtr<RegisterID> structureEnumerator;
+    RefPtr<RegisterID> enumerator;
     generator.emitNode(base.get(), m_expr);
     RefPtr<RegisterID> local = this->tryGetBoundLocal(generator);
+    RefPtr<RegisterID> enumeratorIndex;
 
     int profilerStartOffset = m_statement->startOffset();
     int profilerEndOffset = m_statement->endOffset() + (m_statement->isBlock() ? 1 : 0);
+
+    enumerator = generator.emitGetPropertyEnumerator(generator.newTemporary(), base.get());
+
     // Indexed property loop.
     {
         LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
         RefPtr<Label> loopStart = generator.newLabel();
         RefPtr<Label> loopEnd = generator.newLabel();
 
-        length = generator.emitGetEnumerableLength(generator.newTemporary(), base.get());
+        length = generator.emitGetEnumerableLength(generator.newTemporary(), enumerator.get());
         RefPtr<RegisterID> i = generator.emitLoad(generator.newTemporary(), jsNumber(0));
         RefPtr<RegisterID> propertyName = generator.newTemporary();
 
@@ -2233,32 +2237,31 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
         RefPtr<Label> loopStart = generator.newLabel();
         RefPtr<Label> loopEnd = generator.newLabel();
 
-        structureEnumerator = generator.emitGetStructurePropertyEnumerator(generator.newTemporary(), base.get(), length.get());
-        RefPtr<RegisterID> i = generator.emitLoad(generator.newTemporary(), jsNumber(0));
+        enumeratorIndex = generator.emitLoad(generator.newTemporary(), jsNumber(0));
         RefPtr<RegisterID> propertyName = generator.newTemporary();
-        generator.emitNextEnumeratorPropertyName(propertyName.get(), structureEnumerator.get(), i.get());
+        generator.emitEnumeratorStructurePropertyName(propertyName.get(), enumerator.get(), enumeratorIndex.get());
 
         generator.emitLabel(loopStart.get());
         generator.emitLoopHint();
 
         RefPtr<RegisterID> result = generator.emitUnaryOp(op_eq_null, generator.newTemporary(), propertyName.get());
         generator.emitJumpIfTrue(result.get(), loopEnd.get());
-        generator.emitHasStructureProperty(result.get(), base.get(), propertyName.get(), structureEnumerator.get());
+        generator.emitHasStructureProperty(result.get(), base.get(), propertyName.get(), enumerator.get());
         generator.emitJumpIfFalse(result.get(), scope->continueTarget());
 
         this->emitLoopHeader(generator, propertyName.get());
 
         generator.emitProfileControlFlow(profilerStartOffset);
 
-        generator.pushStructureForInScope(local.get(), i.get(), propertyName.get(), structureEnumerator.get());
+        generator.pushStructureForInScope(local.get(), enumeratorIndex.get(), propertyName.get(), enumerator.get());
         generator.emitNode(dst, m_statement);
         generator.popStructureForInScope(local.get());
 
         generator.emitProfileControlFlow(profilerEndOffset);
 
         generator.emitLabel(scope->continueTarget());
-        generator.emitInc(i.get());
-        generator.emitNextEnumeratorPropertyName(propertyName.get(), structureEnumerator.get(), i.get());
+        generator.emitInc(enumeratorIndex.get());
+        generator.emitEnumeratorStructurePropertyName(propertyName.get(), enumerator.get(), enumeratorIndex.get());
         generator.emitJump(loopStart.get());
         
         generator.emitLabel(scope->breakTarget());
@@ -2272,16 +2275,18 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
         RefPtr<Label> loopStart = generator.newLabel();
         RefPtr<Label> loopEnd = generator.newLabel();
 
-        RefPtr<RegisterID> genericEnumerator = generator.emitGetGenericPropertyEnumerator(generator.newTemporary(), base.get(), length.get(), structureEnumerator.get());
-        RefPtr<RegisterID> i = generator.emitLoad(generator.newTemporary(), jsNumber(0));
         RefPtr<RegisterID> propertyName = generator.newTemporary();
 
-        generator.emitNextEnumeratorPropertyName(propertyName.get(), genericEnumerator.get(), i.get());
-        RefPtr<RegisterID> result = generator.emitUnaryOp(op_eq_null, generator.newTemporary(), propertyName.get());
-        generator.emitJumpIfTrue(result.get(), loopEnd.get());
+        generator.emitEnumeratorGenericPropertyName(propertyName.get(), enumerator.get(), enumeratorIndex.get());
 
         generator.emitLabel(loopStart.get());
         generator.emitLoopHint();
+
+        RefPtr<RegisterID> result = generator.emitUnaryOp(op_eq_null, generator.newTemporary(), propertyName.get());
+        generator.emitJumpIfTrue(result.get(), loopEnd.get());
+
+        generator.emitHasGenericProperty(result.get(), base.get(), propertyName.get());
+        generator.emitJumpIfFalse(result.get(), scope->continueTarget());
 
         this->emitLoopHeader(generator, propertyName.get());
 
@@ -2290,15 +2295,10 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
         generator.emitNode(dst, m_statement);
 
         generator.emitLabel(scope->continueTarget());
-        generator.emitInc(i.get());
-        generator.emitNextEnumeratorPropertyName(propertyName.get(), genericEnumerator.get(), i.get());
-        generator.emitUnaryOp(op_eq_null, result.get(), propertyName.get());
-        generator.emitJumpIfTrue(result.get(), loopEnd.get());
+        generator.emitInc(enumeratorIndex.get());
+        generator.emitEnumeratorGenericPropertyName(propertyName.get(), enumerator.get(), enumeratorIndex.get());
+        generator.emitJump(loopStart.get());
 
-        generator.emitHasGenericProperty(result.get(), base.get(), propertyName.get());
-        generator.emitJumpIfTrue(result.get(), loopStart.get());
-        generator.emitJump(scope->continueTarget());
-        
         generator.emitLabel(scope->breakTarget());
         generator.emitJump(end.get());
         generator.emitLabel(loopEnd.get());

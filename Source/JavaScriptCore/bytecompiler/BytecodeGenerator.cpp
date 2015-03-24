@@ -2701,28 +2701,26 @@ RegisterID* BytecodeGenerator::emitHasStructureProperty(RegisterID* dst, Registe
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitGetStructurePropertyEnumerator(RegisterID* dst, RegisterID* base, RegisterID* length)
+RegisterID* BytecodeGenerator::emitGetPropertyEnumerator(RegisterID* dst, RegisterID* base)
 {
-    emitOpcode(op_get_structure_property_enumerator);
+    emitOpcode(op_get_property_enumerator);
     instructions().append(dst->index());
     instructions().append(base->index());
-    instructions().append(length->index());
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitGetGenericPropertyEnumerator(RegisterID* dst, RegisterID* base, RegisterID* length, RegisterID* structureEnumerator)
+RegisterID* BytecodeGenerator::emitEnumeratorStructurePropertyName(RegisterID* dst, RegisterID* enumerator, RegisterID* index)
 {
-    emitOpcode(op_get_generic_property_enumerator);
+    emitOpcode(op_enumerator_structure_pname);
     instructions().append(dst->index());
-    instructions().append(base->index());
-    instructions().append(length->index());
-    instructions().append(structureEnumerator->index());
+    instructions().append(enumerator->index());
+    instructions().append(index->index());
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitNextEnumeratorPropertyName(RegisterID* dst, RegisterID* enumerator, RegisterID* index)
+RegisterID* BytecodeGenerator::emitEnumeratorGenericPropertyName(RegisterID* dst, RegisterID* enumerator, RegisterID* index)
 {
-    emitOpcode(op_next_enumerator_pname);
+    emitOpcode(op_enumerator_generic_pname);
     instructions().append(dst->index());
     instructions().append(enumerator->index());
     instructions().append(index->index());

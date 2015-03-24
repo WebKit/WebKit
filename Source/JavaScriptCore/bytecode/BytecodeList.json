@@ -125,9 +125,9 @@
             { "name" : "op_has_structure_property", "length" : 5 },
             { "name" : "op_has_generic_property", "length" : 4 },
             { "name" : "op_get_direct_pname", "length" : 7 },
-            { "name" : "op_get_structure_property_enumerator", "length" : 4 },
-            { "name" : "op_get_generic_property_enumerator", "length" : 5 },
-            { "name" : "op_next_enumerator_pname", "length" : 4 },
+            { "name" : "op_get_property_enumerator", "length" : 3 },
+            { "name" : "op_enumerator_structure_pname", "length" : 4 },
+            { "name" : "op_enumerator_generic_pname", "length" : 4 },
             { "name" : "op_to_index_string", "length" : 3 }
         ]
     },

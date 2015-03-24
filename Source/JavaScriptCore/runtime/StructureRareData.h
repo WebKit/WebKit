@@ -55,10 +55,8 @@ public:
     JSString* objectToStringValue() const;
     void setObjectToStringValue(VM&, JSString* value);
 
-    JSPropertyNameEnumerator* cachedStructurePropertyNameEnumerator() const;
-    JSPropertyNameEnumerator* cachedGenericPropertyNameEnumerator() const;
-    void setCachedStructurePropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
-    void setCachedGenericPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
+    JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
+    void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
 
     DECLARE_EXPORT_INFO;
 
@@ -71,7 +69,7 @@ private:
 
     WriteBarrier<Structure> m_previous;
     WriteBarrier<JSString> m_objectToStringValue;
-    WriteBarrier<JSPropertyNameEnumerator> m_cachedStructurePropertyNameEnumerator;
+    WriteBarrier<JSPropertyNameEnumerator> m_cachedPropertyNameEnumerator;
     WriteBarrier<JSPropertyNameEnumerator> m_cachedGenericPropertyNameEnumerator;
     
     typedef HashMap<PropertyOffset, RefPtr<WatchpointSet>, WTF::IntHash<PropertyOffset>, WTF::UnsignedWithZeroKeyHashTraits<PropertyOffset>> PropertyWatchpointMap;

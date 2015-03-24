@@ -1216,46 +1216,24 @@ bool ClassInfo::hasStaticSetterOrReadonlyProperties() const
     return false;
 }
 
-void Structure::setCachedStructurePropertyNameEnumerator(VM& vm, JSPropertyNameEnumerator* enumerator)
+void Structure::setCachedPropertyNameEnumerator(VM& vm, JSPropertyNameEnumerator* enumerator)
 {
     ASSERT(!isDictionary());
     if (!hasRareData())
         allocateRareData(vm);
-    rareData()->setCachedStructurePropertyNameEnumerator(vm, enumerator);
+    rareData()->setCachedPropertyNameEnumerator(vm, enumerator);
 }
 
-JSPropertyNameEnumerator* Structure::cachedStructurePropertyNameEnumerator() const
+JSPropertyNameEnumerator* Structure::cachedPropertyNameEnumerator() const
 {
     if (!hasRareData())
         return nullptr;
-    return rareData()->cachedStructurePropertyNameEnumerator();
+    return rareData()->cachedPropertyNameEnumerator();
 }
 
-void Structure::setCachedGenericPropertyNameEnumerator(VM& vm, JSPropertyNameEnumerator* enumerator)
-{
-    ASSERT(!isDictionary());
-    if (!hasRareData())
-        allocateRareData(vm);
-    rareData()->setCachedGenericPropertyNameEnumerator(vm, enumerator);
-}
-
-JSPropertyNameEnumerator* Structure::cachedGenericPropertyNameEnumerator() const
-{
-    if (!hasRareData())
-        return nullptr;
-    return rareData()->cachedGenericPropertyNameEnumerator();
-}
-
-bool Structure::canCacheStructurePropertyNameEnumerator() const
+bool Structure::canCachePropertyNameEnumerator() const
 {
     if (isDictionary())
-        return false;
-    return true;
-}
-
-bool Structure::canCacheGenericPropertyNameEnumerator() const
-{
-    if (!canCacheStructurePropertyNameEnumerator())
         return false;
 
     if (hasIndexedProperties(indexingType()))
@@ -1274,10 +1252,10 @@ bool Structure::canCacheGenericPropertyNameEnumerator() const
             return false;
         structure++;
     }
-
+    
     return true;
 }
-
+    
 bool Structure::canAccessPropertiesQuickly() const
 {
     if (hasNonEnumerableProperties())

@@ -202,9 +202,9 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_has_structure_property:
     case op_has_indexed_property:
     case op_get_direct_pname:
-    case op_get_structure_property_enumerator:
-    case op_get_generic_property_enumerator:
-    case op_next_enumerator_pname:
+    case op_get_property_enumerator:
+    case op_enumerator_structure_pname:
+    case op_enumerator_generic_pname:
     case op_to_index_string:
     case op_new_func:
     case op_new_func_exp:

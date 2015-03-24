@@ -557,9 +557,9 @@ namespace JSC {
         void emit_op_has_structure_property(Instruction*);
         void emit_op_has_indexed_property(Instruction*);
         void emit_op_get_direct_pname(Instruction*);
-        void emit_op_get_structure_property_enumerator(Instruction*);
-        void emit_op_get_generic_property_enumerator(Instruction*);
-        void emit_op_next_enumerator_pname(Instruction*);
+        void emit_op_get_property_enumerator(Instruction*);
+        void emit_op_enumerator_structure_pname(Instruction*);
+        void emit_op_enumerator_generic_pname(Instruction*);
         void emit_op_to_index_string(Instruction*);
 
         void emitSlow_op_add(Instruction*, Vector<SlowCaseEntry>::iterator&);
