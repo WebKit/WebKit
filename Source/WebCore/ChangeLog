@@ -1,3 +1,13 @@
+2015-03-24  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of <rdar://problem/20282863> Transforms are flattened in snapshots of on-screen WKWebViews
+        https://bugs.webkit.org/show_bug.cgi?id=143023
+
+        Reviewed by Tim Horton.
+
+        * platform/spi/cocoa/QuartzCoreSPI.h: Added the declaration of
+        CARenderServerRenderLayerWithTransform.
+
 2015-03-24  David Hyatt  <hyatt@apple.com>
 
         Disable layout dimensions optimization for RenderRegions

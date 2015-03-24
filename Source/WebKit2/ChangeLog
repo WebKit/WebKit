@@ -1,3 +1,16 @@
+2015-03-24  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 part of <rdar://problem/20282863> Transforms are flattened in snapshots of on-screen WKWebViews
+        https://bugs.webkit.org/show_bug.cgi?id=143023
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]): If the view is in a
+        window, use CARenderServerRenderLayerWithTransform to synchronously capture a snapshot of
+        its layer tree into an IOSurfcae, then call the completion handler with an image created
+        from the IOSurface.
+
 2015-03-24  Beth Dakin  <bdakin@apple.com>
 
         Add events related to force click gesture
