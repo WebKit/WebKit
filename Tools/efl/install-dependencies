@@ -73,8 +73,10 @@ function installDependenciesWithApt {
         libgpg-error-dev \
         libicu-dev \
         libjpeg-dev \
+        libjson-glib-dev \
         liblua5.1-0-dev \
         libmpg123-dev \
+        liborc-0.4-dev \
         libp11-kit-dev \
         libpng-dev \
         libpulse-dev \

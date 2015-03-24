@@ -22,6 +22,7 @@
       <dep package="gst-libav"/>
       <dep package="libseccomp"/>
       <dep package="atk"/>
+      <dep package="openwebrtc"/>
     </dependencies>
   </metamodule>
 
@@ -39,6 +40,8 @@
       href="http://cairographics.org"/>
   <repository type="tarball" name="freedesktop.org"
       href="http://www.freedesktop.org"/>
+  <repository type="tarball" name="nice.freedesktop.org"
+      href="http://nice.freedesktop.org/"/>
   <repository type="tarball" name="enlightenment.fr"
       href="http://git.enlightenment.fr/cgit.cgi/svn/"/>
   <repository type="tarball" name="xmlsoft.org"
@@ -292,6 +295,45 @@
     <dependencies>
         <dep package="glib"/>
     </dependencies>
+  </autotools>
+
+  <autotools id="libusrsctp" autogen-sh="./bootstrap; ./configure">
+    <branch repo="github.com" module="ossy-szeged/sctp-refimpl/archive/libusrsctp-r9168.tar.gz" version="r9168" checkoutdir="libusrsctp"
+            hash="sha256:c1947e6a67fdc0d12f9f078265141125d0df019c7189d60e24f2331f4b6aaec2"
+            md5sum="468386780c94370b1fb9b446ae3011ad" size="629523">
+    </branch>
+  </autotools>
+
+  <autotools id="gst-plugins-openwebrtc" supports-parallel-builds="no" autogen-sh="./autogen.sh; ./configure">
+    <dependencies>
+      <dep package="gst-plugins-base"/>
+      <dep package="libusrsctp"/>
+    </dependencies>
+   <branch repo="github.com" module="EricssonResearch/openwebrtc-gst-plugins/archive/e359b67484af90f416ea35e301205d2b53c77a14.tar.gz" checkoutdir="gst-plugins-openwebrtc" version="gst-plugins-openwebrtc-20150317"
+           hash="sha256:a456425efb88de39c16a4f8ac4214aaf53157f9df1323f08de375c77f227b6b7"
+           md5sum="827f13634ffa83cccf1a6312effbceaa" size="92883">
+   </branch>
+  </autotools>
+
+  <autotools id="libnice">
+    <dependencies>
+      <dep package="gstreamer"/>
+    </dependencies>
+    <branch repo="nice.freedesktop.org" module="releases/libnice-0.1.10.tar.gz" checkoutdir="libnice" version="0.1.10"
+            hash="sha256:1dbfb663b730889ae8cab13a2913fe557d581f70b513c918bbbd0b7d3eefebc9"
+            md5sum="27b62d0093ce29a39df1c6fcf0bb4396" size="903083">
+    </branch>
+  </autotools>
+
+  <autotools id="openwebrtc" autogenargs="--enable-bridge=no">
+    <dependencies>
+      <dep package="gst-plugins-openwebrtc"/>
+      <dep package="libnice"/>
+     </dependencies>
+    <branch repo="github.com" module="WebRTCinWebKit/openwebrtc/archive/1598e6f612d257196db70d0cf930ede94f83497a.tar.gz" checkoutdir="openwebrtc" version="configurable-sinks"
+            hash="sha256:584922ffd4cef9f991e6035bb6d87f6b09ded23e245d1ff15db3c0af9cddcf29"
+            md5sum="1598e6f612d257196db70d0cf930ede94f83497a.tar.gz" size="243435">
+    </branch>
   </autotools>
 
 </moduleset>

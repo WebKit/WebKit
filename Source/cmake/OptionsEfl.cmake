@@ -194,6 +194,13 @@ if (ENABLE_GEOLOCATION)
     endif ()
 endif ()
 
+if (ENABLE_MEDIA_STREAM)
+    find_package(OpenWebRTC)
+    if (OPENWEBRTC_FOUND)
+        add_definitions(-DWTF_USE_OPENWEBRTC)
+    endif ()
+endif ()
+
 if (ENABLE_NETSCAPE_PLUGIN_API)
     set(ENABLE_PLUGIN_PROCESS 1)
 endif ()

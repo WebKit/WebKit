@@ -1,3 +1,16 @@
+2015-03-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Add OpenWebRTC in jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=142778
+
+        Reviewed by Gyuyoung Kim.
+
+        Original patch by Philippe Normand <pnormand@igalia.com>
+
+        * efl/install-dependencies: Dependencies for OpenWebRTC.
+        * efl/jhbuild.modules: build OpenWebRTC, libusrsctp, libnice and
+        the openwebrtc gst plugins.
+
 2015-03-23  Brent Fulgham  <bfulgham@apple.com>
 
         Regression(r181257): WTF_WorkQueue.Simple is flaky
