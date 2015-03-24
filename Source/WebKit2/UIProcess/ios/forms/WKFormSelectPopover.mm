@@ -369,7 +369,6 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
 @implementation WKSelectPopover {
     WKContentView *_view;
     RetainPtr<WKSelectTableViewController> _tableViewController;
-    RetainPtr<UIKeyboard> _keyboard;
 }
 
 - (instancetype)initWithView:(WKContentView *)view hasGroups:(BOOL)hasGroups
@@ -381,7 +380,6 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     CGRect frame;
     frame.origin = CGPointZero;
     frame.size = [UIKeyboard defaultSizeForInterfaceOrientation:[UIApp interfaceOrientation]];
-    _keyboard = adoptNS([[UIKeyboard alloc] initWithFrame:frame]);
 
     _tableViewController = adoptNS([[WKSelectTableViewController alloc] initWithView:view hasGroups:hasGroups]);
     [_tableViewController setPopover:self];
@@ -407,10 +405,6 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     [navController release];
     
     [[UIKeyboardImpl sharedInstance] setDelegate:_tableViewController.get()];
-    [_keyboard setSize:[UIKeyboard defaultSizeForInterfaceOrientation:[UIApp interfaceOrientation]]];
-    [_keyboard prepareForGeometryChange];
-    [_keyboard geometryChangeDone:NO];
-    [_keyboard activate];
     
     return self;
 }
