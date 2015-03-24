@@ -1,5 +1,11 @@
 2015-03-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed, another attempt to fix 32-bit build after r181881.
+
+        * UIProcess/WebInspectorProxy.h:
+
+2015-03-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed, attempt to fix 32-bit build after r181881.
 
         * UIProcess/API/Cocoa/WKViewPrivate.h:

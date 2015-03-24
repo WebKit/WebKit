@@ -177,7 +177,7 @@ private:
     void platformSave(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void platformAppend(const String& filename, const String& content);
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && WK_API_ENABLED
     bool platformCanAttach(bool webProcessCanAttach);
 #else
     bool platformCanAttach(bool webProcessCanAttach) { return webProcessCanAttach; }
