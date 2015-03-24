@@ -538,13 +538,12 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
             break;
         case ContentExtensions::ActionType::CSSDisplayNoneStyleSheet: {
             StyleSheetContents* styleSheetContents = userContentController->globalDisplayNoneStyleSheet(action.stringArgument());
-            RELEASE_ASSERT(styleSheetContents);
-
-            if (type == CachedResource::MainResource && request.initiatingDocumentLoader())
-                request.initiatingDocumentLoader()->addPendingContentExtensionSheet(action.stringArgument(), *styleSheetContents);
-            else if (m_document)
-                m_document->styleSheetCollection().maybeAddContentExtensionSheet(action.stringArgument(), *styleSheetContents);
-
+            if (styleSheetContents) {
+                if (type == CachedResource::MainResource && request.initiatingDocumentLoader())
+                    request.initiatingDocumentLoader()->addPendingContentExtensionSheet(action.stringArgument(), *styleSheetContents);
+                else if (m_document)
+                    m_document->styleSheetCollection().maybeAddContentExtensionSheet(action.stringArgument(), *styleSheetContents);
+            }
             break;
         }
         case ContentExtensions::ActionType::IgnorePreviousRules:

@@ -1,3 +1,14 @@
+2015-03-23  Alex Christensen  <achristensen@webkit.org>
+
+        Fix api tests after r181876.
+
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
+        Always append a CSSDisplayNoneStyleSheet action if no ignore-previous-rules is seen.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        Changed an assertion to a null check.
+
 2015-03-23  Dean Jackson  <dino@apple.com>
 
         Timelines are sharing the same canvas background

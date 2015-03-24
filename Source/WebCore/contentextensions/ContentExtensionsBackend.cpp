@@ -99,7 +99,7 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
                 finalActions.append(action);
             }
 
-            if (!sawIgnorePreviousRules && contentExtension->globalDisplayNoneStyleSheet())
+            if (!sawIgnorePreviousRules)
                 finalActions.append(Action(ActionType::CSSDisplayNoneStyleSheet, contentExtension->identifier()));
         }
     }
