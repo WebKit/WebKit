@@ -728,7 +728,7 @@ double Element::offsetTop()
 
 double Element::offsetWidth()
 {
-    document().updateLayoutIfDimensionsOutOfDate(this, WidthDimensionsCheck);
+    document().updateLayoutIfDimensionsOutOfDate(*this, WidthDimensionsCheck);
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
         LayoutUnit offsetWidth = subpixelMetricsEnabled(renderer->document()) ? renderer->offsetWidth() : LayoutUnit(renderer->pixelSnappedOffsetWidth());
         return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(offsetWidth, *renderer).toDouble(), renderer->document());
@@ -738,7 +738,7 @@ double Element::offsetWidth()
 
 double Element::offsetHeight()
 {
-    document().updateLayoutIfDimensionsOutOfDate(this, HeightDimensionsCheck);
+    document().updateLayoutIfDimensionsOutOfDate(*this, HeightDimensionsCheck);
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
         LayoutUnit offsetHeight = subpixelMetricsEnabled(renderer->document()) ? renderer->offsetHeight() : LayoutUnit(renderer->pixelSnappedOffsetHeight());
         return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(offsetHeight, *renderer).toDouble(), renderer->document());
@@ -790,7 +790,7 @@ double Element::clientTop()
 
 double Element::clientWidth()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIfDimensionsOutOfDate(*this, WidthDimensionsCheck);
 
     if (!document().hasLivingRenderTree())
         return 0;
@@ -811,8 +811,7 @@ double Element::clientWidth()
 
 double Element::clientHeight()
 {
-    document().updateLayoutIgnorePendingStylesheets();
-
+    document().updateLayoutIfDimensionsOutOfDate(*this, HeightDimensionsCheck);
     if (!document().hasLivingRenderTree())
         return 0;
     RenderView& renderView = *document().renderView();
@@ -872,7 +871,7 @@ void Element::setScrollTop(int newTop)
 
 int Element::scrollWidth()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIfDimensionsOutOfDate(*this, WidthDimensionsCheck);
     if (RenderBox* rend = renderBox())
         return adjustForAbsoluteZoom(rend->scrollWidth(), *rend);
     return 0;
@@ -880,7 +879,7 @@ int Element::scrollWidth()
 
 int Element::scrollHeight()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIfDimensionsOutOfDate(*this, HeightDimensionsCheck);
     if (RenderBox* rend = renderBox())
         return adjustForAbsoluteZoom(rend->scrollHeight(), *rend);
     return 0;

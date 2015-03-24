@@ -1896,7 +1896,7 @@ Ref<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element* el
     return ensureStyleResolver().styleForElement(element, element->parentNode() ? element->parentNode()->computedStyle() : nullptr);
 }
 
-bool Document::updateLayoutIfDimensionsOutOfDate(Element* element, DimensionsCheck dimensionsCheck)
+bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsCheck dimensionsCheck)
 {
     ASSERT(isMainThread());
     
@@ -1920,13 +1920,13 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element* element, DimensionsChe
     // layout.
     bool requireFullLayout = false;
     if (HTMLFrameOwnerElement* owner = ownerElement()) {
-        if (owner->document().updateLayoutIfDimensionsOutOfDate(owner))
+        if (owner->document().updateLayoutIfDimensionsOutOfDate(*owner))
             requireFullLayout = true;
     }
     
     updateStyleIfNeeded();
-    
-    RenderObject* renderer = element->renderer();
+
+    RenderObject* renderer = element.renderer();
     if (!renderer || renderer->needsLayout())
         requireFullLayout = true;
 
@@ -1940,7 +1940,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element* element, DimensionsChe
         RenderBox* currentBox = nullptr;
         
         // Check our containing block chain. If anything in the chain needs a layout, then require a full layout.
-        for (RenderObject* currRenderer = element->renderer(); currRenderer && !currRenderer->isRenderView(); currRenderer = currRenderer->container()) {
+        for (RenderObject* currRenderer = element.renderer(); currRenderer && !currRenderer->isRenderView(); currRenderer = currRenderer->container()) {
             
             // Require the entire container chain to be boxes.
             if (!is<RenderBox>(currRenderer)) {
@@ -1969,9 +1969,8 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element* element, DimensionsChe
                 }
             }
             
-            if (!currentBox->isRenderBlockFlow() || currentBox->isInline() || currentBox->isOutOfFlowPositioned() || currentBox->flowThreadContainingBlock() || currentBox->isWritingModeRoot()) {
-                // FIXME: For now require only block-level non-positioned
-                // block flows all the way back to the root. This limits the optimization
+            if (!currentBox->isRenderBlockFlow() || currentBox->flowThreadContainingBlock() || currentBox->isWritingModeRoot()) {
+                // FIXME: For now require only block flows all the way back to the root. This limits the optimization
                 // for now, and we'll expand it in future patches to apply to more and more scenarios.
                 // Disallow regions/columns from having the optimization.
                 // Give up if the writing mode changes at all in the containing block chain.
