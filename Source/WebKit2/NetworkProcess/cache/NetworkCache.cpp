@@ -321,6 +321,7 @@ static StoreDecision canStore(const WebCore::ResourceRequest& originalRequest, c
     switch (response.httpStatusCode()) {
     case 200: // OK
     case 203: // Non-Authoritative Information
+    case 204: // No Content
     case 300: // Multiple Choices
     case 301: // Moved Permanently
     case 302: // Found

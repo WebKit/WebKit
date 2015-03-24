@@ -1,3 +1,20 @@
+2015-03-24  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Responses with 204 HTTP Status Code should be cacheable by default
+        https://bugs.webkit.org/show_bug.cgi?id=143020
+        <rdar://problem/20281529>
+
+        Reviewed by Antti Koivisto.
+
+        Add test to make sure that responses with 204 HTTP Status Code are
+        cacheable by default.
+
+        * http/tests/cache/disk-cache/disk-cache-204-status-code-expected.txt: Added.
+        * http/tests/cache/disk-cache/disk-cache-204-status-code.html: Added.
+        * http/tests/cache/disk-cache/resources/cache-test.js:
+        Re-introduce support for generating responses with only headers (no body).
+        This was mistakenly dropped when I rebased my patch for r181895.
+
 2015-03-24  Beth Dakin  <bdakin@apple.com>
 
         Another attempted test fix after http://trac.webkit.org/changeset/181907

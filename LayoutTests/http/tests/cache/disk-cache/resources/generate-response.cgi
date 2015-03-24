@@ -5,6 +5,7 @@ use HTTP::Date;
 
 my $query = new CGI;
 @names = $query->param;
+my $includeBody = $query->param('include-body') || 0;
 
 my $hasStatusCode = 0;
 if ($query->http && $query->http("If-None-Match") eq "match") {
@@ -14,8 +15,9 @@ if ($query->http && $query->http("If-None-Match") eq "match") {
 
 foreach (@names) {
     next if ($_ eq "uniqueId");
+    next if ($_ eq "include-body");
     next if ($_ eq "Status" and $hasStatusCode);
     print $_ . ": " . $query->param($_) . "\n";
 }
 print "\n";
-print "test";
+print "test" if $includeBody;

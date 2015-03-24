@@ -38,10 +38,12 @@ function makeHeaderValue(value)
     return value;
 }
 
-function generateTestURL(test)
+function generateTestURL(test, includeBody)
 {
+    includeBody = typeof includeBody !== 'undefined' ? includeBody : true;
     var uniqueTestId = Math.floor((Math.random() * 1000000000000));
-    var testURL = "resources/generate-response.cgi?uniqueId=" + uniqueTestId++ + "&Content-type=text/plain";
+    var cgi_script = "resources/generate-response.cgi?include-body=" + (includeBody ? "1" : "0");
+    var testURL = cgi_script + "&uniqueId=" + uniqueTestId++ + "&Content-type=text/plain";
     for (var header in test.responseHeaders)
         testURL += '&' + header + '=' + makeHeaderValue(test.responseHeaders[header]);
     return testURL;
@@ -50,7 +52,7 @@ function generateTestURL(test)
 function loadResource(test, onload)
 {
     if (!test.url)
-        test.url = generateTestURL(test);
+        test.url = generateTestURL(test, test.includeBody);
 
     test.xhr = new XMLHttpRequest();
     test.xhr.onload = onload;
@@ -115,8 +117,9 @@ function mergeFields(field, componentField)
     }
 }
 
-function generateTests(testMatrix)
+function generateTests(testMatrix, includeBody)
 {
+    includeBody = typeof includeBody !== 'undefined' ? includeBody : true;
     var tests = [];
 
     var testCount = 1;
@@ -138,6 +141,7 @@ function generateTests(testMatrix)
                 mergeFields(test[field], component[field]);
             }
         }
+        test.includeBody = includeBody;
         tests.push(test);
     }
     return tests;

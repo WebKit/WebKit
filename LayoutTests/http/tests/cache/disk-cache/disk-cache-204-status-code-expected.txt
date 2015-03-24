@@ -1,0 +1,17 @@
+Test that responses with HTTP status code 204 are cacheable
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+running 2 tests
+
+response headers: {"Status":"204","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"204","Cache-control":"max-age=100"}
+response source: Disk cache
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
