@@ -634,7 +634,9 @@ public:
     {
         return Structure::create(vm, globalObject, proto, TypeInfo(FunctionExecutableType, StructureFlags), info());
     }
-        
+
+    unsigned parametersStartOffset() const { return m_parametersStartOffset; }
+
     DECLARE_INFO;
         
     void unlinkCalls();
@@ -663,6 +665,7 @@ private:
     RefPtr<FunctionCodeBlock> m_codeBlockForCall;
     RefPtr<FunctionCodeBlock> m_codeBlockForConstruct;
     RefPtr<TypeSet> m_returnStatementTypeSet;
+    unsigned m_parametersStartOffset;
 };
 
 inline void ExecutableBase::clearCodeVirtual(ExecutableBase* executable)

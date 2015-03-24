@@ -1581,6 +1581,7 @@ namespace JSC {
 
         int functionNameStart() const { return m_functionNameStart; }
         int functionKeywordStart() const { return m_functionKeywordStart; }
+        int parametersStart() const { return m_parametersStart; }
         unsigned startColumn() const { return m_startColumn; }
         unsigned endColumn() const { return m_endColumn; }
 

@@ -42,7 +42,7 @@ PASS walker.firstChild(); walker.currentNode.id is 'A1'
 PASS walker.nextNode(); walker.currentNode.id is 'B1'
 
 Testing acceptNode callee
-Callee: function(node) {
+Callee: function (node) {
     debug('Callee: ' + arguments.callee);
     return NodeFilter.FILTER_ACCEPT;
   }

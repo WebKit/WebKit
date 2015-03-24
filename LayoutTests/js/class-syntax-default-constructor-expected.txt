@@ -11,7 +11,7 @@ PASS class B extends A { }; new B instanceof A; new B instanceof A is true
 PASS B() threw exception TypeError: Cannot call a class constructor.
 PASS B.prototype.constructor.name is "B"
 PASS A !== B is true
-FAIL A.prototype.constructor should be function () { super(...arguments); }. Was function () { }.
+FAIL A.prototype.constructor should be function B() { super(...arguments); }. Was function A() { }.
 PASS new (class extends (class { constructor(a, b) { return [a, b]; } }) {})(1, 2) is [1, 2]
 PASS successfullyParsed is true
 

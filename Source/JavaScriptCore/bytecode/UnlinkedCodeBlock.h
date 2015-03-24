@@ -128,6 +128,7 @@ public:
     unsigned unlinkedBodyEndColumn() const { return m_unlinkedBodyEndColumn; }
     unsigned startOffset() const { return m_startOffset; }
     unsigned sourceLength() { return m_sourceLength; }
+    unsigned parametersStartOffset() const { return m_parametersStartOffset; }
     unsigned typeProfilingStartOffset() const { return m_typeProfilingStartOffset; }
     unsigned typeProfilingEndOffset() const { return m_typeProfilingEndOffset; }
 
@@ -183,6 +184,7 @@ private:
     unsigned m_unlinkedBodyEndColumn;
     unsigned m_startOffset;
     unsigned m_sourceLength;
+    unsigned m_parametersStartOffset;
     unsigned m_typeProfilingStartOffset;
     unsigned m_typeProfilingEndOffset;
 

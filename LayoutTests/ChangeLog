@@ -1,3 +1,36 @@
+2015-03-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ES6: Object Literal Methods toString is missing method name
+        https://bugs.webkit.org/show_bug.cgi?id=142992
+
+        Reviewed by Geoffrey Garen.
+
+        * js/class-syntax-default-constructor-expected.txt:
+        This test was already failing, it now fails in a different way.
+
+        * js/object-literal-computed-methods-expected.txt:
+        * js/object-literal-methods-expected.txt:
+        These tests now pass.
+
+        * fast/dom/TreeWalker/acceptNode-filter-expected.txt:
+        * js/destructuring-assignment-expected.txt:
+        * js/dfg-redundant-load-of-captured-variable-proven-constant-expected.txt:
+        * js/dfg-resolve-global-specific-dictionary-expected.txt:
+        * js/dom/JSON-parse-expected.txt:
+        * js/dom/JSON-stringify-expected.txt:
+        * js/dom/dfg-strcat-over-objects-then-exit-on-it-expected.txt:
+        * js/dom/function-prototype-expected.txt:
+        * js/dom/toString-and-valueOf-override-expected.txt:
+        * js/kde/lval-exceptions-expected.txt:
+        * storage/domstorage/localstorage/string-conversion-expected.txt:
+        * storage/domstorage/sessionstorage/string-conversion-expected.txt:
+        * js/dom/script-tests/dfg-strcat-over-objects-then-exit-on-it.js:
+        * js/script-tests/dfg-redundant-load-of-captured-variable-proven-constant.js:
+        * js/script-tests/dfg-resolve-global-specific-dictionary.js:
+        * js/dom/function-prototype.html:
+        Update tests to add expected whitespace for stringifying a function
+        with no name.
+
 2015-03-24  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS Selectors Level 4: enable case-insensitive attribute matching by default

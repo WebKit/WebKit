@@ -119,7 +119,7 @@ addThis();
  */
 with (x)
 {
-  var g = function () {}
+  var g = function() {}
 }
 status = inSection(5);
 actual = x.g.toString();

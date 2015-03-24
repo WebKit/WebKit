@@ -1,3 +1,35 @@
+2015-03-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ES6: Object Literal Methods toString is missing method name
+        https://bugs.webkit.org/show_bug.cgi?id=142992
+
+        Reviewed by Geoffrey Garen.
+
+        Always stringify functions in the pattern:
+
+          "function " + <function name> + <text from opening parenthesis to closing brace>.
+
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        Update the path that was not stringifying in this pattern.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedFunctionExecutable::parametersStartOffset):
+        * parser/Nodes.h:
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::parametersStartOffset):
+        Pass the already known function parameter opening parenthesis
+        start offset through to the FunctionExecutable. 
+
+        * tests/mozilla/js1_5/Scope/regress-185485.js:
+        (with.g):
+        Add back original space in this test that was removed by r181810
+        now that we have the space again in stringification.
+
 2015-03-24  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (172175-172177): Change in for...in processing causes properties added in loop to be enumerated

@@ -12,7 +12,7 @@ function bar() {
 
 var x = function() { };
 
-var expected = "\"function() { }\"";
+var expected = "\"function () { }\"";
 var blah = this;
 for (var i = 0; i < 1000; ++i) {
     blah["i" + i] = i;

@@ -408,6 +408,7 @@ FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source,
     ASSERT(endColumn != UINT_MAX);
     m_startColumn = startColumn;
     m_endColumn = endColumn;
+    m_parametersStartOffset = unlinkedExecutable->parametersStartOffset();
     m_typeProfilingStartOffset = unlinkedExecutable->typeProfilingStartOffset();
     m_typeProfilingEndOffset = unlinkedExecutable->typeProfilingEndOffset();
 }
