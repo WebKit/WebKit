@@ -1,3 +1,38 @@
+2015-03-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Make URL filter patterns matching consistent and add a simple canonicalization step
+        https://bugs.webkit.org/show_bug.cgi?id=142998
+
+        Reviewed by Alex Christensen.
+
+        This patch makes two changes to the url filter input:
+        -Make the matching "Search" by default, the pattern can now appear anywhere
+         in the URL by default.
+        -Make the input a little less fragile: do not explode on valid input
+         that is not formatted in a certain way.
+
+        To implement the search behavior, I simply add an implict ".*" in front of the patterns
+        when that make sense.
+
+        To make the input more solid, we do some little modification on the input:
+        -Remove duplicated ".*".
+        -Remove matching suffixes that do not bring new information.
+        -Unify all the ".*" in the same format.
+
+        Why do that here? That should be done through a graph analysis on the machine.
+
+        The reason is this is incredibly cheap compared to the graph analysis. Any state
+        removed upfront will save the handling of several hundred nodes in the deterministic
+        graph.
+
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::Term::isKnownToMatchAnyString):
+        (WebCore::ContentExtensions::Term::isUniversalTransition):
+        (WebCore::ContentExtensions::GraphBuilder::finalize):
+        (WebCore::ContentExtensions::GraphBuilder::assertionBOL):
+        (WebCore::ContentExtensions::GraphBuilder::fail):
+        (WebCore::ContentExtensions::GraphBuilder::simplifySunkTerms):
+
 2015-03-24  Chris Dumez  <cdumez@apple.com>
 
         Regression(r181671): Caused Timer-related crashes on iOS / WK1
