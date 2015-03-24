@@ -112,12 +112,6 @@ shouldBe("f()", "f");
 
 shouldBe("const a;", "undefined");
 
-// Make sure we don't override properties placed on the global object
-var ranConstInitialiser = false;
-const bodyId = (ranConstInitialiser = true, "Const initialiser overwrote existing property");
-shouldBe("bodyId", "document.getElementById('bodyId')");
-shouldBeTrue("ranConstInitialiser");
-
 // Make sure that dynamic scopes (catch, with) don't break const declarations
 function tryCatch1() {
     var bar;

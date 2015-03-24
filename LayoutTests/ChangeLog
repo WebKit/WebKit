@@ -1,3 +1,16 @@
+2015-03-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Move the bulk of the js/dom/const test into js/const, so that run-jsc-stress-tests runs it.
+
+        Rubber stamped by Andreas Kling and Michael Saboff.
+
+        * js/const-expected.txt: Copied from LayoutTests/js/dom/const-expected.txt.
+        * js/const.html: Copied from LayoutTests/js/dom/const.html.
+        * js/dom/const-expected.txt: Replaced.
+        * js/dom/const.html: Replaced.
+        * js/resources/const.js: Removed.
+        * js/script-tests/const.js: Copied from LayoutTests/js/resources/const.js.
+
 2015-03-23  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Fix up a few mistakes in LayoutTests/contentfiltering/
