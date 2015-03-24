@@ -208,8 +208,6 @@ static String notAFunctionSourceAppender(const String& originalMessage, const St
 
 static String invalidParameterInSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
-    ASSERT(type != TypeObject);
-
     if (occurrence == ErrorInstance::FoundApproximateSource)
         return defaultApproximateSourceError(originalMessage, sourceText);
 

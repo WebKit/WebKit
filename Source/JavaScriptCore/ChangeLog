@@ -1,3 +1,10 @@
+2015-03-24  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed build fix for debug builds.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::invalidParameterInSourceAppender):
+
 2015-03-24  Saam Barati  <saambarati1@gmail.com>
 
         Improve error messages in JSC
