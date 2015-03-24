@@ -1,3 +1,12 @@
+2015-03-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update baselines after r181889.
+        https://bugs.webkit.org/show_bug.cgi?id=141869
+
+        * platform/win/css3/selectors3/xhtml/css3-modsel-15c-expected.txt:
+        * platform/win/css3/selectors3/xml/css3-modsel-15c-expected.txt:
+        * platform/win/fast/dom/NavigatorContentUtils/is-protocol-handler-registered-expected.txt:
+
 2015-03-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2] NetworkCache retrievals fail for entries with no body
