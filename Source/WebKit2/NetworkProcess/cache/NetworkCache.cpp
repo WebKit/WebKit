@@ -325,6 +325,7 @@ static StoreDecision canStore(const WebCore::ResourceRequest& originalRequest, c
     case 301: // Moved Permanently
     case 302: // Found
     case 307: // Temporary Redirect
+    case 404: // Not Found
     case 410: // Gone
         if (response.cacheControlContainsNoStore()) {
             LOG(NetworkCache, "(NetworkProcess) Cache-control:no-store");
