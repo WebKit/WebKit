@@ -180,6 +180,7 @@ struct WKViewInterpretKeyEventsParameters {
 
 #if WK_API_ENABLED
     RetainPtr<WKBrowsingContextController> _browsingContextController;
+    RetainPtr<NSView> _inspectorAttachmentView;
 #endif
 
     RetainPtr<NSTrackingArea> _primaryTrackingArea;
@@ -192,8 +193,6 @@ struct WKViewInterpretKeyEventsParameters {
     RetainPtr<NSView> _layerHostingView;
 
     RetainPtr<id> _remoteAccessibilityChild;
-
-    RetainPtr<NSView> _inspectorAttachmentView;
 
     // For asynchronous validation.
     ValidationMap _validationMap;
@@ -4135,6 +4134,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_page->setUnderlayColor(colorFromNSColor(underlayColor));
 }
 
+#if WK_API_ENABLED
 - (NSView *)_inspectorAttachmentView
 {
     NSView *attachmentView = _data->_inspectorAttachmentView.get();
@@ -4150,6 +4150,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_inspectorAttachmentView = newView;
     _data->_page->inspector()->attachmentViewDidChange(oldView ? oldView : self, newView ? newView : self);
 }
+#endif
 
 - (NSView *)fullScreenPlaceholderView
 {

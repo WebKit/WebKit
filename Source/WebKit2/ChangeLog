@@ -1,3 +1,10 @@
+2015-03-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed, attempt to fix 32-bit build after r181881.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+
 2015-03-19  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Support attaching to another view other than the WKView
