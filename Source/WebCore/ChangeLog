@@ -1,3 +1,9 @@
+2015-03-24  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the iOS Simulator build.
+
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+
 2015-03-24  Benjamin Poulain  <bpoulain@apple.com>
 
         Make URL filter patterns matching consistent and add a simple canonicalization step
