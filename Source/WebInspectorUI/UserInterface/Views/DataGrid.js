@@ -41,7 +41,7 @@ WebInspector.DataGrid = function(columnsData, editCallback, deleteCallback, pref
     this.selected = false;
     this.dataGrid = this;
     this.indentWidth = 15;
-    this.resizerElements = [];
+    this.resizers = [];
     this._columnWidthsInitialized = false;
 
     this.element = document.createElement("div");
@@ -111,6 +111,9 @@ WebInspector.DataGrid.SortOrder = {
     Ascending: "data-grid-sort-order-ascending",
     Descending: "data-grid-sort-order-descending"
 };
+
+WebInspector.DataGrid.PreviousColumnOrdinalSymbol = Symbol("previous-column-ordinal");
+WebInspector.DataGrid.NextColumnOrdinalSymbol = Symbol("next-column-ordinal");
 
 WebInspector.DataGrid.SortColumnAscendingStyleClassName = "sort-ascending";
 WebInspector.DataGrid.SortColumnDescendingStyleClassName = "sort-descending";
@@ -662,22 +665,19 @@ WebInspector.DataGrid.prototype = {
     _positionResizerElements: function()
     {
         var left = 0;
-        var previousResizerElement = null;
+        var previousResizer = null;
 
         // Make n - 1 resizers for n columns.
         for (var i = 0; i < this.orderedColumns.length - 1; ++i) {
-            var resizerElement = this.resizerElements[i];
-
-            if (!resizerElement) {
-                // This is the first call to updateWidth, so the resizers need
-                // to be created.
-                resizerElement = document.createElement("div");
-                resizerElement.classList.add("data-grid-resizer");
+            // Create a new resizer if one does not exist for this column.
+            if (i === this.resizers.length) {
+                resizer = new WebInspector.Resizer(WebInspector.Resizer.RuleOrientation.Vertical, this);
+                this.resizers[i] = resizer;
                 // This resizer is associated with the column to its right.
-                resizerElement.addEventListener("mousedown", this._startResizerDragging.bind(this), false);
-                this.element.appendChild(resizerElement);
-                this.resizerElements[i] = resizerElement;
+                this.element.appendChild(resizer.element);
             }
+
+            var resizer = this.resizers[i];
 
             // Get the width of the cell in the first (and only) row of the
             // header table in order to determine the width of the column, since
@@ -685,20 +685,20 @@ WebInspector.DataGrid.prototype = {
             left += this._headerTableBodyElement.rows[0].cells[i].offsetWidth;
 
             if (this._isColumnVisible(this.orderedColumns[i])) {
-                resizerElement.style.removeProperty("display");
-                resizerElement.style.left = left + "px";
-                resizerElement.leftNeighboringColumnID = i;
-                if (previousResizerElement)
-                    previousResizerElement.rightNeighboringColumnID = i;
-                previousResizerElement = resizerElement;
+                resizer.element.style.removeProperty("display");
+                resizer.element.style.left = left + "px";
+                resizer[WebInspector.DataGrid.PreviousColumnOrdinalSymbol] = i;
+                if (previousResizer)
+                    previousResizer[WebInspector.DataGrid.NextColumnOrdinalSymbol] = i;
+                previousResizer = resizer;
             } else {
-                resizerElement.style.setProperty("display", "none");
-                resizerElement.leftNeighboringColumnID = 0;
-                resizerElement.rightNeighboringColumnID = 0;
+                resizer.element.style.setProperty("display", "none");
+                resizer[WebInspector.DataGrid.PreviousColumnOrdinalSymbol] = 0;
+                resizer[WebInspector.DataGrid.NextColumnOrdinalSymbol] = 0;
             }
         }
-        if (previousResizerElement)
-            previousResizerElement.rightNeighboringColumnID = this.orderedColumns.length - 1;
+        if (previousResizer)
+            previousResizer[WebInspector.DataGrid.NextColumnOrdinalSymbol] = this.orderedColumns.length - 1;
     },
 
     addPlaceholderNode: function()
@@ -1242,35 +1242,27 @@ WebInspector.DataGrid.prototype = {
         this._resizeMethod = method;
     },
 
-    _startResizerDragging: function(event)
+    resizerDragStarted: function(resizer)
     {
-        if (event.button !== 0 || event.ctrlKey)
-            return;
+        if (!resizer[WebInspector.DataGrid.NextColumnOrdinalSymbol])
+            return true; // Abort the drag;
 
-        this._currentResizer = event.target;
-        if (!this._currentResizer.rightNeighboringColumnID)
-            return;
-
-        WebInspector.elementDragStart(this._currentResizer, this._resizerDragging.bind(this),
-            this._endResizerDragging.bind(this), event, "col-resize");
+        this._currentResizer = resizer;
     },
 
-    _resizerDragging: function(event)
+    resizerDragging: function(resizer, positionDelta)
     {
-        if (event.button !== 0)
-            return;
-
-        var resizer = this._currentResizer;
-        if (!resizer)
+        console.assert(resizer === this._currentResizer, resizer, this._currentResizer);
+        if (resizer != this._currentResizer)
             return;
 
         // Constrain the dragpoint to be within the containing div of the
         // datagrid.
-        var dragPoint = event.clientX - this.element.totalOffsetLeft;
+        var dragPoint = (resizer.initialPosition - positionDelta) - this.element.totalOffsetLeft;
         // Constrain the dragpoint to be within the space made up by the
         // column directly to the left and the column directly to the right.
-        var leftCellIndex = resizer.leftNeighboringColumnID;
-        var rightCellIndex = resizer.rightNeighboringColumnID;
+        var leftCellIndex = resizer[WebInspector.DataGrid.PreviousColumnOrdinalSymbol];
+        var rightCellIndex = resizer[WebInspector.DataGrid.NextColumnOrdinalSymbol];
         var firstRowCells = this._headerTableBodyElement.rows[0].cells;
         var leftEdgeOfPreviousColumn = 0;
         for (var i = 0; i < leftCellIndex; i++)
@@ -1278,7 +1270,7 @@ WebInspector.DataGrid.prototype = {
 
         // Differences for other resize methods
         if (this.resizeMethod === WebInspector.DataGrid.ResizeMethod.Last) {
-            rightCellIndex = this.resizerElements.length;
+            rightCellIndex = this.resizers.length;
         } else if (this.resizeMethod === WebInspector.DataGrid.ResizeMethod.First) {
             leftEdgeOfPreviousColumn += firstRowCells[leftCellIndex].offsetWidth - firstRowCells[0].offsetWidth;
             leftCellIndex = 0;
@@ -1292,7 +1284,7 @@ WebInspector.DataGrid.prototype = {
 
         dragPoint = Number.constrain(dragPoint, leftMinimum, rightMaximum);
 
-        resizer.style.left = (dragPoint - this.CenterResizerOverBorderAdjustment) + "px";
+        resizer.element.style.left = (dragPoint - this.CenterResizerOverBorderAdjustment) + "px";
 
         var percentLeftColumn = (((dragPoint - leftEdgeOfPreviousColumn) / this._dataTableElement.offsetWidth) * 100) + "%";
         this._headerTableColumnGroupElement.children[leftCellIndex].style.width = percentLeftColumn;
@@ -1307,12 +1299,12 @@ WebInspector.DataGrid.prototype = {
         this.dispatchEventToListeners(WebInspector.DataGrid.Event.DidLayout);
     },
 
-    _endResizerDragging: function(event)
+    resizerDragEnded: function(resizer)
     {
-        if (event.button !== 0)
+        console.assert(resizer === this._currentResizer, resizer, this._currentResizer);
+        if (resizer != this._currentResizer)
             return;
 
-        WebInspector.elementDragEnd(event);
         this._currentResizer = null;
         this.dispatchEventToListeners(WebInspector.DataGrid.Event.DidLayout);
     },

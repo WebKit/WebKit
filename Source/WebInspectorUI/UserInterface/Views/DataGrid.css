@@ -302,11 +302,6 @@ body.mac-platform.legacy .data-grid:focus tr.selected {
     display: block;
 }
 
-.data-grid-resizer {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 5px;
+.data-grid .resizer {
     z-index: 500;
-    cursor: col-resize;
 }

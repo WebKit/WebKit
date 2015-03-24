@@ -1,3 +1,59 @@
+2015-03-06  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: unify resizer implementations used by DataGrid and Sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=142407
+
+        Reviewed by Timothy Hatcher.
+
+        Both of these implementations do the same thing slightly differently. Unify the code
+        and use the "glass pane" technique to preserve cursor while dragging over links or text.
+
+        This patch implements vertical and horizontal rule orientations. Further refactorings
+        to use this class may need to add "Indeterminate" orientation to support moving the inspector
+        window by its fake toolbar element.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid .resizer):
+        (.data-grid-resizer): Deleted.
+        * UserInterface/Views/DataGrid.js: Store Resizer instances rather than resizer elements.
+        Use symbols to secretly store neighbor column ids on the resizer objects. Stop using
+        WebInspector.elementDragStart, as I would like to deprecate it in favor of Resizer instances.
+
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype._positionResizerElements):
+        (WebInspector.DataGrid.prototype.resizerDragStarted):
+        (WebInspector.DataGrid.prototype.resizerDragging):
+        (WebInspector.DataGrid.prototype.resizerDragEnded):
+        (WebInspector.DataGrid.prototype._startResizerDragging): Deleted.
+        (WebInspector.DataGrid.prototype._resizerDragging): Deleted.
+        (WebInspector.DataGrid.prototype._endResizerDragging): Deleted.
+        * UserInterface/Views/Resizer.css:
+        (.resizer):
+        (.resizer.vertical-rule):
+        (.resizer.horizontal-rule):
+        (.glass-pane-for-drag):
+        * UserInterface/Views/Resizer.js: Added.
+        (WebInspector.Resizer):
+        (WebInspector.Resizer.prototype.get element):
+        (WebInspector.Resizer.prototype.get orientation):
+        (WebInspector.Resizer.prototype.get initialPosition):
+        (WebInspector.Resizer.prototype._currentPosition):
+        (WebInspector.Resizer.prototype._resizerMouseDown):
+        (WebInspector.Resizer.prototype._resizerMouseMoved):
+        (WebInspector.Resizer.prototype._resizerMouseUp):
+        * UserInterface/Views/Sidebar.css:
+        (.sidebar > .resizer): Deleted.
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar):
+        (WebInspector.Sidebar.prototype.resizerDragStarted):
+        (WebInspector.Sidebar.prototype.resizerDragging):
+        (WebInspector.Sidebar.prototype.resizerDragEnded):
+        (WebInspector.Sidebar.prototype._navigationItemSelected):
+        (WebInspector.Sidebar.prototype._resizerMouseDown): Deleted.
+        (WebInspector.Sidebar.prototype._resizerMouseMoved): Deleted.
+        (WebInspector.Sidebar.prototype._resizerMouseUp): Deleted.
+
 2015-03-17  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: Debugger sidebar should have a filter button for breakpoints
