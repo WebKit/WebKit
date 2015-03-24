@@ -1,3 +1,15 @@
+2015-03-24  Anders Carlsson  <andersca@apple.com>
+
+        Fix crash in WebKit::RemoteObjectRegistry::sendInvocation
+        https://bugs.webkit.org/show_bug.cgi?id=143027
+        rdar://problem/20208674
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController dealloc]):
+        Make sure to invalidate the _WKRemoteObjectRegistry like we do in the UI process.
+
 2015-03-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Responses with 204 HTTP Status Code should be cacheable by default

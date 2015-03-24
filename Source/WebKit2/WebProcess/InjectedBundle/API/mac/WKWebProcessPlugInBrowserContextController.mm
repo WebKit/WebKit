@@ -342,6 +342,8 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 
 - (void)dealloc
 {
+    [_remoteObjectRegistry _invalidate];
+
     _page->~WebPage();
 
     [super dealloc];
