@@ -535,6 +535,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/RegExpMatchesArray.cpp
     runtime/RegExpObject.cpp
     runtime/RegExpPrototype.cpp
+    runtime/RuntimeType.cpp
     runtime/SamplingCounter.cpp
     runtime/SetConstructor.cpp
     runtime/SetIteratorConstructor.cpp

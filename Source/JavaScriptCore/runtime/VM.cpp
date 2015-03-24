@@ -75,6 +75,7 @@
 #include "PropertyMapHashTable.h"
 #include "RegExpCache.h"
 #include "RegExpObject.h"
+#include "RuntimeType.h"
 #include "SimpleTypedArrayController.h"
 #include "SourceProviderCache.h"
 #include "StackVisitor.h"
@@ -540,7 +541,10 @@ void VM::releaseExecutableMemory()
 
 static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, unsigned bytecodeOffset)
 {
-    exception->clearAppendSourceToMessage();
+    ErrorInstance::SourceAppender appender = exception->sourceAppender();
+    exception->clearSourceAppender();
+    RuntimeType type = exception->runtimeTypeForCause();
+    exception->clearRuntimeTypeForCause();
     
     if (!callFrame->codeBlock()->hasExpressionInfo())
         return;
@@ -569,7 +573,7 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     String message = asString(jsMessage)->value(callFrame);
     
     if (expressionStart < expressionStop)
-        message =  makeString(message, " (evaluating '", codeBlock->source()->getRange(expressionStart, expressionStop), "')");
+        message = appender(message, codeBlock->source()->getRange(expressionStart, expressionStop), type, ErrorInstance::FoundExactSource);
     else {
         // No range information, so give a few characters of context.
         const StringImpl* data = sourceString.impl();
@@ -586,7 +590,7 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
             stop++;
         while (stop > expressionStart && isStrWhiteSpace((*data)[stop - 1]))
             stop--;
-        message = makeString(message, " (near '...", codeBlock->source()->getRange(start, stop), "...')");
+        message = appender(message, codeBlock->source()->getRange(start, stop), type, ErrorInstance::FoundApproximateSource);
     }
     
     exception->putDirect(*vm, vm->propertyNames->message, jsString(vm, message));
@@ -662,7 +666,7 @@ JSValue VM::throwException(ExecState* exec, JSValue error)
         if (!stackFrame.sourceURL.isEmpty())
             exception->putDirect(*this, Identifier(this, "sourceURL"), jsString(this, stackFrame.sourceURL), ReadOnly | DontDelete);
     }
-    if (exception->isErrorInstance() && static_cast<ErrorInstance*>(exception)->appendSourceToMessage()) {
+    if (exception->isErrorInstance() && static_cast<ErrorInstance*>(exception)->hasSourceAppender()) {
         FindFirstCallerFrameWithCodeblockFunctor functor(exec);
         topCallFrame->iterate(functor);
         CallFrame* callFrame = functor.foundCallFrame();

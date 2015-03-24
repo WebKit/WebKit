@@ -3,25 +3,25 @@ This test case tests the various typed array and related constructors. In partic
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS Int8Array() threw exception TypeError: Function is not a function (evaluating 'Int8Array()').
+PASS Int8Array() threw exception TypeError: Int8Array is not a function. (In 'Int8Array()', 'Int8Array' is an instance of Function).
 PASS new Int8Array() did not throw exception.
-PASS Int16Array() threw exception TypeError: Function is not a function (evaluating 'Int16Array()').
+PASS Int16Array() threw exception TypeError: Int16Array is not a function. (In 'Int16Array()', 'Int16Array' is an instance of Function).
 PASS new Int16Array() did not throw exception.
-PASS Int32Array() threw exception TypeError: Function is not a function (evaluating 'Int32Array()').
+PASS Int32Array() threw exception TypeError: Int32Array is not a function. (In 'Int32Array()', 'Int32Array' is an instance of Function).
 PASS new Int32Array() did not throw exception.
-PASS Uint8Array() threw exception TypeError: Function is not a function (evaluating 'Uint8Array()').
+PASS Uint8Array() threw exception TypeError: Uint8Array is not a function. (In 'Uint8Array()', 'Uint8Array' is an instance of Function).
 PASS new Uint8Array() did not throw exception.
-PASS Uint16Array() threw exception TypeError: Function is not a function (evaluating 'Uint16Array()').
+PASS Uint16Array() threw exception TypeError: Uint16Array is not a function. (In 'Uint16Array()', 'Uint16Array' is an instance of Function).
 PASS new Uint16Array() did not throw exception.
-PASS Uint32Array() threw exception TypeError: Function is not a function (evaluating 'Uint32Array()').
+PASS Uint32Array() threw exception TypeError: Uint32Array is not a function. (In 'Uint32Array()', 'Uint32Array' is an instance of Function).
 PASS new Uint32Array() did not throw exception.
-PASS Uint8ClampedArray() threw exception TypeError: Function is not a function (evaluating 'Uint8ClampedArray()').
+PASS Uint8ClampedArray() threw exception TypeError: Uint8ClampedArray is not a function. (In 'Uint8ClampedArray()', 'Uint8ClampedArray' is an instance of Function).
 PASS new Uint8ClampedArray() did not throw exception.
-PASS Float32Array() threw exception TypeError: Function is not a function (evaluating 'Float32Array()').
+PASS Float32Array() threw exception TypeError: Float32Array is not a function. (In 'Float32Array()', 'Float32Array' is an instance of Function).
 PASS new Float32Array() did not throw exception.
-PASS Float64Array() threw exception TypeError: Function is not a function (evaluating 'Float64Array()').
+PASS Float64Array() threw exception TypeError: Float64Array is not a function. (In 'Float64Array()', 'Float64Array' is an instance of Function).
 PASS new Float64Array() did not throw exception.
-PASS DataView(new ArrayBuffer()) threw exception TypeError: Function is not a function (evaluating 'DataView(new ArrayBuffer())').
+PASS DataView(new ArrayBuffer()) threw exception TypeError: DataView is not a function. (In 'DataView(new ArrayBuffer())', 'DataView' is an instance of Function).
 PASS new DataView(new ArrayBuffer()) did not throw exception.
 PASS successfullyParsed is true
 

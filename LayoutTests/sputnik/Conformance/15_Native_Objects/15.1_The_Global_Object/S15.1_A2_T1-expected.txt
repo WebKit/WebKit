@@ -1,6 +1,6 @@
 S15.1_A2_T1
 
-PASS TypeError: Window is not a function (evaluating 'this()')
+PASS TypeError: this is not a function. (In 'this()', 'this' is an instance of Window)
 
 TEST COMPLETE
 

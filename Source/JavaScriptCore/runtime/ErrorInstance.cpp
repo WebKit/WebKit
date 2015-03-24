@@ -32,7 +32,6 @@ const ClassInfo ErrorInstance::s_info = { "Error", &JSNonFinalObject::s_info, 0,
 
 ErrorInstance::ErrorInstance(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)
-    , m_appendSourceToMessage(false)
 {
 }
 

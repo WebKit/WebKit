@@ -72,7 +72,7 @@ ALWAYS_INLINE int arityCheckFor(ExecState* exec, JSStack* stack, CodeSpecializat
 inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
 {
     if (!baseVal.isObject()) {
-        exec->vm().throwException(exec, createInvalidParameterError(exec, "in", baseVal));
+        exec->vm().throwException(exec, createInvalidInParameterError(exec, baseVal));
         return false;
     }
 

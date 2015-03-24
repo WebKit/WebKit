@@ -200,7 +200,7 @@ EncodedJSValue JIT_OPERATION operationInOptimize(ExecState* exec, StructureStubI
     NativeCallFrameTracer tracer(vm, exec);
     
     if (!base->isObject()) {
-        vm->throwException(exec, createInvalidParameterError(exec, "in", base));
+        vm->throwException(exec, createInvalidInParameterError(exec, base));
         return JSValue::encode(jsUndefined());
     }
     
@@ -226,7 +226,7 @@ EncodedJSValue JIT_OPERATION operationIn(ExecState* exec, StructureStubInfo*, JS
     NativeCallFrameTracer tracer(vm, exec);
 
     if (!base->isObject()) {
-        vm->throwException(exec, createInvalidParameterError(exec, "in", base));
+        vm->throwException(exec, createInvalidInParameterError(exec, base));
         return JSValue::encode(jsUndefined());
     }
 
@@ -966,12 +966,13 @@ void JIT_OPERATION operationThrowStaticError(ExecState* exec, EncodedJSValue enc
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-
-    String message = errorDescriptionForValue(exec, JSValue::decode(encodedValue))->value(exec);
+    JSValue errorMessageValue = JSValue::decode(encodedValue);
+    RELEASE_ASSERT(errorMessageValue.isString());
+    String errorMessage = asString(errorMessageValue)->value(exec);
     if (referenceErrorFlag)
-        vm.throwException(exec, createReferenceError(exec, message));
+        vm.throwException(exec, createReferenceError(exec, errorMessage));
     else
-        vm.throwException(exec, createTypeError(exec, message));
+        vm.throwException(exec, createTypeError(exec, errorMessage));
 }
 
 void JIT_OPERATION operationDebug(ExecState* exec, int32_t debugHookID)
@@ -1348,7 +1349,7 @@ EncodedJSValue JIT_OPERATION operationCheckHasInstance(ExecState* exec, EncodedJ
         }
     }
 
-    vm.throwException(exec, createInvalidParameterError(exec, "instanceof", baseVal));
+    vm.throwException(exec, createInvalidInstanceofParameterError(exec, baseVal));
     return JSValue::encode(JSValue());
 }
 

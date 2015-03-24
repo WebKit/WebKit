@@ -1,3 +1,80 @@
+2015-03-24  Saam Barati  <saambarati1@gmail.com>
+
+        Improve error messages in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=141869
+
+        Reviewed by Geoffrey Garen.
+
+        JavaScriptCore has some unintuitive error messages associated
+        with certain common errors. This patch changes some specific
+        error messages to be more understandable and also creates a
+        mechanism that will allow for easy modification of error messages
+        in the future. The specific errors we change are not a function
+        errors and invalid parameter errors.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeOfVarargs):
+        * jit/JITOperations.cpp:
+        op_throw_static_error always has a JSString as its argument.
+        There is no need to dance around this, and we should assert
+        that this always holds. This JSString represents the error 
+        message we want to display to the user, so there is no need
+        to pass it into errorDescriptionForValue which will now place
+        quotes around the string.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::opIn):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::hasSourceAppender):
+        (JSC::ErrorInstance::sourceAppender):
+        (JSC::ErrorInstance::setSourceAppender):
+        (JSC::ErrorInstance::clearSourceAppender):
+        (JSC::ErrorInstance::setRuntimeTypeForCause):
+        (JSC::ErrorInstance::runtimeTypeForCause):
+        (JSC::ErrorInstance::clearRuntimeTypeForCause):
+        (JSC::ErrorInstance::appendSourceToMessage): Deleted.
+        (JSC::ErrorInstance::setAppendSourceToMessage): Deleted.
+        (JSC::ErrorInstance::clearAppendSourceToMessage): Deleted.
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::errorDescriptionForValue):
+        (JSC::defaultApproximateSourceError):
+        (JSC::defaultSourceAppender):
+        (JSC::functionCallBase):
+        (JSC::notAFunctionSourceAppender):
+        (JSC::invalidParameterInSourceAppender):
+        (JSC::invalidParameterInstanceofSourceAppender):
+        (JSC::createError):
+        (JSC::createInvalidFunctionApplyParameterError):
+        (JSC::createInvalidInParameterError):
+        (JSC::createInvalidInstanceofParameterError):
+        (JSC::createNotAConstructorError):
+        (JSC::createNotAFunctionError):
+        (JSC::createNotAnObjectError):
+        (JSC::createInvalidParameterError): Deleted.
+        * runtime/ExceptionHelpers.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasInstance):
+        * runtime/RuntimeType.cpp: Added.
+        (JSC::runtimeTypeForValue):
+        (JSC::runtimeTypeAsString):
+        * runtime/RuntimeType.h: Added.
+        * runtime/TypeProfilerLog.cpp:
+        (JSC::TypeProfilerLog::processLogEntries):
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::getRuntimeTypeForValue): Deleted.
+        * runtime/TypeSet.h:
+        * runtime/VM.cpp:
+        (JSC::appendSourceToError):
+        (JSC::VM::throwException):
+
 2015-03-23  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should have a low-cost asynchronous disassembler

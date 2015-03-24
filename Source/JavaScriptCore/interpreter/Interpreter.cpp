@@ -142,7 +142,7 @@ unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVa
     else if (arguments.isUndefinedOrNull())
         length = 0;
     else if (!arguments.isObject()) {
-        callFrame->vm().throwException(callFrame, createInvalidParameterError(callFrame, "Function.prototype.apply", arguments));
+        callFrame->vm().throwException(callFrame, createInvalidFunctionApplyParameterError(callFrame,  arguments));
         return 0;
     } else if (asObject(arguments)->classInfo() == Arguments::info())
         length = asArguments(arguments)->length(callFrame);

@@ -801,6 +801,9 @@
     <ClCompile Include="..\runtime\RegExpPrototype.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\RuntimeType.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\SamplingCounter.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -2868,6 +2871,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\RuntimeFlags.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\RuntimeType.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\SamplingCounter.h">

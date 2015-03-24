@@ -43,7 +43,7 @@ PASS sour.closest("c, b, a") is c
 PASS sour.closest("b, a") is b
 PASS sour.closest("a") is a
 PASS document.closest is undefined
-PASS document.closest() threw exception TypeError: undefined is not a function (evaluating 'document.closest()').
+PASS document.closest() threw exception TypeError: document.closest is not a function. (In 'document.closest()', 'document.closest' is undefined).
 PASS theTarget.closest() threw exception TypeError: Not enough arguments.
 PASS theTarget.closest("") threw exception Error: SyntaxError: DOM Exception 12.
 PASS theTarget.closest(".123") threw exception Error: SyntaxError: DOM Exception 12.

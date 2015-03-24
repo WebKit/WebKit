@@ -26,6 +26,7 @@
 #ifndef TypeSet_h
 #define TypeSet_h
 
+#include "RuntimeType.h"
 #include "StructureSet.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
@@ -45,20 +46,6 @@ class TypeSet;
 }
 
 namespace JSC {
-
-class JSValue;
-
-enum RuntimeType : uint8_t {
-    TypeNothing            = 0x0,
-    TypeFunction           = 0x1,
-    TypeUndefined          = 0x2,
-    TypeNull               = 0x4,
-    TypeBoolean            = 0x8,
-    TypeMachineInt         = 0x10,
-    TypeNumber             = 0x20,
-    TypeString             = 0x40,
-    TypeObject             = 0x80
-};
 
 class StructureShape : public RefCounted<StructureShape> {
     friend class TypeSet;
@@ -98,7 +85,6 @@ public:
     static PassRefPtr<TypeSet> create() { return adoptRef(new TypeSet); }
     TypeSet();
     void addTypeInformation(RuntimeType, PassRefPtr<StructureShape>, Structure*);
-    static RuntimeType getRuntimeTypeForValue(JSValue);
     void invalidateCache();
     String dumpTypes() const;
     String displayName() const;

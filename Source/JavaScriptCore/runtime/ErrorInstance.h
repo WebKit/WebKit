@@ -22,7 +22,7 @@
 #define ErrorInstance_h
 
 #include "Interpreter.h"
-#include "JSObject.h"
+#include "RuntimeType.h"
 #include "SourceProvider.h"
 
 namespace JSC {
@@ -50,16 +50,24 @@ public:
         return create(exec->vm(), structure, message.isUndefined() ? String() : message.toString(exec)->value(exec), stackTrace);
     }
 
-    bool appendSourceToMessage() { return m_appendSourceToMessage; }
-    void setAppendSourceToMessage() { m_appendSourceToMessage = true; }
-    void clearAppendSourceToMessage() { m_appendSourceToMessage = false; }
+    enum SourceTextWhereErrorOccurred { FoundExactSource, FoundApproximateSource };
+    typedef String (*SourceAppender) (const String& originalMessage, const String& sourceText, RuntimeType, SourceTextWhereErrorOccurred);
+
+    bool hasSourceAppender() const { return !!m_sourceAppender; }
+    SourceAppender sourceAppender() const { return m_sourceAppender; }
+    void setSourceAppender(SourceAppender appender) { m_sourceAppender = appender; }
+    void clearSourceAppender() { m_sourceAppender = nullptr; }
+    void setRuntimeTypeForCause(RuntimeType type) { m_runtimeTypeForCause = type; }
+    RuntimeType runtimeTypeForCause() const { return m_runtimeTypeForCause; }
+    void clearRuntimeTypeForCause() { m_runtimeTypeForCause = TypeNothing; }
 
 protected:
     explicit ErrorInstance(VM&, Structure*);
 
     void finishCreation(VM&, const String&, Vector<StackFrame> = Vector<StackFrame>());
 
-    bool m_appendSourceToMessage;
+    SourceAppender m_sourceAppender { nullptr };
+    RuntimeType m_runtimeTypeForCause { TypeNothing };
 };
 
 } // namespace JSC

@@ -1,3 +1,41 @@
+2015-03-24  Saam Barati  <saambarati1@gmail.com>
+
+        Improve error messages in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=141869
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/NodeList/nodelist-item-call-as-function-expected.txt:
+        * fast/dom/call-a-constructor-as-a-function-expected.txt:
+        * fast/regex/dom/cross-frame-callable-expected.txt:
+        * fast/selectors/closest-general-expected.txt:
+        * http/tests/security/xss-DENIED-window-index-assign-expected.txt:
+        * js/dom/exception-thrown-from-new-expected.txt:
+        * js/exception-for-nonobject-expected.txt:
+        * js/exception-function-apply-expected.txt: Added.
+        * js/exception-function-apply.html: Added.
+        * js/exception-in-expected.txt: Added.
+        * js/exception-in.html: Added.
+        * js/exception-instanceof-expected.txt: Added.
+        * js/exception-instanceof.html: Added.
+        * js/instance-of-immediates-expected.txt:
+        * js/script-tests/exception-function-apply.js: Added.
+        * js/script-tests/exception-in.js: Added.
+        * js/script-tests/exception-instanceof.js: Added.
+        * js/typedarray-constructors-expected.txt:
+        * platform/mac-wk2/plugins/npruntime/object-from-destroyed-plugin-expected.txt:
+        * platform/mac-wk2/plugins/npruntime/object-from-destroyed-plugin-in-subframe-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-15c-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-15c-expected.txt:
+        * plugins/npruntime/object-from-destroyed-plugin-expected.txt:
+        * plugins/npruntime/object-from-destroyed-plugin-in-subframe-expected.txt:
+        * plugins/npruntime/plugin-scriptable-object-invoke-default-expected.txt:
+        * sputnik/Conformance/12_Statement/12.1_Block/S12.1_A4_T1-expected.txt:
+        * sputnik/Conformance/13_Function_Definition/S13_A17_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/S15.1_A2_T1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/S15.2.4_A3-expected.txt:
+        * svg/dom/svgpath-out-of-bounds-getPathSeg-expected.txt:
+
 2015-03-23  Yoav Weiss  <yoav@yoav.ws>
 
         Update empty image canvas tests and fix a related bug

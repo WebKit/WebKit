@@ -558,7 +558,7 @@ LLINT_SLOW_PATH_DECL(slow_path_check_has_instance)
             LLINT_RETURN_WITH_PC_ADJUSTMENT(result, pc[4].u.operand);
         }
     }
-    LLINT_THROW(createInvalidParameterError(exec, "instanceof", baseVal));
+    LLINT_THROW(createInvalidInstanceofParameterError(exec, baseVal));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_instanceof)
@@ -1305,10 +1305,13 @@ LLINT_SLOW_PATH_DECL(slow_path_throw)
 LLINT_SLOW_PATH_DECL(slow_path_throw_static_error)
 {
     LLINT_BEGIN();
+    JSValue errorMessageValue = LLINT_OP_C(1).jsValue();
+    RELEASE_ASSERT(errorMessageValue.isString());
+    String errorMessage = asString(errorMessageValue)->value(exec);
     if (pc[2].u.operand)
-        LLINT_THROW(createReferenceError(exec, errorDescriptionForValue(exec, LLINT_OP_C(1).jsValue())->value(exec)));
+        LLINT_THROW(createReferenceError(exec, errorMessage));
     else
-        LLINT_THROW(createTypeError(exec, errorDescriptionForValue(exec, LLINT_OP_C(1).jsValue())->value(exec)));
+        LLINT_THROW(createTypeError(exec, errorMessage));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_handle_watchdog_timer)

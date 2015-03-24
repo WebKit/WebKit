@@ -75,7 +75,7 @@ void TypeProfilerLog::processLogEntries(String reason)
                 shape = iter->value;
         }
 
-        RuntimeType type = TypeSet::getRuntimeTypeForValue(value);
+        RuntimeType type = runtimeTypeForValue(value);
         TypeLocation* location = entry->location;
         location->m_lastSeenType = type;
         if (location->m_globalTypeSet)

@@ -1,6 +1,6 @@
 S15.2.4_A3
 
-TypeError: Object is not a function (evaluating 'Object.prototype()')
+TypeError: Object.prototype is not a function. (In 'Object.prototype()', 'Object.prototype' is an instance of Object)
 PASS 
 
 TEST COMPLETE

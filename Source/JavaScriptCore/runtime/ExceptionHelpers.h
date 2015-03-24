@@ -29,6 +29,7 @@
 #ifndef ExceptionHelpers_h
 #define ExceptionHelpers_h
 
+#include "ErrorInstance.h"
 #include "JSObject.h"
 
 namespace JSC {
@@ -38,13 +39,15 @@ typedef JSObject* (*ErrorFactory)(ExecState*, const String&);
 JSObject* createTerminatedExecutionException(VM*);
 bool isTerminatedExecutionException(JSObject*);
 JS_EXPORT_PRIVATE bool isTerminatedExecutionException(JSValue);
-JS_EXPORT_PRIVATE JSObject* createError(ExecState*, ErrorFactory, JSValue, const String&);
+JS_EXPORT_PRIVATE JSObject* createError(ExecState*, ErrorFactory, JSValue, const String&, ErrorInstance::SourceAppender);
 JS_EXPORT_PRIVATE JSObject* createStackOverflowError(ExecState*);
 JSObject* createStackOverflowError(JSGlobalObject*);
 JSObject* createOutOfMemoryError(JSGlobalObject*);
 JSObject* createUndefinedVariableError(ExecState*, const Identifier&);
 JSObject* createNotAnObjectError(ExecState*, JSValue);
-JSObject* createInvalidParameterError(ExecState*, const char* op, JSValue);
+JSObject* createInvalidFunctionApplyParameterError(ExecState*, JSValue);
+JSObject* createInvalidInParameterError(ExecState*, JSValue);
+JSObject* createInvalidInstanceofParameterError(ExecState*, JSValue);
 JSObject* createNotAConstructorError(ExecState*, JSValue);
 JSObject* createNotAFunctionError(ExecState*, JSValue);
 JSObject* createErrorForInvalidGlobalAssignment(ExecState*, const String&);

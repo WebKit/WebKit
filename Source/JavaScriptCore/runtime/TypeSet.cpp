@@ -42,31 +42,6 @@ TypeSet::TypeSet()
 {
 }
 
-RuntimeType TypeSet::getRuntimeTypeForValue(JSValue v)
-{
-    RuntimeType ret;
-    if (v.isFunction())
-        ret = TypeFunction;
-    else if (v.isUndefined())
-        ret = TypeUndefined;
-    else if (v.isNull())
-        ret = TypeNull;
-    else if (v.isBoolean())
-        ret = TypeBoolean;
-    else if (v.isMachineInt())
-        ret = TypeMachineInt;
-    else if (v.isNumber())
-        ret = TypeNumber;
-    else if (v.isString())
-        ret = TypeString;
-    else if (v.isObject())
-        ret = TypeObject;
-    else
-        ret = TypeNothing;
-
-    return ret;
-}
-
 void TypeSet::addTypeInformation(RuntimeType type, PassRefPtr<StructureShape> prpNewShape, Structure* structure) 
 {
     RefPtr<StructureShape> newShape = prpNewShape;
