@@ -1,3 +1,16 @@
+2015-03-24  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS Selectors Level 4: enable case-insensitive attribute matching by default
+        https://bugs.webkit.org/show_bug.cgi?id=142960
+
+        Reviewed by Andreas Kling.
+
+        This test is imported from blink. That's the only test
+        they have for this feature.
+
+        * fast/css/attribute-selector-case-insensitive-expected.txt: Added.
+        * fast/css/attribute-selector-case-insensitive.html: Added.
+
 2015-03-24  Yoav Weiss  <yoav@yoav.ws>
 
         Stop image from displaying when src attribute is removed or emptied

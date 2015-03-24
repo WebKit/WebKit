@@ -1277,14 +1277,12 @@ attrib:
   ;
 
 attrib_flags:
-#if ENABLE_CSS_SELECTORS_LEVEL4
     IDENT maybe_space {
         if (UNLIKELY($1.length() != 1 || !isASCIIAlphaCaselessEqual($1[0], 'i')))
             YYERROR;
         $$ = true;
     }
     |
-#endif
     /* empty */ {
         $$ = false;
     }

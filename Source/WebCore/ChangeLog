@@ -1,3 +1,16 @@
+2015-03-24  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS Selectors Level 4: enable case-insensitive attribute matching by default
+        https://bugs.webkit.org/show_bug.cgi?id=142960
+
+        Reviewed by Andreas Kling.
+
+        All open issues have been resolved, enable the feature by default.
+
+        Test: fast/css/attribute-selector-case-insensitive.html
+
+        * css/CSSGrammar.y.in:
+
 2015-03-24  Dean Jackson  <dino@apple.com>
 
         MediaControls: Scrubber and Time displays have the incorrect blending
