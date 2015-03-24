@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 9: InvalidStateError: DOM Exception 11: An attempt was made to use an object that is not, or is no longer, usable.
+TEST PASSED
 

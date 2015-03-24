@@ -1751,11 +1751,12 @@ RefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageElement* 
     if (ec)
         return nullptr;
 
-    if (!image->complete())
+    CachedImage* cachedImage = image->cachedImage();
+    // If the image loading hasn't started or the image is not complete, it is not fully decodable.
+    if (!cachedImage || !image->complete())
         return nullptr;
 
-    CachedImage* cachedImage = image->cachedImage();
-    if (!cachedImage || cachedImage->status() == CachedResource::LoadError) {
+    if (cachedImage->status() == CachedResource::LoadError) {
         ec = INVALID_STATE_ERR;
         return nullptr;
     }
