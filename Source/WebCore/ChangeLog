@@ -1,3 +1,21 @@
+2015-03-24  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r181671): Caused Timer-related crashes on iOS / WK1
+        https://bugs.webkit.org/show_bug.cgi?id=143025
+
+        Reviewed by Andy Estes.
+
+        Call CFRunLoopAddTimer() on WebThreadRunLoop() instead of
+        CFRunLoopGetCurrent() for iOS, as we did before r181671.
+
+        I inadvertently changed this in r181671 when merging the Mac
+        and iOS implementations.
+
+        No new tests, already covered by existing tests.
+
+        * platform/cf/SharedTimerCF.mm:
+        (WebCore::setSharedTimerFireInterval):
+
 2015-03-24  Dan Bernstein  <mitz@apple.com>
 
         WebCore part of <rdar://problem/20282863> Transforms are flattened in snapshots of on-screen WKWebViews

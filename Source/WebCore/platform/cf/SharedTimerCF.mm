@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 #import "PowerObserverMac.h"
 #elif PLATFORM(IOS)
+#import "WebCoreThread.h"
 #import "WebCoreThreadRun.h"
 #endif
 
@@ -106,7 +107,11 @@ void setSharedTimerFireInterval(double interval)
     CFAbsoluteTime fireDate = CFAbsoluteTimeGetCurrent() + interval;
     if (!sharedTimer) {
         sharedTimer = CFRunLoopTimerCreate(nullptr, fireDate, kCFTimeIntervalDistantFuture, 0, 0, timerFired, nullptr);
+#if PLATFORM(IOS)
+        CFRunLoopAddTimer(WebThreadRunLoop(), sharedTimer, kCFRunLoopCommonModes);
+#else
         CFRunLoopAddTimer(CFRunLoopGetCurrent(), sharedTimer, kCFRunLoopCommonModes);
+#endif
 
         setupPowerObserver();
 
