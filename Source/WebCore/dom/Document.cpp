@@ -1927,7 +1927,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
     updateStyleIfNeeded();
 
     RenderObject* renderer = element.renderer();
-    if (!renderer || renderer->needsLayout())
+    if (!renderer || renderer->needsLayout() || renderer->isRenderRegion()) // Needing layout or having auto height regions result in giving up.
         requireFullLayout = true;
 
     bool isVertical = renderer && !renderer->isHorizontalWritingMode();

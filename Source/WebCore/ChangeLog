@@ -1,3 +1,15 @@
+2015-03-24  David Hyatt  <hyatt@apple.com>
+
+        Disable layout dimensions optimization for RenderRegions
+        https://bugs.webkit.org/show_bug.cgi?id=143017
+
+        Reviewed by Dean Jackson.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayoutIfDimensionsOutOfDate):
+        Turn off the optimization for regions, since auto height regions can change size
+        without needing a layout.
+
 2015-03-24  Beth Dakin  <bdakin@apple.com>
 
         Add events related to force click gesture
