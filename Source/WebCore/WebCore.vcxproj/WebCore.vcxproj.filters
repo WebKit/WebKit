@@ -3378,6 +3378,9 @@
     <ClCompile Include="..\dom\WebKitAnimationEvent.cpp">
       <Filter>dom</Filter>
     </ClCompile>
+    <ClCompile Include="..\dom\WebKitMouseForceEvent.cpp">
+      <Filter>dom</Filter>
+    </ClCompile>
     <ClCompile Include="..\dom\WebKitNamedFlow.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -6206,6 +6209,9 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSTransformValue.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitMouseForceEvent.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitNamedFlow.cpp">
@@ -10470,6 +10476,9 @@
     <ClInclude Include="..\dom\WebKitAnimationEvent.h">
       <Filter>dom</Filter>
     </ClInclude>
+    <ClInclude Include="..\dom\WebKitMouseForceEvent.h">
+      <Filter>dom</Filter>
+    </ClInclude>
     <ClInclude Include="..\dom\WebKitNamedFlow.h">
       <Filter>dom</Filter>
     </ClInclude>
@@ -13572,6 +13581,9 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSTransformValue.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitMouseForceEvent.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitNamedFlow.h">

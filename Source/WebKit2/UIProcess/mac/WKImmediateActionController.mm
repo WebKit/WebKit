@@ -53,6 +53,13 @@ using namespace WebKit;
 @interface WKImmediateActionController () <QLPreviewMenuItemDelegate>
 @end
 
+@interface WebAnimationController : NSObject <NSImmediateActionAnimationController> {
+}
+@end
+
+@implementation WebAnimationController
+@end
+
 @implementation WKImmediateActionController
 
 - (instancetype)initWithPage:(WebPageProxy&)page view:(WKView *)wkView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -205,6 +212,11 @@ using namespace WebKit;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
+    if (_hitTestResult.contentPreventsDefault) {
+        _page->immediateActionDidUpdate([immediateActionRecognizer animationProgress]);
+        return;
+    }
+
     _page->setTextIndicatorAnimationProgress([immediateActionRecognizer animationProgress]);
 }
 
@@ -249,6 +261,11 @@ using namespace WebKit;
 
 - (id <NSImmediateActionAnimationController>)_defaultAnimationController
 {
+    if (_hitTestResult.contentPreventsDefault) {
+        RetainPtr<WebAnimationController> dummyController = [[WebAnimationController alloc] init];
+        return dummyController.get();
+    }
+
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
 
     if (!hitTestResult)
@@ -288,6 +305,11 @@ using namespace WebKit;
     _type = kWKImmediateActionNone;
 
     id <NSImmediateActionAnimationController> defaultAnimationController = [self _defaultAnimationController];
+
+    if (_hitTestResult.contentPreventsDefault) {
+        [_immediateActionRecognizer.get() setAnimationController:defaultAnimationController];
+        return;
+    }
 
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
     id customClientAnimationController = [_wkView _immediateActionAnimationControllerForHitTestResult:toAPI(hitTestResult.get()) withType:_type userData:toAPI(_userData.get())];

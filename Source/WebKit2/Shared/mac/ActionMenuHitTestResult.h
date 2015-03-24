@@ -65,6 +65,8 @@ struct ActionMenuHitTestResult {
     DictionaryPopupInfo dictionaryPopupInfo;
 
     RefPtr<WebCore::TextIndicator> linkTextIndicator;
+
+    bool contentPreventsDefault;
 };
 
 } // namespace WebKit

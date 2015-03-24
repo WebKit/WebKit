@@ -232,6 +232,12 @@ namespace WebCore {
     macro(webkitkeyadded) \
     macro(webkitkeyerror) \
     macro(webkitkeymessage) \
+    macro(webkitmouseforcecancelled) \
+    macro(webkitmouseforcechanged) \
+    macro(webkitmouseforceclick) \
+    macro(webkitmouseforcedown) \
+    macro(webkitmouseforcewillbegin) \
+    macro(webkitmouseforceup) \
     macro(webkitneedkey) \
     macro(webkitnetworkinfochange) \
     macro(webkitplaybacktargetavailabilitychanged) \

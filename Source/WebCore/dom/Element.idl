@@ -254,6 +254,12 @@
     [NotEnumerable] attribute EventHandler onwebkitkeyadded;
     [NotEnumerable] attribute EventHandler onwebkitkeyerror;
     [NotEnumerable] attribute EventHandler onwebkitkeymessage;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforcecancelled;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforcechanged;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforceclick;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforcedown;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforcewillbegin;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforceup;
     [NotEnumerable] attribute EventHandler onwebkitneedkey;
     [NotEnumerable] attribute EventHandler onwebkitplaybacktargetavailabilitychanged;
     [NotEnumerable] attribute EventHandler onwebkitpresentationmodechanged;

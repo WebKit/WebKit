@@ -270,6 +270,12 @@ onwebkitfullscreenerror
 onwebkitkeyadded
 onwebkitkeyerror
 onwebkitkeymessage
+onwebkitmouseforcecancelled
+onwebkitmouseforcechanged
+onwebkitmouseforceclick
+onwebkitmouseforcedown
+onwebkitmouseforceup
+onwebkitmouseforcewillbegin
 onwebkitneedkey
 onwebkitsourceclose
 onwebkitsourceended

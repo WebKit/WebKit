@@ -76,6 +76,8 @@ void ActionMenuHitTestResult::encode(IPC::ArgumentEncoder& encoder) const
     encoder << hasLinkTextIndicator;
     if (hasLinkTextIndicator)
         encoder << linkTextIndicator->data();
+
+    encoder << contentPreventsDefault;
 }
 
 bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHitTestResult& actionMenuHitTestResult)
@@ -155,6 +157,9 @@ bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHi
 
         actionMenuHitTestResult.linkTextIndicator = WebCore::TextIndicator::create(indicatorData);
     }
+
+    if (!decoder.decode(actionMenuHitTestResult.contentPreventsDefault))
+        return false;
 
     return true;
 }

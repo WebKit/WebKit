@@ -1,3 +1,55 @@
+2015-03-24  Beth Dakin  <bdakin@apple.com>
+
+        Add events related to force click gesture
+        https://bugs.webkit.org/show_bug.cgi?id=142836
+        -and corresponding-
+        rdar://problem/20210239
+
+        Reviewed by Dean Jackson.
+
+        ActionMenuHitTestResult has a new bool indicating whether to not the HitTestResult 
+        will prevent default. 
+        * Shared/mac/ActionMenuHitTestResult.h:
+        * Shared/mac/ActionMenuHitTestResult.mm:
+        (WebKit::ActionMenuHitTestResult::encode):
+        (WebKit::ActionMenuHitTestResult::decode):
+
+        Send immediateActionDidUpdate and the normalized force over the the WebProcess.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::immediateActionDidUpdate):
+        * UIProcess/WebPageProxy.h:
+
+        We need a dummy animation controller when web content is overriding the default 
+        behavior.
+        * UIProcess/mac/WKImmediateActionController.mm:
+
+        Send along the update information.
+        (-[WKImmediateActionController immediateActionRecognizerDidUpdateAnimation:]):
+
+        Use the dummy animation controller if default has been prevented.
+        (-[WKImmediateActionController _defaultAnimationController]):
+        (-[WKImmediateActionController _updateImmediateActionItem]):
+
+        Keep track of whether m_lastActionMenuHitTes prevented the default immediate 
+        action behavior.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Call dispatchMouseForceMayBegin() at hit test time.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performActionMenuHitTestAtLocation):
+
+        Call dispatchMouseForceChanged() if appropriate.
+        (WebKit::WebPage::immediateActionDidUpdate):
+
+        Call dispatchMouseForceCancelled() if appropriate.
+        (WebKit::WebPage::immediateActionDidCancel):
+
+        Call dispatchMouseForceDown() if appropriate.
+        (WebKit::WebPage::immediateActionDidComplete):
+
 2015-03-24  Anders Carlsson  <andersca@apple.com>
 
         Fix designated initializer violations

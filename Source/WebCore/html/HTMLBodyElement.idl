@@ -45,6 +45,12 @@ interface HTMLBodyElement : HTMLElement {
     [NotEnumerable, WindowEventHandler] attribute EventHandler onscroll;
     [NotEnumerable, WindowEventHandler] attribute EventHandler onstorage;
     [NotEnumerable, WindowEventHandler] attribute EventHandler onunload;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitmouseforcecancelled;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitmouseforcechanged;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitmouseforceclick;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitmouseforcedown;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitmouseforcewillbegin;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitmouseforceup;
     [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitwillrevealbottom;
     [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitwillrevealleft;
     [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitwillrevealright;

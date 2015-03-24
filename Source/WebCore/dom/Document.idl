@@ -296,6 +296,12 @@
     [NotEnumerable] attribute EventHandler ontouchstart;
     [NotEnumerable] attribute EventHandler onwebkitfullscreenchange;
     [NotEnumerable] attribute EventHandler onwebkitfullscreenerror;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforcecancelled;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforcechanged;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforceclick;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforcedown;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforceup;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforcewillbegin;
     [NotEnumerable] attribute EventHandler onwebkitwillrevealbottom;
     [NotEnumerable] attribute EventHandler onwebkitwillrevealleft;
     [NotEnumerable] attribute EventHandler onwebkitwillrevealright;

@@ -78,6 +78,7 @@
 #include "StyleResolver.h"
 #include "TextIterator.h"
 #include "VoidCallback.h"
+#include "WebKitMouseForceEvent.h"
 #include "WheelEvent.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
@@ -2105,6 +2106,86 @@ void Element::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
 
     EventDispatcher::dispatchEvent(this, FocusEvent::create(eventNames().blurEvent, false, false, document().defaultView(), 0, WTF::move(newFocusedElement)));
 }
+
+#if ENABLE(MOUSE_FORCE_EVENTS)
+bool Element::dispatchMouseForceWillBegin()
+{
+    Frame* frame = document().frame();
+    if (!frame)
+        return false;
+
+    PlatformMouseEvent platformMouseEvent(frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), NoButton, PlatformEvent::NoType, 1, false, false, false, false, WTF::currentTime());
+    RefPtr<Event> mouseForceWillBeginEvent =  WebKitMouseForceEvent::create(eventNames().webkitmouseforcewillbeginEvent, 0, platformMouseEvent, document().defaultView());
+    mouseForceWillBeginEvent->setTarget(this);
+    dispatchEvent(mouseForceWillBeginEvent);
+
+    if (mouseForceWillBeginEvent->defaultHandled() || mouseForceWillBeginEvent->defaultPrevented())
+        return true;
+    return false;
+}
+
+void Element::dispatchMouseForceChanged(float force, const PlatformMouseEvent& platformMouseEvent)
+{
+    RefPtr<WebKitMouseForceEvent> mouseForceChangedEvent = WebKitMouseForceEvent::create(eventNames().webkitmouseforcechangedEvent, force, platformMouseEvent, document().defaultView());
+    mouseForceChangedEvent->setTarget(this);
+    dispatchEvent(mouseForceChangedEvent);
+}
+
+void Element::dispatchMouseForceDown(const PlatformMouseEvent& platformMouseEvent)
+{
+    RefPtr<Event> mouseForceDownEvent = WebKitMouseForceEvent::create(eventNames().webkitmouseforcedownEvent, 1, platformMouseEvent, document().defaultView());
+    mouseForceDownEvent->setTarget(this);
+    dispatchEvent(mouseForceDownEvent);
+}
+
+void Element::dispatchMouseForceUp(const PlatformMouseEvent& platformMouseEvent)
+{
+    RefPtr<Event> mouseForceUpEvent = WebKitMouseForceEvent::create(eventNames().webkitmouseforceupEvent, 1, platformMouseEvent, document().defaultView());
+    mouseForceUpEvent->setTarget(this);
+    dispatchEvent(mouseForceUpEvent);
+}
+
+void Element::dispatchMouseForceClick(const PlatformMouseEvent& platformMouseEvent)
+{
+    RefPtr<Event> mouseForceClickEvent = WebKitMouseForceEvent::create(eventNames().webkitmouseforceclickEvent, 1, platformMouseEvent, document().defaultView());
+    mouseForceClickEvent->setTarget(this);
+    dispatchEvent(mouseForceClickEvent);
+}
+
+void Element::dispatchMouseForceCancelled(const PlatformMouseEvent& platformMouseEvent)
+{
+    RefPtr<Event> mouseForceCancelledEvent = WebKitMouseForceEvent::create(eventNames().webkitmouseforcecancelledEvent, 0, platformMouseEvent, document().defaultView());
+    mouseForceCancelledEvent->setTarget(this);
+    dispatchEvent(mouseForceCancelledEvent);
+}
+
+#else // #if ENABLE(MOUSE_FORCE_EVENTS)
+
+bool Element::dispatchMouseForceWillBegin()
+{
+    return false;
+}
+
+void Element::dispatchMouseForceChanged(float, const PlatformMouseEvent&)
+{
+}
+
+void Element::dispatchMouseForceDown(const PlatformMouseEvent&)
+{
+}
+
+void Element::dispatchMouseForceUp(const PlatformMouseEvent&)
+{
+}
+
+void Element::dispatchMouseForceClick(const PlatformMouseEvent&)
+{
+}
+
+void Element::dispatchMouseForceCancelled(const PlatformMouseEvent&)
+{
+}
+#endif // #if ENABLE(MOUSE_FORCE_EVENTS)
 
 void Element::mergeWithNextTextNode(Text& node, ExceptionCode& ec)
 {

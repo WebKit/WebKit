@@ -1,3 +1,87 @@
+2015-03-24  Beth Dakin  <bdakin@apple.com>
+
+        Add events related to force click gesture
+        https://bugs.webkit.org/show_bug.cgi?id=142836
+        -and corresponding-
+        rdar://problem/20210239
+
+        Reviewed by Dean Jackson.
+
+        This patch adds six new events for the force click gesture:
+
+        webkitmouseforcewillbegin -> Event is sent just before mousedown to indicate that 
+        force can be perceived if the user presses any harder. The author should prevent 
+        default on this event to both prevent the user agent’s default force click 
+        features and to receive the other 5 events.
+
+        webkitmouseforcechanged -> This event fires whenever force changes between the 
+        mousedown and mouseup. It is a new type of mouse event that includes a force 
+        variable which is a normalized number between 0 (corresponds to click) and 1 
+        (corresponds to force click). In this patch, I have only added code to send this 
+        event between mousedown and mouseforcedown, but as a followup patch, we plan to 
+        send it through mouseup.
+
+        webkitmouseforcecancelled -> If the user releases their finger from the trackpad 
+        after pressing hard enough to send webkitmouseforcewillbegin events but not hard 
+        enough to force click, this event will be sent to indicate that the user bailed 
+        out on the gesture.
+
+        webkitmouseforcedown -> The down part of the force click.
+
+        webkitmouseforceup -> The up part of the force click. This event is added in this 
+        patch, but does not yet fire. That is work for a follow-up patch.
+
+        webkitmouseforceclick -> The equivalent of the click event for the force click. 
+        Should fire just after webkitmouseforceup. This event is added in this patch, but 
+        does not yet fire. That is work for a follow-up patch.
+
+        Add new files for WebKitMouseForceEvent to build systems.
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Plumbing for new events.
+        * dom/Document.idl:
+
+        Code to dispatch the new events. Currently the code that calls these functions is 
+        in WebKit2.
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseForceWillBegin):
+        (WebCore::Element::dispatchMouseForceChanged):
+        (WebCore::Element::dispatchMouseForceDown):
+        (WebCore::Element::dispatchMouseForceUp):
+        (WebCore::Element::dispatchMouseForceClick):
+        (WebCore::Element::dispatchMouseForceCancelled):
+        * dom/Element.h:
+
+        More plumbing.
+        * dom/Element.idl:
+        * dom/EventNames.h:
+        * dom/EventNames.in:
+
+        Our new type of mouse event that includes force.
+        * dom/WebKitMouseForceEvent.cpp: Added.
+        (WebCore::WebKitMouseForceEventInit::WebKitMouseForceEventInit):
+        (WebCore::WebKitMouseForceEvent::WebKitMouseForceEvent):
+        (WebCore::WebKitMouseForceEvent::~WebKitMouseForceEvent):
+        (WebCore::WebKitMouseForceEvent::eventInterface):
+        * dom/WebKitMouseForceEvent.h: Added.
+        * dom/WebKitMouseForceEvent.idl: Added.
+
+        More plumbing.
+        * html/HTMLAttributeNames.in:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::createWindowEventHandlerNameMap):
+        * html/HTMLBodyElement.idl:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createEventHandlerNameMap):
+        * page/DOMWindow.idl:
+        * page/EventHandler.h:
+        (WebCore::EventHandler::lastMouseDownEvent):
+
 2015-03-24  Anders Carlsson  <andersca@apple.com>
 
         Fix designated initializer violations

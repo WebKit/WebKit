@@ -988,6 +988,7 @@ public:
     void selectLastActionMenuRange();
     void focusAndSelectLastActionMenuHitTestResult();
 
+    void immediateActionDidUpdate(float force);
     void immediateActionDidCancel();
     void immediateActionDidComplete();
 

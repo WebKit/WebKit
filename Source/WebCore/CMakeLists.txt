@@ -427,6 +427,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/TreeWalker.idl
     dom/UIEvent.idl
     dom/WebKitAnimationEvent.idl
+    dom/WebKitMouseForceEvent.idl
     dom/WebKitNamedFlow.idl
     dom/WebKitTransitionEvent.idl
     dom/WheelEvent.idl
@@ -1452,6 +1453,7 @@ set(WebCore_SOURCES
     dom/ViewportArguments.cpp
     dom/VisitedLinkState.cpp
     dom/WebKitAnimationEvent.cpp
+    dom/WebKitMouseForceEvent.cpp
     dom/WebKitNamedFlow.cpp
     dom/WebKitTransitionEvent.cpp
     dom/WheelEvent.cpp

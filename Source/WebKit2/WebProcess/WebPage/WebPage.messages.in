@@ -405,6 +405,7 @@ messages -> WebPage LegacyReceiver {
     PerformActionMenuHitTestAtLocation(WebCore::FloatPoint location, bool forImmediateAction)
     SelectLastActionMenuRange()
     FocusAndSelectLastActionMenuHitTestResult()
+    ImmediateActionDidUpdate(float force)
     ImmediateActionDidCancel()
     ImmediateActionDidComplete()
     DataDetectorsDidPresentUI(WebCore::PageOverlay::PageOverlayID pageOverlay)

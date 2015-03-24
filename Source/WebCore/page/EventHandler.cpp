@@ -4022,6 +4022,11 @@ void EventHandler::setLastKnownMousePosition(const PlatformMouseEvent& event)
     m_lastKnownMouseGlobalPosition = event.globalPosition();
 }
 
+const PlatformMouseEvent& EventHandler::lastMouseDownEvent() const
+{
+    return m_mouseDown;
+}
+
 void EventHandler::setImmediateActionStage(ImmediateActionStage stage)
 {
     m_immediateActionStage = stage;

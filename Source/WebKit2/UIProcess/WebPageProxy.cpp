@@ -5570,6 +5570,11 @@ void WebPageProxy::focusAndSelectLastActionMenuHitTestResult()
     m_process->send(Messages::WebPage::FocusAndSelectLastActionMenuHitTestResult(), m_pageID);
 }
 
+void WebPageProxy::immediateActionDidUpdate(float force)
+{
+    m_process->send(Messages::WebPage::ImmediateActionDidUpdate(force), m_pageID);
+}
+
 void WebPageProxy::immediateActionDidCancel()
 {
     m_process->send(Messages::WebPage::ImmediateActionDidCancel(), m_pageID);

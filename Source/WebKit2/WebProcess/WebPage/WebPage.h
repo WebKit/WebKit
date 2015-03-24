@@ -1084,6 +1084,7 @@ private:
     PassRefPtr<WebCore::Range> lookupTextAtLocation(WebCore::FloatPoint, NSDictionary **options);
     void selectLastActionMenuRange();
     void focusAndSelectLastActionMenuHitTestResult();
+    void immediateActionDidUpdate(float force);
     void immediateActionDidCancel();
     void immediateActionDidComplete();
     void setFont(const String& fontFamily, double fontSize, uint64_t fontTraits);
@@ -1341,6 +1342,7 @@ private:
     RefPtr<WebCore::Range> m_lastActionMenuRangeForSelection;
     WebCore::HitTestResult m_lastActionMenuHitTestResult;
     RefPtr<WebPageOverlay> m_lastActionMenuHitPageOverlay;
+    bool m_lastActionMenuHitTestPreventsDefault;
 #endif
 
     bool m_mainFrameProgressCompleted;

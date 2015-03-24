@@ -1,3 +1,16 @@
+2015-03-24  Beth Dakin  <bdakin@apple.com>
+
+        Add events related to force click gesture
+        https://bugs.webkit.org/show_bug.cgi?id=142836
+        -and corresponding-
+        rdar://problem/20210239
+
+        Reviewed by Dean Jackson.
+
+        * fast/dom/event-handler-attributes-expected.txt:
+        * fast/dom/event-handler-attributes.html:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
 2015-03-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Responses with 404 HTTP Status Code should be cacheable by default

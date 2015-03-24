@@ -1,3 +1,15 @@
+2015-03-24  Beth Dakin  <bdakin@apple.com>
+
+        Add events related to force click gesture
+        https://bugs.webkit.org/show_bug.cgi?id=142836
+        -and corresponding-
+        rdar://problem/20210239
+
+        Reviewed by Dean Jackson.
+
+        New enable flag for the events.
+        * wtf/FeatureDefines.h:
+
 2015-03-23  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should have a low-cost asynchronous disassembler

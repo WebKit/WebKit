@@ -28,6 +28,7 @@ TransitionEvent
 UIEvent
 UIEvents interfaceName=UIEvent
 WebKitAnimationEvent
+WebKitMouseForceEvent
 WebKitTransitionEvent
 WheelEvent
 XMLHttpRequestProgressEvent
