@@ -1,3 +1,21 @@
+2015-03-24  Mark Lam  <mark.lam@apple.com>
+
+        The ExecutionTimeLimit test should use its own JSGlobalContextRef.
+        <https://webkit.org/b/143024>
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, the ExecutionTimeLimit test is using a JSGlobalContextRef
+        passed in from testapi.c.  It should create its own for better
+        encapsulation of the test.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (currentCPUTimeAsJSFunctionCallback):
+        (testExecutionTimeLimit):
+        * API/tests/ExecutionTimeLimitTest.h:
+        * API/tests/testapi.c:
+        (main):
+
 2015-03-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         ES6: Object Literal Methods toString is missing method name

@@ -28,6 +28,7 @@
 
 #if OS(DARWIN)
 
+#include "JSContextRefPrivate.h"
 #include "JavaScriptCore.h"
 
 #include <mach/mach.h>
@@ -35,7 +36,7 @@
 #include <stdio.h>
 #include <sys/time.h>
 
-static JSGlobalContextRef* currentContextForAssertion = nullptr;
+static JSGlobalContextRef context = nullptr;
 
 static double currentCPUTime()
 {
@@ -61,7 +62,7 @@ static JSValueRef currentCPUTimeAsJSFunctionCallback(JSContextRef ctx, JSObjectR
     UNUSED_PARAM(arguments);
     UNUSED_PARAM(exception);
     
-    ASSERT(JSContextGetGlobalContext(ctx) == *currentContextForAssertion);
+    ASSERT(JSContextGetGlobalContext(ctx) == context);
     return JSValueMakeNumber(ctx, currentCPUTime());
 }
 
@@ -97,10 +98,9 @@ static bool extendTerminateCallback(JSContextRef ctx, void* context)
 }
 
 
-int testExecutionTimeLimit(JSGlobalContextRef* globalContext)
+int testExecutionTimeLimit()
 {
-    JSGlobalContextRef& context = *globalContext;
-    currentContextForAssertion = globalContext;
+    context = JSGlobalContextCreateInGroup(nullptr, nullptr);
 
     JSContextGroupRef contextGroup = JSContextGetGroup(context);
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
@@ -261,6 +261,7 @@ int testExecutionTimeLimit(JSGlobalContextRef* globalContext)
         }
     }
 
+    JSGlobalContextRelease(context);
     return failed;
 }
 

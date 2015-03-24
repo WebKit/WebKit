@@ -1857,7 +1857,7 @@ int main(int argc, char* argv[])
     }
 
 #if OS(DARWIN)
-    failed = testExecutionTimeLimit(&context) || failed;
+    failed = testExecutionTimeLimit() || failed;
 #endif /* OS(DARWIN) */
     failed = testGlobalContextWithFinalizer() || failed;
 

@@ -26,15 +26,13 @@
 #ifndef ExecutionTimeLimitTest_h
 #define ExecutionTimeLimitTest_h
 
-#include "JSContextRefPrivate.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* Returns 1 if failures were encountered.  Else, returns 0. */
-int testExecutionTimeLimit(JSGlobalContextRef*);
-    
+int testExecutionTimeLimit();
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
