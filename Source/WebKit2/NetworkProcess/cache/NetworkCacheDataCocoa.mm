@@ -49,7 +49,7 @@ Data::Data(DispatchPtr<dispatch_data_t> dispatchData, Backing backing)
 
 const uint8_t* Data::data() const
 {
-    if (!m_data) {
+    if (!m_data && m_dispatchData) {
         const void* data;
         size_t size;
         m_dispatchData = adoptDispatch(dispatch_data_create_map(m_dispatchData.get(), &data, &size));

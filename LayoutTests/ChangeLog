@@ -1,5 +1,20 @@
 2015-03-24  Chris Dumez  <cdumez@apple.com>
 
+        [WK2] NetworkCache retrievals fail for entries with no body
+        https://bugs.webkit.org/show_bug.cgi?id=142979
+        <rdar://problem/20264100>
+
+        Reviewed by Antti Koivisto.
+
+        Add network disk cache validation test for resources that have no body
+        (only headers).
+
+        * http/tests/cache/disk-cache/disk-cache-validation-no-body-expected.txt: Added.
+        * http/tests/cache/disk-cache/disk-cache-validation-no-body.html: Added.
+        * http/tests/cache/disk-cache/resources/generate-response-no-body.cgi: Added.
+
+2015-03-24  Chris Dumez  <cdumez@apple.com>
+
         [WK2] The WebKit network cache does not cache responses with "Content-Disposition: attachment" header
         https://bugs.webkit.org/show_bug.cgi?id=142989
         <rdar://problem/20265992>

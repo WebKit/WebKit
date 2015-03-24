@@ -212,18 +212,22 @@ static std::unique_ptr<Storage::Entry> decodeEntry(const Data& fileData, int fd,
 
     if (metaData.key != key)
         return nullptr;
-    if (metaData.bodyOffset + metaData.bodySize != fileData.size())
-        return nullptr;
 
-    auto bodyData = mapFile(fd, metaData.bodyOffset, metaData.bodySize);
-    if (bodyData.isNull()) {
-        LOG(NetworkCacheStorage, "(NetworkProcess) map failed");
-        return nullptr;
-    }
+    Data bodyData;
+    if (metaData.bodySize) {
+        if (metaData.bodyOffset + metaData.bodySize != fileData.size())
+            return nullptr;
 
-    if (metaData.bodyChecksum != hashData(bodyData)) {
-        LOG(NetworkCacheStorage, "(NetworkProcess) data checksum mismatch");
-        return nullptr;
+        bodyData = mapFile(fd, metaData.bodyOffset, metaData.bodySize);
+        if (bodyData.isNull()) {
+            LOG(NetworkCacheStorage, "(NetworkProcess) map failed");
+            return nullptr;
+        }
+
+        if (metaData.bodyChecksum != hashData(bodyData)) {
+            LOG(NetworkCacheStorage, "(NetworkProcess) data checksum mismatch");
+            return nullptr;
+        }
     }
 
     return std::make_unique<Storage::Entry>(Storage::Entry {

@@ -1,5 +1,37 @@
 2015-03-24  Chris Dumez  <cdumez@apple.com>
 
+        [WK2] NetworkCache retrievals fail for entries with no body
+        https://bugs.webkit.org/show_bug.cgi?id=142979
+        <rdar://problem/20264100>
+
+        Reviewed by Antti Koivisto.
+
+        NetworkCache retrievals were failing for entries with no body because
+        decodeEntry() doesn't correctly handle this case. In particular, the
+        following check fails:
+        "metaData.bodyOffset + metaData.bodySize == fileData.size()".
+        This is because bodyOffset is pageSize-aligned.
+
+        As a result, the following resource on apple.com is stored in the cache
+        but we fail to reuse it and reload it from the network every time:
+        http://images.apple.com/home/styles/promos.css
+
+        This patch updates decodeEntry() to create a null Data object for the
+        body if bodySize is 0.
+
+        * NetworkProcess/cache/NetworkCacheDataCocoa.mm:
+        (WebKit::NetworkCache::Data::data):
+        Do not attempt to initialize m_data if m_dispatchData is null as the
+        call to dispatch_data_create_map() would then crash. We now return
+        null in this case. This is needed as decodeStorageEntry() in
+        NetworkCache.cpp constructs a SharedBuffer from
+        storageEntry.body.data() and the body may be null.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::decodeEntry):
+
+2015-03-24  Chris Dumez  <cdumez@apple.com>
+
         [WK2] The WebKit network cache does not cache responses with "Content-Disposition: attachment" header
         https://bugs.webkit.org/show_bug.cgi?id=142989
         <rdar://problem/20265992>
