@@ -57,6 +57,21 @@
 #endif // PLATFORM(IOS)
 }
 
+- (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration
+{
+    if (!(self = [super init]))
+        return nil;
+
+#if PLATFORM(IOS)
+    // FIXME: Remove once <rdar://problem/15256572> is fixed.
+    InitWebCoreThreadSystemInterface();
+#endif
+
+    API::Object::constructInWrapper<WebKit::WebProcessPool>(self, *configuration->_processPoolConfiguration);
+
+    return self;
+}
+
 - (instancetype)init
 {
     return [self _initWithConfiguration:adoptNS([[_WKProcessPoolConfiguration alloc] init]).get()];
@@ -111,21 +126,6 @@
         url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
 
     return [url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES];
-}
-
-- (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration
-{
-    if (!(self = [super init]))
-        return nil;
-
-#if PLATFORM(IOS)
-    // FIXME: Remove once <rdar://problem/15256572> is fixed.
-    InitWebCoreThreadSystemInterface();
-#endif
-
-    API::Object::constructInWrapper<WebKit::WebProcessPool>(self, *configuration->_processPoolConfiguration);
-
-    return self;
 }
 
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host

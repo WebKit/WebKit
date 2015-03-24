@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2009, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,9 @@ WEBKIT_CLASS_AVAILABLE_MAC(10_4)
 @private
     DOMObjectInternal *_internal;
 }
+
+- (instancetype)init NS_UNAVAILABLE;
+
 @end
 
 @interface DOMObject (DOMLinkStyle)

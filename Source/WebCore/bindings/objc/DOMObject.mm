@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006-2009, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth <speth@end.com>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
@@ -42,10 +42,10 @@
 @implementation DOMObject
 
 // Prevent creation of DOM objects by clients who just "[[xxx alloc] init]".
-- (id)init
+- (instancetype)init
 {
     [NSException raise:NSGenericException format:@"+[%@ init]: should never be used", NSStringFromClass([self class])];
-    [self release];
+
     return nil;
 }
 

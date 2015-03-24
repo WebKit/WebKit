@@ -64,7 +64,7 @@ static BackForwardListMap& backForwardLists()
     return staticBackForwardLists;
 }
 
-@implementation WebBackForwardList (WebBackForwardListInternal)
+@implementation WebBackForwardList
 
 BackForwardList* core(WebBackForwardList *webBackForwardList)
 {
@@ -96,10 +96,6 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     backForwardLists().set(core(self), self);
     return self;
 }
-
-@end
-
-@implementation WebBackForwardList
 
 + (void)initialize
 {

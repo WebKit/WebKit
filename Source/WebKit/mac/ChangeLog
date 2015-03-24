@@ -1,3 +1,17 @@
+2015-03-24  Anders Carlsson  <andersca@apple.com>
+
+        Fix designated initializer violations
+        https://bugs.webkit.org/show_bug.cgi?id=143016
+        rdar://problem/20268858
+
+        Reviewed by Dan Bernstein.
+
+        Move -[WebBackForwardList initWithBackForwardList:] to the implementation instead of a category since
+        nobody calls it outside of WebBackForwardList.mm.
+
+        * History/WebBackForwardList.mm:
+        * History/WebBackForwardListInternal.h:
+
 2015-03-23  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (Yosemite): WKView visibility notifications are messed up

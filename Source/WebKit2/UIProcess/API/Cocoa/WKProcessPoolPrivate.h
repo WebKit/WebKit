@@ -30,9 +30,11 @@
 @class _WKProcessPoolConfiguration;
 @protocol _WKDownloadDelegate;
 
-@interface WKProcessPool (WKPrivate)
+@interface WKProcessPool ()
+- (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration __attribute__((objc_method_family(init))) WK_DESIGNATED_INITIALIZER;
+@end
 
-- (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration __attribute__((objc_method_family(init)));
+@interface WKProcessPool (WKPrivate)
 
 @property (nonatomic, readonly) _WKProcessPoolConfiguration *_configuration;
 

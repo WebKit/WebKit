@@ -36,6 +36,6 @@ class BackForwardList;
 WebCore::BackForwardList* core(WebBackForwardList *);
 WebBackForwardList *kit(WebCore::BackForwardList*);
 
-@interface WebBackForwardList (WebBackForwardListInternal)
+@interface WebBackForwardList ()
 - (id)initWithBackForwardList:(PassRefPtr<WebCore::BackForwardList>)backForwardList;
 @end
