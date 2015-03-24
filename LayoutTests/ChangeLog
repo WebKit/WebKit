@@ -1,5 +1,11 @@
 2015-03-24  Beth Dakin  <bdakin@apple.com>
 
+        Another attempted test fix after http://trac.webkit.org/changeset/181907
+
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
+2015-03-24  Beth Dakin  <bdakin@apple.com>
+
         Attempted test fix after http://trac.webkit.org/changeset/181907
 
         * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:

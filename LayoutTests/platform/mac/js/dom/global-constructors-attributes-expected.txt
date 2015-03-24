@@ -2018,11 +2018,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeys').hasOwnProperty('
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeys').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeys').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeys').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitMouseForceChangedEvent').value is WebKitMouseForceChangedEvent
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitMouseForceChangedEvent').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitMouseForceChangedEvent').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitMouseForceChangedEvent').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitMouseForceChangedEvent').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitMouseForceEvent').value is WebKitMouseForceEvent
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitMouseForceEvent').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitMouseForceEvent').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitMouseForceEvent').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitMouseForceEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMutationObserver').value is WebKitMutationObserver
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMutationObserver').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMutationObserver').hasOwnProperty('set') is false
