@@ -1,3 +1,11 @@
+2015-03-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed gardening after r181901.
+
+        * platform/mac/http/tests/media/media-source/mediasource-sourcebuffer-mode-expected.txt:
+        Update the expected results for platform specific results that include
+        a stringified function.
+
 2015-03-24  Beth Dakin  <bdakin@apple.com>
 
         Add events related to force click gesture
