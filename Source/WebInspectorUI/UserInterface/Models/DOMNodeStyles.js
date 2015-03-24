@@ -252,7 +252,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             this.refresh();
         }
 
-        selector = this._node.appropriateSelectorFor(true);
+        var selector = this._node.appropriateSelectorFor(true);
 
         CSSAgent.addRule.invoke({contextNodeId: this._node.id, selector}, addedRule.bind(this));
     }
