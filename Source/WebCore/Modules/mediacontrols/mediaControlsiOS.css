@@ -361,6 +361,7 @@ audio::-webkit-media-controls-timeline {
     border-radius: 0 !important;
     box-sizing: content-box !important;
     -webkit-transform: translate3d(0, 0, 0);
+    mix-blend-mode: plus-darker;
 }
 
 audio::-webkit-media-controls-timeline::-webkit-slider-runnable-track,

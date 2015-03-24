@@ -247,20 +247,7 @@ ControllerIOS.prototype = {
 
         var midY = height / 2;
 
-        // 1. Draw the outline with a clip path that subtracts the
-        // middle of a lozenge. This produces a better result than
-        // stroking when we come to filling the parts below.
-        ctx.save();
-        ctx.beginPath();
-        this.addRoundedRect(ctx, 1, midY - 3, width - 2, 6, 3);
-        this.addRoundedRect(ctx, 2, midY - 2, width - 4, 4, 2);
-        ctx.closePath();
-        ctx.clip("evenodd");
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, width, height);
-        ctx.restore();
-
-        // 2. Draw the buffered part and played parts, using
+        // 1. Draw the buffered part and played parts, using
         // solid rectangles that are clipped to the outside of
         // the lozenge.
         ctx.save();
@@ -268,10 +255,23 @@ ControllerIOS.prototype = {
         this.addRoundedRect(ctx, 1, midY - 3, width - 2, 6, 3);
         ctx.closePath();
         ctx.clip();
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, Math.round(width * buffered) + 2, height);
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, Math.round(width * played) + 2, height);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+        ctx.fillRect(Math.round(width * played) + 2, 0, Math.round(width * (buffered - played)) + 2, height);
+        ctx.restore();
+
+        // 2. Draw the outline with a clip path that subtracts the
+        // middle of a lozenge. This produces a better result than
+        // stroking.
+        ctx.save();
+        ctx.beginPath();
+        this.addRoundedRect(ctx, 1, midY - 3, width - 2, 6, 3);
+        this.addRoundedRect(ctx, 2, midY - 2, width - 4, 4, 2);
+        ctx.closePath();
+        ctx.clip("evenodd");
+        ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+        ctx.fillRect(Math.round(width * buffered) + 2, 0, width, height);
         ctx.restore();
     },
 
