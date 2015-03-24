@@ -45,7 +45,6 @@ Controller.PlayAfterSeeking = 0;
 Controller.PauseAfterSeeking = 1;
 
 /* Globals */
-Controller.gLastTimelineId = 0;
 Controller.gWirelessImage = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 245"><g fill="#1060FE"><path d="M193.6,6.3v121.6H6.4V6.3H193.6 M199.1,0.7H0.9v132.7h198.2V0.7L199.1,0.7z"/><path d="M43.5,139.3c15.8,8,35.3,12.7,56.5,12.7s40.7-4.7,56.5-12.7H43.5z"/></g><g text-anchor="middle" font-family="Helvetica Neue"><text x="100" y="204" fill="white" font-size="24">##DEVICE_TYPE##</text><text x="100" y="234" fill="#5C5C5C" font-size="21">##DEVICE_NAME##</text></g></svg>';
 Controller.gSimulateWirelessPlaybackTarget = false; // Used for testing when there are no wireless targets.
 Controller.gSimulateOptimizedFullscreenAvailable = false; // Used for testing when optimized fullscreen is not available.
@@ -362,7 +361,7 @@ Controller.prototype = {
         this.listenFor(timeline, 'mouseup', this.handleTimelineMouseUp);
         timeline.step = .01;
 
-        this.timelineContextName = "_webkit-media-controls-timeline-" + Controller.gLastTimelineId;
+        this.timelineContextName = "_webkit-media-controls-timeline-" + this.host.generateUUID();
         timeline.style.backgroundImage = '-webkit-canvas(' + this.timelineContextName + ')';
         
         var thumbnailTrack = this.controls.thumbnailTrack = document.createElement('div');
@@ -410,9 +409,8 @@ Controller.prototype = {
         volume.step = .01;
         this.listenFor(volume, 'input', this.handleVolumeSliderInput);
 
-        this.volumeContextName = "_webkit-media-controls-volume-" + Controller.gLastTimelineId;
+        this.volumeContextName = "_webkit-media-controls-volume-" + this.host.generateUUID();
         volume.style.backgroundImage = '-webkit-canvas(' + this.volumeContextName + ')';
-        Controller.gLastTimelineId++;
         
         var captionButton = this.controls.captionButton = document.createElement('button');
         captionButton.setAttribute('pseudo', '-webkit-media-controls-toggle-closed-captions-button');

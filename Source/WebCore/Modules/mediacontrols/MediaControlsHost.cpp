@@ -38,6 +38,7 @@
 #include "PageGroup.h"
 #include "TextTrack.h"
 #include "TextTrackList.h"
+#include "UUID.h"
 #include <runtime/JSCJSValueInlines.h>
 
 namespace WebCore {
@@ -290,6 +291,11 @@ String MediaControlsHost::mediaUIImageData(const String& partID) const
 #endif
 
     return emptyString();
+}
+
+String MediaControlsHost::generateUUID() const
+{
+    return createCanonicalUUIDString();
 }
 
 }

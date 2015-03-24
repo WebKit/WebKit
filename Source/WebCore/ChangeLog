@@ -1,3 +1,30 @@
+2015-03-23  Dean Jackson  <dino@apple.com>
+
+        Timelines are sharing the same canvas background
+        https://bugs.webkit.org/show_bug.cgi?id=142994
+        <rdar://problem/20209466>
+
+        Reviewed by Brent Fulgham.
+
+        Since each MediaControl lives in an isolated world, we
+        can't rely on a global variable to provide a unique
+        identifier for a named canvas. The fix is to expose
+        WebCore's UUID generator, and have each canvas use
+        that for a name.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::generateUUID): New method on the
+        MediaControlsHost that generates a UUID.
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+
+        * Modules/mediacontrols/mediaControlsApple.js: Remove the global
+        variable unique ID that wasn't working, and instead get
+        an ID from the MediaControlsHost.
+        (Controller.prototype.createControls):
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS):
+
 2015-03-23  Brent Fulgham  <bfulgham@apple.com>
 
         Scroll latching logic can get stuck in 'scrollable="no"' iframes

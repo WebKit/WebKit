@@ -8,7 +8,7 @@ function ControllerIOS(root, video, host)
     this.doingSetup = true;
     this._pageScaleFactor = 1;
 
-    this.timelineContextName = "_webkit-media-controls-timeline-" + ControllerIOS.gLastTimelineId++;
+    this.timelineContextName = "_webkit-media-controls-timeline-" + host.generateUUID();
 
     Controller.call(this, root, video, host);
 
@@ -29,8 +29,6 @@ ControllerIOS.ButtonWidth = 42;
 /* Enums */
 ControllerIOS.StartPlaybackControls = 2;
 
-/* Globals */
-ControllerIOS.gLastTimelineId = 0;
 
 ControllerIOS.prototype = {
     addVideoListeners: function() {

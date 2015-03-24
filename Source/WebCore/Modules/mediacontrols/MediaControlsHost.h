@@ -80,6 +80,8 @@ public:
     bool controlsDependOnPageScaleFactor() const;
     void setControlsDependOnPageScaleFactor(bool v);
 
+    String generateUUID() const;
+
 private:
     MediaControlsHost(HTMLMediaElement*);
 

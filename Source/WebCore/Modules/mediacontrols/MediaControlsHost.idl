@@ -62,4 +62,6 @@ enum MediaUIPartID {
     void exitedFullscreen();
     void enterFullscreenOptimized();
     DOMString mediaUIImageData(MediaUIPartID partID);
+
+    DOMString generateUUID();
 };
