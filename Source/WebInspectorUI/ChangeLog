@@ -1,3 +1,15 @@
+2015-03-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Workaround issue causing uncaught exception in Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=143015
+
+        Reviewed by Timothy Hatcher.
+
+        Workaround <https://webkit.org/b/143012> and avoid early returning in constructors.
+
+        * UserInterface/Controllers/ReplayManager.js:
+        (WebInspector.ReplayManager.class.ReplayManager):
+
 2015-03-06  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: unify resizer implementations used by DataGrid and Sidebar

@@ -49,32 +49,30 @@ WebInspector.ReplayManager = class ReplayManager extends WebInspector.Object
         // for the duration of the playback command until another playback begins.
         this._playbackSpeed = WebInspector.ReplayManager.PlaybackSpeed.RealTime;
 
-        if (!window.ReplayAgent)
-            return;
+        if (window.ReplayAgent) {
+            var instance = this;
+            this._initializationPromise = ReplayAgent.currentReplayState()
+                .then(function(payload) {
+                    console.assert(payload.sessionState in WebInspector.ReplayManager.SessionState, "Unknown session state: " + payload.sessionState);
+                    console.assert(payload.segmentState in WebInspector.ReplayManager.SegmentState, "Unknown segment state: " + payload.segmentState);
 
-        var instance = this;
+                    instance._activeSessionIdentifier = payload.sessionIdentifier;
+                    instance._activeSegmentIdentifier = payload.segmentIdentifier;
+                    instance._sessionState = WebInspector.ReplayManager.SessionState[payload.sessionState];
+                    instance._segmentState = WebInspector.ReplayManager.SegmentState[payload.segmentState];
+                    instance._currentPosition = payload.replayPosition;
 
-        this._initializationPromise = ReplayAgent.currentReplayState()
-            .then(function(payload) {
-                console.assert(payload.sessionState in WebInspector.ReplayManager.SessionState, "Unknown session state: " + payload.sessionState);
-                console.assert(payload.segmentState in WebInspector.ReplayManager.SegmentState, "Unknown segment state: " + payload.segmentState);
-
-                instance._activeSessionIdentifier = payload.sessionIdentifier;
-                instance._activeSegmentIdentifier = payload.segmentIdentifier;
-                instance._sessionState = WebInspector.ReplayManager.SessionState[payload.sessionState];
-                instance._segmentState = WebInspector.ReplayManager.SegmentState[payload.segmentState];
-                instance._currentPosition = payload.replayPosition;
-
-                instance._initialized = true;
-            }).then(function() {
-                return ReplayAgent.getAvailableSessions();
-            }).then(function(payload) {
-                for (var sessionId of payload.ids)
-                    instance.sessionCreated(sessionId);
-            }).catch(function(error) {
-                console.error("ReplayManager initialization failed: ", error);
-                throw error;
-            });
+                    instance._initialized = true;
+                }).then(function() {
+                    return ReplayAgent.getAvailableSessions();
+                }).then(function(payload) {
+                    for (var sessionId of payload.ids)
+                        instance.sessionCreated(sessionId);
+                }).catch(function(error) {
+                    console.error("ReplayManager initialization failed: ", error);
+                    throw error;
+                });
+        }
     }
 
     // Public
