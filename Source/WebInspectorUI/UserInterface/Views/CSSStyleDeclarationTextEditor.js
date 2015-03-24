@@ -23,89 +23,76 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSStyleDeclarationTextEditor = function(delegate, style, element)
+WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(delegate, style, element)
+    {
+        super();
 
-    this._element = element || document.createElement("div");
-    this._element.classList.add(WebInspector.CSSStyleDeclarationTextEditor.StyleClassName);
-    this._element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
+        this._element = element || document.createElement("div");
+        this._element.classList.add(WebInspector.CSSStyleDeclarationTextEditor.StyleClassName);
+        this._element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
 
-    this._showsImplicitProperties = true;
-    this._alwaysShowPropertyNames = {};
-    this._sortProperties = false;
+        this._showsImplicitProperties = true;
+        this._alwaysShowPropertyNames = {};
+        this._sortProperties = false;
 
-    this._prefixWhitespace = "";
-    this._suffixWhitespace = "";
-    this._linePrefixWhitespace = "";
+        this._prefixWhitespace = "";
+        this._suffixWhitespace = "";
+        this._linePrefixWhitespace = "";
 
-    this._delegate = delegate || null;
+        this._delegate = delegate || null;
 
-    this._codeMirror = CodeMirror(this.element, {
-        readOnly: true,
-        lineWrapping: true,
-        mode: "css-rule",
-        electricChars: false,
-        indentWithTabs: true,
-        indentUnit: 4,
-        smartIndent: false,
-        matchBrackets: true,
-        autoCloseBrackets: true
-    });
+        this._codeMirror = CodeMirror(this.element, {
+            readOnly: true,
+            lineWrapping: true,
+            mode: "css-rule",
+            electricChars: false,
+            indentWithTabs: true,
+            indentUnit: 4,
+            smartIndent: false,
+            matchBrackets: true,
+            autoCloseBrackets: true
+        });
 
-    this._completionController = new WebInspector.CodeMirrorCompletionController(this._codeMirror, this);
-    this._tokenTrackingController = new WebInspector.CodeMirrorTokenTrackingController(this._codeMirror, this);
+        this._completionController = new WebInspector.CodeMirrorCompletionController(this._codeMirror, this);
+        this._tokenTrackingController = new WebInspector.CodeMirrorTokenTrackingController(this._codeMirror, this);
 
-    this._jumpToSymbolTrackingModeEnabled = false;
-    this._tokenTrackingController.classNameForHighlightedRange = WebInspector.CodeMirrorTokenTrackingController.JumpToSymbolHighlightStyleClassName;
-    this._tokenTrackingController.mouseOverDelayDuration = 0;
-    this._tokenTrackingController.mouseOutReleaseDelayDuration = 0;
-    this._tokenTrackingController.mode = WebInspector.CodeMirrorTokenTrackingController.Mode.NonSymbolTokens;
+        this._jumpToSymbolTrackingModeEnabled = false;
+        this._tokenTrackingController.classNameForHighlightedRange = WebInspector.CodeMirrorTokenTrackingController.JumpToSymbolHighlightStyleClassName;
+        this._tokenTrackingController.mouseOverDelayDuration = 0;
+        this._tokenTrackingController.mouseOutReleaseDelayDuration = 0;
+        this._tokenTrackingController.mode = WebInspector.CodeMirrorTokenTrackingController.Mode.NonSymbolTokens;
 
-    // Make sure CompletionController adds event listeners first.
-    // Otherwise we end up in race conditions during complete or delete-complete phases.
-    this._codeMirror.on("change", this._contentChanged.bind(this));
-    this._codeMirror.on("blur", this._editorBlured.bind(this));
+        // Make sure CompletionController adds event listeners first.
+        // Otherwise we end up in race conditions during complete or delete-complete phases.
+        this._codeMirror.on("change", this._contentChanged.bind(this));
+        this._codeMirror.on("blur", this._editorBlured.bind(this));
 
-    this.style = style;
-};
-
-// FIXME: Move to a WebInspector.Object subclass and we can remove this.
-WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.CSSStyleDeclarationTextEditor);
-
-WebInspector.CSSStyleDeclarationTextEditor.StyleClassName = "css-style-text-editor";
-WebInspector.CSSStyleDeclarationTextEditor.ReadOnlyStyleClassName = "read-only";
-WebInspector.CSSStyleDeclarationTextEditor.ColorSwatchElementStyleClassName = "color-swatch";
-WebInspector.CSSStyleDeclarationTextEditor.CheckboxPlaceholderElementStyleClassName = "checkbox-placeholder";
-WebInspector.CSSStyleDeclarationTextEditor.EditingLineStyleClassName = "editing-line";
-WebInspector.CSSStyleDeclarationTextEditor.CommitCoalesceDelay = 250;
-WebInspector.CSSStyleDeclarationTextEditor.RemoveEditingLineClassesDelay = 2000;
-
-WebInspector.CSSStyleDeclarationTextEditor.prototype = {
-    constructor: WebInspector.CSSStyleDeclarationTextEditor,
+        this.style = style;
+    }
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get delegate()
     {
         return this._delegate;
-    },
+    }
 
     set delegate(delegate)
     {
         this._delegate = delegate || null;
-    },
+    }
 
     get style()
     {
         return this._style;
-    },
+    }
 
     set style(style)
     {
@@ -129,29 +116,29 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         this._updateJumpToSymbolTrackingMode();
 
         this._resetContent();
-    },
+    }
 
     get focused()
     {
         return this._codeMirror.getWrapperElement().classList.contains("CodeMirror-focused");
-    },
+    }
 
     get alwaysShowPropertyNames()
     {
         return Object.keys(this._alwaysShowPropertyNames);
-    },
+    }
 
     set alwaysShowPropertyNames(alwaysShowPropertyNames)
     {
         this._alwaysShowPropertyNames = (alwaysShowPropertyNames || []).keySet();
 
         this._resetContent();
-    },
+    }
 
     get showsImplicitProperties()
     {
         return this._showsImplicitProperties;
-    },
+    }
 
     set showsImplicitProperties(showsImplicitProperties)
     {
@@ -161,12 +148,12 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         this._showsImplicitProperties = showsImplicitProperties;
 
         this._resetContent();
-    },
+    }
 
     get sortProperties()
     {
         return this._sortProperties;
-    },
+    }
 
     set sortProperties(sortProperties)
     {
@@ -176,32 +163,32 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         this._sortProperties = sortProperties;
 
         this._resetContent();
-    },
+    }
 
-    focus: function()
+    focus()
     {
         this._codeMirror.focus();
-    },
+    }
 
-    refresh: function()
+    refresh()
     {
         this._resetContent();
-    },
+    }
 
-    updateLayout: function(force)
+    updateLayout(force)
     {
         this._codeMirror.refresh();
-    },
+    }
 
     // Protected
 
-    didDismissPopover: function(popover)
+    didDismissPopover(popover)
     {
         if (popover === this._colorPickerPopover)
             delete this._colorPickerPopover;
-    },
+    }
 
-    completionControllerCompletionsHidden: function(completionController)
+    completionControllerCompletionsHidden(completionController)
     {
         var styleText = this._style.text;
         var currentText = this._formattedContent();
@@ -213,20 +200,20 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             this._commitChanges();
         else
             this._propertiesChanged();
-    },
+    }
 
     // Private
 
-    _clearRemoveEditingLineClassesTimeout: function()
+    _clearRemoveEditingLineClassesTimeout()
     {
         if (!this._removeEditingLineClassesTimeout)
             return;
 
         clearTimeout(this._removeEditingLineClassesTimeout);
         delete this._removeEditingLineClassesTimeout;
-    },
+    }
 
-    _removeEditingLineClasses: function()
+    _removeEditingLineClasses()
     {
         this._clearRemoveEditingLineClassesTimeout();
 
@@ -238,16 +225,16 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         }
 
         this._codeMirror.operation(removeEditingLineClasses.bind(this));
-    },
+    }
 
-    _removeEditingLineClassesSoon: function()
+    _removeEditingLineClassesSoon()
     {
         if (this._removeEditingLineClassesTimeout)
             return;
         this._removeEditingLineClassesTimeout = setTimeout(this._removeEditingLineClasses.bind(this), WebInspector.CSSStyleDeclarationTextEditor.RemoveEditingLineClassesDelay);
-    },
+    }
 
-    _formattedContent: function()
+    _formattedContent()
     {
         // Start with the prefix whitespace we stripped.
         var content = this._prefixWhitespace;
@@ -265,9 +252,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         content += this._suffixWhitespace;
 
         return content;
-    },
+    }
 
-    _commitChanges: function()
+    _commitChanges()
     {
         if (this._commitChangesTimeout) {
             clearTimeout(this._commitChangesTimeout);
@@ -275,9 +262,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         }
 
         this._style.text = this._formattedContent();
-    },
+    }
 
-    _editorBlured: function(codeMirror)
+    _editorBlured(codeMirror)
     {
         // Clicking a suggestion causes the editor to blur. We don't want to reset content in this case.
         if (this._completionController.isHandlingClickEvent())
@@ -286,9 +273,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         // Reset the content on blur since we stop accepting external changes while the the editor is focused.
         // This causes us to pick up any change that was suppressed while the editor was focused.
         this._resetContent();
-    },
+    }
 
-    _contentChanged: function(codeMirror, change)
+    _contentChanged(codeMirror, change)
     {
         // Return early if the style isn't editable. This still can be called when readOnly is set because
         // clicking on a color swatch modifies the text.
@@ -309,15 +296,16 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         // Use a short delay for user input to coalesce more changes before committing. Other actions like
         // undo, redo and paste are atomic and work better with a zero delay. CodeMirror identifies changes that
         // get coalesced in the undo stack with a "+" prefix on the origin. Use that to set the delay for our coalescing.
-        const delay = change.origin && change.origin.charAt(0) === "+" ? WebInspector.CSSStyleDeclarationTextEditor.CommitCoalesceDelay : 0;
+        // FIXME: use const or let
+        var delay = change.origin && change.origin.charAt(0) === "+" ? WebInspector.CSSStyleDeclarationTextEditor.CommitCoalesceDelay : 0;
 
         // Reset the timeout so rapid changes coalesce after a short delay.
         if (this._commitChangesTimeout)
             clearTimeout(this._commitChangesTimeout);
         this._commitChangesTimeout = setTimeout(this._commitChanges.bind(this), delay);
-    },
+    }
 
-    _updateTextMarkers: function(nonatomic)
+    _updateTextMarkers(nonatomic)
     {
         function update()
         {
@@ -349,7 +337,8 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
 
             if (!this._codeMirror.getOption("readOnly")) {
                 // Matches a comment like: /* -webkit-foo: bar; */
-                const commentedPropertyRegex = /\/\*\s*[-\w]+\s*:\s*[^;]+;?\s*\*\//g;
+                // FIXME: use const or let
+                var commentedPropertyRegex = /\/\*\s*[-\w]+\s*:\s*[^;]+;?\s*\*\//g;
 
                 // Look for comments that look like properties and add checkboxes in front of them.
                 var lineCount = this._codeMirror.lineCount();
@@ -388,9 +377,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             update.call(this);
         else
             this._codeMirror.operation(update.bind(this));
-    },
+    }
 
-    _createColorSwatches: function(nonatomic, lineNumber)
+    _createColorSwatches(nonatomic, lineNumber)
     {
         function update()
         {
@@ -419,9 +408,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             update.call(this);
         else
             this._codeMirror.operation(update.bind(this));
-    },
+    }
 
-    _updateTextMarkerForPropertyIfNeeded: function(property)
+    _updateTextMarkerForPropertyIfNeeded(property)
     {
         var textMarker = property.__propertyTextMarker;
         console.assert(textMarker);
@@ -434,9 +423,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             return;
 
         this._createTextMarkerForPropertyIfNeeded(range.from, range.to, property);
-    },
+    }
 
-    _createTextMarkerForPropertyIfNeeded: function(from, to, property)
+    _createTextMarkerForPropertyIfNeeded(from, to, property)
     {
         if (!this._codeMirror.getOption("readOnly")) {
             // Create a new checkbox element and marker.
@@ -493,9 +482,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         property.addEventListener(WebInspector.CSSProperty.Event.OverriddenStatusChanged, this._propertyOverriddenStatusChanged, this);
 
         this._removeCheckboxPlaceholder(from.line);
-    },
+    }
 
-    _clearTextMarkers: function(nonatomic, all)
+    _clearTextMarkers(nonatomic, all)
     {
         function clear()
         {
@@ -526,9 +515,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             clear.call(this);
         else
             this._codeMirror.operation(clear.bind(this));
-    },
+    }
 
-    _iterateOverProperties: function(onlyVisibleProperties, callback)
+    _iterateOverProperties(onlyVisibleProperties, callback)
     {
         var properties = onlyVisibleProperties ? this._style.visibleProperties : this._style.properties;
 
@@ -546,9 +535,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             if (callback.call(this, properties[i], i === properties.length - 1))
                 break;
         }
-    },
+    }
 
-    _propertyCheckboxChanged: function(event)
+    _propertyCheckboxChanged(event)
     {
         var property = event.target.__cssProperty;
         console.assert(property);
@@ -578,9 +567,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         }
 
         this._codeMirror.operation(update.bind(this));
-    },
+    }
 
-    _propertyCommentCheckboxChanged: function(event)
+    _propertyCommentCheckboxChanged(event)
     {
         var commentTextMarker = event.target.__commentTextMarker;
         console.assert(commentTextMarker);
@@ -612,9 +601,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         }
 
         this._codeMirror.operation(update.bind(this));
-    },
+    }
 
-    _colorSwatchClicked: function(event)
+    _colorSwatchClicked(event)
     {
         if (this._colorPickerPopover)
             return;
@@ -715,14 +704,14 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
 
             colorPicker.color = color;
         }
-    },
+    }
 
-    _propertyOverriddenStatusChanged: function(event)
+    _propertyOverriddenStatusChanged(event)
     {
         this._updateTextMarkerForPropertyIfNeeded(event.target);
-    },
+    }
 
-    _propertiesChanged: function(event)
+    _propertiesChanged(event)
     {
         // Don't try to update the document while completions are showing. Doing so will clear
         // the completion hint and prevent further interaction with the completion.
@@ -738,9 +727,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         this._removeEditingLineClassesSoon();
 
         this._updateTextMarkers();
-    },
+    }
 
-    _markLinesWithCheckboxPlaceholder: function()
+    _markLinesWithCheckboxPlaceholder()
     {
         if (this._codeMirror.getOption("readOnly"))
             return;
@@ -776,9 +765,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             var placeholderMark = this._codeMirror.setUniqueBookmark(position, placeholderElement);
             placeholderMark.__checkboxPlaceholder = true;
         }
-    },
+    }
 
-    _removeCheckboxPlaceholder: function(lineNumber)
+    _removeCheckboxPlaceholder(lineNumber)
     {
         var marks = this._codeMirror.findMarksAt({line: lineNumber, ch: 0});
         for (var i = 0; i < marks.length; ++i) {
@@ -789,9 +778,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             mark.clear();
             return;
         }
-    },
+    }
 
-    _resetContent: function()
+    _resetContent()
     {
         if (this._commitChangesTimeout) {
             clearTimeout(this._commitChangesTimeout);
@@ -957,9 +946,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         this._ignoreCodeMirrorContentDidChangeEvent = true;
         this._codeMirror.operation(update.bind(this));
         delete this._ignoreCodeMirrorContentDidChangeEvent;
-    },
+    }
 
-    _updateJumpToSymbolTrackingMode: function()
+    _updateJumpToSymbolTrackingMode()
     {
         var oldJumpToSymbolTrackingModeEnabled = this._jumpToSymbolTrackingModeEnabled;
 
@@ -977,9 +966,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
                 this._tokenTrackingController.enabled = false;
             }
         }
-    },
+    }
 
-    tokenTrackingControllerHighlightedRangeWasClicked: function(tokenTrackingController)
+    tokenTrackingControllerHighlightedRangeWasClicked(tokenTrackingController)
     {
         console.assert(this._style.ownerRule.sourceCodeLocation);
         if (!this._style.ownerRule.sourceCodeLocation)
@@ -1009,12 +998,18 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         }
 
         WebInspector.resourceSidebarPanel.showSourceCodeLocation(sourceCodeLocation);
-    },
+    }
 
-    tokenTrackingControllerNewHighlightCandidate: function(tokenTrackingController, candidate)
+    tokenTrackingControllerNewHighlightCandidate(tokenTrackingController, candidate)
     {
         this._tokenTrackingController.highlightRange(candidate.hoveredTokenRange);
     }
 };
 
-WebInspector.CSSStyleDeclarationTextEditor.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.CSSStyleDeclarationTextEditor.StyleClassName = "css-style-text-editor";
+WebInspector.CSSStyleDeclarationTextEditor.ReadOnlyStyleClassName = "read-only";
+WebInspector.CSSStyleDeclarationTextEditor.ColorSwatchElementStyleClassName = "color-swatch";
+WebInspector.CSSStyleDeclarationTextEditor.CheckboxPlaceholderElementStyleClassName = "checkbox-placeholder";
+WebInspector.CSSStyleDeclarationTextEditor.EditingLineStyleClassName = "editing-line";
+WebInspector.CSSStyleDeclarationTextEditor.CommitCoalesceDelay = 250;
+WebInspector.CSSStyleDeclarationTextEditor.RemoveEditingLineClassesDelay = 2000;

@@ -1,3 +1,21 @@
+2015-03-24  Tobias Reiss  <tobi+webkit@basecode.de>
+
+        Web Inspector: Adopt ES6 Class Syntax for CSSStyleDeclarationTextEditor
+        https://bugs.webkit.org/show_bug.cgi?id=143019
+
+        Reviewed by Timothy Hatcher.
+
+        - Convert CSSStyleDeclarationTextEditor to use class syntax
+        - Convert constructor functions to constructor methods
+        - Convert "constructor.method" to class static methods where possible
+        - Convert all methods to method syntax, eliminate commas between methods
+        - Convert all superclass calls in classes to use "super"
+        - Removed FIXME from WebInspector.Object subclasses, added calls to super.
+        - Fixed strict mode issues now that classes enforce strict mode (see below).
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        Many function declarations modified.
+
 2015-03-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Workaround issue causing uncaught exception in Inspector
