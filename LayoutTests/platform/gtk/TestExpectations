@@ -630,6 +630,8 @@ webkit.org/b/142823 fast/attachment/attachment-select-on-click.html [ Missing ]
 webkit.org/b/142823 fast/attachment/attachment-subtitle.html [ Missing ]
 webkit.org/b/142823 fast/attachment/attachment-title.html [ Missing ]
 
+webkit.org/b/142670 media/video-background-tab-playback.html [ Failure ]
+
 # TODO Scroll snap points
 css3/scroll-snap [ Skip ]
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1319,7 +1321,6 @@ webkit.org/b/142489 http/tests/media/video-play-waiting.html [ Timeout ]
 webkit.org/b/142490 inspector/css/selector-dynamic-specificity.html [ Timeout ]
 webkit.org/b/142491 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
 
-webkit.org/b/142670 media/video-background-tab-playback.html [ Timeout ]
 webkit.org/b/142820 fast/images/animated-gif-body-outside-viewport.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1891,8 +1892,6 @@ webkit.org/b/102776 media/track/track-cue-rendering-horizontal.html [ Failure Ti
 webkit.org/b/102776 media/track/track-cue-rendering-vertical.html [ Failure Timeout ]
 webkit.org/b/102776 media/track/track-cue-rendering-tree-is-removed-properly.html [ Timeout Pass ]
 
-webkit.org/b/104686 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Failure ]
-
 webkit.org/b/98146 accessibility/svg-bounds.html [ Failure ]
 
 # Enable when support drag-and-drop autoscrolling
@@ -1987,11 +1986,8 @@ webkit.org/b/118416 storage/websql/sql-error-codes.html [ Failure ]
 Bug(GTK) mathml/very-large-stretchy-operators.html [ Pass Timeout ]
 
 webkit.org/b/119841 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
-webkit.org/b/119841 fast/sub-pixel/zoomed-em-border.html [ ImageOnlyFailure ]
 
 webkit.org/b/120105 http/tests/navigation/post-frames-goback1-uncached.html [ Failure ]
-
-webkit.org/b/120203 http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html [ Failure ]
 
 webkit.org/b/120596 css3/background/background-repeat-space-border.html [ ImageOnlyFailure ]
 webkit.org/b/120596 css3/background/background-repeat-space-content.html [ ImageOnlyFailure ]
@@ -2353,7 +2349,6 @@ webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg [ 
 webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg [ Failure ]
 webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ Failure ]
 
-webkit.org/b/142480 fast/dom/event-handler-attributes.html [ Failure ]
 webkit.org/b/142482 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
 
 webkit.org/b/142487 fast/regions/region-overflow-break.html [ ImageOnlyFailure ]
@@ -2369,6 +2364,11 @@ webkit.org/b/142669 fast/regions/overflow/overflow-region-float.html [ ImageOnly
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
+
+# This tests are passing on GTK+ but they do not in the Apple ports
+imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
+imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
+transitions/svg-text-shadow-transition.html [ Pass ]
 
 # This feature is only enabled on Mac and iOS right now
 contentfiltering [ Skip ]
