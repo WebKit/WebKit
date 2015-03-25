@@ -244,8 +244,6 @@ webkit.org/b/134550 [ Mavericks Yosemite ] http/tests/cache/iframe-304-crash.htm
 # testRunner.setUseDeferredFrameLoading is not implemented.
 webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
 
-webkit.org/b/133692 platform/mac-wk2/plugins/destroy-during-async-npp-new.html [ Skip ]
-
 webkit.org/b/136554 platform/mac-wk2/tiled-drawing/scrolling/frames/frameset-nested-frame-scrollability.html [ Pass Failure ]
 webkit.org/b/139901 platform/mac-wk2/tiled-drawing/scrolling/frames/frameset-frame-scrollability.html [ Pass Failure ]
 

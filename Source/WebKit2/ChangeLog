@@ -1,3 +1,21 @@
+2015-03-23  Anders Carlsson  <andersca@apple.com>
+
+        Make platform/mac-wk2/plugins/destroy-during-async-npp-new.html work again.
+        https://bugs.webkit.org/show_bug.cgi?id=133692
+        rdar://problem/17255947
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add plug-in destruction protectors around message receiver code that can call out to NPObjects or JavaScript
+        where we need the plug-in to stay around after the call.
+
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        (WebKit::NPObjectMessageReceiver::invoke):
+        (WebKit::NPObjectMessageReceiver::invokeDefault):
+        (WebKit::NPObjectMessageReceiver::getProperty):
+        (WebKit::NPObjectMessageReceiver::setProperty):
+        (WebKit::NPObjectMessageReceiver::construct):
+
 2015-03-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Use std::abs() in ClickCounter::currentClickCountForGdkButtonEvent()
