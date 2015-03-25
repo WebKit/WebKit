@@ -1,3 +1,26 @@
+2015-03-25  Alex Christensen  <achristensen@webkit.org>
+
+        Add case-insensitive checks to DFA bytecode.
+        https://bugs.webkit.org/show_bug.cgi?id=142977
+
+        Reviewed by Benjamin Poulain.
+
+        * contentextensions/DFABytecode.h:
+        (WebCore::ContentExtensions::instructionSizeWithArguments):
+        * contentextensions/DFABytecodeCompiler.cpp:
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitCheckValue):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitCheckValueRange):
+        Add case-insensitive bytecode.
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compileNodeTransitions):
+        Check to see if case-insensitive bytecodes can be used.
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compileCheckForRange):
+        * contentextensions/DFABytecodeCompiler.h:
+        (WebCore::ContentExtensions::DFABytecodeCompiler::Range::Range):
+        Added Range structure to be able to count the ranges in a future patch deciding if we want to use jump tables.
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+        Interpret case-insensitive bytecodes.
+
 2015-03-25  Sam Weinig  <sam@webkit.org>
 
         Address additional review feedback from https://bugs.webkit.org/show_bug.cgi?id=143059.

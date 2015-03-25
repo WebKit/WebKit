@@ -69,24 +69,23 @@ void DFABytecodeCompiler::emitJump(unsigned destinationNodeIndex)
     append<unsigned>(m_bytecode, 0); // This value will be set when linking.
 }
 
-void DFABytecodeCompiler::emitCheckValue(uint8_t value, unsigned destinationNodeIndex)
+void DFABytecodeCompiler::emitCheckValue(uint8_t value, unsigned destinationNodeIndex, bool caseSensitive)
 {
-    append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::CheckValue);
+    append<DFABytecodeInstruction>(m_bytecode, caseSensitive ? DFABytecodeInstruction::CheckValueCaseSensitive : DFABytecodeInstruction::CheckValueCaseInsensitive);
     append<uint8_t>(m_bytecode, value);
     m_linkRecords.append(std::make_pair(m_bytecode.size(), destinationNodeIndex));
     append<unsigned>(m_bytecode, 0); // This value will be set when linking.
 }
 
-void DFABytecodeCompiler::emitCheckValueRange(uint8_t lowValue, uint8_t highValue, unsigned destinationNodeIndex)
+void DFABytecodeCompiler::emitCheckValueRange(uint8_t lowValue, uint8_t highValue, unsigned destinationNodeIndex, bool caseSensitive)
 {
-    ASSERT_WITH_MESSAGE(lowValue != highValue, "A single value check should be emitted for single values.");
-    ASSERT_WITH_MESSAGE(lowValue < highValue, "The instruction semantic impose lowValue is smaller than highValue.");
+    ASSERT_WITH_MESSAGE(lowValue < highValue, "The instruction semantic impose lowValue is strictly less than highValue.");
 
-    append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::CheckValueRange);
+    append<DFABytecodeInstruction>(m_bytecode, caseSensitive ? DFABytecodeInstruction::CheckValueRangeCaseSensitive : DFABytecodeInstruction::CheckValueRangeCaseInsensitive);
     append<uint8_t>(m_bytecode, lowValue);
     append<uint8_t>(m_bytecode, highValue);
     m_linkRecords.append(std::make_pair(m_bytecode.size(), destinationNodeIndex));
-    append<unsigned>(m_bytecode, 0);
+    append<unsigned>(m_bytecode, 0); // This value will be set when linking.
 }
 
 void DFABytecodeCompiler::emitTerminate()
@@ -113,56 +112,84 @@ void DFABytecodeCompiler::compileNode(unsigned index)
 
 void DFABytecodeCompiler::compileNodeTransitions(const DFANode& node)
 {
+    unsigned destinations[128];
+    const unsigned noDestination = std::numeric_limits<unsigned>::max();
+    for (uint16_t i = 0; i < 128; i++) {
+        auto it = node.transitions.find(i);
+        if (it == node.transitions.end())
+            destinations[i] = noDestination;
+        else
+            destinations[i] = it->value;
+    }
+
+    Vector<Range> ranges;
+    uint8_t rangeMin;
     bool hasRangeMin = false;
-    uint16_t rangeMin;
-    unsigned rangeDestination = 0;
+    for (uint8_t i = 0; i < 128; i++) {
+        if (hasRangeMin) {
+            ASSERT_WITH_MESSAGE(!(node.hasFallbackTransition && node.fallbackTransition == destinations[rangeMin]), "Individual transitions to the fallback transitions should have been eliminated by the optimizer.");
+            if (destinations[i] != destinations[rangeMin]) {
 
-    for (unsigned char i = 0; i < 128; ++i) {
-        auto transitionIterator = node.transitions.find(i);
-        if (transitionIterator == node.transitions.end()) {
-            if (hasRangeMin) {
-                ASSERT_WITH_MESSAGE(!(node.hasFallbackTransition && node.fallbackTransition == rangeDestination), "Individual transitions to the fallback transitions should have been eliminated by the optimizer.");
+                // This is the end of a range. Check if it can be case insensitive.
+                uint8_t rangeMax = i - 1;
+                bool caseSensitive = true;
+                if (rangeMin >= 'A' && rangeMax <= 'Z') {
+                    caseSensitive = false;
+                    for (uint8_t rangeIndex = rangeMin; rangeIndex <= rangeMax; rangeIndex++) {
+                        if (destinations[rangeMin] != destinations[toASCIILower(rangeIndex)]) {
+                            caseSensitive = true;
+                            break;
+                        }
+                    }
+                }
 
-                unsigned char lastHighValue = i - 1;
-                compileCheckForRange(rangeMin, lastHighValue, rangeDestination);
-                hasRangeMin = false;
+                if (!caseSensitive) {
+                    // If all the lower-case destinations are the same as the upper-case destinations,
+                    // then they will be covered by a case-insensitive range and will not need their own range.
+                    for (uint8_t rangeIndex = rangeMin; rangeIndex <= rangeMax; rangeIndex++) {
+                        ASSERT(destinations[rangeMin] == destinations[toASCIILower(rangeIndex)]);
+                        destinations[toASCIILower(rangeIndex)] = noDestination;
+                    }
+                    ranges.append(Range(toASCIILower(rangeMin), toASCIILower(rangeMax), destinations[rangeMin], caseSensitive));
+                } else
+                    ranges.append(Range(rangeMin, rangeMax, destinations[rangeMin], caseSensitive));
+
+                if (destinations[i] == noDestination)
+                    hasRangeMin = false;
+                else
+                    rangeMin = i;
             }
-            continue;
-        }
-
-        if (!hasRangeMin) {
-            hasRangeMin = true;
-            rangeMin = transitionIterator->key;
-            rangeDestination = transitionIterator->value;
         } else {
-            if (transitionIterator->value == rangeDestination)
-                continue;
-
-            unsigned char lastHighValue = i - 1;
-            compileCheckForRange(rangeMin, lastHighValue, rangeDestination);
-            rangeMin = i;
-            rangeDestination = transitionIterator->value;
+            if (destinations[i] != noDestination) {
+                rangeMin = i;
+                hasRangeMin = true;
+            }
         }
     }
-    if (hasRangeMin)
-        compileCheckForRange(rangeMin, 127, rangeDestination);
+    if (hasRangeMin) {
+        // Ranges are appended after passing the end of them.
+        // If a range goes to 127, we will have an uncommitted rangeMin because the loop does not check 128.
+        // If a range goes to 127, there will never be values higher than it, so checking for case-insensitive ranges would always fail.
+        ranges.append(Range(rangeMin, 127, destinations[rangeMin], true));
+    }
 
+    for (const auto& range : ranges)
+        compileCheckForRange(range);
     if (node.hasFallbackTransition)
         emitJump(node.fallbackTransition);
     else
         emitTerminate();
 }
 
-void DFABytecodeCompiler::compileCheckForRange(uint16_t lowValue, uint16_t highValue, unsigned destinationNodeIndex)
+void DFABytecodeCompiler::compileCheckForRange(const Range& range)
 {
-    ASSERT_WITH_MESSAGE(lowValue < 128, "The DFA engine only supports the ASCII alphabet.");
-    ASSERT_WITH_MESSAGE(highValue < 128, "The DFA engine only supports the ASCII alphabet.");
-    ASSERT(lowValue <= highValue);
+    ASSERT_WITH_MESSAGE(range.max < 128, "The DFA engine only supports the ASCII alphabet.");
+    ASSERT(range.min <= range.max);
 
-    if (lowValue == highValue)
-        emitCheckValue(lowValue, destinationNodeIndex);
+    if (range.min == range.max)
+        emitCheckValue(range.min, range.destination, range.caseSensitive);
     else
-        emitCheckValueRange(lowValue, highValue, destinationNodeIndex);
+        emitCheckValueRange(range.min, range.max, range.destination, range.caseSensitive);
 }
 
 void DFABytecodeCompiler::compile()

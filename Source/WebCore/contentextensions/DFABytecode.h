@@ -39,13 +39,15 @@ enum class DFABytecodeInstruction : uint8_t {
     // CheckValue has two arguments:
     // The value to check (1 byte),
     // The index to jump to if the values are equal (4 bytes).
-    CheckValue,
+    CheckValueCaseInsensitive,
+    CheckValueCaseSensitive,
 
     // Jump to an offset if the input value is within a certain range.
     // The lower value (1 byte).
     // The higher value (1 byte).
     // The index to jump to if the value is in the range (4 bytes).
-    CheckValueRange,
+    CheckValueRangeCaseInsensitive,
+    CheckValueRangeCaseSensitive,
 
     // AppendAction has one argument:
     // The action to append (4 bytes).
@@ -67,9 +69,11 @@ enum class DFABytecodeInstruction : uint8_t {
 static inline size_t instructionSizeWithArguments(DFABytecodeInstruction instruction)
 {
     switch (instruction) {
-    case DFABytecodeInstruction::CheckValue:
+    case DFABytecodeInstruction::CheckValueCaseSensitive:
+    case DFABytecodeInstruction::CheckValueCaseInsensitive:
         return sizeof(DFABytecodeInstruction) + sizeof(uint8_t) + sizeof(unsigned);
-    case DFABytecodeInstruction::CheckValueRange:
+    case DFABytecodeInstruction::CheckValueRangeCaseSensitive:
+    case DFABytecodeInstruction::CheckValueRangeCaseInsensitive:
         return sizeof(DFABytecodeInstruction) + sizeof(uint8_t) + sizeof(uint8_t) + sizeof(unsigned);
     case DFABytecodeInstruction::AppendAction:
         return sizeof(DFABytecodeInstruction) + sizeof(unsigned);

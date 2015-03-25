@@ -85,33 +85,46 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
             case DFABytecodeInstruction::Terminate:
                 goto nextDFA;
                     
-            case DFABytecodeInstruction::CheckValue:
+            case DFABytecodeInstruction::CheckValueCaseSensitive:
+            case DFABytecodeInstruction::CheckValueCaseInsensitive: {
                 if (urlIndexIsAfterEndOfString)
                     goto nextDFA;
 
+                char character = url[urlIndex];
+                if (static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) == DFABytecodeInstruction::CheckValueCaseInsensitive)
+                    character = toASCIILower(character);
+
                 // Check to see if the next character in the url is the value stored with the bytecode.
-                if (url[urlIndex] == getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode))) {
+                if (character == getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode))) {
                     programCounter = getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t));
-                    if (!url[urlIndex])
+                    if (!character)
                         urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
-                } else
-                    programCounter += instructionSizeWithArguments(DFABytecodeInstruction::CheckValue);
+                } else {
+                    programCounter += instructionSizeWithArguments(DFABytecodeInstruction::CheckValueCaseSensitive);
+                    ASSERT(instructionSizeWithArguments(DFABytecodeInstruction::CheckValueCaseSensitive) == instructionSizeWithArguments(DFABytecodeInstruction::CheckValueCaseInsensitive));
+                }
                 break;
+            }
                     
-            case DFABytecodeInstruction::CheckValueRange: {
+            case DFABytecodeInstruction::CheckValueRangeCaseSensitive:
+            case DFABytecodeInstruction::CheckValueRangeCaseInsensitive: {
                 if (urlIndexIsAfterEndOfString)
                     goto nextDFA;
                 
                 char character = url[urlIndex];
+                if (static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) == DFABytecodeInstruction::CheckValueRangeCaseInsensitive)
+                    character = toASCIILower(character);
                 if (character >= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode))
                     && character <= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t))) {
                     programCounter = getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t) + sizeof(uint8_t));
                     if (!character)
                         urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
-                } else
-                    programCounter += instructionSizeWithArguments(DFABytecodeInstruction::CheckValueRange);
+                } else {
+                    programCounter += instructionSizeWithArguments(DFABytecodeInstruction::CheckValueRangeCaseSensitive);
+                    ASSERT(instructionSizeWithArguments(DFABytecodeInstruction::CheckValueRangeCaseSensitive) == instructionSizeWithArguments(DFABytecodeInstruction::CheckValueRangeCaseInsensitive));
+                }
                 break;
             }
 
