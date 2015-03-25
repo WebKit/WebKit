@@ -32,11 +32,14 @@
 use strict;
 use warnings;
 
+use Archive::Zip qw( :ERROR_CODES );
+use File::Copy;
 use File::Find;
 use File::Spec;
 use File::Temp ();
 use FindBin;
-use HTTP::Date qw(str2time);
+use HTTP::Date qw(str2time time2str);
+use LWP::Simple;
 use POSIX;
 use lib $FindBin::Bin;
 use webkitdirs;
@@ -67,26 +70,33 @@ my $prefixInZip = shift;
 my $sourceDir = sourceDir();
 my $file = getLibraryName($libsURL);
 my $zipFile = "$file.zip"; 
-my $webkitLibrariesDir = toUnixPath($ENV{'WEBKIT_LIBRARIES'}) || "$sourceDir/WebKitLibraries/win";
+my $webkitLibrariesDir = $ENV{'WEBKIT_LIBRARIES'} || "$sourceDir/WebKitLibraries/win";
 my $tmpRelativeDir = File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1);
 my $tmpAbsDir = File::Spec->rel2abs($tmpRelativeDir);
 
 print "Checking Last-Modified date of $zipFile...\n";
 
-my $result = system "curl -s -I -k $libsURL | grep Last-Modified > \"$tmpAbsDir/$file.headers\"";
+my ($content_type, $document_length, $modified_time, $expires, $server) = head($libsURL);
 
-if (WEXITSTATUS($result)) {
+if (defined $modified_time) {
+
+    open NEW, ">", "$tmpAbsDir/$file.headers";
+    print NEW "Last-Modified: " . time2str($modified_time) . "\n";
+    close NEW;
+
+} else {
 
     #Note: Neither GitHub nor DropBox emit the Last-Modified HTTP header, so fall back to a file
 	#containing the necessary information if we do not receive the information in our initial query.
     my $headerURL = $libsURL;
     $headerURL =~ s/\.zip$/\.headers/;
 
-    $result = system "curl -k -o \"$tmpAbsDir/$file.headers\" $headerURL";
+    my $result = getstore($headerURL, "$tmpAbsDir/$file.headers");
 
-    if (WEXITSTATUS($result)) {
+    if (!is_success($result)) {
         print STDERR "Couldn't check Last-Modified date of new $zipFile.\n";
-        print STDERR "Please ensure that $libsURL is reachable.\n";
+        print STDERR "Please ensure that Perl can use LWP::Simple to connect to HTTPS urls, and that $libsURL is reachable.\n";
+        print STDERR "You may have to run $ cpan LWP::Protocol::https\n";
 
         if (! -f "$webkitLibrariesDir/$file.headers") {
             print STDERR "Unable to check Last-Modified date and no version of $file to fall back to.\n";
@@ -113,11 +123,13 @@ if (open NEW, "$tmpAbsDir/$file.headers") {
 }
 
 print "Downloading $zipFile...\n\n";
-$result = system "curl -k -o \"$tmpAbsDir/$zipFile\" $libsURL";
-die "Couldn't download $zipFile!" if $result;
+print "$libsURL\n";
+my $result = getstore($libsURL, "$tmpAbsDir/$zipFile");
+die "Couldn't download $zipFile!" if is_error($result);
 
-$result = system "unzip", "-q", "-d", $tmpAbsDir, "$tmpAbsDir/$zipFile";
-die "Couldn't unzip $zipFile." if $result;
+my $zip = Archive::Zip->new("$tmpAbsDir/$zipFile");
+$result = $zip->extractTree("", $tmpAbsDir);
+die "Couldn't unzip $zipFile." if $result != AZ_OK;
 
 print "\nInstalling $file...\n";
 
@@ -131,24 +143,16 @@ sub wanted
         return;
     }
 
-    system "cp", $_, $destination;
+    copy($_, $destination);
 }
 
 File::Find::find(\&wanted, "$tmpAbsDir/$file");
 
-$result = system "mv", "$tmpAbsDir/$file.headers", $webkitLibrariesDir;
-print STDERR "Couldn't move $file.headers to $webkitLibrariesDir" . ".\n" if $result;
+$result = move("$tmpAbsDir/$file.headers", $webkitLibrariesDir);
+print STDERR "Couldn't move $file.headers to $webkitLibrariesDir" . ".\n" if $result == 0;
 
 print "The $file has been sucessfully installed in\n $webkitLibrariesDir\n";
 exit;
-
-sub toUnixPath
-{
-    my $path = shift;
-    return unless $path;
-    chomp($path = `cygpath -u '$path'`);
-    return $path;
-}
 
 sub lastModifiedToUnixTime($)
 {

@@ -1449,15 +1449,16 @@ sub windowsOutputDir()
 sub fontExists($)
 {
     my $font = shift;
-    my $val = system qw(regtool get), '\\HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts\\' . $font . ' (TrueType)';
-    return 0 == $val;
+    my $cmd = "reg query \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts\\" . $font ."\" 2>&1";
+    my $val = `$cmd`;
+    return $? == 0;
 }
 
 sub checkInstalledTools()
 {
     # SVN 1.7.10 is known to be compatible with current servers. SVN 1.8.x seems to be missing some authentication
     # protocols we use for svn.webkit.org:
-    my $svnVersion = `svn --version | grep "\\sversion"`;
+    my $svnVersion = `svn --version 2> NUL | grep "\\sversion"`;
     chomp($svnVersion);
     if (!$? and $svnVersion =~ /1\.8\./) {
         print "svn 1.7.10 is known to be compatible with our servers. You are running $svnVersion,\nwhich may not work properly.\n"
@@ -1468,7 +1469,7 @@ sub checkInstalledTools()
     die "You must have Python installed to build WebKit.\n" if ($?);
 
     # cURL 7.34.0 has a bug that prevents authentication with opensource.apple.com (and other things using SSL3).
-    my $curlVer = `curl --version | grep "curl"`;
+    my $curlVer = `curl --version 2> NUL | grep "curl"`;
     chomp($curlVer);
     if (!$? and $curlVer =~ /libcurl\/7\.34\.0/) {
         print "cURL version 7.34.0 has a bug that prevents authentication with SSL v2 or v3.\n";
@@ -1525,7 +1526,10 @@ sub setupAppleWinEnv()
 
         foreach my $variable (keys %variablesToSet) {
             print "Setting the Environment Variable '" . $variable . "' to '" . $variablesToSet{$variable} . "'\n\n";
-            system qw(regtool -s set), '\\HKEY_CURRENT_USER\\Environment\\' . $variable, $variablesToSet{$variable};
+            my $ret = system "setx", $variable, $variablesToSet{$variable};
+            if ($ret != 0) {
+                system qw(regtool -s set), '\\HKEY_CURRENT_USER\\Environment\\' . $variable, $variablesToSet{$variable};
+            }
             $restartNeeded ||=  $variable eq "WEBKIT_LIBRARIES" || $variable eq "WEBKIT_OUTPUTDIR";
         }
 
