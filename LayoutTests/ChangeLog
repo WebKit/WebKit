@@ -1,3 +1,19 @@
+2015-03-24  Yoav Weiss  <yoav@yoav.ws>
+
+        Stop image from displaying when src attribute is removed or emptied
+        https://bugs.webkit.org/show_bug.cgi?id=142677
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/HTMLImageElement/image-empty-src-expected.html: Added.
+        * fast/dom/HTMLImageElement/image-empty-src.html: Added.
+        * fast/dom/HTMLImageElement/image-remove-src-expected.html: Added.
+        * fast/dom/HTMLImageElement/image-remove-src.html: Added.
+        * fast/dom/HTMLImageElement/image-empty-srcset-expected.html: Added.
+        * fast/dom/HTMLImageElement/image-empty-srcset.html: Added.
+        * fast/dom/HTMLImageElement/image-remove-srcset-expected.html: Added.
+        * fast/dom/HTMLImageElement/image-remove-srcset.html: Added.
+
 2015-03-23  Yoav Weiss  <yoav@yoav.ws>
 
         Update empty image canvas tests and fix a related bug

@@ -171,7 +171,8 @@ void ImageLoader::updateFromElement()
 
     AtomicString attr = element().imageSourceURL();
 
-    if (attr == m_failedLoadURL)
+    // Avoid loading a URL we already failed to load.
+    if (!m_failedLoadURL.isEmpty() && attr == m_failedLoadURL)
         return;
 
     // Do not load any image if the 'src' attribute is missing or if it is
@@ -254,8 +255,10 @@ void ImageLoader::updateFromElement()
             // dispatched.
             newImage->addClient(this);
         }
-        if (oldImage)
+        if (oldImage) {
             oldImage->removeClient(this);
+            updateRenderer();
+        }
     }
 
     if (RenderImageResource* imageResource = renderImageResource())
