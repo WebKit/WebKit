@@ -128,13 +128,13 @@ WebKitBackForwardList* webkitBackForwardListCreate(WebBackForwardList* backForwa
     return list;
 }
 
-void webkitBackForwardListChanged(WebKitBackForwardList* backForwardList, WebBackForwardListItem* webAddedItem, Vector<RefPtr<WebBackForwardListItem>> webRemovedItems)
+void webkitBackForwardListChanged(WebKitBackForwardList* backForwardList, WebBackForwardListItem* webAddedItem, const Vector<RefPtr<WebBackForwardListItem>>& webRemovedItems)
 {
     WebKitBackForwardListItem* addedItem = webkitBackForwardListGetOrCreateItem(backForwardList, webAddedItem);
     GList* removedItems = nullptr;
 
     WebKitBackForwardListPrivate* priv = backForwardList->priv;
-    for (const auto& webItem : webRemovedItems) {
+    for (auto& webItem : webRemovedItems) {
         removedItems = g_list_prepend(removedItems, g_object_ref(priv->itemsMap.get(webItem.get()).get()));
         priv->itemsMap.remove(webItem.get());
     }

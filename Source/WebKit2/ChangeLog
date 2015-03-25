@@ -1,3 +1,16 @@
+2015-03-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WK2] webkitBackForwardListChanged() should operate on a Vector reference
+        https://bugs.webkit.org/show_bug.cgi?id=142963
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp:
+        (webkitBackForwardListChanged): This function only reads from the passed-in
+        Vector of removed items, so only a const lvalue reference to the Vector
+        is needed.
+        * UIProcess/API/gtk/WebKitBackForwardListPrivate.h:
+
 2015-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.8.0 release.
