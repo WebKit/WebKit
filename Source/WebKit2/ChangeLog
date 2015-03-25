@@ -1,5 +1,18 @@
 2015-03-23  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK] Use std::abs() in ClickCounter::currentClickCountForGdkButtonEvent()
+        https://bugs.webkit.org/show_bug.cgi?id=142964
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (ClickCounter::currentClickCountForGdkButtonEvent): Use the STL's std::abs()
+        instead of C's abs(). The templated nature of std::abs() ensures the proper
+        computation that matches the types of the passed-in values, and shuts down
+        a warning when compiling with Clang.
+
+2015-03-23  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK][WK2] webkitBackForwardListChanged() should operate on a Vector reference
         https://bugs.webkit.org/show_bug.cgi?id=142963
 
