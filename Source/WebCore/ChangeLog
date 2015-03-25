@@ -1,3 +1,9 @@
+2015-03-25  Dan Bernstein  <mitz@apple.com>
+
+        iOS Simulator build fix.
+
+        * platform/spi/cocoa/IOSurfaceSPI.h:
+
 2015-03-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r181932.

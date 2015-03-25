@@ -26,6 +26,8 @@
 #ifndef IOSurfaceSPI_h
 #define IOSurfaceSPI_h
 
+#if !PLATFORM(IOS_SIMULATOR)
+
 #if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
 #include <IOSurface/IOSurface.h>
@@ -91,5 +93,7 @@ WTF_EXTERN_C_BEGIN
 IOReturn IOSurfaceSetPurgeable(IOSurfaceRef buffer, uint32_t newState, uint32_t *oldState);
 
 WTF_EXTERN_C_END
+
+#endif
 
 #endif // IOSurfaceSPI_h
