@@ -1,3 +1,10 @@
+2015-03-24  Dan Bernstein  <mitz@apple.com>
+
+        Another attempt to fix the build.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+
 2015-03-24  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Add multi-DFA compiling and interpreting.

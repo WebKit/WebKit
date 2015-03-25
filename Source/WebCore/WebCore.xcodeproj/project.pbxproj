@@ -1623,7 +1623,7 @@
 		44DAB5B115A623580097C1E4 /* Extensions3DOpenGLCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44DAB5AF15A623580097C1E4 /* Extensions3DOpenGLCommon.cpp */; };
 		44DAB5B215A623580097C1E4 /* Extensions3DOpenGLCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DAB5B015A623580097C1E4 /* Extensions3DOpenGLCommon.h */; };
 		44DEF6431A6FF92700D45EEC /* IOReturnSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DEF6421A6FF92700D45EEC /* IOReturnSPI.h */; };
-		44DFF6431A6FF92700D45EEC /* IOSurfaceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DFF6421A6FF92700D45EEC /* IOSurfaceSPI.h */; };
+		44DFF6431A6FF92700D45EEC /* IOSurfaceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DFF6421A6FF92700D45EEC /* IOSurfaceSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44EFF6431A6FF92700D45EEC /* IOTypesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 44EFF6421A6FF92700D45EEC /* IOTypesSPI.h */; };
 		45099C411370A7800058D513 /* IconURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45099C401370A7800058D513 /* IconURL.cpp */; };
 		450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 450CEBEE15073BBE002BB149 /* LabelableElement.cpp */; };
