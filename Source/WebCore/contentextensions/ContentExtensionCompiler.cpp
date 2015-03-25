@@ -111,23 +111,16 @@ CompiledContentExtensionData compileRuleList(const String& ruleList)
     Vector<unsigned> actionLocations = serializeActions(parsedRuleList, actions);
     Vector<uint64_t> universalActionLocations;
 
-    Vector<NFA> nfas;
-    nfas.append(NFA());
+    NFA nfa;
+    URLFilterParser urlFilterParser(nfa);
     bool nonUniversalActionSeen = false;
     for (unsigned ruleIndex = 0; ruleIndex < parsedRuleList.size(); ++ruleIndex) {
-
-        // FIXME: Tune this better and adjust ContentExtensionTest.MultiDFA accordingly.
-        if (nfas[nfas.size() - 1].graphSize() > 500)
-            nfas.append(NFA());
-
-        NFA& lastNFA = nfas[nfas.size() - 1];
-        URLFilterParser urlFilterParser(lastNFA);
         const ContentExtensionRule& contentExtensionRule = parsedRuleList[ruleIndex];
         const Trigger& trigger = contentExtensionRule.trigger();
         ASSERT(trigger.urlFilter.length());
 
         // High bits are used for flags. This should match how they are used in DFABytecodeCompiler::compileNode.
-        uint64_t actionLocationAndFlags = (static_cast<uint64_t>(trigger.flags) << 32) | static_cast<uint64_t>(actionLocations[ruleIndex]);
+        uint64_t actionLocationAndFlags =(static_cast<uint64_t>(trigger.flags) << 32) | static_cast<uint64_t>(actionLocations[ruleIndex]);
         URLFilterParser::ParseStatus status = urlFilterParser.addPattern(trigger.urlFilter, trigger.urlFilterIsCaseSensitive, actionLocationAndFlags);
 
         if (status == URLFilterParser::MatchesEverything) {
@@ -156,17 +149,9 @@ CompiledContentExtensionData compileRuleList(const String& ruleList)
     double dfaBuildTimeStart = monotonicallyIncreasingTime();
 #endif
 
-    Vector<DFABytecode> bytecode;
-    for (size_t i = 0; i < nfas.size(); ++i) {
-        DFA dfa = NFAToDFA::convert(nfas[i]);
-        if (!i) {
-            // Put all the universal actions on the first DFA.
-            for (uint64_t actionLocation : universalActionLocations)
-                dfa.nodeAt(dfa.root()).actions.append(actionLocation);
-        }
-        DFABytecodeCompiler compiler(dfa, bytecode);
-        compiler.compile();
-    }
+    DFA dfa = NFAToDFA::convert(nfa);
+    for (uint64_t actionLocation : universalActionLocations)
+        dfa.nodeAt(dfa.root()).actions.append(actionLocation);
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double dfaBuildTimeEnd = monotonicallyIncreasingTime();
@@ -178,6 +163,10 @@ CompiledContentExtensionData compileRuleList(const String& ruleList)
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
     dfa.debugPrintDot();
 #endif
+
+    Vector<DFABytecode> bytecode;
+    DFABytecodeCompiler compiler(dfa, bytecode);
+    compiler.compile();
 
     return { WTF::move(bytecode), WTF::move(actions) };
 }

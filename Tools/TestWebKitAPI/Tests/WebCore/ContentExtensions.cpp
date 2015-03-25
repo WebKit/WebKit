@@ -36,7 +36,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace ContentExtensions {
@@ -99,22 +98,16 @@ private:
     ContentExtensions::CompiledContentExtensionData m_data;
 };
 
-void static testRequest(ContentExtensions::ContentExtensionsBackend contentExtensionsBackend, const ResourceLoadInfo& resourceLoadInfo, Vector<ContentExtensions::ActionType> expectedActions, bool ignorePreviousRules = false)
+void static testRequest(ContentExtensions::ContentExtensionsBackend contentExtensionsBackend, const ResourceLoadInfo& resourceLoadInfo, Vector<ContentExtensions::ActionType> expectedActions)
 {
     auto actions = contentExtensionsBackend.actionsForResourceLoad(resourceLoadInfo);
-
-    unsigned expectedSize = actions.size();
-    if (actions.size() && !ignorePreviousRules)
-        expectedSize--; // The last action is applying the compiled stylesheet.
-    
-    EXPECT_EQ(expectedActions.size(), expectedSize);
-    if (expectedActions.size() != expectedSize)
+    // The last action is applying the compiled stylesheet.
+    EXPECT_EQ(expectedActions.size(), actions.size() ? actions.size() - 1 : 0);
+    if (expectedActions.size() != (actions.size() ? actions.size() - 1 : 0))
         return;
 
     for (unsigned i = 0; i < expectedActions.size(); ++i)
         EXPECT_EQ(expectedActions[i], actions[i].type());
-    if (!ignorePreviousRules)
-        EXPECT_EQ(actions[actions.size() - 1].type(), ContentExtensions::ActionType::CSSDisplayNoneStyleSheet);
 }
 
 ResourceLoadInfo mainDocumentRequest(const char* url, ResourceType resourceType = ResourceType::Document)
@@ -515,47 +508,6 @@ TEST_F(ContentExtensionTest, ResourceType)
     testRequest(backend, mainDocumentRequest("http://block_all_types.org", ResourceType::Media), { ContentExtensions::ActionType::BlockLoad });
     testRequest(backend, mainDocumentRequest("http://block_only_images.org", ResourceType::Image), { ContentExtensions::ActionType::BlockLoad });
     testRequest(backend, mainDocumentRequest("http://block_only_images.org", ResourceType::Document), { });
-}
-
-TEST_F(ContentExtensionTest, MultiDFA)
-{
-    // Make an NFA with about 2000 nodes.
-    StringBuilder ruleList;
-    ruleList.append('[');
-    for (char c1 = 'A'; c1 <= 'Z'; ++c1) {
-        for (char c2 = 'A'; c2 <= 'Z'; ++c2) {
-            for (char c3 = 'A'; c3 <= 'C'; ++c3) {
-                if (c1 != 'A' || c2 != 'A' || c3 != 'A')
-                    ruleList.append(',');
-                ruleList.append("{\"action\":{\"type\":\"");
-                
-                // Put an ignore-previous-rules near the middle.
-                if (c1 == 'L' && c2 == 'L' && c3 == 'A')
-                    ruleList.append("ignore-previous-rules");
-                else
-                    ruleList.append("block");
-                
-                ruleList.append("\"},\"trigger\":{\"url-filter\":\".*");
-                ruleList.append(c1);
-                ruleList.append(c2);
-                ruleList.append(c3);
-                ruleList.append("\", \"url-filter-is-case-sensitive\":true}}");
-            }
-        }
-    }
-    ruleList.append(']');
-    
-    auto extensionData = ContentExtensions::compileRuleList(ruleList.toString());
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
-        
-    ContentExtensions::ContentExtensionsBackend backend;
-    backend.addContentExtension("ResourceTypeFilter", extension);
-
-    testRequest(backend, mainDocumentRequest("http://webkit.org/AAA"), { ContentExtensions::ActionType::BlockLoad });
-    testRequest(backend, mainDocumentRequest("http://webkit.org/ZZC"), { ContentExtensions::ActionType::BlockLoad });
-    testRequest(backend, mainDocumentRequest("http://webkit.org/LLA/AAA"), { }, true);
-    testRequest(backend, mainDocumentRequest("http://webkit.org/LLA/MMC"), { ContentExtensions::ActionType::BlockLoad }, true);
-    testRequest(backend, mainDocumentRequest("http://webkit.org/"), { });
 }
 
 static void testPatternStatus(String pattern, ContentExtensions::URLFilterParser::ParseStatus status)

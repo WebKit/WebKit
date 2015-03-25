@@ -167,9 +167,7 @@ void DFABytecodeCompiler::compileCheckForRange(uint16_t lowValue, uint16_t highV
 
 void DFABytecodeCompiler::compile()
 {
-    // DFA header.
-    unsigned startLocation = m_bytecode.size();
-    append<unsigned>(m_bytecode, 0);
+    ASSERT(!m_bytecode.size());
     m_nodeStartOffsets.resize(m_dfa.size());
     
     // Make sure the root is always at the beginning of the bytecode.
@@ -182,9 +180,6 @@ void DFABytecodeCompiler::compile()
     // Link.
     for (const auto& linkRecord : m_linkRecords)
         set32Bits(m_bytecode, linkRecord.first, m_nodeStartOffsets[linkRecord.second]);
-    
-    // Set size header.
-    set32Bits(m_bytecode, startLocation, m_bytecode.size() - startLocation);
 }
     
 } // namespace ContentExtensions
