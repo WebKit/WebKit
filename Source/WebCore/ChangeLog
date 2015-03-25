@@ -1,3 +1,16 @@
+2015-03-19  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (r109593): Clicking after last inline element could cause a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=142880
+        rdar://problem/17222294
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: editing/selection/click-after-last-inline-crash.html
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::closestLeafChildForLogicalLeftPosition):
+
 2015-03-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Unreviewed. GTK build fix after r181720.
