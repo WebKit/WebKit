@@ -53,8 +53,10 @@ SVGForeignObjectElement& RenderSVGForeignObject::foreignObjectElement() const
 
 void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context->paintingDisabled()
-        || (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection))
+    if (paintInfo.context->paintingDisabled())
+        return;
+
+    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection)
         return;
 
     PaintInfo childPaintInfo(paintInfo);
@@ -65,30 +67,30 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
         childPaintInfo.context->clip(m_viewport);
 
     SVGRenderingContext renderingContext;
-    bool continueRendering = true;
     if (paintInfo.phase == PaintPhaseForeground) {
         renderingContext.prepareToRenderSVGContent(*this, childPaintInfo);
-        continueRendering = renderingContext.isRenderingPrepared();
+        if (!renderingContext.isRenderingPrepared())
+            return;
     }
 
-    if (continueRendering) {
-        // Paint all phases of FO elements atomically, as though the FO element established its
-        // own stacking context.
-        bool preservePhase = paintInfo.phase == PaintPhaseSelection || paintInfo.phase == PaintPhaseTextClip;
-        LayoutPoint childPoint = IntPoint();
-        childPaintInfo.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
-        RenderBlock::paint(childPaintInfo, IntPoint());
-        if (!preservePhase) {
-            childPaintInfo.phase = PaintPhaseChildBlockBackgrounds;
-            RenderBlock::paint(childPaintInfo, childPoint);
-            childPaintInfo.phase = PaintPhaseFloat;
-            RenderBlock::paint(childPaintInfo, childPoint);
-            childPaintInfo.phase = PaintPhaseForeground;
-            RenderBlock::paint(childPaintInfo, childPoint);
-            childPaintInfo.phase = PaintPhaseOutline;
-            RenderBlock::paint(childPaintInfo, childPoint);
-        }
+    LayoutPoint childPoint = IntPoint();
+    if (paintInfo.phase == PaintPhaseSelection) {
+        RenderBlock::paint(childPaintInfo, childPoint);
+        return;
     }
+
+    // Paint all phases of FO elements atomically, as though the FO element established its
+    // own stacking context.
+    childPaintInfo.phase = PaintPhaseBlockBackground;
+    RenderBlock::paint(childPaintInfo, childPoint);
+    childPaintInfo.phase = PaintPhaseChildBlockBackgrounds;
+    RenderBlock::paint(childPaintInfo, childPoint);
+    childPaintInfo.phase = PaintPhaseFloat;
+    RenderBlock::paint(childPaintInfo, childPoint);
+    childPaintInfo.phase = PaintPhaseForeground;
+    RenderBlock::paint(childPaintInfo, childPoint);
+    childPaintInfo.phase = PaintPhaseOutline;
+    RenderBlock::paint(childPaintInfo, childPoint);
 }
 
 LayoutRect RenderSVGForeignObject::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const

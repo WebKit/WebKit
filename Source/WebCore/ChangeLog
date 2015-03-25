@@ -1,3 +1,67 @@
+2015-03-18  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Unreviewed. GTK build fix after r181720.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::styleDidChange):
+
+2015-03-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Switching between two SVG images with no intrinsic sizes causes them to get the default SVG size instead of the container size.
+        https://bugs.webkit.org/show_bug.cgi?id=142805.
+
+        Reviewed by Darin Adler.
+        
+        The bug happens due to wrong logic in RenderImage::imageDimensionsChanged().
+        This function decides to setNeedsLayout() if the intrinsic size of the image
+        changes. If the size does not change, it only repaints the image rectangle.
+        When switching the src of the an image between two SVG images and both of
+        them have no intrinsic size, we do not updateInnerContentRect() and this
+        means an SVGImageForContainer is not going to be created for this image.
+        When the image is drawn, it is drawn directly from the SVGImage. And this
+        means the drawing has to be scaled by container_size / SVG_default_intrinsic_size
+        
+        After figuring out that I need to updateInnerContentRect() to fix this bug,
+        I found out Blink has already changed this code to do the same thing. But 
+        they also did more clean-up in this function. Here is the link
+        https://codereview.chromium.org/114323004. I think their change seems correct
+        although they did not say what exactly they were trying to fix.
+        
+        The plan for repaintOrMarkForLayout(), which is the new name of this function,
+        is the following:
+            -- setNeedLayout() if the intrinsic size changes and it affects the size
+               of the image.
+            -- updateInnerContentRect() if the intrinsic size did not change but the
+               image has exiting layout.
+            -- repaint the image rectangle if layout is not needed.
+            
+        This change also removes the call to computeLogicalWidthInRegion(), which is
+        almost running a layout for the image. This call figures out whether the image
+        needs to setNeedsLayout(). This call is unnecessary; the image needs to run a
+        layout if the intrinsic size has changed and it affects the size of the image.
+                    
+        Test: svg/as-image/svg-no-intrinsic-size-switching.html
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::styleDidChange): Change the function call.
+        (WebCore::RenderImage::imageChanged): Rename local variable and change the
+        function call.
+        
+        (WebCore::RenderImage::updateIntrinsicSizeIfNeeded): Simplify this function.
+        Call setIntrinsicSize() with the new size unless the image is in error state.
+        
+        (WebCore::RenderImage::repaintOrMarkForLayout): This a better name for this
+        function since it is called even if the intrinsic size was not changed.
+        (WebCore::RenderImage::imageDimensionsChanged): Deleted.
+        
+        * rendering/RenderImage.h: Rename imageDimensionsChanged() and change the 
+        updateIntrinsicSizeIfNeeded() to return void.
+        
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::paint): Code cleanup. This function can
+        only handle the paint phases PaintPhaseForeground and PaintPhaseSelection.
+        Use this information to simplify the logic and order of painting there.
+
 2015-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid repaints when changing transform on an element with multiple background images

@@ -1,3 +1,16 @@
+2015-03-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Switching between two SVG images with no intrinsic sizes causes them to get the default SVG size instead of the container size.
+        https://bugs.webkit.org/show_bug.cgi?id=142805.
+
+        Reviewed by Darin Adler.
+
+        * svg/as-image/svg-no-intrinsic-size-switching-expected.html: Added.
+        * svg/as-image/svg-no-intrinsic-size-switching.html: Added.
+        Ensure that switching the source of an <img> element between two SVG images,
+        which have no intrinsic sizes, gets the image the size of the container and
+        not the default SVG intrinsic size which is 300x150 pixels.
+
 2015-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid repaints when changing transform on an element with multiple background images
