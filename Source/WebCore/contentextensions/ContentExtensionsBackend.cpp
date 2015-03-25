@@ -80,14 +80,13 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
         const SerializedActionByte* actions = compiledExtension.actions();
         const unsigned actionsLength = compiledExtension.actionsLength();
         
+        bool sawIgnorePreviousRules = false;
         if (!triggeredActions.isEmpty()) {
             Vector<unsigned> actionLocations;
             actionLocations.reserveInitialCapacity(triggeredActions.size());
             for (auto actionLocation : triggeredActions)
                 actionLocations.append(static_cast<unsigned>(actionLocation));
             std::sort(actionLocations.begin(), actionLocations.end());
-
-            bool sawIgnorePreviousRules = false;
 
             // Add actions in reverse order to properly deal with IgnorePreviousRules.
             for (unsigned i = actionLocations.size(); i; i--) {
@@ -98,10 +97,9 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
                 }
                 finalActions.append(action);
             }
-
-            if (!sawIgnorePreviousRules)
-                finalActions.append(Action(ActionType::CSSDisplayNoneStyleSheet, contentExtension->identifier()));
         }
+        if (!sawIgnorePreviousRules)
+            finalActions.append(Action(ActionType::CSSDisplayNoneStyleSheet, contentExtension->identifier()));
     }
     return finalActions;
 }

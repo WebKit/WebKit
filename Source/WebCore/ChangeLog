@@ -1,3 +1,27 @@
+2015-03-25  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Add multi-DFA compiling and interpreting.
+        https://bugs.webkit.org/show_bug.cgi?id=143010
+
+        Reviewed by Benjamin Poulain.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        Compile multiple NFAs to DFAs.
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
+        Fixed a bug when there are no non-universal actions.
+        We still need to report that no ignore-previous-rules was hit to apply the
+        universal actions which are now accessed through DFABytecodeInterpreter::actionsFromDFARoot
+        and skipped in DFABytecodeInterpreter::interpret.
+        * contentextensions/DFABytecodeCompiler.cpp:
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compile):
+        Add a header for each DFA.
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::actionsFromDFARoot):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+        Interpret as many DFAs as there are in the bytecode.
+
 2015-03-25  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Illegal character in project file.
