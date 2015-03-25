@@ -1,5 +1,17 @@
 2015-03-24  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Setter should have a single formal parameter, Getter no parameters
+        https://bugs.webkit.org/show_bug.cgi?id=142903
+
+        Reviewed by Geoffrey Garen.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        Enforce no parameters for getters and a single parameter
+        for setters, with informational error messages.
+
+2015-03-24  Joseph Pecoraro  <pecoraro@apple.com>
+
         ES6: Classes: Early return in sub-class constructor results in returning undefined instead of instance
         https://bugs.webkit.org/show_bug.cgi?id=143012
 

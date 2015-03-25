@@ -16,9 +16,9 @@ class Derived extends Base {
     chainMethod() { return [super.chainMethod(), 'derived']; }
     callBaseMethod() { return super.baseMethod(); }
     get callBaseMethodInGetter() { return super['baseMethod'](); }
-    set callBaseMethodInSetter() { valueInSetter = super.baseMethod(); }
+    set callBaseMethodInSetter(x) { valueInSetter = super.baseMethod(); }
     get baseMethodInGetterSetter() { return super.baseMethod; }
-    set baseMethodInGetterSetter() { valueInSetter = super['baseMethod']; }
+    set baseMethodInGetterSetter(x) { valueInSetter = super['baseMethod']; }
     static staticMethod() { return super.staticMethod(); }
 }
 

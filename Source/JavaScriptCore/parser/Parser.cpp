@@ -1323,11 +1323,24 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         semanticFailureDueToKeyword(stringForFunctionMode(mode), " name");
         failWithMessage("Expected an opening '(' before a ", stringForFunctionMode(mode), "'s parameter list");
     }
-    if (!match(CLOSEPAREN)) {
-        info.parameters = parseFormalParameters(context);
-        failIfFalse(info.parameters, "Cannot parse parameters for this ", stringForFunctionMode(mode));
+
+    if (mode == GetterMode)
+        consumeOrFail(CLOSEPAREN, "getter functions must have no parameters");
+    else if (mode == SetterMode) {
+        failIfTrue(match(CLOSEPAREN), "setter functions must have one parameter");
+        auto parameter = parseDeconstructionPattern(context, DeconstructToParameters);
+        failIfFalse(parameter, "setter functions must have one parameter");
+        info.parameters = context.createFormalParameterList(parameter);
+        failIfTrue(match(COMMA), "setter functions must have one parameter");
+        consumeOrFail(CLOSEPAREN, "Expected a ')' after a parameter declaration");
+    } else {
+        if (!match(CLOSEPAREN)) {
+            info.parameters = parseFormalParameters(context);
+            failIfFalse(info.parameters, "Cannot parse parameters for this ", stringForFunctionMode(mode));
+        }
+        consumeOrFail(CLOSEPAREN, "Expected a ')' or a ',' after a parameter declaration");
     }
-    consumeOrFail(CLOSEPAREN, "Expected a ')' or a ',' after a parameter declaration");
+
     matchOrFail(OPENBRACE, "Expected an opening '{' at the start of a ", stringForFunctionMode(mode), " body");
 
     // BytecodeGenerator emits code to throw TypeError when a class constructor is "call"ed.

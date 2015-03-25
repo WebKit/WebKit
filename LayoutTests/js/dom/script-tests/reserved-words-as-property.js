@@ -56,7 +56,7 @@ function testWord(word, strictPrefix, expectedResult) {
     // These should be allowed for all words, even reserved ones.
     testWordEvalAndFunction(strictPrefix + "({ \"" + word + "\": 42 }." + word + " === 42)", false);
     testWordEvalAndFunction(strictPrefix + "({ " + word + ": 42 }." + word + " === 42)", false);
-    testWordEvalAndFunction(strictPrefix + "({ get " + word + "(){}, set " + word + "(){}, parsedOkay: 42 }.parsedOkay === 42)", false);
+    testWordEvalAndFunction(strictPrefix + "({ get " + word + "(){}, set " + word + "(x){}, parsedOkay: 42 }.parsedOkay === 42)", false);
 }
 
 function testWordStrictAndNonStrict(word, condition) {

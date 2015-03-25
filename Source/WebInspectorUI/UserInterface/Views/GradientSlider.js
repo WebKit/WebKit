@@ -330,7 +330,7 @@ WebInspector.GradientSliderKnob.prototype = {
         this._updateTransform();
     },
 
-    get wellColor(color)
+    get wellColor()
     {
         return this._wellColor;
     },

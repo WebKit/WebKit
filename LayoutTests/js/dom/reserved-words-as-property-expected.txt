@@ -19,8 +19,8 @@ PASS ({ "true": 42 }.true === 42) is true
 PASS (function(){({ "true": 42 }.true === 42)}); true is true
 PASS ({ true: 42 }.true === 42) is true
 PASS (function(){({ true: 42 }.true === 42)}); true is true
-PASS ({ get true(){}, set true(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get true(){}, set true(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get true(){}, set true(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get true(){}, set true(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var true; true threw exception SyntaxError: Cannot use the keyword 'true' as a variable name..
 PASS (function(){"use strict";var true; true}); true threw exception SyntaxError: Cannot use the keyword 'true' as a variable name..
 PASS "use strict";var true = 42; true === 42 threw exception SyntaxError: Cannot use the keyword 'true' as a variable name..
@@ -37,8 +37,8 @@ PASS "use strict";({ "true": 42 }.true === 42) is true
 PASS (function(){"use strict";({ "true": 42 }.true === 42)}); true is true
 PASS "use strict";({ true: 42 }.true === 42) is true
 PASS (function(){"use strict";({ true: 42 }.true === 42)}); true is true
-PASS "use strict";({ get true(){}, set true(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get true(){}, set true(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get true(){}, set true(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get true(){}, set true(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var false; true threw exception SyntaxError: Cannot use the keyword 'false' as a variable name..
 PASS (function(){var false; true}); true threw exception SyntaxError: Cannot use the keyword 'false' as a variable name..
 PASS var false = 42; false === 42 threw exception SyntaxError: Cannot use the keyword 'false' as a variable name..
@@ -55,8 +55,8 @@ PASS ({ "false": 42 }.false === 42) is true
 PASS (function(){({ "false": 42 }.false === 42)}); true is true
 PASS ({ false: 42 }.false === 42) is true
 PASS (function(){({ false: 42 }.false === 42)}); true is true
-PASS ({ get false(){}, set false(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get false(){}, set false(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get false(){}, set false(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get false(){}, set false(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var false; true threw exception SyntaxError: Cannot use the keyword 'false' as a variable name..
 PASS (function(){"use strict";var false; true}); true threw exception SyntaxError: Cannot use the keyword 'false' as a variable name..
 PASS "use strict";var false = 42; false === 42 threw exception SyntaxError: Cannot use the keyword 'false' as a variable name..
@@ -73,8 +73,8 @@ PASS "use strict";({ "false": 42 }.false === 42) is true
 PASS (function(){"use strict";({ "false": 42 }.false === 42)}); true is true
 PASS "use strict";({ false: 42 }.false === 42) is true
 PASS (function(){"use strict";({ false: 42 }.false === 42)}); true is true
-PASS "use strict";({ get false(){}, set false(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get false(){}, set false(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get false(){}, set false(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get false(){}, set false(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var null; true threw exception SyntaxError: Cannot use the keyword 'null' as a variable name..
 PASS (function(){var null; true}); true threw exception SyntaxError: Cannot use the keyword 'null' as a variable name..
 PASS var null = 42; null === 42 threw exception SyntaxError: Cannot use the keyword 'null' as a variable name..
@@ -91,8 +91,8 @@ PASS ({ "null": 42 }.null === 42) is true
 PASS (function(){({ "null": 42 }.null === 42)}); true is true
 PASS ({ null: 42 }.null === 42) is true
 PASS (function(){({ null: 42 }.null === 42)}); true is true
-PASS ({ get null(){}, set null(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get null(){}, set null(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get null(){}, set null(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get null(){}, set null(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var null; true threw exception SyntaxError: Cannot use the keyword 'null' as a variable name..
 PASS (function(){"use strict";var null; true}); true threw exception SyntaxError: Cannot use the keyword 'null' as a variable name..
 PASS "use strict";var null = 42; null === 42 threw exception SyntaxError: Cannot use the keyword 'null' as a variable name..
@@ -109,8 +109,8 @@ PASS "use strict";({ "null": 42 }.null === 42) is true
 PASS (function(){"use strict";({ "null": 42 }.null === 42)}); true is true
 PASS "use strict";({ null: 42 }.null === 42) is true
 PASS (function(){"use strict";({ null: 42 }.null === 42)}); true is true
-PASS "use strict";({ get null(){}, set null(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get null(){}, set null(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get null(){}, set null(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get null(){}, set null(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var break; true threw exception SyntaxError: Cannot use the keyword 'break' as a variable name..
 PASS (function(){var break; true}); true threw exception SyntaxError: Cannot use the keyword 'break' as a variable name..
 PASS var break = 42; break === 42 threw exception SyntaxError: Cannot use the keyword 'break' as a variable name..
@@ -127,8 +127,8 @@ PASS ({ "break": 42 }.break === 42) is true
 PASS (function(){({ "break": 42 }.break === 42)}); true is true
 PASS ({ break: 42 }.break === 42) is true
 PASS (function(){({ break: 42 }.break === 42)}); true is true
-PASS ({ get break(){}, set break(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get break(){}, set break(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get break(){}, set break(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get break(){}, set break(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var break; true threw exception SyntaxError: Cannot use the keyword 'break' as a variable name..
 PASS (function(){"use strict";var break; true}); true threw exception SyntaxError: Cannot use the keyword 'break' as a variable name..
 PASS "use strict";var break = 42; break === 42 threw exception SyntaxError: Cannot use the keyword 'break' as a variable name..
@@ -145,8 +145,8 @@ PASS "use strict";({ "break": 42 }.break === 42) is true
 PASS (function(){"use strict";({ "break": 42 }.break === 42)}); true is true
 PASS "use strict";({ break: 42 }.break === 42) is true
 PASS (function(){"use strict";({ break: 42 }.break === 42)}); true is true
-PASS "use strict";({ get break(){}, set break(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get break(){}, set break(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get break(){}, set break(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get break(){}, set break(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var case; true threw exception SyntaxError: Cannot use the keyword 'case' as a variable name..
 PASS (function(){var case; true}); true threw exception SyntaxError: Cannot use the keyword 'case' as a variable name..
 PASS var case = 42; case === 42 threw exception SyntaxError: Cannot use the keyword 'case' as a variable name..
@@ -163,8 +163,8 @@ PASS ({ "case": 42 }.case === 42) is true
 PASS (function(){({ "case": 42 }.case === 42)}); true is true
 PASS ({ case: 42 }.case === 42) is true
 PASS (function(){({ case: 42 }.case === 42)}); true is true
-PASS ({ get case(){}, set case(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get case(){}, set case(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get case(){}, set case(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get case(){}, set case(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var case; true threw exception SyntaxError: Cannot use the keyword 'case' as a variable name..
 PASS (function(){"use strict";var case; true}); true threw exception SyntaxError: Cannot use the keyword 'case' as a variable name..
 PASS "use strict";var case = 42; case === 42 threw exception SyntaxError: Cannot use the keyword 'case' as a variable name..
@@ -181,8 +181,8 @@ PASS "use strict";({ "case": 42 }.case === 42) is true
 PASS (function(){"use strict";({ "case": 42 }.case === 42)}); true is true
 PASS "use strict";({ case: 42 }.case === 42) is true
 PASS (function(){"use strict";({ case: 42 }.case === 42)}); true is true
-PASS "use strict";({ get case(){}, set case(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get case(){}, set case(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get case(){}, set case(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get case(){}, set case(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var catch; true threw exception SyntaxError: Cannot use the keyword 'catch' as a variable name..
 PASS (function(){var catch; true}); true threw exception SyntaxError: Cannot use the keyword 'catch' as a variable name..
 PASS var catch = 42; catch === 42 threw exception SyntaxError: Cannot use the keyword 'catch' as a variable name..
@@ -199,8 +199,8 @@ PASS ({ "catch": 42 }.catch === 42) is true
 PASS (function(){({ "catch": 42 }.catch === 42)}); true is true
 PASS ({ catch: 42 }.catch === 42) is true
 PASS (function(){({ catch: 42 }.catch === 42)}); true is true
-PASS ({ get catch(){}, set catch(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get catch(){}, set catch(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get catch(){}, set catch(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get catch(){}, set catch(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var catch; true threw exception SyntaxError: Cannot use the keyword 'catch' as a variable name..
 PASS (function(){"use strict";var catch; true}); true threw exception SyntaxError: Cannot use the keyword 'catch' as a variable name..
 PASS "use strict";var catch = 42; catch === 42 threw exception SyntaxError: Cannot use the keyword 'catch' as a variable name..
@@ -217,8 +217,8 @@ PASS "use strict";({ "catch": 42 }.catch === 42) is true
 PASS (function(){"use strict";({ "catch": 42 }.catch === 42)}); true is true
 PASS "use strict";({ catch: 42 }.catch === 42) is true
 PASS (function(){"use strict";({ catch: 42 }.catch === 42)}); true is true
-PASS "use strict";({ get catch(){}, set catch(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get catch(){}, set catch(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get catch(){}, set catch(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get catch(){}, set catch(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var continue; true threw exception SyntaxError: Cannot use the keyword 'continue' as a variable name..
 PASS (function(){var continue; true}); true threw exception SyntaxError: Cannot use the keyword 'continue' as a variable name..
 PASS var continue = 42; continue === 42 threw exception SyntaxError: Cannot use the keyword 'continue' as a variable name..
@@ -235,8 +235,8 @@ PASS ({ "continue": 42 }.continue === 42) is true
 PASS (function(){({ "continue": 42 }.continue === 42)}); true is true
 PASS ({ continue: 42 }.continue === 42) is true
 PASS (function(){({ continue: 42 }.continue === 42)}); true is true
-PASS ({ get continue(){}, set continue(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get continue(){}, set continue(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get continue(){}, set continue(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get continue(){}, set continue(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var continue; true threw exception SyntaxError: Cannot use the keyword 'continue' as a variable name..
 PASS (function(){"use strict";var continue; true}); true threw exception SyntaxError: Cannot use the keyword 'continue' as a variable name..
 PASS "use strict";var continue = 42; continue === 42 threw exception SyntaxError: Cannot use the keyword 'continue' as a variable name..
@@ -253,8 +253,8 @@ PASS "use strict";({ "continue": 42 }.continue === 42) is true
 PASS (function(){"use strict";({ "continue": 42 }.continue === 42)}); true is true
 PASS "use strict";({ continue: 42 }.continue === 42) is true
 PASS (function(){"use strict";({ continue: 42 }.continue === 42)}); true is true
-PASS "use strict";({ get continue(){}, set continue(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get continue(){}, set continue(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get continue(){}, set continue(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get continue(){}, set continue(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var debugger; true threw exception SyntaxError: Cannot use the keyword 'debugger' as a variable name..
 PASS (function(){var debugger; true}); true threw exception SyntaxError: Cannot use the keyword 'debugger' as a variable name..
 PASS var debugger = 42; debugger === 42 threw exception SyntaxError: Cannot use the keyword 'debugger' as a variable name..
@@ -271,8 +271,8 @@ PASS ({ "debugger": 42 }.debugger === 42) is true
 PASS (function(){({ "debugger": 42 }.debugger === 42)}); true is true
 PASS ({ debugger: 42 }.debugger === 42) is true
 PASS (function(){({ debugger: 42 }.debugger === 42)}); true is true
-PASS ({ get debugger(){}, set debugger(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get debugger(){}, set debugger(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get debugger(){}, set debugger(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get debugger(){}, set debugger(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var debugger; true threw exception SyntaxError: Cannot use the keyword 'debugger' as a variable name..
 PASS (function(){"use strict";var debugger; true}); true threw exception SyntaxError: Cannot use the keyword 'debugger' as a variable name..
 PASS "use strict";var debugger = 42; debugger === 42 threw exception SyntaxError: Cannot use the keyword 'debugger' as a variable name..
@@ -289,8 +289,8 @@ PASS "use strict";({ "debugger": 42 }.debugger === 42) is true
 PASS (function(){"use strict";({ "debugger": 42 }.debugger === 42)}); true is true
 PASS "use strict";({ debugger: 42 }.debugger === 42) is true
 PASS (function(){"use strict";({ debugger: 42 }.debugger === 42)}); true is true
-PASS "use strict";({ get debugger(){}, set debugger(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get debugger(){}, set debugger(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get debugger(){}, set debugger(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get debugger(){}, set debugger(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var default; true threw exception SyntaxError: Cannot use the keyword 'default' as a variable name..
 PASS (function(){var default; true}); true threw exception SyntaxError: Cannot use the keyword 'default' as a variable name..
 PASS var default = 42; default === 42 threw exception SyntaxError: Cannot use the keyword 'default' as a variable name..
@@ -307,8 +307,8 @@ PASS ({ "default": 42 }.default === 42) is true
 PASS (function(){({ "default": 42 }.default === 42)}); true is true
 PASS ({ default: 42 }.default === 42) is true
 PASS (function(){({ default: 42 }.default === 42)}); true is true
-PASS ({ get default(){}, set default(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get default(){}, set default(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get default(){}, set default(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get default(){}, set default(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var default; true threw exception SyntaxError: Cannot use the keyword 'default' as a variable name..
 PASS (function(){"use strict";var default; true}); true threw exception SyntaxError: Cannot use the keyword 'default' as a variable name..
 PASS "use strict";var default = 42; default === 42 threw exception SyntaxError: Cannot use the keyword 'default' as a variable name..
@@ -325,8 +325,8 @@ PASS "use strict";({ "default": 42 }.default === 42) is true
 PASS (function(){"use strict";({ "default": 42 }.default === 42)}); true is true
 PASS "use strict";({ default: 42 }.default === 42) is true
 PASS (function(){"use strict";({ default: 42 }.default === 42)}); true is true
-PASS "use strict";({ get default(){}, set default(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get default(){}, set default(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get default(){}, set default(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get default(){}, set default(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var delete; true threw exception SyntaxError: Cannot use the keyword 'delete' as a variable name..
 PASS (function(){var delete; true}); true threw exception SyntaxError: Cannot use the keyword 'delete' as a variable name..
 PASS var delete = 42; delete === 42 threw exception SyntaxError: Cannot use the keyword 'delete' as a variable name..
@@ -343,8 +343,8 @@ PASS ({ "delete": 42 }.delete === 42) is true
 PASS (function(){({ "delete": 42 }.delete === 42)}); true is true
 PASS ({ delete: 42 }.delete === 42) is true
 PASS (function(){({ delete: 42 }.delete === 42)}); true is true
-PASS ({ get delete(){}, set delete(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get delete(){}, set delete(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get delete(){}, set delete(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get delete(){}, set delete(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var delete; true threw exception SyntaxError: Cannot use the keyword 'delete' as a variable name..
 PASS (function(){"use strict";var delete; true}); true threw exception SyntaxError: Cannot use the keyword 'delete' as a variable name..
 PASS "use strict";var delete = 42; delete === 42 threw exception SyntaxError: Cannot use the keyword 'delete' as a variable name..
@@ -361,8 +361,8 @@ PASS "use strict";({ "delete": 42 }.delete === 42) is true
 PASS (function(){"use strict";({ "delete": 42 }.delete === 42)}); true is true
 PASS "use strict";({ delete: 42 }.delete === 42) is true
 PASS (function(){"use strict";({ delete: 42 }.delete === 42)}); true is true
-PASS "use strict";({ get delete(){}, set delete(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get delete(){}, set delete(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get delete(){}, set delete(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get delete(){}, set delete(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var do; true threw exception SyntaxError: Cannot use the keyword 'do' as a variable name..
 PASS (function(){var do; true}); true threw exception SyntaxError: Cannot use the keyword 'do' as a variable name..
 PASS var do = 42; do === 42 threw exception SyntaxError: Cannot use the keyword 'do' as a variable name..
@@ -379,8 +379,8 @@ PASS ({ "do": 42 }.do === 42) is true
 PASS (function(){({ "do": 42 }.do === 42)}); true is true
 PASS ({ do: 42 }.do === 42) is true
 PASS (function(){({ do: 42 }.do === 42)}); true is true
-PASS ({ get do(){}, set do(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get do(){}, set do(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get do(){}, set do(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get do(){}, set do(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var do; true threw exception SyntaxError: Cannot use the keyword 'do' as a variable name..
 PASS (function(){"use strict";var do; true}); true threw exception SyntaxError: Cannot use the keyword 'do' as a variable name..
 PASS "use strict";var do = 42; do === 42 threw exception SyntaxError: Cannot use the keyword 'do' as a variable name..
@@ -397,8 +397,8 @@ PASS "use strict";({ "do": 42 }.do === 42) is true
 PASS (function(){"use strict";({ "do": 42 }.do === 42)}); true is true
 PASS "use strict";({ do: 42 }.do === 42) is true
 PASS (function(){"use strict";({ do: 42 }.do === 42)}); true is true
-PASS "use strict";({ get do(){}, set do(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get do(){}, set do(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get do(){}, set do(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get do(){}, set do(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var else; true threw exception SyntaxError: Cannot use the keyword 'else' as a variable name..
 PASS (function(){var else; true}); true threw exception SyntaxError: Cannot use the keyword 'else' as a variable name..
 PASS var else = 42; else === 42 threw exception SyntaxError: Cannot use the keyword 'else' as a variable name..
@@ -415,8 +415,8 @@ PASS ({ "else": 42 }.else === 42) is true
 PASS (function(){({ "else": 42 }.else === 42)}); true is true
 PASS ({ else: 42 }.else === 42) is true
 PASS (function(){({ else: 42 }.else === 42)}); true is true
-PASS ({ get else(){}, set else(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get else(){}, set else(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get else(){}, set else(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get else(){}, set else(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var else; true threw exception SyntaxError: Cannot use the keyword 'else' as a variable name..
 PASS (function(){"use strict";var else; true}); true threw exception SyntaxError: Cannot use the keyword 'else' as a variable name..
 PASS "use strict";var else = 42; else === 42 threw exception SyntaxError: Cannot use the keyword 'else' as a variable name..
@@ -433,8 +433,8 @@ PASS "use strict";({ "else": 42 }.else === 42) is true
 PASS (function(){"use strict";({ "else": 42 }.else === 42)}); true is true
 PASS "use strict";({ else: 42 }.else === 42) is true
 PASS (function(){"use strict";({ else: 42 }.else === 42)}); true is true
-PASS "use strict";({ get else(){}, set else(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get else(){}, set else(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get else(){}, set else(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get else(){}, set else(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var finally; true threw exception SyntaxError: Cannot use the keyword 'finally' as a variable name..
 PASS (function(){var finally; true}); true threw exception SyntaxError: Cannot use the keyword 'finally' as a variable name..
 PASS var finally = 42; finally === 42 threw exception SyntaxError: Cannot use the keyword 'finally' as a variable name..
@@ -451,8 +451,8 @@ PASS ({ "finally": 42 }.finally === 42) is true
 PASS (function(){({ "finally": 42 }.finally === 42)}); true is true
 PASS ({ finally: 42 }.finally === 42) is true
 PASS (function(){({ finally: 42 }.finally === 42)}); true is true
-PASS ({ get finally(){}, set finally(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get finally(){}, set finally(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get finally(){}, set finally(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get finally(){}, set finally(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var finally; true threw exception SyntaxError: Cannot use the keyword 'finally' as a variable name..
 PASS (function(){"use strict";var finally; true}); true threw exception SyntaxError: Cannot use the keyword 'finally' as a variable name..
 PASS "use strict";var finally = 42; finally === 42 threw exception SyntaxError: Cannot use the keyword 'finally' as a variable name..
@@ -469,8 +469,8 @@ PASS "use strict";({ "finally": 42 }.finally === 42) is true
 PASS (function(){"use strict";({ "finally": 42 }.finally === 42)}); true is true
 PASS "use strict";({ finally: 42 }.finally === 42) is true
 PASS (function(){"use strict";({ finally: 42 }.finally === 42)}); true is true
-PASS "use strict";({ get finally(){}, set finally(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get finally(){}, set finally(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get finally(){}, set finally(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get finally(){}, set finally(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var for; true threw exception SyntaxError: Cannot use the keyword 'for' as a variable name..
 PASS (function(){var for; true}); true threw exception SyntaxError: Cannot use the keyword 'for' as a variable name..
 PASS var for = 42; for === 42 threw exception SyntaxError: Cannot use the keyword 'for' as a variable name..
@@ -487,8 +487,8 @@ PASS ({ "for": 42 }.for === 42) is true
 PASS (function(){({ "for": 42 }.for === 42)}); true is true
 PASS ({ for: 42 }.for === 42) is true
 PASS (function(){({ for: 42 }.for === 42)}); true is true
-PASS ({ get for(){}, set for(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get for(){}, set for(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get for(){}, set for(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get for(){}, set for(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var for; true threw exception SyntaxError: Cannot use the keyword 'for' as a variable name..
 PASS (function(){"use strict";var for; true}); true threw exception SyntaxError: Cannot use the keyword 'for' as a variable name..
 PASS "use strict";var for = 42; for === 42 threw exception SyntaxError: Cannot use the keyword 'for' as a variable name..
@@ -505,8 +505,8 @@ PASS "use strict";({ "for": 42 }.for === 42) is true
 PASS (function(){"use strict";({ "for": 42 }.for === 42)}); true is true
 PASS "use strict";({ for: 42 }.for === 42) is true
 PASS (function(){"use strict";({ for: 42 }.for === 42)}); true is true
-PASS "use strict";({ get for(){}, set for(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get for(){}, set for(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get for(){}, set for(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get for(){}, set for(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var function; true threw exception SyntaxError: Cannot use the keyword 'function' as a variable name..
 PASS (function(){var function; true}); true threw exception SyntaxError: Cannot use the keyword 'function' as a variable name..
 PASS var function = 42; function === 42 threw exception SyntaxError: Cannot use the keyword 'function' as a variable name..
@@ -523,8 +523,8 @@ PASS ({ "function": 42 }.function === 42) is true
 PASS (function(){({ "function": 42 }.function === 42)}); true is true
 PASS ({ function: 42 }.function === 42) is true
 PASS (function(){({ function: 42 }.function === 42)}); true is true
-PASS ({ get function(){}, set function(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get function(){}, set function(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get function(){}, set function(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get function(){}, set function(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var function; true threw exception SyntaxError: Cannot use the keyword 'function' as a variable name..
 PASS (function(){"use strict";var function; true}); true threw exception SyntaxError: Cannot use the keyword 'function' as a variable name..
 PASS "use strict";var function = 42; function === 42 threw exception SyntaxError: Cannot use the keyword 'function' as a variable name..
@@ -541,8 +541,8 @@ PASS "use strict";({ "function": 42 }.function === 42) is true
 PASS (function(){"use strict";({ "function": 42 }.function === 42)}); true is true
 PASS "use strict";({ function: 42 }.function === 42) is true
 PASS (function(){"use strict";({ function: 42 }.function === 42)}); true is true
-PASS "use strict";({ get function(){}, set function(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get function(){}, set function(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get function(){}, set function(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get function(){}, set function(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var if; true threw exception SyntaxError: Cannot use the keyword 'if' as a variable name..
 PASS (function(){var if; true}); true threw exception SyntaxError: Cannot use the keyword 'if' as a variable name..
 PASS var if = 42; if === 42 threw exception SyntaxError: Cannot use the keyword 'if' as a variable name..
@@ -559,8 +559,8 @@ PASS ({ "if": 42 }.if === 42) is true
 PASS (function(){({ "if": 42 }.if === 42)}); true is true
 PASS ({ if: 42 }.if === 42) is true
 PASS (function(){({ if: 42 }.if === 42)}); true is true
-PASS ({ get if(){}, set if(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get if(){}, set if(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get if(){}, set if(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get if(){}, set if(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var if; true threw exception SyntaxError: Cannot use the keyword 'if' as a variable name..
 PASS (function(){"use strict";var if; true}); true threw exception SyntaxError: Cannot use the keyword 'if' as a variable name..
 PASS "use strict";var if = 42; if === 42 threw exception SyntaxError: Cannot use the keyword 'if' as a variable name..
@@ -577,8 +577,8 @@ PASS "use strict";({ "if": 42 }.if === 42) is true
 PASS (function(){"use strict";({ "if": 42 }.if === 42)}); true is true
 PASS "use strict";({ if: 42 }.if === 42) is true
 PASS (function(){"use strict";({ if: 42 }.if === 42)}); true is true
-PASS "use strict";({ get if(){}, set if(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get if(){}, set if(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get if(){}, set if(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get if(){}, set if(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var in; true threw exception SyntaxError: Cannot use the keyword 'in' as a variable name..
 PASS (function(){var in; true}); true threw exception SyntaxError: Cannot use the keyword 'in' as a variable name..
 PASS var in = 42; in === 42 threw exception SyntaxError: Cannot use the keyword 'in' as a variable name..
@@ -595,8 +595,8 @@ PASS ({ "in": 42 }.in === 42) is true
 PASS (function(){({ "in": 42 }.in === 42)}); true is true
 PASS ({ in: 42 }.in === 42) is true
 PASS (function(){({ in: 42 }.in === 42)}); true is true
-PASS ({ get in(){}, set in(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get in(){}, set in(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get in(){}, set in(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get in(){}, set in(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var in; true threw exception SyntaxError: Cannot use the keyword 'in' as a variable name..
 PASS (function(){"use strict";var in; true}); true threw exception SyntaxError: Cannot use the keyword 'in' as a variable name..
 PASS "use strict";var in = 42; in === 42 threw exception SyntaxError: Cannot use the keyword 'in' as a variable name..
@@ -613,8 +613,8 @@ PASS "use strict";({ "in": 42 }.in === 42) is true
 PASS (function(){"use strict";({ "in": 42 }.in === 42)}); true is true
 PASS "use strict";({ in: 42 }.in === 42) is true
 PASS (function(){"use strict";({ in: 42 }.in === 42)}); true is true
-PASS "use strict";({ get in(){}, set in(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get in(){}, set in(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get in(){}, set in(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get in(){}, set in(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var instanceof; true threw exception SyntaxError: Cannot use the keyword 'instanceof' as a variable name..
 PASS (function(){var instanceof; true}); true threw exception SyntaxError: Cannot use the keyword 'instanceof' as a variable name..
 PASS var instanceof = 42; instanceof === 42 threw exception SyntaxError: Cannot use the keyword 'instanceof' as a variable name..
@@ -631,8 +631,8 @@ PASS ({ "instanceof": 42 }.instanceof === 42) is true
 PASS (function(){({ "instanceof": 42 }.instanceof === 42)}); true is true
 PASS ({ instanceof: 42 }.instanceof === 42) is true
 PASS (function(){({ instanceof: 42 }.instanceof === 42)}); true is true
-PASS ({ get instanceof(){}, set instanceof(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get instanceof(){}, set instanceof(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get instanceof(){}, set instanceof(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get instanceof(){}, set instanceof(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var instanceof; true threw exception SyntaxError: Cannot use the keyword 'instanceof' as a variable name..
 PASS (function(){"use strict";var instanceof; true}); true threw exception SyntaxError: Cannot use the keyword 'instanceof' as a variable name..
 PASS "use strict";var instanceof = 42; instanceof === 42 threw exception SyntaxError: Cannot use the keyword 'instanceof' as a variable name..
@@ -649,8 +649,8 @@ PASS "use strict";({ "instanceof": 42 }.instanceof === 42) is true
 PASS (function(){"use strict";({ "instanceof": 42 }.instanceof === 42)}); true is true
 PASS "use strict";({ instanceof: 42 }.instanceof === 42) is true
 PASS (function(){"use strict";({ instanceof: 42 }.instanceof === 42)}); true is true
-PASS "use strict";({ get instanceof(){}, set instanceof(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get instanceof(){}, set instanceof(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get instanceof(){}, set instanceof(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get instanceof(){}, set instanceof(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var new; true threw exception SyntaxError: Cannot use the keyword 'new' as a variable name..
 PASS (function(){var new; true}); true threw exception SyntaxError: Cannot use the keyword 'new' as a variable name..
 PASS var new = 42; new === 42 threw exception SyntaxError: Cannot use the keyword 'new' as a variable name..
@@ -667,8 +667,8 @@ PASS ({ "new": 42 }.new === 42) is true
 PASS (function(){({ "new": 42 }.new === 42)}); true is true
 PASS ({ new: 42 }.new === 42) is true
 PASS (function(){({ new: 42 }.new === 42)}); true is true
-PASS ({ get new(){}, set new(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get new(){}, set new(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get new(){}, set new(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get new(){}, set new(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var new; true threw exception SyntaxError: Cannot use the keyword 'new' as a variable name..
 PASS (function(){"use strict";var new; true}); true threw exception SyntaxError: Cannot use the keyword 'new' as a variable name..
 PASS "use strict";var new = 42; new === 42 threw exception SyntaxError: Cannot use the keyword 'new' as a variable name..
@@ -685,8 +685,8 @@ PASS "use strict";({ "new": 42 }.new === 42) is true
 PASS (function(){"use strict";({ "new": 42 }.new === 42)}); true is true
 PASS "use strict";({ new: 42 }.new === 42) is true
 PASS (function(){"use strict";({ new: 42 }.new === 42)}); true is true
-PASS "use strict";({ get new(){}, set new(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get new(){}, set new(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get new(){}, set new(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get new(){}, set new(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var return; true threw exception SyntaxError: Cannot use the keyword 'return' as a variable name..
 PASS (function(){var return; true}); true threw exception SyntaxError: Cannot use the keyword 'return' as a variable name..
 PASS var return = 42; return === 42 threw exception SyntaxError: Cannot use the keyword 'return' as a variable name..
@@ -703,8 +703,8 @@ PASS ({ "return": 42 }.return === 42) is true
 PASS (function(){({ "return": 42 }.return === 42)}); true is true
 PASS ({ return: 42 }.return === 42) is true
 PASS (function(){({ return: 42 }.return === 42)}); true is true
-PASS ({ get return(){}, set return(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get return(){}, set return(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get return(){}, set return(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get return(){}, set return(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var return; true threw exception SyntaxError: Cannot use the keyword 'return' as a variable name..
 PASS (function(){"use strict";var return; true}); true threw exception SyntaxError: Cannot use the keyword 'return' as a variable name..
 PASS "use strict";var return = 42; return === 42 threw exception SyntaxError: Cannot use the keyword 'return' as a variable name..
@@ -721,8 +721,8 @@ PASS "use strict";({ "return": 42 }.return === 42) is true
 PASS (function(){"use strict";({ "return": 42 }.return === 42)}); true is true
 PASS "use strict";({ return: 42 }.return === 42) is true
 PASS (function(){"use strict";({ return: 42 }.return === 42)}); true is true
-PASS "use strict";({ get return(){}, set return(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get return(){}, set return(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get return(){}, set return(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get return(){}, set return(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var switch; true threw exception SyntaxError: Cannot use the keyword 'switch' as a variable name..
 PASS (function(){var switch; true}); true threw exception SyntaxError: Cannot use the keyword 'switch' as a variable name..
 PASS var switch = 42; switch === 42 threw exception SyntaxError: Cannot use the keyword 'switch' as a variable name..
@@ -739,8 +739,8 @@ PASS ({ "switch": 42 }.switch === 42) is true
 PASS (function(){({ "switch": 42 }.switch === 42)}); true is true
 PASS ({ switch: 42 }.switch === 42) is true
 PASS (function(){({ switch: 42 }.switch === 42)}); true is true
-PASS ({ get switch(){}, set switch(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get switch(){}, set switch(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get switch(){}, set switch(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get switch(){}, set switch(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var switch; true threw exception SyntaxError: Cannot use the keyword 'switch' as a variable name..
 PASS (function(){"use strict";var switch; true}); true threw exception SyntaxError: Cannot use the keyword 'switch' as a variable name..
 PASS "use strict";var switch = 42; switch === 42 threw exception SyntaxError: Cannot use the keyword 'switch' as a variable name..
@@ -757,8 +757,8 @@ PASS "use strict";({ "switch": 42 }.switch === 42) is true
 PASS (function(){"use strict";({ "switch": 42 }.switch === 42)}); true is true
 PASS "use strict";({ switch: 42 }.switch === 42) is true
 PASS (function(){"use strict";({ switch: 42 }.switch === 42)}); true is true
-PASS "use strict";({ get switch(){}, set switch(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get switch(){}, set switch(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get switch(){}, set switch(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get switch(){}, set switch(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var this; true threw exception SyntaxError: Cannot use the keyword 'this' as a variable name..
 PASS (function(){var this; true}); true threw exception SyntaxError: Cannot use the keyword 'this' as a variable name..
 PASS var this = 42; this === 42 threw exception SyntaxError: Cannot use the keyword 'this' as a variable name..
@@ -775,8 +775,8 @@ PASS ({ "this": 42 }.this === 42) is true
 PASS (function(){({ "this": 42 }.this === 42)}); true is true
 PASS ({ this: 42 }.this === 42) is true
 PASS (function(){({ this: 42 }.this === 42)}); true is true
-PASS ({ get this(){}, set this(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get this(){}, set this(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get this(){}, set this(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get this(){}, set this(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var this; true threw exception SyntaxError: Cannot use the keyword 'this' as a variable name..
 PASS (function(){"use strict";var this; true}); true threw exception SyntaxError: Cannot use the keyword 'this' as a variable name..
 PASS "use strict";var this = 42; this === 42 threw exception SyntaxError: Cannot use the keyword 'this' as a variable name..
@@ -793,8 +793,8 @@ PASS "use strict";({ "this": 42 }.this === 42) is true
 PASS (function(){"use strict";({ "this": 42 }.this === 42)}); true is true
 PASS "use strict";({ this: 42 }.this === 42) is true
 PASS (function(){"use strict";({ this: 42 }.this === 42)}); true is true
-PASS "use strict";({ get this(){}, set this(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get this(){}, set this(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get this(){}, set this(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get this(){}, set this(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var throw; true threw exception SyntaxError: Cannot use the keyword 'throw' as a variable name..
 PASS (function(){var throw; true}); true threw exception SyntaxError: Cannot use the keyword 'throw' as a variable name..
 PASS var throw = 42; throw === 42 threw exception SyntaxError: Cannot use the keyword 'throw' as a variable name..
@@ -811,8 +811,8 @@ PASS ({ "throw": 42 }.throw === 42) is true
 PASS (function(){({ "throw": 42 }.throw === 42)}); true is true
 PASS ({ throw: 42 }.throw === 42) is true
 PASS (function(){({ throw: 42 }.throw === 42)}); true is true
-PASS ({ get throw(){}, set throw(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get throw(){}, set throw(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get throw(){}, set throw(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get throw(){}, set throw(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var throw; true threw exception SyntaxError: Cannot use the keyword 'throw' as a variable name..
 PASS (function(){"use strict";var throw; true}); true threw exception SyntaxError: Cannot use the keyword 'throw' as a variable name..
 PASS "use strict";var throw = 42; throw === 42 threw exception SyntaxError: Cannot use the keyword 'throw' as a variable name..
@@ -829,8 +829,8 @@ PASS "use strict";({ "throw": 42 }.throw === 42) is true
 PASS (function(){"use strict";({ "throw": 42 }.throw === 42)}); true is true
 PASS "use strict";({ throw: 42 }.throw === 42) is true
 PASS (function(){"use strict";({ throw: 42 }.throw === 42)}); true is true
-PASS "use strict";({ get throw(){}, set throw(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get throw(){}, set throw(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get throw(){}, set throw(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get throw(){}, set throw(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var try; true threw exception SyntaxError: Cannot use the keyword 'try' as a variable name..
 PASS (function(){var try; true}); true threw exception SyntaxError: Cannot use the keyword 'try' as a variable name..
 PASS var try = 42; try === 42 threw exception SyntaxError: Cannot use the keyword 'try' as a variable name..
@@ -847,8 +847,8 @@ PASS ({ "try": 42 }.try === 42) is true
 PASS (function(){({ "try": 42 }.try === 42)}); true is true
 PASS ({ try: 42 }.try === 42) is true
 PASS (function(){({ try: 42 }.try === 42)}); true is true
-PASS ({ get try(){}, set try(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get try(){}, set try(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get try(){}, set try(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get try(){}, set try(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var try; true threw exception SyntaxError: Cannot use the keyword 'try' as a variable name..
 PASS (function(){"use strict";var try; true}); true threw exception SyntaxError: Cannot use the keyword 'try' as a variable name..
 PASS "use strict";var try = 42; try === 42 threw exception SyntaxError: Cannot use the keyword 'try' as a variable name..
@@ -865,8 +865,8 @@ PASS "use strict";({ "try": 42 }.try === 42) is true
 PASS (function(){"use strict";({ "try": 42 }.try === 42)}); true is true
 PASS "use strict";({ try: 42 }.try === 42) is true
 PASS (function(){"use strict";({ try: 42 }.try === 42)}); true is true
-PASS "use strict";({ get try(){}, set try(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get try(){}, set try(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get try(){}, set try(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get try(){}, set try(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var typeof; true threw exception SyntaxError: Cannot use the keyword 'typeof' as a variable name..
 PASS (function(){var typeof; true}); true threw exception SyntaxError: Cannot use the keyword 'typeof' as a variable name..
 PASS var typeof = 42; typeof === 42 threw exception SyntaxError: Cannot use the keyword 'typeof' as a variable name..
@@ -883,8 +883,8 @@ PASS ({ "typeof": 42 }.typeof === 42) is true
 PASS (function(){({ "typeof": 42 }.typeof === 42)}); true is true
 PASS ({ typeof: 42 }.typeof === 42) is true
 PASS (function(){({ typeof: 42 }.typeof === 42)}); true is true
-PASS ({ get typeof(){}, set typeof(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get typeof(){}, set typeof(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get typeof(){}, set typeof(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get typeof(){}, set typeof(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var typeof; true threw exception SyntaxError: Cannot use the keyword 'typeof' as a variable name..
 PASS (function(){"use strict";var typeof; true}); true threw exception SyntaxError: Cannot use the keyword 'typeof' as a variable name..
 PASS "use strict";var typeof = 42; typeof === 42 threw exception SyntaxError: Cannot use the keyword 'typeof' as a variable name..
@@ -901,8 +901,8 @@ PASS "use strict";({ "typeof": 42 }.typeof === 42) is true
 PASS (function(){"use strict";({ "typeof": 42 }.typeof === 42)}); true is true
 PASS "use strict";({ typeof: 42 }.typeof === 42) is true
 PASS (function(){"use strict";({ typeof: 42 }.typeof === 42)}); true is true
-PASS "use strict";({ get typeof(){}, set typeof(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get typeof(){}, set typeof(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get typeof(){}, set typeof(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get typeof(){}, set typeof(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var var; true threw exception SyntaxError: Cannot use the keyword 'var' as a variable name..
 PASS (function(){var var; true}); true threw exception SyntaxError: Cannot use the keyword 'var' as a variable name..
 PASS var var = 42; var === 42 threw exception SyntaxError: Cannot use the keyword 'var' as a variable name..
@@ -919,8 +919,8 @@ PASS ({ "var": 42 }.var === 42) is true
 PASS (function(){({ "var": 42 }.var === 42)}); true is true
 PASS ({ var: 42 }.var === 42) is true
 PASS (function(){({ var: 42 }.var === 42)}); true is true
-PASS ({ get var(){}, set var(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get var(){}, set var(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get var(){}, set var(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get var(){}, set var(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var var; true threw exception SyntaxError: Cannot use the keyword 'var' as a variable name..
 PASS (function(){"use strict";var var; true}); true threw exception SyntaxError: Cannot use the keyword 'var' as a variable name..
 PASS "use strict";var var = 42; var === 42 threw exception SyntaxError: Cannot use the keyword 'var' as a variable name..
@@ -937,8 +937,8 @@ PASS "use strict";({ "var": 42 }.var === 42) is true
 PASS (function(){"use strict";({ "var": 42 }.var === 42)}); true is true
 PASS "use strict";({ var: 42 }.var === 42) is true
 PASS (function(){"use strict";({ var: 42 }.var === 42)}); true is true
-PASS "use strict";({ get var(){}, set var(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get var(){}, set var(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get var(){}, set var(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get var(){}, set var(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var void; true threw exception SyntaxError: Cannot use the keyword 'void' as a variable name..
 PASS (function(){var void; true}); true threw exception SyntaxError: Cannot use the keyword 'void' as a variable name..
 PASS var void = 42; void === 42 threw exception SyntaxError: Cannot use the keyword 'void' as a variable name..
@@ -955,8 +955,8 @@ PASS ({ "void": 42 }.void === 42) is true
 PASS (function(){({ "void": 42 }.void === 42)}); true is true
 PASS ({ void: 42 }.void === 42) is true
 PASS (function(){({ void: 42 }.void === 42)}); true is true
-PASS ({ get void(){}, set void(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get void(){}, set void(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get void(){}, set void(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get void(){}, set void(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var void; true threw exception SyntaxError: Cannot use the keyword 'void' as a variable name..
 PASS (function(){"use strict";var void; true}); true threw exception SyntaxError: Cannot use the keyword 'void' as a variable name..
 PASS "use strict";var void = 42; void === 42 threw exception SyntaxError: Cannot use the keyword 'void' as a variable name..
@@ -973,8 +973,8 @@ PASS "use strict";({ "void": 42 }.void === 42) is true
 PASS (function(){"use strict";({ "void": 42 }.void === 42)}); true is true
 PASS "use strict";({ void: 42 }.void === 42) is true
 PASS (function(){"use strict";({ void: 42 }.void === 42)}); true is true
-PASS "use strict";({ get void(){}, set void(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get void(){}, set void(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get void(){}, set void(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get void(){}, set void(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var while; true threw exception SyntaxError: Cannot use the keyword 'while' as a variable name..
 PASS (function(){var while; true}); true threw exception SyntaxError: Cannot use the keyword 'while' as a variable name..
 PASS var while = 42; while === 42 threw exception SyntaxError: Cannot use the keyword 'while' as a variable name..
@@ -991,8 +991,8 @@ PASS ({ "while": 42 }.while === 42) is true
 PASS (function(){({ "while": 42 }.while === 42)}); true is true
 PASS ({ while: 42 }.while === 42) is true
 PASS (function(){({ while: 42 }.while === 42)}); true is true
-PASS ({ get while(){}, set while(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get while(){}, set while(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get while(){}, set while(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get while(){}, set while(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var while; true threw exception SyntaxError: Cannot use the keyword 'while' as a variable name..
 PASS (function(){"use strict";var while; true}); true threw exception SyntaxError: Cannot use the keyword 'while' as a variable name..
 PASS "use strict";var while = 42; while === 42 threw exception SyntaxError: Cannot use the keyword 'while' as a variable name..
@@ -1009,8 +1009,8 @@ PASS "use strict";({ "while": 42 }.while === 42) is true
 PASS (function(){"use strict";({ "while": 42 }.while === 42)}); true is true
 PASS "use strict";({ while: 42 }.while === 42) is true
 PASS (function(){"use strict";({ while: 42 }.while === 42)}); true is true
-PASS "use strict";({ get while(){}, set while(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get while(){}, set while(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get while(){}, set while(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get while(){}, set while(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var with; true threw exception SyntaxError: Cannot use the keyword 'with' as a variable name..
 PASS (function(){var with; true}); true threw exception SyntaxError: Cannot use the keyword 'with' as a variable name..
 PASS var with = 42; with === 42 threw exception SyntaxError: Cannot use the keyword 'with' as a variable name..
@@ -1027,8 +1027,8 @@ PASS ({ "with": 42 }.with === 42) is true
 PASS (function(){({ "with": 42 }.with === 42)}); true is true
 PASS ({ with: 42 }.with === 42) is true
 PASS (function(){({ with: 42 }.with === 42)}); true is true
-PASS ({ get with(){}, set with(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get with(){}, set with(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get with(){}, set with(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get with(){}, set with(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var with; true threw exception SyntaxError: Cannot use the keyword 'with' as a variable name..
 PASS (function(){"use strict";var with; true}); true threw exception SyntaxError: Cannot use the keyword 'with' as a variable name..
 PASS "use strict";var with = 42; with === 42 threw exception SyntaxError: Cannot use the keyword 'with' as a variable name..
@@ -1045,8 +1045,8 @@ PASS "use strict";({ "with": 42 }.with === 42) is true
 PASS (function(){"use strict";({ "with": 42 }.with === 42)}); true is true
 PASS "use strict";({ with: 42 }.with === 42) is true
 PASS (function(){"use strict";({ with: 42 }.with === 42)}); true is true
-PASS "use strict";({ get with(){}, set with(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get with(){}, set with(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get with(){}, set with(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get with(){}, set with(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var class; true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
 PASS (function(){var class; true}); true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
 PASS var class = 42; class === 42 threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
@@ -1063,8 +1063,8 @@ PASS ({ "class": 42 }.class === 42) is true
 PASS (function(){({ "class": 42 }.class === 42)}); true is true
 PASS ({ class: 42 }.class === 42) is true
 PASS (function(){({ class: 42 }.class === 42)}); true is true
-PASS ({ get class(){}, set class(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get class(){}, set class(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get class(){}, set class(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get class(){}, set class(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var class; true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
 PASS (function(){"use strict";var class; true}); true threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
 PASS "use strict";var class = 42; class === 42 threw exception SyntaxError: Cannot use the keyword 'class' as a variable name..
@@ -1081,8 +1081,8 @@ PASS "use strict";({ "class": 42 }.class === 42) is true
 PASS (function(){"use strict";({ "class": 42 }.class === 42)}); true is true
 PASS "use strict";({ class: 42 }.class === 42) is true
 PASS (function(){"use strict";({ class: 42 }.class === 42)}); true is true
-PASS "use strict";({ get class(){}, set class(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get class(){}, set class(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get class(){}, set class(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get class(){}, set class(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var const; true threw exception SyntaxError: Cannot use the keyword 'const' as a variable name..
 PASS (function(){var const; true}); true threw exception SyntaxError: Cannot use the keyword 'const' as a variable name..
 PASS var const = 42; const === 42 threw exception SyntaxError: Cannot use the keyword 'const' as a variable name..
@@ -1099,8 +1099,8 @@ PASS ({ "const": 42 }.const === 42) is true
 PASS (function(){({ "const": 42 }.const === 42)}); true is true
 PASS ({ const: 42 }.const === 42) is true
 PASS (function(){({ const: 42 }.const === 42)}); true is true
-PASS ({ get const(){}, set const(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get const(){}, set const(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get const(){}, set const(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get const(){}, set const(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var const; true threw exception SyntaxError: Cannot use the keyword 'const' as a variable name..
 PASS (function(){"use strict";var const; true}); true threw exception SyntaxError: Cannot use the keyword 'const' as a variable name..
 PASS "use strict";var const = 42; const === 42 threw exception SyntaxError: Cannot use the keyword 'const' as a variable name..
@@ -1117,8 +1117,8 @@ PASS "use strict";({ "const": 42 }.const === 42) is true
 PASS (function(){"use strict";({ "const": 42 }.const === 42)}); true is true
 PASS "use strict";({ const: 42 }.const === 42) is true
 PASS (function(){"use strict";({ const: 42 }.const === 42)}); true is true
-PASS "use strict";({ get const(){}, set const(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get const(){}, set const(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get const(){}, set const(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get const(){}, set const(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var enum; true threw exception SyntaxError: Cannot use the reserved word 'enum' as a variable name..
 PASS (function(){var enum; true}); true threw exception SyntaxError: Cannot use the reserved word 'enum' as a variable name..
 PASS var enum = 42; enum === 42 threw exception SyntaxError: Cannot use the reserved word 'enum' as a variable name..
@@ -1135,8 +1135,8 @@ PASS ({ "enum": 42 }.enum === 42) is true
 PASS (function(){({ "enum": 42 }.enum === 42)}); true is true
 PASS ({ enum: 42 }.enum === 42) is true
 PASS (function(){({ enum: 42 }.enum === 42)}); true is true
-PASS ({ get enum(){}, set enum(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get enum(){}, set enum(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get enum(){}, set enum(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get enum(){}, set enum(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var enum; true threw exception SyntaxError: Cannot use the reserved word 'enum' as a variable name..
 PASS (function(){"use strict";var enum; true}); true threw exception SyntaxError: Cannot use the reserved word 'enum' as a variable name..
 PASS "use strict";var enum = 42; enum === 42 threw exception SyntaxError: Cannot use the reserved word 'enum' as a variable name..
@@ -1153,8 +1153,8 @@ PASS "use strict";({ "enum": 42 }.enum === 42) is true
 PASS (function(){"use strict";({ "enum": 42 }.enum === 42)}); true is true
 PASS "use strict";({ enum: 42 }.enum === 42) is true
 PASS (function(){"use strict";({ enum: 42 }.enum === 42)}); true is true
-PASS "use strict";({ get enum(){}, set enum(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get enum(){}, set enum(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get enum(){}, set enum(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get enum(){}, set enum(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var export; true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
 PASS (function(){var export; true}); true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
 PASS var export = 42; export === 42 threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
@@ -1171,8 +1171,8 @@ PASS ({ "export": 42 }.export === 42) is true
 PASS (function(){({ "export": 42 }.export === 42)}); true is true
 PASS ({ export: 42 }.export === 42) is true
 PASS (function(){({ export: 42 }.export === 42)}); true is true
-PASS ({ get export(){}, set export(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get export(){}, set export(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get export(){}, set export(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get export(){}, set export(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var export; true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
 PASS (function(){"use strict";var export; true}); true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
 PASS "use strict";var export = 42; export === 42 threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
@@ -1189,8 +1189,8 @@ PASS "use strict";({ "export": 42 }.export === 42) is true
 PASS (function(){"use strict";({ "export": 42 }.export === 42)}); true is true
 PASS "use strict";({ export: 42 }.export === 42) is true
 PASS (function(){"use strict";({ export: 42 }.export === 42)}); true is true
-PASS "use strict";({ get export(){}, set export(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get export(){}, set export(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get export(){}, set export(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get export(){}, set export(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var extends; true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
 PASS (function(){var extends; true}); true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
 PASS var extends = 42; extends === 42 threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
@@ -1207,8 +1207,8 @@ PASS ({ "extends": 42 }.extends === 42) is true
 PASS (function(){({ "extends": 42 }.extends === 42)}); true is true
 PASS ({ extends: 42 }.extends === 42) is true
 PASS (function(){({ extends: 42 }.extends === 42)}); true is true
-PASS ({ get extends(){}, set extends(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get extends(){}, set extends(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get extends(){}, set extends(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get extends(){}, set extends(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var extends; true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
 PASS (function(){"use strict";var extends; true}); true threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
 PASS "use strict";var extends = 42; extends === 42 threw exception SyntaxError: Cannot use the keyword 'extends' as a variable name..
@@ -1225,8 +1225,8 @@ PASS "use strict";({ "extends": 42 }.extends === 42) is true
 PASS (function(){"use strict";({ "extends": 42 }.extends === 42)}); true is true
 PASS "use strict";({ extends: 42 }.extends === 42) is true
 PASS (function(){"use strict";({ extends: 42 }.extends === 42)}); true is true
-PASS "use strict";({ get extends(){}, set extends(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get extends(){}, set extends(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get extends(){}, set extends(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get extends(){}, set extends(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var import; true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
 PASS (function(){var import; true}); true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
 PASS var import = 42; import === 42 threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
@@ -1243,8 +1243,8 @@ PASS ({ "import": 42 }.import === 42) is true
 PASS (function(){({ "import": 42 }.import === 42)}); true is true
 PASS ({ import: 42 }.import === 42) is true
 PASS (function(){({ import: 42 }.import === 42)}); true is true
-PASS ({ get import(){}, set import(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get import(){}, set import(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get import(){}, set import(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get import(){}, set import(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var import; true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
 PASS (function(){"use strict";var import; true}); true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
 PASS "use strict";var import = 42; import === 42 threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
@@ -1261,8 +1261,8 @@ PASS "use strict";({ "import": 42 }.import === 42) is true
 PASS (function(){"use strict";({ "import": 42 }.import === 42)}); true is true
 PASS "use strict";({ import: 42 }.import === 42) is true
 PASS (function(){"use strict";({ import: 42 }.import === 42)}); true is true
-PASS "use strict";({ get import(){}, set import(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get import(){}, set import(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get import(){}, set import(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get import(){}, set import(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var super; true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
 PASS (function(){var super; true}); true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
 PASS var super = 42; super === 42 threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
@@ -1279,8 +1279,8 @@ PASS ({ "super": 42 }.super === 42) is true
 PASS (function(){({ "super": 42 }.super === 42)}); true is true
 PASS ({ super: 42 }.super === 42) is true
 PASS (function(){({ super: 42 }.super === 42)}); true is true
-PASS ({ get super(){}, set super(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get super(){}, set super(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get super(){}, set super(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get super(){}, set super(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var super; true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
 PASS (function(){"use strict";var super; true}); true threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
 PASS "use strict";var super = 42; super === 42 threw exception SyntaxError: Cannot use the keyword 'super' as a variable name..
@@ -1297,8 +1297,8 @@ PASS "use strict";({ "super": 42 }.super === 42) is true
 PASS (function(){"use strict";({ "super": 42 }.super === 42)}); true is true
 PASS "use strict";({ super: 42 }.super === 42) is true
 PASS (function(){"use strict";({ super: 42 }.super === 42)}); true is true
-PASS "use strict";({ get super(){}, set super(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get super(){}, set super(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get super(){}, set super(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get super(){}, set super(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var implements; true is true
 PASS (function(){var implements; true}); true is true
 PASS var implements = 42; implements === 42 is true
@@ -1315,8 +1315,8 @@ PASS ({ "implements": 42 }.implements === 42) is true
 PASS (function(){({ "implements": 42 }.implements === 42)}); true is true
 PASS ({ implements: 42 }.implements === 42) is true
 PASS (function(){({ implements: 42 }.implements === 42)}); true is true
-PASS ({ get implements(){}, set implements(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get implements(){}, set implements(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get implements(){}, set implements(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get implements(){}, set implements(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var implements; true threw exception SyntaxError: Cannot use the reserved word 'implements' as a variable name in strict mode..
 PASS (function(){"use strict";var implements; true}); true threw exception SyntaxError: Cannot use the reserved word 'implements' as a variable name in strict mode..
 PASS "use strict";var implements = 42; implements === 42 threw exception SyntaxError: Cannot use the reserved word 'implements' as a variable name in strict mode..
@@ -1333,8 +1333,8 @@ PASS "use strict";({ "implements": 42 }.implements === 42) is true
 PASS (function(){"use strict";({ "implements": 42 }.implements === 42)}); true is true
 PASS "use strict";({ implements: 42 }.implements === 42) is true
 PASS (function(){"use strict";({ implements: 42 }.implements === 42)}); true is true
-PASS "use strict";({ get implements(){}, set implements(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get implements(){}, set implements(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get implements(){}, set implements(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get implements(){}, set implements(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var let; true is true
 PASS (function(){var let; true}); true is true
 PASS var let = 42; let === 42 is true
@@ -1351,8 +1351,8 @@ PASS ({ "let": 42 }.let === 42) is true
 PASS (function(){({ "let": 42 }.let === 42)}); true is true
 PASS ({ let: 42 }.let === 42) is true
 PASS (function(){({ let: 42 }.let === 42)}); true is true
-PASS ({ get let(){}, set let(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get let(){}, set let(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get let(){}, set let(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get let(){}, set let(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var let; true threw exception SyntaxError: Cannot use the reserved word 'let' as a variable name in strict mode..
 PASS (function(){"use strict";var let; true}); true threw exception SyntaxError: Cannot use the reserved word 'let' as a variable name in strict mode..
 PASS "use strict";var let = 42; let === 42 threw exception SyntaxError: Cannot use the reserved word 'let' as a variable name in strict mode..
@@ -1369,8 +1369,8 @@ PASS "use strict";({ "let": 42 }.let === 42) is true
 PASS (function(){"use strict";({ "let": 42 }.let === 42)}); true is true
 PASS "use strict";({ let: 42 }.let === 42) is true
 PASS (function(){"use strict";({ let: 42 }.let === 42)}); true is true
-PASS "use strict";({ get let(){}, set let(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get let(){}, set let(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get let(){}, set let(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get let(){}, set let(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var private; true is true
 PASS (function(){var private; true}); true is true
 PASS var private = 42; private === 42 is true
@@ -1387,8 +1387,8 @@ PASS ({ "private": 42 }.private === 42) is true
 PASS (function(){({ "private": 42 }.private === 42)}); true is true
 PASS ({ private: 42 }.private === 42) is true
 PASS (function(){({ private: 42 }.private === 42)}); true is true
-PASS ({ get private(){}, set private(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get private(){}, set private(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get private(){}, set private(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get private(){}, set private(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var private; true threw exception SyntaxError: Cannot use the reserved word 'private' as a variable name in strict mode..
 PASS (function(){"use strict";var private; true}); true threw exception SyntaxError: Cannot use the reserved word 'private' as a variable name in strict mode..
 PASS "use strict";var private = 42; private === 42 threw exception SyntaxError: Cannot use the reserved word 'private' as a variable name in strict mode..
@@ -1405,8 +1405,8 @@ PASS "use strict";({ "private": 42 }.private === 42) is true
 PASS (function(){"use strict";({ "private": 42 }.private === 42)}); true is true
 PASS "use strict";({ private: 42 }.private === 42) is true
 PASS (function(){"use strict";({ private: 42 }.private === 42)}); true is true
-PASS "use strict";({ get private(){}, set private(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get private(){}, set private(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get private(){}, set private(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get private(){}, set private(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var public; true is true
 PASS (function(){var public; true}); true is true
 PASS var public = 42; public === 42 is true
@@ -1423,8 +1423,8 @@ PASS ({ "public": 42 }.public === 42) is true
 PASS (function(){({ "public": 42 }.public === 42)}); true is true
 PASS ({ public: 42 }.public === 42) is true
 PASS (function(){({ public: 42 }.public === 42)}); true is true
-PASS ({ get public(){}, set public(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get public(){}, set public(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get public(){}, set public(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get public(){}, set public(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var public; true threw exception SyntaxError: Cannot use the reserved word 'public' as a variable name in strict mode..
 PASS (function(){"use strict";var public; true}); true threw exception SyntaxError: Cannot use the reserved word 'public' as a variable name in strict mode..
 PASS "use strict";var public = 42; public === 42 threw exception SyntaxError: Cannot use the reserved word 'public' as a variable name in strict mode..
@@ -1441,8 +1441,8 @@ PASS "use strict";({ "public": 42 }.public === 42) is true
 PASS (function(){"use strict";({ "public": 42 }.public === 42)}); true is true
 PASS "use strict";({ public: 42 }.public === 42) is true
 PASS (function(){"use strict";({ public: 42 }.public === 42)}); true is true
-PASS "use strict";({ get public(){}, set public(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get public(){}, set public(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get public(){}, set public(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get public(){}, set public(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var yield; true is true
 PASS (function(){var yield; true}); true is true
 PASS var yield = 42; yield === 42 is true
@@ -1459,8 +1459,8 @@ PASS ({ "yield": 42 }.yield === 42) is true
 PASS (function(){({ "yield": 42 }.yield === 42)}); true is true
 PASS ({ yield: 42 }.yield === 42) is true
 PASS (function(){({ yield: 42 }.yield === 42)}); true is true
-PASS ({ get yield(){}, set yield(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get yield(){}, set yield(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get yield(){}, set yield(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get yield(){}, set yield(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var yield; true threw exception SyntaxError: Cannot use the reserved word 'yield' as a variable name in strict mode..
 PASS (function(){"use strict";var yield; true}); true threw exception SyntaxError: Cannot use the reserved word 'yield' as a variable name in strict mode..
 PASS "use strict";var yield = 42; yield === 42 threw exception SyntaxError: Cannot use the reserved word 'yield' as a variable name in strict mode..
@@ -1477,8 +1477,8 @@ PASS "use strict";({ "yield": 42 }.yield === 42) is true
 PASS (function(){"use strict";({ "yield": 42 }.yield === 42)}); true is true
 PASS "use strict";({ yield: 42 }.yield === 42) is true
 PASS (function(){"use strict";({ yield: 42 }.yield === 42)}); true is true
-PASS "use strict";({ get yield(){}, set yield(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get yield(){}, set yield(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get yield(){}, set yield(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get yield(){}, set yield(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var interface; true is true
 PASS (function(){var interface; true}); true is true
 PASS var interface = 42; interface === 42 is true
@@ -1495,8 +1495,8 @@ PASS ({ "interface": 42 }.interface === 42) is true
 PASS (function(){({ "interface": 42 }.interface === 42)}); true is true
 PASS ({ interface: 42 }.interface === 42) is true
 PASS (function(){({ interface: 42 }.interface === 42)}); true is true
-PASS ({ get interface(){}, set interface(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get interface(){}, set interface(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get interface(){}, set interface(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get interface(){}, set interface(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var interface; true threw exception SyntaxError: Cannot use the reserved word 'interface' as a variable name in strict mode..
 PASS (function(){"use strict";var interface; true}); true threw exception SyntaxError: Cannot use the reserved word 'interface' as a variable name in strict mode..
 PASS "use strict";var interface = 42; interface === 42 threw exception SyntaxError: Cannot use the reserved word 'interface' as a variable name in strict mode..
@@ -1513,8 +1513,8 @@ PASS "use strict";({ "interface": 42 }.interface === 42) is true
 PASS (function(){"use strict";({ "interface": 42 }.interface === 42)}); true is true
 PASS "use strict";({ interface: 42 }.interface === 42) is true
 PASS (function(){"use strict";({ interface: 42 }.interface === 42)}); true is true
-PASS "use strict";({ get interface(){}, set interface(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get interface(){}, set interface(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get interface(){}, set interface(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get interface(){}, set interface(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var package; true is true
 PASS (function(){var package; true}); true is true
 PASS var package = 42; package === 42 is true
@@ -1531,8 +1531,8 @@ PASS ({ "package": 42 }.package === 42) is true
 PASS (function(){({ "package": 42 }.package === 42)}); true is true
 PASS ({ package: 42 }.package === 42) is true
 PASS (function(){({ package: 42 }.package === 42)}); true is true
-PASS ({ get package(){}, set package(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get package(){}, set package(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get package(){}, set package(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get package(){}, set package(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var package; true threw exception SyntaxError: Cannot use the reserved word 'package' as a variable name in strict mode..
 PASS (function(){"use strict";var package; true}); true threw exception SyntaxError: Cannot use the reserved word 'package' as a variable name in strict mode..
 PASS "use strict";var package = 42; package === 42 threw exception SyntaxError: Cannot use the reserved word 'package' as a variable name in strict mode..
@@ -1549,8 +1549,8 @@ PASS "use strict";({ "package": 42 }.package === 42) is true
 PASS (function(){"use strict";({ "package": 42 }.package === 42)}); true is true
 PASS "use strict";({ package: 42 }.package === 42) is true
 PASS (function(){"use strict";({ package: 42 }.package === 42)}); true is true
-PASS "use strict";({ get package(){}, set package(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get package(){}, set package(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get package(){}, set package(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get package(){}, set package(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var protected; true is true
 PASS (function(){var protected; true}); true is true
 PASS var protected = 42; protected === 42 is true
@@ -1567,8 +1567,8 @@ PASS ({ "protected": 42 }.protected === 42) is true
 PASS (function(){({ "protected": 42 }.protected === 42)}); true is true
 PASS ({ protected: 42 }.protected === 42) is true
 PASS (function(){({ protected: 42 }.protected === 42)}); true is true
-PASS ({ get protected(){}, set protected(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get protected(){}, set protected(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get protected(){}, set protected(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get protected(){}, set protected(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var protected; true threw exception SyntaxError: Cannot use the reserved word 'protected' as a variable name in strict mode..
 PASS (function(){"use strict";var protected; true}); true threw exception SyntaxError: Cannot use the reserved word 'protected' as a variable name in strict mode..
 PASS "use strict";var protected = 42; protected === 42 threw exception SyntaxError: Cannot use the reserved word 'protected' as a variable name in strict mode..
@@ -1585,8 +1585,8 @@ PASS "use strict";({ "protected": 42 }.protected === 42) is true
 PASS (function(){"use strict";({ "protected": 42 }.protected === 42)}); true is true
 PASS "use strict";({ protected: 42 }.protected === 42) is true
 PASS (function(){"use strict";({ protected: 42 }.protected === 42)}); true is true
-PASS "use strict";({ get protected(){}, set protected(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get protected(){}, set protected(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get protected(){}, set protected(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get protected(){}, set protected(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var static; true is true
 PASS (function(){var static; true}); true is true
 PASS var static = 42; static === 42 is true
@@ -1603,8 +1603,8 @@ PASS ({ "static": 42 }.static === 42) is true
 PASS (function(){({ "static": 42 }.static === 42)}); true is true
 PASS ({ static: 42 }.static === 42) is true
 PASS (function(){({ static: 42 }.static === 42)}); true is true
-PASS ({ get static(){}, set static(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get static(){}, set static(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get static(){}, set static(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get static(){}, set static(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var static; true threw exception SyntaxError: Cannot use the reserved word 'static' as a variable name in strict mode..
 PASS (function(){"use strict";var static; true}); true threw exception SyntaxError: Cannot use the reserved word 'static' as a variable name in strict mode..
 PASS "use strict";var static = 42; static === 42 threw exception SyntaxError: Cannot use the reserved word 'static' as a variable name in strict mode..
@@ -1621,8 +1621,8 @@ PASS "use strict";({ "static": 42 }.static === 42) is true
 PASS (function(){"use strict";({ "static": 42 }.static === 42)}); true is true
 PASS "use strict";({ static: 42 }.static === 42) is true
 PASS (function(){"use strict";({ static: 42 }.static === 42)}); true is true
-PASS "use strict";({ get static(){}, set static(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get static(){}, set static(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get static(){}, set static(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get static(){}, set static(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var abstract; true is true
 PASS (function(){var abstract; true}); true is true
 PASS var abstract = 42; abstract === 42 is true
@@ -1639,8 +1639,8 @@ PASS ({ "abstract": 42 }.abstract === 42) is true
 PASS (function(){({ "abstract": 42 }.abstract === 42)}); true is true
 PASS ({ abstract: 42 }.abstract === 42) is true
 PASS (function(){({ abstract: 42 }.abstract === 42)}); true is true
-PASS ({ get abstract(){}, set abstract(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get abstract(){}, set abstract(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get abstract(){}, set abstract(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get abstract(){}, set abstract(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var abstract; true is true
 PASS (function(){"use strict";var abstract; true}); true is true
 PASS "use strict";var abstract = 42; abstract === 42 is true
@@ -1657,8 +1657,8 @@ PASS "use strict";({ "abstract": 42 }.abstract === 42) is true
 PASS (function(){"use strict";({ "abstract": 42 }.abstract === 42)}); true is true
 PASS "use strict";({ abstract: 42 }.abstract === 42) is true
 PASS (function(){"use strict";({ abstract: 42 }.abstract === 42)}); true is true
-PASS "use strict";({ get abstract(){}, set abstract(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get abstract(){}, set abstract(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get abstract(){}, set abstract(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get abstract(){}, set abstract(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var boolean; true is true
 PASS (function(){var boolean; true}); true is true
 PASS var boolean = 42; boolean === 42 is true
@@ -1675,8 +1675,8 @@ PASS ({ "boolean": 42 }.boolean === 42) is true
 PASS (function(){({ "boolean": 42 }.boolean === 42)}); true is true
 PASS ({ boolean: 42 }.boolean === 42) is true
 PASS (function(){({ boolean: 42 }.boolean === 42)}); true is true
-PASS ({ get boolean(){}, set boolean(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get boolean(){}, set boolean(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get boolean(){}, set boolean(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get boolean(){}, set boolean(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var boolean; true is true
 PASS (function(){"use strict";var boolean; true}); true is true
 PASS "use strict";var boolean = 42; boolean === 42 is true
@@ -1693,8 +1693,8 @@ PASS "use strict";({ "boolean": 42 }.boolean === 42) is true
 PASS (function(){"use strict";({ "boolean": 42 }.boolean === 42)}); true is true
 PASS "use strict";({ boolean: 42 }.boolean === 42) is true
 PASS (function(){"use strict";({ boolean: 42 }.boolean === 42)}); true is true
-PASS "use strict";({ get boolean(){}, set boolean(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get boolean(){}, set boolean(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get boolean(){}, set boolean(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get boolean(){}, set boolean(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var byte; true is true
 PASS (function(){var byte; true}); true is true
 PASS var byte = 42; byte === 42 is true
@@ -1711,8 +1711,8 @@ PASS ({ "byte": 42 }.byte === 42) is true
 PASS (function(){({ "byte": 42 }.byte === 42)}); true is true
 PASS ({ byte: 42 }.byte === 42) is true
 PASS (function(){({ byte: 42 }.byte === 42)}); true is true
-PASS ({ get byte(){}, set byte(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get byte(){}, set byte(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get byte(){}, set byte(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get byte(){}, set byte(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var byte; true is true
 PASS (function(){"use strict";var byte; true}); true is true
 PASS "use strict";var byte = 42; byte === 42 is true
@@ -1729,8 +1729,8 @@ PASS "use strict";({ "byte": 42 }.byte === 42) is true
 PASS (function(){"use strict";({ "byte": 42 }.byte === 42)}); true is true
 PASS "use strict";({ byte: 42 }.byte === 42) is true
 PASS (function(){"use strict";({ byte: 42 }.byte === 42)}); true is true
-PASS "use strict";({ get byte(){}, set byte(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get byte(){}, set byte(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get byte(){}, set byte(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get byte(){}, set byte(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var char; true is true
 PASS (function(){var char; true}); true is true
 PASS var char = 42; char === 42 is true
@@ -1747,8 +1747,8 @@ PASS ({ "char": 42 }.char === 42) is true
 PASS (function(){({ "char": 42 }.char === 42)}); true is true
 PASS ({ char: 42 }.char === 42) is true
 PASS (function(){({ char: 42 }.char === 42)}); true is true
-PASS ({ get char(){}, set char(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get char(){}, set char(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get char(){}, set char(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get char(){}, set char(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var char; true is true
 PASS (function(){"use strict";var char; true}); true is true
 PASS "use strict";var char = 42; char === 42 is true
@@ -1765,8 +1765,8 @@ PASS "use strict";({ "char": 42 }.char === 42) is true
 PASS (function(){"use strict";({ "char": 42 }.char === 42)}); true is true
 PASS "use strict";({ char: 42 }.char === 42) is true
 PASS (function(){"use strict";({ char: 42 }.char === 42)}); true is true
-PASS "use strict";({ get char(){}, set char(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get char(){}, set char(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get char(){}, set char(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get char(){}, set char(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var double; true is true
 PASS (function(){var double; true}); true is true
 PASS var double = 42; double === 42 is true
@@ -1783,8 +1783,8 @@ PASS ({ "double": 42 }.double === 42) is true
 PASS (function(){({ "double": 42 }.double === 42)}); true is true
 PASS ({ double: 42 }.double === 42) is true
 PASS (function(){({ double: 42 }.double === 42)}); true is true
-PASS ({ get double(){}, set double(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get double(){}, set double(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get double(){}, set double(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get double(){}, set double(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var double; true is true
 PASS (function(){"use strict";var double; true}); true is true
 PASS "use strict";var double = 42; double === 42 is true
@@ -1801,8 +1801,8 @@ PASS "use strict";({ "double": 42 }.double === 42) is true
 PASS (function(){"use strict";({ "double": 42 }.double === 42)}); true is true
 PASS "use strict";({ double: 42 }.double === 42) is true
 PASS (function(){"use strict";({ double: 42 }.double === 42)}); true is true
-PASS "use strict";({ get double(){}, set double(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get double(){}, set double(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get double(){}, set double(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get double(){}, set double(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var final; true is true
 PASS (function(){var final; true}); true is true
 PASS var final = 42; final === 42 is true
@@ -1819,8 +1819,8 @@ PASS ({ "final": 42 }.final === 42) is true
 PASS (function(){({ "final": 42 }.final === 42)}); true is true
 PASS ({ final: 42 }.final === 42) is true
 PASS (function(){({ final: 42 }.final === 42)}); true is true
-PASS ({ get final(){}, set final(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get final(){}, set final(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get final(){}, set final(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get final(){}, set final(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var final; true is true
 PASS (function(){"use strict";var final; true}); true is true
 PASS "use strict";var final = 42; final === 42 is true
@@ -1837,8 +1837,8 @@ PASS "use strict";({ "final": 42 }.final === 42) is true
 PASS (function(){"use strict";({ "final": 42 }.final === 42)}); true is true
 PASS "use strict";({ final: 42 }.final === 42) is true
 PASS (function(){"use strict";({ final: 42 }.final === 42)}); true is true
-PASS "use strict";({ get final(){}, set final(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get final(){}, set final(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get final(){}, set final(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get final(){}, set final(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var float; true is true
 PASS (function(){var float; true}); true is true
 PASS var float = 42; float === 42 is true
@@ -1855,8 +1855,8 @@ PASS ({ "float": 42 }.float === 42) is true
 PASS (function(){({ "float": 42 }.float === 42)}); true is true
 PASS ({ float: 42 }.float === 42) is true
 PASS (function(){({ float: 42 }.float === 42)}); true is true
-PASS ({ get float(){}, set float(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get float(){}, set float(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get float(){}, set float(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get float(){}, set float(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var float; true is true
 PASS (function(){"use strict";var float; true}); true is true
 PASS "use strict";var float = 42; float === 42 is true
@@ -1873,8 +1873,8 @@ PASS "use strict";({ "float": 42 }.float === 42) is true
 PASS (function(){"use strict";({ "float": 42 }.float === 42)}); true is true
 PASS "use strict";({ float: 42 }.float === 42) is true
 PASS (function(){"use strict";({ float: 42 }.float === 42)}); true is true
-PASS "use strict";({ get float(){}, set float(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get float(){}, set float(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get float(){}, set float(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get float(){}, set float(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var goto; true is true
 PASS (function(){var goto; true}); true is true
 PASS var goto = 42; goto === 42 is true
@@ -1891,8 +1891,8 @@ PASS ({ "goto": 42 }.goto === 42) is true
 PASS (function(){({ "goto": 42 }.goto === 42)}); true is true
 PASS ({ goto: 42 }.goto === 42) is true
 PASS (function(){({ goto: 42 }.goto === 42)}); true is true
-PASS ({ get goto(){}, set goto(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get goto(){}, set goto(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get goto(){}, set goto(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get goto(){}, set goto(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var goto; true is true
 PASS (function(){"use strict";var goto; true}); true is true
 PASS "use strict";var goto = 42; goto === 42 is true
@@ -1909,8 +1909,8 @@ PASS "use strict";({ "goto": 42 }.goto === 42) is true
 PASS (function(){"use strict";({ "goto": 42 }.goto === 42)}); true is true
 PASS "use strict";({ goto: 42 }.goto === 42) is true
 PASS (function(){"use strict";({ goto: 42 }.goto === 42)}); true is true
-PASS "use strict";({ get goto(){}, set goto(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get goto(){}, set goto(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get goto(){}, set goto(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get goto(){}, set goto(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var int; true is true
 PASS (function(){var int; true}); true is true
 PASS var int = 42; int === 42 is true
@@ -1927,8 +1927,8 @@ PASS ({ "int": 42 }.int === 42) is true
 PASS (function(){({ "int": 42 }.int === 42)}); true is true
 PASS ({ int: 42 }.int === 42) is true
 PASS (function(){({ int: 42 }.int === 42)}); true is true
-PASS ({ get int(){}, set int(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get int(){}, set int(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get int(){}, set int(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get int(){}, set int(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var int; true is true
 PASS (function(){"use strict";var int; true}); true is true
 PASS "use strict";var int = 42; int === 42 is true
@@ -1945,8 +1945,8 @@ PASS "use strict";({ "int": 42 }.int === 42) is true
 PASS (function(){"use strict";({ "int": 42 }.int === 42)}); true is true
 PASS "use strict";({ int: 42 }.int === 42) is true
 PASS (function(){"use strict";({ int: 42 }.int === 42)}); true is true
-PASS "use strict";({ get int(){}, set int(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get int(){}, set int(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get int(){}, set int(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get int(){}, set int(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var long; true is true
 PASS (function(){var long; true}); true is true
 PASS var long = 42; long === 42 is true
@@ -1963,8 +1963,8 @@ PASS ({ "long": 42 }.long === 42) is true
 PASS (function(){({ "long": 42 }.long === 42)}); true is true
 PASS ({ long: 42 }.long === 42) is true
 PASS (function(){({ long: 42 }.long === 42)}); true is true
-PASS ({ get long(){}, set long(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get long(){}, set long(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get long(){}, set long(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get long(){}, set long(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var long; true is true
 PASS (function(){"use strict";var long; true}); true is true
 PASS "use strict";var long = 42; long === 42 is true
@@ -1981,8 +1981,8 @@ PASS "use strict";({ "long": 42 }.long === 42) is true
 PASS (function(){"use strict";({ "long": 42 }.long === 42)}); true is true
 PASS "use strict";({ long: 42 }.long === 42) is true
 PASS (function(){"use strict";({ long: 42 }.long === 42)}); true is true
-PASS "use strict";({ get long(){}, set long(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get long(){}, set long(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get long(){}, set long(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get long(){}, set long(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var native; true is true
 PASS (function(){var native; true}); true is true
 PASS var native = 42; native === 42 is true
@@ -1999,8 +1999,8 @@ PASS ({ "native": 42 }.native === 42) is true
 PASS (function(){({ "native": 42 }.native === 42)}); true is true
 PASS ({ native: 42 }.native === 42) is true
 PASS (function(){({ native: 42 }.native === 42)}); true is true
-PASS ({ get native(){}, set native(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get native(){}, set native(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get native(){}, set native(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get native(){}, set native(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var native; true is true
 PASS (function(){"use strict";var native; true}); true is true
 PASS "use strict";var native = 42; native === 42 is true
@@ -2017,8 +2017,8 @@ PASS "use strict";({ "native": 42 }.native === 42) is true
 PASS (function(){"use strict";({ "native": 42 }.native === 42)}); true is true
 PASS "use strict";({ native: 42 }.native === 42) is true
 PASS (function(){"use strict";({ native: 42 }.native === 42)}); true is true
-PASS "use strict";({ get native(){}, set native(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get native(){}, set native(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get native(){}, set native(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get native(){}, set native(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var short; true is true
 PASS (function(){var short; true}); true is true
 PASS var short = 42; short === 42 is true
@@ -2035,8 +2035,8 @@ PASS ({ "short": 42 }.short === 42) is true
 PASS (function(){({ "short": 42 }.short === 42)}); true is true
 PASS ({ short: 42 }.short === 42) is true
 PASS (function(){({ short: 42 }.short === 42)}); true is true
-PASS ({ get short(){}, set short(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get short(){}, set short(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get short(){}, set short(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get short(){}, set short(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var short; true is true
 PASS (function(){"use strict";var short; true}); true is true
 PASS "use strict";var short = 42; short === 42 is true
@@ -2053,8 +2053,8 @@ PASS "use strict";({ "short": 42 }.short === 42) is true
 PASS (function(){"use strict";({ "short": 42 }.short === 42)}); true is true
 PASS "use strict";({ short: 42 }.short === 42) is true
 PASS (function(){"use strict";({ short: 42 }.short === 42)}); true is true
-PASS "use strict";({ get short(){}, set short(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get short(){}, set short(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get short(){}, set short(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get short(){}, set short(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var synchronized; true is true
 PASS (function(){var synchronized; true}); true is true
 PASS var synchronized = 42; synchronized === 42 is true
@@ -2071,8 +2071,8 @@ PASS ({ "synchronized": 42 }.synchronized === 42) is true
 PASS (function(){({ "synchronized": 42 }.synchronized === 42)}); true is true
 PASS ({ synchronized: 42 }.synchronized === 42) is true
 PASS (function(){({ synchronized: 42 }.synchronized === 42)}); true is true
-PASS ({ get synchronized(){}, set synchronized(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get synchronized(){}, set synchronized(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get synchronized(){}, set synchronized(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get synchronized(){}, set synchronized(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var synchronized; true is true
 PASS (function(){"use strict";var synchronized; true}); true is true
 PASS "use strict";var synchronized = 42; synchronized === 42 is true
@@ -2089,8 +2089,8 @@ PASS "use strict";({ "synchronized": 42 }.synchronized === 42) is true
 PASS (function(){"use strict";({ "synchronized": 42 }.synchronized === 42)}); true is true
 PASS "use strict";({ synchronized: 42 }.synchronized === 42) is true
 PASS (function(){"use strict";({ synchronized: 42 }.synchronized === 42)}); true is true
-PASS "use strict";({ get synchronized(){}, set synchronized(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get synchronized(){}, set synchronized(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get synchronized(){}, set synchronized(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get synchronized(){}, set synchronized(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var throws; true is true
 PASS (function(){var throws; true}); true is true
 PASS var throws = 42; throws === 42 is true
@@ -2107,8 +2107,8 @@ PASS ({ "throws": 42 }.throws === 42) is true
 PASS (function(){({ "throws": 42 }.throws === 42)}); true is true
 PASS ({ throws: 42 }.throws === 42) is true
 PASS (function(){({ throws: 42 }.throws === 42)}); true is true
-PASS ({ get throws(){}, set throws(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get throws(){}, set throws(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get throws(){}, set throws(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get throws(){}, set throws(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var throws; true is true
 PASS (function(){"use strict";var throws; true}); true is true
 PASS "use strict";var throws = 42; throws === 42 is true
@@ -2125,8 +2125,8 @@ PASS "use strict";({ "throws": 42 }.throws === 42) is true
 PASS (function(){"use strict";({ "throws": 42 }.throws === 42)}); true is true
 PASS "use strict";({ throws: 42 }.throws === 42) is true
 PASS (function(){"use strict";({ throws: 42 }.throws === 42)}); true is true
-PASS "use strict";({ get throws(){}, set throws(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get throws(){}, set throws(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get throws(){}, set throws(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get throws(){}, set throws(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var transient; true is true
 PASS (function(){var transient; true}); true is true
 PASS var transient = 42; transient === 42 is true
@@ -2143,8 +2143,8 @@ PASS ({ "transient": 42 }.transient === 42) is true
 PASS (function(){({ "transient": 42 }.transient === 42)}); true is true
 PASS ({ transient: 42 }.transient === 42) is true
 PASS (function(){({ transient: 42 }.transient === 42)}); true is true
-PASS ({ get transient(){}, set transient(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get transient(){}, set transient(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get transient(){}, set transient(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get transient(){}, set transient(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var transient; true is true
 PASS (function(){"use strict";var transient; true}); true is true
 PASS "use strict";var transient = 42; transient === 42 is true
@@ -2161,8 +2161,8 @@ PASS "use strict";({ "transient": 42 }.transient === 42) is true
 PASS (function(){"use strict";({ "transient": 42 }.transient === 42)}); true is true
 PASS "use strict";({ transient: 42 }.transient === 42) is true
 PASS (function(){"use strict";({ transient: 42 }.transient === 42)}); true is true
-PASS "use strict";({ get transient(){}, set transient(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get transient(){}, set transient(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get transient(){}, set transient(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get transient(){}, set transient(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var volatile; true is true
 PASS (function(){var volatile; true}); true is true
 PASS var volatile = 42; volatile === 42 is true
@@ -2179,8 +2179,8 @@ PASS ({ "volatile": 42 }.volatile === 42) is true
 PASS (function(){({ "volatile": 42 }.volatile === 42)}); true is true
 PASS ({ volatile: 42 }.volatile === 42) is true
 PASS (function(){({ volatile: 42 }.volatile === 42)}); true is true
-PASS ({ get volatile(){}, set volatile(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get volatile(){}, set volatile(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS ({ get volatile(){}, set volatile(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){({ get volatile(){}, set volatile(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS "use strict";var volatile; true is true
 PASS (function(){"use strict";var volatile; true}); true is true
 PASS "use strict";var volatile = 42; volatile === 42 is true
@@ -2197,8 +2197,8 @@ PASS "use strict";({ "volatile": 42 }.volatile === 42) is true
 PASS (function(){"use strict";({ "volatile": 42 }.volatile === 42)}); true is true
 PASS "use strict";({ volatile: 42 }.volatile === 42) is true
 PASS (function(){"use strict";({ volatile: 42 }.volatile === 42)}); true is true
-PASS "use strict";({ get volatile(){}, set volatile(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get volatile(){}, set volatile(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
+PASS "use strict";({ get volatile(){}, set volatile(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
+PASS (function(){"use strict";({ get volatile(){}, set volatile(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS window.yield === 42 is true
 PASS successfullyParsed is true
 

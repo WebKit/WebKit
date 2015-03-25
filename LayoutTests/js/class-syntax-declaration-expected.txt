@@ -25,6 +25,13 @@ PASS X.constructor() is staticMethodValue
 PASS class X { constructor() {} static prototype() {} } threw exception SyntaxError: Cannot declare a static method named 'prototype'..
 PASS class X { constructor() {} prototype() { return instanceMethodValue; } } did not throw exception.
 PASS (new X).prototype() is instanceMethodValue
+PASS class X { constructor() {} set foo(a) {} } did not throw exception.
+PASS class X { constructor() {} set foo({x, y}) {} } did not throw exception.
+PASS class X { constructor() {} set foo() {} } threw exception SyntaxError: Unexpected token ')'. setter functions must have one parameter..
+PASS class X { constructor() {} set foo(a, b) {} } threw exception SyntaxError: Unexpected token ','. setter functions must have one parameter..
+PASS class X { constructor() {} get foo() {} } did not throw exception.
+PASS class X { constructor() {} get foo(x) {} } threw exception SyntaxError: Unexpected identifier 'x'. getter functions must have no parameters..
+PASS class X { constructor() {} get foo({x, y}) {} } threw exception SyntaxError: Unexpected token '{'. getter functions must have no parameters..
 PASS successfullyParsed is true
 
 TEST COMPLETE

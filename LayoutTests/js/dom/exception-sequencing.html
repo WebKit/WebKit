@@ -680,8 +680,8 @@ window.__defineGetter__("nonThrowingIndexBase", function(){
     return {
         get nonThrowingTestIndex(){ executionOrder += "get nonThrowingTestIndex, "; return undefined; },
         get throwingTestIndex(){ executionOrder += "get nonThrowingTestIndex, "; throw {}; return undefined; },
-        set nonThrowingTestIndex(){ executionOrder += "set nonThrowingTestIndex, "; return undefined; },
-        set throwingTestIndex(){ executionOrder += "set nonThrowingTestIndex, "; throw {}; return undefined; }
+        set nonThrowingTestIndex(x){ executionOrder += "set nonThrowingTestIndex, "; return undefined; },
+        set throwingTestIndex(x){ executionOrder += "set nonThrowingTestIndex, "; throw {}; return undefined; }
     }
   });
 window.__defineGetter__("throwingIndexBase", function(){ 

@@ -8,7 +8,7 @@ function testGlobalCode(test) {
 }
 var testObject = {
     get getterTest(){ testGlobalCode("var a, b, c, d; testVar = 'PASS';"); },
-    set setterTest(){ testGlobalCode("var e, f, g, h; testVar = 'PASS';"); },
+    set setterTest(x){ testGlobalCode("var e, f, g, h; testVar = 'PASS';"); },
     toString: function() { testGlobalCode("var i, j, k, l; testVar = 'PASS';"); return ''; },
     valueOf: function() { testGlobalCode("var m, n, o, p; testVar = 'PASS';"); return 0; },
     toStringTest: function() { "" + this; },

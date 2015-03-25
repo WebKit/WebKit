@@ -1,3 +1,33 @@
+2015-03-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Setter should have a single formal parameter, Getter no parameters
+        https://bugs.webkit.org/show_bug.cgi?id=142903
+
+        Reviewed by Geoffrey Garen.
+
+        Correct a bunch of setters in existing tests and add
+        tests for good/bad getter and setter syntax.
+
+        * js/class-syntax-declaration-expected.txt:
+        * js/dom/exception-sequencing.html:
+        * js/dom/reserved-words-as-property-expected.txt:
+        * js/dom/script-tests/implicit-call-with-global-reentry.js:
+        (testObject.set setterTest):
+        * js/dom/script-tests/reserved-words-as-property.js:
+        (testWord):
+        * js/for-in-cached-expected.txt:
+        * js/object-literal-direct-put-expected.txt:
+        * js/object-literal-syntax-expected.txt:
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/class-syntax-declaration.js:
+        * js/script-tests/class-syntax-super.js:
+        (class.Derived.extends.Base.set callBaseMethodInSetter):
+        (class.Derived.extends.Base.set baseMethodInGetterSetter):
+        * js/script-tests/for-in-cached.js:
+        * js/script-tests/object-literal-direct-put.js:
+        * js/script-tests/object-literal-syntax.js:
+        * js/script-tests/parser-syntax-check.js:
+
 2015-03-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Responses with 302 HTTP Status Code should not be cached

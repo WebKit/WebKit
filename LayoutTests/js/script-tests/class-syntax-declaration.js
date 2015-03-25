@@ -38,4 +38,12 @@ shouldThrow("class X { constructor() {} static prototype() {} }", "'SyntaxError:
 shouldNotThrow("class X { constructor() {} prototype() { return instanceMethodValue; } }");
 shouldBe("(new X).prototype()", "instanceMethodValue");
 
+shouldNotThrow("class X { constructor() {} set foo(a) {} }");
+shouldNotThrow("class X { constructor() {} set foo({x, y}) {} }");
+shouldThrow("class X { constructor() {} set foo() {} }");
+shouldThrow("class X { constructor() {} set foo(a, b) {} }");
+shouldNotThrow("class X { constructor() {} get foo() {} }");
+shouldThrow("class X { constructor() {} get foo(x) {} }");
+shouldThrow("class X { constructor() {} get foo({x, y}) {} }");
+
 var successfullyParsed = true;
