@@ -1,3 +1,20 @@
+2015-03-25  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION (r181660): Force click url preview doesn't have a TextIndicator in Mail
+        https://bugs.webkit.org/show_bug.cgi?id=143064
+        -and corresponding-
+        rdar://problem/20251440
+
+        Reviewed by Tim Horton.
+
+        The TextIndicator was getting set to nil by the call to 
+        _dismissContentRelativeChildWindows in mouseDown. That line of code was added by 
+        http://trac.webkit.org/changeset/177242 to work around a bug in another component 
+        that has now been resolved, so it no longer appears to be necessary. 
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView mouseDown:]):
+
 2015-03-25  Anders Carlsson  <andersca@apple.com>
 
         Add network and application cache directories to WebsiteDataStore
