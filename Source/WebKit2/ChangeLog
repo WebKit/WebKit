@@ -1,3 +1,18 @@
+2015-03-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Inspector doesn't get focused when opened in dock mode
+        https://bugs.webkit.org/show_bug.cgi?id=143030
+
+        Reviewed by Anders Carlsson.
+
+        The bug was caused by platformBringToFront and platformAttach calling makeFirstResponder on WKWebView,
+        which aren't intended to become the first responder. Fixed the bug by calling makeFirstResponder on the WKView
+        subview of the WKWebView, which is intended to be used as the first responder on behalf of the web view.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformBringToFront):
+        (WebKit::WebInspectorProxy::platformAttach):
+
 2015-03-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Responses with 302 HTTP Status Code should not be cached
