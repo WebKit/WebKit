@@ -212,10 +212,9 @@ using namespace WebKit;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    if (_hitTestResult.contentPreventsDefault) {
-        _page->immediateActionDidUpdate([immediateActionRecognizer animationProgress]);
+    _page->immediateActionDidUpdate([immediateActionRecognizer animationProgress]);
+    if (_hitTestResult.contentPreventsDefault)
         return;
-    }
 
     _page->setTextIndicatorAnimationProgress([immediateActionRecognizer animationProgress]);
 }

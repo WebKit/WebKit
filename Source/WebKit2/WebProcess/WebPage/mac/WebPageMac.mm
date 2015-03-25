@@ -1158,6 +1158,8 @@ void WebPage::focusAndSelectLastActionMenuHitTestResult()
 
 void WebPage::immediateActionDidUpdate(float force)
 {
+    m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);
+
     Element* element = m_lastActionMenuHitTestResult.innerElement();
     if (!element)
         return;

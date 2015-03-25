@@ -1,3 +1,20 @@
+2015-03-25  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION (r181660): Safari navigates to link after a starting and canceling a 
+        force preview
+        https://bugs.webkit.org/show_bug.cgi?id=143057
+        -and corresponding-
+        rdar://problem/20251436
+
+        Reviewed by Tim Horton.
+
+        This patch adds a value for ActionUpdated to the ImmediateActionStage enum. Now if 
+        m_immediateActionStage indicates that an immediate action has either begun or 
+        completed then we can have the same behavior.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        * page/EventHandler.h:
+
 2015-03-25  Dean Jackson  <dino@apple.com>
 
         MediaControls: Use font with fixed number width

@@ -120,6 +120,7 @@ enum CheckDragHysteresis { ShouldCheckDragHysteresis, DontCheckDragHysteresis };
 enum class ImmediateActionStage {
     None,
     PerformedHitTest,
+    ActionUpdated,
     ActionCancelled,
     ActionCompleted
 };
