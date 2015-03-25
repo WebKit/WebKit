@@ -81,6 +81,8 @@ runTestShouldBeTrue("var VarA = class A { constructor() {} }; var VarB = class B
 debug(''); debug('Class statement binding in other circumstances');
 runTestShouldThrow("var result = A; result");
 runTestShouldThrow("var result = A; class A {}; result");
+runTestShouldThrow("class A { constructor() { A = 1; } }; new A");
+runTestShouldBe("class A { constructor() { } }; A = 1; A", "1");
 runTestShouldNotThrow("class A {}; var result = A; result");
 shouldBe("eval('var Foo = 10'); Foo", "10");
 shouldThrow("'use strict'; eval('var Foo = 10'); Foo");
