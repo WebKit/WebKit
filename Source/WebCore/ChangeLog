@@ -1,3 +1,21 @@
+2015-03-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r181898 and r181909.
+        https://bugs.webkit.org/show_bug.cgi?id=143034
+
+        Broke fast/regions/auto-size/autoheight-two-pass-layout-
+        complex-002.html (Requested by ap on #webkit).
+
+        Reverted changesets:
+
+        "Improve the offsetWidth/Height layout optimization"
+        https://bugs.webkit.org/show_bug.cgi?id=143008
+        http://trac.webkit.org/changeset/181898
+
+        "Disable layout dimensions optimization for RenderRegions"
+        https://bugs.webkit.org/show_bug.cgi?id=143017
+        http://trac.webkit.org/changeset/181909
+
 2015-03-24  Zhuo Li  <zachli@apple.com>
 
         Scripts running in isolated world should not subject to a page's CSP about 'eval'.
