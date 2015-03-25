@@ -108,7 +108,7 @@ public:
     }
     size_t parameterCount() const;
     bool isInStrictContext() const { return m_isInStrictContext; }
-    FunctionMode functionMode() const { return m_functionMode; }
+    FunctionMode functionMode() const { return static_cast<FunctionMode>(m_functionMode); }
     JSParserStrictness toStrictness() const
     {
         if (m_isBuiltinFunction)
@@ -166,10 +166,6 @@ private:
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
 
-    bool m_isInStrictContext : 1;
-    bool m_hasCapturedVariables : 1;
-    bool m_isBuiltinFunction : 1;
-
     Identifier m_name;
     Identifier m_inferredName;
     WriteBarrier<JSString> m_nameValue;
@@ -188,7 +184,10 @@ private:
 
     CodeFeatures m_features;
 
-    FunctionMode m_functionMode;
+    unsigned m_isInStrictContext : 1;
+    unsigned m_hasCapturedVariables : 1;
+    unsigned m_isBuiltinFunction : 1;
+    unsigned m_functionMode : 1; // FunctionMode
 
 protected:
     void finishCreation(VM& vm)

@@ -1,3 +1,20 @@
+2015-03-21  Andreas Kling  <akling@apple.com>
+
+        Make UnlinkedFunctionExecutable fit in a 128-byte cell.
+        <https://webkit.org/b/142939>
+
+        Reviewed by Mark Hahnenberg.
+
+        Re-arrange the members of UnlinkedFunctionExecutable so it can fit inside
+        a 128-byte heap cell instead of requiring a 256-byte one.
+
+        Threw in a static_assert to catch anyone pushing it over the limit again.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedFunctionExecutable::functionMode):
+
 2015-03-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION (r179429): Potential Use after free in JavaScriptCore`WTF::StringImpl::ref + 83

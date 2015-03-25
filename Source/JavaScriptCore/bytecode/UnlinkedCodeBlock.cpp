@@ -42,6 +42,8 @@
 
 namespace JSC {
 
+static_assert(sizeof(UnlinkedFunctionExecutable) <= 128, "UnlinkedFunctionExecutable should fit in a 128-byte cell.");
+
 const ClassInfo UnlinkedFunctionExecutable::s_info = { "UnlinkedFunctionExecutable", 0, 0, CREATE_METHOD_TABLE(UnlinkedFunctionExecutable) };
 const ClassInfo UnlinkedCodeBlock::s_info = { "UnlinkedCodeBlock", 0, 0, CREATE_METHOD_TABLE(UnlinkedCodeBlock) };
 const ClassInfo UnlinkedGlobalCodeBlock::s_info = { "UnlinkedGlobalCodeBlock", &Base::s_info, 0, CREATE_METHOD_TABLE(UnlinkedGlobalCodeBlock) };
@@ -81,9 +83,6 @@ unsigned UnlinkedCodeBlock::addOrFindConstant(JSValue v)
 
 UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& source, FunctionBodyNode* node, UnlinkedFunctionKind kind)
     : Base(*vm, structure)
-    , m_isInStrictContext(node->isInStrictContext())
-    , m_hasCapturedVariables(false)
-    , m_isBuiltinFunction(kind == UnlinkedBuiltinFunction)
     , m_name(node->ident())
     , m_inferredName(node->inferredName())
     , m_parameters(node->parameters())
@@ -97,6 +96,9 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_typeProfilingStartOffset(node->functionKeywordStart())
     , m_typeProfilingEndOffset(node->startStartOffset() + node->source().length() - 1)
     , m_features(0)
+    , m_isInStrictContext(node->isInStrictContext())
+    , m_hasCapturedVariables(false)
+    , m_isBuiltinFunction(kind == UnlinkedBuiltinFunction)
     , m_functionMode(node->functionMode())
 {
 }
