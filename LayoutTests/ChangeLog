@@ -1,3 +1,17 @@
+2015-03-24  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Responses with 302 HTTP Status Code should not be cached
+        https://bugs.webkit.org/show_bug.cgi?id=143028
+        <rdar://problem/19714040>
+
+        Reviewed by Antti Koivisto.
+
+        Add layout test to check that responses with 302 HTTP Status Code
+        are not cached.
+
+        * http/tests/cache/disk-cache/disk-cache-302-status-code-expected.txt: Added.
+        * http/tests/cache/disk-cache/disk-cache-302-status-code.html: Added.
+
 2015-03-24  Zhuo Li  <zachli@apple.com>
 
         Scripts running in isolated world should not subject to a page's CSP about 'eval'.

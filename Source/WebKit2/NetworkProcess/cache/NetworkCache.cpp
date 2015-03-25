@@ -324,7 +324,6 @@ static StoreDecision canStore(const WebCore::ResourceRequest& originalRequest, c
     case 204: // No Content
     case 300: // Multiple Choices
     case 301: // Moved Permanently
-    case 302: // Found
     case 307: // Temporary Redirect
     case 404: // Not Found
     case 410: // Gone
