@@ -16,15 +16,17 @@ PASS setterValue is 789
 PASS (new A).__proto__ is A.prototype
 PASS A.prototype.constructor is A
 PASS class threw exception SyntaxError: Unexpected end of script.
+PASS class [ threw exception SyntaxError: Unexpected token '['.
+PASS class { threw exception SyntaxError: Class statements must have a name..
 PASS class X { threw exception SyntaxError: Unexpected end of script.
 PASS class X { ( } threw exception SyntaxError: Unexpected token '('. Expected an identifier..
 PASS class X {} did not throw exception.
 PASS class X { constructor() {} constructor() {} } threw exception SyntaxError: Cannot declare multiple constructors in a single class..
 PASS class X { constructor() {} static constructor() { return staticMethodValue; } } did not throw exception.
-PASS X.constructor() is staticMethodValue
+PASS class X { constructor() {} static constructor() { return staticMethodValue; } }; X.constructor() is staticMethodValue
 PASS class X { constructor() {} static prototype() {} } threw exception SyntaxError: Cannot declare a static method named 'prototype'..
 PASS class X { constructor() {} prototype() { return instanceMethodValue; } } did not throw exception.
-PASS (new X).prototype() is instanceMethodValue
+PASS class X { constructor() {} prototype() { return instanceMethodValue; } }; (new X).prototype() is instanceMethodValue
 PASS class X { constructor() {} set foo(a) {} } did not throw exception.
 PASS class X { constructor() {} set foo({x, y}) {} } did not throw exception.
 PASS class X { constructor() {} set foo() {} } threw exception SyntaxError: Unexpected token ')'. setter functions must have one parameter..

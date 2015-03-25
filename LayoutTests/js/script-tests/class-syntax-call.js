@@ -1,8 +1,11 @@
 description('Tests for calling the constructors of ES6 classes');
 
-shouldNotThrow('class A { constructor() {} }; new A');
+class A { constructor() {} };
+class B extends A { constructor() { super() } };
+
+shouldNotThrow('new A');
 shouldThrow('A()', '"TypeError: Cannot call a class constructor"');
-shouldNotThrow('class B extends A { constructor() { super() } }; new B');
+shouldNotThrow('new B');
 shouldThrow('B()', '"TypeError: Cannot call a class constructor"');
 shouldNotThrow('new (class { constructor() {} })()');
 shouldThrow('(class { constructor() {} })()', '"TypeError: Cannot call a class constructor"');

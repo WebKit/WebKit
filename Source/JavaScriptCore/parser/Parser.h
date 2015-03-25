@@ -774,7 +774,7 @@ private:
 
     template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionRequirements, FunctionParseMode, bool nameIsInContainingScope, ConstructorKind, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&);
 #if ENABLE(ES6_CLASS_SYNTAX)
-    template <class TreeBuilder> NEVER_INLINE TreeClassExpression parseClass(TreeBuilder&, FunctionRequirements);
+    template <class TreeBuilder> NEVER_INLINE TreeClassExpression parseClass(TreeBuilder&, FunctionRequirements, ParserClassInfo<TreeBuilder>&);
 #endif
 
     ALWAYS_INLINE int isBinaryOperator(JSTokenType);

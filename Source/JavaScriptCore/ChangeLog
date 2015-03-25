@@ -1,3 +1,28 @@
+2015-03-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ES6: Classes: Program level class statement throws exception in strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=143038
+
+        Reviewed by Ryosuke Niwa.
+
+        Classes expose a name to the current lexical environment. This treats
+        "class X {}" like "var X = class X {}". Ideally it would be "let X = class X {}".
+        Also, improve error messages for class statements where the class is missing a name.
+
+        * parser/Parser.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        Fill name in info parameter if needed. Better error message if name is needed and missing.
+
+        (JSC::Parser<LexerType>::parseClassDeclaration):
+        Pass info parameter to get name, and expose the name as a variable name.
+
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        Pass info parameter that is ignored.
+
+        * parser/ParserFunctionInfo.h:
+        Add a parser info for class, to extract the name.
+
 2015-03-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         New map and set modification tests in r181922 fails

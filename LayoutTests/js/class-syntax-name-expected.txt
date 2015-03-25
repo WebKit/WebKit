@@ -1,0 +1,122 @@
+Tests for ES6 class name semantics in class statements and expressions
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Class statement
+PASS A threw exception ReferenceError: Can't find variable: A.
+PASS 'use strict'; A threw exception ReferenceError: Can't find variable: A.
+PASS class {} threw exception SyntaxError: Class statements must have a name..
+PASS 'use strict'; class {} threw exception SyntaxError: Class statements must have a name..
+PASS class { constructor() {} } threw exception SyntaxError: Class statements must have a name..
+PASS 'use strict'; class { constructor() {} } threw exception SyntaxError: Class statements must have a name..
+PASS class A { constructor() {} } did not throw exception.
+PASS 'use strict'; class A { constructor() {} } did not throw exception.
+PASS class A { constructor() {} }; A.toString() is 'function A() {}'
+PASS 'use strict'; class A { constructor() {} }; A.toString() is 'function A() {}'
+PASS class A { constructor() {} }; (new A) instanceof A is true
+PASS 'use strict'; class A { constructor() {} }; (new A) instanceof A is true
+PASS class A { constructor() { this.base = A; } }; (new A).base.toString() is 'function A() { this.base = A; }'
+PASS 'use strict'; class A { constructor() { this.base = A; } }; (new A).base.toString() is 'function A() { this.base = A; }'
+PASS class A { constructor() {} }; class B extends A {}; did not throw exception.
+PASS 'use strict'; class A { constructor() {} }; class B extends A {}; did not throw exception.
+PASS class A { constructor() {} }; class B extends A { constructor() {} }; B.toString() is 'function B() {}'
+PASS 'use strict'; class A { constructor() {} }; class B extends A { constructor() {} }; B.toString() is 'function B() {}'
+PASS class A { constructor() {} }; class B extends A {}; (new B) instanceof A is true
+PASS 'use strict'; class A { constructor() {} }; class B extends A {}; (new B) instanceof A is true
+PASS class A { constructor() {} }; class B extends A {}; (new B) instanceof B is true
+PASS 'use strict'; class A { constructor() {} }; class B extends A {}; (new B) instanceof B is true
+PASS class A { constructor() {} }; class B extends A { constructor() { super(); this.base = A; this.derived = B; } }; (new B).base.toString() is 'function A() {}'
+PASS 'use strict'; class A { constructor() {} }; class B extends A { constructor() { super(); this.base = A; this.derived = B; } }; (new B).base.toString() is 'function A() {}'
+PASS class A { constructor() {} }; class B extends A { constructor() { super(); this.base = A; this.derived = B; } }; (new B).derived.toString() is 'function B() { super(); this.base = A; this.derived = B; }'
+PASS 'use strict'; class A { constructor() {} }; class B extends A { constructor() { super(); this.base = A; this.derived = B; } }; (new B).derived.toString() is 'function B() { super(); this.base = A; this.derived = B; }'
+
+Class expression
+PASS A threw exception ReferenceError: Can't find variable: A.
+PASS 'use strict'; A threw exception ReferenceError: Can't find variable: A.
+PASS (class {}) did not throw exception.
+PASS 'use strict'; (class {}) did not throw exception.
+PASS (class { constructor(){} }) did not throw exception.
+PASS 'use strict'; (class { constructor(){} }) did not throw exception.
+PASS typeof (class {}) is "function"
+PASS 'use strict'; typeof (class {}) is "function"
+PASS (class A {}) did not throw exception.
+PASS 'use strict'; (class A {}) did not throw exception.
+PASS typeof (class A {}) is "function"
+PASS 'use strict'; typeof (class A {}) is "function"
+PASS (class A {}); A threw exception ReferenceError: Can't find variable: A.
+PASS 'use strict'; (class A {}); A threw exception ReferenceError: Can't find variable: A.
+PASS new (class A {}) did not throw exception.
+PASS 'use strict'; new (class A {}) did not throw exception.
+PASS typeof (new (class A {})) is "object"
+PASS 'use strict'; typeof (new (class A {})) is "object"
+PASS (new (class A { constructor() { this.base = A; } })).base did not throw exception.
+PASS 'use strict'; (new (class A { constructor() { this.base = A; } })).base did not throw exception.
+PASS (new (class A { constructor() { this.base = A; } })).base.toString() is "function A() { this.base = A; }"
+PASS 'use strict'; (new (class A { constructor() { this.base = A; } })).base.toString() is "function A() { this.base = A; }"
+PASS class A {}; (class B extends A {}) did not throw exception.
+PASS 'use strict'; class A {}; (class B extends A {}) did not throw exception.
+PASS class A {}; (class B extends A {}); B threw exception ReferenceError: Can't find variable: B.
+PASS 'use strict'; class A {}; (class B extends A {}); B threw exception ReferenceError: Can't find variable: B.
+PASS class A {}; new (class B extends A {}) did not throw exception.
+PASS 'use strict'; class A {}; new (class B extends A {}) did not throw exception.
+PASS class A {}; new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } }) did not throw exception.
+PASS 'use strict'; class A {}; new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } }) did not throw exception.
+PASS class A {}; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })) instanceof A is true
+PASS 'use strict'; class A {}; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })) instanceof A is true
+PASS class A { constructor() {} }; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })).base.toString() is 'function A() {}'
+PASS 'use strict'; class A { constructor() {} }; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })).base.toString() is 'function A() {}'
+PASS class A { constructor() {} }; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })).derived.toString() is 'function B() { super(); this.base = A; this.derived = B; }'
+PASS 'use strict'; class A { constructor() {} }; (new (class B extends A { constructor() { super(); this.base = A; this.derived = B; } })).derived.toString() is 'function B() { super(); this.base = A; this.derived = B; }'
+
+Class expression assignment to variable
+PASS A threw exception ReferenceError: Can't find variable: A.
+PASS 'use strict'; A threw exception ReferenceError: Can't find variable: A.
+PASS var VarA = class {} did not throw exception.
+PASS 'use strict'; var VarA = class {} did not throw exception.
+PASS var VarA = class { constructor() {} }; VarA.toString() is 'function () {}'
+PASS 'use strict'; var VarA = class { constructor() {} }; VarA.toString() is 'function () {}'
+PASS VarA threw exception ReferenceError: Can't find variable: VarA.
+PASS 'use strict'; VarA threw exception ReferenceError: Can't find variable: VarA.
+PASS var VarA = class A { constructor() {} } did not throw exception.
+PASS 'use strict'; var VarA = class A { constructor() {} } did not throw exception.
+PASS var VarA = class A { constructor() {} }; VarA.toString() is 'function A() {}'
+PASS 'use strict'; var VarA = class A { constructor() {} }; VarA.toString() is 'function A() {}'
+PASS var VarA = class A { constructor() {} }; A.toString() threw exception ReferenceError: Can't find variable: A.
+PASS 'use strict'; var VarA = class A { constructor() {} }; A.toString() threw exception ReferenceError: Can't find variable: A.
+PASS var VarA = class A { constructor() {} }; (new VarA) instanceof VarA is true
+PASS 'use strict'; var VarA = class A { constructor() {} }; (new VarA) instanceof VarA is true
+PASS var VarA = class A { constructor() { this.base = A; } }; (new VarA).base.toString() is 'function A() { this.base = A; }'
+PASS 'use strict'; var VarA = class A { constructor() { this.base = A; } }; (new VarA).base.toString() is 'function A() { this.base = A; }'
+PASS var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() {} }; did not throw exception.
+PASS 'use strict'; var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() {} }; did not throw exception.
+PASS var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() {} }; B threw exception ReferenceError: Can't find variable: B.
+PASS 'use strict'; var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() {} }; B threw exception ReferenceError: Can't find variable: B.
+PASS var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() {} }; VarB.toString() is 'function B() {}'
+PASS 'use strict'; var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() {} }; VarB.toString() is 'function B() {}'
+PASS var VarA = class A { constructor() {} }; var VarB = class B extends VarA { }; (new VarB) instanceof VarA is true
+PASS 'use strict'; var VarA = class A { constructor() {} }; var VarB = class B extends VarA { }; (new VarB) instanceof VarA is true
+PASS var VarA = class A { constructor() {} }; var VarB = class B extends VarA { }; (new VarB) instanceof VarB is true
+PASS 'use strict'; var VarA = class A { constructor() {} }; var VarB = class B extends VarA { }; (new VarB) instanceof VarB is true
+PASS var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() { super(); this.base = VarA; this.derived = B; this.derivedVar = VarB; } }; (new VarB).base === VarA is true
+PASS 'use strict'; var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() { super(); this.base = VarA; this.derived = B; this.derivedVar = VarB; } }; (new VarB).base === VarA is true
+PASS var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() { super(); this.base = VarA; this.derived = B; this.derivedVar = VarB; } }; (new VarB).derived === VarB is true
+PASS 'use strict'; var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() { super(); this.base = VarA; this.derived = B; this.derivedVar = VarB; } }; (new VarB).derived === VarB is true
+PASS var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() { super(); this.base = VarA; this.derived = B; this.derivedVar = VarB; } }; (new VarB).derivedVar === VarB is true
+PASS 'use strict'; var VarA = class A { constructor() {} }; var VarB = class B extends VarA { constructor() { super(); this.base = VarA; this.derived = B; this.derivedVar = VarB; } }; (new VarB).derivedVar === VarB is true
+
+Class statement binding in other circumstances
+PASS var result = A; result threw exception ReferenceError: Can't find variable: A.
+PASS 'use strict'; var result = A; result threw exception ReferenceError: Can't find variable: A.
+FAIL var result = A; class A {}; result should throw an exception. Was undefined.
+FAIL 'use strict'; var result = A; class A {}; result should throw an exception. Was undefined.
+PASS class A {}; var result = A; result did not throw exception.
+PASS 'use strict'; class A {}; var result = A; result did not throw exception.
+PASS eval('var Foo = 10'); Foo is 10
+PASS 'use strict'; eval('var Foo = 10'); Foo threw exception ReferenceError: Can't find variable: Foo.
+PASS eval('class Bar { constructor() {} }'); Bar.toString() is 'function Bar() {}'
+PASS 'use strict'; eval('class Bar { constructor() {} }'); Bar.toString() threw exception ReferenceError: Can't find variable: Bar.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

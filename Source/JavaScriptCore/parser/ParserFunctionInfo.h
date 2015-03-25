@@ -40,6 +40,13 @@ struct ParserFunctionInfo {
     unsigned bodyStartColumn = 0;
 };
 
+#if ENABLE(ES6_CLASS_SYNTAX)
+template <class TreeBuilder>
+struct ParserClassInfo {
+    const Identifier* className = 0;
+};
+#endif
+
 }
 
 #endif
