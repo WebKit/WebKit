@@ -1,3 +1,140 @@
+2015-03-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION (r181458): Heap use-after-free in JSSetIterator destructor
+        https://bugs.webkit.org/show_bug.cgi?id=142696
+
+        Reviewed and tweaked by Geoffrey Garen.
+
+        Before r142556, JSSetIterator::destroy was not defined.
+        So accidentally MapData::const_iterator in JSSet was never destroyed.
+        But it had non trivial destructor, decrementing MapData->m_iteratorCount.
+
+        After r142556, JSSetIterator::destroy works.
+        It correctly destruct MapData::const_iterator and m_iteratorCount partially works.
+        But JSSetIterator::~JSSetIterator requires owned JSSet since it mutates MapData->m_iteratorCount.
+
+        It is guaranteed that JSSet is live since JSSetIterator has a reference to JSSet
+        and marks it in visitChildren (WriteBarrier<Unknown>).
+        However, the order of destructions is not guaranteed in GC-ed system.
+
+        Consider the following case,
+        allocate JSSet and subsequently allocate JSSetIterator.
+        And they resides in the separated MarkedBlock, <1> and <2>.
+
+        JSSet<1> <- JSSetIterator<2>
+
+        And after that, when performing GC, Marker decides that the above 2 objects are not marked.
+        And Marker also decides MarkedBlocks <1> and <2> can be sweeped.
+
+        First Sweeper sweep <1>, destruct JSSet<1> and free MarkedBlock<1>.
+        Second Sweeper sweep <2>, attempt to destruct JSSetIterator<2>.
+        However, JSSetIterator<2>'s destructor,
+        JSSetIterator::~JSSetIterator requires live JSSet<1>, it causes use-after-free.
+
+        In this patch, we introduce WeakGCMap into JSMap/JSSet to track live iterators.
+        When packing the removed elements in JSSet/JSMap, we apply the change to all live
+        iterators tracked by WeakGCMap.
+
+        WeakGCMap can only track JSCell since they are managed by GC.
+        So we drop JSSet/JSMap C++ style iterators. Instead of C++ style iterator, this patch
+        introduces JS style iterator signatures into C++ class IteratorData.
+        If we need to iterate over JSMap/JSSet, use JSSetIterator/JSMapIterator instead of using
+        IteratorData directly.
+
+        * runtime/JSMap.cpp:
+        (JSC::JSMap::destroy):
+        * runtime/JSMap.h:
+        (JSC::JSMap::JSMap):
+        (JSC::JSMap::begin): Deleted.
+        (JSC::JSMap::end): Deleted.
+        * runtime/JSMapIterator.cpp:
+        (JSC::JSMapIterator::destroy):
+        * runtime/JSMapIterator.h:
+        (JSC::JSMapIterator::next):
+        (JSC::JSMapIterator::nextKeyValue):
+        (JSC::JSMapIterator::iteratorData):
+        (JSC::JSMapIterator::JSMapIterator):
+        * runtime/JSSet.cpp:
+        (JSC::JSSet::destroy):
+        * runtime/JSSet.h:
+        (JSC::JSSet::JSSet):
+        (JSC::JSSet::begin): Deleted.
+        (JSC::JSSet::end): Deleted.
+        * runtime/JSSetIterator.cpp:
+        (JSC::JSSetIterator::destroy):
+        * runtime/JSSetIterator.h:
+        (JSC::JSSetIterator::next):
+        (JSC::JSSetIterator::iteratorData):
+        (JSC::JSSetIterator::JSSetIterator):
+        * runtime/MapData.h:
+        (JSC::MapDataImpl::IteratorData::finish):
+        (JSC::MapDataImpl::IteratorData::isFinished):
+        (JSC::MapDataImpl::shouldPack):
+        (JSC::JSIterator>::MapDataImpl):
+        (JSC::JSIterator>::KeyType::KeyType):
+        (JSC::JSIterator>::IteratorData::IteratorData):
+        (JSC::JSIterator>::IteratorData::next):
+        (JSC::JSIterator>::IteratorData::ensureSlot):
+        (JSC::JSIterator>::IteratorData::applyMapDataPatch):
+        (JSC::JSIterator>::IteratorData::refreshCursor):
+        (JSC::MapDataImpl::const_iterator::key): Deleted.
+        (JSC::MapDataImpl::const_iterator::value): Deleted.
+        (JSC::MapDataImpl::const_iterator::operator++): Deleted.
+        (JSC::MapDataImpl::const_iterator::finish): Deleted.
+        (JSC::MapDataImpl::const_iterator::atEnd): Deleted.
+        (JSC::MapDataImpl::begin): Deleted.
+        (JSC::MapDataImpl::end): Deleted.
+        (JSC::MapDataImpl<Entry>::MapDataImpl): Deleted.
+        (JSC::MapDataImpl<Entry>::clear): Deleted.
+        (JSC::MapDataImpl<Entry>::KeyType::KeyType): Deleted.
+        (JSC::MapDataImpl<Entry>::const_iterator::internalIncrement): Deleted.
+        (JSC::MapDataImpl<Entry>::const_iterator::ensureSlot): Deleted.
+        (JSC::MapDataImpl<Entry>::const_iterator::const_iterator): Deleted.
+        (JSC::MapDataImpl<Entry>::const_iterator::~const_iterator): Deleted.
+        (JSC::MapDataImpl<Entry>::const_iterator::operator): Deleted.
+        (JSC::=): Deleted.
+        * runtime/MapDataInlines.h:
+        (JSC::JSIterator>::clear):
+        (JSC::JSIterator>::find):
+        (JSC::JSIterator>::contains):
+        (JSC::JSIterator>::add):
+        (JSC::JSIterator>::set):
+        (JSC::JSIterator>::get):
+        (JSC::JSIterator>::remove):
+        (JSC::JSIterator>::replaceAndPackBackingStore):
+        (JSC::JSIterator>::replaceBackingStore):
+        (JSC::JSIterator>::ensureSpaceForAppend):
+        (JSC::JSIterator>::visitChildren):
+        (JSC::JSIterator>::copyBackingStore):
+        (JSC::JSIterator>::applyMapDataPatch):
+        (JSC::MapDataImpl<Entry>::find): Deleted.
+        (JSC::MapDataImpl<Entry>::contains): Deleted.
+        (JSC::MapDataImpl<Entry>::add): Deleted.
+        (JSC::MapDataImpl<Entry>::set): Deleted.
+        (JSC::MapDataImpl<Entry>::get): Deleted.
+        (JSC::MapDataImpl<Entry>::remove): Deleted.
+        (JSC::MapDataImpl<Entry>::replaceAndPackBackingStore): Deleted.
+        (JSC::MapDataImpl<Entry>::replaceBackingStore): Deleted.
+        (JSC::MapDataImpl<Entry>::ensureSpaceForAppend): Deleted.
+        (JSC::MapDataImpl<Entry>::visitChildren): Deleted.
+        (JSC::MapDataImpl<Entry>::copyBackingStore): Deleted.
+        * runtime/MapPrototype.cpp:
+        (JSC::mapProtoFuncForEach):
+        * runtime/SetPrototype.cpp:
+        (JSC::setProtoFuncForEach):
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::forEach):
+        * tests/stress/modify-map-during-iteration.js: Added.
+        (testValue):
+        (identityPairs):
+        (.set if):
+        (var):
+        (set map):
+        * tests/stress/modify-set-during-iteration.js: Added.
+        (testValue):
+        (set forEach):
+        (set delete):
+
 2015-03-24  Mark Lam  <mark.lam@apple.com>
 
         The ExecutionTimeLimit test should use its own JSGlobalContextRef.

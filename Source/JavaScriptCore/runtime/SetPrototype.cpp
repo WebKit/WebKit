@@ -128,20 +128,24 @@ EncodedJSValue JSC_HOST_CALL setProtoFuncForEach(CallFrame* callFrame)
         return JSValue::encode(throwTypeError(callFrame, WTF::ASCIILiteral("Set.prototype.forEach called without callback")));
     JSValue thisValue = callFrame->argument(1);
     VM* vm = &callFrame->vm();
+    JSSetIterator* iterator = JSSetIterator::create(*vm, callFrame->callee()->globalObject()->setIteratorStructure(), set, SetIterateKey);
+    JSValue key;
     if (callType == CallTypeJS) {
         JSFunction* function = jsCast<JSFunction*>(callBack);
         CachedCall cachedCall(callFrame, function, 1);
-        for (auto ptr = set->begin(), end = set->end(); ptr != end && !vm->exception(); ++ptr) {
+        while (iterator->next(callFrame, key) && !vm->exception()) {
             cachedCall.setThis(thisValue);
-            cachedCall.setArgument(0, ptr.key());
+            cachedCall.setArgument(0, key);
             cachedCall.call();
         }
+        iterator->finish();
     } else {
-        for (auto ptr = set->begin(), end = set->end(); ptr != end && !vm->exception(); ++ptr) {
+        while (iterator->next(callFrame, key) && !vm->exception()) {
             MarkedArgumentBuffer args;
-            args.append(ptr.key());
+            args.append(key);
             JSC::call(callFrame, callBack, callType, callData, thisValue, args);
         }
+        iterator->finish();
     }
     return JSValue::encode(jsUndefined());
 }

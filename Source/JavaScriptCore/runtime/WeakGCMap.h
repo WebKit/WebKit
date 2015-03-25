@@ -70,6 +70,17 @@ public:
         m_map.clear();
     }
 
+    bool isEmpty() const
+    {
+        const_iterator it = m_map.begin();
+        const_iterator end = m_map.end();
+        while (it != end) {
+            if (it->value)
+                return true;
+        }
+        return false;
+    }
+
     iterator find(const KeyType& key)
     {
         iterator it = m_map.find(key);
@@ -82,6 +93,15 @@ public:
     const_iterator find(const KeyType& key) const
     {
         return const_cast<WeakGCMap*>(this)->find(key);
+    }
+
+    template<typename Functor>
+    void forEach(Functor functor)
+    {
+        for (auto& pair : m_map) {
+            if (pair.value)
+                functor(pair.key, pair.value.get());
+        }
     }
 
     bool contains(const KeyType& key) const

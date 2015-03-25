@@ -32,9 +32,13 @@
 
 namespace JSC {
 
+class JSMapIterator;
+
 class JSMap : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
+
+    friend class JSMapIterator;
 
     // Our marking functions expect Entry to maintain this layout, and have all
     // fields be WriteBarrier<Unknown>
@@ -82,7 +86,7 @@ public:
         }
     };
 
-    typedef MapDataImpl<Entry> MapData;
+    typedef MapDataImpl<Entry, JSMapIterator> MapData;
 
     DECLARE_EXPORT_INFO;
 
@@ -103,16 +107,6 @@ public:
         return create(exec->vm(), structure);
     }
 
-    typedef MapData::const_iterator const_iterator;
-
-    const_iterator begin() const
-    {
-        return m_mapData.begin();
-    }
-    const_iterator end() const
-    {
-        return m_mapData.end();
-    }
     bool has(ExecState*, JSValue);
     size_t size(ExecState*);
     JSValue get(ExecState*, JSValue);
@@ -123,7 +117,7 @@ public:
 private:
     JSMap(VM& vm, Structure* structure)
         : Base(vm, structure)
-        , m_mapData()
+        , m_mapData(vm)
     {
     }
 

@@ -119,22 +119,26 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncForEach(CallFrame* callFrame)
         return JSValue::encode(throwTypeError(callFrame, WTF::ASCIILiteral("Map.prototype.forEach called without callback")));
     JSValue thisValue = callFrame->argument(1);
     VM* vm = &callFrame->vm();
+    JSMapIterator* iterator = JSMapIterator::create(*vm, callFrame->callee()->globalObject()->mapIteratorStructure(), map, MapIterateKeyValue);
+    JSValue key, value;
     if (callType == CallTypeJS) {
         JSFunction* function = jsCast<JSFunction*>(callBack);
         CachedCall cachedCall(callFrame, function, 2);
-        for (auto ptr = map->begin(), end = map->end(); ptr != end && !vm->exception(); ++ptr) {
+        while (iterator->nextKeyValue(key, value) && !vm->exception()) {
             cachedCall.setThis(thisValue);
-            cachedCall.setArgument(0, ptr.value());
-            cachedCall.setArgument(1, ptr.key());
+            cachedCall.setArgument(0, value);
+            cachedCall.setArgument(1, key);
             cachedCall.call();
         }
+        iterator->finish();
     } else {
-        for (auto ptr = map->begin(), end = map->end(); ptr != end && !vm->exception(); ++ptr) {
+        while (iterator->nextKeyValue(key, value) && !vm->exception()) {
             MarkedArgumentBuffer args;
-            args.append(ptr.value());
-            args.append(ptr.key());
+            args.append(value);
+            args.append(key);
             JSC::call(callFrame, callBack, callType, callData, thisValue, args);
         }
+        iterator->finish();
     }
     return JSValue::encode(jsUndefined());
 }

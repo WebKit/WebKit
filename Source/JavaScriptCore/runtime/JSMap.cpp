@@ -27,6 +27,7 @@
 #include "JSMap.h"
 
 #include "JSCJSValueInlines.h"
+#include "JSMapIterator.h"
 #include "MapDataInlines.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
@@ -37,7 +38,8 @@ const ClassInfo JSMap::s_info = { "Map", &Base::s_info, 0, CREATE_METHOD_TABLE(J
 
 void JSMap::destroy(JSCell* cell)
 {
-    jsCast<JSMap*>(cell)->~JSMap();
+    JSMap* thisObject = jsCast<JSMap*>(cell);
+    thisObject->JSMap::~JSMap();
 }
 
 void JSMap::visitChildren(JSCell* cell, SlotVisitor& visitor)

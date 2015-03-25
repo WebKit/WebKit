@@ -32,9 +32,13 @@
 
 namespace JSC {
 
+class JSSetIterator;
+
 class JSSet : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
+
+    friend class JSSetIterator;
 
     // Our marking functions expect Entry to maintain this layout, and have all
     // fields be WriteBarrier<Unknown>
@@ -78,7 +82,7 @@ public:
         }
     };
 
-    typedef MapDataImpl<Entry> SetData;
+    typedef MapDataImpl<Entry, JSSetIterator> SetData;
 
     DECLARE_EXPORT_INFO;
 
@@ -99,16 +103,6 @@ public:
         return create(exec->vm(), structure);
     }
 
-    typedef SetData::const_iterator const_iterator;
-
-    const_iterator begin() const
-    {
-        return m_setData.begin();
-    }
-    const_iterator end() const
-    {
-        return m_setData.end();
-    }
     bool has(ExecState*, JSValue);
     size_t size(ExecState*);
     JS_EXPORT_PRIVATE void add(ExecState*, JSValue);
@@ -118,7 +112,7 @@ public:
 private:
     JSSet(VM& vm, Structure* structure)
         : Base(vm, structure)
-        , m_setData()
+        , m_setData(vm)
     {
     }
 

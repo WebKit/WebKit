@@ -29,6 +29,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSMap.h"
+#include "MapDataInlines.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 
@@ -44,7 +45,8 @@ void JSMapIterator::finishCreation(VM& vm, JSMap* iteratedObject)
 
 void JSMapIterator::destroy(JSCell* cell)
 {
-    jsCast<JSMapIterator*>(cell)->~JSMapIterator();
+    JSMapIterator* thisObject = jsCast<JSMapIterator*>(cell);
+    thisObject->JSMapIterator::~JSMapIterator();
 }
 
 void JSMapIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)

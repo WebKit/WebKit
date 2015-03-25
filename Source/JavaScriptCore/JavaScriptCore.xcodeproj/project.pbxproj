@@ -1305,7 +1305,7 @@
 		A74DEF93182D991400522C22 /* MapIteratorPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A74DEF8D182D991400522C22 /* MapIteratorPrototype.cpp */; };
 		A74DEF94182D991400522C22 /* MapIteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A74DEF8E182D991400522C22 /* MapIteratorPrototype.h */; };
 		A74DEF95182D991400522C22 /* JSMapIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A74DEF8F182D991400522C22 /* JSMapIterator.cpp */; };
-		A74DEF96182D991400522C22 /* JSMapIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = A74DEF90182D991400522C22 /* JSMapIterator.h */; };
+		A74DEF96182D991400522C22 /* JSMapIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = A74DEF90182D991400522C22 /* JSMapIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A75706DE118A2BCF0057F88F /* JITArithmetic32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */; };
 		A75EE9B218AAB7E200AAD043 /* BuiltinNames.h in Headers */ = {isa = PBXBuildFile; fileRef = A75EE9B018AAB7E200AAD043 /* BuiltinNames.h */; };
 		A76140CD182982CB00750624 /* ArgumentsIteratorConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A76140C7182982CB00750624 /* ArgumentsIteratorConstructor.cpp */; };
@@ -1352,7 +1352,7 @@
 		A790DD6D182F499700588807 /* SetIteratorPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A790DD67182F499700588807 /* SetIteratorPrototype.cpp */; };
 		A790DD6E182F499700588807 /* SetIteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A790DD68182F499700588807 /* SetIteratorPrototype.h */; };
 		A790DD6F182F499700588807 /* JSSetIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A790DD69182F499700588807 /* JSSetIterator.cpp */; };
-		A790DD70182F499700588807 /* JSSetIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = A790DD6A182F499700588807 /* JSSetIterator.h */; };
+		A790DD70182F499700588807 /* JSSetIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = A790DD6A182F499700588807 /* JSSetIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7986D5717A0BB1E00A95DD0 /* DFGEdgeUsesStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = A7986D5617A0BB1E00A95DD0 /* DFGEdgeUsesStructure.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7A4AE0817973B26005612B1 /* MacroAssemblerX86Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A4AE0717973B26005612B1 /* MacroAssemblerX86Common.cpp */; };
 		A7A4AE1017973B4D005612B1 /* JITStubsX86Common.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A4AE0C17973B4D005612B1 /* JITStubsX86Common.h */; };

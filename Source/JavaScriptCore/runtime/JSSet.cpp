@@ -27,6 +27,7 @@
 #include "JSSet.h"
 
 #include "JSCJSValueInlines.h"
+#include "JSSetIterator.h"
 #include "MapDataInlines.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
@@ -37,7 +38,8 @@ const ClassInfo JSSet::s_info = { "Set", &Base::s_info, 0, CREATE_METHOD_TABLE(J
 
 void JSSet::destroy(JSCell* cell)
 {
-    jsCast<JSSet*>(cell)->~JSSet();
+    JSSet* thisObject = jsCast<JSSet*>(cell);
+    thisObject->JSSet::~JSSet();
 }
 
 void JSSet::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -58,13 +58,13 @@ public:
 
     bool next(CallFrame* callFrame, JSValue& value)
     {
-        if (!m_iterator.ensureSlot())
+        WTF::KeyValuePair<JSValue, JSValue> pair;
+        if (!m_iterator.next(pair))
             return false;
         if (m_kind == SetIterateValue || m_kind == SetIterateKey)
-            value = m_iterator.key();
+            value = pair.key;
         else
-            value = createPair(callFrame, m_iterator.key(), m_iterator.key());
-        ++m_iterator;
+            value = createPair(callFrame, pair.key, pair.key);
         return true;
     }
 
@@ -77,21 +77,26 @@ public:
     JSValue iteratedValue() const { return m_set.get(); }
     JSSetIterator* clone(ExecState*);
 
+    JSSet::SetData::IteratorData* iteratorData()
+    {
+        return &m_iterator;
+    }
+
 private:
     JSSetIterator(VM& vm, Structure* structure, JSSet* iteratedObject, SetIterationKind kind)
         : Base(vm, structure)
-        , m_iterator(iteratedObject->begin())
+        , m_iterator(iteratedObject->m_setData.createIteratorData(this))
         , m_kind(kind)
     {
     }
 
     static void destroy(JSCell*);
-    void finishCreation(VM&, JSSet*);
-    JSValue createPair(CallFrame*, JSValue, JSValue);
+    JS_EXPORT_PRIVATE void finishCreation(VM&, JSSet*);
+    JS_EXPORT_PRIVATE JSValue createPair(CallFrame*, JSValue, JSValue);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<JSSet> m_set;
-    JSSet::const_iterator m_iterator;
+    JSSet::SetData::IteratorData m_iterator;
     SetIterationKind m_kind;
 };
 

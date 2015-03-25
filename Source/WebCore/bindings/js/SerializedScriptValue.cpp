@@ -61,7 +61,9 @@
 #include <runtime/JSCInlines.h>
 #include <runtime/JSDataView.h>
 #include <runtime/JSMap.h>
+#include <runtime/JSMapIterator.h>
 #include <runtime/JSSet.h>
+#include <runtime/JSSetIterator.h>
 #include <runtime/JSTypedArrays.h>
 #include <runtime/MapData.h>
 #include <runtime/MapDataInlines.h>
@@ -1220,10 +1222,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
     Vector<uint32_t, 16> lengthStack;
     Vector<PropertyNameArray, 16> propertyStack;
     Vector<JSObject*, 32> inputObjectStack;
-    Vector<JSMap*, 4> mapStack;
-    Vector<JSMap::const_iterator, 4> mapIteratorStack;
-    Vector<JSSet*, 4> setStack;
-    Vector<JSSet::const_iterator, 4> setIteratorStack;
+    Vector<JSMapIterator*, 4> mapIteratorStack;
+    Vector<JSSetIterator*, 4> setIteratorStack;
     Vector<JSValue, 4> mapIteratorValueStack;
     Vector<WalkerState, 16> stateStack;
     WalkerState state = StateUnknown;
@@ -1356,19 +1356,19 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 JSMap* inMap = jsCast<JSMap*>(inValue);
                 if (!startMap(inMap))
                     break;
+                JSMapIterator* iterator = JSMapIterator::create(m_exec->vm(), m_exec->lexicalGlobalObject()->mapIteratorStructure(), inMap, MapIterateKeyValue);
                 m_gcBuffer.append(inMap);
-                mapStack.append(inMap);
-                mapIteratorStack.append(inMap->begin());
+                m_gcBuffer.append(iterator);
+                mapIteratorStack.append(iterator);
                 inputObjectStack.append(inMap);
                 goto mapDataStartVisitEntry;
             }
             mapDataStartVisitEntry:
             case MapDataStartVisitEntry: {
-                JSMap::const_iterator& ptr = mapIteratorStack.last();
-                JSMap* map = mapStack.last();
-                if (ptr == map->end()) {
+                JSMapIterator* iterator = mapIteratorStack.last();
+                JSValue key, value;
+                if (!iterator->nextKeyValue(key, value)) {
                     mapIteratorStack.removeLast();
-                    mapStack.removeLast();
                     JSObject* object = inputObjectStack.last();
                     ASSERT(jsDynamicCast<JSMap*>(object));
                     propertyStack.append(PropertyNameArray(m_exec));
@@ -1377,9 +1377,9 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     indexStack.append(0);
                     goto objectStartVisitMember;
                 }
-                inValue = ptr.key();
-                m_gcBuffer.append(ptr.value());
-                mapIteratorValueStack.append(ptr.value());
+                inValue = key;
+                m_gcBuffer.append(value);
+                mapIteratorValueStack.append(value);
                 stateStack.append(MapDataEndVisitKey);
                 goto stateUnknown;
             }
@@ -1390,8 +1390,6 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 goto stateUnknown;
             }
             case MapDataEndVisitValue: {
-                if (mapIteratorStack.last() != mapStack.last()->end())
-                    ++mapIteratorStack.last();
                 goto mapDataStartVisitEntry;
             }
 
@@ -1402,19 +1400,19 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 JSSet* inSet = jsCast<JSSet*>(inValue);
                 if (!startSet(inSet))
                     break;
+                JSSetIterator* iterator = JSSetIterator::create(m_exec->vm(), m_exec->lexicalGlobalObject()->setIteratorStructure(), inSet, SetIterateKey);
                 m_gcBuffer.append(inSet);
-                setStack.append(inSet);
-                setIteratorStack.append(inSet->begin());
+                m_gcBuffer.append(iterator);
+                setIteratorStack.append(iterator);
                 inputObjectStack.append(inSet);
                 goto setDataStartVisitEntry;
             }
             setDataStartVisitEntry:
             case SetDataStartVisitEntry: {
-                JSSet::const_iterator& ptr = setIteratorStack.last();
-                JSSet* set = setStack.last();
-                if (ptr == set->end()) {
+                JSSetIterator* iterator = setIteratorStack.last();
+                JSValue key;
+                if (!iterator->next(m_exec, key)) {
                     setIteratorStack.removeLast();
-                    setStack.removeLast();
                     JSObject* object = inputObjectStack.last();
                     ASSERT(jsDynamicCast<JSSet*>(object));
                     propertyStack.append(PropertyNameArray(m_exec));
@@ -1423,13 +1421,11 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     indexStack.append(0);
                     goto objectStartVisitMember;
                 }
-                inValue = ptr.key();
+                inValue = key;
                 stateStack.append(SetDataEndVisitKey);
                 goto stateUnknown;
             }
             case SetDataEndVisitKey: {
-                if (setIteratorStack.last() != setStack.last()->end())
-                    ++setIteratorStack.last();
                 goto setDataStartVisitEntry;
             }
 

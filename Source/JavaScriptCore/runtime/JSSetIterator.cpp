@@ -29,6 +29,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSSet.h"
+#include "MapDataInlines.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 
@@ -52,7 +53,8 @@ void JSSetIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 void JSSetIterator::destroy(JSCell* cell)
 {
-    jsCast<JSSetIterator*>(cell)->~JSSetIterator();
+    JSSetIterator* thisObject = jsCast<JSSetIterator*>(cell);
+    thisObject->JSSetIterator::~JSSetIterator();
 }
 
 JSValue JSSetIterator::createPair(CallFrame* callFrame, JSValue key, JSValue value)

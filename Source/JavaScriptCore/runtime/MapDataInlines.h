@@ -37,8 +37,24 @@
 
 namespace JSC {
 
-template<typename Entry>
-inline Entry* MapDataImpl<Entry>::find(ExecState* exec, KeyType key)
+template<typename Entry, typename JSIterator>
+inline void MapDataImpl<Entry, JSIterator>::clear()
+{
+    m_cellKeyedTable.clear();
+    m_valueKeyedTable.clear();
+    m_stringKeyedTable.clear();
+    m_symbolKeyedTable.clear();
+    m_capacity = 0;
+    m_size = 0;
+    m_deletedCount = 0;
+    m_entries = nullptr;
+    m_iterators.forEach([](JSIterator* iterator, JSIterator*) {
+        iterator->iteratorData()->didRemoveAllEntries();
+    });
+}
+
+template<typename Entry, typename JSIterator>
+inline Entry* MapDataImpl<Entry, JSIterator>::find(ExecState* exec, KeyType key)
 {
     if (key.value.isString()) {
         auto iter = m_stringKeyedTable.find(asString(key.value)->value(exec).impl());
@@ -65,15 +81,15 @@ inline Entry* MapDataImpl<Entry>::find(ExecState* exec, KeyType key)
     return &m_entries[iter->value];
 }
 
-template<typename Entry>
-inline bool MapDataImpl<Entry>::contains(ExecState* exec, KeyType key)
+template<typename Entry, typename JSIterator>
+inline bool MapDataImpl<Entry, JSIterator>::contains(ExecState* exec, KeyType key)
 {
     return find(exec, key);
 }
 
-template<typename Entry>
+template<typename Entry, typename JSIterator>
 template <typename Map, typename Key>
-inline Entry* MapDataImpl<Entry>::add(ExecState* exec, JSCell* owner, Map& map, Key key, KeyType keyValue)
+inline Entry* MapDataImpl<Entry, JSIterator>::add(ExecState* exec, JSCell* owner, Map& map, Key key, KeyType keyValue)
 {
     typename Map::iterator location = map.find(key);
     if (location != map.end())
@@ -90,8 +106,8 @@ inline Entry* MapDataImpl<Entry>::add(ExecState* exec, JSCell* owner, Map& map, 
     return entry;
 }
 
-template<typename Entry>
-inline void MapDataImpl<Entry>::set(ExecState* exec, JSCell* owner, KeyType key, JSValue value)
+template<typename Entry, typename JSIterator>
+inline void MapDataImpl<Entry, JSIterator>::set(ExecState* exec, JSCell* owner, KeyType key, JSValue value)
 {
     Entry* location = add(exec, owner, key);
     if (!location)
@@ -99,8 +115,8 @@ inline void MapDataImpl<Entry>::set(ExecState* exec, JSCell* owner, KeyType key,
     location->setValue(exec->vm(), owner, value);
 }
 
-template<typename Entry>
-inline Entry* MapDataImpl<Entry>::add(ExecState* exec, JSCell* owner, KeyType key)
+template<typename Entry, typename JSIterator>
+inline Entry* MapDataImpl<Entry, JSIterator>::add(ExecState* exec, JSCell* owner, KeyType key)
 {
     if (key.value.isString())
         return add(exec, owner, m_stringKeyedTable, asString(key.value)->value(exec).impl(), key);
@@ -111,16 +127,16 @@ inline Entry* MapDataImpl<Entry>::add(ExecState* exec, JSCell* owner, KeyType ke
     return add(exec, owner, m_valueKeyedTable, JSValue::encode(key.value), key);
 }
 
-template<typename Entry>
-inline JSValue MapDataImpl<Entry>::get(ExecState* exec, KeyType key)
+template<typename Entry, typename JSIterator>
+inline JSValue MapDataImpl<Entry, JSIterator>::get(ExecState* exec, KeyType key)
 {
     if (Entry* entry = find(exec, key))
         return entry->value().get();
     return JSValue();
 }
 
-template<typename Entry>
-inline bool MapDataImpl<Entry>::remove(ExecState* exec, KeyType key)
+template<typename Entry, typename JSIterator>
+inline bool MapDataImpl<Entry, JSIterator>::remove(ExecState* exec, KeyType key)
 {
     int32_t location;
     if (key.value.isString()) {
@@ -153,16 +169,20 @@ inline bool MapDataImpl<Entry>::remove(ExecState* exec, KeyType key)
     return true;
 }
 
-template<typename Entry>
-inline void MapDataImpl<Entry>::replaceAndPackBackingStore(Entry* destination, int32_t newCapacity)
+template<typename Entry, typename JSIterator>
+inline void MapDataImpl<Entry, JSIterator>::replaceAndPackBackingStore(Entry* destination, int32_t newCapacity)
 {
     ASSERT(shouldPack());
     int32_t newEnd = 0;
     RELEASE_ASSERT(newCapacity > 0);
     for (int32_t i = 0; i < m_size; i++) {
         Entry& entry = m_entries[i];
-        if (!entry.key())
+        if (!entry.key()) {
+            m_iterators.forEach([i](JSIterator* iterator, JSIterator*) {
+                iterator->iteratorData()->didRemoveEntry(i);
+            });
             continue;
+        }
         ASSERT(newEnd < newCapacity);
         destination[newEnd] = entry;
 
@@ -191,8 +211,8 @@ inline void MapDataImpl<Entry>::replaceAndPackBackingStore(Entry* destination, i
     m_entries = destination;
 }
 
-template<typename Entry>
-inline void MapDataImpl<Entry>::replaceBackingStore(Entry* destination, int32_t newCapacity)
+template<typename Entry, typename JSIterator>
+inline void MapDataImpl<Entry, JSIterator>::replaceBackingStore(Entry* destination, int32_t newCapacity)
 {
     ASSERT(!shouldPack());
     RELEASE_ASSERT(newCapacity > 0);
@@ -202,8 +222,8 @@ inline void MapDataImpl<Entry>::replaceBackingStore(Entry* destination, int32_t 
     m_entries = destination;
 }
 
-template<typename Entry>
-inline CheckedBoolean MapDataImpl<Entry>::ensureSpaceForAppend(ExecState* exec, JSCell* owner)
+template<typename Entry, typename JSIterator>
+inline CheckedBoolean MapDataImpl<Entry, JSIterator>::ensureSpaceForAppend(ExecState* exec, JSCell* owner)
 {
     if (m_capacity > m_size)
         return true;
@@ -224,8 +244,8 @@ inline CheckedBoolean MapDataImpl<Entry>::ensureSpaceForAppend(ExecState* exec, 
     return true;
 }
 
-template<typename Entry>
-inline void MapDataImpl<Entry>::visitChildren(JSCell* owner, SlotVisitor& visitor)
+template<typename Entry, typename JSIterator>
+inline void MapDataImpl<Entry, JSIterator>::visitChildren(JSCell* owner, SlotVisitor& visitor)
 {
     Entry* entries = m_entries;
     if (!entries)
@@ -244,8 +264,8 @@ inline void MapDataImpl<Entry>::visitChildren(JSCell* owner, SlotVisitor& visito
     visitor.copyLater(owner, MapBackingStoreCopyToken, entries, capacityInBytes());
 }
 
-template<typename Entry>
-inline void MapDataImpl<Entry>::copyBackingStore(CopyVisitor& visitor, CopyToken token)
+template<typename Entry, typename JSIterator>
+inline void MapDataImpl<Entry, JSIterator>::copyBackingStore(CopyVisitor& visitor, CopyToken token)
 {
     if (token == MapBackingStoreCopyToken && visitor.checkIfShouldCopy(m_entries)) {
         Entry* oldEntries = m_entries;
@@ -256,6 +276,13 @@ inline void MapDataImpl<Entry>::copyBackingStore(CopyVisitor& visitor, CopyToken
             replaceBackingStore(newEntries, m_capacity);
         visitor.didCopy(oldEntries, capacityInBytes());
     }
+}
+
+template<typename Entry, typename JSIterator>
+inline auto MapDataImpl<Entry, JSIterator>::createIteratorData(JSIterator* iterator) -> IteratorData
+{
+    m_iterators.set(iterator, iterator);
+    return IteratorData(this);
 }
 
 }
