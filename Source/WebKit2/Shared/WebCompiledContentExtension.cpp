@@ -28,9 +28,23 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include <WebCore/ContentExtensionCompiler.h>
-
 namespace WebKit {
+
+LegacyContentExtensionCompilationClient::LegacyContentExtensionCompilationClient(WebCore::ContentExtensions::CompiledContentExtensionData& data)
+    : m_data(data)
+{
+}
+
+void LegacyContentExtensionCompilationClient::writeBytecode(Vector<WebCore::ContentExtensions::DFABytecode>&& bytecode)
+{
+    m_data.bytecode = WTF::move(bytecode);
+}
+
+void LegacyContentExtensionCompilationClient::writeActions(Vector<WebCore::ContentExtensions::SerializedActionByte>&& actions)
+{
+    m_data.actions = WTF::move(actions);
+}
+
 
 Ref<WebCompiledContentExtension> WebCompiledContentExtension::createFromCompiledContentExtensionData(const WebCore::ContentExtensions::CompiledContentExtensionData& compilerData)
 {
@@ -42,7 +56,7 @@ Ref<WebCompiledContentExtension> WebCompiledContentExtension::createFromCompiled
     data.data = WTF::move(sharedMemory);
     data.bytecodeOffset = 0;
     data.bytecodeSize = compilerData.bytecode.size();
-    data.actionsOffset = compilerData.bytecode.size();
+    data.actionsOffset = compilerData.  bytecode.size();
     data.actionsSize = compilerData.actions.size();
 
     return create(WTF::move(data));

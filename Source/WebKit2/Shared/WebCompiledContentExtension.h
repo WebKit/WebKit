@@ -29,15 +29,23 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "WebCompiledContentExtensionData.h"
+#include <WebCore/ContentExtensionCompiler.h>
 #include <WebCore/CompiledContentExtension.h>
 
-namespace WebCore {
-namespace ContentExtensions {
-struct CompiledContentExtensionData;
-}
-}
-
 namespace WebKit {
+
+// FIXME: Remove this once everyone is converted to using the UserContentExtensionStore.
+class LegacyContentExtensionCompilationClient final : public WebCore::ContentExtensions::ContentExtensionCompilationClient {
+public:
+    LegacyContentExtensionCompilationClient(WebCore::ContentExtensions::CompiledContentExtensionData&);
+
+    virtual void writeBytecode(Vector<WebCore::ContentExtensions::DFABytecode>&&) override;
+    virtual void writeActions(Vector<WebCore::ContentExtensions::SerializedActionByte>&&) override;
+
+private:
+    WebCore::ContentExtensions::CompiledContentExtensionData& m_data;
+};
+
 
 class WebCompiledContentExtension final : public WebCore::ContentExtensions::CompiledContentExtension {
 public:

@@ -30,6 +30,7 @@
 #include "WKAPICast.h"
 #include "WebCompiledContentExtension.h"
 #include <WebCore/ContentExtensionCompiler.h>
+#include <WebCore/ContentExtensionError.h>
 
 using namespace WebKit;
 
@@ -41,8 +42,14 @@ WKTypeID WKUserContentFilterGetTypeID()
 WKUserContentFilterRef WKUserContentFilterCreate(WKStringRef nameRef, WKStringRef serializedRulesRef)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    auto compiledContentExtensionData = WebCore::ContentExtensions::compileRuleList(toWTFString(serializedRulesRef));
-    auto compiledContentExtension = WebKit::WebCompiledContentExtension::createFromCompiledContentExtensionData(compiledContentExtensionData);
+    WebCore::ContentExtensions::CompiledContentExtensionData data;
+    LegacyContentExtensionCompilationClient client(data);
+
+    auto compilerError = WebCore::ContentExtensions::compileRuleList(toWTFString(serializedRulesRef), client);
+    if (compilerError)
+        return nullptr;
+
+    auto compiledContentExtension = WebKit::WebCompiledContentExtension::createFromCompiledContentExtensionData(data);
 
     return toAPI(&API::UserContentExtension::create(toWTFString(nameRef), WTF::move(compiledContentExtension)).leakRef());
 #else

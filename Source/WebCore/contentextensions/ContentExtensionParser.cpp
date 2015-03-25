@@ -28,6 +28,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "ContentExtensionError.h"
 #include "ContentExtensionRule.h"
 #include "ContentExtensionsBackend.h"
 #include "ContentExtensionsDebugging.h"
@@ -46,57 +47,48 @@ namespace WebCore {
 
 namespace ContentExtensions {
 
-static bool getTypeFlags(ExecState& exec, const JSValue& typeValue, ResourceFlags& flags, uint16_t(*stringToType)(const String&))
+static std::error_code getTypeFlags(ExecState& exec, const JSValue& typeValue, ResourceFlags& flags, uint16_t(*stringToType)(const String&))
 {
     if (!typeValue.isObject())
-        return true;
+        return { };
 
     JSObject* object = typeValue.toObject(&exec);
-    if (!isJSArray(object)) {
-        WTFLogAlways("Invalid trigger flags array");
-        return false;
-    }
+    if (!isJSArray(object))
+        return ContentExtensionError::JSONInvalidTriggerFlagsArray;
 
     JSArray* array = jsCast<JSArray*>(object);
     
     unsigned length = array->length();
     for (unsigned i = 0; i < length; ++i) {
         JSValue value = array->getIndex(&exec, i);
-        if (exec.hadException() || !value) {
-            WTFLogAlways("Invalid object in the trigger flags array.");
-            continue;
-        }
+        if (exec.hadException() || !value)
+            return ContentExtensionError::JSONInvalidObjectInTriggerFlagsArray;
         
         String name = value.toWTFString(&exec);
         uint16_t type = stringToType(name);
-        if (!type) {
-            WTFLogAlways("Invalid string in the trigger flags array.");
-            continue;
-        }
+        if (!type)
+            return ContentExtensionError::JSONInvalidStringInTriggerFlagsArray;
+
         flags |= type;
     }
-    return true;
+
+    return { };
 }
     
-static bool loadTrigger(ExecState& exec, JSObject& ruleObject, Trigger& trigger)
+static std::error_code loadTrigger(ExecState& exec, JSObject& ruleObject, Trigger& trigger)
 {
     JSValue triggerObject = ruleObject.get(&exec, Identifier(&exec, "trigger"));
-    if (!triggerObject || exec.hadException() || !triggerObject.isObject()) {
-        WTFLogAlways("Invalid trigger object.");
-        return false;
-    }
-
+    if (!triggerObject || exec.hadException() || !triggerObject.isObject())
+        return ContentExtensionError::JSONInvalidTrigger;
+    
     JSValue urlFilterObject = triggerObject.get(&exec, Identifier(&exec, "url-filter"));
-    if (!urlFilterObject || exec.hadException() || !urlFilterObject.isString()) {
-        WTFLogAlways("Invalid url-filter object.");
-        return false;
-    }
+    if (!urlFilterObject || exec.hadException() || !urlFilterObject.isString())
+        return ContentExtensionError::JSONInvalidURLFilterInTrigger;
 
     String urlFilter = urlFilterObject.toWTFString(&exec);
-    if (urlFilter.isEmpty()) {
-        WTFLogAlways("Invalid url-filter object. The url is empty.");
-        return false;
-    }
+    if (urlFilter.isEmpty())
+        return ContentExtensionError::JSONInvalidURLFilterInTrigger;
+
     trigger.urlFilter = urlFilter;
 
     JSValue urlFilterCaseValue = triggerObject.get(&exec, Identifier(&exec, "url-filter-is-case-sensitive"));
@@ -104,29 +96,31 @@ static bool loadTrigger(ExecState& exec, JSObject& ruleObject, Trigger& trigger)
         trigger.urlFilterIsCaseSensitive = urlFilterCaseValue.toBoolean(&exec);
 
     JSValue resourceTypeValue = triggerObject.get(&exec, Identifier(&exec, "resource-type"));
-    if (resourceTypeValue && !exec.hadException() && !getTypeFlags(exec, resourceTypeValue, trigger.flags, readResourceType))
-        return false;
-    
-    JSValue loadTypeValue = triggerObject.get(&exec, Identifier(&exec, "load-type"));
-    if (loadTypeValue && !exec.hadException() && !getTypeFlags(exec, loadTypeValue, trigger.flags, readLoadType))
-        return false;
+    if (resourceTypeValue && !exec.hadException()) {
+        auto typeFlagsError = getTypeFlags(exec, resourceTypeValue, trigger.flags, readResourceType);
+        if (typeFlagsError)
+            return typeFlagsError;
+    }
 
-    return true;
+    JSValue loadTypeValue = triggerObject.get(&exec, Identifier(&exec, "load-type"));
+    if (loadTypeValue && !exec.hadException()) {
+        auto typeFlagsError = getTypeFlags(exec, loadTypeValue, trigger.flags, readLoadType);
+        if (typeFlagsError)
+            return typeFlagsError;
+    }
+
+    return { };
 }
 
-static bool loadAction(ExecState& exec, JSObject& ruleObject, Action& action)
+static std::error_code loadAction(ExecState& exec, JSObject& ruleObject, Action& action)
 {
     JSValue actionObject = ruleObject.get(&exec, Identifier(&exec, "action"));
-    if (!actionObject || exec.hadException() || !actionObject.isObject()) {
-        WTFLogAlways("Invalid action object.");
-        return false;
-    }
+    if (!actionObject || exec.hadException() || !actionObject.isObject())
+        return ContentExtensionError::JSONInvalidAction;
 
     JSValue typeObject = actionObject.get(&exec, Identifier(&exec, "type"));
-    if (!typeObject || exec.hadException() || !typeObject.isString()) {
-        WTFLogAlways("Invalid url-filter object.");
-        return false;
-    }
+    if (!typeObject || exec.hadException() || !typeObject.isString())
+        return ContentExtensionError::JSONInvalidActionType;
 
     String actionType = typeObject.toWTFString(&exec);
 
@@ -138,77 +132,73 @@ static bool loadAction(ExecState& exec, JSObject& ruleObject, Action& action)
         action = ActionType::BlockCookies;
     else if (actionType == "css-display-none") {
         JSValue selector = actionObject.get(&exec, Identifier(&exec, "selector"));
-        if (!selector || exec.hadException() || !selector.isString()) {
-            WTFLogAlways("css-display-none action type requires a selector");
-            return false;
-        }
-        action = Action(ActionType::CSSDisplayNoneSelector, selector.toWTFString(&exec));
-    } else {
-        WTFLogAlways("Unrecognized action: \"%s\"", actionType.utf8().data());
-        return false;
-    }
+        if (!selector || exec.hadException() || !selector.isString())
+            return ContentExtensionError::JSONInvalidCSSDisplayNoneActionType;
 
-    return true;
+        action = Action(ActionType::CSSDisplayNoneSelector, selector.toWTFString(&exec));
+    } else
+        return ContentExtensionError::JSONInvalidActionType;
+
+    return { };
 }
 
-static void loadRule(ExecState& exec, JSObject& ruleObject, Vector<ContentExtensionRule>& ruleList)
+static std::error_code loadRule(ExecState& exec, JSObject& ruleObject, Vector<ContentExtensionRule>& ruleList)
 {
     Trigger trigger;
-    if (!loadTrigger(exec, ruleObject, trigger))
-        return;
+    auto triggerError = loadTrigger(exec, ruleObject, trigger);
+    if (triggerError)
+        return triggerError;
 
     Action action;
-    if (!loadAction(exec, ruleObject, action))
-        return;
+    auto actionError = loadAction(exec, ruleObject, action);
+    if (actionError)
+        return actionError;
 
     ruleList.append(ContentExtensionRule(trigger, action));
+    return { };
 }
 
-static Vector<ContentExtensionRule> loadEncodedRules(ExecState& exec, const String& rules)
+static std::error_code loadEncodedRules(ExecState& exec, const String& rules, Vector<ContentExtensionRule>& ruleList)
 {
     JSValue decodedRules = JSONParse(&exec, rules);
 
-    if (exec.hadException() || !decodedRules) {
-        WTFLogAlways("Failed to parse the JSON string.");
-        return Vector<ContentExtensionRule>();
+    if (exec.hadException() || !decodedRules)
+        return ContentExtensionError::JSONInvalid;
+
+    if (!decodedRules.isObject())
+        return ContentExtensionError::JSONTopLevelStructureNotAnObject;
+
+    JSObject* topLevelObject = decodedRules.toObject(&exec);
+    if (!topLevelObject || exec.hadException())
+        return ContentExtensionError::JSONTopLevelStructureNotAnObject;
+    
+    if (!isJSArray(topLevelObject))
+        return ContentExtensionError::JSONTopLevelStructureNotAnArray;
+
+    JSArray* topLevelArray = jsCast<JSArray*>(topLevelObject);
+
+    Vector<ContentExtensionRule> localRuleList;
+
+    unsigned length = topLevelArray->length();
+    for (unsigned i = 0; i < length; ++i) {
+        JSValue value = topLevelArray->getIndex(&exec, i);
+        if (exec.hadException() || !value)
+            return ContentExtensionError::JSONInvalidObjectInTopLevelArray;
+
+        JSObject* ruleObject = value.toObject(&exec);
+        if (!ruleObject || exec.hadException())
+            return ContentExtensionError::JSONInvalidRule;
+
+        auto error = loadRule(exec, *ruleObject, localRuleList);
+        if (error)
+            return error;
     }
 
-    if (decodedRules.isObject()) {
-        JSObject* topLevelObject = decodedRules.toObject(&exec);
-        if (!topLevelObject || exec.hadException()) {
-            WTFLogAlways("Invalid input, the top level structure is not an object.");
-            return Vector<ContentExtensionRule>();
-        }
-
-        if (!isJSArray(topLevelObject)) {
-            WTFLogAlways("Invalid input, the top level object is not an array.");
-            return Vector<ContentExtensionRule>();
-        }
-
-        Vector<ContentExtensionRule> ruleList;
-        JSArray* topLevelArray = jsCast<JSArray*>(topLevelObject);
-
-        unsigned length = topLevelArray->length();
-        for (unsigned i = 0; i < length; ++i) {
-            JSValue value = topLevelArray->getIndex(&exec, i);
-            if (exec.hadException() || !value) {
-                WTFLogAlways("Invalid object in the array.");
-                continue;
-            }
-
-            JSObject* ruleObject = value.toObject(&exec);
-            if (!ruleObject || exec.hadException()) {
-                WTFLogAlways("Invalid rule");
-                continue;
-            }
-            loadRule(exec, *ruleObject, ruleList);
-        }
-        return ruleList;
-    }
-    return Vector<ContentExtensionRule>();
+    ruleList = WTF::move(localRuleList);
+    return { };
 }
 
-Vector<ContentExtensionRule> parseRuleList(const String& rules)
+std::error_code parseRuleList(const String& rules, Vector<ContentExtensionRule>& ruleList)
 {
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double loadExtensionStartTime = monotonicallyIncreasingTime();
@@ -219,19 +209,22 @@ Vector<ContentExtensionRule> parseRuleList(const String& rules)
     JSGlobalObject* globalObject = JSGlobalObject::create(*vm, JSGlobalObject::createStructure(*vm, jsNull()));
 
     ExecState* exec = globalObject->globalExec();
-    Vector<ContentExtensionRule> ruleList = loadEncodedRules(*exec, rules);
+    auto error = loadEncodedRules(*exec, rules, ruleList);
 
     vm.clear();
 
+    if (error)
+        return error;
+
     if (ruleList.isEmpty())
-        WTFLogAlways("Empty extension.");
+        return ContentExtensionError::JSONContainsNoRules;
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double loadExtensionEndTime = monotonicallyIncreasingTime();
     dataLogF("Time spent loading extension %f\n", (loadExtensionEndTime - loadExtensionStartTime));
 #endif
 
-    return ruleList;
+    return { };
 }
 
 } // namespace ContentExtensions

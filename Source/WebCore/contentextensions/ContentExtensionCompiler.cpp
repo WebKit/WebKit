@@ -30,6 +30,7 @@
 
 #include "CompiledContentExtension.h"
 #include "ContentExtensionActions.h"
+#include "ContentExtensionError.h"
 #include "ContentExtensionParser.h"
 #include "ContentExtensionRule.h"
 #include "ContentExtensionsDebugging.h"
@@ -99,9 +100,12 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
 }
 
 
-CompiledContentExtensionData compileRuleList(const String& ruleList)
+std::error_code compileRuleList(const String& ruleList, ContentExtensionCompilationClient& client)
 {
-    auto parsedRuleList = parseRuleList(ruleList);
+    Vector<ContentExtensionRule> parsedRuleList;
+    auto parserError = parseRuleList(ruleList, parsedRuleList);
+    if (parserError)
+        return parserError;
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double nfaBuildTimeStart = monotonicallyIncreasingTime();
@@ -178,7 +182,10 @@ CompiledContentExtensionData compileRuleList(const String& ruleList)
     dfa.debugPrintDot();
 #endif
 
-    return { WTF::move(bytecode), WTF::move(actions) };
+    client.writeBytecode(WTF::move(bytecode));
+    client.writeActions(WTF::move(actions));
+
+    return { };
 }
 
 } // namespace ContentExtensions

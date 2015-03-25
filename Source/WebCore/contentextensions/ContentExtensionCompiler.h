@@ -29,6 +29,7 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "CompiledContentExtension.h"
+#include <system_error>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 
@@ -40,7 +41,15 @@ struct CompiledContentExtensionData {
     Vector<SerializedActionByte> actions;
 };
 
-WEBCORE_EXPORT CompiledContentExtensionData compileRuleList(const String&);
+class ContentExtensionCompilationClient {
+public:
+    virtual ~ContentExtensionCompilationClient() { }
+    
+    virtual void writeBytecode(Vector<DFABytecode>&&) = 0;
+    virtual void writeActions(Vector<SerializedActionByte>&&) = 0;
+};
+
+WEBCORE_EXPORT std::error_code compileRuleList(const String&, ContentExtensionCompilationClient&);
 
 } // namespace ContentExtensions
 } // namespace WebCore

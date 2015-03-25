@@ -30,6 +30,8 @@
 
 #include "WebCompiledContentExtension.h"
 #include <WebCore/ContentExtensionCompiler.h>
+#include <WebCore/ContentExtensionError.h>
+#include <string>
 
 @implementation _WKUserContentFilter
 
@@ -38,9 +40,14 @@
     if (!(self = [super init]))
         return nil;
 
-    auto compiledContentExtensionData = WebCore::ContentExtensions::compileRuleList(String(serializedRules));
-    auto compiledContentExtension = WebKit::WebCompiledContentExtension::createFromCompiledContentExtensionData(compiledContentExtensionData);
+    WebCore::ContentExtensions::CompiledContentExtensionData data;
+    WebKit::LegacyContentExtensionCompilationClient client(data);
 
+    auto compilerError = WebCore::ContentExtensions::compileRuleList(String(serializedRules), client);
+    if (compilerError)
+        [NSException raise:NSGenericException format:@"Failed to compile rules with error: %s", compilerError.message().c_str()];
+
+    auto compiledContentExtension = WebKit::WebCompiledContentExtension::createFromCompiledContentExtensionData(data);
     API::Object::constructInWrapper<API::UserContentExtension>(self, String(name), WTF::move(compiledContentExtension));
 
     return self;

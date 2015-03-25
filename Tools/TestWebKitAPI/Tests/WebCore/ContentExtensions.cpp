@@ -74,8 +74,40 @@ public:
     }
 };
 
+class InMemoryContentExtensionCompilationClient final : public WebCore::ContentExtensions::ContentExtensionCompilationClient {
+public:
+    InMemoryContentExtensionCompilationClient(WebCore::ContentExtensions::CompiledContentExtensionData& data)
+        : m_data(data)
+    {
+    }
+
+    virtual void writeBytecode(Vector<WebCore::ContentExtensions::DFABytecode>&& bytecode) override
+    {
+        m_data.bytecode = WTF::move(bytecode);
+    }
+    
+    virtual void writeActions(Vector<WebCore::ContentExtensions::SerializedActionByte>&& actions) override
+    {
+        m_data.actions = WTF::move(actions);
+    }
+
+private:
+    WebCore::ContentExtensions::CompiledContentExtensionData& m_data;
+};
+
 class InMemoryCompiledContentExtension : public ContentExtensions::CompiledContentExtension {
 public:
+    static RefPtr<InMemoryCompiledContentExtension> createFromFilter(const String& filter)
+    {
+        WebCore::ContentExtensions::CompiledContentExtensionData extensionData;
+        InMemoryContentExtensionCompilationClient client(extensionData);
+        auto compilerError = ContentExtensions::compileRuleList(filter, client);
+        if (compilerError)
+            return nullptr;
+
+        return InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    }
+
     static RefPtr<InMemoryCompiledContentExtension> create(ContentExtensions::CompiledContentExtensionData&& data)
     {
         return adoptRef(new InMemoryCompiledContentExtension(WTF::move(data)));
@@ -126,8 +158,7 @@ const char* basicFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-
 
 TEST_F(ContentExtensionTest, Basic)
 {
-    auto extensionData = ContentExtensions::compileRuleList(basicFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(basicFilter);
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("testFilter", extension);
@@ -139,8 +170,7 @@ TEST_F(ContentExtensionTest, RangeBasic)
 {
     const char* rangeBasicFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"w[0-9]c\", \"url-filter-is-case-sensitive\":true}},"
         "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"[A-H][a-z]cko\", \"url-filter-is-case-sensitive\":true}}]";
-    auto extensionData = ContentExtensions::compileRuleList(rangeBasicFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(rangeBasicFilter);
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("PatternNestedGroupsFilter", extension);
@@ -166,8 +196,7 @@ TEST_F(ContentExtensionTest, RangeExclusionGeneratingUniversalTransition)
 {
     // Transition of the type ([^X]X) effictively transition on every input.
     const char* rangeExclusionGeneratingUniversalTransitionFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"[^a]+afoobar\"}}]";
-    auto extensionData = ContentExtensions::compileRuleList(rangeExclusionGeneratingUniversalTransitionFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(rangeExclusionGeneratingUniversalTransitionFilter);
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("PatternNestedGroupsFilter", extension);
@@ -189,8 +218,7 @@ TEST_F(ContentExtensionTest, RangeExclusionGeneratingUniversalTransition)
 TEST_F(ContentExtensionTest, PatternStartingWithGroup)
 {
     const char* patternsStartingWithGroupFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(http://whatwg\\\\.org/)?webkit\134\134.org\"}}]";
-    auto extensionData = ContentExtensions::compileRuleList(patternsStartingWithGroupFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(patternsStartingWithGroupFilter);
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("PatternNestedGroupsFilter", extension);
@@ -206,8 +234,7 @@ TEST_F(ContentExtensionTest, PatternNestedGroups)
 {
     const char* patternNestedGroupsFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^http://webkit\\\\.org/(foo(bar)*)+\"}}]";
 
-    auto extensionData = ContentExtensions::compileRuleList(patternNestedGroupsFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(patternNestedGroupsFilter);
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("PatternNestedGroupsFilter", extension);
@@ -229,8 +256,7 @@ TEST_F(ContentExtensionTest, MatchPastEndOfString)
 {
     const char* matchPastEndOfStringFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".+\"}}]";
 
-    auto extensionData = ContentExtensions::compileRuleList(matchPastEndOfStringFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(matchPastEndOfStringFilter);
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("MatchPastEndOfString", extension);
@@ -249,8 +275,7 @@ const char* startOfLineAssertionFilter = "[{\"action\":{\"type\":\"block\"},\"tr
 
 TEST_F(ContentExtensionTest, StartOfLineAssertion)
 {
-    auto extensionData = ContentExtensions::compileRuleList(startOfLineAssertionFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(startOfLineAssertionFilter);
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("StartOfLineAssertion", extension);
@@ -268,8 +293,7 @@ TEST_F(ContentExtensionTest, StartOfLineAssertion)
 TEST_F(ContentExtensionTest, EndOfLineAssertion)
 {
     const char* endOfLineAssertionFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"foobar$\"}}]";
-    auto extensionData = ContentExtensions::compileRuleList(endOfLineAssertionFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(endOfLineAssertionFilter);
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("EndOfLineAssertion", extension);
@@ -285,8 +309,7 @@ TEST_F(ContentExtensionTest, EndOfLineAssertion)
 TEST_F(ContentExtensionTest, EndOfLineAssertionWithInvertedCharacterSet)
 {
     const char* endOfLineAssertionWithInvertedCharacterSetFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"[^y]$\"}}]";
-    auto extensionData = ContentExtensions::compileRuleList(endOfLineAssertionWithInvertedCharacterSetFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(endOfLineAssertionWithInvertedCharacterSetFilter);
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("EndOfLineAssertion", extension);
@@ -308,8 +331,7 @@ TEST_F(ContentExtensionTest, PrefixInfixSuffixExactMatch)
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^prefix\"}},"
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"suffix$\"}},"
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^http://exact\\\\.org/$\"}}]";
-    auto extensionData = ContentExtensions::compileRuleList(prefixInfixSuffixExactMatchFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(prefixInfixSuffixExactMatchFilter);
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("PrefixInfixSuffixExactMatch", extension);
@@ -334,8 +356,7 @@ TEST_F(ContentExtensionTest, DuplicatedMatchAllTermsInVariousFormat)
 {
     const char* duplicatedMatchAllTermsInVariousFormatFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*.*(.)*(.*)(.+)*(.?)*infix\"}},"
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"pre(.?)+(.+)?post\"}}]";
-    auto extensionData = ContentExtensions::compileRuleList(duplicatedMatchAllTermsInVariousFormatFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(duplicatedMatchAllTermsInVariousFormatFilter);
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("DuplicatedMatchAllTermsInVariousFormat", extension);
@@ -367,8 +388,7 @@ TEST_F(ContentExtensionTest, TermsKnownToMatchAnything)
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^pre8(.?)*post8$\"}},"
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^pre9(.+)?post9$\"}},"
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^pre0(.?)+post0$\"}}]";
-    auto extensionData = ContentExtensions::compileRuleList(termsKnownToMatchAnythingFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(termsKnownToMatchAnythingFilter);
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("TermsKnownToMatchAnything", extension);
@@ -411,8 +431,7 @@ TEST_F(ContentExtensionTest, TrailingDotStar)
 {
     const char* trailingDotStarFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"foo.*$\"}},"
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"bar(.*)$\"}}]";
-    auto extensionData = ContentExtensions::compileRuleList(trailingDotStarFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(trailingDotStarFilter);
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("TrailingDotStar", extension);
@@ -435,8 +454,7 @@ TEST_F(ContentExtensionTest, TrailingTermsCarryingNoData)
     const char* trailingTermsCarryingNoDataFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"foob?a?r?\"}},"
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"bazo(ok)?a?$\"}},"
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"cats*$\"}}]";
-    auto extensionData = ContentExtensions::compileRuleList(trailingTermsCarryingNoDataFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(trailingTermsCarryingNoDataFilter);
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("TrailingTermsCarryingNoData", extension);
@@ -478,8 +496,7 @@ TEST_F(ContentExtensionTest, LoadType)
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"whatwg.org\",\"load-type\":[\"first-party\"]}},"
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"alwaysblock.pdf\"}}]";
 
-    auto extensionData = ContentExtensions::compileRuleList(loadTypeFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(loadTypeFilter);
         
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("LoadTypeFilter", extension);
@@ -499,8 +516,7 @@ TEST_F(ContentExtensionTest, ResourceType)
     const char* resourceTypeFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block_all_types.org\",\"resource-type\":[\"document\",\"image\",\"style-sheet\",\"script\",\"font\",\"raw\",\"svg-document\",\"media\"]}},"
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block_only_images\",\"resource-type\":[\"image\"]}}]";
 
-    auto extensionData = ContentExtensions::compileRuleList(resourceTypeFilter);
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(resourceTypeFilter);
         
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("ResourceTypeFilter", extension);
@@ -545,8 +561,7 @@ TEST_F(ContentExtensionTest, MultiDFA)
     }
     ruleList.append(']');
     
-    auto extensionData = ContentExtensions::compileRuleList(ruleList.toString());
-    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(ruleList.toString());
         
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("ResourceTypeFilter", extension);
