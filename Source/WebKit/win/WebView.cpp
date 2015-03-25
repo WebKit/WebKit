@@ -2501,14 +2501,31 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
             break;
     }
 
-    if (webView->needsDisplay() && message != WM_PAINT)
-        ::UpdateWindow(hWnd);
+    webView->updateWindowIfNeeded(hWnd, message);
 
     if (!handled)
         lResult = DefWindowProc(hWnd, message, wParam, lParam);
     
     // Let the client know whether we consider this message handled.
     return (message == WM_KEYDOWN || message == WM_SYSKEYDOWN || message == WM_KEYUP || message == WM_SYSKEYUP) ? !handled : lResult;
+}
+
+void WebView::updateWindowIfNeeded(HWND hWnd, UINT message)
+{
+    if (!needsDisplay())
+        return;
+
+    // Care should be taken when updating the window from the window procedure.
+    // Updating the window in response to e.g. WM_PARENTNOTIFY may cause reentrancy problems,
+    // because WM_PARENTNOTIFY is sent synchronously to the parent window when e.g. DestroyWindow() is called.
+
+    switch (message) {
+    case WM_PAINT:
+    case WM_PARENTNOTIFY:
+        return;
+    }
+
+    ::UpdateWindow(hWnd);
 }
 
 bool WebView::developerExtrasEnabled() const

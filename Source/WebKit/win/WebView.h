@@ -1026,6 +1026,8 @@ protected:
     static bool registerWebViewWindowClass();
     static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+    void updateWindowIfNeeded(HWND hWnd, UINT message);
+
     HIMC getIMMContext();
     void releaseIMMContext(HIMC);
     static bool allowSiteSpecificHacks() { return s_allowSiteSpecificHacks; } 
