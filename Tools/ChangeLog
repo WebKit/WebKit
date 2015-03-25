@@ -1,3 +1,11 @@
+2015-03-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix Windows build from r181977.
+
+        Unreviewed.
+
+        * Scripts/update-webkit-dependency:
+
 2015-03-25  Sam Weinig  <sam@webkit.org>
 
         Address additional review feedback from https://bugs.webkit.org/show_bug.cgi?id=143059.

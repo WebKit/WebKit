@@ -96,7 +96,7 @@ if (defined $modified_time) {
     if (!is_success($result)) {
         print STDERR "Couldn't check Last-Modified date of new $zipFile.\n";
         print STDERR "Please ensure that Perl can use LWP::Simple to connect to HTTPS urls, and that $libsURL is reachable.\n";
-        print STDERR "You may have to run $ cpan LWP::Protocol::https\n";
+        print STDERR "You may have to run \$ cpan LWP::Protocol::https\n";
 
         if (! -f "$webkitLibrariesDir/$file.headers") {
             print STDERR "Unable to check Last-Modified date and no version of $file to fall back to.\n";
