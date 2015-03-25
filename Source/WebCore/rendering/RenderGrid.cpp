@@ -1074,7 +1074,7 @@ LayoutPoint RenderGrid::findChildLogicalPosition(RenderBox& child, const GridSiz
 void RenderGrid::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect)
 {
     for (RenderBox* child = m_orderIterator.first(); child; child = m_orderIterator.next())
-        paintChild(*child, paintInfo, paintOffset, forChild, usePrintRect);
+        paintChild(*child, paintInfo, paintOffset, forChild, usePrintRect, PaintAsInlineBlock);
 }
 
 const char* RenderGrid::renderName() const

@@ -1,3 +1,19 @@
+2015-03-18  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Flex and grid items should be painted as inline-blocks
+        https://bugs.webkit.org/show_bug.cgi?id=142266
+
+        Reviewed by Darin Adler.
+
+        * css3/flexbox/flex-item-text-background-not-interleaved-expected.html: Added.
+        * css3/flexbox/flex-item-text-background-not-interleaved.html: Added.
+        * fast/css-grid-layout/float-not-protruding-into-next-grid-item-expected.html:
+        Add some vertical space to avoid issues with backgrounds.
+        * fast/css-grid-layout/float-not-protruding-into-next-grid-item.html:
+        Ditto.
+        * fast/css-grid-layout/grid-item-text-background-not-interleaved-expected.html: Added.
+        * fast/css-grid-layout/grid-item-text-background-not-interleaved.html: Added.
+
 2015-03-16  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Crash viewing http://www.last.fm/

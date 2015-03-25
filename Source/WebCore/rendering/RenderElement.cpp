@@ -1157,6 +1157,31 @@ RenderElement* RenderElement::hoverAncestor() const
     return hoverAncestor;
 }
 
+static inline void paintPhase(RenderElement& element, PaintPhase phase, PaintInfo& paintInfo, const LayoutPoint& childPoint)
+{
+    paintInfo.phase = phase;
+    element.paint(paintInfo, childPoint);
+}
+
+void RenderElement::paintAsInlineBlock(PaintInfo& paintInfo, const LayoutPoint& childPoint)
+{
+    // Paint all phases atomically, as though the element established its own stacking context.
+    // (See Appendix E.2, section 6.4 on inline block/table/replaced elements in the CSS2.1 specification.)
+    // This is also used by other elements (e.g. flex items and grid items).
+    if (paintInfo.phase == PaintPhaseSelection) {
+        paint(paintInfo, childPoint);
+    } else if (paintInfo.phase == PaintPhaseForeground) {
+        paintPhase(*this, PaintPhaseBlockBackground, paintInfo, childPoint);
+        paintPhase(*this, PaintPhaseChildBlockBackgrounds, paintInfo, childPoint);
+        paintPhase(*this, PaintPhaseFloat, paintInfo, childPoint);
+        paintPhase(*this, PaintPhaseForeground, paintInfo, childPoint);
+        paintPhase(*this, PaintPhaseOutline, paintInfo, childPoint);
+
+        // Reset |paintInfo| to the original phase.
+        paintInfo.phase = PaintPhaseForeground;
+    }
+}
+
 void RenderElement::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;

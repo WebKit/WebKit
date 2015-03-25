@@ -1,3 +1,43 @@
+2015-03-18  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Flex and grid items should be painted as inline-blocks
+        https://bugs.webkit.org/show_bug.cgi?id=142266
+
+        Reviewed by Darin Adler.
+
+        Based on Blink r157004 by <cbiesinger@chromium.org>.
+        https://src.chromium.org/viewvc/blink?revision=157004&view=revision
+
+        Both flexbox and grid specs define that the painting order of flex/grid
+        items is the same as inline blocks. See
+        http://dev.w3.org/csswg/css-flexbox/#painting and
+        http://dev.w3.org/csswg/css-grid/#z-order.
+
+        Extracted inline blocks painting code from InlineElementBox and moved to
+        a helper method that will be reused for flexboxes and grids.
+
+        Tests: css3/flexbox/flex-item-text-background-not-interleaved.html
+               fast/css-grid-layout/grid-item-text-background-not-interleaved.html
+
+        * rendering/InlineElementBox.cpp:
+        (WebCore::InlineElementBox::paint): Move code to
+        RenderElement::paintAsInlineBlock().
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChild): Add new argument to paint children
+        as inline blocks.
+        * rendering/RenderBlock.h: Define PaintType enmu and modify paintChild()
+        signature to add the new argument.
+        * rendering/RenderElement.cpp:
+        (WebCore::paintPhase): Paint element in a phase.
+        (WebCore::RenderElement::paintAsInlineBlock): Code extracted from
+        InlineElementBox::paint().
+        * rendering/RenderElement.h: Add new method signature.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::paintChildren): Call
+        RenderBlock::paintChild() with the new argument.
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::paintChildren): Ditto.
+
 2015-03-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash due to empty drag image during drag-and-drop

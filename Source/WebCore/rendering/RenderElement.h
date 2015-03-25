@@ -112,6 +112,11 @@ public:
 
     virtual void paint(PaintInfo&, const LayoutPoint&) = 0;
 
+    // inline-block elements paint all phases atomically. This function ensures that. Certain other elements
+    // (grid items, flex items) require this behavior as well, and this function exists as a helper for them.
+    // It is expected that the caller will call this function independent of the value of paintInfo.phase.
+    void paintAsInlineBlock(PaintInfo&, const LayoutPoint&);
+
     // Recursive function that computes the size and position of this object and all its descendants.
     virtual void layout();
 

@@ -336,7 +336,7 @@ void RenderFlexibleBox::repaintChildrenDuringLayoutIfMoved(const ChildFrameRects
 void RenderFlexibleBox::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
 {
     for (RenderBox* child = m_orderIterator.first(); child; child = m_orderIterator.next()) {
-        if (!paintChild(*child, paintInfo, paintOffset, paintInfoForChild, usePrintRect))
+        if (!paintChild(*child, paintInfo, paintOffset, paintInfoForChild, usePrintRect, PaintAsInlineBlock))
             return;
     }
 }
