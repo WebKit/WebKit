@@ -1751,11 +1751,12 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageEleme
     if (ec)
         return 0;
 
-    if (!image->complete())
-        return 0;
-
     CachedImage* cachedImage = image->cachedImage();
-    if (!cachedImage || cachedImage->status() == CachedResource::LoadError) {
+    // If the image loading hasn't started or the image is not complete, it is not fully decodable.
+    if (!cachedImage || !image->complete())
+        return nullptr;
+
+    if (cachedImage->status() == CachedResource::LoadError) {
         ec = INVALID_STATE_ERR;
         return 0;
     }

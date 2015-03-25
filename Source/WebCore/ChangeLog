@@ -1,3 +1,30 @@
+2015-03-23 Yoav Weiss  <yoav@yoav.ws>
+
+        Update empty image canvas tests and fix a related bug
+        https://bugs.webkit.org/show_bug.cgi?id=142694
+
+        Reviewed by Chris Dumez.
+
+        During the work on https://bugs.webkit.org/show_bug.cgi?id=142677
+        we encountered an issue with canvas tests related to empty image handling
+        when drawn or used as a pattern. After updating these tests, an issue with
+        pattern handling was encountered.
+
+        The spec, as well as Chrome's implementation, say that when an empty image
+        is used as a pattern, createPattern should return null. See
+        https://html.spec.whatwg.org/multipage/scripting.html#fill-and-stroke-styles:check-the-usability-of-the-image-argument
+        Instead, createPattern returned an exception in this case.
+        This patch fixes that and makes sure that it returns a null when image loading hasn't started.
+
+        Tests: canvas/philip/tests/2d.drawImage.incomplete.emptysrc.html
+               canvas/philip/tests/2d.drawImage.incomplete.nosrc.html
+               canvas/philip/tests/2d.drawImage.incomplete.removedsrc.html
+               canvas/philip/tests/2d.pattern.image.incomplete.emptysrc.html
+               canvas/philip/tests/2d.pattern.image.incomplete.removedsrc.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createPattern): Return "null" if image is not fully decodeable.
+
 2015-03-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION (r179429): Potential Use after free in JavaScriptCore`WTF::StringImpl::ref + 83
