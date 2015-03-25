@@ -101,7 +101,7 @@ public:
     {
         WebCore::ContentExtensions::CompiledContentExtensionData extensionData;
         InMemoryContentExtensionCompilationClient client(extensionData);
-        auto compilerError = ContentExtensions::compileRuleList(filter, client);
+        auto compilerError = ContentExtensions::compileRuleList(client, filter);
         if (compilerError)
             return nullptr;
 

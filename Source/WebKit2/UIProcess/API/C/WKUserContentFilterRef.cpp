@@ -45,7 +45,7 @@ WKUserContentFilterRef WKUserContentFilterCreate(WKStringRef nameRef, WKStringRe
     WebCore::ContentExtensions::CompiledContentExtensionData data;
     LegacyContentExtensionCompilationClient client(data);
 
-    auto compilerError = WebCore::ContentExtensions::compileRuleList(toWTFString(serializedRulesRef), client);
+    auto compilerError = WebCore::ContentExtensions::compileRuleList(client, toWTFString(serializedRulesRef));
     if (compilerError)
         return nullptr;
 

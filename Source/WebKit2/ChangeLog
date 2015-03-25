@@ -1,5 +1,16 @@
 2015-03-25  Sam Weinig  <sam@webkit.org>
 
+        Address additional review feedback from https://bugs.webkit.org/show_bug.cgi?id=143059.
+
+        * Shared/WebCompiledContentExtension.cpp:
+        (WebKit::WebCompiledContentExtension::createFromCompiledContentExtensionData):
+        * UIProcess/API/C/WKUserContentFilterRef.cpp:
+        (WKUserContentFilterCreate):
+        * UIProcess/API/Cocoa/_WKUserContentFilter.mm:
+        (-[_WKUserContentFilter initWithName:serializedRules:]):
+
+2015-03-25  Sam Weinig  <sam@webkit.org>
+
         [Content Extensions] Convert content extension compiling to return error codes and write its output using a client
         https://bugs.webkit.org/show_bug.cgi?id=143059
 

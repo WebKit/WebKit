@@ -100,7 +100,7 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
 }
 
 
-std::error_code compileRuleList(const String& ruleList, ContentExtensionCompilationClient& client)
+std::error_code compileRuleList(ContentExtensionCompilationClient& client, const String& ruleList)
 {
     Vector<ContentExtensionRule> parsedRuleList;
     auto parserError = parseRuleList(ruleList, parsedRuleList);

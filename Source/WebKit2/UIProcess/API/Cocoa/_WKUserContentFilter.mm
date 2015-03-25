@@ -43,8 +43,7 @@
     WebCore::ContentExtensions::CompiledContentExtensionData data;
     WebKit::LegacyContentExtensionCompilationClient client(data);
 
-    auto compilerError = WebCore::ContentExtensions::compileRuleList(String(serializedRules), client);
-    if (compilerError)
+    if (auto compilerError = WebCore::ContentExtensions::compileRuleList(client, String(serializedRules)))
         [NSException raise:NSGenericException format:@"Failed to compile rules with error: %s", compilerError.message().c_str()];
 
     auto compiledContentExtension = WebKit::WebCompiledContentExtension::createFromCompiledContentExtensionData(data);

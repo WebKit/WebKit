@@ -1,5 +1,15 @@
 2015-03-25  Sam Weinig  <sam@webkit.org>
 
+        Address additional review feedback from https://bugs.webkit.org/show_bug.cgi?id=143059.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionCompiler.h:
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::getTypeFlags):
+
+2015-03-25  Sam Weinig  <sam@webkit.org>
+
         [Content Extensions] Convert content extension compiling to return error codes and write its output using a client
         https://bugs.webkit.org/show_bug.cgi?id=143059
 

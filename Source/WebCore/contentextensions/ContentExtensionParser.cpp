@@ -47,7 +47,7 @@ namespace WebCore {
 
 namespace ContentExtensions {
 
-static std::error_code getTypeFlags(ExecState& exec, const JSValue& typeValue, ResourceFlags& flags, uint16_t(*stringToType)(const String&))
+static std::error_code getTypeFlags(ExecState& exec, const JSValue& typeValue, ResourceFlags& flags, uint16_t (*stringToType)(const String&))
 {
     if (!typeValue.isObject())
         return { };

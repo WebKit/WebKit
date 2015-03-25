@@ -56,7 +56,7 @@ Ref<WebCompiledContentExtension> WebCompiledContentExtension::createFromCompiled
     data.data = WTF::move(sharedMemory);
     data.bytecodeOffset = 0;
     data.bytecodeSize = compilerData.bytecode.size();
-    data.actionsOffset = compilerData.  bytecode.size();
+    data.actionsOffset = compilerData.bytecode.size();
     data.actionsSize = compilerData.actions.size();
 
     return create(WTF::move(data));

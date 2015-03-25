@@ -49,7 +49,7 @@ public:
     virtual void writeActions(Vector<SerializedActionByte>&&) = 0;
 };
 
-WEBCORE_EXPORT std::error_code compileRuleList(const String&, ContentExtensionCompilationClient&);
+WEBCORE_EXPORT std::error_code compileRuleList(ContentExtensionCompilationClient&, const String&);
 
 } // namespace ContentExtensions
 } // namespace WebCore
