@@ -75,7 +75,7 @@
                       "triggers": ["mavericks-debug-tests-wk1", "mavericks-debug-tests-wk2"],
                       "slavenames": ["bot101", "bot105"]
                     },
-                    { "name": "Apple Mavericks Debug WK1 (Tests)", "type": "TestWebKit1", "builddir": "mavericks-debug-tests-wk1",
+                    { "name": "Apple Mavericks Debug WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "mavericks-debug-tests-wk1",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot124", "bot108"]
@@ -98,7 +98,7 @@
                       "triggers": ["mavericks-release-tests-wk1", "mavericks-release-tests-wk2", "mavericks-release-perf"],
                       "slavenames": ["bot301", "bot306"]
                     },
-                    { "name": "Apple Mavericks Release WK1 (Tests)", "type": "TestWebKit1", "builddir": "mavericks-release-tests-wk1",
+                    { "name": "Apple Mavericks Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "mavericks-release-tests-wk1",
                       "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot199", "bot151"]
