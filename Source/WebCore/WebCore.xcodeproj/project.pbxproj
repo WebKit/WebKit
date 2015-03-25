@@ -1638,12 +1638,12 @@
 		45BAC2B01360BBAB005DA258 /* IconURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 45BAC2AF1360BBAB005DA258 /* IconURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45FEA5CF156DDE8C00654101 /* Decimal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45FEA5CD156DDE8C00654101 /* Decimal.cpp */; };
 		45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45FEA5CE156DDE8C00654101 /* Decimal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4634592C1AC2271000ECB71C /* PowerObserverMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */; };
+		4634592E1AC2273C00ECB71C /* SharedTimerCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634592D1AC2273C00ECB71C /* SharedTimerCF.cpp */; };
 		4689F1AF1267BAE100E8D380 /* FileMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 4689F1AE1267BAE100E8D380 /* FileMetadata.h */; };
 		46C83EFD1A9BBE2900A79A41 /* GeoNotifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46C83EFB1A9BBE2900A79A41 /* GeoNotifier.cpp */; };
 		46C83EFE1A9BBE2900A79A41 /* GeoNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C83EFC1A9BBE2900A79A41 /* GeoNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		46D791141AB89A9B001B696B /* SharedTimerCF.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46D791131AB89A9B001B696B /* SharedTimerCF.mm */; };
 		46DBB6501AB8C96F00D9A813 /* PowerObserverMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DBB64E1AB8C96F00D9A813 /* PowerObserverMac.h */; };
-		46DBB6511AB8C96F00D9A813 /* PowerObserverMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46DBB64F1AB8C96F00D9A813 /* PowerObserverMac.mm */; };
 		46FCB6181A70820E00C5A21E /* DiagnosticLoggingKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = CD37B37515C1A7E1006DC898 /* DiagnosticLoggingKeys.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */; };
 		490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */; };
@@ -8779,12 +8779,12 @@
 		45BAC2AF1360BBAB005DA258 /* IconURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconURL.h; sourceTree = "<group>"; };
 		45FEA5CD156DDE8C00654101 /* Decimal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Decimal.cpp; sourceTree = "<group>"; };
 		45FEA5CE156DDE8C00654101 /* Decimal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decimal.h; sourceTree = "<group>"; };
+		4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerObserverMac.cpp; sourceTree = "<group>"; };
+		4634592D1AC2273C00ECB71C /* SharedTimerCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedTimerCF.cpp; sourceTree = "<group>"; };
 		4689F1AE1267BAE100E8D380 /* FileMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMetadata.h; path = platform/FileMetadata.h; sourceTree = "<group>"; };
 		46C83EFB1A9BBE2900A79A41 /* GeoNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeoNotifier.cpp; sourceTree = "<group>"; };
 		46C83EFC1A9BBE2900A79A41 /* GeoNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoNotifier.h; sourceTree = "<group>"; };
-		46D791131AB89A9B001B696B /* SharedTimerCF.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedTimerCF.mm; sourceTree = "<group>"; };
 		46DBB64E1AB8C96F00D9A813 /* PowerObserverMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PowerObserverMac.h; sourceTree = "<group>"; };
-		46DBB64F1AB8C96F00D9A813 /* PowerObserverMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PowerObserverMac.mm; sourceTree = "<group>"; };
 		490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ANGLEWebKitBridge.cpp; sourceTree = "<group>"; };
 		490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANGLEWebKitBridge.h; sourceTree = "<group>"; };
 		49291E4A134172C800E753DE /* ImageRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageRenderingMode.h; sourceTree = "<group>"; };
@@ -15233,7 +15233,7 @@
 				2D76BB8319456F8100CFD29A /* RunLoopObserver.cpp */,
 				2D76BB801945632400CFD29A /* RunLoopObserver.h */,
 				512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */,
-				46D791131AB89A9B001B696B /* SharedTimerCF.mm */,
+				4634592D1AC2273C00ECB71C /* SharedTimerCF.cpp */,
 				1A98956A0AA78F80005EF5EF /* URLCF.cpp */,
 				5CBC8DAA1AAA302200E1C803 /* MediaAccessibilitySoftLink.cpp */,
 				5CBC8DAB1AAA302200E1C803 /* MediaAccessibilitySoftLink.h */,
@@ -16690,8 +16690,8 @@
 				C5F765BA14E1ECF4006C899B /* PlatformPasteboardMac.mm */,
 				BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */,
 				29E4D8E016B0959800C84704 /* PlatformSpeechSynthesizerMac.mm */,
+				4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */,
 				46DBB64E1AB8C96F00D9A813 /* PowerObserverMac.h */,
-				46DBB64F1AB8C96F00D9A813 /* PowerObserverMac.mm */,
 				0081FEFE16B0A2B6008AAA7A /* PublicSuffixMac.mm */,
 				BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */,
 				BC51156D12B1749C00C96754 /* ScrollAnimatorMac.mm */,
@@ -27533,6 +27533,7 @@
 				BCB16C1F0979C3BD00467741 /* CachedResource.cpp in Sources */,
 				E47B4BE90E71241600038854 /* CachedResourceHandle.cpp in Sources */,
 				BCB16C290979C3BD00467741 /* CachedResourceLoader.cpp in Sources */,
+				4634592C1AC2271000ECB71C /* PowerObserverMac.cpp in Sources */,
 				5081E3C33CE580C16EF8B48B /* CachedResourceRequest.cpp in Sources */,
 				93D200F21AB8F81F0025E851 /* JSWebKitMouseForceEvent.cpp in Sources */,
 				6C638896A96CCEE50C8C946C /* CachedResourceRequestInitiators.cpp in Sources */,
@@ -28016,7 +28017,6 @@
 				9BAB6C6D12550631001626D4 /* EditingStyle.cpp in Sources */,
 				4B3043CC0AE0373B00A82647 /* Editor.cpp in Sources */,
 				93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */,
-				46D791141AB89A9B001B696B /* SharedTimerCF.mm in Sources */,
 				0760C17A1AA8FC7D009ED7B8 /* MediaPlaybackTargetMac.mm in Sources */,
 				FED13D3A0CEA934600D89466 /* EditorIOS.mm in Sources */,
 				ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */,
@@ -28749,6 +28749,7 @@
 				CDA98E0616039E1F00FEA3B1 /* JSMediaKeySession.cpp in Sources */,
 				BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */,
 				D3A94A46122DC40F00A37BBC /* JSMediaQueryList.cpp in Sources */,
+				4634592E1AC2273C00ECB71C /* SharedTimerCF.cpp in Sources */,
 				7C5343FC17B74B63004232F0 /* JSMediaQueryListListener.cpp in Sources */,
 				319848021A1D818100A13318 /* AnimationEvent.cpp in Sources */,
 				CD9DE17417AAC74C00EA386D /* JSMediaSource.cpp in Sources */,
@@ -29383,7 +29384,6 @@
 				B27535630B053814002CE64F /* PathCG.cpp in Sources */,
 				A88DD4890B4629B000C02990 /* PathTraversalState.cpp in Sources */,
 				A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */,
-				46DBB6511AB8C96F00D9A813 /* PowerObserverMac.mm in Sources */,
 				A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */,
 				B27535640B053814002CE64F /* PDFDocumentImage.cpp in Sources */,
 				2D6E468417D660F500ECF8BB /* PDFDocumentImageMac.mm in Sources */,

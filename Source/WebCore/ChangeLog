@@ -1,3 +1,20 @@
+2015-03-24  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Use .cpp file extension instead of .mm for SharedTimerCF and PowerObserverMac
+        https://bugs.webkit.org/show_bug.cgi?id=143026
+
+        Reviewed by Andy Estes.
+
+        Use .cpp file extension instead of .mm for SharedTimerCF and
+        PowerObserverMac.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cf/SharedTimerCF.cpp: Renamed from Source/WebCore/platform/cf/SharedTimerCF.mm.
+        (WebCore::timerFired):
+        Use WTF::AutodrainedPool instead of @autoreleasepool {}.
+
+        * platform/mac/PowerObserverMac.cpp: Renamed from Source/WebCore/platform/mac/PowerObserverMac.mm.
+
 2015-03-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION (r181458): Heap use-after-free in JSSetIterator destructor

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "SharedTimer.h"
 
+#include <wtf/AutodrainedPool.h>
+
 #if PLATFORM(MAC)
 #import "PowerObserverMac.h"
 #elif PLATFORM(IOS)
@@ -62,7 +64,7 @@ static void setupPowerObserver()
     if (!registeredForApplicationNotification) {
         registeredForApplicationNotification = true;
         CFNotificationCenterRef notificationCenter = CFNotificationCenterGetLocalCenter();
-        CFNotificationCenterAddObserver(notificationCenter, 0, applicationDidBecomeActive, CFSTR("UIApplicationDidBecomeActiveNotification"), NULL, CFNotificationSuspensionBehaviorCoalesce);
+        CFNotificationCenterAddObserver(notificationCenter, nullptr, applicationDidBecomeActive, CFSTR("UIApplicationDidBecomeActiveNotification"), nullptr, CFNotificationSuspensionBehaviorCoalesce);
     }
 #endif
 }
@@ -76,9 +78,8 @@ void setSharedTimerFiredFunction(void (*f)())
 
 static void timerFired(CFRunLoopTimerRef, void*)
 {
-    @autoreleasepool {
-        sharedTimerFiredFunction();
-    }
+    AutodrainedPool pool;
+    sharedTimerFiredFunction();
 }
 
 static void restartSharedTimer()
