@@ -330,7 +330,7 @@ inline bool RenderElement::shouldRepaintForStyleDifference(StyleDifference diff)
 void RenderElement::updateFillImages(const FillLayer* oldLayers, const FillLayer* newLayers)
 {
     // Optimize the common case
-    if (oldLayers && !oldLayers->next() && newLayers && !newLayers->next() && oldLayers->image() == newLayers->image() && oldLayers->maskImage() == newLayers->maskImage())
+    if (FillLayer::imagesIdentical(oldLayers, newLayers))
         return;
     
     // Go through the new layers and addClients first, to avoid removing all clients of an image.
