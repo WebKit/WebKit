@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Security-Policy" content="img-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="img-src 'none'; script-src 'unsafe-inline'">
 <script>
     if (window.testRunner) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
     }
 
-    tests = 2;
+    tests = 4;
     window.addEventListener("message", function(message) {
         tests -= 1;
         test();
@@ -29,12 +29,30 @@
             img.src = "../resources/abe.png";
         }
 
+        function callEval(isolated) {
+            try { 
+                eval("true");
+                alert('Called eval() in ' + (isolated ? "isolated world" : "main world"));
+                window.postMessage("next", "*");
+            } catch (error) {
+                console.log(error);
+                alert('BLOCKED eval() in ' + (isolated ? "isolated world" : "main world"));
+                window.postMessage("next", "*");
+            }
+        }
+
         switch (tests) {
-            case 2:
+            case 4:
                 setImgSrc(false);
                 break;
+            case 3:
+                testRunner.evaluateScriptInIsolatedWorld(1, String(setImgSrc) + "\nsetImgSrc(true);");
+                break;
+            case 2:
+                callEval(false);
+                break;
             case 1:
-                testRunner.evaluateScriptInIsolatedWorld(1, String(eval("setImgSrc")) + "\nsetImgSrc(true);");
+                testRunner.evaluateScriptInIsolatedWorld(1, String(callEval) + "\ncallEval(true);");
                 break;
             case 0:
                 testRunner.notifyDone();
