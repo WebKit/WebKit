@@ -1,3 +1,22 @@
+2015-03-19  Andreas Kling  <akling@apple.com>
+
+        JSCallee unnecessarily overrides a bunch of things in the method table.
+        <https://webkit.org/b/142855>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove JSCallee method table overrides that simply call to base class.
+        This makes JSFunction property slot lookups slightly more efficient since
+        they can take the fast path when passing over JSCallee in the base class chain.
+
+        * runtime/JSCallee.cpp:
+        (JSC::JSCallee::getOwnPropertySlot): Deleted.
+        (JSC::JSCallee::getOwnNonIndexPropertyNames): Deleted.
+        (JSC::JSCallee::put): Deleted.
+        (JSC::JSCallee::deleteProperty): Deleted.
+        (JSC::JSCallee::defineOwnProperty): Deleted.
+        * runtime/JSCallee.h:
+
 2015-03-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Enable generating idiv instructions if it is supported
