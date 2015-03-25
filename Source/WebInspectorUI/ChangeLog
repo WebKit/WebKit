@@ -1,5 +1,37 @@
 2015-03-24  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: IndexedDB / Databases ContentViews should have refresh button
+        https://bugs.webkit.org/show_bug.cgi?id=142996
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Remove unused strings.
+
+        * UserInterface/Images/ReloadFull.svg: Added.
+        This is the same as Reload.svg but adjusted to fill the viewbox edge to edge.
+        The only change is to the viewbox.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.release):
+        Some clients would call release not knowing if this was an object or not.
+        Act gracefully in the case that this was not an object that needs a
+        remote release.
+
+        * UserInterface/Views/DatabaseTableContentView.js:
+        (WebInspector.DatabaseTableContentView):
+        (WebInspector.DatabaseTableContentView.prototype.get navigationItems):
+        (WebInspector.DatabaseTableContentView.prototype._queryError):
+        (WebInspector.DatabaseTableContentView.prototype._refreshButtonClicked):
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.js:
+        (WebInspector.IndexedDatabaseObjectStoreContentView):
+        (WebInspector.IndexedDatabaseObjectStoreContentView.prototype.get navigationItems):
+        (WebInspector.IndexedDatabaseObjectStoreContentView.prototype._fetchMoreData):
+        (WebInspector.IndexedDatabaseObjectStoreContentView.prototype._refreshButtonClicked):
+        Give the storage content views a refresh button to reload the content.
+
+2015-03-24  Joseph Pecoraro  <pecoraro@apple.com>
+
         Setter should have a single formal parameter, Getter no parameters
         https://bugs.webkit.org/show_bug.cgi?id=142903
 

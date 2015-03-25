@@ -29,6 +29,18 @@ WebInspector.DatabaseTableContentView = function(representedObject)
 
     this.element.classList.add(WebInspector.DatabaseTableContentView.StyleClassName);
 
+    var refreshSource, refreshSize;
+    if (WebInspector.Platform.isLegacyMacOS) {
+        refreshSource = "Images/Legacy/Reload.svg";
+        refreshSize = 16;
+    } else {
+        refreshSource = "Images/ReloadFull.svg";
+        refreshSize = 13;
+    }
+
+    this._refreshButtonNavigationItem = new WebInspector.ButtonNavigationItem("database-table-refresh", WebInspector.UIString("Refresh"), refreshSource, refreshSize, refreshSize);
+    this._refreshButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
+
     this.update();
 };
 
@@ -36,8 +48,14 @@ WebInspector.DatabaseTableContentView.StyleClassName = "database-table";
 
 WebInspector.DatabaseTableContentView.prototype = {
     constructor: WebInspector.DatabaseTableContentView,
+    __proto__: WebInspector.ContentView.prototype,
 
     // Public
+
+    get navigationItems()
+    {
+        return [this._refreshButtonNavigationItem];
+    },
 
     get allowedNavigationSidebarPanels()
     {
@@ -101,7 +119,10 @@ WebInspector.DatabaseTableContentView.prototype = {
     {
         this.element.removeChildren();
         this.element.appendChild(WebInspector.createMessageTextView(WebInspector.UIString("An error occured trying to\nread the “%s” table.").format(this.representedObject.name), true));
+    },
+
+    _refreshButtonClicked: function()
+    {
+        this.update();
     }
 };
-
-WebInspector.DatabaseTableContentView.prototype.__proto__ = WebInspector.ContentView.prototype;
