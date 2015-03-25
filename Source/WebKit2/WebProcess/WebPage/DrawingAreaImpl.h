@@ -51,15 +51,15 @@ private:
     // DrawingArea
     virtual void setNeedsDisplay() override;
     virtual void setNeedsDisplayInRect(const WebCore::IntRect&) override;
-    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta);
+    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
     virtual void pageBackgroundTransparencyChanged() override;
-    virtual void setLayerTreeStateIsFrozen(bool);
-    virtual bool layerTreeStateIsFrozen() const { return m_layerTreeStateIsFrozen; }
-    virtual LayerTreeHost* layerTreeHost() const { return m_layerTreeHost.get(); }
-    virtual void forceRepaint();
-    virtual bool forceRepaintAsync(uint64_t callbackID);
+    virtual void setLayerTreeStateIsFrozen(bool) override;
+    virtual bool layerTreeStateIsFrozen() const override { return m_layerTreeStateIsFrozen; }
+    virtual LayerTreeHost* layerTreeHost() const override { return m_layerTreeHost.get(); }
+    virtual void forceRepaint() override;
+    virtual bool forceRepaintAsync(uint64_t callbackID) override;
 
-    virtual void setPaintingEnabled(bool);
+    virtual void setPaintingEnabled(bool) override;
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
     virtual void updatePreferences(const WebPreferencesStore&) override;
 
@@ -68,15 +68,15 @@ private:
     virtual void scheduleCompositingLayerFlush() override;
     virtual void scheduleCompositingLayerFlushImmediately() override;
 
-    virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*);
+    virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
     virtual void setNativeSurfaceHandleForCompositing(uint64_t) override;
 #endif
 
     // IPC message handlers.
-    virtual void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
-    virtual void didUpdate();
+    virtual void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset) override;
+    virtual void didUpdate() override;
     virtual void suspendPainting();
     virtual void resumePainting();
     

@@ -1,3 +1,16 @@
+2015-03-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] Clean up DrawingAreaImpl vtable overrides
+        https://bugs.webkit.org/show_bug.cgi?id=143044
+
+        Reviewed by Carlos Garcia Campos.
+
+        Declare virtual methods of the DrawingAreaImpl class as overridden where necessary.
+
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (WebKit::DrawingAreaImpl::layerTreeStateIsFrozen): Deleted.
+        (WebKit::DrawingAreaImpl::layerTreeHost): Deleted.
+
 2015-03-23  Anders Carlsson  <andersca@apple.com>
 
         Make platform/mac-wk2/plugins/destroy-during-async-npp-new.html work again.
