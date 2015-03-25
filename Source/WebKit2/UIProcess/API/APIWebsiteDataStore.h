@@ -44,6 +44,7 @@ public:
 
     WebKit::WebsiteDataStore& websiteDataStore() { return *m_websiteDataStore; }
 
+    static String cacheDirectoryFileSystemRepresentation(const String& directoryName);
     static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName);
 
 private:

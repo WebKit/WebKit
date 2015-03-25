@@ -1,3 +1,22 @@
+2015-03-25  Anders Carlsson  <andersca@apple.com>
+
+        Add network and application cache directories to WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=143063
+
+        Reviewed by Sam Weinig.
+
+        Create a WebKit directory under ~/Library/Caches/<Bundle ID> for non-sandboxed applications,
+        and ~/Library/Caches for sandboxed applications. Create NetworkCache and OfflineWebApplicationCache
+        subdirectories. These directories will be used with the modern WebKit API.
+
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::cacheDirectoryFileSystemRepresentation):
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2015-03-25  Sam Weinig  <sam@webkit.org>
 
         Address additional review feedback from https://bugs.webkit.org/show_bug.cgi?id=143059.

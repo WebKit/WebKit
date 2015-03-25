@@ -30,6 +30,33 @@
 
 namespace API {
 
+String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName)
+{
+    static dispatch_once_t onceToken;
+    static NSURL *cacheURL;
+
+    dispatch_once(&onceToken, ^{
+        NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
+        if (!url)
+            RELEASE_ASSERT_NOT_REACHED();
+
+        if (!WebKit::processHasContainer()) {
+            NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
+            if (!bundleIdentifier)
+                bundleIdentifier = [NSProcessInfo processInfo].processName;
+            url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
+        }
+
+        cacheURL = [[url URLByAppendingPathComponent:@"WebKit" isDirectory:YES] retain];
+    });
+
+    NSURL *url = [cacheURL URLByAppendingPathComponent:directoryName isDirectory:YES];
+    if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr])
+        LOG_ERROR("Failed to create directory %@", url);
+
+    return url.absoluteURL.path.fileSystemRepresentation;
+}
+
 String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName)
 {
     static dispatch_once_t onceToken;
@@ -61,11 +88,13 @@ String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const Stri
 
 WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
 {
-    // FIXME: Fill everything in.
     WebKit::WebsiteDataStore::Configuration configuration;
 
-    configuration.localStorageDirectory = websiteDataDirectoryFileSystemRepresentation("LocalStorage");
+    configuration.networkCacheDirectory = cacheDirectoryFileSystemRepresentation("NetworkCache");
+    configuration.applicationCacheDirectory = cacheDirectoryFileSystemRepresentation("OfflineWebApplicationCache");
+
     configuration.webSQLDatabaseDirectory = websiteDataDirectoryFileSystemRepresentation("WebSQL");
+    configuration.localStorageDirectory = websiteDataDirectoryFileSystemRepresentation("LocalStorage");
 
     return configuration;
 }

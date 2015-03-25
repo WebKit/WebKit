@@ -45,6 +45,9 @@ struct WebsiteDataRecord;
 class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver {
 public:
     struct Configuration {
+        String networkCacheDirectory;
+        String applicationCacheDirectory;
+
         String webSQLDatabaseDirectory;
         String localStorageDirectory;
     };
@@ -82,6 +85,9 @@ private:
 
     const uint64_t m_identifier;
     const WebCore::SessionID m_sessionID;
+
+    const String m_networkCacheDirectory;
+    const String m_applicationCacheDirectory;
 
     const String m_webSQLDatabaseDirectory;
     const RefPtr<StorageManager> m_storageManager;
