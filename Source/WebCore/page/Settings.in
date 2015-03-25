@@ -237,3 +237,6 @@ ignoreViewportScalingConstraints initial=false
 appleMailPaginationQuirkEnabled initial=false
 
 attachmentElementEnabled initial=true, conditional=ATTACHMENT_ELEMENT
+
+newBlockInsideInlineModelEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
+

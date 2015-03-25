@@ -1,3 +1,18 @@
+2015-03-25  David Hyatt  <hyatt@apple.com>
+
+        Add a pref to enable the new block-inside-inline model
+        https://bugs.webkit.org/show_bug.cgi?id=143050
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetNewBlockInsideInlineModelEnabled):
+        (WKPreferencesGetNewBlockInsideInlineModelEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2015-03-25  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] WebUserMediaClient::pageDestroyed() virtual method should be marked as override

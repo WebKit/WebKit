@@ -1187,6 +1187,16 @@ bool WKPreferencesGetSimpleLineLayoutDebugBordersEnabled(WKPreferencesRef prefer
     return toImpl(preferencesRef)->simpleLineLayoutDebugBordersEnabled();
 }
 
+void WKPreferencesSetNewBlockInsideInlineModelEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setNewBlockInsideInlineModelEnabled(flag);
+}
+
+bool WKPreferencesGetNewBlockInsideInlineModelEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->newBlockInsideInlineModelEnabled();
+}
+
 void WKPreferencesSetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setSubpixelCSSOMElementMetricsEnabled(flag);
