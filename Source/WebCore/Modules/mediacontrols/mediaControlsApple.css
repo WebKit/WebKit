@@ -417,6 +417,7 @@ audio::-webkit-media-controls-time-remaining-display {
     text-decoration: none;
     position: relative;
     bottom: 0.5px;
+    font-family: -apple-system-font-monospaced-numbers;
 }
 
 video::-webkit-media-controls-current-time-display,

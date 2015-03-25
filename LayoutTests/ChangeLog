@@ -1,3 +1,16 @@
+2015-03-25  Dean Jackson  <dino@apple.com>
+
+        MediaControls: Use font with fixed number width
+        https://bugs.webkit.org/show_bug.cgi?id=143018
+        <rdar://problem/20245415>
+
+        Reviewed by Eric Carlson.
+
+        Add some results for the new font family "-apple-system-font-monospaced-numbers".
+
+        * platform/mac/fast/text/systemFont.html:
+        * platform/mac/fast/text/systemFont-expected.txt:
+
 2015-03-25  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         GTK+ Gardening 24th March

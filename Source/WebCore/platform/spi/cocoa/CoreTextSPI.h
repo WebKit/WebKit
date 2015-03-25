@@ -71,6 +71,19 @@ void CTFontSetRenderingParameters(CTFontRef, CGContextRef);
 
 CTFontDescriptorRef CTFontDescriptorCreateForUIType(CTFontUIFontType, CGFloat size, CFStringRef language);
 CTFontDescriptorRef CTFontDescriptorCreateWithTextStyle(CFStringRef style, CFStringRef size, CFStringRef language);
+
+#if PLATFORM(COCOA)
+#if !USE(APPLE_INTERNAL_SDK)
+typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions)
+{
+    kCTFontDescriptorOptionSystemUIFont = 1 << 1,
+    kCTFontDescriptorOptionPreferAppleSystemFont = kCTFontOptionsPreferSystemFont
+};
+
+CTFontDescriptorRef CTFontDescriptorCreateWithAttributesAndOptions(CFDictionaryRef attributes, CTFontDescriptorOptions);
+#endif
+#endif
+
 bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100

@@ -1,8 +1,8 @@
-layer at (0,0) size 785x1810
+layer at (0,0) size 785x2092
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1810
-  RenderBlock {HTML} at (0,0) size 785x1810
-    RenderBody {BODY} at (8,8) size 769x1794
+layer at (0,0) size 785x2092
+  RenderBlock {HTML} at (0,0) size 785x2092
+    RenderBody {BODY} at (8,8) size 769x2076
       RenderBlock {DIV} at (0,0) size 769x897
         RenderBlock {DIV} at (0,0) size 769x28
           RenderText {#text} at (0,0) size 438x28
@@ -79,3 +79,20 @@ layer at (0,0) size 785x1810
           RenderText {#text} at (0,0) size 756x170
             text run at (0,0) width 756: "This is a test for -apple-"
             text run at (0,85) width 525: "system-font font"
+      RenderBlock {DIV} at (0,1794) size 769x282
+        RenderBlock {DIV} at (0,0) size 769x56
+          RenderText {#text} at (0,0) size 695x56
+            text run at (0,0) width 695: "This is a test for -apple-system-font-monospaced-numbers font -"
+            text run at (0,28) width 126: "00:11:22:33"
+        RenderBlock {DIV} at (0,56) size 769x70
+          RenderText {#text} at (0,0) size 672x70
+            text run at (0,0) width 672: "This is a test for -apple-system-font-monospaced-"
+            text run at (0,35) width 362: "numbers font - 00:11:22:33"
+        RenderBlock {DIV} at (0,126) size 769x70
+          RenderText {#text} at (0,0) size 672x70
+            text run at (0,0) width 672: "This is a test for -apple-system-font-monospaced-"
+            text run at (0,35) width 362: "numbers font - 00:11:22:33"
+        RenderBlock {DIV} at (0,196) size 769x86
+          RenderText {#text} at (0,0) size 658x86
+            text run at (0,0) width 582: "This is a test for -apple-system-font-"
+            text run at (0,43) width 658: "monospaced-numbers font - 00:11:22:33"

@@ -1,3 +1,31 @@
+2015-03-25  Dean Jackson  <dino@apple.com>
+
+        MediaControls: Use font with fixed number width
+        https://bugs.webkit.org/show_bug.cgi?id=143018
+        <rdar://problem/20245415>
+
+        Reviewed by Eric Carlson.
+
+        Add a new font-family, specific to Apple platforms,
+        called -apple-system-font-monospaced-numbers. This is
+        a special variant of the system font which uses monospaced
+        forms for the number glyphs - allowing a time reading that
+        doesn't bounce around as the time changes.
+
+        * Modules/mediacontrols/mediaControlsApple.css: Media controls should
+        use the new font.
+        (audio::-webkit-media-controls-time-remaining-display):
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-time-remaining-display):
+
+        * platform/graphics/ios/FontCacheIOS.mm: Request a new CTFontRef with
+        the appropriate attributes.
+        (WebCore::createCTFontWithFamilyNameAndWeight):
+        * platform/graphics/mac/FontCacheMac.mm: Ditto, but NSFont.
+        (WebCore::fontWithFamily):
+        * platform/spi/cocoa/CoreTextSPI.h: Expose the constants for
+        the new form so that the public SDK can build.
+
 2015-03-25  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Add multi-DFA compiling and interpreting.

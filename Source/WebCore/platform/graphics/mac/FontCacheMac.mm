@@ -158,6 +158,15 @@ static NSFont *fontWithFamily(NSString *desiredFamily, NSFontTraitMask desiredTr
         return (desiredWeight >= 7) ? [NSFont boldSystemFontOfSize:size] : [NSFont systemFontOfSize:size];
     }
 
+    if (stringIsCaseInsensitiveEqualToString(desiredFamily, @"-apple-system-font-monospaced-numbers")) {
+        NSArray *featureArray = @[ @{ NSFontFeatureTypeIdentifierKey : @(kNumberSpacingType),
+            NSFontFeatureSelectorIdentifierKey : @(kMonospacedNumbersSelector) } ];
+
+        NSFont* systemFont = [NSFont systemFontOfSize:size];
+        NSFontDescriptor* desc = [systemFont.fontDescriptor fontDescriptorByAddingAttributes:@{ NSFontFeatureSettingsAttribute : featureArray }];
+        return [NSFont fontWithDescriptor:desc size:size];
+    }
+
     id cachedAvailableFamily = [desiredFamilyToAvailableFamilyDictionary() objectForKey:desiredFamily];
     if (cachedAvailableFamily == [NSNull null]) {
         // We already know this font is not available.
