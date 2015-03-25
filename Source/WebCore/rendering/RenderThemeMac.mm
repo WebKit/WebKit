@@ -2178,7 +2178,8 @@ void AttachmentLayout::addTitleLine(CTLineRef line, CGFloat& yOffset, Vector<CGP
 
 void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
 {
-    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, attachmentTitleFontSize, nullptr));
+    CFStringRef language = 0; // By not specifying a language we use the system language.
+    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, attachmentTitleFontSize, language));
     baseline = CGRound(attachmentIconBackgroundSize + attachmentIconToTitleMargin + CTFontGetAscent(font.get()));
 
     String title = attachment.attachmentElement().attachmentTitle();
@@ -2241,7 +2242,8 @@ void AttachmentLayout::layOutSubtitle(const RenderAttachment& attachment)
     if (subtitleText.isEmpty())
         return;
 
-    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, attachmentSubtitleFontSize, nullptr));
+    CFStringRef language = 0; // By not specifying a language we use the system language.
+    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, attachmentSubtitleFontSize, language));
     NSDictionary *textAttributes = @{
         (id)kCTFontAttributeName: (id)font.get(),
         (id)kCTForegroundColorAttributeName: (NSColor *)cachedCGColor(attachmentSubtitleTextColor(), ColorSpaceDeviceRGB)

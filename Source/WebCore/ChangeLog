@@ -1,3 +1,16 @@
+2015-03-24  Dean Jackson  <dino@apple.com>
+
+        Source/WebCore/rendering/RenderThemeMac.mm:2181:118: error: null passed to a callee that requires a non-null argument [-Werror,-Wnonnull]
+        https://bugs.webkit.org/show_bug.cgi?id=143039
+
+        Unreviewed build fix for newer versions of OS X.
+
+        * rendering/RenderThemeMac.mm: Define a null language parameter. This
+        seemed better than turning the clang warning off for just that
+        function.
+        (WebCore::AttachmentLayout::layOutTitle):
+        (WebCore::AttachmentLayout::layOutSubtitle):
+
 2015-03-24  Dan Bernstein  <mitz@apple.com>
 
         Another attempt to fix the build.
