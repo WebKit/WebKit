@@ -488,7 +488,7 @@ SLOW_PATH_DECL(slow_path_del_by_val)
         couldDelete = baseObject->methodTable()->deletePropertyByIndex(baseObject, exec, i);
     else {
         CHECK_EXCEPTION();
-        PropertyName property = subscript.toPropertyKey(exec);
+        auto property = subscript.toPropertyKey(exec);
         CHECK_EXCEPTION();
         couldDelete = baseObject->methodTable()->deleteProperty(baseObject, exec, property);
     }

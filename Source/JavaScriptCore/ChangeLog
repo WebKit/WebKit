@@ -1,3 +1,44 @@
+2015-03-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION (r179429): Potential Use after free in JavaScriptCore`WTF::StringImpl::ref + 83
+        https://bugs.webkit.org/show_bug.cgi?id=142410
+
+        Reviewed by Geoffrey Garen.
+
+        Before this patch, added function JSValue::toPropertyKey returns PropertyName.
+        Since PropertyName doesn't have AtomicStringImpl ownership,
+        if Identifier is implicitly converted to PropertyName and Identifier is destructed,
+        PropertyName may refer freed AtomicStringImpl*.
+
+        This patch changes the result type of JSValue::toPropertyName from PropertyName to Identifier,
+        to keep AtomicStringImpl* ownership after the toPropertyName call is done.
+        And receive the result value as Identifier type to keep ownership in the caller side.
+
+        To catch the result of toPropertyKey as is, we catch the result of toPropertyName as auto.
+
+        However, now we don't need to have both Identifier and PropertyName.
+        So we'll merge PropertyName to Identifier in the subsequent patch.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationPutByValInternal):
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::getByVal):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::opIn):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::toPropertyKey):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::objectConstructorDefineProperty):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncPropertyIsEnumerable):
+
 2015-03-19  Andreas Kling  <akling@apple.com>
 
         JSCallee unnecessarily overrides a bunch of things in the method table.

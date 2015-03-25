@@ -745,7 +745,7 @@ inline JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript)
         return baseValue.get(exec, i);
     }
 
-    PropertyName property = subscript.toPropertyKey(exec);
+    auto property = subscript.toPropertyKey(exec);
     return baseValue.get(exec, property);
 }
 
@@ -795,7 +795,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
         LLINT_END();
     }
 
-    PropertyName property = subscript.toPropertyKey(exec);
+    auto property = subscript.toPropertyKey(exec);
     LLINT_CHECK_EXCEPTION();
     PutPropertySlot slot(baseValue, exec->codeBlock()->isStrictMode());
     baseValue.put(exec, property, value, slot);
@@ -815,7 +815,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
         uint32_t i = subscript.asUInt32();
         baseObject->putDirectIndex(exec, i, value);
     } else {
-        PropertyName property = subscript.toPropertyKey(exec);
+        auto property = subscript.toPropertyKey(exec);
         if (!exec->vm().exception()) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot(baseObject, exec->codeBlock()->isStrictMode());
             baseObject->putDirect(exec->vm(), property, value, slot);
@@ -839,7 +839,7 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_val)
         couldDelete = baseObject->methodTable()->deletePropertyByIndex(baseObject, exec, i);
     else {
         LLINT_CHECK_EXCEPTION();
-        PropertyName property = subscript.toPropertyKey(exec);
+        auto property = subscript.toPropertyKey(exec);
         LLINT_CHECK_EXCEPTION();
         couldDelete = baseObject->methodTable()->deleteProperty(baseObject, exec, property);
     }

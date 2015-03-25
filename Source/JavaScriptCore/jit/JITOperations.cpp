@@ -467,7 +467,7 @@ static void putByVal(CallFrame* callFrame, JSValue baseValue, JSValue subscript,
         } else
             baseValue.putByIndex(callFrame, i, value, callFrame->codeBlock()->isStrictMode());
     } else {
-        PropertyName property = subscript.toPropertyKey(callFrame);
+        auto property = subscript.toPropertyKey(callFrame);
         if (!callFrame->vm().exception()) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot(baseValue, callFrame->codeBlock()->isStrictMode());
             baseValue.put(callFrame, property, value, slot);
@@ -481,7 +481,7 @@ static void directPutByVal(CallFrame* callFrame, JSObject* baseObject, JSValue s
         uint32_t i = subscript.asUInt32();
         baseObject->putDirectIndex(callFrame, i, value);
     } else {
-        PropertyName property = subscript.toPropertyKey(callFrame);
+        auto property = subscript.toPropertyKey(callFrame);
         if (!callFrame->vm().exception()) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot(baseObject, callFrame->codeBlock()->isStrictMode());
             baseObject->putDirect(callFrame->vm(), property, value, slot);
@@ -1429,7 +1429,7 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, R
         return baseValue.get(exec, i);
     }
 
-    PropertyName property = subscript.toPropertyKey(exec);
+    auto property = subscript.toPropertyKey(exec);
     return baseValue.get(exec, property);
 }
 
@@ -1565,7 +1565,7 @@ EncodedJSValue JIT_OPERATION operationGetByValString(ExecState* exec, EncodedJSV
                 ctiPatchCallByReturnAddress(exec->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationGetByValDefault));
         }
     } else {
-        PropertyName property = subscript.toPropertyKey(exec);
+        auto property = subscript.toPropertyKey(exec);
         result = baseValue.get(exec, property);
     }
 

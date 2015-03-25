@@ -263,7 +263,7 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
     if (allowsAccess && JSGlobalObject::getOwnPropertySlotByIndex(thisObject, exec, index, slot))
         return true;
     
-    PropertyName propertyName = Identifier::from(exec, index);
+    Identifier propertyName = Identifier::from(exec, index);
     
     // Check for child frames by name before built-in properties to
     // match Mozilla. This does not match IE, but some sites end up
@@ -308,7 +308,7 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
     // Allow shortcuts like 'Image1' instead of document.images.Image1
     Document* document = thisObject->impl().frame()->document();
     if (is<HTMLDocument>(*document)) {
-        AtomicStringImpl* atomicPropertyName = propertyName.publicName();
+        AtomicStringImpl* atomicPropertyName = propertyName.impl();
         if (atomicPropertyName && downcast<HTMLDocument>(*document).hasWindowNamedItem(*atomicPropertyName)) {
             slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, namedItemGetter);
             return true;
@@ -344,7 +344,7 @@ void JSDOMWindow::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSVa
     if (!thisObject->impl().frame())
         return;
     
-    PropertyName propertyName = Identifier::from(exec, index);
+    Identifier propertyName = Identifier::from(exec, index);
 
     // Optimization: access JavaScript global variables directly before involving the DOM.
     if (thisObject->JSGlobalObject::hasOwnPropertyForWrite(exec, propertyName)) {

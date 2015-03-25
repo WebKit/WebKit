@@ -46,6 +46,7 @@ class VM;
 class JSGlobalObject;
 class JSObject;
 class JSString;
+class Identifier;
 class PropertyName;
 class PropertySlot;
 class PutPropertySlot;
@@ -243,7 +244,7 @@ public:
     // been set in the ExecState already.
     double toNumber(ExecState*) const;
     JSString* toString(ExecState*) const;
-    PropertyName toPropertyKey(ExecState*) const;
+    Identifier toPropertyKey(ExecState*) const;
     WTF::String toWTFString(ExecState*) const;
     WTF::String toWTFStringInline(ExecState*) const;
     JSObject* toObject(ExecState*) const;

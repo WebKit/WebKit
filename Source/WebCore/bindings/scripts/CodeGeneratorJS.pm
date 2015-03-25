@@ -2107,7 +2107,7 @@ sub GenerateImplementation
                 if ($generatedPropertyName) {
                     return;
                 }
-                push(@implContent, "    PropertyName propertyName = Identifier::from(exec, index);\n");
+                push(@implContent, "    Identifier propertyName = Identifier::from(exec, index);\n");
                 $generatedPropertyName = 1;
             };
 
@@ -2483,7 +2483,7 @@ sub GenerateImplementation
                 }
 
                 if ($interface->extendedAttributes->{"CustomNamedSetter"}) {
-                    push(@implContent, "    PropertyName propertyName = Identifier::from(exec, index);\n");
+                    push(@implContent, "    Identifier propertyName = Identifier::from(exec, index);\n");
                     push(@implContent, "    PutPropertySlot slot(thisObject, shouldThrow);\n");
                     push(@implContent, "    if (thisObject->putDelegate(exec, propertyName, value, slot))\n");
                     push(@implContent, "        return;\n");
