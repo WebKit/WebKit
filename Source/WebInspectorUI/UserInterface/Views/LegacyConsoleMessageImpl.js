@@ -451,10 +451,9 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
                 return element;
         }
 
-        var dataGridContainer = element.createChild("span");
         var dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, flatValues);
         dataGrid.element.classList.add("inline");
-        dataGridContainer.appendChild(dataGrid.element);
+        element.appendChild(dataGrid.element);
 
         return element;
     },

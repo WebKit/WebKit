@@ -251,6 +251,10 @@
     color: rgb(15%, 15%, 15%);
 }
 
+.console-messages .data-grid {
+    clear: both;
+}
+
 .console-message-url {
     float: right;
     margin-left: 4px;
