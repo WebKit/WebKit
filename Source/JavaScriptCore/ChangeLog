@@ -1,5 +1,15 @@
 2015-03-25  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Fix formatting in BuiltinExecutables
+        https://bugs.webkit.org/show_bug.cgi?id=143061
+
+        Reviewed by Ryosuke Niwa.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutableInternal):
+
+2015-03-25  Joseph Pecoraro  <pecoraro@apple.com>
+
         ES6: Classes: Program level class statement throws exception in strict mode
         https://bugs.webkit.org/show_bug.cgi?id=143038
 

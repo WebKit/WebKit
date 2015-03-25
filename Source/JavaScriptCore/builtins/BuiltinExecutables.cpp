@@ -97,7 +97,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutableInternal(const S
     RELEASE_ASSERT(body);
     for (const auto& closedVariable : program->closedVariables()) {
         if (closedVariable == m_vm.propertyNames->arguments.impl())
-        continue;
+            continue;
         
         if (closedVariable == m_vm.propertyNames->undefinedKeyword.impl())
             continue;
