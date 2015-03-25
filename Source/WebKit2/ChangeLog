@@ -1,3 +1,28 @@
+2015-03-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Web Inspector: Switching tabs to window with inspector open prohibits typing into console
+        https://bugs.webkit.org/show_bug.cgi?id=126800
+
+        Reviewed by Anders Carlsson.
+
+        This is a regression from r85356 and r83814. These two patches made WKWebView clear its selection
+        when WKView resigns the first responder without ever restoring it even if WKView later becomes
+        the first responder again. This is problematic when a text field or a editing host element had been
+        focused and selected prior to the resignation since the editing code uses the selection to determine
+        the editability of the element.
+
+        Fixed the bug by restoring selection in [WKView becomeFirstResponder] if the selection is empty.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView becomeFirstResponder]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::restoreSelectionInFocusedEditableElement):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::restoreSelectionInFocusedEditableElement):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-03-25  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r181660): Safari navigates to link after a starting and canceling a 

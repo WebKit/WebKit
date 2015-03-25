@@ -143,6 +143,7 @@ messages -> WebPage LegacyReceiver {
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t navigationID, uint64_t downloadID)
 
     ClearSelection()
+    RestoreSelectionInFocusedEditableElement()
 
     # Callbacks.
     GetContentsAsString(uint64_t callbackID)

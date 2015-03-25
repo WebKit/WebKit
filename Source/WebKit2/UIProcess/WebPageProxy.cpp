@@ -1444,6 +1444,13 @@ void WebPageProxy::clearSelection()
     m_process->send(Messages::WebPage::ClearSelection(), m_pageID);
 }
 
+void WebPageProxy::restoreSelectionInFocusedEditableElement()
+{
+    if (!isValid())
+        return;
+    m_process->send(Messages::WebPage::RestoreSelectionInFocusedEditableElement(), m_pageID);
+}
+
 void WebPageProxy::validateCommand(const String& commandName, std::function<void (const String&, bool, int32_t, CallbackBase::Error)> callbackFunction)
 {
     if (!isValid()) {

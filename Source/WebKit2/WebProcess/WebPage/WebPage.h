@@ -683,6 +683,7 @@ public:
 
     void replaceSelectionWithText(WebCore::Frame*, const String&);
     void clearSelection();
+    void restoreSelectionInFocusedEditableElement();
 
 #if ENABLE(DRAG_SUPPORT)
 #if PLATFORM(GTK)

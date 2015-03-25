@@ -393,6 +393,7 @@ public:
     void setWindowResizerSize(const WebCore::IntSize&);
     
     void clearSelection();
+    void restoreSelectionInFocusedEditableElement();
 
     void setViewNeedsDisplay(const WebCore::IntRect&);
     void displayView();

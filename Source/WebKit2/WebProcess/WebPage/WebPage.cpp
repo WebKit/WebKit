@@ -3366,6 +3366,18 @@ void WebPage::clearSelection()
 }
 #endif
 
+void WebPage::restoreSelectionInFocusedEditableElement()
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame.selection().isNone())
+        return;
+
+    if (auto document = frame.document()) {
+        if (auto element = document->focusedElement())
+            element->updateFocusAppearance(true /* restoreSelection */);
+    }
+}
+
 bool WebPage::mainFrameHasCustomContentProvider() const
 {
     if (Frame* frame = mainFrame()) {

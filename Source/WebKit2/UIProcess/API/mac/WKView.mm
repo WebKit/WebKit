@@ -447,6 +447,8 @@ struct WKViewInterpretKeyEventsParameters {
     
     [self _updateSecureInputState];
     _data->_page->viewStateDidChange(ViewState::IsFocused);
+    // Restore the selection in the editable region if resigning first responder cleared selection.
+    _data->_page->restoreSelectionInFocusedEditableElement();
 
     _data->_inBecomeFirstResponder = false;
     
