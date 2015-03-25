@@ -1,3 +1,20 @@
+2015-03-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ES6: Classes: Early return in sub-class constructor results in returning undefined instead of instance
+        https://bugs.webkit.org/show_bug.cgi?id=143012
+
+        Reviewed by Ryosuke Niwa.
+
+        * js/class-constructor-return-expected.txt: Added.
+        * js/class-constructor-return.html: Added.
+        * js/script-tests/class-constructor-return.js: Added.
+        New test covering different return values from constructors.
+
+        * js/class-syntax-super-expected.txt:
+        * js/script-tests/class-syntax-super.js:
+        Fix test. Returning undefined is the same as an implicit return
+        and should return `this`.
+
 2015-03-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Responses with 204 HTTP Status Code should be cacheable by default

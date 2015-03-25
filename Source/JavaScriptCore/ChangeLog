@@ -1,3 +1,15 @@
+2015-03-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ES6: Classes: Early return in sub-class constructor results in returning undefined instead of instance
+        https://bugs.webkit.org/show_bug.cgi?id=143012
+
+        Reviewed by Ryosuke Niwa.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitReturn):
+        Fix handling of "undefined" when returned from a Derived class. It was
+        returning "undefined" when it should have returned "this".
+
 2015-03-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION (r181458): Heap use-after-free in JSSetIterator destructor

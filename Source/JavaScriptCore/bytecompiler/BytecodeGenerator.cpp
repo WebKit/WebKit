@@ -1930,24 +1930,28 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
         instructions().append(m_lexicalEnvironmentRegister ? m_lexicalEnvironmentRegister->index() : emitLoad(0, JSValue())->index());
     }
 
-    bool thisMightBeUninitialized = constructorKind() == ConstructorKind::Derived;
-    bool srcIsThis = src->index() == m_thisRegister.index();
-    if (isConstructor() && (!srcIsThis || thisMightBeUninitialized)) {
-        RefPtr<Label> isObjectOrUndefinedLabel = newLabel();
-
-        if (srcIsThis && thisMightBeUninitialized)
+    if (isConstructor()) {
+        bool derived = constructorKind() == ConstructorKind::Derived;
+        if (derived && src->index() == m_thisRegister.index())
             emitTDZCheck(src);
 
-        emitJumpIfTrue(emitIsObject(newTemporary(), src), isObjectOrUndefinedLabel.get());
+        RefPtr<Label> isObjectLabel = newLabel();
+        emitJumpIfTrue(emitIsObject(newTemporary(), src), isObjectLabel.get());
 
-        if (thisMightBeUninitialized) {
-            emitJumpIfTrue(emitIsUndefined(newTemporary(), src), isObjectOrUndefinedLabel.get());
+        if (derived) {
+            RefPtr<Label> isUndefinedLabel = newLabel();
+            emitJumpIfTrue(emitIsUndefined(newTemporary(), src), isUndefinedLabel.get());
             emitThrowTypeError("Cannot return a non-object type in the constructor of a derived class.");
-        } else
-            emitUnaryNoDstOp(op_ret, &m_thisRegister);
+            emitLabel(isUndefinedLabel.get());
+            if (constructorKind() == ConstructorKind::Derived)
+                emitTDZCheck(&m_thisRegister);
+        }
 
-        emitLabel(isObjectOrUndefinedLabel.get());
+        emitUnaryNoDstOp(op_ret, &m_thisRegister);
+
+        emitLabel(isObjectLabel.get());
     }
+
     return emitUnaryNoDstOp(op_ret, src);
 }
 

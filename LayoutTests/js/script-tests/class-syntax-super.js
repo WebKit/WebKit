@@ -49,12 +49,14 @@ shouldThrow('(new x).method1()', '"ReferenceError: Cannot delete a super propert
 shouldThrow('(new x).method2()', '"ReferenceError: Cannot delete a super property"');
 shouldBeTrue('new (class { constructor() { return undefined; } }) instanceof Object');
 shouldBeTrue('new (class { constructor() { return 1; } }) instanceof Object');
-shouldBe('new (class extends Base { constructor() { return undefined } })', 'undefined');
+shouldThrow('new (class extends Base { constructor() { return undefined } })');
+shouldBeTrue('new (class extends Base { constructor() { super(); return undefined } }) instanceof Object');
 shouldBe('x = { }; new (class extends Base { constructor() { return x } });', 'x');
 shouldBeFalse('x instanceof Base');
 shouldThrow('new (class extends Base { constructor() { } })', '"ReferenceError: Cannot access uninitialized variable."');
 shouldThrow('new (class extends Base { constructor() { return 1; } })', '"TypeError: Cannot return a non-object type in the constructor of a derived class."');
-shouldBe('new (class extends null { constructor() { return undefined } })', 'undefined');
+shouldThrow('new (class extends null { constructor() { return undefined } })');
+shouldBeTrue('new (class extends null { constructor() { super(); return undefined } }) instanceof Object');
 shouldBe('x = { }; new (class extends null { constructor() { return x } });', 'x');
 shouldBeTrue('x instanceof Object');
 shouldThrow('new (class extends null { constructor() { } })', '"ReferenceError: Cannot access uninitialized variable."');
