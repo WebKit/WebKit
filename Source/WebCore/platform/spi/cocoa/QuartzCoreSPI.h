@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "IOSurfaceSPI.h"
 #import <QuartzCore/QuartzCore.h>
 
 #if USE(APPLE_INTERNAL_SDK)
