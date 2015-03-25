@@ -1,3 +1,9 @@
+2015-03-25  Dan Bernstein  <mitz@apple.com>
+
+        Another attempt to get the iOS EWS building again.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2015-03-25  Alex Christensen  <achristensen@webkit.org>
 
         Add case-insensitive checks to DFA bytecode.
