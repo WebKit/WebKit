@@ -1,3 +1,57 @@
+2015-03-25  Antti Koivisto  <antti@apple.com>
+
+        Separate entry decoding from validation
+        https://bugs.webkit.org/show_bug.cgi?id=143052
+
+        Reviewed by Chris Dumez.
+
+        Make NetworkCache::Cache a class and move it to a file of its own.
+        Move the encoding/decoding code there.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDiskCacheEntries):
+        (WebKit::clearDiskCacheEntries):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::sendReplyToSynchronousRequest):
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::sendBufferMaybeAborting):
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::validateCacheEntry):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::collectVaryingRequestHeaders):
+        (WebKit::NetworkCache::canUse):
+
+            Focused function for deciding if we can use a cache entry and if it needs validation.
+
+        (WebKit::NetworkCache::Cache::retrieve):
+        (WebKit::NetworkCache::Cache::store):
+        (WebKit::NetworkCache::Cache::update):
+        (WebKit::NetworkCache::Cache::traverse):
+        (WebKit::NetworkCache::encodeStorageEntry): Deleted.
+        (WebKit::NetworkCache::decodeStorageEntry): Deleted.
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheEntry.cpp: Added.
+        (WebKit::NetworkCache::Entry::Entry):
+        (WebKit::NetworkCache::Entry::encode):
+        (WebKit::NetworkCache::Entry::decode):
+        (WebKit::NetworkCache::Entry::initializeBufferFromStorageEntry):
+        (WebKit::NetworkCache::Entry::buffer):
+        (WebKit::NetworkCache::Entry::shareableResourceHandle):
+        (WebKit::NetworkCache::Entry::needsValidation):
+        (WebKit::NetworkCache::Entry::setNeedsValidation):
+        * NetworkProcess/cache/NetworkCacheEntry.h: Added.
+        (WebKit::NetworkCache::Entry::key):
+        (WebKit::NetworkCache::Entry::timeStamp):
+        (WebKit::NetworkCache::Entry::response):
+        (WebKit::NetworkCache::Entry::varyingRequestHeaders):
+        (WebKit::NetworkCache::Entry::sourceStorageEntry):
+        * NetworkProcess/cache/NetworkCacheStatistics.h:
+        * NetworkProcess/cache/NetworkCacheStatisticsCocoa.mm:
+        (WebKit::NetworkCache::cachedEntryReuseFailureToDiagnosticKey):
+        (WebKit::NetworkCache::Statistics::recordRetrievedCachedEntry):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-03-25  David Hyatt  <hyatt@apple.com>
 
         Add a pref to enable the new block-inside-inline model

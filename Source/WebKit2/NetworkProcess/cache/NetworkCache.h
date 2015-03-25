@@ -28,6 +28,7 @@
 
 #if ENABLE(NETWORK_CACHE)
 
+#include "NetworkCacheEntry.h"
 #include "NetworkCacheStorage.h"
 #include "ShareableResource.h"
 #include <WebCore/ResourceResponse.h>
@@ -54,16 +55,6 @@ struct MappedBody {
 #endif
 };
 
-struct Entry {
-    Storage::Entry storageEntry;
-    WebCore::ResourceResponse response;
-    RefPtr<WebCore::SharedBuffer> buffer;
-#if ENABLE(SHAREABLE_RESOURCE)
-    ShareableResource::Handle shareableResourceHandle;
-#endif
-    bool needsRevalidation;
-};
-
 enum class RetrieveDecision {
     Yes,
     NoDueToHTTPMethod,
@@ -80,11 +71,12 @@ enum class StoreDecision {
     NoDueToHTTPStatusCode
 };
 
-enum class CachedEntryReuseFailure {
-    None,
-    VaryingHeaderMismatch,
-    MissingValidatorFields,
-    Other,
+enum class UseDecision {
+    Use,
+    Validate,
+    NoDueToVaryingHeaderMismatch,
+    NoDueToMissingValidatorFields,
+    NoDueToDecodeFailure,
 };
 
 class Cache {

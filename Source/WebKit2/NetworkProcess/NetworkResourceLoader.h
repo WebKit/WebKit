@@ -161,7 +161,7 @@ private:
 
     void startBufferingTimerIfNeeded();
     void bufferingTimerFired();
-    bool sendBufferMaybeAborting(WebCore::SharedBuffer&, size_t encodedDataLength);
+    bool sendBufferMaybeAborting(const WebCore::SharedBuffer&, size_t encodedDataLength);
 
     bool isSynchronous() const;
 

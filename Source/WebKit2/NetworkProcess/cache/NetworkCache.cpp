@@ -29,21 +29,17 @@
 #if ENABLE(NETWORK_CACHE)
 
 #include "Logging.h"
-#include "NetworkCacheCoders.h"
 #include "NetworkCacheStatistics.h"
 #include "NetworkCacheStorage.h"
-#include "NetworkResourceLoader.h"
-#include "WebCoreArgumentCoders.h"
-#include <JavaScriptCore/JSONObject.h>
 #include <WebCore/CacheValidation.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PlatformCookieJar.h>
+#include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/StringHasher.h>
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(COCOA)
@@ -110,37 +106,21 @@ static String headerValueForVary(const WebCore::ResourceRequest& request, const 
     return request.httpHeaderField(headerName);
 }
 
-static Storage::Entry encodeStorageEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PassRefPtr<WebCore::SharedBuffer> responseData)
+static Vector<std::pair<String, String>> collectVaryingRequestHeaders(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)
 {
-    Encoder encoder;
-    encoder << response;
-
     String varyValue = response.httpHeaderField(WebCore::HTTPHeaderName::Vary);
-    bool hasVaryingRequestHeaders = !varyValue.isEmpty();
-
-    encoder << hasVaryingRequestHeaders;
-
-    if (hasVaryingRequestHeaders) {
-        Vector<String> varyingHeaderNames;
-        varyValue.split(',', false, varyingHeaderNames);
-
-        Vector<std::pair<String, String>> varyingRequestHeaders;
-        for (auto& varyHeaderName : varyingHeaderNames) {
-            String headerName = varyHeaderName.stripWhiteSpace();
-            String headerValue = headerValueForVary(request, headerName);
-            varyingRequestHeaders.append(std::make_pair(headerName, headerValue));
-        }
-        encoder << varyingRequestHeaders;
+    if (varyValue.isEmpty())
+        return { };
+    Vector<String> varyingHeaderNames;
+    varyValue.split(',', /*allowEmptyEntries*/ false, varyingHeaderNames);
+    Vector<std::pair<String, String>> varyingRequestHeaders;
+    varyingRequestHeaders.reserveCapacity(varyingHeaderNames.size());
+    for (auto& varyHeaderName : varyingHeaderNames) {
+        String headerName = varyHeaderName.stripWhiteSpace();
+        String headerValue = headerValueForVary(request, headerName);
+        varyingRequestHeaders.append(std::make_pair(headerName, headerValue));
     }
-    encoder.encodeChecksum();
-
-    auto timeStamp = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-    Data header(encoder.buffer(), encoder.bufferSize());
-    Data body;
-    if (responseData)
-        body = { reinterpret_cast<const uint8_t*>(responseData->data()), responseData->size() };
-
-    return { makeCacheKey(request), timeStamp, header, body };
+    return varyingRequestHeaders;
 }
 
 static bool verifyVaryingRequestHeaders(const Vector<std::pair<String, String>>& varyingRequestHeaders, const WebCore::ResourceRequest& request)
@@ -170,77 +150,29 @@ static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
     return false;
 }
 
-static std::unique_ptr<Entry> decodeStorageEntry(const Storage::Entry& storageEntry, const WebCore::ResourceRequest& request, CachedEntryReuseFailure& failure)
+static UseDecision canUse(const Entry& entry, const WebCore::ResourceRequest& request)
 {
-    Decoder decoder(storageEntry.header.data(), storageEntry.header.size());
-
-    WebCore::ResourceResponse cachedResponse;
-    if (!decoder.decode(cachedResponse)) {
-        LOG(NetworkCache, "(NetworkProcess) response decoding failed\n");
-        failure = CachedEntryReuseFailure::Other;
-        return nullptr;
-    }
-
-    bool hasVaryingRequestHeaders;
-    if (!decoder.decode(hasVaryingRequestHeaders)) {
-        failure = CachedEntryReuseFailure::Other;
-        return nullptr;
-    }
-
-    if (hasVaryingRequestHeaders) {
-        Vector<std::pair<String, String>> varyingRequestHeaders;
-        if (!decoder.decode(varyingRequestHeaders)) {
-            failure = CachedEntryReuseFailure::Other;
-            return nullptr;
-        }
-
-        if (!verifyVaryingRequestHeaders(varyingRequestHeaders, request)) {
-            LOG(NetworkCache, "(NetworkProcess) varying header mismatch\n");
-            failure = CachedEntryReuseFailure::VaryingHeaderMismatch;
-            return nullptr;
-        }
-    }
-    if (!decoder.verifyChecksum()) {
-        LOG(NetworkCache, "(NetworkProcess) checksum verification failure\n");
-        failure = CachedEntryReuseFailure::Other;
-        return nullptr;
+    if (!verifyVaryingRequestHeaders(entry.varyingRequestHeaders(), request)) {
+        LOG(NetworkCache, "(NetworkProcess) varying header mismatch\n");
+        return UseDecision::NoDueToVaryingHeaderMismatch;
     }
 
     bool allowExpired = cachePolicyAllowsExpired(request.cachePolicy());
-    auto timeStamp = std::chrono::duration_cast<std::chrono::duration<double>>(storageEntry.timeStamp);
-    double age = WebCore::computeCurrentAge(cachedResponse, timeStamp.count());
-    double lifetime = WebCore::computeFreshnessLifetimeForHTTPFamily(cachedResponse, timeStamp.count());
+    auto doubleTimeStamp = std::chrono::duration<double>(entry.timeStamp());
+    double age = WebCore::computeCurrentAge(entry.response(), doubleTimeStamp.count());
+    double lifetime = WebCore::computeFreshnessLifetimeForHTTPFamily(entry.response(), doubleTimeStamp.count());
     bool isExpired = age > lifetime;
     // We never revalidate in the case of a history navigation (i.e. allowExpired is true).
-    bool needsRevalidation = !allowExpired && (cachedResponse.cacheControlContainsNoCache() || isExpired);
+    bool needsRevalidation = !allowExpired && (entry.response().cacheControlContainsNoCache() || isExpired);
+    if (!needsRevalidation)
+        return UseDecision::Use;
 
-    if (needsRevalidation) {
-        bool hasValidatorFields = cachedResponse.hasCacheValidatorFields();
-        LOG(NetworkCache, "(NetworkProcess) needsRevalidation hasValidatorFields=%d isExpired=%d age=%f lifetime=%f", isExpired, hasValidatorFields, age, lifetime);
-        if (!hasValidatorFields) {
-            failure = CachedEntryReuseFailure::MissingValidatorFields;
-            return nullptr;
-        }
-    }
+    bool hasValidatorFields = entry.response().hasCacheValidatorFields();
+    LOG(NetworkCache, "(NetworkProcess) needsRevalidation hasValidatorFields=%d isExpired=%d age=%f lifetime=%f", isExpired, hasValidatorFields, age, lifetime);
+    if (!hasValidatorFields)
+        return UseDecision::NoDueToMissingValidatorFields;
 
-    auto entry = std::make_unique<Entry>();
-    entry->storageEntry = storageEntry;
-    entry->needsRevalidation = needsRevalidation;
-
-    cachedResponse.setSource(needsRevalidation ? WebCore::ResourceResponse::Source::DiskCacheAfterValidation : WebCore::ResourceResponse::Source::DiskCache);
-    entry->response = cachedResponse;
-
-#if ENABLE(SHAREABLE_RESOURCE)
-    RefPtr<SharedMemory> sharedMemory = storageEntry.body.isMap() ? SharedMemory::createFromVMBuffer(const_cast<uint8_t*>(storageEntry.body.data()), storageEntry.body.size()) : nullptr;
-    RefPtr<ShareableResource> shareableResource = sharedMemory ? ShareableResource::create(sharedMemory.release(), 0, storageEntry.body.size()) : nullptr;
-
-    if (shareableResource && shareableResource->createHandle(entry->shareableResourceHandle))
-        entry->buffer = entry->shareableResourceHandle.tryWrapInSharedBuffer();
-    else
-#endif
-        entry->buffer = WebCore::SharedBuffer::create(storageEntry.body.data(), storageEntry.body.size());
-
-    return entry;
+    return UseDecision::Validate;
 }
 
 static RetrieveDecision canRetrieve(const WebCore::ResourceRequest& request)
@@ -280,8 +212,8 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t w
     auto startTime = std::chrono::system_clock::now();
     unsigned priority = originalRequest.priority();
 
-    m_storage->retrieve(storageKey, priority, [this, originalRequest, completionHandler, startTime, storageKey, webPageID](std::unique_ptr<Storage::Entry> entry) {
-        if (!entry) {
+    m_storage->retrieve(storageKey, priority, [this, originalRequest, completionHandler, startTime, storageKey, webPageID](std::unique_ptr<Storage::Entry> storageEntry) {
+        if (!storageEntry) {
             LOG(NetworkCache, "(NetworkProcess) not found in storage");
 
             if (m_statistics)
@@ -290,20 +222,31 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t w
             completionHandler(nullptr);
             return false;
         }
-        ASSERT(entry->key == storageKey);
 
-        CachedEntryReuseFailure failure = CachedEntryReuseFailure::None;
-        auto decodedEntry = decodeStorageEntry(*entry, originalRequest, failure);
-        bool success = !!decodedEntry;
-        if (m_statistics)
-            m_statistics->recordRetrievedCachedEntry(webPageID, storageKey, originalRequest, failure);
+        ASSERT(storageEntry->key == storageKey);
+
+        auto cacheEntry = Entry::decode(*storageEntry);
+
+        auto useDecision = cacheEntry ? canUse(*cacheEntry, originalRequest) : UseDecision::NoDueToDecodeFailure;
+        switch (useDecision) {
+        case UseDecision::Use:
+            break;
+        case UseDecision::Validate:
+            cacheEntry->setNeedsValidation();
+            break;
+        default:
+            cacheEntry = nullptr;
+        };
 
 #if !LOG_DISABLED
         auto elapsedMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count();
 #endif
-        LOG(NetworkCache, "(NetworkProcess) retrieve complete success=%d priority=%u time=%lldms", success, originalRequest.priority(), elapsedMS);
-        completionHandler(WTF::move(decodedEntry));
-        return success;
+        LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%u time=%lldms", useDecision, originalRequest.priority(), elapsedMS);
+        completionHandler(WTF::move(cacheEntry));
+
+        if (m_statistics)
+            m_statistics->recordRetrievedCachedEntry(webPageID, storageKey, originalRequest, useDecision);
+        return useDecision != UseDecision::NoDueToDecodeFailure;
     });
 }
 
@@ -356,7 +299,9 @@ void Cache::store(const WebCore::ResourceRequest& originalRequest, const WebCore
         return;
     }
 
-    auto storageEntry = encodeStorageEntry(originalRequest, response, WTF::move(responseData));
+    Entry cacheEntry(makeCacheKey(originalRequest), response, WTF::move(responseData), collectVaryingRequestHeaders(originalRequest, response));
+
+    auto storageEntry = cacheEntry.encode();
 
     m_storage->store(storageEntry, [completionHandler](bool success, const Data& bodyData) {
         MappedBody mappedBody;
@@ -373,16 +318,18 @@ void Cache::store(const WebCore::ResourceRequest& originalRequest, const WebCore
     });
 }
 
-void Cache::update(const WebCore::ResourceRequest& originalRequest, const Entry& entry, const WebCore::ResourceResponse& validatingResponse)
+void Cache::update(const WebCore::ResourceRequest& originalRequest, const Entry& existingEntry, const WebCore::ResourceResponse& validatingResponse)
 {
     LOG(NetworkCache, "(NetworkProcess) updating %s", originalRequest.url().string().latin1().data());
 
-    WebCore::ResourceResponse response = entry.response;
+    WebCore::ResourceResponse response = existingEntry.response();
     WebCore::updateResponseHeadersAfterRevalidation(response, validatingResponse);
 
-    auto updateEntry = encodeStorageEntry(originalRequest, response, entry.buffer);
+    Entry updateEntry(existingEntry.key(), response, existingEntry.buffer(), collectVaryingRequestHeaders(originalRequest, response));
 
-    m_storage->update(updateEntry, entry.storageEntry, [](bool success, const Data&) {
+    auto updateStorageEntry = updateEntry.encode();
+
+    m_storage->update(updateStorageEntry, existingEntry.sourceStorageEntry(), [](bool success, const Data&) {
         LOG(NetworkCache, "(NetworkProcess) updated, success=%d", success);
     });
 }
@@ -398,61 +345,23 @@ void Cache::traverse(std::function<void (const Entry*)>&& traverseHandler)
 {
     ASSERT(isEnabled());
 
-    m_storage->traverse([traverseHandler](const Storage::Entry* entry) {
-        if (!entry) {
+    m_storage->traverse([traverseHandler](const Storage::Entry* storageEntry) {
+        if (!storageEntry) {
             traverseHandler(nullptr);
             return;
         }
 
-        Entry cacheEntry;
-        cacheEntry.storageEntry = *entry;
-
-        Decoder decoder(cacheEntry.storageEntry.header.data(), cacheEntry.storageEntry.header.size());
-        if (!decoder.decode(cacheEntry.response))
+        auto cacheEntry = Entry::decode(*storageEntry);
+        if (!cacheEntry)
             return;
 
-        traverseHandler(&cacheEntry);
+        traverseHandler(cacheEntry.get());
     });
 }
 
 String Cache::dumpFilePath() const
 {
     return WebCore::pathByAppendingComponent(m_storage->baseDirectoryPath(), "dump.json");
-}
-
-static bool entryAsJSON(StringBuilder& json, const Storage::Entry& entry)
-{
-    Decoder decoder(entry.header.data(), entry.header.size());
-    WebCore::ResourceResponse cachedResponse;
-    if (!decoder.decode(cachedResponse))
-        return false;
-    json.append("{\n");
-    json.append("\"hash\": ");
-    JSC::appendQuotedJSONStringToBuilder(json, entry.key.hashAsString());
-    json.append(",\n");
-    json.append("\"partition\": ");
-    JSC::appendQuotedJSONStringToBuilder(json, entry.key.partition());
-    json.append(",\n");
-    json.append("\"timestamp\": ");
-    json.appendNumber(entry.timeStamp.count());
-    json.append(",\n");
-    json.append("\"URL\": ");
-    JSC::appendQuotedJSONStringToBuilder(json, cachedResponse.url().string());
-    json.append(",\n");
-    json.append("\"headers\": {\n");
-    bool firstHeader = true;
-    for (auto& header : cachedResponse.httpHeaderFields()) {
-        if (!firstHeader)
-            json.append(",\n");
-        firstHeader = false;
-        json.append("    ");
-        JSC::appendQuotedJSONStringToBuilder(json, header.key);
-        json.append(": ");
-        JSC::appendQuotedJSONStringToBuilder(json, header.value);
-    }
-    json.append("\n}\n");
-    json.append("}");
-    return true;
 }
 
 void Cache::dumpContentsToFile()
@@ -470,9 +379,11 @@ void Cache::dumpContentsToFile()
             WebCore::closeFile(handle);
             return;
         }
-        StringBuilder json;
-        if (!entryAsJSON(json, *entry))
+        auto cacheEntry = Entry::decode(*entry);
+        if (!cacheEntry)
             return;
+        StringBuilder json;
+        cacheEntry->asJSON(json);
         json.append(",\n");
         auto writeData = json.toString().utf8();
         WebCore::writeToFile(dumpFileHandle, writeData.data(), writeData.length());

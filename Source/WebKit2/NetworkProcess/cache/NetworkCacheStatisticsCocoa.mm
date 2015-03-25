@@ -262,32 +262,33 @@ void Statistics::recordRetrievalFailure(uint64_t webPageID, const Key& key, cons
     });
 }
 
-static String cachedEntryReuseFailureToDiagnosticKey(CachedEntryReuseFailure failure)
+static String cachedEntryReuseFailureToDiagnosticKey(UseDecision decision)
 {
-    switch (failure) {
-    case CachedEntryReuseFailure::VaryingHeaderMismatch:
+    switch (decision) {
+    case UseDecision::NoDueToVaryingHeaderMismatch:
         return WebCore::DiagnosticLoggingKeys::varyingHeaderMismatchKey();
-    case CachedEntryReuseFailure::MissingValidatorFields:
+    case UseDecision::NoDueToMissingValidatorFields:
         return WebCore::DiagnosticLoggingKeys::missingValidatorFieldsKey();
-    case CachedEntryReuseFailure::Other:
+    case UseDecision::NoDueToDecodeFailure:
         return WebCore::DiagnosticLoggingKeys::otherKey();
-    case CachedEntryReuseFailure::None:
+    case UseDecision::Use:
+    case UseDecision::Validate:
         ASSERT_NOT_REACHED();
         break;
     }
     return emptyString();
 }
 
-void Statistics::recordRetrievedCachedEntry(uint64_t webPageID, const Key& key, const WebCore::ResourceRequest& request, CachedEntryReuseFailure failure)
+void Statistics::recordRetrievedCachedEntry(uint64_t webPageID, const Key& key, const WebCore::ResourceRequest& request, UseDecision decision)
 {
     WebCore::URL requestURL = request.url();
-    if (failure == CachedEntryReuseFailure::None) {
+    if (decision == UseDecision::Use || decision == UseDecision::Validate) {
         LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s is in the cache and is used", webPageID, requestURL.string().ascii().data());
         NetworkProcess::singleton().logDiagnosticMessageWithResult(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::retrievalKey(), WebCore::DiagnosticLoggingResultPass, WebCore::ShouldSample::Yes);
         return;
     }
 
-    String diagnosticKey = cachedEntryReuseFailureToDiagnosticKey(failure);
+    String diagnosticKey = cachedEntryReuseFailureToDiagnosticKey(decision);
     LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s is in the cache but wasn't used, reason: %s", webPageID, requestURL.string().ascii().data(), diagnosticKey.utf8().data());
     NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::unusableCachedEntryKey(), diagnosticKey, WebCore::ShouldSample::Yes);
 }

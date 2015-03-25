@@ -1766,6 +1766,8 @@
 		E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */; };
 		E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */; };
 		E1EE53E711F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */; };
+		E413F59D1AC1ADC400345360 /* NetworkCacheEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = E413F59B1AC1ADB600345360 /* NetworkCacheEntry.h */; };
+		E413F59F1AC1AF9D00345360 /* NetworkCacheEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E413F59E1AC1AF9D00345360 /* NetworkCacheEntry.cpp */; };
 		E42E060F1AA7523400B11699 /* NetworkCacheIOChannelCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E42E060D1AA750E500B11699 /* NetworkCacheIOChannelCocoa.mm */; };
 		E42E06101AA7523B00B11699 /* NetworkCacheIOChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E060B1AA7440D00B11699 /* NetworkCacheIOChannel.h */; };
 		E42E06121AA75ABD00B11699 /* NetworkCacheData.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E06111AA75ABD00B11699 /* NetworkCacheData.h */; };
@@ -4015,6 +4017,8 @@
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
 		E1FEF39A190F76F300731658 /* com.apple.WebKit.Databases.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.Databases.sb.in; sourceTree = "<group>"; };
 		E1FEF39C190F791C00731658 /* DatabaseProcessIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseProcessIOS.mm; sourceTree = "<group>"; };
+		E413F59B1AC1ADB600345360 /* NetworkCacheEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheEntry.h; sourceTree = "<group>"; };
+		E413F59E1AC1AF9D00345360 /* NetworkCacheEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheEntry.cpp; sourceTree = "<group>"; };
 		E42E060B1AA7440D00B11699 /* NetworkCacheIOChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheIOChannel.h; sourceTree = "<group>"; };
 		E42E060D1AA750E500B11699 /* NetworkCacheIOChannelCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkCacheIOChannelCocoa.mm; sourceTree = "<group>"; };
 		E42E06111AA75ABD00B11699 /* NetworkCacheData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheData.h; sourceTree = "<group>"; };
@@ -7470,6 +7474,8 @@
 				E489D2871A0A2DB80078C06A /* NetworkCacheDecoder.h */,
 				E489D2881A0A2DB80078C06A /* NetworkCacheEncoder.cpp */,
 				E489D2891A0A2DB80078C06A /* NetworkCacheEncoder.h */,
+				E413F59E1AC1AF9D00345360 /* NetworkCacheEntry.cpp */,
+				E413F59B1AC1ADB600345360 /* NetworkCacheEntry.h */,
 				834B250E1A831A8D00CFB150 /* NetworkCacheFileSystemPosix.h */,
 				E42E060B1AA7440D00B11699 /* NetworkCacheIOChannel.h */,
 				E42E060D1AA750E500B11699 /* NetworkCacheIOChannelCocoa.mm */,
@@ -7829,6 +7835,7 @@
 				1A4A9F3312B844E2008FE984 /* PluginQuirks.h in Headers */,
 				7CD622781739D863005BD7FF /* PluginSandboxProfile.h in Headers */,
 				1A6FB7AF11E64B6800DB1371 /* PluginView.h in Headers */,
+				E413F59D1AC1ADC400345360 /* NetworkCacheEntry.h in Headers */,
 				E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */,
 				86F9536518FF58F5001DB2EF /* ProcessAssertion.h in Headers */,
 				BC1A7C581136E19C00FB7167 /* ProcessLauncher.h in Headers */,
@@ -9383,6 +9390,7 @@
 				1A2D957012848564001EB962 /* ChildProcess.cpp in Sources */,
 				BC82837B16B36A4F00A278FE /* ChildProcessEntryPoint.mm in Sources */,
 				A7E93CED1925331100A1DC48 /* ChildProcessIOS.mm in Sources */,
+				E413F59F1AC1AF9D00345360 /* NetworkCacheEntry.cpp in Sources */,
 				9F54F88F16488E87007DF81A /* ChildProcessMac.mm in Sources */,
 				E1513C66166EABB200149FCB /* ChildProcessProxy.cpp in Sources */,
 				1A2A4B0E1586A2240090C9E9 /* ColorSpaceData.mm in Sources */,

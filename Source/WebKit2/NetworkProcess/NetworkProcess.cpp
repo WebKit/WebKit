@@ -287,7 +287,7 @@ static void fetchDiskCacheEntries(SessionID sessionID, std::function<void (Vecto
                 return;
             }
 
-            origins->add(SecurityOrigin::create(entry->response.url()));
+            origins->add(SecurityOrigin::create(entry->response().url()));
         });
 
         return;
@@ -379,8 +379,8 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, std
         NetworkCache::singleton().traverse([completionHandler, originsToDelete, cacheKeysToDelete](const NetworkCache::Entry *entry) {
 
             if (entry) {
-                if (originsToDelete->contains(SecurityOrigin::create(entry->response.url())))
-                    cacheKeysToDelete->append(entry->storageEntry.key);
+                if (originsToDelete->contains(SecurityOrigin::create(entry->response().url())))
+                    cacheKeysToDelete->append(entry->key());
                 return;
             }
 
