@@ -44,7 +44,7 @@ public:
 
     void lock()
     {
-        while (!m_lock.compare_exchange_weak(false, true, std::memory_order_acquire))
+        while (!m_lock.compareExchangeWeak(false, true, std::memory_order_acquire))
             std::this_thread::yield();
     }
     

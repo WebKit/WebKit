@@ -2203,7 +2203,7 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     // I may be asked to scan myself more than once, and it may even happen concurrently.
     // To this end, use an atomic operation to check (and set) if I've been called already.
     // Only one thread may proceed past this point - whichever one wins the atomic set race.
-    bool setByMe = m_visitAggregateHasBeenCalled.compare_exchange_strong(false, true, std::memory_order_acquire);
+    bool setByMe = m_visitAggregateHasBeenCalled.compareExchangeStrong(false, true);
     if (!setByMe)
         return;
 #endif // ENABLE(PARALLEL_GC)

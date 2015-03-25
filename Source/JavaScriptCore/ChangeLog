@@ -1,3 +1,12 @@
+2015-03-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Change Atomic methods from using the_wrong_naming_conventions to using theRightNamingConventions. Also make seq_cst the default.
+
+        Rubber stamped by Geoffrey Garen.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+
 2015-03-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix formatting in BuiltinExecutables

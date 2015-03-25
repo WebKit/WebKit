@@ -81,18 +81,21 @@ namespace WTF {
 
 template<typename T>
 struct Atomic {
+    // Don't pass a non-default value for the order parameter unless you really know
+    // what you are doing and have thought about it very hard. The cost of seq_cst
+    // is usually not high enough to justify the risk.
 
-    T load(std::memory_order order) const { return value.load(order); }
+    T load(std::memory_order order = std::memory_order_seq_cst) const { return value.load(order); }
 
-    void store(T desired, std::memory_order order) { value.store(desired, order); }
+    void store(T desired, std::memory_order order = std::memory_order_seq_cst) { value.store(desired, order); }
 
-    bool compare_exchange_weak(T expected, T desired, std::memory_order order)
+    bool compareExchangeWeak(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
     {
         T expectedOrActual = expected;
         return value.compare_exchange_weak(expectedOrActual, desired, order);
     }
 
-    bool compare_exchange_strong(T expected, T desired, std::memory_order order)
+    bool compareExchangeStrong(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
     {
         T expectedOrActual = expected;
         return value.compare_exchange_strong(expectedOrActual, desired, order);

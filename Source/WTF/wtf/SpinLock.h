@@ -38,7 +38,7 @@ struct SpinLockBase {
 
     void lock()
     {
-        while (!m_lock.compare_exchange_weak(0, 1, std::memory_order_acquire))
+        while (!m_lock.compareExchangeWeak(0, 1, std::memory_order_acquire))
             std::this_thread::yield();
     }
 

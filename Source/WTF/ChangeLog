@@ -1,3 +1,21 @@
+2015-03-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Change Atomic methods from using the_wrong_naming_conventions to using theRightNamingConventions. Also make seq_cst the default.
+
+        Rubber stamped by Geoffrey Garen.
+
+        * wtf/Atomics.h:
+        (WTF::Atomic::load):
+        (WTF::Atomic::store):
+        (WTF::Atomic::compareExchangeWeak):
+        (WTF::Atomic::compareExchangeStrong):
+        (WTF::Atomic::compare_exchange_weak): Deleted.
+        (WTF::Atomic::compare_exchange_strong): Deleted.
+        * wtf/ByteSpinLock.h:
+        (WTF::ByteSpinLock::lock):
+        * wtf/SpinLock.h:
+        (WTF::SpinLockBase::lock):
+
 2015-03-24  Beth Dakin  <bdakin@apple.com>
 
         Add events related to force click gesture
