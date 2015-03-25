@@ -15182,7 +15182,7 @@
     <ClInclude Include="..\html\canvas\WebGLVertexArrayObject.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
-    <ClInclude Include="..\html\canvas\WebGLVertexArrayObjectBase.h”>
+    <ClInclude Include="..\html\canvas\WebGLVertexArrayObjectBase.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLQuery.h">

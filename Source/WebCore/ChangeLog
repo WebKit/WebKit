@@ -1,3 +1,15 @@
+2015-03-25  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Illegal character in project file.
+        https://bugs.webkit.org/show_bug.cgi?id=143051
+
+        Reviewed by Brent Fulgham.
+
+        There is an illegal character in the WebCore project filter.
+        WebCore files are shown unfiltered.
+
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2015-03-25  David Hyatt  <hyatt@apple.com>
 
         Add a pref to enable the new block-inside-inline model
