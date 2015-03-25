@@ -178,8 +178,8 @@ inline void MapDataImpl<Entry, JSIterator>::replaceAndPackBackingStore(Entry* de
     for (int32_t i = 0; i < m_size; i++) {
         Entry& entry = m_entries[i];
         if (!entry.key()) {
-            m_iterators.forEach([i](JSIterator* iterator, JSIterator*) {
-                iterator->iteratorData()->didRemoveEntry(i);
+            m_iterators.forEach([newEnd](JSIterator* iterator, JSIterator*) {
+                iterator->iteratorData()->didRemoveEntry(newEnd);
             });
             continue;
         }

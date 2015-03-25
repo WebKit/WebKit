@@ -74,3 +74,24 @@ for (var [elm, _] of map) {
     throw new Error("unreeachable.");
 }
 
+var map = new Map();
+for (var i = 0; i < 5; ++i)
+    map.set(i, i);
+testValue(map.size, 5);
+var iter = map.keys();
+testValue(iter.next().value, 0);
+testValue(iter.next().value, 1);
+testValue(iter.next().value, 2);
+testValue(iter.next().value, 3);
+map.delete(0);
+map.delete(1);
+map.delete(2);
+map.delete(3);
+// It will cause MapData packing.
+for (var i = 5; i < 1000; ++i)
+    map.set(i, i);
+gc();
+for (var i = 4; i < 1000; ++i)
+    testValue(iter.next().value, i);
+testValue(iter.next().value, undefined);
+

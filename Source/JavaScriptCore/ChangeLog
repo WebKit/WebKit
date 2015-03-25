@@ -1,3 +1,68 @@
+2015-03-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        New map and set modification tests in r181922 fails
+        https://bugs.webkit.org/show_bug.cgi?id=143031
+
+        Reviewed and tweaked by Geoffrey Garen.
+
+        When packing Map/Set backing store, we need to decrement Map/Set iterator's m_index
+        to adjust for the packed backing store.
+
+        Consider the following map data.
+
+        x: deleted, o: exists
+        0 1 2 3 4
+        x x x x o
+
+        And iterator with m_index 3.
+
+        When packing the map data, map data will become,
+
+        0
+        o
+
+        At that time, we perfom didRemoveEntry 4 times on iterators.
+        times => m_index/index/result
+        1 => 3/0/dec
+        2 => 2/1/dec
+        3 => 1/2/nothing
+        4 => 1/3/nothing
+
+        After iteration, iterator's m_index becomes 1. But we expected that becomes 0.
+        This is because if we use decremented m_index for comparison,
+        while provided deletedIndex is the index in old storage, m_index is the index in partially packed storage.
+
+        In this patch, we compare against the packed index instead.
+        times => m_index/packedIndex/result
+        1 => 3/0/dec
+        2 => 2/0/dec
+        3 => 1/0/dec
+        4 => 0/0/nothing
+
+        So m_index becomes 0 as expected.
+
+        And according to the spec, once the iterator is closed (becomes done: true),
+        its internal [[Map]]/[[Set]] is set to undefined.
+        So after the iterator is finished, we don't revive the iterator (e.g. by clearing m_index = 0).
+
+        In this patch, we change 2 things.
+        1.
+        Compare an iterator's index against the packed index when removing an entry.
+
+        2.
+        If the iterator is closed (isFinished()), we don't apply adjustment to the iterator.
+
+        * runtime/MapData.h:
+        (JSC::MapDataImpl::IteratorData::finish):
+        (JSC::MapDataImpl::IteratorData::isFinished):
+        (JSC::MapDataImpl::IteratorData::didRemoveEntry):
+        (JSC::MapDataImpl::IteratorData::didRemoveAllEntries):
+        (JSC::MapDataImpl::IteratorData::startPackBackingStore):
+        * runtime/MapDataInlines.h:
+        (JSC::JSIterator>::replaceAndPackBackingStore):
+        * tests/stress/modify-map-during-iteration.js:
+        * tests/stress/modify-set-during-iteration.js:
+
 2015-03-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Setter should have a single formal parameter, Getter no parameters

@@ -70,3 +70,22 @@ for (var elm of iter) {
     throw new Error("unreeachable.");
 }
 
+var set = new Set([0, 1, 2, 3, 4]);
+var iter = set[Symbol.iterator]();
+testValue(set.size, 5);
+testValue(iter.next().value, 0);
+testValue(iter.next().value, 1);
+testValue(iter.next().value, 2);
+testValue(iter.next().value, 3);
+set.delete(0);
+set.delete(1);
+set.delete(2);
+set.delete(3);
+// It will cause MapData packing.
+for (var i = 5; i < 1000; ++i)
+    set.add(i);
+gc();
+for (var i = 4; i < 1000; ++i)
+    testValue(iter.next().value, i);
+testValue(iter.next().value, undefined);
+

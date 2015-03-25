@@ -54,15 +54,23 @@ public:
         IteratorData(const MapDataImpl*);
         bool next(WTF::KeyValuePair<JSValue, JSValue>&);
 
-        void didRemoveEntry(int32_t index)
+        // This function is called while packing a map's backing store. The
+        // passed-in index is the new index the entry would have after packing.
+        void didRemoveEntry(int32_t packedIndex)
         {
-            if (m_index <= index)
+            if (isFinished())
                 return;
+
+            if (m_index <= packedIndex)
+                return;
+
             --m_index;
         }
 
         void didRemoveAllEntries()
         {
+            if (isFinished())
+                return;
             m_index = 0;
         }
 
