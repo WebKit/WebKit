@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CodeOrigin.h"
 #include "DFGCommon.h"
 #include "DumpContext.h"
 #include "MacroAssembler.h"

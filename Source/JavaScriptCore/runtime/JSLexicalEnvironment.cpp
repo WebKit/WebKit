@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #include "config.h"
 #include "JSLexicalEnvironment.h"
 
-#include "Arguments.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSCInlines.h"
@@ -40,27 +39,19 @@ namespace JSC {
 
 const ClassInfo JSLexicalEnvironment::s_info = { "JSLexicalEnvironment", &Base::s_info, 0, CREATE_METHOD_TABLE(JSLexicalEnvironment) };
 
-void JSLexicalEnvironment::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-
-    for (int i = 0; i < thisObject->symbolTable()->captureCount(); ++i)
-        visitor.append(&thisObject->storage()[i]);
-}
-
 inline bool JSLexicalEnvironment::symbolTableGet(PropertyName propertyName, PropertySlot& slot)
 {
     SymbolTableEntry entry = symbolTable()->inlineGet(propertyName.uid());
     if (entry.isNull())
         return false;
 
+    ScopeOffset offset = entry.scopeOffset();
+
     // Defend against the inspector asking for a var after it has been optimized out.
-    if (!isValid(entry))
+    if (!isValid(offset))
         return false;
 
-    slot.setValue(this, DontEnum, registerAt(entry.getIndex()).get());
+    slot.setValue(this, DontEnum, variableAt(offset).get());
     return true;
 }
 
@@ -70,11 +61,13 @@ inline bool JSLexicalEnvironment::symbolTableGet(PropertyName propertyName, Prop
     if (entry.isNull())
         return false;
 
+    ScopeOffset offset = entry.scopeOffset();
+
     // Defend against the inspector asking for a var after it has been optimized out.
-    if (!isValid(entry))
+    if (!isValid(offset))
         return false;
 
-    descriptor.setDescriptor(registerAt(entry.getIndex()).get(), entry.getAttributes());
+    descriptor.setDescriptor(variableAt(offset).get(), entry.getAttributes());
     return true;
 }
 
@@ -95,12 +88,13 @@ inline bool JSLexicalEnvironment::symbolTablePut(ExecState* exec, PropertyName p
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return true;
         }
+        ScopeOffset offset = iter->value.scopeOffset();
         // Defend against the inspector asking for a var after it has been optimized out.
-        if (!isValid(iter->value))
+        if (!isValid(offset))
             return false;
         if (VariableWatchpointSet* set = iter->value.watchpointSet())
-            set->invalidate(VariableWriteFireDetail(this, propertyName)); // Don't mess around - if we had found this statically, we would have invcalidated it.
-        reg = &registerAt(iter->value.getIndex());
+            set->invalidate(VariableWriteFireDetail(this, propertyName)); // Don't mess around - if we had found this statically, we would have invalidated it.
+        reg = &variableAt(offset);
     }
     reg->set(vm, this, value);
     return true;
@@ -116,7 +110,7 @@ void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, ExecSta
         for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
             if (it->value.getAttributes() & DontEnum && !shouldIncludeDontEnumProperties(mode))
                 continue;
-            if (!thisObject->isValid(it->value))
+            if (!thisObject->isValid(it->value.scopeOffset()))
                 continue;
             propertyNames.add(Identifier(exec, it->key.get()));
         }
@@ -137,11 +131,13 @@ inline bool JSLexicalEnvironment::symbolTablePutWithAttributes(VM& vm, PropertyN
             return false;
         SymbolTableEntry& entry = iter->value;
         ASSERT(!entry.isNull());
-        if (!isValid(entry))
+        
+        ScopeOffset offset = entry.scopeOffset();
+        if (!isValid(offset))
             return false;
         
         entry.setAttributes(attributes);
-        reg = &registerAt(entry.getIndex());
+        reg = &variableAt(offset);
     }
     reg->set(vm, this, value);
     return true;

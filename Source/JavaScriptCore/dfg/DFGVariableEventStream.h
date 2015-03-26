@@ -32,6 +32,7 @@
 #include "DFGMinifiedGraph.h"
 #include "DFGVariableEvent.h"
 #include "Operands.h"
+#include "ValueRecovery.h"
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {

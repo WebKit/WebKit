@@ -35,7 +35,6 @@ namespace JSC {
 class LinkBuffer;
 
 namespace DFG {
-class Graph;
 struct Node;
 }
 
@@ -50,7 +49,7 @@ public:
     
     static unsigned numSpillSlotsNeeded();
     
-    void emit(CCallHelpers&, DFG::Graph&, int32_t spillSlotsOffset);
+    void emit(CCallHelpers&, int32_t spillSlotsOffset);
     void link(VM&, LinkBuffer&, CodeLocationLabel exceptionHandler);
     
     unsigned stackmapID() const { return m_stackmapID; }

@@ -47,14 +47,6 @@ JSNameScope* JSNameScope::create(VM& vm, JSGlobalObject* globalObject, JSScope* 
     return nullptr;
 }
 
-void JSNameScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    JSNameScope* thisObject = jsCast<JSNameScope*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_registerStore);
-}
-
 JSValue JSNameScope::toThis(JSCell*, ExecState* exec, ECMAMode ecmaMode)
 {
     if (ecmaMode == StrictMode)

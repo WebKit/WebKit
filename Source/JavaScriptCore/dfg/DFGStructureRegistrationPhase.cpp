@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -118,12 +118,19 @@ public:
                     registerStructure(m_graph.globalObjectFor(node->origin.semantic)->activationStructure());
                     break;
                     
+                case CreateDirectArguments:
+                    registerStructure(m_graph.globalObjectFor(node->origin.semantic)->directArgumentsStructure());
+                    break;
+                    
+                case CreateScopedArguments:
+                    registerStructure(m_graph.globalObjectFor(node->origin.semantic)->scopedArgumentsStructure());
+                    break;
+                    
                 case NewRegexp:
                     registerStructure(m_graph.globalObjectFor(node->origin.semantic)->regExpStructure());
                     break;
                     
-                case NewFunctionExpression:
-                case NewFunctionNoCheck:
+                case NewFunction:
                     registerStructure(m_graph.globalObjectFor(node->origin.semantic)->functionStructure());
                     break;
                     

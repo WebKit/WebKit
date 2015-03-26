@@ -63,7 +63,7 @@ public:
 
         // Create a SSACalculator::Variable for every root VariableAccessData.
         for (VariableAccessData& variable : m_graph.m_variableAccessData) {
-            if (!variable.isRoot() || variable.isCaptured())
+            if (!variable.isRoot())
                 continue;
             
             SSACalculator::Variable* ssaVariable = m_calculator.newVariable();
@@ -87,8 +87,6 @@ public:
                     continue;
                 
                 VariableAccessData* variable = node->variableAccessData();
-                if (variable->isCaptured())
-                    continue;
                 
                 Node* childNode;
                 if (node->op() == SetLocal)
@@ -190,10 +188,8 @@ public:
         //
         //   - MovHint has KillLocal prepended to it.
         //
-        //   - GetLocal over captured variables lose their phis and become GetStack.
-        //
-        //   - GetLocal over uncaptured variables die and get replaced with references to the node
-        //     specified by valueForOperand.
+        //   - GetLocal die and get replaced with references to the node specified by
+        //     valueForOperand.
         //
         //   - SetLocal turns into PutStack if it's flushed, or turns into a Check otherwise.
         //
@@ -218,8 +214,6 @@ public:
                         continue;
                     
                     VariableAccessData* variable = nodeAtHead->variableAccessData();
-                    if (variable->isCaptured())
-                        continue;
                     
                     if (verbose)
                         dataLog("Considering live variable ", VariableAccessDataDump(m_graph, variable), " at head of block ", *block, "\n");
@@ -283,18 +277,16 @@ public:
                 case SetLocal: {
                     VariableAccessData* variable = node->variableAccessData();
                     
-                    if (variable->isCaptured() || !!(node->flags() & NodeIsFlushed)) {
+                    if (!!(node->flags() & NodeIsFlushed)) {
                         node->convertToPutStack(
                             m_graph.m_stackAccessData.add(
                                 variable->local(), variable->flushFormat()));
                     } else
                         node->setOpAndDefaultFlags(Check);
                     
-                    if (!variable->isCaptured()) {
-                        if (verbose)
-                            dataLog("Mapping: ", variable->local(), " -> ", node->child1().node(), "\n");
-                        valueForOperand.operand(variable->local()) = node->child1().node();
-                    }
+                    if (verbose)
+                        dataLog("Mapping: ", variable->local(), " -> ", node->child1().node(), "\n");
+                    valueForOperand.operand(variable->local()) = node->child1().node();
                     break;
                 }
                     
@@ -307,11 +299,6 @@ public:
                 case GetLocal: {
                     VariableAccessData* variable = node->variableAccessData();
                     node->children.reset();
-                    
-                    if (variable->isCaptured()) {
-                        node->convertToGetStack(m_graph.m_stackAccessData.add(variable->local(), variable->flushFormat()));
-                        break;
-                    }
                     
                     node->convertToPhantom();
                     if (verbose)
@@ -329,19 +316,7 @@ public:
                 case PhantomLocal: {
                     ASSERT(node->child1().useKind() == UntypedUse);
                     VariableAccessData* variable = node->variableAccessData();
-                    if (variable->isCaptured()) {
-                        // This is a fun case. We could have a captured variable that had some
-                        // or all of its uses strength reduced to phantoms rather than flushes.
-                        // SSA conversion will currently still treat it as flushed, in the sense
-                        // that it will just keep the SetLocal. Therefore, there is nothing that
-                        // needs to be done here: we don't need to also keep the source value
-                        // alive. And even if we did want to keep the source value alive, we
-                        // wouldn't be able to, because the variablesAtHead value for a captured
-                        // local wouldn't have been computed by the Phi reduction algorithm
-                        // above.
-                        node->children.reset();
-                    } else
-                        node->child1() = valueForOperand.operand(variable->local())->defaultEdge();
+                    node->child1() = valueForOperand.operand(variable->local())->defaultEdge();
                     node->convertToPhantom();
                     break;
                 }
@@ -402,12 +377,9 @@ public:
             FlushFormat format = FlushedJSValue;
 
             Node* node = m_argumentMapping.get(m_graph.m_arguments[i]);
-
-            // m_argumentMapping.get could return null for a captured local. That's fine. We only
-            // track the argument loads of those arguments for which we speculate type. We don't
-            // speculate type for captured arguments.
-            if (node)
-                format = node->stackAccessData()->format;
+            
+            RELEASE_ASSERT(node);
+            format = node->stackAccessData()->format;
             
             m_graph.m_argumentFormats[i] = format;
             m_graph.m_arguments[i] = node; // Record the load that loads the arguments for the benefit of exit profiling.

@@ -26,11 +26,11 @@
 #include "config.h"
 #include "LLIntSlowPaths.h"
 
-#include "Arguments.h"
 #include "ArrayConstructor.h"
 #include "CallFrame.h"
 #include "CommonSlowPaths.h"
 #include "CommonSlowPathsExceptions.h"
+#include "Error.h"
 #include "ErrorHandlingScope.h"
 #include "ExceptionFuzz.h"
 #include "GetterSetter.h"
@@ -254,12 +254,11 @@ LLINT_SLOW_PATH_DECL(trace_arityCheck_for_construct)
 
 LLINT_SLOW_PATH_DECL(trace)
 {
-    dataLogF("%p / %p: executing bc#%zu, %s, scope %p, pc = %p\n",
+    dataLogF("%p / %p: executing bc#%zu, %s, pc = %p\n",
             exec->codeBlock(),
             exec,
             static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
-            opcodeNames[exec->vm().interpreter->getOpcodeID(pc[0].u.opcode)],
-            exec->uncheckedR(exec->codeBlock()->scopeRegister().offset()).Register::scope(), pc);
+            opcodeNames[exec->vm().interpreter->getOpcodeID(pc[0].u.opcode)], pc);
     if (exec->vm().interpreter->getOpcodeID(pc[0].u.opcode) == op_enter) {
         dataLogF("Frame will eventually return to %p\n", exec->returnPC().value());
         *bitwise_cast<volatile char*>(exec->returnPC().value());
@@ -507,7 +506,6 @@ LLINT_SLOW_PATH_DECL(slow_path_create_lexical_environment)
     int scopeReg = pc[2].u.operand;
     JSScope* scope = exec->uncheckedR(scopeReg).Register::scope();
     JSLexicalEnvironment* lexicalEnvironment = JSLexicalEnvironment::create(vm, exec, scope, exec->codeBlock());
-    exec->uncheckedR(pc[2].u.operand) = lexicalEnvironment;
     LLINT_RETURN(JSValue(lexicalEnvironment));
 }
 
@@ -753,24 +751,6 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_val)
 {
     LLINT_BEGIN();
     LLINT_RETURN_PROFILED(op_get_by_val, getByVal(exec, LLINT_OP_C(2).jsValue(), LLINT_OP_C(3).jsValue()));
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_get_argument_by_val)
-{
-    LLINT_BEGIN();
-    JSValue arguments = LLINT_OP(2).jsValue();
-    if (!arguments) {
-        int lexicalEnvironmentReg = pc[4].u.operand;
-        JSLexicalEnvironment* lexicalEnvironment = VirtualRegister(lexicalEnvironmentReg).isValid() ?
-            exec->uncheckedR(lexicalEnvironmentReg).lexicalEnvironment() : nullptr;
-        arguments = JSValue(Arguments::create(vm, exec, lexicalEnvironment));
-
-        LLINT_CHECK_EXCEPTION();
-        LLINT_OP(2) = arguments;
-        exec->uncheckedR(unmodifiedArgumentsRegister(VirtualRegister(pc[2].u.operand)).offset()) = arguments;
-    }
-    
-    LLINT_RETURN_PROFILED(op_get_argument_by_val, getByVal(exec, arguments, LLINT_OP_C(3).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
@@ -1239,15 +1219,6 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
     LLINT_CALL_RETURN(exec, execCallee, LLInt::getCodePtr(getHostCallReturnValue));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_tear_off_arguments)
-{
-    LLINT_BEGIN();
-    ASSERT(exec->codeBlock()->usesArguments());
-    Arguments* arguments = jsCast<Arguments*>(exec->uncheckedR(VirtualRegister(pc[1].u.operand).offset()).jsValue());
-    arguments->tearOff(exec);
-    LLINT_END();
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_strcat)
 {
     LLINT_BEGIN();
@@ -1407,7 +1378,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
     ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
     if (modeAndType.type() == LocalClosureVar) {
         JSLexicalEnvironment* environment = jsCast<JSLexicalEnvironment*>(scope);
-        environment->registerAt(pc[6].u.operand).set(vm, environment, value);
+        environment->variableAt(ScopeOffset(pc[6].u.operand)).set(vm, environment, value);
         if (VariableWatchpointSet* set = pc[5].u.watchpointSet)
             set->notifyWrite(vm, value, "Executed op_put_scope<LocalClosureVar>");
         LLINT_END();

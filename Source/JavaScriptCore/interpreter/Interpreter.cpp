@@ -30,11 +30,12 @@
 #include "config.h"
 #include "Interpreter.h"
 
-#include "Arguments.h"
 #include "BatchedTransitionOptimizer.h"
 #include "CallFrameClosure.h"
 #include "CallFrameInlines.h"
+#include "ClonedArguments.h"
 #include "CodeBlock.h"
+#include "DirectArguments.h"
 #include "Heap.h"
 #include "Debugger.h"
 #include "DebuggerCallFrame.h"
@@ -44,6 +45,7 @@
 #include "GetterSetter.h"
 #include "JSArray.h"
 #include "JSBoundFunction.h"
+#include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"
 #include "JSNameScope.h"
 #include "JSNotAnObject.h"
@@ -55,13 +57,13 @@
 #include "LegacyProfiler.h"
 #include "LiteralParser.h"
 #include "ObjectPrototype.h"
-#include "JSCInlines.h"
 #include "Parser.h"
 #include "ProtoCallFrame.h"
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
 #include "Register.h"
 #include "SamplingTool.h"
+#include "ScopedArguments.h"
 #include "StackAlignment.h"
 #include "StackVisitor.h"
 #include "StrictEvalActivation.h"
@@ -136,20 +138,34 @@ JSValue eval(CallFrame* callFrame)
 
 unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVarArgOffset)
 {
+    if (UNLIKELY(!arguments.isCell())) {
+        if (arguments.isUndefinedOrNull())
+            return 0;
+        
+        callFrame->vm().throwException(callFrame, createInvalidFunctionApplyParameterError(callFrame, arguments));
+        return 0;
+    }
+    
+    JSCell* cell = arguments.asCell();
     unsigned length;
-    if (!arguments)
-        length = callFrame->argumentCount();
-    else if (arguments.isUndefinedOrNull())
-        length = 0;
-    else if (!arguments.isObject()) {
+    switch (cell->type()) {
+    case DirectArgumentsType:
+        length = jsCast<DirectArguments*>(cell)->length(callFrame);
+        break;
+    case ScopedArgumentsType:
+        length =jsCast<ScopedArguments*>(cell)->length(callFrame);
+        break;
+    case StringType:
         callFrame->vm().throwException(callFrame, createInvalidFunctionApplyParameterError(callFrame,  arguments));
         return 0;
-    } else if (asObject(arguments)->classInfo() == Arguments::info())
-        length = asArguments(arguments)->length(callFrame);
-    else if (isJSArray(arguments))
-        length = asArray(arguments)->length();
-    else
-        length = asObject(arguments)->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
+    default:
+        ASSERT(arguments.isObject());
+        if (isJSArray(cell))
+            length = jsCast<JSArray*>(cell)->length();
+        else
+            length = jsCast<JSObject*>(cell)->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
+        break;
+    }
     
     if (length >= firstVarArgOffset)
         length -= firstVarArgOffset;
@@ -164,7 +180,7 @@ unsigned sizeFrameForVarargs(CallFrame* callFrame, JSStack* stack, JSValue argum
     unsigned length = sizeOfVarargs(callFrame, arguments, firstVarArgOffset);
     
     CallFrame* calleeFrame = calleeFrameForVarargs(callFrame, numUsedStackSlots, length + 1);
-    if (length > Arguments::MaxArguments || !stack->ensureCapacityFor(calleeFrame->registers())) {
+    if (length > maxArguments || !stack->ensureCapacityFor(calleeFrame->registers())) {
         throwStackOverflowError(callFrame);
         return 0;
     }
@@ -174,30 +190,31 @@ unsigned sizeFrameForVarargs(CallFrame* callFrame, JSStack* stack, JSValue argum
 
 void loadVarargs(CallFrame* callFrame, VirtualRegister firstElementDest, JSValue arguments, uint32_t offset, uint32_t length)
 {
-    if (!arguments) { // f.apply(x, arguments), with arguments unmodified.
-        for (size_t i = 0; i < length; ++i)
-            callFrame->r(firstElementDest + i) = callFrame->argumentAfterCapture(i + offset);
-        return;
-    }
-    
-    if (arguments.isUndefinedOrNull())
+    if (UNLIKELY(!arguments.isCell()))
         return;
     
-    if (asObject(arguments)->classInfo() == Arguments::info()) {
-        asArguments(arguments)->copyToArguments(callFrame, firstElementDest, offset, length);
+    JSCell* cell = arguments.asCell();
+    switch (cell->type()) {
+    case DirectArgumentsType:
+        jsCast<DirectArguments*>(cell)->copyToArguments(callFrame, firstElementDest, offset, length);
         return;
-    }
-    
-    if (isJSArray(arguments)) {
-        asArray(arguments)->copyToArguments(callFrame, firstElementDest, offset, length);
+    case ScopedArgumentsType:
+        jsCast<ScopedArguments*>(cell)->copyToArguments(callFrame, firstElementDest, offset, length);
         return;
-    }
-    
-    for (unsigned i = 0; i < length; ++i) {
-        callFrame->r(firstElementDest + i) = asObject(arguments)->get(callFrame, i + offset);
-        if (UNLIKELY(callFrame->vm().exception()))
+    default: {
+        ASSERT(arguments.isObject());
+        JSObject* object = jsCast<JSObject*>(cell);
+        if (isJSArray(object)) {
+            jsCast<JSArray*>(object)->copyToArguments(callFrame, firstElementDest, offset, length);
             return;
-    }
+        }
+        unsigned i;
+        for (i = 0; i < length && object->canGetIndexQuickly(i + offset); ++i)
+            callFrame->r(firstElementDest + i) = object->getIndexQuickly(i + offset);
+        for (; i < length; ++i)
+            callFrame->r(firstElementDest + i) = object->get(callFrame, i + offset);
+        return;
+    } }
 }
 
 void setupVarargsFrame(CallFrame* callFrame, CallFrame* newCallFrame, JSValue arguments, uint32_t offset, uint32_t length)
@@ -384,25 +401,6 @@ static bool unwindCallFrame(StackVisitor& visitor)
         else
             debugger->didExecuteProgram(callFrame);
         ASSERT(!callFrame->hadException());
-    }
-
-    if (CodeBlock* codeBlock = visitor->codeBlock()) {
-        if (codeBlock->codeType() == FunctionCode && codeBlock->needsActivation()) {
-#if ENABLE(DFG_JIT)
-            RELEASE_ASSERT(!visitor->isInlinedFrame());
-#endif
-        }
-
-        if (codeBlock->codeType() == FunctionCode && codeBlock->usesArguments()) {
-            if (Arguments* arguments = visitor->existingArguments()) {
-#if ENABLE(DFG_JIT)
-                if (visitor->isInlinedFrame())
-                    arguments->tearOff(callFrame, visitor->inlineCallFrame());
-                else
-#endif
-                    arguments->tearOff(callFrame);
-            }
-        }
     }
 
     return !visitor->callerIsVMEntryFrame();

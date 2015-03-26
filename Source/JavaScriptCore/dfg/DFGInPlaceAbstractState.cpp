@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -129,11 +129,7 @@ void InPlaceAbstractState::initialize()
         }
     }
     for (size_t i = 0; i < root->valuesAtHead.numberOfLocals(); ++i) {
-        Node* node = root->variablesAtHead.local(i);
-        if (node && node->variableAccessData()->isCaptured())
-            root->valuesAtHead.local(i).makeHeapTop();
-        else
-            root->valuesAtHead.local(i).clear();
+        root->valuesAtHead.local(i).clear();
         root->valuesAtTail.local(i).clear();
     }
     for (BlockIndex blockIndex = 1 ; blockIndex < m_graph.numBlocks(); ++blockIndex) {
@@ -263,40 +259,31 @@ bool InPlaceAbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
         
     AbstractValue source;
     
-    if (node->variableAccessData()->isCaptured()) {
-        // If it's captured then we know that whatever value was stored into the variable last is the
-        // one we care about. This is true even if the variable at tail is dead, which might happen if
-        // the last thing we did to the variable was a GetLocal and then ended up not using the
-        // GetLocal's result.
-        
+    switch (node->op()) {
+    case Phi:
+    case SetArgument:
+    case PhantomLocal:
+    case Flush:
+        // The block transfers the value from head to tail.
         source = inVariable;
-    } else {
-        switch (node->op()) {
-        case Phi:
-        case SetArgument:
-        case PhantomLocal:
-        case Flush:
-            // The block transfers the value from head to tail.
-            source = inVariable;
-            break;
+        break;
             
-        case GetLocal:
-            // The block refines the value with additional speculations.
-            source = forNode(node);
-            break;
+    case GetLocal:
+        // The block refines the value with additional speculations.
+        source = forNode(node);
+        break;
             
-        case SetLocal:
-            // The block sets the variable, and potentially refines it, both
-            // before and after setting it.
-            source = forNode(node->child1());
-            if (node->variableAccessData()->flushFormat() == FlushedDouble)
-                RELEASE_ASSERT(!(source.m_type & ~SpecFullDouble));
-            break;
+    case SetLocal:
+        // The block sets the variable, and potentially refines it, both
+        // before and after setting it.
+        source = forNode(node->child1());
+        if (node->variableAccessData()->flushFormat() == FlushedDouble)
+            RELEASE_ASSERT(!(source.m_type & ~SpecFullDouble));
+        break;
         
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
     
     if (destination == source) {

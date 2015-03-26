@@ -30,7 +30,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeOrigin.h"
 #include "Options.h"
 #include "VirtualRegister.h"
 
@@ -193,12 +192,10 @@ enum GraphForm {
     // expect to be live at the head, and which locals they make available at the
     // tail. ThreadedCPS form also implies that:
     //
-    // - GetLocals and SetLocals to uncaptured variables are not redundant within
-    //   a basic block.
+    // - GetLocals and SetLocals are not redundant within a basic block.
     //
     // - All GetLocals and Flushes are linked directly to the last access point
-    //   of the variable, which must not be another GetLocal if the variable is
-    //   uncaptured.
+    //   of the variable, which must not be another GetLocal.
     //
     // - Phantom(Phi) is not legal, but PhantomLocal is.
     //

@@ -32,7 +32,7 @@ namespace JSC { namespace FTL {
 
 void ExitArgument::dump(PrintStream& out) const
 {
-    out.print("arg", argument(), " as ", format());
+    out.print("#", argument(), " as ", format());
 }
 
 } } // namespace JSC::FTL

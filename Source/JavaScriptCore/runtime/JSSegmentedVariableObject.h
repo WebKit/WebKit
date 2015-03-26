@@ -57,24 +57,23 @@ class JSSegmentedVariableObject : public JSSymbolTableObject {
 public:
     typedef JSSymbolTableObject Base;
 
-    WriteBarrier<Unknown>& registerAt(int index) { return m_registers[index]; }
+    WriteBarrier<Unknown>& variableAt(ScopeOffset offset) { return m_variables[offset.offset()]; }
     
     // This is a slow method call, which searches the register bank to find the index
     // given a pointer. It will CRASH() if it does not find the register. Only use this
     // in debug code (like bytecode dumping).
-    JS_EXPORT_PRIVATE int findRegisterIndex(void*);
+    JS_EXPORT_PRIVATE ScopeOffset findVariableIndex(void*);
     
-    WriteBarrier<Unknown>* assertRegisterIsInThisObject(WriteBarrier<Unknown>* registerPointer)
+    WriteBarrier<Unknown>* assertVariableIsInThisObject(WriteBarrier<Unknown>* variablePointer)
     {
-#if !ASSERT_DISABLED
-        findRegisterIndex(registerPointer);
-#endif
-        return registerPointer;
+        if (!ASSERT_DISABLED)
+            findVariableIndex(variablePointer);
+        return variablePointer;
     }
     
     // Adds numberOfRegistersToAdd registers, initializes them to Undefined, and returns
     // the index of the first one added.
-    JS_EXPORT_PRIVATE int addRegisters(int numberOfRegistersToAdd);
+    JS_EXPORT_PRIVATE ScopeOffset addVariables(unsigned numberOfVariablesToAdd);
     
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
@@ -90,7 +89,7 @@ protected:
         m_symbolTable.set(vm, this, SymbolTable::create(vm));
     }
     
-    SegmentedVector<WriteBarrier<Unknown>, 16> m_registers;
+    SegmentedVector<WriteBarrier<Unknown>, 16> m_variables;
     ConcurrentJITLock m_lock;
 };
 

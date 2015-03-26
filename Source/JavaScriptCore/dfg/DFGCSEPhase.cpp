@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -326,8 +326,8 @@ private:
                 return;
         
             if (m_node->op() == GetLocal) {
-                // For uncaptured locals, usually the CPS rethreading phase does this. But it's OK
-                // for us to mess with locals - regardless of their capturedness - so long as:
+                // Usually the CPS rethreading phase does this. But it's OK for us to mess with
+                // locals so long as:
                 // 
                 // - We dethread the graph. Any changes we make may invalidate the assumptions of
                 //   our CPS form, particularly if this GetLocal is linked to the variablesAtTail.
@@ -466,7 +466,7 @@ public:
         // clobbering the value. So, we just search for all of the like values that have been
         // computed. We pick one that is in a block that dominates ours. Note that this means that
         // a PureValue will map to a list of nodes, since there may be many places in the control
-        // flow graph that compute a value but only one of them that dominates us. we may build up
+        // flow graph that compute a value but only one of them that dominates us. We may build up
         // a large list of nodes that compute some value in the case of gnarly control flow. This
         // is probably OK.
         

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +71,6 @@ class CommonData {
 public:
     CommonData()
         : isStillValid(true)
-        , machineCaptureStart(std::numeric_limits<int>::max())
         , frameRegisterCount(std::numeric_limits<unsigned>::max())
         , requiredRegisterCountForExit(std::numeric_limits<unsigned>::max())
     { }
@@ -103,9 +102,6 @@ public:
     bool allTransitionsHaveBeenMarked; // Initialized and used on every GC.
     bool isStillValid;
     
-    int machineCaptureStart;
-    std::unique_ptr<SlowArgument[]> slowArguments;
-
 #if USE(JSVALUE32_64)
     std::unique_ptr<Bag<double>> doubleConstants;
 #endif

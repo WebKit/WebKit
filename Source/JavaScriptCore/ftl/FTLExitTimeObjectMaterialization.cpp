@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,9 @@ namespace JSC { namespace FTL {
 
 using namespace JSC::DFG;
 
-ExitTimeObjectMaterialization::ExitTimeObjectMaterialization(NodeType type)
+ExitTimeObjectMaterialization::ExitTimeObjectMaterialization(NodeType type, CodeOrigin codeOrigin)
     : m_type(type)
+    , m_origin(codeOrigin)
 {
 }
 
@@ -56,6 +57,12 @@ ExitValue ExitTimeObjectMaterialization::get(PromotedLocationDescriptor location
             return value.value();
     }
     return ExitValue();
+}
+
+void ExitTimeObjectMaterialization::accountForLocalsOffset(int offset)
+{
+    for (ExitPropertyValue& property : m_properties)
+        property = property.withLocalsOffset(offset);
 }
 
 void ExitTimeObjectMaterialization::dump(PrintStream& out) const

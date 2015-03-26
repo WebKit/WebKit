@@ -42,6 +42,9 @@ else
 end
 const SlotSize = 8
 
+const JSEnvironmentRecord_variables = (sizeof JSEnvironmentRecord + SlotSize - 1) & ~(SlotSize - 1)
+const DirectArguments_storage = (sizeof DirectArguments + SlotSize - 1) & ~(SlotSize - 1)
+
 const StackAlignment = 16
 const StackAlignmentMask = StackAlignment - 1
 
@@ -921,6 +924,30 @@ _llint_op_touch_entry:
     traceExecution()
     callSlowPath(_slow_path_touch_entry)
     dispatch(1)
+
+
+_llint_op_create_direct_arguments:
+    traceExecution()
+    callSlowPath(_slow_path_create_direct_arguments)
+    dispatch(2)
+
+
+_llint_op_create_scoped_arguments:
+    traceExecution()
+    callSlowPath(_slow_path_create_scoped_arguments)
+    dispatch(3)
+
+
+_llint_op_create_out_of_band_arguments:
+    traceExecution()
+    callSlowPath(_slow_path_create_out_of_band_arguments)
+    dispatch(2)
+
+
+_llint_op_new_func:
+    traceExecution()
+    callSlowPath(_llint_slow_path_new_func)
+    dispatch(4)
 
 
 _llint_op_new_array:

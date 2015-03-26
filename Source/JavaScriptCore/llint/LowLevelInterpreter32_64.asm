@@ -722,7 +722,6 @@ _llint_op_enter:
 
 _llint_op_create_lexical_environment:
     traceExecution()
-    loadi 4[PC], t0
     callSlowPath(_llint_slow_path_create_lexical_environment)
     dispatch(3)
 
@@ -735,23 +734,6 @@ _llint_op_get_scope:
     storei CellTag, TagOffset[cfr, t1, 8]
     storei t0, PayloadOffset[cfr, t1, 8]
     dispatch(2)
-
-
-_llint_op_init_lazy_reg:
-    traceExecution()
-    loadi 4[PC], t0
-    storei EmptyValueTag, TagOffset[cfr, t0, 8]
-    storei 0, PayloadOffset[cfr, t0, 8]
-    dispatch(2)
-
-
-_llint_op_create_arguments:
-    traceExecution()
-    loadi 4[PC], t0
-    bineq TagOffset[cfr, t0, 8], EmptyValueTag, .opCreateArgumentsDone
-    callSlowPath(_slow_path_create_arguments)
-.opCreateArgumentsDone:
-    dispatch(3)
 
 
 _llint_op_create_this:
@@ -1450,22 +1432,6 @@ _llint_op_get_array_length:
     dispatch(9)
 
 
-_llint_op_get_arguments_length:
-    traceExecution()
-    loadi 8[PC], t0
-    loadi 4[PC], t1
-    bineq TagOffset[cfr, t0, 8], EmptyValueTag, .opGetArgumentsLengthSlow
-    loadi ArgumentCount + PayloadOffset[cfr], t2
-    subi 1, t2
-    storei Int32Tag, TagOffset[cfr, t1, 8]
-    storei t2, PayloadOffset[cfr, t1, 8]
-    dispatch(4)
-
-.opGetArgumentsLengthSlow:
-    callSlowPath(_llint_slow_path_get_arguments_length)
-    dispatch(4)
-
-
 macro putById(getPropertyStorage)
     traceExecution()
     writeBarrierOnOperands(1, 3)
@@ -1614,30 +1580,6 @@ _llint_op_get_by_val:
 .opGetByValSlow:
     callSlowPath(_llint_slow_path_get_by_val)
     dispatch(6)
-
-
-_llint_op_get_argument_by_val:
-    # FIXME: At some point we should array profile this. Right now it isn't necessary
-    # since the DFG will never turn a get_argument_by_val into a GetByVal.
-    traceExecution()
-    loadi 8[PC], t0
-    loadi 12[PC], t1
-    bineq TagOffset[cfr, t0, 8], EmptyValueTag, .opGetArgumentByValSlow
-    loadConstantOrVariablePayload(t1, Int32Tag, t2, .opGetArgumentByValSlow)
-    loadi ArgumentCount + PayloadOffset[cfr], t1
-    subi 1, t1
-    biaeq t2, t1, .opGetArgumentByValSlow
-    loadi 4[PC], t3
-    loadi FirstArgumentOffset + TagOffset[cfr, t2, 8], t0
-    loadi FirstArgumentOffset + PayloadOffset[cfr, t2, 8], t1
-    storei t0, TagOffset[cfr, t3, 8]
-    storei t1, PayloadOffset[cfr, t3, 8]
-    valueProfile(t0, t1, 24, t2)
-    dispatch(7)
-
-.opGetArgumentByValSlow:
-    callSlowPath(_llint_slow_path_get_argument_by_val)
-    dispatch(7)
 
 
 macro contiguousPutByVal(storeCallback)
@@ -1921,16 +1863,6 @@ _llint_op_switch_char:
     dispatch(0)
 
 
-_llint_op_new_func:
-    traceExecution()
-    btiz 16[PC], .opNewFuncUnchecked
-    loadi 4[PC], t1
-    bineq TagOffset[cfr, t1, 8], EmptyValueTag, .opNewFuncDone
-.opNewFuncUnchecked:
-    callSlowPath(_llint_slow_path_new_func)
-.opNewFuncDone:
-    dispatch(5)
-
 macro arrayProfileForCall()
     loadi 16[PC], t3
     negi t3
@@ -1963,14 +1895,6 @@ macro doCall(slowPath)
 .opCallSlow:
     slowPathForCall(slowPath)
 end
-
-_llint_op_tear_off_arguments:
-    traceExecution()
-    loadi 4[PC], t0
-    bieq TagOffset[cfr, t0, 8], EmptyValueTag, .opTearOffArgumentsNotCreated
-    callSlowPath(_llint_slow_path_tear_off_arguments)
-.opTearOffArgumentsNotCreated:
-    dispatch(3)
 
 
 _llint_op_ret:
@@ -2213,10 +2137,9 @@ macro getGlobalVar()
 end
 
 macro getClosureVar()
-    loadp JSEnvironmentRecord::m_registers[t0], t0
     loadisFromInstruction(6, t3)
-    loadp TagOffset[t0, t3, 8], t1
-    loadp PayloadOffset[t0, t3, 8], t2
+    loadp JSEnvironmentRecord_variables + TagOffset[t0, t3, 8], t1
+    loadp JSEnvironmentRecord_variables + PayloadOffset[t0, t3, 8], t2
     valueProfile(t1, t2, 28, t0)
     loadisFromInstruction(1, t0)
     storei t1, TagOffset[cfr, t0, 8]
@@ -2290,10 +2213,9 @@ end
 macro putClosureVar()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2, t3)
-    loadp JSEnvironmentRecord::m_registers[t0], t0
     loadisFromInstruction(6, t1)
-    storei t2, TagOffset[t0, t1, 8]
-    storei t3, PayloadOffset[t0, t1, 8]
+    storei t2, JSEnvironmentRecord_variables + TagOffset[t0, t1, 8]
+    storei t3, JSEnvironmentRecord_variables + PayloadOffset[t0, t1, 8]
 end
 
 macro putLocalClosureVar()
@@ -2303,10 +2225,9 @@ macro putLocalClosureVar()
     btpz t4, .noVariableWatchpointSet
     notifyWrite(t4, t2, t3, t1, .pDynamic)
 .noVariableWatchpointSet:
-    loadp JSEnvironmentRecord::m_registers[t0], t0
     loadisFromInstruction(6, t1)
-    storei t2, TagOffset[t0, t1, 8]
-    storei t3, PayloadOffset[t0, t1, 8]
+    storei t2, JSEnvironmentRecord_variables + TagOffset[t0, t1, 8]
+    storei t3, JSEnvironmentRecord_variables + PayloadOffset[t0, t1, 8]
 end
 
 
@@ -2367,6 +2288,34 @@ _llint_op_put_to_scope:
 .pDynamic:
     callSlowPath(_llint_slow_path_put_to_scope)
     dispatch(7)
+
+
+_llint_op_get_from_arguments:
+    traceExecution()
+    loadisFromInstruction(2, t0)
+    loadi PayloadOffset[cfr, t0, 8], t0
+    loadi 12[PC], t1
+    loadi DirectArguments_storage + TagOffset[t0, t1, 8], t2
+    loadi DirectArguments_storage + PayloadOffset[t0, t1, 8], t3
+    loadisFromInstruction(1, t1)
+    valueProfile(t2, t3, 16, t0)
+    storei t2, TagOffset[cfr, t1, 8]
+    storei t3, PayloadOffset[cfr, t1, 8]
+    dispatch(5)
+
+
+_llint_op_put_to_arguments:
+    traceExecution()
+    writeBarrierOnOperands(1, 3)
+    loadisFromInstruction(1, t0)
+    loadi PayloadOffset[cfr, t0, 8], t0
+    loadisFromInstruction(3, t1)
+    loadConstantOrVariable(t1, t2, t3)
+    loadi 8[PC], t1
+    storei t2, DirectArguments_storage + TagOffset[t0, t1, 8]
+    storei t3, DirectArguments_storage + PayloadOffset[t0, t1, 8]
+    dispatch(4)
+
 
 _llint_op_profile_type:
     traceExecution()

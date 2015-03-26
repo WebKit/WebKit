@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,6 +50,8 @@ public:
     
     DFG::PromotedLocationDescriptor location() const { return m_location; }
     const ExitValue& value() const { return m_value; }
+    
+    ExitPropertyValue withLocalsOffset(int offset) const;
     
     void dump(PrintStream& out) const;
 

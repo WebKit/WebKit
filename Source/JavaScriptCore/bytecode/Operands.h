@@ -209,6 +209,10 @@ public:
             return virtualRegisterForArgument(index).offset();
         return virtualRegisterForLocal(index - numberOfArguments()).offset();
     }
+    VirtualRegister virtualRegisterForIndex(size_t index) const
+    {
+        return VirtualRegister(operandForIndex(index));
+    }
     size_t indexForOperand(int operand) const
     {
         if (operandIsArgument(operand))

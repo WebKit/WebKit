@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple, Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #ifndef JSArgumentsIterator_h
 #define JSArgumentsIterator_h
 
-#include "Arguments.h"
+#include "JSObject.h"
 
 namespace JSC {
 
@@ -41,7 +41,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static JSArgumentsIterator* create(VM& vm, Structure* structure, Arguments* arguments)
+    static JSArgumentsIterator* create(VM& vm, Structure* structure, JSObject* arguments)
     {
         JSArgumentsIterator* instance = new (NotNull, allocateCell<JSArgumentsIterator>(vm.heap)) JSArgumentsIterator(vm, structure);
         instance->finishCreation(vm, arguments);
@@ -50,11 +50,11 @@ public:
 
     bool next(CallFrame* callFrame, JSValue& value)
     {
-        if (m_nextIndex >= m_arguments->length(callFrame))
+        unsigned length =
+            m_arguments->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
+        if (m_nextIndex >= length)
             return false;
-        value = m_arguments->tryGetArgument(m_nextIndex++);
-        if (!value)
-            value = jsUndefined();
+        value = m_arguments->getIndex(callFrame, m_nextIndex++);
         return true;
     }
 
@@ -71,11 +71,13 @@ private:
     {
     }
 
-    void finishCreation(VM&, Arguments*);
+    void finishCreation(VM&, JSObject*);
     
-    WriteBarrier<Arguments> m_arguments;
+    WriteBarrier<JSObject> m_arguments;
     size_t m_nextIndex;
 };
+
+EncodedJSValue JSC_HOST_CALL argumentsFuncIterator(ExecState*);
 
 }
 

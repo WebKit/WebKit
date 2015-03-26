@@ -85,18 +85,27 @@ size_t sizeOfCallVarargs()
 size_t sizeOfCallForwardVarargs()
 {
 #if CPU(ARM64)
-    return 460;
+    return 312;
 #else
-    return 372;
+    return 250;
 #endif
 }
 
 size_t sizeOfConstructVarargs()
 {
 #if CPU(ARM64)
-    return 300;
+    return 332;
 #else
     return 275;
+#endif
+}
+
+size_t sizeOfConstructForwardVarargs()
+{
+#if CPU(ARM64)
+    return 312;
+#else
+    return 250;
 #endif
 }
 
@@ -125,6 +134,8 @@ size_t sizeOfICFor(Node* node)
         return sizeOfCallForwardVarargs();
     case ConstructVarargs:
         return sizeOfConstructVarargs();
+    case ConstructForwardVarargs:
+        return sizeOfConstructForwardVarargs();
     case In:
         return sizeOfIn();
     default:

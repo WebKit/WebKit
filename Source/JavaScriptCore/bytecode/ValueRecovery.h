@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef ValueRecovery_h
 #define ValueRecovery_h
 
+#include "DFGMinifiedID.h"
 #include "DataFormat.h"
 #if ENABLE(JIT)
 #include "GPRInfo.h"
@@ -38,6 +39,7 @@
 namespace JSC {
 
 struct DumpContext;
+struct InlineCallFrame;
 
 // Describes how to recover a given bytecode virtual register at a given
 // code point.
@@ -62,8 +64,9 @@ enum ValueRecoveryTechnique {
     DoubleDisplacedInJSStack,
     CellDisplacedInJSStack,
     BooleanDisplacedInJSStack,
-    // It's an Arguments object.
-    ArgumentsThatWereNotCreated,
+    // It's an Arguments object. This arises because of the simplified arguments simplification done by the DFG.
+    DirectArgumentsThatWereNotCreated,
+    ClonedArgumentsThatWereNotCreated,
     // It's a constant.
     Constant,
     // Don't know how to recover it.
@@ -167,10 +170,19 @@ public:
         return result;
     }
     
-    static ValueRecovery argumentsThatWereNotCreated()
+    static ValueRecovery directArgumentsThatWereNotCreated(DFG::MinifiedID id)
     {
         ValueRecovery result;
-        result.m_technique = ArgumentsThatWereNotCreated;
+        result.m_technique = DirectArgumentsThatWereNotCreated;
+        result.m_source.nodeID = id.bits();
+        return result;
+    }
+    
+    static ValueRecovery outOfBandArgumentsThatWereNotCreated(DFG::MinifiedID id)
+    {
+        ValueRecovery result;
+        result.m_technique = ClonedArgumentsThatWereNotCreated;
+        result.m_source.nodeID = id.bits();
         return result;
     }
     
@@ -256,6 +268,12 @@ public:
         return JSValue::decode(m_source.constant);
     }
     
+    DFG::MinifiedID nodeID() const
+    {
+        ASSERT(m_technique == DirectArgumentsThatWereNotCreated || m_technique == ClonedArgumentsThatWereNotCreated);
+        return DFG::MinifiedID::fromBits(m_source.nodeID);
+    }
+    
     JSValue recover(ExecState*) const;
     
 #if ENABLE(JIT)
@@ -276,6 +294,7 @@ private:
 #endif
         int virtualReg;
         EncodedJSValue constant;
+        uintptr_t nodeID;
     } m_source;
 };
 

@@ -42,6 +42,7 @@ size_t sizeOfCall();
 size_t sizeOfCallVarargs();
 size_t sizeOfCallForwardVarargs();
 size_t sizeOfConstructVarargs();
+size_t sizeOfConstructForwardVarargs();
 size_t sizeOfIn();
 
 size_t sizeOfICFor(DFG::Node*);

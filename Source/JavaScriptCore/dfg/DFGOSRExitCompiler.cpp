@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,75 @@
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace DFG {
+
+void OSRExitCompiler::emitRestoreArguments(const Operands<ValueRecovery>& operands)
+{
+    HashMap<MinifiedID, int> alreadyAllocatedArguments; // Maps phantom arguments node ID to operand.
+    for (size_t index = 0; index < operands.size(); ++index) {
+        const ValueRecovery& recovery = operands[index];
+        int operand = operands.operandForIndex(index);
+        
+        if (recovery.technique() != DirectArgumentsThatWereNotCreated
+            && recovery.technique() != ClonedArgumentsThatWereNotCreated)
+            continue;
+        
+        MinifiedID id = recovery.nodeID();
+        auto iter = alreadyAllocatedArguments.find(id);
+        if (iter != alreadyAllocatedArguments.end()) {
+            JSValueRegs regs = JSValueRegs::withTwoAvailableRegs(GPRInfo::regT0, GPRInfo::regT1);
+            m_jit.loadValue(CCallHelpers::addressFor(iter->value), regs);
+            m_jit.storeValue(regs, CCallHelpers::addressFor(operand));
+            continue;
+        }
+        
+        InlineCallFrame* inlineCallFrame =
+            m_jit.codeBlock()->jitCode()->dfg()->minifiedDFG.at(id)->inlineCallFrame();
+
+        int stackOffset;
+        if (inlineCallFrame)
+            stackOffset = inlineCallFrame->stackOffset;
+        else
+            stackOffset = 0;
+        
+        if (!inlineCallFrame || inlineCallFrame->isClosureCall) {
+            m_jit.loadPtr(
+                AssemblyHelpers::addressFor(stackOffset + JSStack::Callee),
+                GPRInfo::regT0);
+        } else {
+            m_jit.move(
+                AssemblyHelpers::TrustedImmPtr(inlineCallFrame->calleeRecovery.constant().asCell()),
+                GPRInfo::regT0);
+        }
+        
+        if (!inlineCallFrame || inlineCallFrame->isVarargs()) {
+            m_jit.load32(
+                AssemblyHelpers::payloadFor(stackOffset + JSStack::ArgumentCount),
+                GPRInfo::regT1);
+        } else {
+            m_jit.move(
+                AssemblyHelpers::TrustedImm32(inlineCallFrame->arguments.size()),
+                GPRInfo::regT1);
+        }
+        
+        m_jit.setupArgumentsWithExecState(
+            AssemblyHelpers::TrustedImmPtr(inlineCallFrame), GPRInfo::regT0, GPRInfo::regT1);
+        switch (recovery.technique()) {
+        case DirectArgumentsThatWereNotCreated:
+            m_jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(operationCreateDirectArgumentsDuringExit)), GPRInfo::nonArgGPR0);
+            break;
+        case ClonedArgumentsThatWereNotCreated:
+            m_jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(operationCreateClonedArgumentsDuringExit)), GPRInfo::nonArgGPR0);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        m_jit.call(GPRInfo::nonArgGPR0);
+        m_jit.storeCell(GPRInfo::returnValueGPR, AssemblyHelpers::addressFor(operand));
+        
+        alreadyAllocatedArguments.add(id, operand);
+    }
+}
 
 extern "C" {
 

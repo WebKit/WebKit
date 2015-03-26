@@ -438,6 +438,7 @@ private:
                 case Upsilon:
                 case CheckInBounds:
                 case PhantomNewObject:
+                case GetMyArgumentByVal:
                 case PutHint:
                 case CheckStructureImmediate:
                 case MaterializeNewObject:
@@ -454,8 +455,6 @@ private:
                     continue;
                 switch (node->op()) {
                 case GetLocal:
-                    if (node->variableAccessData()->isCaptured())
-                        break;
                     // Ignore GetLocal's that we know to be dead, but that the graph
                     // doesn't yet know to be dead.
                     if (!m_myRefCounts.get(node))
@@ -465,8 +464,6 @@ private:
                     getLocalPositions.operand(node->local()) = i;
                     break;
                 case SetLocal:
-                    if (node->variableAccessData()->isCaptured())
-                        break;
                     // Only record the first SetLocal. There may be multiple SetLocals
                     // because of flushing.
                     if (setLocalPositions.operand(node->local()) != notSet)
@@ -474,8 +471,6 @@ private:
                     setLocalPositions.operand(node->local()) = i;
                     break;
                 case SetArgument:
-                    if (node->variableAccessData()->isCaptured())
-                        break;
                     // This acts like a reset. It's ok to have a second GetLocal for a local in the same
                     // block if we had a SetArgument for that local.
                     getLocalPositions.operand(node->local()) = notSet;

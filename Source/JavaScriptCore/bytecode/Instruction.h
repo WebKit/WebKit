@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,7 +97,7 @@ struct Instruction {
     Instruction(ArrayProfile* profile) { u.arrayProfile = profile; }
     Instruction(ArrayAllocationProfile* profile) { u.arrayAllocationProfile = profile; }
     Instruction(ObjectAllocationProfile* profile) { u.objectAllocationProfile = profile; }
-    Instruction(WriteBarrier<Unknown>* registerPointer) { u.registerPointer = registerPointer; }
+    Instruction(WriteBarrier<Unknown>* variablePointer) { u.variablePointer = variablePointer; }
     Instruction(Special::Pointer pointer) { u.specialPointer = pointer; }
     Instruction(StringImpl* uid) { u.uid = uid; }
     Instruction(bool* predicatePointer) { u.predicatePointer = predicatePointer; }
@@ -108,7 +108,7 @@ struct Instruction {
         WriteBarrierBase<Structure> structure;
         WriteBarrierBase<StructureChain> structureChain;
         WriteBarrierBase<JSCell> jsCell;
-        WriteBarrier<Unknown>* registerPointer;
+        WriteBarrier<Unknown>* variablePointer;
         Special::Pointer specialPointer;
         PropertySlot::GetValueFunc getterFunc;
         LLIntCallLinkInfo* callLinkInfo;

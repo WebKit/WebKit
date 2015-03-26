@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,8 @@ enum JITArrayMode {
     JITDouble,
     JITContiguous,
     JITArrayStorage,
+    JITDirectArguments,
+    JITScopedArguments,
     JITInt8Array,
     JITInt16Array,
     JITInt32Array,
@@ -65,6 +67,17 @@ inline bool isOptimizableIndexingType(IndexingType indexingType)
     }
 }
 
+inline bool hasOptimizableIndexingForJSType(JSType type)
+{
+    switch (type) {
+    case DirectArgumentsType:
+    case ScopedArgumentsType:
+        return true;
+    default:
+        return false;
+    }
+}
+
 inline bool hasOptimizableIndexingForClassInfo(const ClassInfo* classInfo)
 {
     return isTypedView(classInfo->typedArrayStorageType);
@@ -73,6 +86,7 @@ inline bool hasOptimizableIndexingForClassInfo(const ClassInfo* classInfo)
 inline bool hasOptimizableIndexing(Structure* structure)
 {
     return isOptimizableIndexingType(structure->indexingType())
+        || hasOptimizableIndexingForJSType(structure->typeInfo().type())
         || hasOptimizableIndexingForClassInfo(structure->classInfo());
 }
 
@@ -89,6 +103,19 @@ inline JITArrayMode jitArrayModeForIndexingType(IndexingType indexingType)
         return JITArrayStorage;
     default:
         CRASH();
+        return JITContiguous;
+    }
+}
+
+inline JITArrayMode jitArrayModeForJSType(JSType type)
+{
+    switch (type) {
+    case DirectArgumentsType:
+        return JITDirectArguments;
+    case ScopedArgumentsType:
+        return JITScopedArguments;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
         return JITContiguous;
     }
 }
@@ -117,6 +144,19 @@ inline JITArrayMode jitArrayModeForClassInfo(const ClassInfo* classInfo)
     default:
         CRASH();
         return JITContiguous;
+    }
+}
+
+inline bool jitArrayModePermitsPut(JITArrayMode mode)
+{
+    switch (mode) {
+    case JITDirectArguments:
+    case JITScopedArguments:
+        // We could support put_by_val on these at some point, but it's just not that profitable
+        // at the moment.
+        return false;
+    default:
+        return true;
     }
 }
 
@@ -151,6 +191,9 @@ inline JITArrayMode jitArrayModeForStructure(Structure* structure)
 {
     if (isOptimizableIndexingType(structure->indexingType()))
         return jitArrayModeForIndexingType(structure->indexingType());
+    
+    if (hasOptimizableIndexingForJSType(structure->typeInfo().type()))
+        return jitArrayModeForJSType(structure->typeInfo().type());
     
     ASSERT(hasOptimizableIndexingForClassInfo(structure->classInfo()));
     return jitArrayModeForClassInfo(structure->classInfo());

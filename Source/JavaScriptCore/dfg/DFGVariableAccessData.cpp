@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,7 @@ VariableAccessData::VariableAccessData()
     , m_prediction(SpecNone)
     , m_argumentAwarePrediction(SpecNone)
     , m_flags(0)
-    , m_isCaptured(false)
     , m_shouldNeverUnbox(false)
-    , m_isArgumentsAlias(false)
     , m_structureCheckHoistingFailed(false)
     , m_checkArrayHoistingFailed(false)
     , m_isProfitableToUnbox(false)
@@ -47,14 +45,12 @@ VariableAccessData::VariableAccessData()
     clearVotes();
 }
 
-VariableAccessData::VariableAccessData(VirtualRegister local, bool isCaptured)
+VariableAccessData::VariableAccessData(VirtualRegister local)
     : m_local(local)
     , m_prediction(SpecNone)
     , m_argumentAwarePrediction(SpecNone)
     , m_flags(0)
-    , m_isCaptured(isCaptured)
-    , m_shouldNeverUnbox(isCaptured)
-    , m_isArgumentsAlias(false)
+    , m_shouldNeverUnbox(false)
     , m_structureCheckHoistingFailed(false)
     , m_checkArrayHoistingFailed(false)
     , m_isProfitableToUnbox(false)
@@ -62,12 +58,6 @@ VariableAccessData::VariableAccessData(VirtualRegister local, bool isCaptured)
     , m_doubleFormatState(EmptyDoubleFormatState)
 {
     clearVotes();
-}
-
-bool VariableAccessData::mergeIsCaptured(bool isCaptured)
-{
-    return checkAndSet(m_shouldNeverUnbox, m_shouldNeverUnbox || isCaptured)
-        | checkAndSet(m_isCaptured, m_isCaptured || isCaptured);
 }
 
 bool VariableAccessData::mergeShouldNeverUnbox(bool shouldNeverUnbox)
@@ -197,9 +187,6 @@ bool VariableAccessData::couldRepresentInt52Impl()
 FlushFormat VariableAccessData::flushFormat()
 {
     ASSERT(find() == this);
-    
-    if (isArgumentsAlias())
-        return FlushedArguments;
     
     if (!shouldUnboxIfPossible())
         return FlushedJSValue;

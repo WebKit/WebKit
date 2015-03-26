@@ -29,7 +29,6 @@
 #if USE(JSVALUE32_64)
 #include "JIT.h"
 
-#include "Arguments.h"
 #include "CodeBlock.h"
 #include "Interpreter.h"
 #include "JITInlines.h"
@@ -122,22 +121,6 @@ void JIT::compileSetupVarargsFrame(Instruction* instruction, CallLinkInfo* info)
     int firstFreeRegister = instruction[5].u.operand;
     int firstVarArgOffset = instruction[6].u.operand;
 
-    JumpList slowCase;
-    JumpList end;
-    bool canOptimize = m_codeBlock->usesArguments()
-        && VirtualRegister(arguments) == m_codeBlock->argumentsRegister()
-        && !m_codeBlock->symbolTable()->slowArguments();
-
-    if (canOptimize) {
-        emitLoadTag(arguments, regT1);
-        slowCase.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::EmptyValueTag)));
-        
-        move(TrustedImm32(-firstFreeRegister), regT1);
-        emitSetupVarargsFrameFastCase(*this, regT1, regT0, regT1, regT2, firstVarArgOffset, slowCase);
-        end.append(jump());
-        slowCase.link(this);
-    }
-
     emitLoad(arguments, regT1, regT0);
     callOperation(operationSizeFrameForVarargs, regT1, regT0, -firstFreeRegister, firstVarArgOffset);
     move(TrustedImm32(-firstFreeRegister), regT1);
@@ -146,9 +129,6 @@ void JIT::compileSetupVarargsFrame(Instruction* instruction, CallLinkInfo* info)
     emitLoad(arguments, regT2, regT4);
     callOperation(operationSetupVarargsFrame, regT1, regT2, regT4, firstVarArgOffset, regT0);
     move(returnValueGPR, regT1);
-
-    if (canOptimize)
-        end.link(this);
 
     // Profile the argument count.
     load32(Address(regT1, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset), regT2);

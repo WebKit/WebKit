@@ -33,11 +33,33 @@
 
 namespace JSC {
 
+#if CPU(MIPS) || (OS(WINDOWS) && CPU(X86_64))
+#define POKE_ARGUMENT_OFFSET 4
+#else
+#define POKE_ARGUMENT_OFFSET 0
+#endif
+
 class CCallHelpers : public AssemblyHelpers {
 public:
     CCallHelpers(VM* vm, CodeBlock* codeBlock = 0)
         : AssemblyHelpers(vm, codeBlock)
     {
+    }
+    
+    // The most general helper for setting arguments that fit in a GPR, if you can compute each
+    // argument without using any argument registers. You usually want one of the setupArguments*()
+    // methods below instead of this. This thing is most useful if you have *a lot* of arguments.
+    template<typename Functor>
+    void setupArgument(unsigned argumentIndex, const Functor& functor)
+    {
+        unsigned numberOfRegs = GPRInfo::numberOfArgumentRegisters; // Disguise the constant from clang's tautological compare warning.
+        if (argumentIndex < numberOfRegs) {
+            functor(GPRInfo::toArgumentRegister(argumentIndex));
+            return;
+        }
+        
+        functor(GPRInfo::nonArgGPR0);
+        poke(GPRInfo::nonArgGPR0, POKE_ARGUMENT_OFFSET + argumentIndex - GPRInfo::numberOfArgumentRegisters);
     }
 
     // These methods used to sort arguments into the correct registers.
@@ -862,12 +884,6 @@ public:
     {
         setupThreeStubArgsGPR<GPRInfo::argumentGPR1, GPRInfo::argumentGPR2, GPRInfo::argumentGPR3>(arg1, arg2, arg3);
     }
-
-#if CPU(MIPS) || (OS(WINDOWS) && CPU(X86_64))
-#define POKE_ARGUMENT_OFFSET 4
-#else
-#define POKE_ARGUMENT_OFFSET 0
-#endif
 
 #if CPU(X86_64) || CPU(ARM64)
     ALWAYS_INLINE void setupArguments(FPRReg arg1)

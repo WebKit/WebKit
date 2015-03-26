@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,20 +38,24 @@ namespace JSC { namespace FTL {
 class ExitTimeObjectMaterialization {
     WTF_MAKE_NONCOPYABLE(ExitTimeObjectMaterialization)
 public:
-    ExitTimeObjectMaterialization(DFG::NodeType);
+    ExitTimeObjectMaterialization(DFG::NodeType, CodeOrigin);
     ~ExitTimeObjectMaterialization();
     
     void add(DFG::PromotedLocationDescriptor, const ExitValue&);
     
     DFG::NodeType type() const { return m_type; }
+    CodeOrigin origin() const { return m_origin; }
     
     ExitValue get(DFG::PromotedLocationDescriptor) const;
     const Vector<ExitPropertyValue>& properties() const { return m_properties; }
+    
+    void accountForLocalsOffset(int offset);
     
     void dump(PrintStream& out) const;
     
 private:
     DFG::NodeType m_type;
+    CodeOrigin m_origin;
     Vector<ExitPropertyValue> m_properties;
 };
 

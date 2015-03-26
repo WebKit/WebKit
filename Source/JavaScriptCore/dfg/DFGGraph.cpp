@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "BytecodeKills.h"
 #include "BytecodeLivenessAnalysisInlines.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
@@ -62,9 +63,7 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     , m_profiledBlock(m_codeBlock->alternative())
     , m_allocator(longLivedState.m_allocator)
     , m_mustHandleValues(OperandsLike, plan.mustHandleValues)
-    , m_hasArguments(false)
     , m_nextMachineLocal(0)
-    , m_machineCaptureStart(std::numeric_limits<int>::max())
     , m_fixpointState(BeforeFixpoint)
     , m_structureRegistrationState(HaveNotStartedRegistering)
     , m_form(LoadStore)
@@ -75,11 +74,6 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     
     for (unsigned i = m_mustHandleValues.size(); i--;)
         m_mustHandleValues[i] = freezeFragile(plan.mustHandleValues[i]);
-    
-    for (unsigned i = m_codeBlock->m_numVars; i--;) {
-        if (m_codeBlock->isCaptured(virtualRegisterForLocal(i)))
-            m_outermostCapturedVars.set(i);
-    }
 }
 
 Graph::~Graph()
@@ -216,10 +210,12 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, node->arrayMode());
     if (node->hasArithMode())
         out.print(comma, node->arithMode());
-    if (node->hasVarNumber())
-        out.print(comma, node->varNumber());
+    if (node->hasScopeOffset())
+        out.print(comma, node->scopeOffset());
+    if (node->hasDirectArgumentsOffset())
+        out.print(comma, node->capturedArgumentsOffset());
     if (node->hasRegisterPointer())
-        out.print(comma, "global", globalObjectFor(node->origin.semantic)->findRegisterIndex(node->registerPointer()), "(", RawPointer(node->registerPointer()), ")");
+        out.print(comma, "global", globalObjectFor(node->origin.semantic)->findVariableIndex(node->variablePointer()), "(", RawPointer(node->variablePointer()), ")");
     if (node->hasIdentifier())
         out.print(comma, "id", node->identifierNumber(), "{", identifiers()[node->identifierNumber()], "}");
     if (node->hasPromotedLocationDescriptor())
@@ -228,8 +224,14 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, inContext(node->structureSet(), context));
     if (node->hasStructure())
         out.print(comma, inContext(*node->structure(), context));
-    if (node->hasTransition())
+    if (node->hasTransition()) {
         out.print(comma, pointerDumpInContext(node->transition(), context));
+#if USE(JSVALUE64)
+        out.print(", ID:", node->transition()->next->id());
+#else
+        out.print(", ID:", RawPointer(node->transition()->next));
+#endif
+    }
     if (node->hasCellOperand()) {
         if (!node->cellOperand()->value() || !node->cellOperand()->value().isCell())
             out.print(comma, "invalid cell operand: ", node->cellOperand()->value());
@@ -748,10 +750,6 @@ void Graph::invalidateCFG()
 
 void Graph::substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, VariableAccessData* variableAccessData, Node* newGetLocal)
 {
-    if (variableAccessData->isCaptured()) {
-        // Let CSE worry about this one.
-        return;
-    }
     for (unsigned indexInBlock = startIndexInBlock; indexInBlock < block.size(); ++indexInBlock) {
         Node* node = block[indexInBlock];
         bool shouldContinue = true;
@@ -869,6 +867,24 @@ FullBytecodeLiveness& Graph::livenessFor(CodeBlock* codeBlock)
 FullBytecodeLiveness& Graph::livenessFor(InlineCallFrame* inlineCallFrame)
 {
     return livenessFor(baselineCodeBlockFor(inlineCallFrame));
+}
+
+BytecodeKills& Graph::killsFor(CodeBlock* codeBlock)
+{
+    HashMap<CodeBlock*, std::unique_ptr<BytecodeKills>>::iterator iter = m_bytecodeKills.find(codeBlock);
+    if (iter != m_bytecodeKills.end())
+        return *iter->value;
+    
+    std::unique_ptr<BytecodeKills> kills = std::make_unique<BytecodeKills>();
+    codeBlock->livenessAnalysis().computeKills(*kills);
+    BytecodeKills& result = *kills;
+    m_bytecodeKills.add(codeBlock, WTF::move(kills));
+    return result;
+}
+
+BytecodeKills& Graph::killsFor(InlineCallFrame* inlineCallFrame)
+{
+    return killsFor(baselineCodeBlockFor(inlineCallFrame));
 }
 
 bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
@@ -1007,7 +1023,7 @@ JSValue Graph::tryGetConstantProperty(const AbstractValue& base, PropertyOffset 
     return tryGetConstantProperty(base.m_value, base.m_structure, offset);
 }
 
-JSValue Graph::tryGetConstantClosureVar(JSValue base, VirtualRegister reg)
+JSValue Graph::tryGetConstantClosureVar(JSValue base, ScopeOffset offset)
 {
     if (!base)
         return JSValue();
@@ -1022,7 +1038,7 @@ JSValue Graph::tryGetConstantClosureVar(JSValue base, VirtualRegister reg)
     if (symbolTable->m_functionEnteredOnce.hasBeenInvalidated())
         return JSValue();
     
-    SymbolTableEntry* entry = symbolTable->entryFor(locker, reg);
+    SymbolTableEntry* entry = symbolTable->entryFor(locker, offset);
     if (!entry)
         return JSValue();
     
@@ -1040,24 +1056,16 @@ JSValue Graph::tryGetConstantClosureVar(JSValue base, VirtualRegister reg)
     return value;
 }
 
-JSValue Graph::tryGetConstantClosureVar(const AbstractValue& value, VirtualRegister reg)
+JSValue Graph::tryGetConstantClosureVar(const AbstractValue& value, ScopeOffset offset)
 {
-    return tryGetConstantClosureVar(value.m_value, reg);
+    return tryGetConstantClosureVar(value.m_value, offset);
 }
 
-JSValue Graph::tryGetConstantClosureVar(Node* node, VirtualRegister reg)
+JSValue Graph::tryGetConstantClosureVar(Node* node, ScopeOffset offset)
 {
     if (!node->hasConstant())
         return JSValue();
-    return tryGetConstantClosureVar(node->asJSValue(), reg);
-}
-
-WriteBarrierBase<Unknown>* Graph::tryGetRegisters(Node* node)
-{
-    JSLexicalEnvironment* lexicalEnvironment = node->dynamicCastConstant<JSLexicalEnvironment*>();
-    if (!lexicalEnvironment)
-        return 0;
-    return lexicalEnvironment->registers();
+    return tryGetConstantClosureVar(node->asJSValue(), offset);
 }
 
 JSArrayBufferView* Graph::tryGetFoldableView(Node* node)

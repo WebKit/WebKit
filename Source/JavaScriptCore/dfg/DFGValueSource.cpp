@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,9 +58,6 @@ void ValueSource::dump(PrintStream& out) const
         break;
     case DoubleInJSStack:
         out.print("Double:", virtualRegister());
-        break;
-    case ArgumentsSource:
-        out.print("Arguments");
         break;
     case HaveNode:
         out.print("Node(", m_value, ")");

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,10 +71,6 @@ static void compileRecovery(
     case ExitValueInJSStackAsInt52:
     case ExitValueInJSStackAsDouble:
         jit.load64(AssemblyHelpers::addressFor(value.virtualRegister()), GPRInfo::regT0);
-        break;
-            
-    case ExitValueArgumentsObjectThatWasNotCreated:
-        jit.move(MacroAssembler::TrustedImm64(JSValue::encode(JSValue())), GPRInfo::regT0);
         break;
             
     case ExitValueRecovery:
@@ -230,7 +226,11 @@ static void compileStub(
     }
     
     // Materialize all objects. Don't materialize an object until all of the objects it needs
-    // have been materialized.
+    // have been materialized. Curiously, this is the only place that we have an algorithm that prevents
+    // OSR exit from handling cyclic object materializations. Of course, object allocation sinking
+    // currently wouldn't recognize a cycle as being sinkable - but if it did then the only thing that
+    // would ahve to change is this fixpoint. Instead we would allocate the objects first and populate
+    // them with data later.
     HashSet<ExitTimeObjectMaterialization*> toMaterialize;
     for (ExitTimeObjectMaterialization* materialization : exit.m_materializations)
         toMaterialize.add(materialization);
@@ -443,15 +443,6 @@ static void compileStub(
     
     handleExitCounts(jit, exit);
     reifyInlinedCallFrames(jit, exit);
-    
-    ArgumentsRecoveryGenerator argumentsRecovery;
-    for (unsigned index = exit.m_values.size(); index--;) {
-        if (!exit.m_values[index].isArgumentsObjectThatWasNotCreated())
-            continue;
-        int operand = exit.m_values.operandForIndex(index);
-        argumentsRecovery.generateFor(operand, exit.m_codeOrigin, jit);
-    }
-    
     adjustAndJumpToTarget(jit, exit);
     
     LinkBuffer patchBuffer(*vm, jit, codeBlock);

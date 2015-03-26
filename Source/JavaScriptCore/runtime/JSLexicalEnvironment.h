@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 #include "CodeBlock.h"
 #include "CopiedSpaceInlines.h"
 #include "JSEnvironmentRecord.h"
-#include "Nodes.h"
 #include "SymbolTable.h"
 
 namespace JSC {
@@ -41,33 +40,31 @@ class Register;
     
 class JSLexicalEnvironment : public JSEnvironmentRecord {
 private:
-    JSLexicalEnvironment(VM&, CallFrame*, Register*, JSScope*, CodeBlock*);
+    JSLexicalEnvironment(VM&, Structure*, JSScope*, SymbolTable*);
     
 public:
     typedef JSEnvironmentRecord Base;
 
-    static JSLexicalEnvironment* create(VM& vm, CallFrame* callFrame, Register* registers, JSScope* currentScope, CodeBlock* codeBlock)
+    static JSLexicalEnvironment* create(
+        VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable)
     {
-        SymbolTable* symbolTable = codeBlock->symbolTable();
-        ASSERT(codeBlock->codeType() == FunctionCode);
-        JSLexicalEnvironment* lexicalEnvironment = new (
-            NotNull,
-            allocateCell<JSLexicalEnvironment>(
-                vm.heap,
-                allocationSize(symbolTable)
-            )
-        ) JSLexicalEnvironment(vm, callFrame, registers, currentScope, codeBlock);
-        lexicalEnvironment->finishCreation(vm);
-        return lexicalEnvironment;
+        JSLexicalEnvironment* result = 
+            new (
+                NotNull,
+                allocateCell<JSLexicalEnvironment>(vm.heap, allocationSize(symbolTable)))
+            JSLexicalEnvironment(vm, structure, currentScope, symbolTable);
+        result->finishCreation(vm);
+        return result;
     }
-        
+    
     static JSLexicalEnvironment* create(VM& vm, CallFrame* callFrame, JSScope* currentScope, CodeBlock* codeBlock)
     {
-        return create(vm, callFrame, callFrame->registers() + codeBlock->framePointerOffsetToGetActivationRegisters(), currentScope, codeBlock);
+        JSGlobalObject* globalObject = callFrame->lexicalGlobalObject();
+        Structure* structure = globalObject->activationStructure();
+        SymbolTable* symbolTable = codeBlock->symbolTable();
+        return create(vm, structure, currentScope, symbolTable);
     }
-
-    static void visitChildren(JSCell*, SlotVisitor&);
-
+        
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
@@ -81,12 +78,6 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject) { return Structure::create(vm, globalObject, jsNull(), TypeInfo(ActivationObjectType, StructureFlags), info()); }
 
-    WriteBarrierBase<Unknown>& registerAt(int) const;
-    bool isValidIndex(int) const;
-    bool isValid(const SymbolTableEntry&) const;
-    int registersOffset();
-    static int registersOffset(SymbolTable*);
-
 protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | Base::StructureFlags;
 
@@ -96,31 +87,12 @@ private:
     bool symbolTableGet(PropertyName, PropertySlot&, bool& slotIsWriteable);
     bool symbolTablePut(ExecState*, PropertyName, JSValue, bool shouldThrow);
     bool symbolTablePutWithAttributes(VM&, PropertyName, JSValue, unsigned attributes);
-
-    static size_t allocationSize(SymbolTable*);
-    static size_t storageOffset();
-
-    WriteBarrier<Unknown>* storage(); // captureCount() number of registers.
 };
 
-inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, CallFrame* callFrame, Register* registers, JSScope* currentScope, CodeBlock* codeBlock)
-    : Base(
-        vm,
-        callFrame->lexicalGlobalObject()->activationStructure(),
-        registers,
-        currentScope,
-        codeBlock->symbolTable())
+inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable)
+    : Base(vm, structure, currentScope, symbolTable)
 {
-    SymbolTable* symbolTable = codeBlock->symbolTable();
-    WriteBarrier<Unknown>* storage = this->storage();
-    size_t captureCount = symbolTable->captureCount();
-    for (size_t i = 0; i < captureCount; ++i)
-        new (NotNull, &storage[i]) WriteBarrier<Unknown>(UndefinedWriteBarrierTag);
-    m_registers = reinterpret_cast_ptr<WriteBarrierBase<Unknown>*>(
-        reinterpret_cast<char*>(this) + registersOffset(symbolTable));
 }
-
-JSLexicalEnvironment* asActivation(JSValue);
 
 inline JSLexicalEnvironment* asActivation(JSValue value)
 {
@@ -131,49 +103,6 @@ inline JSLexicalEnvironment* asActivation(JSValue value)
 ALWAYS_INLINE JSLexicalEnvironment* Register::lexicalEnvironment() const
 {
     return asActivation(jsValue());
-}
-
-inline int JSLexicalEnvironment::registersOffset(SymbolTable* symbolTable)
-{
-    return storageOffset() + ((symbolTable->captureCount() - symbolTable->captureStart()  - 1) * sizeof(WriteBarrier<Unknown>));
-}
-
-inline size_t JSLexicalEnvironment::storageOffset()
-{
-    return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(JSLexicalEnvironment));
-}
-
-inline WriteBarrier<Unknown>* JSLexicalEnvironment::storage()
-{
-    return reinterpret_cast_ptr<WriteBarrier<Unknown>*>(
-        reinterpret_cast<char*>(this) + storageOffset());
-}
-
-inline size_t JSLexicalEnvironment::allocationSize(SymbolTable* symbolTable)
-{
-    size_t objectSizeInBytes = WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(JSLexicalEnvironment));
-    size_t storageSizeInBytes = symbolTable->captureCount() * sizeof(WriteBarrier<Unknown>);
-    return objectSizeInBytes + storageSizeInBytes;
-}
-
-inline bool JSLexicalEnvironment::isValidIndex(int index) const
-{
-    if (index > symbolTable()->captureStart())
-        return false;
-    if (index <= symbolTable()->captureEnd())
-        return false;
-    return true;
-}
-
-inline bool JSLexicalEnvironment::isValid(const SymbolTableEntry& entry) const
-{
-    return isValidIndex(entry.getIndex());
-}
-
-inline WriteBarrierBase<Unknown>& JSLexicalEnvironment::registerAt(int index) const
-{
-    ASSERT(isValidIndex(index));
-    return Base::registerAt(index);
 }
 
 } // namespace JSC

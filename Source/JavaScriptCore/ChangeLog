@@ -1,3 +1,1014 @@
+2015-03-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Heap variables shouldn't end up in the stack frame
+        https://bugs.webkit.org/show_bug.cgi?id=141174
+
+        Reviewed by Geoffrey Garen.
+        
+        This is a major change to how JavaScriptCore handles declared variables (i.e. "var"). It removes
+        any ambiguity about whether a variable should be in the heap or on the stack. A variable will no
+        longer move between heap and stack during its lifetime. This enables a bunch of optimizations and
+        simplifications:
+        
+        - Accesses to variables no longer need checks or indirections to determine where the variable is
+          at that moment in time. For example, loading a closure variable now takes just one load instead
+          of two. Loading an argument by index now takes a bounds check and a load in the fastest case
+          (when no arguments object allocation is required) while previously that same operation required
+          a "did I allocate arguments yet" check, a bounds check, and then the load.
+        
+        - Reasoning about the allocation of an activation or arguments object now follows the same simple
+          logic as the allocation of any other kind of object. Previously, those objects were lazily
+          allocated - so an allocation instruction wasn't the actual allocation site, since it might not
+          allocate anything at all. This made the implementation of traditional escape analyses really
+          awkward, and ultimately it meant that we missed important cases. Now, we can reason about the
+          arguments object using the usual SSA tricks which allows for more comprehensive removal.
+        
+        - The allocations of arguments objects, functions, and activations are now much faster. While
+          this patch generally expands our ability to eliminate arguments object allocations, an earlier
+          version of the patch - which lacked that functionality - was a progression on some arguments-
+          and closure-happy benchmarks because although no allocations were eliminated, all allocations
+          were faster.
+        
+        - There is no tear-off. The runtime no loner needs to know about where on the stack a frame keeps
+          its arguments objects or activations. The runtime doesn't have to do things to the arguments
+          objects and activations that a frame allocated, when the frame is unwound. We always had horrid
+          bugs in that code, so it's good to see it go. This removes *a ton* of machinery from the DFG,
+          FTL, CodeBlock, and other places. All of the things having to do with "captured variables" is
+          now gone. This also enables implementing block-scoping. Without this change, block-scope
+          support would require telling CodeBlock and all of the rest of the runtime about all of the
+          variables that store currently-live scopes. That would have been so disastrously hard that it
+          might as well be impossible. With this change, it's fair game for the bytecode generator to
+          simply allocate whatever activations it wants, wherever it wants, and to keep them live for
+          however long it wants. This all works, because after bytecode generation, an activation is just
+          an object and variables that refer to it are just normal variables.
+        
+        - SymbolTable can now tell you explicitly where a variable lives. The answer is in the form of a
+          VarOffset object, which has methods like isStack(), isScope(), etc. VirtualRegister is never
+          used for offsets of non-stack variables anymore. We now have shiny new objects for other kinds
+          of offsets - ScopeOffset for offsets into scopes, and DirectArgumentsOffset for offsets into
+          an arguments object.
+        
+        - Functions that create activations can now tier-up into the FTL. Previously they couldn't. Also,
+          using activations used to prevent inlining; now functions that use activations can be inlined
+          just fine.
+        
+        This is a >1% speed-up on Octane. This is a >2% speed-up on CompressionBench. This is a tiny
+        speed-up on AsmBench (~0.4% or something). This looks like it might be a speed-up on SunSpider.
+        It's only a slow-down on very short-running microbenchmarks we had previously written for our old
+        style of tear-off-based arguments optimization. Those benchmarks are not part of any major suite.
+        
+        The easiest way of understanding this change is to start by looking at the changes in runtime/,
+        and then the changes in bytecompiler/, and then sort of work your way up the compiler tiers.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbortReason.h:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::BaseIndex::withOffset):
+        * bytecode/ByValInfo.h:
+        (JSC::hasOptimizableIndexingForJSType):
+        (JSC::hasOptimizableIndexing):
+        (JSC::jitArrayModeForJSType):
+        (JSC::jitArrayModePermitsPut):
+        (JSC::jitArrayModeForStructure):
+        * bytecode/BytecodeKills.h: Added.
+        (JSC::BytecodeKills::BytecodeKills):
+        (JSC::BytecodeKills::operandIsKilled):
+        (JSC::BytecodeKills::forEachOperandKilledAt):
+        (JSC::BytecodeKills::KillSet::KillSet):
+        (JSC::BytecodeKills::KillSet::add):
+        (JSC::BytecodeKills::KillSet::forEachLocal):
+        (JSC::BytecodeKills::KillSet::contains):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::isValidRegisterForLiveness):
+        (JSC::stepOverInstruction):
+        (JSC::BytecodeLivenessAnalysis::runLivenessFixpoint):
+        (JSC::BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeOffset):
+        (JSC::BytecodeLivenessAnalysis::operandIsLiveAtBytecodeOffset):
+        (JSC::BytecodeLivenessAnalysis::computeFullLiveness):
+        (JSC::BytecodeLivenessAnalysis::computeKills):
+        (JSC::indexForOperand): Deleted.
+        (JSC::BytecodeLivenessAnalysis::getLivenessInfoForNonCapturedVarsAtBytecodeOffset): Deleted.
+        (JSC::getLivenessInfo): Deleted.
+        * bytecode/BytecodeLivenessAnalysis.h:
+        * bytecode/BytecodeLivenessAnalysisInlines.h:
+        (JSC::operandIsAlwaysLive):
+        (JSC::operandThatIsNotAlwaysLiveIsLive):
+        (JSC::operandIsLive):
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::nameForRegister):
+        (JSC::CodeBlock::validate):
+        (JSC::CodeBlock::isCaptured): Deleted.
+        (JSC::CodeBlock::framePointerOffsetToGetActivationRegisters): Deleted.
+        (JSC::CodeBlock::machineSlowArguments): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::unmodifiedArgumentsRegister): Deleted.
+        (JSC::CodeBlock::setArgumentsRegister): Deleted.
+        (JSC::CodeBlock::argumentsRegister): Deleted.
+        (JSC::CodeBlock::uncheckedArgumentsRegister): Deleted.
+        (JSC::CodeBlock::usesArguments): Deleted.
+        (JSC::CodeBlock::captureCount): Deleted.
+        (JSC::CodeBlock::captureStart): Deleted.
+        (JSC::CodeBlock::captureEnd): Deleted.
+        (JSC::CodeBlock::argumentIndexAfterCapture): Deleted.
+        (JSC::CodeBlock::hasSlowArguments): Deleted.
+        (JSC::ExecState::argumentAfterCapture): Deleted.
+        * bytecode/CodeOrigin.h:
+        * bytecode/DataFormat.h:
+        (JSC::dataFormatToString):
+        * bytecode/FullBytecodeLiveness.h:
+        (JSC::FullBytecodeLiveness::getLiveness):
+        (JSC::FullBytecodeLiveness::operandIsLive):
+        (JSC::FullBytecodeLiveness::FullBytecodeLiveness): Deleted.
+        (JSC::FullBytecodeLiveness::getOut): Deleted.
+        * bytecode/Instruction.h:
+        (JSC::Instruction::Instruction):
+        * bytecode/Operands.h:
+        (JSC::Operands::virtualRegisterForIndex):
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationToAbbreviatedString):
+        (JSC::speculationFromClassInfo):
+        * bytecode/SpeculatedType.h:
+        (JSC::isDirectArgumentsSpeculation):
+        (JSC::isScopedArgumentsSpeculation):
+        (JSC::isActionableMutableArraySpeculation):
+        (JSC::isActionableArraySpeculation):
+        (JSC::isArgumentsSpeculation): Deleted.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::setArgumentsRegister): Deleted.
+        (JSC::UnlinkedCodeBlock::usesArguments): Deleted.
+        (JSC::UnlinkedCodeBlock::argumentsRegister): Deleted.
+        * bytecode/ValueRecovery.cpp:
+        (JSC::ValueRecovery::dumpInContext):
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::directArgumentsThatWereNotCreated):
+        (JSC::ValueRecovery::outOfBandArgumentsThatWereNotCreated):
+        (JSC::ValueRecovery::nodeID):
+        (JSC::ValueRecovery::argumentsThatWereNotCreated): Deleted.
+        * bytecode/VirtualRegister.h:
+        (JSC::VirtualRegister::operator==):
+        (JSC::VirtualRegister::operator!=):
+        (JSC::VirtualRegister::operator<):
+        (JSC::VirtualRegister::operator>):
+        (JSC::VirtualRegister::operator<=):
+        (JSC::VirtualRegister::operator>=):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeNextParameter):
+        (JSC::BytecodeGenerator::visibleNameForParameter):
+        (JSC::BytecodeGenerator::emitMove):
+        (JSC::BytecodeGenerator::variable):
+        (JSC::BytecodeGenerator::createVariable):
+        (JSC::BytecodeGenerator::emitResolveScope):
+        (JSC::BytecodeGenerator::emitGetFromScope):
+        (JSC::BytecodeGenerator::emitPutToScope):
+        (JSC::BytecodeGenerator::initializeVariable):
+        (JSC::BytecodeGenerator::emitInstanceOf):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitNewFunctionInternal):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitReturn):
+        (JSC::BytecodeGenerator::emitConstruct):
+        (JSC::BytecodeGenerator::isArgumentNumber):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        (JSC::BytecodeGenerator::addVar): Deleted.
+        (JSC::BytecodeGenerator::emitInitLazyRegister): Deleted.
+        (JSC::BytecodeGenerator::initializeCapturedVariable): Deleted.
+        (JSC::BytecodeGenerator::resolveCallee): Deleted.
+        (JSC::BytecodeGenerator::addCallee): Deleted.
+        (JSC::BytecodeGenerator::addParameter): Deleted.
+        (JSC::BytecodeGenerator::willResolveToArgumentsRegister): Deleted.
+        (JSC::BytecodeGenerator::uncheckedLocalArgumentsRegister): Deleted.
+        (JSC::BytecodeGenerator::createLazyRegisterIfNecessary): Deleted.
+        (JSC::BytecodeGenerator::isCaptured): Deleted.
+        (JSC::BytecodeGenerator::local): Deleted.
+        (JSC::BytecodeGenerator::constLocal): Deleted.
+        (JSC::BytecodeGenerator::emitResolveConstantLocal): Deleted.
+        (JSC::BytecodeGenerator::emitGetArgumentsLength): Deleted.
+        (JSC::BytecodeGenerator::emitGetArgumentByVal): Deleted.
+        (JSC::BytecodeGenerator::emitLazyNewFunction): Deleted.
+        (JSC::BytecodeGenerator::createArgumentsIfNecessary): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::Variable::Variable):
+        (JSC::Variable::isResolved):
+        (JSC::Variable::ident):
+        (JSC::Variable::offset):
+        (JSC::Variable::isLocal):
+        (JSC::Variable::local):
+        (JSC::Variable::isSpecial):
+        (JSC::BytecodeGenerator::argumentsRegister):
+        (JSC::BytecodeGenerator::emitNode):
+        (JSC::BytecodeGenerator::registerFor):
+        (JSC::Local::Local): Deleted.
+        (JSC::Local::operator bool): Deleted.
+        (JSC::Local::get): Deleted.
+        (JSC::Local::isSpecial): Deleted.
+        (JSC::ResolveScopeInfo::ResolveScopeInfo): Deleted.
+        (JSC::ResolveScopeInfo::isLocal): Deleted.
+        (JSC::ResolveScopeInfo::localIndex): Deleted.
+        (JSC::BytecodeGenerator::hasSafeLocalArgumentsRegister): Deleted.
+        (JSC::BytecodeGenerator::captureMode): Deleted.
+        (JSC::BytecodeGenerator::shouldTearOffArgumentsEagerly): Deleted.
+        (JSC::BytecodeGenerator::shouldCreateArgumentsEagerly): Deleted.
+        (JSC::BytecodeGenerator::hasWatchableVariable): Deleted.
+        (JSC::BytecodeGenerator::watchableVariableIdentifier): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ResolveNode::isPure):
+        (JSC::ResolveNode::emitBytecode):
+        (JSC::BracketAccessorNode::emitBytecode):
+        (JSC::DotAccessorNode::emitBytecode):
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::PostfixNode::emitResolve):
+        (JSC::DeleteResolveNode::emitBytecode):
+        (JSC::TypeOfResolveNode::emitBytecode):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::ConstDeclNode::emitCodeSingle):
+        (JSC::EmptyVarExpression::emitBytecode):
+        (JSC::ForInNode::tryGetBoundLocal):
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::ArrayPatternNode::emitDirectBinding):
+        (JSC::BindingNode::bindValue):
+        (JSC::getArgumentByVal): Deleted.
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGAbstractInterpreter.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::clobberWorld):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::clobberCapturedVars): Deleted.
+        * dfg/DFGAbstractValue.h:
+        * dfg/DFGArgumentPosition.h:
+        (JSC::DFG::ArgumentPosition::addVariable):
+        * dfg/DFGArgumentsEliminationPhase.cpp: Added.
+        (JSC::DFG::performArgumentsElimination):
+        * dfg/DFGArgumentsEliminationPhase.h: Added.
+        * dfg/DFGArgumentsSimplificationPhase.cpp: Removed.
+        * dfg/DFGArgumentsSimplificationPhase.h: Removed.
+        * dfg/DFGArgumentsUtilities.cpp: Added.
+        (JSC::DFG::argumentsInvolveStackSlot):
+        (JSC::DFG::emitCodeToGetArgumentsArrayLength):
+        * dfg/DFGArgumentsUtilities.h: Added.
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine):
+        (JSC::DFG::ArrayMode::alreadyChecked):
+        (JSC::DFG::arrayTypeToString):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::canCSEStorage):
+        (JSC::DFG::ArrayMode::modeForPut):
+        * dfg/DFGAvailabilityMap.cpp:
+        (JSC::DFG::AvailabilityMap::prune):
+        * dfg/DFGAvailabilityMap.h:
+        (JSC::DFG::AvailabilityMap::closeOverNodes):
+        (JSC::DFG::AvailabilityMap::closeStartingWithLocal):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::newVariableAccessData):
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::flushDirect):
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::noticeArgumentsUse):
+        (JSC::DFG::ByteCodeParser::handleVarargsCall):
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeGetLocalFor):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeLocalsInBlock):
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGCallCreateDirectArgumentsSlowPathGenerator.h: Added.
+        (JSC::DFG::CallCreateDirectArgumentsSlowPathGenerator::CallCreateDirectArgumentsSlowPathGenerator):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::isSupportedForInlining):
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGCommon.h:
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::CommonData):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::cleanVariables):
+        * dfg/DFGDisassembler.h:
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGFlushFormat.cpp:
+        (WTF::printInternal):
+        * dfg/DFGFlushFormat.h:
+        (JSC::DFG::resultFor):
+        (JSC::DFG::useKindFor):
+        (JSC::DFG::dataFormatFor):
+        * dfg/DFGForAllKills.h: Added.
+        (JSC::DFG::forAllLiveNodesAtTail):
+        (JSC::DFG::forAllDirectlyKilledOperands):
+        (JSC::DFG::forAllKilledOperands):
+        (JSC::DFG::forAllKilledNodesAtNodeIndex):
+        (JSC::DFG::forAllKillsInBlock):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::substituteGetLocal):
+        (JSC::DFG::Graph::livenessFor):
+        (JSC::DFG::Graph::killsFor):
+        (JSC::DFG::Graph::tryGetConstantClosureVar):
+        (JSC::DFG::Graph::tryGetRegisters): Deleted.
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::symbolTableFor):
+        (JSC::DFG::Graph::uses):
+        (JSC::DFG::Graph::bytecodeRegisterForArgument): Deleted.
+        (JSC::DFG::Graph::capturedVarsFor): Deleted.
+        (JSC::DFG::Graph::usesArguments): Deleted.
+        (JSC::DFG::Graph::argumentsRegisterFor): Deleted.
+        (JSC::DFG::Graph::machineArgumentsRegisterFor): Deleted.
+        (JSC::DFG::Graph::uncheckedArgumentsRegisterFor): Deleted.
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        (JSC::DFG::InPlaceAbstractState::mergeStateAtTail):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        * dfg/DFGMinifiedID.h:
+        * dfg/DFGMinifiedNode.cpp:
+        (JSC::DFG::MinifiedNode::fromNode):
+        * dfg/DFGMinifiedNode.h:
+        (JSC::DFG::belongsInMinifiedGraph):
+        (JSC::DFG::MinifiedNode::hasInlineCallFrame):
+        (JSC::DFG::MinifiedNode::inlineCallFrame):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToIdentityOn):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasConstant):
+        (JSC::DFG::Node::constant):
+        (JSC::DFG::Node::hasScopeOffset):
+        (JSC::DFG::Node::scopeOffset):
+        (JSC::DFG::Node::hasDirectArgumentsOffset):
+        (JSC::DFG::Node::capturedArgumentsOffset):
+        (JSC::DFG::Node::variablePointer):
+        (JSC::DFG::Node::hasCallVarargsData):
+        (JSC::DFG::Node::hasLoadVarargsData):
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasCellOperand):
+        (JSC::DFG::Node::objectMaterializationData):
+        (JSC::DFG::Node::isPhantomAllocation):
+        (JSC::DFG::Node::willHaveCodeGenOrOSR):
+        (JSC::DFG::Node::shouldSpeculateDirectArguments):
+        (JSC::DFG::Node::shouldSpeculateScopedArguments):
+        (JSC::DFG::Node::isPhantomArguments): Deleted.
+        (JSC::DFG::Node::hasVarNumber): Deleted.
+        (JSC::DFG::Node::varNumber): Deleted.
+        (JSC::DFG::Node::registerPointer): Deleted.
+        (JSC::DFG::Node::shouldSpeculateArguments): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGOSRExitCompiler.cpp:
+        (JSC::DFG::OSRExitCompiler::emitRestoreArguments):
+        * dfg/DFGOSRExitCompiler.h:
+        (JSC::DFG::OSRExitCompiler::badIndex): Deleted.
+        (JSC::DFG::OSRExitCompiler::initializePoisoned): Deleted.
+        (JSC::DFG::OSRExitCompiler::poisonIndex): Deleted.
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::ArgumentsRecoveryGenerator::ArgumentsRecoveryGenerator): Deleted.
+        (JSC::DFG::ArgumentsRecoveryGenerator::~ArgumentsRecoveryGenerator): Deleted.
+        (JSC::DFG::ArgumentsRecoveryGenerator::generateFor): Deleted.
+        * dfg/DFGOSRExitCompilerCommon.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::read):
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::write):
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::def):
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        (JSC::DFG::preciseLocalClobberize):
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::writeTop): Deleted.
+        (JSC::DFG::forEachLocalReadByUnwind): Deleted.
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::run):
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        (JSC::DFG::PredictionPropagationPhase::propagateThroughArgumentPositions):
+        * dfg/DFGPromoteHeapAccess.h:
+        (JSC::DFG::promoteHeapAccess):
+        * dfg/DFGPromotedHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGPromotedHeapLocation.h:
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSArray):
+        (JSC::DFG::SpeculativeJIT::emitGetLength):
+        (JSC::DFG::SpeculativeJIT::emitGetCallee):
+        (JSC::DFG::SpeculativeJIT::emitGetArgumentStart):
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+        (JSC::DFG::SpeculativeJIT::compileForwardVarargs):
+        (JSC::DFG::SpeculativeJIT::compileCreateActivation):
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetFromArguments):
+        (JSC::DFG::SpeculativeJIT::compilePutToArguments):
+        (JSC::DFG::SpeculativeJIT::compileCreateScopedArguments):
+        (JSC::DFG::SpeculativeJIT::compileCreateClonedArguments):
+        (JSC::DFG::SpeculativeJIT::emitAllocateArguments): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnArguments): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetArgumentsLength): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionNoCheck): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionExpression): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObjectWithKnownSize):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObject):
+        (JSC::DFG::SpeculativeJIT::framePointerOffsetToGetActivationRegisters): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run):
+        * dfg/DFGUnificationPhase.cpp:
+        (JSC::DFG::UnificationPhase::run):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validateCPS):
+        * dfg/DFGValueSource.cpp:
+        (JSC::DFG::ValueSource::dump):
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::dataFormatToValueSourceKind):
+        (JSC::DFG::valueSourceKindToDataFormat):
+        (JSC::DFG::ValueSource::ValueSource):
+        (JSC::DFG::ValueSource::forFlushFormat):
+        (JSC::DFG::ValueSource::valueRecovery):
+        * dfg/DFGVarargsForwardingPhase.cpp: Added.
+        (JSC::DFG::performVarargsForwarding):
+        * dfg/DFGVarargsForwardingPhase.h: Added.
+        * dfg/DFGVariableAccessData.cpp:
+        (JSC::DFG::VariableAccessData::VariableAccessData):
+        (JSC::DFG::VariableAccessData::flushFormat):
+        (JSC::DFG::VariableAccessData::mergeIsCaptured): Deleted.
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::shouldNeverUnbox):
+        (JSC::DFG::VariableAccessData::shouldUseDoubleFormat):
+        (JSC::DFG::VariableAccessData::isCaptured): Deleted.
+        (JSC::DFG::VariableAccessData::mergeIsArgumentsAlias): Deleted.
+        (JSC::DFG::VariableAccessData::isArgumentsAlias): Deleted.
+        * dfg/DFGVariableAccessDataDump.cpp:
+        (JSC::DFG::VariableAccessDataDump::dump):
+        * dfg/DFGVariableAccessDataDump.h:
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::tryToSetConstantRecovery):
+        * dfg/DFGVariableEventStream.h:
+        * ftl/FTLAbstractHeap.cpp:
+        (JSC::FTL::AbstractHeap::dump):
+        (JSC::FTL::AbstractField::dump):
+        (JSC::FTL::IndexedAbstractHeap::dump):
+        (JSC::FTL::NumberedAbstractHeap::dump):
+        (JSC::FTL::AbsoluteAbstractHeap::dump):
+        * ftl/FTLAbstractHeap.h:
+        * ftl/FTLAbstractHeapRepository.cpp:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLExitArgument.cpp:
+        (JSC::FTL::ExitArgument::dump):
+        * ftl/FTLExitPropertyValue.cpp:
+        (JSC::FTL::ExitPropertyValue::withLocalsOffset):
+        * ftl/FTLExitPropertyValue.h:
+        * ftl/FTLExitTimeObjectMaterialization.cpp:
+        (JSC::FTL::ExitTimeObjectMaterialization::ExitTimeObjectMaterialization):
+        (JSC::FTL::ExitTimeObjectMaterialization::accountForLocalsOffset):
+        * ftl/FTLExitTimeObjectMaterialization.h:
+        (JSC::FTL::ExitTimeObjectMaterialization::origin):
+        * ftl/FTLExitValue.cpp:
+        (JSC::FTL::ExitValue::withLocalsOffset):
+        (JSC::FTL::ExitValue::valueFormat):
+        (JSC::FTL::ExitValue::dumpInContext):
+        * ftl/FTLExitValue.h:
+        (JSC::FTL::ExitValue::isArgument):
+        (JSC::FTL::ExitValue::argumentsObjectThatWasNotCreated): Deleted.
+        (JSC::FTL::ExitValue::isArgumentsObjectThatWasNotCreated): Deleted.
+        (JSC::FTL::ExitValue::valueFormat): Deleted.
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfCallForwardVarargs):
+        (JSC::FTL::sizeOfConstructForwardVarargs):
+        (JSC::FTL::sizeOfICFor):
+        * ftl/FTLInlineCacheSize.h:
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLJSCallVarargs.cpp:
+        (JSC::FTL::JSCallVarargs::JSCallVarargs):
+        (JSC::FTL::JSCallVarargs::emit):
+        * ftl/FTLJSCallVarargs.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compilePutStack):
+        (JSC::FTL::LowerDFGToLLVM::compileGetArrayLength):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentByVal):
+        (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileArrayPush):
+        (JSC::FTL::LowerDFGToLLVM::compileArrayPop):
+        (JSC::FTL::LowerDFGToLLVM::compileCreateActivation):
+        (JSC::FTL::LowerDFGToLLVM::compileNewFunction):
+        (JSC::FTL::LowerDFGToLLVM::compileCreateDirectArguments):
+        (JSC::FTL::LowerDFGToLLVM::compileCreateScopedArguments):
+        (JSC::FTL::LowerDFGToLLVM::compileCreateClonedArguments):
+        (JSC::FTL::LowerDFGToLLVM::compileStringCharAt):
+        (JSC::FTL::LowerDFGToLLVM::compileStringCharCodeAt):
+        (JSC::FTL::LowerDFGToLLVM::compileGetGlobalVar):
+        (JSC::FTL::LowerDFGToLLVM::compilePutGlobalVar):
+        (JSC::FTL::LowerDFGToLLVM::compileGetArgumentCount):
+        (JSC::FTL::LowerDFGToLLVM::compileGetClosureVar):
+        (JSC::FTL::LowerDFGToLLVM::compilePutClosureVar):
+        (JSC::FTL::LowerDFGToLLVM::compileGetFromArguments):
+        (JSC::FTL::LowerDFGToLLVM::compilePutToArguments):
+        (JSC::FTL::LowerDFGToLLVM::compileCallOrConstructVarargs):
+        (JSC::FTL::LowerDFGToLLVM::compileForwardVarargs):
+        (JSC::FTL::LowerDFGToLLVM::compileGetEnumeratorPname):
+        (JSC::FTL::LowerDFGToLLVM::ArgumentsLength::ArgumentsLength):
+        (JSC::FTL::LowerDFGToLLVM::getArgumentsLength):
+        (JSC::FTL::LowerDFGToLLVM::getCurrentCallee):
+        (JSC::FTL::LowerDFGToLLVM::getArgumentsStart):
+        (JSC::FTL::LowerDFGToLLVM::baseIndex):
+        (JSC::FTL::LowerDFGToLLVM::allocateObject):
+        (JSC::FTL::LowerDFGToLLVM::allocateVariableSizedObject):
+        (JSC::FTL::LowerDFGToLLVM::isArrayType):
+        (JSC::FTL::LowerDFGToLLVM::emitStoreBarrier):
+        (JSC::FTL::LowerDFGToLLVM::buildExitArguments):
+        (JSC::FTL::LowerDFGToLLVM::exitValueForAvailability):
+        (JSC::FTL::LowerDFGToLLVM::exitValueForNode):
+        (JSC::FTL::LowerDFGToLLVM::loadStructure):
+        (JSC::FTL::LowerDFGToLLVM::compilePhantomArguments): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentsLength): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::compileGetClosureRegisters): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::compileCheckArgumentsNotCreated): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::checkArgumentsNotCreated): Deleted.
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileRecovery):
+        (JSC::FTL::compileStub):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::aShr):
+        (JSC::FTL::Output::lShr):
+        (JSC::FTL::Output::zeroExtPtr):
+        * heap/CopyToken.h:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::getArgumentUnsafe):
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeOfVarargs):
+        (JSC::sizeFrameForVarargs):
+        (JSC::loadVarargs):
+        (JSC::unwindCallFrame):
+        * interpreter/Interpreter.h:
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::createArguments):
+        (JSC::StackVisitor::Frame::existingArguments): Deleted.
+        * interpreter/StackVisitor.h:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::storeValue):
+        (JSC::AssemblyHelpers::loadValue):
+        (JSC::AssemblyHelpers::storeTrustedValue):
+        (JSC::AssemblyHelpers::branchIfNotCell):
+        (JSC::AssemblyHelpers::branchIsEmpty):
+        (JSC::AssemblyHelpers::argumentsStart):
+        (JSC::AssemblyHelpers::baselineArgumentsRegisterFor): Deleted.
+        (JSC::AssemblyHelpers::offsetOfLocals): Deleted.
+        (JSC::AssemblyHelpers::offsetOfArguments): Deleted.
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgument):
+        * jit/GPRInfo.h:
+        (JSC::JSValueRegs::withTwoAvailableRegs):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_lexical_environment):
+        (JSC::JIT::emit_op_new_func):
+        (JSC::JIT::emit_op_create_direct_arguments):
+        (JSC::JIT::emit_op_create_scoped_arguments):
+        (JSC::JIT::emit_op_create_out_of_band_arguments):
+        (JSC::JIT::emit_op_tear_off_arguments): Deleted.
+        (JSC::JIT::emit_op_create_arguments): Deleted.
+        (JSC::JIT::emit_op_init_lazy_reg): Deleted.
+        (JSC::JIT::emit_op_get_arguments_length): Deleted.
+        (JSC::JIT::emitSlow_op_get_arguments_length): Deleted.
+        (JSC::JIT::emit_op_get_argument_by_val): Deleted.
+        (JSC::JIT::emitSlow_op_get_argument_by_val): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_lexical_environment):
+        (JSC::JIT::emit_op_tear_off_arguments): Deleted.
+        (JSC::JIT::emit_op_create_arguments): Deleted.
+        (JSC::JIT::emit_op_init_lazy_reg): Deleted.
+        (JSC::JIT::emit_op_get_arguments_length): Deleted.
+        (JSC::JIT::emitSlow_op_get_arguments_length): Deleted.
+        (JSC::JIT::emit_op_get_argument_by_val): Deleted.
+        (JSC::JIT::emitSlow_op_get_argument_by_val): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitGetClosureVar):
+        (JSC::JIT::emitPutClosureVar):
+        (JSC::JIT::emit_op_get_from_arguments):
+        (JSC::JIT::emit_op_put_to_arguments):
+        (JSC::JIT::emit_op_init_global_const):
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::emitDirectArgumentsGetByVal):
+        (JSC::JIT::emitScopedArgumentsGetByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitGetClosureVar):
+        (JSC::JIT::emitPutClosureVar):
+        (JSC::JIT::emit_op_get_from_arguments):
+        (JSC::JIT::emit_op_put_to_arguments):
+        (JSC::JIT::emit_op_init_global_const):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/Nodes.h:
+        (JSC::ScopeNode::captures):
+        * runtime/Arguments.cpp: Removed.
+        * runtime/Arguments.h: Removed.
+        * runtime/ArgumentsMode.h: Added.
+        * runtime/DirectArgumentsOffset.cpp: Added.
+        (JSC::DirectArgumentsOffset::dump):
+        * runtime/DirectArgumentsOffset.h: Added.
+        (JSC::DirectArgumentsOffset::DirectArgumentsOffset):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/ConstantMode.cpp: Added.
+        (WTF::printInternal):
+        * runtime/ConstantMode.h:
+        (JSC::modeForIsConstant):
+        * runtime/DirectArguments.cpp: Added.
+        (JSC::DirectArguments::DirectArguments):
+        (JSC::DirectArguments::createUninitialized):
+        (JSC::DirectArguments::create):
+        (JSC::DirectArguments::createByCopying):
+        (JSC::DirectArguments::visitChildren):
+        (JSC::DirectArguments::copyBackingStore):
+        (JSC::DirectArguments::createStructure):
+        (JSC::DirectArguments::overrideThings):
+        (JSC::DirectArguments::overrideThingsIfNecessary):
+        (JSC::DirectArguments::overrideArgument):
+        (JSC::DirectArguments::copyToArguments):
+        (JSC::DirectArguments::overridesSize):
+        * runtime/DirectArguments.h: Added.
+        (JSC::DirectArguments::internalLength):
+        (JSC::DirectArguments::length):
+        (JSC::DirectArguments::canAccessIndexQuickly):
+        (JSC::DirectArguments::getIndexQuickly):
+        (JSC::DirectArguments::setIndexQuickly):
+        (JSC::DirectArguments::callee):
+        (JSC::DirectArguments::argument):
+        (JSC::DirectArguments::overrodeThings):
+        (JSC::DirectArguments::offsetOfCallee):
+        (JSC::DirectArguments::offsetOfLength):
+        (JSC::DirectArguments::offsetOfMinCapacity):
+        (JSC::DirectArguments::offsetOfOverrides):
+        (JSC::DirectArguments::storageOffset):
+        (JSC::DirectArguments::offsetOfSlot):
+        (JSC::DirectArguments::allocationSize):
+        (JSC::DirectArguments::storage):
+        * runtime/FunctionPrototype.cpp:
+        * runtime/GenericArguments.h: Added.
+        (JSC::GenericArguments::GenericArguments):
+        * runtime/GenericArgumentsInlines.h: Added.
+        (JSC::GenericArguments<Type>::getOwnPropertySlot):
+        (JSC::GenericArguments<Type>::getOwnPropertySlotByIndex):
+        (JSC::GenericArguments<Type>::getOwnPropertyNames):
+        (JSC::GenericArguments<Type>::put):
+        (JSC::GenericArguments<Type>::putByIndex):
+        (JSC::GenericArguments<Type>::deleteProperty):
+        (JSC::GenericArguments<Type>::deletePropertyByIndex):
+        (JSC::GenericArguments<Type>::defineOwnProperty):
+        (JSC::GenericArguments<Type>::copyToArguments):
+        * runtime/GenericOffset.h: Added.
+        (JSC::GenericOffset::GenericOffset):
+        (JSC::GenericOffset::operator!):
+        (JSC::GenericOffset::offsetUnchecked):
+        (JSC::GenericOffset::offset):
+        (JSC::GenericOffset::operator==):
+        (JSC::GenericOffset::operator!=):
+        (JSC::GenericOffset::operator<):
+        (JSC::GenericOffset::operator>):
+        (JSC::GenericOffset::operator<=):
+        (JSC::GenericOffset::operator>=):
+        (JSC::GenericOffset::operator+):
+        (JSC::GenericOffset::operator-):
+        (JSC::GenericOffset::operator+=):
+        (JSC::GenericOffset::operator-=):
+        * runtime/JSArgumentsIterator.cpp:
+        (JSC::JSArgumentsIterator::finishCreation):
+        (JSC::argumentsFuncIterator):
+        * runtime/JSArgumentsIterator.h:
+        (JSC::JSArgumentsIterator::create):
+        (JSC::JSArgumentsIterator::next):
+        * runtime/JSEnvironmentRecord.cpp:
+        (JSC::JSEnvironmentRecord::visitChildren):
+        * runtime/JSEnvironmentRecord.h:
+        (JSC::JSEnvironmentRecord::variables):
+        (JSC::JSEnvironmentRecord::isValid):
+        (JSC::JSEnvironmentRecord::variableAt):
+        (JSC::JSEnvironmentRecord::offsetOfVariables):
+        (JSC::JSEnvironmentRecord::offsetOfVariable):
+        (JSC::JSEnvironmentRecord::allocationSizeForScopeSize):
+        (JSC::JSEnvironmentRecord::allocationSize):
+        (JSC::JSEnvironmentRecord::JSEnvironmentRecord):
+        (JSC::JSEnvironmentRecord::finishCreationUninitialized):
+        (JSC::JSEnvironmentRecord::finishCreation):
+        (JSC::JSEnvironmentRecord::registers): Deleted.
+        (JSC::JSEnvironmentRecord::registerAt): Deleted.
+        (JSC::JSEnvironmentRecord::addressOfRegisters): Deleted.
+        (JSC::JSEnvironmentRecord::offsetOfRegisters): Deleted.
+        * runtime/JSFunction.cpp:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::addGlobalVar):
+        (JSC::JSGlobalObject::addFunction):
+        (JSC::JSGlobalObject::visitChildren):
+        (JSC::JSGlobalObject::addStaticGlobals):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::directArgumentsStructure):
+        (JSC::JSGlobalObject::scopedArgumentsStructure):
+        (JSC::JSGlobalObject::outOfBandArgumentsStructure):
+        (JSC::JSGlobalObject::argumentsStructure): Deleted.
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::symbolTableGet):
+        (JSC::JSLexicalEnvironment::symbolTablePut):
+        (JSC::JSLexicalEnvironment::getOwnNonIndexPropertyNames):
+        (JSC::JSLexicalEnvironment::symbolTablePutWithAttributes):
+        (JSC::JSLexicalEnvironment::visitChildren): Deleted.
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::JSLexicalEnvironment::create):
+        (JSC::JSLexicalEnvironment::JSLexicalEnvironment):
+        (JSC::JSLexicalEnvironment::registersOffset): Deleted.
+        (JSC::JSLexicalEnvironment::storageOffset): Deleted.
+        (JSC::JSLexicalEnvironment::storage): Deleted.
+        (JSC::JSLexicalEnvironment::allocationSize): Deleted.
+        (JSC::JSLexicalEnvironment::isValidIndex): Deleted.
+        (JSC::JSLexicalEnvironment::isValid): Deleted.
+        (JSC::JSLexicalEnvironment::registerAt): Deleted.
+        * runtime/JSNameScope.cpp:
+        (JSC::JSNameScope::visitChildren): Deleted.
+        * runtime/JSNameScope.h:
+        (JSC::JSNameScope::create):
+        (JSC::JSNameScope::value):
+        (JSC::JSNameScope::finishCreation):
+        (JSC::JSNameScope::JSNameScope):
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::findVariableIndex):
+        (JSC::JSSegmentedVariableObject::addVariables):
+        (JSC::JSSegmentedVariableObject::visitChildren):
+        (JSC::JSSegmentedVariableObject::findRegisterIndex): Deleted.
+        (JSC::JSSegmentedVariableObject::addRegisters): Deleted.
+        * runtime/JSSegmentedVariableObject.h:
+        (JSC::JSSegmentedVariableObject::variableAt):
+        (JSC::JSSegmentedVariableObject::assertVariableIsInThisObject):
+        (JSC::JSSegmentedVariableObject::registerAt): Deleted.
+        (JSC::JSSegmentedVariableObject::assertRegisterIsInThisObject): Deleted.
+        * runtime/JSSymbolTableObject.h:
+        (JSC::JSSymbolTableObject::offsetOfSymbolTable):
+        (JSC::symbolTableGet):
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutWithAttributes):
+        * runtime/JSType.h:
+        * runtime/Options.h:
+        * runtime/ClonedArguments.cpp: Added.
+        (JSC::ClonedArguments::ClonedArguments):
+        (JSC::ClonedArguments::createEmpty):
+        (JSC::ClonedArguments::createWithInlineFrame):
+        (JSC::ClonedArguments::createWithMachineFrame):
+        (JSC::ClonedArguments::createByCopyingFrom):
+        (JSC::ClonedArguments::createStructure):
+        (JSC::ClonedArguments::getOwnPropertySlot):
+        (JSC::ClonedArguments::getOwnPropertyNames):
+        (JSC::ClonedArguments::put):
+        (JSC::ClonedArguments::deleteProperty):
+        (JSC::ClonedArguments::defineOwnProperty):
+        (JSC::ClonedArguments::materializeSpecials):
+        (JSC::ClonedArguments::materializeSpecialsIfNecessary):
+        * runtime/ClonedArguments.h: Added.
+        (JSC::ClonedArguments::specialsMaterialized):
+        * runtime/ScopeOffset.cpp: Added.
+        (JSC::ScopeOffset::dump):
+        * runtime/ScopeOffset.h: Added.
+        (JSC::ScopeOffset::ScopeOffset):
+        * runtime/ScopedArguments.cpp: Added.
+        (JSC::ScopedArguments::ScopedArguments):
+        (JSC::ScopedArguments::finishCreation):
+        (JSC::ScopedArguments::createUninitialized):
+        (JSC::ScopedArguments::create):
+        (JSC::ScopedArguments::createByCopying):
+        (JSC::ScopedArguments::createByCopyingFrom):
+        (JSC::ScopedArguments::visitChildren):
+        (JSC::ScopedArguments::createStructure):
+        (JSC::ScopedArguments::overrideThings):
+        (JSC::ScopedArguments::overrideThingsIfNecessary):
+        (JSC::ScopedArguments::overrideArgument):
+        (JSC::ScopedArguments::copyToArguments):
+        * runtime/ScopedArguments.h: Added.
+        (JSC::ScopedArguments::internalLength):
+        (JSC::ScopedArguments::length):
+        (JSC::ScopedArguments::canAccessIndexQuickly):
+        (JSC::ScopedArguments::getIndexQuickly):
+        (JSC::ScopedArguments::setIndexQuickly):
+        (JSC::ScopedArguments::callee):
+        (JSC::ScopedArguments::overrodeThings):
+        (JSC::ScopedArguments::offsetOfOverrodeThings):
+        (JSC::ScopedArguments::offsetOfTotalLength):
+        (JSC::ScopedArguments::offsetOfTable):
+        (JSC::ScopedArguments::offsetOfScope):
+        (JSC::ScopedArguments::overflowStorageOffset):
+        (JSC::ScopedArguments::allocationSize):
+        (JSC::ScopedArguments::overflowStorage):
+        * runtime/ScopedArgumentsTable.cpp: Added.
+        (JSC::ScopedArgumentsTable::ScopedArgumentsTable):
+        (JSC::ScopedArgumentsTable::~ScopedArgumentsTable):
+        (JSC::ScopedArgumentsTable::destroy):
+        (JSC::ScopedArgumentsTable::create):
+        (JSC::ScopedArgumentsTable::clone):
+        (JSC::ScopedArgumentsTable::setLength):
+        (JSC::ScopedArgumentsTable::set):
+        (JSC::ScopedArgumentsTable::createStructure):
+        * runtime/ScopedArgumentsTable.h: Added.
+        (JSC::ScopedArgumentsTable::length):
+        (JSC::ScopedArgumentsTable::get):
+        (JSC::ScopedArgumentsTable::lock):
+        (JSC::ScopedArgumentsTable::offsetOfLength):
+        (JSC::ScopedArgumentsTable::offsetOfArguments):
+        (JSC::ScopedArgumentsTable::at):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTableEntry::prepareToWatch):
+        (JSC::SymbolTable::SymbolTable):
+        (JSC::SymbolTable::visitChildren):
+        (JSC::SymbolTable::localToEntry):
+        (JSC::SymbolTable::entryFor):
+        (JSC::SymbolTable::cloneScopePart):
+        (JSC::SymbolTable::prepareForTypeProfiling):
+        (JSC::SymbolTable::uniqueIDForOffset):
+        (JSC::SymbolTable::globalTypeSetForOffset):
+        (JSC::SymbolTable::cloneCapturedNames): Deleted.
+        (JSC::SymbolTable::uniqueIDForRegister): Deleted.
+        (JSC::SymbolTable::globalTypeSetForRegister): Deleted.
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTableEntry::varOffsetFromBits):
+        (JSC::SymbolTableEntry::scopeOffsetFromBits):
+        (JSC::SymbolTableEntry::Fast::varOffset):
+        (JSC::SymbolTableEntry::Fast::scopeOffset):
+        (JSC::SymbolTableEntry::Fast::isDontEnum):
+        (JSC::SymbolTableEntry::Fast::getAttributes):
+        (JSC::SymbolTableEntry::SymbolTableEntry):
+        (JSC::SymbolTableEntry::varOffset):
+        (JSC::SymbolTableEntry::isWatchable):
+        (JSC::SymbolTableEntry::scopeOffset):
+        (JSC::SymbolTableEntry::setAttributes):
+        (JSC::SymbolTableEntry::constantMode):
+        (JSC::SymbolTableEntry::isDontEnum):
+        (JSC::SymbolTableEntry::disableWatching):
+        (JSC::SymbolTableEntry::pack):
+        (JSC::SymbolTableEntry::isValidVarOffset):
+        (JSC::SymbolTable::createNameScopeTable):
+        (JSC::SymbolTable::maxScopeOffset):
+        (JSC::SymbolTable::didUseScopeOffset):
+        (JSC::SymbolTable::didUseVarOffset):
+        (JSC::SymbolTable::scopeSize):
+        (JSC::SymbolTable::nextScopeOffset):
+        (JSC::SymbolTable::takeNextScopeOffset):
+        (JSC::SymbolTable::add):
+        (JSC::SymbolTable::set):
+        (JSC::SymbolTable::argumentsLength):
+        (JSC::SymbolTable::setArgumentsLength):
+        (JSC::SymbolTable::argumentOffset):
+        (JSC::SymbolTable::setArgumentOffset):
+        (JSC::SymbolTable::arguments):
+        (JSC::SlowArgument::SlowArgument): Deleted.
+        (JSC::SymbolTableEntry::Fast::getIndex): Deleted.
+        (JSC::SymbolTableEntry::getIndex): Deleted.
+        (JSC::SymbolTableEntry::isValidIndex): Deleted.
+        (JSC::SymbolTable::captureStart): Deleted.
+        (JSC::SymbolTable::setCaptureStart): Deleted.
+        (JSC::SymbolTable::captureEnd): Deleted.
+        (JSC::SymbolTable::setCaptureEnd): Deleted.
+        (JSC::SymbolTable::captureCount): Deleted.
+        (JSC::SymbolTable::isCaptured): Deleted.
+        (JSC::SymbolTable::parameterCount): Deleted.
+        (JSC::SymbolTable::parameterCountIncludingThis): Deleted.
+        (JSC::SymbolTable::setParameterCountIncludingThis): Deleted.
+        (JSC::SymbolTable::slowArguments): Deleted.
+        (JSC::SymbolTable::setSlowArguments): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * runtime/VarOffset.cpp: Added.
+        (JSC::VarOffset::dump):
+        (WTF::printInternal):
+        * runtime/VarOffset.h: Added.
+        (JSC::VarOffset::VarOffset):
+        (JSC::VarOffset::assemble):
+        (JSC::VarOffset::isValid):
+        (JSC::VarOffset::operator!):
+        (JSC::VarOffset::kind):
+        (JSC::VarOffset::isStack):
+        (JSC::VarOffset::isScope):
+        (JSC::VarOffset::isDirectArgument):
+        (JSC::VarOffset::stackOffsetUnchecked):
+        (JSC::VarOffset::scopeOffsetUnchecked):
+        (JSC::VarOffset::capturedArgumentsOffsetUnchecked):
+        (JSC::VarOffset::stackOffset):
+        (JSC::VarOffset::scopeOffset):
+        (JSC::VarOffset::capturedArgumentsOffset):
+        (JSC::VarOffset::rawOffset):
+        (JSC::VarOffset::checkSanity):
+        (JSC::VarOffset::operator==):
+        (JSC::VarOffset::operator!=):
+        (JSC::VarOffset::hash):
+        (JSC::VarOffset::isHashTableDeletedValue):
+        (JSC::VarOffsetHash::hash):
+        (JSC::VarOffsetHash::equal):
+        * tests/stress/arguments-exit-strict-mode.js: Added.
+        * tests/stress/arguments-exit.js: Added.
+        * tests/stress/arguments-inlined-exit-strict-mode-fixed.js: Added.
+        * tests/stress/arguments-inlined-exit-strict-mode.js: Added.
+        * tests/stress/arguments-inlined-exit.js: Added.
+        * tests/stress/arguments-interference.js: Added.
+        * tests/stress/arguments-interference-cfg.js: Added.
+        * tests/stress/dead-get-closure-var.js: Added.
+        * tests/stress/get-declared-unpassed-argument-in-direct-arguments.js: Added.
+        * tests/stress/get-declared-unpassed-argument-in-scoped-arguments.js: Added.
+        * tests/stress/varargs-closure-inlined-exit-strict-mode.js: Added.
+        * tests/stress/varargs-closure-inlined-exit.js: Added.
+        * tests/stress/varargs-exit.js: Added.
+        * tests/stress/varargs-inlined-exit.js: Added.
+        * tests/stress/varargs-inlined-simple-exit-aliasing-weird-reversed-args.js: Added.
+        * tests/stress/varargs-inlined-simple-exit-aliasing-weird.js: Added.
+        * tests/stress/varargs-inlined-simple-exit-aliasing.js: Added.
+        * tests/stress/varargs-inlined-simple-exit.js: Added.
+        * tests/stress/varargs-too-few-arguments.js: Added.
+        * tests/stress/varargs-varargs-closure-inlined-exit.js: Added.
+        * tests/stress/varargs-varargs-inlined-exit-strict-mode.js: Added.
+        * tests/stress/varargs-varargs-inlined-exit.js: Added.
+
 2015-03-25  Andy Estes  <aestes@apple.com>
 
         [Cocoa] RemoteInspectorXPCConnection::deserializeMessage() leaks a NSDictionary under Objective-C GC

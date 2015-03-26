@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,14 @@
 
 #include "config.h"
 #include "CommonSlowPaths.h"
-#include "Arguments.h"
 #include "ArityCheckFailReturnThunks.h"
 #include "ArrayConstructor.h"
 #include "CallFrame.h"
+#include "ClonedArguments.h"
 #include "CodeProfiling.h"
 #include "CommonSlowPathsExceptions.h"
+#include "DirectArguments.h"
+#include "Error.h"
 #include "ErrorHandlingScope.h"
 #include "ExceptionFuzz.h"
 #include "GetterSetter.h"
@@ -38,6 +40,7 @@
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITStubs.h"
+#include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
@@ -49,7 +52,7 @@
 #include "LLIntExceptions.h"
 #include "LowLevelInterpreter.h"
 #include "ObjectConstructor.h"
-#include "JSCInlines.h"
+#include "ScopedArguments.h"
 #include "StructureRareDataInlines.h"
 #include "TypeProfilerLog.h"
 #include "VariableWatchpointSetInlines.h"
@@ -210,17 +213,24 @@ SLOW_PATH_DECL(slow_path_touch_entry)
     END();
 }
 
-SLOW_PATH_DECL(slow_path_create_arguments)
+SLOW_PATH_DECL(slow_path_create_direct_arguments)
 {
     BEGIN();
-    int lexicalEnvironmentReg = pc[2].u.operand;
-    JSLexicalEnvironment* lexicalEnvironment = VirtualRegister(lexicalEnvironmentReg).isValid() ?
-        exec->uncheckedR(lexicalEnvironmentReg).lexicalEnvironment() : nullptr;
-    JSValue arguments = JSValue(Arguments::create(vm, exec, lexicalEnvironment));
-    CHECK_EXCEPTION();
-    exec->uncheckedR(pc[1].u.operand) = arguments;
-    exec->uncheckedR(unmodifiedArgumentsRegister(VirtualRegister(pc[1].u.operand)).offset()) = arguments;
-    END();
+    RETURN(DirectArguments::createByCopying(exec));
+}
+
+SLOW_PATH_DECL(slow_path_create_scoped_arguments)
+{
+    BEGIN();
+    JSLexicalEnvironment* scope = jsCast<JSLexicalEnvironment*>(OP(2).jsValue());
+    ScopedArgumentsTable* table = exec->codeBlock()->symbolTable()->arguments();
+    RETURN(ScopedArguments::createByCopying(exec, table, scope));
+}
+
+SLOW_PATH_DECL(slow_path_create_out_of_band_arguments)
+{
+    BEGIN();
+    RETURN(ClonedArguments::createWithMachineFrame(exec, exec, ArgumentsMode::Cloned));
 }
 
 SLOW_PATH_DECL(slow_path_create_this)

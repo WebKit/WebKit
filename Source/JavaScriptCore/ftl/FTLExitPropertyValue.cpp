@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,11 @@
 #if ENABLE(FTL_JIT)
 
 namespace JSC { namespace FTL {
+
+ExitPropertyValue ExitPropertyValue::withLocalsOffset(int offset) const
+{
+    return ExitPropertyValue(m_location, m_value.withLocalsOffset(offset));
+}
 
 void ExitPropertyValue::dump(PrintStream& out) const
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,8 @@ inline bool belongsInMinifiedGraph(NodeType type)
     case JSConstant:
     case Int52Constant:
     case DoubleConstant:
-    case PhantomArguments:
+    case PhantomDirectArguments:
+    case PhantomClonedArguments:
         return true;
     default:
         return false;
@@ -65,6 +66,13 @@ public:
         return JSValue::decode(bitwise_cast<EncodedJSValue>(m_info));
     }
     
+    bool hasInlineCallFrame() const { return hasInlineCallFrame(m_op); }
+    
+    InlineCallFrame* inlineCallFrame() const
+    {
+        return bitwise_cast<InlineCallFrame*>(static_cast<uintptr_t>(m_info));
+    }
+    
     static MinifiedID getID(MinifiedNode* node) { return node->id(); }
     static bool compareByNodeIndex(const MinifiedNode& a, const MinifiedNode& b)
     {
@@ -75,6 +83,11 @@ private:
     static bool hasConstant(NodeType type)
     {
         return type == JSConstant || type == Int52Constant || type == DoubleConstant;
+    }
+    
+    static bool hasInlineCallFrame(NodeType type)
+    {
+        return type == PhantomDirectArguments || type == PhantomClonedArguments;
     }
     
     MinifiedID m_id;

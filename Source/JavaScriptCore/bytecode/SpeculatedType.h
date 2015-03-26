@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,8 +52,9 @@ static const SpeculatedType SpecUint32Array        = 0x00000200; // It's definit
 static const SpeculatedType SpecFloat32Array       = 0x00000400; // It's definitely an Uint16Array or one of its subclasses.
 static const SpeculatedType SpecFloat64Array       = 0x00000800; // It's definitely an Uint16Array or one of its subclasses.
 static const SpeculatedType SpecTypedArrayView     = SpecInt8Array | SpecInt16Array | SpecInt32Array | SpecUint8Array | SpecUint8ClampedArray | SpecUint16Array | SpecUint32Array | SpecFloat32Array | SpecFloat64Array;
-static const SpeculatedType SpecArguments          = 0x00001000; // It's definitely an Arguments object.
-static const SpeculatedType SpecStringObject       = 0x00002000; // It's definitely a StringObject.
+static const SpeculatedType SpecDirectArguments    = 0x00001000; // It's definitely a DirectArguments object.
+static const SpeculatedType SpecScopedArguments    = 0x00002000; // It's definitely a ScopedArguments object.
+static const SpeculatedType SpecStringObject       = 0x00004000; // It's definitely a StringObject.
 static const SpeculatedType SpecObjectOther        = 0x00008000; // It's definitely an object but not JSFinalObject, JSArray, or JSFunction.
 static const SpeculatedType SpecObject             = 0x0000ffff; // Bitmask used for testing for any kind of object prediction.
 static const SpeculatedType SpecStringIdent        = 0x00010000; // It's definitely a JSString, and it's an identifier.
@@ -193,9 +194,14 @@ inline bool isFloat64ArraySpeculation(SpeculatedType value)
     return value == SpecFloat64Array;
 }
 
-inline bool isArgumentsSpeculation(SpeculatedType value)
+inline bool isDirectArgumentsSpeculation(SpeculatedType value)
 {
-    return !!value && (value & SpecArguments) == value;
+    return value == SpecDirectArguments;
+}
+
+inline bool isScopedArgumentsSpeculation(SpeculatedType value)
+{
+    return value == SpecScopedArguments;
 }
 
 inline bool isActionableIntMutableArraySpeculation(SpeculatedType value)
@@ -224,13 +230,14 @@ inline bool isActionableTypedMutableArraySpeculation(SpeculatedType value)
 inline bool isActionableMutableArraySpeculation(SpeculatedType value)
 {
     return isArraySpeculation(value)
-        || isArgumentsSpeculation(value)
         || isActionableTypedMutableArraySpeculation(value);
 }
 
 inline bool isActionableArraySpeculation(SpeculatedType value)
 {
     return isStringSpeculation(value)
+        || isDirectArgumentsSpeculation(value)
+        || isScopedArgumentsSpeculation(value)
         || isActionableMutableArraySpeculation(value);
 }
 

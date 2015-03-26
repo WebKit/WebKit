@@ -131,14 +131,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     switch (node->op()) {
     case JSConstant:
     case DoubleConstant:
-    case Int52Constant:
-    case PhantomArguments: {
+    case Int52Constant: {
         setBuiltInConstant(node, *node->constant());
         break;
     }
         
     case Identity: {
         forNode(node) = forNode(node->child1());
+        if (forNode(node).value())
+            m_state.setFoundConstants(true);
         break;
     }
         
@@ -207,7 +208,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         ASSERT(!m_state.variables().operand(node->local()).isClear());
         break;
         
-    case LoadVarargs: {
+    case LoadVarargs:
+    case ForwardVarargs: {
+        // FIXME: ForwardVarargs should check if the count becomes known, and if it does, it should turn
+        // itself into a straight-line sequence of GetStack/PutStack.
+        // https://bugs.webkit.org/show_bug.cgi?id=143071
         clobberWorld(node->origin.semantic, clobberLimit);
         LoadVarargsData* data = node->loadVarargsData();
         m_state.variables().operand(data->count).setType(SpecInt32);
@@ -879,7 +884,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
         
-        if (isFinalObjectSpeculation(abstractChild.m_type) || isArraySpeculation(abstractChild.m_type) || isArgumentsSpeculation(abstractChild.m_type)) {
+        if (isFinalObjectSpeculation(abstractChild.m_type) || isArraySpeculation(abstractChild.m_type) || isDirectArgumentsSpeculation(abstractChild.m_type) || isScopedArgumentsSpeculation(abstractChild.m_type)) {
             setConstant(node, *m_graph.freeze(vm->smallStrings.objectString()));
             break;
         }
@@ -1031,7 +1036,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             } else
                 forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
             break;
-        case Array::Arguments:
+        case Array::DirectArguments:
+        case Array::ScopedArguments:
             forNode(node).makeHeapTop();
             break;
         case Array::Int32:
@@ -1138,6 +1144,51 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).makeHeapTop();
         break;
+        
+    case GetMyArgumentByVal: {
+        JSValue index = forNode(node->child2()).m_value;
+        InlineCallFrame* inlineCallFrame = node->child1()->origin.semantic.inlineCallFrame;
+
+        if (index && index.isInt32()) {
+            // This pretends to return TOP for accesses that are actually proven out-of-bounds because
+            // that's the conservative thing to do. Otherwise we'd need to write more code to mark such
+            // paths as unreachable, and it's almost certainly not worth the effort.
+            
+            if (inlineCallFrame) {
+                if (index.asUInt32() < inlineCallFrame->arguments.size() - 1) {
+                    forNode(node) = m_state.variables().operand(
+                        virtualRegisterForArgument(index.asInt32() + 1) + inlineCallFrame->stackOffset);
+                    m_state.setFoundConstants(true);
+                    break;
+                }
+            } else {
+                if (index.asUInt32() < m_state.variables().numberOfArguments() - 1) {
+                    forNode(node) = m_state.variables().argument(index.asInt32() + 1);
+                    m_state.setFoundConstants(true);
+                    break;
+                }
+            }
+        }
+        
+        if (inlineCallFrame) {
+            // We have a bound on the types even though it's random access. Take advantage of this.
+            
+            AbstractValue result;
+            for (unsigned i = inlineCallFrame->arguments.size(); i-- > 1;) {
+                result.merge(
+                    m_state.variables().operand(
+                        virtualRegisterForArgument(i) + inlineCallFrame->stackOffset));
+            }
+            
+            if (result.value())
+                m_state.setFoundConstants(true);
+            forNode(node) = result;
+            break;
+        }
+        
+        forNode(node).makeHeapTop();
+        break;
+    }
             
     case RegExpExec:
         forNode(node).makeHeapTop();
@@ -1303,6 +1354,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
         
     case PhantomNewObject:
+    case PhantomDirectArguments:
+    case PhantomClonedArguments:
     case BottomValue:
         m_state.setDidClobber(true); // Prevent constant folding.
         // This claims to return bottom.
@@ -1332,93 +1385,29 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case TypedArrayWatchpoint:
         break;
     
-    case CreateArguments:
-        forNode(node) = forNode(node->child1());
-        forNode(node).filter(~SpecEmpty);
-        forNode(node).merge(SpecArguments);
+    case CreateDirectArguments:
+        forNode(node).set(m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->directArgumentsStructure());
         break;
         
-    case TearOffArguments:
-        // Does nothing that is user-visible.
-        break;
-
-    case CheckArgumentsNotCreated:
-        if (isEmptySpeculation(
-                m_state.variables().operand(
-                    m_graph.argumentsRegisterFor(node->origin.semantic).offset()).m_type))
-            m_state.setFoundConstants(true);
+    case CreateScopedArguments:
+        forNode(node).set(m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->scopedArgumentsStructure());
         break;
         
-    case GetMyArgumentsLength:
-        // We know that this executable does not escape its arguments, so we can optimize
-        // the arguments a bit. Note that this is not sufficient to force constant folding
-        // of GetMyArgumentsLength, because GetMyArgumentsLength is a clobbering operation.
-        // We perform further optimizations on this later on.
-        if (node->origin.semantic.inlineCallFrame
-            && !node->origin.semantic.inlineCallFrame->isVarargs()) {
-            setConstant(
-                node, jsNumber(node->origin.semantic.inlineCallFrame->arguments.size() - 1));
-            m_state.setDidClobber(true); // Pretend that we clobbered to prevent constant folding.
-        } else
-            forNode(node).setType(SpecInt32);
+    case CreateClonedArguments:
+        forNode(node).setType(SpecObjectOther);
         break;
         
-    case GetMyArgumentsLengthSafe:
-        // This potentially clobbers all structures if the arguments object had a getter
-        // installed on the length property.
-        clobberWorld(node->origin.semantic, clobberLimit);
-        // We currently make no guarantee about what this returns because it does not
-        // speculate that the length property is actually a length.
-        forNode(node).makeHeapTop();
-        break;
-        
-    case GetMyArgumentByVal: {
-        InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame;
-        JSValue value = forNode(node->child1()).m_value;
-        if (inlineCallFrame && value && value.isInt32()) {
-            int32_t index = value.asInt32();
-            if (index >= 0
-                && static_cast<size_t>(index + 1) < inlineCallFrame->arguments.size()) {
-                forNode(node) = m_state.variables().operand(
-                    inlineCallFrame->stackOffset +
-                    m_graph.baselineCodeBlockFor(inlineCallFrame)->argumentIndexAfterCapture(index));
-                m_state.setFoundConstants(true);
-                break;
-            }
-        }
-        forNode(node).makeHeapTop();
-        break;
-    }
-        
-    case GetMyArgumentByValSafe:
-        // This potentially clobbers all structures if the property we're accessing has
-        // a getter. We don't speculate against this.
-        clobberWorld(node->origin.semantic, clobberLimit);
-        // And the result is unknown.
-        forNode(node).makeHeapTop();
-        break;
-        
-    case NewFunction: {
-        AbstractValue& value = forNode(node);
-        value = forNode(node->child1());
-        
-        if (!(value.m_type & SpecEmpty)) {
-            m_state.setFoundConstants(true);
-            break;
-        }
-
-        value.setType((value.m_type & ~SpecEmpty) | SpecFunction);
-        break;
-    }
-
-    case NewFunctionExpression:
-    case NewFunctionNoCheck:
+    case NewFunction:
         forNode(node).set(
             m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->functionStructure());
         break;
         
     case GetCallee:
         forNode(node).setType(SpecFunction);
+        break;
+        
+    case GetArgumentCount:
+        forNode(node).setType(SpecInt32);
         break;
         
     case GetGetter: {
@@ -1469,12 +1458,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case GetClosureRegisters:
-        forNode(node).clear(); // The result is not a JS value.
-        break;
-
     case GetClosureVar:
-        if (JSValue value = m_graph.tryGetConstantClosureVar(forNode(node->child1()), VirtualRegister(node->varNumber()))) {
+        if (JSValue value = m_graph.tryGetConstantClosureVar(forNode(node->child1()), node->scopeOffset())) {
             setConstant(node, *m_graph.freeze(value));
             break;
         }
@@ -1482,7 +1467,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
             
     case PutClosureVar:
-        clobberCapturedVars(node->origin.semantic);
+        break;
+        
+    case GetFromArguments:
+        forNode(node).makeHeapTop();
+        break;
+        
+    case PutToArguments:
         break;
             
     case GetById:
@@ -1626,8 +1617,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:
             break;
-        case Array::Arguments:
-            filter(node->child1(), SpecArguments);
+        case Array::DirectArguments:
+            filter(node->child1(), SpecDirectArguments);
+            break;
+        case Array::ScopedArguments:
+            filter(node->child1(), SpecScopedArguments);
             break;
         case Array::Int8Array:
             filter(node->child1(), SpecInt8Array);
@@ -2026,6 +2020,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CallVarargs:
     case CallForwardVarargs:
     case ConstructVarargs:
+    case ConstructForwardVarargs:
         clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).makeHeapTop();
         break;
@@ -2120,34 +2115,9 @@ bool AbstractInterpreter<AbstractStateType>::execute(Node* node)
 
 template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::clobberWorld(
-    const CodeOrigin& codeOrigin, unsigned clobberLimit)
+    const CodeOrigin&, unsigned clobberLimit)
 {
-    clobberCapturedVars(codeOrigin);
     clobberStructures(clobberLimit);
-}
-
-template<typename AbstractStateType>
-void AbstractInterpreter<AbstractStateType>::clobberCapturedVars(const CodeOrigin& codeOrigin)
-{
-    SamplingRegion samplingRegion("DFG AI Clobber Captured Vars");
-    if (codeOrigin.inlineCallFrame) {
-        const BitVector& capturedVars = codeOrigin.inlineCallFrame->capturedVars;
-        for (size_t i = capturedVars.size(); i--;) {
-            if (!capturedVars.quickGet(i))
-                continue;
-            m_state.variables().local(i).makeHeapTop();
-        }
-    } else {
-        for (size_t i = m_codeBlock->m_numVars; i--;) {
-            if (m_codeBlock->isCaptured(virtualRegisterForLocal(i)))
-                m_state.variables().local(i).makeHeapTop();
-        }
-    }
-
-    for (size_t i = m_state.variables().numberOfArguments(); i--;) {
-        if (m_codeBlock->isCaptured(virtualRegisterForArgument(i)))
-            m_state.variables().argument(i).makeHeapTop();
-    }
 }
 
 template<typename AbstractStateType>

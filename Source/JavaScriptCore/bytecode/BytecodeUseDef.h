@@ -48,11 +48,12 @@ void computeUsesForBytecodeOffset(
     case op_loop_hint:
     case op_jmp:
     case op_new_object:
-    case op_init_lazy_reg:
     case op_enter:
     case op_catch:
     case op_touch_entry:
     case op_profile_control_flow:
+    case op_create_direct_arguments:
+    case op_create_out_of_band_arguments:
         return;
     case op_get_scope:
     case op_to_this:
@@ -73,8 +74,6 @@ void computeUsesForBytecodeOffset(
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;
     }
-    case op_create_arguments:
-    case op_new_func:
     case op_jlesseq:
     case op_jgreater:
     case op_jgreatereq:
@@ -101,7 +100,8 @@ void computeUsesForBytecodeOffset(
     case op_put_by_id_transition_normal_out_of_line:
     case op_put_by_id_out_of_line:
     case op_put_by_id:
-    case op_put_to_scope: {
+    case op_put_to_scope:
+    case op_put_to_arguments: {
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
         return;
@@ -127,7 +127,6 @@ void computeUsesForBytecodeOffset(
     case op_get_by_id:
     case op_get_by_id_out_of_line:
     case op_get_array_length:
-    case op_get_arguments_length:
     case op_typeof:
     case op_is_undefined:
     case op_is_boolean:
@@ -145,7 +144,10 @@ void computeUsesForBytecodeOffset(
     case op_new_array_with_size:
     case op_create_this:
     case op_del_by_id:
-    case op_unsigned: {
+    case op_unsigned:
+    case op_new_func:
+    case op_create_scoped_arguments:
+    case op_get_from_arguments: {
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         return;
     }
@@ -182,7 +184,6 @@ void computeUsesForBytecodeOffset(
         return;
     }
     case op_has_structure_property:
-    case op_get_argument_by_val:
     case op_construct_varargs:
     case op_call_varargs: {
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
@@ -220,12 +221,6 @@ void computeUsesForBytecodeOffset(
         int lastArg = registerOffset + CallFrame::thisArgumentOffset();
         for (int i = 0; i < argCount; i++)
             functor(codeBlock, instruction, opcodeID, lastArg + i);
-        return;
-    }
-    case op_tear_off_arguments: {
-        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
-        functor(codeBlock, instruction, opcodeID, unmodifiedArgumentsRegister(VirtualRegister(instruction[1].u.operand)).offset());
-        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         return;
     }
     default:
@@ -281,10 +276,10 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_put_by_val:
     case op_put_by_val_direct:
     case op_put_by_index:
-    case op_tear_off_arguments:
     case op_profile_type:
     case op_profile_control_flow:
     case op_touch_entry:
+    case op_put_to_arguments:
 #define LLINT_HELPER_OPCODES(opcode, length) case opcode:
         FOR_EACH_LLINT_OPCODE_EXTENSION(LLINT_HELPER_OPCODES);
 #undef LLINT_HELPER_OPCODES
@@ -325,8 +320,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_check_has_instance:
     case op_instanceof:
     case op_get_by_val:
-    case op_get_argument_by_val:
-    case op_get_arguments_length:
     case op_typeof:
     case op_is_undefined:
     case op_is_boolean:
@@ -366,12 +359,14 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_new_object:
     case op_to_this:
     case op_check_tdz:
-    case op_init_lazy_reg:
     case op_get_scope:
-    case op_create_arguments:
+    case op_create_direct_arguments:
+    case op_create_scoped_arguments:
+    case op_create_out_of_band_arguments:
     case op_del_by_id:
     case op_del_by_val:
-    case op_unsigned: {
+    case op_unsigned:
+    case op_get_from_arguments: {
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;
     }

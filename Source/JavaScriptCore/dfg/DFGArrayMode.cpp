@@ -197,8 +197,15 @@ ArrayMode ArrayMode::refine(
         if (isStringSpeculation(base))
             return withType(Array::String);
         
-        if (isArgumentsSpeculation(base))
-            return withType(Array::Arguments);
+        if (isDirectArgumentsSpeculation(base) || isScopedArgumentsSpeculation(base)) {
+            // Handle out-of-bounds accesses as generic accesses.
+            if (graph.hasExitSite(node->origin.semantic, OutOfBounds) || !isInBounds())
+                return ArrayMode(Array::Generic);
+            
+            if (isDirectArgumentsSpeculation(base))
+                return withType(Array::DirectArguments);
+            return withType(Array::ScopedArguments);
+        }
         
         ArrayMode result;
         switch (node->op()) {
@@ -396,8 +403,11 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, AbstractValue& value) c
             return true;
         } }
         
-    case Array::Arguments:
-        return speculationChecked(value.m_type, SpecArguments);
+    case Array::DirectArguments:
+        return speculationChecked(value.m_type, SpecDirectArguments);
+        
+    case Array::ScopedArguments:
+        return speculationChecked(value.m_type, SpecScopedArguments);
         
     case Array::Int8Array:
         return speculationChecked(value.m_type, SpecInt8Array);
@@ -461,8 +471,10 @@ const char* arrayTypeToString(Array::Type type)
         return "ArrayStorage";
     case Array::SlowPutArrayStorage:
         return "SlowPutArrayStorage";
-    case Array::Arguments:
-        return "Arguments";
+    case Array::DirectArguments:
+        return "DirectArguments";
+    case Array::ScopedArguments:
+        return "ScopedArguments";
     case Array::Int8Array:
         return "Int8Array";
     case Array::Int16Array:

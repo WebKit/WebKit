@@ -429,6 +429,7 @@ struct Node {
     }
 
     void convertToIdentity();
+    void convertToIdentityOn(Node*);
 
     bool mustGenerate()
     {
@@ -447,19 +448,20 @@ struct Node {
         }
     }
     
-    bool isPhantomArguments()
-    {
-        return op() == PhantomArguments;
-    }
-    
     bool hasConstant()
     {
         switch (op()) {
         case JSConstant:
         case DoubleConstant:
         case Int52Constant:
-        case PhantomArguments:
             return true;
+            
+        case PhantomDirectArguments:
+        case PhantomClonedArguments:
+            // These pretend to be the empty value constant for the benefit of the DFG backend, which
+            // otherwise wouldn't take kindly to a node that doesn't compute a value.
+            return true;
+            
         default:
             return false;
         }
@@ -468,8 +470,13 @@ struct Node {
     FrozenValue* constant()
     {
         ASSERT(hasConstant());
-        if (op() == PhantomArguments)
+        
+        if (op() == PhantomDirectArguments || op() == PhantomClonedArguments) {
+            // These pretend to be the empty value constant for the benefit of the DFG backend, which
+            // otherwise wouldn't take kindly to a node that doesn't compute a value.
             return FrozenValue::emptySingleton();
+        }
+        
         return bitwise_cast<FrozenValue*>(m_opInfo);
     }
     
@@ -934,15 +941,26 @@ struct Node {
         return m_opInfo;
     }
     
-    bool hasVarNumber()
+    bool hasScopeOffset()
     {
         return op() == GetClosureVar || op() == PutClosureVar;
     }
 
-    int varNumber()
+    ScopeOffset scopeOffset()
     {
-        ASSERT(hasVarNumber());
-        return m_opInfo;
+        ASSERT(hasScopeOffset());
+        return ScopeOffset(m_opInfo);
+    }
+    
+    bool hasDirectArgumentsOffset()
+    {
+        return op() == GetFromArguments || op() == PutToArguments;
+    }
+    
+    DirectArgumentsOffset capturedArgumentsOffset()
+    {
+        ASSERT(hasDirectArgumentsOffset());
+        return DirectArgumentsOffset(m_opInfo);
     }
     
     bool hasRegisterPointer()
@@ -950,7 +968,7 @@ struct Node {
         return op() == GetGlobalVar || op() == PutGlobalVar;
     }
     
-    WriteBarrier<Unknown>* registerPointer()
+    WriteBarrier<Unknown>* variablePointer()
     {
         return bitwise_cast<WriteBarrier<Unknown>*>(m_opInfo);
     }
@@ -961,6 +979,7 @@ struct Node {
         case CallVarargs:
         case CallForwardVarargs:
         case ConstructVarargs:
+        case ConstructForwardVarargs:
             return true;
         default:
             return false;
@@ -975,7 +994,7 @@ struct Node {
     
     bool hasLoadVarargsData()
     {
-        return op() == LoadVarargs;
+        return op() == LoadVarargs || op() == ForwardVarargs;
     }
     
     LoadVarargsData* loadVarargsData()
@@ -1134,8 +1153,6 @@ struct Node {
         case GetById:
         case GetByIdFlush:
         case GetByVal:
-        case GetMyArgumentByVal:
-        case GetMyArgumentByValSafe:
         case Call:
         case Construct:
         case CallVarargs:
@@ -1146,6 +1163,7 @@ struct Node {
         case GetByOffset:
         case MultiGetByOffset:
         case GetClosureVar:
+        case GetFromArguments:
         case ArrayPop:
         case ArrayPush:
         case RegExpExec:
@@ -1176,9 +1194,7 @@ struct Node {
         case CheckCell:
         case NativeConstruct:
         case NativeCall:
-        case NewFunctionNoCheck:
         case NewFunction:
-        case NewFunctionExpression:
             return true;
         default:
             return false;
@@ -1330,6 +1346,7 @@ struct Node {
     
     ObjectMaterializationData& objectMaterializationData()
     {
+        ASSERT(hasObjectMaterializationData());
         return *reinterpret_cast<ObjectMaterializationData*>(m_opInfo);
     }
     
@@ -1337,6 +1354,18 @@ struct Node {
     {
         switch (op()) {
         case PhantomNewObject:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    bool isPhantomAllocation()
+    {
+        switch (op()) {
+        case PhantomNewObject:
+        case PhantomDirectArguments:
+        case PhantomClonedArguments:
             return true;
         default:
             return false;
@@ -1451,7 +1480,6 @@ struct Node {
         case SetLocal:
         case MovHint:
         case ZombieHint:
-        case PhantomArguments:
             return true;
         case Phantom:
         case HardPhantom:
@@ -1671,9 +1699,14 @@ struct Node {
         return isArraySpeculation(prediction());
     }
     
-    bool shouldSpeculateArguments()
+    bool shouldSpeculateDirectArguments()
     {
-        return isArgumentsSpeculation(prediction());
+        return isDirectArgumentsSpeculation(prediction());
+    }
+    
+    bool shouldSpeculateScopedArguments()
+    {
+        return isScopedArgumentsSpeculation(prediction());
     }
     
     bool shouldSpeculateInt8Array()

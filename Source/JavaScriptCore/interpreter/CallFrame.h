@@ -239,6 +239,15 @@ namespace JSC  {
             this[argumentOffset(argument)] = value;
         }
 
+        JSValue getArgumentUnsafe(size_t argIndex)
+        {
+            // User beware! This method does not verify that there is a valid
+            // argument at the specified argIndex. This is used for debugging
+            // and verification code only. The caller is expected to know what
+            // he/she is doing when calling this method.
+            return this[argumentOffset(argIndex)].jsValue();
+        }
+
         static int thisArgumentOffset() { return argumentOffsetIncludingThis(0); }
         JSValue thisValue() { return this[thisArgumentOffset()].jsValue(); }
         void setThisValue(JSValue value) { this[thisArgumentOffset()] = value; }
@@ -293,15 +302,6 @@ namespace JSC  {
             //       argIndex = JSStack::FirstArgument - offset;
             size_t argIndex = offset - JSStack::FirstArgument;
             return argIndex;
-        }
-
-        JSValue getArgumentUnsafe(size_t argIndex)
-        {
-            // User beware! This method does not verify that there is a valid
-            // argument at the specified argIndex. This is used for debugging
-            // and verification code only. The caller is expected to know what
-            // he/she is doing when calling this method.
-            return this[argumentOffset(argIndex)].jsValue();
         }
 
         void* callerFrameOrVMEntryFrame() const { return callerFrameAndPC().callerFrame; }

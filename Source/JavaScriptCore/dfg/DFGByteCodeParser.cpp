@@ -225,11 +225,11 @@ private:
     void linkBlock(BasicBlock*, Vector<BasicBlock*>& possibleTargets);
     void linkBlocks(Vector<UnlinkedBlock>& unlinkedBlocks, Vector<BasicBlock*>& possibleTargets);
     
-    VariableAccessData* newVariableAccessData(VirtualRegister operand, bool isCaptured)
+    VariableAccessData* newVariableAccessData(VirtualRegister operand)
     {
         ASSERT(!operand.isConstant());
         
-        m_graph.m_variableAccessData.append(VariableAccessData(operand, isCaptured));
+        m_graph.m_variableAccessData.append(VariableAccessData(operand));
         return &m_graph.m_variableAccessData.last();
     }
     
@@ -346,7 +346,6 @@ private:
         unsigned local = operand.toLocal();
 
         Node* node = m_currentBlock->variablesAtTail.local(local);
-        bool isCaptured = m_codeBlock->isCaptured(operand, inlineCallFrame());
         
         // This has two goals: 1) link together variable access datas, and 2)
         // try to avoid creating redundant GetLocals. (1) is required for
@@ -358,20 +357,17 @@ private:
         
         if (node) {
             variable = node->variableAccessData();
-            variable->mergeIsCaptured(isCaptured);
             
-            if (!isCaptured) {
-                switch (node->op()) {
-                case GetLocal:
-                    return node;
-                case SetLocal:
-                    return node->child1().node();
-                default:
-                    break;
-                }
+            switch (node->op()) {
+            case GetLocal:
+                return node;
+            case SetLocal:
+                return node->child1().node();
+            default:
+                break;
             }
         } else
-            variable = newVariableAccessData(operand, isCaptured);
+            variable = newVariableAccessData(operand);
         
         node = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variable)));
         m_currentBlock->variablesAtTail.local(local) = node;
@@ -384,15 +380,14 @@ private:
         m_currentSemanticOrigin = semanticOrigin;
 
         unsigned local = operand.toLocal();
-        bool isCaptured = m_codeBlock->isCaptured(operand, inlineCallFrame());
         
         if (setMode != ImmediateNakedSet) {
             ArgumentPosition* argumentPosition = findArgumentPositionForLocal(operand);
-            if (isCaptured || argumentPosition)
+            if (argumentPosition)
                 flushDirect(operand, argumentPosition);
         }
 
-        VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
+        VariableAccessData* variableAccessData = newVariableAccessData(operand);
         variableAccessData->mergeStructureCheckHoistingFailed(
             m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex, BadCache));
         variableAccessData->mergeCheckArrayHoistingFailed(
@@ -411,26 +406,22 @@ private:
         ASSERT(argument < m_numArguments);
         
         Node* node = m_currentBlock->variablesAtTail.argument(argument);
-        bool isCaptured = m_codeBlock->isCaptured(operand);
 
         VariableAccessData* variable;
         
         if (node) {
             variable = node->variableAccessData();
-            variable->mergeIsCaptured(isCaptured);
             
-            if (!isCaptured) {
-                switch (node->op()) {
-                case GetLocal:
-                    return node;
-                case SetLocal:
-                    return node->child1().node();
-                default:
-                    break;
-                }
+            switch (node->op()) {
+            case GetLocal:
+                return node;
+            case SetLocal:
+                return node->child1().node();
+            default:
+                break;
             }
         } else
-            variable = newVariableAccessData(operand, isCaptured);
+            variable = newVariableAccessData(operand);
         
         node = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variable)));
         m_currentBlock->variablesAtTail.argument(argument) = node;
@@ -444,9 +435,7 @@ private:
         unsigned argument = operand.toArgument();
         ASSERT(argument < m_numArguments);
         
-        bool isCaptured = m_codeBlock->isCaptured(operand);
-
-        VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
+        VariableAccessData* variableAccessData = newVariableAccessData(operand);
 
         // Always flush arguments, except for 'this'. If 'this' is created by us,
         // then make sure that it's never unboxed.
@@ -512,19 +501,16 @@ private:
     
     void flushDirect(VirtualRegister operand, ArgumentPosition* argumentPosition)
     {
-        bool isCaptured = m_codeBlock->isCaptured(operand, inlineCallFrame());
-        
         ASSERT(!operand.isConstant());
         
         Node* node = m_currentBlock->variablesAtTail.operand(operand);
         
         VariableAccessData* variable;
         
-        if (node) {
+        if (node)
             variable = node->variableAccessData();
-            variable->mergeIsCaptured(isCaptured);
-        } else
-            variable = newVariableAccessData(operand, isCaptured);
+        else
+            variable = newVariableAccessData(operand);
         
         node = addToGraph(Flush, OpInfo(variable));
         m_currentBlock->variablesAtTail.operand(operand) = node;
@@ -545,11 +531,6 @@ private:
             numArguments = inlineStackEntry->m_codeBlock->numParameters();
         for (unsigned argument = numArguments; argument-- > 1;)
             flushDirect(inlineStackEntry->remapOperand(virtualRegisterForArgument(argument)));
-        for (int local = 0; local < inlineStackEntry->m_codeBlock->m_numVars; ++local) {
-            if (!inlineStackEntry->m_codeBlock->isCaptured(virtualRegisterForLocal(local)))
-                continue;
-            flushDirect(inlineStackEntry->remapOperand(virtualRegisterForLocal(local)));
-        }
     }
 
     void flushForTerminal()
@@ -844,6 +825,16 @@ private:
         return node;
     }
     
+    void noticeArgumentsUse()
+    {
+        // All of the arguments in this function need to be formatted as JSValues because we will
+        // load from them in a random-access fashion and we don't want to have to switch on
+        // format.
+        
+        for (ArgumentPosition* argument : m_inlineStackTop->m_argumentPositions)
+            argument->mergeShouldNeverUnbox(true);
+    }
+    
     void buildOperandMapsIfNecessary();
     
     VM* m_vm;
@@ -1122,6 +1113,9 @@ void ByteCodeParser::handleVarargsCall(Instruction* pc, NodeType op, CodeSpecial
         m_inlineStackTop->m_callLinkInfos, m_callContextMap);
     if (callTarget->isCellConstant())
         callLinkStatus.setProvenConstantCallee(CallVariant(callTarget->asCell()));
+    
+    if (Options::verboseDFGByteCodeParsing())
+        dataLog("    Varargs call link status at ", currentCodeOrigin(), ": ", callLinkStatus, "\n");
     
     if (callLinkStatus.canOptimize()
         && handleInlining(callTarget, result, callLinkStatus, firstFreeReg, VirtualRegister(thisReg), VirtualRegister(arguments), firstVarArgOffset, 0, m_currentIndex + OPCODE_LENGTH(op_call_varargs), op, InlineCallFrame::varargsKindFor(kind), prediction)) {
@@ -1431,29 +1425,38 @@ bool ByteCodeParser::attemptToInlineCall(Node* callTargetNode, int resultOperand
     if (verbose)
         dataLog("    Considering callee ", callee, "\n");
     
-    if (InternalFunction* function = callee.internalFunction()) {
-        if (handleConstantInternalFunction(resultOperand, function, registerOffset, argumentCountIncludingThis, specializationKind, insertChecksWithAccounting)) {
-            RELEASE_ASSERT(didInsertChecks);
-            addToGraph(Phantom, callTargetNode);
-            emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
-            inliningBalance--;
-            return true;
+    // Intrinsics and internal functions can only be inlined if we're not doing varargs. This is because
+    // we currently don't have any way of getting profiling information for arguments to non-JS varargs
+    // calls. The prediction propagator won't be of any help because LoadVarargs obscures the data flow,
+    // and there are no callsite value profiles and native function won't have callee value profiles for
+    // those arguments. Even worse, if the intrinsic decides to exit, it won't really have anywhere to
+    // exit to: LoadVarargs is effectful and it's part of the op_call_varargs, so we can't exit without
+    // calling LoadVarargs twice.
+    if (!InlineCallFrame::isVarargs(kind)) {
+        if (InternalFunction* function = callee.internalFunction()) {
+            if (handleConstantInternalFunction(resultOperand, function, registerOffset, argumentCountIncludingThis, specializationKind, insertChecksWithAccounting)) {
+                RELEASE_ASSERT(didInsertChecks);
+                addToGraph(Phantom, callTargetNode);
+                emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
+                inliningBalance--;
+                return true;
+            }
+            RELEASE_ASSERT(!didInsertChecks);
+            return false;
         }
-        RELEASE_ASSERT(!didInsertChecks);
-        return false;
-    }
     
-    Intrinsic intrinsic = callee.intrinsicFor(specializationKind);
-    if (intrinsic != NoIntrinsic) {
-        if (handleIntrinsic(resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction, insertChecksWithAccounting)) {
-            RELEASE_ASSERT(didInsertChecks);
-            addToGraph(Phantom, callTargetNode);
-            emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
-            inliningBalance--;
-            return true;
+        Intrinsic intrinsic = callee.intrinsicFor(specializationKind);
+        if (intrinsic != NoIntrinsic) {
+            if (handleIntrinsic(resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction, insertChecksWithAccounting)) {
+                RELEASE_ASSERT(didInsertChecks);
+                addToGraph(Phantom, callTargetNode);
+                emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
+                inliningBalance--;
+                return true;
+            }
+            RELEASE_ASSERT(!didInsertChecks);
+            return false;
         }
-        RELEASE_ASSERT(!didInsertChecks);
-        return false;
     }
     
     unsigned myInliningCost = inliningCost(callee, argumentCountIncludingThis, specializationKind);
@@ -1540,6 +1543,8 @@ bool ByteCodeParser::handleInlining(
                     int remappedRegisterOffset =
                         m_inlineStackTop->remapOperand(VirtualRegister(registerOffset)).offset();
                     
+                    ensureLocals(VirtualRegister(remappedRegisterOffset).toLocal());
+                    
                     int argumentStart = registerOffset + JSStack::CallFrameHeaderSize;
                     int remappedArgumentStart =
                         m_inlineStackTop->remapOperand(VirtualRegister(argumentStart)).offset();
@@ -1559,7 +1564,7 @@ bool ByteCodeParser::handleInlining(
                     // before SSA.
             
                     VariableAccessData* countVariable = newVariableAccessData(
-                        VirtualRegister(remappedRegisterOffset + JSStack::ArgumentCount), false);
+                        VirtualRegister(remappedRegisterOffset + JSStack::ArgumentCount));
                     // This is pretty lame, but it will force the count to be flushed as an int. This doesn't
                     // matter very much, since our use of a SetArgument and Flushes for this local slot is
                     // mostly just a formality.
@@ -1571,7 +1576,7 @@ bool ByteCodeParser::handleInlining(
                     set(VirtualRegister(argumentStart), get(thisArgument), ImmediateNakedSet);
                     for (unsigned argument = 1; argument < maxNumArguments; ++argument) {
                         VariableAccessData* variable = newVariableAccessData(
-                            VirtualRegister(remappedArgumentStart + argument), false);
+                            VirtualRegister(remappedArgumentStart + argument));
                         variable->mergeShouldNeverUnbox(true); // We currently have nowhere to put the type check on the LoadVarargs. LoadVarargs is effectful, so after it finishes, we cannot exit.
                         
                         // For a while it had been my intention to do things like this inside the
@@ -2534,7 +2539,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         m_graph.m_arguments.resize(m_numArguments);
         for (unsigned argument = 0; argument < m_numArguments; ++argument) {
             VariableAccessData* variable = newVariableAccessData(
-                virtualRegisterForArgument(argument), m_codeBlock->isCaptured(virtualRegisterForArgument(argument)));
+                virtualRegisterForArgument(argument));
             variable->mergeStructureCheckHoistingFailed(
                 m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
             variable->mergeCheckArrayHoistingFailed(
@@ -3084,7 +3089,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
             addToGraph(
                 PutGlobalVar,
-                OpInfo(m_inlineStackTop->m_codeBlock->globalObject()->assertRegisterIsInThisObject(currentInstruction[1].u.registerPointer)),
+                OpInfo(m_inlineStackTop->m_codeBlock->globalObject()->assertVariableIsInThisObject(currentInstruction[1].u.variablePointer)),
                 value);
             NEXT_OPCODE(op_init_global_const);
         }
@@ -3327,66 +3332,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_construct);
             
         case op_call_varargs: {
-            int result = currentInstruction[1].u.operand;
-            int callee = currentInstruction[2].u.operand;
-            int thisReg = currentInstruction[3].u.operand;
-            int arguments = currentInstruction[4].u.operand;
-            int firstFreeReg = currentInstruction[5].u.operand;
-            int firstVarArgOffset = currentInstruction[6].u.operand;
-            
-            if (arguments == m_inlineStackTop->m_codeBlock->uncheckedArgumentsRegister().offset()
-                && !m_inlineStackTop->m_codeBlock->symbolTable()->slowArguments()) {
-                if (inlineCallFrame()
-                    && !inlineCallFrame()->isVarargs()
-                    && !firstVarArgOffset) {
-                    addToGraph(CheckArgumentsNotCreated);
-
-                    unsigned argCount = inlineCallFrame()->arguments.size();
-            
-                    // Let's compute the register offset. We start with the last used register, and
-                    // then adjust for the things we want in the call frame.
-                    int registerOffset = firstFreeReg + 1;
-                    registerOffset -= argCount; // We will be passing some arguments.
-                    registerOffset -= JSStack::CallFrameHeaderSize; // We will pretend to have a call frame header.
-            
-                    // Get the alignment right.
-                    registerOffset = -WTF::roundUpToMultipleOf(
-                        stackAlignmentRegisters(),
-                        -registerOffset);
-
-                    ensureLocals(
-                        m_inlineStackTop->remapOperand(
-                            VirtualRegister(registerOffset)).toLocal());
-            
-                    // The bytecode wouldn't have set up the arguments. But we'll do it and make it
-                    // look like the bytecode had done it.
-                    int nextRegister = registerOffset + JSStack::CallFrameHeaderSize;
-                    set(VirtualRegister(nextRegister++), get(VirtualRegister(thisReg)), ImmediateNakedSet);
-                    for (unsigned argument = 1; argument < argCount; ++argument)
-                        set(VirtualRegister(nextRegister++), get(virtualRegisterForArgument(argument)), ImmediateNakedSet);
-            
-                    handleCall(
-                        result, Call, CodeForCall, OPCODE_LENGTH(op_call_varargs),
-                        callee, argCount, registerOffset);
-                    NEXT_OPCODE(op_call_varargs);
-                }
-                
-                // Emit CallForwardVarargs
-                // FIXME: This means we cannot inline forwarded varargs calls inside a varargs
-                // call frame. We will probably fix that once we finally get rid of the
-                // arguments object special-casing.
-                CallVarargsData* data = m_graph.m_callVarargsData.add();
-                data->firstVarArgOffset = firstVarArgOffset;
-                
-                Node* call = addToGraph(
-                    CallForwardVarargs, OpInfo(data), OpInfo(getPrediction()),
-                    get(VirtualRegister(callee)), get(VirtualRegister(thisReg)));
-                VirtualRegister resultReg(result);
-                if (resultReg.isValid())
-                    set(resultReg, call);
-                NEXT_OPCODE(op_call_varargs);
-            }
-            
             handleVarargsCall(currentInstruction, CallVarargs, CodeForCall);
             NEXT_OPCODE(op_call_varargs);
         }
@@ -3511,16 +3456,23 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
                 Node* scopeNode = get(VirtualRegister(scope));
-                if (JSValue value = m_graph.tryGetConstantClosureVar(scopeNode, VirtualRegister(operand))) {
-                    addToGraph(Phantom, scopeNode);
+                
+                // Ideally we wouldn't have to do this Phantom. But:
+                //
+                // For the constant case: we must do it because otherwise we would have no way of knowing
+                // that the scope is live at OSR here.
+                //
+                // For the non-constant case: GetClosureVar could be DCE'd, but baseline's implementation
+                // won't be able to handle an Undefined scope.
+                addToGraph(Phantom, scopeNode);
+                
+                if (JSValue value = m_graph.tryGetConstantClosureVar(scopeNode, ScopeOffset(operand))) {
                     set(VirtualRegister(dst), weakJSConstant(value));
                     break;
                 }
                 SpeculatedType prediction = getPrediction();
                 set(VirtualRegister(dst),
-                    addToGraph(
-                        GetClosureVar, OpInfo(operand), OpInfo(prediction),
-                        scopeNode, addToGraph(GetClosureRegisters, scopeNode)));
+                    addToGraph(GetClosureVar, OpInfo(operand), OpInfo(prediction), scopeNode));
                 break;
             }
             case Dynamic:
@@ -3532,13 +3484,19 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_put_to_scope: {
             unsigned scope = currentInstruction[1].u.operand;
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];
+            unsigned identifierNumber = currentInstruction[2].u.operand;
+            if (identifierNumber != UINT_MAX)
+                identifierNumber = m_inlineStackTop->m_identifierRemap[identifierNumber];
             unsigned value = currentInstruction[3].u.operand;
             ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
-            AtomicStringImpl* uid = m_graph.identifiers()[identifierNumber];
-
-            Structure* structure = 0;
-            VariableWatchpointSet* watchpoints = 0;
+            AtomicStringImpl* uid;
+            if (identifierNumber != UINT_MAX)
+                uid = m_graph.identifiers()[identifierNumber];
+            else
+                uid = nullptr;
+            
+            Structure* structure = nullptr;
+            VariableWatchpointSet* watchpoints = nullptr;
             uintptr_t operand;
             {
                 ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
@@ -3554,7 +3512,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             switch (resolveType) {
             case GlobalProperty:
             case GlobalPropertyWithVarInjectionChecks: {
-                PutByIdStatus status = PutByIdStatus::computeFor(globalObject, structure, uid, false);
+                PutByIdStatus status;
+                if (uid)
+                    status = PutByIdStatus::computeFor(globalObject, structure, uid, false);
+                else
+                    status = PutByIdStatus(PutByIdStatus::TakesSlowPath);
                 if (status.numVariants() != 1
                     || status[0].kind() != PutByIdVariant::Replace
                     || status[0].structure().size() != 1) {
@@ -3571,11 +3533,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             }
             case GlobalVar:
             case GlobalVarWithVarInjectionChecks: {
-                SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
-                ASSERT(watchpoints == entry.watchpointSet());
+                if (watchpoints) {
+                    SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
+                    ASSERT_UNUSED(entry, watchpoints == entry.watchpointSet());
+                }
                 Node* valueNode = get(VirtualRegister(value));
                 addToGraph(PutGlobalVar, OpInfo(operand), valueNode);
-                if (watchpoints->state() != IsInvalidated)
+                if (watchpoints && watchpoints->state() != IsInvalidated)
                     addToGraph(NotifyWrite, OpInfo(watchpoints), valueNode);
                 // Keep scope alive until after put.
                 addToGraph(Phantom, get(VirtualRegister(scope)));
@@ -3585,13 +3549,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
                 Node* scopeNode = get(VirtualRegister(scope));
-                Node* scopeRegisters = addToGraph(GetClosureRegisters, scopeNode);
                 Node* valueNode = get(VirtualRegister(value));
 
                 if (watchpoints && watchpoints->state() != IsInvalidated)
                     addToGraph(NotifyWrite, OpInfo(watchpoints), valueNode);
 
-                addToGraph(PutClosureVar, OpInfo(operand), scopeNode, scopeRegisters, valueNode);
+                addToGraph(PutClosureVar, OpInfo(operand), scopeNode, valueNode);
                 break;
             }
             case Dynamic:
@@ -3621,15 +3584,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_loop_hint);
         }
             
-        case op_init_lazy_reg: {
-            set(VirtualRegister(currentInstruction[1].u.operand), jsConstant(JSValue()));
-            ASSERT(operandIsLocal(currentInstruction[1].u.operand));
-            m_graph.m_lazyVars.set(VirtualRegister(currentInstruction[1].u.operand).toLocal());
-            NEXT_OPCODE(op_init_lazy_reg);
-        }
-            
         case op_create_lexical_environment: {
-            Node* lexicalEnvironment = addToGraph(CreateActivation, get(VirtualRegister(currentInstruction[1].u.operand)), get(VirtualRegister(currentInstruction[2].u.operand)));
+            Node* lexicalEnvironment = addToGraph(CreateActivation, get(VirtualRegister(currentInstruction[2].u.operand)));
             set(VirtualRegister(currentInstruction[1].u.operand), lexicalEnvironment);
             set(VirtualRegister(currentInstruction[2].u.operand), lexicalEnvironment);
             NEXT_OPCODE(op_create_lexical_environment);
@@ -3650,48 +3606,51 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_get_scope);
         }
             
-        case op_create_arguments: {
-            m_graph.m_hasArguments = true;
-            Node* createArguments = addToGraph(CreateArguments, get(VirtualRegister(currentInstruction[1].u.operand)));
+        case op_create_direct_arguments: {
+            noticeArgumentsUse();
+            Node* createArguments = addToGraph(CreateDirectArguments);
             set(VirtualRegister(currentInstruction[1].u.operand), createArguments);
-            set(unmodifiedArgumentsRegister(VirtualRegister(currentInstruction[1].u.operand)), createArguments);
-            NEXT_OPCODE(op_create_arguments);
+            NEXT_OPCODE(op_create_direct_arguments);
+        }
+            
+        case op_create_scoped_arguments: {
+            noticeArgumentsUse();
+            Node* createArguments = addToGraph(CreateScopedArguments, get(VirtualRegister(currentInstruction[2].u.operand)));
+            set(VirtualRegister(currentInstruction[1].u.operand), createArguments);
+            NEXT_OPCODE(op_create_scoped_arguments);
         }
 
-        case op_tear_off_arguments: {
-            m_graph.m_hasArguments = true;
-            addToGraph(TearOffArguments, get(VirtualRegister(currentInstruction[1].u.operand)), get(VirtualRegister(currentInstruction[2].u.operand)));
-            NEXT_OPCODE(op_tear_off_arguments);
+        case op_create_out_of_band_arguments: {
+            noticeArgumentsUse();
+            Node* createArguments = addToGraph(CreateClonedArguments);
+            set(VirtualRegister(currentInstruction[1].u.operand), createArguments);
+            NEXT_OPCODE(op_create_out_of_band_arguments);
         }
             
-        case op_get_arguments_length: {
-            m_graph.m_hasArguments = true;
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(GetMyArgumentsLengthSafe));
-            NEXT_OPCODE(op_get_arguments_length);
-        }
-            
-        case op_get_argument_by_val: {
-            m_graph.m_hasArguments = true;
+        case op_get_from_arguments: {
             set(VirtualRegister(currentInstruction[1].u.operand),
                 addToGraph(
-                    GetMyArgumentByValSafe, OpInfo(0), OpInfo(getPrediction()),
-                    get(VirtualRegister(currentInstruction[3].u.operand))));
-            NEXT_OPCODE(op_get_argument_by_val);
+                    GetFromArguments,
+                    OpInfo(currentInstruction[3].u.operand),
+                    OpInfo(getPrediction()),
+                    get(VirtualRegister(currentInstruction[2].u.operand))));
+            NEXT_OPCODE(op_get_from_arguments);
+        }
+            
+        case op_put_to_arguments: {
+            addToGraph(
+                PutToArguments,
+                OpInfo(currentInstruction[2].u.operand),
+                get(VirtualRegister(currentInstruction[1].u.operand)),
+                get(VirtualRegister(currentInstruction[3].u.operand)));
+            NEXT_OPCODE(op_put_to_arguments);
         }
             
         case op_new_func: {
             FunctionExecutable* decl = m_inlineStackTop->m_profiledBlock->functionDecl(currentInstruction[3].u.operand);
             FrozenValue* frozen = m_graph.freezeStrong(decl);
-            if (!currentInstruction[4].u.operand) {
-                set(VirtualRegister(currentInstruction[1].u.operand),
-                    addToGraph(NewFunctionNoCheck, OpInfo(frozen), get(VirtualRegister(currentInstruction[2].u.operand))));
-            } else {
-                set(VirtualRegister(currentInstruction[1].u.operand),
-                    addToGraph(
-                        NewFunction,
-                        OpInfo(frozen),
-                        get(VirtualRegister(currentInstruction[1].u.operand)), get(VirtualRegister(currentInstruction[2].u.operand))));
-            }
+            set(VirtualRegister(currentInstruction[1].u.operand),
+                addToGraph(NewFunction, OpInfo(frozen), get(VirtualRegister(currentInstruction[2].u.operand))));
             NEXT_OPCODE(op_new_func);
         }
 
@@ -3699,7 +3658,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             FunctionExecutable* expr = m_inlineStackTop->m_profiledBlock->functionExpr(currentInstruction[3].u.operand);
             FrozenValue* frozen = m_graph.freezeStrong(expr);
             set(VirtualRegister(currentInstruction[1].u.operand),
-                addToGraph(NewFunctionExpression, OpInfo(frozen), get(VirtualRegister(currentInstruction[2].u.operand))));
+                addToGraph(NewFunction, OpInfo(frozen), get(VirtualRegister(currentInstruction[2].u.operand))));
             NEXT_OPCODE(op_new_func_exp);
         }
 
@@ -3906,12 +3865,6 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         m_argumentPositions[i] = argumentPosition;
     }
     
-    // Track the code-block-global exit sites.
-    if (m_exitProfile.hasExitSite(ArgumentsEscaped)) {
-        byteCodeParser->m_graph.m_executablesWhoseArgumentsEscaped.add(
-            codeBlock->ownerExecutable());
-    }
-        
     if (m_caller) {
         // Inline case.
         ASSERT(codeBlock != byteCodeParser->m_codeBlock);
@@ -3936,22 +3889,6 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         m_inlineCallFrame->arguments.resize(argumentCountIncludingThis); // Set the number of arguments including this, but don't configure the value recoveries, yet.
         m_inlineCallFrame->kind = kind;
         
-        if (m_inlineCallFrame->caller.inlineCallFrame)
-            m_inlineCallFrame->capturedVars = m_inlineCallFrame->caller.inlineCallFrame->capturedVars;
-        else
-            m_inlineCallFrame->capturedVars = byteCodeParser->m_graph.m_outermostCapturedVars;
-
-        for (int i = argumentCountIncludingThis; i--;) {
-            VirtualRegister argument = virtualRegisterForArgument(i);
-            if (codeBlock->isCaptured(argument))
-                m_inlineCallFrame->capturedVars.set(VirtualRegister(argument.offset() + m_inlineCallFrame->stackOffset).toLocal());
-        }
-        for (size_t i = codeBlock->m_numVars; i--;) {
-            VirtualRegister local = virtualRegisterForLocal(i);
-            if (codeBlock->isCaptured(local))
-                m_inlineCallFrame->capturedVars.set(VirtualRegister(local.offset() + m_inlineCallFrame->stackOffset).toLocal());
-        }
-
         byteCodeParser->buildOperandMapsIfNecessary();
         
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
@@ -4029,8 +3966,7 @@ void ByteCodeParser::parseCodeBlock()
                 " ", inlineCallFrame()->caller);
         }
         dataLog(
-            ": captureCount = ", codeBlock->symbolTable() ? codeBlock->symbolTable()->captureCount() : 0,
-            ", needsActivation = ", codeBlock->needsActivation(),
+            ": needsActivation = ", codeBlock->needsActivation(),
             ", isStrictMode = ", codeBlock->ownerExecutable()->isStrictMode(), "\n");
         codeBlock->baselineVersion()->dumpBytecode();
     }

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2015 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,9 +21,9 @@
 #include "config.h"
 #include "FunctionPrototype.h"
 
-#include "Arguments.h"
 #include "BuiltinExecutables.h"
 #include "BuiltinNames.h"
+#include "Error.h"
 #include "JSArray.h"
 #include "JSBoundFunction.h"
 #include "JSFunction.h"

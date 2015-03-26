@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,11 +36,7 @@ typedef HashMap<unsigned, FastBitVector, WTF::IntHash<unsigned>, WTF::UnsignedWi
 
 class FullBytecodeLiveness {
 public:
-    FullBytecodeLiveness() : m_codeBlock(0) { }
-    
-    // We say "out" to refer to the bitvector that contains raw results for a bytecode
-    // instruction.
-    const FastBitVector& getOut(unsigned bytecodeIndex) const
+    const FastBitVector& getLiveness(unsigned bytecodeIndex) const
     {
         BytecodeToBitmapMap::const_iterator iter = m_map.find(bytecodeIndex);
         ASSERT(iter != m_map.end());
@@ -49,18 +45,12 @@ public:
     
     bool operandIsLive(int operand, unsigned bytecodeIndex) const
     {
-        return operandIsAlwaysLive(m_codeBlock, operand) || operandThatIsNotAlwaysLiveIsLive(m_codeBlock, getOut(bytecodeIndex), operand);
-    }
-    
-    FastBitVector getLiveness(unsigned bytecodeIndex) const
-    {
-        return getLivenessInfo(m_codeBlock, getOut(bytecodeIndex));
+        return operandIsAlwaysLive(operand) || operandThatIsNotAlwaysLiveIsLive(getLiveness(bytecodeIndex), operand);
     }
     
 private:
     friend class BytecodeLivenessAnalysis;
     
-    CodeBlock* m_codeBlock;
     BytecodeToBitmapMap m_map;
 };
 

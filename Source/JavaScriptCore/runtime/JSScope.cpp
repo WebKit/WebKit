@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +62,7 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
         }
 
         if (!entry.isNull()) {
-            op = ResolveOp(makeType(ClosureVar, needsVarInjectionChecks), depth, 0, lexicalEnvironment, entry.watchpointSet(), entry.getIndex());
+            op = ResolveOp(makeType(ClosureVar, needsVarInjectionChecks), depth, 0, lexicalEnvironment, entry.watchpointSet(), entry.scopeOffset().offset());
             return true;
         }
 
@@ -82,7 +82,7 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
 
             op = ResolveOp(
                 makeType(GlobalVar, needsVarInjectionChecks), depth, 0, 0, entry.watchpointSet(),
-                reinterpret_cast<uintptr_t>(globalObject->registerAt(entry.getIndex()).slot()));
+                reinterpret_cast<uintptr_t>(globalObject->variableAt(entry.scopeOffset()).slot()));
             return true;
         }
 

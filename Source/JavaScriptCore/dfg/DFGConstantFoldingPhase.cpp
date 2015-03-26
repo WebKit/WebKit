@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractInterpreterInlines.h"
+#include "DFGArgumentsUtilities.h"
 #include "DFGBasicBlock.h"
 #include "DFGGraph.h"
 #include "DFGInPlaceAbstractState.h"
@@ -97,16 +98,6 @@ private:
                 break;
             }
                 
-            case CheckArgumentsNotCreated: {
-                if (!isEmptySpeculation(
-                        m_state.variables().operand(
-                            m_graph.argumentsRegisterFor(node->origin.semantic)).m_type))
-                    break;
-                node->convertToPhantom();
-                eliminated = true;
-                break;
-            }
-                    
             case CheckStructure:
             case ArrayifyToStructure: {
                 AbstractValue& value = m_state.forNode(node->child1());
@@ -204,6 +195,63 @@ private:
                     break;
                 }
                 
+                break;
+            }
+                
+            case GetMyArgumentByVal: {
+                JSValue index = m_state.forNode(node->child2()).value();
+                if (!index || !index.isInt32())
+                    break;
+                
+                Node* arguments = node->child1().node();
+                InlineCallFrame* inlineCallFrame = arguments->origin.semantic.inlineCallFrame;
+                
+                // Don't try to do anything if the index is known to be outside our static bounds. Note
+                // that our static bounds are usually strictly larger than the dynamic bounds. The
+                // exception is something like this, assuming foo() is not inlined:
+                //
+                // function foo() { return arguments[5]; }
+                //
+                // Here the static bound on number of arguments is 0, and we're accessing index 5. We
+                // will not strength-reduce this to GetStack because GetStack is otherwise assumed by the
+                // compiler to access those variables that are statically accounted for; for example if
+                // we emitted a GetStack on arg6 we would have out-of-bounds access crashes anywhere that
+                // uses an Operands<> map. There is not much cost to continuing to use a
+                // GetMyArgumentByVal in such statically-out-of-bounds accesses; we just lose CFA unless
+                // GCSE removes the access entirely.
+                if (inlineCallFrame) {
+                    if (index.isUInt32() >= inlineCallFrame->arguments.size() - 1)
+                        break;
+                } else {
+                    if (index.isUInt32() >= m_state.variables().numberOfArguments() - 1)
+                        break;
+                }
+                
+                m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
+                
+                StackAccessData* data;
+                if (inlineCallFrame) {
+                    data = m_graph.m_stackAccessData.add(
+                        inlineCallFrame->arguments[index.asInt32() + 1].virtualRegister(), FlushedJSValue);
+                } else {
+                    data = m_graph.m_stackAccessData.add(
+                        virtualRegisterForArgument(index.asInt32() + 1), FlushedJSValue);
+                }
+                
+                if (inlineCallFrame && !inlineCallFrame->isVarargs()
+                    && index.asUInt32() < inlineCallFrame->arguments.size() - 1) {
+                    node->convertToGetStack(data);
+                    eliminated = true;
+                    break;
+                }
+                
+                Node* length = emitCodeToGetArgumentsArrayLength(
+                    m_insertionSet, arguments, indexInBlock, node->origin);
+                m_insertionSet.insertNode(
+                    indexInBlock, SpecNone, CheckInBounds, node->origin,
+                    node->child2(), Edge(length, Int32Use));
+                node->convertToGetStack(data);
+                eliminated = true;
                 break;
             }
                 
@@ -382,37 +430,6 @@ private:
                 
                 node->convertToIdentity();
                 changed = true;
-                break;
-            }
-                
-            case GetMyArgumentByVal: {
-                InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame;
-                JSValue value = m_state.forNode(node->child1()).m_value;
-                if (inlineCallFrame && value && value.isInt32()) {
-                    int32_t index = value.asInt32();
-                    if (index >= 0
-                        && static_cast<size_t>(index + 1) < inlineCallFrame->arguments.size()) {
-                        // Roll the interpreter over this.
-                        m_interpreter.execute(indexInBlock);
-                        eliminated = true;
-                        
-                        int operand =
-                            inlineCallFrame->stackOffset +
-                            m_graph.baselineCodeBlockFor(inlineCallFrame)->argumentIndexAfterCapture(index);
-                        
-                        m_insertionSet.insertNode(
-                            indexInBlock, SpecNone, CheckArgumentsNotCreated, node->origin);
-                        m_insertionSet.insertNode(
-                            indexInBlock, SpecNone, Phantom, node->origin, node->children);
-                        
-                        if (m_graph.m_form == SSA)
-                            node->convertToGetStack(m_graph.m_stackAccessData.add(VirtualRegister(operand), FlushedJSValue));
-                        else
-                            node->convertToGetLocalUnlinked(VirtualRegister(operand));
-                        break;
-                    }
-                }
-                
                 break;
             }
                 

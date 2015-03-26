@@ -71,6 +71,9 @@ public:
     
     void resize(size_t numBits)
     {
+        if (numBits == m_numBits)
+            return;
+        
         // Use fastCalloc instead of fastRealloc because we expect the common
         // use case for this method to be initializing the size of the bitvector.
         

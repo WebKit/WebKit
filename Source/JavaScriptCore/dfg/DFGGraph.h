@@ -315,13 +315,6 @@ public:
             && negate->canSpeculateInt52(pass);
     }
     
-    VirtualRegister bytecodeRegisterForArgument(CodeOrigin codeOrigin, int argument)
-    {
-        return VirtualRegister(
-            codeOrigin.inlineCallFrame->stackOffset +
-            baselineCodeBlockFor(codeOrigin)->argumentIndexAfterCapture(argument));
-    }
-    
     static const char *opName(NodeType);
     
     StructureSet* addStructureSet(const StructureSet& structureSet)
@@ -367,11 +360,14 @@ public:
         return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, m_profiledBlock);
     }
     
-    const BitVector& capturedVarsFor(InlineCallFrame* inlineCallFrame)
+    SymbolTable* symbolTableFor(InlineCallFrame* inlineCallFrame)
     {
-        if (!inlineCallFrame)
-            return m_outermostCapturedVars;
-        return inlineCallFrame->capturedVars;
+        return baselineCodeBlockFor(inlineCallFrame)->symbolTable();
+    }
+    
+    SymbolTable* symbolTableFor(const CodeOrigin& codeOrigin)
+    {
+        return symbolTableFor(codeOrigin.inlineCallFrame);
     }
     
     bool isStrictModeFor(CodeOrigin codeOrigin)
@@ -406,60 +402,6 @@ public:
         return hasExitSite(node->origin.semantic, exitKind);
     }
     
-    bool usesArguments(InlineCallFrame* inlineCallFrame)
-    {
-        if (!inlineCallFrame)
-            return m_profiledBlock->usesArguments();
-        
-        return baselineCodeBlockForInlineCallFrame(inlineCallFrame)->usesArguments();
-    }
-    
-    VirtualRegister argumentsRegisterFor(InlineCallFrame* inlineCallFrame)
-    {
-        if (!inlineCallFrame)
-            return m_profiledBlock->argumentsRegister();
-        
-        return VirtualRegister(baselineCodeBlockForInlineCallFrame(
-            inlineCallFrame)->argumentsRegister().offset() +
-            inlineCallFrame->stackOffset);
-    }
-    
-    VirtualRegister argumentsRegisterFor(const CodeOrigin& codeOrigin)
-    {
-        return argumentsRegisterFor(codeOrigin.inlineCallFrame);
-    }
-    
-    VirtualRegister machineArgumentsRegisterFor(InlineCallFrame* inlineCallFrame)
-    {
-        if (!inlineCallFrame)
-            return m_codeBlock->argumentsRegister();
-        
-        return inlineCallFrame->argumentsRegister;
-    }
-    
-    VirtualRegister machineArgumentsRegisterFor(const CodeOrigin& codeOrigin)
-    {
-        return machineArgumentsRegisterFor(codeOrigin.inlineCallFrame);
-    }
-    
-    VirtualRegister uncheckedArgumentsRegisterFor(InlineCallFrame* inlineCallFrame)
-    {
-        if (!inlineCallFrame)
-            return m_profiledBlock->uncheckedArgumentsRegister();
-        
-        CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
-        if (!codeBlock->usesArguments())
-            return VirtualRegister();
-        
-        return VirtualRegister(codeBlock->argumentsRegister().offset() +
-            inlineCallFrame->stackOffset);
-    }
-    
-    VirtualRegister uncheckedArgumentsRegisterFor(const CodeOrigin& codeOrigin)
-    {
-        return uncheckedArgumentsRegisterFor(codeOrigin.inlineCallFrame);
-    }
-    
     VirtualRegister activationRegister()
     {
         return m_profiledBlock->activationRegister();
@@ -482,11 +424,6 @@ public:
     
     ValueProfile* valueProfileFor(Node*);
     MethodOfGettingAValueProfile methodOfGettingAValueProfileFor(Node*);
-    
-    bool usesArguments() const
-    {
-        return m_codeBlock->usesArguments();
-    }
     
     BlockIndex numBlocks() const { return m_blocks.size(); }
     BasicBlock* block(BlockIndex blockIndex) const { return m_blocks[blockIndex].get(); }
@@ -722,6 +659,13 @@ public:
             });
     }
     
+    bool uses(Node* node, Node* child)
+    {
+        bool result = false;
+        doToChildren(node, [&] (Edge edge) { result |= edge == child; });
+        return result;
+    }
+    
     Profiler::Compilation* compilation() { return m_plan.compilation.get(); }
     
     DesiredIdentifiers& identifiers() { return m_plan.identifiers; }
@@ -730,6 +674,9 @@ public:
     FullBytecodeLiveness& livenessFor(CodeBlock*);
     FullBytecodeLiveness& livenessFor(InlineCallFrame*);
     bool isLiveInBytecode(VirtualRegister, CodeOrigin);
+    
+    BytecodeKills& killsFor(CodeBlock*);
+    BytecodeKills& killsFor(InlineCallFrame*);
     
     unsigned frameRegisterCount();
     unsigned stackPointerOffset();
@@ -741,10 +688,9 @@ public:
     JSValue tryGetConstantProperty(JSValue base, const StructureAbstractValue&, PropertyOffset);
     JSValue tryGetConstantProperty(const AbstractValue&, PropertyOffset);
     
-    JSValue tryGetConstantClosureVar(JSValue base, VirtualRegister);
-    JSValue tryGetConstantClosureVar(const AbstractValue&, VirtualRegister);
-    JSValue tryGetConstantClosureVar(Node*, VirtualRegister);
-    WriteBarrierBase<Unknown>* tryGetRegisters(Node*);
+    JSValue tryGetConstantClosureVar(JSValue base, ScopeOffset);
+    JSValue tryGetConstantClosureVar(const AbstractValue&, ScopeOffset);
+    JSValue tryGetConstantClosureVar(Node*, ScopeOffset);
     
     JSArrayBufferView* tryGetFoldableView(Node*);
     JSArrayBufferView* tryGetFoldableView(Node*, ArrayMode);
@@ -826,18 +772,13 @@ public:
     Bag<StackAccessData> m_stackAccessData;
     Vector<InlineVariableData, 4> m_inlineVariableData;
     HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>> m_bytecodeLiveness;
-    bool m_hasArguments;
-    HashSet<ExecutableBase*> m_executablesWhoseArgumentsEscaped;
-    BitVector m_lazyVars;
+    HashMap<CodeBlock*, std::unique_ptr<BytecodeKills>> m_bytecodeKills;
     Dominators m_dominators;
     PrePostNumbering m_prePostNumbering;
     NaturalLoops m_naturalLoops;
     unsigned m_localVars;
     unsigned m_nextMachineLocal;
     unsigned m_parameterSlots;
-    int m_machineCaptureStart;
-    std::unique_ptr<SlowArgument[]> m_slowArguments;
-    BitVector m_outermostCapturedVars;
 
 #if USE(JSVALUE32_64)
     std::unordered_map<int64_t, double*> m_doubleConstantsMap;

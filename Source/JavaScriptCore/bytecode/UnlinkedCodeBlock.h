@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -287,11 +287,6 @@ public:
     void setScopeRegister(VirtualRegister scopeRegister) { m_scopeRegister = scopeRegister; }
     void setActivationRegister(VirtualRegister activationRegister) { m_lexicalEnvironmentRegister = activationRegister; }
 
-    void setArgumentsRegister(VirtualRegister argumentsRegister) { m_argumentsRegister = argumentsRegister; }
-    bool usesArguments() const { return m_argumentsRegister.isValid(); }
-    VirtualRegister argumentsRegister() const { return m_argumentsRegister; }
-
-
     bool usesGlobalObject() const { return m_globalObjectRegister.isValid(); }
     void setGlobalObjectRegister(VirtualRegister globalObjectRegister) { m_globalObjectRegister = globalObjectRegister; }
     VirtualRegister globalObjectRegister() const { return m_globalObjectRegister; }
@@ -531,7 +526,6 @@ private:
     VM* m_vm;
 
     VirtualRegister m_thisRegister;
-    VirtualRegister m_argumentsRegister;
     VirtualRegister m_scopeRegister;
     VirtualRegister m_lexicalEnvironmentRegister;
     VirtualRegister m_globalObjectRegister;

@@ -52,6 +52,32 @@ struct AvailabilityMap {
             functor(pair.value);
     }
     
+    template<typename HasFunctor, typename AddFunctor>
+    void closeOverNodes(const HasFunctor& has, const AddFunctor& add)
+    {
+        bool changed;
+        do {
+            changed = false;
+            for (auto pair : m_heap) {
+                if (pair.value.hasNode() && has(pair.key.base()))
+                    changed |= add(pair.value.node());
+            }
+        } while (changed);
+    }
+    
+    template<typename HasFunctor, typename AddFunctor>
+    void closeStartingWithLocal(VirtualRegister reg, const HasFunctor& has, const AddFunctor& add)
+    {
+        Availability availability = m_locals.operand(reg);
+        if (!availability.hasNode())
+            return;
+        
+        if (!add(availability.node()))
+            return;
+        
+        closeOverNodes(has, add);
+    }
+    
     Operands<Availability> m_locals;
     HashMap<PromotedHeapLocation, Availability> m_heap;
 };

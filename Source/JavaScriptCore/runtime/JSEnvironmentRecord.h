@@ -46,29 +46,71 @@ class JSEnvironmentRecord : public JSSymbolTableObject {
 public:
     typedef JSSymbolTableObject Base;
 
-    WriteBarrierBase<Unknown>* registers() { return m_registers; }
-    WriteBarrierBase<Unknown>& registerAt(int index) const { return m_registers[index]; }
+    WriteBarrierBase<Unknown>* variables()
+    {
+        return bitwise_cast<WriteBarrierBase<Unknown>*>(bitwise_cast<char*>(this) + offsetOfVariables());
+    }
+    
+    bool isValid(ScopeOffset offset)
+    {
+        return !!offset && offset.offset() < m_symbolTable->scopeSize();
+    }
+    
+    WriteBarrierBase<Unknown>& variableAt(ScopeOffset offset)
+    {
+        ASSERT(isValid(offset));
+        return variables()[offset.offset()];
+    }
 
-    WriteBarrierBase<Unknown>* const * addressOfRegisters() const { return &m_registers; }
-    static size_t offsetOfRegisters() { return OBJECT_OFFSETOF(JSEnvironmentRecord, m_registers); }
+    static size_t offsetOfVariables()
+    {
+        return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(JSEnvironmentRecord));
+    }
+    
+    static ptrdiff_t offsetOfVariable(ScopeOffset offset)
+    {
+        return offsetOfVariables() + offset.offset() * sizeof(WriteBarrier<Unknown>);
+    }
 
     DECLARE_INFO;
 
+    static size_t allocationSizeForScopeSize(unsigned scopeSize)
+    {
+        return offsetOfVariables() + scopeSize * sizeof(WriteBarrier<Unknown>);
+    }
+    
+    static size_t allocationSize(SymbolTable* symbolTable)
+    {
+        return allocationSizeForScopeSize(symbolTable->scopeSize());
+    }
+    
 protected:
     static const unsigned StructureFlags = Base::StructureFlags;
 
     JSEnvironmentRecord(
         VM& vm,
         Structure* structure,
-        Register* registers,
         JSScope* scope,
         SymbolTable* symbolTable)
         : Base(vm, structure, scope, symbolTable)
-        , m_registers(reinterpret_cast<WriteBarrierBase<Unknown>*>(registers))
     {
     }
+    
+    void finishCreationUninitialized(VM& vm)
+    {
+        Base::finishCreation(vm);
+    }
+    
+    void finishCreation(VM& vm)
+    {
+        finishCreationUninitialized(vm);
+        for (unsigned i = m_symbolTable->scopeSize(); i--;) {
+            // Filling this with undefined is useful because that's what variables start out as.
+            variableAt(ScopeOffset(i)).setUndefined();
+        }
+    }
 
-    WriteBarrierBase<Unknown>* m_registers; // "r" in the stack.
+    static void visitChildren(JSCell*, SlotVisitor&);
 };
 
 } // namespace JSC

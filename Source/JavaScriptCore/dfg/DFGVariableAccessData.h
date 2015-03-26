@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +48,7 @@ enum DoubleBallot { VoteValue, VoteDouble };
 class VariableAccessData : public UnionFind<VariableAccessData> {
 public:
     VariableAccessData();
-    VariableAccessData(VirtualRegister local, bool isCaptured);
+    VariableAccessData(VirtualRegister local);
     
     VirtualRegister local()
     {
@@ -62,13 +62,6 @@ public:
         return m_machineLocal;
     }
 
-    bool mergeIsCaptured(bool isCaptured);
-    
-    bool isCaptured()
-    {
-        return m_isCaptured;
-    }
-    
     bool mergeIsProfitableToUnbox(bool isProfitableToUnbox)
     {
         return checkAndSet(m_isProfitableToUnbox, m_isProfitableToUnbox || isProfitableToUnbox);
@@ -86,7 +79,6 @@ public:
     // mean that we have actually done so.
     bool shouldNeverUnbox()
     {
-        ASSERT(!(m_isCaptured && !m_shouldNeverUnbox));
         return m_shouldNeverUnbox;
     }
     
@@ -116,16 +108,6 @@ public:
     bool checkArrayHoistingFailed()
     {
         return m_checkArrayHoistingFailed;
-    }
-    
-    bool mergeIsArgumentsAlias(bool isArgumentsAlias)
-    {
-        return checkAndSet(m_isArgumentsAlias, m_isArgumentsAlias || isArgumentsAlias);
-    }
-    
-    bool isArgumentsAlias()
-    {
-        return m_isArgumentsAlias;
     }
     
     bool mergeIsLoadedFrom(bool isLoadedFrom)
@@ -193,7 +175,6 @@ public:
         ASSERT(isRoot());
         bool doubleState = m_doubleFormatState == UsingDoubleFormat;
         ASSERT(!(doubleState && shouldNeverUnbox()));
-        ASSERT(!(doubleState && isCaptured()));
         return doubleState && isProfitableToUnbox();
     }
     
@@ -233,9 +214,7 @@ private:
     SpeculatedType m_argumentAwarePrediction;
     NodeFlags m_flags;
 
-    bool m_isCaptured;
     bool m_shouldNeverUnbox;
-    bool m_isArgumentsAlias;
     bool m_structureCheckHoistingFailed;
     bool m_checkArrayHoistingFailed;
     bool m_isProfitableToUnbox;

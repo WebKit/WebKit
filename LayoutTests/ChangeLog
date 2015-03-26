@@ -1,3 +1,51 @@
+2015-03-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Heap variables shouldn't end up in the stack frame
+        https://bugs.webkit.org/show_bug.cgi?id=141174
+
+        Reviewed by Geoffrey Garen.
+
+        * js/function-apply-aliased-expected.txt:
+        * js/function-dot-arguments-expected.txt:
+        * js/regress/arguments-expected.txt: Added.
+        * js/regress/arguments-named-and-reflective-expected.txt: Added.
+        * js/regress/arguments-named-and-reflective.html: Added.
+        * js/regress/arguments-strict-mode-expected.txt: Added.
+        * js/regress/arguments-strict-mode.html: Added.
+        * js/regress/arguments.html: Added.
+        * js/regress/script-tests/arguments-named-and-reflective.js: Added.
+        * js/regress/script-tests/arguments-strict-mode.js: Added.
+        * js/regress/script-tests/arguments.js: Added.
+        * js/regress/script-tests/try-catch-get-by-val-cloned-arguments.js: Added.
+        * js/regress/script-tests/try-catch-get-by-val-direct-arguments.js: Added.
+        * js/regress/script-tests/try-catch-get-by-val-scoped-arguments.js: Added.
+        * js/regress/script-tests/varargs-call.js: Added.
+        * js/regress/script-tests/varargs-construct-inline.js: Added.
+        * js/regress/script-tests/varargs-construct.js: Added.
+        * js/regress/script-tests/varargs-inline.js: Added.
+        * js/regress/script-tests/varargs-strict-mode.js: Added.
+        * js/regress/script-tests/varargs.js: Added.
+        * js/regress/try-catch-get-by-val-cloned-arguments-expected.txt: Added.
+        * js/regress/try-catch-get-by-val-cloned-arguments.html: Added.
+        * js/regress/try-catch-get-by-val-direct-arguments-expected.txt: Added.
+        * js/regress/try-catch-get-by-val-direct-arguments.html: Added.
+        * js/regress/try-catch-get-by-val-scoped-arguments-expected.txt: Added.
+        * js/regress/try-catch-get-by-val-scoped-arguments.html: Added.
+        * js/regress/varargs-call-expected.txt: Added.
+        * js/regress/varargs-call.html: Added.
+        * js/regress/varargs-construct-expected.txt: Added.
+        * js/regress/varargs-construct-inline-expected.txt: Added.
+        * js/regress/varargs-construct-inline.html: Added.
+        * js/regress/varargs-construct.html: Added.
+        * js/regress/varargs-expected.txt: Added.
+        * js/regress/varargs-inline-expected.txt: Added.
+        * js/regress/varargs-inline.html: Added.
+        * js/regress/varargs-strict-mode-expected.txt: Added.
+        * js/regress/varargs-strict-mode.html: Added.
+        * js/regress/varargs.html: Added.
+        * js/script-tests/function-apply-aliased.js:
+        * js/script-tests/function-dot-arguments.js:
+
 2015-03-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: table cells that use display:block render the table inaccessible to VoiceOver

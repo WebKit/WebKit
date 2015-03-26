@@ -44,6 +44,9 @@ shouldBe("myFunctionWithApply.apply(myObject, arg1Array)", '[myFunctionWithApply
 shouldBe("forwarder(myFunctionWithApply, myObject, arg1Array)", '[myFunctionWithApply, "myFunctionWithApply.apply", myObject]');
 shouldBe("myFunctionWithApply.aliasedApply(myObject, arg1Array)", '[myObject, "myFunctionWithApply", "arg1"]');
 
+// Let's make sure that shouldThrow() is compiled before we do crazy.
+shouldThrow("throw 42");
+
 function stackOverflowTest() {
     try {
         var a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z;

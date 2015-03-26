@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@ namespace JSC { namespace DFG {
 
 void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecovery>& operands, SpeculationRecovery* recovery)
 {
-    // 1) Pro-forma stuff.
+    // Pro-forma stuff.
     if (Options::printEachOSRExit()) {
         SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
         debugInfo->codeBlock = m_jit.codeBlock();
@@ -48,8 +48,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         m_jit.debugCall(debugOperationPrintSpeculationFailure, debugInfo);
     }
     
-    // 2) Perform speculation recovery. This only comes into play when an operation
-    //    starts mutating state before verifying the speculation it has already made.
+    // Perform speculation recovery. This only comes into play when an operation
+    // starts mutating state before verifying the speculation it has already made.
     
     if (recovery) {
         switch (recovery->type()) {
@@ -65,7 +65,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         }
     }
 
-    // 3) Refine some value profile, if appropriate.
+    // Refine some value profile, if appropriate.
     
     if (!!exit.m_jsValueSource) {
         if (exit.m_kind == BadCache || exit.m_kind == BadIndexingType) {
@@ -102,13 +102,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 scratch1 = AssemblyHelpers::selectScratchGPR(usedRegister1, usedRegister2);
                 scratch2 = AssemblyHelpers::selectScratchGPR(usedRegister1, usedRegister2, scratch1);
                 
-#if CPU(ARM64)
-                m_jit.pushToSave(scratch1);
-                m_jit.pushToSave(scratch2);
-#else
                 m_jit.push(scratch1);
                 m_jit.push(scratch2);
-#endif
                 
                 GPRReg value;
                 if (exit.m_jsValueSource.isAddress()) {
@@ -124,13 +119,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 m_jit.lshift32(scratch1, scratch2);
                 m_jit.or32(scratch2, AssemblyHelpers::AbsoluteAddress(arrayProfile->addressOfArrayModes()));
                 
-#if CPU(ARM64)
-                m_jit.popToRestore(scratch2);
-                m_jit.popToRestore(scratch1);
-#else
                 m_jit.pop(scratch2);
                 m_jit.pop(scratch1);
-#endif
             }
         }
         
@@ -141,22 +131,14 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 // Save a register so we can use it.
                 GPRReg scratch = AssemblyHelpers::selectScratchGPR(exit.m_jsValueSource.base());
                 
-#if CPU(ARM64)
-                m_jit.pushToSave(scratch);
-#else
                 m_jit.push(scratch);
-#endif
 
                 m_jit.load32(exit.m_jsValueSource.asAddress(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), scratch);
                 m_jit.store32(scratch, &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.tag);
                 m_jit.load32(exit.m_jsValueSource.asAddress(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), scratch);
                 m_jit.store32(scratch, &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.payload);
                 
-#if CPU(ARM64)
-                m_jit.popToRestore(scratch);
-#else
                 m_jit.pop(scratch);
-#endif
             } else if (exit.m_jsValueSource.hasKnownTag()) {
                 m_jit.store32(AssemblyHelpers::TrustedImm32(exit.m_jsValueSource.tag()), &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.tag);
                 m_jit.store32(exit.m_jsValueSource.payloadGPR(), &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.payload);
@@ -170,7 +152,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     // Do a simplified OSR exit. See DFGOSRExitCompiler64.cpp's comment regarding how and wny we
     // do this simple approach.
 
-    // 4) Save all state from GPRs into the scratch buffer.
+    // Save all state from GPRs into the scratch buffer.
     
     ScratchBuffer* scratchBuffer = m_jit.vm()->scratchBufferForSize(sizeof(EncodedJSValue) * operands.size());
     EncodedJSValue* scratch = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : 0;
@@ -203,7 +185,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     
     // Now all GPRs are free to reuse.
     
-    // 5) Save all state from FPRs into the scratch buffer.
+    // Save all state from FPRs into the scratch buffer.
     
     for (size_t index = 0; index < operands.size(); ++index) {
         const ValueRecovery& recovery = operands[index];
@@ -221,9 +203,9 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     
     // Now all FPRs are free to reuse.
     
-    // 6) Save all state from the stack into the scratch buffer. For simplicity we
-    //    do this even for state that's already in the right place on the stack.
-    //    It makes things simpler later.
+    // Save all state from the stack into the scratch buffer. For simplicity we
+    // do this even for state that's already in the right place on the stack.
+    // It makes things simpler later.
     
     for (size_t index = 0; index < operands.size(); ++index) {
         const ValueRecovery& recovery = operands[index];
@@ -261,9 +243,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             -m_jit.codeBlock()->jitCode()->dfgCommon()->requiredRegisterCountForExit * sizeof(Register)),
         CCallHelpers::framePointerRegister, CCallHelpers::stackPointerRegister);
     
-    // 7) Do all data format conversions and store the results into the stack.
-    
-    bool haveArguments = false;
+    // Do all data format conversions and store the results into the stack.
     
     for (size_t index = 0; index < operands.size(); ++index) {
         const ValueRecovery& recovery = operands[index];
@@ -342,14 +322,9 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 AssemblyHelpers::payloadFor(operand));
             break;
             
-        case ArgumentsThatWereNotCreated:
-            haveArguments = true;
-            m_jit.store32(
-                AssemblyHelpers::TrustedImm32(JSValue().tag()),
-                AssemblyHelpers::tagFor(operand));
-            m_jit.store32(
-                AssemblyHelpers::TrustedImm32(JSValue().payload()),
-                AssemblyHelpers::payloadFor(operand));
+        case DirectArgumentsThatWereNotCreated:
+        case ClonedArgumentsThatWereNotCreated:
+            // Don't do this, yet.
             break;
             
         default:
@@ -357,64 +332,57 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         }
     }
     
-    // 8) Adjust the old JIT's execute counter. Since we are exiting OSR, we know
-    //    that all new calls into this code will go to the new JIT, so the execute
-    //    counter only affects call frames that performed OSR exit and call frames
-    //    that were still executing the old JIT at the time of another call frame's
-    //    OSR exit. We want to ensure that the following is true:
+    // Now that things on the stack are recovered, do the arguments recovery. We assume that arguments
+    // recoveries don't recursively refer to each other. But, we don't try to assume that they only
+    // refer to certain ranges of locals. Hence why we need to do this here, once the stack is sensible.
+    // Note that we also roughly assume that the arguments might still be materialized outside of its
+    // inline call frame scope - but for now the DFG wouldn't do that.
+    
+    emitRestoreArguments(operands);
+
+    // Adjust the old JIT's execute counter. Since we are exiting OSR, we know
+    // that all new calls into this code will go to the new JIT, so the execute
+    // counter only affects call frames that performed OSR exit and call frames
+    // that were still executing the old JIT at the time of another call frame's
+    // OSR exit. We want to ensure that the following is true:
     //
-    //    (a) Code the performs an OSR exit gets a chance to reenter optimized
-    //        code eventually, since optimized code is faster. But we don't
-    //        want to do such reentery too aggressively (see (c) below).
+    // (a) Code the performs an OSR exit gets a chance to reenter optimized
+    //     code eventually, since optimized code is faster. But we don't
+    //     want to do such reentery too aggressively (see (c) below).
     //
-    //    (b) If there is code on the call stack that is still running the old
-    //        JIT's code and has never OSR'd, then it should get a chance to
-    //        perform OSR entry despite the fact that we've exited.
+    // (b) If there is code on the call stack that is still running the old
+    //     JIT's code and has never OSR'd, then it should get a chance to
+    //     perform OSR entry despite the fact that we've exited.
     //
-    //    (c) Code the performs an OSR exit should not immediately retry OSR
-    //        entry, since both forms of OSR are expensive. OSR entry is
-    //        particularly expensive.
+    // (c) Code the performs an OSR exit should not immediately retry OSR
+    //     entry, since both forms of OSR are expensive. OSR entry is
+    //     particularly expensive.
     //
-    //    (d) Frequent OSR failures, even those that do not result in the code
-    //        running in a hot loop, result in recompilation getting triggered.
+    // (d) Frequent OSR failures, even those that do not result in the code
+    //     running in a hot loop, result in recompilation getting triggered.
     //
-    //    To ensure (c), we'd like to set the execute counter to
-    //    counterValueForOptimizeAfterWarmUp(). This seems like it would endanger
-    //    (a) and (b), since then every OSR exit would delay the opportunity for
-    //    every call frame to perform OSR entry. Essentially, if OSR exit happens
-    //    frequently and the function has few loops, then the counter will never
-    //    become non-negative and OSR entry will never be triggered. OSR entry
-    //    will only happen if a loop gets hot in the old JIT, which does a pretty
-    //    good job of ensuring (a) and (b). But that doesn't take care of (d),
-    //    since each speculation failure would reset the execute counter.
-    //    So we check here if the number of speculation failures is significantly
-    //    larger than the number of successes (we want 90% success rate), and if
-    //    there have been a large enough number of failures. If so, we set the
-    //    counter to 0; otherwise we set the counter to
-    //    counterValueForOptimizeAfterWarmUp().
+    // To ensure (c), we'd like to set the execute counter to
+    // counterValueForOptimizeAfterWarmUp(). This seems like it would endanger
+    // (a) and (b), since then every OSR exit would delay the opportunity for
+    // every call frame to perform OSR entry. Essentially, if OSR exit happens
+    // frequently and the function has few loops, then the counter will never
+    // become non-negative and OSR entry will never be triggered. OSR entry
+    // will only happen if a loop gets hot in the old JIT, which does a pretty
+    // good job of ensuring (a) and (b). But that doesn't take care of (d),
+    // since each speculation failure would reset the execute counter.
+    // So we check here if the number of speculation failures is significantly
+    // larger than the number of successes (we want 90% success rate), and if
+    // there have been a large enough number of failures. If so, we set the
+    // counter to 0; otherwise we set the counter to
+    // counterValueForOptimizeAfterWarmUp().
     
     handleExitCounts(m_jit, exit);
     
-    // 9) Reify inlined call frames.
+    // Reify inlined call frames.
     
     reifyInlinedCallFrames(m_jit, exit);
     
-    // 10) Create arguments if necessary and place them into the appropriate aliased
-    //     registers.
-    
-    if (haveArguments) {
-        ArgumentsRecoveryGenerator argumentsRecovery;
-
-        for (size_t index = 0; index < operands.size(); ++index) {
-            const ValueRecovery& recovery = operands[index];
-            if (recovery.technique() != ArgumentsThatWereNotCreated)
-                continue;
-            argumentsRecovery.generateFor(
-                operands.operandForIndex(index), exit.m_codeOrigin, m_jit);
-        }
-    }
-
-    // 12) And finish.
+    // And finish.
     adjustAndJumpToTarget(m_jit, exit);
 }
 

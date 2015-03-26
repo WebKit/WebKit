@@ -189,12 +189,10 @@ struct InlineCallFrame {
     WriteBarrier<ScriptExecutable> executable;
     ValueRecovery calleeRecovery;
     CodeOrigin caller;
-    BitVector capturedVars; // Indexed by the machine call frame's variable numbering.
 
     signed stackOffset : 28;
     unsigned kind : 3; // real type is Kind
     bool isClosureCall : 1; // If false then we know that callee/scope are constants and the DFG won't treat them as variables, i.e. they have to be recovered manually.
-    VirtualRegister argumentsRegister; // This is only set if the code uses arguments. The unmodified arguments register follows the unmodifiedArgumentsRegister() convention (see CodeBlock.h).
     VirtualRegister argumentCountRegister; // Only set when we inline a varargs call.
     
     // There is really no good notion of a "default" set of values for

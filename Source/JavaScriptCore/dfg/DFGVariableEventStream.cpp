@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,8 +91,13 @@ bool VariableEventStream::tryToSetConstantRecovery(ValueRecovery& recovery, Mini
         return true;
     }
     
-    if (node->op() == PhantomArguments) {
-        recovery = ValueRecovery::argumentsThatWereNotCreated();
+    if (node->op() == PhantomDirectArguments) {
+        recovery = ValueRecovery::directArgumentsThatWereNotCreated(node->id());
+        return true;
+    }
+    
+    if (node->op() == PhantomClonedArguments) {
+        recovery = ValueRecovery::outOfBandArgumentsThatWereNotCreated(node->id());
         return true;
     }
     

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +35,7 @@
 namespace JSC { namespace FTL {
 
 #define FOR_EACH_ABSTRACT_HEAP(macro) \
-    macro(length) \
-    macro(structureTable) \
-    macro(typedArrayProperties) \
-    macro(WriteBarrierBuffer_bufferContents)
+    macro(typedArrayProperties)
 
 #define FOR_EACH_ABSTRACT_FIELD(macro) \
     macro(ArrayBuffer_data, ArrayBuffer::offsetOfData()) \
@@ -46,6 +43,10 @@ namespace JSC { namespace FTL {
     macro(Butterfly_publicLength, Butterfly::offsetOfPublicLength()) \
     macro(Butterfly_vectorLength, Butterfly::offsetOfVectorLength()) \
     macro(CallFrame_callerFrame, CallFrame::callerFrameOffset()) \
+    macro(DirectArguments_callee, DirectArguments::offsetOfCallee()) \
+    macro(DirectArguments_length, DirectArguments::offsetOfLength()) \
+    macro(DirectArguments_minCapacity, DirectArguments::offsetOfMinCapacity()) \
+    macro(DirectArguments_overrides, DirectArguments::offsetOfOverrides()) \
     macro(GetterSetter_getter, GetterSetter::offsetOfGetter()) \
     macro(GetterSetter_setter, GetterSetter::offsetOfSetter()) \
     macro(JSArrayBufferView_length, JSArrayBufferView::offsetOfLength()) \
@@ -70,10 +71,16 @@ namespace JSC { namespace FTL {
     macro(JSString_flags, JSString::offsetOfFlags()) \
     macro(JSString_length, JSString::offsetOfLength()) \
     macro(JSString_value, JSString::offsetOfValue()) \
-    macro(JSEnvironmentRecord_registers, JSEnvironmentRecord::offsetOfRegisters()) \
+    macro(JSSymbolTableObject_symbolTable, JSSymbolTableObject::offsetOfSymbolTable()) \
     macro(JSWrapperObject_internalValue, JSWrapperObject::internalValueOffset()) \
     macro(MarkedAllocator_freeListHead, MarkedAllocator::offsetOfFreeListHead()) \
     macro(MarkedBlock_markBits, MarkedBlock::offsetOfMarks()) \
+    macro(ScopedArguments_overrodeThings, ScopedArguments::offsetOfOverrodeThings()) \
+    macro(ScopedArguments_scope, ScopedArguments::offsetOfScope()) \
+    macro(ScopedArguments_table, ScopedArguments::offsetOfTable()) \
+    macro(ScopedArguments_totalLength, ScopedArguments::offsetOfTotalLength()) \
+    macro(ScopedArgumentsTable_arguments, ScopedArgumentsTable::offsetOfArguments()) \
+    macro(ScopedArgumentsTable_length, ScopedArgumentsTable::offsetOfLength()) \
     macro(StringImpl_data, StringImpl::dataOffset()) \
     macro(StringImpl_hashAndFlags, StringImpl::flagsOffset()) \
     macro(Structure_classInfo, Structure::classInfoOffset()) \
@@ -82,14 +89,23 @@ namespace JSC { namespace FTL {
     macro(Structure_structureID, Structure::structureIDOffset())
 
 #define FOR_EACH_INDEXED_ABSTRACT_HEAP(macro) \
+    macro(DirectArguments_storage, DirectArguments::storageOffset(), sizeof(EncodedJSValue)) \
+    macro(JSEnvironmentRecord_variables, JSEnvironmentRecord::offsetOfVariables(), sizeof(EncodedJSValue)) \
+    macro(JSPropertyNameEnumerator_cachedPropertyNamesVectorContents, 0, sizeof(WriteBarrier<JSString>)) \
     macro(JSRopeString_fibers, JSRopeString::offsetOfFibers(), sizeof(WriteBarrier<JSString>)) \
+    macro(MarkedSpace_Subspace_impreciseAllocators, OBJECT_OFFSETOF(MarkedSpace::Subspace, impreciseAllocators), sizeof(MarkedAllocator)) \
+    macro(MarkedSpace_Subspace_preciseAllocators, OBJECT_OFFSETOF(MarkedSpace::Subspace, preciseAllocators), sizeof(MarkedAllocator)) \
+    macro(ScopedArguments_overflowStorage, ScopedArguments::overflowStorageOffset(), sizeof(EncodedJSValue)) \
+    macro(WriteBarrierBuffer_bufferContents, 0, sizeof(JSCell*)) \
     macro(characters8, 0, sizeof(LChar)) \
     macro(characters16, 0, sizeof(UChar)) \
     macro(indexedInt32Properties, 0, sizeof(EncodedJSValue)) \
     macro(indexedDoubleProperties, 0, sizeof(double)) \
     macro(indexedContiguousProperties, 0, sizeof(EncodedJSValue)) \
     macro(indexedArrayStorageProperties, 0, sizeof(EncodedJSValue)) \
+    macro(scopedArgumentsTableArguments, 0, sizeof(int32_t)) \
     macro(singleCharacterStrings, 0, sizeof(JSString*)) \
+    macro(structureTable, 0, sizeof(Structure*)) \
     macro(variables, 0, sizeof(Register))
     
 #define FOR_EACH_NUMBERED_ABSTRACT_HEAP(macro) \

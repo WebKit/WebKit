@@ -116,6 +116,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ToThis:
     case CreateThis:
     case GetCallee:
+    case GetArgumentCount:
     case GetLocal:
     case SetLocal:
     case PutStack:
@@ -170,7 +171,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ArrayifyToStructure:
     case GetScope:
     case SkipScope:
-    case GetClosureRegisters:
     case GetClosureVar:
     case PutClosureVar:
     case GetGlobalVar:
@@ -195,6 +195,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ConstructVarargs:
     case LoadVarargs:
     case CallForwardVarargs:
+    case ConstructForwardVarargs:
     case NewObject:
     case NewArray:
     case NewArrayWithSize:
@@ -222,17 +223,12 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case MakeRope:
     case In:
     case CreateActivation:
-    case CreateArguments:
-    case PhantomArguments:
-    case TearOffArguments:
-    case GetMyArgumentsLength:
-    case GetMyArgumentByVal:
-    case GetMyArgumentsLengthSafe:
-    case GetMyArgumentByValSafe:
-    case CheckArgumentsNotCreated:
-    case NewFunctionNoCheck:
+    case CreateDirectArguments:
+    case CreateScopedArguments:
+    case CreateClonedArguments:
+    case GetFromArguments:
+    case PutToArguments:
     case NewFunction:
-    case NewFunctionExpression:
     case Jump:
     case Branch:
     case Switch:
@@ -280,6 +276,10 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeNewObject:
+    case PhantomDirectArguments:
+    case PhantomClonedArguments:
+    case GetMyArgumentByVal:
+    case ForwardVarargs:
         return true;
 
     case NativeCall:

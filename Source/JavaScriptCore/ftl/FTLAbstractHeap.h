@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,6 +99,8 @@ public:
     
     void decorateInstruction(LValue instruction, const AbstractHeapRepository&) const;
 
+    void dump(PrintStream&) const;
+
 private:
     friend class AbstractHeapRepository;
     
@@ -135,6 +137,8 @@ public:
         return m_offset;
     }
     
+    void dump(PrintStream&) const;
+
 private:
     ptrdiff_t m_offset;
 };
@@ -157,6 +161,8 @@ public:
     
     TypedPointer baseIndex(Output& out, LValue base, LValue index, JSValue indexAsConstant = JSValue(), ptrdiff_t offset = 0);
     
+    void dump(PrintStream&) const;
+
 private:
     const AbstractField& returnInitialized(AbstractField& field, ptrdiff_t index)
     {
@@ -201,6 +207,8 @@ public:
     const AbstractHeap& at(unsigned number) { return m_indexedHeap.at(number); }
     const AbstractHeap& operator[](unsigned number) { return at(number); }
 
+    void dump(PrintStream&) const;
+
 private:
     
     // We use the fact that the indexed heap already has a superset of the
@@ -221,6 +229,8 @@ public:
     }
     
     const AbstractHeap& operator[](void* address) { return at(address); }
+
+    void dump(PrintStream&) const;
 
 private:
     // The trick here is that the indexed heap is "indexed" by a pointer-width

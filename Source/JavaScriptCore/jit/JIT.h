@@ -346,6 +346,8 @@ namespace JSC {
         JumpList emitDoubleGetByVal(Instruction*, PatchableJump& badType);
         JumpList emitContiguousGetByVal(Instruction*, PatchableJump& badType, IndexingType expectedShape = ContiguousShape);
         JumpList emitArrayStorageGetByVal(Instruction*, PatchableJump& badType);
+        JumpList emitDirectArgumentsGetByVal(Instruction*, PatchableJump& badType);
+        JumpList emitScopedArgumentsGetByVal(Instruction*, PatchableJump& badType);
         JumpList emitIntTypedArrayGetByVal(Instruction*, PatchableJump& badType, TypedArrayType);
         JumpList emitFloatTypedArrayGetByVal(Instruction*, PatchableJump& badType, TypedArrayType);
         
@@ -468,8 +470,10 @@ namespace JSC {
         void emit_op_construct(Instruction*);
         void emit_op_create_this(Instruction*);
         void emit_op_to_this(Instruction*);
+        void emit_op_create_direct_arguments(Instruction*);
+        void emit_op_create_scoped_arguments(Instruction*);
+        void emit_op_create_out_of_band_arguments(Instruction*);
         void emit_op_check_tdz(Instruction*);
-        void emit_op_create_arguments(Instruction*);
         void emit_op_debug(Instruction*);
         void emit_op_del_by_id(Instruction*);
         void emit_op_div(Instruction*);
@@ -620,6 +624,8 @@ namespace JSC {
         void emit_op_resolve_scope(Instruction*);
         void emit_op_get_from_scope(Instruction*);
         void emit_op_put_to_scope(Instruction*);
+        void emit_op_get_from_arguments(Instruction*);
+        void emit_op_put_to_arguments(Instruction*);
         void emitSlow_op_resolve_scope(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_from_scope(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_to_scope(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -697,6 +703,7 @@ namespace JSC {
 #endif
         MacroAssembler::Call callOperation(J_JITOperation_EJIdc, int, GPRReg, const Identifier*);
         MacroAssembler::Call callOperation(J_JITOperation_EJJ, int, GPRReg, GPRReg);
+        MacroAssembler::Call callOperation(C_JITOperation_EJsc, GPRReg);
         MacroAssembler::Call callOperation(J_JITOperation_EJscC, int, GPRReg, JSCell*);
         MacroAssembler::Call callOperation(C_JITOperation_EJscZ, GPRReg, int32_t);
         MacroAssembler::Call callOperation(C_JITOperation_EJscZ, int, GPRReg, int32_t);

@@ -61,7 +61,7 @@ void promoteHeapAccess(Node* node, const WriteFunctor& write, const ReadFunctor&
     }
         
     case PutHint: {
-        ASSERT(node->child1()->isPhantomObjectAllocation());
+        ASSERT(node->child1()->isPhantomAllocation());
         write(
             PromotedHeapLocation(node->child1().node(), node->promotedLocationDescriptor()),
             node->child2());

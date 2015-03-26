@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,27 +32,22 @@
 
 namespace JSC {
 
-inline bool operandIsAlwaysLive(CodeBlock* codeBlock, int operand)
+inline bool operandIsAlwaysLive(int operand)
 {
-    if (VirtualRegister(operand).isArgument())
-        return true;
-    return operand <= codeBlock->captureStart() && operand > codeBlock->captureEnd();
+    return !VirtualRegister(operand).isLocal();
 }
 
-inline bool operandThatIsNotAlwaysLiveIsLive(CodeBlock* codeBlock, const FastBitVector& out, int operand)
+inline bool operandThatIsNotAlwaysLiveIsLive(const FastBitVector& out, int operand)
 {
-    VirtualRegister virtualReg(operand);
-    if (virtualReg.offset() > codeBlock->captureStart())
-        return out.get(virtualReg.toLocal());
-    size_t index = virtualReg.toLocal() - codeBlock->captureCount();
-    if (index >= out.numBits())
+    unsigned local = VirtualRegister(operand).toLocal();
+    if (local >= out.numBits())
         return false;
-    return out.get(index);
+    return out.get(local);
 }
 
-inline bool operandIsLive(CodeBlock* codeBlock, const FastBitVector& out, int operand)
+inline bool operandIsLive(const FastBitVector& out, int operand)
 {
-    return operandIsAlwaysLive(codeBlock, operand) || operandThatIsNotAlwaysLiveIsLive(codeBlock, out, operand);
+    return operandIsAlwaysLive(operand) || operandThatIsNotAlwaysLiveIsLive(out, operand);
 }
 
 } // namespace JSC

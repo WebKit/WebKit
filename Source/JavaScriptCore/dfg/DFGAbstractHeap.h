@@ -47,7 +47,6 @@ namespace JSC { namespace DFG {
     macro(World) \
     macro(Stack) \
     macro(Heap) \
-    macro(Arguments_registers) \
     macro(Butterfly_publicLength) \
     macro(Butterfly_vectorLength) \
     macro(GetterSetter_getter) \
@@ -57,7 +56,6 @@ namespace JSC { namespace DFG {
     macro(JSCell_typeInfoFlags) \
     macro(JSCell_typeInfoType) \
     macro(JSObject_butterfly) \
-    macro(JSEnvironmentRecord_registers) \
     macro(JSPropertyNameEnumerator_cachedPropertyNames) \
     macro(NamedProperties) \
     macro(IndexedInt32Properties) \
@@ -65,7 +63,8 @@ namespace JSC { namespace DFG {
     macro(IndexedContiguousProperties) \
     macro(IndexedArrayStorageProperties) \
     macro(ArrayStorageProperties) \
-    macro(Variables) \
+    macro(DirectArgumentsProperties) \
+    macro(ScopeProperties) \
     macro(TypedArrayProperties) \
     macro(HeapObjectCount) /* Used to reflect the fact that some allocations reveal object identity */\
     macro(RegExpState) \

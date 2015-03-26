@@ -32,12 +32,12 @@ PASS tearOffTest4(1, 2, 3, false) is [10, 2, 3, false]
 PASS tearOffTest4a(1, 2, 3, false) is [10, 2, 3, false]
 PASS tearOffTest4b(1, 2, 3, false) is [1, 2, 3, false]
 PASS tearOffTest4c(1, 2, 3, false) is [1, 2, 3, false]
-PASS tearOffTest5(1, 2, 3, false) is [10, 2, 3, false]
-PASS tearOffTest5a(1, 2, 3, false) is [10, 2, 3, false]
+PASS tearOffTest5(1, 2, 3, false) is [1, 2, 3, false]
+PASS tearOffTest5a(1, 2, 3, false) is [1, 2, 3, false]
 PASS tearOffTest5b(1, 2, 3, false) is [1, 2, 3, false]
 PASS tearOffTest5c(1, 2, 3, false) is [1, 2, 3, false]
-PASS tearOffTest6(1, 2, 3, false) is [10, 2, 3, false]
-PASS tearOffTest6a(1, 2, 3, false) is [10, 2, 3, false]
+PASS tearOffTest6(1, 2, 3, false) is [1, 2, 3, false]
+PASS tearOffTest6a(1, 2, 3, false) is [1, 2, 3, false]
 PASS tearOffTest6b(1, 2, 3, false) is [1, 2, 3, false]
 PASS tearOffTest6c(1, 2, 3, false) is [1, 2, 3, false]
 PASS tearOffTest7(1, 2, 3, false) is [10, 2, 3, false]
@@ -56,9 +56,9 @@ PASS tearOffTest10(1, 2, 3, false) is [undefined, 2, 3, false]
 PASS tearOffTest10a(1, 2, 3, false) is [undefined, 2, 3, false]
 PASS tearOffTest10b(1, 2, 3, false) is [undefined, 2, 3, false]
 PASS tearOffTest10c(1, 2, 3, false) is [undefined, 2, 3, false]
-PASS lexicalArgumentsLiveRead1(0, 2, 3) is 1
-PASS lexicalArgumentsLiveRead2(1, 0, 3) is 2
-PASS lexicalArgumentsLiveRead3(1, 2, 0) is 3
+PASS lexicalArgumentsLiveRead1(0, 2, 3) is 0
+PASS lexicalArgumentsLiveRead2(1, 0, 3) is 0
+PASS lexicalArgumentsLiveRead3(1, 2, 0) is 0
 PASS lexicalArgumentsLiveWrite1(0, 2, 3) is 0
 PASS lexicalArgumentsLiveWrite2(1, 0, 3) is 0
 PASS lexicalArgumentsLiveWrite3(1, 2, 0) is 0

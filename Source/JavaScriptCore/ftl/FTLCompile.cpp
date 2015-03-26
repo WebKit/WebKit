@@ -140,6 +140,9 @@ static void dumpDataSection(DataSection* section, const char* prefix)
 
 static int offsetOfStackRegion(StackMaps::RecordMap& recordMap, uint32_t stackmapID)
 {
+    if (stackmapID == UINT_MAX)
+        return 0;
+    
     StackMaps::RecordMap::iterator iter = recordMap.find(stackmapID);
     RELEASE_ASSERT(iter != recordMap.end());
     RELEASE_ASSERT(iter->value.size() == 1);
@@ -301,20 +304,11 @@ static void fixFunctionBasedOnStackMaps(
     VM& vm = graph.m_vm;
     StackMaps stackmaps = jitCode->stackmaps;
     
-    int localsOffset =
-        offsetOfStackRegion(recordMap, state.capturedStackmapID) + graph.m_nextMachineLocal;
-    
-    int varargsSpillSlotsOffset;
-    if (state.varargsSpillSlotsStackmapID != UINT_MAX)
-        varargsSpillSlotsOffset = offsetOfStackRegion(recordMap, state.varargsSpillSlotsStackmapID);
-    else
-        varargsSpillSlotsOffset = 0;
+    int localsOffset = offsetOfStackRegion(recordMap, state.capturedStackmapID) + graph.m_nextMachineLocal;
+    int varargsSpillSlotsOffset = offsetOfStackRegion(recordMap, state.varargsSpillSlotsStackmapID);
     
     for (unsigned i = graph.m_inlineVariableData.size(); i--;) {
         InlineCallFrame* inlineCallFrame = graph.m_inlineVariableData[i].inlineCallFrame;
-        
-        if (inlineCallFrame->argumentsRegister.isValid())
-            inlineCallFrame->argumentsRegister += localsOffset;
         
         if (inlineCallFrame->argumentCountRegister.isValid())
             inlineCallFrame->argumentCountRegister += localsOffset;
@@ -330,11 +324,6 @@ static void fixFunctionBasedOnStackMaps(
         }
     }
     
-    if (codeBlock->usesArguments()) {
-        codeBlock->setArgumentsRegister(
-            VirtualRegister(codeBlock->argumentsRegister().offset() + localsOffset));
-    }
-
     MacroAssembler::Label stackOverflowException;
 
     {
@@ -396,15 +385,10 @@ static void fixFunctionBasedOnStackMaps(
             info.m_thunkAddress = linkBuffer->locationOf(info.m_thunkLabel);
             exit.m_patchableCodeOffset = linkBuffer->offsetOf(info.m_thunkJump);
             
-            for (unsigned j = exit.m_values.size(); j--;) {
-                ExitValue value = exit.m_values[j];
-                if (!value.isInJSStackSomehow())
-                    continue;
-                if (!value.virtualRegister().isLocal())
-                    continue;
-                exit.m_values[j] = value.withVirtualRegister(
-                    VirtualRegister(value.virtualRegister().offset() + localsOffset));
-            }
+            for (unsigned j = exit.m_values.size(); j--;)
+                exit.m_values[j] = exit.m_values[j].withLocalsOffset(localsOffset);
+            for (ExitTimeObjectMaterialization* materialization : exit.m_materializations)
+                materialization->accountForLocalsOffset(localsOffset);
             
             if (verboseCompilationEnabled()) {
                 DumpContext context;
@@ -588,7 +572,7 @@ static void fixFunctionBasedOnStackMaps(
         JSCallVarargs& call = state.jsCallVarargses[i];
         
         CCallHelpers fastPathJIT(&vm, codeBlock);
-        call.emit(fastPathJIT, graph, varargsSpillSlotsOffset);
+        call.emit(fastPathJIT, varargsSpillSlotsOffset);
         
         char* startOfIC = bitwise_cast<char*>(generatedFunction) + call.m_instructionOffset;
         size_t sizeOfIC = sizeOfICFor(call.node());

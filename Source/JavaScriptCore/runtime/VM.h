@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -250,6 +250,7 @@ public:
     Strong<Structure> propertyNameEnumeratorStructure;
     Strong<Structure> getterSetterStructure;
     Strong<Structure> customGetterSetterStructure;
+    Strong<Structure> scopedArgumentsTableStructure;
     Strong<Structure> apiWrapperStructure;
     Strong<Structure> JSScopeStructure;
     Strong<Structure> executableStructure;

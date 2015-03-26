@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -346,18 +346,16 @@ struct AbstractValue {
     
     // This is a proven constraint on the possible types that this value can have
     // now or any time in the future, unless it is reassigned. This field is
-    // impervious to side-effects unless the side-effect can reassign the value
-    // (for example if we're talking about a captured variable). The relationship
-    // between this field, and the structure fields above, is as follows. The
-    // fields above constraint the structures that a cell may have, but they say
-    // nothing about whether or not the value is known to be a cell. More formally,
-    // the m_structure is itself an abstract value that consists of the
-    // union of the set of all non-cell values and the set of cell values that have
-    // the given structure. This abstract value is then the intersection of the
-    // m_structure and the set of values whose type is m_type. So, for
-    // example if m_type is SpecFinal|SpecInt32 and m_structure is
-    // [0x12345] then this abstract value corresponds to the set of all integers
-    // unified with the set of all objects with structure 0x12345.
+    // impervious to side-effects. The relationship between this field, and the
+    // structure fields above, is as follows. The fields above constraint the
+    // structures that a cell may have, but they say nothing about whether or not
+    // the value is known to be a cell. More formally, the m_structure is itself an
+    // abstract value that consists of the union of the set of all non-cell values
+    // and the set of cell values that have the given structure. This abstract
+    // value is then the intersection of the m_structure and the set of values
+    // whose type is m_type. So, for example if m_type is SpecFinal|SpecInt32 and
+    // m_structure is [0x12345] then this abstract value corresponds to the set of
+    // all integers unified with the set of all objects with structure 0x12345.
     SpeculatedType m_type;
     
     // This is a proven constraint on the possible indexing types that this value

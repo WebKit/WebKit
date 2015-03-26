@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012, 2013, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -209,7 +209,6 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     , m_numCalleeRegisters(0)
     , m_numParameters(0)
     , m_vm(vm)
-    , m_argumentsRegister(VirtualRegister())
     , m_globalObjectRegister(VirtualRegister())
     , m_needsFullScopeChain(info.needsActivation())
     , m_usesEval(info.usesEval())

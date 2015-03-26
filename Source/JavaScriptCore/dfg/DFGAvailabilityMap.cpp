@@ -45,14 +45,13 @@ void AvailabilityMap::prune()
             possibleNodes.add(m_locals[i].node());
     }
 
-    unsigned oldPossibleNodesSize;
-    do {
-        oldPossibleNodesSize = possibleNodes.size();
-        for (auto pair : m_heap) {
-            if (pair.value.hasNode() && possibleNodes.contains(pair.key.base()))
-                possibleNodes.add(pair.value.node());
-        }
-    } while (oldPossibleNodesSize != possibleNodes.size());
+    closeOverNodes(
+        [&] (Node* node) -> bool {
+            return possibleNodes.contains(node);
+        },
+        [&] (Node* node) -> bool {
+            return possibleNodes.add(node).isNewEntry;
+        });
     
     HashMap<PromotedHeapLocation, Availability> newHeap;
     for (auto pair : m_heap) {

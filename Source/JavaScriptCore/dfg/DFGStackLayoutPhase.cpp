@@ -46,8 +46,6 @@ public:
     
     bool run()
     {
-        SymbolTable* symbolTable = codeBlock()->symbolTable();
-
         // This enumerates the locals that we actually care about and packs them. So for example
         // if we use local 1, 3, 4, 5, 7, then we remap them: 1->0, 3->1, 4->2, 5->3, 7->4. We
         // treat a variable as being "used" if there exists an access to it (SetLocal, GetLocal,
@@ -84,7 +82,8 @@ public:
                     break;
                 }
                     
-                case LoadVarargs: {
+                case LoadVarargs:
+                case ForwardVarargs: {
                     LoadVarargsData* data = node->loadVarargsData();
                     if (data->count.isLocal())
                         usedLocals.set(data->count.toLocal());
@@ -114,27 +113,8 @@ public:
             }
         }
         
-        // Ensure that captured variables and captured inline arguments are pinned down.
-        // They should have been because of flushes, except that the flushes can be optimized
-        // away.
-        if (symbolTable) {
-            for (int i = symbolTable->captureStart(); i > symbolTable->captureEnd(); i--)
-                usedLocals.set(VirtualRegister(i).toLocal());
-        }
-        if (codeBlock()->usesArguments()) {
-            usedLocals.set(codeBlock()->argumentsRegister().toLocal());
-            usedLocals.set(unmodifiedArgumentsRegister(codeBlock()->argumentsRegister()).toLocal());
-        }
-        if (codeBlock()->uncheckedActivationRegister().isValid())
-            usedLocals.set(codeBlock()->activationRegister().toLocal());
         for (InlineCallFrameSet::iterator iter = m_graph.m_plan.inlineCallFrames->begin(); !!iter; ++iter) {
             InlineCallFrame* inlineCallFrame = *iter;
-            if (!m_graph.usesArguments(inlineCallFrame))
-                continue;
-            
-            VirtualRegister argumentsRegister = m_graph.argumentsRegisterFor(inlineCallFrame);
-            usedLocals.set(argumentsRegister.toLocal());
-            usedLocals.set(unmodifiedArgumentsRegister(argumentsRegister).toLocal());
             
             if (inlineCallFrame->isVarargs()) {
                 usedLocals.set(VirtualRegister(
@@ -193,35 +173,13 @@ public:
             data->machineLocal = assign(allocation, data->local);
         }
         
-        if (codeBlock()->usesArguments()) {
-            VirtualRegister argumentsRegister =
-                assign(allocation, codeBlock()->argumentsRegister());
-            RELEASE_ASSERT(
-                assign(allocation, unmodifiedArgumentsRegister(codeBlock()->argumentsRegister()))
-                == unmodifiedArgumentsRegister(argumentsRegister));
-            codeBlock()->setArgumentsRegister(argumentsRegister);
-        }
-        
-        if (codeBlock()->uncheckedActivationRegister().isValid()) {
-            codeBlock()->setActivationRegister(
-                assign(allocation, codeBlock()->activationRegister()));
-        }
-        
         // This register is never valid for DFG code blocks.
+        codeBlock()->setActivationRegister(VirtualRegister());
         codeBlock()->setScopeRegister(VirtualRegister());
 
         for (unsigned i = m_graph.m_inlineVariableData.size(); i--;) {
             InlineVariableData data = m_graph.m_inlineVariableData[i];
             InlineCallFrame* inlineCallFrame = data.inlineCallFrame;
-            
-            if (m_graph.usesArguments(inlineCallFrame)) {
-                inlineCallFrame->argumentsRegister = assign(
-                    allocation, m_graph.argumentsRegisterFor(inlineCallFrame));
-
-                RELEASE_ASSERT(
-                    assign(allocation, unmodifiedArgumentsRegister(m_graph.argumentsRegisterFor(inlineCallFrame)))
-                    == unmodifiedArgumentsRegister(inlineCallFrame->argumentsRegister));
-            }
             
             if (inlineCallFrame->isVarargs()) {
                 inlineCallFrame->argumentCountRegister = assign(
@@ -253,30 +211,6 @@ public:
                 RELEASE_ASSERT(inlineCallFrame->calleeRecovery.isConstant());
         }
         
-        if (symbolTable) {
-            if (symbolTable->captureCount()) {
-                unsigned captureStartLocal = allocation[
-                    VirtualRegister(codeBlock()->symbolTable()->captureStart()).toLocal()];
-                ASSERT(captureStartLocal != UINT_MAX);
-                m_graph.m_machineCaptureStart = virtualRegisterForLocal(captureStartLocal).offset();
-            } else
-                m_graph.m_machineCaptureStart = virtualRegisterForLocal(0).offset();
-        
-            // This is an abomination. If we had captured an argument then the argument ends
-            // up being "slow", meaning that loads of the argument go through an extra lookup
-            // table.
-            if (const SlowArgument* slowArguments = symbolTable->slowArguments()) {
-                auto newSlowArguments = std::make_unique<SlowArgument[]>(
-                    symbolTable->parameterCount());
-                for (size_t i = symbolTable->parameterCount(); i--;) {
-                    newSlowArguments[i] = slowArguments[i];
-                    newSlowArguments[i].index = assign(allocation, VirtualRegister(slowArguments[i].index)).offset();
-                }
-            
-                m_graph.m_slowArguments = WTF::move(newSlowArguments);
-            }
-        }
-        
         // Fix GetLocalUnlinked's variable references.
         if (hasNodesThatNeedFixup) {
             for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
@@ -291,7 +225,8 @@ public:
                         break;
                     }
                         
-                    case LoadVarargs: {
+                    case LoadVarargs:
+                    case ForwardVarargs: {
                         LoadVarargsData* data = node->loadVarargsData();
                         data->machineCount = assign(allocation, data->count);
                         data->machineStart = assign(allocation, data->start);

@@ -94,6 +94,36 @@ void Node::convertToIdentity()
     setResult(result);
 }
 
+void Node::convertToIdentityOn(Node* child)
+{
+    children.reset();
+    child1() = child->defaultEdge();
+    NodeFlags output = canonicalResultRepresentation(this->result());
+    NodeFlags input = canonicalResultRepresentation(child->result());
+    if (output == input) {
+        setOpAndDefaultFlags(Identity);
+        setResult(output);
+        return;
+    }
+    switch (output) {
+    case NodeResultDouble:
+        RELEASE_ASSERT(input == NodeResultInt52 || input == NodeResultJS);
+        setOpAndDefaultFlags(DoubleRep);
+        return;
+    case NodeResultInt52:
+        RELEASE_ASSERT(input == NodeResultDouble || input == NodeResultJS);
+        setOpAndDefaultFlags(Int52Rep);
+        return;
+    case NodeResultJS:
+        RELEASE_ASSERT(input == NodeResultDouble || input == NodeResultInt52);
+        setOpAndDefaultFlags(ValueRep);
+        return;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return;
+    }
+}
+
 void Node::convertToPutHint(const PromotedLocationDescriptor& descriptor, Node* base, Node* value)
 {
     m_op = PutHint;

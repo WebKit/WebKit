@@ -609,7 +609,6 @@ _llint_op_enter:
 
 _llint_op_create_lexical_environment:
     traceExecution()
-    loadisFromInstruction(1, t0)
     callSlowPath(_llint_slow_path_create_lexical_environment)
     dispatch(3)
 
@@ -621,22 +620,6 @@ _llint_op_get_scope:
     loadisFromInstruction(1, t1)
     storeq t0, [cfr, t1, 8]
     dispatch(2)
-
-
-_llint_op_init_lazy_reg:
-    traceExecution()
-    loadisFromInstruction(1, t0)
-    storeq ValueEmpty, [cfr, t0, 8]
-    dispatch(2)
-
-
-_llint_op_create_arguments:
-    traceExecution()
-    loadisFromInstruction(1, t0)
-    bqneq [cfr, t0, 8], ValueEmpty, .opCreateArgumentsDone
-    callSlowPath(_slow_path_create_arguments)
-.opCreateArgumentsDone:
-    dispatch(3)
 
 
 _llint_op_create_this:
@@ -1314,22 +1297,6 @@ _llint_op_get_array_length:
     dispatch(9)
 
 
-_llint_op_get_arguments_length:
-    traceExecution()
-    loadisFromInstruction(2, t0)
-    loadisFromInstruction(1, t1)
-    btqnz [cfr, t0, 8], .opGetArgumentsLengthSlow
-    loadi ArgumentCount + PayloadOffset[cfr], t2
-    subi 1, t2
-    orq tagTypeNumber, t2
-    storeq t2, [cfr, t1, 8]
-    dispatch(4)
-
-.opGetArgumentsLengthSlow:
-    callSlowPath(_llint_slow_path_get_arguments_length)
-    dispatch(4)
-
-
 macro putById(getPropertyStorage)
     traceExecution()
     writeBarrierOnOperands(1, 3)
@@ -1474,30 +1441,6 @@ _llint_op_get_by_val:
 .opGetByValSlow:
     callSlowPath(_llint_slow_path_get_by_val)
     dispatch(6)
-
-
-_llint_op_get_argument_by_val:
-    # FIXME: At some point we should array profile this. Right now it isn't necessary
-    # since the DFG will never turn a get_argument_by_val into a GetByVal.
-    traceExecution()
-    loadisFromInstruction(2, t0)
-    loadisFromInstruction(3, t1)
-    btqnz [cfr, t0, 8], .opGetArgumentByValSlow
-    loadConstantOrVariableInt32(t1, t2, .opGetArgumentByValSlow)
-    loadi ArgumentCount + PayloadOffset[cfr], t1
-    sxi2q t2, t2
-    subi 1, t1
-    biaeq t2, t1, .opGetArgumentByValSlow
-    loadisFromInstruction(1, t3)
-    loadpFromInstruction(6, t1)
-    loadq FirstArgumentOffset[cfr, t2, 8], t0
-    storeq t0, [cfr, t3, 8]
-    valueProfile(t0, 6, t1)
-    dispatch(7)
-
-.opGetArgumentByValSlow:
-    callSlowPath(_llint_slow_path_get_argument_by_val)
-    dispatch(7)
 
 
 macro contiguousPutByVal(storeCallback)
@@ -1781,17 +1724,6 @@ _llint_op_switch_char:
     dispatch(0)
 
 
-_llint_op_new_func:
-    traceExecution()
-    loadisFromInstruction(4, t2)
-    btiz t2, .opNewFuncUnchecked
-    loadisFromInstruction(1, t1)
-    btqnz [cfr, t1, 8], .opNewFuncDone
-.opNewFuncUnchecked:
-    callSlowPath(_llint_slow_path_new_func)
-.opNewFuncDone:
-    dispatch(5)
-
 macro arrayProfileForCall()
     loadisFromInstruction(4, t3)
     negp t3
@@ -1823,14 +1755,6 @@ macro doCall(slowPath)
 .opCallSlow:
     slowPathForCall(slowPath)
 end
-
-_llint_op_tear_off_arguments:
-    traceExecution()
-    loadisFromInstruction(1, t0)
-    btqz [cfr, t0, 8], .opTearOffArgumentsNotCreated
-    callSlowPath(_llint_slow_path_tear_off_arguments)
-.opTearOffArgumentsNotCreated:
-    dispatch(3)
 
 
 _llint_op_ret:
@@ -2080,9 +2004,8 @@ macro getGlobalVar()
 end
 
 macro getClosureVar()
-    loadp JSEnvironmentRecord::m_registers[t0], t0
     loadisFromInstruction(6, t1)
-    loadq [t0, t1, 8], t0
+    loadq JSEnvironmentRecord_variables[t0, t1, 8], t0
     valueProfile(t0, 7, t1)
     loadisFromInstruction(1, t1)
     storeq t0, [cfr, t1, 8]
@@ -2154,9 +2077,8 @@ end
 macro putClosureVar()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2)
-    loadp JSEnvironmentRecord::m_registers[t0], t0
     loadisFromInstruction(6, t1)
-    storeq t2, [t0, t1, 8]
+    storeq t2, JSEnvironmentRecord_variables[t0, t1, 8]
 end
 
 macro putLocalClosureVar()
@@ -2166,9 +2088,8 @@ macro putLocalClosureVar()
     btpz t3, .noVariableWatchpointSet
     notifyWrite(t3, t2, t1, .pDynamic)
 .noVariableWatchpointSet:
-    loadp JSEnvironmentRecord::m_registers[t0], t0
     loadisFromInstruction(6, t1)
-    storeq t2, [t0, t1, 8]
+    storeq t2, JSEnvironmentRecord_variables[t0, t1, 8]
 end
 
 
@@ -2229,6 +2150,29 @@ _llint_op_put_to_scope:
 .pDynamic:
     callSlowPath(_llint_slow_path_put_to_scope)
     dispatch(7)
+
+
+_llint_op_get_from_arguments:
+    traceExecution()
+    loadVariable(2, t0)
+    loadi 24[PB, PC, 8], t1
+    loadq DirectArguments_storage[t0, t1, 8], t0
+    valueProfile(t0, 4, t1)
+    loadisFromInstruction(1, t1)
+    storeq t0, [cfr, t1, 8]
+    dispatch(5)
+
+
+_llint_op_put_to_arguments:
+    traceExecution()
+    writeBarrierOnOperands(1, 3)
+    loadVariable(1, t0)
+    loadi 16[PB, PC, 8], t1
+    loadisFromInstruction(3, t3)
+    loadConstantOrVariable(t3, t2)
+    storeq t2, DirectArguments_storage[t0, t1, 8]
+    dispatch(4)
+
 
 _llint_op_profile_type:
     traceExecution()

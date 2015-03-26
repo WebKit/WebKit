@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +57,7 @@ enum AbortReason {
     DFGSlowPathGeneratorFellThrough                   = 210,
     DFGUnreachableBasicBlock                          = 220,
     DFGUnreasonableOSREntryJumpDestination            = 230,
+    DFGVarargsThrowingPathDidNotThrow                 = 235,
     JITDivOperandsAreNotNumbers                       = 240,
     JITGetByValResultIsNotEmpty                       = 250,
     JITNotSupported                                   = 260,

@@ -1,5 +1,15 @@
 2015-03-25  Filip Pizlo  <fpizlo@apple.com>
 
+        Heap variables shouldn't end up in the stack frame
+        https://bugs.webkit.org/show_bug.cgi?id=141174
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/FastBitVector.h:
+        (WTF::FastBitVector::resize): Small change: don't resize if you don't have to resize.
+
+2015-03-25  Filip Pizlo  <fpizlo@apple.com>
+
         Change Atomic methods from using the_wrong_naming_conventions to using theRightNamingConventions. Also make seq_cst the default.
 
         Rubber stamped by Geoffrey Garen.

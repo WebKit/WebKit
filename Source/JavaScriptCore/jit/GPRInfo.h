@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,6 +50,11 @@ public:
     }
     
     static JSValueRegs payloadOnly(GPRReg gpr)
+    {
+        return JSValueRegs(gpr);
+    }
+    
+    static JSValueRegs withTwoAvailableRegs(GPRReg gpr, GPRReg)
     {
         return JSValueRegs(gpr);
     }
@@ -144,6 +149,11 @@ public:
         : m_tagGPR(tagGPR)
         , m_payloadGPR(payloadGPR)
     {
+    }
+    
+    static JSValueRegs withTwoAvailableRegs(GPRReg gpr1, GPRReg gpr2)
+    {
+        return JSValueRegs(gpr1, gpr2);
     }
     
     static JSValueRegs payloadOnly(GPRReg gpr)
@@ -325,6 +335,12 @@ public:
         return registerForIndex[index];
     }
 
+    static GPRReg toArgumentRegister(unsigned)
+    {
+        UNREACHABLE_FOR_PLATFORM();
+        return InvalidGPRReg;
+    }
+
     static unsigned toIndex(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
@@ -494,6 +510,13 @@ public:
     {
         ASSERT(index < numberOfRegisters);
         static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regT8 };
+        return registerForIndex[index];
+    }
+
+    static GPRReg toArgumentRegister(unsigned index)
+    {
+        ASSERT(index < numberOfArgumentRegisters);
+        static const GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3 };
         return registerForIndex[index];
     }
 

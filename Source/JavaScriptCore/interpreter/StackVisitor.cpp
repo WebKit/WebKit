@@ -26,8 +26,8 @@
 #include "config.h"
 #include "StackVisitor.h"
 
-#include "Arguments.h"
 #include "CallFrameInlines.h"
+#include "ClonedArguments.h"
 #include "Executable.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
@@ -255,63 +255,24 @@ String StackVisitor::Frame::toString()
     return traceBuild.toString().impl();
 }
 
-Arguments* StackVisitor::Frame::createArguments()
+ClonedArguments* StackVisitor::Frame::createArguments()
 {
     ASSERT(m_callFrame);
     CallFrame* physicalFrame = m_callFrame;
-    VM& vm = physicalFrame->vm();
-    Arguments* arguments;
+    ClonedArguments* arguments;
     ArgumentsMode mode;
     if (Options::enableFunctionDotArguments())
-        mode = ClonedArgumentsCreationMode;
+        mode = ArgumentsMode::Cloned;
     else
-        mode = FakeArgumentValuesCreationMode;
+        mode = ArgumentsMode::FakeValues;
 #if ENABLE(DFG_JIT)
     if (isInlinedFrame()) {
         ASSERT(m_inlineCallFrame);
-        arguments = Arguments::create(vm, physicalFrame, m_inlineCallFrame, mode);
-        arguments->tearOff(physicalFrame, m_inlineCallFrame);
-        jsCast<Arguments*>((JSCell*)arguments);
+        arguments = ClonedArguments::createWithInlineFrame(physicalFrame, physicalFrame, m_inlineCallFrame, mode);
     } else 
 #endif
-    {
-        JSLexicalEnvironment* lexicalEnvironment = nullptr;
-        arguments = Arguments::create(vm, physicalFrame, lexicalEnvironment, mode);
-        arguments->tearOff(physicalFrame);
-    }
+        arguments = ClonedArguments::createWithMachineFrame(physicalFrame, physicalFrame, mode);
     return arguments;
-}
-
-Arguments* StackVisitor::Frame::existingArguments()
-{
-    if (codeBlock()->codeType() != FunctionCode)
-        return 0;
-    if (!codeBlock()->usesArguments())
-        return 0;
-    
-    VirtualRegister reg;
-        
-#if ENABLE(DFG_JIT)
-    if (isInlinedFrame())
-        reg = inlineCallFrame()->argumentsRegister;
-    else
-#endif // ENABLE(DFG_JIT)
-        reg = codeBlock()->argumentsRegister();
-
-    // Care should be taken here since exception fuzzing may raise exceptions in
-    // places where they would be otherwise impossible. Therefore, callFrame may
-    // lack activation even if the codeBlock signals need of activation. Also,
-    // even if codeBlock signals the use of arguments, the
-    // unmodifiedArgumentsRegister may not be initialized yet (neither locally
-    // nor in lexicalEnvironment).
-    JSValue result = jsUndefined();
-    if (codeBlock()->needsActivation() && callFrame()->hasActivation())
-        result = callFrame()->lexicalEnvironment()->registerAt(unmodifiedArgumentsRegister(reg).offset()).get();
-    if (!result || !result.isCell()) // Try local unmodifiedArgumentsRegister if lexicalEnvironment is not present (generally possible) or has not set up registers yet (only possible if fuzzing exceptions).
-        result = callFrame()->r(unmodifiedArgumentsRegister(reg).offset()).jsValue();
-    if (!result || !result.isCell()) // Protect against the case when exception fuzzing throws when unmodifiedArgumentsRegister is not set up yet (e.g., in op_enter).
-        return 0;
-    return jsCast<Arguments*>(result);
 }
 
 void StackVisitor::Frame::computeLineAndColumn(unsigned& line, unsigned& column)

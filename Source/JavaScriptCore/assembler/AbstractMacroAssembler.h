@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -205,6 +205,11 @@ public:
         RegisterID index;
         Scale scale;
         int32_t offset;
+        
+        BaseIndex withOffset(int32_t additionalOffset)
+        {
+            return BaseIndex(base, index, scale, offset + additionalOffset);
+        }
     };
 
     // AbsoluteAddress:

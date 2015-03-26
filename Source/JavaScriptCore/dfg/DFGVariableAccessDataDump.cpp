@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,9 +62,7 @@ void VariableAccessDataDump::dump(PrintStream& out) const
         index /= 26;
     }
     
-    if (m_data->isCaptured())
-        out.print("*");
-    else if (m_data->shouldNeverUnbox())
+    if (m_data->shouldNeverUnbox())
         out.print("!");
     else if (!m_data->shouldUnboxIfPossible())
         out.print("~");

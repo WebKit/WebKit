@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,10 +29,11 @@
 #include "config.h"
 #include "SpeculatedType.h"
 
-#include "Arguments.h"
+#include "DirectArguments.h"
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "JSCInlines.h"
+#include "ScopedArguments.h"
 #include "StringObject.h"
 #include "ValueProfile.h"
 #include <wtf/BoundsCheckedPointer.h>
@@ -127,8 +128,13 @@ void dumpSpeculation(PrintStream& out, SpeculatedType value)
             else
                 isTop = false;
     
-            if (value & SpecArguments)
-                myOut.print("Arguments");
+            if (value & SpecDirectArguments)
+                myOut.print("Directarguments");
+            else
+                isTop = false;
+    
+            if (value & SpecScopedArguments)
+                myOut.print("Scopedarguments");
             else
                 isTop = false;
     
@@ -232,8 +238,10 @@ static const char* speculationToAbbreviatedString(SpeculatedType prediction)
         return "<Float32array>";
     if (isFloat64ArraySpeculation(prediction))
         return "<Float64array>";
-    if (isArgumentsSpeculation(prediction))
-        return "<Arguments>";
+    if (isDirectArgumentsSpeculation(prediction))
+        return "<DirectArguments>";
+    if (isScopedArgumentsSpeculation(prediction))
+        return "<ScopedArguments>";
     if (isStringObjectSpeculation(prediction))
         return "<StringObject>";
     if (isStringOrStringObjectSpeculation(prediction))
@@ -305,8 +313,11 @@ SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
     if (classInfo == JSArray::info())
         return SpecArray;
     
-    if (classInfo == Arguments::info())
-        return SpecArguments;
+    if (classInfo == DirectArguments::info())
+        return SpecDirectArguments;
+    
+    if (classInfo == ScopedArguments::info())
+        return SpecScopedArguments;
     
     if (classInfo == StringObject::info())
         return SpecStringObject;

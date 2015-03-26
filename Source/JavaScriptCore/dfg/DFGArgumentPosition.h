@@ -46,6 +46,9 @@ public:
     void addVariable(VariableAccessData* variable)
     {
         m_variables.append(variable);
+        
+        // We may set this early. Merging it here saves us time in prediction propagation.
+        variable->mergeShouldNeverUnbox(m_shouldNeverUnbox);
     }
     
     VariableAccessData* someVariable() const

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,12 +34,12 @@ namespace JSC {
 struct CodeOrigin;
 struct InlineCallFrame;
 
-class Arguments;
 class CodeBlock;
 class ExecState;
 class JSFunction;
 class JSObject;
 class JSScope;
+class ClonedArguments;
 class Register;
 
 typedef ExecState CallFrame;
@@ -78,8 +78,7 @@ public:
         CodeType codeType() const;
         JS_EXPORT_PRIVATE void computeLineAndColumn(unsigned& line, unsigned& column);
 
-        Arguments* createArguments();
-        Arguments* existingArguments();
+        ClonedArguments* createArguments();
         VMEntryFrame* vmEntryFrame() const { return m_VMEntryFrame; }
         CallFrame* callFrame() const { return m_callFrame; }
         

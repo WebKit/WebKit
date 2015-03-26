@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple, Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +26,16 @@
 #include "config.h"
 #include "JSArgumentsIterator.h"
 
-#include "Arguments.h"
+#include "ClonedArguments.h"
+#include "DirectArguments.h"
 #include "JSCInlines.h"
+#include "ScopedArguments.h"
 
 namespace JSC {
 
 const ClassInfo JSArgumentsIterator::s_info = { "ArgumentsIterator", &Base::s_info, 0, CREATE_METHOD_TABLE(JSArgumentsIterator) };
 
-void JSArgumentsIterator::finishCreation(VM& vm, Arguments* arguments)
+void JSArgumentsIterator::finishCreation(VM& vm, JSObject* arguments)
 {
     Base::finishCreation(vm);
     m_arguments.set(vm, this, arguments);
@@ -44,6 +46,14 @@ JSArgumentsIterator* JSArgumentsIterator::clone(ExecState* exec)
     auto clone = JSArgumentsIterator::create(exec->vm(), exec->callee()->globalObject()->argumentsIteratorStructure(), m_arguments.get());
     clone->m_nextIndex = m_nextIndex;
     return clone;
+}
+
+EncodedJSValue JSC_HOST_CALL argumentsFuncIterator(ExecState* exec)
+{
+    JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
+    if (!thisObj->inherits(DirectArguments::info()) && !thisObj->inherits(ScopedArguments::info()) && !thisObj->inherits(ClonedArguments::info()))
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Attempted to use Arguments iterator on non-Arguments object")));
+    return JSValue::encode(JSArgumentsIterator::create(exec->vm(), exec->callee()->globalObject()->argumentsIteratorStructure(), thisObj));
 }
 
 }

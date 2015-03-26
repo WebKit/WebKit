@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,5 +34,13 @@
 namespace JSC {
 
 const ClassInfo JSEnvironmentRecord::s_info = { "EnvironmentRecord", &Base::s_info, 0, CREATE_METHOD_TABLE(JSEnvironmentRecord) };
+
+void JSEnvironmentRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSEnvironmentRecord* thisObject = jsCast<JSEnvironmentRecord*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.appendValues(thisObject->variables(), thisObject->m_symbolTable->scopeSize());
+}
 
 } // namespace JSC

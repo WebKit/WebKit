@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -178,61 +178,55 @@ namespace JSC {
         TryData* tryData;
     };
 
-    enum CaptureMode {
-        NotCaptured,
-        IsCaptured
-    };
-
-    class Local {
+    class Variable {
     public:
-        Local()
-            : m_local(0)
+        enum VariableKind { NormalVariable, SpecialVariable };
+
+        Variable()
+            : m_offset()
+            , m_local(nullptr)
             , m_attributes(0)
-            , m_kind(NormalLocal)
+            , m_kind(NormalVariable)
+        {
+        }
+        
+        Variable(const Identifier& ident)
+            : m_ident(ident)
+            , m_local(nullptr)
+            , m_attributes(0)
+            , m_kind(NormalVariable) // This is somewhat meaningless here for this kind of Variable.
         {
         }
 
-        enum LocalKind { NormalLocal, SpecialLocal };
-
-        Local(RegisterID* local, unsigned attributes, LocalKind kind)
-            : m_local(local)
+        Variable(const Identifier& ident, VarOffset offset, RegisterID* local, unsigned attributes, VariableKind kind)
+            : m_ident(ident)
+            , m_offset(offset)
+            , m_local(local)
             , m_attributes(attributes)
             , m_kind(kind)
         {
         }
 
-        operator bool() const { return m_local; }
-
-        RegisterID* get() const { return m_local; }
+        // If it's unset, then it is a non-locally-scoped variable. If it is set, then it could be
+        // a stack variable, a scoped variable in the local scope, or a variable captured in the
+        // direct arguments object.
+        bool isResolved() const { return !!m_offset; }
+        
+        const Identifier& ident() const { return m_ident; }
+        
+        VarOffset offset() const { return m_offset; }
+        bool isLocal() const { return m_offset.isStack(); }
+        RegisterID* local() const { return m_local; }
 
         bool isReadOnly() const { return m_attributes & ReadOnly; }
-        bool isSpecial() const { return m_kind != NormalLocal; }
+        bool isSpecial() const { return m_kind != NormalVariable; }
 
     private:
+        Identifier m_ident;
+        VarOffset m_offset;
         RegisterID* m_local;
         unsigned m_attributes;
-        LocalKind m_kind;
-    };
-
-    struct ResolveScopeInfo {
-        ResolveScopeInfo()
-            : m_localIndex(0)
-            , m_resolveScopeKind(NonLocalScope)
-        {
-        }
-
-        ResolveScopeInfo(int index)
-            : m_localIndex(index)
-            , m_resolveScopeKind(LocalScope)
-        {
-        }
-
-        bool isLocal() const { return m_resolveScopeKind == LocalScope; }
-        int localIndex() const { return m_localIndex; }
-
-    private:
-        int m_localIndex;
-        enum { LocalScope, NonLocalScope } m_resolveScopeKind;
+        VariableKind m_kind;
     };
 
     struct TryRange {
@@ -282,19 +276,17 @@ namespace JSC {
 
         void setIsNumericCompareFunction(bool isNumericCompareFunction);
 
-        bool willResolveToArgumentsRegister(const Identifier&);
-
-        bool hasSafeLocalArgumentsRegister() { return m_localArgumentsRegister; }
-        RegisterID* uncheckedLocalArgumentsRegister();
-
-        bool isCaptured(int operand);
-        CaptureMode captureMode(int operand) { return isCaptured(operand) ? IsCaptured : NotCaptured; }
+        Variable variable(const Identifier&);
         
-        Local local(const Identifier&);
-        Local constLocal(const Identifier&);
-
+        // Ignores the possibility of intervening scopes.
+        Variable variablePerSymbolTable(const Identifier&);
+        
+        enum ExistingVariableMode { VerifyExisting, IgnoreExisting };
+        void createVariable(const Identifier&, VarKind, ConstantMode, ExistingVariableMode = VerifyExisting); // Creates the variable, or asserts that the already-created variable is sufficiently compatible.
+        
         // Returns the register storing "this"
         RegisterID* thisRegister() { return &m_thisRegister; }
+        RegisterID* argumentsRegister() { return m_argumentsRegister; }
         RegisterID* newTarget() { return m_newTargetRegister; }
 
         RegisterID* scopeRegister() { return m_scopeRegister; }
@@ -353,8 +345,6 @@ namespace JSC {
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
-            // Should never store directly into a captured variable.
-            ASSERT(!dst || dst == ignoredResult() || !isCaptured(dst->index()));
             if (!m_vm->isSafeToRecurse()) {
                 emitThrowExpressionTooDeepException();
                 return;
@@ -371,8 +361,6 @@ namespace JSC {
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
-            // Should never store directly into a captured variable.
-            ASSERT(!dst || dst == ignoredResult() || !isCaptured(dst->index()));
             if (!m_vm->isSafeToRecurse())
                 return emitThrowExpressionTooDeepException();
             return n->emitBytecode(*this, dst);
@@ -463,8 +451,7 @@ namespace JSC {
         RegisterID* emitNewArray(RegisterID* dst, ElementNode*, unsigned length); // stops at first elision
 
         RegisterID* emitNewFunction(RegisterID* dst, FunctionBodyNode*);
-        RegisterID* emitLazyNewFunction(RegisterID* dst, FunctionBodyNode* body);
-        RegisterID* emitNewFunctionInternal(RegisterID* dst, unsigned index, bool shouldNullCheck);
+        RegisterID* emitNewFunctionInternal(RegisterID* dst, unsigned index);
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode* func);
         RegisterID* emitNewDefaultConstructor(RegisterID* dst, ConstructorKind, const Identifier& name);
         RegisterID* emitNewRegExp(RegisterID* dst, RegExp*);
@@ -483,7 +470,6 @@ namespace JSC {
         RegisterID* emitInitGlobalConst(const Identifier&, RegisterID* value);
 
         RegisterID* emitGetById(RegisterID* dst, RegisterID* base, const Identifier& property);
-        RegisterID* emitGetArgumentsLength(RegisterID* dst, RegisterID* base);
         RegisterID* emitPutById(RegisterID* base, const Identifier& property, RegisterID* value);
         RegisterID* emitDirectPutById(RegisterID* base, const Identifier& property, RegisterID* value, PropertyNode::PutType);
         RegisterID* emitDeleteById(RegisterID* dst, RegisterID* base, const Identifier&);
@@ -510,14 +496,11 @@ namespace JSC {
         void emitToPrimitive(RegisterID* dst, RegisterID* src);
 
         ResolveType resolveType();
-        RegisterID* emitResolveConstantLocal(RegisterID* dst, const Identifier&, ResolveScopeInfo&);
-        // Calls tempDestination(dst), so it's safe to pass nullptr. It's also redundant to call
-        // tempDestination(dst) on the thing you pass as the destination. The reason why this
-        // calls tempDestination() for you is that it may not need a spare register. It may return
-        // scopeRegister() directly. So, you cannot rely on this storing to dst.
-        RegisterID* emitResolveScope(RegisterID* dst, const Identifier&, ResolveScopeInfo&);
-        RegisterID* emitGetFromScope(RegisterID* dst, RegisterID* scope, const Identifier&, ResolveMode, const ResolveScopeInfo&);
-        RegisterID* emitPutToScope(RegisterID* scope, const Identifier&, RegisterID* value, ResolveMode, const ResolveScopeInfo&);
+        RegisterID* emitResolveConstantLocal(RegisterID* dst, const Variable&);
+        RegisterID* emitResolveScope(RegisterID* dst, const Variable&);
+        RegisterID* emitGetFromScope(RegisterID* dst, RegisterID* scope, const Variable&, ResolveMode);
+        RegisterID* emitPutToScope(RegisterID* scope, const Variable&, RegisterID* value, ResolveMode);
+        RegisterID* initializeVariable(const Variable&, RegisterID* value);
 
         PassRefPtr<Label> emitLabel(Label*);
         void emitLoopHint();
@@ -597,6 +580,8 @@ namespace JSC {
         OpcodeID lastOpcodeID() const { return m_lastOpcodeID; }
 
     private:
+        Variable variableForLocalEntry(const Identifier&, const SymbolTableEntry&);
+
         void emitOpcode(OpcodeID);
         UnlinkedArrayAllocationProfile newArrayAllocationProfile();
         UnlinkedObjectAllocationProfile newObjectAllocationProfile();
@@ -629,11 +614,7 @@ namespace JSC {
 
         RegisterID* newRegister();
 
-        // Adds a var slot and maps it to the name ident in symbolTable().
-        enum WatchMode { IsWatchable, NotWatchable };
-        RegisterID* addVar(const Identifier&, ConstantMode, WatchMode);
-
-        // Adds an anonymous var slot. To give this slot a name, add it to symbolTable().
+        // Adds an anonymous local var slot. To give this slot a name, add it to symbolTable().
         RegisterID* addVar()
         {
             ++m_codeBlock->m_numVars;
@@ -643,23 +624,20 @@ namespace JSC {
             return result;
         }
 
-        // Returns the index of the added var.
-        void addParameter(const Identifier&, int parameterIndex);
-        RegisterID* resolveCallee(FunctionNode*);
-        void addCallee(FunctionNode*, RegisterID*);
-
-        void preserveLastVar();
-
-        RegisterID& registerFor(int index)
+        // Initializes the stack form the parameter; does nothing for the symbol table.
+        RegisterID* initializeNextParameter();
+        StringImpl* visibleNameForParameter(DeconstructionPatternNode*);
+        
+        RegisterID& registerFor(VirtualRegister reg)
         {
-            if (operandIsLocal(index))
-                return m_calleeRegisters[VirtualRegister(index).toLocal()];
+            if (reg.isLocal())
+                return m_calleeRegisters[reg.toLocal()];
 
-            if (index == JSStack::Callee)
+            if (reg.offset() == JSStack::Callee)
                 return m_calleeRegister;
 
             ASSERT(m_parameters.size());
-            return m_parameters[VirtualRegister(index).toArgument()];
+            return m_parameters[reg.toArgument()];
         }
 
         bool hasConstant(const Identifier&) const;
@@ -675,11 +653,8 @@ namespace JSC {
             return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), body, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction);
         }
 
-        RegisterID* emitInitLazyRegister(RegisterID*);
-        
         RegisterID* emitConstructVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         RegisterID* emitCallVarargs(OpcodeID, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
-        RegisterID* initializeCapturedVariable(RegisterID* dst, const Identifier&, RegisterID*);
 
     public:
         JSString* addStringConstant(const Identifier&);
@@ -713,43 +688,7 @@ namespace JSC {
             return true;
         }
 
-        bool shouldTearOffArgumentsEagerly()
-        {
-            return m_codeType == FunctionCode && isStrictMode() && m_scopeNode->modifiesParameter();
-        }
-
-        bool shouldCreateArgumentsEagerly()
-        {
-            if (m_codeType != FunctionCode)
-                return false;
-            return m_lexicalEnvironmentRegister && m_codeBlock->usesArguments();
-        }
-
         RegisterID* emitThrowExpressionTooDeepException();
-
-        void createArgumentsIfNecessary();
-        RegisterID* createLazyRegisterIfNecessary(RegisterID*);
-        
-        bool hasWatchableVariable(int operand) const
-        {
-            VirtualRegister reg(operand);
-            if (!reg.isLocal())
-                return false;
-            if (static_cast<size_t>(reg.toLocal()) >= m_watchableVariables.size())
-                return false;
-            const Identifier& ident = m_watchableVariables[reg.toLocal()];
-            if (ident.isNull())
-                return false;
-            ASSERT(hasConstant(ident)); // Should have already been added.
-            return true;
-        }
-        
-        const Identifier& watchableVariableIdentifier(int operand) const
-        {
-            ASSERT(hasWatchableVariable(operand));
-            VirtualRegister reg(operand);
-            return m_watchableVariables[reg.toLocal()];
-        }
 
     private:
         Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow> m_instructions;
@@ -769,13 +708,12 @@ namespace JSC {
         RegisterID m_thisRegister;
         RegisterID m_calleeRegister;
         RegisterID* m_scopeRegister { nullptr };
+        RegisterID* m_argumentsRegister { nullptr };
         RegisterID* m_lexicalEnvironmentRegister { nullptr };
         RegisterID* m_emptyValueRegister { nullptr };
         RegisterID* m_globalObjectRegister { nullptr };
-        RegisterID* m_localArgumentsRegister { nullptr };
         RegisterID* m_newTargetRegister { nullptr };
 
-        Vector<Identifier, 16> m_watchableVariables;
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
         SegmentedVector<RegisterID, 32> m_calleeRegisters;
         SegmentedVector<RegisterID, 32> m_parameters;
@@ -790,15 +728,14 @@ namespace JSC {
         Vector<std::unique_ptr<ForInContext>> m_forInContextStack;
         Vector<TryContext> m_tryContextStack;
         Vector<std::pair<RefPtr<RegisterID>, const DeconstructionPatternNode*>> m_deconstructedParameters;
+        Vector<FunctionBodyNode*> m_functionsToInitialize;
+        bool m_needToInitializeArguments { false };
         
         Vector<TryRange> m_tryRanges;
         SegmentedVector<TryData, 8> m_tryData;
 
         int m_nextConstantOffset { 0 };
 
-        int m_firstLazyFunction { 0 };
-        int m_lastLazyFunction { 0 };
-        HashMap<unsigned int, FunctionBodyNode*, WTF::IntHash<unsigned int>, WTF::UnsignedWithZeroKeyHashTraits<unsigned int>> m_lazyFunctions;
         typedef HashMap<FunctionBodyNode*, unsigned> FunctionOffsetMap;
         FunctionOffsetMap m_functionOffsets;
         

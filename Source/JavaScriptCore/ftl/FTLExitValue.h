@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,6 @@ enum ExitValueKind {
     ExitValueInJSStackAsInt32,
     ExitValueInJSStackAsInt52,
     ExitValueInJSStackAsDouble,
-    ExitValueArgumentsObjectThatWasNotCreated,
     ExitValueRecovery,
     ExitValueMaterializeNewObject
 };
@@ -122,13 +121,6 @@ public:
         return result;
     }
     
-    static ExitValue argumentsObjectThatWasNotCreated()
-    {
-        ExitValue result;
-        result.m_kind = ExitValueArgumentsObjectThatWasNotCreated;
-        return result;
-    }
-    
     static ExitValue recovery(RecoveryOpcode opcode, unsigned leftArgument, unsigned rightArgument, ValueFormat format)
     {
         ExitValue result;
@@ -159,7 +151,6 @@ public:
     }
     bool isConstant() const { return kind() == ExitValueConstant; }
     bool isArgument() const { return kind() == ExitValueArgument; }
-    bool isArgumentsObjectThatWasNotCreated() const { return kind() == ExitValueArgumentsObjectThatWasNotCreated; }
     bool isRecovery() const { return kind() == ExitValueRecovery; }
     bool isObjectMaterialization() const { return kind() == ExitValueMaterializeNewObject; }
     
@@ -220,43 +211,13 @@ public:
         return result;
     }
     
+    ExitValue withLocalsOffset(int offset) const;
+    
     // If it's in the JSStack somehow, this will tell you what format it's in, in a manner
     // that is compatible with exitArgument().format(). If it's a constant or it's dead, it
     // will claim to be a JSValue. If it's an argument then it will tell you the argument's
     // format.
-    ValueFormat valueFormat() const
-    {
-        switch (kind()) {
-        case InvalidExitValue:
-            RELEASE_ASSERT_NOT_REACHED();
-            return InvalidValueFormat;
-            
-        case ExitValueDead:
-        case ExitValueConstant:
-        case ExitValueInJSStack:
-        case ExitValueArgumentsObjectThatWasNotCreated:
-        case ExitValueMaterializeNewObject:
-            return ValueFormatJSValue;
-            
-        case ExitValueArgument:
-            return exitArgument().format();
-            
-        case ExitValueInJSStackAsInt32:
-            return ValueFormatInt32;
-            
-        case ExitValueInJSStackAsInt52:
-            return ValueFormatInt52;
-            
-        case ExitValueInJSStackAsDouble:
-            return ValueFormatDouble;
-            
-        case ExitValueRecovery:
-            return recoveryFormat();
-        }
-        
-        RELEASE_ASSERT_NOT_REACHED();
-        return InvalidValueFormat;
-    }
+    ValueFormat valueFormat() const;
 
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;

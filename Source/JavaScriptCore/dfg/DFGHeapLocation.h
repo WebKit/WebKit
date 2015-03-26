@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,8 +40,8 @@ enum LocationKind {
     ArrayLengthLoc,
     ButterflyLoc,
     CheckHasInstanceLoc,
-    ClosureRegistersLoc,
     ClosureVariableLoc,
+    DirectArgumentsLoc,
     GetterLoc,
     GlobalVariableLoc,
     HasIndexedPropertyLoc,
@@ -51,15 +51,14 @@ enum LocationKind {
     InvalidationPointLoc,
     IsFunctionLoc,
     IsObjectOrNullLoc,
-    MyArgumentByValLoc,
-    MyArgumentsLengthLoc,
     NamedPropertyLoc,
     SetterLoc,
     StructureLoc,
     TypeOfLoc,
     TypedArrayByteOffsetLoc,
     VarInjectionWatchpointLoc,
-    VariableLoc
+    StackLoc,
+    StackPayloadLoc
 };
 
 class HeapLocation {

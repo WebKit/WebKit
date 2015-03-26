@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +51,20 @@ void AbstractHeap::decorateInstruction(LValue instruction, const AbstractHeapRep
     if (!Options::useFTLTBAA())
         return;
     setMetadata(instruction, repository.m_tbaaKind, tbaaMetadata(repository));
+}
+
+void AbstractHeap::dump(PrintStream& out) const
+{
+    out.print(heapName());
+    if (m_parent)
+        out.print("->", *m_parent);
+}
+
+void AbstractField::dump(PrintStream& out) const
+{
+    out.print(heapName(), "(", m_offset, ")");
+    if (parent())
+        out.print("->", *parent());
 }
 
 IndexedAbstractHeap::IndexedAbstractHeap(LContext context, AbstractHeap* parent, const char* heapName, ptrdiff_t offset, size_t elementSize)
@@ -176,6 +190,11 @@ void IndexedAbstractHeap::initialize(AbstractField& field, ptrdiff_t signedIndex
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void IndexedAbstractHeap::dump(PrintStream& out) const
+{
+    out.print("Indexed:", atAnyIndex());
+}
+
 NumberedAbstractHeap::NumberedAbstractHeap(LContext context, AbstractHeap* heap, const char* heapName)
     : m_indexedHeap(context, heap, heapName, 0, 1)
 {
@@ -185,6 +204,11 @@ NumberedAbstractHeap::~NumberedAbstractHeap()
 {
 }
 
+void NumberedAbstractHeap::dump(PrintStream& out) const
+{
+    out.print("Numbered: ", atAnyNumber());
+}
+
 AbsoluteAbstractHeap::AbsoluteAbstractHeap(LContext context, AbstractHeap* heap, const char* heapName)
     : m_indexedHeap(context, heap, heapName, 0, 1)
 {
@@ -192,6 +216,11 @@ AbsoluteAbstractHeap::AbsoluteAbstractHeap(LContext context, AbstractHeap* heap,
 
 AbsoluteAbstractHeap::~AbsoluteAbstractHeap()
 {
+}
+
+void AbsoluteAbstractHeap::dump(PrintStream& out) const
+{
+    out.print("Absolute:", atAnyAddress());
 }
 
 } } // namespace JSC::FTL

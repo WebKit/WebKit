@@ -133,8 +133,8 @@ public:
     LValue bitOr(LValue left, LValue right) { return buildOr(m_builder, left, right); }
     LValue bitXor(LValue left, LValue right) { return buildXor(m_builder, left, right); }
     LValue shl(LValue left, LValue right) { return buildShl(m_builder, left, right); }
-    LValue aShr(LValue left, LValue right) { return buildAShr(m_builder, left, right); }
-    LValue lShr(LValue left, LValue right) { return buildLShr(m_builder, left, right); }
+    LValue aShr(LValue left, LValue right) { return buildAShr(m_builder, left, right); } // arithmetic = signed
+    LValue lShr(LValue left, LValue right) { return buildLShr(m_builder, left, right); } // logical = unsigned
     LValue bitNot(LValue value) { return buildNot(m_builder, value); }
     
     LValue insertElement(LValue vector, LValue element, LValue index) { return buildInsertElement(m_builder, vector, element, index); }
@@ -202,6 +202,7 @@ public:
     
     LValue signExt(LValue value, LType type) { return buildSExt(m_builder, value, type); }
     LValue zeroExt(LValue value, LType type) { return buildZExt(m_builder, value, type); }
+    LValue zeroExtPtr(LValue value) { return zeroExt(value, intPtr); }
     LValue fpToInt(LValue value, LType type) { return buildFPToSI(m_builder, value, type); }
     LValue fpToUInt(LValue value, LType type) { return buildFPToUI(m_builder, value, type); }
     LValue fpToInt32(LValue value) { return fpToInt(value, int32); }
@@ -217,6 +218,8 @@ public:
     LValue ptrToInt(LValue value, LType type) { return buildPtrToInt(m_builder, value, type); }
     LValue bitCast(LValue value, LType type) { return buildBitCast(m_builder, value, type); }
     
+    // Hilariously, the #define machinery in the stdlib means that this method is actually called
+    // __builtin_alloca. So far this appears benign. :-|
     LValue alloca(LType type) { return buildAlloca(m_builder, type); }
     
     // Access the value of an alloca. Also used as a low-level implementation primitive for

@@ -237,60 +237,14 @@ private:
             Node* setLocal = nullptr;
             VirtualRegister local = m_node->local();
             
-            if (m_node->variableAccessData()->isCaptured()) {
-                for (unsigned i = m_nodeIndex; i--;) {
-                    Node* node = m_block->at(i);
-                    bool done = false;
-                    switch (node->op()) {
-                    case GetLocal:
-                    case Flush:
-                        if (node->local() == local)
-                            done = true;
-                        break;
-                
-                    case GetLocalUnlinked:
-                        if (node->unlinkedLocal() == local)
-                            done = true;
-                        break;
-                
-                    case SetLocal: {
-                        if (node->local() != local)
-                            break;
-                        setLocal = node;
-                        done = true;
-                        break;
-                    }
-                
-                    case Phantom:
-                    case Check:
-                    case HardPhantom:
-                    case MovHint:
-                    case JSConstant:
-                    case DoubleConstant:
-                    case Int52Constant:
-                    case GetScope:
-                    case PhantomLocal:
-                    case GetCallee:
-                    case CountExecution:
-                        break;
-                
-                    default:
-                        done = true;
-                        break;
-                    }
-                    if (done)
-                        break;
+            for (unsigned i = m_nodeIndex; i--;) {
+                Node* node = m_block->at(i);
+                if (node->op() == SetLocal && node->local() == local) {
+                    setLocal = node;
+                    break;
                 }
-            } else {
-                for (unsigned i = m_nodeIndex; i--;) {
-                    Node* node = m_block->at(i);
-                    if (node->op() == SetLocal && node->local() == local) {
-                        setLocal = node;
-                        break;
-                    }
-                    if (accessesOverlap(m_graph, node, AbstractHeap(Variables, local)))
-                        break;
-                }
+                if (accessesOverlap(m_graph, node, AbstractHeap(Stack, local)))
+                    break;
             }
             
             if (!setLocal)

@@ -161,9 +161,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     if (!m_graph.m_plan.inlineCallFrames->isEmpty())
         m_jitCode->common.inlineCallFrames = m_graph.m_plan.inlineCallFrames;
     
-    m_jitCode->common.machineCaptureStart = m_graph.m_machineCaptureStart;
-    m_jitCode->common.slowArguments = WTF::move(m_graph.m_slowArguments);
-
 #if USE(JSVALUE32_64)
     m_jitCode->common.doubleConstants = WTF::move(m_graph.m_doubleConstants);
 #endif

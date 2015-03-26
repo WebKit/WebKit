@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,6 @@ enum FlushFormat {
     FlushedCell,
     FlushedBoolean,
     FlushedJSValue,
-    FlushedArguments,
     ConflictingFlush
 };
 
@@ -55,7 +54,6 @@ inline NodeFlags resultFor(FlushFormat format)
     case FlushedJSValue:
     case FlushedCell:
     case ConflictingFlush:
-    case FlushedArguments:
         return NodeResultJS;
     case FlushedInt32:
         return NodeResultInt32;
@@ -76,7 +74,6 @@ inline UseKind useKindFor(FlushFormat format)
     case DeadFlush:
     case FlushedJSValue:
     case ConflictingFlush:
-    case FlushedArguments:
         return UntypedUse;
     case FlushedCell:
         return CellUse;
@@ -116,8 +113,6 @@ inline DataFormat dataFormatFor(FlushFormat format)
         return DataFormatCell;
     case FlushedBoolean:
         return DataFormatBoolean;
-    case FlushedArguments:
-        return DataFormatArguments;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return DataFormatDead;

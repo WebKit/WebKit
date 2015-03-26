@@ -28,7 +28,6 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGGraph.h"
 #include "DFGNode.h"
 #include "DFGOperations.h"
 #include "JSCInlines.h"
@@ -51,11 +50,14 @@ JSCallVarargs::JSCallVarargs(unsigned stackmapID, Node* node)
     : m_stackmapID(stackmapID)
     , m_node(node)
     , m_callBase(
-        node->op() == ConstructVarargs ? CallLinkInfo::ConstructVarargs : CallLinkInfo::CallVarargs,
+        (node->op() == ConstructVarargs || node->op() == ConstructForwardVarargs)
+        ? CallLinkInfo::ConstructVarargs : CallLinkInfo::CallVarargs,
         node->origin.semantic)
     , m_instructionOffset(0)
 {
-    ASSERT(node->op() == CallVarargs || node->op() == CallForwardVarargs || node->op() == ConstructVarargs);
+    ASSERT(
+        node->op() == CallVarargs || node->op() == CallForwardVarargs
+        || node->op() == ConstructVarargs || node->op() == ConstructForwardVarargs);
 }
 
 unsigned JSCallVarargs::numSpillSlotsNeeded()
@@ -63,11 +65,11 @@ unsigned JSCallVarargs::numSpillSlotsNeeded()
     return 4;
 }
 
-void JSCallVarargs::emit(CCallHelpers& jit, Graph& graph, int32_t spillSlotsOffset)
+void JSCallVarargs::emit(CCallHelpers& jit, int32_t spillSlotsOffset)
 {
     // We are passed three pieces of information:
     // - The callee.
-    // - The arguments object.
+    // - The arguments object, if it's not a forwarding call.
     // - The "this" value, if it's a constructor call.
 
     CallVarargsData* data = m_node->callVarargsData();
@@ -76,20 +78,19 @@ void JSCallVarargs::emit(CCallHelpers& jit, Graph& graph, int32_t spillSlotsOffs
     
     GPRReg argumentsGPR = InvalidGPRReg;
     GPRReg thisGPR = InvalidGPRReg;
-    bool argumentsOnStack = false;
+    
+    bool forwarding = false;
     
     switch (m_node->op()) {
     case CallVarargs:
+    case ConstructVarargs:
         argumentsGPR = GPRInfo::argumentGPR1;
         thisGPR = GPRInfo::argumentGPR2;
         break;
     case CallForwardVarargs:
+    case ConstructForwardVarargs:
         thisGPR = GPRInfo::argumentGPR1;
-        argumentsOnStack = true;
-        break;
-    case ConstructVarargs:
-        argumentsGPR = GPRInfo::argumentGPR1;
-        thisGPR = GPRInfo::argumentGPR2;
+        forwarding = true;
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -115,20 +116,8 @@ void JSCallVarargs::emit(CCallHelpers& jit, Graph& graph, int32_t spillSlotsOffs
     GPRReg scratchGPR1 = allocator.allocateScratchGPR();
     GPRReg scratchGPR2 = allocator.allocateScratchGPR();
     GPRReg scratchGPR3 = allocator.allocateScratchGPR();
-    if (argumentsOnStack)
-        argumentsGPR = allocator.allocateScratchGPR();
+
     RELEASE_ASSERT(!allocator.numberOfReusedRegisters());
-    
-    auto loadArguments = [&] (bool clobbered) {
-        if (argumentsOnStack) {
-            jit.load64(
-                CCallHelpers::addressFor(graph.machineArgumentsRegisterFor(m_node->origin.semantic)),
-                argumentsGPR);
-        } else if (clobbered) {
-            jit.load64(
-                CCallHelpers::addressFor(spillSlotsOffset + argumentsSpillSlot), argumentsGPR);
-        }
-    };
     
     auto computeUsedStack = [&] (GPRReg targetGPR, unsigned extra) {
         if (isARM64()) {
@@ -151,60 +140,54 @@ void JSCallVarargs::emit(CCallHelpers& jit, Graph& graph, int32_t spillSlotsOffs
         m_exceptions.append(jit.emitExceptionCheck(AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
     };
     
-    loadArguments(false);
-
     if (isARM64()) {
         jit.move(CCallHelpers::stackPointerRegister, scratchGPR1);
         jit.storePtr(scratchGPR1, CCallHelpers::addressFor(spillSlotsOffset + stackPointerSpillSlot));
     } else
         jit.storePtr(CCallHelpers::stackPointerRegister, CCallHelpers::addressFor(spillSlotsOffset + stackPointerSpillSlot));
-    
-    // Attempt the forwarding fast path, if it's been requested.
-    CCallHelpers::Jump haveArguments;
-    if (m_node->op() == CallForwardVarargs) {
-        // Do the horrific foo.apply(this, arguments) optimization.
-        // FIXME: do this optimization at the IR level.
-        
-        CCallHelpers::JumpList slowCase;
-        slowCase.append(jit.branchTest64(CCallHelpers::NonZero, argumentsGPR));
-        
-        computeUsedStack(scratchGPR2, 0);
-        emitSetupVarargsFrameFastCase(jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, m_node->origin.semantic.inlineCallFrame, data->firstVarArgOffset, slowCase);
-        
-        jit.move(calleeGPR, GPRInfo::regT0);
-        haveArguments = jit.jump();
-        slowCase.link(&jit);
-    }
-    
-    // Gotta spill the callee, arguments, and this because we will need them later and we will have some
-    // calls that clobber them.
-    jit.store64(calleeGPR, CCallHelpers::addressFor(spillSlotsOffset + calleeSpillSlot));
-    if (!argumentsOnStack)
-        jit.store64(argumentsGPR, CCallHelpers::addressFor(spillSlotsOffset + argumentsSpillSlot));
-    jit.store64(thisGPR, CCallHelpers::addressFor(spillSlotsOffset + thisSpillSlot));
-    
+
     unsigned extraStack = sizeof(CallerFrameAndPC) +
         WTF::roundUpToMultipleOf(stackAlignmentBytes(), 5 * sizeof(void*));
-    computeUsedStack(scratchGPR1, 0);
-    jit.subPtr(CCallHelpers::TrustedImm32(extraStack), CCallHelpers::stackPointerRegister);
-    jit.setupArgumentsWithExecState(argumentsGPR, scratchGPR1, CCallHelpers::TrustedImm32(data->firstVarArgOffset));
-    callWithExceptionCheck(bitwise_cast<void*>(operationSizeFrameForVarargs));
-    
-    jit.move(GPRInfo::returnValueGPR, scratchGPR1);
-    computeUsedStack(scratchGPR2, extraStack);
-    loadArguments(true);
-    emitSetVarargsFrame(jit, scratchGPR1, false, scratchGPR2, scratchGPR2);
-    jit.addPtr(CCallHelpers::TrustedImm32(-extraStack), scratchGPR2, CCallHelpers::stackPointerRegister);
-    jit.setupArgumentsWithExecState(scratchGPR2, argumentsGPR, CCallHelpers::TrustedImm32(data->firstVarArgOffset), scratchGPR1);
-    callWithExceptionCheck(bitwise_cast<void*>(operationSetupVarargsFrame));
-    
-    jit.move(GPRInfo::returnValueGPR, scratchGPR2);
 
-    jit.load64(CCallHelpers::addressFor(spillSlotsOffset + thisSpillSlot), thisGPR);
-    jit.load64(CCallHelpers::addressFor(spillSlotsOffset + calleeSpillSlot), GPRInfo::regT0);
+    if (forwarding) {
+        CCallHelpers::JumpList slowCase;
+        computeUsedStack(scratchGPR2, 0);
+        emitSetupVarargsFrameFastCase(jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, m_node->child2()->origin.semantic.inlineCallFrame, data->firstVarArgOffset, slowCase);
+        
+        CCallHelpers::Jump done = jit.jump();
+        slowCase.link(&jit);
+        jit.subPtr(CCallHelpers::TrustedImm32(extraStack), CCallHelpers::stackPointerRegister);
+        jit.setupArgumentsExecState();
+        callWithExceptionCheck(bitwise_cast<void*>(operationThrowStackOverflowForVarargs));
+        jit.abortWithReason(DFGVarargsThrowingPathDidNotThrow);
+        
+        done.link(&jit);
+        jit.move(calleeGPR, GPRInfo::regT0);
+    } else {
+        // Gotta spill the callee, arguments, and this because we will need them later and we will have some
+        // calls that clobber them.
+        jit.store64(calleeGPR, CCallHelpers::addressFor(spillSlotsOffset + calleeSpillSlot));
+        jit.store64(argumentsGPR, CCallHelpers::addressFor(spillSlotsOffset + argumentsSpillSlot));
+        jit.store64(thisGPR, CCallHelpers::addressFor(spillSlotsOffset + thisSpillSlot));
     
-    if (m_node->op() == CallForwardVarargs)
-        haveArguments.link(&jit);
+        computeUsedStack(scratchGPR1, 0);
+        jit.subPtr(CCallHelpers::TrustedImm32(extraStack), CCallHelpers::stackPointerRegister);
+        jit.setupArgumentsWithExecState(argumentsGPR, scratchGPR1, CCallHelpers::TrustedImm32(data->firstVarArgOffset));
+        callWithExceptionCheck(bitwise_cast<void*>(operationSizeFrameForVarargs));
+    
+        jit.move(GPRInfo::returnValueGPR, scratchGPR1);
+        computeUsedStack(scratchGPR2, extraStack);
+        jit.load64(CCallHelpers::addressFor(spillSlotsOffset + argumentsSpillSlot), argumentsGPR);
+        emitSetVarargsFrame(jit, scratchGPR1, false, scratchGPR2, scratchGPR2);
+        jit.addPtr(CCallHelpers::TrustedImm32(-extraStack), scratchGPR2, CCallHelpers::stackPointerRegister);
+        jit.setupArgumentsWithExecState(scratchGPR2, argumentsGPR, CCallHelpers::TrustedImm32(data->firstVarArgOffset), scratchGPR1);
+        callWithExceptionCheck(bitwise_cast<void*>(operationSetupVarargsFrame));
+    
+        jit.move(GPRInfo::returnValueGPR, scratchGPR2);
+
+        jit.load64(CCallHelpers::addressFor(spillSlotsOffset + thisSpillSlot), thisGPR);
+        jit.load64(CCallHelpers::addressFor(spillSlotsOffset + calleeSpillSlot), GPRInfo::regT0);
+    }
     
     jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), scratchGPR2, CCallHelpers::stackPointerRegister);
 

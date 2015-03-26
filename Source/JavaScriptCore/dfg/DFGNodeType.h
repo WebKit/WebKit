@@ -50,6 +50,7 @@ namespace JSC { namespace DFG {
     macro(ToThis, NodeResultJS) \
     macro(CreateThis, NodeResultJS) /* Note this is not MustGenerate since we're returning it anyway. */ \
     macro(GetCallee, NodeResultJS) \
+    macro(GetArgumentCount, NodeResultInt32) \
     \
     /* Nodes for local variable access. These nodes are linked together using Phi nodes. */\
     /* Any two nodes that are part of the same Phi graph will share the same */\
@@ -151,7 +152,9 @@ namespace JSC { namespace DFG {
     /* this must be the directly subsequent property put. Note that PutByVal */\
     /* opcodes use VarArgs beause they may have up to 4 children. */\
     macro(GetByVal, NodeResultJS | NodeMustGenerate) \
+    macro(GetMyArgumentByVal, NodeResultJS | NodeMustGenerate) \
     macro(LoadVarargs, NodeMustGenerate) \
+    macro(ForwardVarargs, NodeMustGenerate) \
     macro(PutByValDirect, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutByVal, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutByValAlias, NodeMustGenerate | NodeHasVarArgs) \
@@ -183,7 +186,6 @@ namespace JSC { namespace DFG {
     macro(GetTypedArrayByteOffset, NodeResultInt32) \
     macro(GetScope, NodeResultJS) \
     macro(SkipScope, NodeResultJS) \
-    macro(GetClosureRegisters, NodeResultStorage) \
     macro(GetClosureVar, NodeResultJS) \
     macro(PutClosureVar, NodeMustGenerate) \
     macro(GetGlobalVar, NodeResultJS) \
@@ -224,6 +226,7 @@ namespace JSC { namespace DFG {
     macro(CallVarargs, NodeResultJS | NodeMustGenerate) \
     macro(CallForwardVarargs, NodeResultJS | NodeMustGenerate) \
     macro(ConstructVarargs, NodeResultJS | NodeMustGenerate) \
+    macro(ConstructForwardVarargs, NodeResultJS | NodeMustGenerate) \
     macro(NativeCall, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(NativeConstruct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     \
@@ -264,26 +267,17 @@ namespace JSC { namespace DFG {
     macro(ProfileType, NodeMustGenerate) \
     macro(ProfileControlFlow, NodeMustGenerate) \
     \
-    /* Nodes used for activations. Activation support works by having it anchored at */\
-    /* epilgoues via TearOffActivation, and all CreateActivation nodes kept alive by */\
-    /* being threaded with each other. */\
     macro(CreateActivation, NodeResultJS) \
     \
-    /* Nodes used for arguments. Similar to lexical environment support, only it makes even less */\
-    /* sense. */\
-    macro(CreateArguments, NodeResultJS) \
-    macro(PhantomArguments, NodeResultJS) \
-    macro(TearOffArguments, NodeMustGenerate) \
-    macro(GetMyArgumentsLength, NodeResultJS | NodeMustGenerate) \
-    macro(GetMyArgumentByVal, NodeResultJS | NodeMustGenerate) \
-    macro(GetMyArgumentsLengthSafe, NodeResultJS | NodeMustGenerate) \
-    macro(GetMyArgumentByValSafe, NodeResultJS | NodeMustGenerate) \
-    macro(CheckArgumentsNotCreated, NodeMustGenerate) \
+    macro(CreateDirectArguments, NodeResultJS) \
+    macro(PhantomDirectArguments, NodeResultJS) \
+    macro(CreateScopedArguments, NodeResultJS) \
+    macro(CreateClonedArguments, NodeResultJS) \
+    macro(PhantomClonedArguments, NodeResultJS) \
+    macro(GetFromArguments, NodeResultJS) \
+    macro(PutToArguments, NodeMustGenerate) \
     \
-    /* Nodes for creating functions. */\
-    macro(NewFunctionNoCheck, NodeResultJS) \
     macro(NewFunction, NodeResultJS) \
-    macro(NewFunctionExpression, NodeResultJS) \
     \
     /* These aren't terminals but always exit */ \
     macro(Throw, NodeMustGenerate) \

@@ -28,7 +28,6 @@
 
 #if ENABLE(JIT)
 
-#include "Arguments.h"
 #include "ArrayConstructor.h"
 #include "DFGCompilationMode.h"
 #include "DFGDriver.h"
@@ -47,6 +46,7 @@
 #include "JSCatchScope.h"
 #include "JSFunctionNameScope.h"
 #include "JSGlobalObjectFunctions.h"
+#include "JSLexicalEnvironment.h"
 #include "JSNameScope.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSStackInlines.h"
@@ -530,7 +530,7 @@ void JIT_OPERATION operationPutByVal(ExecState* exec, EncodedJSValue encodedBase
         if (hasOptimizableIndexing(object->structure(vm))) {
             // Attempt to optimize.
             JITArrayMode arrayMode = jitArrayModeForStructure(object->structure(vm));
-            if (arrayMode != byValInfo.arrayMode) {
+            if (jitArrayModePermitsPut(arrayMode) && arrayMode != byValInfo.arrayMode) {
                 JIT::compilePutByVal(&vm, exec->codeBlock(), &byValInfo, ReturnAddressPtr(OUR_RETURN_ADDRESS), arrayMode);
                 didOptimize = true;
             }
@@ -575,7 +575,7 @@ void JIT_OPERATION operationDirectPutByVal(ExecState* callFrame, EncodedJSValue 
         if (hasOptimizableIndexing(object->structure(vm))) {
             // Attempt to optimize.
             JITArrayMode arrayMode = jitArrayModeForStructure(object->structure(vm));
-            if (arrayMode != byValInfo.arrayMode) {
+            if (jitArrayModePermitsPut(arrayMode) && arrayMode != byValInfo.arrayMode) {
                 JIT::compileDirectPutByVal(&vm, callFrame->codeBlock(), &byValInfo, ReturnAddressPtr(OUR_RETURN_ADDRESS), arrayMode);
                 didOptimize = true;
             }
@@ -732,6 +732,7 @@ inline char* linkFor(
         callLinkInfo->setSeen();
     else
         linkFor(execCallee, *callLinkInfo, codeBlock, callee, codePtr, kind, registers);
+    
     return reinterpret_cast<char*>(codePtr.executableAddress());
 }
 
@@ -1353,49 +1354,12 @@ EncodedJSValue JIT_OPERATION operationCheckHasInstance(ExecState* exec, EncodedJ
     return JSValue::encode(JSValue());
 }
 
-JSCell* JIT_OPERATION operationCreateActivation(ExecState* exec, JSScope* currentScope, int32_t offset)
+JSCell* JIT_OPERATION operationCreateActivation(ExecState* exec, JSScope* currentScope)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    JSLexicalEnvironment* lexicalEnvironment = JSLexicalEnvironment::create(vm, exec, exec->registers() + offset, currentScope, exec->codeBlock());
+    JSLexicalEnvironment* lexicalEnvironment = JSLexicalEnvironment::create(vm, exec, currentScope, exec->codeBlock());
     return lexicalEnvironment;
-}
-
-// FIXME: This is a temporary thunk for the DFG until we add the lexicalEnvironment operand to the DFG CreateArguments node.
-JSCell* JIT_OPERATION operationCreateArgumentsForDFG(ExecState* exec)
-{
-    JSLexicalEnvironment* lexicalEnvironment = exec->lexicalEnvironmentOrNullptr();
-    return operationCreateArguments(exec, lexicalEnvironment);
-}
-    
-JSCell* JIT_OPERATION operationCreateArguments(ExecState* exec, JSLexicalEnvironment* lexicalEnvironment)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    // NB: This needs to be exceedingly careful with top call frame tracking, since it
-    // may be called from OSR exit, while the state of the call stack is bizarre.
-    Arguments* result = Arguments::create(vm, exec, lexicalEnvironment);
-    ASSERT(!vm.exception());
-    return result;
-}
-
-JSCell* JIT_OPERATION operationCreateArgumentsDuringOSRExit(ExecState* exec)
-{
-    DeferGCForAWhile(exec->vm().heap);
-    JSLexicalEnvironment* lexicalEnvironment = exec->lexicalEnvironmentOrNullptr();
-    return operationCreateArguments(exec, lexicalEnvironment);
-}
-
-EncodedJSValue JIT_OPERATION operationGetArgumentsLength(ExecState* exec, int32_t argumentsRegister)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    // Here we can assume that the argumernts were created. Because otherwise the JIT code would
-    // have not made this call.
-    Identifier ident(&vm, "length");
-    JSValue baseValue = exec->uncheckedR(argumentsRegister).jsValue();
-    PropertySlot slot(baseValue);
-    return JSValue::encode(baseValue.get(exec, ident, slot));
 }
 
 }
@@ -1565,12 +1529,6 @@ EncodedJSValue JIT_OPERATION operationGetByValString(ExecState* exec, EncodedJSV
     return JSValue::encode(result);
 }
 
-void JIT_OPERATION operationTearOffArguments(ExecState* exec, JSCell* argumentsCell, JSCell*)
-{
-    ASSERT(exec->codeBlock()->usesArguments());
-    jsCast<Arguments*>(argumentsCell)->tearOff(exec);
-}
-
 EncodedJSValue JIT_OPERATION operationDeleteById(ExecState* exec, EncodedJSValue encodedBase, const Identifier* identifier)
 {
     VM& vm = exec->vm();
@@ -1734,7 +1692,7 @@ void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)
     ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
     if (modeAndType.type() == LocalClosureVar) {
         JSLexicalEnvironment* environment = jsCast<JSLexicalEnvironment*>(scope);
-        environment->registerAt(pc[6].u.operand).set(vm, environment, value);
+        environment->variableAt(ScopeOffset(pc[6].u.operand)).set(vm, environment, value);
         if (VariableWatchpointSet* set = pc[5].u.watchpointSet)
             set->notifyWrite(vm, value, "Executed op_put_scope<LocalClosureVar>");
         return;
@@ -1795,7 +1753,7 @@ void JIT_OPERATION operationInitGlobalConst(ExecState* exec, Instruction* pc)
     NativeCallFrameTracer tracer(vm, exec);
 
     JSValue value = exec->r(pc[2].u.operand).jsValue();
-    pc[1].u.registerPointer->set(*vm, exec->codeBlock()->globalObject(), value);
+    pc[1].u.variablePointer->set(*vm, exec->codeBlock()->globalObject(), value);
 }
 
 void JIT_OPERATION lookupExceptionHandler(VM* vm, ExecState* exec)

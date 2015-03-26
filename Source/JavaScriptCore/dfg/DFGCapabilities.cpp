@@ -44,8 +44,7 @@ bool isSupported()
 
 bool isSupportedForInlining(CodeBlock* codeBlock)
 {
-    return !codeBlock->ownerExecutable()->needsActivation()
-        && codeBlock->ownerExecutable()->isInliningCandidate();
+    return codeBlock->ownerExecutable()->isInliningCandidate();
 }
 
 bool mightCompileEval(CodeBlock* codeBlock)
@@ -184,11 +183,11 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_construct:
     case op_call_varargs:
     case op_construct_varargs:
-    case op_init_lazy_reg:
-    case op_create_arguments:
-    case op_tear_off_arguments:
-    case op_get_argument_by_val:
-    case op_get_arguments_length:
+    case op_create_direct_arguments:
+    case op_create_scoped_arguments:
+    case op_create_out_of_band_arguments:
+    case op_get_from_arguments:
+    case op_put_to_arguments:
     case op_jneq_ptr:
     case op_typeof:
     case op_to_number:
@@ -208,6 +207,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_to_index_string:
     case op_new_func:
     case op_new_func_exp:
+    case op_create_lexical_environment:
         return CanCompileAndInline;
 
     case op_put_to_scope: {
@@ -227,8 +227,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
         return CanCompileAndInline;
     }
 
-    case op_new_regexp: 
-    case op_create_lexical_environment:
+    case op_new_regexp:
     case op_switch_string: // Don't inline because we don't want to copy string tables in the concurrent JIT.
         return CanCompile;
 

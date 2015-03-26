@@ -65,11 +65,12 @@ extern "C" {
     E: ExecState*
     F: CallFrame*
     I: StringImpl*
-    Icf: InlineCalLFrame*
+    Icf: InlineCallFrame*
     Idc: const Identifier*
     J: EncodedJSValue
     Jcp: const JSValue*
     Jsc: JSScope*
+    Jsf: JSFunction*
     Jss: JSString*
     L: JSLexicalEnvironment*
     O: JSObject*
@@ -129,6 +130,7 @@ typedef JSCell* JIT_OPERATION (*C_JITOperation_ECZC)(ExecState*, JSCell*, int32_
 typedef JSCell* JIT_OPERATION (*C_JITOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EIcf)(ExecState*, InlineCallFrame*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJ)(ExecState*, EncodedJSValue);
+typedef JSCell* JIT_OPERATION (*C_JITOperation_EJsc)(ExecState*, JSScope*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJscC)(ExecState*, JSScope*, JSCell*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJZ)(ExecState*, EncodedJSValue, int32_t);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJZC)(ExecState*, EncodedJSValue, int32_t, JSCell*);
@@ -141,6 +143,11 @@ typedef JSCell* JIT_OPERATION (*C_JITOperation_EL)(ExecState*, JSLexicalEnvironm
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EO)(ExecState*, JSObject*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EOZ)(ExecState*, JSObject*, int32_t);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_ESt)(ExecState*, Structure*);
+typedef JSCell* JIT_OPERATION (*C_JITOperation_EStJscSymtab)(ExecState*, Structure*, JSScope*, SymbolTable*);
+typedef JSCell* JIT_OPERATION (*C_JITOperation_EStRZJsfL)(ExecState*, Structure*, Register*, int32_t, JSFunction*, JSLexicalEnvironment*);
+typedef JSCell* JIT_OPERATION (*C_JITOperation_EStRZJsf)(ExecState*, Structure*, Register*, int32_t, JSFunction*);
+typedef JSCell* JIT_OPERATION (*C_JITOperation_EStZ)(ExecState*, Structure*, int32_t);
+typedef JSCell* JIT_OPERATION (*C_JITOperation_EStZZ)(ExecState*, Structure*, int32_t, int32_t);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EZ)(ExecState*, int32_t);
 typedef double JIT_OPERATION (*D_JITOperation_D)(double);
 typedef double JIT_OPERATION (*D_JITOperation_DD)(double, double);
@@ -293,17 +300,12 @@ void JIT_OPERATION operationPopScope(ExecState*, int32_t) WTF_INTERNAL;
 void JIT_OPERATION operationProfileDidCall(ExecState*, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationProfileWillCall(ExecState*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationCheckHasInstance(ExecState*, EncodedJSValue, EncodedJSValue baseVal) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationCreateActivation(ExecState*, JSScope* currentScope, int32_t offset) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationCreateArgumentsForDFG(ExecState*) WTF_INTERNAL; // FIXME: This is a temporary thunk for the DFG until we add the lexicalEnvironment operand to the DFG CreateArguments node.
-JSCell* JIT_OPERATION operationCreateArguments(ExecState*, JSLexicalEnvironment*) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationCreateArgumentsDuringOSRExit(ExecState*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetArgumentsLength(ExecState*, int32_t) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationCreateActivation(ExecState*, JSScope* currentScope) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValDefault(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValGeneric(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValString(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationHasIndexedPropertyDefault(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationHasIndexedPropertyGeneric(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript) WTF_INTERNAL;
-void JIT_OPERATION operationTearOffArguments(ExecState*, JSCell*, JSCell*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationDeleteById(ExecState*, EncodedJSValue base, const Identifier*) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationGetPNames(ExecState*, JSObject*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationInstanceOf(ExecState*, EncodedJSValue, EncodedJSValue proto) WTF_INTERNAL;

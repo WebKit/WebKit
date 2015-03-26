@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,18 +36,6 @@ namespace JSC { namespace DFG {
 void handleExitCounts(CCallHelpers&, const OSRExitBase&);
 void reifyInlinedCallFrames(CCallHelpers&, const OSRExitBase&);
 void adjustAndJumpToTarget(CCallHelpers&, const OSRExitBase&);
-
-class ArgumentsRecoveryGenerator {
-public:
-    ArgumentsRecoveryGenerator();
-    ~ArgumentsRecoveryGenerator();
-    
-    void generateFor(int operand, CodeOrigin, CCallHelpers&);
-    
-private:
-    HashSet<InlineCallFrame*, DefaultHash<InlineCallFrame*>::Hash,
-        NullableHashTraits<InlineCallFrame*>> m_didCreateArgumentsObject;
-};
 
 } } // namespace JSC::DFG
 

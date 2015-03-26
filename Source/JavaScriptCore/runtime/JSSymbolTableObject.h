@@ -47,6 +47,8 @@ public:
     JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     JS_EXPORT_PRIVATE static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     
+    static ptrdiff_t offsetOfSymbolTable() { return OBJECT_OFFSETOF(JSSymbolTableObject, m_symbolTable); }
+    
 protected:
     static const unsigned StructureFlags = IsEnvironmentRecord | OverridesGetPropertyNames | Base::StructureFlags;
     
@@ -78,7 +80,7 @@ inline bool symbolTableGet(
         return false;
     SymbolTableEntry::Fast entry = iter->value;
     ASSERT(!entry.isNull());
-    slot.setValue(object, entry.getAttributes() | DontDelete, object->registerAt(entry.getIndex()).get());
+    slot.setValue(object, entry.getAttributes() | DontDelete, object->variableAt(entry.scopeOffset()).get());
     return true;
 }
 
@@ -94,7 +96,7 @@ inline bool symbolTableGet(
     SymbolTableEntry::Fast entry = iter->value;
     ASSERT(!entry.isNull());
     descriptor.setDescriptor(
-        object->registerAt(entry.getIndex()).get(), entry.getAttributes() | DontDelete);
+        object->variableAt(entry.scopeOffset()).get(), entry.getAttributes() | DontDelete);
     return true;
 }
 
@@ -110,7 +112,7 @@ inline bool symbolTableGet(
         return false;
     SymbolTableEntry::Fast entry = iter->value;
     ASSERT(!entry.isNull());
-    slot.setValue(object, entry.getAttributes() | DontDelete, object->registerAt(entry.getIndex()).get());
+    slot.setValue(object, entry.getAttributes() | DontDelete, object->variableAt(entry.scopeOffset()).get());
     slotIsWriteable = !entry.isReadOnly();
     return true;
 }
@@ -145,7 +147,7 @@ inline bool symbolTablePut(
             // https://bugs.webkit.org/show_bug.cgi?id=134601
             set->notifyWrite(vm, value, object, propertyName);
         }
-        reg = &object->registerAt(fastEntry.getIndex());
+        reg = &object->variableAt(fastEntry.scopeOffset());
     }
     // I'd prefer we not hold lock while executing barriers, since I prefer to reserve
     // the right for barriers to be able to trigger GC. And I don't want to hold VM
@@ -173,7 +175,7 @@ inline bool symbolTablePutWithAttributes(
         if (VariableWatchpointSet* set = entry.watchpointSet())
             set->notifyWrite(vm, value, object, propertyName);
         entry.setAttributes(attributes);
-        reg = &object->registerAt(entry.getIndex());
+        reg = &object->variableAt(entry.scopeOffset());
     }
     reg->set(vm, object, value);
     return true;

@@ -82,8 +82,10 @@ public:
                 for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex)
                     calculator.executeNode(block->at(nodeIndex));
                 
+                // FIXME: we should probably prune by liveness here.
+                // https://bugs.webkit.org/show_bug.cgi?id=143078
                 calculator.m_availability.prune();
-                
+
                 if (calculator.m_availability == block->ssa->availabilityAtTail)
                     continue;
                 
@@ -155,13 +157,46 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
         break;
     }
         
-    case LoadVarargs: {
+    case LoadVarargs:
+    case ForwardVarargs: {
         LoadVarargsData* data = node->loadVarargsData();
         m_availability.m_locals.operand(data->count) =
             Availability(FlushedAt(FlushedInt32, data->machineCount));
         for (unsigned i = data->limit; i--;) {
             m_availability.m_locals.operand(VirtualRegister(data->start.offset() + i)) =
                 Availability(FlushedAt(FlushedJSValue, VirtualRegister(data->machineStart.offset() + i)));
+        }
+        break;
+    }
+        
+    case PhantomDirectArguments:
+    case PhantomClonedArguments: {
+        InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame;
+        if (!inlineCallFrame) {
+            // We don't need to record anything about how the arguments are to be recovered. It's just a
+            // given that we can read them from the stack.
+            break;
+        }
+        
+        if (inlineCallFrame->isVarargs()) {
+            // Record how to read each argument and the argument count.
+            Availability argumentCount =
+                m_availability.m_locals.operand(inlineCallFrame->stackOffset + JSStack::ArgumentCount);
+            
+            m_availability.m_heap.set(PromotedHeapLocation(ArgumentCountPLoc, node), argumentCount);
+        }
+        
+        if (inlineCallFrame->isClosureCall) {
+            Availability callee = m_availability.m_locals.operand(
+                inlineCallFrame->stackOffset + JSStack::Callee);
+            m_availability.m_heap.set(PromotedHeapLocation(ArgumentsCalleePLoc, node), callee);
+        }
+        
+        for (unsigned i = 0; i < inlineCallFrame->arguments.size() - 1; ++i) {
+            Availability argument = m_availability.m_locals.operand(
+                inlineCallFrame->stackOffset + CallFrame::argumentOffset(i));
+            
+            m_availability.m_heap.set(PromotedHeapLocation(ArgumentPLoc, node, i), argument);
         }
         break;
     }

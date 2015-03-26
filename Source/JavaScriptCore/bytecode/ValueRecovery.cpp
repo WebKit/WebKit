@@ -112,8 +112,11 @@ void ValueRecovery::dumpInContext(PrintStream& out, DumpContext* context) const
     case BooleanDisplacedInJSStack:
         out.print("*bool(", virtualRegister(), ")");
         return;
-    case ArgumentsThatWereNotCreated:
-        out.printf("arguments");
+    case DirectArgumentsThatWereNotCreated:
+        out.print("DirectArguments(", nodeID(), ")");
+        return;
+    case ClonedArgumentsThatWereNotCreated:
+        out.print("ClonedArguments(", nodeID(), ")");
         return;
     case Constant:
         out.print("[", inContext(constant(), context), "]");

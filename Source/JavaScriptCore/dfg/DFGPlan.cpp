@@ -28,7 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGArgumentsSimplificationPhase.h"
+#include "DFGArgumentsEliminationPhase.h"
 #include "DFGBackwardsPropagationPhase.h"
 #include "DFGByteCodeParser.h"
 #include "DFGCFAPhase.h"
@@ -67,6 +67,7 @@
 #include "DFGTypeCheckHoistingPhase.h"
 #include "DFGUnificationPhase.h"
 #include "DFGValidate.h"
+#include "DFGVarargsForwardingPhase.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
 #include "DFGWatchpointCollectionPhase.h"
 #include "Debugger.h"
@@ -220,6 +221,11 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     if (validationEnabled())
         validate(dfg);
     
+    if (Options::dumpGraphAfterParsing()) {
+        dataLog("Graph after parsing:\n");
+        dfg.dump();
+    }
+    
     performCPSRethreading(dfg);
     performUnification(dfg);
     performPredictionInjection(dfg);
@@ -257,9 +263,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         
     performStrengthReduction(dfg);
     performLocalCSE(dfg);
-    performCPSRethreading(dfg); // Canonicalize PhantomLocal to Phantom
-    performArgumentsSimplification(dfg);
-    performCPSRethreading(dfg); // This should do nothing, if arguments simplification did nothing.
+    performCPSRethreading(dfg);
     performCFA(dfg);
     performConstantFolding(dfg);
     bool changed = false;
@@ -270,6 +274,28 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         validate(dfg);
     
     performCPSRethreading(dfg);
+    if (!isFTL(mode)) {
+        // Only run this if we're not FTLing, because currently for a LoadVarargs that is forwardable and
+        // in a non-varargs inlined call frame, this will generate ForwardVarargs while the FTL
+        // ArgumentsEliminationPhase will create a sequence of GetStack+PutStacks. The GetStack+PutStack
+        // sequence then gets sunk, eliminating anything that looks like an escape for subsequent phases,
+        // while the ForwardVarargs doesn't get simplified until later (or not at all) and looks like an
+        // escape for all of the arguments. This then disables object allocation sinking.
+        //
+        // So, for now, we just disable this phase for the FTL.
+        //
+        // If we wanted to enable it, we'd have to do any of the following:
+        // - Enable ForwardVarargs->GetStack+PutStack strength reduction, and have that run before
+        //   PutStack sinking and object allocation sinking.
+        // - Make VarargsForwarding emit a GetLocal+SetLocal sequence, that we can later turn into
+        //   GetStack+PutStack.
+        //
+        // But, it's not super valuable to enable those optimizations, since the FTL
+        // ArgumentsEliminationPhase does everything that this phase does, and it doesn't introduce this
+        // pathology.
+        
+        changed |= performVarargsForwarding(dfg); // Do this after CFG simplification and CPS rethreading.
+    }
     if (changed) {
         performCFA(dfg);
         performConstantFolding(dfg);
@@ -321,7 +347,11 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performCPSRethreading(dfg);
         performSSAConversion(dfg);
         performSSALowering(dfg);
+        
+        // Ideally, these would be run to fixpoint with the object allocation sinking phase.
+        performArgumentsElimination(dfg);
         performPutStackSinking(dfg);
+        
         performGlobalCSE(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
@@ -340,7 +370,14 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             performCFA(dfg);
             performConstantFolding(dfg);
         }
+        
+        // Currently, this relies on pre-headers still being valid. That precludes running CFG
+        // simplification before it, unless we re-created the pre-headers. There wouldn't be anything
+        // wrong with running LICM earlier, if we wanted to put other CFG transforms above this point.
+        // Alternatively, we could run loop pre-header creation after SSA conversion - but if we did that
+        // then we'd need to do some simple SSA fix-up.
         performLICM(dfg);
+        
         performPhantomCanonicalization(dfg);
         performIntegerCheckCombining(dfg);
         performGlobalCSE(dfg);

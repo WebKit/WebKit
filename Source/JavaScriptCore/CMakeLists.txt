@@ -118,8 +118,9 @@ set(JavaScriptCore_SOURCES
 
     dfg/DFGAbstractHeap.cpp
     dfg/DFGAbstractValue.cpp
-    dfg/DFGArgumentsSimplificationPhase.cpp
     dfg/DFGArithMode.cpp
+    dfg/DFGArgumentsEliminationPhase.cpp
+    dfg/DFGArgumentsUtilities.cpp
     dfg/DFGArrayMode.cpp
     dfg/DFGAtTailAbstractState.cpp
     dfg/DFGAvailability.cpp
@@ -232,6 +233,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGValidate.cpp
     dfg/DFGValueSource.cpp
     dfg/DFGValueStrength.cpp
+    dfg/DFGVarargsForwardingPhase.cpp
     dfg/DFGVariableAccessData.cpp
     dfg/DFGVariableAccessDataDump.cpp
     dfg/DFGVariableEvent.cpp
@@ -398,7 +400,6 @@ set(JavaScriptCore_SOURCES
 
 set(JavaScriptCore_RUNTIME_SOURCES
     runtime/ArgList.cpp
-    runtime/Arguments.cpp
     runtime/ArgumentsIteratorConstructor.cpp
     runtime/ArgumentsIteratorPrototype.cpp
     runtime/ArrayBuffer.cpp
@@ -414,6 +415,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/BooleanPrototype.cpp
     runtime/BundlePath.cpp
     runtime/CallData.cpp
+    runtime/ClonedArguments.cpp
     runtime/CodeCache.cpp
     runtime/CodeSpecializationKind.cpp
     runtime/CommonIdentifiers.cpp
@@ -423,6 +425,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/Completion.cpp
     runtime/ConsoleClient.cpp
     runtime/ConsolePrototype.cpp
+    runtime/ConstantMode.cpp
     runtime/ConstructData.cpp
     runtime/ControlFlowProfiler.cpp
     runtime/CustomGetterSetter.cpp
@@ -431,6 +434,8 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/DateConversion.cpp
     runtime/DateInstance.cpp
     runtime/DatePrototype.cpp
+    runtime/DirectArguments.cpp
+    runtime/DirectArgumentsOffset.cpp
     runtime/DumpContext.cpp
     runtime/Error.cpp
     runtime/ErrorConstructor.cpp
@@ -538,6 +543,9 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/RegExpPrototype.cpp
     runtime/RuntimeType.cpp
     runtime/SamplingCounter.cpp
+    runtime/ScopeOffset.cpp
+    runtime/ScopedArguments.cpp
+    runtime/ScopedArgumentsTable.cpp
     runtime/SetConstructor.cpp
     runtime/SetIteratorConstructor.cpp
     runtime/SetIteratorPrototype.cpp
@@ -570,6 +578,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/TypedArrayType.cpp
     runtime/VM.cpp
     runtime/VMEntryScope.cpp
+    runtime/VarOffset.cpp
     runtime/Watchdog.cpp
     runtime/WatchdogNone.cpp
     runtime/WeakMapConstructor.cpp

@@ -270,7 +270,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case Phi:
     case PhantomLocal:
     case SetArgument:
-    case PhantomArguments:
     case Jump:
     case Branch:
     case Switch:
@@ -300,7 +299,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case Flush:
-        read(AbstractHeap(Variables, node->local()));
+        read(AbstractHeap(Stack, node->local()));
         write(SideState);
         return;
 
@@ -317,16 +316,26 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CreateActivation:
         read(HeapObjectCount);
         write(HeapObjectCount);
-        write(SideState);
-        write(Watchpoint_fire);
         return;
         
-    case CreateArguments:
-        read(Variables);
+    case CreateDirectArguments:
+    case CreateScopedArguments:
+    case CreateClonedArguments:
+        read(Stack);
         read(HeapObjectCount);
         write(HeapObjectCount);
-        write(SideState);
-        write(Watchpoint_fire);
+        return;
+
+    case PhantomDirectArguments:
+    case PhantomClonedArguments:
+        // DFG backend requires that the locals that this reads are flushed. FTL backend can handle those
+        // locals being promoted.
+        if (!isFTL(graph.m_plan.mode))
+            read(Stack);
+        
+        // Even though it's phantom, it still has the property that one can't be replaced with another.
+        read(HeapObjectCount);
+        write(HeapObjectCount);
         return;
 
     case ToThis:
@@ -375,10 +384,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CallVarargs:
     case CallForwardVarargs:
     case ConstructVarargs:
+    case ConstructForwardVarargs:
     case ToPrimitive:
     case In:
-    case GetMyArgumentsLengthSafe:
-    case GetMyArgumentByValSafe:
     case ValueAdd:
         read(World);
         write(Heap);
@@ -395,44 +403,63 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
         
     case GetCallee:
-        read(AbstractHeap(Variables, JSStack::Callee));
-        def(HeapLocation(VariableLoc, AbstractHeap(Variables, JSStack::Callee)), node);
+        read(AbstractHeap(Stack, JSStack::Callee));
+        def(HeapLocation(StackLoc, AbstractHeap(Stack, JSStack::Callee)), node);
+        return;
+        
+    case GetArgumentCount:
+        read(AbstractHeap(Stack, JSStack::ArgumentCount));
+        def(HeapLocation(StackPayloadLoc, AbstractHeap(Stack, JSStack::ArgumentCount)), node);
         return;
         
     case GetLocal:
-        read(AbstractHeap(Variables, node->local()));
-        def(HeapLocation(VariableLoc, AbstractHeap(Variables, node->local())), node);
+        read(AbstractHeap(Stack, node->local()));
+        def(HeapLocation(StackLoc, AbstractHeap(Stack, node->local())), node);
         return;
         
     case SetLocal:
-        write(AbstractHeap(Variables, node->local()));
-        def(HeapLocation(VariableLoc, AbstractHeap(Variables, node->local())), node->child1().node());
+        write(AbstractHeap(Stack, node->local()));
+        def(HeapLocation(StackLoc, AbstractHeap(Stack, node->local())), node->child1().node());
         return;
         
     case GetStack: {
-        AbstractHeap heap(Variables, node->stackAccessData()->local);
+        AbstractHeap heap(Stack, node->stackAccessData()->local);
         read(heap);
-        def(HeapLocation(VariableLoc, heap), node);
+        def(HeapLocation(StackLoc, heap), node);
         return;
     }
         
     case PutStack: {
-        AbstractHeap heap(Variables, node->stackAccessData()->local);
+        AbstractHeap heap(Stack, node->stackAccessData()->local);
         write(heap);
-        def(HeapLocation(VariableLoc, heap), node->child1().node());
+        def(HeapLocation(StackLoc, heap), node->child1().node());
         return;
     }
         
-    case LoadVarargs:
-        // This actually writes to local variables as well. But when it reads the array, it does
-        // so in a way that may trigger getters or various traps.
+    case LoadVarargs: {
         read(World);
-        write(World);
+        write(Heap);
+        LoadVarargsData* data = node->loadVarargsData();
+        write(AbstractHeap(Stack, data->count.offset()));
+        for (unsigned i = data->limit; i--;)
+            write(AbstractHeap(Stack, data->start.offset() + static_cast<int>(i)));
         return;
+    }
+        
+    case ForwardVarargs: {
+        // We could be way more precise here.
+        read(Stack);
+        
+        LoadVarargsData* data = node->loadVarargsData();
+        write(AbstractHeap(Stack, data->count.offset()));
+        for (unsigned i = data->limit; i--;)
+            write(AbstractHeap(Stack, data->start.offset() + static_cast<int>(i)));
+        return;
+    }
         
     case GetLocalUnlinked:
-        read(AbstractHeap(Variables, node->unlinkedLocal()));
-        def(HeapLocation(VariableLoc, AbstractHeap(Variables, node->unlinkedLocal())), node);
+        read(AbstractHeap(Stack, node->unlinkedLocal()));
+        def(HeapLocation(StackLoc, AbstractHeap(Stack, node->unlinkedLocal())), node);
         return;
         
     case GetByVal: {
@@ -465,10 +492,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             def(PureValue(node, mode.asWord()));
             return;
             
-        case Array::Arguments:
-            read(Arguments_registers);
-            read(Variables);
-            def(HeapLocation(IndexedPropertyLoc, Variables, node->child1(), node->child2()), node);
+        case Array::DirectArguments:
+            read(DirectArgumentsProperties);
+            def(HeapLocation(IndexedPropertyLoc, DirectArgumentsProperties, node->child1(), node->child2()), node);
+            return;
+            
+        case Array::ScopedArguments:
+            read(ScopeProperties);
+            def(HeapLocation(IndexedPropertyLoc, ScopeProperties, node->child1(), node->child2()), node);
             return;
             
         case Array::Int32:
@@ -532,6 +563,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         RELEASE_ASSERT_NOT_REACHED();
         return;
     }
+        
+    case GetMyArgumentByVal: {
+        read(Stack);
+        // FIXME: It would be trivial to have a def here.
+        // https://bugs.webkit.org/show_bug.cgi?id=143077
+        return;
+    }
 
     case PutByValDirect:
     case PutByVal:
@@ -544,7 +582,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::SelectUsingPredictions:
         case Array::Unprofiled:
         case Array::Undecided:
-        case Array::String:
             // Assume the worst since we don't have profiling yet.
             read(World);
             write(Heap);
@@ -557,13 +594,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::Generic:
             read(World);
             write(Heap);
-            return;
-            
-        case Array::Arguments:
-            read(Arguments_registers);
-            read(MiscFields);
-            write(Variables);
-            def(HeapLocation(IndexedPropertyLoc, Variables, base, index), value);
             return;
             
         case Array::Int32:
@@ -631,6 +661,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             write(TypedArrayProperties);
             // FIXME: We can't def() anything here because these operations truncate their inputs.
             // https://bugs.webkit.org/show_bug.cgi?id=134737
+            return;
+        case Array::String:
+        case Array::DirectArguments:
+        case Array::ScopedArguments:
+            DFG_CRASH(graph, node, "impossible array mode for put");
             return;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -760,7 +795,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             def(PureValue(node, mode.asWord()));
             return;
             
-        case Array::Arguments:
+        case Array::DirectArguments:
+        case Array::ScopedArguments:
             read(MiscFields);
             def(HeapLocation(ArrayLengthLoc, MiscFields, node->child1()), node);
             return;
@@ -773,29 +809,38 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         }
     }
         
-    case GetClosureRegisters:
-        read(JSEnvironmentRecord_registers);
-        def(HeapLocation(ClosureRegistersLoc, JSEnvironmentRecord_registers, node->child1()), node);
-        return;
-
     case GetClosureVar:
-        read(AbstractHeap(Variables, node->varNumber()));
-        def(HeapLocation(ClosureVariableLoc, AbstractHeap(Variables, node->varNumber()), node->child1()), node);
+        read(AbstractHeap(ScopeProperties, node->scopeOffset().offset()));
+        def(HeapLocation(ClosureVariableLoc, AbstractHeap(ScopeProperties, node->scopeOffset().offset()), node->child1()), node);
         return;
         
     case PutClosureVar:
-        write(AbstractHeap(Variables, node->varNumber()));
-        def(HeapLocation(ClosureVariableLoc, AbstractHeap(Variables, node->varNumber()), node->child1()), node->child3().node());
+        write(AbstractHeap(ScopeProperties, node->scopeOffset().offset()));
+        def(HeapLocation(ClosureVariableLoc, AbstractHeap(ScopeProperties, node->scopeOffset().offset()), node->child2()), node->child2().node());
         return;
         
+    case GetFromArguments: {
+        AbstractHeap heap(DirectArgumentsProperties, node->capturedArgumentsOffset().offset());
+        read(heap);
+        def(HeapLocation(DirectArgumentsLoc, heap), node);
+        return;
+    }
+        
+    case PutToArguments: {
+        AbstractHeap heap(DirectArgumentsProperties, node->capturedArgumentsOffset().offset());
+        write(heap);
+        def(HeapLocation(DirectArgumentsLoc, heap), node->child2().node());
+        return;
+    }
+        
     case GetGlobalVar:
-        read(AbstractHeap(Absolute, node->registerPointer()));
-        def(HeapLocation(GlobalVariableLoc, AbstractHeap(Absolute, node->registerPointer())), node);
+        read(AbstractHeap(Absolute, node->variablePointer()));
+        def(HeapLocation(GlobalVariableLoc, AbstractHeap(Absolute, node->variablePointer())), node);
         return;
         
     case PutGlobalVar:
-        write(AbstractHeap(Absolute, node->registerPointer()));
-        def(HeapLocation(GlobalVariableLoc, AbstractHeap(Absolute, node->registerPointer())), node->child1().node());
+        write(AbstractHeap(Absolute, node->variablePointer()));
+        def(HeapLocation(GlobalVariableLoc, AbstractHeap(Absolute, node->variablePointer())), node->child1().node());
         return;
 
     case NewArray:
@@ -815,9 +860,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case NewStringObject:
     case PhantomNewObject:
     case MaterializeNewObject:
-    case NewFunctionNoCheck:
     case NewFunction:
-    case NewFunctionExpression:
         read(HeapObjectCount);
         write(HeapObjectCount);
         return;
@@ -869,30 +912,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             return;
         }
         
-    case TearOffArguments:
-        read(Variables);
-        write(Arguments_registers);
-        return;
-        
-    case GetMyArgumentsLength:
-        read(AbstractHeap(Variables, graph.argumentsRegisterFor(node->origin.semantic)));
-        read(AbstractHeap(Variables, JSStack::ArgumentCount));
-        // FIXME: We could def() this by specifying the code origin as a kind of m_info, like we
-        // have for PureValue.
-        // https://bugs.webkit.org/show_bug.cgi?id=134797
-        return;
-        
-    case GetMyArgumentByVal:
-        read(Variables);
-        // FIXME: We could def() this by specifying the code origin as a kind of m_info, like we
-        // have for PureValue.
-        // https://bugs.webkit.org/show_bug.cgi?id=134797
-        return;
-        
-    case CheckArgumentsNotCreated:
-        read(AbstractHeap(Variables, graph.argumentsRegisterFor(node->origin.semantic)));
-        return;
-
     case ThrowReferenceError:
         write(SideState);
         read(HeapObjectCount);

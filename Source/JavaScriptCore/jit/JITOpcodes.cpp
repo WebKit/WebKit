@@ -28,7 +28,6 @@
 #if ENABLE(JIT)
 #include "JIT.h"
 
-#include "Arguments.h"
 #include "BasicBlockLocation.h"
 #include "CopiedSpaceInlines.h"
 #include "Debugger.h"
@@ -243,18 +242,6 @@ void JIT::emit_op_is_object(Instruction* currentInstruction)
 
     done.link(this);
     emitPutVirtualRegister(dst);
-}
-
-void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
-{
-    int arguments = currentInstruction[1].u.operand;
-    int lexicalEnvironment = currentInstruction[2].u.operand;
-
-    Jump argsNotCreated = branchTest64(Zero, Address(callFrameRegister, sizeof(Register) * (VirtualRegister(arguments).offset())));
-    emitGetVirtualRegister(VirtualRegister(arguments).offset(), regT0);
-    emitGetVirtualRegister(lexicalEnvironment, regT1);
-    callOperation(operationTearOffArguments, regT0, regT1);
-    argsNotCreated.link(this);
 }
 
 void JIT::emit_op_ret(Instruction* currentInstruction)
@@ -677,7 +664,7 @@ void JIT::emit_op_create_lexical_environment(Instruction* currentInstruction)
     int scope = currentInstruction[2].u.operand;
 
     emitGetVirtualRegister(scope, regT0);
-    callOperation(operationCreateActivation, regT0, 0);
+    callOperation(operationCreateActivation, regT0);
     emitStoreCell(dst, returnValueGPR);
     emitStoreCell(scope, returnValueGPR);
 }
@@ -688,31 +675,6 @@ void JIT::emit_op_get_scope(Instruction* currentInstruction)
     emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT0);
     loadPtr(Address(regT0, JSFunction::offsetOfScopeChain()), regT0);
     emitStoreCell(dst, regT0);
-}
-
-void JIT::emit_op_create_arguments(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int lexicalEnvironment = currentInstruction[2].u.operand;
-
-    Jump argsCreated = branchTest64(NonZero, Address(callFrameRegister, sizeof(Register) * dst));
-
-    if (VirtualRegister(lexicalEnvironment).isValid()) {
-        emitGetVirtualRegister(lexicalEnvironment, regT0);
-        callOperation(operationCreateArguments, regT0);
-    } else
-        callOperation(operationCreateArguments, TrustedImmPtr(nullptr));
-    emitStoreCell(dst, returnValueGPR);
-    emitStoreCell(unmodifiedArgumentsRegister(VirtualRegister(dst)), returnValueGPR);
-
-    argsCreated.link(this);
-}
-
-void JIT::emit_op_init_lazy_reg(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-
-    store64(TrustedImm64((int64_t)0), Address(callFrameRegister, sizeof(Register) * dst));
 }
 
 void JIT::emit_op_to_this(Instruction* currentInstruction)
@@ -915,69 +877,6 @@ void JIT::emitSlow_op_to_number(Instruction* currentInstruction, Vector<SlowCase
     slowPathCall.call();
 }
 
-void JIT::emit_op_get_arguments_length(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int argumentsRegister = currentInstruction[2].u.operand;
-    addSlowCase(branchTest64(NonZero, addressFor(argumentsRegister)));
-    emitGetFromCallFrameHeader32(JSStack::ArgumentCount, regT0);
-    sub32(TrustedImm32(1), regT0);
-    emitFastArithReTagImmediate(regT0, regT0);
-    emitPutVirtualRegister(dst, regT0);
-}
-
-void JIT::emitSlow_op_get_arguments_length(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkSlowCase(iter);
-    int dst = currentInstruction[1].u.operand;
-    int base = currentInstruction[2].u.operand;
-    callOperation(operationGetArgumentsLength, dst, base);
-}
-
-void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int argumentsRegister = currentInstruction[2].u.operand;
-    int property = currentInstruction[3].u.operand;
-    addSlowCase(branchTest64(NonZero, addressFor(argumentsRegister)));
-    emitGetVirtualRegister(property, regT1);
-    addSlowCase(emitJumpIfNotImmediateInteger(regT1));
-    emitGetFromCallFrameHeader32(JSStack::ArgumentCount, regT2);
-    sub32(TrustedImm32(1), regT2);
-    addSlowCase(branch32(AboveOrEqual, regT1, regT2));
-
-    signExtend32ToPtr(regT1, regT1);
-    load64(BaseIndex(callFrameRegister, regT1, TimesEight, CallFrame::argumentOffset(0) * static_cast<int>(sizeof(Register))), regT0);
-    emitValueProfilingSite();
-    emitPutVirtualRegister(dst, regT0);
-}
-
-void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    int dst = currentInstruction[1].u.operand;
-    int arguments = currentInstruction[2].u.operand;
-    int property = currentInstruction[3].u.operand;
-    int lexicalEnvironment = currentInstruction[4].u.operand;
-    
-    linkSlowCase(iter);
-    Jump skipArgumentsCreation = jump();
-    
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    if (VirtualRegister(lexicalEnvironment).isValid()) {
-        emitGetVirtualRegister(lexicalEnvironment, regT0);
-        callOperation(operationCreateArguments, regT0);
-    } else
-        callOperation(operationCreateArguments, TrustedImmPtr(nullptr));
-    emitStoreCell(arguments, returnValueGPR);
-    emitStoreCell(unmodifiedArgumentsRegister(VirtualRegister(arguments)), returnValueGPR);
-    
-    skipArgumentsCreation.link(this);
-    emitGetVirtualRegister(arguments, regT0);
-    emitGetVirtualRegister(property, regT1);
-    callOperation(WithProfile, operationGetByValGeneric, dst, regT0, regT1);
-}
-
 #endif // USE(JSVALUE64)
 
 void JIT::emit_op_touch_entry(Instruction* currentInstruction)
@@ -1042,13 +941,6 @@ void JIT::emit_op_new_func(Instruction* currentInstruction)
 {
     Jump lazyJump;
     int dst = currentInstruction[1].u.operand;
-    if (currentInstruction[4].u.operand) {
-#if USE(JSVALUE32_64)
-        lazyJump = branch32(NotEqual, tagFor(dst), TrustedImm32(JSValue::EmptyValueTag));
-#else
-        lazyJump = branchTest64(NonZero, addressFor(dst));
-#endif
-    }
 
 #if USE(JSVALUE64)
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
@@ -1057,9 +949,6 @@ void JIT::emit_op_new_func(Instruction* currentInstruction)
 #endif
     FunctionExecutable* funcExec = m_codeBlock->functionDecl(currentInstruction[3].u.operand);
     callOperation(operationNewFunction, dst, regT0, funcExec);
-
-    if (currentInstruction[4].u.operand)
-        lazyJump.link(this);
 }
 
 void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
@@ -1432,6 +1321,24 @@ void JIT::emit_op_profile_control_flow(Instruction* currentInstruction)
     BasicBlockLocation* basicBlockLocation = currentInstruction[1].u.basicBlockLocation;
     if (!basicBlockLocation->hasExecuted())
         basicBlockLocation->emitExecuteCode(*this, regT1);
+}
+
+void JIT::emit_op_create_direct_arguments(Instruction* currentInstruction)
+{
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_direct_arguments);
+    slowPathCall.call();
+}
+
+void JIT::emit_op_create_scoped_arguments(Instruction* currentInstruction)
+{
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_scoped_arguments);
+    slowPathCall.call();
+}
+
+void JIT::emit_op_create_out_of_band_arguments(Instruction* currentInstruction)
+{
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_out_of_band_arguments);
+    slowPathCall.call();
 }
 
 } // namespace JSC

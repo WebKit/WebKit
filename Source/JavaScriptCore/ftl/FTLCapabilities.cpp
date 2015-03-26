@@ -44,7 +44,6 @@ inline CapabilityLevel canCompile(Node* node)
     
     switch (node->op()) {
     case JSConstant:
-    case GetMyArgumentsLength:
     case GetLocal:
     case SetLocal:
     case PutStack:
@@ -103,9 +102,15 @@ inline CapabilityLevel canCompile(Node* node)
     case ExtractOSREntryLocal:
     case LoopHint:
     case SkipScope:
-    case GetClosureRegisters:
+    case CreateActivation:
+    case NewFunction:
     case GetClosureVar:
     case PutClosureVar:
+    case CreateDirectArguments:
+    case CreateScopedArguments:
+    case CreateClonedArguments:
+    case GetFromArguments:
+    case PutToArguments:
     case InvalidationPoint:
     case StringCharAt:
     case CheckCell:
@@ -124,6 +129,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CallVarargs:
     case CallForwardVarargs:
     case ConstructVarargs:
+    case ConstructForwardVarargs:
     case LoadVarargs:
     case NativeCall:
     case NativeConstruct:
@@ -137,8 +143,8 @@ inline CapabilityLevel canCompile(Node* node)
     case GetExecutable:
     case GetScope:
     case AllocationProfileWatchpoint:
-    case CheckArgumentsNotCreated:
     case GetCallee:
+    case GetArgumentCount:
     case ToString:
     case MakeRope:
     case NewArrayWithSize:
@@ -147,11 +153,9 @@ inline CapabilityLevel canCompile(Node* node)
     case MultiGetByOffset:
     case MultiPutByOffset:
     case ToPrimitive:
-    case PhantomArguments:
     case Throw:
     case ThrowReferenceError:
     case Unreachable:
-    case GetMyArgumentByVal:
     case IsUndefined:
     case IsBoolean:
     case IsNumber:
@@ -180,6 +184,10 @@ inline CapabilityLevel canCompile(Node* node)
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeNewObject:
+    case PhantomDirectArguments:
+    case PhantomClonedArguments:
+    case GetMyArgumentByVal:
+    case ForwardVarargs:
         // These are OK.
         break;
     case Identity:
@@ -208,6 +216,8 @@ inline CapabilityLevel canCompile(Node* node)
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
+        case Array::DirectArguments:
+        case Array::ScopedArguments:
             break;
         default:
             if (isTypedView(node->arrayMode().typedArrayType()))
@@ -221,6 +231,8 @@ inline CapabilityLevel canCompile(Node* node)
         case Array::Double:
         case Array::Contiguous:
         case Array::String:
+        case Array::DirectArguments:
+        case Array::ScopedArguments:
             break;
         default:
             if (isTypedView(node->arrayMode().typedArrayType()))
@@ -247,6 +259,8 @@ inline CapabilityLevel canCompile(Node* node)
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
+        case Array::DirectArguments:
+        case Array::ScopedArguments:
             break;
         default:
             if (isTypedView(node->arrayMode().typedArrayType()))
@@ -364,17 +378,6 @@ CapabilityLevel canCompile(Graph& graph)
     if (graph.m_codeBlock->codeType() != FunctionCode) {
         if (verboseCapabilities())
             dataLog("FTL rejecting ", *graph.m_codeBlock, " because it doesn't belong to a function.\n");
-        return CannotCompile;
-    }
-    
-    if (graph.m_codeBlock->needsActivation()) {
-        // Need this because although we also don't support
-        // CreateActivation, we might not see those nodes in case of
-        // OSR entry.
-        // FIXME: Support activations.
-        // https://bugs.webkit.org/show_bug.cgi?id=129576
-        if (verboseCapabilities())
-            dataLog("FTL rejecting ", *graph.m_codeBlock, " because it uses activations.\n");
         return CannotCompile;
     }
     

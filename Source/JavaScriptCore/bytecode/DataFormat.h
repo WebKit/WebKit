@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,6 @@ enum DataFormat {
     
     // Special data formats used only for OSR.
     DataFormatDead = 33, // Implies jsUndefined().
-    DataFormatArguments = 34 // Implies that the arguments object must be reified.
 };
 
 inline const char* dataFormatToString(DataFormat dataFormat)
@@ -90,8 +89,6 @@ inline const char* dataFormatToString(DataFormat dataFormat)
         return "JSBoolean";
     case DataFormatDead:
         return "Dead";
-    case DataFormatArguments:
-        return "Arguments";
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return "Unknown";

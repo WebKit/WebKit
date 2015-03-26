@@ -88,6 +88,16 @@ public:
 #endif
     }
     
+    void storeValue(JSValueRegs regs, BaseIndex address)
+    {
+#if USE(JSVALUE64)
+        store64(regs.gpr(), address);
+#else
+        store32(regs.payloadGPR(), address.withOffset(PayloadOffset));
+        store32(regs.tagGPR(), address.withOffset(TagOffset));
+#endif
+    }
+    
     void storeValue(JSValueRegs regs, void* address)
     {
 #if USE(JSVALUE64)
@@ -113,6 +123,26 @@ public:
 #endif
     }
     
+    void loadValue(BaseIndex address, JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        load64(address, regs.gpr());
+#else
+        if (address.base == regs.payloadGPR() || address.index == regs.payloadGPR()) {
+            // We actually could handle the case where the registers are aliased to both
+            // tag and payload, but we don't for now.
+            RELEASE_ASSERT(address.base != regs.tagGPR());
+            RELEASE_ASSERT(address.index != regs.tagGPR());
+            
+            load32(address.withOffset(TagOffset), regs.tagGPR());
+            load32(address.withOffset(PayloadOffset), regs.payloadGPR());
+        } else {
+            load32(address.withOffset(PayloadOffset), regs.payloadGPR());
+            load32(address.withOffset(TagOffset), regs.tagGPR());
+        }
+#endif
+    }
+    
     void moveTrustedValue(JSValue value, JSValueRegs regs)
     {
 #if USE(JSVALUE64)
@@ -120,6 +150,26 @@ public:
 #else
         move(TrustedImm32(value.tag()), regs.tagGPR());
         move(TrustedImm32(value.payload()), regs.payloadGPR());
+#endif
+    }
+    
+    void storeTrustedValue(JSValue value, Address address)
+    {
+#if USE(JSVALUE64)
+        store64(TrustedImm64(JSValue::encode(value)), address);
+#else
+        store32(TrustedImm32(value.tag()), address.withOffset(TagOffset));
+        store32(TrustedImm32(value.payload()), address.withOffset(PayloadOffset));
+#endif
+    }
+
+    void storeTrustedValue(JSValue value, BaseIndex address)
+    {
+#if USE(JSVALUE64)
+        store64(TrustedImm64(JSValue::encode(value)), address);
+#else
+        store32(TrustedImm32(value.tag()), address.withOffset(TagOffset));
+        store32(TrustedImm32(value.payload()), address.withOffset(PayloadOffset));
 #endif
     }
 
@@ -324,6 +374,23 @@ public:
         return branchTest64(MacroAssembler::NonZero, reg, GPRInfo::tagMaskRegister);
 #else
         return branch32(MacroAssembler::NotEqual, reg, TrustedImm32(JSValue::CellTag));
+#endif
+    }
+    Jump branchIfNotCell(JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        return branchIfNotCell(regs.gpr());
+#else
+        return branchIfNotCell(regs.tagGPR());
+#endif
+    }
+    
+    Jump branchIsEmpty(JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        return branchTest64(Zero, regs.gpr());
+#else
+        return branch32(Equal, regs.tagGPR(), TrustedImm32(JSValue::EmptyValueTag));
 #endif
     }
     
@@ -634,46 +701,25 @@ public:
         return m_baselineCodeBlock;
     }
     
-    VirtualRegister baselineArgumentsRegisterFor(InlineCallFrame* inlineCallFrame)
-    {
-        if (!inlineCallFrame)
-            return baselineCodeBlock()->argumentsRegister();
-        
-        return VirtualRegister(baselineCodeBlockForInlineCallFrame(
-            inlineCallFrame)->argumentsRegister().offset() + inlineCallFrame->stackOffset);
-    }
-    
-    VirtualRegister baselineArgumentsRegisterFor(const CodeOrigin& codeOrigin)
-    {
-        return baselineArgumentsRegisterFor(codeOrigin.inlineCallFrame);
-    }
-    
     SymbolTable* symbolTableFor(const CodeOrigin& codeOrigin)
     {
         return baselineCodeBlockFor(codeOrigin)->symbolTable();
     }
 
-    int offsetOfLocals(const CodeOrigin& codeOrigin)
-    {
-        if (!codeOrigin.inlineCallFrame)
-            return 0;
-        return codeOrigin.inlineCallFrame->stackOffset * sizeof(Register);
-    }
-
-    int offsetOfArguments(InlineCallFrame* inlineCallFrame)
+    static VirtualRegister argumentsStart(InlineCallFrame* inlineCallFrame)
     {
         if (!inlineCallFrame)
-            return CallFrame::argumentOffset(0) * sizeof(Register);
+            return VirtualRegister(CallFrame::argumentOffset(0));
         if (inlineCallFrame->arguments.size() <= 1)
-            return 0;
+            return virtualRegisterForLocal(0);
         ValueRecovery recovery = inlineCallFrame->arguments[1];
         RELEASE_ASSERT(recovery.technique() == DisplacedInJSStack);
-        return recovery.virtualRegister().offset() * sizeof(Register);
+        return recovery.virtualRegister();
     }
     
-    int offsetOfArguments(const CodeOrigin& codeOrigin)
+    static VirtualRegister argumentsStart(const CodeOrigin& codeOrigin)
     {
-        return offsetOfArguments(codeOrigin.inlineCallFrame);
+        return argumentsStart(codeOrigin.inlineCallFrame);
     }
     
     void emitLoadStructure(RegisterID source, RegisterID dest, RegisterID scratch)

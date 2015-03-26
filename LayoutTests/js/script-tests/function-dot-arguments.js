@@ -362,7 +362,7 @@ function tearOffTest5(a, b, c, d)
 
     return arrayify(inner());
 }
-shouldBe("tearOffTest5(1, 2, 3, false)", "[10, 2, 3, false]");
+shouldBe("tearOffTest5(1, 2, 3, false)", "[1, 2, 3, false]");
 
 
 function tearOffTest5a(a, b, c, d)
@@ -382,7 +382,7 @@ function tearOffTest5a(a, b, c, d)
         return arrayify(inner());
     }
 }
-shouldBe("tearOffTest5a(1, 2, 3, false)", "[10, 2, 3, false]");
+shouldBe("tearOffTest5a(1, 2, 3, false)", "[1, 2, 3, false]");
 
 
 function tearOffTest5b(a, b, c, d)
@@ -426,7 +426,7 @@ function tearOffTest6(a, b, c, d)
     delete arguments[0];
     return arrayify(tearOffTest6External());
 }
-shouldBe("tearOffTest6(1, 2, 3, false)", "[10, 2, 3, false]");
+shouldBe("tearOffTest6(1, 2, 3, false)", "[1, 2, 3, false]");
 
 
 function tearOffTest6aExternal()
@@ -446,7 +446,7 @@ function tearOffTest6a(a, b, c, d)
         return arrayify(tearOffTest6aExternal());
     }
 }
-shouldBe("tearOffTest6a(1, 2, 3, false)", "[10, 2, 3, false]");
+shouldBe("tearOffTest6a(1, 2, 3, false)", "[1, 2, 3, false]");
 
 
 function tearOffTest6bExternal()
@@ -739,7 +739,7 @@ function lexicalArgumentsLiveRead1(a, b, c)
     a = 1;
     return lexicalArgumentsLiveRead1.arguments[0];
 }
-shouldBe("lexicalArgumentsLiveRead1(0, 2, 3)", "1");
+shouldBe("lexicalArgumentsLiveRead1(0, 2, 3)", "0");
 
 function lexicalArgumentsLiveRead2(a, b, c)
 {
@@ -747,7 +747,7 @@ function lexicalArgumentsLiveRead2(a, b, c)
     b = 2;
     return lexicalArgumentsLiveRead2.arguments[1];
 }
-shouldBe("lexicalArgumentsLiveRead2(1, 0, 3)", "2");
+shouldBe("lexicalArgumentsLiveRead2(1, 0, 3)", "0");
 
 function lexicalArgumentsLiveRead3(a, b, c)
 {
@@ -755,7 +755,7 @@ function lexicalArgumentsLiveRead3(a, b, c)
     c = 3;
     return lexicalArgumentsLiveRead3.arguments[2];
 }
-shouldBe("lexicalArgumentsLiveRead3(1, 2, 0)", "3");
+shouldBe("lexicalArgumentsLiveRead3(1, 2, 0)", "0");
 
 function lexicalArgumentsLiveWrite1(a, b, c)
 {
