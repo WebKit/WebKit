@@ -1,3 +1,50 @@
+2015-03-26  Brady Eidson  <beidson@apple.com>
+
+        Apply ContentExtension actions after redirects.
+        <rdar://problem/20062613> and https://bugs.webkit.org/show_bug.cgi?id=143055
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/contentextensions/loading/main-resource-redirect-blocked.php
+               http/tests/contentextensions/subresource-redirect-blocked.html
+
+        This patch moves the "run a URL against the content extension" code from CachedResourceLoader to
+        the ContentExtensionsBackend.
+
+        That allows it to be shared between the CachedResourceLoader where loads are initiated and 
+        ResourceLoader where redirects are handled.
+
+        * contentextensions/ContentExtension.cpp:
+        (WebCore::ContentExtensions::ContentExtension::globalDisplayNoneStyleSheet):
+
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentExtensionRulesForLoad):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::displayNoneCSSRule):
+        * contentextensions/ContentExtensionsBackend.h:
+
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+
+        * loader/ResourceLoadInfo.h:
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::willSendRequest):
+        * loader/ResourceLoader.h:
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+
+        * page/UserContentController.cpp:
+        (WebCore::UserContentController::processContentExtensionRulesForLoad):
+        (WebCore::UserContentController::actionsForResourceLoad): Deleted.
+        (WebCore::UserContentController::globalDisplayNoneStyleSheet): Deleted.
+        (WebCore::UserContentController::displayNoneCSSRule): Deleted.
+        * page/UserContentController.h:
+
 2015-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Crash when laying out (char)0

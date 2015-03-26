@@ -508,63 +508,10 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         return nullptr;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    URL mainDocumentURL;
-    if (frame() && frame()->mainFrame().document())
-        mainDocumentURL = frame()->mainFrame().document()->url();
+    if (frame() && frame()->mainFrame().page() && frame()->mainFrame().page()->userContentController() && m_documentLoader)
+        frame()->mainFrame().page()->userContentController()->processContentExtensionRulesForLoad(request.mutableResourceRequest(), toResourceType(type), *m_documentLoader);
 
-    ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, toResourceType(type) };
-
-    Vector<ContentExtensions::Action> actions;
-    UserContentController* userContentController = nullptr;
-    if (frame() && frame()->mainFrame().page())
-        userContentController = frame()->mainFrame().page()->userContentController();
-
-    if (userContentController)
-        actions = userContentController->actionsForResourceLoad(resourceLoadInfo);
-
-    StringBuilder css;
-    bool willBlockLoad = false;
-    for (const auto& action : actions) {
-        switch (action.type()) {
-        case ContentExtensions::ActionType::BlockLoad:
-            willBlockLoad = true;
-            break;
-        case ContentExtensions::ActionType::BlockCookies:
-            request.mutableResourceRequest().setAllowCookies(false);
-            break;
-        case ContentExtensions::ActionType::CSSDisplayNoneSelector:
-            css.append(action.stringArgument());
-            css.append(UserContentController::displayNoneCSSRule());
-            break;
-        case ContentExtensions::ActionType::CSSDisplayNoneStyleSheet: {
-            StyleSheetContents* styleSheetContents = userContentController->globalDisplayNoneStyleSheet(action.stringArgument());
-            if (styleSheetContents) {
-                if (type == CachedResource::MainResource && request.initiatingDocumentLoader())
-                    request.initiatingDocumentLoader()->addPendingContentExtensionSheet(action.stringArgument(), *styleSheetContents);
-                else if (m_document)
-                    m_document->styleSheetCollection().maybeAddContentExtensionSheet(action.stringArgument(), *styleSheetContents);
-            }
-            break;
-        }
-        case ContentExtensions::ActionType::IgnorePreviousRules:
-        case ContentExtensions::ActionType::InvalidAction:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
-
-    if (css.length()) {
-        Ref<StyleSheetContents> styleSheet = StyleSheetContents::create();
-        styleSheet->setIsUserStyleSheet(true);
-
-        if (styleSheet->parseString(css.toString())) {
-            if (type == CachedResource::MainResource && request.initiatingDocumentLoader())
-                request.initiatingDocumentLoader()->addPendingContentExtensionSheet(styleSheet);
-            else if (m_document)
-                m_document->styleSheetCollection().addUserSheet(WTF::move(styleSheet));
-        }
-    }
-
-    if (willBlockLoad)
+    if (request.mutableResourceRequest().isNull())
         return nullptr;
 #endif
 

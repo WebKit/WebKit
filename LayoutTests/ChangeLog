@@ -1,3 +1,19 @@
+2015-03-26  Brady Eidson  <beidson@apple.com>
+
+        Apply ContentExtension actions after redirects.
+        <rdar://problem/20062613> and https://bugs.webkit.org/show_bug.cgi?id=143055
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/contentextensions/loading/main-resource-redirect-blocked-expected.txt: Added.
+        * http/tests/contentextensions/loading/main-resource-redirect-blocked.php: Added.
+        * http/tests/contentextensions/loading/main-resource-redirect-blocked.php.json: Added.
+        * http/tests/contentextensions/loading/resources/main-resource-redirect-blocked-target.html: Added.
+        * http/tests/contentextensions/resources/subresource-redirect.php: Added.
+        * http/tests/contentextensions/subresource-redirect-blocked-expected.txt: Added.
+        * http/tests/contentextensions/subresource-redirect-blocked.html: Added.
+        * http/tests/contentextensions/subresource-redirect-blocked.html.json: Added.
+
 2015-03-26  Michael Saboff  <msaboff@apple.com>
 
         js/promises-tests/promises-tests-2-3-3.html sometimes crashes under DFG::SpeculativeJIT::compile

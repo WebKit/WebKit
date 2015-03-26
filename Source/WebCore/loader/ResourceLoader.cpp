@@ -52,6 +52,11 @@
 #include "SharedBuffer.h"
 #include <wtf/Ref.h>
 
+#if ENABLE(CONTENT_EXTENSIONS)
+#include "ResourceLoadInfo.h"
+#include "UserContentController.h"
+#endif
+
 namespace WebCore {
 
 ResourceLoader::ResourceLoader(Frame* frame, ResourceLoaderOptions options)
@@ -64,6 +69,9 @@ ResourceLoader::ResourceLoader(Frame* frame, ResourceLoaderOptions options)
     , m_defersLoading(frame->page()->defersLoading())
     , m_options(options)
     , m_isQuickLookResource(false)
+#if ENABLE(CONTENT_EXTENSIONS)
+    , m_resourceType(ResourceType::Invalid)
+#endif
 {
 }
 
@@ -267,7 +275,19 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
     Ref<ResourceLoader> protect(*this);
 
     ASSERT(!m_reachedTerminalState);
-    
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    ASSERT(m_resourceType != ResourceType::Invalid);
+
+    if (frameLoader() && frameLoader()->frame().page() && frameLoader()->frame().page()->userContentController() && m_documentLoader)
+        frameLoader()->frame().page()->userContentController()->processContentExtensionRulesForLoad(request, m_resourceType, *m_documentLoader);
+
+    if (request.isNull()) {
+        didFail(cannotShowURLError());
+        return;
+    }
+#endif
+
     // We need a resource identifier for all requests, even if FrameLoader is never going to see it (such as with CORS preflight requests).
     bool createdResourceIdentifier = false;
     if (!m_identifier) {

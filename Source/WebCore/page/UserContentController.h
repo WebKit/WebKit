@@ -39,12 +39,17 @@
 namespace WebCore {
 
 class DOMWrapperWorld;
+class DocumentLoader;
 class Page;
+class ResourceRequest;
 class StyleSheetContents;
 class URL;
 class UserScript;
 class UserStyleSheet;
 class UserMessageHandlerDescriptor;
+
+enum class ResourceType : uint16_t;
+
 struct ResourceLoadInfo;
 
 namespace ContentExtensions {
@@ -86,10 +91,8 @@ public:
     WEBCORE_EXPORT void addUserContentExtension(const String& name, RefPtr<ContentExtensions::CompiledContentExtension>);
     WEBCORE_EXPORT void removeUserContentExtension(const String& name);
     WEBCORE_EXPORT void removeAllUserContentExtensions();
-    
-    Vector<ContentExtensions::Action> actionsForResourceLoad(const ResourceLoadInfo&);
-    StyleSheetContents* globalDisplayNoneStyleSheet(const String& identifier) const;
-    static const String& displayNoneCSSRule();
+
+    void processContentExtensionRulesForLoad(ResourceRequest&, ResourceType, DocumentLoader& initiatingDocumentLoader);
 #endif
 
 private:

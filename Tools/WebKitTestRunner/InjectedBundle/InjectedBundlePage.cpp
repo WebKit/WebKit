@@ -685,14 +685,17 @@ void InjectedBundlePage::didReceiveServerRedirectForProvisionalLoadForFrame(WKBu
     dumpLoadEvent(frame, "didReceiveServerRedirectForProvisionalLoadForFrame");
 }
 
-void InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRef frame, WKErrorRef)
+void InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRef frame, WKErrorRef error)
 {
     auto& injectedBundle = InjectedBundle::singleton();
     if (!injectedBundle.isTestRunning())
         return;
 
-    if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
+    if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks()) {
         dumpLoadEvent(frame, "didFailProvisionalLoadWithError");
+        if (WKErrorGetErrorCode(error) == kWKErrorCodeCannotShowURL)
+            dumpLoadEvent(frame, "(kWKErrorCodeCannotShowURL)");
+    }
 
     frameDidChangeLocation(frame);
 }

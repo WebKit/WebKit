@@ -34,12 +34,19 @@
 #include "FrameLoaderClient.h"
 #include <wtf/Ref.h>
 
+#if ENABLE(CONTENT_EXTENSIONS)
+#include "ResourceLoadInfo.h"
+#endif
+
 namespace WebCore {
 
 NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(Frame* frame, NetscapePlugInStreamLoaderClient* client)
     : ResourceLoader(frame, ResourceLoaderOptions(SendCallbacks, SniffContent, DoNotBufferData, AllowStoredCredentials, AskClientForAllCredentials, SkipSecurityCheck, UseDefaultOriginRestrictionsForType, DoNotIncludeCertificateInfo))
     , m_client(client)
 {
+#if ENABLE(CONTENT_EXTENSIONS)
+    m_resourceType = ResourceType::PlugInStream;
+#endif
 }
 
 NetscapePlugInStreamLoader::~NetscapePlugInStreamLoader()

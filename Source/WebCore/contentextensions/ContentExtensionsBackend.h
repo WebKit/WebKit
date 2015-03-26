@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+class DocumentLoader;
+class ResourceRequest;
 class URL;
 
 struct ResourceLoadInfo;
@@ -62,6 +64,10 @@ public:
     // - Internal WebCore Interface.
     WEBCORE_EXPORT Vector<Action> actionsForResourceLoad(const ResourceLoadInfo&) const;
     StyleSheetContents* globalDisplayNoneStyleSheet(const String& identifier) const;
+
+    void processContentExtensionRulesForLoad(ResourceRequest&, ResourceType, DocumentLoader& initiatingDocumentLoader);
+
+    static const String& displayNoneCSSRule();
 
 private:
     HashMap<String, RefPtr<ContentExtension>> m_contentExtensions;

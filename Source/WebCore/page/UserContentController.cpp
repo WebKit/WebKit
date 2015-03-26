@@ -33,7 +33,6 @@
 #include "ResourceLoadInfo.h"
 #include "UserScript.h"
 #include "UserStyleSheet.h"
-#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 #include "UserMessageHandlerDescriptor.h"
@@ -205,26 +204,12 @@ void UserContentController::removeAllUserContentExtensions()
     m_contentExtensionBackend->removeAllContentExtensions();
 }
 
-Vector<ContentExtensions::Action> UserContentController::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo)
+void UserContentController::processContentExtensionRulesForLoad(ResourceRequest& request, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
 {
     if (!m_contentExtensionBackend)
-        return Vector<ContentExtensions::Action>();
+        return;
 
-    return m_contentExtensionBackend->actionsForResourceLoad(resourceLoadInfo);
-}
-
-StyleSheetContents* UserContentController::globalDisplayNoneStyleSheet(const String& identifier) const
-{
-    if (!m_contentExtensionBackend)
-        return nullptr;
-
-    return m_contentExtensionBackend->globalDisplayNoneStyleSheet(identifier);
-}
-
-const String& UserContentController::displayNoneCSSRule()
-{
-    static NeverDestroyed<const String> rule(ASCIILiteral("{display:none !important;}\n"));
-    return rule;
+    m_contentExtensionBackend->processContentExtensionRulesForLoad(request, resourceType, initiatingDocumentLoader);
 }
 
 #endif

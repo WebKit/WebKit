@@ -27,8 +27,8 @@
 #include "ContentExtension.h"
 
 #include "CompiledContentExtension.h"
+#include "ContentExtensionsBackend.h"
 #include "StyleSheetContents.h"
-#include "UserContentController.h"
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -62,7 +62,7 @@ StyleSheetContents* ContentExtension::globalDisplayNoneStyleSheet()
     StringBuilder css;
     for (auto& selector : selectors) {
         css.append(selector);
-        css.append(UserContentController::displayNoneCSSRule());
+        css.append(ContentExtensionsBackend::displayNoneCSSRule());
     }
 
     m_globalDisplayNoneStyleSheet = StyleSheetContents::create();

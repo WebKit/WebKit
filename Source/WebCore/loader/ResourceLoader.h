@@ -52,6 +52,10 @@ class URL;
 class QuickLookHandle;
 #endif
 
+#if ENABLE(CONTENT_EXTENSIONS)
+enum class ResourceType : uint16_t;
+#endif
+
 class ResourceLoader : public RefCounted<ResourceLoader>, protected ResourceHandleClient {
 public:
     virtual ~ResourceLoader() = 0;
@@ -224,6 +228,11 @@ private:
     ResourceRequest m_deferredRequest;
     ResourceLoaderOptions m_options;
     bool m_isQuickLookResource;
+
+#if ENABLE(CONTENT_EXTENSIONS)
+protected:
+    ResourceType m_resourceType;
+#endif
 };
 
 inline const ResourceResponse& ResourceLoader::response() const

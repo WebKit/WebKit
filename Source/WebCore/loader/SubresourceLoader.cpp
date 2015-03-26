@@ -50,6 +50,10 @@
 #include <RuntimeApplicationChecksIOS.h>
 #endif
 
+#if ENABLE(CONTENT_EXTENSIONS)
+#include "ResourceLoadInfo.h"
+#endif
+
 namespace WebCore {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, subresourceLoaderCounter, ("SubresourceLoader"));
@@ -75,6 +79,9 @@ SubresourceLoader::SubresourceLoader(Frame* frame, CachedResource* resource, con
 {
 #ifndef NDEBUG
     subresourceLoaderCounter.increment();
+#endif
+#if ENABLE(CONTENT_EXTENSIONS)
+    m_resourceType = toResourceType(resource->type());
 #endif
 }
 
