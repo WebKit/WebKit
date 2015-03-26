@@ -1,3 +1,21 @@
+2015-03-26  Geoffrey Garen  <ggaren@apple.com>
+
+        "lineNo" does not match WebKit coding style guidelines
+        https://bugs.webkit.org/show_bug.cgi?id=143119
+
+        Reviewed by Michael Saboff.
+
+        We can afford to use whole words.
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+        * bindings/js/JSMainThreadExecStateInstrumentation.h:
+        (WebCore::JSMainThreadExecState::instrumentFunctionCall):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        * testing/Internals.cpp:
+        (WebCore::Internals::parserMetaData):
+
 2015-03-26  Roger Fong  <roger_fong@apple.com>
 
         Apply blur effect to media control background.

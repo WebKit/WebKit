@@ -41,7 +41,7 @@ inline InspectorInstrumentationCookie JSMainThreadExecState::instrumentFunctionC
     int lineNumber = 1;
     if (callType == JSC::CallTypeJS) {
         resourceName = callData.js.functionExecutable->sourceURL();
-        lineNumber = callData.js.functionExecutable->lineNo();
+        lineNumber = callData.js.functionExecutable->firstLine();
     } else
         resourceName = "undefined";
     return InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber);

@@ -98,15 +98,15 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
     if (!rootNode)
         return nullptr;
 
-    unsigned lineCount = rootNode->lastLine() - rootNode->lineNo();
+    unsigned lineCount = rootNode->lastLine() - rootNode->firstLine();
     unsigned startColumn = rootNode->startColumn() + 1;
     bool endColumnIsOnStartLine = !lineCount;
     unsigned unlinkedEndColumn = rootNode->endColumn();
     unsigned endColumn = unlinkedEndColumn + (endColumnIsOnStartLine ? startColumn : 1);
-    executable->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), rootNode->lineNo(), rootNode->lastLine(), startColumn, endColumn);
+    executable->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), rootNode->firstLine(), rootNode->lastLine(), startColumn, endColumn);
 
     UnlinkedCodeBlockType* unlinkedCodeBlock = UnlinkedCodeBlockType::create(&vm, executable->executableInfo());
-    unlinkedCodeBlock->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), rootNode->lineNo() - source.firstLine(), lineCount, unlinkedEndColumn);
+    unlinkedCodeBlock->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), rootNode->firstLine() - source.firstLine(), lineCount, unlinkedEndColumn);
 
     auto generator = std::make_unique<BytecodeGenerator>(vm, rootNode.get(), unlinkedCodeBlock, debuggerMode, profilerMode);
     error = generator->generate();

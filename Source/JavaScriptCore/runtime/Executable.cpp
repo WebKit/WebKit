@@ -100,7 +100,7 @@ ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCod
     , m_hasCapturedVariables(false)
     , m_neverInline(false)
     , m_didTryToEnterInLoop(false)
-    , m_overrideLineNo(-1)
+    , m_overrideLineNumber(-1)
     , m_firstLine(-1)
     , m_lastLine(-1)
     , m_startColumn(UINT_MAX)
@@ -239,7 +239,7 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
     UnlinkedFunctionCodeBlock* unlinkedCodeBlock =
         executable->m_unlinkedExecutable->codeBlockFor(
             *vm, executable->m_source, kind, debuggerMode, profilerMode, error);
-    recordParse(executable->m_unlinkedExecutable->features(), executable->m_unlinkedExecutable->hasCapturedVariables(), lineNo(), lastLine(), startColumn(), endColumn()); 
+    recordParse(executable->m_unlinkedExecutable->features(), executable->m_unlinkedExecutable->hasCapturedVariables(), firstLine(), lastLine(), startColumn(), endColumn()); 
     if (!unlinkedCodeBlock) {
         exception = vm->throwException(
             globalObject->globalExec(),
@@ -611,15 +611,15 @@ void FunctionExecutable::unlinkCalls()
 
 FunctionExecutable* FunctionExecutable::fromGlobalCode(
     const Identifier& name, ExecState& exec, const SourceCode& source, 
-    JSObject*& exception, int overrideLineNo)
+    JSObject*& exception, int overrideLineNumber)
 {
     UnlinkedFunctionExecutable* unlinkedExecutable = 
         UnlinkedFunctionExecutable::fromGlobalCode(
-            name, exec, source, exception, overrideLineNo);
+            name, exec, source, exception, overrideLineNumber);
     if (!unlinkedExecutable)
         return nullptr;
 
-    return unlinkedExecutable->link(exec.vm(), source, overrideLineNo);
+    return unlinkedExecutable->link(exec.vm(), source, overrideLineNumber);
 }
 
 void ExecutableBase::dump(PrintStream& out) const

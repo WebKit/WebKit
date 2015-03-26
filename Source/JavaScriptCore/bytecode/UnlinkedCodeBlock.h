@@ -138,9 +138,9 @@ public:
 
     static UnlinkedFunctionExecutable* fromGlobalCode(
         const Identifier&, ExecState&, const SourceCode&, JSObject*& exception, 
-        int overrideLineNo);
+        int overrideLineNumber);
 
-    FunctionExecutable* link(VM&, const SourceCode&, int overrideLineNo = -1);
+    FunctionExecutable* link(VM&, const SourceCode&, int overrideLineNumber = -1);
 
     void clearCodeForRecompilation()
     {

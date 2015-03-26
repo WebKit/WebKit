@@ -201,7 +201,7 @@ CallIdentifier createCallIdentifierFromFunctionImp(ExecState* exec, JSObject* fu
     const String& name = getCalculatedDisplayName(exec, function);
     JSFunction* jsFunction = jsDynamicCast<JSFunction*>(function);
     if (jsFunction && !jsFunction->isHostOrBuiltinFunction())
-        return CallIdentifier(name.isEmpty() ? ASCIILiteral(AnonymousFunction) : name, jsFunction->jsExecutable()->sourceURL(), jsFunction->jsExecutable()->lineNo(), jsFunction->jsExecutable()->startColumn());
+        return CallIdentifier(name.isEmpty() ? ASCIILiteral(AnonymousFunction) : name, jsFunction->jsExecutable()->sourceURL(), jsFunction->jsExecutable()->firstLine(), jsFunction->jsExecutable()->startColumn());
     return CallIdentifier(name.isEmpty() ? ASCIILiteral(AnonymousFunction) : name, defaultSourceURL, defaultLineNumber, defaultColumnNumber);
 }
 

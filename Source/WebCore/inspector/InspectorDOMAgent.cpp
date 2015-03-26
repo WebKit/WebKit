@@ -1375,7 +1375,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
             if (auto function = JSC::jsDynamicCast<JSC::JSFunction*>(handler)) {
                 if (!function->isHostOrBuiltinFunction()) {
                     if (auto executable = function->jsExecutable()) {
-                        lineNumber = executable->lineNo() - 1;
+                        lineNumber = executable->firstLine() - 1;
                         scriptID = executable->sourceID() == JSC::SourceProvider::nullID ? emptyString() : String::number(executable->sourceID());
                         sourceName = executable->sourceURL();
                     }

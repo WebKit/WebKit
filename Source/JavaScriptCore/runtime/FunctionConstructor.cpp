@@ -89,7 +89,7 @@ JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const
 JSObject* constructFunctionSkippingEvalEnabledCheck(
     ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, 
     const Identifier& functionName, const String& sourceURL, 
-    const TextPosition& position, int overrideLineNo)
+    const TextPosition& position, int overrideLineNumber)
 {
     // How we stringify functions is sometimes important for web compatibility.
     // See https://bugs.webkit.org/show_bug.cgi?id=24350.
@@ -116,7 +116,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
 
     SourceCode source = makeSource(program, sourceURL, position);
     JSObject* exception = nullptr;
-    FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, *exec, source, exception, overrideLineNo);
+    FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, *exec, source, exception, overrideLineNumber);
     if (!function) {
         ASSERT(exception);
         return exec->vm().throwException(exec, exception);

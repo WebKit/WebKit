@@ -1346,7 +1346,7 @@ String Internals::parserMetaData(Deprecated::ScriptValue value)
     } else
         return String();
 
-    unsigned startLine = executable->lineNo();
+    unsigned startLine = executable->firstLine();
     unsigned startColumn = executable->startColumn();
     unsigned endLine = executable->lastLine();
     unsigned endColumn = executable->endColumn();

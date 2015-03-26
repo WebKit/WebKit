@@ -87,7 +87,7 @@ public:
 
     JSObject* toErrorObject(
         JSGlobalObject* globalObject, const SourceCode& source, 
-        int overrideLineNo = -1)
+        int overrideLineNumber = -1)
     {
         switch (m_type) {
         case ErrorNone:
@@ -96,7 +96,7 @@ public:
             return addErrorInfo(
                 globalObject->globalExec(), 
                 createSyntaxError(globalObject, m_message), 
-                overrideLineNo == -1 ? m_line : overrideLineNo, source);
+                overrideLineNumber == -1 ? m_line : overrideLineNumber, source);
         case EvalError:
             return createSyntaxError(globalObject, m_message);
         case StackOverflow: {

@@ -1,5 +1,62 @@
 2015-03-26  Geoffrey Garen  <ggaren@apple.com>
 
+        "lineNo" does not match WebKit coding style guidelines
+        https://bugs.webkit.org/show_bug.cgi?id=143119
+
+        Reviewed by Michael Saboff.
+
+        We can afford to use whole words.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::lineNumberForBytecodeOffset):
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::link):
+        (JSC::UnlinkedFunctionExecutable::fromGlobalCode):
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::WhileNode::emitBytecode):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::toggleBreakpoint):
+        * interpreter/Interpreter.cpp:
+        (JSC::StackFrame::computeLineAndColumn):
+        (JSC::GetStackTraceFunctor::operator()):
+        (JSC::Interpreter::execute):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::computeLineAndColumn):
+        * parser/Nodes.h:
+        (JSC::Node::firstLine):
+        (JSC::Node::lineNo): Deleted.
+        (JSC::StatementNode::firstLine): Deleted.
+        * parser/ParserError.h:
+        (JSC::ParserError::toErrorObject):
+        * profiler/LegacyProfiler.cpp:
+        (JSC::createCallIdentifierFromFunctionImp):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::FunctionExecutable::fromGlobalCode):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::firstLine):
+        (JSC::ScriptExecutable::setOverrideLineNumber):
+        (JSC::ScriptExecutable::hasOverrideLineNumber):
+        (JSC::ScriptExecutable::overrideLineNumber):
+        (JSC::ScriptExecutable::lineNo): Deleted.
+        (JSC::ScriptExecutable::setOverrideLineNo): Deleted.
+        (JSC::ScriptExecutable::hasOverrideLineNo): Deleted.
+        (JSC::ScriptExecutable::overrideLineNo): Deleted.
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionConstructor.h:
+        * tools/CodeProfile.cpp:
+        (JSC::CodeProfile::report):
+        * tools/CodeProfile.h:
+        (JSC::CodeProfile::CodeProfile):
+
+2015-03-26  Geoffrey Garen  <ggaren@apple.com>
+
         Assertion firing in JavaScriptCore/parser/parser.h for statesman.com site
         https://bugs.webkit.org/show_bug.cgi?id=142974
 

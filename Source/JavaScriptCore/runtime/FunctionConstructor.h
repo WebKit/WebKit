@@ -61,7 +61,7 @@ JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&);
 
 JS_EXPORT_PRIVATE JSObject* constructFunctionSkippingEvalEnabledCheck(
     ExecState*, JSGlobalObject*, const ArgList&, const Identifier&, 
-    const String&, const WTF::TextPosition&, int overrideLineNo = -1);
+    const String&, const WTF::TextPosition&, int overrideLineNumber = -1);
 
 } // namespace JSC
 

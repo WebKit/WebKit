@@ -106,11 +106,11 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
 
     // We want all errors to refer back to the line on which our attribute was
     // declared, regardless of any newlines in our JavaScript source text.
-    int overrideLineNo = m_position.m_line.oneBasedInt();
+    int overrideLineNumber = m_position.m_line.oneBasedInt();
 
     JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(
         exec, exec->lexicalGlobalObject(), args, Identifier(exec, m_functionName), 
-        m_sourceURL, m_position, overrideLineNo);
+        m_sourceURL, m_position, overrideLineNumber);
 
     if (exec->hadException()) {
         reportCurrentException(exec);

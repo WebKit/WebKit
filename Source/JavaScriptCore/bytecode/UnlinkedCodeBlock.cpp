@@ -132,7 +132,7 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     visitor.append(&thisObject->m_symbolTableForConstruct);
 }
 
-FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& ownerSource, int overrideLineNo)
+FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& ownerSource, int overrideLineNumber)
 {
     SourceCode source = m_sourceOverride ? SourceCode(m_sourceOverride) : ownerSource;
     unsigned firstLine = source.firstLine() + m_firstLineOffset;
@@ -146,14 +146,14 @@ FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& o
 
     SourceCode code(source.provider(), startOffset, startOffset + m_sourceLength, firstLine, startColumn);
     FunctionExecutable* result = FunctionExecutable::create(vm, code, this, firstLine, firstLine + m_lineCount, startColumn, endColumn);
-    if (overrideLineNo != -1)
-        result->setOverrideLineNo(overrideLineNo);
+    if (overrideLineNumber != -1)
+        result->setOverrideLineNumber(overrideLineNumber);
     return result;
 }
 
 UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
     const Identifier& name, ExecState& exec, const SourceCode& source, 
-    JSObject*& exception, int overrideLineNo)
+    JSObject*& exception, int overrideLineNumber)
 {
     ParserError error;
     VM& vm = exec.vm();
@@ -165,7 +165,7 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
         globalObject.debugger()->sourceParsed(&exec, source.provider(), error.line(), error.message());
 
     if (error.isValid()) {
-        exception = error.toErrorObject(&globalObject, source, overrideLineNo);
+        exception = error.toErrorObject(&globalObject, source, overrideLineNumber);
         return nullptr;
     }
 

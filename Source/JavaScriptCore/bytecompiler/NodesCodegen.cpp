@@ -1987,7 +1987,7 @@ void WhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
     RefPtr<Label> topOfLoop = generator.newLabel();
 
-    generator.emitDebugHook(WillExecuteStatement, m_expr->lineNo(), m_expr->startOffset(), m_expr->lineStartOffset());
+    generator.emitDebugHook(WillExecuteStatement, m_expr->firstLine(), m_expr->startOffset(), m_expr->lineStartOffset());
     generator.emitNodeInConditionContext(m_expr, topOfLoop.get(), scope->breakTarget(), FallThroughMeansTrue);
 
     generator.emitLabel(topOfLoop.get());

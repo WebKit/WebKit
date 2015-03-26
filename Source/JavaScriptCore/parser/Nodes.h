@@ -126,7 +126,7 @@ namespace JSC {
     public:
         virtual ~Node() { }
 
-        int lineNo() const { return m_position.line; }
+        int firstLine() const { return m_position.line; }
         int startOffset() const { return m_position.offset; }
         int endOffset() const { return m_endOffset; }
         int lineStartOffset() const { return m_position.lineStartOffset; }
@@ -184,7 +184,6 @@ namespace JSC {
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* destination = 0) = 0;
 
         void setLoc(unsigned firstLine, unsigned lastLine, int startOffset, int lineStartOffset);
-        unsigned firstLine() const { return lineNo(); }
         unsigned lastLine() const { return m_lastLine; }
 
         StatementNode* next() { return m_next; }

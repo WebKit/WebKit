@@ -2831,7 +2831,7 @@ HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
 unsigned CodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
 {
     RELEASE_ASSERT(bytecodeOffset < instructions().size());
-    return m_ownerExecutable->lineNo() + m_unlinkedCode->lineNumberForBytecodeOffset(bytecodeOffset);
+    return m_ownerExecutable->firstLine() + m_unlinkedCode->lineNumberForBytecodeOffset(bytecodeOffset);
 }
 
 unsigned CodeBlock::columnNumberForBytecodeOffset(unsigned bytecodeOffset)
@@ -2850,7 +2850,7 @@ void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& d
     m_unlinkedCode->expressionRangeForBytecodeOffset(bytecodeOffset, divot, startOffset, endOffset, line, column);
     divot += m_sourceOffset;
     column += line ? 1 : firstLineColumnOffset();
-    line += m_ownerExecutable->lineNo();
+    line += m_ownerExecutable->firstLine();
 }
 
 bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, unsigned column)

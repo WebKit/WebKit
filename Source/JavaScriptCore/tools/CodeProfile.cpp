@@ -143,7 +143,7 @@ void CodeProfile::sample(void* pc, void** framePointer)
 
 void CodeProfile::report()
 {
-    dataLogF("<CodeProfiling %s:%d>\n", m_file.data(), m_lineNo);
+    dataLogF("<CodeProfiling %s:%d>\n", m_file.data(), m_lineNumber);
 
     // How many frames of C-code to print - 0, if not verbose, 1 if verbose, up to 1024 if very verbose.
     unsigned recursionLimit = CodeProfiling::beVeryVerbose() ? 1024 : CodeProfiling::beVerbose();
@@ -186,7 +186,7 @@ void CodeProfile::report()
     for (size_t i = 0 ; i < m_children.size(); ++i)
         m_children[i]->report();
 
-    dataLogF("</CodeProfiling %s:%d>\n", m_file.data(), m_lineNo);
+    dataLogF("</CodeProfiling %s:%d>\n", m_file.data(), m_lineNumber);
 }
 
 }

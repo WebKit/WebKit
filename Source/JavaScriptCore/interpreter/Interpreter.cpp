@@ -441,8 +441,8 @@ void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column)
     line = divotLine + lineOffset;
     column = divotColumn + (divotLine ? 1 : firstLineColumnOffset);
 
-    if (executable->hasOverrideLineNo())
-        line = executable->overrideLineNo();
+    if (executable->hasOverrideLineNumber())
+        line = executable->overrideLineNumber();
 }
 
 void StackFrame::expressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column)
@@ -496,7 +496,7 @@ public:
                     Strong<ScriptExecutable>(vm, codeBlock->ownerExecutable()),
                     Strong<UnlinkedCodeBlock>(vm, codeBlock->unlinkedCodeBlock()),
                     codeBlock->source(),
-                    codeBlock->ownerExecutable()->lineNo(),
+                    codeBlock->ownerExecutable()->firstLine(),
                     codeBlock->firstLineColumnOffset(),
                     codeBlock->sourceOffset(),
                     visitor->bytecodeOffset(),
@@ -845,7 +845,7 @@ failedJSONP:
     protoCallFrame.init(codeBlock, JSCallee::create(vm, scope->globalObject(), scope), thisObj, 1);
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->willExecute(callFrame, program->sourceURL(), program->lineNo(), program->startColumn());
+        profiler->willExecute(callFrame, program->sourceURL(), program->firstLine(), program->startColumn());
 
     // Execute the code:
     JSValue result;
@@ -857,7 +857,7 @@ failedJSONP:
     }
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->didExecute(callFrame, program->sourceURL(), program->lineNo(), program->startColumn());
+        profiler->didExecute(callFrame, program->sourceURL(), program->firstLine(), program->startColumn());
 
     return checkedReturn(result);
 }
@@ -1132,7 +1132,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     protoCallFrame.init(codeBlock, JSCallee::create(vm, scope->globalObject(), scope), thisValue, 1);
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->willExecute(callFrame, eval->sourceURL(), eval->lineNo(), eval->startColumn());
+        profiler->willExecute(callFrame, eval->sourceURL(), eval->firstLine(), eval->startColumn());
 
     // Execute the code:
     JSValue result;
@@ -1144,7 +1144,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     }
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->didExecute(callFrame, eval->sourceURL(), eval->lineNo(), eval->startColumn());
+        profiler->didExecute(callFrame, eval->sourceURL(), eval->firstLine(), eval->startColumn());
 
     return checkedReturn(result);
 }

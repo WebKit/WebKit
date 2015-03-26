@@ -37,7 +37,7 @@ class CodeProfile {
 public:
     CodeProfile(const SourceCode& source, CodeProfile* parent)
         : m_file(source.provider()->url().utf8())
-        , m_lineNo(source.firstLine())
+        , m_lineNumber(source.firstLine())
         , m_parent(parent)
     {
         if (parent)
@@ -80,7 +80,7 @@ private:
     };
 
     CString m_file;
-    unsigned m_lineNo;
+    unsigned m_lineNumber;
     CodeProfile* m_parent;
     Vector<std::unique_ptr<CodeProfile>> m_children;
     TieredMMapArray<CodeRecord> m_samples;

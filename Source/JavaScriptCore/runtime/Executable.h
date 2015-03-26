@@ -357,10 +357,10 @@ public:
     const SourceCode& source() const { return m_source; }
     intptr_t sourceID() const { return m_source.providerID(); }
     const String& sourceURL() const { return m_source.provider()->url(); }
-    int lineNo() const { return m_firstLine; }
-    void setOverrideLineNo(int overrideLineNo) { m_overrideLineNo = overrideLineNo; }
-    bool hasOverrideLineNo() const { return m_overrideLineNo != -1; }
-    int overrideLineNo() const { return m_overrideLineNo; }
+    int firstLine() const { return m_firstLine; }
+    void setOverrideLineNumber(int overrideLineNumber) { m_overrideLineNumber = overrideLineNumber; }
+    bool hasOverrideLineNumber() const { return m_overrideLineNumber != -1; }
+    int overrideLineNumber() const { return m_overrideLineNumber; }
     int lastLine() const { return m_lastLine; }
     unsigned startColumn() const { return m_startColumn; }
     unsigned endColumn() const { return m_endColumn; }
@@ -432,7 +432,7 @@ protected:
     bool m_hasCapturedVariables;
     bool m_neverInline;
     bool m_didTryToEnterInLoop;
-    int m_overrideLineNo;
+    int m_overrideLineNumber;
     int m_firstLine;
     int m_lastLine;
     unsigned m_startColumn;
@@ -555,7 +555,7 @@ public:
     }
     static FunctionExecutable* fromGlobalCode(
         const Identifier& name, ExecState&, const SourceCode&, 
-        JSObject*& exception, int overrideLineNo);
+        JSObject*& exception, int overrideLineNumber);
 
     static void destroy(JSCell*);
         

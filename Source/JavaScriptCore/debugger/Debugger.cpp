@@ -270,7 +270,7 @@ void Debugger::toggleBreakpoint(CodeBlock* codeBlock, Breakpoint& breakpoint, Br
     unsigned line = breakpoint.line;
     unsigned column = breakpoint.column;
 
-    unsigned startLine = executable->lineNo();
+    unsigned startLine = executable->firstLine();
     unsigned startColumn = executable->startColumn();
     unsigned endLine = executable->lastLine();
     unsigned endColumn = executable->endColumn();
