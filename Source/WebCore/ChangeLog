@@ -1,3 +1,27 @@
+2015-03-25  David Hyatt  <hyatt@apple.com>
+
+        Improve the offsetWidth/Height layout optimization
+        https://bugs.webkit.org/show_bug.cgi?id=143008
+
+        Reviewed by Zalan Bujtas.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayoutIfDimensionsOutOfDate):
+        * dom/Document.h:
+        Change Element* to Element&. Clean up the dimension bits to use shifting. Remove both the inline and
+        the positioning restrictions on the optimization check.
+
+        * dom/Element.cpp:
+        (WebCore::Element::offsetWidth):
+        (WebCore::Element::offsetHeight):
+        Change to use Element& instead of Element*.
+
+        (WebCore::Element::clientWidth):
+        (WebCore::Element::clientHeight):
+        (WebCore::Element::scrollWidth):
+        (WebCore::Element::scrollHeight):
+        Turn on the optimization for clientWidth/Height and scrollWidth/Height.
+
 2015-03-26  Brady Eidson  <beidson@apple.com>
 
         Apply ContentExtension actions after redirects.
