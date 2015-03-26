@@ -1,5 +1,12 @@
 2015-03-25  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, VC found a bug. This fixes the bug.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
+2015-03-25  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, try to fix Windows build.
 
         * runtime/ClonedArguments.cpp:

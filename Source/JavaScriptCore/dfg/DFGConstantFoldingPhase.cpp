@@ -220,10 +220,10 @@ private:
                 // GetMyArgumentByVal in such statically-out-of-bounds accesses; we just lose CFA unless
                 // GCSE removes the access entirely.
                 if (inlineCallFrame) {
-                    if (index.isUInt32() >= inlineCallFrame->arguments.size() - 1)
+                    if (index.asUInt32() >= inlineCallFrame->arguments.size() - 1)
                         break;
                 } else {
-                    if (index.isUInt32() >= m_state.variables().numberOfArguments() - 1)
+                    if (index.asUInt32() >= m_state.variables().numberOfArguments() - 1)
                         break;
                 }
                 
