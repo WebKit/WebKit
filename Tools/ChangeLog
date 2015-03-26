@@ -1,3 +1,13 @@
+2015-03-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [jhbuild] git should use only 1 thread for cloning jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=143095
+
+        Reviewed by Gyuyoung Kim.
+
+        * jhbuild/jhbuild-wrapper:
+        (clone_jhbuild):
+
 2015-03-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Update prepare-ChangeLog to work with ES6 Class syntax
