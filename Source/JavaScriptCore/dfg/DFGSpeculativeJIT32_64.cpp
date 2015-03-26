@@ -747,6 +747,10 @@ void SpeculativeJIT::emitCall(Node* node)
         
         DFG_ASSERT(m_jit.graph(), node, isFlushed());
         
+        // We don't need the arguments array anymore.
+        if (isVarargs)
+            use(node->child2());
+
         // Now set up the "this" argument.
         JSValueOperand thisArgument(this, node->child3());
         GPRReg thisArgumentTagGPR = thisArgument.tagGPR();
