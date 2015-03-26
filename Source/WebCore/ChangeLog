@@ -1,3 +1,19 @@
+2015-03-26  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r182014.
+
+    2015-03-26  Jer Noble  <jer.noble@apple.com>
+
+            [Mac][EME] Crash at com.apple.WebCore: WebCore::CDMSessionMediaSourceAVFObjC::releaseKeys + 177
+            https://bugs.webkit.org/show_bug.cgi?id=143080
+
+            Reviewed by Eric Carlson.
+
+            Null-check m_certificate before dereferencing.
+
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+            (WebCore::CDMSessionMediaSourceAVFObjC::releaseKeys):
+
 2015-03-16  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r181587.
