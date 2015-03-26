@@ -320,6 +320,8 @@ def parse_args(args):
             help=("The name of an additional subversion or git checkout")),
         optparse.make_option("--additional-repository-path",
             help=("The path to an additional subversion or git checkout (requires --additional-repository-name)")),
+        optparse.make_option("--allowed-host", type="string", action="append", default=[],
+            help=("If specified, tests are allowed to make requests to the specified hostname."))
     ]))
 
     option_parser = optparse.OptionParser()

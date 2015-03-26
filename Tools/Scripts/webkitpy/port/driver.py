@@ -370,6 +370,10 @@ class Driver(object):
         if self._no_timeout:
             cmd.append('--no-timeout')
 
+        for allowed_host in self._port.allowed_hosts():
+            cmd.append('--allowed-host')
+            cmd.append(allowed_host)
+
         cmd.extend(self._port.get_option('additional_drt_flag', []))
         cmd.extend(self._port.additional_drt_flag())
 

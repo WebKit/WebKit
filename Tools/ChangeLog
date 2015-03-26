@@ -1,5 +1,28 @@
 2015-03-26  Jer Noble  <jer.noble@apple.com>
 
+        Add --allowed-host support to run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=142938
+
+        Reviewed by Brent Fulgham.
+
+        Accept --allowed-host arguments from run-webkit-tests and pass them through to
+        DumpRenderTree and WebKitTestRunner.
+
+        Drive-by fix: Depending on the value of the --layout-test-dir parameter, layout test results
+        are placed in the wrong location. The argument is compared with each tests's path, and if a
+        relative path or a path with '..' was used, results are placed alongside the test. Take the
+        absolute path of the --layout-test-dir argument, collapsing path components like '..'.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__):
+        (Port.allowed_hosts):
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.cmd_line):
+
+2015-03-26  Jer Noble  <jer.noble@apple.com>
+
         [Mac] Add an --allowed-host argument to DRT and WKTR to allow tests to connect to non-localhost servers
         https://bugs.webkit.org/show_bug.cgi?id=142931
 

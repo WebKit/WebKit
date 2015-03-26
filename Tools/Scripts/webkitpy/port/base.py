@@ -138,7 +138,7 @@ class Port(object):
         self._results_directory = None
         self._root_was_set = hasattr(options, 'root') and options.root
         self._jhbuild_wrapper = []
-        self._layout_tests_dir = hasattr(options, 'layout_tests_dir') and options.layout_tests_dir
+        self._layout_tests_dir = hasattr(options, 'layout_tests_dir') and options.layout_tests_dir and self._filesystem.abspath(options.layout_tests_dir)
 
     def architecture(self):
         return self.get_option('architecture')
@@ -1047,6 +1047,8 @@ class Port(object):
             repository_paths += [(self._options.additional_repository_name, self._options.additional_repository_path)]
         return repository_paths
 
+    def allowed_hosts(self):
+        return self.get_option("allowed_host", [])
 
     def default_configuration(self):
         return self._config.default_configuration()
