@@ -2162,7 +2162,7 @@ private:
             LValue arguments = lowCell(m_node->child1());
             speculate(
                 ExoticObjectMode, noValue(), nullptr,
-                m_out.notZero8(m_out.loadPtr(arguments, m_heaps.ScopedArguments_overrodeThings)));
+                m_out.notZero8(m_out.load8(arguments, m_heaps.ScopedArguments_overrodeThings)));
             setInt32(m_out.load32NonNegative(arguments, m_heaps.ScopedArguments_totalLength));
             return;
         }
