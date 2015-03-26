@@ -1,3 +1,18 @@
+2015-03-25  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: table cells that use display:block render the table inaccessible to VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=143007
+
+        Reviewed by Mario Sanchez Prada.
+
+        When display:block is used on a table cell, it was being ignored because it was anonymous.
+        This is still a valid scenario however if it's still inside of a valid table.
+
+        Test: accessibility/table-cell-display-block.html
+
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::computeAccessibilityIsIgnored):
+
 2015-03-25  Tim Horton  <timothy_horton@apple.com>
 
         Add a preference to prevent "user-scalable=no" from having any effect

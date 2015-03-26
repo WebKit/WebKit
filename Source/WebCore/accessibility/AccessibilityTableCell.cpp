@@ -64,8 +64,10 @@ bool AccessibilityTableCell::computeAccessibilityIsIgnored() const
     if (decision == IgnoreObject)
         return true;
     
-    // Ignore anonymous table cells.
-    if (!node())
+    // Ignore anonymous table cells as long as they're not in a table (ie. when display:table is used).
+    RenderObject* renderTable = is<RenderTableCell>(m_renderer) ? downcast<RenderTableCell>(*m_renderer).table() : nullptr;
+    bool inTable = renderTable && renderTable->node() && (renderTable->node()->hasTagName(tableTag) || nodeHasRole(renderTable->node(), "grid"));
+    if (!node() && !inTable)
         return true;
         
     if (!isTableCell())

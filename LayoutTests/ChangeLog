@@ -1,3 +1,13 @@
+2015-03-25  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: table cells that use display:block render the table inaccessible to VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=143007
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/table-cell-display-block-expected.txt: Added.
+        * accessibility/table-cell-display-block.html: Added.
+
 2015-03-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add a few more tests for Class names
