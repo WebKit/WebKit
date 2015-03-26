@@ -1,3 +1,25 @@
+2015-03-26  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: [role="button"][aria-pressed] should be exposed as AXCheckbox:AXToggleButton, with role description of "toggle button"
+        https://bugs.webkit.org/show_bug.cgi?id=115298
+
+        Reviewed by Mario Sanchez Prada.
+
+        A role=button + aria-pressed object should be exposed as AXCheckbox on Mac now. It should also convert the
+        aria-pressed state into a 0, 1, 2 number value for the Mac.
+
+        Test: platform/mac/accessibility/aria-pressed-button-attributes.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::checkboxOrRadioValue):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isToggleButton):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (createAccessibilityRoleMap):
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2015-03-25  Dean Jackson  <dino@apple.com>
 
         CSS blend modes do not parse when in the shadow tree

@@ -502,6 +502,7 @@ public:
     virtual bool isMockObject() const { return false; }
     virtual bool isMediaControlLabel() const { return false; }
     bool isSwitch() const { return roleValue() == SwitchRole; }
+    bool isToggleButton() const { return roleValue() == ToggleButtonRole; }
     bool isTextControl() const;
     bool isARIATextControl() const;
     bool isTabList() const { return roleValue() == TabListRole; }
@@ -599,7 +600,7 @@ public:
     virtual bool supportsARIAControls() const { return false; }
     virtual void ariaControlsElements(AccessibilityChildrenVector&) const { }
     virtual bool ariaHasPopup() const { return false; }
-    virtual bool ariaPressedIsPresent() const;
+    bool ariaPressedIsPresent() const;
     bool ariaIsMultiline() const;
     String invalidStatus() const;
     bool supportsARIAExpanded() const;

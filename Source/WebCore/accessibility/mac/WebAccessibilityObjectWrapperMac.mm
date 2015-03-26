@@ -1191,6 +1191,9 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     if (m_object->supportsARIAOwns())
         [additional addObject:NSAccessibilityOwnsAttribute];
     
+    if (m_object->isToggleButton())
+        [additional addObject:NSAccessibilityValueAttribute];
+    
     if (m_object->supportsARIAExpanded())
         [additional addObject:NSAccessibilityExpandedAttribute];
     
@@ -1944,7 +1947,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { FormRole, NSAccessibilityGroupRole },
         { SpinButtonRole, NSAccessibilityIncrementorRole },
         { FooterRole, NSAccessibilityGroupRole },
-        { ToggleButtonRole, NSAccessibilityButtonRole },
+        { ToggleButtonRole, NSAccessibilityCheckBoxRole },
         { CanvasRole, NSAccessibilityImageRole },
         { SVGRootRole, NSAccessibilityGroupRole },
         { LegendRole, NSAccessibilityGroupRole },
@@ -1998,13 +2001,15 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     if (m_object->isAttachment()) {
         NSView* attachView = [self attachmentView];
-        if ([[attachView accessibilityAttributeNames] containsObject:NSAccessibilitySubroleAttribute]) {
+        if ([[attachView accessibilityAttributeNames] containsObject:NSAccessibilitySubroleAttribute])
             return [attachView accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
-        }
     }
     
-    if (m_object->roleValue() == HorizontalRuleRole)
+    AccessibilityRole role = m_object->roleValue();
+    if (role == HorizontalRuleRole)
         return NSAccessibilityContentSeparatorSubrole;
+    if (role == ToggleButtonRole)
+        return NSAccessibilityToggleSubrole;
     
     if (is<AccessibilitySpinButtonPart>(*m_object)) {
         if (downcast<AccessibilitySpinButtonPart>(*m_object).isIncrementor())
@@ -2029,7 +2034,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     }
     
     // ARIA content subroles.
-    switch (m_object->roleValue()) {
+    switch (role) {
         case LandmarkApplicationRole:
             return @"AXLandmarkApplication";
         case LandmarkBannerRole:
@@ -2085,7 +2090,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             break;
     }
     
-    if (m_object->roleValue() == MathElementRole) {
+    if (role == MathElementRole) {
         if (m_object->isMathFraction())
             return @"AXMathFraction";
         if (m_object->isMathFenced())
@@ -2122,9 +2127,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXMathMultiscript";
     }
     
-    if (m_object->roleValue() == VideoRole)
+    if (role == VideoRole)
         return @"AXVideo";
-    if (m_object->roleValue() == AudioRole)
+    if (role == AudioRole)
         return @"AXAudio";
     
     if (m_object->isMediaTimeline())
@@ -2449,7 +2454,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if (m_object->isHeading())
             return [NSNumber numberWithInt:m_object->headingLevel()];
         
-        if (m_object->isCheckboxOrRadio() || m_object->isMenuItem() || m_object->isSwitch()) {
+        if (m_object->isCheckboxOrRadio() || m_object->isMenuItem() || m_object->isSwitch() || m_object->isToggleButton()) {
             switch (m_object->checkboxOrRadioValue()) {
                 case ButtonStateOff:
                     return [NSNumber numberWithInt:0];

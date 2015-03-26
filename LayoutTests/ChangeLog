@@ -1,3 +1,17 @@
+2015-03-26  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: [role="button"][aria-pressed] should be exposed as AXCheckbox:AXToggleButton, with role description of "toggle button"
+        https://bugs.webkit.org/show_bug.cgi?id=115298
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/aria-toggle-button-with-title.html:
+             Bad path for post test resources file, so that is fixed.
+        * platform/mac/accessibility/aria-pressed-button-attributes-expected.txt: Added.
+        * platform/mac/accessibility/aria-pressed-button-attributes.html: Added.
+        * platform/mac/accessibility/aria-toggle-button-with-title-expected.txt:
+              Updated to reflect the new role of this object.
+
 2015-03-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening, skip failing tests on AArch64 Linux.
