@@ -1,3 +1,10 @@
+2015-03-25  Alexey Proskuryakov  <ap@apple.com>
+
+        media/track/track-mode.html flakily times out
+        https://bugs.webkit.org/show_bug.cgi?id=143085
+
+        * TestExpectations: Added an expectation.
+
 2015-03-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: table cells that use display:block render the table inaccessible to VoiceOver
