@@ -49,14 +49,14 @@ Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, RefPtr<W
 {
 }
 
-Entry::Entry(const Storage::Entry& storageEntry)
+Entry::Entry(const Storage::Record& storageEntry)
     : m_key(storageEntry.key)
     , m_timeStamp(storageEntry.timeStamp)
-    , m_sourceStorageEntry(storageEntry)
+    , m_sourceStorageRecord(storageEntry)
 {
 }
 
-Storage::Entry Entry::encode() const
+Storage::Record Entry::encodeAsStorageRecord() const
 {
     Encoder encoder;
     encoder << m_response;
@@ -76,7 +76,7 @@ Storage::Entry Entry::encode() const
     return { m_key, m_timeStamp, header, body };
 }
 
-std::unique_ptr<Entry> Entry::decode(const Storage::Entry& storageEntry)
+std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storageEntry)
 {
     std::unique_ptr<Entry> entry(new Entry(storageEntry));
 
@@ -102,13 +102,13 @@ std::unique_ptr<Entry> Entry::decode(const Storage::Entry& storageEntry)
     return entry;
 }
 
-void Entry::initializeBufferFromStorageEntry() const
+void Entry::initializeBufferFromStorageRecord() const
 {
-    auto* data = m_sourceStorageEntry.body.data();
-    size_t size = m_sourceStorageEntry.body.size();
+    auto* data = m_sourceStorageRecord.body.data();
+    size_t size = m_sourceStorageRecord.body.size();
 #if ENABLE(SHAREABLE_RESOURCE)
-    RefPtr<SharedMemory> sharedMemory = m_sourceStorageEntry.body.isMap() ? SharedMemory::createFromVMBuffer(const_cast<uint8_t*>(data), size) : nullptr;
-    RefPtr<ShareableResource> shareableResource = sharedMemory ? ShareableResource::create(sharedMemory.release(), 0, m_sourceStorageEntry.body.size()) : nullptr;
+    RefPtr<SharedMemory> sharedMemory = m_sourceStorageRecord.body.isMap() ? SharedMemory::createFromVMBuffer(const_cast<uint8_t*>(data), size) : nullptr;
+    RefPtr<ShareableResource> shareableResource = sharedMemory ? ShareableResource::create(sharedMemory.release(), 0, m_sourceStorageRecord.body.size()) : nullptr;
 
     if (shareableResource && shareableResource->createHandle(m_shareableResourceHandle))
         m_buffer = m_shareableResourceHandle.tryWrapInSharedBuffer();
@@ -120,7 +120,7 @@ void Entry::initializeBufferFromStorageEntry() const
 WebCore::SharedBuffer* Entry::buffer() const
 {
     if (!m_buffer)
-        initializeBufferFromStorageEntry();
+        initializeBufferFromStorageRecord();
 
     return m_buffer.get();
 }
@@ -128,7 +128,7 @@ WebCore::SharedBuffer* Entry::buffer() const
 ShareableResource::Handle& Entry::shareableResourceHandle() const
 {
     if (!m_buffer)
-        initializeBufferFromStorageEntry();
+        initializeBufferFromStorageRecord();
 
     return m_shareableResourceHandle;
 }

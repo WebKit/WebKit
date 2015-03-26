@@ -47,8 +47,8 @@ class Entry {
 public:
     Entry(const Key&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&, const Vector<std::pair<String, String>>& varyingRequestHeaders);
 
-    Storage::Entry encode() const;
-    static std::unique_ptr<Entry> decode(const Storage::Entry&);
+    Storage::Record encodeAsStorageRecord() const;
+    static std::unique_ptr<Entry> decodeStorageRecord(const Storage::Record&);
 
     const Key& key() const { return m_key; }
     std::chrono::milliseconds timeStamp() const { return m_timeStamp; }
@@ -63,13 +63,13 @@ public:
     bool needsValidation() const;
     void setNeedsValidation();
 
-    const Storage::Entry& sourceStorageEntry() const { return m_sourceStorageEntry; }
+    const Storage::Record& sourceStorageRecord() const { return m_sourceStorageRecord; }
 
     void asJSON(StringBuilder&) const;
 
 private:
-    Entry(const Storage::Entry&);
-    void initializeBufferFromStorageEntry() const;
+    Entry(const Storage::Record&);
+    void initializeBufferFromStorageRecord() const;
 
     Key m_key;
     std::chrono::milliseconds m_timeStamp;
@@ -81,7 +81,7 @@ private:
     mutable ShareableResource::Handle m_shareableResourceHandle;
 #endif
 
-    Storage::Entry m_sourceStorageEntry { };
+    Storage::Record m_sourceStorageRecord { };
 };
 
 }

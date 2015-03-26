@@ -1,3 +1,54 @@
+2015-03-26  Antti Koivisto  <antti@apple.com>
+
+        Rename Storage::Entry to Storage::Record
+        https://bugs.webkit.org/show_bug.cgi?id=143101
+
+        Reviewed by Chris Dumez.
+
+        Lets have just one type called Entry in the cache code.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        (WebKit::NetworkCache::Cache::store):
+        (WebKit::NetworkCache::Cache::update):
+        (WebKit::NetworkCache::Cache::traverse):
+        (WebKit::NetworkCache::Cache::dumpContentsToFile):
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::Entry):
+        (WebKit::NetworkCache::Entry::encodeAsStorageRecord):
+        (WebKit::NetworkCache::Entry::decodeStorageRecord):
+        (WebKit::NetworkCache::Entry::initializeBufferFromStorageRecord):
+        (WebKit::NetworkCache::Entry::buffer):
+        (WebKit::NetworkCache::Entry::shareableResourceHandle):
+        (WebKit::NetworkCache::Entry::encode): Deleted.
+        (WebKit::NetworkCache::Entry::decode): Deleted.
+        (WebKit::NetworkCache::Entry::initializeBufferFromStorageEntry): Deleted.
+        * NetworkProcess/cache/NetworkCacheEntry.h:
+        (WebKit::NetworkCache::Entry::sourceStorageRecord):
+        (WebKit::NetworkCache::Entry::sourceStorageEntry): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::RecordMetaData::RecordMetaData):
+        (WebKit::NetworkCache::decodeRecordMetaData):
+        (WebKit::NetworkCache::decodeRecordHeader):
+        (WebKit::NetworkCache::decodeRecord):
+        (WebKit::NetworkCache::encodeRecordMetaData):
+        (WebKit::NetworkCache::encodeRecordHeader):
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::retrieveFromMemory):
+        (WebKit::NetworkCache::Storage::store):
+        (WebKit::NetworkCache::Storage::update):
+        (WebKit::NetworkCache::Storage::traverse):
+        (WebKit::NetworkCache::Storage::dispatchPendingWriteOperations):
+        (WebKit::NetworkCache::Storage::dispatchFullWriteOperation):
+        (WebKit::NetworkCache::Storage::dispatchHeaderWriteOperation):
+        (WebKit::NetworkCache::EntryMetaData::EntryMetaData): Deleted.
+        (WebKit::NetworkCache::decodeEntryMetaData): Deleted.
+        (WebKit::NetworkCache::decodeEntryHeader): Deleted.
+        (WebKit::NetworkCache::decodeEntry): Deleted.
+        (WebKit::NetworkCache::encodeEntryMetaData): Deleted.
+        (WebKit::NetworkCache::encodeEntryHeader): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2015-03-26  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Let the compiler generate the NetworkCache::Key move constructor

@@ -226,8 +226,8 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t w
     auto startTime = std::chrono::system_clock::now();
     unsigned priority = originalRequest.priority();
 
-    m_storage->retrieve(storageKey, priority, [this, originalRequest, completionHandler, startTime, storageKey, webPageID](std::unique_ptr<Storage::Entry> storageEntry) {
-        if (!storageEntry) {
+    m_storage->retrieve(storageKey, priority, [this, originalRequest, completionHandler, startTime, storageKey, webPageID](std::unique_ptr<Storage::Record> record) {
+        if (!record) {
             LOG(NetworkCache, "(NetworkProcess) not found in storage");
 
             if (m_statistics)
@@ -237,26 +237,26 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t w
             return false;
         }
 
-        ASSERT(storageEntry->key == storageKey);
+        ASSERT(record->key == storageKey);
 
-        auto cacheEntry = Entry::decode(*storageEntry);
+        auto entry = Entry::decodeStorageRecord(*record);
 
-        auto useDecision = cacheEntry ? canUse(*cacheEntry, originalRequest) : UseDecision::NoDueToDecodeFailure;
+        auto useDecision = entry ? canUse(*entry, originalRequest) : UseDecision::NoDueToDecodeFailure;
         switch (useDecision) {
         case UseDecision::Use:
             break;
         case UseDecision::Validate:
-            cacheEntry->setNeedsValidation();
+            entry->setNeedsValidation();
             break;
         default:
-            cacheEntry = nullptr;
+            entry = nullptr;
         };
 
 #if !LOG_DISABLED
         auto elapsedMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count();
-#endif
         LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%u time=%lldms", useDecision, originalRequest.priority(), elapsedMS);
-        completionHandler(WTF::move(cacheEntry));
+#endif
+        completionHandler(WTF::move(entry));
 
         if (m_statistics)
             m_statistics->recordRetrievedCachedEntry(webPageID, storageKey, originalRequest, useDecision);
@@ -315,9 +315,9 @@ void Cache::store(const WebCore::ResourceRequest& originalRequest, const WebCore
 
     Entry cacheEntry(makeCacheKey(originalRequest), response, WTF::move(responseData), collectVaryingRequestHeaders(originalRequest, response));
 
-    auto storageEntry = cacheEntry.encode();
+    auto record = cacheEntry.encodeAsStorageRecord();
 
-    m_storage->store(storageEntry, [completionHandler](bool success, const Data& bodyData) {
+    m_storage->store(record, [completionHandler](bool success, const Data& bodyData) {
         MappedBody mappedBody;
 #if ENABLE(SHAREABLE_RESOURCE)
         if (bodyData.isMap()) {
@@ -341,9 +341,9 @@ void Cache::update(const WebCore::ResourceRequest& originalRequest, const Entry&
 
     Entry updateEntry(existingEntry.key(), response, existingEntry.buffer(), collectVaryingRequestHeaders(originalRequest, response));
 
-    auto updateStorageEntry = updateEntry.encode();
+    auto updateRecord = updateEntry.encodeAsStorageRecord();
 
-    m_storage->update(updateStorageEntry, existingEntry.sourceStorageEntry(), [](bool success, const Data&) {
+    m_storage->update(updateRecord, existingEntry.sourceStorageRecord(), [](bool success, const Data&) {
         LOG(NetworkCache, "(NetworkProcess) updated, success=%d", success);
     });
 }
@@ -359,17 +359,17 @@ void Cache::traverse(std::function<void (const Entry*)>&& traverseHandler)
 {
     ASSERT(isEnabled());
 
-    m_storage->traverse([traverseHandler](const Storage::Entry* storageEntry) {
-        if (!storageEntry) {
+    m_storage->traverse([traverseHandler](const Storage::Record* record) {
+        if (!record) {
             traverseHandler(nullptr);
             return;
         }
 
-        auto cacheEntry = Entry::decode(*storageEntry);
-        if (!cacheEntry)
+        auto entry = Entry::decodeStorageRecord(*record);
+        if (!entry)
             return;
 
-        traverseHandler(cacheEntry.get());
+        traverseHandler(entry.get());
     });
 }
 
@@ -386,18 +386,18 @@ void Cache::dumpContentsToFile()
     if (!dumpFileHandle)
         return;
     WebCore::writeToFile(dumpFileHandle, "[\n", 2);
-    m_storage->traverse([dumpFileHandle](const Storage::Entry* entry) {
-        if (!entry) {
+    m_storage->traverse([dumpFileHandle](const Storage::Record* record) {
+        if (!record) {
             WebCore::writeToFile(dumpFileHandle, "{}\n]\n", 5);
             auto handle = dumpFileHandle;
             WebCore::closeFile(handle);
             return;
         }
-        auto cacheEntry = Entry::decode(*entry);
-        if (!cacheEntry)
+        auto entry = Entry::decodeStorageRecord(*record);
+        if (!entry)
             return;
         StringBuilder json;
-        cacheEntry->asJSON(json);
+        entry->asJSON(json);
         json.append(",\n");
         auto writeData = json.toString().utf8();
         WebCore::writeToFile(dumpFileHandle, writeData.data(), writeData.length());

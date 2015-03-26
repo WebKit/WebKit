@@ -47,24 +47,24 @@ class Storage {
 public:
     static std::unique_ptr<Storage> open(const String& cachePath);
 
-    struct Entry {
+    struct Record {
         Key key;
         std::chrono::milliseconds timeStamp;
         Data header;
         Data body;
     };
     // This may call completion handler synchronously on failure.
-    typedef std::function<bool (std::unique_ptr<Entry>)> RetrieveCompletionHandler;
+    typedef std::function<bool (std::unique_ptr<Record>)> RetrieveCompletionHandler;
     void retrieve(const Key&, unsigned priority, RetrieveCompletionHandler&&);
 
     typedef std::function<void (bool success, const Data& mappedBody)> StoreCompletionHandler;
-    void store(const Entry&, StoreCompletionHandler&&);
-    void update(const Entry& updateEntry, const Entry& existingEntry, StoreCompletionHandler&&);
+    void store(const Record&, StoreCompletionHandler&&);
+    void update(const Record& updateRecord, const Record& existingRecord, StoreCompletionHandler&&);
 
     void remove(const Key&);
 
     // Null entry signals end.
-    void traverse(std::function<void (const Entry*)>&&);
+    void traverse(std::function<void (const Record*)>&&);
 
     void setMaximumSize(size_t);
     void clear();
@@ -89,8 +89,8 @@ private:
     void dispatchPendingReadOperations();
 
     struct WriteOperation {
-        Entry entry;
-        Optional<Entry> existingEntry;
+        Record record;
+        Optional<Record> existingRecord;
         StoreCompletionHandler completionHandler;
     };
     void dispatchFullWriteOperation(const WriteOperation&);
