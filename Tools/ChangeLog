@@ -1,3 +1,18 @@
+2015-03-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Use JITCompilationCanFail in more places, and make the fail path of JITCompilationMustSucceed a crash instead of attempting GC
+        https://bugs.webkit.org/show_bug.cgi?id=142993
+
+        Reviewed by Mark Lam.
+        
+        Bunch of support for testing executable allocation failure.
+
+        * Scripts/jsc-stress-test-helpers/js-executable-allocation-fuzz: Added.
+        (fail):
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        * Scripts/run-jsc-stress-tests:
+
 2015-03-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix Windows build from r181977.

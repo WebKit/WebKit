@@ -598,6 +598,7 @@
     <ClCompile Include="..\jit\ArityCheckFailReturnThunks.cpp" />
     <ClCompile Include="..\jit\AssemblyHelpers.cpp" />
     <ClCompile Include="..\jit\BinarySwitch.cpp" />
+    <ClCompile Include="..\jit\ExecutableAllocationFuzz.cpp" />
     <ClCompile Include="..\jit\ExecutableAllocator.cpp" />
     <ClCompile Include="..\jit\ExecutableAllocatorFixedVMPool.cpp" />
     <ClCompile Include="..\jit\GCAwareJITStubRoutine.cpp" />
@@ -1340,6 +1341,7 @@
     <ClInclude Include="..\jit\BinarySwitch.h" />
     <ClInclude Include="..\jit\CCallHelpers.h" />
     <ClInclude Include="..\jit\CompactJITCodeMap.h" />
+    <ClInclude Include="..\jit\ExecutableAllocationFuzz.h" />
     <ClInclude Include="..\jit\ExecutableAllocator.h" />
     <ClInclude Include="..\jit\FPRInfo.h" />
     <ClInclude Include="..\jit\GCAwareJITStubRoutine.h" />

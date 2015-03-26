@@ -293,7 +293,7 @@ static FunctionPtr customFor(const PutPropertySlot& slot)
     return FunctionPtr(slot.customSetter());
 }
 
-static void generateByIdStub(
+static bool generateByIdStub(
     ExecState* exec, ByIdStubKind kind, const Identifier& propertyName,
     FunctionPtr custom, StructureStubInfo& stubInfo, StructureChain* chain, size_t count,
     PropertyOffset offset, Structure* structure, bool loadTargetFromProxy, WatchpointSet* watchpointSet,
@@ -574,7 +574,9 @@ static void generateByIdStub(
     }
     emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);
     
-    LinkBuffer patchBuffer(*vm, stubJit, exec->codeBlock());
+    LinkBuffer patchBuffer(*vm, stubJit, exec->codeBlock(), JITCompilationCanFail);
+    if (patchBuffer.didFailToAllocate())
+        return false;
     
     linkRestoreScratch(patchBuffer, needToRestoreScratch, success, fail, failureCases, successLabel, slowCaseLabel);
     if (kind == CallCustomGetter || kind == CallCustomSetter) {
@@ -601,6 +603,8 @@ static void generateByIdStub(
         stubRoutine = adoptRef(new AccessorCallJITStubRoutine(code, *vm, WTF::move(callLinkInfo)));
     else
         stubRoutine = createJITStubRoutine(code, *vm, codeBlock->ownerExecutable(), true);
+    
+    return true;
 }
 
 enum InlineCacheAction {
@@ -687,7 +691,9 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
 
             emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);
             
-            LinkBuffer patchBuffer(*vm, stubJit, codeBlock);
+            LinkBuffer patchBuffer(*vm, stubJit, codeBlock, JITCompilationCanFail);
+            if (patchBuffer.didFailToAllocate())
+                return GiveUpOnCache;
 
             linkRestoreScratch(patchBuffer, needToRestoreScratch, stubInfo, success, fail, failureCases);
 
@@ -717,8 +723,10 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
 
         MacroAssembler::Jump success = stubJit.jump();
 
-        LinkBuffer patchBuffer(*vm, stubJit, codeBlock);
-
+        LinkBuffer patchBuffer(*vm, stubJit, codeBlock, JITCompilationCanFail);
+        if (patchBuffer.didFailToAllocate())
+            return GiveUpOnCache;
+        
         patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone));
         patchBuffer.link(failure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase));
 
@@ -844,11 +852,13 @@ static InlineCacheAction tryBuildGetByIDList(ExecState* exec, JSValue baseValue,
     }
     
     RefPtr<JITStubRoutine> stubRoutine;
-    generateByIdStub(
+    bool result = generateByIdStub(
         exec, kindFor(slot), ident, customFor(slot), stubInfo, prototypeChain, count, offset, 
         structure, loadTargetFromProxy, slot.watchpointSet(), 
         stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
         CodeLocationLabel(list->currentSlowPathTarget(stubInfo)), stubRoutine);
+    if (!result)
+        return GiveUpOnCache;
     
     GetByIdAccess::AccessType accessType;
     if (slot.isCacheableValue())
@@ -901,7 +911,7 @@ static V_JITOperation_ESsiJJI appropriateListBuildingPutByIdFunction(const PutPr
     return operationPutByIdNonStrictBuildList;
 }
 
-static void emitPutReplaceStub(
+static bool emitPutReplaceStub(
     ExecState* exec,
     const Identifier&,
     const PutPropertySlot& slot,
@@ -968,7 +978,10 @@ static void emitPutReplaceStub(
         failure = badStructure;
     }
     
-    LinkBuffer patchBuffer(*vm, stubJit, exec->codeBlock());
+    LinkBuffer patchBuffer(*vm, stubJit, exec->codeBlock(), JITCompilationCanFail);
+    if (patchBuffer.didFailToAllocate())
+        return false;
+    
     patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone));
     patchBuffer.link(failure, failureLabel);
             
@@ -977,6 +990,8 @@ static void emitPutReplaceStub(
         ("PutById replace stub for %s, return point %p",
             toCString(*exec->codeBlock()).data(), stubInfo.callReturnLocation.labelAtOffset(
                 stubInfo.patch.deltaCallToDone).executableAddress()));
+    
+    return true;
 }
 
 static Structure* emitPutTransitionStubAndGetOldStructure(ExecState* exec, VM* vm, Structure*& structure, const Identifier& ident, 
@@ -1213,7 +1228,10 @@ static Structure* emitPutTransitionStubAndGetOldStructure(ExecState* exec, VM* v
         successInSlowPath = stubJit.jump();
     }
     
-    LinkBuffer patchBuffer(*vm, stubJit, exec->codeBlock());
+    LinkBuffer patchBuffer(*vm, stubJit, exec->codeBlock(), JITCompilationCanFail);
+    if (patchBuffer.didFailToAllocate())
+        return nullptr;
+    
     patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone));
     if (allocator.didReuseRegisters())
         patchBuffer.link(failure, failureLabel);
@@ -1308,13 +1326,15 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
         PolymorphicPutByIdList* list;
         list = PolymorphicPutByIdList::from(putKind, stubInfo);
 
-        generateByIdStub(
+        bool result = generateByIdStub(
             exec, kindFor(slot), ident, customFor(slot), stubInfo, prototypeChain, count,
             offset, structure, false, nullptr,
             stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
             stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase),
             stubRoutine);
-
+        if (!result)
+            return GiveUpOnCache;
+        
         list->addAccess(PutByIdAccess::setter(
             *vm, codeBlock->ownerExecutable(),
             slot.isCacheableSetter() ? PutByIdAccess::Setter : PutByIdAccess::CustomSetter,
@@ -1383,10 +1403,12 @@ static InlineCacheAction tryBuildPutByIdList(ExecState* exec, JSValue baseValue,
             structure->didCachePropertyReplacement(*vm, slot.cachedOffset());
             
             // We're now committed to creating the stub. Mogrify the meta-data accordingly.
-            emitPutReplaceStub(
+            bool result = emitPutReplaceStub(
                 exec, propertyName, slot, stubInfo, 
                 structure, CodeLocationLabel(list->currentSlowPathTarget()), stubRoutine);
-
+            if (!result)
+                return GiveUpOnCache;
+            
             list->addAccess(
                 PutByIdAccess::replace(
                     *vm, codeBlock->ownerExecutable(),
@@ -1416,13 +1438,15 @@ static InlineCacheAction tryBuildPutByIdList(ExecState* exec, JSValue baseValue,
         PolymorphicPutByIdList* list;
         list = PolymorphicPutByIdList::from(putKind, stubInfo);
 
-        generateByIdStub(
+        bool result = generateByIdStub(
             exec, kindFor(slot), propertyName, customFor(slot), stubInfo, prototypeChain, count,
             offset, structure, false, nullptr,
             stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
             CodeLocationLabel(list->currentSlowPathTarget()),
             stubRoutine);
-
+        if (!result)
+            return GiveUpOnCache;
+        
         list->addAccess(PutByIdAccess::setter(
             *vm, codeBlock->ownerExecutable(),
             slot.isCacheableSetter() ? PutByIdAccess::Setter : PutByIdAccess::CustomSetter,
@@ -1548,8 +1572,10 @@ static InlineCacheAction tryRepatchIn(
         
         emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);
         
-        LinkBuffer patchBuffer(*vm, stubJit, exec->codeBlock());
-
+        LinkBuffer patchBuffer(*vm, stubJit, exec->codeBlock(), JITCompilationCanFail);
+        if (patchBuffer.didFailToAllocate())
+            return GiveUpOnCache;
+        
         linkRestoreScratch(patchBuffer, needToRestoreScratch, success, fail, failureCases, successLabel, slowCaseLabel);
         
         stubRoutine = FINALIZE_CODE_FOR_STUB(
@@ -1851,7 +1877,11 @@ void linkPolymorphicCall(
     stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
     AssemblyHelpers::Jump slow = stubJit.jump();
         
-    LinkBuffer patchBuffer(*vm, stubJit, callerCodeBlock);
+    LinkBuffer patchBuffer(*vm, stubJit, callerCodeBlock, JITCompilationCanFail);
+    if (patchBuffer.didFailToAllocate()) {
+        linkVirtualFor(exec, callLinkInfo, CodeForCall, registers);
+        return;
+    }
     
     RELEASE_ASSERT(callCases.size() == calls.size());
     for (CallToCodePtr callToCodePtr : calls) {

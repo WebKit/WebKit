@@ -1,3 +1,72 @@
+2015-03-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Use JITCompilationCanFail in more places, and make the fail path of JITCompilationMustSucceed a crash instead of attempting GC
+        https://bugs.webkit.org/show_bug.cgi?id=142993
+
+        Reviewed by Geoffrey Garen and Mark Lam.
+        
+        This changes the most commonly invoked paths that relied on JITCompilationMustSucceed
+        into using JITCompilationCanFail and having a legit fallback path. This mostly involves
+        having the FTL JIT do the same trick as the DFG JIT in case of any memory allocation
+        failure, but also involves adding the same kind of thing to the stub generators in
+        Repatch.
+        
+        Because of that change, there are relatively few uses of JITCompilationMustSucceed. Most
+        of those uses cannot handle a GC, and so cannot do releaseExecutableMemory(). Only a few,
+        like host call stub generation, could handle a GC, but those get invoked very rarely. So,
+        this patch changes the releaseExecutableMemory() call into a crash with some diagnostic
+        printout.
+        
+        Also add a way of inducing executable allocation failure, so that we can test this.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::link): Deleted.
+        (JSC::DFG::JITCompiler::linkFunction): Deleted.
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateCodeSection):
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLState.h:
+        * jit/ArityCheckFailReturnThunks.cpp:
+        (JSC::ArityCheckFailReturnThunks::returnPCsFor):
+        * jit/ExecutableAllocationFuzz.cpp: Added.
+        (JSC::numberOfExecutableAllocationFuzzChecks):
+        (JSC::doExecutableAllocationFuzzing):
+        * jit/ExecutableAllocationFuzz.h: Added.
+        (JSC::doExecutableAllocationFuzzingIfEnabled):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::ExecutableAllocator::allocate):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITCompilationEffort.h:
+        * jit/Repatch.cpp:
+        (JSC::generateByIdStub):
+        (JSC::tryCacheGetByID):
+        (JSC::tryBuildGetByIDList):
+        (JSC::emitPutReplaceStub):
+        (JSC::emitPutTransitionStubAndGetOldStructure):
+        (JSC::tryCachePutByID):
+        (JSC::tryBuildPutByIdList):
+        (JSC::tryRepatchIn):
+        (JSC::linkPolymorphicCall):
+        * jsc.cpp:
+        (jscmain):
+        * runtime/Options.h:
+        * runtime/TestRunnerUtils.h:
+        * runtime/VM.cpp:
+        * tests/executableAllocationFuzz: Added.
+        * tests/executableAllocationFuzz.yaml: Added.
+        * tests/executableAllocationFuzz/v8-raytrace.js: Added.
+
 2015-03-25  Mark Lam  <mark.lam@apple.com>
 
         REGRESSION(169139): LLINT intermittently fails JSC testapi tests.

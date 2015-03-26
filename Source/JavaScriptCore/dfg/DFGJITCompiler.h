@@ -111,9 +111,6 @@ public:
     void compile();
     void compileFunction();
     
-    void link();
-    void linkFunction();
-
     // Accessors for properties.
     Graph& graph() { return m_graph; }
     

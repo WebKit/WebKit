@@ -646,6 +646,8 @@
 		0FEE98431A89227500754E93 /* SetupVarargsFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEE98421A89227500754E93 /* SetupVarargsFrame.cpp */; };
 		0FEFC9AA1681A3B300567F53 /* DFGOSRExitJumpPlaceholder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEFC9A71681A3B000567F53 /* DFGOSRExitJumpPlaceholder.cpp */; };
 		0FEFC9AB1681A3B600567F53 /* DFGOSRExitJumpPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEFC9A81681A3B000567F53 /* DFGOSRExitJumpPlaceholder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FF054F91AC35B4400E5BE57 /* ExecutableAllocationFuzz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF054F71AC35B4400E5BE57 /* ExecutableAllocationFuzz.cpp */; };
+		0FF054FA1AC35B4400E5BE57 /* ExecutableAllocationFuzz.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF054F81AC35B4400E5BE57 /* ExecutableAllocationFuzz.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF0F19916B729F6005DF95B /* DFGLongLivedState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB4B51C16B62772003F696B /* DFGLongLivedState.cpp */; };
 		0FF0F19B16B729FA005DF95B /* DFGLongLivedState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB4B51D16B62772003F696B /* DFGLongLivedState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF0F19C16B72A03005DF95B /* DFGNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB4B51E16B62772003F696B /* DFGNode.cpp */; };
@@ -2349,6 +2351,8 @@
 		0FEE98421A89227500754E93 /* SetupVarargsFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetupVarargsFrame.cpp; sourceTree = "<group>"; };
 		0FEFC9A71681A3B000567F53 /* DFGOSRExitJumpPlaceholder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRExitJumpPlaceholder.cpp; path = dfg/DFGOSRExitJumpPlaceholder.cpp; sourceTree = "<group>"; };
 		0FEFC9A81681A3B000567F53 /* DFGOSRExitJumpPlaceholder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExitJumpPlaceholder.h; path = dfg/DFGOSRExitJumpPlaceholder.h; sourceTree = "<group>"; };
+		0FF054F71AC35B4400E5BE57 /* ExecutableAllocationFuzz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocationFuzz.cpp; sourceTree = "<group>"; };
+		0FF054F81AC35B4400E5BE57 /* ExecutableAllocationFuzz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutableAllocationFuzz.h; sourceTree = "<group>"; };
 		0FF4272F158EBD44004CB9FF /* Disassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Disassembler.h; path = disassembler/Disassembler.h; sourceTree = "<group>"; };
 		0FF42730158EBD44004CB9FF /* UDis86Disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UDis86Disassembler.cpp; path = disassembler/UDis86Disassembler.cpp; sourceTree = "<group>"; };
 		0FF42734158EBD94004CB9FF /* udis86_decode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = udis86_decode.c; path = disassembler/udis86/udis86_decode.c; sourceTree = "<group>"; };
@@ -3801,6 +3805,8 @@
 		1429D92C0ED22D7000B89619 /* jit */ = {
 			isa = PBXGroup;
 			children = (
+				0FF054F71AC35B4400E5BE57 /* ExecutableAllocationFuzz.cpp */,
+				0FF054F81AC35B4400E5BE57 /* ExecutableAllocationFuzz.h */,
 				0F7576D018E1FEE9002EF4CD /* AccessorCallJITStubRoutine.cpp */,
 				0F7576D118E1FEE9002EF4CD /* AccessorCallJITStubRoutine.h */,
 				0F6B1CC718641DF800845D97 /* ArityCheckFailReturnThunks.cpp */,
@@ -5619,6 +5625,7 @@
 				A704D90317A0BAA8006BA554 /* DFGAbstractInterpreter.h in Headers */,
 				A704D90417A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h in Headers */,
 				0F620177143FCD3F0068B77C /* DFGAbstractValue.h in Headers */,
+				0FF054FA1AC35B4400E5BE57 /* ExecutableAllocationFuzz.h in Headers */,
 				0F66E16B14DF3F1600B7B2E4 /* DFGAdjacencyList.h in Headers */,
 				0FFB921816D02EB20055A5DB /* DFGAllocator.h in Headers */,
 				A737810C1799EA2E00817533 /* DFGAnalysis.h in Headers */,
@@ -7229,6 +7236,7 @@
 				0F2B66FA17B6B5AB00A7AE3F /* JSTypedArrayConstructors.cpp in Sources */,
 				0F2B66FC17B6B5AB00A7AE3F /* JSTypedArrayPrototypes.cpp in Sources */,
 				0F2B66FE17B6B5AB00A7AE3F /* JSTypedArrays.cpp in Sources */,
+				0FF054F91AC35B4400E5BE57 /* ExecutableAllocationFuzz.cpp in Sources */,
 				86E3C61A167BABEE006D760A /* JSValue.mm in Sources */,
 				14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */,
 				147F39D7107EC37600427A48 /* JSEnvironmentRecord.cpp in Sources */,

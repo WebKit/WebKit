@@ -66,6 +66,7 @@ public:
     LContext context;
     LModule module;
     LValue function;
+    bool allocationFailed { false }; // Throw out the compilation once LLVM returns.
     RefPtr<JITCode> jitCode;
     GeneratedFunction generatedFunction;
     JITFinalizer* finalizer;

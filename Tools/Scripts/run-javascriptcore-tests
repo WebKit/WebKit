@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005, 2013-2014 Apple Inc.  All rights reserved.
+# Copyright (C) 2005, 2013-2015 Apple Inc.  All rights reserved.
 # Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -269,6 +269,7 @@ sub runJSCStressTests
         "/usr/bin/env", "ruby", "Tools/Scripts/run-jsc-stress-tests",
         "-j", jscPath($productDir), "-o", $jscStressResultsDir,
         "PerformanceTests/SunSpider/tests/sunspider-1.0",
+        "Source/JavaScriptCore/tests/executableAllocationFuzz.yaml",
         "Source/JavaScriptCore/tests/exceptionFuzz.yaml",
         "PerformanceTests/SunSpider/no-architecture-specific-optimizations.yaml",
         "PerformanceTests/SunSpider/tests/v8-v6",

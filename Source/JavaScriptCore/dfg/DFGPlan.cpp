@@ -299,13 +299,10 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         dumpAndVerifyGraph(dfg, "Graph after optimization:");
         
         JITCompiler dataFlowJIT(dfg);
-        if (codeBlock->codeType() == FunctionCode) {
+        if (codeBlock->codeType() == FunctionCode)
             dataFlowJIT.compileFunction();
-            dataFlowJIT.linkFunction();
-        } else {
+        else
             dataFlowJIT.compile();
-            dataFlowJIT.link();
-        }
         
         return DFGPath;
     }
@@ -404,6 +401,11 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             FTL::fail(state);
             return FTLPath;
         }
+        
+        if (state.allocationFailed) {
+            FTL::fail(state);
+            return FTLPath;
+        }
 
         if (state.jitCode->stackmaps.stackSize() > Options::llvmMaxStackSize()) {
             FTL::fail(state);
@@ -411,6 +413,12 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         }
 
         FTL::link(state);
+        
+        if (state.allocationFailed) {
+            FTL::fail(state);
+            return FTLPath;
+        }
+        
         return FTLPath;
 #else
         RELEASE_ASSERT_NOT_REACHED();

@@ -326,6 +326,7 @@ set(JavaScriptCore_SOURCES
     jit/AssemblyHelpers.cpp
     jit/ArityCheckFailReturnThunks.cpp
     jit/BinarySwitch.cpp
+    jit/ExecutableAllocationFuzz.cpp
     jit/ExecutableAllocator.cpp
     jit/ExecutableAllocatorFixedVMPool.cpp
     jit/GCAwareJITStubRoutine.cpp

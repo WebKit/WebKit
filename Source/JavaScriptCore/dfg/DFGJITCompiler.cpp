@@ -325,10 +325,7 @@ void JITCompiler::compile()
     // Create OSR entry trampolines if necessary.
     m_speculative->createOSREntries();
     setEndOfCode();
-}
 
-void JITCompiler::link()
-{
     auto linkBuffer = std::make_unique<LinkBuffer>(*m_vm, *this, m_codeBlock, JITCompilationCanFail);
     if (linkBuffer->didFailToAllocate()) {
         m_graph.m_plan.finalizer = std::make_unique<FailedFinalizer>(m_graph.m_plan);
@@ -412,7 +409,9 @@ void JITCompiler::compileFunction()
 #else
     thunkReg = GPRInfo::regT5;
 #endif
-    move(TrustedImmPtr(m_vm->arityCheckFailReturnThunks->returnPCsFor(*m_vm, m_codeBlock->numParameters())), thunkReg);
+    CodeLocationLabel* arityThunkLabels =
+        m_vm->arityCheckFailReturnThunks->returnPCsFor(*m_vm, m_codeBlock->numParameters());
+    move(TrustedImmPtr(arityThunkLabels), thunkReg);
     loadPtr(BaseIndex(thunkReg, GPRInfo::regT0, timesPtr()), thunkReg);
     m_callArityFixup = call();
     jump(fromArityCheck);
@@ -426,10 +425,7 @@ void JITCompiler::compileFunction()
     // Create OSR entry trampolines if necessary.
     m_speculative->createOSREntries();
     setEndOfCode();
-}
 
-void JITCompiler::linkFunction()
-{
     // === Link ===
     auto linkBuffer = std::make_unique<LinkBuffer>(*m_vm, *this, m_codeBlock, JITCompilationCanFail);
     if (linkBuffer->didFailToAllocate()) {

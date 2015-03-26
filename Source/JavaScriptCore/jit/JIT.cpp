@@ -585,7 +585,9 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 #else
         thunkReg = GPRInfo::regT5;
 #endif
-        move(TrustedImmPtr(m_vm->arityCheckFailReturnThunks->returnPCsFor(*m_vm, m_codeBlock->numParameters())), thunkReg);
+        CodeLocationLabel* failThunkLabels =
+            m_vm->arityCheckFailReturnThunks->returnPCsFor(*m_vm, m_codeBlock->numParameters());
+        move(TrustedImmPtr(failThunkLabels), thunkReg);
         loadPtr(BaseIndex(thunkReg, regT0, timesPtr()), thunkReg);
         emitNakedCall(m_vm->getCTIStub(arityFixupGenerator).code());
 
