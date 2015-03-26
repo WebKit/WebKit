@@ -232,7 +232,10 @@ private:
                 StackAccessData* data;
                 if (inlineCallFrame) {
                     data = m_graph.m_stackAccessData.add(
-                        inlineCallFrame->arguments[index.asInt32() + 1].virtualRegister(), FlushedJSValue);
+                        VirtualRegister(
+                            inlineCallFrame->stackOffset +
+                            CallFrame::argumentOffset(index.asInt32())),
+                        FlushedJSValue);
                 } else {
                     data = m_graph.m_stackAccessData.add(
                         virtualRegisterForArgument(index.asInt32() + 1), FlushedJSValue);

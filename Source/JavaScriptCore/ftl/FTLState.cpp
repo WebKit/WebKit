@@ -92,6 +92,11 @@ State::~State()
 
 void State::dumpState(const char* when)
 {
+    dumpState(module, when);
+}
+
+void State::dumpState(LModule module, const char* when)
+{
     dataLog("LLVM IR for ", CodeBlockWithJITType(graph.m_codeBlock, FTL::JITCode::FTLJIT), " ", when, ":\n");
     dumpModule(module);
 }

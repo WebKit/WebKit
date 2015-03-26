@@ -1,3 +1,15 @@
+2015-03-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fixes to silly things. While landing fixes to r181993, I introduced crashes. This fixes them.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants): I landed a fix for a VS warning. It broke this. Now I'm fixing it.
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile): Make sure we pass the module when dumping. This makes FTL debugging possible again.
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::dumpState): New overload that takes a module, so that we can call this after FTL::compile() clears State's module.
+        * ftl/FTLState.h:
+
 2015-03-25  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix obvious goof that was causing 32-bit debug crashes. The 64-bit version did it

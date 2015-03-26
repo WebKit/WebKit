@@ -86,6 +86,7 @@ public:
     RefPtr<DataSection> stackmapsSection;
     
     void dumpState(const char* when);
+    void dumpState(LModule, const char* when);
 
     HashSet<CString> nativeLoadedLibraries;
 

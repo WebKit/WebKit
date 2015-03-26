@@ -743,8 +743,8 @@ void compile(State& state, Safepoint::Result& safepointResult)
         }
 
         if (shouldShowDisassembly() || verboseCompilationEnabled())
-            state.dumpState("after optimization");
-    
+            state.dumpState(module, "after optimization");
+        
         // FIXME: Need to add support for the case where JIT memory allocation failed.
         // https://bugs.webkit.org/show_bug.cgi?id=113620
         state.generatedFunction = reinterpret_cast<GeneratedFunction>(llvm->GetPointerToGlobal(engine, state.function));
