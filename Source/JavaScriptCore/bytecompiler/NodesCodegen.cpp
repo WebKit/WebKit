@@ -1767,7 +1767,7 @@ RegisterID* ConstDeclNode::emitCodeSingle(BytecodeGenerator& generator)
         // pretty shady - particularly how negligent it is with inteleaving scopes - but it's the
         // behavior that JSC has had for a long time.
         
-        ASSERT(generator.codeType() == FunctinCode);
+        ASSERT(generator.codeType() == FunctionCode);
         
         var = generator.variablePerSymbolTable(m_ident);
         if (!var.isResolved())

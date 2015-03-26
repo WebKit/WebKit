@@ -1,5 +1,12 @@
 2015-03-25  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix debug build.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ConstDeclNode::emitCodeSingle):
+
+2015-03-25  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix CLOOP build.
 
         * dfg/DFGMinifiedID.h:
