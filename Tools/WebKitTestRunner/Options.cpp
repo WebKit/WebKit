@@ -99,6 +99,12 @@ bool handleOptionRemoteLayerTree(Options& options, const char*, const char*)
     return true;
 }
 
+bool handleOptionAllowedHost(Options& options, const char*, const char* host)
+{
+    options.allowedHosts.push_back(host);
+    return true;
+}
+
 bool handleOptionUnmatched(Options& options, const char* option, const char*)
 {
     if (option[0] && option[1] && option[0] == '-' && option[1] == '-')
@@ -120,6 +126,8 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--complex-text", "Force complex tests.", handleOptionComplexText));
     optionList.append(Option("--accelerated-drawing", "Use accelerated drawing.", handleOptionAcceleratedDrawing));
     optionList.append(Option("--remote-layer-tree", "Use remote layer tree.", handleOptionRemoteLayerTree));
+    optionList.append(Option("--allowed-host", "Allows access to the specified host from tests.", handleOptionAllowedHost, true));
+
     optionList.append(Option(0, 0, handleOptionUnmatched));
 }
 

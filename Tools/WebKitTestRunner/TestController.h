@@ -214,6 +214,7 @@ private:
     bool m_gcBetweenTests;
     bool m_shouldDumpPixelsForAllTests;
     std::vector<std::string> m_paths;
+    std::vector<std::string> m_allowedHosts;
     WKRetainPtr<WKStringRef> m_injectedBundlePath;
     WKRetainPtr<WKStringRef> m_testPluginDirectory;
 

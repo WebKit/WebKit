@@ -52,6 +52,8 @@ public:
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 
     void addDisallowedURL(JSStringRef url);
+    const std::set<std::string>& allowedHosts() const { return m_allowedHosts; }
+    void setAllowedHosts(std::set<std::string> hosts) { m_allowedHosts = WTF::move(hosts); }
     void addURLToRedirect(std::string origin, std::string destination);
     const std::string& redirectionDestinationForURL(std::string);
     void clearAllApplicationCaches();
@@ -418,11 +420,12 @@ private:
     std::string m_titleTextDirection;
 
     std::set<std::string> m_willSendRequestClearHeaders;
+    std::set<std::string> m_allowedHosts;
 
     std::vector<char> m_audioResult;
 
     std::map<std::string, std::string> m_URLsToRedirect;
-    
+
     static JSClassRef getJSClass();
     static JSStaticValue* staticValues();
     static JSStaticFunction* staticFunctions();

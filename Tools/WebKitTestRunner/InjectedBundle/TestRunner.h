@@ -331,6 +331,8 @@ private:
     bool m_userStyleSheetEnabled;
     WKRetainPtr<WKStringRef> m_userStyleSheetLocation;
 
+    WKRetainPtr<WKArrayRef> m_allowedHosts;
+
     PlatformTimerRef m_waitToDumpWatchdogTimer;
 };
 

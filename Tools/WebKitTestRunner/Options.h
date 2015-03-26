@@ -47,6 +47,7 @@ struct Options {
     bool shouldUseAcceleratedDrawing;
     bool shouldUseRemoteLayerTree;
     std::vector<std::string> paths;
+    std::vector<std::string> allowedHosts;
 };
 
 class Option {

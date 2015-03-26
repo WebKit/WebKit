@@ -115,6 +115,8 @@ public:
     void queueLoadingScript(WKStringRef script);
     void queueNonLoadingScript(WKStringRef script);
 
+    bool isAllowedHost(WKStringRef);
+
 private:
     InjectedBundle();
     ~InjectedBundle();
@@ -165,6 +167,8 @@ private:
     WKRetainPtr<WKDataRef> m_audioResult;
     WKRetainPtr<WKImageRef> m_pixelResult;
     WKRetainPtr<WKArrayRef> m_repaintRects;
+
+    Vector<String> m_allowedHosts;
 };
 
 } // namespace WTR

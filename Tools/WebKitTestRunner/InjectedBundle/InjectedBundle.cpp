@@ -166,6 +166,17 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
         if (shouldGC)
             WKBundleGarbageCollectJavaScriptObjects(m_bundle);
 
+        WKRetainPtr<WKStringRef> allowedHostsKey(AdoptWK, WKStringCreateWithUTF8CString("AllowedHosts"));
+        WKTypeRef allowedHostsValue = WKDictionaryGetItemForKey(messageBodyDictionary, allowedHostsKey.get());
+        if (allowedHostsValue && WKGetTypeID(allowedHostsValue) == WKArrayGetTypeID()) {
+            WKArrayRef allowedHostsArray = static_cast<WKArrayRef>(allowedHostsValue);
+            for (size_t i = 0, size = WKArrayGetSize(allowedHostsArray); i < size; ++i) {
+                WKTypeRef item = WKArrayGetItemAtIndex(allowedHostsArray, i);
+                if (item && WKGetTypeID(item) == WKStringGetTypeID())
+                    m_allowedHosts.append(toWTFString(static_cast<WKStringRef>(item)));
+            }
+        }
+
         m_state = Idle;
         m_dumpPixels = false;
 
@@ -597,6 +608,13 @@ void InjectedBundle::queueNonLoadingScript(WKStringRef script)
 
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("QueueNonLoadingScript"));
     WKBundlePostMessage(m_bundle, messageName.get(), script);
+}
+
+bool InjectedBundle::isAllowedHost(WKStringRef host)
+{
+    if (m_allowedHosts.isEmpty())
+        return false;
+    return m_allowedHosts.contains(toWTFString(host));
 }
 
 } // namespace WTR

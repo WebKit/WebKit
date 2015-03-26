@@ -137,6 +137,11 @@ BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
     return NSOrderedSame == [host compare:@"255.255.255.255"];
 }
 
+BOOL isAllowedHost(NSString *host)
+{
+    return gTestRunner->allowedHosts().count(host.UTF8String);
+}
+
 -(NSURLRequest *)webView: (WebView *)wv resource:identifier willSendRequest: (NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
 {
     if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
@@ -165,7 +170,7 @@ BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
         NSString *testHost = 0;
         if ([lowercaseTestURL hasPrefix:@"http:"] || [lowercaseTestURL hasPrefix:@"https:"])
             testHost = [[NSURL URLWithString:testURL] host];
-        if (!isLocalhost(host) && !hostIsUsedBySomeTestsToGenerateError(host) && (!testHost || isLocalhost(testHost))) {
+        if (!isLocalhost(host) && !hostIsUsedBySomeTestsToGenerateError(host) && !isAllowedHost(host) && (!testHost || isLocalhost(testHost))) {
             printf("Blocked access to external URL %s\n", [[url absoluteString] cStringUsingEncoding:NSUTF8StringEncoding]);
             return nil;
         }
