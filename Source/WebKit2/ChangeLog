@@ -1,5 +1,20 @@
 2015-03-26  Antti Koivisto  <antti@apple.com>
 
+        Remove unneeded isConditionalRequest check from NetworkResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=143096
+
+        Reviewed by Anders Carlsson.
+
+        This check is leftover from implementation that allowed disk cache to validate conditional
+        request itself. The case can't happen as NetworkCache canRetrieve test does not allow
+        conditional requests in the first place.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponseAsync):
+        (WebKit::isConditionalRequest): Deleted.
+
+2015-03-26  Antti Koivisto  <antti@apple.com>
+
         Rename Storage::Entry to Storage::Record
         https://bugs.webkit.org/show_bug.cgi?id=143101
 

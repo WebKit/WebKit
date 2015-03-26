@@ -228,17 +228,6 @@ void NetworkResourceLoader::abort()
     cleanup();
 }
 
-#if ENABLE(NETWORK_CACHE)
-static bool isConditionalRequest(const WebCore::ResourceRequest& request)
-{
-    if (!request.httpHeaderField(WebCore::HTTPHeaderName::IfNoneMatch).isEmpty())
-        return true;
-    if (!request.httpHeaderField(WebCore::HTTPHeaderName::IfModifiedSince).isEmpty())
-        return true;
-    return false;
-}
-#endif
-
 void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, const ResourceResponse& receivedResponse)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
@@ -258,7 +247,7 @@ void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, cons
         bool validationSucceeded = m_response.httpStatusCode() == 304; // 304 Not Modified
         if (validationSucceeded)
             NetworkCache::singleton().update(originalRequest(), *m_cacheEntryForValidation, m_response);
-        if (!validationSucceeded || isConditionalRequest(originalRequest()))
+        else
             m_cacheEntryForValidation = nullptr;
     }
     shouldSendDidReceiveResponse = !m_cacheEntryForValidation;
