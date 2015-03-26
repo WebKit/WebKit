@@ -1,3 +1,13 @@
+2015-03-26  Roger Fong  <roger_fong@apple.com>
+
+        Apply blur effect to media control background.
+        https://bugs.webkit.org/show_bug.cgi?id=143116.
+        <rdar://problem/20316964>.
+
+        Reviewed by Brent Fulgham.
+
+        * platform/mac/TestExpectations: Tests need rebaselining. Will do so with other previously skipped media tests.
+
 2015-03-26  Geoffrey Garen  <ggaren@apple.com>
 
         Assertion firing in JavaScriptCore/parser/parser.h for statesman.com site
