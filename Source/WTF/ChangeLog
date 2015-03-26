@@ -1,5 +1,11 @@
 2015-03-25  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, we have edited this file in 2015.
+
+        * wtf/Platform.h:
+
+2015-03-25  Filip Pizlo  <fpizlo@apple.com>
+
         Heap variables shouldn't end up in the stack frame
         https://bugs.webkit.org/show_bug.cgi?id=141174
 
