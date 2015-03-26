@@ -1,3 +1,22 @@
+2015-03-26  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NetworkCache] Compute if a cached response has expired only when actually needed
+        https://bugs.webkit.org/show_bug.cgi?id=143070
+
+        Reviewed by Antti Koivisto.
+
+        Compute if a cached response has expired only when actually needed:
+        - This is not a history navigation
+        and
+        - It does not have "Cache-Control: no-cache" header
+
+        Previously, we would always determine if the response has expired and
+        we often end up not using this information.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::responseHasExpired):
+        (WebKit::NetworkCache::canUse):
+
 2015-03-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Avoid the Vector<> copy in WebTouchEvent constructor

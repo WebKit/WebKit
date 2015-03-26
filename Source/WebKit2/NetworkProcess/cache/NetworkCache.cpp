@@ -150,6 +150,25 @@ static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
     return false;
 }
 
+static inline bool responseHasExpired(const WebCore::ResourceResponse& response, std::chrono::milliseconds timestamp)
+{
+    if (response.cacheControlContainsNoCache())
+        return true;
+
+    auto doubleTimeStamp = std::chrono::duration<double>(timestamp);
+    double age = WebCore::computeCurrentAge(response, doubleTimeStamp.count());
+    double lifetime = WebCore::computeFreshnessLifetimeForHTTPFamily(response, doubleTimeStamp.count());
+
+    bool hasExpired = age > lifetime;
+
+#ifndef LOG_DISABLED
+    if (hasExpired)
+        LOG(NetworkCache, "(NetworkProcess) needsRevalidation hasExpired age=%f lifetime=%f", age, lifetime);
+#endif
+
+    return hasExpired;
+}
+
 static UseDecision canUse(const Entry& entry, const WebCore::ResourceRequest& request)
 {
     if (!verifyVaryingRequestHeaders(entry.varyingRequestHeaders(), request)) {
@@ -157,18 +176,13 @@ static UseDecision canUse(const Entry& entry, const WebCore::ResourceRequest& re
         return UseDecision::NoDueToVaryingHeaderMismatch;
     }
 
-    bool allowExpired = cachePolicyAllowsExpired(request.cachePolicy());
-    auto doubleTimeStamp = std::chrono::duration<double>(entry.timeStamp());
-    double age = WebCore::computeCurrentAge(entry.response(), doubleTimeStamp.count());
-    double lifetime = WebCore::computeFreshnessLifetimeForHTTPFamily(entry.response(), doubleTimeStamp.count());
-    bool isExpired = age > lifetime;
-    // We never revalidate in the case of a history navigation (i.e. allowExpired is true).
-    bool needsRevalidation = !allowExpired && (entry.response().cacheControlContainsNoCache() || isExpired);
+    // We never revalidate in the case of a history navigation (i.e. cachePolicyAllowsExpired() returns true).
+    bool needsRevalidation = !cachePolicyAllowsExpired(request.cachePolicy()) && responseHasExpired(entry.response(), entry.timeStamp());
     if (!needsRevalidation)
         return UseDecision::Use;
 
     bool hasValidatorFields = entry.response().hasCacheValidatorFields();
-    LOG(NetworkCache, "(NetworkProcess) needsRevalidation hasValidatorFields=%d isExpired=%d age=%f lifetime=%f", isExpired, hasValidatorFields, age, lifetime);
+    LOG(NetworkCache, "(NetworkProcess) needsRevalidation hasValidatorFields=%d", hasValidatorFields);
     if (!hasValidatorFields)
         return UseDecision::NoDueToMissingValidatorFields;
 
