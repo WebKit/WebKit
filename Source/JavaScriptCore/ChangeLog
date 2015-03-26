@@ -1,5 +1,11 @@
 2015-03-25  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix a typo that ggaren found but that I didn't fix before.
+
+        * runtime/DirectArgumentsOffset.h:
+
+2015-03-25  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, VC found a bug. This fixes the bug.
 
         * dfg/DFGConstantFoldingPhase.cpp:

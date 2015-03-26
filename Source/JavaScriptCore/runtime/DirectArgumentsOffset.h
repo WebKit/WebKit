@@ -32,7 +32,7 @@
 namespace JSC {
 
 // This is an offset into the special arguments object, which captures the arguments to a
-// function. It only comes into play it the arguments aren't also lifted into the activation.
+// function. It only comes into play if the arguments aren't also lifted into the activation.
 // If they were then accesses to the arguments would resolve to a ScopeOffset and not a
 // DirectArgumentsOffset.
 class DirectArgumentsOffset : public GenericOffset<DirectArgumentsOffset> {
