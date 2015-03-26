@@ -1,3 +1,18 @@
+2015-03-25  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: table cells that use display:block render the table inaccessible to VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=143007
+
+        Unreviewed, layout test fix.
+
+        Skip associated accessibility/table-cell-display-block.html on failing platforms.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+            Specific platform changes in children ordering need to be updated to make this test pass.
+        * platform/win/TestExpectations:
+            Need to implement cellForRowAndColumn.
+
 2015-03-25  Filip Pizlo  <fpizlo@apple.com>
 
         Heap variables shouldn't end up in the stack frame
