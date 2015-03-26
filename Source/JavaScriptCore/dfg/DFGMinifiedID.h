@@ -26,8 +26,6 @@
 #ifndef DFGMinifiedID_h
 #define DFGMinifiedID_h
 
-#if ENABLE(DFG_JIT)
-
 #include "DFGCommon.h"
 #include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
@@ -104,8 +102,6 @@ template<> struct HashTraits<JSC::DFG::MinifiedID> : SimpleClassHashTraits<JSC::
 };
 
 } // namespace WTF
-
-#endif // ENABLE(DFG_JIT)
 
 #endif // DFGMinifiedID_h
 
