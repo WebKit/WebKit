@@ -1,6 +1,6 @@
 /*
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2013, 2014 University of Washington. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,17 +28,21 @@
 // Add DOM or Inspector event listeners to the set using `register()`.
 // Use `install()` and `uninstall()` to enable or disable all listeners
 // in the set at once.
-WebInspector.EventListenerSet = function(defaultThisObject, name)
+
+WebInspector.EventListenerSet = class EventListenerSet
 {
-    this.name = name;
-    this._defaultThisObject = defaultThisObject;
+    constructor(defaultThisObject, name)
+    {
+        this.name = name;
+        this._defaultThisObject = defaultThisObject;
 
-    this._listeners = [];
-    this._installed = false;
-}
+        this._listeners = [];
+        this._installed = false;
+    }
 
-WebInspector.EventListenerSet.prototype = {
-    register: function(emitter, type, callback, thisObject, usesCapture)
+    // Public
+
+    register(emitter, type, callback, thisObject, usesCapture)
     {
         console.assert(callback, "Missing callback for event: " + type);
         console.assert(type, "Tried to register listener for unknown event: " + type);
@@ -49,16 +53,16 @@ WebInspector.EventListenerSet.prototype = {
             return;
 
         this._listeners.push({listener: new WebInspector.EventListener(thisObject || this._defaultThisObject), emitter, type, callback, usesCapture});
-    },
+    }
 
-    unregister: function()
+    unregister()
     {
         if (this._installed)
             this.uninstall();
         this._listeners = [];
-    },
+    }
 
-    install: function()
+    install()
     {
         console.assert(!this._installed, "Already installed listener group: " + this.name);
         if (this._installed)
@@ -68,9 +72,9 @@ WebInspector.EventListenerSet.prototype = {
 
         for (var data of this._listeners)
             data.listener.connect(data.emitter, data.type, data.callback, data.usesCapture);
-    },
+    }
 
-    uninstall: function(unregisterListeners)
+    uninstall(unregisterListeners)
     {
         console.assert(this._installed, "Trying to uninstall listener group " + this.name + ", but it isn't installed.");
         if (!this._installed)
@@ -83,5 +87,5 @@ WebInspector.EventListenerSet.prototype = {
 
         if (unregisterListeners)
             this._listeners = [];
-    },
-}
+    }
+};

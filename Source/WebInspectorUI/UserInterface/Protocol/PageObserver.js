@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,71 +23,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.PageObserver = function()
+WebInspector.PageObserver = class PageObserver
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
-};
-
-WebInspector.PageObserver.prototype = {
-    constructor: WebInspector.PageObserver,
-
     // Events defined by the "Page" domain.
 
-    domContentEventFired: function(timestamp)
+    domContentEventFired(timestamp)
     {
         // Covered by Timeline "MarkDOMContent" record.
-    },
+    }
 
-    loadEventFired: function(timestamp)
+    loadEventFired(timestamp)
     {
         WebInspector.timelineManager.pageDidLoad(timestamp);
-    },
+    }
 
-    frameNavigated: function(frame, loaderId)
+    frameNavigated(frame, loaderId)
     {
         WebInspector.frameResourceManager.frameDidNavigate(frame, loaderId);
-    },
+    }
 
-    frameDetached: function(frameId)
+    frameDetached(frameId)
     {
         WebInspector.frameResourceManager.frameDidDetach(frameId);
-    },
+    }
 
-    frameStartedLoading: function(frameId)
+    frameStartedLoading(frameId)
     {
         // Not handled yet.
-    },
+    }
 
-    frameStoppedLoading: function(frameId)
+    frameStoppedLoading(frameId)
     {
         // Not handled yet.
-    },
+    }
 
-    frameScheduledNavigation: function(frameId, delay)
+    frameScheduledNavigation(frameId, delay)
     {
         // Not handled yet.
-    },
+    }
 
-    frameClearedScheduledNavigation: function(frameId)
+    frameClearedScheduledNavigation(frameId)
     {
         // Not handled yet.
-    },
+    }
 
-    javascriptDialogOpening: function(message)
+    javascriptDialogOpening(message)
     {
         // Not handled yet.
-    },
+    }
 
-    javascriptDialogClosed: function()
+    javascriptDialogClosed()
     {
         // Not handled yet.
-    },
+    }
 
-    scriptsEnabled: function(enabled)
+    scriptsEnabled(enabled)
     {
         // Not handled yet.
     }
 };
-
-WebInspector.PageObserver.prototype.__proto__ = WebInspector.Object.prototype;

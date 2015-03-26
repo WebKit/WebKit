@@ -1,6 +1,6 @@
 /*
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2013, 2014 University of Washington. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,16 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.EventListener = function(thisObject, fireOnce)
+WebInspector.EventListener = class EventListener
 {
-    this._thisObject = thisObject;
-    this._emitter = null;
-    this._callback = null;
-    this._fireOnce = fireOnce;
-};
+    constructor(thisObject, fireOnce)
+    {
+        this._thisObject = thisObject;
+        this._emitter = null;
+        this._callback = null;
+        this._fireOnce = fireOnce;
+    }
 
-WebInspector.EventListener.prototype = {
-    connect: function(emitter, type, callback, usesCapture)
+    // Public
+
+    connect(emitter, type, callback, usesCapture)
     {
         console.assert(!this._emitter && !this._callback, "EventListener already bound to a callback.", this);
         console.assert(callback, "Missing callback for event: " + type);
@@ -64,9 +67,9 @@ WebInspector.EventListener.prototype = {
             this._emitter.addEventListener(this._type, this._callback, this._usesCapture);
         else
             this._emitter.addEventListener(this._type, this._callback, this._thisObject);
-    },
+    }
 
-    disconnect: function()
+    disconnect()
     {
         console.assert(this._emitter && this._callback, "EventListener is not bound to a callback.", this);
 

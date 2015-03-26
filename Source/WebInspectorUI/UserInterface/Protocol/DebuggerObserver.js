@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DebuggerObserver = function()
+WebInspector.DebuggerObserver = class DebuggerObserver
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
-};
-
-WebInspector.DebuggerObserver.prototype = {
-    constructor: WebInspector.DebuggerObserver,
-
     // Events defined by the "Debugger" domain.
 
-    globalObjectCleared: function()
+    globalObjectCleared()
     {
         WebInspector.debuggerManager.reset();
-    },
+    }
 
-    scriptParsed: function(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL)
+    scriptParsed(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL)
     {
         WebInspector.debuggerManager.scriptDidParse(scriptId, url, isContentScript, startLine, startColumn, endLine, endColumn, sourceMapURL);
-    },
+    }
 
-    scriptFailedToParse: function(url, scriptSource, startLine, errorLine, errorMessage)
+    scriptFailedToParse(url, scriptSource, startLine, errorLine, errorMessage)
     {
         // FIXME: Not implemented.
-    },
+    }
 
-    breakpointResolved: function(breakpointId, location)
+    breakpointResolved(breakpointId, location)
     {
         WebInspector.debuggerManager.breakpointResolved(breakpointId, location);
-    },
+    }
 
-    paused: function(callFrames, reason, data)
+    paused(callFrames, reason, data)
     {
         WebInspector.debuggerManager.debuggerDidPause(callFrames, reason, data);
-    },
+    }
 
-    resumed: function()
+    resumed()
     {
         WebInspector.debuggerManager.debuggerDidResume();
-    },
+    }
 
-    playBreakpointActionSound: function(breakpointActionIdentifier)
+    playBreakpointActionSound(breakpointActionIdentifier)
     {
         WebInspector.debuggerManager.playBreakpointActionSound(breakpointActionIdentifier);
-    },
+    }
 
-    didSampleProbe: function(sample)
+    didSampleProbe(sample)
     {
         WebInspector.probeManager.didSampleProbe(sample);
     }
 };
-
-WebInspector.DebuggerObserver.prototype.__proto__ = WebInspector.Object.prototype;

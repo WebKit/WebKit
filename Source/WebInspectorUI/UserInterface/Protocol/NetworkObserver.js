@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,86 +23,77 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkObserver = function()
+WebInspector.NetworkObserver = class NetworkObserver
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
-};
-
-WebInspector.NetworkObserver.prototype = {
-    constructor: WebInspector.NetworkObserver,
-
     // Events defined by the "Network" domain.
 
-    requestWillBeSent: function(requestId, frameId, loaderId, documentURL, request, timestamp, initiator, redirectResponse, type)
+    requestWillBeSent(requestId, frameId, loaderId, documentURL, request, timestamp, initiator, redirectResponse, type)
     {
         WebInspector.frameResourceManager.resourceRequestWillBeSent(requestId, frameId, loaderId, request, type, redirectResponse, timestamp, initiator);
-    },
+    }
 
-    requestServedFromCache: function(requestId)
+    requestServedFromCache(requestId)
     {
         WebInspector.frameResourceManager.markResourceRequestAsServedFromMemoryCache(requestId);
-    },
+    }
 
-    responseReceived: function(requestId, frameId, loaderId, timestamp, type, response)
+    responseReceived(requestId, frameId, loaderId, timestamp, type, response)
     {
         WebInspector.frameResourceManager.resourceRequestDidReceiveResponse(requestId, frameId, loaderId, type, response, timestamp);
-    },
+    }
 
-    dataReceived: function(requestId, timestamp, dataLength, encodedDataLength)
+    dataReceived(requestId, timestamp, dataLength, encodedDataLength)
     {
         WebInspector.frameResourceManager.resourceRequestDidReceiveData(requestId, dataLength, encodedDataLength, timestamp);
-    },
+    }
 
-    loadingFinished: function(requestId, timestamp, sourceMapURL)
+    loadingFinished(requestId, timestamp, sourceMapURL)
     {
         WebInspector.frameResourceManager.resourceRequestDidFinishLoading(requestId, timestamp, sourceMapURL);
-    },
+    }
 
-    loadingFailed: function(requestId, timestamp, errorText, canceled)
+    loadingFailed(requestId, timestamp, errorText, canceled)
     {
         WebInspector.frameResourceManager.resourceRequestDidFailLoading(requestId, canceled, timestamp);
-    },
+    }
 
-    requestServedFromMemoryCache: function(requestId, frameId, loaderId, documentURL, timestamp, initiator, resource)
+    requestServedFromMemoryCache(requestId, frameId, loaderId, documentURL, timestamp, initiator, resource)
     {
         WebInspector.frameResourceManager.resourceRequestWasServedFromMemoryCache(requestId, frameId, loaderId, resource, timestamp, initiator);
-    },
+    }
 
-    webSocketWillSendHandshakeRequest: function(requestId, timestamp, request)
+    webSocketWillSendHandshakeRequest(requestId, timestamp, request)
     {
         // FIXME: Not implemented.
-    },
+    }
 
-    webSocketHandshakeResponseReceived: function(requestId, timestamp, response)
+    webSocketHandshakeResponseReceived(requestId, timestamp, response)
     {
         // FIXME: Not implemented.
-    },
+    }
 
-    webSocketCreated: function(requestId, url)
+    webSocketCreated(requestId, url)
     {
         // FIXME: Not implemented.
-    },
+    }
 
-    webSocketClosed: function(requestId, timestamp)
+    webSocketClosed(requestId, timestamp)
     {
         // FIXME: Not implemented.
-    },
+    }
 
-    webSocketFrameReceived: function(requestId, timestamp, response)
+    webSocketFrameReceived(requestId, timestamp, response)
     {
         // FIXME: Not implemented.
-    },
+    }
 
-    webSocketFrameError: function(requestId, timestamp, errorMessage)
+    webSocketFrameError(requestId, timestamp, errorMessage)
     {
         // FIXME: Not implemented.
-    },
+    }
 
-    webSocketFrameSent: function(requestId, timestamp, response)
+    webSocketFrameSent(requestId, timestamp, response)
     {
         // FIXME: Not implemented.
     }
 };
-
-WebInspector.NetworkObserver.prototype.__proto__ = WebInspector.Object.prototype;

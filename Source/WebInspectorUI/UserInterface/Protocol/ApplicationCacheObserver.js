@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ApplicationCacheObserver = function()
+WebInspector.ApplicationCacheObserver = class ApplicationCacheObserver
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
-};
-
-WebInspector.ApplicationCacheObserver.prototype = {
-    constructor: WebInspector.ApplicationCacheObserver,
-
     // Events defined by the "ApplicationCache" domain.
 
-    applicationCacheStatusUpdated: function(frameId, manifestURL, status)
+    applicationCacheStatusUpdated(frameId, manifestURL, status)
     {
         WebInspector.applicationCacheManager.applicationCacheStatusUpdated(frameId, manifestURL, status);
-    },
+    }
 
-    networkStateUpdated: function(isNowOnline)
+    networkStateUpdated(isNowOnline)
     {
         WebInspector.applicationCacheManager.networkStateUpdated(isNowOnline);
     }
 };
-
-WebInspector.ApplicationCacheObserver.prototype.__proto__ = WebInspector.Object.prototype;

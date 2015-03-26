@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,71 +23,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMObserver = function()
+WebInspector.DOMObserver = class DOMObserver
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
-};
-
-WebInspector.DOMObserver.prototype = {
-    constructor: WebInspector.DOMObserver,
-
     // Events defined by the "DOM" domain.
 
-    documentUpdated: function()
+    documentUpdated()
     {
         WebInspector.domTreeManager._documentUpdated();
-    },
+    }
 
-    setChildNodes: function(parentId, payloads)
+    setChildNodes(parentId, payloads)
     {
         WebInspector.domTreeManager._setChildNodes(parentId, payloads);
-    },
+    }
 
-    attributeModified: function(nodeId, name, value)
+    attributeModified(nodeId, name, value)
     {
         WebInspector.domTreeManager._attributeModified(nodeId, name, value);
-    },
+    }
 
-    attributeRemoved: function(nodeId, name)
+    attributeRemoved(nodeId, name)
     {
         WebInspector.domTreeManager._attributeRemoved(nodeId, name);
-    },
+    }
 
-    inlineStyleInvalidated: function(nodeIds)
+    inlineStyleInvalidated(nodeIds)
     {
         WebInspector.domTreeManager._inlineStyleInvalidated(nodeIds);
-    },
+    }
 
-    characterDataModified: function(nodeId, characterData)
+    characterDataModified(nodeId, characterData)
     {
         WebInspector.domTreeManager._characterDataModified(nodeId, characterData);
-    },
+    }
 
-    childNodeCountUpdated: function(nodeId, childNodeCount)
+    childNodeCountUpdated(nodeId, childNodeCount)
     {
         WebInspector.domTreeManager._childNodeCountUpdated(nodeId, childNodeCount);
-    },
+    }
 
-    childNodeInserted: function(parentNodeId, previousNodeId, payload)
+    childNodeInserted(parentNodeId, previousNodeId, payload)
     {
         WebInspector.domTreeManager._childNodeInserted(parentNodeId, previousNodeId, payload);
-    },
+    }
 
-    childNodeRemoved: function(parentNodeId, nodeId)
+    childNodeRemoved(parentNodeId, nodeId)
     {
         WebInspector.domTreeManager._childNodeRemoved(parentNodeId, nodeId);
-    },
+    }
 
-    shadowRootPushed: function(parentNodeId, nodeId)
+    shadowRootPushed(parentNodeId, nodeId)
     {
         WebInspector.domTreeManager._childNodeInserted(parentNodeId, 0, nodeId);
-    },
+    }
 
-    shadowRootPopped: function(parentNodeId, nodeId)
+    shadowRootPopped(parentNodeId, nodeId)
     {
         WebInspector.domTreeManager._childNodeRemoved(parentNodeId, nodeId);
     }
 };
-
-WebInspector.DOMObserver.prototype.__proto__ = WebInspector.Object.prototype;

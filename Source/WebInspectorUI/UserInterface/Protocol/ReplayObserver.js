@@ -24,103 +24,96 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ReplayPosition = function(segmentOffset, inputOffset)
+// FIXME: This ReplayPosition class shouldn't be here, no matter how simple it is.
+WebInspector.ReplayPosition = class ReplayPosition
 {
-    this.segmentOffset = segmentOffset;
-    this.inputOffset = inputOffset;
+    constructor(segmentOffset, inputOffset)
+    {
+        this.segmentOffset = segmentOffset;
+        this.inputOffset = inputOffset;
+    }
 };
 
-WebInspector.ReplayPosition.fromProtocol = function(payload)
+WebInspector.ReplayObserver = class ReplayObserver
 {
-    return new WebInspector.ReplayPosition(payload.segmentOffset, payload.inputOffset);
-};
+    // Events defined by the "Replay" domain.
 
-WebInspector.ReplayObserver = function()
-{
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
-};
-
-WebInspector.ReplayObserver.prototype = {
-    constructor: WebInspector.ReplayObserver,
-    __proto__: WebInspector.Object.prototype,
-
-    captureStarted: function()
+    captureStarted()
     {
         WebInspector.replayManager.captureStarted();
-    },
+    }
 
-    captureStopped: function()
+    captureStopped()
     {
         WebInspector.replayManager.captureStopped();
-    },
+    }
 
-    playbackStarted: function()
+    playbackStarted()
     {
         WebInspector.replayManager.playbackStarted();
-    },
+    }
 
-    playbackHitPosition: function(replayPosition, timestamp)
+    playbackHitPosition(replayPosition, timestamp)
     {
-        WebInspector.replayManager.playbackHitPosition(WebInspector.ReplayPosition.fromProtocol(replayPosition), timestamp);
-    },
+        WebInspector.replayManager.playbackHitPosition(new WebInspector.ReplayPosition(replayPosition.segmentOffset, replayPosition.inputOffset), timestamp);
+    }
 
-    playbackPaused: function(replayPosition)
+    playbackPaused(replayPosition)
     {
-        WebInspector.replayManager.playbackPaused(WebInspector.ReplayPosition.fromProtocol(replayPosition));
-    },
+        WebInspector.replayManager.playbackPaused(new WebInspector.ReplayPosition(replayPosition.segmentOffset, replayPosition.inputOffset));
+    }
 
-    playbackFinished: function()
+    playbackFinished()
     {
         WebInspector.replayManager.playbackFinished();
-    },
+    }
 
-    inputSuppressionChanged: function(willSuppress)
+    inputSuppressionChanged(willSuppress)
     {
         // Not handled yet.
-    },
+    }
 
-    sessionCreated: function(sessionId)
+    sessionCreated(sessionId)
     {
         WebInspector.replayManager.sessionCreated(sessionId);
-    },
+    }
 
-    sessionModified: function(sessionId)
+    sessionModified(sessionId)
     {
         WebInspector.replayManager.sessionModified(sessionId);
-    },
+    }
 
-    sessionRemoved: function(sessionId)
+    sessionRemoved(sessionId)
     {
         WebInspector.replayManager.sessionRemoved(sessionId);
-    },
+    }
 
-    sessionLoaded: function(sessionId)
+    sessionLoaded(sessionId)
     {
         WebInspector.replayManager.sessionLoaded(sessionId);
-    },
+    }
 
-    segmentCreated: function(segmentId)
+    segmentCreated(segmentId)
     {
         WebInspector.replayManager.segmentCreated(segmentId);
-    },
+    }
 
-    segmentRemoved: function(segmentId)
+    segmentRemoved(segmentId)
     {
         WebInspector.replayManager.segmentRemoved(segmentId);
-    },
+    }
 
-    segmentCompleted: function(segmentId)
+    segmentCompleted(segmentId)
     {
         WebInspector.replayManager.segmentCompleted(segmentId);
-    },
+    }
 
-    segmentLoaded: function(segmentId)
+    segmentLoaded(segmentId)
     {
         WebInspector.replayManager.segmentLoaded(segmentId);
-    },
+    }
 
-    segmentUnloaded: function()
+    segmentUnloaded()
     {
         WebInspector.replayManager.segmentUnloaded();
     }

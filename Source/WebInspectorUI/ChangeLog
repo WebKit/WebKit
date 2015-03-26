@@ -1,3 +1,31 @@
+2015-03-26  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Convert Base and Protocol files to ES6 classes
+        https://bugs.webkit.org/show_bug.cgi?id=143106
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/EventListener.js:
+        * UserInterface/Base/EventListenerSet.js:
+        * UserInterface/Protocol/ApplicationCacheObserver.js:
+        * UserInterface/Protocol/CSSObserver.js:
+        * UserInterface/Protocol/ConsoleObserver.js:
+        * UserInterface/Protocol/DOMObserver.js:
+        * UserInterface/Protocol/DOMStorageObserver.js:
+        * UserInterface/Protocol/DatabaseObserver.js:
+        * UserInterface/Protocol/DebuggerObserver.js:
+        * UserInterface/Protocol/InspectorBackend.js:
+        * UserInterface/Protocol/InspectorObserver.js:
+        * UserInterface/Protocol/LayerTreeObserver.js:
+        * UserInterface/Protocol/MessageDispatcher.js:
+        * UserInterface/Protocol/NetworkObserver.js:
+        * UserInterface/Protocol/PageObserver.js:
+        * UserInterface/Protocol/RemoteObject.js:
+        * UserInterface/Protocol/ReplayObserver.js:
+        * UserInterface/Protocol/RuntimeObserver.js:
+        * UserInterface/Protocol/TimelineObserver.js:
+        Converted to ES6 classes where possible.
+
 2015-03-25  Tobias Reiss  <tobi+webkit@basecode.de>
 
         Web Inspector: Add ESLint "Disallow Undeclared Variables" rule and enable ES6 env

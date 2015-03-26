@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,67 +23,58 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSObserver = function()
+WebInspector.CSSObserver = class CSSObserver
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
-};
-
-WebInspector.CSSObserver.prototype = {
-    constructor: WebInspector.CSSObserver,
-
     // Events defined by the "CSS" domain.
 
-    mediaQueryResultChanged: function()
+    mediaQueryResultChanged()
     {
         WebInspector.cssStyleManager.mediaQueryResultChanged();
-    },
+    }
 
-    styleSheetChanged: function(styleSheetId)
+    styleSheetChanged(styleSheetId)
     {
         WebInspector.cssStyleManager.styleSheetChanged(styleSheetId);
-    },
+    }
 
-    styleSheetAdded: function(header)
+    styleSheetAdded(header)
     {
         // FIXME: Not implemented. <rdar://problem/13213680>
-    },
+    }
 
-    styleSheetRemoved: function(header)
+    styleSheetRemoved(header)
     {
         // FIXME: Not implemented. <rdar://problem/13213680>
-    },
+    }
 
-    namedFlowCreated: function(namedFlow)
+    namedFlowCreated(namedFlow)
     {
         WebInspector.domTreeManager.namedFlowCreated(namedFlow);
-    },
+    }
 
-    namedFlowRemoved: function(documentNodeId, flowName)
+    namedFlowRemoved(documentNodeId, flowName)
     {
         WebInspector.domTreeManager.namedFlowRemoved(documentNodeId, flowName);
-    },
+    }
 
     // COMPATIBILITY (iOS 7): regionLayoutUpdated was removed and replaced by regionOversetChanged.
-    regionLayoutUpdated: function(namedFlow)
+    regionLayoutUpdated(namedFlow)
     {
         WebInspector.domTreeManager.regionLayoutUpdated(namedFlow);
-    },
+    }
 
-    regionOversetChanged: function(namedFlow)
+    regionOversetChanged(namedFlow)
     {
         WebInspector.domTreeManager.regionOversetChanged(namedFlow);
-    },
+    }
 
-    registeredNamedFlowContentElement: function(documentNodeId, flowName, contentNodeId, nextContentElementNodeId)
+    registeredNamedFlowContentElement(documentNodeId, flowName, contentNodeId, nextContentElementNodeId)
     {
         WebInspector.domTreeManager.registeredNamedFlowContentElement(documentNodeId, flowName, contentNodeId, nextContentElementNodeId);
-    },
+    }
 
-    unregisteredNamedFlowContentElement: function(documentNodeId, flowName, contentNodeId)
+    unregisteredNamedFlowContentElement(documentNodeId, flowName, contentNodeId)
     {
         WebInspector.domTreeManager.unregisteredNamedFlowContentElement(documentNodeId, flowName, contentNodeId);
     }
 };
-
-WebInspector.CSSObserver.prototype.__proto__ = WebInspector.Object.prototype;

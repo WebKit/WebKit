@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseObserver = function()
+WebInspector.DatabaseObserver = class DatabaseObserver
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
-};
-
-WebInspector.DatabaseObserver._callbacks = {};
-
-WebInspector.DatabaseObserver.prototype = {
-    constructor: WebInspector.DatabaseObserver,
-
     // Events defined by the "Database" domain.
 
-    addDatabase: function(database)
+    addDatabase(database)
     {
         WebInspector.storageManager.databaseWasAdded(database.id, database.domain, database.name, database.version);
-    },
+    }
 
     // COMPATIBILITY (iOS 6): This event was removed in favor of a more async DatabaseAgent.executeSQL.
-    sqlTransactionSucceeded: function(transactionId, columnNames, values)
+    sqlTransactionSucceeded(transactionId, columnNames, values)
     {
         if (!WebInspector.DatabaseObserver._callbacks[transactionId])
             return;
@@ -52,10 +43,10 @@ WebInspector.DatabaseObserver.prototype = {
 
         if (callback)
             callback(columnNames, values, null);
-    },
+    }
 
     // COMPATIBILITY (iOS 6): This event was removed in favor of a more async DatabaseAgent.executeSQL.
-    sqlTransactionFailed: function(transactionId, sqlError)
+    sqlTransactionFailed(transactionId, sqlError)
     {
         if (!WebInspector.DatabaseObserver._callbacks[transactionId])
             return;
@@ -68,4 +59,4 @@ WebInspector.DatabaseObserver.prototype = {
     }
 };
 
-WebInspector.DatabaseObserver.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.DatabaseObserver._callbacks = {};

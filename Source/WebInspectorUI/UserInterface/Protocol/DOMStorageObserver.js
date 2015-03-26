@@ -24,46 +24,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMStorageObserver = function()
+WebInspector.DOMStorageObserver = class DOMStorageObserver
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
-};
-
-WebInspector.DOMStorageObserver.prototype = {
-    constructor: WebInspector.DOMStorageObserver,
-    __proto__: WebInspector.Object.prototype,
-
     // Events defined by the "DOMStorage" domain.
 
     // COMPATIBILITY (iOS 6): This event no longer exists. It is still needed and called on iOS 6.
-    addDOMStorage: function(storage)
+    addDOMStorage(storage)
     {
         WebInspector.storageManager.domStorageWasAdded(storage.id, storage.host, storage.isLocalStorage);
-    },
+    }
 
     // COMPATIBILITY (iOS 6): This event was split into the granular events below.
-    updateDOMStorage: function(storageId)
+    updateDOMStorage(storageId)
     {
         WebInspector.storageManager.domStorageWasUpdated(storageId);
-    },
+    }
 
-    domStorageItemsCleared: function(storageId)
+    domStorageItemsCleared(storageId)
     {
         WebInspector.storageManager.itemsCleared(storageId);
-    },
+    }
 
-    domStorageItemRemoved: function(storageId, key)
+    domStorageItemRemoved(storageId, key)
     {
         WebInspector.storageManager.itemRemoved(storageId, key);
-    },
+    }
 
-    domStorageItemAdded: function(storageId, key, value)
+    domStorageItemAdded(storageId, key, value)
     {
         WebInspector.storageManager.itemAdded(storageId, key, value);
-    },
+    }
 
-    domStorageItemUpdated: function(storageId, key, oldValue, value)
+    domStorageItemUpdated(storageId, key, oldValue, value)
     {
         WebInspector.storageManager.itemUpdated(storageId, key, oldValue, value);
     }

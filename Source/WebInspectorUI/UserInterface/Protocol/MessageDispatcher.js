@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,34 +24,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.messagesToDispatch = [];
+WebInspector._messagesToDispatch = [];
 
 WebInspector.dispatchNextQueuedMessageFromBackend = function()
 {
-    var startCount = WebInspector.messagesToDispatch.length;
+    var startCount = WebInspector._messagesToDispatch.length;
     var startTime = Date.now();
     var timeLimitPerRunLoop = 10; // milliseconds
 
     var i = 0;
-    for (; i < WebInspector.messagesToDispatch.length; ++i) {
+    for (; i < WebInspector._messagesToDispatch.length; ++i) {
         // Defer remaining messages if we have taken too long. In practice, single
         // messages like Page.getResourceContent blow through the time budget.
         if (Date.now() - startTime > timeLimitPerRunLoop)
             break;
 
-        InspectorBackend.dispatch(WebInspector.messagesToDispatch[i]);
+        InspectorBackend.dispatch(WebInspector._messagesToDispatch[i]);
     }
 
-    if (i === WebInspector.messagesToDispatch.length) {
-        WebInspector.messagesToDispatch = [];
+    if (i === WebInspector._messagesToDispatch.length) {
+        WebInspector._messagesToDispatch = [];
         WebInspector._dispatchTimeout = null;
     } else {
-        WebInspector.messagesToDispatch = WebInspector.messagesToDispatch.slice(i);
+        WebInspector._messagesToDispatch = WebInspector._messagesToDispatch.slice(i);
         WebInspector._dispatchTimeout = setTimeout(WebInspector.dispatchNextQueuedMessageFromBackend, 0);
     }
 
     if (InspectorBackend.dumpInspectorTimeStats)
-        console.log("time-stats: --- RunLoop duration: " + (Date.now() - startTime) + "ms; dispatched: " + (startCount - WebInspector.messagesToDispatch.length) + "; remaining: " + WebInspector.messagesToDispatch.length);
+        console.log("time-stats: --- RunLoop duration: " + (Date.now() - startTime) + "ms; dispatched: " + (startCount - WebInspector._messagesToDispatch.length) + "; remaining: " + WebInspector._messagesToDispatch.length);
 };
 
 WebInspector.dispatchMessageFromBackend = function(message)
@@ -59,7 +59,7 @@ WebInspector.dispatchMessageFromBackend = function(message)
     // Enforce asynchronous interaction between the backend and the frontend by queueing messages.
     // The messages are dequeued on a zero delay timeout.
 
-    this.messagesToDispatch.push(message);
+    WebInspector._messagesToDispatch.push(message);
 
     if (this._dispatchTimeout)
         return;
