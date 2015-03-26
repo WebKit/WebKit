@@ -200,6 +200,10 @@ public:
 
     bool isValid() const { return m_client; }
 
+#if HAVE(QOS_CLASSES)
+    void setShouldBoostMainThreadOnSyncMessage(bool b) { m_shouldBoostMainThreadOnSyncMessage = b; }
+#endif
+
 private:
     Connection(Identifier, bool isServer, Client&, WTF::RunLoop& clientRunLoop);
     void platformInitialize(Identifier);
@@ -303,6 +307,11 @@ private:
     class SecondaryThreadPendingSyncReply;
     typedef HashMap<uint64_t, SecondaryThreadPendingSyncReply*> SecondaryThreadPendingSyncReplyMap;
     SecondaryThreadPendingSyncReplyMap m_secondaryThreadPendingSyncReplyMap;
+
+#if HAVE(QOS_CLASSES)
+    pthread_t m_mainThread { 0 };
+    bool m_shouldBoostMainThreadOnSyncMessage { false };
+#endif
 
 #if OS(DARWIN)
     // Called on the connection queue.

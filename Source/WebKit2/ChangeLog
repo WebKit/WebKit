@@ -1,3 +1,41 @@
+2015-03-26  Andreas Kling  <akling@apple.com>
+
+        [Darwin] Boost the web process QoS level while handling a synchronous IPC message.
+        <https://webkit.org/b/142988>
+        <rdar://problem/20264346>
+
+        Reviewed by Antti Koivisto and Anders Carlsson.
+
+        Add a mechanism for IPC::Connection to boost the main thread for the duration
+        of processing a synchronous message.
+
+        This fixes an issue where the UI process would block on a synchronous request
+        to the web process that was being carried out at a lower QoS level.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::Connection): Save the main thread's pthread_t while we have
+        a chance to retreive it.
+
+        (IPC::Connection::processIncomingMessage): Optionally boost the main thread when
+        processing an incoming message with the IsSyncMessage flag set.
+
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::setShouldBoostMainThreadOnSyncMessage): Added. When this mode is
+        enabled, Connection will give a temporary QoS override to the main thread when
+        receiving a synchronous message. Ownership of the override is handed to the
+        MessageDecoder, which resets the main thread QoS in its destructor.
+
+        * Platform/IPC/MessageDecoder.cpp:
+        (IPC::MessageDecoder::~MessageDecoder): Remove any QoS override owned by this message.
+
+        * Platform/IPC/MessageDecoder.h:
+        (IPC::MessageDecoder::setQOSClassOverride): Added. Takes ownership of a QoS override
+        to make sure it stays in effect until this message has been dispatched.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection): Set up main thread QoS boosting for the
+        web process's connection to the UI process.
+
 2015-03-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cursor doesn't change back to pointer when leaving Mail

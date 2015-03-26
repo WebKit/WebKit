@@ -34,6 +34,10 @@
 #include <uuid/uuid.h>
 #endif
 
+#if HAVE(QOS_CLASSES)
+#include <pthread/qos.h>
+#endif
+
 namespace IPC {
 
 class DataReference;
@@ -53,6 +57,10 @@ public:
 
 #if PLATFORM(MAC)
     void setImportanceAssertion(std::unique_ptr<ImportanceAssertion>);
+#endif
+
+#if HAVE(QOS_CLASSES)
+    void setQOSClassOverride(pthread_override_t override) { m_qosClassOverride = override; }
 #endif
 
 #if HAVE(DTRACE)
@@ -75,6 +83,10 @@ private:
 
 #if PLATFORM(MAC)
     std::unique_ptr<ImportanceAssertion> m_importanceAssertion;
+#endif
+
+#if HAVE(QOS_CLASSES)
+    pthread_override_t m_qosClassOverride { nullptr };
 #endif
 };
 

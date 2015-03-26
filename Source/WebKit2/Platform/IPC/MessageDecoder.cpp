@@ -39,6 +39,10 @@ namespace IPC {
 
 MessageDecoder::~MessageDecoder()
 {
+#if HAVE(QOS_CLASSES)
+    if (m_qosClassOverride)
+        pthread_override_qos_class_end_np(m_qosClassOverride);
+#endif
 }
 
 MessageDecoder::MessageDecoder(const DataReference& buffer, Vector<Attachment> attachments)
