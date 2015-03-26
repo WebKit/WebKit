@@ -1,3 +1,10 @@
+2015-03-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening, skip failing tests on AArch64 Linux.
+
+        * tests/mozilla/mozilla-tests.yaml:
+        * tests/stress/cached-prototype-setter.js:
+
 2015-03-26  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fixes to silly things. While landing fixes to r181993, I introduced crashes. This fixes them.

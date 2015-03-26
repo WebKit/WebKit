@@ -1,4 +1,6 @@
-//@ skip if $architecture == "arm64" and $hostOS == "darwin"
+// [ARM] jsc-layout-tests.yaml/js/script-tests/array-from.js fails on Aarch64
+// https://bugs.webkit.org/show_bug.cgi?id=142272
+//@ skip if $architecture == "arm64"
 description("Tests for Array.from");
 
 function section(title) {

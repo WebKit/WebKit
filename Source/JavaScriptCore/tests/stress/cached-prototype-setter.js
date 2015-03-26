@@ -1,3 +1,7 @@
+// [ARM] stress/cached-prototype-setter.js.no-llint fails intermittently on Aarch64 Linux
+// https://bugs.webkit.org/show_bug.cgi?id=142277
+//@ skip if $architecture == "arm64" and $hostOS == "linux"
+
 (function() {
     var xSetterCalled = false;
 
