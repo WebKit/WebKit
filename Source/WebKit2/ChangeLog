@@ -1,3 +1,17 @@
+2015-03-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [Linux] SeccompFilters: improve the port-agnostic whitelist
+        https://bugs.webkit.org/show_bug.cgi?id=140064
+
+        Reviewed by Žan Doberšek.
+
+        Allow the web process to access several files and directories that it
+        was previously prohibited from accessing. This makes the web process
+        much less likely to break.
+
+        * Shared/linux/SeccompFilters/SyscallPolicy.cpp:
+        (WebKit::SyscallPolicy::addDefaultWebProcessPolicy):
+
 2015-03-26  Antti Koivisto  <antti@apple.com>
 
         Remove unneeded isConditionalRequest check from NetworkResourceLoader

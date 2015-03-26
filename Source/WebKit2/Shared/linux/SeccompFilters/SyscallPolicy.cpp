@@ -135,7 +135,11 @@ void SyscallPolicy::addDefaultWebProcessPolicy(const WebProcessCreationParameter
 
     // Shared libraries, plugins and fonts.
     addDirectoryPermission(ASCIILiteral("/lib"), Read);
+    addDirectoryPermission(ASCIILiteral("/lib32"), Read);
+    addDirectoryPermission(ASCIILiteral("/lib64"), Read);
     addDirectoryPermission(ASCIILiteral("/usr/lib"), Read);
+    addDirectoryPermission(ASCIILiteral("/usr/lib32"), Read);
+    addDirectoryPermission(ASCIILiteral("/usr/lib64"), Read);
     addDirectoryPermission(ASCIILiteral("/usr/share"), Read);
 
     // SSL Certificates.
@@ -186,13 +190,50 @@ void SyscallPolicy::addDefaultWebProcessPolicy(const WebProcessCreationParameter
     // Needed by D-Bus.
     addFilePermission(ASCIILiteral("/var/lib/dbus/machine-id"), Read);
 
+    // Needed by at-spi2.
+    // FIXME This is too permissive: https://bugs.webkit.org/show_bug.cgi?id=143004
+    addDirectoryPermission("/run/user/" + String::number(getuid()), ReadAndWrite);
+
+    // Needed by WebKit's memory pressure handler
+    addFilePermission(ASCIILiteral("/sys/fs/cgroup/memory/memory.pressure_level"), Read);
+    addFilePermission(ASCIILiteral("/sys/fs/cgroup/memory/cgroup.event_control"), Read);
+
     char* homeDir = getenv("HOME");
     if (homeDir) {
         // X11 connection token.
         addFilePermission(String::fromUTF8(homeDir) + "/.Xauthority", Read);
-        // MIME type resolution.
-        addDirectoryPermission(String::fromUTF8(homeDir) +  "/.local/share/mime", Read);
     }
+
+    // MIME type resolution.
+    char* dataHomeDir = getenv("XDG_DATA_HOME");
+    if (dataHomeDir)
+        addDirectoryPermission(String::fromUTF8(dataHomeDir) + "/mime", Read);
+    else if (homeDir)
+        addDirectoryPermission(String::fromUTF8(homeDir) + "/.local/share/mime", Read);
+
+#if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
+    // Needed on most non-Debian distros by libxshmfence <= 1.1, or newer
+    // libxshmfence with older kernels (linux <= 3.16), for DRI3 shared memory.
+    // FIXME Try removing this permission when we can rely on a newer libxshmfence.
+    // See http://code.google.com/p/chromium/issues/detail?id=415681
+    addDirectoryPermission(ASCIILiteral("/var/tmp"), ReadAndWrite);
+
+    // Optional Mesa DRI configuration file
+    addFilePermission(ASCIILiteral("/etc/drirc"), Read);
+    if (homeDir)
+        addFilePermission(String::fromUTF8(homeDir) + "/.drirc", Read);
+
+    // Mesa uses udev.
+    addDirectoryPermission(ASCIILiteral("/etc/udev"), Read);
+    addDirectoryPermission(ASCIILiteral("/run/udev"), Read);
+    addDirectoryPermission(ASCIILiteral("/sys/bus"), Read);
+    addDirectoryPermission(ASCIILiteral("/sys/class"), Read);
+    addDirectoryPermission(ASCIILiteral("/sys/devices"), Read);
+#endif
+
+    // Needed by NVIDIA proprietary graphics driver
+    if (homeDir)
+        addDirectoryPermission(String::fromUTF8(homeDir) + "/.nv", ReadAndWrite);
 }
 
 } // namespace WebKit
