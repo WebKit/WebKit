@@ -100,6 +100,7 @@ ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCod
     , m_hasCapturedVariables(false)
     , m_neverInline(false)
     , m_didTryToEnterInLoop(false)
+    , m_overrideLineNo(-1)
     , m_firstLine(-1)
     , m_lastLine(-1)
     , m_startColumn(UINT_MAX)
@@ -608,12 +609,17 @@ void FunctionExecutable::unlinkCalls()
 #endif
 }
 
-FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, ExecState& exec, const SourceCode& source, JSObject*& exception)
+FunctionExecutable* FunctionExecutable::fromGlobalCode(
+    const Identifier& name, ExecState& exec, const SourceCode& source, 
+    JSObject*& exception, int overrideLineNo)
 {
-    UnlinkedFunctionExecutable* unlinkedExecutable = UnlinkedFunctionExecutable::fromGlobalCode(name, exec, source, exception);
+    UnlinkedFunctionExecutable* unlinkedExecutable = 
+        UnlinkedFunctionExecutable::fromGlobalCode(
+            name, exec, source, exception, overrideLineNo);
     if (!unlinkedExecutable)
         return nullptr;
-    return unlinkedExecutable->link(exec.vm(), source);
+
+    return unlinkedExecutable->link(exec.vm(), source, overrideLineNo);
 }
 
 void ExecutableBase::dump(PrintStream& out) const

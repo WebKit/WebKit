@@ -136,9 +136,11 @@ public:
         VM&, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, 
         ParserError&);
 
-    static UnlinkedFunctionExecutable* fromGlobalCode(const Identifier&, ExecState&, const SourceCode&, JSObject*& exception);
+    static UnlinkedFunctionExecutable* fromGlobalCode(
+        const Identifier&, ExecState&, const SourceCode&, JSObject*& exception, 
+        int overrideLineNo);
 
-    FunctionExecutable* link(VM&, const SourceCode&);
+    FunctionExecutable* link(VM&, const SourceCode&, int overrideLineNo = -1);
 
     void clearCodeForRecompilation()
     {

@@ -1,3 +1,24 @@
+2015-03-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Assertion firing in JavaScriptCore/parser/parser.h for statesman.com site
+        https://bugs.webkit.org/show_bug.cgi?id=142974
+
+        Reviewed by Joseph Pecoraro.
+
+        No test covering this ASSERT because I couldn't design a way to reproduce
+        it after trying for a few hours. Simply loading the original ASSERTing
+        content from disk is not enough to reproduce this bug.
+
+        * fast/profiler/dead-time-expected.txt:
+        * fast/profiler/inline-event-handler-expected.txt:
+        * fast/profiler/stop-profiling-after-setTimeout-expected.txt: These are
+        progressions, where we used to get the line number wrong.
+
+        * fast/dom/attribute-event-listener-errors-expected.txt: Added.
+        * fast/dom/attribute-event-listener-errors.html: Added. This test covers
+        a subtle way in which the new mechanism for attribute event listener
+        line numbers is more accurate than the old one.
+
 2015-03-26  Brady Eidson  <beidson@apple.com>
 
         Apply ContentExtension actions after redirects.

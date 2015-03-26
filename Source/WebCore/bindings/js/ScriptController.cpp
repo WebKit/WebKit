@@ -274,6 +274,11 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld& world)
 
 TextPosition ScriptController::eventHandlerPosition() const
 {
+    // FIXME: If we are not currently parsing, we should use our current location
+    // in JavaScript, to cover cases like "element.setAttribute('click', ...)".
+
+    // FIXME: This location maps to the end of the HTML tag, and not to the
+    // exact column number belonging to the event handler attribute.
     ScriptableDocumentParser* parser = m_frame.document()->scriptableDocumentParser();
     if (parser)
         return parser->textPosition();

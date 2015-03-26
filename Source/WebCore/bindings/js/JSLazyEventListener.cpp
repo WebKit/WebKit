@@ -24,6 +24,7 @@
 #include "Frame.h"
 #include "JSNode.h"
 #include "ScriptController.h"
+#include <runtime/Executable.h>
 #include <runtime/FunctionConstructor.h>
 #include <runtime/IdentifierInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -103,15 +104,13 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
     args.append(jsNontrivialString(exec, m_eventParameterName));
     args.append(jsStringWithCache(exec, m_code));
 
-    // Move our text position backward one line. Creating an anonymous function
-    // will add a line for a function declaration, but we want our line number
-    // to match up with where the attribute was declared.
-    TextPosition position(
-        OrdinalNumber::fromOneBasedInt(
-            m_position.m_line.oneBasedInt() - 1), m_position.m_column);
+    // We want all errors to refer back to the line on which our attribute was
+    // declared, regardless of any newlines in our JavaScript source text.
+    int overrideLineNo = m_position.m_line.oneBasedInt();
+
     JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(
         exec, exec->lexicalGlobalObject(), args, Identifier(exec, m_functionName), 
-        m_sourceURL, position);
+        m_sourceURL, m_position, overrideLineNo);
 
     if (exec->hadException()) {
         reportCurrentException(exec);
@@ -120,6 +119,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
     }
 
     JSFunction* listenerAsFunction = jsCast<JSFunction*>(jsFunction);
+
     if (m_originalNode) {
         if (!wrapper()) {
             // Ensure that 'node' has a JavaScript wrapper to mark the event listener we're creating.

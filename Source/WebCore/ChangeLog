@@ -1,3 +1,19 @@
+2015-03-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Assertion firing in JavaScriptCore/parser/parser.h for statesman.com site
+        https://bugs.webkit.org/show_bug.cgi?id=142974
+
+        Reviewed by Joseph Pecoraro.
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction): Use the new override
+        line number API to guarantee that errors will map to the .html file locations
+        that we like.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::eventHandlerPosition): Added a FIXME to cover
+        some cases where our line and column numbers are still nonsense.
+
 2015-03-26  Beth Dakin  <bdakin@apple.com>
 
         Relevant repainted objects callback is inaccurate and inconsistent for PDF 

@@ -1,3 +1,54 @@
+2015-03-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Assertion firing in JavaScriptCore/parser/parser.h for statesman.com site
+        https://bugs.webkit.org/show_bug.cgi?id=142974
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch does two things:
+
+        (1) Restore JavaScriptCore's sanitization of line and column numbers to
+        one-based values.
+
+        We need this because WebCore sometimes provides huge negative column
+        numbers.
+
+        (2) Solve the attribute event listener line numbering problem a different
+        way: Rather than offseting all line numbers by -1 in an attribute event
+        listener in order to arrange for a custom result, instead use an explicit
+        feature for saying "all errors in this code should map to this line number".
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::link):
+        (JSC::UnlinkedFunctionExecutable::fromGlobalCode):
+        * bytecode/UnlinkedCodeBlock.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::StackFrame::computeLineAndColumn):
+        (JSC::GetStackTraceFunctor::operator()):
+        * interpreter/Interpreter.h:
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::computeLineAndColumn):
+        * parser/ParserError.h:
+        (JSC::ParserError::toErrorObject): Plumb through an override line number.
+        When a function has an override line number, all syntax and runtime
+        errors in the function will map to it. This is useful for attribute event
+        listeners.
+ 
+        * parser/SourceCode.h:
+        (JSC::SourceCode::SourceCode): Restore the old sanitization of line and
+        column numbers to one-based integers. It was kind of a hack to remove this.
+
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::FunctionExecutable::fromGlobalCode):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::setOverrideLineNo):
+        (JSC::ScriptExecutable::hasOverrideLineNo):
+        (JSC::ScriptExecutable::overrideLineNo):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionConstructor.h: Plumb through an override line number.
+
 2015-03-26  Filip Pizlo  <fpizlo@apple.com>
 
         If we're in code for accessing scoped arguments, we should probably check if the object is a scoped arguments rather than checking if it's a direct arguments.

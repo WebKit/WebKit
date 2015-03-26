@@ -358,6 +358,9 @@ public:
     intptr_t sourceID() const { return m_source.providerID(); }
     const String& sourceURL() const { return m_source.provider()->url(); }
     int lineNo() const { return m_firstLine; }
+    void setOverrideLineNo(int overrideLineNo) { m_overrideLineNo = overrideLineNo; }
+    bool hasOverrideLineNo() const { return m_overrideLineNo != -1; }
+    int overrideLineNo() const { return m_overrideLineNo; }
     int lastLine() const { return m_lastLine; }
     unsigned startColumn() const { return m_startColumn; }
     unsigned endColumn() const { return m_endColumn; }
@@ -429,6 +432,7 @@ protected:
     bool m_hasCapturedVariables;
     bool m_neverInline;
     bool m_didTryToEnterInLoop;
+    int m_overrideLineNo;
     int m_firstLine;
     int m_lastLine;
     unsigned m_startColumn;
@@ -549,7 +553,9 @@ public:
         executable->finishCreation(vm);
         return executable;
     }
-    static FunctionExecutable* fromGlobalCode(const Identifier& name, ExecState&, const SourceCode&, JSObject*& exception);
+    static FunctionExecutable* fromGlobalCode(
+        const Identifier& name, ExecState&, const SourceCode&, 
+        JSObject*& exception, int overrideLineNo);
 
     static void destroy(JSCell*);
         

@@ -81,7 +81,7 @@ namespace JSC {
     struct StackFrame {
         Strong<JSObject> callee;
         StackFrameCodeType codeType;
-        Strong<ExecutableBase> executable;
+        Strong<ScriptExecutable> executable;
         Strong<UnlinkedCodeBlock> codeBlock;
         RefPtr<SourceProvider> code;
         int lineOffset;

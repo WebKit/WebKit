@@ -440,6 +440,9 @@ void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column)
 
     line = divotLine + lineOffset;
     column = divotColumn + (divotLine ? 1 : firstLineColumnOffset);
+
+    if (executable->hasOverrideLineNo())
+        line = executable->overrideLineNo();
 }
 
 void StackFrame::expressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column)
@@ -490,7 +493,7 @@ public:
                 StackFrame s = {
                     Strong<JSObject>(vm, visitor->callee()),
                     getStackFrameCodeType(visitor),
-                    Strong<ExecutableBase>(vm, codeBlock->ownerExecutable()),
+                    Strong<ScriptExecutable>(vm, codeBlock->ownerExecutable()),
                     Strong<UnlinkedCodeBlock>(vm, codeBlock->unlinkedCodeBlock()),
                     codeBlock->source(),
                     codeBlock->ownerExecutable()->lineNo(),
@@ -501,7 +504,7 @@ public:
                 };
                 m_results.append(s);
             } else {
-                StackFrame s = { Strong<JSObject>(vm, visitor->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, 0, String()};
+                StackFrame s = { Strong<JSObject>(vm, visitor->callee()), StackFrameNativeCode, Strong<ScriptExecutable>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, 0, String()};
                 m_results.append(s);
             }
     

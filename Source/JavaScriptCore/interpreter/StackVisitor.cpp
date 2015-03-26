@@ -293,6 +293,9 @@ void StackVisitor::Frame::computeLineAndColumn(unsigned& line, unsigned& column)
 
     line = divotLine + codeBlock->ownerExecutable()->lineNo();
     column = divotColumn + (divotLine ? 1 : codeBlock->firstLineColumnOffset());
+
+    if (codeBlock->ownerExecutable()->hasOverrideLineNo())
+        line = codeBlock->ownerExecutable()->overrideLineNo();
 }
 
 void StackVisitor::Frame::retrieveExpressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column)

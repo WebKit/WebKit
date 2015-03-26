@@ -59,7 +59,9 @@ private:
 JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&, const Identifier& functionName, const String& sourceURL, const WTF::TextPosition&);
 JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&);
 
-JS_EXPORT_PRIVATE JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState*, JSGlobalObject*, const ArgList&, const Identifier&, const String&, const WTF::TextPosition&);
+JS_EXPORT_PRIVATE JSObject* constructFunctionSkippingEvalEnabledCheck(
+    ExecState*, JSGlobalObject*, const ArgList&, const Identifier&, 
+    const String&, const WTF::TextPosition&, int overrideLineNo = -1);
 
 } // namespace JSC
 
