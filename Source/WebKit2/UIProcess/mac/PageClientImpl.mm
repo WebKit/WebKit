@@ -627,7 +627,7 @@ void PageClientImpl::recordAutocorrectionResponse(AutocorrectionResponseType res
 void PageClientImpl::recommendedScrollbarStyleDidChange(ScrollbarStyle newStyle)
 {
     // Now re-create a tracking area with the appropriate options given the new scrollbar style
-    NSTrackingAreaOptions options = NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect;
+    NSTrackingAreaOptions options = NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect | NSTrackingCursorUpdate;
     if (newStyle == ScrollbarStyle::AlwaysVisible)
         options |= NSTrackingActiveAlways;
     else

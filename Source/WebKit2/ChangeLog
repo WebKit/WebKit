@@ -1,3 +1,20 @@
+2015-03-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Cursor doesn't change back to pointer when leaving Mail
+        https://bugs.webkit.org/show_bug.cgi?id=132038
+
+        Reviewed by Anders Carlsson.
+
+        Fixed the bug by adding a cursor rect and making the primary tracking area update the cursor so that
+        AppKit will reset the cursor as it leaves the WebView.
+
+        We use nil cursor here since we manually update the cursor by calling [NSCursor set].
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::recommendedScrollbarStyleDidChange):
+
 2015-03-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [Linux] SeccompFilters: improve the port-agnostic whitelist

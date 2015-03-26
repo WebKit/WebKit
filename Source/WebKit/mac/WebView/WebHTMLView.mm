@@ -4226,7 +4226,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
 #if !PLATFORM(IOS)
     if (!_private->installedTrackingArea) {
-        NSTrackingAreaOptions options = NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect;
+        NSTrackingAreaOptions options = NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect | NSTrackingCursorUpdate;
         if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy
 #if ENABLE(DASHBOARD_SUPPORT)
             || [[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows]

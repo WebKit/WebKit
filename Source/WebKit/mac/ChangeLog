@@ -1,3 +1,18 @@
+2015-03-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Cursor doesn't change back to pointer when leaving Mail
+        https://bugs.webkit.org/show_bug.cgi?id=132038
+
+        Reviewed by Anders Carlsson.
+
+        Fixed the bug by adding a cursor rect and making the primary tracking area update the cursor so that
+        AppKit will reset the cursor as it leaves the WebView.
+
+        We use nil cursor here since we manually update the cursor by calling [NSCursor set].
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView setDataSource:]): Use NSTrackingCursorUpdate option in creating the primary tracking area.
+
 2015-03-24  Anders Carlsson  <andersca@apple.com>
 
         Fix designated initializer violations
