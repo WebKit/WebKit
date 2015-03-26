@@ -97,6 +97,7 @@ using namespace WebCore;
 
 - (id)initWithCallback:(MediaSessionManageriOS*)callback;
 - (void)allocateVolumeView;
+- (void)setVolumeView:(RetainPtr<MPVolumeView>)volumeView;
 - (void)clearCallback;
 - (void)interruption:(NSNotification *)notification;
 - (void)applicationWillEnterForeground:(NSNotification *)notification;
@@ -245,19 +246,29 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 
 - (void)allocateVolumeView
 {
-    if (!isMainThread()) {
-        // Call synchronously to the main thread so that _volumeView will be completely setup before the constructor completes
-        // because hasWirelessTargetsAvailable is synchronous and can be called on the WebThread.
-        RetainPtr<WebMediaSessionHelper> strongSelf = self;
-        dispatch_sync(dispatch_get_main_queue(), [strongSelf]() {
-            [strongSelf allocateVolumeView];
-        });
+    if (pthread_main_np()) {
+        [self setVolumeView:adoptNS([allocMPVolumeViewInstance() init])];
         return;
     }
 
-    _volumeView = adoptNS([allocMPVolumeViewInstance() init]);
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(wirelessRoutesAvailableDidChange:) name:MPVolumeViewWirelessRoutesAvailableDidChangeNotification object:_volumeView.get()];
-    
+    RetainPtr<WebMediaSessionHelper> strongSelf = self;
+    dispatch_async(dispatch_get_main_queue(), [strongSelf]() {
+        RetainPtr<MPVolumeView> volumeView = adoptNS([allocMPVolumeViewInstance() init]);
+        callOnWebThreadOrDispatchAsyncOnMainThread([strongSelf, volumeView]() {
+            [strongSelf setVolumeView:volumeView];
+        });
+    });
+}
+
+- (void)setVolumeView:(RetainPtr<MPVolumeView>)volumeView
+{
+    if (_volumeView)
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:MPVolumeViewWirelessRoutesAvailableDidChangeNotification object:_volumeView.get()];
+
+    _volumeView = volumeView;
+
+    if (_volumeView)
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(wirelessRoutesAvailableDidChange:) name:MPVolumeViewWirelessRoutesAvailableDidChangeNotification object:_volumeView.get()];
 }
 
 - (id)initWithCallback:(MediaSessionManageriOS*)callback
@@ -321,7 +332,7 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 - (BOOL)hasWirelessTargetsAvailable
 {
     LOG(Media, "-[WebMediaSessionHelper hasWirelessTargetsAvailable]");
-    return [_volumeView areWirelessRoutesAvailable];
+    return _volumeView ? [_volumeView areWirelessRoutesAvailable] : NO;
 }
 
 - (void)startMonitoringAirPlayRoutes

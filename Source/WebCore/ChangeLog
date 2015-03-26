@@ -1,3 +1,20 @@
+2015-03-26  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Accessibility crashing because MediaPlayer is laying out UI off the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=142970
+
+        Reviewed by Eric Carlson.
+
+        isMainThread() will (ironically) return true if called from the web thread. Rather than dispatch
+        synchronously to the main thread to allocate the _volumeView, dispatch asynchronously and handle
+        the case where the MPVolumeView has not yet been created.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (-[WebMediaSessionHelper allocateVolumeView]): Dispatch to the main thread to allocate. Move notification
+            registration to -setVolumeView:.
+        (-[WebMediaSessionHelper setVolumeView:]): Added. Register/Unregister for route availablitiy notifications.
+        (-[WebMediaSessionHelper hasWirelessTargetsAvailable]): Handle the possibility of a nil _volumeView.
+
 2015-03-26  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix state maching debugging after r181964
