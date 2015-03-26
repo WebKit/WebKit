@@ -73,7 +73,7 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(ExecState* myFrame, Exec
 
     ClonedArguments* result = createEmpty(myFrame, callee);
     
-    unsigned length;
+    unsigned length = 0; // Initialize because VC needs it.
     switch (mode) {
     case ArgumentsMode::Cloned: {
         if (inlineCallFrame) {

@@ -1,5 +1,12 @@
 2015-03-25  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, try to fix Windows build.
+
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createWithInlineFrame):
+
+2015-03-25  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix debug build.
 
         * bytecompiler/NodesCodegen.cpp:
