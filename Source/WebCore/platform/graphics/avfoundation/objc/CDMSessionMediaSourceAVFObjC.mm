@@ -147,6 +147,9 @@ void CDMSessionMediaSourceAVFObjC::releaseKeys()
         LOG(Media, "CDMSessionMediaSourceAVFObjC::releaseKeys(%p) - expiring stream session", this);
         [m_streamSession expire];
 
+        if (!m_certificate)
+            return;
+
         if (![getAVStreamSessionClass() respondsToSelector:@selector(pendingExpiredSessionReportsWithAppIdentifier:storageDirectoryAtURL:)])
             return;
 
