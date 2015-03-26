@@ -36,6 +36,7 @@
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/_WKWebsiteDataStore.h>
 
 static void* keyValueObservingContext = &keyValueObservingContext;
@@ -102,7 +103,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
     [urlText setStringValue:[self addProtocolIfNecessary:[urlText stringValue]]];
 
-    [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[[urlText stringValue] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]]];
+    [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL _web_URLWithUserTypedString:[urlText stringValue]]]];
 }
 
 - (IBAction)showHideWebView:(id)sender
@@ -388,7 +389,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (!URL.absoluteString.length)
         return;
 
-    urlText.stringValue = [[URL absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    urlText.stringValue = [URL _web_userVisibleString];
 }
 
 - (void)loadURLString:(NSString *)urlString
