@@ -1,3 +1,13 @@
+2015-03-26  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix state maching debugging after r181964
+        https://bugs.webkit.org/show_bug.cgi?id=143082
+
+        Reviewed by Alex Christensen.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+
 2015-03-25  David Hyatt  <hyatt@apple.com>
 
         Improve the offsetWidth/Height layout optimization

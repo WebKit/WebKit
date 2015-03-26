@@ -153,7 +153,11 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
 #endif
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-    nfa.debugPrintDot();
+    for (size_t i = 0; i < nfas.size(); ++i) {
+        WTFLogAlways("NFA %zu", i);
+        const NFA& nfa = nfas[i];
+        nfa.debugPrintDot();
+    }
 #endif
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
@@ -162,6 +166,12 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
     Vector<DFABytecode> bytecode;
     for (size_t i = 0; i < nfas.size(); ++i) {
         DFA dfa = NFAToDFA::convert(nfas[i]);
+
+#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
+        WTFLogAlways("DFA %zu", i);
+        dfa.debugPrintDot();
+#endif
+
         if (!i) {
             // Put all the universal actions on the first DFA.
             for (uint64_t actionLocation : universalActionLocations)
@@ -170,13 +180,6 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
         DFABytecodeCompiler compiler(dfa, bytecode);
         compiler.compile();
     }
-
-#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    double dfaBuildTimeEnd = monotonicallyIncreasingTime();
-    dataLogF("    Time spent building the DFA: %f\n", (dfaBuildTimeEnd - dfaBuildTimeStart));
-#endif
-
-    // FIXME: never add a DFA that only matches the empty set.
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
     dfa.debugPrintDot();
