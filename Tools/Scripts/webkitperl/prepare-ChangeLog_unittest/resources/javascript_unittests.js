@@ -148,3 +148,45 @@ function func16()
                return 123;
            });
 }
+
+class BaseClass { constructor() {} };
+
+class DerivedClass extends BaseClass {
+    constructor()
+    {
+        super();
+    }
+
+    static staticMethod()
+    {
+    }
+
+    method(a, b)
+    {
+        function nestedFunctionInsideMethod() {
+            // ..
+        }
+    }
+
+    get getter() { }
+}
+
+var namespace = {};
+namespace.MyClass = class IgnoredName {
+    constructor()
+    {
+    }
+
+    static staticMethod()
+    {
+    }
+
+    method(a, b)
+    {
+        function nestedFunctionInsideMethod() {
+            // ..
+        }
+    }
+
+    get getter() { }
+}

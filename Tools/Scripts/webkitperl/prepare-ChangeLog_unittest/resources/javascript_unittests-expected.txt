@@ -131,6 +131,76 @@
       '128',
       '150',
       'func16'
+    ],
+    [
+      152,
+      152,
+      'BaseClass'
+    ],
+    [
+      152,
+      152,
+      'BaseClass'
+    ],
+    [
+      156,
+      158,
+      'DerivedClass'
+    ],
+    [
+      161,
+      162,
+      'DerivedClass.staticMethod'
+    ],
+    [
+      166,
+      168,
+      'DerivedClass.prototype.method.nestedFunctionInsideMethod'
+    ],
+    [
+      165,
+      169,
+      'DerivedClass.prototype.method'
+    ],
+    [
+      171,
+      171,
+      'DerivedClass.prototype.get getter'
+    ],
+    [
+      154,
+      172,
+      'DerivedClass'
+    ],
+    [
+      177,
+      178,
+      'namespace.MyClass'
+    ],
+    [
+      181,
+      182,
+      'namespace.MyClass.staticMethod'
+    ],
+    [
+      186,
+      188,
+      'namespace.MyClass.prototype.method.nestedFunctionInsideMethod'
+    ],
+    [
+      185,
+      189,
+      'namespace.MyClass.prototype.method'
+    ],
+    [
+      191,
+      191,
+      'namespace.MyClass.prototype.get getter'
+    ],
+    [
+      175,
+      192,
+      'namespace.MyClass'
     ]
   ]
 }

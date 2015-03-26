@@ -1,3 +1,29 @@
+2015-03-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Update prepare-ChangeLog to work with ES6 Class syntax
+        https://bugs.webkit.org/show_bug.cgi?id=143069
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_javascript):
+        Better handle ES6 Class syntax.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/javascript_unittests-expected.txt:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/javascript_unittests.js:
+        (BaseClass):
+        (DerivedClass):
+        (DerivedClass.staticMethod):
+        (DerivedClass.prototype.method.nestedFunctionInsideMethod):
+        (DerivedClass.prototype.method):
+        (DerivedClass.prototype.get getter):
+        (namespace.MyClass):
+        (namespace.MyClass.staticMethod):
+        (namespace.MyClass.prototype.method.nestedFunctionInsideMethod):
+        (namespace.MyClass.prototype.method):
+        (namespace.MyClass.prototype.get getter):
+        Proof!
+
 2015-03-25  Filip Pizlo  <fpizlo@apple.com>
 
         Use JITCompilationCanFail in more places, and make the fail path of JITCompilationMustSucceed a crash instead of attempting GC

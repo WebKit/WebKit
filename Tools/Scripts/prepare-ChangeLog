@@ -1250,18 +1250,48 @@ sub get_function_line_ranges_for_java($$)
 
 
 # Read a file and get all the line ranges of the things that look like
-# JavaScript functions.
+# JavaScript functions or methods.
 #
 # A function name is the word that immediately follows `function' when
-# followed by an open curly brace. It can appear at the top level, or
-# inside other functions.
+# followed by an open curly brace. It can appear at the top level,
+# or inside other functions. For example:
 #
-# An anonymous function name is the identifier chain immediately before
+#    function name() { // (name)
+#        function inner() { } // (name.inner)
+#    }
+#
+# An anonymous function name is the identifier on the left hand side of
 # an assignment with the equals operator or object notation that has a
-# value starting with `function' followed by an open curly brace.
+# value starting with `function' followed an open curly brace.
+# For example:
+#
+#    namespace = {
+#        name: function() {} // (namespace.name)
+#    }
+#    namespace.Foo = function() {} // (namespace.Foo)
 #
 # A getter or setter name is the word that immediately follows `get' or
-# `set' when followed by an open curly brace .
+# `set' when followed by params and an open curly brace. For example:
+#
+#    namespace = {
+#      get foo() {} // (namespace.get foo)
+#    }
+#
+# A method name is the word immediately before parenthesis, with an open
+# curly brace immediately following closing parenthesis. For simplification
+# we only parse for methods inside of a class. And for a class expression
+# we take the assignment identifier instead of the class name for namespacing.
+#
+#    namespace.Foo = class DoesNotMatter extends Bar {
+#        constructor() {} // (namespace.Foo)
+#        static staticMethod() {} // (namespace.Foo.staticMethod)
+#        instanceMethod() {} // (namespace.Foo.prototype.instanceMethod)
+#        get getter() {} // (namespace.Foo.prototype.get getter)
+#    }
+#    class ClassName {
+#        constructor() {} // (ClassName)
+#        method() {} // (ClassName.prototype.method)
+#    }
 #
 # Comment handling is simple-minded but will work for all but pathological cases.
 #
@@ -1273,6 +1303,7 @@ sub get_function_line_ranges_for_javascript($$)
 
     my @currentScopes;
     my @currentIdentifiers;
+    my @currentParsingMode = ("global");
     my @currentFunctionNames;
     my @currentFunctionDepths;
     my @currentFunctionStartLines;
@@ -1281,14 +1312,20 @@ sub get_function_line_ranges_for_javascript($$)
 
     my $inComment = 0;
     my $inQuotedText = "";
+    my $inExtends = 0;
+    my $inMethod = 0;
     my $parenthesesDepth = 0;
     my $bracesDepth = 0;
 
+    my $classJustSeen = 0;
+    my $parenthesisJustSeen = 0;
     my $functionJustSeen = 0;
     my $getterJustSeen = 0;
     my $setterJustSeen = 0;
     my $assignmentJustSeen = 0;
+    my $staticOrContructorSeen = 0;
 
+    my $possibleMethodName = "";
     my $word = "";
 
     while (<$fileHandle>) {
@@ -1326,38 +1363,69 @@ sub get_function_line_ranges_for_javascript($$)
 
         # Find function names.
         while (m-(\w+|[(){}=:;,])-g) {
+            # Skip everything until "{" after extends.
+            if ($inExtends) {
+                next if $1 ne '{';
+                $inExtends = 0;
+            }
+
             # Open parenthesis.
             if ($1 eq '(') {
                 $parenthesesDepth++;
+                $possibleMethodName = join('.', @currentIdentifiers);
                 next;
             }
 
             # Close parenthesis.
             if ($1 eq ')') {
                 $parenthesesDepth--;
+                $parenthesisJustSeen = 1;
                 next;
             }
 
             # Open brace.
             if ($1 eq '{') {
-                push(@currentScopes, join(".", @currentIdentifiers));
-                @currentIdentifiers = ();
+                my $methodName = "";
+
+                # Method.
+                if ($currentParsingMode[$#currentParsingMode] eq 'class' and $parenthesisJustSeen and ($staticOrContructorSeen or $possibleMethodName)) {
+                    $methodName = join('.', $staticOrContructorSeen ? "" : "prototype", $possibleMethodName);
+                    $methodName =~ s/\.{2,}/\./g; # Removes consecutive periods.
+                    $methodName =~ s/\.$//; # Remove trailing period.
+
+                    my $currentMethod = join('.', @currentScopes, $methodName);
+                    $currentMethod =~ s/\.{2,}/\./g; # Removes consecutive periods.
+                    $currentMethod =~ s/\.$//; # Remove trailing period.
+
+                    push(@currentParsingMode, "method");
+                    push(@currentFunctionNames, $currentMethod);
+                    push(@currentFunctionDepths, $bracesDepth);
+                    push(@currentFunctionStartLines, $.);
+                }
 
                 $bracesDepth++;
+                $functionJustSeen = 0;
+
+                push(@currentScopes, join('.', $methodName ? $methodName : @currentIdentifiers));
+                @currentIdentifiers = ();
+
+                $staticOrContructorSeen = 0;
                 next;
             }
 
             # Close brace.
             if ($1 eq '}') {
                 $bracesDepth--;
+                $functionJustSeen = 0;
 
                 if (@currentFunctionDepths and $bracesDepth == $currentFunctionDepths[$#currentFunctionDepths]) {
                     pop(@currentFunctionDepths);
+                    pop(@currentParsingMode);
 
-                    my $currentFunction = pop(@currentFunctionNames);
+                    my $currentName = pop(@currentFunctionNames);
                     my $start = pop(@currentFunctionStartLines);
 
-                    push(@ranges, [$start, $., $currentFunction]);
+                    push(@ranges, [$start, $., $currentName]);
                 }
 
                 pop(@currentScopes);
@@ -1372,6 +1440,18 @@ sub get_function_line_ranges_for_javascript($$)
                 next;
             }
 
+            # Class.
+            if ($1 eq 'class') {
+                $classJustSeen = 1;
+                next;
+            }
+
+            # Extends.
+            if ($1 eq 'extends') {
+                $inExtends = 1;
+                next;
+            }
+
             # Function.
             if ($1 eq 'function') {
                 $functionJustSeen = 1;
@@ -1380,6 +1460,7 @@ sub get_function_line_ranges_for_javascript($$)
                     my $currentFunction = join('.', (@currentScopes, @currentIdentifiers));
                     $currentFunction =~ s/\.{2,}/\./g; # Removes consecutive periods.
 
+                    push(@currentParsingMode, "function");
                     push(@currentFunctionNames, $currentFunction);
                     push(@currentFunctionDepths, $bracesDepth);
                     push(@currentFunctionStartLines, $.);
@@ -1400,6 +1481,12 @@ sub get_function_line_ranges_for_javascript($$)
                 next;
             }
 
+            # Static.
+            if ($1 eq 'static' or $1 eq 'constructor') {
+                $staticOrContructorSeen = 1;
+                next;
+            }
+
             # Assignment operator.
             if ($1 eq '=' or $1 eq ':') {
                 $assignmentJustSeen = 1;
@@ -1410,15 +1497,38 @@ sub get_function_line_ranges_for_javascript($$)
 
             # Word.
             $word = $1;
-            $word = "get $word" if $getterJustSeen;
-            $word = "set $word" if $setterJustSeen;
 
-            if (($functionJustSeen and !$assignmentJustSeen) or $getterJustSeen or $setterJustSeen) {
+            if ($classJustSeen) {
+                push(@currentIdentifiers, $word) if !$assignmentJustSeen;
+
+                my $currentClass = join('.', (@currentScopes, @currentIdentifiers));
+                $currentClass =~ s/\.{2,}/\./g; # Removes consecutive periods.
+
+                push(@currentParsingMode, "class");
+                push(@currentFunctionNames, $currentClass);
+                push(@currentFunctionDepths, $bracesDepth);
+                push(@currentFunctionStartLines, $.);
+            } elsif ($getterJustSeen or $setterJustSeen) {
+                $word = "get $word" if $getterJustSeen;
+                $word = "set $word" if $setterJustSeen;
+
+                push(@currentIdentifiers, $word);
+
+                my $mode = $currentParsingMode[$#currentParsingMode];
+                my $currentFunction = join('.', (@currentScopes, ($mode eq 'class') ? "prototype" : "", @currentIdentifiers));
+                $currentFunction =~ s/\.{2,}/\./g; # Removes consecutive periods.
+
+                push(@currentParsingMode, "function");
+                push(@currentFunctionNames, $currentFunction);
+                push(@currentFunctionDepths, $bracesDepth);
+                push(@currentFunctionStartLines, $.);
+            } elsif ($functionJustSeen and !$assignmentJustSeen) {
                 push(@currentIdentifiers, $word);
 
                 my $currentFunction = join('.', (@currentScopes, @currentIdentifiers));
                 $currentFunction =~ s/\.{2,}/\./g; # Removes consecutive periods.
 
+                push(@currentParsingMode, "function");
                 push(@currentFunctionNames, $currentFunction);
                 push(@currentFunctionDepths, $bracesDepth);
                 push(@currentFunctionStartLines, $.);
@@ -1426,6 +1536,8 @@ sub get_function_line_ranges_for_javascript($$)
                 push(@currentIdentifiers, $word);
             }
 
+            $classJustSeen = 0;
+            $parenthesisJustSeen = 0;
             $functionJustSeen = 0;
             $getterJustSeen = 0;
             $setterJustSeen = 0;
