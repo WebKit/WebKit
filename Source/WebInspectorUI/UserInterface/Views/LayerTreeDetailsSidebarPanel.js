@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayerTreeDetailsSidebarPanel = function()
+WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WebInspector.DOMDetailsSidebarPanel
 {
-    WebInspector.DOMDetailsSidebarPanel.call(this, "layer-tree", WebInspector.UIString("Layers"), WebInspector.UIString("Layer"), "Images/NavigationItemLayers.svg", "3");
+    constructor()
+    {
+        super("layer-tree", WebInspector.UIString("Layers"), WebInspector.UIString("Layer"), "Images/NavigationItemLayers.svg", "3");
 
-    this._dataGridNodesByLayerId = {};
+        this._dataGridNodesByLayerId = {};
 
-    this.element.classList.add(WebInspector.LayerTreeDetailsSidebarPanel.StyleClassName);
+        this.element.classList.add("layer-tree");
 
-    WebInspector.showShadowDOMSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
+        WebInspector.showShadowDOMSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
 
-    window.addEventListener("resize", this._windowResized.bind(this));
+        window.addEventListener("resize", this._windowResized.bind(this));
 
-    this._buildLayerInfoSection();
-    this._buildDataGridSection();
-    this._buildBottomBar();
-};
-
-WebInspector.LayerTreeDetailsSidebarPanel.StyleClassName = "layer-tree";
-
-WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
-    constructor: WebInspector.LayerTreeDetailsSidebarPanel,
-    __proto__: WebInspector.DOMDetailsSidebarPanel.prototype,
+        this._buildLayerInfoSection();
+        this._buildDataGridSection();
+        this._buildBottomBar();
+    }
 
     // DetailsSidebarPanel Overrides.
 
-    shown: function()
+    shown()
     {
         WebInspector.layerTreeManager.addEventListener(WebInspector.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
 
@@ -57,16 +53,16 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
         this.needsRefresh();
 
         WebInspector.DOMDetailsSidebarPanel.prototype.shown.call(this);
-    },
+    }
 
-    hidden: function()
+    hidden()
     {
         WebInspector.layerTreeManager.removeEventListener(WebInspector.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
 
         WebInspector.DOMDetailsSidebarPanel.prototype.hidden.call(this);
-    },
+    }
 
-    refresh: function()
+    refresh()
     {
         if (!this.domNode)
             return;
@@ -75,35 +71,35 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
             this._unfilteredChildLayers = childLayers;
             this._updateDisplayWithLayers(layerForNode, childLayers);
         }.bind(this));
-    },
+    }
 
     // DOMDetailsSidebarPanel Overrides
 
-    supportsDOMNode: function(nodeToInspect)
+    supportsDOMNode(nodeToInspect)
     {
         return WebInspector.layerTreeManager.supported && nodeToInspect.nodeType() === Node.ELEMENT_NODE;
-    },
+    }
 
     // Private
 
-    _layerTreeDidChange: function(event)
+    _layerTreeDidChange(event)
     {
         this.needsRefresh();
-    },
+    }
 
-    _showShadowDOMSettingChanged: function(event)
+    _showShadowDOMSettingChanged(event)
     {
         if (this.selected)
             this._updateDisplayWithLayers(this._layerForNode, this._unfilteredChildLayers);
-    },
+    }
 
-    _windowResized: function(event)
+    _windowResized(event)
     {
         if (this._popover && this._popover.visible)
             this._updatePopoverForSelectedNode();
-    },
+    }
 
-    _buildLayerInfoSection: function()
+    _buildLayerInfoSection()
     {
         var rows = this._layerInfoRows = {};
         var rowsArray = [];
@@ -122,9 +118,9 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
         this._layerInfoSection = new WebInspector.DetailsSection("layer-info", WebInspector.UIString("Layer Info"), [this._noLayerInformationGroup]);
 
         this.contentElement.appendChild(this._layerInfoSection.element);
-    },
+    }
 
-    _buildDataGridSection: function()
+    _buildDataGridSection()
     {
         var columns = {name: {}, paintCount: {}, memory: {}};
 
@@ -160,9 +156,9 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
 
         var element = this.contentElement.appendChild(section.element);
         element.classList.add(section.identifier);
-    },
+    }
 
-    _buildBottomBar: function()
+    _buildBottomBar()
     {
         var bottomBar = this.element.appendChild(document.createElement("div"));
         bottomBar.className = "bottom-bar";
@@ -172,9 +168,9 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
 
         this._layersMemoryLabel = bottomBar.appendChild(document.createElement("div"));
         this._layersMemoryLabel.className = "layers-memory-label";
-    },
+    }
 
-    _sortDataGrid: function()
+    _sortDataGrid()
     {
         var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier;
 
@@ -187,9 +183,9 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
 
         this._dataGrid.sortNodes(comparator);
         this._updatePopoverForSelectedNode();
-    },
+    }
 
-    _selectedDataGridNodeChanged: function()
+    _selectedDataGridNodeChanged()
     {
         if (this._dataGrid.selectedNode) {
             this._highlightSelectedNode();
@@ -198,27 +194,27 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
             WebInspector.domTreeManager.hideDOMNodeHighlight();
             this._hidePopover();
         }
-    },
+    }
 
-    _dataGridGainedFocus: function(event)
+    _dataGridGainedFocus(event)
     {
         this._highlightSelectedNode();
         this._showPopoverForSelectedNode();
-    },
+    }
 
-    _dataGridLostFocus: function(event)
+    _dataGridLostFocus(event)
     {
         WebInspector.domTreeManager.hideDOMNodeHighlight();
         this._hidePopover();
-    },
+    }
 
-    _dataGridWasClicked: function(event)
+    _dataGridWasClicked(event)
     {
         if (this._dataGrid.selectedNode && event.target.parentNode.classList.contains("filler"))
             this._dataGrid.selectedNode.deselect();
-    },
+    }
 
-    _highlightSelectedNode: function()
+    _highlightSelectedNode()
     {
         var dataGridNode = this._dataGrid.selectedNode;
         if (!dataGridNode)
@@ -229,9 +225,9 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
             WebInspector.domTreeManager.highlightRect(layer.bounds, true);
         else
             WebInspector.domTreeManager.highlightDOMNode(layer.nodeId);
-    },
+    }
 
-    _updateDisplayWithLayers: function(layerForNode, childLayers)
+    _updateDisplayWithLayers(layerForNode, childLayers)
     {
         if (!WebInspector.showShadowDOMSetting.value) {
             childLayers = childLayers.filter(function(layer) {
@@ -245,11 +241,11 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
 
         this._layerForNode = layerForNode;
         this._childLayers = childLayers;
-    },
+    }
 
-    _updateLayerInfoSection: function(layer)
+    _updateLayerInfoSection(layer)
     {
-        const emDash = "\u2014";
+        var emDash = "\u2014";
 
         this._layerInfoSection.groups = layer ? [this._layerInfoGroup] : [this._noLayerInformationGroup];
 
@@ -260,9 +256,9 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
         this._layerInfoRows["Width"].value = layer.compositedBounds.width + "px";
         this._layerInfoRows["Height"].value = layer.compositedBounds.height + "px";
         this._layerInfoRows["Paints"].value = layer.paintCount + "";
-    },
+    }
 
-    _updateDataGrid: function(layerForNode, childLayers)
+    _updateDataGrid(layerForNode, childLayers)
     {
         var dataGrid = this._dataGrid;
 
@@ -291,18 +287,18 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
         this._sortDataGrid();
 
         this._childLayersRow.dataGrid = !isEmptyObject(childLayers) ? this._dataGrid : null;
-    },
+    }
 
-    _dataGridNodeForLayer: function(layer)
+    _dataGridNodeForLayer(layer)
     {
         var node = new WebInspector.LayerTreeDataGridNode(layer);
 
         this._dataGridNodesByLayerId[layer.layerId] = node;
 
         return node;
-    },
+    }
 
-    _updateMetrics: function(layerForNode, childLayers)
+    _updateMetrics(layerForNode, childLayers)
     {
         var layerCount = 0;
         var totalMemory = 0;
@@ -319,9 +315,9 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
 
         this._layersCountLabel.textContent = WebInspector.UIString("Layer Count: %d").format(layerCount);
         this._layersMemoryLabel.textContent = WebInspector.UIString("Memory: %s").format(Number.bytesToString(totalMemory));
-    },
+    }
 
-    _showPopoverForSelectedNode: function()
+    _showPopoverForSelectedNode()
     {
         var dataGridNode = this._dataGrid.selectedNode;
         if (!dataGridNode)
@@ -331,9 +327,9 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
             if (dataGridNode === this._dataGrid.selectedNode)
                 this._updatePopoverForSelectedNode(content);
         }.bind(this));
-    },
+    }
 
-    _updatePopoverForSelectedNode: function(content)
+    _updatePopoverForSelectedNode(content)
     {
         var dataGridNode = this._dataGrid.selectedNode;
         if (!dataGridNode)
@@ -349,15 +345,15 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
             popover.content = content;
 
         popover.present(targetFrame.pad(2), [WebInspector.RectEdge.MIN_X]);
-    },
+    }
 
-    _hidePopover: function()
+    _hidePopover()
     {
         if (this._popover)
             this._popover.dismiss();
-    },
+    }
 
-    _contentForPopover: function(layer, callback)
+    _contentForPopover(layer, callback)
     {
         var content = document.createElement("div");
         content.className = "layer-tree-popover";
@@ -378,9 +374,9 @@ WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
         }.bind(this));
 
         return content;
-    },
+    }
 
-    _populateListOfCompositingReasons: function(list, compositingReasons)
+    _populateListOfCompositingReasons(list, compositingReasons)
     {
         function addReason(reason)
         {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScopeChainDetailsSidebarPanel = function()
+WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends WebInspector.DetailsSidebarPanel
 {
-    WebInspector.DetailsSidebarPanel.call(this, "scope-chain", WebInspector.UIString("Scope Chain"), WebInspector.UIString("Scope Chain"), "Images/NavigationItemVariable.svg", "5");
+    constructor()
+    {
+        super("scope-chain", WebInspector.UIString("Scope Chain"), WebInspector.UIString("Scope Chain"), "Images/NavigationItemVariable.svg", "5");
 
-    this._callFrame = null;
+        this._callFrame = null;
 
-    // Update on console prompt eval as objects in the scope chain may have changed.
-    WebInspector.runtimeManager.addEventListener(WebInspector.RuntimeManager.Event.DidEvaluate, this.needsRefresh, this);
-};
-
-WebInspector.ScopeChainDetailsSidebarPanel.autoExpandProperties = new Set;
-
-WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
-    constructor: WebInspector.ScopeChainDetailsSidebarPanel,
-    __proto__: WebInspector.DetailsSidebarPanel.prototype,
+        // Update on console prompt eval as objects in the scope chain may have changed.
+        WebInspector.runtimeManager.addEventListener(WebInspector.RuntimeManager.Event.DidEvaluate, this.needsRefresh, this);
+    }
 
     // Public
 
@@ -60,12 +56,12 @@ WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
         this.callFrame = callFrameToInspect;
 
         return !!this.callFrame;
-    },
+    }
 
     get callFrame()
     {
         return this._callFrame;
-    },
+    }
 
     set callFrame(callFrame)
     {
@@ -75,7 +71,7 @@ WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
         this._callFrame = callFrame;
 
         this.needsRefresh();
-    },
+    }
 
     refresh()
     {
@@ -181,13 +177,13 @@ WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
         // We need a timeout in place in case there are long running, pending backend dispatches. This can happen
         // if the debugger is paused in code that was executed from the console. The console will be waiting for
         // the result of the execution and without a timeout we would never update the scope variables.
-        var delay = WebInspector.ScopeChainDetailsSidebarPanel.autoExpandProperties.size === 0 ? 50 : 250;
+        var delay = WebInspector.ScopeChainDetailsSidebarPanel._autoExpandProperties.size === 0 ? 50 : 250;
         var timeout = setTimeout(delayedWork.bind(this), delay);
 
         // Since ObjectTreeView populates asynchronously, we want to wait to replace the existing content
         // until after all the pending asynchronous requests are completed. This prevents severe flashing while stepping.
         InspectorBackend.runAfterPendingDispatches(delayedWork.bind(this));
-    },
+    }
 
     _propertyPathIdentifierForTreeElement(identifier, objectPropertyTreeElement)
     {
@@ -199,7 +195,7 @@ WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
             return null;
 
         return identifier + "-" + propertyPath.fullPath;
-    },
+    }
 
     _objectTreeAddHandler(identifier, treeElement)
     {
@@ -207,9 +203,9 @@ WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
         if (!propertyPathIdentifier)
             return;
 
-        if (WebInspector.ScopeChainDetailsSidebarPanel.autoExpandProperties.has(propertyPathIdentifier))
+        if (WebInspector.ScopeChainDetailsSidebarPanel._autoExpandProperties.has(propertyPathIdentifier))
             treeElement.expand();
-    },
+    }
 
     _objectTreeExpandHandler(identifier, treeElement)
     {
@@ -217,8 +213,8 @@ WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
         if (!propertyPathIdentifier)
             return;
 
-        WebInspector.ScopeChainDetailsSidebarPanel.autoExpandProperties.add(propertyPathIdentifier);
-    },
+        WebInspector.ScopeChainDetailsSidebarPanel._autoExpandProperties.add(propertyPathIdentifier);
+    }
 
     _objectTreeCollapseHandler(identifier, treeElement)
     {
@@ -226,6 +222,8 @@ WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
         if (!propertyPathIdentifier)
             return;
 
-        WebInspector.ScopeChainDetailsSidebarPanel.autoExpandProperties.delete(propertyPathIdentifier);
+        WebInspector.ScopeChainDetailsSidebarPanel._autoExpandProperties.delete(propertyPathIdentifier);
     }
 };
+
+WebInspector.ScopeChainDetailsSidebarPanel._autoExpandProperties = new Set;

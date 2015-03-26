@@ -1,5 +1,33 @@
 2015-03-26  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Convert sidebar classes to ES6
+        https://bugs.webkit.org/show_bug.cgi?id=143108
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/KeyboardShortcut.js:
+        (WebInspector.KeyboardShortcut._handleKeyDown): Continue if callback is null.
+        (WebInspector.KeyboardShortcut.prototype.set callback): Added.
+
+        * UserInterface/Views/ApplicationCacheDetailsSidebarPanel.js:
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        * UserInterface/Views/DOMDetailsSidebarPanel.js:
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        * UserInterface/Views/DetailsSidebarPanel.js:
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        * UserInterface/Views/ProbeDetailsSidebarPanel.js:
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        * UserInterface/Views/Sidebar.js:
+        * UserInterface/Views/SidebarPanel.js:
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        Converted to ES6 classes.
+
+2015-03-26  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Convert some View classes to ES6 classes
         https://bugs.webkit.org/show_bug.cgi?id=143107
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DetailsSidebarPanel = function(identifier, displayName, singularDisplayName, image, keyboardShortcutKey, element)
+WebInspector.DetailsSidebarPanel = class DetailsSidebarPanel extends WebInspector.SidebarPanel
 {
-    if (keyboardShortcutKey)
-        this._keyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control | WebInspector.KeyboardShortcut.Modifier.Shift, keyboardShortcutKey, this.toggle.bind(this));
+    constructor(identifier, displayName, singularDisplayName, image, keyboardShortcutKey, element)
+    {
+        var keyboardShortcut = null;
+        if (keyboardShortcutKey)
+            keyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control | WebInspector.KeyboardShortcut.Modifier.Shift, keyboardShortcutKey);
 
-    if (this._keyboardShortcut) {
-        var showToolTip = WebInspector.UIString("Show the %s details sidebar (%s)").format(singularDisplayName, this._keyboardShortcut.displayName);
-        var hideToolTip = WebInspector.UIString("Hide the %s details sidebar (%s)").format(singularDisplayName, this._keyboardShortcut.displayName);
-    } else {
-        var showToolTip = WebInspector.UIString("Show the %s details sidebar").format(singularDisplayName);
-        var hideToolTip = WebInspector.UIString("Hide the %s details sidebar").format(singularDisplayName);
+        if (keyboardShortcut) {
+            var showToolTip = WebInspector.UIString("Show the %s details sidebar (%s)").format(singularDisplayName, keyboardShortcut.displayName);
+            var hideToolTip = WebInspector.UIString("Hide the %s details sidebar (%s)").format(singularDisplayName, keyboardShortcut.displayName);
+        } else {
+            var showToolTip = WebInspector.UIString("Show the %s details sidebar").format(singularDisplayName);
+            var hideToolTip = WebInspector.UIString("Hide the %s details sidebar").format(singularDisplayName);
+        }
+
+        super(identifier, displayName, showToolTip, hideToolTip, image, element);
+
+        this._keyboardShortcut = keyboardShortcut;
+        if (this._keyboardShortcut)
+            this._keyboardShortcut.callback = this.toggle.bind(this);
+
+        this.element.classList.add("details");
     }
-
-    WebInspector.SidebarPanel.call(this, identifier, displayName, showToolTip, hideToolTip, image, element);
-
-    this.element.classList.add(WebInspector.DetailsSidebarPanel.StyleClassName);
-};
-
-WebInspector.DetailsSidebarPanel.StyleClassName = "details";
-
-WebInspector.DetailsSidebarPanel.prototype = {
-    constructor: WebInspector.DetailsSidebarPanel,
-    __proto__: WebInspector.SidebarPanel.prototype,
 
     // Public
 
-    inspect: function(objects)
+    inspect(objects)
     {
         // Implemented by subclasses.
         return false;
-    },
+    }
 
-    shown: function()
+    shown()
     {
         if (this._needsRefresh) {
             delete this._needsRefresh;
             this.refresh();
         }
-    },
+    }
 
-    needsRefresh: function()
+    needsRefresh()
     {
         if (!this.selected) {
             this._needsRefresh = true;
@@ -71,9 +72,9 @@ WebInspector.DetailsSidebarPanel.prototype = {
         }
 
         this.refresh();
-    },
+    }
 
-    refresh: function()
+    refresh()
     {
         // Implemented by subclasses.
     }

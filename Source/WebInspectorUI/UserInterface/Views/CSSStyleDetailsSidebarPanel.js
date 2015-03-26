@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,83 +23,77 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSStyleDetailsSidebarPanel = function()
+WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WebInspector.DOMDetailsSidebarPanel
 {
-    WebInspector.DOMDetailsSidebarPanel.call(this, "css-style", WebInspector.UIString("Styles"), WebInspector.UIString("Style"), "Images/NavigationItemBrushAndRuler.svg", "4");
+    constructor()
+    {
+        super("css-style", WebInspector.UIString("Styles"), WebInspector.UIString("Style"), "Images/NavigationItemBrushAndRuler.svg", "4");
 
-    this._selectedPanel = null;
+        this._selectedPanel = null;
 
-    this._navigationBar = new WebInspector.NavigationBar(null, null, "tablist");
-    this._navigationBar.addEventListener(WebInspector.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
-    this.element.insertBefore(this._navigationBar.element, this.contentElement);
+        this._navigationBar = new WebInspector.NavigationBar(null, null, "tablist");
+        this._navigationBar.addEventListener(WebInspector.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
+        this.element.insertBefore(this._navigationBar.element, this.contentElement);
 
-    this._forcedPseudoClassCheckboxes = {};
+        this._forcedPseudoClassCheckboxes = {};
 
-    if (WebInspector.cssStyleManager.canForcePseudoClasses()) {
-        this._forcedPseudoClassContainer = document.createElement("div");
-        this._forcedPseudoClassContainer.className = WebInspector.CSSStyleDetailsSidebarPanel.PseudoClassesElementStyleClassName;
+        if (WebInspector.cssStyleManager.canForcePseudoClasses()) {
+            this._forcedPseudoClassContainer = document.createElement("div");
+            this._forcedPseudoClassContainer.className = WebInspector.CSSStyleDetailsSidebarPanel.PseudoClassesElementStyleClassName;
 
-        var groupElement = null;
+            var groupElement = null;
 
-        WebInspector.CSSStyleManager.ForceablePseudoClasses.forEach(function(pseudoClass) {
-            // We don't localize the label since it is a CSS pseudo-class from the CSS standard.
-            var label = pseudoClass.capitalize();
+            WebInspector.CSSStyleManager.ForceablePseudoClasses.forEach(function(pseudoClass) {
+                // We don't localize the label since it is a CSS pseudo-class from the CSS standard.
+                var label = pseudoClass.capitalize();
 
-            var labelElement = document.createElement("label");
+                var labelElement = document.createElement("label");
 
-            var checkboxElement = document.createElement("input");
-            checkboxElement.addEventListener("change", this._forcedPseudoClassCheckboxChanged.bind(this, pseudoClass));
-            checkboxElement.type = "checkbox";
+                var checkboxElement = document.createElement("input");
+                checkboxElement.addEventListener("change", this._forcedPseudoClassCheckboxChanged.bind(this, pseudoClass));
+                checkboxElement.type = "checkbox";
 
-            this._forcedPseudoClassCheckboxes[pseudoClass] = checkboxElement;
+                this._forcedPseudoClassCheckboxes[pseudoClass] = checkboxElement;
 
-            labelElement.appendChild(checkboxElement);
-            labelElement.appendChild(document.createTextNode(label));
+                labelElement.appendChild(checkboxElement);
+                labelElement.appendChild(document.createTextNode(label));
 
-            if (!groupElement || groupElement.children.length === 2) {
-                groupElement = document.createElement("div");
-                groupElement.className = WebInspector.CSSStyleDetailsSidebarPanel.PseudoClassesGroupElementStyleClassName;
-                this._forcedPseudoClassContainer.appendChild(groupElement);
-            }
+                if (!groupElement || groupElement.children.length === 2) {
+                    groupElement = document.createElement("div");
+                    groupElement.className = WebInspector.CSSStyleDetailsSidebarPanel.PseudoClassesGroupElementStyleClassName;
+                    this._forcedPseudoClassContainer.appendChild(groupElement);
+                }
 
-            groupElement.appendChild(labelElement);
-        }, this);
+                groupElement.appendChild(labelElement);
+            }, this);
 
-        this.contentElement.appendChild(this._forcedPseudoClassContainer);
+            this.contentElement.appendChild(this._forcedPseudoClassContainer);
+        }
+
+        this._computedStyleDetailsPanel = new WebInspector.ComputedStyleDetailsPanel;
+        this._rulesStyleDetailsPanel = new WebInspector.RulesStyleDetailsPanel;
+        this._metricsStyleDetailsPanel = new WebInspector.MetricsStyleDetailsPanel;
+
+        this._panels = [this._computedStyleDetailsPanel, this._rulesStyleDetailsPanel, this._metricsStyleDetailsPanel];
+
+        this._navigationBar.addNavigationItem(this._computedStyleDetailsPanel.navigationItem);
+        this._navigationBar.addNavigationItem(this._rulesStyleDetailsPanel.navigationItem);
+        this._navigationBar.addNavigationItem(this._metricsStyleDetailsPanel.navigationItem);
+
+        this._lastSelectedSectionSetting = new WebInspector.Setting("last-selected-style-details-panel", this._rulesStyleDetailsPanel.navigationItem.identifier);
+
+        // This will cause the selected panel to be set in _navigationItemSelected.
+        this._navigationBar.selectedNavigationItem = this._lastSelectedSectionSetting.value;
     }
-
-    this._computedStyleDetailsPanel = new WebInspector.ComputedStyleDetailsPanel;
-    this._rulesStyleDetailsPanel = new WebInspector.RulesStyleDetailsPanel;
-    this._metricsStyleDetailsPanel = new WebInspector.MetricsStyleDetailsPanel;
-
-    this._panels = [this._computedStyleDetailsPanel, this._rulesStyleDetailsPanel, this._metricsStyleDetailsPanel];
-
-    this._navigationBar.addNavigationItem(this._computedStyleDetailsPanel.navigationItem);
-    this._navigationBar.addNavigationItem(this._rulesStyleDetailsPanel.navigationItem);
-    this._navigationBar.addNavigationItem(this._metricsStyleDetailsPanel.navigationItem);
-
-    this._lastSelectedSectionSetting = new WebInspector.Setting("last-selected-style-details-panel", this._rulesStyleDetailsPanel.navigationItem.identifier);
-
-    // This will cause the selected panel to be set in _navigationItemSelected.
-    this._navigationBar.selectedNavigationItem = this._lastSelectedSectionSetting.value;
-};
-
-WebInspector.CSSStyleDetailsSidebarPanel.PseudoClassesElementStyleClassName = "pseudo-classes";
-WebInspector.CSSStyleDetailsSidebarPanel.PseudoClassesGroupElementStyleClassName = "group";
-WebInspector.CSSStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset = 38; // Default height of the forced pseudo classes container. Updated in widthDidChange.
-
-WebInspector.CSSStyleDetailsSidebarPanel.prototype = {
-    constructor: WebInspector.CSSStyleDetailsSidebarPanel,
-    __proto__: WebInspector.DOMDetailsSidebarPanel.prototype,
 
     // Public
 
-    supportsDOMNode: function(nodeToInspect)
+    supportsDOMNode(nodeToInspect)
     {
         return nodeToInspect.nodeType() === Node.ELEMENT_NODE;
-    },
+    }
 
-    refresh: function()
+    refresh()
     {
         var domNode = this.domNode;
         if (!domNode)
@@ -113,9 +107,9 @@ WebInspector.CSSStyleDetailsSidebarPanel.prototype = {
         }
 
         this._updatePseudoClassCheckboxes();
-    },
+    }
 
-    visibilityDidChange: function()
+    visibilityDidChange()
     {
         WebInspector.SidebarPanel.prototype.visibilityDidChange.call(this);
 
@@ -133,27 +127,27 @@ WebInspector.CSSStyleDetailsSidebarPanel.prototype = {
 
         this._selectedPanel.shown();
         this._selectedPanel.markAsNeedsRefresh(this.domNode);
-    },
+    }
 
-    widthDidChange: function()
+    widthDidChange()
     {
         this._updateNoForcedPseudoClassesScrollOffset();
 
         if (this._selectedPanel)
             this._selectedPanel.widthDidChange();
-    },
+    }
 
     // Protected
 
-    addEventListeners: function()
+    addEventListeners()
     {
         this.domNode.addEventListener(WebInspector.DOMNode.Event.EnabledPseudoClassesChanged, this._updatePseudoClassCheckboxes, this);
-    },
+    }
 
-    removeEventListeners: function()
+    removeEventListeners()
     {
         this.domNode.removeEventListener(null, null, this);
-    },
+    }
 
     // Private
 
@@ -162,15 +156,15 @@ WebInspector.CSSStyleDetailsSidebarPanel.prototype = {
         if (!WebInspector.cssStyleManager.canForcePseudoClasses())
             return 0;
         return this.domNode && this.domNode.enabledPseudoClasses.length ? 0 : WebInspector.CSSStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset;
-    },
+    }
 
-    _updateNoForcedPseudoClassesScrollOffset: function()
+    _updateNoForcedPseudoClassesScrollOffset()
     {
         if (this._forcedPseudoClassContainer)
             WebInspector.CSSStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset = this._forcedPseudoClassContainer.offsetHeight;
-    },
+    }
 
-    _navigationItemSelected: function(event)
+    _navigationItemSelected(event)
     {
         console.assert(event.target.selectedNavigationItem);
         if (!event.target.selectedNavigationItem)
@@ -208,17 +202,17 @@ WebInspector.CSSStyleDetailsSidebarPanel.prototype = {
         }
 
         this._lastSelectedSectionSetting.value = selectedNavigationItem.identifier;
-    },
+    }
 
-    _forcedPseudoClassCheckboxChanged: function(pseudoClass, event)
+    _forcedPseudoClassCheckboxChanged(pseudoClass, event)
     {
         if (!this.domNode)
             return;
 
         this.domNode.setPseudoClassEnabled(pseudoClass, event.target.checked);
-    },
+    }
 
-    _updatePseudoClassCheckboxes: function()
+    _updatePseudoClassCheckboxes()
     {
         if (!this.domNode)
             return;
@@ -231,3 +225,7 @@ WebInspector.CSSStyleDetailsSidebarPanel.prototype = {
         }
     }
 };
+
+WebInspector.CSSStyleDetailsSidebarPanel.PseudoClassesElementStyleClassName = "pseudo-classes";
+WebInspector.CSSStyleDetailsSidebarPanel.PseudoClassesGroupElementStyleClassName = "group";
+WebInspector.CSSStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset = 38; // Default height of the forced pseudo classes container. Updated in widthDidChange.

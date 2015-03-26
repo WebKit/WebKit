@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMDetailsSidebarPanel = function(identifier, displayName, singularDisplayName, image, keyboardShortcutKey, element)
+WebInspector.DOMDetailsSidebarPanel = class DOMDetailsSidebarPanel extends WebInspector.DetailsSidebarPanel
 {
-    WebInspector.DetailsSidebarPanel.call(this, identifier, displayName, singularDisplayName, image, keyboardShortcutKey, element);
+    constructor(identifier, displayName, singularDisplayName, image, keyboardShortcutKey, element)
+    {
+        super(identifier, displayName, singularDisplayName, image, keyboardShortcutKey, element);
 
-    this.element.addEventListener("click", this._mouseWasClicked.bind(this), true);
+        this.element.addEventListener("click", this._mouseWasClicked.bind(this), true);
 
-    this._domNode = null;
-};
-
-WebInspector.DOMDetailsSidebarPanel.prototype = {
-    constructor: WebInspector.DOMDetailsSidebarPanel,
-    __proto__: WebInspector.DetailsSidebarPanel.prototype,
+        this._domNode = null;
+    }
 
     // Public
 
-    inspect: function(objects)
+    inspect(objects)
     {
         // Convert to a single item array if needed.
         if (!(objects instanceof Array))
@@ -60,12 +58,12 @@ WebInspector.DOMDetailsSidebarPanel.prototype = {
         this.domNode = nodeToInspect;
 
         return !!this._domNode;
-    },
+    }
 
     get domNode()
     {
         return this._domNode;
-    },
+    }
 
     set domNode(domNode)
     {
@@ -81,27 +79,27 @@ WebInspector.DOMDetailsSidebarPanel.prototype = {
             this.addEventListeners();
 
         this.needsRefresh();
-    },
+    }
 
-    supportsDOMNode: function(nodeToInspect)
+    supportsDOMNode(nodeToInspect)
     {
         // Implemented by subclasses.
         return true;
-    },
+    }
 
-    addEventListeners: function()
+    addEventListeners()
     {
         // Implemented by subclasses.
-    },
+    }
 
-    removeEventListeners: function()
+    removeEventListeners()
     {
         // Implemented by subclasses.
-    },
+    }
 
     // Private
 
-    _mouseWasClicked: function(event)
+    _mouseWasClicked(event)
     {
         if (this._domNode && this._domNode.ownerDocument) {
             var mainResource = WebInspector.frameResourceManager.resourceForURL(this._domNode.ownerDocument.documentURL);
