@@ -180,6 +180,9 @@ webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ ImageOnlyFa
 # nth-child tests takes long time and Debug build sometimes timeouts because there are many test cases.
 webkit.org/b/137149 fast/selectors/nth-child-of-basics.html [ Slow ]
 
+# Promises/A+ 2.3.3 has many tests and it sometimes exceeds the time limit. 
+webkit.org/b/136878 js/promises-tests/promises-tests-2-3-3.html [ Slow ] 
+
 # @supports W3C Failures
 webkit.org/b/137566 css3/conditional/w3c/at-supports-010.html [ ImageOnlyFailure ]
 webkit.org/b/137568 css3/conditional/w3c/at-supports-014.html [ ImageOnlyFailure ]
@@ -463,7 +466,6 @@ webkit.org/b/135053 [ Debug ] html5lib/webkit-resumer.html [ Slow ]
 [ Debug ] fast/workers/dedicated-worker-lifecycle.html [ Slow ]
 
 webkit.org/b/142175 js/promises-tests/promises-tests-2-1-2.html [ Pass Timeout ]
-webkit.org/b/139865 js/promises-tests/promises-tests-2-3-3.html [ Skip ]
 
 webkit.org/b/139840 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Pass Failure ]
 

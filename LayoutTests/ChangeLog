@@ -1,3 +1,14 @@
+2015-03-26  Michael Saboff  <msaboff@apple.com>
+
+        js/promises-tests/promises-tests-2-3-3.html sometimes crashes under DFG::SpeculativeJIT::compile
+        https://bugs.webkit.org/show_bug.cgi?id=139865
+
+        Reviewed by Alexey Proskuryakov.
+
+        It appears that r181993 fixed this test as it removed the code where the crash occurred.
+
+        * TestExpectations: Re-enabled js/promises-tests/promises-tests-2-3-3 including marking it as Slow.
+
 2015-03-26  Chris Fleizach  <cfleizach@apple.com>
 
         AX: [role="button"][aria-pressed] should be exposed as AXCheckbox:AXToggleButton, with role description of "toggle button"
