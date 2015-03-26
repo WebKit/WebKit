@@ -31,6 +31,7 @@
 #import <Foundation/Foundation.h>
 #import <wtf/Assertions.h>
 #import <wtf/Ref.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
 #if __has_include(<CoreFoundation/CFXPCBridge.h>)
@@ -121,9 +122,9 @@ NSDictionary *RemoteInspectorXPCConnection::deserializeMessage(xpc_object_t obje
         return nil;
     }
 
-    NSDictionary *dictionary = static_cast<NSDictionary *>(_CFXPCCreateCFObjectFromXPCMessage(xpcDictionary));
+    RetainPtr<CFDictionaryRef> dictionary = adoptCF((CFDictionaryRef)_CFXPCCreateCFObjectFromXPCMessage(xpcDictionary));
     ASSERT_WITH_MESSAGE(dictionary, "Unable to deserialize xpc message");
-    return [dictionary autorelease];
+    return (NSDictionary *)dictionary.autorelease();
 }
 
 void RemoteInspectorXPCConnection::handleEvent(xpc_object_t object)

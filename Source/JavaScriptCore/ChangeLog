@@ -1,3 +1,13 @@
+2015-03-25  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] RemoteInspectorXPCConnection::deserializeMessage() leaks a NSDictionary under Objective-C GC
+        https://bugs.webkit.org/show_bug.cgi?id=143068
+
+        Reviewed by Dan Bernstein.
+
+        * inspector/remote/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::deserializeMessage): Used RetainPtr::autorelease(), which does the right thing under GC.
+
 2015-03-25  Filip Pizlo  <fpizlo@apple.com>
 
         Use JITCompilationCanFail in more places, and make the fail path of JITCompilationMustSucceed a crash instead of attempting GC
