@@ -204,7 +204,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
                             gdk_event_get_time(event));
 }
 
-WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, const Vector<WebPlatformTouchPoint>& touchPoints)
+WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
 {
 #ifndef GTK_API_VERSION_2
     WebEvent::Type type = WebEvent::NoType;
@@ -222,7 +222,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, const 
         ASSERT_NOT_REACHED();
     }
 
-    return WebTouchEvent(type, touchPoints, modifiersForEvent(event), gdk_event_get_time(event));
+    return WebTouchEvent(type, WTF::move(touchPoints), modifiersForEvent(event), gdk_event_get_time(event));
 #else
     return WebTouchEvent();
 #endif // GTK_API_VERSION_2

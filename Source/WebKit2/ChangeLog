@@ -1,3 +1,28 @@
+2015-03-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Avoid the Vector<> copy in WebTouchEvent constructor
+        https://bugs.webkit.org/show_bug.cgi?id=143043
+
+        Reviewed by Carlos Garcia Campos.
+
+        Have the WebTouchEvent accept a Vector<> rvalue.
+        The relevant code is updated so the Vector<> object is moved
+        through the call chain and finally into the WebTouchEvent constructor.
+
+        * Shared/NativeWebTouchEvent.h:
+        * Shared/WebEvent.h:
+        * Shared/WebTouchEvent.cpp:
+        (WebKit::WebTouchEvent::WebTouchEvent):
+        * Shared/efl/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * Shared/gtk/NativeWebTouchEventGtk.cpp:
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * Shared/gtk/WebEventFactory.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseTouchEvent):
+
 2015-03-25  Chris Dumez  <cdumez@apple.com>
 
         [WK2] WebFrameLoaderClient::dispatchDecidePolicyForResponse() should always call the FramePolicyFunction
