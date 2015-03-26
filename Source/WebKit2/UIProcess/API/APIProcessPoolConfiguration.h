@@ -55,7 +55,10 @@ public:
     void setMaximumProcessCount(unsigned maximumProcessCount) { m_maximumProcessCount = maximumProcessCount; } 
 
     WebKit::CacheModel cacheModel() const { return m_cacheModel; }
-    void setCacheModel(WebKit::CacheModel cacheModel) { m_cacheModel = cacheModel; } 
+    void setCacheModel(WebKit::CacheModel cacheModel) { m_cacheModel = cacheModel; }
+
+    int64_t diskCacheSizeOverride() const { return m_diskCacheSizeOverride; }
+    void setDiskCacheSizeOverride(int64_t size) { m_diskCacheSizeOverride = size; }
 
     WTF::String indexedDBDatabaseDirectory() const { return m_indexedDBDatabaseDirectory; }
     void setIndexedDBDatabaseDirectory(const WTF::String& indexedDBDatabaseDirectory) { m_indexedDBDatabaseDirectory = indexedDBDatabaseDirectory; }
@@ -80,6 +83,7 @@ private:
     bool m_useNetworkProcess { true };
     unsigned m_maximumProcessCount { 0 };
     WebKit::CacheModel m_cacheModel { WebKit::CacheModelPrimaryWebBrowser };
+    int64_t m_diskCacheSizeOverride { -1 };
     WTF::String m_injectedBundlePath;
     WTF::String m_indexedDBDatabaseDirectory;
     WTF::String m_localStorageDirectory;

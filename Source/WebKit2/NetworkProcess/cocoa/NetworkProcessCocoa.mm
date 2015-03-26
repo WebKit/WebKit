@@ -133,6 +133,9 @@ void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
         cacheTotalCapacity, cacheMinDeadCapacity, cacheMaxDeadCapacity, deadDecodedDataDeletionInterval,
         pageCacheCapacity, urlCacheMemoryCapacity, urlCacheDiskCapacity);
 
+    if (m_diskCacheSizeOverride >= 0)
+        urlCacheDiskCapacity = m_diskCacheSizeOverride;
+
 #if ENABLE(NETWORK_CACHE)
     auto& networkCache = NetworkCache::singleton();
     if (networkCache.isEnabled()) {

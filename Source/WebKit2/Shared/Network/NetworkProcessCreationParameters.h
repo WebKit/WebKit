@@ -52,6 +52,7 @@ struct NetworkProcessCreationParameters {
 
     bool privateBrowsingEnabled;
     CacheModel cacheModel;
+    int64_t diskCacheSizeOverride { -1 };
     bool canHandleHTTPSServerTrustEvaluation;
 
     String diskCacheDirectory;

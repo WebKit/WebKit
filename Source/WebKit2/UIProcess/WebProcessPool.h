@@ -475,6 +475,7 @@ private:
     Vector<std::pair<String, RefPtr<API::Object>>> m_messagesToInjectedBundlePostedToEmptyContext;
 
     CacheModel m_cacheModel;
+    uint64_t m_diskCacheSizeOverride;
 
     bool m_memorySamplerEnabled;
     double m_memorySamplerInterval;

@@ -72,6 +72,16 @@
     _processPoolConfiguration->setMaximumProcessCount(maximumProcessCount);
 }
 
+- (NSInteger)diskCacheSizeOverride
+{
+    return _processPoolConfiguration->diskCacheSizeOverride();
+}
+
+- (void)setDiskCacheSizeOverride:(NSInteger)size
+{
+    _processPoolConfiguration->setDiskCacheSizeOverride(size);
+}
+
 - (NSArray *)cachePartitionedURLSchemes
 {
     auto schemes = _processPoolConfiguration->cachePartitionedURLSchemes();

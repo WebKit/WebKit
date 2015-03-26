@@ -1,3 +1,40 @@
+2015-03-26  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][Cocoa] Add private API to override the network disk cache size
+        https://bugs.webkit.org/show_bug.cgi?id=143113
+        <rdar://problem/20315669>
+
+        Reviewed by Antti Koivisto.
+
+        Add private API to let the client override the network disk cache size.
+        By default, the network disk cache is automatically determined based on
+        the CacheModel and the available disk space. However, for testing
+        purposes, it can be used for the client-side to be able to override
+        the disk cache size.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::setMaximumSize):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformSetCacheModel):
+        * Shared/Network/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * Shared/Network/NetworkProcessCreationParameters.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration diskCacheSizeOverride]):
+        (-[_WKProcessPoolConfiguration setDiskCacheSizeOverride:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebProcessPool.h:
+
 2015-03-26  Andreas Kling  <akling@apple.com>
 
         [Darwin] Boost the web process QoS level while handling a synchronous IPC message.

@@ -155,6 +155,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_alwaysUsesComplexTextCodePath(false)
     , m_shouldUseFontSmoothing(true)
     , m_cacheModel(m_configuration->cacheModel())
+    , m_diskCacheSizeOverride(m_configuration->diskCacheSizeOverride())
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
     , m_websiteDataStore(API::WebsiteDataStore::create(websiteDataStoreConfiguration(m_configuration.get())))
@@ -403,6 +404,7 @@ void WebProcessPool::ensureNetworkProcess()
     parameters.privateBrowsingEnabled = WebPreferences::anyPagesAreUsingPrivateBrowsing();
 
     parameters.cacheModel = m_cacheModel;
+    parameters.diskCacheSizeOverride = m_diskCacheSizeOverride;
     parameters.canHandleHTTPSServerTrustEvaluation = m_canHandleHTTPSServerTrustEvaluation;
 
     parameters.diskCacheDirectory = stringByResolvingSymlinksInPath(diskCacheDirectory());

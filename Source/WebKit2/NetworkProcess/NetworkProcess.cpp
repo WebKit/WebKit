@@ -177,6 +177,8 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
     memoryPressureHandler.install();
 
     m_diskCacheIsDisabledForTesting = parameters.shouldUseTestingNetworkSession;
+
+    m_diskCacheSizeOverride = parameters.diskCacheSizeOverride;
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
 
     setCanHandleHTTPSServerTrustEvaluation(parameters.canHandleHTTPSServerTrustEvaluation);
