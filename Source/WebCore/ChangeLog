@@ -1,3 +1,28 @@
+2015-03-25  Dean Jackson  <dino@apple.com>
+
+        CSS blend modes do not parse when in the shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=143067
+        <rdar://problem/20302662>
+
+        Reviewed by Anders Carlson.
+
+        The media controls style sheets are injected as UA stylesheets
+        when we come across a <video> or <audio> element. These stylesheets
+        have a different parsing context than the document stylesheets -
+        one that uses the default constructor, which initializes some
+        features like cssCompositingEnabled to false without checking
+        the runtime state.
+
+        The easy fix is to use the global state to initialize the context.
+
+        Unfortunately we can't test this since it only occurs in the shadow
+        tree.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext): Check the state
+        of RuntimeEnabledFeatures to initialize CSS Regions and
+        CSS Compositing (Blending).
+
 2015-03-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: table cells that use display:block render the table inaccessible to VoiceOver
