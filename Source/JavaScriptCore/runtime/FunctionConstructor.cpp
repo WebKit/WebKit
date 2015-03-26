@@ -102,10 +102,10 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         StringBuilder builder;
         builder.appendLiteral("{function ");
         builder.append(functionName.string());
-        builder.append("(");
+        builder.append('(');
         builder.append(args.at(0).toString(exec)->value(exec));
         for (size_t i = 1; i < args.size() - 1; i++) {
-            builder.append(", ");
+            builder.appendLiteral(", ");
             builder.append(args.at(i).toString(exec)->value(exec));
         }
         builder.appendLiteral(") {\n");
