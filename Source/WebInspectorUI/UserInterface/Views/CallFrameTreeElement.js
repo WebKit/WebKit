@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,55 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CallFrameTreeElement = function(callFrame)
+WebInspector.CallFrameTreeElement = class CallFrameTreeElement extends WebInspector.GeneralTreeElement
 {
-    console.assert(callFrame instanceof WebInspector.CallFrame);
+    constructor(callFrame)
+    {
+        console.assert(callFrame instanceof WebInspector.CallFrame);
 
-    var className = WebInspector.CallFrameTreeElement.FunctionIconStyleClassName;
-    if (callFrame.nativeCode)
-        className = WebInspector.CallFrameTreeElement.NativeIconStyleClassName;
+        var className = WebInspector.CallFrameTreeElement.FunctionIconStyleClassName;
+        if (callFrame.nativeCode)
+            className = WebInspector.CallFrameTreeElement.NativeIconStyleClassName;
 
-    // This is more than likely an event listener function with an "on" prefix and it is
-    // as long or longer than the shortest event listener name -- "oncut".
-    if (callFrame.functionName && callFrame.functionName.startsWith("on") && callFrame.functionName.length >= 5)
-        className = WebInspector.CallFrameTreeElement.EventListenerIconStyleClassName;
+        // This is more than likely an event listener function with an "on" prefix and it is
+        // as long or longer than the shortest event listener name -- "oncut".
+        if (callFrame.functionName && callFrame.functionName.startsWith("on") && callFrame.functionName.length >= 5)
+            className = WebInspector.CallFrameTreeElement.EventListenerIconStyleClassName;
 
-    var title = callFrame.functionName || WebInspector.UIString("(anonymous function)");
+        var title = callFrame.functionName || WebInspector.UIString("(anonymous function)");
 
-    WebInspector.GeneralTreeElement.call(this, className, title, null, callFrame, false);
+        super(className, title, null, callFrame, false);
 
-    if (!callFrame.nativeCode && callFrame.sourceCodeLocation) {
-        var displayScriptURL = callFrame.sourceCodeLocation.displaySourceCode.url;
-        if (displayScriptURL) {
-            this.subtitle = document.createElement("span");
-            callFrame.sourceCodeLocation.populateLiveDisplayLocationString(this.subtitle, "textContent");
-            // Set the tooltip on the entire tree element in onattach, once the element is created.
-            this.tooltipHandledSeparately = true;
+        if (!callFrame.nativeCode && callFrame.sourceCodeLocation) {
+            var displayScriptURL = callFrame.sourceCodeLocation.displaySourceCode.url;
+            if (displayScriptURL) {
+                this.subtitle = document.createElement("span");
+                callFrame.sourceCodeLocation.populateLiveDisplayLocationString(this.subtitle, "textContent");
+                // Set the tooltip on the entire tree element in onattach, once the element is created.
+                this.tooltipHandledSeparately = true;
+            }
         }
+
+        this._callFrame = callFrame;
+
+        this.small = true;
     }
-
-    this._callFrame = callFrame;
-
-    this.small = true;
-};
-
-WebInspector.CallFrameTreeElement.FunctionIconStyleClassName = "function-icon";
-WebInspector.CallFrameTreeElement.EventListenerIconStyleClassName = "event-listener-icon";
-WebInspector.CallFrameTreeElement.NativeIconStyleClassName = "native-icon";
-
-WebInspector.CallFrameTreeElement.prototype = {
-    constructor: WebInspector.CallFrameTreeElement,
 
     // Public
 
     get callFrame()
     {
         return this._callFrame;
-    },
+    }
 
     // Protected
 
-    onattach: function()
+    onattach()
     {
         WebInspector.GeneralTreeElement.prototype.onattach.call(this);
 
@@ -84,4 +79,6 @@ WebInspector.CallFrameTreeElement.prototype = {
     }
 };
 
-WebInspector.CallFrameTreeElement.prototype.__proto__ = WebInspector.GeneralTreeElement.prototype;
+WebInspector.CallFrameTreeElement.FunctionIconStyleClassName = "function-icon";
+WebInspector.CallFrameTreeElement.EventListenerIconStyleClassName = "event-listener-icon";
+WebInspector.CallFrameTreeElement.NativeIconStyleClassName = "native-icon";

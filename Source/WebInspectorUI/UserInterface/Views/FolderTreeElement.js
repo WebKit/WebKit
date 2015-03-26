@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FolderTreeElement = function(title, subtitle, additionalClassNames, representedObject)
+WebInspector.FolderTreeElement = class FolderTreeElement extends WebInspector.GeneralTreeElement
 {
-    var classNames;
-    if (!additionalClassNames)
-        classNames = [];
-    else if (additionalClassNames.constructor === Array)
-        classNames = additionalClassNames;
-    else if (typeof additionalClassNames === "string")
-        classNames = [additionalClassNames];
+    constructor(title, subtitle, additionalClassNames, representedObject)
+    {
+        var classNames;
+        if (!additionalClassNames)
+            classNames = [];
+        else if (additionalClassNames.constructor === Array)
+            classNames = additionalClassNames;
+        else if (typeof additionalClassNames === "string")
+            classNames = [additionalClassNames];
 
-    classNames.unshift(WebInspector.FolderTreeElement.FolderIconStyleClassName);
+        classNames.unshift(WebInspector.FolderTreeElement.FolderIconStyleClassName);
 
-    WebInspector.GeneralTreeElement.call(this, classNames, title, subtitle, representedObject, true);
+        super(classNames, title, subtitle, representedObject, true);
 
-    this.small = true;
-};
-
-WebInspector.FolderTreeElement.FolderIconStyleClassName = "folder-icon";
-
-WebInspector.FolderTreeElement.prototype = {
-    constructor: WebInspector.FolderTreeElement
+        this.small = true;
+    }
 
     // No Methods or Properties
 };
 
-WebInspector.FolderTreeElement.prototype.__proto__ = WebInspector.GeneralTreeElement.prototype;
+WebInspector.FolderTreeElement.FolderIconStyleClassName = "folder-icon";

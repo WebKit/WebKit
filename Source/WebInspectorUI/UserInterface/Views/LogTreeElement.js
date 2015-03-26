@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LogTreeElement = function(representedObject)
+WebInspector.LogTreeElement = class LogTreeElement extends WebInspector.GeneralTreeElement
 {
-    console.assert(representedObject instanceof WebInspector.LogObject);
+    constructor(representedObject)
+    {
+        console.assert(representedObject instanceof WebInspector.LogObject);
 
-    WebInspector.GeneralTreeElement.call(this, WebInspector.LogTreeElement.StyleClassName, WebInspector.UIString("Console"), representedObject.startDate.toLocaleTimeString(), representedObject, false);
+        super("log-icon", WebInspector.UIString("Console"), representedObject.startDate.toLocaleTimeString(), representedObject, false);
 
-    this._logObject = representedObject;
+        this._logObject = representedObject;
 
-    this.small = true;
-};
-
-WebInspector.LogTreeElement.StyleClassName = "log-icon";
-
-WebInspector.LogTreeElement.prototype = {
-    constructor: WebInspector.LogTreeElement,
+        this.small = true;
+    }
 
     // Public
 
@@ -46,5 +43,3 @@ WebInspector.LogTreeElement.prototype = {
         return this._logObject;
     }
 };
-
-WebInspector.LogTreeElement.prototype.__proto__ = WebInspector.GeneralTreeElement.prototype;

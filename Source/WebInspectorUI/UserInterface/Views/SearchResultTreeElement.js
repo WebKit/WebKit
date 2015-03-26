@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,58 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SearchResultTreeElement = function(representedObject)
+WebInspector.SearchResultTreeElement = class SearchResultTreeElement extends WebInspector.GeneralTreeElement
 {
-    console.assert(representedObject instanceof WebInspector.DOMSearchMatchObject || representedObject instanceof WebInspector.SourceCodeSearchMatchObject);
+    constructor(representedObject)
+    {
+        console.assert(representedObject instanceof WebInspector.DOMSearchMatchObject || representedObject instanceof WebInspector.SourceCodeSearchMatchObject);
 
-    var title = WebInspector.SearchResultTreeElement.truncateAndHighlightTitle(representedObject.title, representedObject.searchTerm, representedObject.sourceCodeTextRange);
+        var title = WebInspector.SearchResultTreeElement.truncateAndHighlightTitle(representedObject.title, representedObject.searchTerm, representedObject.sourceCodeTextRange);
 
-    WebInspector.GeneralTreeElement.call(this, representedObject.className, title, null, representedObject, false);
-    this.small = true;
-};
+        super(representedObject.className, title, null, representedObject, false);
 
-WebInspector.SearchResultTreeElement.CharactersToShowBeforeSearchMatch = 15;
-WebInspector.SearchResultTreeElement.CharactersToShowAfterSearchMatch = 50;
-WebInspector.SearchResultTreeElement.HighlightedStyleClassName = "highlighted";
+        this.small = true;
+    }
 
-WebInspector.SearchResultTreeElement.prototype = {
-    constructor: WebInspector.SearchResultTreeElement,
+    // Static
+
+    static truncateAndHighlightTitle(title, searchTerm, sourceCodeTextRange)
+    {
+        // Use the original location, since those line/column offsets match the line text in title.
+        var textRange = sourceCodeTextRange.textRange;
+
+        var searchTermIndex = textRange.startColumn;
+
+        // We should only have one line text ranges, so make sure that is the case.
+        console.assert(textRange.startLine === textRange.endLine);
+
+        // Show some characters before the matching text (if there are enough) for context. TreeOutline takes care of the truncating
+        // at the end of the string.
+        var modifiedTitle = null;
+        if (searchTermIndex > WebInspector.SearchResultTreeElement.CharactersToShowBeforeSearchMatch) {
+            modifiedTitle = "\u2026" + title.substring(searchTermIndex - WebInspector.SearchResultTreeElement.CharactersToShowBeforeSearchMatch);
+            searchTermIndex = WebInspector.SearchResultTreeElement.CharactersToShowBeforeSearchMatch + 1;
+        } else
+            modifiedTitle = title;
+
+        // Truncate the tail of the title so the tooltip isn't so large.
+        modifiedTitle = modifiedTitle.trimEnd(searchTermIndex + searchTerm.length + WebInspector.SearchResultTreeElement.CharactersToShowAfterSearchMatch);
+
+        console.assert(modifiedTitle.substring(searchTermIndex, searchTermIndex + searchTerm.length).toLowerCase() === searchTerm.toLowerCase());
+
+        var highlightedTitle = document.createDocumentFragment();
+
+        highlightedTitle.appendChild(document.createTextNode(modifiedTitle.substring(0, searchTermIndex)));
+
+        var highlightSpan = document.createElement("span");
+        highlightSpan.className = "highlighted";
+        highlightSpan.appendChild(document.createTextNode(modifiedTitle.substring(searchTermIndex, searchTermIndex + searchTerm.length)));
+        highlightedTitle.appendChild(highlightSpan);
+
+        highlightedTitle.appendChild(document.createTextNode(modifiedTitle.substring(searchTermIndex + searchTerm.length)));
+
+        return highlightedTitle;
+    }
 
     // Public
 
@@ -48,42 +84,5 @@ WebInspector.SearchResultTreeElement.prototype = {
     }
 };
 
-WebInspector.SearchResultTreeElement.prototype.__proto__ = WebInspector.GeneralTreeElement.prototype;
-
-WebInspector.SearchResultTreeElement.truncateAndHighlightTitle = function(title, searchTerm, sourceCodeTextRange)
-{
-    // Use the original location, since those line/column offsets match the line text in title.
-    var textRange = sourceCodeTextRange.textRange;
-
-    var searchTermIndex = textRange.startColumn;
-
-    // We should only have one line text ranges, so make sure that is the case.
-    console.assert(textRange.startLine === textRange.endLine);
-
-    // Show some characters before the matching text (if there are enough) for context. TreeOutline takes care of the truncating
-    // at the end of the string.
-    var modifiedTitle = null;
-    if (searchTermIndex > WebInspector.SearchResultTreeElement.CharactersToShowBeforeSearchMatch) {
-        modifiedTitle = "\u2026" + title.substring(searchTermIndex - WebInspector.SearchResultTreeElement.CharactersToShowBeforeSearchMatch);
-        searchTermIndex = WebInspector.SearchResultTreeElement.CharactersToShowBeforeSearchMatch + 1;
-    } else
-        modifiedTitle = title;
-
-    // Truncate the tail of the title so the tooltip isn't so large.
-    modifiedTitle = modifiedTitle.trimEnd(searchTermIndex + searchTerm.length + WebInspector.SearchResultTreeElement.CharactersToShowAfterSearchMatch);
-
-    console.assert(modifiedTitle.substring(searchTermIndex, searchTermIndex + searchTerm.length).toLowerCase() === searchTerm.toLowerCase());
-
-    var highlightedTitle = document.createDocumentFragment();
-
-    highlightedTitle.appendChild(document.createTextNode(modifiedTitle.substring(0, searchTermIndex)));
-
-    var highlightSpan = document.createElement("span");
-    highlightSpan.className = WebInspector.SearchResultTreeElement.HighlightedStyleClassName;
-    highlightSpan.appendChild(document.createTextNode(modifiedTitle.substring(searchTermIndex, searchTermIndex + searchTerm.length)));
-    highlightedTitle.appendChild(highlightSpan);
-
-    highlightedTitle.appendChild(document.createTextNode(modifiedTitle.substring(searchTermIndex + searchTerm.length)));
-
-    return highlightedTitle;
-};
+WebInspector.SearchResultTreeElement.CharactersToShowBeforeSearchMatch = 15;
+WebInspector.SearchResultTreeElement.CharactersToShowAfterSearchMatch = 50;

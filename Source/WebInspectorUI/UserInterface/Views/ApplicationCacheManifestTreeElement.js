@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ApplicationCacheManifestTreeElement = function(representedObject)
+WebInspector.ApplicationCacheManifestTreeElement = class ApplicationCacheManifestTreeElement extends WebInspector.StorageTreeElement
 {
-    console.assert(representedObject instanceof WebInspector.ApplicationCacheManifest);
+    constructor(representedObject)
+    {
+        console.assert(representedObject instanceof WebInspector.ApplicationCacheManifest);
 
-    WebInspector.StorageTreeElement.call(this, WebInspector.ApplicationCacheManifestTreeElement.StyleClassName, "", representedObject);
-};
-
-WebInspector.ApplicationCacheManifestTreeElement.StyleClassName = "application-cache-manifest";
-
-WebInspector.ApplicationCacheManifestTreeElement.prototype = {
-    constructor: WebInspector.ApplicationCacheManifestTreeElement,
+        super("application-cache-manifest", "", representedObject);
+    }
 
     // Public
 
@@ -43,7 +40,7 @@ WebInspector.ApplicationCacheManifestTreeElement.prototype = {
             this._generateTitles();
 
         return this._name;
-    },
+    }
 
     get secondaryName()
     {
@@ -51,14 +48,14 @@ WebInspector.ApplicationCacheManifestTreeElement.prototype = {
             this._generateTitles();
 
         return this._secondaryName;
-    },
+    }
 
     get categoryName()
     {
         return WebInspector.UIString("Application Cache");
-    },
+    }
 
-    _generateTitles: function()
+    _generateTitles()
     {
         var parsedURL = parseURL(this.representedObject.manifestURL);
 
@@ -70,5 +67,3 @@ WebInspector.ApplicationCacheManifestTreeElement.prototype = {
         this._secondaryName = this._name !== secondaryName ? secondaryName : null;
     }
 };
-
-WebInspector.ApplicationCacheManifestTreeElement.prototype.__proto__ = WebInspector.StorageTreeElement.prototype;

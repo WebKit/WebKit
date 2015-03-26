@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IndexedDatabaseObjectStoreTreeElement = function(objectStore)
+WebInspector.IndexedDatabaseObjectStoreTreeElement = class IndexedDatabaseObjectStoreTreeElement extends WebInspector.GeneralTreeElement
 {
-    console.assert(objectStore instanceof WebInspector.IndexedDatabaseObjectStore);
+    constructor(objectStore)
+    {
+        console.assert(objectStore instanceof WebInspector.IndexedDatabaseObjectStore);
 
-    this._objectStore = objectStore;
+        super(WebInspector.IndexedDatabaseObjectStoreTreeElement.IconStyleClassName, objectStore.name, null, objectStore, !!this._objectStore.indexes.length);
 
-    WebInspector.GeneralTreeElement.call(this, WebInspector.IndexedDatabaseObjectStoreTreeElement.IconStyleClassName, objectStore.name, null, objectStore, !!this._objectStore.indexes.length);
+        this._objectStore = objectStore;
 
-    this.small = true;
-};
-
-WebInspector.IndexedDatabaseObjectStoreTreeElement.IconStyleClassName = "database-table-icon";
-
-WebInspector.IndexedDatabaseObjectStoreTreeElement.prototype = {
-    constructor: WebInspector.IndexedDatabaseObjectStoreTreeElement,
-    __proto__: WebInspector.GeneralTreeElement.prototype,
+        this.small = true;
+    }
 
     // Public
 
     get objectStore()
     {
         return this._objectStore;
-    },
+    }
 
     // Overrides from TreeElement (Protected)
 
-    oncollapse: function()
+    oncollapse()
     {
         this.shouldRefreshChildren = true;
-    },
+    }
 
-    onpopulate: function()
+    onpopulate()
     {
         if (this.children.length && !this.shouldRefreshChildren)
             return;

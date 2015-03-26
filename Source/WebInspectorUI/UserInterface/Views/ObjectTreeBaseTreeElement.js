@@ -23,45 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectTreeBaseTreeElement = function(representedObject, propertyPath, property)
+WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends WebInspector.GeneralTreeElement
 {
-    console.assert(representedObject);
-    console.assert(propertyPath instanceof WebInspector.PropertyPath);
-    console.assert(!property || property instanceof WebInspector.PropertyDescriptor);
+    constructor(representedObject, propertyPath, property)
+    {
+        console.assert(representedObject);
+        console.assert(propertyPath instanceof WebInspector.PropertyPath);
+        console.assert(!property || property instanceof WebInspector.PropertyDescriptor);
 
-    this._property = property;
-    this._propertyPath = propertyPath;
+        super(null, null, null, representedObject, false);
 
-    WebInspector.GeneralTreeElement.call(this, null, null, null, representedObject, false);
+        this._property = property;
+        this._propertyPath = propertyPath;
 
-    this.small = true;
-    this.toggleOnClick = true;
-    this.selectable = false;
-    this.tooltipHandledSeparately = true;
-};
-
-WebInspector.ObjectTreeBaseTreeElement.prototype = {
-    constructor: WebInspector.ObjectTreeBaseTreeElement,
-    __proto__: WebInspector.GeneralTreeElement.prototype,
+        this.small = true;
+        this.toggleOnClick = true;
+        this.selectable = false;
+        this.tooltipHandledSeparately = true;
+    }
 
     // Public
 
     get property()
     {
         return this._property;
-    },
+    }
 
     get propertyPath()
     {
         return this._propertyPath;
-    },
+    }
 
     // Protected
 
     oncontextmenu(event)
     {
         this._contextMenuHandler(event);
-    },
+    }
 
     resolvedValue()
     {
@@ -71,7 +69,7 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
         if (this._property.hasValue())
             return this._property.value;
         return null;
-    },
+    }
 
     resolvedValuePropertyPath()
     {
@@ -81,19 +79,19 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
         if (this._property.hasValue())
             return this._propertyPath.appendPropertyDescriptor(this._property.value, this._property, WebInspector.PropertyPath.Type.Value);
         return null;
-    },
+    }
 
     thisPropertyPath()
     {
         console.assert(this._property);
         return this._propertyPath.appendPropertyDescriptor(null, this._property, this.propertyPathType());
-    },
+    }
 
     hadError()
     {
         console.assert(this._property);
         return this._property.wasThrown || this._getterHadError;
-    },
+    }
 
     propertyPathType()
     {
@@ -105,7 +103,7 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
         if (this._property.hasSetter())
             return WebInspector.PropertyPath.Type.Setter;
         return WebInspector.PropertyPath.Type.Value;
-    },
+    }
 
     propertyPathString(propertyPath)
     {
@@ -113,7 +111,7 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
             return WebInspector.UIString("Unable to determine path to property from root");
 
         return propertyPath.displayPath(this.propertyPathType());
-    },
+    }
 
     createInteractiveGetterElement()
     {
@@ -134,7 +132,7 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
         }.bind(this));
 
         return getterElement;
-    },
+    }
 
     createReadOnlyIconElement()
     {
@@ -142,7 +140,7 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
         readOnlyElement.className = "read-only";
         readOnlyElement.title = WebInspector.UIString("Read only");
         return readOnlyElement;
-    },
+    }
 
     // Private
 
@@ -160,7 +158,7 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
             WebInspector.quickConsole.prompt.pushHistoryItem(text);
 
         WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, resolvedValue);
-    },
+    }
 
     _contextMenuHandler(event)
     {
@@ -184,7 +182,7 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
 
         if (!contextMenu.isEmpty())
             contextMenu.show();
-    },
+    }
 
     _appendMenusItemsForObject(contextMenu, resolvedValue)
     {

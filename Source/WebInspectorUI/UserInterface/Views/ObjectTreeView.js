@@ -64,7 +64,7 @@ WebInspector.ObjectTreeView = function(object, mode, propertyPath, forceExpandin
 
     this._outlineElement = document.createElement("ol");
     this._outlineElement.className = "object-tree-outline";
-    this._outline = new TreeOutline(this._outlineElement);
+    this._outline = new WebInspector.TreeOutline(this._outlineElement);
     this._element.appendChild(this._outlineElement);
 
     // FIXME: Support editable ObjectTrees.
@@ -233,7 +233,7 @@ WebInspector.ObjectTreeView.prototype = {
 
         if (!list) {
             var errorMessageElement = WebInspector.ObjectTreeView.emptyMessageElement(WebInspector.UIString("Could not fetch properties. Object may no longer exist."));
-            this._outline.appendChild(new TreeElement(errorMessageElement, null, false));
+            this._outline.appendChild(new WebInspector.TreeElement(errorMessageElement, null, false));
             return;
         }
 
@@ -252,7 +252,7 @@ WebInspector.ObjectTreeView.prototype = {
 
         if (!this._outline.children.length) {
             var emptyMessageElement = WebInspector.ObjectTreeView.emptyMessageElement(WebInspector.UIString("No Entries."));
-            this._outline.appendChild(new TreeElement(emptyMessageElement, null, false));
+            this._outline.appendChild(new WebInspector.TreeElement(emptyMessageElement, null, false));
         }
 
         // Show the prototype so users can see the API.
@@ -284,7 +284,7 @@ WebInspector.ObjectTreeView.prototype = {
 
         if (!this._outline.children.length) {
             var emptyMessageElement = WebInspector.ObjectTreeView.emptyMessageElement(WebInspector.UIString("No Properties."));
-            this._outline.appendChild(new TreeElement(emptyMessageElement, null, false));
+            this._outline.appendChild(new WebInspector.TreeElement(emptyMessageElement, null, false));
         }
     },
 

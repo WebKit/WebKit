@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2013, 2015 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009 Joseph Pecoraro
  *
@@ -28,46 +28,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMTreeElement = function(node, elementCloseTag)
+WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElement
 {
-    this._elementCloseTag = elementCloseTag;
-    var hasChildrenOverride = !elementCloseTag && node.hasChildNodes() && !this._showInlineText(node);
+    constructor(node, elementCloseTag)
+    {
+        super("", node);
 
-    // The title will be updated in onattach.
-    TreeElement.call(this, "", node, hasChildrenOverride);
+        this._elementCloseTag = elementCloseTag;
+        this.hasChildren = !elementCloseTag && node.hasChildNodes() && !this._showInlineText(node);
 
-    if (this.representedObject.nodeType() === Node.ELEMENT_NODE && !elementCloseTag)
-        this._canAddAttributes = true;
-    this._searchQuery = null;
-    this._expandedChildrenLimit = WebInspector.DOMTreeElement.InitialChildrenLimit;
-};
+        if (this.representedObject.nodeType() === Node.ELEMENT_NODE && !elementCloseTag)
+            this._canAddAttributes = true;
+        this._searchQuery = null;
+        this._expandedChildrenLimit = WebInspector.DOMTreeElement.InitialChildrenLimit;
+    }
 
-WebInspector.DOMTreeElement.InitialChildrenLimit = 500;
-WebInspector.DOMTreeElement.MaximumInlineTextChildLength = 80;
-
-// A union of HTML4 and HTML5-Draft elements that explicitly
-// or implicitly (for HTML5) forbid the closing tag.
-// FIXME: Revise once HTML5 Final is published.
-WebInspector.DOMTreeElement.ForbiddenClosingTagElements = [
-    "area", "base", "basefont", "br", "canvas", "col", "command", "embed", "frame",
-    "hr", "img", "input", "isindex", "keygen", "link", "meta", "param", "source"
-].keySet();
-
-// These tags we do not allow editing their tag name.
-WebInspector.DOMTreeElement.EditTagBlacklist = [
-    "html", "head", "body"
-].keySet();
-
-WebInspector.DOMTreeElement.SearchHighlightStyleClassName = "search-highlight";
-WebInspector.DOMTreeElement.BouncyHighlightStyleClassName = "bouncy-highlight";
-
-WebInspector.DOMTreeElement.prototype = {
-    isCloseTag: function()
+    isCloseTag()
     {
         return this._elementCloseTag;
-    },
+    }
 
-    highlightSearchResults: function(searchQuery)
+    highlightSearchResults(searchQuery)
     {
         if (this._searchQuery !== searchQuery) {
             this._updateSearchHighlight(false);
@@ -77,15 +58,15 @@ WebInspector.DOMTreeElement.prototype = {
         this._searchQuery = searchQuery;
         this._searchHighlightsVisible = true;
         this.updateTitle(true);
-    },
+    }
 
-    hideSearchHighlights: function()
+    hideSearchHighlights()
     {
         delete this._searchHighlightsVisible;
         this._updateSearchHighlight(false);
-    },
+    }
 
-    emphasizeSearchHighlight: function()
+    emphasizeSearchHighlight()
     {
         var highlightElement = this.title.querySelector("." + WebInspector.DOMTreeElement.SearchHighlightStyleClassName);
         console.assert(highlightElement);
@@ -116,9 +97,9 @@ WebInspector.DOMTreeElement.prototype = {
         }
 
         this._bouncyHighlightElement.addEventListener("webkitAnimationEnd", animationEnded.bind(this));
-    },
+    }
 
-    _updateSearchHighlight: function(show)
+    _updateSearchHighlight(show)
     {
         if (!this._highlightResult)
             return;
@@ -152,12 +133,12 @@ WebInspector.DOMTreeElement.prototype = {
 
         for (var i = 0, size = this._highlightResult.length; i < size; ++i)
             updater(this._highlightResult[i]);
-    },
+    }
 
     get hovered()
     {
         return this._hovered;
-    },
+    }
 
     set hovered(x)
     {
@@ -174,12 +155,12 @@ WebInspector.DOMTreeElement.prototype = {
                 this.listItemElement.classList.remove("hovered");
             }
         }
-    },
+    }
 
     get expandedChildrenLimit()
     {
         return this._expandedChildrenLimit;
-    },
+    }
 
     set expandedChildrenLimit(x)
     {
@@ -189,7 +170,7 @@ WebInspector.DOMTreeElement.prototype = {
         this._expandedChildrenLimit = x;
         if (this.treeOutline && !this._updateChildrenInProgress)
             this._updateChildren(true);
-    },
+    }
 
     get expandedChildCount()
     {
@@ -199,9 +180,9 @@ WebInspector.DOMTreeElement.prototype = {
         if (count && this.children[count - 1].expandAllButton)
             count--;
         return count;
-    },
+    }
 
-    showChild: function(index)
+    showChild(index)
     {
         console.assert(!this._elementCloseTag);
         if (this._elementCloseTag)
@@ -214,9 +195,9 @@ WebInspector.DOMTreeElement.prototype = {
 
         // Whether index-th child is visible in the children tree
         return this.expandedChildCount > index;
-    },
+    }
 
-    _createTooltipForNode: function()
+    _createTooltipForNode()
     {
         var node = this.representedObject;
         if (!node.nodeName() || node.nodeName().toLowerCase() !== "img")
@@ -256,9 +237,9 @@ WebInspector.DOMTreeElement.prototype = {
             object.release();
         }
         WebInspector.RemoteObject.resolveNode(node, "", resolvedNode.bind(this));
-    },
+    }
 
-    updateSelection: function()
+    updateSelection()
     {
         var listItemElement = this.listItemElement;
         if (!listItemElement)
@@ -277,9 +258,9 @@ WebInspector.DOMTreeElement.prototype = {
         }
 
         this.selectionElement.style.height = listItemElement.offsetHeight + "px";
-    },
+    }
 
-    onattach: function()
+    onattach()
     {
         if (this._hovered) {
             this.updateSelection();
@@ -289,51 +270,46 @@ WebInspector.DOMTreeElement.prototype = {
         this.updateTitle();
         this.listItemElement.draggable = true;
         this.listItemElement.addEventListener("dragstart", this);
-    },
+    }
 
-    onpopulate: function()
+    onpopulate()
     {
         if (this.children.length || this._showInlineText(this.representedObject) || this._elementCloseTag)
             return;
 
         this.updateChildren();
-    },
+    }
 
-    expandRecursively: function()
+    expandRecursively()
     {
-        function callback()
-        {
-            TreeElement.prototype.expandRecursively.call(this, Number.MAX_VALUE);
-        }
+        this.representedObject.getSubtree(-1, super.expandRecursively.bind(this, Number.MAX_VALUE));
+    }
 
-        this.representedObject.getSubtree(-1, callback.bind(this));
-    },
-
-    updateChildren: function(fullRefresh)
+    updateChildren(fullRefresh)
     {
         if (this._elementCloseTag)
             return;
         this.representedObject.getChildNodes(this._updateChildren.bind(this, fullRefresh));
-    },
+    }
 
-    insertChildElement: function(child, index, closingTag)
+    insertChildElement(child, index, closingTag)
     {
         var newElement = new WebInspector.DOMTreeElement(child, closingTag);
         newElement.selectable = this.treeOutline._selectEnabled;
         this.insertChild(newElement, index);
         return newElement;
-    },
+    }
 
-    moveChild: function(child, targetIndex)
+    moveChild(child, targetIndex)
     {
         var wasSelected = child.selected;
         this.removeChild(child);
         this.insertChild(child, targetIndex);
         if (wasSelected)
             child.select();
-    },
+    }
 
-    _updateChildren: function(fullRefresh)
+    _updateChildren(fullRefresh)
     {
         if (this._updateChildrenInProgress || !this.treeOutline._visible)
             return;
@@ -421,25 +397,25 @@ WebInspector.DOMTreeElement.prototype = {
         }
 
         delete this._updateChildrenInProgress;
-    },
+    }
 
-    adjustCollapsedRange: function()
+    adjustCollapsedRange()
     {
         // Ensure precondition: only the tree elements for node children are found in the tree
         // (not the Expand All button or the closing tag).
         if (this.expandAllButtonElement && this.expandAllButtonElement.__treeElement.parent)
             this.removeChild(this.expandAllButtonElement.__treeElement);
 
-        const node = this.representedObject;
+        var node = this.representedObject;
         if (!node.children)
             return;
-        const childNodeCount = node.children.length;
+        var childNodeCount = node.children.length;
 
         // In case some nodes from the expanded range were removed, pull some nodes from the collapsed range into the expanded range at the bottom.
         for (var i = this.expandedChildCount, limit = Math.min(this.expandedChildrenLimit, childNodeCount); i < limit; ++i)
             this.insertChildElement(node.children[i], i);
 
-        const expandedChildCount = this.expandedChildCount;
+        var expandedChildCount = this.expandedChildCount;
         if (childNodeCount > this.expandedChildCount) {
             var targetButtonIndex = expandedChildCount;
             if (!this.expandAllButtonElement) {
@@ -447,7 +423,7 @@ WebInspector.DOMTreeElement.prototype = {
                 button.className = "show-all-nodes";
                 button.value = "";
 
-                var item = new TreeElement(button, null, false);
+                var item = new WebInspector.TreeElement(button, null, false);
                 item.selectable = false;
                 item.expandAllButton = true;
 
@@ -461,32 +437,32 @@ WebInspector.DOMTreeElement.prototype = {
             this.expandAllButtonElement.textContent = WebInspector.UIString("Show All Nodes (%d More)").format(childNodeCount - expandedChildCount);
         } else if (this.expandAllButtonElement)
             delete this.expandAllButtonElement;
-    },
+    }
 
-    handleLoadAllChildren: function()
+    handleLoadAllChildren()
     {
         this.expandedChildrenLimit = Math.max(this.representedObject.childNodeCount, this.expandedChildrenLimit + WebInspector.DOMTreeElement.InitialChildrenLimit);
-    },
+    }
 
-    onexpand: function()
+    onexpand()
     {
         if (this._elementCloseTag)
             return;
 
         this.updateTitle();
         this.treeOutline.updateSelection();
-    },
+    }
 
-    oncollapse: function()
+    oncollapse()
     {
         if (this._elementCloseTag)
             return;
 
         this.updateTitle();
         this.treeOutline.updateSelection();
-    },
+    }
 
-    onreveal: function()
+    onreveal()
     {
         if (this.listItemElement) {
             var tagSpans = this.listItemElement.getElementsByClassName("html-tag-name");
@@ -495,9 +471,9 @@ WebInspector.DOMTreeElement.prototype = {
             else
                 this.listItemElement.scrollIntoViewIfNeeded(false);
         }
-    },
+    }
 
-    onselect: function(treeElement, selectedByUser)
+    onselect(treeElement, selectedByUser)
     {
         this.treeOutline.suppressRevealAndSelect = true;
         this.treeOutline.selectDOMNode(this.representedObject, selectedByUser);
@@ -505,14 +481,14 @@ WebInspector.DOMTreeElement.prototype = {
             WebInspector.domTreeManager.highlightDOMNode(this.representedObject.id);
         this.updateSelection();
         this.treeOutline.suppressRevealAndSelect = false;
-    },
+    }
 
-    ondeselect: function(treeElement)
+    ondeselect(treeElement)
     {
         this.treeOutline.selectDOMNode(null);
-    },
+    }
 
-    ondelete: function()
+    ondelete()
     {
         if (this.representedObject.isInShadowTree())
             return false;
@@ -523,9 +499,9 @@ WebInspector.DOMTreeElement.prototype = {
         else
             this.remove();
         return true;
-    },
+    }
 
-    onenter: function()
+    onenter()
     {
         // On Enter or Return start editing the first attribute
         // or create a new attribute on the selected element.
@@ -536,11 +512,11 @@ WebInspector.DOMTreeElement.prototype = {
 
         // prevent a newline from being immediately inserted
         return true;
-    },
+    }
 
-    selectOnMouseDown: function(event)
+    selectOnMouseDown(event)
     {
-        TreeElement.prototype.selectOnMouseDown.call(this, event);
+        super.selectOnMouseDown(event);
 
         if (this._editing)
             return;
@@ -548,9 +524,9 @@ WebInspector.DOMTreeElement.prototype = {
         // Prevent selecting the nearest word on double click.
         if (event.detail >= 2)
             event.preventDefault();
-    },
+    }
 
-    ondblclick: function(event)
+    ondblclick(event)
     {
         if (this._editing || this._elementCloseTag)
             return;
@@ -560,9 +536,9 @@ WebInspector.DOMTreeElement.prototype = {
 
         if (this.hasChildren && !this.expanded)
             this.expand();
-    },
+    }
 
-    _insertInLastAttributePosition: function(tag, node)
+    _insertInLastAttributePosition(tag, node)
     {
         if (tag.getElementsByClassName("html-attribute").length > 0)
             tag.insertBefore(node, tag.lastChild);
@@ -575,9 +551,9 @@ WebInspector.DOMTreeElement.prototype = {
         }
 
         this.updateSelection();
-    },
+    }
 
-    _startEditingTarget: function(eventTarget)
+    _startEditingTarget(eventTarget)
     {
         if (this.treeOutline.selectedDOMNode() !== this.representedObject)
             return false;
@@ -605,9 +581,9 @@ WebInspector.DOMTreeElement.prototype = {
             return this._addNewAttribute();
 
         return false;
-    },
+    }
 
-    _populateTagContextMenu: function(contextMenu, event)
+    _populateTagContextMenu(contextMenu, event)
     {
         var node = this.representedObject;
         if (!node.isInShadowTree()) {
@@ -629,9 +605,9 @@ WebInspector.DOMTreeElement.prototype = {
 
         this._populateNodeContextMenu(contextMenu);
         this.treeOutline._populateContextMenu(contextMenu, this.representedObject);
-    },
+    }
 
-    _populateForcedPseudoStateItems: function(subMenu)
+    _populateForcedPseudoStateItems(subMenu)
     {
         var node = this.representedObject;
         var enabledPseudoClasses = node.enabledPseudoClasses;
@@ -643,18 +619,18 @@ WebInspector.DOMTreeElement.prototype = {
                 node.setPseudoClassEnabled(pseudoClass, !enabled);
             }, enabled, false);
         });
-    },
+    }
 
-    _populateTextContextMenu: function(contextMenu, textNode)
+    _populateTextContextMenu(contextMenu, textNode)
     {
         var node = this.representedObject;
         if (!node.isInShadowTree())
             contextMenu.appendItem(WebInspector.UIString("Edit Text"), this._startEditingTextNode.bind(this, textNode));
 
         this._populateNodeContextMenu(contextMenu);
-    },
+    }
 
-    _populateNodeContextMenu: function(contextMenu)
+    _populateNodeContextMenu(contextMenu)
     {
         // Add free-form node-related actions.
         var node = this.representedObject;
@@ -663,9 +639,9 @@ WebInspector.DOMTreeElement.prototype = {
         contextMenu.appendItem(WebInspector.UIString("Copy as HTML"), this._copyHTML.bind(this));
         if (!node.isInShadowTree())
             contextMenu.appendItem(WebInspector.UIString("Delete Node"), this.remove.bind(this));
-    },
+    }
 
-    _startEditing: function()
+    _startEditing()
     {
         if (this.treeOutline.selectedDOMNode() !== this.representedObject)
             return false;
@@ -689,9 +665,9 @@ WebInspector.DOMTreeElement.prototype = {
                 return this._startEditingTextNode(textNode);
             return false;
         }
-    },
+    }
 
-    _addNewAttribute: function()
+    _addNewAttribute()
     {
         // Cannot just convert the textual html into an element without
         // a parent node. Use a temporary span container for the HTML.
@@ -704,9 +680,9 @@ WebInspector.DOMTreeElement.prototype = {
         var tag = this.listItemElement.getElementsByClassName("html-tag")[0];
         this._insertInLastAttributePosition(tag, attr);
         return this._startEditingAttribute(attr, attr);
-    },
+    }
 
-    _triggerEditAttribute: function(attributeName)
+    _triggerEditAttribute(attributeName)
     {
         var attributeElements = this.listItemElement.getElementsByClassName("html-attribute-name");
         for (var i = 0, len = attributeElements.length; i < len; ++i) {
@@ -720,9 +696,9 @@ WebInspector.DOMTreeElement.prototype = {
                 }
             }
         }
-    },
+    }
 
-    _startEditingAttribute: function(attribute, elementForSelection)
+    _startEditingAttribute(attribute, elementForSelection)
     {
         if (WebInspector.isBeingEdited(attribute))
             return true;
@@ -756,9 +732,9 @@ WebInspector.DOMTreeElement.prototype = {
         window.getSelection().setBaseAndExtent(elementForSelection, 0, elementForSelection, 1);
 
         return true;
-    },
+    }
 
-    _startEditingTextNode: function(textNode)
+    _startEditingTextNode(textNode)
     {
         if (WebInspector.isBeingEdited(textNode))
             return true;
@@ -769,9 +745,9 @@ WebInspector.DOMTreeElement.prototype = {
         window.getSelection().setBaseAndExtent(textNode, 0, textNode, 1);
 
         return true;
-    },
+    }
 
-    _startEditingTagName: function(tagNameElement)
+    _startEditingTagName(tagNameElement)
     {
         if (!tagNameElement) {
             tagNameElement = this.listItemElement.getElementsByClassName("html-tag-name")[0];
@@ -812,9 +788,9 @@ WebInspector.DOMTreeElement.prototype = {
         this._editing = WebInspector.startEditing(tagNameElement, config);
         window.getSelection().setBaseAndExtent(tagNameElement, 0, tagNameElement, 1);
         return true;
-    },
+    }
 
-    _startEditingAsHTML: function(commitCallback, error, initialValue)
+    _startEditingAsHTML(commitCallback, error, initialValue)
     {
         if (error)
             return;
@@ -868,9 +844,9 @@ WebInspector.DOMTreeElement.prototype = {
         var config = new WebInspector.EditingConfig(commit.bind(this), dispose.bind(this));
         config.setMultiline(true);
         this._editing = WebInspector.startEditing(this._htmlEditElement, config);
-    },
+    }
 
-    _attributeEditingCommitted: function(element, newText, oldText, attributeName, moveDirection)
+    _attributeEditingCommitted(element, newText, oldText, attributeName, moveDirection)
     {
         this._editing = false;
 
@@ -925,9 +901,9 @@ WebInspector.DOMTreeElement.prototype = {
         }
 
         this.representedObject.setAttribute(attributeName, newText, moveToNextAttributeIfNeeded.bind(this));
-    },
+    }
 
-    _tagNameEditingCommitted: function(element, newText, oldText, tagName, moveDirection)
+    _tagNameEditingCommitted(element, newText, oldText, tagName, moveDirection)
     {
         this._editing = false;
         var self = this;
@@ -986,9 +962,9 @@ WebInspector.DOMTreeElement.prototype = {
         }
 
         this.representedObject.setNodeName(newText, changeTagNameCallback);
-    },
+    }
 
-    _textNodeEditingCommitted: function(element, newText)
+    _textNodeEditingCommitted(element, newText)
     {
         this._editing = false;
 
@@ -1001,17 +977,17 @@ WebInspector.DOMTreeElement.prototype = {
             textNode = this.representedObject;
 
         textNode.setNodeValue(newText, this.updateTitle.bind(this));
-    },
+    }
 
-    _editingCancelled: function(element, context)
+    _editingCancelled(element, context)
     {
         this._editing = false;
 
         // Need to restore attributes structure.
         this.updateTitle();
-    },
+    }
 
-    _distinctClosingTagElement: function()
+    _distinctClosingTagElement()
     {
         // FIXME: Improve the Tree Element / Outline Abstraction to prevent crawling the DOM
 
@@ -1027,9 +1003,9 @@ WebInspector.DOMTreeElement.prototype = {
         // null in the case where there isn't a closing tag.
         var tags = this.listItemElement.getElementsByClassName("html-tag");
         return (tags.length === 1 ? null : tags[tags.length - 1]);
-    },
+    }
 
-    updateTitle: function(onlySearchQueryChanged)
+    updateTitle(onlySearchQueryChanged)
     {
         // If we are editing, return early to prevent canceling the edit.
         // After editing is committed updateTitle will be called.
@@ -1048,9 +1024,9 @@ WebInspector.DOMTreeElement.prototype = {
         delete this.selectionElement;
         this.updateSelection();
         this._highlightSearchResults();
-    },
+    }
 
-    _buildAttributeDOM: function(parentElement, name, value, node)
+    _buildAttributeDOM(parentElement, name, value, node)
     {
         var hasText = (value.length > 0);
         var attrSpanElement = parentElement.createChild("span", "html-attribute");
@@ -1087,9 +1063,9 @@ WebInspector.DOMTreeElement.prototype = {
 
         if (hasText)
             attrSpanElement.appendChild(document.createTextNode("\""));
-    },
+    }
 
-    _buildTagDOM: function(parentElement, tagName, isClosingTag, isDistinctTreeElement)
+    _buildTagDOM(parentElement, tagName, isClosingTag, isDistinctTreeElement)
     {
         var node = this.representedObject;
         var classes = [ "html-tag" ];
@@ -1111,12 +1087,19 @@ WebInspector.DOMTreeElement.prototype = {
         }
         tagElement.appendChild(document.createTextNode(">"));
         parentElement.appendChild(document.createTextNode("\u200B"));
-    },
+    }
 
-    _nodeTitleInfo: function()
+    _nodeTitleInfo()
     {
         var node = this.representedObject;
         var info = {titleDOM: document.createDocumentFragment(), hasChildren: this.hasChildren};
+
+        function trimedNodeValue()
+        {
+            // Trim empty lines from the beginning and extra space at the end since most style and script tags begin with a newline
+            // and end with a newline and indentation for the end tag.
+            return node.nodeValue().replace(/^[\n\r]*/, "").replace(/\s*$/, "");
+        }
 
         switch (node.nodeType()) {
             case Node.DOCUMENT_FRAGMENT_NODE:
@@ -1177,13 +1160,6 @@ WebInspector.DOMTreeElement.prototype = {
                 break;
 
             case Node.TEXT_NODE:
-                function trimedNodeValue()
-                {
-                    // Trim empty lines from the beginning and extra space at the end since most style and script tags begin with a newline
-                    // and end with a newline and indentation for the end tag.
-                    return node.nodeValue().replace(/^[\n\r]*/, "").replace(/\s*$/, "");
-                }
-
                 if (node.parentNode && node.parentNode.nodeName().toLowerCase() === "script") {
                     var newNode = info.titleDOM.createChild("span", "html-text-node large");
                     newNode.appendChild(WebInspector.syntaxHighlightStringAsDocumentFragment(trimedNodeValue(), "text/javascript"));
@@ -1237,9 +1213,9 @@ WebInspector.DOMTreeElement.prototype = {
         }
 
         return info;
-    },
+    }
 
-    _singleTextChild: function(node)
+    _singleTextChild(node)
     {
         if (!node)
             return null;
@@ -1253,9 +1229,9 @@ WebInspector.DOMTreeElement.prototype = {
 
         var sibling = firstChild.nextSibling;
         return sibling ? null : firstChild;
-    },
+    }
 
-    _showInlineText: function(node)
+    _showInlineText(node)
     {
         if (node.nodeType() === Node.ELEMENT_NODE) {
             var textChild = this._singleTextChild(node);
@@ -1263,9 +1239,9 @@ WebInspector.DOMTreeElement.prototype = {
                 return true;
         }
         return false;
-    },
+    }
 
-    remove: function()
+    remove()
     {
         var parentElement = this.parent;
         if (!parentElement)
@@ -1285,9 +1261,9 @@ WebInspector.DOMTreeElement.prototype = {
         }
 
         this.representedObject.removeNode(removeNodeCallback);
-    },
+    }
 
-    _editAsHTML: function()
+    _editAsHTML()
     {
         var treeOutline = this.treeOutline;
         var node = this.representedObject;
@@ -1322,14 +1298,14 @@ WebInspector.DOMTreeElement.prototype = {
         }
 
         node.getOuterHTML(this._startEditingAsHTML.bind(this, commitChange));
-    },
+    }
 
-    _copyHTML: function()
+    _copyHTML()
     {
         this.representedObject.copyNode();
-    },
+    }
 
-    _highlightSearchResults: function()
+    _highlightSearchResults()
     {
         if (!this.title || !this._searchQuery || !this._searchHighlightsVisible)
             return;
@@ -1356,13 +1332,30 @@ WebInspector.DOMTreeElement.prototype = {
 
         this._highlightResult = [];
         WebInspector.highlightRangesWithStyleClass(this.title, matchRanges, WebInspector.DOMTreeElement.SearchHighlightStyleClassName, this._highlightResult);
-    },
+    }
 
-    handleEvent: function(event)
+    handleEvent(event)
     {
         if (event.type === "dragstart" && this._editing)
             event.preventDefault();
     }
 };
 
-WebInspector.DOMTreeElement.prototype.__proto__ = TreeElement.prototype;
+WebInspector.DOMTreeElement.InitialChildrenLimit = 500;
+WebInspector.DOMTreeElement.MaximumInlineTextChildLength = 80;
+
+// A union of HTML4 and HTML5-Draft elements that explicitly
+// or implicitly (for HTML5) forbid the closing tag.
+WebInspector.DOMTreeElement.ForbiddenClosingTagElements = [
+    "area", "base", "basefont", "br", "canvas", "col", "command", "embed", "frame",
+    "hr", "img", "input", "isindex", "keygen", "link", "meta", "param", "source",
+    "wbr", "track", "menuitem"
+].keySet();
+
+// These tags we do not allow editing their tag name.
+WebInspector.DOMTreeElement.EditTagBlacklist = [
+    "html", "head", "body"
+].keySet();
+
+WebInspector.DOMTreeElement.SearchHighlightStyleClassName = "search-highlight";
+WebInspector.DOMTreeElement.BouncyHighlightStyleClassName = "bouncy-highlight";

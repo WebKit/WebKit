@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TreeElementStatusButton = function(element) {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+WebInspector.TreeElementStatusButton = class TreeElementStatusButton extends WebInspector.Object
+{
+    constructor(element)
+    {
+        super();
 
-    console.assert(element);
+        console.assert(element);
 
-    this._element = element;
-    this._element.classList.add(WebInspector.TreeElementStatusButton.StyleClassName);
-    this._element.addEventListener("click", this._clicked.bind(this));
-};
-
-WebInspector.TreeElementStatusButton.StyleClassName = "status-button";
-WebInspector.TreeElementStatusButton.DisabledStyleClassName = "disabled";
-
-WebInspector.TreeElementStatusButton.Event = {
-    Clicked: "status-button-clicked"
-};
-
-WebInspector.TreeElementStatusButton.prototype = {
-    constructor: WebInspector.TreeElementStatusButton,
+        this._element = element;
+        this._element.classList.add("status-button");
+        this._element.addEventListener("click", this._clicked.bind(this));
+    }
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get hidden()
     {
         return !this._element.classList.contains(WebInspector.TreeElementStatusButton.DisabledStyleClassName);
-    },
+    }
 
     set hidden(flag)
     {
         this._element.classList.toggle("hidden", flag);
-    },
+    }
 
     get enabled()
     {
         return !this._element.classList.contains(WebInspector.TreeElementStatusButton.DisabledStyleClassName);
-    },
+    }
 
     set enabled(flag)
     {
@@ -72,11 +64,11 @@ WebInspector.TreeElementStatusButton.prototype = {
             this._element.classList.remove(WebInspector.TreeElementStatusButton.DisabledStyleClassName);
         else
             this._element.classList.add(WebInspector.TreeElementStatusButton.DisabledStyleClassName);
-    },
+    }
 
     // Private
 
-    _clicked: function(event)
+    _clicked(event)
     {
         if (!this.enabled)
             return;
@@ -87,4 +79,8 @@ WebInspector.TreeElementStatusButton.prototype = {
     }
 };
 
-WebInspector.TreeElementStatusButton.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.TreeElementStatusButton.DisabledStyleClassName = "disabled";
+
+WebInspector.TreeElementStatusButton.Event = {
+    Clicked: "status-button-clicked"
+};

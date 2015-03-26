@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,7 +68,7 @@ WebInspector.TypePropertiesSection.prototype = {
             var title = document.createElement("div");
             title.className = "info";
             title.textContent = this.emptyPlaceholder;
-            var infoElement = new TreeElement(title, null, false);
+            var infoElement = new WebInspector.TreeElement(title, null, false);
             this.propertiesTreeOutline.appendChild(infoElement);
         }
 
@@ -125,25 +125,23 @@ WebInspector.TypePropertiesSection.PropertyComparator = function(propertyA, prop
     return diff;
 };
 
-WebInspector.TypePropertyTreeElement = function(property)
+WebInspector.TypePropertyTreeElement = class TypePropertyTreeElement extends WebInspector.TreeElement
 {
-    this.property = property;
+    constructor(property)
+    {
+        super(this.nameElement, null, false);
 
-    this.nameElement = document.createElement("span");
-    this.nameElement.className = "name";
-    this.nameElement.textContent = this.property.name;
+        this.property = property;
 
-    TreeElement.call(this, this.nameElement, null, false);
+        this.nameElement = document.createElement("span");
+        this.nameElement.className = "name";
+        this.nameElement.textContent = this.property.name;
 
-    this.toggleOnClick = true;
-    this.hasChildren = !!this.property.structure;
-};
+        this.toggleOnClick = true;
+        this.hasChildren = !!this.property.structure;
+    }
 
-WebInspector.TypePropertyTreeElement.prototype = {
-    constructor: WebInspector.TypePropertyTreeElement,
-    __proto__: TreeElement.prototype,
-
-    onpopulate: function()
+    onpopulate()
     {
         this.removeChildren();
 
@@ -184,4 +182,3 @@ WebInspector.TypePropertyTreeElement.prototype = {
             this.appendChild(new WebInspector.TypePropertyTreeElement(property));
     }
 };
-

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceMapResourceTreeElement = function(sourceMapResource, representedObject)
+WebInspector.SourceMapResourceTreeElement = class SourceMapResourceTreeElement extends WebInspector.ResourceTreeElement
 {
-    console.assert(sourceMapResource instanceof WebInspector.SourceMapResource);
+    constructor(sourceMapResource, representedObject)
+    {
+        console.assert(sourceMapResource instanceof WebInspector.SourceMapResource);
 
-    WebInspector.ResourceTreeElement.call(this, sourceMapResource);
+        super(sourceMapResource);
 
-    console.assert(this.resource === sourceMapResource);
+        console.assert(this.resource === sourceMapResource);
 
-    this.addClassName(WebInspector.SourceMapResourceTreeElement.StyleClassName);
-};
-
-WebInspector.SourceMapResourceTreeElement.StyleClassName = "source-map-resource";
-
-WebInspector.SourceMapResourceTreeElement.prototype = {
-    constructor: WebInspector.SourceMapResourceTreeElement,
+        this.addClassName("source-map-resource");
+    }
 
     // Protected
 
-    _updateTitles: function()
+    _updateTitles()
     {
         var oldMainTitle = this.mainTitle;
         this.mainTitle = this.resource.displayName;
@@ -56,5 +53,3 @@ WebInspector.SourceMapResourceTreeElement.prototype = {
             this.callFirstAncestorFunction("descendantResourceTreeElementMainTitleDidChange", [this, oldMainTitle]);
     }
 };
-
-WebInspector.SourceMapResourceTreeElement.prototype.__proto__ = WebInspector.ResourceTreeElement.prototype;

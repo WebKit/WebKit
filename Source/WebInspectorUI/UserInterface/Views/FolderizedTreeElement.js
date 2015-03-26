@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FolderizedTreeElement = function(classNames, title, subtitle, representedObject, hasChildren)
+WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInspector.GeneralTreeElement
 {
-    WebInspector.GeneralTreeElement.call(this, classNames, title, subtitle, representedObject, hasChildren);
+    constructor(classNames, title, subtitle, representedObject, hasChildren)
+    {
+        super(classNames, title, subtitle, representedObject, hasChildren);
 
-    this.shouldRefreshChildren = true;
+        this.shouldRefreshChildren = true;
 
-    this._folderSettingsKey = "";
-    this._folderTypeMap = new Map;
-    this._folderizeSettingsMap = new Map;
-    this._groupedIntoFolders = false;
-    this._clearNewChildQueue();
-};
-
-WebInspector.FolderizedTreeElement.MediumChildCountThreshold = 5;
-WebInspector.FolderizedTreeElement.LargeChildCountThreshold = 15;
-WebInspector.FolderizedTreeElement.NumberOfMediumCategoriesThreshold = 2;
-WebInspector.FolderizedTreeElement.NewChildQueueUpdateInterval = 500;
-
-WebInspector.FolderizedTreeElement.prototype = {
-    constructor: WebInspector.FolderizedTreeElement,
-    __proto__: WebInspector.GeneralTreeElement.prototype,
+        this._folderSettingsKey = "";
+        this._folderTypeMap = new Map;
+        this._folderizeSettingsMap = new Map;
+        this._groupedIntoFolders = false;
+        this._clearNewChildQueue();
+    }
 
     // Public
 
     get groupedIntoFolders()
     {
         return this._groupedIntoFolders;
-    },
+    }
 
     set folderSettingsKey(x)
     {
         this._folderSettingsKey = x;
-    },
+    }
 
-    registerFolderizeSettings: function(type, folderDisplayName, validateRepresentedObjectCallback, countChildrenCallback, treeElementConstructor)
+    registerFolderizeSettings(type, folderDisplayName, validateRepresentedObjectCallback, countChildrenCallback, treeElementConstructor)
     {
         console.assert(type);
         console.assert(folderDisplayName);
@@ -74,13 +67,13 @@ WebInspector.FolderizedTreeElement.prototype = {
         };
 
         this._folderizeSettingsMap.set(type, settings);
-    },
+    }
 
     // Overrides from TreeElement (Private).
 
-    removeChildren: function()
+    removeChildren()
     {
-        TreeElement.prototype.removeChildren.call(this);
+        super.removeChildren();
 
         this._clearNewChildQueue();
 
@@ -90,11 +83,11 @@ WebInspector.FolderizedTreeElement.prototype = {
         this._folderTypeMap.clear();
 
         this._groupedIntoFolders = false;
-    },
+    }
 
     // Protected
 
-    addChildForRepresentedObject: function(representedObject)
+    addChildForRepresentedObject(representedObject)
     {
         var settings = this._settingsForRepresentedObject(representedObject);
         console.assert(settings);
@@ -108,18 +101,18 @@ WebInspector.FolderizedTreeElement.prototype = {
             childTreeElement = new settings.treeElementConstructor(representedObject);
 
         this._addTreeElement(childTreeElement);
-    },
+    }
 
-    addRepresentedObjectToNewChildQueue: function(representedObject)
+    addRepresentedObjectToNewChildQueue(representedObject)
     {
         // This queue reduces flashing as resources load and change folders when their type becomes known.
 
         this._newChildQueue.push(representedObject);
         if (!this._newChildQueueTimeoutIdentifier)
             this._newChildQueueTimeoutIdentifier = setTimeout(this._populateFromNewChildQueue.bind(this), WebInspector.FolderizedTreeElement.NewChildQueueUpdateInterval);
-    },
+    }
 
-    removeChildForRepresentedObject: function(representedObject)
+    removeChildForRepresentedObject(representedObject)
     {
         this._removeRepresentedObjectFromNewChildQueue(representedObject);
         this.updateParentStatus();
@@ -137,14 +130,14 @@ WebInspector.FolderizedTreeElement.prototype = {
             return;
 
         this._removeTreeElement(childTreeElement);
-    },
+    }
 
-    compareChildTreeElements: function(a, b)
+    compareChildTreeElements(a, b)
     {
         return this._compareTreeElementsByMainTitle(a, b);
-    },
+    }
 
-    updateParentStatus: function()
+    updateParentStatus()
     {
         var hasChildren = false;
         for (var settings of this._folderizeSettingsMap.values()) {
@@ -157,26 +150,26 @@ WebInspector.FolderizedTreeElement.prototype = {
         this.hasChildren = hasChildren;
         if (!this.hasChildren)
             this.removeChildren();
-    },
+    }
 
-    prepareToPopulate: function()
+    prepareToPopulate()
     {
         if (!this._groupedIntoFolders && this._shouldGroupIntoFolders())
             this._groupedIntoFolders = true;
-    },
+    }
 
     // Private
 
-    _clearNewChildQueue: function()
+    _clearNewChildQueue()
     {
         this._newChildQueue = [];
         if (this._newChildQueueTimeoutIdentifier) {
             clearTimeout(this._newChildQueueTimeoutIdentifier);
             this._newChildQueueTimeoutIdentifier = null;
         }
-    },
+    }
 
-    _populateFromNewChildQueue: function()
+    _populateFromNewChildQueue()
     {
         if (!this.children.length) {
             this.updateParentStatus();
@@ -190,14 +183,14 @@ WebInspector.FolderizedTreeElement.prototype = {
             this.addChildForRepresentedObject(this._newChildQueue[i]);
 
         this._clearNewChildQueue();
-    },
+    }
 
-    _removeRepresentedObjectFromNewChildQueue: function(representedObject)
+    _removeRepresentedObjectFromNewChildQueue(representedObject)
     {
         this._newChildQueue.remove(representedObject);
-    },
+    }
 
-    _addTreeElement: function(childTreeElement)
+    _addTreeElement(childTreeElement)
     {
         console.assert(childTreeElement);
         if (!childTreeElement)
@@ -215,27 +208,27 @@ WebInspector.FolderizedTreeElement.prototype = {
 
         if (wasSelected)
             childTreeElement.revealAndSelect(true, false, true, true);
-    },
+    }
 
-    _compareTreeElementsByMainTitle: function(a, b)
+    _compareTreeElementsByMainTitle(a, b)
     {
         return a.mainTitle.localeCompare(b.mainTitle);
-    },
+    }
 
-    _insertFolderTreeElement: function(folderTreeElement)
+    _insertFolderTreeElement(folderTreeElement)
     {
         console.assert(this._groupedIntoFolders);
         console.assert(!folderTreeElement.parent);
         this.insertChild(folderTreeElement, insertionIndexForObjectInListSortedByFunction(folderTreeElement, this.children, this._compareTreeElementsByMainTitle));
-    },
+    }
 
-    _insertChildTreeElement: function(parentTreeElement, childTreeElement)
+    _insertChildTreeElement(parentTreeElement, childTreeElement)
     {
         console.assert(!childTreeElement.parent);
         parentTreeElement.insertChild(childTreeElement, insertionIndexForObjectInListSortedByFunction(childTreeElement, parentTreeElement.children, this.compareChildTreeElements.bind(this)));
-    },
+    }
 
-    _removeTreeElement: function(childTreeElement, suppressOnDeselect, suppressSelectSibling)
+    _removeTreeElement(childTreeElement, suppressOnDeselect, suppressSelectSibling)
     {
         var oldParent = childTreeElement.parent;
         if (!oldParent)
@@ -253,9 +246,9 @@ WebInspector.FolderizedTreeElement.prototype = {
         // Remove the old parent folder if it is now empty.
         if (!oldParent.children.length)
             oldParent.parent.removeChild(oldParent);
-    },
+    }
 
-    _parentTreeElementForRepresentedObject: function(representedObject)
+    _parentTreeElementForRepresentedObject(representedObject)
     {
         if (!this._groupedIntoFolders)
             return this;
@@ -286,24 +279,24 @@ WebInspector.FolderizedTreeElement.prototype = {
         folder = createFolderTreeElement.call(this, settings.type, settings.folderDisplayName);
         this._folderTypeMap.set(settings.type, folder);
         return folder;
-    },
+    }
 
-    _folderTreeElementExpandedStateChange: function(folderTreeElement)
+    _folderTreeElementExpandedStateChange(folderTreeElement)
     {
         console.assert(folderTreeElement.__expandedSetting);
         folderTreeElement.__expandedSetting.value = folderTreeElement.expanded;
-    },
+    }
 
-    _settingsForRepresentedObject: function(representedObject)
+    _settingsForRepresentedObject(representedObject)
     {
         for (var settings of this._folderizeSettingsMap.values()) {
             if (settings.validateRepresentedObjectCallback(representedObject))
                 return settings;
         }
         return null;
-    },
+    }
 
-    _shouldGroupIntoFolders: function()
+    _shouldGroupIntoFolders()
     {
         // Already grouped into folders, keep it that way.
         if (this._groupedIntoFolders)
@@ -358,3 +351,8 @@ WebInspector.FolderizedTreeElement.prototype = {
         return false;
     }
 };
+
+WebInspector.FolderizedTreeElement.MediumChildCountThreshold = 5;
+WebInspector.FolderizedTreeElement.LargeChildCountThreshold = 15;
+WebInspector.FolderizedTreeElement.NumberOfMediumCategoriesThreshold = 2;
+WebInspector.FolderizedTreeElement.NewChildQueueUpdateInterval = 500;

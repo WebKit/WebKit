@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseHostTreeElement = function(host)
+WebInspector.DatabaseHostTreeElement = class DatabaseHostTreeElement extends WebInspector.StorageTreeElement
 {
-    WebInspector.StorageTreeElement.call(this, WebInspector.FolderTreeElement.FolderIconStyleClassName, WebInspector.displayNameForHost(host), null);
+    constructor(host)
+    {
+        super(WebInspector.FolderTreeElement.FolderIconStyleClassName, WebInspector.displayNameForHost(host), null);
 
-    this._host = host;
+        this._host = host;
 
-    this.hasChildren = true;
-};
-
-WebInspector.DatabaseHostTreeElement.prototype = {
-    constructor: WebInspector.DatabaseHostTreeElement,
+        this.hasChildren = true;
+    }
 
     // Public
 
     get name()
     {
         return WebInspector.displayNameForHost(this._host);
-    },
+    }
 
     get categoryName()
     {
         return WebInspector.UIString("Databases");
     }
 };
-
-WebInspector.DatabaseHostTreeElement.prototype.__proto__ = WebInspector.StorageTreeElement.prototype;

@@ -23,22 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IndexedDatabaseObjectStoreIndexTreeElement = function(objectStoreIndex)
+WebInspector.IndexedDatabaseObjectStoreIndexTreeElement = class IndexedDatabaseObjectStoreIndexTreeElement extends WebInspector.GeneralTreeElement
 {
-    console.assert(objectStoreIndex instanceof WebInspector.IndexedDatabaseObjectStoreIndex);
+    constructor(objectStoreIndex)
+    {
+        console.assert(objectStoreIndex instanceof WebInspector.IndexedDatabaseObjectStoreIndex);
 
-    this._objectStoreIndex = objectStoreIndex;
+        super("database-table-icon", objectStoreIndex.name, null, objectStoreIndex, false);
 
-    WebInspector.GeneralTreeElement.call(this, WebInspector.IndexedDatabaseObjectStoreTreeElement.IconStyleClassName, objectStoreIndex.name, null, objectStoreIndex, false);
+        this._objectStoreIndex = objectStoreIndex;
 
-    this.small = true;
-};
-
-WebInspector.IndexedDatabaseObjectStoreIndexTreeElement.IconStyleClassName = "database-table-icon";
-
-WebInspector.IndexedDatabaseObjectStoreIndexTreeElement.prototype = {
-    constructor: WebInspector.IndexedDatabaseObjectStoreIndexTreeElement,
-    __proto__: WebInspector.GeneralTreeElement.prototype,
+        this.small = true;
+    }
 
     // Public
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseTableTreeElement = function(representedObject)
+WebInspector.DatabaseTableTreeElement = class DatabaseTableTreeElement extends WebInspector.GeneralTreeElement
 {
-    console.assert(representedObject instanceof WebInspector.DatabaseTableObject);
+    constructor(representedObject)
+    {
+        console.assert(representedObject instanceof WebInspector.DatabaseTableObject);
 
-    WebInspector.GeneralTreeElement.call(this, WebInspector.DatabaseTableTreeElement.DatabaseTableIconStyleClassName, representedObject.name, null, representedObject, false);
+        super("database-table-icon", representedObject.name, null, representedObject, false);
 
-    this.small = true;
+        this.small = true;
+    }
 };
-
-WebInspector.DatabaseTableTreeElement.DatabaseTableIconStyleClassName = "database-table-icon";
-
-WebInspector.DatabaseTableTreeElement.prototype = {
-    constructor: WebInspector.DatabaseTableTreeElement
-};
-
-WebInspector.DatabaseTableTreeElement.prototype.__proto__ = WebInspector.GeneralTreeElement.prototype;

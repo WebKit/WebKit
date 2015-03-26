@@ -23,30 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMStorageTreeElement = function(representedObject)
+WebInspector.DOMStorageTreeElement = class DOMStorageTreeElement extends WebInspector.StorageTreeElement
 {
-    console.assert(representedObject instanceof WebInspector.DOMStorageObject);
+    constructor(representedObject)
+    {
+        console.assert(representedObject instanceof WebInspector.DOMStorageObject);
 
-    if (representedObject.isLocalStorage())
-        var className = WebInspector.DOMStorageTreeElement.LocalStorageIconStyleClassName;
-    else
-        var className = WebInspector.DOMStorageTreeElement.SessionStorageIconStyleClassName;
+        if (representedObject.isLocalStorage())
+            var className = WebInspector.DOMStorageTreeElement.LocalStorageIconStyleClassName;
+        else
+            var className = WebInspector.DOMStorageTreeElement.SessionStorageIconStyleClassName;
 
-    WebInspector.StorageTreeElement.call(this, className, WebInspector.displayNameForHost(representedObject.host), representedObject);
-};
-
-WebInspector.DOMStorageTreeElement.LocalStorageIconStyleClassName = "local-storage-icon";
-WebInspector.DOMStorageTreeElement.SessionStorageIconStyleClassName = "session-storage-icon";
-
-WebInspector.DOMStorageTreeElement.prototype = {
-    constructor: WebInspector.DOMStorageTreeElement,
+        super(className, WebInspector.displayNameForHost(representedObject.host), representedObject);
+    }
 
     // Public
 
     get name()
     {
         return WebInspector.displayNameForHost(this.representedObject.host);
-    },
+    }
 
     get categoryName()
     {
@@ -56,4 +52,5 @@ WebInspector.DOMStorageTreeElement.prototype = {
     }
 };
 
-WebInspector.DOMStorageTreeElement.prototype.__proto__ = WebInspector.StorageTreeElement.prototype;
+WebInspector.DOMStorageTreeElement.LocalStorageIconStyleClassName = "local-storage-icon";
+WebInspector.DOMStorageTreeElement.SessionStorageIconStyleClassName = "session-storage-icon";

@@ -1,5 +1,58 @@
 2015-03-26  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Convert TreeElement classes to ES6
+        https://bugs.webkit.org/show_bug.cgi?id=143111
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ApplicationCacheFrameTreeElement.js:
+        * UserInterface/Views/ApplicationCacheManifestTreeElement.js:
+        * UserInterface/Views/BreakpointTreeElement.js:
+        * UserInterface/Views/CallFrameTreeElement.js:
+        * UserInterface/Views/ContentFlowTreeElement.js:
+        * UserInterface/Views/CookieStorageTreeElement.js:
+        * UserInterface/Views/DOMStorageTreeElement.js:
+        * UserInterface/Views/DOMTreeElement.js:
+        * UserInterface/Views/DOMTreeOutline.js:
+        * UserInterface/Views/DatabaseHostTreeElement.js:
+        * UserInterface/Views/DatabaseTableTreeElement.js:
+        * UserInterface/Views/DatabaseTreeElement.js:
+        * UserInterface/Views/FolderTreeElement.js:
+        * UserInterface/Views/FolderizedTreeElement.js:
+        * UserInterface/Views/FrameTreeElement.js:
+        * UserInterface/Views/GeneralTreeElement.js:
+        * UserInterface/Views/IndexedDatabaseHostTreeElement.js:
+        * UserInterface/Views/IndexedDatabaseObjectStoreIndexTreeElement.js:
+        * UserInterface/Views/IndexedDatabaseObjectStoreTreeElement.js:
+        * UserInterface/Views/IndexedDatabaseTreeElement.js:
+        * UserInterface/Views/LegacyConsoleMessageImpl.js:
+        * UserInterface/Views/LogTreeElement.js:
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.js:
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        * UserInterface/Views/ObjectTreeMapEntryTreeElement.js:
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        * UserInterface/Views/ObjectTreeSetIndexTreeElement.js:
+        * UserInterface/Views/ObjectTreeView.js:
+        * UserInterface/Views/ProfileNodeTreeElement.js:
+        * UserInterface/Views/PropertiesSection.js:
+        * UserInterface/Views/ResourceTreeElement.js:
+        * UserInterface/Views/ScriptTreeElement.js:
+        * UserInterface/Views/SearchResultTreeElement.js:
+        * UserInterface/Views/SourceCodeTimelineTreeElement.js:
+        * UserInterface/Views/SourceCodeTreeElement.js:
+        * UserInterface/Views/SourceMapResourceTreeElement.js:
+        * UserInterface/Views/StorageTreeElement.js:
+        * UserInterface/Views/TimelineDataGrid.js:
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        * UserInterface/Views/TreeElementStatusButton.js:
+        * UserInterface/Views/TreeOutline.js:
+        * UserInterface/Views/TreeOutlineDataGridSynchronizer.js:
+        * UserInterface/Views/TypePropertiesSection.js:
+        Converted to ES6 classes where possible.
+
+2015-03-26  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Convert sidebar classes to ES6
         https://bugs.webkit.org/show_bug.cgi?id=143108
 

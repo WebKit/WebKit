@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,81 +23,77 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceTreeElement = function(resource, representedObject)
+WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspector.SourceCodeTreeElement
 {
-    console.assert(resource instanceof WebInspector.Resource);
+    constructor(resource, representedObject)
+    {
+        console.assert(resource instanceof WebInspector.Resource);
 
-    WebInspector.SourceCodeTreeElement.call(this, resource, [WebInspector.ResourceTreeElement.StyleClassName, WebInspector.ResourceTreeElement.ResourceIconStyleClassName, resource.type], "", "", representedObject || resource, false);
+        super(resource, ["resource", WebInspector.ResourceTreeElement.ResourceIconStyleClassName, resource.type], "", "", representedObject || resource, false);
 
-    this._updateResource(resource);
-};
+        this._updateResource(resource);
+    }
 
-WebInspector.ResourceTreeElement.StyleClassName = "resource";
-WebInspector.ResourceTreeElement.ResourceIconStyleClassName = "resource-icon";
-WebInspector.ResourceTreeElement.FailedStyleClassName = "failed";
+    // Static
 
-WebInspector.ResourceTreeElement.compareResourceTreeElements = function(a, b)
-{
-    // Compare by type first to keep resources grouped by type when not sorted into folders.
-    var comparisonResult = a.resource.type.localeCompare(b.resource.type);
-    if (comparisonResult !== 0)
-        return comparisonResult;
+    static compareResourceTreeElements(a, b)
+    {
+        // Compare by type first to keep resources grouped by type when not sorted into folders.
+        var comparisonResult = a.resource.type.localeCompare(b.resource.type);
+        if (comparisonResult !== 0)
+            return comparisonResult;
 
-    // Compare async resource types by their first timestamp so they are in chronological order.
-    if (a.resource.type === WebInspector.Resource.Type.XHR || a.resource.type === WebInspector.Resource.Type.WebSocket)
-        return a.resource.firstTimestamp - b.resource.firstTimestamp || 0;
+        // Compare async resource types by their first timestamp so they are in chronological order.
+        if (a.resource.type === WebInspector.Resource.Type.XHR || a.resource.type === WebInspector.Resource.Type.WebSocket)
+            return a.resource.firstTimestamp - b.resource.firstTimestamp || 0;
 
-    // Compare by subtitle when the types are the same. The subtitle is used to show the
-    // domain of the resource. This causes resources to group by domain. If the resource
-    // is on the same domain as the frame it will have an empty subtitle. This is good
-    // because empty string sorts first, so those will appear before external resources.
-    comparisonResult = a.subtitle.localeCompare(b.subtitle);
-    if (comparisonResult !== 0)
-        return comparisonResult;
+        // Compare by subtitle when the types are the same. The subtitle is used to show the
+        // domain of the resource. This causes resources to group by domain. If the resource
+        // is on the same domain as the frame it will have an empty subtitle. This is good
+        // because empty string sorts first, so those will appear before external resources.
+        comparisonResult = a.subtitle.localeCompare(b.subtitle);
+        if (comparisonResult !== 0)
+            return comparisonResult;
 
-    // Compare by title when the subtitles are the same.
-    return a.mainTitle.localeCompare(b.mainTitle);
-};
-
-WebInspector.ResourceTreeElement.compareFolderAndResourceTreeElements = function(a, b)
-{
-    var aIsFolder = a instanceof WebInspector.FolderTreeElement;
-    var bIsFolder = b instanceof WebInspector.FolderTreeElement;
-
-    if (aIsFolder && !bIsFolder)
-        return -1;
-    if (!aIsFolder && bIsFolder)
-        return 1;
-    if (aIsFolder && bIsFolder)
+        // Compare by title when the subtitles are the same.
         return a.mainTitle.localeCompare(b.mainTitle);
+    }
 
-    return WebInspector.ResourceTreeElement.compareResourceTreeElements(a, b);
-};
+    static compareFolderAndResourceTreeElements(a, b)
+    {
+        var aIsFolder = a instanceof WebInspector.FolderTreeElement;
+        var bIsFolder = b instanceof WebInspector.FolderTreeElement;
 
-WebInspector.ResourceTreeElement.prototype = {
-    constructor: WebInspector.ResourceTreeElement,
-    __proto__: WebInspector.SourceCodeTreeElement.prototype,
+        if (aIsFolder && !bIsFolder)
+            return -1;
+        if (!aIsFolder && bIsFolder)
+            return 1;
+        if (aIsFolder && bIsFolder)
+            return a.mainTitle.localeCompare(b.mainTitle);
+
+        return WebInspector.ResourceTreeElement.compareResourceTreeElements(a, b);
+    }
 
     // Public
 
     get resource()
     {
         return this._resource;
-    },
+    }
 
     get filterableData()
     {
         return {text: this._resource.url};
-    },
+    }
 
-    ondblclick: function()
+    ondblclick()
     {
         InspectorFrontendHost.openInNewTab(this._resource.url);
-    },
+    }
 
     // Protected (Used by FrameTreeElement)
 
-    _updateResource: function(resource)
+    _updateResource(resource)
     {
         console.assert(resource instanceof WebInspector.Resource);
 
@@ -125,11 +121,11 @@ WebInspector.ResourceTreeElement.prototype = {
         this._updateTitles();
         this._updateStatus();
         this._updateToolTip();
-    },
+    }
 
     // Protected
 
-    _updateTitles: function()
+    _updateTitles()
     {
         var frame = this._resource.parentFrame;
         var isMainResource = this._resource.isMainResource();
@@ -152,11 +148,11 @@ WebInspector.ResourceTreeElement.prototype = {
 
         if (oldMainTitle !== this.mainTitle)
             this.callFirstAncestorFunction("descendantResourceTreeElementMainTitleDidChange", [this, oldMainTitle]);
-    },
+    }
 
     // Private
 
-    _updateStatus: function()
+    _updateStatus()
     {
         if (this._resource.failed)
             this.addClassName(WebInspector.ResourceTreeElement.FailedStyleClassName);
@@ -174,20 +170,20 @@ WebInspector.ResourceTreeElement.prototype = {
             var spinner = new WebInspector.IndeterminateProgressSpinner;
             this.status = spinner.element;
         }
-    },
+    }
 
-    _updateToolTip: function()
+    _updateToolTip()
     {
         this.tooltip = this._resource.url;
-    },
+    }
 
-    _urlDidChange: function(event)
+    _urlDidChange(event)
     {
         this._updateTitles();
         this._updateToolTip();
-    },
+    }
 
-    _typeDidChange: function(event)
+    _typeDidChange(event)
     {
         this.removeClassName(event.data.oldType);
         this.addClassName(this._resource.type);
@@ -195,3 +191,6 @@ WebInspector.ResourceTreeElement.prototype = {
         this.callFirstAncestorFunction("descendantResourceTreeElementTypeDidChange", [this, event.data.oldType]);
     }
 };
+
+WebInspector.ResourceTreeElement.ResourceIconStyleClassName = "resource-icon";
+WebInspector.ResourceTreeElement.FailedStyleClassName = "failed";

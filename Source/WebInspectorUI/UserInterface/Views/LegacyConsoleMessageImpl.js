@@ -139,10 +139,10 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
         if (this._shouldDumpStackTrace()) {
             var ol = document.createElement("ol");
             ol.className = "outline-disclosure";
-            var treeOutline = new TreeOutline(ol);
+            var treeOutline = new WebInspector.TreeOutline(ol);
 
             var content = this._formattedMessage;
-            var root = new TreeElement(content, null, true);
+            var root = new WebInspector.TreeElement(content, null, true);
             content.treeElementForTest = root;
             treeOutline.appendChild(root);
             if (this.type === WebInspector.LegacyConsoleMessage.MessageType.Trace)
@@ -620,7 +620,7 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
                 content.appendChild(urlElement);
             }
 
-            var treeElement = new TreeElement(content);
+            var treeElement = new WebInspector.TreeElement(content);
             parentTreeElement.appendChild(treeElement);
         }
     },

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodeTimelineTreeElement = function(sourceCodeTimeline, subtitleNameStyle, includeTimerIdentifierInMainTitle)
+WebInspector.SourceCodeTimelineTreeElement = class SourceCodeTimelineTreeElement extends WebInspector.TimelineRecordTreeElement
 {
-    console.assert(sourceCodeTimeline);
+    constructor(sourceCodeTimeline, subtitleNameStyle, includeTimerIdentifierInMainTitle)
+    {
+        console.assert(sourceCodeTimeline);
 
-    this._sourceCodeTimeline = sourceCodeTimeline;
+        subtitleNameStyle = subtitleNameStyle || WebInspector.SourceCodeLocation.NameStyle.None;
 
-    subtitleNameStyle = subtitleNameStyle || WebInspector.SourceCodeLocation.NameStyle.None;
+        super(sourceCodeTimeline.records[0], subtitleNameStyle, includeTimerIdentifierInMainTitle, sourceCodeTimeline.sourceCodeLocation, sourceCodeTimeline);
 
-    WebInspector.TimelineRecordTreeElement.call(this, sourceCodeTimeline.records[0], subtitleNameStyle, includeTimerIdentifierInMainTitle, sourceCodeTimeline.sourceCodeLocation, sourceCodeTimeline);
-};
-
-WebInspector.SourceCodeTimelineTreeElement.prototype = {
-    constructor: WebInspector.SourceCodeTimelineTreeElement,
-    __proto__: WebInspector.TimelineRecordTreeElement.prototype,
+        this._sourceCodeTimeline = sourceCodeTimeline;
+    }
 
     // Public
 
-    record: undefined,
+    get record()
+    {
+        return undefined;
+    }
 
     get sourceCodeTimeline()
     {

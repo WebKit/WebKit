@@ -23,42 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectTreeMapEntryTreeElement = function(object, propertyPath)
+WebInspector.ObjectTreeMapEntryTreeElement = class ObjectTreeMapEntryTreeElement extends WebInspector.ObjectTreeBaseTreeElement
 {
-    console.assert(object instanceof WebInspector.RemoteObject);
+    constructor(object, propertyPath)
+    {
+        console.assert(object instanceof WebInspector.RemoteObject);
 
-    this._object = object;
+        // Treat the same as an array-index just with different strings and widths.
+        super(this._object, propertyPath);
 
-    // Treat the same as an array-index just with different strings and widths.
-    WebInspector.ObjectTreeBaseTreeElement.call(this, this._object, propertyPath);
+        this._object = object;
 
-    this.mainTitle = this._titleFragment();
-    this.addClassName("object-tree-array-index");
-    this.addClassName("object-tree-map-entry");
-};
-
-WebInspector.ObjectTreeMapEntryTreeElement.prototype = {
-    constructor: WebInspector.ObjectTreeMapEntryTreeElement,
-    __proto__: WebInspector.ObjectTreeBaseTreeElement.prototype,
+        this.mainTitle = this._titleFragment();
+        this.addClassName("object-tree-array-index");
+        this.addClassName("object-tree-map-entry");
+    }
 
     // Public
 
     get object()
     {
         return this._object;
-    },
+    }
 
     // Protected
 
     resolvedValue()
     {
         return this._object;
-    },
+    }
 
     propertyPathType()
     {
         return WebInspector.PropertyPath.Type.Value;
-    },
+    }
 
     // Private
 
@@ -83,23 +81,21 @@ WebInspector.ObjectTreeMapEntryTreeElement.prototype = {
     }
 };
 
-
-WebInspector.ObjectTreeMapKeyTreeElement = function(object, propertyPath)
+WebInspector.ObjectTreeMapKeyTreeElement = class ObjectTreeMapKeyTreeElement extends WebInspector.ObjectTreeMapEntryTreeElement
 {
-    WebInspector.ObjectTreeMapEntryTreeElement.call(this, object, propertyPath);
-    this.addClassName("key");
-};
+    constructor(object, propertyPath)
+    {
+        super(object, propertyPath);
 
-WebInspector.ObjectTreeMapKeyTreeElement.prototype = {
-    constructor: WebInspector.ObjectTreeMapKeyTreeElement,
-    __proto__: WebInspector.ObjectTreeMapEntryTreeElement.prototype,
-
+        this.addClassName("key");
+    }
+    
     // Protected
 
     displayPropertyName()
     {
         return WebInspector.UIString("key");
-    },
+    }
 
     resolvedValuePropertyPath()
     {
@@ -107,24 +103,23 @@ WebInspector.ObjectTreeMapKeyTreeElement.prototype = {
     }
 };
 
-
-WebInspector.ObjectTreeMapValueTreeElement = function(object, propertyPath, key)
+WebInspector.ObjectTreeMapValueTreeElement = class ObjectTreeMapValueTreeElement extends WebInspector.ObjectTreeMapEntryTreeElement
 {
-    this._key = key;
-    WebInspector.ObjectTreeMapEntryTreeElement.call(this, object, propertyPath);
-    this.addClassName("value");
-};
+    constructor(object, propertyPath, key)
+    {
+        super(object, propertyPath);
 
-WebInspector.ObjectTreeMapValueTreeElement.prototype = {
-    constructor: WebInspector.ObjectTreeMapValueTreeElement,
-    __proto__: WebInspector.ObjectTreeMapEntryTreeElement.prototype,
+        this._key = key;
 
+        this.addClassName("value");
+    }
+    
     // Protected
 
     displayPropertyName()
     {
         return WebInspector.UIString("value");
-    },
+    }
 
     resolvedValuePropertyPath()
     {

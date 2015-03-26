@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2105 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,87 +23,85 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProfileNodeTreeElement = function(profileNode, delegate)
+WebInspector.ProfileNodeTreeElement = class ProfileNodeTreeElement extends WebInspector.GeneralTreeElement
 {
-    console.assert(profileNode);
+    constructor(profileNode, delegate)
+    {
+        console.assert(profileNode);
 
-    this._profileNode = profileNode;
-    this._delegate = delegate || null;
+        var title = profileNode.functionName;
+        var subtitle = "";
 
-    var title = profileNode.functionName;
-    var subtitle = "";
+        if (!title) {
+            switch (profileNode.type) {
+            case WebInspector.ProfileNode.Type.Function:
+                title = WebInspector.UIString("(anonymous function)");
+                break;
+            case WebInspector.ProfileNode.Type.Program:
+                title = WebInspector.UIString("(program)");
+                break;
+            default:
+                title = WebInspector.UIString("(anonymous function)");
+                console.error("Unknown ProfileNode type: " + profileNode.type);
+            }
+        }
 
-    if (!title) {
+        var sourceCodeLocation = profileNode.sourceCodeLocation;
+        if (sourceCodeLocation) {
+            subtitle = document.createElement("span");
+            sourceCodeLocation.populateLiveDisplayLocationString(subtitle, "textContent");
+        }
+
+        var className;
+
         switch (profileNode.type) {
         case WebInspector.ProfileNode.Type.Function:
-            title = WebInspector.UIString("(anonymous function)");
+            className = WebInspector.CallFrameTreeElement.FunctionIconStyleClassName;
+            if (!sourceCodeLocation)
+                className = WebInspector.CallFrameTreeElement.NativeIconStyleClassName;
             break;
         case WebInspector.ProfileNode.Type.Program:
-            title = WebInspector.UIString("(program)");
+            className = WebInspector.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass;
             break;
-        default:
-            title = WebInspector.UIString("(anonymous function)");
-            console.error("Unknown ProfileNode type: " + profileNode.type);
         }
+
+        console.assert(className);
+
+        // This is more than likely an event listener function with an "on" prefix and it is
+        // as long or longer than the shortest event listener name -- "oncut".
+        if (profileNode.functionName && profileNode.functionName.startsWith("on") && profileNode.functionName.length >= 5)
+            className = WebInspector.CallFrameTreeElement.EventListenerIconStyleClassName;
+
+        var hasChildren = !!profileNode.childNodes.length;
+
+        super([className], title, subtitle, profileNode, hasChildren);
+
+        this._profileNode = profileNode;
+        this._delegate = delegate || null;
+
+        this.small = true;
+        this.shouldRefreshChildren = true;
+
+        if (sourceCodeLocation)
+            this.tooltipHandledSeparately = true;
     }
-
-    var sourceCodeLocation = this._profileNode.sourceCodeLocation;
-    if (sourceCodeLocation) {
-        subtitle = document.createElement("span");
-        sourceCodeLocation.populateLiveDisplayLocationString(subtitle, "textContent");
-    }
-
-    var className;
-
-    switch (this._profileNode.type) {
-    case WebInspector.ProfileNode.Type.Function:
-        className = WebInspector.CallFrameTreeElement.FunctionIconStyleClassName;
-        if (!sourceCodeLocation)
-            className = WebInspector.CallFrameTreeElement.NativeIconStyleClassName;
-        break;
-    case WebInspector.ProfileNode.Type.Program:
-        className = WebInspector.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass;
-        break;
-    }
-
-    console.assert(className);
-
-    // This is more than likely an event listener function with an "on" prefix and it is
-    // as long or longer than the shortest event listener name -- "oncut".
-    if (profileNode.functionName && profileNode.functionName.startsWith("on") && profileNode.functionName.length >= 5)
-        className = WebInspector.CallFrameTreeElement.EventListenerIconStyleClassName;
-
-    var hasChildren = !!profileNode.childNodes.length;
-
-    WebInspector.GeneralTreeElement.call(this, [className], title, subtitle, profileNode, hasChildren);
-
-    this.small = true;
-    this.shouldRefreshChildren = true;
-
-    if (sourceCodeLocation)
-        this.tooltipHandledSeparately = true;
-};
-
-WebInspector.ProfileNodeTreeElement.prototype = {
-    constructor: WebInspector.ProfileNodeTreeElement,
-    __proto__: WebInspector.GeneralTreeElement.prototype,
 
     // Public
 
     get profileNode()
     {
         return this._profileNode;
-    },
+    }
 
     get filterableData()
     {
         var url = this._profileNode.sourceCodeLocation ? this._profileNode.sourceCodeLocation.sourceCode.url : "";
         return {text: [this.mainTitle, url || ""]};
-    },
+    }
 
     // Protected
 
-    onattach: function()
+    onattach()
     {
         WebInspector.GeneralTreeElement.prototype.onattach.call(this);
 
@@ -114,9 +112,9 @@ WebInspector.ProfileNodeTreeElement.prototype = {
 
         var tooltipPrefix = this.mainTitle + "\n";
         this._profileNode.sourceCodeLocation.populateLiveDisplayLocationTooltip(this.element, tooltipPrefix);
-    },
+    }
 
-    onpopulate: function()
+    onpopulate()
     {
         if (!this.hasChildren || !this.shouldRefreshChildren)
             return;

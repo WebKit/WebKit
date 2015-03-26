@@ -157,7 +157,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
             contentTreeOutlineElement.classList.add(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName);
         this.contentElement.appendChild(contentTreeOutlineElement);
 
-        var contentTreeOutline = new TreeOutline(contentTreeOutlineElement);
+        var contentTreeOutline = new WebInspector.TreeOutline(contentTreeOutlineElement);
         contentTreeOutline.allowsRepeatSelection = true;
 
         if (!suppressFiltering) {

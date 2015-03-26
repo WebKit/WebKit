@@ -23,41 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectTreeSetIndexTreeElement = function(object, propertyPath)
+WebInspector.ObjectTreeSetIndexTreeElement = class ObjectTreeSetIndexTreeElement extends WebInspector.ObjectTreeBaseTreeElement
 {
-    console.assert(object instanceof WebInspector.RemoteObject);
+    constructor(object, propertyPath)
+    {
+        console.assert(object instanceof WebInspector.RemoteObject);
 
-    this._object = object;
+        // Treat the same as an array-index just with different strings and widths.
+        super(object, propertyPath);
 
-    // Treat the same as an array-index just with different strings and widths.
-    WebInspector.ObjectTreeBaseTreeElement.call(this, this._object, propertyPath);
+        this._object = object;
 
-    this.mainTitle = this._titleFragment();
-    this.addClassName("object-tree-array-index");
-};
-
-WebInspector.ObjectTreeSetIndexTreeElement.prototype = {
-    constructor: WebInspector.ObjectTreeSetIndexTreeElement,
-    __proto__: WebInspector.ObjectTreeBaseTreeElement.prototype,
+        this.mainTitle = this._titleFragment();
+        this.addClassName("object-tree-array-index");
+    }
 
     // Public
 
     get object()
     {
         return this._object;
-    },
+    }
 
     // Protected
 
     resolvedValue()
     {
         return this._object;
-    },
+    }
 
     resolvedValuePropertyPath()
     {
         return this.propertyPath.appendSetIndex(this._object);
-    },
+    }
 
     // Private
 

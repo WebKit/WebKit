@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.StorageTreeElement = function(classNames, title, representedObject)
+WebInspector.StorageTreeElement = class StorageTreeElement extends WebInspector.GeneralTreeElement
 {
-    WebInspector.GeneralTreeElement.call(this, classNames, title, null, representedObject, false);
+    constructor(classNames, title, representedObject)
+    {
+        super(classNames, title, null, representedObject, false);
 
-    this.small = true;
-    this.flattened = false;
-};
-
-WebInspector.StorageTreeElement.prototype = {
-    constructor: WebInspector.StorageTreeElement,
+        this.small = true;
+        this.flattened = false;
+    }
 
     // Public
 
     get flattened()
     {
         return this._flattened;
-    },
+    }
 
     set flattened(flattened)
     {
@@ -57,11 +56,11 @@ WebInspector.StorageTreeElement.prototype = {
         this.mainTitle = this.categoryName;
         this.subtitle = this.name;
         this._updateChildrenTitles();
-    },
+    }
 
     // Private
 
-    _updateChildrenTitles: function()
+    _updateChildrenTitles()
     {
         for (var i = 0; i < this.children.length; ++i) {
             if (typeof this.children[i].updateTitles === "function")
@@ -69,5 +68,3 @@ WebInspector.StorageTreeElement.prototype = {
         }
     }
 };
-
-WebInspector.StorageTreeElement.prototype.__proto__ = WebInspector.GeneralTreeElement.prototype;

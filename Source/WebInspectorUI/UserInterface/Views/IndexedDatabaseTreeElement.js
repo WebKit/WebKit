@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IndexedDatabaseTreeElement = function(indexedDatabase)
+WebInspector.IndexedDatabaseTreeElement = class IndexedDatabaseTreeElement extends WebInspector.GeneralTreeElement
 {
-    console.assert(indexedDatabase instanceof WebInspector.IndexedDatabase);
+    constructor(indexedDatabase)
+    {
+        console.assert(indexedDatabase instanceof WebInspector.IndexedDatabase);
 
-    this._indexedDatabase = indexedDatabase;
+        this._indexedDatabase = indexedDatabase;
 
-    WebInspector.GeneralTreeElement.call(this, WebInspector.IndexedDatabaseTreeElement.IconStyleClassName, indexedDatabase.name, null, indexedDatabase, !!this._indexedDatabase.objectStores.length);
+        super("database-icon", indexedDatabase.name, null, indexedDatabase, !!this._indexedDatabase.objectStores.length);
 
-    this.small = true;
-};
-
-WebInspector.IndexedDatabaseTreeElement.IconStyleClassName = "database-icon";
-
-WebInspector.IndexedDatabaseTreeElement.prototype = {
-    constructor: WebInspector.IndexedDatabaseTreeElement,
+        this.small = true;
+    }
 
     // Public
 
     get indexedDatabase()
     {
         return this._indexedDatabase;
-    },
+    }
 
     // Overrides from TreeElement (Protected)
 
-    oncollapse: function()
+    oncollapse()
     {
         this.shouldRefreshChildren = true;
-    },
+    }
 
-    onpopulate: function()
+    onpopulate()
     {
         if (this.children.length && !this.shouldRefreshChildren)
             return;
@@ -66,5 +63,3 @@ WebInspector.IndexedDatabaseTreeElement.prototype = {
             this.appendChild(new WebInspector.IndexedDatabaseObjectStoreTreeElement(objectStore));
     }
 };
-
-WebInspector.IndexedDatabaseTreeElement.prototype.__proto__ = WebInspector.GeneralTreeElement.prototype;

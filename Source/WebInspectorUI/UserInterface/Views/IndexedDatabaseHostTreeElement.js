@@ -23,25 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IndexedDatabaseHostTreeElement = function(host)
+WebInspector.IndexedDatabaseHostTreeElement = class IndexedDatabaseHostTreeElement extends WebInspector.StorageTreeElement
 {
-    WebInspector.StorageTreeElement.call(this, WebInspector.FolderTreeElement.FolderIconStyleClassName, WebInspector.displayNameForHost(host), null);
+    constructor(host)
+    {
+        super(WebInspector.FolderTreeElement.FolderIconStyleClassName, WebInspector.displayNameForHost(host), null);
 
-    this._host = host;
+        this._host = host;
 
-    this.hasChildren = true;
-};
-
-WebInspector.IndexedDatabaseHostTreeElement.prototype = {
-    constructor: WebInspector.IndexedDatabaseHostTreeElement,
-    __proto__: WebInspector.StorageTreeElement.prototype,
+        this.hasChildren = true;
+    }
 
     // Public
 
     get name()
     {
         return WebInspector.displayNameForHost(this._host);
-    },
+    }
 
     get categoryName()
     {

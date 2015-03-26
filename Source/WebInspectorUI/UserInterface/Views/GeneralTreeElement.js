@@ -23,73 +23,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.GeneralTreeElement = function(classNames, title, subtitle, representedObject, hasChildren)
+WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.TreeElement
 {
-    TreeElement.call(this, "", representedObject, hasChildren);
+    constructor(classNames, title, subtitle, representedObject, hasChildren)
+    {
+        super("", representedObject, hasChildren);
 
-    this.classNames = classNames;
+        this.classNames = classNames;
 
-    this._tooltipHandledSeparately = false;
-    this._mainTitle = title || "";
-    this._subtitle = subtitle || "";
-    this._status = "";
-};
-
-WebInspector.GeneralTreeElement.StyleClassName = "item";
-WebInspector.GeneralTreeElement.DisclosureButtonStyleClassName = "disclosure-button";
-WebInspector.GeneralTreeElement.IconElementStyleClassName = "icon";
-WebInspector.GeneralTreeElement.StatusElementStyleClassName = "status";
-WebInspector.GeneralTreeElement.TitlesElementStyleClassName = "titles";
-WebInspector.GeneralTreeElement.MainTitleElementStyleClassName = "title";
-WebInspector.GeneralTreeElement.SubtitleElementStyleClassName = "subtitle";
-WebInspector.GeneralTreeElement.NoSubtitleStyleClassName = "no-subtitle";
-WebInspector.GeneralTreeElement.SmallStyleClassName = "small";
-WebInspector.GeneralTreeElement.TwoLineStyleClassName = "two-line";
-
-WebInspector.GeneralTreeElement.Event = {
-    MainTitleDidChange: "general-tree-element-main-title-did-change"
-};
-
-WebInspector.GeneralTreeElement.prototype = {
-    constructor: WebInspector.GeneralTreeElement,
-    __proto__: TreeElement.prototype,
+        this._tooltipHandledSeparately = false;
+        this._mainTitle = title || "";
+        this._subtitle = subtitle || "";
+        this._status = "";
+    }
 
     // Public
 
     get element()
     {
         return this._listItemNode;
-    },
+    }
 
     get iconElement()
     {
         this._createElementsIfNeeded();
         return this._iconElement;
-    },
+    }
 
     get titlesElement()
     {
         this._createElementsIfNeeded();
         return this._titlesElement;
-    },
+    }
 
     get mainTitleElement()
     {
         this._createElementsIfNeeded();
         return this._mainTitleElement;
-    },
+    }
 
     get subtitleElement()
     {
         this._createElementsIfNeeded();
         this._createSubtitleElementIfNeeded();
         return this._subtitleElement;
-    },
+    }
 
     get classNames()
     {
         return this._classNames;
-    },
+    }
 
     set classNames(x)
     {
@@ -107,9 +90,9 @@ WebInspector.GeneralTreeElement.prototype = {
             for (var i = 0; i < this._classNames.length; ++i)
                 this._listItemNode.classList.add(this._classNames[i]);
         }
-    },
+    }
 
-    addClassName: function(className)
+    addClassName(className)
     {
         if (this._classNames.contains(className))
             return;
@@ -118,9 +101,9 @@ WebInspector.GeneralTreeElement.prototype = {
 
         if (this._listItemNode)
             this._listItemNode.classList.add(className);
-    },
+    }
 
-    removeClassName: function(className)
+    removeClassName(className)
     {
         if (!this._classNames.contains(className))
             return;
@@ -129,12 +112,12 @@ WebInspector.GeneralTreeElement.prototype = {
 
         if (this._listItemNode)
             this._listItemNode.classList.remove(className);
-    },
+    }
 
     get small()
     {
         return this._small;
-    },
+    }
 
     set small(x)
     {
@@ -146,12 +129,12 @@ WebInspector.GeneralTreeElement.prototype = {
             else
                 this._listItemNode.classList.remove(WebInspector.GeneralTreeElement.SmallStyleClassName);
         }
-    },
+    }
 
     get twoLine()
     {
         return this._twoLine;
-    },
+    }
 
     set twoLine(x)
     {
@@ -163,12 +146,12 @@ WebInspector.GeneralTreeElement.prototype = {
             else
                 this._listItemNode.classList.remove(WebInspector.GeneralTreeElement.TwoLineStyleClassName);
         }
-    },
+    }
 
     get mainTitle()
     {
         return this._mainTitle;
-    },
+    }
 
     set mainTitle(x)
     {
@@ -176,24 +159,24 @@ WebInspector.GeneralTreeElement.prototype = {
         this._updateTitleElements();
         this.didChange();
         this.dispatchEventToListeners(WebInspector.GeneralTreeElement.Event.MainTitleDidChange);
-    },
+    }
 
     get subtitle()
     {
         return this._subtitle;
-    },
+    }
 
     set subtitle(x)
     {
         this._subtitle = x || "";
         this._updateTitleElements();
         this.didChange();
-    },
+    }
 
     get status()
     {
         return this._status;
-    },
+    }
 
     set status(x)
     {
@@ -207,36 +190,36 @@ WebInspector.GeneralTreeElement.prototype = {
 
         this._status = x || "";
         this._updateStatusElement();
-    },
+    }
 
     get filterableData()
     {
         return {text: [this.mainTitle, this.subtitle]};
-    },
+    }
 
     get tooltipHandledSeparately()
     {
         return this._tooltipHandledSeparately;
-    },
+    }
 
     set tooltipHandledSeparately(x)
     {
         this._tooltipHandledSeparately = x || false;
-    },
+    }
 
     // Overrides from TreeElement (Private)
 
-    isEventWithinDisclosureTriangle: function(event)
+    isEventWithinDisclosureTriangle(event)
     {
         return event.target === this._disclosureButton;
-    },
+    }
 
-    onattach: function()
+    onattach()
     {
         this._createElementsIfNeeded();
         this._updateTitleElements();
 
-        this._listItemNode.classList.add(WebInspector.GeneralTreeElement.StyleClassName);
+        this._listItemNode.classList.add("item");
 
         if (this._classNames) {
             for (var i = 0; i < this._classNames.length; ++i)
@@ -264,25 +247,25 @@ WebInspector.GeneralTreeElement.prototype = {
         }
 
         this._updateStatusElement();
-    },
+    }
 
-    ondetach: function()
+    ondetach()
     {
         if (this._boundContextMenuEventHandler) {
             this._listItemNode.removeEventListener("contextmenu", this._boundContextMenuEventHandler, true);
             delete this._boundContextMenuEventHandler;
         }
-    },
+    }
 
-    onreveal: function()
+    onreveal()
     {
         if (this._listItemNode)
             this._listItemNode.scrollIntoViewIfNeeded(false);
-    },
+    }
 
     // Protected
 
-    callFirstAncestorFunction: function(functionName, args)
+    callFirstAncestorFunction(functionName, args)
     {
         // Call the first ancestor that implements a function named functionName (if any).
         var currentNode = this.parent;
@@ -294,11 +277,11 @@ WebInspector.GeneralTreeElement.prototype = {
 
             currentNode = currentNode.parent;
         }
-    },
+    }
 
     // Private
 
-    _createElementsIfNeeded: function()
+    _createElementsIfNeeded()
     {
         if (this._createdElements)
             return;
@@ -321,9 +304,9 @@ WebInspector.GeneralTreeElement.prototype = {
         this._titlesElement.appendChild(this._mainTitleElement);
 
         this._createdElements = true;
-    },
+    }
 
-    _createSubtitleElementIfNeeded: function()
+    _createSubtitleElementIfNeeded()
     {
         if (this._subtitleElement)
             return;
@@ -331,9 +314,9 @@ WebInspector.GeneralTreeElement.prototype = {
         this._subtitleElement = document.createElement("span");
         this._subtitleElement.className = WebInspector.GeneralTreeElement.SubtitleElementStyleClassName;
         this._titlesElement.appendChild(this._subtitleElement);
-    },
+    }
 
-    _updateTitleElements: function()
+    _updateTitleElements()
     {
         if (!this._createdElements)
             return;
@@ -377,9 +360,9 @@ WebInspector.GeneralTreeElement.prototype = {
             else
                 this._listItemNode.title = subtitleText;
         }
-    },
+    }
 
-    _updateStatusElement: function()
+    _updateStatusElement()
     {
         if (!this._statusElement)
             return;
@@ -393,4 +376,18 @@ WebInspector.GeneralTreeElement.prototype = {
         } else
             this._statusElement.textContent = this._status;
     }
+};
+
+WebInspector.GeneralTreeElement.DisclosureButtonStyleClassName = "disclosure-button";
+WebInspector.GeneralTreeElement.IconElementStyleClassName = "icon";
+WebInspector.GeneralTreeElement.StatusElementStyleClassName = "status";
+WebInspector.GeneralTreeElement.TitlesElementStyleClassName = "titles";
+WebInspector.GeneralTreeElement.MainTitleElementStyleClassName = "title";
+WebInspector.GeneralTreeElement.SubtitleElementStyleClassName = "subtitle";
+WebInspector.GeneralTreeElement.NoSubtitleStyleClassName = "no-subtitle";
+WebInspector.GeneralTreeElement.SmallStyleClassName = "small";
+WebInspector.GeneralTreeElement.TwoLineStyleClassName = "two-line";
+
+WebInspector.GeneralTreeElement.Event = {
+    MainTitleDidChange: "general-tree-element-main-title-did-change"
 };

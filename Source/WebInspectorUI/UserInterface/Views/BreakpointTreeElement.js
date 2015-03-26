@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,100 +23,87 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BreakpointTreeElement = function(breakpoint, className, title)
+WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInspector.GeneralTreeElement
 {
-    console.assert(breakpoint instanceof WebInspector.Breakpoint);
+    constructor(breakpoint, className, title)
+    {
+        console.assert(breakpoint instanceof WebInspector.Breakpoint);
 
-    if (!className)
-        className = WebInspector.BreakpointTreeElement.GenericLineIconStyleClassName;
+        if (!className)
+            className = WebInspector.BreakpointTreeElement.GenericLineIconStyleClassName;
 
-    WebInspector.GeneralTreeElement.call(this, [WebInspector.BreakpointTreeElement.StyleClassName, className], title, null, breakpoint, false);
+        super(["breakpoint", className], title, null, breakpoint, false);
 
-    this._breakpoint = breakpoint;
+        this._breakpoint = breakpoint;
 
-    this._listeners = new WebInspector.EventListenerSet(this, "BreakpointTreeElement listeners");
-    if (!title)
-        this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.LocationDidChange, this._breakpointLocationDidChange);
-    this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.DisabledStateDidChange, this._updateStatus);
-    this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.AutoContinueDidChange, this._updateStatus);
-    this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._updateStatus);
-    this._listeners.register(WebInspector.debuggerManager, WebInspector.DebuggerManager.Event.BreakpointsEnabledDidChange, this._updateStatus);
+        this._listeners = new WebInspector.EventListenerSet(this, "BreakpointTreeElement listeners");
+        if (!title)
+            this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.LocationDidChange, this._breakpointLocationDidChange);
+        this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.DisabledStateDidChange, this._updateStatus);
+        this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.AutoContinueDidChange, this._updateStatus);
+        this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._updateStatus);
+        this._listeners.register(WebInspector.debuggerManager, WebInspector.DebuggerManager.Event.BreakpointsEnabledDidChange, this._updateStatus);
 
-    this._listeners.register(WebInspector.probeManager, WebInspector.ProbeManager.Event.ProbeSetAdded, this._probeSetAdded);
-    this._listeners.register(WebInspector.probeManager, WebInspector.ProbeManager.Event.ProbeSetRemoved, this._probeSetRemoved);
+        this._listeners.register(WebInspector.probeManager, WebInspector.ProbeManager.Event.ProbeSetAdded, this._probeSetAdded);
+        this._listeners.register(WebInspector.probeManager, WebInspector.ProbeManager.Event.ProbeSetRemoved, this._probeSetRemoved);
 
-    this._statusImageElement = document.createElement("img");
-    this._statusImageElement.className = WebInspector.BreakpointTreeElement.StatusImageElementStyleClassName;
-    this._listeners.register(this._statusImageElement, "mousedown", this._statusImageElementMouseDown);
-    this._listeners.register(this._statusImageElement, "click", this._statusImageElementClicked);
+        this._statusImageElement = document.createElement("img");
+        this._statusImageElement.className = WebInspector.BreakpointTreeElement.StatusImageElementStyleClassName;
+        this._listeners.register(this._statusImageElement, "mousedown", this._statusImageElementMouseDown);
+        this._listeners.register(this._statusImageElement, "click", this._statusImageElementClicked);
 
-    if (!title)
-        this._updateTitles();
-    this._updateStatus();
+        if (!title)
+            this._updateTitles();
+        this._updateStatus();
 
-    this.status = this._statusImageElement;
-    this.small = true;
+        this.status = this._statusImageElement;
+        this.small = true;
 
-    this._iconAnimationLayerElement = document.createElement("span");
-    this.iconElement.appendChild(this._iconAnimationLayerElement);
-};
-
-WebInspector.BreakpointTreeElement.GenericLineIconStyleClassName = "breakpoint-generic-line-icon";
-WebInspector.BreakpointTreeElement.StyleClassName = "breakpoint";
-WebInspector.BreakpointTreeElement.StatusImageElementStyleClassName = "status-image";
-WebInspector.BreakpointTreeElement.StatusImageResolvedStyleClassName = "resolved";
-WebInspector.BreakpointTreeElement.StatusImageAutoContinueStyleClassName = "auto-continue";
-WebInspector.BreakpointTreeElement.StatusImageDisabledStyleClassName = "disabled";
-WebInspector.BreakpointTreeElement.FormattedLocationStyleClassName = "formatted-location";
-WebInspector.BreakpointTreeElement.ProbeDataUpdatedStyleClassName = "data-updated";
-
-WebInspector.BreakpointTreeElement.ProbeDataUpdatedAnimationDuration = 400; // milliseconds
-
-
-WebInspector.BreakpointTreeElement.prototype = {
-    constructor: WebInspector.BreakpointTreeElement,
+        this._iconAnimationLayerElement = document.createElement("span");
+        this.iconElement.appendChild(this._iconAnimationLayerElement);
+    }
 
     // Public
 
     get breakpoint()
     {
         return this._breakpoint;
-    },
+    }
 
     get filterableData()
     {
         return {text: this.breakpoint.url};
-    },
+    }
 
-    ondelete: function()
+    ondelete()
     {
         if (!WebInspector.debuggerManager.isBreakpointRemovable(this._breakpoint))
             return false;
 
         WebInspector.debuggerManager.removeBreakpoint(this._breakpoint);
         return true;
-    },
+    }
 
-    onenter: function()
+    onenter()
     {
         this._breakpoint.cycleToNextMode();
         return true;
-    },
+    }
 
-    onspace: function()
+    onspace()
     {
         this._breakpoint.cycleToNextMode();
         return true;
-    },
+    }
 
-    oncontextmenu: function(event)
+    oncontextmenu(event)
     {
         var contextMenu = new WebInspector.ContextMenu(event);
         this._breakpoint.appendContextMenuItems(contextMenu, this._statusImageElement);
         contextMenu.show();
-    },
+    }
 
-    onattach: function()
+    onattach()
     {
         WebInspector.GeneralTreeElement.prototype.onattach.call(this);
 
@@ -125,9 +112,9 @@ WebInspector.BreakpointTreeElement.prototype = {
         for (var probeSet of WebInspector.probeManager.probeSets)
             if (probeSet.breakpoint === this._breakpoint)
                 this._addProbeSet(probeSet);
-    },
+    }
 
-    ondetach: function()
+    ondetach()
     {
         WebInspector.GeneralTreeElement.prototype.ondetach.call(this);
 
@@ -135,17 +122,17 @@ WebInspector.BreakpointTreeElement.prototype = {
 
         if (this._probeSet)
             this._removeProbeSet(this._probeSet);
-    },
+    }
 
-    removeStatusImage: function()
+    removeStatusImage()
     {
         this._statusImageElement.remove();
         this._statusImageElement = null;
-    },
+    }
 
     // Private
 
-    _updateTitles: function()
+    _updateTitles()
     {
         var sourceCodeLocation = this._breakpoint.sourceCodeLocation;
 
@@ -166,9 +153,9 @@ WebInspector.BreakpointTreeElement.prototype = {
 
             this.tooltip = this.mainTitle + " \u2014 " + WebInspector.UIString("originally %s").format(sourceCodeLocation.originalLocationString());
         }
-    },
+    }
 
-    _updateStatus: function()
+    _updateStatus()
     {
         if (!this._statusImageElement)
             return;
@@ -187,9 +174,9 @@ WebInspector.BreakpointTreeElement.prototype = {
             this._statusImageElement.classList.add(WebInspector.BreakpointTreeElement.StatusImageResolvedStyleClassName);
         else
             this._statusImageElement.classList.remove(WebInspector.BreakpointTreeElement.StatusImageResolvedStyleClassName);
-    },
+    }
 
-    _addProbeSet: function(probeSet)
+    _addProbeSet(probeSet)
     {
         console.assert(probeSet instanceof WebInspector.ProbeSet);
         console.assert(probeSet.breakpoint === this._breakpoint);
@@ -198,9 +185,9 @@ WebInspector.BreakpointTreeElement.prototype = {
         this._probeSet = probeSet;
         probeSet.addEventListener(WebInspector.ProbeSet.Event.SamplesCleared, this._samplesCleared, this);
         probeSet.dataTable.addEventListener(WebInspector.ProbeSetDataTable.Event.FrameInserted, this._dataUpdated, this);
-    },
+    }
 
-    _removeProbeSet: function(probeSet)
+    _removeProbeSet(probeSet)
     {
         console.assert(probeSet instanceof WebInspector.ProbeSet);
         console.assert(probeSet === this._probeSet);
@@ -208,32 +195,32 @@ WebInspector.BreakpointTreeElement.prototype = {
         probeSet.removeEventListener(WebInspector.ProbeSet.Event.SamplesCleared, this._samplesCleared, this);
         probeSet.dataTable.removeEventListener(WebInspector.ProbeSetDataTable.Event.FrameInserted, this._dataUpdated, this);
         delete this._probeSet;
-    },
+    }
 
-    _probeSetAdded: function(event)
+    _probeSetAdded(event)
     {
         var probeSet = event.data.probeSet;
         if (probeSet.breakpoint === this._breakpoint)
             this._addProbeSet(probeSet);
-    },
+    }
 
-    _probeSetRemoved: function(event)
+    _probeSetRemoved(event)
     {
         var probeSet = event.data.probeSet;
         if (probeSet.breakpoint === this._breakpoint)
             this._removeProbeSet(probeSet);
-    },
+    }
 
-    _samplesCleared: function(event)
+    _samplesCleared(event)
     {
         console.assert(this._probeSet);
 
         var oldTable = event.data.oldTable;
         oldTable.removeEventListener(WebInspector.ProbeSetDataTable.Event.FrameInserted, this._dataUpdated, this);
         this._probeSet.dataTable.addEventListener(WebInspector.ProbeSetDataTable.Event.FrameInserted, this._dataUpdated, this);
-    },
+    }
 
-    _dataUpdated: function()
+    _dataUpdated()
     {
         if (this.element.classList.contains(WebInspector.BreakpointTreeElement.ProbeDataUpdatedStyleClassName)) {
             clearTimeout(this._removeIconAnimationTimeoutIdentifier);
@@ -248,10 +235,10 @@ WebInspector.BreakpointTreeElement.prototype = {
         this._removeIconAnimationTimeoutIdentifier = setTimeout(function() {
             this.element.classList.remove(WebInspector.BreakpointTreeElement.ProbeDataUpdatedStyleClassName);
         }.bind(this), WebInspector.BreakpointTreeElement.ProbeDataUpdatedAnimationDuration);
-    },
+    }
 
 
-    _breakpointLocationDidChange: function(event)
+    _breakpointLocationDidChange(event)
     {
         console.assert(event.target === this._breakpoint);
 
@@ -260,18 +247,26 @@ WebInspector.BreakpointTreeElement.prototype = {
             return;
 
         this._updateTitles();
-    },
+    }
 
-    _statusImageElementMouseDown: function(event)
+    _statusImageElementMouseDown(event)
     {
         // To prevent the tree element from selecting.
         event.stopPropagation();
-    },
+    }
 
-    _statusImageElementClicked: function(event)
+    _statusImageElementClicked(event)
     {
         this._breakpoint.cycleToNextMode();
     }
 };
 
-WebInspector.BreakpointTreeElement.prototype.__proto__ = WebInspector.GeneralTreeElement.prototype;
+WebInspector.BreakpointTreeElement.GenericLineIconStyleClassName = "breakpoint-generic-line-icon";
+WebInspector.BreakpointTreeElement.StatusImageElementStyleClassName = "status-image";
+WebInspector.BreakpointTreeElement.StatusImageResolvedStyleClassName = "resolved";
+WebInspector.BreakpointTreeElement.StatusImageAutoContinueStyleClassName = "auto-continue";
+WebInspector.BreakpointTreeElement.StatusImageDisabledStyleClassName = "disabled";
+WebInspector.BreakpointTreeElement.FormattedLocationStyleClassName = "formatted-location";
+WebInspector.BreakpointTreeElement.ProbeDataUpdatedStyleClassName = "data-updated";
+
+WebInspector.BreakpointTreeElement.ProbeDataUpdatedAnimationDuration = 400; // milliseconds

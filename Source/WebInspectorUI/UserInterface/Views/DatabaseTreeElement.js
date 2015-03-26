@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseTreeElement = function(representedObject)
+WebInspector.DatabaseTreeElement = class DatabaseTreeElement extends WebInspector.GeneralTreeElement
 {
-    console.assert(representedObject instanceof WebInspector.DatabaseObject);
+    constructor(representedObject)
+    {
+        console.assert(representedObject instanceof WebInspector.DatabaseObject);
 
-    WebInspector.GeneralTreeElement.call(this, WebInspector.DatabaseTreeElement.DatabaseIconStyleClassName, representedObject.name, null, representedObject, true);
+        super("database-icon", representedObject.name, null, representedObject, true);
 
-    this.small = true;
-    this.hasChildren = false;
+        this.small = true;
+        this.hasChildren = false;
 
-    // Since we are initially telling the tree element we don't have any children, make sure that we try to populate
-    // the tree element (which will get a list of tables) when the element is created.
-    this.onpopulate();
-};
-
-WebInspector.DatabaseTreeElement.DatabaseIconStyleClassName = "database-icon";
-
-WebInspector.DatabaseTreeElement.prototype = {
-    constructor: WebInspector.DatabaseTreeElement,
+        // Since we are initially telling the tree element we don't have any children, make sure that we try to populate
+        // the tree element (which will get a list of tables) when the element is created.
+        this.onpopulate();
+    }
 
     // Overrides from TreeElement (Private)
 
-    oncollapse: function()
+    oncollapse()
     {
         this.shouldRefreshChildren = true;
-    },
+    }
 
-    onpopulate: function()
+    onpopulate()
     {
         if (this.children.length && !this.shouldRefreshChildren)
             return;
@@ -71,5 +68,3 @@ WebInspector.DatabaseTreeElement.prototype = {
         this.representedObject.getTableNames(tableNamesCallback.bind(this));
     }
 };
-
-WebInspector.DatabaseTreeElement.prototype.__proto__ = WebInspector.GeneralTreeElement.prototype;
