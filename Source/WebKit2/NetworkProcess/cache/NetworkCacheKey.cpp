@@ -44,14 +44,6 @@ Key::Key(const Key& o)
 {
 }
 
-Key::Key(Key&& o)
-    : m_method(WTF::move(o.m_method))
-    , m_partition(WTF::move(o.m_partition))
-    , m_identifier(WTF::move(o.m_identifier))
-    , m_hash(o.m_hash)
-{
-}
-
 Key::Key(const String& method, const String& partition, const String& identifier)
     : m_method(method.isolatedCopy())
     , m_partition(partition.isolatedCopy())

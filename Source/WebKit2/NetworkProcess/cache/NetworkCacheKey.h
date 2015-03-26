@@ -43,10 +43,11 @@ public:
 
     Key() { }
     Key(const Key&);
-    Key(Key&&);
+    Key(Key&&) = default;
     Key(const String& method, const String& partition, const String& identifier);
 
     Key& operator=(const Key&);
+    Key& operator=(Key&&) = default;
 
     bool isNull() const { return m_identifier.isNull(); }
 

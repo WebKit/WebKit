@@ -1,5 +1,25 @@
 2015-03-26  Chris Dumez  <cdumez@apple.com>
 
+        [WK2] Let the compiler generate the NetworkCache::Key move constructor
+        https://bugs.webkit.org/show_bug.cgi?id=143079
+
+        Reviewed by Antti Koivisto.
+
+        Let the compiler generate the NetworkCache::Key move constructor. The
+        generated one will do exactly the same thing as the one we had except
+        that it will move the m_hash member as well. I don't see any reason why
+        we weren't moving this member before (it is an std::array<uint8_t, 16>).
+
+        Also have the compiler generate a move assignment operator for
+        consistency. Although it is not currently useful, it could be at some
+        point.
+
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::NetworkCache::Key::Key): Deleted.
+        * NetworkProcess/cache/NetworkCacheKey.h:
+
+2015-03-26  Chris Dumez  <cdumez@apple.com>
+
         [WK2][NetworkCache] Compute if a cached response has expired only when actually needed
         https://bugs.webkit.org/show_bug.cgi?id=143070
 
