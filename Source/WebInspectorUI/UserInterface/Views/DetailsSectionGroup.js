@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DetailsSectionGroup = function(rows) {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+WebInspector.DetailsSectionGroup = class DetailsSectionGroup extends WebInspector.Object
+{
+    constructor(rows)
+    {
+        super();
 
-    this._element = document.createElement("div");
-    this._element.className = WebInspector.DetailsSectionGroup.StyleClassName;
+        this._element = document.createElement("div");
+        this._element.className = "group";
 
-    this.rows = rows;
-};
-
-WebInspector.DetailsSectionGroup.StyleClassName = "group";
-
-WebInspector.DetailsSectionGroup.prototype = {
-    constructor: WebInspector.DetailsSectionGroup,
+        this.rows = rows || [];
+    }
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get rows()
     {
         return this._rows;
-    },
+    }
 
     set rows(rows)
     {
@@ -60,5 +57,3 @@ WebInspector.DetailsSectionGroup.prototype = {
             this._element.appendChild(this._rows[i].element);
     }
 };
-
-WebInspector.DetailsSectionGroup.prototype.__proto__ = WebInspector.Object.prototype;

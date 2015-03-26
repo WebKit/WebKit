@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,60 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Popover = function(delegate) {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+WebInspector.Popover = class Popover extends WebInspector.Object
+{
+    constructor(delegate)
+    {
+        super();
 
-    this.delegate = delegate;
-    this._edge = null;
-    this._frame = new WebInspector.Rect;
-    this._content = null;
-    this._targetFrame = new WebInspector.Rect;
-    this._anchorPoint = new WebInspector.Point;
-    this._preferredEdges = null;
+        this.delegate = delegate;
+        this._edge = null;
+        this._frame = new WebInspector.Rect;
+        this._content = null;
+        this._targetFrame = new WebInspector.Rect;
+        this._anchorPoint = new WebInspector.Point;
+        this._preferredEdges = null;
 
-    this._contentNeedsUpdate = false;
+        this._contentNeedsUpdate = false;
 
-    this._element = document.createElement("div");
-    this._element.className = WebInspector.Popover.StyleClassName;
-    this._canvasId = "popover-" + (WebInspector.Popover.canvasId++);
-    this._element.style.backgroundImage = "-webkit-canvas(" + this._canvasId + ")";
-    this._element.addEventListener("transitionend", this, true);
+        this._element = document.createElement("div");
+        this._element.className = "popover";
+        this._canvasId = "popover-" + (WebInspector.Popover.canvasId++);
+        this._element.style.backgroundImage = "-webkit-canvas(" + this._canvasId + ")";
+        this._element.addEventListener("transitionend", this, true);
 
-    this._container = this._element.appendChild(document.createElement("div"));
-    this._container.className = "container";
-};
-
-WebInspector.Popover.StyleClassName = "popover";
-WebInspector.Popover.FadeOutClassName = "fade-out";
-WebInspector.Popover.canvasId = 0;
-WebInspector.Popover.CornerRadius = 5;
-WebInspector.Popover.MinWidth = 40;
-WebInspector.Popover.MinHeight = 40;
-WebInspector.Popover.ShadowPadding = 5;
-WebInspector.Popover.ContentPadding = 5;
-WebInspector.Popover.AnchorSize = new WebInspector.Size(22, 11);
-WebInspector.Popover.ShadowEdgeInsets = new WebInspector.EdgeInsets(WebInspector.Popover.ShadowPadding);
-
-WebInspector.Popover.prototype = {
-    constructor: WebInspector.Popover,
+        this._container = this._element.appendChild(document.createElement("div"));
+        this._container.className = "container";
+    }
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get frame()
     {
         return this._frame;
-    },
+    }
 
     get visible()
     {
         return this._element.parentNode === document.body && !this._element.classList.contains(WebInspector.Popover.FadeOutClassName);
-    },
+    }
 
     set frame(frame)
     {
@@ -86,7 +74,7 @@ WebInspector.Popover.prototype = {
         this._element.style.height = frame.size.height + "px";
         this._element.style.backgroundSize = frame.size.width + "px " + frame.size.height + "px";
         this._frame = frame;
-    },
+    }
 
     set content(content)
     {
@@ -99,9 +87,9 @@ WebInspector.Popover.prototype = {
 
         if (this.visible)
             this._update(true);
-    },
+    }
 
-    update: function()
+    update()
     {
         if (!this.visible)
             return;
@@ -113,9 +101,9 @@ WebInspector.Popover.prototype = {
 
         if (previouslyFocusedElement)
             previouslyFocusedElement.focus();
-    },
+    }
 
-    present: function(targetFrame, preferredEdges)
+    present(targetFrame, preferredEdges)
     {
         this._targetFrame = targetFrame;
         this._preferredEdges = preferredEdges;
@@ -126,9 +114,9 @@ WebInspector.Popover.prototype = {
         this._addListenersIfNeeded();
 
         this._update();
-    },
+    }
 
-    presentNewContentWithFrame: function(content, targetFrame, preferredEdges)
+    presentNewContentWithFrame(content, targetFrame, preferredEdges)
     {
         this._content = content;
         this._contentNeedsUpdate = true;
@@ -140,9 +128,9 @@ WebInspector.Popover.prototype = {
 
         var shouldAnimate = this.visible;
         this._update(shouldAnimate);
-    },
+    }
 
-    dismiss: function()
+    dismiss()
     {
         if (this._element.parentNode !== document.body)
             return;
@@ -156,9 +144,9 @@ WebInspector.Popover.prototype = {
 
         if (this.delegate && typeof this.delegate.willDismissPopover === "function")
             this.delegate.willDismissPopover(this);
-    },
+    }
 
-    handleEvent: function(event)
+    handleEvent(event)
     {
         switch (event.type) {
         case "mousedown":
@@ -176,11 +164,11 @@ WebInspector.Popover.prototype = {
                 break;
             }
         }
-    },
+    }
 
     // Private
 
-    _update: function(shouldAnimate)
+    _update(shouldAnimate)
     {
         if (shouldAnimate)
             var previousEdge = this._edge;
@@ -212,7 +200,7 @@ WebInspector.Popover.prototype = {
             this._preferredSize = new WebInspector.Size(Math.ceil(popoverBounds.width), Math.ceil(popoverBounds.height));
         }
 
-        const titleBarOffset = WebInspector.Platform.name === "mac" && !WebInspector.Platform.isLegacyMacOS ? 22 : 0;
+        var titleBarOffset = WebInspector.Platform.name === "mac" && !WebInspector.Platform.isLegacyMacOS ? 22 : 0;
         var containerFrame = new WebInspector.Rect(0, titleBarOffset, window.innerWidth, window.innerHeight - titleBarOffset);
         // The frame of the window with a little inset to make sure we have room for shadows.
         containerFrame = containerFrame.inset(WebInspector.Popover.ShadowEdgeInsets);
@@ -297,9 +285,9 @@ WebInspector.Popover.prototype = {
         }
 
         this._contentNeedsUpdate = false;
-    },
+    }
 
-    _cssClassNameForEdge: function()
+    _cssClassNameForEdge()
     {
         switch (this._edge) {
         case WebInspector.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
@@ -313,15 +301,15 @@ WebInspector.Popover.prototype = {
         }
         console.error("Unknown edge.");
         return "arrow-up";
-    },
+    }
 
-    _setAnchorPoint: function(anchorPoint) {
+    _setAnchorPoint(anchorPoint) {
         anchorPoint.x = Math.floor(anchorPoint.x);
         anchorPoint.y = Math.floor(anchorPoint.y);
         this._anchorPoint = anchorPoint;
-    },
+    }
 
-    _animateFrame: function(toFrame, toAnchor)
+    _animateFrame(toFrame, toAnchor)
     {
         var startTime = Date.now();
         var duration = 350;
@@ -359,9 +347,9 @@ WebInspector.Popover.prototype = {
         }
 
         drawBackground.call(this);
-    },
+    }
 
-    _drawBackground: function()
+    _drawBackground()
     {
         var scaleFactor = window.devicePixelRatio;
 
@@ -429,9 +417,9 @@ WebInspector.Popover.prototype = {
         finalContext.shadowColor = "rgba(0, 0, 0, 0.5)";
 
         finalContext.drawImage(scratchCanvas, 0, 0, scaledWidth, scaledHeight);
-    },
+    }
 
-    _bestMetricsForEdge: function(preferredSize, targetFrame, containerFrame, edge)
+    _bestMetricsForEdge(preferredSize, targetFrame, containerFrame, edge)
     {
         var x, y;
         var width = preferredSize.width + (WebInspector.Popover.ShadowPadding * 2) + (WebInspector.Popover.ContentPadding * 2);
@@ -494,9 +482,9 @@ WebInspector.Popover.prototype = {
             frame: bestFrame,
             contentSize: new WebInspector.Size(width, height)
         };
-    },
+    }
 
-    _drawFrame: function(ctx, bounds, anchorEdge)
+    _drawFrame(ctx, bounds, anchorEdge)
     {
         var r = WebInspector.Popover.CornerRadius;
         var arrowHalfLength = WebInspector.Popover.AnchorSize.width / 2;
@@ -546,9 +534,9 @@ WebInspector.Popover.prototype = {
             break;
         }
         ctx.closePath();
-    },
+    }
 
-    _addListenersIfNeeded: function()
+    _addListenersIfNeeded()
     {
         if (!this._isListeningForPopoverEvents) {
             this._isListeningForPopoverEvents = true;
@@ -558,4 +546,12 @@ WebInspector.Popover.prototype = {
     }
 };
 
-WebInspector.Popover.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.Popover.FadeOutClassName = "fade-out";
+WebInspector.Popover.canvasId = 0;
+WebInspector.Popover.CornerRadius = 5;
+WebInspector.Popover.MinWidth = 40;
+WebInspector.Popover.MinHeight = 40;
+WebInspector.Popover.ShadowPadding = 5;
+WebInspector.Popover.ContentPadding = 5;
+WebInspector.Popover.AnchorSize = new WebInspector.Size(22, 11);
+WebInspector.Popover.ShadowEdgeInsets = new WebInspector.EdgeInsets(WebInspector.Popover.ShadowPadding);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScopeBarItem = function(id, label, isExclusive) {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+WebInspector.ScopeBarItem = class ScopeBarItem extends WebInspector.Object
+{
+    constructor(id, label, isExclusive)
+    {
+        super();
 
-    this.id = id;
-    this.label = label;
-    this.isExclusive = isExclusive;
+        this.id = id;
+        this.label = label;
+        this.isExclusive = isExclusive;
 
-    this._selectedSetting = new WebInspector.Setting("scopebaritem-" + id, false);
+        this._selectedSetting = new WebInspector.Setting("scopebaritem-" + id, false);
 
-    this._markElementSelected(this._selectedSetting.value);
-};
-
-WebInspector.ScopeBarItem.SelectedStyleClassName = "selected";
-WebInspector.ScopeBarItem.Event = {
-    SelectionChanged: "scope-bar-item-selection-did-change"
-};
-
-WebInspector.ScopeBarItem.prototype = {
-    constructor: WebInspector.ScopeBarItem,
+        this._markElementSelected(this._selectedSetting.value);
+    }
 
     // Public
 
@@ -54,19 +48,19 @@ WebInspector.ScopeBarItem.prototype = {
             this._element.addEventListener("click", this._clicked.bind(this), false);
         }
         return this._element;
-    },
+    }
 
     get selected()
     {
         return this._selectedSetting.value;
-    },
+    }
 
     set selected(selected)
     {
         this.setSelected(selected, false);
-    },
+    }
 
-    setSelected: function(selected, withModifier)
+    setSelected(selected, withModifier)
     {
         if (this._selectedSetting.value === selected)
             return;
@@ -76,23 +70,27 @@ WebInspector.ScopeBarItem.prototype = {
         this._selectedSetting.value = selected;
 
         this.dispatchEventToListeners(WebInspector.ScopeBarItem.Event.SelectionChanged, {withModifier});
-    },
+    }
 
     // Private
 
-    _markElementSelected: function(selected)
+    _markElementSelected(selected)
     {
         if (selected)
             this.element.classList.add(WebInspector.ScopeBarItem.SelectedStyleClassName);
         else
             this.element.classList.remove(WebInspector.ScopeBarItem.SelectedStyleClassName);
-    },
+    }
 
-    _clicked: function(event)
+    _clicked(event)
     {
         var withModifier = (event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey);
         this.setSelected(!this.selected, withModifier);
     }
 };
 
-WebInspector.ScopeBarItem.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.ScopeBarItem.SelectedStyleClassName = "selected";
+
+WebInspector.ScopeBarItem.Event = {
+    SelectionChanged: "scope-bar-item-selection-did-change"
+};

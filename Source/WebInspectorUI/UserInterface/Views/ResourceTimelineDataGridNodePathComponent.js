@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceTimelineDataGridNodePathComponent = function(resourceTimelineDataGridNode) {
-    var resource = resourceTimelineDataGridNode.record.resource;
-    var classNames = [WebInspector.ResourceTreeElement.ResourceIconStyleClassName, resource.type];
+WebInspector.ResourceTimelineDataGridNodePathComponent = class ResourceTimelineDataGridNodePathComponent extends WebInspector.HierarchicalPathComponent
+{
+    constructor(resourceTimelineDataGridNode)
+    {
+        var resource = resourceTimelineDataGridNode.record.resource;
+        var classNames = [WebInspector.ResourceTreeElement.ResourceIconStyleClassName, resource.type];
 
-    WebInspector.HierarchicalPathComponent.call(this, resourceTimelineDataGridNode.data.name, classNames, resource);
+        super(resourceTimelineDataGridNode.data.name, classNames, resource);
 
-    this._resourceTimelineDataGridNode = resourceTimelineDataGridNode;
-};
-
-WebInspector.ResourceTimelineDataGridNodePathComponent.prototype = {
-    constructor: WebInspector.ResourceTimelineDataGridNodePathComponent,
+        this._resourceTimelineDataGridNode = resourceTimelineDataGridNode;
+    }
 
     // Public
 
     get resourceTimelineDataGridNode()
     {
         return this._resourceTimelineDataGridNode;
-    },
+    }
 
     get previousSibling()
     {
         if (!this._resourceTimelineDataGridNode.previousSibling)
             return null;
         return new WebInspector.ResourceTimelineDataGridNodePathComponent(this._resourceTimelineDataGridNode.previousSibling);
-    },
+    }
 
     get nextSibling()
     {
@@ -56,5 +56,3 @@ WebInspector.ResourceTimelineDataGridNodePathComponent.prototype = {
         return new WebInspector.ResourceTimelineDataGridNodePathComponent(this._resourceTimelineDataGridNode.nextSibling);
     }
 };
-
-WebInspector.ResourceTimelineDataGridNodePathComponent.prototype.__proto__ = WebInspector.HierarchicalPathComponent.prototype;

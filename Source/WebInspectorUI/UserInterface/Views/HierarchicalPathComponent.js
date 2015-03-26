@@ -23,104 +23,81 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.HierarchicalPathComponent = function(displayName, styleClassNames, representedObject, textOnly, showSelectorArrows)
+WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(displayName, styleClassNames, representedObject, textOnly, showSelectorArrows)
+    {
+        super();
 
-    console.assert(displayName);
-    console.assert(styleClassNames);
+        console.assert(displayName);
+        console.assert(styleClassNames);
 
-    this._representedObject = representedObject || null;
+        this._representedObject = representedObject || null;
 
-    this._element = document.createElement("div");
-    this._element.className = WebInspector.HierarchicalPathComponent.StyleClassName;
+        this._element = document.createElement("div");
+        this._element.className = "hierarchical-path-component";
 
-    if (!(styleClassNames instanceof Array))
-        styleClassNames = [styleClassNames];
+        if (!(styleClassNames instanceof Array))
+            styleClassNames = [styleClassNames];
 
-    for (var i = 0; i < styleClassNames.length; ++i) {
-        if (!styleClassNames[i])
-            continue;
-        this._element.classList.add(styleClassNames[i]);
+        for (var i = 0; i < styleClassNames.length; ++i) {
+            if (!styleClassNames[i])
+                continue;
+            this._element.classList.add(styleClassNames[i]);
+        }
+
+        if (!textOnly) {
+            this._iconElement = document.createElement("img");
+            this._iconElement.className = WebInspector.HierarchicalPathComponent.IconElementStyleClassName;
+            this._element.appendChild(this._iconElement);
+        } else
+            this._element.classList.add(WebInspector.HierarchicalPathComponent.TextOnlyStyleClassName);
+
+        this._titleElement = document.createElement("div");
+        this._titleElement.className = WebInspector.HierarchicalPathComponent.TitleElementStyleClassName;
+        this._element.appendChild(this._titleElement);
+
+        this._titleContentElement = document.createElement("div");
+        this._titleContentElement.className = WebInspector.HierarchicalPathComponent.TitleContentElementStyleClassName;
+        this._titleElement.appendChild(this._titleContentElement);
+
+        this._separatorElement = document.createElement("div");
+        this._separatorElement.className = WebInspector.HierarchicalPathComponent.SeparatorElementStyleClassName;
+        this._element.appendChild(this._separatorElement);
+
+        this._selectElement = document.createElement("select");
+        this._selectElement.addEventListener("mouseover", this._selectElementMouseOver.bind(this));
+        this._selectElement.addEventListener("mouseout", this._selectElementMouseOut.bind(this));
+        this._selectElement.addEventListener("mousedown", this._selectElementMouseDown.bind(this));
+        this._selectElement.addEventListener("mouseup", this._selectElementMouseUp.bind(this));
+        this._selectElement.addEventListener("change", this._selectElementSelectionChanged.bind(this));
+        this._element.appendChild(this._selectElement);
+
+        this._previousSibling = null;
+        this._nextSibling = null;
+
+        this._truncatedDisplayNameLength = 0;
+
+        this.selectorArrows = showSelectorArrows;
+        this.displayName = displayName;
     }
-
-    if (!textOnly) {
-        this._iconElement = document.createElement("img");
-        this._iconElement.className = WebInspector.HierarchicalPathComponent.IconElementStyleClassName;
-        this._element.appendChild(this._iconElement);
-    } else
-        this._element.classList.add(WebInspector.HierarchicalPathComponent.TextOnlyStyleClassName);
-
-    this._titleElement = document.createElement("div");
-    this._titleElement.className = WebInspector.HierarchicalPathComponent.TitleElementStyleClassName;
-    this._element.appendChild(this._titleElement);
-
-    this._titleContentElement = document.createElement("div");
-    this._titleContentElement.className = WebInspector.HierarchicalPathComponent.TitleContentElementStyleClassName;
-    this._titleElement.appendChild(this._titleContentElement);
-
-    this._separatorElement = document.createElement("div");
-    this._separatorElement.className = WebInspector.HierarchicalPathComponent.SeparatorElementStyleClassName;
-    this._element.appendChild(this._separatorElement);
-
-    this._selectElement = document.createElement("select");
-    this._selectElement.addEventListener("mouseover", this._selectElementMouseOver.bind(this));
-    this._selectElement.addEventListener("mouseout", this._selectElementMouseOut.bind(this));
-    this._selectElement.addEventListener("mousedown", this._selectElementMouseDown.bind(this));
-    this._selectElement.addEventListener("mouseup", this._selectElementMouseUp.bind(this));
-    this._selectElement.addEventListener("change", this._selectElementSelectionChanged.bind(this));
-    this._element.appendChild(this._selectElement);
-
-    this._previousSibling = null;
-    this._nextSibling = null;
-
-    this._truncatedDisplayNameLength = 0;
-
-    this.selectorArrows = showSelectorArrows;
-    this.displayName = displayName;
-};
-
-WebInspector.HierarchicalPathComponent.StyleClassName = "hierarchical-path-component";
-WebInspector.HierarchicalPathComponent.HiddenStyleClassName = "hidden";
-WebInspector.HierarchicalPathComponent.CollapsedStyleClassName = "collapsed";
-WebInspector.HierarchicalPathComponent.IconElementStyleClassName = "icon";
-WebInspector.HierarchicalPathComponent.TextOnlyStyleClassName = "text-only";
-WebInspector.HierarchicalPathComponent.ShowSelectorArrowsStyleClassName = "show-selector-arrows";
-WebInspector.HierarchicalPathComponent.TitleElementStyleClassName = "title";
-WebInspector.HierarchicalPathComponent.TitleContentElementStyleClassName = "content";
-WebInspector.HierarchicalPathComponent.SelectorArrowsElementStyleClassName = "selector-arrows";
-WebInspector.HierarchicalPathComponent.SeparatorElementStyleClassName = "separator";
-
-WebInspector.HierarchicalPathComponent.MinimumWidth = 32;
-WebInspector.HierarchicalPathComponent.MinimumWidthCollapsed = 24;
-WebInspector.HierarchicalPathComponent.MinimumWidthForOneCharacterTruncatedTitle = 54;
-WebInspector.HierarchicalPathComponent.SelectorArrowsWidth = 12;
-
-WebInspector.HierarchicalPathComponent.Event = {
-    SiblingWasSelected: "hierarchical-path-component-sibling-was-selected",
-    Clicked: "hierarchical-path-component-clicked"
-};
-
-WebInspector.HierarchicalPathComponent.prototype = {
-    constructor: WebInspector.HierarchicalPathComponent,
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get representedObject()
     {
         return this._representedObject;
-    },
+    }
 
     get displayName()
     {
         return this._displayName;
-    },
+    }
 
     set displayName(newDisplayName)
     {
@@ -131,12 +108,12 @@ WebInspector.HierarchicalPathComponent.prototype = {
         this._displayName = newDisplayName;
 
         this._updateElementTitleAndText();
-    },
+    }
 
     get truncatedDisplayNameLength()
     {
         return this._truncatedDisplayNameLength;
-    },
+    }
 
     set truncatedDisplayNameLength(truncatedDisplayNameLength)
     {
@@ -148,7 +125,7 @@ WebInspector.HierarchicalPathComponent.prototype = {
         this._truncatedDisplayNameLength = truncatedDisplayNameLength;
 
         this._updateElementTitleAndText();
-    },
+    }
 
     get minimumWidth()
     {
@@ -157,7 +134,7 @@ WebInspector.HierarchicalPathComponent.prototype = {
         if (this.selectorArrows)
             return WebInspector.HierarchicalPathComponent.MinimumWidth + WebInspector.HierarchicalPathComponent.SelectorArrowsWidth;
         return WebInspector.HierarchicalPathComponent.MinimumWidth;
-    },
+    }
 
     get forcedWidth()
     {
@@ -165,7 +142,7 @@ WebInspector.HierarchicalPathComponent.prototype = {
         if (typeof maxWidth === "string")
             return parseInt(maxWidth);
         return null;
-    },
+    }
 
     set forcedWidth(width)
     {
@@ -184,12 +161,12 @@ WebInspector.HierarchicalPathComponent.prototype = {
             this._element.style.setProperty("width", Math.max(1, width) + "px");
         } else
             this._element.style.removeProperty("width");
-    },
+    }
 
     get hidden()
     {
         return this._element.classList.contains(WebInspector.HierarchicalPathComponent.HiddenStyleClassName);
-    },
+    }
 
     set hidden(flag)
     {
@@ -197,12 +174,12 @@ WebInspector.HierarchicalPathComponent.prototype = {
             this._element.classList.add(WebInspector.HierarchicalPathComponent.HiddenStyleClassName);
         else
             this._element.classList.remove(WebInspector.HierarchicalPathComponent.HiddenStyleClassName);
-    },
+    }
 
     get collapsed()
     {
         return this._element.classList.contains(WebInspector.HierarchicalPathComponent.CollapsedStyleClassName);
-    },
+    }
 
     set collapsed(flag)
     {
@@ -210,12 +187,12 @@ WebInspector.HierarchicalPathComponent.prototype = {
             this._element.classList.add(WebInspector.HierarchicalPathComponent.CollapsedStyleClassName);
         else
             this._element.classList.remove(WebInspector.HierarchicalPathComponent.CollapsedStyleClassName);
-    },
+    }
 
     get selectorArrows()
     {
         return this._element.classList.contains(WebInspector.HierarchicalPathComponent.ShowSelectorArrowsStyleClassName);
-    },
+    }
 
     set selectorArrows(flag)
     {
@@ -233,31 +210,31 @@ WebInspector.HierarchicalPathComponent.prototype = {
 
             this._element.classList.remove(WebInspector.HierarchicalPathComponent.ShowSelectorArrowsStyleClassName);
         }
-    },
+    }
 
     get previousSibling()
     {
         return this._previousSibling;
-    },
+    }
 
     set previousSibling(newSlibling)
     {
         this._previousSibling = newSlibling || null;
-    },
+    }
 
     get nextSibling()
     {
         return this._nextSibling;
-    },
+    }
 
     set nextSibling(newSlibling)
     {
         this._nextSibling = newSlibling || null;
-    },
+    }
 
     // Private
 
-    _updateElementTitleAndText: function()
+    _updateElementTitleAndText()
     {
         var truncatedDisplayName = this._displayName;
         if (this._truncatedDisplayNameLength && truncatedDisplayName.length > this._truncatedDisplayNameLength)
@@ -265,16 +242,16 @@ WebInspector.HierarchicalPathComponent.prototype = {
 
         this._element.title = this._displayName;
         this._titleContentElement.textContent = truncatedDisplayName;
-    },
+    }
 
-    _updateSelectElement: function()
+    _updateSelectElement()
     {
         this._selectElement.removeChildren();
 
         function createOption(component)
         {
             var optionElement = document.createElement("option");
-            const maxPopupMenuLength = 130; // <rdar://problem/13445374> <select> with very long option has clipped text and popup menu is still very wide
+            var maxPopupMenuLength = 130; // <rdar://problem/13445374> <select> with very long option has clipped text and popup menu is still very wide
             optionElement.textContent = component.displayName.length <= maxPopupMenuLength ? component.displayName : component.displayName.substring(0, maxPopupMenuLength) + "\u2026";
             optionElement._pathComponent = component;
             return optionElement;
@@ -307,34 +284,52 @@ WebInspector.HierarchicalPathComponent.prototype = {
             this._selectElement.selectedIndex = -1;
         else
             this._selectElement.selectedIndex = previousSiblingCount;
-    },
+    }
 
-    _selectElementMouseOver: function(event)
+    _selectElementMouseOver(event)
     {
         if (typeof this.mouseOver === "function")
             this.mouseOver();
-    },
+    }
 
-    _selectElementMouseOut: function(event)
+    _selectElementMouseOut(event)
     {
         if (typeof this.mouseOut === "function")
             this.mouseOut();
-    },
+    }
 
-    _selectElementMouseDown: function(event)
+    _selectElementMouseDown(event)
     {
         this._updateSelectElement();
-    },
+    }
 
-    _selectElementMouseUp: function(event)
+    _selectElementMouseUp(event)
     {
         this.dispatchEventToListeners(WebInspector.HierarchicalPathComponent.Event.Clicked);
-    },
+    }
 
-    _selectElementSelectionChanged: function(event)
+    _selectElementSelectionChanged(event)
     {
         this.dispatchEventToListeners(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, {pathComponent: this._selectElement[this._selectElement.selectedIndex]._pathComponent});
     }
 };
 
-WebInspector.HierarchicalPathComponent.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.HierarchicalPathComponent.HiddenStyleClassName = "hidden";
+WebInspector.HierarchicalPathComponent.CollapsedStyleClassName = "collapsed";
+WebInspector.HierarchicalPathComponent.IconElementStyleClassName = "icon";
+WebInspector.HierarchicalPathComponent.TextOnlyStyleClassName = "text-only";
+WebInspector.HierarchicalPathComponent.ShowSelectorArrowsStyleClassName = "show-selector-arrows";
+WebInspector.HierarchicalPathComponent.TitleElementStyleClassName = "title";
+WebInspector.HierarchicalPathComponent.TitleContentElementStyleClassName = "content";
+WebInspector.HierarchicalPathComponent.SelectorArrowsElementStyleClassName = "selector-arrows";
+WebInspector.HierarchicalPathComponent.SeparatorElementStyleClassName = "separator";
+
+WebInspector.HierarchicalPathComponent.MinimumWidth = 32;
+WebInspector.HierarchicalPathComponent.MinimumWidthCollapsed = 24;
+WebInspector.HierarchicalPathComponent.MinimumWidthForOneCharacterTruncatedTitle = 54;
+WebInspector.HierarchicalPathComponent.SelectorArrowsWidth = 12;
+
+WebInspector.HierarchicalPathComponent.Event = {
+    SiblingWasSelected: "hierarchical-path-component-sibling-was-selected",
+    Clicked: "hierarchical-path-component-clicked"
+};

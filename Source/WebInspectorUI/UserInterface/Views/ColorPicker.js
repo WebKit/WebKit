@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ColorPicker = function()
+WebInspector.ColorPicker = class ColorPicker extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    this._colorWheel = new WebInspector.ColorWheel();
-    this._colorWheel.delegate = this;
-    this._colorWheel.dimension = 200;
+        this._colorWheel = new WebInspector.ColorWheel();
+        this._colorWheel.delegate = this;
+        this._colorWheel.dimension = 200;
 
-    this._brightnessSlider = new WebInspector.Slider();
-    this._brightnessSlider.delegate = this;
-    this._brightnessSlider.element.classList.add("brightness");
+        this._brightnessSlider = new WebInspector.Slider();
+        this._brightnessSlider.delegate = this;
+        this._brightnessSlider.element.classList.add("brightness");
 
-    this._opacitySlider = new WebInspector.Slider();
-    this._opacitySlider.delegate = this;
-    this._opacitySlider.element.classList.add("opacity");
+        this._opacitySlider = new WebInspector.Slider();
+        this._opacitySlider.delegate = this;
+        this._opacitySlider.element.classList.add("opacity");
 
-    this._element = document.createElement("div");
-    this._element.className = "color-picker";
+        this._element = document.createElement("div");
+        this._element.className = "color-picker";
 
-    this._element.appendChild(this._colorWheel.element);
-    this._element.appendChild(this._brightnessSlider.element);
-    this._element.appendChild(this._opacitySlider.element);
+        this._element.appendChild(this._colorWheel.element);
+        this._element.appendChild(this._brightnessSlider.element);
+        this._element.appendChild(this._opacitySlider.element);
 
-    this._opacity = 0;
-    this._opacityPattern = "url(Images/Checkers.svg)";
+        this._opacity = 0;
+        this._opacityPattern = "url(Images/Checkers.svg)";
 
-    this._color = "white";
-};
-
-WebInspector.ColorPicker.Event = {
-    ColorChanged: "css-color-picker-color-changed"
-};
-
-WebInspector.ColorPicker.prototype = {
-    contructor: WebInspector.ColorPicker,
-    __proto__: WebInspector.Object.prototype,
+        this._color = "white";
+    }
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     set brightness(brightness)
     {
@@ -77,7 +70,7 @@ WebInspector.ColorPicker.prototype = {
 
         this._updateColor();
         this._updateSliders(this._colorWheel.rawColor, this._colorWheel.tintedColor);
-    },
+    }
 
     set opacity(opacity)
     {
@@ -86,17 +79,17 @@ WebInspector.ColorPicker.prototype = {
 
         this._opacity = opacity;
         this._updateColor();
-    },
+    }
 
     get colorWheel()
     {
         return this._colorWheel;
-    },
+    }
 
     get color()
     {
         return this._color;
-    },
+    }
 
     set color(color)
     {
@@ -111,25 +104,25 @@ WebInspector.ColorPicker.prototype = {
         this._updateSliders(this._colorWheel.rawColor, color);
 
         delete this._dontUpdateColor;
-    },
+    }
 
-    colorWheelColorDidChange: function(colorWheel)
+    colorWheelColorDidChange(colorWheel)
     {
         this._updateColor();
         this._updateSliders(this._colorWheel.rawColor, this._colorWheel.tintedColor);
-    },
+    }
 
-    sliderValueDidChange: function(slider, value)
+    sliderValueDidChange(slider, value)
     {
         if (slider === this._opacitySlider)
             this.opacity = value;
         else if (slider === this._brightnessSlider)
             this.brightness = value;
-    },
+    }
 
     // Private
 
-    _updateColor: function()
+    _updateColor()
     {
         if (this._dontUpdateColor)
             return;
@@ -144,9 +137,9 @@ WebInspector.ColorPicker.prototype = {
 
         this._color = new WebInspector.Color(this._colorFormat, components);
         this.dispatchEventToListeners(WebInspector.ColorPicker.Event.ColorChanged, {color: this._color});
-    },
+    }
 
-    _updateSliders: function(rawColor, tintedColor)
+    _updateSliders(rawColor, tintedColor)
     {
         var rgb = this._colorWheel.tintedColor.rgb;
         var opaque = new WebInspector.Color(WebInspector.Color.Format.RGBA, rgb.concat(1)).toString();
@@ -155,4 +148,8 @@ WebInspector.ColorPicker.prototype = {
         this._opacitySlider.element.style.backgroundImage = "linear-gradient(90deg, " + transparent + ", " + opaque + "), " + this._opacityPattern;
         this._brightnessSlider.element.style.backgroundImage = "linear-gradient(90deg, black, " + rawColor + ")";
     }
+};
+
+WebInspector.ColorPicker.Event = {
+    ColorChanged: "css-color-picker-color-changed"
 };

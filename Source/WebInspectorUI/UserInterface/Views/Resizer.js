@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2015 University of Washington.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,61 +24,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Resizer = function(ruleOrientation, delegate) {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+WebInspector.Resizer = class Resizer extends WebInspector.Object
+{
+    constructor(ruleOrientation, delegate)
+    {
+        console.assert(delegate);
 
-    console.assert(delegate);
+        super();
 
-    this._delegate = delegate;
-    this._orientation = ruleOrientation;
-    this._element = document.createElement("div");
-    this._element.classList.add(WebInspector.Resizer.StyleClassName);
+        this._delegate = delegate;
+        this._orientation = ruleOrientation;
+        this._element = document.createElement("div");
+        this._element.classList.add("resizer");
 
-    if (this._orientation === WebInspector.Resizer.RuleOrientation.Horizontal)
-        this._element.classList.add(WebInspector.Resizer.HorizontalRuleStyleClassName);
-    else if (this._orientation === WebInspector.Resizer.RuleOrientation.Vertical)
-        this._element.classList.add(WebInspector.Resizer.VerticalRuleStyleClassName);
+        if (this._orientation === WebInspector.Resizer.RuleOrientation.Horizontal)
+            this._element.classList.add("horizontal-rule");
+        else if (this._orientation === WebInspector.Resizer.RuleOrientation.Vertical)
+            this._element.classList.add("vertical-rule");
 
-    this._element.addEventListener("mousedown", this._resizerMouseDown.bind(this), false);
-    this._resizerMouseMovedEventListener = this._resizerMouseMoved.bind(this);
-    this._resizerMouseUpEventListener = this._resizerMouseUp.bind(this);
-};
-
-WebInspector.Resizer.RuleOrientation = {
-    Horizontal: Symbol("resizer-rule-orientation-horizontal"),
-    Vertical: Symbol("resizer-rule-orientation-vertical"),
-};
-
-WebInspector.Resizer.StyleClassName = "resizer";
-WebInspector.Resizer.HorizontalRuleStyleClassName = "horizontal-rule";
-WebInspector.Resizer.VerticalRuleStyleClassName = "vertical-rule";
-WebInspector.Resizer.GlassPaneStyleClassName = "glass-pane-for-drag";
-
-WebInspector.Resizer.prototype = {
-    constructor: WebInspector.Resizer,
-    __proto__: WebInspector.Object.prototype,
+        this._element.addEventListener("mousedown", this._resizerMouseDown.bind(this), false);
+        this._resizerMouseMovedEventListener = this._resizerMouseMoved.bind(this);
+        this._resizerMouseUpEventListener = this._resizerMouseUp.bind(this);
+    }
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get orientation()
     {
         return this._orientation;
-    },
+    }
 
     get initialPosition()
     {
         return this._resizerMouseDownPosition || NaN;
-    },
+    }
 
     // Private
 
-    _currentPosition: function()
+    _currentPosition()
     {
         if (this._orientation === WebInspector.Resizer.RuleOrientation.Vertical)
             return event.pageX;
@@ -85,9 +74,9 @@ WebInspector.Resizer.prototype = {
             return event.pageY;
 
         console.assert(false, "Should not be reached!");
-    },
+    }
 
-    _resizerMouseDown: function(event)
+    _resizerMouseDown(event)
     {
         if (event.button !== 0 || event.ctrlKey)
             return;
@@ -124,21 +113,21 @@ WebInspector.Resizer.prototype = {
             WebInspector._elementDraggingGlassPane.parentElement.removeChild(WebInspector._elementDraggingGlassPane);
 
         var glassPaneElement = document.createElement("div");
-        glassPaneElement.className = WebInspector.Resizer.GlassPaneStyleClassName;
+        glassPaneElement.className = "glass-pane-for-drag";
         document.body.appendChild(glassPaneElement);
         WebInspector._elementDraggingGlassPane = glassPaneElement;
-    },
+    }
 
-    _resizerMouseMoved: function(event)
+    _resizerMouseMoved(event)
     {
         event.preventDefault();
         event.stopPropagation();
 
         if (typeof this._delegate.resizerDragging === "function")
             this._delegate.resizerDragging(this, this._resizerMouseDownPosition - this._currentPosition());
-    },
+    }
 
-    _resizerMouseUp: function(event)
+    _resizerMouseUp(event)
     {
         if (event.button !== 0 || event.ctrlKey)
             return;
@@ -161,4 +150,9 @@ WebInspector.Resizer.prototype = {
 
         delete this._resizerMouseDownPosition;
     }
+};
+
+WebInspector.Resizer.RuleOrientation = {
+    Horizontal: Symbol("resizer-rule-orientation-horizontal"),
+    Vertical: Symbol("resizer-rule-orientation-vertical"),
 };

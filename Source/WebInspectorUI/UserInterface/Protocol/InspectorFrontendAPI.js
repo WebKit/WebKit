@@ -98,7 +98,7 @@ InspectorFrontendAPI = {
 
     contextMenuItemSelected: function(id)
     {
-        WebInspector.contextMenuItemSelected(id);
+        WebInspector.ContextMenu.contextMenuItemSelected(id);
     },
 
     contextMenuCleared: function()

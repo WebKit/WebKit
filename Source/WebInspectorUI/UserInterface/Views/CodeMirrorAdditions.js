@@ -182,7 +182,7 @@
 
     function extendedCSSToken(stream, state)
     {
-        const hexColorRegex = /#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g;
+        var hexColorRegex = /#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g;
 
         if (state._urlTokenize) {
             // Call the link tokenizer instead.
@@ -503,7 +503,7 @@
         var end = range instanceof WebInspector.TextRange ? range.endLine + 1 : this.lineCount();
 
         // Matches rgba(0, 0, 0, 0.5), rgb(0, 0, 0), hsl(), hsla(), #fff, #ffffff, white
-        const colorRegex = /((?:rgb|hsl)a?\([^)]+\)|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|\b\w+\b(?![-.]))/g;
+        var colorRegex = /((?:rgb|hsl)a?\([^)]+\)|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|\b\w+\b(?![-.]))/g;
 
         for (var lineNumber = start; lineNumber < end; ++lineNumber) {
             var lineContent = this.getLine(lineNumber);
@@ -568,7 +568,7 @@
         var start = range instanceof WebInspector.TextRange ? range.startLine : 0;
         var end = range instanceof WebInspector.TextRange ? range.endLine + 1 : this.lineCount();
 
-        const gradientRegex = /(repeating-)?(linear|radial)-gradient\s*\(\s*/g;
+        var gradientRegex = /(repeating-)?(linear|radial)-gradient\s*\(\s*/g;
 
         for (var lineNumber = start; lineNumber < end; ++lineNumber) {
             var lineContent = this.getLine(lineNumber);
@@ -653,23 +653,23 @@
 
     // Register some extra MIME-types for CodeMirror. These are in addition to the
     // ones CodeMirror already registers, like text/html, text/javascript, etc.
-    const extraXMLTypes = ["text/xml", "text/xsl"];
+    var extraXMLTypes = ["text/xml", "text/xsl"];
     extraXMLTypes.forEach(function(type) {
         CodeMirror.defineMIME(type, "xml");
     });
 
-    const extraHTMLTypes = ["application/xhtml+xml", "image/svg+xml"];
+    var extraHTMLTypes = ["application/xhtml+xml", "image/svg+xml"];
     extraHTMLTypes.forEach(function(type) {
         CodeMirror.defineMIME(type, "htmlmixed");
     });
 
-    const extraJavaScriptTypes = ["text/ecmascript", "application/javascript", "application/ecmascript", "application/x-javascript",
+    var extraJavaScriptTypes = ["text/ecmascript", "application/javascript", "application/ecmascript", "application/x-javascript",
         "text/x-javascript", "text/javascript1.1", "text/javascript1.2", "text/javascript1.3", "text/jscript", "text/livescript"];
     extraJavaScriptTypes.forEach(function(type) {
         CodeMirror.defineMIME(type, "javascript");
     });
 
-    const extraJSONTypes = ["application/x-json", "text/x-json"];
+    var extraJSONTypes = ["application/x-json", "text/x-json"];
     extraJSONTypes.forEach(function(type) {
         CodeMirror.defineMIME(type, {name: "javascript", json: true});
     });

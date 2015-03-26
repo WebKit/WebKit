@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ColorWheel = function()
+WebInspector.ColorWheel = class ColorWheel extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    this._rawCanvas = document.createElement("canvas");
-    this._tintedCanvas = document.createElement("canvas");
-    this._finalCanvas = document.createElement("canvas");
+        this._rawCanvas = document.createElement("canvas");
+        this._tintedCanvas = document.createElement("canvas");
+        this._finalCanvas = document.createElement("canvas");
 
-    this._crosshair = document.createElement("div");
-    this._crosshair.className = "crosshair";
+        this._crosshair = document.createElement("div");
+        this._crosshair.className = "crosshair";
 
-    this._element = document.createElement("div");
-    this._element.className = "color-wheel";
+        this._element = document.createElement("div");
+        this._element.className = "color-wheel";
 
-    this._element.appendChild(this._finalCanvas);
-    this._element.appendChild(this._crosshair);
+        this._element.appendChild(this._finalCanvas);
+        this._element.appendChild(this._crosshair);
 
-    this._finalCanvas.addEventListener("mousedown", this);
-};
-
-WebInspector.ColorWheel.prototype = {
-    contructor: WebInspector.ColorWheel,
-    __proto__: WebInspector.Object.prototype,
+        this._finalCanvas.addEventListener("mousedown", this);
+    }
 
     // Public
 
@@ -65,23 +62,23 @@ WebInspector.ColorWheel.prototype = {
 
         this._drawRawCanvas();
         this._draw();
-    },
+    }
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get brightness()
     {
         return this._brightness;
-    },
+    }
 
     set brightness(brightness)
     {
         this._brightness = brightness;
         this._draw();
-    },
+    }
 
     get tintedColor()
     {
@@ -89,14 +86,14 @@ WebInspector.ColorWheel.prototype = {
             return this._colorAtPointWithBrightness(this._crosshairPosition.x * window.devicePixelRatio, this._crosshairPosition.y * window.devicePixelRatio, this._brightness);
 
         return new WebInspector.Color(WebInspector.Color.Format.RGBA, [0, 0, 0, 0]);
-    },
+    }
 
     set tintedColor(tintedColor)
     {
         var data = this._tintedColorToPointAndBrightness(tintedColor);
         this._setCrosshairPosition(data.point);
         this.brightness = data.brightness;
-    },
+    }
 
     get rawColor()
     {
@@ -104,11 +101,11 @@ WebInspector.ColorWheel.prototype = {
             return this._colorAtPointWithBrightness(this._crosshairPosition.x * window.devicePixelRatio, this._crosshairPosition.y * window.devicePixelRatio, 1);
 
         return new WebInspector.Color(WebInspector.Color.Format.RGBA, [0, 0, 0, 0]);
-    },
+    }
 
     // Protected
 
-    handleEvent: function(event)
+    handleEvent(event)
     {
         switch (event.type) {
         case "mousedown":
@@ -121,30 +118,30 @@ WebInspector.ColorWheel.prototype = {
             this._handleMouseup(event);
             break;
         }
-    },
+    }
 
     // Private
 
-    _handleMousedown: function(event)
+    _handleMousedown(event)
     {
         window.addEventListener("mousemove", this, true);
         window.addEventListener("mouseup", this, true);
 
         this._updateColorForMouseEvent(event);
-    },
+    }
 
-    _handleMousemove: function(event)
+    _handleMousemove(event)
     {
         this._updateColorForMouseEvent(event);
-    },
+    }
 
-    _handleMouseup: function(event)
+    _handleMouseup(event)
     {
         window.removeEventListener("mousemove", this, true);
         window.removeEventListener("mouseup", this, true);
-    },
+    }
 
-    _pointInCircleForEvent: function(event)
+    _pointInCircleForEvent(event)
     {
         function distance(a, b)
         {
@@ -169,9 +166,9 @@ WebInspector.ColorWheel.prototype = {
             point = pointOnCircumference(center, this._radius, angle);
         }
         return point;
-    },
+    }
 
-    _updateColorForMouseEvent: function(event)
+    _updateColorForMouseEvent(event)
     {
         var point = this._pointInCircleForEvent(event);
 
@@ -179,15 +176,15 @@ WebInspector.ColorWheel.prototype = {
 
         if (this.delegate && typeof this.delegate.colorWheelColorDidChange === "function")
             this.delegate.colorWheelColorDidChange(this);
-    },
+    }
 
-    _setCrosshairPosition: function(point)
+    _setCrosshairPosition(point)
     {
         this._crosshairPosition = point;
         this._crosshair.style.webkitTransform = "translate(" + Math.round(point.x) + "px, " + Math.round(point.y) + "px)";
-    },
+    }
 
-    _tintedColorToPointAndBrightness: function(color)
+    _tintedColorToPointAndBrightness(color)
     {
         var rgb = color.rgb;
         var hsv = WebInspector.Color.rgb2hsv(rgb[0], rgb[1], rgb[2]);
@@ -200,9 +197,9 @@ WebInspector.ColorWheel.prototype = {
             point: new WebInspector.Point(x, y),
             brightness: hsv[2]
         };
-    },
+    }
 
-    _drawRawCanvas: function() {
+    _drawRawCanvas() {
         var ctx = this._rawCanvas.getContext("2d");
 
         var dimension = this._dimension * window.devicePixelRatio;
@@ -225,9 +222,9 @@ WebInspector.ColorWheel.prototype = {
             }
         }
         ctx.putImageData(imageData, 0, 0);
-    },
+    }
 
-    _colorAtPointWithBrightness: function(x, y, brightness)
+    _colorAtPointWithBrightness(x, y, brightness)
     {
         var center = this._dimension / 2 * window.devicePixelRatio;
         var xDis = x - center;
@@ -249,9 +246,9 @@ WebInspector.ColorWheel.prototype = {
             Math.round(rgb[2] * 255),
             1
         ]);
-    },
+    }
 
-    _drawTintedCanvas: function()
+    _drawTintedCanvas()
     {
         var ctx = this._tintedCanvas.getContext("2d");
         var dimension = this._dimension * window.devicePixelRatio;
@@ -264,9 +261,9 @@ WebInspector.ColorWheel.prototype = {
             ctx.fillRect(0, 0, dimension, dimension);
         }
         ctx.restore();
-    },
+    }
 
-    _draw: function()
+    _draw()
     {
         this._drawTintedCanvas();
 

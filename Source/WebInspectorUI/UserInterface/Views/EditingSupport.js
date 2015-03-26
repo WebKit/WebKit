@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +57,7 @@ WebInspector.isEditingAnyField = function()
 
 WebInspector.isEventTargetAnEditableField = function(event)
 {
-    const textInputTypes = {"text": true, "search": true, "tel": true, "url": true, "email": true, "password": true};
+    var textInputTypes = {"text": true, "search": true, "tel": true, "url": true, "email": true, "password": true};
     if (event.target instanceof HTMLInputElement)
         return event.target.type in textInputTypes;
 
@@ -74,26 +74,27 @@ WebInspector.isEventTargetAnEditableField = function(event)
     return false;
 };
 
-WebInspector.EditingConfig = function(commitHandler, cancelHandler, context)
+WebInspector.EditingConfig = class EditingConfig
 {
-    this.commitHandler = commitHandler;
-    this.cancelHandler = cancelHandler;
-    this.context = context;
-    this.spellcheck = false;
-};
+    constructor(commitHandler, cancelHandler, context)
+    {
+        this.commitHandler = commitHandler;
+        this.cancelHandler = cancelHandler;
+        this.context = context;
+        this.spellcheck = false;
+    }
 
-WebInspector.EditingConfig.prototype = {
-    setPasteHandler: function(pasteHandler)
+    setPasteHandler(pasteHandler)
     {
         this.pasteHandler = pasteHandler;
-    },
+    }
 
-    setMultiline: function(multiline)
+    setMultiline(multiline)
     {
         this.multiline = multiline;
-    },
+    }
 
-    setCustomFinishHandler: function(customFinishHandler)
+    setCustomFinishHandler(customFinishHandler)
     {
         this.customFinishHandler = customFinishHandler;
     }

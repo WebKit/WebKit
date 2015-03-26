@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,69 +23,109 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMTreeElementPathComponent = function(domTreeElement, representedObject) {
-    var node = domTreeElement.representedObject;
+WebInspector.DOMTreeElementPathComponent = class DOMTreeElementPathComponent extends WebInspector.HierarchicalPathComponent
+{
+    constructor(domTreeElement, representedObject)
+    {
+        var node = domTreeElement.representedObject;
 
-    var title = null;
-    var className = null;
+        var title = null;
+        var className = null;
 
-    switch (node.nodeType()) {
-    case Node.ELEMENT_NODE:
-        className = WebInspector.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
-        title = WebInspector.displayNameForNode(node);
-        break;
-
-    case Node.TEXT_NODE:
-        className = WebInspector.DOMTreeElementPathComponent.DOMTextNodeIconStyleClassName;
-        title = "\"" + node.nodeValue().trimEnd(32) + "\"";
-        break;
-
-    case Node.COMMENT_NODE:
-        className = WebInspector.DOMTreeElementPathComponent.DOMCommentIconStyleClassName;
-        title = "<!--" + node.nodeValue().trimEnd(32) + "-->";
-        break;
-
-    case Node.DOCUMENT_TYPE_NODE:
-        className = WebInspector.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
-        title = "<!DOCTYPE>";
-        break;
-
-    case Node.DOCUMENT_NODE:
-        className = WebInspector.DOMTreeElementPathComponent.DOMDocumentIconStyleClassName;
-        title = node.nodeNameInCorrectCase();
-        break;
-
-    case Node.CDATA_SECTION_NODE:
-        className = WebInspector.DOMTreeElementPathComponent.DOMCharacterDataIconStyleClassName;
-        title = "<![CDATA[" + node.trimEnd(32) + "]]>";
-        break;
-
-    case Node.DOCUMENT_FRAGMENT_NODE:
-        // FIXME: At some point we might want a different icon for this.
-        // <rdar://problem/12800950> Need icon for DOCUMENT_FRAGMENT_NODE and PROCESSING_INSTRUCTION_NODE
-        className = WebInspector.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
-        if (node.isInShadowTree())
-            title = WebInspector.UIString("Shadow Content");
-        else
+        switch (node.nodeType()) {
+        case Node.ELEMENT_NODE:
+            className = WebInspector.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
             title = WebInspector.displayNameForNode(node);
-        break;
+            break;
 
-    case Node.PROCESSING_INSTRUCTION_NODE:
-        // FIXME: At some point we might want a different icon for this.
-        // <rdar://problem/12800950> Need icon for DOCUMENT_FRAGMENT_NODE and PROCESSING_INSTRUCTION_NODE.
-        className = WebInspector.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
-        title = node.nodeNameInCorrectCase();
-        break;
+        case Node.TEXT_NODE:
+            className = WebInspector.DOMTreeElementPathComponent.DOMTextNodeIconStyleClassName;
+            title = "\"" + node.nodeValue().trimEnd(32) + "\"";
+            break;
 
-    default:
-        console.error("Unknown DOM node type: ", node.nodeType());
-        className = WebInspector.DOMTreeElementPathComponent.DOMNodeIconStyleClassName;
-        title = node.nodeNameInCorrectCase();
+        case Node.COMMENT_NODE:
+            className = WebInspector.DOMTreeElementPathComponent.DOMCommentIconStyleClassName;
+            title = "<!--" + node.nodeValue().trimEnd(32) + "-->";
+            break;
+
+        case Node.DOCUMENT_TYPE_NODE:
+            className = WebInspector.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
+            title = "<!DOCTYPE>";
+            break;
+
+        case Node.DOCUMENT_NODE:
+            className = WebInspector.DOMTreeElementPathComponent.DOMDocumentIconStyleClassName;
+            title = node.nodeNameInCorrectCase();
+            break;
+
+        case Node.CDATA_SECTION_NODE:
+            className = WebInspector.DOMTreeElementPathComponent.DOMCharacterDataIconStyleClassName;
+            title = "<![CDATA[" + node.trimEnd(32) + "]]>";
+            break;
+
+        case Node.DOCUMENT_FRAGMENT_NODE:
+            // FIXME: At some point we might want a different icon for this.
+            // <rdar://problem/12800950> Need icon for DOCUMENT_FRAGMENT_NODE and PROCESSING_INSTRUCTION_NODE
+            className = WebInspector.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
+            if (node.isInShadowTree())
+                title = WebInspector.UIString("Shadow Content");
+            else
+                title = WebInspector.displayNameForNode(node);
+            break;
+
+        case Node.PROCESSING_INSTRUCTION_NODE:
+            // FIXME: At some point we might want a different icon for this.
+            // <rdar://problem/12800950> Need icon for DOCUMENT_FRAGMENT_NODE and PROCESSING_INSTRUCTION_NODE.
+            className = WebInspector.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
+            title = node.nodeNameInCorrectCase();
+            break;
+
+        default:
+            console.error("Unknown DOM node type: ", node.nodeType());
+            className = WebInspector.DOMTreeElementPathComponent.DOMNodeIconStyleClassName;
+            title = node.nodeNameInCorrectCase();
+        }
+
+        super(title, className, representedObject || domTreeElement.representedObject);
+
+        this._domTreeElement = domTreeElement;
     }
 
-    WebInspector.HierarchicalPathComponent.call(this, title, className, representedObject || domTreeElement.representedObject);
+    // Public
 
-    this._domTreeElement = domTreeElement;
+    get domTreeElement()
+    {
+        return this._domTreeElement;
+    }
+
+    get previousSibling()
+    {
+        if (!this._domTreeElement.previousSibling)
+            return null;
+        return new WebInspector.DOMTreeElementPathComponent(this._domTreeElement.previousSibling);
+    }
+
+    get nextSibling()
+    {
+        if (!this._domTreeElement.nextSibling)
+            return null;
+        if (this._domTreeElement.nextSibling.isCloseTag())
+            return null;
+        return new WebInspector.DOMTreeElementPathComponent(this._domTreeElement.nextSibling);
+    }
+
+    // Protected
+
+    mouseOver()
+    {
+        var nodeId = this._domTreeElement.representedObject.id;
+        WebInspector.domTreeManager.highlightDOMNode(nodeId);
+    }
+
+    mouseOut()
+    {
+        WebInspector.domTreeManager.hideDOMNodeHighlight();
+    }
 };
 
 WebInspector.DOMTreeElementPathComponent.DOMElementIconStyleClassName = "dom-element-icon";
@@ -95,45 +135,3 @@ WebInspector.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName = "do
 WebInspector.DOMTreeElementPathComponent.DOMDocumentIconStyleClassName = "dom-document-icon";
 WebInspector.DOMTreeElementPathComponent.DOMCharacterDataIconStyleClassName = "dom-character-data-icon";
 WebInspector.DOMTreeElementPathComponent.DOMNodeIconStyleClassName = "dom-node-icon";
-
-WebInspector.DOMTreeElementPathComponent.prototype = {
-    constructor: WebInspector.DOMTreeElementPathComponent,
-
-    // Public
-
-    get domTreeElement()
-    {
-        return this._domTreeElement;
-    },
-
-    get previousSibling()
-    {
-        if (!this._domTreeElement.previousSibling)
-            return null;
-        return new WebInspector.DOMTreeElementPathComponent(this._domTreeElement.previousSibling);
-    },
-
-    get nextSibling()
-    {
-        if (!this._domTreeElement.nextSibling)
-            return null;
-        if (this._domTreeElement.nextSibling.isCloseTag())
-            return null;
-        return new WebInspector.DOMTreeElementPathComponent(this._domTreeElement.nextSibling);
-    },
-
-    // Protected
-
-    mouseOver: function()
-    {
-        var nodeId = this._domTreeElement.representedObject.id;
-        WebInspector.domTreeManager.highlightDOMNode(nodeId);
-    },
-
-    mouseOut: function()
-    {
-        WebInspector.domTreeManager.hideDOMNodeHighlight();
-    }
-};
-
-WebInspector.DOMTreeElementPathComponent.prototype.__proto__ = WebInspector.HierarchicalPathComponent.prototype;

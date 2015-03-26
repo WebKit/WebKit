@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DetailsSectionPropertiesRow = function(propertiesSection, emptyMessage) {
-    WebInspector.DetailsSectionRow.call(this, emptyMessage);
+WebInspector.DetailsSectionPropertiesRow = class DetailsSectionPropertiesRow extends WebInspector.DetailsSectionRow
+{
+    constructor(propertiesSection, emptyMessage)
+    {
+        super(emptyMessage);
 
-    this.element.classList.add(WebInspector.DetailsSectionPropertiesRow.StyleClassName);
-    this.element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
+        this.element.classList.add("properties");
+        this.element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
 
-    this.propertiesSection = propertiesSection;
-};
-
-WebInspector.DetailsSectionPropertiesRow.StyleClassName = "properties";
-
-WebInspector.DetailsSectionPropertiesRow.prototype = {
-    constructor: WebInspector.DetailsSectionPropertiesRow,
+        this.propertiesSection = propertiesSection;
+    }
 
     // Public
 
     get propertiesSection()
     {
         return this._propertiesSection;
-    },
+    }
 
     set propertiesSection(propertiesSection)
     {
@@ -58,5 +56,3 @@ WebInspector.DetailsSectionPropertiesRow.prototype = {
             this.showEmptyMessage();
     }
 };
-
-WebInspector.DetailsSectionPropertiesRow.prototype.__proto__ = WebInspector.DetailsSectionRow.prototype;

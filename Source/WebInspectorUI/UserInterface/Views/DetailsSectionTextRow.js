@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DetailsSectionTextRow = function(text)
+WebInspector.DetailsSectionTextRow = class DetailsSectionTextRow extends WebInspector.DetailsSectionRow
 {
-    WebInspector.DetailsSectionRow.call(this);
+    constructor(text)
+    {
+        super();
 
-    this.element.classList.add(WebInspector.DetailsSectionTextRow.StyleClassName);
+        this.element.classList.add("text");
 
-    this.element.textContent = text;
-};
-
-WebInspector.DetailsSectionTextRow.StyleClassName = "text";
-
-WebInspector.DetailsSectionTextRow.prototype = {
-    constructor: WebInspector.DetailsSectionTextRow,
-    __proto__: WebInspector.DetailsSectionRow.prototype,
+        this.element.textContent = text;
+    }
 
     // Public
 
     get text()
     {
         return this.element.textContent;
-    },
+    }
 
     set text(text)
     {

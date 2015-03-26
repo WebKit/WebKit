@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -180,7 +180,7 @@ InspectorBackendClass = class InspectorBackendClass
             try {
                 callback.apply(null, callbackArguments);
             } catch (e) {
-                console.error("Uncaught exception in inspector page while dispatching callback for command " + command.qualifiedName + ": ", e);
+                console.error("Uncaught exception in inspector page while dispatching callback for command " + command.qualifiedName + ": ", e, e.stack);
             }
 
             var processingDuration = Date.now() - processingStartTime;
@@ -232,7 +232,7 @@ InspectorBackendClass = class InspectorBackendClass
         try {
             agent.dispatchEvent(eventName, eventArguments);
         } catch (e) {
-            console.error("Uncaught exception in inspector page while handling event " + qualifiedName + ": ", e);
+            console.error("Uncaught exception in inspector page while handling event " + qualifiedName + ": ", e, e.stack);
         }
 
         var processingDuration = Date.now() - processingStartTime;

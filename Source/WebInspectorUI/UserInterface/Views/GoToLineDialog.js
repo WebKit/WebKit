@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.GoToLineDialog = function()
+WebInspector.GoToLineDialog = class GoToLineDialog extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor()
+    {
+        super();
 
-    this._element = document.createElement("div");
-    this._element.className = WebInspector.GoToLineDialog.StyleClassName;
+        this._element = document.createElement("div");
+        this._element.className = "go-to-line-dialog";
 
-    var field = this._element.appendChild(document.createElement("div"));
+        var field = this._element.appendChild(document.createElement("div"));
 
-    this._input = field.appendChild(document.createElement("input"));
-    this._input.type = "text";
-    this._input.placeholder = WebInspector.UIString("Line Number");
-    this._input.spellcheck = false;
+        this._input = field.appendChild(document.createElement("input"));
+        this._input.type = "text";
+        this._input.placeholder = WebInspector.UIString("Line Number");
+        this._input.spellcheck = false;
 
-    this._clearIcon = field.appendChild(document.createElement("img"));
+        this._clearIcon = field.appendChild(document.createElement("img"));
 
-    this._input.addEventListener("input", this);
-    this._input.addEventListener("keydown", this);
-    this._input.addEventListener("blur", this);
-    this._clearIcon.addEventListener("mousedown", this);
-    this._clearIcon.addEventListener("click", this);
+        this._input.addEventListener("input", this);
+        this._input.addEventListener("keydown", this);
+        this._input.addEventListener("blur", this);
+        this._clearIcon.addEventListener("mousedown", this);
+        this._clearIcon.addEventListener("click", this);
 
-    this._dismissing = false;
-};
-
-WebInspector.GoToLineDialog.StyleClassName = "go-to-line-dialog";
-WebInspector.GoToLineDialog.NonEmptyClassName = "non-empty";
-
-WebInspector.GoToLineDialog.prototype = {
-    constructor: WebInspector.GoToLineDialog,
-
-    __proto__: WebInspector.Object.prototype,
+        this._dismissing = false;
+    }
 
     // Public
 
-    present: function(parent)
+    present(parent)
     {
         parent.appendChild(this._element);
         this._input.focus();
         this._clear();
-    },
+    }
 
-    dismiss: function()
+    dismiss()
     {
         if (this._dismissing)
             return;
@@ -83,11 +76,11 @@ WebInspector.GoToLineDialog.prototype = {
             this.delegate.goToLineDialogWasDismissed(this);
 
         this._dismissing = false;
-    },
+    }
 
     // Protected
 
-    handleEvent: function(event)
+    handleEvent(event)
     {
         switch (event.type) {
         case "input":
@@ -106,25 +99,27 @@ WebInspector.GoToLineDialog.prototype = {
             this._handleClickEvent(event);
             break;
         }
-    },
+    }
 
     // Private
 
-    _handleInputEvent: function(event)
+    _handleInputEvent(event)
     {
         if (this._input.value === "")
             this._element.classList.remove(WebInspector.GoToLineDialog.NonEmptyClassName);
         else
             this._element.classList.add(WebInspector.GoToLineDialog.NonEmptyClassName);
-    },
+    }
 
-    _handleKeydownEvent: function(event)
+    _handleKeydownEvent(event)
     {
         if (event.keyCode === WebInspector.KeyboardShortcut.Key.Escape.keyCode) {
             if (this._input.value === "")
                 this.dismiss();
             else
                 this._clear();
+
+            event.preventDefault();
         } else if (event.keyCode === WebInspector.KeyboardShortcut.Key.Enter.keyCode) {
             var value = parseInt(this._input.value, 10);
 
@@ -139,31 +134,34 @@ WebInspector.GoToLineDialog.prototype = {
             }
 
             this._input.select();
+
             InspectorFrontendHost.beep();
         }
-    },
+    }
 
-    _handleBlurEvent: function(event)
+    _handleBlurEvent(event)
     {
         this.dismiss();
-    },
+    }
 
-    _handleMousedownEvent: function(event)
+    _handleMousedownEvent(event)
     {
         this._input.select();
         // This ensures we don't get a "blur" event triggered for the text field
         // which would end up dimissing the dialog, which is not the intent.
         event.preventDefault();
-    },
+    }
 
-    _handleClickEvent: function(event)
+    _handleClickEvent(event)
     {
         this._clear();
-    },
+    }
 
-    _clear: function()
+    _clear()
     {
         this._input.value = "";
         this._element.classList.remove(WebInspector.GoToLineDialog.NonEmptyClassName);
     }
 };
+
+WebInspector.GoToLineDialog.NonEmptyClassName = "non-empty";

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.HoverMenu = function(delegate)
+WebInspector.HoverMenu = class HoverMenu extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(delegate)
+    {
+        super();
 
-    this.delegate = delegate;
+        this.delegate = delegate;
 
-    this._element = document.createElement("div");
-    this._element.className = WebInspector.HoverMenu.StyleClassName;
-    this._element.addEventListener("transitionend", this, true);
+        this._element = document.createElement("div");
+        this._element.className = "hover-menu";
+        this._element.addEventListener("transitionend", this, true);
 
-    this._outlineElement = this._element.appendChild(document.createElementNS("http://www.w3.org/2000/svg", "svg"));
+        this._outlineElement = this._element.appendChild(document.createElementNS("http://www.w3.org/2000/svg", "svg"));
 
-    this._button = this._element.appendChild(document.createElement("img"));
-    this._button.addEventListener("click", this);
-}
-
-WebInspector.HoverMenu.StyleClassName = "hover-menu";
-WebInspector.HoverMenu.VisibleClassName = "visible";
-
-WebInspector.HoverMenu.prototype = {
-    constructor: WebInspector.HoverMenu,
-    __proto__: WebInspector.Object.prototype,
+        this._button = this._element.appendChild(document.createElement("img"));
+        this._button.addEventListener("click", this);
+    }
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
-    present: function(rects)
+    present(rects)
     {
         this._outlineElement.textContent = "";
 
@@ -63,9 +57,9 @@ WebInspector.HoverMenu.prototype = {
         this._element.classList.add(WebInspector.HoverMenu.VisibleClassName);
 
         window.addEventListener("scroll", this, true);
-    },
+    }
 
-    dismiss: function(discrete)
+    dismiss(discrete)
     {
         if (this._element.parentNode !== document.body)
             return;
@@ -76,11 +70,11 @@ WebInspector.HoverMenu.prototype = {
         this._element.classList.remove(WebInspector.HoverMenu.VisibleClassName);
 
         window.removeEventListener("scroll", this, true);
-    },
+    }
 
     // Protected
 
-    handleEvent: function(event)
+    handleEvent(event)
     {
         switch (event.type) {
         case "scroll":
@@ -95,17 +89,17 @@ WebInspector.HoverMenu.prototype = {
                 this._element.remove();
             break;
         }
-    },
+    }
 
     // Private
 
-    _handleClickEvent: function(event)
+    _handleClickEvent(event)
     {
         if (this.delegate && typeof this.delegate.hoverMenuButtonWasPressed === "function")
             this.delegate.hoverMenuButtonWasPressed(this);
-    },
+    }
 
-    _drawOutline: function(rects)
+    _drawOutline(rects)
     {
         var buttonWidth = this._button.width;
         var buttonHeight = this._button.height;
@@ -135,11 +129,11 @@ WebInspector.HoverMenu.prototype = {
 
         this._button.style.left = (lastRect.maxX() - bounds.minX() - buttonWidth) + "px";
         this._button.style.top = (lastRect.maxY() - bounds.minY() - buttonHeight) + "px";
-    },
+    }
 
-    _addRect: function(rect)
+    _addRect(rect)
     {
-        const r = 4;
+        var r = 4;
 
         var svgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         svgRect.setAttribute("x", 1);
@@ -149,24 +143,24 @@ WebInspector.HoverMenu.prototype = {
         svgRect.setAttribute("rx", r);
         svgRect.setAttribute("ry", r);
         return this._outlineElement.appendChild(svgRect);
-    },
+    }
 
-    _addPath: function(commands, tx, ty)
+    _addPath(commands, tx, ty)
     {
         var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", commands.join(" "));
         path.setAttribute("transform", "translate(" + (tx + 1) + "," + (ty + 1) + ")");
         return this._outlineElement.appendChild(path);
-    },
+    }
 
-    _drawSingleLine: function(rect)
+    _drawSingleLine(rect)
     {
         this._addRect(rect.pad(2));
-    },
+    }
 
-    _drawTwoNonOverlappingLines: function(rects)
+    _drawTwoNonOverlappingLines(rects)
     {
-        const r = 4;
+        var r = 4;
 
         var firstRect = rects[0].pad(2);
         var secondRect = rects[1].pad(2);
@@ -193,12 +187,12 @@ WebInspector.HoverMenu.prototype = {
             "q", 0, r, -r, r,
             "H", rect.minX()
         ], tx, ty);
-    },
+    }
     
-    _drawOverlappingLines: function(rects)
+    _drawOverlappingLines(rects)
     {
-        const PADDING = 2;
-        const r = 4;
+        var PADDING = 2;
+        var r = 4;
 
         var minX = Number.MAX_VALUE;
         var maxX = -Number.MAX_VALUE;
@@ -219,7 +213,7 @@ WebInspector.HoverMenu.prototype = {
             return this._addRect(new WebInspector.Rect(minX, minY, maxX - minX, maxY - minY));
         
         var lastLineMinY = rects.lastValue.minY() + PADDING;
-        if (rects[0].minX() === minX + PADDING)
+        if (rects[0].minX() === minX + PADDING) {
             return this._addPath([
                 "M", minX + r, minY,
                 "H", maxX - r,
@@ -235,9 +229,10 @@ WebInspector.HoverMenu.prototype = {
                 "V", minY + r,
                 "q", 0, -r, r, -r
             ], -minX, -minY);
-        
+        }
+
         var firstLineMaxY = rects[0].maxY() - PADDING;
-        if (rects.lastValue.maxX() === maxX - PADDING)
+        if (rects.lastValue.maxX() === maxX - PADDING) {
             return this._addPath([
                 "M", firstLineMinX + r, minY,
                 "H", maxX - r,
@@ -253,7 +248,8 @@ WebInspector.HoverMenu.prototype = {
                 "V", minY + r,
                 "q", 0, -r, r, -r
             ], -minX, -minY);
-        
+        }
+
         return this._addPath([
             "M", firstLineMinX + r, minY,
             "H", maxX - r,
@@ -274,4 +270,6 @@ WebInspector.HoverMenu.prototype = {
             "q", 0, -r, r, -r
         ], -minX, -minY);
     }
-}
+};
+
+WebInspector.HoverMenu.VisibleClassName = "visible";

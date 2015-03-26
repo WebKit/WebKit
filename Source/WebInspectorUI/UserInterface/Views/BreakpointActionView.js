@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,107 +23,107 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BreakpointActionView = function(action, delegate, omitFocus)
+WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(action, delegate, omitFocus)
+    {
+        super();
 
-    console.assert(action);
-    console.assert(delegate);
-    console.assert(DebuggerAgent.BreakpointActionType);
+        console.assert(action);
+        console.assert(delegate);
+        console.assert(DebuggerAgent.BreakpointActionType);
 
-    this._action = action;
-    this._delegate = delegate;
+        this._action = action;
+        this._delegate = delegate;
 
-    this._element = document.createElement("div");
-    this._element.className = "breakpoint-action-block";
+        this._element = document.createElement("div");
+        this._element.className = "breakpoint-action-block";
 
-    var header = this._element.appendChild(document.createElement("div"));
-    header.className = "breakpoint-action-block-header";
+        var header = this._element.appendChild(document.createElement("div"));
+        header.className = "breakpoint-action-block-header";
 
-    var picker = header.appendChild(document.createElement("select"));
-    picker.addEventListener("change", this._pickerChanged.bind(this));
+        var picker = header.appendChild(document.createElement("select"));
+        picker.addEventListener("change", this._pickerChanged.bind(this));
 
-    for (var key in WebInspector.BreakpointAction.Type) {
-        var type = WebInspector.BreakpointAction.Type[key];
-        var option = document.createElement("option");
-        option.textContent = WebInspector.BreakpointActionView.displayStringForType(type);
-        option.selected = this._action.type === type;
-        option.value = type;
-        picker.add(option);
+        for (var key in WebInspector.BreakpointAction.Type) {
+            var type = WebInspector.BreakpointAction.Type[key];
+            var option = document.createElement("option");
+            option.textContent = WebInspector.BreakpointActionView.displayStringForType(type);
+            option.selected = this._action.type === type;
+            option.value = type;
+            picker.add(option);
+        }
+
+        var appendActionButton = header.appendChild(document.createElement("button"));
+        appendActionButton.className = "breakpoint-action-append-button";
+        appendActionButton.addEventListener("click", this._appendActionButtonClicked.bind(this));
+        appendActionButton.title = WebInspector.UIString("Add new breakpoint action after this action");
+
+        var removeActionButton = header.appendChild(document.createElement("button"));
+        removeActionButton.className = "breakpoint-action-remove-button";
+        removeActionButton.addEventListener("click", this._removeAction.bind(this));
+        removeActionButton.title = WebInspector.UIString("Remove this breakpoint action");
+
+        this._bodyElement = this._element.appendChild(document.createElement("div"));
+        this._bodyElement.className = "breakpoint-action-block-body";
+
+        this._updateBody(omitFocus);
     }
 
-    var appendActionButton = header.appendChild(document.createElement("button"));
-    appendActionButton.className = "breakpoint-action-append-button";
-    appendActionButton.addEventListener("click", this._appendActionButtonClicked.bind(this));
-    appendActionButton.title = WebInspector.UIString("Add new breakpoint action after this action");
+    // Static
 
-    var removeActionButton = header.appendChild(document.createElement("button"));
-    removeActionButton.className = "breakpoint-action-remove-button";
-    removeActionButton.addEventListener("click", this._removeAction.bind(this));
-    removeActionButton.title = WebInspector.UIString("Remove this breakpoint action");
-
-    this._bodyElement = this._element.appendChild(document.createElement("div"));
-    this._bodyElement.className = "breakpoint-action-block-body";
-
-    this._updateBody(omitFocus);
-};
-
-WebInspector.BreakpointActionView.displayStringForType = function(type)
-{
-    switch (type) {
-    case WebInspector.BreakpointAction.Type.Log:
-        return WebInspector.UIString("Log Message");
-    case WebInspector.BreakpointAction.Type.Evaluate:
-        return WebInspector.UIString("Evaluate JavaScript");
-    case WebInspector.BreakpointAction.Type.Sound:
-        return WebInspector.UIString("Play Sound");
-    case WebInspector.BreakpointAction.Type.Probe:
-        return WebInspector.UIString("Probe Expression");
-    default:
-        console.assert(false);
-        return "";
+    static displayStringForType(type)
+    {
+        switch (type) {
+        case WebInspector.BreakpointAction.Type.Log:
+            return WebInspector.UIString("Log Message");
+        case WebInspector.BreakpointAction.Type.Evaluate:
+            return WebInspector.UIString("Evaluate JavaScript");
+        case WebInspector.BreakpointAction.Type.Sound:
+            return WebInspector.UIString("Play Sound");
+        case WebInspector.BreakpointAction.Type.Probe:
+            return WebInspector.UIString("Probe Expression");
+        default:
+            console.assert(false);
+            return "";
+        }
     }
-};
-
-WebInspector.BreakpointActionView.prototype = {
-    constructor: WebInspector.BreakpointActionView,
 
     // Public
 
     get action()
     {
         return this._action;
-    },
+    }
 
     get element()
     {
         return this._element;
-    },
+    }
 
     // Private
 
-    _pickerChanged: function(event)
+    _pickerChanged(event)
     {
         var newType = event.target.value;
         this._action = this._action.breakpoint.recreateAction(newType, this._action);
         this._updateBody();
         this._delegate.breakpointActionViewResized(this);
-    },
+    }
 
-    _appendActionButtonClicked: function(event)
+    _appendActionButtonClicked(event)
     {
         var newAction = this._action.breakpoint.createAction(WebInspector.Breakpoint.DefaultBreakpointActionType, this._action);
         this._delegate.breakpointActionViewAppendActionView(this, newAction);
-    },
+    }
 
-    _removeAction: function()
+    _removeAction()
     {
         this._action.breakpoint.removeAction(this._action);
         this._delegate.breakpointActionViewRemoveActionView(this);
-    },
+    }
 
-    _updateBody: function(omitFocus)
+    _updateBody(omitFocus)
     {
         this._bodyElement.removeChildren();
 
@@ -182,14 +182,14 @@ WebInspector.BreakpointActionView.prototype = {
             this._bodyElement.hidden = true;
             break;
         }
-    },
+    }
 
-    _logInputChanged: function(event)
+    _logInputChanged(event)
     {
         this._action.data = event.target.value;
-    },
+    }
 
-    _codeMirrorBlurred: function(event)
+    _codeMirrorBlurred(event)
     {
         // Throw away the expression if it's just whitespace.
         var data = (this._codeMirror.getValue() || "").trim();
@@ -198,12 +198,10 @@ WebInspector.BreakpointActionView.prototype = {
             this._removeAction();
         else
             this._action.data = data;
-    },
+    }
 
-    _codeMirrorViewportChanged: function(event)
+    _codeMirrorViewportChanged(event)
     {
         this._delegate.breakpointActionViewResized(this);
     }
 };
-
-WebInspector.BreakpointActionView.prototype.__proto__ = WebInspector.Object.prototype;

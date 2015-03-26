@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScopeBar = function(identifier, items, defaultItem) {
-    WebInspector.NavigationItem.call(this, identifier);
+WebInspector.ScopeBar = class ScopeBar extends WebInspector.NavigationItem
+{
+    constructor(identifier, items, defaultItem)
+    {
+        super(identifier);
 
-    this._element.classList.add(WebInspector.ScopeBar.StyleClassName);
+        this._element.classList.add("scope-bar");
 
-    this._items = items;
-    this._defaultItem = defaultItem;
+        this._items = items;
+        this._defaultItem = defaultItem;
 
-    this._itemsById = [];
-    this._populate();
-};
-
-WebInspector.ScopeBar.StyleClassName = "scope-bar";
-WebInspector.ScopeBar.Event = {
-    SelectionChanged: "scopebar-selection-did-change"
-};
-
-WebInspector.ScopeBar.prototype = {
-    constructor: WebInspector.ScopeBar,
+        this._itemsById = [];
+        this._populate();
+    }
 
     // Public
 
     get defaultItem()
     {
         return this._defaultItem;
-    },
+    }
 
-    item: function(id)
+    item(id)
     {
         return this._itemsById[id];
-    },
+    }
 
     get selectedItems()
     {
         return this._items.filter(function(item) {
             return item.selected;
         });
-    },
+    }
 
-    hasNonDefaultItemSelected: function()
+    hasNonDefaultItemSelected()
     {
         return this._items.some(function(item) {
             return item.selected && item !== this._defaultItem;
         }, this);
-    },
+    }
 
-    updateLayout: function(expandOnly)
+    updateLayout(expandOnly)
     {
         if (expandOnly)
             return;
@@ -88,11 +83,11 @@ WebInspector.ScopeBar.prototype = {
             if (!isSelected)
                 item.element.classList.remove(WebInspector.ScopeBarItem.SelectedStyleClassName);
         }
-    },
+    }
 
     // Private
 
-    _populate: function()
+    _populate()
     {
         var item;
         for (var i = 0; i < this._items.length; ++i) {
@@ -105,9 +100,9 @@ WebInspector.ScopeBar.prototype = {
 
         if (!this.selectedItems.length && this._defaultItem)
             this._defaultItem.selected = true;
-    },
+    }
 
-    _itemSelectionDidChange: function(event)
+    _itemSelectionDidChange(event)
     {
         var sender = event.target;
         var item;
@@ -138,4 +133,6 @@ WebInspector.ScopeBar.prototype = {
     }
 };
 
-WebInspector.ScopeBar.prototype.__proto__ = WebInspector.NavigationItem.prototype;
+WebInspector.ScopeBar.Event = {
+    SelectionChanged: "scopebar-selection-did-change"
+};

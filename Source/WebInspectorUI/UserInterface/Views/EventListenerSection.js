@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.EventListenerSection = function(type, nodeId)
+WebInspector.EventListenerSection = class EventListenerSection extends WebInspector.DetailsSection
 {
-    WebInspector.DetailsSection.call(this, type + "-event-listener-section", type, [], null, true);
+    constructor(type, nodeId)
+    {
+        super(type + "-event-listener-section", type, [], null, true);
 
-    this.element.classList.add("event-listener-section");
+        this.element.classList.add("event-listener-section");
 
-    this._nodeId = nodeId;
-};
+        this._nodeId = nodeId;
+    }
 
-WebInspector.EventListenerSection.prototype = {
-    constructor: WebInspector.EventListenerSection,
+    // Public
 
-    addListener: function(eventListener)
+    addListener(eventListener)
     {
         var groups = this.groups;
         groups.push(new WebInspector.EventListenerSectionGroup(eventListener, this._nodeId));
         this.groups = groups;
     }
 };
-
-WebInspector.EventListenerSection.prototype.__proto__ = WebInspector.DetailsSection.prototype;

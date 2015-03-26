@@ -1,5 +1,47 @@
 2015-03-26  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Convert some View classes to ES6 classes
+        https://bugs.webkit.org/show_bug.cgi?id=143107
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.contextMenuItemSelected): Updated to the right function path.
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        * UserInterface/Views/BreakpointActionView.js:
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        * UserInterface/Views/ColorPicker.js:
+        * UserInterface/Views/ColorWheel.js:
+        * UserInterface/Views/ContextMenu.js:
+        * UserInterface/Views/DOMTreeElementPathComponent.js:
+        * UserInterface/Views/DetailsSection.js:
+        * UserInterface/Views/DetailsSectionDataGridRow.js:
+        * UserInterface/Views/DetailsSectionGroup.js:
+        * UserInterface/Views/DetailsSectionPropertiesRow.js:
+        * UserInterface/Views/DetailsSectionRow.js:
+        * UserInterface/Views/DetailsSectionSimpleRow.js:
+        * UserInterface/Views/DetailsSectionTextRow.js:
+        * UserInterface/Views/EditingSupport.js:
+        * UserInterface/Views/EventListenerSection.js:
+        * UserInterface/Views/EventListenerSectionGroup.js:
+        * UserInterface/Views/FilterBar.js:
+        * UserInterface/Views/FindBanner.js:
+        * UserInterface/Views/GeneralTreeElementPathComponent.js:
+        * UserInterface/Views/GoToLineDialog.js:
+        * UserInterface/Views/GradientSlider.js:
+        * UserInterface/Views/HierarchicalPathComponent.js:
+        * UserInterface/Views/HierarchicalPathNavigationItem.js:
+        * UserInterface/Views/HoverMenu.js:
+        * UserInterface/Views/Popover.js:
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        * UserInterface/Views/ResourceTimelineDataGridNodePathComponent.js:
+        * UserInterface/Views/SearchBar.js:
+        * UserInterface/Views/Slider.js:
+        Converted to ES6 classes.
+
+2015-03-26  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Convert Base and Protocol files to ES6 classes
         https://bugs.webkit.org/show_bug.cgi?id=143106
 

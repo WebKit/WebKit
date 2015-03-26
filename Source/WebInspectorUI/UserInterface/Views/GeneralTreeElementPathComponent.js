@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.GeneralTreeElementPathComponent = function(generalTreeElement, representedObject) {
-    WebInspector.HierarchicalPathComponent.call(this, generalTreeElement.mainTitle, generalTreeElement.classNames, representedObject || generalTreeElement.representedObject);
+WebInspector.GeneralTreeElementPathComponent = class GeneralTreeElementPathComponent extends WebInspector.HierarchicalPathComponent
+{
+    constructor(generalTreeElement, representedObject)
+    {
+        super(generalTreeElement.mainTitle, generalTreeElement.classNames, representedObject || generalTreeElement.representedObject);
 
-    this._generalTreeElement = generalTreeElement;
-    generalTreeElement.addEventListener(WebInspector.GeneralTreeElement.Event.MainTitleDidChange, this._mainTitleDidChange, this);
-};
-
-WebInspector.GeneralTreeElementPathComponent.prototype = {
-    constructor: WebInspector.GeneralTreeElementPathComponent,
+        this._generalTreeElement = generalTreeElement;
+        generalTreeElement.addEventListener(WebInspector.GeneralTreeElement.Event.MainTitleDidChange, this._mainTitleDidChange, this);
+    }
 
     // Public
 
     get generalTreeElement()
     {
         return this._generalTreeElement;
-    },
+    }
 
     get previousSibling()
     {
@@ -50,7 +50,7 @@ WebInspector.GeneralTreeElementPathComponent.prototype = {
             return null;
 
         return new WebInspector.GeneralTreeElementPathComponent(previousSibling);
-    },
+    }
 
     get nextSibling()
     {
@@ -62,14 +62,12 @@ WebInspector.GeneralTreeElementPathComponent.prototype = {
             return null;
 
         return new WebInspector.GeneralTreeElementPathComponent(nextSibling);
-    },
+    }
 
     // Private
 
-    _mainTitleDidChange: function(event)
+    _mainTitleDidChange(event)
     {
         this.displayName = this._generalTreeElement.mainTitle;
     }
 };
-
-WebInspector.GeneralTreeElementPathComponent.prototype.__proto__ = WebInspector.HierarchicalPathComponent.prototype;

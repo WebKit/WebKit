@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.HierarchicalPathNavigationItem = function(identifier, components) {
-    WebInspector.NavigationItem.call(this, identifier);
+WebInspector.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends WebInspector.NavigationItem
+{
+    constructor(identifier, components)
+    {
+        super(identifier);
 
-    this.components = components;
-};
-
-WebInspector.HierarchicalPathNavigationItem.StyleClassName = "hierarchical-path";
-WebInspector.HierarchicalPathNavigationItem.AlwaysShowLastPathComponentSeparatorStyleClassName = "always-show-last-path-component-separator";
-
-WebInspector.HierarchicalPathNavigationItem.Event = {
-    PathComponentWasSelected: "hierarchical-path-navigation-item-path-component-was-selected"
-};
-
-WebInspector.HierarchicalPathNavigationItem.prototype = {
-    constructor: WebInspector.HierarchicalPathNavigationItem,
+        this.components = components;
+    }
 
     // Public
 
     get components()
     {
         return this._components;
-    },
+    }
 
     set components(newComponents)
     {
@@ -69,17 +62,17 @@ WebInspector.HierarchicalPathNavigationItem.prototype = {
         // Update layout for the so other items can adjust to the extra space (or lack thereof) too.
         if (this.parentNavigationBar)
             this.parentNavigationBar.updateLayoutSoon();
-    },
+    }
 
     get lastComponent()
     {
         return this._components.lastValue || null;
-    },
+    }
 
     get alwaysShowLastPathComponentSeparator()
     {
         return this.element.classList.contains(WebInspector.HierarchicalPathNavigationItem.AlwaysShowLastPathComponentSeparatorStyleClassName);
-    },
+    }
 
     set alwaysShowLastPathComponentSeparator(flag)
     {
@@ -87,9 +80,9 @@ WebInspector.HierarchicalPathNavigationItem.prototype = {
             this.element.classList.add(WebInspector.HierarchicalPathNavigationItem.AlwaysShowLastPathComponentSeparatorStyleClassName);
         else
             this.element.classList.remove(WebInspector.HierarchicalPathNavigationItem.AlwaysShowLastPathComponentSeparatorStyleClassName);
-    },
+    }
 
-    updateLayout: function(expandOnly)
+    updateLayout(expandOnly)
     {
         var navigationBar = this.parentNavigationBar;
         if (!navigationBar)
@@ -222,16 +215,25 @@ WebInspector.HierarchicalPathNavigationItem.prototype = {
 
         // Set the tool tip of the collapsed component.
         this._collapsedComponent.element.title = hiddenDisplayNames.join("\n");
-    },
+    }
+
+    // Protected
+
+    get additionalClassNames()
+    {
+        return ["hierarchical-path"];
+    }
 
     // Private
 
-    _additionalClassNames: [WebInspector.HierarchicalPathNavigationItem.StyleClassName],
-
-    _siblingPathComponentWasSelected: function(event)
+    _siblingPathComponentWasSelected(event)
     {
         this.dispatchEventToListeners(WebInspector.HierarchicalPathNavigationItem.Event.PathComponentWasSelected, event.data);
     }
 };
 
-WebInspector.HierarchicalPathNavigationItem.prototype.__proto__ = WebInspector.NavigationItem.prototype;
+WebInspector.HierarchicalPathNavigationItem.AlwaysShowLastPathComponentSeparatorStyleClassName = "always-show-last-path-component-separator";
+
+WebInspector.HierarchicalPathNavigationItem.Event = {
+    PathComponentWasSelected: "hierarchical-path-navigation-item-path-component-was-selected"
+};

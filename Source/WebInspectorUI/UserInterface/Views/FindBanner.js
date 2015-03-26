@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,127 +23,108 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FindBanner = function(delegate, element) {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+WebInspector.FindBanner = class FindBanner extends WebInspector.Object
+{
+    constructor(delegate, element)
+    {
+        super();
 
-    this._delegate = delegate || null;
+        this._delegate = delegate || null;
 
-    this._element = element || document.createElement("div");
-    this._element.classList.add(WebInspector.FindBanner.StyleClassName);
+        this._element = element || document.createElement("div");
+        this._element.classList.add("find-banner");
 
-    this._resultCountLabel = document.createElement("label");
-    this._element.appendChild(this._resultCountLabel);
+        this._resultCountLabel = document.createElement("label");
+        this._element.appendChild(this._resultCountLabel);
 
-    this._previousResultButton = document.createElement("button");
-    this._previousResultButton.classList.add(WebInspector.FindBanner.SegmentedButtonStyleClassName);
-    this._previousResultButton.classList.add(WebInspector.FindBanner.LeftSegmentButtonStyleClassName);
-    this._previousResultButton.disabled = true;
-    this._previousResultButton.addEventListener("click", this._previousResultButtonClicked.bind(this));
-    this._element.appendChild(this._previousResultButton);
+        this._previousResultButton = document.createElement("button");
+        this._previousResultButton.classList.add(WebInspector.FindBanner.SegmentedButtonStyleClassName);
+        this._previousResultButton.classList.add(WebInspector.FindBanner.LeftSegmentButtonStyleClassName);
+        this._previousResultButton.disabled = true;
+        this._previousResultButton.addEventListener("click", this._previousResultButtonClicked.bind(this));
+        this._element.appendChild(this._previousResultButton);
 
-    var previousResultButtonGlyphElement = document.createElement("div");
-    previousResultButtonGlyphElement.classList.add(WebInspector.FindBanner.SegmentGlyphStyleClassName);
-    this._previousResultButton.appendChild(previousResultButtonGlyphElement);
+        var previousResultButtonGlyphElement = document.createElement("div");
+        previousResultButtonGlyphElement.classList.add(WebInspector.FindBanner.SegmentGlyphStyleClassName);
+        this._previousResultButton.appendChild(previousResultButtonGlyphElement);
 
-    this._nextResultButton = document.createElement("button");
-    this._nextResultButton.classList.add(WebInspector.FindBanner.SegmentedButtonStyleClassName);
-    this._nextResultButton.classList.add(WebInspector.FindBanner.RightSegmentButtonStyleClassName);
-    this._nextResultButton.disabled = true;
-    this._nextResultButton.addEventListener("click", this._nextResultButtonClicked.bind(this));
-    this._element.appendChild(this._nextResultButton);
+        this._nextResultButton = document.createElement("button");
+        this._nextResultButton.classList.add(WebInspector.FindBanner.SegmentedButtonStyleClassName);
+        this._nextResultButton.classList.add(WebInspector.FindBanner.RightSegmentButtonStyleClassName);
+        this._nextResultButton.disabled = true;
+        this._nextResultButton.addEventListener("click", this._nextResultButtonClicked.bind(this));
+        this._element.appendChild(this._nextResultButton);
 
-    var nextResultButtonGlyphElement = document.createElement("div");
-    nextResultButtonGlyphElement.classList.add(WebInspector.FindBanner.SegmentGlyphStyleClassName);
-    this._nextResultButton.appendChild(nextResultButtonGlyphElement);
+        var nextResultButtonGlyphElement = document.createElement("div");
+        nextResultButtonGlyphElement.classList.add(WebInspector.FindBanner.SegmentGlyphStyleClassName);
+        this._nextResultButton.appendChild(nextResultButtonGlyphElement);
 
-    this._inputField = document.createElement("input");
-    this._inputField.type = "search";
-    this._inputField.spellcheck = false;
-    this._inputField.incremental = true;
-    this._inputField.setAttribute("results", 5);
-    this._inputField.setAttribute("autosave", "inspector-search");
-    this._inputField.addEventListener("keydown", this._inputFieldKeyDown.bind(this), false);
-    this._inputField.addEventListener("keyup", this._inputFieldKeyUp.bind(this), false);
-    this._inputField.addEventListener("search", this._inputFieldSearch.bind(this), false);
-    this._element.appendChild(this._inputField);
+        this._inputField = document.createElement("input");
+        this._inputField.type = "search";
+        this._inputField.spellcheck = false;
+        this._inputField.incremental = true;
+        this._inputField.setAttribute("results", 5);
+        this._inputField.setAttribute("autosave", "inspector-search");
+        this._inputField.addEventListener("keydown", this._inputFieldKeyDown.bind(this), false);
+        this._inputField.addEventListener("keyup", this._inputFieldKeyUp.bind(this), false);
+        this._inputField.addEventListener("search", this._inputFieldSearch.bind(this), false);
+        this._element.appendChild(this._inputField);
 
-    this._doneButton = document.createElement("button");
-    this._doneButton.textContent = WebInspector.UIString("Done");
-    this._doneButton.addEventListener("click", this._doneButtonClicked.bind(this));
-    this._element.appendChild(this._doneButton);
+        this._doneButton = document.createElement("button");
+        this._doneButton.textContent = WebInspector.UIString("Done");
+        this._doneButton.addEventListener("click", this._doneButtonClicked.bind(this));
+        this._element.appendChild(this._doneButton);
 
-    this._numberOfResults = null;
-    this._searchBackwards = false;
-    this._searchKeyPressed = false;
-    this._previousSearchValue = "";
+        this._numberOfResults = null;
+        this._searchBackwards = false;
+        this._searchKeyPressed = false;
+        this._previousSearchValue = "";
 
-    this._hideKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape, this.hide.bind(this), this._element);
-    this._populateFindKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "E", this._populateSearchQueryFromSelection.bind(this));
-    this._populateFindKeyboardShortcut.implicitlyPreventsDefault = false;
-    this._findNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._nextResultButtonClicked.bind(this));
-    this._findPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._previousResultButtonClicked.bind(this));
+        this._hideKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape, this.hide.bind(this), this._element);
+        this._populateFindKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "E", this._populateSearchQueryFromSelection.bind(this));
+        this._populateFindKeyboardShortcut.implicitlyPreventsDefault = false;
+        this._findNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._nextResultButtonClicked.bind(this));
+        this._findPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._previousResultButtonClicked.bind(this));
 
-    this._generateButtonsGlyphsIfNeeded();
-};
-
-// FIXME: Move to a WebInspector.Object subclass and we can remove this.
-WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.FindBanner);
-
-WebInspector.FindBanner.StyleClassName = "find-banner";
-WebInspector.FindBanner.SupportsFindBannerStyleClassName = "supports-find-banner";
-WebInspector.FindBanner.ShowingFindBannerStyleClassName = "showing-find-banner";
-WebInspector.FindBanner.NoTransitionStyleClassName = "no-find-banner-transition";
-WebInspector.FindBanner.ShowingStyleClassName = "showing";
-WebInspector.FindBanner.SegmentedButtonStyleClassName = "segmented";
-WebInspector.FindBanner.LeftSegmentButtonStyleClassName = "left";
-WebInspector.FindBanner.RightSegmentButtonStyleClassName = "right";
-WebInspector.FindBanner.SegmentGlyphStyleClassName = "glyph";
-
-WebInspector.FindBanner.Event = {
-    DidShow: "find-banner-did-show",
-    DidHide: "find-banner-did-hide"
-};
-
-WebInspector.FindBanner.prototype = {
-    constructor: WebInspector.FindBanner,
+        this._generateButtonsGlyphsIfNeeded();
+    }
 
     // Public
 
     get delegate()
     {
         return this._delegate;
-    },
+    }
 
     set delegate(newDelegate)
     {
         this._delegate = newDelegate || null;
-    },
+    }
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get inputField()
     {
         return this._inputField;
-    },
+    }
 
     get searchQuery()
     {
         return this._inputField.value || "";
-    },
+    }
 
     set searchQuery(query)
     {
         this._inputField.value = query || "";
-    },
+    }
 
     get numberOfResults()
     {
         return this._numberOfResults;
-    },
+    }
 
     set numberOfResults(numberOfResults)
     {
@@ -162,15 +143,21 @@ WebInspector.FindBanner.prototype = {
             this._resultCountLabel.textContent = WebInspector.UIString("1 match");
         else if (numberOfResults > 1)
             this._resultCountLabel.textContent = WebInspector.UIString("%d matches").format(numberOfResults);
-    },
+    }
 
     get targetElement()
     {
         return this._targetElement;
-    },
+    }
 
     set targetElement(element)
     {
+        function delayedWork()
+        {
+            oldTargetElement.classList.remove(WebInspector.FindBanner.NoTransitionStyleClassName);
+            this._element.classList.remove(WebInspector.FindBanner.NoTransitionStyleClassName);
+        }
+
         if (this._targetElement) {
             var oldTargetElement = this._targetElement;
 
@@ -181,12 +168,6 @@ WebInspector.FindBanner.prototype = {
             this._element.classList.add(WebInspector.FindBanner.NoTransitionStyleClassName);
             this._element.classList.remove(WebInspector.FindBanner.ShowingStyleClassName);
 
-            function delayedWork()
-            {
-                oldTargetElement.classList.remove(WebInspector.FindBanner.NoTransitionStyleClassName);
-                this._element.classList.remove(WebInspector.FindBanner.NoTransitionStyleClassName);
-            }
-
             // Delay so we can remove the no transition style class after the other style changes are committed.
             setTimeout(delayedWork.bind(this), 0);
         }
@@ -195,14 +176,14 @@ WebInspector.FindBanner.prototype = {
 
         if (this._targetElement)
             this._targetElement.classList.add(WebInspector.FindBanner.SupportsFindBannerStyleClassName);
-    },
+    }
 
     get showing()
     {
         return this._element.classList.contains(WebInspector.FindBanner.ShowingStyleClassName);
-    },
+    }
 
-    show: function()
+    show()
     {
         console.assert(this._targetElement);
         if (!this._targetElement)
@@ -228,9 +209,9 @@ WebInspector.FindBanner.prototype = {
         setTimeout(delayedWork.bind(this), 0);
 
         this.dispatchEventToListeners(WebInspector.FindBanner.Event.DidShow);
-    },
+    }
 
-    hide: function()
+    hide()
     {
         console.assert(this._targetElement);
         if (!this._targetElement)
@@ -242,27 +223,27 @@ WebInspector.FindBanner.prototype = {
         this._element.classList.remove(WebInspector.FindBanner.ShowingStyleClassName);
 
         this.dispatchEventToListeners(WebInspector.FindBanner.Event.DidHide);
-    },
+    }
 
     // Private
 
-    _inputFieldKeyDown: function(event)
+    _inputFieldKeyDown(event)
     {
         if (event.keyIdentifier === "Shift")
             this._searchBackwards = true;
         else if (event.keyIdentifier === "Enter")
             this._searchKeyPressed = true;
-    },
+    }
 
-    _inputFieldKeyUp: function(event)
+    _inputFieldKeyUp(event)
     {
         if (event.keyIdentifier === "Shift")
             this._searchBackwards = false;
         else if (event.keyIdentifier === "Enter")
             this._searchKeyPressed = false;
-    },
+    }
 
-    _inputFieldSearch: function(event)
+    _inputFieldSearch(event)
     {
         if (this._inputField.value) {
             if (this._previousSearchValue !== this.searchQuery) {
@@ -285,9 +266,9 @@ WebInspector.FindBanner.prototype = {
         }
 
         this._previousSearchValue = this.searchQuery;
-    },
+    }
 
-    _populateSearchQueryFromSelection: function(event)
+    _populateSearchQueryFromSelection(event)
     {
         if (this._delegate && typeof this._delegate.findBannerSearchQueryForSelection === "function") {
             var query = this._delegate.findBannerSearchQueryForSelection(this);
@@ -298,26 +279,26 @@ WebInspector.FindBanner.prototype = {
                     this._delegate.findBannerPerformSearch(this, this.searchQuery);
             }
         }
-    },
+    }
 
-    _previousResultButtonClicked: function(event)
+    _previousResultButtonClicked(event)
     {
         if (this._delegate && typeof this._delegate.findBannerRevealPreviousResult === "function")
             this._delegate.findBannerRevealPreviousResult(this);
-    },
+    }
 
-    _nextResultButtonClicked: function(event)
+    _nextResultButtonClicked(event)
     {
         if (this._delegate && typeof this._delegate.findBannerRevealNextResult === "function")
             this._delegate.findBannerRevealNextResult(this);
-    },
+    }
 
-    _doneButtonClicked: function(event)
+    _doneButtonClicked(event)
     {
         this.hide();
-    },
+    }
 
-    _generateButtonsGlyphsIfNeeded: function()
+    _generateButtonsGlyphsIfNeeded()
     {
         if (WebInspector.FindBanner._generatedButtonsGlyphs)
             return;
@@ -342,4 +323,16 @@ WebInspector.FindBanner.prototype = {
     }
 };
 
-WebInspector.FindBanner.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.FindBanner.SupportsFindBannerStyleClassName = "supports-find-banner";
+WebInspector.FindBanner.ShowingFindBannerStyleClassName = "showing-find-banner";
+WebInspector.FindBanner.NoTransitionStyleClassName = "no-find-banner-transition";
+WebInspector.FindBanner.ShowingStyleClassName = "showing";
+WebInspector.FindBanner.SegmentedButtonStyleClassName = "segmented";
+WebInspector.FindBanner.LeftSegmentButtonStyleClassName = "left";
+WebInspector.FindBanner.RightSegmentButtonStyleClassName = "right";
+WebInspector.FindBanner.SegmentGlyphStyleClassName = "glyph";
+
+WebInspector.FindBanner.Event = {
+    DidShow: "find-banner-did-show",
+    DidHide: "find-banner-did-hide"
+};

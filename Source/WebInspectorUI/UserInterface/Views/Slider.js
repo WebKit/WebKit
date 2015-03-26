@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Slider = function()
+WebInspector.Slider = class Slider extends WebInspector.Object
 {
-    this._element = document.createElement("div");
-    this._element.className = "slider";
+    constructor()
+    {
+        super();
 
-    this._knob = this._element.appendChild(document.createElement("img"));
+        this._element = document.createElement("div");
+        this._element.className = "slider";
 
-    this._value = 0;
-    this._knobX = 0;
-    this.__maxX = 0;
+        this._knob = this._element.appendChild(document.createElement("img"));
 
-    this._element.addEventListener("mousedown", this);
-};
+        this._value = 0;
+        this._knobX = 0;
+        this.__maxX = 0;
 
-WebInspector.Slider.KnobWidth = 13;
-
-WebInspector.Slider.prototype = {
-    contructor: WebInspector.Slider,
-    __proto__: WebInspector.Object.prototype,
+        this._element.addEventListener("mousedown", this);
+    }
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get value()
     {
         return this._value;
-    },
+    }
 
     set value(value)
     {
@@ -69,11 +67,11 @@ WebInspector.Slider.prototype = {
 
         if (this.delegate && typeof this.delegate.sliderValueDidChange === "function")
             this.delegate.sliderValueDidChange(this, value);
-    },
+    }
 
     // Protected
 
-    handleEvent: function(event)
+    handleEvent(event)
     {
         switch (event.type) {
         case "mousedown":
@@ -86,11 +84,11 @@ WebInspector.Slider.prototype = {
             this._handleMouseup(event);
             break;
         }
-    },
+    }
 
     // Private
 
-    _handleMousedown: function(event)
+    _handleMousedown(event)
     {
         if (event.target !== this._knob)
             this.value = (this._localPointForEvent(event).x - 3) / this._maxX;
@@ -102,30 +100,30 @@ WebInspector.Slider.prototype = {
 
         window.addEventListener("mousemove", this, true);
         window.addEventListener("mouseup", this, true);
-    },
+    }
 
-    _handleMousemove: function(event)
+    _handleMousemove(event)
     {
         var dx = this._localPointForEvent(event).x - this._startMouseX;
         var x = Math.max(Math.min(this._startKnobX + dx, this._maxX), 0);
 
         this.value = x / this._maxX;
-    },
+    }
 
-    _handleMouseup: function(event)
+    _handleMouseup(event)
     {
         this._element.classList.remove("dragging");
 
         window.removeEventListener("mousemove", this, true);
         window.removeEventListener("mouseup", this, true);
-    },
+    }
 
-    _localPointForEvent: function(event)
+    _localPointForEvent(event)
     {
         // We convert all event coordinates from page coordinates to local coordinates such that the slider
         // may be transformed using CSS Transforms and interaction works as expected.
         return window.webkitConvertPointFromPageToNode(this._element, new WebKitPoint(event.pageX, event.pageY));
-    },
+    }
 
     get _maxX()
     {
@@ -135,3 +133,5 @@ WebInspector.Slider.prototype = {
         return this.__maxX;
     }
 };
+
+WebInspector.Slider.KnobWidth = 13;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,74 +23,68 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DetailsSectionSimpleRow = function(label, value) {
-    WebInspector.DetailsSectionRow.call(this);
+WebInspector.DetailsSectionSimpleRow = class DetailsSectionSimpleRow extends WebInspector.DetailsSectionRow
+{
+    constructor(label, value)
+    {
+        super();
 
-    this.element.classList.add(WebInspector.DetailsSectionSimpleRow.StyleClassName);
+        this.element.classList.add("simple");
 
-    this._labelElement = document.createElement("div");
-    this._labelElement.className = WebInspector.DetailsSectionSimpleRow.LabelElementStyleClassName;
-    this.element.appendChild(this._labelElement);
+        this._labelElement = document.createElement("div");
+        this._labelElement.className = WebInspector.DetailsSectionSimpleRow.LabelElementStyleClassName;
+        this.element.appendChild(this._labelElement);
 
-    this._valueElement = document.createElement("div");
-    this._valueElement.className = WebInspector.DetailsSectionSimpleRow.ValueElementStyleClassName;
-    this.element.appendChild(this._valueElement);
+        this._valueElement = document.createElement("div");
+        this._valueElement.className = WebInspector.DetailsSectionSimpleRow.ValueElementStyleClassName;
+        this.element.appendChild(this._valueElement);
 
-    // Workaround for <rdar://problem/12668870> Triple-clicking text within a
-    // <div> set to "display: table-cell" selects text outside the cell.
-    //
-    // On triple-click, adjust the selection range to include only the value
-    // element if the selection extends beyond it.
-    var valueElementClicked = function(event) {
-        event.stopPropagation();
+        // Workaround for <rdar://problem/12668870> Triple-clicking text within a
+        // <div> set to "display: table-cell" selects text outside the cell.
+        //
+        // On triple-click, adjust the selection range to include only the value
+        // element if the selection extends WebInspector.beyond it.
+        var valueElementClicked = function(event) {
+            event.stopPropagation();
 
-        if (event.detail < 3)
-            return;
+            if (event.detail < 3)
+                return;
 
-        var currentSelection = window.getSelection();
-        if (!currentSelection)
-            return;
+            var currentSelection = window.getSelection();
+            if (!currentSelection)
+                return;
 
-        var currentRange = currentSelection.getRangeAt(0);
-        if (!currentRange || currentRange.startContainer === currentRange.endContainer)
-            return;
+            var currentRange = currentSelection.getRangeAt(0);
+            if (!currentRange || currentRange.startContainer === currentRange.endContainer)
+                return;
 
-        var correctedRange = document.createRange();
-        correctedRange.selectNodeContents(event.currentTarget);
-        currentSelection.removeAllRanges();
-        currentSelection.addRange(correctedRange);
-    };
-    this._valueElement.addEventListener("click", valueElementClicked);
+            var correctedRange = document.createRange();
+            correctedRange.selectNodeContents(event.currentTarget);
+            currentSelection.removeAllRanges();
+            currentSelection.addRange(correctedRange);
+        };
+        this._valueElement.addEventListener("click", valueElementClicked);
 
-    this.label = label;
-    this.value = value;
-};
-
-WebInspector.DetailsSectionSimpleRow.StyleClassName = "simple";
-WebInspector.DetailsSectionSimpleRow.DataStyleClassName = "data";
-WebInspector.DetailsSectionSimpleRow.EmptyStyleClassName = "empty";
-WebInspector.DetailsSectionSimpleRow.LabelElementStyleClassName = "label";
-WebInspector.DetailsSectionSimpleRow.ValueElementStyleClassName = "value";
-
-WebInspector.DetailsSectionSimpleRow.prototype = {
-    constructor: WebInspector.DetailsSectionSimpleRow,
+        this.label = label;
+        this.value = value;
+    }
 
     // Public
 
     get label()
     {
         return this._labelElement.textContent;
-    },
+    }
 
     set label(label)
     {
         this._labelElement.textContent = label;
-    },
+    }
 
     get value()
     {
         return this._value;
-    },
+    }
 
     set value(value)
     {
@@ -117,4 +111,7 @@ WebInspector.DetailsSectionSimpleRow.prototype = {
     }
 };
 
-WebInspector.DetailsSectionSimpleRow.prototype.__proto__ = WebInspector.DetailsSectionRow.prototype;
+WebInspector.DetailsSectionSimpleRow.DataStyleClassName = "data";
+WebInspector.DetailsSectionSimpleRow.EmptyStyleClassName = "empty";
+WebInspector.DetailsSectionSimpleRow.LabelElementStyleClassName = "label";
+WebInspector.DetailsSectionSimpleRow.ValueElementStyleClassName = "value";

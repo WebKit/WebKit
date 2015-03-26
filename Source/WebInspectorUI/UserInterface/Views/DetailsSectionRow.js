@@ -23,33 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DetailsSectionRow = function(emptyMessage) {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+WebInspector.DetailsSectionRow = class DetailsSectionRow extends WebInspector.Object
+{
+    constructor(emptyMessage)
+    {
+        super();
 
-    this._element = document.createElement("div");
-    this._element.className = WebInspector.DetailsSectionRow.StyleClassName;
+        this._element = document.createElement("div");
+        this._element.className = "row";
 
-    this._emptyMessage = emptyMessage || "";
-};
-
-WebInspector.DetailsSectionRow.StyleClassName = "row";
-WebInspector.DetailsSectionRow.EmptyStyleClassName = "empty";
-
-WebInspector.DetailsSectionRow.prototype = {
-    constructor: WebInspector.DetailsSectionRow,
+        this._emptyMessage = emptyMessage || "";
+    }
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get emptyMessage()
     {
         return this._emptyMessage;
-    },
+    }
 
     set emptyMessage(emptyMessage)
     {
@@ -57,9 +53,9 @@ WebInspector.DetailsSectionRow.prototype = {
 
         if (!this._element.childNodes.length)
             this.showEmptyMessage();
-    },
+    }
 
-    showEmptyMessage: function()
+    showEmptyMessage()
     {
         this.element.classList.add(WebInspector.DetailsSectionRow.EmptyStyleClassName);
 
@@ -68,13 +64,13 @@ WebInspector.DetailsSectionRow.prototype = {
             this.element.appendChild(this._emptyMessage);
         } else
             this.element.textContent = this._emptyMessage;
-    },
+    }
 
-    hideEmptyMessage: function()
+    hideEmptyMessage()
     {
         this.element.classList.remove(WebInspector.DetailsSectionRow.EmptyStyleClassName);
         this.element.removeChildren();
     }
 };
 
-WebInspector.DetailsSectionRow.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.DetailsSectionRow.EmptyStyleClassName = "empty";

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DetailsSectionDataGridRow = function(dataGrid, emptyMessage) {
-    WebInspector.DetailsSectionRow.call(this, emptyMessage);
+WebInspector.DetailsSectionDataGridRow = class DetailsSectionDataGridRow extends WebInspector.DetailsSectionRow
+{
+    constructor(dataGrid, emptyMessage)
+    {
+        super(emptyMessage);
 
-    this.element.classList.add(WebInspector.DetailsSectionDataGridRow.StyleClassName);
+        this.element.classList.add("data-grid");
 
-    this.dataGrid = dataGrid;
-};
-
-WebInspector.DetailsSectionDataGridRow.StyleClassName = "data-grid";
-
-WebInspector.DetailsSectionDataGridRow.prototype = {
-    constructor: WebInspector.DetailsSectionDataGridRow,
+        this.dataGrid = dataGrid;
+    }
 
     // Public
 
     get dataGrid()
     {
         return this._dataGrid;
-    },
+    }
 
     set dataGrid(dataGrid)
     {
@@ -59,5 +57,3 @@ WebInspector.DetailsSectionDataGridRow.prototype = {
             this.showEmptyMessage();
     }
 };
-
-WebInspector.DetailsSectionDataGridRow.prototype.__proto__ = WebInspector.DetailsSectionRow.prototype;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,85 +23,73 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DetailsSection = function(identifier, title, groups, optionsElement, defaultCollapsedSettingValue) {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
+{
+    constructor(identifier, title, groups, optionsElement, defaultCollapsedSettingValue)
+    {
+        super();
 
-    console.assert(identifier);
+        console.assert(identifier);
 
-    this._element = document.createElement("div");
-    this._element.className = WebInspector.DetailsSection.StyleClassName;
-    this._element.classList.add(identifier);
+        this._element = document.createElement("div");
+        this._element.className = WebInspector.DetailsSection.StyleClassName;
+        this._element.classList.add(identifier);
 
-    this._headerElement = document.createElement("div");
-    this._headerElement.addEventListener("click", this._headerElementClicked.bind(this));
-    this._headerElement.className = WebInspector.DetailsSection.HeaderElementStyleClassName;
-    this._element.appendChild(this._headerElement);
+        this._headerElement = document.createElement("div");
+        this._headerElement.addEventListener("click", this._headerElementClicked.bind(this));
+        this._headerElement.className = WebInspector.DetailsSection.HeaderElementStyleClassName;
+        this._element.appendChild(this._headerElement);
 
-    if (optionsElement instanceof HTMLElement) {
-        this._optionsElement = optionsElement;
-        this._optionsElement.addEventListener("mousedown", this._optionsElementMouseDown.bind(this));
-        this._optionsElement.addEventListener("mouseup", this._optionsElementMouseUp.bind(this));
-        this._headerElement.appendChild(this._optionsElement);
+        if (optionsElement instanceof HTMLElement) {
+            this._optionsElement = optionsElement;
+            this._optionsElement.addEventListener("mousedown", this._optionsElementMouseDown.bind(this));
+            this._optionsElement.addEventListener("mouseup", this._optionsElementMouseUp.bind(this));
+            this._headerElement.appendChild(this._optionsElement);
+        }
+
+        this._titleElement = document.createElement("span");
+        this._headerElement.appendChild(this._titleElement);
+
+        this._contentElement = document.createElement("div");
+        this._contentElement.className = WebInspector.DetailsSection.ContentElementStyleClassName;
+        this._element.appendChild(this._contentElement);
+
+        this._generateDisclosureTrianglesIfNeeded();
+
+        this._identifier = identifier;
+        this.title = title;
+        this.groups = groups || [new WebInspector.DetailsSectionGroup];
+
+        this._collapsedSetting = new WebInspector.Setting(identifier + "-details-section-collapsed", !!defaultCollapsedSettingValue);
+        this.collapsed = this._collapsedSetting.value;
     }
-
-    this._titleElement = document.createElement("span");
-    this._headerElement.appendChild(this._titleElement);
-
-    this._contentElement = document.createElement("div");
-    this._contentElement.className = WebInspector.DetailsSection.ContentElementStyleClassName;
-    this._element.appendChild(this._contentElement);
-
-    this._generateDisclosureTrianglesIfNeeded();
-
-    this._identifier = identifier;
-    this.title = title;
-    this.groups = groups || [new WebInspector.DetailsSectionGroup];
-
-    this._collapsedSetting = new WebInspector.Setting(identifier + "-details-section-collapsed", !!defaultCollapsedSettingValue);
-    this.collapsed = this._collapsedSetting.value;
-};
-
-WebInspector.DetailsSection.StyleClassName = "details-section";
-WebInspector.DetailsSection.HeaderElementStyleClassName = "header";
-WebInspector.DetailsSection.TitleElementStyleClassName = "title";
-WebInspector.DetailsSection.ContentElementStyleClassName = "content";
-WebInspector.DetailsSection.CollapsedStyleClassName = "collapsed";
-WebInspector.DetailsSection.MouseOverOptionsElementStyleClassName = "mouse-over-options-element";
-WebInspector.DetailsSection.DisclosureTriangleOpenCanvasIdentifier = "details-section-disclosure-triangle-open";
-WebInspector.DetailsSection.DisclosureTriangleClosedCanvasIdentifier = "details-section-disclosure-triangle-closed";
-WebInspector.DetailsSection.DisclosureTriangleNormalCanvasIdentifierSuffix = "-normal";
-WebInspector.DetailsSection.DisclosureTriangleActiveCanvasIdentifierSuffix = "-active";
-
-WebInspector.DetailsSection.prototype = {
-    constructor: WebInspector.DetailsSection,
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get identifier()
     {
         return this._identifier;
-    },
+    }
 
     get title()
     {
         return this._titleElement.textContent;
-    },
+    }
 
     set title(title)
     {
         this._titleElement.textContent = title;
-    },
+    }
 
     get collapsed()
     {
         return this._element.classList.contains(WebInspector.DetailsSection.CollapsedStyleClassName);
-    },
+    }
 
     set collapsed(flag)
     {
@@ -111,12 +99,12 @@ WebInspector.DetailsSection.prototype = {
             this._element.classList.remove(WebInspector.DetailsSection.CollapsedStyleClassName);
 
         this._collapsedSetting.value = flag || false;
-    },
+    }
 
     get groups()
     {
         return this._groups;
-    },
+    }
 
     set groups(groups)
     {
@@ -126,11 +114,11 @@ WebInspector.DetailsSection.prototype = {
 
         for (var i = 0; i < this._groups.length; ++i)
             this._contentElement.appendChild(this._groups[i].element);
-    },
+    }
 
     // Private
 
-    _headerElementClicked: function(event)
+    _headerElementClicked(event)
     {
         if (event.target.isSelfOrDescendant(this._optionsElement))
             return;
@@ -138,19 +126,19 @@ WebInspector.DetailsSection.prototype = {
         this.collapsed = !this.collapsed;
 
         this._element.scrollIntoViewIfNeeded(false);
-    },
+    }
 
-    _optionsElementMouseDown: function(event)
+    _optionsElementMouseDown(event)
     {
         this._headerElement.classList.add(WebInspector.DetailsSection.MouseOverOptionsElementStyleClassName);
-    },
+    }
 
-    _optionsElementMouseUp: function(event)
+    _optionsElementMouseUp(event)
     {
         this._headerElement.classList.remove(WebInspector.DetailsSection.MouseOverOptionsElementStyleClassName);
-    },
+    }
 
-    _generateDisclosureTrianglesIfNeeded: function()
+    _generateDisclosureTrianglesIfNeeded()
     {
         if (WebInspector.DetailsSection._generatedDisclosureTriangles)
             return;
@@ -173,4 +161,13 @@ WebInspector.DetailsSection.prototype = {
     }
 };
 
-WebInspector.DetailsSection.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.DetailsSection.StyleClassName = "details-section";
+WebInspector.DetailsSection.HeaderElementStyleClassName = "header";
+WebInspector.DetailsSection.TitleElementStyleClassName = "title";
+WebInspector.DetailsSection.ContentElementStyleClassName = "content";
+WebInspector.DetailsSection.CollapsedStyleClassName = "collapsed";
+WebInspector.DetailsSection.MouseOverOptionsElementStyleClassName = "mouse-over-options-element";
+WebInspector.DetailsSection.DisclosureTriangleOpenCanvasIdentifier = "details-section-disclosure-triangle-open";
+WebInspector.DetailsSection.DisclosureTriangleClosedCanvasIdentifier = "details-section-disclosure-triangle-closed";
+WebInspector.DetailsSection.DisclosureTriangleNormalCanvasIdentifierSuffix = "-normal";
+WebInspector.DetailsSection.DisclosureTriangleActiveCanvasIdentifierSuffix = "-active";
