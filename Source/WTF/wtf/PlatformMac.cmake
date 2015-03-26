@@ -1,4 +1,13 @@
 list(APPEND WTF_SOURCES
+    AutodrainedPoolMac.mm
+    RunLoopTimerCF.cpp
+    SchedulePairCF.cpp
+    SchedulePairMac.mm
+
+    cf/RunLoopCF.cpp
+
+    cocoa/WorkQueueCocoa.cpp
+
     mac/DeprecatedSymbolsUsedBySafari.mm
     mac/MainThreadMac.mm
 

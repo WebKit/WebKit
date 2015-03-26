@@ -18,10 +18,10 @@
  *
  */
 
-#if !PLATFORM(IOS)
-
 #import "config.h"
 #import "Icon.h"
+
+#if !PLATFORM(IOS)
 
 #import "GraphicsContext.h"
 #import "IntRect.h"

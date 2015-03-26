@@ -49,7 +49,6 @@ list(APPEND WebCore_SOURCES
     loader/soup/CachedRawResourceSoup.cpp
     loader/soup/SubresourceLoaderSoup.cpp
 
-    platform/Cursor.cpp
     platform/PlatformStrategies.cpp
 
     platform/audio/gtk/AudioBusGtk.cpp

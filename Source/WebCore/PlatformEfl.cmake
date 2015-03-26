@@ -66,7 +66,6 @@ list(APPEND WebCore_SOURCES
 
     platform/ContextMenuItemNone.cpp
     platform/ContextMenuNone.cpp
-    platform/Cursor.cpp
 
     platform/audio/efl/AudioBusEfl.cpp
 

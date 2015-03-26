@@ -1,3 +1,36 @@
+find_library(ACCELERATE_LIBRARY accelerate)
+find_library(AUDIOUNIT_LIBRARY AudioUnit)
+find_library(CARBON_LIBRARY Carbon)
+find_library(COCOA_LIBRARY Cocoa)
+find_library(DISKARBITRATION_LIBRARY DiskArbitration)
+find_library(IOKIT_LIBRARY IOKit)
+find_library(OPENGL_LIBRARY OpenGL)
+find_library(QUARTZCORE_LIBRARY QuartzCore)
+find_library(SQLITE3_LIBRARY sqlite3)
+find_library(XML2_LIBRARY XML2)
+find_package(ZLIB REQUIRED)
+
+if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
+set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceMavericks.a)
+else ()
+set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceYosemite.a)
+endif ()
+link_directories(../../WebKitLibraries)
+
+list(APPEND WebKit_LIBRARIES
+    ${ACCELERATE_LIBRARY}
+    ${AUDIOUNIT_LIBRARY}
+    ${CARBON_LIBRARY}
+    ${COCOA_LIBRARY}
+    ${DISKARBITRATION_LIBRARY}
+    ${IOKIT_LIBRARY}
+    ${OPENGL_LIBRARY}
+    ${QUARTZCORE_LIBRARY}
+    ${SQLITE3_LIBRARY}
+    ${WEBKITSYSTEMINTERFACE_LIBRARY}
+    ${XML2_LIBRARY}
+)
+
 list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/dfg"
     "${WEBCORE_DIR}/accessibility/mac"

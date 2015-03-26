@@ -8,6 +8,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/loader/mac"
     "${WEBCORE_DIR}/page/cocoa"
     "${WEBCORE_DIR}/page/mac"
+    "${WEBCORE_DIR}/platform/audio/mac"
     "${WEBCORE_DIR}/platform/cf"
     "${WEBCORE_DIR}/platform/cocoa"
     "${WEBCORE_DIR}/platform/graphics/avfoundation"
@@ -18,6 +19,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/cocoa"
     "${WEBCORE_DIR}/platform/graphics/cg"
     "${WEBCORE_DIR}/platform/graphics/opentype"
+    "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/mac"
     "${WEBCORE_DIR}/platform/mac"
     "${WEBCORE_DIR}/platform/network/cocoa"
@@ -41,6 +43,14 @@ list(APPEND WebCore_SOURCES
     accessibility/mac/WebAccessibilityObjectWrapperBase.mm
     accessibility/mac/WebAccessibilityObjectWrapperMac.mm
 
+    crypto/CommonCryptoUtilities.cpp
+    crypto/CryptoAlgorithm.cpp
+    crypto/CryptoAlgorithmDescriptionBuilder.cpp
+    crypto/CryptoAlgorithmRegistry.cpp
+    crypto/CryptoKey.cpp
+    crypto/CryptoKeyPair.cpp
+    crypto/SubtleCrypto.cpp
+
     loader/archive/cf/LegacyWebArchive.cpp
     loader/archive/cf/LegacyWebArchiveMac.mm
 
@@ -56,16 +66,41 @@ list(APPEND WebCore_SOURCES
     page/mac/SettingsMac.mm
     page/mac/UserAgentMac.mm
 
+    platform/LocalizedStrings.cpp
+
+    platform/audio/mac/AudioBusMac.mm
+    platform/audio/mac/AudioDestinationMac.cpp
+    platform/audio/mac/AudioFileReaderMac.cpp
+    platform/audio/mac/AudioHardwareListenerMac.cpp
+    platform/audio/mac/AudioSessionMac.cpp
+    platform/audio/mac/CARingBuffer.cpp
+    platform/audio/mac/FFTFrameMac.cpp
+    platform/audio/mac/MediaSessionManagerMac.cpp
+
+    platform/cf/CFURLExtras.cpp
+    platform/cf/CoreMediaSoftLink.cpp
+    platform/cf/FileSystemCF.cpp
+    platform/cf/MediaAccessibilitySoftLink.cpp
+    platform/cf/RunLoopObserver.cpp
+    platform/cf/SharedBufferCF.cpp
+    platform/cf/SharedTimerCF.mm
+    platform/cf/URLCF.cpp
+
     platform/cocoa/DisplaySleepDisablerCocoa.cpp
     platform/cocoa/KeyEventCocoa.mm
     platform/cocoa/MemoryPressureHandlerCocoa.mm
     platform/cocoa/SystemVersion.mm
     platform/cocoa/TelephoneNumberDetectorCocoa.cpp
 
+    platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
     platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm
+    platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm
     platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
     platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
+    platform/graphics/avfoundation/MediaPlaybackTargetMac.mm
     platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp
+    platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm
+    platform/graphics/avfoundation/MediaTimeAVFoundation.cpp
 
     platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm
     platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp
@@ -95,6 +130,59 @@ list(APPEND WebCore_SOURCES
     platform/graphics/ca/mac/PlatformCAFiltersMac.mm
     platform/graphics/ca/mac/PlatformCALayerMac.mm
     platform/graphics/ca/mac/WebTiledBackingLayer.mm
+
+    platform/graphics/cg/BitmapImageCG.cpp
+    platform/graphics/cg/ColorCG.cpp
+    platform/graphics/cg/FloatPointCG.cpp
+    platform/graphics/cg/FloatRectCG.cpp
+    platform/graphics/cg/FloatSizeCG.cpp
+    platform/graphics/cg/GradientCG.cpp
+    platform/graphics/cg/GraphicsContext3DCG.cpp
+    platform/graphics/cg/GraphicsContextCG.cpp
+    platform/graphics/cg/IOSurfacePool.cpp
+    platform/graphics/cg/ImageBufferCG.cpp
+    platform/graphics/cg/ImageBufferDataCG.cpp
+    platform/graphics/cg/ImageCG.cpp
+    platform/graphics/cg/ImageSourceCG.cpp
+    platform/graphics/cg/ImageSourceCGMac.mm
+    platform/graphics/cg/ImageSourceCGWin.cpp
+    platform/graphics/cg/IntPointCG.cpp
+    platform/graphics/cg/IntRectCG.cpp
+    platform/graphics/cg/IntSizeCG.cpp
+    platform/graphics/cg/PDFDocumentImage.cpp
+    platform/graphics/cg/PathCG.cpp
+    platform/graphics/cg/PatternCG.cpp
+    platform/graphics/cg/SubimageCacheWithTimer.cpp
+    platform/graphics/cg/TransformationMatrixCG.cpp
+
+    platform/graphics/mac/ColorMac.mm
+    platform/graphics/mac/ComplexTextController.cpp
+    platform/graphics/mac/ComplexTextControllerCoreText.mm
+    platform/graphics/mac/DisplayRefreshMonitorMac.cpp
+    platform/graphics/mac/FloatPointMac.mm
+    platform/graphics/mac/FloatRectMac.mm
+    platform/graphics/mac/FloatSizeMac.mm
+    platform/graphics/mac/FontCacheMac.mm
+    platform/graphics/mac/FontCustomPlatformData.cpp
+    platform/graphics/mac/GlyphPageMac.cpp
+    platform/graphics/mac/GraphicsContext3DMac.mm
+    platform/graphics/mac/GraphicsContextMac.mm
+    platform/graphics/mac/IconMac.mm
+    platform/graphics/mac/ImageMac.mm
+    platform/graphics/mac/IntPointMac.mm
+    platform/graphics/mac/IntRectMac.mm
+    platform/graphics/mac/IntSizeMac.mm
+    platform/graphics/mac/MediaTimeQTKit.mm
+    platform/graphics/mac/PDFDocumentImageMac.mm
+    platform/graphics/mac/SimpleFontDataCoreText.cpp
+    platform/graphics/mac/WebGLLayer.mm
+    platform/graphics/mac/WebLayer.mm
+
+    platform/graphics/opengl/Extensions3DOpenGL.cpp
+    platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
+    platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+    platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+    platform/graphics/opengl/TemporaryOpenGLSetting.cpp
 
     platform/graphics/opentype/OpenTypeMathData.cpp
 
@@ -191,6 +279,9 @@ list(APPEND WebCore_SOURCES
     platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm
     platform/network/mac/WebCoreURLResponse.mm
 
+    platform/posix/FileSystemPOSIX.cpp
+    platform/posix/SharedBufferPOSIX.cpp
+
     platform/text/cf/HyphenationCF.cpp
 
     platform/text/mac/LocaleMac.mm
@@ -214,6 +305,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     editing
     editing/cocoa
     editing/mac
+    fileapi
     history
     html
     html/forms
@@ -221,6 +313,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     html/shadow
     inspector
     loader
+
     loader/appcache
     loader/archive
     loader/archive/cf
@@ -233,6 +326,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     platform
     plugins
     rendering
+    replay
     storage
     style
     svg
@@ -242,6 +336,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     page/scrolling
 
     platform/animation
+    platform/audio
     platform/graphics
     platform/mac
     platform/mock
@@ -250,6 +345,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     platform/text
 
     platform/graphics/ca
+    platform/graphics/cg
     platform/graphics/filters
     platform/graphics/mac
     platform/graphics/transforms

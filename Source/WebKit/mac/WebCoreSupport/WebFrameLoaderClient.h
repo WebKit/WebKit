@@ -239,7 +239,9 @@ private:
     virtual void didCreateQuickLookHandle(WebCore::QuickLookHandle&) override;
 #endif
 
+#if ENABLE(CONTENT_FILTERING)
     void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler) override;
+#endif
 
     RetainPtr<WebFrame> m_webFrame;
 

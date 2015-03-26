@@ -72,10 +72,12 @@ void WebPageProxy::loadRecentSearches(const String& name, Vector<String>& search
     }
 }
 
+#if ENABLE(CONTENT_FILTERING)
 void WebPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler& unblockHandler, uint64_t frameID)
 {
     if (WebFrameProxy* frame = m_process->webFrame(frameID))
         frame->contentFilterDidBlockLoad(unblockHandler);
 }
+#endif
 
 }

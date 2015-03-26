@@ -1998,6 +1998,7 @@ set(WebCore_SOURCES
     platform/ContextMenu.cpp
     platform/ContextMenuItem.cpp
     platform/CrossThreadCopier.cpp
+    platform/Cursor.cpp
     platform/DateComponents.cpp
     platform/Decimal.cpp
     platform/DisplaySleepDisabler.cpp
@@ -3146,6 +3147,7 @@ endif ()
 set(WebCoreTestSupport_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mock"
     "${WEBCORE_DIR}/testing"
+    "${DERIVED_SOURCES_WEBCORE_DIR}"
 )
 
 set(WebCoreTestSupport_IDL_INCLUDES

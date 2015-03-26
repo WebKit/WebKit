@@ -13,6 +13,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Platform/mac"
     "${WEBKIT2_DIR}/Platform/IPC/mac"
     "${WEBKIT2_DIR}/Shared/API/Cocoa"
+    "${WEBKIT2_DIR}/Shared/API/c/cf"
     "${WEBKIT2_DIR}/Shared/cf"
     "${WEBKIT2_DIR}/Shared/mac"
     "${WEBKIT2_DIR}/Shared/Plugins/mac"
@@ -42,9 +43,12 @@ set(WebKit2_FORWARDING_HEADERS_FILES
 )
 
 set(WebKit2_FORWARDING_HEADERS_DIRECTORIES
-    UIProcess/API/C
     Shared/API/c
+    Shared/API/c/mac
+    UIProcess/API/C
     UIProcess/Cocoa
+    WebProcess/InjectedBundle/API/c
+    WebProcess/WebPage
 )
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebKit FILES ${WebKit2_FORWARDING_HEADERS_FILES} DIRECTORIES ${WebKit2_FORWARDING_HEADERS_DIRECTORIES})
