@@ -1,3 +1,30 @@
+2015-03-26  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION(r1807689): Slower startup time for WKWebView.
+        https://bugs.webkit.org/show_bug.cgi?id=143115
+        rdar://problem/20233711
+
+        Reviewed by Anders Carlsson.
+
+        In http://trac.webkit.org/changeset/180768 we added an observer to
+        track visibility of the NSFontPanel to ensure we could fetch the font
+        information for the current selection when the panel first becomes visible.
+        It turns out that adding the observer requires the shared font panel
+        object to be created.
+        That is apparently a very expensive operation that is regressing
+        the initialization time for the WKWebView.
+        We should initialize the NSFontPanel lazily, only when we make the entire
+        view editable.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setEditable:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView addWindowObserversForWindow:]):
+        (-[WKView _addFontPanelObserver]):
+        (-[WKView removeWindowObservers]):
+        (-[WKView observeValueForKeyPath:ofObject:change:context:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+
 2015-03-26  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.

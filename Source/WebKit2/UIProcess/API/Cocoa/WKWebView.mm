@@ -1659,6 +1659,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (void)_setEditable:(BOOL)editable
 {
     _page->setEditable(editable);
+    [_wkView _addFontPanelObserver];
 }
 
 - (_WKRemoteObjectRegistry *)_remoteObjectRegistry

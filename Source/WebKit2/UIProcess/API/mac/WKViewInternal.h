@@ -132,6 +132,7 @@ struct WebPageConfiguration;
 - (void)_windowDidOrderOnScreen:(NSNotification *)notification;
 - (void)_windowDidOrderOffScreen:(NSNotification *)notification;
 
+- (void)_addFontPanelObserver;
 // FullScreen
 
 @property (readonly) BOOL _hasFullScreenWindowController;
