@@ -47,6 +47,7 @@ static bool constraintsAreAllRelative(const ViewportConfiguration::Parameters& c
 ViewportConfiguration::ViewportConfiguration()
     : m_minimumLayoutSize(1024, 768)
     , m_canIgnoreScalingConstraints(false)
+    , m_forceAlwaysUserScalable(false)
 {
     // Setup a reasonable default configuration to avoid computing infinite scale/sizes.
     // Those are the original iPhone configuration.
@@ -178,7 +179,7 @@ double ViewportConfiguration::minimumScale() const
 
 bool ViewportConfiguration::allowsUserScaling() const
 {
-    return shouldIgnoreScalingConstraints() || m_configuration.allowsUserScaling;
+    return m_forceAlwaysUserScalable || shouldIgnoreScalingConstraints() || m_configuration.allowsUserScaling;
 }
 
 ViewportConfiguration::Parameters ViewportConfiguration::webpageParameters()

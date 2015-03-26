@@ -1,3 +1,17 @@
+2015-03-25  Tim Horton  <timothy_horton@apple.com>
+
+        Add a preference to prevent "user-scalable=no" from having any effect
+        https://bugs.webkit.org/show_bug.cgi?id=143032
+
+        Reviewed by Sam Weinig.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::ViewportConfiguration):
+        (WebCore::ViewportConfiguration::allowsUserScaling):
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::setForceAlwaysUserScalable):
+        If forceAlwaysUserScalable is set to true, force "user-scalable=yes".
+
 2015-03-25  Dan Bernstein  <mitz@apple.com>
 
         Another attempt to get the iOS EWS building again.

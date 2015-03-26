@@ -1,3 +1,15 @@
+2015-03-25  Tim Horton  <timothy_horton@apple.com>
+
+        Add a preference to prevent "user-scalable=no" from having any effect
+        https://bugs.webkit.org/show_bug.cgi?id=143032
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Add a preference and push it to the ViewportConfiguration.
+
 2015-03-25  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r181660): Force click url preview doesn't have a TextIndicator in Mail

@@ -78,6 +78,7 @@ public:
     WEBCORE_EXPORT void setViewportArguments(const ViewportArguments&);
 
     void setCanIgnoreScalingConstraints(bool canIgnoreScalingConstraints) { m_canIgnoreScalingConstraints = canIgnoreScalingConstraints; }
+    void setForceAlwaysUserScalable(bool forceAlwaysUserScalable) { m_forceAlwaysUserScalable = forceAlwaysUserScalable; }
 
     WEBCORE_EXPORT IntSize layoutSize() const;
     WEBCORE_EXPORT double initialScale() const;
@@ -113,6 +114,7 @@ private:
     ViewportArguments m_viewportArguments;
 
     bool m_canIgnoreScalingConstraints;
+    bool m_forceAlwaysUserScalable;
 };
 
 } // namespace WebCore

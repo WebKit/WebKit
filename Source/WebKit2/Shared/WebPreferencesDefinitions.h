@@ -230,6 +230,7 @@
     macro(DeveloperExtrasEnabled, developerExtrasEnabled, Bool, bool, false) \
     macro(LogsPageMessagesToSystemConsoleEnabled, logsPageMessagesToSystemConsoleEnabled, Bool, bool, false) \
     macro(IgnoreViewportScalingConstraints, ignoreViewportScalingConstraints, Bool, bool, true) \
+    macro(ForceAlwaysUserScalable, forceAlwaysUserScalable, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DEBUG_UINT32_PREFERENCE(macro) \
