@@ -1,3 +1,15 @@
+2015-03-25  Tobias Reiss  <tobi+webkit@basecode.de>
+
+        Web Inspector: Add ESLint "Disallow Undeclared Variables" rule and enable ES6 env
+        https://bugs.webkit.org/show_bug.cgi?id=143062
+
+        Reviewed by Joseph Pecoraro.
+
+        ESLint: Add support for es6 environment and "no-undef" rule which disallows
+        use of undeclared variables unless mentioned in a /*global */ block.
+
+        * .eslintrc:
+
 2015-03-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: console.table with source code location look poor

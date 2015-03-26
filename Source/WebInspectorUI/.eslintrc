@@ -26,6 +26,7 @@
 {
     "env": {
         "browser": true,
+        "es6": true,
         "node": false,
     },
     "globals": {
@@ -68,6 +69,7 @@
         "no-proto": 0,
         "no-return-assign": 2,
         "no-trailing-spaces": 2,
+        "no-undef": 2,
         "no-underscore-dangle": 0,
         "no-unused-expressions": 2,
         "no-wrap-func": 2,
