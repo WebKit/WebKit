@@ -1,5 +1,15 @@
 2015-03-26  Filip Pizlo  <fpizlo@apple.com>
 
+        If we're in code for accessing scoped arguments, we should probably check if the object is a scoped arguments rather than checking if it's a direct arguments.
+
+        Reviewed by Michael Saboff.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitScopedArgumentsGetByVal):
+        * tests/stress/scoped-then-direct-arguments-get-by-val-in-baseline.js: Added.
+
+2015-03-26  Filip Pizlo  <fpizlo@apple.com>
+
         FTL ScopedArguments GetArrayLength generates incorrect code and crashes in LLVM
         https://bugs.webkit.org/show_bug.cgi?id=143098
 

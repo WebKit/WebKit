@@ -1125,7 +1125,7 @@ JIT::JumpList JIT::emitScopedArgumentsGetByVal(Instruction*, PatchableJump& badT
 #endif
 
     load8(Address(base, JSCell::typeInfoTypeOffset()), scratch);
-    badType = patchableBranch32(NotEqual, scratch, TrustedImm32(DirectArgumentsType));
+    badType = patchableBranch32(NotEqual, scratch, TrustedImm32(ScopedArgumentsType));
     slowCases.append(branch32(AboveOrEqual, property, Address(base, ScopedArguments::offsetOfTotalLength())));
     
     loadPtr(Address(base, ScopedArguments::offsetOfTable()), scratch);
