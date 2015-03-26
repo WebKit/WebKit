@@ -246,14 +246,17 @@ void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintO
 {
     Page* page = frame().page();
 
+    // The relevant repainted object heuristic is not tuned for plugin documents.
+    bool countsTowardsRelevantObjects = page && !document().isPluginDocument() && paintInfo.phase == PaintPhaseForeground;
+
     if (isPluginUnavailable()) {
-        if (page && paintInfo.phase == PaintPhaseForeground)
+        if (countsTowardsRelevantObjects)
             page->addRelevantUnpaintedObject(this, visualOverflowRect());
         RenderReplaced::paint(paintInfo, paintOffset);
         return;
     }
 
-    if (page && paintInfo.phase == PaintPhaseForeground)
+    if (countsTowardsRelevantObjects)
         page->addRelevantRepaintedObject(this, visualOverflowRect());
 
     RenderWidget::paint(paintInfo, paintOffset);

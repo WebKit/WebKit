@@ -359,6 +359,7 @@ public:
     WEBCORE_EXPORT Color pageExtendedBackgroundColor() const;
 
     bool isCountingRelevantRepaintedObjects() const;
+    void setIsCountingRelevantRepaintedObjects(bool isCounting) { m_isCountingRelevantRepaintedObjects = isCounting; }
     void startCountingRelevantRepaintedObjects();
     void resetRelevantPaintedObjectCounter();
     void addRelevantRepaintedObject(RenderObject*, const LayoutRect& objectPaintRect);

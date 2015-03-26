@@ -3737,9 +3737,20 @@ void FrameView::updateControlTints()
     if (frame().document()->url().isEmpty())
         return;
 
+    // As noted above, this is a "fake" paint, so we should pause counting relevant repainted objects.
+    Page* page = frame().page();
+    bool isCurrentlyCountingRelevantRepaintedObject = false;
+    if (page) {
+        isCurrentlyCountingRelevantRepaintedObject = page->isCountingRelevantRepaintedObjects();
+        page->setIsCountingRelevantRepaintedObjects(false);
+    }
+
     RenderView* renderView = this->renderView();
     if ((renderView && renderView->theme().supportsControlTints()) || hasCustomScrollbars())
         paintControlTints();
+
+    if (page)
+        page->setIsCountingRelevantRepaintedObjects(isCurrentlyCountingRelevantRepaintedObject);
 }
 
 void FrameView::paintControlTints()
