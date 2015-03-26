@@ -17,6 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 import sys
+import platform
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild") )
 import jhbuildrc_common
@@ -39,3 +40,6 @@ if not 'ACCESSIBILITY_EAIL_LIBRARY_PATH' in os.environ:
         os.environ['ACCESSIBILITY_EAIL_LIBRARY_PATH'] = _libeail_path
 
 partial_build = False
+
+if platform.processor() == 'aarch64':
+    skip = "libseccomp"
