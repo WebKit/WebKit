@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,90 +23,65 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TextEditor = function(element, mimeType, delegate)
+WebInspector.TextEditor = class TextEditor extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(element, mimeType, delegate)
+    {
+        super();
 
-    var text = (element ? element.textContent : "");
-    this._element = element || document.createElement("div");
-    this._element.classList.add(WebInspector.TextEditor.StyleClassName);
-    this._element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
+        var text = (element ? element.textContent : "");
+        this._element = element || document.createElement("div");
+        this._element.classList.add("text-editor");
+        this._element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
 
-    this._codeMirror = CodeMirror(this.element, {
-        readOnly: true,
-        indentWithTabs: true,
-        indentUnit: 4,
-        lineNumbers: true,
-        lineWrapping: true,
-        matchBrackets: true,
-        autoCloseBrackets: true
-    });
+        this._codeMirror = CodeMirror(this.element, {
+            readOnly: true,
+            indentWithTabs: true,
+            indentUnit: 4,
+            lineNumbers: true,
+            lineWrapping: true,
+            matchBrackets: true,
+            autoCloseBrackets: true
+        });
 
-    this._codeMirror.on("change", this._contentChanged.bind(this));
-    this._codeMirror.on("gutterClick", this._gutterMouseDown.bind(this));
-    this._codeMirror.on("gutterContextMenu", this._gutterContextMenu.bind(this));
-    this._codeMirror.getScrollerElement().addEventListener("click", this._openClickedLinks.bind(this), true);
+        this._codeMirror.on("change", this._contentChanged.bind(this));
+        this._codeMirror.on("gutterClick", this._gutterMouseDown.bind(this));
+        this._codeMirror.on("gutterContextMenu", this._gutterContextMenu.bind(this));
+        this._codeMirror.getScrollerElement().addEventListener("click", this._openClickedLinks.bind(this), true);
 
-    this._completionController = new WebInspector.CodeMirrorCompletionController(this._codeMirror, this);
-    this._tokenTrackingController = new WebInspector.CodeMirrorTokenTrackingController(this._codeMirror, this);
+        this._completionController = new WebInspector.CodeMirrorCompletionController(this._codeMirror, this);
+        this._tokenTrackingController = new WebInspector.CodeMirrorTokenTrackingController(this._codeMirror, this);
 
-    this._initialStringNotSet = true;
+        this._initialStringNotSet = true;
 
-    this.mimeType = mimeType;
+        this.mimeType = mimeType;
 
-    this._breakpoints = {};
-    this._executionLineNumber = NaN;
-    this._executionColumnNumber = NaN;
+        this._breakpoints = {};
+        this._executionLineNumber = NaN;
+        this._executionColumnNumber = NaN;
 
-    this._searchQuery = null;
-    this._searchResults = [];
-    this._currentSearchResultIndex = -1;
-    this._ignoreCodeMirrorContentDidChangeEvent = 0;
+        this._searchQuery = null;
+        this._searchResults = [];
+        this._currentSearchResultIndex = -1;
+        this._ignoreCodeMirrorContentDidChangeEvent = 0;
 
-    this._formatted = false;
-    this._formatterSourceMap = null;
+        this._formatted = false;
+        this._formatterSourceMap = null;
 
-    this._delegate = delegate || null;
-};
-
-// FIXME: Move to a WebInspector.Object subclass and we can remove this.
-WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.TextEditor);
-
-WebInspector.TextEditor.StyleClassName = "text-editor";
-WebInspector.TextEditor.HighlightedStyleClassName = "highlighted";
-WebInspector.TextEditor.SearchResultStyleClassName = "search-result";
-WebInspector.TextEditor.HasBreakpointStyleClassName = "has-breakpoint";
-WebInspector.TextEditor.BreakpointResolvedStyleClassName = "breakpoint-resolved";
-WebInspector.TextEditor.BreakpointAutoContinueStyleClassName = "breakpoint-auto-continue";
-WebInspector.TextEditor.BreakpointDisabledStyleClassName = "breakpoint-disabled";
-WebInspector.TextEditor.MultipleBreakpointsStyleClassName = "multiple-breakpoints";
-WebInspector.TextEditor.ExecutionLineStyleClassName = "execution-line";
-WebInspector.TextEditor.BouncyHighlightStyleClassName = "bouncy-highlight";
-WebInspector.TextEditor.NumberOfFindsPerSearchBatch = 10;
-WebInspector.TextEditor.HighlightAnimationDuration = 2000;
-
-WebInspector.TextEditor.Event = {
-    ExecutionLineNumberDidChange: "text-editor-execution-line-number-did-change",
-    NumberOfSearchResultsDidChange: "text-editor-number-of-search-results-did-change",
-    ContentDidChange: "text-editor-content-did-change",
-    FormattingDidChange: "text-editor-formatting-did-change"
-};
-
-WebInspector.TextEditor.prototype = {
-    constructor: WebInspector.TextEditor,
+        this._delegate = delegate || null;
+    }
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get string()
     {
         return this._codeMirror.getValue();
-    },
+    }
 
     set string(newString)
     {
@@ -146,22 +121,22 @@ WebInspector.TextEditor.prototype = {
         this._codeMirror.operation(update.bind(this));
         this._ignoreCodeMirrorContentDidChangeEvent--;
         console.assert(this._ignoreCodeMirrorContentDidChangeEvent >= 0);
-    },
+    }
 
     get readOnly()
     {
         return this._codeMirror.getOption("readOnly") || false;
-    },
+    }
 
     set readOnly(readOnly)
     {
         this._codeMirror.setOption("readOnly", readOnly);
-    },
+    }
 
     get formatted()
     {
         return this._formatted;
-    },
+    }
 
     set formatted(formatted)
     {
@@ -180,52 +155,52 @@ WebInspector.TextEditor.prototype = {
         this._formatted = formatted;
 
         this.dispatchEventToListeners(WebInspector.TextEditor.Event.FormattingDidChange);
-    },
+    }
 
     set autoFormat(auto)
     {
         this._autoFormat = auto;
-    },
+    }
 
-    hasFormatter: function()
+    hasFormatter()
     {
-        const supportedModes = {
+        var supportedModes = {
             "javascript": true,
             "css": true,
         };
 
         var mode = this._codeMirror.getMode();
         return mode.name in supportedModes;
-    },
+    }
 
-    canBeFormatted: function()
+    canBeFormatted()
     {
         // Can be overriden by subclasses.
         return this.hasFormatter();
-    },
+    }
 
-    canShowTypeAnnotations: function()
+    canShowTypeAnnotations()
     {
         return false;
-    },
+    }
 
     get selectedTextRange()
     {
         var start = this._codeMirror.getCursor(true);
         var end = this._codeMirror.getCursor(false);
         return this._textRangeFromCodeMirrorPosition(start, end);
-    },
+    }
 
     set selectedTextRange(textRange)
     {
         var position = this._codeMirrorPositionFromTextRange(textRange);
         this._codeMirror.setSelection(position.start, position.end);
-    },
+    }
 
     get mimeType()
     {
         return this._mimeType;
-    },
+    }
 
     set mimeType(newMIMEType)
     {
@@ -233,12 +208,12 @@ WebInspector.TextEditor.prototype = {
 
         this._mimeType = newMIMEType;
         this._codeMirror.setOption("mode", newMIMEType);
-    },
+    }
 
     get executionLineNumber()
     {
         return this._executionLineNumber;
-    },
+    }
 
     set executionLineNumber(lineNumber)
     {
@@ -252,47 +227,47 @@ WebInspector.TextEditor.prototype = {
         // Still dispatch the event even if the number didn't change. The execution state still
         // could have changed (e.g. continuing in a loop with a breakpoint inside).
         this.dispatchEventToListeners(WebInspector.TextEditor.Event.ExecutionLineNumberDidChange);
-    },
+    }
 
     get executionColumnNumber()
     {
         return this._executionColumnNumber;
-    },
+    }
 
     set executionColumnNumber(columnNumber)
     {
         this._executionColumnNumber = columnNumber;
-    },
+    }
 
     get formatterSourceMap()
     {
         return this._formatterSourceMap;
-    },
+    }
 
     get tokenTrackingController()
     {
         return this._tokenTrackingController;
-    },
+    }
 
     get delegate()
     {
         return this._delegate;
-    },
+    }
 
     set delegate(newDelegate)
     {
         this._delegate = newDelegate || null;
-    },
+    }
 
     get numberOfSearchResults()
     {
         return this._searchResults.length;
-    },
+    }
 
     get currentSearchQuery()
     {
         return this._searchQuery;
-    },
+    }
 
     set automaticallyRevealFirstSearchResult(reveal)
     {
@@ -303,9 +278,9 @@ WebInspector.TextEditor.prototype = {
             if (this._currentSearchResultIndex === -1)
                 this._revealFirstSearchResultAfterCursor();
         }
-    },
+    }
 
-    performSearch: function(query)
+    performSearch(query)
     {
         if (this._searchQuery === query)
             return;
@@ -367,9 +342,9 @@ WebInspector.TextEditor.prototype = {
 
         // Start the search.
         boundBatchSearch();
-    },
+    }
 
-    addSearchResults: function(textRanges)
+    addSearchResults(textRanges)
     {
         console.assert(textRanges);
         if (!textRanges || !textRanges.length)
@@ -391,9 +366,9 @@ WebInspector.TextEditor.prototype = {
         }
 
         this._codeMirror.operation(markRanges.bind(this));
-    },
+    }
 
-    searchCleared: function()
+    searchCleared()
     {
         function clearResults() {
             for (var i = 0; i < this._searchResults.length; ++i)
@@ -405,17 +380,17 @@ WebInspector.TextEditor.prototype = {
         this._searchQuery = null;
         this._searchResults = [];
         this._currentSearchResultIndex = -1;
-    },
+    }
 
-    searchQueryWithSelection: function()
+    searchQueryWithSelection()
     {
         if (!this._codeMirror.somethingSelected())
             return null;
 
         return this._codeMirror.getSelection();
-    },
+    }
 
-    revealPreviousSearchResult: function(changeFocus)
+    revealPreviousSearchResult(changeFocus)
     {
         if (!this._searchResults.length)
             return;
@@ -431,9 +406,9 @@ WebInspector.TextEditor.prototype = {
             this._currentSearchResultIndex = this._searchResults.length - 1;
 
         this._revealSearchResult(this._searchResults[this._currentSearchResultIndex], changeFocus, -1);
-    },
+    }
 
-    revealNextSearchResult: function(changeFocus)
+    revealNextSearchResult(changeFocus)
     {
         if (!this._searchResults.length)
             return;
@@ -449,25 +424,25 @@ WebInspector.TextEditor.prototype = {
             this._currentSearchResultIndex = 0;
 
         this._revealSearchResult(this._searchResults[this._currentSearchResultIndex], changeFocus, 1);
-    },
+    }
 
-    line: function(lineNumber)
+    line(lineNumber)
     {
         return this._codeMirror.getLine(lineNumber);
-    },
+    }
 
-    getTextInRange: function(startPosition, endPosition)
+    getTextInRange(startPosition, endPosition)
     {
         return this._codeMirror.getRange(startPosition, endPosition);
-    },
+    }
 
-    addStyleToTextRange: function(startPosition, endPosition, styleClassName)
+    addStyleToTextRange(startPosition, endPosition, styleClassName)
     {
         endPosition.ch += 1;
         return this._codeMirror.getDoc().markText(startPosition, endPosition, {className: styleClassName, inclusiveLeft: true, inclusiveRight: true});
-    },
+    }
 
-    revealPosition: function(position, textRangeToSelect, forceUnformatted, noHighlight)
+    revealPosition(position, textRangeToSelect, forceUnformatted, noHighlight)
     {
         console.assert(position === undefined || position instanceof WebInspector.SourceCodePosition, "revealPosition called without a SourceCodePosition");
         if (!(position instanceof WebInspector.SourceCodePosition))
@@ -524,14 +499,14 @@ WebInspector.TextEditor.prototype = {
         }
 
         this._codeMirror.operation(revealAndHighlightLine.bind(this));
-    },
+    }
 
-    updateLayout: function(force)
+    updateLayout(force)
     {
         this._codeMirror.refresh();
-    },
+    }
 
-    shown: function()
+    shown()
     {
         this._visible = true;
 
@@ -542,14 +517,14 @@ WebInspector.TextEditor.prototype = {
         // This needs to be done as a separate operation from the refresh
         // so that the scrollInfo coordinates are correct.
         this._revealPendingPositionIfPossible();
-    },
+    }
 
-    hidden: function()
+    hidden()
     {
         this._visible = false;
-    },
+    }
 
-    setBreakpointInfoForLineAndColumn: function(lineNumber, columnNumber, breakpointInfo)
+    setBreakpointInfoForLineAndColumn(lineNumber, columnNumber, breakpointInfo)
     {
         if (this._ignoreSetBreakpointInfoCalls)
             return;
@@ -558,9 +533,9 @@ WebInspector.TextEditor.prototype = {
             this._addBreakpointToLineAndColumnWithInfo(lineNumber, columnNumber, breakpointInfo);
         else
             this._removeBreakpointFromLineAndColumn(lineNumber, columnNumber);
-    },
+    }
 
-    updateBreakpointLineAndColumn: function(oldLineNumber, oldColumnNumber, newLineNumber, newColumnNumber)
+    updateBreakpointLineAndColumn(oldLineNumber, oldColumnNumber, newLineNumber, newColumnNumber)
     {
         console.assert(this._breakpoints[oldLineNumber]);
         if (!this._breakpoints[oldLineNumber])
@@ -573,18 +548,18 @@ WebInspector.TextEditor.prototype = {
         var breakpointInfo = this._breakpoints[oldLineNumber][oldColumnNumber];
         this._removeBreakpointFromLineAndColumn(oldLineNumber, oldColumnNumber);
         this._addBreakpointToLineAndColumnWithInfo(newLineNumber, newColumnNumber, breakpointInfo);
-    },
+    }
 
-    addStyleClassToLine: function(lineNumber, styleClassName)
+    addStyleClassToLine(lineNumber, styleClassName)
     {
         var lineHandle = this._codeMirror.getLineHandle(lineNumber);
         if (!lineHandle)
             return null;
 
         return this._codeMirror.addLineClass(lineHandle, "wrap", styleClassName);
-    },
+    }
 
-    removeStyleClassFromLine: function(lineNumber, styleClassName)
+    removeStyleClassFromLine(lineNumber, styleClassName)
     {
         var lineHandle = this._codeMirror.getLineHandle(lineNumber);
         console.assert(lineHandle);
@@ -592,9 +567,9 @@ WebInspector.TextEditor.prototype = {
             return null;
 
         return this._codeMirror.removeLineClass(lineHandle, "wrap", styleClassName);
-    },
+    }
 
-    toggleStyleClassForLine: function(lineNumber, styleClassName)
+    toggleStyleClassForLine(lineNumber, styleClassName)
     {
         var lineHandle = this._codeMirror.getLineHandle(lineNumber);
         console.assert(lineHandle);
@@ -602,9 +577,9 @@ WebInspector.TextEditor.prototype = {
             return false;
 
         return this._codeMirror.toggleLineClass(lineHandle, "wrap", styleClassName);
-    },
+    }
 
-    createWidgetForLine: function(lineNumber)
+    createWidgetForLine(lineNumber)
     {
         var lineHandle = this._codeMirror.getLineHandle(lineNumber);
         if (!lineHandle)
@@ -613,53 +588,53 @@ WebInspector.TextEditor.prototype = {
         var widgetElement = document.createElement("div");
         var lineWidget = this._codeMirror.addLineWidget(lineHandle, widgetElement, {coverGutter: false, noHScroll: true, handleMouseEvents: true});
         return new WebInspector.LineWidget(lineWidget, widgetElement);
-    },
+    }
 
     get lineCount()
     {
         return this._codeMirror.lineCount();
-    },
+    }
 
-    focus: function()
+    focus()
     {
         this._codeMirror.focus();
-    },
+    }
 
-    contentDidChange: function(replacedRanges, newRanges)
+    contentDidChange(replacedRanges, newRanges)
     {
         // Implemented by subclasses.
-    },
+    }
 
-    rectsForRange: function(range)
+    rectsForRange(range)
     {
         return this._codeMirror.rectsForRange(range);
-    },
+    }
 
     get markers()
     {
         return this._codeMirror.getAllMarks().map(function(codeMirrorTextMarker) {
             return WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker(codeMirrorTextMarker);
         });
-    },
+    }
 
-    markersAtPosition: function(position)
+    markersAtPosition(position)
     {
         return this._codeMirror.findMarksAt(position).map(function(codeMirrorTextMarker) {
             return WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker(codeMirrorTextMarker);
         });
-    },
+    }
 
-    createColorMarkers: function(range)
+    createColorMarkers(range)
     {
         return this._codeMirror.createColorMarkers(range);
-    },
+    }
 
-    createGradientMarkers: function(range)
+    createGradientMarkers(range)
     {
         return this._codeMirror.createGradientMarkers(range);
-    },
+    }
 
-    editingControllerForMarker: function(editableMarker)
+    editingControllerForMarker(editableMarker)
     {
         switch (editableMarker.type) {
         case WebInspector.TextMarker.Type.Color:
@@ -669,9 +644,9 @@ WebInspector.TextEditor.prototype = {
         default:
             return new WebInspector.CodeMirrorEditingController(this._codeMirror, editableMarker);
         }
-    },
+    }
 
-    visibleRangeOffsets: function()
+    visibleRangeOffsets()
     {
         var startOffset = null;
         var endOffset = null;
@@ -686,9 +661,9 @@ WebInspector.TextEditor.prototype = {
         }
 
         return {startOffset, endOffset};
-    },
+    }
 
-    originalOffsetToCurrentPosition: function(offset)
+    originalOffsetToCurrentPosition(offset)
     {
         var position = null;
         if (this._formatterSourceMap) {
@@ -698,14 +673,14 @@ WebInspector.TextEditor.prototype = {
             position = this._codeMirror.getDoc().posFromIndex(offset);
 
         return position;
-    },
+    }
 
-    currentOffsetToCurrentPosition: function(offset)
+    currentOffsetToCurrentPosition(offset)
     {
         return this._codeMirror.getDoc().posFromIndex(offset);
-    },
+    }
 
-    currentPositionToOriginalOffset: function(position)
+    currentPositionToOriginalOffset(position)
     {
         var offset = null;
         if (this._formatterSourceMap)
@@ -714,36 +689,36 @@ WebInspector.TextEditor.prototype = {
             offset = this.tokenTrackingController._codeMirror.getDoc().indexFromPos(position);
 
         return offset;
-    },
+    }
 
-    currentPositionToCurrentOffset: function(position)
+    currentPositionToCurrentOffset(position)
     {
         return this._codeMirror.getDoc().indexFromPos(position);
-    },
+    }
 
-    setInlineWidget: function(position, inlineElement)
+    setInlineWidget(position, inlineElement)
     {
         return this._codeMirror.setUniqueBookmark(position, {widget: inlineElement});
-    },
+    }
 
-    addScrollHandler: function(handler)
+    addScrollHandler(handler)
     {
         this._codeMirror.on("scroll", handler);
-    },
+    }
 
-    removeScrollHandler: function(handler)
+    removeScrollHandler(handler)
     {
         this._codeMirror.off("scroll", handler);
-    },
+    }
 
     // Protected
 
-    prettyPrint: function(pretty)
+    prettyPrint(pretty)
     {
         function prettyPrintAndUpdateEditor()
         {
-            const start = {line: 0, ch: 0};
-            const end = {line: this._codeMirror.lineCount() - 1};
+            var start = {line: 0, ch: 0};
+            var end = {line: this._codeMirror.lineCount() - 1};
 
             var oldSelectionAnchor = this._codeMirror.getCursor("anchor");
             var oldSelectionHead = this._codeMirror.getCursor("head");
@@ -752,7 +727,7 @@ WebInspector.TextEditor.prototype = {
 
             if (pretty) {
                 // <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
-                const indentString = "    ";
+                var indentString = "    ";
                 var originalLineEndings = [];
                 var formattedLineEndings = [];
                 var mapping = {original: [0], formatted: [0]};
@@ -836,16 +811,16 @@ WebInspector.TextEditor.prototype = {
         }
 
         this._codeMirror.operation(prettyPrintAndUpdateEditor.bind(this));
-    },
+    }
 
     // Private
 
-    hasEdits: function()
+    hasEdits()
     {
         return !this._codeMirror.isClean();
-    },
+    }
 
-    _contentChanged: function(codeMirror, change)
+    _contentChanged(codeMirror, change)
     {
         if (this._ignoreCodeMirrorContentDidChangeEvent > 0)
             return;
@@ -880,26 +855,26 @@ WebInspector.TextEditor.prototype = {
         }
 
         this.dispatchEventToListeners(WebInspector.TextEditor.Event.ContentDidChange);
-    },
+    }
 
-    _textRangeFromCodeMirrorPosition: function(start, end)
+    _textRangeFromCodeMirrorPosition(start, end)
     {
         console.assert(start);
         console.assert(end);
 
         return new WebInspector.TextRange(start.line, start.ch, end.line, end.ch);
-    },
+    }
 
-    _codeMirrorPositionFromTextRange: function(textRange)
+    _codeMirrorPositionFromTextRange(textRange)
     {
         console.assert(textRange);
 
         var start = {line: textRange.startLine, ch: textRange.startColumn};
         var end = {line: textRange.endLine, ch: textRange.endColumn};
         return {start, end};
-    },
+    }
 
-    _revealPendingPositionIfPossible: function()
+    _revealPendingPositionIfPossible()
     {
         // Nothing to do if we don't have a pending position.
         if (!this._positionToReveal)
@@ -910,9 +885,9 @@ WebInspector.TextEditor.prototype = {
             return;
 
         this.revealPosition(this._positionToReveal, this._textRangeToSelect, this._forceUnformatted);
-    },
+    }
 
-    _revealSearchResult: function(result, changeFocus, directionInCaseOfRevalidation)
+    _revealSearchResult(result, changeFocus, directionInCaseOfRevalidation)
     {
         var position = result.find();
 
@@ -972,9 +947,9 @@ WebInspector.TextEditor.prototype = {
 
         // Listen for the end of the animation so we can remove the element.
         this._bouncyHighlightElement.addEventListener("webkitAnimationEnd", animationEnded.bind(this));
-    },
+    }
 
-    _binarySearchInsertionIndexInSearchResults: function(object, comparator)
+    _binarySearchInsertionIndexInSearchResults(object, comparator)
     {
         // It is possible that markers in the search results array may have been deleted.
         // In those cases the comparator will return "null" and we immediately stop
@@ -998,9 +973,9 @@ WebInspector.TextEditor.prototype = {
         }
 
         return first - 1;
-    },
+    }
 
-    _revealFirstSearchResultBeforeCursor: function(changeFocus)
+    _revealFirstSearchResultBeforeCursor(changeFocus)
     {
         console.assert(this._searchResults.length);
 
@@ -1025,9 +1000,9 @@ WebInspector.TextEditor.prototype = {
 
         this._currentSearchResultIndex = index;
         this._revealSearchResult(this._searchResults[this._currentSearchResultIndex], changeFocus);
-    },
+    }
 
-    _revealFirstSearchResultAfterCursor: function(changeFocus)
+    _revealFirstSearchResultAfterCursor(changeFocus)
     {
         console.assert(this._searchResults.length);
 
@@ -1057,9 +1032,9 @@ WebInspector.TextEditor.prototype = {
 
         this._currentSearchResultIndex = index;
         this._revealSearchResult(this._searchResults[this._currentSearchResultIndex], changeFocus);
-    },
+    }
 
-    _cursorDoesNotMatchLastRevealedSearchResult: function()
+    _cursorDoesNotMatchLastRevealedSearchResult()
     {
         console.assert(this._currentSearchResultIndex !== -1);
         console.assert(this._searchResults.length);
@@ -1072,9 +1047,9 @@ WebInspector.TextEditor.prototype = {
         var lastRevealedSearchResultPosition = lastRevealedSearchResultMarker.from;
 
         return WebInspector.compareCodeMirrorPositions(currentCursorPosition, lastRevealedSearchResultPosition) !== 0;
-    },
+    }
 
-    _revalidateSearchResults: function(direction)
+    _revalidateSearchResults(direction)
     {
         console.assert(direction !== undefined);
 
@@ -1097,9 +1072,9 @@ WebInspector.TextEditor.prototype = {
             else
                 this._revealFirstSearchResultBeforeCursor();
         }
-    },
+    }
 
-    _updateExecutionLine: function()
+    _updateExecutionLine()
     {
         function update()
         {
@@ -1113,9 +1088,9 @@ WebInspector.TextEditor.prototype = {
         }
 
         this._codeMirror.operation(update.bind(this));
-    },
+    }
 
-    _setBreakpointStylesOnLine: function(lineNumber)
+    _setBreakpointStylesOnLine(lineNumber)
     {
         var columnBreakpoints = this._breakpoints[lineNumber];
         console.assert(columnBreakpoints);
@@ -1170,18 +1145,18 @@ WebInspector.TextEditor.prototype = {
         }
 
         this._codeMirror.operation(updateStyles.bind(this));
-    },
+    }
 
-    _addBreakpointToLineAndColumnWithInfo: function(lineNumber, columnNumber, breakpointInfo)
+    _addBreakpointToLineAndColumnWithInfo(lineNumber, columnNumber, breakpointInfo)
     {
         if (!this._breakpoints[lineNumber])
             this._breakpoints[lineNumber] = {};
         this._breakpoints[lineNumber][columnNumber] = breakpointInfo;
 
         this._setBreakpointStylesOnLine(lineNumber);
-    },
+    }
 
-    _removeBreakpointFromLineAndColumn: function(lineNumber, columnNumber)
+    _removeBreakpointFromLineAndColumn(lineNumber, columnNumber)
     {
         console.assert(columnNumber in this._breakpoints[lineNumber]);
         delete this._breakpoints[lineNumber][columnNumber];
@@ -1208,21 +1183,21 @@ WebInspector.TextEditor.prototype = {
         }
 
         this._codeMirror.operation(updateStyles.bind(this));
-    },
+    }
 
-    _allColumnBreakpointInfoForLine: function(lineNumber)
+    _allColumnBreakpointInfoForLine(lineNumber)
     {
         return this._breakpoints[lineNumber];
-    },
+    }
 
-    _setColumnBreakpointInfoForLine: function(lineNumber, columnBreakpointInfo)
+    _setColumnBreakpointInfoForLine(lineNumber, columnBreakpointInfo)
     {
         console.assert(columnBreakpointInfo);
         this._breakpoints[lineNumber] = columnBreakpointInfo;
         this._setBreakpointStylesOnLine(lineNumber);
-    },
+    }
 
-    _gutterMouseDown: function(codeMirror, lineNumber, gutterElement, event)
+    _gutterMouseDown(codeMirror, lineNumber, gutterElement, event)
     {
         if (event.button !== 0 || event.ctrlKey)
             return;
@@ -1265,9 +1240,9 @@ WebInspector.TextEditor.prototype = {
         // Register these listeners on the document so we can track the mouse if it leaves the gutter.
         document.addEventListener("mousemove", this._documentMouseMovedEventListener, true);
         document.addEventListener("mouseup", this._documentMouseUpEventListener, true);
-    },
+    }
 
-    _gutterContextMenu: function(codeMirror, lineNumber, gutterElement, event)
+    _gutterContextMenu(codeMirror, lineNumber, gutterElement, event)
     {
         if (this._delegate && typeof this._delegate.textEditorGutterContextMenu === "function") {
             var breakpoints = [];
@@ -1276,9 +1251,9 @@ WebInspector.TextEditor.prototype = {
 
             this._delegate.textEditorGutterContextMenu(this, lineNumber, 0, breakpoints, event);
         }
-    },
+    }
 
-    _documentMouseMoved: function(event)
+    _documentMouseMoved(event)
     {
         console.assert("_lineNumberWithMousedDownBreakpoint" in this);
         if (!("_lineNumberWithMousedDownBreakpoint" in this))
@@ -1332,9 +1307,9 @@ WebInspector.TextEditor.prototype = {
             this._lineNumberWithDraggedBreakpoint = lineNumber;
             this._columnNumberWithDraggedBreakpoint = columnNumber;
         }
-    },
+    }
 
-    _documentMouseUp: function(event)
+    _documentMouseUp(event)
     {
         console.assert("_lineNumberWithMousedDownBreakpoint" in this);
         if (!("_lineNumberWithMousedDownBreakpoint" in this))
@@ -1345,9 +1320,9 @@ WebInspector.TextEditor.prototype = {
         document.removeEventListener("mousemove", this._documentMouseMovedEventListener, true);
         document.removeEventListener("mouseup", this._documentMouseUpEventListener, true);
 
-        const delegateImplementsBreakpointClicked = this._delegate && typeof this._delegate.textEditorBreakpointClicked === "function";
-        const delegateImplementsBreakpointRemoved = this._delegate && typeof this._delegate.textEditorBreakpointRemoved === "function";
-        const delegateImplementsBreakpointMoved = this._delegate && typeof this._delegate.textEditorBreakpointMoved === "function";
+        var delegateImplementsBreakpointClicked = this._delegate && typeof this._delegate.textEditorBreakpointClicked === "function";
+        var delegateImplementsBreakpointRemoved = this._delegate && typeof this._delegate.textEditorBreakpointRemoved === "function";
+        var delegateImplementsBreakpointMoved = this._delegate && typeof this._delegate.textEditorBreakpointMoved === "function";
 
         if (this._mouseDragged) {
             if (!("_lineNumberWithDraggedBreakpoint" in this)) {
@@ -1393,9 +1368,9 @@ WebInspector.TextEditor.prototype = {
         delete this._columnNumberWithDraggedBreakpoint;
         delete this._previousColumnBreakpointInfo;
         delete this._mouseDragged;
-    },
+    }
 
-    _openClickedLinks: function(event)
+    _openClickedLinks(event)
     {
         // Get the position in the text and the token at that position.
         var position = this._codeMirror.coordsChar({left: event.pageX, top: event.pageY});
@@ -1421,9 +1396,9 @@ WebInspector.TextEditor.prototype = {
         // Stop processing the event.
         event.preventDefault();
         event.stopPropagation();
-    },
+    }
 
-    _isPositionVisible: function(position)
+    _isPositionVisible(position)
     {
         var scrollInfo = this._codeMirror.getScrollInfo();
         var visibleRangeStart = scrollInfo.top;
@@ -1431,9 +1406,9 @@ WebInspector.TextEditor.prototype = {
         var coords = this._codeMirror.charCoords(position, "local");
 
         return coords.top >= visibleRangeStart && coords.bottom <= visibleRangeEnd;
-    },
+    }
 
-    _scrollIntoViewCentered: function(position)
+    _scrollIntoViewCentered(position)
     {
         var scrollInfo = this._codeMirror.getScrollInfo();
         var lineHeight = Math.ceil(this._codeMirror.defaultTextHeight());
@@ -1442,4 +1417,21 @@ WebInspector.TextEditor.prototype = {
     }
 };
 
-WebInspector.TextEditor.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.TextEditor.HighlightedStyleClassName = "highlighted";
+WebInspector.TextEditor.SearchResultStyleClassName = "search-result";
+WebInspector.TextEditor.HasBreakpointStyleClassName = "has-breakpoint";
+WebInspector.TextEditor.BreakpointResolvedStyleClassName = "breakpoint-resolved";
+WebInspector.TextEditor.BreakpointAutoContinueStyleClassName = "breakpoint-auto-continue";
+WebInspector.TextEditor.BreakpointDisabledStyleClassName = "breakpoint-disabled";
+WebInspector.TextEditor.MultipleBreakpointsStyleClassName = "multiple-breakpoints";
+WebInspector.TextEditor.ExecutionLineStyleClassName = "execution-line";
+WebInspector.TextEditor.BouncyHighlightStyleClassName = "bouncy-highlight";
+WebInspector.TextEditor.NumberOfFindsPerSearchBatch = 10;
+WebInspector.TextEditor.HighlightAnimationDuration = 2000;
+
+WebInspector.TextEditor.Event = {
+    ExecutionLineNumberDidChange: "text-editor-execution-line-number-did-change",
+    NumberOfSearchResultsDidChange: "text-editor-number-of-search-results-did-change",
+    ContentDidChange: "text-editor-content-did-change",
+    FormattingDidChange: "text-editor-formatting-did-change"
+};

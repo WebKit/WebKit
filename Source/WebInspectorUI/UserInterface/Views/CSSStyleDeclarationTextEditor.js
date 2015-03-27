@@ -296,7 +296,6 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         // Use a short delay for user input to coalesce more changes before committing. Other actions like
         // undo, redo and paste are atomic and work better with a zero delay. CodeMirror identifies changes that
         // get coalesced in the undo stack with a "+" prefix on the origin. Use that to set the delay for our coalescing.
-        // FIXME: use const or let
         var delay = change.origin && change.origin.charAt(0) === "+" ? WebInspector.CSSStyleDeclarationTextEditor.CommitCoalesceDelay : 0;
 
         // Reset the timeout so rapid changes coalesce after a short delay.
@@ -337,7 +336,6 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
             if (!this._codeMirror.getOption("readOnly")) {
                 // Matches a comment like: /* -webkit-foo: bar; */
-                // FIXME: use const or let
                 var commentedPropertyRegex = /\/\*\s*[-\w]+\s*:\s*[^;]+;?\s*\*\//g;
 
                 // Look for comments that look like properties and add checkboxes in front of them.

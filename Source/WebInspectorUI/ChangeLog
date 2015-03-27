@@ -1,3 +1,17 @@
+2015-03-26  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Convert TextEditor classes to ES6
+        https://bugs.webkit.org/show_bug.cgi?id=143127
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        Removed a comment about const, we can't use it in strict mode / classes.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        * UserInterface/Views/TextEditor.js:
+        Converted to ES6 classes.
+
 2015-03-26  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: clicking on console record while REPL is focused does not select a new record
