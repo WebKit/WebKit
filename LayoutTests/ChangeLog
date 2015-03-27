@@ -1,3 +1,13 @@
+2015-03-27  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Safari fails to fire page "load" event with video[preload=none]
+        https://bugs.webkit.org/show_bug.cgi?id=143147
+
+        Reviewed by Simon Fraser.
+
+        * media/video-page-load-preload-none-expected.txt: Added.
+        * media/video-page-load-preload-none.html: Added.
+
 2015-03-27  Brent Fulgham  <bfulgham@apple.com>
 
         Correct test results after r182012.

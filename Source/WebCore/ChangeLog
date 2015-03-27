@@ -1,3 +1,26 @@
+2015-03-27  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Safari fails to fire page "load" event with video[preload=none]
+        https://bugs.webkit.org/show_bug.cgi?id=143147
+
+        Reviewed by Simon Fraser.
+
+        Test: media/video-page-load-preload-none.html
+
+        When told to load() when preload == None, set the networkState to Idle.
+        This causes HTMLMediaElement to set the shouldDelayLoadEvent flag to
+        false, and allows the page's 'load' event to fire.
+
+        Drive-by fix: add setNetworkState() and setReadyState() methods to
+        MediaPlayerPrivateAVFoundation, reducing a bunch of code duplication.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::load):
+        (WebCore::MediaPlayerPrivateAVFoundation::setNetworkState):
+        (WebCore::MediaPlayerPrivateAVFoundation::setReadyState):
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+
 2015-03-27  Alexey Proskuryakov  <ap@apple.com>
 
         Calling crypto.webkitSubtle.generateKey causes page memory to never be released

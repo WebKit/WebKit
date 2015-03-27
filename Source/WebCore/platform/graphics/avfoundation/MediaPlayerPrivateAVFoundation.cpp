@@ -167,14 +167,8 @@ void MediaPlayerPrivateAVFoundation::load(const String& url)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::load(%p)", this);
 
-    if (m_networkState != MediaPlayer::Loading) {
-        m_networkState = MediaPlayer::Loading;
-        m_player->networkStateChanged();
-    }
-    if (m_readyState != MediaPlayer::HaveNothing) {
-        m_readyState = MediaPlayer::HaveNothing;
-        m_player->readyStateChanged();
-    }
+    setNetworkState(m_preload == MediaPlayer::None ? MediaPlayer::Idle : MediaPlayer::Loading);
+    setReadyState(MediaPlayer::HaveNothing);
 
     m_assetURL = url;
 
@@ -188,8 +182,7 @@ void MediaPlayerPrivateAVFoundation::load(const String& url)
 #if ENABLE(MEDIA_SOURCE)
 void MediaPlayerPrivateAVFoundation::load(const String&, MediaSourcePrivateClient*)
 {
-    m_networkState = MediaPlayer::FormatError;
-    m_player->networkStateChanged();
+    setNetworkState(MediaPlayer::FormatError);
 }
 #endif
 
@@ -356,6 +349,24 @@ void MediaPlayerPrivateAVFoundation::setHasClosedCaptions(bool b)
     }
 }
 
+void MediaPlayerPrivateAVFoundation::setNetworkState(MediaPlayer::NetworkState state)
+{
+    if (state == m_networkState)
+        return;
+
+    m_networkState = state;
+    m_player->networkStateChanged();
+}
+
+void MediaPlayerPrivateAVFoundation::setReadyState(MediaPlayer::ReadyState state)
+{
+    if (state == m_readyState)
+        return;
+
+    m_readyState = state;
+    m_player->readyStateChanged();
+}
+
 void MediaPlayerPrivateAVFoundation::characteristicsChanged()
 {
     if (m_delayCharacteristicsChangedNotification) {
@@ -478,11 +489,11 @@ void MediaPlayerPrivateAVFoundation::updateStates()
     if (m_ignoreLoadStateChanges)
         return;
 
-    MediaPlayer::NetworkState oldNetworkState = m_networkState;
-    MediaPlayer::ReadyState oldReadyState = m_readyState;
+    MediaPlayer::NetworkState newNetworkState = m_networkState;
+    MediaPlayer::ReadyState newReadyState = m_readyState;
 
     if (m_loadingMetadata)
-        m_networkState = MediaPlayer::Loading;
+        newNetworkState = MediaPlayer::Loading;
     else {
         // -loadValuesAsynchronouslyForKeys:completionHandler: has invoked its handler; test status of keys and determine state.
         AssetStatus assetStatus = this->assetStatus();
@@ -492,20 +503,20 @@ void MediaPlayerPrivateAVFoundation::updateStates()
         if (m_readyState < MediaPlayer::HaveMetadata && assetStatus > MediaPlayerAVAssetStatusLoading) {
             if (m_assetIsPlayable) {
                 if (assetStatus >= MediaPlayerAVAssetStatusLoaded)
-                    m_readyState = MediaPlayer::HaveMetadata;
+                    newReadyState = MediaPlayer::HaveMetadata;
                 if (itemStatus <= MediaPlayerAVPlayerItemStatusUnknown) {
                     if (assetStatus == MediaPlayerAVAssetStatusFailed || m_preload > MediaPlayer::MetaData || isLiveStream()) {
                         // The asset is playable but doesn't support inspection prior to playback (eg. streaming files),
                         // or we are supposed to prepare for playback immediately, so create the player item now.
-                        m_networkState = MediaPlayer::Loading;
+                        newNetworkState = MediaPlayer::Loading;
                         prepareToPlay();
                     } else
-                        m_networkState = MediaPlayer::Idle;
+                        newNetworkState = MediaPlayer::Idle;
                 }
             } else {
                 // FIX ME: fetch the error associated with the @"playable" key to distinguish between format 
                 // and network errors.
-                m_networkState = MediaPlayer::FormatError;
+                newNetworkState = MediaPlayer::FormatError;
             }
         }
         
@@ -521,25 +532,25 @@ void MediaPlayerPrivateAVFoundation::updateStates()
                 // If the status becomes PlaybackBufferFull, loading stops and the status will not
                 // progress to LikelyToKeepUp. Set the readyState to  HAVE_ENOUGH_DATA, on the
                 // presumption that if the playback buffer is full, playback will probably not stall.
-                m_readyState = MediaPlayer::HaveEnoughData;
+                newReadyState = MediaPlayer::HaveEnoughData;
                 break;
 
             case MediaPlayerAVPlayerItemStatusReadyToPlay:
                 if (m_readyState != MediaPlayer::HaveEnoughData && maxTimeLoaded() > currentMediaTime())
-                    m_readyState = MediaPlayer::HaveFutureData;
+                    newReadyState = MediaPlayer::HaveFutureData;
                 break;
 
             case MediaPlayerAVPlayerItemStatusPlaybackBufferEmpty:
-                m_readyState = MediaPlayer::HaveCurrentData;
+                newReadyState = MediaPlayer::HaveCurrentData;
                 break;
             }
 
             if (itemStatus == MediaPlayerAVPlayerItemStatusPlaybackBufferFull)
-                m_networkState = MediaPlayer::Idle;
+                newNetworkState = MediaPlayer::Idle;
             else if (itemStatus == MediaPlayerAVPlayerItemStatusFailed)
-                m_networkState = MediaPlayer::DecodeError;
+                newNetworkState = MediaPlayer::DecodeError;
             else if (itemStatus != MediaPlayerAVPlayerItemStatusPlaybackBufferFull && itemStatus >= MediaPlayerAVPlayerItemStatusReadyToPlay)
-                m_networkState = (maxTimeLoaded() == durationMediaTime()) ? MediaPlayer::Loaded : MediaPlayer::Loading;
+                newNetworkState = (maxTimeLoaded() == durationMediaTime()) ? MediaPlayer::Loaded : MediaPlayer::Loading;
         }
     }
 
@@ -548,28 +559,25 @@ void MediaPlayerPrivateAVFoundation::updateStates()
 
     if (!m_haveReportedFirstVideoFrame && m_cachedHasVideo && hasAvailableVideoFrame()) {
         if (m_readyState < MediaPlayer::HaveCurrentData)
-            m_readyState = MediaPlayer::HaveCurrentData;
+            newReadyState = MediaPlayer::HaveCurrentData;
         m_haveReportedFirstVideoFrame = true;
         m_player->firstVideoFrameAvailable();
     }
 
-    if (m_networkState != oldNetworkState)
-        m_player->networkStateChanged();
+#if !LOG_DISABLED
+    if (m_networkState != newNetworkState || m_readyState != newReadyState) {
+        LOG(Media, "MediaPlayerPrivateAVFoundation::updateStates(%p) - entered with networkState = %i, readyState = %i,  exiting with networkState = %i, readyState = %i",
+            this, static_cast<int>(m_networkState), static_cast<int>(m_readyState), static_cast<int>(newNetworkState), static_cast<int>(newReadyState));
+    }
+#endif
 
-    if (m_readyState != oldReadyState)
-        m_player->readyStateChanged();
+    setNetworkState(newNetworkState);
+    setReadyState(newReadyState);
 
     if (m_playWhenFramesAvailable && hasAvailableVideoFrame()) {
         m_playWhenFramesAvailable = false;
         platformPlay();
     }
-
-#if !LOG_DISABLED
-    if (m_networkState != oldNetworkState || oldReadyState != m_readyState) {
-        LOG(Media, "MediaPlayerPrivateAVFoundation::updateStates(%p) - entered with networkState = %i, readyState = %i,  exiting with networkState = %i, readyState = %i",
-            this, static_cast<int>(oldNetworkState), static_cast<int>(oldReadyState), static_cast<int>(m_networkState), static_cast<int>(m_readyState));
-    }
-#endif
 }
 
 void MediaPlayerPrivateAVFoundation::setSize(const IntSize&) 
