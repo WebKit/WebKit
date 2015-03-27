@@ -1,3 +1,12 @@
+2015-03-27  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: skipping inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html until crash is fixed.
+        <https://webkit.org/b/143105>
+
+        Not reviewed.
+
+        * TestExpectations:
+
 2015-03-27  Chris Dumez  <cdumez@apple.com>
 
         [WK2][NetworkCache] We only cache responses with status codes that are cacheable by default
