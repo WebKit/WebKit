@@ -1,3 +1,13 @@
+2015-03-26  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: clicking on console record while REPL is focused does not select a new record
+        https://bugs.webkit.org/show_bug.cgi?id=142171
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._mousedown):
+
 2015-03-26  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Web Inspector: New Images for Console Types

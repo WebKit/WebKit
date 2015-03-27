@@ -374,11 +374,8 @@ WebInspector.LogContentView.prototype = {
             return;
         }
 
-        if (!this._focused) {
+        if (!this._focused)
             this.messagesElement.focus();
-            if (this._selectedMessages.length)
-                return;
-        }
 
         this._mouseDownWrapper = event.target.enclosingNodeOrSelfWithClass(WebInspector.LogContentView.ItemWrapperStyleClassName);
         this._mouseDownShiftKey = event.shiftKey;
