@@ -68,7 +68,7 @@ public:
     ~MediaPlayerPrivateGStreamer();
 
     static void registerMediaEngine(MediaEngineRegistrar);
-    gboolean handleSyncMessage(GstMessage*);
+    void handleSyncMessage(GstMessage*);
     gboolean handleMessage(GstMessage*);
     void handlePluginInstallerResult(GstInstallPluginsReturn);
 
@@ -158,6 +158,10 @@ private:
     void asyncStateChangeDone();
 
     void createGSTPlayBin();
+
+#if USE(GSTREAMER_GL)
+    bool ensureGstGLContext();
+#endif
 
     bool loadNextLocation();
     void mediaLocationChanged(GstMessage*);
@@ -255,8 +259,8 @@ private:
     bool isMediaSource() const { return false; }
 #endif
 #if USE(GSTREAMER_GL)
-    GstGLContext* m_glContext;
-    GstGLDisplay* m_glDisplay;
+    GRefPtr<GstGLContext> m_glContext;
+    GRefPtr<GstGLDisplay> m_glDisplay;
 #endif
 };
 }

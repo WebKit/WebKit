@@ -282,11 +282,6 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         add_definitions(-DWTF_USE_GSTREAMER_MPEGTS)
         set(USE_GSTREAMER_MPEGTS TRUE)
     endif ()
-
-    if (PC_GSTREAMER_GL_FOUND)
-        add_definitions(-DWTF_USE_GSTREAMER_GL)
-        set(USE_GSTREAMER_GL TRUE)
-    endif ()
 endif ()
 
 if (ENABLE_WAYLAND_TARGET)
@@ -392,6 +387,11 @@ if ((OPENGL_FOUND OR OPENGLES2_FOUND) AND (GLX_FOUND OR EGL_FOUND))
         add_definitions(-DWTF_USE_TILED_BACKING_STORE=1)
         add_definitions(-DWTF_USE_COORDINATED_GRAPHICS=1)
         add_definitions(-DWTF_USE_COORDINATED_GRAPHICS_THREADED=1)
+    endif ()
+
+    if (PC_GSTREAMER_GL_FOUND)
+        add_definitions(-DWTF_USE_GSTREAMER_GL)
+        set(USE_GSTREAMER_GL TRUE)
     endif ()
 endif ()
 

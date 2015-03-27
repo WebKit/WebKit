@@ -106,9 +106,9 @@ static gboolean mediaPlayerPrivateMessageCallback(GstBus*, GstMessage* message, 
     return player->handleMessage(message);
 }
 
-static gboolean mediaPlayerPrivateSyncMessageCallback(GstBus*, GstMessage* message, MediaPlayerPrivateGStreamer* player)
+static void mediaPlayerPrivateSyncMessageCallback(GstBus*, GstMessage* message, MediaPlayerPrivateGStreamer* player)
 {
-    return player->handleSyncMessage(message);
+    player->handleSyncMessage(message);
 }
 
 static void mediaPlayerPrivateSourceChangedCallback(GObject*, GParamSpec*, MediaPlayerPrivateGStreamer* player)
@@ -244,10 +244,6 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
 #endif
     , m_requestedState(GST_STATE_VOID_PENDING)
     , m_missingPlugins(false)
-#if USE(GSTREAMER_GL)
-    , m_glContext(nullptr)
-    , m_glDisplay(nullptr)
-#endif
 {
 }
 
@@ -935,7 +931,7 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() cons
     return timeRanges;
 }
 
-gboolean MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
+void MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
 {
     switch (GST_MESSAGE_TYPE(message)) {
 #if USE(GSTREAMER_GL)
@@ -943,42 +939,22 @@ gboolean MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
         const gchar* contextType;
         gst_message_parse_context_type(message, &contextType);
 
-        if (!m_glDisplay) {
-#if PLATFORM(X11)
-            Display* display = GLContext::sharedX11Display();
-            GstGLDisplayX11* gstGLDisplay = gst_gl_display_x11_new_with_display(display);
-#elif PLATFORM(WAYLAND)
-            EGLDisplay display = WaylandDisplay::instance()->eglDisplay();
-            GstGLDisplayEGL* gstGLDisplay = gst_gl_display_egl_new_with_egl_display(display);
-#else
-            return FALSE;
-#endif
-
-            m_glDisplay = reinterpret_cast<GstGLDisplay*>(gstGLDisplay);
-            GLContext* webkitContext = GLContext::sharingContext();
-#if USE(GLX)
-            GLXContext* glxSharingContext = reinterpret_cast<GLXContext*>(webkitContext->platformContext());
-            if (glxSharingContext && !m_glContext)
-                m_glContext = gst_gl_context_new_wrapped(GST_GL_DISPLAY(gstGLDisplay), reinterpret_cast<guintptr>(glxSharingContext), GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
-#elif USE(EGL)
-            EGLContext* eglSharingContext = reinterpret_cast<EGLContext*>(webkitContext->platformContext());
-            if (eglSharingContext && !m_glContext)
-                m_glContext = gst_gl_context_new_wrapped(GST_GL_DISPLAY(gstGLDisplay), reinterpret_cast<guintptr>(eglSharingContext), GST_GL_PLATFORM_EGL, GST_GL_API_GLES2);
-#endif
-        }
+        if (!ensureGstGLContext())
+            return;
 
         if (!g_strcmp0(contextType, GST_GL_DISPLAY_CONTEXT_TYPE)) {
             GstContext* displayContext = gst_context_new(GST_GL_DISPLAY_CONTEXT_TYPE, TRUE);
-            gst_context_set_gl_display(displayContext, m_glDisplay);
+            gst_context_set_gl_display(displayContext, m_glDisplay.get());
             gst_element_set_context(GST_ELEMENT(message->src), displayContext);
-            return TRUE;
+            return;
         }
+
         if (!g_strcmp0(contextType, "gst.gl.app_context")) {
             GstContext* appContext = gst_context_new("gst.gl.app_context", TRUE);
             GstStructure* structure = gst_context_writable_structure(appContext);
-            gst_structure_set(structure, "context", GST_GL_TYPE_CONTEXT, m_glContext, nullptr);
+            gst_structure_set(structure, "context", GST_GL_TYPE_CONTEXT, m_glContext.get(), nullptr);
             gst_element_set_context(GST_ELEMENT(message->src), appContext);
-            return TRUE;
+            return;
         }
         break;
     }
@@ -986,8 +962,42 @@ gboolean MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
     default:
         break;
     }
-    return FALSE;
 }
+
+#if USE(GSTREAMER_GL)
+bool MediaPlayerPrivateGStreamer::ensureGstGLContext()
+{
+    if (m_glContext)
+        return true;
+
+    if (!m_glDisplay) {
+#if PLATFORM(X11)
+        Display* display = GLContext::sharedX11Display();
+        m_glDisplay = GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(display));
+#elif PLATFORM(WAYLAND)
+        EGLDisplay display = WaylandDisplay::instance()->eglDisplay();
+        m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(display));
+#endif
+    }
+
+    PlatformGraphicsContext3D contextHandle = GLContext::sharingContext()->platformContext();
+    if (!contextHandle)
+        return false;
+#if USE(EGL)
+    GstGLPlatform glPlatform = GST_GL_PLATFORM_EGL;
+#else
+    GstGLPlatform glPlatform = GST_GL_PLATFORM_GLX;
+#endif
+#if USE(GLES2)
+    GstGLAPI glAPI = GST_GL_API_GLES2;
+#else
+    GstGLAPI glAPI = GST_GL_API_OPENGL;
+#endif
+    m_glContext = gst_gl_context_new_wrapped(m_glDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI);
+
+    return true;
+}
+#endif // USE(GSTREAMER_GL)
 
 gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
 {
