@@ -234,6 +234,9 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
             [(NSData *)data release];
         }, data.leakRef());
     }
+#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+    parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
+#endif
 }
 
 #if ENABLE(NETWORK_PROCESS)
@@ -251,6 +254,9 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
     parameters.httpProxy = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2HTTPProxyDefaultsKey];
     parameters.httpsProxy = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2HTTPSProxyDefaultsKey];
+#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+    parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
+#endif
 
 #if ENABLE(NETWORK_CACHE)
     parameters.shouldEnableNetworkCache = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitNetworkCacheEnabledDefaultsKey];

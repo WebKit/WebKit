@@ -57,6 +57,7 @@ typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 typedef const struct _CFURLCache* CFURLCacheRef;
 typedef const struct _CFURLRequest *CFURLRequestRef;
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
+typedef const struct __CFData *CFDataRef;
 
 #ifdef __BLOCKS__
 typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
@@ -108,6 +109,11 @@ enum : NSUInteger {
 -(id)_initWithCFCachedURLResponse:(CFCachedURLResponseRef)cachedResponse;
 -(CFCachedURLResponseRef)_CFCachedURLResponse;
 @end
+#endif
+
+#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+EXTERN_C CFDataRef _CFNetworkCopyATSContext(void);
+EXTERN_C Boolean _CFNetworkSetATSContext(CFDataRef);
 #endif
 
 #endif // CFNetworkSPI_h

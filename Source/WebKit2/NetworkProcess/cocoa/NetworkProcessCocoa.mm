@@ -88,6 +88,9 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
         return;
 
     _CFURLCacheSetMinSizeForVMCachedResource(cache.get(), NetworkResourceLoader::fileBackedResourceMinimumSize());
+#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+    _CFNetworkSetATSContext(parameters.networkATSContext.get());
+#endif
 }
 
 static uint64_t memorySize()

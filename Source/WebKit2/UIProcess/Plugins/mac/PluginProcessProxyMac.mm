@@ -35,6 +35,7 @@
 #import "SandboxUtilities.h"
 #import "WebKitSystemInterface.h"
 #import <QuartzCore/CARemoteLayerServer.h>
+#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/URL.h>
 #import <crt_externs.h>
@@ -165,6 +166,9 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
 
 #if HAVE(HOSTED_CORE_ANIMATION)
     parameters.acceleratedCompositingPort = MachSendRight::create([CARemoteLayerServer sharedServer].serverPort);
+#endif
+#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+    parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 #endif
 }
 

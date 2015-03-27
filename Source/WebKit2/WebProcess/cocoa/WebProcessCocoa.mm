@@ -207,6 +207,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     Method methodToPatch = class_getInstanceMethod([NSApplication class], @selector(accessibilityFocusedUIElement));
     method_setImplementation(methodToPatch, (IMP)NSApplicationAccessibilityFocusedUIElement);
 #endif
+#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+    _CFNetworkSetATSContext(parameters.networkATSContext.get());
+#endif
 }
 
 void WebProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)

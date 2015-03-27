@@ -55,6 +55,9 @@ struct PluginProcessCreationParameters {
 
 #if PLATFORM(COCOA)
     WebCore::MachSendRight acceleratedCompositingPort;
+#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+    RetainPtr<CFDataRef> networkATSContext;
+#endif
 #endif
 };
 
