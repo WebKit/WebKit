@@ -1675,7 +1675,7 @@ sub buildVisualStudioProject
 
     my $platform = "/p:Platform=" . (isWin64() ? "x64" : "Win32");
     my $logPath = File::Spec->catdir($baseProductDir, $configuration);
-    File::Path->make_path($logPath) unless -d $logPath;
+    File::Path->make_path($logPath) unless -d $logPath or $logPath eq ".";
 
     my $errorLogFile = File::Spec->catfile($logPath, "webkit_errors.log");
     chomp($errorLogFile = `cygpath -w "$errorLogFile"`) if isCygwin();
@@ -2473,9 +2473,10 @@ sub formatBuildTime($)
 sub runSvnUpdateAndResolveChangeLogs(@)
 {
     my @svnOptions = @_;
-    open UPDATE, "-|", "svn", "update", @svnOptions or die;
+    my $openCommand = "svn update " . join(" ", @svnOptions);
+    open my $update, "$openCommand |" or die "cannot execute command $openCommand";
     my @conflictedChangeLogs;
-    while (my $line = <UPDATE>) {
+    while (my $line = <$update>) {
         print $line;
         $line =~ m/^C\s+(.+?)[\r\n]*$/;
         if ($1) {
@@ -2483,7 +2484,7 @@ sub runSvnUpdateAndResolveChangeLogs(@)
           push @conflictedChangeLogs, $filename if basename($filename) eq "ChangeLog";
         }
     }
-    close UPDATE or die;
+    close $update or die;
 
     if (@conflictedChangeLogs) {
         print "Attempting to merge conflicted ChangeLogs.\n";
