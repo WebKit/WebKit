@@ -144,14 +144,14 @@ sub determineSourceDir
 
     # walks up path checking each directory to see if it is the main WebKit project dir, 
     # defined by containing Sources, WebCore, and WebKit
-    until ((-d "$sourceDir/Source" && -d "$sourceDir/Source/WebCore" && -d "$sourceDir/Source/WebKit") || (-d "$sourceDir/Internal" && -d "$sourceDir/OpenSource"))
+    until ((-d File::Spec->catdir($sourceDir, "Source") && -d File::Spec->catdir($sourceDir, "Source", "WebCore") && -d File::Spec->catdir($sourceDir, "Source", "WebKit")) || (-d File::Spec->catdir($sourceDir, "Internal") && -d File::Spec->catdir($sourceDir, "OpenSource")))
     {
         if ($sourceDir !~ s|/[^/]+$||) {
             die "Could not find top level webkit directory above source directory using FindBin.\n";
         }
     }
 
-    $sourceDir = "$sourceDir/OpenSource" if -d "$sourceDir/OpenSource";
+    $sourceDir = File::Spec->catdir($sourceDir, "OpenSource") if -d File::Spec->catdir($sourceDir, "OpenSource");
 }
 
 sub currentPerlPath()
@@ -1433,17 +1433,17 @@ sub windowsSourceDir()
 
 sub windowsSourceSourceDir()
 {
-    return windowsSourceDir() . "\\Source";
+    return File::Spec->catdir(windowsSourceDir(), "Source");
 }
 
 sub windowsLibrariesDir()
 {
-    return windowsSourceDir() . "\\WebKitLibraries\\win";
+    return File::Spec->catdir(windowsSourceDir(), "WebKitLibraries", "win");
 }
 
 sub windowsOutputDir()
 {
-    return windowsSourceDir() . "\\WebKitBuild";
+    return File::Spec->catdir(windowsSourceDir(), "WebKitBuild");
 }
 
 sub fontExists($)
@@ -1456,26 +1456,20 @@ sub fontExists($)
 
 sub checkInstalledTools()
 {
-    # SVN 1.7.10 is known to be compatible with current servers. SVN 1.8.x seems to be missing some authentication
-    # protocols we use for svn.webkit.org:
-    my $svnVersion = `svn --version 2> NUL | grep "\\sversion"`;
-    chomp($svnVersion);
-    if (!$? and $svnVersion =~ /1\.8\./) {
-        print "svn 1.7.10 is known to be compatible with our servers. You are running $svnVersion,\nwhich may not work properly.\n"
-    }
-
     # environment variables. Avoid until this is corrected.
     my $pythonVer = `python --version 2>&1`;
     die "You must have Python installed to build WebKit.\n" if ($?);
 
     # cURL 7.34.0 has a bug that prevents authentication with opensource.apple.com (and other things using SSL3).
-    my $curlVer = `curl --version 2> NUL | grep "curl"`;
-    chomp($curlVer);
-    if (!$? and $curlVer =~ /libcurl\/7\.34\.0/) {
-        print "cURL version 7.34.0 has a bug that prevents authentication with SSL v2 or v3.\n";
-        print "cURL 7.33.0 is known to work. The cURL projects is preparing an update to\n";
-        print "correct this problem.\n\n";
-        die "Please install a working cURL and try again.\n";
+    my $curlVer = `curl --version 2> NUL`;
+    if (!$? and $curlVer =~ "(.*curl.*)") {
+        $curlVer = $1;
+        if ($curlVer =~ /libcurl\/7\.34\.0/) {
+            print "cURL version 7.34.0 has a bug that prevents authentication with SSL v2 or v3.\n";
+            print "cURL 7.33.0 is known to work. The cURL projects is preparing an update to\n";
+            print "correct this problem.\n\n";
+            die "Please install a working cURL and try again.\n";
+        }
     }
 
     # MathML requires fonts that do not ship with Windows (at least through Windows 8). Warn the user if they are missing
@@ -1675,7 +1669,7 @@ sub buildVisualStudioProject
 
     my $platform = "/p:Platform=" . (isWin64() ? "x64" : "Win32");
     my $logPath = File::Spec->catdir($baseProductDir, $configuration);
-    File::Path->make_path($logPath) unless -d $logPath or $logPath eq ".";
+    make_path($logPath) unless -d $logPath or $logPath eq ".";
 
     my $errorLogFile = File::Spec->catfile($logPath, "webkit_errors.log");
     chomp($errorLogFile = `cygpath -w "$errorLogFile"`) if isCygwin();

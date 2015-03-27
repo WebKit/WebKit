@@ -1,3 +1,28 @@
+2015-03-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support building WTF on Windows without Cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=143084
+
+        Reviewed by Brent Fulgham.
+
+        Windows without Cygwin doesn't have curl, unzip, or grep. Luckily, Perl does all of these things.
+        This patch also migrates to using File::Spec->catfile() for directory separators.
+
+        * Scripts/update-webkit-dependency:
+        (wanted):
+        * Scripts/update-webkit-support-libs:
+        (wanted):
+        (downloadExpectedVersionNumber):
+        (zipFileVersion):
+        (toUnixPath): Deleted.
+        * Scripts/webkitdirs.pm:
+        (determineSourceDir):
+        (windowsSourceSourceDir):
+        (windowsLibrariesDir):
+        (windowsOutputDir):
+        (checkInstalledTools):
+        (buildVisualStudioProject):
+
 2015-03-27  Alex Christensen  <achristensen@webkit.org>
 
         Fix WinCairo bot.

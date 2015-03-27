@@ -1,3 +1,14 @@
+2015-03-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support building WTF on Windows without Cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=143084
+
+        Reviewed by Brent Fulgham.
+
+        Windows doesn't have "touch".
+
+        * WTF.vcxproj/WTFGenerated.make:
+
 2015-03-26  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.

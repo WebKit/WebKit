@@ -32,11 +32,14 @@
 use strict;
 use warnings;
 
+use Archive::Zip qw( :ERROR_CODES );
+use File::Copy;
 use File::Find;
 use File::Temp ();
 use File::Spec;
 use FindBin;
 use lib $FindBin::Bin;
+use LWP::Simple;
 use webkitdirs;
 
 use constant NOTAVERSION => "-1";
@@ -44,9 +47,9 @@ use constant NOTAVERSION => "-1";
 my $sourceDir = sourceDir();
 my $file = "WebKitSupportLibrary";
 my $zipFile = "$file.zip"; 
-my $zipDirectory = toUnixPath($ENV{'WEBKITSUPPORTLIBRARIESZIPDIR'}) || $sourceDir;
+my $zipDirectory = $ENV{'WEBKITSUPPORTLIBRARIESZIPDIR'} || $sourceDir;
 my $pathToZip = File::Spec->catfile($zipDirectory, $zipFile);
-my $webkitLibrariesDir = toUnixPath($ENV{'WEBKIT_LIBRARIES'}) || "$sourceDir/WebKitLibraries/win";
+my $webkitLibrariesDir = $ENV{'WEBKIT_LIBRARIES'} || File::Spec->catdir($sourceDir, "WebKitLibraries", "win");
 my $versionFile = $file . "Version";
 my $pathToVersionFile = File::Spec->catfile($webkitLibrariesDir, $versionFile);
 my $tmpRelativeDir = File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1);
@@ -71,36 +74,29 @@ if ($zipFileVersion eq $extractedVersion) {
     exit;
 }
 
-my $result = system "unzip", "-q", "-d", $tmpAbsDir, $pathToZip;
-die "Couldn't unzip $zipFile." if $result;
+my $zip = Archive::Zip->new($pathToZip);
+my $result = $zip->extractTree("", $tmpAbsDir);
+die "Couldn't unzip $zipFile." if $result != AZ_OK;
 
 print "\nInstalling $file...\n";
 
 sub wanted
 {
-    my $relativeName = File::Spec->abs2rel($File::Find::name, "$tmpAbsDir/$file/win");
-    my $destination = "$webkitLibrariesDir/$relativeName";
+    my $relativeName = File::Spec->abs2rel($File::Find::name, File::Spec->catdir($tmpAbsDir, "$file", "win"));
+    my $destination = File::Spec->catfile($webkitLibrariesDir, $relativeName);
 
     if (-d $_) {
         mkdir $destination;
         return;
     }
 
-    system "cp", $_, $destination;
+    copy($_, $destination);
 }
 
-File::Find::find(\&wanted, "$tmpAbsDir/$file");
+File::Find::find(\&wanted, File::Spec->catfile($tmpAbsDir, $file));
 
 print "The $file has been sucessfully installed in\n $webkitLibrariesDir\n";
 exit;
-
-sub toUnixPath
-{
-    my $path = shift;
-    return unless $path;
-    chomp($path = `cygpath -u '$path'`);
-    return $path;
-}
 
 sub extractedVersion
 {
@@ -114,14 +110,15 @@ sub extractedVersion
 
 sub downloadExpectedVersionNumber
 {
-    chomp(my $expectedVersion = `curl -s --sslv3 -k $versionFileURL`);
-    return WEXITSTATUS($?) ? NOTAVERSION : $expectedVersion;
+    chomp(my $expectedVersion = get($versionFileURL));
+    return defined $expectedVersion ? $expectedVersion : NOTAVERSION;
 }
 
 sub zipFileVersion
 {
     return NOTAVERSION unless -f $pathToZip;
-    chomp(my $zipFileVersion = `unzip -p "$pathToZip" $file/win/$versionFile`);
+    my $zip = Archive::Zip->new($pathToZip);
+    chomp(my $zipFileVersion = $zip->contents("$file/win/$versionFile"));
     return $zipFileVersion;
 }
 
