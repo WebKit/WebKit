@@ -82,6 +82,9 @@ public:
         m_position = webEvent.position();
         m_globalPosition = webEvent.globalPosition();
         m_clickCount = webEvent.clickCount();
+#if PLATFORM(MAC)
+        m_eventNumber = webEvent.eventNumber();
+#endif
 
         m_modifierFlags = 0;
         if (webEvent.shiftKey())

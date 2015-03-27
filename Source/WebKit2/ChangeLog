@@ -1,3 +1,26 @@
+2015-03-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Safari clears selection when its window gets activated via mouse down
+        https://bugs.webkit.org/show_bug.cgi?id=143157
+
+        Reviewed by Anders Carlsson.
+
+        The bug was caused by PlatformMouseEvent created in WebKit2 not having its event number
+        even though we were correctly calling setActivationEventNumber in WebPage::acceptsFirstMouse.
+
+        Fixed the bug by storing [NSEvent eventNumber] in WebMouseEvent on Mac in WebKit2 as done in WebKit1.
+
+        * Shared/WebEvent.h:
+        (WebKit::WebMouseEvent::eventNumber):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        (WebKit::WebMouseEvent::encode):
+        (WebKit::WebMouseEvent::decode):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+
 2015-03-27  Anders Carlsson  <andersca@apple.com>
 
         Only do the Connection::setShouldCloseConnectionOnMachExceptions() hack where necessary

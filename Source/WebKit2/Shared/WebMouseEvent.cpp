@@ -40,10 +40,17 @@ WebMouseEvent::WebMouseEvent()
     , m_deltaY(0)
     , m_deltaZ(0)
     , m_clickCount(0)
+#if PLATFORM(MAC)
+    , m_eventNumber(-1)
+#endif
 {
 }
 
+#if PLATFORM(MAC)
+WebMouseEvent::WebMouseEvent(Type type, Button button, const IntPoint& position, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers modifiers, double timestamp, int eventNumber)
+#else
 WebMouseEvent::WebMouseEvent(Type type, Button button, const IntPoint& position, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers modifiers, double timestamp)
+#endif
     : WebEvent(type, modifiers, timestamp)
     , m_button(button)
     , m_position(position)
@@ -52,6 +59,9 @@ WebMouseEvent::WebMouseEvent(Type type, Button button, const IntPoint& position,
     , m_deltaY(deltaY)
     , m_deltaZ(deltaZ)
     , m_clickCount(clickCount)
+#if PLATFORM(MAC)
+    , m_eventNumber(eventNumber)
+#endif
 {
     ASSERT(isMouseEventType(type));
 }
@@ -67,6 +77,9 @@ void WebMouseEvent::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_deltaY;
     encoder << m_deltaZ;
     encoder << m_clickCount;
+#if PLATFORM(MAC)
+    encoder << m_eventNumber;
+#endif
 }
 
 bool WebMouseEvent::decode(IPC::ArgumentDecoder& decoder, WebMouseEvent& result)
@@ -88,6 +101,10 @@ bool WebMouseEvent::decode(IPC::ArgumentDecoder& decoder, WebMouseEvent& result)
         return false;
     if (!decoder.decode(result.m_clickCount))
         return false;
+#if PLATFORM(MAC)
+    if (!decoder.decode(result.m_eventNumber))
+        return false;
+#endif
 
     return true;
 }

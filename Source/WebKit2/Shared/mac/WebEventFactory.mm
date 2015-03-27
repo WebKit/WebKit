@@ -351,8 +351,9 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSView *windo
     int clickCount                          = clickCountForEvent(event);
     WebEvent::Modifiers modifiers           = modifiersForEvent(event);
     double timestamp                        = eventTimeStampSince1970(event);
+    int eventNumber                         = [event eventNumber];
 
-    return WebMouseEvent(type, button, IntPoint(position), IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp);
+    return WebMouseEvent(type, button, IntPoint(position), IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp, eventNumber);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windowView)
