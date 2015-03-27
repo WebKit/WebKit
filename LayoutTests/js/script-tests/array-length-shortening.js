@@ -1,6 +1,3 @@
-// [ARM] REGRESSION(181077): jsc-layout-tests.yaml/js/script-tests/array-length-shortening.js fails on AArch64
-// https://bugs.webkit.org/show_bug.cgi?id=142575
-//@ skip if $architecture == "arm64"
 description(
 "Tests array length shortening."
 );

@@ -1,3 +1,9 @@
+2015-03-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening.
+
+        * js/script-tests/array-length-shortening.js: Unskip, r182058 fixed it.
+
 2015-03-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         FEMorphology::platformApplyGeneric() should bail out if the radius is less than or equal to zero.
