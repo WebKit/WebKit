@@ -3237,7 +3237,7 @@ private:
         int insn = *static_cast<int*>(address);
         op = (insn >> 24) & 0x1;
         imm14 = (insn << 13) >> 18;
-        bitNumber = static_cast<unsigned>((((insn >> 26) & 0x20)) | ((insn > 19) & 0x1f));
+        bitNumber = static_cast<unsigned>((((insn >> 26) & 0x20)) | ((insn >> 19) & 0x1f));
         rt = static_cast<RegisterID>(insn & 0x1f);
         return (insn & 0x7e000000) == 0x36000000;
         
