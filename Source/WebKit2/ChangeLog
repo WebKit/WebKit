@@ -1,3 +1,77 @@
+2015-03-27  Tim Horton  <timothy_horton@apple.com>
+
+        Implement iOS WebKit2 PDF Find-in-Page
+        https://bugs.webkit.org/show_bug.cgi?id=143065
+        <rdar://problem/16793370>
+
+        Reviewed by Dan Bernstein.
+
+        * Platform/spi/ios/CorePDFSPI.h:
+        Add some SPI.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _countStringMatches:options:maxCount:]):
+        (-[WKWebView _findString:options:maxCount:]):
+        (-[WKWebView _hideFindUI]):
+        If we have a custom content view, forward find-in-page methods to it.
+        
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKFindOptions.h:
+        Move _WKFindOptions into its own file.
+
+        * UIProcess/Cocoa/WKWebViewContentProvider.h:
+        Add find-related methods to the WKWebViewContentProvider protocol.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_initWithFrame:webView:]):
+        (-[WKPDFView dealloc]):
+        Maintain a dispatch queue for searching the PDF.
+
+        (-[WKPDFView web_setContentProviderData:suggestedFilename:]):
+        Fix a type.
+
+        (-[WKPDFView _ensureViewForPage:]):
+        Split the code to create/parent a page view out from _revalidateViews,
+        so that the find code can create/parent the targetted UIPDFPageView
+        in order to install the find highlight in it, but before it is scrolled into view.
+
+        (-[WKPDFView _revalidateViews]):
+        Use the stored page index instead of counting again.
+        Don't unparent page views that have find-in-page highlights in them, because
+        we won't know enough to recreate them later.
+
+        (-[WKPDFView _computePageAndDocumentFrames]):
+        Put the page index in PDFPageInfo, for reference elsewhere.
+
+        (-[WKPDFView _stringCompareOptionsFromWKFindOptions:]):
+        (-[WKPDFView _computeMatchesForString:options:maxCount:completionHandler:]):
+        Asynchronously (and on our serial queue) search the PDF for the given string.
+        We'll cache the most recent results to avoid searching more than once,
+        cancel existing searches when another begins (since it's a serial queue,
+        this ensures we'll only have one search active at a time).
+
+        (-[WKPDFView web_countStringMatches:options:maxCount:]):
+        Count the number of matches for the given string, and inform the FindClient
+        of the result.
+
+        (-[WKPDFView _didFindMatch:]):
+        When we find a match, create a view for it, highlight the match, and
+        zoom so that it's in-view.
+
+        (-[WKPDFView web_findString:options:maxCount:]):
+        Incrementally search the document for the given string. We do an incremental
+        search even if we have all of the results so that we can anchor the search
+        in the right place if the new string is a prefix of the old string, etc.
+        Wrap around appropriately when searching past the beginning or end of the
+        document. If we have all of the results (there were less than maxCount results),
+        look through the cached matches for the incrementally-found result and
+        report its index to the client.
+
+        (-[WKPDFView web_hideFindUI]):
+        Dismiss the selection and clear some state so we start the next search afresh.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-03-27  Andreas Kling  <akling@apple.com>
 
         WebProcessProxy should not retain WebBackForwardListItems forever.

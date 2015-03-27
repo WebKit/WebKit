@@ -27,37 +27,20 @@
 
 #if WK_API_ENABLED
 
-#if PLATFORM(IOS)
+typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
+    _WKFindOptionsCaseInsensitive = 1 << 0,
+    _WKFindOptionsAtWordStarts = 1 << 1,
+    _WKFindOptionsTreatMedialCapitalAsWordStart = 1 << 2,
+    _WKFindOptionsBackwards = 1 << 3,
+    _WKFindOptionsWrapAround = 1 << 4,
+    _WKFindOptionsShowOverlay = 1 << 5,
+    _WKFindOptionsShowFindIndicator = 1 << 6,
+    _WKFindOptionsShowHighlight = 1 << 7,
+    _WKFindOptionsDetermineMatchIndex = 1 << 8,
 
-#import <WebKit/WKPageLoadTypes.h>
-#import <WebKit/_WKFindOptions.h>
+    _WKFindOptionsIrrelevantForIncrementalResults = _WKFindOptionsShowOverlay | _WKFindOptionsShowFindIndicator | _WKFindOptionsShowHighlight | _WKFindOptionsDetermineMatchIndex,
+    _WKFindOptionsIrrelevantForBatchResults = _WKFindOptionsBackwards | _WKFindOptionsWrapAround | _WKFindOptionsIrrelevantForIncrementalResults
 
-@class NSData;
-@class UIScrollView;
-@class UIView;
-@class WKWebView;
-@protocol NSObject;
-@protocol UIScrollViewDelegate;
-struct CGSize;
-struct UIEdgeInsets;
+} WK_ENUM_AVAILABLE(10_10, 8_0);
 
-// FIXME: This should be API (and probably should not be a UIScrollViewDelegate).
-@protocol WKWebViewContentProvider <NSObject, UIScrollViewDelegate>
-
-- (instancetype)web_initWithFrame:(CGRect) frame webView:(WKWebView *)webView;
-- (void)web_setContentProviderData:(NSData *)data suggestedFilename:(NSString *)filename;
-- (void)web_setMinimumSize:(CGSize)size;
-- (void)web_setOverlaidAccessoryViewsInset:(CGSize)inset;
-- (void)web_computedContentInsetDidChange;
-- (void)web_setFixedOverlayView:(UIView *)fixedOverlayView;
-- (void)web_didSameDocumentNavigation:(WKSameDocumentNavigationType)navigationType;
-- (void)web_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
-- (void)web_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
-- (void)web_hideFindUI;
-
-@end
-
-#endif // PLATFORM(IOS)
-
-#endif // WK_API_ENABLED
-
+#endif

@@ -2094,16 +2094,34 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
 {
+#if PLATFORM(IOS)
+    if (_customContentView) {
+        [_customContentView web_countStringMatches:string options:options maxCount:maxCount];
+        return;
+    }
+#endif
     _page->countStringMatches(string, toFindOptions(options), maxCount);
 }
 
 - (void)_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
 {
+#if PLATFORM(IOS)
+    if (_customContentView) {
+        [_customContentView web_findString:string options:options maxCount:maxCount];
+        return;
+    }
+#endif
     _page->findString(string, toFindOptions(options), maxCount);
 }
 
 - (void)_hideFindUI
 {
+#if PLATFORM(IOS)
+    if (_customContentView) {
+        [_customContentView web_hideFindUI];
+        return;
+    }
+#endif
     _page->hideFindUI();
 }
 

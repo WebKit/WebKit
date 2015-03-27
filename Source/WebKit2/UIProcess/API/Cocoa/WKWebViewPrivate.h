@@ -27,6 +27,7 @@
 
 #if WK_API_ENABLED
 
+#import <WebKit/_WKFindOptions.h>
 #import <WebKit/_WKRenderingProgressEvents.h>
 
 typedef NS_ENUM(NSInteger, _WKPaginationMode) {
@@ -35,18 +36,6 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
     _WKPaginationModeRightToLeft,
     _WKPaginationModeTopToBottom,
     _WKPaginationModeBottomToTop,
-} WK_ENUM_AVAILABLE(10_10, 8_0);
-
-typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
-    _WKFindOptionsCaseInsensitive = 1 << 0,
-    _WKFindOptionsAtWordStarts = 1 << 1,
-    _WKFindOptionsTreatMedialCapitalAsWordStart = 1 << 2,
-    _WKFindOptionsBackwards = 1 << 3,
-    _WKFindOptionsWrapAround = 1 << 4,
-    _WKFindOptionsShowOverlay = 1 << 5,
-    _WKFindOptionsShowFindIndicator = 1 << 6,
-    _WKFindOptionsShowHighlight = 1 << 7,
-    _WKFindOptionsDetermineMatchIndex = 1 << 8,
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
 @class WKBrowsingContextHandle;

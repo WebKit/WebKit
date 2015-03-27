@@ -33,14 +33,18 @@
 #import <CorePDF/UIPDFLinkAnnotation.h>
 #import <CorePDF/UIPDFPage.h>
 #import <CorePDF/UIPDFPageView.h>
+#import <CorePDF/UIPDFSelection.h>
 
 #else
+
+@class UIPDFSelection;
 
 @interface UIPDFPage : NSObject
 @end
 
 @interface UIPDFPage (Details)
 - (CGRect)cropBoxAccountForRotation;
+- (UIPDFSelection *)findString:(NSString *)string fromSelection:(UIPDFSelection *)selection options:(NSStringCompareOptions)options;
 @end
 
 @interface UIPDFDocument : NSObject
@@ -55,6 +59,7 @@
 
 typedef enum {
     kUIPDFObjectKindGraphic = 1,
+    kUIPDFObjectKindText = 2
 } UIPDFObjectKind;
 
 @class UIPDFPageView;
@@ -76,6 +81,8 @@ typedef enum {
 @interface UIPDFPageView (Details)
 - (id)initWithPage:(UIPDFPage *) page tiledContent:(BOOL)tiled;
 - (CGRect)convertRectFromPDFPageSpace:(CGRect)p;
+- (void)highlightSearchSelection:(UIPDFSelection *)selection animated:(BOOL)animated;
+- (void)clearSearchHighlights;
 @property (nonatomic, assign) BOOL useBackingLayer;
 @property (nonatomic, assign) id<NSObject, UIPDFPageViewDelegate> delegate;
 @property (nonatomic, readonly) CALayer *contentLayer;
@@ -118,6 +125,17 @@ typedef enum {
 @optional
 - (void)annotation:(UIPDFAnnotation *)annotation wasTouchedAtPoint:(CGPoint) point controller:(UIPDFAnnotationController *)controller;
 - (void)annotation:(UIPDFAnnotation *)annotation isBeingPressedAtPoint:(CGPoint) point controller:(UIPDFAnnotationController *)controller;
+@end
+
+@interface UIPDFSelection : NSObject
+@end
+
+@interface UIPDFSelection (Details)
+- (id)initWithPage:(UIPDFPage *)page fromIndex:(NSUInteger)startIndex toIndex:(NSUInteger)endIndex;
+- (CGRect)bounds;
+- (UIPDFPage *)page;
+- (NSUInteger)startIndex;
+@property (nonatomic, assign) CFRange stringRange;
 @end
 
 #endif

@@ -676,6 +676,7 @@
 		2DDF731618E95060004F5A66 /* RemoteLayerBackingStoreCollection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DDF731418E95060004F5A66 /* RemoteLayerBackingStoreCollection.mm */; };
 		2DE6943D18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DE6943B18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp */; };
 		2DE6943E18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE6943C18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h */; };
+		2DEAC5CF1AC368BB00A195D8 /* _WKFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEAC5CE1AC368BB00A195D8 /* _WKFindOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DF9593B18A42412009785A1 /* ViewGestureControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9593418A42412009785A1 /* ViewGestureControllerIOS.mm */; };
 		2DF9EEE51A781FB400B6CFBE /* APIFrameInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9EEE31A781FB400B6CFBE /* APIFrameInfo.cpp */; };
 		2DF9EEE61A781FB400B6CFBE /* APIFrameInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF9EEE41A781FB400B6CFBE /* APIFrameInfo.h */; };
@@ -2833,6 +2834,7 @@
 		2DDF731418E95060004F5A66 /* RemoteLayerBackingStoreCollection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerBackingStoreCollection.mm; sourceTree = "<group>"; };
 		2DE6943B18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmartMagnificationControllerMessageReceiver.cpp; sourceTree = "<group>"; };
 		2DE6943C18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartMagnificationControllerMessages.h; sourceTree = "<group>"; };
+		2DEAC5CE1AC368BB00A195D8 /* _WKFindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFindOptions.h; sourceTree = "<group>"; };
 		2DF9593418A42412009785A1 /* ViewGestureControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewGestureControllerIOS.mm; path = ios/ViewGestureControllerIOS.mm; sourceTree = "<group>"; };
 		2DF9EEE31A781FB400B6CFBE /* APIFrameInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIFrameInfo.cpp; sourceTree = "<group>"; };
 		2DF9EEE41A781FB400B6CFBE /* APIFrameInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFrameInfo.h; sourceTree = "<group>"; };
@@ -5323,6 +5325,7 @@
 				1AD01BC71905D37E00C9C45F /* _WKErrorRecoveryAttempting.h */,
 				1AD01BC61905D37E00C9C45F /* _WKErrorRecoveryAttempting.mm */,
 				005D158E18E4C4EB00734619 /* _WKFindDelegate.h */,
+				2DEAC5CE1AC368BB00A195D8 /* _WKFindOptions.h */,
 				37A64E5418F38E3C00EB30F1 /* _WKFormDelegate.h */,
 				37A64E5618F38F4600EB30F1 /* _WKFormInputSession.h */,
 				1A43E828188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h */,
@@ -7754,6 +7757,7 @@
 				1A6FBD2811E69BC200DB1371 /* NetscapePlugin.h in Headers */,
 				1A4A9C5612B816CF008FE984 /* NetscapePluginModule.h in Headers */,
 				1AA5889211EE70400061B882 /* NetscapePluginStream.h in Headers */,
+				2DEAC5CF1AC368BB00A195D8 /* _WKFindOptions.h in Headers */,
 				E1798C7A16E6818800240139 /* NetworkBlobRegistry.h in Headers */,
 				E4436ECC1A0D040B00EAD204 /* NetworkCache.h in Headers */,
 				E489D28A1A0A2DB80078C06A /* NetworkCacheCoder.h in Headers */,

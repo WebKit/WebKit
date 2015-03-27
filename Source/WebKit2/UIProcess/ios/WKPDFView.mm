@@ -28,13 +28,16 @@
 
 #if PLATFORM(IOS)
 
+#import "APIFindClient.h"
 #import "APIUIClient.h"
 #import "CorePDFSPI.h"
 #import "SessionState.h"
 #import "UIKitSPI.h"
 #import "WKPDFPageNumberIndicator.h"
 #import "WKWebViewInternal.h"
+#import "WeakObjCPtr.h"
 #import "WebPageProxy.h"
+#import "_WKFindDelegate.h"
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <WebCore/FloatRect.h>
 #import <wtf/RetainPtr.h>
@@ -54,6 +57,7 @@ typedef struct {
     CGRect frame;
     RetainPtr<UIPDFPageView> view;
     RetainPtr<UIPDFPage> page;
+    unsigned index;
 } PDFPageInfo;
 
 @interface WKPDFView ()
@@ -79,6 +83,22 @@ typedef struct {
 
     RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
     WebKit::InteractionInformationAtPosition _positionInformation;
+
+    unsigned _currentFindPageIndex;
+    unsigned _currentFindMatchIndex;
+    RetainPtr<UIPDFSelection> _currentFindSelection;
+
+    RetainPtr<NSString> _cachedFindString;
+    Vector<RetainPtr<UIPDFSelection>> _cachedFindMatches;
+    unsigned _cachedFindMaximumCount;
+    _WKFindOptions _cachedFindOptionsAffectingResults;
+
+    std::atomic<unsigned> _nextComputeMatchesOperationID;
+    RetainPtr<NSString> _nextCachedFindString;
+    unsigned _nextCachedFindMaximumCount;
+    _WKFindOptions _nextCachedFindOptionsAffectingResults;
+
+    dispatch_queue_t _findQueue;
 }
 
 - (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView
@@ -98,6 +118,8 @@ typedef struct {
     _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
     [_actionSheetAssistant setDelegate:self];
 
+    _findQueue = dispatch_queue_create("com.apple.WebKit.WKPDFViewComputeMatchesQueue", DISPATCH_QUEUE_SERIAL);
+
     return self;
 }
 
@@ -105,6 +127,7 @@ typedef struct {
 {
     [self _clearPages];
     [_pageNumberIndicator removeFromSuperview];
+    dispatch_release(_findQueue);
     [super dealloc];
 }
 
@@ -135,7 +158,7 @@ typedef struct {
 
     [self _clearPages];
 
-    RetainPtr<CGDataProvider> dataProvider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)data));
+    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)data));
     RetainPtr<CGPDFDocumentRef> cgPDFDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
     _pdfDocument = adoptNS([[UIPDFDocument alloc] initWithCGPDFDocument:cgPDFDocument.get()]);
 
@@ -165,6 +188,21 @@ typedef struct {
         [_pageNumberIndicator show];
 }
 
+- (void)_ensureViewForPage:(PDFPageInfo&)pageInfo
+{
+    if (pageInfo.view)
+        return;
+
+    pageInfo.view = adoptNS([[UIPDFPageView alloc] initWithPage:pageInfo.page.get() tiledContent:YES]);
+    [pageInfo.view setUseBackingLayer:YES];
+    [pageInfo.view setDelegate:self];
+    [[pageInfo.view annotationController] setDelegate:self];
+    [self addSubview:pageInfo.view.get()];
+
+    [pageInfo.view setFrame:pageInfo.frame];
+    [pageInfo.view contentLayer].contentsScale = self.window.screen.scale;
+}
+
 - (void)_revalidateViews
 {
     if (_isStartingZoom)
@@ -178,31 +216,18 @@ typedef struct {
     CGRect targetRectForCenterPage = CGRectInset(targetRect, 0, targetRect.size.height / 2 - pdfPageMargin * 2);
 
     _centerPageNumber = 0;
-    unsigned currentPage = 0;
 
     for (auto& pageInfo : _pages) {
-        ++currentPage;
-
-        if (!CGRectIntersectsRect(pageInfo.frame, targetRectWithOverdraw)) {
+        if (!CGRectIntersectsRect(pageInfo.frame, targetRectWithOverdraw) && pageInfo.index != _currentFindPageIndex) {
             [pageInfo.view removeFromSuperview];
             pageInfo.view = nullptr;
             continue;
         }
 
         if (!_centerPageNumber && CGRectIntersectsRect(pageInfo.frame, targetRectForCenterPage))
-            _centerPageNumber = currentPage;
+            _centerPageNumber = pageInfo.index + 1;
 
-        if (pageInfo.view)
-            continue;
-
-        pageInfo.view = adoptNS([[UIPDFPageView alloc] initWithPage:pageInfo.page.get() tiledContent:YES]);
-        [pageInfo.view setUseBackingLayer:YES];
-        [pageInfo.view setDelegate:self];
-        [[pageInfo.view annotationController] setDelegate:self];
-        [self addSubview:pageInfo.view.get()];
-
-        [pageInfo.view setFrame:pageInfo.frame];
-        [pageInfo.view contentLayer].contentsScale = self.window.screen.scale;
+        [self _ensureViewForPage:pageInfo];
     }
 
     [self _updatePageNumberIndicator];
@@ -291,8 +316,8 @@ typedef struct {
     _pages.reserveCapacity(pageCount);
 
     CGRect pageFrame = CGRectMake(0, 0, _minimumSize.width, _minimumSize.height);
-    for (NSUInteger pageNumber = 0; pageNumber < pageCount; ++pageNumber) {
-        UIPDFPage *page = [_pdfDocument pageAtIndex:pageNumber];
+    for (NSUInteger pageIndex = 0; pageIndex < pageCount; ++pageIndex) {
+        UIPDFPage *page = [_pdfDocument pageAtIndex:pageIndex];
         if (!page)
             continue;
 
@@ -303,6 +328,7 @@ typedef struct {
         PDFPageInfo pageInfo;
         pageInfo.page = page;
         pageInfo.frame = pageFrameWithMarginApplied;
+        pageInfo.index = pageIndex;
         _pages.append(pageInfo);
         pageFrame.origin.y += pageFrame.size.height - pdfPageMargin;
     }
@@ -362,6 +388,194 @@ typedef struct {
     }
 
     return nil;
+}
+
+#pragma mark Find-in-Page
+
+static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
+{
+    NSStringCompareOptions findOptions = 0;
+    if (options & _WKFindOptionsCaseInsensitive)
+        findOptions |= NSCaseInsensitiveSearch;
+    if (options & _WKFindOptionsBackwards)
+        findOptions |= NSBackwardsSearch;
+    return findOptions;
+}
+
+- (void)_computeMatchesForString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount completionHandler:(void (^)(BOOL success))completionHandler
+{
+    if (!_pdfDocument) {
+        completionHandler(NO);
+        return;
+    }
+
+    _WKFindOptions optionsAffectingResults = options & ~_WKFindOptionsIrrelevantForBatchResults;
+
+    // If this search is equivalent to the currently cached search, bail and call the completion handler, because the existing cached results are valid.
+    if (!_cachedFindMatches.isEmpty() && [_cachedFindString isEqualToString:string] && _cachedFindOptionsAffectingResults == optionsAffectingResults && _cachedFindMaximumCount == maxCount) {
+        // Also, cancel any running search, because it will eventually replace the now-valid results.
+        ++_nextComputeMatchesOperationID;
+
+        completionHandler(YES);
+        return;
+    }
+
+    // If this search is equivalent to the currently running asynchronous search, bail as if this search were cancelled; the original search's completion handler will eventually fire.
+    if ([_nextCachedFindString isEqualToString:string] && _nextCachedFindOptionsAffectingResults == optionsAffectingResults && _nextCachedFindMaximumCount == maxCount) {
+        completionHandler(NO);
+        return;
+    }
+
+    NSStringCompareOptions findOptions = stringCompareOptions(optionsAffectingResults);
+
+    Vector<PDFPageInfo> pages = _pages;
+
+    unsigned computeMatchesOperationID = ++_nextComputeMatchesOperationID;
+    _nextCachedFindString = string;
+    _nextCachedFindOptionsAffectingResults = optionsAffectingResults;
+    _nextCachedFindMaximumCount = maxCount;
+
+    RetainPtr<WKPDFView> retainedSelf = self;
+    typeof(completionHandler) completionHandlerCopy = Block_copy(completionHandler);
+
+    dispatch_async(_findQueue, [pages, string, findOptions, optionsAffectingResults, maxCount, computeMatchesOperationID, retainedSelf, completionHandlerCopy] {
+        Vector<RetainPtr<UIPDFSelection>> matches;
+
+        for (unsigned pageIndex = 0; pageIndex < pages.size(); ++pageIndex) {
+            UIPDFSelection *match = nullptr;
+            while ((match = [pages[pageIndex].page findString:string fromSelection:match options:findOptions])) {
+                matches.append(match);
+                if (matches.size() > maxCount)
+                    goto maxCountExceeded;
+
+                // If we've enqueued another search, cancel this one.
+                if (retainedSelf->_nextComputeMatchesOperationID != computeMatchesOperationID) {
+                    dispatch_async(dispatch_get_main_queue(), [completionHandlerCopy] {
+                        completionHandlerCopy(NO);
+                        Block_release(completionHandlerCopy);
+                    });
+                    return;
+                }
+            };
+        }
+
+    maxCountExceeded:
+        dispatch_async(dispatch_get_main_queue(), [computeMatchesOperationID, string, optionsAffectingResults, maxCount, matches, completionHandlerCopy, retainedSelf] {
+
+            // If another search has been enqueued in the meantime, ignore this result.
+            if (retainedSelf->_nextComputeMatchesOperationID != computeMatchesOperationID) {
+                Block_release(completionHandlerCopy);
+                return;
+            }
+
+            retainedSelf->_cachedFindString = string;
+            retainedSelf->_cachedFindOptionsAffectingResults = optionsAffectingResults;
+            retainedSelf->_cachedFindMaximumCount = maxCount;
+            retainedSelf->_cachedFindMatches = matches;
+
+            retainedSelf->_nextCachedFindString = nil;
+
+            completionHandlerCopy(YES);
+            Block_release(completionHandlerCopy);
+        });
+    });
+}
+
+- (void)web_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
+{
+    RefPtr<WebKit::WebPageProxy> page = _webView->_page;
+    [self _computeMatchesForString:string options:options maxCount:maxCount completionHandler:^(BOOL success) {
+        if (!success)
+            return;
+        page->findClient().didCountStringMatches(page.get(), string, _cachedFindMatches.size());
+    }];
+}
+
+- (void)_didFindMatch:(UIPDFSelection *)match
+{
+    for (auto& pageInfo : _pages) {
+        if (pageInfo.page == match.page) {
+            [self _ensureViewForPage:pageInfo];
+
+            [pageInfo.view highlightSearchSelection:match animated:NO];
+
+            _currentFindPageIndex = pageInfo.index;
+            _currentFindSelection = match;
+
+            CGRect zoomRect = [pageInfo.view convertRectFromPDFPageSpace:match.bounds];
+            [self zoom:pageInfo.view.get() to:zoomRect atPoint:CGPointZero kind:kUIPDFObjectKindText];
+
+            return;
+        }
+    }
+}
+
+- (void)web_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
+{
+    if (_currentFindSelection)
+        [_pages[_currentFindPageIndex].view clearSearchHighlights];
+
+    RetainPtr<UIPDFSelection> previousFindSelection = _currentFindSelection;
+    unsigned previousFindPageIndex = 0;
+    if (previousFindSelection) {
+        previousFindPageIndex = _currentFindPageIndex;
+        if (![_cachedFindString isEqualToString:string]) {
+            NSUInteger location = [_currentFindSelection startIndex];
+            if (location)
+                previousFindSelection = adoptNS([[UIPDFSelection alloc] initWithPage:[_currentFindSelection page] fromIndex:location - 1 toIndex:location]);
+        }
+    }
+
+    NSStringCompareOptions findOptions = stringCompareOptions(options);
+    bool backwards = (options & _WKFindOptionsBackwards);
+    RefPtr<WebKit::WebPageProxy> page = _webView->_page;
+
+    [self _computeMatchesForString:string options:options maxCount:maxCount completionHandler:^(BOOL success) {
+        if (!success)
+            return;
+
+        unsigned pageIndex = previousFindPageIndex;
+        for (unsigned i = 0; i < _pages.size(); ++i) {
+            UIPDFSelection *match = [_pages[pageIndex].page findString:string fromSelection:(pageIndex == previousFindPageIndex ? previousFindSelection.get() : nil) options:findOptions];
+
+            if (!match) {
+                if (!pageIndex && backwards)
+                    pageIndex = _pages.size() - 1;
+                else if (pageIndex == _pages.size() - 1 && !backwards)
+                    pageIndex = 0;
+                else
+                    pageIndex += backwards ? -1 : 1;
+                continue;
+            }
+
+            [self _didFindMatch:match];
+
+            if (_cachedFindMatches.size() <= maxCount) {
+                _currentFindMatchIndex = 0;
+                for (const auto& knownMatch : _cachedFindMatches) {
+                    if (match.stringRange.location == [knownMatch stringRange].location && match.stringRange.length == [knownMatch stringRange].length) {
+                        page->findClient().didFindString(page.get(), string, _cachedFindMatches.size(), _currentFindMatchIndex);
+                        break;
+                    }
+                    _currentFindMatchIndex++;
+                }
+            }
+
+            return;
+        }
+        
+        page->findClient().didFailToFindString(page.get(), string);
+    }];
+}
+
+- (void)web_hideFindUI
+{
+    if (_currentFindSelection)
+        [_pages[_currentFindPageIndex].view clearSearchHighlights];
+
+    _currentFindSelection = nullptr;
+    _cachedFindString = nullptr;
+    _cachedFindMatches.clear();
 }
 
 #pragma mark UIPDFPageViewDelegate
