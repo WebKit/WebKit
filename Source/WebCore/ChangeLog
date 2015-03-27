@@ -1,3 +1,18 @@
+2015-03-27  Antti Koivisto  <antti@apple.com>
+
+        Move CacheValidation to platform
+        https://bugs.webkit.org/show_bug.cgi?id=143133
+
+        Reviewed by Chris Dumez.
+
+        It deals with platform types only and is currently violating layering.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/cache/CacheValidation.cpp: Removed.
+        * loader/cache/CacheValidation.h: Removed.
+        * platform/network/CacheValidation.cpp: Copied from Source/WebCore/loader/cache/CacheValidation.cpp.
+        * platform/network/CacheValidation.h: Copied from Source/WebCore/loader/cache/CacheValidation.h.
+
 2015-03-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r177896.

@@ -1888,7 +1888,6 @@ set(WebCore_SOURCES
     loader/cache/CachedSVGDocumentReference.cpp
     loader/cache/CachedScript.cpp
     loader/cache/CachedXSLStyleSheet.cpp
-    loader/cache/CacheValidation.cpp
     loader/cache/MemoryCache.cpp
 
     loader/icon/IconController.cpp
@@ -2212,6 +2211,7 @@ set(WebCore_SOURCES
     platform/network/BlobRegistry.cpp
     platform/network/BlobRegistryImpl.cpp
     platform/network/BlobResourceHandle.cpp
+    platform/network/CacheValidation.cpp
     platform/network/CredentialBase.cpp
     platform/network/CredentialStorage.cpp
     platform/network/DNSResolveQueue.cpp

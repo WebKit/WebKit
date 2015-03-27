@@ -7357,7 +7357,6 @@
     <ClCompile Include="..\loader\cache\CachedSVGDocumentReference.cpp" />
     <ClCompile Include="..\loader\cache\CachedTextTrack.cpp" />
     <ClCompile Include="..\loader\cache\CachedXSLStyleSheet.cpp" />
-    <ClCompile Include="..\loader\cache\CacheValidation.cpp" />
     <ClCompile Include="..\loader\cache\MemoryCache.cpp" />
     <ClCompile Include="..\platform\audio\AudioHardwareListener.cpp" />
     <ClCompile Include="..\platform\CalculationValue.cpp" />
@@ -8680,6 +8679,7 @@
     <ClCompile Include="..\platform\network\BlobResourceHandle.cpp" />
     <ClCompile Include="..\platform\network\BlobRegistry.cpp" />
     <ClCompile Include="..\platform\network\BlobRegistryImpl.cpp" />
+    <ClCompile Include="..\platform\network\CacheValidation.cpp" />
     <ClCompile Include="..\platform\network\CredentialBase.cpp" />
     <ClCompile Include="..\platform\network\CredentialStorage.cpp" />
     <ClCompile Include="..\platform\network\DataURL.cpp" />
@@ -19421,7 +19421,6 @@
     <ClInclude Include="..\loader\cache\CachedTextTrack.h" />
     <ClInclude Include="..\loader\cache\CachedXSLStyleSheet.h" />
     <ClInclude Include="..\loader\cache\CachePolicy.h" />
-    <ClInclude Include="..\loader\cache\CacheValidation.h" />
     <ClInclude Include="..\loader\cache\MemoryCache.h" />
     <ClInclude Include="..\platform\audio\AudioHardwareListener.h" />
     <ClInclude Include="..\platform\CalculationValue.h" />
@@ -19889,6 +19888,7 @@
     <ClInclude Include="..\platform\network\BlobRegistryImpl.h" />
     <ClInclude Include="..\platform\network\BlobResourceHandle.h" />
     <ClInclude Include="..\platform\network\CookieStorage.h" />
+    <ClInclude Include="..\platform\network\CacheValidation.h" />
     <ClInclude Include="..\platform\network\Credential.h" />
     <ClInclude Include="..\platform\network\CredentialBase.h" />
     <ClInclude Include="..\platform\network\CredentialStorage.h" />
