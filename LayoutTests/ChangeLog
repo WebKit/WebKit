@@ -1,3 +1,26 @@
+2015-03-27  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NetworkCache] We only cache responses with status codes that are cacheable by default
+        https://bugs.webkit.org/show_bug.cgi?id=143125
+        <rdar://problem/20321172>
+
+        Reviewed by Antti Koivisto.
+
+        Add layout test to check that responses with status code 307 (which is not
+        cacheable by default) are cached if they have explicit expiration headers.
+
+        Also update a couple of other disk cache tests to cover heuristic
+        freshness (http://tools.ietf.org/html/rfc7234#section-4.2.2), relying on
+        'Last-Modified' header to estimate freshness if usual expiration headers
+        are not available.
+
+        * http/tests/cache/disk-cache/disk-cache-204-status-code-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-204-status-code.html:
+        * http/tests/cache/disk-cache/disk-cache-307-status-code-expected.txt: Added.
+        * http/tests/cache/disk-cache/disk-cache-307-status-code.html: Added.
+        * http/tests/cache/disk-cache/disk-cache-404-status-code-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-404-status-code.html:
+
 2015-03-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening.

@@ -7,6 +7,7 @@ var tests =
 [
  { responseHeaders: {'Status': '204', 'Cache-control': 'max-age=0' }, includeBody: false },
  { responseHeaders: {'Status': '204', 'Cache-control': 'max-age=100' }, includeBody: false },
+ { responseHeaders: {'Status': '204', 'Last-Modified': 'now(-1000)' }, includeBody: false }, // Heuristic freshness.
 ];
 
 description("Test that responses with HTTP status code 204 are cacheable");

@@ -1,3 +1,28 @@
+2015-03-27  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NetworkCache] We only cache responses with status codes that are cacheable by default
+        https://bugs.webkit.org/show_bug.cgi?id=143125
+        <rdar://problem/20321172>
+
+        Reviewed by Antti Koivisto.
+
+        We Previously only cached responses with status codes that are cacheable
+        by default [1]. However, RFC 7234 [2] allows us to cache responses with
+        other status codes, as long as they have explicit headers allowing
+        caching:
+        - 'Expires' header field
+        - 'max-age' response directive
+
+        This patch updates our caching policy accordingly to improve efficiency.
+
+        [1] http://tools.ietf.org/html/rfc7231#page-48
+        [2] http://tools.ietf.org/html/rfc7234#section-4.3.2
+
+        Test: http/tests/cache/disk-cache/disk-cache-307-status-code.html
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::canStore):
+
 2015-03-26  Antti Koivisto  <antti@apple.com>
 
         Respect cache-control directives in request

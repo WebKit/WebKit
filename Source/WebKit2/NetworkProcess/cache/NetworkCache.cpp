@@ -279,6 +279,44 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t w
     });
 }
 
+// http://tools.ietf.org/html/rfc7231#page-48
+static bool isStatusCodeCacheableByDefault(int statusCode)
+{
+    switch (statusCode) {
+    case 200: // OK
+    case 203: // Non-Authoritative Information
+    case 204: // No Content
+    case 300: // Multiple Choices
+    case 301: // Moved Permanently
+    case 404: // Not Found
+    case 405: // Method Not Allowed
+    case 410: // Gone
+    case 414: // URI Too Long
+    case 501: // Not Implemented
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool isStatusCodePotentiallyCacheable(int statusCode)
+{
+    switch (statusCode) {
+    case 201: // Created
+    case 202: // Accepted
+    case 205: // Reset Content
+    case 302: // Found
+    case 303: // See Other
+    case 307: // Temporary redirect
+    case 403: // Forbidden
+    case 406: // Not Acceptable
+    case 415: // Unsupported Media Type
+        return true;
+    default:
+        return false;
+    }
+}
+
 static StoreDecision canStore(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response)
 {
     if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isHTTP())
@@ -294,19 +332,17 @@ static StoreDecision canStore(const WebCore::ResourceRequest& originalRequest, c
     if (response.cacheControlContainsNoStore())
         return StoreDecision::NoDueToNoStoreResponse;
 
-    switch (response.httpStatusCode()) {
-    case 200: // OK
-    case 203: // Non-Authoritative Information
-    case 204: // No Content
-    case 300: // Multiple Choices
-    case 301: // Moved Permanently
-    case 307: // Temporary Redirect
-    case 404: // Not Found
-    case 410: // Gone
+    if (isStatusCodeCacheableByDefault(response.httpStatusCode()))
         return StoreDecision::Yes;
-    default:
-        LOG(NetworkCache, "(NetworkProcess) status code %d", response.httpStatusCode());
+
+    if (isStatusCodePotentiallyCacheable(response.httpStatusCode())) {
+        // Check for expiration headers allowing us to cache.
+        // http://tools.ietf.org/html/rfc7234#section-4.3.2
+        if (std::isfinite(response.expires()) || std::isfinite(response.cacheControlMaxAge()))
+            return StoreDecision::Yes;
     }
+
+    LOG(NetworkCache, "(NetworkProcess) status code %d not cacheable by default and no explicit expiration headers", response.httpStatusCode());
 
     return StoreDecision::NoDueToHTTPStatusCode;
 }

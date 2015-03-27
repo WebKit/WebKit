@@ -104,10 +104,10 @@ public:
     WEBCORE_EXPORT bool cacheControlContainsNoStore() const;
     WEBCORE_EXPORT bool cacheControlContainsMustRevalidate() const;
     WEBCORE_EXPORT bool hasCacheValidatorFields() const;
-    double cacheControlMaxAge() const;
+    WEBCORE_EXPORT double cacheControlMaxAge() const;
     double date() const;
     double age() const;
-    double expires() const;
+    WEBCORE_EXPORT double expires() const;
     WEBCORE_EXPORT double lastModified() const;
 
     enum class Source { Unknown, Network, DiskCache, DiskCacheAfterValidation };
