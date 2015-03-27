@@ -1,3 +1,15 @@
+2015-03-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct test results after r182012.
+
+        The test now produces identical results on all platforms, so update the root test result,
+        and remove custom non-matching expectations. This corrects Windows, GTK, and EFL builds, and
+        should not harm the Mac build.
+
+        * accessibility/aria-toggle-button-with-title-expected.txt:
+        * platform/mac/accessibility/aria-toggle-button-with-title-expected.txt: Removed.
+        * platform/win/accessibility/aria-toggle-button-with-title-expected.txt: Removed.
+
 2015-03-27  Mark Lam  <mark.lam@apple.com>
 
         Gardening: skipping inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html until crash is fixed.
