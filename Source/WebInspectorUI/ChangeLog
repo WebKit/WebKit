@@ -1,3 +1,28 @@
+2015-03-26  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] Web Inspector: New Images for Console Types
+        https://bugs.webkit.org/show_bug.cgi?id=142301
+
+        Reviewed by Joseph Pecoraro.
+
+        Add more free icons and for the Web Inspector in GTK+.
+
+        * UserInterface/Images/gtk/Eye.svg: Added.
+        * UserInterface/Images/gtk/Frames.png: Added.
+        * UserInterface/Images/gtk/Frames@2x.png: Added.
+        * UserInterface/Images/gtk/FramesLarge.png: Added.
+        * UserInterface/Images/gtk/FramesLarge@2x.png: Added.
+        * UserInterface/Images/gtk/Reload.svg:
+        * UserInterface/Images/gtk/ReloadFull.svg: Added.
+        * UserInterface/Images/gtk/TypeBoolean.svg: Added.
+        * UserInterface/Images/gtk/TypeNull.svg: Added.
+        * UserInterface/Images/gtk/TypeNumber.svg: Added.
+        * UserInterface/Images/gtk/TypeObject.svg: Added.
+        * UserInterface/Images/gtk/TypeRegex.svg: Added.
+        * UserInterface/Images/gtk/TypeString.svg: Added.
+        * UserInterface/Images/gtk/TypeSymbol.svg: Added.
+        * UserInterface/Images/gtk/TypeUndefined.svg: Added.
+
 2015-03-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ES6: Provide a better view for Classes in the console
