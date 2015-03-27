@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,105 +23,87 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.QuickConsole = function(element)
+WebInspector.QuickConsole = class QuickConsole extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(element)
+    {
+        super();
 
-    this._toggleOrFocusKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape, this._toggleOrFocus.bind(this));
+        this._toggleOrFocusKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape, this._toggleOrFocus.bind(this));
 
-    var mainFrameExecutionContext = new WebInspector.ExecutionContext(WebInspector.QuickConsole.MainFrameContextExecutionIdentifier, WebInspector.UIString("Main Frame"), true, null);
-    this._mainFrameExecutionContextPathComponent = this._createExecutionContextPathComponent(mainFrameExecutionContext.name, mainFrameExecutionContext.identifier);
-    this._selectedExecutionContextPathComponent = this._mainFrameExecutionContextPathComponent;
+        var mainFrameExecutionContext = new WebInspector.ExecutionContext(WebInspector.QuickConsole.MainFrameContextExecutionIdentifier, WebInspector.UIString("Main Frame"), true, null);
+        this._mainFrameExecutionContextPathComponent = this._createExecutionContextPathComponent(mainFrameExecutionContext.name, mainFrameExecutionContext.identifier);
+        this._selectedExecutionContextPathComponent = this._mainFrameExecutionContextPathComponent;
 
-    this._otherExecutionContextPathComponents = [];
-    this._frameIdentifierToExecutionContextPathComponentMap = {};
+        this._otherExecutionContextPathComponents = [];
+        this._frameIdentifierToExecutionContextPathComponentMap = {};
 
-    this._element = element || document.createElement("div");
-    this._element.classList.add(WebInspector.QuickConsole.StyleClassName);
+        this._element = element || document.createElement("div");
+        this._element.classList.add("quick-console");
 
-    this.prompt = new WebInspector.ConsolePrompt(null, "text/javascript");
-    this.prompt.element.classList.add(WebInspector.QuickConsole.TextPromptStyleClassName);
-    this._element.appendChild(this.prompt.element);
+        this.prompt = new WebInspector.ConsolePrompt(null, "text/javascript");
+        this.prompt.element.classList.add(WebInspector.QuickConsole.TextPromptStyleClassName);
+        this._element.appendChild(this.prompt.element);
 
-    // FIXME: CodeMirror 4 has a default "Esc" key handler that always prevents default.
-    // Our keyboard shortcut above will respect the default prevented and ignore the event
-    // and not toggle the console. Install our own Escape key handler that will trigger
-    // when the ConsolePrompt is empty, to restore toggling behavior. A better solution
-    // would be for CodeMirror's event handler to pass if it doesn't do anything.
-    this.prompt.escapeKeyHandlerWhenEmpty = function() { WebInspector.toggleSplitConsole(); };
+        // FIXME: CodeMirror 4 has a default "Esc" key handler that always prevents default.
+        // Our keyboard shortcut above will respect the default prevented and ignore the event
+        // and not toggle the console. Install our own Escape key handler that will trigger
+        // when the ConsolePrompt is empty, to restore toggling behavior. A better solution
+        // would be for CodeMirror's event handler to pass if it doesn't do anything.
+        this.prompt.escapeKeyHandlerWhenEmpty = function() { WebInspector.toggleSplitConsole(); };
 
-    this.prompt.shown();
+        this.prompt.shown();
 
-    this._navigationBar = new WebInspector.QuickConsoleNavigationBar;
-    this._element.appendChild(this._navigationBar.element);
+        this._navigationBar = new WebInspector.QuickConsoleNavigationBar;
+        this._element.appendChild(this._navigationBar.element);
 
-    this._executionContextSelectorItem = new WebInspector.HierarchicalPathNavigationItem;
-    this._executionContextSelectorItem.showSelectorArrows = true;
-    this._navigationBar.addNavigationItem(this._executionContextSelectorItem);
+        this._executionContextSelectorItem = new WebInspector.HierarchicalPathNavigationItem;
+        this._executionContextSelectorItem.showSelectorArrows = true;
+        this._navigationBar.addNavigationItem(this._executionContextSelectorItem);
 
-    this._executionContextSelectorDivider = new WebInspector.DividerNavigationItem;
-    this._navigationBar.addNavigationItem(this._executionContextSelectorDivider);
+        this._executionContextSelectorDivider = new WebInspector.DividerNavigationItem;
+        this._navigationBar.addNavigationItem(this._executionContextSelectorDivider);
 
-    this._rebuildExecutionContextPathComponents();
+        this._rebuildExecutionContextPathComponents();
 
-    // COMPATIBILITY (iOS 6): Execution contexts did not exist, evaluation worked with frame ids.
-    if (WebInspector.ExecutionContext.supported()) {
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.PageExecutionContextChanged, this._framePageExecutionContextsChanged, this);
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ExecutionContextsCleared, this._frameExecutionContextsCleared, this);
-    } else {
-        WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.FrameWasAdded, this._frameAdded, this);
-        WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.FrameWasRemoved, this._frameRemoved, this);
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._frameMainResourceChanged, this);
+        // COMPATIBILITY (iOS 6): Execution contexts did not exist, evaluation worked with frame ids.
+        if (WebInspector.ExecutionContext.supported()) {
+            WebInspector.Frame.addEventListener(WebInspector.Frame.Event.PageExecutionContextChanged, this._framePageExecutionContextsChanged, this);
+            WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ExecutionContextsCleared, this._frameExecutionContextsCleared, this);
+        } else {
+            WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.FrameWasAdded, this._frameAdded, this);
+            WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.FrameWasRemoved, this._frameRemoved, this);
+            WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._frameMainResourceChanged, this);
+        }
+
+        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._debuggerActiveCallFrameDidChange, this);
     }
-
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._debuggerActiveCallFrameDidChange, this);
-};
-
-WebInspector.QuickConsole.StyleClassName = "quick-console";
-WebInspector.QuickConsole.ShowingLogClassName = "showing-log";
-WebInspector.QuickConsole.NavigationBarContainerStyleClassName = "navigation-bar-container";
-WebInspector.QuickConsole.NavigationBarSpacerStyleClassName = "navigation-bar-spacer";
-WebInspector.QuickConsole.TextPromptStyleClassName = "text-prompt";
-
-WebInspector.QuickConsole.ToolbarSingleLineHeight = 21;
-WebInspector.QuickConsole.ToolbarPromptPadding = 4;
-WebInspector.QuickConsole.ToolbarTopBorder = 1;
-
-WebInspector.QuickConsole.MainFrameContextExecutionIdentifier = undefined;
-
-WebInspector.QuickConsole.Event = {
-    DidResize: "quick-console-did-resize"
-};
-
-WebInspector.QuickConsole.prototype = {
-    constructor: WebInspector.QuickConsole,
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get navigationBar()
     {
         return this._navigationBar;
-    },
+    }
 
     get executionContextIdentifier()
     {
         return this._selectedExecutionContextPathComponent._executionContextIdentifier;
-    },
+    }
 
-    updateLayout: function()
+    updateLayout()
     {
         // A hard maximum size of 33% of the window.
-        const maximumAllowedHeight = Math.round(window.innerHeight * 0.33);
+        var maximumAllowedHeight = Math.round(window.innerHeight * 0.33);
         this.prompt.element.style.maxHeight = maximumAllowedHeight + "px";
-    },
+    }
 
-    consoleLogVisibilityChanged: function(visible)
+    consoleLogVisibilityChanged(visible)
     {
         if (visible)
             this.element.classList.add(WebInspector.QuickConsole.ShowingLogClassName);
@@ -129,11 +111,11 @@ WebInspector.QuickConsole.prototype = {
             this.element.classList.remove(WebInspector.QuickConsole.ShowingLogClassName);
 
         this.dispatchEventToListeners(WebInspector.QuickConsole.Event.DidResize);
-    },
+    }
 
     // Private
 
-    _executionContextPathComponentsToDisplay: function()
+    _executionContextPathComponentsToDisplay()
     {
         // If we are in the debugger the console will use the active call frame, don't show the selector.
         if (WebInspector.debuggerManager.activeCallFrame)
@@ -144,9 +126,9 @@ WebInspector.QuickConsole.prototype = {
             return [];
 
         return [this._selectedExecutionContextPathComponent];
-    },
+    }
 
-    _rebuildExecutionContextPathComponents: function()
+    _rebuildExecutionContextPathComponents()
     {
         var components = this._executionContextPathComponentsToDisplay();
         var isEmpty = !components.length;
@@ -155,9 +137,9 @@ WebInspector.QuickConsole.prototype = {
 
         this._executionContextSelectorItem.hidden = isEmpty;
         this._executionContextSelectorDivider.hidden = isEmpty;
-    },
+    }
 
-    _framePageExecutionContextsChanged: function(event)
+    _framePageExecutionContextsChanged(event)
     {
         var frame = event.target;
 
@@ -170,9 +152,9 @@ WebInspector.QuickConsole.prototype = {
             this._selectedExecutionContextPathComponent = newExecutionContextPathComponent;
             this._rebuildExecutionContextPathComponents();
         }
-    },
+    }
 
-    _frameExecutionContextsCleared: function(event)
+    _frameExecutionContextsCleared(event)
     {
         var frame = event.target;
 
@@ -187,27 +169,27 @@ WebInspector.QuickConsole.prototype = {
         }
 
         this._removeExecutionContextPathComponentForFrame(frame);
-    },
+    }
 
-    _frameAdded: function(event)
+    _frameAdded(event)
     {
         var frame = event.data.frame;
         this._insertExecutionContextPathComponentForFrame(frame);
-    },
+    }
 
-    _frameRemoved: function(event)
+    _frameRemoved(event)
     {
         var frame = event.data.frame;
         this._removeExecutionContextPathComponentForFrame(frame);
-    },
+    }
 
-    _frameMainResourceChanged: function(event)
+    _frameMainResourceChanged(event)
     {
         var frame = event.target;
         this._updateExecutionContextPathComponentForFrame(frame);
-    },
+    }
 
-    _createExecutionContextPathComponent: function(name, identifier)
+    _createExecutionContextPathComponent(name, identifier)
     {
         var pathComponent = new WebInspector.HierarchicalPathComponent(name, "execution-context", identifier, true, true);
         pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
@@ -215,9 +197,9 @@ WebInspector.QuickConsole.prototype = {
         pathComponent.truncatedDisplayNameLength = 50;
         pathComponent._executionContextIdentifier = identifier;
         return pathComponent;
-    },
+    }
 
-    _createExecutionContextPathComponentFromFrame: function(frame)
+    _createExecutionContextPathComponentFromFrame(frame)
     {
         var name = frame.name ? frame.name + " \u2014 " + frame.mainResource.displayName : frame.mainResource.displayName;
         var identifier = WebInspector.ExecutionContext.supported() ? frame.pageExecutionContext.id : frame.id;
@@ -226,9 +208,9 @@ WebInspector.QuickConsole.prototype = {
         pathComponent._frame = frame;
 
         return pathComponent;
-    },
+    }
 
-    _compareExecutionContextPathComponents: function(a, b)
+    _compareExecutionContextPathComponents(a, b)
     {
         // "Main Frame" always on top.
         if (!a._frame)
@@ -243,9 +225,9 @@ WebInspector.QuickConsole.prototype = {
             return 1;
 
         return a.displayName.localeCompare(b.displayName);
-    },
+    }
 
-    _insertExecutionContextPathComponentForFrame: function(frame, skipRebuild)
+    _insertExecutionContextPathComponentForFrame(frame, skipRebuild)
     {
         if (frame.isMainFrame())
             return this._mainFrameExecutionContextPathComponent;
@@ -276,9 +258,9 @@ WebInspector.QuickConsole.prototype = {
             this._rebuildExecutionContextPathComponents();
 
         return executionContextPathComponent;
-    },
+    }
 
-    _removeExecutionContextPathComponentForFrame: function(frame, skipRebuild)
+    _removeExecutionContextPathComponentForFrame(frame, skipRebuild)
     {
         if (frame.isMainFrame())
             return;
@@ -306,9 +288,9 @@ WebInspector.QuickConsole.prototype = {
 
         if (!skipRebuild)
             this._rebuildExecutionContextPathComponents();
-    },
+    }
 
-    _updateExecutionContextPathComponentForFrame: function(frame)
+    _updateExecutionContextPathComponentForFrame(frame)
     {
         if (frame.isMainFrame())
             return;
@@ -326,9 +308,9 @@ WebInspector.QuickConsole.prototype = {
             this._selectedExecutionContextPathComponent = newExecutionContextPathComponent;
 
         this._rebuildExecutionContextPathComponents();
-    },
+    }
 
-    _pathComponentSelected: function(event)
+    _pathComponentSelected(event)
     {
         if (event.data.pathComponent === this._selectedExecutionContextPathComponent)
             return;
@@ -336,19 +318,19 @@ WebInspector.QuickConsole.prototype = {
         this._selectedExecutionContextPathComponent = event.data.pathComponent;
 
         this._rebuildExecutionContextPathComponents();
-    },
+    }
 
-    _pathComponentClicked: function(event)
+    _pathComponentClicked(event)
     {
         this.prompt.focus();
-    },
+    }
 
-    _debuggerActiveCallFrameDidChange: function(event)
+    _debuggerActiveCallFrameDidChange(event)
     {
         this._rebuildExecutionContextPathComponents();
-    },
+    }
 
-    _toggleOrFocus: function(event)
+    _toggleOrFocus(event)
     {
         if (this.prompt.focused)
             WebInspector.toggleSplitConsole();
@@ -357,4 +339,17 @@ WebInspector.QuickConsole.prototype = {
     }
 };
 
-WebInspector.QuickConsole.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.QuickConsole.ShowingLogClassName = "showing-log";
+WebInspector.QuickConsole.NavigationBarContainerStyleClassName = "navigation-bar-container";
+WebInspector.QuickConsole.NavigationBarSpacerStyleClassName = "navigation-bar-spacer";
+WebInspector.QuickConsole.TextPromptStyleClassName = "text-prompt";
+
+WebInspector.QuickConsole.ToolbarSingleLineHeight = 21;
+WebInspector.QuickConsole.ToolbarPromptPadding = 4;
+WebInspector.QuickConsole.ToolbarTopBorder = 1;
+
+WebInspector.QuickConsole.MainFrameContextExecutionIdentifier = undefined;
+
+WebInspector.QuickConsole.Event = {
+    DidResize: "quick-console-did-resize"
+};

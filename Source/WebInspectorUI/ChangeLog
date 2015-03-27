@@ -1,5 +1,28 @@
 2015-03-26  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Convert more misc View classes to ES6
+        https://bugs.webkit.org/show_bug.cgi?id=143128
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CompletionSuggestionsView.js:
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        * UserInterface/Views/DashboardContainerView.js:
+        * UserInterface/Views/DashboardView.js:
+        * UserInterface/Views/DebuggerDashboardView.js:
+        * UserInterface/Views/DefaultDashboardView.js:
+        * UserInterface/Views/FilterBarButton.js:
+        * UserInterface/Views/MetricsStyleDetailsPanel.js:
+        * UserInterface/Views/ObjectPreviewView.js:
+        * UserInterface/Views/ObjectTreeView.js:
+        * UserInterface/Views/QuickConsole.js:
+        * UserInterface/Views/ReplayDashboardView.js:
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        * UserInterface/Views/StyleDetailsPanel.js:
+        Converted to ES6 classes.
+
+2015-03-26  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Convert TextEditor classes to ES6
         https://bugs.webkit.org/show_bug.cgi?id=143127
 

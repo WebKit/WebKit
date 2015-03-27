@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RulesStyleDetailsPanel = function()
+WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebInspector.StyleDetailsPanel
 {
-    WebInspector.StyleDetailsPanel.call(this, WebInspector.RulesStyleDetailsPanel.StyleClassName, "rules", WebInspector.UIString("Rules"));
+    constructor()
+    {
+        super("rules", "rules", WebInspector.UIString("Rules"));
 
-    this._sections = [];
-};
-
-WebInspector.RulesStyleDetailsPanel.StyleClassName = "rules";
-WebInspector.RulesStyleDetailsPanel.LabelElementStyleClassName = "label";
-WebInspector.RulesStyleDetailsPanel.NewRuleElementStyleClassName = "new-rule";
-
-WebInspector.RulesStyleDetailsPanel.prototype = {
-    constructor: WebInspector.RulesStyleDetailsPanel,
+        this._sections = [];
+    }
 
     // Public
 
-    refresh: function(significantChange)
+    refresh(significantChange)
     {
         // We only need to do a rebuild on significant changes. Other changes are handled
         // by the sections and text editors themselves.
@@ -150,7 +145,7 @@ WebInspector.RulesStyleDetailsPanel.prototype = {
 
             if (!this.nodeStyles.node.isInShadowTree()) {
                 var newRuleButton = document.createElement("div");
-                newRuleButton.className = WebInspector.RulesStyleDetailsPanel.NewRuleElementStyleClassName;
+                newRuleButton.className = "new-rule";
                 newRuleButton.addEventListener("click", this._newRuleClicked.bind(this));
 
                 newRuleButton.appendChild(document.createElement("img"));
@@ -189,7 +184,7 @@ WebInspector.RulesStyleDetailsPanel.prototype = {
                 prefixElement.textContent = WebInspector.UIString("Inherited From: ");
 
                 var inheritedLabel = document.createElement("div");
-                inheritedLabel.className = WebInspector.RulesStyleDetailsPanel.LabelElementStyleClassName;
+                inheritedLabel.className = "label";
                 inheritedLabel.appendChild(prefixElement);
                 inheritedLabel.appendChild(WebInspector.linkifyNodeReference(style.node));
                 newDOMFragment.appendChild(inheritedLabel);
@@ -212,7 +207,7 @@ WebInspector.RulesStyleDetailsPanel.prototype = {
                     prefixElement.textContent = WebInspector.UIString("Media: ");
 
                     var mediaLabel = document.createElement("div");
-                    mediaLabel.className = WebInspector.RulesStyleDetailsPanel.LabelElementStyleClassName;
+                    mediaLabel.className = "label";
                     mediaLabel.appendChild(prefixElement);
                     mediaLabel.appendChild(document.createTextNode(media.text));
 
@@ -244,11 +239,11 @@ WebInspector.RulesStyleDetailsPanel.prototype = {
 
         if (previousFocusedSection)
             previousFocusedSection.focus();
-    },
+    }
 
     // Protected
 
-    shown: function()
+    shown()
     {
         WebInspector.StyleDetailsPanel.prototype.shown.call(this);
 
@@ -259,9 +254,9 @@ WebInspector.RulesStyleDetailsPanel.prototype = {
             section.style.__rulesSection = section;
             section.updateLayout();
         }
-    },
+    }
 
-    hidden: function()
+    hidden()
     {
         WebInspector.StyleDetailsPanel.prototype.hidden.call(this);
 
@@ -269,21 +264,19 @@ WebInspector.RulesStyleDetailsPanel.prototype = {
         // to release their objects when this panel is not visible.
         for (var i = 0; i < this._sections.length; ++i)
             delete this._sections[i].style.__rulesSection;
-    },
+    }
 
-    widthDidChange: function()
+    widthDidChange()
     {
         for (var i = 0; i < this._sections.length; ++i)
             this._sections[i].updateLayout();
-    },
+    }
 
     // Private
 
-    _newRuleClicked: function(event)
+    _newRuleClicked(event)
     {
         this._focusNextNewInspectorRule = true;
         this.nodeStyles.addEmptyRule();
     }
 };
-
-WebInspector.RulesStyleDetailsPanel.prototype.__proto__ = WebInspector.StyleDetailsPanel.prototype;

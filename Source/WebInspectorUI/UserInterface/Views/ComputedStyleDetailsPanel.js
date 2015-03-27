@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,82 +23,79 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ComputedStyleDetailsPanel = function()
+WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WebInspector.StyleDetailsPanel
 {
-    WebInspector.StyleDetailsPanel.call(this, WebInspector.ComputedStyleDetailsPanel.StyleClassName, "computed", WebInspector.UIString("Computed"));
+    constructor()
+    {
+        super(WebInspector.ComputedStyleDetailsPanel.StyleClassName, "computed", WebInspector.UIString("Computed"));
 
-    this._computedStyleShowAllSetting = new WebInspector.Setting("computed-style-show-all", false);
+        this._computedStyleShowAllSetting = new WebInspector.Setting("computed-style-show-all", false);
 
-    var computedStyleShowAllLabel = document.createElement("label");
-    computedStyleShowAllLabel.textContent = WebInspector.UIString("Show All");
+        var computedStyleShowAllLabel = document.createElement("label");
+        computedStyleShowAllLabel.textContent = WebInspector.UIString("Show All");
 
-    this._computedStyleShowAllCheckbox = document.createElement("input");
-    this._computedStyleShowAllCheckbox.type = "checkbox";
-    this._computedStyleShowAllCheckbox.checked = this._computedStyleShowAllSetting.value;
-    this._computedStyleShowAllCheckbox.addEventListener("change", this._computedStyleShowAllCheckboxValueChanged.bind(this));
-    computedStyleShowAllLabel.appendChild(this._computedStyleShowAllCheckbox);
+        this._computedStyleShowAllCheckbox = document.createElement("input");
+        this._computedStyleShowAllCheckbox.type = "checkbox";
+        this._computedStyleShowAllCheckbox.checked = this._computedStyleShowAllSetting.value;
+        this._computedStyleShowAllCheckbox.addEventListener("change", this._computedStyleShowAllCheckboxValueChanged.bind(this));
+        computedStyleShowAllLabel.appendChild(this._computedStyleShowAllCheckbox);
 
-    this._propertiesTextEditor = new WebInspector.CSSStyleDeclarationTextEditor(this);
-    this._propertiesTextEditor.showsImplicitProperties = this._computedStyleShowAllSetting.value;
-    this._propertiesTextEditor.alwaysShowPropertyNames = ["display", "width", "height"];
-    this._propertiesTextEditor.sortProperties = true;
+        this._propertiesTextEditor = new WebInspector.CSSStyleDeclarationTextEditor(this);
+        this._propertiesTextEditor.showsImplicitProperties = this._computedStyleShowAllSetting.value;
+        this._propertiesTextEditor.alwaysShowPropertyNames = ["display", "width", "height"];
+        this._propertiesTextEditor.sortProperties = true;
 
-    var propertiesRow = new WebInspector.DetailsSectionRow;
-    var propertiesGroup = new WebInspector.DetailsSectionGroup([propertiesRow]);
-    var propertiesSection = new WebInspector.DetailsSection("computed-style-properties", WebInspector.UIString("Properties"), [propertiesGroup], computedStyleShowAllLabel);
+        var propertiesRow = new WebInspector.DetailsSectionRow;
+        var propertiesGroup = new WebInspector.DetailsSectionGroup([propertiesRow]);
+        var propertiesSection = new WebInspector.DetailsSection("computed-style-properties", WebInspector.UIString("Properties"), [propertiesGroup], computedStyleShowAllLabel);
 
-    propertiesRow.element.appendChild(this._propertiesTextEditor.element);
+        propertiesRow.element.appendChild(this._propertiesTextEditor.element);
 
-    // Region flow name is used to display the "flow-from" property of the Region Containers.
-    this._regionFlowFragment = document.createElement("span");
-    this._regionFlowFragment.appendChild(document.createElement("img")).className = "icon";
-    this._regionFlowNameLabelValue = this._regionFlowFragment.appendChild(document.createElement("span"));
+        // Region flow name is used to display the "flow-from" property of the Region Containers.
+        this._regionFlowFragment = document.createElement("span");
+        this._regionFlowFragment.appendChild(document.createElement("img")).className = "icon";
+        this._regionFlowNameLabelValue = this._regionFlowFragment.appendChild(document.createElement("span"));
 
-    var goToRegionFlowButton = this._regionFlowFragment.appendChild(WebInspector.createGoToArrowButton());
-    goToRegionFlowButton.addEventListener("click", this._goToRegionFlowArrowWasClicked.bind(this));
+        var goToRegionFlowButton = this._regionFlowFragment.appendChild(WebInspector.createGoToArrowButton());
+        goToRegionFlowButton.addEventListener("click", this._goToRegionFlowArrowWasClicked.bind(this));
 
-    this._regionFlowNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Region Flow"));
-    this._regionFlowNameRow.element.classList.add("content-flow-link");
+        this._regionFlowNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Region Flow"));
+        this._regionFlowNameRow.element.classList.add("content-flow-link");
 
-    // Content flow name is used to display the "flow-into" property of the Content nodes.
-    this._contentFlowFragment = document.createElement("span");
-    this._contentFlowFragment.appendChild(document.createElement("img")).className = "icon";
-    this._contentFlowNameLabelValue = this._contentFlowFragment.appendChild(document.createElement("span"));
+        // Content flow name is used to display the "flow-into" property of the Content nodes.
+        this._contentFlowFragment = document.createElement("span");
+        this._contentFlowFragment.appendChild(document.createElement("img")).className = "icon";
+        this._contentFlowNameLabelValue = this._contentFlowFragment.appendChild(document.createElement("span"));
 
-    var goToContentFlowButton = this._contentFlowFragment.appendChild(WebInspector.createGoToArrowButton());
-    goToContentFlowButton.addEventListener("click", this._goToContentFlowArrowWasClicked.bind(this));
+        var goToContentFlowButton = this._contentFlowFragment.appendChild(WebInspector.createGoToArrowButton());
+        goToContentFlowButton.addEventListener("click", this._goToContentFlowArrowWasClicked.bind(this));
 
-    this._contentFlowNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Content Flow"));
-    this._contentFlowNameRow.element.classList.add("content-flow-link");
+        this._contentFlowNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Content Flow"));
+        this._contentFlowNameRow.element.classList.add("content-flow-link");
 
-    var flowNamesGroup = new WebInspector.DetailsSectionGroup([this._regionFlowNameRow, this._contentFlowNameRow]);
-    this._flowNamesSection = new WebInspector.DetailsSection("content-flow", WebInspector.UIString("Flows"), [flowNamesGroup]);
+        var flowNamesGroup = new WebInspector.DetailsSectionGroup([this._regionFlowNameRow, this._contentFlowNameRow]);
+        this._flowNamesSection = new WebInspector.DetailsSection("content-flow", WebInspector.UIString("Flows"), [flowNamesGroup]);
 
-    this._containerRegionsDataGrid = new WebInspector.DOMTreeDataGrid;
-    this._containerRegionsDataGrid.element.classList.add("no-header");
+        this._containerRegionsDataGrid = new WebInspector.DOMTreeDataGrid;
+        this._containerRegionsDataGrid.element.classList.add("no-header");
 
-    var containerRegionsRow = new WebInspector.DetailsSectionDataGridRow(this._containerRegionsDataGrid);
-    var containerRegionsGroup = new WebInspector.DetailsSectionGroup([containerRegionsRow]);
-    this._containerRegionsFlowSection = new WebInspector.DetailsSection("container-regions", WebInspector.UIString("Container Regions"), [containerRegionsGroup]);
+        var containerRegionsRow = new WebInspector.DetailsSectionDataGridRow(this._containerRegionsDataGrid);
+        var containerRegionsGroup = new WebInspector.DetailsSectionGroup([containerRegionsRow]);
+        this._containerRegionsFlowSection = new WebInspector.DetailsSection("container-regions", WebInspector.UIString("Container Regions"), [containerRegionsGroup]);
 
-    this.element.appendChild(propertiesSection.element);
-    this.element.appendChild(this._flowNamesSection.element);
-    this.element.appendChild(this._containerRegionsFlowSection.element);
+        this.element.appendChild(propertiesSection.element);
+        this.element.appendChild(this._flowNamesSection.element);
+        this.element.appendChild(this._containerRegionsFlowSection.element);
 
-    this._resetFlowDetails();
-};
-
-WebInspector.ComputedStyleDetailsPanel.StyleClassName = "computed";
-
-WebInspector.ComputedStyleDetailsPanel.prototype = {
-    constructor: WebInspector.ComputedStyleDetailsPanel,
+        this._resetFlowDetails();
+    }
 
     // Public
 
     get regionFlow()
     {
         return this._regionFlow;
-    },
+    }
 
     set regionFlow(regionFlow)
     {
@@ -106,12 +103,12 @@ WebInspector.ComputedStyleDetailsPanel.prototype = {
         this._regionFlowNameLabelValue.textContent = regionFlow ? regionFlow.name : "";
         this._regionFlowNameRow.value = regionFlow ? this._regionFlowFragment : null;
         this._updateFlowNamesSectionVisibility();
-    },
+    }
 
     get contentFlow()
     {
         return this._contentFlow;
-    },
+    }
 
     set contentFlow(contentFlow)
     {
@@ -119,12 +116,12 @@ WebInspector.ComputedStyleDetailsPanel.prototype = {
         this._contentFlowNameLabelValue.textContent = contentFlow ? contentFlow.name : "";
         this._contentFlowNameRow.value = contentFlow ? this._contentFlowFragment : null;
         this._updateFlowNamesSectionVisibility();
-    },
+    }
 
     get containerRegions()
     {
         return this._containerRegions;
-    },
+    }
 
     set containerRegions(regions)
     {
@@ -140,50 +137,50 @@ WebInspector.ComputedStyleDetailsPanel.prototype = {
             this._containerRegionsDataGrid.appendChild(new WebInspector.DOMTreeDataGridNode(regionNode));
 
         this._containerRegionsFlowSection.element.classList.remove("hidden");
-    },
+    }
 
-    refresh: function()
+    refresh()
     {
         this._propertiesTextEditor.style = this.nodeStyles.computedStyle;
         this._refreshFlowDetails(this.nodeStyles.node);
-    },
+    }
 
     // Protected
 
-    shown: function()
+    shown()
     {
         WebInspector.StyleDetailsPanel.prototype.shown.call(this);
 
         this._propertiesTextEditor.updateLayout();
-    },
+    }
 
-    widthDidChange: function()
+    widthDidChange()
     {
         this._propertiesTextEditor.updateLayout();
-    },
+    }
 
     // Private
 
-    _computedStyleShowAllCheckboxValueChanged: function(event)
+    _computedStyleShowAllCheckboxValueChanged(event)
     {
         var checked = this._computedStyleShowAllCheckbox.checked;
         this._computedStyleShowAllSetting.value = checked;
         this._propertiesTextEditor.showsImplicitProperties = checked;
-    },
+    }
 
-    _updateFlowNamesSectionVisibility: function()
+    _updateFlowNamesSectionVisibility()
     {
         this._flowNamesSection.element.classList.toggle("hidden", !this._contentFlow && !this._regionFlow);
-    },
+    }
 
-    _resetFlowDetails : function()
+    _resetFlowDetails ()
     {
         this.regionFlow = null;
         this.contentFlow = null;
         this.containerRegions = null;
-    },
+    }
 
-    _refreshFlowDetails: function(domNode)
+    _refreshFlowDetails(domNode)
     {
         this._resetFlowDetails();
         if (!domNode)
@@ -203,17 +200,17 @@ WebInspector.ComputedStyleDetailsPanel.prototype = {
         }
 
         WebInspector.domTreeManager.getNodeContentFlowInfo(domNode, contentFlowInfoReady.bind(this));
-    },
+    }
 
-    _goToRegionFlowArrowWasClicked: function()
+    _goToRegionFlowArrowWasClicked()
     {
         WebInspector.resourceSidebarPanel.showContentFlowDOMTree(this._regionFlow);
-    },
+    }
 
-    _goToContentFlowArrowWasClicked: function()
+    _goToContentFlowArrowWasClicked()
     {
         WebInspector.resourceSidebarPanel.showContentFlowDOMTree(this._contentFlow, this.nodeStyles.node, true);
     }
 };
 
-WebInspector.ComputedStyleDetailsPanel.prototype.__proto__ = WebInspector.StyleDetailsPanel.prototype;
+WebInspector.ComputedStyleDetailsPanel.StyleClassName = "computed";

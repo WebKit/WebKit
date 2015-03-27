@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DashboardView = function(representedObject, identifier)
+WebInspector.DashboardView = class DashboardView extends WebInspector.Object
 {
-    // Creating a new DashboardView directly returns an instance of the proper subclass.
-    if (this.constructor === WebInspector.DashboardView) {
+    constructor(representedObject, identifier)
+    {
+        console.assert(identifier);
+
+        super();
+
+        this._representedObject = representedObject;
+
+        this._element = document.createElement("div");
+        this._element.classList.add(WebInspector.DashboardView.StyleClassName);
+        this._element.classList.add(identifier);
+    }
+
+    // Static
+
+    static create(representedObject)
+    {
         console.assert(representedObject);
 
         if (representedObject instanceof WebInspector.DefaultDashboard)
@@ -41,50 +56,32 @@ WebInspector.DashboardView = function(representedObject, identifier)
         throw "Can't make a DashboardView for an unknown representedObject.";
     }
 
-    // Otherwise, a subclass is calling the base constructor.
-    console.assert(this.constructor !== WebInspector.DashboardView && this instanceof WebInspector.DashboardView);
-    console.assert(identifier);
-
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
-
-    this._representedObject = representedObject;
-
-    this._element = document.createElement("div");
-    this._element.classList.add(WebInspector.DashboardView.StyleClassName);
-    this._element.classList.add(identifier);
-};
-
-WebInspector.DashboardView.StyleClassName = "dashboard";
-
-WebInspector.DashboardView.prototype = {
-    constructor: WebInspector.DashboardView,
-    __proto__: WebInspector.Object.prototype,
-
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get representedObject()
     {
         return this._representedObject;
-    },
+    }
 
-    shown: function()
+    shown()
     {
         // Implemented by subclasses.
-    },
+    }
 
-    hidden: function()
+    hidden()
     {
         // Implemented by subclasses.
-    },
+    }
 
-    closed: function()
+    closed()
     {
         // Implemented by subclasses.
     }
 };
+
+WebInspector.DashboardView.StyleClassName = "dashboard";

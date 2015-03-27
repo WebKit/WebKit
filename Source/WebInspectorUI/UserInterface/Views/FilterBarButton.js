@@ -23,38 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FilterBarButton = function(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss, role)
+WebInspector.FilterBarButton = class FilterBarButton extends WebInspector.ActivateButtonNavigationItem
 {
-    WebInspector.ActivateButtonNavigationItem.call(this, identifier, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss, role);
+    constructor(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss, role)
+    {
+        super(identifier, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss, role);
 
-    this._filterFunction = filterFunction;
+        this._filterFunction = filterFunction;
 
-    this._activatedSetting = new WebInspector.Setting(identifier, activatedByDefault);
+        this._activatedSetting = new WebInspector.Setting(identifier, activatedByDefault);
 
-    this.activated = !!this._activatedSetting.value;
-};
-
-WebInspector.FilterBarButton.StyleClassName = "filter-bar-button";
-
-WebInspector.FilterBarButton.Event = {
-    ActivatedStateToggled: "filter-bar-activated-state-toggled"
-};
-
-WebInspector.FilterBarButton.prototype = {
-    constructor: WebInspector.FilterBarButton,
-    __proto__: WebInspector.ActivateButtonNavigationItem.prototype,
+        this.activated = !!this._activatedSetting.value;
+    }
 
     // Public
 
     get filterFunction()
     {
         return this._filterFunction;
-    },
+    }
 
-    toggle: function()
+    toggle()
     {
         this.activated = !this.activated;
         this._activatedSetting.value = this.activated;
         this.dispatchEventToListeners(WebInspector.FilterBarButton.Event.ActivatedStateToggled);
     }
+};
+
+WebInspector.FilterBarButton.Event = {
+    ActivatedStateToggled: "filter-bar-activated-state-toggled"
 };

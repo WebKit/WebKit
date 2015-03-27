@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.MetricsStyleDetailsPanel = function()
+WebInspector.MetricsStyleDetailsPanel = class MetricsStyleDetailsPanel extends WebInspector.StyleDetailsPanel
 {
-    WebInspector.StyleDetailsPanel.call(this, WebInspector.MetricsStyleDetailsPanel.StyleClassName, "metrics", WebInspector.UIString("Metrics"));
+    constructor()
+    {
+        super("metrics", "metrics", WebInspector.UIString("Metrics"));
 
-    this._boxModelDiagramRow = new WebInspector.BoxModelDetailsSectionRow;
+        this._boxModelDiagramRow = new WebInspector.BoxModelDetailsSectionRow;
 
-    var boxModelGroup = new WebInspector.DetailsSectionGroup([this._boxModelDiagramRow]);
-    var boxModelSection = new WebInspector.DetailsSection("style-box-model", WebInspector.UIString("Box Model"), [boxModelGroup]);
+        var boxModelGroup = new WebInspector.DetailsSectionGroup([this._boxModelDiagramRow]);
+        var boxModelSection = new WebInspector.DetailsSection("style-box-model", WebInspector.UIString("Box Model"), [boxModelGroup]);
 
-    this.element.appendChild(boxModelSection.element);
-};
-
-WebInspector.MetricsStyleDetailsPanel.StyleClassName = "metrics";
-
-WebInspector.MetricsStyleDetailsPanel.prototype = {
-    constructor: WebInspector.MetricsStyleDetailsPanel,
+        this.element.appendChild(boxModelSection.element);
+    }
 
     // Public
 
-    refresh: function()
+    refresh()
     {
         this._boxModelDiagramRow.nodeStyles = this.nodeStyles;
     }
 };
-
-WebInspector.MetricsStyleDetailsPanel.prototype.__proto__ = WebInspector.StyleDetailsPanel.prototype;

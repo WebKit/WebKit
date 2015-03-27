@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CompletionSuggestionsView = function(delegate)
+WebInspector.CompletionSuggestionsView = class CompletionSuggestionsView extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(delegate)
+    {
+        super();
 
-    this._delegate = delegate || null;
+        this._delegate = delegate || null;
 
-    this._selectedIndex = NaN;
+        this._selectedIndex = NaN;
 
-    this._element = document.createElement("div");
-    this._element.className = WebInspector.CompletionSuggestionsView.StyleClassName;
+        this._element = document.createElement("div");
+        this._element.className = WebInspector.CompletionSuggestionsView.StyleClassName;
 
-    this._containerElement = document.createElement("div");
-    this._containerElement.className = WebInspector.CompletionSuggestionsView.ContainerElementStyleClassName;
-    this._containerElement.addEventListener("mousedown", this._mouseDown.bind(this));
-    this._containerElement.addEventListener("mouseup", this._mouseUp.bind(this));
-    this._containerElement.addEventListener("click", this._itemClicked.bind(this));
-    this._element.appendChild(this._containerElement);
-};
-
-WebInspector.CompletionSuggestionsView.StyleClassName = "completion-suggestions";
-WebInspector.CompletionSuggestionsView.ContainerElementStyleClassName = "completion-suggestions-container";
-WebInspector.CompletionSuggestionsView.ItemElementStyleClassName = "item";
-WebInspector.CompletionSuggestionsView.SelectedItemStyleClassName = "selected";
-
-WebInspector.CompletionSuggestionsView.prototype = {
-    constructor: WebInspector.CompletionSuggestionsView,
+        this._containerElement = document.createElement("div");
+        this._containerElement.className = WebInspector.CompletionSuggestionsView.ContainerElementStyleClassName;
+        this._containerElement.addEventListener("mousedown", this._mouseDown.bind(this));
+        this._containerElement.addEventListener("mouseup", this._mouseUp.bind(this));
+        this._containerElement.addEventListener("click", this._itemClicked.bind(this));
+        this._element.appendChild(this._containerElement);
+    }
 
     // Public
 
     get delegate()
     {
         return this._delegate;
-    },
+    }
 
     get visible()
     {
         return !!this._element.parentNode;
-    },
+    }
 
     get selectedIndex()
     {
         return this._selectedIndex;
-    },
+    }
 
     set selectedIndex(index)
     {
@@ -82,9 +75,9 @@ WebInspector.CompletionSuggestionsView.prototype = {
 
         selectedItemElement.classList.add(WebInspector.CompletionSuggestionsView.SelectedItemStyleClassName);
         selectedItemElement.scrollIntoViewIfNeeded(false);
-    },
+    }
 
-    selectNext: function()
+    selectNext()
     {
         var count = this._containerElement.children.length;
 
@@ -96,9 +89,9 @@ WebInspector.CompletionSuggestionsView.prototype = {
         var selectedItemElement = this._selectedItemElement;
         if (selectedItemElement && this._delegate && typeof this._delegate.completionSuggestionsSelectedCompletion === "function")
             this._delegate.completionSuggestionsSelectedCompletion(this, selectedItemElement.textContent);
-    },
+    }
 
-    selectPrevious: function()
+    selectPrevious()
     {
         if (isNaN(this._selectedIndex) || this._selectedIndex === 0)
             this.selectedIndex = this._containerElement.children.length - 1;
@@ -108,14 +101,14 @@ WebInspector.CompletionSuggestionsView.prototype = {
         var selectedItemElement = this._selectedItemElement;
         if (selectedItemElement && this._delegate && typeof this._delegate.completionSuggestionsSelectedCompletion === "function")
             this._delegate.completionSuggestionsSelectedCompletion(this, selectedItemElement.textContent);
-    },
+    }
 
-    isHandlingClickEvent: function()
+    isHandlingClickEvent()
     {
         return this._mouseIsDown;
-    },
+    }
 
-    show: function(anchorBounds)
+    show(anchorBounds)
     {
         // Measure the container so we can know the intrinsic size of the items.
         this._containerElement.style.position = "absolute";
@@ -128,9 +121,9 @@ WebInspector.CompletionSuggestionsView.prototype = {
         this._element.appendChild(this._containerElement);
 
         // Lay out the suggest-box relative to the anchorBounds.
-        const margin = 10;
-        const horizontalPadding = 22;
-        const absoluteMaximumHeight = 160;
+        var margin = 10;
+        var horizontalPadding = 22;
+        var absoluteMaximumHeight = 160;
 
         var x = anchorBounds.origin.x;
         var y = anchorBounds.origin.y + anchorBounds.size.height;
@@ -161,14 +154,14 @@ WebInspector.CompletionSuggestionsView.prototype = {
         this._element.style.height = height + "px";
 
         document.body.appendChild(this._element);
-    },
+    }
 
-    hide: function()
+    hide()
     {
         this._element.remove();
-    },
+    }
 
-    update: function(completions, selectedIndex)
+    update(completions, selectedIndex)
     {
         this._containerElement.removeChildren();
 
@@ -183,7 +176,7 @@ WebInspector.CompletionSuggestionsView.prototype = {
                 itemElement.classList.add(WebInspector.CompletionSuggestionsView.SelectedItemStyleClassName);
             this._containerElement.appendChild(itemElement);
         }
-    },
+    }
 
     // Private
 
@@ -195,23 +188,23 @@ WebInspector.CompletionSuggestionsView.prototype = {
         var element = this._containerElement.children[this._selectedIndex] || null;
         console.assert(element);
         return element;
-    },
+    }
 
-    _mouseDown: function(event)
+    _mouseDown(event)
     {
         if (event.button !== 0)
             return;
         this._mouseIsDown = true;
-    },
+    }
 
-    _mouseUp: function(event)
+    _mouseUp(event)
     {
         if (event.button !== 0)
             return;
         this._mouseIsDown = false;
-    },
+    }
 
-    _itemClicked: function(event)
+    _itemClicked(event)
     {
         if (event.button !== 0)
             return;
@@ -226,4 +219,7 @@ WebInspector.CompletionSuggestionsView.prototype = {
     }
 };
 
-WebInspector.CompletionSuggestionsView.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.CompletionSuggestionsView.StyleClassName = "completion-suggestions";
+WebInspector.CompletionSuggestionsView.ContainerElementStyleClassName = "completion-suggestions-container";
+WebInspector.CompletionSuggestionsView.ItemElementStyleClassName = "item";
+WebInspector.CompletionSuggestionsView.SelectedItemStyleClassName = "selected";

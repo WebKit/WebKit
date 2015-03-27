@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,57 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DebuggerDashboardView = function(representedObject)
+WebInspector.DebuggerDashboardView = class DebuggerDashboardView extends WebInspector.DashboardView
 {
-    WebInspector.DashboardView.call(this, representedObject, "debugger");
+    constructor(representedObject)
+    {
+        super(representedObject, "debugger");
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._rebuildLocation, this);
+        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._rebuildLocation, this);
 
-    this._navigationBar = new WebInspector.NavigationBar;
-    this.element.appendChild(this._navigationBar.element);
+        this._navigationBar = new WebInspector.NavigationBar;
+        this.element.appendChild(this._navigationBar.element);
 
-    var resumeImage;
-    if (WebInspector.Platform.isLegacyMacOS)
-        resumeImage = {src: "Images/Legacy/Resume.svg", width: 16, height: 16};
-    else
-        resumeImage = {src: "Images/Resume.svg", width: 15, height: 15};
+        var resumeImage;
+        if (WebInspector.Platform.isLegacyMacOS)
+            resumeImage = {src: "Images/Legacy/Resume.svg", width: 16, height: 16};
+        else
+            resumeImage = {src: "Images/Resume.svg", width: 15, height: 15};
 
-    var tooltip = WebInspector.UIString("Continue script execution (%s or %s)").format(WebInspector.debuggerSidebarPanel.pauseOrResumeKeyboardShortcut.displayName, WebInspector.debuggerSidebarPanel.pauseOrResumeAlternateKeyboardShortcut.displayName);
-    this._debuggerResumeButtonItem = new WebInspector.ActivateButtonNavigationItem("debugger-dashboard-pause", tooltip, tooltip, resumeImage.src, resumeImage.width, resumeImage.height, true);
-    this._debuggerResumeButtonItem.activated = true;
-    this._debuggerResumeButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._resumeButtonClicked, this);
-    this._navigationBar.addNavigationItem(this._debuggerResumeButtonItem);
+        var tooltip = WebInspector.UIString("Continue script execution (%s or %s)").format(WebInspector.debuggerSidebarPanel.pauseOrResumeKeyboardShortcut.displayName, WebInspector.debuggerSidebarPanel.pauseOrResumeAlternateKeyboardShortcut.displayName);
+        this._debuggerResumeButtonItem = new WebInspector.ActivateButtonNavigationItem("debugger-dashboard-pause", tooltip, tooltip, resumeImage.src, resumeImage.width, resumeImage.height, true);
+        this._debuggerResumeButtonItem.activated = true;
+        this._debuggerResumeButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._resumeButtonClicked, this);
+        this._navigationBar.addNavigationItem(this._debuggerResumeButtonItem);
 
-    var message = this._messageElement = document.createElement("div");
-    message.classList.add(WebInspector.DebuggerDashboardView.MessageStyleClassName);
-    message.title = message.textContent = WebInspector.UIString("Debugger Paused");
-    this.element.appendChild(message);
+        var message = this._messageElement = document.createElement("div");
+        message.classList.add(WebInspector.DebuggerDashboardView.MessageStyleClassName);
+        message.title = message.textContent = WebInspector.UIString("Debugger Paused");
+        this.element.appendChild(message);
 
-    var dividerElement = document.createElement("div");
-    dividerElement.classList.add(WebInspector.DebuggerDashboardView.DividerStyleClassName);
-    this.element.appendChild(dividerElement);
+        var dividerElement = document.createElement("div");
+        dividerElement.classList.add(WebInspector.DebuggerDashboardView.DividerStyleClassName);
+        this.element.appendChild(dividerElement);
 
-    var locationElement = this._locationElement = document.createElement("div");
-    locationElement.classList.add(WebInspector.DebuggerDashboardView.LocationStyleClassName);
-    this.element.appendChild(locationElement);
+        var locationElement = this._locationElement = document.createElement("div");
+        locationElement.classList.add(WebInspector.DebuggerDashboardView.LocationStyleClassName);
+        this.element.appendChild(locationElement);
 
-    this._rebuildLocation();
-};
+        this._rebuildLocation();
+    }
 
-WebInspector.DebuggerDashboardView.FunctionIconStyleClassName = WebInspector.CallFrameTreeElement.FunctionIconStyleClassName;
-WebInspector.DebuggerDashboardView.EventListenerIconStyleClassName = WebInspector.CallFrameTreeElement.EventListenerIconStyleClassName;
+    // Private
 
-WebInspector.DebuggerDashboardView.IconStyleClassName = "icon";
-WebInspector.DebuggerDashboardView.MessageStyleClassName = "message";
-WebInspector.DebuggerDashboardView.DividerStyleClassName = "divider";
-WebInspector.DebuggerDashboardView.LocationStyleClassName = "location";
-WebInspector.DebuggerDashboardView.FunctionNameStyleClassName = "function-name";
-
-WebInspector.DebuggerDashboardView.prototype = {
-    constructor: WebInspector.DebuggerDashboardView,
-    __proto__: WebInspector.DashboardView.prototype,
-
-    _rebuildLocation: function()
+    _rebuildLocation()
     {
         if (!WebInspector.debuggerManager.activeCallFrame)
             return;
@@ -107,10 +98,19 @@ WebInspector.DebuggerDashboardView.prototype = {
         var shouldPreventLinkFloat = true;
         var linkElement = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, shouldPreventLinkFloat);
         this._locationElement.appendChild(linkElement);
-    },
+    }
 
-    _resumeButtonClicked: function()
+    _resumeButtonClicked()
     {
         WebInspector.debuggerManager.resume();
     }
 };
+
+WebInspector.DebuggerDashboardView.FunctionIconStyleClassName = WebInspector.CallFrameTreeElement.FunctionIconStyleClassName;
+WebInspector.DebuggerDashboardView.EventListenerIconStyleClassName = WebInspector.CallFrameTreeElement.EventListenerIconStyleClassName;
+
+WebInspector.DebuggerDashboardView.IconStyleClassName = "icon";
+WebInspector.DebuggerDashboardView.MessageStyleClassName = "message";
+WebInspector.DebuggerDashboardView.DividerStyleClassName = "divider";
+WebInspector.DebuggerDashboardView.LocationStyleClassName = "location";
+WebInspector.DebuggerDashboardView.FunctionNameStyleClassName = "function-name";

@@ -23,157 +23,150 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectTreeView = function(object, mode, propertyPath, forceExpanding)
+WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(object, mode, propertyPath, forceExpanding)
+    {
+        super();
 
-    console.assert(object instanceof WebInspector.RemoteObject);
-    console.assert(!propertyPath || propertyPath instanceof WebInspector.PropertyPath);
+        console.assert(object instanceof WebInspector.RemoteObject);
+        console.assert(!propertyPath || propertyPath instanceof WebInspector.PropertyPath);
 
-    this._object = object;
-    this._mode = mode || WebInspector.ObjectTreeView.defaultModeForObject(object);
-    this._propertyPath = propertyPath || new WebInspector.PropertyPath(this._object, "this");
-    this._expanded = false;
-    this._hasLosslessPreview = false;
+        this._object = object;
+        this._mode = mode || WebInspector.ObjectTreeView.defaultModeForObject(object);
+        this._propertyPath = propertyPath || new WebInspector.PropertyPath(this._object, "this");
+        this._expanded = false;
+        this._hasLosslessPreview = false;
 
-    // If ObjectTree is used outside of the console, we do not know when to release
-    // WeakMap entries. Currently collapse would work. For the console, we can just
-    // listen for console clear events. Currently all ObjectTrees are in the console.
-    this._inConsole = true;
+        // If ObjectTree is used outside of the console, we do not know when to release
+        // WeakMap entries. Currently collapse would work. For the console, we can just
+        // listen for console clear events. Currently all ObjectTrees are in the console.
+        this._inConsole = true;
 
-    // Always force expanding for classes.
-    if (this._object.isClass())
-        forceExpanding = true;
+        // Always force expanding for classes.
+        if (this._object.isClass())
+            forceExpanding = true;
 
-    this._element = document.createElement("div");
-    this._element.className = "object-tree";
+        this._element = document.createElement("div");
+        this._element.className = "object-tree";
 
-    if (this._object.preview) {
-        this._previewView = new WebInspector.ObjectPreviewView(this._object.preview);
-        this._previewView.element.addEventListener("click", this._handlePreviewOrTitleElementClick.bind(this));
-        this._element.appendChild(this._previewView.element);
+        if (this._object.preview) {
+            this._previewView = new WebInspector.ObjectPreviewView(this._object.preview);
+            this._previewView.element.addEventListener("click", this._handlePreviewOrTitleElementClick.bind(this));
+            this._element.appendChild(this._previewView.element);
 
-        if (this._previewView.lossless && !this._propertyPath.parent && !forceExpanding) {
-            this._hasLosslessPreview = true;
-            this.element.classList.add("lossless-preview");
-        }
-    } else {
-        this._titleElement = document.createElement("span");
-        this._titleElement.className = "title";
-        this._titleElement.appendChild(WebInspector.FormattedValue.createElementForRemoteObject(this._object));
-        this._titleElement.addEventListener("click", this._handlePreviewOrTitleElementClick.bind(this));
-        this._element.appendChild(this._titleElement);
-    }
-
-    this._outlineElement = document.createElement("ol");
-    this._outlineElement.className = "object-tree-outline";
-    this._outline = new WebInspector.TreeOutline(this._outlineElement);
-    this._element.appendChild(this._outlineElement);
-
-    // FIXME: Support editable ObjectTrees.
-};
-
-WebInspector.ObjectTreeView.defaultModeForObject = function(object)
-{
-    if (object.subtype === "class")
-        return WebInspector.ObjectTreeView.Mode.ClassAPI;
-
-    return WebInspector.ObjectTreeView.Mode.Properties;
-}
-
-WebInspector.ObjectTreeView.emptyMessageElement = function(message)
-{
-    var emptyMessageElement = document.createElement("div");
-    emptyMessageElement.className = "empty-message";
-    emptyMessageElement.textContent = message;
-    return emptyMessageElement;
-};
-
-WebInspector.ObjectTreeView.Mode = {
-    Properties: Symbol("object-tree-properties"),      // Properties
-    PrototypeAPI: Symbol("object-tree-prototype-api"), // API view on a live object instance, so getters can be invoked.
-    ClassAPI: Symbol("object-tree-class-api"),         // API view without an object instance, can not invoke getters.
-};
-
-WebInspector.ObjectTreeView.ComparePropertyDescriptors = function(propertyA, propertyB)
-{
-    var a = propertyA.name;
-    var b = propertyB.name;
-
-    // Put __proto__ at the bottom.
-    if (a === "__proto__")
-        return 1;
-    if (b === "__proto__")
-        return -1;
-
-    // Put internal properties at the top.
-    if (a.isInternalProperty && !b.isInternalProperty)
-        return -1;
-    if (b.isInternalProperty && !a.isInternalProperty)
-        return 1;
-
-    // if used elsewhere make sure to
-    //  - convert a and b to strings (not needed here, properties are all strings)
-    //  - check if a == b (not needed here, no two properties can be the same)
-
-    var diff = 0;
-    var chunk = /^\d+|^\D+/;
-    var chunka, chunkb, anum, bnum;
-    while (diff === 0) {
-        if (!a && b)
-            return -1;
-        if (!b && a)
-            return 1;
-        chunka = a.match(chunk)[0];
-        chunkb = b.match(chunk)[0];
-        anum = !isNaN(chunka);
-        bnum = !isNaN(chunkb);
-        if (anum && !bnum)
-            return -1;
-        if (bnum && !anum)
-            return 1;
-        if (anum && bnum) {
-            diff = chunka - chunkb;
-            if (diff === 0 && chunka.length !== chunkb.length) {
-                if (!+chunka && !+chunkb) // chunks are strings of all 0s (special case)
-                    return chunka.length - chunkb.length;
-                else
-                    return chunkb.length - chunka.length;
+            if (this._previewView.lossless && !this._propertyPath.parent && !forceExpanding) {
+                this._hasLosslessPreview = true;
+                this.element.classList.add("lossless-preview");
             }
-        } else if (chunka !== chunkb)
-            return (chunka < chunkb) ? -1 : 1;
-        a = a.substring(chunka.length);
-        b = b.substring(chunkb.length);
-    }
-    return diff;
-};
+        } else {
+            this._titleElement = document.createElement("span");
+            this._titleElement.className = "title";
+            this._titleElement.appendChild(WebInspector.FormattedValue.createElementForRemoteObject(this._object));
+            this._titleElement.addEventListener("click", this._handlePreviewOrTitleElementClick.bind(this));
+            this._element.appendChild(this._titleElement);
+        }
 
-WebInspector.ObjectTreeView.prototype = {
-    constructor: WebInspector.ObjectTreeView,
-    __proto__: WebInspector.Object.prototype,
+        this._outlineElement = document.createElement("ol");
+        this._outlineElement.className = "object-tree-outline";
+        this._outline = new WebInspector.TreeOutline(this._outlineElement);
+        this._element.appendChild(this._outlineElement);
+
+        // FIXME: Support editable ObjectTrees.
+    }
+
+    // Static
+
+    static defaultModeForObject(object)
+    {
+        if (object.subtype === "class")
+            return WebInspector.ObjectTreeView.Mode.ClassAPI;
+
+        return WebInspector.ObjectTreeView.Mode.Properties;
+    }
+
+    static createEmptyMessageElement(message)
+    {
+        var emptyMessageElement = document.createElement("div");
+        emptyMessageElement.className = "empty-message";
+        emptyMessageElement.textContent = message;
+        return emptyMessageElement;
+    };
+
+    static comparePropertyDescriptors(propertyA, propertyB)
+    {
+        var a = propertyA.name;
+        var b = propertyB.name;
+
+        // Put __proto__ at the bottom.
+        if (a === "__proto__")
+            return 1;
+        if (b === "__proto__")
+            return -1;
+
+        // Put internal properties at the top.
+        if (a.isInternalProperty && !b.isInternalProperty)
+            return -1;
+        if (b.isInternalProperty && !a.isInternalProperty)
+            return 1;
+
+        // if used elsewhere make sure to
+        //  - convert a and b to strings (not needed here, properties are all strings)
+        //  - check if a == b (not needed here, no two properties can be the same)
+
+        var diff = 0;
+        var chunk = /^\d+|^\D+/;
+        var chunka, chunkb, anum, bnum;
+        while (diff === 0) {
+            if (!a && b)
+                return -1;
+            if (!b && a)
+                return 1;
+            chunka = a.match(chunk)[0];
+            chunkb = b.match(chunk)[0];
+            anum = !isNaN(chunka);
+            bnum = !isNaN(chunkb);
+            if (anum && !bnum)
+                return -1;
+            if (bnum && !anum)
+                return 1;
+            if (anum && bnum) {
+                diff = chunka - chunkb;
+                if (diff === 0 && chunka.length !== chunkb.length) {
+                    if (!+chunka && !+chunkb) // chunks are strings of all 0s (special case)
+                        return chunka.length - chunkb.length;
+                    else
+                        return chunkb.length - chunka.length;
+                }
+            } else if (chunka !== chunkb)
+                return (chunka < chunkb) ? -1 : 1;
+            a = a.substring(chunka.length);
+            b = b.substring(chunkb.length);
+        }
+        return diff;
+    };
 
     // Public
 
     get object()
     {
         return this._object;
-    },
+    }
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get treeOutline()
     {
         return this._outline;
-    },
+    }
 
     get expanded()
     {
         return this._expanded;
-    },
+    }
 
     expand()
     {
@@ -189,7 +182,7 @@ WebInspector.ObjectTreeView.prototype = {
         this._trackWeakEntries();
 
         this.update();
-    },
+    }
 
     collapse()
     {
@@ -203,14 +196,14 @@ WebInspector.ObjectTreeView.prototype = {
             this._previewView.showPreview();
 
         this._untrackWeakEntries();
-    },
+    }
 
     showOnlyProperties()
     {
         this._inConsole = false;
 
         this._element.classList.add("properties-only");
-    },
+    }
 
     appendTitleSuffix(suffixElement)
     {
@@ -218,7 +211,7 @@ WebInspector.ObjectTreeView.prototype = {
             this._previewView.element.appendChild(suffixElement);
         else
             this._titleElement.appendChild(suffixElement);
-    },
+    }
 
     appendExtraPropertyDescriptor(propertyDescriptor)
     {
@@ -226,7 +219,7 @@ WebInspector.ObjectTreeView.prototype = {
             this._extraProperties = [];
 
         this._extraProperties.push(propertyDescriptor);
-    },
+    }
 
     // Protected
 
@@ -238,7 +231,7 @@ WebInspector.ObjectTreeView.prototype = {
             this._object.classPrototype.getDisplayablePropertyDescriptors(this._updateChildren.bind(this, this._updateProperties));
         else
             this._object.getDisplayablePropertyDescriptors(this._updateChildren.bind(this, this._updateProperties));
-    },
+    }
 
     // Private
 
@@ -247,13 +240,13 @@ WebInspector.ObjectTreeView.prototype = {
         this._outline.removeChildren();
 
         if (!list) {
-            var errorMessageElement = WebInspector.ObjectTreeView.emptyMessageElement(WebInspector.UIString("Could not fetch properties. Object may no longer exist."));
+            var errorMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("Could not fetch properties. Object may no longer exist."));
             this._outline.appendChild(new WebInspector.TreeElement(errorMessageElement, null, false));
             return;
         }
 
         handler.call(this, list, this._propertyPath);
-    },
+    }
 
     _updateEntries(entries, propertyPath)
     {
@@ -266,7 +259,7 @@ WebInspector.ObjectTreeView.prototype = {
         }
 
         if (!this._outline.children.length) {
-            var emptyMessageElement = WebInspector.ObjectTreeView.emptyMessageElement(WebInspector.UIString("No Entries."));
+            var emptyMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Entries."));
             this._outline.appendChild(new WebInspector.TreeElement(emptyMessageElement, null, false));
         }
 
@@ -275,14 +268,14 @@ WebInspector.ObjectTreeView.prototype = {
             if (propertyDescriptor)
                 this._outline.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode));
         }.bind(this));
-    },
+    }
 
     _updateProperties(properties, propertyPath)
     {
         if (this._extraProperties)
             properties = properties.concat(this._extraProperties);
 
-        properties.sort(WebInspector.ObjectTreeView.ComparePropertyDescriptors);
+        properties.sort(WebInspector.ObjectTreeView.comparePropertyDescriptors);
 
         var isArray = this._object.isArray();
         var isPropertyMode = this._mode === WebInspector.ObjectTreeView.Mode.Properties;
@@ -298,10 +291,10 @@ WebInspector.ObjectTreeView.prototype = {
         }
 
         if (!this._outline.children.length) {
-            var emptyMessageElement = WebInspector.ObjectTreeView.emptyMessageElement(WebInspector.UIString("No Properties."));
+            var emptyMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Properties."));
             this._outline.appendChild(new WebInspector.TreeElement(emptyMessageElement, null, false));
         }
-    },
+    }
 
     _handlePreviewOrTitleElementClick(event)
     {
@@ -314,7 +307,7 @@ WebInspector.ObjectTreeView.prototype = {
             this.collapse();
 
         event.stopPropagation();
-    },
+    }
 
     _trackWeakEntries()
     {
@@ -331,7 +324,7 @@ WebInspector.ObjectTreeView.prototype = {
             WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._untrackWeakEntries, this);
             WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.SessionStarted, this._untrackWeakEntries, this);
         }
-    },
+    }
 
     _untrackWeakEntries()
     {
@@ -354,5 +347,11 @@ WebInspector.ObjectTreeView.prototype = {
         // FIXME: This only tries to release weak entries if this object was a WeakMap.
         // If there was a WeakMap expanded in a sub-object, we will never release those values.
         // Should we attempt walking the entire tree and release weak collections?
-    },
+    }
+};
+
+WebInspector.ObjectTreeView.Mode = {
+    Properties: Symbol("object-tree-properties"),      // Properties
+    PrototypeAPI: Symbol("object-tree-prototype-api"), // API view on a live object instance, so getters can be invoked.
+    ClassAPI: Symbol("object-tree-class-api"),         // API view without an object instance, can not invoke getters.
 };
