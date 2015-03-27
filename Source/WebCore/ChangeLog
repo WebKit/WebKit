@@ -1,3 +1,37 @@
+2015-03-26  Antti Koivisto  <antti@apple.com>
+
+        Respect cache-control directives in request
+        https://bugs.webkit.org/show_bug.cgi?id=143121
+        rdar://problem/19714040
+
+        Reviewed by Chris Dumez.
+
+        Test: http/tests/cache/disk-cache/disk-cache-request-headers.html
+
+        * loader/cache/CacheValidation.cpp:
+        (WebCore::isCacheHeaderSeparator):
+        (WebCore::isControlCharacter):
+        (WebCore::trimToNextSeparator):
+        (WebCore::parseCacheHeader):
+        (WebCore::parseCacheControlDirectives):
+
+            Factor Cache-control parsing here so it can be used for both requests and responses.
+
+        * loader/cache/CacheValidation.h:
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::ResourceResponseBase):
+        (WebCore::ResourceResponseBase::parseCacheControlDirectives):
+        (WebCore::ResourceResponseBase::cacheControlContainsNoCache):
+        (WebCore::ResourceResponseBase::cacheControlContainsNoStore):
+        (WebCore::ResourceResponseBase::cacheControlContainsMustRevalidate):
+        (WebCore::ResourceResponseBase::cacheControlMaxAge):
+        (WebCore::isCacheHeaderSeparator): Deleted.
+        (WebCore::isControlCharacter): Deleted.
+        (WebCore::trimToNextSeparator): Deleted.
+        (WebCore::parseCacheHeader): Deleted.
+        * platform/network/ResourceResponseBase.h:
+
 2015-03-27  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GStreamer] share GL context in pipeline, part 2

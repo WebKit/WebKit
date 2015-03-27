@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CacheValidation.h"
 
+#include "HTTPHeaderMap.h"
 #include "ResourceResponse.h"
 #include <wtf/CurrentTime.h>
 
@@ -147,6 +148,146 @@ bool redirectChainAllowsReuse(RedirectChainCacheStatus redirectChainCacheStatus,
     }
     ASSERT_NOT_REACHED();
     return false;
+}
+
+inline bool isCacheHeaderSeparator(UChar c)
+{
+    // See RFC 2616, Section 2.2
+    switch (c) {
+    case '(':
+    case ')':
+    case '<':
+    case '>':
+    case '@':
+    case ',':
+    case ';':
+    case ':':
+    case '\\':
+    case '"':
+    case '/':
+    case '[':
+    case ']':
+    case '?':
+    case '=':
+    case '{':
+    case '}':
+    case ' ':
+    case '\t':
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool isControlCharacter(UChar c)
+{
+    return c < ' ' || c == 127;
+}
+
+inline String trimToNextSeparator(const String& str)
+{
+    return str.substring(0, str.find(isCacheHeaderSeparator));
+}
+
+static Vector<std::pair<String, String>> parseCacheHeader(const String& header)
+{
+    Vector<std::pair<String, String>> result;
+
+    const String safeHeader = header.removeCharacters(isControlCharacter);
+    unsigned max = safeHeader.length();
+    unsigned pos = 0;
+    while (pos < max) {
+        size_t nextCommaPosition = safeHeader.find(',', pos);
+        size_t nextEqualSignPosition = safeHeader.find('=', pos);
+        if (nextEqualSignPosition == notFound && nextCommaPosition == notFound) {
+            // Add last directive to map with empty string as value
+            result.append(std::make_pair(trimToNextSeparator(safeHeader.substring(pos, max - pos).stripWhiteSpace()), ""));
+            return result;
+        }
+        if (nextCommaPosition != notFound && (nextCommaPosition < nextEqualSignPosition || nextEqualSignPosition == notFound)) {
+            // Add directive to map with empty string as value
+            result.append(std::make_pair(trimToNextSeparator(safeHeader.substring(pos, nextCommaPosition - pos).stripWhiteSpace()), ""));
+            pos += nextCommaPosition - pos + 1;
+            continue;
+        }
+        // Get directive name, parse right hand side of equal sign, then add to map
+        String directive = trimToNextSeparator(safeHeader.substring(pos, nextEqualSignPosition - pos).stripWhiteSpace());
+        pos += nextEqualSignPosition - pos + 1;
+
+        String value = safeHeader.substring(pos, max - pos).stripWhiteSpace();
+        if (value[0] == '"') {
+            // The value is a quoted string
+            size_t nextDoubleQuotePosition = value.find('"', 1);
+            if (nextDoubleQuotePosition == notFound) {
+                // Parse error; just use the rest as the value
+                result.append(std::make_pair(directive, trimToNextSeparator(value.substring(1, value.length() - 1).stripWhiteSpace())));
+                return result;
+            }
+            // Store the value as a quoted string without quotes
+            result.append(std::make_pair(directive, value.substring(1, nextDoubleQuotePosition - 1).stripWhiteSpace()));
+            pos += (safeHeader.find('"', pos) - pos) + nextDoubleQuotePosition + 1;
+            // Move past next comma, if there is one
+            size_t nextCommaPosition2 = safeHeader.find(',', pos);
+            if (nextCommaPosition2 == notFound)
+                return result; // Parse error if there is anything left with no comma
+            pos += nextCommaPosition2 - pos + 1;
+            continue;
+        }
+        // The value is a token until the next comma
+        size_t nextCommaPosition2 = value.find(',');
+        if (nextCommaPosition2 == notFound) {
+            // The rest is the value; no change to value needed
+            result.append(std::make_pair(directive, trimToNextSeparator(value)));
+            return result;
+        }
+        // The value is delimited by the next comma
+        result.append(std::make_pair(directive, trimToNextSeparator(value.substring(0, nextCommaPosition2).stripWhiteSpace())));
+        pos += (safeHeader.find(',', pos) - pos) + 1;
+    }
+    return result;
+}
+
+CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
+{
+    CacheControlDirectives result;
+
+    String cacheControlValue = headers.get(HTTPHeaderName::CacheControl);
+    if (!cacheControlValue.isEmpty()) {
+        auto directives = parseCacheHeader(cacheControlValue);
+
+        size_t directivesSize = directives.size();
+        for (size_t i = 0; i < directivesSize; ++i) {
+            // RFC2616 14.9.1: A no-cache directive with a value is only meaningful for proxy caches.
+            // It should be ignored by a browser level cache.
+            if (equalIgnoringCase(directives[i].first, "no-cache") && directives[i].second.isEmpty())
+                result.noCache = true;
+            else if (equalIgnoringCase(directives[i].first, "no-store"))
+                result.noStore = true;
+            else if (equalIgnoringCase(directives[i].first, "must-revalidate"))
+                result.mustRevalidate = true;
+            else if (equalIgnoringCase(directives[i].first, "max-age")) {
+                if (!std::isnan(result.maxAge)) {
+                    // First max-age directive wins if there are multiple ones.
+                    continue;
+                }
+                bool ok;
+                double maxAge = directives[i].second.toDouble(&ok);
+                if (ok)
+                    result.maxAge = maxAge;
+            }
+        }
+    }
+
+    if (!result.noCache) {
+        // Handle Pragma: no-cache
+        // This is deprecated and equivalent to Cache-control: no-cache
+        // Don't bother tokenizing the value, it is not important
+        String pragmaValue = headers.get(HTTPHeaderName::Pragma);
+
+        result.noCache = pragmaValue.contains("no-cache", false);
+    }
+
+    return result;
 }
 
 }

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ResourceResponseBase.h"
 
+#include "CacheValidation.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "ResourceResponse.h"
@@ -37,8 +38,6 @@
 
 namespace WebCore {
 
-static void parseCacheHeader(const String& header, Vector<std::pair<String, String>>& result);
-
 inline const ResourceResponse& ResourceResponseBase::asResourceResponse() const
 {
     return *static_cast<const ResourceResponse*>(this);
@@ -48,7 +47,6 @@ ResourceResponseBase::ResourceResponseBase()
     : m_expectedContentLength(0)
     , m_includesCertificateInfo(false)
     , m_httpStatusCode(0)
-    , m_cacheControlMaxAge(0)
     , m_age(0)
     , m_date(0)
     , m_expires(0)
@@ -59,9 +57,6 @@ ResourceResponseBase::ResourceResponseBase()
     , m_haveParsedDateHeader(false)
     , m_haveParsedExpiresHeader(false)
     , m_haveParsedLastModifiedHeader(false)
-    , m_cacheControlContainsNoCache(false)
-    , m_cacheControlContainsNoStore(false)
-    , m_cacheControlContainsMustRevalidate(false)
     , m_source(Source::Unknown)
 {
 }
@@ -73,7 +68,6 @@ ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeTyp
     , m_textEncodingName(textEncodingName)
     , m_includesCertificateInfo(true) // Empty but valid for synthetic responses.
     , m_httpStatusCode(0)
-    , m_cacheControlMaxAge(0)
     , m_age(0)
     , m_date(0)
     , m_expires(0)
@@ -84,9 +78,6 @@ ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeTyp
     , m_haveParsedDateHeader(false)
     , m_haveParsedExpiresHeader(false)
     , m_haveParsedLastModifiedHeader(false)
-    , m_cacheControlContainsNoCache(false)
-    , m_cacheControlContainsNoStore(false)
-    , m_cacheControlContainsMustRevalidate(false)
     , m_source(Source::Unknown)
 {
 }
@@ -358,69 +349,29 @@ void ResourceResponseBase::parseCacheControlDirectives() const
 
     lazyInit(CommonFieldsOnly);
 
+    m_cacheControlDirectives = WebCore::parseCacheControlDirectives(m_httpHeaderFields);
     m_haveParsedCacheControlHeader = true;
-
-    m_cacheControlContainsMustRevalidate = false;
-    m_cacheControlContainsNoCache = false;
-    m_cacheControlMaxAge = std::numeric_limits<double>::quiet_NaN();
-
-    String cacheControlValue = m_httpHeaderFields.get(HTTPHeaderName::CacheControl);
-    if (!cacheControlValue.isEmpty()) {
-        Vector<std::pair<String, String>> directives;
-        parseCacheHeader(cacheControlValue, directives);
-
-        size_t directivesSize = directives.size();
-        for (size_t i = 0; i < directivesSize; ++i) {
-            // RFC2616 14.9.1: A no-cache directive with a value is only meaningful for proxy caches.
-            // It should be ignored by a browser level cache.
-            if (equalIgnoringCase(directives[i].first, "no-cache") && directives[i].second.isEmpty())
-                m_cacheControlContainsNoCache = true;
-            else if (equalIgnoringCase(directives[i].first, "no-store"))
-                m_cacheControlContainsNoStore = true;
-            else if (equalIgnoringCase(directives[i].first, "must-revalidate"))
-                m_cacheControlContainsMustRevalidate = true;
-            else if (equalIgnoringCase(directives[i].first, "max-age")) {
-                if (!std::isnan(m_cacheControlMaxAge)) {
-                    // First max-age directive wins if there are multiple ones.
-                    continue;
-                }
-                bool ok;
-                double maxAge = directives[i].second.toDouble(&ok);
-                if (ok)
-                    m_cacheControlMaxAge = maxAge;
-            }
-        }
-    }
-
-    if (!m_cacheControlContainsNoCache) {
-        // Handle Pragma: no-cache
-        // This is deprecated and equivalent to Cache-control: no-cache
-        // Don't bother tokenizing the value, it is not important
-        String pragmaValue = m_httpHeaderFields.get(HTTPHeaderName::Pragma);
-
-        m_cacheControlContainsNoCache = pragmaValue.contains("no-cache", false);
-    }
 }
     
 bool ResourceResponseBase::cacheControlContainsNoCache() const
 {
     if (!m_haveParsedCacheControlHeader)
         parseCacheControlDirectives();
-    return m_cacheControlContainsNoCache;
+    return m_cacheControlDirectives.noCache;
 }
 
 bool ResourceResponseBase::cacheControlContainsNoStore() const
 {
     if (!m_haveParsedCacheControlHeader)
         parseCacheControlDirectives();
-    return m_cacheControlContainsNoStore;
+    return m_cacheControlDirectives.noStore;
 }
 
 bool ResourceResponseBase::cacheControlContainsMustRevalidate() const
 {
     if (!m_haveParsedCacheControlHeader)
         parseCacheControlDirectives();
-    return m_cacheControlContainsMustRevalidate;
+    return m_cacheControlDirectives.mustRevalidate;
 }
 
 bool ResourceResponseBase::hasCacheValidatorFields() const
@@ -434,7 +385,7 @@ double ResourceResponseBase::cacheControlMaxAge() const
 {
     if (!m_haveParsedCacheControlHeader)
         parseCacheControlDirectives();
-    return m_cacheControlMaxAge;
+    return m_cacheControlDirectives.maxAge;
 }
 
 static double parseDateValueInHeader(const HTTPHeaderMap& headers, HTTPHeaderName headerName)
@@ -553,101 +504,6 @@ bool ResourceResponseBase::compare(const ResourceResponse& a, const ResourceResp
     if (a.resourceLoadTiming() != b.resourceLoadTiming())
         return false;
     return ResourceResponse::platformCompare(a, b);
-}
-
-static bool isCacheHeaderSeparator(UChar c)
-{
-    // See RFC 2616, Section 2.2
-    switch (c) {
-        case '(':
-        case ')':
-        case '<':
-        case '>':
-        case '@':
-        case ',':
-        case ';':
-        case ':':
-        case '\\':
-        case '"':
-        case '/':
-        case '[':
-        case ']':
-        case '?':
-        case '=':
-        case '{':
-        case '}':
-        case ' ':
-        case '\t':
-            return true;
-        default:
-            return false;
-    }
-}
-
-static bool isControlCharacter(UChar c)
-{
-    return c < ' ' || c == 127;
-}
-
-static inline String trimToNextSeparator(const String& str)
-{
-    return str.substring(0, str.find(isCacheHeaderSeparator));
-}
-
-static void parseCacheHeader(const String& header, Vector<std::pair<String, String>>& result)
-{
-    const String safeHeader = header.removeCharacters(isControlCharacter);
-    unsigned max = safeHeader.length();
-    for (unsigned pos = 0; pos < max; /* pos incremented in loop */) {
-        size_t nextCommaPosition = safeHeader.find(',', pos);
-        size_t nextEqualSignPosition = safeHeader.find('=', pos);
-        if (nextEqualSignPosition != notFound && (nextEqualSignPosition < nextCommaPosition || nextCommaPosition == notFound)) {
-            // Get directive name, parse right hand side of equal sign, then add to map
-            String directive = trimToNextSeparator(safeHeader.substring(pos, nextEqualSignPosition - pos).stripWhiteSpace());
-            pos += nextEqualSignPosition - pos + 1;
-
-            String value = safeHeader.substring(pos, max - pos).stripWhiteSpace();
-            if (value[0] == '"') {
-                // The value is a quoted string
-                size_t nextDoubleQuotePosition = value.find('"', 1);
-                if (nextDoubleQuotePosition != notFound) {
-                    // Store the value as a quoted string without quotes
-                    result.append(std::pair<String, String>(directive, value.substring(1, nextDoubleQuotePosition - 1).stripWhiteSpace()));
-                    pos += (safeHeader.find('"', pos) - pos) + nextDoubleQuotePosition + 1;
-                    // Move past next comma, if there is one
-                    size_t nextCommaPosition2 = safeHeader.find(',', pos);
-                    if (nextCommaPosition2 != notFound)
-                        pos += nextCommaPosition2 - pos + 1;
-                    else
-                        return; // Parse error if there is anything left with no comma
-                } else {
-                    // Parse error; just use the rest as the value
-                    result.append(std::pair<String, String>(directive, trimToNextSeparator(value.substring(1, value.length() - 1).stripWhiteSpace())));
-                    return;
-                }
-            } else {
-                // The value is a token until the next comma
-                size_t nextCommaPosition2 = value.find(',');
-                if (nextCommaPosition2 != notFound) {
-                    // The value is delimited by the next comma
-                    result.append(std::pair<String, String>(directive, trimToNextSeparator(value.substring(0, nextCommaPosition2).stripWhiteSpace())));
-                    pos += (safeHeader.find(',', pos) - pos) + 1;
-                } else {
-                    // The rest is the value; no change to value needed
-                    result.append(std::pair<String, String>(directive, trimToNextSeparator(value)));
-                    return;
-                }
-            }
-        } else if (nextCommaPosition != notFound && (nextCommaPosition < nextEqualSignPosition || nextEqualSignPosition == notFound)) {
-            // Add directive to map with empty string as value
-            result.append(std::pair<String, String>(trimToNextSeparator(safeHeader.substring(pos, nextCommaPosition - pos).stripWhiteSpace()), ""));
-            pos += nextCommaPosition - pos + 1;
-        } else {
-            // Add last directive to map with empty string as value
-            result.append(std::pair<String, String>(trimToNextSeparator(safeHeader.substring(pos, max - pos).stripWhiteSpace()), ""));
-            return;
-        }
-    }
 }
 
 }

@@ -236,6 +236,7 @@ static String storeDecisionToDiagnosticKey(StoreDecision storeDecision)
     case StoreDecision::NoDueToAttachmentResponse:
         return WebCore::DiagnosticLoggingKeys::isAttachmentKey();
     case StoreDecision::NoDueToNoStoreResponse:
+    case StoreDecision::NoDueToNoStoreRequest:
         return WebCore::DiagnosticLoggingKeys::cacheControlNoStoreKey();
     case StoreDecision::NoDueToHTTPStatusCode:
         return WebCore::DiagnosticLoggingKeys::uncacheableStatusCodeKey();

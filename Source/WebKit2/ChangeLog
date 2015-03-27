@@ -1,3 +1,27 @@
+2015-03-26  Antti Koivisto  <antti@apple.com>
+
+        Respect cache-control directives in request
+        https://bugs.webkit.org/show_bug.cgi?id=143121
+        rdar://problem/19714040
+
+        Reviewed by Chris Dumez.
+
+        Better support for https://tools.ietf.org/html/rfc7234#section-5.2.1
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::canUse):
+
+            Consider requests with Cache-control: no-cache and max-age=0 expired.
+
+        (WebKit::NetworkCache::canStore):
+
+            Don't store requests with Cache-control: no-store.
+
+        (WebKit::NetworkCache::Cache::store):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStatisticsCocoa.mm:
+        (WebKit::NetworkCache::storeDecisionToDiagnosticKey):
+
 2015-03-25  Jon Honeycutt  <jhoneycutt@apple.com>
 
         iOS file upload panel menu items need icons

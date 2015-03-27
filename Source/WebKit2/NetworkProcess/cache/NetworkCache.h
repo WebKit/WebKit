@@ -68,7 +68,8 @@ enum class StoreDecision {
     NoDueToHTTPMethod,
     NoDueToAttachmentResponse,
     NoDueToNoStoreResponse,
-    NoDueToHTTPStatusCode
+    NoDueToHTTPStatusCode,
+    NoDueToNoStoreRequest
 };
 
 enum class UseDecision {

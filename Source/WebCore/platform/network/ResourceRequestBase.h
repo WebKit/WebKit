@@ -79,7 +79,7 @@ namespace WebCore {
         WEBCORE_EXPORT const String& httpMethod() const;
         WEBCORE_EXPORT void setHTTPMethod(const String& httpMethod);
         
-        const HTTPHeaderMap& httpHeaderFields() const;
+        WEBCORE_EXPORT const HTTPHeaderMap& httpHeaderFields() const;
         WEBCORE_EXPORT void setHTTPHeaderFields(HTTPHeaderMap);
 
         WEBCORE_EXPORT String httpHeaderField(const String& name) const;

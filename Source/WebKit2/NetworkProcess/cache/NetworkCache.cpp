@@ -150,7 +150,7 @@ static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
     return false;
 }
 
-static inline bool responseHasExpired(const WebCore::ResourceResponse& response, std::chrono::milliseconds timestamp)
+static bool responseHasExpired(const WebCore::ResourceResponse& response, std::chrono::milliseconds timestamp)
 {
     if (response.cacheControlContainsNoCache())
         return true;
@@ -169,6 +169,18 @@ static inline bool responseHasExpired(const WebCore::ResourceResponse& response,
     return hasExpired;
 }
 
+static bool requestNeedsRevalidation(const WebCore::ResourceRequest& request)
+{
+    auto requestDirectives = WebCore::parseCacheControlDirectives(request.httpHeaderFields());
+    if (requestDirectives.noCache)
+        return true;
+    // For requests we ignore max-age values other than zero.
+    if (requestDirectives.maxAge == 0)
+        return true;
+
+    return false;
+}
+
 static UseDecision canUse(const Entry& entry, const WebCore::ResourceRequest& request)
 {
     if (!verifyVaryingRequestHeaders(entry.varyingRequestHeaders(), request)) {
@@ -176,8 +188,11 @@ static UseDecision canUse(const Entry& entry, const WebCore::ResourceRequest& re
         return UseDecision::NoDueToVaryingHeaderMismatch;
     }
 
-    // We never revalidate in the case of a history navigation (i.e. cachePolicyAllowsExpired() returns true).
-    bool needsRevalidation = !cachePolicyAllowsExpired(request.cachePolicy()) && responseHasExpired(entry.response(), entry.timeStamp());
+    // We never revalidate in the case of a history navigation.
+    if (cachePolicyAllowsExpired(request.cachePolicy()))
+        return UseDecision::Use;
+
+    bool needsRevalidation = requestNeedsRevalidation(request) || responseHasExpired(entry.response(), entry.timeStamp());
     if (!needsRevalidation)
         return UseDecision::Use;
 
@@ -266,14 +281,18 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t w
 
 static StoreDecision canStore(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response)
 {
-    if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isHTTP()) {
-        LOG(NetworkCache, "(NetworkProcess) not HTTP");
+    if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isHTTP())
         return StoreDecision::NoDueToProtocol;
-    }
-    if (originalRequest.httpMethod() != "GET") {
-        LOG(NetworkCache, "(NetworkProcess) method %s", originalRequest.httpMethod().utf8().data());
+
+    if (originalRequest.httpMethod() != "GET")
         return StoreDecision::NoDueToHTTPMethod;
-    }
+
+    auto requestDirectives = WebCore::parseCacheControlDirectives(originalRequest.httpHeaderFields());
+    if (requestDirectives.noStore)
+        return StoreDecision::NoDueToNoStoreRequest;
+
+    if (response.cacheControlContainsNoStore())
+        return StoreDecision::NoDueToNoStoreResponse;
 
     switch (response.httpStatusCode()) {
     case 200: // OK
@@ -284,10 +303,6 @@ static StoreDecision canStore(const WebCore::ResourceRequest& originalRequest, c
     case 307: // Temporary Redirect
     case 404: // Not Found
     case 410: // Gone
-        if (response.cacheControlContainsNoStore()) {
-            LOG(NetworkCache, "(NetworkProcess) Cache-control:no-store");
-            return StoreDecision::NoDueToNoStoreResponse;
-        }
         return StoreDecision::Yes;
     default:
         LOG(NetworkCache, "(NetworkProcess) status code %d", response.httpStatusCode());
@@ -305,7 +320,7 @@ void Cache::store(const WebCore::ResourceRequest& originalRequest, const WebCore
 
     StoreDecision storeDecision = canStore(originalRequest, response);
     if (storeDecision != StoreDecision::Yes) {
-        LOG(NetworkCache, "(NetworkProcess) didn't store");
+        LOG(NetworkCache, "(NetworkProcess) didn't store, storeDecision=%d", storeDecision);
         if (m_statistics) {
             auto key = makeCacheKey(originalRequest);
             m_statistics->recordNotCachingResponse(key, storeDecision);

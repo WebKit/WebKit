@@ -28,6 +28,7 @@
 
 namespace WebCore {
 
+class HTTPHeaderMap;
 class ResourceResponse;
 
 struct RedirectChainCacheStatus {
@@ -51,6 +52,14 @@ WEBCORE_EXPORT void updateRedirectChainStatus(RedirectChainCacheStatus&, const R
 
 enum ReuseExpiredRedirectionOrNot { DoNotReuseExpiredRedirection, ReuseExpiredRedirection };
 WEBCORE_EXPORT bool redirectChainAllowsReuse(RedirectChainCacheStatus, ReuseExpiredRedirectionOrNot);
+
+struct CacheControlDirectives {
+    double maxAge { std::numeric_limits<double>::quiet_NaN() };
+    bool noCache { false };
+    bool noStore { false };
+    bool mustRevalidate { false };
+};
+WEBCORE_EXPORT CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap&);
 
 }
 
