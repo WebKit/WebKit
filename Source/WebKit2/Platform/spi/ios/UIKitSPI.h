@@ -37,6 +37,7 @@
 #import <UIKit/UIGestureRecognizer_Private.h>
 #import <UIKit/UIImagePickerController_Private.h>
 #import <UIKit/UIImage_Private.h>
+#import <UIKit/UIInterface_Private.h>
 #import <UIKit/UIKeyboardImpl.h>
 #import <UIKit/UIKeyboardIntl.h>
 #import <UIKit/UIKeyboard_Private.h>
@@ -698,6 +699,9 @@ void _UIApplicationLoadWebKit(void);
 BOOL _UIApplicationUsesLegacyUI(void);
 
 void UIImageDataWriteToSavedPhotosAlbum(NSData *imageData, id completionTarget, SEL completionSelector, void *contextInfo);
+
+UIImage* _UIImageGetWebKitPhotoLibraryIcon(void);
+UIImage* _UIImageGetWebKitTakePhotoOrVideoIcon(void);
 
 extern const float UIWebViewGrowsAndShrinksToFitHeight;
 extern const float UIWebViewScalesToFitScale;

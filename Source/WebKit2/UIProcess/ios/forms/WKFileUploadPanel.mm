@@ -57,6 +57,28 @@ SOFT_LINK_FRAMEWORK(CoreMedia);
 SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime);
 #define kCMTimeZero getkCMTimeZero()
 
+#pragma mark - Document picker icons
+
+static inline UIImage *photoLibraryIcon()
+{
+    // FIXME: Remove when a new SDK is available. <rdar://problem/20150072>
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 && defined(HAVE_WEBKIT_DOC_PICKER_ICONS)
+    return _UIImageGetWebKitPhotoLibraryIcon();
+#else
+    return nil;
+#endif
+}
+
+static inline UIImage *cameraIcon()
+{
+    // FIXME: Remove when a new SDK is available. <rdar://problem/20150072>
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 && defined(HAVE_WEBKIT_DOC_PICKER_ICONS)
+    return _UIImageGetWebKitTakePhotoOrVideoIcon();
+#else
+    return nil;
+#endif
+}
+
 #pragma mark - Icon generation
 
 static CGRect squareCropRectForSize(CGSize size)
@@ -491,13 +513,12 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
     [_documentMenuController initWithDocumentTypes:[self _documentPickerMenuMediaTypes] inMode:UIDocumentPickerModeImport];
     [_documentMenuController setDelegate:self];
 
-    // FIXME: Need icons for Camera and Photo Library options.
-    [_documentMenuController addOptionWithTitle:[self _photoLibraryButtonLabel] image:nil order:UIDocumentMenuOrderFirst handler:^{
+    [_documentMenuController addOptionWithTitle:[self _photoLibraryButtonLabel] image:photoLibraryIcon() order:UIDocumentMenuOrderFirst handler:^{
         [self _showPhotoPickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
     }];
 
     if (NSString *cameraString = [self _cameraButtonLabel]) {
-        [_documentMenuController addOptionWithTitle:cameraString image:nil order:UIDocumentMenuOrderFirst handler:^{
+        [_documentMenuController addOptionWithTitle:cameraString image:cameraIcon() order:UIDocumentMenuOrderFirst handler:^{
             _usingCamera = YES;
             [self _showPhotoPickerWithSourceType:UIImagePickerControllerSourceTypeCamera];
         }];

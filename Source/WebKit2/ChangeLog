@@ -1,3 +1,23 @@
+2015-03-25  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        iOS file upload panel menu items need icons
+        <https://bugs.webkit.org/show_bug.cgi?id=143042>
+        <rdar://problem/20178678>
+
+        Reviewed by Andy Estes.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Declare new SPI methods _UIImageGetWebKitTakePhotoOrVideoIcon and
+        _UIImageGetWebKitPhotoLibraryIcon().
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (photoLibraryIcon):
+        (cameraIcon):
+        If UIKit SPI exists, use it. Otherwise, return nil.
+
+        (-[WKFileUploadPanel _showDocumentPickerMenu]):
+        Use icons.
+
 2015-03-26  Enrica Casucci  <enrica@apple.com>
 
         OS X build fix after r182037.
