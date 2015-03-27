@@ -30,9 +30,9 @@
 
 #include "NetworkCache.h"
 #include "NetworkCacheKey.h"
-#include "NetworkCacheStorage.h"
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/Timer.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 class ResourceRequest;
@@ -56,6 +56,8 @@ public:
 private:
     explicit Statistics(const String& databasePath);
 
+    WorkQueue& serialBackgroundIOQueue() { return m_serialBackgroundIOQueue.get(); }
+
     void initialize(const String& databasePath);
     void bootstrapFromNetworkCache(const String& networkCachePath);
     void shrinkIfNeeded();
@@ -77,9 +79,7 @@ private:
 
     std::atomic<size_t> m_approximateEntryCount { 0 };
 
-#if PLATFORM(COCOA)
-    mutable DispatchPtr<dispatch_queue_t> m_backgroundIOQueue;
-#endif
+    mutable Ref<WorkQueue> m_serialBackgroundIOQueue;
     mutable HashSet<std::unique_ptr<const EverRequestedQuery>> m_activeQueries;
     WebCore::SQLiteDatabase m_database;
     HashSet<String> m_hashesToAdd;

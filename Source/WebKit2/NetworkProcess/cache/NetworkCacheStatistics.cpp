@@ -82,11 +82,9 @@ std::unique_ptr<Statistics> Statistics::open(const String& cachePath)
 }
 
 Statistics::Statistics(const String& databasePath)
-    : m_backgroundIOQueue(adoptDispatch(dispatch_queue_create("com.apple.WebKit.Cache.Statistics.Background", DISPATCH_QUEUE_SERIAL)))
+    : m_serialBackgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Statistics.Background", WorkQueue::Type::Serial, WorkQueue::QOS::Background))
     , m_writeTimer(*this, &Statistics::writeTimerFired)
 {
-    dispatch_set_target_queue(m_backgroundIOQueue.get(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0));
-
     initialize(databasePath);
 }
 
@@ -98,7 +96,7 @@ void Statistics::initialize(const String& databasePath)
 
     StringCapture databasePathCapture(databasePath);
     StringCapture networkCachePathCapture(singleton().storagePath());
-    dispatch_async(m_backgroundIOQueue.get(), [this, databasePathCapture, networkCachePathCapture, startTime] {
+    serialBackgroundIOQueue().dispatch([this, databasePathCapture, networkCachePathCapture, startTime] {
         WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
 
         String databasePath = databasePathCapture.string();
@@ -172,7 +170,7 @@ void Statistics::shrinkIfNeeded()
     clear();
 
     StringCapture networkCachePathCapture(singleton().storagePath());
-    dispatch_async(m_backgroundIOQueue.get(), [this, networkCachePathCapture] {
+    serialBackgroundIOQueue().dispatch([this, networkCachePathCapture] {
         bootstrapFromNetworkCache(networkCachePathCapture.string());
         LOG(NetworkCache, "(NetworkProcess) statistics cache shrink completed m_approximateEntryCount=%lu", static_cast<size_t>(m_approximateEntryCount));
     });
@@ -317,7 +315,7 @@ void Statistics::writeTimerFired()
 
     shrinkIfNeeded();
 
-    dispatch_async(m_backgroundIOQueue.get(), [this, hashesToAdd, storeDecisionsToAdd] {
+    serialBackgroundIOQueue().dispatch([this, hashesToAdd, storeDecisionsToAdd] {
         if (!m_database.isOpen())
             return;
 
@@ -351,7 +349,7 @@ void Statistics::queryWasEverRequested(const String& hash, NeedUncachedReason ne
     auto everRequestedQuery = std::make_unique<EverRequestedQuery>(EverRequestedQuery { hash, needUncachedReason == NeedUncachedReason::Yes, completionHandler });
     auto& query = *everRequestedQuery;
     m_activeQueries.add(WTF::move(everRequestedQuery));
-    dispatch_async(m_backgroundIOQueue.get(), [this, wasAlreadyRequested, &query] () mutable {
+    serialBackgroundIOQueue().dispatch([this, wasAlreadyRequested, &query] () mutable {
         WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
         Optional<StoreDecision> storeDecision;
         if (m_database.isOpen()) {
@@ -372,7 +370,7 @@ void Statistics::queryWasEverRequested(const String& hash, NeedUncachedReason ne
                 }
             }
         }
-        dispatch_async(dispatch_get_main_queue(), [this, &query, wasAlreadyRequested, storeDecision] {
+        RunLoop::main().dispatch([this, &query, wasAlreadyRequested, storeDecision] {
             query.completionHandler(wasAlreadyRequested, storeDecision);
             m_activeQueries.remove(&query);
         });
@@ -383,7 +381,7 @@ void Statistics::clear()
 {
     ASSERT(RunLoop::isMain());
 
-    dispatch_async(m_backgroundIOQueue.get(), [this] {
+    serialBackgroundIOQueue().dispatch([this] {
         if (m_database.isOpen()) {
             WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
             WebCore::SQLiteTransaction deleteTransaction(m_database);

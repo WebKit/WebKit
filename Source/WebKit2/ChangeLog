@@ -1,3 +1,39 @@
+2015-03-27  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NetworkCache] Use WTF::WorkQueue abstraction inside NetworkCacheStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=143154
+
+        Reviewed by Antti Koivisto.
+
+        Use WTF::WorkQueue abstraction inside NetworkCacheStatistics, like we
+        already do in NetworkCacheStorage.
+
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp: Renamed from Source/WebKit2/NetworkProcess/cache/NetworkCacheStatisticsCocoa.mm.
+        (WebKit::NetworkCache::executeSQLCommand):
+        (WebKit::NetworkCache::executeSQLStatement):
+        (WebKit::NetworkCache::Statistics::open):
+        (WebKit::NetworkCache::Statistics::Statistics):
+        (WebKit::NetworkCache::Statistics::initialize):
+        (WebKit::NetworkCache::Statistics::bootstrapFromNetworkCache):
+        (WebKit::NetworkCache::Statistics::shrinkIfNeeded):
+        (WebKit::NetworkCache::Statistics::recordRetrievalRequest):
+        (WebKit::NetworkCache::Statistics::recordNotCachingResponse):
+        (WebKit::NetworkCache::retrieveDecisionToDiagnosticKey):
+        (WebKit::NetworkCache::Statistics::recordNotUsingCacheForRequest):
+        (WebKit::NetworkCache::storeDecisionToDiagnosticKey):
+        (WebKit::NetworkCache::Statistics::recordRetrievalFailure):
+        (WebKit::NetworkCache::cachedEntryReuseFailureToDiagnosticKey):
+        (WebKit::NetworkCache::Statistics::recordRetrievedCachedEntry):
+        (WebKit::NetworkCache::Statistics::markAsRequested):
+        (WebKit::NetworkCache::Statistics::writeTimerFired):
+        (WebKit::NetworkCache::Statistics::queryWasEverRequested):
+        (WebKit::NetworkCache::Statistics::clear):
+        (WebKit::NetworkCache::Statistics::addHashesToDatabase):
+        (WebKit::NetworkCache::Statistics::addStoreDecisionsToDatabase):
+        * NetworkProcess/cache/NetworkCacheStatistics.h:
+        (WebKit::NetworkCache::Statistics::serialBackgroundIOQueue):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-03-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Safari clears selection when its window gets activated via mouse down
