@@ -743,7 +743,12 @@ inline JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript)
         return baseValue.get(exec, i);
     }
 
+    baseValue.requireObjectCoercible(exec);
+    if (exec->hadException())
+        return jsUndefined();
     auto property = subscript.toPropertyKey(exec);
+    if (exec->hadException())
+        return jsUndefined();
     return baseValue.get(exec, property);
 }
 

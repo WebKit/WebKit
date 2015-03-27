@@ -85,7 +85,10 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncValueOf(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
-    return JSValue::encode(jsBoolean(thisValue.toObject(exec)->hasOwnProperty(exec, exec->argument(0).toPropertyKey(exec))));
+    auto propertyName = exec->argument(0).toPropertyKey(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(jsBoolean(thisValue.toObject(exec)->hasOwnProperty(exec, propertyName)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState* exec)
@@ -118,13 +121,17 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec)
     if (getCallData(get, callData) == CallTypeNone)
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("invalid getter usage")));
 
+    auto propertyName = exec->argument(0).toPropertyKey(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     PropertyDescriptor descriptor;
     descriptor.setGetter(get);
     descriptor.setEnumerable(true);
     descriptor.setConfigurable(true);
 
     bool shouldThrow = true;
-    thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, exec->argument(0).toPropertyKey(exec), descriptor, shouldThrow);
+    thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 
     return JSValue::encode(jsUndefined());
 }
@@ -140,13 +147,17 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
     if (getCallData(set, callData) == CallTypeNone)
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("invalid setter usage")));
 
+    auto propertyName = exec->argument(0).toPropertyKey(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     PropertyDescriptor descriptor;
     descriptor.setSetter(set);
     descriptor.setEnumerable(true);
     descriptor.setConfigurable(true);
 
     bool shouldThrow = true;
-    thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, exec->argument(0).toPropertyKey(exec), descriptor, shouldThrow);
+    thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 
     return JSValue::encode(jsUndefined());
 }
@@ -157,9 +168,12 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
+    auto propertyName = exec->argument(0).toPropertyKey(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     PropertySlot slot(thisObject);
-    if (thisObject->getPropertySlot(exec, exec->argument(0).toPropertyKey(exec), slot)
-        && slot.isAccessor()) {
+    if (thisObject->getPropertySlot(exec, propertyName, slot) && slot.isAccessor()) {
         GetterSetter* getterSetter = slot.getterSetter();
         return getterSetter->isGetterNull() ? JSValue::encode(jsUndefined()) : JSValue::encode(getterSetter->getter());
     }
@@ -173,9 +187,12 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
+    auto propertyName = exec->argument(0).toPropertyKey(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     PropertySlot slot(thisObject);
-    if (thisObject->getPropertySlot(exec, exec->argument(0).toPropertyKey(exec), slot)
-        && slot.isAccessor()) {
+    if (thisObject->getPropertySlot(exec, propertyName, slot) && slot.isAccessor()) {
         GetterSetter* getterSetter = slot.getterSetter();
         return getterSetter->isSetterNull() ? JSValue::encode(jsUndefined()) : JSValue::encode(getterSetter->setter());
     }
@@ -185,9 +202,13 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecState* exec)
 {
-    JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
     auto propertyName = exec->argument(0).toPropertyKey(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
 
+    JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     PropertyDescriptor descriptor;
     bool enumerable = thisObject->getOwnPropertyDescriptor(exec, propertyName, descriptor) && descriptor.enumerable();
     return JSValue::encode(jsBoolean(enumerable));

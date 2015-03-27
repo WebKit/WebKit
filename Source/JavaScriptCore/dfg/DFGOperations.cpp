@@ -298,7 +298,12 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
         }
     }
 
+    baseValue.requireObjectCoercible(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     auto propertyName = property.toPropertyKey(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     return JSValue::encode(baseValue.get(exec, propertyName));
 }
 
@@ -327,6 +332,8 @@ EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
     }
 
     auto propertyName = property.toPropertyKey(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     return JSValue::encode(JSValue(base).get(exec, propertyName));
 }
 

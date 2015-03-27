@@ -26,6 +26,7 @@
 #ifndef JSValueInlines_h
 #define JSValueInlines_h
 
+#include "ExceptionHelpers.h"
 #include "Identifier.h"
 #include "InternalFunction.h"
 #include "JSCJSValue.h"
@@ -914,6 +915,14 @@ inline TriState JSValue::pureToBoolean() const
     if (isCell())
         return asCell()->pureToBoolean();
     return isTrue() ? TrueTriState : FalseTriState;
+}
+
+ALWAYS_INLINE bool JSValue::requireObjectCoercible(ExecState* exec) const
+{
+    if (!isUndefinedOrNull())
+        return true;
+    exec->vm().throwException(exec, createNotAnObjectError(exec, *this));
+    return false;
 }
 
 } // namespace JSC

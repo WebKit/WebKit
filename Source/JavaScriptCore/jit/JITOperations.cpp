@@ -1386,7 +1386,12 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, R
         return baseValue.get(exec, i);
     }
 
+    baseValue.requireObjectCoercible(exec);
+    if (exec->hadException())
+        return jsUndefined();
     auto property = subscript.toPropertyKey(exec);
+    if (exec->hadException())
+        return jsUndefined();
     return baseValue.get(exec, property);
 }
 
@@ -1522,7 +1527,12 @@ EncodedJSValue JIT_OPERATION operationGetByValString(ExecState* exec, EncodedJSV
                 ctiPatchCallByReturnAddress(exec->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationGetByValDefault));
         }
     } else {
+        baseValue.requireObjectCoercible(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
         auto property = subscript.toPropertyKey(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
         result = baseValue.get(exec, property);
     }
 

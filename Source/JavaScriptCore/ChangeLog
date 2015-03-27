@@ -1,3 +1,73 @@
+2015-03-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Insert exception check around toPropertyKey call
+        https://bugs.webkit.org/show_bug.cgi?id=142922
+
+        Reviewed by Geoffrey Garen.
+
+        In some places, exception check is missing after/before toPropertyKey.
+        However, since it calls toString, it's observable to users,
+
+        Missing exception checks in Object.prototype methods can be
+        observed since it would be overridden with toObject(null/undefined) errors.
+        We inserted exception checks after toPropertyKey.
+
+        Missing exception checks in GetById related code can be
+        observed since it would be overridden with toObject(null/undefined) errors.
+        In this case, we need to insert exception checks before/after toPropertyKey
+        since RequireObjectCoercible followed by toPropertyKey can cause exceptions.
+
+        JSValue::get checks null/undefined and raise an exception if |this| is null or undefined.
+        However, we need to check whether the baseValue is object coercible before executing JSValue::toPropertyKey.
+        According to the spec, we first perform RequireObjectCoercible and check the exception.
+        And second, we perform ToPropertyKey and check the exception.
+        Since JSValue::toPropertyKey can cause toString call, this is observable to users.
+        For example, if the target is not object coercible,
+        ToPropertyKey should not be executed, and toString should not be executed by ToPropertyKey.
+        So the order of observable actions (RequireObjectCoercible and ToPropertyKey) should be correct to the spec.
+
+        This patch introduces JSValue::requireObjectCoercible and use it because of the following 2 reasons.
+
+        1. Using toObject instead of requireObjectCoercible produces unnecessary wrapper object.
+
+        toObject converts primitive types into wrapper objects.
+        But it is not efficient since wrapper objects are not necessary
+        if we look up methods from primitive values's prototype. (using synthesizePrototype is better).
+
+        2. Using the result of toObject is not correct to the spec.
+
+        To align to the spec correctly, we cannot use JSObject::get
+        by using the wrapper object produced by the toObject suggested in (1).
+        If we use JSObject that is converted by toObject, getter will be called by using this JSObject as |this|.
+        It is not correct since getter should be called with the original |this| value that may be primitive types.
+
+        So in this patch, we use JSValue::requireObjectCoercible
+        to check the target is object coercible and raise an error if it's not.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::getByVal):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::requireObjectCoercible):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        (JSC::objectProtoFuncPropertyIsEnumerable):
+        * tests/stress/exception-in-to-property-key-should-be-handled-early-in-object-methods.js: Added.
+        (shouldThrow):
+        (if):
+        * tests/stress/exception-in-to-property-key-should-be-handled-early.js: Added.
+        (shouldThrow):
+        (.):
+
 2015-03-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         WebContent Crash when instantiating class with Type Profiling enabled
