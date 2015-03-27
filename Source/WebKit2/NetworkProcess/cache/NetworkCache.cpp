@@ -169,7 +169,7 @@ static bool responseHasExpired(const WebCore::ResourceResponse& response, std::c
     return hasExpired;
 }
 
-static bool requestNeedsRevalidation(const WebCore::ResourceRequest& request)
+static bool requestRequiresRevalidation(const WebCore::ResourceRequest& request)
 {
     auto requestDirectives = WebCore::parseCacheControlDirectives(request.httpHeaderFields());
     if (requestDirectives.noCache)
@@ -192,7 +192,7 @@ static UseDecision canUse(const Entry& entry, const WebCore::ResourceRequest& re
     if (cachePolicyAllowsExpired(request.cachePolicy()))
         return UseDecision::Use;
 
-    bool needsRevalidation = requestNeedsRevalidation(request) || responseHasExpired(entry.response(), entry.timeStamp());
+    bool needsRevalidation = requestRequiresRevalidation(request) || responseHasExpired(entry.response(), entry.timeStamp());
     if (!needsRevalidation)
         return UseDecision::Use;
 
