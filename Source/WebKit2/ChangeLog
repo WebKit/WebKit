@@ -1,3 +1,21 @@
+2015-03-27  Anders Carlsson  <andersca@apple.com>
+
+        Only do the Connection::setShouldCloseConnectionOnMachExceptions() hack where necessary
+        https://bugs.webkit.org/show_bug.cgi?id=143141
+        rdar://problem/19471284
+
+        Reviewed by Andreas Kling.
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::platformInvalidate):
+        (IPC::Connection::platformInitialize):
+        (IPC::Connection::open):
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::didFinishLaunching):
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+
 2015-03-27  Tim Horton  <timothy_horton@apple.com>
 
         Implement iOS WebKit2 PDF Find-in-Page
