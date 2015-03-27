@@ -206,8 +206,10 @@ static String notAFunctionSourceAppender(const String& originalMessage, const St
     return builder.toString();
 }
 
-static String invalidParameterInSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+static String invalidParameterInSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType type, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
+    ASSERT_UNUSED(type, type != TypeObject);
+
     if (occurrence == ErrorInstance::FoundApproximateSource)
         return defaultApproximateSourceError(originalMessage, sourceText);
 
