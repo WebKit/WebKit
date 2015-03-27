@@ -1,3 +1,28 @@
+2015-03-27  Tim Horton  <timothy_horton@apple.com>
+
+        WebProcess started by editable WKWebView spends 15% of its initialization time loading DataDetectors
+        https://bugs.webkit.org/show_bug.cgi?id=143142
+        <rdar://problem/20324495>
+
+        Reviewed by Anders Carlsson.
+
+        Calling DataDetectorsLibrary() is expensive; we should avoid doing it
+        until actually necessary. When loading a page that makes a caret selection,
+        ServicesOverlayController was calling DataDetectorsLibrary() (ignoring the fact
+        that a caret selection can't have any services associated with it) to avoid
+        crashing on systems where DataDetectors is not available. Instead, we should
+        first check if there's anything to do, and then check for the existence
+        of DataDetectors.
+
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::buildPhoneNumberHighlights):
+        Build the list of phone number ranges, and bail (clearing the potential highlights)
+        if it is empty, before calling DataDetectorsLibrary().
+
+        (WebCore::ServicesOverlayController::buildSelectionHighlight):
+        Check the list of selection rects, and bail (clearing the potential highlights)
+        if it is empty, before calling DataDetectorsLibrary().
+
 2015-03-27  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Safari fails to fire page "load" event with video[preload=none]

@@ -471,37 +471,44 @@ void ServicesOverlayController::removeAllPotentialHighlightsOfType(Highlight::Ty
 
 void ServicesOverlayController::buildPhoneNumberHighlights()
 {
-    if (!DataDetectorsLibrary())
+    if (!m_mainFrame.settings().serviceControlsEnabled())
         return;
 
-    if (!m_mainFrame.settings().serviceControlsEnabled())
+    Vector<RefPtr<Range>> phoneNumberRanges;
+    for (Frame* frame = &m_mainFrame; frame; frame = frame->tree().traverseNext())
+        phoneNumberRanges.appendVector(frame->editor().detectedTelephoneNumberRanges());
+
+    if (phoneNumberRanges.isEmpty()) {
+        removeAllPotentialHighlightsOfType(Highlight::Type::TelephoneNumber);
+        didRebuildPotentialHighlights();
+        return;
+    }
+
+    if (!DataDetectorsLibrary())
         return;
 
     HashSet<RefPtr<Highlight>> newPotentialHighlights;
 
     FrameView& mainFrameView = *m_mainFrame.view();
 
-    for (Frame* frame = &m_mainFrame; frame; frame = frame->tree().traverseNext()) {
-        auto& ranges = frame->editor().detectedTelephoneNumberRanges();
-        for (auto& range : ranges) {
-            // FIXME: This will choke if the range wraps around the edge of the view.
-            // What should we do in that case?
-            IntRect rect = textQuadsToBoundingRectForRange(*range);
+    for (auto& range : phoneNumberRanges) {
+        // FIXME: This will choke if the range wraps around the edge of the view.
+        // What should we do in that case?
+        IntRect rect = textQuadsToBoundingRectForRange(*range);
 
-            // Convert to the main document's coordinate space.
-            // FIXME: It's a little crazy to call contentsToWindow and then windowToContents in order to get the right coordinate space.
-            // We should consider adding conversion functions to ScrollView for contentsToDocument(). Right now, contentsToRootView() is
-            // not equivalent to what we need when you have a topContentInset or a header banner.
-            FrameView* viewForRange = range->ownerDocument().view();
-            if (!viewForRange)
-                continue;
-            rect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(rect.location())));
+        // Convert to the main document's coordinate space.
+        // FIXME: It's a little crazy to call contentsToWindow and then windowToContents in order to get the right coordinate space.
+        // We should consider adding conversion functions to ScrollView for contentsToDocument(). Right now, contentsToRootView() is
+        // not equivalent to what we need when you have a topContentInset or a header banner.
+        FrameView* viewForRange = range->ownerDocument().view();
+        if (!viewForRange)
+            continue;
+        rect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(rect.location())));
 
-            CGRect cgRect = rect;
-            RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES));
+        CGRect cgRect = rect;
+        RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES));
 
-            newPotentialHighlights.add(Highlight::createForTelephoneNumber(*this, ddHighlight, range));
-        }
+        newPotentialHighlights.add(Highlight::createForTelephoneNumber(*this, ddHighlight, range));
     }
 
     replaceHighlightsOfTypePreservingEquivalentHighlights(newPotentialHighlights, Highlight::Type::TelephoneNumber);
@@ -511,14 +518,20 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
 
 void ServicesOverlayController::buildSelectionHighlight()
 {
-    if (!DataDetectorsLibrary())
-        return;
-
     if (!m_mainFrame.settings().serviceControlsEnabled())
         return;
 
+    if (m_currentSelectionRects.isEmpty()) {
+        removeAllPotentialHighlightsOfType(Highlight::Type::Selection);
+        didRebuildPotentialHighlights();
+        return;
+    }
+
     Page* page = m_mainFrame.page();
     if (!page)
+        return;
+
+    if (!DataDetectorsLibrary())
         return;
 
     HashSet<RefPtr<Highlight>> newPotentialHighlights;
