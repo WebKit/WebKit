@@ -1,5 +1,16 @@
 2015-03-26  Enrica Casucci  <enrica@apple.com>
 
+        OS X build fix after r182037.
+
+        Unreviewed.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _addFontPanelObserver]):
+        (-[WKView removeWindowObservers]):
+        (-[WKView observeValueForKeyPath:ofObject:change:context:]):
+
+2015-03-26  Enrica Casucci  <enrica@apple.com>
+
         iOS build fix after r182037.
 
         Unreviewed.

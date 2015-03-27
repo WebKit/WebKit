@@ -2619,7 +2619,9 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (void)_addFontPanelObserver
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [[NSFontPanel sharedFontPanel] addObserver:self forKeyPath:@"visible" options:0 context:keyValueObservingContext];
+#endif
 }
 
 - (void)removeWindowObservers
@@ -2638,9 +2640,9 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeScreenNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidChangeContentsHostedInLayerSurfaceNotification" object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeOcclusionStateNotification object:window];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (_data->_page->isEditable())
         [[NSFontPanel sharedFontPanel] removeObserver:self forKeyPath:@"visible" context:keyValueObservingContext];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [window removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
     [window removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
 #endif
@@ -3850,6 +3852,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (context != keyValueObservingContext) {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
         return;
@@ -3859,7 +3862,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         [self updateFontPanelIfNeeded];
         return;
     }
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if ([keyPath isEqualToString:@"contentLayoutRect"] || [keyPath isEqualToString:@"titlebarAppearsTransparent"])
         [self _updateContentInsetsIfAutomatic];
 #endif
