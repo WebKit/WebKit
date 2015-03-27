@@ -1024,8 +1024,6 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreen(const WebCore::IntRect& fi
         return;
     }
 
-    m_playerController = nil;
-
     dispatch_async(dispatch_get_main_queue(), [strongThis, finalRect] {
         strongThis->exitFullscreenInternal(finalRect);
     });
