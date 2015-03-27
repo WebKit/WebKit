@@ -1,3 +1,13 @@
+2015-03-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Calling crypto.webkitSubtle.generateKey causes page memory to never be released
+        https://bugs.webkit.org/show_bug.cgi?id=143151
+        rdar://problem/18940687
+
+        Reviewed by Tim Horton.
+
+        * crypto/mac/CryptoKeyRSAMac.cpp: (WebCore::CryptoKeyRSA::generatePair): Don't.
+
 2015-03-27  Brent Fulgham  <bfulgham@apple.com>
 
         Null dereference in InbandMetadataTextTrack handling

@@ -261,6 +261,7 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, unsigned mo
             WTFLogAlways("Could not generate a key pair, status %d", status);
             callOnWebThreadOrDispatchAsyncOnMainThread(^{
                 (*localFailureCallback)();
+                delete localCallback;
                 delete localFailureCallback;
             });
             return;
@@ -270,6 +271,7 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, unsigned mo
             RefPtr<CryptoKeyRSA> privateKey = CryptoKeyRSA::create(algorithm, CryptoKeyType::Private, ccPrivateKey, extractable, usage);
             (*localCallback)(CryptoKeyPair::create(publicKey.release(), privateKey.release()));
             delete localCallback;
+            delete localFailureCallback;
         });
     });
 }
