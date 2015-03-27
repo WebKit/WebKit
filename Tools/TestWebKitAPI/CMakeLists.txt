@@ -22,6 +22,7 @@ include_directories(${CMAKE_BINARY_DIR}
     ${WEBCORE_DIR}/css
     ${WEBCORE_DIR}/dom
     ${WEBCORE_DIR}/editing
+    ${WEBCORE_DIR}/loader/cache
     ${WEBCORE_DIR}/platform
     ${WEBCORE_DIR}/platform/animation
     ${WEBCORE_DIR}/platform/graphics
