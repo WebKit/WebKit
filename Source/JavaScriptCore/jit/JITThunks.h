@@ -46,6 +46,7 @@ class VM;
 class NativeExecutable;
 
 class JITThunks final : private WeakHandleOwner {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     JITThunks();
     virtual ~JITThunks();

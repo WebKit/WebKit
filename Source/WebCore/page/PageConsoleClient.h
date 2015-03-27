@@ -46,6 +46,7 @@ class Page;
 typedef Vector<RefPtr<JSC::Profile>> ProfilesArray;
 
 class WEBCORE_EXPORT PageConsoleClient final : public JSC::ConsoleClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit PageConsoleClient(Page&);
     virtual ~PageConsoleClient();

@@ -110,6 +110,7 @@ struct ReplayPosition {
 };
 
 class ReplayController final : public EventLoopInputDispatcherClient {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ReplayController);
 public:
     ReplayController(Page&);

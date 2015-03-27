@@ -41,6 +41,7 @@ class MediaSession;
 class RemoteCommandListener;
 
 class MediaSessionManager : private RemoteCommandListenerClient, private SystemSleepListener::Client, private AudioHardwareListener::Client {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static MediaSessionManager& sharedManager();
     virtual ~MediaSessionManager() { }

@@ -114,6 +114,7 @@ private:
 
 
 class Timer : public TimerBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     template <typename TimerFiredClass, typename TimerFiredBaseClass>
     Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())

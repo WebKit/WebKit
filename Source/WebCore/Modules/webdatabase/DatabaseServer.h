@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class DatabaseServer: public AbstractDatabaseServer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DatabaseServer() { };
     virtual ~DatabaseServer() { }

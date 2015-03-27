@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class SystemSleepListenerMac : public SystemSleepListener {
+    WTF_MAKE_FAST_ALLOCATED;
 protected:
     SystemSleepListenerMac(Client&);
     virtual ~SystemSleepListenerMac();

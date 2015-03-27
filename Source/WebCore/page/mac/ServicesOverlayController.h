@@ -45,6 +45,7 @@ struct GapRects;
 namespace WebCore {
 
 class ServicesOverlayController : private PageOverlay::Client {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ServicesOverlayController(MainFrame&);
     ~ServicesOverlayController();

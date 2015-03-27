@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class CaptionUserPreferencesMediaAF : public CaptionUserPreferences {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CaptionUserPreferencesMediaAF(PageGroup&);
     virtual ~CaptionUserPreferencesMediaAF();
