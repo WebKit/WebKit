@@ -169,7 +169,7 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
         } else {
             valueOrGetterElement = document.createElement("span");
             if (this.property.hasGetter())
-                valueOrGetterElement.appendChild(this.createInteractiveGetterElement());
+                valueOrGetterElement.appendChild(this.createInteractiveGetterElement(this._mode !== WebInspector.ObjectTreeView.Mode.ClassAPI));
             if (!this.property.hasSetter())
                 valueOrGetterElement.appendChild(this.createReadOnlyIconElement());
             // FIXME: What if just a setter?
@@ -211,7 +211,7 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
             container.appendChild(paramElement);
         } else {
             if (this.property.hasGetter())
-                container.appendChild(this.createInteractiveGetterElement());
+                container.appendChild(this.createInteractiveGetterElement(this._mode !== WebInspector.ObjectTreeView.Mode.ClassAPI));
             if (!this.property.hasSetter())
                 container.appendChild(this.createReadOnlyIconElement());
             // FIXME: What if just a setter?
@@ -304,8 +304,10 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
         var resolvedValue = this.resolvedValue();
         if (resolvedValue.isCollectionType() && this._mode === WebInspector.ObjectTreeView.Mode.Properties)
             resolvedValue.getCollectionEntries(0, 100, this._updateChildrenInternal.bind(this, this._updateEntries, this._mode));
+        else if (this._mode === WebInspector.ObjectTreeView.Mode.ClassAPI)
+            resolvedValue.getOwnPropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, WebInspector.ObjectTreeView.Mode.ClassAPI));
         else if (this.property.name === "__proto__")
-            resolvedValue.getOwnPropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, WebInspector.ObjectTreeView.Mode.API));
+            resolvedValue.getOwnPropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, WebInspector.ObjectTreeView.Mode.PrototypeAPI));
         else
             resolvedValue.getDisplayablePropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, this._mode));
     }
@@ -353,7 +355,7 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
         var resolvedValue = this.resolvedValue();
         var isArray = resolvedValue.isArray();
         var isPropertyMode = mode === WebInspector.ObjectTreeView.Mode.Properties || this._getterValue;
-        var isAPI = mode === WebInspector.ObjectTreeView.Mode.API;
+        var isAPI = mode !== WebInspector.ObjectTreeView.Mode.Prototype;
 
         var prototypeName = undefined;
         if (this.property.name === "__proto__") {
@@ -367,7 +369,7 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
             // already showed them in the Properties section.
             if (isAPI && propertyDescriptor.nativeGetter)
                 continue;
-            
+
             if (isArray && isPropertyMode) {
                 if (propertyDescriptor.isIndexProperty())
                     this.appendChild(new WebInspector.ObjectTreeArrayIndexTreeElement(propertyDescriptor, propertyPath));

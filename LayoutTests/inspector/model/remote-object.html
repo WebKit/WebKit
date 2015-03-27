@@ -154,6 +154,13 @@ function test()
         {expression: "Promise.resolve()"},
         {expression: "Promise.resolve({result:1})"},
 
+    // Classes
+
+        {expression: "Person = class Person { constructor(){} get fullName(){} methodName(p1, p2){} }; Person"}, // Constructor => class type
+        {expression: "Person.prototype.methodName"}, // Method => just a function type
+        {expression: "Alpha = class A { methodA(){} }; Beta = class B extends Alpha { methodB(){} }; Beta"},
+        {expression: "[Beta]"},
+
     // Improveable:
 
         // Sealed / Frozen objects.
@@ -216,7 +223,11 @@ function runInBrowserTest()
 
     for (var step of steps) {
         console.info("EXPRESSION", step.expression);
-        console.log(eval(step.expression));
+        try {
+            console.log(eval(step.expression));
+        } catch (e) {
+            console.log("EXCEPTION: " + e);
+        }
     }
 }
 </script>

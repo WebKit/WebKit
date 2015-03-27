@@ -60,6 +60,11 @@ inline bool JSFunction::isHostOrBuiltinFunction() const
     return isHostFunction() || isBuiltinFunction();
 }
 
+inline bool JSFunction::isClassConstructorFunction() const
+{
+    return !isHostFunction() && jsExecutable()->isClassConstructorFunction();
+}
+
 inline NativeFunction JSFunction::nativeFunction()
 {
     ASSERT(isHostFunctionNonInline());

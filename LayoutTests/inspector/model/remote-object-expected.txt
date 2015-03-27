@@ -196,7 +196,7 @@ EXPRESSION: (function(){})
 {
   "_type": "function",
   "_objectId": "<filtered>",
-  "_description": "function () {}"
+  "_description": "function (){}"
 }
 
 -----------------------------------------------------
@@ -204,7 +204,7 @@ EXPRESSION: function foo(){}; foo
 {
   "_type": "function",
   "_objectId": "<filtered>",
-  "_description": "function foo() {}"
+  "_description": "function foo(){}"
 }
 
 -----------------------------------------------------
@@ -244,7 +244,7 @@ EXPRESSION: Object.getOwnPropertyDescriptor({ get getter() { return 1 } }, 'gett
 {
   "_type": "function",
   "_objectId": "<filtered>",
-  "_description": "function () { return 1; }"
+  "_description": "function () { return 1 }"
 }
 
 -----------------------------------------------------
@@ -4085,6 +4085,69 @@ EXPRESSION: Promise.resolve({result:1})
           "_entries": null
         },
         "_internal": true
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Person = class Person { constructor(){} get fullName(){} methodName(p1, p2){} }; Person
+{
+  "_type": "function",
+  "_subtype": "class",
+  "_objectId": "<filtered>",
+  "_description": "class Person",
+  "_classPrototype": {
+    "_type": "object",
+    "_objectId": "<filtered>",
+    "_description": "Person"
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Person.prototype.methodName
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function methodName(p1, p2){}"
+}
+
+-----------------------------------------------------
+EXPRESSION: Alpha = class A { methodA(){} }; Beta = class B extends Alpha { methodB(){} }; Beta
+{
+  "_type": "function",
+  "_subtype": "class",
+  "_objectId": "<filtered>",
+  "_description": "class B",
+  "_classPrototype": {
+    "_type": "object",
+    "_objectId": "<filtered>",
+    "_description": "B"
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [Beta]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "function",
+        "_subtype": "class",
+        "_value": "B"
       }
     ],
     "_entries": null

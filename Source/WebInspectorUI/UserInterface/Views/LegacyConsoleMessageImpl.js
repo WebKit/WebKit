@@ -46,6 +46,7 @@ WebInspector.LegacyConsoleMessageImpl = function(source, level, message, linkifi
         "set": this._formatParameterAsObject,
         "weakmap": this._formatParameterAsObject,
         "iterator": this._formatParameterAsObject,
+        "class": this._formatParameterAsObject,
         "array":  this._formatParameterAsArray,
         "node":   this._formatParameterAsNode,
         "string": this._formatParameterAsString
@@ -308,7 +309,8 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
 
     _formatParameterAsObject: function(obj, elem, forceExpansion)
     {
-        this._objectTree = new WebInspector.ObjectTreeView(obj, WebInspector.ObjectTreeView.Mode.Properties, this._rootPropertyPathForObject(obj), forceExpansion);
+        // FIXME: Should have a better ObjectTreeView mode for classes (static methods and methods).
+        this._objectTree = new WebInspector.ObjectTreeView(obj, null, this._rootPropertyPathForObject(obj), forceExpansion);
         elem.appendChild(this._objectTree.element);
     },
 

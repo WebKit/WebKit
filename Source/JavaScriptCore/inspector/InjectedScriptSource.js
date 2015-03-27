@@ -779,6 +779,9 @@ InjectedScript.prototype = {
         if (subtype === "array")
             return className;
 
+        if (subtype === "class")
+            return obj.name;
+
         // NodeList in JSC is a function, check for array prior to this.
         if (typeof obj === "function")
             return toString(obj);
@@ -922,6 +925,8 @@ InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType, 
         this.size = object.size;
     else if (subtype === "weakmap")
         this.size = InjectedScriptHost.weakMapSize(object);
+    else if (subtype === "class")
+        this.classPrototype = injectedScript._wrapObject(object.prototype, objectGroupName);
 
     if (generatePreview && this.type === "object")
         this.preview = this._generatePreview(object, undefined, columnNames);
@@ -955,6 +960,8 @@ InjectedScript.RemoteObject.prototype = {
         var remoteObject = new InjectedScript.RemoteObject(value, undefined, false, true, undefined);
         if (remoteObject.objectId)
             injectedScript.releaseObject(remoteObject.objectId);
+        if (remoteObject.classPrototype && remoteObject.classPrototype.objectId)
+            injectedScript.releaseObject(remoteObject.classPrototype.objectId);
 
         return remoteObject.preview || remoteObject._emptyPreview();
     },
@@ -1103,7 +1110,7 @@ InjectedScript.RemoteObject.prototype = {
                     preview.overflow = true;
             } else {
                 var description = "";
-                if (type !== "function")
+                if (type !== "function" || subtype === "class")
                     description = this._abbreviateString(injectedScript._describe(value), maxLength, subtype === "regexp");
                 property.value = description;
                 preview.lossless = false;

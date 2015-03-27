@@ -166,6 +166,7 @@ public:
     static void destroy(JSCell*);
 
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
+    bool isClassConstructorFunction() const { return constructorKind() != ConstructorKind::None; }
 
 private:
     UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionBodyNode*, UnlinkedFunctionKind);

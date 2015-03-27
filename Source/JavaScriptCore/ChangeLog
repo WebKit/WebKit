@@ -1,3 +1,33 @@
+2015-03-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ES6: Provide a better view for Classes in the console
+        https://bugs.webkit.org/show_bug.cgi?id=142999
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/Runtime.json:
+        Provide a new `subtype` enum "class". This is a subtype of `type`
+        "function", all other subtypes are subtypes of `object` types.
+        For a class, the frontend will immediately want to get the prototype
+        to enumerate its methods, so include the `classPrototype`.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        Denote class construction functions as "class" subtypes.
+
+        * inspector/InjectedScriptSource.js:
+        Handling for the new "class" type.
+
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedFunctionExecutable::isClassConstructorFunction):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::isClassConstructorFunction):
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::isClassConstructorFunction):
+        Check if this function is a class constructor function. That information
+        is on the UnlinkedFunctionExecutable, so plumb it through to JSFunction.
+
 2015-03-26  Geoffrey Garen  <ggaren@apple.com>
 
         Function.prototype.toString should not decompile the AST

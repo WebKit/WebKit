@@ -1525,7 +1525,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
         content.appendChild(titleElement);
 
         // FIXME: If this is a variable, it would be nice to put the variable name in the PropertyPath.
-        var objectTree = new WebInspector.ObjectTreeView(data, WebInspector.ObjectTreeView.Mode.Properties, null);
+        var objectTree = new WebInspector.ObjectTreeView(data);
         objectTree.showOnlyProperties();
         objectTree.expand();
 

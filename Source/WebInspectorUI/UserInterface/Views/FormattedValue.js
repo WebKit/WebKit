@@ -86,9 +86,12 @@ WebInspector.FormattedValue.createElementForTypesAndValue = function(type, subty
         return span;
     }
 
-    // Function: ellided in previews.
+    // Function: if class, show the description, otherwise ellide in previews.
     if (type === "function") {
-        span.textContent = isPreview ? "function" : displayString;
+        if (subtype === "class")
+            span.textContent = displayString;
+        else
+            span.textContent = isPreview ? "function" : displayString;
         return span;
     }
 
@@ -125,8 +128,8 @@ WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject = fu
     if (object.subtype === "node")
         return WebInspector.FormattedValue.createElementForNode(object);
 
-    if (object.type === "object") {
-        var objectTree = new WebInspector.ObjectTreeView(object, WebInspector.ObjectTreeView.Mode.Properties, propertyPath, forceExpanding);
+    if (object.type === "object" || object.subtype === "class") {
+        var objectTree = new WebInspector.ObjectTreeView(object, null, propertyPath, forceExpanding);
         return objectTree.element;
     }
 

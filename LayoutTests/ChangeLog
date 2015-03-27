@@ -1,3 +1,14 @@
+2015-03-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ES6: Provide a better view for Classes in the console
+        https://bugs.webkit.org/show_bug.cgi?id=142999
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object.html:
+        Update the test to include coverage of the new "class" subtype of "function".
+
 2015-03-26  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r181358 and r181507): Lots of sites think that we support touch events on OS X

@@ -31,7 +31,7 @@
 
 WebInspector.RemoteObject = class RemoteObject
 {
-    constructor(objectId, type, subtype, value, description, size, preview)
+    constructor(objectId, type, subtype, value, description, size, classPrototype, preview)
     {
         console.assert(type);
         console.assert(!preview || preview instanceof WebInspector.ObjectPreview);
@@ -40,7 +40,7 @@ WebInspector.RemoteObject = class RemoteObject
         this._subtype = subtype;
 
         if (objectId) {
-            // Object or Symbol.
+            // Object, Function, or Symbol.
             console.assert(!subtype || typeof subtype === "string");
             console.assert(!description || typeof description === "string");
             console.assert(!value);
@@ -49,7 +49,11 @@ WebInspector.RemoteObject = class RemoteObject
             this._description = description;
             this._hasChildren = type !== "symbol";
             this._size = size;
+            this._classPrototype = classPrototype;
             this._preview = preview;
+
+            if (subtype === "class")
+                this._description = "class " + this._description;
         } else {
             // Primitive or null.
             console.assert(type !== "object" || value === null);
@@ -65,7 +69,7 @@ WebInspector.RemoteObject = class RemoteObject
 
     static fromPrimitiveValue(value)
     {
-        return new WebInspector.RemoteObject(undefined, typeof value, undefined, undefined, value);
+        return new WebInspector.RemoteObject(undefined, typeof value, undefined, value, undefined, undefined, undefined);
     }
 
     static fromPayload(payload)
@@ -82,6 +86,9 @@ WebInspector.RemoteObject = class RemoteObject
             }
         }
 
+        if (payload.classPrototype)
+            payload.classPrototype = WebInspector.RemoteObject.fromPayload(payload.classPrototype);
+
         if (payload.preview) {
             // COMPATIBILITY (iOS 8): iOS 7 and 8 did not have type/subtype/description on
             // Runtime.ObjectPreview. Copy them over from the RemoteObject.
@@ -95,7 +102,7 @@ WebInspector.RemoteObject = class RemoteObject
             payload.preview = WebInspector.ObjectPreview.fromPayload(payload.preview);
         }
 
-        return new WebInspector.RemoteObject(payload.objectId, payload.type, payload.subtype, payload.value, payload.description, payload.size, payload.preview);
+        return new WebInspector.RemoteObject(payload.objectId, payload.type, payload.subtype, payload.value, payload.description, payload.size, payload.classPrototype, payload.preview);
     }
 
     static createCallArgument(valueOrObject)
@@ -169,6 +176,11 @@ WebInspector.RemoteObject = class RemoteObject
     get size()
     {
         return this._size || 0;
+    }
+
+    get classPrototype()
+    {
+        return this._classPrototype;
     }
 
     get preview()
@@ -321,6 +333,11 @@ WebInspector.RemoteObject = class RemoteObject
     isArray()
     {
         return this._subtype === "array";
+    }
+
+    isClass()
+    {
+        return this._subtype === "class";
     }
 
     isCollectionType()

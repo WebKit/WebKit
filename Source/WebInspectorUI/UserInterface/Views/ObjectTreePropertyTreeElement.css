@@ -157,7 +157,11 @@
     margin-left: 3px;
 }
 
-.object-tree-property .getter:hover {
+.object-tree-property .getter.disabled {
+    opacity: 0.35;
+}
+
+.object-tree-property .getter:not(.disabled):hover {
     opacity: 1;
 }
 

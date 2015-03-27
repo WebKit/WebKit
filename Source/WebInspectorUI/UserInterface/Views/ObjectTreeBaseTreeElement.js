@@ -113,12 +113,18 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
         return propertyPath.displayPath(this.propertyPathType());
     }
 
-    createInteractiveGetterElement()
+    createInteractiveGetterElement(enabled)
     {
         var getterElement = document.createElement("img");
         getterElement.className = "getter";
-        getterElement.title = WebInspector.UIString("Invoke getter");
 
+        if (!enabled) {
+            getterElement.classList.add("disabled");
+            getterElement.title = WebInspector.UIString("Getter");
+            return getterElement;
+        }
+
+        getterElement.title = WebInspector.UIString("Invoke getter");
         getterElement.addEventListener("click", function(event) {
             event.stopPropagation();
             var lastNonPrototypeObject = this._propertyPath.lastNonPrototypeObject;

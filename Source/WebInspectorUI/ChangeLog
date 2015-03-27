@@ -1,3 +1,52 @@
+2015-03-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ES6: Provide a better view for Classes in the console
+        https://bugs.webkit.org/show_bug.cgi?id=142999
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject):
+        (WebInspector.RemoteObject.fromPrimitiveValue):
+        (WebInspector.RemoteObject.fromPayload):
+        (WebInspector.RemoteObject.prototype.get classPrototype):
+        (WebInspector.RemoteObject.prototype.isClass):
+        Update our RemoteObject model object for the new subtype
+        and its unique properties.
+
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createElementForTypesAndValue):
+        (WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject):
+        Better handle "class", as it is a new function subtype.
+
+        * UserInterface/Views/LegacyConsoleMessageImpl.js:
+        (WebInspector.LegacyConsoleMessageImpl):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._formatParameterAsObject):
+        Format a "class" with ObjectTreeView.
+
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.js:
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (.object-tree-property .getter.disabled):
+        (.object-tree-property .getter:not(.disabled):hover):
+        (.object-tree-property .getter:hover): Deleted.
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        In ClassAPI mode, you cannot invoke a getter since we don't have
+        an instance to invoke it on. So disable interactivity with getters.
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView):
+        Update the modes to include an API mode for instances and classes.
+
+        (WebInspector.ObjectTreeView.defaultModeForObject):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForObject):
+        Simplify ObjectTree construction to automatically determine mode based
+        on the RemoteObject that was provided.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        "Getter" tooltip.
+
 2015-03-26  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Convert TreeElement classes to ES6

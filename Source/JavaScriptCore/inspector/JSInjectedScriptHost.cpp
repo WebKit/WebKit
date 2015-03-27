@@ -136,8 +136,15 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
         return exec->vm().smallStrings.symbolString();
 
     JSObject* object = asObject(value);
-    if (object && object->isErrorInstance())
-        return jsNontrivialString(exec, ASCIILiteral("error"));
+    if (object) {
+        if (object->isErrorInstance())
+            return jsNontrivialString(exec, ASCIILiteral("error"));
+
+        // Consider class constructor functions class objects.
+        JSFunction* function = jsDynamicCast<JSFunction*>(value);
+        if (function && function->isClassConstructorFunction())
+            return jsNontrivialString(exec, ASCIILiteral("class"));
+    }
 
     if (value.inherits(JSArray::info()))
         return jsNontrivialString(exec, ASCIILiteral("array"));

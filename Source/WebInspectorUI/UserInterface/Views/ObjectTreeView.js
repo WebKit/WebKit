@@ -32,7 +32,7 @@ WebInspector.ObjectTreeView = function(object, mode, propertyPath, forceExpandin
     console.assert(!propertyPath || propertyPath instanceof WebInspector.PropertyPath);
 
     this._object = object;
-    this._mode = mode || WebInspector.ObjectTreeView.Mode.Properties;
+    this._mode = mode || WebInspector.ObjectTreeView.defaultModeForObject(object);
     this._propertyPath = propertyPath || new WebInspector.PropertyPath(this._object, "this");
     this._expanded = false;
     this._hasLosslessPreview = false;
@@ -41,6 +41,10 @@ WebInspector.ObjectTreeView = function(object, mode, propertyPath, forceExpandin
     // WeakMap entries. Currently collapse would work. For the console, we can just
     // listen for console clear events. Currently all ObjectTrees are in the console.
     this._inConsole = true;
+
+    // Always force expanding for classes.
+    if (this._object.isClass())
+        forceExpanding = true;
 
     this._element = document.createElement("div");
     this._element.className = "object-tree";
@@ -70,6 +74,14 @@ WebInspector.ObjectTreeView = function(object, mode, propertyPath, forceExpandin
     // FIXME: Support editable ObjectTrees.
 };
 
+WebInspector.ObjectTreeView.defaultModeForObject = function(object)
+{
+    if (object.subtype === "class")
+        return WebInspector.ObjectTreeView.Mode.ClassAPI;
+
+    return WebInspector.ObjectTreeView.Mode.Properties;
+}
+
 WebInspector.ObjectTreeView.emptyMessageElement = function(message)
 {
     var emptyMessageElement = document.createElement("div");
@@ -79,8 +91,9 @@ WebInspector.ObjectTreeView.emptyMessageElement = function(message)
 };
 
 WebInspector.ObjectTreeView.Mode = {
-    Properties: Symbol("object-tree-properties"),
-    API: Symbol("object-tree-api"),
+    Properties: Symbol("object-tree-properties"),      // Properties
+    PrototypeAPI: Symbol("object-tree-prototype-api"), // API view on a live object instance, so getters can be invoked.
+    ClassAPI: Symbol("object-tree-class-api"),         // API view without an object instance, can not invoke getters.
 };
 
 WebInspector.ObjectTreeView.ComparePropertyDescriptors = function(propertyA, propertyB)
@@ -221,6 +234,8 @@ WebInspector.ObjectTreeView.prototype = {
     {
         if (this._object.isCollectionType() && this._mode === WebInspector.ObjectTreeView.Mode.Properties)
             this._object.getCollectionEntries(0, 100, this._updateChildren.bind(this, this._updateEntries));
+        else if (this._object.isClass())
+            this._object.classPrototype.getDisplayablePropertyDescriptors(this._updateChildren.bind(this, this._updateProperties));
         else
             this._object.getDisplayablePropertyDescriptors(this._updateChildren.bind(this, this._updateProperties));
     },
