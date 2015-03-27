@@ -1,3 +1,15 @@
+2015-03-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Null dereference in InbandMetadataTextTrack handling
+        https://bugs.webkit.org/show_bug.cgi?id=143144
+        <rdar://problem/18983250>
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp:
+        (WebCore::InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes): Check for null return value from
+        'client()', just like we do in all other methods.
+
 2015-03-27  Oliver Hunt  <oliver@apple.com>
 
         Forward additional CFNetwork ATS information to child processes
