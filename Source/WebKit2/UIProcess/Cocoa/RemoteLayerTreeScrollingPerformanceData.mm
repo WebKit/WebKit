@@ -63,8 +63,7 @@ bool RemoteLayerTreeScrollingPerformanceData::BlankPixelCount::canCoalesce(Blank
 
 void RemoteLayerTreeScrollingPerformanceData::appendBlankPixelCount(BlankPixelCount::EventType eventType, unsigned blankPixelCount)
 {
-    double now = WTF::monotonicallyIncreasingTime();
-
+    double now = CFAbsoluteTimeGetCurrent();
     if (!m_blankPixelCounts.isEmpty() && m_blankPixelCounts.last().canCoalesce(eventType, blankPixelCount)) {
         m_blankPixelCounts.last().endTime = now;
         return;
