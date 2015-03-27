@@ -25,8 +25,6 @@ const windowEvents = [
     "click",
     "contextmenu",
     "dblclick",
-    "devicemotion",
-    "deviceorientation",
     "drag",
     "dragend",
     "dragenter",
@@ -39,9 +37,6 @@ const windowEvents = [
     "ended",
     "error",
     "focus",
-    "gesturechange",
-    "gestureend",
-    "gesturestart",
     "hashchange",
     "input",
     "invalid",
@@ -63,7 +58,6 @@ const windowEvents = [
     "mousewheel",
     "offline",
     "online",
-    "orientationchange",
     "pagehide",
     "pageshow",
     "pause",
@@ -84,10 +78,6 @@ const windowEvents = [
     "submit",
     "suspend",
     "timeupdate",
-    "touchcancel",
-    "touchend",
-    "touchmove",
-    "touchstart",
     "transitionend",
     "unload",
     "volumechange",
@@ -95,18 +85,7 @@ const windowEvents = [
     "webkitanimationend",
     "webkitanimationiteration",
     "webkitanimationstart",
-    "webkitdeviceproximity",
-    "webkitmouseforcecancelled",
-    "webkitmouseforcechanged",
-    "webkitmouseforceclick",
-    "webkitmouseforcedown",
-    "webkitmouseforceup",
-    "webkitmouseforcewillbegin",
     "webkittransitionend",
-    "webkitwillrevealbottom",
-    "webkitwillrevealleft",
-    "webkitwillrevealright",
-    "webkitwillrevealtop",
     "wheel",
 ];
 
@@ -146,33 +125,14 @@ const documentEvents = [
     "mouseup",
     "mousewheel",
     "paste",
-    "pointerlockchange",
-    "pointerlockerror",
     "readystatechange",
     "reset",
     "scroll",
     "search",
-    "securitypolicyviolation",
     "select",
     "selectionchange",
     "selectstart",
     "submit",
-    "touchcancel",
-    "touchend",
-    "touchmove",
-    "touchstart",
-    "webkitmouseforcecancelled",
-    "webkitmouseforcechanged",
-    "webkitmouseforceclick",
-    "webkitmouseforcedown",
-    "webkitmouseforceup",
-    "webkitmouseforcewillbegin",
-    "webkitfullscreenchange",
-    "webkitfullscreenerror",
-    "webkitwillrevealbottom",
-    "webkitwillrevealleft",
-    "webkitwillrevealright",
-    "webkitwillrevealtop",
     "wheel",
 ];
 
@@ -181,8 +141,6 @@ const elementEvents = [
     "animationend",
     "animationiteration",
     "animationstart",
-    "autocomplete",
-    "autocompleteerror",
     "beforecopy",
     "beforecut",
     "beforeload",
@@ -210,9 +168,6 @@ const elementEvents = [
     "focus",
     "focusin",
     "focusout",
-    "gesturechange",
-    "gestureend",
-    "gesturestart",
     "input",
     "invalid",
     "keydown",
@@ -247,36 +202,13 @@ const elementEvents = [
     "submit",
     "suspend",
     "timeupdate",
-    "touchcancel",
-    "touchend",
-    "touchmove",
-    "touchstart",
     "transitionend",
     "volumechange",
     "waiting",
     "webkitanimationend",
     "webkitanimationiteration",
     "webkitanimationstart",
-    "webkitcurrentplaybacktargetiswirelesschanged",
-    "webkitfullscreenchange",
-    "webkitfullscreenerror",
-    "webkitkeyadded",
-    "webkitkeyerror",
-    "webkitkeymessage",
-    "webkitmouseforcecancelled",
-    "webkitmouseforcechanged",
-    "webkitmouseforceclick",
-    "webkitmouseforcedown",
-    "webkitmouseforceup",
-    "webkitmouseforcewillbegin",
-    "webkitneedkey",
-    "webkitplaybacktargetavailabilitychanged",
-    "webkitpresentationmodechanged",
     "webkittransitionend",
-    "webkitwillrevealbottom",
-    "webkitwillrevealleft",
-    "webkitwillrevealright",
-    "webkitwillrevealtop",
     "wheel",
 ];
 
@@ -292,23 +224,12 @@ const bodyElementWindowForwardedEvents = [
     "message",
     "offline",
     "online",
-    "orientationchange",
     "pagehide",
     "pageshow",
     "popstate",
     "resize",
     "storage",
     "unload",
-    "webkitmouseforcecancelled",
-    "webkitmouseforcechanged",
-    "webkitmouseforceclick",
-    "webkitmouseforcedown",
-    "webkitmouseforceup",
-    "webkitmouseforcewillbegin",
-    "webkitwillrevealbottom",
-    "webkitwillrevealleft",
-    "webkitwillrevealright",
-    "webkitwillrevealtop",
 ];
 
 const bodyElementDocumentForwardedEvents = [
@@ -612,6 +533,74 @@ loader/appcache/DOMApplicationCache.idl:    attribute EventListener onprogress;
 loader/appcache/DOMApplicationCache.idl:    attribute EventListener onupdateready;
 loader/appcache/DOMApplicationCache.idl:    attribute EventListener oncached;
 loader/appcache/DOMApplicationCache.idl:    attribute EventListener onobsolete;
+
+page/DOMWindow.idl:    [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondevicemotion;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondeviceorientation;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchcancel;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchend;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchmove;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchstart;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturechange;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongestureend;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturestart;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=ORIENTATION_EVENTS] attribute EventHandler onorientationchange;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=PROXIMITY_EVENTS] attribute EventHandler onwebkitdeviceproximity;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealbottom;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealleft;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealright;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealtop;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcecancelled;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceclick;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
+ 
+dom/Document.idl:    [NotEnumerable, Conditional=CSP_NEXT] attribute EventHandler onsecuritypolicyviolation;
+dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchcancel;
+dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchend;
+dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchmove;
+dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchstart;
+dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealbottom;
+dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealleft;
+dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealright;
+dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealtop;
+dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcecancelled;
+dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
+dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceclick;
+dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
+dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
+dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
+dom/Document.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenchange;
+dom/Document.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenerror;
+dom/Document.idl:    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockchange;
+dom/Document.idl:    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockerror;
+ 
+dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchcancel;
+dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchend;
+dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchmove;
+dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchstart;
+dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealbottom;
+dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealleft;
+dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealright;
+dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealtop;
+dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcecancelled;
+dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
+dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceclick;
+dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
+dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
+dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
+dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventHandler onwebkitkeyadded;
+dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventHandler onwebkitkeyerror;
+dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventHandler onwebkitkeymessage;
+dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2] attribute EventHandler onwebkitneedkey;
+dom/Element.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenchange;
+dom/Element.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenerror;
+dom/Element.idl:    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventHandler onautocomplete;
+dom/Element.idl:    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventHandler onautocompleteerror;
+dom/Element.idl:    [NotEnumerable, Conditional=VIDEO_PRESENTATION_MODE] attribute EventHandler onwebkitpresentationmodechanged;
+dom/Element.idl:    [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitcurrentplaybacktargetiswirelesschanged;
+dom/Element.idl:    [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitplaybacktargetavailabilitychanged;
 
 page/EventSource.idl:    attribute EventListener onopen;
 page/EventSource.idl:    attribute EventListener onmessage;

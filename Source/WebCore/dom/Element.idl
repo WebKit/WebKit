@@ -172,8 +172,6 @@
     [NotEnumerable] attribute EventHandler onanimationend;
     [NotEnumerable] attribute EventHandler onanimationiteration;
     [NotEnumerable] attribute EventHandler onanimationstart;
-    [NotEnumerable] attribute EventHandler onautocomplete;
-    [NotEnumerable] attribute EventHandler onautocompleteerror;
     [NotEnumerable] attribute EventHandler onbeforecopy;
     [NotEnumerable] attribute EventHandler onbeforecut;
     [NotEnumerable] attribute EventHandler onbeforeload;
@@ -238,37 +236,51 @@
     [NotEnumerable] attribute EventHandler onsubmit;
     [NotEnumerable] attribute EventHandler onsuspend;
     [NotEnumerable] attribute EventHandler ontimeupdate;
-    [NotEnumerable] attribute EventHandler ontouchcancel;
-    [NotEnumerable] attribute EventHandler ontouchend;
-    [NotEnumerable] attribute EventHandler ontouchmove;
-    [NotEnumerable] attribute EventHandler ontouchstart;
     [NotEnumerable] attribute EventHandler ontransitionend;
     [NotEnumerable] attribute EventHandler onvolumechange;
     [NotEnumerable] attribute EventHandler onwaiting;
     [NotEnumerable] attribute EventHandler onwebkitanimationend;
     [NotEnumerable] attribute EventHandler onwebkitanimationiteration;
     [NotEnumerable] attribute EventHandler onwebkitanimationstart;
-    [NotEnumerable] attribute EventHandler onwebkitcurrentplaybacktargetiswirelesschanged;
-    [NotEnumerable] attribute EventHandler onwebkitfullscreenchange;
-    [NotEnumerable] attribute EventHandler onwebkitfullscreenerror;
-    [NotEnumerable] attribute EventHandler onwebkitkeyadded;
-    [NotEnumerable] attribute EventHandler onwebkitkeyerror;
-    [NotEnumerable] attribute EventHandler onwebkitkeymessage;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforcecancelled;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforcechanged;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforceclick;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforcedown;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforcewillbegin;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforceup;
-    [NotEnumerable] attribute EventHandler onwebkitneedkey;
-    [NotEnumerable] attribute EventHandler onwebkitplaybacktargetavailabilitychanged;
-    [NotEnumerable] attribute EventHandler onwebkitpresentationmodechanged;
     [NotEnumerable] attribute EventHandler onwebkittransitionend;
-    [NotEnumerable] attribute EventHandler onwebkitwillrevealbottom;
-    [NotEnumerable] attribute EventHandler onwebkitwillrevealleft;
-    [NotEnumerable] attribute EventHandler onwebkitwillrevealright;
-    [NotEnumerable] attribute EventHandler onwebkitwillrevealtop;
     [NotEnumerable] attribute EventHandler onwheel;
+
+    // Some sites use the existence of event handler properties for feature detection,
+    // so they actually need to be conditional, not just non-enumerable.
+
+    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchcancel;
+    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchend;
+    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchmove;
+    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchstart;
+
+    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealbottom;
+    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealleft;
+    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealright;
+    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealtop;
+
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcecancelled;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceclick;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
+
+    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventHandler onwebkitkeyadded;
+    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventHandler onwebkitkeyerror;
+    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventHandler onwebkitkeymessage;
+
+    [NotEnumerable, Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2] attribute EventHandler onwebkitneedkey;
+
+    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenchange;
+    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenerror;
+
+    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventHandler onautocomplete;
+    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventHandler onautocompleteerror;
+
+    [NotEnumerable, Conditional=VIDEO_PRESENTATION_MODE] attribute EventHandler onwebkitpresentationmodechanged;
+
+    [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitcurrentplaybacktargetiswirelesschanged;
+    [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitplaybacktargetavailabilitychanged;
 };
 
 Element implements ChildNode;

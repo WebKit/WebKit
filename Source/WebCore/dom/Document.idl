@@ -279,34 +279,40 @@
     [NotEnumerable] attribute EventHandler onmouseup;
     [NotEnumerable] attribute EventHandler onmousewheel;
     [NotEnumerable] attribute EventHandler onpaste;
-    [NotEnumerable] attribute EventHandler onpointerlockchange;
-    [NotEnumerable] attribute EventHandler onpointerlockerror;
     [NotEnumerable] attribute EventHandler onreadystatechange;
     [NotEnumerable] attribute EventHandler onreset;
     [NotEnumerable] attribute EventHandler onscroll;
     [NotEnumerable] attribute EventHandler onsearch;
-    [NotEnumerable] attribute EventHandler onsecuritypolicyviolation;
     [NotEnumerable] attribute EventHandler onselect;
     [NotEnumerable] attribute EventHandler onselectionchange;
     [NotEnumerable] attribute EventHandler onselectstart;
     [NotEnumerable] attribute EventHandler onsubmit;
-    [NotEnumerable] attribute EventHandler ontouchcancel;
-    [NotEnumerable] attribute EventHandler ontouchend;
-    [NotEnumerable] attribute EventHandler ontouchmove;
-    [NotEnumerable] attribute EventHandler ontouchstart;
-    [NotEnumerable] attribute EventHandler onwebkitfullscreenchange;
-    [NotEnumerable] attribute EventHandler onwebkitfullscreenerror;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforcecancelled;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforcechanged;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforceclick;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforcedown;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforceup;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforcewillbegin;
-    [NotEnumerable] attribute EventHandler onwebkitwillrevealbottom;
-    [NotEnumerable] attribute EventHandler onwebkitwillrevealleft;
-    [NotEnumerable] attribute EventHandler onwebkitwillrevealright;
-    [NotEnumerable] attribute EventHandler onwebkitwillrevealtop;
     [NotEnumerable] attribute EventHandler onwheel;
+
+    [NotEnumerable, Conditional=CSP_NEXT] attribute EventHandler onsecuritypolicyviolation;
+
+    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchcancel;
+    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchend;
+    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchmove;
+    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchstart;
+
+    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealbottom;
+    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealleft;
+    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealright;
+    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealtop;
+
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcecancelled;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceclick;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
+
+    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenchange;
+    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenerror;
+
+    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockchange;
+    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockerror;
 
 #if defined(ENABLE_IOS_TOUCH_EVENTS) && ENABLE_IOS_TOUCH_EVENTS
 #include <WebKitAdditions/DocumentIOS.idl>

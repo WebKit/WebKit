@@ -198,8 +198,6 @@
     [NotEnumerable] attribute EventHandler onclick;
     [NotEnumerable] attribute EventHandler oncontextmenu;
     [NotEnumerable] attribute EventHandler ondblclick;
-    [NotEnumerable] attribute EventHandler ondevicemotion;
-    [NotEnumerable] attribute EventHandler ondeviceorientation;
     [NotEnumerable] attribute EventHandler ondrag;
     [NotEnumerable] attribute EventHandler ondragend;
     [NotEnumerable] attribute EventHandler ondragenter;
@@ -212,9 +210,6 @@
     [NotEnumerable] attribute EventHandler onended;
     [NotEnumerable] attribute EventHandler onerror;
     [NotEnumerable] attribute EventHandler onfocus;
-    [NotEnumerable] attribute EventHandler ongesturechange;
-    [NotEnumerable] attribute EventHandler ongestureend;
-    [NotEnumerable] attribute EventHandler ongesturestart;
     [NotEnumerable] attribute EventHandler onhashchange;
     [NotEnumerable] attribute EventHandler oninput;
     [NotEnumerable] attribute EventHandler oninvalid;
@@ -236,7 +231,6 @@
     [NotEnumerable] attribute EventHandler onmousewheel;
     [NotEnumerable] attribute EventHandler onoffline;
     [NotEnumerable] attribute EventHandler ononline;
-    [NotEnumerable] attribute EventHandler onorientationchange;
     [NotEnumerable] attribute EventHandler onpagehide;
     [NotEnumerable] attribute EventHandler onpageshow;
     [NotEnumerable] attribute EventHandler onpause;
@@ -257,10 +251,6 @@
     [NotEnumerable] attribute EventHandler onsubmit;
     [NotEnumerable] attribute EventHandler onsuspend;
     [NotEnumerable] attribute EventHandler ontimeupdate;
-    [NotEnumerable] attribute EventHandler ontouchcancel;
-    [NotEnumerable] attribute EventHandler ontouchend;
-    [NotEnumerable] attribute EventHandler ontouchmove;
-    [NotEnumerable] attribute EventHandler ontouchstart;
     [NotEnumerable] attribute EventHandler ontransitionend;
     [NotEnumerable] attribute EventHandler onunload;
     [NotEnumerable] attribute EventHandler onvolumechange;
@@ -268,19 +258,39 @@
     [NotEnumerable] attribute EventHandler onwebkitanimationend;
     [NotEnumerable] attribute EventHandler onwebkitanimationiteration;
     [NotEnumerable] attribute EventHandler onwebkitanimationstart;
-    [NotEnumerable] attribute EventHandler onwebkitdeviceproximity;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforcecancelled;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforcechanged;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforceclick;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforcedown;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforceup;
-    [NotEnumerable] attribute EventHandler onwebkitmouseforcewillbegin;
     [NotEnumerable] attribute EventHandler onwebkittransitionend;
-    [NotEnumerable] attribute EventHandler onwebkitwillrevealbottom;
-    [NotEnumerable] attribute EventHandler onwebkitwillrevealleft;
-    [NotEnumerable] attribute EventHandler onwebkitwillrevealright;
-    [NotEnumerable] attribute EventHandler onwebkitwillrevealtop;
     [NotEnumerable] attribute EventHandler onwheel;
+
+    // Some sites use the existence of event handler properties for feature detection,
+    // so they actually need to be conditional, not just non-enumerable.
+
+    [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondevicemotion;
+    [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondeviceorientation;
+
+    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchcancel;
+    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchend;
+    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchmove;
+    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchstart;
+
+    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturechange;
+    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongestureend;
+    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturestart;
+
+    [NotEnumerable, Conditional=ORIENTATION_EVENTS] attribute EventHandler onorientationchange;
+
+    [NotEnumerable, Conditional=PROXIMITY_EVENTS] attribute EventHandler onwebkitdeviceproximity;
+
+    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealbottom;
+    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealleft;
+    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealright;
+    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealtop;
+
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcecancelled;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceclick;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
 
     // EventTarget interface
     [Custom] void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
