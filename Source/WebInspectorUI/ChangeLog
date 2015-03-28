@@ -1,5 +1,37 @@
 2015-03-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Add Setter Icon for ObjectTreeView
+        https://bugs.webkit.org/show_bug.cgi?id=143129
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Images/Pencil.svg: Added.
+        New icon used to indicate setter properties.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Remove "Read only" and replace with "Setter".
+
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.js:
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._titleFragment):
+        (WebInspector.ObjectTreeArrayIndexTreeElement):
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._createTitlePropertyStyle):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._createTitleAPIStyle):
+        Update cases that created setter / getter elements.
+        
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.createGetterElement):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.createInteractiveGetterElement): Deleted.
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (.object-tree-property :matches(.getter, .setter)):
+        (.object-tree-property .spacer):
+        (.object-tree-property .getter):
+        (.object-tree-property .setter):
+        (.object-tree-property .getter + .setter):
+        New setter element and styles. Setters are always non-interactable right now.
+
+2015-03-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Uncaught Exceptions with Context Menus
         https://bugs.webkit.org/show_bug.cgi?id=143162
 

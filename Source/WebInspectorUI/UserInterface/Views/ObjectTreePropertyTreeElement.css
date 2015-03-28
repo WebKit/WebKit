@@ -145,19 +145,39 @@
     -webkit-padding-start: 0px;
 }
 
-.object-tree-property .getter {
+.object-tree-property :matches(.getter, .setter) {
     position: relative;
+    opacity: 0.6;
+    vertical-align: top;
+}
+
+.object-tree-property .spacer {
+    margin-left: 4px;
+}
+
+.object-tree-property .getter {
     top: 1px;
 
     content: url(../Images/Eye.svg);
-    opacity: 0.6;
 
     width: 16px;
     height: 11px;
-    margin-left: 3px;
 }
 
-.object-tree-property .getter.disabled {
+.object-tree-property .setter {
+    top: -1px;
+
+    content: url(../Images/Pencil.svg);
+
+    width: 13px;
+    height: 13px;
+}
+
+.object-tree-property .getter + .setter {
+    margin-left: 1px;
+}
+
+.object-tree-property :matches(.getter, .setter).disabled {
     opacity: 0.35;
 }
 

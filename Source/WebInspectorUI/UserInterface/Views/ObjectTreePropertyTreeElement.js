@@ -169,10 +169,9 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
         } else {
             valueOrGetterElement = document.createElement("span");
             if (this.property.hasGetter())
-                valueOrGetterElement.appendChild(this.createInteractiveGetterElement(this._mode !== WebInspector.ObjectTreeView.Mode.ClassAPI));
-            if (!this.property.hasSetter())
-                valueOrGetterElement.appendChild(this.createReadOnlyIconElement());
-            // FIXME: What if just a setter?
+                valueOrGetterElement.appendChild(this.createGetterElement(this._mode !== WebInspector.ObjectTreeView.Mode.ClassAPI));
+            if (this.property.hasSetter())
+                valueOrGetterElement.appendChild(this.createSetterElement());
         }
 
         valueOrGetterElement.classList.add("value");
@@ -210,11 +209,12 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
             paramElement.textContent = this._functionParameterString();
             container.appendChild(paramElement);
         } else {
+            var spacer = container.appendChild(document.createElement("span"));
+            spacer.className = "spacer";
             if (this.property.hasGetter())
-                container.appendChild(this.createInteractiveGetterElement(this._mode !== WebInspector.ObjectTreeView.Mode.ClassAPI));
-            if (!this.property.hasSetter())
-                container.appendChild(this.createReadOnlyIconElement());
-            // FIXME: What if just a setter?
+                container.appendChild(this.createGetterElement(this._mode !== WebInspector.ObjectTreeView.Mode.ClassAPI));
+            if (this.property.hasSetter())
+                container.appendChild(this.createSetterElement());
         }
 
         return container;

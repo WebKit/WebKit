@@ -69,10 +69,9 @@ WebInspector.ObjectTreeArrayIndexTreeElement = class ObjectTreeArrayIndexTreeEle
             valueElement.appendChild(WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject(resolvedValue, this.resolvedValuePropertyPath()));
         else {
             if (this.property.hasGetter())
-                container.appendChild(this.createInteractiveGetterElement(true));
-            if (!this.property.hasSetter())
-                container.appendChild(this.createReadOnlyIconElement());
-            // FIXME: What if just a setter?
+                container.appendChild(this.createGetterElement(true));
+            if (this.property.hasSetter())
+                container.appendChild(this.createSetterElement());
         }
 
         valueElement.classList.add("value");

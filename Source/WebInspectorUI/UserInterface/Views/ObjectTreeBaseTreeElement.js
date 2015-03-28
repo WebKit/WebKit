@@ -113,12 +113,12 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
         return propertyPath.displayPath(this.propertyPathType());
     }
 
-    createInteractiveGetterElement(enabled)
+    createGetterElement(interactive)
     {
         var getterElement = document.createElement("img");
         getterElement.className = "getter";
 
-        if (!enabled) {
+        if (!interactive) {
             getterElement.classList.add("disabled");
             getterElement.title = WebInspector.UIString("Getter");
             return getterElement;
@@ -140,12 +140,16 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
         return getterElement;
     }
 
-    createReadOnlyIconElement()
+    createSetterElement(interactive)
     {
-        var readOnlyElement = document.createElement("img");
-        readOnlyElement.className = "read-only";
-        readOnlyElement.title = WebInspector.UIString("Read only");
-        return readOnlyElement;
+        var setterElement = document.createElement("img");
+        setterElement.className = "setter";
+        setterElement.title = WebInspector.UIString("Setter");
+
+        if (!interactive)
+            setterElement.classList.add("disabled");
+
+        return setterElement;
     }
 
     // Private
