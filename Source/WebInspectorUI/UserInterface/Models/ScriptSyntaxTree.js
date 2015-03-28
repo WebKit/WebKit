@@ -787,6 +787,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             break;
         default:
             console.error("Unsupported Syntax Tree Node: " + node.type, node);
+            return null;
         }
         
         result.range = node.range;

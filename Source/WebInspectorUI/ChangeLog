@@ -1,5 +1,24 @@
 2015-03-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Uncaught TDZ Exception with Type Profiler
+        https://bugs.webkit.org/show_bug.cgi?id=143167
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TypePropertiesSection.js:
+        (WebInspector.TypePropertyTreeElement):
+        Avoid TDZ issue by not using "this" before "super".
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        (WebInspector.ScriptSyntaxTree):
+        Better handle unsupported node types by returning null and avoiding an exception.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        Fix an issue I saw once where the sourceCode was a Script itself.
+
+2015-03-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Uncaught exception while debugging, after performSearch callback line does not exists
         https://bugs.webkit.org/show_bug.cgi?id=143172
 

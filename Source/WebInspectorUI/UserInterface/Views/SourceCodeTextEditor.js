@@ -1408,7 +1408,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         console.assert(candidate.expression);
 
         var sourceCode = this._sourceCode;
-        var sourceID = sourceCode.scripts[0].id;
+        var sourceID = sourceCode instanceof WebInspector.Script ? sourceCode.id : sourceCode.scripts[0].id;
         var range = candidate.hoveredTokenRange;
         var offset = this.currentPositionToOriginalOffset({line: range.start.line, ch: range.start.ch});
 

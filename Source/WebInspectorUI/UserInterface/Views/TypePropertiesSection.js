@@ -129,13 +129,13 @@ WebInspector.TypePropertyTreeElement = class TypePropertyTreeElement extends Web
 {
     constructor(property)
     {
-        super(this.nameElement, null, false);
+        var titleElement = document.createElement("span");
+        super(titleElement, null, false);
 
         this.property = property;
 
-        this.nameElement = document.createElement("span");
-        this.nameElement.className = "name";
-        this.nameElement.textContent = this.property.name;
+        titleElement.className = "name";
+        titleElement.textContent = this.property.name;
 
         this.toggleOnClick = true;
         this.hasChildren = !!this.property.structure;
