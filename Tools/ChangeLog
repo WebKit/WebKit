@@ -1,3 +1,17 @@
+2015-03-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMake] Remove unnecessary INCLUDE_IF_EXISTS macro 
+        https://bugs.webkit.org/show_bug.cgi?id=143138
+
+        Reviewed by Csaba Osztrogonác.
+
+        INCLUDE_IF_EXISTS isn't used except for 2 places. However those uses can
+        be replaced with WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS.
+
+        * ImageDiff/CMakeLists.txt:
+        Use WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS() instead of INCLUDE_IF_EXISTS.
+        * WebKitTestRunner/CMakeLists.txt: ditto.
+
 2015-03-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Support building WTF on Windows without Cygwin

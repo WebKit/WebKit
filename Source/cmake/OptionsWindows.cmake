@@ -22,7 +22,7 @@ if (MSVC)
     endif ()
 endif ()
 
-set(PORT_FALLBACK Win)
+set(PORT Win)
 set(JavaScriptCore_LIBRARY_TYPE SHARED)
 set(WTF_LIBRARY_TYPE SHARED)
 set(ICU_LIBRARIES libicuuc$(DebugSuffix) libicuin$(DebugSuffix))

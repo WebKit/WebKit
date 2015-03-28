@@ -1,4 +1,5 @@
-macro(INCLUDE_IF_EXISTS _file)
+macro(WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS)
+    set(_file ${CMAKE_CURRENT_SOURCE_DIR}/Platform${PORT}.cmake)
     if (EXISTS ${_file})
         message(STATUS "Using platform-specific CMakeLists: ${_file}")
         include(${_file})
@@ -6,7 +7,6 @@ macro(INCLUDE_IF_EXISTS _file)
         message(STATUS "Platform-specific CMakeLists not found: ${_file}")
     endif ()
 endmacro()
-
 
 # Append the given dependencies to the source file
 macro(ADD_SOURCE_DEPENDENCIES _source _deps)
@@ -188,13 +188,6 @@ macro(MAKE_HASH_TOOLS _source)
 
     unset(_name)
     unset(_hash_tools_h)
-endmacro()
-
-macro(WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS)
-    if (PORT_FALLBACK)
-        INCLUDE_IF_EXISTS(${CMAKE_CURRENT_SOURCE_DIR}/Platform${PORT_FALLBACK}.cmake)
-    endif ()
-    INCLUDE_IF_EXISTS(${CMAKE_CURRENT_SOURCE_DIR}/Platform${PORT}.cmake)
 endmacro()
 
 macro(WEBKIT_WRAP_SOURCELIST)
