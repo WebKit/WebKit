@@ -43,8 +43,6 @@
 - (NSError *)_mainDocumentError;
 - (NSString *)_responseMIMEType;
 
-- (BOOL)_transferApplicationCache:(NSString*)destinationBundleIdentifier;
-
 - (void)_setDeferMainResourceDataLoad:(BOOL)flag;
 
 #if TARGET_OS_IPHONE

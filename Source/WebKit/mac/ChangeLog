@@ -1,3 +1,14 @@
+2015-03-28  Anders Carlsson  <andersca@apple.com>
+
+        Remove an unused SPI method from WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=143185
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _transferApplicationCache:]): Deleted.
+        * WebView/WebDataSourcePrivate.h:
+
 2015-03-26  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.

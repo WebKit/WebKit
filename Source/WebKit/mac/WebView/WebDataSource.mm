@@ -195,16 +195,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     return [[self response] MIMEType];
 }
 
-- (BOOL)_transferApplicationCache:(NSString*)destinationBundleIdentifier
-{
-    if (!toPrivate(_private)->loader)
-        return NO;
-        
-    NSString *cacheDir = [NSString _webkit_localCacheDirectoryWithBundleIdentifier:destinationBundleIdentifier];
-    
-    return ApplicationCacheStorage::storeCopyOfCache(cacheDir, toPrivate(_private)->loader->applicationCacheHost());
-}
-
 - (void)_setDeferMainResourceDataLoad:(BOOL)flag
 {
     if (!toPrivate(_private)->loader)

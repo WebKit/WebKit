@@ -1,3 +1,14 @@
+2015-03-28  Anders Carlsson  <andersca@apple.com>
+
+        Remove an unused SPI method from WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=143185
+
+        Reviewed by Sam Weinig.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::storeCopyOfCache): Deleted.
+        * loader/appcache/ApplicationCacheStorage.h:
+
 2015-03-28  Joonghun Park  <jh718.park@samsung.com>
 
         nullptr cleanup in InlineFooBox classes

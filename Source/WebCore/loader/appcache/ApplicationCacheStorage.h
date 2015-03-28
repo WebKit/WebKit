@@ -89,8 +89,6 @@ public:
     
     WEBCORE_EXPORT void empty();
     
-    static bool WEBCORE_EXPORT storeCopyOfCache(const String& cacheDirectory, ApplicationCacheHost*);
-
     bool getManifestURLs(Vector<URL>* urls);
     bool cacheGroupSize(const String& manifestURL, int64_t* size);
     bool deleteCacheGroup(const String& manifestURL);

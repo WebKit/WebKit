@@ -1337,41 +1337,6 @@ bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer* dat
     return true;
 }
 
-bool ApplicationCacheStorage::storeCopyOfCache(const String& cacheDirectory, ApplicationCacheHost* cacheHost)
-{
-    SQLiteTransactionInProgressAutoCounter transactionCounter;
-
-    ApplicationCache* cache = cacheHost->applicationCache();
-    if (!cache)
-        return true;
-
-    // Create a new cache.
-    RefPtr<ApplicationCache> cacheCopy = ApplicationCache::create();
-
-    cacheCopy->setOnlineWhitelist(cache->onlineWhitelist());
-    cacheCopy->setFallbackURLs(cache->fallbackURLs());
-
-    // Traverse the cache and add copies of all resources.
-    for (auto& resource : cache->resources().values()) {
-        RefPtr<ApplicationCacheResource> resourceCopy = ApplicationCacheResource::create(resource->url(), resource->response(), resource->type(), resource->data(), resource->path());
-        
-        cacheCopy->addResource(resourceCopy.release());
-    }
-
-    // Now create a new cache group.
-    auto groupCopy = std::make_unique<ApplicationCacheGroup>(cache->group()->manifestURL(), true);
-
-    groupCopy->setNewestCache(cacheCopy);
-    
-    ApplicationCacheStorage copyStorage;
-    copyStorage.setCacheDirectory(cacheDirectory);
-    
-    // Empty the cache in case something was there before.
-    copyStorage.empty();
-    
-    return copyStorage.storeNewestCache(groupCopy.get());
-}
-
 bool ApplicationCacheStorage::getManifestURLs(Vector<URL>* urls)
 {
     SQLiteTransactionInProgressAutoCounter transactionCounter;
