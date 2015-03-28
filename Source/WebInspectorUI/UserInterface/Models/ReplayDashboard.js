@@ -25,9 +25,4 @@
 
 WebInspector.ReplayDashboard = class ReplayDashboard extends WebInspector.Object
 {
-    constructor()
-    {
-        // FIXME: Remove once <https://webkit.org/b/142862> is fixed.
-        super();
-    }
 };

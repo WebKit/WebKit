@@ -25,12 +25,6 @@
 
 WebInspector.Revision = class Revision extends WebInspector.Object
 {
-    constructor()
-    {
-        // FIXME: Remove once <https://webkit.org/b/142862> is fixed.
-        super();
-    }
-
     // Public
 
     apply()

@@ -1,3 +1,14 @@
+2015-03-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ES6 Classes: Runtime error in JIT'd class calling super() with arguments and superclass has default constructor
+        https://bugs.webkit.org/show_bug.cgi?id=142862
+
+        Reviewed by Benjamin Poulain.
+
+        Add a test that used to fail in DFG now that the bug has been fixed by r181993.
+
+        * tests/stress/class-syntax-derived-default-constructor.js: Added.
+
 2015-03-27  Michael Saboff  <msaboff@apple.com>
 
         load8Signed() and load16Signed() should be renamed to avoid confusion

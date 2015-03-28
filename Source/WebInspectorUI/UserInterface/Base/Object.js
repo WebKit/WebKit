@@ -25,11 +25,6 @@
 
 WebInspector.Object = class Object
 {
-    constructor()
-    {
-        // FIXME: Remove once <https://webkit.org/b/142862> is fixed.
-    }
-
     // Static
 
     static addEventListener(eventType, listener, thisObject)

@@ -25,12 +25,6 @@
 
 WebInspector.NetworkTimeline = class NetworkTimeline extends WebInspector.Timeline
 {
-    constructor(type)
-    {
-        // FIXME: Remove once <https://webkit.org/b/142862> is fixed.
-        super(type);
-    }
-
     // Public
 
     recordForResource(resource)

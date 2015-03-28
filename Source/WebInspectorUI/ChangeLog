@@ -1,3 +1,18 @@
+2015-03-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ES6 Classes: Runtime error in JIT'd class calling super() with arguments and superclass has default constructor
+        https://bugs.webkit.org/show_bug.cgi?id=142862
+
+        Reviewed by Benjamin Poulain.
+
+        Removed the workaround for the bug since it has been fixed by r181993.
+
+        * UserInterface/Base/Object.js:
+        * UserInterface/Models/DebuggerDashboard.js:
+        * UserInterface/Models/NetworkTimeline.js:
+        * UserInterface/Models/ReplayDashboard.js:
+        * UserInterface/Models/Revision.js:
+
 2015-03-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add Setter Icon for ObjectTreeView
