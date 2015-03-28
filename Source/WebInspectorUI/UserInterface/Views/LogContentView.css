@@ -298,10 +298,6 @@
     padding: 0 0 0 12px !important;
 }
 
-.console-group-messages .outline-disclosure.single-node li {
-    padding-left: 2px;
-}
-
 .console-group-messages .outline-disclosure li .selection {
     margin-left: -6px;
     margin-right: -6px;

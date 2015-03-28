@@ -35,10 +35,6 @@
     color: hsl(0, 0%, 67%);
 }
 
-.formatted-node > ol {
-    display: block !important;
-}
-
 .formatted-number {
     color: rgb(28, 0, 207);
 }
@@ -65,4 +61,20 @@
 
 .formatted-null, .formatted-undefined {
     color: rgb(128, 128, 128);
+}
+
+.formatted-node > .dom-tree-outline {
+    display: block !important;
+    padding: 0;
+    margin-left: -2px;
+}
+
+.formatted-node > .dom-tree-outline ol {
+    -webkit-padding-start: 12px;
+}
+
+.formatted-node > .dom-tree-outline li.hovered:not(.selected) .selection {
+    display: block;
+    left: -1px;
+    right: -2px;
 }

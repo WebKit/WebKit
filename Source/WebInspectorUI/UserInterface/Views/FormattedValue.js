@@ -56,11 +56,9 @@ WebInspector.FormattedValue.createElementForNode = function(object)
             return;
         }
 
-        // FIXME: Extract the styles for a formatted-node outline-disclosure from the LogContentView.
         var treeOutline = new WebInspector.DOMTreeOutline(false, false, true);
         treeOutline.setVisible(true);
         treeOutline.rootDOMNode = WebInspector.domTreeManager.nodeForId(nodeId);
-        treeOutline.element.classList.add("outline-disclosure");
         if (!treeOutline.children[0].hasChildren)
             treeOutline.element.classList.add("single-node");
         span.appendChild(treeOutline.element);

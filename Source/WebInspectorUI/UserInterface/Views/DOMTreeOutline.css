@@ -103,6 +103,10 @@ body.mac-platform.legacy .dom-tree-outline:focus li.selected .selection {
     word-wrap: break-word;
 }
 
+.dom-tree-outline.single-node li {
+    padding-left: 2px;
+}
+
 .dom-tree-outline:focus li.selected {
     color: white;
 }

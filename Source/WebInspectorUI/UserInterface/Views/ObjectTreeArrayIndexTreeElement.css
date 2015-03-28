@@ -63,3 +63,8 @@
 .object-tree-property + ol .object-tree-array-index {
     left: -18px;
 }
+
+/* A node inside an array we should reduce the padding-start. */
+.object-tree-array-index .index-value .formatted-node .dom-tree-outline {
+    -webkit-padding-start: 0px;
+}
