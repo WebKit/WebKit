@@ -141,7 +141,6 @@ WebInspector.DataGrid.createSortableDataGrid = function(columnNames, values)
             data[columnNames[j]] = values[numColumns * i + j];
 
         var node = new WebInspector.DataGridNode(data, false);
-        node.selectable = false;
         dataGrid.appendChild(node);
     }
 

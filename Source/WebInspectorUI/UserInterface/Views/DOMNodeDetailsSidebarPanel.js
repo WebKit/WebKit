@@ -584,8 +584,6 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
             var attribute = attributes[i];
 
             var node = new WebInspector.DataGridNode({name: attribute.name, value: attribute.value || ""}, false);
-            node.selectable = true;
-
             dataGrid.appendChild(node);
         }
 

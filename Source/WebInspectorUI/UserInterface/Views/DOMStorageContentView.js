@@ -80,7 +80,6 @@ WebInspector.DOMStorageContentView.prototype = {
                     continue;
                 var data = {key: entry[0], value: entry[1]};
                 var node = new WebInspector.DataGridNode(data, false);
-                node.selectable = true;
                 this._dataGrid.appendChild(node);
             }
 

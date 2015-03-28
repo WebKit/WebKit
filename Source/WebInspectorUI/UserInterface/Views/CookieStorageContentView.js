@@ -148,7 +148,6 @@ WebInspector.CookieStorageContentView.prototype = {
                 data["expires"] = cookie.session ? WebInspector.UIString("Session") : new Date(cookie.expires).toLocaleString();
 
             var node = new WebInspector.DataGridNode(data);
-            node.selectable = true;
             node.cookie = cookie;
 
             this._dataGrid.appendChild(node);

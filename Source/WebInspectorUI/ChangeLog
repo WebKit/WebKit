@@ -1,3 +1,26 @@
+2015-03-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught Exception: TypeError: Attempted to assign to readonly - DOMNodeDetailsSidebarPanel.js
+        https://bugs.webkit.org/show_bug.cgi?id=143139
+
+        Reviewed by Timothy Hatcher.
+
+        DataGridNodes do not have a selectable setter. TreeElements do.
+        DataGridNodes are always selectable. Match current behavior by
+        removing all instances of attempting to set the selectability
+        which would, under strict mode, result in an error.
+
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        (WebInspector.ApplicationCacheFrameContentView.prototype._populateDataGrid):
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView.prototype._rebuildTable):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._createAttributesDataGrid):
+        (WebInspector.DOMNodeDetailsSidebarPanel):
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView.prototype.reset):
+        * UserInterface/Views/DataGrid.js:
+
 2015-03-26  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Convert more misc View classes to ES6
