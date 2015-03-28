@@ -103,7 +103,7 @@ InspectorFrontendAPI = {
 
     contextMenuCleared: function()
     {
-        WebInspector.contextMenuCleared();
+        WebInspector.ContextMenu.contextMenuCleared();
     },
 
     dispatchMessageAsync: function(messageObject)
