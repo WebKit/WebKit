@@ -40,13 +40,14 @@ enum {
 };
 typedef uint32_t WKPluginLoadPolicy;
 
-enum WKPluginLoadClientPolicy {
+enum {
     kWKPluginLoadClientPolicyUndefined = 0,
     kWKPluginLoadClientPolicyBlock,
     kWKPluginLoadClientPolicyAsk,
     kWKPluginLoadClientPolicyAllow,
     kWKPluginLoadClientPolicyAllowAlways,
 };
+typedef uint32_t WKPluginLoadClientPolicy;
 
 #ifdef __cplusplus
 }
