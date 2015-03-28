@@ -117,7 +117,8 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
             element.textContent = shouldRoundValue ? ("~" + Math.round(floatValue * 100) / 100) : value;
             if (shouldRoundValue)
                 element.title = value;
-            element.addEventListener("dblclick", this._startEditing.bind(this, element, name, propertyName, style), false);
+            // FIXME: <https://webkit.org/b/143164> Web Inspector: REGRESSION(r179286) Editing Style Metrics Values no longer works
+            // element.addEventListener("dblclick", this._startEditing.bind(this, element, name, propertyName, style), false);
             return element;
         }
 
@@ -413,8 +414,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
         }
 
         var property = this._nodeStyles.inlineStyle.propertyForName(context.styleProperty);
-        property.value = userInput;
-        property.add();
+        // FIXME: <https://webkit.org/b/143164> Web Inspector: REGRESSION(r179286) Editing Style Metrics Values no longer works
     }
 
     _editingCommitted(element, userInput, previousContent, context)
