@@ -296,7 +296,7 @@ WebInspector.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingCo
 
         if (!token || !token.type || !token.string) {
             if (this._hoveredMarker && this._delegate && typeof this._delegate.tokenTrackingControllerMouseOutOfHoveredMarker === "function") {
-                if (!this._codeMirror.findMarksAt(position).contains(this._hoveredMarker.codeMirrorTextMarker))
+                if (!this._codeMirror.findMarksAt(position).includes(this._hoveredMarker.codeMirrorTextMarker))
                     this._delegate.tokenTrackingControllerMouseOutOfHoveredMarker(this, this._hoveredMarker);
             }
 
@@ -471,13 +471,13 @@ WebInspector.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingCo
                 break;
 
             var isDot = !token.type && token.string === ".";
-            var isExpression = token.type && token.type.contains("m-javascript");
+            var isExpression = token.type && token.type.includes("m-javascript");
             if (!isDot && !isExpression)
                 break;
 
             // Disallow operators. We want the hovered expression to be just a single operand.
             // Also, some operators can modify values, such as pre-increment and assignment operators.
-            if (isExpression && token.type.contains("operator"))
+            if (isExpression && token.type.includes("operator"))
                 break;
 
             expression = token.string + expression;

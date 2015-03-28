@@ -298,8 +298,7 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
 
     _extraDomainsActivated(event)
     {
-        
-        if (event.data.domains.contains("DOMStorage") && window.DOMStorageAgent && DOMStorageAgent.getDOMStorageItems)
+        if (event.data.domains.includes("DOMStorage") && window.DOMStorageAgent && DOMStorageAgent.getDOMStorageItems)
             WebInspector.Frame.addEventListener(WebInspector.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
     }
 };

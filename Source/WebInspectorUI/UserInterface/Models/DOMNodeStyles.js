@@ -391,7 +391,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
             style.__pendingText = text;
 
-            if (!this._stylesNeedingTextCommited.contains(style))
+            if (!this._stylesNeedingTextCommited.includes(style))
                 this._stylesNeedingTextCommited.push(style);
 
             return;
@@ -617,7 +617,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             // If the previous and current maps differ then make sure the found styleDeclaration is added to the current map.
             styleDeclarations = mapKey && mapKey in this._styleDeclarationsMap ? this._styleDeclarationsMap[mapKey] : [];
 
-            if (styleDeclaration && !styleDeclarations.contains(styleDeclaration)) {
+            if (styleDeclaration && !styleDeclarations.includes(styleDeclaration)) {
                 styleDeclarations.push(styleDeclaration);
                 this._styleDeclarationsMap[mapKey] = styleDeclarations;
             }

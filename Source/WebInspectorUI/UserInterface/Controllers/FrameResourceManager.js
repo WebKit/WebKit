@@ -580,7 +580,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
 
     _extraDomainsActivated(event)
     {
-        if (event.data.domains.contains("Page") && window.PageAgent)
+        if (event.data.domains.includes("Page") && window.PageAgent)
             PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
     }
 };

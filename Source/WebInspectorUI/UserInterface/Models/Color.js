@@ -49,7 +49,7 @@ WebInspector.Color = class Color
     {
         var value = colorString.toLowerCase().replace(/%|\s+/g, "");
         var transparentNicknames = ["transparent", "rgba(0,0,0,0)", "hsla(0,0,0,0)"];
-        if (transparentNicknames.contains(value)) {
+        if (transparentNicknames.includes(value)) {
             var color = new WebInspector.Color(WebInspector.Color.Format.Nickname, [0, 0, 0, 0]);
             color.nickname = "transparent";
             color.original = colorString;

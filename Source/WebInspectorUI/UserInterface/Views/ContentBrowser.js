@@ -383,7 +383,7 @@ WebInspector.ContentBrowser.prototype = {
         }
 
         // Insert the _contentViewSelectionPathNavigationItem after the _hierarchicalPathNavigationItem, if needed.
-        if (!this._navigationBar.navigationItems.contains(this._contentViewSelectionPathNavigationItem)) {
+        if (!this._navigationBar.navigationItems.includes(this._contentViewSelectionPathNavigationItem)) {
             var hierarchicalPathItemIndex = this._navigationBar.navigationItems.indexOf(this._hierarchicalPathNavigationItem);
             console.assert(hierarchicalPathItemIndex !== -1);
             this._navigationBar.insertNavigationItem(this._contentViewSelectionPathNavigationItem, hierarchicalPathItemIndex + 1);

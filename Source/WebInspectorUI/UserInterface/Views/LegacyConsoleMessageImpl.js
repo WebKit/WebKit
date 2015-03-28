@@ -396,7 +396,7 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
                 const maxColumnsToRender = 10;
                 for (var j = 0; j < rowPreview.propertyPreviews.length; ++j) {
                     var cellProperty = rowPreview.propertyPreviews[j];
-                    var columnRendered = columnNames.contains(cellProperty.name);
+                    var columnRendered = columnNames.includes(cellProperty.name);
                     if (!columnRendered) {
                         if (userProvidedColumnNames || columnNames.length === maxColumnsToRender)
                             continue;

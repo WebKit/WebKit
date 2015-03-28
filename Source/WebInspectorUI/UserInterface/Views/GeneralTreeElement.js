@@ -94,7 +94,7 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
 
     addClassName(className)
     {
-        if (this._classNames.contains(className))
+        if (this._classNames.includes(className))
             return;
 
         this._classNames.push(className);
@@ -105,7 +105,7 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
 
     removeClassName(className)
     {
-        if (!this._classNames.contains(className))
+        if (!this._classNames.includes(className))
             return;
 
         this._classNames.remove(className);

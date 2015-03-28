@@ -614,7 +614,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         // These strings don't need to be localized as they are CSS pseudo-classes.
         WebInspector.CSSStyleManager.ForceablePseudoClasses.forEach(function(pseudoClass) {
             var label = pseudoClass.capitalize();
-            var enabled = enabledPseudoClasses.contains(pseudoClass);
+            var enabled = enabledPseudoClasses.includes(pseudoClass);
             subMenu.appendCheckboxItem(label, function() {
                 node.setPseudoClassEnabled(pseudoClass, !enabled);
             }, enabled, false);

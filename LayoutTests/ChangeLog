@@ -1,3 +1,12 @@
+2015-03-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Adopt Array.prototype.includes and String.prototype.includes
+        https://bugs.webkit.org/show_bug.cgi?id=143176
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/css/pseudo-element-matches.html:
+
 2015-03-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r181326): It made dfg-int16array.js and dfg-int8array.js fail on AArch64 Linux

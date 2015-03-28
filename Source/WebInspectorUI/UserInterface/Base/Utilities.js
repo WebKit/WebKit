@@ -393,14 +393,6 @@ Object.defineProperty(DocumentFragment.prototype, "createChild",
     value: Element.prototype.createChild
 });
 
-Object.defineProperty(Array.prototype, "contains",
-{
-    value: function(value)
-    {
-        return this.indexOf(value) !== -1;
-    }
-});
-
 Object.defineProperty(Array.prototype, "lastValue",
 {
     get: function()
@@ -433,14 +425,6 @@ Object.defineProperty(Array.prototype, "keySet",
         for (var i = 0; i < this.length; ++i)
             keys[this[i]] = true;
         return keys;
-    }
-});
-
-Object.defineProperty(String.prototype, "contains",
-{
-    value: function(value)
-    {
-        return this.indexOf(value) !== -1;
     }
 });
 

@@ -256,7 +256,7 @@ WebInspector.NavigationBar.prototype = {
         var navigationItem = null;
 
         if (navigationItemOrIdentifierOrIndex instanceof WebInspector.NavigationItem) {
-            if (this._navigationItems.contains(navigationItemOrIdentifierOrIndex))
+            if (this._navigationItems.includes(navigationItemOrIdentifierOrIndex))
                 navigationItem = navigationItemOrIdentifierOrIndex;
         } else if (typeof navigationItemOrIdentifierOrIndex === "number") {
             navigationItem = this._navigationItems[navigationItemOrIdentifierOrIndex];

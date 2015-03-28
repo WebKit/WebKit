@@ -20,7 +20,7 @@ function test() {
             found = true;
             var index = 0;
             for (var selector of rule.selectors) {
-                var matches = rule.matchedSelectorIndices.contains(index);
+                var matches = rule.matchedSelectorIndices.includes(index);
                 InspectorTest.log(selector.text + (matches ? " MATCHES" : ""));
                 index++;
             }

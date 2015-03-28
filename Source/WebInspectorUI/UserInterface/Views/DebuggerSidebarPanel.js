@@ -335,7 +335,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
     {
         var resource = event.data.resource;
 
-        if (![WebInspector.Resource.Type.Document, WebInspector.Resource.Type.Script].contains(resource.type))
+        if (![WebInspector.Resource.Type.Document, WebInspector.Resource.Type.Script].includes(resource.type))
             return;
 
         this._addTreeElementForSourceCodeToContentTreeOutline(resource);

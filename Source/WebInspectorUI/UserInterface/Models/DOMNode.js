@@ -553,11 +553,11 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
     {
         var pseudoClasses = this._enabledPseudoClasses;
         if (enabled) {
-            if (pseudoClasses.contains(pseudoClass))
+            if (pseudoClasses.includes(pseudoClass))
                 return;
             pseudoClasses.push(pseudoClass);
         } else {
-            if (!pseudoClasses.contains(pseudoClass))
+            if (!pseudoClasses.includes(pseudoClass))
                 return;
             pseudoClasses.remove(pseudoClass);
         }

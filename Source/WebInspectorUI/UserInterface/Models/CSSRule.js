@@ -142,7 +142,7 @@ WebInspector.CSSRule = class CSSRule extends WebInspector.Object
             return this._matchedSelectors;
 
         this._matchedSelectors = this._selectors.filter(function(element, index) {
-            return this._matchedSelectorIndices.contains(index);
+            return this._matchedSelectorIndices.includes(index);
         }, this);
 
         return this._matchedSelectors;

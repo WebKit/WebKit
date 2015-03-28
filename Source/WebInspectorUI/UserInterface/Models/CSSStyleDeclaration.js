@@ -124,7 +124,7 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
         for (var i = 0; i < oldProperties.length; ++i) {
             var oldProperty = oldProperties[i];
 
-            if (!this._properties.contains(oldProperty)) {
+            if (!this._properties.includes(oldProperty)) {
                 // Clear the index, since it is no longer valid.
                 oldProperty.index = NaN;
 
@@ -142,7 +142,7 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
 
         var addedProperties = [];
         for (var i = 0; i < this._properties.length; ++i) {
-            if (!oldProperties.contains(this._properties[i]))
+            if (!oldProperties.includes(this._properties[i]))
                 addedProperties.push(this._properties[i]);
         }
 

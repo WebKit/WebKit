@@ -221,7 +221,7 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 
         for (var pseudoClass in this._forcedPseudoClassCheckboxes) {
             var checkboxElement = this._forcedPseudoClassCheckboxes[pseudoClass];
-            checkboxElement.checked = enabledPseudoClasses.contains(pseudoClass);
+            checkboxElement.checked = enabledPseudoClasses.includes(pseudoClass);
         }
     }
 };

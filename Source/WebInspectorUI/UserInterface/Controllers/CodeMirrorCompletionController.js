@@ -596,7 +596,7 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
                     if (declaringVariable && variable.name === prefix)
                         continue;
 
-                    if (variable.name.startsWith(prefix) && !matchingWords.contains(variable.name))
+                    if (variable.name.startsWith(prefix) && !matchingWords.includes(variable.name))
                         matchingWords.push(variable.name);
                 }
             }

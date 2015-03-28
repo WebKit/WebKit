@@ -217,7 +217,7 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
             var alwaysMatch = !matchedSelectorIndices.length;
             if (selectors.length) {
                 for (var i = 0; i < selectors.length; ++i) {
-                    appendSelector.call(this, selectors[i], alwaysMatch || matchedSelectorIndices.contains(i));
+                    appendSelector.call(this, selectors[i], alwaysMatch || matchedSelectorIndices.includes(i));
                     if (i < selectors.length - 1)
                         this._selectorElement.appendChild(document.createTextNode(", "));
                 }

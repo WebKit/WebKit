@@ -482,7 +482,7 @@ WebInspector.LogContentView.prototype = {
 
     _updateMessagesSelection: function(message, multipleSelection, rangeSelection, shouldScrollIntoView)
     {
-        var alreadySelectedMessage = this._selectedMessages.contains(message);
+        var alreadySelectedMessage = this._selectedMessages.includes(message);
         if (alreadySelectedMessage && this._selectedMessages.length && multipleSelection) {
             message.classList.remove(WebInspector.LogContentView.SelectedStyleClassName);
             this._selectedMessages.remove(message);

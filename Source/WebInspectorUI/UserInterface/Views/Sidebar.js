@@ -215,7 +215,7 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.Object
         var sidebarPanel = null;
 
         if (sidebarPanelOrIdentifierOrIndex instanceof WebInspector.SidebarPanel) {
-            if (this._sidebarPanels.contains(sidebarPanelOrIdentifierOrIndex))
+            if (this._sidebarPanels.includes(sidebarPanelOrIdentifierOrIndex))
                 sidebarPanel = sidebarPanelOrIdentifierOrIndex;
         } else if (typeof sidebarPanelOrIdentifierOrIndex === "number") {
             sidebarPanel = this._sidebarPanels[sidebarPanelOrIdentifierOrIndex];

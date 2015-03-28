@@ -86,7 +86,7 @@ WebInspector.LayerTreeManager = class LayerTreeManager extends WebInspector.Obje
         newLayers.forEach(function(layer) {
             layerIdsInNewLayers.push(layer.layerId);
 
-            var existed = layerIdsInPreviousLayers.contains(layer.layerId);
+            var existed = layerIdsInPreviousLayers.includes(layer.layerId);
 
             var nodeId = nodeIdForLayer(layer);
             if (!nodeId)
@@ -94,10 +94,10 @@ WebInspector.LayerTreeManager = class LayerTreeManager extends WebInspector.Obje
 
             if (layer.isReflection) {
                 nodeIdsForReflectionsInNewLayers.push(nodeId);
-                existed = existed || nodeIdsForReflectionsInPreviousLayers.contains(nodeId);
+                existed = existed || nodeIdsForReflectionsInPreviousLayers.includes(nodeId);
             } else {
                 nodeIdsInNewLayers.push(nodeId);
-                existed = existed || nodeIdsInPreviousLayers.contains(nodeId);
+                existed = existed || nodeIdsInPreviousLayers.includes(nodeId);
             }
 
             if (existed)
@@ -110,9 +110,9 @@ WebInspector.LayerTreeManager = class LayerTreeManager extends WebInspector.Obje
             var nodeId = nodeIdForLayer(layer);
 
             if (layer.isReflection)
-                return !nodeIdsForReflectionsInNewLayers.contains(nodeId);
+                return !nodeIdsForReflectionsInNewLayers.includes(nodeId);
             else
-                return !nodeIdsInNewLayers.contains(nodeId) && !layerIdsInNewLayers.contains(layer.layerId);
+                return !nodeIdsInNewLayers.includes(nodeId) && !layerIdsInNewLayers.includes(layer.layerId);
         });
 
         return {preserved, additions, removals};

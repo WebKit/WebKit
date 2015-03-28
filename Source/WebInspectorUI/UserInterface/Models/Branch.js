@@ -90,7 +90,7 @@ WebInspector.Branch = class Branch extends WebInspector.Object
         if (this._locked)
             return;
 
-        if (this._revisions.contains(revision))
+        if (this._revisions.includes(revision))
             return;
 
         this._revisions.push(revision);
