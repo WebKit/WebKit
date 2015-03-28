@@ -1,5 +1,25 @@
 2015-03-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: TypeProfiler doesn't work on files with ES6 Class Syntax
+        https://bugs.webkit.org/show_bug.cgi?id=143169
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype._recurse):
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        (WebInspector.ScriptSyntaxTree):
+        Add basic support for Esprima's ES6 Class/Method/Spread nodes.
+        There are more ES6 features that should be covered, but this
+        covers all the features we use in Web Inspector source, so
+        Type Profiling can work with our own source.
+
+        Treat Methods like getters / setters right now because their
+        syntax is very similiar to getters/setters. There is a bug
+        handling generic ES6 cleanup to better name things.
+
+2015-03-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Uncaught TDZ Exception with Type Profiler
         https://bugs.webkit.org/show_bug.cgi?id=143167
 
