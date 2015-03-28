@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ void TypeSet::addTypeInformation(RuntimeType type, PassRefPtr<StructureShape> pr
     RefPtr<StructureShape> newShape = prpNewShape;
     m_seenTypes = m_seenTypes | type;
 
-    if (structure && newShape && type != TypeString) {
+    if (structure && newShape && !runtimeTypeIsPrimitive(type)) {
         if (!m_structureSet.contains(structure)) {
             m_structureSet.add(structure);
             // Make one more pass making sure that: 
@@ -93,21 +93,23 @@ String TypeSet::dumpTypes() const
     StringBuilder seen;
 
     if (m_seenTypes & TypeFunction)
-         seen.append("Function ");
+        seen.appendLiteral("Function ");
     if (m_seenTypes & TypeUndefined)
-         seen.append("Undefined ");
+        seen.appendLiteral("Undefined ");
     if (m_seenTypes & TypeNull)
-         seen.append("Null ");
+        seen.appendLiteral("Null ");
     if (m_seenTypes & TypeBoolean)
-         seen.append("Boolean ");
+        seen.appendLiteral("Boolean ");
     if (m_seenTypes & TypeMachineInt)
-         seen.append("MachineInt ");
+        seen.appendLiteral("MachineInt ");
     if (m_seenTypes & TypeNumber)
-         seen.append("Number ");
+        seen.appendLiteral("Number ");
     if (m_seenTypes & TypeString)
-         seen.append("String ");
+        seen.appendLiteral("String ");
     if (m_seenTypes & TypeObject)
-         seen.append("Object ");
+        seen.appendLiteral("Object ");
+    if (m_seenTypes & TypeSymbol)
+        seen.appendLiteral("Symbol ");
 
     for (size_t i = 0; i < m_structureHistory.size(); i++) {
         RefPtr<StructureShape> shape = m_structureHistory.at(i);
@@ -116,7 +118,7 @@ String TypeSet::dumpTypes() const
     }
 
     if (m_structureHistory.size()) 
-        seen.append("\nStructures:[ ");
+        seen.appendLiteral("\nStructures:[ ");
     for (size_t i = 0; i < m_structureHistory.size(); i++) {
         seen.append(m_structureHistory.at(i)->stringRepresentation());
         seen.append(' ');
@@ -125,14 +127,14 @@ String TypeSet::dumpTypes() const
         seen.append(']');
 
     if (m_structureHistory.size()) {
-        seen.append("\nLeast Common Ancestor: ");
+        seen.appendLiteral("\nLeast Common Ancestor: ");
         seen.append(leastCommonAncestor());
     }
 
     return seen.toString();
 }
 
-bool TypeSet::doesTypeConformTo(uint8_t test) const
+bool TypeSet::doesTypeConformTo(RuntimeTypeMask test) const
 {
     // This function checks if our seen types conform  to the types described by the test bitstring. (i.e we haven't seen more types than test).
     // We are <= to those types if ANDing with the bitstring doesn't zero out any of our bits.
@@ -183,6 +185,8 @@ String TypeSet::displayName() const
         return ASCIILiteral("Number");
     if (doesTypeConformTo(TypeString))
         return ASCIILiteral("String");
+    if (doesTypeConformTo(TypeSymbol))
+        return ASCIILiteral("Symbol");
 
     if (doesTypeConformTo(TypeNull | TypeUndefined))
         return ASCIILiteral("(?)");
@@ -197,6 +201,8 @@ String TypeSet::displayName() const
         return ASCIILiteral("Number?");
     if (doesTypeConformTo(TypeString | TypeNull | TypeUndefined))
         return ASCIILiteral("String?");
+    if (doesTypeConformTo(TypeSymbol | TypeNull | TypeUndefined))
+        return ASCIILiteral("Symbol?");
    
     if (doesTypeConformTo(TypeObject | TypeFunction | TypeString))
         return ASCIILiteral("Object");
@@ -232,6 +238,7 @@ Ref<Inspector::Protocol::Runtime::TypeSet> TypeSet::inspectorTypeSet() const
         .setIsNumber((m_seenTypes & TypeNumber) != TypeNothing)
         .setIsString((m_seenTypes & TypeString) != TypeNothing)
         .setIsObject((m_seenTypes & TypeObject) != TypeNothing)
+        .setIsSymbol((m_seenTypes & TypeSymbol) != TypeNothing)
         .release();
 }
 
@@ -287,6 +294,12 @@ String TypeSet::toJSONString() const
             json.append(",");
         hasAnItem = true;
         json.append("\"String\"");
+    }
+    if (m_seenTypes & TypeSymbol) {
+        if (hasAnItem)
+            json.append(",");
+        hasAnItem = true;
+        json.append("\"Symbol\"");
     }
     json.append("]");
 

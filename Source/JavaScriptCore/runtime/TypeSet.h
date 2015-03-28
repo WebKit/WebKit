@@ -94,12 +94,12 @@ public:
     String leastCommonAncestor() const;
     Ref<Inspector::Protocol::Runtime::TypeSet> inspectorTypeSet() const;
     bool isEmpty() const { return m_seenTypes == TypeNothing; }
-    bool doesTypeConformTo(uint8_t test) const;
-    uint8_t seenTypes() const { return m_seenTypes; }
+    bool doesTypeConformTo(RuntimeTypeMask test) const;
+    RuntimeTypeMask seenTypes() const { return m_seenTypes; }
     StructureSet structureSet() const { return m_structureSet; };
 
 private:
-    uint8_t m_seenTypes;
+    RuntimeTypeMask m_seenTypes;
     bool m_isOverflown;
     Vector<RefPtr<StructureShape>> m_structureHistory;
     StructureSet m_structureSet;

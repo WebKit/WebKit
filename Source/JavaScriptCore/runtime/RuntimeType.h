@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-enum RuntimeType : uint8_t {
+enum RuntimeType : uint16_t {
     TypeNothing            = 0x0,
     TypeFunction           = 0x1,
     TypeUndefined          = 0x2,
@@ -40,12 +40,20 @@ enum RuntimeType : uint8_t {
     TypeMachineInt         = 0x10,
     TypeNumber             = 0x20,
     TypeString             = 0x40,
-    TypeObject             = 0x80
+    TypeObject             = 0x80,
+    TypeSymbol             = 0x100
 };
+
+typedef uint16_t RuntimeTypeMask;
 
 class JSValue;
 RuntimeType runtimeTypeForValue(JSValue);
 String runtimeTypeAsString(RuntimeType);
+
+ALWAYS_INLINE bool runtimeTypeIsPrimitive(RuntimeTypeMask type)
+{
+    return type & ~(TypeFunction | TypeObject);
+}
 
 } // namespace JSC
 

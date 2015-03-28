@@ -1,3 +1,36 @@
+2015-03-28  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: ES6: Better support for Symbol types in Type Profiler
+        https://bugs.webkit.org/show_bug.cgi?id=141257
+
+        Reviewed by Joseph Pecoraro.
+
+        ES6 introduces the new primitive type Symbol. This patch makes JSC's 
+        type profiler support this new primitive type.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * inspector/protocol/Runtime.json:
+        * runtime/RuntimeType.cpp:
+        (JSC::runtimeTypeForValue):
+        * runtime/RuntimeType.h:
+        (JSC::runtimeTypeIsPrimitive):
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::addTypeInformation):
+        (JSC::TypeSet::dumpTypes):
+        (JSC::TypeSet::doesTypeConformTo):
+        (JSC::TypeSet::displayName):
+        (JSC::TypeSet::inspectorTypeSet):
+        (JSC::TypeSet::toJSONString):
+        * runtime/TypeSet.h:
+        (JSC::TypeSet::seenTypes):
+        * tests/typeProfiler/driver/driver.js:
+        * tests/typeProfiler/symbol.js: Added.
+        (wrapper.foo):
+        (wrapper.bar):
+        (wrapper.bar.bar.baz):
+        (wrapper):
+
 2015-03-27  Saam Barati  <saambarati1@gmail.com>
 
         Deconstruction parameters are bound too late

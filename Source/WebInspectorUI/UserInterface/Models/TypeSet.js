@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  * Copyright (C) Saam Barati.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,6 +50,8 @@ WebInspector.TypeSet = class TypeSet extends WebInspector.Object
             bitString |= WebInspector.TypeSet.TypeBit.String;
         if (typeSet.isObject)
             bitString |= WebInspector.TypeSet.TypeBit.Object;
+        if (typeSet.isSymbol)
+            bitString |= WebInspector.TypeSet.TypeBit.Symbol;
 
         console.assert(bitString);
         this._bitString = bitString;
@@ -101,6 +103,8 @@ WebInspector.TypeSet = class TypeSet extends WebInspector.Object
             this._primitiveTypeNames.push("Boolean");
         if (typeSet.isString)
             this._primitiveTypeNames.push("String");
+        if (typeSet.isSymbol)
+            this._primitiveTypeNames.push("Symbol");
 
         // It's implied that type Integer is contained in type Number. Don't put 
         // both 'Integer' and 'Number' into the set because this could imply that 
@@ -122,7 +126,8 @@ WebInspector.TypeSet.TypeBit = {
     "Integer"     :  0x10,
     "Number"      :  0x20,
     "String"      :  0x40,
-    "Object"      :  0x80
+    "Object"      :  0x80,
+    "Symbol"      :  0x100
 };
 
 WebInspector.TypeSet.NullOrUndefinedTypeBits = WebInspector.TypeSet.TypeBit.Null | WebInspector.TypeSet.TypeBit.Undefined;

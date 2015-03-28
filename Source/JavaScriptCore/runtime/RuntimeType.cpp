@@ -51,6 +51,8 @@ RuntimeType runtimeTypeForValue(JSValue value)
         return TypeObject;
     if (value.isFunction())
         return TypeFunction;
+    if (value.isSymbol())
+        return TypeSymbol;
 
     return TypeNothing;
 }

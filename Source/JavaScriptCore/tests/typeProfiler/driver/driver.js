@@ -7,6 +7,7 @@ var T = {
     Many: "(many)",
     String: "String",
     Undefined: "Undefined",
+    Symbol: "Symbol",
     UndefinedOrNull: "(?)"
 };
 
@@ -14,7 +15,8 @@ var TOptional = {
     Boolean:"Boolean?",
     Integer: "Integer?",
     Number: "Number?",
-    String: "String?"
+    String: "String?",
+    Symbol: "Symbol?"
 };
 
 function assert(condition, reason) {

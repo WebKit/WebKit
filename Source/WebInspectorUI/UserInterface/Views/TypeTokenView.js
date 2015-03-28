@@ -160,6 +160,8 @@ WebInspector.TypeTokenView = class TypeTokenView extends WebInspector.Object
             return "Number";
         if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.String))
             return "String";
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Symbol))
+            return "Symbol";
 
         if (typeSet.isContainedIn(WebInspector.TypeSet.NullOrUndefinedTypeBits))
             return "(?)";
@@ -174,6 +176,8 @@ WebInspector.TypeTokenView = class TypeTokenView extends WebInspector.Object
             return "Number?";
         if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.String | WebInspector.TypeSet.NullOrUndefinedTypeBits))
             return "String?";
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Symbol | WebInspector.TypeSet.NullOrUndefinedTypeBits))
+            return "Symbol?";
        
         if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Object | WebInspector.TypeSet.TypeBit.Function | WebInspector.TypeSet.TypeBit.String))
             return "Object";
@@ -191,6 +195,7 @@ WebInspector.TypeTokenView.TitleType = {
 
 WebInspector.TypeTokenView.ColorClassForType = {
     "String": "type-token-string",
+    "Symbol": "type-token-symbol",
     "Function": "type-token-function",
     "Number": "type-token-number",
     "Integer": "type-token-number",

@@ -154,7 +154,8 @@
                 { "name": "isInteger", "type": "boolean", "description": "Indicates if this type description has been type Integer." },
                 { "name": "isNumber", "type": "boolean", "description": "Indicates if this type description has been type Number." },
                 { "name": "isString", "type": "boolean", "description": "Indicates if this type description has been type String." },
-                { "name": "isObject", "type": "boolean", "description": "Indicates if this type description has been type Object." }
+                { "name": "isObject", "type": "boolean", "description": "Indicates if this type description has been type Object." },
+                { "name": "isSymbol", "type": "boolean", "description": "Indicates if this type description has been type Symbol." }
             ]
         },
         {

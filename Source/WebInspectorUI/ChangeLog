@@ -1,3 +1,25 @@
+2015-03-28  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: ES6: Better support for Symbol types in Type Profiler
+        https://bugs.webkit.org/show_bug.cgi?id=141257
+
+        Reviewed by Joseph Pecoraro.
+
+        The Web Inspector's visualization of JSC's type profiler
+        should have support for the Symbol type.
+
+        * UserInterface/Models/TypeSet.js:
+        (WebInspector.TypeSet):
+        (WebInspector.TypeSet.prototype.get primitiveTypeNames):
+        * UserInterface/Views/TypeTokenView.css:
+        TypeTokenView will display Symbol type tokens using the same color that 
+        Symbol values are displayed as formatted values.
+
+        (.type-token-symbol):
+        * UserInterface/Views/TypeTokenView.js:
+        (WebInspector.TypeTokenView.prototype._displayTypeName):
+        (WebInspector.TypeTokenView):
+
 2015-03-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Adopt Array.prototype.includes and String.prototype.includes
