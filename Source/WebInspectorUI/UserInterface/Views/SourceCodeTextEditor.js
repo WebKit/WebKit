@@ -187,6 +187,8 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             for (var i = 0; i < matches.length; ++i) {
                 var matchLineNumber = matches[i].lineNumber;
                 var line = this.line(matchLineNumber);
+                if (!line)
+                    return;
 
                 // Reset the last index to reuse the regex on a new line.
                 queryRegex.lastIndex = 0;

@@ -1,3 +1,15 @@
+2015-03-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught exception while debugging, after performSearch callback line does not exists
+        https://bugs.webkit.org/show_bug.cgi?id=143172
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.customPerformSearch.searchResultCallback):
+        (WebInspector.SourceCodeTextEditor.prototype.customPerformSearch):
+        Gracefully handle if the line does not exist.
+
 2015-03-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         ES6 Classes: Runtime error in JIT'd class calling super() with arguments and superclass has default constructor
