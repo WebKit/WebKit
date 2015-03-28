@@ -1,5 +1,17 @@
 2015-03-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove unused testing properties
+        https://bugs.webkit.org/show_bug.cgi?id=143156
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LegacyConsoleMessageImpl.js:
+        (WebInspector.LegacyConsoleMessageImpl.prototype._formatMessage):
+        * UserInterface/Views/Section.js:
+        (WebInspector.Section.prototype.get subtitleAsTextForTest): Deleted.
+
+2015-03-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Uncaught Exception: TypeError: Attempted to assign to readonly - DOMNodeDetailsSidebarPanel.js
         https://bugs.webkit.org/show_bug.cgi?id=143139
 

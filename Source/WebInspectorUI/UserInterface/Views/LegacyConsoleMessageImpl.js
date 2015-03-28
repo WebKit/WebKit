@@ -144,7 +144,6 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
 
             var content = this._formattedMessage;
             var root = new WebInspector.TreeElement(content, null, true);
-            content.treeElementForTest = root;
             treeOutline.appendChild(root);
             if (this.type === WebInspector.LegacyConsoleMessage.MessageType.Trace)
                 root.expand();
