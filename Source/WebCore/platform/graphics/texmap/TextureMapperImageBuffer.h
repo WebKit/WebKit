@@ -20,37 +20,17 @@
 #ifndef TextureMapperImageBuffer_h
 #define TextureMapperImageBuffer_h
 
+#include "BitmapTextureImageBuffer.h"
 #include "ImageBuffer.h"
 #include "TextureMapper.h"
 
 #if USE(TEXTURE_MAPPER)
 namespace WebCore {
 
-class BitmapTextureImageBuffer : public BitmapTexture {
-    friend class TextureMapperImageBuffer;
-public:
-    static PassRefPtr<BitmapTexture> create() { return adoptRef(new BitmapTextureImageBuffer); }
-    virtual IntSize size() const { return m_image->internalSize(); }
-    virtual void didReset();
-    virtual bool isValid() const { return m_image.get(); }
-    inline GraphicsContext* graphicsContext() { return m_image ? m_image->context() : 0; }
-    virtual void updateContents(Image*, const IntRect&, const IntPoint&, UpdateContentsFlag);
-    virtual void updateContents(TextureMapper*, GraphicsLayer*, const IntRect& target, const IntPoint& offset, UpdateContentsFlag);
-    virtual void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine, UpdateContentsFlag);
-    PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const FilterOperations&);
-
-private:
-    BitmapTextureImageBuffer() { }
-    std::unique_ptr<ImageBuffer> m_image;
-};
-
-
 class TextureMapperImageBuffer : public TextureMapper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureMapperImageBuffer()
-        : TextureMapper(SoftwareMode)
-    { }
+    TextureMapperImageBuffer();
 
     // TextureMapper implementation
     virtual void drawBorder(const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) override;

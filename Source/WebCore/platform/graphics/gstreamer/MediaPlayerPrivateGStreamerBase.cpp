@@ -45,6 +45,8 @@
 #include <gst/video/gstvideometa.h>
 
 #if GST_CHECK_VERSION(1, 1, 0) && USE(TEXTURE_MAPPER_GL)
+#include "BitmapTextureGL.h"
+#include "BitmapTexturePool.h"
 #include "TextureMapperGL.h"
 #endif
 

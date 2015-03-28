@@ -20,6 +20,7 @@
 #include "config.h"
 #include "TextureMapperImageBuffer.h"
 
+#include "BitmapTexturePool.h"
 #include "GraphicsLayer.h"
 #include "NotImplemented.h"
 
@@ -28,46 +29,10 @@ namespace WebCore {
 
 static const int s_maximumAllowedImageBufferDimension = 4096;
 
-void BitmapTextureImageBuffer::updateContents(const void* data, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine, UpdateContentsFlag)
+TextureMapperImageBuffer::TextureMapperImageBuffer()
+    : TextureMapper(SoftwareMode)
 {
-#if PLATFORM(CAIRO)
-    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data()),
-                                                                                   CAIRO_FORMAT_ARGB32,
-                                                                                   targetRect.width(), targetRect.height(),
-                                                                                   bytesPerLine));
-    m_image->context()->platformContext()->drawSurfaceToContext(surface.get(), targetRect,
-                                                                IntRect(sourceOffset, targetRect.size()), m_image->context());
-#else
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(targetRect);
-    UNUSED_PARAM(sourceOffset);
-    UNUSED_PARAM(bytesPerLine);
-#endif
-}
-
-void BitmapTextureImageBuffer::updateContents(TextureMapper*, GraphicsLayer* sourceLayer, const IntRect& targetRect, const IntPoint& sourceOffset, UpdateContentsFlag)
-{
-    GraphicsContext* context = m_image->context();
-
-    context->clearRect(targetRect);
-
-    IntRect sourceRect(targetRect);
-    sourceRect.setLocation(sourceOffset);
-    context->save();
-    context->clip(targetRect);
-    context->translate(targetRect.x() - sourceOffset.x(), targetRect.y() - sourceOffset.y());
-    sourceLayer->paintGraphicsLayerContents(*context, sourceRect);
-    context->restore();
-}
-
-void BitmapTextureImageBuffer::didReset()
-{
-    m_image = ImageBuffer::create(contentSize());
-}
-
-void BitmapTextureImageBuffer::updateContents(Image* image, const IntRect& targetRect, const IntPoint& offset, UpdateContentsFlag)
-{
-    m_image->context()->drawImage(image, ColorSpaceDeviceRGB, targetRect, IntRect(offset, targetRect.size()), CompositeCopy);
+    m_texturePool = std::make_unique<BitmapTexturePool>();
 }
 
 IntSize TextureMapperImageBuffer::maxTextureSize() const
@@ -109,7 +74,7 @@ void TextureMapperImageBuffer::drawTexture(const BitmapTexture& texture, const F
         return;
 
     const BitmapTextureImageBuffer& textureImageBuffer = static_cast<const BitmapTextureImageBuffer&>(texture);
-    ImageBuffer* image = textureImageBuffer.m_image.get();
+    ImageBuffer* image = textureImageBuffer.image();
     context->save();
     context->setCompositeOperation(isInMaskMode() ? CompositeDestinationIn : CompositeSourceOver);
     context->setAlpha(opacity);

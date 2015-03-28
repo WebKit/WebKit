@@ -28,6 +28,7 @@
 #include <WebCore/GraphicsSurfaceToken.h>
 
 #if USE(TEXTURE_MAPPER)
+#include "BitmapTextureGL.h"
 #include "TextureMapperGL.h"
 #endif
 

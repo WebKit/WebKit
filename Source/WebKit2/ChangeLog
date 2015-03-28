@@ -1,3 +1,22 @@
+2015-03-27  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [TexMap] Seperate BitmapTexture related classes implementations from TextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=142386
+
+        Reviewed by Žan Doberšek.
+
+        TextureMapper and TextureMapperGL are bloated and tightly coupled with
+        BitmapTexture. We should move these classes to seperated file of their own.
+        Also, this patch removes friend relationship from TextureMapperGL and  its
+        subsidiary classes.
+
+        The main purpose of this refactoring is to expose BitmapTexturePool to
+        renderers of platformlayers like Video and Canvas. By doing this, each
+        renderer can acquire textures from the global texture pool to paint
+        their contents directly.
+
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp: Include BitmapTextureGL.h explicitly
+
 2015-03-27  Anders Carlsson  <andersca@apple.com>
 
         Use a typedef for the WKPluginLoadClientPolicy enum

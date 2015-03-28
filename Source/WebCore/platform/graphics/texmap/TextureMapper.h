@@ -22,10 +22,11 @@
 
 #if USE(TEXTURE_MAPPER)
 
-#if (PLATFORM(GTK) || PLATFORM(EFL)) && USE(OPENGL_ES_2)
+#if USE(OPENGL_ES_2)
 #define TEXMAP_OPENGL_ES_2
 #endif
 
+#include "BitmapTexture.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "IntSize.h"
@@ -43,64 +44,8 @@ class GraphicsLayer;
 class TextureMapper;
 class FilterOperations;
 
-// A 2D texture that can be the target of software or GL rendering.
-class BitmapTexture : public RefCounted<BitmapTexture> {
-public:
-    enum Flag {
-        NoFlag = 0,
-        SupportsAlpha = 0x01
-    };
-
-    enum UpdateContentsFlag {
-        UpdateCanModifyOriginalImageData,
-        UpdateCannotModifyOriginalImageData
-    };
-
-    typedef unsigned Flags;
-
-    BitmapTexture()
-        : m_flags(0)
-    {
-    }
-
-    virtual ~BitmapTexture() { }
-    virtual bool isBackedByOpenGL() const { return false; }
-
-    virtual IntSize size() const = 0;
-    virtual void updateContents(Image*, const IntRect&, const IntPoint& offset, UpdateContentsFlag) = 0;
-    virtual void updateContents(TextureMapper*, GraphicsLayer*, const IntRect& target, const IntPoint& offset, UpdateContentsFlag);
-    virtual void updateContents(const void*, const IntRect& target, const IntPoint& offset, int bytesPerLine, UpdateContentsFlag) = 0;
-    virtual bool isValid() const = 0;
-    inline Flags flags() const { return m_flags; }
-
-    virtual int bpp() const { return 32; }
-    virtual bool canReuseWith(const IntSize& /* contentsSize */, Flags = 0) { return false; }
-    void reset(const IntSize& size, Flags flags = 0)
-    {
-        m_flags = flags;
-        m_contentSize = size;
-        didReset();
-    }
-    virtual void didReset() { }
-
-    inline IntSize contentSize() const { return m_contentSize; }
-    inline int numberOfBytes() const { return size().width() * size().height() * bpp() >> 3; }
-    inline bool isOpaque() const { return !(m_flags & SupportsAlpha); }
-
-    virtual PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const FilterOperations&) { return this; }
-
-protected:
-    IntSize m_contentSize;
-
-private:
-    Flags m_flags;
-};
-
-// A "context" class used to encapsulate accelerated texture mapping functions: i.e. drawing a texture
-// onto the screen or into another texture with a specified transform, opacity and mask.
 class TextureMapper {
     WTF_MAKE_FAST_ALLOCATED;
-    friend class BitmapTexture;
 public:
     enum AccelerationMode { SoftwareMode, OpenGLMode };
     enum PaintFlag {
@@ -164,6 +109,7 @@ public:
 
 protected:
     GraphicsContext* m_context;
+    std::unique_ptr<BitmapTexturePool> m_texturePool;
 
     bool isInMaskMode() const { return m_isMaskMode; }
     WrapMode wrapMode() const { return m_wrapMode; }
@@ -180,7 +126,6 @@ private:
 #endif
     InterpolationQuality m_interpolationQuality;
     TextDrawingModeFlags m_textDrawingMode;
-    std::unique_ptr<BitmapTexturePool> m_texturePool;
     AccelerationMode m_accelerationMode;
     bool m_isMaskMode;
     TransformationMatrix m_patternTransform;

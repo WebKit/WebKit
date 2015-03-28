@@ -20,6 +20,7 @@
 #include "config.h"
 #include "TextureMapper.h"
 
+#include "BitmapTexturePool.h"
 #include "FilterOperations.h"
 #include "GraphicsLayer.h"
 #include "TextureMapperImageBuffer.h"
@@ -30,98 +31,9 @@
 
 namespace WebCore {
 
-struct BitmapTexturePoolEntry {
-    explicit BitmapTexturePoolEntry(PassRefPtr<BitmapTexture> texture)
-        : m_texture(texture)
-    { }
-    inline void markUsed() { m_timeLastUsed = monotonicallyIncreasingTime(); }
-    static bool compareTimeLastUsed(const BitmapTexturePoolEntry& a, const BitmapTexturePoolEntry& b)
-    {
-        return a.m_timeLastUsed - b.m_timeLastUsed > 0;
-    }
-
-    RefPtr<BitmapTexture> m_texture;
-    double m_timeLastUsed;
-};
-
-class BitmapTexturePool {
-    WTF_MAKE_NONCOPYABLE(BitmapTexturePool);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    BitmapTexturePool();
-
-    PassRefPtr<BitmapTexture> acquireTexture(const IntSize&, TextureMapper*);
-
-private:
-    void scheduleReleaseUnusedTextures();
-    void releaseUnusedTexturesTimerFired();
-
-    Vector<BitmapTexturePoolEntry> m_textures;
-    Timer m_releaseUnusedTexturesTimer;
-
-    static const double s_releaseUnusedSecondsTolerance;
-    static const double s_releaseUnusedTexturesTimerInterval;
-};
-
-const double BitmapTexturePool::s_releaseUnusedSecondsTolerance = 3;
-const double BitmapTexturePool::s_releaseUnusedTexturesTimerInterval = 0.5;
-
-BitmapTexturePool::BitmapTexturePool()
-    : m_releaseUnusedTexturesTimer(*this, &BitmapTexturePool::releaseUnusedTexturesTimerFired)
-{ }
-
-void BitmapTexturePool::scheduleReleaseUnusedTextures()
-{
-    if (m_releaseUnusedTexturesTimer.isActive())
-        m_releaseUnusedTexturesTimer.stop();
-
-    m_releaseUnusedTexturesTimer.startOneShot(s_releaseUnusedTexturesTimerInterval);
-}
-
-void BitmapTexturePool::releaseUnusedTexturesTimerFired()
-{
-    if (m_textures.isEmpty())
-        return;
-
-    // Delete entries, which have been unused in s_releaseUnusedSecondsTolerance.
-    std::sort(m_textures.begin(), m_textures.end(), BitmapTexturePoolEntry::compareTimeLastUsed);
-
-    double minUsedTime = monotonicallyIncreasingTime() - s_releaseUnusedSecondsTolerance;
-    for (size_t i = 0; i < m_textures.size(); ++i) {
-        if (m_textures[i].m_timeLastUsed < minUsedTime) {
-            m_textures.remove(i, m_textures.size() - i);
-            break;
-        }
-    }
-}
-
-PassRefPtr<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, TextureMapper* textureMapper)
-{
-    BitmapTexturePoolEntry* selectedEntry = 0;
-    for (auto& entry : m_textures) {
-        // If the surface has only one reference (the one in m_textures), we can safely reuse it.
-        if (entry.m_texture->refCount() > 1)
-            continue;
-
-        if (entry.m_texture->canReuseWith(size)) {
-            selectedEntry = &entry;
-            break;
-        }
-    }
-
-    if (!selectedEntry) {
-        m_textures.append(BitmapTexturePoolEntry(textureMapper->createTexture()));
-        selectedEntry = &m_textures.last();
-    }
-
-    scheduleReleaseUnusedTextures();
-    selectedEntry->markUsed();
-    return selectedEntry->m_texture;
-}
-
 PassRefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size, const BitmapTexture::Flags flags)
 {
-    RefPtr<BitmapTexture> selectedTexture = m_texturePool->acquireTexture(size, this);
+    RefPtr<BitmapTexture> selectedTexture = m_texturePool->acquireTexture(size);
     selectedTexture->reset(size, flags);
     return selectedTexture.release();
 }
@@ -137,7 +49,6 @@ TextureMapper::TextureMapper(AccelerationMode accelerationMode)
     : m_context(0)
     , m_interpolationQuality(InterpolationDefault)
     , m_textDrawingMode(TextModeFill)
-    , m_texturePool(std::make_unique<BitmapTexturePool>())
     , m_accelerationMode(accelerationMode)
     , m_isMaskMode(false)
     , m_wrapMode(StretchWrap)
@@ -145,23 +56,6 @@ TextureMapper::TextureMapper(AccelerationMode accelerationMode)
 
 TextureMapper::~TextureMapper()
 { }
-
-void BitmapTexture::updateContents(TextureMapper* textureMapper, GraphicsLayer* sourceLayer, const IntRect& targetRect, const IntPoint& offset, UpdateContentsFlag updateContentsFlag)
-{
-    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(targetRect.size());
-    GraphicsContext* context = imageBuffer->context();
-    context->setImageInterpolationQuality(textureMapper->imageInterpolationQuality());
-    context->setTextDrawingMode(textureMapper->textDrawingMode());
-
-    IntRect sourceRect(targetRect);
-    sourceRect.setLocation(offset);
-    context->translate(-offset.x(), -offset.y());
-    sourceLayer->paintGraphicsLayerContents(*context, sourceRect);
-
-    RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
-
-    updateContents(image.get(), targetRect, IntPoint(), updateContentsFlag);
-}
 
 } // namespace
 

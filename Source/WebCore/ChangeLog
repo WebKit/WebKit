@@ -1,3 +1,74 @@
+2015-03-27  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [TexMap] Seperate BitmapTexture related classes implementations from TextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=142386
+
+        Reviewed by Žan Doberšek.
+
+        TextureMapper and TextureMapperGL are bloated and tightly coupled with
+        BitmapTexture. We should move these classes to seperated file of their own.
+        Also, this patch removes friend relationship from TextureMapperGL and  its
+        subsidiary classes.
+
+        The main purpose of this refactoring is to expose BitmapTexturePool to
+        renderers of platformlayers like Video and Canvas. By doing this, each
+        renderer can acquire textures from the global texture pool to paint
+        their contents directly.
+
+        No new tests needed.
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        Include BitmapTextureGL and BitmapTexturePool explicitly
+
+        * platform/graphics/texmap/BitmapTexture.cpp: Added.
+        * platform/graphics/texmap/BitmapTexture.h: Added.
+        (WebCore::BitmapTexture::updateContents):
+        Exclude BitmapTexture class from TextureMapper
+
+        * platform/graphics/texmap/BitmapTextureGL.cpp: Added.
+        * platform/graphics/texmap/BitmapTextureGL.h: Added.
+        Exclude BitmapTextureGL class from TextureMapperGL
+        (WebCore::BitmapTextureGL::clipStack): Added.
+        Add the getter for clipStack for TextureMapperGL
+        (WebCore::BitmapTextureGL::Bind): Deleted.
+        (WebCore::BitmapTextureGL::BindAsSurface): Added.
+        Bind used TextureMapperGL's internal data directly to compute projection matrix as a friend class,
+        However, TextureMapperGL can compute projection matrix itself after binding job, so this
+        friend ship is not needed. Also, this patch renames Bind to BindAsSurface to remove ambiguity.
+
+        * platform/graphics/texmap/BitmapTextureImageBuffer.cpp: Added.
+        * platform/graphics/texmap/BitmapTextureImageBuffer.h: Added.
+        Exclude BitmapTextureImageBuffer class from TextureMapperImageBuffer
+
+        * platform/graphics/texmap/BitmapTexturePool.cpp: Added.
+        * platform/graphics/texmap/BitmapTexturePool.h: Added.
+        Exclude BitmapTexturePool class from TextureMapperGL
+        (WebCore::BitmapTexturePool::acquireTexture):
+        Modified to use passed GraphicsContext3D instead of TextureMapperGL to remove redundant coupling
+
+        * platform/graphics/texmap/TextureMapper.cpp:
+        * platform/graphics/texmap/TextureMapper.h:
+        Remove BitmapTexturePool and BitmapTexture from its implementation.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        * platform/graphics/texmap/TextureMapperGL.h:
+        Remove BitmapTextureGL from its implementation.
+        (WebCore::TextureMapperGL::TextureMapperGL):
+        (WebCore::TextureMapperGL::clipStack):
+        (WebCore::TextureMapperGL::bindSurface):
+        (WebCore::TextureMapperGL::currentSurface):
+        Add a getter of the current surface for filtering operation in BitmapTextureGL.
+        It would be clear to move filtering operation from BitmapTextureGL to TextureMapperGL later.
+
+        (WebCore::TextureMapperGL::ClipStack):
+        Move inner class declaration to public.
+
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp:
+        * platform/graphics/texmap/TextureMapperImageBuffer.h:
+        Remove BitmapTextureImageBuffer from its implementation.
+
 2015-03-27  Tim Horton  <timothy_horton@apple.com>
 
         WebProcess started by editable WKWebView spends 15% of its initialization time loading DataDetectors
