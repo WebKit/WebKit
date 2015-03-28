@@ -1,8 +1,3 @@
-// REGRESSION(r181326): It made dfg-int16array.js and dfg-int8array.js fail on AArch64 Linux
-// https://bugs.webkit.org/show_bug.cgi?id=142629
-
-//@ skip if $architecture == "arm64" and $hostOS == "linux"
-
 description(
 "This tests that int16 arrays work in the DFG."
 );

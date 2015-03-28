@@ -1,3 +1,13 @@
+2015-03-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r181326): It made dfg-int16array.js and dfg-int8array.js fail on AArch64 Linux
+        https://bugs.webkit.org/show_bug.cgi?id=142629
+
+        Unreviewed gardening, unskip now passing tests after r182091.
+
+        * js/script-tests/dfg-int16array.js:
+        * js/script-tests/dfg-int8array.js:
+
 2015-03-27  Saam Barati  <saambarati1@gmail.com>
 
         Deconstruction parameters are bound too late
