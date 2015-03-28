@@ -1,3 +1,17 @@
+2015-03-27  Saam Barati  <saambarati1@gmail.com>
+
+        Deconstruction parameters are bound too late
+        https://bugs.webkit.org/show_bug.cgi?id=143148
+
+        Reviewed by Filip Pizlo.
+
+        * js/regress/deconstructing-parameters-overridden-by-function-expected.txt: Added.
+        * js/regress/deconstructing-parameters-overridden-by-function.html: Added.
+        * js/regress/script-tests/deconstructing-parameters-overridden-by-function.js: Added.
+        (f):
+        (test):
+        (.arg):
+
 2015-03-27  Michael Saboff  <msaboff@apple.com>
 
         Fix flakey dfg-int8array.js and dfg-int16array.js tests for ARM64

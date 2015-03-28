@@ -69,7 +69,12 @@ ParserError BytecodeGenerator::generate()
     // perform that assignment now.
     if (m_needToInitializeArguments)
         initializeVariable(variable(propertyNames().arguments), m_argumentsRegister);
-    
+
+    for (size_t i = 0; i < m_deconstructedParameters.size(); i++) {
+        auto& entry = m_deconstructedParameters[i];
+        entry.second->bindValue(*this, entry.first.get());
+    }
+
     {
         RefPtr<RegisterID> temp = newTemporary();
         for (FunctionBodyNode* functionBody : m_functionsToInitialize) {
@@ -78,11 +83,6 @@ ParserError BytecodeGenerator::generate()
         }
     }
     
-    for (size_t i = 0; i < m_deconstructedParameters.size(); i++) {
-        auto& entry = m_deconstructedParameters[i];
-        entry.second->bindValue(*this, entry.first.get());
-    }
-
     bool callingClassConstructor = constructorKind() != ConstructorKind::None && !isConstructor();
     if (!callingClassConstructor)
         m_scopeNode->emitBytecode(*this);
