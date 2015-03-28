@@ -253,7 +253,7 @@ InlineBox* InlineBox::prevLeafChildIgnoringLineBreak() const
 {
     InlineBox* leaf = prevLeafChild();
     if (leaf && leaf->isLineBreak())
-        return 0;
+        return nullptr;
     return leaf;
 }
 

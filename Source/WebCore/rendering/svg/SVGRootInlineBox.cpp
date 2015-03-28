@@ -195,7 +195,7 @@ InlineBox* SVGRootInlineBox::closestLeafChildForPosition(const LayoutPoint& poin
         return firstLeaf;
 
     // FIXME: Check for vertical text!
-    InlineBox* closestLeaf = 0;
+    InlineBox* closestLeaf = nullptr;
     for (InlineBox* leaf = firstLeaf; leaf; leaf = leaf->nextLeafChild()) {
         if (!leaf->isSVGInlineTextBox())
             continue;
@@ -238,8 +238,8 @@ static inline void swapItemsInLayoutAttributes(SVGTextLayoutAttributes* firstAtt
 static inline void findFirstAndLastAttributesInVector(Vector<SVGTextLayoutAttributes*>& attributes, RenderSVGInlineText* firstContext, RenderSVGInlineText* lastContext,
                                                       SVGTextLayoutAttributes*& first, SVGTextLayoutAttributes*& last)
 {
-    first = 0;
-    last = 0;
+    first = nullptr;
+    last = nullptr;
 
     unsigned attributesSize = attributes.size();
     for (unsigned i = 0; i < attributesSize; ++i) {

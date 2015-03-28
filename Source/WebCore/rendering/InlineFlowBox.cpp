@@ -198,7 +198,7 @@ void InlineFlowBox::removeChild(InlineBox* child)
     if (child->prevOnLine())
         child->prevOnLine()->setNextOnLine(child->nextOnLine());
     
-    child->setParent(0);
+    child->setParent(nullptr);
 
     checkConsistency();
 }
@@ -206,19 +206,19 @@ void InlineFlowBox::removeChild(InlineBox* child)
 void InlineFlowBox::deleteLine()
 {
     InlineBox* child = firstChild();
-    InlineBox* next = 0;
+    InlineBox* next = nullptr;
     while (child) {
         ASSERT(this == child->parent());
         next = child->nextOnLine();
 #ifndef NDEBUG
-        child->setParent(0);
+        child->setParent(nullptr);
 #endif
         child->deleteLine();
         child = next;
     }
 #ifndef NDEBUG
-    m_firstChild = 0;
-    m_lastChild = 0;
+    m_firstChild = nullptr;
+    m_lastChild = nullptr;
 #endif
 
     removeLineBoxFromRenderObject();
@@ -372,7 +372,7 @@ float InlineFlowBox::placeBoxesInInlineDirection(float logicalLeft, bool& needsW
     float minLogicalLeft = startLogicalLeft;
     float maxLogicalRight = logicalLeft;
 
-    placeBoxRangeInInlineDirection(firstChild(), 0, logicalLeft, minLogicalLeft, maxLogicalRight, needsWordSpacing);
+    placeBoxRangeInInlineDirection(firstChild(), nullptr, logicalLeft, minLogicalLeft, maxLogicalRight, needsWordSpacing);
 
     logicalLeft += borderLogicalRight() + paddingLogicalRight();
     endPlacingBoxRangesInInlineDirection(startLogicalLeft, logicalLeft, minLogicalLeft, maxLogicalRight);
@@ -882,7 +882,7 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox& textBox, Glyp
     const RenderStyle& lineStyle = this->lineStyle();
     
     GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(&textBox);
-    GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->value.second;
+    GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? nullptr : &it->value.second;
     bool isFlippedLine = lineStyle.isFlippedLinesWritingMode();
 
     int topGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->bottom : glyphOverflow->top) : 0;

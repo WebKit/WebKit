@@ -1134,8 +1134,8 @@ Node* RootInlineBox::getLogicalStartBoxWithNode(InlineBox*& startBox) const
             return startBox->renderer().node();
         }
     }
-    startBox = 0;
-    return 0;
+    startBox = nullptr;
+    return nullptr;
 }
     
 Node* RootInlineBox::getLogicalEndBoxWithNode(InlineBox*& endBox) const
@@ -1148,8 +1148,8 @@ Node* RootInlineBox::getLogicalEndBoxWithNode(InlineBox*& endBox) const
             return endBox->renderer().node();
         }
     }
-    endBox = 0;
-    return 0;
+    endBox = nullptr;
+    return nullptr;
 }
 
 #if ENABLE(TREE_DEBUGGING)

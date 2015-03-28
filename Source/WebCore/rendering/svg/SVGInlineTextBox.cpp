@@ -54,7 +54,7 @@ SVGInlineTextBox::SVGInlineTextBox(RenderSVGInlineText& renderer)
     , m_logicalHeight(0)
     , m_paintingResourceMode(ApplyToDefaultMode)
     , m_startsNewTextChunk(false)
-    , m_paintingResource(0)
+    , m_paintingResource(nullptr)
 {
 }
 
@@ -373,7 +373,7 @@ void SVGInlineTextBox::releasePaintingResource(GraphicsContext*& context, const 
 {
     ASSERT(m_paintingResource);
 
-    m_paintingResource->postApplyResource(parent()->renderer(), context, m_paintingResourceMode, path, /*RenderSVGShape*/ 0);
+    m_paintingResource->postApplyResource(parent()->renderer(), context, m_paintingResourceMode, path, /*RenderSVGShape*/ nullptr);
     m_paintingResource = nullptr;
 }
 
@@ -397,12 +397,12 @@ bool SVGInlineTextBox::prepareGraphicsContextForTextPainting(GraphicsContext*& c
 
 void SVGInlineTextBox::restoreGraphicsContextAfterTextPainting(GraphicsContext*& context, TextRun& textRun)
 {
-    releasePaintingResource(context, /* path */0);
+    releasePaintingResource(context, /* path */nullptr);
 
 #if ENABLE(SVG_FONTS)
     TextRun::RenderingContext* renderingContext = textRun.renderingContext();
     if (renderingContext)
-        static_cast<SVGTextRunRenderingContext*>(renderingContext)->setActivePaintingResource(0);
+        static_cast<SVGTextRunRenderingContext*>(renderingContext)->setActivePaintingResource(nullptr);
 #else
     UNUSED_PARAM(textRun);
 #endif
