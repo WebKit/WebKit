@@ -1,5 +1,18 @@
 2015-03-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        parse doesn't initialize the 16-bit version of the JSC parser with defaultConstructorKind
+        https://bugs.webkit.org/show_bug.cgi?id=143170
+
+        Reviewed by Benjamin Poulain.
+
+        Assert that we never use 16-bit version of the parser to parse a default constructor
+        since both base and derived default constructors should be using a 8-bit string.
+
+        * parser/Parser.h:
+        (JSC::parse):
+
+2015-03-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         ES6 Classes: Runtime error in JIT'd class calling super() with arguments and superclass has default constructor
         https://bugs.webkit.org/show_bug.cgi?id=142862
 

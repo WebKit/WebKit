@@ -1006,6 +1006,7 @@ std::unique_ptr<ParsedNode> parse(
         }
         return result;
     }
+    ASSERT_WITH_MESSAGE(defaultConstructorKind == ConstructorKind::None, "BuiltinExecutables::createDefaultConstructor should always use a 8-bit string");
     Parser<Lexer<UChar>> parser(vm, source, parameters, name, builtinMode, strictMode, codeType);
     std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error);
     if (positionBeforeLastNewline)
