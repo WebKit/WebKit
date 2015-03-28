@@ -1,5 +1,25 @@
 2015-03-27  Simon Fraser  <simon.fraser@apple.com>
 
+        More modern loops in RenderLayer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=143175
+
+        Reviewed by Ryosuke Niwa.
+
+        Use modern loops in more places in RenderLayer.app.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::update3DTransformedDescendantStatus):
+        (WebCore::RenderLayer::paint):
+        (WebCore::performOverlapTests):
+        (WebCore::RenderLayer::paintFixedLayersInNamedFlows):
+        (WebCore::RenderLayer::paintList):
+        (WebCore::RenderLayer::collectFragments):
+        (WebCore::RenderLayer::updatePaintingInfoForFragments):
+        (WebCore::RenderLayer::paintTransformedLayerIntoFragments):
+        (WebCore::RenderLayer::calculateClipRects):
+
+2015-03-27  Simon Fraser  <simon.fraser@apple.com>
+
         nullptr cleanup in RenderLayer
         https://bugs.webkit.org/show_bug.cgi?id=143174
 

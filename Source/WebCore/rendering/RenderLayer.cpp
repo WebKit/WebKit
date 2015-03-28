@@ -1281,14 +1281,14 @@ bool RenderLayer::update3DTransformedDescendantStatus()
         // Transformed or preserve-3d descendants can only be in the z-order lists, not
         // in the normal flow list, so we only need to check those.
         if (Vector<RenderLayer*>* positiveZOrderList = posZOrderList()) {
-            for (unsigned i = 0; i < positiveZOrderList->size(); ++i)
-                m_has3DTransformedDescendant |= positiveZOrderList->at(i)->update3DTransformedDescendantStatus();
+            for (auto layer : *positiveZOrderList)
+                m_has3DTransformedDescendant |= layer->update3DTransformedDescendantStatus();
         }
 
         // Now check our negative z-index children.
         if (Vector<RenderLayer*>* negativeZOrderList = negZOrderList()) {
-            for (unsigned i = 0; i < negativeZOrderList->size(); ++i)
-                m_has3DTransformedDescendant |= negativeZOrderList->at(i)->update3DTransformedDescendantStatus();
+            for (auto layer : *negativeZOrderList)
+                m_has3DTransformedDescendant |= layer->update3DTransformedDescendantStatus();
         }
         
         m_3DTransformedDescendantStatusDirty = false;
@@ -3743,9 +3743,8 @@ void RenderLayer::paint(GraphicsContext* context, const LayoutRect& damageRect, 
     LayerPaintingInfo paintingInfo(this, enclosingIntRect(damageRect), paintBehavior, subpixelAccumulation, subtreePaintRoot, &overlapTestRequests);
     paintLayer(context, paintingInfo, paintFlags);
 
-    OverlapTestRequestMap::iterator end = overlapTestRequests.end();
-    for (OverlapTestRequestMap::iterator it = overlapTestRequests.begin(); it != end; ++it)
-        it->key->setOverlapTestResult(false);
+    for (auto it : overlapTestRequests)
+        it.key->setOverlapTestResult(false);
 }
 
 void RenderLayer::paintOverlayScrollbars(GraphicsContext* context, const LayoutRect& damageRect, PaintBehavior paintBehavior, RenderObject* subtreePaintRoot)
@@ -3813,17 +3812,16 @@ void RenderLayer::restoreClip(GraphicsContext* context, const LayoutRect& paintD
 static void performOverlapTests(OverlapTestRequestMap& overlapTestRequests, const RenderLayer* rootLayer, const RenderLayer* layer)
 {
     Vector<OverlapTestRequestClient*> overlappedRequestClients;
-    OverlapTestRequestMap::iterator end = overlapTestRequests.end();
     LayoutRect boundingBox = layer->boundingBox(rootLayer, layer->offsetFromAncestor(rootLayer));
-    for (OverlapTestRequestMap::iterator it = overlapTestRequests.begin(); it != end; ++it) {
-        if (!boundingBox.intersects(it->value))
+    for (auto it : overlapTestRequests) {
+        if (!boundingBox.intersects(it.value))
             continue;
 
-        it->key->setOverlapTestResult(true);
-        overlappedRequestClients.append(it->key);
+        it.key->setOverlapTestResult(true);
+        overlappedRequestClients.append(it.key);
     }
-    for (size_t i = 0; i < overlappedRequestClients.size(); ++i)
-        overlapTestRequests.remove(overlappedRequestClients[i]);
+    for (auto client : overlappedRequestClients)
+        overlapTestRequests.remove(client);
 }
 
 static inline bool shouldDoSoftwarePaint(const RenderLayer* layer, bool paintingReflection)
@@ -4177,10 +4175,8 @@ void RenderLayer::paintFixedLayersInNamedFlows(GraphicsContext* context, const L
     renderer().view().flowThreadController().collectFixedPositionedLayers(fixedLayers);
 
     // Paint the layers
-    for (size_t i = 0; i < fixedLayers.size(); ++i) {
-        RenderLayer* fixedLayer = fixedLayers.at(i);
+    for (auto fixedLayer : fixedLayers)
         fixedLayer->paintLayer(context, paintingInfo, paintFlags);
-    }
 }
 
 void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags)
@@ -4400,8 +4396,7 @@ void RenderLayer::paintList(Vector<RenderLayer*>* list, GraphicsContext* context
     LayerListMutationDetector mutationChecker(this);
 #endif
 
-    for (size_t i = 0; i < list->size(); ++i) {
-        RenderLayer* childLayer = list->at(i);
+    for (auto childLayer : *list) {
         if (childLayer->isFlowThreadCollectingGraphicsLayersUnderRegions())
             continue;
         childLayer->paintLayer(context, paintingInfo, paintFlags);
@@ -4542,9 +4537,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
         ancestorClipRect.intersect(dirtyRect);
     }
 
-    for (size_t i = 0; i < fragments.size(); ++i) {
-        LayerFragment& fragment = fragments.at(i);
-        
+    for (auto& fragment : fragments) {
         // Set our four rects with all clipping applied that was internal to the flow thread.
         fragment.setRects(layerBoundsInFlowThread, backgroundRectInFlowThread, foregroundRectInFlowThread, outlineRectInFlowThread, &layerBoundingBoxInFlowThread);
         
@@ -4567,8 +4560,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
 void RenderLayer::updatePaintingInfoForFragments(LayerFragments& fragments, const LayerPaintingInfo& localPaintingInfo, PaintLayerFlags localPaintFlags,
     bool shouldPaintContent, const LayoutSize& offsetFromRoot)
 {
-    for (size_t i = 0; i < fragments.size(); ++i) {
-        LayerFragment& fragment = fragments.at(i);
+    for (auto& fragment : fragments) {
         fragment.shouldPaintContent = shouldPaintContent;
         if (this != localPaintingInfo.rootLayer || !(localPaintFlags & PaintLayerPaintingOverflowContents)) {
             LayoutSize newOffsetFromRoot = offsetFromRoot + fragment.paginationOffset;
@@ -4587,9 +4579,7 @@ void RenderLayer::paintTransformedLayerIntoFragments(GraphicsContext* context, c
         (paintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, IgnoreOverlayScrollbarSize,
         (paintFlags & PaintLayerPaintingOverflowContents) ? IgnoreOverflowClip : RespectOverflowClip, offsetOfPaginationLayerFromRoot, &transformedExtent);
     
-    for (size_t i = 0; i < enclosingPaginationFragments.size(); ++i) {
-        const LayerFragment& fragment = enclosingPaginationFragments.at(i);
-        
+    for (const auto& fragment : enclosingPaginationFragments) {
         // Apply the page/column clip for this fragment, as well as any clips established by layers in between us and
         // the enclosing pagination layer.
         LayoutRect clipRect = fragment.backgroundRect.rect();
@@ -5943,9 +5933,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
 #endif
 
     if (Vector<RenderLayer*>* negZOrderList = this->negZOrderList()) {
-        size_t listSize = negZOrderList->size();
-        for (size_t i = 0; i < listSize; ++i) {
-            RenderLayer* curLayer = negZOrderList->at(i);
+        for (auto curLayer : *negZOrderList) {
             if (flags & IncludeCompositedDescendants || !curLayer->isComposited()) {
                 LayoutRect childUnionBounds = curLayer->calculateLayerBounds(this, curLayer->offsetFromAncestor(this), descendantFlags);
                 unionBounds.unite(childUnionBounds);
@@ -5954,9 +5942,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     }
 
     if (Vector<RenderLayer*>* posZOrderList = this->posZOrderList()) {
-        size_t listSize = posZOrderList->size();
-        for (size_t i = 0; i < listSize; ++i) {
-            RenderLayer* curLayer = posZOrderList->at(i);
+        for (auto curLayer : *posZOrderList) {
             // The RenderNamedFlowThread is ignored when we calculate the bounds of the RenderView.
             if ((flags & IncludeCompositedDescendants || !curLayer->isComposited()) && !curLayer->isFlowThreadCollectingGraphicsLayersUnderRegions()) {
                 LayoutRect childUnionBounds = curLayer->calculateLayerBounds(this, curLayer->offsetFromAncestor(this), descendantFlags);
@@ -5966,9 +5952,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     }
 
     if (Vector<RenderLayer*>* normalFlowList = this->normalFlowList()) {
-        size_t listSize = normalFlowList->size();
-        for (size_t i = 0; i < listSize; ++i) {
-            RenderLayer* curLayer = normalFlowList->at(i);
+        for (auto curLayer : *normalFlowList) {
             // RenderView will always return the size of the document, before reaching this point,
             // so there's no way we could hit a RenderNamedFlowThread here.
             ASSERT(!curLayer->isFlowThreadCollectingGraphicsLayersUnderRegions());
@@ -6140,7 +6124,7 @@ bool RenderLayer::listBackgroundIsKnownToBeOpaqueInRect(const Vector<RenderLayer
     if (!list || list->isEmpty())
         return false;
 
-    for (Vector<RenderLayer*>::const_reverse_iterator iter = list->rbegin(); iter != list->rend(); ++iter) {
+    for (auto iter = list->rbegin(); iter != list->rend(); ++iter) {
         const RenderLayer* childLayer = *iter;
         if (childLayer->isComposited())
             continue;
@@ -6313,37 +6297,25 @@ void RenderLayer::updateDescendantsLayerListsIfNeeded(bool recursive)
     
     if (isStackingContainer()) {
         if (Vector<RenderLayer*>* list = negZOrderList()) {
-            size_t listSize = list->size();
-            for (size_t i = 0; i < listSize; ++i) {
-                RenderLayer* childLayer = list->at(i);
+            for (auto childLayer : *list)
                 layersToUpdate.append(childLayer);
-            }
         }
     }
     
     if (Vector<RenderLayer*>* list = normalFlowList()) {
-        size_t listSize = list->size();
-        for (size_t i = 0; i < listSize; ++i) {
-            RenderLayer* childLayer = list->at(i);
+        for (auto childLayer : *list)
             layersToUpdate.append(childLayer);
-        }
     }
     
     if (isStackingContainer()) {
         if (Vector<RenderLayer*>* list = posZOrderList()) {
-            size_t listSize = list->size();
-            for (size_t i = 0; i < listSize; ++i) {
-                RenderLayer* childLayer = list->at(i);
+            for (auto childLayer : *list)
                 layersToUpdate.append(childLayer);
-            }
         }
     }
     
-    size_t listSize = layersToUpdate.size();
-    for (size_t i = 0; i < listSize; ++i) {
-        RenderLayer* childLayer = layersToUpdate.at(i);
+    for (auto childLayer : layersToUpdate) {
         childLayer->updateLayerListsIfNeeded();
-        
         if (recursive)
             childLayer->updateDescendantsLayerListsIfNeeded(true);
     }
@@ -6968,9 +6940,7 @@ void RenderLayer::paintFlowThreadIfRegionForFragments(const LayerFragments& frag
             regionClipRect.move(offsetFromAncestor(paintingInfo.rootLayer));
     }
     
-    for (size_t i = 0; i < fragments.size(); ++i) {
-        const LayerFragment& fragment = fragments.at(i);
-
+    for (const auto& fragment : fragments) {
         ClipRect clipRect = fragment.foregroundRect;
         if (flowFragment->shouldClipFlowThreadContent())
             clipRect.intersect(regionClipRect);
