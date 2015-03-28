@@ -81,7 +81,7 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
 
     collectScopeChainVariableNames(callback)
     {
-        var result = {this: true};
+        var result = {this: true, __proto__: null};
 
         var pendingRequests = this._scopeChain.length;
 

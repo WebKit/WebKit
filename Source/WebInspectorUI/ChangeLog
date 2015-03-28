@@ -1,5 +1,18 @@
 2015-03-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Uncaught Exceptions evaluating code while paused
+        https://bugs.webkit.org/show_bug.cgi?id=143163
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CallFrame.js:
+        (WebInspector.CallFrame.prototype.collectScopeChainVariableNames):
+        We define a property named "valueForCaseInsensitiveKey" on Object.prototype
+        that is readonly. So we should avoid Object.prototype when building our
+        result list. This should probably move to a Map object eventually.
+
+2015-03-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove unused testing properties
         https://bugs.webkit.org/show_bug.cgi?id=143156
 
