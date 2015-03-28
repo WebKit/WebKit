@@ -1,3 +1,42 @@
+2015-03-27  Simon Fraser  <simon.fraser@apple.com>
+
+        nullptr cleanup in RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=143174
+
+        Reviewed by Ryosuke Niwa.
+
+        Replace 0 with nullptr in RenderLayer.cpp.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::filterRenderer):
+        (WebCore::RenderLayer::updateLayerPositionsAfterLayout):
+        (WebCore::RenderLayer::updateLayerPositionsAfterOverflowScroll):
+        (WebCore::RenderLayer::positionNewlyCreatedOverflowControls):
+        (WebCore::RenderLayer::enclosingOverflowClipLayer):
+        (WebCore::RenderLayer::enclosingCompositingLayer):
+        (WebCore::RenderLayer::enclosingCompositingLayerForRepaint):
+        (WebCore::RenderLayer::enclosingFilterLayer):
+        (WebCore::RenderLayer::enclosingFilterRepaintLayer):
+        (WebCore::RenderLayer::clippingRootForPainting):
+        (WebCore::RenderLayer::transparentPaintingAncestor):
+        (WebCore::transparencyClipBox):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::removeOnlyThisLayer):
+        (WebCore::RenderLayer::insertOnlyThisLayer):
+        (WebCore::accumulateOffsetTowardsAncestor):
+        (WebCore::RenderLayer::enclosingScrollableArea):
+        (WebCore::RenderLayer::enclosingPaginationLayerInSubtree):
+        (WebCore::RenderLayer::enclosingElement):
+        (WebCore::RenderLayer::enclosingFlowThreadAncestor):
+        (WebCore::RenderLayer::hitTestFixedLayersInNamedFlows):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestTransformedLayerInFragments):
+        (WebCore::RenderLayer::hitTestLayerByApplyingTransform):
+        (WebCore::RenderLayer::hitTestList):
+        (WebCore::RenderLayer::updateClipRects):
+        (WebCore::RenderLayer::clipRects):
+        (WebCore::RenderLayer::calculateClipRects):
+
 2015-03-27  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [TexMap] Seperate BitmapTexture related classes implementations from TextureMapper
