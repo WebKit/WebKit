@@ -1,5 +1,51 @@
 2015-03-27  Michael Saboff  <msaboff@apple.com>
 
+        load8Signed() and load16Signed() should be renamed to avoid confusion
+        https://bugs.webkit.org/show_bug.cgi?id=143168
+
+        Reviewed by Benjamin Poulain.
+
+        Renamed load8Signed() to load8SignedExtendTo32() and load16Signed() to load16SignedExtendTo32().
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::load8SignedExtendTo32):
+        (JSC::MacroAssemblerARM::load16SignedExtendTo32):
+        (JSC::MacroAssemblerARM::load8Signed): Deleted.
+        (JSC::MacroAssemblerARM::load16Signed): Deleted.
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load16SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::load8SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::load16Signed): Deleted.
+        (JSC::MacroAssemblerARM64::load8Signed): Deleted.
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load16SignedExtendTo32):
+        (JSC::MacroAssemblerARMv7::load8SignedExtendTo32):
+        (JSC::MacroAssemblerARMv7::load16Signed): Deleted.
+        (JSC::MacroAssemblerARMv7::load8Signed): Deleted.
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::load8SignedExtendTo32):
+        (JSC::MacroAssemblerMIPS::load16SignedExtendTo32):
+        (JSC::MacroAssemblerMIPS::load8Signed): Deleted.
+        (JSC::MacroAssemblerMIPS::load16Signed): Deleted.
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::load8SignedExtendTo32):
+        (JSC::MacroAssemblerSH4::load8):
+        (JSC::MacroAssemblerSH4::load16SignedExtendTo32):
+        (JSC::MacroAssemblerSH4::load16):
+        (JSC::MacroAssemblerSH4::load8Signed): Deleted.
+        (JSC::MacroAssemblerSH4::load16Signed): Deleted.
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::load8SignedExtendTo32):
+        (JSC::MacroAssemblerX86Common::load16SignedExtendTo32):
+        (JSC::MacroAssemblerX86Common::load8Signed): Deleted.
+        (JSC::MacroAssemblerX86Common::load16Signed): Deleted.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+
+2015-03-27  Michael Saboff  <msaboff@apple.com>
+
         Fix flakey dfg-int8array.js and dfg-int16array.js tests for ARM64
         https://bugs.webkit.org/show_bug.cgi?id=138390
 

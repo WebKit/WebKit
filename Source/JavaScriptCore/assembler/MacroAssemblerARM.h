@@ -370,7 +370,7 @@ public:
         m_assembler.dataTransfer32(ARMAssembler::LoadUint8, dest, ARMRegisters::S0, 0);
     }
 
-    void load8Signed(BaseIndex address, RegisterID dest)
+    void load8SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
         m_assembler.baseIndexTransfer16(ARMAssembler::LoadInt8, dest, address.base, address.index, static_cast<int>(address.scale), address.offset);
     }
@@ -385,7 +385,7 @@ public:
         m_assembler.baseIndexTransfer16(ARMAssembler::LoadUint16, dest, address.base, address.index, static_cast<int>(address.scale), address.offset);
     }
 
-    void load16Signed(BaseIndex address, RegisterID dest)
+    void load16SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
         m_assembler.baseIndexTransfer16(ARMAssembler::LoadInt16, dest, address.base, address.index, static_cast<int>(address.scale), address.offset);
     }
