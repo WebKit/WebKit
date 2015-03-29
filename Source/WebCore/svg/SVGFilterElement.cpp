@@ -25,7 +25,6 @@
 #include "config.h"
 #include "SVGFilterElement.h"
 
-#include "Attr.h"
 #include "RenderSVGResourceFilter.h"
 #include "SVGFilterBuilder.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -124,9 +123,7 @@ void SVGFilterElement::parseAttribute(const QualifiedName& name, const AtomicStr
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(name))
-        SVGElement::parseAttribute(name, value);
-    else if (name == SVGNames::filterUnitsAttr) {
+    if (name == SVGNames::filterUnitsAttr) {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
             setFilterUnitsBaseValue(propertyValue);
@@ -148,13 +145,13 @@ void SVGFilterElement::parseAttribute(const QualifiedName& name, const AtomicStr
             setFilterResXBaseValue(x);
             setFilterResYBaseValue(y);
         }
-    } else if (SVGURIReference::parseAttribute(name, value)
-             || SVGLangSpace::parseAttribute(name, value)
-             || SVGExternalResourcesRequired::parseAttribute(name, value)) {
-    } else
-        ASSERT_NOT_REACHED();
+    }
 
     reportAttributeParsingError(parseError, name, value);
+
+    SVGElement::parseAttribute(name, value);
+    SVGURIReference::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGFilterElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -166,16 +163,13 @@ void SVGFilterElement::svgAttributeChanged(const QualifiedName& attrName)
 
     InstanceInvalidationGuard guard(*this);
 
-    if (attrName == SVGNames::xAttr
-        || attrName == SVGNames::yAttr
-        || attrName == SVGNames::widthAttr
-        || attrName == SVGNames::heightAttr) {
+    if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr || attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
         invalidateSVGPresentationAttributeStyle();
         return;
     }
 
-    if (RenderObject* object = renderer())
-        object->setNeedsLayout();
+    if (auto* renderer = this->renderer())
+        renderer->setNeedsLayout();
 }
 
 void SVGFilterElement::childrenChanged(const ChildChange& change)

@@ -24,7 +24,6 @@
 #include "config.h"
 #include "SVGLinearGradientElement.h"
 
-#include "Attribute.h"
 #include "Document.h"
 #include "FloatPoint.h"
 #include "LinearGradientAttributes.h"
@@ -85,9 +84,7 @@ void SVGLinearGradientElement::parseAttribute(const QualifiedName& name, const A
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(name))
-        SVGGradientElement::parseAttribute(name, value);
-    else if (name == SVGNames::x1Attr)
+    if (name == SVGNames::x1Attr)
         setX1BaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::y1Attr)
         setY1BaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
@@ -95,10 +92,10 @@ void SVGLinearGradientElement::parseAttribute(const QualifiedName& name, const A
         setX2BaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::y2Attr)
         setY2BaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else
-        ASSERT_NOT_REACHED();
 
     reportAttributeParsingError(parseError, name, value);
+
+    SVGGradientElement::parseAttribute(name, value);
 }
 
 void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName)

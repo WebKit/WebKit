@@ -22,7 +22,6 @@
 #include "config.h"
 #include "SVGClipPathElement.h"
 
-#include "Attribute.h"
 #include "Document.h"
 #include "RenderSVGResourceClipper.h"
 #include "SVGNames.h"
@@ -68,24 +67,15 @@ bool SVGClipPathElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGClipPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGGraphicsElement::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::clipPathUnitsAttr) {
-        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
+        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
             setClipPathUnitsBaseValue(propertyValue);
         return;
     }
 
-    if (SVGLangSpace::parseAttribute(name, value))
-        return;
-    if (SVGExternalResourcesRequired::parseAttribute(name, value))
-        return;
-
-    ASSERT_NOT_REACHED();
+    SVGGraphicsElement::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGClipPathElement::svgAttributeChanged(const QualifiedName& attrName)

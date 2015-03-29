@@ -26,7 +26,6 @@
 #include "config.h"
 #include "RenderSVGImage.h"
 
-#include "Attr.h"
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "LayoutRepainter.h"

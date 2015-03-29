@@ -22,7 +22,6 @@
 #include "config.h"
 #include "SVGForeignObjectElement.h"
 
-#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "RenderSVGForeignObject.h"
 #include "RenderSVGResource.h"
@@ -86,9 +85,7 @@ void SVGForeignObjectElement::parseAttribute(const QualifiedName& name, const At
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(name))
-        SVGGraphicsElement::parseAttribute(name, value);
-    else if (name == SVGNames::xAttr)
+    if (name == SVGNames::xAttr)
         setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
         setYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
@@ -96,12 +93,11 @@ void SVGForeignObjectElement::parseAttribute(const QualifiedName& name, const At
         setWidthBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::heightAttr)
         setHeightBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else if (SVGLangSpace::parseAttribute(name, value)
-               || SVGExternalResourcesRequired::parseAttribute(name, value)) {
-    } else
-        ASSERT_NOT_REACHED();
 
     reportAttributeParsingError(parseError, name, value);
+
+    SVGGraphicsElement::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)

@@ -22,7 +22,6 @@
 #include "config.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
-#include "Attribute.h"
 #include "FilterEffect.h"
 #include "RenderSVGResourceFilterPrimitive.h"
 #include "SVGElement.h"
@@ -79,9 +78,7 @@ void SVGFilterPrimitiveStandardAttributes::parseAttribute(const QualifiedName& n
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(name))
-        SVGElement::parseAttribute(name, value);
-    else if (name == SVGNames::xAttr)
+    if (name == SVGNames::xAttr)
         setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
         setYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
@@ -91,10 +88,10 @@ void SVGFilterPrimitiveStandardAttributes::parseAttribute(const QualifiedName& n
         setHeightBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::resultAttr)
         setResultBaseValue(value);
-    else
-        ASSERT_NOT_REACHED();
 
     reportAttributeParsingError(parseError, name, value);
+
+    SVGElement::parseAttribute(name, value);
 }
 
 bool SVGFilterPrimitiveStandardAttributes::setFilterEffectAttribute(FilterEffect*, const QualifiedName&)

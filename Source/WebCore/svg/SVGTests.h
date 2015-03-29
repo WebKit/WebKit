@@ -37,10 +37,11 @@ public:
     static bool hasExtension(const String&);
     bool isValid() const;
 
-    bool parseAttribute(const QualifiedName&, const AtomicString&);
-    static bool isKnownAttribute(const QualifiedName&);
+    void parseAttribute(const QualifiedName&, const AtomicString&);
 
+    static bool isKnownAttribute(const QualifiedName&);
     static void addSupportedAttributes(HashSet<QualifiedName>&);
+
     static bool handleAttributeChange(SVGElement*, const QualifiedName&);
 
     static const SVGAttributeToPropertyMap& attributeToPropertyMap();

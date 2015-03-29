@@ -257,7 +257,6 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString
 
     reportAttributeParsingError(parseError, name, value);
 
-    SVGLangSpace::parseAttribute(name, value);
     SVGExternalResourcesRequired::parseAttribute(name, value);
     SVGFitToViewBox::parseAttribute(this, name, value);
     SVGZoomAndPan::parseAttribute(*this, name, value);

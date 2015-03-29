@@ -23,8 +23,6 @@
 #include "config.h"
 #include "SVGAElement.h"
 
-#include "Attr.h"
-#include "Attribute.h"
 #include "Document.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -43,7 +41,6 @@
 #include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "XLinkNames.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -82,57 +79,30 @@ String SVGAElement::title() const
     return SVGElement::title();
 }
 
-bool SVGAElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGURIReference::addSupportedAttributes(supportedAttributes);
-        SVGLangSpace::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::targetAttr);
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGAElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGGraphicsElement::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::targetAttr) {
         setSVGTargetBaseValue(value);
         return;
     }
 
-    if (SVGURIReference::parseAttribute(name, value))
-        return;
-    if (SVGLangSpace::parseAttribute(name, value))
-        return;
-    if (SVGExternalResourcesRequired::parseAttribute(name, value))
-        return;
-
-    ASSERT_NOT_REACHED();
+    SVGGraphicsElement::parseAttribute(name, value);
+    SVGURIReference::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGGraphicsElement::svgAttributeChanged(attrName);
-        return;
-    }
-
-    InstanceInvalidationGuard guard(*this);
-
-    // Unlike other SVG*Element classes, SVGAElement only listens to SVGURIReference changes
-    // as none of the other properties changes the linking behaviour for our <a> element.
     if (SVGURIReference::isKnownAttribute(attrName)) {
         bool wasLink = isLink();
         setIsLink(!href().isNull() && !shouldProhibitLinks(this));
-        if (wasLink != isLink())
+        if (wasLink != isLink()) {
+            InstanceInvalidationGuard guard(*this);
             setNeedsStyleRecalc();
+        }
     }
+
+    SVGGraphicsElement::svgAttributeChanged(attrName);
 }
 
 RenderPtr<RenderElement> SVGAElement::createElementRenderer(Ref<RenderStyle>&& style)

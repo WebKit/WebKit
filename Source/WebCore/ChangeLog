@@ -1,5 +1,271 @@
 2015-03-29  Darin Adler  <darin@apple.com>
 
+        Remove unneeded SVG code, including most isSupportedAttribute functions
+        https://bugs.webkit.org/show_bug.cgi?id=143194
+
+        Reviewed by Antti Koivisto.
+
+        - Removed most implementations of isSupportedAttribute. Others can be removed in
+          future patches. The ones left behind are now all private static member functions.
+          It's dangerous for them to be public because they tend to indicate which attributes
+          are supported at a particular level in the class hierarchy and they are not virtual
+          functions; might want to rethink the function name if we keep any of these long term.
+
+        - Removed unneeded includes, especially of Attr.h and Attribute.h.
+
+        - Changed most parseAttribute and svgAttributeChanged functions so they no longer
+          rely on checking attribute names against a set. Also removed lots of unneeded calls
+          to SVGLangSpace::parseAttribute, which is called by SVGElement::parseAttribute and
+          need not be called by derived classes.
+
+        - Removed return values from parseAttribute functions. Skipping other parseAttribute
+          logic is not an important optimization and makes functions needlessly complex.
+
+        - Moved use of InstanceInvalidationGuard closer to where they are needed. Eventually
+          we may be able to remove many of these.
+
+        - Used auto in a few places where the same type is repeated twice on the same line of
+          code, and auto makes it a bit smaller.
+
+        - Got rid of protected sections in some final classes; doesn't make sense to combine
+          these two. Also moved a few functions from protected to private in other classes.
+
+        - Made a number of functions into static member functions in the base classes such
+          as SVGLangSpace; they were not making any use of the object, and so it was wasteful
+          to compile them as non-static member functions.
+
+        * rendering/svg/RenderSVGImage.cpp: Removed unneeded includes.
+        * svg/SVGAElement.cpp: Removed unneeded includes.
+        (WebCore::SVGAElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGAElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGAElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGAElement.h: Removed isSupportedAttribute.
+        * svg/SVGAnimateMotionElement.cpp: Removed unneeded includes.
+        (WebCore::SVGAnimateMotionElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGAnimateMotionElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGAnimateMotionElement.h: Removed isSupportedAttribute.
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGAnimateTransformElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGAnimateTransformElement.h: Removed isSupportedAttribute.
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGCircleElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGCircleElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGCircleElement.h: Removed isSupportedAttribute.
+        * svg/SVGClipPathElement.cpp: Removed unneeded includes.
+        (WebCore::SVGClipPathElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGCursorElement.cpp: Removed unneeded includes.
+        (WebCore::SVGCursorElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGCursorElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGElement.cpp: Removed unneeded includes.
+        * svg/SVGEllipseElement.cpp: Removed unneeded includes.
+        (WebCore::SVGEllipseElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGEllipseElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGEllipseElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGEllipseElement.h: Removed isSupportedAttribute.
+        * svg/SVGExternalResourcesRequired.cpp: Removed unneeded includes.
+        (WebCore::SVGExternalResourcesRequired::parseAttribute): Don't return a boolean.
+        * svg/SVGExternalResourcesRequired.h: Don't return a boolean.
+        * svg/SVGFEBlendElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFEBlendElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFEBlendElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFEBlendElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFEBlendElement.h: Removed isSupportedAttribute.
+        * svg/SVGFEColorMatrixElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFEColorMatrixElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFEColorMatrixElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFEColorMatrixElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFEColorMatrixElement.h: Removed isSupportedAttribute.
+        * svg/SVGFEComponentTransferElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFEComponentTransferElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFEComponentTransferElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGFEComponentTransferElement.h: Removed unneeded includes.
+        * svg/SVGFECompositeElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFECompositeElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFECompositeElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFECompositeElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEConvolveMatrixElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFEConvolveMatrixElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFEConvolveMatrixElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFEConvolveMatrixElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFEDiffuseLightingElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFEDiffuseLightingElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFEDiffuseLightingElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFEDisplacementMapElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFEDisplacementMapElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFEDisplacementMapElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEDropShadowElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFEDropShadowElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFEDropShadowElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFEDropShadowElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFEDropShadowElement.h:
+        * svg/SVGFEFloodElement.cpp: Removed unneeded includes.
+        * svg/SVGFEGaussianBlurElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFEGaussianBlurElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFEGaussianBlurElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFEGaussianBlurElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEImageElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFEImageElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFEImageElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFEImageElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFELightElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFELightElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFELightElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFELightElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEMergeNodeElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFEMergeNodeElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFEMergeNodeElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFEMergeNodeElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFEMorphologyElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFEMorphologyElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFEMorphologyElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFEMorphologyElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEOffsetElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFEOffsetElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFEOffsetElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFEOffsetElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFESpecularLightingElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFESpecularLightingElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFESpecularLightingElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFESpecularLightingElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFETileElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFETileElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFETileElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFETileElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFETurbulenceElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGFETurbulenceElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGFETurbulenceElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFilterElement.cpp: Removed unneeded includes.
+        (WebCore::SVGFilterElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp: Removed unneeded includes.
+        (WebCore::SVGFilterPrimitiveStandardAttributes::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGFilterPrimitiveStandardAttributes.h: Removed isSupportedAttribute and also moved a
+        couple functions out of the class definition.
+        * svg/SVGFitToViewBox.cpp: Removed unneeded includes.
+        * svg/SVGFontFaceElement.cpp: Removed unneeded includes.
+        * svg/SVGFontFaceUriElement.cpp: Removed unneeded includes.
+        * svg/SVGForeignObjectElement.cpp: Removed unneeded includes.
+        (WebCore::SVGForeignObjectElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGGElement.cpp: Removed unneeded includes.
+        (WebCore::SVGGElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGGlyphElement.cpp: Removed unneeded includes.
+        * svg/SVGGlyphRefElement.cpp: Removed unneeded includes.
+        (WebCore::SVGGlyphRefElement::hasValidGlyphElement): Rewrote to use is<> instead of hasTagName.
+        (WebCore::SVGGlyphRefElement::parseAttribute): Don't use return value from SVGURIReference::parseAttribute.
+        * svg/SVGGradientElement.cpp: Removed unneeded includes.
+        (WebCore::SVGGradientElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGGraphicsElement.cpp: Removed unneeded includes.
+        (WebCore::SVGGraphicsElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGImageElement.cpp: Removed unneeded includes.
+        (WebCore::SVGImageElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGLangSpace.cpp: Removed unneeded includes.
+        (WebCore::SVGLangSpace::parseAttribute): Removed the return value.
+        * svg/SVGLangSpace.h: Converted functions to static member functions and removed the
+        return value from parseAttribute.
+        * svg/SVGLineElement.cpp: Removed unneeded includes.
+        (WebCore::SVGLineElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGLinearGradientElement.cpp: Removed unneeded includes.
+        (WebCore::SVGLinearGradientElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGMPathElement.cpp: Removed unneeded includes.
+        (WebCore::SVGMPathElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGMPathElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGMPathElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGMPathElement.h: Removed isSupportedAttribute and made didNotifySubtreeInsertions
+        private instead of protected.
+        * svg/SVGMarkerElement.cpp: Removed unneeded includes.
+        (WebCore::SVGMarkerElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGMaskElement.cpp: Removed unneeded includes.
+        (WebCore::SVGMaskElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGPathElement.cpp: Removed unneeded includes.
+        (WebCore::SVGPathElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGPatternElement.cpp: Removed unneeded includes.
+        (WebCore::SVGPatternElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGPolyElement.cpp: Removed unneeded includes.
+        (WebCore::SVGPolyElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGPolyElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGPolyElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGPolyElement.h:
+        * svg/SVGRadialGradientElement.cpp: Removed unneeded includes.
+        (WebCore::SVGRadialGradientElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGRectElement.cpp: Removed unneeded includes.
+        (WebCore::SVGRectElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGRectElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGRectElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.cpp: Removed unneeded includes.
+        (WebCore::SVGSVGElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGScriptElement.cpp: Removed unneeded includes.
+        * svg/SVGStopElement.cpp: Removed unneeded includes.
+        (WebCore::SVGStopElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGStopElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGStopElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGStopElement.h: Removed isSupportedAttribute.
+        * svg/SVGStyleElement.cpp: Removed unneeded includes.
+        (WebCore::SVGStyleElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGStyleElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGStyleElement.h: Removed isSupportedAttribute.
+        * svg/SVGSymbolElement.cpp: Removed unneeded includes.
+        (WebCore::SVGSymbolElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGSymbolElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGSymbolElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGSymbolElement.h: Removed isSupportedAttribute.
+        * svg/SVGTRefElement.cpp: Removed unneeded includes.
+        (WebCore::SVGTRefElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGTRefElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGTRefElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGTRefElement.h: Removed isSupportedAttribute and made didNotifySubtreeInsertions
+        private instead of protected.
+        * svg/SVGTests.cpp: Removed unneeded includes.
+        (WebCore::SVGTests::parseAttribute): Removed return value.
+        * svg/SVGTests.h: Removed return value of parseAttribute.
+        * svg/SVGTextContentElement.cpp: Removed unneeded includes.
+        (WebCore::SVGTextContentElement::collectStyleForPresentationAttribute): Don't use
+        isSupportedAttribute. Also removed global to optimize comparing attribute value against
+        the string "preserve".
+        (WebCore::SVGTextContentElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGTextContentElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGTextContentElement.h: Made isSupportedAttribute private instead of protected.
+        * svg/SVGTextElement.cpp: Removed unneeded includes.
+        * svg/SVGTextPathElement.cpp: Removed unneeded includes.
+        (WebCore::SVGTextPathElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGTextPositioningElement.cpp: Removed unneeded includes.
+        (WebCore::SVGTextPositioningElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGTextPositioningElement::parseAttribute): Don't use isSupportedAttribute.
+        (WebCore::SVGTextPositioningElement::svgAttributeChanged): Don't use isSupportedAttribute.
+        * svg/SVGTextPositioningElement.h: Removed isSupportedAttribute and made some functions
+        private insetad of protected.
+        * svg/SVGURIReference.cpp: Removed unneeded includes.
+        (WebCore::SVGURIReference::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGURIReference.h:
+        (WebCore::SVGURIReference::isExternalURIReference):
+        * svg/SVGUseElement.cpp: Removed unneeded includes.
+        (WebCore::SVGUseElement::parseAttribute): Don't use isSupportedAttribute.
+        * svg/SVGViewElement.h: Removed isSupportedAttribute.
+        * svg/animation/SVGSMILElement.cpp: Removed unneeded includes.
+
+2015-03-29  Darin Adler  <darin@apple.com>
+
         Remove unneeded includes of "Attribute.h"
         https://bugs.webkit.org/show_bug.cgi?id=143195
 

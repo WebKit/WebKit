@@ -26,7 +26,6 @@
 
 namespace WebCore {
 
-class Attribute;
 class SVGElement;
 
 // Notes on a SVG 1.1 spec discrepancy:
@@ -38,14 +37,16 @@ class SVGExternalResourcesRequired {
 public:
     virtual ~SVGExternalResourcesRequired() { }
 
-    bool parseAttribute(const QualifiedName&, const AtomicString&);
-    bool isKnownAttribute(const QualifiedName&);
-    void addSupportedAttributes(HashSet<QualifiedName>&);
+    void parseAttribute(const QualifiedName&, const AtomicString&);
+
+    static bool isKnownAttribute(const QualifiedName&);
+    static void addSupportedAttributes(HashSet<QualifiedName>&);
+
     bool handleAttributeChange(SVGElement*, const QualifiedName&);
 
 protected:
     // These types look a bit awkward, but have to match the generic types of the SVGAnimatedProperty macros.
-    virtual void setExternalResourcesRequiredBaseValue(const bool&, const bool validValue = true) = 0;
+    virtual void setExternalResourcesRequiredBaseValue(const bool&, bool validValue = true) = 0;
     virtual bool& externalResourcesRequiredBaseValue() const = 0;
 
     virtual void setHaveFiredLoadEvent(bool) { }

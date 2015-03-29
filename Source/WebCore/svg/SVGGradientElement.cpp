@@ -76,13 +76,8 @@ bool SVGGradientElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGGradientElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGElement::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::gradientUnitsAttr) {
-        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
+        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
             setGradientUnitsBaseValue(propertyValue);
         return;
@@ -97,18 +92,15 @@ void SVGGradientElement::parseAttribute(const QualifiedName& name, const AtomicS
     }
 
     if (name == SVGNames::spreadMethodAttr) {
-        SVGSpreadMethodType propertyValue = SVGPropertyTraits<SVGSpreadMethodType>::fromString(value);
+        auto propertyValue = SVGPropertyTraits<SVGSpreadMethodType>::fromString(value);
         if (propertyValue > 0)
             setSpreadMethodBaseValue(propertyValue);
         return;
     }
 
-    if (SVGURIReference::parseAttribute(name, value))
-        return;
-    if (SVGExternalResourcesRequired::parseAttribute(name, value))
-        return;
-
-    ASSERT_NOT_REACHED();
+    SVGElement::parseAttribute(name, value);
+    SVGURIReference::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGGradientElement::svgAttributeChanged(const QualifiedName& attrName)

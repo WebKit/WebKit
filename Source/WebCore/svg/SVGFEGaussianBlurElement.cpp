@@ -21,12 +21,10 @@
 #include "config.h"
 #include "SVGFEGaussianBlurElement.h"
 
-#include "Attribute.h"
 #include "FilterEffect.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -76,24 +74,8 @@ void SVGFEGaussianBlurElement::setStdDeviation(float x, float y)
     invalidate();
 }
 
-bool SVGFEGaussianBlurElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        supportedAttributes.get().add(SVGNames::inAttr);
-        supportedAttributes.get().add(SVGNames::stdDeviationAttr);
-        supportedAttributes.get().add(SVGNames::edgeModeAttr);
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGFEGaussianBlurElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::stdDeviationAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
@@ -109,36 +91,26 @@ void SVGFEGaussianBlurElement::parseAttribute(const QualifiedName& name, const A
     }
 
     if (name == SVGNames::edgeModeAttr) {
-        EdgeModeType propertyValue = SVGPropertyTraits<EdgeModeType>::fromString(value);
+        auto propertyValue = SVGPropertyTraits<EdgeModeType>::fromString(value);
         if (propertyValue > 0)
             setEdgeModeBaseValue(propertyValue);
         else
-            document().accessSVGExtensions().reportWarning(
-                "feGaussianBlur: problem parsing edgeMode=\"" + value
-                + "\". Filtered element will not be displayed.");
+            document().accessSVGExtensions().reportWarning("feGaussianBlur: problem parsing edgeMode=\"" + value + "\". Filtered element will not be displayed.");
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 void SVGFEGaussianBlurElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
-        return;
-    }
-
-    InstanceInvalidationGuard guard(*this);
-    
-    if (attrName == SVGNames::inAttr
-        || attrName == SVGNames::stdDeviationAttr
-        || attrName == SVGNames::edgeModeAttr) {
+    if (attrName == SVGNames::inAttr || attrName == SVGNames::stdDeviationAttr || attrName == SVGNames::edgeModeAttr) {
+        InstanceInvalidationGuard guard(*this);
         invalidate();
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
 PassRefPtr<FilterEffect> SVGFEGaussianBlurElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)

@@ -42,13 +42,11 @@ public:
 
     virtual ~SVGFEImageElement();
 
-protected:
-    virtual void didNotifySubtreeInsertions(ContainerNode*) override;
-
 private:
     SVGFEImageElement(const QualifiedName&, Document&);
 
-    bool isSupportedAttribute(const QualifiedName&);
+    virtual void didNotifySubtreeInsertions(ContainerNode*) override;
+
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&) override;
     virtual void notifyFinished(CachedResource*) override;

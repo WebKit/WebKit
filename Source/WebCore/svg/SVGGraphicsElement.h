@@ -56,8 +56,6 @@ public:
 protected:
     SVGGraphicsElement(const QualifiedName&, Document&);
 
-    bool isSupportedAttribute(const QualifiedName&);
-
     virtual bool supportsFocus() const override { return Element::supportsFocus() || hasFocusEventListeners(); }
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
@@ -69,6 +67,8 @@ protected:
 
 private:
     virtual bool isSVGGraphicsElement() const override { return true; }
+
+    static bool isSupportedAttribute(const QualifiedName&);
 
     // SVGTests
     virtual void synchronizeRequiredFeatures() override { SVGTests::synchronizeRequiredFeatures(this); }

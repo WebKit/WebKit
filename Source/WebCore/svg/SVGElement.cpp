@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SVGElement.h"
 
-#include "Attr.h"
 #include "CSSCursorImageValue.h"
 #include "CSSParser.h"
 #include "DOMImplementation.h"

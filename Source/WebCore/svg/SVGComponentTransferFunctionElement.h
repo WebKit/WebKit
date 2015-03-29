@@ -76,13 +76,14 @@ public:
 protected:
     SVGComponentTransferFunctionElement(const QualifiedName&, Document&);
 
-    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&) override;
 
     virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
     
 private:
+    static bool isSupportedAttribute(const QualifiedName&);
+
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGComponentTransferFunctionElement)
         DECLARE_ANIMATED_ENUMERATION(Type, type, ComponentTransferType)
         DECLARE_ANIMATED_NUMBER_LIST(TableValues, tableValues)

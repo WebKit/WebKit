@@ -35,7 +35,6 @@
 #include "StyleInheritedData.h"
 #include "Text.h"
 #include "XLinkNames.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -177,44 +176,23 @@ void SVGTRefElement::detachTarget()
         document().accessSVGExtensions().addPendingResource(id, this);
 }
 
-bool SVGTRefElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty())
-        SVGURIReference::addSupportedAttributes(supportedAttributes);
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGTRefElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGTextPositioningElement::parseAttribute(name, value);
-        return;
-    }
-
-    if (SVGURIReference::parseAttribute(name, value))
-        return;
-
-    ASSERT_NOT_REACHED();
+    SVGTextPositioningElement::parseAttribute(name, value);
+    SVGURIReference::parseAttribute(name, value);
 }
 
 void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGTextPositioningElement::svgAttributeChanged(attrName);
-        return;
-    }
-
-    InstanceInvalidationGuard guard(*this);
-
     if (SVGURIReference::isKnownAttribute(attrName)) {
+        InstanceInvalidationGuard guard(*this);
         buildPendingResource();
         if (auto renderer = this->renderer())
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGTextPositioningElement::svgAttributeChanged(attrName);
 }
 
 RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(Ref<RenderStyle>&& style)

@@ -73,7 +73,6 @@ public:
 private:
     SVGFEDisplacementMapElement(const QualifiedName& tagName, Document&);
     
-    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName) override;
     virtual void svgAttributeChanged(const QualifiedName&) override;

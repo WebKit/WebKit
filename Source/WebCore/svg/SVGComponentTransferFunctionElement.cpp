@@ -21,7 +21,6 @@
 #include "config.h"
 #include "SVGComponentTransferFunctionElement.h"
 
-#include "Attribute.h"
 #include "SVGFEComponentTransferElement.h"
 #include "SVGNames.h"
 #include "SVGNumberList.h"
@@ -75,11 +74,6 @@ bool SVGComponentTransferFunctionElement::isSupportedAttribute(const QualifiedNa
 
 void SVGComponentTransferFunctionElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGElement::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::typeAttr) {
         ComponentTransferType propertyValue = SVGPropertyTraits<ComponentTransferType>::fromString(value);
         if (propertyValue > 0)
@@ -120,7 +114,7 @@ void SVGComponentTransferFunctionElement::parseAttribute(const QualifiedName& na
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGElement::parseAttribute(name, value);
 }
 
 void SVGComponentTransferFunctionElement::svgAttributeChanged(const QualifiedName& attrName)

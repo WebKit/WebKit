@@ -22,7 +22,6 @@
 #include "config.h"
 #include "SVGFELightElement.h"
 
-#include "Attribute.h"
 #include "ElementIterator.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
@@ -31,7 +30,6 @@
 #include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -84,31 +82,8 @@ PassRefPtr<LightSource> SVGFELightElement::findLightSource(const SVGElement* svg
     return lightNode->lightSource();
 }
 
-bool SVGFELightElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        supportedAttributes.get().add(SVGNames::azimuthAttr);
-        supportedAttributes.get().add(SVGNames::elevationAttr);
-        supportedAttributes.get().add(SVGNames::xAttr);
-        supportedAttributes.get().add(SVGNames::yAttr);
-        supportedAttributes.get().add(SVGNames::zAttr);
-        supportedAttributes.get().add(SVGNames::pointsAtXAttr);
-        supportedAttributes.get().add(SVGNames::pointsAtYAttr);
-        supportedAttributes.get().add(SVGNames::pointsAtZAttr);
-        supportedAttributes.get().add(SVGNames::specularExponentAttr);
-        supportedAttributes.get().add(SVGNames::limitingConeAngleAttr);
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGFELightElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGElement::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::azimuthAttr) {
         setAzimuthBaseValue(value.toFloat());
         return;
@@ -159,48 +134,36 @@ void SVGFELightElement::parseAttribute(const QualifiedName& name, const AtomicSt
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGElement::parseAttribute(name, value);
 }
 
 void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGElement::svgAttributeChanged(attrName);
-        return;
-    }
+    if (attrName == SVGNames::azimuthAttr || attrName == SVGNames::elevationAttr
+        || attrName == SVGNames::xAttr || attrName == SVGNames::yAttr || attrName == SVGNames::zAttr
+        || attrName == SVGNames::pointsAtXAttr || attrName == SVGNames::pointsAtYAttr || attrName == SVGNames::pointsAtZAttr
+        || attrName == SVGNames::specularExponentAttr || attrName == SVGNames::limitingConeAngleAttr) {
 
-    InstanceInvalidationGuard guard(*this);
-    
-    if (attrName == SVGNames::azimuthAttr
-        || attrName == SVGNames::elevationAttr
-        || attrName == SVGNames::xAttr
-        || attrName == SVGNames::yAttr
-        || attrName == SVGNames::zAttr
-        || attrName == SVGNames::pointsAtXAttr
-        || attrName == SVGNames::pointsAtYAttr
-        || attrName == SVGNames::pointsAtZAttr
-        || attrName == SVGNames::specularExponentAttr
-        || attrName == SVGNames::limitingConeAngleAttr) {
-        ContainerNode* parent = parentNode();
+        auto* parent = parentElement();
         if (!parent)
             return;
 
-        RenderObject* renderer = parent->renderer();
+        auto* renderer = parent->renderer();
         if (!renderer || !renderer->isSVGResourceFilterPrimitive())
             return;
 
-        if (parent->hasTagName(SVGNames::feDiffuseLightingTag)) {
-            SVGFEDiffuseLightingElement* diffuseLighting = static_cast<SVGFEDiffuseLightingElement*>(parent);
-            diffuseLighting->lightElementAttributeChanged(this, attrName);
-            return;
-        } else if (parent->hasTagName(SVGNames::feSpecularLightingTag)) {
-            SVGFESpecularLightingElement* specularLighting = static_cast<SVGFESpecularLightingElement*>(parent);
-            specularLighting->lightElementAttributeChanged(this, attrName);
-            return;
+        if (is<SVGFEDiffuseLightingElement>(*parent)) {
+            InstanceInvalidationGuard guard(*this);
+            downcast<SVGFEDiffuseLightingElement>(*parent).lightElementAttributeChanged(this, attrName);
+        } else if (is<SVGFESpecularLightingElement>(*parent)) {
+            InstanceInvalidationGuard guard(*this);
+            downcast<SVGFESpecularLightingElement>(*parent).lightElementAttributeChanged(this, attrName);
         }
+
+        return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGElement::svgAttributeChanged(attrName);
 }
 
 void SVGFELightElement::childrenChanged(const ChildChange& change)

@@ -26,21 +26,18 @@
 
 namespace WebCore {
 
-class Attribute;
-class Element;
-
 class SVGURIReference {
 public:
     virtual ~SVGURIReference() { }
 
-    bool parseAttribute(const QualifiedName&, const AtomicString&);
-    bool isKnownAttribute(const QualifiedName&);
-    void addSupportedAttributes(HashSet<QualifiedName>&);
+    void parseAttribute(const QualifiedName&, const AtomicString&);
+    static bool isKnownAttribute(const QualifiedName&);
+    static void addSupportedAttributes(HashSet<QualifiedName>&);
 
     static String fragmentIdentifierFromIRIString(const String&, Document&);
     static Element* targetElementFromIRIString(const String&, Document&, String* = 0, Document* = 0);
 
-    static inline bool isExternalURIReference(const String& uri, Document& document)
+    static bool isExternalURIReference(const String& uri, Document& document)
     {
         // Fragment-only URIs are always internal
         if (uri.startsWith('#'))

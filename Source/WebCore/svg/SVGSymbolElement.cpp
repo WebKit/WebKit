@@ -24,7 +24,6 @@
 #include "RenderSVGHiddenContainer.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -52,46 +51,22 @@ Ref<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGSymbolElement(tagName, document));
 }
 
-bool SVGSymbolElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGLangSpace::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        SVGFitToViewBox::addSupportedAttributes(supportedAttributes);
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGSymbolElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGElement::parseAttribute(name, value);
-        return;
-    }
-
-    if (SVGLangSpace::parseAttribute(name, value))
-        return;
-    if (SVGExternalResourcesRequired::parseAttribute(name, value))
-        return;
-    if (SVGFitToViewBox::parseAttribute(this, name, value))
-        return;
-
-    ASSERT_NOT_REACHED();
+    SVGElement::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
+    SVGFitToViewBox::parseAttribute(this, name, value);
 }
 
 void SVGSymbolElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGElement::svgAttributeChanged(attrName);
+    if (attrName == SVGNames::viewBoxAttr) {
+        InstanceInvalidationGuard guard(*this);
+        updateRelativeLengthsInformation();
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
-
-    // Every other property change is ignored.
-    if (attrName == SVGNames::viewBoxAttr)
-        updateRelativeLengthsInformation();
+    SVGElement::svgAttributeChanged(attrName);
 }
 
 bool SVGSymbolElement::selfHasRelativeLengths() const

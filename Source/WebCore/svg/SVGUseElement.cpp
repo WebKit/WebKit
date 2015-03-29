@@ -98,7 +98,6 @@ void SVGUseElement::parseAttribute(const QualifiedName& name, const AtomicString
 
     SVGExternalResourcesRequired::parseAttribute(name, value);
     SVGGraphicsElement::parseAttribute(name, value);
-    SVGLangSpace::parseAttribute(name, value);
     SVGURIReference::parseAttribute(name, value);
 }
 

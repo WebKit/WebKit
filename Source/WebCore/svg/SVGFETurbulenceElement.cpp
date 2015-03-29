@@ -21,10 +21,8 @@
 #include "config.h"
 #include "SVGFETurbulenceElement.h"
 
-#include "Attribute.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -73,26 +71,8 @@ const AtomicString& SVGFETurbulenceElement::baseFrequencyYIdentifier()
     return s_identifier;
 }
 
-bool SVGFETurbulenceElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        supportedAttributes.get().add(SVGNames::baseFrequencyAttr);
-        supportedAttributes.get().add(SVGNames::numOctavesAttr);
-        supportedAttributes.get().add(SVGNames::seedAttr);
-        supportedAttributes.get().add(SVGNames::stitchTilesAttr);
-        supportedAttributes.get().add(SVGNames::typeAttr);
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGFETurbulenceElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::typeAttr) {
         TurbulenceType propertyValue = SVGPropertyTraits<TurbulenceType>::fromString(value);
         if (propertyValue > 0)
@@ -126,7 +106,7 @@ void SVGFETurbulenceElement::parseAttribute(const QualifiedName& name, const Ato
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 bool SVGFETurbulenceElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
@@ -149,23 +129,13 @@ bool SVGFETurbulenceElement::setFilterEffectAttribute(FilterEffect* effect, cons
 
 void SVGFETurbulenceElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
-        return;
-    }
-
-    InstanceInvalidationGuard guard(*this);
-    
-    if (attrName == SVGNames::baseFrequencyAttr
-        || attrName == SVGNames::numOctavesAttr
-        || attrName == SVGNames::seedAttr
-        || attrName == SVGNames::stitchTilesAttr
-        || attrName == SVGNames::typeAttr) {
+    if (attrName == SVGNames::baseFrequencyAttr || attrName == SVGNames::numOctavesAttr || attrName == SVGNames::seedAttr || attrName == SVGNames::stitchTilesAttr || attrName == SVGNames::typeAttr) {
+        InstanceInvalidationGuard guard(*this);
         primitiveAttributeChanged(attrName);
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
 PassRefPtr<FilterEffect> SVGFETurbulenceElement::build(SVGFilterBuilder*, Filter* filter)

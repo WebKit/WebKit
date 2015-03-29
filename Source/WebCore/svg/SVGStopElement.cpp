@@ -21,13 +21,11 @@
 #include "config.h"
 #include "SVGStopElement.h"
 
-#include "Attribute.h"
 #include "Document.h"
 #include "RenderSVGGradientStop.h"
 #include "RenderSVGResource.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -52,21 +50,8 @@ Ref<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGStopElement(tagName, document));
 }
 
-bool SVGStopElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty())
-        supportedAttributes.get().add(SVGNames::offsetAttr);
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGStopElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGElement::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::offsetAttr) {
         if (value.endsWith('%'))
             setOffsetBaseValue(value.string().left(value.length() - 1).toFloat() / 100.0f);
@@ -75,25 +60,20 @@ void SVGStopElement::parseAttribute(const QualifiedName& name, const AtomicStrin
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGElement::parseAttribute(name, value);
 }
 
 void SVGStopElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGElement::svgAttributeChanged(attrName);
-        return;
-    }
-
-    InstanceInvalidationGuard guard(*this);
-
     if (attrName == SVGNames::offsetAttr) {
-        if (auto renderer = this->renderer())
+        if (auto renderer = this->renderer()) {
+            InstanceInvalidationGuard guard(*this);
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+        }
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGElement::svgAttributeChanged(attrName);
 }
 
 RenderPtr<RenderElement> SVGStopElement::createElementRenderer(Ref<RenderStyle>&& style)

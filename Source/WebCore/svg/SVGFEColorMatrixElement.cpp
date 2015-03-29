@@ -21,11 +21,9 @@
 #include "config.h"
 #include "SVGFEColorMatrixElement.h"
 
-#include "Attribute.h"
 #include "FilterEffect.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -54,26 +52,10 @@ Ref<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const QualifiedName
     return adoptRef(*new SVGFEColorMatrixElement(tagName, document));
 }
 
-bool SVGFEColorMatrixElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        supportedAttributes.get().add(SVGNames::typeAttr);
-        supportedAttributes.get().add(SVGNames::valuesAttr);
-        supportedAttributes.get().add(SVGNames::inAttr);
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGFEColorMatrixElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::typeAttr) {
-        ColorMatrixType propertyValue = SVGPropertyTraits<ColorMatrixType>::fromString(value);
+        auto propertyValue = SVGPropertyTraits<ColorMatrixType>::fromString(value);
         if (propertyValue > 0)
             setTypeBaseValue(propertyValue);
         return;
@@ -92,7 +74,7 @@ void SVGFEColorMatrixElement::parseAttribute(const QualifiedName& name, const At
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 bool SVGFEColorMatrixElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
@@ -109,24 +91,19 @@ bool SVGFEColorMatrixElement::setFilterEffectAttribute(FilterEffect* effect, con
 
 void SVGFEColorMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
-        return;
-    }
-
-    InstanceInvalidationGuard guard(*this);
-
     if (attrName == SVGNames::typeAttr || attrName == SVGNames::valuesAttr) {
+        InstanceInvalidationGuard guard(*this);
         primitiveAttributeChanged(attrName);
         return;
     }
 
     if (attrName == SVGNames::inAttr) {
+        InstanceInvalidationGuard guard(*this);
         invalidate();
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
 PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)

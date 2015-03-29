@@ -50,7 +50,6 @@ private:
     SVGViewElement(const QualifiedName&, Document&);
 
     // FIXME: svgAttributeChanged missing.
-    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }

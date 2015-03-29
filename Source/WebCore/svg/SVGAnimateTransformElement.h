@@ -40,8 +40,6 @@ private:
     SVGAnimateTransformElement(const QualifiedName&, Document&);
     
     virtual bool hasValidAttributeType() override;
-
-    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     SVGTransform::SVGTransformType m_type;

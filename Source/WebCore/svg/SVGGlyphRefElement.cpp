@@ -59,10 +59,7 @@ bool SVGGlyphRefElement::hasValidGlyphElement(String& glyphName) const
 {
     // FIXME: We only support xlink:href so far.
     // https://bugs.webkit.org/show_bug.cgi?id=64787
-    Element* element = targetElementFromIRIString(getAttribute(XLinkNames::hrefAttr), document(), &glyphName);
-    if (!element || !element->hasTagName(SVGNames::glyphTag))
-        return false;
-    return true;
+    return is<SVGGlyphElement>(targetElementFromIRIString(getAttribute(XLinkNames::hrefAttr), document(), &glyphName));
 }
 
 void SVGGlyphRefElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -81,8 +78,7 @@ void SVGGlyphRefElement::parseAttribute(const QualifiedName& name, const AtomicS
     else if (name == SVGNames::dyAttr)
         parseNumber(startPtr, endPtr, m_dy);
     else {
-        if (SVGURIReference::parseAttribute(name, value))
-            return;
+        SVGURIReference::parseAttribute(name, value);
         SVGElement::parseAttribute(name, value);
     }
 }

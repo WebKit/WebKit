@@ -23,12 +23,10 @@
 #include "config.h"
 #include "SVGStyleElement.h"
 
-#include "Attribute.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "SVGNames.h"
-#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -96,24 +94,8 @@ void SVGStyleElement::setTitle(const AtomicString& title, ExceptionCode&)
     setAttribute(SVGNames::titleAttr, title);
 }
 
-bool SVGStyleElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGLangSpace::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::titleAttr);
-        supportedAttributes.get().add(SVGNames::mediaAttr);
-        supportedAttributes.get().add(SVGNames::typeAttr);
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGStyleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGElement::parseAttribute(name, value);
-        return;
-    }
     if (name == SVGNames::titleAttr) {
         if (sheet())
             sheet()->setTitle(value);
@@ -127,10 +109,8 @@ void SVGStyleElement::parseAttribute(const QualifiedName& name, const AtomicStri
         m_styleSheetOwner.setMedia(value);
         return;
     }
-    if (SVGLangSpace::parseAttribute(name, value))
-        return;
 
-    ASSERT_NOT_REACHED();
+    SVGElement::parseAttribute(name, value);
 }
 
 void SVGStyleElement::finishParsingChildren()

@@ -21,7 +21,6 @@
 #include "config.h"
 #include "SVGTextElement.h"
 
-#include "Attribute.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGText.h"
 #include "SVGNames.h"

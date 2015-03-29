@@ -23,7 +23,6 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGFontFaceUriElement.h"
 
-#include "Attribute.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CachedFont.h"
 #include "CachedResourceLoader.h"

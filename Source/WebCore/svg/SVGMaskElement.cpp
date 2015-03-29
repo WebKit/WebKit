@@ -25,7 +25,6 @@
 #include "config.h"
 #include "SVGMaskElement.h"
 
-#include "Attribute.h"
 #include "RenderSVGResourceMasker.h"
 #include "SVGNames.h"
 #include "SVGRenderSupport.h"
@@ -95,21 +94,22 @@ bool SVGMaskElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    SVGParsingError parseError = NoError;
-
-    if (!isSupportedAttribute(name))
-        SVGElement::parseAttribute(name, value);
-    else if (name == SVGNames::maskUnitsAttr) {
-        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
+    if (name == SVGNames::maskUnitsAttr) {
+        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
             setMaskUnitsBaseValue(propertyValue);
         return;
-    } else if (name == SVGNames::maskContentUnitsAttr) {
-        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
+    }
+    if (name == SVGNames::maskContentUnitsAttr) {
+        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
             setMaskContentUnitsBaseValue(propertyValue);
         return;
-    } else if (name == SVGNames::xAttr)
+    }
+
+    SVGParsingError parseError = NoError;
+
+    if (name == SVGNames::xAttr)
         setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
         setYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
@@ -117,13 +117,12 @@ void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomicStrin
         setWidthBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::heightAttr)
         setHeightBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else if (SVGTests::parseAttribute(name, value)
-             || SVGLangSpace::parseAttribute(name, value)
-             || SVGExternalResourcesRequired::parseAttribute(name, value)) {
-    } else
-        ASSERT_NOT_REACHED();
 
     reportAttributeParsingError(parseError, name, value);
+
+    SVGElement::parseAttribute(name, value);
+    SVGTests::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)

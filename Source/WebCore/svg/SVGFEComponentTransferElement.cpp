@@ -21,7 +21,6 @@
 #include "config.h"
 #include "SVGFEComponentTransferElement.h"
 
-#include "Attr.h"
 #include "ElementIterator.h"
 #include "FilterEffect.h"
 #include "SVGFEFuncAElement.h"
@@ -54,27 +53,14 @@ Ref<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(const Q
     return adoptRef(*new SVGFEComponentTransferElement(tagName, document));
 }
 
-bool SVGFEComponentTransferElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty())
-        supportedAttributes.get().add(SVGNames::inAttr);
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGFEComponentTransferElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::inAttr) {
         setIn1BaseValue(value);
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 PassRefPtr<FilterEffect> SVGFEComponentTransferElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)

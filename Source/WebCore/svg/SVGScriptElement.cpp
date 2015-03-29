@@ -21,7 +21,6 @@
 #include "config.h"
 #include "SVGScriptElement.h"
 
-#include "Attribute.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"

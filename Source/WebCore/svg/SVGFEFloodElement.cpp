@@ -21,7 +21,6 @@
 #include "config.h"
 #include "SVGFEFloodElement.h"
 
-#include "Attribute.h"
 #include "RenderStyle.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"

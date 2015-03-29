@@ -47,22 +47,12 @@ public:
 protected:
     SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document&);
 
-    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&) override;
     virtual void childrenChanged(const ChildChange&) override;
 
-    inline void invalidate()
-    {
-        if (RenderElement* primitiveRenderer = renderer())
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*primitiveRenderer);
-    }
-
-    inline void primitiveAttributeChanged(const QualifiedName& attribute)
-    {
-        if (RenderElement* primitiveRenderer = renderer())
-            static_cast<RenderSVGResourceFilterPrimitive*>(primitiveRenderer)->primitiveAttributeChanged(attribute);
-    }
+    void invalidate();
+    void primitiveAttributeChanged(const QualifiedName& attributeName);
 
 private:
     virtual bool isFilterEffect() const override { return true; }
@@ -70,6 +60,8 @@ private:
     virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
     virtual bool rendererIsNeeded(const RenderStyle&) override;
     virtual bool childShouldCreateRenderer(const Node&) const override { return false; }
+
+    static bool isSupportedAttribute(const QualifiedName&);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
         DECLARE_ANIMATED_LENGTH(X, x)
@@ -81,6 +73,18 @@ private:
 };
 
 void invalidateFilterPrimitiveParent(SVGElement*);
+
+inline void SVGFilterPrimitiveStandardAttributes::invalidate()
+{
+    if (auto* primitiveRenderer = renderer())
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*primitiveRenderer);
+}
+
+inline void SVGFilterPrimitiveStandardAttributes::primitiveAttributeChanged(const QualifiedName& attribute)
+{
+    if (auto* primitiveRenderer = renderer())
+        static_cast<RenderSVGResourceFilterPrimitive*>(primitiveRenderer)->primitiveAttributeChanged(attribute);
+}
 
 } // namespace WebCore
 

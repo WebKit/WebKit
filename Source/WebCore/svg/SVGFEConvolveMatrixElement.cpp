@@ -20,7 +20,6 @@
 #include "config.h"
 #include "SVGFEConvolveMatrixElement.h"
 
-#include "Attr.h"
 #include "FilterEffect.h"
 #include "FloatPoint.h"
 #include "IntPoint.h"
@@ -28,7 +27,6 @@
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -99,31 +97,8 @@ const AtomicString& SVGFEConvolveMatrixElement::orderYIdentifier()
     return s_identifier;
 }
 
-bool SVGFEConvolveMatrixElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        supportedAttributes.get().add(SVGNames::inAttr);
-        supportedAttributes.get().add(SVGNames::orderAttr);
-        supportedAttributes.get().add(SVGNames::kernelMatrixAttr);
-        supportedAttributes.get().add(SVGNames::edgeModeAttr);
-        supportedAttributes.get().add(SVGNames::divisorAttr);
-        supportedAttributes.get().add(SVGNames::biasAttr);
-        supportedAttributes.get().add(SVGNames::targetXAttr);
-        supportedAttributes.get().add(SVGNames::targetYAttr);
-        supportedAttributes.get().add(SVGNames::kernelUnitLengthAttr);
-        supportedAttributes.get().add(SVGNames::preserveAlphaAttr);
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::inAttr) {
         setIn1BaseValue(value);
         return;
@@ -135,9 +110,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
             setOrderXBaseValue(x);
             setOrderYBaseValue(y);
         } else
-            document().accessSVGExtensions().reportWarning(
-                "feConvolveMatrix: problem parsing order=\"" + value
-                + "\". Filtered element will not be displayed.");
+            document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing order=\"" + value + "\". Filtered element will not be displayed.");
         return;
     }
 
@@ -146,9 +119,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
         if (propertyValue > 0)
             setEdgeModeBaseValue(propertyValue);
         else
-            document().accessSVGExtensions().reportWarning(
-                "feConvolveMatrix: problem parsing edgeMode=\"" + value
-                + "\". Filtered element will not be displayed.");
+            document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing edgeMode=\"" + value + "\". Filtered element will not be displayed.");
         return;
     }
 
@@ -165,9 +136,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
         if (divisor)
             setDivisorBaseValue(divisor);
         else
-            document().accessSVGExtensions().reportWarning(
-                "feConvolveMatrix: problem parsing divisor=\"" + value
-                + "\". Filtered element will not be displayed.");
+            document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing divisor=\"" + value + "\". Filtered element will not be displayed.");
         return;
     }
     
@@ -192,9 +161,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
             setKernelUnitLengthXBaseValue(x);
             setKernelUnitLengthYBaseValue(y);
         } else
-            document().accessSVGExtensions().reportWarning(
-                "feConvolveMatrix: problem parsing kernelUnitLength=\"" + value
-                + "\". Filtered element will not be displayed.");
+            document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing kernelUnitLength=\"" + value + "\". Filtered element will not be displayed.");
         return;
     }
 
@@ -204,13 +171,11 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
         else if (value == "false")
             setPreserveAlphaBaseValue(false);
         else
-            document().accessSVGExtensions().reportWarning(
-                "feConvolveMatrix: problem parsing preserveAlphaAttr=\"" + value
-                + "\". Filtered element will not be displayed.");
+            document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing preserveAlphaAttr=\"" + value  + "\". Filtered element will not be displayed.");
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 bool SVGFEConvolveMatrixElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
@@ -251,32 +216,19 @@ void SVGFEConvolveMatrixElement::setKernelUnitLength(float x, float y)
 
 void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
-        return;
-    }
-
-    InstanceInvalidationGuard guard(*this);
-
-    if (attrName == SVGNames::edgeModeAttr
-        || attrName == SVGNames::divisorAttr
-        || attrName == SVGNames::biasAttr
-        || attrName == SVGNames::targetXAttr
-        || attrName == SVGNames::targetYAttr
-        || attrName == SVGNames::kernelUnitLengthAttr
-        || attrName == SVGNames::preserveAlphaAttr) {
+    if (attrName == SVGNames::edgeModeAttr || attrName == SVGNames::divisorAttr || attrName == SVGNames::biasAttr || attrName == SVGNames::targetXAttr || attrName == SVGNames::targetYAttr || attrName == SVGNames::kernelUnitLengthAttr || attrName == SVGNames::preserveAlphaAttr) {
+        InstanceInvalidationGuard guard(*this);
         primitiveAttributeChanged(attrName);
         return;
     }
 
-    if (attrName == SVGNames::inAttr
-        || attrName == SVGNames::orderAttr
-        || attrName == SVGNames::kernelMatrixAttr) {
+    if (attrName == SVGNames::inAttr || attrName == SVGNames::orderAttr || attrName == SVGNames::kernelMatrixAttr) {
+        InstanceInvalidationGuard guard(*this);
         invalidate();
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
 PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)

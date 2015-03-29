@@ -21,11 +21,9 @@
 #include "config.h"
 #include "SVGFECompositeElement.h"
 
-#include "Attribute.h"
 #include "FilterEffect.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -62,28 +60,8 @@ Ref<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& ta
     return adoptRef(*new SVGFECompositeElement(tagName, document));
 }
 
-bool SVGFECompositeElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        supportedAttributes.get().add(SVGNames::inAttr);
-        supportedAttributes.get().add(SVGNames::in2Attr);
-        supportedAttributes.get().add(SVGNames::operatorAttr);
-        supportedAttributes.get().add(SVGNames::k1Attr);
-        supportedAttributes.get().add(SVGNames::k2Attr);
-        supportedAttributes.get().add(SVGNames::k3Attr);
-        supportedAttributes.get().add(SVGNames::k4Attr);
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGFECompositeElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::operatorAttr) {
         CompositeOperationType propertyValue = SVGPropertyTraits<CompositeOperationType>::fromString(value);
         if (propertyValue > 0)
@@ -121,7 +99,7 @@ void SVGFECompositeElement::parseAttribute(const QualifiedName& name, const Atom
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
@@ -145,28 +123,19 @@ bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect* effect, const
 
 void SVGFECompositeElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
-        return;
-    }
-
-    InstanceInvalidationGuard guard(*this);
-
-    if (attrName == SVGNames::operatorAttr
-        || attrName == SVGNames::k1Attr
-        || attrName == SVGNames::k2Attr
-        || attrName == SVGNames::k3Attr
-        || attrName == SVGNames::k4Attr) {
+    if (attrName == SVGNames::operatorAttr || attrName == SVGNames::k1Attr || attrName == SVGNames::k2Attr || attrName == SVGNames::k3Attr || attrName == SVGNames::k4Attr) {
+        InstanceInvalidationGuard guard(*this);
         primitiveAttributeChanged(attrName);
         return;
     }
 
     if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr) {
+        InstanceInvalidationGuard guard(*this);
         invalidate();
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
 PassRefPtr<FilterEffect> SVGFECompositeElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)

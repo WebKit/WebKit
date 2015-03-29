@@ -21,7 +21,6 @@
 #include "config.h"
 #include "SVGURIReference.h"
 
-#include "Attribute.h"
 #include "Document.h"
 #include "Element.h"
 #include "URL.h"
@@ -29,14 +28,10 @@
 
 namespace WebCore {
 
-bool SVGURIReference::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGURIReference::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name.matches(XLinkNames::hrefAttr)) {
+    if (name.matches(XLinkNames::hrefAttr))
         setHrefBaseValue(value);
-        return true;
-    }
-
-    return false;
 }
 
 bool SVGURIReference::isKnownAttribute(const QualifiedName& attrName)

@@ -28,13 +28,9 @@ namespace WebCore {
 
 class SVGTRefTargetEventListener;
 
-class SVGTRefElement final : public SVGTextPositioningElement,
-                             public SVGURIReference {
+class SVGTRefElement final : public SVGTextPositioningElement, public SVGURIReference {
 public:
     static Ref<SVGTRefElement> create(const QualifiedName&, Document&);
-
-protected:
-    virtual void didNotifySubtreeInsertions(ContainerNode*) override;
 
 private:
     friend class SVGTRefTargetEventListener;
@@ -42,7 +38,6 @@ private:
     SVGTRefElement(const QualifiedName&, Document&);
     virtual ~SVGTRefElement();
 
-    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&) override;
 
@@ -52,6 +47,7 @@ private:
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;
+    virtual void didNotifySubtreeInsertions(ContainerNode*) override;
 
     virtual void clearTarget() override;
 

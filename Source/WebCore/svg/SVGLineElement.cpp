@@ -21,7 +21,6 @@
 #include "config.h"
 #include "SVGLineElement.h"
 
-#include "Attribute.h"
 #include "FloatPoint.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
@@ -81,9 +80,7 @@ void SVGLineElement::parseAttribute(const QualifiedName& name, const AtomicStrin
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(name))
-        SVGGraphicsElement::parseAttribute(name, value);
-    else if (name == SVGNames::x1Attr)
+    if (name == SVGNames::x1Attr)
         setX1BaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::y1Attr)
         setY1BaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
@@ -91,12 +88,11 @@ void SVGLineElement::parseAttribute(const QualifiedName& name, const AtomicStrin
         setX2BaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::y2Attr)
         setY2BaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else if (SVGLangSpace::parseAttribute(name, value)
-             || SVGExternalResourcesRequired::parseAttribute(name, value)) {
-    } else
-        ASSERT_NOT_REACHED();
 
     reportAttributeParsingError(parseError, name, value);
+
+    SVGGraphicsElement::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)

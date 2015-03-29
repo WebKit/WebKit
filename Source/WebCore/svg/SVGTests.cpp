@@ -22,7 +22,6 @@
 #include "config.h"
 #include "SVGTests.h"
 
-#include "Attribute.h"
 #include "DOMImplementation.h"
 #include "HTMLNames.h"
 #include "Language.h"
@@ -102,21 +101,14 @@ bool SVGTests::isValid() const
     return true;
 }
 
-bool SVGTests::parseAttribute(const QualifiedName& attributeName, const AtomicString& value)
+void SVGTests::parseAttribute(const QualifiedName& attributeName, const AtomicString& value)
 {
-    if (attributeName == requiredFeaturesAttr) {
+    if (attributeName == requiredFeaturesAttr)
         m_requiredFeatures.value.reset(value);
-        return true;
-    }
-    if (attributeName == requiredExtensionsAttr) {
+    if (attributeName == requiredExtensionsAttr)
         m_requiredExtensions.value.reset(value);
-        return true;
-    }
-    if (attributeName == systemLanguageAttr) {
+    if (attributeName == systemLanguageAttr)
         m_systemLanguage.value.reset(value);
-        return true;
-    }
-    return false;
 }
 
 bool SVGTests::isKnownAttribute(const QualifiedName& attributeName)

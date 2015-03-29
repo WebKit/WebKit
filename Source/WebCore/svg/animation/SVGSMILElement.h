@@ -42,7 +42,6 @@ public:
     SVGSMILElement(const QualifiedName&, Document&);
     virtual ~SVGSMILElement();
 
-    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&) override;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
@@ -131,6 +130,8 @@ private:
     virtual void startedActiveInterval() = 0;
     void endedActiveInterval();
     virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement) = 0;
+
+    static bool isSupportedAttribute(const QualifiedName&);
 
     enum BeginOrEnd { Begin, End };
     

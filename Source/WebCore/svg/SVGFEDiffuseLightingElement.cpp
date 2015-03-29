@@ -20,7 +20,6 @@
 #include "config.h"
 #include "SVGFEDiffuseLightingElement.h"
 
-#include "Attr.h"
 #include "FEDiffuseLighting.h"
 #include "FilterEffect.h"
 #include "RenderStyle.h"
@@ -29,7 +28,6 @@
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -75,26 +73,8 @@ const AtomicString& SVGFEDiffuseLightingElement::kernelUnitLengthYIdentifier()
     return s_identifier;
 }
 
-bool SVGFEDiffuseLightingElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        supportedAttributes.get().add(SVGNames::inAttr);
-        supportedAttributes.get().add(SVGNames::diffuseConstantAttr);
-        supportedAttributes.get().add(SVGNames::surfaceScaleAttr);
-        supportedAttributes.get().add(SVGNames::kernelUnitLengthAttr);
-        supportedAttributes.get().add(SVGNames::lighting_colorAttr); // Even though it's a SVG-CSS property, we override its handling here.
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGFEDiffuseLightingElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name) || name == SVGNames::lighting_colorAttr) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::inAttr) {
         setIn1BaseValue(value);
         return;
@@ -119,7 +99,7 @@ void SVGFEDiffuseLightingElement::parseAttribute(const QualifiedName& name, cons
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 bool SVGFEDiffuseLightingElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
@@ -168,27 +148,19 @@ bool SVGFEDiffuseLightingElement::setFilterEffectAttribute(FilterEffect* effect,
 
 void SVGFEDiffuseLightingElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
-        return;
-    }
-
-    InstanceInvalidationGuard guard(*this);
-    
-    if (attrName == SVGNames::surfaceScaleAttr
-        || attrName == SVGNames::diffuseConstantAttr
-        || attrName == SVGNames::kernelUnitLengthAttr
-        || attrName == SVGNames::lighting_colorAttr) {
+    if (attrName == SVGNames::surfaceScaleAttr || attrName == SVGNames::diffuseConstantAttr || attrName == SVGNames::kernelUnitLengthAttr || attrName == SVGNames::lighting_colorAttr) {
+        InstanceInvalidationGuard guard(*this);
         primitiveAttributeChanged(attrName);
         return;
     }
 
     if (attrName == SVGNames::inAttr) {
+        InstanceInvalidationGuard guard(*this);
         invalidate();
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
 void SVGFEDiffuseLightingElement::lightElementAttributeChanged(const SVGFELightElement* lightElement, const QualifiedName& attrName)

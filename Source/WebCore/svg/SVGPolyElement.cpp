@@ -21,7 +21,6 @@
 #include "config.h"
 #include "SVGPolyElement.h"
 
-#include "Attribute.h"
 #include "Document.h"
 #include "FloatPoint.h"
 #include "RenderSVGPath.h"
@@ -29,7 +28,6 @@
 #include "SVGAnimatedPointList.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -63,24 +61,8 @@ SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document& document)
     registerAnimatedPropertiesForSVGPolyElement();    
 }
 
-bool SVGPolyElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGLangSpace::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::pointsAttr);
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGPolyElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGGraphicsElement::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::pointsAttr) {
         SVGPointList newList;
         if (!pointsListFromSVGData(newList, value))
@@ -93,39 +75,30 @@ void SVGPolyElement::parseAttribute(const QualifiedName& name, const AtomicStrin
         return;
     }
 
-    if (SVGLangSpace::parseAttribute(name, value))
-        return;
-    if (SVGExternalResourcesRequired::parseAttribute(name, value))
-        return;
-
-    ASSERT_NOT_REACHED();
+    SVGGraphicsElement::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGGraphicsElement::svgAttributeChanged(attrName);
-        return;
-    }
-
-    InstanceInvalidationGuard guard(*this);
-
-    auto* renderer = downcast<RenderSVGShape>(this->renderer());
-    if (!renderer)
-        return;
-
     if (attrName == SVGNames::pointsAttr) {
-        renderer->setNeedsShapeUpdate();
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+        if (auto* renderer = downcast<RenderSVGPath>(this->renderer())) {
+            InstanceInvalidationGuard guard(*this);
+            renderer->setNeedsShapeUpdate();
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+        }
         return;
     }
 
     if (SVGLangSpace::isKnownAttribute(attrName) || SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+        if (auto* renderer = downcast<RenderSVGPath>(this->renderer())) {
+            InstanceInvalidationGuard guard(*this);
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+        }
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGGraphicsElement::svgAttributeChanged(attrName);
 }
 
 void SVGPolyElement::synchronizePoints(SVGElement* contextElement)

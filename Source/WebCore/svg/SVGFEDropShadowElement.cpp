@@ -20,13 +20,11 @@
 #include "config.h"
 #include "SVGFEDropShadowElement.h"
 
-#include "Attribute.h"
 #include "RenderStyle.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGRenderStyle.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -81,25 +79,8 @@ void SVGFEDropShadowElement::setStdDeviation(float x, float y)
     invalidate();
 }
 
-bool SVGFEDropShadowElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        supportedAttributes.get().add(SVGNames::inAttr);
-        supportedAttributes.get().add(SVGNames::dxAttr);
-        supportedAttributes.get().add(SVGNames::dyAttr);
-        supportedAttributes.get().add(SVGNames::stdDeviationAttr);
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::stdDeviationAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
@@ -124,27 +105,18 @@ void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const Ato
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 void SVGFEDropShadowElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
-        return;
-    }
-
-    InstanceInvalidationGuard guard(*this);
-    
-    if (attrName == SVGNames::inAttr
-        || attrName == SVGNames::stdDeviationAttr
-        || attrName == SVGNames::dxAttr
-        || attrName == SVGNames::dyAttr) {
+    if (attrName == SVGNames::inAttr || attrName == SVGNames::stdDeviationAttr || attrName == SVGNames::dxAttr || attrName == SVGNames::dyAttr) {
+        InstanceInvalidationGuard guard(*this);
         invalidate();
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
 PassRefPtr<FilterEffect> SVGFEDropShadowElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)

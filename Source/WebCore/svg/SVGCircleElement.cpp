@@ -21,7 +21,6 @@
 #include "config.h"
 #include "SVGCircleElement.h"
 
-#include "Attribute.h"
 #include "ExceptionCode.h"
 #include "FloatPoint.h"
 #include "RenderSVGEllipse.h"
@@ -30,7 +29,6 @@
 #include "SVGException.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -63,51 +61,29 @@ Ref<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGCircleElement(tagName, document));
 }
 
-bool SVGCircleElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGLangSpace::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::cxAttr);
-        supportedAttributes.get().add(SVGNames::cyAttr);
-        supportedAttributes.get().add(SVGNames::rAttr);
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGCircleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(name))
-        SVGGraphicsElement::parseAttribute(name, value);
-    else if (name == SVGNames::cxAttr)
+    if (name == SVGNames::cxAttr)
         setCxBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::cyAttr)
         setCyBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::rAttr)
         setRBaseValue(SVGLength::construct(LengthModeOther, value, parseError, ForbidNegativeLengths));
-    else if (SVGLangSpace::parseAttribute(name, value)
-             || SVGExternalResourcesRequired::parseAttribute(name, value)) {
-    } else
-        ASSERT_NOT_REACHED();
 
     reportAttributeParsingError(parseError, name, value);
+
+    SVGGraphicsElement::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGGraphicsElement::svgAttributeChanged(attrName);
-        return;
-    }
+    SVGGraphicsElement::svgAttributeChanged(attrName);
 
-    InstanceInvalidationGuard guard(*this);
-
-    if (attrName == SVGNames::cxAttr
-        || attrName == SVGNames::cyAttr
-        || attrName == SVGNames::rAttr) {
+    if (attrName == SVGNames::cxAttr || attrName == SVGNames::cyAttr || attrName == SVGNames::rAttr) {
+        InstanceInvalidationGuard guard(*this);
         invalidateSVGPresentationAttributeStyle();
         return;
     }
@@ -117,11 +93,9 @@ void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
 
     if (SVGLangSpace::isKnownAttribute(attrName) || SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
+        InstanceInvalidationGuard guard(*this);
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-        return;
     }
-
-    ASSERT_NOT_REACHED();
 }
 
 RenderPtr<RenderElement> SVGCircleElement::createElementRenderer(Ref<RenderStyle>&& style)

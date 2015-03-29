@@ -21,7 +21,6 @@
 #include "config.h"
 #include "SVGCursorElement.h"
 
-#include "Attr.h"
 #include "Document.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
@@ -81,19 +80,17 @@ void SVGCursorElement::parseAttribute(const QualifiedName& name, const AtomicStr
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(name))
-        SVGElement::parseAttribute(name, value);
-    else if (name == SVGNames::xAttr)
+    if (name == SVGNames::xAttr)
         setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
         setYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else if (SVGTests::parseAttribute(name, value)
-             || SVGExternalResourcesRequired::parseAttribute(name, value)
-             || SVGURIReference::parseAttribute(name, value)) {
-    } else
-        ASSERT_NOT_REACHED();
-    
+
     reportAttributeParsingError(parseError, name, value);
+
+    SVGElement::parseAttribute(name, value);
+    SVGTests::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
+    SVGURIReference::parseAttribute(name, value);
 }
 
 void SVGCursorElement::addClient(SVGElement* element)
@@ -121,13 +118,8 @@ void SVGCursorElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     InstanceInvalidationGuard guard(*this);
-
-    // Any change of a cursor specific attribute triggers this recalc.
-    HashSet<SVGElement*>::const_iterator it = m_clients.begin();
-    HashSet<SVGElement*>::const_iterator end = m_clients.end();
-
-    for (; it != end; ++it)
-        (*it)->setNeedsStyleRecalc();
+    for (auto& client : m_clients)
+        client->setNeedsStyleRecalc();
 }
 
 void SVGCursorElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const

@@ -24,7 +24,6 @@
 #include "SVGPatternElement.h"
 
 #include "AffineTransform.h"
-#include "Attribute.h"
 #include "Document.h"
 #include "FloatConversion.h"
 #include "GraphicsContext.h"
@@ -111,27 +110,29 @@ bool SVGPatternElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGPatternElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    SVGParsingError parseError = NoError;
-
-    if (!isSupportedAttribute(name))
-        SVGElement::parseAttribute(name, value);
-    else if (name == SVGNames::patternUnitsAttr) {
-        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
+    if (name == SVGNames::patternUnitsAttr) {
+        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
             setPatternUnitsBaseValue(propertyValue);
         return;
-    } else if (name == SVGNames::patternContentUnitsAttr) {
-        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
+    }
+    if (name == SVGNames::patternContentUnitsAttr) {
+        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
             setPatternContentUnitsBaseValue(propertyValue);
         return;
-    } else if (name == SVGNames::patternTransformAttr) {
+    }
+    if (name == SVGNames::patternTransformAttr) {
         SVGTransformList newList;
         newList.parse(value);
         detachAnimatedPatternTransformListWrappers(newList.size());
         setPatternTransformBaseValue(newList);
         return;
-    } else if (name == SVGNames::xAttr)
+    }
+
+    SVGParsingError parseError = NoError;
+
+    if (name == SVGNames::xAttr)
         setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
         setYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
@@ -139,15 +140,14 @@ void SVGPatternElement::parseAttribute(const QualifiedName& name, const AtomicSt
         setWidthBaseValue(SVGLength::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
     else if (name == SVGNames::heightAttr)
         setHeightBaseValue(SVGLength::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
-    else if (SVGURIReference::parseAttribute(name, value)
-             || SVGTests::parseAttribute(name, value)
-             || SVGLangSpace::parseAttribute(name, value)
-             || SVGExternalResourcesRequired::parseAttribute(name, value)
-             || SVGFitToViewBox::parseAttribute(this, name, value)) {
-    } else
-        ASSERT_NOT_REACHED();
 
     reportAttributeParsingError(parseError, name, value);
+
+    SVGElement::parseAttribute(name, value);
+    SVGURIReference::parseAttribute(name, value);
+    SVGTests::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
+    SVGFitToViewBox::parseAttribute(this, name, value);
 }
 
 void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)

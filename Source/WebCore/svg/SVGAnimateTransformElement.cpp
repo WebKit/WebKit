@@ -23,10 +23,8 @@
 #include "config.h"
 #include "SVGAnimateTransformElement.h"
 
-#include "Attribute.h"
 #include "SVGNames.h"
 #include "SVGTransformable.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -54,21 +52,8 @@ bool SVGAnimateTransformElement::hasValidAttributeType()
     return m_animatedPropertyType == AnimatedTransformList;
 }
 
-bool SVGAnimateTransformElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty())
-        supportedAttributes.get().add(SVGNames::typeAttr);
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGAnimateTransformElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGAnimateElementBase::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::typeAttr) {
         m_type = SVGTransformable::parseTransformType(value);
         if (m_type == SVGTransform::SVG_TRANSFORM_MATRIX)
@@ -76,7 +61,7 @@ void SVGAnimateTransformElement::parseAttribute(const QualifiedName& name, const
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGAnimateElementBase::parseAttribute(name, value);
 }
 
 }

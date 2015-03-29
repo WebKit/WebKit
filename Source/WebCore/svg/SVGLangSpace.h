@@ -26,8 +26,6 @@
 
 namespace WebCore {
 
-class Attribute;
-
 class SVGLangSpace {
 public:
     const AtomicString& xmllang() const { return m_lang; }
@@ -36,9 +34,10 @@ public:
     const AtomicString& xmlspace() const;
     void setXmlspace(const AtomicString& xmlSpace);
 
-    bool parseAttribute(const QualifiedName&, const AtomicString&);
-    bool isKnownAttribute(const QualifiedName&);
-    void addSupportedAttributes(HashSet<QualifiedName>&);
+    void parseAttribute(const QualifiedName&, const AtomicString&);
+
+    static bool isKnownAttribute(const QualifiedName&);
+    static void addSupportedAttributes(HashSet<QualifiedName>&);
 
 private:
     AtomicString m_lang;

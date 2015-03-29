@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SVGAnimationElement.h"
 
-#include "Attribute.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
@@ -163,11 +162,6 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGSMILElement::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::valuesAttr) {
         // Per the SMIL specification, leading and trailing white space,
         // and white space before and after semicolon separators, is allowed and will be ignored.
@@ -214,12 +208,9 @@ void SVGAnimationElement::parseAttribute(const QualifiedName& name, const Atomic
         return;
     }
 
-    if (SVGTests::parseAttribute(name, value))
-        return;
-    if (SVGExternalResourcesRequired::parseAttribute(name, value))
-        return;
-
-    ASSERT_NOT_REACHED();
+    SVGSMILElement::parseAttribute(name, value);
+    SVGTests::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGAnimationElement::svgAttributeChanged(const QualifiedName& attrName)

@@ -22,7 +22,6 @@
 #include "SVGGraphicsElement.h"
 
 #include "AffineTransform.h"
-#include "Attribute.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGNames.h"
@@ -110,11 +109,6 @@ bool SVGGraphicsElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGElement::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::transformAttr) {
         SVGTransformList newList;
         newList.parse(value);
@@ -123,10 +117,8 @@ void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomicS
         return;
     }
 
-    if (SVGTests::parseAttribute(name, value))
-        return;
-
-    ASSERT_NOT_REACHED();
+    SVGElement::parseAttribute(name, value);
+    SVGTests::parseAttribute(name, value);
 }
 
 void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)

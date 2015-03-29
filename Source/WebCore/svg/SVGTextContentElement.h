@@ -96,7 +96,6 @@ protected:
 
     virtual bool isValid() const override { return SVGTests::isValid(); }
 
-    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual bool isPresentationAttribute(const QualifiedName&) const override;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
@@ -106,6 +105,8 @@ protected:
 
 private:
     virtual bool isTextContent() const override final { return true; }
+
+    static bool isSupportedAttribute(const QualifiedName&);
 
     // Custom 'textLength' property
     static void synchronizeTextLength(SVGElement* contextElement);

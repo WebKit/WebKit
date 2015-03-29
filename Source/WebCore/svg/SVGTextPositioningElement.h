@@ -34,11 +34,12 @@ public:
 protected:
     SVGTextPositioningElement(const QualifiedName&, Document&);
 
-    virtual bool isPresentationAttribute(const QualifiedName&) const override final;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override final;
-    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&) override;
+
+private:
+    virtual bool isPresentationAttribute(const QualifiedName&) const override final;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override final;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGTextPositioningElement)
         DECLARE_ANIMATED_LENGTH_LIST(X, x)

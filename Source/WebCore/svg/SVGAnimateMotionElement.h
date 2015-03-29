@@ -38,7 +38,6 @@ private:
     virtual bool hasValidAttributeType() override;
     virtual bool hasValidAttributeName() override;
 
-    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     virtual void resetAnimatedType() override;

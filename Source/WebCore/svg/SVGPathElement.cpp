@@ -21,7 +21,6 @@
 #include "config.h"
 #include "SVGPathElement.h"
 
-#include "Attribute.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGMPathElement.h"
@@ -224,11 +223,6 @@ bool SVGPathElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGGraphicsElement::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::dAttr) {
         if (!buildSVGPathByteStreamFromString(value, m_pathByteStream.get(), UnalteredParsing))
             document().accessSVGExtensions().reportError("Problem parsing d=\"" + value + "\"");
@@ -242,12 +236,8 @@ void SVGPathElement::parseAttribute(const QualifiedName& name, const AtomicStrin
         return;
     }
 
-    if (SVGLangSpace::parseAttribute(name, value))
-        return;
-    if (SVGExternalResourcesRequired::parseAttribute(name, value))
-        return;
-
-    ASSERT_NOT_REACHED();
+    SVGGraphicsElement::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)

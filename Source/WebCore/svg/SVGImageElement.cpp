@@ -23,7 +23,6 @@
 #include "config.h"
 #include "SVGImageElement.h"
 
-#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "RenderImageResource.h"
 #include "RenderSVGImage.h"
@@ -88,29 +87,29 @@ bool SVGImageElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    SVGParsingError parseError = NoError;
-
-    if (!isSupportedAttribute(name))
-        SVGGraphicsElement::parseAttribute(name, value);
-    else if (name == SVGNames::xAttr)
-        setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
-    else if (name == SVGNames::yAttr)
-        setYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else if (name == SVGNames::preserveAspectRatioAttr) {
+    if (name == SVGNames::preserveAspectRatioAttr) {
         SVGPreserveAspectRatio preserveAspectRatio;
         preserveAspectRatio.parse(value);
         setPreserveAspectRatioBaseValue(preserveAspectRatio);
-    } else if (name == SVGNames::widthAttr)
+        return;
+    }
+
+    SVGParsingError parseError = NoError;
+
+    if (name == SVGNames::xAttr)
+        setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
+    else if (name == SVGNames::yAttr)
+        setYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
+    else if (name == SVGNames::widthAttr)
         setWidthBaseValue(SVGLength::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
     else if (name == SVGNames::heightAttr)
         setHeightBaseValue(SVGLength::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
-    else if (SVGLangSpace::parseAttribute(name, value)
-             || SVGExternalResourcesRequired::parseAttribute(name, value)
-             || SVGURIReference::parseAttribute(name, value)) {
-    } else
-        ASSERT_NOT_REACHED();
 
     reportAttributeParsingError(parseError, name, value);
+
+    SVGGraphicsElement::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
+    SVGURIReference::parseAttribute(name, value);
 }
 
 void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)

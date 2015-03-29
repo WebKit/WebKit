@@ -21,20 +21,15 @@
 #include "config.h"
 #include "SVGExternalResourcesRequired.h"
 
-#include "Attr.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 
 namespace WebCore {
 
-bool SVGExternalResourcesRequired::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGExternalResourcesRequired::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == SVGNames::externalResourcesRequiredAttr) {
+    if (name == SVGNames::externalResourcesRequiredAttr)
         setExternalResourcesRequiredBaseValue(value == "true");
-        return true;
-    }
-
-    return false;
 }
 
 bool SVGExternalResourcesRequired::isKnownAttribute(const QualifiedName& attrName)

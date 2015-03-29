@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SVGSMILElement.h"
 
-#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "Event.h"

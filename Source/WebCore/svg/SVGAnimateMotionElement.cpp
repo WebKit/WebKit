@@ -23,9 +23,7 @@
 #include "SVGAnimateMotionElement.h"
 
 #include "AffineTransform.h"
-#include "Attribute.h"
 #include "ElementIterator.h"
-#include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "SVGImageElement.h"
 #include "SVGMPathElement.h"
@@ -36,7 +34,6 @@
 #include "SVGPathUtilities.h"
 #include "SVGTransformList.h"
 #include <wtf/MathExtras.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringView.h>
 
@@ -96,21 +93,8 @@ bool SVGAnimateMotionElement::hasValidAttributeName()
     return true;
 }
 
-bool SVGAnimateMotionElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty())
-        supportedAttributes.get().add(SVGNames::pathAttr);
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGAnimateMotionElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGAnimationElement::parseAttribute(name, value);
-        return;
-    }
-
     if (name == SVGNames::pathAttr) {
         m_path = Path();
         buildPathFromString(value, m_path);
@@ -118,7 +102,7 @@ void SVGAnimateMotionElement::parseAttribute(const QualifiedName& name, const At
         return;
     }
 
-    ASSERT_NOT_REACHED();
+    SVGAnimationElement::parseAttribute(name, value);
 }
     
 SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const
