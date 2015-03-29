@@ -42,7 +42,7 @@ if os.path.isfile(filename):
     f.close()
     t = True
 
-if (not t or comp == comparator):
+if (not t or comp != comparator):
     f = open(filename, 'w')
     f.write(comp)
     f.close()
