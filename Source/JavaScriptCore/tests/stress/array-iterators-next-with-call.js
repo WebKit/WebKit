@@ -83,7 +83,7 @@ for (var primitive of primitives) {
     }
     if (!didThrow)
         throw "Error: no error thrown";
-    var expectedMessage = 'TypeError: %ArrayIteratorPrototype%.next requires that |this| be Array Iterator Instance';
+    var expectedMessage = 'TypeError: %ArrayIteratorPrototype%.next requires that |this| be an Array Iterator instance';
     if (primitive == null)
         expectedMessage = 'TypeError: %ArrayIteratorPrototype%.next requires that |this| not be null or undefined';
     if (String(didThrow) !== expectedMessage)
@@ -110,6 +110,6 @@ for (var object of nonRelatedObjects) {
     }
     if (!didThrow)
         throw "Error: no error thrown";
-    if (String(didThrow) !== 'TypeError: %ArrayIteratorPrototype%.next requires that |this| be Array Iterator Instance')
+    if (String(didThrow) !== 'TypeError: %ArrayIteratorPrototype%.next requires that |this| be an Array Iterator instance')
         throw "Error: bad error thrown: " + didThrow;
 }

@@ -31,7 +31,7 @@ function next() {
 
     var itemKind = this.@arrayIterationKind;
     if (itemKind === undefined)
-        throw new @TypeError("%ArrayIteratorPrototype%.next requires that |this| be Array Iterator Instance");
+        throw new @TypeError("%ArrayIteratorPrototype%.next requires that |this| be an Array Iterator instance");
 
     var done = true;
     var value = undefined;
@@ -55,8 +55,5 @@ function next() {
         }
     }
 
-    return {
-        done: done,
-        value: value
-    };
+    return {done, value};
 }

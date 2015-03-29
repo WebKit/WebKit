@@ -24,11 +24,10 @@
  */
 
 function from(arrayLike /*, mapFn, thisArg */) {
-
     "use strict";
 
     if (arrayLike == null)
-         throw new @TypeError("Array.from requires an array-like object - not null or undefined");
+        throw new @TypeError("Array.from requires an array-like object - not null or undefined");
 
     var thisObj = this;
 
@@ -37,8 +36,8 @@ function from(arrayLike /*, mapFn, thisArg */) {
 
     var thisArg;
 
-    if (typeof mapFn !== "undefined") {
-        if (typeof mapFn !== 'function')
+    if (mapFn !== undefined) {
+        if (typeof mapFn !== "function")
             throw new @TypeError("Array.from requires that the second argument, when provided, be a function");
 
         if (arguments.length > 2)
@@ -58,7 +57,7 @@ function from(arrayLike /*, mapFn, thisArg */) {
     // originally Math.min(Math.max(length, 0), maxSafeInteger));
     var itemsLength = lengthValue > 0 ? (lengthValue < maxSafeInteger ? lengthValue : maxSafeInteger) : 0;
 
-    var result = (typeof thisObj === 'function') ? @Object(new thisObj(itemsLength)) : new @Array(itemsLength);
+    var result = (typeof thisObj === "function") ? @Object(new thisObj(itemsLength)) : new @Array(itemsLength);
 
     var k = 0;
     while (k < itemsLength) {

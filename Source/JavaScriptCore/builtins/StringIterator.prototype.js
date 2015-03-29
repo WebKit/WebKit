@@ -31,7 +31,7 @@ function next() {
 
     var position = this.@stringIteratorNextIndex;
     if (position === undefined)
-        throw new @TypeError("%StringIteratorPrototype%.next requires that |this| be String Iterator Instance");
+        throw new @TypeError("%StringIteratorPrototype%.next requires that |this| be a String Iterator instance");
 
     var done = true;
     var value = undefined;
@@ -59,8 +59,5 @@ function next() {
         }
     }
 
-    return {
-        done: done,
-        value: value
-    };
+    return {done, value};
 }

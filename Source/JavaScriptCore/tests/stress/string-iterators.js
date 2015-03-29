@@ -180,7 +180,7 @@ for (var primitive of primitives) {
     }
     if (!didThrow)
         throw "Error: no error thrown";
-    var message = 'TypeError: %StringIteratorPrototype%.next requires that |this| be String Iterator Instance';
+    var message = 'TypeError: %StringIteratorPrototype%.next requires that |this| be a String Iterator instance';
     if (primitive == null)
         message = 'TypeError: %StringIteratorPrototype%.next requires that |this| be not null or undefined'
     if (String(didThrow) !== message)
@@ -207,6 +207,6 @@ for (var object of nonRelatedObjects) {
     }
     if (!didThrow)
         throw "Error: no error thrown";
-    if (String(didThrow) !== 'TypeError: %StringIteratorPrototype%.next requires that |this| be String Iterator Instance')
+    if (String(didThrow) !== 'TypeError: %StringIteratorPrototype%.next requires that |this| be a String Iterator instance')
         throw "Error: bad error thrown: " + didThrow;
 }
