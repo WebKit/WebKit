@@ -348,6 +348,8 @@
 		07E9E12E18F5E2760011A3A4 /* InbandMetadataTextTrackPrivateAVF.h in Headers */ = {isa = PBXBuildFile; fileRef = 07E9E12D18F5E2760011A3A4 /* InbandMetadataTextTrackPrivateAVF.h */; };
 		07E9E13018F62B370011A3A4 /* InbandMetadataTextTrackPrivateAVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07E9E12F18F62B370011A3A4 /* InbandMetadataTextTrackPrivateAVF.cpp */; };
 		07EDC3EE1AACB75D00983EB5 /* MediaSessionManagerMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07EDC3ED1AACB75D00983EB5 /* MediaSessionManagerMac.cpp */; };
+		07F0B97A1AC5DB3300E535D9 /* AVKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F0B9791AC5DB3300E535D9 /* AVKitSPI.h */; };
+		07F0B97C1AC5DB4600E535D9 /* AVFoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F0B97B1AC5DB4600E535D9 /* AVFoundationSPI.h */; };
 		07F944161864D046005D31CB /* MediaSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CDAE8C081746B95700532D78 /* MediaSessionManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07FBDE2C18FED178001A7CFF /* JSDataCueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07FBDE2B18FED178001A7CFF /* JSDataCueCustom.cpp */; };
 		07FE99DC18807A7D00256648 /* HTMLMediaSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07FE99DA18807A7D00256648 /* HTMLMediaSession.cpp */; };
@@ -5844,7 +5846,6 @@
 		CE1252391A166FA000864480 /* QuickLookSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252381A166FA000864480 /* QuickLookSPI.h */; };
 		CE12523B1A16711000864480 /* NSFileManagerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12523A1A16711000864480 /* NSFileManagerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE12523D1A1676CD00864480 /* QuartzCoreSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12523C1A1676CD00864480 /* QuartzCoreSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CE12523F1A16AE1200864480 /* AVKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12523E1A16AE1200864480 /* AVKitSPI.h */; };
 		CE1252411A16B1B600864480 /* MediaPlayerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252401A16B1B600864480 /* MediaPlayerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE1252431A16C01A00864480 /* CoreUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252421A16C01A00864480 /* CoreUISPI.h */; };
 		CE1252451A16C22500864480 /* DynamicLinkerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252441A16C22500864480 /* DynamicLinkerSPI.h */; };
@@ -7374,6 +7375,8 @@
 		07E9E12D18F5E2760011A3A4 /* InbandMetadataTextTrackPrivateAVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandMetadataTextTrackPrivateAVF.h; sourceTree = "<group>"; };
 		07E9E12F18F62B370011A3A4 /* InbandMetadataTextTrackPrivateAVF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InbandMetadataTextTrackPrivateAVF.cpp; sourceTree = "<group>"; };
 		07EDC3ED1AACB75D00983EB5 /* MediaSessionManagerMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSessionManagerMac.cpp; sourceTree = "<group>"; };
+		07F0B9791AC5DB3300E535D9 /* AVKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVKitSPI.h; sourceTree = "<group>"; };
+		07F0B97B1AC5DB4600E535D9 /* AVFoundationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationSPI.h; sourceTree = "<group>"; };
 		07FBDE2B18FED178001A7CFF /* JSDataCueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDataCueCustom.cpp; sourceTree = "<group>"; };
 		07FE99DA18807A7D00256648 /* HTMLMediaSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLMediaSession.cpp; sourceTree = "<group>"; };
 		07FE99DB18807A7D00256648 /* HTMLMediaSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLMediaSession.h; sourceTree = "<group>"; };
@@ -13413,7 +13416,6 @@
 		CE1252381A166FA000864480 /* QuickLookSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickLookSPI.h; path = ios/QuickLookSPI.h; sourceTree = "<group>"; };
 		CE12523A1A16711000864480 /* NSFileManagerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSFileManagerSPI.h; sourceTree = "<group>"; };
 		CE12523C1A1676CD00864480 /* QuartzCoreSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuartzCoreSPI.h; sourceTree = "<group>"; };
-		CE12523E1A16AE1200864480 /* AVKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AVKitSPI.h; path = ios/AVKitSPI.h; sourceTree = "<group>"; };
 		CE1252401A16B1B600864480 /* MediaPlayerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaPlayerSPI.h; path = ios/MediaPlayerSPI.h; sourceTree = "<group>"; };
 		CE1252421A16C01A00864480 /* CoreUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreUISPI.h; path = ios/CoreUISPI.h; sourceTree = "<group>"; };
 		CE1252441A16C22500864480 /* DynamicLinkerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicLinkerSPI.h; sourceTree = "<group>"; };
@@ -16440,6 +16442,7 @@
 		653EF83719A043AE0052202C /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				07F0B9791AC5DB3300E535D9 /* AVKitSPI.h */,
 				CD4097FF1A8C855F004C65E9 /* CFNSURLConnectionSPI.h */,
 				1C5E980F1A02CEFA002DB55F /* CoreTextSPI.h */,
 				CE12524A1A16C79B00864480 /* DispatchSPI.h */,
@@ -17802,6 +17805,7 @@
 		9348428019F1A9190009D5AE /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				07F0B97B1AC5DB4600E535D9 /* AVFoundationSPI.h */,
 				2D59F1BE1A0044C6001F3D29 /* DataDetectorsSPI.h */,
 				2D413F601A187A3F0041A521 /* LookupSPI.h */,
 				1C6466271A12C3F90094603C /* NSFontSPI.h */,
@@ -18706,7 +18710,6 @@
 		A172182419DE182B00464D17 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				CE12523E1A16AE1200864480 /* AVKitSPI.h */,
 				CE1252421A16C01A00864480 /* CoreUISPI.h */,
 				CEC337AE1A46086D009B8523 /* GraphicsServicesSPI.h */,
 				CE1252481A16C3BC00864480 /* MobileGestaltSPI.h */,
@@ -23723,7 +23726,6 @@
 				A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */,
 				070363E0181A1CDC00C074A5 /* AVAudioCaptureSource.h in Headers */,
 				070363E2181A1CDC00C074A5 /* AVCaptureDeviceManager.h in Headers */,
-				CE12523F1A16AE1200864480 /* AVKitSPI.h in Headers */,
 				070363E4181A1CDC00C074A5 /* AVMediaCaptureSource.h in Headers */,
 				CD336F6217F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.h in Headers */,
 				070363E6181A1CDC00C074A5 /* AVVideoCaptureSource.h in Headers */,
@@ -25014,6 +25016,7 @@
 				6FA4454E898F2FC168BC38C1 /* JSBeforeUnloadEvent.h in Headers */,
 				FDF09DC91399B62200688E5B /* JSBiquadFilterNode.h in Headers */,
 				2E2D99CE10E2BBDA00496337 /* JSBlob.h in Headers */,
+				07F0B97C1AC5DB4600E535D9 /* AVFoundationSPI.h in Headers */,
 				1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */,
 				1A37636C1A2E68BB009A7EE2 /* StorageNamespaceProvider.h in Headers */,
 				65DF323A09D1DE65000BE325 /* JSCanvasGradient.h in Headers */,
@@ -25238,6 +25241,7 @@
 				07C59B7217F79C7C000FBCBB /* JSMediaSourceStates.h in Headers */,
 				07277E4D17D018CC0015534D /* JSMediaStream.h in Headers */,
 				07277E4F17D018CC0015534D /* JSMediaStreamAudioDestinationNode.h in Headers */,
+				07F0B97A1AC5DB3300E535D9 /* AVKitSPI.h in Headers */,
 				FDBD480D159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h in Headers */,
 				0705851317FA7107005F2BCB /* JSMediaStreamCapabilities.h in Headers */,
 				07277E5117D018CC0015534D /* JSMediaStreamEvent.h in Headers */,

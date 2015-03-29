@@ -1,3 +1,47 @@
+2015-03-28  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Update for output device API change
+        https://bugs.webkit.org/show_bug.cgi?id=143187
+
+        Reviewed by Zalan Bujtas.
+
+        The API used for output device is being deprecated, update to the replacement.
+
+        * WebCore.xcodeproj/project.pbxproj: Add SPI headers.
+
+        * platform/graphics/MediaPlaybackTarget.h:
+        (WebCore::MediaPlaybackTarget::MediaPlaybackTarget): Update for API change.
+        (WebCore::MediaPlaybackTarget::setDevicePickerContext):
+        (WebCore::MediaPlaybackTarget::devicePickerContext):
+
+        * platform/graphics/avfoundation/MediaPlaybackTargetMac.mm:
+        (WebCore::MediaPlaybackTarget::encode):
+        (WebCore::MediaPlaybackTarget::decode):
+
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.h:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::MediaPlaybackTargetPickerMac):
+        (WebCore::MediaPlaybackTargetPickerMac::~MediaPlaybackTargetPickerMac):
+        (WebCore::MediaPlaybackTargetPickerMac::outputeDeviceAvailabilityChangedTimerFired):
+        (WebCore::MediaPlaybackTargetPickerMac::devicePicker):
+        (WebCore::MediaPlaybackTargetPickerMac::currentDeviceDidChange):
+        (WebCore::MediaPlaybackTargetPickerMac::stopMonitoringPlaybackTargets):
+        (-[WebAVOutputDeviceMenuControllerHelper observeValueForKeyPath:ofObject:change:context:]):
+        (-[WebAVOutputDevicePickerMenuControllerHelper observeValueForKeyPath:ofObject:change:context:]): Deleted.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+
+        * platform/spi/cocoa/AVKitSPI.h: Copied from Source/WebCore/platform/spi/ios/AVKitSPI.h. Moved
+            from ios directory, added Mac includes and prototypes.
+        * platform/spi/ios/AVKitSPI.h: Removed.
+
+        * platform/spi/mac/AVFoundationSPI.h: Added.
+
 2015-03-28  Simon Fraser  <simon.fraser@apple.com>
 
         Optimize RenderLayer::intersectsDamageRect() slightly

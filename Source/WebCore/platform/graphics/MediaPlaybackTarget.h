@@ -33,7 +33,7 @@
 #if PLATFORM(COCOA)
 OBJC_CLASS NSKeyedArchiver;
 OBJC_CLASS NSKeyedUnarchiver;
-OBJC_CLASS AVOutputDevicePickerContext;
+OBJC_CLASS AVOutputContext;
 #endif
 
 namespace WebCore {
@@ -43,18 +43,18 @@ public:
     virtual ~MediaPlaybackTarget() { }
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT MediaPlaybackTarget(AVOutputDevicePickerContext *context = nil) { m_devicePickerContext = context; }
+    WEBCORE_EXPORT MediaPlaybackTarget(AVOutputContext *context = nil) { m_devicePickerContext = context; }
 
     WEBCORE_EXPORT void encode(NSKeyedArchiver *) const;
     WEBCORE_EXPORT static bool decode(NSKeyedUnarchiver *, MediaPlaybackTarget&);
 
-    void setDevicePickerContext(AVOutputDevicePickerContext *context) { m_devicePickerContext = context; }
-    AVOutputDevicePickerContext *devicePickerContext() const { return m_devicePickerContext.get(); }
+    void setDevicePickerContext(AVOutputContext *context) { m_devicePickerContext = context; }
+    AVOutputContext *devicePickerContext() const { return m_devicePickerContext.get(); }
 #endif
 
 protected:
 #if PLATFORM(COCOA)
-    RetainPtr<AVOutputDevicePickerContext> m_devicePickerContext;
+    RetainPtr<AVOutputContext> m_devicePickerContext;
 #endif
 };
 

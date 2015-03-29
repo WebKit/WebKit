@@ -34,7 +34,7 @@
 OBJC_CLASS AVAssetImageGenerator;
 OBJC_CLASS AVAssetResourceLoadingRequest;
 OBJC_CLASS AVMediaSelectionGroup;
-OBJC_CLASS AVOutputDevicePickerContext;
+OBJC_CLASS AVOutputContext;
 OBJC_CLASS AVPlayer;
 OBJC_CLASS AVPlayerItem;
 OBJC_CLASS AVPlayerItemLegibleOutput;
@@ -351,7 +351,7 @@ private:
 #endif
 
 #if PLATFORM(MAC) && ENABLE(WIRELESS_PLAYBACK_TARGET)
-    RetainPtr<AVOutputDevicePickerContext> m_outputDevicePickerContext;
+    RetainPtr<AVOutputContext> m_outputContext;
 #endif
 
     mutable RetainPtr<NSArray> m_cachedSeekableRanges;

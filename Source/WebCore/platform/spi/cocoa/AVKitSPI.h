@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "SoftLinking.h"
+#import <objc/runtime.h>
+
+#if PLATFORM(IOS)
 #import <AVKit/AVKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
@@ -93,7 +97,7 @@ typedef NSInteger AVPlayerViewControllerOptimizedFullscreenStopReason;
 @property (nonatomic, weak) id <AVPlayerViewControllerDelegate> delegate;
 @end
 
-#endif
+#endif // USE(APPLE_INTERNAL_SDK)
 
 #if USE(APPLE_INTERNAL_SDK) && __IPHONE_OS_VERSION_MIN_REQUIRED < 90000
 
@@ -108,5 +112,35 @@ typedef NSInteger AVPlayerViewControllerOptimizedFullscreenStopReason;
 + (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
 @property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
 @end
+
+#endif
+
+#endif // PLATFORM(IOS)
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <AVKit/AVOutputDeviceMenuController.h>
+
+#else
+
+@class AVOutputContext;
+
+NS_CLASS_AVAILABLE_MAC(10_11)
+@interface AVOutputDeviceMenuController : NSObject
+
+- (instancetype)initWithOutputContext:(AVOutputContext *)outputContext NS_DESIGNATED_INITIALIZER;
+
+@property (readonly) AVOutputContext *outputContext;
+@property (readonly, getter=isExternalOutputDeviceAvailable) BOOL externalOutputDeviceAvailable;
+@property (readonly, getter=isExternalOutputDevicePicked) BOOL externalOutputDevicePicked;
+
+- (void)showMenuForRect:(NSRect)screenRect appearanceName:(NSString *)appearanceName;
+
+@end
+
+
+#endif
 
 #endif

@@ -23,47 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaPlaybackTargetPickerMac_h
-#define MediaPlaybackTargetPickerMac_h
+#import "SoftLinking.h"
+#import <objc/runtime.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
-#import "MediaPlaybackTargetPicker.h"
-#include <wtf/RetainPtr.h>
-#include <wtf/RunLoop.h>
+#if USE(APPLE_INTERNAL_SDK)
 
-OBJC_CLASS AVOutputDeviceMenuController;
-OBJC_CLASS WebAVOutputDeviceMenuControllerHelper;
+#import <AVFoundation/AVOutputContext.h>
+#import <AVFoundation/AVPlayer_Private.h>
 
-namespace WebCore {
+#else
 
-class MediaPlaybackTargetPickerMac final : public MediaPlaybackTargetPicker {
-    WTF_MAKE_NONCOPYABLE(MediaPlaybackTargetPickerMac);
-public:
-    virtual ~MediaPlaybackTargetPickerMac();
+@class AVOutputContext;
+@interface AVOutputContext : NSObject <NSSecureCoding>
+@property (nonatomic, readonly) NSString *deviceName;
++ (instancetype)outputContext;
+@end
 
-    WEBCORE_EXPORT static std::unique_ptr<MediaPlaybackTargetPickerMac> create(MediaPlaybackTargetPicker::Client&);
+@interface AVPlayer (AVPlayerExternalPlaybackSupportPrivate)
+@property (nonatomic, retain) AVOutputContext *outputContext;
+@end
 
-    virtual void showPlaybackTargetPicker(const FloatRect&, bool) override;
-    virtual void startingMonitoringPlaybackTargets() override;
-    virtual void stopMonitoringPlaybackTargets() override;
-    
-    void availableDevicesDidChange();
-    void currentDeviceDidChange();
+#endif
 
-private:
-    explicit MediaPlaybackTargetPickerMac(MediaPlaybackTargetPicker::Client&);
-
-    AVOutputDeviceMenuController *devicePicker();
-    void outputeDeviceAvailabilityChangedTimerFired();
-
-    RetainPtr<AVOutputDeviceMenuController> m_outputDeviceMenuController;
-    RetainPtr<WebAVOutputDeviceMenuControllerHelper> m_outputDeviceMenuControllerDelegate;
-    RunLoop::Timer<MediaPlaybackTargetPickerMac> m_deviceChangeTimer;
-};
-
-} // namespace WebKit
-
-#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
-
-#endif // WebContextMenuProxyMac_h
+#endif

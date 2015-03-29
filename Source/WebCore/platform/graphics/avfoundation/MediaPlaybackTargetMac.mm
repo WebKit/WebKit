@@ -28,15 +28,12 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
-#import <AVFoundation/AVOutputDevicePickerContext.h>
 #import <WebCore/MediaPlaybackTarget.h>
 #import <WebCore/SoftLinking.h>
 #import <objc/runtime.h>
 
-typedef AVOutputDevicePickerContext AVOutputDevicePickerContextType;
-
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-SOFT_LINK_CLASS(AVFoundation, AVOutputDevicePickerContext)
+SOFT_LINK_CLASS(AVFoundation, AVOutputContext)
 
 namespace WebCore {
 
@@ -44,26 +41,26 @@ static NSString * const deviceContextKey = @"deviceContext";
 
 void MediaPlaybackTarget::encode(NSKeyedArchiver *archiver) const
 {
-    if ([getAVOutputDevicePickerContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
+    if ([getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
         [archiver encodeObject:m_devicePickerContext.get() forKey:deviceContextKey];
 }
 
 bool MediaPlaybackTarget::decode(NSKeyedUnarchiver *unarchiver, MediaPlaybackTarget& playbackTarget)
 {
-    if (![getAVOutputDevicePickerContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
+    if (![getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
         return false;
 
-    AVOutputDevicePickerContext *context = nil;
-
+    AVOutputContext *context = nil;
     @try {
-        context = [unarchiver decodeObjectOfClass:getAVOutputDevicePickerContextClass() forKey:deviceContextKey];
+        context = [unarchiver decodeObjectOfClass:getAVOutputContextClass() forKey:deviceContextKey];
     } @catch (NSException *exception) {
-        LOG_ERROR("The target picker being decoded is not a AVOutputDevicePickerContext.");
+        LOG_ERROR("The target picker being decoded is not a AVOutputContext.");
+        return false;
     }
 
     playbackTarget.m_devicePickerContext = context;
 
-    return context;
+    return true;
 }
 
 } // namespace WebCore

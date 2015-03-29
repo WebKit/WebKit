@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 
+#import "AVFoundationSPI.h"
 #import "AVTrackPrivateAVFObjCImpl.h"
 #import "AudioSourceProviderAVFObjC.h"
 #import "AudioTrackPrivateAVFObjC.h"
@@ -135,14 +136,6 @@ template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionA
 @interface AVURLAsset (WebKitExtensions)
 @property (nonatomic, readonly) NSURL *resolvedURL;
 @end
-
-#if PLATFORM(MAC) && ENABLE(WIRELESS_PLAYBACK_TARGET)
-typedef AVOutputDevicePickerContext AVOutputDevicePickerContextType;
-
-@interface AVPlayer (WebKitExtensions)
-@property (nonatomic) AVOutputDevicePickerContext *outputDevicePickerContext;
-@end
-#endif
 
 typedef AVPlayer AVPlayerType;
 typedef AVPlayerItem AVPlayerItemType;
@@ -555,7 +548,7 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
         [m_avPlayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"rate"];
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
         [m_avPlayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"externalPlaybackActive"];
-        [m_avPlayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"outputDevicePickerContext"];
+        [m_avPlayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"outputContext"];
 #endif
         m_avPlayer = nil;
     }
@@ -937,7 +930,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"rate" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"externalPlaybackActive" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
-    [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"outputDevicePickerContext" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
+    [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"outputContext" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -953,8 +946,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
-    if (m_outputDevicePickerContext)
-        m_avPlayer.get().outputDevicePickerContext = m_outputDevicePickerContext.get();
+    if (m_outputContext)
+        m_avPlayer.get().outputContext = m_outputContext.get();
 #endif
 
     if (player()->client().mediaPlayerIsVideo())
@@ -2769,14 +2762,14 @@ void MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled(bool d
 #if !PLATFORM(IOS)
 void MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(const MediaPlaybackTarget& target)
 {
-    m_outputDevicePickerContext = target.devicePickerContext();
+    m_outputContext = target.devicePickerContext();
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(%p) - target = %p", this, m_outputDevicePickerContext.get());
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(%p) - target = %p", this, m_outputContext.get());
 
     if (!m_avPlayer)
         return;
 
-    m_avPlayer.get().outputDevicePickerContext = m_outputDevicePickerContext.get();
+    m_avPlayer.get().outputContext = m_outputContext.get();
 }
 #endif
 
@@ -3209,7 +3202,7 @@ NSArray* assetTrackMetadataKeyNames()
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
         else if ([keyPath isEqualToString:@"externalPlaybackActive"])
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::playbackTargetIsWirelessDidChange, m_callback);
-        else if ([keyPath isEqualToString:@"outputDevicePickerContext"])
+        else if ([keyPath isEqualToString:@"outputContext"])
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::playbackTargetIsWirelessDidChange, m_callback);
 #endif
     }
