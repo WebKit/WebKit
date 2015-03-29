@@ -1,3 +1,25 @@
+2015-03-29  Antti Koivisto  <antti@apple.com>
+
+        Use st_mtime instead of st_atime to track file access time
+        https://bugs.webkit.org/show_bug.cgi?id=143200
+
+        Reviewed by Darin Adler.
+
+        On OS X atime updates automatically on read so calling Storage::traverse() would always ends up updating access times
+        for all cache entries to the current time. This would make entry worth computation produce unexpected results.
+        We update mtime manually on successful cache retrieve only so switching to it fixes the problem.
+
+        * NetworkProcess/cache/NetworkCacheFileSystemPosix.h:
+        (WebKit::NetworkCache::fileTimes):
+        (WebKit::NetworkCache::updateFileModificationTimeIfNeeded):
+        (WebKit::NetworkCache::updateFileAccessTimeIfNeeded): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::updateFileModificationTime):
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::deletionProbability):
+        (WebKit::NetworkCache::Storage::updateFileAccessTime): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2015-03-27  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [TexMap] Seperate BitmapTexture related classes implementations from TextureMapper

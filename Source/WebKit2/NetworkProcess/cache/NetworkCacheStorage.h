@@ -97,7 +97,7 @@ private:
     void dispatchHeaderWriteOperation(const WriteOperation&);
     void dispatchPendingWriteOperations();
 
-    void updateFileAccessTime(IOChannel&);
+    void updateFileModificationTime(IOChannel&);
 
     WorkQueue& ioQueue() { return m_ioQueue.get(); }
     WorkQueue& backgroundIOQueue() { return m_backgroundIOQueue.get(); }

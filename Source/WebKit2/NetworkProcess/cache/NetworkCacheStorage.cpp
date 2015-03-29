@@ -292,11 +292,11 @@ void Storage::remove(const Key& key)
     });
 }
 
-void Storage::updateFileAccessTime(IOChannel& channel)
+void Storage::updateFileModificationTime(IOChannel& channel)
 {
     StringCapture filePathCapture(channel.path());
     serialBackgroundIOQueue().dispatch([filePathCapture] {
-        updateFileAccessTimeIfNeeded(filePathCapture.string());
+        updateFileModificationTimeIfNeeded(filePathCapture.string());
     });
 }
 
@@ -316,7 +316,7 @@ void Storage::dispatchReadOperation(const ReadOperation& read)
                 auto record = decodeRecord(fileData, channel->fileDescriptor(), read.key);
                 bool success = read.completionHandler(WTF::move(record));
                 if (success)
-                    updateFileAccessTime(*channel);
+                    updateFileModificationTime(*channel);
                 else
                     remove(read.key);
             }
@@ -589,7 +589,8 @@ static double deletionProbability(FileTimes times)
 
     using namespace std::chrono;
     auto age = system_clock::now() - times.creation;
-    auto accessAge = times.access - times.creation;
+    // File modification time is updated manually on cache read. We don't use access time since OS may update it automatically.
+    auto accessAge = times.modification - times.creation;
 
     // For sanity.
     if (age <= seconds::zero() || accessAge < seconds::zero() || accessAge > age)

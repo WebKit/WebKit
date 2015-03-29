@@ -71,7 +71,7 @@ inline void traverseCacheFiles(const String& cachePath, const Function& function
 
 struct FileTimes {
     std::chrono::system_clock::time_point creation;
-    std::chrono::system_clock::time_point access;
+    std::chrono::system_clock::time_point modification;
 };
 
 inline FileTimes fileTimes(const String& path)
@@ -79,18 +79,18 @@ inline FileTimes fileTimes(const String& path)
     struct stat fileInfo;
     if (stat(WebCore::fileSystemRepresentation(path).data(), &fileInfo))
         return { };
-    return { std::chrono::system_clock::from_time_t(fileInfo.st_birthtime), std::chrono::system_clock::from_time_t(fileInfo.st_atime) };
+    return { std::chrono::system_clock::from_time_t(fileInfo.st_birthtime), std::chrono::system_clock::from_time_t(fileInfo.st_mtime) };
 }
 
-inline void updateFileAccessTimeIfNeeded(const String& path)
+inline void updateFileModificationTimeIfNeeded(const String& path)
 {
     auto times = fileTimes(path);
-    if (times.creation != times.access) {
-        // Don't update more than once per hour;
-        if (std::chrono::system_clock::now() - times.access < std::chrono::hours(1))
+    if (times.creation != times.modification) {
+        // Don't update more than once per hour.
+        if (std::chrono::system_clock::now() - times.modification < std::chrono::hours(1))
             return;
     }
-    // This really updates both access time and modification time.
+    // This really updates both the access time and the modification time.
     utimes(WebCore::fileSystemRepresentation(path).data(), 0);
 }
 
