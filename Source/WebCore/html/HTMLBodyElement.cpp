@@ -24,7 +24,6 @@
 #include "config.h"
 #include "HTMLBodyElement.h"
 
-#include "Attribute.h"
 #include "CSSImageValue.h"
 #include "CSSParser.h"
 #include "CSSValueKeywords.h"

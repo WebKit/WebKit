@@ -23,7 +23,6 @@
 #include "config.h"
 #include "HTMLParamElement.h"
 
-#include "Attribute.h"
 #include "Document.h"
 #include "HTMLNames.h"
 

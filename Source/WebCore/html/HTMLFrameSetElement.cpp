@@ -24,7 +24,6 @@
 #include "config.h"
 #include "HTMLFrameSetElement.h"
 
-#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "ElementIterator.h"

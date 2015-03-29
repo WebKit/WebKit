@@ -25,7 +25,6 @@
 #include "config.h"
 #include "HTMLFormControlElement.h"
 
-#include "Attribute.h"
 #include "ControlStates.h"
 #include "ElementAncestorIterator.h"
 #include "Event.h"

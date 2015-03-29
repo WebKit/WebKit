@@ -24,7 +24,6 @@
 #include "config.h"
 #include "HTMLStyleElement.h"
 
-#include "Attribute.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventSender.h"

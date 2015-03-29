@@ -25,7 +25,6 @@
 #include "config.h"
 #include "HTMLTableColElement.h"
 
-#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"

@@ -23,7 +23,6 @@
 #include "config.h"
 #include "HTMLPlugInElement.h"
 
-#include "Attribute.h"
 #include "BridgeJSC.h"
 #include "Chrome.h"
 #include "ChromeClient.h"

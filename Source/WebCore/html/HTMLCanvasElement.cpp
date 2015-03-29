@@ -28,7 +28,6 @@
 #include "config.h"
 #include "HTMLCanvasElement.h"
 
-#include "Attribute.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"

@@ -1,3 +1,53 @@
+2015-03-29  Darin Adler  <darin@apple.com>
+
+        Remove unneeded includes of "Attribute.h"
+        https://bugs.webkit.org/show_bug.cgi?id=143195
+
+        Reviewed by Antti Koivisto.
+
+        * css/StyleResolver.cpp:
+        * html/HTMLAnchorElement.cpp:
+        * html/HTMLAreaElement.cpp:
+        * html/HTMLBRElement.cpp:
+        * html/HTMLBaseElement.cpp:
+        * html/HTMLBodyElement.cpp:
+        * html/HTMLButtonElement.cpp:
+        * html/HTMLCanvasElement.cpp:
+        * html/HTMLDivElement.cpp:
+        * html/HTMLElement.cpp:
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLFontElement.cpp:
+        * html/HTMLFormControlElement.cpp:
+        * html/HTMLFormElement.cpp:
+        * html/HTMLFrameElement.cpp:
+        * html/HTMLFrameElementBase.cpp:
+        * html/HTMLFrameSetElement.cpp:
+        * html/HTMLHRElement.cpp:
+        * html/HTMLIFrameElement.cpp:
+        * html/HTMLImageElement.cpp:
+        * html/HTMLOListElement.cpp:
+        * html/HTMLOptionElement.cpp:
+        * html/HTMLParagraphElement.cpp:
+        * html/HTMLParamElement.cpp:
+        * html/HTMLPlugInElement.cpp:
+        * html/HTMLPreElement.cpp:
+        * html/HTMLProgressElement.cpp:
+        * html/HTMLScriptElement.cpp:
+        * html/HTMLSelectElement.cpp:
+        * html/HTMLStyleElement.cpp:
+        * html/HTMLTableCaptionElement.cpp:
+        * html/HTMLTableCellElement.cpp:
+        * html/HTMLTableColElement.cpp:
+        * html/HTMLTableElement.cpp:
+        * html/HTMLTablePartElement.cpp:
+        * html/HTMLTextAreaElement.cpp:
+        * html/HTMLTextFormControlElement.cpp:
+        * html/HTMLUListElement.cpp:
+        * html/HTMLVideoElement.cpp:
+        * html/parser/HTMLScriptRunner.cpp:
+        * inspector/InspectorNodeFinder.cpp:
+        Removed includes of "Attribute.h".
+
 2015-03-28  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Update for output device API change

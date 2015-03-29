@@ -25,7 +25,6 @@
 #include "config.h"
 #include "HTMLTablePartElement.h"
 
-#include "Attribute.h"
 #include "CSSImageValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"

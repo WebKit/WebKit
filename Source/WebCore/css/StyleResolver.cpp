@@ -30,7 +30,6 @@
 #include "config.h"
 #include "StyleResolver.h"
 
-#include "Attribute.h"
 #include "CSSBorderImage.h"
 #include "CSSCalculationValue.h"
 #include "CSSCursorImageValue.h"

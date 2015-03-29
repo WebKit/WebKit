@@ -25,8 +25,6 @@
 #include "config.h"
 #include "HTMLFormElement.h"
 
-#include "Attribute.h"
-
 #include "AutocompleteErrorEvent.h"
 #include "DOMFormData.h"
 #include "DOMWindow.h"

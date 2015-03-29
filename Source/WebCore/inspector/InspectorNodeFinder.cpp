@@ -33,7 +33,6 @@
 #include "InspectorNodeFinder.h"
 
 #include "Attr.h"
-#include "Attribute.h"
 #include "Document.h"
 #include "Element.h"
 #include "HTMLFrameOwnerElement.h"

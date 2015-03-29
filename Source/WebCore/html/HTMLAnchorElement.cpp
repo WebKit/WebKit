@@ -24,7 +24,6 @@
 #include "config.h"
 #include "HTMLAnchorElement.h"
 
-#include "Attribute.h"
 #include "DNS.h"
 #include "ElementIterator.h"
 #include "EventHandler.h"

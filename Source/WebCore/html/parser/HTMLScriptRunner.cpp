@@ -26,7 +26,6 @@
 #include "config.h"
 #include "HTMLScriptRunner.h"
 
-#include "Attribute.h"
 #include "CachedScript.h"
 #include "CachedResourceLoader.h"
 #include "Element.h"

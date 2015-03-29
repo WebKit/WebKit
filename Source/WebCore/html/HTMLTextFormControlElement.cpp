@@ -26,7 +26,6 @@
 #include "HTMLTextFormControlElement.h"
 
 #include "AXObjectCache.h"
-#include "Attribute.h"
 #include "ChromeClient.h"
 #include "Document.h"
 #include "Event.h"

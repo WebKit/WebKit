@@ -25,7 +25,6 @@
 #include "config.h"
 #include "HTMLElement.h"
 
-#include "Attribute.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"

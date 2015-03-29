@@ -27,7 +27,6 @@
 #include "config.h"
 #include "HTMLOptionElement.h"
 
-#include "Attribute.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLDataListElement.h"

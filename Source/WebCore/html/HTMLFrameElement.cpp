@@ -24,7 +24,6 @@
 #include "config.h"
 #include "HTMLFrameElement.h"
 
-#include "Attribute.h"
 #include "Frame.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"

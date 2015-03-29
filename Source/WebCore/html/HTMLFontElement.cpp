@@ -23,7 +23,6 @@
 #include "config.h"
 #include "HTMLFontElement.h"
 
-#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"

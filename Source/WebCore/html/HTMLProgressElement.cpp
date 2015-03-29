@@ -21,7 +21,6 @@
 #include "config.h"
 #include "HTMLProgressElement.h"
 
-#include "Attribute.h"
 #include "ElementIterator.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"

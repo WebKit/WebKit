@@ -26,7 +26,6 @@
 #include "config.h"
 #include "HTMLButtonElement.h"
 
-#include "Attribute.h"
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "HTMLFormElement.h"

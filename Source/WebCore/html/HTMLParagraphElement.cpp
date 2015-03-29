@@ -23,7 +23,6 @@
 #include "config.h"
 #include "HTMLParagraphElement.h"
 
-#include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"

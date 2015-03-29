@@ -26,7 +26,6 @@
 #include "config.h"
 #include "HTMLTextAreaElement.h"
 
-#include "Attribute.h"
 #include "BeforeTextInsertedEvent.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
