@@ -74,5 +74,4 @@ $ENV{'JavaScriptCore'} = $XSRCROOT;
 $ENV{'DFTABLES_EXTENSION'} = '.exe';
 
 my $DERIVED_SOURCES_MAKEFILE = File::Spec->catfile($XSRCROOT, 'DerivedSources.make');
-
-system('/usr/bin/make', '-f', $DERIVED_SOURCES_MAKEFILE, '-j', $NUMCPUS) and die "Failed to build $DERIVED_SOURCES_MAKEFILE: $!";
+system('make', '-f', $DERIVED_SOURCES_MAKEFILE, '-j', $NUMCPUS) and die "Failed to build $DERIVED_SOURCES_MAKEFILE: $!";

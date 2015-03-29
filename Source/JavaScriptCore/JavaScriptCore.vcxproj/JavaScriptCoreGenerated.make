@@ -1,5 +1,5 @@
 all:
-    @touch "%ConfigurationBuildDir%\buildfailed"
+    @type NUL > "%ConfigurationBuildDir%\buildfailed"
     @perl build-generated-files.pl "%ConfigurationBuildDir%" "$(WEBKIT_LIBRARIES)" "%PlatformArchitecture%"
     @copy-files.cmd
 

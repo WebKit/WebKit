@@ -1,5 +1,5 @@
 all:
-    touch "%ConfigurationBuildDir%\buildfailed"
+    @type NUL > "%ConfigurationBuildDir%\buildfailed"
     perl build-LLIntAssembly.pl "%ConfigurationBuildDir%" "$(WEBKIT_LIBRARIES)" "$(DEBUGSUFFIX)" "%PlatformArchitecture%"
     -del "%ConfigurationBuildDir%\buildfailed"
 

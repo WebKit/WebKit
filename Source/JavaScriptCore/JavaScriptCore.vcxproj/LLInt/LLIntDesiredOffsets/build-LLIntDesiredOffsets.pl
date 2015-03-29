@@ -55,4 +55,4 @@ unless (-d $BUILD_PRODUCTS_DIR) {
 my $generateOffsetExtractor = File::Spec->catfile($XSRCROOT, 'offlineasm', 'generate_offset_extractor.rb');
 my $lowLevelInterpreter = File::Spec->catfile($XSRCROOT, 'llint', 'LowLevelInterpreter.asm');
 my $OUTPUTFILENAME = File::Spec->catfile($BUILD_PRODUCTS_DIR, 'LLIntDesiredOffsets.h');
-system('/usr/bin/env', 'ruby', $generateOffsetExtractor, "-I$BUILD_PRODUCTS_DIR", $lowLevelInterpreter, $OUTPUTFILENAME) and die "Failed to generate $OUTPUTFILENAME: $!";
+system('ruby', $generateOffsetExtractor, "-I$BUILD_PRODUCTS_DIR", $lowLevelInterpreter, $OUTPUTFILENAME) and die "Failed to generate $OUTPUTFILENAME: $!";

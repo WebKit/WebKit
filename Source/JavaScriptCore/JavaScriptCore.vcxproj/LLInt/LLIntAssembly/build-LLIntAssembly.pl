@@ -67,4 +67,4 @@ my $OUTPUTFILENAME = File::Spec->catfile($DERIVED_SOURCES_DIR, 'LowLevelInterpre
 my $offlineAsm = File::Spec->catfile($XSRCROOT, 'offlineasm', 'asm.rb');
 my $lowLevelInterpreter = File::Spec->catfile($XSRCROOT, 'llint', 'LowLevelInterpreter.asm');
 my $offsetsExtractor = File::Spec->catfile($BUILD_PRODUCTS_DIR, 'LLIntOffsetsExtractor', "LLIntOffsetsExtractor$ARGV[2].exe");
-system('/usr/bin/env', 'ruby', $offlineAsm, '-I.', $lowLevelInterpreter, $offsetsExtractor, $OUTPUTFILENAME) and die "Failed to generate $OUTPUTFILENAME: $!";
+system('ruby', $offlineAsm, '-I.', $lowLevelInterpreter, $offsetsExtractor, $OUTPUTFILENAME) and die "Failed to generate $OUTPUTFILENAME: $!";

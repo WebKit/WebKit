@@ -1,3 +1,26 @@
+2015-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Win] Allow building JavaScriptCore without Cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=143189
+
+        Reviewed by Brent Fulgham.
+
+        Paths like /usr/bin/ don't exist on Windows.
+        Hashbangs don't work on Windows. Instead we must explicitly call the executable.
+        Prefixing commands with environment variables doesn't work on Windows.
+        Windows doesn't have 'cmp'
+        Windows uses 'del' instead of 'rm'
+        Windows uses 'type NUL' intead of 'touch'
+
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.make:
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.make:
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/build-LLIntAssembly.pl:
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/LLIntDesiredOffsets.make:
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/build-LLIntDesiredOffsets.pl:
+        * JavaScriptCore.vcxproj/build-generated-files.pl:
+        * UpdateContents.py: Copied from Source/JavaScriptCore/JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/build-LLIntDesiredOffsets.pl.
+
 2015-03-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Clean up JavaScriptCore/builtins
