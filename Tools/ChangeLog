@@ -1,3 +1,29 @@
+2015-03-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [buildbot] clean-build script should remove untracked files and revert local changes too
+        https://bugs.webkit.org/show_bug.cgi?id=142400
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch cleans the WebKit folder by deleting SCM untracked files and reverting changes for tracked files.
+
+        * BuildSlaveSupport/clean-build:
+        (main): Adding call to Tools/Scripts/clean-webkit.
+        * Scripts/clean-webkit: Added.
+        (main): Removes untracked and changed files.
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.untracked_files): Retrieves GIT untracked files.
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.untracked_files): Retrieves SVN untracked files.
+        (SCM):
+        (SCM.discard_untracked_files): Deletes untracked files/folders.
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (SCMTest._shared_test_untracked_files): Unit testing for untracked files.
+        (test_untracked_files):
+        (GitSVNTest.test_untracked_files):
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.untracked_files):
+
 2015-03-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMake] Remove unnecessary INCLUDE_IF_EXISTS macro 
