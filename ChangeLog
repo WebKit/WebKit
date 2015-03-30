@@ -1,3 +1,17 @@
+2015-03-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMake] Update old CMakeList.txt in gtest
+        https://bugs.webkit.org/show_bug.cgi?id=143192
+
+        Reviewed by Darin Adler.
+
+        CMake ports have used cmake/gtest/CMakeLists.txt instead of ThirdParty/test/CMakeLists.txt
+        in order to build gtest. However it looks ThirdParty/test/CMakeLists.txt won't be used anymore.
+        So this patch moves cmake/gtest/CMakeLists.txt to ThirdPart/test/CMakeLists.txt, and use it.
+
+        * Source/CMakeLists.txt:
+        * Source/cmake/gtest/CMakeLists.txt: Removed.
+
 2015-03-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMake] Remove unnecessary INCLUDE_IF_EXISTS macro

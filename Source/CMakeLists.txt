@@ -8,7 +8,7 @@ add_subdirectory(WTF)
 add_subdirectory(JavaScriptCore)
 
 if (ENABLE_API_TESTS)
-    add_subdirectory(cmake/gtest)
+    add_subdirectory(ThirdParty/gtest)
 endif ()
 
 if (ENABLE_WEBCORE)
