@@ -905,9 +905,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             break;
         case CSSSelector::PseudoClassAutofill:
             return isAutofilled(element);
-#if ENABLE(CSS_SELECTORS_LEVEL4)
         case CSSSelector::PseudoClassAnyLink:
-#endif
         case CSSSelector::PseudoClassAnyLinkDeprecated:
         case CSSSelector::PseudoClassLink:
             // :visited and :link matches are separated later when applying the style. Here both classes match all links...

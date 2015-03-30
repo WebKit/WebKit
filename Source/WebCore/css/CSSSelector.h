@@ -106,9 +106,7 @@ namespace WebCore {
             PseudoClassLink,
             PseudoClassVisited,
             PseudoClassAny,
-#if ENABLE(CSS_SELECTORS_LEVEL4)
             PseudoClassAnyLink,
-#endif
             PseudoClassAnyLinkDeprecated,
             PseudoClassAutofill,
             PseudoClassHover,

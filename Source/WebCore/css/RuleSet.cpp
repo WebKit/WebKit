@@ -246,9 +246,7 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
             switch (selector->pseudoClassType()) {
             case CSSSelector::PseudoClassLink:
             case CSSSelector::PseudoClassVisited:
-#if ENABLE(CSS_SELECTORS_LEVEL4)
             case CSSSelector::PseudoClassAnyLink:
-#endif
             case CSSSelector::PseudoClassAnyLinkDeprecated:
                 linkSelector = selector;
                 break;

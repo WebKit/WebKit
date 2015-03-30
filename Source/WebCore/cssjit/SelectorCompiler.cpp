@@ -657,14 +657,14 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::CannotCompile;
 
     // Optimized pseudo selectors.
-#if ENABLE(CSS_SELECTORS_LEVEL4)
     case CSSSelector::PseudoClassAnyLink:
-#endif
-    case CSSSelector::PseudoClassAnyLinkDeprecated:
     case CSSSelector::PseudoClassLink:
     case CSSSelector::PseudoClassRoot:
     case CSSSelector::PseudoClassTarget:
         fragment.pseudoClasses.add(type);
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassAnyLinkDeprecated:
+        fragment.pseudoClasses.add(CSSSelector::PseudoClassAnyLink);
         return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoClassVisited:
@@ -2592,10 +2592,8 @@ void SelectorCodeGenerator::generateElementDataMatching(Assembler::JumpList& fai
 void SelectorCodeGenerator::generateElementLinkMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassLink)
-#if ENABLE(CSS_SELECTORS_LEVEL4)
         || fragment.pseudoClasses.contains(CSSSelector::PseudoClassAnyLink)
-#endif
-        || fragment.pseudoClasses.contains(CSSSelector::PseudoClassVisited) || fragment.pseudoClasses.contains(CSSSelector::PseudoClassAnyLinkDeprecated))
+        || fragment.pseudoClasses.contains(CSSSelector::PseudoClassVisited))
         generateElementIsLink(failureCases);
 }
 

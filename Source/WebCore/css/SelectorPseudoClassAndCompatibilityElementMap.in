@@ -6,9 +6,7 @@
 -webkit-full-page-media
 active
 after, PseudoClassUnknown, PseudoElementAfter
-#if ENABLE(CSS_SELECTORS_LEVEL4)
 any-link
-#endif
 before, PseudoClassUnknown, PseudoElementBefore
 checked
 corner-present

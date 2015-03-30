@@ -419,11 +419,9 @@ String CSSSelector::selectorText(const String& rightSide) const
                 str.append(')');
                 break;
             }
-#if ENABLE(CSS_SELECTORS_LEVEL4)
             case CSSSelector::PseudoClassAnyLink:
                 str.appendLiteral(":any-link");
                 break;
-#endif
             case CSSSelector::PseudoClassAnyLinkDeprecated:
                 str.appendLiteral(":-webkit-any-link");
                 break;

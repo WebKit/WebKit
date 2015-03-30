@@ -1,3 +1,35 @@
+2015-03-29  Benjamin Poulain  <benjamin@webkit.org>
+
+        Enable :any-link by default
+        https://bugs.webkit.org/show_bug.cgi?id=143201
+
+        Reviewed by Sam Weinig.
+
+        The pseudo class :any-link has been stable for a while. This patch enables
+        it by default and remove the -webkit- prefix on the default style.
+
+        * css/CSSDefaultStyleSheets.cpp:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRule):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::isCommonPseudoClassSelector):
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        * css/html.css:
+        (a:any-link):
+        (a:any-link:active):
+        (:any-link img):
+        (a:-webkit-any-link): Deleted.
+        (a:-webkit-any-link:active): Deleted.
+        (:-webkit-any-link img): Deleted.
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementLinkMatching):
+
 2015-03-29  Joonghun Park  <jh718.park@samsung.com>
 
         nullptr cleanup in RenderFooBox classes
