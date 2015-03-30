@@ -1,5 +1,32 @@
 2015-03-29  Benjamin Poulain  <benjamin@webkit.org>
 
+        Use :matches() instead of :-webkit-any() for the sections and headings default style
+        https://bugs.webkit.org/show_bug.cgi?id=143197
+
+        Reviewed by Darin Adler.
+
+        We no longer need to use the :-webkit-any() hack in the default stylesheet.
+
+        The pseudo class :matches() also support correct specificity. This is not observable
+        since those selector do not conflict with any other rule in the default stylesheet.
+
+        * css/CSSSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::determineLinkMatchType):
+        * css/html.css:
+        (:matches(article, aside, nav, section) h1):
+        (:matches(article, aside, nav, section) :matches(article, aside, nav, section) h1):
+        (:matches(article, aside, nav, section) :matches(article, aside, nav, section) :matches(article, aside, nav, section) h1):
+        (:matches(article, aside, nav, section) :matches(article, aside, nav, section) :matches(article, aside, nav, section) :matches(article, aside, nav, section) h1):
+        (:matches(article, aside, nav, section) :matches(article, aside, nav, section) :matches(article, aside, nav, section) :matches(article, aside, nav, section) :matches(article, aside, nav, section) h1):
+        (:-webkit-any(article,aside,nav,section) h1): Deleted.
+        (:-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) h1): Deleted.
+        (:-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) h1): Deleted.
+        (:-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) h1): Deleted.
+        (:-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) h1): Deleted.
+
+2015-03-29  Benjamin Poulain  <benjamin@webkit.org>
+
         `currentColor` computes to the same colour on all elements, even if 'color' is inherited differently
         https://bugs.webkit.org/show_bug.cgi?id=133420
 

@@ -1146,7 +1146,6 @@ unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)
                 linkMatchType &= ~SelectorChecker::MatchLink;
                 break;
             default:
-                // We don't support :link and :visited inside :-webkit-any.
                 break;
             }
         }
