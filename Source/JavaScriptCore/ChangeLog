@@ -1,3 +1,14 @@
+2015-03-30  Per Arne Vollan  <peavo@outlook.com>
+
+        Avoid using hardcoded values for JSValue::Int32Tag, if possible.
+        https://bugs.webkit.org/show_bug.cgi?id=143134
+
+        Reviewed by Geoffrey Garen.
+
+        * jit/JSInterfaceJIT.h:
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+
 2015-03-30  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION: js/regress/inline-arguments-local-escape.html is flaky
