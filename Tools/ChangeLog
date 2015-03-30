@@ -1,3 +1,17 @@
+2015-03-30  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r182119.
+        https://bugs.webkit.org/show_bug.cgi?id=143196
+
+        problem with syntax (Requested by youenn on #webkit).
+
+        Reverted changeset:
+
+        "[buildbot] clean-build script should remove untracked files
+        and revert local changes too"
+        https://bugs.webkit.org/show_bug.cgi?id=142400
+        http://trac.webkit.org/changeset/182119
+
 2015-03-30  Benjamin Poulain  <benjamin@webkit.org>
 
         Start the features.json files
