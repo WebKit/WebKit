@@ -138,7 +138,7 @@ void HistoryController::restoreScrollPositionAndViewState()
         Page* page = m_frame.page();
         if (page && m_frame.isMainFrame()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingCoordinator->frameViewRootLayerDidChange(view);
+                scrollingCoordinator->frameViewRootLayerDidChange(*view);
         }
     }
 

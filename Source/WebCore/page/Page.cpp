@@ -369,7 +369,7 @@ String Page::synchronousScrollingReasonsAsText()
     return String();
 }
 
-Ref<ClientRectList> Page::nonFastScrollableRects(const Frame* frame)
+Ref<ClientRectList> Page::nonFastScrollableRects(const Frame& frame)
 {
     if (Document* document = m_mainFrame->document())
         document->updateLayout();

@@ -115,26 +115,26 @@ public:
     virtual bool isRemoteScrollingCoordinator() const { return false; }
 
     // Return whether this scrolling coordinator handles scrolling for the given frame view.
-    virtual bool coordinatesScrollingForFrameView(FrameView*) const;
+    virtual bool coordinatesScrollingForFrameView(const FrameView&) const;
 
     // Should be called whenever the given frame view has been laid out.
-    virtual void frameViewLayoutUpdated(FrameView*) { }
+    virtual void frameViewLayoutUpdated(FrameView&) { }
 
     // Should be called whenever a wheel event handler is added or removed in the 
     // frame view's underlying document.
-    void frameViewWheelEventHandlerCountChanged(FrameView*);
+    void frameViewWheelEventHandlerCountChanged(FrameView&);
 
     // Should be called whenever the slow repaint objects counter changes between zero and one.
-    void frameViewHasSlowRepaintObjectsDidChange(FrameView*);
+    void frameViewHasSlowRepaintObjectsDidChange(FrameView&);
 
     // Should be called whenever the set of fixed objects changes.
-    void frameViewFixedObjectsDidChange(FrameView*);
+    void frameViewFixedObjectsDidChange(FrameView&);
 
     // Called whenever the non-fast scrollable region changes for reasons other than layout.
-    virtual void frameViewNonFastScrollableRegionChanged(FrameView*) { }
+    virtual void frameViewNonFastScrollableRegionChanged(FrameView&) { }
 
     // Should be called whenever the root layer for the given frame view changes.
-    virtual void frameViewRootLayerDidChange(FrameView*);
+    virtual void frameViewRootLayerDidChange(FrameView&);
 
     // Return whether this scrolling coordinator can keep fixed position layers fixed to their
     // containers while scrolling.
@@ -156,8 +156,8 @@ public:
     // These virtual functions are currently unique to the threaded scrolling architecture. 
     // Their meaningful implementations are in ScrollingCoordinatorMac.
     virtual void commitTreeStateIfNeeded() { }
-    virtual bool requestScrollPositionUpdate(FrameView*, const IntPoint&) { return false; }
-    virtual bool handleWheelEvent(FrameView*, const PlatformWheelEvent&) { return true; }
+    virtual bool requestScrollPositionUpdate(FrameView&, const IntPoint&) { return false; }
+    virtual bool handleWheelEvent(FrameView&, const PlatformWheelEvent&) { return true; }
     virtual ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID /*parentID*/) { return newNodeID; }
     virtual void detachFromStateTree(ScrollingNodeID) { }
     virtual void clearStateTree() { }
@@ -186,47 +186,47 @@ public:
     ScrollingNodeID uniqueScrollLayerID();
 
     enum MainThreadScrollingReasonFlags {
-        ForcedOnMainThread = 1 << 0,
-        HasSlowRepaintObjects = 1 << 1,
-        HasViewportConstrainedObjectsWithoutSupportingFixedLayers = 1 << 2,
-        HasNonLayerViewportConstrainedObjects = 1 << 3,
-        IsImageDocument = 1 << 4
+        ForcedOnMainThread                                          = 1 << 0,
+        HasSlowRepaintObjects                                       = 1 << 1,
+        HasViewportConstrainedObjectsWithoutSupportingFixedLayers   = 1 << 2,
+        HasNonLayerViewportConstrainedObjects                       = 1 << 3,
+        IsImageDocument                                             = 1 << 4
     };
 
-    SynchronousScrollingReasons synchronousScrollingReasons(FrameView*) const;
+    SynchronousScrollingReasons synchronousScrollingReasons(const FrameView&) const;
     bool shouldUpdateScrollLayerPositionSynchronously() const;
 
-    virtual void willDestroyScrollableArea(ScrollableArea*) { }
-    virtual void scrollableAreaScrollLayerDidChange(ScrollableArea*) { }
-    virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea*, ScrollbarOrientation) { }
+    virtual void willDestroyScrollableArea(ScrollableArea&) { }
+    virtual void scrollableAreaScrollLayerDidChange(ScrollableArea&) { }
+    virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) { }
 
     static String synchronousScrollingReasonsAsText(SynchronousScrollingReasons);
     String synchronousScrollingReasonsAsText() const;
 
-    Region computeNonFastScrollableRegion(const Frame*, const IntPoint& frameLocation) const;
+    Region computeNonFastScrollableRegion(const Frame&, const IntPoint& frameLocation) const;
 
 protected:
     explicit ScrollingCoordinator(Page*);
 
-    static GraphicsLayer* scrollLayerForScrollableArea(ScrollableArea*);
+    static GraphicsLayer* scrollLayerForScrollableArea(ScrollableArea&);
 
     unsigned computeCurrentWheelEventHandlerCount();
-    GraphicsLayer* scrollLayerForFrameView(FrameView*);
-    GraphicsLayer* counterScrollingLayerForFrameView(FrameView*);
-    GraphicsLayer* insetClipLayerForFrameView(FrameView*);
-    GraphicsLayer* rootContentLayerForFrameView(FrameView*);
-    GraphicsLayer* contentShadowLayerForFrameView(FrameView*);
-    GraphicsLayer* headerLayerForFrameView(FrameView*);
-    GraphicsLayer* footerLayerForFrameView(FrameView*);
+    GraphicsLayer* scrollLayerForFrameView(FrameView&);
+    GraphicsLayer* counterScrollingLayerForFrameView(FrameView&);
+    GraphicsLayer* insetClipLayerForFrameView(FrameView&);
+    GraphicsLayer* rootContentLayerForFrameView(FrameView&);
+    GraphicsLayer* contentShadowLayerForFrameView(FrameView&);
+    GraphicsLayer* headerLayerForFrameView(FrameView&);
+    GraphicsLayer* footerLayerForFrameView(FrameView&);
 
     Page* m_page; // FIXME: ideally this would be a reference but it gets nulled on async teardown.
 
 private:
-    virtual void recomputeWheelEventHandlerCountForFrameView(FrameView*) { }
+    virtual void recomputeWheelEventHandlerCountForFrameView(FrameView&) { }
     virtual void setSynchronousScrollingReasons(SynchronousScrollingReasons) { }
 
-    virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(FrameView*) const;
-    void updateSynchronousScrollingReasons(FrameView*);
+    virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const;
+    void updateSynchronousScrollingReasons(FrameView&);
     
     bool m_forceSynchronousScrollLayerPositionUpdates;
 };

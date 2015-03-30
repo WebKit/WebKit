@@ -1,3 +1,17 @@
+2015-03-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert arguments to ScrollingCoordinator functions to references
+        https://bugs.webkit.org/show_bug.cgi?id=143198
+
+        Reviewed by Darin Adler.
+
+        Convert all the FrameView* and ScrollableArea* arguments to ScrollingCoordinator functions to
+        references, and use references in a few other places.
+
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.h:
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::coordinatesScrollingForFrameView):
+
 2015-03-29  Enrica Casucci  <enrica@apple.com>
 
         [iOS WK2] WKContentView should implement _selectionClipRect

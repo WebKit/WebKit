@@ -5995,7 +5995,7 @@ static void wheelEventHandlerCountChanged(Document* document)
         return;
 
     // FIXME: Why doesn't this need to be called in didBecomeCurrentDocumentInFrame?
-    scrollingCoordinator->frameViewWheelEventHandlerCountChanged(frameView);
+    scrollingCoordinator->frameViewWheelEventHandlerCountChanged(*frameView);
 }
 
 void Document::didAddWheelEventHandler(Node&)

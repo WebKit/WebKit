@@ -47,10 +47,10 @@ public:
 
     virtual void updateViewportConstrainedNode(ScrollingNodeID, const ViewportConstraints&, GraphicsLayer*) override;
 
-    virtual void scrollableAreaScrollLayerDidChange(ScrollableArea*) override;
-    virtual void willDestroyScrollableArea(ScrollableArea*) override;
+    virtual void scrollableAreaScrollLayerDidChange(ScrollableArea&) override;
+    virtual void willDestroyScrollableArea(ScrollableArea&) override;
 
-    virtual bool requestScrollPositionUpdate(FrameView*, const IntPoint&) override;
+    virtual bool requestScrollPositionUpdate(FrameView&, const IntPoint&) override;
 
 private:
     std::unique_ptr<ScrollingStateTree> m_scrollingStateTree;

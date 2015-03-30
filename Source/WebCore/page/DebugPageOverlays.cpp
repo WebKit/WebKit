@@ -127,7 +127,7 @@ bool NonFastScrollableRegionOverlay::updateRegion()
 
     if (Page* page = m_frame.page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            *region = scrollingCoordinator->computeNonFastScrollableRegion(&m_frame, IntPoint());
+            *region = scrollingCoordinator->computeNonFastScrollableRegion(m_frame, IntPoint());
     }
 
     // computeNonFastScrollableRegion() applies topContentInset.

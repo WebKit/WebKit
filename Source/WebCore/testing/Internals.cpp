@@ -1771,7 +1771,7 @@ RefPtr<ClientRectList> Internals::nonFastScrollableRects(ExceptionCode& ec) cons
     if (!page)
         return nullptr;
 
-    return page->nonFastScrollableRects(document->frame());
+    return page->nonFastScrollableRects(*document->frame());
 }
 
 void Internals::garbageCollectDocumentResources(ExceptionCode& ec) const

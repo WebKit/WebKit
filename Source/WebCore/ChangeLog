@@ -1,3 +1,105 @@
+2015-03-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert arguments to ScrollingCoordinator functions to references
+        https://bugs.webkit.org/show_bug.cgi?id=143198
+
+        Reviewed by Darin Adler.
+
+        Convert all the FrameView* and ScrollableArea* arguments to ScrollingCoordinator functions to
+        references, and use references in a few other places.
+
+        * dom/Document.cpp:
+        (WebCore::wheelEventHandlerCountChanged):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+        * page/DebugPageOverlays.cpp:
+        (WebCore::NonFastScrollableRegionOverlay::updateRegion):
+        * page/Frame.cpp:
+        (WebCore::Frame::willDetachPage):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::prepareForDetach):
+        (WebCore::FrameView::addSlowRepaintObject):
+        (WebCore::FrameView::removeSlowRepaintObject):
+        (WebCore::FrameView::addViewportConstrainedObject):
+        (WebCore::FrameView::removeViewportConstrainedObject):
+        (WebCore::FrameView::requestScrollPositionUpdate):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::scrollableAreaSetChanged):
+        (WebCore::FrameView::wheelEvent):
+        * page/Page.cpp:
+        (WebCore::Page::nonFastScrollableRects):
+        * page/Page.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged):
+        (WebCore::AsyncScrollingCoordinator::frameViewRootLayerDidChange):
+        (WebCore::AsyncScrollingCoordinator::requestScrollPositionUpdate):
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        (WebCore::AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange):
+        (WebCore::AsyncScrollingCoordinator::ensureRootStateNodeForFrameView):
+        (WebCore::AsyncScrollingCoordinator::updateMainFrameScrollLayerPosition):
+        (WebCore::AsyncScrollingCoordinator::recomputeWheelEventHandlerCountForFrameView):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::pageDestroyed):
+        (WebCore::ScrollingCoordinator::coordinatesScrollingForFrameView):
+        (WebCore::ScrollingCoordinator::computeNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinator::frameViewWheelEventHandlerCountChanged):
+        (WebCore::ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange):
+        (WebCore::ScrollingCoordinator::frameViewFixedObjectsDidChange):
+        (WebCore::ScrollingCoordinator::scrollLayerForScrollableArea):
+        (WebCore::ScrollingCoordinator::scrollLayerForFrameView):
+        (WebCore::ScrollingCoordinator::headerLayerForFrameView):
+        (WebCore::ScrollingCoordinator::footerLayerForFrameView):
+        (WebCore::ScrollingCoordinator::counterScrollingLayerForFrameView):
+        (WebCore::ScrollingCoordinator::insetClipLayerForFrameView):
+        (WebCore::ScrollingCoordinator::contentShadowLayerForFrameView):
+        (WebCore::ScrollingCoordinator::rootContentLayerForFrameView):
+        (WebCore::ScrollingCoordinator::frameViewRootLayerDidChange):
+        (WebCore::ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects):
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasons):
+        (WebCore::ScrollingCoordinator::updateSynchronousScrollingReasons):
+        (WebCore::ScrollingCoordinator::setForceSynchronousScrollLayerPositionUpdates):
+        (WebCore::ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously):
+        (WebCore::ScrollingCoordinator::replaySessionStateDidChange):
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasonsAsText):
+        * page/scrolling/ScrollingCoordinator.h: Align the bitmask enums to make mistakes easier to spot.
+        (WebCore::ScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::ScrollingCoordinator::frameViewNonFastScrollableRegionChanged):
+        (WebCore::ScrollingCoordinator::requestScrollPositionUpdate):
+        (WebCore::ScrollingCoordinator::handleWheelEvent):
+        (WebCore::ScrollingCoordinator::willDestroyScrollableArea):
+        (WebCore::ScrollingCoordinator::scrollableAreaScrollLayerDidChange):
+        (WebCore::ScrollingCoordinator::scrollableAreaScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::recomputeWheelEventHandlerCountForFrameView):
+        * page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp:
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::scrollableAreaScrollLayerDidChange):
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::willDestroyScrollableArea):
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::requestScrollPositionUpdate):
+        * page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.h:
+        * page/scrolling/ios/ScrollingCoordinatorIOS.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::handleWheelEvent):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::~RenderLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateOverflowControlsLayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::hasCoordinatedScrolling):
+        (WebCore::RenderLayerCompositor::scrollingLayerDidChange):
+        (WebCore::RenderLayerCompositor::updateLayerForHeader):
+        (WebCore::RenderLayerCompositor::updateLayerForFooter):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::destroyRootLayer):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinationForThisFrame):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+        (WebCore::RenderLayerCompositor::willRemoveScrollingLayerWithBacking):
+        (WebCore::RenderLayerCompositor::didAddScrollingLayer):
+        * testing/Internals.cpp:
+        (WebCore::Internals::nonFastScrollableRects):
+
 2015-03-29  Benjamin Poulain  <benjamin@webkit.org>
 
         Use :matches() instead of :-webkit-any() for the sections and headings default style

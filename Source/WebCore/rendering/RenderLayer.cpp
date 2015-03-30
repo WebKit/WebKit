@@ -360,7 +360,7 @@ RenderLayer::~RenderLayer()
 
     if (renderer().frame().page()) {
         if (ScrollingCoordinator* scrollingCoordinator = renderer().frame().page()->scrollingCoordinator())
-            scrollingCoordinator->willDestroyScrollableArea(this);
+            scrollingCoordinator->willDestroyScrollableArea(*this);
     }
 
     if (m_reflection)

@@ -358,7 +358,7 @@ void FrameView::prepareForDetach()
 
     if (frame().page()) {
         if (ScrollingCoordinator* scrollingCoordinator = frame().page()->scrollingCoordinator())
-            scrollingCoordinator->willDestroyScrollableArea(this);
+            scrollingCoordinator->willDestroyScrollableArea(*this);
     }
 }
 
@@ -1548,7 +1548,7 @@ void FrameView::addSlowRepaintObject(RenderElement* o)
 
         if (Page* page = frame().page()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingCoordinator->frameViewHasSlowRepaintObjectsDidChange(this);
+                scrollingCoordinator->frameViewHasSlowRepaintObjectsDidChange(*this);
         }
     }
 }
@@ -1565,7 +1565,7 @@ void FrameView::removeSlowRepaintObject(RenderElement* o)
 
         if (Page* page = frame().page()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingCoordinator->frameViewHasSlowRepaintObjectsDidChange(this);
+                scrollingCoordinator->frameViewHasSlowRepaintObjectsDidChange(*this);
         }
     }
 }
@@ -1582,7 +1582,7 @@ void FrameView::addViewportConstrainedObject(RenderElement* object)
 
         if (Page* page = frame().page()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingCoordinator->frameViewFixedObjectsDidChange(this);
+                scrollingCoordinator->frameViewFixedObjectsDidChange(*this);
         }
     }
 }
@@ -1592,7 +1592,7 @@ void FrameView::removeViewportConstrainedObject(RenderElement* object)
     if (m_viewportConstrainedObjects && m_viewportConstrainedObjects->remove(object)) {
         if (Page* page = frame().page()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingCoordinator->frameViewFixedObjectsDidChange(this);
+                scrollingCoordinator->frameViewFixedObjectsDidChange(*this);
         }
 
         // FIXME: In addFixedObject() we only call this if there's a platform widget,
@@ -2230,7 +2230,7 @@ bool FrameView::requestScrollPositionUpdate(const IntPoint& position)
 #if ENABLE(ASYNC_SCROLLING) || USE(TILED_BACKING_STORE)
     if (Page* page = frame().page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            return scrollingCoordinator->requestScrollPositionUpdate(this, position);
+            return scrollingCoordinator->requestScrollPositionUpdate(*this, position);
     }
 #else
     UNUSED_PARAM(position);
@@ -2963,7 +2963,7 @@ void FrameView::performPostLayoutTasks()
 
     if (auto* page = frame().page()) {
         if (auto* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->frameViewLayoutUpdated(this);
+            scrollingCoordinator->frameViewLayoutUpdated(*this);
     }
 
     if (RenderView* renderView = this->renderView()) {
@@ -4377,7 +4377,7 @@ void FrameView::scrollableAreaSetChanged()
 {
     if (auto* page = frame().page()) {
         if (auto* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->frameViewNonFastScrollableRegionChanged(this);
+            scrollingCoordinator->frameViewNonFastScrollableRegionChanged(*this);
     }
 }
 
@@ -4429,8 +4429,8 @@ bool FrameView::wheelEvent(const PlatformWheelEvent& wheelEvent)
 #if ENABLE(ASYNC_SCROLLING)
     if (Page* page = frame().page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
-            if (scrollingCoordinator->coordinatesScrollingForFrameView(this))
-                return scrollingCoordinator->handleWheelEvent(this, wheelEvent);
+            if (scrollingCoordinator->coordinatesScrollingForFrameView(*this))
+                return scrollingCoordinator->handleWheelEvent(*this, wheelEvent);
         }
     }
 #endif

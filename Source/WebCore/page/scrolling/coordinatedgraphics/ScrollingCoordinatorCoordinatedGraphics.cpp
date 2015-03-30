@@ -94,16 +94,16 @@ void ScrollingCoordinatorCoordinatedGraphics::updateViewportConstrainedNode(Scro
     }
 }
 
-void ScrollingCoordinatorCoordinatedGraphics::scrollableAreaScrollLayerDidChange(ScrollableArea* scrollableArea)
+void ScrollingCoordinatorCoordinatedGraphics::scrollableAreaScrollLayerDidChange(ScrollableArea& scrollableArea)
 {
     CoordinatedGraphicsLayer* layer = toCoordinatedGraphicsLayer(scrollLayerForScrollableArea(scrollableArea));
     if (!layer)
         return;
 
-    layer->setScrollableArea(scrollableArea);
+    layer->setScrollableArea(&scrollableArea);
 }
 
-void ScrollingCoordinatorCoordinatedGraphics::willDestroyScrollableArea(ScrollableArea* scrollableArea)
+void ScrollingCoordinatorCoordinatedGraphics::willDestroyScrollableArea(ScrollableArea& scrollableArea)
 {
     CoordinatedGraphicsLayer* layer = toCoordinatedGraphicsLayer(scrollLayerForScrollableArea(scrollableArea));
     if (!layer)
@@ -112,13 +112,13 @@ void ScrollingCoordinatorCoordinatedGraphics::willDestroyScrollableArea(Scrollab
     layer->setScrollableArea(0);
 }
 
-bool ScrollingCoordinatorCoordinatedGraphics::requestScrollPositionUpdate(FrameView* frameView, const IntPoint& scrollPosition)
+bool ScrollingCoordinatorCoordinatedGraphics::requestScrollPositionUpdate(FrameView& frameView, const IntPoint& scrollPosition)
 {
-    if (!frameView->delegatesScrolling())
+    if (!frameView.delegatesScrolling())
         return false;
 
-    frameView->setFixedVisibleContentRect(IntRect(scrollPosition, frameView->visibleContentRect().size()));
-    frameView->hostWindow()->delegatedScrollRequested(scrollPosition);
+    frameView.setFixedVisibleContentRect(IntRect(scrollPosition, frameView.visibleContentRect().size()));
+    frameView.hostWindow()->delegatedScrollRequested(scrollPosition);
     return true;
 }
 
