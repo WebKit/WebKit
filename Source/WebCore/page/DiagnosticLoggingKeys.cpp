@@ -383,6 +383,11 @@ String DiagnosticLoggingKeys::uncacheableStatusCodeKey()
     return ASCIILiteral("uncacheableStatusCode");
 }
 
+String DiagnosticLoggingKeys::unlikelyToReuseKey()
+{
+    return ASCIILiteral("unlikelyToReuse");
+}
+
 String DiagnosticLoggingKeys::unsupportedHTTPMethodKey()
 {
     return ASCIILiteral("unsupportedHTTPMethod");

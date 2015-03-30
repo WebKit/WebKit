@@ -2561,6 +2561,8 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
 
     if (m_overrideCachePolicyForTesting)
         request.setCachePolicy(m_overrideCachePolicyForTesting.value());
+    if (m_overrideResourceLoadPriorityForTesting)
+        request.setPriority(m_overrideResourceLoadPriorityForTesting.value());
 
     if (request.cachePolicy() == ReloadIgnoringCacheData) {
         if (loadType == FrameLoadType::Reload)
@@ -3411,6 +3413,12 @@ void FrameLoader::loadProgressingStatusChanged()
 void FrameLoader::forcePageTransitionIfNeeded()
 {
     m_client.forcePageTransitionIfNeeded();
+}
+
+void FrameLoader::clearTestingOverrides()
+{
+    m_overrideCachePolicyForTesting = Nullopt;
+    m_overrideResourceLoadPriorityForTesting = Nullopt;
 }
 
 bool FrameLoaderClient::hasHTMLView() const

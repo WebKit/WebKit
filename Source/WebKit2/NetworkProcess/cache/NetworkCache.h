@@ -62,14 +62,16 @@ enum class RetrieveDecision {
     NoDueToReloadIgnoringCache
 };
 
+// FIXME: This enum is used in the Statistics code in a way that prevents removing or reordering anything.
 enum class StoreDecision {
     Yes,
     NoDueToProtocol,
     NoDueToHTTPMethod,
-    NoDueToAttachmentResponse,
+    NoDueToAttachmentResponse, // Unused.
     NoDueToNoStoreResponse,
     NoDueToHTTPStatusCode,
-    NoDueToNoStoreRequest
+    NoDueToNoStoreRequest,
+    NoDueToUnlikelyToReuse
 };
 
 enum class UseDecision {

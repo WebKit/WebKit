@@ -108,6 +108,7 @@ public:
     static String styleSheetKey();
     static String svgDocumentKey();
     WEBCORE_EXPORT static String uncacheableStatusCodeKey();
+    WEBCORE_EXPORT static String unlikelyToReuseKey();
     WEBCORE_EXPORT static String unsupportedHTTPMethodKey();
     static String unsuspendableDOMObjectKey();
     WEBCORE_EXPORT static String unusableCachedEntryKey();

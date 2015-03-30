@@ -290,7 +290,8 @@ public:
     void forcePageTransitionIfNeeded();
 
     void setOverrideCachePolicyForTesting(ResourceRequestCachePolicy policy) { m_overrideCachePolicyForTesting = policy; }
-    void clearOverrideCachePolicyForTesting() { m_overrideCachePolicyForTesting = Nullopt; }
+    void setOverrideResourceLoadPriorityForTesting(ResourceLoadPriority priority) { m_overrideResourceLoadPriorityForTesting = priority; }
+    WEBCORE_EXPORT void clearTestingOverrides();
 
 private:
     enum FormSubmissionCacheLoadPolicy {
@@ -442,6 +443,7 @@ private:
     RefPtr<FrameNetworkingContext> m_networkingContext;
 
     Optional<ResourceRequestCachePolicy> m_overrideCachePolicyForTesting;
+    Optional<ResourceLoadPriority> m_overrideResourceLoadPriorityForTesting;
 
     URL m_previousURL;
     RefPtr<HistoryItem> m_requestedHistoryItem;

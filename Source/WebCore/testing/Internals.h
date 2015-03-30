@@ -90,6 +90,7 @@ public:
     bool isLoadingFromMemoryCache(const String& url);
     String xhrResponseSource(XMLHttpRequest*);
     void setOverrideCachePolicy(const String&);
+    void setOverrideResourceLoadPriority(const String&);
 
     void clearMemoryCache();
     void pruneMemoryCacheToSize(unsigned size);

@@ -37,6 +37,13 @@ enum CachePolicy {
     "ReturnCacheDataDontLoad"
 };
 
+enum ResourceLoadPriority {
+    "ResourceLoadPriorityVeryLow",
+    "ResourceLoadPriorityLow",
+    "ResourceLoadPriorityMedium",
+    "ResourceLoadPriorityHigh",
+    "ResourceLoadPriorityVeryHigh"
+};
 
 [
     NoInterfaceObject,
@@ -56,6 +63,7 @@ enum CachePolicy {
     void pruneMemoryCacheToSize(long size);
     long memoryCacheSize();
     void setOverrideCachePolicy(CachePolicy policy);
+    void setOverrideResourceLoadPriority(ResourceLoadPriority priority);
 
     void clearPageCache();
     unsigned int pageCacheSize();

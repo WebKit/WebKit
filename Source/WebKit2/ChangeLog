@@ -1,3 +1,37 @@
+2015-03-30  Antti Koivisto  <antti@apple.com>
+
+        Don't cache resources that are very unlikely to be reused
+        https://bugs.webkit.org/show_bug.cgi?id=143226
+        <rdar://problem/20347160>
+
+        Reviewed by Geoff Garen.
+
+        We are writing lots of resources to the cache that are never used again.
+
+        In browse-around-randomly test this reduced number of cache entries created by ~20% and bytes written by ~5%.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeUseDecision):
+        (WebKit::NetworkCache::makeRetrieveDecision):
+
+            Rename for clarity.
+
+        (WebKit::NetworkCache::makeStoreDecision):
+
+            Store only if the resource has non-zero expiration or has validation headers.
+
+            Very High priority resources (main resources) keep the existing policy to minimize impact
+            on back navigation and tab restore.
+
+        (WebKit::NetworkCache::Cache::retrieve):
+        (WebKit::NetworkCache::Cache::store):
+        (WebKit::NetworkCache::canUse): Deleted.
+        (WebKit::NetworkCache::canRetrieve): Deleted.
+        (WebKit::NetworkCache::canStore): Deleted.
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::storeDecisionToDiagnosticKey):
+
 2015-03-30  Tim Horton  <timothy_horton@apple.com>
 
         Swipe snapshot removed too early (jumps around) on arstechnica and NYT

@@ -1,3 +1,21 @@
+2015-03-30  Antti Koivisto  <antti@apple.com>
+
+        Don't cache resources that are very unlikely to be reused
+        https://bugs.webkit.org/show_bug.cgi?id=143226
+        <rdar://problem/20347160>
+
+        Reviewed by Geoff Garen.
+
+        * http/tests/cache/disk-cache/disk-cache-request-max-stale-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-request-max-stale-expected.html:
+
+            Keep max-age: 0 cacheable in this test by adding a validation header.
+
+        * http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html:
+
+            Rebase and expand to cover the high priority resource case.
+
 2015-03-30  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         Rebaseline accessibility/aria-toggle-button-with-title.html

@@ -36,7 +36,12 @@ var tests = generateTests(testMatrix);
 debug("running " + tests.length + " tests");
 debug("");
 
-runTests(tests);
+runTests(tests, function () {
+    debug("Testing high priority resources");
+    debug("");
+    internals.setOverrideResourceLoadPriority("ResourceLoadPriorityVeryHigh");
+    runTests(tests);
+});
 
 </script>
 <script src="/js-test-resources/js-test-post.js"></script>
