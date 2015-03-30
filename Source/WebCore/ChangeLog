@@ -1,3 +1,23 @@
+2015-03-30  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Crash when closing window while video is loading
+        https://bugs.webkit.org/show_bug.cgi?id=143088
+
+        Reviewed by Mark Lam.
+
+        When the media player is destroyed, we have to cancel possible calls on the
+        main thread made by a worker thread. Otherwise the destroyed media player
+        will be accessed when performing the call.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::~MediaPlayerPrivateMediaFoundation):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endCreatedMediaSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endGetEvent):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onTopologySet):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onCreatedMediaSourceCallback):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onTopologySetCallback):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
 2015-03-30  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [Threaded Compositor] Crash when animation changes frequently.
