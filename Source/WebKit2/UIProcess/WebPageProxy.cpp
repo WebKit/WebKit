@@ -4656,6 +4656,9 @@ void WebPageProxy::processDidCrash()
 void WebPageProxy::resetState(ResetStateReason resetStateReason)
 {
     m_mainFrame = nullptr;
+#if PLATFORM(COCOA)
+    m_scrollingPerformanceData = nullptr;
+#endif
     m_drawingArea = nullptr;
 
     if (m_inspector) {

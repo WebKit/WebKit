@@ -1,5 +1,18 @@
 2015-03-29  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix iOS scrollperf crash after a web process crash
+        https://bugs.webkit.org/show_bug.cgi?id=143110
+
+        Reviewed by Dean Jackson.
+        
+        When we destroy the drawing area after a web process crash, we also need to destroy
+        the scrollingPerformanceData which has a reference to the drawing area.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+
+2015-03-29  Simon Fraser  <simon.fraser@apple.com>
+
         Convert arguments to ScrollingCoordinator functions to references
         https://bugs.webkit.org/show_bug.cgi?id=143198
 
