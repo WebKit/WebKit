@@ -1,5 +1,17 @@
 2015-03-30  Antti Koivisto  <antti@apple.com>
 
+        Include cache entry worth to json dump
+        https://bugs.webkit.org/show_bug.cgi?id=143202
+
+        Follow-up fix.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::computeRecordWorth):
+
+            This accidentally gave the error case worth 1 rather than 0 as it should be.
+
+2015-03-30  Antti Koivisto  <antti@apple.com>
+
         Don't cache resources that are very unlikely to be reused
         https://bugs.webkit.org/show_bug.cgi?id=143226
         <rdar://problem/20347160>

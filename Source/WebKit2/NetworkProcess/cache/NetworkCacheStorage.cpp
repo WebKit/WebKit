@@ -600,7 +600,7 @@ static double computeRecordWorth(FileTimes times)
 
     // For sanity.
     if (age <= seconds::zero() || accessAge < seconds::zero() || accessAge > age)
-        return 1;
+        return 0;
 
     // We like old entries that have been accessed recently.
     return duration<double>(accessAge) / age;
