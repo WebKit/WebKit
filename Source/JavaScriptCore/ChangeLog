@@ -1,3 +1,15 @@
+2015-03-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        Start the features.json files
+        https://bugs.webkit.org/show_bug.cgi?id=143207
+
+        Reviewed by Darin Adler.
+
+        Start the features.json files to have something to experiment
+        with for the UI.
+
+        * features.json: Added.
+
 2015-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Win] Addresing post-review comment after r182122

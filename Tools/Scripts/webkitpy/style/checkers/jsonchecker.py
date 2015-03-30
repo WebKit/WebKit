@@ -55,3 +55,26 @@ class JSONContributorsChecker(JSONChecker):
     def check(self, lines):
         super(JSONContributorsChecker, self).check(lines)
         self._handle_style_error(0, 'json/syntax', 5, 'contributors.json should not be modified through the commit queue')
+
+
+class JSONFeaturesChecker(JSONChecker):
+    """Processes the features.json lines"""
+
+    def check(self, lines):
+        super(JSONFeaturesChecker, self).check(lines)
+
+        try:
+            features_definition = json.loads('\n'.join(lines) + '\n')
+            if 'features' not in features_definition:
+                self._handle_style_error(0, 'json/syntax', 5, '"features" key not found, the key is mandatory.')
+                return
+
+            features_list = features_definition['features']
+            for i in xrange(len(features_list)):
+                feature = features_list[i]
+                if 'name' not in feature:
+                    self._handle_style_error(0, 'json/syntax', 5, 'The feature %d does not have the mandatory field "name".' % i)
+                if 'status' not in feature:
+                    self._handle_style_error(0, 'json/syntax', 5, 'The feature %d does not have the mandatory field "status".' % i)
+        except:
+            pass

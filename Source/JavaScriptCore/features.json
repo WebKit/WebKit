@@ -1,0 +1,50 @@
+{
+    "specification": [
+    {
+        "name": "ES6",
+        "url": "http://wiki.ecmascript.org/doku.php?id=harmony:specification_drafts",
+        "keywords": ["es6", "es2015", "ecmascript"]
+    },
+    {
+        "name": "ES7",
+        "keywords": ["es7", "ecmascript"]
+    }
+    ],
+
+    "features": [
+    {
+        "name": "Array.prototype.includes",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://github.com/tc39/Array.prototype.includes",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=142707",
+        "specification": "ES7"
+    },
+    {
+        "name": "Promise Objects",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true,
+            "shipped": ["ios8-safari", "osx-safari-7.1"]
+        },
+        "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Mozilla/JavaScript_code_modules/Promise.jsm/Promise",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=120260",
+        "specification": "ES6"
+    },
+    {
+        "name": "Symbol Objects",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-symbol-objects",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=140435",
+        "specification": "ES6"
+    }
+    ]
+}

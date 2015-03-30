@@ -1,0 +1,67 @@
+{
+    "specification": [
+    {
+        "name": "HTML5",
+        "url": "https://html.spec.whatwg.org",
+        "keywords": ["html", "html5", "html5.1"],
+        "category": "html"
+    },
+    {
+        "name": "DOM",
+        "url": "https://dom.spec.whatwg.org",
+        "keywords": ["dom", "dom4"],
+        "category": "html"
+    },
+    {
+        "name": "Streams",
+        "url": "https://streams.spec.whatwg.org",
+        "keywords": ["streams api"],
+        "category": "webapps"
+    },
+    {
+        "name": "CSS Selectors Level 4",
+        "url": "http://dev.w3.org/csswg/selectors-4/",
+        "keywords": ["css selectors", "selectors"],
+        "category": "css"
+    },
+    {
+        "name": "CSS Media Queries Level 4",
+        "url": "http://dev.w3.org/csswg/mediaqueries-4/",
+        "keywords": ["css media queries", "media queries"],
+        "category": "css"
+    }
+    ],
+
+    "features": [
+    {
+        "name": "Element.closest()",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://dom.spec.whatwg.org/#dom-element-closest",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/closest",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=137418",
+        "specification": "DOM",
+        "description": "Find the closest ancestor matching the selector passed as argument. The element itself is returned if it matches the selector."
+    },
+    {
+        "name": "Force Click Events",
+        "status": {
+            "status": "Prototyping",
+            "enabled-by-default": true
+        },
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=142836",
+        "description": "Provide the events necessary to handle force click events in the page, overriding the default behavior."
+    },
+    {
+        "name": "Readable Streams",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": true
+        },
+        "url": "https://streams.spec.whatwg.org/#rs",
+        "specification": "Streams"
+    }
+    ]
+}
