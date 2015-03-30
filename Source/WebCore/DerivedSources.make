@@ -682,13 +682,13 @@ SVG_BINDING_IDLS = \
     $(WebCore)/svg/SVGZoomEvent.idl
 #
 
-# Windows has specific needs for specifying the path to its interpreters
+PYTHON = python
+PERL = perl
+
 ifeq ($(OS),Windows_NT)
-    PYTHON = /usr/bin/python
-    PERL = /usr/bin/perl
+    DELETE = cmd //C del
 else
-    PYTHON = python
-    PERL = perl
+    DELETE = rm -f
 endif
 # --------
 
@@ -881,7 +881,7 @@ all : XMLViewerCSS.h
 XMLViewerCSS.h : xml/XMLViewer.css
 	$(PYTHON) $(InspectorScripts)/cssmin.py <"$(WebCore)/xml/XMLViewer.css" > ./XMLViewer.min.css
 	$(PERL) $(InspectorScripts)/xxd.pl XMLViewer_css ./XMLViewer.min.css XMLViewerCSS.h
-	rm -f ./XMLViewer.min.css
+	$(DELETE) XMLViewer.min.css
 
 # --------
 
@@ -892,7 +892,7 @@ all : XMLViewerJS.h
 XMLViewerJS.h : xml/XMLViewer.js
 	$(PYTHON) $(InspectorScripts)/jsmin.py <"$(WebCore)/xml/XMLViewer.js" > ./XMLViewer.min.js
 	$(PERL) $(InspectorScripts)/xxd.pl XMLViewer_js ./XMLViewer.min.js XMLViewerJS.h
-	rm -f ./XMLViewer.min.js
+	$(DELETE) XMLViewer.min.js
 
 # --------
 
@@ -1169,15 +1169,17 @@ DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE = ./DedicatedWorkerGlobalScopeConst
 IDL_FILES_TMP = ./idl_files.tmp
 IDL_ATTRIBUTES_FILE = $(WebCore)/bindings/scripts/IDLAttributes.txt
 
-# The following two lines get a space character stored in a variable.
-# See <http://blog.jgc.org/2007/06/escaping-comma-and-space-in-gnu-make.html>.
-space :=
-space +=
+# The following lines get a newline character stored in a variable.
+# See <http://stackoverflow.com/questions/7039811/how-do-i-process-extremely-long-lists-of-files-in-a-make-recipe>.
+define NL
+
+
+endef
 
 $(SUPPLEMENTAL_MAKEFILE_DEPS) : $(PREPROCESS_IDLS_SCRIPTS) $(BINDING_IDLS) $(PLATFORM_FEATURE_DEFINES) DerivedSources.make
-	printf "$(subst $(space),,$(patsubst %,%\n,$(BINDING_IDLS)))" > $(IDL_FILES_TMP)
+	$(foreach f,$(BINDING_IDLS),echo $(f)>>$(IDL_FILES_TMP)$(NL))
 	$(call preprocess_idls_script, $(PREPROCESS_IDLS_SCRIPTS)) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --dedicatedWorkerGlobalScopeConstructorsFile $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $@
-	rm -f $(IDL_FILES_TMP)
+	$(DELETE) $(IDL_FILES_TMP)
 
 JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(WINDOW_CONSTRUCTORS_FILE) $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) $(PLATFORM_FEATURE_DEFINES)
 	$(call generator_script, $(JS_BINDINGS_SCRIPTS)) $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
@@ -1191,7 +1193,7 @@ all : InspectorOverlayPage.h
 InspectorOverlayPage.h : InspectorOverlayPage.html InspectorOverlayPage.css InspectorOverlayPage.js
 	$(PYTHON) $(InspectorScripts)/inline-and-minify-stylesheets-and-scripts.py $(WebCore)/inspector/InspectorOverlayPage.html ./InspectorOverlayPage.combined.html
 	$(PERL) $(InspectorScripts)/xxd.pl InspectorOverlayPage_html ./InspectorOverlayPage.combined.html InspectorOverlayPage.h
-	rm -f ./InspectorOverlayPage.combined.html
+	$(DELETE) InspectorOverlayPage.combined.html
 
 all : CommandLineAPIModuleSource.h
 
@@ -1199,7 +1201,7 @@ CommandLineAPIModuleSource.h : CommandLineAPIModuleSource.js
 	echo "//# sourceURL=__WebInspectorCommandLineAPIModuleSource__" > ./CommandLineAPIModuleSource.min.js
 	$(PYTHON) $(InspectorScripts)/jsmin.py <$(WebCore)/inspector/CommandLineAPIModuleSource.js >> ./CommandLineAPIModuleSource.min.js
 	$(PERL) $(InspectorScripts)/xxd.pl CommandLineAPIModuleSource_js ./CommandLineAPIModuleSource.min.js CommandLineAPIModuleSource.h
-	rm -f ./CommandLineAPIModuleSource.min.js
+	$(DELETE) CommandLineAPIModuleSource.min.js
 
 # Web Replay inputs generator
 
@@ -1269,10 +1271,7 @@ ifeq ($(OS),Windows_NT)
 
 all : WebCoreHeaderDetection.h
 
-WebCoreHeaderDetection.h : DerivedSources.make
-	echo "/* Identifying AVFoundation Support */" > $@
-	if [ -f "$(WEBKIT_LIBRARIES)/include/AVFoundationCF/AVCFBase.h" ]||[ -f "$(WEBKITLIBRARIESDIR)/include/AVFoundationCF/AVCFBase.h" ]; then echo "#define HAVE_AVCF 1" >> $@; else echo >> $@; fi
-	if [ -f "$(WEBKIT_LIBRARIES)/include/AVFoundationCF/AVCFPlayerItemLegibleOutput.h" ]||[ -f "$(WEBKITLIBRARIESDIR)/include/AVFoundationCF/AVCFPlayerItemLegibleOutput.h" ]; then echo "#define HAVE_AVCF_LEGIBLE_OUTPUT 1" >> $@; else echo >> $@; fi
-	if [ -f "$(WEBKIT_LIBRARIES)/include/AVFoundationCF/AVCFAssetResourceLoader.h" ]||[ -f "$(WEBKITLIBRARIESDIR)/include/AVFoundationCF/AVCFAssetResourceLoader.h" ]; then echo "#define HAVE_AVFOUNDATION_LOADER_DELEGATE 1" >> $@; else echo >> $@; fi
+WebCoreHeaderDetection.h : $(WebCore)/AVFoundationSupport.py DerivedSources.make
+	$(PYTHON) $(WebCore)/AVFoundationSupport.py > $@
 
 endif # Windows_NT

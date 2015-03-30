@@ -3,7 +3,7 @@ make:
     @if errorlevel 1 exit 1
     @echo XXWebCoreGeneratedXX > "%ConfigurationBuildDir%\buildfailed"
 
-    perl build-generated-files.pl "%ConfigurationBuildDir%" "%WebKit_Libraries%" windows "%PlatformArchitecture%"
+    perl build-generated-files.pl "%ConfigurationBuildDir%" "%WebKit_Libraries%" windows "%PlatformArchitecture%" "$(CC)"
     perl migrate-scripts.pl "%ConfigurationBuildDir%\obj%PlatformArchitecture%\WebCore\scripts"
     @cmd /C copyForwardingHeaders.cmd cg cf
     @cmd /C copyWebCoreResourceFiles.cmd

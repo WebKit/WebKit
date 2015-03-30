@@ -28,6 +28,7 @@
 
 use strict;
 use Cwd;
+use File::Copy;
 use File::Path qw(make_path);
 use File::Spec;
 
@@ -60,5 +61,17 @@ $ENV{'WEBCORE'} = $XSRCROOT;
 $ENV{'WebCore'} = $XSRCROOT;
 $ENV{'WEBKIT_OUTPUT'} = $XDSTROOT;
 
-my $MIGRATE_SCRIPTS_MAKEFILE = File::Spec->catfile($XSRCROOT, 'WebCore.vcxproj', 'MigrateScripts');
-system('/usr/bin/make', '-f', $MIGRATE_SCRIPTS_MAKEFILE, '-j', $NUMCPUS) and die "Failed to build $MIGRATE_SCRIPTS_MAKEFILE: $!";
+sub copyFile {
+    my $filename = shift;
+    my $source = File::Spec->catfile($XSRCROOT, "bindings", "scripts", $filename);
+    my $destination = File::Spec->catfile($XDSTROOT, $filename);
+    if (! -e $destination || (stat($source))[9] > (stat($destination))[9]) { # 9th element is file modification time
+        copy($source, $destination);
+    }
+}
+
+copyFile("CodeGenerator.pm");
+copyFile("IDLParser.pm");
+copyFile("generate-bindings.pl");
+copyFile("preprocessor.pm");
+copyFile("preprocess-idls.pl");

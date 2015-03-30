@@ -54,7 +54,11 @@ sub applyPreprocessor
         } else {
             $preprocessor = "/usr/bin/gcc";
         }
-        push(@args, qw(-E -P -x c++));
+        if ($Config::Config{"osname"} eq "MSWin32") {
+            push(@args, qw(/EP));
+        } else {
+            push(@args, qw(-E -P -x c++));
+        }
     }
 
     if ($Config::Config{"osname"} eq "darwin") {
@@ -71,7 +75,7 @@ sub applyPreprocessor
     @macros = map { "-D$_" } @macros;
 
     my $pid = 0;
-    if ($Config{osname} eq "cygwin" || $Config{osname} eq 'MSWin32') {
+    if ($Config{osname} eq "cygwin") {
         # This call can fail if Windows rebases cygwin, so retry a few times until it succeeds.
         for (my $tries = 0; !$pid && ($tries < 20); $tries++) {
             eval {
@@ -84,6 +88,8 @@ sub applyPreprocessor
                 sleep 1;
             }
         };
+    } elsif ($Config::Config{"osname"} eq "MSWin32") {
+        $pid = open2(\*PP_OUT, \*PP_IN, $preprocessor, @args, @macros, $fileName);
     } else {
         $pid = open2(\*PP_OUT, \*PP_IN, split(' ', $preprocessor), @args, @macros, $fileName);
     }

@@ -1,3 +1,28 @@
+2015-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Allow building on Windows without Cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=143219
+
+        Reviewed by Brent Fulgham.
+
+        * AVFoundationSupport.py: Renamed from Source/WebCore/WebCore.vcxproj/MigrateScripts.
+        Move logic from DerivedSources.make to its own script
+        (lookFor):
+        * DerivedSources.make: Paths like /usr/bin don't exist on Windows.
+        Windows uses del instead of rm -f
+        Windows doesn't have printf
+        * WebCore.vcxproj/WebCoreGenerated.make: Pass the CC executable to
+        build-generated-files.pl
+        * WebCore.vcxproj/build-generated-files.pl: Export the CC executable as an environment
+        variable. Don't use /usr/bin.
+        * WebCore.vcxproj/migrate-scripts.pl: Deleted the MigrateScripts makefile. We don't
+        need a whole Makefile just to copy 5 files. Moved this logic into migrate-scripts.pl.
+        (copyFile):
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor): Support passing preprocessing flags to the Visual Studio
+        compiler.
+        * dom/make_names.pl: Ditto.
+
 2015-03-30  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.

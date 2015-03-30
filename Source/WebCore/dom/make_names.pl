@@ -62,17 +62,23 @@ my %extensionAttrs = ();
 
 require Config;
 
-my $gccLocation = "";
+my $ccLocation = "";
 if ($ENV{CC}) {
-    $gccLocation = $ENV{CC};
+    $ccLocation = $ENV{CC};
 } elsif (($Config::Config{"osname"}) =~ /solaris/i) {
-    $gccLocation = "/usr/sfw/bin/gcc";
+    $ccLocation = "/usr/sfw/bin/gcc";
 } elsif ($Config::Config{"osname"} eq "darwin" && $ENV{SDKROOT}) {
-    chomp($gccLocation = `xcrun -find cc -sdk '$ENV{SDKROOT}'`);
+    chomp($ccLocation = `xcrun -find cc -sdk '$ENV{SDKROOT}'`);
 } else {
-    $gccLocation = "/usr/bin/cc";
+    $ccLocation = "/usr/bin/cc";
 }
-my $preprocessor = $gccLocation . " -E -x c++";
+
+my $preprocessor = "";
+if ($Config::Config{"osname"} eq "MSWin32") {
+    $preprocessor = "\"$ccLocation\" /EP";
+} else {
+    $preprocessor = $ccLocation . " -E -x c++";
+}
 
 GetOptions(
     'tags=s' => \$tagsFile, 
