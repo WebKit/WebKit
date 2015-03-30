@@ -93,23 +93,28 @@ sub createForwardingHeadersForFramework {
     foreach my $header (@frameworkHeaders) {
         my $headerName = basename($header);
 
-        # If we found more headers with the same name, only generate a forwarding header for the current platform
-        if(grep($_ =~ "/$headerName\$", @frameworkHeaders) == 1 || $header =~ "/$platform/" ) {
-            my $forwardingHeaderPath = File::Spec->catfile($targetDirectory, $headerName);
-            my $expectedIncludeStatement = "#include \"$frameworkDirectoryName/$header\"";
-            my $foundIncludeStatement = 0;
-
-            $foundIncludeStatement = <EXISTING_HEADER> if open(EXISTING_HEADER, "<$forwardingHeaderPath");
-            chomp($foundIncludeStatement);
-
-            if (! $foundIncludeStatement || $foundIncludeStatement ne $expectedIncludeStatement) {
-                print "[Creating forwarding header for $framework/$header]\n" if $verbose;
-                open(FORWARDING_HEADER, ">$forwardingHeaderPath") or die "Could not open $forwardingHeaderPath.";
-                print FORWARDING_HEADER "$expectedIncludeStatement\n";
-                close(FORWARDING_HEADER);
-            }
-
-            close(EXISTING_HEADER);
+        # If we found more headers with the same name, exit immediately.
+        my @headers = grep($_ =~ "/$headerName\$", @frameworkHeaders);
+        if (@headers != 1) {
+            print("ERROR: Can't create $headerName forwarding header, because there are more headers with the same name:\n");
+            foreach (@headers) { print " - $_\n" };
+            die();
         }
+
+        my $forwardingHeaderPath = File::Spec->catfile($targetDirectory, $headerName);
+        my $expectedIncludeStatement = "#include \"$frameworkDirectoryName/$header\"";
+        my $foundIncludeStatement = 0;
+
+        $foundIncludeStatement = <EXISTING_HEADER> if open(EXISTING_HEADER, "<$forwardingHeaderPath");
+        chomp($foundIncludeStatement);
+
+        if (! $foundIncludeStatement || $foundIncludeStatement ne $expectedIncludeStatement) {
+            print "[Creating forwarding header for $framework/$header]\n";
+            open(FORWARDING_HEADER, ">$forwardingHeaderPath") or die "Could not open $forwardingHeaderPath.";
+            print FORWARDING_HEADER "$expectedIncludeStatement\n";
+            close(FORWARDING_HEADER);
+        }
+
+        close(EXISTING_HEADER);
     }
 }
