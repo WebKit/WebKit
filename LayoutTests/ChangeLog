@@ -1,3 +1,12 @@
+2015-03-30  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+        Update expectations for delete-emoji test since the bug is fixed now.
+        https://bugs.webkit.org/show_bug.cgi?id=141419
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * platform/gtk/TestExpectations:
+
 2015-03-29  Benjamin Poulain  <benjamin@webkit.org>
 
         `currentColor` computes to the same colour on all elements, even if 'color' is inherited differently

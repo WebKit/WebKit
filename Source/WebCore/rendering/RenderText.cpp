@@ -1401,7 +1401,7 @@ int RenderText::previousOffset(int current) const
     return result;
 }
 
-#if PLATFORM(COCOA) || PLATFORM(EFL)
+#if PLATFORM(COCOA) || PLATFORM(EFL) || PLATFORM(GTK)
 
 #define HANGUL_CHOSEONG_START (0x1100)
 #define HANGUL_CHOSEONG_END (0x115F)
@@ -1443,7 +1443,7 @@ static inline bool isRegionalIndicator(UChar32 character)
 
 int RenderText::previousOffsetForBackwardDeletion(int current) const
 {
-#if PLATFORM(COCOA) || PLATFORM(EFL)
+#if PLATFORM(COCOA) || PLATFORM(EFL) || PLATFORM(GTK)
     ASSERT(m_text);
     StringImpl& text = *m_text.impl();
     UChar32 character;
