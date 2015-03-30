@@ -1,3 +1,18 @@
+2015-03-30  Michael Saboff  <msaboff@apple.com>
+
+        Fix flakey float32-repeat-out-of-bounds.js and int8-repeat-out-of-bounds.js tests for ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=138391
+
+        Reviewed by Mark Lam.
+
+        Re-enabling these tests as I can't get them to fail on local iOS test devices.
+        There have been many changes since these tests were disabled.
+        I'll watch automated test results for failures.  If there are failures running automated
+        testing, it might be due to the device's relative CPU performance.
+        
+        * tests/stress/float32-repeat-out-of-bounds.js:
+        * tests/stress/int8-repeat-out-of-bounds.js:
+
 2015-03-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Regression: Preview for [[null]] shouldn't be []
