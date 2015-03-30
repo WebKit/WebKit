@@ -28,17 +28,10 @@
 
 #if WK_API_ENABLED
 
+#import "WKErrorInternal.h"
+#import "_WKUserContentFilterInternal.h"
+
 @implementation _WKUserContentExtensionStore
-
-- (instancetype)init
-{
-    if (!(self = [super init]))
-        return nil;
-
-    API::Object::constructInWrapper<API::UserContentExtensionStore>(self);
-
-    return self;
-}
 
 - (void)dealloc
 {
@@ -47,11 +40,84 @@
     [super dealloc];
 }
 
++ (instancetype)defaultStore
+{
+    return WebKit::wrapper(API::UserContentExtensionStore::defaultStore());
+}
+
+- (void)compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *)encodedContentExtension completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler
+{
+    auto handler = adoptNS([completionHandler copy]);
+
+    _userContentExtensionStore->compileContentExtension(identifier, encodedContentExtension, [handler](RefPtr<API::UserContentExtension> contentExtension, std::error_code error) {
+        if (error) {
+            auto rawHandler = (void (^)(_WKUserContentFilter *, NSError *))handler.get();
+            
+            // FIXME: Pass real error.
+            auto error = createNSError(WKErrorUnknown);
+            rawHandler(nil, error.get());
+            return;
+        }
+
+        auto rawHandler = (void (^)(_WKUserContentFilter *, NSError *))handler.get();
+        rawHandler(WebKit::wrapper(*contentExtension.get()), nil);
+    });
+}
+
+- (void)lookupContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler
+{
+    auto handler = adoptNS([completionHandler copy]);
+
+    _userContentExtensionStore->lookupContentExtension(identifier, [handler](RefPtr<API::UserContentExtension> contentExtension, std::error_code error) {
+        if (error) {
+            auto rawHandler = (void (^)(_WKUserContentFilter *, NSError *))handler.get();
+
+            // FIXME: Pass real error.
+            auto error = createNSError(WKErrorUnknown);
+            rawHandler(nil, error.get());
+            return;
+        }
+
+        auto rawHandler = (void (^)(_WKUserContentFilter *, NSError *))handler.get();
+        rawHandler(WebKit::wrapper(*contentExtension.get()), nil);
+    });
+}
+
+- (void)removeContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSError *))completionHandler
+{
+    auto handler = adoptNS([completionHandler copy]);
+
+    _userContentExtensionStore->removeContentExtension(identifier, [handler](std::error_code error) {
+        if (error) {
+            auto rawHandler = (void (^)(NSError *))handler.get();
+
+            // FIXME: Pass real error.
+            auto error = createNSError(WKErrorUnknown);
+            rawHandler(error.get());
+            return;
+        }
+
+        auto rawHandler = (void (^)(NSError *))handler.get();
+        rawHandler(nil);
+    });
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
 {
     return *_userContentExtensionStore;
+}
+
+@end
+
+@implementation _WKUserContentExtensionStore (WKPrivate)
+
+// For testing only.
+
+- (void)_removeAllContentExtensions
+{
+    _userContentExtensionStore->synchronousRemoveAllContentExtensions();
 }
 
 @end

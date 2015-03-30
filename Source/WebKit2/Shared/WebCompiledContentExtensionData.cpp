@@ -38,10 +38,10 @@ void WebCompiledContentExtensionData::encode(IPC::ArgumentEncoder& encoder) cons
     data->createHandle(handle, SharedMemory::ReadOnly);
     encoder << handle;
 
-    encoder << bytecodeOffset;
-    encoder << bytecodeSize;
     encoder << actionsOffset;
     encoder << actionsSize;
+    encoder << bytecodeOffset;
+    encoder << bytecodeSize;
 }
 
 bool WebCompiledContentExtensionData::decode(IPC::ArgumentDecoder& decoder, WebCompiledContentExtensionData& compiledContentExtensionData)
@@ -51,15 +51,14 @@ bool WebCompiledContentExtensionData::decode(IPC::ArgumentDecoder& decoder, WebC
         return false;
     compiledContentExtensionData.data = SharedMemory::create(handle, SharedMemory::ReadOnly);
 
-    if (!decoder.decode(compiledContentExtensionData.bytecodeOffset))
-        return false;
-    if (!decoder.decode(compiledContentExtensionData.bytecodeSize))
-        return false;
     if (!decoder.decode(compiledContentExtensionData.actionsOffset))
         return false;
     if (!decoder.decode(compiledContentExtensionData.actionsSize))
         return false;
-
+    if (!decoder.decode(compiledContentExtensionData.bytecodeOffset))
+        return false;
+    if (!decoder.decode(compiledContentExtensionData.bytecodeSize))
+        return false;
 
     return true;
 }

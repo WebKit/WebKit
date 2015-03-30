@@ -49,15 +49,15 @@ void LegacyContentExtensionCompilationClient::writeActions(Vector<WebCore::Conte
 Ref<WebCompiledContentExtension> WebCompiledContentExtension::createFromCompiledContentExtensionData(const WebCore::ContentExtensions::CompiledContentExtensionData& compilerData)
 {
     RefPtr<SharedMemory> sharedMemory = SharedMemory::create(compilerData.bytecode.size() + compilerData.actions.size());
-    memcpy(static_cast<char*>(sharedMemory->data()), compilerData.bytecode.data(), compilerData.bytecode.size());
-    memcpy(static_cast<char*>(sharedMemory->data()) + compilerData.bytecode.size(), compilerData.actions.data(), compilerData.actions.size());
+    memcpy(static_cast<char*>(sharedMemory->data()), compilerData.actions.data(), compilerData.actions.size());
+    memcpy(static_cast<char*>(sharedMemory->data()) + compilerData.actions.size(), compilerData.bytecode.data(), compilerData.bytecode.size());
 
     WebCompiledContentExtensionData data;
     data.data = WTF::move(sharedMemory);
-    data.bytecodeOffset = 0;
-    data.bytecodeSize = compilerData.bytecode.size();
-    data.actionsOffset = compilerData.bytecode.size();
+    data.actionsOffset = 0;
     data.actionsSize = compilerData.actions.size();
+    data.bytecodeOffset = compilerData.actions.size();
+    data.bytecodeSize = compilerData.bytecode.size();
 
     return create(WTF::move(data));
 }

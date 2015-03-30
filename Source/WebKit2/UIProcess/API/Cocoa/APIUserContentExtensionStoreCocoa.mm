@@ -23,47 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompiledContentExtensionData_h
-#define WebCompiledContentExtensionData_h
+#include "config.h"
+#include "APIUserContentExtensionStore.h"
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "SharedMemory.h"
-#include <wtf/RefPtr.h>
+#include "SandboxUtilities.h"
 
-namespace IPC {
-class ArgumentDecoder;
-class ArgumentEncoder;
+namespace API {
+
+String UserContentExtensionStore::defaultStorePath()
+{
+    static dispatch_once_t onceToken;
+    static NSURL *contentExtensionStoreURL;
+
+    dispatch_once(&onceToken, ^{
+        NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
+        if (!url)
+            RELEASE_ASSERT_NOT_REACHED();
+
+        url = [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
+
+        if (!WebKit::processHasContainer()) {
+            NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
+            if (!bundleIdentifier)
+                bundleIdentifier = [NSProcessInfo processInfo].processName;
+            url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
+        }
+
+        contentExtensionStoreURL = [[url URLByAppendingPathComponent:@"ContentExtensions" isDirectory:YES] retain];
+    });
+
+    if (![[NSFileManager defaultManager] createDirectoryAtURL:contentExtensionStoreURL withIntermediateDirectories:YES attributes:nil error:nullptr])
+        LOG_ERROR("Failed to create directory %@", contentExtensionStoreURL);
+
+    return contentExtensionStoreURL.absoluteURL.path.fileSystemRepresentation;
 }
 
-namespace WebKit {
-
-class WebCompiledContentExtensionData {
-public:
-    WebCompiledContentExtensionData()
-    {
-    }
-    
-    WebCompiledContentExtensionData(RefPtr<SharedMemory> data, unsigned actionsOffset, unsigned actionsSize, unsigned bytecodeOffset, unsigned bytecodeSize)
-        : data(data)
-        , actionsOffset(actionsOffset)
-        , actionsSize(actionsSize)
-        , bytecodeOffset(bytecodeOffset)
-        , bytecodeSize(bytecodeSize)
-    {
-    }
-
-    void encode(IPC::ArgumentEncoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, WebCompiledContentExtensionData&);
-
-    RefPtr<SharedMemory> data;
-    unsigned actionsOffset { 0 };
-    unsigned actionsSize { 0 };
-    unsigned bytecodeOffset { 0 };
-    unsigned bytecodeSize { 0 };
-};
-
-}
+} // namespace API
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-#endif // WebCompiledContentExtensionData_h

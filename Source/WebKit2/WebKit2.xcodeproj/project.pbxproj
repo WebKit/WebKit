@@ -1138,6 +1138,7 @@
 		7C8EB11718DB6A19007917C2 /* WKPreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8EB11618DB6A19007917C2 /* WKPreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C9D1537184584DA009D3918 /* WKBrowsingContextGroupInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9D1536184584DA009D3918 /* WKBrowsingContextGroupInternal.h */; };
 		7CA254EB182993CE00FC8A41 /* WKBrowsingContextPolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CA254EA182993CE00FC8A41 /* WKBrowsingContextPolicyDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7CA3793E1AC378B30079DC37 /* _WKUserContentExtensionStorePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CA3793D1AC378B30079DC37 /* _WKUserContentExtensionStorePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CB16FEF1724BA23007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE21724B9B5007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb */; };
 		7CB16FF01724BA24007A0A95 /* com.apple.QuickTime Plugin.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */; };
 		7CB16FF11724BA26007A0A95 /* com.apple.WebKit.plugin-common.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE41724B9B5007A0A95 /* com.apple.WebKit.plugin-common.sb */; };
@@ -1169,6 +1170,7 @@
 		7CE4D2201A4914CA00C7F152 /* APIProcessPoolConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE4D21E1A4914CA00C7F152 /* APIProcessPoolConfiguration.h */; };
 		7CE4D2271A4916C200C7F152 /* WebProcessPoolMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE4D2251A4916C200C7F152 /* WebProcessPoolMessageReceiver.cpp */; };
 		7CE4D2281A4916C200C7F152 /* WebProcessPoolMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE4D2261A4916C200C7F152 /* WebProcessPoolMessages.h */; };
+		7CEFA9621AC0999300B910FD /* APIUserContentExtensionStoreCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7CEFA9601AC0999300B910FD /* APIUserContentExtensionStoreCocoa.mm */; };
 		7CF47FF617275B71008ACB91 /* WKBundlePageBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF47FF417275B71008ACB91 /* WKBundlePageBanner.cpp */; };
 		7CF47FF717275B71008ACB91 /* WKBundlePageBanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CF47FF517275B71008ACB91 /* WKBundlePageBanner.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CF47FFB17275C57008ACB91 /* PageBanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CF47FF917275C57008ACB91 /* PageBanner.h */; };
@@ -3345,6 +3347,7 @@
 		7C8EB11618DB6A19007917C2 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
 		7C9D1536184584DA009D3918 /* WKBrowsingContextGroupInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextGroupInternal.h; sourceTree = "<group>"; };
 		7CA254EA182993CE00FC8A41 /* WKBrowsingContextPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextPolicyDelegate.h; sourceTree = "<group>"; };
+		7CA3793D1AC378B30079DC37 /* _WKUserContentExtensionStorePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentExtensionStorePrivate.h; sourceTree = "<group>"; };
 		7CB16FE21724B9B5007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.ist.ds.appleconnect.webplugin.sb; sourceTree = "<group>"; };
 		7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.apple.QuickTime Plugin.plugin.sb"; sourceTree = "<group>"; };
 		7CB16FE41724B9B5007A0A95 /* com.apple.WebKit.plugin-common.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.apple.WebKit.plugin-common.sb"; sourceTree = "<group>"; };
@@ -3377,6 +3380,7 @@
 		7CE4D21E1A4914CA00C7F152 /* APIProcessPoolConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = APIProcessPoolConfiguration.h; path = UIProcess/API/APIProcessPoolConfiguration.h; sourceTree = SOURCE_ROOT; };
 		7CE4D2251A4916C200C7F152 /* WebProcessPoolMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessPoolMessageReceiver.cpp; sourceTree = "<group>"; };
 		7CE4D2261A4916C200C7F152 /* WebProcessPoolMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessPoolMessages.h; sourceTree = "<group>"; };
+		7CEFA9601AC0999300B910FD /* APIUserContentExtensionStoreCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = APIUserContentExtensionStoreCocoa.mm; sourceTree = "<group>"; };
 		7CF47FF417275B71008ACB91 /* WKBundlePageBanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundlePageBanner.cpp; sourceTree = "<group>"; };
 		7CF47FF517275B71008ACB91 /* WKBundlePageBanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePageBanner.h; sourceTree = "<group>"; };
 		7CF47FF917275C57008ACB91 /* PageBanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageBanner.h; sourceTree = "<group>"; };
@@ -5343,6 +5347,7 @@
 				7C2413011AACFA7500A58C15 /* _WKUserContentExtensionStore.h */,
 				7C2413001AACFA7500A58C15 /* _WKUserContentExtensionStore.mm */,
 				7C2413041AACFA9C00A58C15 /* _WKUserContentExtensionStoreInternal.h */,
+				7CA3793D1AC378B30079DC37 /* _WKUserContentExtensionStorePrivate.h */,
 				7C89D2B81A6B0F2C003A5FDE /* _WKUserContentFilter.h */,
 				7C89D2B71A6B0F2C003A5FDE /* _WKUserContentFilter.mm */,
 				7C89D2BB1A6B0F5B003A5FDE /* _WKUserContentFilterInternal.h */,
@@ -5355,6 +5360,7 @@
 				75A8D2C4187CCF9F00C39C9E /* _WKWebsiteDataStore.h */,
 				75A8D2C5187CCF9F00C39C9E /* _WKWebsiteDataStore.mm */,
 				75A8D2D4187D1C0100C39C9E /* _WKWebsiteDataStoreInternal.h */,
+				7CEFA9601AC0999300B910FD /* APIUserContentExtensionStoreCocoa.mm */,
 				1A3635AB1A3145E500ED6197 /* APIWebsiteDataStoreCocoa.mm */,
 				1AFDE64319510B5500C48FFA /* LegacyBundleForClass.mm */,
 				37C4C08B1814AC5C003688B9 /* WKBackForwardList.h */,
@@ -7813,6 +7819,7 @@
 				BC8780FC1161C2B800CC2768 /* PlatformProcessIdentifier.h in Headers */,
 				1A6FB7D311E651E200DB1371 /* Plugin.h in Headers */,
 				31A67E0D165B2A99006CBA66 /* PlugInAutoStartProvider.h in Headers */,
+				7CA3793E1AC378B30079DC37 /* _WKUserContentExtensionStorePrivate.h in Headers */,
 				1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */,
 				1AA56F2911E92BC80061B882 /* PluginController.h in Headers */,
 				1A8EF4CB1252403700F7067F /* PluginControllerProxy.h in Headers */,
@@ -9596,6 +9603,7 @@
 				1A0EC907124C0AB8007EF4A5 /* PluginProcessConnection.cpp in Sources */,
 				1A0EC910124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp in Sources */,
 				1A7865B916CAC71500ACE83A /* PluginProcessConnectionManagerMessageReceiver.cpp in Sources */,
+				7CEFA9621AC0999300B910FD /* APIUserContentExtensionStoreCocoa.mm in Sources */,
 				1A2BB6D014117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp in Sources */,
 				1A2D90D31281C966001EB962 /* PluginProcessCreationParameters.cpp in Sources */,
 				1AA4792312A59FD9008236C3 /* PluginProcessMac.mm in Sources */,

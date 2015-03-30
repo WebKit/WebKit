@@ -1,3 +1,93 @@
+2015-03-30  Sam Weinig  <sam@webkit.org>
+
+        [Content Extensions] Flesh out the UserContentExtensionStore
+        https://bugs.webkit.org/show_bug.cgi?id=143123
+
+        Reviewed by Benjamin Poulain.
+
+        * Shared/WebCompiledContentExtension.cpp:
+        (WebKit::WebCompiledContentExtension::createFromCompiledContentExtensionData):
+        * Shared/WebCompiledContentExtensionData.cpp:
+        (WebKit::WebCompiledContentExtensionData::encode):
+        (WebKit::WebCompiledContentExtensionData::decode):
+        * Shared/WebCompiledContentExtensionData.h:
+        (WebKit::WebCompiledContentExtensionData::WebCompiledContentExtensionData):
+        Switch the order in memory of actions and bytecode (and switch the order of the
+        variables as well, to keep it clear). This will become necessary when streaming
+        the data to disk, as actions are created before the bytecode and we would have to keep them
+        in memory until the bytecode was finished compiling if they didn't come before in the file.
+
+        * UIProcess/API/APIUserContentExtensionStore.h:
+        * UIProcess/API/APIUserContentExtensionStore.cpp:
+        (API::UserContentExtensionStore::defaultStore):
+        Add accessor for the processes default shared store.
+
+        (API::constructedPath):
+        Helper for constructing the path to a file in the store based on identifier.
+
+        (API::encodeContentExtensionMetaData):
+        (API::decodeContentExtensionMetaData):
+        Helpers for encoding/decoding the file metadata (version, bytecode size, actions size).
+
+        (API::openAndMapContentExtension):
+        Helper to open and map a filed back content extension.
+
+        (API::writeDataToFile):
+        Helper to write a Data object to a file.
+
+        (API::compiledToFile):
+        Helper to run the content extension compiler and write it to disk. It first
+        writes it to a temporary file and then does an atomic rename operation to put
+        the file in the final location. Doing this means that if the process crashes while
+        the compile is taking place, the partially written file won't end up in the cache, 
+        but rather, will be cleaned up by the OS.
+ 
+        (API::UserContentExtensionStore::lookupContentExtension):
+        API entry point to lookup an extension that has been compiled to disk. On a background queue,
+        it attempts to open and map the extension (based on the identifier passed in) and return it
+        to the caller via the callback function passed in.
+        
+        (API::UserContentExtensionStore::compileContentExtension):
+        API entry point to compile an extension and write it to store. On a background queue, it 
+        compiles the file to disk and if successful, returns the memory mapped data via the callback
+        function passed in.
+
+        (API::UserContentExtensionStore::removeContentExtension):
+        API entry point to remove an extension from the store. On a background queue, it 
+        unlinks the extension (based on the identifier passed in) and tells the caller it completed
+        the action vial the callback function passed in.
+
+        (API::UserContentExtensionStore::synchronousRemoveAllContentExtensions):
+        Helper for testing which synchronously unlinks all the files in the store.
+
+        (API::userContentExtensionStoreErrorCategory):
+        std::error_code adaptor for some generic errors that can happen in the store. We will want
+        to flesh these out further.
+
+        * UIProcess/API/Cocoa/APIUserContentExtensionStoreCocoa.mm: Added.
+        (API::UserContentExtensionStore::defaultStorePath):
+        Helper to get the platform specific path for the store.
+
+        * UIProcess/API/C/WKUserContentExtensionStoreRef.cpp:
+        (WKUserContentExtensionStoreGetTypeID):
+        Add ENABLE(CONTENT_EXTENSIONS) guards.
+
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStore.h:
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStore.mm:
+        (-[_WKUserContentExtensionStore dealloc]):
+        (+[_WKUserContentExtensionStore defaultStore]):
+        (-[_WKUserContentExtensionStore compileContentExtensionForIdentifier:encodedContentExtension:completionHandler:]):
+        (-[_WKUserContentExtensionStore lookupContentExtensionForIdentifier:completionHandler:]):
+        (-[_WKUserContentExtensionStore removeContentExtensionForIdentifier:completionHandler:]):
+        (-[_WKUserContentExtensionStore _removeAllContentExtensions]):
+        (-[_WKUserContentExtensionStore init]): Deleted.
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStoreInternal.h:
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStorePrivate.h: Added.
+        SPI wrappers for the store.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2015-03-30  Antti Koivisto  <antti@apple.com>
 
         Don't cache resources that are very unlikely to be reused

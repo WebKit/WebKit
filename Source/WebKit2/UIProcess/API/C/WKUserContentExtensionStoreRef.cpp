@@ -33,5 +33,9 @@ using namespace WebKit;
 
 WKTypeID WKUserContentExtensionStoreGetTypeID()
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     return toAPI(API::UserContentExtensionStore::APIType);
+#else
+    return 0;
+#endif
 }

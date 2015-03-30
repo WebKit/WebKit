@@ -98,6 +98,12 @@ bool getFileSize(const String& path, long long& size)
     return getFileSizeFromFindData(findData, size);
 }
 
+bool getFileSize(PlatformFileHandle, long long&)
+{
+    notImplemented();
+    return false;
+}
+
 bool getFileModificationTime(const String& path, time_t& time)
 {
     WIN32_FIND_DATAW findData;
@@ -152,6 +158,12 @@ bool deleteEmptyDirectory(const String& path)
 {
     String filename = path;
     return !!RemoveDirectoryW(filename.charactersWithNullTermination().data());
+}
+
+bool renameFile(const String&, const String&)
+{
+    notImplemented();
+    return false;
 }
 
 String pathByAppendingComponent(const String& path, const String& component)

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKUserContentExtensionStore.h"
+#import "_WKUserContentExtensionStorePrivate.h"
 
 #if WK_API_ENABLED
 

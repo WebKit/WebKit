@@ -24,6 +24,7 @@
 #include "FileSystem.h"
 
 #include "FileMetadata.h"
+#include "NotImplemented.h"
 #include "UUID.h"
 #include <gio/gio.h>
 #include <glib.h>
@@ -110,6 +111,12 @@ bool deleteEmptyDirectory(const String& path)
     return filename ? g_rmdir(filename.get()) != -1 : false;
 }
 
+bool renameFile(const String&, const String&)
+{
+    notImplemented();
+    return false;
+}
+
 static bool getFileStat(const String& path, GStatBuf* statBuffer)
 {
     GUniquePtr<gchar> filename = unescapedFilename(path);
@@ -127,6 +134,12 @@ bool getFileSize(const String& path, long long& resultSize)
 
     resultSize = statResult.st_size;
     return true;
+}
+
+bool getFileSize(PlatformFileHandle, long long&)
+{
+    notImplemented();
+    return false;
 }
 
 bool getFileCreationTime(const String&, time_t&)

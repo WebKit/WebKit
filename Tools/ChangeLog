@@ -1,3 +1,14 @@
+2015-03-30  Sam Weinig  <sam@webkit.org>
+
+        [Content Extensions] Flesh out the UserContentExtensionStore
+        https://bugs.webkit.org/show_bug.cgi?id=143123
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/_WKUserContentExtensionStore.mm: Added.
+        Add tests for _WKUserContentExtensionStore.
+
 2015-03-30  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         Update install-dependencies Fedora packages after r181624

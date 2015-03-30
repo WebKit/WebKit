@@ -23,47 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompiledContentExtensionData_h
-#define WebCompiledContentExtensionData_h
+#import <WebKit/_WKUserContentExtensionStore.h>
 
-#if ENABLE(CONTENT_EXTENSIONS)
+#if WK_API_ENABLED
 
-#include "SharedMemory.h"
-#include <wtf/RefPtr.h>
+@interface _WKUserContentExtensionStore (WKPrivate)
 
-namespace IPC {
-class ArgumentDecoder;
-class ArgumentEncoder;
-}
+// For testing only.
+- (void)_removeAllContentExtensions;
 
-namespace WebKit {
+@end
 
-class WebCompiledContentExtensionData {
-public:
-    WebCompiledContentExtensionData()
-    {
-    }
-    
-    WebCompiledContentExtensionData(RefPtr<SharedMemory> data, unsigned actionsOffset, unsigned actionsSize, unsigned bytecodeOffset, unsigned bytecodeSize)
-        : data(data)
-        , actionsOffset(actionsOffset)
-        , actionsSize(actionsSize)
-        , bytecodeOffset(bytecodeOffset)
-        , bytecodeSize(bytecodeSize)
-    {
-    }
-
-    void encode(IPC::ArgumentEncoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, WebCompiledContentExtensionData&);
-
-    RefPtr<SharedMemory> data;
-    unsigned actionsOffset { 0 };
-    unsigned actionsSize { 0 };
-    unsigned bytecodeOffset { 0 };
-    unsigned bytecodeSize { 0 };
-};
-
-}
-
-#endif // ENABLE(CONTENT_EXTENSIONS)
-#endif // WebCompiledContentExtensionData_h
+#endif

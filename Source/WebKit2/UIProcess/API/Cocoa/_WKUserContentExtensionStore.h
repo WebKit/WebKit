@@ -27,8 +27,16 @@
 
 #if WK_API_ENABLED
 
+@class _WKUserContentFilter;
+
 WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 @interface _WKUserContentExtensionStore : NSObject
+
++ (instancetype)defaultStore;
+
+- (void)compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *)encodedContentExtension completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler;
+- (void)lookupContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler;
+- (void)removeContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSError *))completionHandler;
 
 @end
 

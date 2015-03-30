@@ -1,3 +1,30 @@
+2015-03-30  Sam Weinig  <sam@webkit.org>
+
+        [Content Extensions] Flesh out the UserContentExtensionStore
+        https://bugs.webkit.org/show_bug.cgi?id=143123
+
+        Reviewed by Benjamin Poulain.
+
+        - Adds a variant of getFileSize() that takes a PlatformFileHandle.
+        - Adds a new file system function, rename() which operates as the POSIX
+          rename function does.
+
+        * platform/FileSystem.h:
+        Add new functions.
+
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::renameFile):
+        (WebCore::getFileSize):
+        Add implementations.
+
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::renameFile):
+        (WebCore::getFileSize):
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::getFileSize):
+        (WebCore::renameFile):
+        Add stubs.
+
 2015-03-30  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Crash when closing window while video is loading

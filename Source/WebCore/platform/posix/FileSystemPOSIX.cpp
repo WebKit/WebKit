@@ -71,6 +71,19 @@ bool deleteFile(const String& path)
     return !unlink(fsRep.data());
 }
 
+bool renameFile(const String& oldPath, const String& newPath)
+{
+    CString oldPathFsRep = fileSystemRepresentation(oldPath);
+    if (!oldPathFsRep.data() || oldPathFsRep.data()[0] == '\0')
+        return false;
+
+    CString newPathFsRep = fileSystemRepresentation(newPath);
+    if (!newPathFsRep.data() || newPathFsRep.data()[0] == '\0')
+        return false;
+
+    return !rename(oldPathFsRep.data(), newPathFsRep.data());
+}
+
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)
 {
     CString fsRep = fileSystemRepresentation(path);
@@ -177,6 +190,16 @@ bool getFileSize(const String& path, long long& result)
     struct stat fileInfo;
 
     if (stat(fsRep.data(), &fileInfo))
+        return false;
+
+    result = fileInfo.st_size;
+    return true;
+}
+
+bool getFileSize(PlatformFileHandle handle, long long& result)
+{
+    struct stat fileInfo;
+    if (fstat(handle, &fileInfo))
         return false;
 
     result = fileInfo.st_size;

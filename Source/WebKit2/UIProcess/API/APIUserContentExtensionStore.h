@@ -26,16 +26,62 @@
 #ifndef APIUserContentExtensionStore_h
 #define APIUserContentExtensionStore_h
 
+#if ENABLE(CONTENT_EXTENSIONS)
+
 #include "APIObject.h"
+#include <system_error>
+#include <wtf/text/WTFString.h>
+
+namespace WTF {
+class WorkQueue;
+}
 
 namespace API {
 
+class UserContentExtension;
+
 class UserContentExtensionStore final : public ObjectImpl<Object::Type::UserContentExtensionStore> {
 public:
+    enum class Error {
+        LookupFailed = 1,
+        CompileFailed,
+        RemoveFailed
+    };
+
+    static UserContentExtensionStore& defaultStore();
+
     explicit UserContentExtensionStore();
+    explicit UserContentExtensionStore(const WTF::String& storePath);
     virtual ~UserContentExtensionStore();
+
+    void compileContentExtension(const WTF::String& identifier, const WTF::String& json, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)>);
+    void lookupContentExtension(const WTF::String& identifier, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)>);
+    void removeContentExtension(const WTF::String& identifier, std::function<void(std::error_code)>);
+
+    // For testing only.
+    void synchronousRemoveAllContentExtensions();
+
+private:
+    WTF::String defaultStorePath();
+
+    const WTF::String m_storePath;
+    Ref<WTF::WorkQueue> m_compileQueue;
+    Ref<WTF::WorkQueue> m_readQueue;
+    Ref<WTF::WorkQueue> m_removeQueue;
 };
+
+const std::error_category& userContentExtensionStoreErrorCategory();
+
+inline std::error_code make_error_code(UserContentExtensionStore::Error error)
+{
+    return { static_cast<int>(error), userContentExtensionStoreErrorCategory() };
+}
 
 } // namespace API
 
+namespace std {
+    template<> struct is_error_code_enum<API::UserContentExtensionStore::Error> : public true_type { };
+}
+
+#endif // ENABLE(CONTENT_EXTENSIONS)
 #endif // APIUserContentExtensionStore_h
