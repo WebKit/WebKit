@@ -126,6 +126,9 @@ WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject = fu
     if (object.subtype === "node")
         return WebInspector.FormattedValue.createElementForNode(object);
 
+    if (object.subtype === "null")
+        return WebInspector.FormattedValue.createElementForRemoteObject(object);
+
     if (object.type === "object" || object.subtype === "class") {
         var objectTree = new WebInspector.ObjectTreeView(object, null, propertyPath, forceExpanding);
         return objectTree.element;

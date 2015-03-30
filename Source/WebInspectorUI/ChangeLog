@@ -1,3 +1,15 @@
+2015-03-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Regression: null shouldn't be expandable in object outline
+        https://bugs.webkit.org/show_bug.cgi?id=143209
+
+        Reviewed by Mark Lam.
+
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject):
+        When creating an object tree or formatted value, choose just a formatted value
+        for "null", since it does not have properties.
+
 2015-03-30  Tobias Reiss  <tobi+webkit@basecode.de>
 
         Web Inspector: Add more ESLint rules that reflect the current state of the code base
