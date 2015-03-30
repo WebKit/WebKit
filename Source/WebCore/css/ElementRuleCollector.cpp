@@ -104,7 +104,7 @@ inline void ElementRuleCollector::addElementStyleProperties(const StylePropertie
 {
     if (!propertySet)
         return;
-    m_result.ranges.lastAuthorRule = m_result.matchedProperties.size();
+    m_result.ranges.lastAuthorRule = m_result.matchedProperties().size();
     if (m_result.ranges.firstAuthorRule == -1)
         m_result.ranges.firstAuthorRule = m_result.ranges.lastAuthorRule;
     m_result.addMatchedProperties(*propertySet);
@@ -220,7 +220,7 @@ void ElementRuleCollector::sortAndTransferMatchedRules()
 void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
 {
     clearMatchedRules();
-    m_result.ranges.lastAuthorRule = m_result.matchedProperties.size() - 1;
+    m_result.ranges.lastAuthorRule = m_result.matchedProperties().size() - 1;
 
     // Match global author rules.
     MatchRequest matchRequest(m_ruleSets.authorStyle(), includeEmptyRules);
@@ -238,7 +238,7 @@ void ElementRuleCollector::matchUserRules(bool includeEmptyRules)
     
     clearMatchedRules();
 
-    m_result.ranges.lastUserRule = m_result.matchedProperties.size() - 1;
+    m_result.ranges.lastUserRule = m_result.matchedProperties().size() - 1;
     MatchRequest matchRequest(m_ruleSets.userStyle(), includeEmptyRules);
     StyleResolver::RuleRange ruleRange = m_result.ranges.userRuleRange();
     collectMatchingRules(matchRequest, ruleRange);
@@ -267,7 +267,7 @@ void ElementRuleCollector::matchUARules(RuleSet* rules)
 {
     clearMatchedRules();
     
-    m_result.ranges.lastUARule = m_result.matchedProperties.size() - 1;
+    m_result.ranges.lastUARule = m_result.matchedProperties().size() - 1;
     StyleResolver::RuleRange ruleRange = m_result.ranges.UARuleRange();
     collectMatchingRules(MatchRequest(rules), ruleRange);
 

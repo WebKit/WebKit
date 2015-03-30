@@ -1,3 +1,17 @@
+2015-03-29  Benjamin Poulain  <benjamin@webkit.org>
+
+        `currentColor` computes to the same colour on all elements, even if 'color' is inherited differently
+        https://bugs.webkit.org/show_bug.cgi?id=133420
+
+        Reviewed by Darin Adler.
+
+        * fast/css/currentColor-on-before-after-pseudo-elements-expected.html: Added.
+        * fast/css/currentColor-on-before-after-pseudo-elements.html: Added.
+        * fast/css/currentColor-style-update-reftest-expected.html: Added.
+        * fast/css/currentColor-style-update-reftest.html: Added.
+        * fast/css/currentColor-value-style-update-expected.txt: Added.
+        * fast/css/currentColor-value-style-update.html: Added.
+
 2015-03-29  Darin Adler  <darin@apple.com>
 
         HTMLCollection caches incorrect length if item(0) is called before length on an empty collection

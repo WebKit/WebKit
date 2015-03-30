@@ -277,12 +277,15 @@ public:
 
     struct MatchResult {
         MatchResult() : isCacheable(true) { }
-        Vector<MatchedProperties, 64> matchedProperties;
         Vector<StyleRule*, 64> matchedRules;
         MatchRanges ranges;
         bool isCacheable;
 
-        void addMatchedProperties(const StyleProperties&, StyleRule* = 0, unsigned linkMatchType = SelectorChecker::MatchAll, PropertyWhitelistType = PropertyWhitelistNone);
+        const Vector<MatchedProperties, 64>& matchedProperties() const { return m_matchedProperties; }
+
+        void addMatchedProperties(const StyleProperties&, StyleRule* = nullptr, unsigned linkMatchType = SelectorChecker::MatchAll, PropertyWhitelistType = PropertyWhitelistNone);
+    private:
+        Vector<MatchedProperties, 64> m_matchedProperties;
     };
 
 private:
