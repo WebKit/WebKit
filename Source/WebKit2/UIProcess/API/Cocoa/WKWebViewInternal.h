@@ -93,6 +93,7 @@ struct PrintInfo;
 
 - (void)_updateVisibleContentRects;
 
+- (void)_didFinishLoadForMainFrame;
 - (void)_didSameDocumentNavigationForMainFrame:(WebKit::SameDocumentNavigationType)navigationType;
 
 - (BOOL)_isShowingVideoOptimized;

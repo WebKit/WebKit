@@ -705,6 +705,7 @@ void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
 
 void PageClientImpl::didFinishLoadForMainFrame()
 {
+    [m_webView _didFinishLoadForMainFrame];
 }
 
 void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType navigationType)

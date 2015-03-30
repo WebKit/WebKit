@@ -86,22 +86,9 @@ namespace WebKit {
 
 ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
-    , m_activeGestureType(ViewGestureType::None)
     , m_swipeWatchdogTimer(RunLoop::main(), this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
-    , m_swipeWatchdogAfterFirstVisuallyNonEmptyLayoutTimer(RunLoop::main(), this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
     , m_swipeActiveLoadMonitoringTimer(RunLoop::main(), this, &ViewGestureController::activeLoadMonitoringTimerFired)
-    , m_lastMagnificationGestureWasSmartMagnification(false)
-    , m_visibleContentRectIsValid(false)
-    , m_frameHandlesMagnificationGesture(false)
-    , m_swipeTransitionStyle(SwipeTransitionStyle::Overlap)
-    , m_customSwipeViewsTopContentInset(0)
-    , m_pendingSwipeReason(PendingSwipeReason::None)
-    , m_didMoveSwipeSnapshotCallback(nullptr)
-    , m_shouldIgnorePinnedState(false)
-    , m_swipeWaitingForVisuallyNonEmptyLayout(false)
-    , m_swipeWaitingForRenderTreeSizeThreshold(false)
-    , m_swipeWaitingForRepaint(false)
-    , m_swipeInProgress(false)
+    , m_swipeWatchdogAfterFirstVisuallyNonEmptyLayoutTimer(RunLoop::main(), this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
 {
     m_webPageProxy.process().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID(), *this);
 }

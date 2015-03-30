@@ -1,3 +1,53 @@
+2015-03-30  Tim Horton  <timothy_horton@apple.com>
+
+        Swipe snapshot removed too early (jumps around) on arstechnica and NYT
+        https://bugs.webkit.org/show_bug.cgi?id=143199
+        <rdar://problem/18420467>
+
+        Reviewed by Dan Bernstein.
+
+        Make ViewGestureControllerIOS's snapshot removal timing behave more like the Mac version.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        Let ViewGestureController know when the page has finished state restoration.
+
+        (-[WKWebView _didFinishLoadForMainFrame]):
+        (-[WKWebView _didSameDocumentNavigationForMainFrame:]):
+        Forward these to ViewGestureController.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didFinishLoadForMainFrame):
+        Forward didFinishLoadForMainFrame to WKWebView.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        Split the swipe snapshot removal state into a bunch of bools.
+
+        (WebKit::ViewGestureController::willCommitPostSwipeTransitionLayerTree):
+        (WebKit::ViewGestureController::setRenderTreeSize):
+        (WebKit::ViewGestureController::removeSwipeSnapshotIfReady):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        Unify the snapshot removal logic into one function; removeSwipeSnapshotIfReady
+        completely owns the decision. For now, we're waiting for everything, but
+        we can do better in the future (using firstVisuallyNonEmptyLayout like Mac used to).
+
+        (WebKit::ViewGestureController::didRestoreScrollPosition):
+        (WebKit::ViewGestureController::didFinishLoadForMainFrame):
+        (WebKit::ViewGestureController::didSameDocumentNavigationForMainFrame):
+        (WebKit::ViewGestureController::activeLoadMonitoringTimerFired):
+        Add more conditions for swipe snapshot removal. We'll now wait for
+        didFinishLoadForMainFrame (or didSameDocumentNavigationForMainFrame),
+        for active loads to finish, and for the scroll position to be restored.
+        This brings the iOS implementation in line with the slightly better Mac
+        implementation, and also sets the stage for deduplication of all of this code.
+        
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::ViewGestureController):
+
 2015-03-30  Chris Dumez  <cdumez@apple.com>
 
         [WK2][NetworkCache] Add support for "Cache-Control: max-stale" request header

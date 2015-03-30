@@ -64,6 +64,7 @@ using namespace WebCore;
 
 static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 3_s;
+static const std::chrono::milliseconds swipeSnapshotRemovalActiveLoadMonitoringInterval = 250_ms;
 
 // The key in this map is the associated page ID.
 static HashMap<uint64_t, WebKit::ViewGestureController*>& viewGestureControllersForAllPages()
@@ -138,11 +139,8 @@ namespace WebKit {
 
 ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
-    , m_activeGestureType(ViewGestureType::None)
     , m_swipeWatchdogTimer(RunLoop::main(), this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
-    , m_snapshotRemovalTargetRenderTreeSize(0)
-    , m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit(false)
-    , m_gesturePendingSnapshotRemoval(0)
+    , m_swipeActiveLoadMonitoringTimer(RunLoop::main(), this, &ViewGestureController::activeLoadMonitoringTimerFired)
 {
     viewGestureControllersForAllPages().add(webPageProxy.pageID(), this);
 }
@@ -301,6 +299,12 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         return;
     }
 
+    m_swipeWaitingForRenderTreeSizeThreshold = true;
+    m_swipeWaitingForRepaint = true;
+    m_swipeWaitingForDidFinishLoad = true;
+    m_swipeWaitingForSubresourceLoads = true;
+    m_swipeWaitingForScrollPositionRestoration = true;
+
     m_swipeWatchdogTimer.startOneShot(swipeSnapshotRemovalWatchdogDuration.count());
 }
 
@@ -314,7 +318,11 @@ void ViewGestureController::willCommitPostSwipeTransitionLayerTree(bool successf
         return;
     }
 
-    m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit = true;
+    if (!m_swipeWaitingForRepaint)
+        return;
+
+    m_swipeWaitingForRepaint = false;
+    removeSwipeSnapshotIfReady();
 }
 
 void ViewGestureController::setRenderTreeSize(uint64_t renderTreeSize)
@@ -322,11 +330,67 @@ void ViewGestureController::setRenderTreeSize(uint64_t renderTreeSize)
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;
 
-    if (!m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit)
+    if (!m_swipeWaitingForRenderTreeSizeThreshold)
         return;
 
-    if (!m_snapshotRemovalTargetRenderTreeSize || renderTreeSize > m_snapshotRemovalTargetRenderTreeSize)
-        removeSwipeSnapshot();
+    if (!m_snapshotRemovalTargetRenderTreeSize || renderTreeSize > m_snapshotRemovalTargetRenderTreeSize) {
+        m_swipeWaitingForRenderTreeSizeThreshold = false;
+        removeSwipeSnapshotIfReady();
+    }
+}
+
+void ViewGestureController::didRestoreScrollPosition()
+{
+    if (m_activeGestureType != ViewGestureType::Swipe)
+        return;
+
+    if (!m_swipeWaitingForScrollPositionRestoration)
+        return;
+
+    m_swipeWaitingForScrollPositionRestoration = false;
+    removeSwipeSnapshotIfReady();
+}
+
+void ViewGestureController::didFinishLoadForMainFrame()
+{
+    if (m_activeGestureType != ViewGestureType::Swipe)
+        return;
+
+    if (!m_swipeWaitingForDidFinishLoad)
+        return;
+
+    m_swipeWaitingForDidFinishLoad = false;
+
+    if (m_webPageProxy.pageLoadState().isLoading()) {
+        m_swipeActiveLoadMonitoringTimer.startRepeating(swipeSnapshotRemovalActiveLoadMonitoringInterval);
+        return;
+    }
+
+    m_swipeWaitingForSubresourceLoads = false;
+    removeSwipeSnapshotIfReady();
+}
+
+void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
+{
+    if (m_activeGestureType != ViewGestureType::Swipe)
+        return;
+
+    // This is nearly equivalent to didFinishLoad in the same document navigation case.
+    m_swipeWaitingForDidFinishLoad = false;
+
+    if (type != SameDocumentNavigationSessionStateReplace && type != SameDocumentNavigationSessionStatePop)
+        return;
+
+    m_swipeActiveLoadMonitoringTimer.startRepeating(swipeSnapshotRemovalActiveLoadMonitoringInterval);
+}
+
+void ViewGestureController::activeLoadMonitoringTimerFired()
+{
+    if (m_webPageProxy.pageLoadState().isLoading())
+        return;
+
+    m_swipeWaitingForSubresourceLoads = false;
+    removeSwipeSnapshotIfReady();
 }
 
 void ViewGestureController::swipeSnapshotWatchdogTimerFired()
@@ -334,11 +398,24 @@ void ViewGestureController::swipeSnapshotWatchdogTimerFired()
     removeSwipeSnapshot();
 }
 
+void ViewGestureController::removeSwipeSnapshotIfReady()
+{
+    if (m_swipeWaitingForRenderTreeSizeThreshold || m_swipeWaitingForRepaint || m_swipeWaitingForDidFinishLoad || m_swipeWaitingForSubresourceLoads || m_swipeWaitingForScrollPositionRestoration)
+        return;
+
+    removeSwipeSnapshot();
+}
+
 void ViewGestureController::removeSwipeSnapshot()
 {
-    m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit = false;
+    m_swipeWaitingForRenderTreeSizeThreshold = false;
+    m_swipeWaitingForRepaint = false;
+    m_swipeWaitingForDidFinishLoad = false;
+    m_swipeWaitingForSubresourceLoads = false;
+    m_swipeWaitingForScrollPositionRestoration = false;
 
     m_swipeWatchdogTimer.stop();
+    m_swipeActiveLoadMonitoringTimer.stop();
 
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;

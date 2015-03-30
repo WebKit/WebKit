@@ -907,7 +907,9 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         [self _updateVisibleContentRects];
     }
 
-    if (_needsToRestoreExposedRect && layerTreeTransaction.transactionID() >= _firstTransactionIDAfterPageRestore) {
+    bool isTransactionAfterPageRestore = layerTreeTransaction.transactionID() >= _firstTransactionIDAfterPageRestore;
+
+    if (_needsToRestoreExposedRect && isTransactionAfterPageRestore) {
         _needsToRestoreExposedRect = NO;
 
         if (areEssentiallyEqualAsFloat(contentZoomScale(self), _scaleToRestore)) {
@@ -915,11 +917,12 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
             exposedPosition.scale(_scaleToRestore, _scaleToRestore);
 
             changeContentOffsetBoundedInValidRange(_scrollView.get(), exposedPosition);
+            _gestureController->didRestoreScrollPosition();
         }
         [self _updateVisibleContentRects];
     }
 
-    if (_needsToRestoreUnobscuredCenter && layerTreeTransaction.transactionID() >= _firstTransactionIDAfterPageRestore) {
+    if (_needsToRestoreUnobscuredCenter && isTransactionAfterPageRestore) {
         _needsToRestoreUnobscuredCenter = NO;
 
         if (areEssentiallyEqualAsFloat(contentZoomScale(self), _scaleToRestore)) {
@@ -931,6 +934,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
             topLeftInDocumentCoordinate.moveBy(WebCore::FloatPoint(-_obscuredInsets.left, -_obscuredInsets.top));
 
             changeContentOffsetBoundedInValidRange(_scrollView.get(), topLeftInDocumentCoordinate);
+            _gestureController->didRestoreScrollPosition();
         }
         [self _updateVisibleContentRects];
     }
@@ -1496,9 +1500,18 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         inStableState:isStableState isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively];
 }
 
+- (void)_didFinishLoadForMainFrame
+{
+    if (_gestureController)
+        _gestureController->didFinishLoadForMainFrame();
+}
+
 - (void)_didSameDocumentNavigationForMainFrame:(WebKit::SameDocumentNavigationType)navigationType
 {
     [_customContentView web_didSameDocumentNavigation:toAPI(navigationType)];
+
+    if (_gestureController)
+        _gestureController->didSameDocumentNavigationForMainFrame(navigationType);
 }
 
 - (void)_keyboardChangedWithInfo:(NSDictionary *)keyboardInfo adjustScrollView:(BOOL)adjustScrollView

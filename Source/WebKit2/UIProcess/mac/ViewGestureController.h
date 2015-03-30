@@ -109,8 +109,6 @@ public:
     void setShouldIgnorePinnedState(bool ignore) { m_shouldIgnorePinnedState = ignore; }
 
     void didFirstVisuallyNonEmptyLayoutForMainFrame();
-    void didFinishLoadForMainFrame();
-    void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType);
 #else
     void installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView);
     void setAlternateBackForwardListSourceView(WKWebView *);
@@ -119,15 +117,19 @@ public:
     void endSwipeGesture(WebBackForwardListItem* targetItem, _UIViewControllerTransitionContext *, bool cancelled);
     void willCommitPostSwipeTransitionLayerTree(bool);
     void setRenderTreeSize(uint64_t);
+    void didRestoreScrollPosition();
 #endif
 
+    void didFinishLoadForMainFrame();
     void removeSwipeSnapshot();
+    void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType);
 
 private:
     // IPC::MessageReceiver.
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     void swipeSnapshotWatchdogTimerFired();
+    void activeLoadMonitoringTimerFired();
 
 #if PLATFORM(MAC)
     // Message handlers.
@@ -135,7 +137,6 @@ private:
     void didCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool isReplacedElement, double viewportMinimumScale, double viewportMaximumScale);
     void didHitRenderTreeSizeThreshold();
     void removeSwipeSnapshotAfterRepaint();
-    void activeLoadMonitoringTimerFired();
 
     void endMagnificationGesture();
     WebCore::FloatPoint scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
@@ -152,67 +153,71 @@ private:
     CALayer *determineLayerAdjacentToSnapshotForParent(SwipeDirection, CALayer *snapshotLayerParent) const;
     void applyDebuggingPropertiesToSwipeViews();
     void didMoveSwipeSnapshotLayer();
+#else
+    void removeSwipeSnapshotIfReady();
 #endif
 
     WebPageProxy& m_webPageProxy;
-    ViewGestureType m_activeGestureType;
+    ViewGestureType m_activeGestureType { ViewGestureType::None };
 
     RunLoop::Timer<ViewGestureController> m_swipeWatchdogTimer;
+    RunLoop::Timer<ViewGestureController> m_swipeActiveLoadMonitoringTimer;
 
 #if PLATFORM(MAC)
     RefPtr<ViewSnapshot> m_currentSwipeSnapshot;
 
     RunLoop::Timer<ViewGestureController> m_swipeWatchdogAfterFirstVisuallyNonEmptyLayoutTimer;
-    RunLoop::Timer<ViewGestureController> m_swipeActiveLoadMonitoringTimer;
 
     double m_magnification;
     WebCore::FloatPoint m_magnificationOrigin;
 
     WebCore::FloatRect m_lastSmartMagnificationUnscaledTargetRect;
-    bool m_lastMagnificationGestureWasSmartMagnification;
+    bool m_lastMagnificationGestureWasSmartMagnification { false };
     WebCore::FloatPoint m_lastSmartMagnificationOrigin;
 
     WebCore::FloatRect m_visibleContentRect;
-    bool m_visibleContentRectIsValid;
-    bool m_frameHandlesMagnificationGesture;
+    bool m_visibleContentRectIsValid { false };
+    bool m_frameHandlesMagnificationGesture { false };
 
     RetainPtr<WKSwipeCancellationTracker> m_swipeCancellationTracker;
     RetainPtr<CALayer> m_swipeLayer;
     RetainPtr<CALayer> m_swipeSnapshotLayer;
     Vector<RetainPtr<CALayer>> m_currentSwipeLiveLayers;
 
-    SwipeTransitionStyle m_swipeTransitionStyle;
+    SwipeTransitionStyle m_swipeTransitionStyle { SwipeTransitionStyle::Overlap };
     Vector<RetainPtr<NSView>> m_customSwipeViews;
-    float m_customSwipeViewsTopContentInset;
+    float m_customSwipeViewsTopContentInset { 0 };
     WebCore::FloatRect m_currentSwipeCustomViewBounds;
 
     // If we need to wait for content to decide if it is going to consume
     // the scroll event that would have started a swipe, we'll fill these in.
-    PendingSwipeReason m_pendingSwipeReason;
+    PendingSwipeReason m_pendingSwipeReason { PendingSwipeReason::None };
     SwipeDirection m_pendingSwipeDirection;
     WebCore::FloatSize m_cumulativeDeltaForPendingSwipe;
 
-    void (^m_didMoveSwipeSnapshotCallback)(CGRect);
+    void (^m_didMoveSwipeSnapshotCallback)(CGRect) { nullptr };
 
-    bool m_shouldIgnorePinnedState;
-
-    bool m_swipeWaitingForVisuallyNonEmptyLayout;
-    bool m_swipeWaitingForRenderTreeSizeThreshold;
-    bool m_swipeWaitingForRepaint;
-    bool m_swipeInProgress;
+    bool m_shouldIgnorePinnedState { false };
+    bool m_swipeInProgress { false };
 #else    
-    UIView *m_liveSwipeView;
+    UIView *m_liveSwipeView { nullptr };
     RetainPtr<UIView> m_liveSwipeViewClippingView;
     RetainPtr<UIView> m_snapshotView;
     RetainPtr<UIView> m_transitionContainerView;
     RetainPtr<WKSwipeTransitionController> m_swipeInteractiveTransitionDelegate;
     RetainPtr<_UIViewControllerOneToOneTransitionContext> m_swipeTransitionContext;
-    uint64_t m_snapshotRemovalTargetRenderTreeSize;
-    bool m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit;
+    uint64_t m_snapshotRemovalTargetRenderTreeSize { 0 };
     WeakObjCPtr<WKWebView> m_alternateBackForwardListSourceView;
     RefPtr<WebPageProxy> m_webPageProxyForBackForwardListForCurrentSwipe;
-    uint64_t m_gesturePendingSnapshotRemoval;
+    uint64_t m_gesturePendingSnapshotRemoval { 0 };
 #endif
+
+    bool m_swipeWaitingForVisuallyNonEmptyLayout { false };
+    bool m_swipeWaitingForRenderTreeSizeThreshold { false };
+    bool m_swipeWaitingForRepaint { false };
+    bool m_swipeWaitingForDidFinishLoad { false };
+    bool m_swipeWaitingForSubresourceLoads { false };
+    bool m_swipeWaitingForScrollPositionRestoration { false };
 };
 
 } // namespace WebKit
