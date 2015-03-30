@@ -1,3 +1,102 @@
+2015-03-30  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Upgrade align-self and align-items parsing to CSS 3
+        https://bugs.webkit.org/show_bug.cgi?id=133359
+
+        Reviewed by David Hyatt.
+
+        From Blink r164817 and r165264 by <jchaffraix@chromium.org>
+
+        Broaden justify-self's parsing name
+
+        This is in preparation of migrating align-self, align-items
+        and justify-items to the CSS 3 Alignment syntax.
+
+        The current naming was too tied to justify-self and needs to
+        be broadened. This will reduce the follow-up implementations'
+        patches.
+
+        Upgrade align-self and align-items parsing to CSS 3
+
+        This change migrates the 2 properties to the CSS 3 Alignment
+        parsing. The new parsing is identical to how we parse
+        'justify-self'. The 2 properties need to be migrated together
+        as they are used in tandem in CSSComputedStyleDeclaration.
+
+        This change also removes EAlignItems as it is now unused.
+
+        Tests: css3/parse-align-items.html
+               css3/parse-align-self.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::resolveAlignmentAuto): Added. Resolves the "auto" value for the alignment properties.
+        (WebCore::valueForItemPositionWithOverflowAlignment): Added. Builds the CSSValue for the for the alignment properties.
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+         (WebCore::isValidKeywordPropertyAndValue): Removed align-self, align-items and justify-items.
+        (WebCore::isKeywordPropertyID): Removed align-self, align-items and justify-items.
+        (WebCore::isBaselinePositionKeyword): Added. Set of keywords related to baseline value.
+        (WebCore::CSSParser::parseItemPositionOverflowPosition): Generic parsing fuction for the alignment properties.
+        (WebCore::CSSParser::parseJustifySelf): Deleted.
+        (WebCore::CSSParser::parseValue): Added align-items and align-self to the list and call to the generic parsing fuction for the alignment properties.
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Added.
+        (WebCore::CSSPrimitiveValue::operator ItemPosition): Added. Replace the old EAlignItems enumeration.
+        (WebCore::CSSPrimitiveValue::operator OverflowAlignment): Added.
+        (WebCore::CSSPrimitiveValue::operator EAlignItems): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EJustifySelf): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EJustifySelfOverflowAlignment): Deleted.
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInheritAlignSelf): Added.
+        (WebCore::StyleBuilderCustom::applyInitialAlignSelf): Added.
+        (WebCore::StyleBuilderCustom::applyValueAlignSelf): Added.
+        (WebCore::StyleBuilderCustom::applyInheritAlignItems): Added.
+        (WebCore::StyleBuilderCustom::applyInitialAlignItems): Added.
+        (WebCore::StyleBuilderCustom::applyValueAlignItems): Added.
+        (WebCore::StyleBuilderCustom::applyInheritJustifySelf): Added.
+        (WebCore::StyleBuilderCustom::applyInitialJustifySelf): Added.
+        (WebCore::StyleBuilderCustom::applyValueJustifySelf): Added.
+        (WebCore::StyleBuilderCustom::applyValueWebkitJustifySelf): Deleted.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle): isDisplayFlexibleOrGridBox now a RenderStyle function.
+        (WebCore::isDisplayFlexibleBox): Deleted. Moved to RenderStyle.
+        (WebCore::isDisplayGridBox): Deleted. Moved to RenderStyle.
+        (WebCore::isDisplayFlexibleOrGridBox): Deleted. Moved to RenderStyle.
+        * rendering/RenderBox.cpp:
+        (WebCore::flexItemHasStretchAlignment): Adapted to the new ItemPostition enum.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::firstLineBaseline): Adapted to the new ItemPostition enum.
+        (WebCore::RenderFlexibleBox::styleDidChange): Adapted to the new ItemPostition enum.
+        (WebCore::RenderFlexibleBox::alignmentForChild): Adapted to the new ItemPostition enum.
+        (WebCore::RenderFlexibleBox::needToStretchChild): Adapted to the new ItemPostition enum.
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren): Adapted to the new ItemPostition enum.
+        (WebCore::RenderFlexibleBox::alignChildren): Adapted to the new ItemPostition enum.
+        (WebCore::resolveAlignment): Deleted. Moved to RenderStyle.
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::createFullScreenStyle): Adapted to the new ItemPostition enum.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::adjustInnerStyle): Adapted to the new ItemPostition enum.
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::updateStyle): Adapted to the new ItemPostition enum.
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::fixAnonymousStyleForSubSupPair): Adapted to the new ItemPostition enum.
+        (WebCore::RenderMathMLScripts::fixAnonymousStyles): Adapted to the new ItemPostition enum.
+        * rendering/style/ContentData.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::resolveAlignment): Added.
+        * rendering/style/RenderStyle.h: Adapted to the new ItemPostition enum.
+        * rendering/style/RenderStyleConstants.h: Adapted to the new ItemPostition enum.
+        * rendering/style/StyleRareNonInheritedData.cpp: Adapted to the new ItemPostition enum.
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData): Adapted to the new ItemPostition enum.
+        (WebCore::StyleRareNonInheritedData::operator==): Adapted to the new ItemPostition enum.
+        * rendering/style/StyleRareNonInheritedData.h: Adapted to the new ItemPostition enum.
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::determineChange): Changes in the alignItems property cause a Detach.
+
 2015-03-27  David Hyatt  <hyatt@apple.com>
 
         [New Block-Inside-Inline Model] Create anonymous inline blocks to hold blocks-inside-inlines.

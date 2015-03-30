@@ -99,7 +99,10 @@ public:
 private:
     virtual std::unique_ptr<ContentData> cloneInternal() const override
     {
-        return std::make_unique<ImageContentData>(m_image.get());
+        std::unique_ptr<ContentData> image = std::make_unique<ImageContentData>(m_image.get());
+        image->setAltText(altText());
+
+        return image;
     }
 
     RefPtr<StyleImage> m_image;

@@ -543,6 +543,7 @@ space-around
 // flex-end
 // center
 // baseline
+last-baseline
 // stretch
 
 // CSS_PROP_JUSTIFY_CONTENT
@@ -556,6 +557,7 @@ space-around
 // auto
 // stretch
 // baseline
+// last-baseline
 // center
 // start
 // end

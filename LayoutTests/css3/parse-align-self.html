@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#alignSelfBaseline {
+    -webkit-align-self: baseline;
+}
+
+#alignSelfLastBaseline {
+    -webkit-align-self: last-baseline;
+}
+
+#alignSelfStretch {
+    -webkit-align-self: stretch;
+}
+
+#alignSelfStart {
+    -webkit-align-self: start;
+}
+
+#alignSelfEnd {
+    -webkit-align-self: end;
+}
+
+#alignSelfCenter {
+    -webkit-align-self: center;
+}
+
+#alignSelfSelfStart {
+    -webkit-align-self: self-start;
+}
+
+#alignSelfSelfEnd {
+    -webkit-align-self: self-end;
+}
+
+#alignSelfLeft {
+    -webkit-align-self: left;
+}
+
+#alignSelfRight {
+    -webkit-align-self: right;
+}
+
+#alignSelfFlexStart {
+    -webkit-align-self: flex-start;
+}
+
+#alignSelfFlexEnd {
+    -webkit-align-self: flex-end;
+}
+
+#alignSelfEndTrue {
+    -webkit-align-self: end true;
+}
+
+#alignSelfCenterTrue {
+    -webkit-align-self: center true;
+}
+
+#alignSelfSelfEndSafe {
+    -webkit-align-self: self-end safe;
+}
+
+#alignSelfSelfStartSafe {
+    -webkit-align-self: self-start safe;
+}
+
+#alignSelfRightSafe {
+    -webkit-align-self: right safe;
+}
+
+#alignSelfLeftTrue {
+    -webkit-align-self: left true;
+}
+
+#alignSelfFlexStartTrue {
+    -webkit-align-self: flex-start true;
+}
+
+#alignSelfFlexEndSafe {
+    -webkit-align-self: flex-end safe;
+}
+</style>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<div id="alignSelfBaseline"></div>
+<div id="alignSelfLastBaseline"></div>
+<div id="alignSelfStretch"></div>
+<div id="alignSelfStart"></div>
+<div id="alignSelfEnd"></div>
+<div id="alignSelfCenter"></div>
+<div id="alignSelfSelfStart"></div>
+<div id="alignSelfSelfEnd"></div>
+<div id="alignSelfLeft"></div>
+<div id="alignSelfRight"></div>
+<div id="alignSelfFlexStart"></div>
+<div id="alignSelfFlexEnd"></div>
+
+<div id="alignSelfEndTrue"></div>
+<div id="alignSelfCenterTrue"></div>
+<div id="alignSelfSelfEndSafe"></div>
+<div id="alignSelfSelfStartSafe"></div>
+<div id="alignSelfRightSafe"></div>
+<div id="alignSelfLeftTrue"></div>
+<div id="alignSelfFlexStartTrue"></div>
+<div id="alignSelfFlexEndSafe"></div>
+<script src="resources/alignment-parsing-utils.js"></script>
+<script>
+description('Test that setting and getting align-self works as expected');
+
+debug("Test getting align-self set through CSS");
+var alignSelfBaseline = document.getElementById("alignSelfBaseline");
+shouldBe("getComputedStyle(alignSelfBaseline, '').getPropertyValue('-webkit-align-self')", "'baseline'");
+
+var alignSelfLastBaseline = document.getElementById("alignSelfLastBaseline");
+shouldBe("getComputedStyle(alignSelfLastBaseline, '').getPropertyValue('-webkit-align-self')", "'last-baseline'");
+
+var alignSelfStretch = document.getElementById("alignSelfStretch");
+shouldBe("getComputedStyle(alignSelfStretch, '').getPropertyValue('-webkit-align-self')", "'stretch'");
+
+var alignSelfStart = document.getElementById("alignSelfStart");
+shouldBe("getComputedStyle(alignSelfStart, '').getPropertyValue('-webkit-align-self')", "'start'");
+
+var alignSelfEnd = document.getElementById("alignSelfEnd");
+shouldBe("getComputedStyle(alignSelfEnd, '').getPropertyValue('-webkit-align-self')", "'end'");
+
+var alignSelfCenter = document.getElementById("alignSelfCenter");
+shouldBe("getComputedStyle(alignSelfCenter, '').getPropertyValue('-webkit-align-self')", "'center'");
+
+var alignSelfSelfEnd = document.getElementById("alignSelfSelfEnd");
+shouldBe("getComputedStyle(alignSelfSelfEnd, '').getPropertyValue('-webkit-align-self')", "'self-end'");
+
+var alignSelfSelfStart = document.getElementById("alignSelfSelfStart");
+shouldBe("getComputedStyle(alignSelfSelfStart, '').getPropertyValue('-webkit-align-self')", "'self-start'");
+
+var alignSelfLeft = document.getElementById("alignSelfLeft");
+shouldBe("getComputedStyle(alignSelfLeft, '').getPropertyValue('-webkit-align-self')", "'left'");
+
+var alignSelfRight = document.getElementById("alignSelfRight");
+shouldBe("getComputedStyle(alignSelfRight, '').getPropertyValue('-webkit-align-self')", "'right'");
+
+var alignSelfFlexStart = document.getElementById("alignSelfFlexStart");
+shouldBe("getComputedStyle(alignSelfFlexStart, '').getPropertyValue('-webkit-align-self')", "'flex-start'");
+
+var alignSelfFlexEnd = document.getElementById("alignSelfFlexEnd");
+shouldBe("getComputedStyle(alignSelfFlexEnd, '').getPropertyValue('-webkit-align-self')", "'flex-end'");
+
+var alignSelfEndTrue = document.getElementById("alignSelfEndTrue");
+shouldBe("getComputedStyle(alignSelfEndTrue, '').getPropertyValue('-webkit-align-self')", "'end true'");
+
+var alignSelfCenterTrue = document.getElementById("alignSelfCenterTrue");
+shouldBe("getComputedStyle(alignSelfCenterTrue, '').getPropertyValue('-webkit-align-self')", "'center true'");
+
+var alignSelfSelfEndSafe = document.getElementById("alignSelfSelfEndSafe");
+shouldBe("getComputedStyle(alignSelfSelfEndSafe, '').getPropertyValue('-webkit-align-self')", "'self-end safe'");
+
+var alignSelfSelfStartSafe = document.getElementById("alignSelfSelfStartSafe");
+shouldBe("getComputedStyle(alignSelfSelfStartSafe, '').getPropertyValue('-webkit-align-self')", "'self-start safe'");
+
+var alignSelfRightSafe = document.getElementById("alignSelfRightSafe");
+shouldBe("getComputedStyle(alignSelfRightSafe, '').getPropertyValue('-webkit-align-self')", "'right safe'");
+
+var alignSelfLeftTrue = document.getElementById("alignSelfLeftTrue");
+shouldBe("getComputedStyle(alignSelfLeftTrue, '').getPropertyValue('-webkit-align-self')", "'left true'");
+
+var alignSelfFlexStartTrue = document.getElementById("alignSelfFlexStartTrue");
+shouldBe("getComputedStyle(alignSelfFlexStartTrue, '').getPropertyValue('-webkit-align-self')", "'flex-start true'");
+
+var alignSelfFlexEndSafe = document.getElementById("alignSelfFlexEndSafe");
+shouldBe("getComputedStyle(alignSelfFlexEndSafe, '').getPropertyValue('-webkit-align-self')", "'flex-end safe'");
+
+debug("");
+debug("Test initial value of align-self through JS");
+element = document.createElement("div");
+document.body.appendChild(element);
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-align-self')", "'start'");
+
+debug("");
+debug("Test getting and setting align-self through JS");
+container = document.createElement("div");
+element = document.createElement("div");
+container.appendChild(element);
+document.body.appendChild(container);
+element.style.webkitAlignSelf = "center";
+checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "center", "center");
+
+element.style.webkitAlignSelf = "true start";
+checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "start true", "start true");
+
+element.style.webkitAlignSelf = "flex-end safe";
+checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "flex-end safe", "flex-end safe");
+
+element.style.webkitAlignSelf = "right";
+checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "right", "right");
+
+element.style.webkitAlignSelf = "center";
+checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "center", "center");
+
+element.style.webkitAlignSelf = "self-start";
+checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "self-start", "self-start");
+
+element.style.webkitAlignSelf = "auto";
+checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto", "start");
+
+container.style.display = "-webkit-flex";
+element.style.webkitAlignSelf = "auto";
+checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto", "stretch");
+
+container.style.display = "-webkit-grid";
+element.style.webkitAlignSelf = "auto";
+checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto", "stretch");
+
+element.style.webkitAlignSelf = "self-end";
+checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "self-end", "self-end");
+
+debug("");
+debug("Test bad combinations of align-self");
+container = document.createElement("div");
+element = document.createElement("div");
+container.appendChild(element);
+document.body.appendChild(container);
+
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "true auto");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto safe");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto left");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "baseline safe");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "baseline center");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "stretch true");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "stretch right");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "true true");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "true safe");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "center start");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "stretch true");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "safe stretch");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "baseline safe");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "true baseline");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "true safe left");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "true left safe");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "left safe true safe");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy start");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy end");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy right true");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy auto");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy stretch");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy left right");
+
+debug("");
+debug("Test the value 'initial'");
+container.style.display = "";
+checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "center", "start");
+
+debug("");
+debug("Test the value 'initial' for grid containers");
+container.style.display = "-webkit-grid";
+checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "left safe", "stretch");
+
+debug("");
+debug("Test the value 'initial' for flex containers");
+container.style.display = "-webkit-flex";
+checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "right true", "stretch");
+
+debug("");
+debug("Test the value 'initial' for positioned elements");
+container.style.display = "";
+element.style.position = "absolute";
+checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "left", "auto");
+
+debug("");
+debug("Test the value 'initial' for positioned elements in grid containers");
+container.style.display = "-webkit-grid";
+element.style.position = "absolute";
+checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "right", "auto");
+
+debug("");
+debug("Test the value 'initial' for positioned elements in grid containers");
+container.style.display = "-webkit-flex";
+element.style.position = "absolute";
+checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "end", "auto");
+
+debug("");
+debug("Test the value 'inherit'");
+checkInheritValues("webkitAlignSelf", "-webkit-align-self", "end");
+checkInheritValues("webkitAlignSelf", "-webkit-align-self", "left safe");
+checkInheritValues("webkitAlignSelf", "-webkit-align-self", "center true");
+
+</script>
+</body>
+</html>

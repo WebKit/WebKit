@@ -292,16 +292,18 @@ rect: style.getPropertyValue(column-width) : auto
 rect: style.getPropertyCSSValue(column-width) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(align-content) : stretch
 rect: style.getPropertyCSSValue(align-content) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(align-items) : stretch
-rect: style.getPropertyCSSValue(align-items) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(align-self) : stretch
-rect: style.getPropertyCSSValue(align-self) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(align-items) : start
+rect: style.getPropertyCSSValue(align-items) : [object CSSValueList]
+rect: style.getPropertyValue(align-self) : start
+rect: style.getPropertyCSSValue(align-self) : [object CSSValueList]
 rect: style.getPropertyValue(flex-direction) : row
 rect: style.getPropertyCSSValue(flex-direction) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(flex-wrap) : nowrap
 rect: style.getPropertyCSSValue(flex-wrap) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(justify-content) : flex-start
 rect: style.getPropertyCSSValue(justify-content) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(justify-self) : start
+rect: style.getPropertyCSSValue(justify-self) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-font-kerning) : auto
 rect: style.getPropertyCSSValue(-webkit-font-kerning) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-smoothing) : auto
@@ -806,16 +808,18 @@ g: style.getPropertyValue(column-width) : auto
 g: style.getPropertyCSSValue(column-width) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(align-content) : stretch
 g: style.getPropertyCSSValue(align-content) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(align-items) : stretch
-g: style.getPropertyCSSValue(align-items) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(align-self) : stretch
-g: style.getPropertyCSSValue(align-self) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(align-items) : start
+g: style.getPropertyCSSValue(align-items) : [object CSSValueList]
+g: style.getPropertyValue(align-self) : start
+g: style.getPropertyCSSValue(align-self) : [object CSSValueList]
 g: style.getPropertyValue(flex-direction) : row
 g: style.getPropertyCSSValue(flex-direction) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(flex-wrap) : nowrap
 g: style.getPropertyCSSValue(flex-wrap) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(justify-content) : flex-start
 g: style.getPropertyCSSValue(justify-content) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(justify-self) : start
+g: style.getPropertyCSSValue(justify-self) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-font-kerning) : auto
 g: style.getPropertyCSSValue(-webkit-font-kerning) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-smoothing) : auto

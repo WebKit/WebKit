@@ -188,12 +188,14 @@ public:
     unsigned m_backfaceVisibility : 1; // EBackfaceVisibility
 
     unsigned m_alignContent : 3; // EAlignContent
-    unsigned m_alignItems : 3; // EAlignItems
-    unsigned m_alignSelf : 3; // EAlignItems
+    unsigned m_alignItems : 4; // ItemPosition
+    unsigned m_alignItemsOverflowAlignment : 2; // OverflowAlignment
+    unsigned m_alignSelf : 4; // ItemPosition
+    unsigned m_alignSelfOverflowAlignment : 2; // OverflowAlignment
     unsigned m_justifyContent : 3; // EJustifyContent
 
-    unsigned m_justifySelf : 4; // EJustifySelf
-    unsigned m_justifySelfOverflowAlignment : 2; // EJustifySelfOverflowAlignment
+    unsigned m_justifySelf : 4; // ItemPosition
+    unsigned m_justifySelfOverflowAlignment : 2; // OverflowAlignment
 
     unsigned userDrag : 2; // EUserDrag
     unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."

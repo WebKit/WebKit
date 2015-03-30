@@ -83,7 +83,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_backfaceVisibility(RenderStyle::initialBackfaceVisibility())
     , m_alignContent(RenderStyle::initialAlignContent())
     , m_alignItems(RenderStyle::initialAlignItems())
+    , m_alignItemsOverflowAlignment(RenderStyle::initialAlignItemsOverflowAlignment())
     , m_alignSelf(RenderStyle::initialAlignSelf())
+    , m_alignSelfOverflowAlignment(RenderStyle::initialAlignSelfOverflowAlignment())
     , m_justifyContent(RenderStyle::initialJustifyContent())
     , m_justifySelf(RenderStyle::initialJustifySelf())
     , m_justifySelfOverflowAlignment(RenderStyle::initialJustifySelfOverflowAlignment())
@@ -134,6 +136,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
 #endif
     , m_content(o.m_content ? o.m_content->clone() : nullptr)
     , m_counterDirectives(o.m_counterDirectives ? clone(*o.m_counterDirectives) : nullptr)
+    , m_altText(o.m_altText)
     , m_boxShadow(o.m_boxShadow ? std::make_unique<ShadowData>(*o.m_boxShadow) : nullptr)
     , m_boxReflect(o.m_boxReflect)
     , m_animations(o.m_animations ? std::make_unique<AnimationList>(*o.m_animations) : nullptr)
@@ -170,7 +173,9 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_backfaceVisibility(o.m_backfaceVisibility)
     , m_alignContent(o.m_alignContent)
     , m_alignItems(o.m_alignItems)
+    , m_alignItemsOverflowAlignment(o.m_alignItemsOverflowAlignment)
     , m_alignSelf(o.m_alignSelf)
+    , m_alignSelfOverflowAlignment(o.m_alignSelfOverflowAlignment)
     , m_justifyContent(o.m_justifyContent)
     , m_justifySelf(o.m_justifySelf)
     , m_justifySelfOverflowAlignment(o.m_justifySelfOverflowAlignment)
@@ -265,7 +270,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_backfaceVisibility == o.m_backfaceVisibility
         && m_alignContent == o.m_alignContent
         && m_alignItems == o.m_alignItems
+        && m_alignItemsOverflowAlignment == o.m_alignItemsOverflowAlignment
         && m_alignSelf == o.m_alignSelf
+        && m_alignSelfOverflowAlignment == o.m_alignSelfOverflowAlignment
         && m_justifyContent == o.m_justifyContent
         && userDrag == o.userDrag
         && textOverflow == o.textOverflow

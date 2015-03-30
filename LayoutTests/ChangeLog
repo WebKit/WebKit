@@ -1,3 +1,35 @@
+2015-03-30  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Upgrade align-self and align-items parsing to CSS 3
+        https://bugs.webkit.org/show_bug.cgi?id=133359
+
+        Reviewed by David Hyatt.
+
+        From Blink r164817 and r165264 by <jchaffraix@chromium.org>
+
+        Broaden justify-self's parsing name and upgrade align-self and
+        align-items parsing to CSS 3.
+
+        * TestExpectations:
+        * css3/flexbox/css-properties-expected.txt:
+        * css3/flexbox/css-properties.html:
+        * css3/parse-align-items-expected.txt: Added.
+        * css3/parse-align-items.html: Added.
+        * css3/parse-align-self-expected.txt: Added.
+        * css3/parse-align-self.html: Added.
+        * css3/resources/alignment-parsing-utils.js: Added.
+        (checkValues):
+        (checkBadValues):
+        (checkInitialValues):
+        (checkInheritValues):
+        (checkLegacyValues):
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * fast/css/parse-justify-self-expected.txt:
+        * fast/css/parse-justify-self.html:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2015-03-27  David Hyatt  <hyatt@apple.com>
 
         [New Block-Inside-Inline Model] Create anonymous inline blocks to hold blocks-inside-inlines.

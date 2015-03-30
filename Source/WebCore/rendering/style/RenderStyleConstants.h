@@ -245,12 +245,11 @@ enum EBoxDirection { BNORMAL, BREVERSE };
 // CSS3 Flexbox Properties
 
 enum EAlignContent { AlignContentFlexStart, AlignContentFlexEnd, AlignContentCenter, AlignContentSpaceBetween, AlignContentSpaceAround, AlignContentStretch };
-enum EAlignItems { AlignAuto, AlignFlexStart, AlignFlexEnd, AlignCenter, AlignStretch, AlignBaseline };
 enum EFlexDirection { FlowRow, FlowRowReverse, FlowColumn, FlowColumnReverse };
 enum EFlexWrap { FlexNoWrap, FlexWrap, FlexWrapReverse };
 enum EJustifyContent { JustifyFlexStart, JustifyFlexEnd, JustifyCenter, JustifySpaceBetween, JustifySpaceAround };
-enum EJustifySelf {JustifySelfAuto, JustifySelfStretch, JustifySelfBaseline, JustifySelfCenter, JustifySelfStart, JustifySelfEnd, JustifySelfSelfStart, JustifySelfSelfEnd, JustifySelfFlexStart, JustifySelfFlexEnd, JustifySelfLeft, JustifySelfRight};
-enum EJustifySelfOverflowAlignment {JustifySelfOverflowAlignmentDefault, JustifySelfOverflowAlignmentTrue, JustifySelfOverflowAlignmentSafe};
+enum ItemPosition {ItemPositionAuto, ItemPositionStretch, ItemPositionBaseline, ItemPositionLastBaseline, ItemPositionCenter, ItemPositionStart, ItemPositionEnd, ItemPositionSelfStart, ItemPositionSelfEnd, ItemPositionFlexStart, ItemPositionFlexEnd, ItemPositionLeft, ItemPositionRight};
+enum OverflowAlignment {OverflowAlignmentDefault, OverflowAlignmentTrue, OverflowAlignmentSafe};
 
 
 enum ETextSecurity {

@@ -1143,26 +1143,6 @@ static bool doesNotInheritTextDecoration(const RenderStyle& style, Element* e)
         || style.isFloating() || style.hasOutOfFlowPosition();
 }
 
-static bool isDisplayFlexibleBox(EDisplay display)
-{
-    return display == FLEX || display == INLINE_FLEX;
-}
-
-static inline bool isDisplayGridBox(EDisplay display)
-{
-#if ENABLE(CSS_GRID_LAYOUT)
-    return display == GRID || display == INLINE_GRID;
-#else
-    UNUSED_PARAM(display);
-    return false;
-#endif
-}
-
-static bool isDisplayFlexibleOrGridBox(EDisplay display)
-{
-    return isDisplayFlexibleBox(display) || isDisplayGridBox(display);
-}
-
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
 static bool isScrollableOverflow(EOverflow overflow)
 {
@@ -1319,14 +1299,14 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         if (style.writingMode() != TopToBottomWritingMode && (style.display() == BOX || style.display() == INLINE_BOX))
             style.setWritingMode(TopToBottomWritingMode);
 
-        if (isDisplayFlexibleOrGridBox(parentStyle.display())) {
+        if (parentStyle.isDisplayFlexibleOrGridBox()) {
             style.setFloating(NoFloat);
             style.setDisplay(equivalentBlockDisplay(style.display(), style.isFloating(), !document().inQuirksMode()));
         }
     }
 
     // Make sure our z-index value is only applied if the object is positioned.
-    if (style.position() == StaticPosition && !isDisplayFlexibleOrGridBox(parentStyle.display()))
+    if (style.position() == StaticPosition && !parentStyle.isDisplayFlexibleOrGridBox())
         style.setHasAutoZIndex();
 
     // Auto z-index becomes 0 for the root element and transparent objects. This prevents

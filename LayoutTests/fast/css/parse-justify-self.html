@@ -3,63 +3,63 @@
 <head>
 <style>
 #justifySelfBaseline {
-    -webkit-justify-self: baseline;
+    justify-self: baseline;
 }
 
 #justifySelfStretch {
-    -webkit-justify-self: stretch;
+    justify-self: stretch;
 }
 
 #justifySelfStart {
-    -webkit-justify-self: start;
+    justify-self: start;
 }
 
 #justifySelfEnd {
-    -webkit-justify-self: end;
+    justify-self: end;
 }
 
 #justifySelfCenter {
-    -webkit-justify-self: center;
+    justify-self: center;
 }
 
 #justifySelfSelfStart {
-    -webkit-justify-self: self-start;
+    justify-self: self-start;
 }
 
 #justifySelfSelfEnd {
-    -webkit-justify-self: self-end;
+    justify-self: self-end;
 }
 
 #justifySelfLeft {
-    -webkit-justify-self: left;
+    justify-self: left;
 }
 
 #justifySelfRight {
-    -webkit-justify-self: right;
+    justify-self: right;
 }
 
 #justifySelfEndTrue {
-    -webkit-justify-self: end true;
+    justify-self: end true;
 }
 
 #justifySelfCenterTrue {
-    -webkit-justify-self: center true;
+    justify-self: center true;
 }
 
 #justifySelfSelfEndSafe {
-    -webkit-justify-self: self-end safe;
+    justify-self: self-end safe;
 }
 
 #justifySelfSelfStartSafe {
-    -webkit-justify-self: self-start safe;
+    justify-self: self-start safe;
 }
 
 #justifySelfRightSafe {
-    -webkit-justify-self: right safe;
+    justify-self: right safe;
 }
 
 #justifySelfLeftTrue {
-    -webkit-justify-self: left true;
+    justify-self: left true;
 }
 </style>
 <script src="../../resources/js-test.js"></script>
@@ -86,150 +86,144 @@ description('Test that setting and getting justify-self works as expected');
 
 debug("Test getting justify-self set through CSS");
 var justifySelfBaseline = document.getElementById("justifySelfBaseline");
-shouldBe("getComputedStyle(justifySelfBaseline, '').getPropertyValue('-webkit-justify-self')", "'baseline'");
+shouldBe("getComputedStyle(justifySelfBaseline, '').getPropertyValue('justify-self')", "'baseline'");
 
 var justifySelfStretch = document.getElementById("justifySelfStretch");
-shouldBe("getComputedStyle(justifySelfStretch, '').getPropertyValue('-webkit-justify-self')", "'stretch'");
+shouldBe("getComputedStyle(justifySelfStretch, '').getPropertyValue('justify-self')", "'stretch'");
 
 var justifySelfStart = document.getElementById("justifySelfStart");
-shouldBe("getComputedStyle(justifySelfStart, '').getPropertyValue('-webkit-justify-self')", "'start'");
+shouldBe("getComputedStyle(justifySelfStart, '').getPropertyValue('justify-self')", "'start'");
 
 var justifySelfEnd = document.getElementById("justifySelfEnd");
-shouldBe("getComputedStyle(justifySelfEnd, '').getPropertyValue('-webkit-justify-self')", "'end'");
+shouldBe("getComputedStyle(justifySelfEnd, '').getPropertyValue('justify-self')", "'end'");
 
 var justifySelfCenter = document.getElementById("justifySelfCenter");
-shouldBe("getComputedStyle(justifySelfCenter, '').getPropertyValue('-webkit-justify-self')", "'center'");
+shouldBe("getComputedStyle(justifySelfCenter, '').getPropertyValue('justify-self')", "'center'");
 
 var justifySelfSelfEnd = document.getElementById("justifySelfSelfEnd");
-shouldBe("getComputedStyle(justifySelfSelfEnd, '').getPropertyValue('-webkit-justify-self')", "'self-end'");
+shouldBe("getComputedStyle(justifySelfSelfEnd, '').getPropertyValue('justify-self')", "'self-end'");
 
 var justifySelfSelfStart = document.getElementById("justifySelfSelfStart");
-shouldBe("getComputedStyle(justifySelfSelfStart, '').getPropertyValue('-webkit-justify-self')", "'self-start'");
+shouldBe("getComputedStyle(justifySelfSelfStart, '').getPropertyValue('justify-self')", "'self-start'");
 
 var justifySelfLeft = document.getElementById("justifySelfLeft");
-shouldBe("getComputedStyle(justifySelfLeft, '').getPropertyValue('-webkit-justify-self')", "'left'");
+shouldBe("getComputedStyle(justifySelfLeft, '').getPropertyValue('justify-self')", "'left'");
 
 var justifySelfRight = document.getElementById("justifySelfRight");
-shouldBe("getComputedStyle(justifySelfRight, '').getPropertyValue('-webkit-justify-self')", "'right'");
+shouldBe("getComputedStyle(justifySelfRight, '').getPropertyValue('justify-self')", "'right'");
 
 var justifySelfEndTrue = document.getElementById("justifySelfEndTrue");
-shouldBe("getComputedStyle(justifySelfEndTrue, '').getPropertyValue('-webkit-justify-self')", "'end true'");
+shouldBe("getComputedStyle(justifySelfEndTrue, '').getPropertyValue('justify-self')", "'end true'");
 
 var justifySelfCenterTrue = document.getElementById("justifySelfCenterTrue");
-shouldBe("getComputedStyle(justifySelfCenterTrue, '').getPropertyValue('-webkit-justify-self')", "'center true'");
+shouldBe("getComputedStyle(justifySelfCenterTrue, '').getPropertyValue('justify-self')", "'center true'");
 
 var justifySelfSelfEndSafe = document.getElementById("justifySelfSelfEndSafe");
-shouldBe("getComputedStyle(justifySelfSelfEndSafe, '').getPropertyValue('-webkit-justify-self')", "'self-end safe'");
+shouldBe("getComputedStyle(justifySelfSelfEndSafe, '').getPropertyValue('justify-self')", "'self-end safe'");
 
 var justifySelfSelfStartSafe = document.getElementById("justifySelfSelfStartSafe");
-shouldBe("getComputedStyle(justifySelfSelfStartSafe, '').getPropertyValue('-webkit-justify-self')", "'self-start safe'");
+shouldBe("getComputedStyle(justifySelfSelfStartSafe, '').getPropertyValue('justify-self')", "'self-start safe'");
 
 var justifySelfRightSafe = document.getElementById("justifySelfRightSafe");
-shouldBe("getComputedStyle(justifySelfRightSafe, '').getPropertyValue('-webkit-justify-self')", "'right safe'");
+shouldBe("getComputedStyle(justifySelfRightSafe, '').getPropertyValue('justify-self')", "'right safe'");
 
 var justifySelfLeftTrue = document.getElementById("justifySelfLeftTrue");
-shouldBe("getComputedStyle(justifySelfLeftTrue, '').getPropertyValue('-webkit-justify-self')", "'left true'");
+shouldBe("getComputedStyle(justifySelfLeftTrue, '').getPropertyValue('justify-self')", "'left true'");
 
 debug("");
 debug("Test initial value of justify-self through JS");
 element = document.createElement("div");
 document.body.appendChild(element);
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
 debug("");
 debug("Test getting and setting justify-self through JS");
 element = document.createElement("div");
 document.body.appendChild(element);
-element.style.webkitJustifySelf = "center";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'center'");
+element.style.justifySelf = "center";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'center'");
 
 element = document.createElement("div");
 document.body.appendChild(element);
-element.style.webkitJustifySelf = "true start";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'start true'");
+element.style.justifySelf = "true start";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start true'");
 
-element.style.webkitJustifySelf = "auto";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "start";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
 debug("");
-debug("Test bad combinaisons of justify-self");
+debug("Test bad combinations of justify-self");
 element = document.createElement("div");
 document.body.appendChild(element);
-element.style.webkitJustifySelf = "true auto";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "start left";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "auto safe";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "baseline safe";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "auto left";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "baseline center";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "baseline safe";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "stretch true";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "baseline center";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "stretch right";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "stretch true";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "true true";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "stretch right";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "true";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "true true";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "true safe";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "true";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "center start";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "true safe";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "stretch true";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "center start";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "safe stretch";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "stretch true";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "baseline safe";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "safe stretch";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "true baseline";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "baseline safe";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "true safe";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "true baseline";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "true safe left";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "true safe";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "true left safe";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.webkitJustifySelf = "true safe left";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
-
-element.style.webkitJustifySelf = "true left safe";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
-
-element.style.webkitJustifySelf = "left safe true safe";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "left safe true safe";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
 debug("");
 debug("Test the value 'initial'");
-element.style.webkitJustifySelf = "center";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'center'");
-element.style.webkitJustifySelf = "initial";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'auto'");
+element.style.justifySelf = "center";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'center'");
+element.style.justifySelf = "initial";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
 debug("");
 debug("Test the value 'inherit'");
 parentElement = document.createElement("div");
 document.body.appendChild(parentElement);
-parentElement.style.webkitJustifySelf = "end";
-shouldBe("getComputedStyle(parentElement, '').getPropertyValue('-webkit-justify-self')", "'end'");
+parentElement.style.justifySelf = "end";
+shouldBe("getComputedStyle(parentElement, '').getPropertyValue('justify-self')", "'end'");
 
 element = document.createElement("div");
 parentElement.appendChild(element);
-element.style.webkitJustifySelf = "inherit";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-justify-self')", "'end'");
+element.style.justifySelf = "inherit";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'end'");
 </script>
 </body>
 </html>

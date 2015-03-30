@@ -214,7 +214,7 @@ public:
 
     bool parseClipShape(CSSPropertyID, bool important);
 
-    bool parseJustifySelf(CSSPropertyID, bool important);
+    bool parseItemPositionOverflowPosition(CSSPropertyID, bool important);
 
 #if ENABLE(CSS_SHAPES)
     PassRefPtr<CSSValue> parseShapeProperty(CSSPropertyID);

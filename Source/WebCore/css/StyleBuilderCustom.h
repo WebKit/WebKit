@@ -102,6 +102,9 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitSvgShadow);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitTextEmphasisStyle);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Zoom);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(JustifySelf);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(AlignItems);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(AlignSelf);
 
     // Custom handling of initial + inherit value setting only.
     static void applyInitialWebkitMaskImage(StyleResolver&) { }
@@ -120,7 +123,6 @@ public:
 #if ENABLE(DASHBOARD_SUPPORT)
     static void applyValueWebkitDashboardRegion(StyleResolver&, CSSValue&);
 #endif
-    static void applyValueWebkitJustifySelf(StyleResolver&, CSSValue&);
     static void applyValueWebkitLocale(StyleResolver&, CSSValue&);
     static void applyValueWebkitTextOrientation(StyleResolver&, CSSValue&);
 #if ENABLE(IOS_TEXT_AUTOSIZING)
@@ -504,6 +506,78 @@ inline void StyleBuilderCustom::applyValueTextIndent(StyleResolver& styleResolve
 #endif
 }
 
+inline void StyleBuilderCustom::applyInheritAlignSelf(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setAlignSelf(styleResolver.parentStyle()->alignSelf());
+    styleResolver.style()->setAlignSelfOverflowAlignment(styleResolver.parentStyle()->alignSelfOverflowAlignment());
+}
+
+inline void StyleBuilderCustom::applyInitialAlignSelf(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setAlignSelf(RenderStyle::initialAlignSelf());
+    styleResolver.style()->setAlignSelfOverflowAlignment(RenderStyle::initialAlignSelfOverflowAlignment());
+}
+
+inline void StyleBuilderCustom::applyValueAlignSelf(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (Pair* pairValue = primitiveValue.getPairValue()) {
+        styleResolver.style()->setAlignSelf(*pairValue->first());
+        styleResolver.style()->setAlignSelfOverflowAlignment(*pairValue->second());
+    } else {
+        styleResolver.style()->setAlignSelf(primitiveValue);
+        styleResolver.style()->setAlignSelfOverflowAlignment(RenderStyle::initialAlignSelfOverflowAlignment());
+    }
+}
+
+inline void StyleBuilderCustom::applyInheritAlignItems(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setAlignItems(styleResolver.parentStyle()->alignItems());
+    styleResolver.style()->setAlignItemsOverflowAlignment(styleResolver.parentStyle()->alignItemsOverflowAlignment());
+}
+
+inline void StyleBuilderCustom::applyInitialAlignItems(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setAlignItems(RenderStyle::initialAlignItems());
+    styleResolver.style()->setAlignItemsOverflowAlignment(RenderStyle::initialAlignItemsOverflowAlignment());
+}
+
+inline void StyleBuilderCustom::applyValueAlignItems(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (Pair* pairValue = primitiveValue.getPairValue()) {
+        styleResolver.style()->setAlignItems(*pairValue->first());
+        styleResolver.style()->setAlignItemsOverflowAlignment(*pairValue->second());
+    } else {
+        styleResolver.style()->setAlignItems(primitiveValue);
+        styleResolver.style()->setAlignItemsOverflowAlignment(RenderStyle::initialAlignItemsOverflowAlignment());
+    }
+}
+
+inline void StyleBuilderCustom::applyInheritJustifySelf(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setJustifySelf(styleResolver.parentStyle()->justifySelf());
+    styleResolver.style()->setJustifySelfOverflowAlignment(styleResolver.parentStyle()->justifySelfOverflowAlignment());
+}
+
+inline void StyleBuilderCustom::applyInitialJustifySelf(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setJustifySelf(RenderStyle::initialJustifySelf());
+    styleResolver.style()->setJustifySelfOverflowAlignment(RenderStyle::initialJustifySelfOverflowAlignment());
+}
+
+inline void StyleBuilderCustom::applyValueJustifySelf(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (Pair* pairValue = primitiveValue.getPairValue()) {
+        styleResolver.style()->setJustifySelf(*pairValue->first());
+        styleResolver.style()->setJustifySelfOverflowAlignment(*pairValue->second());
+    } else {
+        styleResolver.style()->setJustifySelf(primitiveValue);
+        styleResolver.style()->setJustifySelfOverflowAlignment(RenderStyle::initialJustifySelfOverflowAlignment());
+    }
+}
+
 enum BorderImageType { BorderImage, WebkitMaskBoxImage };
 enum BorderImageModifierType { Outset, Repeat, Slice, Width };
 template <BorderImageType type, BorderImageModifierType modifier>
@@ -731,17 +805,6 @@ inline void StyleBuilderCustom::applyValueWebkitTextSizeAdjust(StyleResolver& st
     styleResolver.state().setFontDirty(true);
 }
 #endif
-
-inline void StyleBuilderCustom::applyValueWebkitJustifySelf(StyleResolver& styleResolver, CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-
-    if (Pair* pairValue = primitiveValue.getPairValue()) {
-        styleResolver.style()->setJustifySelf(*pairValue->first());
-        styleResolver.style()->setJustifySelfOverflowAlignment(*pairValue->second());
-    } else
-        styleResolver.style()->setJustifySelf(primitiveValue);
-}
 
 template <CSSPropertyID id>
 inline void StyleBuilderCustom::applyTextOrBoxShadowValue(StyleResolver& styleResolver, CSSValue& value)

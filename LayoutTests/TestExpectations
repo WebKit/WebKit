@@ -69,6 +69,10 @@ webkit.org/b/127860 [ Debug ] js/function-apply-aliased.html [ Skip ]
 # This test verifies dynamic manipulation of the mroot and msqrt elements.
 mathml/roots-removeChild.html [ ImageOnlyFailure ]
 
+webkit.org/b/133359 mathml/presentation/style-changed.html [ ImageOnlyFailure ]
+webkit.org/b/136291 platform/mac/accessibility/webkit-alt-for-css-content.html [ Failure ]
+webkit.org/b/136291 platform/mac/accessibility/alt-for-css-content.html [ Failure ]
+
 # This test verifies that a mismatch reftest will fail as intended if both results are same. (introduced in r93187)
 fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 

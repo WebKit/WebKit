@@ -454,9 +454,9 @@ isolation
 -webkit-filter [ConditionalConverter=FilterOperations]
 align-content
 -webkit-align-content = align-content
-align-items
+align-items [Custom=All]
 -webkit-align-items = align-items
-align-self
+align-self [Custom=All]
 -webkit-align-self = align-self
 flex [Longhands=flex-grow|flex-shrink|flex-basis]
 -webkit-flex = flex
@@ -477,7 +477,7 @@ justify-content
 #if defined(ENABLE_FILTERS_LEVEL_2) && ENABLE_FILTERS_LEVEL_2
 -webkit-backdrop-filter [ConditionalConverter=FilterOperations]
 #endif
--webkit-justify-self [Custom=Value]
+justify-self [Custom=All]
 -webkit-font-size-delta [SkipBuilder]
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 -webkit-grid [Longhands=-webkit-grid-template-columns|-webkit-grid-template-rows|-webkit-grid-template-areas|-webkit-grid-auto-flow|-webkit-grid-auto-columns|-webkit-grid-auto-rows]
