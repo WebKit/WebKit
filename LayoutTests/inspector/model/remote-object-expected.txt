@@ -712,6 +712,91 @@ EXPRESSION: [true, 1, 1.234, 'string', /regex/]
 }
 
 -----------------------------------------------------
+EXPRESSION: [[null]]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 1,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "object",
+              "_subtype": "null",
+              "_value": "null"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [[undefined]]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 1,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "undefined",
+              "_value": "undefined"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
 EXPRESSION: [{a:1}, {b:2}, {c:2}]
 {
   "_type": "object",

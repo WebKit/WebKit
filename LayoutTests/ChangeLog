@@ -1,3 +1,13 @@
+2015-03-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Regression: Preview for [[null]] shouldn't be []
+        https://bugs.webkit.org/show_bug.cgi?id=143208
+
+        Reviewed by Mark Lam.
+
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object.html:
+
 2015-03-30  Antti Koivisto  <antti@apple.com>
 
         Don't cache resources that are very unlikely to be reused

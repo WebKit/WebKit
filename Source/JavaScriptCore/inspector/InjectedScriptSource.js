@@ -1175,6 +1175,10 @@ InjectedScript.RemoteObject.prototype = {
         if (injectedScript.isPrimitiveValue(object) || isSymbol(object))
             return true;
 
+        // Null.
+        if (object === null)
+            return true;
+
         // Cyclic objects.
         if (knownObjects.has(object))
             return false;

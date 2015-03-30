@@ -1,3 +1,13 @@
+2015-03-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Regression: Preview for [[null]] shouldn't be []
+        https://bugs.webkit.org/show_bug.cgi?id=143208
+
+        Reviewed by Mark Lam.
+
+        * inspector/InjectedScriptSource.js:
+        Handle null when generating simple object previews.
+
 2015-03-30  Per Arne Vollan  <peavo@outlook.com>
 
         Avoid using hardcoded values for JSValue::Int32Tag, if possible.
