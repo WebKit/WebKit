@@ -1,3 +1,18 @@
+2015-03-30  Enrica Casucci  <enrica@apple.com>
+
+        [iOS] WebContent crashing at WebCore: WebCore::Range::collectSelectionRects.
+        https://bugs.webkit.org/show_bug.cgi?id=143234
+        <rdar://problem/18571345>
+
+        Reviewed by Tim Horton.
+
+        This is a speculative fix that adds a null check before referencing the range.
+        In both places where the check has been added the range returned by the call
+        that should create it could be null.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState):
+
 2015-03-30  Sam Weinig  <sam@webkit.org>
 
         [Content Extensions] Flesh out the UserContentExtensionStore
