@@ -62,7 +62,7 @@ WebInspector.ReplayDashboardView = class ReplayDashboardView extends WebInspecto
         else
             this._playbackPaused();
     }
-    
+
     // Private
 
     _captureButtonItemClicked()

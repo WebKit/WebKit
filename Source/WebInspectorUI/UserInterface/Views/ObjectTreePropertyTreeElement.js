@@ -50,7 +50,7 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
         this._updateTooltips();
         this._updateHasChildren();
     }
-    
+
     // Protected
 
     onpopulate()
@@ -357,7 +357,7 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
         var isPropertyMode = mode === WebInspector.ObjectTreeView.Mode.Properties || this._getterValue;
         var isAPI = mode !== WebInspector.ObjectTreeView.Mode.Prototype;
 
-        var prototypeName = undefined;
+        var prototypeName;
         if (this.property.name === "__proto__") {
             if (resolvedValue.description)
                 prototypeName = this._sanitizedPrototypeString(resolvedValue);

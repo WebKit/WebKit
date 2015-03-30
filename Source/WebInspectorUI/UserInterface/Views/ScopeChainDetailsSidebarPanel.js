@@ -93,7 +93,6 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
             var title = null;
             var extraPropertyDescriptor = null;
             var collapsedByDefault = false;
-            var dontHighlightNonEnumerableProperties = true;
 
             ++sectionCountByType[scope.type];
 
@@ -101,7 +100,6 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
                 case WebInspector.ScopeChainNode.Type.Local:
                     foundLocalScope = true;
                     collapsedByDefault = false;
-                    dontHighlightNonEnumerableProperties = true;
 
                     title = WebInspector.UIString("Local Variables");
 
@@ -111,31 +109,26 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
 
                 case WebInspector.ScopeChainNode.Type.Closure:
                     title = WebInspector.UIString("Closure Variables");
-                    dontHighlightNonEnumerableProperties = true;
                     collapsedByDefault = false;
                     break;
 
                 case WebInspector.ScopeChainNode.Type.Catch:
                     title = WebInspector.UIString("Catch Variables");
-                    dontHighlightNonEnumerableProperties = true;
                     collapsedByDefault = false;
                     break;
 
                 case WebInspector.ScopeChainNode.Type.FunctionName:
                     title = WebInspector.UIString("Function Name Variable");
-                    dontHighlightNonEnumerableProperties = true;
                     collapsedByDefault = true;
                     break;
 
                 case WebInspector.ScopeChainNode.Type.With:
                     title = WebInspector.UIString("With Object Properties");
                     collapsedByDefault = foundLocalScope;
-                    dontHighlightNonEnumerableProperties = false;
                     break;
 
                 case WebInspector.ScopeChainNode.Type.Global:
                     title = WebInspector.UIString("Global Variables");
-                    dontHighlightNonEnumerableProperties = false;
                     collapsedByDefault = true;
                     break;
             }

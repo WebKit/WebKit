@@ -89,7 +89,7 @@ WebInspector.ObjectTreeMapKeyTreeElement = class ObjectTreeMapKeyTreeElement ext
 
         this.addClassName("key");
     }
-    
+
     // Protected
 
     displayPropertyName()
@@ -113,7 +113,7 @@ WebInspector.ObjectTreeMapValueTreeElement = class ObjectTreeMapValueTreeElement
 
         this.addClassName("value");
     }
-    
+
     // Protected
 
     displayPropertyName()

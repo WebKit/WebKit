@@ -147,7 +147,7 @@ WebInspector.SourceCodeTreeElement = class SourceCodeTreeElement extends WebInsp
         var currentPath = "";
         var currentFolderTreeElement = this;
 
-        for (var i = 0 ; i < components.length - 1; ++i) {
+        for (var i = 0; i < components.length - 1; ++i) {
             var componentName = components[i];
             currentPath += (i ? "/" : "") + componentName;
 

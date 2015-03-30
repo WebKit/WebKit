@@ -310,8 +310,6 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         {
             this._clearTextMarkers(true);
 
-            var styleText = this._style.text;
-
             this._iterateOverProperties(true, function(property) {
                 var styleTextRange = property.styleDeclarationTextRange;
                 console.assert(styleTextRange);
@@ -395,7 +393,6 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                 swatchElement.appendChild(swatchInnerElement);
 
                 var codeMirrorTextMarker = marker.codeMirrorTextMarker;
-                var swatchMarker = this._codeMirror.setUniqueBookmark(codeMirrorTextMarker.find().from, swatchElement);
 
                 swatchInnerElement.__colorTextMarker = codeMirrorTextMarker;
                 swatchInnerElement.__color = color;

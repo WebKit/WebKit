@@ -353,7 +353,7 @@ WebInspector.TimelineRuler.prototype = {
             count: dividerCount,
             firstTime: firstDividerTime,
             lastTime: lastDividerTime,
-        }
+        };
 
         if (Object.shallowEqual(dividerData, this._currentDividers))
             return;

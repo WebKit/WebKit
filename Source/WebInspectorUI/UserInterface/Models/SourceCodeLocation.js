@@ -211,7 +211,7 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
 
     populateLiveDisplayLocationString(element, propertyName, columnStyle, nameStyle, prefix)
     {
-        var currentDisplay = undefined;
+        var currentDisplay;
 
         function updateDisplayString(showAlternativeLocation, forceUpdate)
         {

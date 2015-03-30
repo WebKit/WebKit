@@ -27,7 +27,7 @@ WebInspector.TypeTokenView = class TypeTokenView extends WebInspector.Object
 {
     constructor(tokenAnnotator, shouldHaveRightMargin, shouldHaveLeftMargin, titleType, functionOrVariableName)
     {
-        console.assert(titleType === WebInspector.TypeTokenView.TitleType.Variable  || titleType === WebInspector.TypeTokenView.TitleType.ReturnStatement);
+        console.assert(titleType === WebInspector.TypeTokenView.TitleType.Variable || titleType === WebInspector.TypeTokenView.TitleType.ReturnStatement);
 
         super();
 
@@ -110,7 +110,7 @@ WebInspector.TypeTokenView = class TypeTokenView extends WebInspector.Object
         this.element.addEventListener("mouseout", function() {
             if (timeoutID)
                 clearTimeout(timeoutID);
-        }.bind(this));
+        });
     }
 
     _shouldShowPopover()
@@ -141,7 +141,7 @@ WebInspector.TypeTokenView = class TypeTokenView extends WebInspector.Object
                 return this._types.leastCommonAncestor + "?";
         }
 
-        // The order of these checks are important. 
+        // The order of these checks are important.
         // For example, if a value is only a function, it is contained in TypeFunction, but it is also contained in (TypeFunction | TypeNull).
         // Therefore, more specific types must be checked first.
 
@@ -178,7 +178,7 @@ WebInspector.TypeTokenView = class TypeTokenView extends WebInspector.Object
             return "String?";
         if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Symbol | WebInspector.TypeSet.NullOrUndefinedTypeBits))
             return "Symbol?";
-       
+
         if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Object | WebInspector.TypeSet.TypeBit.Function | WebInspector.TypeSet.TypeBit.String))
             return "Object";
         if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Object | WebInspector.TypeSet.TypeBit.Function | WebInspector.TypeSet.TypeBit.String | WebInspector.TypeSet.NullOrUndefinedTypeBits))

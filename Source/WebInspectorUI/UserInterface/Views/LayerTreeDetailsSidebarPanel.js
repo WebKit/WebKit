@@ -245,8 +245,6 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
 
     _updateLayerInfoSection(layer)
     {
-        var emDash = "\u2014";
-
         this._layerInfoSection.groups = layer ? [this._layerInfoGroup] : [this._noLayerInformationGroup];
 
         if (!layer)

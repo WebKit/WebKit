@@ -116,7 +116,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         this.tokenTrackingController.removeHighlightedRange();
 
         this._dismissPopover();
-        
+
         this._dismissEditingController(true);
 
         if (this._typeTokenAnnotator)
@@ -298,8 +298,8 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
     prettyPrint(pretty)
     {
-        // The annotators must be cleared before pretty printing takes place and resumed 
-        // after so that they clear their annotations in a known state and insert new annotations 
+        // The annotators must be cleared before pretty printing takes place and resumed
+        // after so that they clear their annotations in a known state and insert new annotations
         // in the new state.
         var shouldResumeTypeTokenAnnotator = this._typeTokenAnnotator && this._typeTokenAnnotator.isActive();
         var shouldResumeBasicBlockAnnotator = this._basicBlockAnnotator && this._basicBlockAnnotator.isActive();
@@ -868,7 +868,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             arrowElement.className = "arrow";
 
             var iconElement = widgetElement.appendChild(document.createElement("span"));
-            iconElement.className = "icon";            
+            iconElement.className = "icon";
 
             var textElement = widgetElement.appendChild(document.createElement("span"));
             textElement.className = "text";
@@ -927,7 +927,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         var textElement = widget.widgetElement.lastChild;
         if (textElement.offsetWidth !== textElement.scrollWidth)
             return true;
-        
+
         return false;
     }
 
@@ -1551,7 +1551,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
     _trackPopoverEvents()
     {
-        if (!this._popoverEventListeners) 
+        if (!this._popoverEventListeners)
             this._popoverEventListeners = new WebInspector.EventListenerSet(this, "Popover listeners");
         if (!this._popoverEventListenersAreRegistered) {
             this._popoverEventListenersAreRegistered = true;
@@ -1622,13 +1622,13 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
     {
         if (this._editingController)
             this._editingController.dismissHoverMenu(discrete);
-        
+
         this.tokenTrackingController.hoveredMarker = null;
         delete this._editingController;
     }
 
     // CodeMirrorEditingController Delegate
-    
+
     editingControllerDidStartEditing(editingController)
     {
         // We can pause the token tracking controller during editing, it will be reset
@@ -1638,11 +1638,11 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
         // We clear the marker since we'll reset it after editing.
         editingController.marker.clear();
-        
+
         // We ignore content changes made as a result of color editing.
         this._ignoreContentDidChange++;
     }
-    
+
     editingControllerDidFinishEditing(editingController)
     {
         this._updateEditableMarkers(editingController.range);
@@ -1670,10 +1670,10 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             if (!this._typeTokenScrollHandler)
                 this._enableScrollEventsForTypeTokenAnnotator();
         } else {
-            // Because we disable type profiling when exiting the inspector, there is no need to call 
-            // RuntimeAgent.disableTypeProfiler() here.  If we were to call it here, JavaScriptCore would 
-            // compile out all the necessary type profiling information, so if a user were to quickly press then 
-            // unpress the type profiling button, we wouldn't be able to re-show type information which would 
+            // Because we disable type profiling when exiting the inspector, there is no need to call
+            // RuntimeAgent.disableTypeProfiler() here.  If we were to call it here, JavaScriptCore would
+            // compile out all the necessary type profiling information, so if a user were to quickly press then
+            // unpress the type profiling button, we wouldn't be able to re-show type information which would
             // provide a confusing user experience.
 
             this._typeTokenAnnotator.clear();

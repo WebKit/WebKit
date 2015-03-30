@@ -29,7 +29,6 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
     {
         super();
 
-        var text = (element ? element.textContent : "");
         this._element = element || document.createElement("div");
         this._element.classList.add("text-editor");
         this._element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
@@ -757,8 +756,8 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
 
                 var mappedAnchorLocation = this._formatterSourceMap.originalToFormatted(oldSelectionAnchor.line, oldSelectionAnchor.ch);
                 var mappedHeadLocation = this._formatterSourceMap.originalToFormatted(oldSelectionHead.line, oldSelectionHead.ch);
-                newSelectionAnchor = {line:mappedAnchorLocation.lineNumber, ch:mappedAnchorLocation.columnNumber};
-                newSelectionHead = {line:mappedHeadLocation.lineNumber, ch:mappedHeadLocation.columnNumber};
+                newSelectionAnchor = {line: mappedAnchorLocation.lineNumber, ch: mappedAnchorLocation.columnNumber};
+                newSelectionHead = {line: mappedHeadLocation.lineNumber, ch: mappedHeadLocation.columnNumber};
             } else {
                 this._codeMirror.undo();
 
@@ -780,8 +779,8 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
 
                 var mappedAnchorLocation = this._formatterSourceMap.formattedToOriginal(oldSelectionAnchor.line, oldSelectionAnchor.ch);
                 var mappedHeadLocation = this._formatterSourceMap.formattedToOriginal(oldSelectionHead.line, oldSelectionHead.ch);
-                newSelectionAnchor = {line:mappedAnchorLocation.lineNumber, ch:mappedAnchorLocation.columnNumber};
-                newSelectionHead = {line:mappedHeadLocation.lineNumber, ch:mappedHeadLocation.columnNumber};
+                newSelectionAnchor = {line: mappedAnchorLocation.lineNumber, ch: mappedAnchorLocation.columnNumber};
+                newSelectionHead = {line: mappedHeadLocation.lineNumber, ch: mappedHeadLocation.columnNumber};
 
                 this._formatterSourceMap = null;
             }

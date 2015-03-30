@@ -212,7 +212,7 @@ WebInspector.TimelineRecordFrame.prototype = {
             return element;
         }
 
-        for (type in WebInspector.TimelineRecord.Type) {
+        for (var type in WebInspector.TimelineRecord.Type) {
             var recordType = WebInspector.TimelineRecord.Type[type];
             var duration = displayRecord.durationForRecords(recordType);
             if (duration === 0)

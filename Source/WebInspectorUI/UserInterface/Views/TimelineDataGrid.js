@@ -62,7 +62,7 @@ WebInspector.TimelineDataGrid = function(treeOutline, columns, delegate, editCal
     this.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sort, this);
 
     window.addEventListener("resize", this._windowResized.bind(this));
-}
+};
 
 WebInspector.TimelineDataGrid.StyleClassName = "timeline";
 WebInspector.TimelineDataGrid.HasNonDefaultFilterStyleClassName = "has-non-default-filter";
@@ -168,7 +168,7 @@ WebInspector.TimelineDataGrid.prototype = {
         this._treeOutlineDataGridSynchronizer.associate(treeElement, dataGridNode);
 
         parentElement = parentElement || this._treeOutlineDataGridSynchronizer.treeOutline;
-        parentNode = parentElement.root ? this : this._treeOutlineDataGridSynchronizer.dataGridNodeForTreeElement(parentElement);
+        var parentNode = parentElement.root ? this : this._treeOutlineDataGridSynchronizer.dataGridNodeForTreeElement(parentElement);
 
         console.assert(parentNode);
 
@@ -467,7 +467,7 @@ WebInspector.TimelineDataGrid.prototype = {
             this._popoverCallStackTreeOutline.removeChildren();
 
         var callFrames = this.selectedNode.record.callFrames;
-        for (var i = 0 ; i < callFrames.length; ++i) {
+        for (var i = 0; i < callFrames.length; ++i) {
             var callFrameTreeElement = new WebInspector.CallFrameTreeElement(callFrames[i]);
             this._popoverCallStackTreeOutline.appendChild(callFrameTreeElement);
         }

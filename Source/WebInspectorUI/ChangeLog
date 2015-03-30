@@ -1,3 +1,42 @@
+2015-03-30  Tobias Reiss  <tobi+webkit@basecode.de>
+
+        Web Inspector: Add more ESLint rules that reflect the current state of the code base
+        https://bugs.webkit.org/show_bug.cgi?id=143212
+
+        Reviewed by Timothy Hatcher.
+
+        * .eslintrc:
+        Define some utilities as globals.
+        Replace "no-comma-dangle" with "comma-dangle". "no-comma-dangle" is deprecated and does not trigger in ESLint v.0.17.1
+        Set "new-cap" to 0 due to the usage of "WebInspector.UIString".
+        Disable "no-redeclare" for now and enable it back as soon as block scoped `let` is used.
+        Disable "dot-notation", "no-shadow" and "no-use-before-define" due to a lot of hits.
+        Disable "no-inner-declarations" as this is a common pattern to save memory.
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        * UserInterface/Models/SourceCodeLocation.js:
+        It's not necessary to initialize x to undefined.
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        * UserInterface/Views/TextEditor.js:
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        Remove unused variable x.
+        * UserInterface/Views/ObjectTreeMapEntryTreeElement.js:
+        * UserInterface/Models/PropertyPath.js:
+        * UserInterface/Views/RadioButtonNavigationItem.js:
+        * UserInterface/Views/ReplayDashboardView.js:
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        * UserInterface/Views/SourceCodeTreeElement.js:
+        Remove trailing and unexpected whitespace.
+        * UserInterface/Views/ProbeSetDataGrid.js:
+        * UserInterface/Views/TimelineRuler.js:
+        Add missing semicolon.
+        * UserInterface/Views/TimelineDataGrid.js:
+        * UserInterface/Views/TimelineRecordFrame.js:
+        Add missing var statement.
+        * UserInterface/Views/TypeTokenView.js:
+        Remove unnecessary `bind`.
+
 2015-03-28  Saam Barati  <saambarati1@gmail.com>
 
         Web Inspector: ES6: Better support for Symbol types in Type Profiler

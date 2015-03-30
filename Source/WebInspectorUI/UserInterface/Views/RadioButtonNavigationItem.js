@@ -70,7 +70,7 @@ WebInspector.RadioButtonNavigationItem.prototype = {
         var classNames = this._classNames.join(".");
 
         // Default state.
-        var styleText = parentSelector + " ." + classNames + " > .glyph { background-image: -webkit-canvas(" + this._canvasIdentifier() + "); background-size: " +  this._imageWidth + "px " + this._imageHeight + "px; }\n";
+        var styleText = parentSelector + " ." + classNames + " > .glyph { background-image: -webkit-canvas(" + this._canvasIdentifier() + "); background-size: " + this._imageWidth + "px " + this._imageHeight + "px; }\n";
 
         // Selected state.
         styleText += parentSelector + " ." + classNames + ".selected:not(.disabled) > .glyph { background-image: -webkit-canvas(" + this._canvasIdentifier(WebInspector.ButtonNavigationItem.States.Focus) + "); }\n";

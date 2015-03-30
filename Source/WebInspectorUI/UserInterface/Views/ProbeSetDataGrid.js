@@ -46,11 +46,11 @@ WebInspector.ProbeSetDataGrid = function(probeSet)
     this._listeners.register(probeSet, WebInspector.ProbeSet.Event.ProbeAdded, this._setupProbe);
     this._listeners.register(probeSet, WebInspector.ProbeSet.Event.ProbeRemoved, this._teardownProbe);
     this._listeners.register(probeSet, WebInspector.ProbeSet.Event.SamplesCleared, this._setupData);
-    this._listeners.register(WebInspector.Probe, WebInspector.Probe.Event.ExpressionChanged, this._probeExpressionChanged)
+    this._listeners.register(WebInspector.Probe, WebInspector.Probe.Event.ExpressionChanged, this._probeExpressionChanged);
     this._listeners.install();
 
     this._setupData();
-}
+};
 
 WebInspector.ProbeSetDataGrid.DataUpdatedStyleClassName = "data-updated";
 WebInspector.ProbeSetDataGrid.PastFrameStyleClassName = "past-value";
@@ -192,4 +192,4 @@ WebInspector.ProbeSetDataGrid.prototype = {
         for (var frame of this._data.frames)
             this._updateNodeForFrame(frame);
     }
-}
+};
