@@ -2467,6 +2467,8 @@ void Internals::setMediaSessionRestrictions(const String& mediaTypeString, const
         restrictions += MediaSessionManager::BackgroundProcessPlaybackRestricted;
     if (equalIgnoringCase(restrictionsString, "BackgroundTabPlaybackRestricted"))
         restrictions += MediaSessionManager::BackgroundTabPlaybackRestricted;
+    if (equalIgnoringCase(restrictionsString, "InterruptedPlaybackNotPermitted"))
+        restrictions += MediaSessionManager::InterruptedPlaybackNotPermitted;
 
     MediaSessionManager::sharedManager().addRestriction(mediaType, restrictions);
 }

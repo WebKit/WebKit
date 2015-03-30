@@ -33,6 +33,7 @@
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "MediaCanStartListener.h"
+#include "MediaSession.h"
 #include <atomic>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
@@ -57,6 +58,7 @@ class HTMLMediaElement;
 class ChannelMergerNode;
 class ChannelSplitterNode;
 class GainNode;
+class GenericEventQueue;
 class PannerNode;
 class AudioListener;
 class AudioSummingJunction;
@@ -74,7 +76,7 @@ class PeriodicWave;
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
 // For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism. 
 
-class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTargetWithInlineData, public MediaCanStartListener, public AudioProducer {
+class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTargetWithInlineData, public MediaCanStartListener, public AudioProducer, private MediaSessionClient {
 public:
     // Create an AudioContext for rendering to the audio hardware.
     static RefPtr<AudioContext> create(Document&, ExceptionCode&);
@@ -103,6 +105,11 @@ public:
     void decodeAudioData(ArrayBuffer*, PassRefPtr<AudioBufferCallback>, PassRefPtr<AudioBufferCallback>, ExceptionCode& ec);
 
     AudioListener* listener() { return m_listener.get(); }
+
+    void suspendContext(std::function<void()>, std::function<void()>, ExceptionCode&);
+    void resumeContext(std::function<void()>, std::function<void()>, ExceptionCode&);
+    void closeContext(std::function<void()>, std::function<void()>, ExceptionCode&);
+    const AtomicString& state() const;
 
     // The AudioNode create methods are called on the main thread (from JavaScript).
     PassRefPtr<AudioBufferSourceNode> createBufferSource();
@@ -264,9 +271,11 @@ private:
     void lazyInitialize();
     void uninitialize();
 
+    enum class State { Suspended, Running, Interrupted, Closed };
+    void setState(State);
+
     // ScriptExecutionContext calls stop twice.
     // We'd like to schedule only one stop action for them.
-    bool m_isStopScheduled;
     static void stopDispatch(void* userData);
     void clear();
 
@@ -278,9 +287,6 @@ private:
     // AudioProducer
     virtual bool isPlayingAudio() override;
     virtual void pageMutedStateDidChange() override;
-
-    bool m_isInitialized;
-    bool m_isAudioThreadFinished;
 
     // The context itself keeps a reference to all source nodes.  The source nodes, then reference all nodes they're connected to.
     // In turn, these nodes reference all nodes they're connected to.  All nodes are ultimately connected to the AudioDestinationNode.
@@ -298,8 +304,24 @@ private:
     // Make sure to dereference them here.
     void derefUnfinishedSourceNodes();
 
-    RefPtr<AudioDestinationNode> m_destinationNode;
-    RefPtr<AudioListener> m_listener;
+    // MediaSessionClient
+    virtual MediaSession::MediaType mediaType() const { return MediaSession::WebAudio; }
+    virtual MediaSession::MediaType presentationType() const { return MediaSession::WebAudio; }
+    virtual bool canReceiveRemoteControlCommands() const { return false; }
+    virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) { }
+    virtual bool overrideBackgroundPlaybackRestriction() const { return false; }
+    virtual void suspendPlayback() override;
+    virtual void mayResumePlayback(bool shouldResume) override;
+
+    // EventTarget
+    virtual void refEventTarget() override { ref(); }
+    virtual void derefEventTarget() override { deref(); }
+
+    void handleDirtyAudioSummingJunctions();
+    void handleDirtyAudioNodeOutputs();
+
+    void addReaction(State, std::function<void()>);
+    void updateAutomaticPullNodes();
 
     // Only accessed in the audio thread.
     Vector<AudioNode*> m_finishedNodes;
@@ -317,39 +339,39 @@ private:
 
     // They will be scheduled for deletion (on the main thread) at the end of a render cycle (in realtime thread).
     Vector<AudioNode*> m_nodesToDelete;
-    bool m_isDeletionScheduled;
+
+    bool m_isDeletionScheduled { false };
+    bool m_isStopScheduled { false };
+    bool m_isInitialized { false };
+    bool m_isAudioThreadFinished { false };
+    bool m_automaticPullNodesNeedUpdating { false };
+    bool m_isOfflineContext { false };
 
     // Only accessed when the graph lock is held.
     HashSet<AudioSummingJunction*> m_dirtySummingJunctions;
     HashSet<AudioNodeOutput*> m_dirtyAudioNodeOutputs;
-    void handleDirtyAudioSummingJunctions();
-    void handleDirtyAudioNodeOutputs();
 
     // For the sake of thread safety, we maintain a seperate Vector of automatic pull nodes for rendering in m_renderingAutomaticPullNodes.
     // It will be copied from m_automaticPullNodes by updateAutomaticPullNodes() at the very start or end of the rendering quantum.
     HashSet<AudioNode*> m_automaticPullNodes;
     Vector<AudioNode*> m_renderingAutomaticPullNodes;
-    // m_automaticPullNodesNeedUpdating keeps track if m_automaticPullNodes is modified.
-    bool m_automaticPullNodesNeedUpdating;
-    void updateAutomaticPullNodes();
+    // Only accessed in the audio thread.
+    Vector<AudioNode*> m_deferredFinishDerefList;
+    Vector<Vector<std::function<void()>>> m_stateReactions;
 
-    unsigned m_connectionCount;
+    std::unique_ptr<MediaSession> m_mediaSession;
+    std::unique_ptr<GenericEventQueue> m_eventQueue;
+
+    RefPtr<AudioBuffer> m_renderTarget;
+    RefPtr<AudioDestinationNode> m_destinationNode;
+    RefPtr<AudioListener> m_listener;
+
+    unsigned m_connectionCount { 0 };
 
     // Graph locking.
     Mutex m_contextGraphMutex;
-    volatile ThreadIdentifier m_audioThread;
+    volatile ThreadIdentifier m_audioThread { 0 };
     volatile ThreadIdentifier m_graphOwnerThread; // if the lock is held then this is the thread which owns it, otherwise == UndefinedThreadIdentifier
-    
-    // Only accessed in the audio thread.
-    Vector<AudioNode*> m_deferredFinishDerefList;
-
-    // EventTarget
-    virtual void refEventTarget() override { ref(); }
-    virtual void derefEventTarget() override { deref(); }
-
-    RefPtr<AudioBuffer> m_renderTarget;
-    
-    bool m_isOfflineContext;
 
     AsyncAudioDecoder m_audioDecoder;
 
@@ -358,12 +380,11 @@ private:
     enum { MaxNumberOfChannels = 32 };
 
     // Number of AudioBufferSourceNodes that are active (playing).
-    std::atomic<int> m_activeSourceCount;
+    std::atomic<int> m_activeSourceCount { 0 };
 
-    BehaviorRestrictions m_restrictions;
+    BehaviorRestrictions m_restrictions { NoRestrictions };
 
-    enum class State { Suspended, Running, Closed };
-    State m_state;
+    State m_state { State::Suspended };
 };
 
 } // WebCore

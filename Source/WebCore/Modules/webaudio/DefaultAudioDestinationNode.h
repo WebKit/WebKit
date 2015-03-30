@@ -50,6 +50,9 @@ public:
     // AudioDestinationNode
     virtual void enableInput(const String& inputDeviceId) override;
     virtual void startRendering() override;
+    virtual void resume(std::function<void()>) override;
+    virtual void suspend(std::function<void()>) override;
+    virtual void close(std::function<void()>) override;
     virtual unsigned long maxChannelCount() const override;
     virtual bool isPlaying() override;
 

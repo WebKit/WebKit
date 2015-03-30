@@ -185,10 +185,13 @@ void MediaSessionManageriOS::configureWireLessTargetMonitoring()
         [m_objcObserver stopMonitoringAirPlayRoutes];
 }
 
-void MediaSessionManageriOS::sessionWillBeginPlayback(MediaSession& session)
+bool MediaSessionManageriOS::sessionWillBeginPlayback(MediaSession& session)
 {
-    MediaSessionManager::sessionWillBeginPlayback(session);
+    if (!MediaSessionManager::sessionWillBeginPlayback(session))
+        return false;
+
     updateNowPlayingInfo();
+    return true;
 }
     
 void MediaSessionManageriOS::sessionWillEndPlayback(MediaSession& session)

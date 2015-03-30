@@ -707,8 +707,8 @@ private:
     virtual MediaSession::MediaType mediaType() const override;
     virtual MediaSession::MediaType presentationType() const override;
     virtual MediaSession::DisplayType displayType() const override;
-    virtual void pausePlayback() override;
-    virtual void resumePlayback() override;
+    virtual void suspendPlayback() override;
+    virtual void mayResumePlayback(bool shouldResume) override;
     virtual String mediaSessionTitle() const override;
     virtual double mediaSessionDuration() const override { return duration(); }
     virtual double mediaSessionCurrentTime() const override { return currentTime(); }

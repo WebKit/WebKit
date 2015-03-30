@@ -107,6 +107,14 @@ inline void DeferredWrapper::resolve<Vector<unsigned char>>(const Vector<unsigne
 }
 
 template<>
+inline void DeferredWrapper::resolve(const std::nullptr_t&)
+{
+    JSC::ExecState* exec = m_globalObject->globalExec();
+    JSC::JSLockHolder locker(exec);
+    resolve(exec, JSC::jsNull());
+}
+
+template<>
 inline void DeferredWrapper::reject<String>(const String& result)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();

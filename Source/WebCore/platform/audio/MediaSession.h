@@ -149,8 +149,8 @@ public:
     virtual MediaSession::MediaType presentationType() const = 0;
     virtual MediaSession::DisplayType displayType() const { return MediaSession::Normal; }
 
-    virtual void resumePlayback() = 0;
-    virtual void pausePlayback() = 0;
+    virtual void mayResumePlayback(bool shouldResume) = 0;
+    virtual void suspendPlayback() = 0;
 
     virtual String mediaSessionTitle() const;
     virtual double mediaSessionDuration() const;

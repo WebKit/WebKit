@@ -176,11 +176,11 @@ size_t AudioSession::numberOfOutputChannels() const
     return [[AVAudioSession sharedInstance] outputNumberOfChannels];
 }
 
-void AudioSession::setActive(bool active)
+bool AudioSession::tryToSetActive(bool active)
 {
     NSError *error = nil;
     [[AVAudioSession sharedInstance] setActive:active error:&error];
-    ASSERT(!error);
+    return !error;
 }
 
 size_t AudioSession::preferredBufferSize() const

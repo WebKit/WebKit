@@ -33,6 +33,7 @@
 #include "JSAudioBuffer.h"
 #include "JSAudioContext.h"
 #include "JSDOMBinding.h"
+#include "JSDOMPromise.h"
 #include "JSOfflineAudioContext.h"
 #include "OfflineAudioContext.h"
 #include <runtime/ArrayBuffer.h>
@@ -108,6 +109,69 @@ EncodedJSValue JSC_HOST_CALL constructJSAudioContext(ExecState* exec)
         return throwVMError(exec, createReferenceError(exec, "Error creating AudioContext"));
 
     return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), AudioContext, audioContext.get()));
+}
+
+JSValue JSAudioContext::suspend(ExecState* exec)
+{
+    DeferredWrapper wrapper(exec, globalObject());
+    auto successCallback = [wrapper]() mutable {
+        wrapper.resolve(nullptr);
+    };
+    auto failureCallback = [wrapper]() mutable {
+        wrapper.reject(nullptr);
+    };
+
+    ExceptionCode ec = 0;
+    impl().suspendContext(WTF::move(successCallback), WTF::move(failureCallback), ec);
+
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+
+    return wrapper.promise();
+}
+
+JSValue JSAudioContext::resume(ExecState* exec)
+{
+    DeferredWrapper wrapper(exec, globalObject());
+    auto successCallback = [wrapper]() mutable {
+        wrapper.resolve(nullptr);
+    };
+    auto failureCallback = [wrapper]() mutable {
+        wrapper.reject(nullptr);
+    };
+
+    ExceptionCode ec = 0;
+    impl().resumeContext(WTF::move(successCallback), WTF::move(failureCallback), ec);
+
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+
+    return wrapper.promise();
+}
+
+JSValue JSAudioContext::close(ExecState* exec)
+{
+    DeferredWrapper wrapper(exec, globalObject());
+    auto successCallback = [wrapper]() mutable {
+        wrapper.resolve(nullptr);
+    };
+    auto failureCallback = [wrapper]() mutable {
+        wrapper.reject(nullptr);
+    };
+
+    ExceptionCode ec = 0;
+    impl().closeContext(WTF::move(successCallback), WTF::move(failureCallback), ec);
+
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+
+    return wrapper.promise();
 }
 
 } // namespace WebCore

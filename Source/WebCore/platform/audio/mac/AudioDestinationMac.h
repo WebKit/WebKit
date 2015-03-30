@@ -31,7 +31,6 @@
 
 #include "AudioBus.h"
 #include "AudioDestination.h"
-#include "MediaSession.h"
 #include <AudioUnit/AudioUnit.h>
 #include <wtf/RefPtr.h>
 
@@ -39,7 +38,7 @@ namespace WebCore {
 
 // An AudioDestination using CoreAudio's default output AudioUnit
 
-class AudioDestinationMac : public AudioDestination, public MediaSessionClient {
+class AudioDestinationMac : public AudioDestination {
 public:
     AudioDestinationMac(AudioIOCallback&, float sampleRate);
     virtual ~AudioDestinationMac();
@@ -53,19 +52,9 @@ private:
     OSStatus render(UInt32 numberOfFrames, AudioBufferList* ioData);
     void setIsPlaying(bool);
 
-    virtual MediaSession::MediaType mediaType() const override { return MediaSession::WebAudio; }
-    virtual MediaSession::MediaType presentationType() const { return MediaSession::WebAudio; }
-    virtual bool canReceiveRemoteControlCommands() const override { return false; }
-    virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override { }
-    virtual bool overrideBackgroundPlaybackRestriction() const override { return false; }
-
     virtual void start() override;
     virtual void stop() override;
     virtual bool isPlaying() override { return m_isPlaying; }
-
-    virtual void pausePlayback() override { stop(); }
-    virtual void resumePlayback() override { start(); }
-
     virtual float sampleRate() const override { return m_sampleRate; }
 
     AudioUnit m_outputUnit;
@@ -74,10 +63,6 @@ private:
 
     float m_sampleRate;
     bool m_isPlaying;
-
-#if USE(AUDIO_SESSION)
-    std::unique_ptr<MediaSession> m_mediaSession;
-#endif
 };
 
 } // namespace WebCore

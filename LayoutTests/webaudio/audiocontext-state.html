@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description('Basic tests for AudioNode API.');
+
+var context = null;
+var node = null;
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+
+    context = new webkitAudioContext();
+
+    shouldBe('context.state', '"suspended"');
+
+    node = context.createBufferSource();
+    evalAndLog('node.connect(context.destination)');
+
+    shouldBe('context.state', '"running"');
+
+    debug('Calling context.suspend()');
+    context.suspend().then(suspendSucceeded, suspendFailed);
+}
+
+function suspendFailed() {
+    testFailed('context.suspend() promise rejected');
+    finishJSTest();
+}
+
+function suspendSucceeded() {
+    testPassed('context.suspend() promise resolved');
+    shouldBe('context.state', '"suspended"');
+
+    debug('Calling context.resume()');
+    context.resume().then(resumeSucceeded, resumeFailed);
+}
+
+function resumeFailed() {
+    testFailed('context.resume() promise rejected');
+    finishJSTest();
+}
+
+function resumeSucceeded() {
+    testPassed('context.resume() promise resolved');
+    shouldBe('context.state', '"running"');
+
+    debug('Calling context.close()');
+    context.close().then(closeSucceeded, closeFailed);
+}
+
+function closeFailed() { 
+    testFailed('context.close() promise rejected');
+    finishJSTest();
+}
+
+function closeSucceeded() {
+    testPassed('context.close() promise resolved');
+    shouldBe('context.state', '"closed"');
+
+    debug('Calling context.resume() (should fail)');
+    context.resume().then(resumeSucceededIncorrectly, resumeFailedCorrectly);
+}
+
+function resumeSucceededIncorrectly() {
+    testFailed('context.resume() promise resolved (should have rejected)');
+    finishJSTest();
+}
+
+function resumeFailedCorrectly() {
+    testPassed('context.resume() promise rejected (correctly)');
+    shouldBe('context.state', '"closed"');
+
+    debug('Calling context.suspend() (should fail)');
+    context.suspend().then(suspendSucceededIncorrectly, suspendFailedCorrectly);
+}
+
+function suspendSucceededIncorrectly() {
+    testFailed('context.suspend() promise resolved (should have rejected)');
+    finishJSTest();
+}
+
+function suspendFailedCorrectly() {
+    testPassed('context.resume() promise rejected (correctly)');
+    shouldBe('context.state', '"closed"');
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

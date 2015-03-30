@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description('Basic tests for AudioNode API.');
+
+var context = null;
+var node = null;
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+
+    context = new webkitAudioContext();
+
+    shouldBe('context.state', '"suspended"');
+    context.onstatechange = beganRunning;
+
+    node = context.createBufferSource();
+    evalAndLog('node.connect(context.destination)');
+
+}
+
+function beganRunning(e) {
+    debug('EVENT ' + event.type);
+    shouldBe('context.state', '"running"');
+
+    debug('');
+    debug('Test 1: resume() while interrupted is resolved after the interruption ends.');
+
+    context.onstatechange = firstInterruptionStarted;
+    if (window.internals)
+        evalAndLog('internals.beginMediaSessionInterruption()');
+
+}
+
+function firstInterruptionStarted(e) {
+    debug('EVENT ' + event.type);
+    shouldBe('context.state', '"interrupted"');
+    if (window.internals)
+        evalAndLog('internals.setMediaSessionRestrictions("WebAudio", "InterruptedPlaybackNotPermitted")');
+
+    context.onstatechange = null;
+
+    debug('Calling context.resume()');
+    context.resume().then(firstResumeSucceeded);
+    debug('Delaying 100ms');
+    setTimeout(function() {
+        shouldBe('context.state', '"interrupted"');
+        if (window.internals)
+            evalAndLog('internals.endMediaSessionInterruption("MayResumePlaying")');
+    }, 100);
+}
+
+function firstResumeSucceeded() {
+    testPassed('context.resume() promise resolved');
+    shouldBe('context.state', '"running"');
+
+    debug('');
+    debug('Test 2: resume() while interrupted will cause interruption to end.')
+
+    context.onstatechange = secondInterruptionStarted;
+    if (window.internals)
+        evalAndLog('internals.beginMediaSessionInterruption()');
+}
+
+function secondInterruptionStarted(e) {
+    debug('EVENT ' + event.type);
+    shouldBe('context.state', '"interrupted"');
+    if (window.internals)
+        evalAndLog('internals.setMediaSessionRestrictions("WebAudio", "")');
+
+    context.onstatechange = null;
+
+    debug('Calling context.resume()');
+    context.resume().then(secondResumeSucceeded);
+}
+
+function secondResumeSucceeded() {
+    testPassed('context.resume() promise resolved');
+    shouldBe('context.state', '"running"');
+
+    debug('');
+    debug('Test 3: running AudioContexts will not resume after an interruption ends.')
+
+    context.onstatechange = thirdInterruptionStarted;
+    if (window.internals)
+        evalAndLog('internals.beginMediaSessionInterruption()');
+}
+
+function thirdInterruptionStarted() {
+    debug('EVENT ' + event.type);
+    shouldBe('context.state', '"interrupted"');
+
+    context.onstatechange = thirdInterruptionEnded;
+    if (window.internals)
+        evalAndLog('internals.endMediaSessionInterruption("")');
+}
+
+function thirdInterruptionEnded() {
+    debug('EVENT ' + event.type);
+    shouldBe('context.state', '"suspended"');
+
+    debug('');
+    debug('Test 4: resume() while interrupted will not resume playback after an interruption.')
+
+    context.onstatechange = fourthInterruptionStarted;
+    if (window.internals)
+        evalAndLog('internals.beginMediaSessionInterruption()');
+}
+
+function fourthInterruptionStarted() {
+    debug('EVENT ' + event.type);
+    shouldBe('context.state', '"interrupted"');
+
+    context.onstatechange = fourthInterruptionEnded;
+
+    debug('Calling context.resume()');
+    context.resume();
+
+    if (window.internals)
+        evalAndLog('internals.endMediaSessionInterruption("")');
+}
+
+function fourthInterruptionEnded() {
+    debug('EVENT ' + event.type);
+    shouldBe('context.state', '"suspended"');
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

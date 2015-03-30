@@ -107,9 +107,10 @@ size_t AudioSession::numberOfOutputChannels() const
     return 0;
 }
 
-void AudioSession::setActive(bool)
+bool AudioSession::tryToSetActive(bool)
 {
     notImplemented();
+    return true;
 }
 
 size_t AudioSession::preferredBufferSize() const

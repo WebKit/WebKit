@@ -64,6 +64,7 @@ public:
         AutoPreloadingNotPermitted = 1 << 3,
         BackgroundProcessPlaybackRestricted = 1 << 4,
         BackgroundTabPlaybackRestricted = 1 << 5,
+        InterruptedPlaybackNotPermitted = 1 << 6,
     };
     typedef unsigned SessionRestrictions;
 
@@ -72,7 +73,7 @@ public:
     WEBCORE_EXPORT SessionRestrictions restrictions(MediaSession::MediaType);
     virtual void resetRestrictions();
 
-    virtual void sessionWillBeginPlayback(MediaSession&);
+    virtual bool sessionWillBeginPlayback(MediaSession&);
     virtual void sessionWillEndPlayback(MediaSession&);
 
     bool sessionRestrictsInlineVideoPlayback(const MediaSession&) const;

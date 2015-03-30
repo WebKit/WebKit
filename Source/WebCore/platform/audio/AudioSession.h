@@ -59,7 +59,7 @@ public:
     float sampleRate() const;
     size_t numberOfOutputChannels() const;
 
-    void setActive(bool);
+    bool tryToSetActive(bool);
 
     size_t preferredBufferSize() const;
     void setPreferredBufferSize(size_t);

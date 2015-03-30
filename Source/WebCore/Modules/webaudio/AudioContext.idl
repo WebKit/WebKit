@@ -23,6 +23,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum AudioContextState {
+    "suspended",
+    "running",
+    "interrupted",
+    "closed"
+};
+
 [
     EnabledBySetting=WebAudio,
     Conditional=WEB_AUDIO,
@@ -42,6 +49,13 @@
 
     // All panning is relative to this listener.
     readonly attribute AudioListener listener;
+
+    [Custom] Promise suspend();
+    [Custom] Promise resume();
+    [Custom] Promise close();
+
+    readonly attribute AudioContextState state;
+    attribute EventHandler onstatechange;
 
     // Number of AudioBufferSourceNodes that are currently playing.
     readonly attribute unsigned long activeSourceCount;

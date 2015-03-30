@@ -53,7 +53,7 @@ private:
 
     MediaSessionManageriOS();
 
-    virtual void sessionWillBeginPlayback(MediaSession&) override;
+    virtual bool sessionWillBeginPlayback(MediaSession&) override;
     virtual void sessionWillEndPlayback(MediaSession&) override;
     
     void updateNowPlayingInfo();

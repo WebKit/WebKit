@@ -44,9 +44,11 @@
 #include "DelayNode.h"
 #include "Document.h"
 #include "DynamicsCompressorNode.h"
+#include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FFTFrame.h"
 #include "GainNode.h"
+#include "GenericEventQueue.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
 #include "OfflineAudioCompletionEvent.h"
@@ -55,10 +57,11 @@
 #include "Page.h"
 #include "PannerNode.h"
 #include "PeriodicWave.h"
-#include <inspector/ScriptCallStack.h>
 #include "ScriptController.h"
 #include "ScriptProcessorNode.h"
 #include "WaveShaperNode.h"
+#include <inspector/ScriptCallStack.h>
+#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(MEDIA_STREAM)
 #include "MediaStream.h"
@@ -126,19 +129,9 @@ RefPtr<AudioContext> AudioContext::create(Document& document, ExceptionCode& ec)
 // Constructor for rendering to the audio hardware.
 AudioContext::AudioContext(Document& document)
     : ActiveDOMObject(&document)
-    , m_isStopScheduled(false)
-    , m_isInitialized(false)
-    , m_isAudioThreadFinished(false)
-    , m_destinationNode(0)
-    , m_isDeletionScheduled(false)
-    , m_automaticPullNodesNeedUpdating(false)
-    , m_connectionCount(0)
-    , m_audioThread(0)
+    , m_mediaSession(MediaSession::create(*this))
+    , m_eventQueue(std::make_unique<GenericEventQueue>(*this))
     , m_graphOwnerThread(UndefinedThreadIdentifier)
-    , m_isOfflineContext(false)
-    , m_activeSourceCount(0)
-    , m_restrictions(NoRestrictions)
-    , m_state(State::Suspended)
 {
     constructCommon();
 
@@ -151,18 +144,10 @@ AudioContext::AudioContext(Document& document)
 // Constructor for offline (non-realtime) rendering.
 AudioContext::AudioContext(Document& document, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
     : ActiveDOMObject(&document)
-    , m_isStopScheduled(false)
-    , m_isInitialized(false)
-    , m_isAudioThreadFinished(false)
-    , m_destinationNode(0)
-    , m_automaticPullNodesNeedUpdating(false)
-    , m_connectionCount(0)
-    , m_audioThread(0)
-    , m_graphOwnerThread(UndefinedThreadIdentifier)
     , m_isOfflineContext(true)
-    , m_activeSourceCount(0)
-    , m_restrictions(NoRestrictions)
-    , m_state(State::Suspended)
+    , m_mediaSession(MediaSession::create(*this))
+    , m_eventQueue(std::make_unique<GenericEventQueue>(*this))
+    , m_graphOwnerThread(UndefinedThreadIdentifier)
 {
     constructCommon();
 
@@ -277,7 +262,7 @@ void AudioContext::uninitialize()
         --s_hardwareContextCount;
 
         // Offline contexts move to 'Closed' state when dispatching the completion event.
-        m_state = State::Closed;
+        setState(State::Closed);
     }
 
     // Get rid of the sources which may still be playing.
@@ -289,6 +274,56 @@ void AudioContext::uninitialize()
 bool AudioContext::isInitialized() const
 {
     return m_isInitialized;
+}
+
+void AudioContext::addReaction(State state, std::function<void()> reaction)
+{
+    size_t stateIndex = static_cast<size_t>(state);
+    if (stateIndex >= m_stateReactions.size())
+        m_stateReactions.resize(stateIndex + 1);
+
+    m_stateReactions[stateIndex].append(reaction);
+}
+
+void AudioContext::setState(State state)
+{
+    if (m_state == state)
+        return;
+
+    m_state = state;
+    m_eventQueue->enqueueEvent(Event::create(eventNames().statechangeEvent, true, false));
+
+    size_t stateIndex = static_cast<size_t>(state);
+    if (stateIndex >= m_stateReactions.size())
+        return;
+
+    Vector<std::function<void()>> reactions;
+    m_stateReactions[stateIndex].swap(reactions);
+
+    for (auto& reaction : reactions)
+        reaction();
+}
+
+const AtomicString& AudioContext::state() const
+{
+    static NeverDestroyed<AtomicString> suspended("suspended");
+    static NeverDestroyed<AtomicString> running("running");
+    static NeverDestroyed<AtomicString> interrupted("interrupted");
+    static NeverDestroyed<AtomicString> closed("closed");
+
+    switch (m_state) {
+    case State::Suspended:
+        return suspended;
+    case State::Running:
+        return running;
+    case State::Interrupted:
+        return interrupted;
+    case State::Closed:
+        return closed;
+    }
+
+    ASSERT_NOT_REACHED();
+    return suspended;
 }
 
 void AudioContext::stopDispatch(void* userData)
@@ -310,6 +345,8 @@ void AudioContext::stop()
     m_isStopScheduled = true;
 
     document()->updateIsPlayingAudio();
+
+    m_eventQueue->close();
 
     // Don't call uninitialize() immediately here because the ScriptExecutionContext is in the middle
     // of dealing with all of its ActiveDOMObjects at this point. uninitialize() can de-reference other
@@ -980,7 +1017,7 @@ void AudioContext::startRendering()
             removeBehaviorRestriction(AudioContext::RequirePageConsentForAudioStartRestriction);
     }
     destination()->startRendering();
-    m_state = State::Running;
+    setState(State::Running);
 }
 
 void AudioContext::mediaCanStart()
@@ -1011,7 +1048,7 @@ void AudioContext::fireCompletionEvent()
         return;
         
     AudioBuffer* renderedBuffer = m_renderTarget.get();
-    m_state = State::Closed;
+    setState(State::Closed);
 
     ASSERT(renderedBuffer);
     if (!renderedBuffer)
@@ -1020,7 +1057,7 @@ void AudioContext::fireCompletionEvent()
     // Avoid firing the event if the document has already gone away.
     if (scriptExecutionContext()) {
         // Call the offline rendering completion event listener.
-        dispatchEvent(OfflineAudioCompletionEvent::create(renderedBuffer));
+        m_eventQueue->enqueueEvent(OfflineAudioCompletionEvent::create(renderedBuffer));
     }
 }
 
@@ -1033,6 +1070,127 @@ void AudioContext::decrementActiveSourceCount()
 {
     --m_activeSourceCount;
 }
+
+void AudioContext::suspendContext(std::function<void()> successCallback, std::function<void()> failureCallback, ExceptionCode& ec)
+{
+    ASSERT(successCallback);
+    ASSERT(failureCallback);
+
+    if (isOfflineContext()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (m_state == State::Suspended) {
+        scriptExecutionContext()->postTask(successCallback);
+        return;
+    }
+
+    if (m_state == State::Closed || m_state == State::Interrupted || !m_destinationNode) {
+        scriptExecutionContext()->postTask(failureCallback);
+        return;
+    }
+
+    addReaction(State::Suspended, successCallback);
+
+    if (!m_mediaSession->clientWillPausePlayback())
+        return;
+
+    RefPtr<AudioContext> strongThis(this);
+    m_destinationNode->suspend([strongThis] {
+        strongThis->setState(State::Suspended);
+    });
+}
+
+void AudioContext::resumeContext(std::function<void()> successCallback, std::function<void()> failureCallback, ExceptionCode& ec)
+{
+    ASSERT(successCallback);
+    ASSERT(failureCallback);
+
+    if (isOfflineContext()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (m_state == State::Running) {
+        scriptExecutionContext()->postTask(successCallback);
+        return;
+    }
+
+    if (m_state == State::Closed || !m_destinationNode) {
+        scriptExecutionContext()->postTask(failureCallback);
+        return;
+    }
+
+    addReaction(State::Running, successCallback);
+
+    if (!m_mediaSession->clientWillBeginPlayback())
+        return;
+
+    RefPtr<AudioContext> strongThis(this);
+    m_destinationNode->resume([strongThis] {
+        strongThis->setState(State::Running);
+    });
+}
+
+void AudioContext::closeContext(std::function<void()> successCallback, std::function<void()>, ExceptionCode& ec)
+{
+    ASSERT(successCallback);
+
+    if (isOfflineContext()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (m_state == State::Closed || !m_destinationNode) {
+        scriptExecutionContext()->postTask(successCallback);
+        return;
+    }
+
+    addReaction(State::Closed, successCallback);
+
+    RefPtr<AudioContext> strongThis(this);
+    m_destinationNode->close([strongThis, successCallback] {
+        strongThis->setState(State::Closed);
+        strongThis->uninitialize();
+    });
+}
+
+
+void AudioContext::suspendPlayback()
+{
+    if (!m_destinationNode || m_state == State::Closed)
+        return;
+
+    if (m_state == State::Suspended) {
+        if (m_mediaSession->state() == MediaSession::Interrupted)
+            setState(State::Interrupted);
+        return;
+    }
+
+    RefPtr<AudioContext> strongThis(this);
+    m_destinationNode->suspend([strongThis] {
+        bool interrupted = strongThis->m_mediaSession->state() == MediaSession::Interrupted;
+        strongThis->setState(interrupted ? State::Interrupted : State::Suspended);
+    });
+}
+
+void AudioContext::mayResumePlayback(bool shouldResume)
+{
+    if (!m_destinationNode || m_state == State::Closed || m_state == State::Running)
+        return;
+
+    if (!shouldResume) {
+        setState(State::Suspended);
+        return;
+    }
+
+    RefPtr<AudioContext> strongThis(this);
+    m_destinationNode->resume([strongThis] {
+        strongThis->setState(State::Running);
+    });
+}
+
 
 } // namespace WebCore
 

@@ -1,3 +1,15 @@
+2015-03-30  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] When Web Audio is interrupted by a phone call, it cannot be restarted.
+        https://bugs.webkit.org/show_bug.cgi?id=143190
+
+        Reviewed by Darin Adler.
+
+        * webaudio/audiocontext-state-expected.txt: Added.
+        * webaudio/audiocontext-state-interrupted-expected.txt: Added.
+        * webaudio/audiocontext-state-interrupted.html: Added.
+        * webaudio/audiocontext-state.html: Added.
+
 2015-03-30  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         Update expectations for delete-emoji test since the bug is fixed now.

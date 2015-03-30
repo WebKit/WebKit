@@ -1,3 +1,113 @@
+2015-03-30  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] When Web Audio is interrupted by a phone call, it cannot be restarted.
+        https://bugs.webkit.org/show_bug.cgi?id=143190
+
+        Reviewed by Darin Adler.
+
+        Tests: webaudio/audiocontext-state-interrupted.html
+               webaudio/audiocontext-state.html
+
+        Implement the following methods and properties from the Web Audio spec:
+        close(), suspend(), resume(), onstatechange.
+
+        AudioContext will take more responsibility for tracking state and interruptions (and
+        AudioDestination will give up that responsibility). This means AudioContext must be a
+        MediaSessionClient, and own its own MediaSession. In return, AudioDestinationIOS and 
+        AudioDestinationMac relinquish both.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext): Set default values in header.
+        (WebCore::AudioContext::uninitialize): Call setState() instead of setting m_state.
+        (WebCore::AudioContext::addReaction): Added. Append the callback to the appropriate vector for the state.
+        (WebCore::AudioContext::setState): Added. Fire events and resolve the appropriate reaction callbacks for the new state.
+        (WebCore::AudioContext::state): Return a string representing the context's state.
+        (WebCore::AudioContext::stop): Close the event queue.
+        (WebCore::AudioContext::startRendering): Call setState().
+        (WebCore::AudioContext::fireCompletionEvent): Call setState().
+        (WebCore::AudioContext::suspendContext): Added. Add reaction callback and call suspend() on the destination node.
+        (WebCore::AudioContext::resumeContext): Added. Add reaction callback and call resume() on the destination node.
+        (WebCore::AudioContext::closeContext): Added. Add reaction callback and call close() on the destination node.
+        (WebCore::AudioContext::suspendPlayback): Added. Suspend playback and set state to interrupted.
+        (WebCore::AudioContext::mayResumePlayback): Added. Conditionally resume playback.
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContext::suspend): Added. Create and return a new Promise object.
+        (WebCore::JSAudioContext::resume): Ditto.
+        (WebCore::JSAudioContext::close): Ditto.
+        * Modules/webaudio/AudioContext.idl: Add new methods and properties.
+
+        Extensive organizational changes were made to AudioContext.h to group instance
+        variables together and add C++11 initializers in their declarations:
+
+        * Modules/webaudio/AudioContext.h:
+        (WebCore::AudioContext::mediaType): Moved from AudioDestinationNode.
+        (WebCore::AudioContext::presentationType): Ditto.
+        (WebCore::AudioContext::canReceiveRemoteControlCommands): Ditto.
+        (WebCore::AudioContext::didReceiveRemoteControlCommand): Ditto.
+        (WebCore::AudioContext::overrideBackgroundPlaybackRestriction): Ditto.
+        
+        Other changes to support the new AudioContext methods:
+
+        * Modules/webaudio/AudioDestinationNode.h:
+        (WebCore::AudioDestinationNode::resume): Add empty default virtual method.
+        (WebCore::AudioDestinationNode::suspend): Ditto.
+        (WebCore::AudioDestinationNode::close): Ditto.
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::resume): Added. Pass to AudioDestination.
+        (WebCore::DefaultAudioDestinationNode::suspend): Ditto.
+        (WebCore::DefaultAudioDestinationNode::close): Ditto.
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DeferredWrapper::resolve): Add an overload for a nullptr resolve value.
+        * dom/EventNames.h: Added 'statechange'.
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::Task::Task): Add a constructor which takes a void() callback.
+
+        Modify MediaSession, AudioSession, and MediaSessionManager to support the new
+        interruption behavior.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::suspendPlayback): Renamed from pausePlayback().
+        (WebCore::HTMLMediaElement::mayResumePlayback): Renamed from resumePlayback().
+        * html/HTMLMediaElement.h:
+        * platform/audio/AudioSession.cpp:
+        (WebCore::AudioSession::tryToSetActive): Renamed from setActive. Return true by default.
+        (WebCore::AudioSession::setActive): Deleted.
+        * platform/audio/AudioSession.h:
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::beginInterruption): pausePlayback() was renamed to suspendPlayback().
+        (WebCore::MediaSession::endInterruption): Always notify the client, telling it whether to resume.
+        (WebCore::MediaSession::clientWillBeginPlayback): Bail early if reentrant.  Check the (new) 
+            return value of sessionWillBeginPlayback() and remember to resume once the interruption ends.
+        (WebCore::MediaSession::clientWillPausePlayback): Bail early if reentrant.
+        (WebCore::MediaSession::pauseSession): pausePlayback() was renamed to suspendPlayback().
+        * platform/audio/MediaSession.h:
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::sessionWillBeginPlayback): Return false if not allowed to break interruption or 
+            if activating the audio session failed. Otherwise, end the interruption.
+        * platform/audio/MediaSessionManager.h:
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::AudioDestinationIOS::AudioDestinationIOS): m_mediaSession was removed.
+        (WebCore::AudioDestinationIOS::start): Ditto.
+        * platform/audio/ios/AudioDestinationIOS.h:
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::tryToSetActive): Renamed from setActive. Return false if the AVAudioSession could not be activated.
+        (WebCore::AudioSession::setActive): Deleted.
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::sessionWillBeginPlayback): Do not update the now playing info if session playback was blocked.
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestinationMac::AudioDestinationMac): m_mediaSession was removed.
+        * platform/audio/mac/AudioDestinationMac.h:
+        * platform/audio/mac/AudioSessionMac.cpp:
+        (WebCore::AudioSession::tryToSetActive): Renamed from setActive(). Return true by default.
+        (WebCore::AudioSession::setActive): Deleted.
+        * platform/audio/mac/MediaSessionManagerMac.cpp:
+        (MediaSessionManager::updateSessionState): No longer attempt to activate the session, as this is done
+            MediaSessionManager::sessionWillBeginPlayback().
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaSessionRestrictions): Add "InterruptedPlaybackNotPermitted".
+
 2015-03-25 Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
 
         [Streams API] Error storage should be moved from source to stream/reader

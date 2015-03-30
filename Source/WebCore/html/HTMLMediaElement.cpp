@@ -6031,17 +6031,17 @@ size_t HTMLMediaElement::maximumSourceBufferSize(const SourceBuffer& buffer) con
 }
 #endif
 
-void HTMLMediaElement::pausePlayback()
+void HTMLMediaElement::suspendPlayback()
 {
     LOG(Media, "HTMLMediaElement::pausePlayback(%p) - paused = %s", this, boolString(paused()));
     if (!paused())
         pause();
 }
 
-void HTMLMediaElement::resumePlayback()
+void HTMLMediaElement::mayResumePlayback(bool shouldResume)
 {
     LOG(Media, "HTMLMediaElement::resumePlayback(%p) - paused = %s", this, boolString(paused()));
-    if (paused())
+    if (paused() && shouldResume)
         play();
 }
     

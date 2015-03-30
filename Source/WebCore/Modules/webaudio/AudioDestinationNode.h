@@ -35,7 +35,7 @@ namespace WebCore {
 
 class AudioBus;
 class AudioContext;
-    
+
 class AudioDestinationNode : public AudioNode, public AudioIOCallback {
 public:
     AudioDestinationNode(AudioContext*, float sampleRate);
@@ -58,6 +58,9 @@ public:
     virtual void enableInput(const String& inputDeviceId) = 0;
 
     virtual void startRendering() = 0;
+    virtual void resume(std::function<void()>) { }
+    virtual void suspend(std::function<void()>) { }
+    virtual void close(std::function<void()>) { }
 
     AudioSourceProvider* localAudioInputProvider() { return &m_localAudioInputProvider; }
 

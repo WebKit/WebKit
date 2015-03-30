@@ -80,9 +80,9 @@ private:
 class DeleteCallbackDataTask : public ScriptExecutionContext::Task {
 public:
     DeleteCallbackDataTask(JSCallbackData* data)
-        : ScriptExecutionContext::Task({ ScriptExecutionContext::Task::CleanupTask, [data] (ScriptExecutionContext&) {
+        : ScriptExecutionContext::Task(ScriptExecutionContext::Task::CleanupTask, [data] (ScriptExecutionContext&) {
             delete data;
-        } })
+        })
     {
     }
 };
