@@ -1,3 +1,10 @@
+2015-03-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix iOS internal build after r182132.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::computeNonFastScrollableRegion):
+
 2015-03-30  Jer Noble  <jer.noble@apple.com>
 
         [iOS] When Web Audio is interrupted by a phone call, it cannot be restarted.

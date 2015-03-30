@@ -100,10 +100,10 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame& frame, 
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
     // On iOS, we use nonFastScrollableRegion to represent the region covered by elements with touch event handlers.
-    ASSERT(frame->isMainFrame());
+    ASSERT(frame.isMainFrame());
     UNUSED_PARAM(frameLocation);
 
-    Document* document = frame->document();
+    Document* document = frame.document();
     if (!document)
         return Region();
 
