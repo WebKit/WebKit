@@ -76,7 +76,7 @@ void RenderLineBoxList::deleteLineBoxTree()
         line->deleteLine();
         line = nextLine;
     }
-    m_firstLineBox = m_lastLineBox = 0;
+    m_firstLineBox = m_lastLineBox = nullptr;
 }
 
 void RenderLineBoxList::extractLineBox(InlineFlowBox* box)
@@ -87,8 +87,8 @@ void RenderLineBoxList::extractLineBox(InlineFlowBox* box)
     if (box == m_firstLineBox)
         m_firstLineBox = 0;
     if (box->prevLineBox())
-        box->prevLineBox()->setNextLineBox(0);
-    box->setPreviousLineBox(0);
+        box->prevLineBox()->setNextLineBox(nullptr);
+    box->setPreviousLineBox(nullptr);
     for (InlineFlowBox* curr = box; curr; curr = curr->nextLineBox())
         curr->setExtracted();
 
@@ -138,8 +138,8 @@ void RenderLineBoxList::deleteLineBoxes()
             next = curr->nextLineBox();
             delete curr;
         }
-        m_firstLineBox = 0;
-        m_lastLineBox = 0;
+        m_firstLineBox = nullptr;
+        m_lastLineBox = nullptr;
     }
 }
 
@@ -402,8 +402,8 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
 void RenderLineBoxList::checkConsistency() const
 {
 #ifdef CHECK_CONSISTENCY
-    const InlineFlowBox* prev = 0;
-    for (const InlineFlowBox* child = m_firstLineBox; child != 0; child = child->nextLineBox()) {
+    const InlineFlowBox* prev = nullptr;
+    for (const InlineFlowBox* child = m_firstLineBox; child != nullptr; child = child->nextLineBox()) {
         ASSERT(child->prevLineBox() == prev);
         prev = child;
     }

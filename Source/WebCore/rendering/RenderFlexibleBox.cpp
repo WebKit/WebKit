@@ -179,7 +179,7 @@ Optional<int> RenderFlexibleBox::firstLineBaseline() const
 {
     if (isWritingModeRoot() || m_numberOfInFlowChildrenOnFirstLine <= 0)
         return Optional<int>();
-    RenderBox* baselineChild = 0;
+    RenderBox* baselineChild = nullptr;
     int childNumber = 0;
     for (RenderBox* child = m_orderIterator.first(); child; child = m_orderIterator.next()) {
         if (child->isOutOfFlowPositioned())
@@ -465,7 +465,7 @@ LayoutUnit RenderFlexibleBox::computeMainAxisExtentForChild(RenderBox& child, Si
     if (isColumnFlow())
         return child.computeContentLogicalHeight(size);
     // FIXME: Figure out how this should work for regions and pass in the appropriate values.
-    RenderRegion* region = 0;
+    RenderRegion* region = nullptr;
     return child.computeLogicalWidthInRegionUsing(sizeType, size, contentLogicalWidth(), this, region) - child.borderAndPaddingLogicalWidth();
 }
 

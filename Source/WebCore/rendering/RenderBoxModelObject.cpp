@@ -83,7 +83,7 @@ static ContinuationMap& continuationMap()
 // This HashMap is similar to the continuation map, but connects first-letter
 // renderers to their remaining text fragments.
 typedef HashMap<const RenderBoxModelObject*, RenderTextFragment*> FirstLetterRemainingTextMap;
-static FirstLetterRemainingTextMap* firstLetterRemainingTextMap = 0;
+static FirstLetterRemainingTextMap* firstLetterRemainingTextMap = nullptr;
 
 void RenderBoxModelObject::setSelectionState(SelectionState state)
 {
@@ -195,7 +195,7 @@ void RenderBoxModelObject::willBeDestroyed()
     // If this is a first-letter object with a remaining text fragment then the
     // entry needs to be cleared from the map.
     if (firstLetterRemainingText())
-        setFirstLetterRemainingText(0);
+        setFirstLetterRemainingText(nullptr);
 
     if (!documentBeingDestroyed())
         view().imageQualityController().rendererWillBeDestroyed(*this);
@@ -615,7 +615,7 @@ void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const
 
     // Now add the text to the clip. We do this by painting using a special paint phase that signals to
     // InlineTextBoxes that they should just add their contents to the clip.
-    PaintInfo info(maskImageContext, maskRect, PaintPhaseTextClip, PaintBehaviorForceBlackText, 0);
+    PaintInfo info(maskImageContext, maskRect, PaintPhaseTextClip, PaintBehaviorForceBlackText);
     if (box) {
         const RootInlineBox& rootBox = box->root();
         box->paint(info, LayoutPoint(scrolledPaintRect.x() - box->x(), scrolledPaintRect.y() - box->y()), rootBox.lineTop(), rootBox.lineBottom());
@@ -1636,7 +1636,7 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
         sideRect.setHeight(edges[BSTop].widthForPainting() + innerBorderAdjustment.y());
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSTop].style()) || borderWillArcInnerEdge(innerBorder.radii().topLeft(), innerBorder.radii().topRight()));
-        paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSTop, BSLeft, BSRight, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
+        paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSTop, BSLeft, BSRight, edges, usePath ? &roundedPath : nullptr, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
     }
 
     if (edges[BSBottom].shouldRender() && includesEdge(edgeSet, BSBottom)) {
@@ -1644,7 +1644,7 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
         sideRect.shiftYEdgeTo(sideRect.maxY() - edges[BSBottom].widthForPainting() - innerBorderAdjustment.y());
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSBottom].style()) || borderWillArcInnerEdge(innerBorder.radii().bottomLeft(), innerBorder.radii().bottomRight()));
-        paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSBottom, BSLeft, BSRight, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
+        paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSBottom, BSLeft, BSRight, edges, usePath ? &roundedPath : nullptr, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
     }
 
     if (edges[BSLeft].shouldRender() && includesEdge(edgeSet, BSLeft)) {
@@ -1652,7 +1652,7 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
         sideRect.setWidth(edges[BSLeft].widthForPainting() + innerBorderAdjustment.x());
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSLeft].style()) || borderWillArcInnerEdge(innerBorder.radii().bottomLeft(), innerBorder.radii().topLeft()));
-        paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSLeft, BSTop, BSBottom, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
+        paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSLeft, BSTop, BSBottom, edges, usePath ? &roundedPath : nullptr, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
     }
 
     if (edges[BSRight].shouldRender() && includesEdge(edgeSet, BSRight)) {
@@ -1660,7 +1660,7 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
         sideRect.shiftXEdgeTo(sideRect.maxX() - edges[BSRight].widthForPainting() - innerBorderAdjustment.x());
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSRight].style()) || borderWillArcInnerEdge(innerBorder.radii().bottomRight(), innerBorder.radii().topRight()));
-        paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSRight, BSTop, BSBottom, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
+        paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSRight, BSTop, BSBottom, edges, usePath ? &roundedPath : nullptr, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
     }
 }
 
@@ -2531,7 +2531,7 @@ void RenderBoxModelObject::setContinuation(RenderBoxModelObject* continuation)
 RenderTextFragment* RenderBoxModelObject::firstLetterRemainingText() const
 {
     if (!firstLetterRemainingTextMap)
-        return 0;
+        return nullptr;
     return firstLetterRemainingTextMap->get(this);
 }
 

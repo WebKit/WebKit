@@ -86,8 +86,8 @@ using namespace HTMLNames;
 
 // Used by flexible boxes when flexing this element and by table cells.
 typedef WTF::HashMap<const RenderBox*, LayoutUnit> OverrideSizeMap;
-static OverrideSizeMap* gOverrideHeightMap = 0;
-static OverrideSizeMap* gOverrideWidthMap = 0;
+static OverrideSizeMap* gOverrideHeightMap = nullptr;
+static OverrideSizeMap* gOverrideWidthMap = nullptr;
 
 #if ENABLE(CSS_GRID_LAYOUT)
 // Used by grid elements to properly size their grid items.
@@ -128,7 +128,7 @@ RenderBox::RenderBox(Element& element, Ref<RenderStyle>&& style, unsigned baseTy
     : RenderBoxModelObject(element, WTF::move(style), baseTypeFlags)
     , m_minPreferredLogicalWidth(-1)
     , m_maxPreferredLogicalWidth(-1)
-    , m_inlineBoxWrapper(0)
+    , m_inlineBoxWrapper(nullptr)
 {
     setIsBox();
 }
@@ -137,7 +137,7 @@ RenderBox::RenderBox(Document& document, Ref<RenderStyle>&& style, unsigned base
     : RenderBoxModelObject(document, WTF::move(style), baseTypeFlags)
     , m_minPreferredLogicalWidth(-1)
     , m_maxPreferredLogicalWidth(-1)
-    , m_inlineBoxWrapper(0)
+    , m_inlineBoxWrapper(nullptr)
 {
     setIsBox();
 }
@@ -1610,7 +1610,7 @@ void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, cons
 void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const LayoutRect& rect,
     BackgroundBleedAvoidance bleedAvoidance, CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage)
 {
-    paintFillLayerExtended(paintInfo, c, fillLayer, rect, bleedAvoidance, 0, LayoutSize(), op, backgroundObject, baseBgColorUsage);
+    paintFillLayerExtended(paintInfo, c, fillLayer, rect, bleedAvoidance, nullptr, LayoutSize(), op, backgroundObject, baseBgColorUsage);
 }
 
 static bool layersUseImage(WrappedImagePtr image, const FillLayer* layers)
@@ -1805,7 +1805,7 @@ LayoutRect RenderBox::clipRect(const LayoutPoint& location, RenderRegion* region
 
 LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStart, LayoutUnit childMarginEnd, const RenderBlock* cb, RenderRegion* region) const
 {    
-    RenderRegion* containingBlockRegion = 0;
+    RenderRegion* containingBlockRegion = nullptr;
     LayoutUnit logicalTopPosition = logicalTop();
     if (region) {
         LayoutUnit offsetFromLogicalTopOfRegion = region ? region->logicalTopForFlowThreadContent() - offsetFromLogicalTopOfFirstPage() : LayoutUnit();
@@ -1889,7 +1889,7 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContentInRegion(RenderRegion
 LayoutUnit RenderBox::containingBlockAvailableLineWidthInRegion(RenderRegion* region) const
 {
     RenderBlock* cb = containingBlock();
-    RenderRegion* containingBlockRegion = 0;
+    RenderRegion* containingBlockRegion = nullptr;
     LayoutUnit logicalTopPosition = logicalTop();
     if (region) {
         LayoutUnit offsetFromLogicalTopOfRegion = region ? region->logicalTopForFlowThreadContent() - offsetFromLogicalTopOfFirstPage() : LayoutUnit();
@@ -2565,7 +2565,7 @@ RenderBoxRegionInfo* RenderBox::renderBoxRegionInfo(RenderRegion* region, Render
 {
     // Make sure nobody is trying to call this with a null region.
     if (!region)
-        return 0;
+        return nullptr;
 
     // If we have computed our width in this region already, it will be cached, and we can
     // just return it.
@@ -2578,7 +2578,7 @@ RenderBoxRegionInfo* RenderBox::renderBoxRegionInfo(RenderRegion* region, Render
     // support to cover all boxes.
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     if (isRenderFlowThread() || !flowThread || !canHaveBoxInfoInRegion() || flowThread->style().writingMode() != style().writingMode())
-        return 0;
+        return nullptr;
 
     LogicalExtentComputedValues computedValues;
     computeLogicalWidthInRegion(computedValues, region);
@@ -3406,7 +3406,7 @@ void RenderBox::computePositionedLogicalWidthUsing(Length logicalWidth, const Re
 
     LayoutUnit logicalLeftValue = 0;
 
-    const LayoutUnit containerRelativeLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock, 0, false);
+    const LayoutUnit containerRelativeLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock, nullptr, false);
 
     bool logicalWidthIsAuto = logicalWidth.isIntrinsicOrAuto();
     bool logicalLeftIsAuto = logicalLeft.isAuto();
@@ -3732,7 +3732,7 @@ void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, 
     LayoutUnit logicalHeightValue;
     LayoutUnit contentLogicalHeight = logicalHeight - bordersPlusPadding;
 
-    const LayoutUnit containerRelativeLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock, 0, false);
+    const LayoutUnit containerRelativeLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock, nullptr, false);
 
     LayoutUnit logicalTopValue = 0;
     LayoutUnit resolvedLogicalHeight = 0;
@@ -3891,7 +3891,7 @@ void RenderBox::computePositionedLogicalWidthReplaced(LogicalExtentComputedValue
      *    else if 'direction' is 'rtl', set 'right' to the static position.
     \*-----------------------------------------------------------------------*/
     // see FIXME 1
-    computeInlineStaticDistance(logicalLeft, logicalRight, this, containerBlock, containerLogicalWidth, 0); // FIXME: Pass the region.
+    computeInlineStaticDistance(logicalLeft, logicalRight, this, containerBlock, containerLogicalWidth, nullptr); // FIXME: Pass the region.
 
     /*-----------------------------------------------------------------------*\
      * 3. If 'left' or 'right' are 'auto', replace any 'auto' on 'margin-left'
@@ -4215,7 +4215,7 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point, const Rend
 
     // Pass off to the closest child.
     LayoutUnit minDist = LayoutUnit::max();
-    RenderBox* closestRenderer = 0;
+    RenderBox* closestRenderer = nullptr;
     LayoutPoint adjustedPoint = point;
     if (isTableRow())
         adjustedPoint.moveBy(location());
@@ -4810,7 +4810,7 @@ RenderObject* RenderBox::splitAnonymousBoxesAroundChild(RenderObject* beforeChil
             // See for example RenderTableCell:clippedOverflowRectForRepaint.
             markBoxForRelayoutAfterSplit(*parentBox);
             parentBox->insertChildInternal(postBox, boxToSplit.nextSibling(), NotifyChildren);
-            boxToSplit.moveChildrenTo(postBox, beforeChild, 0, true);
+            boxToSplit.moveChildrenTo(postBox, beforeChild, nullptr, true);
 
             markBoxForRelayoutAfterSplit(boxToSplit);
             markBoxForRelayoutAfterSplit(*postBox);

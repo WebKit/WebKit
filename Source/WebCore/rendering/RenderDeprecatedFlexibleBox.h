@@ -49,7 +49,7 @@ public:
     virtual bool avoidsFloats() const override { return true; }
     virtual bool canCollapseAnonymousBlockChild() const override { return false; }
 
-    void placeChild(RenderBox* child, const LayoutPoint& location, LayoutSize* childLayoutDelta = 0);
+    void placeChild(RenderBox* child, const LayoutPoint& location, LayoutSize* childLayoutDelta = nullptr);
 
 private:
     virtual bool isDeprecatedFlexibleBox() const override { return true; }

@@ -59,7 +59,7 @@ public:
 
     void reset()
     {
-        m_currentChild = 0;
+        m_currentChild = nullptr;
         m_ordinalIteration = -1;
     }
 
@@ -79,7 +79,7 @@ public:
                     m_currentOrdinal = m_forward ? 1 : m_largestOrdinal;
                 else {
                     if (m_ordinalIteration > m_ordinalValues.size())
-                        return 0;
+                        return nullptr;
 
                     // Only copy+sort the values once per layout even if the iterator is reset.
                     if (static_cast<size_t>(m_ordinalValues.size()) != m_sortedOrdinalValues.size()) {

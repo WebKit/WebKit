@@ -779,7 +779,7 @@ bool RenderListBox::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() con
 ScrollableArea* RenderListBox::enclosingScrollableArea() const
 {
     // FIXME: Return a RenderLayer that's scrollable.
-    return 0;
+    return nullptr;
 }
 
 bool RenderListBox::isScrollableOrRubberbandable()
@@ -824,7 +824,7 @@ void RenderListBox::destroyScrollbar()
 
 void RenderListBox::setHasVerticalScrollbar(bool hasScrollbar)
 {
-    if (hasScrollbar == (m_vBar != 0))
+    if (hasScrollbar == (m_vBar != nullptr))
         return;
 
     if (hasScrollbar)

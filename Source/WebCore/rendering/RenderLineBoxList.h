@@ -40,8 +40,8 @@ class RenderBlockFlow;
 class RenderLineBoxList {
 public:
     RenderLineBoxList()
-        : m_firstLineBox(0)
-        , m_lastLineBox(0)
+        : m_firstLineBox(nullptr)
+        , m_lastLineBox(nullptr)
     {
     }
 

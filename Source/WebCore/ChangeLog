@@ -1,3 +1,60 @@
+2015-03-29  Joonghun Park  <jh718.park@samsung.com>
+
+        nullptr cleanup in RenderFooBox classes
+        https://bugs.webkit.org/show_bug.cgi?id=143182
+
+        Reviewed by Ryosuke Niwa.
+
+        No new tests, no behavior changes
+
+        Replace 0 with nullptr in RenderFooBox classes.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::RenderBox):
+        (WebCore::RenderBox::paintFillLayer):
+        (WebCore::RenderBox::shrinkLogicalWidthToAvoidFloats):
+        (WebCore::RenderBox::containingBlockAvailableLineWidthInRegion):
+        (WebCore::RenderBox::renderBoxRegionInfo):
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing):
+        (WebCore::RenderBox::computePositionedLogicalHeightUsing):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        (WebCore::RenderBox::positionForPoint):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::setMarginBefore):
+        (WebCore::RenderBox::setMarginAfter):
+        (WebCore::RenderBox::setMarginStart):
+        (WebCore::RenderBox::setMarginEnd):
+        (WebCore::RenderBox::createAnonymousBoxWithSameTypeAs):
+        (WebCore::RenderBox::setInlineBoxWrapper):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::willBeDestroyed):
+        (WebCore::RenderBoxModelObject::paintMaskForTextFillBox):
+        (WebCore::RenderBoxModelObject::paintBorderSides):
+        (WebCore::RenderBoxModelObject::firstLetterRemainingText):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::moveChildTo):
+        (WebCore::RenderBoxModelObject::moveAllChildrenTo):
+        (WebCore::RenderBoxModelObject::moveChildrenTo):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::FlexBoxIterator::reset):
+        (WebCore::FlexBoxIterator::next):
+        * rendering/RenderDeprecatedFlexibleBox.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::firstLineBaseline):
+        (WebCore::RenderFlexibleBox::computeMainAxisExtentForChild):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::deleteLineBoxTree):
+        (WebCore::RenderLineBoxList::extractLineBox):
+        (WebCore::RenderLineBoxList::deleteLineBoxes):
+        (WebCore::RenderLineBoxList::checkConsistency):
+        * rendering/RenderLineBoxList.h:
+        (WebCore::RenderLineBoxList::RenderLineBoxList):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::enclosingScrollableArea):
+        (WebCore::RenderListBox::setHasVerticalScrollbar):
+        * rendering/RenderListBox.h:
+
 2015-03-29  Darin Adler  <darin@apple.com>
 
         HTMLCollection caches incorrect length if item(0) is called before length on an empty collection

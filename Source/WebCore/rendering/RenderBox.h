@@ -85,7 +85,7 @@ public:
     LayoutUnit logicalWidth() const { return style().isHorizontalWritingMode() ? width() : height(); }
     LayoutUnit logicalHeight() const { return style().isHorizontalWritingMode() ? height() : width(); }
 
-    LayoutUnit constrainLogicalWidthInRegionByMinMax(LayoutUnit, LayoutUnit, RenderBlock*, RenderRegion* = 0) const;
+    LayoutUnit constrainLogicalWidthInRegionByMinMax(LayoutUnit, LayoutUnit, RenderBlock*, RenderRegion* = nullptr) const;
     LayoutUnit constrainLogicalHeightByMinMax(LayoutUnit) const;
     LayoutUnit constrainContentBoxLogicalHeightByMinMax(LayoutUnit) const;
 
@@ -174,7 +174,7 @@ public:
 
     // Bounds of the outline box in absolute coords. Respects transforms
     virtual LayoutRect outlineBoundsForRepaint(const RenderLayerModelObject* /*repaintContainer*/, const RenderGeometryMap*) const override final;
-    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override;
+    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = nullptr) override;
     
     virtual FloatRect repaintRectInLocalCoordinates() const override { return borderBoxRect(); }
     virtual FloatRect objectBoundingBox() const override { return borderBoxRect(); }
@@ -264,26 +264,26 @@ public:
     LayoutUnit marginLogicalLeft() const { return m_marginBox.logicalLeft(style().writingMode()); }
     LayoutUnit marginLogicalRight() const { return m_marginBox.logicalRight(style().writingMode()); }
     
-    virtual LayoutUnit marginBefore(const RenderStyle* overrideStyle = 0) const override final { return m_marginBox.before((overrideStyle ? overrideStyle : &style())->writingMode()); }
-    virtual LayoutUnit marginAfter(const RenderStyle* overrideStyle = 0) const override final { return m_marginBox.after((overrideStyle ? overrideStyle : &style())->writingMode()); }
-    virtual LayoutUnit marginStart(const RenderStyle* overrideStyle = 0) const override final
+    virtual LayoutUnit marginBefore(const RenderStyle* overrideStyle = nullptr) const override final { return m_marginBox.before((overrideStyle ? overrideStyle : &style())->writingMode()); }
+    virtual LayoutUnit marginAfter(const RenderStyle* overrideStyle = nullptr) const override final { return m_marginBox.after((overrideStyle ? overrideStyle : &style())->writingMode()); }
+    virtual LayoutUnit marginStart(const RenderStyle* overrideStyle = nullptr) const override final
     {
         const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
         return m_marginBox.start(styleToUse->writingMode(), styleToUse->direction());
     }
-    virtual LayoutUnit marginEnd(const RenderStyle* overrideStyle = 0) const override final
+    virtual LayoutUnit marginEnd(const RenderStyle* overrideStyle = nullptr) const override final
     {
         const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
         return m_marginBox.end(styleToUse->writingMode(), styleToUse->direction());
     }
-    void setMarginBefore(LayoutUnit value, const RenderStyle* overrideStyle = 0) { m_marginBox.setBefore((overrideStyle ? overrideStyle : &style())->writingMode(), value); }
-    void setMarginAfter(LayoutUnit value, const RenderStyle* overrideStyle = 0) { m_marginBox.setAfter((overrideStyle ? overrideStyle : &style())->writingMode(), value); }
-    void setMarginStart(LayoutUnit value, const RenderStyle* overrideStyle = 0)
+    void setMarginBefore(LayoutUnit value, const RenderStyle* overrideStyle = nullptr) { m_marginBox.setBefore((overrideStyle ? overrideStyle : &style())->writingMode(), value); }
+    void setMarginAfter(LayoutUnit value, const RenderStyle* overrideStyle = nullptr) { m_marginBox.setAfter((overrideStyle ? overrideStyle : &style())->writingMode(), value); }
+    void setMarginStart(LayoutUnit value, const RenderStyle* overrideStyle = nullptr)
     {
         const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
         m_marginBox.setStart(styleToUse->writingMode(), styleToUse->direction(), value);
     }
-    void setMarginEnd(LayoutUnit value, const RenderStyle* overrideStyle = 0)
+    void setMarginEnd(LayoutUnit value, const RenderStyle* overrideStyle = nullptr)
     {
         const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
         m_marginBox.setEnd(styleToUse->writingMode(), styleToUse->direction(), value);
@@ -338,7 +338,7 @@ public:
     void clearOverrideContainingBlockContentLogicalHeight();
 #endif
 
-    virtual LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = 0) const override;
+    virtual LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     
     LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit width) const;
     LayoutUnit adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const;
@@ -413,7 +413,7 @@ public:
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const;
 
     RenderBoxRegionInfo* renderBoxRegionInfo(RenderRegion*, RenderBoxRegionInfoFlags = CacheRenderBoxRegionInfo) const;
-    void computeLogicalWidthInRegion(LogicalExtentComputedValues&, RenderRegion* = 0) const;
+    void computeLogicalWidthInRegion(LogicalExtentComputedValues&, RenderRegion* = nullptr) const;
 
     bool stretchesToViewport() const
     {
@@ -459,7 +459,7 @@ public:
     int instrinsicScrollbarLogicalWidth() const;
     int scrollbarLogicalHeight() const { return style().isHorizontalWritingMode() ? horizontalScrollbarHeight() : verticalScrollbarWidth(); }
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint());
-    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0);
+    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr);
     bool canBeScrolledAndHasScrollableArea() const;
     virtual bool canBeProgramaticallyScrolled() const;
     virtual void autoscroll(const IntPoint&);
@@ -482,7 +482,7 @@ public:
     bool hasUnsplittableScrollingOverflow() const;
     bool isUnsplittableForPagination() const;
 
-    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) override;
+    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = nullptr) override;
 
     virtual LayoutRect overflowClipRect(const LayoutPoint& location, RenderRegion*, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhaseBlockBackground);
     virtual LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, RenderRegion* region, OverlayScrollbarSizeRelevancy relevancy) { return overflowClipRect(location, region, relevancy); }
@@ -496,7 +496,7 @@ public:
     virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&);
     virtual void paintMask(PaintInfo&, const LayoutPoint&);
     virtual void paintClippingMask(PaintInfo&, const LayoutPoint&);
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
 
     // Called when a positioned object moves but doesn't necessarily change size.  A simplified layout is attempted
     // that just updates the object's position. If the size does change, the object remains dirty.
@@ -593,7 +593,7 @@ public:
     virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject*) const
     {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
 
     bool hasSameDirectionAs(const RenderBox* object) const { return style().direction() == object->style().direction(); }
@@ -640,7 +640,7 @@ protected:
     BackgroundBleedAvoidance determineBackgroundBleedAvoidance(GraphicsContext*) const;
     bool backgroundHasOpaqueTopLayer() const;
 
-    void computePositionedLogicalWidth(LogicalExtentComputedValues&, RenderRegion* = 0) const;
+    void computePositionedLogicalWidth(LogicalExtentComputedValues&, RenderRegion* = nullptr) const;
 
     LayoutUnit computeIntrinsicLogicalWidthUsing(Length logicalWidthLength, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;
     
@@ -677,7 +677,7 @@ private:
 
     bool skipContainingBlockForPercentHeightCalculation(const RenderBox* containingBlock, bool isPerpendicularWritingMode) const;
    
-    LayoutUnit containingBlockLogicalWidthForPositioned(const RenderBoxModelObject* containingBlock, RenderRegion* = 0, bool checkForPerpendicularWritingMode = true) const;
+    LayoutUnit containingBlockLogicalWidthForPositioned(const RenderBoxModelObject* containingBlock, RenderRegion* = nullptr, bool checkForPerpendicularWritingMode = true) const;
     LayoutUnit containingBlockLogicalHeightForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode = true) const;
 
     LayoutUnit viewLogicalHeightForPercentages() const;
@@ -764,7 +764,7 @@ inline void RenderBox::setInlineBoxWrapper(InlineElementBox* boxWrapper)
         // Otherwise, there will two line box wrappers keeping the reference to this renderer, and
         // only one will be notified when the renderer is getting destroyed. The second line box wrapper
         // will keep a stale reference.
-        if (UNLIKELY(m_inlineBoxWrapper != 0))
+        if (UNLIKELY(m_inlineBoxWrapper != nullptr))
             deleteLineBoxWrapper();
     }
 
