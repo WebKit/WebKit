@@ -44,6 +44,8 @@ namespace NetworkCache {
 static const char networkCacheSubdirectory[] = "WebKitCache";
 static const char versionDirectoryPrefix[] = "Version ";
 
+static double computeRecordWorth(FileTimes);
+
 std::unique_ptr<Storage> Storage::open(const String& cachePath)
 {
     ASSERT(RunLoop::isMain());
@@ -425,27 +427,33 @@ void Storage::update(const Record& updateRecord, const Record& existingRecord, S
     dispatchPendingWriteOperations();
 }
 
-void Storage::traverse(std::function<void (const Record*)>&& traverseHandler)
+void Storage::traverse(TraverseFlags flags, std::function<void (const Record*, const RecordInfo&)>&& traverseHandler)
 {
     StringCapture cachePathCapture(m_directoryPath);
-    ioQueue().dispatch([this, cachePathCapture, traverseHandler] {
+    ioQueue().dispatch([this, flags, cachePathCapture, traverseHandler] {
         String cachePath = cachePathCapture.string();
-        traverseCacheFiles(cachePath, [this, &traverseHandler](const String& fileName, const String& partitionPath) {
+        traverseCacheFiles(cachePath, [this, flags, &traverseHandler](const String& fileName, const String& partitionPath) {
             auto filePath = WebCore::pathByAppendingComponent(partitionPath, fileName);
+
+            RecordInfo info;
+            if (flags & TraverseFlag::ComputeWorth)
+                info.worth = computeRecordWorth(fileTimes(filePath));
+
             auto channel = IOChannel::open(filePath, IOChannel::Type::Read);
             const size_t headerReadSize = 16 << 10;
             // FIXME: Traversal is slower than it should be due to lack of parallelism.
-            channel->readSync(0, headerReadSize, [this, &traverseHandler](Data& fileData, int) {
+            channel->readSync(0, headerReadSize, [this, &traverseHandler, &info](Data& fileData, int) {
                 RecordMetaData metaData;
                 Data headerData;
                 if (decodeRecordHeader(fileData, metaData, headerData)) {
                     Record record { metaData.key, metaData.timeStamp, headerData, { } };
-                    traverseHandler(&record);
+                    info.bodySize = metaData.bodySize;
+                    traverseHandler(&record, info);
                 }
             });
         });
         RunLoop::main().dispatch([this, traverseHandler] {
-            traverseHandler(nullptr);
+            traverseHandler(nullptr, { });
         });
     });
 }
@@ -583,10 +591,8 @@ void Storage::clear()
     });
 }
 
-static double deletionProbability(FileTimes times)
+static double computeRecordWorth(FileTimes times)
 {
-    static const double maximumProbability { 0.33 };
-
     using namespace std::chrono;
     auto age = system_clock::now() - times.creation;
     // File modification time is updated manually on cache read. We don't use access time since OS may update it automatically.
@@ -594,15 +600,23 @@ static double deletionProbability(FileTimes times)
 
     // For sanity.
     if (age <= seconds::zero() || accessAge < seconds::zero() || accessAge > age)
-        return maximumProbability;
+        return 1;
 
     // We like old entries that have been accessed recently.
-    auto relativeValue = duration<double>(accessAge) / age;
+    return duration<double>(accessAge) / age;
+}
+
+
+static double deletionProbability(FileTimes times)
+{
+    static const double maximumProbability { 0.33 };
+
+    auto worth = computeRecordWorth(times);
 
     // Adjust a bit so the most valuable entries don't get deleted at all.
-    auto effectiveValue = std::min(1.1 * relativeValue, 1.);
+    auto effectiveWorth = std::min(1.1 * worth, 1.);
 
-    return (1 - effectiveValue) * maximumProbability;
+    return (1 - effectiveWorth) * maximumProbability;
 }
 
 void Storage::shrinkIfNeeded()

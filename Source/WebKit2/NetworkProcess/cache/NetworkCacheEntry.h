@@ -65,7 +65,7 @@ public:
 
     const Storage::Record& sourceStorageRecord() const { return m_sourceStorageRecord; }
 
-    void asJSON(StringBuilder&) const;
+    void asJSON(StringBuilder&, const Storage::RecordInfo&) const;
 
 private:
     Entry(const Storage::Record&);

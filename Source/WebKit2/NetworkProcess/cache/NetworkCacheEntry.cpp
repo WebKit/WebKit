@@ -144,11 +144,17 @@ void Entry::setNeedsValidation()
     m_response.setSource(WebCore::ResourceResponse::Source::DiskCacheAfterValidation);
 }
 
-void Entry::asJSON(StringBuilder& json) const
+void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
 {
     json.appendLiteral("{\n");
     json.appendLiteral("\"hash\": ");
     JSC::appendQuotedJSONStringToBuilder(json, m_key.hashAsString());
+    json.appendLiteral(",\n");
+    json.appendLiteral("\"bodySize\": ");
+    json.appendNumber(info.bodySize);
+    json.appendLiteral(",\n");
+    json.appendLiteral("\"worth\": ");
+    json.appendNumber(info.worth);
     json.appendLiteral(",\n");
     json.appendLiteral("\"partition\": ");
     JSC::appendQuotedJSONStringToBuilder(json, m_key.partition());

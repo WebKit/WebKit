@@ -63,8 +63,16 @@ public:
 
     void remove(const Key&);
 
-    // Null entry signals end.
-    void traverse(std::function<void (const Record*)>&&);
+    struct RecordInfo {
+        size_t bodySize { 0 };
+        double worth { -1 }; // 0-1 where 1 is the most valuable.
+    };
+    enum TraverseFlag {
+        ComputeWorth = 1 << 0,
+    };
+    typedef unsigned TraverseFlags;
+    // Null record signals end.
+    void traverse(TraverseFlags, std::function<void (const Record*, const RecordInfo&)>&&);
 
     void setMaximumSize(size_t);
     void clear();

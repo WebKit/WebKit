@@ -410,7 +410,7 @@ void Cache::traverse(std::function<void (const Entry*)>&& traverseHandler)
 {
     ASSERT(isEnabled());
 
-    m_storage->traverse([traverseHandler](const Storage::Record* record) {
+    m_storage->traverse(0, [traverseHandler](const Storage::Record* record, const Storage::RecordInfo&) {
         if (!record) {
             traverseHandler(nullptr);
             return;
@@ -433,25 +433,50 @@ void Cache::dumpContentsToFile()
 {
     if (!m_storage)
         return;
-    auto dumpFileHandle = WebCore::openFile(dumpFilePath(), WebCore::OpenForWrite);
-    if (!dumpFileHandle)
+    auto fd = WebCore::openFile(dumpFilePath(), WebCore::OpenForWrite);
+    if (!fd)
         return;
-    WebCore::writeToFile(dumpFileHandle, "[\n", 2);
-    m_storage->traverse([dumpFileHandle](const Storage::Record* record) {
+    auto prologue = String("{\n\"entries\": [\n").utf8();
+    WebCore::writeToFile(fd, prologue.data(), prologue.length());
+
+    struct Totals {
+        unsigned count { 0 };
+        double worth { 0 };
+        size_t bodySize { 0 };
+    };
+    Totals totals;
+    m_storage->traverse(Storage::TraverseFlag::ComputeWorth, [fd, totals](const Storage::Record* record, const Storage::RecordInfo& info) mutable {
         if (!record) {
-            WebCore::writeToFile(dumpFileHandle, "{}\n]\n", 5);
-            auto handle = dumpFileHandle;
-            WebCore::closeFile(handle);
+            StringBuilder epilogue;
+            epilogue.appendLiteral("{}\n],\n");
+            epilogue.appendLiteral("\"totals\": {\n");
+            epilogue.appendLiteral("\"count\": ");
+            epilogue.appendNumber(totals.count);
+            epilogue.appendLiteral(",\n");
+            epilogue.appendLiteral("\"bodySize\": ");
+            epilogue.appendNumber(totals.bodySize);
+            epilogue.appendLiteral(",\n");
+            epilogue.appendLiteral("\"averageWorth\": ");
+            epilogue.appendNumber(totals.count ? totals.worth / totals.count : 0);
+            epilogue.appendLiteral("\n");
+            epilogue.appendLiteral("}\n}\n");
+            auto writeData = epilogue.toString().utf8();
+            WebCore::writeToFile(fd, writeData.data(), writeData.length());
+            WebCore::closeFile(fd);
             return;
         }
         auto entry = Entry::decodeStorageRecord(*record);
         if (!entry)
             return;
+        ++totals.count;
+        totals.worth += info.worth;
+        totals.bodySize += info.bodySize;
+
         StringBuilder json;
-        entry->asJSON(json);
-        json.append(",\n");
+        entry->asJSON(json, info);
+        json.appendLiteral(",\n");
         auto writeData = json.toString().utf8();
-        WebCore::writeToFile(dumpFileHandle, writeData.data(), writeData.length());
+        WebCore::writeToFile(fd, writeData.data(), writeData.length());
     });
 }
 

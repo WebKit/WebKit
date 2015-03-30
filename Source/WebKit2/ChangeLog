@@ -1,3 +1,31 @@
+2015-03-29  Antti Koivisto  <antti@apple.com>
+
+        Include cache entry worth to json dump
+        https://bugs.webkit.org/show_bug.cgi?id=143202
+
+        Reviewed by Darin Adler.
+
+        This is useful for analyzing cache performance.
+        Also include the body size, total item count and average worth.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::traverse):
+        (WebKit::NetworkCache::Cache::dumpContentsToFile):
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::asJSON):
+        * NetworkProcess/cache/NetworkCacheEntry.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::traverse):
+
+            Add flags for specificying what sort of information is needed.
+
+        (WebKit::NetworkCache::computeRecordWorth):
+
+            Factor to a function.
+
+        (WebKit::NetworkCache::deletionProbability):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2015-03-29  Simon Fraser  <simon.fraser@apple.com>
 
         Fix iOS scrollperf crash after a web process crash
