@@ -311,6 +311,7 @@ function installFedoraDependencies {
         gtk2-devel \
         gtk3-devel \
         harfbuzz-devel \
+	json-glib-devel \
         libXt-devel \
         libXtst-devel \
         libgudev1-devel \
@@ -319,13 +320,16 @@ function installFedoraDependencies {
         libpng-devel \
         libsecret-devel \
         libsoup-devel \
+	libv4l-devel \
         libwebp-devel \
         libxslt-devel \
         mesa-libGL-devel \
         ninja-build \
+	openssl-devel \
         pcre-devel \
         perl-Switch \
         perl-version \
+	pulseaudio-libs-devel \
         python-devel \
         orc-devel \
         ruby \
