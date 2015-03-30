@@ -35,6 +35,8 @@
 
 #else
 
+#import <AVFoundation/AVPlayer.h>
+
 @class AVOutputContext;
 @interface AVOutputContext : NSObject <NSSecureCoding>
 @property (nonatomic, readonly) NSString *deviceName;
