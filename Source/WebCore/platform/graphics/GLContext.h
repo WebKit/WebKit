@@ -57,6 +57,8 @@ public:
     virtual bool canRenderToDefaultFramebuffer() = 0;
     virtual IntSize defaultFrameBufferSize() = 0;
 
+    virtual bool isEGLContext() const = 0;
+
 #if USE(CAIRO)
     virtual cairo_device_t* cairoDevice() = 0;
 #endif

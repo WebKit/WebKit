@@ -49,6 +49,7 @@ public:
     virtual bool canRenderToDefaultFramebuffer();
     virtual IntSize defaultFrameBufferSize();
     virtual cairo_device_t* cairoDevice();
+    virtual bool isEGLContext() const { return false; }
 
 #if USE(3D_GRAPHICS)
     virtual PlatformGraphicsContext3D platformContext();

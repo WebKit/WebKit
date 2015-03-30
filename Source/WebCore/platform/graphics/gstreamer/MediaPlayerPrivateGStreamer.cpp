@@ -980,19 +980,22 @@ bool MediaPlayerPrivateGStreamer::ensureGstGLContext()
 #endif
     }
 
-    PlatformGraphicsContext3D contextHandle = GLContext::sharingContext()->platformContext();
+    GLContext* webkitContext = GLContext::sharingContext();
+    // EGL and GLX are mutually exclusive, no need for ifdefs here.
+    GstGLPlatform glPlatform = webkitContext->isEGLContext() ? GST_GL_PLATFORM_EGL : GST_GL_PLATFORM_GLX;
+
+#if USE(OPENGL_ES_2)
+    GstGLAPI glAPI = GST_GL_API_GLES2;
+#elif USE(OPENGL)
+    GstGLAPI glAPI = GST_GL_API_OPENGL;
+#else
+    ASSERT_NOT_REACHED();
+#endif
+
+    PlatformGraphicsContext3D contextHandle = webkitContext->platformContext();
     if (!contextHandle)
         return false;
-#if USE(EGL)
-    GstGLPlatform glPlatform = GST_GL_PLATFORM_EGL;
-#else
-    GstGLPlatform glPlatform = GST_GL_PLATFORM_GLX;
-#endif
-#if USE(GLES2)
-    GstGLAPI glAPI = GST_GL_API_GLES2;
-#else
-    GstGLAPI glAPI = GST_GL_API_OPENGL;
-#endif
+
     m_glContext = gst_gl_context_new_wrapped(m_glDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI);
 
     return true;

@@ -1,3 +1,25 @@
+2015-03-30  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] More GL shared context fixes
+        https://bugs.webkit.org/show_bug.cgi?id=143216
+
+        Reviewed by Carlos Garcia Campos.
+
+        Moved the GLX/EGL context tests to be done at runtime rather than
+        using build-time macros because in the GTK port at least, both EGL
+        and GLX support are mutually exclusive. Also fixed a couple wrong
+        defines (USE(GLES2) doesn't exist).
+
+        * platform/graphics/GLContext.h: Simple utility method to check if
+        the platform context is compatible with EGL APIs or not.
+        * platform/graphics/egl/GLContextEGL.h:
+        (WebCore::GLContextEGL::isEGLContext):
+        * platform/graphics/glx/GLContextGLX.h:
+        (WebCore::GLContextGLX::isEGLContext):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::ensureGstGLContext): Do
+        runtime checks and properly ensure GLES2/GL API usage.
+
 2015-03-30  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         Add support for deleting emoji on GTK
