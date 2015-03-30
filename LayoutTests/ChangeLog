@@ -1,3 +1,21 @@
+2015-03-30  Chris Dumez  <cdumez@apple.com>
+
+        Cached "Expires" header is not updated upon successful resource revalidation
+        https://bugs.webkit.org/show_bug.cgi?id=143228
+        <rdar://problem/20348059>
+
+        Reviewed by Antti Koivisto.
+
+        Add layout test to check that a cached response's "Expires" header is
+        updated from the 304 response's headers upon successful revalidation.
+
+        * http/tests/cache/disk-cache/disk-cache-revalidation-new-expire-header-expected.txt: Added.
+        * http/tests/cache/disk-cache/disk-cache-revalidation-new-expire-header.html: Added.
+        * http/tests/cache/disk-cache/resources/cache-test.js:
+        (generateTestURL):
+        (loadResource):
+        * http/tests/cache/disk-cache/resources/generate-response.cgi:
+
 2015-03-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Regression: Preview for [[null]] shouldn't be []

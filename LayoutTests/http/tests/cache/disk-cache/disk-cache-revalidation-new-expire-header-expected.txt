@@ -1,0 +1,19 @@
+Test that the 'Expires' header is updated upon successful validation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+response headers: {"Expires":"now(0)","ETag":"match"}
+response's 'Expires' header is overriden by future date in 304 response
+response source: Disk cache after validation
+
+304 response included an 'Expires' header in the future, so we should not need to revalidate this time.
+response headers: {"Expires":"now(0)","ETag":"match"}
+response's 'Expires' header is overriden by future date in 304 response
+response source: Disk cache
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

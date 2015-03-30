@@ -38,12 +38,15 @@ function makeHeaderValue(value)
     return value;
 }
 
-function generateTestURL(test, includeBody)
+function generateTestURL(test, includeBody, expiresInFutureIn304)
 {
     includeBody = typeof includeBody !== 'undefined' ? includeBody : true;
+    expiresInFutureIn304 = typeof expiresInFutureIn304 !== 'undefined' ? expiresInFutureIn304 : false;
     var uniqueTestId = Math.floor((Math.random() * 1000000000000));
-    var cgi_script = "resources/generate-response.cgi?include-body=" + (includeBody ? "1" : "0");
-    var testURL = cgi_script + "&uniqueId=" + uniqueTestId++ + "&Content-type=text/plain";
+    var testURL = "resources/generate-response.cgi?include-body=" + (includeBody ? "1" : "0");
+    if (expiresInFutureIn304)
+        testURL += "&expires-in-future-in-304=1";
+    testURL += "&uniqueId=" + uniqueTestId++ + "&Content-type=text/plain";
     for (var header in test.responseHeaders)
         testURL += '&' + header + '=' + makeHeaderValue(test.responseHeaders[header]);
     return testURL;
@@ -52,7 +55,7 @@ function generateTestURL(test, includeBody)
 function loadResource(test, onload)
 {
     if (!test.url)
-        test.url = generateTestURL(test, test.includeBody);
+        test.url = generateTestURL(test, test.includeBody, test.expiresInFutureIn304);
 
     test.xhr = new XMLHttpRequest();
     test.xhr.onload = onload;
@@ -81,6 +84,8 @@ function printResults(tests)
     for (var i = 0; i < tests.length; ++i) {
         var test = tests[i];
         debug("response headers: " + JSON.stringify(test.responseHeaders));
+        if (test.expiresInFutureIn304)
+            debug("response's 'Expires' header is overriden by future date in 304 response");
         if (test.requestHeaders)
             debug("request headers: " + JSON.stringify(test.requestHeaders));
         responseSource = internals.xhrResponseSource(test.xhr);

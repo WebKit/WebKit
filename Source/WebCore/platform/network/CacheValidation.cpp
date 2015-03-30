@@ -39,7 +39,6 @@ const char* const headersToIgnoreAfterRevalidation[] = {
     "allow",
     "connection",
     "etag",
-    "expires",
     "keep-alive",
     "last-modified"
     "proxy-authenticate",

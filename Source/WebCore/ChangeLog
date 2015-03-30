@@ -1,3 +1,35 @@
+2015-03-30  Chris Dumez  <cdumez@apple.com>
+
+        Cached "Expires" header is not updated upon successful resource revalidation
+        https://bugs.webkit.org/show_bug.cgi?id=143228
+        <rdar://problem/20348059>
+
+        Reviewed by Antti Koivisto.
+
+        Cached "Expires" header was not updated upon successful resource
+        revalidation. This affected both our disk cache and our memory cache.
+        This was caused by shouldUpdateHeaderAfterRevalidation() in
+        CacheValidation.cpp returning false for the "Expires" header.
+
+        There is a comment there stating that the list of ignored headers
+        matches Chromium's net library but that's not the case, at least not
+        anymore:
+        http://osxr.org/android/source/external/chromium/net/http/http_response_headers.cc
+
+        HTTP servers such as Apache return an "Expires" header in their 304
+        responses and the "Expires" header is potentially a new one. However,
+        our caches were ignoring the updated expiration date and kept using the
+        old one, which meant that the cached resource expired sooner than it
+        should have.
+
+        See the following Apache bugs that explain the issue:
+        https://bz.apache.org/bugzilla/show_bug.cgi?id=24884
+        https://bz.apache.org/bugzilla/show_bug.cgi?id=25123
+
+        Test: http/tests/cache/disk-cache/disk-cache-revalidation-new-expire-header.html
+
+        * platform/network/CacheValidation.cpp:
+
 2015-03-30  Antti Koivisto  <antti@apple.com>
 
         Don't cache resources that are very unlikely to be reused
