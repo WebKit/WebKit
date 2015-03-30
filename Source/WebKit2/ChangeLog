@@ -1,3 +1,19 @@
+2015-03-30  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NetworkCache] Add support for "Cache-Control: max-stale" request header
+        https://bugs.webkit.org/show_bug.cgi?id=143159
+        <rdar://problem/20333296>
+
+        Reviewed by Antti Koivisto.
+
+        Add support for "Cache-Control: max-stale" request header:
+        https://tools.ietf.org/html/rfc7234#section-5.2.1.2
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::responseHasExpired):
+        (WebKit::NetworkCache::requestRequiresRevalidation):
+        (WebKit::NetworkCache::canUse):
+
 2015-03-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL][GTK] WebKit2's generate-forwarding-headers.pl should fail if clashing headers found

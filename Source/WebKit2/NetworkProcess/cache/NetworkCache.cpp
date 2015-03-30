@@ -150,7 +150,7 @@ static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
     return false;
 }
 
-static bool responseHasExpired(const WebCore::ResourceResponse& response, std::chrono::milliseconds timestamp)
+static bool responseHasExpired(const WebCore::ResourceResponse& response, std::chrono::milliseconds timestamp, double maxStale)
 {
     if (response.cacheControlContainsNoCache())
         return true;
@@ -159,17 +159,18 @@ static bool responseHasExpired(const WebCore::ResourceResponse& response, std::c
     double age = WebCore::computeCurrentAge(response, doubleTimeStamp.count());
     double lifetime = WebCore::computeFreshnessLifetimeForHTTPFamily(response, doubleTimeStamp.count());
 
-    bool hasExpired = age > lifetime;
+    maxStale = std::isnan(maxStale) ? 0 : maxStale;
+    bool hasExpired = age - lifetime > maxStale;
 
 #ifndef LOG_DISABLED
     if (hasExpired)
-        LOG(NetworkCache, "(NetworkProcess) needsRevalidation hasExpired age=%f lifetime=%f", age, lifetime);
+        LOG(NetworkCache, "(NetworkProcess) needsRevalidation hasExpired age=%f lifetime=%f max-stale=%g", age, lifetime, maxStale);
 #endif
 
     return hasExpired;
 }
 
-static bool requestRequiresRevalidation(const WebCore::ResourceRequest& request)
+static bool responseNeedsRevalidation(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, std::chrono::milliseconds timestamp)
 {
     auto requestDirectives = WebCore::parseCacheControlDirectives(request.httpHeaderFields());
     if (requestDirectives.noCache)
@@ -178,7 +179,7 @@ static bool requestRequiresRevalidation(const WebCore::ResourceRequest& request)
     if (requestDirectives.maxAge == 0)
         return true;
 
-    return false;
+    return responseHasExpired(response, timestamp, requestDirectives.maxStale);
 }
 
 static UseDecision canUse(const Entry& entry, const WebCore::ResourceRequest& request)
@@ -192,8 +193,7 @@ static UseDecision canUse(const Entry& entry, const WebCore::ResourceRequest& re
     if (cachePolicyAllowsExpired(request.cachePolicy()))
         return UseDecision::Use;
 
-    bool needsRevalidation = requestRequiresRevalidation(request) || responseHasExpired(entry.response(), entry.timeStamp());
-    if (!needsRevalidation)
+    if (!responseNeedsRevalidation(entry.response(), request, entry.timeStamp()))
         return UseDecision::Use;
 
     bool hasValidatorFields = entry.response().hasCacheValidatorFields();

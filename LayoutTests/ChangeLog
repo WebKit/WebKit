@@ -1,3 +1,17 @@
+2015-03-30  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NetworkCache] Add support for "Cache-Control: max-stale" request header
+        https://bugs.webkit.org/show_bug.cgi?id=143159
+        <rdar://problem/20333296>
+
+        Reviewed by Antti Koivisto.
+
+        Add layout test to cover support for "Cache-Control: max-stale" request
+        header.
+
+        * http/tests/cache/disk-cache/disk-cache-request-max-stale-expected.txt: Added.
+        * http/tests/cache/disk-cache/disk-cache-request-max-stale.html: Added.
+
 2015-03-30  Jer Noble  <jer.noble@apple.com>
 
         [iOS] When Web Audio is interrupted by a phone call, it cannot be restarted.

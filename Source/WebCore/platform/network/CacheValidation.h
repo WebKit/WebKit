@@ -55,6 +55,7 @@ WEBCORE_EXPORT bool redirectChainAllowsReuse(RedirectChainCacheStatus, ReuseExpi
 
 struct CacheControlDirectives {
     double maxAge { std::numeric_limits<double>::quiet_NaN() };
+    double maxStale { std::numeric_limits<double>::quiet_NaN() };
     bool noCache { false };
     bool noStore { false };
     bool mustRevalidate { false };

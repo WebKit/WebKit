@@ -274,6 +274,21 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
                 double maxAge = directives[i].second.toDouble(&ok);
                 if (ok)
                     result.maxAge = maxAge;
+            } else if (equalIgnoringCase(directives[i].first, "max-stale")) {
+                // https://tools.ietf.org/html/rfc7234#section-5.2.1.2
+                if (!std::isnan(result.maxStale)) {
+                    // First max-stale directive wins if there are multiple ones.
+                    continue;
+                }
+                if (directives[i].second.isEmpty()) {
+                    // if no value is assigned to max-stale, then the client is willing to accept a stale response of any age.
+                    result.maxStale = std::numeric_limits<double>::max();
+                    continue;
+                }
+                bool ok;
+                double maxStale = directives[i].second.toDouble(&ok);
+                if (ok)
+                    result.maxStale = maxStale;
             }
         }
     }

@@ -1,0 +1,155 @@
+Test for 'max-stale' request header
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+running 36 tests
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"max-stale=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"max-stale=0"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=0","Age":"200"}
+request headers: {"Cache-control":"max-stale=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100","Age":"200"}
+request headers: {"Cache-control":"max-stale=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"max-stale"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"max-stale"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=0","Age":"200"}
+request headers: {"Cache-control":"max-stale"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=100","Age":"200"}
+request headers: {"Cache-control":"max-stale"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"max-stale=100"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"max-stale=100"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=0","Age":"200"}
+request headers: {"Cache-control":"max-stale=100"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100","Age":"200"}
+request headers: {"Cache-control":"max-stale=100"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"max-stale=0, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"max-stale=0, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=0","Age":"200"}
+request headers: {"Cache-control":"max-stale=0, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100","Age":"200"}
+request headers: {"Cache-control":"max-stale=0, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"max-stale, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"max-stale, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=0","Age":"200"}
+request headers: {"Cache-control":"max-stale, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100","Age":"200"}
+request headers: {"Cache-control":"max-stale, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"max-stale=100, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"max-stale=100, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=0","Age":"200"}
+request headers: {"Cache-control":"max-stale=100, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100","Age":"200"}
+request headers: {"Cache-control":"max-stale=100, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"max-stale=0, max-age=100"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"max-stale=0, max-age=100"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=0","Age":"200"}
+request headers: {"Cache-control":"max-stale=0, max-age=100"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100","Age":"200"}
+request headers: {"Cache-control":"max-stale=0, max-age=100"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"max-stale, max-age=100"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"max-stale, max-age=100"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=0","Age":"200"}
+request headers: {"Cache-control":"max-stale, max-age=100"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=100","Age":"200"}
+request headers: {"Cache-control":"max-stale, max-age=100"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"max-stale=100, max-age=100"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"max-stale=100, max-age=100"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=0","Age":"200"}
+request headers: {"Cache-control":"max-stale=100, max-age=100"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100","Age":"200"}
+request headers: {"Cache-control":"max-stale=100, max-age=100"}
+response source: Network
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
