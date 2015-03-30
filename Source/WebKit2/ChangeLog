@@ -1,3 +1,18 @@
+2015-03-29  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WK2] WKContentView should implement _selectionClipRect
+        https://bugs.webkit.org/show_bug.cgi?id=143143
+        rdar://problem/20330075
+
+        Reviewed by Benjamin Poulain.
+
+        UIKit checks if the text delegate responds to this selector
+        to retrieve the clipping rectangle for the editable element
+        where the selection is being create.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _selectionClipRect]):
+
 2015-03-29  Antti Koivisto  <antti@apple.com>
 
         Use st_mtime instead of st_atime to track file access time

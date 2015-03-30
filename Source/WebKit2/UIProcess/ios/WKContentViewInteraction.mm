@@ -805,6 +805,13 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius)
     return [_inputPeripheral assistantView];
 }
 
+- (CGRect)_selectionClipRect
+{
+    if (_assistedNodeInformation.elementType == InputType::None)
+        return CGRectZero;
+    return _assistedNodeInformation.elementRect;
+}
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer
 {
     // A long-press gesture can not be recognized while panning, but a pan can be recognized
