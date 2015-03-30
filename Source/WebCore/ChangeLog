@@ -1,3 +1,26 @@
+2015-03-27  David Hyatt  <hyatt@apple.com>
+
+        [New Block-Inside-Inline Model] Create anonymous inline blocks to hold blocks-inside-inlines.
+        https://bugs.webkit.org/show_bug.cgi?id=143145
+
+        Reviewed by Dean Jackson.
+
+        Added fast/block/inside-inlines/ tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::renderName):
+        Add support for labeling anonymous inline-blocks when dumped by the render tree.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        When the pref is set to use the new block-inside-inline model, create an anonymous inline block to
+        hold block children of RenderInlines instead of splitting flows or creating continuations.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isAnonymousInlineBlock):
+        Add the definition of isAnonymousInlineBlock (note the exclusion of Ruby, since Ruby creates anonymous
+        inline-blocks also).
+
 2015-03-30  Chris Dumez  <cdumez@apple.com>
 
         [WK2][NetworkCache] Add support for "Cache-Control: max-stale" request header

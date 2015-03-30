@@ -3656,6 +3656,8 @@ const char* RenderBlock::renderName() const
         return "RenderBlock (positioned)";
     if (isAnonymousBlock())
         return "RenderBlock (anonymous)";
+    if (isAnonymousInlineBlock())
+        return "RenderBlock (anonymous inline-block)";
     // FIXME: Temporary hack while the new generated content system is being implemented.
     if (isPseudoElement())
         return "RenderBlock (generated)";
