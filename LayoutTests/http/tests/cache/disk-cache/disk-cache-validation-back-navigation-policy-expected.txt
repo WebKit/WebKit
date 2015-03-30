@@ -30,7 +30,7 @@ response headers: {"Cache-control":"max-age=0, no-cache"}
 response source: Network
 
 response headers: {"Cache-control":"max-age=100, no-cache"}
-response source: Disk cache
+response source: Network
 
 response headers: {"ETag":"match"}
 response source: Disk cache
@@ -111,7 +111,7 @@ response headers: {"Cache-control":"max-age=0, no-cache, must-revalidate"}
 response source: Network
 
 response headers: {"Cache-control":"max-age=100, no-cache, must-revalidate"}
-response source: Disk cache
+response source: Network
 
 response headers: {"ETag":"match","Cache-control":"must-revalidate"}
 response source: Disk cache

@@ -279,7 +279,7 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     bool storeUnconditionallyForHistoryNavigation = originalRequest.priority() == WebCore::ResourceLoadPriorityVeryHigh;
     if (!storeUnconditionallyForHistoryNavigation) {
         auto currentTime = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch());
-        bool hasNonZeroLifetime = WebCore::computeFreshnessLifetimeForHTTPFamily(response, currentTime.count()) > 0;
+        bool hasNonZeroLifetime = !response.cacheControlContainsNoCache() && WebCore::computeFreshnessLifetimeForHTTPFamily(response, currentTime.count()) > 0;
 
         bool possiblyReusable = response.hasCacheValidatorFields() || hasNonZeroLifetime;
         if (!possiblyReusable)
