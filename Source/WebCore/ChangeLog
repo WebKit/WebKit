@@ -1,3 +1,46 @@
+2015-03-30  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [Threaded Compositor] Crash when animation changes frequently.
+        https://bugs.webkit.org/show_bug.cgi?id=143213
+
+        Reviewed by Simon Fraser.
+
+        CompositingCoordinator copies CoordinatedGraphicsLayerState when
+        flushing GraphicsLayer changes, and ThreadedCoordinatedCompositor passes
+        it to compositing thread.
+
+        To ensure thread-safety, we need to provide copy constructor to copy
+        Animation object in TextureMapperAnimation instead of referencing it.
+
+        Since TimingFunction and TransformOperation used by KeyframeValueList are
+        not ThreadSafeRefCounted, these should be cloned also.
+
+        No new tests needed.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::AnimationValue::AnimationValue):
+        (WebCore::FloatAnimationValue::FloatAnimationValue):
+        (WebCore::TransformAnimationValue::TransformAnimationValue):
+        (WebCore::FilterAnimationValue::FilterAnimationValue):
+        Adds deep copy constructor.
+
+        * platform/graphics/texmap/TextureMapperAnimation.cpp:
+        (WebCore::TextureMapperAnimation::TextureMapperAnimation):
+        Because the name of the animation can be AtomicString, we need to create
+        isolated version of string to ensure thread safty.
+
+        * platform/graphics/texmap/TextureMapperAnimation.h:
+        * platform/graphics/transforms/IdentityTransformOperation.h:
+        * platform/graphics/transforms/Matrix3DTransformOperation.h:
+        * platform/graphics/transforms/MatrixTransformOperation.h:
+        * platform/graphics/transforms/PerspectiveTransformOperation.h:
+        * platform/graphics/transforms/RotateTransformOperation.h:
+        * platform/graphics/transforms/ScaleTransformOperation.h:
+        * platform/graphics/transforms/SkewTransformOperation.h:
+        * platform/graphics/transforms/TransformOperation.h:
+        * platform/graphics/transforms/TranslateTransformOperation.h:
+        Adds TransformOperation::clone() for threadsafety.
+
 2015-03-30  Chris Dumez  <cdumez@apple.com>
 
         Cached "Expires" header is not updated upon successful resource revalidation

@@ -75,6 +75,12 @@ protected:
     {
     }
 
+    AnimationValue(const AnimationValue& other)
+        : m_keyTime(other.m_keyTime)
+        , m_timingFunction(other.m_timingFunction ? other.m_timingFunction->clone() : nullptr)
+    {
+    }
+
 private:
     double m_keyTime;
     RefPtr<TimingFunction> m_timingFunction;
@@ -93,6 +99,12 @@ public:
     virtual std::unique_ptr<AnimationValue> clone() const override
     {
         return std::make_unique<FloatAnimationValue>(*this);
+    }
+
+    FloatAnimationValue(const FloatAnimationValue& other)
+        : AnimationValue(other)
+        , m_value(other.m_value)
+    {
     }
 
     float value() const { return m_value; }
@@ -116,6 +128,13 @@ public:
         return std::make_unique<TransformAnimationValue>(*this);
     }
 
+    TransformAnimationValue(const TransformAnimationValue& other)
+        : AnimationValue(other)
+    {
+        for (size_t i = 0; i < other.m_value.operations().size(); ++i)
+            m_value.operations().append(other.m_value.operations()[i]->clone());
+    }
+
     const TransformOperations& value() const { return m_value; }
 
 private:
@@ -135,6 +154,13 @@ public:
     virtual std::unique_ptr<AnimationValue> clone() const override
     {
         return std::make_unique<FilterAnimationValue>(*this);
+    }
+
+    FilterAnimationValue(const FilterAnimationValue& other)
+        : AnimationValue(other)
+    {
+        for (size_t i = 0; i < other.m_value.operations().size(); ++i)
+            m_value.operations().append(other.m_value.operations()[i]->clone());
     }
 
     const FilterOperations& value() const { return m_value; }

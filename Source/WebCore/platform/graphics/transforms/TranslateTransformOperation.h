@@ -43,6 +43,11 @@ public:
         return adoptRef(new TranslateTransformOperation(tx, ty, tz, type));
     }
 
+    virtual PassRefPtr<TransformOperation> clone() const override
+    {
+        return adoptRef(new TranslateTransformOperation(m_x, m_y, m_z, m_type));
+    }
+
     double x(const FloatSize& borderBoxSize) const { return floatValueForLength(m_x, borderBoxSize.width()); }
     double y(const FloatSize& borderBoxSize) const { return floatValueForLength(m_y, borderBoxSize.height()); }
     double z(const FloatSize&) const { return floatValueForLength(m_z, 1); }

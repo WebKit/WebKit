@@ -41,6 +41,11 @@ public:
         return adoptRef(new RotateTransformOperation(x, y, z, angle, type));
     }
 
+    virtual PassRefPtr<TransformOperation> clone() const override
+    {
+        return adoptRef(new RotateTransformOperation(m_x, m_y, m_z, m_angle, m_type));
+    }
+
     double x() const { return m_x; }
     double y() const { return m_y; }
     double z() const { return m_z; }

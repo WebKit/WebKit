@@ -42,6 +42,11 @@ public:
         return adoptRef(new MatrixTransformOperation(t));
     }
 
+    virtual PassRefPtr<TransformOperation> clone() const override
+    {
+        return adoptRef(new MatrixTransformOperation(matrix()));
+    }
+
     TransformationMatrix matrix() const { return TransformationMatrix(m_a, m_b, m_c, m_d, m_e, m_f); }
 
 private:

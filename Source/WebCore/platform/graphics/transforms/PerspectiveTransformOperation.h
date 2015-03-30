@@ -39,6 +39,11 @@ public:
         return adoptRef(new PerspectiveTransformOperation(p));
     }
 
+    virtual PassRefPtr<TransformOperation> clone() const override
+    {
+        return adoptRef(new PerspectiveTransformOperation(m_p));
+    }
+
     Length perspective() const { return m_p; }
     
 private:

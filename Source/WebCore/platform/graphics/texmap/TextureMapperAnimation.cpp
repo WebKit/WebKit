@@ -213,13 +213,27 @@ TextureMapperAnimation::TextureMapperAnimation(const String& name, const Keyfram
     : m_keyframes(keyframes)
     , m_boxSize(boxSize)
     , m_animation(Animation::create(*animation))
-    , m_name(name)
+    , m_name(name.isSafeToSendToAnotherThread() ? name : name.isolatedCopy())
     , m_listsMatch(listsMatch)
     , m_startTime(startTime)
     , m_pauseTime(0)
     , m_totalRunningTime(0)
     , m_lastRefreshedTime(m_startTime)
     , m_state(PlayingState)
+{
+}
+
+TextureMapperAnimation::TextureMapperAnimation(const TextureMapperAnimation& other)
+    : m_keyframes(other.keyframes())
+    , m_boxSize(other.boxSize())
+    , m_animation(Animation::create(*other.animation()))
+    , m_name(other.name().isSafeToSendToAnotherThread() ? other.name() : other.name().isolatedCopy())
+    , m_listsMatch(other.listsMatch())
+    , m_startTime(other.startTime())
+    , m_pauseTime(other.pauseTime())
+    , m_totalRunningTime(other.m_totalRunningTime)
+    , m_lastRefreshedTime(other.m_lastRefreshedTime)
+    , m_state(other.state())
 {
 }
 

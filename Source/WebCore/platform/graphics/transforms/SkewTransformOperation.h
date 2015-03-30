@@ -36,6 +36,11 @@ public:
         return adoptRef(new SkewTransformOperation(angleX, angleY, type));
     }
 
+    virtual PassRefPtr<TransformOperation> clone() const override
+    {
+        return adoptRef(new SkewTransformOperation(m_angleX, m_angleY, m_type));
+    }
+
     double angleX() const { return m_angleX; }
     double angleY() const { return m_angleY; }
 

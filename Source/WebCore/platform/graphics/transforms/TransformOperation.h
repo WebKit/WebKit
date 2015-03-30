@@ -54,6 +54,8 @@ public:
 
     virtual ~TransformOperation() { }
 
+    virtual PassRefPtr<TransformOperation> clone() const = 0;
+
     virtual bool operator==(const TransformOperation&) const = 0;
     bool operator!=(const TransformOperation& o) const { return !(*this == o); }
 
