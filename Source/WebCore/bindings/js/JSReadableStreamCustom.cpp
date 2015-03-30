@@ -68,22 +68,22 @@ JSValue JSReadableStream::pipeThrough(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL constructJSReadableStream(ExecState* exec)
 {
+    if (exec->argumentCount() && !exec->argument(0).isObject())
+        return throwVMError(exec, createTypeError(exec, ASCIILiteral("ReadableStream constructor should get an object as argument.")));
+
     DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
     ASSERT(jsConstructor);
     ScriptExecutionContext* scriptExecutionContext = jsConstructor->scriptExecutionContext();
 
-    Ref<ReadableStreamJSSource> source = ReadableStreamJSSource::create(exec);
-    if (source->isErrored())
-        return throwVMError(exec, source->error());
 
+    Ref<ReadableStreamJSSource> source = ReadableStreamJSSource::create(exec);
     RefPtr<ReadableStream> readableStream = ReadableStream::create(*scriptExecutionContext, Ref<ReadableStreamSource>(source.get()));
 
     VM& vm = exec->vm();
     JSGlobalObject* globalObject = exec->callee()->globalObject();
     JSReadableStream* jsReadableStream = JSReadableStream::create(JSReadableStream::createStructure(vm, globalObject, JSReadableStream::createPrototype(vm, globalObject)), jsCast<JSDOMGlobalObject*>(globalObject), readableStream.releaseNonNull());
 
-    if (!source->start())
-        return throwVMError(exec, source->error());
+    source->start(exec);
 
     return JSValue::encode(jsReadableStream);
 }

@@ -1,3 +1,25 @@
+2015-03-25 Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Error storage should be moved from source to stream/reader
+        https://bugs.webkit.org/show_bug.cgi?id=143048
+
+        Reviewed by Benjamin Poulain.
+
+        This patch removes error storage from the source as it should be stored at the stream level as error access goes through the reader.
+        It removes abstract ReadableStreamSource::isErrored and the storage of JavaScript errors from ReadableStreamJSSource.
+
+        Existing tests cover most of the changes.
+        Added test case for creating readable stream from empty JS object.
+
+        * Modules/streams/ReadableStreamSource.h: Removing isErrored().
+        * bindings/js/JSReadableStreamCustom.cpp:
+        (WebCore::constructJSReadableStream): Added JS stream constructor parameters checking.
+        * bindings/js/ReadableStreamJSSource.cpp:
+        (WebCore::ReadableStreamJSSource::ReadableStreamJSSource): Removed JS stream constructor parameters checking.
+        (WebCore::ReadableStreamJSSource::start): Changed prototype of start so that start can throw errors directly.
+        (WebCore::ReadableStreamJSSource::setInternalError): Deleted.
+        * bindings/js/ReadableStreamJSSource.h: Removed m_error, setInternalError and updated start declaration.
+
 2015-03-30  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] More GL shared context fixes

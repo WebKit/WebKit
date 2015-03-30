@@ -45,4 +45,8 @@ test(function() {
 
 }, 'ReadableStream instances should have the correct list of properties');
 
+test(function() {
+    new ReadableStream({ });
+}, 'ReadableStream can be constructed with an empty object as argument');
+
 </script>

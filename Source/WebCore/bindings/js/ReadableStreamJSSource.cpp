@@ -34,6 +34,7 @@
 
 #include "JSDOMPromise.h"
 #include "JSReadableStream.h"
+#include "NotImplemented.h"
 #include <runtime/Error.h>
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/JSString.h>
@@ -68,21 +69,15 @@ Ref<ReadableStreamJSSource> ReadableStreamJSSource::create(JSC::ExecState* exec)
 
 ReadableStreamJSSource::ReadableStreamJSSource(JSC::ExecState* exec)
 {
-    if (!exec->argumentCount())
-        return;
-
-    if (!exec->argument(0).isObject()) {
-        setInternalError(exec, ASCIILiteral("ReadableStream constructor should get an object as argument."));
-        return;
+    if (exec->argumentCount()) {
+        ASSERT(exec->argument(0).isObject());
+        // FIXME: Implement parameters support;
     }
-
-    // FIXME: Implement parameters support
-    setInternalError(exec, ASCIILiteral("ReadableStream constructor does not support parameter yet."));
 }
 
-void ReadableStreamJSSource::setInternalError(JSC::ExecState* exec, const String& message)
+void ReadableStreamJSSource::start(JSC::ExecState*)
 {
-    m_error.set(exec->vm(), createTypeError(exec, message));
+    notImplemented();
 }
 
 } // namespace WebCore

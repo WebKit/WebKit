@@ -48,18 +48,10 @@ public:
     static Ref<ReadableStreamJSSource> create(JSC::ExecState*);
     ~ReadableStreamJSSource() { }
 
-    JSC::JSValue error() { return m_error.get(); }
-    bool start() { return true; }
-
-    // ReadableStreamSource API.
-    virtual bool isErrored() { return !!m_error; }
+    void start(JSC::ExecState*);
 
 private:
-    void setInternalError(JSC::ExecState*, const String&);
-
     ReadableStreamJSSource(JSC::ExecState*);
-    // m_error may be an error generated from ReadableStreamJSSource or from JS callbacks.
-    JSC::Strong<JSC::Unknown> m_error;
 };
 
 void setInternalSlotToObject(JSC::ExecState*, JSC::JSValue, JSC::PrivateName&, JSC::JSValue);

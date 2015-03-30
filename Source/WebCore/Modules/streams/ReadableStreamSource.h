@@ -55,8 +55,6 @@ public:
     {
         return true;
     }
-
-    virtual bool isErrored() { return false; }
 };
 
 }
