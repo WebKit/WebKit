@@ -107,26 +107,47 @@ private:
     
     void readTop()
     {
-        // All of the outermost arguments, except this, are definitely read.
-        for (unsigned i = m_graph.m_codeBlock->numParameters(); i-- > 1;)
-            m_read(virtualRegisterForArgument(i));
-        
-        // The stack header is read.
-        for (unsigned i = 0; i < JSStack::ThisArgument; ++i)
-            m_read(VirtualRegister(i));
-        
-        // Read all of the inline arguments and call frame headers that we didn't already capture.
-        for (InlineCallFrame* inlineCallFrame = m_node->origin.semantic.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->caller.inlineCallFrame) {
+        switch (m_node->op()) {
+        case GetMyArgumentByVal:
+        case ForwardVarargs:
+        case CallForwardVarargs:
+        case ConstructForwardVarargs: {
+            InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
+            if (!inlineCallFrame) {
+                // Read the outermost arguments and argument count.
+                for (unsigned i = m_graph.m_codeBlock->numParameters(); i-- > 1;)
+                    m_read(virtualRegisterForArgument(i));
+                m_read(VirtualRegister(JSStack::ArgumentCount));
+                break;
+            }
+            
             for (unsigned i = inlineCallFrame->arguments.size(); i-- > 1;)
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()));
-            if (inlineCallFrame->isClosureCall)
-                m_read(VirtualRegister(inlineCallFrame->stackOffset + JSStack::Callee));
             if (inlineCallFrame->isVarargs())
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + JSStack::ArgumentCount));
+            break;
         }
-
-        // Note that we don't need to do anything special for CallForwardVarargs, since it reads
-        // our arguments the same way that any effectful thing might.
+            
+        default: {
+            // All of the outermost arguments, except this, are definitely read.
+            for (unsigned i = m_graph.m_codeBlock->numParameters(); i-- > 1;)
+                m_read(virtualRegisterForArgument(i));
+        
+            // The stack header is read.
+            for (unsigned i = 0; i < JSStack::ThisArgument; ++i)
+                m_read(VirtualRegister(i));
+        
+            // Read all of the inline arguments and call frame headers that we didn't already capture.
+            for (InlineCallFrame* inlineCallFrame = m_node->origin.semantic.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->caller.inlineCallFrame) {
+                for (unsigned i = inlineCallFrame->arguments.size(); i-- > 1;)
+                    m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()));
+                if (inlineCallFrame->isClosureCall)
+                    m_read(VirtualRegister(inlineCallFrame->stackOffset + JSStack::Callee));
+                if (inlineCallFrame->isVarargs())
+                    m_read(VirtualRegister(inlineCallFrame->stackOffset + JSStack::ArgumentCount));
+            }
+            break;
+        } }
     }
     
     Graph& m_graph;

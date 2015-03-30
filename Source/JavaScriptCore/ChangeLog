@@ -1,3 +1,44 @@
+2015-03-30  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION: js/regress/inline-arguments-local-escape.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=143104
+
+        Reviewed by Geoffrey Garen.
+        
+        Created a test that is a 100% repro of the flaky failure. This test is called
+        get-my-argument-by-val-for-inlined-escaped-arguments.js. It fails all of the time because it
+        always causes the compiler to emit a GetMyArgumentByVal of the arguments object returned by
+        the inlined function. Other than that, it's the same as inline-arguments-local-escape.
+        
+        Also created three more tests for three similar, but not identical, failures.
+        
+        Then fixed the bug: PreciseLocalClobberize was assuming that if we read(Stack) then we are
+        only reading those parts of the stack that are relevant to the current semantic code origin.
+        That's false after ArgumentsEliminationPhase - we might have operations on phantom arguments,
+        like GetMyArgumentByVal, ForwardVarargs, CallForwardVarargs, and ConstructForwardVarargs, that
+        read parts of the stack associated with the inline call frame for the phantom arguments. This
+        may not be subsumed by the current semantic origin's stack area in cases that the arguments
+        were allowed to "locally" escape.
+        
+        The higher-order lesson here is that in DFG SSA IR, the current semantic origin's stack area
+        is not really a meaningful concept anymore. It is only meaningful for nodes that will read
+        the stack due to function.arguments, but there are a bunch of other ways that we could also
+        read the stack and those operations may read any stack slot. I believe that this change makes
+        PreciseLocalClobberize right: it will refine a read(Stack) from Clobberize correctly by casing
+        on node type. In future, if we add a read(Stack) to Clobberize, we'll have to make sure that
+        readTop() in PreciseLocalClobberize does the right thing.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * tests/stress/call-forward-varargs-for-inlined-escaped-arguments.js: Added.
+        * tests/stress/construct-forward-varargs-for-inlined-escaped-arguments.js: Added.
+        * tests/stress/forward-varargs-for-inlined-escaped-arguments.js: Added.
+        * tests/stress/get-my-argument-by-val-for-inlined-escaped-arguments.js: Added.
+        * tests/stress/real-forward-varargs-for-inlined-escaped-arguments.js: Added.
+
 2015-03-30  Benjamin Poulain  <benjamin@webkit.org>
 
         Start the features.json files

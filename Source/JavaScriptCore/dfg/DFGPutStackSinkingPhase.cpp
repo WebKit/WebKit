@@ -216,11 +216,6 @@ public:
                     if (verbose)
                         dataLog("Deferred at ", node, ":", deferred, "\n");
                     
-                    if (node->op() == KillStack) {
-                        deferred.operand(node->unlinkedLocal()) = ConflictingFlush;
-                        continue;
-                    }
-                    
                     if (node->op() == GetStack) {
                         // A GetStack doesn't affect anything, since we know which local we are reading
                         // from.
@@ -392,11 +387,6 @@ public:
                     break;
                 }
                     
-                case KillStack: {
-                    deferred.operand(node->unlinkedLocal()) = ConflictingFlush;
-                    break;
-                }
-                    
                 case GetStack: {
                     StackAccessData* data = node->stackAccessData();
                     FlushFormat format = deferred.operand(data->local);
@@ -493,7 +483,7 @@ public:
         }
         
         // Finally eliminate the sunken PutStacks by turning them into Phantoms. This keeps whatever
-        // type check they were doing. Also prepend KillLocals to them to ensure that we know that
+        // type check they were doing. Also prepend KillStacks to them to ensure that we know that
         // the relevant value was *not* stored to the stack.
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {

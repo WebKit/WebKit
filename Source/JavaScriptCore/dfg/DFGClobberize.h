@@ -76,6 +76,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     //   can use it for IR dumps. No promises on whether the answers are sound
     //   prior to type inference - though they probably could be if we did some
     //   small hacking.
+    //
+    // - If you do read(Stack) or read(World), then make sure that readTop() in
+    //   PreciseLocalClobberize is correct.
     
     // While read() and write() are fairly self-explanatory - they track what sorts of things the
     // node may read or write - the def() functor is more tricky. It tells you the heap locations
