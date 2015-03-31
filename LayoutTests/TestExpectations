@@ -127,7 +127,7 @@ webkit.org/b/141661 fast/text/emoji.html [ Failure ]
 webkit.org/b/142548 editing/selection/extend-by-character-007.html [ Failure ]
 
 webkit.org/b/128736 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure Pass ]
-webkit.org/b/143105 inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html [ Skip ] # Crashing
+webkit.org/b/134982 inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html [ Failure Pass ]
 
 # CSS Font Loading is not yet enabled on all platforms
 webkit.org/b/135390 fast/css/fontloader-download-error.html [ Skip ]

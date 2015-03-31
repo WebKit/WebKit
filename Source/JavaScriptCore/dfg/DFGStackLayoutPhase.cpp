@@ -175,7 +175,10 @@ public:
         
         // This register is never valid for DFG code blocks.
         codeBlock()->setActivationRegister(VirtualRegister());
-        codeBlock()->setScopeRegister(VirtualRegister());
+        if (LIKELY(!m_graph.hasDebuggerEnabled()))
+            codeBlock()->setScopeRegister(VirtualRegister());
+        else
+            codeBlock()->setScopeRegister(assign(allocation, codeBlock()->scopeRegister()));
 
         for (unsigned i = m_graph.m_inlineVariableData.size(); i--;) {
             InlineVariableData data = m_graph.m_inlineVariableData[i];

@@ -1,3 +1,38 @@
+2015-03-30  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION (r181993): inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html crashes.
+        <https://webkit.org/b/143105>
+
+        Reviewed by Filip Pizlo.
+
+        With r181993, the DFG and FTL may elide the storing of the scope register.  As a result,
+        on OSR exits from DFG / FTL frames where this elision has take place, we may get baseline
+        JIT frames that may have its scope register not set.  The Debugger's current implementation
+        which relies on the scope register is not happy about this.  For example, this results in a
+        crash in the layout test inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html.
+
+        The fix is to disable inlining when the debugger is in use.  Also, we add Flush nodes to
+        ensure that the scope register value is flushed to the register in the stack frame.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::flush):
+        - Add code to flush the scope register.
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        - Pretend that all codeBlocks are too expensive to inline if the debugger is in use, thereby
+          disabling inlining whenever the debugger is in use.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::hasDebuggerEnabled):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        - Update the DFG codeBlock's scopeRegister since it can be moved during stack layout.
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        - Update the FTL codeBlock's scopeRegister since it can be moved during stack layout.
+
 2015-03-30  Michael Saboff  <msaboff@apple.com>
 
         Fix flakey float32-repeat-out-of-bounds.js and int8-repeat-out-of-bounds.js tests for ARM64

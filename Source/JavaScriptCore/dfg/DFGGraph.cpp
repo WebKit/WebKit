@@ -74,6 +74,9 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     
     for (unsigned i = m_mustHandleValues.size(); i--;)
         m_mustHandleValues[i] = freezeFragile(plan.mustHandleValues[i]);
+
+    m_hasDebuggerEnabled = m_profiledBlock->globalObject()->hasDebugger()
+        || Options::forceDebuggerBytecodeGeneration();
 }
 
 Graph::~Graph()

@@ -322,6 +322,9 @@ static void fixFunctionBasedOnStackMaps(
             inlineCallFrame->calleeRecovery =
                 inlineCallFrame->calleeRecovery.withLocalsOffset(localsOffset);
         }
+
+        if (graph.hasDebuggerEnabled())
+            codeBlock->setScopeRegister(codeBlock->scopeRegister() + localsOffset);
     }
     
     MacroAssembler::Label stackOverflowException;
