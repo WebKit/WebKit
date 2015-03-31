@@ -1,3 +1,11 @@
+2015-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Unreviewed build fix.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        Don't include inspector files twice in debug builds.
+        InspectorAllInOne.cpp is now used on debug builds.
+
 2015-03-31  David Hyatt  <hyatt@apple.com>
 
         [New Block-Inside-Inline Model] Anonymous inline-blocks should size as though they are block-level.
