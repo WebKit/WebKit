@@ -241,6 +241,10 @@
     border-collapse: collapse;
 }
 
+.chart-pane .commits-viewer {
+    width: 100%;
+}
+
 .chart-pane .details-table td:last-child {
     padding-right: 1px;
 }

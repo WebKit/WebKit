@@ -1,5 +1,21 @@
 2015-03-31  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard should show relative change in values
+        https://bugs.webkit.org/show_bug.cgi?id=143252
+
+        Reviewed by Antti Koivisto.
+
+        When a range of values are selected, show the percentage difference between the start and the end
+        in addition to the absolute value difference. When a single point is selected, show the relative
+        difference with respect to the previous point. Use two significant figures and always show plus sign
+        when the difference is positive.
+
+        * public/v2/app.js: Compute and format the relative difference.
+        * public/v2/chart-pane.css: Don't let commits view shrink itself when they're all collapsed.
+        * public/v2/index.html: Show the relative difference.
+
+2015-03-31  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION(r180000): Changing moving average or enveloping strategy doesn't update the graph
         https://bugs.webkit.org/show_bug.cgi?id=143254
 

@@ -424,7 +424,13 @@ App.Pane = Ember.Object.extend({
             label = formatter(Math.abs(diffFromTarget)) + ' until target';
 
         var valueDelta = previousPoint ? chartData.deltaFormatter(currentPoint.value - previousPoint.value) : null;
-        return {className: className, label: label, currentValue: chartData.formatter(currentPoint.value), valueDelta: valueDelta};
+        return {
+            className: className,
+            label: label,
+            currentValue: chartData.formatter(currentPoint.value),
+            valueDelta: valueDelta,
+            relativeDelta: d3.format('+.2p')((currentPoint.value - previousPoint.value) / previousPoint.value),
+        };
     },
     _relativeDifferentToLaterPointInTimeSeries: function (currentPoint, timeSeries)
     {
