@@ -194,7 +194,7 @@ Parser<LexerType>::Parser(
     VM* vm, const SourceCode& source, FunctionParameters* parameters, 
     const Identifier& name, JSParserBuiltinMode builtinMode, 
     JSParserStrictMode strictMode, JSParserCodeType codeType, 
-    ConstructorKind defaultConstructorKind)
+    ConstructorKind defaultConstructorKind, ThisTDZMode thisTDZMode)
     : m_vm(vm)
     , m_source(&source)
     , m_hasStackOverflow(false)
@@ -209,6 +209,7 @@ Parser<LexerType>::Parser(
     , m_sourceElements(0)
     , m_parsingBuiltin(builtinMode == JSParserBuiltinMode::Builtin)
     , m_defaultConstructorKind(defaultConstructorKind)
+    , m_thisTDZMode(thisTDZMode)
 {
     m_lexer = std::make_unique<LexerType>(vm, builtinMode);
     m_lexer->setCode(source, &m_parserArena);
@@ -2293,7 +2294,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
     case THISTOKEN: {
         JSTokenLocation location(tokenLocation());
         next();
-        return context.thisExpr(location);
+        return context.thisExpr(location, m_thisTDZMode);
     }
     case IDENT: {
         JSTextPosition start = tokenStartPosition();

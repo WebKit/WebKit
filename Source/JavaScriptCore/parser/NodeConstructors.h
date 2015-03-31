@@ -107,8 +107,9 @@ namespace JSC {
     {
     }
 
-    inline ThisNode::ThisNode(const JSTokenLocation& location)
+    inline ThisNode::ThisNode(const JSTokenLocation& location, ThisTDZMode thisTDZMode)
         : ExpressionNode(location)
+        , m_shouldAlwaysEmitTDZCheck(thisTDZMode == ThisTDZMode::AlwaysCheck)
     {
     }
 

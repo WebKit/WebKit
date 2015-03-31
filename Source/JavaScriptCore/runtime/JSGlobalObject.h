@@ -83,6 +83,7 @@ class RegExpPrototype;
 class SourceCode;
 class NullGetterFunction;
 class NullSetterFunction;
+enum class ThisTDZMode;
 struct ActivationStackNode;
 struct HashTable;
 
@@ -599,7 +600,7 @@ public:
     unsigned weakRandomInteger() { return m_weakRandom.getUint32(); }
 
     UnlinkedProgramCodeBlock* createProgramCodeBlock(CallFrame*, ProgramExecutable*, JSObject** exception);
-    UnlinkedEvalCodeBlock* createEvalCodeBlock(CallFrame*, EvalExecutable*);
+    UnlinkedEvalCodeBlock* createEvalCodeBlock(CallFrame*, EvalExecutable*, ThisTDZMode);
 
 protected:
 

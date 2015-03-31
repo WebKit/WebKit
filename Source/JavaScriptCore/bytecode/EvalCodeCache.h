@@ -50,9 +50,9 @@ namespace JSC {
             return 0;
         }
         
-        EvalExecutable* getSlow(ExecState* exec, ScriptExecutable* owner, bool inStrictContext, const String& evalSource, JSScope* scope)
+        EvalExecutable* getSlow(ExecState* exec, ScriptExecutable* owner, bool inStrictContext, ThisTDZMode thisTDZMode, const String& evalSource, JSScope* scope)
         {
-            EvalExecutable* evalExecutable = EvalExecutable::create(exec, makeSource(evalSource), inStrictContext);
+            EvalExecutable* evalExecutable = EvalExecutable::create(exec, makeSource(evalSource), inStrictContext, thisTDZMode);
             if (!evalExecutable)
                 return 0;
 

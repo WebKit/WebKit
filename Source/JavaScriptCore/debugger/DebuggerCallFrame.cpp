@@ -190,7 +190,9 @@ JSValue DebuggerCallFrame::evaluate(const String& script, JSValue& exception)
     
     DebuggerEvalEnabler evalEnabler(callFrame);
     VM& vm = callFrame->vm();
-    EvalExecutable* eval = EvalExecutable::create(callFrame, makeSource(script), callFrame->codeBlock()->isStrictMode());
+    auto& codeBlock = *callFrame->codeBlock();
+    ThisTDZMode thisTDZMode = codeBlock.unlinkedCodeBlock()->constructorKind() == ConstructorKind::Derived ? ThisTDZMode::AlwaysCheck : ThisTDZMode::CheckIfNeeded;
+    EvalExecutable* eval = EvalExecutable::create(callFrame, makeSource(script), codeBlock.isStrictMode(), thisTDZMode);
     if (vm.exception()) {
         exception = vm.exception();
         vm.clearException();

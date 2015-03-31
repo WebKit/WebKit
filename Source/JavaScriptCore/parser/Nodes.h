@@ -440,10 +440,12 @@ namespace JSC {
 
     class ThisNode : public ExpressionNode {
     public:
-        ThisNode(const JSTokenLocation&);
+        ThisNode(const JSTokenLocation&, ThisTDZMode);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        bool m_shouldAlwaysEmitTDZCheck;
     };
 
     class SuperNode final : public ExpressionNode {
