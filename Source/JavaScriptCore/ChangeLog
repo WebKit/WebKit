@@ -1,3 +1,69 @@
+2015-03-31  Andreas Kling  <akling@apple.com>
+
+        Logically empty WeakBlocks should not pin down their MarkedBlocks indefinitely.
+        <https://webkit.org/b/143210>
+
+        Reviewed by Geoffrey Garen.
+
+        Since a MarkedBlock cannot be destroyed until all the WeakBlocks pointing into it are gone,
+        we had a little problem where WeakBlocks with only null pointers would still keep their
+        MarkedBlock alive.
+
+        This patch fixes that by detaching WeakBlocks from their MarkedBlock once a sweep discovers
+        that the WeakBlock contains no pointers to live objects. Ownership of the WeakBlock is passed
+        to the Heap, which will sweep the list of these detached WeakBlocks as part of a full GC,
+        destroying them once they're fully dead.
+
+        This allows the garbage collector to reclaim the 64kB MarkedBlocks much sooner, and resolves
+        a mysterious issue where doing two full garbage collections back-to-back would free additional
+        memory in the second collection.
+
+        Management of detached WeakBlocks is implemented as a Vector<WeakBlock*> in Heap, along with
+        an index of the next block in that vector that needs to be swept. The IncrementalSweeper then
+        calls into Heap::sweepNextLogicallyEmptyWeakBlock() to sweep one block at a time.
+
+        * heap/Heap.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::collectAllGarbage): Add a final pass where we sweep the logically empty WeakBlocks
+        owned by Heap, after everything else has been swept.
+
+        (JSC::Heap::notifyIncrementalSweeper): Set up an incremental sweep of logically empty WeakBlocks
+        after a full garbage collection ends. Note that we don't do this after Eden collections, since
+        they are unlikely to cause entire WeakBlocks to go empty.
+
+        (JSC::Heap::addLogicallyEmptyWeakBlock): Added. Interface for passing ownership of a WeakBlock
+        to the Heap when it's detached from a WeakSet.
+
+        (JSC::Heap::sweepAllLogicallyEmptyWeakBlocks): Helper for collectAllGarbage() that sweeps all
+        of the logically empty WeakBlocks owned by Heap.
+
+        (JSC::Heap::sweepNextLogicallyEmptyWeakBlock): Sweeps one logically empty WeakBlock if needed
+        and updates the next-logically-empty-weak-block-to-sweep index.
+
+        (JSC::Heap::lastChanceToFinalize): call sweepAllLogicallyEmptyWeakBlocks() here, since there
+        won't be another chance after this.
+
+        * heap/IncrementalSweeper.h:
+        (JSC::IncrementalSweeper::hasWork): Deleted.
+
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::fullSweep):
+        (JSC::IncrementalSweeper::doSweep):
+        (JSC::IncrementalSweeper::sweepNextBlock): Restructured IncrementalSweeper a bit to simplify
+        adding a new sweeping stage for the Heap's logically empty WeakBlocks. sweepNextBlock() is
+        changed to return a bool (true if there's more work to be done.)
+
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::sweep): This now figures out if the WeakBlock is logically empty, i.e doesn't
+        contain any pointers to live objects. The answer is stored in a new SweepResult member.
+
+        * heap/WeakBlock.h:
+        (JSC::WeakBlock::isLogicallyEmptyButNotFree): Added. Can be queried after a sweep to determine
+        if the WeakBlock could be detached from the MarkedBlock.
+
+        (JSC::WeakBlock::SweepResult::SweepResult): Deleted in favor of initializing member variables
+        when declaring them.
+
 2015-03-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         eval("this.foo") causes a crash if this had not been initialized in a derived class's constructor
