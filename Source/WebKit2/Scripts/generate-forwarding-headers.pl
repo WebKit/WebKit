@@ -109,7 +109,7 @@ sub createForwardingHeadersForFramework {
         chomp($foundIncludeStatement);
 
         if (! $foundIncludeStatement || $foundIncludeStatement ne $expectedIncludeStatement) {
-            print "[Creating forwarding header for $framework/$header]\n";
+            print "[Creating forwarding header for $framework/$header]\n" if $verbose;
             open(FORWARDING_HEADER, ">$forwardingHeaderPath") or die "Could not open $forwardingHeaderPath.";
             print FORWARDING_HEADER "$expectedIncludeStatement\n";
             close(FORWARDING_HEADER);

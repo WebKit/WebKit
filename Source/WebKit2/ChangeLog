@@ -1,3 +1,10 @@
+2015-03-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, revert accidental change by r182138.
+
+        * Scripts/generate-forwarding-headers.pl:
+        (createForwardingHeadersForFramework):
+
 2015-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build with REDIRECTED_XCOMPOSITE_WINDOW disabled in X11 platform.
