@@ -144,6 +144,13 @@ class SVN(SCM, SVNRepository):
         # FIXME: What about files which are not committed yet?
         return self._run_svn(["diff"], cwd=self.checkout_root, decode_output=False) != ""
 
+    def untracked_files(self, include_ignored_files=False):
+        status_command = [self.executable_name, "status"]
+        if include_ignored_files:
+            status_command.append("--no-ignore")
+        status_command.extend(self._patch_directories)
+        return self.run_status_and_extract_filenames(status_command, self._status_regexp("I?"))
+
     def discard_working_directory_changes(self):
         # Make sure there are no locks lying around from a previously aborted svn invocation.
         # This is slightly dangerous, as it's possible the user is running another svn process
