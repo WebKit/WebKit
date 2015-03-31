@@ -27,6 +27,7 @@
 
 #include "PlatformUtilities.h"
 #include <JavaScriptCore/InitializeThreading.h>
+#include <WebCore/CombinedURLFilters.h>
 #include <WebCore/ContentExtensionCompiler.h>
 #include <WebCore/ContentExtensionError.h>
 #include <WebCore/ContentExtensionsBackend.h>
@@ -621,10 +622,86 @@ TEST_F(ContentExtensionTest, InvalidJSON)
         ContentExtensions::ContentExtensionError::JSONInvalidRegex);
 }
 
+TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines1)
+{
+    const char* strictPrefixSeparatedMachinesFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^.*foo\"}},"
+    "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"bar$\"}},"
+    "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^[ab]+bang\"}}]";
+
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(strictPrefixSeparatedMachinesFilter);
+
+    ContentExtensions::ContentExtensionsBackend backend;
+    backend.addContentExtension("StrictPrefixSeparatedMachines1", extension);
+
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foo"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("foo://webkit.org/bar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/bar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bar://webkit.org/bar"), { ContentExtensions::ActionType::BlockLoad });
+
+    testRequest(backend, mainDocumentRequest("abang://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bbang://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("cbang://webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/bang"), { });
+    testRequest(backend, mainDocumentRequest("bang://webkit.org/"), { });
+}
+
+TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines1Partitioning)
+{
+    ContentExtensions::CombinedURLFilters combinedURLFilters;
+    ContentExtensions::URLFilterParser parser(combinedURLFilters);
+
+    // Those two share a prefix.
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^.*foo", false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("bar$", false, 1));
+
+    // Not this one.
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^[ab]+bang", false, 0));
+
+    EXPECT_EQ(2ul, combinedURLFilters.createNFAs().size());
+}
+
+TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines2)
+{
+    const char* strictPrefixSeparatedMachinesFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^foo\"}},"
+    "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^.*[a-c]+bar\"}},"
+    "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^webkit:\"}},"
+    "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"[a-c]+b+oom\"}}]";
+
+    auto extension = InMemoryCompiledContentExtension::createFromFilter(strictPrefixSeparatedMachinesFilter);
+
+    ContentExtensions::ContentExtensionsBackend backend;
+    backend.addContentExtension("StrictPrefixSeparatedMachines2", extension);
+
+    testRequest(backend, mainDocumentRequest("http://webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("foo://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("webkit://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+
+    testRequest(backend, mainDocumentRequest("http://bar.org/"), { });
+    testRequest(backend, mainDocumentRequest("http://abar.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://bbar.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://cbar.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://abcbar.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://dbar.org/"), { });
+}
+
+TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines2Partitioning)
+{
+    ContentExtensions::CombinedURLFilters combinedURLFilters;
+    ContentExtensions::URLFilterParser parser(combinedURLFilters);
+
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^foo", false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^.*[a-c]+bar", false, 1));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^webkit:", false, 2));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("[a-c]+b+oom", false, 3));
+
+    // "^foo" and "^webkit:" can be grouped, the other two have a variable prefix.
+    EXPECT_EQ(3ul, combinedURLFilters.createNFAs().size());
+}
+
 static void testPatternStatus(String pattern, ContentExtensions::URLFilterParser::ParseStatus status)
 {
-    ContentExtensions::NFA nfa;
-    ContentExtensions::URLFilterParser parser(nfa);
+    ContentExtensions::CombinedURLFilters combinedURLFilters;
+    ContentExtensions::URLFilterParser parser(combinedURLFilters);
     EXPECT_EQ(status, parser.addPattern(pattern, false, 0));
 }
     

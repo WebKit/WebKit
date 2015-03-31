@@ -1,3 +1,14 @@
+2015-03-31  Benjamin Poulain  <bpoulain@apple.com>
+
+        Content Extensions: split the state machines to minimize prefix states
+        https://bugs.webkit.org/show_bug.cgi?id=143253
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::testPatternStatus):
+
 2015-03-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Clean up Identifier factories to clarify the meaning of StringImpl*

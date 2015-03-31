@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NFANode_h
-#define NFANode_h
+#ifndef CombinedURLFilters_h
+#define CombinedURLFilters_h
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtensionsDebugging.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
+#include "NFA.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 namespace ContentExtensions {
 
-// A NFANode abstract the transition table out of a NFA state.
+class Term;
+struct PrefixTreeVertex;
 
-typedef HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> NFANodeIndexSet;
-typedef HashMap<uint16_t, NFANodeIndexSet, DefaultHash<uint16_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>> NFANodeTransitions;
-
-class NFANode {
+class WEBCORE_EXPORT CombinedURLFilters {
 public:
-    HashMap<uint16_t, NFANodeIndexSet, DefaultHash<uint16_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>> transitions;
-    NFANodeIndexSet transitionsOnAnyCharacter;
+    CombinedURLFilters();
+    ~CombinedURLFilters();
+    void addPattern(uint64_t patternId, const Vector<Term>& pattern);
 
-    Vector<uint64_t> finalRuleIds;
+    Vector<NFA> createNFAs() const;
+
+private:
+    std::unique_ptr<PrefixTreeVertex> m_prefixTreeRoot;
 };
 
-}
-
+} // namespace ContentExtensions
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
 
-#endif // NFANode_h
+#endif // CombinedURLFilters_h

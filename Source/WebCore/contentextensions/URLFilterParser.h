@@ -28,16 +28,13 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 namespace ContentExtensions {
 
-class NFA;
-
-struct PrefixTreeEntry;
+class CombinedURLFilters;
 
 class WEBCORE_EXPORT URLFilterParser {
 public:
@@ -58,13 +55,12 @@ public:
         InvalidQuantifier,
     };
     static String statusString(ParseStatus);
-    explicit URLFilterParser(NFA&);
+    explicit URLFilterParser(CombinedURLFilters&);
     ~URLFilterParser();
     ParseStatus addPattern(const String& pattern, bool patternIsCaseSensitive, uint64_t patternId);
 
 private:
-    NFA& m_nfa;
-    std::unique_ptr<PrefixTreeEntry> m_prefixTreeRoot;
+    CombinedURLFilters& m_combinedURLFilters;
 };
 
 } // namespace ContentExtensions

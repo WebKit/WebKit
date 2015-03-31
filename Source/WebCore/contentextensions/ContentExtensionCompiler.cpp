@@ -28,6 +28,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "CombinedURLFilters.h"
 #include "CompiledContentExtension.h"
 #include "ContentExtensionActions.h"
 #include "ContentExtensionError.h"
@@ -127,24 +128,17 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
         return parserError;
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    double nfaBuildTimeStart = monotonicallyIncreasingTime();
+    double patternPartitioningStart = monotonicallyIncreasingTime();
 #endif
 
     Vector<SerializedActionByte> actions;
     Vector<unsigned> actionLocations = serializeActions(parsedRuleList, actions);
     Vector<uint64_t> universalActionLocations;
 
-    Vector<NFA> nfas;
-    nfas.append(NFA());
+    CombinedURLFilters combinedURLFilters;
+    URLFilterParser urlFilterParser(combinedURLFilters);
     bool ignorePreviousRulesSeen = false;
     for (unsigned ruleIndex = 0; ruleIndex < parsedRuleList.size(); ++ruleIndex) {
-
-        // FIXME: Tune this better and adjust ContentExtensionTest.MultiDFA accordingly.
-        if (nfas[nfas.size() - 1].graphSize() > 400)
-            nfas.append(NFA());
-
-        NFA& lastNFA = nfas[nfas.size() - 1];
-        URLFilterParser urlFilterParser(lastNFA);
         const ContentExtensionRule& contentExtensionRule = parsedRuleList[ruleIndex];
         const Trigger& trigger = contentExtensionRule.trigger();
         ASSERT(trigger.urlFilter.length());
@@ -154,11 +148,12 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
         URLFilterParser::ParseStatus status = urlFilterParser.addPattern(trigger.urlFilter, trigger.urlFilterIsCaseSensitive, actionLocationAndFlags);
 
         if (status == URLFilterParser::MatchesEverything) {
+
             if (ignorePreviousRulesSeen)
                 return ContentExtensionError::RegexMatchesEverythingAfterIgnorePreviousRules;
             universalActionLocations.append(actionLocationAndFlags);
         }
-        
+
         if (status != URLFilterParser::Ok && status != URLFilterParser::MatchesEverything) {
             dataLogF("Error while parsing %s: %s\n", trigger.urlFilter.utf8().data(), URLFilterParser::statusString(status).utf8().data());
             return ContentExtensionError::JSONInvalidRegex;
@@ -167,6 +162,17 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
         if (contentExtensionRule.action().type() == ActionType::IgnorePreviousRules)
             ignorePreviousRulesSeen = true;
     }
+
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+    double patternPartitioningEnd = monotonicallyIncreasingTime();
+    dataLogF("    Time spent partitioning the rules into groups: %f\n", (patternPartitioningEnd - patternPartitioningStart));
+#endif
+
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+    double nfaBuildTimeStart = monotonicallyIncreasingTime();
+#endif
+
+    Vector<NFA> nfas = combinedURLFilters.createNFAs();
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double nfaBuildTimeEnd = monotonicallyIncreasingTime();
@@ -202,10 +208,6 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
         DFABytecodeCompiler compiler(dfa, bytecode);
         compiler.compile();
     }
-
-#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-    dfa.debugPrintDot();
-#endif
 
     client.writeBytecode(WTF::move(bytecode));
     client.writeActions(WTF::move(actions));

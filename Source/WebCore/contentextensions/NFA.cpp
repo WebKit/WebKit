@@ -81,10 +81,10 @@ void NFA::addTransitionsOnAnyCharacter(unsigned from, unsigned to)
         transitionSlot.value.remove(to);
 }
 
-void NFA::setFinal(unsigned node, uint64_t ruleId)
+void NFA::setActions(unsigned node, const ActionSet& actions)
 {
-    if (!m_nodes[node].finalRuleIds.contains(ruleId))
-        m_nodes[node].finalRuleIds.append(ruleId);
+    ASSERT_WITH_MESSAGE(m_nodes[node].finalRuleIds.isEmpty(), "The final state should only be defined once.");
+    copyToVector(actions, m_nodes[node].finalRuleIds);
 }
 
 unsigned NFA::graphSize() const
@@ -101,13 +101,6 @@ void NFA::restoreToGraphSize(unsigned size)
 }
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-
-void NFA::addRuleId(unsigned node, uint64_t ruleId)
-{
-    if (!m_nodes[node].ruleIds.contains(ruleId))
-        m_nodes[node].ruleIds.append(ruleId);
-}
-
 static void printRange(bool firstRange, uint16_t rangeStart, uint16_t rangeEnd, uint16_t epsilonTransitionCharacter)
 {
     if (!firstRange)
@@ -180,17 +173,6 @@ void NFA::debugPrintDot() const
     dataLogF("    {\n");
     for (unsigned i = 0; i < m_nodes.size(); ++i) {
         dataLogF("         %d [label=<Node %d", i, i);
-
-        const Vector<uint64_t>& originalRules = m_nodes[i].ruleIds;
-        if (!originalRules.isEmpty()) {
-            dataLogF("<BR/>(Rules: ");
-            for (unsigned ruleIndex = 0; ruleIndex < originalRules.size(); ++ruleIndex) {
-                if (ruleIndex)
-                    dataLogF(", ");
-                dataLogF("%llu", originalRules[ruleIndex]);
-            }
-            dataLogF(")");
-        }
 
         const Vector<uint64_t>& finalRules = m_nodes[i].finalRuleIds;
         if (!finalRules.isEmpty()) {

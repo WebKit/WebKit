@@ -1029,6 +1029,9 @@
 		26C15CF71857E15E00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 26C15CF51857E15D00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.h */; };
 		26C17A3E1491D2D400D12BA2 /* FileSystemIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 26C17A3C1491D2D400D12BA2 /* FileSystemIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		26C17A3F1491D2D400D12BA2 /* FileSystemIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26C17A3D1491D2D400D12BA2 /* FileSystemIOS.mm */; };
+		26E944D81AC4B2DD007B85B5 /* CombinedURLFilters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26E944D41AC4B2DD007B85B5 /* CombinedURLFilters.cpp */; };
+		26E944D91AC4B2DD007B85B5 /* CombinedURLFilters.h in Headers */ = {isa = PBXBuildFile; fileRef = 26E944D51AC4B2DD007B85B5 /* CombinedURLFilters.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		26E944DD1AC4B4EA007B85B5 /* Term.h in Headers */ = {isa = PBXBuildFile; fileRef = 26E944DC1AC4B4EA007B85B5 /* Term.h */; };
 		26E98A10130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */; };
 		26F0C8971A2E724B002794F8 /* ContentExtensionParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F0C8951A2E724B002794F8 /* ContentExtensionParser.cpp */; };
 		26F0C8981A2E724B002794F8 /* ContentExtensionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F0C8961A2E724B002794F8 /* ContentExtensionParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8121,6 +8124,9 @@
 		26C15CF51857E15D00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceHandleCFURLConnectionDelegateWithOperationQueue.h; sourceTree = "<group>"; };
 		26C17A3C1491D2D400D12BA2 /* FileSystemIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystemIOS.h; path = ios/FileSystemIOS.h; sourceTree = "<group>"; };
 		26C17A3D1491D2D400D12BA2 /* FileSystemIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSystemIOS.mm; path = ios/FileSystemIOS.mm; sourceTree = "<group>"; };
+		26E944D41AC4B2DD007B85B5 /* CombinedURLFilters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombinedURLFilters.cpp; sourceTree = "<group>"; };
+		26E944D51AC4B2DD007B85B5 /* CombinedURLFilters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombinedURLFilters.h; sourceTree = "<group>"; };
+		26E944DC1AC4B4EA007B85B5 /* Term.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Term.h; sourceTree = "<group>"; };
 		26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecASCIIFastPath.h; sourceTree = "<group>"; };
 		26F0C8951A2E724B002794F8 /* ContentExtensionParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensionParser.cpp; sourceTree = "<group>"; };
 		26F0C8961A2E724B002794F8 /* ContentExtensionParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionParser.h; sourceTree = "<group>"; };
@@ -15511,15 +15517,17 @@
 		26F0C8901A2D79CB002794F8 /* contentextensions */ = {
 			isa = PBXGroup;
 			children = (
-				51B45D1E1AB8D1E200117CD2 /* ContentExtension.cpp */,
-				51B45D1F1AB8D1E200117CD2 /* ContentExtension.h */,
+				26E944D41AC4B2DD007B85B5 /* CombinedURLFilters.cpp */,
+				26E944D51AC4B2DD007B85B5 /* CombinedURLFilters.h */,
 				7C93F3471AA6BA5E00A98BAB /* CompiledContentExtension.cpp */,
 				7C93F3481AA6BA5E00A98BAB /* CompiledContentExtension.h */,
+				51B45D1E1AB8D1E200117CD2 /* ContentExtension.cpp */,
+				51B45D1F1AB8D1E200117CD2 /* ContentExtension.h */,
 				5CDFA6C71AA4F2DA00EA8746 /* ContentExtensionActions.h */,
-				7CFDC57A1AC1D80500E24A57 /* ContentExtensionError.cpp */,
-				7CFDC57B1AC1D80500E24A57 /* ContentExtensionError.h */,
 				7C93F34B1AA6BF0700A98BAB /* ContentExtensionCompiler.cpp */,
 				7C93F34C1AA6BF0700A98BAB /* ContentExtensionCompiler.h */,
+				7CFDC57A1AC1D80500E24A57 /* ContentExtensionError.cpp */,
+				7CFDC57B1AC1D80500E24A57 /* ContentExtensionError.h */,
 				26F0C8951A2E724B002794F8 /* ContentExtensionParser.cpp */,
 				26F0C8961A2E724B002794F8 /* ContentExtensionParser.h */,
 				26F0C8991A2EC110002794F8 /* ContentExtensionRule.cpp */,
@@ -15540,6 +15548,7 @@
 				269397201A4A412F00E8349D /* NFANode.h */,
 				267725FA1A5B3AD9003C24DD /* NFAToDFA.cpp */,
 				267725FB1A5B3AD9003C24DD /* NFAToDFA.h */,
+				26E944DC1AC4B4EA007B85B5 /* Term.h */,
 				267726021A5DF6F2003C24DD /* URLFilterParser.cpp */,
 				267726031A5DF6F2003C24DD /* URLFilterParser.h */,
 			);
@@ -26122,6 +26131,7 @@
 				436708CF12D9CA4B00044234 /* RenderSVGResourceClipper.h in Headers */,
 				436708D112D9CA4B00044234 /* RenderSVGResourceContainer.h in Headers */,
 				436708D312D9CA4B00044234 /* RenderSVGResourceFilter.h in Headers */,
+				26E944DD1AC4B4EA007B85B5 /* Term.h in Headers */,
 				436708D512D9CA4B00044234 /* RenderSVGResourceFilterPrimitive.h in Headers */,
 				436708D712D9CA4B00044234 /* RenderSVGResourceGradient.h in Headers */,
 				436708D912D9CA4B00044234 /* RenderSVGResourceLinearGradient.h in Headers */,
@@ -27062,6 +27072,7 @@
 				A14832BF187F652C00DA63A6 /* WKGraphics.h in Headers */,
 				A14832C1187F657A00DA63A6 /* WKTypes.h in Headers */,
 				A14832C3187F65DF00DA63A6 /* WKUtilities.h in Headers */,
+				26E944D91AC4B2DD007B85B5 /* CombinedURLFilters.h in Headers */,
 				A14832C4187F663C00DA63A6 /* WKView.h in Headers */,
 				A14832C6187F668F00DA63A6 /* WKViewPrivate.h in Headers */,
 				379919971200DDF400EA041C /* WOFFFileFormat.h in Headers */,
@@ -28828,6 +28839,7 @@
 				BCD9C2650C17AA67005C90A2 /* JSNodeListCustom.cpp in Sources */,
 				1A37636B1A2E68BB009A7EE2 /* StorageNamespaceProvider.cpp in Sources */,
 				33503CA310179AD7003B47E1 /* JSNotification.cpp in Sources */,
+				26E944D81AC4B2DD007B85B5 /* CombinedURLFilters.cpp in Sources */,
 				33503CA510179AD7003B47E1 /* JSNotificationCenter.cpp in Sources */,
 				31EC1E2814FF60EE00C94662 /* JSNotificationPermissionCallback.cpp in Sources */,
 				7E46F6FA1627A2CA00062223 /* JSOESElementIndexUint.cpp in Sources */,
