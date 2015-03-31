@@ -1,3 +1,21 @@
+2015-03-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Object type restrictions on a first parameter of several Object.* functions are relaxed
+        https://bugs.webkit.org/show_bug.cgi?id=142937
+
+        Reviewed by Darin Adler.
+
+        Several LayoutTests are updated with the new behavior.
+        Test cases in IETestCenter contain test for the outdated behavior.
+        But IETestCenter is brought from the external source, so instead of modifying it,
+        we mark them as Failure in TestExpectations.
+
+        * TestExpectations:
+        * js/dom/getOwnPropertyDescriptor-expected.txt:
+        * js/prototypes-expected.txt:
+        * js/resources/getOwnPropertyDescriptor.js:
+        * js/script-tests/prototypes.js:
+
 2015-03-30  David Hyatt  <hyatt@apple.com>
 
         [New Block-Inside-Inline Model] Make sure line breaks occur before and after the anonymous inline-block.

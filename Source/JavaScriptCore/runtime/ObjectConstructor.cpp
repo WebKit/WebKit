@@ -148,10 +148,10 @@ public:
             return StackVisitor::Continue;
         }
 
-    if (m_object->allowsAccessFrom(visitor->callFrame()))
-        m_result = JSValue::encode(m_object->prototype());
-    return StackVisitor::Done;
-}
+        if (m_object->allowsAccessFrom(visitor->callFrame()))
+            m_result = JSValue::encode(m_object->prototype());
+        return StackVisitor::Done;
+    }
 
 private:
     bool m_hasSkippedFirstFrame;
@@ -161,9 +161,9 @@ private:
 
 EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)
 {
-    if (!exec->argument(0).isObject())
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Requested prototype of a value that is not an object.")));
-    JSObject* object = asObject(exec->argument(0));
+    JSObject* object = exec->argument(0).toObject(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsNull());
     ObjectConstructorGetPrototypeOfFunctor functor(object);
     exec->iterate(functor);
     return functor.result();
@@ -171,12 +171,12 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState* exec)
 {
-    if (!exec->argument(0).isObject())
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Requested property descriptor of a value that is not an object.")));
+    JSObject* object = exec->argument(0).toObject(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsNull());
     auto propertyName = exec->argument(1).toPropertyKey(exec);
     if (exec->hadException())
         return JSValue::encode(jsNull());
-    JSObject* object = asObject(exec->argument(0));
     PropertyDescriptor descriptor;
     if (!object->getOwnPropertyDescriptor(exec, propertyName, descriptor))
         return JSValue::encode(jsUndefined());
@@ -203,10 +203,11 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState
 // FIXME: Use the enumeration cache.
 EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState* exec)
 {
-    if (!exec->argument(0).isObject())
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Requested property names of a value that is not an object.")));
+    JSObject* object = exec->argument(0).toObject(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsNull());
     PropertyNameArray properties(exec);
-    asObject(exec->argument(0))->methodTable(exec->vm())->getOwnPropertyNames(asObject(exec->argument(0)), exec, properties, IncludeDontEnumProperties);
+    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, IncludeDontEnumProperties);
     JSArray* names = constructEmptyArray(exec, 0);
     size_t numProperties = properties.size();
     for (size_t i = 0; i < numProperties; i++)
@@ -217,10 +218,11 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState* exe
 // FIXME: Use the enumeration cache.
 EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec)
 {
-    if (!exec->argument(0).isObject())
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Requested keys of a value that is not an object.")));
+    JSObject* object = exec->argument(0).toObject(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsNull());
     PropertyNameArray properties(exec);
-    asObject(exec->argument(0))->methodTable(exec->vm())->getOwnPropertyNames(asObject(exec->argument(0)), exec, properties, ExcludeDontEnumProperties);
+    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, ExcludeDontEnumProperties);
     JSArray* keys = constructEmptyArray(exec, 0);
     size_t numProperties = properties.size();
     for (size_t i = 0; i < numProperties; i++)
@@ -385,10 +387,10 @@ EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
 {
-    // 1. If Type(O) is not Object throw a TypeError exception.
+    // 1. If Type(O) is not Object, return O.
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Object.seal can only be called on Objects.")));
+        return JSValue::encode(obj);
     JSObject* object = asObject(obj);
 
     if (isJSFinalObject(object)) {
@@ -422,10 +424,10 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(ExecState* exec)
 {
-    // 1. If Type(O) is not Object throw a TypeError exception.
+    // 1. If Type(O) is not Object, return O.
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Object.freeze can only be called on Objects.")));
+        return JSValue::encode(obj);
     JSObject* object = asObject(obj);
 
     if (isJSFinalObject(object) && !hasIndexedProperties(object->indexingType())) {
@@ -465,17 +467,17 @@ EncodedJSValue JSC_HOST_CALL objectConstructorPreventExtensions(ExecState* exec)
 {
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Object.preventExtensions can only be called on Objects.")));
+        return JSValue::encode(obj);
     asObject(obj)->preventExtensions(exec->vm());
     return JSValue::encode(obj);
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState* exec)
 {
-    // 1. If Type(O) is not Object throw a TypeError exception.
+    // 1. If Type(O) is not Object, return true.
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Object.isSealed can only be called on Objects.")));
+        return JSValue::encode(jsBoolean(true));
     JSObject* object = asObject(obj);
 
     if (isJSFinalObject(object))
@@ -502,10 +504,10 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState* exec)
 {
-    // 1. If Type(O) is not Object throw a TypeError exception.
+    // 1. If Type(O) is not Object, return true.
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Object.isFrozen can only be called on Objects.")));
+        return JSValue::encode(jsBoolean(true));
     JSObject* object = asObject(obj);
 
     if (isJSFinalObject(object))
@@ -535,7 +537,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsExtensible(ExecState* exec)
 {
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Object.isExtensible can only be called on Objects.")));
+        return JSValue::encode(jsBoolean(false));
     return JSValue::encode(jsBoolean(asObject(obj)->isExtensible()));
 }
 

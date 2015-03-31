@@ -501,3 +501,17 @@ webkit.org/b/114280 svg/animations/smil-leak-elements.svg [ Pass Failure ]
 webkit.org/b/142894 contentfiltering/block-after-add-data.html [ Skip ]
 
 webkit.org/b/143085 media/track/track-mode.html [ Pass Timeout ]
+
+# In ES6, Object type restrictions on a first parameter of several Object.* functions are relaxed.
+webkit.org/b/142937 ietestcenter/Javascript/15.2.3.2-1.html [ Failure ]
+webkit.org/b/142937 ietestcenter/Javascript/15.2.3.3-1.html [ Failure ]
+webkit.org/b/142937 ietestcenter/Javascript/15.2.3.4-1.html [ Failure ]
+webkit.org/b/142937 ietestcenter/Javascript/15.2.3.8-1.html [ Failure ]
+webkit.org/b/142937 ietestcenter/Javascript/15.2.3.9-1.html [ Failure ]
+webkit.org/b/142937 ietestcenter/Javascript/15.2.3.10-1.html [ Failure ]
+webkit.org/b/142937 ietestcenter/Javascript/15.2.3.11-1.html [ Failure ]
+webkit.org/b/142937 ietestcenter/Javascript/15.2.3.12-1.html [ Failure ]
+webkit.org/b/142937 ietestcenter/Javascript/15.2.3.13-1.html [ Failure ]
+webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-1.html [ Failure ]
+webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-2.html [ Failure ]
+webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-3.html [ Failure ]

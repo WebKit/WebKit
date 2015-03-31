@@ -1,3 +1,57 @@
+2015-03-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Object type restrictions on a first parameter of several Object.* functions are relaxed
+        https://bugs.webkit.org/show_bug.cgi?id=142937
+
+        Reviewed by Darin Adler.
+
+        In ES6, Object type restrictions on a first parameter of several Object.* functions are relaxed.
+        In ES5 or prior, when a first parameter is not object type, these functions raise TypeError.
+        But now, several functions perform ToObject onto a non-object parameter.
+        And others behaves as if a parameter is a non-extensible ordinary object with no own properties.
+        It is described in ES6 Annex E.
+        Functions different from ES5 are following.
+
+        1. An attempt is make to coerce the argument using ToObject.
+            Object.getOwnPropertyDescriptor
+            Object.getOwnPropertyNames
+            Object.getPrototypeOf
+            Object.keys
+
+        2. Treated as if it was a non-extensible ordinary object with no own properties.
+            Object.freeze
+            Object.isExtensible
+            Object.isFrozen
+            Object.isSealed
+            Object.preventExtensions
+            Object.seal
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::operator()):
+        (JSC::objectConstructorGetPrototypeOf):
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::objectConstructorGetOwnPropertyNames):
+        (JSC::objectConstructorKeys):
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorPreventExtensions):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        (JSC::objectConstructorIsExtensible):
+        * tests/stress/object-freeze-accept-non-object.js: Added.
+        * tests/stress/object-get-own-property-descriptor-perform-to-object.js: Added.
+        (canary):
+        * tests/stress/object-get-own-property-names-perform-to-object.js: Added.
+        (compare):
+        * tests/stress/object-get-prototype-of-perform-to-object.js: Added.
+        * tests/stress/object-is-extensible-accept-non-object.js: Added.
+        * tests/stress/object-is-frozen-accept-non-object.js: Added.
+        * tests/stress/object-is-sealed-accept-non-object.js: Added.
+        * tests/stress/object-keys-perform-to-object.js: Added.
+        (compare):
+        * tests/stress/object-prevent-extensions-accept-non-object.js: Added.
+        * tests/stress/object-seal-accept-non-object.js: Added.
+
 2015-03-31  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: add 2D/WebGL canvas instrumentation infrastructure

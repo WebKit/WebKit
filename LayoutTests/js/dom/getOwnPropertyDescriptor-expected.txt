@@ -201,12 +201,12 @@ PASS Object.getOwnPropertyDescriptor(objectWithAccessor, 'accessor').hasOwnPrope
 PASS Object.getOwnPropertyDescriptor(objectWithAccessor, 'accessor').hasOwnProperty('writable') is false
 PASS Object.getOwnPropertyDescriptor(objectWithAccessor, 'accessor').enumerable is true
 PASS Object.getOwnPropertyDescriptor(objectWithAccessor, 'accessor').configurable is true
-PASS Object.getOwnPropertyDescriptor(null) threw exception TypeError: Requested property descriptor of a value that is not an object..
-PASS Object.getOwnPropertyDescriptor(undefined) threw exception TypeError: Requested property descriptor of a value that is not an object..
-PASS Object.getOwnPropertyDescriptor(1) threw exception TypeError: Requested property descriptor of a value that is not an object..
-PASS Object.getOwnPropertyDescriptor('') threw exception TypeError: Requested property descriptor of a value that is not an object..
-PASS Object.getOwnPropertyDescriptor(true) threw exception TypeError: Requested property descriptor of a value that is not an object..
-PASS Object.getOwnPropertyDescriptor(false) threw exception TypeError: Requested property descriptor of a value that is not an object..
+PASS Object.getOwnPropertyDescriptor(null) threw exception TypeError: null is not an object (evaluating 'Object.getOwnPropertyDescriptor(null)').
+PASS Object.getOwnPropertyDescriptor(undefined) threw exception TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(undefined)').
+PASS Object.getOwnPropertyDescriptor(1) is undefined
+PASS Object.getOwnPropertyDescriptor('') is undefined
+PASS Object.getOwnPropertyDescriptor(true) is undefined
+PASS Object.getOwnPropertyDescriptor(false) is undefined
 Checking property ordering
 PASS property is 'value'
 PASS property is 'writable'

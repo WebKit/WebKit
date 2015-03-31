@@ -74,10 +74,10 @@ descriptorShouldBe("objectWithAccessor", "'accessor'", {"set": "setterFunc", "ge
 
 shouldThrow("Object.getOwnPropertyDescriptor(null)");
 shouldThrow("Object.getOwnPropertyDescriptor(undefined)");
-shouldThrow("Object.getOwnPropertyDescriptor(1)");
-shouldThrow("Object.getOwnPropertyDescriptor('')");
-shouldThrow("Object.getOwnPropertyDescriptor(true)");
-shouldThrow("Object.getOwnPropertyDescriptor(false)");
+shouldBe("Object.getOwnPropertyDescriptor(1)", "undefined");
+shouldBe("Object.getOwnPropertyDescriptor('')", "undefined");
+shouldBe("Object.getOwnPropertyDescriptor(true)", "undefined");
+shouldBe("Object.getOwnPropertyDescriptor(false)", "undefined");
 
 debug("Checking property ordering");
 var normalOrder = ["'value'", "'writable'", "'enumerable'", "'configurable'"];
