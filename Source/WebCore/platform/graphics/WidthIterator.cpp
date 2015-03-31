@@ -108,8 +108,10 @@ static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int&
         return 0;
 
     int glyphBufferSize = glyphBuffer->size();
-    if (glyphBuffer->size() <= lastGlyphCount + 1)
+    if (glyphBuffer->size() <= lastGlyphCount + 1) {
+        lastGlyphCount = glyphBufferSize;
         return 0;
+    }
 
     GlyphBufferAdvance* advances = glyphBuffer->advances(0);
     float widthDifference = 0;
@@ -145,6 +147,19 @@ static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int&
         glyphBuffer->advances(spaceOffset)->setWidth(originalAdvances.advanceAtCharacter);
     }
     charactersTreatedAsSpace.clear();
+
+#if PLATFORM(MAC) || PLATFORM(IOS)
+    // Workaround for <rdar://problem/20230073> FIXME: Please remove this when no longer needed.
+    GlyphBufferGlyph* glyphs = glyphBuffer->glyphs(0);
+    int filteredIndex = lastGlyphCount;
+    for (int i = lastGlyphCount; i < glyphBufferSize; ++i) {
+        glyphs[filteredIndex] = glyphs[i];
+        advances[filteredIndex] = advances[i];
+        if (glyphs[filteredIndex] != kCGFontIndexInvalid)
+            ++filteredIndex;
+    }
+    glyphBufferSize = filteredIndex;
+#endif
 
     for (int i = lastGlyphCount; i < glyphBufferSize; ++i)
         widthDifference += advances[i].width();
@@ -207,7 +222,8 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
         if (font != lastFontData && width) {
             if (shouldApplyFontTransforms()) {
                 m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, lastFontData, *this, m_typesettingFeatures, charactersTreatedAsSpace);
-                lastGlyphCount = glyphBuffer->size(); // applyFontTransforms doesn't update when there had been only one glyph.
+                if (glyphBuffer)
+                    glyphBuffer->shrink(lastGlyphCount);
             }
 
             lastFontData = font;
@@ -325,8 +341,11 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
         }
     }
 
-    if (shouldApplyFontTransforms())
+    if (shouldApplyFontTransforms()) {
         m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, lastFontData, *this, m_typesettingFeatures, charactersTreatedAsSpace);
+        if (glyphBuffer)
+            glyphBuffer->shrink(lastGlyphCount);
+    }
 
     unsigned consumedCharacters = textIterator.currentCharacter() - m_currentCharacter;
     m_currentCharacter = textIterator.currentCharacter();

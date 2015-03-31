@@ -202,6 +202,18 @@ public:
         return (*m_offsetsInString)[index];
     }
 
+    void shrink(int truncationPoint)
+    {
+        m_font.shrink(truncationPoint);
+        m_glyphs.shrink(truncationPoint);
+        m_advances.shrink(truncationPoint);
+        if (m_offsetsInString)
+            m_offsetsInString->shrink(truncationPoint);
+#if PLATFORM(WIN)
+        m_offsets.shrink(truncationPoint);
+#endif
+    }
+
 private:
     void swap(int index1, int index2)
     {

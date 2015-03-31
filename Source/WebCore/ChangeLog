@@ -1,3 +1,27 @@
+2015-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Crash in CGContextShowGlyphsWithAdvances when passing kCGFontIndexInvalid
+        https://bugs.webkit.org/show_bug.cgi?id=143114
+
+        This is a workaround for <rdar://problem/20230073>. Please remove when it is no longer necessary.
+
+        Reviewed by Alexey Proskuryakov.
+
+        Covered by:
+        compositing/regions/floated-region-with-transformed-child.html
+        compositing/regions/floated-region-with-transformed-child-expected.html
+        fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-005.html
+        fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-005-expected.html
+        fast/regions/overflow/overflow-content-transform-rotate.html
+        fast/regions/overflow/overflow-content-transform-rotate-expected.html
+
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::shrink): Performing shaping may remove glyphs, so we need to shrink the GlyphBuffer.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::applyFontTransforms): Filter out kCGFontIndexInvalid.
+        (WebCore::WidthIterator::advanceInternal): Moved code into applyFontTransforms, and trigger the
+        shrink of the GlyphBuffer.
+
 2015-03-31  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r173484): Reducing content of scrollable region does not reset scroll 
