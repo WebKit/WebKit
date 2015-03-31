@@ -173,8 +173,28 @@ typedef struct {
 {
     _minimumSize = size;
 
+    CGFloat oldDocumentLeftFraction = 0;
+    CGFloat oldDocumentTopFraction = 0;
+    CGSize contentSize = _scrollView.contentSize;
+    if (contentSize.width && contentSize.height) {
+        CGPoint contentOffset = _scrollView.contentOffset;
+        UIEdgeInsets contentInset = _scrollView.contentInset;
+        oldDocumentLeftFraction = (contentOffset.x + contentInset.left) / contentSize.width;
+        oldDocumentTopFraction = (contentOffset.y + contentInset.top) / contentSize.height;
+    }
+
     [self _computePageAndDocumentFrames];
-    [self _revalidateViews];
+
+    // FIXME: This dispatch_async is unnecessary except to work around rdar://problem/15035620.
+    // Once that is resolved, we should do the setContentOffset without the dispatch_async.
+    RetainPtr<WKPDFView> retainedSelf = self;
+    dispatch_async(dispatch_get_main_queue(), [retainedSelf, oldDocumentLeftFraction, oldDocumentTopFraction] {
+        CGSize contentSize = retainedSelf->_scrollView.contentSize;
+        UIEdgeInsets contentInset = retainedSelf->_scrollView.contentInset;
+        [retainedSelf->_scrollView setContentOffset:CGPointMake((oldDocumentLeftFraction * contentSize.width) - contentInset.left, (oldDocumentTopFraction * contentSize.height) - contentInset.top) animated:NO];
+
+        [retainedSelf _revalidateViews];
+    });
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView

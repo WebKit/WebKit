@@ -1,3 +1,15 @@
+2015-03-31  Timothy Horton  <timothy_horton@apple.com>
+
+        [iOS] Rotating PDF in Safari scrolls to the wrong position
+        https://bugs.webkit.org/show_bug.cgi?id=143259
+        <rdar://problem/19872693>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_setMinimumSize:]):
+        Maintan the relative top/left within the rescaled document.
+
 2015-03-31  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] Extend ProcessThrottler use to the NetworkProcess
