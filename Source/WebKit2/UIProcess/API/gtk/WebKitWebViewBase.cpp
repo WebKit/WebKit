@@ -67,7 +67,7 @@
 #include "WebFullScreenManagerProxy.h"
 #endif
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(X11)
 #include <gdk/gdkx.h>
 #endif
 
@@ -541,6 +541,9 @@ static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* 
 
     return true;
 #else
+    UNUSED_PARAM(webViewBase);
+    UNUSED_PARAM(cr);
+    UNUSED_PARAM(clipRect);
     return false;
 #endif
 }
@@ -639,6 +642,8 @@ static void resizeWebKitWebViewBaseFromAllocation(WebKitWebViewBase* webViewBase
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (sizeChanged && priv->redirectedWindow && drawingArea && drawingArea->isInAcceleratedCompositingMode())
         priv->redirectedWindow->resize(viewRect.size());
+#else
+    UNUSED_PARAM(sizeChanged);
 #endif
 
     if (drawingArea)
