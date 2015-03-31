@@ -1,3 +1,12 @@
+2015-03-31  Dean Jackson  <dino@apple.com>
+
+        accessibility/aria-hidden-hides-all-elements.html fails on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=143275
+
+        Mark as Pass/Fail.
+
+        * platform/win/TestExpectations:
+
 2015-03-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         border-image with 'fill' keyword does not fill the middle area unless the border width is greater than zero.

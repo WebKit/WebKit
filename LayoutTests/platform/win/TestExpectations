@@ -3064,5 +3064,6 @@ contentfiltering [ Skip ]
 [ Release ] inspector-protocol/layers/layers-for-node.html [ Skip ] # Timeouts
 [ Release ] inspector-protocol/layers/layers-generated-content.html  [ Skip ] # Timeouts
 
-
+# Started failing recently.
+webkit.org/b/143275 accessibility/aria-hidden-hides-all-elements.html [ Pass Failure ]
 
