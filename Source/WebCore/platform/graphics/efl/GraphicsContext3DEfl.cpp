@@ -180,6 +180,8 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 
 bool GraphicsContext3D::makeContextCurrent()
 {
+    if (!m_private)
+        return false;
     return m_private->makeContextCurrent();
 }
 
