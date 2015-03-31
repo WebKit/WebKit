@@ -1,3 +1,21 @@
+2015-03-31  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r182204.
+
+    2015-03-31  Jer Noble  <jer.noble@apple.com>
+
+            [Mac] Songza.com fails to play; QTKit path reports it is always "seeking".
+            https://bugs.webkit.org/show_bug.cgi?id=143274
+
+            Rubber-stamped by Eric Carlson.
+
+            MediaTime::invalidTime() is always greater than any valid time. So when
+            checking to see if MediaPlayerPrivateQTKit is seeking, first check if the
+            m_seekTo time is valid before checking whether it's > 0.
+
+            * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+            (WebCore::MediaPlayerPrivateQTKit::seeking):
+
 2015-03-26  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r182014.

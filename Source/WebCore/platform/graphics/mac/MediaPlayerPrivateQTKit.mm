@@ -726,7 +726,7 @@ bool MediaPlayerPrivateQTKit::seeking() const
 {
     if (!metaDataAvailable())
         return false;
-    return m_seekTo >= MediaTime::zeroTime();
+    return m_seekTo.isValid() && m_seekTo >= MediaTime::zeroTime();
 }
 
 FloatSize MediaPlayerPrivateQTKit::naturalSize() const
