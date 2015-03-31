@@ -292,10 +292,10 @@ String Parser<LexerType>::parseInner()
         IdentifierSet usedVariables;
         scope->getUsedVariables(usedVariables);
         for (const auto& variable : usedVariables) {
-            if (scope->hasDeclaredVariable(Identifier(m_vm, variable.get())))
+            if (scope->hasDeclaredVariable(Identifier::fromUid(m_vm, variable.get())))
                 continue;
             
-            if (scope->hasDeclaredParameter(Identifier(m_vm, variable.get())))
+            if (scope->hasDeclaredParameter(Identifier::fromUid(m_vm, variable.get())))
                 continue;
 
             if (variable == m_vm->propertyNames->arguments.impl())
@@ -524,7 +524,7 @@ template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::create
     ASSERT(!name.isEmpty());
     ASSERT(!name.isNull());
     
-    ASSERT(name.impl()->isAtomic());
+    ASSERT(name.impl()->isAtomic() || name.impl()->isSymbol());
     if (depth) {
         if (kind == DeconstructToVariables)
             failIfFalseIfStrict(declareVariable(&name), "Cannot deconstruct to a variable named '", name.impl(), "' in strict mode");

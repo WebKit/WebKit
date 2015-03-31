@@ -53,7 +53,7 @@ void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* exec, Prop
     thisObject->m_impl->getNames(names);
     size_t length = names.size();
     for (size_t i = 0; i < length; ++i)
-        propertyNames.add(Identifier(exec, names[i]));
+        propertyNames.add(Identifier::fromString(exec, names[i]));
 
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }

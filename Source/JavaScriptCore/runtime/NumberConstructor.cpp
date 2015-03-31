@@ -59,21 +59,21 @@ void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
     // no. of arguments for constructor
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 
-    putDirectWithoutTransition(vm, Identifier(&vm, "EPSILON"), jsDoubleNumber(std::numeric_limits<double>::epsilon()), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(vm, Identifier(&vm, "MAX_VALUE"), jsDoubleNumber(1.7976931348623157E+308), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(vm, Identifier(&vm, "MIN_VALUE"), jsDoubleNumber(5E-324), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(vm, Identifier(&vm, "MAX_SAFE_INTEGER"), jsDoubleNumber(9007199254740991.0), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(vm, Identifier(&vm, "MIN_SAFE_INTEGER"), jsDoubleNumber(-9007199254740991.0), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(vm, Identifier(&vm, "NEGATIVE_INFINITY"), jsDoubleNumber(-std::numeric_limits<double>::infinity()), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(vm, Identifier(&vm, "POSITIVE_INFINITY"), jsDoubleNumber(std::numeric_limits<double>::infinity()), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(vm, Identifier(&vm, "NaN"), jsNaN(), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "EPSILON"), jsDoubleNumber(std::numeric_limits<double>::epsilon()), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "MAX_VALUE"), jsDoubleNumber(1.7976931348623157E+308), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "MIN_VALUE"), jsDoubleNumber(5E-324), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "MAX_SAFE_INTEGER"), jsDoubleNumber(9007199254740991.0), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "MIN_SAFE_INTEGER"), jsDoubleNumber(-9007199254740991.0), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "NEGATIVE_INFINITY"), jsDoubleNumber(-std::numeric_limits<double>::infinity()), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "POSITIVE_INFINITY"), jsDoubleNumber(std::numeric_limits<double>::infinity()), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "NaN"), jsNaN(), DontDelete | DontEnum | ReadOnly);
 
-    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier(&vm, "isFinite"), 1, numberConstructorFuncIsFinite, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier(&vm, "isInteger"), 1, numberConstructorFuncIsInteger, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier(&vm, "isNaN"), 1, numberConstructorFuncIsNaN, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier(&vm, "isSafeInteger"), 1, numberConstructorFuncIsSafeInteger, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier(&vm, "parseFloat"), 1, globalFuncParseFloat, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier(&vm, "parseInt"), 1, globalFuncParseInt, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "isFinite"), 1, numberConstructorFuncIsFinite, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "isInteger"), 1, numberConstructorFuncIsInteger, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "isNaN"), 1, numberConstructorFuncIsNaN, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "isSafeInteger"), 1, numberConstructorFuncIsSafeInteger, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "parseFloat"), 1, globalFuncParseFloat, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "parseInt"), 1, globalFuncParseInt, NoIntrinsic, DontEnum | Function);
 }
 
 // ECMA 15.7.1

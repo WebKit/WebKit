@@ -67,11 +67,11 @@ JSValue JSIDBObjectStore::createIndex(ExecState* exec)
     bool unique = false;
     bool multiEntry = false;
     if (!optionsValue.isUndefinedOrNull()) {
-        unique = optionsValue.get(exec, Identifier(exec, "unique")).toBoolean(exec);
+        unique = optionsValue.get(exec, Identifier::fromString(exec, "unique")).toBoolean(exec);
         if (exec->hadException())
             return jsUndefined();
 
-        multiEntry = optionsValue.get(exec, Identifier(exec, "multiEntry")).toBoolean(exec);
+        multiEntry = optionsValue.get(exec, Identifier::fromString(exec, "multiEntry")).toBoolean(exec);
         if (exec->hadException())
             return jsUndefined();
     }

@@ -618,11 +618,11 @@ protected:
         addFunction(vm, "getElement", functionGetElement, 1);
         addFunction(vm, "setElementRoot", functionSetElementRoot, 2);
         
-        putDirectNativeFunction(vm, this, Identifier(&vm, "DFGTrue"), 0, functionFalse1, DFGTrueIntrinsic, DontEnum | JSC::Function);
-        putDirectNativeFunction(vm, this, Identifier(&vm, "OSRExit"), 0, functionUndefined1, OSRExitIntrinsic, DontEnum | JSC::Function);
-        putDirectNativeFunction(vm, this, Identifier(&vm, "isFinalTier"), 0, functionFalse2, IsFinalTierIntrinsic, DontEnum | JSC::Function);
-        putDirectNativeFunction(vm, this, Identifier(&vm, "predictInt32"), 0, functionUndefined2, SetInt32HeapPredictionIntrinsic, DontEnum | JSC::Function);
-        putDirectNativeFunction(vm, this, Identifier(&vm, "fiatInt52"), 0, functionIdentity, FiatInt52Intrinsic, DontEnum | JSC::Function);
+        putDirectNativeFunction(vm, this, Identifier::fromString(&vm, "DFGTrue"), 0, functionFalse1, DFGTrueIntrinsic, DontEnum | JSC::Function);
+        putDirectNativeFunction(vm, this, Identifier::fromString(&vm, "OSRExit"), 0, functionUndefined1, OSRExitIntrinsic, DontEnum | JSC::Function);
+        putDirectNativeFunction(vm, this, Identifier::fromString(&vm, "isFinalTier"), 0, functionFalse2, IsFinalTierIntrinsic, DontEnum | JSC::Function);
+        putDirectNativeFunction(vm, this, Identifier::fromString(&vm, "predictInt32"), 0, functionUndefined2, SetInt32HeapPredictionIntrinsic, DontEnum | JSC::Function);
+        putDirectNativeFunction(vm, this, Identifier::fromString(&vm, "fiatInt52"), 0, functionIdentity, FiatInt52Intrinsic, DontEnum | JSC::Function);
         
         addFunction(vm, "effectful42", functionEffectful42, 0);
         addFunction(vm, "makeMasquerader", functionMakeMasquerader, 0);
@@ -644,20 +644,20 @@ protected:
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
             array->putDirectIndex(globalExec(), i, jsString(globalExec(), arguments[i]));
-        putDirect(vm, Identifier(globalExec(), "arguments"), array);
+        putDirect(vm, Identifier::fromString(globalExec(), "arguments"), array);
         
-        putDirect(vm, Identifier(globalExec(), "console"), jsUndefined());
+        putDirect(vm, Identifier::fromString(globalExec(), "console"), jsUndefined());
     }
 
     void addFunction(VM& vm, const char* name, NativeFunction function, unsigned arguments)
     {
-        Identifier identifier(&vm, name);
+        Identifier identifier = Identifier::fromString(&vm, name);
         putDirect(vm, identifier, JSFunction::create(vm, this, arguments, identifier.string(), function));
     }
     
     void addConstructableFunction(VM& vm, const char* name, NativeFunction function, unsigned arguments)
     {
-        Identifier identifier(&vm, name);
+        Identifier identifier = Identifier::fromString(&vm, name);
         putDirect(vm, identifier, JSFunction::create(vm, this, arguments, identifier.string(), function, NoIntrinsic, function));
     }
 };
@@ -889,7 +889,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     for (unsigned i = 1; i < exec->argumentCount(); ++i)
         array->putDirectIndex(globalObject->globalExec(), i - 1, exec->uncheckedArgument(i));
     globalObject->putDirect(
-        exec->vm(), Identifier(globalObject->globalExec(), "arguments"), array);
+        exec->vm(), Identifier::fromString(globalObject->globalExec(), "arguments"), array);
 
     JSValue exception;
     StopWatch stopWatch;
@@ -1270,7 +1270,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
             printf("End: %s\n", returnValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
         if (evaluationException) {
             printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
-            Identifier stackID(globalObject->globalExec(), "stack");
+            Identifier stackID = Identifier::fromString(globalObject->globalExec(), "stack");
             JSValue stackValue = evaluationException.get(globalObject->globalExec(), stackID);
             if (!stackValue.isUndefinedOrNull())
                 printf("%s\n", stackValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());

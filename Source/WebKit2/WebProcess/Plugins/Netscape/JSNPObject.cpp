@@ -407,7 +407,7 @@ void JSNPObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
             const char* string = identifierRep->string();
             int length = strlen(string);
             
-            identifier = Identifier(exec, String::fromUTF8WithLatin1Fallback(string, length).impl());
+            identifier = Identifier::fromString(exec, String::fromUTF8WithLatin1Fallback(string, length));
         } else
             identifier = Identifier::from(exec, identifierRep->number());
 

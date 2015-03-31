@@ -70,7 +70,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
             return JSValue::encode(toJS(exec, jsCollection->globalObject(), collection.item(index)));
 
         // Support for document.images('<name>') etc.
-        return JSValue::encode(namedItems(exec, jsCollection, Identifier(exec, string)));
+        return JSValue::encode(namedItems(exec, jsCollection, Identifier::fromString(exec, string)));
     }
 
     // The second arg, if set, is the index of the item we want
@@ -106,12 +106,12 @@ JSValue JSHTMLAllCollection::item(ExecState* exec)
     uint32_t index = toUInt32FromStringImpl(exec->argument(0).toString(exec)->value(exec).impl());
     if (index != PropertyName::NotAnIndex)
         return toJS(exec, globalObject(), impl().item(index));
-    return namedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));
+    return namedItems(exec, this, Identifier::fromString(exec, exec->argument(0).toString(exec)->value(exec)));
 }
 
 JSValue JSHTMLAllCollection::namedItem(ExecState* exec)
 {
-    JSValue value = namedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));
+    JSValue value = namedItems(exec, this, Identifier::fromString(exec, exec->argument(0).toString(exec)->value(exec)));
     return value.isUndefined() ? jsNull() : value;
 }
 

@@ -1,3 +1,173 @@
+2015-03-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Clean up Identifier factories to clarify the meaning of StringImpl*
+        https://bugs.webkit.org/show_bug.cgi?id=143146
+
+        Reviewed by Filip Pizlo.
+
+        In the a lot of places, `Identifier(VM*/ExecState*, StringImpl*)` constructor is used.
+        However, it's ambiguous because `StringImpl*` has 2 different meanings.
+        1) normal string, it is replacable with `WTFString` and
+        2) `uid`, which holds `isSymbol` information to represent Symbols.
+        So we dropped Identifier constructors for strings and instead, introduced 2 factory functions.
+        + `Identifier::fromString(VM*/ExecState*, const String&)`.
+        Just construct Identifier from strings. The symbol-ness of StringImpl* is not kept.
+        + `Identifier::fromUid(VM*/ExecState*, StringImpl*)`.
+        This function is used for 2) `uid`. So symbol-ness of `StringImpl*` is kept.
+
+        And to clean up `StringImpl` which is used as uid,
+        we introduce `StringKind` into `StringImpl`. There's 3 kinds
+        1. StringNormal (non-atomic, non-symbol)
+        2. StringAtomic (atomic, non-symbol)
+        3. StringSymbol (non-atomic, symbol)
+        They are mutually exclusive. And (atomic, symbol) case should not exist.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getOwnNonIndexPropertyNames):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::identifier):
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptFunctionCall::call):
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutableInternal):
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::BuiltinNames):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitThrowReferenceError):
+        (JSC::BytecodeGenerator::emitThrowTypeError):
+        (JSC::BytecodeGenerator::emitReadOnlyExceptionIfNeeded):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        * dfg/DFGDesiredIdentifiers.cpp:
+        (JSC::DFG::DesiredIdentifiers::reallyAdd):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::functionDetails):
+        (Inspector::constructInternalProperty):
+        (Inspector::JSInjectedScriptHost::weakMapEntries):
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::extractSourceInformationFromException):
+        * jit/JITOperations.cpp:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (GlobalObject::addFunction):
+        (GlobalObject::addConstructableFunction):
+        (functionRun):
+        (runWithScripts):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::addVar):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::createBindingPattern):
+        * parser/ParserArena.h:
+        (JSC::IdentifierArena::makeIdentifier):
+        (JSC::IdentifierArena::makeIdentifierLCharFromUChar):
+        (JSC::IdentifierArena::makeNumericIdentifier):
+        * runtime/ArgumentsIteratorPrototype.cpp:
+        (JSC::ArgumentsIteratorPrototype::finishCreation):
+        * runtime/ArrayIteratorPrototype.cpp:
+        (JSC::ArrayIteratorPrototype::finishCreation):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        (JSC::arrayProtoFuncPush):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::getOwnPropertySlot):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        (JSC::hasErrorInfo):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createUndefinedVariableError):
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::getOwnPropertySlot):
+        * runtime/Identifier.h:
+        (JSC::Identifier::isSymbol):
+        (JSC::Identifier::Identifier):
+        (JSC::Identifier::from): Deleted.
+        * runtime/IdentifierInlines.h:
+        (JSC::Identifier::Identifier):
+        (JSC::Identifier::fromUid):
+        (JSC::Identifier::fromString):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpInContextAssumingStructure):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::toPropertyKey):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::getOwnNonIndexPropertyNames):
+        * runtime/JSObject.cpp:
+        (JSC::getClassPropertyNames):
+        (JSC::JSObject::reifyStaticFunctionsForDelete):
+        * runtime/JSObject.h:
+        (JSC::makeIdentifier):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructorFuncRace):
+        (JSC::JSPromiseConstructorFuncAll):
+        * runtime/JSString.h:
+        (JSC::JSString::toIdentifier):
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::getOwnNonIndexPropertyNames):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::tryJSONPParse):
+        (JSC::LiteralParser<CharType>::makeIdentifier):
+        * runtime/Lookup.h:
+        (JSC::reifyStaticProperties):
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/MapIteratorPrototype.cpp:
+        (JSC::MapIteratorPrototype::finishCreation):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::finishCreation):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        * runtime/PrivateName.h:
+        (JSC::PrivateName::PrivateName):
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::find):
+        (JSC::PropertyTable::get):
+        * runtime/PropertyName.h:
+        (JSC::PropertyName::PropertyName):
+        (JSC::PropertyName::publicName):
+        (JSC::PropertyName::asIndex):
+        * runtime/PropertyNameArray.cpp:
+        (JSC::PropertyNameArray::add):
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::addKnownUnique):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::finishCreation):
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        * runtime/SetIteratorPrototype.cpp:
+        (JSC::SetIteratorPrototype::finishCreation):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        * runtime/StringIteratorPrototype.cpp:
+        (JSC::StringIteratorPrototype::finishCreation):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        * runtime/Structure.cpp:
+        (JSC::Structure::getPropertyNamesFromStructure):
+        * runtime/SymbolConstructor.cpp:
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::constructWeakMap):
+
 2015-03-31  Andreas Kling  <akling@apple.com>
 
         Logically empty WeakBlocks should not pin down their MarkedBlocks indefinitely.

@@ -52,7 +52,7 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     CallData callData;
     CallType callType = getCallData(filter, callData);
     if (callType == CallTypeNone) {
-        filter = filter.get(exec, Identifier(exec, "acceptNode"));
+        filter = filter.get(exec, Identifier::fromString(exec, "acceptNode"));
         callType = getCallData(filter, callData);
         if (callType == CallTypeNone) {
             exec->vm().throwException(exec, createTypeError(exec, "NodeFilter object does not have an acceptNode function"));

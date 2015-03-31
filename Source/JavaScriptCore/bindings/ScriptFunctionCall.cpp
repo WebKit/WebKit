@@ -121,7 +121,7 @@ Deprecated::ScriptValue ScriptFunctionCall::call(bool& hadException)
 
     JSLockHolder lock(m_exec);
 
-    JSValue function = thisObject->get(m_exec, Identifier(m_exec, m_name));
+    JSValue function = thisObject->get(m_exec, Identifier::fromString(m_exec, m_name));
     if (m_exec->hadException()) {
         hadException = true;
         return Deprecated::ScriptValue();

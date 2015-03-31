@@ -44,7 +44,7 @@ SymbolConstructor::SymbolConstructor(VM& vm, Structure* structure)
 }
 
 #define INITIALIZE_WELL_KNOWN_SYMBOLS(name) \
-    putDirectWithoutTransition(vm, Identifier(&vm, #name), Symbol::create(vm, vm.propertyNames->name##PrivateName.impl()), DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, #name), Symbol::create(vm, vm.propertyNames->name##Symbol.impl()), DontEnum | DontDelete | ReadOnly);
 
 void SymbolConstructor::finishCreation(VM& vm, SymbolPrototype* prototype)
 {

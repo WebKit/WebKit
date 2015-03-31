@@ -153,7 +153,7 @@ EncodedJSValue JIT_OPERATION operationGetById(ExecState* exec, StructureStubInfo
     
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue);
-    Identifier ident(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
     return JSValue::encode(baseValue.get(exec, ident, slot));
 }
 
@@ -162,7 +162,7 @@ EncodedJSValue JIT_OPERATION operationGetByIdBuildList(ExecState* exec, Structur
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
-    Identifier ident(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue baseValue = JSValue::decode(base);
@@ -179,7 +179,7 @@ EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, Structure
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    Identifier ident = uid->isUnique() ? Identifier::from(PrivateName(uid)) : Identifier(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
 
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue);
@@ -206,7 +206,7 @@ EncodedJSValue JIT_OPERATION operationInOptimize(ExecState* exec, StructureStubI
     
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
-    Identifier ident(vm, key);
+    Identifier ident = Identifier::fromUid(vm, key);
     PropertySlot slot(base);
     bool result = asObject(base)->getPropertySlot(exec, ident, slot);
     
@@ -230,7 +230,7 @@ EncodedJSValue JIT_OPERATION operationIn(ExecState* exec, StructureStubInfo*, JS
         return JSValue::encode(jsUndefined());
     }
 
-    Identifier ident(vm, key);
+    Identifier ident = Identifier::fromUid(vm, key);
     return JSValue::encode(jsBoolean(asObject(base)->hasProperty(exec, ident)));
 }
 
@@ -247,7 +247,7 @@ void JIT_OPERATION operationPutByIdStrict(ExecState* exec, StructureStubInfo*, E
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    Identifier ident(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
     PutPropertySlot slot(JSValue::decode(encodedBase), true, exec->codeBlock()->putByIdContext());
     JSValue::decode(encodedBase).put(exec, ident, JSValue::decode(encodedValue), slot);
 }
@@ -257,7 +257,7 @@ void JIT_OPERATION operationPutByIdNonStrict(ExecState* exec, StructureStubInfo*
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    Identifier ident(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
     PutPropertySlot slot(JSValue::decode(encodedBase), false, exec->codeBlock()->putByIdContext());
     JSValue::decode(encodedBase).put(exec, ident, JSValue::decode(encodedValue), slot);
 }
@@ -267,7 +267,7 @@ void JIT_OPERATION operationPutByIdDirectStrict(ExecState* exec, StructureStubIn
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    Identifier ident(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
     PutPropertySlot slot(JSValue::decode(encodedBase), true, exec->codeBlock()->putByIdContext());
     asObject(JSValue::decode(encodedBase))->putDirect(exec->vm(), ident, JSValue::decode(encodedValue), slot);
 }
@@ -277,7 +277,7 @@ void JIT_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, StructureStu
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    Identifier ident(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
     PutPropertySlot slot(JSValue::decode(encodedBase), false, exec->codeBlock()->putByIdContext());
     asObject(JSValue::decode(encodedBase))->putDirect(exec->vm(), ident, JSValue::decode(encodedValue), slot);
 }
@@ -287,7 +287,7 @@ void JIT_OPERATION operationPutByIdStrictOptimize(ExecState* exec, StructureStub
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    Identifier ident(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue value = JSValue::decode(encodedValue);
@@ -311,7 +311,7 @@ void JIT_OPERATION operationPutByIdNonStrictOptimize(ExecState* exec, StructureS
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    Identifier ident(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue value = JSValue::decode(encodedValue);
@@ -335,7 +335,7 @@ void JIT_OPERATION operationPutByIdDirectStrictOptimize(ExecState* exec, Structu
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    Identifier ident(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue value = JSValue::decode(encodedValue);
@@ -359,7 +359,7 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(ExecState* exec, Stru
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    Identifier ident(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue value = JSValue::decode(encodedValue);
@@ -383,7 +383,7 @@ void JIT_OPERATION operationPutByIdStrictBuildList(ExecState* exec, StructureStu
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    Identifier ident(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue value = JSValue::decode(encodedValue);
@@ -404,7 +404,7 @@ void JIT_OPERATION operationPutByIdNonStrictBuildList(ExecState* exec, Structure
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    Identifier ident(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue value = JSValue::decode(encodedValue);
@@ -425,7 +425,7 @@ void JIT_OPERATION operationPutByIdDirectStrictBuildList(ExecState* exec, Struct
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    Identifier ident(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
     
     JSValue value = JSValue::decode(encodedValue);
@@ -446,7 +446,7 @@ void JIT_OPERATION operationPutByIdDirectNonStrictBuildList(ExecState* exec, Str
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    Identifier ident(vm, uid);
+    Identifier ident = Identifier::fromUid(vm, uid);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue value = JSValue::decode(encodedValue);

@@ -48,7 +48,7 @@ void injectInternalsObject(JSContextRef context)
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
     if (is<Document>(*scriptContext))
-        globalObject->putDirect(exec->vm(), Identifier(exec, Internals::internalsId), toJS(exec, globalObject, Internals::create(downcast<Document>(scriptContext))));
+        globalObject->putDirect(exec->vm(), Identifier::fromString(exec, Internals::internalsId), toJS(exec, globalObject, Internals::create(downcast<Document>(scriptContext))));
 }
 
 void resetInternalsObject(JSContextRef context)

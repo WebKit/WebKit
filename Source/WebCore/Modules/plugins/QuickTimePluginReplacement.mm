@@ -158,7 +158,7 @@ bool QuickTimePluginReplacement::ensureReplacementScriptInjected()
     JSC::ExecState* exec = globalObject->globalExec();
     JSC::JSLockHolder lock(exec);
     
-    JSC::JSValue replacementFunction = globalObject->get(exec, JSC::Identifier(exec, "createPluginReplacement"));
+    JSC::JSValue replacementFunction = globalObject->get(exec, JSC::Identifier::fromString(exec, "createPluginReplacement"));
     if (replacementFunction.isFunction())
         return true;
     
@@ -186,7 +186,7 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot* root)
     JSC::JSLockHolder lock(exec);
     
     // Lookup the "createPluginReplacement" function.
-    JSC::JSValue replacementFunction = globalObject->get(exec, JSC::Identifier(exec, "createPluginReplacement"));
+    JSC::JSValue replacementFunction = globalObject->get(exec, JSC::Identifier::fromString(exec, "createPluginReplacement"));
     if (replacementFunction.isUndefinedOrNull())
         return false;
     JSC::JSObject* replacementObject = replacementFunction.toObject(exec);
@@ -208,7 +208,7 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot* root)
     }
 
     // Get the <video> created to replace the plug-in.
-    JSC::JSValue value = replacement.get(exec, JSC::Identifier(exec, "video"));
+    JSC::JSValue value = replacement.get(exec, JSC::Identifier::fromString(exec, "video"));
     if (!exec->hadException() && !value.isUndefinedOrNull())
         m_mediaElement = JSHTMLVideoElement::toWrapped(value);
 
@@ -219,7 +219,7 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot* root)
     }
 
     // Get the scripting interface.
-    value = replacement.get(exec, JSC::Identifier(exec, "scriptObject"));
+    value = replacement.get(exec, JSC::Identifier::fromString(exec, "scriptObject"));
     if (!exec->hadException() && !value.isUndefinedOrNull())
         m_scriptObject = value.toObject(exec);
 

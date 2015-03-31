@@ -179,7 +179,7 @@ const FunctionCode = 2
 const LLIntReturnPC = ArgumentCount + TagOffset
 
 # String flags.
-const HashFlags8BitBuffer = 32
+const HashFlags8BitBuffer = 8
 
 # Copied from PropertyOffset.h
 const firstOutOfLineOffset = 100

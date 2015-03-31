@@ -48,7 +48,7 @@ void setInternalSlotToObject(ExecState* exec, JSValue objectValue, PrivateName& 
 {
     JSObject* object = objectValue.toObject(exec);
     PutPropertySlot propertySlot(objectValue);
-    object->put(object, exec, Identifier::from(name), value, propertySlot);
+    object->put(object, exec, Identifier::fromUid(name), value, propertySlot);
 }
 
 JSValue getInternalSlotFromObject(ExecState* exec, JSValue objectValue, PrivateName& name)
@@ -56,7 +56,7 @@ JSValue getInternalSlotFromObject(ExecState* exec, JSValue objectValue, PrivateN
     JSObject* object = objectValue.toObject(exec);
     PropertySlot propertySlot(objectValue);
 
-    Identifier propertyName = Identifier::from(name);
+    Identifier propertyName = Identifier::fromUid(name);
     if (!object->getOwnPropertySlot(object, exec, propertyName, propertySlot))
         return JSValue();
     return propertySlot.getValue(exec, propertyName);

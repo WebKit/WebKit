@@ -74,7 +74,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 
     ExecState* exec = m_globalObject->globalExec();
         
-    JSValue function = m_customResolver->get(exec, Identifier(exec, "lookupNamespaceURI"));
+    JSValue function = m_customResolver->get(exec, Identifier::fromString(exec, "lookupNamespaceURI"));
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone) {

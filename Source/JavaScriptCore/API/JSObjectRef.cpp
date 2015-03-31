@@ -140,7 +140,7 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
     JSLockHolder locker(exec);
 
     startingLineNumber = std::max(1, startingLineNumber);
-    Identifier nameID = name ? name->identifier(&exec->vm()) : Identifier(exec, "anonymous");
+    Identifier nameID = name ? name->identifier(&exec->vm()) : Identifier::fromString(exec, "anonymous");
     
     MarkedArgumentBuffer args;
     for (unsigned i = 0; i < parameterCount; i++)

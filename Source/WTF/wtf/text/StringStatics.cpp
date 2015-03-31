@@ -47,18 +47,18 @@ StringImpl* StringImpl::empty()
     return &emptyString.get();
 }
 
-// Set the hash early, so that all unique StringImpls have a hash,
+// Set the hash early, so that all symbol StringImpls have a hash,
 // and don't use the normal hashing algorithm - the unique nature of these
 // keys means that we don't need them to match any other string (in fact,
 // that's exactly the oposite of what we want!), and the normal hash would
 // lead to lots of conflicts.
-unsigned StringImpl::hashAndFlagsForUnique(unsigned flags)
+unsigned StringImpl::hashAndFlagsForSymbol(unsigned flags)
 {
-    static unsigned s_nextHashAndFlagsForUnique = 0;
-    s_nextHashAndFlagsForUnique += 1 << s_flagCount;
-    s_nextHashAndFlagsForUnique |= 1 << 31;
-    unsigned flagsForUnique = (flags & s_flagMask) | s_hashFlagIsAtomic | s_hashFlagIsUnique;
-    return s_nextHashAndFlagsForUnique | flagsForUnique;
+    static unsigned s_nextHashAndFlagsForSymbol = 0;
+    s_nextHashAndFlagsForSymbol += 1 << s_flagCount;
+    s_nextHashAndFlagsForSymbol |= 1 << 31;
+    unsigned flagsForSymbol = ((flags & s_flagMask) & (~s_hashMaskStringKind)) | StringSymbol;
+    return s_nextHashAndFlagsForSymbol | flagsForSymbol;
 }
 
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, nullAtom)

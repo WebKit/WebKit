@@ -1,3 +1,15 @@
+2015-03-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Clean up Identifier factories to clarify the meaning of StringImpl*
+        https://bugs.webkit.org/show_bug.cgi?id=143146
+
+        Reviewed by Filip Pizlo.
+
+        Simple API tests for StringImpl are added.
+
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-03-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Add AArch64 builder and tester bot to build.webkit.org

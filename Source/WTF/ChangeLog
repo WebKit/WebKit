@@ -1,3 +1,53 @@
+2015-03-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Clean up Identifier factories to clarify the meaning of StringImpl*
+        https://bugs.webkit.org/show_bug.cgi?id=143146
+
+        Reviewed by Filip Pizlo.
+
+        Introduce StringKind into `StringImpl`. There's 3 kinds
+        1. StringNormal (non-atomic, non-symbol)
+        2. StringAtomic (atomic, non-symbol)
+        3. StringSymbol (non-atomic, symbol)
+        They are mutually exclusive.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::addSlowCase):
+        (WTF::AtomicString::findSlowCase):
+        When registering a string into AtomicStringTable,
+        it should not be a symbol string
+        because symbol and atomic types are mutually exclusive.
+        When a symbol string comes, we extract an owner string
+        from a symbol string by using `StringImpl::extractFoldedStringInSymbol()`.
+        It always succeeds because a symbol (non empty) string
+        is always BufferSubstring and has an owner string.
+        Empty symbol string doesn't have an owner string.
+        This case is filtered by `!string.length()` guard.
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::add):
+        (WTF::AtomicString::addWithStringTableProvider):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+        (WTF::StringImpl::createSymbol):
+        (WTF::StringImpl::createUnique): Deleted.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::createSymbolEmpty):
+        (WTF::StringImpl::flagIsAtomic):
+        (WTF::StringImpl::flagIsSymbol):
+        (WTF::StringImpl::maskStringKind):
+        (WTF::StringImpl::stringKind):
+        (WTF::StringImpl::isSymbol):
+        (WTF::StringImpl::isAtomic):
+        (WTF::StringImpl::setIsAtomic):
+        (WTF::StringImpl::extractFoldedStringInSymbol):
+        (WTF::StringImpl::createUniqueEmpty): Deleted.
+        (WTF::StringImpl::flagIsUnique): Deleted.
+        (WTF::StringImpl::isUnique): Deleted.
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::hashAndFlagsForSymbol):
+        (WTF::StringImpl::hashAndFlagsForUnique): Deleted.
+
 2015-03-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMake][EFL] Remove redundant library link and include path

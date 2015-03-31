@@ -233,8 +233,8 @@ void JSValue::dumpInContextAssumingStructure(
                     out.print(" (atomic)");
                 if (impl->isAtomic())
                     out.print(" (identifier)");
-                if (impl->isUnique())
-                    out.print(" (unique)");
+                if (impl->isSymbol())
+                    out.print(" (symbol)");
             } else
                 out.print(" (unresolved)");
             out.print(": ", impl);

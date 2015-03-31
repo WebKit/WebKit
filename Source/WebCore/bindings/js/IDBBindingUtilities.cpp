@@ -53,7 +53,7 @@ static bool get(ExecState* exec, JSValue object, const String& keyPathElement, J
     }
     if (!object.isObject())
         return false;
-    Identifier identifier(&exec->vm(), keyPathElement.utf8().data());
+    Identifier identifier = Identifier::fromString(&exec->vm(), keyPathElement.utf8().data());
     if (!asObject(object)->hasProperty(exec, identifier))
         return false;
     result = asObject(object)->get(exec, identifier);
@@ -70,7 +70,7 @@ static bool set(ExecState* exec, JSValue& object, const String& keyPathElement, 
 {
     if (!canSet(object, keyPathElement))
         return false;
-    Identifier identifier(&exec->vm(), keyPathElement.utf8().data());
+    Identifier identifier = Identifier::fromString(&exec->vm(), keyPathElement.utf8().data());
     asObject(object)->putDirect(exec->vm(), identifier, jsValue);
     return true;
 }

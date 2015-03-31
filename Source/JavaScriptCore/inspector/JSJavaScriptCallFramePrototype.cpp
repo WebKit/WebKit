@@ -63,7 +63,7 @@ const ClassInfo JSJavaScriptCallFramePrototype::s_info = { "JavaScriptCallFrame"
 
 #define JSC_NATIVE_NON_INDEX_ACCESSOR(jsName, cppName, attributes) \
     { \
-        Identifier identifier(&vm, jsName); \
+        Identifier identifier = Identifier::fromString(&vm, jsName); \
         GetterSetter* accessor = GetterSetter::create(vm, globalObject); \
         JSFunction* function = JSFunction::create(vm, globalObject, 0, identifier.string(), cppName); \
         accessor->setGetter(vm, globalObject, function); \

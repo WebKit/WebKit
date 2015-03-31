@@ -56,21 +56,21 @@ std::unique_ptr<CryptoAlgorithmDescriptionBuilder> JSCryptoAlgorithmBuilder::cre
 void JSCryptoAlgorithmBuilder::add(const char* key, unsigned value)
 {
     VM& vm = m_exec->vm();
-    Identifier identifier(&vm, key);
+    Identifier identifier = Identifier::fromString(&vm, key);
     m_dictionary->putDirect(vm, identifier, jsNumber(value));
 }
 
 void JSCryptoAlgorithmBuilder::add(const char* key, const String& value)
 {
     VM& vm = m_exec->vm();
-    Identifier identifier(&vm, key);
+    Identifier identifier = Identifier::fromString(&vm, key);
     m_dictionary->putDirect(vm, identifier, jsString(m_exec, value));
 }
 
 void JSCryptoAlgorithmBuilder::add(const char* key, const Vector<uint8_t>& buffer)
 {
     VM& vm = m_exec->vm();
-    Identifier identifier(&vm, key);
+    Identifier identifier = Identifier::fromString(&vm, key);
     RefPtr<Uint8Array> arrayView = Uint8Array::create(buffer.data(), buffer.size());
     m_dictionary->putDirect(vm, identifier, arrayView->wrap(m_exec, vm.entryScope->globalObject()));
 }
@@ -78,7 +78,7 @@ void JSCryptoAlgorithmBuilder::add(const char* key, const Vector<uint8_t>& buffe
 void JSCryptoAlgorithmBuilder::add(const char* key, const CryptoAlgorithmDescriptionBuilder& nestedBuilder)
 {
     VM& vm = m_exec->vm();
-    Identifier identifier(&vm, key);
+    Identifier identifier = Identifier::fromString(&vm, key);
     const JSCryptoAlgorithmBuilder& jsBuilder = static_cast<const JSCryptoAlgorithmBuilder&>(nestedBuilder);
     m_dictionary->putDirect(vm, identifier, jsBuilder.result());
 }

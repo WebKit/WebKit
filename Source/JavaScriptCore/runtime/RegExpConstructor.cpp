@@ -91,7 +91,7 @@ RegExpConstructor::RegExpConstructor(VM& vm, Structure* structure, RegExpPrototy
 
 void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype)
 {
-    Base::finishCreation(vm, Identifier(&vm, "RegExp").string());
+    Base::finishCreation(vm, regExpPrototype->classInfo()->className);
     ASSERT(inherits(info()));
 
     // ECMA 15.10.5.1 RegExp.prototype

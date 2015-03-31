@@ -59,7 +59,7 @@ void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, arrayIteratorProtoFuncIterator, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, arrayIteratorProtoFuncIterator, DontEnum, 0);
 }
 
 bool ArrayIteratorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

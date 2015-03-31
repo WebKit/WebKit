@@ -403,6 +403,9 @@ Ref<StringImpl> AtomicString::addSlowCase(StringImpl& string)
     if (!string.length())
         return *StringImpl::empty();
 
+    if (string.isSymbol())
+        return add(string.extractFoldedStringInSymbol());
+
     ASSERT_WITH_MESSAGE(!string.isAtomic(), "AtomicString should not hit the slow case if the string is already atomic.");
 
     AtomicStringTableLocker locker;
@@ -420,6 +423,9 @@ Ref<StringImpl> AtomicString::addSlowCase(AtomicStringTable& stringTable, String
 {
     if (!string.length())
         return *StringImpl::empty();
+
+    if (string.isSymbol())
+        return add(stringTable, string.extractFoldedStringInSymbol());
 
     ASSERT_WITH_MESSAGE(!string.isAtomic(), "AtomicString should not hit the slow case if the string is already atomic.");
 
@@ -502,6 +508,12 @@ SlowPath:
 AtomicStringImpl* AtomicString::findSlowCase(StringImpl& string)
 {
     ASSERT_WITH_MESSAGE(!string.isAtomic(), "AtomicStringImpls should return from the fast case.");
+
+    if (!string.length())
+        return static_cast<AtomicStringImpl*>(StringImpl::empty());
+
+    if (string.isSymbol())
+        return find(&string.extractFoldedStringInSymbol());
 
     AtomicStringTableLocker locker;
     HashSet<StringImpl*>& atomicStringTable = stringTable();

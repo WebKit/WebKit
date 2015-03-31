@@ -141,6 +141,25 @@ private:
         BufferSubstring,
     };
 
+    // The bottom 6 bits in the hash are flags.
+    static const unsigned s_flagCount = 6;
+    static const unsigned s_flagMask = (1u << s_flagCount) - 1;
+    COMPILE_ASSERT(s_flagCount <= StringHasher::flagCount, StringHasher_reserves_enough_bits_for_StringImpl_flags);
+    static const unsigned s_flagStringKindCount = 4;
+
+    static const unsigned s_hashFlagStringKindIsAtomic = 1u << (s_flagStringKindCount);
+    static const unsigned s_hashFlagStringKindIsSymbol = 1u << (s_flagStringKindCount + 1);
+    static const unsigned s_hashMaskStringKind = s_hashFlagStringKindIsAtomic | s_hashFlagStringKindIsSymbol;
+    static const unsigned s_hashFlag8BitBuffer = 1u << 3;
+    static const unsigned s_hashFlagDidReportCost = 1u << 2;
+    static const unsigned s_hashMaskBufferOwnership = (1u << 0) | (1u << 1);
+
+    enum StringKind {
+        StringNormal = 0u, // non-symbol, non-atomic
+        StringAtomic = s_hashFlagStringKindIsAtomic, // non-symbol, atomic
+        StringSymbol = s_hashFlagStringKindIsSymbol, // symbol, non-atomic
+    };
+
     // Used to construct static strings, which have an special refCount that can never hit zero.
     // This means that the static string will never be destroyed, which is important because
     // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
@@ -150,7 +169,7 @@ private:
         : m_refCount(s_refCountFlagIsStaticString)
         , m_length(0)
         , m_data8(reinterpret_cast<const LChar*>(&m_length))
-        , m_hashAndFlags(s_hashFlag8BitBuffer | s_hashFlagIsAtomic | BufferOwned)
+        , m_hashAndFlags(s_hashFlag8BitBuffer | StringAtomic | BufferOwned)
     {
         // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
         // with impunity. The empty string is special because it is never entered into
@@ -167,7 +186,7 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data8(tailPointer<LChar>())
-        , m_hashAndFlags(s_hashFlag8BitBuffer | BufferInternal)
+        , m_hashAndFlags(s_hashFlag8BitBuffer | StringNormal | BufferInternal)
     {
         ASSERT(m_data8);
         ASSERT(m_length);
@@ -180,7 +199,7 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data16(tailPointer<UChar>())
-        , m_hashAndFlags(BufferInternal)
+        , m_hashAndFlags(StringNormal | BufferInternal)
     {
         ASSERT(m_data16);
         ASSERT(m_length);
@@ -193,7 +212,7 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data8(characters.leakPtr())
-        , m_hashAndFlags(s_hashFlag8BitBuffer | BufferOwned)
+        , m_hashAndFlags(s_hashFlag8BitBuffer | StringNormal | BufferOwned)
     {
         ASSERT(m_data8);
         ASSERT(m_length);
@@ -206,7 +225,7 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data16(characters)
-        , m_hashAndFlags(BufferInternal)
+        , m_hashAndFlags(StringNormal | BufferInternal)
     {
         ASSERT(m_data16);
         ASSERT(m_length);
@@ -218,7 +237,7 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data8(characters)
-        , m_hashAndFlags(s_hashFlag8BitBuffer | BufferInternal)
+        , m_hashAndFlags(s_hashFlag8BitBuffer | StringNormal | BufferInternal)
     {
         ASSERT(m_data8);
         ASSERT(m_length);
@@ -231,7 +250,7 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data16(characters.leakPtr())
-        , m_hashAndFlags(BufferOwned)
+        , m_hashAndFlags(StringNormal | BufferOwned)
     {
         ASSERT(m_data16);
         ASSERT(m_length);
@@ -244,7 +263,7 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data8(characters)
-        , m_hashAndFlags(s_hashFlag8BitBuffer | BufferSubstring)
+        , m_hashAndFlags(s_hashFlag8BitBuffer | StringNormal | BufferSubstring)
     {
         ASSERT(is8Bit());
         ASSERT(m_data8);
@@ -261,7 +280,7 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data16(characters)
-        , m_hashAndFlags(BufferSubstring)
+        , m_hashAndFlags(StringNormal | BufferSubstring)
     {
         ASSERT(!is8Bit());
         ASSERT(m_data16);
@@ -273,14 +292,14 @@ private:
         STRING_STATS_ADD_16BIT_STRING2(m_length, true);
     }
 
-    enum CreateEmptyUniqueTag { CreateEmptyUnique };
-    StringImpl(CreateEmptyUniqueTag)
+    enum CreateSymbolEmptyTag { CreateSymbolEmpty };
+    StringImpl(CreateSymbolEmptyTag)
         : m_refCount(s_refCountIncrement)
         , m_length(0)
         // We expect m_length to be initialized to 0 as we use it
         // to represent a null terminated buffer.
         , m_data8(reinterpret_cast<const LChar*>(&m_length))
-        , m_hashAndFlags(hashAndFlagsForUnique(s_hashFlag8BitBuffer | BufferInternal))
+        , m_hashAndFlags(hashAndFlagsForSymbol(s_hashFlag8BitBuffer | BufferInternal))
     {
         ASSERT(m_data8);
 
@@ -378,12 +397,12 @@ public:
         return constructInternal<T>(resultImpl, length);
     }
 
-    ALWAYS_INLINE static Ref<StringImpl> createUniqueEmpty()
+    ALWAYS_INLINE static Ref<StringImpl> createSymbolEmpty()
     {
-        return adoptRef(*new StringImpl(CreateEmptyUnique));
+        return adoptRef(*new StringImpl(CreateSymbolEmpty));
     }
 
-    WTF_EXPORT_STRING_API static Ref<StringImpl> createUnique(PassRefPtr<StringImpl> rep);
+    WTF_EXPORT_STRING_API static Ref<StringImpl> createSymbol(PassRefPtr<StringImpl> rep);
 
     // Reallocate the StringImpl. The originalString must be only owned by the PassRefPtr,
     // and the buffer ownership must be BufferInternal. Just like the input pointer of realloc(),
@@ -393,8 +412,9 @@ public:
 
     static unsigned flagsOffset() { return OBJECT_OFFSETOF(StringImpl, m_hashAndFlags); }
     static unsigned flagIs8Bit() { return s_hashFlag8BitBuffer; }
-    static unsigned flagIsAtomic() { return s_hashFlagIsAtomic; }
-    static unsigned flagIsUnique() { return s_hashFlagIsUnique; }
+    static unsigned flagIsAtomic() { return s_hashFlagStringKindIsAtomic; }
+    static unsigned flagIsSymbol() { return s_hashFlagStringKindIsSymbol; }
+    static unsigned maskStringKind() { return s_hashMaskStringKind; }
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
     template<typename CharType, size_t inlineCapacity, typename OverflowHandler>
@@ -454,17 +474,21 @@ public:
 
     WTF_EXPORT_STRING_API size_t sizeInBytes() const;
 
-    bool isUnique() const { return m_hashAndFlags & s_hashFlagIsUnique; }
+    StringKind stringKind() const { return static_cast<StringKind>(m_hashAndFlags & s_hashMaskStringKind); }
+    bool isSymbol() const { return m_hashAndFlags & s_hashFlagStringKindIsSymbol; }
+    bool isAtomic() const { return m_hashAndFlags & s_hashFlagStringKindIsAtomic; }
 
-    bool isAtomic() const { return m_hashAndFlags & s_hashFlagIsAtomic; }
     void setIsAtomic(bool isAtomic)
     {
         ASSERT(!isStatic());
-        ASSERT(!isUnique());
-        if (isAtomic)
-            m_hashAndFlags |= s_hashFlagIsAtomic;
-        else
-            m_hashAndFlags &= ~s_hashFlagIsAtomic;
+        ASSERT(!isSymbol());
+        if (isAtomic) {
+            m_hashAndFlags |= s_hashFlagStringKindIsAtomic;
+            ASSERT(stringKind() == StringAtomic);
+        } else {
+            m_hashAndFlags &= ~s_hashFlagStringKindIsAtomic;
+            ASSERT(stringKind() == StringNormal);
+        }
     }
 
 #if STRING_STATS
@@ -717,6 +741,16 @@ public:
 
     WTF_EXPORT_STRING_API static const UChar latin1CaseFoldTable[256];
 
+    WTF_EXPORT_STRING_API StringImpl& extractFoldedStringInSymbol()
+    {
+        ASSERT(length());
+        ASSERT(isSymbol());
+        ASSERT(bufferOwnership() == BufferSubstring);
+        ASSERT(substringBuffer());
+        ASSERT(!substringBuffer()->isSymbol());
+        return *substringBuffer();
+    }
+
 private:
     bool requiresCopy() const
     {
@@ -783,22 +817,11 @@ private:
     template <typename CharType> static Ref<StringImpl> reallocateInternal(PassRefPtr<StringImpl>, unsigned, CharType*&);
     template <typename CharType> static Ref<StringImpl> createInternal(const CharType*, unsigned);
     WTF_EXPORT_PRIVATE NEVER_INLINE unsigned hashSlowCase() const;
-    WTF_EXPORT_PRIVATE static unsigned hashAndFlagsForUnique(unsigned flags);
+    WTF_EXPORT_PRIVATE static unsigned hashAndFlagsForSymbol(unsigned flags);
 
     // The bottom bit in the ref count indicates a static (immortal) string.
     static const unsigned s_refCountFlagIsStaticString = 0x1;
     static const unsigned s_refCountIncrement = 0x2; // This allows us to ref / deref without disturbing the static string flag.
-
-    // The bottom 7 bits in the hash are flags.
-    static const unsigned s_flagCount = 7;
-    static const unsigned s_flagMask = (1u << s_flagCount) - 1;
-    COMPILE_ASSERT(s_flagCount <= StringHasher::flagCount, StringHasher_reserves_enough_bits_for_StringImpl_flags);
-
-    static const unsigned s_hashFlagIsUnique = 1u << 6;
-    static const unsigned s_hashFlag8BitBuffer = 1u << 5;
-    static const unsigned s_hashFlagIsAtomic = 1u << 4;
-    static const unsigned s_hashFlagDidReportCost = 1u << 3;
-    static const unsigned s_hashMaskBufferOwnership = 1u | (1u << 1);
 
 #if STRING_STATS
     WTF_EXPORTDATA static StringStats m_stringStats;
@@ -814,7 +837,7 @@ public:
 
         // These values mimic ConstructFromLiteral.
         static const unsigned s_initialRefCount = s_refCountIncrement;
-        static const unsigned s_initialFlags = s_hashFlag8BitBuffer | BufferInternal;
+        static const unsigned s_initialFlags = s_hashFlag8BitBuffer | StringNormal | BufferInternal;
         static const unsigned s_hashShift = s_flagCount;
     };
 

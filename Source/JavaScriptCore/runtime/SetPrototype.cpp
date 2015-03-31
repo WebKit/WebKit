@@ -67,7 +67,7 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION(vm.propertyNames->keys, setProtoFuncKeys, DontEnum, 0);
     JSC_NATIVE_FUNCTION(vm.propertyNames->values, setProtoFuncValues, DontEnum, 0);
     JSC_NATIVE_FUNCTION(vm.propertyNames->entries, setProtoFuncEntries, DontEnum, 0);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, setProtoFuncKeys, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, setProtoFuncKeys, DontEnum, 0);
 
     GetterSetter* accessor = GetterSetter::create(vm, globalObject);
     JSFunction* function = JSFunction::create(vm, globalObject, 0, vm.propertyNames->size.string(), setProtoFuncSize);

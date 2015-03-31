@@ -31,9 +31,9 @@ namespace JSC {
 
 void PropertyNameArray::add(StringImpl* identifier)
 {
-    ASSERT(!identifier || identifier == StringImpl::empty() || identifier->isAtomic());
+    ASSERT(!identifier || (identifier == StringImpl::empty() || identifier->isAtomic() || identifier->isSymbol()));
     if (!ASSERT_DISABLED) {
-        uint32_t index = PropertyName(Identifier(m_vm, identifier)).asIndex();
+        uint32_t index = PropertyName(Identifier::fromUid(m_vm, identifier)).asIndex();
         ASSERT_UNUSED(index, index == PropertyName::NotAnIndex || index >= m_previouslyEnumeratedLength);
     }
 

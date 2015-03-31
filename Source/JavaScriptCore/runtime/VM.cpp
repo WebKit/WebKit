@@ -662,10 +662,10 @@ JSValue VM::throwException(ExecState* exec, JSValue error)
         unsigned line;
         unsigned column;
         stackFrame.computeLineAndColumn(line, column);
-        exception->putDirect(*this, Identifier(this, "line"), jsNumber(line), ReadOnly | DontDelete);
-        exception->putDirect(*this, Identifier(this, "column"), jsNumber(column), ReadOnly | DontDelete);
+        exception->putDirect(*this, Identifier::fromString(this, "line"), jsNumber(line), ReadOnly | DontDelete);
+        exception->putDirect(*this, Identifier::fromString(this, "column"), jsNumber(column), ReadOnly | DontDelete);
         if (!stackFrame.sourceURL.isEmpty())
-            exception->putDirect(*this, Identifier(this, "sourceURL"), jsString(this, stackFrame.sourceURL), ReadOnly | DontDelete);
+            exception->putDirect(*this, Identifier::fromString(this, "sourceURL"), jsString(this, stackFrame.sourceURL), ReadOnly | DontDelete);
     }
     if (exception->isErrorInstance() && static_cast<ErrorInstance*>(exception)->hasSourceAppender()) {
         FindFirstCallerFrameWithCodeblockFunctor functor(exec);

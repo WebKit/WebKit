@@ -91,7 +91,7 @@ void JSStorage::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
     if (exec->hadException())
         return;
     for (unsigned i = 0; i < length; ++i) {
-        propertyNames.add(Identifier(exec, thisObject->m_impl->key(i, ec)));
+        propertyNames.add(Identifier::fromString(exec, thisObject->m_impl->key(i, ec)));
         setDOMException(exec, ec);
         if (exec->hadException())
             return;

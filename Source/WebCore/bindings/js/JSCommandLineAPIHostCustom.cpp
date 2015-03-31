@@ -89,8 +89,8 @@ static JSArray* getJSListenerFunctions(ExecState* exec, Document* document, cons
             continue;
 
         JSObject* listenerEntry = constructEmptyObject(exec);
-        listenerEntry->putDirect(exec->vm(), Identifier(exec, "listener"), function);
-        listenerEntry->putDirect(exec->vm(), Identifier(exec, "useCapture"), jsBoolean(listenerInfo.eventListenerVector[i].useCapture));
+        listenerEntry->putDirect(exec->vm(), Identifier::fromString(exec, "listener"), function);
+        listenerEntry->putDirect(exec->vm(), Identifier::fromString(exec, "useCapture"), jsBoolean(listenerInfo.eventListenerVector[i].useCapture));
         result->putDirectIndex(exec, outputIndex++, JSValue(listenerEntry));
     }
     return result;
@@ -118,7 +118,7 @@ JSValue JSCommandLineAPIHost::getEventListeners(ExecState* exec)
         if (!listeners->length())
             continue;
         AtomicString eventType = listenersArray[i].eventType;
-        result->putDirect(exec->vm(), Identifier(exec, eventType.impl()), JSValue(listeners));
+        result->putDirect(exec->vm(), Identifier::fromString(exec, eventType.impl()), JSValue(listeners));
     }
 
     return result;

@@ -98,7 +98,7 @@ public:
     void addKnownUnique(StringImpl* identifier)
     {
         m_set->add(identifier);
-        m_data->propertyNameVector().append(Identifier(m_vm, identifier));
+        m_data->propertyNameVector().append(Identifier::fromUid(m_vm, identifier));
     }
 
     Identifier& operator[](unsigned i) { return m_data->propertyNameVector()[i]; }

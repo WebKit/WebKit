@@ -38,23 +38,6 @@ public:
     enum EmptyIdentifierFlag { EmptyIdentifier };
     Identifier(EmptyIdentifierFlag) : m_string(StringImpl::empty()) { ASSERT(m_string.impl()->isAtomic()); }
 
-    // Only to be used with string literals.
-    template<unsigned charactersCount>
-    Identifier(ExecState* exec, const char (&characters)[charactersCount]) : m_string(add(exec, characters)) { ASSERT(m_string.impl()->isAtomic()); }
-    template<unsigned charactersCount>
-    Identifier(VM* vm, const char (&characters)[charactersCount]) : m_string(add(vm, characters)) { ASSERT(m_string.impl()->isAtomic()); }
-
-    Identifier(ExecState*, AtomicStringImpl*);
-    Identifier(ExecState*, const AtomicString&);
-    Identifier(ExecState* exec, StringImpl* rep) : m_string(add(exec, rep)) { ASSERT(m_string.impl()->isAtomic()); }
-    Identifier(ExecState* exec, const String& s) : m_string(add(exec, s.impl())) { ASSERT(m_string.impl()->isAtomic()); }
-    Identifier(ExecState* exec, const char* s) : Identifier(exec, AtomicString(s)) { }
-
-    Identifier(VM* vm, const LChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtomic()); }
-    Identifier(VM* vm, const UChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtomic()); }
-    Identifier(VM* vm, StringImpl* rep) : m_string(add(vm, rep)) { ASSERT(m_string.impl()->isAtomic()); }
-    Identifier(VM* vm, const String& s) : m_string(add(vm, s.impl())) { ASSERT(m_string.impl()->isAtomic()); }
-
     const String& string() const { return m_string; }
     AtomicStringImpl* impl() const { return static_cast<AtomicStringImpl*>(m_string.impl()); }
 
@@ -63,12 +46,33 @@ public:
     CString ascii() const { return m_string.ascii(); }
     CString utf8() const { return m_string.utf8(); }
 
-    static Identifier from(const PrivateName& name)
-    {
-        Identifier result;
-        result.m_string = name.uid();
-        return result;
-    }
+    // There's 2 functions to construct Identifier from string, (1) fromString and (2) fromUid.
+    // They have different meanings in keeping or discarding symbol-ness of strings.
+    // (1): fromString
+    // Just construct Identifier from string. String held by Identifier is always atomized.
+    // Symbol-ness of StringImpl*, which represents that the string is inteded to be used for ES6 Symbols, is discarded.
+    // So a constructed Identifier never represents a symbol.
+    // (2): fromUid
+    // `StringImpl* uid` represents ether String or Symbol property.
+    // fromUid keeps symbol-ness of provided StringImpl* while fromString discards it.
+    // Use fromUid when constructing Identifier from StringImpl* which may represent symbols.
+
+    // Only to be used with string literals.
+    template<unsigned charactersCount>
+    static Identifier fromString(VM*, const char (&characters)[charactersCount]);
+    template<unsigned charactersCount>
+    static Identifier fromString(ExecState*, const char (&characters)[charactersCount]);
+    static Identifier fromString(VM*, const LChar*, int length);
+    static Identifier fromString(VM*, const UChar*, int length);
+    static Identifier fromString(VM*, const String&);
+    static Identifier fromString(ExecState*, AtomicStringImpl*);
+    static Identifier fromString(ExecState*, const AtomicString&);
+    static Identifier fromString(ExecState*, const String&);
+    static Identifier fromString(ExecState*, const char*);
+
+    static Identifier fromUid(VM*, StringImpl* uid);
+    static Identifier fromUid(ExecState*, StringImpl* uid);
+    static Identifier fromUid(const PrivateName&);
 
     static Identifier createLCharFromUChar(VM* vm, const UChar* s, int length) { return Identifier(vm, add8(vm, s, length)); }
 
@@ -81,6 +85,7 @@ public:
 
     bool isNull() const { return m_string.isNull(); }
     bool isEmpty() const { return m_string.isEmpty(); }
+    bool isSymbol() const { return impl()->isSymbol(); }
 
     friend bool operator==(const Identifier&, const Identifier&);
     friend bool operator!=(const Identifier&, const Identifier&);
@@ -104,6 +109,20 @@ public:
 
 private:
     String m_string;
+
+    // Only to be used with string literals.
+    template<unsigned charactersCount>
+    Identifier(VM* vm, const char (&characters)[charactersCount]) : m_string(add(vm, characters)) { ASSERT(m_string.impl()->isAtomic()); }
+
+    Identifier(VM* vm, const LChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtomic()); }
+    Identifier(VM* vm, const UChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtomic()); }
+    Identifier(ExecState*, AtomicStringImpl*);
+    Identifier(ExecState*, const AtomicString&);
+    Identifier(VM* vm, const String& string) : m_string(add(vm, string.impl())) { ASSERT(m_string.impl()->isAtomic()); }
+    Identifier(VM* vm, StringImpl* rep) : m_string(add(vm, rep)) { ASSERT(m_string.impl()->isAtomic()); }
+
+    enum UniqueIdentifierFlag { UniqueIdentifier };
+    Identifier(UniqueIdentifierFlag, StringImpl* uid) : m_string(uid) { ASSERT(m_string.impl()->isSymbol()); }
 
     template <typename CharType>
     ALWAYS_INLINE static uint32_t toUInt32FromCharacters(const CharType* characters, unsigned length, bool& ok);

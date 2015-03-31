@@ -271,7 +271,7 @@ inline PropertyTable::const_iterator PropertyTable::end() const
 inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
 {
     ASSERT(key);
-    ASSERT(key->isAtomic() || key->isUnique());
+    ASSERT(key->isAtomic() || key->isSymbol());
     unsigned hash = key->existingHash();
     unsigned step = 0;
 
@@ -305,7 +305,7 @@ inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
 inline PropertyTable::ValueType* PropertyTable::get(const KeyType& key)
 {
     ASSERT(key);
-    ASSERT(key->isAtomic() || key->isUnique());
+    ASSERT(key->isAtomic() || key->isSymbol());
 
     if (!m_keyCount)
         return nullptr;

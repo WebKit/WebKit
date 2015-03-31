@@ -224,7 +224,7 @@ void JSTestEventTarget::getOwnPropertyNames(JSObject* object, ExecState* exec, P
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     for (unsigned i = 0, count = thisObject->impl().length(); i < count; ++i)
         propertyNames.add(Identifier::from(exec, i));
-     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
+    Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 JSValue JSTestEventTarget::getConstructor(VM& vm, JSGlobalObject* globalObject)

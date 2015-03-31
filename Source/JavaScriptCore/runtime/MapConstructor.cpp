@@ -69,7 +69,7 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
     if (adderFunctionCallType == CallTypeNone)
         return JSValue::encode(throwTypeError(exec));
 
-    JSValue iteratorFunction = iterable.get(exec, exec->propertyNames().iteratorPrivateName);
+    JSValue iteratorFunction = iterable.get(exec, exec->propertyNames().iteratorSymbol);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 

@@ -52,7 +52,7 @@ namespace WebCore {
 
 static bool getJSArrayFromJSON(ExecState* exec, JSObject* json, const char* key, JSArray*& result)
 {
-    Identifier identifier(exec, key);
+    Identifier identifier = Identifier::fromString(exec, key);
     PropertySlot slot(json);
 
     if (!json->getPropertySlot(exec, identifier, slot))
@@ -72,7 +72,7 @@ static bool getJSArrayFromJSON(ExecState* exec, JSObject* json, const char* key,
 
 static bool getStringFromJSON(ExecState* exec, JSObject* json, const char* key, String& result)
 {
-    Identifier identifier(exec, key);
+    Identifier identifier = Identifier::fromString(exec, key);
     PropertySlot slot(json);
 
     if (!json->getPropertySlot(exec, identifier, slot))
@@ -93,7 +93,7 @@ static bool getStringFromJSON(ExecState* exec, JSObject* json, const char* key, 
 
 static bool getBooleanFromJSON(ExecState* exec, JSObject* json, const char* key, bool& result)
 {
-    Identifier identifier(exec, key);
+    Identifier identifier = Identifier::fromString(exec, key);
     PropertySlot slot(json);
 
     if (!json->getPropertySlot(exec, identifier, slot))
@@ -501,7 +501,7 @@ std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyData() const
 static void addToJSON(ExecState* exec, JSObject* json, const char* key, const String& value)
 {
     VM& vm = exec->vm();
-    Identifier identifier(&vm, key);
+    Identifier identifier = Identifier::fromString(&vm, key);
     json->putDirect(vm, identifier, jsString(exec, value));
 }
 
@@ -542,13 +542,13 @@ static void buildJSONForRSAComponents(JSC::ExecState* exec, const CryptoKeyDataR
         addToJSON(exec, jsPrimeInfo, "t", base64URLEncode(data.otherPrimeInfos()[i].factorCRTCoefficient));
         oth->putDirectIndex(exec, i, jsPrimeInfo);
     }
-    result->putDirect(exec->vm(), Identifier(exec, "oth"), oth);
+    result->putDirect(exec->vm(), Identifier::fromString(exec, "oth"), oth);
 }
 
 static void addBoolToJSON(ExecState* exec, JSObject* json, const char* key, bool value)
 {
     VM& vm = exec->vm();
-    Identifier identifier(&vm, key);
+    Identifier identifier = Identifier::fromString(&vm, key);
     json->putDirect(vm, identifier, jsBoolean(value));
 }
 
@@ -675,7 +675,7 @@ static void addUsagesToJSON(ExecState* exec, JSObject* json, CryptoKeyUsage usag
     if (usages & CryptoKeyUsageDeriveBits)
         keyOps->putDirectIndex(exec, index++, jsNontrivialString(exec, ASCIILiteral("deriveBits")));
 
-    json->putDirect(exec->vm(), Identifier(exec, "key_ops"), keyOps);
+    json->putDirect(exec->vm(), Identifier::fromString(exec, "key_ops"), keyOps);
 }
 
 String JSCryptoKeySerializationJWK::serialize(ExecState* exec, const CryptoKey& key)

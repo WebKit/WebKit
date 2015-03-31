@@ -241,7 +241,7 @@ void JSFloat64Array::getOwnPropertyNames(JSObject* object, ExecState* exec, Prop
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     for (unsigned i = 0; i < static_cast<Float64Array*>(thisObject->impl())->length(); ++i)
         propertyNames.add(Identifier::from(exec, i));
-     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
+    Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 JSValue JSFloat64Array::getConstructor(ExecState* exec, JSGlobalObject* globalObject)

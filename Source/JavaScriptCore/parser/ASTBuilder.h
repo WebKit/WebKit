@@ -571,7 +571,7 @@ public:
     {
         if (m_vm->propertyNames->arguments == *ident)
             usesArguments();
-        ASSERT(ident->impl()->isAtomic());
+        ASSERT(ident->impl()->isAtomic() || ident->impl()->isSymbol());
         m_scope.m_varDeclarations.append(std::make_pair(*ident, attrs));
     }
 

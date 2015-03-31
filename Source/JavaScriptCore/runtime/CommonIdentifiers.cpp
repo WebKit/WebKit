@@ -22,25 +22,28 @@
 #include "CommonIdentifiers.h"
 
 #include "BuiltinNames.h"
+#include "IdentifierInlines.h"
 #include "JSCBuiltins.h"
 #include "PrivateName.h"
 
 namespace JSC {
 
-#define INITIALIZE_PROPERTY_NAME(name) , name(vm, #name)
-#define INITIALIZE_KEYWORD(name) , name##Keyword(vm, #name)
+#define INITIALIZE_PROPERTY_NAME(name) , name(Identifier::fromString(vm, #name))
+#define INITIALIZE_KEYWORD(name) , name##Keyword(Identifier::fromString(vm, #name))
 #define INITIALIZE_PRIVATE_NAME(name) , name##PrivateName(m_builtinNames->name##PrivateName())
+#define INITIALIZE_SYMBOL(name) , name##Symbol(m_builtinNames->name##Symbol())
 
 CommonIdentifiers::CommonIdentifiers(VM* vm)
     : nullIdentifier()
     , emptyIdentifier(Identifier::EmptyIdentifier)
-    , underscoreProto(vm, "__proto__")
-    , thisIdentifier(vm, "this")
-    , useStrictIdentifier(vm, "use strict")
+    , underscoreProto(Identifier::fromString(vm, "__proto__"))
+    , thisIdentifier(Identifier::fromString(vm, "this"))
+    , useStrictIdentifier(Identifier::fromString(vm, "use strict"))
     , m_builtinNames(new BuiltinNames(vm, this))
     JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(INITIALIZE_KEYWORD)
     JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PROPERTY_NAME)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PRIVATE_NAME)
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_SYMBOL)
 {
 }
 

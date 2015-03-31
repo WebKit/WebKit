@@ -86,7 +86,7 @@ ObjectConstructor::ObjectConstructor(VM& vm, Structure* structure)
 
 void ObjectConstructor::finishCreation(VM& vm, ObjectPrototype* objectPrototype)
 {
-    Base::finishCreation(vm, Identifier(&vm, "Object").string());
+    Base::finishCreation(vm, objectPrototype->classInfo()->className);
     // ECMA 15.2.3.1
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, objectPrototype, DontEnum | DontDelete | ReadOnly);
     // no. of arguments for constructor

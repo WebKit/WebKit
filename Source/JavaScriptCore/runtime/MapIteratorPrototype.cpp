@@ -46,7 +46,7 @@ void MapIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, MapIteratorPrototypeFuncIterator, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, MapIteratorPrototypeFuncIterator, DontEnum, 0);
     JSC_NATIVE_FUNCTION(vm.propertyNames->next, MapIteratorPrototypeFuncNext, DontEnum, 0);
 }
 

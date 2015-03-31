@@ -79,7 +79,7 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
 
         for (auto iter = table->begin(); iter != table->end(); ++iter) {
             if ((!(iter->attributes() & DontEnum) || shouldIncludeDontEnumProperties(mode)) && !((iter->attributes() & BuiltinOrFunction) && didReify))
-                propertyNames.add(Identifier(&vm, iter.key()));
+                propertyNames.add(Identifier::fromString(&vm, iter.key()));
         }
     }
 }
@@ -1679,7 +1679,7 @@ void JSObject::reifyStaticFunctionsForDelete(ExecState* exec)
         PropertySlot slot(this);
         for (auto iter = hashTable->begin(); iter != hashTable->end(); ++iter) {
             if (iter->attributes() & BuiltinOrFunction)
-                setUpStaticFunctionSlot(globalObject()->globalExec(), iter.value(), this, Identifier(&vm, iter.key()), slot);
+                setUpStaticFunctionSlot(globalObject()->globalExec(), iter.value(), this, Identifier::fromString(&vm, iter.key()), slot);
         }
     }
 

@@ -1991,7 +1991,7 @@ sub GenerateImplementation
                 my $enable_function = GetRuntimeEnableFunctionName($signature);
                 my $name = $signature->name;
                 push(@implContent, "    if (!${enable_function}()) {\n");
-                push(@implContent, "        Identifier propertyName(&vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
+                push(@implContent, "        Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
                 push(@implContent, "        removeDirect(vm, propertyName);\n");
                 push(@implContent, "    }\n");
                 push(@implContent, "#endif\n") if $conditionalString;
@@ -2580,10 +2580,10 @@ sub GenerateImplementation
                     AddToImplIncludes("JS" . $constructorType . ".h", $attribute->signature->extendedAttributes->{"Conditional"});
                 }
                 push(@implContent, "    // Shadowing a built-in constructor.\n");
-                push(@implContent, "    castedThis->putDirect(exec->vm(), Identifier(exec, \"$name\"), value);\n");
+                push(@implContent, "    castedThis->putDirect(exec->vm(), Identifier::fromString(exec, \"$name\"), value);\n");
             } elsif ($attribute->signature->extendedAttributes->{"Replaceable"}) {
                 push(@implContent, "    // Shadowing a built-in object.\n");
-                push(@implContent, "    castedThis->putDirect(exec->vm(), Identifier(exec, \"$name\"), value);\n");
+                push(@implContent, "    castedThis->putDirect(exec->vm(), Identifier::fromString(exec, \"$name\"), value);\n");
             } else {
                 if (!$attribute->isStatic) {
                     push(@implContent, "    auto& impl = castedThis->impl();\n");
@@ -2692,7 +2692,7 @@ sub GenerateImplementation
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
         push(@implContent, "    for (unsigned i = 0, count = thisObject->impl().length(); i < count; ++i)\n");
         push(@implContent, "        propertyNames.add(Identifier::from(exec, i));\n");
-        push(@implContent, "     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);\n");
+        push(@implContent, "    Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);\n");
         push(@implContent, "}\n\n");
     }
 

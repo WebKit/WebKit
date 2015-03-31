@@ -481,4 +481,52 @@ TEST(WTF, StringImplEndsWithIgnoringASCIICaseWithEmpty)
     ASSERT_FALSE(empty->endsWithIgnoringASCIICase(*reference.get()));
 }
 
+TEST(WTF, StringImplCreateSymbolEmpty)
+{
+    RefPtr<StringImpl> reference = StringImpl::createSymbolEmpty();
+    ASSERT_TRUE(reference->isSymbol());
+    ASSERT_FALSE(reference->isAtomic());
+    ASSERT_EQ(0u, reference->length());
+    ASSERT_TRUE(equal(reference.get(), ""));
+}
+
+TEST(WTF, StringImplCreateSymbol)
+{
+    RefPtr<StringImpl> original = stringFromUTF8("original");
+    RefPtr<StringImpl> reference = StringImpl::createSymbol(original);
+    ASSERT_TRUE(reference->isSymbol());
+    ASSERT_FALSE(reference->isAtomic());
+    ASSERT_FALSE(original->isSymbol());
+    ASSERT_FALSE(original->isAtomic());
+    ASSERT_EQ(original->length(), reference->length());
+    ASSERT_TRUE(equal(reference.get(), "original"));
+}
+
+TEST(WTF, StringImplSymbolToAtomicString)
+{
+    RefPtr<StringImpl> original = stringFromUTF8("original");
+    RefPtr<StringImpl> reference = StringImpl::createSymbol(original);
+    ASSERT_TRUE(reference->isSymbol());
+    ASSERT_FALSE(reference->isAtomic());
+
+    RefPtr<StringImpl> atomic = AtomicString::add(reference.get());
+    ASSERT_TRUE(atomic->isAtomic());
+    ASSERT_FALSE(atomic->isSymbol());
+    ASSERT_TRUE(reference->isSymbol());
+    ASSERT_FALSE(reference->isAtomic());
+}
+
+TEST(WTF, StringImplSymbolEmptyToAtomicString)
+{
+    RefPtr<StringImpl> reference = StringImpl::createSymbolEmpty();
+    ASSERT_TRUE(reference->isSymbol());
+    ASSERT_FALSE(reference->isAtomic());
+
+    RefPtr<StringImpl> atomic = AtomicString::add(reference.get());
+    ASSERT_TRUE(atomic->isAtomic());
+    ASSERT_FALSE(atomic->isSymbol());
+    ASSERT_TRUE(reference->isSymbol());
+    ASSERT_FALSE(reference->isAtomic());
+}
+
 } // namespace TestWebKitAPI

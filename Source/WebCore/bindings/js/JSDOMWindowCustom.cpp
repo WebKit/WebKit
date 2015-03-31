@@ -428,7 +428,7 @@ bool JSDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec,
         return false;
 
     // Don't allow shadowing location using accessor properties.
-    if (descriptor.isAccessorDescriptor() && propertyName == Identifier(exec, "location"))
+    if (descriptor.isAccessorDescriptor() && propertyName == Identifier::fromString(exec, "location"))
         return false;
 
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
@@ -444,7 +444,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
     if (Frame* activeFrame = activeDOMWindow(exec).frame()) {
         if (activeFrame->settings().usesDashboardBackwardCompatibilityMode() && !activeFrame->tree().parent()) {
             if (BindingSecurity::shouldAllowAccessToDOMWindow(exec, impl()))
-                putDirect(exec->vm(), Identifier(exec, "location"), value);
+                putDirect(exec->vm(), Identifier::fromString(exec, "location"), value);
             return;
         }
     }
@@ -526,7 +526,7 @@ inline void DialogHandler::dialogCreated(DOMWindow& dialog)
     //        world if dialogArguments comes from an isolated world.
     JSDOMWindow* globalObject = toJSDOMWindow(m_frame.get(), normalWorld(m_exec->vm()));
     if (JSValue dialogArguments = m_exec->argument(1))
-        globalObject->putDirect(m_exec->vm(), Identifier(m_exec, "dialogArguments"), dialogArguments);
+        globalObject->putDirect(m_exec->vm(), Identifier::fromString(m_exec, "dialogArguments"), dialogArguments);
 }
 
 inline JSValue DialogHandler::returnValue() const
@@ -534,7 +534,7 @@ inline JSValue DialogHandler::returnValue() const
     JSDOMWindow* globalObject = toJSDOMWindow(m_frame.get(), normalWorld(m_exec->vm()));
     if (!globalObject)
         return jsUndefined();
-    Identifier identifier(m_exec, "returnValue");
+    Identifier identifier = Identifier::fromString(m_exec, "returnValue");
     PropertySlot slot(globalObject);
     if (!JSGlobalObject::getOwnPropertySlot(globalObject, m_exec, identifier, slot))
         return jsUndefined();

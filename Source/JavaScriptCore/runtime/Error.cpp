@@ -137,17 +137,17 @@ JSObject* addErrorInfo(CallFrame* callFrame, JSObject* error, int line, const So
     const String& sourceURL = source.provider()->url();
 
     if (line != -1)
-        error->putDirect(*vm, Identifier(vm, linePropertyName), jsNumber(line), ReadOnly | DontDelete);
+        error->putDirect(*vm, Identifier::fromString(vm, linePropertyName), jsNumber(line), ReadOnly | DontDelete);
     if (!sourceURL.isNull())
-        error->putDirect(*vm, Identifier(vm, sourceURLPropertyName), jsString(vm, sourceURL), ReadOnly | DontDelete);
+        error->putDirect(*vm, Identifier::fromString(vm, sourceURLPropertyName), jsString(vm, sourceURL), ReadOnly | DontDelete);
     return error;
 }
 
 
 bool hasErrorInfo(ExecState* exec, JSObject* error)
 {
-    return error->hasProperty(exec, Identifier(exec, linePropertyName))
-        || error->hasProperty(exec, Identifier(exec, sourceURLPropertyName));
+    return error->hasProperty(exec, Identifier::fromString(exec, linePropertyName))
+        || error->hasProperty(exec, Identifier::fromString(exec, sourceURLPropertyName));
 }
 
 JSObject* throwTypeError(ExecState* exec)

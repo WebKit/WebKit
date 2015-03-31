@@ -317,7 +317,7 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncRace(ExecState* exec)
     JSPromiseDeferred* deferred = jsCast<JSPromiseDeferred*>(deferredValue);
 
     // 4. Let 'iterator' be the result of calling GetIterator(iterable).
-    JSValue iteratorFunction = iterable.get(exec, vm.propertyNames->iteratorPrivateName);
+    JSValue iteratorFunction = iterable.get(exec, vm.propertyNames->iteratorSymbol);
     if (exec->hadException())
         return JSValue::encode(abruptRejection(exec, deferred));
 
@@ -480,7 +480,7 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncAll(ExecState* exec)
     JSPromiseDeferred* deferred = jsCast<JSPromiseDeferred*>(deferredValue);
 
     // 4. Let 'iterator' be the result of calling GetIterator(iterable).
-    JSValue iteratorFunction = iterable.get(exec, vm.propertyNames->iteratorPrivateName);
+    JSValue iteratorFunction = iterable.get(exec, vm.propertyNames->iteratorSymbol);
     if (exec->hadException())
         return JSValue::encode(abruptRejection(exec, deferred));
 

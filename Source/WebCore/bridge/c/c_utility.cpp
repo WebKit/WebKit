@@ -144,7 +144,7 @@ String convertNPStringToUTF16(const NPString* string)
 
 Identifier identifierFromNPIdentifier(ExecState* exec, const NPUTF8* name)
 {
-    return Identifier(exec, convertUTF8ToUTF16WithLatin1Fallback(name, -1));
+    return Identifier::fromString(exec, convertUTF8ToUTF16WithLatin1Fallback(name, -1));
 }
 
 } }

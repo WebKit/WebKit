@@ -395,7 +395,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     argList.append(JSC::jsBoolean(!m_snapshotImage));
 
     // It is expected the JS file provides a createOverlay(shadowRoot, title, subtitle) function.
-    JSC::JSObject* overlay = globalObject->get(exec, JSC::Identifier(exec, "createOverlay")).toObject(exec);
+    JSC::JSObject* overlay = globalObject->get(exec, JSC::Identifier::fromString(exec, "createOverlay")).toObject(exec);
     JSC::CallData callData;
     JSC::CallType callType = overlay->methodTable()->getCallData(overlay, callData);
     if (callType == JSC::CallTypeNone)

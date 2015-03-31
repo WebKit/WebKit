@@ -400,7 +400,7 @@ void JSCSSStyleDeclaration::getOwnPropertyNames(JSObject* object, ExecState* exe
 
         propertyIdentifiers = new Identifier[numCSSProperties];
         for (int i = 0; i < numCSSProperties; ++i)
-            propertyIdentifiers[i] = Identifier(exec, jsPropertyNames[i].impl());
+            propertyIdentifiers[i] = Identifier::fromString(exec, jsPropertyNames[i]);
     }
 
     for (int i = 0; i < numCSSProperties; ++i)

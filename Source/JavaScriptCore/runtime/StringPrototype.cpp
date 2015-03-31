@@ -142,7 +142,7 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION("startsWith", stringProtoFuncStartsWith, DontEnum, 0);
     JSC_NATIVE_FUNCTION("endsWith", stringProtoFuncEndsWith, DontEnum, 0);
     JSC_NATIVE_FUNCTION("includes", stringProtoFuncIncludes, DontEnum, 0);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, stringProtoFuncIterator, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, stringProtoFuncIterator, DontEnum, 0);
 
     JSC_NATIVE_INTRINSIC_FUNCTION(vm.propertyNames->charCodeAtPrivateName, stringProtoFuncCharCodeAt, DontEnum, 1, CharCodeAtIntrinsic);
 

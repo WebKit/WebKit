@@ -66,7 +66,7 @@ void JSInjectedScriptHostPrototype::finishCreation(VM& vm, JSGlobalObject* globa
     JSC_NATIVE_FUNCTION("weakMapEntries", jsInjectedScriptHostPrototypeFunctionWeakMapEntries, DontEnum, 1);
     JSC_NATIVE_FUNCTION("iteratorEntries", jsInjectedScriptHostPrototypeFunctionIteratorEntries, DontEnum, 1);
 
-    Identifier evaluateIdentifier(&vm, "evaluate");
+    Identifier evaluateIdentifier = Identifier::fromString(&vm, "evaluate");
     GetterSetter* accessor = GetterSetter::create(vm, globalObject);
     JSFunction* function = JSFunction::create(vm, globalObject, 0, evaluateIdentifier.string(), jsInjectedScriptHostPrototypeAttributeEvaluate);
     accessor->setGetter(vm, globalObject, function);

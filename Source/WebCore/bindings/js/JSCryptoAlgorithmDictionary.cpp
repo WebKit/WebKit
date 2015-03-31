@@ -89,7 +89,7 @@ bool JSCryptoAlgorithmDictionary::getAlgorithmIdentifier(ExecState* exec, JSValu
 
 static JSValue getProperty(ExecState* exec, JSObject* object, const char* name)
 {
-    Identifier identifier(exec, name);
+    Identifier identifier = Identifier::fromString(exec, name);
     PropertySlot slot(object);
 
     if (object->getPropertySlot(exec, identifier, slot))
@@ -105,7 +105,7 @@ static bool getHashAlgorithm(JSDictionary& dictionary, CryptoAlgorithmIdentifier
     ExecState* exec = dictionary.execState();
     JSObject* object = dictionary.initializerObject();
 
-    Identifier identifier(exec, "hash");
+    Identifier identifier = Identifier::fromString(exec, "hash");
     PropertySlot slot(object);
 
     JSValue hash = getProperty(exec, object, "hash");

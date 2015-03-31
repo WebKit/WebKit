@@ -380,7 +380,7 @@ int main(int argc, char **argv)
         
         MyObject *myObject = (MyObject *)NPN_CreateObject (myFunctionPtrs);
         
-        global.put(exec, Identifier("myInterface"), Instance::createRuntimeObject(Instance::CLanguage, (void *)myObject));
+        global.put(exec, Identifier::fromString(exec, "myInterface"), Instance::createRuntimeObject(Instance::CLanguage, (void *)myObject));
         
         for (int i = 1; i < argc; i++) {
             const char *code = readJavaScriptFromFile(argv[i]);
@@ -394,7 +394,7 @@ int main(int argc, char **argv)
                     char* msg = exVal.toString(exec)->value(exec).ascii();
                     int lineno = -1;
                     if (exVal.type() == ObjectType) {
-                        Value lineVal = Object::dynamicCast(exVal).get(exec,Identifier("line"));
+                        Value lineVal = Object::dynamicCast(exVal).get(exec, Identifier::fromString(exec, "line"));
                         if (lineVal.type() == NumberType)
                             lineno = int(lineVal.toNumber(exec));
                     }

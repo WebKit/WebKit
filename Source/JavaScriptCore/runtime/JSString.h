@@ -467,7 +467,7 @@ inline JSString* jsNontrivialString(VM* vm, String&& s)
 
 ALWAYS_INLINE Identifier JSString::toIdentifier(ExecState* exec) const
 {
-    return Identifier(exec, toAtomicString(exec));
+    return Identifier::fromString(exec, toAtomicString(exec));
 }
 
 ALWAYS_INLINE AtomicString JSString::toAtomicString(ExecState* exec) const

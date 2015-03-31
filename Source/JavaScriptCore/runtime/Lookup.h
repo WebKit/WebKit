@@ -293,7 +293,7 @@ inline void reifyStaticProperties(VM& vm, const HashTableValue (&values)[numberO
         if (!value.m_key)
             continue;                
 
-        Identifier propertyName(&vm, reinterpret_cast<const LChar*>(value.m_key), strlen(value.m_key));
+        Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(value.m_key), strlen(value.m_key));
         if (value.attributes() & Builtin) {
             thisObj.putDirectBuiltinFunction(vm, thisObj.globalObject(), propertyName, value.builtinGenerator()(vm), value.attributes());
             continue;

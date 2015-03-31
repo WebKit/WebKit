@@ -77,11 +77,11 @@ static std::error_code getTypeFlags(ExecState& exec, const JSValue& typeValue, R
     
 static std::error_code loadTrigger(ExecState& exec, JSObject& ruleObject, Trigger& trigger)
 {
-    JSValue triggerObject = ruleObject.get(&exec, Identifier(&exec, "trigger"));
+    JSValue triggerObject = ruleObject.get(&exec, Identifier::fromString(&exec, "trigger"));
     if (!triggerObject || exec.hadException() || !triggerObject.isObject())
         return ContentExtensionError::JSONInvalidTrigger;
     
-    JSValue urlFilterObject = triggerObject.get(&exec, Identifier(&exec, "url-filter"));
+    JSValue urlFilterObject = triggerObject.get(&exec, Identifier::fromString(&exec, "url-filter"));
     if (!urlFilterObject || exec.hadException() || !urlFilterObject.isString())
         return ContentExtensionError::JSONInvalidURLFilterInTrigger;
 
@@ -91,18 +91,18 @@ static std::error_code loadTrigger(ExecState& exec, JSObject& ruleObject, Trigge
 
     trigger.urlFilter = urlFilter;
 
-    JSValue urlFilterCaseValue = triggerObject.get(&exec, Identifier(&exec, "url-filter-is-case-sensitive"));
+    JSValue urlFilterCaseValue = triggerObject.get(&exec, Identifier::fromString(&exec, "url-filter-is-case-sensitive"));
     if (urlFilterCaseValue && !exec.hadException() && urlFilterCaseValue.isBoolean())
         trigger.urlFilterIsCaseSensitive = urlFilterCaseValue.toBoolean(&exec);
 
-    JSValue resourceTypeValue = triggerObject.get(&exec, Identifier(&exec, "resource-type"));
+    JSValue resourceTypeValue = triggerObject.get(&exec, Identifier::fromString(&exec, "resource-type"));
     if (resourceTypeValue && !exec.hadException()) {
         auto typeFlagsError = getTypeFlags(exec, resourceTypeValue, trigger.flags, readResourceType);
         if (typeFlagsError)
             return typeFlagsError;
     }
 
-    JSValue loadTypeValue = triggerObject.get(&exec, Identifier(&exec, "load-type"));
+    JSValue loadTypeValue = triggerObject.get(&exec, Identifier::fromString(&exec, "load-type"));
     if (loadTypeValue && !exec.hadException()) {
         auto typeFlagsError = getTypeFlags(exec, loadTypeValue, trigger.flags, readLoadType);
         if (typeFlagsError)
@@ -114,11 +114,11 @@ static std::error_code loadTrigger(ExecState& exec, JSObject& ruleObject, Trigge
 
 static std::error_code loadAction(ExecState& exec, JSObject& ruleObject, Action& action)
 {
-    JSValue actionObject = ruleObject.get(&exec, Identifier(&exec, "action"));
+    JSValue actionObject = ruleObject.get(&exec, Identifier::fromString(&exec, "action"));
     if (!actionObject || exec.hadException() || !actionObject.isObject())
         return ContentExtensionError::JSONInvalidAction;
 
-    JSValue typeObject = actionObject.get(&exec, Identifier(&exec, "type"));
+    JSValue typeObject = actionObject.get(&exec, Identifier::fromString(&exec, "type"));
     if (!typeObject || exec.hadException() || !typeObject.isString())
         return ContentExtensionError::JSONInvalidActionType;
 
@@ -131,7 +131,7 @@ static std::error_code loadAction(ExecState& exec, JSObject& ruleObject, Action&
     else if (actionType == "block-cookies")
         action = ActionType::BlockCookies;
     else if (actionType == "css-display-none") {
-        JSValue selector = actionObject.get(&exec, Identifier(&exec, "selector"));
+        JSValue selector = actionObject.get(&exec, Identifier::fromString(&exec, "selector"));
         if (!selector || exec.hadException() || !selector.isString())
             return ContentExtensionError::JSONInvalidCSSDisplayNoneActionType;
 

@@ -1,3 +1,133 @@
+2015-03-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Clean up Identifier factories to clarify the meaning of StringImpl*
+        https://bugs.webkit.org/show_bug.cgi?id=143146
+
+        Reviewed by Filip Pizlo.
+
+        Just change Identifier creations.
+
+        1. If the code creates Identifier from StringImpl*
+        which is treated as symbol or string(unique id), use Identifier::fromUid.
+        2. If the code creates Identifier from string, use Identifier::fromString.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::ensureReplacementScriptInjected):
+        (WebCore::QuickTimePluginReplacement::installReplacement):
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::get):
+        (WebCore::set):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::getOwnPropertyNames):
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCommandLineAPIHostCustom.cpp:
+        (WebCore::getJSListenerFunctions):
+        (WebCore::JSCommandLineAPIHost::getEventListeners):
+        * bindings/js/JSCryptoAlgorithmBuilder.cpp:
+        (WebCore::JSCryptoAlgorithmBuilder::add):
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::getProperty):
+        (WebCore::getHashAlgorithm):
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::getJSArrayFromJSON):
+        (WebCore::getStringFromJSON):
+        (WebCore::getBooleanFromJSON):
+        (WebCore::addToJSON):
+        (WebCore::buildJSONForRSAComponents):
+        (WebCore::addBoolToJSON):
+        (WebCore::addUsagesToJSON):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        (WebCore::JSDOMStringMap::getOwnPropertyNames):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::defineOwnProperty):
+        (WebCore::JSDOMWindow::setLocation):
+        (WebCore::DialogHandler::dialogCreated):
+        (WebCore::DialogHandler::returnValue):
+        * bindings/js/JSDeviceMotionEventCustom.cpp:
+        (WebCore::readAccelerationArgument):
+        (WebCore::readRotationRateArgument):
+        (WebCore::createAccelerationObject):
+        (WebCore::createRotationRateObject):
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::tryGetProperty):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::callHTMLAllCollection):
+        (WebCore::JSHTMLAllCollection::item):
+        (WebCore::JSHTMLAllCollection::namedItem):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::all):
+        (WebCore::JSHTMLDocument::setAll):
+        (WebCore::JSHTMLDocument::open):
+        * bindings/js/JSHTMLFormControlsCollectionCustom.cpp:
+        (WebCore::JSHTMLFormControlsCollection::namedItem):
+        * bindings/js/JSIDBDatabaseCustom.cpp:
+        (WebCore::JSIDBDatabase::createObjectStore):
+        * bindings/js/JSIDBObjectStoreCustom.cpp:
+        (WebCore::JSIDBObjectStore::createIndex):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::populateContextMenuItems):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::getOwnPropertyNames):
+        * bindings/js/ReadableStreamJSSource.cpp:
+        (WebCore::setInternalSlotToObject):
+        (WebCore::getInternalSlotFromObject):
+        * bindings/js/ScriptGlobalObject.cpp:
+        (WebCore::ScriptGlobalObject::set):
+        (WebCore::ScriptGlobalObject::get):
+        (WebCore::ScriptGlobalObject::remove):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::CloneSerializer):
+        (WebCore::CloneSerializer::write):
+        (WebCore::CloneDeserializer::deserialize):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject removeWebScriptKey:]):
+        (-[WebScriptObject hasWebScriptKey:]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSFloat64Array.cpp:
+        (WebCore::JSFloat64Array::getOwnPropertyNames):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTarget::getOwnPropertyNames):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjTestSubObjEnabledBySettingConstructor):
+        (WebCore::setJSTestObjConditionalAttr4Constructor):
+        (WebCore::setJSTestObjConditionalAttr5Constructor):
+        (WebCore::setJSTestObjConditionalAttr6Constructor):
+        (WebCore::setJSTestObjReplaceableAttribute):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::identifierFromNPIdentifier):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::defaultValue):
+        * bridge/testbindings.cpp:
+        (main):
+        * bridge/testbindings.mm:
+        (main):
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::loadTrigger):
+        (WebCore::ContentExtensions::loadAction):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot):
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::injectInternalsObject):
+
 2015-03-31  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Songza.com fails to play; QTKit path reports it is always "seeking".

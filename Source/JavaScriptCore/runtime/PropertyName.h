@@ -81,7 +81,7 @@ public:
     PropertyName(AtomicStringImpl* propertyName)
         : m_impl(propertyName)
     {
-        ASSERT(!m_impl || m_impl->isAtomic());
+        ASSERT(!m_impl || m_impl->isAtomic() || m_impl->isSymbol());
     }
 
     PropertyName(const Identifier& propertyName)
@@ -93,8 +93,7 @@ public:
         : m_impl(static_cast<AtomicStringImpl*>(propertyName.uid()))
     {
         ASSERT(m_impl);
-        ASSERT(m_impl->isUnique());
-        ASSERT(m_impl->isAtomic());
+        ASSERT(m_impl->isSymbol());
     }
 
     AtomicStringImpl* uid() const
@@ -104,14 +103,14 @@ public:
 
     AtomicStringImpl* publicName() const
     {
-        return m_impl->isUnique() ? nullptr : m_impl;
+        return (!m_impl || m_impl->isSymbol()) ? nullptr : m_impl;
     }
 
     static const uint32_t NotAnIndex = UINT_MAX;
 
     uint32_t asIndex()
     {
-        return m_impl ? toUInt32FromStringImpl(m_impl) : NotAnIndex;
+        return (m_impl && !m_impl->isSymbol()) ? toUInt32FromStringImpl(m_impl) : NotAnIndex;
     }
     
     void dump(PrintStream& out) const

@@ -37,7 +37,7 @@ inline Identifier::Identifier(ExecState* exec, AtomicStringImpl* string)
 #ifndef NDEBUG
     checkCurrentAtomicStringTable(exec);
     if (string)
-        ASSERT_WITH_MESSAGE(!string->length() || AtomicString::isInAtomicStringTable(string), "The atomic string comes from an other thread!");
+        ASSERT_WITH_MESSAGE(!string->length() || string->isSymbol() || AtomicString::isInAtomicStringTable(string), "The atomic string comes from an other thread!");
 #else
     UNUSED_PARAM(exec);
 #endif
@@ -49,7 +49,7 @@ inline Identifier::Identifier(ExecState* exec, const AtomicString& string)
 #ifndef NDEBUG
     checkCurrentAtomicStringTable(exec);
     if (!string.isNull())
-        ASSERT_WITH_MESSAGE(!string.length() || AtomicString::isInAtomicStringTable(string.impl()), "The atomic string comes from an other thread!");
+        ASSERT_WITH_MESSAGE(!string.length() || string.impl()->isSymbol() || AtomicString::isInAtomicStringTable(string.impl()), "The atomic string comes from an other thread!");
 #else
     UNUSED_PARAM(exec);
 #endif
@@ -68,6 +68,70 @@ inline Ref<StringImpl> Identifier::add(VM* vm, StringImpl* r)
     checkCurrentAtomicStringTable(vm);
 #endif
     return *AtomicString::addWithStringTableProvider(*vm, r);
+}
+
+inline Identifier Identifier::fromUid(VM* vm, StringImpl* uid)
+{
+    if (!uid || !uid->isSymbol())
+        return Identifier(vm, uid);
+    return Identifier(UniqueIdentifier, uid);
+}
+
+inline Identifier Identifier::fromUid(ExecState* exec, StringImpl* uid)
+{
+    return fromUid(&exec->vm(), uid);
+}
+
+inline Identifier Identifier::fromUid(const PrivateName& name)
+{
+    return Identifier(UniqueIdentifier, name.uid());
+}
+
+template<unsigned charactersCount>
+inline Identifier Identifier::fromString(VM* vm, const char (&characters)[charactersCount])
+{
+    return Identifier(vm, characters);
+}
+
+template<unsigned charactersCount>
+inline Identifier Identifier::fromString(ExecState* exec, const char (&characters)[charactersCount])
+{
+    return Identifier(&exec->vm(), characters);
+}
+
+inline Identifier Identifier::fromString(VM* vm, const LChar* s, int length)
+{
+    return Identifier(vm, s, length);
+}
+
+inline Identifier Identifier::fromString(VM* vm, const UChar* s, int length)
+{
+    return Identifier(vm, s, length);
+}
+
+inline Identifier Identifier::fromString(VM* vm, const String& string)
+{
+    return Identifier(vm, string.impl());
+}
+
+inline Identifier Identifier::fromString(ExecState* exec, const String& string)
+{
+    return Identifier(&exec->vm(), string.impl());
+}
+
+inline Identifier Identifier::fromString(ExecState* exec, AtomicStringImpl* atomicString)
+{
+    return Identifier(exec, atomicString);
+}
+
+inline Identifier Identifier::fromString(ExecState* exec, const AtomicString& atomicString)
+{
+    return Identifier(exec, atomicString);
+}
+
+inline Identifier Identifier::fromString(ExecState* exec, const char* s)
+{
+    return Identifier(exec, AtomicString(s));
 }
 
 } // namespace JSC

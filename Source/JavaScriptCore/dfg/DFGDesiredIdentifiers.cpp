@@ -73,7 +73,7 @@ void DesiredIdentifiers::reallyAdd(VM& vm, CommonData* commonData)
     for (unsigned i = 0; i < m_addedIdentifiers.size(); ++i) {
         StringImpl* rep = m_addedIdentifiers[i];
         ASSERT(rep->hasAtLeastOneRef());
-        commonData->dfgIdentifiers.append(Identifier(&vm, rep));
+        commonData->dfgIdentifiers.append(Identifier::fromUid(&vm, rep));
     }
 }
 

@@ -527,7 +527,7 @@ private:
         : CloneBase(exec)
         , m_buffer(out)
         , m_blobURLs(blobURLs)
-        , m_emptyIdentifier(exec, emptyString())
+        , m_emptyIdentifier(Identifier::fromString(exec, emptyString()))
     {
         write(CurrentVersion);
         fillTransferMap(messagePorts, m_transferredMessagePorts);
@@ -1020,7 +1020,7 @@ private:
         if (str.isNull())
             write(m_emptyIdentifier);
         else
-            write(Identifier(m_exec, str));
+            write(Identifier::fromString(m_exec, str));
     }
 
     void write(const Vector<uint8_t>& vector)
@@ -2487,11 +2487,11 @@ DeserializationResult CloneDeserializer::deserialize()
             }
 
             if (JSValue terminal = readTerminal()) {
-                putProperty(outputObjectStack.last(), Identifier(m_exec, cachedString->string()), terminal);
+                putProperty(outputObjectStack.last(), Identifier::fromString(m_exec, cachedString->string()), terminal);
                 goto objectStartVisitMember;
             }
             stateStack.append(ObjectEndVisitMember);
-            propertyNameStack.append(Identifier(m_exec, cachedString->string()));
+            propertyNameStack.append(Identifier::fromString(m_exec, cachedString->string()));
             goto stateUnknown;
         }
         case ObjectEndVisitMember: {

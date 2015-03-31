@@ -139,7 +139,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, arrayProtoFuncValues, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, arrayProtoFuncValues, DontEnum, 0);
 }
 
 bool ArrayPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -531,7 +531,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
             thisObj->methodTable()->putByIndex(thisObj, exec, length + n, exec->uncheckedArgument(n), true);
         else {
             PutPropertySlot slot(thisObj);
-            Identifier propertyName(exec, JSValue(static_cast<int64_t>(length) + static_cast<int64_t>(n)).toWTFString(exec));
+            Identifier propertyName = Identifier::fromString(exec, JSValue(static_cast<int64_t>(length) + static_cast<int64_t>(n)).toWTFString(exec));
             thisObj->methodTable()->put(thisObj, exec, propertyName, exec->uncheckedArgument(n), slot);
         }
         if (exec->hadException())

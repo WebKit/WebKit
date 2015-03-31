@@ -203,20 +203,20 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
 
     String scriptID = String::number(sourceCode->provider()->asID());
     JSObject* location = constructEmptyObject(exec);
-    location->putDirect(exec->vm(), Identifier(exec, "scriptId"), jsString(exec, scriptID));
-    location->putDirect(exec->vm(), Identifier(exec, "lineNumber"), jsNumber(lineNumber));
-    location->putDirect(exec->vm(), Identifier(exec, "columnNumber"), jsNumber(columnNumber));
+    location->putDirect(exec->vm(), Identifier::fromString(exec, "scriptId"), jsString(exec, scriptID));
+    location->putDirect(exec->vm(), Identifier::fromString(exec, "lineNumber"), jsNumber(lineNumber));
+    location->putDirect(exec->vm(), Identifier::fromString(exec, "columnNumber"), jsNumber(columnNumber));
 
     JSObject* result = constructEmptyObject(exec);
-    result->putDirect(exec->vm(), Identifier(exec, "location"), location);
+    result->putDirect(exec->vm(), Identifier::fromString(exec, "location"), location);
 
     String name = function->name(exec);
     if (!name.isEmpty())
-        result->putDirect(exec->vm(), Identifier(exec, "name"), jsString(exec, name));
+        result->putDirect(exec->vm(), Identifier::fromString(exec, "name"), jsString(exec, name));
 
     String displayName = function->displayName(exec);
     if (!displayName.isEmpty())
-        result->putDirect(exec->vm(), Identifier(exec, "displayName"), jsString(exec, displayName));
+        result->putDirect(exec->vm(), Identifier::fromString(exec, "displayName"), jsString(exec, displayName));
 
     // FIXME: provide function scope data in "scopesRaw" property when JSC supports it.
     // <https://webkit.org/b/87192> [JSC] expose function (closure) inner context to debugger
@@ -227,8 +227,8 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
 static JSObject* constructInternalProperty(ExecState* exec, const String& name, JSValue value)
 {
     JSObject* result = constructEmptyObject(exec);
-    result->putDirect(exec->vm(), Identifier(exec, "name"), jsString(exec, name));
-    result->putDirect(exec->vm(), Identifier(exec, "value"), value);
+    result->putDirect(exec->vm(), Identifier::fromString(exec, "name"), jsString(exec, name));
+    result->putDirect(exec->vm(), Identifier::fromString(exec, "value"), value);
     return result;
 }
 
@@ -381,8 +381,8 @@ JSValue JSInjectedScriptHost::weakMapEntries(ExecState* exec)
     JSArray* array = constructEmptyArray(exec, nullptr);
     for (auto it = weakMap->weakMapData()->begin(); it != weakMap->weakMapData()->end(); ++it) {
         JSObject* entry = constructEmptyObject(exec);
-        entry->putDirect(exec->vm(), Identifier(exec, "key"), it->key);
-        entry->putDirect(exec->vm(), Identifier(exec, "value"), it->value.get());
+        entry->putDirect(exec->vm(), Identifier::fromString(exec, "key"), it->key);
+        entry->putDirect(exec->vm(), Identifier::fromString(exec, "value"), it->value.get());
         array->putDirectIndex(exec, fetched++, entry);
         if (numberToFetch && fetched >= numberToFetch)
             break;
@@ -431,7 +431,7 @@ JSValue JSInjectedScriptHost::iteratorEntries(ExecState* exec)
             break;
 
         JSObject* entry = constructEmptyObject(exec);
-        entry->putDirect(exec->vm(), Identifier(exec, "value"), nextValue);
+        entry->putDirect(exec->vm(), Identifier::fromString(exec, "value"), nextValue);
         array->putDirectIndex(exec, i, entry);
     }
 

@@ -61,10 +61,10 @@ void JSSymbolTableObject::getOwnNonIndexPropertyNames(JSObject* object, ExecStat
         ConcurrentJITLocker locker(thisObject->symbolTable()->m_lock);
         SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
         for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
-            if (it->key->isUnique())
+            if (it->key->isSymbol())
                 continue;
             if (!(it->value.getAttributes() & DontEnum) || shouldIncludeDontEnumProperties(mode))
-                propertyNames.add(Identifier(exec, it->key.get()));
+                propertyNames.add(Identifier::fromUid(exec, it->key.get()));
         }
     }
     

@@ -105,7 +105,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     CallType callType = getCallData(handleEventFunction, callData);
     // If jsFunction is not actually a function, see if it implements the EventListener interface and use that
     if (callType == CallTypeNone) {
-        handleEventFunction = jsFunction->get(exec, Identifier(exec, "handleEvent"));
+        handleEventFunction = jsFunction->get(exec, Identifier::fromString(exec, "handleEvent"));
         callType = getCallData(handleEventFunction, callData);
     }
 

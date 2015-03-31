@@ -60,7 +60,7 @@ JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& 
     CallData callData;
     CallType callType = callback()->methodTable()->getCallData(callback(), callData);
     if (callType == CallTypeNone) {
-        function = callback()->get(exec, Identifier(exec, "handleEvent"));
+        function = callback()->get(exec, Identifier::fromString(exec, "handleEvent"));
         callType = getCallData(function, callData);
         if (callType == CallTypeNone)
             return JSValue();

@@ -109,7 +109,7 @@ StringImpl::~StringImpl()
 
     STRING_STATS_REMOVE_STRING(*this);
 
-    if (isAtomic() && length() && !isUnique())
+    if (isAtomic() && length() && !isSymbol())
         AtomicString::remove(this);
 
     BufferOwnership ownership = bufferOwnership();
@@ -286,13 +286,14 @@ Ref<StringImpl> StringImpl::create(const LChar* string)
     return create(string, length);
 }
 
-Ref<StringImpl> StringImpl::createUnique(PassRefPtr<StringImpl> rep)
+Ref<StringImpl> StringImpl::createSymbol(PassRefPtr<StringImpl> rep)
 {
     unsigned length = rep->length();
     if (!length)
-        return createUniqueEmpty();
+        return createSymbolEmpty();
     Ref<StringImpl> string = createSubstringSharingImpl(rep, 0, length);
-    string->m_hashAndFlags = hashAndFlagsForUnique(string->m_hashAndFlags);
+    ASSERT(!string->isAtomic());
+    string->m_hashAndFlags = hashAndFlagsForSymbol(string->m_hashAndFlags);
     return string;
 }
 

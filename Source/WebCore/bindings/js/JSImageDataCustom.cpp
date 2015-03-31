@@ -45,7 +45,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, ImageData* imageD
         return wrapper;
     
     wrapper = CREATE_DOM_WRAPPER(globalObject, ImageData, imageData);
-    Identifier dataName(exec, "data");
+    Identifier dataName = Identifier::fromString(exec, "data");
     wrapper->putDirect(exec->vm(), dataName, toJS(exec, globalObject, imageData->data()), DontDelete | ReadOnly);
     // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
     // https://bugs.webkit.org/show_bug.cgi?id=142595

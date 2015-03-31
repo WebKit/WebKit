@@ -199,11 +199,9 @@ public:
     WTF_EXPORT_STRING_API static RefPtr<StringImpl> add(StringImpl*, unsigned offset, unsigned length);
     ALWAYS_INLINE static RefPtr<StringImpl> add(StringImpl* string)
     {
-        if (!string || string->isAtomic()) {
-            ASSERT_WITH_MESSAGE(!string || !string->length() || string->isUnique() || isInAtomicStringTable(string), "The atomic string comes from an other thread!");
+        if (!string)
             return string;
-        }
-        return addSlowCase(*string);
+        return add(*string);
     }
     WTF_EXPORT_STRING_API static Ref<StringImpl> addFromLiteralData(const char* characters, unsigned length);
 #if USE(CF)
@@ -213,11 +211,9 @@ public:
     template<typename StringTableProvider>
     ALWAYS_INLINE static RefPtr<StringImpl> addWithStringTableProvider(StringTableProvider& stringTableProvider, StringImpl* string)
     {
-        if (!string || string->isAtomic()) {
-            ASSERT_WITH_MESSAGE(!string || !string->length() || string->isUnique() || isInAtomicStringTable(string), "The atomic string comes from an other thread!");
+        if (!string)
             return string;
-        }
-        return addSlowCase(*stringTableProvider.atomicStringTable(), *string);
+        return add(*stringTableProvider.atomicStringTable(), *string);
     }
 
 #if !ASSERT_DISABLED
@@ -229,7 +225,25 @@ private:
     AtomicString(ASCIILiteral);
 
     String m_string;
-    
+
+    ALWAYS_INLINE static Ref<StringImpl> add(StringImpl& string)
+    {
+        if (string.isAtomic()) {
+            ASSERT_WITH_MESSAGE(!string.length() || isInAtomicStringTable(&string), "The atomic string comes from an other thread!");
+            return string;
+        }
+        return addSlowCase(string);
+    }
+
+    ALWAYS_INLINE static Ref<StringImpl> add(AtomicStringTable& stringTable, StringImpl& string)
+    {
+        if (string.isAtomic()) {
+            ASSERT_WITH_MESSAGE(!string.length() || isInAtomicStringTable(&string), "The atomic string comes from an other thread!");
+            return string;
+        }
+        return addSlowCase(stringTable, string);
+    }
+
     WTF_EXPORT_STRING_API static Ref<StringImpl> addSlowCase(StringImpl&);
     WTF_EXPORT_STRING_API static Ref<StringImpl> addSlowCase(AtomicStringTable&, StringImpl&);
 

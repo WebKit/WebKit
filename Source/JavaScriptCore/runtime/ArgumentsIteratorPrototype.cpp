@@ -43,7 +43,7 @@ void ArgumentsIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalOb
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, argumentsIteratorPrototypeFuncIterator, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, argumentsIteratorPrototypeFuncIterator, DontEnum, 0);
     JSC_NATIVE_FUNCTION(vm.propertyNames->next, argumentsIteratorPrototypeFuncNext, DontEnum, 0);
 }
 

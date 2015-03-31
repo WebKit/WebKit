@@ -58,9 +58,9 @@ bool GenericArguments<Type>::getOwnPropertySlot(JSObject* object, ExecState* exe
     if (Base::getOwnPropertySlot(thisObject, exec, ident, slot))
         return true;
     
-    if (ident == vm.propertyNames->iteratorPrivateName) {
+    if (ident == vm.propertyNames->iteratorSymbol) {
         JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-        thisObject->JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, argumentsFuncIterator, DontEnum, 0);
+        thisObject->JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, argumentsFuncIterator, DontEnum, 0);
         if (JSObject::getOwnPropertySlot(thisObject, exec, ident, slot))
             return true;
     }

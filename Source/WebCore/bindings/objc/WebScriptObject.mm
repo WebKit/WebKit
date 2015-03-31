@@ -330,7 +330,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSLockHolder lock(exec);
     ASSERT(!exec->hadException());
 
-    JSC::JSValue function = [self _imp]->get(exec, Identifier(exec, String(name)));
+    JSC::JSValue function = [self _imp]->get(exec, Identifier::fromString(exec, String(name)));
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone)
@@ -384,7 +384,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSLockHolder lock(exec);
     JSObject* object = JSC::jsDynamicCast<JSObject*>([self _imp]);
     PutPropertySlot slot(object);
-    object->methodTable()->put(object, exec, Identifier(exec, String(key)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
+    object->methodTable()->put(object, exec, Identifier::fromString(exec, String(key)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);
@@ -407,7 +407,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         // leaving the lock permanently held
         JSLockHolder lock(exec);
         
-        JSC::JSValue result = [self _imp]->get(exec, Identifier(exec, String(key)));
+        JSC::JSValue result = [self _imp]->get(exec, Identifier::fromString(exec, String(key)));
         
         if (exec->hadException()) {
             addExceptionToConsole(exec);
@@ -433,7 +433,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     JSLockHolder lock(exec);
-    [self _imp]->methodTable()->deleteProperty([self _imp], exec, Identifier(exec, String(key)));
+    [self _imp]->methodTable()->deleteProperty([self _imp], exec, Identifier::fromString(exec, String(key)));
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);
@@ -450,7 +450,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     JSLockHolder lock(exec);
-    BOOL result = [self _imp]->hasProperty(exec, Identifier(exec, String(key)));
+    BOOL result = [self _imp]->hasProperty(exec, Identifier::fromString(exec, String(key)));
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);

@@ -1554,7 +1554,7 @@ COMPILE_ASSERT(!(sizeof(JSObject) % sizeof(WriteBarrierBase<Unknown>)), JSObject
 
 ALWAYS_INLINE Identifier makeIdentifier(VM& vm, const char* name)
 {
-    return Identifier(&vm, name);
+    return Identifier::fromString(&vm, name);
 }
 
 ALWAYS_INLINE Identifier makeIdentifier(VM&, const Identifier& name)

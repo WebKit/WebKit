@@ -618,7 +618,7 @@ ALWAYS_INLINE Identifier JSValue::toPropertyKey(ExecState* exec) const
 
     JSValue primitive = toPrimitive(exec, PreferString);
     if (primitive.isSymbol())
-        return Identifier::from(asSymbol(primitive)->privateName());
+        return Identifier::fromUid(asSymbol(primitive)->privateName());
     return primitive.toString(exec)->toIdentifier(exec);
 }
 

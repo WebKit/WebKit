@@ -1,3 +1,17 @@
+2015-03-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Clean up Identifier factories to clarify the meaning of StringImpl*
+        https://bugs.webkit.org/show_bug.cgi?id=143146
+
+        Reviewed by Filip Pizlo.
+
+        Just change to Identifier::fromString.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::getOwnPropertyNames):
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::identifierFromIdentifierRep):
+
 2015-03-31  Timothy Horton  <timothy_horton@apple.com>
 
         WebKit briefly shows wrong webpage after swiping back (gigaom.com, or any site on a slow network)

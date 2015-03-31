@@ -119,11 +119,11 @@ PassRefPtr<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState* exec
 static void extractSourceInformationFromException(JSC::ExecState* exec, JSObject* exceptionObject, int* lineNumber, int* columnNumber, String* sourceURL)
 {
     // FIXME: <http://webkit.org/b/115087> Web Inspector: Should not need to evaluate JavaScript handling exceptions
-    JSValue lineValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "line"));
+    JSValue lineValue = exceptionObject->getDirect(exec->vm(), Identifier::fromString(exec, "line"));
     *lineNumber = lineValue && lineValue.isNumber() ? int(lineValue.toNumber(exec)) : 0;
-    JSValue columnValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "column"));
+    JSValue columnValue = exceptionObject->getDirect(exec->vm(), Identifier::fromString(exec, "column"));
     *columnNumber = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(exec)) : 0;
-    JSValue sourceURLValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "sourceURL"));
+    JSValue sourceURLValue = exceptionObject->getDirect(exec->vm(), Identifier::fromString(exec, "sourceURL"));
     *sourceURL = sourceURLValue && sourceURLValue.isString() ? sourceURLValue.toString(exec)->value(exec) : ASCIILiteral("undefined");
     exec->clearException();
 }

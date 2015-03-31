@@ -513,7 +513,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     Vector<Identifier, 0, UnsafeVectorOverflow> variables;
     variables.reserveCapacity(numVariables);
     for (size_t i = 0; i < numVariables; ++i) {
-        ASSERT(varStack[i].first.impl()->isAtomic());
+        ASSERT(varStack[i].first.impl()->isAtomic() || varStack[i].first.impl()->isSymbol());
         variables.append(varStack[i].first);
     }
     codeBlock->adoptVariables(variables);
@@ -2405,14 +2405,14 @@ RegisterID* BytecodeGenerator::popTryAndEmitCatch(TryData* tryData, RegisterID* 
 void BytecodeGenerator::emitThrowReferenceError(const String& message)
 {
     emitOpcode(op_throw_static_error);
-    instructions().append(addConstantValue(addStringConstant(Identifier(m_vm, message)))->index());
+    instructions().append(addConstantValue(addStringConstant(Identifier::fromString(m_vm, message)))->index());
     instructions().append(true);
 }
 
 void BytecodeGenerator::emitThrowTypeError(const String& message)
 {
     emitOpcode(op_throw_static_error);
-    instructions().append(addConstantValue(addStringConstant(Identifier(m_vm, message)))->index());
+    instructions().append(addConstantValue(addStringConstant(Identifier::fromString(m_vm, message)))->index());
     instructions().append(false);
 }
 
@@ -2579,7 +2579,7 @@ void BytecodeGenerator::emitReadOnlyExceptionIfNeeded()
     if (!isStrictMode())
         return;
     emitOpcode(op_throw_static_error);
-    instructions().append(addConstantValue(addStringConstant(Identifier(m_vm, StrictModeReadonlyPropertyWriteError)))->index());
+    instructions().append(addConstantValue(addStringConstant(Identifier::fromString(m_vm, StrictModeReadonlyPropertyWriteError)))->index());
     instructions().append(false);
 }
     
@@ -2588,7 +2588,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
     LabelScopePtr scope = newLabelScope(LabelScope::Loop);
     RefPtr<RegisterID> subject = newTemporary();
     emitNode(subject.get(), subjectNode);
-    RefPtr<RegisterID> iterator = emitGetById(newTemporary(), subject.get(), propertyNames().iteratorPrivateName);
+    RefPtr<RegisterID> iterator = emitGetById(newTemporary(), subject.get(), propertyNames().iteratorSymbol);
     {
         CallArguments args(*this, nullptr);
         emitMove(args.thisRegister(), subject.get());

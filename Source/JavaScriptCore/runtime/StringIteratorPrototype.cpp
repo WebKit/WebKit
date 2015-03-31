@@ -58,7 +58,7 @@ void StringIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObjec
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, stringIteratorPrototypeIterator, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, stringIteratorPrototypeIterator, DontEnum, 0);
 }
 
 bool StringIteratorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

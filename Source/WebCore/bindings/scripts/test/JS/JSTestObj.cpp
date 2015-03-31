@@ -1897,8 +1897,8 @@ void setJSTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, JSObject
     auto* castedThis = jsCast<JSTestObj*>(baseObject);
     UNUSED_PARAM(thisValue);
     UNUSED_PARAM(exec);
-    // Shadowing a built-in constructor.
-    castedThis->putDirect(exec->vm(), Identifier(exec, "TestSubObjEnabledBySetting"), value);
+    // Shadowing a built-in constructor
+    castedThis->putDirect(exec->vm(), Identifier::fromString(exec, "TestSubObjEnabledBySetting"), value);
 }
 
 
@@ -2706,8 +2706,8 @@ void setJSTestObjConditionalAttr4Constructor(ExecState* exec, JSObject* baseObje
     auto* castedThis = jsCast<JSTestObj*>(baseObject);
     UNUSED_PARAM(thisValue);
     UNUSED_PARAM(exec);
-    // Shadowing a built-in constructor.
-    castedThis->putDirect(exec->vm(), Identifier(exec, "conditionalAttr4"), value);
+    // Shadowing a built-in constructor
+    castedThis->putDirect(exec->vm(), Identifier::fromString(exec, "conditionalAttr4"), value);
 }
 
 #endif
@@ -2721,8 +2721,8 @@ void setJSTestObjConditionalAttr5Constructor(ExecState* exec, JSObject* baseObje
     auto* castedThis = jsCast<JSTestObj*>(baseObject);
     UNUSED_PARAM(thisValue);
     UNUSED_PARAM(exec);
-    // Shadowing a built-in constructor.
-    castedThis->putDirect(exec->vm(), Identifier(exec, "conditionalAttr5"), value);
+    // Shadowing a built-in constructor
+    castedThis->putDirect(exec->vm(), Identifier::fromString(exec, "conditionalAttr5"), value);
 }
 
 #endif
@@ -2736,8 +2736,8 @@ void setJSTestObjConditionalAttr6Constructor(ExecState* exec, JSObject* baseObje
     auto* castedThis = jsCast<JSTestObj*>(baseObject);
     UNUSED_PARAM(thisValue);
     UNUSED_PARAM(exec);
-    // Shadowing a built-in constructor.
-    castedThis->putDirect(exec->vm(), Identifier(exec, "conditionalAttr6"), value);
+    // Shadowing a built-in constructor
+    castedThis->putDirect(exec->vm(), Identifier::fromString(exec, "conditionalAttr6"), value);
 }
 
 #endif
@@ -2874,8 +2874,8 @@ void setJSTestObjReplaceableAttribute(ExecState* exec, JSObject* baseObject, Enc
             throwSetterTypeError(*exec, "TestObj", "replaceableAttribute");
         return;
     }
-    // Shadowing a built-in object.
-    castedThis->putDirect(exec->vm(), Identifier(exec, "replaceableAttribute"), value);
+    // Shadowing a built-in object
+    castedThis->putDirect(exec->vm(), Identifier::fromString(exec, "replaceableAttribute"), value);
 }
 
 

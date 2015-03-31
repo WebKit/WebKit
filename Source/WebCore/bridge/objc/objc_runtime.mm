@@ -268,7 +268,7 @@ bool ObjcFallbackObjectImp::deleteProperty(JSCell*, ExecState*, PropertyName)
 JSValue ObjcFallbackObjectImp::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType)
 {
     const ObjcFallbackObjectImp* thisObject = jsCast<const ObjcFallbackObjectImp*>(object);
-    return thisObject->_instance->getValueOfUndefinedField(exec, Identifier(exec, thisObject->m_item));
+    return thisObject->_instance->getValueOfUndefinedField(exec, Identifier::fromString(exec, thisObject->m_item));
 }
 
 bool ObjcFallbackObjectImp::toBoolean(ExecState *) const

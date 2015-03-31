@@ -109,7 +109,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
     int overrideLineNumber = m_position.m_line.oneBasedInt();
 
     JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(
-        exec, exec->lexicalGlobalObject(), args, Identifier(exec, m_functionName), 
+        exec, exec->lexicalGlobalObject(), args, Identifier::fromString(exec, m_functionName),
         m_sourceURL, m_position, overrideLineNumber);
 
     if (exec->hadException()) {
