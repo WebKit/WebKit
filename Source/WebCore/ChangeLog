@@ -1,3 +1,52 @@
+2015-03-31  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Implement a barebone ReadableStreamReader interface
+        https://bugs.webkit.org/show_bug.cgi?id=142866
+
+        Reviewed by Benjamin Poulain.
+
+        This patch implements a barebone ReadableStreamReader as described in https://streams.spec.whatwg.org/#reader-class.
+        It implements the IDL without implementing most of the functionality behind.
+        It implements ReadableStreamReader JS constructor and the link with ReadableStream.getReader:
+        - Raise an error if stream is already locked
+        - Set the stream reader to the newly created ReadableStreamReader instance.
+
+        Test: streams/readablestreamreader-constructor.html
+
+        * CMakeLists.txt: Adding ReadableStreamReader files.
+        * DerivedSources.cpp: Ditto.
+        * DerivedSources.make: Ditto.
+        * Modules/streams/ReadableStream.cpp:
+        (WebCore::ReadableStream::createReader): Used by JS binding to get access to the reader.
+        * Modules/streams/ReadableStream.h: Declaration of createReader, reader and lock.
+        (WebCore::ReadableStream::reader):
+        (WebCore::ReadableStream::lock):
+        * Modules/streams/ReadableStream.idl: Cleaning-up the IDL.
+        * Modules/streams/ReadableStreamReader.cpp: Added.
+        (WebCore::ReadableStreamReader::create):
+        (WebCore::ReadableStreamReader::ReadableStreamReader):
+        (WebCore::ReadableStreamReader::~ReadableStreamReader):
+        (WebCore::ReadableStreamReader::closed):
+        (WebCore::ReadableStreamReader::activeDOMObjectName):
+        (WebCore::ReadableStreamReader::canSuspend):
+        * Modules/streams/ReadableStreamReader.h: Added.
+        (WebCore::ReadableStreamReader::stream):
+        * Modules/streams/ReadableStreamReader.idl: Added.
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSReadableStreamCustom.cpp:
+        (WebCore::JSReadableStream::getReader):
+        * bindings/js/JSReadableStreamReaderCustom.cpp: Added.
+        (WebCore::JSReadableStreamReader::read):
+        (WebCore::getOrCreatePromiseDeferredFromObject):
+        (WebCore::closedPromiseSlotName):
+        (WebCore::JSReadableStreamReader::closed):
+        (WebCore::JSReadableStreamReader::cancel):
+        (WebCore::JSReadableStreamReader::releaseLock):
+        (WebCore::constructJSReadableStreamReader):
+
 2015-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] DnD icon/widget has odd background

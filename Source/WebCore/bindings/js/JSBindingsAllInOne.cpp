@@ -113,6 +113,7 @@
 #include "JSPopStateEventCustom.cpp"
 #if ENABLE(STREAMS_API)
 #include "JSReadableStreamCustom.cpp"
+#include "JSReadableStreamReaderCustom.cpp"
 #include "ReadableStreamJSSource.cpp"
 #endif
 #include "JSRequestAnimationFrameCallbackCustom.cpp"

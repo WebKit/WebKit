@@ -34,8 +34,10 @@
 
 #include "ExceptionCode.h"
 #include "JSDOMPromise.h"
+#include "JSReadableStreamReader.h"
 #include "ReadableStream.h"
 #include "ReadableStreamJSSource.h"
+#include "ReadableStreamReader.h"
 #include <wtf/NeverDestroyed.h>
 
 using namespace JSC;
@@ -50,8 +52,9 @@ JSValue JSReadableStream::cancel(ExecState* exec)
 
 JSValue JSReadableStream::getReader(ExecState* exec)
 {
-    JSValue error = createError(exec, ASCIILiteral("getReader is not implemented"));
-    return exec->vm().throwException(exec, error);
+    if (impl().reader())
+        return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("ReadableStream is locked")));
+    return toJS(exec, globalObject(), impl().createReader());
 }
 
 JSValue JSReadableStream::pipeTo(ExecState* exec)

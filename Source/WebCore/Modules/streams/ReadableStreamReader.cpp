@@ -27,13 +27,63 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    CustomConstructor(any properties),
-    Conditional=STREAMS_API
-] interface ReadableStream {
-    // FIXME: Remove RaisesException once methods are actually implemented.
-    [Custom, RaisesException] Promise cancel(DOMString reason);
-    [Custom, RaisesException] ReadableStreamReader getReader();
-    [Custom, RaisesException] Promise pipeTo(any streams, any options);
-    [Custom, RaisesException] Object pipeThrough(any dest, any options);
-};
+#include "config.h"
+#include "ReadableStreamReader.h"
+
+#if ENABLE(STREAMS_API)
+
+#include "NotImplemented.h"
+#include <wtf/RefCountedLeakCounter.h>
+
+namespace WebCore {
+
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, readableStreamReaderCounter, ("ReadableStreamReader"));
+
+Ref<ReadableStreamReader> ReadableStreamReader::create(ReadableStream& stream)
+{
+    auto readableStreamReader = adoptRef(*new ReadableStreamReader(stream));
+    return readableStreamReader;
+}
+
+ReadableStreamReader::ReadableStreamReader(ReadableStream& stream)
+    : ActiveDOMObject(stream.scriptExecutionContext())
+{
+#ifndef NDEBUG
+    readableStreamReaderCounter.increment();
+#endif
+    suspendIfNeeded();
+    ASSERT_WITH_MESSAGE(!stream.reader(), "A ReadableStream cannot be locked by two readers at the same time.");
+    m_stream = &stream;
+    stream.lock(*this);
+}
+
+ReadableStreamReader::~ReadableStreamReader()
+{
+#ifndef NDEBUG
+    readableStreamReaderCounter.decrement();
+#endif
+    if (m_stream) {
+        m_stream->release();
+        m_stream = nullptr;
+    }
+}
+
+void ReadableStreamReader::closed(ClosedSuccessCallback, ClosedErrorCallback)
+{
+    notImplemented();    
+}
+
+const char* ReadableStreamReader::activeDOMObjectName() const
+{
+    return "ReadableStreamReader";
+}
+
+bool ReadableStreamReader::canSuspend() const
+{
+    // FIXME: We should try and do better here.
+    return false;
+}
+
+}
+
+#endif

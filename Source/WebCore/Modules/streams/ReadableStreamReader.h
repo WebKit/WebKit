@@ -27,13 +27,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    CustomConstructor(any properties),
-    Conditional=STREAMS_API
-] interface ReadableStream {
-    // FIXME: Remove RaisesException once methods are actually implemented.
-    [Custom, RaisesException] Promise cancel(DOMString reason);
-    [Custom, RaisesException] ReadableStreamReader getReader();
-    [Custom, RaisesException] Promise pipeTo(any streams, any options);
-    [Custom, RaisesException] Object pipeThrough(any dest, any options);
+#ifndef ReadableStreamReader_h
+#define ReadableStreamReader_h
+
+#if ENABLE(STREAMS_API)
+
+#include "ActiveDOMObject.h"
+#include "ReadableStream.h"
+#include "ScriptWrappable.h"
+#include <functional>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+
+// ReadableStreamReader implements the core of the streams API ReadableStreamReader functionality.
+// It handles in particular access to the chunks and state of a ReadableStream.
+// See https://streams.spec.whatwg.org/#reader-class for more information.
+class ReadableStreamReader : public ActiveDOMObject, public ScriptWrappable, public RefCounted<ReadableStreamReader> {
+public:
+    static Ref<ReadableStreamReader> create(ReadableStream&);
+    virtual ~ReadableStreamReader();
+
+    ReadableStream* stream() { return m_stream.get(); }
+
+    typedef std::function<void()> ClosedSuccessCallback;
+    typedef std::function<void()> ClosedErrorCallback;
+    void closed(ClosedSuccessCallback, ClosedErrorCallback);
+
+private:
+    ReadableStreamReader(ReadableStream&);
+
+    // ActiveDOMObject API.
+    const char* activeDOMObjectName() const override;
+    bool canSuspend() const override;
+
+    RefPtr<ReadableStream> m_stream;
 };
+
+}
+
+#endif
+
+#endif // ReadableStream_h

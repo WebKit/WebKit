@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+class ReadableStreamReader;
 class ScriptExecutionContext;
 
 // ReadableStream implements the core of the streams API ReadableStream functionality.
@@ -57,6 +58,11 @@ public:
     static Ref<ReadableStream> create(ScriptExecutionContext&, Ref<ReadableStreamSource>&&);
     virtual ~ReadableStream();
 
+    ReadableStreamReader* reader() { return m_reader; }
+    void lock(ReadableStreamReader& reader) { m_reader = &reader; }
+    void release() { m_reader = nullptr; }
+    Ref<ReadableStreamReader> createReader();
+
     State internalState() { return m_state; }
 
 private:
@@ -68,6 +74,7 @@ private:
 
     State m_state;
     Ref<ReadableStreamSource> m_source;
+    ReadableStreamReader* m_reader { nullptr };
 };
 
 }

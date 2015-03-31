@@ -70,7 +70,7 @@ Ref<ReadableStreamJSSource> ReadableStreamJSSource::create(JSC::ExecState* exec)
 ReadableStreamJSSource::ReadableStreamJSSource(JSC::ExecState* exec)
 {
     if (exec->argumentCount()) {
-        ASSERT(exec->argument(0).isObject());
+        ASSERT_WITH_MESSAGE(exec->argument(0).isObject(), "Caller of ReadableStreamJSSource constructor should ensure that passed argument is an object.");
         // FIXME: Implement parameters support;
     }
 }

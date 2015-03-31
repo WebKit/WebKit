@@ -848,6 +848,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'ReadableStream').hasOwnProperty('g
 PASS Object.getOwnPropertyDescriptor(global, 'ReadableStream').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ReadableStream').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'ReadableStream').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'ReadableStreamReader').value is ReadableStreamReader
+PASS Object.getOwnPropertyDescriptor(global, 'ReadableStreamReader').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ReadableStreamReader').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ReadableStreamReader').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'ReadableStreamReader').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Rect').value is Rect
 PASS Object.getOwnPropertyDescriptor(global, 'Rect').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Rect').hasOwnProperty('set') is false

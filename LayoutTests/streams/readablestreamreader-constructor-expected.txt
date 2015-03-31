@@ -1,0 +1,6 @@
+
+PASS ReadableStreamReader constructor should get a ReadableStream object as argument 
+PASS ReadableStream instances should have the correct list of properties 
+PASS ReadableStreamReader closed should always return the same promise object 
+PASS ReadableStream getReader should throw if ReadableStream is locked 
+
