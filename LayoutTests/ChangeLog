@@ -1,3 +1,21 @@
+2015-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Extending null should set __proto__ to null
+        https://bugs.webkit.org/show_bug.cgi?id=142882
+
+        Reviewed by Geoffrey Garen and Benjamin Poulain.
+
+        Added more test cases for extending from null, and added checks for prototypes.
+
+        Also rebaselined existing tests.
+
+        * js/class-syntax-call-expected.txt:
+        * js/class-syntax-extends-expected.txt:
+        * js/class-syntax-super-expected.txt:
+        * js/script-tests/class-syntax-call.js:
+        * js/script-tests/class-syntax-extends.js:
+        * js/script-tests/class-syntax-super.js:
+
 2015-03-30  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Correctly handle regular expressions matching everything

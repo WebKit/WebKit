@@ -2865,6 +2865,9 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
     prototype = generator.emitGetById(generator.newTemporary(), constructor.get(), generator.propertyNames().prototype);
 
     if (superclass) {
+        RefPtr<RegisterID> protoParent = generator.newTemporary();
+        generator.emitLoad(protoParent.get(), jsNull());
+
         RefPtr<RegisterID> tempRegister = generator.newTemporary();
         RefPtr<Label> superclassIsNullLabel = generator.newLabel();
         generator.emitJumpIfTrue(generator.emitUnaryOp(op_eq_null, tempRegister.get(), superclass.get()), superclassIsNullLabel.get());
@@ -2874,8 +2877,6 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         generator.emitJumpIfTrue(generator.emitIsObject(tempRegister.get(), superclass.get()), superclassIsObjectLabel.get());
         generator.emitThrowTypeError(ASCIILiteral("The superclass is not an object."));
         generator.emitLabel(superclassIsObjectLabel.get());
-
-        RefPtr<RegisterID> protoParent = generator.newTemporary();
         generator.emitGetById(protoParent.get(), superclass.get(), generator.propertyNames().prototype);
 
         RefPtr<Label> protoParentIsObjectOrNullLabel = generator.newLabel();
@@ -2884,9 +2885,9 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         generator.emitLabel(protoParentIsObjectOrNullLabel.get());
 
         generator.emitDirectPutById(constructor.get(), generator.propertyNames().underscoreProto, superclass.get(), PropertyNode::Unknown);
+        generator.emitLabel(superclassIsNullLabel.get());
         generator.emitDirectPutById(prototype.get(), generator.propertyNames().underscoreProto, protoParent.get(), PropertyNode::Unknown);
 
-        generator.emitLabel(superclassIsNullLabel.get());
         emitPutHomeObject(generator, constructor.get(), prototype.get());
     }
 

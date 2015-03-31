@@ -1,3 +1,15 @@
+2015-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Extending null should set __proto__ to null
+        https://bugs.webkit.org/show_bug.cgi?id=142882
+
+        Reviewed by Geoffrey Garen and Benjamin Poulain.
+
+        Set Derived.prototype.__proto__ to null when extending null.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ClassExprNode::emitBytecode):
+
 2015-03-30  Mark Lam  <mark.lam@apple.com>
 
         REGRESSION (r181993): inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html crashes.

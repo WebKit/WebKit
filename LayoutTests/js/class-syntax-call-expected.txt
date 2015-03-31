@@ -9,7 +9,7 @@ PASS new B did not throw exception.
 PASS B() threw exception TypeError: Cannot call a class constructor.
 PASS new (class { constructor() {} })() did not throw exception.
 PASS (class { constructor() {} })() threw exception TypeError: Cannot call a class constructor.
-PASS new (class extends null { constructor() { super() } })() did not throw exception.
+PASS new (class extends null { constructor() { super() } })() threw exception TypeError: undefined is not an object (evaluating 'super()').
 PASS (class extends null { constructor() { super() } })() threw exception TypeError: Cannot call a class constructor.
 PASS successfullyParsed is true
 
