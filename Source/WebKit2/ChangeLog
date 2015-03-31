@@ -1,3 +1,17 @@
+2015-03-30  Andreas Kling  <akling@apple.com>
+
+        WebBackForwardList doesn't need to manually clear the snapshot of an entry when removing it.
+        <https://webkit.org/b/143231>
+
+        Reviewed by Tim Horton.
+
+        Now that we don't keep WebBackForwardListItem objects alive forever, it's not necessary
+        to clear the snapshot when removing them from the WebBackForwardList, since the entire
+        object will be deleted shortly after that anyway.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::didRemoveItem):
+
 2015-03-30  Enrica Casucci  <enrica@apple.com>
 
         [iOS] WebContent crashing at WebCore: WebCore::Range::collectSelectionRects.

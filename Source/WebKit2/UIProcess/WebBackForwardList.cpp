@@ -437,10 +437,6 @@ Vector<BackForwardListItemState> WebBackForwardList::itemStates() const
 void WebBackForwardList::didRemoveItem(WebBackForwardListItem& backForwardListItem)
 {
     m_page->backForwardRemovedItem(backForwardListItem.itemID());
-
-#if PLATFORM(COCOA)
-    backForwardListItem.setSnapshot(nullptr);
-#endif
 }
 
 } // namespace WebKit
