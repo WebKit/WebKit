@@ -1,3 +1,16 @@
+2015-03-30  David Hyatt  <hyatt@apple.com>
+
+        [New Block-Inside-Inline Model] Make sure line breaks occur before and after the anonymous inline-block.
+        https://bugs.webkit.org/show_bug.cgi?id=143238.
+
+        Reviewed by Dean Jackson.
+
+        * fast/block/inside-inlines/breaking-behavior-expected.html: Added.
+        * fast/block/inside-inlines/breaking-behavior.html: Added.
+        * fast/block/inside-inlines/new-model/breaking-behavior-expected.html: Added.
+        * fast/block/inside-inlines/new-model/breaking-behavior.html: Added.
+        * fast/block/inside-inlines/new-model/empty-block.html:
+
 2015-03-31  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         GTK+ Gardening 30th March

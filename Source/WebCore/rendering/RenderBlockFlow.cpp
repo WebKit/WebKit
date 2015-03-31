@@ -4024,7 +4024,8 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     while (RenderObject* child = childIterator.next()) {
         bool autoWrap = child->isReplaced() ? child->parent()->style().autoWrap() :
             child->style().autoWrap();
-
+        bool isAnonymousInlineBlock = child->isAnonymousInlineBlock();
+        
         if (!child->isBR()) {
             // Step One: determine whether or not we need to go ahead and
             // terminate our current line. Each discrete chunk can become
@@ -4114,19 +4115,21 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                     clearPreviousFloat = false;
 
                 bool canBreakReplacedElement = !child->isImage() || allowImagesToBreak;
-                if ((canBreakReplacedElement && (autoWrap || oldAutoWrap) && (!isPrevChildInlineFlow || shouldBreakLineAfterText)) || clearPreviousFloat) {
+                if (((canBreakReplacedElement && (autoWrap || oldAutoWrap) && (!isPrevChildInlineFlow || shouldBreakLineAfterText)) || clearPreviousFloat) || isAnonymousInlineBlock) {
+                    if (child->isAnonymousInlineBlock() && styleToUse.collapseWhiteSpace())
+                        stripTrailingSpace(inlineMax, inlineMin, trailingSpaceChild);
                     minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);
                     inlineMin = 0;
                 }
 
                 // If we're supposed to clear the previous float, then terminate maxwidth as well.
-                if (clearPreviousFloat) {
+                if (clearPreviousFloat || isAnonymousInlineBlock) {
                     maxLogicalWidth = preferredWidth(maxLogicalWidth, inlineMax);
                     inlineMax = 0;
                 }
 
                 // Add in text-indent. This is added in only once.
-                if (!addedTextIndent && !child->isFloating()) {
+                if (!addedTextIndent && !child->isFloating() && !isAnonymousInlineBlock) {
                     LayoutUnit ceiledIndent = textIndent.ceilToFloat();
                     childMin += ceiledIndent;
                     childMax += ceiledIndent;
@@ -4140,7 +4143,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                 // Add our width to the max.
                 inlineMax += std::max<float>(0, childMax);
 
-                if (!autoWrap || !canBreakReplacedElement || (isPrevChildInlineFlow && !shouldBreakLineAfterText)) {
+                if ((!autoWrap || !canBreakReplacedElement || (isPrevChildInlineFlow && !shouldBreakLineAfterText)) && !isAnonymousInlineBlock) {
                     if (child->isFloating())
                         minLogicalWidth = preferredWidth(minLogicalWidth, childMin);
                     else
@@ -4151,6 +4154,12 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
 
                     // Now start a new line.
                     inlineMin = 0;
+                    
+                    if (child->isAnonymousInlineBlock()) {
+                        // Terminate max width as well.
+                        maxLogicalWidth = preferredWidth(maxLogicalWidth, childMax);
+                        inlineMax = 0;
+                    }
                 }
 
                 if (autoWrap && canBreakReplacedElement && isPrevChildInlineFlow) {
@@ -4261,8 +4270,8 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                     inlineMax += std::max<float>(0, childMax);
             }
 
-            // Ignore spaces after a list marker.
-            if (child->isListMarker())
+            // Ignore spaces after a list marker and also after an anonymous inline block.
+            if (child->isListMarker() || isAnonymousInlineBlock)
                 stripFrontSpaces = true;
         } else {
             minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);

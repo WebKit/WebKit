@@ -490,9 +490,15 @@ inline void BreakingContext::handleReplaced()
         m_width.updateAvailableWidth(replacedBox.logicalHeight());
 
     // Break on replaced elements if either has normal white-space.
-    if ((m_autoWrap || RenderStyle::autoWrap(m_lastWS)) && (!m_current.renderer()->isImage() || m_allowImagesToBreak)
-        && (!m_current.renderer()->isRubyRun() || downcast<RenderRubyRun>(m_current.renderer())->canBreakBefore(m_renderTextInfo.m_lineBreakIterator))) {
+    if (((m_autoWrap || RenderStyle::autoWrap(m_lastWS)) && (!m_current.renderer()->isImage() || m_allowImagesToBreak)
+        && (!m_current.renderer()->isRubyRun() || downcast<RenderRubyRun>(m_current.renderer())->canBreakBefore(m_renderTextInfo.m_lineBreakIterator))) || replacedBox.isAnonymousInlineBlock()) {
         commitLineBreakAtCurrentWidth(*m_current.renderer());
+        if (m_width.committedWidth() && replacedBox.isAnonymousInlineBlock()) {
+            // Always force a break before an anonymous inline block if there is content on the line
+            // already.
+            m_atEnd = true;
+            return;
+        }
     }
 
     if (m_ignoringSpaces)
@@ -525,6 +531,11 @@ inline void BreakingContext::handleReplaced()
     } else {
         // Update prior line break context characters, using U+FFFD (OBJECT REPLACEMENT CHARACTER) for replaced element.
         m_renderTextInfo.m_lineBreakIterator.updatePriorContext(replacementCharacter);
+    }
+    
+    if (replacedBox.isAnonymousInlineBlock()) {
+        m_atEnd = true;
+        m_lineInfo.setPreviousLineBrokeCleanly(true);
     }
 }
 

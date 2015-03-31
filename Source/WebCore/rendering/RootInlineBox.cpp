@@ -872,6 +872,14 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallb
     // Replaced boxes will return 0 for the line-height if line-box-contain says they are
     // not to be included.
     if (box.renderer().isReplaced()) {
+        if (hasAnonymousInlineBlock()) {
+            ascent = box.logicalHeight(); // Margins exist "outside" the line, since they have to collapse.
+            descent = 0;
+            affectsAscent = true;
+            affectsDescent = true;
+            return;
+        }
+            
         if (lineStyle().lineBoxContain() & LineBoxContainReplaced) {
             ascent = box.baselinePosition(baselineType());
             descent = box.lineHeight() - ascent;
@@ -882,6 +890,9 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallb
         }
         return;
     }
+    
+    if (hasAnonymousInlineBlock())
+        return;
 
     Vector<const Font*>* usedFonts = nullptr;
     GlyphOverflow* glyphOverflow = nullptr;

@@ -283,6 +283,8 @@ RootInlineBox* RenderBlockFlow::constructLine(BidiRunList<BidiRun>& bidiRuns, co
     bool rootHasSelectedChildren = false;
     InlineFlowBox* parentBox = 0;
     int runCount = bidiRuns.runCount() - lineInfo.runsFromLeadingWhitespace();
+    
+    bool isAnonymousInlineBlock = false;
     for (BidiRun* r = bidiRuns.firstRun(); r; r = r->next()) {
         // Create a box for our object.
         bool isOnlyRun = (runCount == 1);
@@ -297,14 +299,19 @@ RootInlineBox* RenderBlockFlow::constructLine(BidiRunList<BidiRun>& bidiRuns, co
 
         if (!rootHasSelectedChildren && box->renderer().selectionState() != RenderObject::SelectionNone)
             rootHasSelectedChildren = true;
-
+    
+        isAnonymousInlineBlock = r->renderer().isAnonymousInlineBlock();
+        
         // If we have no parent box yet, or if the run is not simply a sibling,
         // then we need to construct inline boxes as necessary to properly enclose the
         // run's inline box. Segments can only be siblings at the root level, as
         // they are positioned separately.
         if (!parentBox || &parentBox->renderer() != r->renderer().parent()) {
             // Create new inline boxes all the way back to the appropriate insertion point.
-            parentBox = createLineBoxes(r->renderer().parent(), lineInfo, box);
+            // For anonymous inline blocks, we never create intermediate line boxes for the inlines, since
+            // we want to pretend like they don't exist on the line.
+            RenderObject* parentToUse = isAnonymousInlineBlock ? this : r->renderer().parent();
+            parentBox = createLineBoxes(parentToUse, lineInfo, box);
         } else {
             // Append the inline box to this line.
             parentBox->addToLine(box);
@@ -341,6 +348,8 @@ RootInlineBox* RenderBlockFlow::constructLine(BidiRunList<BidiRun>& bidiRuns, co
 
     // Now mark the line boxes as being constructed.
     lastRootBox()->setConstructed();
+    
+    lastRootBox()->setHasAnonymousInlineBlock(isAnonymousInlineBlock);
 
     // Return the last line.
     return lastRootBox();

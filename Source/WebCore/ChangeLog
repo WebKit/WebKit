@@ -1,3 +1,40 @@
+2015-03-30  David Hyatt  <hyatt@apple.com>
+
+        [New Block-Inside-Inline Model] Make sure line breaks occur before and after the anonymous inline-block.
+        https://bugs.webkit.org/show_bug.cgi?id=143238.
+
+        Reviewed by Dean Jackson.
+
+        Added fast/blocks/inside-inlines/breaking-behavior.html (and new-model equivalent).
+
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        (WebCore::InlineFlowBox::hasAnonymousInlineBlock):
+        (WebCore::InlineFlowBox::setHasAnonymousInlineBlock):
+        Add a bit to root line boxes (stored in the InlineFlowBox since it has free bits) that indicates whether
+        or not a line is an anonymous inline-block line.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths):
+        Patch the preferred logical width computation to break both before and after an anonymous inline-block.
+        Also make sure to strip trailing spaces from the line before the anonymous inline-block.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::constructLine):
+        Patch line construction so that no intermediate boxes are constructed between the InlineBox for the anonymous
+        inline-block and the root line box.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+        The height of a "line" that holds an anonymous inline-block should ignore line-box-contain and also make sure
+        that the margins of the replaced element are "outside" the line, since those margins will collapse.
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleReplaced):
+        Patch handleReplaced to make sure breaks occur both before and after an anonymous inline-block. In the case of
+        a break after the block, we setPreviousLineBrokeCleanly to true so that <br>s that follow the anonymous inline-block
+        are respected.
+
 2015-03-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Add nullptr check to GraphicsContext3D::makeContextCurrent()

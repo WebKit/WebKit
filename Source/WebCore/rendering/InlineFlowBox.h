@@ -53,6 +53,7 @@ public:
         , m_hasAnnotationsBefore(false)
         , m_hasAnnotationsAfter(false)
         , m_isFirstAfterPageBreak(false)
+        , m_hasAnonymousInlineBlock(false)
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
         , m_hasBadChildList(false)
 #endif
@@ -211,6 +212,9 @@ public:
     void setHasTextChildren() { m_hasTextChildren = true; setHasTextDescendants(); }
     void setHasTextDescendants() { m_hasTextDescendants = true; }
     
+    bool hasAnonymousInlineBlock() const { return m_hasAnonymousInlineBlock; }
+    void setHasAnonymousInlineBlock(bool b) { m_hasAnonymousInlineBlock = b; }
+
     void checkConsistency() const;
     void setHasBadChildList();
 
@@ -338,6 +342,7 @@ protected:
     unsigned m_lineBreakBidiStatusLast : 5; // UCharDirection
 
     unsigned m_isFirstAfterPageBreak : 1;
+    unsigned m_hasAnonymousInlineBlock : 1;
 
     // End of RootInlineBox-specific members.
 

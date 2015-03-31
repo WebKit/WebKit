@@ -1,7 +1,8 @@
 <!doctype html>
 <head>
 <script>
-window.internals.settings.setNewBlockInsideInlineModelEnabled(true)
+if (window.internals)
+    window.internals.settings.setNewBlockInsideInlineModelEnabled(true)
 </script>
 </head>
 
