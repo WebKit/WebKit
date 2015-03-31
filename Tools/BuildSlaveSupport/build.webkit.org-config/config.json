@@ -246,6 +246,12 @@
                       "slavenames": ["efl-linux-szeged-slave-2"]
                     },
                     {
+                      "name": "EFL Linux AArch64 Release", "type": "BuildAndRemoteJSCTests", "builddir": "efl-linux-aarch64-release",
+                      "platform": "efl", "configuration": "release", "architectures": ["aarch64"],
+                      "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
+                      "slavenames": ["efl-linux-szeged-slave-4"]
+                    },
+                    {
                       "name": "EFL Linux 64-bit Release WK2 (Perf)", "type": "BuildAndPerfTest", "builddir": "efl-linux-64-release-wk2-perf",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
                       "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
@@ -256,7 +262,7 @@
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release (Build)", "GTK Linux 64-bit Debug (Build)", "GTK Linux ARM Release",
                                        "EFL Linux 64-bit Release WK2",
-                                       "EFL Linux ARMv7 Thumb2 Release", "EFL Linux ARMv7 Traditional Release",
+                                       "EFL Linux ARMv7 Thumb2 Release", "EFL Linux ARMv7 Traditional Release", "EFL Linux AArch64 Release",
                                        "EFL Linux 64-bit Release WK2 (Perf)", "WinCairo 64-Bit Release"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-mavericks", "branch": "trunk", "treeStableTimer": 45.0,
