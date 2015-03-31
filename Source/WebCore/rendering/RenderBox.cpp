@@ -2461,6 +2461,10 @@ static bool isStretchingColumnFlexItem(const RenderBox& flexitem)
 
 bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
 {
+    // Anonymous inline blocks always fill the width of their containing block.
+    if (isAnonymousInlineBlock())
+        return false;
+
     // Marquees in WinIE are like a mixture of blocks and inline-blocks.  They size as though they're blocks,
     // but they allow text to sit on the same line as the marquee.
     if (isFloating() || (isInlineBlockOrInlineTable() && !isHTMLMarquee()))

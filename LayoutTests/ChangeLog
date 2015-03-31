@@ -1,3 +1,15 @@
+2015-03-31  David Hyatt  <hyatt@apple.com>
+
+        [New Block-Inside-Inline Model] Anonymous inline-blocks should size as though they are block-level.
+        https://bugs.webkit.org/show_bug.cgi?id=143271
+
+        Reviewed by Dean Jackson.
+
+        * fast/block/inside-inlines/block-width-check-expected.html: Added.
+        * fast/block/inside-inlines/block-width-check.html: Added.
+        * fast/block/inside-inlines/new-model/block-width-check-expected.html: Added.
+        * fast/block/inside-inlines/new-model/block-width-check.html: Added.
+
 2015-03-31  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r173484): Reducing content of scrollable region does not reset scroll 
