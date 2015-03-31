@@ -630,6 +630,7 @@ webkit.org/b/142823 fast/attachment/attachment-subtitle.html [ Missing ]
 webkit.org/b/142823 fast/attachment/attachment-title.html [ Missing ]
 
 webkit.org/b/142670 media/video-background-tab-playback.html [ Failure ]
+webkit.org/b/143233 media/media-source/media-source-append-buffer-with-append-window.html [ Pass Failure ]
 
 # TODO Scroll snap points
 css3/scroll-snap [ Skip ]
@@ -1321,6 +1322,7 @@ webkit.org/b/142490 inspector/css/selector-dynamic-specificity.html [ Timeout ]
 webkit.org/b/142491 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
 
 webkit.org/b/142820 fast/images/animated-gif-body-outside-viewport.html [ Timeout ]
+webkit.org/b/142491 media/click-volume-bar-not-pausing.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1709,7 +1711,6 @@ webkit.org/b/40601 fast/events/right-click-focus.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.composite.operation.darker.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.drawImage.broken.html [ Failure ]
-Bug(GTK) canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.missingargs.html [ Failure ]
@@ -1956,7 +1957,7 @@ webkit.org/b/113772 http/tests/w3c/webperf/submission/Google/resource-timing/htm
 webkit.org/b/115025 fast/events/constructors/mouse-event-constructor.html [ Failure ]
 webkit.org/b/115025 fast/events/constructors/wheel-event-constructor.html [ Failure ]
 
-webkit.org/b/105296 webaudio/delaynode-maxdelay.html [ Failure ]
+webkit.org/b/105296 webaudio/delaynode-maxdelay.html [ Pass Failure ]
 
 webkit.org/b/115437 fast/css/sticky/sticky-writing-mode-vertical-lr.html [ ImageOnlyFailure ]
 webkit.org/b/115437 fast/regions/region-content-flown-into-region.html [ ImageOnlyFailure ]
@@ -2362,6 +2363,8 @@ webkit.org/b/142667 fast/forms/textfield-overflow-by-value-update.html [ Failure
 
 webkit.org/b/142668 fast/backgrounds/background-opaque-clipped-gradients.html [ ImageOnlyFailure ]
 webkit.org/b/142669 fast/regions/overflow/overflow-region-float.html [ ImageOnlyFailure ]
+
+webkit.org/b/143230 imported/mozilla/svg/filters/feImage-1.svg [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
