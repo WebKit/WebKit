@@ -23,7 +23,7 @@
 
 #include "RenderBoxModelObject.h"
 #include "RenderText.h"
-#include "TextDirection.h"
+#include "TextFlags.h"
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {

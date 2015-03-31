@@ -133,7 +133,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
     if (paintInfo.phase == PaintPhaseForeground) {
         const String& displayedFilename = fileTextValue();
         const FontCascade& font = style().fontCascade();
-        TextRun textRun = constructTextRun(this, font, displayedFilename, style(), TextRun::AllowTrailingExpansion, RespectDirection | RespectDirectionOverride);
+        TextRun textRun = constructTextRun(this, font, displayedFilename, style(), AllowTrailingExpansion, RespectDirection | RespectDirectionOverride);
         textRun.disableRoundingHacks();
 
 #if PLATFORM(IOS)
@@ -204,10 +204,10 @@ void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogic
     const FontCascade& font = style().fontCascade();
     // FIXME: Remove the need for this const_cast by making constructTextRun take a const RenderObject*.
     RenderFileUploadControl* renderer = const_cast<RenderFileUploadControl*>(this);
-    float minDefaultLabelWidth = defaultWidthNumChars * font.width(constructTextRun(renderer, font, characterAsString, style(), TextRun::AllowTrailingExpansion));
+    float minDefaultLabelWidth = defaultWidthNumChars * font.width(constructTextRun(renderer, font, characterAsString, style(), AllowTrailingExpansion));
 
     const String label = theme().fileListDefaultLabel(inputElement().multiple());
-    float defaultLabelWidth = font.width(constructTextRun(renderer, font, label, style(), TextRun::AllowTrailingExpansion));
+    float defaultLabelWidth = font.width(constructTextRun(renderer, font, label, style(), AllowTrailingExpansion));
     if (HTMLInputElement* button = uploadButton())
         if (RenderObject* buttonRenderer = button->renderer())
             defaultLabelWidth += buttonRenderer->maxPreferredLogicalWidth() + afterButtonSpacing;

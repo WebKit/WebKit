@@ -24,7 +24,7 @@
 #ifndef TextRun_h
 #define TextRun_h
 
-#include "TextDirection.h"
+#include "TextFlags.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringView.h>
 
@@ -44,15 +44,6 @@ struct WidthIterator;
 class TextRun {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum ExpansionBehaviorFlags {
-        ForbidTrailingExpansion = 0 << 0,
-        AllowTrailingExpansion = 1 << 0,
-        ForbidLeadingExpansion = 0 << 1,
-        AllowLeadingExpansion = 1 << 1,
-    };
-
-    typedef unsigned ExpansionBehavior;
-
     enum RoundingHackFlags {
         NoRounding = 0,
         RunRounding = 1 << 0,

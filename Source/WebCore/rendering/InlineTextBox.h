@@ -160,10 +160,10 @@ private:
 
     void computeRectForReplacementMarker(RenderedDocumentMarker&, const RenderStyle&, const FontCascade&);
 
-    TextRun::ExpansionBehavior expansionBehavior() const
+    ExpansionBehavior expansionBehavior() const
     {
-        return (canHaveLeadingExpansion() ? TextRun::AllowLeadingExpansion : TextRun::ForbidLeadingExpansion)
-            | (renderer().contentIsKnownToFollow() || (expansion() && nextLeafChild() && !nextLeafChild()->isLineBreak()) ? TextRun::AllowTrailingExpansion : TextRun::ForbidTrailingExpansion);
+        return (canHaveLeadingExpansion() ? AllowLeadingExpansion : ForbidLeadingExpansion)
+            | (renderer().contentIsKnownToFollow() || (expansion() && nextLeafChild() && !nextLeafChild()->isLineBreak()) ? AllowTrailingExpansion : ForbidTrailingExpansion);
     }
 
     void behavesLikeText() const = delete;

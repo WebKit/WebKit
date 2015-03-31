@@ -23,14 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextDirection_h
-#define TextDirection_h
+#ifndef TextFlags_h
+#define TextFlags_h
 
 namespace WebCore {
 
 enum TextDirection { RTL, LTR };
 
 inline bool isLeftToRightDirection(TextDirection direction) { return direction == LTR; }
+
+enum ExpansionBehaviorFlags {
+    ForbidTrailingExpansion = 0 << 0,
+    AllowTrailingExpansion = 1 << 0,
+    ForbidLeadingExpansion = 0 << 1,
+    AllowLeadingExpansion = 1 << 1,
+};
+
+typedef unsigned ExpansionBehavior;
 
 }
 

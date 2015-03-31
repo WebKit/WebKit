@@ -20358,7 +20358,7 @@
     <ClInclude Include="..\platform\text\TextCodecUserDefined.h" />
     <ClInclude Include="..\platform\text\TextCodecUTF16.h" />
     <ClInclude Include="..\platform\text\TextCodecUTF8.h" />
-    <ClInclude Include="..\platform\text\TextDirection.h" />
+    <ClInclude Include="..\platform\text\TextFlags.h" />
     <ClInclude Include="..\platform\text\TextEncoding.h" />
     <ClInclude Include="..\platform\text\TextEncodingDetector.h" />
     <ClInclude Include="..\platform\text\TextEncodingRegistry.h" />

@@ -27,7 +27,7 @@
 #define SelectionRect_h
 
 #include "IntRect.h"
-#include "TextDirection.h"
+#include "TextFlags.h"
 #include <wtf/FastMalloc.h>
 
 namespace WebCore {

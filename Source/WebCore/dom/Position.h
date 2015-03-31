@@ -29,7 +29,7 @@
 #include "ContainerNode.h"
 #include "EditingBoundary.h"
 #include "TextAffinity.h"
-#include "TextDirection.h"
+#include "TextFlags.h"
 #include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>

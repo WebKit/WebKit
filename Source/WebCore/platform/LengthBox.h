@@ -23,7 +23,7 @@
 #define LengthBox_h
 
 #include "Length.h"
-#include "TextDirection.h"
+#include "TextFlags.h"
 #include "WritingMode.h"
 
 namespace WebCore {

@@ -37,7 +37,7 @@
 #include "EventTarget.h"
 #include "URL.h"
 #include "NotificationClient.h"
-#include "TextDirection.h"
+#include "TextFlags.h"
 #include "ThreadableLoaderClient.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

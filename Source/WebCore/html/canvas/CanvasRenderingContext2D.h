@@ -38,7 +38,7 @@
 #include "ImageBuffer.h"
 #include "Path.h"
 #include "PlatformLayer.h"
-#include "TextDirection.h"
+#include "TextFlags.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

@@ -1,3 +1,74 @@
+2015-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Move ExpansionBehaviorFlags and TextDirection to their own file
+        https://bugs.webkit.org/show_bug.cgi?id=143273
+
+        Reviewed by Simon Fraser.
+
+        This is a mechanical change. It just moves code around.
+
+        This is getting ready for https://bugs.webkit.org/show_bug.cgi?id=142608
+
+        No new tests because there is no behavior change.
+
+        * Modules/notifications/Notification.h:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSPrimitiveValueMappings.h:
+        * css/CSSProperty.h:
+        * dom/Position.h:
+        * editing/VisiblePosition.h:
+        * editing/VisibleUnits.h:
+        * editing/htmlediting.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * platform/LengthBox.h:
+        * platform/PopupMenuStyle.h:
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/LayoutBoxExtent.h:
+        * platform/graphics/TextRun.h:
+        * platform/ios/SelectionRect.h:
+        * platform/text/BidiResolver.h:
+        * platform/text/StringWithDirection.h:
+        * platform/text/TextHelpers.h: Renamed from Source/WebCore/platform/text/TextDirection.h.
+        (WebCore::isLeftToRightDirection):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::paint):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::selectionRect):
+        (WebCore::EllipsisBox::paintSelection):
+        * rendering/HitTestLocation.h:
+        * rendering/HitTestResult.h:
+        * rendering/InlineBox.h:
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::expansionBehavior):
+        * rendering/RenderBlock.cpp:
+        (WebCore::constructTextRunInternal):
+        (WebCore::RenderBlock::constructTextRun):
+        * rendering/RenderBlock.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        (WebCore::RenderFileUploadControl::computeIntrinsicLogicalWidths):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::computePreferredLogicalWidths):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::updateOptionsWidth):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::getAverageCharWidth):
+        * rendering/RenderThemeIOS.mm:
+        * rendering/style/RenderStyle.h:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::constructTextRun):
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::SVGTextMetrics::constructTextRun):
+
 2015-03-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Clean up Identifier factories to clarify the meaning of StringImpl*

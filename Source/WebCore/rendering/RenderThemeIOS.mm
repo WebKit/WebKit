@@ -553,7 +553,7 @@ public:
     }
     virtual float measureText(const String& string) const override
     {
-        TextRun run = RenderBlock::constructTextRun(&m_renderObject, m_font, string, m_style, TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
+        TextRun run = RenderBlock::constructTextRun(&m_renderObject, m_font, string, m_style, AllowTrailingExpansion | ForbidLeadingExpansion, DefaultTextRunFlags);
         return m_font.width(run);
     }
 private:

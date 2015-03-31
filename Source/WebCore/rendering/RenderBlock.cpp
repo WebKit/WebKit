@@ -3671,7 +3671,7 @@ const char* RenderBlock::renderName() const
 }
 
 template <typename CharacterType>
-static inline TextRun constructTextRunInternal(RenderObject* context, const FontCascade& font, const CharacterType* characters, int length, const RenderStyle& style, TextRun::ExpansionBehavior expansion)
+static inline TextRun constructTextRunInternal(RenderObject* context, const FontCascade& font, const CharacterType* characters, int length, const RenderStyle& style, ExpansionBehavior expansion)
 {
     TextDirection textDirection = LTR;
     bool directionalOverride = style.rtlOrdering() == VisualOrder;
@@ -3686,7 +3686,7 @@ static inline TextRun constructTextRunInternal(RenderObject* context, const Font
 }
 
 template <typename CharacterType>
-static inline TextRun constructTextRunInternal(RenderObject* context, const FontCascade& font, const CharacterType* characters, int length, const RenderStyle& style, TextRun::ExpansionBehavior expansion, TextRunFlags flags)
+static inline TextRun constructTextRunInternal(RenderObject* context, const FontCascade& font, const CharacterType* characters, int length, const RenderStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
 {
     TextDirection textDirection = LTR;
     bool directionalOverride = style.rtlOrdering() == VisualOrder;
@@ -3705,24 +3705,24 @@ static inline TextRun constructTextRunInternal(RenderObject* context, const Font
     return run;
 }
 
-TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const LChar* characters, int length, const RenderStyle& style, TextRun::ExpansionBehavior expansion)
+TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const LChar* characters, int length, const RenderStyle& style, ExpansionBehavior expansion)
 {
     return constructTextRunInternal(context, font, characters, length, style, expansion);
 }
 
-TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const UChar* characters, int length, const RenderStyle& style, TextRun::ExpansionBehavior expansion)
+TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const UChar* characters, int length, const RenderStyle& style, ExpansionBehavior expansion)
 {
     return constructTextRunInternal(context, font, characters, length, style, expansion);
 }
 
-TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const RenderText* text, const RenderStyle& style, TextRun::ExpansionBehavior expansion)
+TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const RenderText* text, const RenderStyle& style, ExpansionBehavior expansion)
 {
     if (text->is8Bit())
         return constructTextRunInternal(context, font, text->characters8(), text->textLength(), style, expansion);
     return constructTextRunInternal(context, font, text->characters16(), text->textLength(), style, expansion);
 }
 
-TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const RenderText* text, unsigned offset, unsigned length, const RenderStyle& style, TextRun::ExpansionBehavior expansion)
+TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const RenderText* text, unsigned offset, unsigned length, const RenderStyle& style, ExpansionBehavior expansion)
 {
     ASSERT(offset + length <= text->textLength());
     if (text->is8Bit())
@@ -3730,7 +3730,7 @@ TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& 
     return constructTextRunInternal(context, font, text->characters16() + offset, length, style, expansion);
 }
 
-TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const String& string, const RenderStyle& style, TextRun::ExpansionBehavior expansion, TextRunFlags flags)
+TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const String& string, const RenderStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
 {
     unsigned length = string.length();
 

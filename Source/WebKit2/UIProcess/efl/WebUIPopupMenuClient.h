@@ -31,7 +31,7 @@
 #include "WKPageEfl.h"
 #include "WebPopupItem.h"
 #include <WebCore/IntRect.h>
-#include <WebCore/TextDirection.h>
+#include <WebCore/TextFlags.h>
 
 namespace API {
 template<> struct ClientTraits<WKPageUIPopupMenuClientBase> {

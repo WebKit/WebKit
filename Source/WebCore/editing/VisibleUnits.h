@@ -27,7 +27,7 @@
 #define VisibleUnits_h
 
 #include "EditingBoundary.h"
-#include "TextDirection.h"
+#include "TextFlags.h"
 #include "VisibleSelection.h"
 
 namespace WebCore {

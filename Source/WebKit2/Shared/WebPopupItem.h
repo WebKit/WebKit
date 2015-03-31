@@ -26,7 +26,7 @@
 #ifndef WebPopupItem_h
 #define WebPopupItem_h
 
-#include <WebCore/TextDirection.h>
+#include <WebCore/TextFlags.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {

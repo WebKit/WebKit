@@ -180,7 +180,7 @@ float RenderTextControl::getAverageCharWidth()
     const UChar ch = '0';
     const String str = String(&ch, 1);
     const FontCascade& font = style().fontCascade();
-    TextRun textRun = constructTextRun(this, font, str, style(), TextRun::AllowTrailingExpansion);
+    TextRun textRun = constructTextRun(this, font, str, style(), AllowTrailingExpansion);
     textRun.disableRoundingHacks();
     return font.width(textRun);
 }

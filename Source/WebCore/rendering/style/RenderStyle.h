@@ -65,7 +65,7 @@
 #include "StyleSurroundData.h"
 #include "StyleTransformData.h"
 #include "StyleVisualData.h"
-#include "TextDirection.h"
+#include "TextFlags.h"
 #include "ThemeTypes.h"
 #include "TransformOperations.h"
 #include "UnicodeBidi.h"

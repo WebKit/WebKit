@@ -638,7 +638,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
 
         String itemText = client()->itemText(index);
 
-        TextRun textRun(itemText, 0, 0, TextRun::AllowTrailingExpansion, itemStyle.textDirection(), itemStyle.hasTextDirectionOverride());
+        TextRun textRun(itemText, 0, 0, AllowTrailingExpansion, itemStyle.textDirection(), itemStyle.hasTextDirectionOverride());
         context.setFillColor(optionTextColor, ColorSpaceDeviceRGB);
         
         FontCascade itemFont = client()->menuStyle().font();

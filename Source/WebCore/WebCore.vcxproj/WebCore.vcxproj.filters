@@ -8973,7 +8973,7 @@
     <ClInclude Include="..\platform\text\TextCodecUTF8.h">
       <Filter>platform\text</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\text\TextDirection.h">
+    <ClInclude Include="..\platform\text\TextFlags.h">
       <Filter>platform\text</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\text\TextEncoding.h">

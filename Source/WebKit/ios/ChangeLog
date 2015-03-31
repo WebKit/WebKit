@@ -1,3 +1,17 @@
+2015-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Move ExpansionBehaviorFlags and TextDirection to their own file
+        https://bugs.webkit.org/show_bug.cgi?id=143273
+
+        Reviewed by Simon Fraser.
+
+        This is a mechanical change. It just moves code around.
+
+        This is getting ready for https://bugs.webkit.org/show_bug.cgi?id=142608
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        * WebCoreSupport/WebVisiblePosition.mm:
+
 2015-03-09  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Fix build when compiling with dead code stripping disabled

@@ -1542,7 +1542,7 @@ void RenderListMarker::computePreferredLogicalWidths()
             break;
         case Asterisks:
         case Footnotes: {
-            TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
+            TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), AllowTrailingExpansion | ForbidLeadingExpansion, DefaultTextRunFlags);
             logicalWidth = font.width(run); // no suffix for these types
         }
             break;
@@ -1629,7 +1629,7 @@ void RenderListMarker::computePreferredLogicalWidths()
             if (m_text.isEmpty())
                 logicalWidth = 0;
             else {
-                TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
+                TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), AllowTrailingExpansion | ForbidLeadingExpansion, DefaultTextRunFlags);
                 LayoutUnit itemWidth = font.width(run);
                 UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem.value()), ' ' };
                 LayoutUnit suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()));
@@ -1762,7 +1762,7 @@ FloatRect RenderListMarker::getRelativeMarkerRect()
         case Asterisks:
         case Footnotes: {
             const FontCascade& font = style().fontCascade();
-            TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
+            TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), AllowTrailingExpansion | ForbidLeadingExpansion, DefaultTextRunFlags);
             relativeRect = FloatRect(0, 0, font.width(run), font.fontMetrics().height());
             break;
         }
@@ -1856,7 +1856,7 @@ FloatRect RenderListMarker::getRelativeMarkerRect()
             if (m_text.isEmpty())
                 return FloatRect();
             const FontCascade& font = style().fontCascade();
-            TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
+            TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), AllowTrailingExpansion | ForbidLeadingExpansion, DefaultTextRunFlags);
             float itemWidth = font.width(run);
             UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem.value()), ' ' };
             float suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()));

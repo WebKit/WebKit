@@ -126,7 +126,7 @@ void RenderListBox::updateFromElement()
             if (!text.isEmpty()) {
                 applyTextTransform(style(), text, ' ');
                 // FIXME: Why is this always LTR? Can't text direction affect the width?
-                TextRun textRun = constructTextRun(this, itemFont, text, style(), TextRun::AllowTrailingExpansion);
+                TextRun textRun = constructTextRun(this, itemFont, text, style(), AllowTrailingExpansion);
                 textRun.disableRoundingHacks();
                 float textWidth = itemFont.width(textRun);
                 width = std::max(width, textWidth);
@@ -399,7 +399,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     ColorSpace colorSpace = itemStyle->colorSpace();
     paintInfo.context->setFillColor(textColor, colorSpace);
 
-    TextRun textRun(itemText, 0, 0, TextRun::AllowTrailingExpansion, itemStyle->direction(), isOverride(itemStyle->unicodeBidi()), true, TextRun::NoRounding);
+    TextRun textRun(itemText, 0, 0, AllowTrailingExpansion, itemStyle->direction(), isOverride(itemStyle->unicodeBidi()), true, TextRun::NoRounding);
     FontCascade itemFont = style().fontCascade();
     LayoutRect r = itemBoundingBoxRect(paintOffset, listIndex);
     r.move(itemOffsetForAlignment(textRun, itemStyle, itemFont, r));

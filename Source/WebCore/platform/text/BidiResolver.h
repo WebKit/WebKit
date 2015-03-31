@@ -24,7 +24,7 @@
 
 #include "BidiContext.h"
 #include "BidiRunList.h"
-#include "TextDirection.h"
+#include "TextFlags.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>

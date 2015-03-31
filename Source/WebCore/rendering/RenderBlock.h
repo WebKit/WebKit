@@ -205,22 +205,22 @@ public:
     }
 
     static TextRun constructTextRun(RenderObject* context, const FontCascade&, const String&, const RenderStyle&,
-        TextRun::ExpansionBehavior = TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, TextRunFlags = DefaultTextRunFlags);
+        ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextRunFlags = DefaultTextRunFlags);
 
     static TextRun constructTextRun(RenderObject* context, const FontCascade&, const RenderText*, const RenderStyle&,
-        TextRun::ExpansionBehavior = TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion);
+        ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion);
 
     static TextRun constructTextRun(RenderObject* context, const FontCascade&, const RenderText*, unsigned offset, unsigned length, const RenderStyle&,
-        TextRun::ExpansionBehavior = TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion);
+        ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion);
 
     static TextRun constructTextRun(RenderObject* context, const FontCascade&, const RenderText*, unsigned offset, const RenderStyle&,
-        TextRun::ExpansionBehavior = TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion);
+        ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion);
 
     static TextRun constructTextRun(RenderObject* context, const FontCascade&, const LChar* characters, int length, const RenderStyle&,
-        TextRun::ExpansionBehavior = TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion);
+        ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion);
 
     static TextRun constructTextRun(RenderObject* context, const FontCascade&, const UChar* characters, int length, const RenderStyle&,
-        TextRun::ExpansionBehavior = TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion);
+        ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion);
     
     LayoutUnit paginationStrut() const;
     void setPaginationStrut(LayoutUnit);

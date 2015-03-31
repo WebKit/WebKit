@@ -45,7 +45,7 @@
 #include "Path.h"
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
-#include "TextDirection.h"
+#include "TextFlags.h"
 #include "TextRenderingMode.h"
 #include "ThemeTypes.h"
 #include "UnicodeBidi.h"

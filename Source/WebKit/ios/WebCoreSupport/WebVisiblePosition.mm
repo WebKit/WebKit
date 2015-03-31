@@ -37,8 +37,8 @@
 #import <WebCore/RenderTextControl.h>
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/TextBoundaries.h>
-#import <WebCore/TextDirection.h>
 #import <WebCore/TextGranularity.h>
+#import <WebCore/TextFlags.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisiblePosition.h>
 #import <WebCore/VisibleUnits.h>

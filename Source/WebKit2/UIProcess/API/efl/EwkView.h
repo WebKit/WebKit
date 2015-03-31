@@ -29,7 +29,7 @@
 #include "WKRetainPtr.h"
 #include "WebViewEfl.h"
 #include <WebCore/RefPtrCairo.h>
-#include <WebCore/TextDirection.h>
+#include <WebCore/TextFlags.h>
 #include <WebCore/Timer.h>
 #include <WebKit/WKBase.h>
 

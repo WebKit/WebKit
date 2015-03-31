@@ -29,7 +29,7 @@
 #include "Color.h"
 #include "FontCascade.h"
 #include "Length.h"
-#include "TextDirection.h"
+#include "TextFlags.h"
 
 namespace WebCore {
 

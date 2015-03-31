@@ -1,3 +1,20 @@
+2015-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Move ExpansionBehaviorFlags and TextDirection to their own file
+        https://bugs.webkit.org/show_bug.cgi?id=143273
+
+        Reviewed by Simon Fraser.
+
+        This is a mechanical change. It just moves code around.
+
+        This is getting ready for https://bugs.webkit.org/show_bug.cgi?id=142608
+
+        * Shared/WebPopupItem.h:
+        * UIProcess/API/C/efl/WKAPICastEfl.h:
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/WebPopupMenuProxy.h:
+        * UIProcess/efl/WebUIPopupMenuClient.h:
+
 2015-03-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Clean up Identifier factories to clarify the meaning of StringImpl*

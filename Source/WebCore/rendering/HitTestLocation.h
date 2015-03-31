@@ -27,7 +27,7 @@
 #include "HitTestRequest.h"
 #include "LayoutRect.h"
 #include "RoundedRect.h"
-#include "TextDirection.h"
+#include "TextFlags.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>

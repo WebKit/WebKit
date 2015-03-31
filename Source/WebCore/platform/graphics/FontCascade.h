@@ -30,7 +30,7 @@
 #include "FontCascadeFonts.h"
 #include "FontDescription.h"
 #include "Path.h"
-#include "TextDirection.h"
+#include "TextFlags.h"
 #include "TypesettingFeatures.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
