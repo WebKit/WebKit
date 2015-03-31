@@ -1,3 +1,10 @@
+2015-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Unreviewed debug build fix after r182186.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        Include InspectorAllInOne.cpp in debug builds.
+
 2015-03-30  David Hyatt  <hyatt@apple.com>
 
         [New Block-Inside-Inline Model] Make sure line breaks occur before and after the anonymous inline-block.
