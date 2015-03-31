@@ -81,11 +81,8 @@ void WeakBlock::sweep()
             finalize(weakImpl);
         if (weakImpl->state() == WeakImpl::Deallocated)
             addToFreeList(&sweepResult.freeList, weakImpl);
-        else {
+        else
             sweepResult.blockIsFree = false;
-            if (weakImpl->state() == WeakImpl::Live)
-                sweepResult.blockIsLogicallyEmpty = false;
-        }
     }
 
     m_sweepResult = sweepResult;

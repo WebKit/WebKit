@@ -48,7 +48,7 @@ public:
     void addBlocksAndContinueSweeping(Vector<MarkedBlock*>&&);
 
     JS_EXPORT_PRIVATE virtual void doWork() override;
-    bool sweepNextBlock();
+    void sweepNextBlock();
     void willFinishSweeping();
 
 #if USE(CF)
@@ -56,6 +56,7 @@ private:
     void doSweep(double startTime);
     void scheduleTimer();
     void cancelTimer();
+    bool hasWork() const { return !m_blocksToSweep.isEmpty(); }
     
     Vector<MarkedBlock*>& m_blocksToSweep;
 #endif

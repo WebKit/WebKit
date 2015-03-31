@@ -61,7 +61,8 @@ void IncrementalSweeper::cancelTimer()
 
 void IncrementalSweeper::fullSweep()
 {
-    while (sweepNextBlock()) { }
+    while (hasWork())
+        doWork();
 }
 
 void IncrementalSweeper::doWork()
@@ -71,7 +72,9 @@ void IncrementalSweeper::doWork()
 
 void IncrementalSweeper::doSweep(double sweepBeginTime)
 {
-    while (sweepNextBlock()) {
+    while (!m_blocksToSweep.isEmpty()) {
+        sweepNextBlock();
+
         double elapsedTime = WTF::monotonicallyIncreasingTime() - sweepBeginTime;
         if (elapsedTime < sweepTimeSlice)
             continue;
@@ -84,7 +87,7 @@ void IncrementalSweeper::doSweep(double sweepBeginTime)
     cancelTimer();
 }
 
-bool IncrementalSweeper::sweepNextBlock()
+void IncrementalSweeper::sweepNextBlock()
 {
     while (!m_blocksToSweep.isEmpty()) {
         MarkedBlock* block = m_blocksToSweep.takeLast();
@@ -95,10 +98,8 @@ bool IncrementalSweeper::sweepNextBlock()
         DeferGCForAWhile deferGC(m_vm->heap);
         block->sweep();
         m_vm->heap.objectSpace().freeOrShrinkBlock(block);
-        return true;
+        return;
     }
-
-    return m_vm->heap.sweepNextLogicallyEmptyWeakBlock();
 }
 
 void IncrementalSweeper::startSweeping(Vector<MarkedBlock*>&& blockSnapshot)
@@ -146,9 +147,8 @@ void IncrementalSweeper::willFinishSweeping()
 {
 }
 
-bool IncrementalSweeper::sweepNextBlock()
+void IncrementalSweeper::sweepNextBlock()
 {
-    return false;
 }
 
 #endif

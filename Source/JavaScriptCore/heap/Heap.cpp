@@ -373,8 +373,6 @@ void Heap::lastChanceToFinalize()
 
     m_objectSpace.lastChanceToFinalize();
     releaseDelayedReleasedObjects();
-
-    sweepAllLogicallyEmptyWeakBlocks();
 }
 
 void Heap::releaseDelayedReleasedObjects()
@@ -1004,8 +1002,6 @@ void Heap::collectAllGarbage()
     DeferGCForAWhile deferGC(*this);
     m_objectSpace.sweep();
     m_objectSpace.shrink();
-
-    sweepAllLogicallyEmptyWeakBlocks();
 }
 
 static double minute = 60.0;
@@ -1244,11 +1240,8 @@ void Heap::notifyIncrementalSweeper()
     GCPHASE(NotifyIncrementalSweeper);
     if (m_operationInProgress == EdenCollection)
         m_sweeper->addBlocksAndContinueSweeping(WTF::move(m_blockSnapshot));
-    else {
-        if (!m_logicallyEmptyWeakBlocks.isEmpty())
-            m_indexOfNextLogicallyEmptyWeakBlockToSweep = 0;
+    else
         m_sweeper->startSweeping(WTF::move(m_blockSnapshot));
-    }
 }
 
 void Heap::rememberCurrentlyExecutingCodeBlocks()
@@ -1481,43 +1474,6 @@ bool Heap::shouldDoFullCollection(HeapOperation requestedCollectionType) const
     UNUSED_PARAM(requestedCollectionType);
     return true;
 #endif
-}
-
-void Heap::addLogicallyEmptyWeakBlock(WeakBlock* block)
-{
-    m_logicallyEmptyWeakBlocks.append(block);
-}
-
-void Heap::sweepAllLogicallyEmptyWeakBlocks()
-{
-    if (m_logicallyEmptyWeakBlocks.isEmpty())
-        return;
-
-    m_indexOfNextLogicallyEmptyWeakBlockToSweep = 0;
-    while (sweepNextLogicallyEmptyWeakBlock()) { }
-}
-
-bool Heap::sweepNextLogicallyEmptyWeakBlock()
-{
-    if (m_indexOfNextLogicallyEmptyWeakBlockToSweep == WTF::notFound)
-        return false;
-
-    WeakBlock* block = m_logicallyEmptyWeakBlocks[m_indexOfNextLogicallyEmptyWeakBlockToSweep];
-
-    block->sweep();
-    if (block->isEmpty()) {
-        std::swap(m_logicallyEmptyWeakBlocks[m_indexOfNextLogicallyEmptyWeakBlockToSweep], m_logicallyEmptyWeakBlocks.last());
-        m_logicallyEmptyWeakBlocks.removeLast();
-        WeakBlock::destroy(block);
-    } else
-        m_indexOfNextLogicallyEmptyWeakBlockToSweep++;
-
-    if (m_indexOfNextLogicallyEmptyWeakBlockToSweep >= m_logicallyEmptyWeakBlocks.size()) {
-        m_indexOfNextLogicallyEmptyWeakBlockToSweep = WTF::notFound;
-        return false;
-    }
-
-    return true;
 }
 
 } // namespace JSC
