@@ -57,7 +57,8 @@
                     { "name": "efl-linux-slave-2", "platform": "efl" },
                     { "name": "efl-linux-szeged-slave-1", "platform": "efl" },
                     { "name": "efl-linux-szeged-slave-2", "platform": "efl" },
-                    { "name": "efl-linux-szeged-slave-3", "platform": "efl" }
+                    { "name": "efl-linux-szeged-slave-3", "platform": "efl" },
+                    { "name": "efl-linux-szeged-slave-4", "platform": "efl" }
 
                   ],
 
