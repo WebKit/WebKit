@@ -41,6 +41,7 @@
 #include "PageVisibilityState.h"
 #include "PlatformScreen.h"
 #include "ReferrerPolicy.h"
+#include "Region.h"
 #include "RenderPtr.h"
 #include "ScriptExecutionContext.h"
 #include "StringWithDirection.h"
@@ -1148,6 +1149,12 @@ public:
 #endif
     }
 
+    const EventTargetSet* wheelEventTargets() const { return m_wheelEventTargets.get(); }
+
+    Region absoluteRegionForEventTargets(const EventTargetSet*);
+
+    LayoutRect absoluteEventHandlerBounds(bool&) override final;
+
     bool visualUpdatesAllowed() const { return m_visualUpdatesAllowed; }
 
     bool isInDocumentWrite() { return m_writeRecursionDepth > 0; }
@@ -1561,6 +1568,7 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<EventTargetSet> m_touchEventTargets;
 #endif
+    std::unique_ptr<EventTargetSet> m_wheelEventTargets;
 
     double m_lastHandledUserGestureTimestamp;
 

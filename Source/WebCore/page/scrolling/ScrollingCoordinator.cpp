@@ -98,6 +98,10 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(const FrameView& fra
 
 Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame& frame, const IntPoint& frameLocation) const
 {
+    RenderView* renderView = frame.contentRenderer();
+    if (!renderView || renderView->documentBeingDestroyed())
+        return Region();
+
 #if ENABLE(IOS_TOUCH_EVENTS)
     // On iOS, we use nonFastScrollableRegion to represent the region covered by elements with touch event handlers.
     ASSERT(frame.isMainFrame());
@@ -114,6 +118,7 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame& frame, 
     for (const auto& rect : touchRects)
         touchRegion.unite(rect);
 
+    // FIXME: use absoluteRegionForEventTargets().
     return touchRegion;
 #else
     Region nonFastScrollableRegion;
@@ -147,6 +152,11 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame& frame, 
 
     for (Frame* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().nextSibling())
         nonFastScrollableRegion.unite(computeNonFastScrollableRegion(*subframe, offset));
+
+    // Include wheel event handler region for the main frame.
+    Region wheelHandlerRegion = frame.document()->absoluteRegionForEventTargets(frame.document()->wheelEventTargets());
+    wheelHandlerRegion.translate(toIntSize(offset));
+    nonFastScrollableRegion.unite(wheelHandlerRegion);
 
     return nonFastScrollableRegion;
 #endif

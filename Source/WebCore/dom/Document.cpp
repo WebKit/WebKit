@@ -47,6 +47,7 @@
 #include "DOMNamedFlowCollection.h"
 #include "DOMWindow.h"
 #include "DateComponents.h"
+#include "DebugPageOverlays.h"
 #include "Dictionary.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
@@ -2244,6 +2245,9 @@ void Document::prepareForDestruction()
     if (m_touchEventTargets && m_touchEventTargets->size() && parentDocument())
         parentDocument()->didRemoveEventTargetNode(*this);
 #endif
+
+    if (m_wheelEventTargets && m_wheelEventTargets->size() && parentDocument())
+        parentDocument()->didRemoveEventTargetNode(*this);
 
     if (m_mediaQueryMatcher)
         m_mediaQueryMatcher->documentDestroyed();
@@ -5998,29 +6002,61 @@ static void wheelEventHandlerCountChanged(Document* document)
     scrollingCoordinator->frameViewWheelEventHandlerCountChanged(*frameView);
 }
 
-void Document::didAddWheelEventHandler(Node&)
+void Document::didAddWheelEventHandler(Node& node)
 {
     ++m_wheelEventHandlerCount;
+
+    if (!m_wheelEventTargets)
+        m_wheelEventTargets = std::make_unique<EventTargetSet>();
+
+    m_wheelEventTargets->add(&node);
+
+    if (Document* parent = parentDocument()) {
+        parent->didAddWheelEventHandler(*this);
+        return;
+    }
+
     wheelEventHandlerCountChanged(this);
+
+    if (Frame* frame = this->frame())
+        DebugPageOverlays::didChangeEventHandlers(*frame);
 }
 
-void Document::didRemoveWheelEventHandler(Node&)
+void Document::didRemoveWheelEventHandler(Node& node)
 {
     ASSERT(m_wheelEventHandlerCount > 0);
     --m_wheelEventHandlerCount;
+
+    if (!m_wheelEventTargets)
+        return;
+
+    ASSERT(m_wheelEventTargets->contains(&node));
+    m_wheelEventTargets->remove(&node);
+
+    if (Document* parent = parentDocument()) {
+        parent->didRemoveWheelEventHandler(*this);
+        return;
+    }
+
     wheelEventHandlerCountChanged(this);
+
+    if (Frame* frame = this->frame())
+        DebugPageOverlays::didChangeEventHandlers(*frame);
 }
 
 void Document::didAddTouchEventHandler(Node& handler)
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (!m_touchEventTargets.get())
+    if (!m_touchEventTargets)
         m_touchEventTargets = std::make_unique<EventTargetSet>();
+
     m_touchEventTargets->add(&handler);
+
     if (Document* parent = parentDocument()) {
         parent->didAddTouchEventHandler(*this);
         return;
     }
+
     if (Page* page = this->page()) {
         if (m_touchEventTargets->size() == 1)
             page->chrome().client().needTouchEvents(true);
@@ -6033,10 +6069,12 @@ void Document::didAddTouchEventHandler(Node& handler)
 void Document::didRemoveTouchEventHandler(Node& handler)
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (!m_touchEventTargets.get())
+    if (!m_touchEventTargets)
         return;
+
     ASSERT(m_touchEventTargets->contains(&handler));
     m_touchEventTargets->remove(&handler);
+
     if (Document* parent = parentDocument()) {
         parent->didRemoveTouchEventHandler(*this);
         return;
@@ -6047,6 +6085,8 @@ void Document::didRemoveTouchEventHandler(Node& handler)
         return;
     if (m_touchEventTargets->size())
         return;
+
+    // FIXME: why can't we trust m_touchEventTargets?
     for (const Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document() && frame->document()->hasTouchEventHandlers())
             return;
@@ -6065,9 +6105,51 @@ void Document::didRemoveEventTargetNode(Node& handler)
         if ((&handler == this || m_touchEventTargets->isEmpty()) && parentDocument())
             parentDocument()->didRemoveEventTargetNode(*this);
     }
-#else
-    UNUSED_PARAM(handler);
 #endif
+
+    if (m_wheelEventTargets) {
+        m_wheelEventTargets->removeAll(&handler);
+        if ((&handler == this || m_wheelEventTargets->isEmpty()) && parentDocument())
+            parentDocument()->didRemoveEventTargetNode(*this);
+    }
+}
+
+LayoutRect Document::absoluteEventHandlerBounds(bool& includesFixedPositionElements)
+{
+    includesFixedPositionElements = false;
+    if (RenderView* renderView = this->renderView())
+        return renderView->documentRect();
+    
+    return LayoutRect();
+}
+
+Region Document::absoluteRegionForEventTargets(const EventTargetSet* targets)
+{
+    if (!targets)
+        return Region();
+
+    Region targetRegion;
+    bool insideFixedPosition = false;
+
+    for (auto it : *targets) {
+        LayoutRect rootRelativeBounds;
+        
+        if (is<Document>(it.key)) {
+            Document* document = downcast<Document>(it.key);
+            if (document == this)
+                rootRelativeBounds = absoluteEventHandlerBounds(insideFixedPosition);
+            else if (Element* element = document->ownerElement())
+                rootRelativeBounds = element->absoluteEventHandlerBounds(insideFixedPosition);
+        } else if (is<Element>(it.key)) {
+            Element* element = downcast<Element>(it.key);
+            rootRelativeBounds = element->absoluteEventHandlerBounds(insideFixedPosition);
+        }
+        
+        if (!rootRelativeBounds.isEmpty())
+            targetRegion.unite(Region(enclosingIntRect(rootRelativeBounds)));
+    }
+
+    return targetRegion;
 }
 
 void Document::updateLastHandledUserGestureTimestamp()

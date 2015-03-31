@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #content {
+            -webkit-flow-into: flow1;
+        }
+
+        #region1, #region2 {
+            margin: 10px;
+            border: 1px solid black;
+            -webkit-flow-from: flow1;
+        }
+
+        #region1 {
+            margin-left: 30px;
+            width: 300px;
+            height: 200px;
+        }
+
+        #region2 {
+            margin-top: 80px;
+            margin-left: 200px;
+            width: 400px;
+            height: 90px;
+        }
+
+        .target {
+            color: blue;
+        }
+    </style>
+    <script src="resources/wheel-handler-region-helper.js"></script>
+    <script>
+        function doTest()
+        {
+            dumpRegion();
+        }
+
+        window.addEventListener('load', doTest);
+    </script>
+</head>
+<body>
+
+<div id="content">
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    <p class="target" onmousewheel="(void)0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+</div>
+
+<div id="container">
+    <div id="region1"></div>
+    <div id="region2"></div>
+</div>
+
+<pre id="output"></pre>
+
+</body>
+</html>

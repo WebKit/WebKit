@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        iframe {
+            display: block;
+            margin: 10px;
+        }
+    </style>
+    <script src="resources/wheel-handler-region-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        var notificationsPending = 3;
+
+        // Called from subframes.
+        function frameChanged()
+        {
+            receivedNotification();
+        }
+        
+        function mainFrameLoaded()
+        {
+            receivedNotification();
+        }
+        
+        function receivedNotification()
+        {
+            if (!--notificationsPending) {
+                dumpRegion();
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        }
+        
+        window.addEventListener('load', mainFrameLoaded, false);
+    </script>
+</head>
+<body>
+
+<iframe src="resources/gain-wheel-handler.html"></iframe>
+<iframe src="resources/lose-wheel-handler.html"></iframe>
+
+<pre id="output"></pre>
+
+</body>
+</html>

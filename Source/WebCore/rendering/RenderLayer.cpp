@@ -48,6 +48,7 @@
 #include "BoxShape.h"
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
+#include "DebugPageOverlays.h"
 #include "Document.h"
 #include "DocumentEventQueue.h"
 #include "Element.h"
@@ -2391,6 +2392,7 @@ void RenderLayer::scrollTo(int x, int y)
 #if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
         renderer().document().dirtyTouchEventRects();
 #endif
+        DebugPageOverlays::didLayout(renderer().frame());
     }
 
     Frame& frame = renderer().frame();

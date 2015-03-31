@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .fixed {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+        }
+        
+        .box {
+            height: 100px;
+            width: 100px;
+            background-color: blue;
+        }
+        
+        .child {
+            position: relative;
+            left: 50px;
+            top: 50px;
+        }
+        #output {
+            margin-top: 520px;
+        }
+    </style>
+    <script src="resources/wheel-handler-region-helper.js"></script>
+    <script>
+        window.addEventListener('load', dumpRegion, false);
+    </script>
+</head>
+<body>
+
+<div class="fixed box">
+    <div class="child box" onmousewheel="(void)0">
+    </div>
+</div>
+
+<pre id="output"></pre>
+
+</body>
+</html>

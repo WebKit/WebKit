@@ -90,15 +90,7 @@ private:
 
 bool MouseWheelRegionOverlay::updateRegion()
 {
-    std::unique_ptr<Region> region = std::make_unique<Region>();
-
-    for (auto& element : descendantsOfType<Element>(*m_frame.document())) {
-        if (element.hasEventListeners(eventNames().mousewheelEvent) || element.hasEventListeners(eventNames().wheelEvent)) {
-            IntRect elementRect = element.boundsInRootViewSpace();
-            elementRect = m_frame.view()->rootViewToContents(elementRect);
-            region->unite(Region(elementRect));
-        }
-    }
+    std::unique_ptr<Region> region = std::make_unique<Region>(m_frame.document()->absoluteRegionForEventTargets(m_frame.document()->wheelEventTargets()));
 
     bool regionChanged = !m_region || !(*m_region == *region);
     m_region = WTF::move(region);

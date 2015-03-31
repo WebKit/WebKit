@@ -1,3 +1,80 @@
+2015-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to compute a region for elements on the page that have wheel event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=142807
+
+        Reviewed by David Hyatt.
+        
+        Make it possible to compute a region that covers the elements on the page that have
+        a wheel event handler. This region may overestimate, but must not underestimate the area.
+        
+        Elements with wheel handlers are registered on the document, and when a document gains
+        its first wheel handler, it registers the ownerElement in the parent document. Thus, on 
+        the main frame, the region encompasses elements with handlers, and iframes whose subdocuments
+        have handlers.
+        
+        Element gains some functions that allow it to return a rect which is the bounds of the element's
+        renderer, and renders for its descendant elements, which is the size or larger than the event
+        handling region for that element. Some configurations (e.g. position:fixed) require special
+        treatment.
+        
+        Document::absoluteRegionForEventTargets() can then iterate over all elements in the given set,
+        and build a Region for those (short-circuiting if the document itself has a handler).
+        
+        The new code is exercised for the debug MouseWheelRegionOverlay, and also added to the
+        non-fast scrollable region, used by threaded scrolling.
+
+        Tests: platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/handlers-in-iframes.html
+               platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-fixed-child.html
+               platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-in-columns.html
+               platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-in-region.html
+               platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-inside-fixed.html
+               platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-on-document.html
+               platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-on-fixed.html
+               platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-region-basic.html
+
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::absoluteEventHandlerBounds): Base class implementation; returns empty rect.
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction): Unregister from the parent document.
+        (WebCore::Document::didAddWheelEventHandler): Add to the wheel handler set. Tell the parent
+        document if we are adding wheel handlers for the first time. Eventually the wheelEventHandlerCountChanged()
+        code will be removed, now we have the set. Tell debug overlays that we changed.
+        (WebCore::Document::didRemoveWheelEventHandler): Remove from the set, and unregister with the parent
+        document if necessary. Tell debug overlays that we changed.
+        (WebCore::Document::didAddTouchEventHandler): Minor cleanup.
+        (WebCore::Document::didRemoveTouchEventHandler): Ditto.
+        (WebCore::Document::didRemoveEventTargetNode): Remove from wheel targets.
+        (WebCore::Document::absoluteEventHandlerBounds): Implementation of the ContainerNode
+        function, just return the document bounds.
+        (WebCore::Document::absoluteRegionForEventTargets): Iterate over the given event targets,
+        and call absoluteEventHandlerBounds() on each.
+        * dom/Document.h:
+        (WebCore::Document::wheelEventTargets):
+        * dom/Element.cpp:
+        (WebCore::layoutOverflowRectContainsAllDescendants): Return true if we can determine that the
+        layoutOverflow bounds of the given renderer contains the renderers of all descendant elements.
+        (WebCore::Element::eventBounds): Get the "event handling" bounds of this element (excluding
+        descendants), and while doing so, compute whether any descendants are position:fixed, and whether
+        these bounds are known to include descendants.
+        (WebCore::Element::eventBoundsOfElementAndDescendants): Recursive function that short-circuits
+        if it can determine that descendants are enclosed by the bounds.
+        (WebCore::Element::absoluteEventHandlerBounds):
+        * dom/Element.h:
+        * page/DebugPageOverlays.cpp:
+        (WebCore::MouseWheelRegionOverlay::updateRegion): Ask the document for the region of wheel
+        event handlers.
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::computeNonFastScrollableRegion): Add the wheel handler region
+        to the non-fast scrollable region.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo): Overflow scrolling needs to dirty event regions.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteBoundingBoxRect): Need to pass the "wasFixed" flag out
+        of this function.
+        (WebCore::RenderObject::localToAbsolute): Ditto.
+        * rendering/RenderObject.h:
+
 2015-03-31  Alexey Proskuryakov  <ap@apple.com>
 
         Fix bindings tests results after <http://trac.webkit.org/changeset/182205>.

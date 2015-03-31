@@ -484,6 +484,8 @@ public:
     virtual void didDetachRenderers();
     virtual RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle);
 
+    LayoutRect absoluteEventHandlerBounds(bool& includesFixedPositionElements) override;
+
     void setBeforePseudoElement(Ref<PseudoElement>&&);
     void setAfterPseudoElement(Ref<PseudoElement>&&);
     void clearBeforePseudoElement();
@@ -562,6 +564,9 @@ private:
     void addAttributeInternal(const QualifiedName&, const AtomicString& value, SynchronizationOfLazyAttribute);
     void removeAttributeInternal(unsigned index, SynchronizationOfLazyAttribute);
 
+    LayoutRect absoluteEventBounds(bool& boundsIncludeAllDescendantElements, bool& includesFixedPositionElements);
+    LayoutRect absoluteEventBoundsOfElementAndDescendants(bool& includesFixedPositionElements);
+    
 #if ENABLE(TREE_DEBUGGING)
     virtual void formatForDebugger(char* buffer, unsigned length) const override;
 #endif

@@ -1,3 +1,32 @@
+2015-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to compute a region for elements on the page that have wheel event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=142807
+
+        Reviewed by David Hyatt.
+        
+        Tests that dump the non-fast-scrollable region, for various rendering configurations.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/handlers-in-iframes-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/handlers-in-iframes.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/resources/gain-wheel-handler.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/resources/lose-wheel-handler.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/resources/wheel-handler-region-helper.js: Added.
+        (rectsAsString):
+        (dumpRegion):
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-fixed-child-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-fixed-child.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-in-columns.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-in-region.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-inside-fixed-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-inside-fixed.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-on-document-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-on-document.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-on-fixed-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-on-fixed.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-region-basic-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-region-basic.html: Added.
+
 2015-03-31  Dean Jackson  <dino@apple.com>
 
         accessibility/aria-hidden-hides-all-elements.html fails on Windows
