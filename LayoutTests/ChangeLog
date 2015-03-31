@@ -1,3 +1,18 @@
+2015-03-31  Antti Koivisto  <antti@apple.com>
+
+        http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html failing on Mavericks wk2 debug
+        https://bugs.webkit.org/show_bug.cgi?id=143258
+
+        The test relies on resource priorities. Those don't roundtrip when serializing via NSURLRequest on Mavericks due
+        to ResourceRequest::resourcePrioritiesEnabled() returning false.
+
+        It is bit surprising it works on release but not on debug. I suspect some debug code forces NSURLRequest construction
+        and so we end up on the roundtrip code path.
+
+        * platform/mac-mavericks/TestExpectations: Added.
+
+            Skip the test on Mavericks.
+
 2015-03-31  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Implement a barebone ReadableStreamReader interface
