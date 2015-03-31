@@ -205,7 +205,7 @@ void RenderBoxModelObject::willBeDestroyed()
 
 bool RenderBoxModelObject::hasBoxDecorationStyle() const
 {
-    return hasBackground() || style().hasBorder() || style().hasAppearance() || style().boxShadow();
+    return hasBackground() || style().hasBorderDecoration() || style().hasAppearance() || style().boxShadow();
 }
 
 void RenderBoxModelObject::updateFromStyle()
