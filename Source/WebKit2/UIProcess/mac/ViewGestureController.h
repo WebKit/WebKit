@@ -80,8 +80,8 @@ public:
     };
     
     enum class SwipeDirection {
-        Left,
-        Right
+        Back,
+        Forward
     };
 
     enum class PendingSwipeReason {

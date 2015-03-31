@@ -275,7 +275,7 @@ bool ViewGestureController::scrollEventCanBecomeSwipe(NSEvent *event, ViewGestur
     if (!willSwipeLeft && !willSwipeRight)
         return false;
 
-    potentialSwipeDirection = willSwipeLeft ? ViewGestureController::SwipeDirection::Left : ViewGestureController::SwipeDirection::Right;
+    potentialSwipeDirection = willSwipeLeft ? ViewGestureController::SwipeDirection::Back : ViewGestureController::SwipeDirection::Forward;
 
     return true;
 }
@@ -371,9 +371,9 @@ void ViewGestureController::trackSwipeGesture(NSEvent *event, SwipeDirection dir
 
     m_webPageProxy.recordNavigationSnapshot();
 
-    CGFloat maxProgress = (direction == SwipeDirection::Left) ? 1 : 0;
-    CGFloat minProgress = (direction == SwipeDirection::Right) ? -1 : 0;
-    RefPtr<WebBackForwardListItem> targetItem = (direction == SwipeDirection::Left) ? m_webPageProxy.backForwardList().backItem() : m_webPageProxy.backForwardList().forwardItem();
+    CGFloat maxProgress = (direction == SwipeDirection::Back) ? 1 : 0;
+    CGFloat minProgress = (direction == SwipeDirection::Forward) ? -1 : 0;
+    RefPtr<WebBackForwardListItem> targetItem = (direction == SwipeDirection::Back) ? m_webPageProxy.backForwardList().backItem() : m_webPageProxy.backForwardList().forwardItem();
     if (!targetItem)
         return;
     
@@ -446,7 +446,7 @@ CALayer *ViewGestureController::determineSnapshotLayerParent() const
 CALayer *ViewGestureController::determineLayerAdjacentToSnapshotForParent(SwipeDirection direction, CALayer *snapshotLayerParent) const
 {
     // If we have custom swiping views, we assume that the views were passed to us in back-to-front z-order.
-    CALayer *layerAdjacentToSnapshot = direction == SwipeDirection::Left ? m_currentSwipeLiveLayers.first().get() : m_currentSwipeLiveLayers.last().get();
+    CALayer *layerAdjacentToSnapshot = direction == SwipeDirection::Back ? m_currentSwipeLiveLayers.first().get() : m_currentSwipeLiveLayers.last().get();
 
     if (m_currentSwipeLiveLayers.size() == 1)
         return layerAdjacentToSnapshot;
@@ -566,7 +566,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
     // We don't know enough about the custom views' hierarchy to apply a shadow.
     if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap && m_customSwipeViews.isEmpty()) {
-        if (direction == SwipeDirection::Left) {
+        if (direction == SwipeDirection::Back) {
             float topContentInset = m_webPageProxy.topContentInset();
             FloatRect shadowRect(FloatPoint(0, topContentInset), m_webPageProxy.viewSize() - FloatSize(0, topContentInset));
             RetainPtr<CGPathRef> shadowPath = adoptCF(CGPathCreateWithRect(shadowRect, 0));
@@ -584,7 +584,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     }
 
     CALayer *layerAdjacentToSnapshot = determineLayerAdjacentToSnapshotForParent(direction, snapshotLayerParent);
-    if (direction == SwipeDirection::Left)
+    if (direction == SwipeDirection::Back)
         [snapshotLayerParent insertSublayer:m_swipeLayer.get() below:layerAdjacentToSnapshot];
     else
         [snapshotLayerParent insertSublayer:m_swipeLayer.get() above:layerAdjacentToSnapshot];
@@ -606,16 +606,16 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetIte
     double swipingLayerOffset = floor(width * progress);
 
     if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap) {
-        if (direction == SwipeDirection::Right) {
+        if (direction == SwipeDirection::Forward) {
             [m_swipeLayer setTransform:CATransform3DMakeTranslation(width + swipingLayerOffset, 0, 0)];
             didMoveSwipeSnapshotLayer();
         }
     } else if (m_swipeTransitionStyle == SwipeTransitionStyle::Push)
-        [m_swipeLayer setTransform:CATransform3DMakeTranslation((direction == SwipeDirection::Left ? -width : width) + swipingLayerOffset, 0, 0)];
+        [m_swipeLayer setTransform:CATransform3DMakeTranslation((direction == SwipeDirection::Back ? -width : width) + swipingLayerOffset, 0, 0)];
 
     for (const auto& layer : m_currentSwipeLiveLayers) {
         if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap) {
-            if (direction == SwipeDirection::Left)
+            if (direction == SwipeDirection::Back)
                 [layer setTransform:CATransform3DMakeTranslation(swipingLayerOffset, 0, 0)];
         } else if (m_swipeTransitionStyle == SwipeTransitionStyle::Push)
             [layer setTransform:CATransform3DMakeTranslation(swipingLayerOffset, 0, 0)];

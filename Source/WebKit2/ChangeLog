@@ -1,3 +1,29 @@
+2015-03-31  Timothy Horton  <timothy_horton@apple.com>
+
+        Swipes occur in the wrong direction in RTL
+        https://bugs.webkit.org/show_bug.cgi?id=143257
+        <rdar://problem/20300862>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (-[WKSwipeTransitionController gestureRecognizerForInteractiveTransition:WithTarget:action:]):
+        When choosing which edge to attach our gesture recognizers to,
+        flip them in RTL.
+
+        (-[WKSwipeTransitionController directionForTransition:]):
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::canSwipeInDirection):
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::scrollEventCanBecomeSwipe):
+        (WebKit::ViewGestureController::trackSwipeGesture):
+        (WebKit::ViewGestureController::determineLayerAdjacentToSnapshotForParent):
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::handleSwipeGesture):
+        Adjust SwipeDirection to be in logical back-forward list direction
+        instead of physical edge direction.
+
 2015-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move ExpansionBehaviorFlags and TextDirection to their own file
