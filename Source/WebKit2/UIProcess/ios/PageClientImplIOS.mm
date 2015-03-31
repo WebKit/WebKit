@@ -713,6 +713,11 @@ void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigatio
     [m_webView _didSameDocumentNavigationForMainFrame:navigationType];
 }
 
+void PageClientImpl::didChangeBackgroundColor()
+{
+    [m_webView _updateScrollViewBackground];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

@@ -740,17 +740,26 @@ static CGFloat contentZoomScale(WKWebView *webView)
     return scale;
 }
 
+static WebCore::Color baseScrollViewBackgroundColor(WKWebView *webView)
+{
+    if (webView->_customContentView)
+        return [webView->_customContentView backgroundColor].CGColor;
+
+    if (webView->_gestureController) {
+        WebCore::Color color = webView->_gestureController->backgroundColorForCurrentSnapshot();
+        if (color.isValid())
+            return color;
+    }
+
+    return webView->_page->pageExtendedBackgroundColor();
+}
+
 static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 {
     if (!webView.opaque)
         return WebCore::Color::transparent;
 
-    WebCore::Color color;
-
-    if (webView->_customContentView)
-        color = [webView->_customContentView backgroundColor].CGColor;
-    else
-        color = webView->_page->pageExtendedBackgroundColor();
+    WebCore::Color color = baseScrollViewBackgroundColor(webView);
 
     if (!color.isValid())
         color = WebCore::Color::white;

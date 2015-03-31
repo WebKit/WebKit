@@ -99,6 +99,8 @@ struct PrintInfo;
 - (BOOL)_isShowingVideoOptimized;
 - (BOOL)_mayAutomaticallyShowVideoOptimized;
 
+- (void)_updateScrollViewBackground;
+
 @property (nonatomic, readonly) UIEdgeInsets _computedContentInset;
 #else
 @property (nonatomic, setter=_setIgnoresNonWheelEvents:) BOOL _ignoresNonWheelEvents;

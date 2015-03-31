@@ -1,5 +1,65 @@
 2015-03-31  Timothy Horton  <timothy_horton@apple.com>
 
+        WebKit briefly shows wrong webpage after swiping back (gigaom.com, or any site on a slow network)
+        https://bugs.webkit.org/show_bug.cgi?id=143256
+        <rdar://problem/19458648>
+
+        Reviewed by Dan Bernstein.
+
+        Instead of allowing a flash of the previous page when the swipe snapshot
+        timeouts fire (removing the snapshot before the new page is loaded), show
+        the snapshotted background color.
+
+        This fixes the problem on iOS, where UI-side compositing makes it easy to fix,
+        but not yet on OS X.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (baseScrollViewBackgroundColor):
+        (scrollViewBackgroundColor):
+        If the ViewGestureController returns a valid background color, use that
+        instead of the page's background color.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        Expose _updateScrollViewBackground.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didChangeBackgroundColor):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didChangeBackgroundColor):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeBackgroundColor):
+        * UIProcess/WebPageProxy.h:
+        Add and plumb didChangeBackgroundColor, which calls
+        _updateScrollViewBackground on iOS.
+        
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+        Hide the content of the drawing area until the next commit. This way,
+        even if the snapshot is removed (say, because a timeout fired), we won't
+        ever show the old page content (but we will show background color).
+
+        Store the background color associated with the current snapshot.
+
+        Let WKWebView know that it needs to recompute the background color.
+
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        Clear the background color so that the next time we commit, WKWebView
+        will get an invalid color from ViewGestureController and fall back
+        to the page's extended background color instead.
+
+        * UIProcess/mac/ViewGestureController.h:
+        (WebKit::ViewGestureController::backgroundColorForCurrentSnapshot):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        Keep backgroundColorForCurrentSnapshot up to date on Mac too, even
+        though we don't use it yet.
+
+2015-03-31  Timothy Horton  <timothy_horton@apple.com>
+
         [iOS] Rotating PDF in Safari scrolls to the wrong position
         https://bugs.webkit.org/show_bug.cgi?id=143259
         <rdar://problem/19872693>

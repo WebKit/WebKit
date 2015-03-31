@@ -29,6 +29,7 @@
 #include "MessageReceiver.h"
 #include "SameDocumentNavigationType.h"
 #include "WeakObjCPtr.h"
+#include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
@@ -124,6 +125,8 @@ public:
     void removeSwipeSnapshot();
     void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType);
 
+    WebCore::Color backgroundColorForCurrentSnapshot() const { return m_backgroundColorForCurrentSnapshot; }
+
 private:
     // IPC::MessageReceiver.
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
@@ -162,6 +165,8 @@ private:
 
     RunLoop::Timer<ViewGestureController> m_swipeWatchdogTimer;
     RunLoop::Timer<ViewGestureController> m_swipeActiveLoadMonitoringTimer;
+
+    WebCore::Color m_backgroundColorForCurrentSnapshot;
 
 #if PLATFORM(MAC)
     RefPtr<ViewSnapshot> m_currentSwipeSnapshot;

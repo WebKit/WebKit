@@ -1025,6 +1025,8 @@ public:
     virtual void externalOutputDeviceAvailableDidChange(bool) override;
 #endif
 
+    void didChangeBackgroundColor();
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
     void platformInitialize();

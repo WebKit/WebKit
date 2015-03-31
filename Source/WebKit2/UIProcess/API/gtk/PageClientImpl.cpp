@@ -430,4 +430,8 @@ void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigatio
 {
 }
 
+void PageClientImpl::didChangeBackgroundColor()
+{
+}
+
 } // namespace WebKit

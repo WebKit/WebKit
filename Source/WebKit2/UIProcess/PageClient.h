@@ -319,6 +319,8 @@ public:
     virtual void didFinishLoadForMainFrame() = 0;
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) = 0;
 
+    virtual void didChangeBackgroundColor() = 0;
+
 #if PLATFORM(MAC)
     virtual void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, bool forImmediateAction, API::Object*) = 0;
 #endif

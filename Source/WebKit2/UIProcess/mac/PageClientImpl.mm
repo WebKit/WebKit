@@ -779,6 +779,11 @@ void PageClientImpl::removeNavigationGestureSnapshot()
     [m_wkView _removeNavigationGestureSnapshot];
 }
 
+void PageClientImpl::didChangeBackgroundColor()
+{
+    notImplemented();
+}
+
 CGRect PageClientImpl::boundsOfLayerInLayerBackedWindowCoordinates(CALayer *layer) const
 {
     CALayer *windowContentLayer = static_cast<NSView *>(m_wkView.window.contentView).layer;

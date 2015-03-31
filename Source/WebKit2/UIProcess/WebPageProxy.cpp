@@ -5671,4 +5671,9 @@ void WebPageProxy::externalOutputDeviceAvailableDidChange(bool available)
 
 #endif
 
+void WebPageProxy::didChangeBackgroundColor()
+{
+    m_pageClient.didChangeBackgroundColor();
+}
+
 } // namespace WebKit

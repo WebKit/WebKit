@@ -661,7 +661,12 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     m_webPageProxy.navigationGestureDidEnd(true, *targetItem);
     m_webPageProxy.goToBackForwardItem(targetItem);
 
+    // FIXME: Like on iOS, we should ensure that even if one of the timeouts fires,
+    // we never show the old page content, instead showing white (or the snapshot background color).
     m_swipeWatchdogTimer.startOneShot(swipeSnapshotRemovalWatchdogDuration.count());
+
+    if (ViewSnapshot* snapshot = targetItem->snapshot())
+        m_backgroundColorForCurrentSnapshot = snapshot->backgroundColor();
 }
 
 void ViewGestureController::didHitRenderTreeSizeThreshold()
@@ -778,6 +783,8 @@ void ViewGestureController::removeSwipeSnapshot()
     m_activeGestureType = ViewGestureType::None;
 
     m_webPageProxy.navigationGestureSnapshotWasRemoved();
+
+    m_backgroundColorForCurrentSnapshot = Color();
 }
 
 void ViewGestureController::endActiveGesture()

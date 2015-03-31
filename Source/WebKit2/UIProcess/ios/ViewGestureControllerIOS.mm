@@ -294,6 +294,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
             if (gestureControllerIter != viewGestureControllersForAllPages().end() && gestureControllerIter->value->m_gesturePendingSnapshotRemoval == gesturePendingSnapshotRemoval)
                 gestureControllerIter->value->willCommitPostSwipeTransitionLayerTree(error == CallbackBase::Error::None);
         });
+        drawingArea->hideContentUntilNextUpdate();
     } else {
         removeSwipeSnapshot();
         return;
@@ -306,6 +307,11 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     m_swipeWaitingForScrollPositionRestoration = true;
 
     m_swipeWatchdogTimer.startOneShot(swipeSnapshotRemovalWatchdogDuration.count());
+
+    if (ViewSnapshot* snapshot = targetItem->snapshot()) {
+        m_backgroundColorForCurrentSnapshot = snapshot->backgroundColor();
+        m_webPageProxy.didChangeBackgroundColor();
+    }
 }
 
 void ViewGestureController::willCommitPostSwipeTransitionLayerTree(bool successful)
@@ -432,6 +438,8 @@ void ViewGestureController::removeSwipeSnapshot()
     m_webPageProxyForBackForwardListForCurrentSwipe = nullptr;
 
     m_swipeTransitionContext = nullptr;
+
+    m_backgroundColorForCurrentSnapshot = Color();
 }
 
 } // namespace WebKit

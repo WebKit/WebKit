@@ -198,6 +198,8 @@ private:
     virtual void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, bool forImmediateAction, API::Object*) override;
     virtual void showPlatformContextMenu(NSMenu *, WebCore::IntPoint) override;
 
+    virtual void didChangeBackgroundColor() override;
+
     WKView *m_wkView;
     WKWebView *m_webView;
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;

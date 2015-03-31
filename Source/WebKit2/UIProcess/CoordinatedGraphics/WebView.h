@@ -204,6 +204,8 @@ protected:
     virtual void navigationGestureDidEnd(bool, WebBackForwardListItem&) override { };
     virtual void willRecordNavigationSnapshot(WebBackForwardListItem&) override { };
 
+    virtual void didChangeBackgroundColor() override { }
+
     WebViewClient m_client;
     RefPtr<WebPageProxy> m_page;
     DefaultUndoController m_undoController;
