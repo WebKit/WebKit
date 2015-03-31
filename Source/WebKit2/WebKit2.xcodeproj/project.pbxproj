@@ -1177,6 +1177,7 @@
 		7CF47FFE17276AE3008ACB91 /* WKBundlePageBannerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7CF47FFC17276AE3008ACB91 /* WKBundlePageBannerMac.mm */; };
 		7CF47FFF17276AE3008ACB91 /* WKBundlePageBannerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CF47FFD17276AE3008ACB91 /* WKBundlePageBannerMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EC4F0FB18E4ACBB008056AF /* NetworkProcessCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */; };
+		83048AE61ACA45DC0082C832 /* ProcessThrottlerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83048AE51ACA45DC0082C832 /* ProcessThrottlerClient.h */; };
 		834B250F1A831A8D00CFB150 /* NetworkCacheFileSystemPosix.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B250E1A831A8D00CFB150 /* NetworkCacheFileSystemPosix.h */; };
 		834B25121A842C8700CFB150 /* NetworkCacheStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B25101A842C8700CFB150 /* NetworkCacheStatistics.h */; };
 		8372DB251A674C8F00C697C5 /* WKPageDiagnosticLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 8372DB241A674C8F00C697C5 /* WKPageDiagnosticLoggingClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3387,6 +3388,7 @@
 		7CF47FFC17276AE3008ACB91 /* WKBundlePageBannerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBundlePageBannerMac.mm; sourceTree = "<group>"; };
 		7CF47FFD17276AE3008ACB91 /* WKBundlePageBannerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePageBannerMac.h; sourceTree = "<group>"; };
 		7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkProcessCocoa.mm; path = NetworkProcess/cocoa/NetworkProcessCocoa.mm; sourceTree = "<group>"; };
+		83048AE51ACA45DC0082C832 /* ProcessThrottlerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessThrottlerClient.h; sourceTree = "<group>"; };
 		834B250E1A831A8D00CFB150 /* NetworkCacheFileSystemPosix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheFileSystemPosix.h; sourceTree = "<group>"; };
 		834B25101A842C8700CFB150 /* NetworkCacheStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheStatistics.h; sourceTree = "<group>"; };
 		8372DB241A674C8F00C697C5 /* WKPageDiagnosticLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageDiagnosticLoggingClient.h; sourceTree = "<group>"; };
@@ -6145,6 +6147,7 @@
 				BC597074116591D000551FCA /* ProcessModel.h */,
 				86E67A22190F411800004AB7 /* ProcessThrottler.cpp */,
 				86E67A21190F411800004AB7 /* ProcessThrottler.h */,
+				83048AE51ACA45DC0082C832 /* ProcessThrottlerClient.h */,
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
 				51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */,
@@ -7620,6 +7623,7 @@
 				BCE2315D122C30CA00D5C35A /* APIURLRequest.h in Headers */,
 				BC90A1D2122DD55E00CC8C50 /* APIURLResponse.h in Headers */,
 				F6113E25126CE1820057D0A7 /* APIUserContentURLPattern.h in Headers */,
+				83048AE61ACA45DC0082C832 /* ProcessThrottlerClient.h in Headers */,
 				C5E1AFED16B21017006CC1F2 /* APIWebArchive.h in Headers */,
 				C5E1AFEF16B21029006CC1F2 /* APIWebArchiveResource.h in Headers */,
 				1A3635AA1A3144A300ED6197 /* APIWebsiteDataStore.h in Headers */,

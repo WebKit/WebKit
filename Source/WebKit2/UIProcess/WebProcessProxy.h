@@ -33,6 +33,7 @@
 #include "PlatformProcessIdentifier.h"
 #include "PluginInfoStore.h"
 #include "ProcessLauncher.h"
+#include "ProcessThrottlerClient.h"
 #include "ResponsivenessTimer.h"
 #include "WebConnectionToWebProcess.h"
 #include "WebPageProxy.h"
@@ -63,7 +64,7 @@ class WebPageGroup;
 class WebProcessPool;
 struct WebNavigationDataStore;
     
-class WebProcessProxy : public ChildProcessProxy, ResponsivenessTimer::Client {
+class WebProcessProxy : public ChildProcessProxy, ResponsivenessTimer::Client, public ProcessThrottlerClient {
 public:
     typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem>> WebBackForwardListItemMap;
     typedef HashMap<uint64_t, RefPtr<WebFrameProxy>> WebFrameProxyMap;
@@ -142,11 +143,11 @@ public:
 
     void windowServerConnectionStateChanged();
 
-    void sendProcessWillSuspend();
+    void sendProcessWillSuspend() override;
     void processReadyToSuspend();
-    void sendCancelProcessWillSuspend();
+    void sendCancelProcessWillSuspend() override;
     void didCancelProcessSuspension();
-    void sendProcessDidResume();
+    void sendProcessDidResume() override;
 
     void setIsHoldingLockedFiles(bool);
 
@@ -212,6 +213,8 @@ private:
 
     bool canTerminateChildProcess();
 
+    void initializeNetworkProcessActivityToken();
+
     ResponsivenessTimer m_responsivenessTimer;
     
     RefPtr<WebConnectionToWebProcess> m_webConnection;
@@ -237,6 +240,9 @@ private:
     int m_numberOfTimesSuddenTerminationWasDisabled;
     std::unique_ptr<ProcessThrottler> m_throttler;
     ProcessThrottler::BackgroundActivityToken m_tokenForHoldingLockedFiles;
+#if PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)
+    ProcessThrottler::ForegroundActivityToken m_tokenForNetworkProcess;
+#endif
 };
 
 } // namespace WebKit

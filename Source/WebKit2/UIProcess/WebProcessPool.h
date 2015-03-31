@@ -291,7 +291,7 @@ public:
     bool usesNetworkProcess() const;
 
 #if ENABLE(NETWORK_PROCESS)
-    void ensureNetworkProcess();
+    NetworkProcessProxy& ensureNetworkProcess();
     NetworkProcessProxy* networkProcess() { return m_networkProcess.get(); }
     void networkProcessCrashed(NetworkProcessProxy*);
 

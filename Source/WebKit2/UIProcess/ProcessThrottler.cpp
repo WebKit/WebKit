@@ -26,13 +26,13 @@
 #include "config.h"
 #include "ProcessThrottler.h"
 
-#include "WebProcessProxy.h"
+#include "ProcessThrottlerClient.h"
 
 namespace WebKit {
     
 static const unsigned processSuspensionTimeout = 30;
     
-ProcessThrottler::ProcessThrottler(WebProcessProxy* process)
+ProcessThrottler::ProcessThrottler(ProcessThrottlerClient* process)
     : m_process(process)
     , m_suspendTimer(RunLoop::main(), this, &ProcessThrottler::suspendTimerFired)
     , m_foregroundCounter([this](bool) { updateAssertion(); })
@@ -84,7 +84,7 @@ void ProcessThrottler::updateAssertion()
     updateAssertionNow();
 }
 
-void ProcessThrottler::didConnnectToProcess(pid_t pid)
+void ProcessThrottler::didConnectToProcess(pid_t pid)
 {
     m_suspendTimer.stop();
     m_assertion = std::make_unique<ProcessAndUIAssertion>(pid, assertionState());

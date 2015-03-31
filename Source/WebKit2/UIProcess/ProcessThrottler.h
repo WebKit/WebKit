@@ -39,8 +39,8 @@ typedef RefCounter::Token<UserObservablePageTokenType> UserObservablePageToken;
 enum ProcessSuppressionDisabledTokenType { };
 typedef RefCounter::Token<ProcessSuppressionDisabledTokenType> ProcessSuppressionDisabledToken;
 
-class WebProcessProxy;
-    
+class ProcessThrottlerClient;
+
 class ProcessThrottler {
 public:
     enum ForegroundActivityTokenType { };
@@ -48,12 +48,12 @@ public:
     enum BackgroundActivityTokenType { };
     typedef RefCounter::Token<BackgroundActivityTokenType> BackgroundActivityToken;
 
-    ProcessThrottler(WebProcessProxy*);
+    ProcessThrottler(ProcessThrottlerClient*);
 
     inline ForegroundActivityToken foregroundActivityToken() const;
     inline BackgroundActivityToken backgroundActivityToken() const;
     
-    void didConnnectToProcess(pid_t);
+    void didConnectToProcess(pid_t);
     void processReadyToSuspend();
     void didCancelProcessSuspension();
     
@@ -63,7 +63,7 @@ private:
     void updateAssertionNow();
     void suspendTimerFired();
     
-    WebProcessProxy* m_process;
+    ProcessThrottlerClient* m_process;
     std::unique_ptr<ProcessAndUIAssertion> m_assertion;
     RunLoop::Timer<ProcessThrottler> m_suspendTimer;
     RefCounter m_foregroundCounter;

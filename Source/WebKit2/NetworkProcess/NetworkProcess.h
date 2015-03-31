@@ -77,6 +77,10 @@ public:
     DownloadManager& downloadManager();
     bool canHandleHTTPSServerTrustEvaluation() const { return m_canHandleHTTPSServerTrustEvaluation; }
 
+    void processWillSuspend();
+    void cancelProcessWillSuspend();
+    void processDidResume();
+
     // Diagnostic messages logging.
     void logDiagnosticMessage(uint64_t webPageID, const String& message, const String& description, WebCore::ShouldSample);
     void logDiagnosticMessageWithResult(uint64_t webPageID, const String& message, const String& description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample);

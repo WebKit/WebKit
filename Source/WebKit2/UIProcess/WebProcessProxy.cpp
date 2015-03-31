@@ -535,8 +535,10 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #if PLATFORM(IOS)
     xpc_connection_t xpcConnection = connection()->xpcConnection();
     ASSERT(xpcConnection);
-    m_throttler->didConnnectToProcess(xpc_connection_get_pid(xpcConnection));
+    m_throttler->didConnectToProcess(xpc_connection_get_pid(xpcConnection));
 #endif
+
+    initializeNetworkProcessActivityToken();
 }
 
 WebFrameProxy* WebProcessProxy::webFrame(uint64_t frameID) const
@@ -845,9 +847,19 @@ void WebProcessProxy::sendCancelProcessWillSuspend()
     if (canSendMessage())
         send(Messages::WebProcess::CancelProcessWillSuspend(), 0);
 }
-    
+
+void WebProcessProxy::initializeNetworkProcessActivityToken()
+{
+#if PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)
+    if (processPool().usesNetworkProcess())
+        m_tokenForNetworkProcess = processPool().ensureNetworkProcess().throttler().foregroundActivityToken();
+#endif
+}
+
 void WebProcessProxy::sendProcessDidResume()
 {
+    initializeNetworkProcessActivityToken();
+
     if (canSendMessage())
         send(Messages::WebProcess::ProcessDidResume(), 0);
 }
@@ -855,6 +867,9 @@ void WebProcessProxy::sendProcessDidResume()
 void WebProcessProxy::processReadyToSuspend()
 {
     m_throttler->processReadyToSuspend();
+#if PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)
+    m_tokenForNetworkProcess = nullptr;
+#endif
 }
 
 void WebProcessProxy::didCancelProcessSuspension()

@@ -501,6 +501,21 @@ void NetworkProcess::terminate()
     ChildProcess::terminate();
 }
 
+void NetworkProcess::processWillSuspend()
+{
+    MemoryPressureHandler::singleton().releaseMemory(true);
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::ProcessReadyToSuspend(), 0);
+}
+
+void NetworkProcess::cancelProcessWillSuspend()
+{
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCancelProcessSuspension(), 0);
+}
+
+void NetworkProcess::processDidResume()
+{
+}
+
 #if !PLATFORM(COCOA)
 void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)
 {

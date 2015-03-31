@@ -392,10 +392,10 @@ bool WebProcessPool::usesNetworkProcess() const
 }
 
 #if ENABLE(NETWORK_PROCESS)
-void WebProcessPool::ensureNetworkProcess()
+NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
 {
     if (m_networkProcess)
-        return;
+        return *m_networkProcess;
 
     m_networkProcess = NetworkProcessProxy::create(*this);
 
@@ -437,6 +437,8 @@ void WebProcessPool::ensureNetworkProcess()
 #if PLATFORM(COCOA)
     m_networkProcess->send(Messages::NetworkProcess::SetQOS(networkProcessLatencyQOS(), networkProcessThroughputQOS()), 0);
 #endif
+
+    return *m_networkProcess;
 }
 
 void WebProcessPool::networkProcessCrashed(NetworkProcessProxy* networkProcessProxy)

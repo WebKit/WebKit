@@ -1,3 +1,61 @@
+2015-03-31  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Extend ProcessThrottler use to the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=143249
+        <rdar://problem/20231539>
+
+        Reviewed by Gavin Barraclough.
+
+        Extend ProcessThrottler use to the NetworkProcess instead of only the
+        WebProcesses. This is needed so that the NetworkProcess gets notified
+        before suspension. We now use this notification to free-up memory
+        before suspending by calling the critical memory pressure handler, as
+        we already do for WebProcesses (rdar://problem/20231539). In the
+        future, this infrastructure will be used to delay suspension until the
+        pending SQL transactions are done as well (rdar://problem/20180799).
+
+        Previously, the NetworkProcessProxy would hold a foreground assertion
+        on behalf of the NetworkProcess but would never release that assertion.
+        In this patch, we change this so that WebProcessProxies hold assertions
+        on behalf of the NetworkProcess, and release those assertions before
+        suspending. As a result, the NetworkProcess gets suspended when all
+        WebProcesses are suspended.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processWillSuspend):
+        (WebKit::NetworkProcess::cancelProcessWillSuspend):
+        (WebKit::NetworkProcess::processDidResume):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        (WebKit::NetworkProcessProxy::sendProcessWillSuspend):
+        (WebKit::NetworkProcessProxy::sendCancelProcessWillSuspend):
+        (WebKit::NetworkProcessProxy::didCancelProcessSuspension):
+        (WebKit::NetworkProcessProxy::sendProcessDidResume):
+        (WebKit::NetworkProcessProxy::processReadyToSuspend):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        (WebKit::NetworkProcessProxy::throttler):
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::ProcessThrottler):
+        (WebKit::ProcessThrottler::didConnectToProcess):
+        (WebKit::ProcessThrottler::didConnnectToProcess): Deleted.
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/ProcessThrottlerClient.h: Added.
+        (WebKit::ProcessThrottlerClient::~ProcessThrottlerClient):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        (WebKit::WebProcessProxy::initializeNetworkProcessActivityToken):
+        (WebKit::WebProcessProxy::sendProcessDidResume):
+        (WebKit::WebProcessProxy::processReadyToSuspend):
+        * UIProcess/WebProcessProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-03-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, revert accidental change by r182138.

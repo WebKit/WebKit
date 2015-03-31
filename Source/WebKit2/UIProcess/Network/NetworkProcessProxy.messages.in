@@ -31,6 +31,9 @@ messages -> NetworkProcessProxy LegacyReceiver {
     DidDeleteWebsiteData(uint64_t callbackID)
     DidDeleteWebsiteDataForOrigins(uint64_t callbackID)
 
+    ProcessReadyToSuspend()
+    DidCancelProcessSuspension()
+
     # Diagnostic messages logging
     LogDiagnosticMessage(uint64_t pageID, String message, String description, bool shouldSample)
     LogDiagnosticMessageWithResult(uint64_t pageID, String message, String description, uint32_t result, bool shouldSample)
