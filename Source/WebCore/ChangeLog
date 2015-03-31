@@ -1,3 +1,14 @@
+2015-03-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix bindings tests results after <http://trac.webkit.org/changeset/182205>.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjTestSubObjEnabledBySettingConstructor):
+        (WebCore::setJSTestObjConditionalAttr4Constructor):
+        (WebCore::setJSTestObjConditionalAttr5Constructor):
+        (WebCore::setJSTestObjConditionalAttr6Constructor):
+        (WebCore::setJSTestObjReplaceableAttribute):
+
 2015-03-31  Benjamin Poulain  <bpoulain@apple.com>
 
         Content Extensions: split the state machines to minimize prefix states
