@@ -84,7 +84,7 @@ CommitLogs.fetchForTimeRange = function (repository, from, to, keyword)
             }
 
             var fetchedCommits = data.commits;
-            fetchedCommits.forEach(function (commit) { commit.time = new Date(commit.time.replace(' ', 'T')); });
+            fetchedCommits.forEach(function (commit) { commit.time = new Date(commit.time); });
 
             if (useCache)
                 CommitLogs._cacheConsecutiveCommits(repository, from, to, fetchedCommits);

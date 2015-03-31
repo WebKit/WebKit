@@ -98,6 +98,8 @@ function fetch_commits_between($db, $repository_id, $first, $second, $keyword = 
     $commits = $db->query_and_fetch_all($statements . ' ORDER BY commit_time', $values);
     if (!is_array($commits))
         exit_with_error('FailedToFetchCommits', array('repository' => $repository_id, 'first' => $first, 'second' => $second));
+    foreach ($commits as &$commit)
+        $commit['time'] = Database::to_js_time($commit['time']);
     return $commits;
 }
 
@@ -106,7 +108,7 @@ function format_commit($commit_row, $committer_row) {
         'id' => $commit_row['commit_id'],
         'revision' => $commit_row['commit_revision'],
         'parent' => $commit_row['commit_parent'],
-        'time' => $commit_row['commit_time'],
+        'time' => Database::to_js_time($commit_row['commit_time']),
         'authorName' => $committer_row ? $committer_row['committer_name'] : null,
         'authorEmail' => $committer_row ? $committer_row['committer_account'] : null,
         'message' => $commit_row['commit_message']
