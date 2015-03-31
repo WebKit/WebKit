@@ -47,6 +47,7 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::actionsFromDFARoot()
 
     // Skip first DFA header. All universal actions are in the first DFA root.
     unsigned programCounter = sizeof(unsigned);
+
     while (static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) == DFABytecodeInstruction::AppendAction) {
         universalActionLocations.add(static_cast<uint64_t>(getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode))));
         programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
@@ -69,10 +70,11 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
         unsigned dfaBytecodeLength = getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter);
         programCounter += sizeof(unsigned);
 
-        // Skip the universal actions.
-        // FIXME: Replace AppendAction with AppendActions to make this just one jump and make sure there aren't universal actions with flags.
-        while (static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) == DFABytecodeInstruction::AppendAction)
+        // Skip the actions on the DFA root. These are accessed via actionsFromDFARoot.
+        while (static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) == DFABytecodeInstruction::AppendAction) {
+            ASSERT_WITH_MESSAGE(!dfaStart, "Triggers that match everything should only be in the first DFA.");
             programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
+        }
         
         // Interpret the bytecode from this DFA.
         // This should always terminate if interpreting correctly compiled bytecode.

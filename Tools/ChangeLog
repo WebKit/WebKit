@@ -1,3 +1,15 @@
+2015-03-30  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Correctly handle regular expressions matching everything
+        https://bugs.webkit.org/show_bug.cgi?id=143235
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::checkCompilerError):
+        (TestWebKitAPI::TEST_F):
+        Test ContentExtensionErrors.
+
 2015-03-30  Alexey Proskuryakov  <ap@apple.com>
 
         DumpRenderTree should set NSWindowDisplayWithRunLoopObserver

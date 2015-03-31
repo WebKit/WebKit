@@ -73,6 +73,10 @@ const std::error_category& contentExtensionErrorCategory()
                 return "Invalid action type.";
             case ContentExtensionError::JSONInvalidCSSDisplayNoneActionType:
                 return "Invalid css-display-none action type. Requires a selector.";
+            case ContentExtensionError::JSONInvalidRegex:
+                return "Invalid or unsupported regular expression.";
+            case ContentExtensionError::RegexMatchesEverythingAfterIgnorePreviousRules:
+                return "Regular expressions that match everything are only allowed before the first ignore-previous-rules.";
             }
 
             return std::string();

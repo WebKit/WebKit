@@ -28,6 +28,7 @@
 #include "PlatformUtilities.h"
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/ContentExtensionCompiler.h>
+#include <WebCore/ContentExtensionError.h>
 #include <WebCore/ContentExtensionsBackend.h>
 #include <WebCore/NFA.h>
 #include <WebCore/ResourceLoadInfo.h>
@@ -571,6 +572,53 @@ TEST_F(ContentExtensionTest, MultiDFA)
     testRequest(backend, mainDocumentRequest("http://webkit.org/LAA/AAA"), { }, true);
     testRequest(backend, mainDocumentRequest("http://webkit.org/LAA/MAA"), { ContentExtensions::ActionType::BlockLoad }, true);
     testRequest(backend, mainDocumentRequest("http://webkit.org/"), { });
+}
+
+void checkCompilerError(const char* json, ContentExtensions::ContentExtensionError expectedError)
+{
+    WebCore::ContentExtensions::CompiledContentExtensionData extensionData;
+    InMemoryContentExtensionCompilationClient client(extensionData);
+    std::error_code compilerError = ContentExtensions::compileRuleList(client, json);
+    EXPECT_EQ(compilerError.value(), static_cast<int>(expectedError));
+}
+
+TEST_F(ContentExtensionTest, InvalidJSON)
+{
+    checkCompilerError("[", ContentExtensions::ContentExtensionError::JSONInvalid);
+    checkCompilerError("123", ContentExtensions::ContentExtensionError::JSONTopLevelStructureNotAnObject);
+    checkCompilerError("{}", ContentExtensions::ContentExtensionError::JSONTopLevelStructureNotAnArray);
+    // FIXME: Add unit test for JSONInvalidRule if that is possible to hit.
+    checkCompilerError("[]", ContentExtensions::ContentExtensionError::JSONContainsNoRules);
+
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":5}]",
+        ContentExtensions::ContentExtensionError::JSONInvalidTrigger);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"\"}}]",
+        ContentExtensions::ContentExtensionError::JSONInvalidURLFilterInTrigger);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":{}}}]",
+        ContentExtensions::ContentExtensionError::JSONInvalidURLFilterInTrigger);
+
+    // FIXME: Add unit test for JSONInvalidObjectInTriggerFlagsArray if that is possible to hit.
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":{}}}]",
+        ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":[\"invalid\"]}}]",
+        ContentExtensions::ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":{}}}]",
+        ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":[\"invalid\"]}}]",
+        ContentExtensions::ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
+
+    checkCompilerError("[{\"action\":5,\"trigger\":{\"url-filter\":\"webkit.org\"}}]",
+        ContentExtensions::ContentExtensionError::JSONInvalidAction);
+    checkCompilerError("[{\"action\":{\"type\":\"invalid\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]",
+        ContentExtensions::ContentExtensionError::JSONInvalidActionType);
+    checkCompilerError("[{\"action\":{\"type\":\"css-display-none\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]",
+        ContentExtensions::ContentExtensionError::JSONInvalidCSSDisplayNoneActionType);
+
+    checkCompilerError("[{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"webkit.org\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]",
+        ContentExtensions::ContentExtensionError::RegexMatchesEverythingAfterIgnorePreviousRules);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"[\"}}]",
+        ContentExtensions::ContentExtensionError::JSONInvalidRegex);
 }
 
 static void testPatternStatus(String pattern, ContentExtensions::URLFilterParser::ParseStatus status)

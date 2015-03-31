@@ -53,6 +53,9 @@ enum class ContentExtensionError {
     JSONInvalidAction,
     JSONInvalidActionType,
     JSONInvalidCSSDisplayNoneActionType,
+    JSONInvalidRegex,
+    
+    RegexMatchesEverythingAfterIgnorePreviousRules,
 };
 
 const std::error_category& contentExtensionErrorCategory();

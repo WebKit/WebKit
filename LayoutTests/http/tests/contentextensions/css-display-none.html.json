@@ -20,10 +20,27 @@
     {
         "action": {
             "type": "css-display-none",
-            "selector": ".hidden_global"
+            "selector": ".hidden_global1"
         },
         "trigger": {
             "url-filter": ".*"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden_global2"
+        },
+        "trigger": {
+            "url-filter": ".*"
+        }
+    },
+    {
+        "action": {
+            "type": "ignore-previous-rules"
+        },
+        "trigger": {
+            "url-filter": "never_used"
         }
     }
 ]

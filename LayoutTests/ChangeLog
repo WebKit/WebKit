@@ -1,3 +1,17 @@
+2015-03-30  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Correctly handle regular expressions matching everything
+        https://bugs.webkit.org/show_bug.cgi?id=143235
+
+        Reviewed by Benjamin Poulain.
+
+        * http/tests/contentextensions/css-display-none.html:
+        * http/tests/contentextensions/css-display-none.html.json:
+        Test multiple selectors with triggers that match everything.
+        * http/tests/contentextensions/whitelist-expected.txt: Added.
+        * http/tests/contentextensions/whitelist.html: Added.
+        * http/tests/contentextensions/whitelist.html.json: Added.
+
 2015-03-30  Mark Lam  <mark.lam@apple.com>
 
         REGRESSION (r181993): inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html crashes.

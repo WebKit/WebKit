@@ -45,6 +45,12 @@ struct Trigger {
     String urlFilter;
     bool urlFilterIsCaseSensitive { false };
     ResourceFlags flags { 0 };
+    bool operator==(const Trigger& other) const
+    {
+        return urlFilter == other.urlFilter
+            && urlFilterIsCaseSensitive == other.urlFilterIsCaseSensitive
+            && flags == other.flags;
+    }
 };
     
 struct Action {

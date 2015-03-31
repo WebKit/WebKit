@@ -1,3 +1,38 @@
+2015-03-30  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Correctly handle regular expressions matching everything
+        https://bugs.webkit.org/show_bug.cgi?id=143235
+
+        Reviewed by Benjamin Poulain.
+
+        Test: http/tests/contentextensions/whitelist.html
+
+        * contentextensions/CompiledContentExtension.cpp:
+        (WebCore::ContentExtensions::CompiledContentExtension::globalDisplayNoneSelectors):
+        Global actions can have non-css actions.  Only put the selectors into the list of selectors.
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::serializeSelector):
+        (WebCore::ContentExtensions::serializeActions):
+        Merge sequential css selectors with identical triggers (usually .*) into one action to reduce the number of actions.
+        (WebCore::ContentExtensions::compileRuleList):
+        Fail if a regular expression matches everything after ignore-previous-rules.
+        * contentextensions/ContentExtensionError.cpp:
+        (WebCore::ContentExtensions::contentExtensionErrorCategory):
+        * contentextensions/ContentExtensionError.h:
+        Add more failure cases.
+        * contentextensions/ContentExtensionRule.h:
+        (WebCore::ContentExtensions::Trigger::operator==):
+        Allow comparing of Triggers to determine if sequential triggers are equal.
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
+        Put non-css actions that match everything into the list of actions if ignore-previous-rules was not hit.
+        These actions will be out of order, but order only matters when determining if ignore-previous-rules, and this case is handled correctly.
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::actionsFromDFARoot):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+        Added an assertion that all actions that match everything should be in the first DFA root.
+        We should catch them all with URLFilterParser::MatchesEverything.
+
 2015-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow building on Windows without Cygwin
