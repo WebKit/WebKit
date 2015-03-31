@@ -500,6 +500,18 @@ App.Pane = Ember.Object.extend({
         this._updateStrategyConfigIfNeeded(envelopingStrategy, 'envelopingConfig');
 
         chartData.movingAverage = this._computeMovingAverageAndOutliers(chartData, movingAverageStrategy, envelopingStrategy);
+    },
+    _movingAverageOrEnvelopeStrategyDidChange: function () {
+        this._updateMovingAverageAndEnvelope();
+
+        var newChartData = {};
+        var chartData = this.get('chartData');
+        if (!chartData)
+            return;
+        for (var property in chartData)
+            newChartData[property] = chartData[property];
+        this.set('chartData', newChartData);
+
     }.observes('chosenMovingAverageStrategy', 'chosenMovingAverageStrategy.parameterList.@each.value',
         'chosenEnvelopingStrategy', 'chosenEnvelopingStrategy.parameterList.@each.value'),
     _computeMovingAverageAndOutliers: function (chartData, movingAverageStrategy, envelopingStrategy)
