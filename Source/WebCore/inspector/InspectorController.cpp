@@ -37,7 +37,6 @@
 #include "GraphicsContext.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorCSSAgent.h"
-#include "InspectorCanvasAgent.h"
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMDebuggerAgent.h"
@@ -157,10 +156,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     auto domDebuggerAgentPtr = std::make_unique<InspectorDOMDebuggerAgent>(m_instrumentingAgents.get(), m_domAgent, m_debuggerAgent);
     m_domDebuggerAgent = domDebuggerAgentPtr.get();
     m_agents.append(WTF::move(domDebuggerAgentPtr));
-
-    auto canvasAgentPtr = std::make_unique<InspectorCanvasAgent>(m_instrumentingAgents.get(), m_pageAgent);
-    m_instrumentingAgents->setInspectorCanvasAgent(canvasAgentPtr.get());
-    m_agents.append(WTF::move(canvasAgentPtr));
 
     m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(m_instrumentingAgents.get(), pageAgent));
     m_agents.append(std::make_unique<InspectorWorkerAgent>(m_instrumentingAgents.get()));

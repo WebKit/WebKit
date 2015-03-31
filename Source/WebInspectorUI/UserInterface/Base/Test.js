@@ -45,7 +45,6 @@ WebInspector.loaded = function()
     InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
     if (InspectorBackend.registerReplayDispatcher)
         InspectorBackend.registerReplayDispatcher(new WebInspector.ReplayObserver);
-    InspectorBackend.registerCanvasDispatcher(new WebInspector.CanvasObserver);
 
     // Instantiate controllers used by tests.
     this.frameResourceManager = new WebInspector.FrameResourceManager;
@@ -56,7 +55,6 @@ WebInspector.loaded = function()
     this.debuggerManager = new WebInspector.DebuggerManager;
     this.probeManager = new WebInspector.ProbeManager;
     this.replayManager = new WebInspector.ReplayManager;
-    this.canvasManager = new WebInspector.CanvasManager;
 
     // Global controllers.
     this.quickConsole = {executionContextIdentifier: undefined};

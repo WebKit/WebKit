@@ -51,14 +51,6 @@
     content: -webkit-image-set(url(../Images/ClippingJS.png) 1x, url(../Images/ClippingJS@2x.png) 2x);
 }
 
-.canvas-icon .icon {
-    content: url(../Images/Canvas.svg);
-}
-
-.shader-program-icon .icon {
-    content: -webkit-image-set(url(../Images/DocumentGL.png) 1x, url(../Images/DocumentGL@2x.png) 2x);
-}
-
 .source-map-resource.resource-icon .icon {
     content: -webkit-image-set(url(../Images/ClippingGeneric.png) 1x, url(../Images/ClippingGeneric@2x.png) 2x);
 }

@@ -43,7 +43,6 @@
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorController.h"
 #include "InspectorCSSAgent.h"
-#include "InspectorCanvasAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMDebuggerAgent.h"
 #include "InspectorDOMStorageAgent.h"
@@ -63,7 +62,6 @@
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "WebConsoleAgent.h"
-#include "WebGLRenderingContextBase.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerInspectorController.h"
 #include "WorkerRuntimeAgent.h"
@@ -764,9 +762,6 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
             layerTreeAgent->reset();
     }
 
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
-        canvasAgent->frameNavigated(loader);
-
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
         domAgent->didCommitLoad(loader->frame()->document());
 
@@ -1033,44 +1028,6 @@ void InspectorInstrumentation::didSendWebSocketFrameImpl(InstrumentingAgents& in
 }
 #endif
 
-void InspectorInstrumentation::didCreateCSSCanvasImpl(InstrumentingAgents* instrumentingAgents, HTMLCanvasElement& canvasElement, const String& name)
-{
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
-        canvasAgent->didCreateCSSCanvas(canvasElement, name);
-}
-
-void InspectorInstrumentation::didCreateCanvasRenderingContextImpl(InstrumentingAgents* instrumentingAgents, HTMLCanvasElement& canvasElement)
-{
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
-        canvasAgent->didCreateCanvasRenderingContext(canvasElement);
-}
-
-#if ENABLE(WEBGL)
-void InspectorInstrumentation::didAttachShaderImpl(InstrumentingAgents* instrumentingAgents, WebGLRenderingContextBase& context, WebGLProgram& program, WebGLShader& shader)
-{
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
-        canvasAgent->didAttachShader(context, program, shader);
-}
-
-void InspectorInstrumentation::didDetachShaderImpl(InstrumentingAgents* instrumentingAgents, WebGLRenderingContextBase& context, WebGLProgram& program, WebGLShader& shader)
-{
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
-        canvasAgent->didDetachShader(context, program, shader);
-}
-
-void InspectorInstrumentation::didCreateProgramImpl(InstrumentingAgents* instrumentingAgents, WebGLRenderingContextBase& context, WebGLProgram& program)
-{
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
-        canvasAgent->didCreateProgram(context, program);
-}
-
-void InspectorInstrumentation::didDeleteProgramImpl(InstrumentingAgents* instrumentingAgents, WebGLRenderingContextBase& context, WebGLProgram& program)
-{
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
-        canvasAgent->didDeleteProgram(context, program);
-}
-#endif
-
 #if ENABLE(WEB_REPLAY)
 void InspectorInstrumentation::sessionCreatedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySession>&& session)
 {
@@ -1261,16 +1218,6 @@ InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const In
     InspectorTimelineAgent* timelineAgent = cookie.instrumentingAgents()->inspectorTimelineAgent();
     if (timelineAgent && cookie.hasMatchingTimelineAgentId(timelineAgent->id()))
         return timelineAgent;
-    return nullptr;
-}
-
-InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForRenderingContext(WebGLRenderingContextBase* context)
-{
-    if (!context)
-        return nullptr;
-    HTMLCanvasElement* canvasElement = context->canvas();
-    if (canvasElement)
-        return instrumentingAgentsForDocument(&canvasElement->document());
     return nullptr;
 }
 

@@ -774,7 +774,6 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement ||
             treeElement instanceof WebInspector.StorageTreeElement || treeElement instanceof WebInspector.DatabaseTableTreeElement ||
             treeElement instanceof WebInspector.DatabaseTreeElement || treeElement instanceof WebInspector.ApplicationCacheFrameTreeElement ||
-            treeElement instanceof WebInspector.CanvasTreeElement || treeElement instanceof WebInspector.ShaderProgramTreeElement ||
             treeElement instanceof WebInspector.ContentFlowTreeElement || treeElement instanceof WebInspector.IndexedDatabaseObjectStoreTreeElement ||
             treeElement instanceof WebInspector.IndexedDatabaseObjectStoreIndexTreeElement) {
             WebInspector.contentBrowser.showContentViewForRepresentedObject(treeElement.representedObject);

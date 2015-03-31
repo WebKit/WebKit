@@ -36,7 +36,6 @@
 #include "Element.h"
 #include "FormData.h"
 #include "Frame.h"
-#include "HTMLCanvasElement.h"
 #include "HitTestResult.h"
 #include "InspectorInstrumentationCookie.h"
 #include "Page.h"
@@ -76,6 +75,7 @@ class DOMWindow;
 class DOMWrapperWorld;
 class Database;
 class Document;
+class Element;
 class DocumentLoader;
 class DocumentStyleSheetCollection;
 class GraphicsContext;
@@ -93,15 +93,13 @@ class RenderLayerBacking;
 class RenderObject;
 class ResourceRequest;
 class ResourceResponse;
+class ScriptExecutionContext;
 class SecurityOrigin;
 class ShadowRoot;
 class StorageArea;
 class StyleResolver;
 class StyleRule;
 class ThreadableLoaderClient;
-class WebGLShader;
-class WebGLProgram;
-class WebGLRenderingContextBase;
 class WorkerGlobalScope;
 class WorkerGlobalScopeProxy;
 class XMLHttpRequest;
@@ -265,13 +263,9 @@ public:
     static void didReceiveWebSocketFrameError(Document*, unsigned long identifier, const String& errorMessage);
 #endif
 
-    static void didCreateCSSCanvas(HTMLCanvasElement&, const String&);
-    static void didCreateCanvasRenderingContext(HTMLCanvasElement&);
+    static Deprecated::ScriptObject wrapCanvas2DRenderingContextForInstrumentation(Document*, const Deprecated::ScriptObject&);
 #if ENABLE(WEBGL)
-    static void didAttachShader(WebGLRenderingContextBase&, WebGLProgram&, WebGLShader&);
-    static void didDetachShader(WebGLRenderingContextBase&, WebGLProgram&, WebGLShader&);
-    static void didCreateProgram(WebGLRenderingContextBase&, WebGLProgram&);
-    static void didDeleteProgram(WebGLRenderingContextBase&, WebGLProgram&);
+    static Deprecated::ScriptObject wrapWebGLRenderingContextForInstrumentation(Document*, const Deprecated::ScriptObject&);
 #endif
 
     static void networkStateChanged(Page*);
@@ -448,15 +442,6 @@ private:
 
     static void networkStateChangedImpl(InstrumentingAgents&);
     static void updateApplicationCacheStatusImpl(InstrumentingAgents&, Frame*);
-    static void didCreateCSSCanvasImpl(InstrumentingAgents*, HTMLCanvasElement&, const String&);
-    static void didCreateCanvasRenderingContextImpl(InstrumentingAgents*, HTMLCanvasElement&);
-
-#if ENABLE(WEBGL)
-    static void didAttachShaderImpl(InstrumentingAgents*, WebGLRenderingContextBase&, WebGLProgram&, WebGLShader&);
-    static void didDetachShaderImpl(InstrumentingAgents*, WebGLRenderingContextBase&, WebGLProgram&, WebGLShader&);
-    static void didCreateProgramImpl(InstrumentingAgents*, WebGLRenderingContextBase&, WebGLProgram&);
-    static void didDeleteProgramImpl(InstrumentingAgents*, WebGLRenderingContextBase&, WebGLProgram&);
-#endif
 
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
     static void renderLayerDestroyedImpl(InstrumentingAgents&, const RenderLayer&);
@@ -465,7 +450,6 @@ private:
     static InstrumentingAgents* instrumentingAgentsForPage(Page&);
     static InstrumentingAgents* instrumentingAgentsForFrame(Frame&);
     static InstrumentingAgents* instrumentingAgentsForFrame(Frame*);
-    static InstrumentingAgents* instrumentingAgentsForRenderingContext(WebGLRenderingContextBase*);
     static InstrumentingAgents* instrumentingAgentsForContext(ScriptExecutionContext*);
     static InstrumentingAgents* instrumentingAgentsForDocument(Document&);
     static InstrumentingAgents* instrumentingAgentsForDocument(Document*);
@@ -1170,75 +1154,6 @@ inline void InspectorInstrumentation::didSendWebSocketFrame(Document* document, 
         didSendWebSocketFrameImpl(*instrumentingAgents, identifier, frame);
 }
 #endif // ENABLE(WEB_SOCKETS)
-
-inline void InspectorInstrumentation::didCreateCSSCanvas(HTMLCanvasElement& canvasElement, const String& name)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
-        didCreateCSSCanvasImpl(instrumentingAgents, canvasElement, name);
-#else
-    UNUSED_PARAM(canvasElement);
-    UNUSED_PARAM(name);
-#endif
-}
-
-inline void InspectorInstrumentation::didCreateCanvasRenderingContext(HTMLCanvasElement& canvasElement)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
-        didCreateCanvasRenderingContextImpl(instrumentingAgents, canvasElement);
-#else
-    UNUSED_PARAM(canvasElement);
-#endif
-}
-
-#if ENABLE(WEBGL)
-inline void InspectorInstrumentation::didAttachShader(WebGLRenderingContextBase& context, WebGLProgram& program, WebGLShader& shader)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForRenderingContext(&context))
-        didAttachShaderImpl(instrumentingAgents, context, program, shader);
-#else
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(shader);
-#endif
-}
-
-inline void InspectorInstrumentation::didDetachShader(WebGLRenderingContextBase& context, WebGLProgram& program, WebGLShader& shader)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForRenderingContext(&context))
-        didDetachShaderImpl(instrumentingAgents, context, program, shader);
-#else
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(shader);
-#endif
-}
-
-inline void InspectorInstrumentation::didCreateProgram(WebGLRenderingContextBase& context, WebGLProgram& program)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForRenderingContext(&context))
-        didCreateProgramImpl(instrumentingAgents, context, program);
-#else
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(program);
-#endif
-}
-
-inline void InspectorInstrumentation::didDeleteProgram(WebGLRenderingContextBase& context, WebGLProgram& program)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForRenderingContext(&context))
-        didDeleteProgramImpl(instrumentingAgents, context, program);
-#else
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(program);
-#endif
-}
-#endif
 
 #if ENABLE(WEB_REPLAY)
 inline void InspectorInstrumentation::sessionCreated(Page& page, RefPtr<ReplaySession>&& session)

@@ -63,12 +63,6 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
             WebInspector.ContentFlowTreeElement
         );
 
-        this.registerFolderizeSettings("canvases", WebInspector.UIString("Canvases"),
-            function(representedObject) { return representedObject instanceof WebInspector.Canvas; },
-            function() { return WebInspector.canvasManager.canvasesForFrame(this._frame).length; }.bind(this),
-            WebInspector.CanvasTreeElement
-        );
-
         function makeValidateCallback(resourceType) {
             return function(representedObject) {
                 return representedObject instanceof WebInspector.Resource && representedObject.type === resourceType;
@@ -142,10 +136,6 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         // Immediate superclasses are skipped, since Frames handle their own SourceMapResources.
         WebInspector.GeneralTreeElement.prototype.onattach.call(this);
 
-        WebInspector.canvasManager.addEventListener(WebInspector.CanvasManager.Event.CanvasesAvailable, this._canvasesAvailable, this);
-        WebInspector.canvasManager.addEventListener(WebInspector.CanvasManager.Event.CanvasWasAdded, this._canvasWasAdded, this);
-        WebInspector.canvasManager.addEventListener(WebInspector.CanvasManager.Event.CanvasWasRemoved, this._canvasWasRemoved, this);
-
         if (this._frame.isMainFrame()) {
             WebInspector.notifications.addEventListener(WebInspector.Notification.PageArchiveStarted, this._pageArchiveStarted, this);
             WebInspector.notifications.addEventListener(WebInspector.Notification.PageArchiveEnded, this._pageArchiveEnded, this);
@@ -155,10 +145,6 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
     ondetach()
     {
         WebInspector.ResourceTreeElement.prototype.ondetach.call(this);
-
-        WebInspector.canvasManager.removeEventListener(WebInspector.CanvasManager.Event.CanvasesAvailable, this._canvasesAvailable, this);
-        WebInspector.canvasManager.removeEventListener(WebInspector.CanvasManager.Event.CanvasWasAdded, this._canvasWasAdded, this);
-        WebInspector.canvasManager.removeEventListener(WebInspector.CanvasManager.Event.CanvasWasRemoved, this._canvasWasRemoved, this);
 
         if (this._frame.isMainFrame()) {
             WebInspector.notifications.removeEventListener(WebInspector.Notification.PageArchiveStarted, this._pageArchiveStarted, this);
@@ -264,11 +250,8 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         for (var flowKey in flowMap)
             this.addChildForRepresentedObject(flowMap[flowKey]);
 
-        var canvases = WebInspector.canvasManager.canvasesForFrame(this._frame);
-        for (var canvas of canvases)
-            this.addChildForRepresentedObject(canvas);
     }
-        
+
     onexpand()
     {
         this._expandedSetting.value = true;
@@ -339,28 +322,6 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
     _childContentFlowWasRemoved(event)
     {
         this.removeChildForRepresentedObject(event.data.flow);
-    }
-
-    _canvasesAvailable(event)
-    {
-        this.updateParentStatus();
-        this.removeChildren();
-
-        this.shouldRefreshChildren = true;
-    }
-
-    _canvasWasAdded(event)
-    {
-        var canvas = event.data.canvas;
-        if (canvas.parentFrame == this._frame)
-            this.addRepresentedObjectToNewChildQueue(canvas);
-    }
-
-    _canvasWasRemoved(event)
-    {
-        var canvas = event.data.canvas;
-        if (canvas.parentFrame == this._frame)
-            this.removeChildForRepresentedObject(canvas);
     }
 
     _rootDOMNodeInvalidated()

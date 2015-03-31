@@ -292,14 +292,11 @@
     <None Include="..\UserInterface\CallFrame.js" />
     <None Include="..\UserInterface\CallFrameIcons.css" />
     <None Include="..\UserInterface\CallFrameTreeElement.js" />
-    <None Include="..\UserInterface\Canvas.js" />
     <None Include="..\UserInterface\CanvasDataGridNode.js" />
-    <None Include="..\UserInterface\CanvasManager.js" />
     <None Include="..\UserInterface\CanvasObserver.js" />
     <None Include="..\UserInterface\CanvasProfileObject.js" />
     <None Include="..\UserInterface\CanvasProfileType.js" />
     <None Include="..\UserInterface\CanvasProfileView.js" />
-    <None Include="..\UserInterface\CanvasTreeElement.js" />
     <None Include="..\UserInterface\ClusterContentView.css" />
     <None Include="..\UserInterface\ClusterContentView.js" />
     <None Include="..\UserInterface\CodeMirrorAdditions.js" />
@@ -476,7 +473,6 @@
     <None Include="..\UserInterface\Images\BreakpointInactive.png" />
     <None Include="..\UserInterface\Images\BreakpointInactiveButton.svg" />
     <None Include="..\UserInterface\Images\Breakpoints.svg" />
-    <None Include="..\UserInterface\Images\Canvas.svg" />
     <None Include="..\UserInterface\Images\ClippingCSS%402x.png" />
     <None Include="..\UserInterface\Images\ClippingCSS.png" />
     <None Include="..\UserInterface\Images\ClippingGeneric%402x.png" />
@@ -635,8 +631,6 @@
     <None Include="..\UserInterface\Images\Script.png" />
     <None Include="..\UserInterface\Images\SessionStorage%402x.png" />
     <None Include="..\UserInterface\Images\SessionStorage.png" />
-    <None Include="..\UserInterface\Images\ShaderProgram%402x.png" />
-    <None Include="..\UserInterface\Images\ShaderProgram.png" />
     <None Include="..\UserInterface\Images\ShadowDOM.svg" />
     <None Include="..\UserInterface\Images\SortIndicatorDownArrow.svg" />
     <None Include="..\UserInterface\Images\SortIndicatorUpArrow.svg" />
@@ -779,8 +773,6 @@
     <None Include="..\UserInterface\Section.css" />
     <None Include="..\UserInterface\Section.js" />
     <None Include="..\UserInterface\Setting.js" />
-    <None Include="..\UserInterface\ShaderProgram.js" />
-    <None Include="..\UserInterface\ShaderProgramTreeElement.js" />
     <None Include="..\UserInterface\Sidebar.css" />
     <None Include="..\UserInterface\Sidebar.js" />
     <None Include="..\UserInterface\SidebarPanel.css" />
