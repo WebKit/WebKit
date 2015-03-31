@@ -207,6 +207,13 @@ class SCM:
     def untracked_files(self, include_ignored_files=False):
         self._subclass_must_implement()
 
+    def discard_untracked_files(self, discard_ignored_files=False):
+        for filename in self.untracked_files(discard_ignored_files):
+            if self._filesystem.isdir(filename):
+                self._filesystem.rmtree(filename)
+            else:
+                self._filesystem.remove(filename)
+
     def discard_working_directory_changes(self):
         self._subclass_must_implement()
 
