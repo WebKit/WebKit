@@ -1,3 +1,20 @@
+2015-03-31  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: add 2D/WebGL canvas instrumentation infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=137278
+
+        Reviewed by Timothy Hatcher.
+
+        Added Canvas protocol which defines types used by InspectorCanvasAgent.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * inspector/protocol/Canvas.json: Added.
+
+        * inspector/scripts/codegen/generator.py:
+        (Generator.stylized_name_for_enum_value):
+        Added special handling for 2D (always uppercase) and WebGL (rename mapping) enum strings.
+
 2015-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Extending null should set __proto__ to null

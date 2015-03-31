@@ -5053,8 +5053,10 @@ CanvasRenderingContext* Document::getCSSCanvasContext(const String& type, const 
 HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)
 {
     RefPtr<HTMLCanvasElement>& element = m_cssCanvasElements.add(name, nullptr).iterator->value;
-    if (!element)
+    if (!element) {
         element = HTMLCanvasElement::create(*this);
+        InspectorInstrumentation::didCreateCSSCanvas(*element, name);
+    }
     return element.get();
 }
 

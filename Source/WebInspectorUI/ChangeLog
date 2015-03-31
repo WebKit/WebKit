@@ -1,3 +1,128 @@
+2015-03-31  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: add 2D/WebGL canvas instrumentation infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=137278
+
+        Reviewed by Timothy Hatcher.
+
+        Added models, views, and controller classes for 2D and WebGL canvas inspection. Each canvas is shown in the
+        Resources navigation sidebar under its parent frame. Shader programs are displayed as child nodes of
+        their respective canvas. Canvases will get an associated content view and details sidebar in a later patch
+        (see https://bugs.webkit.org/show_bug.cgi?id=138941).
+
+        Shader programs will get an associated content view for editing shader source in a later patch (see
+        https://bugs.webkit.org/show_bug.cgi?id=138593). Individual shaders are not shown in the Resource navigation
+        sidebar, and at this time there are no plans to instrument shaders that aren't attached to a program.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        (WebInspector.sidebarPanelForRepresentedObject):
+        * UserInterface/Base/Test.js:
+        (WebInspector.loaded):
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        Updated for new canvas/shader program types.
+
+        * UserInterface/Controllers/CanvasManager.js: Added.
+        (WebInspector.CanvasManager):
+        (WebInspector.CanvasManager.prototype.canvasesForFrame):
+        (WebInspector.CanvasManager.prototype.canvasAdded.set this):
+        (WebInspector.CanvasManager.prototype.canvasAdded):
+        (WebInspector.CanvasManager.prototype.canvasRemoved):
+        (WebInspector.CanvasManager.programDeleted.get console):
+        (WebInspector.CanvasManager.prototype.programCreated.get console):
+        (WebInspector.CanvasManager.prototype.programCreated):
+        (WebInspector.CanvasManager.prototype._mainResourceDidChange):
+        Frontend controller for canvases and their shader programs.
+
+        * UserInterface/Images/Canvas.svg: Added.
+        * UserInterface/Images/DocumentGL.png: Added.
+        * UserInterface/Images/DocumentGL@2x.png: Added.
+        New art for canvas and shader program tree elements.
+
+        * UserInterface/Models/Canvas.js: Added.
+        (WebInspector.Canvas):
+        (WebInspector.Canvas.prototype.set fromPayload):
+        (WebInspector.Canvas.displayNameForContextType):
+        (WebInspector.Canvas.resetUniqueDisplayNameNumbers):
+        (WebInspector.Canvas.prototype.get id):
+        (WebInspector.Canvas.prototype.get parentFrame):
+        (WebInspector.Canvas.prototype.get name):
+        (WebInspector.Canvas.prototype.get cssCanvas):
+        (WebInspector.Canvas.prototype.get contextType):
+        (WebInspector.Canvas.prototype.get contextAttributes):
+        (WebInspector.Canvas.prototype.get programs):
+        (WebInspector.Canvas.prototype.get displayName):
+        (WebInspector.Canvas.programForId):
+        (WebInspector.Canvas.get programWasCreated.set this):
+        (WebInspector.Canvas.prototype.get programWasCreated):
+        (WebInspector.Canvas.prototype.programWasDeleted):
+        (WebInspector.Canvas.prototype.saveIdentityToCookie):
+        Model for DOM or CSS canvas (2D or WebGL).
+
+        * UserInterface/Models/ShaderProgram.js: Added.
+        (WebInspector.ShaderProgram):
+        (WebInspector.ShaderProgram.prototype.get id):
+        (WebInspector.ShaderProgram.prototype.get canvas):
+        (WebInspector.ShaderProgram.prototype.get displayName):
+        (WebInspector.ShaderProgram.prototype.saveIdentityToCookie):
+        (WebInspector.ShaderProgram.prototype.updateCanvas):
+        * UserInterface/Models/WebGLContextAttributes.js: Added.
+        (WebInspector.WebGLContextAttributes):
+        (WebInspector.WebGLContextAttributes.fromPayload):
+        (WebInspector.WebGLContextAttributes.prototype.get alpha):
+        (WebInspector.WebGLContextAttributes.prototype.get depth):
+        (WebInspector.WebGLContextAttributes.prototype.get stencil):
+        (WebInspector.WebGLContextAttributes.prototype.get antialias):
+        (WebInspector.WebGLContextAttributes.prototype.get premultipliedAlpha):
+        (WebInspector.WebGLContextAttributes.prototype.get preserveDrawingBuffer):
+        Model for WebGL canvas context attributes.
+
+        * UserInterface/Protocol/CanvasObserver.js: Added.
+        (WebInspector.CanvasObserver.prototype.canvasAdded):
+        (WebInspector.CanvasObserver.prototype.canvasRemoved):
+        (WebInspector.CanvasObserver.prototype.programCreated):
+        (WebInspector.CanvasObserver.prototype.programDeleted):
+        (WebInspector.CanvasObserver):
+        Model for WebGL canvas shader program.
+
+        * UserInterface/Views/CanvasTreeElement.js: Added.
+        (WebInspector.CanvasTreeElement.validateRepresentedObject):
+        (WebInspector.CanvasTreeElement.countChildren):
+        (WebInspector.CanvasTreeElement):
+        (WebInspector.CanvasTreeElement.prototype.onexpand):
+        (WebInspector.CanvasTreeElement.prototype.oncollapse):
+        (WebInspector.CanvasTreeElement.prototype.onpopulate):
+        (WebInspector.CanvasTreeElement.prototype._programWasCreated):
+        (WebInspector.CanvasTreeElement.prototype._programWasDeleted):
+        Folderized tree element for canvases and their child objects (shader programs).
+
+        * UserInterface/Views/FrameTreeElement.js:
+        (WebInspector.FrameTreeElement.prototype.onattach):
+        (WebInspector.FrameTreeElement.prototype.ondetach):
+        (WebInspector.FrameTreeElement.prototype.onpopulate):
+        (WebInspector.FrameTreeElement.prototype._canvasesAvailable):
+        (WebInspector.FrameTreeElement.prototype._canvasWasAdded):
+        (WebInspector.FrameTreeElement.prototype._canvasWasRemoved):
+        Updated to support canvas tree elements.
+
+        * UserInterface/Views/ResourceIcons.css:
+        (.canvas-icon .icon):
+        (.shader-program-icon .icon):
+        Styles for new canvas and shader program icons.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._treeElementSelected):
+        Updated for new tree element types.
+
+        * UserInterface/Views/ShaderProgramTreeElement.js: Added.
+        (WebInspector.ShaderProgramTreeElement):
+        Tree element for shader programs. Shown as children of CanvasTreeElement.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+
 2015-03-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Regression: null shouldn't be expandable in object outline

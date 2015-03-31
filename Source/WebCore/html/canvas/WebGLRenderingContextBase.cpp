@@ -49,6 +49,7 @@
 #include "HTMLVideoElement.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
+#include "InspectorInstrumentation.h"
 #include "IntSize.h"
 #include "Logging.h"
 #include "MainFrame.h"
@@ -833,6 +834,8 @@ void WebGLRenderingContextBase::attachShader(WebGLProgram* program, WebGLShader*
     }
     m_context->attachShader(objectOrZero(program), objectOrZero(shader));
     shader->onAttached();
+
+    InspectorInstrumentation::didAttachShader(*this, *program, *shader);
 }
 
 void WebGLRenderingContextBase::bindAttribLocation(WebGLProgram* program, GC3Duint index, const String& name, ExceptionCode& ec)
@@ -1408,6 +1411,9 @@ PassRefPtr<WebGLProgram> WebGLRenderingContextBase::createProgram()
         return nullptr;
     RefPtr<WebGLProgram> o = WebGLProgram::create(this);
     addSharedObject(o.get());
+
+    InspectorInstrumentation::didCreateProgram(*this, *o);
+
     return o;
 }
 
@@ -1482,6 +1488,8 @@ void WebGLRenderingContextBase::deleteProgram(WebGLProgram* program)
     deleteObject(program);
     // We don't reset m_currentProgram to 0 here because the deletion of the
     // current program is delayed.
+
+    InspectorInstrumentation::didDeleteProgram(*this, *program);
 }
 
 void WebGLRenderingContextBase::deleteRenderbuffer(WebGLRenderbuffer* renderbuffer)
@@ -1550,6 +1558,8 @@ void WebGLRenderingContextBase::detachShader(WebGLProgram* program, WebGLShader*
     }
     m_context->detachShader(objectOrZero(program), objectOrZero(shader));
     shader->onDetached(graphicsContext3D());
+
+    InspectorInstrumentation::didDetachShader(*this, *program, *shader);
 }
 
 void WebGLRenderingContextBase::disable(GC3Denum cap)

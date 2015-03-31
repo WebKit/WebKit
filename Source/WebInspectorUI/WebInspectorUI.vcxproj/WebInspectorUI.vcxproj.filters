@@ -126,7 +126,13 @@
     <None Include="..\UserInterface\CallFrameTreeElement.js">
       <Filter>UserInterface</Filter>
     </None>
+    <None Include="..\UserInterface\Canvas.js">
+      <Filter>UserInterface</Filter>
+    </None>
     <None Include="..\UserInterface\CanvasDataGridNode.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CanvasManager.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\CanvasObserver.js">
@@ -139,6 +145,9 @@
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\CanvasProfileView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CanvasTreeElement.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\ClusterContentView.css">
@@ -891,6 +900,12 @@
     <None Include="..\UserInterface\Setting.js">
       <Filter>UserInterface</Filter>
     </None>
+    <None Include="..\UserInterface\ShaderProgram.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ShaderProgramTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
     <None Include="..\UserInterface\Sidebar.css">
       <Filter>UserInterface</Filter>
     </None>
@@ -1162,6 +1177,9 @@
       <Filter>Images</Filter>
     </None>
     <None Include="..\UserInterface\Images\Breakpoints.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Canvas.svg">
       <Filter>Images</Filter>
     </None>
     <None Include="..\UserInterface\Images\ClippingCSS.png">
@@ -1624,6 +1642,12 @@
       <Filter>Images</Filter>
     </None>
     <None Include="..\UserInterface\Images\SessionStorage%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ShaderProgram%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ShaderProgram.png">
       <Filter>Images</Filter>
     </None>
     <None Include="..\UserInterface\Images\ShadowDOM.svg">

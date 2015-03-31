@@ -41,6 +41,7 @@
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "ImageData.h"
+#include "InspectorInstrumentation.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
@@ -193,6 +194,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
                 usesDashbardCompatibilityMode = settings->usesDashboardBackwardCompatibilityMode();
 #endif
             m_context = std::make_unique<CanvasRenderingContext2D>(this, document().inQuirksMode(), usesDashbardCompatibilityMode);
+            InspectorInstrumentation::didCreateCanvasRenderingContext(*this);
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
             // Need to make sure a RenderLayer and compositing layer get created for the Canvas
             setNeedsStyleRecalc(SyntheticStyleChange);
@@ -209,6 +211,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
             if (!m_context) {
                 m_context = WebGLRenderingContextBase::create(this, static_cast<WebGLContextAttributes*>(attrs), type);
                 if (m_context) {
+                    InspectorInstrumentation::didCreateCanvasRenderingContext(*this);
                     // Need to make sure a RenderLayer and compositing layer get created for the Canvas
                     setNeedsStyleRecalc(SyntheticStyleChange);
                 }

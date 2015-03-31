@@ -117,6 +117,7 @@ InitBytecodes.asm: $(JavaScriptCore)/generate-bytecode-files $(JavaScriptCore)/b
 INSPECTOR_DOMAINS = \
     $(JavaScriptCore)/inspector/protocol/ApplicationCache.json \
     $(JavaScriptCore)/inspector/protocol/CSS.json \
+    $(JavaScriptCore)/inspector/protocol/Canvas.json \
     $(JavaScriptCore)/inspector/protocol/Console.json \
     $(JavaScriptCore)/inspector/protocol/DOM.json \
     $(JavaScriptCore)/inspector/protocol/DOMDebugger.json \

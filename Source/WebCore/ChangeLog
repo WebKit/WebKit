@@ -1,3 +1,97 @@
+2015-03-31  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: add 2D/WebGL canvas instrumentation infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=137278
+
+        Reviewed by Timothy Hatcher.
+
+        Added backend agent for canvas inspection. A canvas is instrumented once its CanvasRenderingContext has been
+        created. WebGLRenderingContext is instrumented to track the lifetime of shader program objects.
+
+        To instrument off-screen rendering contexts (CSS canvases and detached canvas elements), the canvas agent must
+        track all CanvasRenderingContexts as they are created, even in the absense of the frontend. As far as I know,
+        there is no practical way to identify rendering contexts belonging to a frame that are not in the DOM. In the
+        absence of the inspector frontend the agent does only the minimum required to track the lifetime of rendering
+        contexts and their resources, to avoid creating a negative performance impact.
+
+        Tests: inspector/canvas/canvas-add-remove-events.html
+               inspector/canvas/canvas-context-attributes.html
+               inspector/canvas/canvas-css-name.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * dom/Document.cpp:
+        (WebCore::Document::getCSSCanvasElement):
+        Instrumentation for CSS canvases.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        Instrumentation for context creation.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::attachShader):
+        (WebCore::WebGLRenderingContextBase::createProgram):
+        (WebCore::WebGLRenderingContextBase::deleteProgram):
+        (WebCore::WebGLRenderingContextBase::detachShader):
+        Instrumentation for programs and shaders.
+
+        * inspector/InspectorAllInOne.cpp:
+
+        * inspector/InspectorCanvasAgent.cpp: Added.
+        (WebCore::InspectorCanvasAgent::InspectorCanvasAgent):
+        (WebCore::InspectorCanvasAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorCanvasAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorCanvasAgent::frameNavigated):
+        (WebCore::InspectorCanvasAgent::didCreateCSSCanvas):
+        (WebCore::InspectorCanvasAgent::didCreateCanvasRenderingContext):
+        (WebCore::InspectorCanvasAgent::didAttachShader):
+        (WebCore::InspectorCanvasAgent::didDetachShader):
+        (WebCore::InspectorCanvasAgent::didCreateProgram):
+        (WebCore::InspectorCanvasAgent::didDeleteProgram):
+        (WebCore::InspectorCanvasAgent::getCanvases):
+        (WebCore::InspectorCanvasAgent::canvasDestroyed):
+        (WebCore::InspectorCanvasAgent::canvasDestroyedTimerFired):
+        (WebCore::InspectorCanvasAgent::reset):
+        (WebCore::InspectorCanvasAgent::getCanvasEntry):
+        (WebCore::InspectorCanvasAgent::getProgramEntry):
+        (WebCore::InspectorCanvasAgent::removeShaderFromShaderMap):
+        (WebCore::InspectorCanvasAgent::contextTypeJson):
+        (WebCore::InspectorCanvasAgent::buildObjectForCanvas):
+        * inspector/InspectorCanvasAgent.h: Added.
+        New backend agent.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        Support for new backend agent.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::didCreateCSSCanvasImpl):
+        (WebCore::InspectorInstrumentation::didCreateCanvasRenderingContextImpl):
+        (WebCore::InspectorInstrumentation::didAttachShaderImpl):
+        (WebCore::InspectorInstrumentation::didDetachShaderImpl):
+        (WebCore::InspectorInstrumentation::didCreateProgramImpl):
+        (WebCore::InspectorInstrumentation::didDeleteProgramImpl):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForRenderingContext):
+        Plumbing for canvas instrumentation.
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didCreateCSSCanvas):
+        (WebCore::InspectorInstrumentation::didCreateCanvasRenderingContext):
+        (WebCore::InspectorInstrumentation::didAttachShader):
+        (WebCore::InspectorInstrumentation::didDetachShader):
+        (WebCore::InspectorInstrumentation::didCreateProgram):
+        (WebCore::InspectorInstrumentation::didDeleteProgram):
+
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::inspectorCanvasAgent):
+        (WebCore::InstrumentingAgents::setInspectorCanvasAgent):
+        Support for new backend agent.
+
 2015-03-31  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Implement a barebone ReadableStreamReader interface

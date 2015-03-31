@@ -1786,6 +1786,7 @@ set(WebCore_SOURCES
     inspector/DOMPatchSupport.cpp
     inspector/InspectorApplicationCacheAgent.cpp
     inspector/InspectorCSSAgent.cpp
+    inspector/InspectorCanvasAgent.cpp
     inspector/InspectorClient.cpp
     inspector/InspectorController.cpp
     inspector/InspectorDOMAgent.cpp

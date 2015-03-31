@@ -1,0 +1,94 @@
+{
+    "domain": "Canvas",
+    "availability": "web",
+    "description": "Canvas domain allows tracking of 2D and WebGL canvases that have an associated graphics context. Tracks canvases belonging to a frame as well as CSS canvases created with -webkit-canvas.",
+    "types": [
+        {
+            "id": "CanvasId",
+            "type": "integer"
+        },
+        {
+            "id": "ProgramId",
+            "type": "object",
+            "properties": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Parent canvas identifier." },
+                { "name": "objectId", "type": "integer", "description": "Uniquely identifies shader program within parent canvas." }
+            ]
+        },
+        {
+            "id": "ContextType",
+            "type": "string",
+            "enum": ["canvas-2d", "webgl"],
+            "description": "The type of rendering context backing the canvas element."
+        },
+        {
+            "id": "ShaderType",
+            "type": "string",
+            "enum": ["fragment", "vertex"],
+            "description": "Shader type. WebGL 1.0 supports VERTEX_SHADER and FRAGMENT_SHADER types."
+        },
+        {
+            "id": "ContextAttributes",
+            "type": "object",
+            "description": "WebGL drawing surface attributes.",
+            "properties": [
+                { "name": "alpha", "type": "boolean" },
+                { "name": "depth", "type": "boolean" },
+                { "name": "stencil", "type": "boolean" },
+                { "name": "antialias", "type": "boolean" },
+                { "name": "premultipliedAlpha", "type": "boolean" },
+                { "name": "preserveDrawingBuffer", "type": "boolean" }
+            ]
+        },
+        {
+            "id": "Canvas",
+            "type": "object",
+            "description": "Information about a 2D/WebGL canvas for which a rendering context has been created.",
+            "properties": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "The id for the canvas." },
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Parent frame identifier." },
+                { "name": "name", "type": "string", "description": "The CSS canvas identifier, or the canvas element id attribute." },
+                { "name": "cssCanvas", "type": "boolean", "description": "True for canvases created with -webkit-canvas." },
+                { "name": "contextType", "$ref": "ContextType", "description": "The type of rendering context backing the canvas." },
+                { "name": "contextAttributes", "$ref": "ContextAttributes", "optional": true, "description": "Context attributes for WebGL rendering contexts." },
+                { "name": "programIds", "type": "array", "items": { "$ref": "ProgramId" }, "description": "Array of program IDs for linked programs belonging to the canvas rendering context." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "getCanvases",
+            "description": "Returns available canvases for all frames.",
+            "returns": [
+                { "name": "result", "type": "array", "items": { "$ref": "Canvas" }, "description": "Array of canvas objects." }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "canvasAdded",
+            "parameters": [
+                { "name": "canvas", "$ref": "Canvas", "description": "Canvas object." }
+            ]
+        },
+        {
+            "name": "canvasRemoved",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Id of the canvas that was removed." }
+            ]
+        },
+        {
+            "name": "programCreated",
+            "description": "Fired when a program is created. Does not imply that link was successful.",
+            "parameters": [
+                { "name": "programId", "$ref": "ProgramId", "description": "Id of the program." }
+            ]
+        },
+        {
+            "name": "programDeleted",
+            "parameters": [
+                { "name": "programId", "$ref": "ProgramId", "description": "Id of the program." }
+            ]
+        }
+    ]
+}

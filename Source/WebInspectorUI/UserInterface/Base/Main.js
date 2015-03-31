@@ -78,6 +78,8 @@ WebInspector.loaded = function()
         InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
     if (InspectorBackend.registerReplayDispatcher)
         InspectorBackend.registerReplayDispatcher(new WebInspector.ReplayObserver);
+    if (InspectorBackend.registerCanvasDispatcher)
+        InspectorBackend.registerCanvasDispatcher(new WebInspector.CanvasObserver);
 
     // Enable agents.
     if (window.InspectorAgent)
@@ -110,6 +112,7 @@ WebInspector.loaded = function()
     this.dashboardManager = new WebInspector.DashboardManager;
     this.probeManager = new WebInspector.ProbeManager;
     this.replayManager = new WebInspector.ReplayManager;
+    this.canvasManager = new WebInspector.CanvasManager;
 
     // Enable the Console Agent after creating the singleton managers.
     if (window.ConsoleAgent)
@@ -383,7 +386,8 @@ WebInspector.sidebarPanelForCurrentContentView = function()
 WebInspector.sidebarPanelForRepresentedObject = function(representedObject)
 {
     if (representedObject instanceof WebInspector.Frame || representedObject instanceof WebInspector.Resource ||
-        representedObject instanceof WebInspector.Script || representedObject instanceof WebInspector.ContentFlow)
+        representedObject instanceof WebInspector.Script || representedObject instanceof WebInspector.ContentFlow ||
+        representedObject instanceof WebInspector.Canvas || representedObject instanceof WebInspector.ShaderProgram)
         return this.resourceSidebarPanel;
 
     if (representedObject instanceof WebInspector.DOMStorageObject || representedObject instanceof WebInspector.CookieStorageObject ||
