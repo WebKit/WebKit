@@ -221,8 +221,12 @@ set(WTF_INCLUDE_DIRECTORIES
 
 set(WTF_LIBRARIES
     ${CMAKE_DL_LIBS}
-    bmalloc
 )
+
+# FIXME: Port bmalloc to Windows. https://bugs.webkit.org/show_bug.cgi?id=143310
+if (NOT WIN32)
+    list(APPEND WTF_LIBRARIES bmalloc)
+endif ()
 
 list(APPEND WTF_SOURCES
     unicode/icu/CollatorICU.cpp

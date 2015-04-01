@@ -1,3 +1,16 @@
+2015-04-01  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Windows and Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=143293
+
+        Reviewed by Filip Pizlo.
+
+        * CMakeLists.txt:
+        Enabled using assembly on Windows.
+        Replaced unix commands with CMake commands.
+        * PlatformMac.cmake:
+        Tell open source builders where to find unicode headers.
+
 2015-04-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         IteratorClose should be called when jumping over the target for-of loop

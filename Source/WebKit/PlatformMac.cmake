@@ -32,6 +32,7 @@ list(APPEND WebKit_LIBRARIES
 )
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${DERIVED_SOURCES_WEBCORE_DIR}"
     "${JAVASCRIPTCORE_DIR}/dfg"
     "${WEBCORE_DIR}/accessibility/mac"
     "${WEBCORE_DIR}/bindings/objc"
@@ -67,7 +68,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     mac/DefaultDelegates
     mac/DOM
     mac/History
-    mac/icu/unicode
+    mac/icu
     mac/Misc
     mac/Panels
     mac/Plugins

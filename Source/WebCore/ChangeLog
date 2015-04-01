@@ -1,3 +1,29 @@
+2015-04-01  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Windows and Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=143293
+
+        Reviewed by Filip Pizlo.
+
+        * PlatformMac.cmake:
+        Tell open source builders where to find unicode headers.
+        * PlatformWin.cmake:
+        Include PlatformWinCairo.cmake.
+        * PlatformWinCairo.cmake:
+        Added from bug 115944 by Patrick Gansterer.
+        * bindings/js/JSDOMStringListCustom.cpp:
+        * bindings/js/JSDOMWrapper.cpp:
+        * bindings/js/JSMessageChannelCustom.cpp:
+        * bindings/js/JSPopStateEventCustom.cpp:
+        * bindings/js/JSReadableStreamCustom.cpp:
+        * bindings/js/ReadableStreamJSSource.cpp:
+        * bindings/js/ScriptController.cpp:
+        * css/CSSComputedStyleDeclaration.cpp:
+        * dom/Attr.cpp:
+        * dom/CollectionIndexCache.cpp:
+        * platform/graphics/ANGLEWebKitBridge.h:
+        Fixed include quirks.
+
 2015-03-31  Simon Fraser  <simon.fraser@apple.com>
 
         Remove scrolling tree dependency on wheel event handler counts, and use fast scrolling even when there are wheel handlers

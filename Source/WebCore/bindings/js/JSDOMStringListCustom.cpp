@@ -19,6 +19,7 @@
 #include "config.h"
 #include "JSDOMStringList.h"
 
+#include "DOMWrapperWorld.h"
 #include <runtime/JSCJSValueInlines.h>
 
 using namespace JSC;

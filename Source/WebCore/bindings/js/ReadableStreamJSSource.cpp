@@ -32,6 +32,7 @@
 #if ENABLE(STREAMS_API)
 #include "ReadableStreamJSSource.h"
 
+#include "DOMWrapperWorld.h"
 #include "JSDOMPromise.h"
 #include "JSReadableStream.h"
 #include "NotImplemented.h"

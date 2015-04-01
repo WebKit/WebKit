@@ -470,7 +470,8 @@ typedef khronos_ssize_t  GLsizeiptr;
  * GL core functions.
  *-----------------------------------------------------------------------*/
 
-#if defined(_MSC_VER) && !defined(ANGLE_WEBKIT_WIN)
+// FIXME: Get WebGL working on Windows with CMake. https://bugs.webkit.org/show_bug.cgi?id=143311
+#if defined(_MSC_VER) && !defined(ANGLE_WEBKIT_WIN) && !defined(BUILDING_WITH_CMAKE)
 #include <GLES2/gl2softlinking.h>
 #else
 

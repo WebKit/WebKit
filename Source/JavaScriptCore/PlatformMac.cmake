@@ -34,6 +34,7 @@ add_custom_command(
 
 list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
     ${JAVASCRIPTCORE_DIR}/disassembler/udis86
+    ${JAVASCRIPTCORE_DIR}/icu
 )
 list(APPEND JavaScriptCore_HEADERS
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/TracingDtrace.h

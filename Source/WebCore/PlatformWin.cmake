@@ -25,7 +25,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/opentype/OpenTypeUtilities.cpp
 
     platform/graphics/win/DIBPixelData.cpp
-    platform/graphics/win/GDIExtras.cpp
     platform/graphics/win/IconWin.cpp
     platform/graphics/win/ImageWin.cpp
     platform/graphics/win/IntPointWin.cpp
@@ -65,27 +64,17 @@ list(APPEND WebCore_SOURCES
     platform/win/WebCoreInstanceHandle.cpp
     platform/win/WheelEventWin.cpp
     platform/win/WidgetWin.cpp
-
-    plugins/PluginDatabase.cpp
-    plugins/PluginPackage.cpp
-
-    plugins/win/PluginDatabaseWin.cpp
 )
 
-if (ENABLE_NETSCAPE_PLUGIN_API)
-    list(APPEND WebCore_SOURCES
-        plugins/PluginView.cpp
-        plugins/npapi.cpp
-
-        plugins/win/PluginMessageThrottlerWin.cpp
-        plugins/win/PluginPackageWin.cpp
-        plugins/win/PluginViewWin.cpp
-    )
-endif ()
+ADD_PRECOMPILED_HEADER("WebCorePrefix" WebCore_SOURCES)
 
 list(APPEND WebCore_SOURCES
     "${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreHeaderDetection.h"
 )
+
+if (${WTF_PLATFORM_WIN_CAIRO})
+    include(PlatformWinCairo.cmake)
+endif ()
 
 # FIXME: This should test if AVF headers are available.
 # https://bugs.webkit.org/show_bug.cgi?id=135861

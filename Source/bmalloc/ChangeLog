@@ -1,3 +1,13 @@
+2015-04-01  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Windows and Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=143293
+
+        Reviewed by Filip Pizlo.
+
+        * bmalloc/BAssert.h:
+        Removed ellipses from macros to appease Visual Studio.
+
 2015-03-13  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.

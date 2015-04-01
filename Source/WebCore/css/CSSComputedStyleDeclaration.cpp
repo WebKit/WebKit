@@ -56,6 +56,7 @@
 #include "Pair.h"
 #include "PseudoElement.h"
 #include "Rect.h"
+#include "RenderBlock.h"
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "SVGElement.h"

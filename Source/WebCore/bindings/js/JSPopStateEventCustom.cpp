@@ -31,6 +31,7 @@
 #include "config.h"
 #include "JSPopStateEvent.h"
 
+#include "DOMWrapperWorld.h"
 #include "JSHistory.h"
 #include <runtime/JSCJSValueInlines.h>
 

@@ -33,11 +33,13 @@
 #include "JSReadableStream.h"
 
 #include "ExceptionCode.h"
+#include "JSDOMBinding.h"
 #include "JSDOMPromise.h"
 #include "JSReadableStreamReader.h"
 #include "ReadableStream.h"
 #include "ReadableStreamJSSource.h"
 #include "ReadableStreamReader.h"
+#include <runtime/Error.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace JSC;

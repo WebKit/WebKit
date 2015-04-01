@@ -1,3 +1,26 @@
+2015-04-01  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Windows and Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=143293
+
+        Reviewed by Filip Pizlo.
+
+        * CMakeLists.txt:
+        Set DERIVED_SOURCES_WTF_DIR for Windows.
+        * Source/CMakeLists.txt:
+        Don't compile bmalloc on Windows.
+        * Source/cmake/OptionsCommon.cmake:
+        Use the absolute path of the C preprocessor.
+        * Source/cmake/OptionsWinCairo.cmake:
+        Added needed definitions.
+        * Source/cmake/OptionsWindows.cmake:
+        Set some default values and removed support for old Visual Studio versions before /MP.
+        * Source/cmake/WebKitFS.cmake:
+        Make WTF DerivedSources directory.
+        * Source/cmake/WebKitMacros.cmake:
+        Added ADD_PRECOMPILED_HEADER macro based on
+        http://stackoverflow.com/questions/148570/using-pre-compiled-headers-with-cmake
+
 2015-04-01  Gwang Yoon Hwang  <yoon@igalia.com>
 
         Use colored diagnostics when building with cmake + ninja + clang

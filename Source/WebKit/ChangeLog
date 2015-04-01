@@ -1,3 +1,13 @@
+2015-04-01  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Windows and Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=143293
+
+        Reviewed by Filip Pizlo.
+
+        * PlatformMac.cmake:
+        Fixed some include directories.
+
 2015-03-26  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.

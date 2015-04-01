@@ -20,3 +20,7 @@ list(APPEND WTF_SOURCES
     text/mac/StringMac.mm
     text/mac/StringViewObjC.mm
 )
+
+list(APPEND WTF_INCLUDE_DIRECTORIES
+    "${WTF_DIR}/icu"
+)

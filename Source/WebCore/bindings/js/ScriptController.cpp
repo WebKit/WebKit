@@ -52,6 +52,7 @@
 #include <debugger/Debugger.h>
 #include <heap/StrongInlines.h>
 #include <inspector/ScriptCallStack.h>
+#include <profiler/Profile.h>
 #include <runtime/InitializeThreading.h>
 #include <runtime/JSLock.h>
 #include <wtf/Threading.h>

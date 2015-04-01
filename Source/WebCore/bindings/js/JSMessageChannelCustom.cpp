@@ -27,6 +27,7 @@
 
 #if ENABLE(CHANNEL_MESSAGING)
 
+#include "DOMWrapperWorld.h"
 #include "JSMessageChannel.h"
 #include <heap/SlotVisitorInlines.h>
 

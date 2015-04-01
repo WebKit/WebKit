@@ -31,7 +31,7 @@
 
 #if !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(WIN) && !defined(BUILDING_WITH_CMAKE)
 #include "ANGLE/ShaderLang.h"
-#elif PLATFORM(WIN)
+#elif PLATFORM(WIN) && !defined(BUILDING_WITH_CMAKE)
 #include "GLSLANG/ShaderLang.h"
 #else
 #include <ANGLE/ShaderLang.h>

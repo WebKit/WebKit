@@ -23,6 +23,7 @@
 #include "config.h"
 #include "Attr.h"
 
+#include "Event.h"
 #include "ExceptionCode.h"
 #include "ScopedEventQueue.h"
 #include "StyleProperties.h"

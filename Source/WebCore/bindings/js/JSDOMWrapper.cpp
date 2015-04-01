@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSDOMWrapper.h"
 
+#include "DOMWrapperWorld.h"
 #include <runtime/Error.h>
 
 using namespace JSC;
