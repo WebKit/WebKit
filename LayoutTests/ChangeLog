@@ -3,6 +3,15 @@
         fast/events/mouse-cursor-image-set.html is timing out on Apple platforms
         https://bugs.webkit.org/show_bug.cgi?id=143323
 
+        Removing old flakiness setting now that we should be skipping.
+
+        * platform/mac/TestExpectations:
+
+2015-04-01  Dean Jackson  <dino@apple.com>
+
+        fast/events/mouse-cursor-image-set.html is timing out on Apple platforms
+        https://bugs.webkit.org/show_bug.cgi?id=143323
+
         The change r182247 has caused this test to timeout. Rather than rollout
         the commit I'm skipping the test and will contact Yoav.
 
