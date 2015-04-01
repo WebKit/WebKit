@@ -1,5 +1,13 @@
 2015-04-01  Alex Christensen  <achristensen@webkit.org>
 
+        Unreviewed build fix when using content extensions performance reporting.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        Time how long it takes to build the DFAs.
+
+2015-04-01  Alex Christensen  <achristensen@webkit.org>
+
         Progress towards CMake on Windows and Mac.
         https://bugs.webkit.org/show_bug.cgi?id=143293
 

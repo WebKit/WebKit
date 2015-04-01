@@ -178,7 +178,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double nfaBuildTimeEnd = monotonicallyIncreasingTime();
-    dataLogF("    Time spent building the NFA: %f\n", (nfaBuildTimeEnd - nfaBuildTimeStart));
+    dataLogF("    Time spent building the NFAs: %f\n", (nfaBuildTimeEnd - nfaBuildTimeStart));
 #endif
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
@@ -210,6 +210,11 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
         DFABytecodeCompiler compiler(dfa, bytecode);
         compiler.compile();
     }
+
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+    double dfaBuildTimeEnd = monotonicallyIncreasingTime();
+    dataLogF("    Time spent building and compiling the DFAs: %f\n", (dfaBuildTimeEnd - dfaBuildTimeStart));
+#endif
 
     client.writeBytecode(WTF::move(bytecode));
     client.writeActions(WTF::move(actions));
