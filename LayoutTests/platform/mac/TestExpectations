@@ -1272,3 +1272,5 @@ webkit.org/b/142142 media/video-volume-slider-drag.html [ Skip ]
 
 # Mavericks and prior do not support APNG.
 webkit.org/b/17022 [ MountainLion Mavericks ] fast/images/animated-png.html [ Skip ]
+
+webkit.org/b/143323 fast/events/mouse-cursor-image-set.html [ Skip ]
