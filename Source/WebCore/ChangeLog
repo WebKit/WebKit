@@ -1,3 +1,9 @@
+2015-04-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Fix the iOS build after r182240.
+
+        * platform/graphics/MediaPlaybackTarget.h:
+
 2015-04-01  Yoav Weiss  <yoav@yoav.ws>
 
         Async loading of image resources
