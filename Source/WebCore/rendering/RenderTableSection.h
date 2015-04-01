@@ -134,9 +134,10 @@ public:
     LayoutUnit rowBaseline(unsigned row);
     void rowLogicalHeightChanged(unsigned rowIndex);
 
-    void removeCachedCollapsedBorders(const RenderTableCell*);
-    void setCachedCollapsedBorder(const RenderTableCell*, CollapsedBorderSide, CollapsedBorderValue);
-    CollapsedBorderValue& cachedCollapsedBorder(const RenderTableCell*, CollapsedBorderSide);
+    void clearCachedCollapsedBorders();
+    void removeCachedCollapsedBorders(const RenderTableCell&);
+    void setCachedCollapsedBorder(const RenderTableCell&, CollapsedBorderSide, CollapsedBorderValue);
+    CollapsedBorderValue cachedCollapsedBorder(const RenderTableCell&, CollapsedBorderSide);
 
     // distributeExtraLogicalHeightToRows methods return the *consumed* extra logical height.
     // FIXME: We may want to introduce a structure holding the in-flux layout information.
