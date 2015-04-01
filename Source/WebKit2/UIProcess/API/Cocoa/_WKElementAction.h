@@ -39,7 +39,9 @@ typedef NS_ENUM(NSInteger, _WKElementActionType) {
     _WKElementActionTypeOpen,
     _WKElementActionTypeCopy,
     _WKElementActionTypeSaveImage,
+#if !defined(TARGET_OS_IOS) || TARGET_OS_IOS
     _WKElementActionTypeAddToReadingList,
+#endif
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
 WK_CLASS_AVAILABLE(10_10, 8_0)

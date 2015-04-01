@@ -1,3 +1,23 @@
+2015-03-31  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/20365675> [iOS] Include Add to Reading List link action only where supported
+        https://bugs.webkit.org/show_bug.cgi?id=143289
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/_WKElementAction.h: Excluded _WKElementActionTypeAddToReadingList from
+        the _WKElementActionType enum when Reading List is not supported.
+
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (+[_WKElementAction elementActionWithType:customTitle:]): Made Add to Reading List code
+        conditional on HAVE(SAFARI_SERVICES_FRAMEWORK).
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showImageSheet]): Ditto.
+        (-[WKActionSheetAssistant showLinkSheet]): Ditto.
+
+        * config.h: Defined HAVE_SAFARI_SERVICES_FRAMEWORK.
+
 2015-03-31  Timothy Horton  <timothy_horton@apple.com>
 
         TextIndicator for <span> inside an <a> only highlights the <span>, should highlight the whole <a>

@@ -34,14 +34,16 @@
 #import "WKActionSheetAssistant.h"
 #import "WKContentViewInteraction.h"
 #import "_WKActivatedElementInfoInternal.h"
-#import <SafariServices/SSReadingList.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SoftLinking.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
+#if HAVE(SAFARI_SERVICES_FRAMEWORK)
+#import <SafariServices/SSReadingList.h>
 SOFT_LINK_FRAMEWORK(SafariServices);
 SOFT_LINK_CLASS(SafariServices, SSReadingList);
+#endif
 
 typedef void (^WKElementActionHandlerInternal)(WKActionSheetAssistant *, _WKActivatedElementInfo *);
 
@@ -76,6 +78,7 @@ typedef void (^WKElementActionHandlerInternal)(WKActionSheetAssistant *, _WKActi
        type:_WKElementActionTypeCustom] autorelease];
 }
 
+#if HAVE(SAFARI_SERVICES_FRAMEWORK)
 static void addToReadingList(NSURL *targetURL, NSString *title)
 {
     if (!title || [title length] == 0)
@@ -83,6 +86,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
 
     [[getSSReadingListClass() defaultReadingList] addReadingListItemWithURL:targetURL title:title previewText:nil error:nil];
 }
+#endif
 
 + (instancetype)elementActionWithType:(_WKElementActionType)type customTitle:(NSString *)customTitle
 {
@@ -107,12 +111,14 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
             [assistant.delegate actionSheetAssistant:assistant performAction:WebKit::SheetAction::SaveImage];
         };
         break;
+#if HAVE(SAFARI_SERVICES_FRAMEWORK)
     case _WKElementActionTypeAddToReadingList:
         title = WEB_UI_STRING("Add to Reading List", "Title for Add to Reading List action button");
         handler = ^(WKActionSheetAssistant *, _WKActivatedElementInfo *actionInfo) {
             addToReadingList(actionInfo.URL, actionInfo.title);
         };
         break;
+#endif
     default:
         [NSException raise:NSInvalidArgumentException format:@"There is no standard web element action of type %ld.", (long)type];
         return nil;

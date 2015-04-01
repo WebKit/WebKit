@@ -37,15 +37,17 @@
 #import "WebPageProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKElementActionInternal.h"
-#import <SafariServices/SSReadingList.h>
 #import <UIKit/UIView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <wtf/text/WTFString.h>
 
+#if HAVE(SAFARI_SERVICES_FRAMEWORK)
+#import <SafariServices/SSReadingList.h>
 SOFT_LINK_FRAMEWORK(SafariServices)
 SOFT_LINK_CLASS(SafariServices, SSReadingList)
+#endif
 
 SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
 SOFT_LINK(TCC, TCCAccessPreflight, TCCAccessPreflightResult, (CFStringRef service, CFDictionaryRef options), (service, options))
@@ -246,8 +248,10 @@ using namespace WebKit;
     auto defaultActions = adoptNS([[NSMutableArray alloc] init]);
     if (!positionInformation.url.isEmpty())
         [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeOpen]];
+#if HAVE(SAFARI_SERVICES_FRAMEWORK)
     if ([getSSReadingListClass() supportsURL:targetURL])
         [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeAddToReadingList]];
+#endif
     if (TCCAccessPreflight(getkTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
         [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeSaveImage]];
     if (!targetURL.scheme.length || [targetURL.scheme caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
@@ -288,8 +292,10 @@ using namespace WebKit;
 
     auto defaultActions = adoptNS([[NSMutableArray alloc] init]);
     [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeOpen]];
+#if HAVE(SAFARI_SERVICES_FRAMEWORK)
     if ([getSSReadingListClass() supportsURL:targetURL])
         [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeAddToReadingList]];
+#endif
     if (![[targetURL scheme] length] || [[targetURL scheme] caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
         [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeCopy]];
 
