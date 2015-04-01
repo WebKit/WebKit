@@ -29,6 +29,7 @@
 #include "JSEventTarget.h"
 #include "JSMainThreadExecState.h"
 #include "JSMainThreadExecStateInstrumentation.h"
+#include "MicroTask.h"
 #include "ScriptController.h"
 #include "WorkerGlobalScope.h"
 #include <runtime/ExceptionHelpers.h>
@@ -151,6 +152,8 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
             }
         }
     }
+    if (scriptExecutionContext->isDocument())
+        MicroTaskQueue::singleton().runMicroTasks();
 }
 
 bool JSEventListener::virtualisAttribute() const

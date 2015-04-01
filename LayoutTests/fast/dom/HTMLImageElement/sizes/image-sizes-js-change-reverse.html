@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<script src="../../../../resources/srcset-helper.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../resources/currentSrcHelper.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function updateSrc() {
+        var img = document.getElementById("foo");
+        // Here we're setting sizes last, and srcset after src to make sure image loading is done is "stable-state"
+        img.src = "../resources/blue-100-px-square.png"
+        img.srcset = "../../../hidpi/resources/image-set-1x.png 200w, ../../../hidpi/resources/image-set-2x.png 400w, ../resources/image-set-4x.png 800w";
+        img.sizes = "400px";
+    }
+
+    addEventListener("DOMContentLoaded", function() {
+        if (sessionStorage.pageReloaded)
+            testRunner.dumpResourceResponseMIMETypes();
+        updateSrc();
+    }, false);
+
+    function runTest()
+    {
+        shouldBe('currentSrcFileName("foo")', '"image-set-4x.png"');
+    }
+</script>
+<img id="foo">

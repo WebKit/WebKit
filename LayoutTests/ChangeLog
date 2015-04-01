@@ -1,3 +1,22 @@
+2015-04-01  Yoav Weiss  <yoav@yoav.ws>
+
+        Async loading of image resources
+        https://bugs.webkit.org/show_bug.cgi?id=134488
+
+        Reviewed by Dean Jackson.
+
+        * fast/dom/HTMLImageElement/image-load-post-onload-expected.txt: Added.
+        * fast/dom/HTMLImageElement/image-load-post-onload.html: Added.
+        * fast/dom/HTMLImageElement/image-loading-gc.html: Cosmetic changes.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-js-change-reverse-expected.txt: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-js-change-reverse.html: Added.
+        * fast/dom/image-object.html: Cosmetic changes.
+        * http/tests/misc/image-blocked-src-change-expected.txt: Removed line numbers from console.
+        * http/tests/misc/image-blocked-src-no-change-expected.txt: Removed line numbers from console.
+        * http/tests/security/contentSecurityPolicy/report-blocked-file-uri-expected.txt: Removed line numbers from console.
+        * http/tests/security/frame-loading-via-document-write-expected.txt: Removed line numbers from console.
+        * http/tests/security/local-image-from-remote-expected.txt: Removed line numbers from console.
+
 2015-03-31  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to compute a region for elements on the page that have wheel event handlers

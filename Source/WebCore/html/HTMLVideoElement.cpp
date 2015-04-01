@@ -309,7 +309,7 @@ void HTMLVideoElement::setWebkitWirelessVideoPlaybackDisabled(bool disabled)
 void HTMLVideoElement::didMoveToNewDocument(Document* oldDocument)
 {
     if (m_imageLoader)
-        m_imageLoader->elementDidMoveToNewDocument();
+        m_imageLoader->elementDidMoveToNewDocument(oldDocument);
     HTMLMediaElement::didMoveToNewDocument(oldDocument);
 }
 

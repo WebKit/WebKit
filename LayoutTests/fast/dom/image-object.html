@@ -46,8 +46,7 @@ function runTests() {
         debug('FAILURE: Empty image should have complete set to true.');
         numErrs++;
     }
-    
-    i2 = new Image()
+    i2 = new Image();
     i2.onload = imageLoaded;
     i2.src = 'resources/apple.gif';
 }

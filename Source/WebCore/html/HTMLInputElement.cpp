@@ -1495,7 +1495,7 @@ void HTMLInputElement::removedFrom(ContainerNode& insertionPoint)
 void HTMLInputElement::didMoveToNewDocument(Document* oldDocument)
 {
     if (imageLoader())
-        imageLoader()->elementDidMoveToNewDocument();
+        imageLoader()->elementDidMoveToNewDocument(oldDocument);
 
     bool needsSuspensionCallback = this->needsSuspensionCallback();
     if (oldDocument) {

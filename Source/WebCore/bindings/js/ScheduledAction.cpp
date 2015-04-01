@@ -34,6 +34,7 @@
 #include "JSMainThreadExecState.h"
 #include "JSMainThreadExecStateInstrumentation.h"
 #include "JSWorkerGlobalScope.h"
+#include "MicroTask.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptSourceCode.h"
@@ -125,6 +126,8 @@ void ScheduledAction::execute(Document& document)
         executeFunctionInContext(window, window->shell(), document);
     else
         frame->script().executeScriptInWorld(*m_isolatedWorld, m_code);
+
+    MicroTaskQueue::singleton().runMicroTasks();
 }
 
 void ScheduledAction::execute(WorkerGlobalScope& workerGlobalScope)

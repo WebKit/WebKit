@@ -1,3 +1,62 @@
+2015-04-01  Yoav Weiss  <yoav@yoav.ws>
+
+        Async loading of image resources
+        https://bugs.webkit.org/show_bug.cgi?id=134488
+
+        Reviewed by Dean Jackson.
+
+        This patch changes image loading to be asynchronous (per spec), in order
+        for it to be agnostic to property setting order when it comes to src, srcset and crossorigin,
+        as well as to enable future hooking of the <picture>-based selection logic on top of it.
+
+        Tests: fast/dom/HTMLImageElement/image-load-post-onload.html
+        fast/dom/HTMLImageElement/sizes/image-sizes-js-change-reverse.html
+
+        * WebCore.xcodeproj/project.pbxproj: Change MicroTask.h to be private.
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent): Add a microtask checkpoint after event handling.
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute): Add a microtask checkpoint after running of a scheduled action.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::didMoveToNewDocument): Add the old document to call of elementDidMoveToNewDocument.
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::notifyFinished): Avoid a crash when notifyFinished is called and there's no CachedImage.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::didMoveToNewDocument): Add the old document to call of elementDidMoveToNewDocument.
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didMoveToNewDocument): Add the old document to call of elementDidMoveToNewDocument.
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::didMoveToNewDocument): Add the old document to call of elementDidMoveToNewDocument.
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::attemptToRunDeferredScriptsAndEnd): Add a microtask checkpoint.
+        * loader/ImageLoader.cpp: Move image resource loading to be asynchronous.
+        (WebCore::ImageLoader::ImageLoaderTask::create):
+        (WebCore::ImageLoader::ImageLoaderTask::run): Run the image loading microtask and called doUpdateFromElement.
+        (WebCore::ImageLoader::ImageLoaderTask::ImageLoaderTask):
+        (WebCore::ImageLoader::ImageLoader):
+        (WebCore::ImageLoader::doUpdateFromElement): This is split from the previous updateFromElement, and performs the actual resource loading.
+        (WebCore::ImageLoader::updateFromElement): Now only prepares the stage for the actual image resource loading.
+        (WebCore::ImageLoader::shouldLoadImmediately): If this returns true, the image resource is loaded immediately, without queueing a microtask.
+        (WebCore::ImageLoader::notifyFinished): Add asserts.
+        (WebCore::ImageLoader::elementDidMoveToNewDocument): Handle document load event counters decrementing and incrementing.
+        * loader/ImageLoader.h:
+        (WebCore::ImageLoader::imageComplete): Make sure that the image is complete only if there aren't any pending tasks.
+        (WebCore::ImageLoader::hasPendingActivity): Make sure that pending activity takes pending tasks into account.
+        (WebCore::ImageLoader::hasPendingTask): Getter to know if an ImageLoader has a pending task. (Used by the image loading microtask)
+        (WebCore::ImageLoader::createWeakPtr): Create a weakPtr to be used by the microtask, so it can called back the loader if it's still alive.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest): Add a 'shouldBypassMainWorldContentSecurityPolicy' flag and act upon it.
+        (WebCore::CachedResourceLoader::requestImage): Add a 'shouldBypassMainWorldContentSecurityPolicy' flag.
+        (WebCore::CachedResourceLoader::requestResource): Add a 'shouldBypassMainWorldContentSecurityPolicy' flag.
+        * loader/cache/CachedResourceLoader.h:
+        (WebCore::CachedResourceLoader::canRequest): Add a 'shouldBypassMainWorldContentSecurityPolicy' flag and act upon it.
+        (WebCore::CachedResourceLoader::requestImage): Add a 'shouldBypassMainWorldContentSecurityPolicy' flag.
+        (WebCore::CachedResourceLoader::requestResource): Add a 'shouldBypassMainWorldContentSecurityPolicy' flag.
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::didMoveToNewDocument): Add the old document to call of elementDidMoveToNewDocument.
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::end): Add a microtask checkpoint after XML finishes parsing.
+
 2015-04-01  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed build fix when using content extensions performance reporting.
