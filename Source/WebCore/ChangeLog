@@ -1,3 +1,15 @@
+2015-04-01  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Link errors, unresolved texture mapper methods.
+        https://bugs.webkit.org/show_bug.cgi?id=143308
+
+        Reviewed by Alex Christensen.
+
+        New texture mapper files should be included in the project.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2015-04-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Support forcing expansion opportunities at the beginning and ending of a run

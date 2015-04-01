@@ -7198,9 +7198,6 @@
     <ClCompile Include="..\html\HTMLWBRElement.cpp">
       <Filter>html</Filter>
     </ClCompile>
-    <ClCompile Include="..\loader\cache\CacheValidation.cpp">
-      <Filter>loader\cache</Filter>
-    </ClCompile>
     <ClCompile Include="..\page\PageConfiguration.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -7254,6 +7251,21 @@
     </ClCompile>
     <ClCompile Include="..\rendering\RenderAttachment.cpp">
       <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\BitmapTextureGL.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\BitmapTextureImageBuffer.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\BitmapTexturePool.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\BitmapTexture.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\CacheValidation.cpp">
+      <Filter>platform\network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -15173,9 +15185,6 @@
     <ClInclude Include="..\html\HTMLWBRElement.h">
       <Filter>html</Filter>
     </ClInclude>
-    <ClInclude Include="..\loader\cache\CacheValidation.h">
-      <Filter>loader\cache</Filter>
-    </ClInclude>
     <ClInclude Include="..\storage\StorageNamespaceProvider.h">
       <Filter>storage</Filter>
     </ClInclude>
@@ -15232,6 +15241,21 @@
     </ClInclude>
     <ClInclude Include="..\rendering\RenderAttachment.h">
       <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\BitmapTexture.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\BitmapTextureGL.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\BitmapTextureImageBuffer.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\BitmapTexturePool.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\network\CacheValidation.h">
+      <Filter>platform\network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
