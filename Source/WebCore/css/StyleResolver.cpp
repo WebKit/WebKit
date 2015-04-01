@@ -446,7 +446,7 @@ inline void StyleResolver::State::initForStyleResolve(Document& document, Elemen
     } else
         m_parentStyle = parentStyle;
 
-    Node* docElement = e ? e->document().documentElement() : 0;
+    Node* docElement = e ? e->document().documentElement() : nullptr;
     RenderStyle* docStyle = document.renderStyle();
     m_rootElementStyle = docElement && e != docElement ? docElement->renderStyle() : docStyle;
 
@@ -506,14 +506,14 @@ Node* StyleResolver::locateCousinList(Element* parent, unsigned& visitedNodeCoun
                 return currentNode->lastChild();
             }
             if (subcount >= cStyleSearchThreshold)
-                return 0;
+                return nullptr;
             currentNode = currentNode->previousSibling();
         }
         currentNode = locateCousinList(thisCousin->parentElement(), visitedNodeCount);
         thisCousin = currentNode;
     }
 
-    return 0;
+    return nullptr;
 }
 
 bool StyleResolver::styleSharingCandidateMatchesRuleSet(RuleSet* ruleSet)
@@ -735,7 +735,7 @@ RenderStyle* StyleResolver::locateSharedStyle()
     // Check previous siblings and their cousins.
     unsigned count = 0;
     unsigned visitedNodeCount = 0;
-    StyledElement* shareElement = 0;
+    StyledElement* shareElement = nullptr;
     Node* cousinList = state.styledElement()->previousSibling();
     while (cousinList) {
         shareElement = findSiblingForStyleSharing(cousinList, count);
@@ -921,7 +921,7 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
 
         const StyleKeyframe* keyframe = keyframes[i].get();
 
-        KeyframeValue keyframeValue(0, 0);
+        KeyframeValue keyframeValue(0, nullptr);
         keyframeValue.setStyle(styleForKeyframe(elementStyle, keyframe, keyframeValue));
 
         // Add this keyframe style to all the indicated key times
@@ -939,7 +939,7 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
             zeroPercentKeyframe = StyleKeyframe::create(MutableStyleProperties::create()).leakRef();
             zeroPercentKeyframe->setKeyText("0%");
         }
-        KeyframeValue keyframeValue(0, 0);
+        KeyframeValue keyframeValue(0, nullptr);
         keyframeValue.setStyle(styleForKeyframe(elementStyle, zeroPercentKeyframe, keyframeValue));
         list.insert(keyframeValue);
     }
@@ -951,7 +951,7 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
             hundredPercentKeyframe = StyleKeyframe::create(MutableStyleProperties::create()).leakRef();
             hundredPercentKeyframe->setKeyText("100%");
         }
-        KeyframeValue keyframeValue(1, 0);
+        KeyframeValue keyframeValue(1, nullptr);
         keyframeValue.setStyle(styleForKeyframe(elementStyle, hundredPercentKeyframe, keyframeValue));
         list.insert(keyframeValue);
     }
@@ -961,7 +961,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* element, c
 {
     ASSERT(parentStyle);
     if (!element)
-        return 0;
+        return nullptr;
 
     State& state = m_state;
 
@@ -992,14 +992,14 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* element, c
     }
 
     if (collector.matchedResult().matchedProperties().isEmpty())
-        return 0;
+        return nullptr;
 
     state.style()->setStyleType(pseudoStyleRequest.pseudoId);
 
     applyMatchedProperties(collector.matchedResult(), element);
 
     // Clean up our style object's display and text decorations (among other fixups).
-    adjustRenderStyle(*state.style(), *m_state.parentStyle(), 0);
+    adjustRenderStyle(*state.style(), *m_state.parentStyle(), nullptr);
 
     if (state.style()->hasViewportUnits())
         document().setHasStyleWithViewportUnits();
@@ -1503,7 +1503,7 @@ Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(Element* ele
         return Vector<RefPtr<StyleRule>>();
 
     initElement(element);
-    m_state.initForStyleResolve(document(), element, 0);
+    m_state.initForStyleResolve(document(), element, nullptr);
 
     ElementRuleCollector collector(*element, m_state.style(), m_ruleSets, m_selectorFilter);
     collector.setMode(SelectorChecker::Mode::CollectingRules);
@@ -1616,18 +1616,18 @@ const StyleResolver::MatchedPropertiesCacheItem* StyleResolver::findFromMatchedP
 
     MatchedPropertiesCache::iterator it = m_matchedPropertiesCache.find(hash);
     if (it == m_matchedPropertiesCache.end())
-        return 0;
+        return nullptr;
     MatchedPropertiesCacheItem& cacheItem = it->value;
 
     size_t size = matchResult.matchedProperties().size();
     if (size != cacheItem.matchedProperties.size())
-        return 0;
+        return nullptr;
     for (size_t i = 0; i < size; ++i) {
         if (matchResult.matchedProperties()[i] != cacheItem.matchedProperties[i])
-            return 0;
+            return nullptr;
     }
     if (cacheItem.ranges != matchResult.ranges)
-        return 0;
+        return nullptr;
     return &cacheItem;
 }
 
@@ -1725,7 +1725,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     State& state = m_state;
     unsigned cacheHash = shouldUseMatchedPropertiesCache && matchResult.isCacheable ? computeMatchedPropertiesHash(matchResult.matchedProperties().data(), matchResult.matchedProperties().size()) : 0;
     bool applyInheritedOnly = false;
-    const MatchedPropertiesCacheItem* cacheItem = 0;
+    const MatchedPropertiesCacheItem* cacheItem = nullptr;
     if (cacheHash && (cacheItem = findFromMatchedPropertiesCache(cacheHash, matchResult))
         && isCacheableInMatchedPropertiesCache(element, state.style(), state.parentStyle())) {
         // We can build up the style by copying non-inherited properties from an earlier style object built using the same exact
@@ -1821,7 +1821,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
 
 void StyleResolver::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, RenderStyle* style)
 {
-    initElement(0);
+    initElement(nullptr);
     m_state.initForStyleResolve(document(), nullptr, style);
     m_state.setStyle(*style);
     applyPropertyToCurrentStyle(id, value);
@@ -2567,7 +2567,7 @@ void StyleResolver::loadPendingResources()
 }
 
 inline StyleResolver::MatchedProperties::MatchedProperties()
-    : possiblyPaddedMember(0)
+    : possiblyPaddedMember(nullptr)
 {
 }
 
