@@ -36,11 +36,8 @@
 #include "TextureMapperPlatformLayer.h"
 #endif
 
-typedef struct _GstSample GstSample;
-typedef struct _GstElement GstElement;
 typedef struct _GstMessage GstMessage;
 typedef struct _GstStreamVolume GstStreamVolume;
-typedef struct _WebKitVideoSink WebKitVideoSink;
 
 namespace WebCore {
 
@@ -117,19 +114,25 @@ protected:
 
     MediaPlayer* m_player;
     GRefPtr<GstStreamVolume> m_volumeElement;
-    GRefPtr<GstElement> m_webkitVideoSink;
+    GRefPtr<GstElement> m_videoSink;
     GRefPtr<GstElement> m_fpsSink;
     MediaPlayer::ReadyState m_readyState;
     MediaPlayer::NetworkState m_networkState;
     IntSize m_size;
     mutable GMutex m_sampleMutex;
-    GstSample* m_sample;
+    GRefPtr<GstSample> m_sample;
     GThreadSafeMainLoopSource m_volumeTimerHandler;
     GThreadSafeMainLoopSource m_muteTimerHandler;
+#if USE(GSTREAMER_GL)
+    GThreadSafeMainLoopSource m_drawTimerHandler;
+    GCond m_drawCondition;
+    GMutex m_drawMutex;
+#endif
     unsigned long m_repaintHandler;
     unsigned long m_volumeSignalHandler;
     unsigned long m_muteSignalHandler;
     mutable FloatSize m_videoSize;
+    bool m_usingFallbackVideoSink;
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
     PassRefPtr<BitmapTexture> updateTexture(TextureMapper*);
 #endif
