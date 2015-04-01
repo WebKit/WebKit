@@ -133,18 +133,40 @@ int JSScope::depth()
     return depth;
 }
 
+// When an exception occurs, the result of isUnscopable becomes false.
+static inline bool isUnscopable(ExecState* exec, JSScope* scope, JSObject* object, const Identifier& ident)
+{
+    if (scope->type() != WithScopeType)
+        return false;
+
+    JSValue unscopables = object->get(exec, exec->propertyNames().unscopablesSymbol);
+    if (exec->hadException())
+        return false;
+    if (!unscopables.isObject())
+        return false;
+    JSValue blocked = jsCast<JSObject*>(unscopables)->get(exec, ident);
+    if (exec->hadException())
+        return false;
+
+    return blocked.toBoolean(exec);
+}
+
 JSValue JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& ident)
 {
     ScopeChainIterator end = scope->end();
     ScopeChainIterator it = scope->begin();
     while (1) {
+        JSScope* scope = it.scope();
         JSObject* object = it.get();
 
         if (++it == end) // Global scope.
             return object;
 
-        if (object->hasProperty(exec, ident))
-            return object;
+        if (object->hasProperty(exec, ident)) {
+            if (!isUnscopable(exec, scope, object, ident))
+                return object;
+            ASSERT_WITH_MESSAGE(!exec->hadException(), "When an exception occurs, the result of isUnscopable becomes false");
+        }
     }
 }
 

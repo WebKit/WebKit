@@ -35,6 +35,7 @@
 #include "JSStringBuilder.h"
 #include "JSStringJoiner.h"
 #include "Lookup.h"
+#include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
 #include "JSCInlines.h"
 #include "StringRecursionChecker.h"
@@ -140,6 +141,22 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
     JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, arrayProtoFuncValues, DontEnum, 0);
+
+    if (globalObject->runtimeFlags().isSymbolEnabled()) {
+        JSObject* unscopables = constructEmptyObject(globalObject->globalExec(), globalObject->nullPrototypeObjectStructure());
+        const char* unscopableNames[] = {
+            "copyWithin",
+            "entries",
+            "fill",
+            "find",
+            "findIndex",
+            "keys",
+            "values"
+        };
+        for (const char* unscopableName : unscopableNames)
+            unscopables->putDirect(vm, Identifier::fromString(&vm, unscopableName), jsBoolean(true));
+        putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, unscopables, DontEnum | ReadOnly);
+    }
 }
 
 bool ArrayPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

@@ -231,7 +231,7 @@
     macro(split) \
     macro(toPrimitive) \
     macro(toStringTag) \
-    macro(unscopable)
+    macro(unscopables)
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     macro(iteratedObject) \

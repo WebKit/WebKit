@@ -1,3 +1,51 @@
+2015-04-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Symbol.unscopables
+        https://bugs.webkit.org/show_bug.cgi?id=142829
+
+        Reviewed by Geoffrey Garen.
+
+        This patch introduces Symbol.unscopables functionality.
+        In ES6, some generic names (like keys, values) are introduced
+        as Array's method name. And this breaks the web since some web sites
+        use like the following code.
+
+        var values = ...;
+        with (array) {
+            values;  // This values is trapped by array's method "values".
+        }
+
+        To fix this, Symbol.unscopables introduces blacklist
+        for with scope's trapping. When resolving scope,
+        if name is found in the target scope and the target scope is with scope,
+        we check Symbol.unscopables object to filter generic names.
+
+        This functionality is only active for with scopes.
+        Global scope does not have unscopables functionality.
+
+        And since
+        1) op_resolve_scope for with scope always return Dynamic resolve type,
+        2) in that case, JSScope::resolve is always used in JIT and LLInt,
+        3) the code which contains op_resolve_scope that returns Dynamic cannot be compiled with DFG and FTL,
+        to implement this functionality, we just change JSScope::resolve and no need to change JIT code.
+        So performance regression is only visible in Dynamic resolving case, and it is already much slow.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::runtimeFlags):
+        * runtime/JSScope.cpp:
+        (JSC::isUnscopable):
+        (JSC::JSScope::resolve):
+        * runtime/JSScope.h:
+        (JSC::ScopeChainIterator::scope):
+        * tests/stress/global-environment-does-not-trap-unscopables.js: Added.
+        (test):
+        * tests/stress/unscopables.js: Added.
+        (test):
+        (.):
+
 2015-03-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         ES6 class syntax should allow static setters and getters

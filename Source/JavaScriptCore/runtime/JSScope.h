@@ -191,6 +191,7 @@ public:
 
     JSObject* get() const { return JSScope::objectAtScope(m_node); }
     JSObject* operator->() const { return JSScope::objectAtScope(m_node); }
+    JSScope* scope() const { return m_node; }
 
     ScopeChainIterator& operator++() { m_node = m_node->next(); return *this; }
 
