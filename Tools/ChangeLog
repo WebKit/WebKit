@@ -1,3 +1,12 @@
+2015-04-01  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Run test-webkitpy as part of EWS (just like we do on other platforms)
+        https://bugs.webkit.org/show_bug.cgi?id=143321
+
+        Reviewed by Alexey Proskuryakov.
+
+        * EWSTools/start-queue-win.sh: Add commands to run 'test-webkitpy' during processing loop.
+
 2015-04-01  Enrica Casucci  <enrica@apple.com>
 
         Injected bundle messages should be at the page level.

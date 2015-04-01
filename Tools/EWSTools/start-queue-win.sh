@@ -43,6 +43,8 @@ function start_ews()
         date
         echo "TASK: kill orphaned tasks"
         taskkill.exe /f /im cl.exe
+        echo "TASK: test-webkitpy"
+        ~/WebKit/Tools/Scripts/test-webkitpy
         echo "TASK: webkit-patch win-ews"
         ~/WebKit/Tools/Scripts/webkit-patch win-ews --bot-id=$BOT_ID --no-confirm --exit-after-iteration 10
         echo "TASK: kill old processes"
@@ -51,3 +53,4 @@ function start_ews()
 }
 
 start_ews
+
