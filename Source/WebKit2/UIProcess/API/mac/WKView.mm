@@ -4419,6 +4419,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [self _ensureGestureController];
 
     _data->_gestureController->handleMagnificationGesture(event.magnification, [self convertPoint:event.locationInWindow fromView:nil]);
+
+    if (event.phase == NSEventPhaseEnded || event.phase == NSEventPhaseCancelled)
+        _data->_gestureController->endMagnificationGesture();
 }
 
 - (void)smartMagnifyWithEvent:(NSEvent *)event
@@ -4433,16 +4436,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [self _ensureGestureController];
 
     _data->_gestureController->handleSmartMagnificationGesture([self convertPoint:event.locationInWindow fromView:nil]);
-}
-
--(void)endGestureWithEvent:(NSEvent *)event
-{
-    if (!_data->_gestureController) {
-        [super endGestureWithEvent:event];
-        return;
-    }
-
-    _data->_gestureController->endActiveGesture();
 }
 
 - (void)setMagnification:(double)magnification centeredAtPoint:(NSPoint)point

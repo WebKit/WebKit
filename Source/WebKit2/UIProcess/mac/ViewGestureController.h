@@ -94,6 +94,8 @@ public:
     double magnification() const;
 
     void handleMagnificationGesture(double scale, WebCore::FloatPoint origin);
+    void endMagnificationGesture();
+
     void handleSmartMagnificationGesture(WebCore::FloatPoint origin);
 
     bool handleScrollWheelEvent(NSEvent *);
@@ -103,8 +105,6 @@ public:
     void setCustomSwipeViewsTopContentInset(float topContentInset) { m_customSwipeViewsTopContentInset = topContentInset; }
     WebCore::FloatRect windowRelativeBoundsForCustomSwipeViews() const;
     void setDidMoveSwipeSnapshotCallback(void(^)(CGRect));
-
-    void endActiveGesture();
 
     bool shouldIgnorePinnedState() { return m_shouldIgnorePinnedState; }
     void setShouldIgnorePinnedState(bool ignore) { m_shouldIgnorePinnedState = ignore; }
@@ -141,7 +141,6 @@ private:
     void didHitRenderTreeSizeThreshold();
     void removeSwipeSnapshotAfterRepaint();
 
-    void endMagnificationGesture();
     WebCore::FloatPoint scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
 
     void trackSwipeGesture(NSEvent *, SwipeDirection);

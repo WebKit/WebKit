@@ -179,7 +179,8 @@ void ViewGestureController::handleMagnificationGesture(double scale, FloatPoint 
 
 void ViewGestureController::endMagnificationGesture()
 {
-    ASSERT(m_activeGestureType == ViewGestureType::Magnification);
+    if (m_activeGestureType != ViewGestureType::Magnification)
+        return;
 
     double newMagnification = std::min(std::max(m_magnification, minMagnification), maxMagnification);
 
@@ -191,6 +192,7 @@ void ViewGestureController::endMagnificationGesture()
     }
 
     m_activeGestureType = ViewGestureType::None;
+    m_visibleContentRectIsValid = false;
 }
 
 void ViewGestureController::handleSmartMagnificationGesture(FloatPoint origin)
@@ -785,14 +787,6 @@ void ViewGestureController::removeSwipeSnapshot()
     m_webPageProxy.navigationGestureSnapshotWasRemoved();
 
     m_backgroundColorForCurrentSnapshot = Color();
-}
-
-void ViewGestureController::endActiveGesture()
-{
-    if (m_activeGestureType == ViewGestureType::Magnification) {
-        endMagnificationGesture();
-        m_visibleContentRectIsValid = false;
-    }
 }
 
 double ViewGestureController::magnification() const
