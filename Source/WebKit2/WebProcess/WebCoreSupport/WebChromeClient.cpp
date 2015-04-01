@@ -990,9 +990,9 @@ void WebChromeClient::pageExtendedBackgroundColorDidChange(Color backgroundColor
 #endif
 }
 
-void WebChromeClient::numWheelEventHandlersChanged(unsigned count)
+void WebChromeClient::wheelEventHandlersChanged(bool hasHandlers)
 {
-    m_page->numWheelEventHandlersChanged(count);
+    m_page->wheelEventHandlersChanged(hasHandlers);
 }
 
 String WebChromeClient::plugInStartLabelTitle(const String& mimeType) const

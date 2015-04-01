@@ -38,8 +38,7 @@
 namespace WebCore {
 
 ScrollingTree::ScrollingTree()
-    : m_hasWheelEventHandlers(false)
-    , m_rubberBandsAtLeft(true)
+    : m_rubberBandsAtLeft(true)
     , m_rubberBandsAtRight(true)
     , m_rubberBandsAtTop(true)
     , m_rubberBandsAtBottom(true)
@@ -64,9 +63,6 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
 {
     // This method is invoked by the event handling thread
     MutexLocker lock(m_mutex);
-
-    if (m_hasWheelEventHandlers)
-        return true;
 
     bool shouldSetLatch = wheelEvent.shouldConsiderLatching();
     
@@ -129,15 +125,12 @@ void ScrollingTree::commitNewTreeState(std::unique_ptr<ScrollingStateTree> scrol
     ScrollingStateScrollingNode* rootNode = scrollingStateTree->rootStateNode();
     if (rootNode
         && (rootStateNodeChanged
-            || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::WheelEventHandlerCount)
             || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::NonFastScrollableRegion)
             || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))) {
         MutexLocker lock(m_mutex);
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
             m_mainFrameScrollPosition = FloatPoint();
-        if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::WheelEventHandlerCount))
-            m_hasWheelEventHandlers = scrollingStateTree->rootStateNode()->wheelEventHandlerCount();
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::NonFastScrollableRegion))
             m_nonFastScrollableRegion = scrollingStateTree->rootStateNode()->nonFastScrollableRegion();
     }

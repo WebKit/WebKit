@@ -49,7 +49,6 @@ public:
     enum ChangedProperty {
         FrameScaleFactor = NumScrollingStateNodeBits,
         NonFastScrollableRegion,
-        WheelEventHandlerCount,
         ReasonsForSynchronousScrolling,
         ScrolledContentsLayer,
         CounterScrollingLayer,
@@ -69,9 +68,6 @@ public:
 
     const Region& nonFastScrollableRegion() const { return m_nonFastScrollableRegion; }
     WEBCORE_EXPORT void setNonFastScrollableRegion(const Region&);
-
-    unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
-    WEBCORE_EXPORT void setWheelEventHandlerCount(unsigned);
 
     SynchronousScrollingReasons synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
     WEBCORE_EXPORT void setSynchronousScrollingReasons(SynchronousScrollingReasons);
@@ -139,7 +135,6 @@ private:
 
     Region m_nonFastScrollableRegion;
     float m_frameScaleFactor;
-    unsigned m_wheelEventHandlerCount;
     SynchronousScrollingReasons m_synchronousScrollingReasons;
     ScrollBehaviorForFixedElements m_behaviorForFixed;
     int m_headerHeight;

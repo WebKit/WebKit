@@ -1,3 +1,64 @@
+2015-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove scrolling tree dependency on wheel event handler counts, and use fast scrolling even when there are wheel handlers
+        https://bugs.webkit.org/show_bug.cgi?id=143288
+        rdar://problem/16049624
+
+        Reviewed by Beth Dakin.
+
+        Remove the wheel event counting that Document does, and passes into the scrolling tree.
+        The ScrollingTree now just uses the non-fast scrollable region to determine when to
+        fast scroll on pages with wheel event handlers.
+        
+        If a handler includes position:fixed renderers, we just cover the whole document
+        with the slow-scrolling region currently. This could be improved.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::didBecomeCurrentDocumentInFrame):
+        (WebCore::Document::wheelEventHandlersChanged):
+        (WebCore::Document::didAddWheelEventHandler):
+        (WebCore::Document::didRemoveWheelEventHandler):
+        (WebCore::Document::wheelEventHandlerCount):
+        (WebCore::Document::touchEventHandlerCount):
+        (WebCore::Document::absoluteRegionForEventTargets): Changed to return a pair<Region, bool>
+        where the bool indicates whether any handler includes position:fixed content.
+        (WebCore::pageWheelEventHandlerCountChanged): Deleted.
+        (WebCore::wheelEventHandlerCountChanged): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::wheelEventHandlerCount): Deleted.
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        * page/DebugPageOverlays.cpp:
+        (WebCore::MouseWheelRegionOverlay::updateRegion):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged):
+        (WebCore::AsyncScrollingCoordinator::recomputeWheelEventHandlerCountForFrameView): Deleted.
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::computeNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinator::frameViewRootLayerDidChange):
+        (WebCore::ScrollingCoordinator::computeCurrentWheelEventHandlerCount): Deleted.
+        (WebCore::ScrollingCoordinator::frameViewWheelEventHandlerCountChanged): Deleted.
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::recomputeWheelEventHandlerCountForFrameView): Deleted.
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode):
+        (WebCore::ScrollingStateFrameScrollingNode::setWheelEventHandlerCount): Deleted.
+        * page/scrolling/ScrollingStateFrameScrollingNode.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::ScrollingTree):
+        (WebCore::ScrollingTree::shouldHandleWheelEventSynchronously):
+        (WebCore::ScrollingTree::commitNewTreeState):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::updateTiledScrollingIndicator):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren):
+        (WebCore::logWheelEventHandlerCountChanged): Deleted.
+        * testing/Internals.cpp:
+        (WebCore::Internals::touchEventHandlerCount):
+
 2015-04-01  David Hyatt  <hyatt@apple.com>
 
         [New Block-Inside-Inline Model] Floats need to be allowed to intrude into anonymous inline-blocks.

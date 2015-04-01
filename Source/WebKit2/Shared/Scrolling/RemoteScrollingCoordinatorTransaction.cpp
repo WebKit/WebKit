@@ -143,7 +143,6 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(ArgumentEncoder& en
     
     SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::FrameScaleFactor, frameScaleFactor)
     SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::NonFastScrollableRegion, nonFastScrollableRegion)
-    SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::WheelEventHandlerCount, wheelEventHandlerCount)
     SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::ReasonsForSynchronousScrolling, synchronousScrollingReasons)
     SCROLLING_NODE_ENCODE_ENUM(ScrollingStateFrameScrollingNode::BehaviorForFixedElements, scrollBehaviorForFixedElements)
     SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::HeaderHeight, headerHeight)
@@ -225,7 +224,6 @@ bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(ArgumentDecoder& de
 
     SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::FrameScaleFactor, float, setFrameScaleFactor);
     SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::NonFastScrollableRegion, Region, setNonFastScrollableRegion);
-    SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::WheelEventHandlerCount, int, setWheelEventHandlerCount);
     SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::ReasonsForSynchronousScrolling, SynchronousScrollingReasons, setSynchronousScrollingReasons);
     SCROLLING_NODE_DECODE_ENUM(ScrollingStateFrameScrollingNode::BehaviorForFixedElements, ScrollBehaviorForFixedElements, setScrollBehaviorForFixedElements);
 
@@ -620,7 +618,6 @@ void RemoteScrollingTreeTextStream::dump(const ScrollingStateFrameScrollingNode&
         ts.decreaseIndent();
     }
 
-    // FIXME: dump wheelEventHandlerCount
     // FIXME: dump synchronousScrollingReasons
     // FIXME: dump scrollableAreaParameters
     // FIXME: dump scrollBehaviorForFixedElements

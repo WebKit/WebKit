@@ -490,7 +490,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_writingModeSetOnDocumentElement(false)
     , m_writeRecursionIsTooDeep(false)
     , m_writeRecursionDepth(0)
-    , m_wheelEventHandlerCount(0)
     , m_lastHandledUserGestureTimestamp(0)
 #if PLATFORM(IOS)
 #if ENABLE(DEVICE_ORIENTATION)
@@ -2098,16 +2097,6 @@ void Document::createRenderTree()
     recalcStyle(Style::Force);
 }
 
-static void pageWheelEventHandlerCountChanged(Page& page)
-{
-    unsigned count = 0;
-    for (const Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (Document* document = frame->document())
-            count += document->wheelEventHandlerCount();
-    }
-    page.chrome().client().numWheelEventHandlersChanged(count);
-}
-
 void Document::didBecomeCurrentDocumentInFrame()
 {
     // FIXME: Are there cases where the document can be dislodged from the frame during the event handling below?
@@ -2128,7 +2117,7 @@ void Document::didBecomeCurrentDocumentInFrame()
     // subframes' documents have no wheel event handlers, then the count did not change,
     // unless the documents they are replacing had wheel event handlers.
     if (page() && m_frame->isMainFrame())
-        pageWheelEventHandlerCountChanged(*page());
+        wheelEventHandlersChanged();
 
 #if ENABLE(TOUCH_EVENTS)
     // FIXME: Doing this only for the main frame is insufficient.
@@ -5982,30 +5971,23 @@ RefPtr<Touch> Document::createTouch(DOMWindow* window, EventTarget* target, int 
 #endif
 #endif // !PLATFORM(IOS)
 
-static void wheelEventHandlerCountChanged(Document* document)
+void Document::wheelEventHandlersChanged()
 {
-    Page* page = document->page();
+    Page* page = this->page();
     if (!page)
         return;
 
-    pageWheelEventHandlerCountChanged(*page);
+    if (FrameView* frameView = view()) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+            scrollingCoordinator->frameViewNonFastScrollableRegionChanged(*frameView);
+    }
 
-    ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator();
-    if (!scrollingCoordinator)
-        return;
-
-    FrameView* frameView = document->view();
-    if (!frameView)
-        return;
-
-    // FIXME: Why doesn't this need to be called in didBecomeCurrentDocumentInFrame?
-    scrollingCoordinator->frameViewWheelEventHandlerCountChanged(*frameView);
+    bool haveHandlers = m_wheelEventTargets && !m_wheelEventTargets->isEmpty();
+    page->chrome().client().wheelEventHandlersChanged(haveHandlers);
 }
 
 void Document::didAddWheelEventHandler(Node& node)
 {
-    ++m_wheelEventHandlerCount;
-
     if (!m_wheelEventTargets)
         m_wheelEventTargets = std::make_unique<EventTargetSet>();
 
@@ -6016,7 +5998,7 @@ void Document::didAddWheelEventHandler(Node& node)
         return;
     }
 
-    wheelEventHandlerCountChanged(this);
+    wheelEventHandlersChanged();
 
     if (Frame* frame = this->frame())
         DebugPageOverlays::didChangeEventHandlers(*frame);
@@ -6024,9 +6006,6 @@ void Document::didAddWheelEventHandler(Node& node)
 
 void Document::didRemoveWheelEventHandler(Node& node)
 {
-    ASSERT(m_wheelEventHandlerCount > 0);
-    --m_wheelEventHandlerCount;
-
     if (!m_wheelEventTargets)
         return;
 
@@ -6038,10 +6017,22 @@ void Document::didRemoveWheelEventHandler(Node& node)
         return;
     }
 
-    wheelEventHandlerCountChanged(this);
+    wheelEventHandlersChanged();
 
     if (Frame* frame = this->frame())
         DebugPageOverlays::didChangeEventHandlers(*frame);
+}
+
+unsigned Document::wheelEventHandlerCount() const
+{
+    if (!m_wheelEventTargets)
+        return 0;
+
+    unsigned count = 0;
+    for (auto& handler : *m_wheelEventTargets)
+        count += handler.value;
+
+    return count;
 }
 
 void Document::didAddTouchEventHandler(Node& handler)
@@ -6114,6 +6105,22 @@ void Document::didRemoveEventTargetNode(Node& handler)
     }
 }
 
+unsigned Document::touchEventHandlerCount() const
+{
+#if ENABLE(TOUCH_EVENTS)
+    if (!m_touchEventTargets)
+        return 0;
+
+    unsigned count = 0;
+    for (auto& handler : *m_touchEventTargets)
+        count += handler.value;
+
+    return count;
+#else
+    return 0;
+#endif
+}
+
 LayoutRect Document::absoluteEventHandlerBounds(bool& includesFixedPositionElements)
 {
     includesFixedPositionElements = false;
@@ -6123,10 +6130,10 @@ LayoutRect Document::absoluteEventHandlerBounds(bool& includesFixedPositionEleme
     return LayoutRect();
 }
 
-Region Document::absoluteRegionForEventTargets(const EventTargetSet* targets)
+Document::RegionFixedPair Document::absoluteRegionForEventTargets(const EventTargetSet* targets)
 {
     if (!targets)
-        return Region();
+        return RegionFixedPair(Region(), false);
 
     Region targetRegion;
     bool insideFixedPosition = false;
@@ -6149,7 +6156,7 @@ Region Document::absoluteRegionForEventTargets(const EventTargetSet* targets)
             targetRegion.unite(Region(enclosingIntRect(rootRelativeBounds)));
     }
 
-    return targetRegion;
+    return RegionFixedPair(targetRegion, insideFixedPosition);
 }
 
 void Document::updateLastHandledUserGestureTimestamp()

@@ -47,8 +47,6 @@
 namespace WebCore {
 
 static void logThreadedScrollingMode(unsigned synchronousScrollingReasons);
-static void logWheelEventHandlerCountChanged(unsigned);
-
 
 PassRefPtr<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeMac::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
 {
@@ -131,11 +129,6 @@ void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingSta
     if (logScrollingMode) {
         if (scrollingTree().scrollingPerformanceLoggingEnabled())
             logThreadedScrollingMode(synchronousScrollingReasons());
-    }
-
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::WheelEventHandlerCount)) {
-        if (scrollingTree().scrollingPerformanceLoggingEnabled())
-            logWheelEventHandlerCountChanged(scrollingStateNode.wheelEventHandlerCount());
     }
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -541,11 +534,6 @@ static void logThreadedScrollingMode(unsigned synchronousScrollingReasons)
         WTFLogAlways("SCROLLING: Switching to main-thread scrolling mode. Time: %f Reason(s): %s\n", WTF::monotonicallyIncreasingTime(), reasonsDescriptionTrimmed.ascii().data());
     } else
         WTFLogAlways("SCROLLING: Switching to threaded scrolling mode. Time: %f\n", WTF::monotonicallyIncreasingTime());
-}
-
-void logWheelEventHandlerCountChanged(unsigned count)
-{
-    WTFLogAlways("SCROLLING: Wheel event handler count changed. Time: %f Count: %u\n", WTF::monotonicallyIncreasingTime(), count);
 }
 
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)

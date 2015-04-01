@@ -120,10 +120,6 @@ public:
     // Should be called whenever the given frame view has been laid out.
     virtual void frameViewLayoutUpdated(FrameView&) { }
 
-    // Should be called whenever a wheel event handler is added or removed in the 
-    // frame view's underlying document.
-    void frameViewWheelEventHandlerCountChanged(FrameView&);
-
     // Should be called whenever the slow repaint objects counter changes between zero and one.
     void frameViewHasSlowRepaintObjectsDidChange(FrameView&);
 
@@ -210,7 +206,6 @@ protected:
 
     static GraphicsLayer* scrollLayerForScrollableArea(ScrollableArea&);
 
-    unsigned computeCurrentWheelEventHandlerCount();
     GraphicsLayer* scrollLayerForFrameView(FrameView&);
     GraphicsLayer* counterScrollingLayerForFrameView(FrameView&);
     GraphicsLayer* insetClipLayerForFrameView(FrameView&);
@@ -222,7 +217,6 @@ protected:
     Page* m_page; // FIXME: ideally this would be a reference but it gets nulled on async teardown.
 
 private:
-    virtual void recomputeWheelEventHandlerCountForFrameView(FrameView&) { }
     virtual void setSynchronousScrollingReasons(SynchronousScrollingReasons) { }
 
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const;

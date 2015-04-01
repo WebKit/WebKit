@@ -156,7 +156,6 @@ private:
     Mutex m_mutex;
     Region m_nonFastScrollableRegion;
     FloatPoint m_mainFrameScrollPosition;
-    bool m_hasWheelEventHandlers;
 
     Mutex m_swipeStateMutex;
     bool m_rubberBandsAtLeft;

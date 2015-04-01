@@ -1,3 +1,16 @@
+2015-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove scrolling tree dependency on wheel event handler counts, and use fast scrolling even when there are wheel handlers
+        https://bugs.webkit.org/show_bug.cgi?id=143288
+
+        Reviewed by Beth Dakin.
+
+        Remove the wheel event counting that Document does, and passes into the scrolling tree.
+        The ScrollingTree now just uses the non-fast scrollable region to determine when to
+        fast scroll on pages with wheel event handlers.
+
+        * WebCoreSupport/WebChromeClient.h:
+
 2015-03-31  Timothy Horton  <timothy_horton@apple.com>
 
         TextIndicator for <span> inside an <a> only highlights the <span>, should highlight the whole <a>

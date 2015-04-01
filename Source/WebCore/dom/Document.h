@@ -1122,7 +1122,6 @@ public:
 
     void initDNSPrefetch();
 
-    unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
     void didAddWheelEventHandler(Node&);
     void didRemoveWheelEventHandler(Node&);
 
@@ -1134,6 +1133,10 @@ public:
 #else
     bool hasTouchEventHandlers() const { return false; }
 #endif
+
+    // Used for testing. Count handlers in the main document, and one per frame which contains handlers.
+    WEBCORE_EXPORT unsigned wheelEventHandlerCount() const;
+    WEBCORE_EXPORT unsigned touchEventHandlerCount() const;
 
     void didAddTouchEventHandler(Node&);
     void didRemoveTouchEventHandler(Node&);
@@ -1151,7 +1154,8 @@ public:
 
     const EventTargetSet* wheelEventTargets() const { return m_wheelEventTargets.get(); }
 
-    Region absoluteRegionForEventTargets(const EventTargetSet*);
+    typedef std::pair<Region, bool> RegionFixedPair;
+    RegionFixedPair absoluteRegionForEventTargets(const EventTargetSet*);
 
     LayoutRect absoluteEventHandlerBounds(bool&) override final;
 
@@ -1319,6 +1323,8 @@ private:
     void addListenerType(ListenerType listenerType) { m_listenerTypes |= listenerType; }
 
     void didAssociateFormControlsTimerFired();
+
+    void wheelEventHandlersChanged();
 
     // DOM Cookies caching.
     const String& cachedDOMCookies() const { return m_cachedDOMCookies; }
@@ -1564,7 +1570,6 @@ private:
     bool m_writeRecursionIsTooDeep;
     unsigned m_writeRecursionDepth;
     
-    unsigned m_wheelEventHandlerCount;
 #if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<EventTargetSet> m_touchEventTargets;
 #endif

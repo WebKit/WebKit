@@ -154,32 +154,20 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame& frame, 
         nonFastScrollableRegion.unite(computeNonFastScrollableRegion(*subframe, offset));
 
     // Include wheel event handler region for the main frame.
-    Region wheelHandlerRegion = frame.document()->absoluteRegionForEventTargets(frame.document()->wheelEventTargets());
-    wheelHandlerRegion.translate(toIntSize(offset));
-    nonFastScrollableRegion.unite(wheelHandlerRegion);
+    Document::RegionFixedPair wheelHandlerRegion = frame.document()->absoluteRegionForEventTargets(frame.document()->wheelEventTargets());
+    bool wheelHandlerInFixedContent = wheelHandlerRegion.second;
+    if (wheelHandlerInFixedContent) {
+        // FIXME: if a fixed element has a wheel event handler, for now just cover the entire document
+        // with the slow-scrolling region. This could be improved.
+        // FIXME: need to handle position:sticky here too.
+        bool inFixed;
+        wheelHandlerRegion.first.unite(enclosingIntRect(frame.document()->absoluteEventHandlerBounds(inFixed)));
+    }
+    wheelHandlerRegion.first.translate(toIntSize(offset));
+    nonFastScrollableRegion.unite(wheelHandlerRegion.first);
 
     return nonFastScrollableRegion;
 #endif
-}
-
-unsigned ScrollingCoordinator::computeCurrentWheelEventHandlerCount()
-{
-    unsigned wheelEventHandlerCount = 0;
-
-    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (frame->document())
-            wheelEventHandlerCount += frame->document()->wheelEventHandlerCount();
-    }
-
-    return wheelEventHandlerCount;
-}
-
-void ScrollingCoordinator::frameViewWheelEventHandlerCountChanged(FrameView& frameView)
-{
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-
-    recomputeWheelEventHandlerCountForFrameView(frameView);
 }
 
 void ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange(FrameView& frameView)
@@ -283,7 +271,6 @@ void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView& frameView)
         return;
 
     frameViewLayoutUpdated(frameView);
-    recomputeWheelEventHandlerCountForFrameView(frameView);
     updateSynchronousScrollingReasons(frameView);
 }
 

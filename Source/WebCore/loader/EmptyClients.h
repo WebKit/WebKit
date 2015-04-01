@@ -227,7 +227,7 @@ public:
     virtual void needTouchEvents(bool) override { }
 #endif
     
-    virtual void numWheelEventHandlersChanged(unsigned) override { }
+    virtual void wheelEventHandlersChanged(bool) override { }
     
     virtual bool isEmptyChromeClient() const override { return true; }
 

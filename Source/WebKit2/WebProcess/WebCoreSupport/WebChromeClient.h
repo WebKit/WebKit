@@ -280,7 +280,7 @@ private:
 
     virtual void pageExtendedBackgroundColorDidChange(WebCore::Color) const override;
     
-    virtual void numWheelEventHandlersChanged(unsigned) override;
+    virtual void wheelEventHandlersChanged(bool) override;
 
     virtual String plugInStartLabelTitle(const String& mimeType) const override;
     virtual String plugInStartLabelSubtitle(const String& mimeType) const override;

@@ -1254,15 +1254,7 @@ unsigned Internals::touchEventHandlerCount(ExceptionCode& ec)
         return 0;
     }
 
-    auto touchHandlers = document->touchEventTargets();
-    if (!touchHandlers)
-        return 0;
-
-    unsigned count = 0;
-    for (auto& handler : *touchHandlers)
-        count += handler.value;
-
-    return count;
+    return document->touchEventHandlerCount();
 }
 
 // FIXME: Remove the document argument. It is almost always the same as

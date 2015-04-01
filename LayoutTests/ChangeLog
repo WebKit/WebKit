@@ -1,3 +1,16 @@
+2015-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to compute a region for elements on the page that have wheel event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=142807
+
+        Reviewed by Beth Dakin.
+        
+        Update results, since any handler with position:fixed now causes the region to cover the document.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-fixed-child-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-inside-fixed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-handler-on-fixed-expected.txt:
+
 2015-04-01  David Hyatt  <hyatt@apple.com>
 
         [New Block-Inside-Inline Model] Floats need to be allowed to intrude into anonymous inline-blocks.

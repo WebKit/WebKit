@@ -144,8 +144,6 @@ void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
     ScrollingModeIndication indicatorMode;
     if (shouldUpdateScrollLayerPositionSynchronously())
         indicatorMode = SynchronousScrollingBecauseOfStyleIndication;
-    else if (scrollingStateTree()->rootStateNode() && scrollingStateTree()->rootStateNode()->wheelEventHandlerCount())
-        indicatorMode =  SynchronousScrollingBecauseOfEventHandlersIndication;
     else
         indicatorMode = AsyncScrollingIndication;
     

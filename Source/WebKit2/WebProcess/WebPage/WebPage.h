@@ -760,7 +760,7 @@ public:
 
     void wheelEvent(const WebWheelEvent&);
 
-    void numWheelEventHandlersChanged(unsigned);
+    void wheelEventHandlersChanged(bool);
     void recomputeShortCircuitHorizontalWheelEventsState();
 
     void updateVisibilityState(bool isInitialState = false);
@@ -1263,7 +1263,7 @@ private:
     bool m_cachedMainFrameIsPinnedToTopSide;
     bool m_cachedMainFrameIsPinnedToBottomSide;
     bool m_canShortCircuitHorizontalWheelEvents;
-    unsigned m_numWheelEventHandlers;
+    bool m_hasWheelEventHandlers;
 
     unsigned m_cachedPageCount;
 

@@ -1,3 +1,33 @@
+2015-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove scrolling tree dependency on wheel event handler counts, and use fast scrolling even when there are wheel handlers
+        https://bugs.webkit.org/show_bug.cgi?id=143288
+        rdar://problem/16049624
+
+        Reviewed by Beth Dakin.
+
+        Remove the wheel event counting that Document does, and passes into the scrolling tree.
+        The ScrollingTree now just uses the non-fast scrollable region to determine when to
+        fast scroll on pages with wheel event handlers.
+        
+        If a handler includes position:fixed renderers, we just cover the whole document
+        with the slow-scrolling region currently. This could be improved.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+        (WebKit::RemoteScrollingTreeTextStream::dump):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::wheelEventHandlersChanged):
+        (WebKit::WebChromeClient::numWheelEventHandlersChanged): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::wheelEventHandlersChanged):
+        (WebKit::WebPage::recomputeShortCircuitHorizontalWheelEventsState):
+        (WebKit::WebPage::numWheelEventHandlersChanged): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+
 2015-03-31  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/20365675> [iOS] Include Add to Reading List link action only where supported

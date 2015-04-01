@@ -96,7 +96,6 @@ private:
     WEBCORE_EXPORT virtual void syncChildPositions(const LayoutRect& viewportRect) override;
     WEBCORE_EXPORT virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) override;
 
-    WEBCORE_EXPORT virtual void recomputeWheelEventHandlerCountForFrameView(FrameView&) override;
     WEBCORE_EXPORT virtual void setSynchronousScrollingReasons(SynchronousScrollingReasons) override;
 
     virtual void scheduleTreeStateCommit() = 0;

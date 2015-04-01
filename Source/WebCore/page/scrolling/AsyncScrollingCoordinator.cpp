@@ -135,6 +135,7 @@ void AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged(FrameVie
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
+    // FIXME: computeNonFastScrollableRegion lazily.
     m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(m_page->mainFrame(), IntPoint()));
 }
 
@@ -485,14 +486,6 @@ void AsyncScrollingCoordinator::updateMainFrameScrollLayerPosition()
 
     if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(*frameView))
         scrollLayer->setPosition(-frameView->scrollPosition());
-}
-
-void AsyncScrollingCoordinator::recomputeWheelEventHandlerCountForFrameView(FrameView& frameView)
-{
-    ScrollingStateFrameScrollingNode* node = downcast<ScrollingStateFrameScrollingNode>(m_scrollingStateTree->stateNodeForID(frameView.scrollLayerID()));
-    if (!node)
-        return;
-    node->setWheelEventHandlerCount(computeCurrentWheelEventHandlerCount());
 }
 
 bool AsyncScrollingCoordinator::isRubberBandInProgress() const
