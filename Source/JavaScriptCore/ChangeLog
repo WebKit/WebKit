@@ -1,5 +1,55 @@
 2015-04-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        IteratorClose should be called when jumping over the target for-of loop
+        https://bugs.webkit.org/show_bug.cgi?id=143140
+
+        Reviewed by Geoffrey Garen.
+
+        This patch fixes labeled break/continue behaviors with for-of and iterators.
+
+        1. Support IteratorClose beyond multiple loop contexts
+        Previously, IteratorClose is only executed in for-of's breakTarget().
+        However, this misses IteratorClose execution when statement roll-ups multiple control flow contexts.
+        For example,
+        outer: for (var e1 of outer) {
+            inner: for (var e2 of inner) {
+                break outer;
+            }
+        }
+        In this case, return method of inner should be called.
+        We leverage the existing system for `finally` to execute inner.return method correctly.
+        Leveraging `finally` system fixes `break`, `continue` and `return` cases.
+        `throw` case is already supported by emitting try-catch handlers in for-of.
+
+        2. Incorrect LabelScope creation is done in ForOfNode
+        ForOfNode creates duplicated LabelScope.
+        It causes infinite loop when executing the following program that contains
+        explicitly labeled for-of loop.
+        For example,
+        inner: for (var elm of array) {
+            continue inner;
+        }
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::pushFinallyContext):
+        (JSC::BytecodeGenerator::pushIteratorCloseContext):
+        (JSC::BytecodeGenerator::popFinallyContext):
+        (JSC::BytecodeGenerator::popIteratorCloseContext):
+        (JSC::BytecodeGenerator::emitComplexPopScopes):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        (JSC::BytecodeGenerator::emitIteratorClose):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForOfNode::emitBytecode):
+        * tests/stress/iterator-return-beyond-multiple-iteration-scopes.js: Added.
+        (createIterator.iterator.return):
+        (createIterator):
+        * tests/stress/raise-error-in-iterator-close.js: Added.
+        (createIterator.iterator.return):
+        (createIterator):
+
+2015-04-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [ES6] Implement Symbol.unscopables
         https://bugs.webkit.org/show_bug.cgi?id=142829
 
