@@ -122,7 +122,7 @@ public:
         return *this;
     }
 
-    template<typename U>
+    template<typename U, class = typename std::enable_if<std::is_same<typename std::remove_reference<U>::type, T>::value>::type>
     Optional& operator=(U&& u)
     {
         destroy();

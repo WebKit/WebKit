@@ -1,3 +1,20 @@
+015-04-01  Antti Koivisto  <antti@apple.com>
+
+        Value assignment operator of Optional should be stricter
+        https://bugs.webkit.org/show_bug.cgi?id=143303
+
+        Reviewed by Andreas Kling.
+
+        struct Foo { mutable Optional<std::chrono::seconds> s; };
+        Foo foo, foo2;
+        foo = foo2;
+
+        doesn't build because it tries to use wrong operator=.
+
+        * wtf/Optional.h:
+
+            Add enable_if test similar to std::experimental::optional.
+
 2015-04-01  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Windows and Mac.
