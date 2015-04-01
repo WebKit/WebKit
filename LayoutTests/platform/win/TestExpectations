@@ -3066,4 +3066,4 @@ contentfiltering [ Skip ]
 
 # Started failing recently.
 webkit.org/b/143275 accessibility/aria-hidden-hides-all-elements.html [ Pass Failure ]
-
+webkit.org/b/143315 accessibility/textarea-selected-text-range.html [ Skip ]
