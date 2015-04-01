@@ -166,7 +166,7 @@ public:
     virtual void exitFullScreenForElement(WebCore::Element*);
 #endif
 
-    virtual void numWheelEventHandlersChanged(unsigned) { }
+    virtual void wheelEventHandlersChanged(bool) override { }
 
     WebView* webView() { return m_webView; }
 

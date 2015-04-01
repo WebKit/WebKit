@@ -1,3 +1,10 @@
+2015-04-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix Windows build.
+
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::numWheelEventHandlersChanged): Deleted.
+
 2015-03-25  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Crash when plugin window is destroyed.
