@@ -162,9 +162,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     SandboxExtension::consumePermanently(parameters.mediaKeyStorageDirectoryExtensionHandle);
 #if PLATFORM(IOS)
     SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
-    SandboxExtension::consumePermanently(parameters.openGLCacheDirectoryExtensionHandle);
+    SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.containerTemporaryDirectoryExtensionHandle);
-    SandboxExtension::consumePermanently(parameters.hstsDatabasePathExtensionHandle);
 #endif
 #endif
 

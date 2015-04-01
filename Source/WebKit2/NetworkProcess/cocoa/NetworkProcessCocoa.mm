@@ -49,7 +49,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 {
 #if PLATFORM(IOS)
     SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
-    SandboxExtension::consumePermanently(parameters.hstsDatabasePathExtensionHandle);
+    SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.parentBundleDirectoryExtensionHandle);
 #endif
     m_diskCacheDirectory = parameters.diskCacheDirectory;

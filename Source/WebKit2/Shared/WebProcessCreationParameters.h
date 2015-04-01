@@ -77,10 +77,8 @@ struct WebProcessCreationParameters {
     String cookieStorageDirectory;
 #if PLATFORM(IOS)
     SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
-    SandboxExtension::Handle openGLCacheDirectoryExtensionHandle;
+    SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
     SandboxExtension::Handle containerTemporaryDirectoryExtensionHandle;
-    // FIXME: Remove this once <rdar://problem/17726660> is fixed.
-    SandboxExtension::Handle hstsDatabasePathExtensionHandle;
 #endif
     SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
     String mediaKeyStorageDirectory;

@@ -55,7 +55,7 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
     encoder << cookieStorageDirectory;
 #if PLATFORM(IOS)
     encoder << cookieStorageDirectoryExtensionHandle;
-    encoder << hstsDatabasePathExtensionHandle;
+    encoder << containerCachesDirectoryExtensionHandle;
     encoder << parentBundleDirectoryExtensionHandle;
 #endif
     encoder << shouldUseTestingNetworkSession;
@@ -105,7 +105,7 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
 #if PLATFORM(IOS)
     if (!decoder.decode(result.cookieStorageDirectoryExtensionHandle))
         return false;
-    if (!decoder.decode(result.hstsDatabasePathExtensionHandle))
+    if (!decoder.decode(result.containerCachesDirectoryExtensionHandle))
         return false;
     if (!decoder.decode(result.parentBundleDirectoryExtensionHandle))
         return false;

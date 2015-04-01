@@ -295,22 +295,12 @@ String WebProcessPool::platformDefaultCookieStorageDirectory() const
 }
 
 #if PLATFORM(IOS)
-String WebProcessPool::openGLCacheDirectory() const
-{
-    String path = pathForProcessContainer();
-    if (path.isEmpty())
-        path = NSHomeDirectory();
-
-    path = path + "/Library/Caches/com.apple.WebKit.WebContent/com.apple.opengl/";
-    return stringByResolvingSymlinksInPath(path);
-}
-
 String WebProcessPool::parentBundleDirectory() const
 {
     return [[[NSBundle mainBundle] bundlePath] stringByStandardizingPath];
 }
 
-String WebProcessPool::networkingHSTSDatabasePath() const
+String WebProcessPool::networkingCachesDirectory() const
 {
     String path = pathForProcessContainer();
     if (path.isEmpty())
@@ -326,10 +316,10 @@ String WebProcessPool::networkingHSTSDatabasePath() const
         return String();
     }
 
-    return path + "/HSTS.plist";
+    return path;
 }
 
-String WebProcessPool::webContentHSTSDatabasePath() const
+String WebProcessPool::webContentCachesDirectory() const
 {
     String path = pathForProcessContainer();
     if (path.isEmpty())
@@ -345,7 +335,7 @@ String WebProcessPool::webContentHSTSDatabasePath() const
         return String();
     }
 
-    return path + "/HSTS.plist";
+    return path;
 }
 
 String WebProcessPool::containerTemporaryDirectory() const

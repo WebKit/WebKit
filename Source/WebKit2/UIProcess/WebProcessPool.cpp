@@ -417,9 +417,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
     if (!parameters.cookieStorageDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
 
-    String hstsDatabasePath = networkingHSTSDatabasePath();
-    if (!hstsDatabasePath.isEmpty())
-        SandboxExtension::createHandle(hstsDatabasePath, SandboxExtension::ReadWrite, parameters.hstsDatabasePathExtensionHandle);
+    String containerCachesDirectory = this->networkingCachesDirectory();
+    if (!containerCachesDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(containerCachesDirectory, parameters.containerCachesDirectoryExtensionHandle);
 
     String parentBundleDirectory = this->parentBundleDirectory();
     if (!parentBundleDirectory.isEmpty())
@@ -616,17 +616,13 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     if (!parameters.cookieStorageDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
 
-    String openGLCacheDirectory = this->openGLCacheDirectory();
-    if (!openGLCacheDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(openGLCacheDirectory, parameters.openGLCacheDirectoryExtensionHandle);
+    String containerCachesDirectory = this->webContentCachesDirectory();
+    if (!containerCachesDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(containerCachesDirectory, parameters.containerCachesDirectoryExtensionHandle);
 
     String containerTemporaryDirectory = this->containerTemporaryDirectory();
     if (!containerTemporaryDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(containerTemporaryDirectory, parameters.containerTemporaryDirectoryExtensionHandle);
-
-    String hstsDatabasePath = webContentHSTSDatabasePath();
-    if (!hstsDatabasePath.isEmpty())
-        SandboxExtension::createHandle(hstsDatabasePath, SandboxExtension::ReadWrite, parameters.hstsDatabasePathExtensionHandle);
 #endif
 
     parameters.mediaKeyStorageDirectory = m_mediaKeysStorageDirectory;

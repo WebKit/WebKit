@@ -76,9 +76,8 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << cookieStorageDirectory;
 #if PLATFORM(IOS)
     encoder << cookieStorageDirectoryExtensionHandle;
-    encoder << openGLCacheDirectoryExtensionHandle;
+    encoder << containerCachesDirectoryExtensionHandle;
     encoder << containerTemporaryDirectoryExtensionHandle;
-    encoder << hstsDatabasePathExtensionHandle;
 #endif
     encoder << mediaKeyStorageDirectory;
     encoder << mediaKeyStorageDirectoryExtensionHandle;
@@ -182,11 +181,9 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
 #if PLATFORM(IOS)
     if (!decoder.decode(parameters.cookieStorageDirectoryExtensionHandle))
         return false;
-    if (!decoder.decode(parameters.openGLCacheDirectoryExtensionHandle))
+    if (!decoder.decode(parameters.containerCachesDirectoryExtensionHandle))
         return false;
     if (!decoder.decode(parameters.containerTemporaryDirectoryExtensionHandle))
-        return false;
-    if (!decoder.decode(parameters.hstsDatabasePathExtensionHandle))
         return false;
 #endif
     if (!decoder.decode(parameters.mediaKeyStorageDirectory))

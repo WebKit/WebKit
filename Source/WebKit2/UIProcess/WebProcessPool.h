@@ -402,10 +402,9 @@ private:
     String platformDefaultCookieStorageDirectory() const;
 
 #if PLATFORM(IOS)
-    String openGLCacheDirectory() const;
     String parentBundleDirectory() const;
-    String networkingHSTSDatabasePath() const;
-    String webContentHSTSDatabasePath() const;
+    String networkingCachesDirectory() const;
+    String webContentCachesDirectory() const;
     String containerTemporaryDirectory() const;
 #endif
 
