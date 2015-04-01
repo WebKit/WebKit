@@ -500,6 +500,9 @@ inline void BreakingContext::handleReplaced()
             return;
         }
     }
+    
+    if (replacedBox.isAnonymousInlineBlock())
+        replacedBox.layoutIfNeeded();
 
     if (m_ignoringSpaces)
         m_lineMidpointState.stopIgnoringSpaces(InlineIterator(0, m_current.renderer(), 0));

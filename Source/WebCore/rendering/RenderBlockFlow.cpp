@@ -232,17 +232,20 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
     // We should not process floats if the parent node is not a RenderBlock. Otherwise, we will add 
     // floats in an invalid context. This will cause a crash arising from a bad cast on the parent.
     // See <rdar://problem/8049753>, where float property is applied on a text node in a SVG.
-    if (!is<RenderBlockFlow>(parent()))
+    bool isBlockInsideInline = isAnonymousInlineBlock();
+    if (!is<RenderBlockFlow>(parent()) && !isBlockInsideInline)
         return;
 
     // First add in floats from the parent. Self-collapsing blocks let their parent track any floats that intrude into
     // them (as opposed to floats they contain themselves) so check for those here too.
-    RenderBlockFlow& parentBlock = downcast<RenderBlockFlow>(*parent());
-    bool parentHasFloats = false;
-    RenderBlockFlow* previousBlock = previousSiblingWithOverhangingFloats(parentHasFloats);
+    RenderBlockFlow& parentBlock = downcast<RenderBlockFlow>(isBlockInsideInline ? *containingBlock() : *parent());
+    bool parentHasFloats = isBlockInsideInline ? parentBlock.containsFloats() : false;
+    RenderBlockFlow* previousBlock = nullptr;
+    if (!isBlockInsideInline)
+        previousBlock = previousSiblingWithOverhangingFloats(parentHasFloats);
     LayoutUnit logicalTopOffset = logicalTop();
     if (parentHasFloats || (parentBlock.lowestFloatLogicalBottom() > logicalTopOffset && previousBlock && previousBlock->isSelfCollapsingBlock()))
-        addIntrudingFloats(&parentBlock, parentBlock.logicalLeftOffsetForContent(), logicalTopOffset);
+        addIntrudingFloats(&parentBlock, &parentBlock, parentBlock.logicalLeftOffsetForContent(), logicalTopOffset);
     
     LayoutUnit logicalLeftOffset = 0;
     if (previousBlock)
@@ -254,7 +257,7 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
 
     // Add overhanging floats from the previous RenderBlock, but only if it has a float that intrudes into our space.    
     if (previousBlock->m_floatingObjects && previousBlock->lowestFloatLogicalBottom() > logicalTopOffset)
-        addIntrudingFloats(previousBlock, logicalLeftOffset, logicalTopOffset);
+        addIntrudingFloats(previousBlock, &parentBlock, logicalLeftOffset, logicalTopOffset);
 
     if (childrenInline()) {
         LayoutUnit changeLogicalTop = LayoutUnit::max();
@@ -2681,7 +2684,7 @@ bool RenderBlockFlow::hasOverhangingFloat(RenderBox& renderer)
     return logicalBottomForFloat(it->get()) > logicalHeight();
 }
 
-void RenderBlockFlow::addIntrudingFloats(RenderBlockFlow* prev, LayoutUnit logicalLeftOffset, LayoutUnit logicalTopOffset)
+void RenderBlockFlow::addIntrudingFloats(RenderBlockFlow* prev, RenderBlockFlow* container, LayoutUnit logicalLeftOffset, LayoutUnit logicalTopOffset)
 {
     ASSERT(!avoidsFloats());
 
@@ -2711,8 +2714,8 @@ void RenderBlockFlow::addIntrudingFloats(RenderBlockFlow* prev, LayoutUnit logic
                 // into account. Only apply this code if prev is the parent, since otherwise the left margin
                 // will get applied twice.
                 LayoutSize offset = isHorizontalWritingMode()
-                    ? LayoutSize(logicalLeftOffset - (prev != parent() ? prev->marginLeft() : LayoutUnit()), logicalTopOffset)
-                    : LayoutSize(logicalTopOffset, logicalLeftOffset - (prev != parent() ? prev->marginTop() : LayoutUnit()));
+                    ? LayoutSize(logicalLeftOffset - (prev != container ? prev->marginLeft() : LayoutUnit()), logicalTopOffset)
+                    : LayoutSize(logicalTopOffset, logicalLeftOffset - (prev != container ? prev->marginTop() : LayoutUnit()));
 
                 m_floatingObjects->add(floatingObject->copyToNewContainer(offset));
             }

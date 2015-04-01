@@ -685,11 +685,17 @@ void RenderBlockFlow::updateLogicalWidthForAlignment(const ETextAlign& textAlign
     }
 }
 
-static void updateLogicalInlinePositions(RenderBlockFlow& block, float& lineLogicalLeft, float& lineLogicalRight, float& availableLogicalWidth, bool firstLine, IndentTextOrNot shouldIndentText, LayoutUnit boxLogicalHeight)
+static void updateLogicalInlinePositions(RenderBlockFlow& block, float& lineLogicalLeft, float& lineLogicalRight, float& availableLogicalWidth, bool firstLine, IndentTextOrNot shouldIndentText, LayoutUnit boxLogicalHeight,
+    RootInlineBox* rootBox)
 {
     LayoutUnit lineLogicalHeight = block.minLineHeightForReplacedRenderer(firstLine, boxLogicalHeight);
-    lineLogicalLeft = block.logicalLeftOffsetForLine(block.logicalHeight(), shouldIndentText == IndentText, lineLogicalHeight);
-    lineLogicalRight = block.logicalRightOffsetForLine(block.logicalHeight(), shouldIndentText == IndentText, lineLogicalHeight);
+    if (rootBox->hasAnonymousInlineBlock()) {
+        lineLogicalLeft = block.logicalLeftOffsetForContent(block.logicalHeight());
+        lineLogicalRight = block.logicalRightOffsetForContent(block.logicalHeight());
+    } else {
+        lineLogicalLeft = block.logicalLeftOffsetForLine(block.logicalHeight(), shouldIndentText == IndentText, lineLogicalHeight);
+        lineLogicalRight = block.logicalRightOffsetForLine(block.logicalHeight(), shouldIndentText == IndentText, lineLogicalHeight);
+    }
     availableLogicalWidth = lineLogicalRight - lineLogicalLeft;
 }
 
@@ -707,12 +713,12 @@ void RenderBlockFlow::computeInlineDirectionPositionsForLine(RootInlineBox* line
     float lineLogicalLeft;
     float lineLogicalRight;
     float availableLogicalWidth;
-    updateLogicalInlinePositions(*this, lineLogicalLeft, lineLogicalRight, availableLogicalWidth, isFirstLine, shouldIndentText, 0);
+    updateLogicalInlinePositions(*this, lineLogicalLeft, lineLogicalRight, availableLogicalWidth, isFirstLine, shouldIndentText, 0, lineBox);
     bool needsWordSpacing;
 
     if (firstRun && firstRun->renderer().isReplaced()) {
         RenderBox& renderBox = downcast<RenderBox>(firstRun->renderer());
-        updateLogicalInlinePositions(*this, lineLogicalLeft, lineLogicalRight, availableLogicalWidth, isFirstLine, shouldIndentText, renderBox.logicalHeight());
+        updateLogicalInlinePositions(*this, lineLogicalLeft, lineLogicalRight, availableLogicalWidth, isFirstLine, shouldIndentText, renderBox.logicalHeight(), lineBox);
     }
 
     computeInlineDirectionPositionsForSegment(lineBox, lineInfo, textAlign, lineLogicalLeft, availableLogicalWidth, firstRun, trailingSpaceRun, textBoxDataMap, verticalPositionCache, wordMeasurements);
@@ -1567,10 +1573,12 @@ void RenderBlockFlow::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaint
                 else if (isFullLayout || box.needsLayout()) {
                     // Replaced element.
                     box.dirtyLineBoxes(isFullLayout);
-                    if (isFullLayout)
-                        replacedChildren.append(&box);
-                    else
-                        box.layoutIfNeeded();
+                    if (!o.isAnonymousInlineBlock()) {
+                        if (isFullLayout)
+                            replacedChildren.append(&box);
+                        else
+                            box.layoutIfNeeded();
+                    }
                 }
             } else if (o.isTextOrLineBreak() || (is<RenderInline>(o) && !walker.atEndOfInline())) {
                 if (is<RenderInline>(o))

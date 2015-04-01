@@ -1,3 +1,52 @@
+2015-04-01  David Hyatt  <hyatt@apple.com>
+
+        [New Block-Inside-Inline Model] Floats need to be allowed to intrude into anonymous inline-blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=143307
+
+        Reviewed by Dean Jackson.
+
+        Added fast/block/inside-inlines/basic-float-intrusion.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        Make sure to exclude the margins of an anonymous inline-block when considering the height of the line.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lineHeight):
+        (WebCore::RenderBlock::baselinePosition):
+        Anonymous inline-block lines ignore line-height and just return the height of the block. For baseline position, the baseline
+        is considered to be at the bottom border edge of the anonymous inline-block.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats):
+        (WebCore::RenderBlockFlow::addIntrudingFloats):
+        * rendering/RenderBlockFlow.h:
+        Patch float intrusion to handle the case of anonymous inline-blocks. Instead of collecting the floats from our parent(), we
+        collect them from the containingBlock() in the anonymous inline-block case. Patch addIntrudingFloats to pass in the container
+        that acts as the "parent", since it is not the parent() in the anonymous inline-block case.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::updateLogicalInlinePositions):
+        Make sure to use the full available width for content always in the anonymous inline-block case, since we don't avoid the
+        floats, but instead let them intrude into the inline-block.
+
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForLine):
+        Patch callers of updateLogicalInlinePositions to pass in the root line box that we're checking for.
+
+        (WebCore::RenderBlockFlow::layoutLineBoxes):
+        Defer the layout of anonymous inline-blocks, since they need to only lay out once the vertical position to lay them out
+        at is known.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::createsNewFormattingContext):
+        (WebCore::RenderBox::avoidsFloats):
+        Anonymous inline-blocks do not establish a new block formatting context, nor do they avoid floats.
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleReplaced):
+        Add code to do a just-in-time layout of the anonymous inline-block at the time it is being examined (after the break before
+        it was handled).
+
 2015-04-01  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Do not include route button if element does not support target playback

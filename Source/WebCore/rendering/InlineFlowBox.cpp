@@ -671,7 +671,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
                     : boxObject.borderRight() + boxObject.paddingRight();
             }
             newLogicalTopIncludingMargins = newLogicalTop;
-        } else if (!child->renderer().isBR()) {
+        } else if (!child->renderer().isBR() && !child->renderer().isAnonymousInlineBlock()) {
             const auto& box = downcast<RenderBox>(child->renderer());
             newLogicalTopIncludingMargins = newLogicalTop;
             LayoutUnit overSideMargin = child->isHorizontal() ? box.marginTop() : box.marginRight();

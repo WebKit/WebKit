@@ -4302,7 +4302,7 @@ bool RenderBox::shrinkToAvoidFloats() const
 
 bool RenderBox::createsNewFormattingContext() const
 {
-    return isInlineBlockOrInlineTable() || isFloatingOrOutOfFlowPositioned() || hasOverflowClip() || isFlexItemIncludingDeprecated()
+    return (isInlineBlockOrInlineTable() && !isAnonymousInlineBlock()) || isFloatingOrOutOfFlowPositioned() || hasOverflowClip() || isFlexItemIncludingDeprecated()
         || isTableCell() || isTableCaption() || isFieldset() || isWritingModeRoot() || isRoot() || isRenderFlowThread() || isRenderRegion()
 #if ENABLE(CSS_GRID_LAYOUT)
         || isGridItem()
@@ -4312,7 +4312,7 @@ bool RenderBox::createsNewFormattingContext() const
 
 bool RenderBox::avoidsFloats() const
 {
-    return isReplaced() || isHR() || isLegend() || createsNewFormattingContext();
+    return (isReplaced() && !isAnonymousInlineBlock()) || isHR() || isLegend() || createsNewFormattingContext();
 }
 
 void RenderBox::addVisualEffectOverflow()

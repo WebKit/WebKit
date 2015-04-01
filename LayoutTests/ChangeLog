@@ -1,3 +1,15 @@
+2015-04-01  David Hyatt  <hyatt@apple.com>
+
+        [New Block-Inside-Inline Model] Floats need to be allowed to intrude into anonymous inline-blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=143307
+
+        Reviewed by Dean Jackson.
+
+        * fast/block/inside-inlines/basic-float-intrusion-expected.html: Added.
+        * fast/block/inside-inlines/basic-float-intrusion.html: Added.
+        * fast/block/inside-inlines/new-model/basic-float-intrusion-expected.html: Added.
+        * fast/block/inside-inlines/new-model/basic-float-intrusion.html: Added.
+
 2015-04-01  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Unreviewed EFL gardening. Remove warning message in layoutTest. 
