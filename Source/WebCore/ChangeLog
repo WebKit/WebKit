@@ -1,3 +1,12 @@
+2015-04-01  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r182121): SVG animation macros cause warnings in MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=143313
+
+        Reviewed by Darin Adler.
+
+        * svg/SVGExternalResourcesRequired.h: Undo the change that caused a type mismatch.
+
 2015-04-01  Eric Carlson  <eric.carlson@apple.com>
 
         Another attempt to fixi the iOS build after r182240.
