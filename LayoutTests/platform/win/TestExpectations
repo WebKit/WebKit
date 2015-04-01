@@ -1433,7 +1433,7 @@ webkit.org/b/140832 [ Release ] accessibility/svg-remote-element.html [ Failure 
 webkit.org/b/140832 [ Debug ] accessibility/svg-remote-element.html [ Skip ] # Debug assertion
 webkit.org/b/140832 [ Release ] accessibility/textarea-line-for-index.html [ Failure ]
 webkit.org/b/140832 [ Debug ] accessibility/textarea-line-for-index.html [ Skip ] # Debug assertion
-webkit.org/b/140832 [ Release ] accessibility/textarea-selected-text-range.html [ Failure ]
+webkit.org/b/140832 [ Release ] accessibility/textarea-selected-text-range.html [ Skip ] # Timeout
 webkit.org/b/140832 [ Debug ] accessibility/textarea-selected-text-range.html [ Skip ] # Debug assertion
 
 # TODO Need to implement global addNotificationListener in Windows DRT
@@ -3066,4 +3066,3 @@ contentfiltering [ Skip ]
 
 # Started failing recently.
 webkit.org/b/143275 accessibility/aria-hidden-hides-all-elements.html [ Pass Failure ]
-webkit.org/b/143315 accessibility/textarea-selected-text-range.html [ Skip ]
