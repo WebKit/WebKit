@@ -1,3 +1,16 @@
+2015-03-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ES6 class syntax should allow static setters and getters
+        https://bugs.webkit.org/show_bug.cgi?id=143180
+
+        Reviewed by Filip Pizlo
+
+        Apparently I misread the spec when I initially implemented parseClass.
+        ES6 class syntax allows static getters and setters so just allow that.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+
 2015-03-31  Filip Pizlo  <fpizlo@apple.com>
 
         PutClosureVar CSE def() rule has a wrong base

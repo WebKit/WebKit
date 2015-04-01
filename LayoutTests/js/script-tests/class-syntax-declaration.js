@@ -9,6 +9,8 @@ var setterValue = undefined;
 class A {
     constructor() { constructorCallCount++; }
     static someStaticMethod() { return staticMethodValue; }
+    static get someStaticGetter() { return getterValue; }
+    static set someStaticSetter(value) { setterValue = value; }
     someInstanceMethod() { return instanceMethodValue; }
     get someGetter() { return getterValue; }
     set someSetter(value) { setterValue = value; }
@@ -16,14 +18,14 @@ class A {
 
 shouldBe("constructorCallCount", "0");
 shouldBe("A.someStaticMethod()", "staticMethodValue");
+shouldBe("A.someStaticGetter", "getterValue");
+shouldBe("setterValue = undefined; A.someStaticSetter = 123; setterValue", "123");
 shouldBe("(new A).someInstanceMethod()", "instanceMethodValue");
 shouldBe("constructorCallCount", "1");
 shouldBe("(new A).someGetter", "getterValue");
 shouldBe("constructorCallCount", "2");
 shouldBe("(new A).someGetter", "getterValue");
-shouldBe("setterValue", "undefined");
-shouldNotThrow("(new A).someSetter = 789");
-shouldBe("setterValue", "789");
+shouldBe("setterValue = undefined; (new A).someSetter = 789; setterValue", "789");
 shouldBe("(new A).__proto__", "A.prototype");
 shouldBe("A.prototype.constructor", "A");
 

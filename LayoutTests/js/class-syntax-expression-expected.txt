@@ -5,14 +5,14 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS constructorCallCount is 0
 PASS A.someStaticMethod() is staticMethodValue
+PASS A.someStaticGetter is getterValue
+PASS setterValue = undefined; A.someStaticSetter = 123; setterValue is 123
 PASS (new A).someInstanceMethod() is instanceMethodValue
 PASS constructorCallCount is 1
 PASS (new A).someGetter is getterValue
 PASS constructorCallCount is 2
 PASS (new A).someGetter is getterValue
-PASS setterValue is undefined
-PASS (new A).someSetter = 789 did not throw exception.
-PASS setterValue is 789
+PASS setterValue = undefined; (new A).someSetter = 789; setterValue is 789
 PASS (new A).__proto__ is A.prototype
 PASS A.prototype.constructor is A
 PASS x = class threw exception SyntaxError: Unexpected end of script.
