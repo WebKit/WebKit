@@ -315,6 +315,9 @@ Controller.prototype = {
         this.listenFor(panel, 'dblclick', this.handlePanelClick);
         this.listenFor(panel, 'dragstart', this.handlePanelDragStart);
         
+        var panelBackgroundContainer = this.controls.panelBackgroundContainer = document.createElement('div');
+        panelBackgroundContainer.setAttribute('pseudo', '-webkit-media-controls-panel-background-container');
+        
         var panelTint = this.controls.panelTint = document.createElement('div');
         panelTint.setAttribute('pseudo', '-webkit-media-controls-panel-tint');
         this.listenFor(panelTint, 'mousedown', this.handlePanelMouseDown);
@@ -507,8 +510,9 @@ Controller.prototype = {
 
     configureInlineControls: function()
     {
-        this.controls.panel.appendChild(this.controls.panelBackground);
-        this.controls.panel.appendChild(this.controls.panelTint);
+        this.controls.panel.appendChild(this.controls.panelBackgroundContainer);
+        this.controls.panelBackgroundContainer.appendChild(this.controls.panelBackground);
+        this.controls.panelBackgroundContainer.appendChild(this.controls.panelTint);
         this.controls.panel.appendChild(this.controls.playButton);
         if (!this.isLive)
             this.controls.panel.appendChild(this.controls.rewindButton);
@@ -779,12 +783,8 @@ Controller.prototype = {
         var opacity = window.getComputedStyle(this.controls.panel).opacity;
         if (parseInt(opacity) > 0) {
             this.controls.panel.classList.remove(this.ClassNames.hidden);
-            if (this.controls.panelBackground)
-                this.controls.panelBackground.classList.remove(this.ClassNames.hidden);
         } else {
             this.controls.panel.classList.add(this.ClassNames.hidden);
-            if (this.controls.panelBackground)
-                this.controls.panelBackground.classList.add(this.ClassNames.hidden);
         }
     },
 
@@ -1248,18 +1248,10 @@ Controller.prototype = {
 
         if (!isPlaying) {
             this.controls.panel.classList.add(this.ClassNames.paused);
-            if (this.controls.panelBackground)
-                this.controls.panelBackground.classList.add(this.ClassNames.paused);
-            if (this.controls.panelTint)
-                this.controls.panelTint.classList.add(this.ClassNames.paused);
             this.controls.playButton.classList.add(this.ClassNames.paused);
             this.controls.playButton.setAttribute('aria-label', this.UIString('Play'));
         } else {
             this.controls.panel.classList.remove(this.ClassNames.paused);
-            if (this.controls.panelBackground)
-                this.controls.panelBackground.classList.remove(this.ClassNames.paused);
-            if (this.controls.panelTint)
-                this.controls.panelTint.classList.add(this.ClassNames.paused);
             this.controls.playButton.classList.remove(this.ClassNames.paused);
             this.controls.playButton.setAttribute('aria-label', this.UIString('Pause'));
             this.resetHideControlsTimer();
@@ -1277,11 +1269,6 @@ Controller.prototype = {
         this.controls.panel.classList.add(this.ClassNames.show);
         this.controls.panel.classList.remove(this.ClassNames.hidden);
 
-        if (this.controls.panelBackground) {
-            this.controls.panelBackground.classList.add(this.ClassNames.show);
-            this.controls.panelBackground.classList.remove(this.ClassNames.hidden);
-        }
-
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
     },
 
@@ -1292,8 +1279,6 @@ Controller.prototype = {
 
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
         this.controls.panel.classList.remove(this.ClassNames.show);
-        if (this.controls.panelBackground)
-            this.controls.panelBackground.classList.remove(this.ClassNames.show);
     },
 
     controlsAlwaysVisible: function()

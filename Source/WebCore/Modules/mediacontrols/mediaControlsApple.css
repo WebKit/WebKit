@@ -73,12 +73,13 @@ audio::-webkit-media-controls-panel {
     z-index: 0;
     bottom: 0;
     width: 100%;
-    min-height: 25px;
-    height: 25px;
+    min-height: 45px;
+    height: 45px;
     line-height: 25px;
     -webkit-user-select: none;
     -webkit-user-drag: element;
     background-color: transparent;
+    padding-top: 20px;
 
     display: -webkit-flex;
     -webkit-flex-direction: row;
@@ -91,14 +92,25 @@ audio::-webkit-media-controls-panel {
     transition: opacity 0.25s linear;
 }
 
+video::-webkit-media-controls-panel-background-container,
+audio::-webkit-media-controls-panel-background-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    min-height: 45px;
+    height: 45px;
+    -webkit-clip-path: inset(20px 0px 0px 0px);
+}
+
 video::-webkit-media-controls-panel-tint,
 audio::-webkit-media-controls-panel-tint {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
-    min-height: 25px;
-    height: 25px;
+    min-height: 45px;
+    height: 45px;
     background-color: rgb(41, 41, 41);
     mix-blend-mode: lighten;
 }
@@ -109,8 +121,8 @@ audio::-webkit-media-controls-panel-background {
     left: 0;
     top: 0;
     width: 100%;
-    min-height: 25px;
-    height: 25px;
+    min-height: 45px;
+    height: 45px;
     background-color: rgba(30, 30, 30, 0.45);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
@@ -191,11 +203,12 @@ video::-webkit-media-controls-panel .volume-box,
 audio::-webkit-media-controls-panel .volume-box {
     position: absolute;
     box-sizing: border-box;
-    height: 23px;
+    height: 63px;
     bottom: 0;
     left: 0;
-
-    -webkit-transform: rotate(-90deg) translateY(-31.5px) translateX(51.5px);
+    
+    -webkit-clip-path: inset(20px 20px 20px 20px round 0px 4px 4px 0px);
+    -webkit-transform: rotate(-90deg) translateY(-51.5px) translateX(31.5px);
 
     background-color: transparent;
     border-bottom-right-radius: 4px;
@@ -217,7 +230,8 @@ audio::-webkit-media-controls-volume-slider-container-background {
     position: absolute;
     left: 0;
     top: 0;
-    height: 23px;
+    width: 116px;
+    height: 63px;
     border-bottom-right-radius: 4px;
     border-top-right-radius: 4px;
     background-color: rgba(30, 30, 30, 0.45);
@@ -229,7 +243,8 @@ audio::-webkit-media-controls-volume-slider-container-tint {
     position: absolute;
     left: 0;
     top: 0;
-    height: 23px;
+    height: 63px;
+    width: 116px;
     border-bottom-right-radius: 4px;
     border-top-right-radius: 4px;
     background-color: rgb(41, 41, 41);
@@ -244,12 +259,10 @@ video::-webkit-media-controls-volume-slider-container-background,
 video::-webkit-media-controls-volume-slider-container-tint,
 audio::-webkit-media-controls-panel .mute-box:hover .volume-box,
 audio::-webkit-media-controls-panel .volume-box:hover,
-audio::-webkit-media-controls-panel .volume-box:active
-audio::-webkit-media-controls-volume-slider-container-background,
-audio::-webkit-media-controls-volume-slider-container-tint {
+audio::-webkit-media-controls-panel .volume-box:active {
     opacity: 1;
     /* resize to usable amount (rather than display:none) for AX and FKA */
-    width: 76px;
+    width: 116px;
 }
 
 audio::-webkit-media-controls-volume-slider,
@@ -259,11 +272,12 @@ video::-webkit-media-controls-volume-slider {
     height: 9px !important;
     width: 64px !important;
     padding: 0 !important;
-    margin-right: 10px !important;
+    margin-right: 30px !important;
 
     background-color: transparent !important;
     background-size: 100% 100%;
     background-repeat: no-repeat;
+    z-index: 1;
 }
 
 video::-webkit-media-controls-volume-slider::-webkit-slider-thumb,
@@ -626,6 +640,7 @@ video:-webkit-animating-full-screen-transition::-webkit-media-controls-panel {
 
 video:-webkit-full-screen::-webkit-media-controls-panel .volume-box {
     -webkit-transform: none;
+    -webkit-clip-path: none;
     opacity: 1;
     left: 32px;
     top: 35px;
