@@ -69,6 +69,8 @@ public:
     float maxGlyphBoundingBoxX() const { return m_maxGlyphBoundingBoxX; }
     float minGlyphBoundingBoxY() const { return m_minGlyphBoundingBoxY; }
     float maxGlyphBoundingBoxY() const { return m_maxGlyphBoundingBoxY; }
+
+    float leadingExpansion() const { return m_leadingExpansion; }
     
 private:
     class ComplexTextRun : public RefCounted<ComplexTextRun> {
@@ -167,7 +169,6 @@ private:
     float m_expansion;
     float m_expansionPerOpportunity;
     float m_leadingExpansion;
-    bool m_afterExpansion;
 
     HashSet<const Font*>* m_fallbackFonts;
 

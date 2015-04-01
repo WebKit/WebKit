@@ -315,10 +315,13 @@ public:
             , m_isHorizontal(isHorizontal)
             , m_endsWithBreak(false)
             , m_hasSelectedChildrenOrCanHaveLeadingExpansion(false)
+            , m_canHaveTrailingExpansion(false)
             , m_knownToHaveNoOverflow(true)  
             , m_hasEllipsisBoxOrHyphen(false)
             , m_dirOverride(false)
             , m_behavesLikeText(false)
+            , m_forceTrailingExpansion(false)
+            , m_forceLeadingExpansion(false)
             , m_determinedIfNextOnLineExists(false)
             , m_nextOnLineExists(false)
         {
@@ -344,11 +347,14 @@ public:
         ADD_BOOLEAN_BITFIELD(endsWithBreak, EndsWithBreak); // Whether the line ends with a <br>.
         // shared between RootInlineBox and InlineTextBox
         ADD_BOOLEAN_BITFIELD(hasSelectedChildrenOrCanHaveLeadingExpansion, HasSelectedChildrenOrCanHaveLeadingExpansion);
+        ADD_BOOLEAN_BITFIELD(canHaveTrailingExpansion, CanHaveTrailingExpansion);
         ADD_BOOLEAN_BITFIELD(knownToHaveNoOverflow, KnownToHaveNoOverflow);
         ADD_BOOLEAN_BITFIELD(hasEllipsisBoxOrHyphen, HasEllipsisBoxOrHyphen);
         // for InlineTextBox
         ADD_BOOLEAN_BITFIELD(dirOverride, DirOverride);
         ADD_BOOLEAN_BITFIELD(behavesLikeText, BehavesLikeText); // Whether or not this object represents text with a non-zero height. Includes non-image list markers, text boxes, br.
+        ADD_BOOLEAN_BITFIELD(forceTrailingExpansion, ForceTrailingExpansion);
+        ADD_BOOLEAN_BITFIELD(forceLeadingExpansion, ForceLeadingExpansion);
 
     private:
         mutable unsigned m_determinedIfNextOnLineExists : 1;
@@ -414,6 +420,12 @@ protected:
     void setHasHyphen(bool hasHyphen) { m_bitfields.setHasEllipsisBoxOrHyphen(hasHyphen); }    
     bool canHaveLeadingExpansion() const { return m_bitfields.hasSelectedChildrenOrCanHaveLeadingExpansion(); }
     void setCanHaveLeadingExpansion(bool canHaveLeadingExpansion) { m_bitfields.setHasSelectedChildrenOrCanHaveLeadingExpansion(canHaveLeadingExpansion); }
+    bool canHaveTrailingExpansion() const { return m_bitfields.canHaveTrailingExpansion(); }
+    void setCanHaveTrailingExpansion(bool canHaveTrailingExpansion) { m_bitfields.setCanHaveTrailingExpansion(canHaveTrailingExpansion); }
+    void setForceTrailingExpansion() { m_bitfields.setForceTrailingExpansion(true); }
+    bool forceTrailingExpansion() const { return m_bitfields.forceTrailingExpansion(); }
+    void setForceLeadingExpansion() { m_bitfields.setForceLeadingExpansion(true); }
+    bool forceLeadingExpansion() const { return m_bitfields.forceLeadingExpansion(); }
     
     // For InlineFlowBox and InlineTextBox
     bool extracted() const { return m_bitfields.extracted(); }

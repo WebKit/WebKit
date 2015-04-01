@@ -77,6 +77,12 @@ public:
     using InlineBox::setHasHyphen;
     using InlineBox::canHaveLeadingExpansion;
     using InlineBox::setCanHaveLeadingExpansion;
+    using InlineBox::canHaveTrailingExpansion;
+    using InlineBox::setCanHaveTrailingExpansion;
+    using InlineBox::forceTrailingExpansion;
+    using InlineBox::setForceTrailingExpansion;
+    using InlineBox::forceLeadingExpansion;
+    using InlineBox::setForceLeadingExpansion;
 
     static inline bool compareByStart(const InlineTextBox* first, const InlineTextBox* second) { return first->start() < second->start(); }
 

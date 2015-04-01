@@ -602,7 +602,7 @@ void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRe
     float afterWidth = controller.runWidthSoFar();
 
     if (run.rtl())
-        selectionRect.move(controller.totalWidth() - afterWidth, 0);
+        selectionRect.move(controller.totalWidth() - afterWidth + controller.leadingExpansion(), 0);
     else
         selectionRect.move(beforeWidth, 0);
     selectionRect.setWidth(afterWidth - beforeWidth);
@@ -623,7 +623,7 @@ float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, int fr
     float afterWidth = controller.runWidthSoFar();
 
     if (run.rtl()) {
-        initialAdvance = controller.totalWidth() + controller.finalRoundingWidth() - afterWidth;
+        initialAdvance = controller.totalWidth() + controller.finalRoundingWidth() - afterWidth + controller.leadingExpansion();
         glyphBuffer.reverse(0, glyphBuffer.size());
     } else
         initialAdvance = beforeWidth;

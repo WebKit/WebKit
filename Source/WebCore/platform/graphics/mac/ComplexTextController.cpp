@@ -133,7 +133,6 @@ ComplexTextController::ComplexTextController(const FontCascade& font, const Text
     , m_finalRoundingWidth(0)
     , m_expansion(run.expansion())
     , m_leadingExpansion(0)
-    , m_afterExpansion(!run.allowsLeadingExpansion())
     , m_fallbackFonts(fallbackFonts)
     , m_minGlyphBoundingBoxX(std::numeric_limits<float>::max())
     , m_maxGlyphBoundingBoxX(std::numeric_limits<float>::min())
@@ -144,10 +143,7 @@ ComplexTextController::ComplexTextController(const FontCascade& font, const Text
     if (!m_expansion)
         m_expansionPerOpportunity = 0;
     else {
-        bool isAfterExpansion = m_afterExpansion;
-        unsigned expansionOpportunityCount = FontCascade::expansionOpportunityCount(m_run.text(), m_run.ltr() ? LTR : RTL, isAfterExpansion);
-        if (isAfterExpansion && !m_run.allowsTrailingExpansion())
-            expansionOpportunityCount--;
+        unsigned expansionOpportunityCount = FontCascade::expansionOpportunityCount(m_run.text(), m_run.ltr() ? LTR : RTL, run.expansionBehavior()).first;
 
         if (!expansionOpportunityCount)
             m_expansionPerOpportunity = 0;
@@ -519,8 +515,10 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
         // We must store the initial advance for the first glyph we are going to draw.
         // When leftmostGlyph is 0, it represents the first glyph to draw, taking into
         // account the text direction.
-        if (glyphBuffer && !leftmostGlyph)
+        if (glyphBuffer && !leftmostGlyph) {
             glyphBuffer->setInitialAdvance(complexTextRun.initialAdvance());
+            glyphBuffer->setLeadingExpansion(m_leadingExpansion);
+        }
 
         while (m_glyphInCurrentRun < glyphCount) {
             unsigned glyphStartOffset = complexTextRun.indexAt(g);
@@ -577,11 +575,42 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
         m_runWidthSoFar += m_finalRoundingWidth;
 }
 
+static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treatAsSpace, bool ltr, bool isAfterExpansion, bool forbidLeadingExpansion, bool forbidTrailingExpansion, bool forceLeadingExpansion, bool forceTrailingExpansion)
+{
+    bool expandLeft = ideograph;
+    bool expandRight = ideograph;
+    if (treatAsSpace) {
+        if (ltr)
+            expandRight = true;
+        else
+            expandLeft = true;
+    }
+    if (isAfterExpansion)
+        expandLeft = false;
+    ASSERT(!forbidLeadingExpansion || !forceLeadingExpansion);
+    ASSERT(!forbidTrailingExpansion || !forceTrailingExpansion);
+    if (forbidLeadingExpansion)
+        expandLeft = false;
+    if (forbidTrailingExpansion)
+        expandRight = false;
+    if (forceLeadingExpansion)
+        expandLeft = true;
+    if (forceTrailingExpansion)
+        expandRight = true;
+    return std::make_pair(expandLeft, expandRight);
+}
+
 void ComplexTextController::adjustGlyphsAndAdvances()
 {
+    bool afterExpansion = (m_run.expansionBehavior() & LeadingExpansionMask) == ForbidLeadingExpansion;
     CGFloat widthSinceLastCommit = 0;
     size_t runCount = m_complexTextRuns.size();
     bool hasExtraSpacing = (m_font.letterSpacing() || m_font.wordSpacing() || m_expansion) && !m_run.spacingDisabled();
+    bool runForcesLeadingExpansion = (m_run.expansionBehavior() & LeadingExpansionMask) == ForceLeadingExpansion;
+    bool runForcesTrailingExpansion = (m_run.expansionBehavior() & TrailingExpansionMask) == ForceTrailingExpansion;
+    bool runForbidsLeadingExpansion = (m_run.expansionBehavior() & LeadingExpansionMask) == ForbidLeadingExpansion;
+    bool runForbidsTrailingExpansion = (m_run.expansionBehavior() & TrailingExpansionMask) == ForbidTrailingExpansion;
+    // We are iterating in glyph order, not string order. Compare this to WidthIterator::advanceInternal()
     for (size_t r = 0; r < runCount; ++r) {
         ComplexTextRun& complexTextRun = *m_complexTextRuns[r];
         unsigned glyphCount = complexTextRun.glyphCount();
@@ -662,16 +691,33 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             if (hasExtraSpacing) {
                 // If we're a glyph with an advance, go ahead and add in letter-spacing.
                 // That way we weed out zero width lurkers.  This behavior matches the fast text code path.
-                if (advance.width && m_font.letterSpacing())
+                if (advance.width)
                     advance.width += m_font.letterSpacing();
 
+                bool lastCharacter = static_cast<unsigned>(characterIndex + 1) == m_run.length() || (U16_IS_SURROGATE_LEAD(ch) && static_cast<unsigned>(characterIndex + 2) == m_run.length() && U16_IS_SURROGATE_TRAIL(*(cp + characterIndex + 1)));
+
+                bool forceLeadingExpansion = false; // On the left, regardless of m_run.ltr()
+                bool forceTrailingExpansion = false; // On the right, regardless of m_run.ltr()
+                bool forbidLeadingExpansion = false;
+                bool forbidTrailingExpansion = false;
+                if (runForcesLeadingExpansion)
+                    forceLeadingExpansion = m_run.ltr() ? !characterIndex : lastCharacter;
+                if (runForcesTrailingExpansion)
+                    forceTrailingExpansion = m_run.ltr() ? lastCharacter : !characterIndex;
+                if (runForbidsLeadingExpansion)
+                    forbidLeadingExpansion = m_run.ltr() ? !characterIndex : lastCharacter;
+                if (runForbidsTrailingExpansion)
+                    forbidTrailingExpansion = m_run.ltr() ? lastCharacter : !characterIndex;
                 // Handle justification and word-spacing.
-                if (treatAsSpace || FontCascade::isCJKIdeographOrSymbol(ch)) {
+                bool ideograph = FontCascade::isCJKIdeographOrSymbol(ch);
+                if (treatAsSpace || ideograph || forceLeadingExpansion || forceTrailingExpansion) {
                     // Distribute the run's total expansion evenly over all expansion opportunities in the run.
                     if (m_expansion) {
+                        bool expandLeft, expandRight;
+                        std::tie(expandLeft, expandRight) = expansionLocation(ideograph, treatAsSpace, m_run.ltr(), afterExpansion, forbidLeadingExpansion, forbidTrailingExpansion, forceLeadingExpansion, forceTrailingExpansion);
                         float previousExpansion = m_expansion;
-                        if (!treatAsSpace && !m_afterExpansion) {
-                            // Take the expansion opportunity before this ideograph.
+                        if (expandLeft) {
+                            // Increase previous width
                             m_expansion -= m_expansionPerOpportunity;
                             float expansionAtThisOpportunity = !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
                             m_totalWidth += expansionAtThisOpportunity;
@@ -681,19 +727,20 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                                 m_adjustedAdvances.last().width += expansionAtThisOpportunity;
                             previousExpansion = m_expansion;
                         }
-                        if (!lastGlyph || m_run.allowsTrailingExpansion()) {
+                        if (expandRight) {
                             m_expansion -= m_expansionPerOpportunity;
-                            advance.width += !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
-                            m_afterExpansion = true;
+                            float expansionAtThisOpportunity = !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
+                            advance.width += expansionAtThisOpportunity;
+                            afterExpansion = true;
                         }
                     } else
-                        m_afterExpansion = false;
+                        afterExpansion = false;
 
                     // Account for word-spacing.
                     if (treatAsSpace && (ch != '\t' || !m_run.allowTabs()) && (characterIndex > 0 || r > 0) && m_font.wordSpacing())
                         advance.width += m_font.wordSpacing();
                 } else
-                    m_afterExpansion = false;
+                    afterExpansion = false;
             }
 
             // Apply rounding hacks if needed.
@@ -746,6 +793,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         if (!isMonotonic)
             complexTextRun.setIsNonMonotonic();
     }
+
     m_totalWidth += widthSinceLastCommit;
 }
 

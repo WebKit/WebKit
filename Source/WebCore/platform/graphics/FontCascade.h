@@ -194,10 +194,16 @@ public:
     static bool isCJKIdeograph(UChar32);
     static bool isCJKIdeographOrSymbol(UChar32);
 
-    // BEWARE: If isAfterExpansion is true after this function call, then the returned value includes a trailing opportunity
-    // which may or may not actually be present. RenderBlockFlow::computeInlineDirectionPositionsForSegment() compensates
-    // for this by decrementing the returned value if isAfterExpansion is true at the end of a line.
-    static unsigned expansionOpportunityCount(const StringView&, TextDirection, bool& isAfterExpansion);
+    // Returns (the number of opportunities, whether the last expansion is a trailing expansion)
+    // If there are no opportunities, the bool will be true iff we are forbidding leading expansions.
+    static std::pair<unsigned, bool> expansionOpportunityCount(const StringView&, TextDirection, ExpansionBehavior);
+
+    // Whether or not there is an expansion opportunity just before the first character
+    // Note that this does not take a isAfterExpansion flag; this assumes that isAfterExpansion is false
+    // Here, "Leading" and "Trailing" are relevant after the line has been rearranged for bidi.
+    // ("Leading" means "left" and "Trailing" means "right.")
+    static bool leadingExpansionOpportunity(const StringView&, TextDirection);
+    static bool trailingExpansionOpportunity(const StringView&, TextDirection);
 
     WEBCORE_EXPORT static void setShouldUseSmoothing(bool);
     WEBCORE_EXPORT static bool shouldUseSmoothing();
@@ -237,8 +243,8 @@ private:
     int offsetForPositionForComplexText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, int from, int to) const;
 
-    static unsigned expansionOpportunityCountInternal(const LChar*, size_t length, TextDirection, bool& isAfterExpansion);
-    static unsigned expansionOpportunityCountInternal(const UChar*, size_t length, TextDirection, bool& isAfterExpansion);
+    static std::pair<unsigned, bool> expansionOpportunityCountInternal(const LChar*, size_t length, TextDirection, ExpansionBehavior);
+    static std::pair<unsigned, bool> expansionOpportunityCountInternal(const UChar*, size_t length, TextDirection, ExpansionBehavior);
 
     friend struct WidthIterator;
     friend class SVGTextRunRenderingContext;

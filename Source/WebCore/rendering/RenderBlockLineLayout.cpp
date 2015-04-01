@@ -722,6 +722,45 @@ void RenderBlockFlow::computeInlineDirectionPositionsForLine(RootInlineBox* line
     lineBox->placeBoxesInInlineDirection(lineLogicalLeft, needsWordSpacing);
 }
 
+static inline ExpansionBehavior expansionBehaviorForInlineTextBox(bool isAfterExpansion)
+{
+    ExpansionBehavior result = AllowTrailingExpansion;
+    result |= isAfterExpansion ? ForbidLeadingExpansion : AllowLeadingExpansion;
+    return result;
+}
+
+static inline void applyExpansionBehavior(InlineTextBox& textBox, ExpansionBehavior expansionBehavior)
+{
+    switch (expansionBehavior & LeadingExpansionMask) {
+    case ForceLeadingExpansion:
+        textBox.setForceLeadingExpansion();
+        break;
+    case ForbidLeadingExpansion:
+        textBox.setCanHaveLeadingExpansion(false);
+        break;
+    case AllowLeadingExpansion:
+        textBox.setCanHaveLeadingExpansion(true);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    switch (expansionBehavior & TrailingExpansionMask) {
+    case ForceTrailingExpansion:
+        textBox.setForceTrailingExpansion();
+        break;
+    case ForbidTrailingExpansion:
+        textBox.setCanHaveTrailingExpansion(false);
+        break;
+    case AllowTrailingExpansion:
+        textBox.setCanHaveTrailingExpansion(true);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
 BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBox* lineBox, const LineInfo& lineInfo, ETextAlign textAlign, float& logicalLeft, 
     float& availableLogicalWidth, BidiRun* firstRun, BidiRun* trailingSpaceRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache,
     WordMeasurements& wordMeasurements)
@@ -742,10 +781,12 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
         }
         if (is<RenderText>(run->renderer())) {
             auto& renderText = downcast<RenderText>(run->renderer());
+            auto& textBox = downcast<InlineTextBox>(*run->box());
             if (textAlign == JUSTIFY && run != trailingSpaceRun) {
-                if (!isAfterExpansion)
-                    downcast<InlineTextBox>(*run->box()).setCanHaveLeadingExpansion(true);
-                unsigned opportunitiesInRun = FontCascade::expansionOpportunityCount(renderText.stringView(run->m_start, run->m_stop), run->box()->direction(), isAfterExpansion);
+                ExpansionBehavior expansionBehavior = expansionBehaviorForInlineTextBox(isAfterExpansion);
+                applyExpansionBehavior(textBox, expansionBehavior);
+                unsigned opportunitiesInRun;
+                std::tie(opportunitiesInRun, isAfterExpansion) = FontCascade::expansionOpportunityCount(renderText.stringView(run->m_start, run->m_stop), run->box()->direction(), expansionBehavior);
                 expansionOpportunities.append(opportunitiesInRun);
                 expansionOpportunityCount += opportunitiesInRun;
             }
@@ -766,11 +807,13 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
                     for (auto* leafChild = rubyBase->firstRootBox()->firstLeafChild(); leafChild; leafChild = leafChild->nextLeafChild()) {
                         if (!is<InlineTextBox>(*leafChild))
                             continue;
-                        if (!isAfterExpansion)
-                            downcast<InlineTextBox>(*leafChild).setCanHaveLeadingExpansion(true);
+                        auto& textBox = downcast<InlineTextBox>(*leafChild);
                         encounteredJustifiedRuby = true;
                         auto& renderText = downcast<RenderText>(leafChild->renderer());
-                        unsigned opportunitiesInRun = FontCascade::expansionOpportunityCount(renderText.stringView(), leafChild->direction(), isAfterExpansion);
+                        ExpansionBehavior expansionBehavior = expansionBehaviorForInlineTextBox(isAfterExpansion);
+                        applyExpansionBehavior(textBox, expansionBehavior);
+                        unsigned opportunitiesInRun;
+                        std::tie(opportunitiesInRun, isAfterExpansion) = FontCascade::expansionOpportunityCount(renderText.stringView(), leafChild->direction(), expansionBehavior);
                         expansionOpportunities.append(opportunitiesInRun);
                         expansionOpportunityCount += opportunitiesInRun;
                     }

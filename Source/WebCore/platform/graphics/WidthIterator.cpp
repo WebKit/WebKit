@@ -39,7 +39,7 @@ WidthIterator::WidthIterator(const FontCascade* font, const TextRun& run, HashSe
     , m_run(run)
     , m_currentCharacter(0)
     , m_runWidthSoFar(0)
-    , m_isAfterExpansion(!run.allowsLeadingExpansion())
+    , m_isAfterExpansion((run.expansionBehavior() & LeadingExpansionMask) == ForbidLeadingExpansion)
     , m_finalRoundingWidth(0)
     , m_typesettingFeatures(font->typesettingFeatures())
     , m_fallbackFonts(fallbackFonts)
@@ -56,10 +56,7 @@ WidthIterator::WidthIterator(const FontCascade* font, const TextRun& run, HashSe
     if (!m_expansion)
         m_expansionPerOpportunity = 0;
     else {
-        bool isAfterExpansion = m_isAfterExpansion;
-        unsigned expansionOpportunityCount = FontCascade::expansionOpportunityCount(m_run.text(), m_run.ltr() ? LTR : RTL, isAfterExpansion);
-        if (isAfterExpansion && !m_run.allowsTrailingExpansion())
-            expansionOpportunityCount--;
+        unsigned expansionOpportunityCount = FontCascade::expansionOpportunityCount(m_run.text(), m_run.ltr() ? LTR : RTL, run.expansionBehavior()).first;
 
         if (!expansionOpportunityCount)
             m_expansionPerOpportunity = 0;
@@ -168,13 +165,47 @@ static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int&
     return widthDifference;
 }
 
+static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treatAsSpace, bool ltr, bool isAfterExpansion, bool forbidLeadingExpansion, bool forbidTrailingExpansion, bool forceLeadingExpansion, bool forceTrailingExpansion)
+{
+    bool expandLeft = ideograph;
+    bool expandRight = ideograph;
+    if (treatAsSpace) {
+        if (ltr)
+            expandRight = true;
+        else
+            expandLeft = true;
+    }
+    if (isAfterExpansion) {
+        if (ltr)
+            expandLeft = false;
+        else
+            expandRight = false;
+    }
+    ASSERT(!forbidLeadingExpansion || !forceLeadingExpansion);
+    ASSERT(!forbidTrailingExpansion || !forceTrailingExpansion);
+    if (forbidLeadingExpansion)
+        expandLeft = false;
+    if (forbidTrailingExpansion)
+        expandRight = false;
+    if (forceLeadingExpansion)
+        expandLeft = true;
+    if (forceTrailingExpansion)
+        expandRight = true;
+    return std::make_pair(expandLeft, expandRight);
+}
+
 template <typename TextIterator>
 inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuffer* glyphBuffer)
 {
     bool rtl = m_run.rtl();
     bool hasExtraSpacing = (m_font->letterSpacing() || m_font->wordSpacing() || m_expansion) && !m_run.spacingDisabled();
 
+    bool runForcesLeadingExpansion = (m_run.expansionBehavior() & LeadingExpansionMask) == ForceLeadingExpansion;
+    bool runForcesTrailingExpansion = (m_run.expansionBehavior() & TrailingExpansionMask) == ForceTrailingExpansion;
+    bool runForbidsLeadingExpansion = (m_run.expansionBehavior() & LeadingExpansionMask) == ForbidLeadingExpansion;
+    bool runForbidsTrailingExpansion = (m_run.expansionBehavior() & TrailingExpansionMask) == ForbidTrailingExpansion;
     float widthSinceLastRounding = m_runWidthSoFar;
+    float leftoverJustificationWidth = 0;
     m_runWidthSoFar = floorf(m_runWidthSoFar);
     widthSinceLastRounding -= m_runWidthSoFar;
 
@@ -189,6 +220,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
     unsigned clusterLength = 0;
     CharactersTreatedAsSpace charactersTreatedAsSpace;
     String normalizedSpacesStringCache;
+    // We are iterating in string order, not glyph order. Compare this to ComplexTextController::adjustGlyphsAndAdvances()
     while (textIterator.consume(character, clusterLength)) {
         unsigned advanceLength = clusterLength;
         int currentCharacter = textIterator.currentCharacter();
@@ -242,36 +274,63 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
 
         if (hasExtraSpacing) {
             // Account for letter-spacing.
-            if (width && m_font->letterSpacing())
+            if (width) {
                 width += m_font->letterSpacing();
+                width += leftoverJustificationWidth;
+                leftoverJustificationWidth = 0;
+            }
 
             static bool expandAroundIdeographs = FontCascade::canExpandAroundIdeographsInComplexText();
             bool treatAsSpace = FontCascade::treatAsSpace(character);
-            if (treatAsSpace || (expandAroundIdeographs && FontCascade::isCJKIdeographOrSymbol(character))) {
+            bool currentIsLastCharacter = currentCharacter + advanceLength == static_cast<size_t>(m_run.length());
+            bool forceLeadingExpansion = false; // On the left, regardless of m_run.ltr()
+            bool forceTrailingExpansion = false; // On the right, regardless of m_run.ltr()
+            bool forbidLeadingExpansion = false;
+            bool forbidTrailingExpansion = false;
+            if (runForcesLeadingExpansion)
+                forceLeadingExpansion = m_run.ltr() ? !currentCharacter : currentIsLastCharacter;
+            if (runForcesTrailingExpansion)
+                forceTrailingExpansion = m_run.ltr() ? currentIsLastCharacter : !currentCharacter;
+            if (runForbidsLeadingExpansion)
+                forbidLeadingExpansion = m_run.ltr() ? !currentCharacter : currentIsLastCharacter;
+            if (runForbidsTrailingExpansion)
+                forbidTrailingExpansion = m_run.ltr() ? currentIsLastCharacter : !currentCharacter;
+            bool ideograph = (expandAroundIdeographs && FontCascade::isCJKIdeographOrSymbol(character));
+            if (treatAsSpace || ideograph || forceLeadingExpansion || forceTrailingExpansion) {
                 // Distribute the run's total expansion evenly over all expansion opportunities in the run.
                 if (m_expansion) {
+                    bool expandLeft, expandRight;
+                    std::tie(expandLeft, expandRight) = expansionLocation(ideograph, treatAsSpace, m_run.ltr(), m_isAfterExpansion, forbidLeadingExpansion, forbidTrailingExpansion, forceLeadingExpansion, forceTrailingExpansion);
                     float previousExpansion = m_expansion;
-                    if (!treatAsSpace && !m_isAfterExpansion) {
-                        // Take the expansion opportunity before this ideograph.
-                        m_expansion -= m_expansionPerOpportunity;
-                        float expansionAtThisOpportunity = !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
-                        m_runWidthSoFar += expansionAtThisOpportunity;
-                        if (glyphBuffer) {
-                            if (glyphBuffer->isEmpty()) {
-                                if (m_forTextEmphasis)
-                                    glyphBuffer->add(font->zeroWidthSpaceGlyph(), font, m_expansionPerOpportunity, currentCharacter);
-                                else
-                                    glyphBuffer->add(font->spaceGlyph(), font, expansionAtThisOpportunity, currentCharacter);
-                            } else
-                                glyphBuffer->expandLastAdvance(expansionAtThisOpportunity);
+                    if (expandLeft) {
+                        if (m_run.ltr()) {
+                            // Increase previous width
+                            m_expansion -= m_expansionPerOpportunity;
+                            float expansionAtThisOpportunity = !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
+                            m_runWidthSoFar += expansionAtThisOpportunity;
+                            if (glyphBuffer) {
+                                if (glyphBuffer->isEmpty()) {
+                                    if (m_forTextEmphasis)
+                                        glyphBuffer->add(font->zeroWidthSpaceGlyph(), font, m_expansionPerOpportunity, currentCharacter);
+                                    else
+                                        glyphBuffer->add(font->spaceGlyph(), font, expansionAtThisOpportunity, currentCharacter);
+                                } else
+                                    glyphBuffer->expandLastAdvance(expansionAtThisOpportunity);
+                            }
+                        } else {
+                            // Increase next width
+                            float expansionAtThisOpportunity = !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion - m_expansionPerOpportunity);
+                            leftoverJustificationWidth += expansionAtThisOpportunity;
+                            m_isAfterExpansion = true;
                         }
                         previousExpansion = m_expansion;
                     }
-                    if (m_run.allowsTrailingExpansion() || (m_run.ltr() && currentCharacter + advanceLength < static_cast<size_t>(m_run.length()))
-                        || (m_run.rtl() && currentCharacter)) {
+                    if (expandRight) {
                         m_expansion -= m_expansionPerOpportunity;
-                        width += !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
-                        m_isAfterExpansion = true;
+                        float expansionAtThisOpportunity = !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
+                        width += expansionAtThisOpportunity;
+                        if (m_run.ltr())
+                            m_isAfterExpansion = true;
                     }
                 } else
                     m_isAfterExpansion = false;
@@ -339,6 +398,13 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
             m_minGlyphBoundingBoxY = std::min(m_minGlyphBoundingBoxY, bounds.y());
             m_lastGlyphOverflow = std::max<float>(0, bounds.maxX() - width);
         }
+    }
+
+    if (leftoverJustificationWidth) {
+        if (m_forTextEmphasis)
+            glyphBuffer->add(lastFontData->zeroWidthSpaceGlyph(), lastFontData, leftoverJustificationWidth, m_run.length());
+        else
+            glyphBuffer->add(lastFontData->spaceGlyph(), lastFontData, leftoverJustificationWidth, m_run.length());
     }
 
     if (shouldApplyFontTransforms()) {

@@ -1,3 +1,67 @@
+2015-04-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support forcing expansion opportunities at the beginning and ending of a run
+        https://bugs.webkit.org/show_bug.cgi?id=143292
+
+        Reviewed by David Hyatt.
+
+        Migrate ExpansionBehavior to an enum comprised of two values: one for leading behavior
+        and one for trailing behavior. Each of these two values can take on a value of
+        "force," "forbid," and neither. All calls that interact with justification are
+        migrated to use this new structure.
+
+        Note that in this terminology, "leading" and "trailing" are with respect to the order
+        that elements get laid out in a line. Therefore, leading is always on the left, since
+        lines get laid out that way regardless of their bidi attributes.
+
+        This is getting ready for https://bugs.webkit.org/show_bug.cgi?id=142608
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::expansionOpportunityCountInternal): Migrate to these new
+        values.
+        (WebCore::FontCascade::expansionOpportunityCount): Ditto.
+        (WebCore::FontCascade::leadingExpansionOpportunity): Returns whether one is present
+        or not.
+        (WebCore::FontCascade::trailingExpansionOpportunity): Ditto.
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/GlyphBuffer.h: New leading expansion field.
+        (WebCore::GlyphBuffer::setLeadingExpansion):
+        (WebCore::GlyphBuffer::leadingExpansion):
+        * platform/graphics/TextRun.h: m_expansionBehavior needs more bits.
+        (WebCore::TextRun::expansionBehavior):
+        (WebCore::TextRun::allowsLeadingExpansion): Deleted.
+        (WebCore::TextRun::allowsTrailingExpansion): Deleted.
+        * platform/graphics/WidthIterator.cpp: Update to support new type.
+        (WebCore::WidthIterator::WidthIterator):
+        (WebCore::expansionLocation): Where should we insert expansions?
+        (WebCore::WidthIterator::advanceInternal): Use expansionLocation()
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::adjustSelectionRectForComplexText):
+        (WebCore::FontCascade::getGlyphsAndAdvancesForComplexText):
+        * platform/graphics/mac/ComplexTextController.cpp: Same as WidthIterator
+        (WebCore::ComplexTextController::ComplexTextController):
+        (WebCore::ComplexTextController::advance):
+        (WebCore::expansionLocation):
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * platform/graphics/mac/ComplexTextController.h:
+        (WebCore::ComplexTextController::leadingExpansion):
+        * platform/text/TextFlags.h: Add new enum values
+        * rendering/InlineBox.h: Update to include new values.
+        (WebCore::InlineBox::InlineBoxBitfields::InlineBoxBitfields):
+        (WebCore::InlineBox::canHaveTrailingExpansion):
+        (WebCore::InlineBox::setCanHaveTrailingExpansion):
+        (WebCore::InlineBox::setForceTrailingExpansion):
+        (WebCore::InlineBox::forceTrailingExpansion):
+        (WebCore::InlineBox::setForceLeadingExpansion):
+        (WebCore::InlineBox::forceLeadingExpansion):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlockLineLayout.cpp: Update to use new FontCascade signatures.
+        (WebCore::expansionBehaviorForInlineTextBox):
+        (WebCore::applyExpansionBehavior):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+
 2015-04-01  Zalan Bujtas  <zalan@apple.com>
 
         Lots of time spent querying table cell borders, when there are none.

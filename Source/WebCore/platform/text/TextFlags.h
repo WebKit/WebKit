@@ -32,11 +32,18 @@ enum TextDirection { RTL, LTR };
 
 inline bool isLeftToRightDirection(TextDirection direction) { return direction == LTR; }
 
+// Here, "Leading" and "Trailing" are relevant after the line has been rearranged for bidi.
+// ("Leading" means "left" and "Trailing" means "right.")
 enum ExpansionBehaviorFlags {
     ForbidTrailingExpansion = 0 << 0,
     AllowTrailingExpansion = 1 << 0,
-    ForbidLeadingExpansion = 0 << 1,
-    AllowLeadingExpansion = 1 << 1,
+    ForceTrailingExpansion = 2 << 0,
+    TrailingExpansionMask = 3 << 0,
+
+    ForbidLeadingExpansion = 0 << 2,
+    AllowLeadingExpansion = 1 << 2,
+    ForceLeadingExpansion = 2 << 2,
+    LeadingExpansionMask = 3 << 2,
 };
 
 typedef unsigned ExpansionBehavior;
