@@ -1179,8 +1179,6 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     if (!m_player->load(url, contentType, keySystem))
         mediaLoadingFailed(MediaPlayer::FormatError);
 
-    m_mediaSession->applyMediaPlayerRestrictions(*this);
-
     // If there is no poster to display, allow the media engine to render video frames as soon as
     // they are available.
     updateDisplayState();
@@ -1987,6 +1985,11 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         prepareMediaFragmentURI();
         scheduleEvent(eventNames().durationchangeEvent);
         scheduleEvent(eventNames().loadedmetadataEvent);
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+        if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent))
+            enqueuePlaybackTargetAvailabilityChangedEvent();
+#endif
+        
         if (hasMediaControls())
             mediaControls()->loadedMetadata();
         if (renderer())
@@ -4268,6 +4271,8 @@ void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
 
     m_havePreparedToPlay = false;
 
+    m_mediaSession->applyMediaPlayerRestrictions(*this);
+
 #if PLATFORM(IOS)
     if (!m_player)
         return;
@@ -4654,8 +4659,13 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent))
+    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent)) {
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(*this, false);
+
+        // Send an availability event in case scripts want to hide the picker when the element
+        // doesn't support playback to a target.
+        enqueuePlaybackTargetAvailabilityChangedEvent();
+    }
 #endif
 
     m_player = nullptr;
@@ -4810,6 +4820,11 @@ bool HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless() const
     return m_mediaSession->currentPlaybackTargetIsWireless(*this);
 }
 
+bool HTMLMediaElement::webkitCurrentPlaybackTargetIsSupported() const
+{
+    return m_mediaSession->currentPlaybackTargetIsSupported(*this);
+}
+
 void HTMLMediaElement::wirelessRoutesAvailableDidChange()
 {
     enqueuePlaybackTargetAvailabilityChangedEvent();
@@ -4868,6 +4883,27 @@ void HTMLMediaElement::setWirelessPlaybackTarget(const MediaPlaybackTarget& devi
     LOG(Media, "HTMLMediaElement::setWirelessPlaybackTarget(%p)", this);
     if (m_player)
         m_player->setWirelessPlaybackTarget(device);
+}
+
+bool HTMLMediaElement::canPlayToWirelessPlaybackTarget()
+{
+    bool canPlay = m_player && m_player->canPlayToWirelessPlaybackTarget();
+
+    LOG(Media, "HTMLMediaElement::canPlayToWirelessPlaybackTarget(%p) - returning %s", this, boolString(canPlay));
+
+    return canPlay;
+}
+
+void HTMLMediaElement::startPlayingToPlaybackTarget()
+{
+    if (m_player)
+        m_player->startPlayingToPlaybackTarget();
+}
+
+void HTMLMediaElement::stopPlayingToPlaybackTarget()
+{
+    if (m_player)
+        m_player->stopPlayingToPlaybackTarget();
 }
 #endif
 

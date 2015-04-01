@@ -161,14 +161,19 @@ public:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual bool isCurrentPlaybackTargetWireless() const { return false; }
+    virtual bool isCurrentPlaybackTargetSupported() const { return true; }
 
     virtual String wirelessPlaybackTargetName() const { return emptyString(); }
     virtual MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const { return MediaPlayer::TargetTypeNone; }
 
-    virtual bool wirelessVideoPlaybackDisabled() const { return false; }
+    virtual bool wirelessVideoPlaybackDisabled() const { return true; }
     virtual void setWirelessVideoPlaybackDisabled(bool) { }
 
+    virtual bool canPlayToWirelessPlaybackTarget() const { return false; }
     virtual void setWirelessPlaybackTarget(const MediaPlaybackTarget&) { }
+
+    virtual void startPlayingToPlaybackTarget() { }
+    virtual void stopPlayingToPlaybackTarget() { }
 #endif
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)

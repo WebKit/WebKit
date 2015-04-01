@@ -354,12 +354,16 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void webkitShowPlaybackTargetPicker();
     bool webkitCurrentPlaybackTargetIsWireless() const;
+    bool webkitCurrentPlaybackTargetIsSupported() const;
 
     virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) override;
     virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
 
     virtual void wirelessRoutesAvailableDidChange() override;
+    virtual bool canPlayToWirelessPlaybackTarget() override;
     virtual void setWirelessPlaybackTarget(const MediaPlaybackTarget&) override;
+    virtual void startPlayingToPlaybackTarget() override;
+    virtual void stopPlayingToPlaybackTarget() override;
 #endif
 
     // EventTarget function.

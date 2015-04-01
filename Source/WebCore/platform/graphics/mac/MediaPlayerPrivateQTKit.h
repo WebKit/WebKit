@@ -179,6 +179,14 @@ private:
     virtual String engineDescription() const { return "QTKit"; }
     virtual long platformErrorCode() const;
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    virtual bool isCurrentPlaybackTargetSupported() const override;
+    virtual void setWirelessPlaybackTarget(const MediaPlaybackTarget&);
+    virtual void startPlayingToPlaybackTarget() override;
+    virtual void stopPlayingToPlaybackTarget() override;
+    void togglePlayingToPlaybackTarget();
+#endif
+
     MediaPlayer* m_player;
     RetainPtr<QTMovie> m_qtMovie;
     RetainPtr<QTVideoRendererWebKitOnly> m_qtVideoRenderer;
@@ -206,6 +214,10 @@ private:
     bool m_privateBrowsing;
     mutable MediaTime m_maxTimeLoadedAtLastDidLoadingProgress;
     mutable FloatSize m_cachedNaturalSize;
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    std::unique_ptr<MediaPlaybackTarget> m_playbackTarget;
+    bool m_currentPlaybackTargetIsSupported { true };
+#endif
 };
 
 }

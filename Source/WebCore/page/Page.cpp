@@ -212,6 +212,9 @@ Page::Page(PageConfiguration& pageConfiguration)
     , m_userContentController(WTF::move(pageConfiguration.userContentController))
     , m_visitedLinkStore(*WTF::move(pageConfiguration.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    , m_playbackTarget(std::make_unique<MediaPlaybackTarget>())
+#endif
     , m_isClosing(false)
     , m_isPlayingAudio(false)
 {
@@ -1681,10 +1684,8 @@ void Page::setSessionID(SessionID sessionID)
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-void Page::showPlaybackTargetPicker(Document* document, const WebCore::IntPoint& location, bool isVideo)
+void Page::showPlaybackTargetPicker(const WebCore::IntPoint& location, bool isVideo)
 {
-    m_documentRequestingPlaybackTargetPicker = document;
-
 #if PLATFORM(IOS)
     // FIXME: refactor iOS implementation.
     UNUSED_PARAM(location);
@@ -1696,25 +1697,9 @@ void Page::showPlaybackTargetPicker(Document* document, const WebCore::IntPoint&
 
 void Page::didChoosePlaybackTarget(const MediaPlaybackTarget& target)
 {
-    Document* documentThatRequestedPicker = nullptr;
-
-    m_playbackTarget = std::make_unique<MediaPlaybackTarget>(target.devicePickerContext());
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        Document* document = frame->document();
-        if (frame->document() == m_documentRequestingPlaybackTargetPicker) {
-            documentThatRequestedPicker = document;
-            continue;
-        }
+    m_playbackTarget->setDevicePickerContext(target.devicePickerContext());
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->document()->didChoosePlaybackTarget(target);
-    }
-
-    // Notify the document that requested the chooser last because if more than one element
-    // is playing the last one to set the context will be the one that actually gets to
-    //  play to the external device.
-    if (documentThatRequestedPicker)
-        documentThatRequestedPicker->didChoosePlaybackTarget(target);
-
-    m_documentRequestingPlaybackTargetPicker = nullptr;
 }
 
 void Page::playbackTargetAvailabilityDidChange(bool available)
@@ -1733,10 +1718,6 @@ void Page::configurePlaybackTargetMonitoring()
             break;
         }
     }
-
-    if (m_requiresPlaybackTargetMonitoring == monitoringRequired)
-        return;
-    m_requiresPlaybackTargetMonitoring = monitoringRequired;
 
     if (monitoringRequired)
         chrome().client().startingMonitoringPlaybackTargets();

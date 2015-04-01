@@ -1695,7 +1695,13 @@ Controller.prototype = {
     },
 
     currentPlaybackTargetIsWireless: function() {
-        return Controller.gSimulateWirelessPlaybackTarget || (('webkitCurrentPlaybackTargetIsWireless' in this.video) && this.video.webkitCurrentPlaybackTargetIsWireless);
+        if (Controller.gSimulateWirelessPlaybackTarget)
+            return true;
+
+        if (!this.video.webkitCurrentPlaybackTargetIsWireless || this.video.webkitWirelessVideoPlaybackDisabled)
+            return false;
+
+        return true;
     },
 
     updateShouldListenForPlaybackTargetAvailabilityEvent: function() {
@@ -1740,7 +1746,11 @@ Controller.prototype = {
     },
 
     updateWirelessTargetAvailable: function() {
-        if (Controller.gSimulateWirelessPlaybackTarget || this.hasWirelessPlaybackTargets)
+        var wirelessPlaybackTargetsAvailable = Controller.gSimulateWirelessPlaybackTarget || this.hasWirelessPlaybackTargets;
+        if (this.video.webkitWirelessVideoPlaybackDisabled)
+            wirelessPlaybackTargetsAvailable = false;
+
+        if (wirelessPlaybackTargetsAvailable)
             this.controls.wirelessTargetPicker.classList.remove(this.ClassNames.hidden);
         else
             this.controls.wirelessTargetPicker.classList.add(this.ClassNames.hidden);
@@ -1753,6 +1763,7 @@ Controller.prototype = {
     },
 
     handleWirelessPlaybackChange: function(event) {
+        this.updateWirelessTargetAvailable();
         this.updateWirelessPlaybackStatus();
         this.setNeedsTimelineMetricsUpdate();
     },

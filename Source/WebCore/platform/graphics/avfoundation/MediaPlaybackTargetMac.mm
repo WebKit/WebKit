@@ -28,7 +28,7 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
-#import <WebCore/MediaPlaybackTarget.h>
+#import <WebCore/AVFoundationSPI.h>
 #import <WebCore/SoftLinking.h>
 #import <objc/runtime.h>
 
@@ -62,6 +62,12 @@ bool MediaPlaybackTarget::decode(NSKeyedUnarchiver *unarchiver, MediaPlaybackTar
 
     return true;
 }
+
+bool MediaPlaybackTarget::hasActiveRoute() const
+{
+    return m_devicePickerContext && m_devicePickerContext.get().deviceName;
+}
+
 
 } // namespace WebCore
 

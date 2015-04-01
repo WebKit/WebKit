@@ -466,6 +466,7 @@ public:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     bool isCurrentPlaybackTargetWireless() const;
+    bool isCurrentPlaybackTargetSupported() const;
 
     enum WirelessPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
     WirelessPlaybackTargetType wirelessPlaybackTargetType() const;
@@ -478,7 +479,11 @@ public:
     void currentPlaybackTargetIsWirelessChanged();
     void playbackTargetAvailabilityChanged();
 
+    bool canPlayToWirelessPlaybackTarget() const;
     void setWirelessPlaybackTarget(const MediaPlaybackTarget&);
+
+    void startPlayingToPlaybackTarget();
+    void stopPlayingToPlaybackTarget();
 #endif
 
     double minFastReverseRate() const;

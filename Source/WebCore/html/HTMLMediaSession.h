@@ -54,8 +54,8 @@ public:
     bool pageAllowsPlaybackAfterResuming(const HTMLMediaElement&) const;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    bool showingPlaybackTargetPickerPermitted(const HTMLMediaElement&) const;
     bool currentPlaybackTargetIsWireless(const HTMLMediaElement&) const;
+    bool currentPlaybackTargetIsSupported(const HTMLMediaElement&) const;
     void showPlaybackTargetPicker(const HTMLMediaElement&);
     bool hasWirelessPlaybackTargets(const HTMLMediaElement&) const;
 
@@ -102,16 +102,15 @@ private:
     virtual void didChoosePlaybackTarget(const MediaPlaybackTarget&) override;
     virtual void externalOutputDeviceAvailableDidChange(bool) const override;
     virtual bool requiresPlaybackTargetRouteMonitoring() const override;
-    virtual bool requestedPlaybackTargetPicker() const override { return m_haveRequestedPlaybackTargetPicker; }
 #endif
 
     BehaviorRestrictions m_restrictions;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     mutable Timer m_targetAvailabilityChangedTimer;
+    std::unique_ptr<MediaPlaybackTarget> m_playbackTarget;
     bool m_hasPlaybackTargetAvailabilityListeners { false };
     mutable bool m_hasPlaybackTargets { false };
-    mutable bool m_haveRequestedPlaybackTargetPicker { false };
 #endif
 };
 

@@ -50,6 +50,11 @@ public:
 
     void setDevicePickerContext(AVOutputContext *context) { m_devicePickerContext = context; }
     AVOutputContext *devicePickerContext() const { return m_devicePickerContext.get(); }
+    bool hasActiveRoute() const;
+#else
+    void setDevicePickerContext(AVOutputContext *) { }
+    AVOutputContext *devicePickerContext() const { return nullptr; }
+    bool hasActiveRoute() const { return false; }
 #endif
 
 protected:

@@ -347,7 +347,8 @@ namespace WebCore {
 
 static NSArray *assetMetadataKeyNames();
 static NSArray *itemKVOProperties();
-static NSArray* assetTrackMetadataKeyNames();
+static NSArray *assetTrackMetadataKeyNames();
+static NSArray *playerKVOProperties();
 
 #if !LOG_DISABLED
 static const char *boolString(bool val)
@@ -545,11 +546,9 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
         if (m_timeObserver)
             [m_avPlayer.get() removeTimeObserver:m_timeObserver.get()];
         m_timeObserver = nil;
-        [m_avPlayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"rate"];
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        [m_avPlayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"externalPlaybackActive"];
-        [m_avPlayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"outputContext"];
-#endif
+
+        for (NSString *keyName in playerKVOProperties())
+            [m_avPlayer.get() removeObserver:m_objcObserver.get() forKeyPath:keyName];
         m_avPlayer = nil;
     }
 
@@ -927,27 +926,21 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     setDelayCallbacks(true);
 
     m_avPlayer = adoptNS([allocAVPlayerInstance() init]);
-    [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"rate" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"externalPlaybackActive" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
-    [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"outputContext" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
-#endif
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    updateDisableExternalPlayback();
-#endif
+    for (NSString *keyName in playerKVOProperties())
+        [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:keyName options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     [m_avPlayer.get() setAppliesMediaSelectionCriteriaAutomatically:NO];
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    updateDisableExternalPlayback();
     [m_avPlayer.get() setAllowsExternalPlayback:m_allowsWirelessVideoPlayback];
-#endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if !PLATFORM(IOS)
     if (m_outputContext)
         m_avPlayer.get().outputContext = m_outputContext.get();
+#endif
 #endif
 
     if (player()->client().mediaPlayerIsVideo())
@@ -2731,8 +2724,14 @@ String MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetName() const
 {
     if (!m_avPlayer)
         return emptyString();
-    
-    String wirelessTargetName = wkExernalDeviceDisplayNameForPlayer(m_avPlayer.get());
+
+    String wirelessTargetName;
+#if !PLATFORM(IOS)
+    if (m_outputContext)
+        wirelessTargetName = m_outputContext.get().deviceName;
+#else
+    wirelessTargetName = wkExernalDeviceDisplayNameForPlayer(m_avPlayer.get());
+#endif
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetName(%p) - returning %s", this, wirelessTargetName.utf8().data());
 
     return wirelessTargetName;
@@ -2756,20 +2755,40 @@ void MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled(bool d
     if (!m_avPlayer)
         return;
 
+    setDelayCallbacks(true);
     [m_avPlayer.get() setAllowsExternalPlayback:!disabled];
+    setDelayCallbacks(false);
 }
 
 #if !PLATFORM(IOS)
 void MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(const MediaPlaybackTarget& target)
 {
     m_outputContext = target.devicePickerContext();
-
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(%p) - target = %p", this, m_outputContext.get());
+}
 
+void MediaPlayerPrivateAVFoundationObjC::startPlayingToPlaybackTarget()
+{
     if (!m_avPlayer)
         return;
 
+    if ([m_avPlayer.get().outputContext isEqual:m_outputContext.get()])
+        return;
+
+    setDelayCallbacks(true);
     m_avPlayer.get().outputContext = m_outputContext.get();
+    setDelayCallbacks(false);
+}
+
+void MediaPlayerPrivateAVFoundationObjC::stopPlayingToPlaybackTarget()
+{
+    if (!m_avPlayer)
+        return;
+
+    setDelayCallbacks(true);
+    // FIXME: uncomment the following line once rdar://20335217 has been fixed.
+    // m_avPlayer.get().outputContext = nil;
+    setDelayCallbacks(false);
 }
 #endif
 
@@ -3084,6 +3103,15 @@ NSArray* assetTrackMetadataKeyNames()
     return keys;
 }
 
+NSArray* playerKVOProperties()
+{
+    static NSArray* keys = [[NSArray alloc] initWithObjects:@"rate",
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+                            @"externalPlaybackActive", @"outputContext", @"allowsExternalPlayback",
+#endif
+                            nil];
+    return keys;
+}
 } // namespace WebCore
 
 @implementation WebCoreAVFMovieObserver
@@ -3200,9 +3228,7 @@ NSArray* assetTrackMetadataKeyNames()
         if ([keyPath isEqualToString:@"rate"])
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::rateDidChange, m_callback, [newValue doubleValue]);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        else if ([keyPath isEqualToString:@"externalPlaybackActive"])
-            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::playbackTargetIsWirelessDidChange, m_callback);
-        else if ([keyPath isEqualToString:@"outputContext"])
+        else if ([keyPath isEqualToString:@"externalPlaybackActive"] || [keyPath isEqualToString:@"outputContext"] || [keyPath isEqualToString:@"allowsExternalPlayback"])
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::playbackTargetIsWirelessDidChange, m_callback);
 #endif
     }

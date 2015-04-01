@@ -1,3 +1,125 @@
+2015-04-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Do not include route button if element does not support target playback
+        https://bugs.webkit.org/show_bug.cgi?id=143251
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.currentPlaybackTargetIsWireless): Return false if target playback is disabled.
+        (Controller.prototype.updateWirelessTargetAvailable): Do not show the picker if target 
+            playback is disabled.
+        (Controller.prototype.handleWirelessPlaybackChange): Call updateWirelessTargetAvailable.
+
+        * dom/Document.cpp:
+        (WebCore::Document::showPlaybackTargetPicker): Update for Page::showPlaybackTargetPicker change.
+        (WebCore::Document::didChoosePlaybackTarget): Notify clients in vector-order, lower level code
+            now tracks which one requested the picker.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource): Don't call applyMediaPlayerRestrictions, it is done
+            in mediaPlayerEngineFailedToLoad.
+        (WebCore::HTMLMediaElement::setReadyState): Enqueue a target availability event if there are
+            listeners readyState reaches HAVE_METADATA so controls are setup correctly.
+        (WebCore::HTMLMediaElement::mediaPlayerEngineFailedToLoad): Call applyMediaPlayerRestrictions.
+        (WebCore::HTMLMediaElement::clearMediaPlayer): Enqueue a target availability event in so controls
+            have a chance to hide the picker.
+        (WebCore::HTMLMediaElement::webkitCurrentPlaybackTargetIsSupported): New, passthrough to the
+            media engine.
+        (WebCore::HTMLMediaElement::canPlayToWirelessPlaybackTarget): Ditto.
+        (WebCore::HTMLMediaElement::startPlayingToPlaybackTarget): Ditto.
+        (WebCore::HTMLMediaElement::stopPlayingToPlaybackTarget): Ditto.
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::HTMLMediaSession): Initialize m_playbackTarget.
+        (WebCore::HTMLMediaSession::currentPlaybackTargetIsSupported): New.
+        (WebCore::HTMLMediaSession::showPlaybackTargetPicker): Pull logic from showingPlaybackTargetPickerPermitted 
+            inline. Don't refuse to show a picker if the element doesn't support target playback, it is up
+            to script to decide which elements can display a picker.
+        (WebCore::HTMLMediaSession::wirelessVideoPlaybackDisabled): Return true if there is no player.
+        (WebCore::HTMLMediaSession::didChoosePlaybackTarget): Call startPlayingToPlaybackTarget or 
+            stopPlayingToPlaybackTarget because setWirelessPlaybackTarget doesn't apply the target.
+        (WebCore::HTMLMediaSession::externalOutputDeviceAvailableDidChange): Add logging.
+        (WebCore::HTMLMediaSession::showingPlaybackTargetPickerPermitted): Deleted.
+        * html/HTMLMediaSession.h:
+
+        * page/Page.cpp:
+        (WebCore::Page::Page): Initialize m_playbackTarget.
+        (WebCore::Page::showPlaybackTargetPicker): Don't set m_documentRequestingPlaybackTargetPicker.
+        (WebCore::Page::didChoosePlaybackTarget): Notify Pages in vector-order, lower level code
+            now tracks which one requested the picker.
+        (WebCore::Page::configurePlaybackTargetMonitoring): Don't track m_requiresPlaybackTargetMonitoring, it
+            is too easy for it to get out of sync with the UI process state.
+        * page/Page.h:
+
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::canPlayToWirelessPlaybackTarget): New, client passthrough.
+        (WebCore::MediaSession::startPlayingToPlaybackTarget): Ditto.
+        (WebCore::MediaSession::stopPlayingToPlaybackTarget): Ditto.
+        * platform/audio/MediaSession.h:
+        (WebCore::MediaSessionClient::canPlayToWirelessPlaybackTarget):
+        (WebCore::MediaSessionClient::startPlayingToPlaybackTarget):
+        (WebCore::MediaSessionClient::stopPlayingToPlaybackTarget):
+
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::sessionWillBeginPlayback): Call startPlayingToPlaybackTarget &
+            stopPlayingToPlaybackTarget as necessary.
+        * platform/audio/MediaSessionManager.h:
+
+        * platform/graphics/MediaPlaybackTarget.h:
+        (WebCore::MediaPlaybackTarget::hasActiveRoute): New.
+        * platform/graphics/MediaPlaybackTargetPickerClient.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::isCurrentPlaybackTargetSupported): New, engine passthrough.
+        (WebCore::MediaPlayer::canPlayToWirelessPlaybackTarget): Ditto.
+        (WebCore::MediaPlayer::startPlayingToPlaybackTarget): Ditto.
+        (WebCore::MediaPlayer::stopPlayingToPlaybackTarget): Ditto.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::isCurrentPlaybackTargetSupported):
+        (WebCore::MediaPlayerPrivateInterface::wirelessVideoPlaybackDisabled):
+        (WebCore::MediaPlayerPrivateInterface::canPlayToWirelessPlaybackTarget):
+        (WebCore::MediaPlayerPrivateInterface::startPlayingToPlaybackTarget):
+        (WebCore::MediaPlayerPrivateInterface::stopPlayingToPlaybackTarget):
+
+        * platform/graphics/avfoundation/MediaPlaybackTargetMac.mm:
+        (WebCore::MediaPlaybackTarget::hasActiveRoute): New.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::canPlayToWirelessPlaybackTarget):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad): Use playerKVOProperties. Drive-by
+            code cleanup.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Use playerKVOProperties.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetName): Implement for Mac.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled): Delay callbacks
+            while setting AVPlayer property.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget): Add logging. Don't set
+            the AVPlayer outputContext immediately.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::startPlayingToPlaybackTarget): New.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::stopPlayingToPlaybackTarget): New.
+        (WebCore::playerKVOProperties): New.
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]): Notify when
+            allowsExternalPlayback changes.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetSupported): New.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setWirelessPlaybackTarget): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::togglePlayingToPlaybackTarget): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::startPlayingToPlaybackTarget): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::stopPlayingToPlaybackTarget): Ditto.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::isCurrentPlaybackTargetSupported): Ditto.
+        (WebCore::MediaPlayerPrivateQTKit::setWirelessPlaybackTarget): Ditto.
+        (WebCore::MediaPlayerPrivateQTKit::togglePlayingToPlaybackTarget): Ditto.
+        (WebCore::MediaPlayerPrivateQTKit::startPlayingToPlaybackTarget): Ditto.
+        (WebCore::MediaPlayerPrivateQTKit::stopPlayingToPlaybackTarget): Ditto.
+
 2015-04-01  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Properly handle regexes that match everything.

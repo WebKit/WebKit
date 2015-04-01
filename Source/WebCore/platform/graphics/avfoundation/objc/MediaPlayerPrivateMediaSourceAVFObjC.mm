@@ -806,6 +806,42 @@ void MediaPlayerPrivateMediaSourceAVFObjC::characteristicsChanged()
     m_player->characteristicChanged();
 }
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+bool MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetSupported() const
+{
+    if (!m_playbackTarget)
+        return true;
+
+    return !m_playbackTarget->hasActiveRoute();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setWirelessPlaybackTarget(const MediaPlaybackTarget& target)
+{
+    if (!m_playbackTarget)
+        m_playbackTarget = std::make_unique<MediaPlaybackTarget>();
+    m_playbackTarget->setDevicePickerContext(target.devicePickerContext());
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::togglePlayingToPlaybackTarget()
+{
+    bool oldSupported = m_currentPlaybackTargetIsSupported;
+    m_currentPlaybackTargetIsSupported = !m_playbackTarget || !m_playbackTarget->hasActiveRoute();
+
+    if (m_player && oldSupported != m_currentPlaybackTargetIsSupported)
+        m_player->currentPlaybackTargetIsWirelessChanged();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::startPlayingToPlaybackTarget()
+{
+    togglePlayingToPlaybackTarget();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::stopPlayingToPlaybackTarget()
+{
+    togglePlayingToPlaybackTarget();
+}
+#endif
+
 }
 
 #endif

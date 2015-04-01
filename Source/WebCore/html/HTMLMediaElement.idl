@@ -116,4 +116,5 @@
 
     [Conditional=WIRELESS_PLAYBACK_TARGET] void webkitShowPlaybackTargetPicker();
     [Conditional=WIRELESS_PLAYBACK_TARGET] readonly attribute boolean webkitCurrentPlaybackTargetIsWireless;
+    [Conditional=WIRELESS_PLAYBACK_TARGET] readonly attribute boolean webkitCurrentPlaybackTargetIsSupported;
 };

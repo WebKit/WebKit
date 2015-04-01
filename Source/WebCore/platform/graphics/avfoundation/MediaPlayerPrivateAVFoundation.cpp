@@ -619,7 +619,7 @@ void MediaPlayerPrivateAVFoundation::metadataLoaded()
 
 void MediaPlayerPrivateAVFoundation::rateChanged()
 {
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && PLATFORM(IOS)
     if (isCurrentPlaybackTargetWireless())
         m_player->handlePlaybackCommand(rate() ? MediaSession::PlayCommand : MediaSession::PauseCommand);
 #endif

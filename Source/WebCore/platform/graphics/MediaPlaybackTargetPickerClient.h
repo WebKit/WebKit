@@ -42,7 +42,6 @@ public:
     virtual void externalOutputDeviceAvailableDidChange(bool) const = 0;
 
     virtual bool requiresPlaybackTargetRouteMonitoring() const = 0;
-    virtual bool requestedPlaybackTargetPicker() const = 0;
 };
 
 } // namespace WebCore

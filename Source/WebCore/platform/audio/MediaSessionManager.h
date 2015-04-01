@@ -85,15 +85,15 @@ public:
     virtual bool hasWirelessTargetsAvailable() { return false; }
 #endif
 
+    void setCurrentSession(MediaSession&);
+    MediaSession* currentSession();
+
 protected:
     friend class MediaSession;
     explicit MediaSessionManager();
 
     void addSession(MediaSession&);
     void removeSession(MediaSession&);
-
-    void setCurrentSession(MediaSession&);
-    MediaSession* currentSession();
 
     Vector<MediaSession*> sessions() { return m_sessions; }
 

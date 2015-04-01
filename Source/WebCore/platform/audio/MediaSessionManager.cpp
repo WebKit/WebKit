@@ -186,19 +186,18 @@ bool MediaSessionManager::sessionWillBeginPlayback(MediaSession& session)
     if (m_interrupted)
         endInterruption(MediaSession::NoFlags);
 
-    if (!restrictions & ConcurrentPlaybackNotPermitted)
-        return true;
-
+    bool newSessionCanPlayToPlaybackTarget = session.canPlayToWirelessPlaybackTarget();
     Vector<MediaSession*> sessions = m_sessions;
     for (auto* oneSession : sessions) {
         if (oneSession == &session)
             continue;
-        if (oneSession->mediaType() != sessionType)
-            continue;
-        if (restrictions & ConcurrentPlaybackNotPermitted)
+        if (newSessionCanPlayToPlaybackTarget)
+            oneSession->stopPlayingToPlaybackTarget();
+        if (oneSession->mediaType() == sessionType && restrictions & ConcurrentPlaybackNotPermitted)
             oneSession->pauseSession();
     }
-    
+    session.startPlayingToPlaybackTarget();
+
     updateSessionState();
     return true;
 }

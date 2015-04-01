@@ -6550,7 +6550,7 @@ void Document::showPlaybackTargetPicker(const HTMLMediaElement& element)
     if (!page)
         return;
 
-    page->showPlaybackTargetPicker(this, view()->lastKnownMousePosition(), is<HTMLVideoElement>(element));
+    page->showPlaybackTargetPicker(view()->lastKnownMousePosition(), is<HTMLVideoElement>(element));
 }
 
 void Document::addPlaybackTargetPickerClient(MediaPlaybackTargetPickerClient& client)
@@ -6604,22 +6604,8 @@ void Document::playbackTargetAvailabilityDidChange(bool available)
 
 void Document::didChoosePlaybackTarget(const MediaPlaybackTarget& device)
 {
-    MediaPlaybackTargetPickerClient* clientThatRequestedPicker = nullptr;
-
-    for (auto* client : m_playbackTargetClients) {
-        if (client->requestedPlaybackTargetPicker()) {
-            clientThatRequestedPicker = client;
-            continue;
-        }
-
+    for (auto* client : m_playbackTargetClients)
         client->didChoosePlaybackTarget(device);
-    }
-
-    // Notify the client that requested the chooser last because if more than one
-    // is playing, only the last one to set the context will actually get to play
-    //  to the external device.
-    if (clientThatRequestedPicker)
-        clientThatRequestedPicker->didChoosePlaybackTarget(device);
 }
 
 #endif
