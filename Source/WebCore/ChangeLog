@@ -1,3 +1,59 @@
+2015-03-30  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Move synchronous message handler to MediaPlayerPrivateGStreamerBase
+        https://bugs.webkit.org/show_bug.cgi?id=143218
+
+        Reviewed by Carlos Garcia Campos.
+
+        Moved the pipeline pointer to the base class, sub-classes should
+        now invoke setPipeline() when loading a resource. The base class
+        now takes care of configuring the GL shared context, this is more
+        logical because video rendering is also managed by this class.
+
+        No new tests, this is only a code refactoring.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition):
+        (WebCore::MediaPlayerPrivateGStreamer::changePipelineState):
+        (WebCore::MediaPlayerPrivateGStreamer::pause):
+        (WebCore::MediaPlayerPrivateGStreamer::duration):
+        (WebCore::MediaPlayerPrivateGStreamer::currentTime):
+        (WebCore::MediaPlayerPrivateGStreamer::seek):
+        (WebCore::MediaPlayerPrivateGStreamer::doSeek):
+        (WebCore::MediaPlayerPrivateGStreamer::updatePlaybackRate):
+        (WebCore::MediaPlayerPrivateGStreamer::paused):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfText):
+        (WebCore::MediaPlayerPrivateGStreamer::setRate):
+        (WebCore::MediaPlayerPrivateGStreamer::buffered):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired):
+        (WebCore::MediaPlayerPrivateGStreamer::didLoadingProgress):
+        (WebCore::MediaPlayerPrivateGStreamer::sourceChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::cancelLoad):
+        (WebCore::MediaPlayerPrivateGStreamer::asyncStateChangeDone):
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamer::loadNextLocation):
+        (WebCore::MediaPlayerPrivateGStreamer::cacheDuration):
+        (WebCore::MediaPlayerPrivateGStreamer::setDownloadBuffering):
+        (WebCore::MediaPlayerPrivateGStreamer::audioSink):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        (WebCore::MediaPlayerPrivateGStreamer::simulateAudioInterruption):
+        (WebCore::mediaPlayerPrivateSyncMessageCallback): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::handleSyncMessage): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::ensureGstGLContext): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::mediaPlayerPrivateNeedContextMessageCallback):
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::setPipeline):
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleNeedContextMessage):
+        (WebCore::MediaPlayerPrivateGStreamerBase::ensureGstGLContext):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
 2015-03-24  Philippe Normand  <philn@igalia.com>
 
         [GStreamer] GstGL support in the video sink

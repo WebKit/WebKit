@@ -38,6 +38,8 @@
 
 typedef struct _GstMessage GstMessage;
 typedef struct _GstStreamVolume GstStreamVolume;
+typedef struct _GstGLContext GstGLContext;
+typedef struct _GstGLDisplay GstGLDisplay;
 
 namespace WebCore {
 
@@ -60,6 +62,11 @@ public:
     float volume() const;
     void volumeChanged();
     void notifyPlayerOfVolumeChange();
+
+#if USE(GSTREAMER_GL)
+    bool ensureGstGLContext();
+#endif
+    void handleNeedContextMessage(GstMessage*);
 
     bool supportsMuting() const { return true; }
     void setMuted(bool);
@@ -112,7 +119,10 @@ protected:
     virtual GstElement* createAudioSink() { return 0; }
     virtual GstElement* audioSink() const { return 0; }
 
+    void setPipeline(GstElement*);
+
     MediaPlayer* m_player;
+    GRefPtr<GstElement> m_pipeline;
     GRefPtr<GstStreamVolume> m_volumeElement;
     GRefPtr<GstElement> m_videoSink;
     GRefPtr<GstElement> m_fpsSink;
@@ -135,6 +145,10 @@ protected:
     bool m_usingFallbackVideoSink;
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
     PassRefPtr<BitmapTexture> updateTexture(TextureMapper*);
+#endif
+#if USE(GSTREAMER_GL)
+    GRefPtr<GstGLContext> m_glContext;
+    GRefPtr<GstGLDisplay> m_glDisplay;
 #endif
 };
 }

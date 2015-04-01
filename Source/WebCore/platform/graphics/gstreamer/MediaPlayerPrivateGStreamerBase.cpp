@@ -56,6 +56,28 @@
 #include "TextureMapperGL.h"
 #endif
 
+#if USE(GSTREAMER_GL)
+#include "GLContext.h"
+
+#define GST_USE_UNSTABLE_API
+#include <gst/gl/gl.h>
+#undef GST_USE_UNSTABLE_API
+
+#if USE(GLX)
+#include "GLContextGLX.h"
+#include <gst/gl/x11/gstgldisplay_x11.h>
+#elif USE(EGL)
+#include "GLContextEGL.h"
+#include <gst/gl/egl/gstgldisplay_egl.h>
+#endif
+
+// gstglapi.h may include eglplatform.h and it includes X.h, which
+// defines None, breaking MediaPlayer::None enum
+#if PLATFORM(X11) && GST_GL_HAVE_PLATFORM_EGL
+#undef None
+#endif
+#endif // USE(GSTREAMER_GL)
+
 GST_DEBUG_CATEGORY(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
 
@@ -100,6 +122,11 @@ static gboolean mediaPlayerPrivateDrawCallback(GstElement*, GstContext*, GstSamp
 }
 #endif
 
+static void mediaPlayerPrivateNeedContextMessageCallback(GstBus*, GstMessage* message, MediaPlayerPrivateGStreamerBase* player)
+{
+    player->handleNeedContextMessage(message);
+}
+
 MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* player)
     : m_player(player)
     , m_fpsSink(0)
@@ -143,11 +170,94 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
     g_mutex_clear(&m_drawMutex);
 #endif
 
+    if (m_pipeline) {
+        GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+        ASSERT(bus);
+        g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(mediaPlayerPrivateNeedContextMessageCallback), this);
+        gst_bus_disable_sync_message_emission(bus.get());
+        m_pipeline.clear();
+    }
+
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
     if (client())
         client()->platformLayerWillBeDestroyed();
 #endif
 }
+
+void MediaPlayerPrivateGStreamerBase::setPipeline(GstElement* pipeline)
+{
+    m_pipeline = pipeline;
+
+    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+    gst_bus_enable_sync_message_emission(bus.get());
+    g_signal_connect(bus.get(), "sync-message::need-context", G_CALLBACK(mediaPlayerPrivateNeedContextMessageCallback), this);
+}
+
+void MediaPlayerPrivateGStreamerBase::handleNeedContextMessage(GstMessage* message)
+{
+#if USE(GSTREAMER_GL)
+    const gchar* contextType;
+    gst_message_parse_context_type(message, &contextType);
+
+    if (!ensureGstGLContext())
+        return;
+
+    if (!g_strcmp0(contextType, GST_GL_DISPLAY_CONTEXT_TYPE)) {
+        GstContext* displayContext = gst_context_new(GST_GL_DISPLAY_CONTEXT_TYPE, TRUE);
+        gst_context_set_gl_display(displayContext, m_glDisplay.get());
+        gst_element_set_context(GST_ELEMENT(message->src), displayContext);
+        return;
+    }
+
+    if (!g_strcmp0(contextType, "gst.gl.app_context")) {
+        GstContext* appContext = gst_context_new("gst.gl.app_context", TRUE);
+        GstStructure* structure = gst_context_writable_structure(appContext);
+        gst_structure_set(structure, "context", GST_GL_TYPE_CONTEXT, m_glContext.get(), nullptr);
+        gst_element_set_context(GST_ELEMENT(message->src), appContext);
+        return;
+    }
+#else
+    UNUSED_PARAM(message);
+#endif // USE(GSTREAMER_GL)
+}
+
+#if USE(GSTREAMER_GL)
+bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
+{
+    if (m_glContext)
+        return true;
+
+    if (!m_glDisplay) {
+#if PLATFORM(X11)
+        Display* display = GLContext::sharedX11Display();
+        m_glDisplay = GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(display));
+#elif PLATFORM(WAYLAND)
+        EGLDisplay display = WaylandDisplay::instance()->eglDisplay();
+        m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(display));
+#endif
+    }
+
+    GLContext* webkitContext = GLContext::sharingContext();
+    // EGL and GLX are mutually exclusive, no need for ifdefs here.
+    GstGLPlatform glPlatform = webkitContext->isEGLContext() ? GST_GL_PLATFORM_EGL : GST_GL_PLATFORM_GLX;
+
+#if USE(OPENGL_ES_2)
+    GstGLAPI glAPI = GST_GL_API_GLES2;
+#elif USE(OPENGL)
+    GstGLAPI glAPI = GST_GL_API_OPENGL;
+#else
+    ASSERT_NOT_REACHED();
+#endif
+
+    PlatformGraphicsContext3D contextHandle = webkitContext->platformContext();
+    if (!contextHandle)
+        return false;
+
+    m_glContext = gst_gl_context_new_wrapped(m_glDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI);
+
+    return true;
+}
+#endif // USE(GSTREAMER_GL)
 
 // Returns the size of the video
 FloatSize MediaPlayerPrivateGStreamerBase::naturalSize() const
