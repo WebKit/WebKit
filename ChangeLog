@@ -1,3 +1,17 @@
+2015-04-01  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        Use colored diagnostics when building with cmake + ninja + clang
+        https://bugs.webkit.org/show_bug.cgi?id=143297
+
+        Reviewed by Žan Doberšek.
+
+        Because that ninja sets subprocess stdout/stderr to a pipe, clang
+        disables colored output.
+        This patch forces clang to use colored diagnostics when we are using
+        the ninja.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2015-03-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMake] Update old CMakeList.txt in gtest
