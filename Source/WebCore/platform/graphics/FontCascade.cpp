@@ -1121,11 +1121,11 @@ bool FontCascade::leadingExpansionOpportunity(const StringView& stringView, Text
     UChar32 initialCharacter;
     if (direction == LTR) {
         initialCharacter = stringView[0];
-        if (!stringView.is8Bit() && U16_IS_LEAD(initialCharacter) && stringView.length() > 1 && U16_IS_TRAIL(stringView[1]))
+        if (U16_IS_LEAD(initialCharacter) && stringView.length() > 1 && U16_IS_TRAIL(stringView[1]))
             initialCharacter = U16_GET_SUPPLEMENTARY(initialCharacter, stringView[1]);
     } else {
         initialCharacter = stringView[stringView.length() - 1];
-        if (!stringView.is8Bit() && U16_IS_TRAIL(initialCharacter) && stringView.length() > 1 && U16_IS_LEAD(stringView[stringView.length() - 2]))
+        if (U16_IS_TRAIL(initialCharacter) && stringView.length() > 1 && U16_IS_LEAD(stringView[stringView.length() - 2]))
             initialCharacter = U16_GET_SUPPLEMENTARY(stringView[stringView.length() - 2], initialCharacter);
     }
 
@@ -1140,11 +1140,11 @@ bool FontCascade::trailingExpansionOpportunity(const StringView& stringView, Tex
     UChar32 finalCharacter;
     if (direction == LTR) {
         finalCharacter = stringView[stringView.length() - 1];
-        if (!stringView.is8Bit() && U16_IS_TRAIL(finalCharacter) && stringView.length() > 1 && U16_IS_LEAD(stringView[stringView.length() - 2]))
+        if (U16_IS_TRAIL(finalCharacter) && stringView.length() > 1 && U16_IS_LEAD(stringView[stringView.length() - 2]))
             finalCharacter = U16_GET_SUPPLEMENTARY(stringView[stringView.length() - 2], finalCharacter);
     } else {
         finalCharacter = stringView[0];
-        if (!stringView.is8Bit() && U16_IS_LEAD(finalCharacter) && stringView.length() > 1 && U16_IS_TRAIL(stringView[1]))
+        if (U16_IS_LEAD(finalCharacter) && stringView.length() > 1 && U16_IS_TRAIL(stringView[1]))
             finalCharacter = U16_GET_SUPPLEMENTARY(finalCharacter, stringView[1]);
     }
 
