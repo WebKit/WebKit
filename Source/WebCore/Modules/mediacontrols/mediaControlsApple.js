@@ -15,6 +15,8 @@ function Controller(root, video, host)
     this.hasVisualMedia = false;
     this.hasWirelessPlaybackTargets = false;
     this.isListeningForPlaybackTargetAvailabilityEvent = false;
+    this.currentTargetIsWireless = false;
+    this.wirelessPlaybackDisabled = false;
 
     this.addVideoListeners();
     this.createBase();
@@ -1285,15 +1287,23 @@ Controller.prototype = {
 
     hideControls: function()
     {
+        if (this.controlsAlwaysVisible())
+            return;
+
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
         this.controls.panel.classList.remove(this.ClassNames.show);
         if (this.controls.panelBackground)
             this.controls.panelBackground.classList.remove(this.ClassNames.show);
     },
 
+    controlsAlwaysVisible: function()
+    {
+        return this.isAudio() || this.currentPlaybackTargetIsWireless();
+    },
+
     controlsAreHidden: function()
     {
-        return !this.isAudio() && !this.controls.panel.classList.contains(this.ClassNames.show);
+        return !this.controlsAlwaysVisible() && !this.controls.panel.classList.contains(this.ClassNames.show);
     },
 
     removeControls: function()
@@ -1698,7 +1708,7 @@ Controller.prototype = {
         if (Controller.gSimulateWirelessPlaybackTarget)
             return true;
 
-        if (!this.video.webkitCurrentPlaybackTargetIsWireless || this.video.webkitWirelessVideoPlaybackDisabled)
+        if (!this.currentTargetIsWireless || this.wirelessPlaybackDisabled)
             return false;
 
         return true;
@@ -1746,8 +1756,11 @@ Controller.prototype = {
     },
 
     updateWirelessTargetAvailable: function() {
+        this.currentTargetIsWireless = this.video.webkitCurrentPlaybackTargetIsWireless;
+        this.wirelessPlaybackDisabled = this.video.webkitWirelessVideoPlaybackDisabled;
+
         var wirelessPlaybackTargetsAvailable = Controller.gSimulateWirelessPlaybackTarget || this.hasWirelessPlaybackTargets;
-        if (this.video.webkitWirelessVideoPlaybackDisabled)
+        if (this.wirelessPlaybackDisabled)
             wirelessPlaybackTargetsAvailable = false;
 
         if (wirelessPlaybackTargetsAvailable)

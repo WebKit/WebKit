@@ -1,3 +1,23 @@
+2015-04-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Media controls should not always auto-hide
+        https://bugs.webkit.org/show_bug.cgi?id=143322
+
+        Reviewed by Dean Jackson.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller): Intialize new properties.
+        (Controller.prototype.hideControls): Do nothing if controlsAlwaysVisible() returns true;
+        (Controller.prototype.controlsAlwaysVisible): New.
+        (Controller.prototype.controlsAreHidden): Consult controlsAlwaysVisible().
+        (Controller.prototype.currentPlaybackTargetIsWireless): Use new properties.
+        (Controller.prototype.updateWirelessTargetAvailable): Cache video.webkitCurrentPlaybackTargetIsWireless
+            and video.webkitWirelessVideoPlaybackDisabled because we know when they change and
+            use them frequently.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.controlsAlwaysVisible): New.
+        * platform/graphics/MediaPlaybackTarget.h:
+
 2015-04-01  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r182121): SVG animation macros cause warnings in MSVC

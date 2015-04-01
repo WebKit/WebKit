@@ -651,6 +651,15 @@ ControllerIOS.prototype = {
             this.controls.fullscreenButton.classList.remove(this.ClassNames.hidden);
     },
 
+    controlsAlwaysVisible: function()
+    {
+        if (this.presentationMode() === 'optimized')
+            return true;
+
+        return Controller.prototype.controlsAlwaysVisible.call(this);
+    },
+
+
 };
 
 Object.create(Controller.prototype).extend(ControllerIOS.prototype);
