@@ -1,3 +1,16 @@
+2015-03-31  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: REGRESSION: Filtering no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=143099
+
+        Reviewed by Brian Burg.
+
+        Add a check for an empty array of filter functions and return true in this case to ensure text
+        and timeline filters work correctly.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.matchTreeElementAgainstFilterFunctions):
+
 2015-03-31  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r182186.

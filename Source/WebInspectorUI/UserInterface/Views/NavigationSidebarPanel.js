@@ -303,6 +303,9 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
     matchTreeElementAgainstFilterFunctions(treeElement)
     {
+        if (!this._filterFunctions.length)
+            return true;
+
         for (var filterFunction of this._filterFunctions) {
             if (filterFunction(treeElement))
                 return true;
