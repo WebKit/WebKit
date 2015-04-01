@@ -32,10 +32,11 @@
 }
 
 .object-tree > :matches(.title, .object-preview)::before {
-    position: absolute;
+    display: inline-block;
 
-    top: 0;
-    left: -2px;
+    vertical-align: baseline;
+    margin-bottom: -2px;
+    margin-right: 2px;
 
     width: 13px;
     height: 13px;
@@ -49,7 +50,7 @@
 }
 
 .object-tree:not(.lossless-preview) > :matches(.title, .object-preview) {
-    margin-left: 13px;
+    margin-left: 1px;
 }
 
 .object-tree.expanded > :matches(.title, .object-preview)::before {

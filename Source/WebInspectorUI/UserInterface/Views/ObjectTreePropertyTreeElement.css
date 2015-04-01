@@ -35,10 +35,13 @@
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .object-tree-property > .disclosure-button {
-    float: left;
+    display: inline-block;
+    vertical-align: top;
 
     width: 16px;
     height: 16px;
@@ -61,7 +64,8 @@
 }
 
 .object-tree-property > .icon {
-    float: left;
+    display: inline-block;
+    vertical-align: top;
     position: relative;
 
     width: 16px;

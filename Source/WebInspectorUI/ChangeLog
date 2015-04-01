@@ -1,3 +1,27 @@
+2015-03-31  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: console.error(object) has double disclosure triangles
+        https://bugs.webkit.org/show_bug.cgi?id=142069
+
+        Use inline-block instead of "float: left" or "position: absolute" to
+        make layout more predictable and easier to understand.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LogContentView.css:
+        (.outline-disclosure, .outline-disclosure ol):
+        (.outline-disclosure > li.parent):
+        (.outline-disclosure > li.parent::before):
+        (.outline-disclosure li.parent): Deleted.
+        (.outline-disclosure li.parent::before): Deleted.
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (.object-tree-property > .titles):
+        (.object-tree-property > .disclosure-button):
+        (.object-tree-property > .icon):
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree > :matches(.title, .object-preview)::before):
+        (.object-tree:not(.lossless-preview) > :matches(.title, .object-preview)):
+
 2015-03-31  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: REGRESSION: Filtering no longer works
