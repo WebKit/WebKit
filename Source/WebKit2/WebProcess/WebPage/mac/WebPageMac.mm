@@ -1041,9 +1041,9 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     RefPtr<Range> selectionRange = corePage()->focusController().focusedOrMainFrame().selection().selection().firstRange();
 
     URL absoluteLinkURL = hitTestResult.absoluteLinkURL();
-    Node *innerNode = hitTestResult.innerNode();
-    if (!absoluteLinkURL.isEmpty() && innerNode) {
-        RefPtr<Range> linkRange = rangeOfContents(*innerNode);
+    Element *URLElement = hitTestResult.URLElement();
+    if (!absoluteLinkURL.isEmpty() && URLElement) {
+        RefPtr<Range> linkRange = rangeOfContents(*URLElement);
         actionMenuResult.linkTextIndicator = TextIndicator::createWithRange(*linkRange, textIndicatorTransitionForActionMenu(selectionRange.get(), *linkRange, forImmediateAction, false));
     }
 

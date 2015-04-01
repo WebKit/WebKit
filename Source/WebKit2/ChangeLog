@@ -1,5 +1,18 @@
 2015-03-31  Timothy Horton  <timothy_horton@apple.com>
 
+        TextIndicator for <span> inside an <a> only highlights the <span>, should highlight the whole <a>
+        https://bugs.webkit.org/show_bug.cgi?id=143287
+        <rdar://problem/20318342>
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performActionMenuHitTestAtLocation):
+        Instead of just highlighting the hit element, highlight the whole
+        element that the link URL comes from.
+
+2015-03-31  Timothy Horton  <timothy_horton@apple.com>
+
         WKView should stop using endGestureWithEvent
         https://bugs.webkit.org/show_bug.cgi?id=143285
         <rdar://problem/20357007>

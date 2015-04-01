@@ -213,10 +213,10 @@ using namespace WebCore;
 {
     NSURL *url = _hitTestResult.absoluteLinkURL();
     NSString *absoluteURLString = [url absoluteString];
-    if (url && WebCore::protocolIsInHTTPFamily(absoluteURLString) && _hitTestResult.innerNode()) {
+    if (url && WebCore::protocolIsInHTTPFamily(absoluteURLString) && _hitTestResult.URLElement()) {
         _type = WebImmediateActionLinkPreview;
 
-        RefPtr<Range> linkRange = rangeOfContents(*_hitTestResult.innerNode());
+        RefPtr<Range> linkRange = rangeOfContents(*_hitTestResult.URLElement());
         RefPtr<TextIndicator> linkTextIndicator = TextIndicator::createWithRange(*linkRange, TextIndicatorPresentationTransition::FadeIn);
         [_webView _setTextIndicator:linkTextIndicator.get() fadeOut:NO];
 
