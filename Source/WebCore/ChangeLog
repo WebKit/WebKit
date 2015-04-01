@@ -1,3 +1,24 @@
+2015-04-01  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Properly handle regexes that match everything.
+        https://bugs.webkit.org/show_bug.cgi?id=143281
+
+        Reviewed by Benjamin Poulain.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        Make sure we always have at least one NFA for rule lists with triggers that all match everything.
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpretAppendAction):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpretTestFlagsAndAppendAction):
+        Add helper functions to reduce duplicate code.
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::actionsFromDFARoot):
+        Get all actions without flags from the DFA root.
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+        Remove branches when interpreting.
+        * contentextensions/DFABytecodeInterpreter.h:
+        Add helper functions to reduce duplicate code.
+
 2015-04-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Addressing post-review comments.

@@ -41,18 +41,39 @@ static inline IntType getBits(const DFABytecode* bytecode, unsigned bytecodeLeng
     return *reinterpret_cast<const IntType*>(&bytecode[index]);
 }
     
+void DFABytecodeInterpreter::interpretAppendAction(unsigned& programCounter, Actions& actions)
+{
+    ASSERT(getBits<DFABytecodeInstruction>(m_bytecode, m_bytecodeLength, programCounter) == DFABytecodeInstruction::AppendAction);
+    actions.add(static_cast<uint64_t>(getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode))));
+    programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
+}
+
+void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(unsigned& programCounter, uint16_t flags, Actions& actions)
+{
+    ASSERT(getBits<DFABytecodeInstruction>(m_bytecode, m_bytecodeLength, programCounter) == DFABytecodeInstruction::TestFlagsAndAppendAction);
+    if (flags & getBits<uint16_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode)))
+        actions.add(static_cast<uint64_t>(getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint16_t))));
+    programCounter += instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendAction);
+}
+
 DFABytecodeInterpreter::Actions DFABytecodeInterpreter::actionsFromDFARoot()
 {
-    DFABytecodeInterpreter::Actions universalActionLocations;
+    Actions actions;
 
-    // Skip first DFA header. All universal actions are in the first DFA root.
+    // DFA header.
+    unsigned dfaBytecodeLength = getBits<unsigned>(m_bytecode, m_bytecodeLength, 0);
     unsigned programCounter = sizeof(unsigned);
 
-    while (static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) == DFABytecodeInstruction::AppendAction) {
-        universalActionLocations.add(static_cast<uint64_t>(getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode))));
-        programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
+    while (programCounter < dfaBytecodeLength) {
+        DFABytecodeInstruction instruction = static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]);
+        if (instruction == DFABytecodeInstruction::AppendAction)
+            interpretAppendAction(programCounter, actions);
+        else if (instruction == DFABytecodeInstruction::TestFlagsAndAppendAction)
+            programCounter += instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendAction);
+        else
+            break;
     }
-    return universalActionLocations;
+    return actions;
 }
     
 DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString& urlCString, uint16_t flags)
@@ -71,9 +92,22 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
         programCounter += sizeof(unsigned);
 
         // Skip the actions on the DFA root. These are accessed via actionsFromDFARoot.
-        while (static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) == DFABytecodeInstruction::AppendAction) {
-            ASSERT_WITH_MESSAGE(!dfaStart, "Triggers that match everything should only be in the first DFA.");
-            programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
+        if (!dfaStart) {
+            while (programCounter < dfaBytecodeLength) {
+                DFABytecodeInstruction instruction = static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]);
+                if (instruction == DFABytecodeInstruction::AppendAction)
+                    programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
+                else if (instruction == DFABytecodeInstruction::TestFlagsAndAppendAction)
+                    interpretTestFlagsAndAppendAction(programCounter, flags, actions);
+                else
+                    break;
+            }
+            if (programCounter >= m_bytecodeLength)
+                return actions;
+        } else {
+            ASSERT_WITH_MESSAGE(static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) != DFABytecodeInstruction::AppendAction 
+                && static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) != DFABytecodeInstruction::TestFlagsAndAppendAction, 
+                "Triggers that match everything should only be in the first DFA.");
         }
         
         // Interpret the bytecode from this DFA.
@@ -87,46 +121,67 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
             case DFABytecodeInstruction::Terminate:
                 goto nextDFA;
                     
-            case DFABytecodeInstruction::CheckValueCaseSensitive:
-            case DFABytecodeInstruction::CheckValueCaseInsensitive: {
+            case DFABytecodeInstruction::CheckValueCaseSensitive: {
                 if (urlIndexIsAfterEndOfString)
                     goto nextDFA;
 
-                char character = url[urlIndex];
-                if (static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) == DFABytecodeInstruction::CheckValueCaseInsensitive)
-                    character = toASCIILower(character);
-
                 // Check to see if the next character in the url is the value stored with the bytecode.
+                char character = url[urlIndex];
                 if (character == getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode))) {
                     programCounter = getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t));
                     if (!character)
                         urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
-                } else {
+                } else
                     programCounter += instructionSizeWithArguments(DFABytecodeInstruction::CheckValueCaseSensitive);
-                    ASSERT(instructionSizeWithArguments(DFABytecodeInstruction::CheckValueCaseSensitive) == instructionSizeWithArguments(DFABytecodeInstruction::CheckValueCaseInsensitive));
-                }
+                break;
+            }
+
+            case DFABytecodeInstruction::CheckValueCaseInsensitive: {
+                if (urlIndexIsAfterEndOfString)
+                    goto nextDFA;
+
+                // Check to see if the next character in the url is the value stored with the bytecode.
+                char character = toASCIILower(url[urlIndex]);
+                if (character == getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode))) {
+                    programCounter = getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t));
+                    if (!character)
+                        urlIndexIsAfterEndOfString = true;
+                    urlIndex++; // This represents an edge in the DFA.
+                } else
+                    programCounter += instructionSizeWithArguments(DFABytecodeInstruction::CheckValueCaseInsensitive);
                 break;
             }
                     
-            case DFABytecodeInstruction::CheckValueRangeCaseSensitive:
-            case DFABytecodeInstruction::CheckValueRangeCaseInsensitive: {
+            case DFABytecodeInstruction::CheckValueRangeCaseSensitive: {
                 if (urlIndexIsAfterEndOfString)
                     goto nextDFA;
                 
                 char character = url[urlIndex];
-                if (static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) == DFABytecodeInstruction::CheckValueRangeCaseInsensitive)
-                    character = toASCIILower(character);
                 if (character >= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode))
                     && character <= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t))) {
                     programCounter = getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t) + sizeof(uint8_t));
                     if (!character)
                         urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
-                } else {
+                } else
                     programCounter += instructionSizeWithArguments(DFABytecodeInstruction::CheckValueRangeCaseSensitive);
-                    ASSERT(instructionSizeWithArguments(DFABytecodeInstruction::CheckValueRangeCaseSensitive) == instructionSizeWithArguments(DFABytecodeInstruction::CheckValueRangeCaseInsensitive));
-                }
+                break;
+            }
+
+            case DFABytecodeInstruction::CheckValueRangeCaseInsensitive: {
+                if (urlIndexIsAfterEndOfString)
+                    goto nextDFA;
+                
+                char character = toASCIILower(url[urlIndex]);
+                if (character >= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode))
+                    && character <= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t))) {
+                    programCounter = getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t) + sizeof(uint8_t));
+                    if (!character)
+                        urlIndexIsAfterEndOfString = true;
+                    urlIndex++; // This represents an edge in the DFA.
+                } else
+                    programCounter += instructionSizeWithArguments(DFABytecodeInstruction::CheckValueRangeCaseInsensitive);
                 break;
             }
 
@@ -139,14 +194,11 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
                 break;
                     
             case DFABytecodeInstruction::AppendAction:
-                actions.add(static_cast<uint64_t>(getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode))));
-                programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
+                interpretAppendAction(programCounter, actions);
                 break;
                     
             case DFABytecodeInstruction::TestFlagsAndAppendAction:
-                if (flags & getBits<uint16_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode)))
-                    actions.add(static_cast<uint64_t>(getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint16_t))));
-                programCounter += instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendAction);
+                interpretTestFlagsAndAppendAction(programCounter, flags, actions);
                 break;
                     
             default:
@@ -155,6 +207,7 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
             // We should always terminate before or at a null character at the end of a String.
             ASSERT(urlIndex <= urlCString.length() || (urlIndexIsAfterEndOfString && urlIndex <= urlCString.length() + 1));
         }
+        RELEASE_ASSERT_NOT_REACHED(); // The while loop can only be exited using goto nextDFA.
         nextDFA:
         ASSERT(dfaBytecodeLength);
         programCounter = dfaStart + dfaBytecodeLength;

@@ -51,6 +51,8 @@ public:
     Actions actionsFromDFARoot();
 
 private:
+    void interpretAppendAction(unsigned& programCounter, Actions&);
+    void interpretTestFlagsAndAppendAction(unsigned& programCounter, uint16_t flags, Actions&);
     const DFABytecode* m_bytecode;
     const unsigned m_bytecodeLength;
 };

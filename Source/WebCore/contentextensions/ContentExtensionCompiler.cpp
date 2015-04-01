@@ -173,6 +173,8 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
 #endif
 
     Vector<NFA> nfas = combinedURLFilters.createNFAs();
+    if (!nfas.size() && universalActionLocations.size())
+        nfas.append(NFA());
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double nfaBuildTimeEnd = monotonicallyIncreasingTime();
