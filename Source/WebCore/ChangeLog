@@ -1,5 +1,14 @@
 2015-04-01  Eric Carlson  <eric.carlson@apple.com>
 
+        Another attempt to fixi the iOS build after r182240.
+
+        Reviewed by Dean Jackson.
+
+        * platform/graphics/MediaPlaybackTarget.h:
+        (WebCore::MediaPlaybackTarget::hasActiveRoute):
+
+2015-04-01  Eric Carlson  <eric.carlson@apple.com>
+
         Fix the iOS build after r182240.
 
         * platform/graphics/MediaPlaybackTarget.h:

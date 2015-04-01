@@ -30,9 +30,11 @@
 
 #include <wtf/RetainPtr.h>
 
+#if PLATFORM(COCOA)
 OBJC_CLASS NSKeyedArchiver;
 OBJC_CLASS NSKeyedUnarchiver;
 OBJC_CLASS AVOutputContext;
+#endif
 
 namespace WebCore {
 
@@ -40,7 +42,7 @@ class MediaPlaybackTarget {
 public:
     virtual ~MediaPlaybackTarget() { }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     WEBCORE_EXPORT MediaPlaybackTarget(AVOutputContext *context = nil) { m_devicePickerContext = context; }
 
     WEBCORE_EXPORT void encode(NSKeyedArchiver *) const;
@@ -48,7 +50,13 @@ public:
 
     void setDevicePickerContext(AVOutputContext *context) { m_devicePickerContext = context; }
     AVOutputContext *devicePickerContext() const { return m_devicePickerContext.get(); }
+
+#if PLATFORM(IOS)
+    bool hasActiveRoute() const { return false; }
+#else
     bool hasActiveRoute() const;
+#endif
+
 #else
     void setDevicePickerContext(AVOutputContext *) { }
     AVOutputContext *devicePickerContext() const { return nullptr; }
@@ -56,7 +64,7 @@ public:
 #endif
 
 protected:
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<AVOutputContext> m_devicePickerContext;
 #endif
 };
