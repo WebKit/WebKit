@@ -1,3 +1,16 @@
+2015-04-01  Timothy Horton  <timothy_horton@apple.com>
+
+        Smart magnification gesture sometimes shoots to the middle of the page
+        https://bugs.webkit.org/show_bug.cgi?id=143296
+        <rdar://problem/18209280>
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::didCollectGeometryForSmartMagnificationGesture):
+        Constrain the target rect to the viewport, and if it had overflowed the viewport,
+        scroll halfway towards the gesture origin.
+
 2015-03-31  Simon Fraser  <simon.fraser@apple.com>
 
         Remove scrolling tree dependency on wheel event handler counts, and use fast scrolling even when there are wheel handlers

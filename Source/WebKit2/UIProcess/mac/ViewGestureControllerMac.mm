@@ -224,10 +224,20 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
 
     double targetMagnification = visibleContentRect.width() / unscaledTargetRect.width();
 
+    FloatRect unscaledVisibleContentRect = visibleContentRect;
+    unscaledVisibleContentRect.scale(1 / currentScaleFactor);
+    FloatRect viewportConstrainedUnscaledTargetRect = unscaledTargetRect;
+    viewportConstrainedUnscaledTargetRect.intersect(unscaledVisibleContentRect);
+
+    if (unscaledTargetRect.width() > viewportConstrainedUnscaledTargetRect.width())
+        viewportConstrainedUnscaledTargetRect.setX(unscaledVisibleContentRect.x() + (origin.x() / currentScaleFactor) - viewportConstrainedUnscaledTargetRect.width() / 2);
+    if (unscaledTargetRect.height() > viewportConstrainedUnscaledTargetRect.height())
+        viewportConstrainedUnscaledTargetRect.setY(unscaledVisibleContentRect.y() + (origin.y() / currentScaleFactor) - viewportConstrainedUnscaledTargetRect.height() / 2);
+
     // For replaced elements like images, we want to fit the whole element
     // in the view, so scale it down enough to make both dimensions fit if possible.
     if (isReplacedElement)
-        targetMagnification = std::min(targetMagnification, static_cast<double>(visibleContentRect.height() / unscaledTargetRect.height()));
+        targetMagnification = std::min(targetMagnification, static_cast<double>(visibleContentRect.height() / viewportConstrainedUnscaledTargetRect.height()));
 
     targetMagnification = std::min(std::max(targetMagnification, minMagnification), maxMagnification);
 
@@ -241,7 +251,7 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
             targetMagnification = 1;
     }
 
-    FloatRect targetRect(unscaledTargetRect);
+    FloatRect targetRect(viewportConstrainedUnscaledTargetRect);
     targetRect.scale(targetMagnification);
     FloatPoint targetOrigin(visibleContentRect.center());
     targetOrigin.moveBy(-targetRect.center());
