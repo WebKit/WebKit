@@ -741,7 +741,7 @@ public:
 
     WTF_EXPORT_STRING_API static const UChar latin1CaseFoldTable[256];
 
-    WTF_EXPORT_STRING_API StringImpl& extractFoldedStringInSymbol()
+    StringImpl& extractFoldedStringInSymbol()
     {
         ASSERT(length());
         ASSERT(isSymbol());

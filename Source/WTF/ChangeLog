@@ -1,3 +1,10 @@
+2015-03-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix the build after <http://trac.webkit.org/changeset/182205>.
+
+        * wtf/text/StringImpl.h: (WTF::StringImpl::extractFoldedStringInSymbol):
+        A function cannot be both exported and inline.
+
 2015-03-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Clean up Identifier factories to clarify the meaning of StringImpl*
