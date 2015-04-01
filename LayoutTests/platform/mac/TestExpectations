@@ -45,8 +45,6 @@ webkit.org/b/129039 accessibility/select-element-at-index.html [ Skip ]
 # ariaControlsElementAtIndex is not implemented in mac
 webkit.org/b/127908 accessibility/aria-controls.html [ Skip ]
 
-webkit.org/b/142976 accessibility/textarea-selected-text-range.html [ Pass Failure ]
-
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
 

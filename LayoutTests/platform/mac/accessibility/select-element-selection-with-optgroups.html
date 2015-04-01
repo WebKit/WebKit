@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html>
 <html>
 <head>
 <script src="../../../resources/js-test-pre.js"></script>
@@ -22,43 +22,36 @@
 <div id="console"></div>
 
 <script>
+description("This tests that setting selection within a list box works correctly if there are optgroups");
+window.jsTestIsAsync = true;
 
-    description("This tests that setting selection within a list box works correctly if there are optgroups");
+if (window.accessibilityController) {
+    document.getElementById("suite").focus();
+    var selectElement = accessibilityController.focusedElement;
 
-    if (window.accessibilityController) {
-          window.jsTestIsAsync = true;
+    shouldBe("selectElement.selectedChildrenCount", "0");
 
-          document.getElementById("suite").focus();
-          var selectElement = accessibilityController.focusedElement;
-    
-          shouldBe("selectElement.selectedChildrenCount", "0");
-          
-          var option1 = selectElement.childAtIndex(1);
-          var option2 = selectElement.childAtIndex(2);
-          var option3 = selectElement.childAtIndex(4);
+    var option1 = selectElement.childAtIndex(1);
+    var option2 = selectElement.childAtIndex(2);
+    var option3 = selectElement.childAtIndex(4);
 
-          // Selection operations happen after a delay so they don't hang. Check the result on a timeout.
-          selectElement.setSelectedChild(option1);
-          setTimeout(function() {
-              shouldBe("selectElement.selectedChildrenCount", "1");
-              shouldBeTrue("selectElement.selectedChildAtIndex(0).isEqual(option1)");
+    // Selection operations happen after a delay so they don't hang. Check the result on a timeout.
+    selectElement.setSelectedChild(option1);
+    shouldBecomeEqual("selectElement.selectedChildrenCount", "1", function() {
+        shouldBeTrue("selectElement.selectedChildAtIndex(0).isEqual(option1)");
 
-              selectElement.setSelectedChild(option2);
-              setTimeout(function() {
-                  shouldBe("selectElement.selectedChildrenCount", "1");
-                  shouldBeTrue("selectElement.selectedChildAtIndex(0).isEqual(option2)");
+        selectElement.setSelectedChild(option2);
+        shouldBecomeEqual("selectElement.selectedChildrenCount", "1", function() {
+           shouldBeTrue("selectElement.selectedChildAtIndex(0).isEqual(option2)");
 
-                  selectElement.setSelectedChild(option3);
-                  setTimeout(function() {
-                      shouldBe("selectElement.selectedChildrenCount", "1");
-                      shouldBeTrue("selectElement.selectedChildAtIndex(0).isEqual(option3)");
-                      finishJSTest();
-                  }, 1);
-              }, 1);
-           }, 1);
-        
-    }
-
+            selectElement.setSelectedChild(option3);
+            shouldBecomeEqual("selectElement.selectedChildrenCount", "1", function() {
+                shouldBeTrue("selectElement.selectedChildAtIndex(0).isEqual(option3)");
+                finishJSTest();
+            });
+        });
+    });
+}
 </script>
 
 <script src="../../../resources/js-test-post.js"></script>

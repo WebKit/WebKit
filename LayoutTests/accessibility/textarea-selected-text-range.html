@@ -22,19 +22,13 @@ line 3
 
             // After setting a property through accessibility, the value won't be updated immediately, so we
             // must check after a timeout to re-verify the value.
-            setTimeout(function() {
-                shouldBe("textArea.selectedTextRange", "'{4, 0}'");
+            shouldBecomeEqual("textArea.selectedTextRange", "'{4, 0}'", function() {
                 textArea.setSelectedTextRange(8,2);
-                setTimeout(function() {
-                    shouldBe("textArea.selectedTextRange", "'{8, 2}'");
+                shouldBecomeEqual("textArea.selectedTextRange", "'{8, 2}'", function() {
                     textArea.setSelectedTextRange(100,0);
-                    setTimeout(function() {
-                        shouldBe("textArea.selectedTextRange", "'{25, 0}'");
-                        finishJSTest();
-                    }, 1);
-                }, 1);
-            }, 1);
-
+                    shouldBecomeEqual("textArea.selectedTextRange", "'{25, 0}'", finishJSTest);
+                });
+            });
         }
     </script>
 <script src="../resources/js-test-post.js"></script>
