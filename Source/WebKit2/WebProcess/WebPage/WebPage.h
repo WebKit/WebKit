@@ -865,6 +865,9 @@ public:
 
     void setPageActivityState(WebCore::PageActivityState::Flags);
 
+    void postMessage(const String& messageName, API::Object* messageBody);
+    void postSynchronousMessage(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

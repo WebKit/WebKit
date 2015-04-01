@@ -46,6 +46,8 @@
 #define WK_WEB_VIEW_PROTOCOLS
 #endif
 
+typedef const struct OpaqueWKPage* WKPageRef;
+
 namespace WebKit {
 class ViewSnapshot;
 class WebPageProxy;
@@ -105,6 +107,8 @@ struct PrintInfo;
 #else
 @property (nonatomic, setter=_setIgnoresNonWheelEvents:) BOOL _ignoresNonWheelEvents;
 #endif
+
+- (WKPageRef)_pageForTesting;
 
 @end
 

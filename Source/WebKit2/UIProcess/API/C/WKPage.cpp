@@ -881,6 +881,11 @@ void WKPageSetPageFindMatchesClient(WKPageRef pageRef, const WKPageFindMatchesCl
     toImpl(pageRef)->initializeFindMatchesClient(wkClient);
 }
 
+void WKPageSetPageInjectedBundleClient(WKPageRef pageRef, const WKPageInjectedBundleClientBase* wkClient)
+{
+    toImpl(pageRef)->setInjectedBundleClient(wkClient);
+}
+
 void WKPageSetPageFormClient(WKPageRef pageRef, const WKPageFormClientBase* wkClient)
 {
     toImpl(pageRef)->setFormClient(std::make_unique<WebFormClient>(wkClient));

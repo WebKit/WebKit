@@ -374,6 +374,7 @@ set(WebKit2_SOURCES
     UIProcess/WebOriginDataManagerProxy.cpp
     UIProcess/WebPageDiagnosticLoggingClient.cpp
     UIProcess/WebPageGroup.cpp
+    UIProcess/WebPageInjectedBundleClient.cpp
     UIProcess/WebPageProxy.cpp
     UIProcess/WebPasteboardProxy.cpp
     UIProcess/WebPreferences.cpp

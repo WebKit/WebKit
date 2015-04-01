@@ -620,6 +620,11 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
     _page->setCustomUserAgent(customUserAgent);
 }
 
+- (WKPageRef)_pageForTesting
+{
+    return toAPI(_page.get());
+}
+
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)

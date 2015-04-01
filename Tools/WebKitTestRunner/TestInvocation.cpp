@@ -175,7 +175,7 @@ void TestInvocation::invoke()
     WKRetainPtr<WKUInt64Ref> timeoutValue = adoptWK(WKUInt64Create(m_timeout));
     WKDictionarySetItem(beginTestMessageBody.get(), timeoutKey.get(), timeoutValue.get());
 
-    WKContextPostMessageToInjectedBundle(TestController::singleton().context(), messageName.get(), beginTestMessageBody.get());
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), beginTestMessageBody.get());
 
     TestController::singleton().runUntil(m_gotInitialResponse, TestController::shortTimeout);
     if (!m_gotInitialResponse) {
@@ -369,21 +369,21 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     if (WKStringIsEqualToUTF8CString(messageName, "AddChromeInputField")) {
         TestController::singleton().mainWebView()->addChromeInputField();
         WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallAddChromeInputFieldCallback"));
-        WKContextPostMessageToInjectedBundle(TestController::singleton().context(), messageName.get(), 0);
+        WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "RemoveChromeInputField")) {
         TestController::singleton().mainWebView()->removeChromeInputField();
         WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallRemoveChromeInputFieldCallback"));
-        WKContextPostMessageToInjectedBundle(TestController::singleton().context(), messageName.get(), 0);
+        WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
         return;
     }
     
     if (WKStringIsEqualToUTF8CString(messageName, "FocusWebView")) {
         TestController::singleton().mainWebView()->makeWebViewFirstResponder();
         WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallFocusWebViewCallback"));
-        WKContextPostMessageToInjectedBundle(TestController::singleton().context(), messageName.get(), 0);
+        WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
         return;
     }
 
@@ -393,7 +393,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKPageSetCustomBackingScaleFactor(TestController::singleton().mainWebView()->page(), backingScaleFactor);
 
         WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallSetBackingScaleFactorCallback"));
-        WKContextPostMessageToInjectedBundle(TestController::singleton().context(), messageName.get(), 0);
+        WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
         return;
     }
 
@@ -522,7 +522,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     if (WKStringIsEqualToUTF8CString(messageName, "ProcessWorkQueue")) {
         if (TestController::singleton().workQueueManager().processWorkQueue()) {
             WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("WorkQueueProcessedCallback"));
-            WKContextPostMessageToInjectedBundle(TestController::singleton().context(), messageName.get(), 0);
+            WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
         }
         return;
     }

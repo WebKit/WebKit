@@ -426,6 +426,8 @@ messages -> WebPageProxy {
 #if PLATFORM(MAC)
     DidPerformActionMenuHitTest(struct WebKit::ActionMenuHitTestResult result, bool forImmediateAction, WebKit::UserData userData)
 #endif
+    HandleMessage(String messageName, WebKit::UserData messageBody) WantsConnection
+    HandleSynchronousMessage(String messageName, WebKit::UserData messageBody) -> (WebKit::UserData returnData) WantsConnection
 
     HandleAutoFillButtonClick(WebKit::UserData userData);
 

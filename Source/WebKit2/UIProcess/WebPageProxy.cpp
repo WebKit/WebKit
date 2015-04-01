@@ -604,6 +604,36 @@ void WebPageProxy::setContextMenuClient(std::unique_ptr<API::ContextMenuClient> 
 }
 #endif
 
+void WebPageProxy::setInjectedBundleClient(const WKPageInjectedBundleClientBase* client)
+{
+    if (!client) {
+        m_injectedBundleClient = nullptr;
+        return;
+    }
+
+    m_injectedBundleClient = std::make_unique<WebPageInjectedBundleClient>();
+    m_injectedBundleClient->initialize(client);
+}
+
+void WebPageProxy::handleMessage(IPC::Connection& connection, const String& messageName, const WebKit::UserData& messageBody)
+{
+    auto* webProcessProxy = WebProcessProxy::fromConnection(&connection);
+    if (!webProcessProxy || !m_injectedBundleClient)
+        return;
+    m_injectedBundleClient->didReceiveMessageFromInjectedBundle(this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.object()).get());
+}
+
+void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const String& messageName, const UserData& messageBody, UserData& returnUserData)
+{
+    if (!WebProcessProxy::fromConnection(&connection) || !m_injectedBundleClient)
+        return;
+
+    RefPtr<API::Object> returnData;
+    m_injectedBundleClient->didReceiveSynchronousMessageFromInjectedBundle(this, messageName, WebProcessProxy::fromConnection(&connection)->transformHandlesToObjects(messageBody.object()).get(), returnData);
+    returnUserData = UserData(WebProcessProxy::fromConnection(&connection)->transformObjectsToHandles(returnData.get()));
+}
+
+
 void WebPageProxy::reattachToWebProcess()
 {
     ASSERT(!m_isClosed);

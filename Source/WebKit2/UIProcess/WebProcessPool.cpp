@@ -1310,7 +1310,6 @@ void WebProcessPool::handleMessage(IPC::Connection& connection, const String& me
     auto* webProcessProxy = WebProcessProxy::fromConnection(&connection);
     if (!webProcessProxy)
         return;
-
     m_injectedBundleClient.didReceiveMessageFromInjectedBundle(this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.object()).get());
 }
 

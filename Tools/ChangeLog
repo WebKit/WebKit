@@ -1,3 +1,80 @@
+2015-04-01  Enrica Casucci  <enrica@apple.com>
+
+        Injected bundle messages should be at the page level.
+        https://bugs.webkit.org/show_bug.cgi?id=143283
+
+        Reviewed by Alexey Proskuryakov.
+
+        Updating WebKitTestRunner to use the new page level messaging.
+        The author of this patch is Tim Horton, I just finished it.
+
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::mouseDown):
+        (WTR::EventSendingController::mouseUp):
+        (WTR::EventSendingController::mouseMoveTo):
+        (WTR::EventSendingController::leapForward):
+        (WTR::EventSendingController::scheduleAsynchronousClick):
+        (WTR::EventSendingController::keyDown):
+        (WTR::EventSendingController::scheduleAsynchronousKeyDown):
+        (WTR::EventSendingController::mouseScrollBy):
+        (WTR::EventSendingController::mouseScrollByWithWheelAndMomentumPhases):
+        (WTR::EventSendingController::continuousMouseScrollBy):
+        (WTR::EventSendingController::addTouchPoint):
+        (WTR::EventSendingController::updateTouchPoint):
+        (WTR::EventSendingController::setTouchModifier):
+        (WTR::EventSendingController::setTouchPointRadius):
+        (WTR::EventSendingController::touchStart):
+        (WTR::EventSendingController::touchMove):
+        (WTR::EventSendingController::touchEnd):
+        (WTR::EventSendingController::touchCancel):
+        (WTR::EventSendingController::clearTouchPoints):
+        (WTR::EventSendingController::releaseTouchPoint):
+        (WTR::EventSendingController::cancelTouchPoint):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessage):
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        (WTR::InjectedBundle::done):
+        (WTR::InjectedBundle::outputText):
+        (WTR::InjectedBundle::postNewBeforeUnloadReturnValue):
+        (WTR::InjectedBundle::postAddChromeInputField):
+        (WTR::InjectedBundle::postRemoveChromeInputField):
+        (WTR::InjectedBundle::postFocusWebView):
+        (WTR::InjectedBundle::postSetBackingScaleFactor):
+        (WTR::InjectedBundle::postSetWindowIsKey):
+        (WTR::InjectedBundle::postSimulateWebNotificationClick):
+        (WTR::InjectedBundle::postSetAddsVisitedLinks):
+        (WTR::InjectedBundle::setGeolocationPermission):
+        (WTR::InjectedBundle::setMockGeolocationPosition):
+        (WTR::InjectedBundle::setMockGeolocationPositionUnavailableError):
+        (WTR::InjectedBundle::setUserMediaPermission):
+        (WTR::InjectedBundle::setCustomPolicyDelegate):
+        (WTR::InjectedBundle::setHidden):
+        (WTR::InjectedBundle::setCacheModel):
+        (WTR::InjectedBundle::shouldProcessWorkQueue):
+        (WTR::InjectedBundle::processWorkQueue):
+        (WTR::InjectedBundle::queueBackNavigation):
+        (WTR::InjectedBundle::queueForwardNavigation):
+        (WTR::InjectedBundle::queueLoad):
+        (WTR::InjectedBundle::queueLoadHTMLString):
+        (WTR::InjectedBundle::queueReload):
+        (WTR::InjectedBundle::queueLoadingScript):
+        (WTR::InjectedBundle::queueNonLoadingScript):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setHandlesAuthenticationChallenges):
+        (WTR::TestRunner::setAuthenticationUsername):
+        (WTR::TestRunner::setAuthenticationPassword):
+        (WTR::TestRunner::secureEventInputIsEnabled):
+        (WTR::TestRunner::setBlockAllPlugins):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::didReceivePageMessageFromInjectedBundle):
+        (WTR::TestController::didReceiveSynchronousPageMessageFromInjectedBundle):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
 2015-04-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r182174 and r182177.

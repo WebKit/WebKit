@@ -1,3 +1,45 @@
+2015-04-01  Enrica Casucci  <enrica@apple.com>
+
+        Injected bundle messages should be at the page level.
+        https://bugs.webkit.org/show_bug.cgi?id=143283
+
+        Reviewed by Alexey Proskuryakov.
+
+        All the messages between the injected bundle and the UI
+        process should be page level messages instead of context.
+        The author of this patch is Tim Horton, I just finished it.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageInjectedBundleClient):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKPageInjectedBundleClient.h: Added.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _pageForTesting]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/WebPageInjectedBundleClient.cpp: Added.
+        (WebKit::WebPageInjectedBundleClient::didReceiveMessageFromInjectedBundle):
+        (WebKit::WebPageInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle):
+        * UIProcess/WebPageInjectedBundleClient.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setInjectedBundleClient):
+        (WebKit::WebPageProxy::handleMessage):
+        (WebKit::WebPageProxy::handleSynchronousMessage):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::injectedBundleClient):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::handleMessage):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePagePostMessage):
+        (WKBundlePagePostSynchronousMessage):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::postMessage):
+        (WebKit::WebPage::postSynchronousMessage):
+        * WebProcess/WebPage/WebPage.h:
+
 2015-04-01  Alexey Proskuryakov  <ap@apple.com>
 
         [iOS] WebContent should have access to the entirety of its caches directory

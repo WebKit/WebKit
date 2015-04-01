@@ -4832,4 +4832,20 @@ void WebPage::didChangeScrollOffsetForFrame(Frame* frame)
     updateMainFrameScrollOffsetPinning();
 }
 
+void WebPage::postMessage(const String& messageName, API::Object* messageBody)
+{
+    send(Messages::WebPageProxy::HandleMessage(messageName, UserData(WebProcess::singleton().transformObjectsToHandles(messageBody))));
+}
+
+void WebPage::postSynchronousMessage(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
+{
+    UserData returnUserData;
+
+    auto& webProcess = WebProcess::singleton();
+    if (!sendSync(Messages::WebPageProxy::HandleSynchronousMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))), Messages::WebPageProxy::HandleSynchronousMessage::Reply(returnUserData)))
+        returnData = nullptr;
+    else
+        returnData = webProcess.transformHandlesToObjects(returnUserData.object());
+}
+
 } // namespace WebKit

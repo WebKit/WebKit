@@ -109,6 +109,9 @@ WK_EXPORT WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef page);
 
 WK_EXPORT bool WKBundlePageIsUsingEphemeralSession(WKBundlePageRef page);
 
+WK_EXPORT void WKBundlePagePostMessage(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody);
+WK_EXPORT void WKBundlePagePostSynchronousMessage(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData);
+
 #ifdef __cplusplus
 }
 #endif

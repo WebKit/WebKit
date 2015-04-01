@@ -572,3 +572,17 @@ void WKBundlePageSetUseTestingViewportConfiguration(WKBundlePageRef pageRef, boo
     toImpl(pageRef)->setUseTestingViewportConfiguration(useTestingViewportConfiguration);
 }
 #endif
+
+void WKBundlePagePostMessage(WKBundlePageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)
+{
+    toImpl(pageRef)->postMessage(toWTFString(messageNameRef), toImpl(messageBodyRef));
+}
+
+void WKBundlePagePostSynchronousMessage(WKBundlePageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef, WKTypeRef* returnDataRef)
+{
+    RefPtr<API::Object> returnData;
+    toImpl(pageRef)->postSynchronousMessage(toWTFString(messageNameRef), toImpl(messageBodyRef), returnData);
+    if (returnDataRef)
+        *returnDataRef = toAPI(returnData.release().leakRef());
+}
+
