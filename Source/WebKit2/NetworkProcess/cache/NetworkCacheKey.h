@@ -44,14 +44,13 @@ public:
     Key() { }
     Key(const Key&);
     Key(Key&&) = default;
-    Key(const String& method, const String& partition, const String& identifier);
+    Key(const String& partition, const String& identifier);
 
     Key& operator=(const Key&);
     Key& operator=(Key&&) = default;
 
     bool isNull() const { return m_identifier.isNull(); }
 
-    const String& method() const { return m_method; }
     const String& partition() const { return m_partition; }
     const String& identifier() const { return m_identifier; }
 
@@ -73,7 +72,6 @@ public:
 private:
     HashType computeHash() const;
 
-    String m_method;
     String m_partition;
     String m_identifier;
     HashType m_hash;

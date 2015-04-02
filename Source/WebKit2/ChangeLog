@@ -1,3 +1,28 @@
+2015-04-02  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NetworkCache] Drop HTTP method from NetworkCache::Key
+        https://bugs.webkit.org/show_bug.cgi?id=143348
+
+        Reviewed by Antti Koivisto.
+
+        Drop HTTP method from NetworkCache::Key as we only cache GET responses
+        for now. Even when we start caching HEAD responses, we likely will not
+        want the method to be part of the key because:
+        - A HEAD response can be used to update the headers of a previously cached response to GET
+        - A cached GET response may be used to satisfy subsequent HEAD requests
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeCacheKey):
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::NetworkCache::Key::Key):
+        (WebKit::NetworkCache::Key::operator=):
+        (WebKit::NetworkCache::Key::computeHash):
+        (WebKit::NetworkCache::Key::operator==):
+        (WebKit::NetworkCache::Key::encode):
+        (WebKit::NetworkCache::Key::decode):
+        * NetworkProcess/cache/NetworkCacheKey.h:
+        (WebKit::NetworkCache::Key::method): Deleted.
+
 2015-04-02  Jer Noble  <jer.noble@apple.com>
 
         [Mac][WK2] Fullscreen animation incorrect when initiated on non-primary monitor
