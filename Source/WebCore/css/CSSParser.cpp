@@ -2763,10 +2763,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = !id && validateUnit(valueWithCalculation, FNumber | FLength | FPercent);
         break;
     case CSSPropertyColumnCount:
-        if (id == CSSValueAuto)
-            validPrimitive = true;
-        else
-            validPrimitive = !id && validateUnit(valueWithCalculation, FPositiveInteger, CSSQuirksMode);
+        parsedValue = parseColumnCount();
         break;
     case CSSPropertyColumnGap: // normal | <length>
         if (id == CSSValueNormal)
@@ -2791,12 +2788,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         }
         break;
     case CSSPropertyColumnWidth: // auto | <length>
-        if (id == CSSValueAuto)
-            validPrimitive = true;
-        else {
-            // Always parse this property in strict mode, since it would be ambiguous otherwise when used in the 'columns' shorthand property.
-            validPrimitive = validateUnit(valueWithCalculation, FLength | FNonNeg, CSSStrictMode) && parsedDouble(valueWithCalculation);
-        }
+        parsedValue = parseColumnWidth();
         break;
     // End of CSS3 properties
 
@@ -2957,7 +2949,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyListStyle:
         return parseShorthand(propId, listStyleShorthand(), important);
     case CSSPropertyColumns:
-        return parseShorthand(propId, columnsShorthand(), important);
+        return parseColumnsShorthand(important);
     case CSSPropertyColumnRule:
         return parseShorthand(propId, columnRuleShorthand(), important);
     case CSSPropertyWebkitTextStroke:
@@ -3607,6 +3599,76 @@ bool CSSParser::parseAnimationShorthand(CSSPropertyID propId, bool important)
 
         addProperty(shorthand.properties()[i], values[i].release(), important);
     }
+
+    return true;
+}
+
+RefPtr<CSSValue> CSSParser::parseColumnWidth()
+{
+    ValueWithCalculation valueWithCalculation(*m_valueList->current());
+    CSSValueID id = valueWithCalculation.value().id;
+    // Always parse this property in strict mode, since it would be ambiguous otherwise when used in the 'columns' shorthand property.
+    if (id != CSSValueAuto && !(validateUnit(valueWithCalculation, FLength | FNonNeg, CSSStrictMode) && parsedDouble(valueWithCalculation)))
+        return nullptr;
+
+    RefPtr<CSSValue> parsedValue = parseValidPrimitive(id, valueWithCalculation);
+    m_valueList->next();
+    return parsedValue;
+}
+
+RefPtr<CSSValue> CSSParser::parseColumnCount()
+{
+    ValueWithCalculation valueWithCalculation(*m_valueList->current());
+    CSSValueID id = valueWithCalculation.value().id;
+
+    if (id != CSSValueAuto && !validateUnit(valueWithCalculation, FPositiveInteger, CSSQuirksMode))
+        return nullptr;
+
+    RefPtr<CSSValue> parsedValue = parseValidPrimitive(id, valueWithCalculation);
+    m_valueList->next();
+    return parsedValue;
+}
+
+bool CSSParser::parseColumnsShorthand(bool important)
+{
+    RefPtr<CSSValue> columnWidth;
+    RefPtr<CSSValue> columnCount;
+    bool hasPendingExplicitAuto = false;
+
+    for (unsigned propertiesParsed = 0; CSSParserValue* value = m_valueList->current(); propertiesParsed++) {
+        if (propertiesParsed >= 2)
+            return false; // Too many values for this shorthand. Invalid declaration.
+        if (!propertiesParsed && value->id == CSSValueAuto) {
+            // 'auto' is a valid value for any of the two longhands, and at this point
+            // we don't know which one(s) it is meant for. We need to see if there are other values first.
+            m_valueList->next();
+            hasPendingExplicitAuto = true;
+        } else {
+            if (!columnWidth) {
+                if ((columnWidth = parseColumnWidth()))
+                    continue;
+            }
+            if (!columnCount) {
+                if ((columnCount = parseColumnCount()))
+                    continue;
+            }
+            // If we didn't find at least one match, this is an invalid shorthand and we have to ignore it.
+            return false;
+        }
+    }
+
+    // Any unassigned property at this point will become implicit 'auto'.
+    if (columnWidth)
+        addProperty(CSSPropertyColumnWidth, columnWidth, important);
+    else {
+        addProperty(CSSPropertyColumnWidth, cssValuePool().createIdentifierValue(CSSValueAuto), important, !hasPendingExplicitAuto /* implicit */);
+        hasPendingExplicitAuto = false;
+    }
+
+    if (columnCount)
+        addProperty(CSSPropertyColumnCount, columnCount, important);
+    else
+        addProperty(CSSPropertyColumnCount, cssValuePool().createIdentifierValue(CSSValueAuto), important, !hasPendingExplicitAuto /* implicit */);
 
     return true;
 }

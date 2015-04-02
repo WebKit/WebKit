@@ -1,3 +1,15 @@
+2015-04-02  Joonghun Park  <jh718.park@samsung.com>
+
+        [CSS MultiColumn] Parse "columns: auto <length>" shorthand property value properly
+        https://bugs.webkit.org/show_bug.cgi?id=143248
+
+        Reviewed by Darin Adler.
+
+        * fast/css/getPropertyValue-columns-expected.txt:
+        * fast/css/getPropertyValue-columns.html:
+        * fast/multicol/columns-shorthand-parsing-2-expected.txt: Added.
+        * fast/multicol/columns-shorthand-parsing-2.html: Added.
+
 2015-04-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r182247.

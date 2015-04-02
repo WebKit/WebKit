@@ -1,3 +1,29 @@
+2015-04-02  Joonghun Park  <jh718.park@samsung.com>
+
+        [CSS MultiColumn] Parse "columns: auto <length>" shorthand property value properly
+        https://bugs.webkit.org/show_bug.cgi?id=143248
+
+        Reviewed by Darin Adler.
+
+        Test: fast/multicol/columns-shorthand-parsing-2.html
+
+        The two longhands for the 'columns' property ('column-count' and
+        'column-width') may both take 'auto' as a value. When we encounter
+        'auto' during parsing the value list of a declaration, we cannot just
+        make a guess at which property/properties that's meant for. Instead,
+        don't assign anything to 'auto' right away, but wait until all values
+        have been processed and at that point set the still unassigned
+        properties to 'auto'. If 'auto' isn't in the value list at all, set
+        unassigned properties to 'initial' for the 'columns' property, just
+        like we do for any other property.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseColumnWidth):
+        (WebCore::CSSParser::parseColumnCount):
+        (WebCore::CSSParser::parseColumnsShorthand):
+        * css/CSSParser.h:
+
 2015-04-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r182247.
