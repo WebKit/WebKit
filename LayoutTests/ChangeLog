@@ -1,3 +1,12 @@
+2015-04-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test gardening.
+
+        Unreviewed.
+
+        * fast/ruby/ruby-expansion-cjk-4-expected.html:
+        * fast/ruby/ruby-expansion-cjk-4.html:
+
 2015-04-02  Anders Carlsson  <andersca@apple.com>
 
         http/tests/security/cross-frame-access-call.html is flaky.
