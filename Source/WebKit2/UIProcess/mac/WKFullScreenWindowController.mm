@@ -106,6 +106,7 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     maskLayer.anchorPoint = CGPointZero;
     maskLayer.frame = NSRectToCGRect(contentView.bounds);
     maskLayer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
+    maskLayer.autoresizingMask = (NSViewWidthSizable | NSViewHeightSizable);
     [_clipView layer].mask = maskLayer;
     [contentView addSubview:_clipView.get()];
 
@@ -507,13 +508,13 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 }
 
 enum AnimationDirection { AnimateIn, AnimateOut };
-static CAAnimation *zoomAnimation(const FloatRect& initialFrame, const FloatRect& finalFrame, CFTimeInterval duration, AnimationDirection direction)
+static CAAnimation *zoomAnimation(const FloatRect& initialFrame, const FloatRect& finalFrame, const FloatRect& screenFrame, CFTimeInterval duration, AnimationDirection direction)
 {
     CABasicAnimation *scaleAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
     FloatRect scaleRect = smallestRectWithAspectRatioAroundRect(finalFrame.size().aspectRatio(), initialFrame);
-    CGAffineTransform resetOriginTransform = CGAffineTransformMakeTranslation(-finalFrame.x(), -finalFrame.y());
+    CGAffineTransform resetOriginTransform = CGAffineTransformMakeTranslation(screenFrame.x() - finalFrame.x(), screenFrame.y() - finalFrame.y());
     CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scaleRect.width() / finalFrame.width(), scaleRect.height() / finalFrame.height());
-    CGAffineTransform translateTransform = CGAffineTransformMakeTranslation(scaleRect.x(), scaleRect.y());
+    CGAffineTransform translateTransform = CGAffineTransformMakeTranslation(scaleRect.x() - screenFrame.x(), scaleRect.y() - screenFrame.y());
 
     CGAffineTransform finalTransform = CGAffineTransformConcat(CGAffineTransformConcat(resetOriginTransform, scaleTransform), translateTransform);
     NSValue *scaleValue = [NSValue valueWithCATransform3D:CATransform3DMakeAffineTransform(finalTransform)];
@@ -529,7 +530,7 @@ static CAAnimation *zoomAnimation(const FloatRect& initialFrame, const FloatRect
     return scaleAnimation;
 }
 
-static CAAnimation *maskAnimation(const FloatRect& initialFrame, const FloatRect& finalFrame, CFTimeInterval duration, AnimationDirection direction)
+static CAAnimation *maskAnimation(const FloatRect& initialFrame, const FloatRect& finalFrame, const FloatRect& screenFrame, CFTimeInterval duration, AnimationDirection direction)
 {
     CABasicAnimation *boundsAnimation = [CABasicAnimation animationWithKeyPath:@"bounds"];
     FloatRect boundsRect = largestRectWithAspectRatioInsideRect(initialFrame.size().aspectRatio(), finalFrame);
@@ -540,7 +541,7 @@ static CAAnimation *maskAnimation(const FloatRect& initialFrame, const FloatRect
         boundsAnimation.toValue = boundsValue;
 
     CABasicAnimation *positionAnimation = [CABasicAnimation animationWithKeyPath:@"position"];
-    NSValue *positionValue = [NSValue valueWithPoint:boundsRect.location()];
+    NSValue *positionValue = [NSValue valueWithPoint:FloatPoint(boundsRect.location() - screenFrame.location())];
     if (direction == AnimateIn)
         positionAnimation.fromValue = positionValue;
     else
@@ -571,8 +572,8 @@ static CAAnimation *fadeAnimation(CFTimeInterval duration, AnimationDirection di
 
 - (void)_startEnterFullScreenAnimationWithDuration:(NSTimeInterval)duration
 {
-    [[_clipView layer] addAnimation:zoomAnimation(_initialFrame, _finalFrame, duration, AnimateIn) forKey:@"fullscreen"];
-    [[_clipView layer].mask addAnimation:maskAnimation(_initialFrame, _finalFrame, duration, AnimateIn) forKey:@"fullscreen"];
+    [[_clipView layer] addAnimation:zoomAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateIn) forKey:@"fullscreen"];
+    [[_clipView layer].mask addAnimation:maskAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateIn) forKey:@"fullscreen"];
 
     NSView* contentView = [[self window] contentView];
     contentView.layer.hidden = NO;
@@ -600,8 +601,8 @@ static CAAnimation *fadeAnimation(CFTimeInterval duration, AnimationDirection di
         _fullScreenState = ExitingFullScreen;
     }
 
-    [[_clipView layer] addAnimation:zoomAnimation(_initialFrame, _finalFrame, duration, AnimateOut) forKey:@"fullscreen"];
-    [[_clipView layer].mask addAnimation:maskAnimation(_initialFrame, _finalFrame, duration, AnimateOut) forKey:@"fullscreen"];
+    [[_clipView layer] addAnimation:zoomAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateOut) forKey:@"fullscreen"];
+    [[_clipView layer].mask addAnimation:maskAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateOut) forKey:@"fullscreen"];
 
     NSView* contentView = [[self window] contentView];
     contentView.layer.hidden = NO;
