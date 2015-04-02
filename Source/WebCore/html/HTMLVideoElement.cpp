@@ -122,14 +122,18 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicStr
     }
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     else if (name == webkitwirelessvideoplaybackdisabledAttr)
-        mediaSession().setWirelessVideoPlaybackDisabled(*this, webkitWirelessVideoPlaybackDisabled());
+        mediaSession().setWirelessVideoPlaybackDisabled(*this, true);
 #endif
     else {
         HTMLMediaElement::parseAttribute(name, value);    
 
 #if PLATFORM(IOS) && ENABLE(WIRELESS_PLAYBACK_TARGET)
-        if (name == webkitairplayAttr)
-            mediaSession().setWirelessVideoPlaybackDisabled(*this, webkitWirelessVideoPlaybackDisabled());
+        if (name == webkitairplayAttr) {
+            bool disabled = false;
+            if (equalIgnoringCase(fastGetAttribute(HTMLNames::webkitairplayAttr), "deny"))
+                disabled = true;
+            mediaSession().setWirelessVideoPlaybackDisabled(*this, disabled);
+        }
 #endif
     }
 

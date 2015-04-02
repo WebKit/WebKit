@@ -241,6 +241,10 @@ bool HTMLMediaSession::wirelessVideoPlaybackDisabled(const HTMLMediaElement& ele
         LOG(Media, "HTMLMediaSession::wirelessVideoPlaybackDisabled - returning TRUE because of legacy attribute");
         return true;
     }
+    if (equalIgnoringCase(legacyAirplayAttributeValue, "allow")) {
+        LOG(Media, "HTMLMediaSession::wirelessVideoPlaybackDisabled - returning FALSE because of legacy attribute");
+        return false;
+    }
 #endif
 
     MediaPlayer* player = element.player();
