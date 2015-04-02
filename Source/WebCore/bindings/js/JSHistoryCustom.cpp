@@ -76,7 +76,6 @@ bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propert
 
 bool JSHistory::putDelegate(ExecState* exec, PropertyName, JSValue, PutPropertySlot&)
 {
-    // Only allow putting by frames in the same origin.
     if (!shouldAllowAccessToFrame(exec, impl().frame()))
         return true;
     return false;
@@ -85,7 +84,6 @@ bool JSHistory::putDelegate(ExecState* exec, PropertyName, JSValue, PutPropertyS
 bool JSHistory::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSHistory* thisObject = jsCast<JSHistory*>(cell);
-    // Only allow deleting by frames in the same origin.
     if (!shouldAllowAccessToFrame(exec, thisObject->impl().frame()))
         return false;
     return Base::deleteProperty(thisObject, exec, propertyName);
@@ -94,7 +92,6 @@ bool JSHistory::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
 bool JSHistory::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
 {
     JSHistory* thisObject = jsCast<JSHistory*>(cell);
-    // Only allow deleting by frames in the same origin.
     if (!shouldAllowAccessToFrame(exec, thisObject->impl().frame()))
         return false;
     return Base::deletePropertyByIndex(thisObject, exec, propertyName);
@@ -103,7 +100,6 @@ bool JSHistory::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned pr
 void JSHistory::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSHistory* thisObject = jsCast<JSHistory*>(object);
-    // Only allow the history object to enumerated by frames in the same origin.
     if (!shouldAllowAccessToFrame(exec, thisObject->impl().frame()))
         return;
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
@@ -125,6 +121,9 @@ JSValue JSHistory::state(ExecState *exec) const
 
 JSValue JSHistory::pushState(ExecState* exec)
 {
+    if (!shouldAllowAccessToFrame(exec, impl().frame()))
+        return jsUndefined();
+
     RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(exec, exec->argument(0), 0, 0);
     if (exec->hadException())
         return jsUndefined();
@@ -151,6 +150,9 @@ JSValue JSHistory::pushState(ExecState* exec)
 
 JSValue JSHistory::replaceState(ExecState* exec)
 {
+    if (!shouldAllowAccessToFrame(exec, impl().frame()))
+        return jsUndefined();
+
     RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(exec, exec->argument(0), 0, 0);
     if (exec->hadException())
         return jsUndefined();
