@@ -150,17 +150,16 @@ static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
     return false;
 }
 
-static bool responseHasExpired(const WebCore::ResourceResponse& response, std::chrono::milliseconds timestamp, double maxStale)
+static bool responseHasExpired(const WebCore::ResourceResponse& response, std::chrono::system_clock::time_point timestamp, Optional<std::chrono::microseconds> maxStale)
 {
     if (response.cacheControlContainsNoCache())
         return true;
 
-    auto doubleTimeStamp = std::chrono::duration<double>(timestamp);
-    double age = WebCore::computeCurrentAge(response, doubleTimeStamp.count());
-    double lifetime = WebCore::computeFreshnessLifetimeForHTTPFamily(response, doubleTimeStamp.count());
+    auto age = WebCore::computeCurrentAge(response, timestamp);
+    auto lifetime = WebCore::computeFreshnessLifetimeForHTTPFamily(response, timestamp);
 
-    maxStale = std::isnan(maxStale) ? 0 : maxStale;
-    bool hasExpired = age - lifetime > maxStale;
+    auto maximumStaleness = maxStale ? maxStale.value() : 0_ms;
+    bool hasExpired = age - lifetime > maximumStaleness;
 
 #ifndef LOG_DISABLED
     if (hasExpired)
@@ -170,13 +169,13 @@ static bool responseHasExpired(const WebCore::ResourceResponse& response, std::c
     return hasExpired;
 }
 
-static bool responseNeedsRevalidation(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, std::chrono::milliseconds timestamp)
+static bool responseNeedsRevalidation(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, std::chrono::system_clock::time_point timestamp)
 {
     auto requestDirectives = WebCore::parseCacheControlDirectives(request.httpHeaderFields());
     if (requestDirectives.noCache)
         return true;
     // For requests we ignore max-age values other than zero.
-    if (requestDirectives.maxAge == 0)
+    if (requestDirectives.maxAge && requestDirectives.maxAge.value() == 0_ms)
         return true;
 
     return responseHasExpired(response, timestamp, requestDirectives.maxStale);
@@ -269,7 +268,7 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
 
     if (!isStatusCodeCacheableByDefault(response.httpStatusCode())) {
         // http://tools.ietf.org/html/rfc7234#section-4.3.2
-        bool hasExpirationHeaders = std::isfinite(response.expires()) || std::isfinite(response.cacheControlMaxAge());
+        bool hasExpirationHeaders = response.expires() || response.cacheControlMaxAge();
         bool expirationHeadersAllowCaching = isStatusCodePotentiallyCacheable(response.httpStatusCode()) && hasExpirationHeaders;
         if (!expirationHeadersAllowCaching)
             return StoreDecision::NoDueToHTTPStatusCode;
@@ -278,8 +277,8 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     // Main resource has ResourceLoadPriorityVeryHigh.
     bool storeUnconditionallyForHistoryNavigation = originalRequest.priority() == WebCore::ResourceLoadPriorityVeryHigh;
     if (!storeUnconditionallyForHistoryNavigation) {
-        auto currentTime = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch());
-        bool hasNonZeroLifetime = !response.cacheControlContainsNoCache() && WebCore::computeFreshnessLifetimeForHTTPFamily(response, currentTime.count()) > 0;
+        auto now = std::chrono::system_clock::now();
+        bool hasNonZeroLifetime = !response.cacheControlContainsNoCache() && WebCore::computeFreshnessLifetimeForHTTPFamily(response, now) > 0_ms;
 
         bool possiblyReusable = response.hasCacheValidatorFields() || hasNonZeroLifetime;
         if (!possiblyReusable)
@@ -358,7 +357,6 @@ void Cache::store(const WebCore::ResourceRequest& originalRequest, const WebCore
     LOG(NetworkCache, "(NetworkProcess) storing %s, partition %s", originalRequest.url().string().latin1().data(), originalRequest.cachePartition().latin1().data());
 
     StoreDecision storeDecision = makeStoreDecision(originalRequest, response);
-
     if (storeDecision != StoreDecision::Yes) {
         LOG(NetworkCache, "(NetworkProcess) didn't store, storeDecision=%d", storeDecision);
         if (m_statistics) {

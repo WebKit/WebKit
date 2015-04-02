@@ -26,6 +26,8 @@
 #ifndef CacheValidation_h
 #define CacheValidation_h
 
+#include <wtf/Optional.h>
+
 namespace WebCore {
 
 class HTTPHeaderMap;
@@ -39,14 +41,14 @@ struct RedirectChainCacheStatus {
     };
     RedirectChainCacheStatus()
         : status(NoRedirection)
-        , endOfValidity(std::numeric_limits<double>::max())
+        , endOfValidity(std::chrono::system_clock::time_point::max())
     { }
     Status status;
-    double endOfValidity;
+    std::chrono::system_clock::time_point endOfValidity;
 };
 
-WEBCORE_EXPORT double computeCurrentAge(const ResourceResponse&, double responseTimestamp);
-WEBCORE_EXPORT double computeFreshnessLifetimeForHTTPFamily(const ResourceResponse&, double responseTimestamp);
+WEBCORE_EXPORT std::chrono::microseconds computeCurrentAge(const ResourceResponse&, std::chrono::system_clock::time_point responseTimestamp);
+WEBCORE_EXPORT std::chrono::microseconds computeFreshnessLifetimeForHTTPFamily(const ResourceResponse&, std::chrono::system_clock::time_point responseTimestamp);
 WEBCORE_EXPORT void updateResponseHeadersAfterRevalidation(ResourceResponse&, const ResourceResponse& validatingResponse);
 WEBCORE_EXPORT void updateRedirectChainStatus(RedirectChainCacheStatus&, const ResourceResponse&);
 
@@ -54,8 +56,8 @@ enum ReuseExpiredRedirectionOrNot { DoNotReuseExpiredRedirection, ReuseExpiredRe
 WEBCORE_EXPORT bool redirectChainAllowsReuse(RedirectChainCacheStatus, ReuseExpiredRedirectionOrNot);
 
 struct CacheControlDirectives {
-    double maxAge { std::numeric_limits<double>::quiet_NaN() };
-    double maxStale { std::numeric_limits<double>::quiet_NaN() };
+    Optional<std::chrono::microseconds> maxAge;
+    Optional<std::chrono::microseconds> maxStale;
     bool noCache { false };
     bool noStore { false };
     bool mustRevalidate { false };

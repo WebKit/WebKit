@@ -234,9 +234,14 @@ bool parseHTTPRefresh(const String& refresh, bool fromHttpEquivMeta, double& del
     }
 }
 
-double parseDate(const String& value)
+Optional<std::chrono::system_clock::time_point> parseHTTPDate(const String& value)
 {
-    return parseDateFromNullTerminatedCharacters(value.utf8().data());
+    double dateInMillisecondsSinceEpoch = parseDateFromNullTerminatedCharacters(value.utf8().data());
+    if (!std::isfinite(dateInMillisecondsSinceEpoch))
+        return { };
+    // This assumes system_clock epoch equals Unix epoch which is true for all implementations but unspecified.
+    // FIXME: The parsing function should be switched to std::chrono too.
+    return std::chrono::system_clock::time_point(std::chrono::milliseconds(static_cast<long long>(dateInMillisecondsSinceEpoch)));
 }
 
 // FIXME: This function doesn't comply with RFC 6266.

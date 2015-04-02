@@ -142,7 +142,8 @@ struct RecordMetaData {
 
     unsigned cacheStorageVersion;
     Key key;
-    std::chrono::milliseconds timeStamp;
+    // FIXME: Add encoder/decoder for time_point.
+    std::chrono::milliseconds epochRelativeTimeStamp;
     unsigned headerChecksum;
     uint64_t headerOffset;
     uint64_t headerSize;
@@ -160,7 +161,7 @@ static bool decodeRecordMetaData(RecordMetaData& metaData, const Data& fileData)
             return false;
         if (!decoder.decode(metaData.key))
             return false;
-        if (!decoder.decode(metaData.timeStamp))
+        if (!decoder.decode(metaData.epochRelativeTimeStamp))
             return false;
         if (!decoder.decode(metaData.headerChecksum))
             return false;
@@ -215,6 +216,11 @@ static std::unique_ptr<Storage::Record> decodeRecord(const Data& fileData, int f
     if (metaData.key != key)
         return nullptr;
 
+    // Sanity check against time stamps in future.
+    auto timeStamp = std::chrono::system_clock::time_point(metaData.epochRelativeTimeStamp);
+    if (timeStamp > std::chrono::system_clock::now())
+        return nullptr;
+
     Data bodyData;
     if (metaData.bodySize) {
         if (metaData.bodyOffset + metaData.bodySize != fileData.size())
@@ -234,7 +240,7 @@ static std::unique_ptr<Storage::Record> decodeRecord(const Data& fileData, int f
 
     return std::make_unique<Storage::Record>(Storage::Record {
         metaData.key,
-        metaData.timeStamp,
+        timeStamp,
         headerData,
         bodyData
     });
@@ -246,7 +252,7 @@ static Data encodeRecordMetaData(const RecordMetaData& metaData)
 
     encoder << metaData.cacheStorageVersion;
     encoder << metaData.key;
-    encoder << metaData.timeStamp;
+    encoder << metaData.epochRelativeTimeStamp;
     encoder << metaData.headerChecksum;
     encoder << metaData.headerSize;
     encoder << metaData.bodyChecksum;
@@ -260,7 +266,7 @@ static Data encodeRecordMetaData(const RecordMetaData& metaData)
 static Data encodeRecordHeader(const Storage::Record& record)
 {
     RecordMetaData metaData(record.key);
-    metaData.timeStamp = record.timeStamp;
+    metaData.epochRelativeTimeStamp = std::chrono::duration_cast<std::chrono::milliseconds>(record.timeStamp.time_since_epoch());
     metaData.headerChecksum = hashData(record.header);
     metaData.headerSize = record.header.size();
     metaData.bodyChecksum = hashData(record.body);
@@ -446,7 +452,7 @@ void Storage::traverse(TraverseFlags flags, std::function<void (const Record*, c
                 RecordMetaData metaData;
                 Data headerData;
                 if (decodeRecordHeader(fileData, metaData, headerData)) {
-                    Record record { metaData.key, metaData.timeStamp, headerData, { } };
+                    Record record { metaData.key, std::chrono::system_clock::time_point(metaData.epochRelativeTimeStamp), headerData, { } };
                     info.bodySize = metaData.bodySize;
                     traverseHandler(&record, info);
                 }
@@ -599,7 +605,7 @@ static double computeRecordWorth(FileTimes times)
     auto accessAge = times.modification - times.creation;
 
     // For sanity.
-    if (age <= seconds::zero() || accessAge < seconds::zero() || accessAge > age)
+    if (age <= 0_s || accessAge < 0_s || accessAge > age)
         return 0;
 
     // We like old entries that have been accessed recently.

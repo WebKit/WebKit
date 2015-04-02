@@ -89,49 +89,56 @@ void updateResponseHeadersAfterRevalidation(ResourceResponse& response, const Re
     }
 }
 
-double computeCurrentAge(const ResourceResponse& response, double responseTimestamp)
+std::chrono::microseconds computeCurrentAge(const ResourceResponse& response, std::chrono::system_clock::time_point responseTimestamp)
 {
+    using namespace std::chrono;
+
     // RFC2616 13.2.3
     // No compensation for latency as that is not terribly important in practice
-    double dateValue = response.date();
-    double apparentAge = std::isfinite(dateValue) ? std::max(0., responseTimestamp - dateValue) : 0;
-    double ageValue = response.age();
-    double correctedReceivedAge = std::isfinite(ageValue) ? std::max(apparentAge, ageValue) : apparentAge;
-    double residentTime = currentTime() - responseTimestamp;
+    auto dateValue = response.date();
+    auto apparentAge = dateValue ? std::max(microseconds::zero(), duration_cast<microseconds>(responseTimestamp - dateValue.value())) : microseconds::zero();
+    auto ageValue = response.age();
+    auto correctedReceivedAge = ageValue ? std::max(apparentAge, ageValue.value()) : apparentAge;
+    auto residentTime = duration_cast<microseconds>(system_clock::now() - responseTimestamp);
     return correctedReceivedAge + residentTime;
 }
 
-double computeFreshnessLifetimeForHTTPFamily(const ResourceResponse& response, double responseTimestamp)
+std::chrono::microseconds computeFreshnessLifetimeForHTTPFamily(const ResourceResponse& response, std::chrono::system_clock::time_point responseTimestamp)
 {
+    using namespace std::chrono;
     ASSERT(response.url().protocolIsInHTTPFamily());
+
     // RFC2616 13.2.4
-    double maxAgeValue = response.cacheControlMaxAge();
-    if (std::isfinite(maxAgeValue))
-        return maxAgeValue;
-    double expiresValue = response.expires();
-    double dateValue = response.date();
-    double creationTime = std::isfinite(dateValue) ? dateValue : responseTimestamp;
-    if (std::isfinite(expiresValue))
-        return expiresValue - creationTime;
-    double lastModifiedValue = response.lastModified();
-    if (std::isfinite(lastModifiedValue))
-        return (creationTime - lastModifiedValue) * 0.1;
+    auto maxAge = response.cacheControlMaxAge();
+    if (maxAge)
+        return maxAge.value();
+    auto expires = response.expires();
+    auto date = response.date();
+    auto creationTime = date ? date.value() : responseTimestamp;
+    if (expires)
+        return duration_cast<microseconds>(expires.value() - creationTime);
+    auto lastModified = response.lastModified();
+    if (lastModified)
+        return duration_cast<microseconds>((creationTime - lastModified.value()) * 0.1);
     // If no cache headers are present, the specification leaves the decision to the UA. Other browsers seem to opt for 0.
-    return 0;
+    return microseconds::zero();
 }
 
 void updateRedirectChainStatus(RedirectChainCacheStatus& redirectChainCacheStatus, const ResourceResponse& response)
 {
+    using namespace std::chrono;
+
     if (redirectChainCacheStatus.status == RedirectChainCacheStatus::NotCachedRedirection)
         return;
     if (response.cacheControlContainsNoStore() || response.cacheControlContainsNoCache() || response.cacheControlContainsMustRevalidate()) {
         redirectChainCacheStatus.status = RedirectChainCacheStatus::NotCachedRedirection;
         return;
     }
+
     redirectChainCacheStatus.status = RedirectChainCacheStatus::CachedRedirection;
-    double responseTimestamp = currentTime();
+    auto responseTimestamp = system_clock::now();
     // Store the nearest end of cache validity date
-    double endOfValidity = responseTimestamp + computeFreshnessLifetimeForHTTPFamily(response, responseTimestamp) - computeCurrentAge(response, responseTimestamp);
+    auto endOfValidity = responseTimestamp + computeFreshnessLifetimeForHTTPFamily(response, responseTimestamp) - computeCurrentAge(response, responseTimestamp);
     redirectChainCacheStatus.endOfValidity = std::min(redirectChainCacheStatus.endOfValidity, endOfValidity);
 }
 
@@ -143,7 +150,7 @@ bool redirectChainAllowsReuse(RedirectChainCacheStatus redirectChainCacheStatus,
     case RedirectChainCacheStatus::NotCachedRedirection:
         return false;
     case RedirectChainCacheStatus::CachedRedirection:
-        return reuseExpiredRedirection || currentTime() <= redirectChainCacheStatus.endOfValidity;
+        return reuseExpiredRedirection || std::chrono::system_clock::now() <= redirectChainCacheStatus.endOfValidity;
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -248,6 +255,8 @@ static Vector<std::pair<String, String>> parseCacheHeader(const String& header)
 
 CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
 {
+    using namespace std::chrono;
+
     CacheControlDirectives result;
 
     String cacheControlValue = headers.get(HTTPHeaderName::CacheControl);
@@ -265,29 +274,29 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
             else if (equalIgnoringCase(directives[i].first, "must-revalidate"))
                 result.mustRevalidate = true;
             else if (equalIgnoringCase(directives[i].first, "max-age")) {
-                if (!std::isnan(result.maxAge)) {
+                if (result.maxAge) {
                     // First max-age directive wins if there are multiple ones.
                     continue;
                 }
                 bool ok;
                 double maxAge = directives[i].second.toDouble(&ok);
                 if (ok)
-                    result.maxAge = maxAge;
+                    result.maxAge = duration_cast<microseconds>(duration<double>(maxAge));
             } else if (equalIgnoringCase(directives[i].first, "max-stale")) {
                 // https://tools.ietf.org/html/rfc7234#section-5.2.1.2
-                if (!std::isnan(result.maxStale)) {
+                if (result.maxStale) {
                     // First max-stale directive wins if there are multiple ones.
                     continue;
                 }
                 if (directives[i].second.isEmpty()) {
                     // if no value is assigned to max-stale, then the client is willing to accept a stale response of any age.
-                    result.maxStale = std::numeric_limits<double>::max();
+                    result.maxStale = microseconds::max();
                     continue;
                 }
                 bool ok;
                 double maxStale = directives[i].second.toDouble(&ok);
                 if (ok)
-                    result.maxStale = maxStale;
+                    result.maxStale = duration_cast<microseconds>(duration<double>(maxStale));
             }
         }
     }

@@ -123,13 +123,13 @@ void PluginStream::stop()
     m_client = 0;
 }
 
-static uint32_t lastModifiedDate(const ResourceResponse& response)
+static uint32_t lastModifiedDateMS(const ResourceResponse& response)
 {
-    double lastModified = response.lastModified();
-    if (!std::isfinite(lastModified))
+    auto lastModified = response.lastModified();
+    if (!lastModified)
         return 0;
 
-    return lastModified * 1000;
+    return std::chrono::duration_cast<std::chrono::milliseconds>(lastModified.value().time_since_epoch()).count();
 }
 
 void PluginStream::startStream()
@@ -178,7 +178,7 @@ void PluginStream::startStream()
     m_stream.pdata = 0;
     m_stream.ndata = this;
     m_stream.end = max(expectedContentLength, 0LL);
-    m_stream.lastmodified = lastModifiedDate(m_resourceResponse);
+    m_stream.lastmodified = lastModifiedDateMS(m_resourceResponse);
     m_stream.notifyData = m_notifyData;
 
     m_transferMode = NP_NORMAL;

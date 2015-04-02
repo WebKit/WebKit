@@ -201,13 +201,13 @@ static String buildHTTPHeaders(const ResourceResponse& response, long long& expe
     return headers;
 }
 
-static uint32_t lastModifiedDate(const ResourceResponse& response)
+static uint32_t lastModifiedDateMS(const ResourceResponse& response)
 {
-    double lastModified = response.lastModified();
-    if (!std::isfinite(lastModified))
+    auto lastModified = response.lastModified();
+    if (!lastModified)
         return 0;
 
-    return lastModified * 1000;
+    return std::chrono::duration_cast<std::chrono::milliseconds>(lastModified.value().time_since_epoch()).count();
 }
 
 void PluginView::Stream::didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse& response)
@@ -223,7 +223,7 @@ void PluginView::Stream::didReceiveResponse(NetscapePlugInStreamLoader*, const R
     if (expectedContentLength > 0)
         streamLength = expectedContentLength;
 
-    m_pluginView->m_plugin->streamDidReceiveResponse(m_streamID, responseURL, streamLength, lastModifiedDate(response), mimeType, headers, response.suggestedFilename());
+    m_pluginView->m_plugin->streamDidReceiveResponse(m_streamID, responseURL, streamLength, lastModifiedDateMS(response), mimeType, headers, response.suggestedFilename());
 }
 
 void PluginView::Stream::didReceiveData(NetscapePlugInStreamLoader*, const char* bytes, int length)
@@ -413,7 +413,7 @@ void PluginView::manualLoadDidReceiveResponse(const ResourceResponse& response)
     if (expectedContentLength > 0)
         streamLength = expectedContentLength;
 
-    m_plugin->manualStreamDidReceiveResponse(responseURL, streamLength, lastModifiedDate(response), mimeType, headers, response.suggestedFilename());
+    m_plugin->manualStreamDidReceiveResponse(responseURL, streamLength, lastModifiedDateMS(response), mimeType, headers, response.suggestedFilename());
 }
 
 void PluginView::manualLoadDidReceiveData(const char* bytes, int length)

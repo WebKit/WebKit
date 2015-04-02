@@ -42,7 +42,7 @@ namespace NetworkCache {
 
 Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& buffer, const Vector<std::pair<String, String>>& varyingRequestHeaders)
     : m_key(key)
-    , m_timeStamp(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()))
+    , m_timeStamp(std::chrono::system_clock::now())
     , m_response(response)
     , m_varyingRequestHeaders(varyingRequestHeaders)
     , m_buffer(WTF::move(buffer))
@@ -160,7 +160,7 @@ void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
     JSC::appendQuotedJSONStringToBuilder(json, m_key.partition());
     json.appendLiteral(",\n");
     json.appendLiteral("\"timestamp\": ");
-    json.appendNumber(m_timeStamp.count());
+    json.appendNumber(std::chrono::duration_cast<std::chrono::milliseconds>(m_timeStamp.time_since_epoch()).count());
     json.appendLiteral(",\n");
     json.appendLiteral("\"URL\": ");
     JSC::appendQuotedJSONStringToBuilder(json, m_response.url().string());

@@ -49,7 +49,7 @@ public:
 
     struct Record {
         Key key;
-        std::chrono::milliseconds timeStamp;
+        std::chrono::system_clock::time_point timeStamp;
         Data header;
         Data body;
     };

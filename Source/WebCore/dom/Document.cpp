@@ -4131,11 +4131,10 @@ String Document::lastModified() const
     DateComponents date;
     bool foundDate = false;
     if (m_frame) {
-        String httpLastModified;
-        if (DocumentLoader* documentLoader = loader()) 
-            httpLastModified = documentLoader->response().httpHeaderField(HTTPHeaderName::LastModified);
-        if (!httpLastModified.isEmpty()) {
-            date.setMillisecondsSinceEpochForDateTime(parseDate(httpLastModified));
+        auto lastModifiedDate = loader() ? loader()->response().lastModified() : Nullopt;
+        if (lastModifiedDate) {
+            using namespace std::chrono;
+            date.setMillisecondsSinceEpochForDateTime(duration_cast<milliseconds>(lastModifiedDate.value().time_since_epoch()).count());
             foundDate = true;
         }
     }

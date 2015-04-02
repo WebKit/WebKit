@@ -1,3 +1,43 @@
+2015-04-01  Antti Koivisto  <antti@apple.com>
+
+        Use std::chrono types to represent time in response and cache classes
+        https://bugs.webkit.org/show_bug.cgi?id=143316
+
+        Reviewed by Andreas Kling.
+
+        Use std::chrono::system_clock::time_point to represent clock times and std::chrono::microseconds to
+        represent durations. Also use WTF::Optional for optional values (instead of coding them as NaNs).
+
+        * dom/Document.cpp:
+        (WebCore::Document::lastModified):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::freshnessLifetime):
+        (WebCore::CachedResource::responseReceived):
+        (WebCore::CachedResource::updateResponseAfterRevalidation):
+        * loader/cache/CachedResource.h:
+        * platform/network/CacheValidation.cpp:
+        (WebCore::computeCurrentAge):
+        (WebCore::computeFreshnessLifetimeForHTTPFamily):
+        (WebCore::updateRedirectChainStatus):
+        (WebCore::redirectChainAllowsReuse):
+        (WebCore::parseCacheControlDirectives):
+        * platform/network/CacheValidation.h:
+        (WebCore::RedirectChainCacheStatus::RedirectChainCacheStatus):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseHTTPDate):
+        (WebCore::parseDate): Deleted.
+        * platform/network/HTTPParsers.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::ResourceResponseBase):
+        (WebCore::ResourceResponseBase::cacheControlMaxAge):
+        (WebCore::parseDateValueInHeader):
+        (WebCore::ResourceResponseBase::date):
+        (WebCore::ResourceResponseBase::age):
+        (WebCore::ResourceResponseBase::expires):
+        (WebCore::ResourceResponseBase::lastModified):
+        * platform/network/ResourceResponseBase.h:
+
 2015-04-02  Joonghun Park  <jh718.park@samsung.com>
 
         [CSS MultiColumn] Parse "columns: auto <length>" shorthand property value properly

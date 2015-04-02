@@ -43,42 +43,22 @@ inline const ResourceResponse& ResourceResponseBase::asResourceResponse() const
     return *static_cast<const ResourceResponse*>(this);
 }
 
-ResourceResponseBase::ResourceResponseBase()  
-    : m_expectedContentLength(0)
+ResourceResponseBase::ResourceResponseBase()
+    : m_isNull(true)
+    , m_expectedContentLength(0)
     , m_includesCertificateInfo(false)
     , m_httpStatusCode(0)
-    , m_age(0)
-    , m_date(0)
-    , m_expires(0)
-    , m_lastModified(0)
-    , m_isNull(true)
-    , m_haveParsedCacheControlHeader(false)
-    , m_haveParsedAgeHeader(false)
-    , m_haveParsedDateHeader(false)
-    , m_haveParsedExpiresHeader(false)
-    , m_haveParsedLastModifiedHeader(false)
-    , m_source(Source::Unknown)
 {
 }
 
 ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName)
-    : m_url(url)
+    : m_isNull(false)
+    , m_url(url)
     , m_mimeType(mimeType)
     , m_expectedContentLength(expectedLength)
     , m_textEncodingName(textEncodingName)
     , m_includesCertificateInfo(true) // Empty but valid for synthetic responses.
     , m_httpStatusCode(0)
-    , m_age(0)
-    , m_date(0)
-    , m_expires(0)
-    , m_lastModified(0)
-    , m_isNull(false)
-    , m_haveParsedCacheControlHeader(false)
-    , m_haveParsedAgeHeader(false)
-    , m_haveParsedDateHeader(false)
-    , m_haveParsedExpiresHeader(false)
-    , m_haveParsedLastModifiedHeader(false)
-    , m_source(Source::Unknown)
 {
 }
 
@@ -381,29 +361,26 @@ bool ResourceResponseBase::hasCacheValidatorFields() const
     return !m_httpHeaderFields.get(HTTPHeaderName::LastModified).isEmpty() || !m_httpHeaderFields.get(HTTPHeaderName::ETag).isEmpty();
 }
 
-double ResourceResponseBase::cacheControlMaxAge() const
+Optional<std::chrono::microseconds> ResourceResponseBase::cacheControlMaxAge() const
 {
     if (!m_haveParsedCacheControlHeader)
         parseCacheControlDirectives();
     return m_cacheControlDirectives.maxAge;
 }
 
-static double parseDateValueInHeader(const HTTPHeaderMap& headers, HTTPHeaderName headerName)
+static Optional<std::chrono::system_clock::time_point> parseDateValueInHeader(const HTTPHeaderMap& headers, HTTPHeaderName headerName)
 {
     String headerValue = headers.get(headerName);
     if (headerValue.isEmpty())
-        return std::numeric_limits<double>::quiet_NaN(); 
+        return { };
     // This handles all date formats required by RFC2616:
     // Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
     // Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
     // Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
-    double dateInMilliseconds = parseDate(headerValue);
-    if (!std::isfinite(dateInMilliseconds))
-        return std::numeric_limits<double>::quiet_NaN();
-    return dateInMilliseconds / 1000;
+    return parseHTTPDate(headerValue);
 }
 
-double ResourceResponseBase::date() const
+Optional<std::chrono::system_clock::time_point> ResourceResponseBase::date() const
 {
     lazyInit(CommonFieldsOnly);
 
@@ -414,22 +391,24 @@ double ResourceResponseBase::date() const
     return m_date;
 }
 
-double ResourceResponseBase::age() const
+Optional<std::chrono::microseconds> ResourceResponseBase::age() const
 {
+    using namespace std::chrono;
+
     lazyInit(CommonFieldsOnly);
 
     if (!m_haveParsedAgeHeader) {
         String headerValue = m_httpHeaderFields.get(HTTPHeaderName::Age);
         bool ok;
-        m_age = headerValue.toDouble(&ok);
-        if (!ok)
-            m_age = std::numeric_limits<double>::quiet_NaN();
+        double ageDouble = headerValue.toDouble(&ok);
+        if (ok)
+            m_age = duration_cast<microseconds>(duration<double>(ageDouble));
         m_haveParsedAgeHeader = true;
     }
     return m_age;
 }
 
-double ResourceResponseBase::expires() const
+Optional<std::chrono::system_clock::time_point> ResourceResponseBase::expires() const
 {
     lazyInit(CommonFieldsOnly);
 
@@ -440,7 +419,7 @@ double ResourceResponseBase::expires() const
     return m_expires;
 }
 
-double ResourceResponseBase::lastModified() const
+Optional<std::chrono::system_clock::time_point> ResourceResponseBase::lastModified() const
 {
     lazyInit(CommonFieldsOnly);
 

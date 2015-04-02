@@ -318,9 +318,9 @@ void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double fini
         bool allowStale = originalRequest().cachePolicy() >= ReturnCacheDataElseLoad;
         bool hasCacheableRedirect = m_response.isHTTP() && WebCore::redirectChainAllowsReuse(m_redirectChainCacheStatus, allowStale ? WebCore::ReuseExpiredRedirection : WebCore::DoNotReuseExpiredRedirection);
         if (hasCacheableRedirect && m_redirectChainCacheStatus.status == RedirectChainCacheStatus::CachedRedirection) {
-            // FIXME: Cache the actual redirects instead of the end result.
-            double now = currentTime();
-            double responseEndOfValidity = now + WebCore::computeFreshnessLifetimeForHTTPFamily(m_response, now) - WebCore::computeCurrentAge(m_response, now);
+            // Maybe we should cache the actual redirects instead of the end result?
+            auto now = std::chrono::system_clock::now();
+            auto responseEndOfValidity = now + WebCore::computeFreshnessLifetimeForHTTPFamily(m_response, now) - WebCore::computeCurrentAge(m_response, now);
             hasCacheableRedirect = responseEndOfValidity <= m_redirectChainCacheStatus.endOfValidity;
         }
 

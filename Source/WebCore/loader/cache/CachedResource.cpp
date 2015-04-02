@@ -116,7 +116,7 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type, Sessio
     , m_decodedDataDeletionTimer(*this, &CachedResource::decodedDataDeletionTimerFired, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_sessionID(sessionID)
     , m_loadPriority(defaultPriorityForResourceType(type))
-    , m_responseTimestamp(currentTime())
+    , m_responseTimestamp(std::chrono::system_clock::now())
     , m_lastDecodedAccessTime(0)
     , m_loadFinishTime(0)
     , m_encodedSize(0)
@@ -347,16 +347,16 @@ bool CachedResource::isExpired() const
     return computeCurrentAge(m_response, m_responseTimestamp) > freshnessLifetime(m_response);
 }
 
-double CachedResource::freshnessLifetime(const ResourceResponse& response) const
+std::chrono::microseconds CachedResource::freshnessLifetime(const ResourceResponse& response) const
 {
     if (!response.url().protocolIsInHTTPFamily()) {
         // Don't cache non-HTTP main resources since we can't check for freshness.
         // FIXME: We should not cache subresources either, but when we tried this
         // it caused performance and flakiness issues in our test infrastructure.
         if (m_type == MainResource && !SchemeRegistry::shouldCacheResponsesFromURLSchemeIndefinitely(response.url().protocol()))
-            return 0;
+            return std::chrono::microseconds::zero();
 
-        return std::numeric_limits<double>::max();
+        return std::chrono::microseconds::max();
     }
 
     return computeFreshnessLifetimeForHTTPFamily(response, m_responseTimestamp);
@@ -373,7 +373,7 @@ void CachedResource::willSendRequest(ResourceRequest&, const ResourceResponse& r
 void CachedResource::responseReceived(const ResourceResponse& response)
 {
     setResponse(response);
-    m_responseTimestamp = currentTime();
+    m_responseTimestamp = std::chrono::system_clock::now();
     String encoding = response.textEncodingName();
     if (!encoding.isNull())
         setEncoding(encoding);
@@ -646,7 +646,7 @@ void CachedResource::switchClientsToRevalidatedResource()
 
 void CachedResource::updateResponseAfterRevalidation(const ResourceResponse& validatingResponse)
 {
-    m_responseTimestamp = currentTime();
+    m_responseTimestamp = std::chrono::system_clock::now();
 
     updateResponseHeadersAfterRevalidation(m_response, validatingResponse);
 }
