@@ -225,6 +225,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/CapabilityRange.idl
     Modules/mediastream/DOMURLMediaStream.idl
     Modules/mediastream/HTMLMediaElementMediaStream.idl
+    Modules/mediastream/MediaDevices.idl
     Modules/mediastream/MediaSourceStates.idl
     Modules/mediastream/MediaStream.idl
     Modules/mediastream/MediaStreamCapabilities.idl
@@ -235,6 +236,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/MediaTrackConstraint.idl
     Modules/mediastream/MediaTrackConstraintSet.idl
     Modules/mediastream/MediaTrackConstraints.idl
+    Modules/mediastream/NavigatorMediaDevices.idl
     Modules/mediastream/NavigatorUserMedia.idl
     Modules/mediastream/NavigatorUserMediaError.idl
     Modules/mediastream/NavigatorUserMediaErrorCallback.idl
@@ -874,6 +876,7 @@ set(WebCore_SOURCES
     Modules/mediastream/DOMURLMediaStream.cpp
     Modules/mediastream/HTMLMediaElementMediaStream.cpp
     Modules/mediastream/MediaConstraintsImpl.cpp
+    Modules/mediastream/MediaDevices.cpp
     Modules/mediastream/MediaSourceStates.cpp
     Modules/mediastream/MediaStream.cpp
     Modules/mediastream/MediaStreamCapabilities.cpp
@@ -885,6 +888,7 @@ set(WebCore_SOURCES
     Modules/mediastream/MediaTrackConstraint.cpp
     Modules/mediastream/MediaTrackConstraintSet.cpp
     Modules/mediastream/MediaTrackConstraints.cpp
+    Modules/mediastream/NavigatorMediaDevices.cpp
     Modules/mediastream/NavigatorUserMedia.cpp
     Modules/mediastream/NavigatorUserMediaError.cpp
     Modules/mediastream/RTCDTMFSender.cpp
@@ -1130,6 +1134,7 @@ set(WebCore_SOURCES
     bindings/js/JSLazyEventListener.cpp
     bindings/js/JSLocationCustom.cpp
     bindings/js/JSMainThreadExecState.cpp
+    bindings/js/JSMediaDevicesCustom.cpp
     bindings/js/JSMediaSourceStatesCustom.cpp
     bindings/js/JSMediaStreamCapabilitiesCustom.cpp
     bindings/js/JSMessageChannelCustom.cpp

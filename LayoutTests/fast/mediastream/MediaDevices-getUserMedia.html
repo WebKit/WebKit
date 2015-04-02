@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="console"></div>
+        <script>
+            description("Tests getUserMedia (Promise-based version on navigator.mediaDevices)");
+
+            function setUserMediaPermission(isGranted) {
+                if (window.testRunner)
+                    testRunner.setUserMediaPermission(isGranted);
+                else
+                    debug("This test can not be run without the testRunner");
+            }
+
+            var stream;
+            var errorArg;
+
+            function invalidGotStream() {
+                testFailed("Stream generated when an error should have occurred.");
+                finishJSTest();
+            }
+
+            function error2(e) {
+                testPassed("Error callback called.");
+                finishJSTest();
+            }
+
+            function error1(e) {
+                errorArg = e;
+                testPassed("Error callback called.");
+                shouldBeEqualToString("errorArg.name", "PermissionDeniedError");
+                shouldBeEqualToString("errorArg.constraintName", "");
+
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true}).then(invalidGotStream).catch(error2);");
+            }
+
+            function gotStream4(s) {
+                stream = s;
+                testPassed("Stream generated.");
+                shouldBe("stream.getAudioTracks().length", "1");
+                shouldBe("stream.getVideoTracks().length", "1");
+
+                setUserMediaPermission(false);
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true}).then(invalidGotStream, error1);");
+            }
+
+            function gotStream3(s) {
+                stream = s;
+                testPassed("Stream generated.");
+                shouldBe("stream.getAudioTracks().length", "1");
+                shouldBe("stream.getVideoTracks().length", "1");
+
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:{}, video:{}}).then(gotStream4);");
+            }
+
+            function gotStream2(s) {
+                stream = s;
+                testPassed("Stream generated.");
+                shouldBe("stream.getAudioTracks().length", "0");
+                shouldBe("stream.getVideoTracks().length", "1");
+
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream3);");
+            }
+
+            function gotStream1(s) {
+                stream = s;
+                testPassed("Stream generated.");
+                shouldBe("stream.getAudioTracks().length", "1");
+                shouldBe("stream.getVideoTracks().length", "0");
+
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({video:true}).then(gotStream2);")
+            }
+
+            shouldThrow("navigator.mediaDevices.getUserMedia();");
+            shouldThrow("navigator.mediaDevices.getUserMedia({});");
+            shouldThrow("navigator.mediaDevices.webkitGetUserMedia({audio:true});");
+            setUserMediaPermission(true);
+            shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true}).then(gotStream1);");
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

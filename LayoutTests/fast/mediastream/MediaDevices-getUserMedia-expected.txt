@@ -1,0 +1,34 @@
+Tests getUserMedia (Promise-based version on navigator.mediaDevices)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS navigator.mediaDevices.getUserMedia(); threw exception TypeError: First argument of getUserMedia must be a valid Dictionary.
+PASS navigator.mediaDevices.getUserMedia({}); threw exception Error: NotSupportedError: DOM Exception 9.
+PASS navigator.mediaDevices.webkitGetUserMedia({audio:true}); threw exception TypeError: navigator.mediaDevices.webkitGetUserMedia is not a function. (In 'navigator.mediaDevices.webkitGetUserMedia({audio:true})', 'navigator.mediaDevices.webkitGetUserMedia' is undefined).
+PASS navigator.mediaDevices.getUserMedia({audio:true}).then(gotStream1); did not throw exception.
+PASS Stream generated.
+PASS stream.getAudioTracks().length is 1
+PASS stream.getVideoTracks().length is 0
+PASS navigator.mediaDevices.getUserMedia({video:true}).then(gotStream2); did not throw exception.
+PASS Stream generated.
+PASS stream.getAudioTracks().length is 0
+PASS stream.getVideoTracks().length is 1
+PASS navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream3); did not throw exception.
+PASS Stream generated.
+PASS stream.getAudioTracks().length is 1
+PASS stream.getVideoTracks().length is 1
+PASS navigator.mediaDevices.getUserMedia({audio:{}, video:{}}).then(gotStream4); did not throw exception.
+PASS Stream generated.
+PASS stream.getAudioTracks().length is 1
+PASS stream.getVideoTracks().length is 1
+PASS navigator.mediaDevices.getUserMedia({audio:true}).then(invalidGotStream, error1); did not throw exception.
+PASS Error callback called.
+PASS errorArg.name is "PermissionDeniedError"
+PASS errorArg.constraintName is ""
+PASS navigator.mediaDevices.getUserMedia({audio:true}).then(invalidGotStream).catch(error2); did not throw exception.
+PASS Error callback called.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

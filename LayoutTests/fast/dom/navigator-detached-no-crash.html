@@ -52,7 +52,7 @@ function check_navigator_and_done() {
 function check_navigator() {
   var strings = [ ];
   for (p in old_nav) {
-    if (p == 'geolocation' || p == 'webkitGetUserMedia') // Don't include Geolocation or the Media Stream API functions until most platforms have support.
+    if (p == 'geolocation' || p == 'webkitGetUserMedia' || p == 'mediaDevices') // Don't include Geolocation or the Media Stream API functions until most platforms have support.
       continue;
 
     if (typeof old_nav[p] == 'function') {

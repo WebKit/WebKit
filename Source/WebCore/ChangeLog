@@ -1,3 +1,56 @@
+2015-04-02  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Add support for Promise-based MediaDevices.getUserMedia()
+        https://bugs.webkit.org/show_bug.cgi?id=143255
+
+        Reviewed by Eric Carlson.
+
+        The MediaDevices object collects functionality related to local media
+        devices. This patch adds the Promise-based version of getUserMedia()
+        (unprefixed). Other functionality, like enumerateDevices(), will be
+        added in later patches.
+
+        The old callback-based webkitGetUserMedia() (on Navigator) is kept for
+        legacy purposes (according to the Media Capture and Streams API spec [1]).
+        Both versions of getUserMedia are backed up by UserMediaRequest where
+        the callbacks from the callback-based version are wrapped inside c++
+        lambda functions. The new Promise-based getUserMedia() uses the lambda
+        functions directly as created by the Promise bindings.
+
+        [1] http://w3c.github.io/mediacapture-main/archives/20150324/getusermedia.html#navigatorusermedia-interface-extensions
+
+        Test: fast/mediastream/MediaDevices-getUserMedia.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/mediastream/MediaDevices.cpp: Added.
+        (WebCore::MediaDevices::create):
+        (WebCore::MediaDevices::MediaDevices):
+        (WebCore::MediaDevices::~MediaDevices):
+        (WebCore::MediaDevices::document):
+        (WebCore::MediaDevices::getUserMedia):
+        * Modules/mediastream/MediaDevices.h: Added.
+        * Modules/mediastream/MediaDevices.idl: Added.
+        * Modules/mediastream/NavigatorMediaDevices.cpp: Added.
+        (WebCore::NavigatorMediaDevices::NavigatorMediaDevices):
+        (WebCore::NavigatorMediaDevices::~NavigatorMediaDevices):
+        (WebCore::NavigatorMediaDevices::from):
+        (WebCore::NavigatorMediaDevices::mediaDevices):
+        (WebCore::NavigatorMediaDevices::supplementName):
+        * Modules/mediastream/NavigatorMediaDevices.h: Added.
+        * Modules/mediastream/NavigatorMediaDevices.idl: Added.
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::create):
+        (WebCore::UserMediaRequest::UserMediaRequest):
+        (WebCore::UserMediaRequest::didCreateStream):
+        (WebCore::UserMediaRequest::failedToCreateStreamWithConstraintsError):
+        (WebCore::UserMediaRequest::failedToCreateStreamWithPermissionError):
+        * Modules/mediastream/UserMediaRequest.h:
+        * PlatformGTK.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSMediaDevicesCustom.cpp: Added.
+        (WebCore::JSMediaDevices::getUserMedia):
+
 2015-04-02  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Fix AirPlay problem caused by r182240

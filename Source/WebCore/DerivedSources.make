@@ -119,6 +119,7 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/mediastream/CapabilityRange.idl \
     $(WebCore)/Modules/mediastream/HTMLMediaElementMediaStream.idl \
     $(WebCore)/Modules/mediastream/MediaSourceStates.idl \
+    $(WebCore)/Modules/mediastream/MediaDevices.idl \
 	$(WebCore)/Modules/mediastream/MediaStream.idl \
 	$(WebCore)/Modules/mediastream/MediaStreamCapabilities.idl \
     $(WebCore)/Modules/mediastream/MediaStreamEvent.idl \
@@ -128,6 +129,7 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/mediastream/MediaTrackConstraint.idl \
     $(WebCore)/Modules/mediastream/MediaTrackConstraints.idl \
     $(WebCore)/Modules/mediastream/MediaTrackConstraintSet.idl \
+    $(WebCore)/Modules/mediastream/NavigatorMediaDevices.idl \
     $(WebCore)/Modules/mediastream/NavigatorUserMedia.idl \
     $(WebCore)/Modules/mediastream/NavigatorUserMediaError.idl \
     $(WebCore)/Modules/mediastream/NavigatorUserMediaErrorCallback.idl \

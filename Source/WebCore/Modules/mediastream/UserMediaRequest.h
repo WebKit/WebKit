@@ -36,10 +36,8 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ActiveDOMObject.h"
+#include "MediaDevices.h"
 #include "MediaStreamCreationClient.h"
-#include "NavigatorUserMediaErrorCallback.h"
-#include "NavigatorUserMediaSuccessCallback.h"
-#include "RealtimeMediaSource.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -51,6 +49,8 @@ class Document;
 class Frame;
 class MediaConstraints;
 class MediaStreamPrivate;
+class NavigatorUserMediaErrorCallback;
+class NavigatorUserMediaSuccessCallback;
 class UserMediaController;
 class SecurityOrigin;
 
@@ -59,6 +59,7 @@ typedef int ExceptionCode;
 class UserMediaRequest : public MediaStreamCreationClient, public ContextDestructionObserver {
 public:
     static PassRefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaController*, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&);
+    static PassRefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaController*, const Dictionary& options, MediaDevices::ResolveCallback, MediaDevices::RejectCallback, ExceptionCode&);
     ~UserMediaRequest();
 
     WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;
@@ -71,7 +72,7 @@ public:
     bool requiresVideo() const { return m_videoConstraints; }
 
 private:
-    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
+    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints, MediaDevices::ResolveCallback, MediaDevices::RejectCallback);
 
     // MediaStreamCreationClient
     virtual void constraintsValidated() override final;
@@ -88,8 +89,8 @@ private:
 
     UserMediaController* m_controller;
 
-    RefPtr<NavigatorUserMediaSuccessCallback> m_successCallback;
-    RefPtr<NavigatorUserMediaErrorCallback> m_errorCallback;
+    MediaDevices::ResolveCallback m_resolveCallback;
+    MediaDevices::RejectCallback m_rejectCallback;
 };
 
 } // namespace WebCore
