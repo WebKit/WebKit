@@ -88,7 +88,6 @@ audio::-webkit-media-controls-panel {
 
     direction: ltr;
 
-    opacity: 0;
     transition: opacity 0.25s linear;
 }
 
@@ -129,6 +128,7 @@ audio::-webkit-media-controls-panel-background {
 
 video::-webkit-media-controls-panel {
     cursor: none;
+    opacity: 0;
 }
 
 video::-webkit-media-controls-panel.show,

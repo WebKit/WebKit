@@ -1,3 +1,15 @@
+2015-04-02  Roger Fong  <roger_fong@apple.com>
+
+        Show audio media controls on OSX.
+        https://bugs.webkit.org/show_bug.cgi?id=143346.
+        <rdar://problem/20306240>
+
+        Reviewed by Dean Jackson.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-panel:hover):
+        Revert part of r180893.
+
 2015-04-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Disallow ruby base from having leading or trailing expansions
