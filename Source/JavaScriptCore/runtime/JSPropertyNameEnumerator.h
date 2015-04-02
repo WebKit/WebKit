@@ -126,13 +126,13 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(ExecState* exec, JSObjec
     PropertyNameArray propertyNames(exec);
 
     if (structure->canAccessPropertiesQuickly() && indexedLength == base->getArrayLength()) {
-        base->methodTable(vm)->getStructurePropertyNames(base, exec, propertyNames, ExcludeDontEnumProperties);
+        base->methodTable(vm)->getStructurePropertyNames(base, exec, propertyNames, EnumerationMode());
 
         numberStructureProperties = propertyNames.size();
 
-        base->methodTable(vm)->getGenericPropertyNames(base, exec, propertyNames, ExcludeDontEnumProperties);
+        base->methodTable(vm)->getGenericPropertyNames(base, exec, propertyNames, EnumerationMode());
     } else
-        base->methodTable(vm)->getPropertyNames(base, exec, propertyNames, ExcludeDontEnumProperties);
+        base->methodTable(vm)->getPropertyNames(base, exec, propertyNames, EnumerationMode());
 
     ASSERT(propertyNames.size() < UINT32_MAX);
 

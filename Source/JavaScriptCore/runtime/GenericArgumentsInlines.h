@@ -91,7 +91,7 @@ void GenericArguments<Type>::getOwnPropertyNames(JSObject* object, ExecState* ex
             continue;
         array.add(Identifier::from(exec, i));
     }
-    if (shouldIncludeDontEnumProperties(mode) && !thisObject->overrodeThings()) {
+    if (mode.includeDontEnumProperties() && !thisObject->overrodeThings()) {
         array.add(exec->propertyNames().callee);
         array.add(exec->propertyNames().length);
     }

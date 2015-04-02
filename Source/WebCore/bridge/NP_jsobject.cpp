@@ -447,7 +447,7 @@ bool _NPN_Enumerate(NPP, NPObject* o, NPIdentifier** identifier, uint32_t* count
         JSLockHolder lock(exec);
         PropertyNameArray propertyNames(exec);
 
-        obj->imp->methodTable()->getPropertyNames(obj->imp, exec, propertyNames, ExcludeDontEnumProperties);
+        obj->imp->methodTable()->getPropertyNames(obj->imp, exec, propertyNames, EnumerationMode());
         unsigned size = static_cast<unsigned>(propertyNames.size());
         // FIXME: This should really call NPN_MemAlloc but that's in WebKit
         NPIdentifier* identifiers = static_cast<NPIdentifier*>(malloc(sizeof(NPIdentifier) * size));

@@ -63,7 +63,7 @@ bool Dictionary::getOwnPropertiesAsStringHashMap(HashMap<String, String>& map) c
     ExecState* exec = m_dictionary.execState();
 
     PropertyNameArray propertyNames(exec);
-    JSObject::getOwnPropertyNames(object, exec, propertyNames, ExcludeDontEnumProperties);
+    JSObject::getOwnPropertyNames(object, exec, propertyNames, EnumerationMode());
     for (PropertyNameArray::const_iterator it = propertyNames.begin(); it != propertyNames.end(); ++it) {
         String stringKey = it->string();
         if (stringKey.isEmpty())
@@ -88,7 +88,7 @@ bool Dictionary::getOwnPropertyNames(Vector<String>& names) const
     ExecState* exec = m_dictionary.execState();
 
     PropertyNameArray propertyNames(exec);
-    JSObject::getOwnPropertyNames(object, exec, propertyNames, ExcludeDontEnumProperties);
+    JSObject::getOwnPropertyNames(object, exec, propertyNames, EnumerationMode());
     for (PropertyNameArray::const_iterator it = propertyNames.begin(); it != propertyNames.end(); ++it) {
         String stringKey = it->string();
         if (!stringKey.isEmpty())

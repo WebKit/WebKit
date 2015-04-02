@@ -28,63 +28,46 @@
 
 namespace JSC {
 
-enum EnumerationMode {
-    ExcludeDontEnumProperties,
-    ExcludeDontEnumPropertiesAndSkipJSObject,
-    IncludeDontEnumProperties,
-    IncludeDontEnumPropertiesAndSkipJSObject
+enum class DontEnumPropertiesMode {
+    Include,
+    Exclude
 };
 
-inline bool shouldIncludeDontEnumProperties(EnumerationMode mode)
-{
-    switch (mode) {
-    case IncludeDontEnumProperties:
-    case IncludeDontEnumPropertiesAndSkipJSObject:
-        return true;
-    default:
-        return false;
-    }
-}
+enum class JSObjectPropertiesMode {
+    Include,
+    Exclude
+};
 
-inline bool shouldExcludeDontEnumProperties(EnumerationMode mode)
-{
-    switch (mode) {
-    case ExcludeDontEnumProperties:
-    case ExcludeDontEnumPropertiesAndSkipJSObject:
-        return true;
-    default:
-        return false;
+class EnumerationMode {
+public:
+    EnumerationMode(DontEnumPropertiesMode dontEnumPropertiesMode = DontEnumPropertiesMode::Exclude, JSObjectPropertiesMode jsObjectPropertiesMode = JSObjectPropertiesMode::Include)
+        : m_dontEnumPropertiesMode(dontEnumPropertiesMode)
+        , m_jsObjectPropertiesMode(jsObjectPropertiesMode)
+    {
     }
-}
 
-inline bool shouldIncludeJSObjectPropertyNames(EnumerationMode mode)
-{
-    switch (mode) {
-    case IncludeDontEnumProperties:
-    case ExcludeDontEnumProperties:
-        return true;
-    case ExcludeDontEnumPropertiesAndSkipJSObject:
-    case IncludeDontEnumPropertiesAndSkipJSObject:
-        return false;
+    EnumerationMode(const EnumerationMode& mode, JSObjectPropertiesMode jsObjectPropertiesMode)
+        : m_dontEnumPropertiesMode(mode.m_dontEnumPropertiesMode)
+        , m_jsObjectPropertiesMode(jsObjectPropertiesMode)
+    {
     }
-    ASSERT_NOT_REACHED();
-    return false;
-}
 
-inline EnumerationMode modeThatSkipsJSObject(EnumerationMode mode)
-{
-    switch (mode) {
-    case IncludeDontEnumProperties:
-        return IncludeDontEnumPropertiesAndSkipJSObject;
-    case ExcludeDontEnumProperties:
-        return ExcludeDontEnumPropertiesAndSkipJSObject;
-    case ExcludeDontEnumPropertiesAndSkipJSObject:
-    case IncludeDontEnumPropertiesAndSkipJSObject:
-        return mode;
+    // Add other constructors as needed for convenience
+
+    bool includeDontEnumProperties()
+    {
+        return m_dontEnumPropertiesMode == DontEnumPropertiesMode::Include;
     }
-    ASSERT_NOT_REACHED();
-    return mode;
-}
+
+    bool includeJSObjectProperties()
+    {
+        return m_jsObjectPropertiesMode == JSObjectPropertiesMode::Include;
+    }
+
+private:
+    DontEnumPropertiesMode m_dontEnumPropertiesMode;
+    JSObjectPropertiesMode m_jsObjectPropertiesMode;
+};
 
 } // namespace JSC
 

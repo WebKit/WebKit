@@ -753,7 +753,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
         return JSValue::encode(jsUndefined());
     
     PropertyNameArray nameArray(exec);
-    thisObj->methodTable(exec->vm())->getPropertyNames(thisObj, exec, nameArray, IncludeDontEnumProperties);
+    thisObj->methodTable(exec->vm())->getPropertyNames(thisObj, exec, nameArray, EnumerationMode(DontEnumPropertiesMode::Include));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 

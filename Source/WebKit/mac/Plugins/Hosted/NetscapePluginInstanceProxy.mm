@@ -1231,7 +1231,7 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
     JSLockHolder lock(exec);
  
     PropertyNameArray propertyNames(exec);
-    object->methodTable()->getPropertyNames(object, exec, propertyNames, ExcludeDontEnumProperties);
+    object->methodTable()->getPropertyNames(object, exec, propertyNames, EnumerationMode());
 
     RetainPtr<NSMutableArray*> array = adoptNS([[NSMutableArray alloc] init]);
     for (unsigned i = 0; i < propertyNames.size(); i++) {

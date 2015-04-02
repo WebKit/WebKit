@@ -1254,7 +1254,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     lengthStack.removeLast();
 
                     propertyStack.append(PropertyNameArray(m_exec));
-                    array->methodTable()->getOwnNonIndexPropertyNames(array, m_exec, propertyStack.last(), ExcludeDontEnumProperties);
+                    array->methodTable()->getOwnNonIndexPropertyNames(array, m_exec, propertyStack.last(), EnumerationMode());
                     if (propertyStack.last().size()) {
                         write(NonIndexPropertiesTag);
                         indexStack.append(0);
@@ -1304,7 +1304,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 inputObjectStack.append(inObject);
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(m_exec));
-                inObject->methodTable()->getOwnPropertyNames(inObject, m_exec, propertyStack.last(), ExcludeDontEnumProperties);
+                inObject->methodTable()->getOwnPropertyNames(inObject, m_exec, propertyStack.last(), EnumerationMode());
             }
             objectStartVisitMember:
             FALLTHROUGH;
@@ -1372,7 +1372,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     JSObject* object = inputObjectStack.last();
                     ASSERT(jsDynamicCast<JSMap*>(object));
                     propertyStack.append(PropertyNameArray(m_exec));
-                    object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), ExcludeDontEnumProperties);
+                    object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), EnumerationMode());
                     write(NonMapPropertiesTag);
                     indexStack.append(0);
                     goto objectStartVisitMember;
@@ -1416,7 +1416,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     JSObject* object = inputObjectStack.last();
                     ASSERT(jsDynamicCast<JSSet*>(object));
                     propertyStack.append(PropertyNameArray(m_exec));
-                    object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), ExcludeDontEnumProperties);
+                    object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), EnumerationMode());
                     write(NonSetPropertiesTag);
                     indexStack.append(0);
                     goto objectStartVisitMember;

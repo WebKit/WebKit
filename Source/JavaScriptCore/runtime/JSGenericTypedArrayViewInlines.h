@@ -415,7 +415,7 @@ void JSGenericTypedArrayView<Adaptor>::getOwnNonIndexPropertyNames(
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
     
-    if (shouldIncludeDontEnumProperties(mode))
+    if (mode.includeDontEnumProperties())
         array.add(exec->propertyNames().length);
     
     Base::getOwnNonIndexPropertyNames(thisObject, exec, array, mode);

@@ -207,7 +207,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState* exe
     if (exec->hadException())
         return JSValue::encode(jsNull());
     PropertyNameArray properties(exec);
-    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, IncludeDontEnumProperties);
+    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
     JSArray* names = constructEmptyArray(exec, 0);
     size_t numProperties = properties.size();
     for (size_t i = 0; i < numProperties; i++)
@@ -222,7 +222,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsNull());
     PropertyNameArray properties(exec);
-    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, ExcludeDontEnumProperties);
+    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, EnumerationMode());
     JSArray* keys = constructEmptyArray(exec, 0);
     size_t numProperties = properties.size();
     for (size_t i = 0; i < numProperties; i++)
@@ -333,7 +333,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState* exec)
 static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* properties)
 {
     PropertyNameArray propertyNames(exec);
-    asObject(properties)->methodTable(exec->vm())->getOwnPropertyNames(asObject(properties), exec, propertyNames, ExcludeDontEnumProperties);
+    asObject(properties)->methodTable(exec->vm())->getOwnPropertyNames(asObject(properties), exec, propertyNames, EnumerationMode());
     size_t numProperties = propertyNames.size();
     Vector<PropertyDescriptor> descriptors;
     MarkedArgumentBuffer markBuffer;
@@ -400,7 +400,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
 
     // 2. For each named own property name P of O,
     PropertyNameArray properties(exec);
-    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, IncludeDontEnumProperties);
+    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
     PropertyNameArray::const_iterator end = properties.end();
     for (PropertyNameArray::const_iterator iter = properties.begin(); iter != end; ++iter) {
         // a. Let desc be the result of calling the [[GetOwnProperty]] internal method of O with P.
@@ -437,7 +437,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(ExecState* exec)
 
     // 2. For each named own property name P of O,
     PropertyNameArray properties(exec);
-    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, IncludeDontEnumProperties);
+    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
     PropertyNameArray::const_iterator end = properties.end();
     for (PropertyNameArray::const_iterator iter = properties.begin(); iter != end; ++iter) {
         // a. Let desc be the result of calling the [[GetOwnProperty]] internal method of O with P.
@@ -485,7 +485,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState* exec)
 
     // 2. For each named own property name P of O,
     PropertyNameArray properties(exec);
-    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, IncludeDontEnumProperties);
+    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
     PropertyNameArray::const_iterator end = properties.end();
     for (PropertyNameArray::const_iterator iter = properties.begin(); iter != end; ++iter) {
         // a. Let desc be the result of calling the [[GetOwnProperty]] internal method of O with P.
@@ -515,7 +515,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState* exec)
 
     // 2. For each named own property name P of O,
     PropertyNameArray properties(exec);
-    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, IncludeDontEnumProperties);
+    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
     PropertyNameArray::const_iterator end = properties.end();
     for (PropertyNameArray::const_iterator iter = properties.begin(); iter != end; ++iter) {
         // a. Let desc be the result of calling the [[GetOwnProperty]] internal method of O with P.

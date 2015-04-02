@@ -118,7 +118,7 @@ private:
 
         size_t count = 0;
         PropertyNameArray propertyNameArray(&vm);
-        prototype->structure()->getPropertyNamesFromStructure(vm, propertyNameArray, ExcludeDontEnumProperties);
+        prototype->structure()->getPropertyNamesFromStructure(vm, propertyNameArray, EnumerationMode());
         PropertyNameArrayData::PropertyNameVector& propertyNameVector = propertyNameArray.data()->propertyNameVector();
         for (size_t i = 0; i < propertyNameVector.size(); ++i) {
             JSValue value = prototype->getDirect(vm, propertyNameVector[i]);

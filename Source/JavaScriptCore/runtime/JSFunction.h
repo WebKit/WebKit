@@ -139,7 +139,7 @@ protected:
     ObjectAllocationProfile* createAllocationProfile(ExecState*, size_t inlineCapacity);
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode = ExcludeDontEnumProperties);
+    static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode = EnumerationMode());
     static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
     static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);

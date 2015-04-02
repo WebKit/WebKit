@@ -201,7 +201,7 @@ void JSArrayBufferView::getOwnNonIndexPropertyNames(
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(object);
     
     // length/byteOffset/byteLength are DontEnum, at least in Firefox.
-    if (shouldIncludeDontEnumProperties(mode)) {
+    if (mode.includeDontEnumProperties()) {
         array.add(exec->propertyNames().byteOffset);
         array.add(exec->propertyNames().byteLength);
         array.add(exec->propertyNames().buffer);

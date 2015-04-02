@@ -75,7 +75,7 @@ void RuntimeArray::getOwnPropertyNames(JSObject* object, ExecState* exec, Proper
     for (unsigned i = 0; i < length; ++i)
         propertyNames.add(Identifier::from(exec, i));
 
-    if (shouldIncludeDontEnumProperties(mode))
+    if (mode.includeDontEnumProperties())
         propertyNames.add(exec->propertyNames().length);
 
     JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);

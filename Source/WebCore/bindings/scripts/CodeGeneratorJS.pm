@@ -968,16 +968,16 @@ sub GenerateHeader
 
     # Custom getPropertyNames function exists on DOMWindow
     if ($interfaceName eq "DOMWindow") {
-        push(@headerContent, "    static void getPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);\n");
-        push(@headerContent, "    static void getGenericPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);\n");
-        push(@headerContent, "    static void getStructurePropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);\n");
+        push(@headerContent, "    static void getPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());\n");
+        push(@headerContent, "    static void getGenericPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());\n");
+        push(@headerContent, "    static void getStructurePropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());\n");
         push(@headerContent, "    static uint32_t getEnumerableLength(JSC::ExecState*, JSC::JSObject*);\n");
         $structureFlags{"JSC::OverridesGetPropertyNames"} = 1;
     }
 
     # Custom getOwnPropertyNames function
     if ($interface->extendedAttributes->{"CustomEnumerateProperty"} || $indexedGetterFunction) {
-        push(@headerContent, "    static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);\n");
+        push(@headerContent, "    static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());\n");
         $structureFlags{"JSC::OverridesGetPropertyNames"} = 1;       
     }
 

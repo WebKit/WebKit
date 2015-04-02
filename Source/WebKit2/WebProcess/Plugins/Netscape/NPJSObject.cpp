@@ -240,7 +240,7 @@ bool NPJSObject::enumerate(NPIdentifier** identifiers, uint32_t* identifierCount
     JSLockHolder lock(exec);
 
     PropertyNameArray propertyNames(exec);
-    m_jsObject->methodTable()->getPropertyNames(m_jsObject.get(), exec, propertyNames, ExcludeDontEnumProperties);
+    m_jsObject->methodTable()->getPropertyNames(m_jsObject.get(), exec, propertyNames, EnumerationMode());
 
     NPIdentifier* nameIdentifiers = npnMemNewArray<NPIdentifier>(propertyNames.size());
 

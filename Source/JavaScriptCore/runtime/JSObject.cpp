@@ -78,7 +78,7 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
             continue;
 
         for (auto iter = table->begin(); iter != table->end(); ++iter) {
-            if ((!(iter->attributes() & DontEnum) || shouldIncludeDontEnumProperties(mode)) && !((iter->attributes() & BuiltinOrFunction) && didReify))
+            if ((!(iter->attributes() & DontEnum) || mode.includeDontEnumProperties()) && !((iter->attributes() & BuiltinOrFunction) && didReify))
                 propertyNames.add(Identifier::fromString(&vm, iter.key()));
         }
     }
@@ -1518,7 +1518,7 @@ void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameA
 
 void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    if (!shouldIncludeJSObjectPropertyNames(mode)) {
+    if (!mode.includeJSObjectProperties()) {
         // We still have to get non-indexed properties from any subclasses of JSObject that have them.
         object->methodTable(exec->vm())->getOwnNonIndexPropertyNames(object, exec, propertyNames, mode);
         return;
@@ -1572,7 +1572,7 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
             
             SparseArrayValueMap::const_iterator end = map->end();
             for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
-                if (shouldIncludeDontEnumProperties(mode) || !(it->value.attributes & DontEnum))
+                if (mode.includeDontEnumProperties() || !(it->value.attributes & DontEnum))
                     keys.uncheckedAppend(static_cast<unsigned>(it->key));
             }
             
@@ -1594,7 +1594,7 @@ void JSObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, Pr
 {
     getClassPropertyNames(exec, object->classInfo(), propertyNames, mode, object->staticFunctionsReified());
 
-    if (!shouldIncludeJSObjectPropertyNames(mode))
+    if (!mode.includeJSObjectProperties())
         return;
     
     VM& vm = exec->vm();
@@ -2800,7 +2800,7 @@ void JSObject::getStructurePropertyNames(JSObject* object, ExecState* exec, Prop
 void JSObject::getGenericPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     VM& vm = exec->vm();
-    object->methodTable(vm)->getOwnPropertyNames(object, exec, propertyNames, modeThatSkipsJSObject(mode));
+    object->methodTable(vm)->getOwnPropertyNames(object, exec, propertyNames, EnumerationMode(mode, JSObjectPropertiesMode::Exclude));
 
     if (object->prototype().isNull())
         return;

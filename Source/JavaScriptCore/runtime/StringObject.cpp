@@ -150,7 +150,7 @@ void StringObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Proper
     int size = thisObject->internalValue()->length();
     for (int i = 0; i < size; ++i)
         propertyNames.add(Identifier::from(exec, i));
-    if (shouldIncludeDontEnumProperties(mode))
+    if (mode.includeDontEnumProperties())
         propertyNames.add(exec->propertyNames().length);
     return JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }

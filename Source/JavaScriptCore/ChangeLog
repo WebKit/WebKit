@@ -1,3 +1,86 @@
+2015-04-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Clean up EnumerationMode to easily extend
+        https://bugs.webkit.org/show_bug.cgi?id=143276
+
+        Reviewed by Geoffrey Garen.
+
+        To make the followings easily,
+        1. Adding new flag Include/ExcludeSymbols in the Object.getOwnPropertySymbols patch
+        2. Make ExcludeSymbols implicitly default for the existing flags
+        we encapsulate EnumerationMode flags into EnumerationMode class.
+
+        And this class manages 2 flags. Later it will be extended to 3.
+        1. DontEnumPropertiesMode (default is Exclude)
+        2. JSObjectPropertiesMode (default is Include)
+        3. SymbolPropertiesMode (default is Exclude)
+            SymbolPropertiesMode will be added in Object.getOwnPropertySymbols patch.
+
+        This patch replaces places using ExcludeDontEnumProperties
+        to EnumerationMode() value which represents default mode.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getOwnNonIndexPropertyNames):
+        * API/JSObjectRef.cpp:
+        (JSObjectCopyPropertyNames):
+        * bindings/ScriptValue.cpp:
+        (Deprecated::jsToInspectorValue):
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfile::possibleDefaultPropertyCount):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSort):
+        * runtime/EnumerationMode.h:
+        (JSC::EnumerationMode::EnumerationMode):
+        (JSC::EnumerationMode::includeDontEnumProperties):
+        (JSC::EnumerationMode::includeJSObjectProperties):
+        (JSC::shouldIncludeDontEnumProperties): Deleted.
+        (JSC::shouldExcludeDontEnumProperties): Deleted.
+        (JSC::shouldIncludeJSObjectPropertyNames): Deleted.
+        (JSC::modeThatSkipsJSObject): Deleted.
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::getOwnPropertyNames):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnNonIndexPropertyNames):
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::getOwnNonIndexPropertyNames):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::getOwnNonIndexPropertyNames):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnNonIndexPropertyNames):
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnNonIndexPropertyNames):
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::getOwnNonIndexPropertyNames):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::getClassPropertyNames):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::getOwnNonIndexPropertyNames):
+        (JSC::JSObject::getGenericPropertyNames):
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::propertyNameEnumerator):
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::getOwnNonIndexPropertyNames):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyNames):
+        (JSC::objectConstructorKeys):
+        (JSC::defineProperties):
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::getOwnNonIndexPropertyNames):
+        (JSC::RegExpObject::getPropertyNames):
+        (JSC::RegExpObject::getGenericPropertyNames):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::getOwnPropertyNames):
+        * runtime/Structure.cpp:
+        (JSC::Structure::getPropertyNamesFromStructure):
+
 2015-04-01  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Windows and Mac.

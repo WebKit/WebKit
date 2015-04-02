@@ -490,7 +490,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                 m_propertyNames = stringifier.m_arrayReplacerPropertyNames.data();
             else {
                 PropertyNameArray objectPropertyNames(exec);
-                m_object->methodTable()->getOwnPropertyNames(m_object.get(), exec, objectPropertyNames, ExcludeDontEnumProperties);
+                m_object->methodTable()->getOwnPropertyNames(m_object.get(), exec, objectPropertyNames, EnumerationMode());
                 m_propertyNames = objectPropertyNames.releaseData();
             }
             m_size = m_propertyNames->propertyNameVector().size();
@@ -707,7 +707,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 objectStack.push(object);
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(m_exec));
-                object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), ExcludeDontEnumProperties);
+                object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), EnumerationMode());
             }
             objectStartVisitMember:
             FALLTHROUGH;

@@ -63,7 +63,7 @@ void JSSymbolTableObject::getOwnNonIndexPropertyNames(JSObject* object, ExecStat
         for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
             if (it->key->isSymbol())
                 continue;
-            if (!(it->value.getAttributes() & DontEnum) || shouldIncludeDontEnumProperties(mode))
+            if (!(it->value.getAttributes() & DontEnum) || mode.includeDontEnumProperties())
                 propertyNames.add(Identifier::fromUid(exec, it->key.get()));
         }
     }
