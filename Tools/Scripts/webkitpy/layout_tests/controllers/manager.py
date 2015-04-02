@@ -142,7 +142,8 @@ class Manager(object):
         # This must be started before we check the system dependencies,
         # since the helper may do things to make the setup correct.
         self._printer.write_update("Starting helper ...")
-        self._port.start_helper(self._options.pixel_tests)
+        if not self._port.start_helper(self._options.pixel_tests):
+            return False
 
         self._port.reset_preferences()
 
@@ -267,9 +268,7 @@ class Manager(object):
         _log.debug("Restarting helper")
         self._port.stop_helper()
         self._options.pixel_tests = True
-        self._port.start_helper()
-
-        return True
+        return self._port.start_helper()
 
     def _look_for_new_crash_logs(self, run_results, start_time):
         """Since crash logs can take a long time to be written out if the system is

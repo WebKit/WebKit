@@ -866,7 +866,7 @@ class Port(object):
         """If a port needs to reconfigure graphics settings or do other
         things to ensure a known test configuration, it should override this
         method."""
-        pass
+        return True
 
     def reset_preferences(self):
         """If a port needs to reset platform-specific persistent preference

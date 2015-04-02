@@ -1,3 +1,24 @@
+2015-04-01  Alexey Proskuryakov  <ap@apple.com>
+
+        When LayoutTestHelper fails to start, we continue to run the tests, ending up with mysterious failures
+        https://bugs.webkit.org/show_bug.cgi?id=143240
+        rdar://problem/19990425
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (colorProfileURLForDisplay):
+        (saveDisplayColorProfiles):
+        Gracefully handle it when the current profile cannot be retrieved, fixing at
+        least one case when LayoutTestHelper couldn't start.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._set_up_run):
+        (Manager._force_pixel_tests_if_needed):
+        * Scripts/webkitpy/port/base.py: (Port.to.start_helper):
+        * Scripts/webkitpy/port/mac.py: (MacPort.start_helper):
+        Return and check an error from start_helper().
+
 2015-04-01  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Run test-webkitpy as part of EWS (just like we do on other platforms)

@@ -73,7 +73,12 @@ static NSURL *colorProfileURLForDisplay(NSString *displayUUIDString)
         profileURL = (CFURLRef)CFDictionaryGetValue(factoryProfile, kColorSyncDeviceProfileURL);
     }
     
-    
+    if (!profileURL) {
+        NSLog(@"Could not determine current color profile, so it will not be reset after running the tests.");
+        CFRelease(deviceInfo);
+        return nil;
+    }
+
     NSURL *url = (NSURL *)CFAutorelease(CFRetain(profileURL));
     CFRelease(deviceInfo);
     return url;
@@ -116,6 +121,9 @@ static void saveDisplayColorProfiles(NSArray *displayUUIDStrings)
             continue;
         
         NSURL *colorProfileURL = colorProfileURLForDisplay(UUIDString);
+        if (!colorProfileURL)
+            continue;
+
         [userColorProfiles setObject:colorProfileURL forKey:UUIDString];
     }
 }
