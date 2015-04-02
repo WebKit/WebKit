@@ -1,3 +1,10 @@
+2015-04-02  Anders Carlsson  <andersca@apple.com>
+
+        http/tests/security/cross-frame-access-call.html is flaky.
+
+        * TestExpectations:
+        Skip this test for now. Fixing it is being tracked by webkit.org/b/143344.
+
 2015-04-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Disallow ruby base from having leading or trailing expansions
