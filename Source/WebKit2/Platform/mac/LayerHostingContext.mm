@@ -102,11 +102,9 @@ CGColorSpaceRef LayerHostingContext::colorSpace() const
     return [m_context colorSpace];
 }
 
-#if PLATFORM(IOS)
 void LayerHostingContext::setFencePort(mach_port_t fencePort)
 {
     [m_context setFencePort:fencePort];
 }
-#endif
 
 } // namespace WebKit
