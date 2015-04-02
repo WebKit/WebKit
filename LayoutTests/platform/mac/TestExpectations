@@ -726,6 +726,8 @@ webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered
 # New test failing, needs investigation.
 webkit.org/b/103857 fast/events/mouse-cursor-change.html
 
+webkit.org/b/116244 fast/events/mouse-cursor-image-set.html [ Failure Pass ]
+
 webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass Failure ]
 
 webkit.org/b/120387 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
@@ -1270,5 +1272,3 @@ webkit.org/b/142142 media/video-volume-slider-drag.html [ Skip ]
 
 # Mavericks and prior do not support APNG.
 webkit.org/b/17022 [ MountainLion Mavericks ] fast/images/animated-png.html [ Skip ]
-
-webkit.org/b/143323 fast/events/mouse-cursor-image-set.html [ Skip ]

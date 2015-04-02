@@ -1,3 +1,10 @@
+2015-04-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Reinstate expectations for fast/events/mouse-cursor-image-set.html now that r182247
+        was rolled out.
+
+        * platform/mac/TestExpectations:
+
 2015-04-02  Joonghun Park  <jh718.park@samsung.com>
 
         [CSS MultiColumn] Parse "columns: auto <length>" shorthand property value properly
