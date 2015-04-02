@@ -1,3 +1,17 @@
+2015-04-01  Roger Fong  <roger_fong@apple.com>
+
+        Fix slider colors for media controls on OSX.
+        https://bugs.webkit.org/show_bug.cgi?id=143328.
+        <rdar://problem/20357858>
+
+        Reviewed by Darin Adler.
+
+        Fill in bottom portion of volume slider.
+        Adjust colors to make slider controls look better. Will likely be tweaked later.
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.drawTimelineBackground):
+        (Controller.prototype.drawVolumeBackground):
+
 2015-04-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Clean up EnumerationMode to easily extend

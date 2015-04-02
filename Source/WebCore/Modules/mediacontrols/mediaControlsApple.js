@@ -1131,7 +1131,7 @@ Controller.prototype = {
         this.addRoundedRect(ctx, scrubberPosition + 1, 8, width - scrubberPosition - borderSize , trackHeight, trackHeight / 2.0);
         ctx.closePath();
         ctx.clip("evenodd");
-        ctx.fillStyle = "rgba(140, 140, 140, 0.68)";
+        ctx.fillStyle = "rgb(100, 100, 100)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
         
@@ -1141,7 +1141,7 @@ Controller.prototype = {
         this.addRoundedRect(ctx, 0, 7, width, timelineHeight, timelineHeight / 2.0);
         ctx.closePath();
         ctx.clip();
-        ctx.fillStyle = "rgb(75, 75, 75)";
+        ctx.fillStyle = "rgb(140, 140, 140)";
         ctx.fillRect(0, 0, width * played, height);
         ctx.restore();
         
@@ -1152,7 +1152,7 @@ Controller.prototype = {
         this.addRoundedRect(ctx, scrubberPosition, 1, scrubberWidth, scrubberHeight, 1);
         ctx.closePath();
         ctx.clip();
-        ctx.fillStyle = "rgb(140, 140, 140)";
+        ctx.fillStyle = "rgb(175, 175, 175)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
         
@@ -1185,14 +1185,25 @@ Controller.prototype = {
         
         var scrubberPosition = Math.round(seekerPosition * (width - scrubberDiameter - borderSize));
         
+
+        // Draw portion of volume under slider thumb.
+        ctx.save();
+        ctx.beginPath();
+        this.addRoundedRect(ctx, 0, 3, scrubberPosition + 2, timelineHeight, timelineHeight / 2.0);
+        ctx.closePath();
+        ctx.clip();
+        ctx.fillStyle = "rgb(140, 140, 140)";
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+        
         // Draw volume track border.
         ctx.save();
         ctx.beginPath();
-        this.addRoundedRect(ctx, 0, 3, width, timelineHeight, timelineHeight / 2.0);
-        this.addRoundedRect(ctx, 1, 4, width - borderSize, trackHeight, trackHeight / 2.0);
+        this.addRoundedRect(ctx, scrubberPosition, 3, width - scrubberPosition, timelineHeight, timelineHeight / 2.0);
+        this.addRoundedRect(ctx, scrubberPosition + 1, 4, width - borderSize - scrubberPosition - 1, trackHeight, trackHeight / 2.0);
         ctx.closePath();
         ctx.clip("evenodd");
-        ctx.fillStyle = "rgba(140, 140, 140, 0.68)";
+        ctx.fillStyle = "rgb(100, 100, 100)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
         
@@ -1211,7 +1222,7 @@ Controller.prototype = {
         this.addRoundedRect(ctx, scrubberPosition + 1, 1, scrubberDiameter, scrubberDiameter, scrubberRadius);
         ctx.closePath();
         ctx.clip();
-        ctx.fillStyle = "rgb(140, 140, 140)";
+        ctx.fillStyle = "rgb(175, 175, 175)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
         
