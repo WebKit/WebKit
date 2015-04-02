@@ -49,6 +49,7 @@ public:
     ContextMenuContextData(const WebCore::ContextMenuContext&);
     
     const WebHitTestResult::Data& webHitTestResultData() const { return m_webHitTestResultData; }
+    const String& selectedText() const { return m_selectedText; }
 
 #if ENABLE(SERVICE_CONTROLS)
     ContextMenuContextData(const Vector<uint8_t>& selectionData, const Vector<String>& selectedTelephoneNumbers, bool isEditable)
@@ -71,6 +72,7 @@ public:
 
 private:
     WebHitTestResult::Data m_webHitTestResultData;
+    String m_selectedText;
 
 #if ENABLE(SERVICE_CONTROLS)
     RefPtr<ShareableBitmap> m_controlledImage;

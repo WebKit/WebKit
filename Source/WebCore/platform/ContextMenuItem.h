@@ -161,6 +161,7 @@ namespace WebCore {
         ContextMenuItemTagDictationAlternative,
         ContextMenuItemTagOpenLinkInThisWindow,
         ContextMenuItemTagToggleVideoFullscreen,
+        ContextMenuItemTagShareMenu, 
         ContextMenuItemBaseCustomTag = 5000,
         ContextMenuItemCustomTagNoAction = 5998,
         ContextMenuItemLastCustomTag = 5999,
@@ -205,6 +206,9 @@ namespace WebCore {
 
         void setSubMenu(ContextMenu*);
 
+        static bool supportsShareMenu();
+        WEBCORE_EXPORT static ContextMenuItem shareSelectedTextMenuItem(const String&);
+
 #if PLATFORM(GTK)
         GtkAction* gtkAction() const;
 #endif
@@ -228,6 +232,7 @@ namespace WebCore {
         ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, Vector<ContextMenuItem>& submenuItems);
 
         WEBCORE_EXPORT PlatformMenuItemDescription releasePlatformDescription();
+        WEBCORE_EXPORT PlatformMenuItemDescription getPlatformDescription() const;
 
         WEBCORE_EXPORT String title() const;
         void setTitle(const String&);

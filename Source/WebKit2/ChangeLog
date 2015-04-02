@@ -1,3 +1,65 @@
+2015-04-02  Brady Eidson  <beidson@apple.com>
+
+        Expose the "Share" menu for text selections on platforms where it's available.
+        rdar://problem/20034174 and https://bugs.webkit.org/show_bug.cgi?id=143318
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/c/WKContextMenuItemTypes.h: Add a constant for the Share menu.
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::encode):
+        (WebKit::ContextMenuContextData::decode):
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::selectedText):
+
+        Add a "cross platform" menu item wrapper, right now only for NSMenuItem.
+        * Shared/NativeContextMenuItem.h:
+        (WebKit::NativeContextMenuItem::~NativeContextMenuItem):
+        (WebKit::NativeContextMenuItem::nsMenuItem):
+        * Shared/mac/NativeContextMenuItem.mm:
+        (WebKit::NativeContextMenuItem::NativeContextMenuItem):
+
+        Let WebContextMenuItem hold on to a NativeContextMenuItem to maintain full fidelity of the platform.
+        * Shared/WebContextMenuItem.cpp:
+        (WebKit::WebContextMenuItem::WebContextMenuItem):
+        * Shared/WebContextMenuItem.h:
+        (WebKit::WebContextMenuItem::create):
+        (WebKit::WebContextMenuItem::nativeContextMenuItem):
+
+        * UIProcess/API/APIContextMenuClient.h:
+        (API::ContextMenuClient::getContextMenuFromProposedMenu):
+        (API::ContextMenuClient::showContextMenu):
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageContextMenuClient):
+
+        * UIProcess/WebContextMenuProxy.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::internalShowContextMenu): Translate the placeholder item from the web process into the
+          native Share menu before consulting the context menu client. Also create the API items here so the native NSMenuItem
+          can be attached to them.
+
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WKMenuTarget forwardContextMenuAction:]):
+        (WebKit::nsMenuItem):
+        (WebKit::nsMenuItemVector):
+        (WebKit::WebContextMenuProxyMac::populate):
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h:
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        (WebKit::WebContextMenuClient::shareSelectedTextMenuItem): In the web process, mark the Share menu's place in the
+          context menu with a placeholder item. It will be translated into the real Share menu in the UI process.
+
 2015-04-02  Timothy Horton  <timothy_horton@apple.com>
 
         De-PLATFORM(IOS)-ify LayerHostingContext::setFencePort

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: We should just include the appropriate internal headers.
+#include "config.h"
+#include "NativeContextMenuItem.h"
 
-typedef NS_ENUM(NSInteger, NSMenuType) {
-    NSMenuTypeNone = 0,
-    NSMenuTypeContextMenu,
-    NSMenuTypeActionMenu,
-};
+#if ENABLE(CONTEXT_MENUS)
 
-@interface NSMenu (Private)
-+ (NSMenuType)menuTypeForEvent:(NSEvent *)event;
-@end
+#include <WebCore/ContextMenuItem.h>
 
-@class QLPreviewMenuItem;
+using namespace WebCore;
 
-@interface NSMenuItem (Private)
-+ (QLPreviewMenuItem *)standardQuickLookMenuItem;
-+ (NSMenuItem *)standardShareMenuItemWithItems:(NSArray *)items;
-@end
+namespace WebKit {
+
+NativeContextMenuItem::NativeContextMenuItem(const ContextMenuItem& coreItem)
+    : m_nsMenuItem(coreItem.getPlatformDescription())
+{
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(CONTEXT_MENUS)

@@ -46,6 +46,7 @@ ContextMenuContextData::ContextMenuContextData()
 
 ContextMenuContextData::ContextMenuContextData(const ContextMenuContext& context)
     : m_webHitTestResultData(WebHitTestResult::Data(context.hitTestResult()))
+    , m_selectedText(context.selectedText())
 #if ENABLE(SERVICE_CONTROLS)
     , m_selectionIsEditable(false)
 #endif
@@ -64,6 +65,7 @@ ContextMenuContextData::ContextMenuContextData(const ContextMenuContext& context
 void ContextMenuContextData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_webHitTestResultData;
+    encoder << m_selectedText;
 
 #if ENABLE(SERVICE_CONTROLS)
     ShareableBitmap::Handle handle;
@@ -76,6 +78,9 @@ void ContextMenuContextData::encode(IPC::ArgumentEncoder& encoder) const
 bool ContextMenuContextData::decode(IPC::ArgumentDecoder& decoder, ContextMenuContextData& contextMenuContextData)
 {
     if (!decoder.decode(contextMenuContextData.m_webHitTestResultData))
+        return false;
+
+    if (!decoder.decode(contextMenuContextData.m_selectedText))
         return false;
 
 #if ENABLE(SERVICE_CONTROLS)

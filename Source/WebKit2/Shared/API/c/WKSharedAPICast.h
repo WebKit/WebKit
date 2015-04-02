@@ -503,6 +503,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
 #endif
     case WebCore::ContextMenuItemTagOpenLinkInThisWindow:
         return kWKContextMenuItemTagOpenLinkInThisWindow;
+    case WebCore::ContextMenuItemTagShareMenu:
+        return kWKContextMenuItemTagShareMenu;
     default:
         if (action < WebCore::ContextMenuItemBaseApplicationTag)
             LOG_ERROR("ContextMenuAction %i is an unknown tag but is below the allowable custom tag value of %i", action, WebCore::  ContextMenuItemBaseApplicationTag);
@@ -692,6 +694,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagCapitalize;
     case kWKContextMenuItemTagChangeBack:
         return WebCore::ContextMenuItemTagChangeBack;
+    case kWKContextMenuItemTagShareMenu:
+        return WebCore::ContextMenuItemTagShareMenu;
 #endif
     case kWKContextMenuItemTagOpenLinkInThisWindow:
         return WebCore::ContextMenuItemTagOpenLinkInThisWindow;
