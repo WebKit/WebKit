@@ -173,7 +173,7 @@ SessionID CachedResourceLoader::sessionID() const
     return sessionID;
 }
 
-CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResourceRequest& request, ShouldBypassMainWorldContentSecurityPolicy shouldBypassMainWorldContentSecurityPolicy)
+CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResourceRequest& request)
 {
     if (Frame* frame = this->frame()) {
         if (frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::NoDismissal) {
@@ -185,7 +185,7 @@ CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResou
     }
     
     request.setDefer(clientDefersImage(request.resourceRequest().url()) ? CachedResourceRequest::DeferredByClient : CachedResourceRequest::NoDefer);
-    return downcast<CachedImage>(requestResource(CachedResource::ImageResource, request, shouldBypassMainWorldContentSecurityPolicy).get());
+    return downcast<CachedImage>(requestResource(CachedResource::ImageResource, request).get());
 }
 
 CachedResourceHandle<CachedFont> CachedResourceLoader::requestFont(CachedResourceRequest& request, bool isSVG)
@@ -357,7 +357,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     return true;
 }
 
-bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, bool forPreload, ShouldBypassMainWorldContentSecurityPolicy bypassMainWorldContentSecurityPolicy)
+bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, bool forPreload)
 {
     if (document() && !document()->securityOrigin()->canDisplay(url)) {
         if (!forPreload)
@@ -366,10 +366,8 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
         return 0;
     }
 
-
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
-    bool shouldBypassMainWorldContentSecurityPolicy = (bypassMainWorldContentSecurityPolicy == ShouldBypassMainWorldContentSecurityPolicy::Yes)
-        || (frame() && frame()->script().shouldBypassMainWorldContentSecurityPolicy());
+    bool shouldBypassMainWorldContentSecurityPolicy = (frame() && frame()->script().shouldBypassMainWorldContentSecurityPolicy());
 
     // Some types of resources can be loaded only from the same origin.  Other
     // types of resources, like Images, Scripts, and CSS, can be loaded from
@@ -494,7 +492,7 @@ static inline void logMemoryCacheResourceRequest(Frame* frame, const String& des
         frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceRequestKey(), description, value, ShouldSample::Yes);
 }
 
-CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest& request, ShouldBypassMainWorldContentSecurityPolicy shouldBypassMainWorldContentSecurityPolicy)
+CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest& request)
 {
     URL url = request.resourceRequest().url();
     
@@ -506,7 +504,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     if (!url.isValid())
         return nullptr;
 
-    if (!canRequest(type, url, request.options(), request.forPreload(), shouldBypassMainWorldContentSecurityPolicy))
+    if (!canRequest(type, url, request.options(), request.forPreload()))
         return nullptr;
 
 #if ENABLE(CONTENT_EXTENSIONS)

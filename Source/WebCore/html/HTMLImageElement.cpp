@@ -452,7 +452,7 @@ void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 
 void HTMLImageElement::didMoveToNewDocument(Document* oldDocument)
 {
-    m_imageLoader.elementDidMoveToNewDocument(oldDocument);
+    m_imageLoader.elementDidMoveToNewDocument();
     HTMLElement::didMoveToNewDocument(oldDocument);
 }
 

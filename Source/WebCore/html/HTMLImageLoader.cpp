@@ -76,8 +76,6 @@ String HTMLImageLoader::sourceURI(const AtomicString& attr) const
 void HTMLImageLoader::notifyFinished(CachedResource*)
 {
     CachedImage* cachedImage = image();
-    if (!cachedImage)
-        return;
 
     Ref<Element> protect(element());
     ImageLoader::notifyFinished(cachedImage);

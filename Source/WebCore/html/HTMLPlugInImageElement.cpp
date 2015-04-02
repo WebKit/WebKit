@@ -306,7 +306,7 @@ void HTMLPlugInImageElement::didMoveToNewDocument(Document* oldDocument)
     }
 
     if (m_imageLoader)
-        m_imageLoader->elementDidMoveToNewDocument(oldDocument);
+        m_imageLoader->elementDidMoveToNewDocument();
 
     HTMLPlugInElement::didMoveToNewDocument(oldDocument);
 }

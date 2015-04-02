@@ -71,9 +71,7 @@ public:
     static Ref<CachedResourceLoader> create(DocumentLoader* documentLoader) { return adoptRef(*new CachedResourceLoader(documentLoader)); }
     ~CachedResourceLoader();
 
-    enum class ShouldBypassMainWorldContentSecurityPolicy { No, Yes };
-
-    CachedResourceHandle<CachedImage> requestImage(CachedResourceRequest&, ShouldBypassMainWorldContentSecurityPolicy = ShouldBypassMainWorldContentSecurityPolicy::No);
+    CachedResourceHandle<CachedImage> requestImage(CachedResourceRequest&);
     CachedResourceHandle<CachedCSSStyleSheet> requestCSSStyleSheet(CachedResourceRequest&);
     CachedResourceHandle<CachedCSSStyleSheet> requestUserCSSStyleSheet(CachedResourceRequest&);
     CachedResourceHandle<CachedScript> requestScript(CachedResourceRequest&);
@@ -133,7 +131,7 @@ public:
     void preload(CachedResource::Type, CachedResourceRequest&, const String& charset);
     void checkForPendingPreloads();
     void printPreloadStats();
-    bool canRequest(CachedResource::Type, const URL&, const ResourceLoaderOptions&, bool forPreload = false, ShouldBypassMainWorldContentSecurityPolicy = ShouldBypassMainWorldContentSecurityPolicy::No);
+    bool canRequest(CachedResource::Type, const URL&, const ResourceLoaderOptions&, bool forPreload = false);
 
     static const ResourceLoaderOptions& defaultCachedResourceOptions();
 
@@ -142,7 +140,7 @@ public:
 private:
     explicit CachedResourceLoader(DocumentLoader*);
 
-    CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&, ShouldBypassMainWorldContentSecurityPolicy = ShouldBypassMainWorldContentSecurityPolicy::No);
+    CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&);
     CachedResourceHandle<CachedResource> revalidateResource(const CachedResourceRequest&, CachedResource*);
     CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, CachedResourceRequest&);
 #if ENABLE(RESOURCE_TIMING)

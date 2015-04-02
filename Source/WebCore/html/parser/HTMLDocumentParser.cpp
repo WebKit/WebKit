@@ -34,7 +34,6 @@
 #include "HTMLTreeBuilder.h"
 #include "HTMLDocument.h"
 #include "InspectorInstrumentation.h"
-#include "MicroTask.h"
 
 namespace WebCore {
 
@@ -410,8 +409,6 @@ void HTMLDocumentParser::attemptToRunDeferredScriptsAndEnd()
     if (m_scriptRunner && !m_scriptRunner->executeScriptsWaitingForParsing())
         return;
     end();
-    if (!isExecutingScript())
-        MicroTaskQueue::singleton().runMicroTasks();
 }
 
 void HTMLDocumentParser::attemptToEnd()

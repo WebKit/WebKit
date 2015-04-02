@@ -1,2 +1,0 @@
-This tests that an image element is loading even if its src was changed after the page's onload event.
-SUCCESS

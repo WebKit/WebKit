@@ -2,8 +2,6 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010 Apple Inc. All rights reserved.
- * Copyright 2014 The Chromium Authors. All rights reserved.
- * Copyright (C) 2015 Akamai Technologies Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,11 +34,9 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
-#include "MemoryCache.h"
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderSVGImage.h"
-#include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -66,25 +62,6 @@ template<> struct ValueCheck<WebCore::ImageLoader*> {
 #endif
 
 namespace WebCore {
-
-class ImageLoader::ImageLoaderTask : public MicroTask {
-public:
-    ImageLoaderTask(WeakPtr<ImageLoader> loader, CachedResourceLoader::ShouldBypassMainWorldContentSecurityPolicy shouldBypassMainWorldContentSecurityPolicy)
-        : m_loader(loader)
-        , m_shouldBypassMainWorldContentSecurityPolicy(shouldBypassMainWorldContentSecurityPolicy)
-    {
-    }
-
-private:
-    virtual void run() override
-    {
-        if (m_loader && m_loader->hasPendingTask())
-            m_loader->doUpdateFromElement(m_shouldBypassMainWorldContentSecurityPolicy);
-    }
-
-    WeakPtr<ImageLoader> m_loader;
-    CachedResourceLoader::ShouldBypassMainWorldContentSecurityPolicy m_shouldBypassMainWorldContentSecurityPolicy;
-};
 
 static ImageEventSender& beforeLoadEventSender()
 {
@@ -114,14 +91,12 @@ ImageLoader::ImageLoader(Element& element)
     : m_element(element)
     , m_image(0)
     , m_derefElementTimer(*this, &ImageLoader::timerFired)
-    , m_weakFactory(this)
     , m_hasPendingBeforeLoadEvent(false)
     , m_hasPendingLoadEvent(false)
     , m_hasPendingErrorEvent(false)
     , m_imageComplete(true)
     , m_loadManually(false)
     , m_elementIsProtected(false)
-    , m_hasPendingTask(false)
 {
 }
 
@@ -184,26 +159,28 @@ void ImageLoader::clearImageWithoutConsideringPendingLoadEvent()
         imageResource->resetAnimation();
 }
 
-void ImageLoader::doUpdateFromElement(CachedResourceLoader::ShouldBypassMainWorldContentSecurityPolicy shouldBypassMainWorldContentSecurityPolicy)
+void ImageLoader::updateFromElement()
 {
-    m_hasPendingTask = false;
-    Document& document = m_element.document();
-    AtomicString attr = m_element.imageSourceURL();
+    // If we're not making renderers for the page, then don't load images.  We don't want to slow
+    // down the raw HTML parsing case by loading images we don't intend to display.
+    Document& document = element().document();
+    if (!document.hasLivingRenderTree())
+        return;
 
-    String srcURI = sourceURI(attr);
-    URL url;
-    // Set url value only if srcURI is not empty. Otherwise, url will be the URL for the document itself.
-    if (!srcURI.isEmpty())
-        url = document.completeURL(srcURI);
+    AtomicString attr = element().imageSourceURL();
+
+    // Avoid loading a URL we already failed to load.
+    if (!m_failedLoadURL.isEmpty() && attr == m_failedLoadURL)
+        return;
+
     // Do not load any image if the 'src' attribute is missing or if it is
     // an empty string.
     CachedResourceHandle<CachedImage> newImage = 0;
-    if (!url.isNull()) {
-        ResourceRequest resourceRequest(url);
-        CachedResourceRequest request(resourceRequest);
+    if (!attr.isNull() && !stripLeadingAndTrailingHTMLSpaces(attr).isEmpty()) {
+        CachedResourceRequest request(ResourceRequest(document.completeURL(sourceURI(attr))));
         request.setInitiator(&element());
 
-        AtomicString crossOriginMode = m_element.fastGetAttribute(HTMLNames::crossoriginAttr);
+        String crossOriginMode = element().fastGetAttribute(HTMLNames::crossoriginAttr);
         if (!crossOriginMode.isNull()) {
             StoredCredentials allowCredentials = equalIgnoringCase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
             updateRequestForAccessControl(request.mutableResourceRequest(), document.securityOrigin(), allowCredentials);
@@ -218,7 +195,7 @@ void ImageLoader::doUpdateFromElement(CachedResourceLoader::ShouldBypassMainWorl
             document.cachedResourceLoader().m_documentResources.set(newImage->url(), newImage.get());
             document.cachedResourceLoader().setAutoLoadImages(autoLoadOtherImages);
         } else
-            newImage = document.cachedResourceLoader().requestImage(request, shouldBypassMainWorldContentSecurityPolicy);
+            newImage = document.cachedResourceLoader().requestImage(request);
 
         // If we do not have an image here, it means that a cross-site
         // violation occurred, or that the image was blocked via Content
@@ -236,7 +213,7 @@ void ImageLoader::doUpdateFromElement(CachedResourceLoader::ShouldBypassMainWorl
         m_hasPendingErrorEvent = true;
         errorEventSender().dispatchEventSoon(*this);
     }
-
+    
     CachedImage* oldImage = m_image.get();
     if (newImage != oldImage) {
         if (m_hasPendingBeforeLoadEvent) {
@@ -288,47 +265,6 @@ void ImageLoader::doUpdateFromElement(CachedResourceLoader::ShouldBypassMainWorl
     // Only consider updating the protection ref-count of the Element immediately before returning
     // from this function as doing so might result in the destruction of this ImageLoader.
     updatedHasPendingEvent();
-    document.decrementLoadEventDelayCount();
-}
-
-void ImageLoader::updateFromElement()
-{
-    AtomicString attribute = m_element.imageSourceURL();
-
-    // Avoid loading a URL we already failed to load.
-    if (!m_failedLoadURL.isEmpty() && attribute == m_failedLoadURL)
-        return;
-
-    // If we're not making renderers for the page, then don't load images. We don't want to slow
-    // down the raw HTML parsing case by loading images we don't intend to display.
-    Document& document = element().document();
-    if (!document.hasLivingRenderTree())
-        return;
-
-    CachedResourceLoader::ShouldBypassMainWorldContentSecurityPolicy shouldBypassMainWorldContentSecurityPolicy = CachedResourceLoader::ShouldBypassMainWorldContentSecurityPolicy::No;
-    if (document.frame() && document.frame()->script().shouldBypassMainWorldContentSecurityPolicy())
-        shouldBypassMainWorldContentSecurityPolicy = CachedResourceLoader::ShouldBypassMainWorldContentSecurityPolicy::Yes;
-
-    if (!m_hasPendingTask) {
-        m_hasPendingTask = true;
-        document.incrementLoadEventDelayCount();
-        if (shouldLoadImmediately(attribute))
-            doUpdateFromElement(CachedResourceLoader::ShouldBypassMainWorldContentSecurityPolicy::No);
-        else
-            MicroTaskQueue::singleton().queueMicroTask(std::make_unique<ImageLoaderTask>(createWeakPtr(), shouldBypassMainWorldContentSecurityPolicy));
-    }
-}
-
-bool ImageLoader::shouldLoadImmediately(const AtomicString& attribute) const
-{
-    String srcURI = sourceURI(attribute);
-    URL url = element().document().completeURL(srcURI);
-    return (srcURI.isEmpty()
-        || url.isEmpty()
-        || m_loadManually
-        || !is<HTMLImageElement>(m_element)
-        || url.protocolIsData()
-        || MemoryCache::singleton().resourceForURL(url));
 }
 
 void ImageLoader::updateFromElementIgnoringPreviousError()
@@ -340,7 +276,6 @@ void ImageLoader::updateFromElementIgnoringPreviousError()
 void ImageLoader::notifyFinished(CachedResource* resource)
 {
     ASSERT(m_failedLoadURL.isEmpty());
-    ASSERT(resource);
     ASSERT(resource == m_image.get());
 
     m_imageComplete = true;
@@ -349,9 +284,6 @@ void ImageLoader::notifyFinished(CachedResource* resource)
 
     if (!m_hasPendingLoadEvent)
         return;
-
-    ASSERT(image());
-    ASSERT(element().document().securityOrigin());
 
     if (element().fastHasAttribute(HTMLNames::crossoriginAttr)
         && !element().document().securityOrigin()->canRequest(image()->response().url())
@@ -532,13 +464,8 @@ void ImageLoader::dispatchPendingErrorEvents()
     errorEventSender().dispatchPendingEvents();
 }
 
-void ImageLoader::elementDidMoveToNewDocument(Document* oldDocument)
+void ImageLoader::elementDidMoveToNewDocument()
 {
-    if (m_hasPendingTask) {
-        if (oldDocument)
-            oldDocument->decrementLoadEventDelayCount();
-        m_element.document().incrementLoadEventDelayCount();
-    }
     clearFailedLoadURL();
     clearImage();
 }

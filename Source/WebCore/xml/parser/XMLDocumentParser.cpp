@@ -40,7 +40,6 @@
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "ImageLoader.h"
-#include "MicroTask.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -201,7 +200,6 @@ void XMLDocumentParser::end()
     document()->setReadyState(Document::Interactive);
     clearCurrentNodeStack();
     document()->finishedParsing();
-    MicroTaskQueue::singleton().runMicroTasks();
 }
 
 void XMLDocumentParser::finish()
