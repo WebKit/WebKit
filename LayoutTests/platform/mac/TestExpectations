@@ -1085,7 +1085,7 @@ webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
 webkit.org/b/137157 [ Release ] inspector/page/main-frame-resource.html [ Pass Failure ]
 [ Debug ] inspector/page/main-frame-resource.html [ Pass Failure Slow ]
 
-webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pass ]
+webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pass Timeout ]
 
 # FIXME: Needs bugzilla (<rdar://problem/15971968>)
 [ Yosemite+ ] platform/mac/accessibility/misspelled-attributed-string.html [ Pass Failure ]

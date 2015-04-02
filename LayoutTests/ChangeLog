@@ -1,3 +1,10 @@
+2015-04-02  Alexey Proskuryakov  <ap@apple.com>
+
+        media/track/track-forced-subtitles-in-band.html times out
+
+        * platform/mac/TestExpectations: Update the expectations - the test doens't only fail
+        flakily, it times out too.
+
 2015-04-02  David Hyatt  <hyatt@apple.com>
 
         [New Block-Inside-Inline Model] Implement the correct paint order for blocks inside inlines.
