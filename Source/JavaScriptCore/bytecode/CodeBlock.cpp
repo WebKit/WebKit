@@ -552,6 +552,31 @@ void CodeBlock::printPutByIdOp(PrintStream& out, ExecState* exec, int location, 
     it += 5;
 }
 
+void CodeBlock::dumpSource()
+{
+    dumpSource(WTF::dataFile());
+}
+
+void CodeBlock::dumpSource(PrintStream& out)
+{
+    ScriptExecutable* executable = ownerExecutable();
+    if (executable->isFunctionExecutable()) {
+        FunctionExecutable* functionExecutable = reinterpret_cast<FunctionExecutable*>(executable);
+        String source = functionExecutable->source().provider()->getRange(
+            functionExecutable->parametersStartOffset(),
+            functionExecutable->typeProfilingEndOffset() + 1); // Type profiling end offset is the character before the '}'.
+        
+        out.print("function ", inferredName(), source);
+        return;
+    }
+    out.print(executable->source().toString());
+}
+
+void CodeBlock::dumpBytecode()
+{
+    dumpBytecode(WTF::dataFile());
+}
+
 void CodeBlock::dumpBytecode(PrintStream& out)
 {
     // We only use the ExecState* for things that don't actually lead to JS execution,

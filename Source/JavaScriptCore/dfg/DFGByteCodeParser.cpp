@@ -3970,8 +3970,9 @@ void ByteCodeParser::parseCodeBlock()
             *m_vm->m_perBytecodeProfiler, m_inlineStackTop->m_profiledBlock);
     }
     
+    bool shouldDumpSource = Options::dumpSourceAtDFGTime();
     bool shouldDumpBytecode = Options::dumpBytecodeAtDFGTime();
-    if (shouldDumpBytecode) {
+    if (shouldDumpSource || shouldDumpBytecode) {
         dataLog("Parsing ", *codeBlock);
         if (inlineCallFrame()) {
             dataLog(
@@ -3981,8 +3982,16 @@ void ByteCodeParser::parseCodeBlock()
         dataLog(
             ": needsActivation = ", codeBlock->needsActivation(),
             ", isStrictMode = ", codeBlock->ownerExecutable()->isStrictMode(), "\n");
-        codeBlock->baselineVersion()->dumpBytecode();
     }
+
+    if (shouldDumpSource) {
+        dataLog("==== begin source ====\n");
+        codeBlock->baselineVersion()->dumpSource();
+        dataLog("\n==== end source ====\n\n");
+    }
+    
+    if (shouldDumpBytecode)
+        codeBlock->baselineVersion()->dumpBytecode();
     
     Vector<unsigned, 32> jumpTargets;
     computePreciseJumpTargets(codeBlock, jumpTargets);

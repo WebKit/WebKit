@@ -1,3 +1,28 @@
+2015-04-02  Mark Lam  <mark.lam@apple.com>
+
+        Add Options::dumpSourceAtDFGTime().
+        <https://webkit.org/b/143349>
+
+        Reviewed by Oliver Hunt, and Michael Saboff.
+
+        Sometimes, we will want to see the JS source code that we're compiling, and it
+        would be nice to be able to do this without having to jump thru a lot of hoops.
+        So, let's add a Options::dumpSourceAtDFGTime() option just like we have a
+        Options::dumpBytecodeAtDFGTime() option.
+
+        Also added versions of CodeBlock::dumpSource() and CodeBlock::dumpBytecode()
+        that explicitly take no arguments (instead of relying on the version that takes
+        the default argument).  These versions are friendlier to use when we want to call
+        them from an interactive debugging session.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpSource):
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/CodeBlock.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * runtime/Options.h:
+
 2015-04-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Clean up EnumerationMode to easily extend

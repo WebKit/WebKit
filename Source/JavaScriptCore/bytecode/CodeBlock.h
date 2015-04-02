@@ -155,7 +155,11 @@ public:
 
     void visitAggregate(SlotVisitor&);
 
-    void dumpBytecode(PrintStream& = WTF::dataFile());
+    void dumpSource();
+    void dumpSource(PrintStream&);
+
+    void dumpBytecode();
+    void dumpBytecode(PrintStream&);
     void dumpBytecode(
         PrintStream&, unsigned bytecodeOffset,
         const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());

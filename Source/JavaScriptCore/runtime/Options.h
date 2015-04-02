@@ -124,6 +124,7 @@ typedef const char* optionString;
     v(bool, showAllDFGNodes, false) \
     v(optionRange, bytecodeRangeToDFGCompile, 0) \
     v(optionString, dfgFunctionWhitelistFile, nullptr) \
+    v(bool, dumpSourceAtDFGTime, false) \
     v(bool, dumpBytecodeAtDFGTime, false) \
     v(bool, dumpGraphAfterParsing, false) \
     v(bool, dumpGraphAtEachPhase, false) \
