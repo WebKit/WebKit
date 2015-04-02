@@ -133,7 +133,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
 
     Vector<SerializedActionByte> actions;
     Vector<unsigned> actionLocations = serializeActions(parsedRuleList, actions);
-    Vector<uint64_t> universalActionLocations;
+    HashSet<uint64_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> universalActionLocations;
 
     CombinedURLFilters combinedURLFilters;
     URLFilterParser urlFilterParser(combinedURLFilters);
@@ -148,10 +148,9 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
         URLFilterParser::ParseStatus status = urlFilterParser.addPattern(trigger.urlFilter, trigger.urlFilterIsCaseSensitive, actionLocationAndFlags);
 
         if (status == URLFilterParser::MatchesEverything) {
-
             if (ignorePreviousRulesSeen)
                 return ContentExtensionError::RegexMatchesEverythingAfterIgnorePreviousRules;
-            universalActionLocations.append(actionLocationAndFlags);
+            universalActionLocations.add(actionLocationAndFlags);
         }
 
         if (status != URLFilterParser::Ok && status != URLFilterParser::MatchesEverything) {
