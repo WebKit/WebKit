@@ -259,6 +259,7 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ / xcodebuild\[[0-9]+:[0-9a-f]+\]\s+DVTAssertions: Warning in .*XCClangResultsPostprocessor.m/;
     return 1 if $line =~ /^(Details|Object|Method|Function|Thread):/;
     return 1 if $line =~ /^Please file a bug at /;
+    return 1 if $line =~ /created by an unsupported XCDependencyGraph build$/;
 
     if ($platform eq "win") {
         return 1 if $line =~ /^\s*(touch|perl|cat|rm -f|bison|del|flex|python|\/usr\/bin\/g\+\+|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file) /;
