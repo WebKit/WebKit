@@ -389,7 +389,8 @@ bool InlineTextBox::isLineBreak() const
     return renderer().style().preserveNewline() && len() == 1 && (*renderer().text())[start()] == '\n';
 }
 
-bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/)
+bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/,
+    HitTestAction /*hitTestAction*/)
 {
     if (!visibleToHitTesting())
         return false;

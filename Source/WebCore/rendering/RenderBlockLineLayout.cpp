@@ -193,6 +193,7 @@ InlineFlowBox* RenderBlockFlow::createLineBoxes(RenderObject* obj, const LineInf
     InlineFlowBox* parentBox = nullptr;
     InlineFlowBox* result = nullptr;
     bool hasDefaultLineBoxContain = style().lineBoxContain() == RenderStyle::initialLineBoxContain();
+    bool isBlockInsideInline = childBox->renderer().isAnonymousInlineBlock();
     do {
         ASSERT_WITH_SECURITY_IMPLICATION(is<RenderInline>(*obj) || obj == this);
 
@@ -216,6 +217,7 @@ InlineFlowBox* RenderBlockFlow::createLineBoxes(RenderObject* obj, const LineInf
             parentBox = downcast<InlineFlowBox>(newBox);
             parentBox->setIsFirstLine(lineInfo.isFirstLine());
             parentBox->setIsHorizontal(isHorizontalWritingMode());
+            parentBox->setHasAnonymousInlineBlock(isBlockInsideInline);
             if (!hasDefaultLineBoxContain)
                 parentBox->clearDescendantsHaveSameLineHeightAndBaseline();
             constructedNewBox = true;
@@ -284,7 +286,6 @@ RootInlineBox* RenderBlockFlow::constructLine(BidiRunList<BidiRun>& bidiRuns, co
     InlineFlowBox* parentBox = 0;
     int runCount = bidiRuns.runCount() - lineInfo.runsFromLeadingWhitespace();
     
-    bool isAnonymousInlineBlock = false;
     for (BidiRun* r = bidiRuns.firstRun(); r; r = r->next()) {
         // Create a box for our object.
         bool isOnlyRun = (runCount == 1);
@@ -299,8 +300,6 @@ RootInlineBox* RenderBlockFlow::constructLine(BidiRunList<BidiRun>& bidiRuns, co
 
         if (!rootHasSelectedChildren && box->renderer().selectionState() != RenderObject::SelectionNone)
             rootHasSelectedChildren = true;
-    
-        isAnonymousInlineBlock = r->renderer().isAnonymousInlineBlock();
         
         // If we have no parent box yet, or if the run is not simply a sibling,
         // then we need to construct inline boxes as necessary to properly enclose the
@@ -308,9 +307,7 @@ RootInlineBox* RenderBlockFlow::constructLine(BidiRunList<BidiRun>& bidiRuns, co
         // they are positioned separately.
         if (!parentBox || &parentBox->renderer() != r->renderer().parent()) {
             // Create new inline boxes all the way back to the appropriate insertion point.
-            // For anonymous inline blocks, we never create intermediate line boxes for the inlines, since
-            // we want to pretend like they don't exist on the line.
-            RenderObject* parentToUse = isAnonymousInlineBlock ? this : r->renderer().parent();
+            RenderObject* parentToUse = r->renderer().parent();
             parentBox = createLineBoxes(parentToUse, lineInfo, box);
         } else {
             // Append the inline box to this line.
@@ -348,8 +345,6 @@ RootInlineBox* RenderBlockFlow::constructLine(BidiRunList<BidiRun>& bidiRuns, co
 
     // Now mark the line boxes as being constructed.
     lastRootBox()->setConstructed();
-    
-    lastRootBox()->setHasAnonymousInlineBlock(isAnonymousInlineBlock);
 
     // Return the last line.
     return lastRootBox();

@@ -140,7 +140,7 @@ void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& pa
     context->fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), c, style.colorSpace());
 }
 
-bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
+bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction hitTestAction)
 {
     LayoutPoint adjustedLocation = accumulatedOffset + LayoutPoint(topLeft());
 
@@ -149,7 +149,7 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         const RenderStyle& lineStyle = this->lineStyle();
         LayoutUnit mtx = adjustedLocation.x() + m_logicalWidth - markupBox->x();
         LayoutUnit mty = adjustedLocation.y() + lineStyle.fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent());
-        if (markupBox->nodeAtPoint(request, result, locationInContainer, LayoutPoint(mtx, mty), lineTop, lineBottom)) {
+        if (markupBox->nodeAtPoint(request, result, locationInContainer, LayoutPoint(mtx, mty), lineTop, lineBottom, hitTestAction)) {
             blockFlow().updateHitTestResult(result, locationInContainer.point() - LayoutSize(mtx, mty));
             return true;
         }

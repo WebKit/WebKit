@@ -1,3 +1,17 @@
+2015-04-02  David Hyatt  <hyatt@apple.com>
+
+        [New Block-Inside-Inline Model] Implement the correct paint order for blocks inside inlines.
+        https://bugs.webkit.org/show_bug.cgi?id=143320
+
+        Reviewed by Darin Adler.
+
+        * fast/block/inside-inlines/new-model/paint-order-expected.html: Added.
+        * fast/block/inside-inlines/new-model/paint-order.html: Added.
+        * fast/block/inside-inlines/opacity-on-inline-expected.html: Added.
+        * fast/block/inside-inlines/opacity-on-inline.html: Added.
+        * fast/block/inside-inlines/paint-order-expected.html: Added.
+        * fast/block/inside-inlines/paint-order.html: Added.
+
 2015-04-02  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Add support for Promise-based MediaDevices.getUserMedia()
