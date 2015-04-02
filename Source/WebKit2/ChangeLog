@@ -1,3 +1,16 @@
+2015-04-02  Oliver Hunt  <oliver@apple.com>
+
+        Ensure that we always set network ATS context in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=143343
+
+        Reviewed by Dan Bernstein.
+
+        If a custom cache location or size we were early returning before setting
+        the CFNetwork ATS context. This is clearly an error.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+
 2015-04-02  Alexey Proskuryakov  <ap@apple.com>
 
         Make checkURLReceivedFromWebProcess not rely on details of platform URL implementation.
