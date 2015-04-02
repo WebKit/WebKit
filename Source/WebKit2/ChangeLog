@@ -1,3 +1,26 @@
+2015-04-01  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][Cocoa] Add didFailProvisionalLoadWithErrorForFrame callback to WKWebProcessPlugInLoadDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=143319
+        <rdar://problem/19463834>
+
+        Reviewed by Dan Bernstein.
+
+        Add didFailProvisionalLoadWithErrorForFrame callback to
+        WKWebProcessPlugInLoadDelegate so that the client side can track all
+        types page load completions:
+        - didFailProvisionalLoadWithErrorForFrame
+        - didFailLoadWithErrorForFrame
+        - didFinishLoadForFrame
+
+        Note that this event is already exposed on UIProcess side via the
+        WKPageLoaderClient.didFailLoadWithErrorForFrame callback.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (didFailProvisionalLoadWithErrorForFrame):
+        (setUpPageLoaderClient):
+
 2015-04-01  Enrica Casucci  <enrica@apple.com>
 
         Injected bundle messages should be at the page level.
