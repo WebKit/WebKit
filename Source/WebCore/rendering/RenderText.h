@@ -165,9 +165,6 @@ public:
 
     LayoutUnit topOfFirstText() const;
 
-    bool contentIsKnownToFollow() { return m_contentIsKnownToFollow; }
-    void setContentIsKnownToFollow(bool contentIsKnownToFollow) { m_contentIsKnownToFollow = contentIsKnownToFollow; }
-
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
     virtual void willBeDestroyed() override;
@@ -218,7 +215,6 @@ private:
     mutable unsigned m_knownToHaveNoOverflowAndNoFallbackFonts : 1;
     unsigned m_useBackslashAsYenSymbol : 1;
     unsigned m_originalTextDiffersFromRendered : 1;
-    unsigned m_contentIsKnownToFollow : 1;
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     // FIXME: This should probably be part of the text sizing structures in Document instead. That would save some memory.

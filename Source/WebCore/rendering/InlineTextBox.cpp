@@ -1394,6 +1394,27 @@ TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const FontCasc
     return run;
 }
 
+ExpansionBehavior InlineTextBox::expansionBehavior() const
+{
+    ExpansionBehavior leadingBehavior;
+    if (forceLeadingExpansion())
+        leadingBehavior = ForceLeadingExpansion;
+    else if (canHaveLeadingExpansion())
+        leadingBehavior = AllowLeadingExpansion;
+    else
+        leadingBehavior = ForbidLeadingExpansion;
+
+    ExpansionBehavior trailingBehavior;
+    if (forceTrailingExpansion())
+        trailingBehavior = ForceTrailingExpansion;
+    else if (expansion() && nextLeafChild() && !nextLeafChild()->isLineBreak())
+        trailingBehavior = AllowTrailingExpansion;
+    else
+        trailingBehavior = ForbidTrailingExpansion;
+
+    return leadingBehavior | trailingBehavior;
+}
+
 #if ENABLE(TREE_DEBUGGING)
 
 const char* InlineTextBox::boxName() const

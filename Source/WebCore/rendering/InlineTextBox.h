@@ -166,11 +166,7 @@ private:
 
     void computeRectForReplacementMarker(RenderedDocumentMarker&, const RenderStyle&, const FontCascade&);
 
-    ExpansionBehavior expansionBehavior() const
-    {
-        return (canHaveLeadingExpansion() ? AllowLeadingExpansion : ForbidLeadingExpansion)
-            | (renderer().contentIsKnownToFollow() || (expansion() && nextLeafChild() && !nextLeafChild()->isLineBreak()) ? AllowTrailingExpansion : ForbidTrailingExpansion);
-    }
+    ExpansionBehavior expansionBehavior() const;
 
     void behavesLikeText() const = delete;
 

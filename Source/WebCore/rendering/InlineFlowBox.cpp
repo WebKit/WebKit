@@ -179,14 +179,6 @@ void InlineFlowBox::removeChild(InlineBox* child)
     if (!isDirty())
         dirtyLineBoxes();
 
-    if (child->prevLeafChild() && is<InlineTextBox>(child->prevLeafChild())) {
-        if (is<InlineTextBox>(child))
-            downcast<InlineTextBox>(child->prevLeafChild())->renderer().setContentIsKnownToFollow(downcast<InlineTextBox>(child)->renderer().contentIsKnownToFollow());
-        // FIXME: Handle the case where we remove the last inline box, and it's not a text box. If we're trying to share
-        // expansion opportunites both inside and outside a replaced element (such as for ruby bases), we need to search
-        // outside the current inline box tree to determine if there is content that follows the new last inline item.
-    }
-
     root().childRemoved(child);
 
     if (child == m_firstChild)
