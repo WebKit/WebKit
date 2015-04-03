@@ -1,3 +1,57 @@
+2015-04-02  Mark Lam  <mark.lam@apple.com>
+
+        Enhance ability to dump JSC Options.
+        <https://webkit.org/b/143357>
+
+        Reviewed by Benjamin Poulain.
+
+        Some enhancements to how the JSC options work:
+
+        1. Add a JSC_showOptions option which take values: 0 = None, 1 = Overridden only,
+           2 = All, 3 = Verbose.
+
+           The default is 0 (None).  This dumps nothing.
+           With the Overridden setting, at VM initialization time, we will dump all
+           option values that have been changed from their default.
+           With the All setting, at VM initialization time, we will dump all option values.
+           With the Verbose setting, at VM initialization time, we will dump all option
+           values along with their descriptions (if available).
+
+        2. We now store a copy of the default option values.
+
+           We later use this for comparison to tell if an option has been overridden, and
+           print the default value for reference.  As a result, we no longer need the
+           didOverride flag since we can compute whether the option is overridden at any time.
+
+        3. Added description strings to some options to be printed when JSC_showOptions=3 (Verbose).
+
+           This will come in handy later when we want to rename some of the options to more sane
+           names that are easier to remember.  For example, we can change
+           Options::dfgFunctionWhitelistFile() to Options::dfgWhiteList(), and
+           Options::slowPathAllocsBetweenGCs() to Options::forcedGcRate().  With the availability
+           of the description, we can afford to use shorter and less descriptive option names,
+           but they will be easier to remember and use for day to day debugging work.
+
+           In this patch, I did not change the names of any of the options yet.  I only added
+           description strings for options that I know about, and where I think the option name
+           isn't already descriptive enough.
+
+        4. Also deleted some unused code.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        (JSC::Options::setOption):
+        (JSC::Options::dumpAllOptions):
+        (JSC::Options::dumpOption):
+        (JSC::Options::Option::dump):
+        (JSC::Options::Option::operator==):
+        * runtime/Options.h:
+        (JSC::OptionRange::rangeString):
+        (JSC::Options::Option::Option):
+        (JSC::Options::Option::operator!=):
+
 2015-04-02  Geoffrey Garen  <ggaren@apple.com>
 
         JavaScriptCore API should support type checking for Array and Date
