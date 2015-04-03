@@ -2188,3 +2188,6 @@ webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
 webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
 webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
 webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
+
+# [EFL] r182307 broke 87 layouttests
+webkit.org/b/143364 fast/fixed-layout [ Skip ]
