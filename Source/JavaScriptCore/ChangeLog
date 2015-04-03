@@ -5,6 +5,17 @@
 
         Follow-up to address a comment by Dan.
 
+        * API/WebKitAvailability.h: __MAC_OS_X_VERSION_MIN_REQUIRED <= 101100
+        is wrong, since this API is available when __MAC_OS_X_VERSION_MIN_REQUIRED
+        is equal to 101100.
+
+2015-04-03  Geoffrey Garen  <ggaren@apple.com>
+
+        JavaScriptCore API should support type checking for Array and Date
+        https://bugs.webkit.org/show_bug.cgi?id=143324
+
+        Follow-up to address a comment by Dan.
+
         * API/WebKitAvailability.h: Do use 10.0 because it was right all along.
         Added a comment explaining why.
 
