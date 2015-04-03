@@ -102,9 +102,11 @@ CGColorSpaceRef LayerHostingContext::colorSpace() const
     return [m_context colorSpace];
 }
 
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 void LayerHostingContext::setFencePort(mach_port_t fencePort)
 {
     [m_context setFencePort:fencePort];
 }
+#endif
 
 } // namespace WebKit
