@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #include "CaptionUserPreferencesMediaAF.h"
 
+#include "AudioTrackList.h"
 #include "FloatConversion.h"
 #include "HTMLMediaElement.h"
 #include "URL.h"
@@ -536,21 +537,16 @@ static String languageIdentifier(const String& languageCode)
     return lowercaseLanguageCode;
 }
 
-static String trackDisplayName(TextTrack* track)
+static void buildDisplayStringForTrackBase(StringBuilder& displayName, const TrackBase& track)
 {
-    if (track == TextTrack::captionMenuOffItem())
-        return textTrackOffMenuItemText();
-    if (track == TextTrack::captionMenuAutomaticItem())
-        return textTrackAutomaticMenuItemText();
-
-    StringBuilder displayName;
-    String label = track->label();
-    String trackLanguageIdentifier = track->language();
+    String label = track.label();
+    String trackLanguageIdentifier = track.language();
 
     RetainPtr<CFLocaleRef> currentLocale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage().createCFString().get()));
     RetainPtr<CFStringRef> localeIdentifier = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromString(kCFAllocatorDefault, trackLanguageIdentifier.createCFString().get()));
     RetainPtr<CFStringRef> languageCF = adoptCF(CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleLanguageCode, localeIdentifier.get()));
     String language = languageCF.get();
+
     if (!label.isEmpty()) {
         if (language.isEmpty() || label.contains(language))
             displayName.append(label);
@@ -581,7 +577,34 @@ static String trackDisplayName(TextTrack* track)
         else
             displayName.append(localeIdentifier.get());
     }
+}
+
+static String trackDisplayName(AudioTrack* track)
+{
+    StringBuilder displayName;
+    buildDisplayStringForTrackBase(displayName, *track);
     
+    if (displayName.isEmpty())
+        displayName.append(audioTrackNoLabelText());
+    
+    return displayName.toString();
+}
+
+String CaptionUserPreferencesMediaAF::displayNameForTrack(AudioTrack* track) const
+{
+    return trackDisplayName(track);
+}
+
+static String trackDisplayName(TextTrack* track)
+{
+    if (track == TextTrack::captionMenuOffItem())
+        return textTrackOffMenuItemText();
+    if (track == TextTrack::captionMenuAutomaticItem())
+        return textTrackAutomaticMenuItemText();
+
+    StringBuilder displayName;
+    buildDisplayStringForTrackBase(displayName, *track);
+
     if (displayName.isEmpty())
         displayName.append(textTrackNoLabelText());
     
@@ -720,6 +743,25 @@ static bool textTrackCompare(const RefPtr<TextTrack>& a, const RefPtr<TextTrack>
 
     // ... and tracks of the same type and language sort by the menu item text.
     return codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get())) < 0;
+}
+
+Vector<RefPtr<AudioTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(AudioTrackList* trackList)
+{
+    ASSERT(trackList);
+    
+    Vector<RefPtr<AudioTrack>> tracksForMenu;
+    
+    for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
+        AudioTrack* track = trackList->item(i);
+        String language = displayNameForLanguageLocale(track->language());
+        tracksForMenu.append(track);
+    }
+    
+    std::sort(tracksForMenu.begin(), tracksForMenu.end(), [](const RefPtr<AudioTrack>& a, const RefPtr<AudioTrack>& b) {
+        return codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get())) < 0;
+    });
+    
+    return tracksForMenu;
 }
 
 Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(TextTrackList* trackList)
