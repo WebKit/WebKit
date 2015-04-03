@@ -105,6 +105,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXSelectedTextChanged:
             macNotification = NSAccessibilitySelectedTextChangedNotification;
             break;
+        case AXCheckedStateChanged:
         case AXValueChanged:
             macNotification = NSAccessibilityValueChangedNotification;
             break;
@@ -138,8 +139,6 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXMenuOpened:
             macNotification = (id)kAXMenuOpenedNotification;
             break;
-        case AXCheckedStateChanged:
-            // Does not exist on Mac.
         default:
             return;
     }

@@ -1,3 +1,17 @@
+2015-04-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Toggling check box state not speaking using plain space, not VO space.
+        https://bugs.webkit.org/show_bug.cgi?id=143356
+
+        Reviewed by Darin Adler.
+
+        The checkbox state change needs to result in a value change being generated, otherwise accessibility won't know the value has changed through keyboard usage.
+  
+        Test: platform/mac/accessibility/checkbox-posts-value-change-notification-after-activation-with-space.html
+
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+
 2015-04-03  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Use pre-computed simple line runs to produce innerText content.
