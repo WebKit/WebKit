@@ -29,7 +29,8 @@
 
 [
     CustomConstructor(any properties),
-    Conditional=STREAMS_API
+    Conditional=STREAMS_API,
+    SkipVTableValidation
 ] interface ReadableStream {
     // FIXME: Remove RaisesException once methods are actually implemented.
     [Custom, RaisesException] Promise cancel(DOMString reason);

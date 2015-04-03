@@ -80,9 +80,8 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStream(ExecState* exec)
     ASSERT(jsConstructor);
     ScriptExecutionContext* scriptExecutionContext = jsConstructor->scriptExecutionContext();
 
-
     Ref<ReadableStreamJSSource> source = ReadableStreamJSSource::create(exec);
-    RefPtr<ReadableStream> readableStream = ReadableStream::create(*scriptExecutionContext, Ref<ReadableStreamSource>(source.get()));
+    RefPtr<ReadableStream> readableStream = ReadableJSStream::create(*scriptExecutionContext, Ref<ReadableStreamJSSource>(source.get()));
 
     VM& vm = exec->vm();
     JSGlobalObject* globalObject = exec->callee()->globalObject();

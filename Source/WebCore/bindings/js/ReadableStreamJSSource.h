@@ -32,6 +32,8 @@
 
 #if ENABLE(STREAMS_API)
 
+#include "ReadableStream.h"
+#include "ReadableStreamReader.h"
 #include "ReadableStreamSource.h"
 #include <heap/Strong.h>
 #include <heap/StrongInlines.h>
@@ -52,6 +54,21 @@ public:
 
 private:
     ReadableStreamJSSource(JSC::ExecState*);
+};
+
+class ReadableJSStream: public ReadableStream {
+public:
+    static Ref<ReadableJSStream> create(ScriptExecutionContext&, Ref<ReadableStreamJSSource>&&);
+    virtual Ref<ReadableStreamReader> createReader() override;
+private:
+    ReadableJSStream(ScriptExecutionContext&, Ref<ReadableStreamJSSource>&&);
+};
+
+class ReadableJSStreamReader: public ReadableStreamReader {
+public:
+    static Ref<ReadableJSStreamReader> create(ReadableJSStream&);
+private:
+    ReadableJSStreamReader(ReadableJSStream&);
 };
 
 void setInternalSlotToObject(JSC::ExecState*, JSC::JSValue, JSC::PrivateName&, JSC::JSValue);

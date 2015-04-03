@@ -40,14 +40,6 @@ namespace WebCore {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, readableStreamCounter, ("ReadableStream"));
 
-Ref<ReadableStream> ReadableStream::create(ScriptExecutionContext& scriptExecutionContext, Ref<ReadableStreamSource>&& source)
-{
-    auto readableStream = adoptRef(*new ReadableStream(scriptExecutionContext, WTF::move(source)));
-    readableStream.get().suspendIfNeeded();
-
-    return readableStream;
-}
-
 ReadableStream::ReadableStream(ScriptExecutionContext& scriptExecutionContext, Ref<ReadableStreamSource>&& source)
     : ActiveDOMObject(&scriptExecutionContext)
     , m_state(State::Readable)
@@ -56,6 +48,7 @@ ReadableStream::ReadableStream(ScriptExecutionContext& scriptExecutionContext, R
 #ifndef NDEBUG
     readableStreamCounter.increment();
 #endif
+    suspendIfNeeded();
 }
 
 ReadableStream::~ReadableStream()
@@ -74,11 +67,6 @@ bool ReadableStream::canSuspend() const
 {
     // FIXME: We should try and do better here.
     return false;
-}
-
-Ref<ReadableStreamReader> ReadableStream::createReader()
-{
-    return ReadableStreamReader::create(*this);
 }
 
 }

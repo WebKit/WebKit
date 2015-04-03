@@ -55,19 +55,19 @@ public:
         Errored
     };
 
-    static Ref<ReadableStream> create(ScriptExecutionContext&, Ref<ReadableStreamSource>&&);
     virtual ~ReadableStream();
 
     ReadableStreamReader* reader() { return m_reader; }
     void lock(ReadableStreamReader& reader) { m_reader = &reader; }
     void release() { m_reader = nullptr; }
-    Ref<ReadableStreamReader> createReader();
+    virtual Ref<ReadableStreamReader> createReader() = 0;
 
     State internalState() { return m_state; }
 
-private:
+protected:
     ReadableStream(ScriptExecutionContext&, Ref<ReadableStreamSource>&&);
 
+private:
     // ActiveDOMObject API.
     const char* activeDOMObjectName() const override;
     bool canSuspend() const override;

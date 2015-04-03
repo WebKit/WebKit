@@ -30,7 +30,8 @@
 [
     ActiveDOMObject,
     CustomConstructor(any properties),
-    Conditional=STREAMS_API
+    Conditional=STREAMS_API,
+    SkipVTableValidation
 ] interface ReadableStreamReader {
     // FIXME: Remove RaisesException once methods are implemented.
     [Custom, RaisesException] Object read();

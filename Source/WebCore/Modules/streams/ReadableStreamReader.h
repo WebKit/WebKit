@@ -46,7 +46,6 @@ namespace WebCore {
 // See https://streams.spec.whatwg.org/#reader-class for more information.
 class ReadableStreamReader : public ActiveDOMObject, public ScriptWrappable, public RefCounted<ReadableStreamReader> {
 public:
-    static Ref<ReadableStreamReader> create(ReadableStream&);
     virtual ~ReadableStreamReader();
 
     ReadableStream* stream() { return m_stream.get(); }
@@ -55,9 +54,10 @@ public:
     typedef std::function<void()> ClosedErrorCallback;
     void closed(ClosedSuccessCallback, ClosedErrorCallback);
 
-private:
+protected:
     ReadableStreamReader(ReadableStream&);
 
+private:
     // ActiveDOMObject API.
     const char* activeDOMObjectName() const override;
     bool canSuspend() const override;

@@ -1,3 +1,35 @@
+2015-04-01 Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Split ReadableStream/Reader implementation according source type (JS vs native)
+        https://bugs.webkit.org/show_bug.cgi?id=143130
+
+        Reviewed by Benjamin Poulain.
+
+        Introduce ReadableJSStream and ReadableJSStreamReader as subclasses of ReadableStream and ReadableStreamReader.
+        These classes manage JS based sources: ReadableStream JS constructor instantiates ReadableJStream.
+        These classes are expected to handle JS source specific handling, in particular JSValue error storage and JSValue chunk queue.
+        Making ReadableStream and ReadableStreamReader abstract, to be subclassed for native sources.
+
+        Current tests cover the changes.
+
+        * Modules/streams/ReadableStream.cpp:
+        (WebCore::ReadableStream::ReadableStream): Moved suspendIfNeeded inside constructor to ease subclassing.
+        (WebCore::ReadableStream::create): Deleted as ReadableStream is now abstarct.
+        * Modules/streams/ReadableStream.h: Made createReader virtual pure.
+        * Modules/streams/ReadableStream.idl: Skipping VTable validation as subclasses of ReadableStream may be JS wrapped.
+        * Modules/streams/ReadableStreamReader.cpp: Removed ReadableStreamReader::create.
+        * Modules/streams/ReadableStreamReader.h: Ditto.
+        * Modules/streams/ReadableStreamReader.idl: Skipping VTable validation as subclasses of ReadableStreamReader may be JS wrapped.
+        * bindings/js/JSReadableStreamCustom.cpp:
+        (WebCore::constructJSReadableStream): Instantiating ReadableJSStream in lieu of ReadableStream within JS constructor.
+        * bindings/js/ReadableStreamJSSource.cpp:
+        (WebCore::ReadableJSStream::create):
+        (WebCore::ReadableJSStream::createReader): Instantiating ReadableJSStreamReader.
+        (WebCore::ReadableJSStream::ReadableJSStream):
+        (WebCore::ReadableJSStreamReader::create):
+        (WebCore::ReadableJSStreamReader::ReadableJSStreamReader):
+        * bindings/js/ReadableStreamJSSource.h: Definition of ReadableJSStream and ReadableJSStreamReader.
+
 2015-04-02  Timothy Horton  <timothy_horton@apple.com>
 
         Scrollbars are left in the wrong position when resizing a fixed layout view
