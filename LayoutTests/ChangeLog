@@ -1,5 +1,11 @@
 2015-04-03  Alexey Proskuryakov  <ap@apple.com>
 
+        Re-skip tests that got recently enabled, but time out.
+
+        * platform/mac-wk2/TestExpectations:
+
+2015-04-03  Alexey Proskuryakov  <ap@apple.com>
+
         fast/fixed-layout/fixed-layout.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=143379
 
