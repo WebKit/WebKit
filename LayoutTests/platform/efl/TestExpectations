@@ -2181,3 +2181,10 @@ webkit.org/b/142571 fast/css/vertical-text-overflow-ellipsis-text-align-center.h
 
 webkit.org/b/142763 fast/images/animated-gif-window-resizing.html [ Timeout ]
 webkit.org/b/142764 accessibility/content-editable-as-textarea.html [ Timeout ]
+
+# Broken Ruby tests
+webkit.org/b/143354 fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
+webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
+webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
+webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
+webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
