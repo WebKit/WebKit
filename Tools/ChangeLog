@@ -1,3 +1,12 @@
+2015-04-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        run-jsc-stress-tests --remote should add libllvmForJSC.so to the bundle on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=143372
+
+        Reviewed by Darin Adler.
+
+        * Scripts/run-jsc-stress-tests:
+
 2015-04-03  Antti Koivisto  <antti@apple.com>
 
         Add non-counting bloom filter class
