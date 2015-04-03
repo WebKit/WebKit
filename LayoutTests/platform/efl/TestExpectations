@@ -1468,7 +1468,7 @@ webkit.org/b/111172 compositing/overlap-blending/children-opacity-huge.html [ Im
 webkit.org/b/111172 compositing/overlap-blending/children-opacity-no-overlap.html [ ImageOnlyFailure ]
 
 # Newly added tests in r148115 is failing.
-webkit.org/b/114338 compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
+#webkit.org/b/114338 compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
 
 # Select element popup is not shown.
 webkit.org/b/114154 fast/forms/select/popup-closes-on-blur.html [ Pass ]
@@ -1668,7 +1668,7 @@ webkit.org/b/98741 plugins/refcount-leaks.html [ Failure ]
 
 # These ref tests are failing because the text is blurry.
 webkit.org/b/105766 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
-webkit.org/b/105766 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
+#webkit.org/b/105766 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
 
 # Failing svg ref tests.
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure Pass ]
@@ -2026,7 +2026,7 @@ webkit.org/b/136406 compositing/backing/backface-visibility-in-transformed.html 
 webkit.org/b/136406 compositing/backing/backface-visibility.html [ Failure ]
 webkit.org/b/136406 compositing/contents-opaque/control-layer.html [ Failure ]
 webkit.org/b/136406 compositing/contents-opaque/hidden-with-visible-text.html [ Failure ]
-webkit.org/b/136406 compositing/contents-opaque/opaque-with-clip-path.html [ ImageOnlyFailure ]
+#webkit.org/b/136406 compositing/contents-opaque/opaque-with-clip-path.html [ ImageOnlyFailure ]
 webkit.org/b/136406 compositing/contents-scale/animating.html [ Failure ]
 webkit.org/b/136406 compositing/contents-scale/rounded-contents-scale.html [ Failure ]
 webkit.org/b/136406 compositing/contents-scale/scaled-ancestor.html [ Failure ]
@@ -2142,10 +2142,10 @@ webkit.org/b/141896 fast/borders/border-radius-on-html.html [ ImageOnlyFailure ]
 webkit.org/b/141958 http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Failure ]
 webkit.org/b/141958 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html [ Failure ]
 
-webkit.org/b/142426 compositing/masks/compositing-clip-path-and-mask.html [ ImageOnlyFailure ]
-webkit.org/b/142426 compositing/masks/compositing-clip-path-mask-change.html [ ImageOnlyFailure ]
-webkit.org/b/142426 compositing/masks/compositing-clip-path.html [ ImageOnlyFailure ]
-webkit.org/b/142426 compositing/masks/reference-clip-path-on-composited.html [ ImageOnlyFailure ]
+#webkit.org/b/142426 compositing/masks/compositing-clip-path-and-mask.html [ ImageOnlyFailure ]
+#webkit.org/b/142426 compositing/masks/compositing-clip-path-mask-change.html [ ImageOnlyFailure ]
+#webkit.org/b/142426 compositing/masks/compositing-clip-path.html [ ImageOnlyFailure ]
+#webkit.org/b/142426 compositing/masks/reference-clip-path-on-composited.html [ ImageOnlyFailure ]
 
 webkit.org/b/142427 fast/regions/scrolling/wheel-scroll-abspos.html [ ImageOnlyFailure ]
 webkit.org/b/142427 fast/regions/scrolling/wheel-scroll.html [ ImageOnlyFailure ]

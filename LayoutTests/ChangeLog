@@ -3,6 +3,15 @@
         [EFL] Fix 18 crashing compositing tests after r182101
         https://bugs.webkit.org/show_bug.cgi?id=143214
 
+        Unreviewed gardening, comment out the original expectations after r182311.
+
+        * platform/efl/TestExpectations:
+
+2015-04-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Fix 18 crashing compositing tests after r182101
+        https://bugs.webkit.org/show_bug.cgi?id=143214
+
         Unreviewed gardening, add crash expectations until proper fix.
 
         * platform/efl/TestExpectations:
