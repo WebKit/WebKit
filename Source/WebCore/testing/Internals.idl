@@ -241,6 +241,9 @@ enum ResourceLoadPriority {
     [RaisesException] void setPageScaleFactor(unrestricted float scaleFactor, long x, long y);
     [RaisesException] void setPageZoomFactor(unrestricted float zoomFactor);
 
+    [RaisesException] void setUseFixedLayout(boolean useFixedLayout);
+    [RaisesException] void setFixedLayoutSize(long width, long height);
+
     void setHeaderHeight(unrestricted float height);
     void setFooterHeight(unrestricted float height);
 

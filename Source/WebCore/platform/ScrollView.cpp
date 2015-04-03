@@ -1053,6 +1053,8 @@ void ScrollView::setFrameRect(const IntRect& newRect)
 
     Widget::setFrameRect(newRect);
     frameRectsChanged();
+
+    updateScrollbars(scrollOffset());
     
     if (!m_useFixedLayout && oldRect.size() != newRect.size())
         availableContentSizeChanged(AvailableSizeChangeReason::AreaSizeChanged);

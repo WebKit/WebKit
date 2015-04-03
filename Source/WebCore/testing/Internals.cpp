@@ -294,6 +294,8 @@ void Internals::resetToConsistentState(Page* page)
         mainFrameView->setHeaderHeight(0);
         mainFrameView->setFooterHeight(0);
         page->setTopContentInset(0);
+        mainFrameView->setUseFixedLayout(false);
+        mainFrameView->setFixedLayoutSize(IntSize());
     }
 
     TextRun::setAllowsRoundingHacks(false);
@@ -1916,6 +1918,28 @@ void Internals::setPageZoomFactor(float zoomFactor, ExceptionCode& ec)
     }
     Frame* frame = document->frame();
     frame->setPageZoomFactor(zoomFactor);
+}
+
+void Internals::setUseFixedLayout(bool useFixedLayout, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->view()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    FrameView* frameView = document->view();
+    frameView->setUseFixedLayout(useFixedLayout);
+}
+
+void Internals::setFixedLayoutSize(int width, int height, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->view()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    FrameView* frameView = document->view();
+    frameView->setFixedLayoutSize(IntSize(width, height));
 }
 
 void Internals::setHeaderHeight(float height)
