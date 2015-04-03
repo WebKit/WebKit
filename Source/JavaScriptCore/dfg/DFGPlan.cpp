@@ -415,6 +415,10 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             return CancelPath;
         
         if (!haveLLVM) {
+            if (Options::ftlCrashesIfCantInitializeLLVM()) {
+                dataLog("LLVM can't be initialized.\n");
+                CRASH();
+            }
             finalizer = std::make_unique<FailedFinalizer>(*this);
             return FailPath;
         }

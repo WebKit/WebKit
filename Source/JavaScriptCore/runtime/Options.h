@@ -171,6 +171,7 @@ typedef const char* optionString;
     v(unsigned, llvmMaxStackSize, 128 * KB, nullptr) \
     v(bool, llvmDisallowAVX, true, nullptr) \
     v(bool, ftlCrashes, false, nullptr) /* fool-proof way of checking that you ended up in the FTL. ;-) */\
+    v(bool, ftlCrashesIfCantInitializeLLVM, false, nullptr) \
     v(bool, clobberAllRegsInFTLICSlowPath, !ASSERT_DISABLED, nullptr) \
     v(bool, assumeAllRegsInFTLICAreLive, false, nullptr) \
     v(bool, enableAccessInlining, true, nullptr) \

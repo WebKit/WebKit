@@ -1,5 +1,14 @@
 2015-04-03  Csaba Osztrogonác  <ossy@webkit.org>
 
+        FTL JIT tests should fail if LLVM library isn't available
+        https://bugs.webkit.org/show_bug.cgi?id=143374
+
+        Reviewed by Mark Lam.
+
+        * Scripts/run-jsc-stress-tests:
+
+2015-04-03  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] Speedup jhbuild with disable running autogen.sh
         https://bugs.webkit.org/show_bug.cgi?id=143369
 
