@@ -1,5 +1,15 @@
 2015-04-03  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [WK2] Unskip now passing tests after r135595
+        https://bugs.webkit.org/show_bug.cgi?id=127428
+
+        Unreviewed gardening.
+
+        * platform/mac-wk2/TestExpectations: Mark editing/selection/context-menu-text-selection.html as timeouting test.
+        * platform/wk2/TestExpectations: Unskip now passing tests.
+
+2015-04-03  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] Fix 18 crashing compositing tests after r182101
         https://bugs.webkit.org/show_bug.cgi?id=143214
 

@@ -248,6 +248,8 @@ webkit.org/b/139820 fast/frames/lots-of-iframes.html [ Timeout ]
 
 webkit.org/b/140217 http/tests/navigation/forward-and-cancel.html [ Pass Failure ]
 
+webkit.org/b/127473 editing/selection/context-menu-text-selection.html [ Timeout ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

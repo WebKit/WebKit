@@ -321,12 +321,6 @@ java
 compositing/plugins/invalidate_rect.html
 plugins/windowless_plugin_paint_test.html
 
-# WebKitTestRunner needs eventSender.contextClick()
-# https://bugs.webkit.org/show_bug.cgi?id=86881
-editing/selection/context-menu-text-selection.html
-editing/selection/5354455-2.html
-fast/events/context-nodrag.html
-
 # WKTR does not support overriding WebKitUsesPageCachePreferenceKey.
 # https://bugs.webkit.org/show_bug.cgi?id=114153
 fast/harness/use-page-cache.html
