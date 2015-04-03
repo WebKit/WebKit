@@ -27,21 +27,20 @@
 #include "JSValueRef.h"
 
 #include "APICast.h"
+#include "DateInstance.h"
 #include "JSAPIWrapperObject.h"
+#include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "JSCallbackObject.h"
 #include "JSGlobalObject.h"
 #include "JSONObject.h"
 #include "JSString.h"
 #include "LiteralParser.h"
-#include "JSCInlines.h"
 #include "Protect.h"
-
+#include <algorithm>
 #include <wtf/Assertions.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
-
-#include <algorithm> // for std::min
 
 #if PLATFORM(MAC)
 #include <mach-o/dyld.h>
@@ -98,8 +97,7 @@ bool JSValueIsUndefined(JSContextRef ctx, JSValueRef value)
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
 
-    JSValue jsValue = toJS(exec, value);
-    return jsValue.isUndefined();
+    return toJS(exec, value).isUndefined();
 }
 
 bool JSValueIsNull(JSContextRef ctx, JSValueRef value)
@@ -111,8 +109,7 @@ bool JSValueIsNull(JSContextRef ctx, JSValueRef value)
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
 
-    JSValue jsValue = toJS(exec, value);
-    return jsValue.isNull();
+    return toJS(exec, value).isNull();
 }
 
 bool JSValueIsBoolean(JSContextRef ctx, JSValueRef value)
@@ -124,8 +121,7 @@ bool JSValueIsBoolean(JSContextRef ctx, JSValueRef value)
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
 
-    JSValue jsValue = toJS(exec, value);
-    return jsValue.isBoolean();
+    return toJS(exec, value).isBoolean();
 }
 
 bool JSValueIsNumber(JSContextRef ctx, JSValueRef value)
@@ -137,8 +133,7 @@ bool JSValueIsNumber(JSContextRef ctx, JSValueRef value)
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
 
-    JSValue jsValue = toJS(exec, value);
-    return jsValue.isNumber();
+    return toJS(exec, value).isNumber();
 }
 
 bool JSValueIsString(JSContextRef ctx, JSValueRef value)
@@ -150,8 +145,7 @@ bool JSValueIsString(JSContextRef ctx, JSValueRef value)
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
 
-    JSValue jsValue = toJS(exec, value);
-    return jsValue.isString();
+    return toJS(exec, value).isString();
 }
 
 bool JSValueIsObject(JSContextRef ctx, JSValueRef value)
@@ -163,8 +157,31 @@ bool JSValueIsObject(JSContextRef ctx, JSValueRef value)
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
 
-    JSValue jsValue = toJS(exec, value);
-    return jsValue.isObject();
+    return toJS(exec, value).isObject();
+}
+
+bool JSValueIsArray(JSContextRef ctx, JSValueRef value)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    ExecState* exec = toJS(ctx);
+    JSLockHolder locker(exec);
+
+    return toJS(exec, value).inherits(JSArray::info());
+}
+
+bool JSValueIsDate(JSContextRef ctx, JSValueRef value)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    ExecState* exec = toJS(ctx);
+    JSLockHolder locker(exec);
+
+    return toJS(exec, value).inherits(DateInstance::info());
 }
 
 bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsClass)

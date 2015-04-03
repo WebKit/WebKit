@@ -356,6 +356,16 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
     return JSValueIsObject([_context JSGlobalContextRef], m_value);
 }
 
+- (BOOL)isArray
+{
+    return JSValueIsArray([_context JSGlobalContextRef], m_value);
+}
+
+- (BOOL)isDate
+{
+    return JSValueIsDate([_context JSGlobalContextRef], m_value);
+}
+
 - (BOOL)isEqualToObject:(id)value
 {
     return JSValueIsStrictEqual([_context JSGlobalContextRef], m_value, objectToValue(_context, value));

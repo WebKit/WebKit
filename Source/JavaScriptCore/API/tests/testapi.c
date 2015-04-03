@@ -1248,6 +1248,8 @@ int main(int argc, char* argv[])
 
     ASSERT(!JSValueIsBoolean(context, NULL));
     ASSERT(!JSValueIsObject(context, NULL));
+    ASSERT(!JSValueIsArray(context, NULL));
+    ASSERT(!JSValueIsDate(context, NULL));
     ASSERT(!JSValueIsString(context, NULL));
     ASSERT(!JSValueIsNumber(context, NULL));
     ASSERT(!JSValueIsUndefined(context, NULL));
@@ -1408,8 +1410,10 @@ int main(int argc, char* argv[])
     } else
         printf("PASS: Correctly serialised with indent of 4.\n");
     JSStringRelease(str);
-    JSStringRef src = JSStringCreateWithUTF8CString("({get a(){ throw '';}})");
-    JSValueRef unstringifiableObj = JSEvaluateScript(context, src, NULL, NULL, 1, NULL);
+
+    str = JSStringCreateWithUTF8CString("({get a(){ throw '';}})");
+    JSValueRef unstringifiableObj = JSEvaluateScript(context, str, NULL, NULL, 1, NULL);
+    JSStringRelease(str);
     
     str = JSValueCreateJSONString(context, unstringifiableObj, 4, 0);
     if (str) {
@@ -1775,6 +1779,16 @@ int main(int argc, char* argv[])
     ASSERT(JSValueIsEqual(context, v, globalObject, NULL));
     v = JSEvaluateScript(context, script, o, NULL, 1, NULL);
     ASSERT(JSValueIsEqual(context, v, o, NULL));
+    JSStringRelease(script);
+
+    script = JSStringCreateWithUTF8CString("[ ]");
+    v = JSEvaluateScript(context, script, NULL, NULL, 1, NULL);
+    ASSERT(JSValueIsArray(context, v));
+    JSStringRelease(script);
+
+    script = JSStringCreateWithUTF8CString("new Date");
+    v = JSEvaluateScript(context, script, NULL, NULL, 1, NULL);
+    ASSERT(JSValueIsDate(context, v));
     JSStringRelease(script);
 
     exception = NULL;

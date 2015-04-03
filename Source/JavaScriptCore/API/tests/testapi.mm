@@ -530,6 +530,18 @@ void testObjectiveCAPI()
     }
 
     @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        JSValue *result = [context evaluateScript:@"[ ]"];
+        checkResult(@"[ ]", [result isArray]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        JSValue *result = [context evaluateScript:@"new Date"];
+        checkResult(@"new Date", [result isDate]);
+    }
+
+    @autoreleasepool {
         JSCollection* myPrivateProperties = [[JSCollection alloc] init];
 
         @autoreleasepool {

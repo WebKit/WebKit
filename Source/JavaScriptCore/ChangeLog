@@ -1,3 +1,29 @@
+2015-04-02  Geoffrey Garen  <ggaren@apple.com>
+
+        JavaScriptCore API should support type checking for Array and Date
+        https://bugs.webkit.org/show_bug.cgi?id=143324
+
+        Reviewed by Darin Adler, Sam Weinig, Dan Bernstein.
+
+        * API/JSValue.h:
+        * API/JSValue.mm:
+        (-[JSValue isArray]):
+        (-[JSValue isDate]): Added an ObjC API.
+
+        * API/JSValueRef.cpp:
+        (JSValueIsArray):
+        (JSValueIsDate):
+        * API/JSValueRef.h: Added a C API.
+
+        * API/WebKitAvailability.h: Brought our availability macros up to date
+        and fixed a harmless bug where "10_10" translated to "10.0".
+
+        * API/tests/testapi.c:
+        (main): Added a test and corrected a pre-existing leak.
+
+        * API/tests/testapi.mm:
+        (testObjectiveCAPI): Added a test.
+
 2015-04-02  Mark Lam  <mark.lam@apple.com>
 
         Add Options::dumpSourceAtDFGTime().

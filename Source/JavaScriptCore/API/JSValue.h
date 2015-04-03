@@ -417,6 +417,18 @@ OBJC_VISIBLE
 
 /*!
 @method
+@abstract Check if a JSValue is an array.
+*/ 
+- (BOOL)isArray NS_AVAILABLE(10_11, 9_0);
+
+/*!
+@method
+@abstract Check if a JSValue is a date.
+*/ 
+- (BOOL)isDate NS_AVAILABLE(10_11, 9_0);
+
+/*!
+@method
 @abstract Compare two JSValues using JavaScript's <code>===</code> operator.
 */
 - (BOOL)isEqualToObject:(id)value;

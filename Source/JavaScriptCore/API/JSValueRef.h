@@ -129,6 +129,24 @@ JS_EXPORT bool JSValueIsObject(JSContextRef ctx, JSValueRef value);
 */
 JS_EXPORT bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsClass);
 
+/*!
+@function
+@abstract       Tests whether a JavaScript value is an array.
+@param ctx      The execution context to use.
+@param value    The JSValue to test.
+@result         true if value is an array, otherwise false.
+*/
+JS_EXPORT bool JSValueIsArray(JSContextRef ctx, JSValueRef value) CF_AVAILABLE(10_11, 9_0);
+
+/*!
+@function
+@abstract       Tests whether a JavaScript value is a date.
+@param ctx      The execution context to use.
+@param value    The JSValue to test.
+@result         true if value is a date, otherwise false.
+*/
+JS_EXPORT bool JSValueIsDate(JSContextRef ctx, JSValueRef value) CF_AVAILABLE(10_11, 9_0);
+
 /* Comparing values */
 
 /*!
