@@ -1,3 +1,10 @@
+2015-04-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, fixing Clang builds of the GTK port on Linux.
+
+        * runtime/Options.cpp:
+        Include the <math.h> header for isnan().
+
 2015-04-02  Mark Lam  <mark.lam@apple.com>
 
         Enhance ability to dump JSC Options.

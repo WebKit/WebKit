@@ -35,6 +35,7 @@
 
 #include "ContextDestructionObserver.h"
 #include "ScriptWrappable.h"
+#include <functional>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

@@ -1,3 +1,10 @@
+2015-04-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, fixing Clang builds of the GTK port on Linux.
+
+        * Modules/mediastream/MediaDevices.h:
+        Include the <functional> header for uses of std::function<>.
+
 2015-04-01 Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
 
         [Streams API] Split ReadableStream/Reader implementation according source type (JS vs native)

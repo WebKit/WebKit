@@ -29,6 +29,7 @@
 #include "HeapStatistics.h"
 #include <algorithm>
 #include <limits>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/DataLog.h>
