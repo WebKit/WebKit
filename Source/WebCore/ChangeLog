@@ -1,3 +1,61 @@
+2015-04-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Expand test infrastructure to support scrolling tests
+        https://bugs.webkit.org/show_bug.cgi?id=143383
+
+        Reviewed by Darin Adler.
+
+        No new tests: No change in behavior.
+
+        This is an initial set of changes that clean up a few things I noticed while extending testing support
+        for scroll animations and wheel event gestures.
+        1. Reduce the amount of #ifdef code in EventHandler{Mac}.
+        2. Consolidate the idea of an "End Gesture" in the PlatformWheelEvent class.
+        3. Remove a number of unneeded null checks in EventHandler.
+        4. ScrollController must always have a client, so hold a reference instead of using a pointer.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::platformNotifyIfEndGesture): Renamed from 'platformNotifySnapIfNecessary'.
+        (WebCore::EventHandler::handleWheelEvent): Call 'platformNotifySnapIfNecessary' at method exit points.
+        (WebCore::EventHandler::platformNotifySnapIfNecessary): Deleted.
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::platformCompleteWheelEvent):  Remove unneeded null checks for 'view'. Remove
+        CSS_SNAP-specific call to 'platformNotifySnapIfNecessary'. This logic is now handled in the new
+        'platformNotifyIfEndGesture' method.
+        (WebCore::EventHandler::platformNotifyIfEndGesture): Renamed from 'platformNotifySnapIfNecessary'.
+        (WebCore::EventHandler::platformNotifySnapIfNecessary): Deleted.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac): Pass 'this' as
+        reference to ScrollController constructor.
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::shouldResetLatching): Call new 'isEndGesture' method.
+        (WebCore::PlatformWheelEvent::isEndGesture): Added method to encapsulate some code that was duplicated
+        in a number of places.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::ScrollAnimator): Pass 'this' as reference to ScrollController constructor.
+        * platform/cocoa/ScrollController.h:
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::ScrollController): Update to reflect m_client is now a reference.
+        (WebCore::ScrollController::handleWheelEvent): Ditto.
+        (WebCore::ScrollController::snapRubberBandTimerFired): Ditto. Also, a drive-by fix for ending rubberband
+        snapping. This end-state wasn't deactivating the timer (even when the animation finished). This isn't a
+        huge problem, but I (will) rely on the state of the animation timer in a future patch to decide if
+        tests should run or continue waiting.
+        (WebCore::ScrollController::isRubberBandInProgress): Ditto.
+        (WebCore::ScrollController::startSnapRubberbandTimer): Ditto.
+        (WebCore::ScrollController::stopSnapRubberbandTimer): Ditto.
+        (WebCore::ScrollController::shouldRubberBandInHorizontalDirection): Ditto.
+        (WebCore::ScrollController::processWheelEventForScrollSnapOnAxis): Ditto.
+        (WebCore::ScrollController::startScrollSnapTimer): Ditto.
+        (WebCore::ScrollController::stopScrollSnapTimer): Ditto.
+        (WebCore::ScrollController::scrollSnapAnimationUpdate): Ditto.
+        (WebCore::ScrollController::beginScrollSnapAnimation): Ditto.
+        (WebCore::ScrollController::computeSnapDelta): Ditto.
+        (WebCore::ScrollController::computeGlideDelta): Ditto.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::gestureShouldBeginSnap): Use new PlatformWheelEvent::isEndGesture() method.
+
 2015-04-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Toggling check box state not speaking using plain space, not VO space.

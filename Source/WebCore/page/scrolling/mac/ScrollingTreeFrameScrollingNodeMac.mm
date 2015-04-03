@@ -55,7 +55,7 @@ PassRefPtr<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeMac::
 
 ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
     : ScrollingTreeFrameScrollingNode(scrollingTree, nodeID)
-    , m_scrollController(this)
+    , m_scrollController(*this)
     , m_verticalScrollbarPainter(0)
     , m_horizontalScrollbarPainter(0)
     , m_lastScrollHadUnfilledPixels(false)

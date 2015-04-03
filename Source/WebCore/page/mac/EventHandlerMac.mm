@@ -938,6 +938,7 @@ static FrameView* frameViewForLatchingState(Frame& frame, ScrollLatchingState* l
 bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEvent, ContainerNode* scrollableContainer, ScrollableArea* scrollableArea)
 {
     // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
+    ASSERT(m_frame.view());
     FrameView* view = m_frame.view();
 
     ScrollLatchingState* latchingState = m_frame.mainFrame().latchingState();
@@ -954,7 +955,9 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEve
         if (!latchingState->startedGestureAtScrollLimit())
             view = frameViewForLatchingState(m_frame, latchingState);
 
-        bool didHandleWheelEvent = view && view->wheelEvent(wheelEvent);
+        ASSERT(view);
+
+        bool didHandleWheelEvent = view->wheelEvent(wheelEvent);
         if (scrollableContainer == latchingState->scrollableContainer()) {
             // If we are just starting a scroll event, and have nowhere left to scroll, allow
             // the enclosing frame to handle the scroll.
@@ -962,20 +965,14 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEve
         }
 
         // If the platform widget is handling the event, we always want to return false.
-        if (view && scrollableArea == view && view->platformWidget())
+        if (scrollableArea == view && view->platformWidget())
             didHandleWheelEvent = false;
         
         return didHandleWheelEvent;
     }
     
-    bool didHandleEvent = view ? view->wheelEvent(wheelEvent) : false;
+    bool didHandleEvent = view->wheelEvent(wheelEvent);
     m_isHandlingWheelEvent = false;
-
-#if ENABLE(CSS_SCROLL_SNAP)
-    if (scrollableArea)
-        platformNotifySnapIfNecessary(wheelEvent, *scrollableArea);
-#endif
-
     return didHandleEvent;
 }
 
@@ -995,16 +992,19 @@ bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelE
     return false;
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
-void EventHandler::platformNotifySnapIfNecessary(const PlatformWheelEvent& wheelEvent, ScrollableArea& scrollableArea)
+void EventHandler::platformNotifyIfEndGesture(const PlatformWheelEvent& wheelEvent, ScrollableArea* scrollableArea)
 {
+    if (!scrollableArea)
+        return;
+
     // Special case handling for ending wheel gesture to activate snap animation:
     if (wheelEvent.phase() != PlatformWheelEventPhaseEnded && wheelEvent.momentumPhase() != PlatformWheelEventPhaseEnded)
         return;
 
-    if (ScrollAnimator* scrollAnimator = scrollableArea.existingScrollAnimator())
+#if ENABLE(CSS_SCROLL_SNAP)
+    if (ScrollAnimator* scrollAnimator = scrollableArea->existingScrollAnimator())
         scrollAnimator->processWheelEventForScrollSnap(wheelEvent);
-}
 #endif
+}
 
 }

@@ -1154,10 +1154,8 @@ static bool gestureShouldBeginSnap(const PlatformWheelEvent& wheelEvent, const V
     if (!snapOffsets)
         return false;
     
-    if ((wheelEvent.phase() != PlatformWheelEventPhaseEnded)
-        && !(wheelEvent.phase() == PlatformWheelEventPhaseNone && wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded)) {
+    if (wheelEvent.phase() != PlatformWheelEventPhaseEnded && !wheelEvent.isEndGesture())
         return false;
-    }
 
     return true;
 }

@@ -99,7 +99,7 @@ class ScrollController {
     WTF_MAKE_NONCOPYABLE(ScrollController);
 
 public:
-    explicit ScrollController(ScrollControllerClient*);
+    explicit ScrollController(ScrollControllerClient&);
 
     bool handleWheelEvent(const PlatformWheelEvent&);
 
@@ -141,7 +141,7 @@ private:
     const ScrollSnapAnimatorState& scrollSnapPointState(ScrollEventAxis) const;
 #endif
 
-    ScrollControllerClient* m_client;
+    ScrollControllerClient& m_client;
     
     CFTimeInterval m_lastMomentumScrollTimestamp;
     FloatSize m_overflowScrollDelta;

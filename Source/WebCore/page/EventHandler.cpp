@@ -2627,11 +2627,9 @@ bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelE
     return true;
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
-void EventHandler::platformNotifySnapIfNecessary(const PlatformWheelEvent&, ScrollableArea&)
+void EventHandler::platformNotifyIfEndGesture(const PlatformWheelEvent&, ScrollableArea*)
 {
 }
-#endif
 
 #endif
 
@@ -2682,6 +2680,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
                     m_isHandlingWheelEvent = false;
                     if (scrollableArea)
                         scrollableArea->setScrolledProgrammatically(false);
+                    platformNotifyIfEndGesture(adjustedEvent, scrollableArea);
                     if (!widget->platformWidget())
                         return true;
                     return platformCompletePlatformWidgetWheelEvent(event, *widget, scrollableContainer.get());
@@ -2697,10 +2696,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
                 scrollableArea->setScrolledProgrammatically(false);
             }
 
-#if ENABLE(CSS_SCROLL_SNAP)
-            if (scrollableArea)
-                platformNotifySnapIfNecessary(adjustedEvent, *scrollableArea);
-#endif
+            platformNotifyIfEndGesture(adjustedEvent, scrollableArea);
             return true;
         }
     }
@@ -2708,7 +2704,9 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     if (scrollableArea)
         scrollableArea->setScrolledProgrammatically(false);
 
-    return platformCompleteWheelEvent(event, scrollableContainer.get(), scrollableArea);
+    bool handledEvent = platformCompleteWheelEvent(event, scrollableContainer.get(), scrollableArea);
+    platformNotifyIfEndGesture(adjustedEvent, scrollableArea);
+    return handledEvent;
 }
 
 void EventHandler::clearLatchedState()

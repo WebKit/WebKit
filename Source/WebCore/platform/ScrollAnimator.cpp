@@ -50,7 +50,7 @@ std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollabl
 ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
     : m_scrollableArea(scrollableArea)
 #if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)
-    , m_scrollController(this)
+    , m_scrollController(*this)
 #endif
     , m_currentPosX(0)
     , m_currentPosY(0)

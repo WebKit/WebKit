@@ -210,10 +210,7 @@ public:
     void platformRecordWheelEvent(const PlatformWheelEvent&);
     bool platformCompleteWheelEvent(const PlatformWheelEvent&, ContainerNode* scrollableContainer, ScrollableArea*);
     bool platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, const Widget&, ContainerNode* scrollableContainer);
-
-#if ENABLE(CSS_SCROLL_SNAP)
-    void platformNotifySnapIfNecessary(const PlatformWheelEvent&, ScrollableArea&);
-#endif
+    void platformNotifyIfEndGesture(const PlatformWheelEvent&, ScrollableArea*);
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
     typedef Vector<RefPtr<Touch>> TouchArray;
