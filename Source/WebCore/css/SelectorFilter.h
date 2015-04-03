@@ -64,7 +64,7 @@ private:
 
     // With 100 unique strings in the filter, 2^12 slot table has false positive rate of ~0.2%.
     static const unsigned bloomFilterKeyBits = 12;
-    std::unique_ptr<BloomFilter<bloomFilterKeyBits>> m_ancestorIdentifierFilter;
+    std::unique_ptr<CountingBloomFilter<bloomFilterKeyBits>> m_ancestorIdentifierFilter;
 };
 
 template <unsigned maximumIdentifierCount>

@@ -88,7 +88,7 @@ void SelectorFilter::setupParentStack(Element* parent)
     ASSERT(m_parentStack.isEmpty() == !m_ancestorIdentifierFilter);
     // Kill whatever we stored before.
     m_parentStack.shrink(0);
-    m_ancestorIdentifierFilter = std::make_unique<BloomFilter<bloomFilterKeyBits>>();
+    m_ancestorIdentifierFilter = std::make_unique<CountingBloomFilter<bloomFilterKeyBits>>();
     // Fast version if parent is a root element:
     if (!parent->parentNode() && !parent->isShadowRoot()) {
         pushParentStackFrame(parent);

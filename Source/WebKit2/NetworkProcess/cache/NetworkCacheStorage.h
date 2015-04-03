@@ -118,7 +118,7 @@ private:
 
     size_t m_maximumSize { std::numeric_limits<size_t>::max() };
 
-    BloomFilter<20> m_contentsFilter;
+    CountingBloomFilter<20> m_contentsFilter;
     std::atomic<bool> m_hasPopulatedContentsFilter { false };
 
     std::atomic<size_t> m_approximateSize { 0 };

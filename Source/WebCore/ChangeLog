@@ -1,3 +1,16 @@
+2015-04-03  Antti Koivisto  <antti@apple.com>
+
+        Add non-counting bloom filter class
+        https://bugs.webkit.org/show_bug.cgi?id=143366
+
+        Reviewed by Sam Weinig.
+
+        * css/SelectorFilter.cpp:
+        (WebCore::SelectorFilter::setupParentStack):
+        * css/SelectorFilter.h:
+
+        Update names.
+
 2015-04-03  Alex Christensen  <achristensen@webkit.org>
 
         Remove dead code.

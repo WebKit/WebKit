@@ -1,3 +1,15 @@
+2015-04-03  Antti Koivisto  <antti@apple.com>
+
+        Add non-counting bloom filter class
+        https://bugs.webkit.org/show_bug.cgi?id=143366
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/BloomFilter.cpp: Added.
+        (TestWebKitAPI::generateRandomHashes):
+        (TestWebKitAPI::TEST):
+
 2015-04-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         FTL JIT tests should fail if LLVM library isn't available
