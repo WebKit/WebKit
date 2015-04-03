@@ -212,6 +212,38 @@ const Options::EntryInfo Options::s_optionsInfo[Options::numberOfOptions] = {
 #undef FOR_EACH_OPTION
 };
 
+static void scaleJITPolicy()
+{
+    auto& scaleFactor = Options::jitPolicyScale();
+    if (scaleFactor > 1.0)
+        scaleFactor = 1.0;
+    else if (scaleFactor < 0.0)
+        scaleFactor = 0.0;
+
+    struct OptionToScale {
+        Options::OptionID id;
+        int32_t minVal;
+    };
+
+    static const OptionToScale optionsToScale[] = {
+        { Options::thresholdForJITAfterWarmUpID, 0 },
+        { Options::thresholdForJITSoonID, 0 },
+        { Options::thresholdForOptimizeAfterWarmUpID, 1 },
+        { Options::thresholdForOptimizeAfterLongWarmUpID, 1 },
+        { Options::thresholdForOptimizeSoonID, 1 },
+        { Options::thresholdForFTLOptimizeSoonID, 2 },
+        { Options::thresholdForFTLOptimizeAfterWarmUpID, 2 }
+    };
+
+    const int numberOfOptionsToScale = sizeof(optionsToScale) / sizeof(OptionToScale);
+    for (int i = 0; i < numberOfOptionsToScale; i++) {
+        Option option(optionsToScale[i].id);
+        ASSERT(option.type() == Options::Type::int32Type);
+        option.int32Val() *= scaleFactor;
+        option.int32Val() = std::max(option.int32Val(), optionsToScale[i].minVal);
+    }
+}
+
 static void recomputeDependentOptions()
 {
 #if !ENABLE(JIT)
@@ -255,7 +287,10 @@ static void recomputeDependentOptions()
         || Options::verboseCFA()
         || Options::verboseFTLFailure())
         Options::alwaysComputeHash() = true;
-    
+
+    if (Option(Options::jitPolicyScaleID).isOverridden())
+        scaleJITPolicy();
+
     // Compute the maximum value of the reoptimization retry counter. This is simply
     // the largest value at which we don't overflow the execute counter, when using it
     // to left-shift the execution counter by this amount. Currently the value ends

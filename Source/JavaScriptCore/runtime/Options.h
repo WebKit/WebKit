@@ -227,6 +227,7 @@ typedef const char* optionString;
     v(unsigned, maximumBinaryStringSwitchCaseLength, 50, nullptr) \
     v(unsigned, maximumBinaryStringSwitchTotalLength, 2000, nullptr) \
     \
+    v(double, jitPolicyScale, 1.0, "scale JIT thresholds to this specified ratio between 0.0 (compile ASAP) and 1.0 (compile like normal).") \
     v(int32, thresholdForJITAfterWarmUp, 500, nullptr) \
     v(int32, thresholdForJITSoon, 100, nullptr) \
     \

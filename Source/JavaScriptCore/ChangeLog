@@ -1,3 +1,22 @@
+2015-04-03  Mark Lam  <mark.lam@apple.com>
+
+        Add Options::jitPolicyScale() as a single knob to make all compilations happen sooner.
+        <https://webkit.org/b/143385>
+
+        Reviewed by Geoffrey Garen.
+
+        For debugging purposes, sometimes, we want to be able to make compilation happen
+        sooner to see if we can accelerate the manifestation of certain events / bugs.
+        Currently, in order to achieve this, we'll have to tweak multiple JIT thresholds
+        which make up the compilation policy.  Let's add a single knob that can tune all
+        the thresholds up / down in one go proportionately so that we can easily tweak
+        how soon compilation occurs.
+
+        * runtime/Options.cpp:
+        (JSC::scaleJITPolicy):
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
 2015-04-03  Geoffrey Garen  <ggaren@apple.com>
 
         is* API methods should be @properties
