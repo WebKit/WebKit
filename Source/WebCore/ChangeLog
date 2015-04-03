@@ -1,3 +1,21 @@
+2015-04-03  Alex Christensen  <achristensen@webkit.org>
+
+        Remove dead code.
+        https://bugs.webkit.org/show_bug.cgi?id=143352
+
+        Reviewed by Gyuyoung Kim.
+
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent):
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyChromeClient::openDateTimeChooser): Deleted.
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::openDateTimeChooser): Deleted.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        Remove ChromeClient::openDateTimeChooser.
+
 2015-04-03  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed, fixing Clang builds of the GTK port on Linux.

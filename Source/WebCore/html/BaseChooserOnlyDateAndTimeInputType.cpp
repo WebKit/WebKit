@@ -54,10 +54,6 @@ void BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent(Event*)
     DateTimeChooserParameters parameters;
     if (!element().setupDateTimeChooserParameters(parameters))
         return;
-#if !PLATFORM(IOS)
-    // FIXME: Is this correct? Why don't we do this on iOS?
-    m_dateTimeChooser = element().document().page()->chrome().openDateTimeChooser(this, parameters);
-#endif
 }
 
 void BaseChooserOnlyDateAndTimeInputType::createShadowSubtree()

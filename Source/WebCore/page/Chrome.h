@@ -163,10 +163,6 @@ public:
     std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient*, const Color& initialColor);
 #endif
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES) && !PLATFORM(IOS)
-    PassRefPtr<DateTimeChooser> openDateTimeChooser(DateTimeChooserClient*, const DateTimeChooserParameters&);
-#endif
-
     void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
     void loadIconForFiles(const Vector<String>&, FileIconLoader*);
 

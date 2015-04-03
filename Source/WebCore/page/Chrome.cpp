@@ -24,7 +24,6 @@
 
 #include "ChromeClient.h"
 #include "DNS.h"
-#include "DateTimeChooser.h"
 #include "Document.h"
 #include "DocumentType.h"
 #include "FileIconLoader.h"
@@ -477,14 +476,6 @@ std::unique_ptr<ColorChooser> Chrome::createColorChooser(ColorChooserClient* cli
 {
     notifyPopupOpeningObservers();
     return m_client.createColorChooser(client, initialColor);
-}
-#endif
-
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES) && !PLATFORM(IOS)
-PassRefPtr<DateTimeChooser> Chrome::openDateTimeChooser(DateTimeChooserClient* client, const DateTimeChooserParameters& parameters)
-{
-    notifyPopupOpeningObservers();
-    return m_client.openDateTimeChooser(client, parameters);
 }
 #endif
 

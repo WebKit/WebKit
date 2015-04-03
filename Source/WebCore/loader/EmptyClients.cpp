@@ -30,7 +30,6 @@
 
 #include "ColorChooser.h"
 #include "DatabaseProvider.h"
-#include "DateTimeChooser.h"
 #include "DocumentLoader.h"
 #include "FileChooser.h"
 #include "FormState.h"
@@ -158,13 +157,6 @@ PassRefPtr<SearchPopupMenu> EmptyChromeClient::createSearchPopupMenu(PopupMenuCl
 
 #if ENABLE(INPUT_TYPE_COLOR)
 std::unique_ptr<ColorChooser> EmptyChromeClient::createColorChooser(ColorChooserClient*, const Color&)
-{
-    return nullptr;
-}
-#endif
-
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES) && !PLATFORM(IOS)
-PassRefPtr<DateTimeChooser> EmptyChromeClient::openDateTimeChooser(DateTimeChooserClient*, const DateTimeChooserParameters&)
 {
     return nullptr;
 }
