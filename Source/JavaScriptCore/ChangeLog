@@ -1,3 +1,18 @@
+2015-04-03  Geoffrey Garen  <ggaren@apple.com>
+
+        is* API methods should be @properties
+        https://bugs.webkit.org/show_bug.cgi?id=143388
+
+        Reviewed by Mark Lam.
+
+        This appears to be the preferred idiom in WebKit, CA, AppKit, and
+        Foundation.
+
+        * API/JSValue.h: Be @properties.
+
+        * API/tests/testapi.mm:
+        (testObjectiveCAPI): Use the @properties.
+
 2015-04-03  Mark Lam  <mark.lam@apple.com>
 
         Some JSC Options refactoring and enhancements.
