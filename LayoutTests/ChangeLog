@@ -1,5 +1,14 @@
 2015-04-03  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] Fix 18 crashing compositing tests after r182101
+        https://bugs.webkit.org/show_bug.cgi?id=143214
+
+        Unreviewed gardening, add crash expectations until proper fix.
+
+        * platform/efl/TestExpectations:
+
+2015-04-03  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed gardening. Skip fast/fixed-layout, because it made the following tests fail.
 
         * platform/efl/TestExpectations:

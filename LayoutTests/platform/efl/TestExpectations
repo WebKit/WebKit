@@ -2191,3 +2191,24 @@ webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
 
 # [EFL] r182307 broke 87 layouttests
 webkit.org/b/143364 fast/fixed-layout [ Skip ]
+
+# [EFL] Fix 18 crashing compositing tests after r182101
+# https://bugs.webkit.org/show_bug.cgi?id=143214
+compositing/clipping/border-radius-stacking-context-clip.html [ Crash ]
+compositing/contents-opaque/opaque-with-clip-path.html [ Crash ]
+compositing/masks/become-tiled-mask.html [ Crash ]
+compositing/masks/cease-tiled-mask.html [ Crash ]
+compositing/masks/compositing-clip-path-and-mask.html [ Crash ]
+compositing/masks/compositing-clip-path-change-no-repaint.html [ Crash ]
+compositing/masks/compositing-clip-path-mask-change.html [ Crash ]
+compositing/masks/compositing-clip-path.html [ Crash ]
+compositing/masks/direct-image-mask.html [ Crash ]
+compositing/masks/mask-layer-size.html [ Crash ]
+compositing/masks/masked-ancestor.html [ Crash ]
+compositing/masks/reference-clip-path-on-composited.html [ Crash ]
+compositing/masks/solid-color-masked.html [ Crash ]
+compositing/masks/tiled-mask.html [ Crash ]
+compositing/masks/toggle-mask.html [ Crash ]
+compositing/overlap-blending/nested-overlap-overflow.html [ Crash ]
+compositing/reflections/nested-reflection-on-overflow.html [ Crash ]
+compositing/text-on-scaled-surface.html [ Crash ]
