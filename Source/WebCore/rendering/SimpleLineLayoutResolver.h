@@ -63,6 +63,7 @@ public:
         LayoutRect rect() const;
         FloatPoint baseline() const;
         StringView text() const;
+        bool isEndOfLine() const;
 
         unsigned lineIndex() const;
 
@@ -156,6 +157,11 @@ inline unsigned RunResolver::Run::start() const
 inline unsigned RunResolver::Run::end() const
 {
     return m_iterator.simpleRun().end;
+}
+
+inline bool RunResolver::Run::isEndOfLine() const
+{
+    return m_iterator.simpleRun().isEndOfLine;
 }
 
 inline unsigned RunResolver::Run::lineIndex() const

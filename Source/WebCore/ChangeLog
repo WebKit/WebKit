@@ -1,3 +1,24 @@
+2015-04-03  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Use pre-computed simple line runs to produce innerText content.
+        https://bugs.webkit.org/show_bug.cgi?id=143351
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation to cover <br> with simple line layout.
+        Runs provide line layout information that can be used to cover hard line break cases.
+        (similar to TextIterator::handleTextBox())
+
+        Covered by existing tests.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::emitCharacter):
+        (WebCore::TextIterator::emitText):
+        * editing/TextIterator.h:
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::isEndOfLine):
+
 2015-04-03  Antti Koivisto  <antti@apple.com>
 
         Add non-counting bloom filter class

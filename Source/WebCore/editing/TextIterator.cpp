@@ -44,6 +44,8 @@
 #include "RenderTextControl.h"
 #include "RenderTextFragment.h"
 #include "ShadowRoot.h"
+#include "SimpleLineLayout.h"
+#include "SimpleLineLayoutResolver.h"
 #include "TextBoundaries.h"
 #include "TextBreakIterator.h"
 #include "TextControlInnerElements.h"
@@ -507,7 +509,7 @@ bool TextIterator::handleTextNode()
         return false;
 
     auto& renderer = *textNode.renderer();
-        
+    const auto* previousTextNode = m_lastTextNode;
     m_lastTextNode = &textNode;
     String rendererText = renderer.text();
 
@@ -541,35 +543,70 @@ bool TextIterator::handleTextNode()
         return true;
     }
 
-    if (renderer.simpleLineLayout()) {
+    if (const auto* layout = renderer.simpleLineLayout()) {
         if (renderer.style().visibility() != VISIBLE && !(m_behavior & TextIteratorIgnoresStyleVisibility))
             return true;
-        // This code aims to produce same results as handleTextBox() below so test results don't change. It does not make much logical sense.
-        unsigned end = (m_node == m_endContainer) ? static_cast<unsigned>(m_endOffset) : rendererText.length();
-        unsigned runEnd = m_offset;
-        unsigned runStart = m_offset;
-        while (runEnd < end && (renderer.style().isCollapsibleWhiteSpace(rendererText[runEnd]) || rendererText[runEnd] == '\t'))
-            ++runEnd;
-        bool addSpaceForPrevious = m_lastTextNodeEndedWithCollapsedSpace && m_lastCharacter && !renderer.style().isCollapsibleWhiteSpace(m_lastCharacter);
-        if (runEnd > runStart || addSpaceForPrevious) {
-            if (runEnd == rendererText.length()) {
-                m_lastTextNodeEndedWithCollapsedSpace = true;
-                return true;
-            }
-            bool addSpaceForCurrent = runStart || (m_lastCharacter && !renderer.style().isCollapsibleWhiteSpace(m_lastCharacter));
-            if (addSpaceForCurrent || addSpaceForPrevious) {
-                emitCharacter(' ', textNode, nullptr, runStart, runEnd);
-                m_offset = runEnd;
+        // Use the simple layout runs to iterate over the text content.
+        ASSERT(renderer.parent() && is<RenderBlockFlow>(renderer.parent()));
+        const auto& blockFlow = downcast<RenderBlockFlow>(*renderer.parent());
+        SimpleLineLayout::RunResolver runResolver(blockFlow, *layout);
+        auto range = runResolver.rangeForRenderer(renderer);
+        unsigned endPosition = (m_node == m_endContainer) ? static_cast<unsigned>(m_endOffset) : rendererText.length();
+        // Simple line layout run positions are all absolute to the parent flow.
+        // Offsetting is required when multiple renderers are present.
+        if (previousTextNode && previousTextNode != &textNode) {
+            const RenderObject& previousRenderer = *previousTextNode->renderer();
+            if (previousRenderer.parent() != &blockFlow)
+                m_previousTextLengthInFlow = 0;
+            else
+                m_previousTextLengthInFlow += previousTextNode->renderer()->text()->length();
+        }
+        // Skip to m_offset position.
+        auto it = range.begin();
+        auto end = range.end();
+        while (it != end && (*it).end() <= (static_cast<unsigned>(m_offset) + m_previousTextLengthInFlow))
+            ++it;
+        if (it == end) {
+            // Collapsed trailing whitespace.
+            m_offset = endPosition;
+            m_lastTextNodeEndedWithCollapsedSpace = true;
+            return true;
+        }
+        if (m_nextRunNeedsWhitespace) {
+            emitCharacter(' ', textNode, nullptr, m_offset, m_offset + 1);
+            return false;
+        }
+        const auto run = *it;
+        ASSERT(run.end() - run.start() <= rendererText.length());
+        // contentStart skips leading whitespace.
+        unsigned contentStart = std::max<unsigned>(m_offset, run.start() - m_previousTextLengthInFlow);
+        unsigned contentEnd = std::min(endPosition, run.end() - m_previousTextLengthInFlow);
+        // Check if whitespace adjustment is needed when crossing renderer boundary.
+        if (previousTextNode && previousTextNode != &textNode) {
+            bool lastCharacterIsNotWhitespace = m_lastCharacter && !renderer.style().isCollapsibleWhiteSpace(m_lastCharacter);
+            bool addTrailingWhitespaceForPrevious = m_lastTextNodeEndedWithCollapsedSpace && lastCharacterIsNotWhitespace;
+            bool leadingWhitespaceIsNeededForCurrent = contentStart > static_cast<unsigned>(m_offset) && lastCharacterIsNotWhitespace;
+            if (addTrailingWhitespaceForPrevious || leadingWhitespaceIsNeededForCurrent) {
+                emitCharacter(' ', textNode, nullptr, m_offset, m_offset + 1);
                 return false;
             }
-            runStart = runEnd;
         }
-        while (runEnd < end && !renderer.style().isCollapsibleWhiteSpace(rendererText[runEnd]))
-            ++runEnd;
-        if (runStart < end)
-            emitText(textNode, renderer, runStart, runEnd);
-        m_offset = runEnd;
-        return runEnd == end;
+        // \n \t single whitespace characters need replacing so that the new line/tab character won't show up.
+        unsigned stopPosition = contentStart;
+        while (stopPosition < contentEnd) {
+            if (rendererText[stopPosition] == '\n' || rendererText[stopPosition] == '\t') {
+                emitText(textNode, renderer, contentStart, stopPosition);
+                m_offset = stopPosition + 1;
+                m_nextRunNeedsWhitespace = true;
+                return false;
+            }
+            ++stopPosition;
+        }
+        emitText(textNode, renderer, contentStart, contentEnd);
+        // When line ending with collapsed whitespace is present, we need to carry over one whitespace: foo\nbar -> foo bar (otherwise we would end up with foobar).
+        m_nextRunNeedsWhitespace = run.isEndOfLine() && contentEnd < endPosition && renderer.style().isCollapsibleWhiteSpace(rendererText[contentEnd]);
+        m_offset = contentEnd;
+        return static_cast<unsigned>(m_offset) == endPosition;
     }
 
     if (renderer.firstTextBox())
@@ -1065,6 +1102,7 @@ void TextIterator::emitCharacter(UChar character, Node& characterNode, Node* off
     m_text = m_copyableText.text();
     m_lastCharacter = character;
     m_lastTextNodeEndedWithCollapsedSpace = false;
+    m_nextRunNeedsWhitespace = false;
 }
 
 void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartOffset, int textEndOffset)
@@ -1089,6 +1127,7 @@ void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartO
     m_text = m_copyableText.text();
 
     m_lastTextNodeEndedWithCollapsedSpace = false;
+    m_nextRunNeedsWhitespace = false;
     m_hasEmitted = true;
 }
 
