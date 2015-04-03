@@ -1,3 +1,14 @@
+2015-04-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r182303, stub NativeContextMenuItem implemetations added for EFL and GTK.
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * Shared/efl/NativeContextMenuItemEfl.cpp: Added.
+        (WebKit::NativeContextMenuItem::NativeContextMenuItem):
+        * Shared/gtk/NativeContextMenuItemGtk.cpp: Added.
+        (WebKit::NativeContextMenuItem::NativeContextMenuItem):
+
 2015-04-02  Timothy Horton  <timothy_horton@apple.com>
 
         De-PLATFORM(IOS)-ify LayerHostingContext::setFencePort

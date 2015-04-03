@@ -54,6 +54,7 @@ list(APPEND WebKit2_SOURCES
     Shared/gtk/ArgumentCodersGtk.cpp
     Shared/gtk/KeyedEncoder.cpp
     Shared/gtk/KeyedDecoder.cpp
+    Shared/efl/NativeContextMenuItemGtk.cpp
     Shared/gtk/NativeWebKeyboardEventGtk.cpp
     Shared/gtk/NativeWebMouseEventGtk.cpp
     Shared/gtk/NativeWebTouchEventGtk.cpp
