@@ -1,3 +1,9 @@
+2015-04-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, kick the GTK bots to fix an incremental build issue.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2015-04-03  Zan Dobersek  <zdobersek@igalia.com>
 
         Fix the EFL and GTK build after r182243
