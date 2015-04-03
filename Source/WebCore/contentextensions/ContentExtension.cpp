@@ -55,7 +55,7 @@ StyleSheetContents* ContentExtension::globalDisplayNoneStyleSheet()
 
     m_parsedGlobalDisplayNoneStyleSheet = true;
 
-    Vector<String> selectors = m_compiledExtension->globalDisplayNoneSelectors();
+    Vector<String> selectors = m_compiledExtension->globalDisplayNoneSelectors(m_pagesUsed);
     if (selectors.isEmpty())
         return nullptr;
 

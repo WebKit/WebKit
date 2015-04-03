@@ -1,3 +1,32 @@
+2015-04-03  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Add memory reporting.
+        https://bugs.webkit.org/show_bug.cgi?id=143386
+
+        Reviewed by Benjamin Poulain.
+
+        * contentextensions/CompiledContentExtension.cpp:
+        (WebCore::ContentExtensions::CompiledContentExtension::globalDisplayNoneSelectors):
+        * contentextensions/CompiledContentExtension.h:
+        * contentextensions/ContentExtension.cpp:
+        (WebCore::ContentExtensions::ContentExtension::globalDisplayNoneStyleSheet):
+        * contentextensions/ContentExtension.h:
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
+        * contentextensions/ContentExtensionsDebugging.h:
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::getBits):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpretAppendAction):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpretTestFlagsAndAppendAction):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::actionsFromDFARoot):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+        * contentextensions/DFABytecodeInterpreter.h:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::DFABytecodeInterpreter):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::~DFABytecodeInterpreter):
+        Keep track of which memory pages in the bytecode are being hit if CONTENT_EXTENSIONS_MEMORY_REPORTING is 1.
+        When CONTENT_EXTENSIONS_MEMORY_REPORTING is 0, this makes an empty vector in ContentExtension
+        and passes some pointers on the stack, many of which can be optimized out by the C++ compiler.
+
 2015-04-03  Brent Fulgham  <bfulgham@apple.com>
 
         Expand test infrastructure to support scrolling tests

@@ -79,8 +79,9 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
     Vector<Action> finalActions;
     ResourceFlags flags = resourceLoadInfo.getResourceFlags();
     for (auto& contentExtension : m_contentExtensions.values()) {
+        RELEASE_ASSERT(contentExtension);
         const CompiledContentExtension& compiledExtension = contentExtension->compiledExtension();
-        DFABytecodeInterpreter interpreter(compiledExtension.bytecode(), compiledExtension.bytecodeLength());
+        DFABytecodeInterpreter interpreter(compiledExtension.bytecode(), compiledExtension.bytecodeLength(), contentExtension->m_pagesUsed);
         DFABytecodeInterpreter::Actions triggeredActions = interpreter.interpret(urlCString, flags);
         
         const SerializedActionByte* actions = compiledExtension.actions();
