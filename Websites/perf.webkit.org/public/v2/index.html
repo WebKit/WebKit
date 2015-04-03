@@ -31,7 +31,7 @@
             {{view App.NumberOfDaysControlView tagName="ul" numberOfDays=numberOfDays}}
             <ul class="controls">
                 <li>
-                    <a href="#" class="control-button" {{action toggleEditMode}}>
+                    <a href="javascript:false" class="control-button" {{action toggleEditMode}}>
                         {{#if controller.editMode}}
                             Finish editing
                         {{else}}
@@ -49,7 +49,7 @@
                 {{#each headerColumns}}
                     {{#if controller.editMode}}
                         <th>
-                            <a href="#" title="Remove column" {{action "removeColumn" index}}>
+                            <a href="javascript:false" title="Remove column" {{action "removeColumn" index}}>
                                 {{partial "close-button"}}
                             </a>
                             {{input value=label}}
@@ -68,7 +68,7 @@
                 <tr>
                     {{#if controller.editMode}}
                         <th>
-                            <a href="#" title="Remove row" {{action "removeRow" this}}>
+                            <a href="javascript:false" title="Remove row" {{action "removeRow" this}}>
                                 {{partial "close-button"}}
                             </a>
                             {{input value=header}}
@@ -106,7 +106,7 @@
                                     {{/if}}
                                 {{/if}}
                                 {{#if controller.editMode}}
-                                    <a href="#" title="Reset pane" class="reset" {{action "resetPane" this}}>
+                                    <a href="javascript:false" title="Reset pane" class="reset" {{action "resetPane" this}}>
                                         {{partial "close-button"}}
                                     </a>
                                 {{/if}}
@@ -146,17 +146,17 @@
             <section class="chart-pane" tabindex="0">
                 <header>
                     <h1 {{action "toggleDetails"}}>{{metric.fullName}} - {{ platform.name}}</h1>
-                    <a href="#" title="Close" class="close-button" {{action "close"}}>{{partial "close-button"}}</a>
+                    <a href="javascript:false" title="Close" class="close-button" {{action "close"}}>{{partial "close-button"}}</a>
                     {{#if movingAverageStrategies}}
-                        <a href="#" title="Statistical Tools" class="stat-button" {{action "toggleStatPane"}}>{{partial "stat-button"}}</a>
+                        <a href="javascript:false" title="Statistical Tools" class="stat-button" {{action "toggleStatPane"}}>{{partial "stat-button"}}</a>
                     {{/if}}
                     {{#if App.Manifest.bugTrackers}}
-                        <a href="#" title="Analysis" class="bugs-button" {{action "toggleBugsPane"}}>
+                        <a href="javascript:false" title="Analysis" class="bugs-button" {{action "toggleBugsPane"}}>
                             {{partial "analysis-button"}}
                         </a>
                     {{/if}}
                     {{#if App.Manifest.repositoriesWithReportedCommits}}
-                        <a href="#" title="Search" class="search-button" {{action "toggleSearchPane"}}>{{partial "search-button"}}</a>
+                        <a href="javascript:false" title="Search" class="search-button" {{action "toggleSearchPane"}}>{{partial "search-button"}}</a>
                     {{/if}}
                 </header>
 
@@ -227,7 +227,7 @@
     <script type="text/x-handlebars" data-template-name="components/interactive-chart">
         {{#if interactive}}
             <div class="selection-toolbar" style="display: none;">
-                <a href="#" class="button" {{action "zoom"}}>
+                <a href="javascript:false" class="button" {{action "zoom"}}>
                     <svg class="zoom" viewBox="0 0 100 100">
                         <g stroke-width="0" stroke="none">
                             <polygon points="25,25 5,50 25,75"/>
@@ -456,22 +456,22 @@
 
     <script type="text/x-handlebars" data-template-name="number-of-days-controls">
         <li class="numberOfDaysIs1">
-            <a href="#" class="control-button" {{action "setNumberOfDays" 1}}>1D</a>
+            <a href="javascript:false" class="control-button" {{action "setNumberOfDays" 1}}>1D</a>
         </li>
         <li class="numberOfDaysIs7">
-            <a href="#" class="control-button" {{action "setNumberOfDays" 7}}>1W</a>
+            <a href="javascript:false" class="control-button" {{action "setNumberOfDays" 7}}>1W</a>
         </li>
         <li class="numberOfDaysIs30">
-            <a href="#" class="control-button" {{action "setNumberOfDays" 30}}>1M</a>
+            <a href="javascript:false" class="control-button" {{action "setNumberOfDays" 30}}>1M</a>
         </li>
         <li class="numberOfDaysIs90">
-            <a href="#" class="control-button" {{action "setNumberOfDays" 90}}>3M</a>
+            <a href="javascript:false" class="control-button" {{action "setNumberOfDays" 90}}>3M</a>
         </li>
         <li class="numberOfDaysIs183">
-            <a href="#" class="control-button" {{action "setNumberOfDays" 183}}>6M</a>
+            <a href="javascript:false" class="control-button" {{action "setNumberOfDays" 183}}>6M</a>
         </li>
         <li class="numberOfDaysIs365">
-            <a href="#" class="control-button" {{action "setNumberOfDays" 365}}>1Y</a>
+            <a href="javascript:false" class="control-button" {{action "setNumberOfDays" 365}}>1Y</a>
         </li>
     </script>
 
@@ -493,7 +493,7 @@
             {{else}}
                 <li>
                     {{#if actionName}}
-                        <a href="#" class="label" {{action actionName actionArgument}}>{{label}}</a>
+                        <a href="javascript:false" class="label" {{action actionName actionArgument}}>{{label}}</a>
                     {{else}}
                         <a class="label">{{label}}</a>
                     {{/if}}

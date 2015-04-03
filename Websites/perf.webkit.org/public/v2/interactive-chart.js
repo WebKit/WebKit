@@ -238,8 +238,8 @@ App.InteractiveChartComponent = Ember.Component.extend({
             margin.left += 3 * rem;
 
         this._margin = margin;
-        this._contentWidth = this._totalWidth - margin.left - margin.right;
-        this._contentHeight = this._totalHeight - margin.top - margin.bottom;
+        this._contentWidth = Math.max(0, this._totalWidth - margin.left - margin.right);
+        this._contentHeight = Math.max(0, this._totalHeight - margin.top - margin.bottom);
 
         this._svg.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -275,7 +275,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
             .call(this._brush)
         .selectAll("rect")
             .attr("y", 1)
-            .attr("height", this._contentHeight - 2);
+            .attr("height", Math.max(0, this._contentHeight - 2));
         this._updateSelectionToolbar();
     },
     _relayoutDataAndAxes: function (selection)

@@ -1,3 +1,23 @@
+2015-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: Perf dashboard sometimes fails to update zooming level
+        https://bugs.webkit.org/show_bug.cgi?id=143359
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by various bugs that ended up in an exception.
+
+        * public/v2/app.js:
+        (App.Pane._handleFetchErrors): Removed superfluous console.log.
+        (App.Pane.computeStatus): Fixed the bug in r182185 that previousPoint could be null.
+        (App.PaneController.actions.zoomed): Update the overview when the main chart triggered a zoom.
+        * public/v2/index.html: Replaced all instances of href="#" by href="javascript:false" to avoid navigating
+        to # when Ember.js fails to attach event listeners on time.
+        * public/v2/interactive-chart.js:
+        (App.InteractiveChartComponent._updateDimensionsIfNeeded): Avoid using a negative width or height when
+        the containing element's size is 0.
+        (App.InteractiveChartComponent._updateBrush): Ditto.
+
 2015-04-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard should have UI to test out anomaly detection strategies

@@ -374,7 +374,6 @@ App.Pane = Ember.Object.extend({
     },
     _handleFetchErrors: function (platformId, metricId, result)
     {
-        console.log(platformId, metricId, result)
         if (!result || typeof(result) === "string")
             this.set('failure', 'Failed to fetch the JSON with an error: ' + result);
         else if (!result.platform)
@@ -423,13 +422,18 @@ App.Pane = Ember.Object.extend({
         } else if (diffFromTarget !== undefined)
             label = formatter(Math.abs(diffFromTarget)) + ' until target';
 
-        var valueDelta = previousPoint ? chartData.deltaFormatter(currentPoint.value - previousPoint.value) : null;
+        var valueDelta = null;
+        var relativeDelta = null;
+        if (previousPoint) {
+            valueDelta = chartData.deltaFormatter(currentPoint.value - previousPoint.value);
+            relativeDelta = d3.format('+.2p')((currentPoint.value - previousPoint.value) / previousPoint.value);
+        }
         return {
             className: className,
             label: label,
             currentValue: chartData.formatter(currentPoint.value),
             valueDelta: valueDelta,
-            relativeDelta: d3.format('+.2p')((currentPoint.value - previousPoint.value) / previousPoint.value),
+            relativeDelta: relativeDelta,
         };
     },
     _relativeDifferentToLaterPointInTimeSeries: function (currentPoint, timeSeries)
@@ -969,6 +973,8 @@ App.PaneController = Ember.ObjectController.extend({
         zoomed: function (selection)
         {
             this.set('mainPlotDomain', selection ? selection : this.get('overviewDomain'));
+            if (selection)
+                this.set('overviewSelection', selection);
             Ember.run.debounce(this, 'propagateZoom', 100);
         },
     },
