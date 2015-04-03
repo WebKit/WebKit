@@ -49,7 +49,6 @@
 #import <WebCore/LookupSPI.h>
 #import <WebCore/NSMenuSPI.h>
 #import <WebCore/Page.h>
-#import <WebCore/QuickLookMacSPI.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/RuntimeApplicationChecks.h>

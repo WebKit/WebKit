@@ -130,15 +130,15 @@ void WebContextMenuProxyGtk::populate(Vector<ContextMenuItem>& items)
     }
 }
 
-void WebContextMenuProxyGtk::populate(const Vector<RefPtr<WebContextMenuItem>>& items)
+void WebContextMenuProxyGtk::populate(const Vector<WebContextMenuItemData>& items)
 {
     for (size_t i = 0; i < items.size(); i++) {
-        ContextMenuItem menuitem = items.at(i)->data()->core();
+        ContextMenuItem menuitem = items.at(i).core();
         append(menuitem);
     }
 }
 
-void WebContextMenuProxyGtk::showContextMenu(const WebCore::IntPoint& position, const Vector<RefPtr<WebContextMenuItem>>& items, const ContextMenuContextData&)
+void WebContextMenuProxyGtk::showContextMenu(const WebCore::IntPoint& position, const Vector<WebContextMenuItemData>& items, const ContextMenuContextData&)
 {
     if (!items.isEmpty())
         populate(items);

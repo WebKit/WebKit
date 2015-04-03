@@ -892,10 +892,9 @@ void ContextMenuController::populate()
 
         if (imageURL.isEmpty() && linkURL.isEmpty() && mediaURL.isEmpty()) {
             if (m_context.hitTestResult().isSelected()) {
-                String selectedString;
                 if (selectionContainsPossibleWord(frame)) {
 #if PLATFORM(COCOA)
-                    selectedString = frame->displayStringModifiedByEncoding(frame->editor().selectedText());
+                    String selectedString = frame->displayStringModifiedByEncoding(frame->editor().selectedText());
                     ContextMenuItem LookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedString));
 
                     appendItem(LookUpInDictionaryItem, m_contextMenu.get());
@@ -910,14 +909,6 @@ void ContextMenuController::populate()
                 appendItem(CopyItem, m_contextMenu.get());
 #if PLATFORM(COCOA)
                 appendItem(*separatorItem(), m_contextMenu.get());
-
-                if (!selectedString.isEmpty() && ContextMenuItem::supportsShareMenu()) {
-                    ContextMenuItem ShareItem(m_client.shareSelectedTextMenuItem(selectedString));
-                    appendItem(ShareItem, m_contextMenu.get());
-                    appendItem(*separatorItem(), m_contextMenu.get());
-
-                    m_context.setSelectedText(selectedString);
-                }
 
                 ContextMenuItem SpeechMenuItem(SubmenuType, ContextMenuItemTagSpeechMenu, contextMenuItemTagSpeechMenu());
                 createAndAppendSpeechSubMenu(SpeechMenuItem);
@@ -1409,7 +1400,6 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemLastCustomTag:
         case ContextMenuItemBaseApplicationTag:
         case ContextMenuItemTagDictationAlternative:
-        case ContextMenuItemTagShareMenu:
             break;
         case ContextMenuItemTagMediaPlayPause:
             if (m_context.hitTestResult().mediaPlaying())

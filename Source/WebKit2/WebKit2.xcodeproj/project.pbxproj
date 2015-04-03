@@ -944,7 +944,6 @@
 		516319921628980A00E22F00 /* NetworkProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 516319911628980A00E22F00 /* NetworkProcessProxyMac.mm */; };
 		5163199416289A6000E22F00 /* NetworkProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ACC9341628064800342550 /* NetworkProcessMessageReceiver.cpp */; };
 		5163199516289A6300E22F00 /* NetworkProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ACC9351628064800342550 /* NetworkProcessMessages.h */; };
-		5163EA451ACC7AE50012D1E4 /* NativeContextMenuItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5163EA431ACC74AE0012D1E4 /* NativeContextMenuItem.mm */; };
 		51654EFD184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51654EFB184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.cpp */; };
 		51654EFE184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.h in Headers */ = {isa = PBXBuildFile; fileRef = 51654EFC184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.h */; };
 		51654F00184EF34A007DC837 /* UniqueIDBDatabaseBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51654EFF184EF34A007DC837 /* UniqueIDBDatabaseBackingStore.h */; };
@@ -3132,8 +3131,6 @@
 		5160BFE013381DF900918999 /* LoggingFoundation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingFoundation.mm; sourceTree = "<group>"; };
 		516311861858446600534647 /* WebCrossThreadCopier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCrossThreadCopier.h; sourceTree = "<group>"; };
 		516319911628980A00E22F00 /* NetworkProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkProcessProxyMac.mm; path = mac/NetworkProcessProxyMac.mm; sourceTree = "<group>"; };
-		5163EA3F1ACC74820012D1E4 /* NativeContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeContextMenuItem.h; sourceTree = "<group>"; };
-		5163EA431ACC74AE0012D1E4 /* NativeContextMenuItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeContextMenuItem.mm; sourceTree = "<group>"; };
 		51654EFB184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueIDBDatabaseBackingStoreSQLite.cpp; sourceTree = "<group>"; };
 		51654EFC184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueIDBDatabaseBackingStoreSQLite.h; sourceTree = "<group>"; };
 		51654EFF184EF34A007DC837 /* UniqueIDBDatabaseBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueIDBDatabaseBackingStore.h; sourceTree = "<group>"; };
@@ -4739,7 +4736,6 @@
 				C58CDF2C1887609F00871536 /* InteractionInformationAtPosition.h */,
 				1A92DC1212F8BAB90017AF65 /* LayerTreeContext.cpp */,
 				1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */,
-				5163EA3F1ACC74820012D1E4 /* NativeContextMenuItem.h */,
 				C02BFF1512514FD8009CCBEA /* NativeWebKeyboardEvent.h */,
 				31EA25D3134F78D6005B1452 /* NativeWebMouseEvent.h */,
 				263172CE18B469490065B9C3 /* NativeWebTouchEvent.h */,
@@ -6533,7 +6529,6 @@
 				CDC3830D1721242D008A2FC3 /* CookieStorageShim.mm */,
 				CDC382F9172116D3008A2FC3 /* CookieStorageShimLibrary.cpp */,
 				CDC3830B172121CE008A2FC3 /* CookieStorageShimLibrary.h */,
-				5163EA431ACC74AE0012D1E4 /* NativeContextMenuItem.mm */,
 				C02BFF1D1251502E009CCBEA /* NativeWebKeyboardEventMac.mm */,
 				31EA25D0134F78B2005B1452 /* NativeWebMouseEventMac.mm */,
 				DF58C6351371ACA000F9A37C /* NativeWebWheelEventMac.mm */,
@@ -9996,7 +9991,6 @@
 				BCA284D61492F2C7001F9042 /* WKConnection.mm in Sources */,
 				BC4A6296147313A0006C681A /* WKConnectionRef.cpp in Sources */,
 				0FCB4E4D18BBE044000FCFC9 /* WKContentView.mm in Sources */,
-				5163EA451ACC7AE50012D1E4 /* NativeContextMenuItem.mm in Sources */,
 				0FCB4E6D18BBF26A000FCFC9 /* WKContentViewInteraction.mm in Sources */,
 				BCB9E24C1120E15C00A137E0 /* WKContext.cpp in Sources */,
 				1AE52F971920263300A1FA37 /* WKContextConfigurationRef.cpp in Sources */,

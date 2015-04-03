@@ -41,9 +41,6 @@ public:
 
     const HitTestResult& hitTestResult() const { return m_hitTestResult; }
 
-    void setSelectedText(const String& selectedText) { m_selectedText = selectedText; }
-    const String& selectedText() const { return m_selectedText; }
-
 #if ENABLE(SERVICE_CONTROLS)
     void setControlledImage(Image* controlledImage) { m_controlledImage = controlledImage; }
     Image* controlledImage() const { return m_controlledImage.get(); }
@@ -52,7 +49,6 @@ public:
 private:
 
     HitTestResult m_hitTestResult;
-    String m_selectedText;
 
 #if ENABLE(SERVICE_CONTROLS)
     RefPtr<Image> m_controlledImage;

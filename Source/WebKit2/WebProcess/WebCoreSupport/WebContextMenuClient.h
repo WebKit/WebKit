@@ -60,7 +60,6 @@ private:
     
 #if PLATFORM(COCOA)
     virtual void searchWithSpotlight() override;
-    virtual WebCore::ContextMenuItem shareSelectedTextMenuItem(const String&) override;
 #endif
 
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)

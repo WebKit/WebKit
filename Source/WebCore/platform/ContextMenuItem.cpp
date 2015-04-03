@@ -117,16 +117,6 @@ bool ContextMenuItem::enabled() const
     return m_enabled;
 }
 
-bool ContextMenuItem::supportsShareMenu()
-{
-    return false;
-}
-
-ContextMenuItem ContextMenuItem::shareSelectedTextMenuItem(const String&)
-{
-    return ContextMenuItem(SubmenuType, ContextMenuItemTagShareMenu, emptyString());
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(CONTEXT_MENUS) && USE(CROSS_PLATFORM_CONTEXT_MENUS)

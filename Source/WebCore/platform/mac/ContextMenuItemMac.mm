@@ -29,7 +29,6 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include "ContextMenu.h"
-#include "NSMenuSPI.h"
 
 namespace WebCore {
 
@@ -96,16 +95,11 @@ ContextMenuItem::~ContextMenuItem()
 {
 }
 
-NSMenuItem *ContextMenuItem::releasePlatformDescription()
+NSMenuItem* ContextMenuItem::releasePlatformDescription()
 {
-    NSMenuItem *item = [m_platformDescription.get() retain];
+    NSMenuItem* item = [m_platformDescription.get() retain];
     m_platformDescription = 0;
     return item;
-}
-
-NSMenuItem *ContextMenuItem::getPlatformDescription() const
-{
-    return m_platformDescription.get();
 }
 
 ContextMenuItemType ContextMenuItem::type() const
@@ -191,19 +185,6 @@ bool ContextMenuItem::enabled() const
 bool ContextMenuItem::checked() const
 {
     return [m_platformDescription.get() state] == NSOnState;
-}
-
-bool ContextMenuItem::supportsShareMenu()
-{
-    static bool supportsShareMenu = [[NSMenuItem class] respondsToSelector:@selector(standardShareMenuItemWithItems:)];
-    return supportsShareMenu;
-}
-
-ContextMenuItem ContextMenuItem::shareSelectedTextMenuItem(const String& selectedText)
-{
-    ContextMenuItem item([NSMenuItem standardShareMenuItemWithItems:@[ (NSString *)selectedText ]]);
-    item.setAction(ContextMenuItemTagShareMenu);
-    return item;
 }
 
 } // namespace WebCore

@@ -60,7 +60,6 @@ namespace WebCore {
 
 #if PLATFORM(COCOA)
         virtual void searchWithSpotlight() = 0;
-        virtual ContextMenuItem shareSelectedTextMenuItem(const String& selectedText) { return ContextMenuItem::shareSelectedTextMenuItem(selectedText); }
 #endif
 
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)
