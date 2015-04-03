@@ -29,6 +29,7 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include "NativeWebMouseEvent.h"
+#include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"

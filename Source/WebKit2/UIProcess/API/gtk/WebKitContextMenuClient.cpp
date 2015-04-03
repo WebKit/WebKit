@@ -34,7 +34,7 @@ public:
     }
 
 private:
-    bool getContextMenuFromProposedMenu(WebPageProxy&, const Vector<WebContextMenuItemData>& proposedMenu, Vector<WebContextMenuItemData>&, const WebHitTestResult::Data& hitTestResultData, API::Object* userData) override
+    bool getContextMenuFromProposedMenu(WebPageProxy&, const Vector<WebContextMenuItemData>& proposedMenu, Vector<WebContextMenuItemData>&, const WebHitTestResult::Data& hitTestResultData, API::Object* userData)
     {
         GRefPtr<GVariant> variant;
         if (userData) {

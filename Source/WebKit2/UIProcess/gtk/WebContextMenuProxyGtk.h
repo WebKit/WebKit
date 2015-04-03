@@ -35,6 +35,7 @@
 
 namespace WebKit {
 
+class WebContextMenuItem;
 class WebContextMenuItemData;
 class WebPageProxy;
 

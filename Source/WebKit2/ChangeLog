@@ -1,3 +1,11 @@
+2015-04-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix.
+
+        * UIProcess/API/gtk/WebKitContextMenuClient.cpp:
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+
 2015-04-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Typo fix.
