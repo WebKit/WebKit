@@ -390,6 +390,14 @@
                     {{/each}}
                 </section>
             {{/if}}
+            {{#if chosenEnvelopingStrategy.execute}}
+                <section class="stat-option">
+                    <h1>Anomaly Detection</h1>
+                    {{#each anomalyDetectionStrategies}}
+                        <label {{bind-attr title=description}}>{{input type="checkbox" name=id checked=enabled}}{{label}}</label>
+                    {{/each}}
+                </section>
+            {{/if}}
         </section>
     </script>
 

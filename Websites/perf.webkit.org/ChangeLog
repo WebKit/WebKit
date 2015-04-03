@@ -1,3 +1,35 @@
+2015-04-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard should have UI to test out anomaly detection strategies
+        https://bugs.webkit.org/show_bug.cgi?id=143290
+
+        Reviewed by Benjamin Poulain.
+
+        Added the UI to select anomaly detection strategies. The detected anomalies are highlighted in the graph.
+
+        Implemented the Western Electric Rules 1 through 4 in http://en.wikipedia.org/wiki/Western_Electric_rules
+        as well as Welch's t-test that compares the last five points to the prior twenty points.
+
+        The latter is what Mozilla uses (or at least did in the past) to detect performance regressions on their
+        performance tests although they compare medians instead of means.
+
+        All of these strategies don't quite work for us since our data points are too noisy but this is a good start.
+
+        * public/v2/app.js:
+        (App.Pane.updateStatisticsTools): Clone anomaly detection strategies.
+        (App.Pane._updateMovingAverageAndEnvelope): Highlight anomalies detected by the enabled strategies.
+        (App.Pane._movingAverageOrEnvelopeStrategyDidChange): Observe changes to anomaly detection strategies.
+        (App.Pane._computeMovingAverageAndOutliers): Detect anomalies by each strategy and aggregate results.
+        Only report the first data point when multiple consecutive data points are detected as anomalies.
+        * public/v2/chart-pane.css: Updated styles.
+        * public/v2/index.html: Added the pane for selecting anomaly detection strategies.
+        * public/v2/js/statistics.js:
+        (Statistics.testWelchsT): Added. Implements Welch's t-test.
+        (.sampleMeanAndVarianceForValues): Added.
+        (.createWesternElectricRule): Added.
+        (.countValuesOnSameSide): Added.
+        (Statistics.AnomalyDetectionStrategy): Added.
+
 2015-03-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: Searching commits can highlight wrong data points

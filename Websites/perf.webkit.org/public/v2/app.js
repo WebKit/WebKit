@@ -464,6 +464,9 @@ App.Pane = Ember.Object.extend({
         var envelopingStrategies = Statistics.EnvelopingStrategies.map(this._cloneStrategy.bind(this));
         this.set('envelopingStrategies', [{label: 'None'}].concat(envelopingStrategies));
         this.set('chosenEnvelopingStrategy', this._configureStrategy(envelopingStrategies, this.get('envelopingConfig')));
+
+        var anomalyDetectionStrategies = Statistics.AnomalyDetectionStrategy.map(this._cloneStrategy.bind(this));
+        this.set('anomalyDetectionStrategies', anomalyDetectionStrategies);
     }.on('init'),
     _cloneStrategy: function (strategy)
     {
@@ -504,8 +507,11 @@ App.Pane = Ember.Object.extend({
 
         var envelopingStrategy = this.get('chosenEnvelopingStrategy');
         this._updateStrategyConfigIfNeeded(envelopingStrategy, 'envelopingConfig');
-
-        chartData.movingAverage = this._computeMovingAverageAndOutliers(chartData, movingAverageStrategy, envelopingStrategy);
+        
+        var anomalyDetectionStrategies = this.get('anomalyDetectionStrategies').filterBy('enabled');
+        var anomalies = {};
+        chartData.movingAverage = this._computeMovingAverageAndOutliers(chartData, movingAverageStrategy, envelopingStrategy, anomalyDetectionStrategies, anomalies);
+        this.set('highlightedItems', anomalies);
     },
     _movingAverageOrEnvelopeStrategyDidChange: function () {
         this._updateMovingAverageAndEnvelope();
@@ -519,8 +525,9 @@ App.Pane = Ember.Object.extend({
         this.set('chartData', newChartData);
 
     }.observes('chosenMovingAverageStrategy', 'chosenMovingAverageStrategy.parameterList.@each.value',
-        'chosenEnvelopingStrategy', 'chosenEnvelopingStrategy.parameterList.@each.value'),
-    _computeMovingAverageAndOutliers: function (chartData, movingAverageStrategy, envelopingStrategy)
+        'chosenEnvelopingStrategy', 'chosenEnvelopingStrategy.parameterList.@each.value',
+        'anomalyDetectionStrategies.@each.enabled'),
+    _computeMovingAverageAndOutliers: function (chartData, movingAverageStrategy, envelopingStrategy, anomalyDetectionStrategies, anomalies)
     {
         var currentTimeSeriesData = chartData.current.series();
         var movingAverageIsSetByUser = movingAverageStrategy && movingAverageStrategy.execute;
@@ -541,6 +548,20 @@ App.Pane = Ember.Object.extend({
         }
         if (!envelopeIsSetByUser)
             envelopeDelta = null;
+
+        var isAnomalyArray = new Array(currentTimeSeriesData.length);
+        for (var strategy of anomalyDetectionStrategies) {
+            var anomalyLengths = this._executeStrategy(strategy, currentTimeSeriesData, [movingAverageValues, envelopeDelta]);
+            for (var i = 0; i < currentTimeSeriesData.length; i++)
+                isAnomalyArray[i] = isAnomalyArray[i] || anomalyLengths[i];
+        }
+        for (var i = 0; i < isAnomalyArray.length; i++) {
+            if (!isAnomalyArray[i])
+                continue;
+            anomalies[currentTimeSeriesData[i].measurement.id()] = true;
+            while (isAnomalyArray[i] && i < isAnomalyArray.length)
+                ++i;
+        }
 
         if (movingAverageIsSetByUser) {
             return new TimeSeries(currentTimeSeriesData.map(function (point, index) {

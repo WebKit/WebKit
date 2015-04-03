@@ -56,6 +56,37 @@ var Statistics = new (function () {
         return [mean - delta, mean + delta];
     }
 
+    // Welch's t-test (http://en.wikipedia.org/wiki/Welch%27s_t_test)
+    this.testWelchsT = function (values1, values2, probability) {
+        var stat1 = sampleMeanAndVarianceForValues(values1);
+        var stat2 = sampleMeanAndVarianceForValues(values2);
+        var sumOfSampleVarianceOverSampleSize = stat1.variance / stat1.size + stat2.variance / stat2.size;
+        var t = (stat1.mean - stat2.mean) / Math.sqrt(sumOfSampleVarianceOverSampleSize);
+
+        // http://en.wikipedia.org/wiki/Welch–Satterthwaite_equation
+        var degreesOfFreedom = sumOfSampleVarianceOverSampleSize * sumOfSampleVarianceOverSampleSize
+            / (stat1.variance * stat1.variance / stat1.size / stat1.size / stat1.degreesOfFreedom
+                + stat2.variance * stat2.variance / stat2.size / stat2.size / stat2.degreesOfFreedom);
+
+        // They're different beyond the confidence interval of the specified probability.
+        return Math.abs(t) > tDistributionQuantiles[probability || 0.9][Math.round(degreesOfFreedom - 1)];
+    }
+
+    function sampleMeanAndVarianceForValues(values) {
+        var sum = Statistics.sum(values);
+        var squareSum = Statistics.squareSum(values);
+        var sampleMean = sum / values.length;
+        // FIXME: Maybe we should be using the biased sample variance.
+        var unbiasedSampleVariance = (squareSum - sum * sum / values.length) / (values.length - 1);
+        return {
+            mean: sampleMean,
+            variance: unbiasedSampleVariance,
+            size: values.length,
+            degreesOfFreedom: values.length - 1,
+        }
+    }
+
+    // One-sided t-distribution.
     var tDistributionQuantiles = {
         0.9: [
             3.077684, 1.885618, 1.637744, 1.533206, 1.475884, 1.439756, 1.414924, 1.396815, 1.383029, 1.372184,
@@ -198,6 +229,70 @@ var Statistics = new (function () {
             }
         },
     ];
+
+    function createWesternElectricRule(windowSize, minOutlinerCount, limitFactor) {
+        return function (values, movingAverages, deviation) {
+            var results = new Array(values.length);
+            var limit = limitFactor * deviation;
+            for (var i = 0; i < values.length; i++)
+                results[i] = countValuesOnSameSide(values, movingAverages, limit, i, windowSize) >= minOutlinerCount ? windowSize : 0;
+            return results;
+        }
+    }
+
+    function countValuesOnSameSide(values, movingAverages, limit, startIndex, windowSize) {
+        var valuesAboveLimit = 0;
+        var valuesBelowLimit = 0;
+        var center = movingAverages[startIndex];
+        for (var i = startIndex; i < startIndex + windowSize && i < values.length; i++) {
+            var diff = values[i] - center;
+            valuesAboveLimit += (diff > limit);
+            valuesBelowLimit += (diff < -limit);
+        }
+        return Math.max(valuesAboveLimit, valuesBelowLimit);
+    }
+    window.countValuesOnSameSide = countValuesOnSameSide;
+
+    this.AnomalyDetectionStrategy = [
+        // Western Electric rules: http://en.wikipedia.org/wiki/Western_Electric_rules
+        {
+            id: 200,
+            label: 'Western Electric: any point beyond 3σ',
+            description: 'Any single point falls outside 3σ limit from the moving average',
+            execute: createWesternElectricRule(1, 1, 3),
+        },
+        {
+            id: 201,
+            label: 'Western Electric: 2/3 points beyond 2σ',
+            description: 'Two out of three consecutive points fall outside 2σ limit from the moving average on the same side',
+            execute: createWesternElectricRule(3, 2, 2),
+        },
+        {
+            id: 202,
+            label: 'Western Electric: 4/5 points beyond σ',
+            description: 'Four out of five consecutive points fall outside 2σ limit from the moving average on the same side',
+            execute: createWesternElectricRule(5, 4, 1),
+        },
+        {
+            id: 203,
+            label: 'Western Electric: 9 points on same side',
+            description: 'Nine consecutive points on the same side of the moving average',
+            execute: createWesternElectricRule(9, 9, 0),
+        },
+        {
+            id: 210,
+            label: 'Mozilla: t-test 5 vs. 20 before that',
+            description: "Use student's t-test to determine whether the mean of the last five data points differs from the mean of the twenty values before that",
+            execute: function (values, movingAverages, deviation) {
+                var results = new Array(values.length);
+                var p = false;
+                for (var i = 20; i < values.length - 5; i++)
+                    results[i] = Statistics.testWelchsT(values.slice(i - 20, i), values.slice(i, i + 5), 0.99) ? 5 : 0;
+                return results;
+            }
+        },
+    ]
+
 })();
 
 if (typeof module != 'undefined') {

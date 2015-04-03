@@ -64,6 +64,7 @@
 
 .popup-pane {
     position: absolute;
+    z-index: 10;
     top: 1.7rem;
     border: 1px solid #bbb;
     font-size: 0.8rem;
@@ -93,6 +94,7 @@
     margin: 0;
     padding: 0;
     font-size: 0.8rem;
+    max-width: 17rem;
 }
 
 .stat-option h1 {
@@ -113,12 +115,8 @@
     margin: 0.1rem 0.5rem 0.1rem 1rem;
 }
 
-.stat-option input {
+.stat-option input[type=number] {
     width: 4rem;
-}
-
-.stat-option p {
-    max-width: 15rem;
 }
 
 .analysis-pane {
@@ -334,7 +332,6 @@
 
 .chart {
     position: relative;
-    overflow: hidden;
 }
 
 .chart svg {
