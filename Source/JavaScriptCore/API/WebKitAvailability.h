@@ -38,12 +38,12 @@
    an application rather than as part of the system.
 */
 
-#ifndef __NSi_10_10
-#define __NSi_10_10 introduced=10.10
+#ifndef __NSi_10_10 // Building from trunk rather than SDK.
+#define __NSi_10_10 introduced=10.0 // Use 10.0 to indicate that everything is available.
 #endif
 
-#ifndef __NSi_10_11
-#define __NSi_10_11 introduced=10.11
+#ifndef __NSi_10_11 // Building from trunk rather than SDK.
+#define __NSi_10_11 introduced=10.0 // Use 10.0 to indicate that everything is available.
 #endif
 
 #ifndef __AVAILABILITY_INTERNAL__MAC_10_9
