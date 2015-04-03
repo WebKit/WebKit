@@ -5625,9 +5625,14 @@ void WebPageProxy::focusAndSelectLastActionMenuHitTestResult()
     m_process->send(Messages::WebPage::FocusAndSelectLastActionMenuHitTestResult(), m_pageID);
 }
 
-void WebPageProxy::immediateActionDidUpdate(float force)
+void WebPageProxy::inputDeviceForceDidChange(float force, int stage)
 {
-    m_process->send(Messages::WebPage::ImmediateActionDidUpdate(force), m_pageID);
+    m_process->send(Messages::WebPage::InputDeviceForceDidChange(force, stage), m_pageID);
+}
+
+void WebPageProxy::immediateActionDidUpdate()
+{
+    m_process->send(Messages::WebPage::ImmediateActionDidUpdate(), m_pageID);
 }
 
 void WebPageProxy::immediateActionDidCancel()

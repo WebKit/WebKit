@@ -1,3 +1,57 @@
+2015-04-03  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=143387
+        Improvements to webkitmouseforce web API
+        -and corresponding-
+        rdar://problem/20281808
+        rdar://problem/20281853
+
+        Reviewed by Darin Adler.
+
+        This patch:
+        1. Dispatches webkitmouseforceup and webkitmouseforceclick at the right time.
+        2. Dispatches webkitmouseforcechanged from mousedown all the way through through 
+        mouseup.
+        3. Uses force values from pressureChangeWithEvent instead of the immediate action 
+        gesture recognizer.
+
+        Listen for this NSResponder method, and pass the relevant info to WebPageProxy to 
+        dispatch to the web process.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView pressureChangeWithEvent:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::inputDeviceForceDidChange):
+        (WebKit::WebPageProxy::immediateActionDidUpdate):
+        * UIProcess/WebPageProxy.h:
+
+        The web process still needs to know when the immediate action gesture recognizer 
+        is updating, but it doesn’t need the force information. That will come from 
+        pressureChangeWithEvent.
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController immediateActionRecognizerDidUpdateAnimation:]):
+
+        Cache m_lastForceStage so that we can determine if we are 
+        transitioning to a new stage.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+
+        New message for InputDeviceForceDidChange and modified message for 
+        ImmediateActionDidUpdate
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        inputDeviceForceDidChange now takes care of dispatching mouseforcechanged, 
+        mouseforcedown, mouseforceup, and mouseforceclick.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::inputDeviceForceDidChange):
+
+        We still need to keep track of the ImmediateActionStages in WebCore::EventHandler 
+        so that we can have the right default behavior on mouseup based on whether or not 
+        that action began and was completed. (In other words, to ensure we don’t navigate 
+        to a link after force clicking it.)
+        (WebKit::WebPage::immediateActionDidUpdate):
+        (WebKit::WebPage::immediateActionDidComplete):
+
 2015-04-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         InjectedBundleNodeHandle::renderedImage() needs to be exposed from the Cocoa WebAPI layer.

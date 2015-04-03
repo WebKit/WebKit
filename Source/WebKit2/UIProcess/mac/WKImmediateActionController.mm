@@ -212,7 +212,7 @@ using namespace WebKit;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    _page->immediateActionDidUpdate([immediateActionRecognizer animationProgress]);
+    _page->immediateActionDidUpdate();
     if (_hitTestResult.contentPreventsDefault)
         return;
 

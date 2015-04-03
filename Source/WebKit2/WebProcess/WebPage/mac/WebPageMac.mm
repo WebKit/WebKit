@@ -1156,10 +1156,8 @@ void WebPage::focusAndSelectLastActionMenuHitTestResult()
     frame->selection().setSelection(position);
 }
 
-void WebPage::immediateActionDidUpdate(float force)
+void WebPage::inputDeviceForceDidChange(float force, int stage)
 {
-    m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);
-
     Element* element = m_lastActionMenuHitTestResult.innerElement();
     if (!element)
         return;
@@ -1167,7 +1165,22 @@ void WebPage::immediateActionDidUpdate(float force)
     if (!m_lastActionMenuHitTestPreventsDefault)
         return;
 
-    element->dispatchMouseForceChanged(force, m_page->mainFrame().eventHandler().lastMouseDownEvent());
+    float overallForce = stage < 1 ? force : force + stage - 1;
+    element->dispatchMouseForceChanged(overallForce, m_page->mainFrame().eventHandler().lastMouseDownEvent());
+
+    if (m_lastForceStage == 1 && stage == 2)
+        element->dispatchMouseForceDown(m_page->mainFrame().eventHandler().lastMouseDownEvent());
+    else if (m_lastForceStage == 2 && stage == 1) {
+        element->dispatchMouseForceUp(m_page->mainFrame().eventHandler().lastMouseDownEvent());
+        element->dispatchMouseForceClick(m_page->mainFrame().eventHandler().lastMouseDownEvent());
+    }
+
+    m_lastForceStage = stage;
+}
+
+void WebPage::immediateActionDidUpdate()
+{
+    m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);
 }
 
 void WebPage::immediateActionDidCancel()
@@ -1187,15 +1200,6 @@ void WebPage::immediateActionDidCancel()
 void WebPage::immediateActionDidComplete()
 {
     m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCompleted);
-
-    Element* element = m_lastActionMenuHitTestResult.innerElement();
-    if (!element)
-        return;
-
-    if (!m_lastActionMenuHitTestPreventsDefault)
-        return;
-
-    element->dispatchMouseForceDown(m_page->mainFrame().eventHandler().lastMouseDownEvent());
 }
 
 void WebPage::dataDetectorsDidPresentUI(PageOverlay::PageOverlayID overlayID)

@@ -1392,6 +1392,13 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
     [self mouseDraggedInternal:event];
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+- (void)pressureChangeWithEvent:(NSEvent *)event
+{
+    _data->_page->inputDeviceForceDidChange(event.pressure, event.stage);
+}
+#endif
+
 - (BOOL)acceptsFirstMouse:(NSEvent *)event
 {
     // There's a chance that responding to this event will run a nested event loop, and
