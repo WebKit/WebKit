@@ -1,3 +1,43 @@
+2015-04-03  Mark Lam  <mark.lam@apple.com>
+
+        Some JSC Options refactoring and enhancements.
+        <https://webkit.org/b/143384>
+
+        Rubber stamped by Benjamin Poulain.
+
+        Create a better encapsulated Option class to make working with options easier.  This
+        is a building block towards a JIT policy scaling debugging option I will introduce later.
+
+        This work entails:
+        1. Convert Options::Option into a public class Option (who works closely with Options).
+        2. Convert Options::EntryType into an enum class Options::Type and make it public.
+        3. Renamed Options::OPT_<option name> to Options::<option name>ID because it reads better.
+        4. Add misc methods to class Option to make it more useable.
+
+        * runtime/Options.cpp:
+        (JSC::Options::dumpOption):
+        (JSC::Option::dump):
+        (JSC::Option::operator==):
+        (JSC::Options::Option::dump): Deleted.
+        (JSC::Options::Option::operator==): Deleted.
+        * runtime/Options.h:
+        (JSC::Option::Option):
+        (JSC::Option::operator!=):
+        (JSC::Option::name):
+        (JSC::Option::description):
+        (JSC::Option::type):
+        (JSC::Option::isOverridden):
+        (JSC::Option::defaultOption):
+        (JSC::Option::boolVal):
+        (JSC::Option::unsignedVal):
+        (JSC::Option::doubleVal):
+        (JSC::Option::int32Val):
+        (JSC::Option::optionRangeVal):
+        (JSC::Option::optionStringVal):
+        (JSC::Option::gcLogLevelVal):
+        (JSC::Options::Option::Option): Deleted.
+        (JSC::Options::Option::operator!=): Deleted.
+
 2015-04-03  Geoffrey Garen  <ggaren@apple.com>
 
         JavaScriptCore API should support type checking for Array and Date

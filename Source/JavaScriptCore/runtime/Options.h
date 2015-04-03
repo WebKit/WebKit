@@ -321,12 +321,21 @@ public:
     // Declare the option IDs:
     enum OptionID {
 #define FOR_EACH_OPTION(type_, name_, defaultValue_, description_) \
-        OPT_##name_,
+        name_##ID,
         JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
         numberOfOptions
     };
 
+    enum class Type {
+        boolType,
+        unsignedType,
+        doubleType,
+        int32Type,
+        optionRangeType,
+        optionStringType,
+        gcLogLevelType,
+    };
 
     static void initialize();
 
@@ -338,23 +347,13 @@ public:
 
     // Declare accessors for each option:
 #define FOR_EACH_OPTION(type_, name_, defaultValue_, description_) \
-    ALWAYS_INLINE static type_& name_() { return s_options[OPT_##name_].type_##Val; } \
-    ALWAYS_INLINE static type_& name_##Default() { return s_defaultOptions[OPT_##name_].type_##Val; }
+    ALWAYS_INLINE static type_& name_() { return s_options[name_##ID].type_##Val; } \
+    ALWAYS_INLINE static type_& name_##Default() { return s_defaultOptions[name_##ID].type_##Val; }
 
     JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
 
 private:
-    enum EntryType {
-        boolType,
-        unsignedType,
-        doubleType,
-        int32Type,
-        optionRangeType,
-        optionStringType,
-        gcLogLevelType,
-    };
-
     // For storing for an option value:
     union Entry {
         bool boolVal;
@@ -366,28 +365,11 @@ private:
         GCLogging::Level gcLogLevelVal;
     };
 
-    class Option {
-    public:
-        Option(EntryType type, Entry& entry)
-            : m_type(type)
-            , m_entry(entry)
-        {
-        }
-
-        void dump(FILE*) const;
-        bool operator==(const Option& other) const;
-        bool operator!=(const Option& other) const { return !(*this == other); }
-
-    private:
-        EntryType m_type;
-        Entry& m_entry;
-    };
-
     // For storing constant meta data about each option:
     struct EntryInfo {
         const char* name;
         const char* description;
-        EntryType type;
+        Type type;
     };
 
     Options();
@@ -396,7 +378,107 @@ private:
     JS_EXPORTDATA static Entry s_options[numberOfOptions];
     static Entry s_defaultOptions[numberOfOptions];
     static const EntryInfo s_optionsInfo[numberOfOptions];
+
+    friend class Option;
 };
+
+class Option {
+public:
+    Option(Options::OptionID id)
+        : m_id(id)
+        , m_entry(Options::s_options[m_id])
+    {
+    }
+    
+    void dump(FILE*) const;
+    bool operator==(const Option& other) const;
+    bool operator!=(const Option& other) const { return !(*this == other); }
+    
+    const char* name() const;
+    const char* description() const;
+    Options::Type type() const;
+    bool isOverridden() const;
+    const Option defaultOption() const;
+    
+    bool& boolVal();
+    unsigned& unsignedVal();
+    double& doubleVal();
+    int32_t& int32Val();
+    OptionRange optionRangeVal();
+    const char* optionStringVal();
+    GCLogging::Level& gcLogLevelVal();
+    
+private:
+    // Only used for constructing default Options.
+    Option(Options::OptionID id, Options::Entry& entry)
+        : m_id(id)
+        , m_entry(entry)
+    {
+    }
+    
+    Options::OptionID m_id;
+    Options::Entry& m_entry;
+};
+
+inline const char* Option::name() const
+{
+    return Options::s_optionsInfo[m_id].name;
+}
+
+inline const char* Option::description() const
+{
+    return Options::s_optionsInfo[m_id].description;
+}
+
+inline Options::Type Option::type() const
+{
+    return Options::s_optionsInfo[m_id].type;
+}
+
+inline bool Option::isOverridden() const
+{
+    return *this != defaultOption();
+}
+
+inline const Option Option::defaultOption() const
+{
+    return Option(m_id, Options::s_defaultOptions[m_id]);
+}
+
+inline bool& Option::boolVal()
+{
+    return m_entry.boolVal;
+}
+
+inline unsigned& Option::unsignedVal()
+{
+    return m_entry.unsignedVal;
+}
+
+inline double& Option::doubleVal()
+{
+    return m_entry.doubleVal;
+}
+
+inline int32_t& Option::int32Val()
+{
+    return m_entry.int32Val;
+}
+
+inline OptionRange Option::optionRangeVal()
+{
+    return m_entry.optionRangeVal;
+}
+
+inline const char* Option::optionStringVal()
+{
+    return m_entry.optionStringVal;
+}
+
+inline GCLogging::Level& Option::gcLogLevelVal()
+{
+    return m_entry.gcLogLevelVal;
+}
 
 } // namespace JSC
 

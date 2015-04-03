@@ -207,7 +207,7 @@ Options::Entry Options::s_defaultOptions[Options::numberOfOptions];
 // Realize the names for each of the options:
 const Options::EntryInfo Options::s_optionsInfo[Options::numberOfOptions] = {
 #define FOR_EACH_OPTION(type_, name_, defaultValue_, description_) \
-    { #name_, description_, Options::type_##Type },
+    { #name_, description_, Options::Type::type_##Type },
     JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
 };
@@ -366,80 +366,77 @@ void Options::dumpOption(DumpLevel level, OptionID id, FILE* stream, const char*
     if (id >= numberOfOptions)
         return; // Illegal option.
 
-    EntryType type = s_optionsInfo[id].type;
-    Option option(type, s_options[id]);
-    Option defaultOption(type, s_defaultOptions[id]);
-
-    bool wasOverridden = (option != defaultOption);
-    bool needsDescription = (level == DumpLevel::Verbose && s_optionsInfo[id].description);
+    Option option(id);
+    bool wasOverridden = option.isOverridden();
+    bool needsDescription = (level == DumpLevel::Verbose && option.description());
 
     if (level == DumpLevel::Overridden && !wasOverridden)
         return;
 
-    fprintf(stream, "%s%s: ", header, s_optionsInfo[id].name);
+    fprintf(stream, "%s%s: ", header, option.name());
     option.dump(stream);
 
     if (wasOverridden) {
         fprintf(stream, " (default: ");
-        defaultOption.dump(stream);
+        option.defaultOption().dump(stream);
         fprintf(stream, ")");
     }
 
     if (needsDescription)
-        fprintf(stream, "\n%s   - %s", header, s_optionsInfo[id].description);
+        fprintf(stream, "   ... %s", option.description());
 
     fprintf(stream, "%s", footer);
 }
 
-void Options::Option::dump(FILE* stream) const
+void Option::dump(FILE* stream) const
 {
-    switch (m_type) {
-    case boolType:
+    switch (type()) {
+    case Options::Type::boolType:
         fprintf(stream, "%s", m_entry.boolVal ? "true" : "false");
         break;
-    case unsignedType:
+    case Options::Type::unsignedType:
         fprintf(stream, "%u", m_entry.unsignedVal);
         break;
-    case doubleType:
+    case Options::Type::doubleType:
         fprintf(stream, "%lf", m_entry.doubleVal);
         break;
-    case int32Type:
+    case Options::Type::int32Type:
         fprintf(stream, "%d", m_entry.int32Val);
         break;
-    case optionRangeType:
+    case Options::Type::optionRangeType:
         fprintf(stream, "%s", m_entry.optionRangeVal.rangeString());
         break;
-    case optionStringType: {
+    case Options::Type::optionStringType: {
         const char* option = m_entry.optionStringVal;
         if (!option)
             option = "";
         fprintf(stream, "%s", option);
         break;
     }
-    case gcLogLevelType: {
+    case Options::Type::gcLogLevelType: {
         fprintf(stream, "%s", GCLogging::levelAsString(m_entry.gcLogLevelVal));
         break;
     }
     }
 }
 
-bool Options::Option::operator==(const Options::Option& other) const
+bool Option::operator==(const Option& other) const
 {
-    switch (m_type) {
-    case boolType:
+    switch (type()) {
+    case Options::Type::boolType:
         return m_entry.boolVal == other.m_entry.boolVal;
-    case unsignedType:
+    case Options::Type::unsignedType:
         return m_entry.unsignedVal == other.m_entry.unsignedVal;
-    case doubleType:
+    case Options::Type::doubleType:
         return (m_entry.doubleVal == other.m_entry.doubleVal) || (isnan(m_entry.doubleVal) && isnan(other.m_entry.doubleVal));
-    case int32Type:
+    case Options::Type::int32Type:
         return m_entry.int32Val == other.m_entry.int32Val;
-    case optionRangeType:
+    case Options::Type::optionRangeType:
         return m_entry.optionRangeVal.rangeString() == other.m_entry.optionRangeVal.rangeString();
-    case optionStringType:
+    case Options::Type::optionStringType:
         return (m_entry.optionStringVal == other.m_entry.optionStringVal)
             || (m_entry.optionStringVal && other.m_entry.optionStringVal && !strcmp(m_entry.optionStringVal, other.m_entry.optionStringVal));
-    case gcLogLevelType:
+    case Options::Type::gcLogLevelType:
         return m_entry.gcLogLevelVal == other.m_entry.gcLogLevelVal;
     }
     return false;
