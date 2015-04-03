@@ -1,3 +1,14 @@
+2015-04-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Fix the EFL and GTK build after r182243
+        https://bugs.webkit.org/show_bug.cgi?id=143361
+
+        Reviewed by Csaba Osztrogonác.
+
+        * PlatformGTK.cmake: Add a custom command that copies the
+        InspectorBackendCommands.js file into the proper directory
+        under DerivedSources/WebInspectorUI/.
+
 2015-04-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix.
