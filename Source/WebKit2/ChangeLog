@@ -1,5 +1,11 @@
 2015-04-02  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Typo fix.
+
+        * PlatformGTK.cmake:
+
+2015-04-02  Csaba Osztrogonác  <ossy@webkit.org>
+
         URTBF after r182303, stub NativeContextMenuItem implemetations added for EFL and GTK.
 
         * PlatformEfl.cmake:
