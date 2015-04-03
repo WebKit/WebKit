@@ -28,6 +28,7 @@
 
 #import "WKWebProcessPlugInFrameInternal.h"
 #import <WebCore/IntRect.h>
+#import <WebKit/WebImage.h>
 
 #if WK_API_ENABLED
 
@@ -62,6 +63,28 @@ using namespace WebKit;
 
     return [wrapper(*frame.release().leakRef()) autorelease];
 }
+
+#if PLATFORM(IOS)
+- (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options
+{
+    RefPtr<WebImage> image = _nodeHandle->renderedImage(options);
+    if (!image || !image->bitmap())
+        return nil;
+
+    return [[[UIImage alloc] initWithCGImage:image->bitmap()->makeCGImage().get()] autorelease];
+}
+#endif
+
+#if PLATFORM(MAC)
+- (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options
+{
+    RefPtr<WebImage> image = _nodeHandle->renderedImage(options);
+    if (!image || !image->bitmap())
+        return nil;
+
+    return [[[NSImage alloc] initWithCGImage:image->bitmap()->makeCGImage().get() size:NSZeroSize] autorelease];
+}
+#endif
 
 - (CGRect)elementBounds
 {

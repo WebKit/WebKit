@@ -29,6 +29,11 @@
 
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/JavaScriptCore.h>
+#import <WebKit/WKImage.h>
+
+#if TARGET_OS_IPHONE
+#import <UIKit/UIImage.h>
+#endif
 
 @class WKWebProcessPlugInFrame;
 
@@ -37,6 +42,12 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 + (WKWebProcessPlugInNodeHandle *)nodeHandleWithJSValue:(JSValue *)value inContext:(JSContext *)context;
 - (WKWebProcessPlugInFrame *)htmlIFrameElementContentFrame;
+
+#if TARGET_OS_IPHONE
+- (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+#else
+- (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+#endif
 
 @property (nonatomic, readonly) CGRect elementBounds;
 @property (nonatomic) BOOL HTMLInputElementIsAutoFilled;
