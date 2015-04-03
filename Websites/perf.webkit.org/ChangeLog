@@ -1,5 +1,63 @@
 2015-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add time series segmentation algorithms as moving averages
+        https://bugs.webkit.org/show_bug.cgi?id=143362
+
+        Reviewed by Chris Dumez.
+
+        This patch implements two preliminary time series segmentation algorithms as moving averages.
+
+        Recursive t-test: Compute Welch's t-statistic at each point in a given segment of the time series.
+        If Welch's t-test implicates a statistically significance difference, then split the segment into two
+        sub segments with the maximum t-statistic (i.e. the point at which if split would yield the highest
+        probability that two segments do not share the same "underlying" mean in classical / frequentist sense).
+        We repeat this process recursively. See [1] for the evaluation of this particular algorithm.
+
+        Schwarz criterion: Use Schwarz or Bayesian information criterion to heuristically find the optimal
+        segmentation. Intuitively, the problem of finding the best segmentation comes down to minimizing the
+        residual sum of squares in each segment as in linear regressions. That is, for a given segment with
+        values y_1 through y_n with mean y_avg, we want to minimize the sum of (y_i - y_avg)^2 over i = 1
+        through i = n. However, we also don't want to split every data point into a separate segment so we need
+        to account the "cost" of introducing new segments. We use a cost function that's loosely based on two
+        models discussed in [2] for simplicity. We will tune this cost function further in the future.
+
+        The problem of finding the best segmentation then reduces to a search problem. Unfortunately, our problem
+        space is exponential with respect to the size of the time series since we could split at each data point.
+        We workaround this problem by first splitting the time series into a manageable smaller grids, and only
+        considering segmentation of a fixed size (i.e. the number of segments is constant). Since time series
+        tend to contain a lot more data points than segments, this strategy finds the optimal solution without
+        exploring much of the problem space.
+
+        Finding the optimal segmentation of a fixed size is, itself, another search problem that is equivalent to
+        finding the shortest path of a fixed length in DAG. Here, we use dynamic programming with a matrix of size
+        n by n where n is the length of the time series (grid). Each entry in this matrix at (i, k) stores
+        the minimum cost of segmenting data points 1 through i using k segments. We start our search at i = 1.
+        Clearly C(1, 0) = 0 (note the actual code uses 0-based index). In i-th iteration, we compute the cost
+        S(i, j) of each segment starting at i and ending at another point j after i and update C(j, k + 1) by
+        min( C(j, k + 1), C(i, k) + S(i, j) ) for all values of j above i.
+
+        [1] Kensuke Fukuda, H. Eugene Stanley, and Luis A. Nunes Amaral, "Heuristic segmentation of
+        a nonstationary time series", Physical Review E 69, 021108 (2004)
+
+        [2] Marc Lavielle, Gilles Teyssi`ere, "Detection of Multiple Change–Points in Multivariate Time Series"
+        Lithuanian Mathematical Journal, vol 46, 2006
+
+        * public/v2/index.html: Show the optional description for the chosen moving average strategy.
+        * public/v2/js/statistics.js:
+        (Statistics.testWelchsT):
+        (Statistics.computeWelchsT): Extracted from testWelchsT. Generalized to take the offset and the length
+        of each value array between which Welch's t-statistic is computed. This generalization helps the
+        Schwarz criterion segmentation algorithm avoid splitting values array O(n^2) times.
+        (.sampleMeanAndVarianceForValues): Ditto for the generalization.
+        (.recursivelySplitIntoTwoSegmentsAtMaxTIfSignificantlyDifferent): Added. Implements recursive t-test.
+        (.splitIntoSegmentsUntilGoodEnough): Added. Implements Schwarz criterion.
+        (.findOptimalSegmentation): Added. Implements the algorithm to find the optimal segmentation of a fixed
+        segment count.
+        (.SampleVarianceUpperTriangularMatrix): Added. Stores S(i, j) used by findOptimalSegmentation.
+        (.SampleVarianceUpperTriangularMatrix.prototype.costBetween): Added.
+
+2015-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION: Perf dashboard sometimes fails to update zooming level
         https://bugs.webkit.org/show_bug.cgi?id=143359
 

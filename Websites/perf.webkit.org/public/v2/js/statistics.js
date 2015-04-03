@@ -58,32 +58,64 @@ var Statistics = new (function () {
 
     // Welch's t-test (http://en.wikipedia.org/wiki/Welch%27s_t_test)
     this.testWelchsT = function (values1, values2, probability) {
-        var stat1 = sampleMeanAndVarianceForValues(values1);
-        var stat2 = sampleMeanAndVarianceForValues(values2);
+        return this.computeWelchsT(values1, 0, values1.length, values2, 0, values2.length, probability).significantlyDifferent;
+    }
+
+    this.computeWelchsT = function (values1, startIndex1, length1, values2, startIndex2, length2, probability) {
+        var stat1 = sampleMeanAndVarianceForValues(values1, startIndex1, length1);
+        var stat2 = sampleMeanAndVarianceForValues(values2, startIndex2, length2);
         var sumOfSampleVarianceOverSampleSize = stat1.variance / stat1.size + stat2.variance / stat2.size;
-        var t = (stat1.mean - stat2.mean) / Math.sqrt(sumOfSampleVarianceOverSampleSize);
+        var t = Math.abs((stat1.mean - stat2.mean) / Math.sqrt(sumOfSampleVarianceOverSampleSize));
 
         // http://en.wikipedia.org/wiki/Welch–Satterthwaite_equation
         var degreesOfFreedom = sumOfSampleVarianceOverSampleSize * sumOfSampleVarianceOverSampleSize
             / (stat1.variance * stat1.variance / stat1.size / stat1.size / stat1.degreesOfFreedom
                 + stat2.variance * stat2.variance / stat2.size / stat2.size / stat2.degreesOfFreedom);
-
-        // They're different beyond the confidence interval of the specified probability.
-        return Math.abs(t) > tDistributionQuantiles[probability || 0.9][Math.round(degreesOfFreedom - 1)];
+        return {
+            t: t,
+            degreesOfFreedom: degreesOfFreedom,
+            significantlyDifferent: t > tDistributionQuantiles[probability || 0.9][Math.round(degreesOfFreedom - 1)],
+        };
     }
 
-    function sampleMeanAndVarianceForValues(values) {
-        var sum = Statistics.sum(values);
-        var squareSum = Statistics.squareSum(values);
-        var sampleMean = sum / values.length;
+    function sampleMeanAndVarianceForValues(values, startIndex, length) {
+        var sum = 0;
+        for (var i = 0; i < length; i++)
+            sum += values[startIndex + i];
+        var squareSum = 0;
+        for (var i = 0; i < length; i++)
+            squareSum += values[startIndex + i] * values[startIndex + i];
+        var sampleMean = sum / length;
         // FIXME: Maybe we should be using the biased sample variance.
-        var unbiasedSampleVariance = (squareSum - sum * sum / values.length) / (values.length - 1);
+        var unbiasedSampleVariance = (squareSum - sum * sum / length) / (length - 1);
         return {
             mean: sampleMean,
             variance: unbiasedSampleVariance,
-            size: values.length,
-            degreesOfFreedom: values.length - 1,
+            size: length,
+            degreesOfFreedom: length - 1,
         }
+    }
+
+    function recursivelySplitIntoTwoSegmentsAtMaxTIfSignificantlyDifferent(values, startIndex, length, minLength, segments) {
+        var tMax = 0;
+        var argTMax = null;
+        for (var i = 1; i < length - 1; i++) {
+            var firstLength = i;
+            var secondLength = length - i;
+            if (firstLength < minLength || secondLength < minLength)
+                continue;
+            var result = Statistics.computeWelchsT(values, startIndex, firstLength, values, startIndex + i, secondLength, 0.9);
+            if (result.significantlyDifferent && result.t > tMax) {
+                tMax = result.t;
+                argTMax = i;
+            }
+        }
+        if (!tMax) {
+            segments.push(values.slice(startIndex, startIndex + length));
+            return;
+        }
+        recursivelySplitIntoTwoSegmentsAtMaxTIfSignificantlyDifferent(values, startIndex, argTMax, minLength, segments);
+        recursivelySplitIntoTwoSegmentsAtMaxTIfSignificantlyDifferent(values, startIndex + argTMax, length - argTMax, minLength, segments);
     }
 
     // One-sided t-distribution.
@@ -193,7 +225,189 @@ var Statistics = new (function () {
                 return averages;
             }
         },
+        {
+            id: 4,
+            label: 'Segmentation: Recursive t-test',
+            description: "Recursively split values into two segments if Welch's t-test detects a statistically significant difference.",
+            parameterList: [{label: "Minimum segment length", value: 20, min: 5}],
+            execute: function (minLength, values) {
+                if (values.length < 2)
+                    return null;
+
+                var averages = new Array(values.length);
+                var segments = new Array;
+                recursivelySplitIntoTwoSegmentsAtMaxTIfSignificantlyDifferent(values, 0, values.length, minLength, segments);
+                var averageIndex = 0;
+                for (var j = 0; j < segments.length; j++) {
+                    var values = segments[j];
+                    var mean = Statistics.sum(values) / values.length;
+                    for (var i = 0; i < values.length; i++)
+                        averages[averageIndex++] = mean;
+                }
+
+                return averages;
+            }
+        },
+        {
+            id: 5,
+            label: 'Segmentation: Schwarz criterion',
+            description: 'Adaptive algorithm that maximizes the Schwarz criterion (BIC).',
+            // Based on Detection of Multiple Change–Points in Multivariate Time Series by Marc Lavielle (July 2006).
+            execute: function (values) {
+                if (values.length < 2)
+                    return null;
+
+                var averages = new Array(values.length);
+                var averageIndex = 0;
+
+                // Split the time series into grids since splitIntoSegmentsUntilGoodEnough is O(n^2).
+                var gridLength = 500;
+                var totalSegmentation = [0];
+                for (var gridCount = 0; gridCount < Math.ceil(values.length / gridLength); gridCount++) {
+                    var gridValues = values.slice(gridCount * gridLength, (gridCount + 1) * gridLength);
+                    var segmentation = splitIntoSegmentsUntilGoodEnough(gridValues);
+
+                    if (Statistics.debuggingSegmentation)
+                        console.log('grid=' + gridCount, segmentation);
+
+                    for (var i = 1; i < segmentation.length - 1; i++)
+                        totalSegmentation.push(gridCount * gridLength + segmentation[i]);
+                }
+
+                if (Statistics.debuggingSegmentation)
+                    console.log('Final Segmentation', totalSegmentation);
+
+                totalSegmentation.push(values.length);
+
+                for (var i = 1; i < totalSegmentation.length; i++) {
+                    var segment = values.slice(totalSegmentation[i - 1], totalSegmentation[i]);
+                    var average = Statistics.sum(segment) / segment.length;
+                    for (var j = 0; j < segment.length; j++)
+                        averages[averageIndex++] = average;
+                }
+
+                return averages;
+            }
+        },
     ];
+
+    this.debuggingSegmentation = false;
+
+    function splitIntoSegmentsUntilGoodEnough(values) {
+        if (values.length < 2)
+            return [0, values.length];
+
+        var matrix = new SampleVarianceUpperTriangularMatrix(values);
+
+        var SchwarzCriterionBeta = Math.log1p(values.length - 1) / values.length;
+
+        var BirgeAndMassartC = 2.5; // Suggested by the authors.
+        var BirgeAndMassartPenalization = function (segmentCount) {
+            return segmentCount * (1 + BirgeAndMassartC * Math.log1p(values.length / segmentCount - 1));
+        }
+
+        var segmentation;
+        var minTotalCost = Infinity;
+        var maxK = 50;
+
+        for (var k = 1; k < maxK; k++) {
+            var start = Date.now();
+            var result = findOptimalSegmentation(values, matrix, k);
+            var cost = result.cost / values.length;
+            var penalty = SchwarzCriterionBeta * BirgeAndMassartPenalization(k);
+            if (cost + penalty < minTotalCost) {
+                minTotalCost = cost + penalty;
+                segmentation = result.segmentation;
+            } else
+                maxK = Math.min(maxK, k + 3);
+            if (Statistics.debuggingSegmentation)
+                console.log('splitIntoSegmentsUntilGoodEnough', k, Date.now() - start, cost + penalty);
+        }
+
+        return segmentation;
+    }
+
+    function findOptimalSegmentation(values, costMatrix, segmentCount) {
+        // Dynamic programming. cost[i][k] = The cost to segmenting values up to i into k segments.
+        var cost = new Array(values.length);
+        for (var i = 0; i < values.length; i++) {
+            cost[i] = new Float32Array(segmentCount + 1);
+        }
+
+        var previousNode = new Array(values.length);
+        for (var i = 0; i < values.length; i++)
+            previousNode[i] = new Array(segmentCount + 1);
+
+        cost[0] = [0]; // The cost of segmenting single value is always 0.
+        previousNode[0] = [-1];
+        for (var segmentStart = 0; segmentStart < values.length; segmentStart++) {
+            var costBySegment = cost[segmentStart];
+            for (var count = 0; count < segmentCount; count++) {
+                if (previousNode[segmentStart][count] === undefined)
+                    continue;
+                for (var segmentEnd = segmentStart + 1; segmentEnd < values.length; segmentEnd++) {
+                    var newCost = costBySegment[count] + costMatrix.costBetween(segmentStart, segmentEnd);
+                    if (previousNode[segmentEnd][count + 1] === undefined || newCost < cost[segmentEnd][count + 1]) {
+                        cost[segmentEnd][count + 1] = newCost;
+                        previousNode[segmentEnd][count + 1] = segmentStart;
+                    }
+                }
+            }
+        }
+
+        if (Statistics.debuggingSegmentation) {
+            console.log('findOptimalSegmentation with k=', segmentCount);
+            for (var i = 0; i < cost.length; i++) {
+                var t = cost[i];
+                var s = '';
+                for (var j = 0; j < t.length; j++) {
+                    var p = previousNode[i][j];
+                    s += '(k=' + j;
+                    if (p !== undefined)
+                        s += ' c=' + t[j] + ' p=' + p
+                    s += ')';
+                }
+                console.log(i, values[i], s);
+            }
+        }
+
+        var currentIndex = values.length - 1;
+        var segmentation = new Array(segmentCount);
+        segmentation[0] = values.length;
+        for (var i = 0; i < segmentCount; i++) {
+            currentIndex = previousNode[currentIndex][segmentCount - i];
+            segmentation[i + 1] = currentIndex;
+        }
+
+        return {segmentation: segmentation.reverse(), cost: cost[values.length - 1][segmentCount]};
+    }
+
+    function SampleVarianceUpperTriangularMatrix(values) {
+        // The cost of segment (i, j].
+        var costMatrix = new Array(values.length - 1);
+        for (var i = 0; i < values.length - 1; i++) {
+            var remainingValueCount = values.length - i - 1;
+            costMatrix[i] = new Float32Array(remainingValueCount);
+            var sum = values[i];
+            var squareSum = sum * sum;
+            costMatrix[i][0] = 0;
+            for (var j = i + 1; j < values.length; j++) {
+                var currentValue = values[j];
+                sum += currentValue;
+                squareSum += currentValue * currentValue;
+                var sampleSize = j - i + 1;
+                var stdev = Statistics.sampleStandardDeviation(sampleSize, sum, squareSum);
+                costMatrix[i][j - i - 1] = sampleSize * Math.log1p(stdev * stdev - 1);
+            }
+        }
+        this.costMatrix = costMatrix;
+    }
+
+    SampleVarianceUpperTriangularMatrix.prototype.costBetween = function(from, to) {
+        if (from >= this.costMatrix.length || from == to)
+            return 0; // The cost of the segment that starts at the last data point is 0.
+        return this.costMatrix[from][to - from - 1];
+    }
 
     this.EnvelopingStrategies = [
         {

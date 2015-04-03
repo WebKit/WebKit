@@ -370,6 +370,9 @@
                     optionValuePath='content'
                     optionLabelPath='content.label'
                     selection=chosenMovingAverageStrategy}}</label>
+                    {{#if chosenMovingAverageStrategy.description}}
+                        <p class="description">{{chosenMovingAverageStrategy.description}}</p>
+                    {{/if}}
                 {{#each chosenMovingAverageStrategy.parameterList}}
                     <label>{{label}}: {{input type="number" value=value min=min max=max step=step}}</label>
                 {{/each}}
