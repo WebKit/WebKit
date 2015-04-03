@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: We should just include the appropriate internal headers.
+#ifndef NativeContextMenuItem_h
+#define NativeContextMenuItem_h
 
-typedef NS_ENUM(NSInteger, NSMenuType) {
-    NSMenuTypeNone = 0,
-    NSMenuTypeContextMenu,
-    NSMenuTypeActionMenu,
+#if ENABLE(CONTEXT_MENUS)
+
+#if PLATFORM(COCOA)
+#include <wtf/RetainPtr.h>
+OBJC_CLASS NSMenuItem;
+#endif
+
+namespace WebCore {
+
+class ContextMenuItem;
+
+}
+
+namespace WebKit {
+
+class NativeContextMenuItem {
+public:
+    NativeContextMenuItem(const WebCore::ContextMenuItem& coreItem);
+
+    virtual ~NativeContextMenuItem() { }
+
+#if PLATFORM(COCOA)
+    NSMenuItem *nsMenuItem() { return m_nsMenuItem.get(); }
+#endif
+
+private:
+
+#if PLATFORM(COCOA)
+    RetainPtr<NSMenuItem> m_nsMenuItem;
+#endif
+
 };
 
-@interface NSMenu (Private)
-+ (NSMenuType)menuTypeForEvent:(NSEvent *)event;
-@end
+} // namespace WebKit
 
-@class QLPreviewMenuItem;
-
-@interface NSMenuItem (Private)
-+ (QLPreviewMenuItem *)standardQuickLookMenuItem;
-+ (NSMenuItem *)standardShareMenuItemWithItems:(NSArray *)items;
-@end
+#endif // ENABLE(CONTEXT_MENUS)
+#endif // NativeContextMenuItem_h

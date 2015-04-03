@@ -744,7 +744,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
         }
 
     private:
-        virtual bool getContextMenuFromProposedMenu(WebPageProxy& page, const Vector<WebContextMenuItemData>& proposedMenuVector, Vector<WebContextMenuItemData>& customMenu, const WebHitTestResult::Data& hitTestResultData, API::Object* userData) override
+        virtual bool getContextMenuFromProposedMenu(WebPageProxy& page, const Vector<RefPtr<WebKit::WebContextMenuItem>>& proposedMenuVector, Vector<RefPtr<WebKit::WebContextMenuItem>>& customMenu, const WebHitTestResult::Data& hitTestResultData, API::Object* userData) override
         {
             if (!m_client.getContextMenuFromProposedMenu && !m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0)
                 return false;
@@ -756,7 +756,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
             proposedMenuItems.reserveInitialCapacity(proposedMenuVector.size());
 
             for (const auto& menuItem : proposedMenuVector)
-                proposedMenuItems.uncheckedAppend(WebContextMenuItem::create(menuItem));
+                proposedMenuItems.uncheckedAppend(menuItem);
 
             WKArrayRef newMenu = nullptr;
             if (m_client.base.version >= 2) {
@@ -777,7 +777,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
                     continue;
                 }
 
-                customMenu.append(*item->data());
+                customMenu.append(item);
             }
 
             return true;
@@ -799,7 +799,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
             m_client.contextMenuDismissed(toAPI(&page), m_client.base.clientInfo);
         }
 
-        virtual bool showContextMenu(WebPageProxy& page, const WebCore::IntPoint& menuLocation, const Vector<WebContextMenuItemData>& menuItemsVector) override
+        virtual bool showContextMenu(WebPageProxy& page, const WebCore::IntPoint& menuLocation, const Vector<RefPtr<WebContextMenuItem>>& menuItemsVector) override
         {
             if (!m_client.showContextMenu)
                 return false;
@@ -808,7 +808,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
             menuItems.reserveInitialCapacity(menuItemsVector.size());
 
             for (const auto& menuItem : menuItemsVector)
-                menuItems.uncheckedAppend(WebContextMenuItem::create(menuItem));
+                menuItems.uncheckedAppend(menuItem);
 
             m_client.showContextMenu(toAPI(&page), toAPI(menuLocation), toAPI(API::Array::create(WTF::move(menuItems)).get()), m_client.base.clientInfo);
 

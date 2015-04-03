@@ -69,6 +69,7 @@
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
 #include "WebCertificateInfo.h"
+#include "WebContextMenuItem.h"
 #include "WebContextMenuProxy.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebEditCommandProxy.h"
@@ -4028,18 +4029,31 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
     m_process->responsivenessTimer()->stop();
 
     // Unless this is an image control, give the PageContextMenuClient one last swipe at changing the menu.
-    Vector<WebContextMenuItemData> items;
-    bool useProposedItems = true;
     bool askClientToChangeMenu = clientEligibility == ContextMenuClientEligibility::EligibleForClient;
 #if ENABLE(SERVICE_CONTROLS)
     if (contextMenuContextData.controlledImage())
         askClientToChangeMenu = false;
 #endif
 
-    if (askClientToChangeMenu && m_contextMenuClient->getContextMenuFromProposedMenu(*this, proposedItems, items, contextMenuContextData.webHitTestResultData(), m_process->transformHandlesToObjects(userData.object()).get()))
+    Vector<RefPtr<WebContextMenuItem>> proposedAPIItems;
+    for (auto& item : proposedItems) {
+        if (item.action() != ContextMenuItemTagShareMenu) {
+            proposedAPIItems.append(WebContextMenuItem::create(item));
+            continue;
+        }
+
+        // Currently we only support the share menu for text selection, so create the appropriate menu item for that text selection now.
+        ContextMenuItem coreItem = ContextMenuItem::shareSelectedTextMenuItem(contextMenuContextData.selectedText());
+        proposedAPIItems.append(WebContextMenuItem::create(coreItem));
+    }
+
+    Vector<RefPtr<WebContextMenuItem>> clientItems;
+    bool useProposedItems = true;
+
+    if (askClientToChangeMenu && m_contextMenuClient->getContextMenuFromProposedMenu(*this, proposedAPIItems, clientItems, contextMenuContextData.webHitTestResultData(), m_process->transformHandlesToObjects(userData.object()).get()))
         useProposedItems = false;
 
-    const Vector<WebContextMenuItemData>& itemsToShow = useProposedItems ? proposedItems : items;
+    const Vector<RefPtr<WebContextMenuItem>>& itemsToShow = useProposedItems ? proposedAPIItems : clientItems;
     if (!m_contextMenuClient->showContextMenu(*this, menuLocation, itemsToShow))
         m_activeContextMenu->showContextMenu(menuLocation, itemsToShow, contextMenuContextData);
 

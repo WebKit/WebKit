@@ -1,3 +1,12 @@
+2015-04-02  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed: Reland change after rollout.
+
+        Expose the "Share" menu for text selections on platforms where it's available.
+        rdar://problem/20034174 and https://bugs.webkit.org/show_bug.cgi?id=143318
+
+        * WebView/WebImmediateActionController.mm: Update for required #include
+
 2015-04-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r182293.
