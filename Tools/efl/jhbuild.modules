@@ -221,7 +221,7 @@
             md5sum="9c0cfef285d5c4a5c80d00904ddab380"/>
   </autotools>
 
-  <autotools id="gstreamer" autogenargs="--disable-gtk-doc">
+  <autotools id="gstreamer" autogenargs="--disable-gtk-doc" autogen-sh="configure">
     <branch module="gstreamer/gstreamer-1.4.4.tar.xz" version="1.4.4"
             repo="gstreamer"
             hash="sha256:f0e305d91a93d05bf9e332cd4256ca07d77f5186a4d73847b7ae6db218f2c237"
@@ -229,7 +229,7 @@
   </autotools>
 
   <autotools id="gst-plugins-base"
-             autogen-sh="autogen.sh"
+             autogen-sh="configure"
              autogenargs="--disable-examples --disable-gtk-doc">
     <dependencies>
       <dep package="gstreamer"/>
@@ -241,7 +241,7 @@
     </branch>
   </autotools>
 
-  <autotools id="gst-plugins-good" autogenargs="--disable-examples --disable-soup --disable-gtk-doc">
+  <autotools id="gst-plugins-good" autogenargs="--disable-examples --disable-soup --disable-gtk-doc" autogen-sh="configure">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
@@ -253,7 +253,7 @@
     </branch>
   </autotools>
 
-  <autotools id="gst-plugins-bad" autogenargs="--disable-examples --disable-gtk-doc">
+  <autotools id="gst-plugins-bad" autogenargs="--disable-examples --disable-gtk-doc" autogen-sh="configure">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
@@ -265,7 +265,7 @@
     </branch>
   </autotools>
 
-  <autotools id="gst-libav" autogenargs="--with-libav-extra-configure='--disable-yasm' --disable-gtk-doc">
+  <autotools id="gst-libav" autogenargs="--with-libav-extra-configure='--disable-yasm' --disable-gtk-doc" autogen-sh="configure">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
