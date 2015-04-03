@@ -74,6 +74,7 @@ public:
     void didCancelProcessSuspension();
     void processReadyToSuspend();
     void sendProcessDidResume() override;
+    void setIsHoldingLockedFiles(bool);
 
     ProcessThrottler& throttler() { return *m_throttler; }
 
@@ -121,6 +122,7 @@ private:
     std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
     CustomProtocolManagerProxy m_customProtocolManagerProxy;
     std::unique_ptr<ProcessThrottler> m_throttler;
+    ProcessThrottler::BackgroundActivityToken m_tokenForHoldingLockedFiles;
 };
 
 } // namespace WebKit

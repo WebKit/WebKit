@@ -23,51 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebSQLiteDatabaseTracker.h"
+#ifndef WebSQLiteDatabaseTracker_h
+#define WebSQLiteDatabaseTracker_h
 
-#include "WebProcess.h"
-#include "WebProcessProxyMessages.h"
-#include <WebCore/SQLiteDatabaseTracker.h>
-#include <wtf/MainThread.h>
-
-using namespace WebCore;
+#include <WebCore/HysteresisActivity.h>
+#include <WebCore/SQLiteDatabaseTrackerClient.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebKit {
 
-const char* WebSQLiteDatabaseTracker::supplementName()
-{
-    return "WebSQLiteDatabaseTracker";
-}
+class ChildProcess;
+class NetworkProcess;
+class WebProcess;
 
-WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker(WebProcess* process)
-    : m_process(process)
-    , m_hysteresis([this](HysteresisState state) { hysteresisUpdated(state); })
-{
-}
+class WebSQLiteDatabaseTracker : public WebCore::SQLiteDatabaseTrackerClient {
+    WTF_MAKE_NONCOPYABLE(WebSQLiteDatabaseTracker)
+public:
+    explicit WebSQLiteDatabaseTracker(NetworkProcess&);
+    explicit WebSQLiteDatabaseTracker(WebProcess&);
 
-void WebSQLiteDatabaseTracker::initialize(const WebProcessCreationParameters&)
-{
-    SQLiteDatabaseTracker::setClient(this);
-}
+    // WebCore::SQLiteDatabaseTrackerClient
+    virtual void willBeginFirstTransaction() override;
+    virtual void didFinishLastTransaction() override;
 
-void WebSQLiteDatabaseTracker::willBeginFirstTransaction()
-{
-    callOnMainThread([this] {
-        m_hysteresis.start();
-    });
-}
+private:
+    void hysteresisUpdated(WebCore::HysteresisState);
 
-void WebSQLiteDatabaseTracker::didFinishLastTransaction()
-{
-    callOnMainThread([this] {
-        m_hysteresis.stop();
-    });
-}
-
-void WebSQLiteDatabaseTracker::hysteresisUpdated(HysteresisState state)
-{
-    m_process->parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(state == HysteresisState::Started), 0);
-}
+    ChildProcess& m_process;
+    WebCore::HysteresisActivity m_hysteresis;
+    enum class ChildProcessType { Network, WebContent };
+    ChildProcessType m_childProcessType;
+};
 
 } // namespace WebKit
+
+#endif // WebSQLiteDatabaseTracker_h

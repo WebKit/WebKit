@@ -1,3 +1,44 @@
+2015-04-03  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] We should prevent NetworkProcess suspension while it has pending SQL transactions
+        https://bugs.webkit.org/show_bug.cgi?id=143278
+        <rdar://problem/20180799>
+
+        Reviewed by Anders Carlsson.
+
+        Prevent NetworkProcess suspension while it has pending SQL transactions,
+        similarly to what we already did for WebProcesses. This patch moves the
+        WebSQLiteDatabaseTracker from WebProcess/ to Shared/ and make it usable
+        by the NetworkProcess class as well.
+
+        Whenever there are locked files to due SQL transactions, the
+        NetworkProcess will send an IPC message to the NetworkProcessProxy
+        which will hold a background process assertion until the NetworkProcess'
+        SQL transactions are complete. This way, it is no longer possible for
+        the NetworkProcess to get suspended while SQL transactions are running
+        and a database file is locked.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        * Shared/WebSQLiteDatabaseTracker.cpp: Renamed from Source/WebKit2/WebProcess/WebCoreSupport/WebSQLiteDatabaseTracker.cpp.
+        (WebKit::WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker):
+        (WebKit::m_childProcessType):
+        (WebKit::WebSQLiteDatabaseTracker::willBeginFirstTransaction):
+        (WebKit::WebSQLiteDatabaseTracker::didFinishLastTransaction):
+        (WebKit::WebSQLiteDatabaseTracker::hysteresisUpdated):
+        * Shared/WebSQLiteDatabaseTracker.h: Renamed from Source/WebKit2/WebProcess/WebCoreSupport/WebSQLiteDatabaseTracker.h.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::NetworkProcessProxy::setIsHoldingLockedFiles):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/WebProcess.h:
+
 2015-04-03  Antti Koivisto  <antti@apple.com>
 
         Add non-counting Bloom filter implementation

@@ -90,6 +90,10 @@ class WebResourceLoadScheduler;
 class WebToDatabaseProcessConnection;
 #endif
 
+#if PLATFORM(IOS)
+class WebSQLiteDatabaseTracker;
+#endif
+
 class WebProcess : public ChildProcess, public WebOriginDataManagerSupplement, private DownloadManager::Client {
     friend class NeverDestroyed<DownloadManager>;
 public:
@@ -374,6 +378,9 @@ private:
     WebCore::Timer m_nonVisibleProcessCleanupTimer;
 
     std::unique_ptr<WebOriginDataManager> m_webOriginDataManager;
+#if PLATFORM(IOS)
+    std::unique_ptr<WebSQLiteDatabaseTracker> m_webSQLiteDatabaseTracker;
+#endif
 };
 
 } // namespace WebKit

@@ -195,9 +195,6 @@ WebProcess::WebProcess()
     addSupplement<WebMediaCacheManager>();
     addSupplement<AuthenticationManager>();
     addSupplement<WebDatabaseManager>();
-#if PLATFORM(IOS)
-    addSupplement<WebSQLiteDatabaseTracker>();
-#endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     addSupplement<WebNotificationManager>();
@@ -238,6 +235,10 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 
 #if ENABLE(SEC_ITEM_SHIM)
     SecItemShim::singleton().initializeConnection(connection);
+#endif
+
+#if PLATFORM(IOS)
+    m_webSQLiteDatabaseTracker = std::make_unique<WebSQLiteDatabaseTracker>(*this);
 #endif
     
     WebProcessSupplementMap::const_iterator it = m_supplements.begin();

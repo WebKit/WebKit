@@ -64,6 +64,10 @@
 #include "NetworkCacheCoders.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "WebSQLiteDatabaseTracker.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -193,6 +197,10 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
 
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
+
+#if PLATFORM(IOS)
+    m_webSQLiteDatabaseTracker = std::make_unique<WebSQLiteDatabaseTracker>(*this);
+#endif
 
     NetworkProcessSupplementMap::const_iterator it = m_supplements.begin();
     NetworkProcessSupplementMap::const_iterator end = m_supplements.end();

@@ -202,6 +202,8 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
     if (m_downloadProxyMap)
         m_downloadProxyMap->processDidClose();
 
+    m_tokenForHoldingLockedFiles = nullptr;
+
     // This may cause us to be deleted.
     networkProcessCrashedOrFailedToLaunch();
 }
@@ -337,6 +339,16 @@ void NetworkProcessProxy::sendProcessDidResume()
 void NetworkProcessProxy::processReadyToSuspend()
 {
     m_throttler->processReadyToSuspend();
+}
+
+void NetworkProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
+{
+    if (!isHoldingLockedFiles) {
+        m_tokenForHoldingLockedFiles = nullptr;
+        return;
+    }
+    if (!m_tokenForHoldingLockedFiles)
+        m_tokenForHoldingLockedFiles = m_throttler->backgroundActivityToken();
 }
 
 } // namespace WebKit

@@ -33,6 +33,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
 
     ProcessReadyToSuspend()
     DidCancelProcessSuspension()
+    SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
 
     # Diagnostic messages logging
     LogDiagnosticMessage(uint64_t pageID, String message, String description, bool shouldSample)

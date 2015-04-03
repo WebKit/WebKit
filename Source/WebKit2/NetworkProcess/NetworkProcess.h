@@ -50,6 +50,10 @@ class NetworkProcessSupplement;
 struct NetworkProcessCreationParameters;
 struct SecurityOriginData;
 
+#if PLATFORM(IOS)
+class WebSQLiteDatabaseTracker;
+#endif
+
 class NetworkProcess : public ChildProcess, private DownloadManager::Client {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
     friend class NeverDestroyed<NetworkProcess>;
@@ -171,6 +175,10 @@ private:
     // multiple requests to clear the cache can come in before previous requests complete, and we need to wait for all of them.
     // In the future using WorkQueue and a counting semaphore would work, as would WorkQueue supporting the libdispatch concept of "work groups".
     dispatch_group_t m_clearCacheDispatchGroup;
+#endif
+
+#if PLATFORM(IOS)
+    std::unique_ptr<WebSQLiteDatabaseTracker> m_webSQLiteDatabaseTracker;
 #endif
 };
 
