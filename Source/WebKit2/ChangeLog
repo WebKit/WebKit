@@ -1,3 +1,9 @@
+2015-04-03  Beth Dakin  <bdakin@apple.com>
+
+        Attempted build fix.
+
+        * UIProcess/API/mac/WKView.mm:
+
 2015-04-03  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the firing of the ReachedSessionRestorationRenderTreeSizeThreshold milestone on iOS

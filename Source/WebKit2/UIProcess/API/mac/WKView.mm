@@ -1392,7 +1392,7 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
     [self mouseDraggedInternal:event];
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
 - (void)pressureChangeWithEvent:(NSEvent *)event
 {
     _data->_page->inputDeviceForceDidChange(event.pressure, event.stage);
