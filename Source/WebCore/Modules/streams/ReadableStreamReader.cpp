@@ -57,7 +57,7 @@ ReadableStreamReader::~ReadableStreamReader()
     readableStreamReaderCounter.decrement();
 #endif
     if (m_stream) {
-        m_stream->release();
+        m_stream->releaseButKeepLocked();
         m_stream = nullptr;
     }
 }

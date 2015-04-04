@@ -1,3 +1,13 @@
+2015-04-04  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Collecting a ReadableStreamReader should not unlock its stream
+        https://bugs.webkit.org/show_bug.cgi?id=143333
+
+        Reviewed by Benjamin Poulain.
+
+        * streams/readablestreamreader-constructor-expected.txt:
+        * streams/readablestreamreader-constructor.html:
+
 2015-04-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Implement ES6 Object.getOwnPropertySymbols

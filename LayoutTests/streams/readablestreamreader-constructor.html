@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <script src='../resources/testharness.js'></script>
 <script src='../resources/testharnessreport.js'></script>
+<script src='../resources/gc.js'></script>
 <script>
  
 test(function() {
@@ -81,5 +82,12 @@ test(function() {
     });
 
 }, 'ReadableStream getReader should throw if ReadableStream is locked');
+
+test(function() {
+    rs = new ReadableStream({});
+    rs.getReader();
+    window.gc();
+    assert_throws(new TypeError(), function() { rs.getReader(); });
+}, 'Collecting a ReadableStreamReader should not unlock its stream.');
 
 </script>

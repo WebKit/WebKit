@@ -1,3 +1,28 @@
+2015-04-04  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Collecting a ReadableStreamReader should not unlock its stream
+        https://bugs.webkit.org/show_bug.cgi?id=143333
+
+        Reviewed by Benjamin Poulain.
+
+        This patch stores as a boolean whether the stream is locked to a reader.
+        In case the reader forget to unlock the stream, the reader can be collected and destructor called.
+        In that case, the link between reader and stream will be reset but the stream will remain in locked state.
+
+        Covered by new test in streams/readablestreamreader-constructor.html.
+
+        * Modules/streams/ReadableStream.h:
+        (WebCore::ReadableStream::isLocked):
+        (WebCore::ReadableStream::lock):
+        (WebCore::ReadableStream::release):
+        (WebCore::ReadableStream::releaseButKeepLocked): Introduced to cut the link between reader and stream but stil keeping the stream locked.
+        * Modules/streams/ReadableStreamReader.cpp:
+        (WebCore::ReadableStreamReader::~ReadableStreamReader):
+        * bindings/js/JSReadableStreamCustom.cpp:
+        (WebCore::JSReadableStream::getReader):
+        * bindings/js/JSReadableStreamReaderCustom.cpp:
+        (WebCore::constructJSReadableStreamReader):
+
 2015-04-03  Zan Dobersek  <zdobersek@igalia.com>
 
         MediaDevices possesses a vtable despite using ImplementationLacksVTable IDL attribute

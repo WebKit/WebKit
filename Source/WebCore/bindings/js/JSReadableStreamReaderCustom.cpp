@@ -106,7 +106,7 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStreamReader(ExecState* exec)
     if (!stream)
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("ReadableStreamReader constructor parameter is not a ReadableStream")));
 
-    if (stream->impl().reader())
+    if (stream->impl().isLocked())
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("ReadableStreamReader constructor parameter is a locked ReadableStream")));
 
     return JSValue::encode(toJS(exec, stream->globalObject(), stream->impl().createReader()));
