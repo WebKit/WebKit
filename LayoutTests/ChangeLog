@@ -1,3 +1,17 @@
+2015-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Differentiate between composited scrolling, and async scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=143291
+
+        Reviewed by Sam Weinig.
+        
+        Rebaseline tests that call setScrollingTreeIncludesFrames(true), where those subframes
+        are now excluded from the non-fast scrollable region.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/coordinated-frame-in-fixed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/fixed-inside-frame-expected.txt:
+
 2015-04-04  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Collecting a ReadableStreamReader should not unlock its stream

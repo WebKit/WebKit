@@ -2191,6 +2191,11 @@ bool RenderLayer::usesCompositedScrolling() const
     return isComposited() && backing()->scrollingLayer();
 }
 
+bool RenderLayer::usesAsyncScrolling() const
+{
+    return hasAcceleratedTouchScrolling() && usesCompositedScrolling();
+}
+
 bool RenderLayer::needsCompositedScrolling() const
 {
     return m_needsCompositedScrolling;

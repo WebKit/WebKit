@@ -558,7 +558,6 @@ private:
     bool useSlowRepaints(bool considerOverlap = true) const;
     bool useSlowRepaintsIfNotOverlapped() const;
     void updateCanBlitOnScrollRecursively();
-    bool contentsInCompositedLayer() const;
     bool shouldLayoutAfterContentsResized() const;
 
     bool shouldUpdateCompositingLayersAfterScrolling() const;
@@ -609,6 +608,9 @@ private:
 #if ENABLE(RUBBER_BANDING)
     virtual GraphicsLayer* layerForOverhangAreas() const override;
 #endif
+
+    virtual bool usesCompositedScrolling() const override;
+    virtual bool usesAsyncScrolling() const override;
 
     // Override scrollbar notifications to update the AXObject cache.
     virtual void didAddScrollbar(Scrollbar*, ScrollbarOrientation) override;

@@ -253,7 +253,11 @@ public:
 #endif
 
     virtual TiledBacking* tiledBacking() const { return 0; }
+
+    // True if scrolling happens by moving compositing layers.
     virtual bool usesCompositedScrolling() const { return false; }
+    // True if the contents can be scrolled asynchronously (i.e. by a ScrollingCoordinator).
+    virtual bool usesAsyncScrolling() const { return false; }
 
     virtual GraphicsLayer* layerForHorizontalScrollbar() const { return 0; }
     virtual GraphicsLayer* layerForVerticalScrollbar() const { return 0; }

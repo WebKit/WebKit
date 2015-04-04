@@ -241,6 +241,9 @@ public:
     bool hasAcceleratedTouchScrolling() const;
     // Returns true when there is actually scrollable overflow (requires layout to be up-to-date).
     bool hasTouchScrollableOverflow() const;
+#else
+    bool hasAcceleratedTouchScrolling() const { return false; }
+    bool hasTouchScrollableOverflow() const { return false; }
 #endif
 
     int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
@@ -601,6 +604,7 @@ public:
     virtual GraphicsLayer* layerForVerticalScrollbar() const override;
     virtual GraphicsLayer* layerForScrollCorner() const override;
     virtual bool usesCompositedScrolling() const override;
+    virtual bool usesAsyncScrolling() const override;
     WEBCORE_EXPORT bool needsCompositedScrolling() const;
 
     bool paintsWithTransparency(PaintBehavior paintBehavior) const

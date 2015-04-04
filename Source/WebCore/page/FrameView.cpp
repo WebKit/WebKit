@@ -1489,7 +1489,7 @@ bool FrameView::useSlowRepaints(bool considerOverlap) const
     // m_contentIsOpaque, so don't take the fast path for composited layers
     // if they are a platform widget in order to get painting correctness
     // for transparent layers. See the comment in WidgetMac::paint.
-    if (contentsInCompositedLayer() && !platformWidget())
+    if (usesCompositedScrolling() && !platformWidget())
         return mustBeSlow;
 
     bool isOverlapped = m_isOverlapped && considerOverlap;
@@ -1516,7 +1516,7 @@ void FrameView::updateCanBlitOnScrollRecursively()
     }
 }
 
-bool FrameView::contentsInCompositedLayer() const
+bool FrameView::usesCompositedScrolling() const
 {
     RenderView* renderView = this->renderView();
     if (renderView && renderView->isComposited()) {
@@ -1525,6 +1525,17 @@ bool FrameView::contentsInCompositedLayer() const
             return true;
     }
 
+    return false;
+}
+
+bool FrameView::usesAsyncScrolling() const
+{
+#if ENABLE(ASYNC_SCROLLING)
+    if (Page* page = frame().page()) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+            return scrollingCoordinator->coordinatesScrollingForFrameView(*this);
+    }
+#endif
     return false;
 }
 
@@ -1793,7 +1804,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
         return true;
     }
 
-    const bool isCompositedContentLayer = contentsInCompositedLayer();
+    const bool isCompositedContentLayer = usesCompositedScrolling();
 
     // Get the rects of the fixed objects visible in the rectToScroll
     Region regionToUpdate;
@@ -1855,7 +1866,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
 
 void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
 {
-    if (contentsInCompositedLayer()) {
+    if (usesCompositedScrolling()) {
         // FIXME: respect paintsEntireContents()?
         IntRect updateRect = visibleContentRect(LegacyIOSDocumentVisibleRect);
 

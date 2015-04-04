@@ -1,3 +1,41 @@
+2015-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Differentiate between composited scrolling, and async scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=143291
+
+        Reviewed by Sam Weinig.
+        
+        ScrollableArea::usesCompositedScrolling() meant "uses aysnc scrolling", but
+        FrameView::contentsInCompositedLayer() covered a related concept, that scrolling
+        happens by moving compositing layers around.
+        
+        Make the difference between these more explicit by adding ScrollableArea::usesAsyncScrolling(),
+        which means that scrolling for that ScrollableArea is asynchronous and managed
+        by a ScrollingCoordinator. This is the meaning that ScrollingCoordinator::computeNonFastScrollableRegion()
+        understands.
+        
+        ScrollableArea::usesCompositedScrolling() is now repurposed to mean "scrolling
+        occurs by moving layers around, not requiring repaint". FrameView::contentsInCompositedLayer()
+        is renamed to usesCompositedScrolling(), and overrides the base class function.
+
+        This only changes behavior in tests that call setScrollingTreeIncludesFrames(true).
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::useSlowRepaints):
+        (WebCore::FrameView::usesCompositedScrolling):
+        (WebCore::FrameView::usesAsyncScrolling):
+        (WebCore::FrameView::scrollContentsFastPath):
+        (WebCore::FrameView::scrollContentsSlowPath):
+        (WebCore::FrameView::contentsInCompositedLayer): Deleted.
+        * page/FrameView.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::computeNonFastScrollableRegion):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::usesAsyncScrolling):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::usesAsyncScrolling):
+        * rendering/RenderLayer.h:
+
 2015-04-04  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Collecting a ReadableStreamReader should not unlock its stream

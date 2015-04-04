@@ -2,8 +2,7 @@
   (scrollable area size 785 600)
   (contents size 785 1016)
   (non-fast-scrollable region
-    at (37,39) size 500x300
-    at (45,339) size 404x12)
+    at (45,47) size 404x304)
   (children 1
     (Frame scrolling node
       (scrollable area size 485 300)
