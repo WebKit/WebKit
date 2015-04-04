@@ -30,8 +30,7 @@
 
 [
     NoInterfaceObject,
-    Conditional=MEDIA_STREAM,
-    ImplementationLacksVTable
+    Conditional=MEDIA_STREAM
 ] interface MediaDevices {
     [Custom, RaisesException] Promise getUserMedia(Dictionary options);
 };
