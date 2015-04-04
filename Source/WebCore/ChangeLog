@@ -1,5 +1,46 @@
 2015-04-04  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (r182215): Feedly crashes when closing article
+        https://bugs.webkit.org/show_bug.cgi?id=143405
+        rdar://problem/20382734, rdar://problem/20395497
+
+        Reviewed by Tim Horton.
+        
+        Calling computeNonFastScrollableRegion() eagerly when scrollable areas come and go
+        is bad, because it can cause FrameView::layout() to get called in the middle of
+        RenderObject destruction, which leaves the render tree in a bad state.
+        
+        Fix by calling computeNonFastScrollableRegion() lazily, just before scrolling tree commit.
+        
+        AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged() now just sets
+        a flag to say that the non-fast region needs to be recomputed, and that schedules
+        a scrolling tree commit. When the commit happens, we recompute the region. If the
+        region didn't change, and no other changes are pending, there's no need to commit.
+
+        Test: platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/compute-region-inside-delete-renderer-crash.html
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::setNonFastScrollableRegionDirty):
+        (WebCore::AsyncScrollingCoordinator::willCommitTree):
+        (WebCore::AsyncScrollingCoordinator::updateNonFastScrollableRegion):
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged):
+        (WebCore::AsyncScrollingCoordinator::scrollingStateTreeAsText): Need to eagerly update
+        the non-fast scrollable region.
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        (WebCore::AsyncScrollingCoordinator::nonFastScrollableRegionDirty):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::ScrollingCoordinator):
+        (WebCore::ScrollingCoordinator::computeNonFastScrollableRegion):
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::willCommitTree):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::commitTreeStateIfNeeded):
+        (WebCore::ScrollingCoordinatorMac::scheduleTreeStateCommit):
+        (WebCore::ScrollingCoordinatorMac::commitTreeState):
+
+2015-04-04  Simon Fraser  <simon.fraser@apple.com>
+
         Differentiate between composited scrolling, and async scrolling
         https://bugs.webkit.org/show_bug.cgi?id=143291
 

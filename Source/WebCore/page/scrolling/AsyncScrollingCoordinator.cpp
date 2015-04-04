@@ -73,6 +73,27 @@ static inline void setStateScrollingNodeSnapOffsetsAsFloat(ScrollingStateScrolli
         node.setVerticalSnapOffsets(snapOffsetsAsFloat);
 }
 
+void AsyncScrollingCoordinator::setNonFastScrollableRegionDirty()
+{
+    m_nonFastScrollableRegionDirty = true;
+    // We have to schedule a commit, but the computed non-fast region may not have actually changed.
+    scheduleTreeStateCommit();
+}
+
+void AsyncScrollingCoordinator::willCommitTree()
+{
+    updateNonFastScrollableRegion();
+}
+
+void AsyncScrollingCoordinator::updateNonFastScrollableRegion()
+{
+    if (!m_nonFastScrollableRegionDirty)
+        return;
+
+    m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(m_page->mainFrame(), IntPoint()));
+    m_nonFastScrollableRegionDirty = false;
+}
+
 void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
 {
     ASSERT(isMainThread());
@@ -88,6 +109,7 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
     // In the future, we may want to have the ability to set non-fast scrolling regions for more than
     // just the root node. But right now, this concept only applies to the root.
     m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(m_page->mainFrame(), IntPoint()));
+    m_nonFastScrollableRegionDirty = false;
 
     if (!coordinatesScrollingForFrameView(frameView))
         return;
@@ -135,8 +157,7 @@ void AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged(FrameVie
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
-    // FIXME: computeNonFastScrollableRegion lazily.
-    m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(m_page->mainFrame(), IntPoint()));
+    setNonFastScrollableRegionDirty();
 }
 
 void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView& frameView)
@@ -500,8 +521,11 @@ void AsyncScrollingCoordinator::setScrollPinningBehavior(ScrollPinningBehavior p
 
 String AsyncScrollingCoordinator::scrollingStateTreeAsText() const
 {
-    if (m_scrollingStateTree->rootStateNode())
+    if (m_scrollingStateTree->rootStateNode()) {
+        if (m_nonFastScrollableRegionDirty)
+            m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(m_page->mainFrame(), IntPoint()));
         return m_scrollingStateTree->rootStateNode()->scrollingStateTreeAsText();
+    }
 
     return String();
 }

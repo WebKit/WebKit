@@ -1,3 +1,27 @@
+2015-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r182215): Feedly crashes when closing article
+        https://bugs.webkit.org/show_bug.cgi?id=143405
+        rdar://problem/20382734, rdar://problem/20395497
+
+        Reviewed by Tim Horton.
+        
+        Calling computeNonFastScrollableRegion() eagerly when scrollable areas come and go
+        is bad, because it can cause FrameView::layout() to get called in the middle of
+        RenderObject destruction, which leaves the render tree in a bad state.
+        
+        Fix by calling computeNonFastScrollableRegion() lazily, just before scrolling tree commit.
+        
+        AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged() now just sets
+        a flag to say that the non-fast region needs to be recomputed, and that schedules
+        a scrolling tree commit. When the commit happens, we recompute the region. If the
+        region didn't change, and no other changes are pending, there's no need to commit.
+
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::buildTransaction):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers): Outdent #ifdefs.
+
 2015-04-03  Beth Dakin  <bdakin@apple.com>
 
         Attempted build fix.

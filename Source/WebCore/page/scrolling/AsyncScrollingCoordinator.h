@@ -68,6 +68,9 @@ protected:
     void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
 
     WEBCORE_EXPORT virtual String scrollingStateTreeAsText() const override;
+    WEBCORE_EXPORT virtual void willCommitTree() override;
+
+    bool nonFastScrollableRegionDirty() const { return m_nonFastScrollableRegionDirty; }
 
 private:
     virtual bool isAsyncScrollingCoordinator() const override { return true; }
@@ -104,6 +107,8 @@ private:
     void updateMainFrameScrollLayerPosition();
 
     void updateScrollPositionAfterAsyncScrollTimerFired();
+    void setNonFastScrollableRegionDirty();
+    void updateNonFastScrollableRegion();
     
     FrameView* frameViewForScrollingNode(ScrollingNodeID) const;
 
@@ -140,6 +145,8 @@ private:
 
     std::unique_ptr<ScrollingStateTree> m_scrollingStateTree;
     RefPtr<ScrollingTree> m_scrollingTree;
+
+    bool m_nonFastScrollableRegionDirty { false };
 };
 
 } // namespace WebCore

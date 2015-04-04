@@ -86,6 +86,7 @@ void RemoteScrollingCoordinator::setScrollPinningBehavior(ScrollPinningBehavior)
 
 void RemoteScrollingCoordinator::buildTransaction(RemoteScrollingCoordinatorTransaction& transaction)
 {
+    willCommitTree();
     transaction.setStateTreeToEncode(scrollingStateTree()->commit(LayerRepresentation::PlatformLayerIDRepresentation));
 }
 

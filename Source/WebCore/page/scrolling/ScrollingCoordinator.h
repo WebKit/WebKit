@@ -214,6 +214,8 @@ protected:
     GraphicsLayer* headerLayerForFrameView(FrameView&);
     GraphicsLayer* footerLayerForFrameView(FrameView&);
 
+    virtual void willCommitTree() { }
+
     Page* m_page; // FIXME: ideally this would be a reference but it gets nulled on async teardown.
 
 private:
@@ -222,7 +224,7 @@ private:
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const;
     void updateSynchronousScrollingReasons(FrameView&);
     
-    bool m_forceSynchronousScrollLayerPositionUpdates;
+    bool m_forceSynchronousScrollLayerPositionUpdates { false };
 };
 
 } // namespace WebCore

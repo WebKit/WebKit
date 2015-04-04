@@ -67,7 +67,6 @@ PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 
 ScrollingCoordinator::ScrollingCoordinator(Page* page)
     : m_page(page)
-    , m_forceSynchronousScrollLayerPositionUpdates(false)
 {
 }
 
@@ -125,6 +124,9 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame& frame, 
     FrameView* frameView = frame.view();
     if (!frameView)
         return nonFastScrollableRegion;
+
+    // FIXME: should ASSERT(!frameView->needsLayout()) here, but need to fix DebugPageOverlays
+    // to not ask for regions at bad times.
 
     IntPoint offset = frameLocation;
     offset.moveBy(frameView->frameRect().location());

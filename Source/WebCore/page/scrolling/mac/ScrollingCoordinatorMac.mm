@@ -79,9 +79,6 @@ void ScrollingCoordinatorMac::pageDestroyed()
 
 void ScrollingCoordinatorMac::commitTreeStateIfNeeded()
 {
-    if (!scrollingStateTree()->hasChangedProperties())
-        return;
-
     commitTreeState();
     m_scrollingStateTreeCommitterTimer.stop();
 }
@@ -103,7 +100,7 @@ bool ScrollingCoordinatorMac::handleWheelEvent(FrameView&, const PlatformWheelEv
 
 void ScrollingCoordinatorMac::scheduleTreeStateCommit()
 {
-    ASSERT(scrollingStateTree()->hasChangedProperties());
+    ASSERT(scrollingStateTree()->hasChangedProperties() || nonFastScrollableRegionDirty());
 
     if (m_scrollingStateTreeCommitterTimer.isActive())
         return;
@@ -118,7 +115,9 @@ void ScrollingCoordinatorMac::scrollingStateTreeCommitterTimerFired()
 
 void ScrollingCoordinatorMac::commitTreeState()
 {
-    ASSERT(scrollingStateTree()->hasChangedProperties());
+    willCommitTree();
+    if (!scrollingStateTree()->hasChangedProperties())
+        return;
 
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
     ScrollingStateTree* unprotectedTreeState = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation).release();
