@@ -1,3 +1,23 @@
+2015-04-03  Tim Horton  <timothy_horton@apple.com>
+
+        fast/fixed-layout/fixed-layout.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=143379
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        Un-flakify the fixed layout test.
+
+        * fast/css-grid-layout/flex-content-sized-columns-resize-expected.html:
+        Remove a mistaken line in the original test; this function doesn't exist in WebKit
+        and was presumably ported directly from the Blink test (and then never noticed because
+        JS exceptions thrown in -expected files go nowhere).
+
+        * fast/fixed-layout/fixed-layout.html:
+        Make the fixed layout test less racy by waiting for the resize event (which can be
+        very asynchronous). Also, force a layout before resizing to ensure that we
+        always do get a resize event.
+
 2015-04-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Toggling check box state not speaking using plain space, not VO space.
