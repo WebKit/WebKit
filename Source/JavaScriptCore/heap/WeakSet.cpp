@@ -44,8 +44,18 @@ WeakSet::~WeakSet()
 
 void WeakSet::sweep()
 {
-    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
+    for (WeakBlock* block = m_blocks.head(); block;) {
+        WeakBlock* nextBlock = block->next();
         block->sweep();
+        if (block->isLogicallyEmptyButNotFree()) {
+            // If this WeakBlock is logically empty, but still has Weaks pointing into it,
+            // we can't destroy it just yet. Detach it from the WeakSet and hand ownership
+            // to the Heap so we don't pin down the entire 64kB MarkedBlock.
+            m_blocks.remove(block);
+            heap()->addLogicallyEmptyWeakBlock(block);
+        }
+        block = nextBlock;
+    }
 
     resetAllocator();
 }
