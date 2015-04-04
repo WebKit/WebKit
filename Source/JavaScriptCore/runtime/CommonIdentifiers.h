@@ -302,6 +302,9 @@ namespace JSC {
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(JSC_IDENTIFIER_DECLARE_PRIVATE_WELL_KNOWN_SYMBOL_GLOBAL)
 #undef JSC_IDENTIFIER_DECLARE_PRIVATE_WELL_KNOWN_SYMBOL_GLOBAL
 
+        bool isPrivateName(StringImpl* uid) const;
+        bool isPrivateName(const Identifier&) const;
+
         const Identifier* getPrivateName(const Identifier&) const;
         Identifier getPublicName(const Identifier&) const;
     };

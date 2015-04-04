@@ -112,7 +112,7 @@ void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, ExecSta
                 continue;
             if (!thisObject->isValid(it->value.scopeOffset()))
                 continue;
-            if (it->key->isSymbol())
+            if (it->key->isSymbol() && !mode.includeSymbolProperties())
                 continue;
             propertyNames.add(Identifier::fromUid(exec, it->key.get()));
         }

@@ -1,3 +1,58 @@
+2015-04-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Implement ES6 Object.getOwnPropertySymbols
+        https://bugs.webkit.org/show_bug.cgi?id=141106
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements `Object.getOwnPropertySymbols`.
+        One technical issue is that, since we use private symbols (such as `@Object`) in the
+        privileged JS code in `builtins/`, they should not be exposed.
+        To distinguish them from the usual symbols, check the target `StringImpl*` is a not private name
+        before adding it into PropertyNameArray.
+
+        To check the target `StringImpl*` is a private name, we leverage privateToPublic map in `BuiltinNames`
+        since all private symbols are held in this map.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutableInternal):
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::isPrivateName):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::isPrivateName):
+        * runtime/CommonIdentifiers.h:
+        * runtime/EnumerationMode.h:
+        (JSC::EnumerationMode::EnumerationMode):
+        (JSC::EnumerationMode::includeSymbolProperties):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createUndefinedVariableError):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::getOwnNonIndexPropertyNames):
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::getOwnNonIndexPropertyNames):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        (JSC::objectConstructorGetOwnPropertySymbols):
+        (JSC::defineProperties):
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        * runtime/ObjectConstructor.h:
+        (JSC::ObjectConstructor::create):
+        * runtime/Structure.cpp:
+        (JSC::Structure::getPropertyNamesFromStructure):
+        * tests/stress/object-get-own-property-symbols-perform-to-object.js: Added.
+        (compare):
+        * tests/stress/object-get-own-property-symbols.js: Added.
+        (forIn):
+        * tests/stress/symbol-define-property.js: Added.
+        (testSymbol):
+        * tests/stress/symbol-seal-and-freeze.js: Added.
+        * tests/stress/symbol-with-json.js: Added.
+
 2015-04-03  Mark Lam  <mark.lam@apple.com>
 
         Add Options::jitPolicyScale() as a single knob to make all compilations happen sooner.

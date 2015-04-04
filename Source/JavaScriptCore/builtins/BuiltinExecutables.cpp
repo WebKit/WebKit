@@ -101,7 +101,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutableInternal(const S
         
         if (closedVariable == m_vm.propertyNames->undefinedKeyword.impl())
             continue;
-        RELEASE_ASSERT(closedVariable->isSymbol());
+        RELEASE_ASSERT(m_vm.propertyNames->isPrivateName(closedVariable.get()));
     }
     body->overrideName(name);
     UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&m_vm, source, body, kind, WTF::move(sourceOverride));

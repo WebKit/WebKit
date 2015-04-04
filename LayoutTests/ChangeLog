@@ -1,3 +1,13 @@
+2015-04-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Implement ES6 Object.getOwnPropertySymbols
+        https://bugs.webkit.org/show_bug.cgi?id=141106
+
+        Reviewed by Geoffrey Garen.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2015-04-03  Tim Horton  <timothy_horton@apple.com>
 
         fast/fixed-layout/fixed-layout.html is flaky

@@ -33,10 +33,10 @@ class ObjectConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    static ObjectConstructor* create(VM& vm, Structure* structure, ObjectPrototype* objectPrototype)
+    static ObjectConstructor* create(VM& vm, JSGlobalObject* globalObject, Structure* structure, ObjectPrototype* objectPrototype)
     {
         ObjectConstructor* constructor = new (NotNull, allocateCell<ObjectConstructor>(vm.heap)) ObjectConstructor(vm, structure);
-        constructor->finishCreation(vm, objectPrototype);
+        constructor->finishCreation(vm, globalObject, objectPrototype);
         return constructor;
     }
 
@@ -50,7 +50,7 @@ public:
     }
 
 protected:
-    void finishCreation(VM&, ObjectPrototype*);
+    void finishCreation(VM&, JSGlobalObject*, ObjectPrototype*);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
 private:

@@ -325,7 +325,7 @@ m_ ## properName ## Structure.set(vm, this, instanceType::createStructure(vm, th
     
     // Constructors
     
-    ObjectConstructor* objectConstructor = ObjectConstructor::create(vm, ObjectConstructor::createStructure(vm, this, m_functionPrototype.get()), m_objectPrototype.get());
+    ObjectConstructor* objectConstructor = ObjectConstructor::create(vm, this, ObjectConstructor::createStructure(vm, this, m_functionPrototype.get()), m_objectPrototype.get());
     m_objectConstructor.set(vm, this, objectConstructor);
     JSCell* functionConstructor = FunctionConstructor::create(vm, FunctionConstructor::createStructure(vm, this, m_functionPrototype.get()), m_functionPrototype.get());
     JSCell* arrayConstructor = ArrayConstructor::create(vm, ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_arrayPrototype.get());

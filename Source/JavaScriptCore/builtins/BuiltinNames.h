@@ -64,6 +64,8 @@ public:
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALISE_PUBLIC_TO_PRIVATE_ENTRY)
     }
 
+    bool isPrivateName(StringImpl* uid) const;
+    bool isPrivateName(const Identifier&) const;
     const Identifier* getPrivateName(const Identifier&) const;
     const Identifier& getPublicName(const Identifier&) const;
     
@@ -87,6 +89,18 @@ private:
 #undef DECLARE_BUILTIN_SYMBOLS
 #undef INITIALISE_BUILTIN_SYMBOLS
 #undef DECLARE_BUILTIN_SYMBOL_ACCESSOR
+
+inline bool BuiltinNames::isPrivateName(StringImpl* uid) const
+{
+    if (!uid->isSymbol())
+        return false;
+    return m_privateToPublicMap.contains(uid);
+}
+
+inline bool BuiltinNames::isPrivateName(const Identifier& ident) const
+{
+    return isPrivateName(ident.impl());
+}
 
 inline const Identifier* BuiltinNames::getPrivateName(const Identifier& ident) const
 {

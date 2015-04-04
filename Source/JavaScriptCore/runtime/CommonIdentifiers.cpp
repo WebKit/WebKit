@@ -51,6 +51,16 @@ CommonIdentifiers::~CommonIdentifiers()
 {
 }
 
+bool CommonIdentifiers::isPrivateName(StringImpl* uid) const
+{
+    return m_builtinNames->isPrivateName(uid);
+}
+
+bool CommonIdentifiers::isPrivateName(const Identifier& ident) const
+{
+    return m_builtinNames->isPrivateName(ident);
+}
+
 const Identifier* CommonIdentifiers::getPrivateName(const Identifier& ident) const
 {
     return m_builtinNames->getPrivateName(ident);
