@@ -1,3 +1,11 @@
+2015-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix some bad test results committed earlier.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/destroy-element-with-multiple-handlers-crash-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/destroy-wheel-element-crash-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/destroy-wheel-element-parent-crash-expected.txt:
+
 2015-04-02  Darin Adler  <darin@apple.com>
 
         Streamline icon-related code, mostly unused
