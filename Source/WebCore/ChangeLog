@@ -1,3 +1,19 @@
+2015-04-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Heuristic: Avoid exposing an element as clickable if mouse event delegation is handled on an AXElement with more than one descendant AXElement
+        https://bugs.webkit.org/show_bug.cgi?id=136247
+
+        Reviewed by Mario Sanchez Prada.
+
+        Modify the logic for determining whether an element supports the press action by trying to filter out objects being handled by event delegation.
+        The heuristic is if an element handles click actions and has more than one of a {static text, image, control, link, heading}, then we think
+        it's using event delegation, and do not expose the press action.
+
+        Test: platform/mac/accessibility/press-action-not-exposed-for-event-delegation.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::supportsPressAction):
+
 2015-04-04  Simon Fraser  <simon.fraser@apple.com>
 
         More const in CSSToStyleMap

@@ -2002,6 +2002,21 @@ bool AccessibilityObject::supportsPressAction() const
     if (!actionElement)
         return false;
     
+    // [Bug: 136247] Heuristic: element handlers that have more than one accessible descendant should not be exposed as supporting press.
+    if (actionElement != element()) {
+        if (AccessibilityObject* axObj = axObjectCache()->getOrCreate(actionElement)) {
+            AccessibilityChildrenVector results;
+            // Search within for immediate descendants that are static text. If we find more than one
+            // then this is an event delegator actionElement and we should expose the press action.
+            Vector<AccessibilitySearchKey> keys({ StaticTextSearchKey, ControlSearchKey, GraphicSearchKey, HeadingSearchKey, LinkSearchKey });
+            AccessibilitySearchCriteria criteria(axObj, SearchDirectionNext, "", 2, false, false);
+            criteria.searchKeys = keys;
+            axObj->findMatchingObjects(&criteria, results);
+            if (results.size() > 1)
+                return false;
+        }
+    }
+    
     // [Bug: 133613] Heuristic: If the action element is presentational, we shouldn't expose press as a supported action.
     return !nodeHasPresentationRole(actionElement);
 }
