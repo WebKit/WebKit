@@ -71,7 +71,7 @@ void stripValuesEndingWithString(const char* environmentVariable, const char* se
                 
         // Copy over everything right of the match to the current component start, and search from there again.
         if (componentStart[0] == ':') {
-            // If componentStart points to a colon, go ahead and copy the colon over.
+            // If componentStart points to a colon, copy the colon over.
             strcpy(componentStart, match + searchLength);
         } else {
             // Otherwise, componentStart still points to the beginning of environmentValueBuffer, so don't copy over the colon.

@@ -342,7 +342,7 @@ void LocalStorageDatabaseTracker::removeDatabaseWithOriginIdentifier(const Strin
 
     m_origins.remove(originIdentifier);
     if (m_origins.isEmpty()) {
-        // There are no origins left, go ahead and delete the tracker database.
+        // There are no origins left; delete the tracker database.
         m_database.close();
         deleteFile(trackerDatabasePath());
         deleteEmptyDirectory(m_localStorageDirectory);

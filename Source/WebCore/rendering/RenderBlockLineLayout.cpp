@@ -103,8 +103,7 @@ void RenderBlockFlow::appendRunsForObject(BidiRunList<BidiRun>& runs, int start,
             return;
         }
 
-        // An end midpoint has been encountered within our object.  We
-        // need to go ahead and append a run with our endpoint.
+        // An end midpoint has been encountered within our object. We need to append a run with our endpoint.
         if (static_cast<int>(nextMidpoint.offset() + 1) <= end) {
             lineMidpointState.setBetweenMidpoints(true);
             lineMidpointState.incrementCurrentMidpoint();

@@ -66,8 +66,7 @@ void XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEvent(bool le
     }
 
     if (!isActive()) {
-        // The timer is not active so the least frequent event for now is every byte.
-        // Just go ahead and dispatch the event.
+        // The timer is not active so the least frequent event for now is every byte. Just dispatch the event.
 
         // We should not have any throttled progress event.
         ASSERT(!m_hasThrottledProgressEvent);

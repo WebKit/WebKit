@@ -315,8 +315,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
 
     // If we have no first line box, then just bail early.
     if (!firstBox) {
-        // For an empty inline, go ahead and propagate the check up to our parent, unless the parent
-        // is already dirty.
+        // For an empty inline, propagate the check up to our parent, unless the parent is already dirty.
         if (container.isInline() && !container.ancestorLineBoxDirty()) {
             container.parent()->dirtyLinesFromChangedChild(container);
             container.setAncestorLineBoxDirty(); // Mark the container to avoid dirtying the same lines again across multiple destroy() calls of the same subtree.

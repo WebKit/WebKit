@@ -684,8 +684,7 @@ void DatabaseTracker::deleteOriginLockFor(SecurityOrigin* origin)
     // files in this origin. We'll give the OriginLock one chance to do an
     // orderly clean up first when we remove its ref from the m_originLockMap.
     // This may or may not be possible depending on whether other threads are
-    // also using the OriginLock at the same time. After that, we will go ahead
-    // and delete the lock file.
+    // also using the OriginLock at the same time. After that, we will delete the lock file.
 
     m_originLockMap.remove(origin->databaseIdentifier());
     OriginLock::deleteLockFile(originPath(origin));

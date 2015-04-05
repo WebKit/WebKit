@@ -1221,7 +1221,7 @@ void IconDatabase::performURLImport()
             
             // If the pageRecord doesn't exist in this map, then no one has retained this pageURL
             // If the s_databaseCleanupCounter count is non-zero, then we're not supposed to be pruning the database in any manner,
-            // so go ahead and actually create a pageURLRecord for this url even though it's not retained.
+            // so actually create a pageURLRecord for this url even though it's not retained.
             // If database cleanup *is* allowed, we don't want to bother pulling in a page url from disk that noone is actually interested
             // in - we'll prune it later instead!
             if (!pageRecord && databaseCleanupCounter && documentCanHaveIcon(pageURL)) {

@@ -1065,7 +1065,7 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
             }
 
             // Apply style to all nodes containing targetNode and their siblings but NOT to targetNode
-            // But if we've removed styledElement then go ahead and always apply the style.
+            // But if we've removed styledElement then always apply the style.
             if (&child != targetNode || styledElement)
                 applyInlineStyleToPushDown(&child, styleToPushDown.get());
 

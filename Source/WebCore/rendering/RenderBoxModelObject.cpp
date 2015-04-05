@@ -813,7 +813,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             if (!boxShadowShouldBeAppliedToBackground)
                 backgroundRect.intersect(paintInfo.rect);
 
-            // If we have an alpha and we are painting the root element, go ahead and blend with the base background color.
+            // If we have an alpha and we are painting the root element, blend with the base background color.
             Color baseColor;
             bool shouldClearBackground = false;
             if ((baseBgColorUsage != BaseBackgroundColorSkip) && isOpaqueRoot) {

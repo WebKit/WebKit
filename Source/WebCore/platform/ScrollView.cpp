@@ -604,8 +604,8 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
     bool hasOverlayScrollbars = (!m_horizontalScrollbar || m_horizontalScrollbar->isOverlayScrollbar()) && (!m_verticalScrollbar || m_verticalScrollbar->isOverlayScrollbar());
 
-    // If we came in here with the view already needing a layout, then go ahead and do that
-    // first. (This will be the common case, e.g., when the page changes due to window resizing for example).
+    // If we came in here with the view already needing a layout then do that first.
+    // (This will be the common case, e.g., when the page changes due to window resizing for example).
     // This layout will not re-enter updateScrollbars and does not count towards our max layout pass total.
     if (!m_scrollbarsSuppressed && !hasOverlayScrollbars) {
         m_inUpdateScrollbars = true;
@@ -839,9 +839,8 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
         if (!scrollContentsFastPath(-scrollDelta, scrollViewRect, clipRect))
             scrollContentsSlowPath(updateRect);
     } else { 
-       // We need to go ahead and repaint the entire backing store.  Do it now before moving the
-       // windowed plugins.
-       scrollContentsSlowPath(updateRect);
+        // We need to repaint the entire backing store. Do it now before moving the windowed plugins.
+        scrollContentsSlowPath(updateRect);
     }
 
     // Invalidate the overhang areas if they are visible.

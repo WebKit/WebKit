@@ -59,8 +59,7 @@ const int maxValueForCssLength = intMaxForLayoutUnit - 2;
 const int minValueForCssLength = intMinForLayoutUnit + 2;
 
 // Dimension calculations are imprecise, often resulting in values of e.g.
-// 44.99998. We need to go ahead and round if we're really close to the next
-// integer value.
+// 44.99998. We need to round if we're really close to the next integer value.
 template<typename T> inline T roundForImpreciseConversion(double value)
 {
     value += (value < 0) ? -0.01 : +0.01;

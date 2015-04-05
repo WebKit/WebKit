@@ -390,9 +390,8 @@ void CachedImage::addIncrementalDataBuffer(SharedBuffer& data)
         return;
     }
 
-    // Go ahead and tell our observers to try to draw.
-    // Each chunk from the network causes observers to repaint, which will
-    // force that chunk to decode.
+    // Tell our observers to try to draw.
+    // Each chunk from the network causes observers to repaint, which will force that chunk to decode.
     // It would be nice to only redraw the decoded band of the image, but with the current design
     // (decoding delayed until painting) that seems hard.
     notifyObservers();

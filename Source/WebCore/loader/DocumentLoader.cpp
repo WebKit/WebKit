@@ -906,7 +906,7 @@ void DocumentLoader::detachFromFrame()
     Ref<DocumentLoader> protectLoader(*this);
 
     // It never makes sense to have a document loader that is detached from its
-    // frame have any loads active, so go ahead and kill all the loads.
+    // frame have any loads active, so kill all the loads.
     stopLoading();
     if (m_mainResource && m_mainResource->hasClient(this))
         m_mainResource->removeClient(this);

@@ -1608,7 +1608,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     // insertText can be called for several reasons:
     // - If it's from normal key event processing (including key bindings), we save the action to perform it later.
-    // - If it's from an input method, then we should go ahead and insert the text now.
+    // - If it's from an input method, then we should insert the text now.
     // - If it's sent outside of keyboard event processing (e.g. from Character Viewer, or when confirming an inline input area with a mouse),
     // then we also execute it immediately, as there will be no other chance.
     Vector<KeypressCommand>* keypressCommands = _data->_collectedKeypressCommands;
@@ -2078,7 +2078,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     // insertText can be called for several reasons:
     // - If it's from normal key event processing (including key bindings), we may need to save the action to perform it later.
-    // - If it's from an input method, then we should go ahead and insert the text now. We assume it's from the input method if we have marked text.
+    // - If it's from an input method, then we should insert the text now. We assume it's from the input method if we have marked text.
     // FIXME: In theory, this could be wrong for some input methods, so we should try to find another way to determine if the call is from the input method.
     // - If it's sent outside of keyboard event processing (e.g. from Character Viewer, or when confirming an inline input area with a mouse),
     // then we also execute it immediately, as there will be no other chance.
@@ -3394,7 +3394,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     }
 
     if (inputSourceChanged) {
-        // The input source changed, go ahead and discard any entered text.
+        // The input source changed; discard any entered text.
         [[WKTextInputWindowController sharedTextInputWindowController] unmarkText];
     }
 

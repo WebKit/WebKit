@@ -671,7 +671,7 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
 #if !ASSERT_DISABLED
     LayoutSize oldLayoutDelta = view().layoutDelta();
 #endif
-    // Go ahead and position the child as though it didn't collapse with the top.
+    // Position the child as though it didn't collapse with the top.
     setLogicalTopForChild(child, logicalTopEstimate, ApplyLayoutDelta);
     estimateRegionRangeForBoxChild(child);
 
@@ -728,10 +728,8 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
     // when collapseMargins dynamically adds overhanging floats because of a child with negative margins.
     if (logicalTopAfterClear != logicalTopEstimate || child.needsLayout() || (paginated && childBlockFlow && childBlockFlow->shouldBreakAtLineToAvoidWidow())) {
         if (child.shrinkToAvoidFloats()) {
-            // The child's width depends on the line width.
-            // When the child shifts to clear an item, its width can
-            // change (because it has more available line width).
-            // So go ahead and mark the item as dirty.
+            // The child's width depends on the line width. When the child shifts to clear an item, its width can
+            // change (because it has more available line width). So mark the item as dirty.
             child.setChildNeedsLayout(MarkOnlyThis);
         }
         
@@ -1312,7 +1310,7 @@ void RenderBlockFlow::handleAfterSideOfBlock(LayoutUnit beforeSide, LayoutUnit a
     if (is<RenderBlockFlow>(lastBlock) && downcast<RenderBlockFlow>(*lastBlock).isSelfCollapsingBlock())
         setLogicalHeight(logicalHeight() - downcast<RenderBlockFlow>(*lastBlock).marginOffsetForSelfCollapsingBlock());
 
-    // If we can't collapse with children then go ahead and add in the bottom margin.
+    // If we can't collapse with children then add in the bottom margin.
     if (!marginInfo.discardMargin() && (!marginInfo.canCollapseWithMarginAfter() && !marginInfo.canCollapseWithMarginBefore()
         && (!document().inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.hasMarginAfterQuirk())))
         setLogicalHeight(logicalHeight() + marginInfo.margin());
@@ -1526,10 +1524,8 @@ LayoutUnit RenderBlockFlow::adjustBlockChildForPagination(LayoutUnit logicalTopA
         setLogicalTopForChild(child, logicalTopAfterClear, ApplyLayoutDelta);
 
         if (child.shrinkToAvoidFloats()) {
-            // The child's width depends on the line width.
-            // When the child shifts to clear an item, its width can
-            // change (because it has more available line width).
-            // So go ahead and mark the item as dirty.
+            // The child's width depends on the line width. When the child shifts to clear an item, its width can
+            // change (because it has more available line width). So mark the item as dirty.
             child.setChildNeedsLayout(MarkOnlyThis);
         }
         
@@ -1588,7 +1584,7 @@ LayoutUnit RenderBlockFlow::adjustBlockChildForPagination(LayoutUnit logicalTopA
             result += paginationStrut;
     }
 
-    // Similar to how we apply clearance. Go ahead and boost height() to be the place where we're going to position the child.
+    // Similar to how we apply clearance. Boost height() to be the place where we're going to position the child.
     setLogicalHeight(logicalHeight() + (result - oldTop));
     
     // Return the final adjusted logical top.
@@ -2231,8 +2227,7 @@ FloatingObject* RenderBlockFlow::insertFloatingObject(RenderBox& floatBox)
 
     std::unique_ptr<FloatingObject> floatingObject = FloatingObject::create(floatBox);
     
-    // Our location is irrelevant if we're unsplittable or no pagination is in effect.
-    // Just go ahead and lay out the float.
+    // Our location is irrelevant if we're unsplittable or no pagination is in effect. Just lay out the float.
     bool isChildRenderBlock = floatBox.isRenderBlock();
     if (isChildRenderBlock && !floatBox.needsLayout() && view().layoutState()->pageLogicalHeightChanged())
         floatBox.setChildNeedsLayout(MarkOnlyThis);
@@ -2662,8 +2657,7 @@ LayoutUnit RenderBlockFlow::addOverhangingFloats(RenderBlockFlow& child, bool ma
                 floatingObject->setShouldPaint(true);
             }
             
-            // Since the float doesn't overhang, it didn't get put into our list. We need to go ahead and add its overflow in to the
-            // child now.
+            // Since the float doesn't overhang, it didn't get put into our list. We need to add its overflow in to the child now.
             if (floatingObject->isDescendant())
                 child.addOverflowFromChild(&floatingObject->renderer(), LayoutSize(xPositionForFloatIncludingMargin(floatingObject), yPositionForFloatIncludingMargin(floatingObject)));
         }
@@ -3057,8 +3051,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
     if (!hasLines()) {
         if (containsStart) {
-            // Go ahead and update our lastLogicalTop to be the bottom of the block.  <hr>s or empty blocks with height can trip this
-            // case.
+            // Update our lastLogicalTop to be the bottom of the block. <hr>s or empty blocks with height can trip this case.
             lastLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalHeight();
             lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, logicalHeight(), cache);
             lastLogicalRight = logicalRightSelectionOffset(rootBlock, logicalHeight(), cache);
@@ -3094,7 +3087,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
         lastSelectedLine = lastRootBox();
 
     if (lastSelectedLine && selectionState() != SelectionEnd && selectionState() != SelectionBoth) {
-        // Go ahead and update our lastY to be the bottom of the last selected line.
+        // Update our lastY to be the bottom of the last selected line.
         lastLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + lastSelectedLine->selectionBottom();
         lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, lastSelectedLine->selectionBottom(), cache);
         lastLogicalRight = logicalRightSelectionOffset(rootBlock, lastSelectedLine->selectionBottom(), cache);
@@ -4030,10 +4023,9 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
         bool isAnonymousInlineBlock = child->isAnonymousInlineBlock();
         
         if (!child->isBR()) {
-            // Step One: determine whether or not we need to go ahead and
-            // terminate our current line. Each discrete chunk can become
-            // the new min-width, if it is the widest chunk seen so far, and
-            // it can also become the max-width.
+            // Step One: determine whether or not we need to terminate our current line.
+            // Each discrete chunk can become the new min-width, if it is the widest chunk
+            // seen so far, and it can also become the max-width.
 
             // Children fall into three categories:
             // (1) An inline flow object. These objects always have a min/max of 0,
@@ -4042,8 +4034,8 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
             //
             // (2) An inline non-text non-flow object, e.g., an inline replaced element.
             // These objects can always be on a line by themselves, so in this situation
-            // we need to go ahead and break the current line, and then add in our own
-            // margins and min/max width on its own line, and then terminate the line.
+            // we need to break the current line, and then add in our own margins and min/max
+            // width on its own line, and then terminate the line.
             //
             // (3) A text object. Text runs can have breakable characters at the start,
             // the middle or the end. They may also lose whitespace off the front if
@@ -4055,9 +4047,8 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
             // ends with whitespace.
             // (c) the min/max width of the string (trimmed for whitespace).
             //
-            // If the text string starts with whitespace, then we need to go ahead and
-            // terminate our current line (unless we're already in a whitespace stripping
-            // mode.
+            // If the text string starts with whitespace, then we need to terminate our current line
+            // (unless we're already in a whitespace stripping mode.
             //
             // If the text string has a breakable character in the middle, but didn't start
             // with whitespace, then we add the width of the first non-breakable run and
@@ -4103,8 +4094,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
 
             if (!is<RenderInline>(*child) && !is<RenderText>(*child)) {
                 // Case (2). Inline replaced elements and floats.
-                // Go ahead and terminate the current line as far as
-                // minwidth is concerned.
+                // Terminate the current line as far as minwidth is concerned.
                 childMin += child->minPreferredLogicalWidth().ceilToFloat();
                 childMax += child->maxPreferredLogicalWidth().ceilToFloat();
 
@@ -4240,7 +4230,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                     // We have a breakable character. Now we need to know if
                     // we start and end with whitespace.
                     if (beginWS) {
-                        // Go ahead and end the current line.
+                        // End the current line.
                         minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);
                     } else {
                         inlineMin += beginMin;
@@ -4251,8 +4241,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                     inlineMin = childMin;
 
                     if (endWS) {
-                        // We end in whitespace, which means we can go ahead
-                        // and end our current line.
+                        // We end in whitespace, which means we can end our current line.
                         minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);
                         inlineMin = 0;
                         shouldBreakLineAfterText = false;

@@ -868,14 +868,13 @@ Ref<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle
 
     applyCascadedProperties(cascade, firstCSSProperty, lastHighPriorityProperty);
 
-    // If our font got dirtied, go ahead and update it now.
+    // If our font got dirtied, update it now.
     updateFont();
 
     // Now do rest of the properties.
     applyCascadedProperties(cascade, firstLowPriorityProperty, lastCSSProperty);
 
-    // If our font got dirtied by one of the non-essential font props,
-    // go ahead and update it a second time.
+    // If our font got dirtied by one of the non-essential font props, update it a second time.
     updateFont();
 
     cascade.applyDeferredProperties(*this);
@@ -1034,7 +1033,7 @@ Ref<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 
     applyCascadedProperties(cascade, firstCSSProperty, lastHighPriorityProperty);
 
-    // If our font got dirtied, go ahead and update it now.
+    // If our font got dirtied, update it now.
     updateFont();
 
     applyCascadedProperties(cascade, firstLowPriorityProperty, lastCSSProperty);
@@ -1790,7 +1789,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     if (cacheItem && cacheItem->renderStyle->effectiveZoom() != state.style()->effectiveZoom())
         return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
 
-    // If our font got dirtied, go ahead and update it now.
+    // If our font got dirtied, update it now.
     updateFont();
 
     // If the font changed, we can't use the matched properties cache. Start over.

@@ -108,7 +108,7 @@ InlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo
             context.handleReplaced();
         } else if (context.currentObject()->isText()) {
             if (context.handleText(wordMeasurements, m_hyphenated, consecutiveHyphenatedLines)) {
-                // We've hit a hard text line break. Our line break iterator is updated, so go ahead and early return.
+                // We've hit a hard text line break. Our line break iterator is updated, so early return.
                 return context.lineBreak();
             }
         } else if (context.currentObject()->isLineBreakOpportunity())

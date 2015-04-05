@@ -383,15 +383,13 @@ inline LayoutUnit inlineLogicalWidth(RenderObject* child, bool checkStartEdge = 
 
 inline void BreakingContext::handleOutOfFlowPositioned(Vector<RenderBox*>& positionedObjects)
 {
-    // If our original display wasn't an inline type, then we can
-    // go ahead and determine our static inline position now.
+    // If our original display wasn't an inline type, then we can determine our static inline position now.
     auto& box = downcast<RenderBox>(*m_current.renderer());
     bool isInlineType = box.style().isOriginalDisplayInlineType();
     if (!isInlineType)
         m_block.setStaticInlinePositionForChild(box, m_block.logicalHeight(), m_block.startOffsetForContent(m_block.logicalHeight()));
     else {
-        // If our original display was an INLINE type, then we can go ahead
-        // and determine our static y position now.
+        // If our original display was an INLINE type, then we can determine our static y position now.
         box.layer()->setStaticBlockPosition(m_block.logicalHeight());
     }
 
@@ -920,9 +918,8 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
             }
 
             if (!m_ignoringSpaces && m_currentStyle->collapseWhiteSpace()) {
-                // If we encounter a newline, or if we encounter a
-                // second space, we need to go ahead and break up this
-                // run and enter a mode where we start collapsing spaces.
+                // If we encounter a newline, or if we encounter a second space,
+                // we need to break up this run and enter a mode where we start collapsing spaces.
                 if (m_currentCharacterIsSpace && previousCharacterIsSpace) {
                     m_ignoringSpaces = true;
 

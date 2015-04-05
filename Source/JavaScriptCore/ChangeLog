@@ -1,3 +1,16 @@
+2015-04-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove "go ahead and" from comments
+        https://bugs.webkit.org/show_bug.cgi?id=143421
+
+        Reviewed by Darin Adler, Benjamin Poulain.
+
+        Remove the phrase "go ahead and" from comments where it doesn't add
+        anything (which is almost all of them).
+
+        * interpreter/JSStack.cpp:
+        (JSC::JSStack::growSlowCase):
+
 2015-04-04  Andreas Kling  <akling@apple.com>
 
         Logically empty WeakBlocks should not pin down their MarkedBlocks indefinitely.

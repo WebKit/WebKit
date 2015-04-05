@@ -285,8 +285,8 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 {
     NSView *documentView = [self documentView];
 
-    // If we came in here with the view already needing a layout, then go ahead and do that
-    // first.  (This will be the common case, e.g., when the page changes due to window resizing for example).
+    // If we came in here with the view already needing a layout, then do that first.
+    // (This will be the common case, e.g., when the page changes due to window resizing for example).
     // This layout will not re-enter updateScrollers and does not count towards our max layout pass total.
     if (!_private->suppressLayout && !_private->suppressScrollers && [documentView isKindOfClass:[WebHTMLView class]]) {
         WebHTMLView* htmlView = (WebHTMLView*)documentView;
