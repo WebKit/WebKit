@@ -1,3 +1,14 @@
+2015-04-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: ObjectTree array index hints are clipped when shown in popover
+        https://bugs.webkit.org/show_bug.cgi?id=143309
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.css:
+        (.object-tree-array-index .index-name):
+        Add left margin that equals the width of the expand/collapse icon.
+
 2015-03-31  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: console.error(object) has double disclosure triangles
