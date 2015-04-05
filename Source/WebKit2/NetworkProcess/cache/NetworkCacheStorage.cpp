@@ -609,7 +609,7 @@ void Storage::setCapacity(size_t capacity)
     ASSERT(RunLoop::isMain());
 
 #if !ASSERT_DISABLED
-    const size_t assumedAverageRecordSize = 50 << 20;
+    const size_t assumedAverageRecordSize = 50 << 10;
     size_t maximumRecordCount = capacity / assumedAverageRecordSize;
     // ~10 bits per element are required for <1% false positive rate.
     size_t effectiveBloomFilterCapacity = ContentsFilter::tableSize / 10;
