@@ -65,7 +65,7 @@ static bool executeSQLStatement(WebCore::SQLiteStatement& statement)
     ASSERT(WebCore::SQLiteDatabaseTracker::hasTransactionInProgress());
     ASSERT(statement.database().isOpen());
 
-    if (statement.step() != WebCore::SQLResultDone) {
+    if (statement.step() != SQLITE_DONE) {
         LOG_ERROR("Network cache statistics: failed to execute statement \"%s\" error \"%s\"", statement.query().utf8().data(), statement.database().lastErrorMsg());
         return false;
     }
@@ -115,7 +115,7 @@ void Statistics::initialize(const String& databasePath)
         executeSQLCommand(m_database, ASCIILiteral("CREATE TABLE IF NOT EXISTS UncachedReason (hash TEXT PRIMARY KEY, reason INTEGER)"));
 
         WebCore::SQLiteStatement statement(m_database, ASCIILiteral("SELECT count(*) FROM AlreadyRequested"));
-        if (statement.prepareAndStep() != WebCore::SQLResultRow) {
+        if (statement.prepareAndStep() != SQLITE_ROW) {
             LOG_ERROR("Network cache statistics: Failed to count the number of rows in AlreadyRequested table");
             return;
         }
@@ -357,17 +357,17 @@ void Statistics::queryWasEverRequested(const String& hash, NeedUncachedReason ne
         if (m_database.isOpen()) {
             if (!wasAlreadyRequested) {
                 WebCore::SQLiteStatement statement(m_database, ASCIILiteral("SELECT hash FROM AlreadyRequested WHERE hash=?"));
-                if (statement.prepare() == WebCore::SQLResultOk) {
+                if (statement.prepare() == SQLITE_OK) {
                     statement.bindText(1, query.hash);
-                    wasAlreadyRequested = (statement.step() == WebCore::SQLResultRow);
+                    wasAlreadyRequested = (statement.step() == SQLITE_ROW);
                 }
             }
             if (wasAlreadyRequested && query.needUncachedReason) {
                 WebCore::SQLiteStatement statement(m_database, ASCIILiteral("SELECT reason FROM UncachedReason WHERE hash=?"));
                 storeDecision = StoreDecision::Yes;
-                if (statement.prepare() == WebCore::SQLResultOk) {
+                if (statement.prepare() == SQLITE_OK) {
                     statement.bindText(1, query.hash);
-                    if (statement.step() == WebCore::SQLResultRow)
+                    if (statement.step() == SQLITE_ROW)
                         storeDecision = static_cast<StoreDecision>(statement.getColumnInt(0));
                 }
             }
@@ -403,7 +403,7 @@ void Statistics::addHashesToDatabase(const Vector<StringCapture>& hashes)
     ASSERT(m_database.isOpen());
 
     WebCore::SQLiteStatement statement(m_database, ASCIILiteral("INSERT OR IGNORE INTO AlreadyRequested (hash) VALUES (?)"));
-    if (statement.prepare() != WebCore::SQLResultOk)
+    if (statement.prepare() != SQLITE_OK)
         return;
 
     for (auto& hash : hashes) {
@@ -421,7 +421,7 @@ void Statistics::addStoreDecisionsToDatabase(const Vector<std::pair<StringCaptur
     ASSERT(m_database.isOpen());
 
     WebCore::SQLiteStatement statement(m_database, ASCIILiteral("INSERT OR REPLACE INTO UncachedReason (hash, reason) VALUES (?, ?)"));
-    if (statement.prepare() != WebCore::SQLResultOk)
+    if (statement.prepare() != SQLITE_OK)
         return;
 
     for (auto& pair : storeDecisions) {

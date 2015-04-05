@@ -91,7 +91,6 @@ int SQLiteStatement::step()
     MutexLocker databaseLock(m_database.databaseMutex());
     if (m_database.isInterrupted())
         return SQLITE_INTERRUPT;
-    //ASSERT(m_isPrepared);
 
     if (!m_statement)
         return SQLITE_OK;
@@ -486,7 +485,7 @@ bool SQLiteStatement::returnIntResults(int col, Vector<int>& v)
         finalize();
     if (prepare() != SQLITE_OK)
         return false;
-        
+
     while (step() == SQLITE_ROW)
         v.append(getColumnInt(col));
     bool result = true;
@@ -506,7 +505,7 @@ bool SQLiteStatement::returnInt64Results(int col, Vector<int64_t>& v)
         finalize();
     if (prepare() != SQLITE_OK)
         return false;
-        
+
     while (step() == SQLITE_ROW)
         v.append(getColumnInt64(col));
     bool result = true;

@@ -1,3 +1,26 @@
+2015-04-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use constants of sqlite3 directly for status of SQL result in webdatabase
+        https://bugs.webkit.org/show_bug.cgi?id=143329
+
+        Reviewed by Darin Adler.
+
+        In webdatabase, it has used own constants vairables as well as using sqlite3 constants directly.
+        It causes to use if~else statement which consumes more cpu cycles compared to switch~case. This
+        patch makes to use constants of sqlite3.
+
+        * Storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::performImport):
+        (WebCore::StorageAreaSync::sync):
+        (WebCore::StorageAreaSync::deleteEmptyDatabase):
+        * Storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::syncImportOriginIdentifiers):
+        (WebCore::StorageTracker::syncSetOriginDetails):
+        (WebCore::StorageTracker::syncDeleteAllOrigins):
+        (WebCore::StorageTracker::syncDeleteOrigin):
+        (WebCore::StorageTracker::databasePathForOrigin):
+        * WebKit.vcxproj/WebKit/WebKitCommon.props: Add sqlite include path.
+
 2015-04-01  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Windows and Mac.

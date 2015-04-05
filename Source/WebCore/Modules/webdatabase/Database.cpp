@@ -314,7 +314,7 @@ Vector<String> Database::performGetTableNames()
     disableAuthorizer();
 
     SQLiteStatement statement(sqliteDatabase(), "SELECT name FROM sqlite_master WHERE type='table';");
-    if (statement.prepare() != SQLResultOk) {
+    if (statement.prepare() != SQLITE_OK) {
         LOG_ERROR("Unable to retrieve list of tables for database %s", databaseDebugName().ascii().data());
         enableAuthorizer();
         return Vector<String>();
@@ -322,7 +322,7 @@ Vector<String> Database::performGetTableNames()
 
     Vector<String> tableNames;
     int result;
-    while ((result = statement.step()) == SQLResultRow) {
+    while ((result = statement.step()) == SQLITE_ROW) {
         String name = statement.getColumnText(0);
         if (name != databaseInfoTableName())
             tableNames.append(name);
@@ -330,7 +330,7 @@ Vector<String> Database::performGetTableNames()
 
     enableAuthorizer();
 
-    if (result != SQLResultDone) {
+    if (result != SQLITE_DONE) {
         LOG_ERROR("Error getting tables for database %s", databaseDebugName().ascii().data());
         return Vector<String>();
     }

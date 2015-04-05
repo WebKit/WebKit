@@ -93,7 +93,7 @@ static void webkitSoupCookieJarSqliteLoad(WebKitSoupCookieJarSqlite* sqliteJar)
     WebKitSoupCookieJarSqlitePrivate* priv = sqliteJar->priv;
     priv->isLoading = true;
     SQLiteStatement query(priv->database, "SELECT id, name, value, host, path, expiry, lastAccessed, isSecure, isHttpOnly FROM moz_cookies;");
-    if (query.prepare() != SQLResultOk) {
+    if (query.prepare() != SQLITE_OK) {
         g_warning("Failed to prepare all cookies query");
         priv->isLoading = false;
         return;
@@ -102,7 +102,7 @@ static void webkitSoupCookieJarSqliteLoad(WebKitSoupCookieJarSqlite* sqliteJar)
     SoupCookieJar* jar = SOUP_COOKIE_JAR(sqliteJar);
     time_t now = floorf(currentTime());
     int result;
-    while ((result = query.step()) == SQLResultRow) {
+    while ((result = query.step()) == SQLITE_ROW) {
         int expireTime = query.getColumnInt(ColumnExpiry);
         if (now >= expireTime)
             continue;
@@ -118,7 +118,7 @@ static void webkitSoupCookieJarSqliteLoad(WebKitSoupCookieJarSqlite* sqliteJar)
         soup_cookie_jar_add_cookie(jar, cookie);
     }
 
-    if (result != SQLResultDone)
+    if (result != SQLITE_DONE)
         g_warning("Error reading cookies from database");
     priv->isLoading = false;
 }
@@ -127,7 +127,7 @@ static bool webkitSoupCookieJarSqliteInsertCookie(WebKitSoupCookieJarSqlite* sql
 {
     WebKitSoupCookieJarSqlitePrivate* priv = sqliteJar->priv;
     SQLiteStatement query(priv->database, "INSERT INTO moz_cookies VALUES(NULL, ?, ?, ?, ?, ?, NULL, ?, ?);");
-    if (query.prepare() != SQLResultOk) {
+    if (query.prepare() != SQLITE_OK) {
         g_warning("Failed to prepare insert cookies query");
         return false;
     }
@@ -139,7 +139,7 @@ static bool webkitSoupCookieJarSqliteInsertCookie(WebKitSoupCookieJarSqlite* sql
     query.bindInt(5, static_cast<int64_t>(soup_date_to_time_t(cookie->expires)));
     query.bindInt(6, cookie->secure);
     query.bindInt(7, cookie->http_only);
-    if (query.step() != SQLResultDone) {
+    if (query.step() != SQLITE_DONE) {
         g_warning("Error adding cookie (name=%s, domain=%s) to database", cookie->name, cookie->name);
         return false;
     }
@@ -151,14 +151,14 @@ static bool webkitSoupCookieJarSqliteDeleteCookie(WebKitSoupCookieJarSqlite* sql
 {
     WebKitSoupCookieJarSqlitePrivate* priv = sqliteJar->priv;
     SQLiteStatement query(priv->database, "DELETE FROM moz_cookies WHERE name = (?) AND host = (?);");
-    if (query.prepare() != SQLResultOk) {
+    if (query.prepare() != SQLITE_OK) {
         g_warning("Failed to prepare delete cookies query");
         return false;
     }
 
     query.bindText(1, String::fromUTF8(cookie->name));
     query.bindText(2, String::fromUTF8(cookie->domain));
-    if (query.step() != SQLResultDone) {
+    if (query.step() != SQLITE_DONE) {
         g_warning("Error deleting cookie (name=%s, domain=%s) from database", cookie->name, cookie->name);
         return false;
     }

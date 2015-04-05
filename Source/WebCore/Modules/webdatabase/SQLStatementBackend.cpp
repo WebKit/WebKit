@@ -112,7 +112,7 @@ PassRefPtr<SQLResultSet> SQLStatementBackend::sqlResultSet() const
     return m_resultSet;
 }
 
-bool SQLStatementBackend::execute(DatabaseBackend* db)
+bool SQLStatementBackend::execute(DatabaseBackend& db)
 {
     ASSERT(!m_resultSet);
 
@@ -124,19 +124,19 @@ bool SQLStatementBackend::execute(DatabaseBackend* db)
     if (m_error)
         return false;
 
-    db->setAuthorizerPermissions(m_permissions);
+    db.setAuthorizerPermissions(m_permissions);
 
-    SQLiteDatabase* database = &db->sqliteDatabase();
+    SQLiteDatabase& database = db.sqliteDatabase();
 
-    SQLiteStatement statement(*database, m_statement);
+    SQLiteStatement statement(database, m_statement);
     int result = statement.prepare();
 
-    if (result != SQLResultOk) {
-        LOG(StorageAPI, "Unable to verify correctness of statement %s - error %i (%s)", m_statement.ascii().data(), result, database->lastErrorMsg());
-        if (result == SQLResultInterrupt)
+    if (result != SQLITE_OK) {
+        LOG(StorageAPI, "Unable to verify correctness of statement %s - error %i (%s)", m_statement.ascii().data(), result, database.lastErrorMsg());
+        if (result == SQLITE_INTERRUPT)
             m_error = SQLError::create(SQLError::DATABASE_ERR, "could not prepare statement", result, "interrupted");
         else
-            m_error = SQLError::create(SQLError::SYNTAX_ERR, "could not prepare statement", result, database->lastErrorMsg());
+            m_error = SQLError::create(SQLError::SYNTAX_ERR, "could not prepare statement", result, database.lastErrorMsg());
         return false;
     }
 
@@ -144,20 +144,20 @@ bool SQLStatementBackend::execute(DatabaseBackend* db)
     // If this is the case, they might be trying to do something fishy or malicious
     if (statement.bindParameterCount() != m_arguments.size()) {
         LOG(StorageAPI, "Bind parameter count doesn't match number of question marks");
-        m_error = SQLError::create(db->isInterrupted() ? SQLError::DATABASE_ERR : SQLError::SYNTAX_ERR, "number of '?'s in statement string does not match argument count");
+        m_error = SQLError::create(db.isInterrupted() ? SQLError::DATABASE_ERR : SQLError::SYNTAX_ERR, "number of '?'s in statement string does not match argument count");
         return false;
     }
 
     for (unsigned i = 0; i < m_arguments.size(); ++i) {
         result = statement.bindValue(i + 1, m_arguments[i]);
-        if (result == SQLResultFull) {
+        if (result == SQLITE_FULL) {
             setFailureDueToQuota();
             return false;
         }
 
-        if (result != SQLResultOk) {
+        if (result != SQLITE_OK) {
             LOG(StorageAPI, "Failed to bind value index %i to statement for query '%s'", i + 1, m_statement.ascii().data());
-            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not bind value", result, database->lastErrorMsg());
+            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not bind value", result, database.lastErrorMsg());
             return false;
         }
     }
@@ -166,7 +166,8 @@ bool SQLStatementBackend::execute(DatabaseBackend* db)
 
     // Step so we can fetch the column names.
     result = statement.step();
-    if (result == SQLResultRow) {
+    switch (result) {
+    case SQLITE_ROW: {
         int columnCount = statement.columnCount();
         SQLResultSetRowList* rows = resultSet->rows();
 
@@ -178,32 +179,36 @@ bool SQLStatementBackend::execute(DatabaseBackend* db)
                 rows->addResult(statement.getColumnValue(i));
 
             result = statement.step();
-        } while (result == SQLResultRow);
+        } while (result == SQLITE_ROW);
 
-        if (result != SQLResultDone) {
-            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not iterate results", result, database->lastErrorMsg());
+        if (result != SQLITE_DONE) {
+            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not iterate results", result, database.lastErrorMsg());
             return false;
         }
-    } else if (result == SQLResultDone) {
+        break;
+    }
+    case SQLITE_DONE: {
         // Didn't find anything, or was an insert
-        if (db->lastActionWasInsert())
-            resultSet->setInsertId(database->lastInsertRowID());
-    } else if (result == SQLResultFull) {
+        if (db.lastActionWasInsert())
+            resultSet->setInsertId(database.lastInsertRowID());
+        break;
+    }
+    case SQLITE_FULL:
         // Return the Quota error - the delegate will be asked for more space and this statement might be re-run
         setFailureDueToQuota();
         return false;
-    } else if (result == SQLResultConstraint) {
-        m_error = SQLError::create(SQLError::CONSTRAINT_ERR, "could not execute statement due to a constaint failure", result, database->lastErrorMsg());
+    case SQLITE_CONSTRAINT:
+        m_error = SQLError::create(SQLError::CONSTRAINT_ERR, "could not execute statement due to a constaint failure", result, database.lastErrorMsg());
         return false;
-    } else {
-        m_error = SQLError::create(SQLError::DATABASE_ERR, "could not execute statement", result, database->lastErrorMsg());
+    default:
+        m_error = SQLError::create(SQLError::DATABASE_ERR, "could not execute statement", result, database.lastErrorMsg());
         return false;
     }
 
     // FIXME: If the spec allows triggers, and we want to be "accurate" in a different way, we'd use
     // sqlite3_total_changes() here instead of sqlite3_changed, because that includes rows modified from within a trigger
     // For now, this seems sufficient
-    resultSet->setRowsAffected(database->lastChanges());
+    resultSet->setRowsAffected(database.lastChanges());
 
     m_resultSet = resultSet;
     return true;

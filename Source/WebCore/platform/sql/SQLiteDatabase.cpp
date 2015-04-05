@@ -31,22 +31,12 @@
 #include "Logging.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
-#include <sqlite3.h>
 #include <thread>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-WEBCORE_EXPORT const int SQLResultDone = SQLITE_DONE;
-const int SQLResultError = SQLITE_ERROR;
-WEBCORE_EXPORT const int SQLResultOk = SQLITE_OK;
-WEBCORE_EXPORT const int SQLResultRow = SQLITE_ROW;
-const int SQLResultSchema = SQLITE_SCHEMA;
-const int SQLResultFull = SQLITE_FULL;
-const int SQLResultInterrupt = SQLITE_INTERRUPT;
-WEBCORE_EXPORT const int SQLResultConstraint = SQLITE_CONSTRAINT;
 
 static const char notOpenErrorMessage[] = "database is not open";
 
@@ -191,7 +181,7 @@ void SQLiteDatabase::setMaximumSize(int64_t size)
 
     SQLiteStatement statement(*this, "PRAGMA max_page_count = " + String::number(newMaxPageCount));
     statement.prepare();
-    if (statement.step() != SQLResultRow)
+    if (statement.step() != SQLITE_ROW)
         LOG_ERROR("Failed to set maximum size of database to %lli bytes", static_cast<long long>(size));
 
     enableAuthorizer(true);

@@ -153,7 +153,7 @@ bool SQLiteIDBCursor::createSQLiteStatement(const String& sql)
 
     m_statement = std::make_unique<SQLiteStatement>(m_transaction->sqliteTransaction()->database(), sql);
 
-    if (m_statement->prepare() != SQLResultOk) {
+    if (m_statement->prepare() != SQLITE_OK) {
         LOG_ERROR("Could not create cursor statement (prepare/id) - '%s'", m_transaction->sqliteTransaction()->database().lastErrorMsg());
         return false;
     }
@@ -190,7 +190,7 @@ void SQLiteIDBCursor::resetAndRebindStatement()
     else
         m_currentUpperKey = m_currentKey;
 
-    if (m_statement->reset() != SQLResultOk) {
+    if (m_statement->reset() != SQLITE_OK) {
         LOG_ERROR("Could not reset cursor statement to respond to object store changes");
         return;
     }
@@ -200,19 +200,19 @@ void SQLiteIDBCursor::resetAndRebindStatement()
 
 bool SQLiteIDBCursor::bindArguments()
 {
-    if (m_statement->bindInt64(1, m_boundID) != SQLResultOk) {
+    if (m_statement->bindInt64(1, m_boundID) != SQLITE_OK) {
         LOG_ERROR("Could not bind id argument (bound ID)");
         return false;
     }
 
     RefPtr<SharedBuffer> buffer = serializeIDBKeyData(m_currentLowerKey);
-    if (m_statement->bindBlob(2, buffer->data(), buffer->size()) != SQLResultOk) {
+    if (m_statement->bindBlob(2, buffer->data(), buffer->size()) != SQLITE_OK) {
         LOG_ERROR("Could not create cursor statement (lower key)");
         return false;
     }
 
     buffer = serializeIDBKeyData(m_currentUpperKey);
-    if (m_statement->bindBlob(3, buffer->data(), buffer->size()) != SQLResultOk) {
+    if (m_statement->bindBlob(3, buffer->data(), buffer->size()) != SQLITE_OK) {
         LOG_ERROR("Could not create cursor statement (upper key)");
         return false;
     }
@@ -277,7 +277,7 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
     }
 
     int result = m_statement->step();
-    if (result == SQLResultDone) {
+    if (result == SQLITE_DONE) {
         m_completed = true;
 
         // When a cursor reaches its end, that is indicated by having undefined keys/values
@@ -288,7 +288,7 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
         return AdvanceResult::Success;
     }
 
-    if (result != SQLResultRow) {
+    if (result != SQLITE_ROW) {
         LOG_ERROR("Error advancing cursor - (%i) %s", result, m_transaction->sqliteTransaction()->database().lastErrorMsg());
         m_completed = true;
         m_errored = true;
@@ -331,9 +331,9 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
 
         SQLiteStatement objectStoreStatement(m_statement->database(), "SELECT value FROM Records WHERE key = CAST(? AS TEXT) and objectStoreID = ?;");
 
-        if (objectStoreStatement.prepare() != SQLResultOk
-            || objectStoreStatement.bindBlob(1, m_currentValueBuffer.data(), m_currentValueBuffer.size()) != SQLResultOk
-            || objectStoreStatement.bindInt64(2, m_objectStoreID) != SQLResultOk) {
+        if (objectStoreStatement.prepare() != SQLITE_OK
+            || objectStoreStatement.bindBlob(1, m_currentValueBuffer.data(), m_currentValueBuffer.size()) != SQLITE_OK
+            || objectStoreStatement.bindInt64(2, m_objectStoreID) != SQLITE_OK) {
             LOG_ERROR("Could not create index cursor statement into object store records (%i) '%s'", m_statement->database().lastError(), m_statement->database().lastErrorMsg());
             m_completed = true;
             m_errored = true;
@@ -342,9 +342,9 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
 
         int result = objectStoreStatement.step();
 
-        if (result == SQLResultRow)
+        if (result == SQLITE_ROW)
             objectStoreStatement.getColumnBlobAsVector(0, m_currentValueBuffer);
-        else if (result == SQLResultDone) {
+        else if (result == SQLITE_DONE) {
             // This indicates that the record we're trying to retrieve has been removed from the object store.
             // Skip over it.
             return AdvanceResult::ShouldAdvanceAgain;

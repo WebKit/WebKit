@@ -47,7 +47,7 @@ public:
         const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions);
     virtual ~SQLStatementBackend();
 
-    bool execute(DatabaseBackend*);
+    bool execute(DatabaseBackend&);
     bool lastExecutionFailedDueToQuota() const;
 
     bool hasStatementCallback() const { return m_hasCallback; }

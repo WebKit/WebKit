@@ -94,17 +94,17 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& que
     SQLiteStatement statement(db, query);
     int result = statement.prepare();
 
-    if (result != SQLResultOk) {
+    if (result != SQLITE_OK) {
         LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", result, query.ascii().data());
         return false;
     }
 
     result = statement.step();
-    if (result == SQLResultRow) {
+    if (result == SQLITE_ROW) {
         resultString = statement.getColumnText(0);
         return true;
     }
-    if (result == SQLResultDone) {
+    if (result == SQLITE_DONE) {
         resultString = String();
         return true;
     }
@@ -118,7 +118,7 @@ static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, cons
     SQLiteStatement statement(db, query);
     int result = statement.prepare();
 
-    if (result != SQLResultOk) {
+    if (result != SQLITE_OK) {
         LOG_ERROR("Failed to prepare statement to set value in database (%s)", query.ascii().data());
         return false;
     }
@@ -126,7 +126,7 @@ static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, cons
     statement.bindText(1, value);
 
     result = statement.step();
-    if (result != SQLResultDone) {
+    if (result != SQLITE_DONE) {
         LOG_ERROR("Failed to step statement to set value in database (%s)", query.ascii().data());
         return false;
     }
@@ -568,7 +568,7 @@ void DatabaseBackendBase::incrementalVacuumIfNeeded()
     int64_t totalSize = m_sqliteDatabase.totalSize();
     if (totalSize <= 10 * freeSpaceSize) {
         int result = m_sqliteDatabase.runIncrementalVacuumCommand();
-        if (result != SQLResultOk)
+        if (result != SQLITE_OK)
             m_frontend->logErrorMessage(formatErrorMessage("error vacuuming database", result, m_sqliteDatabase.lastErrorMsg()));
     }
 }

@@ -1,3 +1,88 @@
+2015-04-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use constants of sqlite3 directly for status of SQL result in webdatabase
+        https://bugs.webkit.org/show_bug.cgi?id=143329
+
+        Reviewed by Darin Adler.
+
+        In webdatabase, it has used own constant vairables as well as using sqlite3 constants directly.
+        It causes to use if~else statement which consumes more cpu cycles compared to switch~case. This
+        patch makes to use constants of sqlite3. Additionally if~else statment is changed to switch~case
+        to save cpu cycles.
+
+        No new tests, no behavior changes.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::performGetTableNames):
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::retrieveTextResultFromDatabase):
+        (WebCore::setTextValueInDatabase):
+        (WebCore::DatabaseBackendBase::incrementalVacuumIfNeeded):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::hasEntryForOriginNoLock):
+        (WebCore::DatabaseTracker::hasEntryForDatabase):
+        (WebCore::DatabaseTracker::fullPathForDatabaseNoLock):
+        (WebCore::DatabaseTracker::origins):
+        (WebCore::DatabaseTracker::databaseNamesForOriginNoLock):
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin):
+        (WebCore::DatabaseTracker::setDatabaseDetails):
+        (WebCore::DatabaseTracker::quotaForOriginNoLock):
+        (WebCore::DatabaseTracker::setQuota):
+        (WebCore::DatabaseTracker::addDatabase):
+        (WebCore::DatabaseTracker::deleteOrigin):
+        (WebCore::DatabaseTracker::deleteDatabase):
+        (WebCore::DatabaseTracker::removeDeletedOpenedDatabases):
+        (WebCore::DatabaseTracker::deleteDatabaseFileIfEmpty):
+        * Modules/webdatabase/SQLStatementBackend.cpp:
+        (WebCore::SQLStatementBackend::execute):
+        * Modules/webdatabase/SQLStatementBackend.h:
+        * Modules/webdatabase/SQLTransactionBackend.cpp:
+        (WebCore::SQLTransactionBackend::runCurrentStatementAndGetNextState):
+        Change to use a reference instead of a pointer in arguemnt of execute().
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::loadCacheGroup):
+        (WebCore::ApplicationCacheStorage::loadManifestHostHashes):
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::calculateQuotaForOrigin):
+        (WebCore::ApplicationCacheStorage::calculateUsageForOrigin):
+        (WebCore::ApplicationCacheStorage::calculateRemainingSizeForOriginExcludingCache):
+        (WebCore::ApplicationCacheStorage::storeUpdatedQuotaForOrigin):
+        (WebCore::ApplicationCacheStorage::verifySchemaVersion):
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::ApplicationCacheStorage::storeUpdatedType):
+        (WebCore::ApplicationCacheStorage::ensureOriginRecord):
+        (WebCore::ApplicationCacheStorage::storeNewestCache):
+        (WebCore::ApplicationCacheStorage::loadCache):
+        (WebCore::ApplicationCacheStorage::remove):
+        (WebCore::ApplicationCacheStorage::getManifestURLs):
+        (WebCore::ApplicationCacheStorage::cacheGroupSize):
+        (WebCore::ApplicationCacheStorage::deleteCacheGroupRecord):
+        (WebCore::ApplicationCacheStorage::checkForMaxSizeReached):
+        (WebCore::ApplicationCacheStorage::checkForDeletedResources):
+        (WebCore::ApplicationCacheStorage::flatFileAreaSize):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::checkIntegrity):
+        (WebCore::IconDatabase::performURLImport):
+        (WebCore::IconDatabase::pruneUnretainedIcons):
+        (WebCore::readySQLiteStatement):
+        (WebCore::IconDatabase::setIconIDForPageURLInSQLDatabase):
+        (WebCore::IconDatabase::removePageURLFromSQLDatabase):
+        (WebCore::IconDatabase::getIconIDForIconURLFromSQLDatabase):
+        (WebCore::IconDatabase::addIconURLToSQLDatabase):
+        (WebCore::IconDatabase::getImageDataForIconURLFromSQLDatabase):
+        (WebCore::IconDatabase::removeIconFromSQLDatabase):
+        (WebCore::IconDatabase::writeIconSnapshotToSQLDatabase):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::setMaximumSize):
+        * platform/sql/SQLiteDatabase.h:
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::getFileNameForNewDatabase):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::step):
+        (WebCore::SQLiteStatement::returnIntResults):
+        (WebCore::SQLiteStatement::returnInt64Results):
+
 2015-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Remove "go ahead and" from comments

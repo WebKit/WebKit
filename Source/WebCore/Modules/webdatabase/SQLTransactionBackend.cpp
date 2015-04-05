@@ -683,7 +683,7 @@ SQLTransactionState SQLTransactionBackend::runCurrentStatementAndGetNextState()
     if (m_hasVersionMismatch)
         m_currentStatementBackend->setVersionMismatchedError();
 
-    if (m_currentStatementBackend->execute(m_database.get())) {
+    if (m_currentStatementBackend->execute(*m_database)) {
         if (m_database->lastActionChangedDatabase()) {
             // Flag this transaction as having changed the database for later delegate notification
             m_modifiedDatabase = true;

@@ -1159,16 +1159,16 @@ bool IconDatabase::checkIntegrity()
     ASSERT_ICON_SYNC_THREAD();
     
     SQLiteStatement integrity(m_syncDB, "PRAGMA integrity_check;");
-    if (integrity.prepare() != SQLResultOk) {
+    if (integrity.prepare() != SQLITE_OK) {
         LOG_ERROR("checkIntegrity failed to execute");
         return false;
     }
     
     int resultCode = integrity.step();
-    if (resultCode == SQLResultOk)
+    if (resultCode == SQLITE_OK)
         return true;
-        
-    if (resultCode != SQLResultRow)
+
+    if (resultCode != SQLITE_ROW)
         return false;
 
     int columns = integrity.columnCount();
@@ -1203,13 +1203,13 @@ void IconDatabase::performURLImport()
 
     SQLiteStatement query(m_syncDB, importQuery);
     
-    if (query.prepare() != SQLResultOk) {
+    if (query.prepare() != SQLITE_OK) {
         LOG_ERROR("Unable to prepare icon url import query");
         return;
     }
     
     int result = query.step();
-    while (result == SQLResultRow) {
+    while (result == SQLITE_ROW) {
         AutodrainedPool pool;
         String pageURL = query.getColumnText(0);
         String iconURL = query.getColumnText(1);
@@ -1264,7 +1264,7 @@ void IconDatabase::performURLImport()
         result = query.step();
     }
     
-    if (result != SQLResultDone)
+    if (result != SQLITE_DONE)
         LOG(IconDatabase, "Error reading page->icon url mappings from database");
 
     // Clear the m_pageURLsPendingImport set - either the page URLs ended up with an iconURL (that we'll notify about) or not, 
@@ -1657,13 +1657,13 @@ void IconDatabase::pruneUnretainedIcons()
     pageSQL.prepare();
     
     int result;
-    while ((result = pageSQL.step()) == SQLResultRow) {
+    while ((result = pageSQL.step()) == SQLITE_ROW) {
         MutexLocker locker(m_urlAndIconLock);
         if (!m_pageURLToRecordMap.contains(pageSQL.getColumnText(1)))
             pageIDsToDelete.append(pageSQL.getColumnInt64(0));
     }
     
-    if (result != SQLResultDone)
+    if (result != SQLITE_DONE)
         LOG_ERROR("Error reading PageURL table from on-disk DB");
     pageSQL.finalize();
     
@@ -1679,7 +1679,7 @@ void IconDatabase::pruneUnretainedIcons()
             LOG(IconDatabase, "Pruning page with rowid %lli from disk", static_cast<long long>(pageIDsToDelete[i]));
             pageDeleteSQL.bindInt64(1, pageIDsToDelete[i]);
             int result = pageDeleteSQL.step();
-            if (result != SQLResultDone)
+            if (result != SQLITE_DONE)
                 LOG_ERROR("Unabled to delete page with id %lli from disk", static_cast<long long>(pageIDsToDelete[i]));
             pageDeleteSQL.reset();
             
@@ -1819,7 +1819,7 @@ inline void readySQLiteStatement(std::unique_ptr<SQLiteStatement>& statement, SQ
     }
     if (!statement) {
         statement = std::make_unique<SQLiteStatement>(db, str);
-        if (statement->prepare() != SQLResultOk)
+        if (statement->prepare() != SQLITE_OK)
             LOG_ERROR("Preparing statement %s failed", str.ascii().data());
     }
 }
@@ -1851,7 +1851,7 @@ void IconDatabase::setIconIDForPageURLInSQLDatabase(int64_t iconID, const String
     m_setIconIDForPageURLStatement->bindInt64(2, iconID);
 
     int result = m_setIconIDForPageURLStatement->step();
-    if (result != SQLResultDone) {
+    if (result != SQLITE_DONE) {
         ASSERT_NOT_REACHED();
         LOG_ERROR("setIconIDForPageURLQuery failed for url %s", urlForLogging(pageURL).ascii().data());
     }
@@ -1866,7 +1866,7 @@ void IconDatabase::removePageURLFromSQLDatabase(const String& pageURL)
     readySQLiteStatement(m_removePageURLStatement, m_syncDB, "DELETE FROM PageURL WHERE url = (?);");
     m_removePageURLStatement->bindText(1, pageURL);
 
-    if (m_removePageURLStatement->step() != SQLResultDone)
+    if (m_removePageURLStatement->step() != SQLITE_DONE)
         LOG_ERROR("removePageURLFromSQLDatabase failed for url %s", urlForLogging(pageURL).ascii().data());
     
     m_removePageURLStatement->reset();
@@ -1881,10 +1881,10 @@ int64_t IconDatabase::getIconIDForIconURLFromSQLDatabase(const String& iconURL)
     m_getIconIDForIconURLStatement->bindText(1, iconURL);
     
     int64_t result = m_getIconIDForIconURLStatement->step();
-    if (result == SQLResultRow)
+    if (result == SQLITE_ROW)
         result = m_getIconIDForIconURLStatement->getColumnInt64(0);
     else {
-        if (result != SQLResultDone)
+        if (result != SQLITE_DONE)
             LOG_ERROR("getIconIDForIconURLFromSQLDatabase failed for url %s", urlForLogging(iconURL).ascii().data());
         result = 0;
     }
@@ -1906,7 +1906,7 @@ int64_t IconDatabase::addIconURLToSQLDatabase(const String& iconURL)
     
     int result = m_addIconToIconInfoStatement->step();
     m_addIconToIconInfoStatement->reset();
-    if (result != SQLResultDone) {
+    if (result != SQLITE_DONE) {
         LOG_ERROR("addIconURLToSQLDatabase failed to insert %s into IconInfo", urlForLogging(iconURL).ascii().data());
         return 0;
     }
@@ -1917,7 +1917,7 @@ int64_t IconDatabase::addIconURLToSQLDatabase(const String& iconURL)
     
     result = m_addIconToIconDataStatement->step();
     m_addIconToIconDataStatement->reset();
-    if (result != SQLResultDone) {
+    if (result != SQLITE_DONE) {
         LOG_ERROR("addIconURLToSQLDatabase failed to insert %s into IconData", urlForLogging(iconURL).ascii().data());
         return 0;
     }
@@ -1935,11 +1935,11 @@ PassRefPtr<SharedBuffer> IconDatabase::getImageDataForIconURLFromSQLDatabase(con
     m_getImageDataForIconURLStatement->bindText(1, iconURL);
     
     int result = m_getImageDataForIconURLStatement->step();
-    if (result == SQLResultRow) {
+    if (result == SQLITE_ROW) {
         Vector<char> data;
         m_getImageDataForIconURLStatement->getColumnBlobAsVector(0, data);
         imageData = SharedBuffer::create(data.data(), data.size());
-    } else if (result != SQLResultDone)
+    } else if (result != SQLITE_DONE)
         LOG_ERROR("getImageDataForIconURLFromSQLDatabase failed for url %s", urlForLogging(iconURL).ascii().data());
 
     m_getImageDataForIconURLStatement->reset();
@@ -1966,21 +1966,21 @@ void IconDatabase::removeIconFromSQLDatabase(const String& iconURL)
     readySQLiteStatement(m_deletePageURLsForIconURLStatement, m_syncDB, "DELETE FROM PageURL WHERE PageURL.iconID = (?);");
     m_deletePageURLsForIconURLStatement->bindInt64(1, iconID);
     
-    if (m_deletePageURLsForIconURLStatement->step() != SQLResultDone)
+    if (m_deletePageURLsForIconURLStatement->step() != SQLITE_DONE)
         LOG_ERROR("m_deletePageURLsForIconURLStatement failed for url %s", urlForLogging(iconURL).ascii().data());
     
     readySQLiteStatement(m_deleteIconFromIconInfoStatement, m_syncDB, "DELETE FROM IconInfo WHERE IconInfo.iconID = (?);");
     m_deleteIconFromIconInfoStatement->bindInt64(1, iconID);
     
-    if (m_deleteIconFromIconInfoStatement->step() != SQLResultDone)
+    if (m_deleteIconFromIconInfoStatement->step() != SQLITE_DONE)
         LOG_ERROR("m_deleteIconFromIconInfoStatement failed for url %s", urlForLogging(iconURL).ascii().data());
-        
+
     readySQLiteStatement(m_deleteIconFromIconDataStatement, m_syncDB, "DELETE FROM IconData WHERE IconData.iconID = (?);");
     m_deleteIconFromIconDataStatement->bindInt64(1, iconID);
     
-    if (m_deleteIconFromIconDataStatement->step() != SQLResultDone)
+    if (m_deleteIconFromIconDataStatement->step() != SQLITE_DONE)
         LOG_ERROR("m_deleteIconFromIconDataStatement failed for url %s", urlForLogging(iconURL).ascii().data());
-        
+
     m_deletePageURLsForIconURLStatement->reset();
     m_deleteIconFromIconInfoStatement->reset();
     m_deleteIconFromIconDataStatement->reset();
@@ -2014,7 +2014,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
         m_updateIconInfoStatement->bindText(2, snapshot.iconURL());
         m_updateIconInfoStatement->bindInt64(3, iconID);
 
-        if (m_updateIconInfoStatement->step() != SQLResultDone)
+        if (m_updateIconInfoStatement->step() != SQLITE_DONE)
             LOG_ERROR("Failed to update icon info for url %s", urlForLogging(snapshot.iconURL()).ascii().data());
         
         m_updateIconInfoStatement->reset();
@@ -2029,7 +2029,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
         else
             m_updateIconDataStatement->bindNull(1);
         
-        if (m_updateIconDataStatement->step() != SQLResultDone)
+        if (m_updateIconDataStatement->step() != SQLITE_DONE)
             LOG_ERROR("Failed to update icon data for url %s", urlForLogging(snapshot.iconURL()).ascii().data());
 
         m_updateIconDataStatement->reset();
@@ -2038,7 +2038,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
         m_setIconInfoStatement->bindText(1, snapshot.iconURL());
         m_setIconInfoStatement->bindInt64(2, snapshot.timestamp());
 
-        if (m_setIconInfoStatement->step() != SQLResultDone)
+        if (m_setIconInfoStatement->step() != SQLITE_DONE)
             LOG_ERROR("Failed to set icon info for url %s", urlForLogging(snapshot.iconURL()).ascii().data());
         
         m_setIconInfoStatement->reset();
@@ -2055,7 +2055,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
         else
             m_setIconDataStatement->bindNull(2);
         
-        if (m_setIconDataStatement->step() != SQLResultDone)
+        if (m_setIconDataStatement->step() != SQLITE_DONE)
             LOG_ERROR("Failed to set icon data for url %s", urlForLogging(snapshot.iconURL()).ascii().data());
 
         m_setIconDataStatement->reset();

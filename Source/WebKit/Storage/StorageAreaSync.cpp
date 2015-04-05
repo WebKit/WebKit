@@ -325,7 +325,7 @@ void StorageAreaSync::performImport()
     }
 
     SQLiteStatement query(m_database, "SELECT key, value FROM ItemTable");
-    if (query.prepare() != SQLResultOk) {
+    if (query.prepare() != SQLITE_OK) {
         LOG_ERROR("Unable to select items from ItemTable for local storage");
         markImported();
         return;
@@ -334,12 +334,12 @@ void StorageAreaSync::performImport()
     HashMap<String, String> itemMap;
 
     int result = query.step();
-    while (result == SQLResultRow) {
+    while (result == SQLITE_ROW) {
         itemMap.set(query.getColumnText(0), query.getColumnBlobAsString(1));
         result = query.step();
     }
 
-    if (result != SQLResultDone) {
+    if (result != SQLITE_DONE) {
         LOG_ERROR("Error reading items from ItemTable for local storage");
         markImported();
         return;
@@ -411,26 +411,26 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
     // If the clear flag is set, then we clear all items out before we write any new ones in.
     if (clearItems) {
         SQLiteStatement clear(m_database, "DELETE FROM ItemTable");
-        if (clear.prepare() != SQLResultOk) {
+        if (clear.prepare() != SQLITE_OK) {
             LOG_ERROR("Failed to prepare clear statement - cannot write to local storage database");
             return;
         }
 
         int result = clear.step();
-        if (result != SQLResultDone) {
+        if (result != SQLITE_DONE) {
             LOG_ERROR("Failed to clear all items in the local storage database - %i", result);
             return;
         }
     }
 
     SQLiteStatement insert(m_database, "INSERT INTO ItemTable VALUES (?, ?)");
-    if (insert.prepare() != SQLResultOk) {
+    if (insert.prepare() != SQLITE_OK) {
         LOG_ERROR("Failed to prepare insert statement - cannot write to local storage database");
         return;
     }
 
     SQLiteStatement remove(m_database, "DELETE FROM ItemTable WHERE key=?");
-    if (remove.prepare() != SQLResultOk) {
+    if (remove.prepare() != SQLITE_OK) {
         LOG_ERROR("Failed to prepare delete statement - cannot write to local storage database");
         return;
     }
@@ -450,7 +450,7 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
             query.bindBlob(2, it->value);
 
         int result = query.step();
-        if (result != SQLResultDone) {
+        if (result != SQLITE_DONE) {
             LOG_ERROR("Failed to update item in the local storage database - %i", result);
             break;
         }
@@ -498,13 +498,13 @@ void StorageAreaSync::deleteEmptyDatabase()
         return;
 
     SQLiteStatement query(m_database, "SELECT COUNT(*) FROM ItemTable");
-    if (query.prepare() != SQLResultOk) {
+    if (query.prepare() != SQLITE_OK) {
         LOG_ERROR("Unable to count number of rows in ItemTable for local storage");
         return;
     }
 
     int result = query.step();
-    if (result != SQLResultRow) {
+    if (result != SQLITE_ROW) {
         LOG_ERROR("No results when counting number of rows in ItemTable for local storage");
         return;
     }

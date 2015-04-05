@@ -86,19 +86,19 @@ void LocalStorageDatabaseTracker::deleteAllDatabases()
         return;
 
     SQLiteStatement statement(m_database, "SELECT origin, path FROM Origins");
-    if (statement.prepare() != SQLResultOk) {
+    if (statement.prepare() != SQLITE_OK) {
         LOG_ERROR("Failed to prepare statement.");
         return;
     }
 
     int result;
-    while ((result = statement.step()) == SQLResultRow) {
+    while ((result = statement.step()) == SQLITE_ROW) {
         deleteFile(statement.getColumnText(1));
 
         // FIXME: Call out to the client.
     }
 
-    if (result != SQLResultDone)
+    if (result != SQLITE_DONE)
         LOG_ERROR("Failed to read in all origins from the database.");
 
     if (m_database.isOpen())
@@ -112,7 +112,7 @@ void LocalStorageDatabaseTracker::deleteAllDatabases()
             return;
 
         SQLiteStatement deleteStatement(m_database, "DELETE FROM Origins");
-        if (deleteStatement.prepare() != SQLResultOk) {
+        if (deleteStatement.prepare() != SQLITE_OK) {
             LOG_ERROR("Unable to prepare deletion of all origins");
             return;
         }
@@ -243,17 +243,17 @@ void LocalStorageDatabaseTracker::importOriginIdentifiers()
 
     if (m_database.isOpen()) {
         SQLiteStatement statement(m_database, "SELECT origin FROM Origins");
-        if (statement.prepare() != SQLResultOk) {
+        if (statement.prepare() != SQLITE_OK) {
             LOG_ERROR("Failed to prepare statement.");
             return;
         }
 
         int result;
 
-        while ((result = statement.step()) == SQLResultRow)
+        while ((result = statement.step()) == SQLITE_ROW)
             m_origins.add(statement.getColumnText(0));
 
-        if (result != SQLResultDone) {
+        if (result != SQLITE_DONE) {
             LOG_ERROR("Failed to read in all origins from the database.");
             return;
         }
@@ -301,7 +301,7 @@ void LocalStorageDatabaseTracker::addDatabaseWithOriginIdentifier(const String& 
         return;
 
     SQLiteStatement statement(m_database, "INSERT INTO Origins VALUES (?, ?)");
-    if (statement.prepare() != SQLResultOk) {
+    if (statement.prepare() != SQLITE_OK) {
         LOG_ERROR("Unable to establish origin '%s' in the tracker", originIdentifier.utf8().data());
         return;
     }
@@ -309,7 +309,7 @@ void LocalStorageDatabaseTracker::addDatabaseWithOriginIdentifier(const String& 
     statement.bindText(1, originIdentifier);
     statement.bindText(2, databasePath);
 
-    if (statement.step() != SQLResultDone)
+    if (statement.step() != SQLITE_DONE)
         LOG_ERROR("Unable to establish origin '%s' in the tracker", originIdentifier.utf8().data());
 
     m_origins.add(originIdentifier);
@@ -328,7 +328,7 @@ void LocalStorageDatabaseTracker::removeDatabaseWithOriginIdentifier(const Strin
         return;
 
     SQLiteStatement deleteStatement(m_database, "DELETE FROM Origins where origin=?");
-    if (deleteStatement.prepare() != SQLResultOk) {
+    if (deleteStatement.prepare() != SQLITE_OK) {
         LOG_ERROR("Unable to prepare deletion of origin '%s'", originIdentifier.ascii().data());
         return;
     }
@@ -357,7 +357,7 @@ String LocalStorageDatabaseTracker::pathForDatabaseWithOriginIdentifier(const St
         return String();
 
     SQLiteStatement pathStatement(m_database, "SELECT path FROM Origins WHERE origin=?");
-    if (pathStatement.prepare() != SQLResultOk) {
+    if (pathStatement.prepare() != SQLITE_OK) {
         LOG_ERROR("Unable to prepare selection of path for origin '%s'", originIdentifier.utf8().data());
         return String();
     }
@@ -365,7 +365,7 @@ String LocalStorageDatabaseTracker::pathForDatabaseWithOriginIdentifier(const St
     pathStatement.bindText(1, originIdentifier);
 
     int result = pathStatement.step();
-    if (result != SQLResultRow)
+    if (result != SQLITE_ROW)
         return String();
 
     return pathStatement.getColumnText(0);
