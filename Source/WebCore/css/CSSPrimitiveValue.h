@@ -259,10 +259,10 @@ public:
 
     unsigned short primitiveType() const;
 
-    double computeDegrees();
+    double computeDegrees() const;
 
     enum TimeUnit { Seconds, Milliseconds };
-    template <typename T, TimeUnit timeUnit> T computeTime()
+    template <typename T, TimeUnit timeUnit> T computeTime() const
     {
         if (timeUnit == Seconds && primitiveType() == CSS_S)
             return getValue<T>();

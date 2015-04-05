@@ -71,7 +71,7 @@ PassRefPtr<StyleImage> CSSToStyleMap::styleImage(CSSPropertyID propertyId, CSSVa
     return m_resolver->styleImage(propertyId, value);
 }
 
-void CSSToStyleMap::mapFillAttachment(CSSPropertyID, FillLayer& layer, CSSValue& value)
+void CSSToStyleMap::mapFillAttachment(CSSPropertyID, FillLayer& layer, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         layer.setAttachment(FillLayer::initialFillAttachment(layer.type()));
@@ -96,7 +96,7 @@ void CSSToStyleMap::mapFillAttachment(CSSPropertyID, FillLayer& layer, CSSValue&
     }
 }
 
-void CSSToStyleMap::mapFillClip(CSSPropertyID, FillLayer& layer, CSSValue& value)
+void CSSToStyleMap::mapFillClip(CSSPropertyID, FillLayer& layer, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         layer.setClip(FillLayer::initialFillClip(layer.type()));
@@ -109,7 +109,7 @@ void CSSToStyleMap::mapFillClip(CSSPropertyID, FillLayer& layer, CSSValue& value
     layer.setClip(downcast<CSSPrimitiveValue>(value));
 }
 
-void CSSToStyleMap::mapFillComposite(CSSPropertyID, FillLayer& layer, CSSValue& value)
+void CSSToStyleMap::mapFillComposite(CSSPropertyID, FillLayer& layer, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         layer.setComposite(FillLayer::initialFillComposite(layer.type()));
@@ -122,7 +122,7 @@ void CSSToStyleMap::mapFillComposite(CSSPropertyID, FillLayer& layer, CSSValue& 
     layer.setComposite(downcast<CSSPrimitiveValue>(value));
 }
 
-void CSSToStyleMap::mapFillBlendMode(CSSPropertyID, FillLayer& layer, CSSValue& value)
+void CSSToStyleMap::mapFillBlendMode(CSSPropertyID, FillLayer& layer, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         layer.setBlendMode(FillLayer::initialFillBlendMode(layer.type()));
@@ -135,7 +135,7 @@ void CSSToStyleMap::mapFillBlendMode(CSSPropertyID, FillLayer& layer, CSSValue& 
     layer.setBlendMode(downcast<CSSPrimitiveValue>(value));
 }
 
-void CSSToStyleMap::mapFillOrigin(CSSPropertyID, FillLayer& layer, CSSValue& value)
+void CSSToStyleMap::mapFillOrigin(CSSPropertyID, FillLayer& layer, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         layer.setOrigin(FillLayer::initialFillOrigin(layer.type()));
@@ -148,7 +148,6 @@ void CSSToStyleMap::mapFillOrigin(CSSPropertyID, FillLayer& layer, CSSValue& val
     layer.setOrigin(downcast<CSSPrimitiveValue>(value));
 }
 
-
 void CSSToStyleMap::mapFillImage(CSSPropertyID property, FillLayer& layer, CSSValue& value)
 {
     if (value.isInitialValue()) {
@@ -159,7 +158,7 @@ void CSSToStyleMap::mapFillImage(CSSPropertyID property, FillLayer& layer, CSSVa
     layer.setImage(styleImage(property, value));
 }
 
-void CSSToStyleMap::mapFillRepeatX(CSSPropertyID, FillLayer& layer, CSSValue& value)
+void CSSToStyleMap::mapFillRepeatX(CSSPropertyID, FillLayer& layer, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         layer.setRepeatX(FillLayer::initialFillRepeatX(layer.type()));
@@ -172,7 +171,7 @@ void CSSToStyleMap::mapFillRepeatX(CSSPropertyID, FillLayer& layer, CSSValue& va
     layer.setRepeatX(downcast<CSSPrimitiveValue>(value));
 }
 
-void CSSToStyleMap::mapFillRepeatY(CSSPropertyID, FillLayer& layer, CSSValue& value)
+void CSSToStyleMap::mapFillRepeatY(CSSPropertyID, FillLayer& layer, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         layer.setRepeatY(FillLayer::initialFillRepeatY(layer.type()));
@@ -196,7 +195,7 @@ static inline bool convertToLengthSize(const CSSPrimitiveValue& primitiveValue, 
     return !size.width().isUndefined() && !size.height().isUndefined();
 }
 
-void CSSToStyleMap::mapFillSize(CSSPropertyID, FillLayer& layer, CSSValue& value)
+void CSSToStyleMap::mapFillSize(CSSPropertyID, FillLayer& layer, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         layer.setSize(FillLayer::initialFillSize(layer.type()));
@@ -224,7 +223,7 @@ void CSSToStyleMap::mapFillSize(CSSPropertyID, FillLayer& layer, CSSValue& value
     layer.setSize(fillSize);
 }
 
-void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer& layer, CSSValue& value)
+void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         layer.setXPosition(FillLayer::initialFillXPosition(layer.type()));
@@ -256,7 +255,7 @@ void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer& layer,
         layer.setBackgroundXOrigin(*pair->first());
 }
 
-void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer, CSSValue& value)
+void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         layer.setYPosition(FillLayer::initialFillYPosition(layer.type()));
@@ -288,7 +287,7 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer,
         layer.setBackgroundYOrigin(*pair->first());
 }
 
-void CSSToStyleMap::mapFillMaskSourceType(CSSPropertyID, FillLayer& layer, CSSValue& value)
+void CSSToStyleMap::mapFillMaskSourceType(CSSPropertyID, FillLayer& layer, const CSSValue& value)
 {
     EMaskSourceType type = FillLayer::initialFillMaskSourceType(layer.type());
     if (value.isInitialValue()) {
@@ -315,7 +314,7 @@ void CSSToStyleMap::mapFillMaskSourceType(CSSPropertyID, FillLayer& layer, CSSVa
     layer.setMaskSourceType(type);
 }
 
-void CSSToStyleMap::mapAnimationDelay(Animation& animation, CSSValue& value)
+void CSSToStyleMap::mapAnimationDelay(Animation& animation, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         animation.setDelay(Animation::initialDelay());
@@ -328,7 +327,7 @@ void CSSToStyleMap::mapAnimationDelay(Animation& animation, CSSValue& value)
     animation.setDelay(downcast<CSSPrimitiveValue>(value).computeTime<double, CSSPrimitiveValue::Seconds>());
 }
 
-void CSSToStyleMap::mapAnimationDirection(Animation& layer, CSSValue& value)
+void CSSToStyleMap::mapAnimationDirection(Animation& layer, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         layer.setDirection(Animation::initialDirection());
@@ -356,7 +355,7 @@ void CSSToStyleMap::mapAnimationDirection(Animation& layer, CSSValue& value)
     }
 }
 
-void CSSToStyleMap::mapAnimationDuration(Animation& animation, CSSValue& value)
+void CSSToStyleMap::mapAnimationDuration(Animation& animation, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         animation.setDuration(Animation::initialDuration());
@@ -369,7 +368,7 @@ void CSSToStyleMap::mapAnimationDuration(Animation& animation, CSSValue& value)
     animation.setDuration(downcast<CSSPrimitiveValue>(value).computeTime<double, CSSPrimitiveValue::Seconds>());
 }
 
-void CSSToStyleMap::mapAnimationFillMode(Animation& layer, CSSValue& value)
+void CSSToStyleMap::mapAnimationFillMode(Animation& layer, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         layer.setFillMode(Animation::initialFillMode());
@@ -397,7 +396,7 @@ void CSSToStyleMap::mapAnimationFillMode(Animation& layer, CSSValue& value)
     }
 }
 
-void CSSToStyleMap::mapAnimationIterationCount(Animation& animation, CSSValue& value)
+void CSSToStyleMap::mapAnimationIterationCount(Animation& animation, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         animation.setIterationCount(Animation::initialIterationCount());
@@ -414,7 +413,7 @@ void CSSToStyleMap::mapAnimationIterationCount(Animation& animation, CSSValue& v
         animation.setIterationCount(primitiveValue.getFloatValue());
 }
 
-void CSSToStyleMap::mapAnimationName(Animation& layer, CSSValue& value)
+void CSSToStyleMap::mapAnimationName(Animation& layer, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         layer.setName(Animation::initialName());
@@ -431,7 +430,7 @@ void CSSToStyleMap::mapAnimationName(Animation& layer, CSSValue& value)
         layer.setName(primitiveValue.getStringValue());
 }
 
-void CSSToStyleMap::mapAnimationPlayState(Animation& layer, CSSValue& value)
+void CSSToStyleMap::mapAnimationPlayState(Animation& layer, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         layer.setPlayState(Animation::initialPlayState());
@@ -445,7 +444,7 @@ void CSSToStyleMap::mapAnimationPlayState(Animation& layer, CSSValue& value)
     layer.setPlayState(playState);
 }
 
-void CSSToStyleMap::mapAnimationProperty(Animation& animation, CSSValue& value)
+void CSSToStyleMap::mapAnimationProperty(Animation& animation, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         animation.setAnimationMode(Animation::AnimateAll);
@@ -469,7 +468,7 @@ void CSSToStyleMap::mapAnimationProperty(Animation& animation, CSSValue& value)
     }
 }
 
-void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, CSSValue& value)
+void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         animation.setTimingFunction(Animation::initialTimingFunction());
@@ -515,7 +514,7 @@ void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, CSSValue& v
 }
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-void CSSToStyleMap::mapAnimationTrigger(Animation& animation, CSSValue& value)
+void CSSToStyleMap::mapAnimationTrigger(Animation& animation, const CSSValue& value)
 {
     if (value.isInitialValue()) {
         animation.setTrigger(Animation::initialTrigger());

@@ -1,3 +1,44 @@
+2015-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        More const in CSSToStyleMap
+        https://bugs.webkit.org/show_bug.cgi?id=143409
+
+        Reviewed by Andreas Kling.
+
+        The CSSValues passed to CSSToStyleMap functions can mostly be treated
+        as |const|, except for CSSImageValues which have special behavior.
+        
+        This makes it clearer what the inputs and outputs of these
+        functions are.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeDegrees):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::computeTime):
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapFillAttachment):
+        (WebCore::CSSToStyleMap::mapFillClip):
+        (WebCore::CSSToStyleMap::mapFillComposite):
+        (WebCore::CSSToStyleMap::mapFillBlendMode):
+        (WebCore::CSSToStyleMap::mapFillOrigin):
+        (WebCore::CSSToStyleMap::mapFillRepeatX):
+        (WebCore::CSSToStyleMap::mapFillRepeatY):
+        (WebCore::CSSToStyleMap::mapFillSize):
+        (WebCore::CSSToStyleMap::mapFillXPosition):
+        (WebCore::CSSToStyleMap::mapFillYPosition):
+        (WebCore::CSSToStyleMap::mapFillMaskSourceType):
+        (WebCore::CSSToStyleMap::mapAnimationDelay):
+        (WebCore::CSSToStyleMap::mapAnimationDirection):
+        (WebCore::CSSToStyleMap::mapAnimationDuration):
+        (WebCore::CSSToStyleMap::mapAnimationFillMode):
+        (WebCore::CSSToStyleMap::mapAnimationIterationCount):
+        (WebCore::CSSToStyleMap::mapAnimationName):
+        (WebCore::CSSToStyleMap::mapAnimationPlayState):
+        (WebCore::CSSToStyleMap::mapAnimationProperty):
+        (WebCore::CSSToStyleMap::mapAnimationTimingFunction):
+        (WebCore::CSSToStyleMap::mapAnimationTrigger):
+        * css/CSSToStyleMap.h:
+
 2015-04-04  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the build.

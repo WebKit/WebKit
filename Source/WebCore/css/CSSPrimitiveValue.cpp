@@ -541,7 +541,7 @@ void CSSPrimitiveValue::cleanup()
     }
 }
 
-double CSSPrimitiveValue::computeDegrees()
+double CSSPrimitiveValue::computeDegrees() const
 {
     switch (primitiveType()) {
     case CSS_DEG:

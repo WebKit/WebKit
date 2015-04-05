@@ -45,30 +45,30 @@ class CSSToStyleMap {
 public:
     CSSToStyleMap(StyleResolver*);
 
-    void mapFillAttachment(CSSPropertyID, FillLayer&, CSSValue&);
-    void mapFillClip(CSSPropertyID, FillLayer&, CSSValue&);
-    void mapFillComposite(CSSPropertyID, FillLayer&, CSSValue&);
-    void mapFillBlendMode(CSSPropertyID, FillLayer&, CSSValue&);
-    void mapFillOrigin(CSSPropertyID, FillLayer&, CSSValue&);
+    void mapFillAttachment(CSSPropertyID, FillLayer&, const CSSValue&);
+    void mapFillClip(CSSPropertyID, FillLayer&, const CSSValue&);
+    void mapFillComposite(CSSPropertyID, FillLayer&, const CSSValue&);
+    void mapFillBlendMode(CSSPropertyID, FillLayer&, const CSSValue&);
+    void mapFillOrigin(CSSPropertyID, FillLayer&, const CSSValue&);
     void mapFillImage(CSSPropertyID, FillLayer&, CSSValue&);
-    void mapFillRepeatX(CSSPropertyID, FillLayer&, CSSValue&);
-    void mapFillRepeatY(CSSPropertyID, FillLayer&, CSSValue&);
-    void mapFillSize(CSSPropertyID, FillLayer&, CSSValue&);
-    void mapFillXPosition(CSSPropertyID, FillLayer&, CSSValue&);
-    void mapFillYPosition(CSSPropertyID, FillLayer&, CSSValue&);
-    void mapFillMaskSourceType(CSSPropertyID, FillLayer&, CSSValue&);
+    void mapFillRepeatX(CSSPropertyID, FillLayer&, const CSSValue&);
+    void mapFillRepeatY(CSSPropertyID, FillLayer&, const CSSValue&);
+    void mapFillSize(CSSPropertyID, FillLayer&, const CSSValue&);
+    void mapFillXPosition(CSSPropertyID, FillLayer&, const CSSValue&);
+    void mapFillYPosition(CSSPropertyID, FillLayer&, const CSSValue&);
+    void mapFillMaskSourceType(CSSPropertyID, FillLayer&, const CSSValue&);
 
-    void mapAnimationDelay(Animation&, CSSValue&);
-    void mapAnimationDirection(Animation&, CSSValue&);
-    void mapAnimationDuration(Animation&, CSSValue&);
-    void mapAnimationFillMode(Animation&, CSSValue&);
-    void mapAnimationIterationCount(Animation&, CSSValue&);
-    void mapAnimationName(Animation&, CSSValue&);
-    void mapAnimationPlayState(Animation&, CSSValue&);
-    void mapAnimationProperty(Animation&, CSSValue&);
-    void mapAnimationTimingFunction(Animation&, CSSValue&);
+    void mapAnimationDelay(Animation&, const CSSValue&);
+    void mapAnimationDirection(Animation&, const CSSValue&);
+    void mapAnimationDuration(Animation&, const CSSValue&);
+    void mapAnimationFillMode(Animation&, const CSSValue&);
+    void mapAnimationIterationCount(Animation&, const CSSValue&);
+    void mapAnimationName(Animation&, const CSSValue&);
+    void mapAnimationPlayState(Animation&, const CSSValue&);
+    void mapAnimationProperty(Animation&, const CSSValue&);
+    void mapAnimationTimingFunction(Animation&, const CSSValue&);
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    void mapAnimationTrigger(Animation&, CSSValue&);
+    void mapAnimationTrigger(Animation&, const CSSValue&);
 #endif
 
     void mapNinePieceImage(CSSPropertyID, CSSValue*, NinePieceImage&);
