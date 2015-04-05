@@ -3347,11 +3347,6 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
 #endif
 }
 
-void FrameLoader::didChangeIcons(IconType type)
-{
-    m_client.dispatchDidChangeIcons(type);
-}
-
 void FrameLoader::dispatchDidCommitLoad()
 {
     if (m_stateMachine.creatingInitialEmptyDocument())

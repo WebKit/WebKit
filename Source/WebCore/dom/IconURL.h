@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,15 +32,9 @@
 #ifndef IconURL_h
 #define IconURL_h
 
-#include "URL.h"
+// FIXME: Rename this header to IconType.h unless we bring back the concept of an "icon URL" structure.
 
 namespace WebCore {
-
-#if ENABLE(TOUCH_ICON_LOADING)
-#define ICON_COUNT 3
-#else
-#define ICON_COUNT 1
-#endif
 
 enum IconType {
     InvalidIcon = 0,
@@ -47,35 +42,6 @@ enum IconType {
     TouchIcon = 1 << 1,
     TouchPrecomposedIcon = 1 << 2,
 };
-
-struct IconURL {
-    IconType m_iconType;
-    String m_sizes;
-    String m_mimeType;
-    URL m_iconURL;
-    bool m_isDefaultIcon;
-
-    IconURL()
-        : m_iconType(InvalidIcon)
-        , m_isDefaultIcon(false)
-    {
-    }
-
-    IconURL(const URL& url, const String& sizes, const String& mimeType, IconType type)
-        : m_iconType(type)
-        , m_sizes(sizes)
-        , m_mimeType(mimeType)
-        , m_iconURL(url)
-        , m_isDefaultIcon(false)
-    {
-    }
-    
-    static IconURL defaultIconURL(const URL&, IconType);
-};
-
-bool operator==(const IconURL&, const IconURL&);
-
-typedef Vector<IconURL, ICON_COUNT> IconURLs;
 
 }
 

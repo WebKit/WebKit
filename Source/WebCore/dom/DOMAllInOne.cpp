@@ -81,7 +81,6 @@
 #include "ExceptionBase.cpp"
 #include "ExceptionCodePlaceholder.cpp"
 #include "FocusEvent.cpp"
-#include "IconURL.cpp"
 #include "IdTargetObserver.cpp"
 #include "IdTargetObserverRegistry.cpp"
 #include "InlineStyleSheetOwner.cpp"

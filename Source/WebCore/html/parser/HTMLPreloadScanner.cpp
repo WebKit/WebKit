@@ -171,8 +171,8 @@ private:
 
     static bool relAttributeIsStyleSheet(const String& attributeValue)
     {
-        LinkRelAttribute rel(attributeValue);
-        return rel.m_isStyleSheet && !rel.m_isAlternate && rel.m_iconType == InvalidIcon && !rel.m_isDNSPrefetch;
+        LinkRelAttribute parsedAttribute { attributeValue };
+        return parsedAttribute.isStyleSheet && !parsedAttribute.isAlternate && parsedAttribute.iconType == InvalidIcon && !parsedAttribute.isDNSPrefetch;
     }
 
     void setUrlToLoad(const String& value, bool allowReplacement = false)

@@ -1,3 +1,121 @@
+2015-04-02  Darin Adler  <darin@apple.com>
+
+        Streamline icon-related code, mostly unused
+        https://bugs.webkit.org/show_bug.cgi?id=143306
+
+        Reviewed by Antti Koivisto.
+
+        I started on this path because Document::iconURLs had a poor implementation,
+        storing results in a data member with no benefit, using HTMLCollection for
+        iteration of the children of the head element instead of using the simpler
+        faster technique we use inside the engine. Then, I discovered this function was
+        mostly-unused code left over from before the Blink fork. I removed most of it.
+        We can add this back later if someone finds a use for it, but if we do we
+        should do a higher quality implementation without the quirks of the old one.
+
+        Refactoring also made it clear that logic isn't exactly sensible. There's a
+        set of rules about what order to return the list in that is not followed by
+        the code that tries to find the "default touch icon". Later we could add some
+        more test coverage and tighten up the logic. But the reality is that at this
+        time, with some small exceptions, icon logic is in the web browsers, not in WebKit.
+
+        * CMakeLists.txt: Removed IconURL.cpp.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/DOMAllInOne.cpp: Ditto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::evaluate): Tweaked formatting.
+        (WebCore::Document::shortcutIconURLs): Removed. Unused function.
+        (WebCore::Document::iconURLs): Removed. Moved code to IconController.
+        (WebCore::Document::addIconURL): Removed. Moved code to LinkLoader.
+
+        * dom/Document.h: Removed shortcutIconURLs, iconURLs, addIconURL,
+        and m_iconURLs.
+
+        * dom/IconURL.cpp: Removed.
+        * dom/IconURL.h: Removed everything from this header except for the
+        IconType enum. Added a FIXME about possibly renaming the header.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement): Pass a reference when creating
+        the link loading.
+        (WebCore::HTMLLinkElement::setDisabledState): Access members of the struct
+        LinkRelElement without "m_" prefix.
+        (WebCore::HTMLLinkElement::parseAttribute): Changed to use early return style,
+        and made the part of this for parsing title use a more normal idiom.
+        (WebCore::HTMLLinkElement::process): Removed many unneeded arguments, made the
+        logic of the code a little easier to follow.
+        (WebCore::HTMLLinkElement::removedFrom): Removed a call to a function that had
+        an empty body.
+        (WebCore::HTMLLinkElement::iconType): Updated for change to LinkRelElement.
+        (WebCore::HTMLLinkElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLLinkElement.h: More of the same.
+
+        * html/LinkRelAttribute.cpp:
+        (WebCore::LinkRelAttribute::LinkRelAttribute): Initialize data members in the
+        struct itself. Got rid of "m_" prefix since this is a struct, not a class.
+        Changed code to use modern for loop; even better would be to eliminate the
+        splitting into a vector entirely and use StringView (do that next time).
+        * html/LinkRelAttribute.h: See above.
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::relAttributeIsStyleSheet):
+        Updated for chnages to LinkRelAttribute and give the local variable a clearer name.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didChangeIcons): Removed.
+        * loader/FrameLoader.h: Removed didChangeIcons.
+
+        * loader/FrameLoaderClient.h: Added include for String since it's no longer
+        taken care of by IconURLs.h.
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::LinkLoader): Take a reference instead of a pointer.
+        (WebCore::LinkLoader::linkLoadTimerFired): Use m_client reference instead of pointer.
+        (WebCore::LinkLoader::linkLoadingErrorTimerFired): Ditto.
+        (WebCore::LinkLoader::notifyFinished): Use nullptr.
+        (WebCore::LinkLoader::loadLink): Tweak formatting. Move the dispatchDidChangeIcons
+        call in here instead of going through Document to FrameLoader and then FrameLoader to
+        FrameLoaderClient, and passing extra unused arguments, the way the old code did.
+        Use a reference instead of a pointer for the document.
+        (WebCore::LinkLoader::released): Removed. Empty function.
+
+        * loader/LinkLoader.h: Changed constructor argument to be a reference. Made more
+        things private. Removed empty released function.
+
+        * loader/icon/IconController.cpp:
+        (WebCore::IconController::IconController): Moved initialization of data members to
+        the class definition in the header.
+        (WebCore::iconsFromLinkElements): Added. This function replaces the existing
+        Document::iconURLs function, but has a simpler implementation and interface.
+        It focuses on exactly what the code in this file needs. If we want to add some
+        more features to the icon controller we might make this more complex again.
+        Even now, building a vector is not necessarily helpful; the only client of this
+        function ends up extracting only one of the URLs this function returns.
+        (WebCore::IconController::url): Rewrote this. It's the only function actually
+        using the icon URLs. This contains a combination of the logic from the various
+        functions in this class before, including iconURL, urlsForTypes, appendToIconURLs,
+        and defaultURL. Among other improvements, replaced the unusual code to construct
+        the icon URL with a call to Document::completeURL.
+        (WebCore::IconController::startLoader): Refactored a bit to remove a local variable.
+        (WebCore::IconController::continueLoadWithDecision): Ditto.
+
+        * loader/icon/IconController.h: Removed unneeded includes, unneeded use of
+        WTF_MAKE_NONCOPYABLE (since classes with data members of reference type are
+        automatically noncopyable), unused fucntions. Also initialize m_waitingForLoadDecision.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::iconURLs): Removed.
+        (WebCore::Internals::shortcutIconURLs): Left this in place since it is used by
+        tests. Changed it to return the actual value from the IconController::url function,
+        since that's the interface to our icon machinery that is actually exposed on some
+        platforms. That means this returns only a single URL.
+        (WebCore::Internals::allIconURLs): Removed.
+        * testing/Internals.h: Removed allIconURLs and iconURLs.
+        * testing/Internals.idl: Removed allIconURLs.
+
 2015-04-04  Simon Fraser  <simon.fraser@apple.com>
 
         Fix EFL and Gtk build.

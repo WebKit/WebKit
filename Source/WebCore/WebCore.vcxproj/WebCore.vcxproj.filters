@@ -3180,9 +3180,6 @@
     <ClCompile Include="..\dom\GenericEventQueue.cpp">
       <Filter>dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\IconURL.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
     <ClCompile Include="..\dom\IdTargetObserver.cpp">
       <Filter>dom</Filter>
     </ClCompile>

@@ -40,6 +40,7 @@
 #include "DNS.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "LinkRelAttribute.h"
 #include "Settings.h"
@@ -47,7 +48,7 @@
 
 namespace WebCore {
 
-LinkLoader::LinkLoader(LinkLoaderClient* client)
+LinkLoader::LinkLoader(LinkLoaderClient& client)
     : m_client(client)
     , m_linkLoadTimer(*this, &LinkLoader::linkLoadTimerFired)
     , m_linkLoadingErrorTimer(*this, &LinkLoader::linkLoadingErrorTimerFired)
@@ -62,12 +63,12 @@ LinkLoader::~LinkLoader()
 
 void LinkLoader::linkLoadTimerFired()
 {
-    m_client->linkLoaded();
+    m_client.linkLoaded();
 }
 
 void LinkLoader::linkLoadingErrorTimerFired()
 {
-    m_client->linkLoadingErrored();
+    m_client.linkLoadingErrored();
 }
 
 void LinkLoader::notifyFinished(CachedResource* resource)
@@ -80,21 +81,21 @@ void LinkLoader::notifyFinished(CachedResource* resource)
         m_linkLoadTimer.startOneShot(0);
 
     m_cachedLinkResource->removeClient(this);
-    m_cachedLinkResource = 0;
+    m_cachedLinkResource = nullptr;
 }
 
-bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const String& type,
-                          const String& sizes, const URL& href, Document* document)
+bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href, Document& document)
 {
     // We'll record this URL per document, even if we later only use it in top level frames
-    if (relAttribute.m_iconType != InvalidIcon && href.isValid() && !href.isEmpty()) {
-        if (!m_client->shouldLoadLink()) 
+    if (relAttribute.iconType != InvalidIcon && href.isValid() && !href.isEmpty()) {
+        if (!m_client.shouldLoadLink())
             return false;
-        document->addIconURL(href.string(), type, sizes, relAttribute.m_iconType);
+        if (Frame* frame = document.frame())
+            frame->loader().client().dispatchDidChangeIcons(relAttribute.iconType);
     }
 
-    if (relAttribute.m_isDNSPrefetch) {
-        Settings* settings = document->settings();
+    if (relAttribute.isDNSPrefetch) {
+        Settings* settings = document.settings();
         // FIXME: The href attribute of the link element can be in "//hostname" form, and we shouldn't attempt
         // to complete that as URL <https://bugs.webkit.org/show_bug.cgi?id=48857>.
         if (settings && settings->dnsPrefetchingEnabled() && href.isValid() && !href.isEmpty())
@@ -102,34 +103,31 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const String& ty
     }
 
 #if ENABLE(LINK_PREFETCH)
-    if ((relAttribute.m_isLinkPrefetch || relAttribute.m_isLinkSubresource) && href.isValid() && document->frame()) {
-        if (!m_client->shouldLoadLink())
+    if ((relAttribute.isLinkPrefetch || relAttribute.isLinkSubresource) && href.isValid() && document.frame()) {
+        if (!m_client.shouldLoadLink())
             return false;
+
         Optional<ResourceLoadPriority> priority;
         CachedResource::Type type = CachedResource::LinkPrefetch;
-        // We only make one request to the cachedresourcelodaer if multiple rel types are
-        // specified, 
-        if (relAttribute.m_isLinkSubresource) {
+        if (relAttribute.isLinkSubresource) {
+            // We only make one request to the cached resource loader if multiple rel types are specified;
+            // this is the higher priority, which should overwrite the lower priority.
             priority = ResourceLoadPriorityLow;
             type = CachedResource::LinkSubresource;
         }
-        CachedResourceRequest linkRequest(ResourceRequest(document->completeURL(href)), priority);
-        
+        CachedResourceRequest linkRequest(ResourceRequest(document.completeURL(href)), priority);
+
         if (m_cachedLinkResource) {
             m_cachedLinkResource->removeClient(this);
             m_cachedLinkResource = nullptr;
         }
-        m_cachedLinkResource = document->cachedResourceLoader().requestLinkResource(type, linkRequest);
+        m_cachedLinkResource = document.cachedResourceLoader().requestLinkResource(type, linkRequest);
         if (m_cachedLinkResource)
             m_cachedLinkResource->addClient(this);
     }
 #endif
 
     return true;
-}
-
-void LinkLoader::released()
-{
 }
 
 }

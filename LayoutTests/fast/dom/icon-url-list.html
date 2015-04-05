@@ -49,10 +49,13 @@ function runTests() {
     var expectedURL1 = "http://test.com/foofavicon.ico";
     var expectedURL2 = "http://test.com/newfavicon.ico";
     var iconURLs = window.internals.shortcutIconURLs();
-    if (expectedURL0 == iconURLs[0] && expectedURL1 == iconURLs[1] && expectedURL2 == iconURLs[2]) 
+    // Expect the array to contain only the last URL because that's what WebKit icon controller provides,
+    // despite the fact that the internals API returns it as an array. We can change this to check for
+    // all three if we add "array of icon URLs" support to WebKit.
+    if (iconURLs.length === 1 && expectedURL2 === iconURLs[0])
         testPassed('URL list matches expected');
     else
-        testFailed('URL list does not match expected');
+        testFailed('URL list does not match expected: length = ' + iconURLs.length + ', URL=' + iconURLs[0]);
 }
 
 </script>

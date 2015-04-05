@@ -32,70 +32,55 @@
 #include "config.h"
 #include "LinkRelAttribute.h"
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 LinkRelAttribute::LinkRelAttribute()
-    : m_isStyleSheet(false)
-    , m_iconType(InvalidIcon)
-    , m_isAlternate(false)
-    , m_isDNSPrefetch(false)
-#if ENABLE(LINK_PREFETCH)
-    , m_isLinkPrefetch(false)
-    , m_isLinkSubresource(false)
-#endif
 {
 }
 
 LinkRelAttribute::LinkRelAttribute(const String& rel)
-    : m_isStyleSheet(false)
-    , m_iconType(InvalidIcon)
-    , m_isAlternate(false)
-    , m_isDNSPrefetch(false)
-#if ENABLE(LINK_PREFETCH)
-    , m_isLinkPrefetch(false)
-    , m_isLinkSubresource(false)
-#endif
 {
     if (equalIgnoringCase(rel, "stylesheet"))
-        m_isStyleSheet = true;
+        isStyleSheet = true;
     else if (equalIgnoringCase(rel, "icon") || equalIgnoringCase(rel, "shortcut icon"))
-        m_iconType = Favicon;
+        iconType = Favicon;
 #if ENABLE(TOUCH_ICON_LOADING)
     else if (equalIgnoringCase(rel, "apple-touch-icon"))
-        m_iconType = TouchIcon;
+        iconType = TouchIcon;
     else if (equalIgnoringCase(rel, "apple-touch-icon-precomposed"))
-        m_iconType = TouchPrecomposedIcon;
+        iconType = TouchPrecomposedIcon;
 #endif
     else if (equalIgnoringCase(rel, "dns-prefetch"))
-        m_isDNSPrefetch = true;
+        isDNSPrefetch = true;
     else if (equalIgnoringCase(rel, "alternate stylesheet") || equalIgnoringCase(rel, "stylesheet alternate")) {
-        m_isStyleSheet = true;
-        m_isAlternate = true;
+        isStyleSheet = true;
+        isAlternate = true;
     } else {
         // Tokenize the rel attribute and set bits based on specific keywords that we find.
         String relCopy = rel;
         relCopy.replace('\n', ' ');
         Vector<String> list;
         relCopy.split(' ', list);
-        Vector<String>::const_iterator end = list.end();
-        for (Vector<String>::const_iterator it = list.begin(); it != end; ++it) {
-            if (equalIgnoringCase(*it, "stylesheet"))
-                m_isStyleSheet = true;
-            else if (equalIgnoringCase(*it, "alternate"))
-                m_isAlternate = true;
-            else if (equalIgnoringCase(*it, "icon"))
-                m_iconType = Favicon;
+        for (auto& word : list) {
+            if (equalIgnoringCase(word, "stylesheet"))
+                isStyleSheet = true;
+            else if (equalIgnoringCase(word, "alternate"))
+                isAlternate = true;
+            else if (equalIgnoringCase(word, "icon"))
+                iconType = Favicon;
 #if ENABLE(TOUCH_ICON_LOADING)
-            else if (equalIgnoringCase(*it, "apple-touch-icon"))
-                m_iconType = TouchIcon;
-            else if (equalIgnoringCase(*it, "apple-touch-icon-precomposed"))
-                m_iconType = TouchPrecomposedIcon;
+            else if (equalIgnoringCase(word, "apple-touch-icon"))
+                iconType = TouchIcon;
+            else if (equalIgnoringCase(word, "apple-touch-icon-precomposed"))
+                iconType = TouchPrecomposedIcon;
 #endif
 #if ENABLE(LINK_PREFETCH)
-            else if (equalIgnoringCase(*it, "prefetch"))
-              m_isLinkPrefetch = true;
-            else if (equalIgnoringCase(*it, "subresource"))
-              m_isLinkSubresource = true;
+            else if (equalIgnoringCase(word, "prefetch"))
+                isLinkPrefetch = true;
+            else if (equalIgnoringCase(word, "subresource"))
+                isLinkSubresource = true;
 #endif
         }
     }

@@ -1633,7 +1633,6 @@
 		44DEF6431A6FF92700D45EEC /* IOReturnSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DEF6421A6FF92700D45EEC /* IOReturnSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44DFF6431A6FF92700D45EEC /* IOSurfaceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DFF6421A6FF92700D45EEC /* IOSurfaceSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44EFF6431A6FF92700D45EEC /* IOTypesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 44EFF6421A6FF92700D45EEC /* IOTypesSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		45099C411370A7800058D513 /* IconURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45099C401370A7800058D513 /* IconURL.cpp */; };
 		450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 450CEBEE15073BBE002BB149 /* LabelableElement.cpp */; };
 		450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 450CEBEF15073BBE002BB149 /* LabelableElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4512502215DCE37D002F84E2 /* SpinButtonElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4512502015DCE37D002F84E2 /* SpinButtonElement.cpp */; };
@@ -8791,7 +8790,6 @@
 		44DEF6421A6FF92700D45EEC /* IOReturnSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOReturnSPI.h; sourceTree = "<group>"; };
 		44DFF6421A6FF92700D45EEC /* IOSurfaceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOSurfaceSPI.h; sourceTree = "<group>"; };
 		44EFF6421A6FF92700D45EEC /* IOTypesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOTypesSPI.h; sourceTree = "<group>"; };
-		45099C401370A7800058D513 /* IconURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconURL.cpp; sourceTree = "<group>"; };
 		450CEBEE15073BBE002BB149 /* LabelableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LabelableElement.cpp; sourceTree = "<group>"; };
 		450CEBEF15073BBE002BB149 /* LabelableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelableElement.h; sourceTree = "<group>"; };
 		4512502015DCE37D002F84E2 /* SpinButtonElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpinButtonElement.cpp; sourceTree = "<group>"; };
@@ -23030,7 +23028,6 @@
 				0720B09F14D3323500642955 /* GenericEventQueue.h */,
 				2442BBF81194C9D300D49469 /* HashChangeEvent.h */,
 				8482B7441198C32E00BFB005 /* HashChangeEvent.idl */,
-				45099C401370A7800058D513 /* IconURL.cpp */,
 				45BAC2AF1360BBAB005DA258 /* IconURL.h */,
 				C3CF17A015B0063F00276D39 /* IdTargetObserver.cpp */,
 				C3CF17A115B0063F00276D39 /* IdTargetObserver.h */,
@@ -28381,7 +28378,6 @@
 				513F14530AB634C400094DDF /* IconLoader.cpp in Sources */,
 				B275358E0B053A66002CE64F /* IconMac.mm in Sources */,
 				51E1ECC00C91C90400DC255B /* IconRecord.cpp in Sources */,
-				45099C411370A7800058D513 /* IconURL.cpp in Sources */,
 				51D719B9181106E00016DC51 /* IDBAny.cpp in Sources */,
 				C585A66211D4FAC5004C3E4B /* IDBBindingUtilities.cpp in Sources */,
 				51D719BF181106E00016DC51 /* IDBCursor.cpp in Sources */,

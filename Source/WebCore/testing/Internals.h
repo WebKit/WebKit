@@ -258,7 +258,6 @@ public:
 
     int pageNumber(Element*, float pageWidth = 800, float pageHeight = 600);
     Vector<String> shortcutIconURLs() const;
-    Vector<String> allIconURLs() const;
 
     int numberOfPages(float pageWidthInPixels = 800, float pageHeightInPixels = 600);
     String pageProperty(String, int, ExceptionCode& = ASSERT_NO_EXCEPTION) const;
@@ -386,7 +385,6 @@ private:
     explicit Internals(Document*);
     Document* contextDocument() const;
     Frame* frame() const;
-    Vector<String> iconURLs(Document*, int iconTypesMask) const;
 
     RenderedDocumentMarker* markerAt(Node*, const String& markerType, unsigned index, ExceptionCode&);
 

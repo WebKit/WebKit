@@ -233,7 +233,6 @@ enum ResourceLoadPriority {
     DOMString counterValue(Element element);
     long pageNumber(Element element, optional unrestricted float pageWidth, optional unrestricted float pageHeight);
     DOMString[] shortcutIconURLs();
-    DOMString[] allIconURLs();
     long numberOfPages(optional unrestricted double pageWidthInPixels, optional unrestricted double pageHeightInPixels);
     [RaisesException] DOMString pageProperty(DOMString propertyName, long pageNumber);
     [RaisesException] DOMString pageSizeAndMarginsInPixels(long pageIndex, long width, long height, long marginTop, long marginRight, long marginBottom, long marginLeft);

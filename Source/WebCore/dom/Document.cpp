@@ -4810,62 +4810,11 @@ RefPtr<XPathNSResolver> Document::createNSResolver(Node* nodeResolver)
     return m_xpathEvaluator->createNSResolver(nodeResolver);
 }
 
-RefPtr<XPathResult> Document::evaluate(const String& expression,
-                                           Node* contextNode,
-                                           XPathNSResolver* resolver,
-                                           unsigned short type,
-                                           XPathResult* result,
-                                           ExceptionCode& ec)
+RefPtr<XPathResult> Document::evaluate(const String& expression, Node* contextNode, XPathNSResolver* resolver, unsigned short type, XPathResult* result, ExceptionCode& ec)
 {
     if (!m_xpathEvaluator)
         m_xpathEvaluator = XPathEvaluator::create();
     return m_xpathEvaluator->evaluate(expression, contextNode, resolver, type, result, ec);
-}
-
-const Vector<IconURL>& Document::shortcutIconURLs()
-{
-    // Include any icons where type = link, rel = "shortcut icon".
-    return iconURLs(Favicon);
-}
-
-const Vector<IconURL>& Document::iconURLs(int iconTypesMask)
-{
-    m_iconURLs.clear();
-
-    if (!head())
-        return m_iconURLs;
-
-    Ref<HTMLCollection> children = head()->children();
-    unsigned int length = children->length();
-    for (unsigned int i = 0; i < length; ++i) {
-        Node* child = children->item(i);
-        if (!is<HTMLLinkElement>(*child))
-            continue;
-        HTMLLinkElement& linkElement = downcast<HTMLLinkElement>(*child);
-        if (!(linkElement.iconType() & iconTypesMask))
-            continue;
-        if (linkElement.href().isEmpty())
-            continue;
-
-        // Put it at the front to ensure that icons seen later take precedence as required by the spec.
-        IconURL newURL(linkElement.href(), linkElement.iconSizes(), linkElement.type(), linkElement.iconType());
-        m_iconURLs.append(newURL);
-    }
-
-    m_iconURLs.reverse();
-    return m_iconURLs;
-}
-
-void Document::addIconURL(const String& url, const String&, const String&, IconType iconType)
-{
-    if (url.isEmpty())
-        return;
-
-    Frame* f = frame();
-    if (!f)
-        return;
-
-    f->loader().didChangeIcons(iconType);
 }
 
 void Document::initSecurityContext()

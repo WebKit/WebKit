@@ -33,25 +33,24 @@
 #define LinkRelAttribute_h
 
 #include "IconURL.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct LinkRelAttribute {
-public:
-    bool m_isStyleSheet;
-    IconType m_iconType;
-    bool m_isAlternate;
-    bool m_isDNSPrefetch;
+    bool isStyleSheet { false };
+    IconType iconType { InvalidIcon };
+    bool isAlternate { false };
+    bool isDNSPrefetch { false };
 #if ENABLE(LINK_PREFETCH)
-    bool m_isLinkPrefetch;
-    bool m_isLinkSubresource;
+    bool isLinkPrefetch { false };
+    bool isLinkSubresource { false };
 #endif
 
     LinkRelAttribute();
     explicit LinkRelAttribute(const String&);
 };
-    
+
 }
 
 #endif
-

@@ -63,6 +63,7 @@
 #include "HTMLVideoElement.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "IconController.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorForwarding.h"
@@ -1848,26 +1849,17 @@ int Internals::pageNumber(Element* element, float pageWidth, float pageHeight)
     return PrintContext::pageNumberForElement(element, FloatSize(pageWidth, pageHeight));
 }
 
-Vector<String> Internals::iconURLs(Document* document, int iconTypesMask) const
-{
-    Vector<IconURL> iconURLs = document->iconURLs(iconTypesMask);
-    Vector<String> array;
-
-    Vector<IconURL>::const_iterator iter(iconURLs.begin());
-    for (; iter != iconURLs.end(); ++iter)
-        array.append(iter->m_iconURL.string());
-
-    return array;
-}
-
 Vector<String> Internals::shortcutIconURLs() const
 {
-    return iconURLs(contextDocument(), Favicon);
-}
+    Vector<String> vector;
 
-Vector<String> Internals::allIconURLs() const
-{
-    return iconURLs(contextDocument(), Favicon | TouchIcon | TouchPrecomposedIcon);
+    if (!frame())
+        return vector;
+
+    auto string = frame()->loader().icon().url().string();
+    if (!string.isNull())
+        vector.append(string);
+    return vector;
 }
 
 int Internals::numberOfPages(float pageWidth, float pageHeight)

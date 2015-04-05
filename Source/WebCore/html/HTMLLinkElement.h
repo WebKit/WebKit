@@ -29,7 +29,6 @@
 #include "CachedResourceHandle.h"
 #include "DOMSettableTokenList.h"
 #include "HTMLElement.h"
-#include "IconURL.h"
 #include "LinkLoader.h"
 #include "LinkLoaderClient.h"
 #include "LinkRelAttribute.h"
@@ -94,7 +93,7 @@ private:
     virtual void linkLoaded() override;
     virtual void linkLoadingErrored() override;
 
-    bool isAlternate() const { return m_disabledState == Unset && m_relAttribute.m_isAlternate; }
+    bool isAlternate() const { return m_disabledState == Unset && m_relAttribute.isAlternate; }
     
     void setDisabledState(bool);
 

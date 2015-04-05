@@ -37,6 +37,7 @@
 #include <functional>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(CONTENT_FILTERING)
 #include "ContentFilterUnblockHandler.h"

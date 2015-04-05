@@ -32,24 +32,20 @@
 #define IconController_h
 
 #include "IconDatabaseBase.h"
-#include "IconURL.h"
-#include "URL.h"
 
 namespace WebCore {
 
 class Frame;
 class IconLoader;
+class URL;
 
 class IconController {
-    WTF_MAKE_NONCOPYABLE(IconController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit IconController(Frame&);
     ~IconController();
 
     WEBCORE_EXPORT URL url();
-    IconURLs urlsForTypes(int iconTypesMask);
-    IconURL iconURL(IconType) const;
 
     void startLoader();
     void stopLoader();
@@ -60,13 +56,9 @@ public:
     void commitToDatabase(const URL& icon);
 
 private:
-    bool appendToIconURLs(IconType, IconURLs*);
-    IconURL defaultURL(IconType);
-
     Frame& m_frame;
-
     std::unique_ptr<IconLoader> m_iconLoader;
-    bool m_waitingForLoadDecision;
+    bool m_waitingForLoadDecision { false };
 };
 
 } // namespace WebCore
