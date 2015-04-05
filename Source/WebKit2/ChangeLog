@@ -1,3 +1,52 @@
+2015-04-04  Antti Koivisto  <antti@apple.com>
+
+        Network cache Bloom filter is too big
+        https://bugs.webkit.org/show_bug.cgi?id=143400
+
+        Reviewed by Chris Dumez.
+
+        It is currently 1MB.
+
+        This patch switches the cache from a counting filter (CountingBloomFilter) to a bit filter (BloomFilter).
+
+        It also reduces the filter size from 2^20 to 2^18 elements which is good for ~26000 cache entries while
+        still keeping false positive rate below 1%. The current cache capacity allows around 4000 entries
+        with typical web contents.
+
+        The new filter size is 32KB.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::Storage):
+        (WebKit::NetworkCache::Storage::synchronize):
+
+            Turn initialization function into general purpose synchronization function.
+
+        (WebKit::NetworkCache::Storage::addToContentsFilter):
+
+            Collect newly added hashes so we don't miss entries that were added during synchronization.
+
+        (WebKit::NetworkCache::Storage::mayContain):
+        (WebKit::NetworkCache::Storage::remove):
+        (WebKit::NetworkCache::Storage::retrieve):
+        (WebKit::NetworkCache::Storage::store):
+        (WebKit::NetworkCache::Storage::dispatchPendingWriteOperations):
+        (WebKit::NetworkCache::Storage::dispatchFullWriteOperation):
+        (WebKit::NetworkCache::Storage::dispatchHeaderWriteOperation):
+        (WebKit::NetworkCache::Storage::setMaximumSize):
+        (WebKit::NetworkCache::Storage::clear):
+        (WebKit::NetworkCache::Storage::shrinkIfNeeded):
+        (WebKit::NetworkCache::Storage::shrink):
+
+            Non-counting Bloom filter does not support removals so this requires a new strategy.
+
+            Shrink code now simply deletes entries. The filter is updated by calling synchronize() at the end.
+            While we could synchronize the filter during traversal it is better to just have one function for that.
+
+        (WebKit::NetworkCache::Storage::initialize): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::mayContain):
+        (WebKit::NetworkCache::Storage::cacheMayContain): Deleted.
+
 2015-04-04  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Blocked page is not always displayed when it should be

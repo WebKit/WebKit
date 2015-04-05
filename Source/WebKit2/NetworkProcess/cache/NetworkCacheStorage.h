@@ -85,9 +85,10 @@ public:
 private:
     Storage(const String& directoryPath);
 
-    void initialize();
+    void synchronize();
     void deleteOldVersions();
     void shrinkIfNeeded();
+    void shrink();
 
     struct ReadOperation {
         Key key;
@@ -111,18 +112,24 @@ private:
     WorkQueue& backgroundIOQueue() { return m_backgroundIOQueue.get(); }
     WorkQueue& serialBackgroundIOQueue() { return m_serialBackgroundIOQueue.get(); }
 
-    bool cacheMayContain(unsigned shortHash) { return !m_hasPopulatedContentsFilter || m_contentsFilter.mayContain(shortHash); }
+    bool mayContain(const Key&) const;
+
+    // 2^18 bit filter can support up to 26000 entries with false positive rate < 1%.
+    using ContentsFilter = BloomFilter<18>;
+    void addToContentsFilter(const Key&);
 
     const String m_baseDirectoryPath;
     const String m_directoryPath;
 
     size_t m_maximumSize { std::numeric_limits<size_t>::max() };
+    size_t m_approximateSize { 0 };
 
-    CountingBloomFilter<20> m_contentsFilter;
-    std::atomic<bool> m_hasPopulatedContentsFilter { false };
+    std::unique_ptr<ContentsFilter> m_contentsFilter;
 
-    std::atomic<size_t> m_approximateSize { 0 };
-    std::atomic<bool> m_shrinkInProgress { false };
+    bool m_synchronizationInProgress { false };
+    bool m_shrinkInProgress { false };
+
+    Vector<unsigned> m_contentsFilterHashesAddedDuringSynchronization;
 
     static const int maximumRetrievePriority = 4;
     Deque<std::unique_ptr<const ReadOperation>> m_pendingReadOperationsByPriority[maximumRetrievePriority + 1];

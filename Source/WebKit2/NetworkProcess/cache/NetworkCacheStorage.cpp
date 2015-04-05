@@ -70,32 +70,73 @@ Storage::Storage(const String& baseDirectoryPath)
     , m_serialBackgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage.serialBackground", WorkQueue::Type::Serial, WorkQueue::QOS::Background))
 {
     deleteOldVersions();
-    initialize();
+    synchronize();
 }
 
-void Storage::initialize()
+void Storage::synchronize()
 {
     ASSERT(RunLoop::isMain());
 
-    StringCapture cachePathCapture(m_directoryPath);
+    if (m_synchronizationInProgress || m_shrinkInProgress)
+        return;
+    m_synchronizationInProgress = true;
 
+    LOG(NetworkCacheStorage, "(NetworkProcess) synchronizing cache");
+
+    StringCapture cachePathCapture(m_directoryPath);
     backgroundIOQueue().dispatch([this, cachePathCapture] {
         String cachePath = cachePathCapture.string();
-        traverseCacheFiles(cachePath, [this](const String& fileName, const String& partitionPath) {
+
+        auto filter = std::make_unique<ContentsFilter>();
+        size_t size = 0;
+        unsigned count = 0;
+        traverseCacheFiles(cachePath, [&filter, &size, &count](const String& fileName, const String& partitionPath) {
             Key::HashType hash;
             if (!Key::stringToHash(fileName, hash))
                 return;
-            unsigned shortHash = Key::toShortHash(hash);
-            RunLoop::main().dispatch([this, shortHash] {
-                m_contentsFilter.add(shortHash);
-            });
             auto filePath = WebCore::pathByAppendingComponent(partitionPath, fileName);
             long long fileSize = 0;
             WebCore::getFileSize(filePath, fileSize);
-            m_approximateSize += fileSize;
+            if (!fileSize)
+                return;
+            filter->add(Key::toShortHash(hash));
+            size += fileSize;
+            ++count;
         });
-        m_hasPopulatedContentsFilter = true;
+
+        auto* filterPtr = filter.release();
+        RunLoop::main().dispatch([this, filterPtr, size] {
+            auto filter = std::unique_ptr<ContentsFilter>(filterPtr);
+
+            for (auto hash : m_contentsFilterHashesAddedDuringSynchronization)
+                filter->add(hash);
+            m_contentsFilterHashesAddedDuringSynchronization.clear();
+
+            m_contentsFilter = WTF::move(filter);
+            m_approximateSize = size;
+            m_synchronizationInProgress = false;
+        });
+
+        LOG(NetworkCacheStorage, "(NetworkProcess) cache synchronization completed approximateSize=%zu count=%d", size, count);
     });
+}
+
+void Storage::addToContentsFilter(const Key& key)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (m_contentsFilter)
+        m_contentsFilter->add(key.shortHash());
+
+    // If we get new entries during filter synchronization take care to add them to the new filter as well.
+    if (m_synchronizationInProgress)
+        m_contentsFilterHashesAddedDuringSynchronization.append(key.shortHash());
+}
+
+bool Storage::mayContain(const Key& key) const
+{
+    ASSERT(RunLoop::isMain());
+    return !m_contentsFilter || m_contentsFilter->mayContain(key.shortHash());
 }
 
 static String directoryPathForKey(const Key& key, const String& cachePath)
@@ -288,11 +329,9 @@ void Storage::remove(const Key& key)
 {
     ASSERT(RunLoop::isMain());
 
-    // For simplicity we don't reduce m_approximateSize on removals.
-    // The next cache shrink will update the size.
-
-    if (m_contentsFilter.mayContain(key.shortHash()))
-        m_contentsFilter.remove(key.shortHash());
+    // We can't remove the key from the Bloom filter (but some false positives are expected anyway).
+    // For simplicity we also don't reduce m_approximateSize on removals.
+    // The next synchronization will update everything.
 
     StringCapture filePathCapture(filePathForKey(key, m_directoryPath));
     serialBackgroundIOQueue().dispatch([this, filePathCapture] {
@@ -385,7 +424,7 @@ void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHand
         return;
     }
 
-    if (!cacheMayContain(key.shortHash())) {
+    if (!mayContain(key)) {
         completionHandler(nullptr);
         return;
     }
@@ -412,7 +451,7 @@ void Storage::store(const Record& record, StoreCompletionHandler&& completionHan
     m_pendingWriteOperations.append(new WriteOperation { record, { }, WTF::move(completionHandler) });
 
     // Add key to the filter already here as we do lookups from the pending operations too.
-    m_contentsFilter.add(record.key.shortHash());
+    addToContentsFilter(record.key);
 
     dispatchPendingWriteOperations();
 }
@@ -479,7 +518,7 @@ void Storage::dispatchPendingWriteOperations()
         auto& write = *writeOperation;
         m_activeWriteOperations.add(WTF::move(writeOperation));
 
-        if (write.existingRecord && cacheMayContain(write.record.key.shortHash())) {
+        if (write.existingRecord && mayContain(write.record.key)) {
             dispatchHeaderWriteOperation(write);
             continue;
         }
@@ -492,8 +531,8 @@ void Storage::dispatchFullWriteOperation(const WriteOperation& write)
     ASSERT(RunLoop::isMain());
     ASSERT(m_activeWriteOperations.contains(&write));
 
-    if (!m_contentsFilter.mayContain(write.record.key.shortHash()))
-        m_contentsFilter.add(write.record.key.shortHash());
+    // This was added already when starting the store but filter might have been wiped.
+    addToContentsFilter(write.record.key);
 
     StringCapture cachePathCapture(m_directoryPath);
     backgroundIOQueue().dispatch([this, &write, cachePathCapture] {
@@ -505,14 +544,10 @@ void Storage::dispatchFullWriteOperation(const WriteOperation& write)
         size_t bodyOffset = encodedHeader.size();
 
         channel->write(0, headerAndBodyData, [this, &write, bodyOffset, fd](int error) {
-            LOG(NetworkCacheStorage, "(NetworkProcess) write complete error=%d", error);
-            if (error) {
-                if (m_contentsFilter.mayContain(write.record.key.shortHash()))
-                    m_contentsFilter.remove(write.record.key.shortHash());
-            }
             size_t bodySize = write.record.body.size();
             size_t totalSize = bodyOffset + bodySize;
 
+            // On error the entry still stays in the contents filter until next synchronization.
             m_approximateSize += totalSize;
 
             bool shouldMapBody = !error && bodySize >= pageSize();
@@ -523,6 +558,8 @@ void Storage::dispatchFullWriteOperation(const WriteOperation& write)
             ASSERT(m_activeWriteOperations.contains(&write));
             m_activeWriteOperations.remove(&write);
             dispatchPendingWriteOperations();
+
+            LOG(NetworkCacheStorage, "(NetworkProcess) write complete error=%d", error);
         });
     });
 
@@ -534,7 +571,7 @@ void Storage::dispatchHeaderWriteOperation(const WriteOperation& write)
     ASSERT(RunLoop::isMain());
     ASSERT(write.existingRecord);
     ASSERT(m_activeWriteOperations.contains(&write));
-    ASSERT(cacheMayContain(write.record.key.shortHash()));
+    ASSERT(mayContain(write.record.key));
 
     // Try to update the header of an existing entry.
     StringCapture cachePathCapture(m_directoryPath);
@@ -570,6 +607,16 @@ void Storage::dispatchHeaderWriteOperation(const WriteOperation& write)
 void Storage::setMaximumSize(size_t size)
 {
     ASSERT(RunLoop::isMain());
+
+#if !ASSERT_DISABLED
+    const size_t assumedAverageRecordSize = 50 << 20;
+    size_t maximumRecordCount = size / assumedAverageRecordSize;
+    // ~10 bits per element are required for <1% false positive rate.
+    size_t effectiveBloomFilterCapacity = ContentsFilter::tableSize / 10;
+    // If this gets hit it might be time to increase the filter size.
+    ASSERT(maximumRecordCount < effectiveBloomFilterCapacity);
+#endif
+
     m_maximumSize = size;
 
     shrinkIfNeeded();
@@ -580,7 +627,8 @@ void Storage::clear()
     ASSERT(RunLoop::isMain());
     LOG(NetworkCacheStorage, "(NetworkProcess) clearing cache");
 
-    m_contentsFilter.clear();
+    if (m_contentsFilter)
+        m_contentsFilter->clear();
     m_approximateSize = 0;
 
     StringCapture directoryPathCapture(m_directoryPath);
@@ -629,20 +677,24 @@ void Storage::shrinkIfNeeded()
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_approximateSize <= m_maximumSize)
-        return;
-    if (m_shrinkInProgress)
+    if (m_approximateSize > m_maximumSize)
+        shrink();
+}
+
+void Storage::shrink()
+{
+    ASSERT(RunLoop::isMain());
+
+    if (m_shrinkInProgress || m_synchronizationInProgress)
         return;
     m_shrinkInProgress = true;
 
     LOG(NetworkCacheStorage, "(NetworkProcess) shrinking cache approximateSize=%zu, m_maximumSize=%zu", static_cast<size_t>(m_approximateSize), m_maximumSize);
 
-    m_approximateSize = 0;
-
     StringCapture cachePathCapture(m_directoryPath);
     backgroundIOQueue().dispatch([this, cachePathCapture] {
         String cachePath = cachePathCapture.string();
-        traverseCacheFiles(cachePath, [this](const String& fileName, const String& partitionPath) {
+        traverseCacheFiles(cachePath, [](const String& fileName, const String& partitionPath) {
             auto filePath = WebCore::pathByAppendingComponent(partitionPath, fileName);
 
             auto times = fileTimes(filePath);
@@ -651,22 +703,8 @@ void Storage::shrinkIfNeeded()
 
             LOG(NetworkCacheStorage, "Deletion probability=%f shouldDelete=%d", probability, shouldDelete);
 
-            if (!shouldDelete) {
-                long long fileSize = 0;
-                WebCore::getFileSize(filePath, fileSize);
-                m_approximateSize += fileSize;
-                return;
-            }
-
-            WebCore::deleteFile(filePath);
-            Key::HashType hash;
-            if (!Key::stringToHash(fileName, hash))
-                return;
-            unsigned shortHash = Key::toShortHash(hash);
-            RunLoop::main().dispatch([this, shortHash] {
-                if (m_contentsFilter.mayContain(shortHash))
-                    m_contentsFilter.remove(shortHash);
-            });
+            if (shouldDelete)
+                WebCore::deleteFile(filePath);
         });
 
         // Let system figure out if they are really empty.
@@ -675,9 +713,13 @@ void Storage::shrinkIfNeeded()
             WebCore::deleteEmptyDirectory(partitionPath);
         });
 
-        m_shrinkInProgress = false;
+        RunLoop::main().dispatch([this] {
+            m_shrinkInProgress = false;
+            // We could synchronize during the shrink traversal. However this is fast and it is better to have just one code path.
+            synchronize();
+        });
 
-        LOG(NetworkCacheStorage, "(NetworkProcess) cache shrink completed approximateSize=%zu", static_cast<size_t>(m_approximateSize));
+        LOG(NetworkCacheStorage, "(NetworkProcess) cache shrink completed");
     });
 }
 
