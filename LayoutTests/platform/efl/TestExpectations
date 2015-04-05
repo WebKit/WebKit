@@ -2212,3 +2212,6 @@ compositing/masks/toggle-mask.html [ Crash ]
 compositing/overlap-blending/nested-overlap-overflow.html [ Crash ]
 compositing/reflections/nested-reflection-on-overflow.html [ Crash ]
 compositing/text-on-scaled-surface.html [ Crash ]
+
+webkit.org/b/143415 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
+webkit.org/b/143416 fast/text/baseline-inline-block.html [ ImageOnlyFailure ]

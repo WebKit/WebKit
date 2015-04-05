@@ -1,3 +1,12 @@
+2015-04-05  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Gardening on 5th April. Mark 2 tests to ImageOnlyFailure.
+        https://bugs.webkit.org/show_bug.cgi?id=143417
+
+        Unreviewed. Mark 2 tests to ImageOnlyFailure.
+
+        * platform/efl/TestExpectations:
+
 2015-04-04  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Blocked page is not always displayed when it should be
