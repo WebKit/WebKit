@@ -1,3 +1,10 @@
+2015-04-04  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the build.
+
+        * loader/icon/IconController.cpp:
+        (WebCore::iconsFromLinkElements):
+
 2015-04-02  Darin Adler  <darin@apple.com>
 
         Streamline icon-related code, mostly unused

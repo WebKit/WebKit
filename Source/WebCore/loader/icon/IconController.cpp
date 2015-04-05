@@ -82,7 +82,7 @@ static Vector<URL> iconsFromLinkElements(Frame& frame, LinkElementSelector selec
             continue;
         if (linkElement.href().isEmpty())
             continue;
-        if (selector == WithMIMEType && linkElement.type().isEmpty())
+        if (selector == LinkElementSelector::WithMIMEType && linkElement.type().isEmpty())
             continue;
         result.append(linkElement.href());
     }
