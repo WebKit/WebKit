@@ -419,7 +419,7 @@ void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHand
     ASSERT(priority <= maximumRetrievePriority);
     ASSERT(!key.isNull());
 
-    if (!m_maximumSize) {
+    if (!m_capacity) {
         completionHandler(nullptr);
         return;
     }
@@ -443,7 +443,7 @@ void Storage::store(const Record& record, StoreCompletionHandler&& completionHan
     ASSERT(RunLoop::isMain());
     ASSERT(!record.key.isNull());
 
-    if (!m_maximumSize) {
+    if (!m_capacity) {
         completionHandler(false, { });
         return;
     }
@@ -462,7 +462,7 @@ void Storage::update(const Record& updateRecord, const Record& existingRecord, S
     ASSERT(!existingRecord.key.isNull());
     ASSERT(existingRecord.key == updateRecord.key);
 
-    if (!m_maximumSize) {
+    if (!m_capacity) {
         completionHandler(false, { });
         return;
     }
@@ -604,20 +604,20 @@ void Storage::dispatchHeaderWriteOperation(const WriteOperation& write)
     });
 }
 
-void Storage::setMaximumSize(size_t size)
+void Storage::setCapacity(size_t capacity)
 {
     ASSERT(RunLoop::isMain());
 
 #if !ASSERT_DISABLED
     const size_t assumedAverageRecordSize = 50 << 20;
-    size_t maximumRecordCount = size / assumedAverageRecordSize;
+    size_t maximumRecordCount = capacity / assumedAverageRecordSize;
     // ~10 bits per element are required for <1% false positive rate.
     size_t effectiveBloomFilterCapacity = ContentsFilter::tableSize / 10;
     // If this gets hit it might be time to increase the filter size.
     ASSERT(maximumRecordCount < effectiveBloomFilterCapacity);
 #endif
 
-    m_maximumSize = size;
+    m_capacity = capacity;
 
     shrinkIfNeeded();
 }
@@ -677,7 +677,7 @@ void Storage::shrinkIfNeeded()
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_approximateSize > m_maximumSize)
+    if (m_approximateSize > m_capacity)
         shrink();
 }
 
@@ -689,7 +689,7 @@ void Storage::shrink()
         return;
     m_shrinkInProgress = true;
 
-    LOG(NetworkCacheStorage, "(NetworkProcess) shrinking cache approximateSize=%zu, m_maximumSize=%zu", static_cast<size_t>(m_approximateSize), m_maximumSize);
+    LOG(NetworkCacheStorage, "(NetworkProcess) shrinking cache approximateSize=%zu capacity=%zu", static_cast<size_t>(m_approximateSize), m_capacity);
 
     StringCapture cachePathCapture(m_directoryPath);
     backgroundIOQueue().dispatch([this, cachePathCapture] {

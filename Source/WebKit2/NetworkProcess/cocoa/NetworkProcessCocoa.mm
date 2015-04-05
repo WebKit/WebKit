@@ -143,7 +143,7 @@ void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
 #if ENABLE(NETWORK_CACHE)
     auto& networkCache = NetworkCache::singleton();
     if (networkCache.isEnabled()) {
-        networkCache.setMaximumSize(urlCacheDiskCapacity);
+        networkCache.setCapacity(urlCacheDiskCapacity);
         return;
     }
 #endif

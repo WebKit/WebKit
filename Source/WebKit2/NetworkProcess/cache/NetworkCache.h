@@ -87,7 +87,7 @@ class Cache {
     friend class WTF::NeverDestroyed<Cache>;
 public:
     bool initialize(const String& cachePath, bool enableEfficacyLogging);
-    void setMaximumSize(size_t);
+    void setCapacity(size_t);
 
     bool isEnabled() const { return !!m_storage; }
 

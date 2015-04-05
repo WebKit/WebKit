@@ -74,7 +74,7 @@ public:
     // Null record signals end.
     void traverse(TraverseFlags, std::function<void (const Record*, const RecordInfo&)>&&);
 
-    void setMaximumSize(size_t);
+    void setCapacity(size_t);
     void clear();
 
     static const unsigned version = 2;
@@ -114,16 +114,16 @@ private:
 
     bool mayContain(const Key&) const;
 
-    // 2^18 bit filter can support up to 26000 entries with false positive rate < 1%.
-    using ContentsFilter = BloomFilter<18>;
     void addToContentsFilter(const Key&);
 
     const String m_baseDirectoryPath;
     const String m_directoryPath;
 
-    size_t m_maximumSize { std::numeric_limits<size_t>::max() };
+    size_t m_capacity { std::numeric_limits<size_t>::max() };
     size_t m_approximateSize { 0 };
 
+    // 2^18 bit filter can support up to 26000 entries with false positive rate < 1%.
+    using ContentsFilter = BloomFilter<18>;
     std::unique_ptr<ContentsFilter> m_contentsFilter;
 
     bool m_synchronizationInProgress { false };

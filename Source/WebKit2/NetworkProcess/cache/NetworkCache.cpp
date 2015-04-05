@@ -76,11 +76,11 @@ bool Cache::initialize(const String& cachePath, bool enableEfficacyLogging)
     return !!m_storage;
 }
 
-void Cache::setMaximumSize(size_t maximumSize)
+void Cache::setCapacity(size_t maximumSize)
 {
     if (!m_storage)
         return;
-    m_storage->setMaximumSize(maximumSize);
+    m_storage->setCapacity(maximumSize);
 }
 
 static Key makeCacheKey(const WebCore::ResourceRequest& request)

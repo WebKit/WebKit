@@ -1,3 +1,26 @@
+2015-04-05  Antti Koivisto  <antti@apple.com>
+
+        Rename Cache::setMaximumSize to setCapacity
+        https://bugs.webkit.org/show_bug.cgi?id=143418
+
+        Reviewed by Dan Bernstein.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::setCapacity):
+        (WebKit::NetworkCache::Cache::setMaximumSize): Deleted.
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::retrieve):
+        (WebKit::NetworkCache::Storage::store):
+        (WebKit::NetworkCache::Storage::update):
+        (WebKit::NetworkCache::Storage::setCapacity):
+        (WebKit::NetworkCache::Storage::shrinkIfNeeded):
+        (WebKit::NetworkCache::Storage::shrink):
+        (WebKit::NetworkCache::Storage::setMaximumSize): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformSetCacheModel):
+
 2015-04-04  Antti Koivisto  <antti@apple.com>
 
         Network cache Bloom filter is too big
