@@ -127,9 +127,6 @@ bool WebFrameProxy::isDisplayingPDFDocument() const
 void WebFrameProxy::didStartProvisionalLoad(const String& url)
 {
     m_frameLoadState.didStartProvisionalLoad(url);
-#if ENABLE(CONTENT_FILTERING)
-    m_contentFilterUnblockHandler = { };
-#endif
 }
 
 void WebFrameProxy::didReceiveServerRedirectForProvisionalLoad(const String& url)
@@ -236,8 +233,10 @@ void WebFrameProxy::setUnreachableURL(const String& unreachableURL)
 #if ENABLE(CONTENT_FILTERING)
 bool WebFrameProxy::didHandleContentFilterUnblockNavigation(const WebCore::ResourceRequest& request)
 {
-    if (!m_contentFilterUnblockHandler.canHandleRequest(request))
+    if (!m_contentFilterUnblockHandler.canHandleRequest(request)) {
+        m_contentFilterUnblockHandler = { };
         return false;
+    }
 
     RefPtr<WebPageProxy> page { m_page };
     ASSERT(page);

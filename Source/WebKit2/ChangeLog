@@ -1,3 +1,14 @@
+2015-04-04  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Blocked page is not always displayed when it should be
+        https://bugs.webkit.org/show_bug.cgi?id=143410
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didStartProvisionalLoad): Stopped clearing m_contentFilterUnblockHandler here.
+        (WebKit::WebFrameProxy::didHandleContentFilterUnblockNavigation): Started doing it here instead.
+
 2015-04-04  Chris Dumez  <cdumez@apple.com>
 
         [WK2][Cocoa] Add a way to temporarily disable the WebKit Network Cache for testing

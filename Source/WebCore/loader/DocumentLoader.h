@@ -64,7 +64,6 @@ namespace WebCore {
     class ArchiveResourceCollection;
     class CachedRawResource;
     class CachedResourceLoader;
-    class ContentFilter;
     class FormState;
     class Frame;
     class FrameLoader;
@@ -72,6 +71,10 @@ namespace WebCore {
     class ResourceLoader;
     class SharedBuffer;
     class SubstituteResource;
+
+#if ENABLE(CONTENT_FILTERING)
+    class ContentFilter;
+#endif
 
     typedef HashMap<unsigned long, RefPtr<ResourceLoader>> ResourceLoaderMap;
     typedef Vector<ResourceResponse> ResponseVector;
@@ -329,6 +332,12 @@ namespace WebCore {
         void substituteResourceDeliveryTimerFired();
 
         void clearMainResource();
+
+#if ENABLE(CONTENT_FILTERING)
+        void becomeMainResourceClientIfFilterAllows();
+        void installContentFilterUnblockHandler(ContentFilter&);
+        void contentFilterDidDecide();
+#endif
 
         Frame* m_frame;
         Ref<CachedResourceLoader> m_cachedResourceLoader;

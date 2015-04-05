@@ -1,3 +1,14 @@
+2015-04-04  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Blocked page is not always displayed when it should be
+        https://bugs.webkit.org/show_bug.cgi?id=143410
+
+        Reviewed by Andreas Kling.
+
+        * TestExpectations: Unskipped block-after-add-data.html.
+        * contentfiltering/block-after-add-data-expected.html: Added a passing expectation.
+        * contentfiltering/block-after-response-expected.html: Ditto.
+
 2015-04-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Heuristic: Avoid exposing an element as clickable if mouse event delegation is handled on an AXElement with more than one descendant AXElement

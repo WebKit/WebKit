@@ -36,22 +36,25 @@ OBJC_CLASS WebFilterEvaluator;
 namespace WebCore {
 
 class ParentalControlsContentFilter final : public PlatformContentFilter {
-    friend std::unique_ptr<ParentalControlsContentFilter> std::make_unique<ParentalControlsContentFilter>(const ResourceResponse&);
+    friend std::unique_ptr<ParentalControlsContentFilter> std::make_unique<ParentalControlsContentFilter>();
 
 public:
-    static bool canHandleResponse(const ResourceResponse&);
-    static std::unique_ptr<ParentalControlsContentFilter> create(const ResourceResponse&);
+    static bool enabled();
+    static std::unique_ptr<ParentalControlsContentFilter> create();
 
+    void responseReceived(const ResourceResponse&) override;
     void addData(const char* data, int length) override;
     void finishedAddingData() override;
     bool needsMoreData() const override;
     bool didBlockData() const override;
-    const char* getReplacementData(int& length) const override;
+    Ref<SharedBuffer> replacementData() const override;
     ContentFilterUnblockHandler unblockHandler() const override;
 
 private:
-    explicit ParentalControlsContentFilter(const ResourceResponse&);
+    ParentalControlsContentFilter();
+    void updateFilterState();
 
+    OSStatus m_filterState;
     RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
     RetainPtr<NSData> m_replacementData;
 };

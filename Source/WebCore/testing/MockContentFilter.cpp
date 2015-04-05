@@ -29,8 +29,11 @@
 #if ENABLE(CONTENT_FILTERING)
 
 #include "ContentFilter.h"
+#include "ContentFilterUnblockHandler.h"
+#include "SharedBuffer.h"
 #include <mutex>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -50,24 +53,23 @@ static inline MockContentFilterSettings& settings()
     return MockContentFilterSettings::singleton();
 }
 
-bool MockContentFilter::canHandleResponse(const ResourceResponse&)
+bool MockContentFilter::enabled()
 {
     return settings().enabled();
 }
 
-std::unique_ptr<MockContentFilter> MockContentFilter::create(const ResourceResponse& response)
+std::unique_ptr<MockContentFilter> MockContentFilter::create()
 {
-    return std::make_unique<MockContentFilter>(response);
+    return std::make_unique<MockContentFilter>();
 }
 
-MockContentFilter::MockContentFilter(const ResourceResponse&)
+void MockContentFilter::responseReceived(const ResourceResponse&)
 {
     maybeDetermineStatus(DecisionPoint::AfterResponse);
 }
 
-void MockContentFilter::addData(const char* data, int length)
+void MockContentFilter::addData(const char*, int)
 {
-    m_replacementData.append(data, length);
     maybeDetermineStatus(DecisionPoint::AfterAddData);
 }
 
@@ -86,14 +88,15 @@ bool MockContentFilter::didBlockData() const
     return m_status == Status::Blocked;
 }
 
-const char* MockContentFilter::getReplacementData(int& length) const
+Ref<SharedBuffer> MockContentFilter::replacementData() const
 {
-    length = m_replacementData.size();
-    return m_replacementData.data();
+    ASSERT(didBlockData());
+    return adoptRef(*SharedBuffer::create(m_replacementData.data(), m_replacementData.size()).leakRef());
 }
 
 ContentFilterUnblockHandler MockContentFilter::unblockHandler() const
 {
+    ASSERT(didBlockData());
     using DecisionHandlerFunction = ContentFilterUnblockHandler::DecisionHandlerFunction;
 
     return ContentFilterUnblockHandler {

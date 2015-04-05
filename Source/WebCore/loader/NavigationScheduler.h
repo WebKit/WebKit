@@ -41,6 +41,7 @@ class FormSubmission;
 class Frame;
 class ScheduledNavigation;
 class SecurityOrigin;
+class SubstituteData;
 class URL;
 
 class NavigationDisablerForBeforeUnload {
@@ -73,6 +74,7 @@ public:
     void scheduleFormSubmission(PassRefPtr<FormSubmission>);
     void scheduleRefresh();
     void scheduleHistoryNavigation(int steps);
+    void scheduleSubstituteDataLoad(const URL& baseURL, const SubstituteData&);
 
     void startTimer();
 

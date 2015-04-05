@@ -278,6 +278,26 @@ private:
     bool m_haveToldClient;
 };
 
+class ScheduledSubstituteDataLoad : public ScheduledNavigation {
+public:
+    ScheduledSubstituteDataLoad(const URL& baseURL, const SubstituteData& substituteData)
+        : ScheduledNavigation { 0, LockHistory::No, LockBackForwardList::No, false, false }
+        , m_baseURL { baseURL }
+        , m_substituteData { substituteData }
+    {
+    }
+
+    void fire(Frame& frame) override
+    {
+        UserGestureIndicator gestureIndicator { wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture };
+        frame.loader().load(FrameLoadRequest { &frame, m_baseURL, m_substituteData });
+    }
+
+private:
+    URL m_baseURL;
+    SubstituteData m_substituteData;
+};
+
 NavigationScheduler::NavigationScheduler(Frame& frame)
     : m_frame(frame)
     , m_timer(*this, &NavigationScheduler::timerFired)
@@ -428,6 +448,12 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
 
     // In all other cases, schedule the history traversal to occur asynchronously.
     schedule(std::make_unique<ScheduledHistoryNavigation>(steps));
+}
+
+void NavigationScheduler::scheduleSubstituteDataLoad(const URL& baseURL, const SubstituteData& substituteData)
+{
+    if (shouldScheduleNavigation())
+        schedule(std::make_unique<ScheduledSubstituteDataLoad>(baseURL, substituteData));
 }
 
 void NavigationScheduler::timerFired()

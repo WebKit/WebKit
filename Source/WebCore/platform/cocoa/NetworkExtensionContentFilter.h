@@ -27,11 +27,9 @@
 #define NetworkExtensionContentFilter_h
 
 #include "PlatformContentFilter.h"
-#include "SharedBuffer.h"
 #include <objc/NSObjCRuntime.h>
 #include <wtf/Compiler.h>
 #include <wtf/OSObjectPtr.h>
-#include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 
 #define HAVE_NETWORK_EXTENSION PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && CPU(X86_64))
@@ -42,31 +40,31 @@ OBJC_CLASS NEFilterSource;
 OBJC_CLASS NSData;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSMutableData;
-
+OBJC_CLASS NSString;
 namespace WebCore {
 
 class NetworkExtensionContentFilter final : public PlatformContentFilter {
-    friend std::unique_ptr<NetworkExtensionContentFilter> std::make_unique<NetworkExtensionContentFilter>(const ResourceResponse&);
+    friend std::unique_ptr<NetworkExtensionContentFilter> std::make_unique<NetworkExtensionContentFilter>();
 
 public:
-    static bool canHandleResponse(const ResourceResponse&);
-    static std::unique_ptr<NetworkExtensionContentFilter> create(const ResourceResponse&);
+    static bool enabled();
+    static std::unique_ptr<NetworkExtensionContentFilter> create();
 
+    void responseReceived(const ResourceResponse&) override;
     void addData(const char* data, int length) override;
     void finishedAddingData() override;
     bool needsMoreData() const override;
     bool didBlockData() const override;
-    const char* getReplacementData(int& length) const override;
+    Ref<SharedBuffer> replacementData() const override;
     ContentFilterUnblockHandler unblockHandler() const override;
 
 private:
-    explicit NetworkExtensionContentFilter(const ResourceResponse&);
+    NetworkExtensionContentFilter();
     void handleDecision(NEFilterSourceStatus, NSData *replacementData);
 
     NEFilterSourceStatus m_status;
     OSObjectPtr<dispatch_queue_t> m_queue;
     OSObjectPtr<dispatch_semaphore_t> m_semaphore;
-    Ref<SharedBuffer> m_originalData;
     RetainPtr<NSData> m_replacementData;
     RetainPtr<NEFilterSource> m_neFilterSource;
 };

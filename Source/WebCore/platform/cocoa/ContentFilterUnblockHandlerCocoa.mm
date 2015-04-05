@@ -29,6 +29,7 @@
 #if ENABLE(CONTENT_FILTERING)
 
 #import "BlockExceptions.h"
+#import "ContentFilter.h"
 #import "ResourceRequest.h"
 
 #if PLATFORM(IOS)
@@ -43,6 +44,7 @@ static NSString * const webFilterEvaluatorKey { @"webFilterEvaluator" };
 #endif
 
 static NSString * const unblockURLHostKey { @"unblockURLHost" };
+static NSString * const unreachableURLKey { @"unreachableURL" };
 
 namespace WebCore {
 
@@ -60,6 +62,21 @@ ContentFilterUnblockHandler::ContentFilterUnblockHandler(String unblockURLHost, 
 }
 #endif
 
+void ContentFilterUnblockHandler::wrapWithDecisionHandler(const DecisionHandlerFunction& decisionHandler)
+{
+    ContentFilterUnblockHandler wrapped { *this };
+    UnblockRequesterFunction wrappedRequester { [wrapped, decisionHandler](DecisionHandlerFunction wrappedDecisionHandler) {
+        wrapped.requestUnblockAsync([wrappedDecisionHandler, decisionHandler](bool unblocked) {
+            wrappedDecisionHandler(unblocked);
+            decisionHandler(unblocked);
+        });
+    }};
+#if PLATFORM(IOS)
+    m_webFilterEvaluator = nullptr;
+#endif
+    std::swap(m_unblockRequester, wrappedRequester);
+}
+
 bool ContentFilterUnblockHandler::needsUIProcess() const
 {
 #if PLATFORM(IOS)
@@ -74,6 +91,7 @@ void ContentFilterUnblockHandler::encode(NSCoder *coder) const
     ASSERT_ARG(coder, coder.allowsKeyedCoding && coder.requiresSecureCoding);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [coder encodeObject:m_unblockURLHost forKey:unblockURLHostKey];
+    [coder encodeObject:(NSURL *)m_unreachableURL forKey:unreachableURLKey];
 #if PLATFORM(IOS)
     [coder encodeObject:m_webFilterEvaluator.get() forKey:webFilterEvaluatorKey];
 #endif
@@ -85,6 +103,7 @@ bool ContentFilterUnblockHandler::decode(NSCoder *coder, ContentFilterUnblockHan
     ASSERT_ARG(coder, coder.allowsKeyedCoding && coder.requiresSecureCoding);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     unblockHandler.m_unblockURLHost = [coder decodeObjectOfClass:[NSString class] forKey:unblockURLHostKey];
+    unblockHandler.m_unreachableURL = [coder decodeObjectOfClass:[NSURL class] forKey:unreachableURLKey];
 #if PLATFORM(IOS)
     unblockHandler.m_webFilterEvaluator = [coder decodeObjectOfClass:getWebFilterEvaluatorClass() forKey:webFilterEvaluatorKey];
 #endif
@@ -104,7 +123,7 @@ bool ContentFilterUnblockHandler::canHandleRequest(const ResourceRequest& reques
 #endif
     }
 
-    return request.url().protocolIs(unblockURLScheme()) && equalIgnoringCase(request.url().host(), m_unblockURLHost);
+    return request.url().protocolIs(ContentFilter::urlScheme()) && equalIgnoringCase(request.url().host(), m_unblockURLHost);
 }
 
 static inline void dispatchToMainThread(void (^block)())

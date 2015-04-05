@@ -26,12 +26,14 @@
 #ifndef PlatformContentFilter_h
 #define PlatformContentFilter_h
 
-#include "ContentFilterUnblockHandler.h"
+#include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class ContentFilterUnblockHandler;
 class ResourceResponse;
+class SharedBuffer;
 
 class PlatformContentFilter {
     WTF_MAKE_FAST_ALLOCATED;
@@ -42,11 +44,12 @@ protected:
 
 public:
     virtual ~PlatformContentFilter() { }
+    virtual void responseReceived(const ResourceResponse&) = 0;
     virtual void addData(const char* data, int length) = 0;
     virtual void finishedAddingData() = 0;
     virtual bool needsMoreData() const = 0;
     virtual bool didBlockData() const = 0;
-    virtual const char* getReplacementData(int& length) const = 0;
+    virtual Ref<SharedBuffer> replacementData() const = 0;
     virtual ContentFilterUnblockHandler unblockHandler() const = 0;
     virtual String unblockRequestDeniedScript() const { return emptyString(); }
 };

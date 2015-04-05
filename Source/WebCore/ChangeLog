@@ -1,3 +1,141 @@
+2015-04-04  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Blocked page is not always displayed when it should be
+        https://bugs.webkit.org/show_bug.cgi?id=143410
+        rdar://problem/20211099
+
+        Reviewed by Andreas Kling.
+
+        These tests now pass: contentfiltering/block-after-add-data.html
+                              contentfiltering/block-after-response.html
+
+        There were several problems with how ContentFilter loaded replacement data:
+        (1) Replacement data was delivered to DocumentLoader as if it were the original document's data. This assumes
+            that the original data was a UTF-8 encoded HTML document, which is not always true. We had a way to reset
+            the encoding, but not the content type.
+        (2) Replacement data was never delivered when the filter blocks in DocumentLoader::responseReceived().
+        (3) The main resource load was cancelled before the replacement data could be rendered when the filter blocks
+            in DocumentLoader::dataReceived().
+        The result was that only when the load was blocked after DocumentLoader::notifyFinished() would the replacement
+        data be shown properly, and only when problem (1) wasn't occurring.
+
+        This patch addresses these issues by using the substitute data mechanism to deliver replacement data. By using
+        substitute data, we can ensure that the original load is cancelled at the earliest opportunity and that the
+        replacement data is loaded with the proper content type and encoding.
+
+        Accomplishing this required changing the way ContentFilter interacts with DocumentLoader. Instead of placing
+        ContentFilter hooks throughout DocumentLoader, this patch makes ContentFilter itself the client of the
+        CachedRawResource for the duration of the filtering. If the filter decides to allow the load, DocumentLoader
+        adds itself as a client causing CachedRawResource to deliver to it the response and buffered data. If the
+        filter decides to block the load, DocumentLoader schedules a substitute data load. An added benefit of this
+        approach is that ContentFilter can reuse CachedRawResource's original data buffer instead of keeping its own.
+
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::createIfNeeded): Changed to take a DecisionFunction rather than a ResourceResponse and DocumentLoader.
+        (WebCore::ContentFilter::ContentFilter): Ditto.
+        (WebCore::ContentFilter::~ContentFilter): Removed ourself as a CachedRawResource client if needed.
+        (WebCore::ContentFilter::startFilteringMainResource): Became the client of the CachedRawResource in order to start the filtering process.
+        (WebCore::ContentFilter::unblockHandler): Returned the unblock handler.
+        (WebCore::ContentFilter::replacementData): Returned the replacement data.
+        (WebCore::ContentFilter::unblockRequestDeniedScript): Returned the unblock request denied script.
+        (WebCore::ContentFilter::responseReceived): Called responseReceived() on each filter using forEachContentFilterUntilBlocked().
+        (WebCore::ContentFilter::dataReceived): Ditto for dataReceived().
+        (WebCore::ContentFilter::notifyFinished): Ditto for finishedLoading().
+        (WebCore::ContentFilter::forEachContentFilterUntilBlocked): For each filter that needs more data, called the function.
+        If the filter blocked the load, called didDecide() with State::Blocked.
+        If all filters allowed the load, called didDecide() with State::Allowed.
+        (WebCore::ContentFilter::didDecide): Set m_state and called m_decisionFunction().
+        (WebCore::ContentFilter::addData): Deleted.
+        (WebCore::ContentFilter::finishedAddingData): Deleted.
+        (WebCore::ContentFilter::needsMoreData): Deleted.
+        (WebCore::ContentFilter::didBlockData): Deleted.
+        (WebCore::ContentFilter::getReplacementData): Deleted.
+        * loader/ContentFilter.h:
+        (WebCore::ContentFilter::type):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader): Called ContentFilter::createIfNeeded() if not loading substitute data.
+        (WebCore::DocumentLoader::finishedLoading): Removed old ContentFilter code.
+        (WebCore::DocumentLoader::responseReceived): Ditto.
+        (WebCore::DocumentLoader::commitData): Ditto.
+        (WebCore::DocumentLoader::dataReceived): Ditto.
+        (WebCore::DocumentLoader::detachFromFrame): Set m_contentFilter to nullptr.
+        (WebCore::DocumentLoader::startLoadingMainResource): Called becomeMainResourceClientIfFilterAllows() instead of
+        becoming m_mainResource's client.
+        (WebCore::DocumentLoader::clearMainResource): Set m_contentFilter to nullptr.
+        (WebCore::DocumentLoader::becomeMainResourceClientIfFilterAllows): If ContentFilter is initialized, called
+        ContentFilter::startFilteringMainResource(). Otherwise added ourself as a client of m_mainResource.
+        (WebCore::DocumentLoader::installContentFilterUnblockHandler): Added a helper for creating and notifying
+        FrameLoaderClient of the unblock handler.
+        (WebCore::DocumentLoader::contentFilterDidDecide): Set m_contentFilter to nullptr. If the content filter
+        allowed the load, then added ourself as the CachedRawResource's client. Otherwise, installed the unblock handler
+        and scheduled a substitute data load with the replacement data.
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::prepareForLoadStart): Removed call to PolicyChecker::prepareForLoadStart().
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledSubstituteDataLoad::ScheduledSubstituteDataLoad): Added a ScheduledNavigation subclass that
+        calls FrameLoader::load() with a FrameLoadRequest containing substitute data.
+        (WebCore::NavigationScheduler::scheduleSubstituteDataLoad): Scheduled a substitute data load.
+        * loader/NavigationScheduler.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy): Reset m_contentFilterUnblockHandler if it couldn't handle the request.
+        (WebCore::PolicyChecker::prepareForLoadStart): Deleted.
+        * loader/PolicyChecker.h:
+        * platform/ContentFilterUnblockHandler.h:
+        (WebCore::ContentFilterUnblockHandler::unreachableURL):
+        (WebCore::ContentFilterUnblockHandler::setUnreachableURL):
+        (WebCore::ContentFilterUnblockHandler::unblockURLScheme): Renamed to ContentFilter::urlScheme().
+        * platform/PlatformContentFilter.h:
+        * platform/cocoa/ContentFilterUnblockHandlerCocoa.mm:
+        (WebCore::ContentFilterUnblockHandler::wrapWithDecisionHandler): Added a helper to wrap the unblock handler with an outer DecisionHandlerFunction.
+        (WebCore::ContentFilterUnblockHandler::encode): Added m_unreachableURL to the encoding.
+        (WebCore::ContentFilterUnblockHandler::decode): Ditto for the decoding.
+        (WebCore::ContentFilterUnblockHandler::canHandleRequest): Changed to call ContentFilter::urlScheme().
+        * platform/cocoa/NetworkExtensionContentFilter.h:
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (replacementDataFromDecisionInfo): Added a helper to extract replacement data from the decisionInfo dictionary.
+        (WebCore::NetworkExtensionContentFilter::enabled): Renamed from canHandleReponse(); only checks if the filter is enabled.
+        (WebCore::NetworkExtensionContentFilter::create): Created a new object.
+        (WebCore::NetworkExtensionContentFilter::NetworkExtensionContentFilter): Created a NEFilterSource immediately when using the modern API.
+        (WebCore::NetworkExtensionContentFilter::responseReceived): Created a NEFilterSource when using the legacy API.
+        Called -[NEFilterSource receivedResponse:decisionHandler:] when using the modern API.
+        (WebCore::NetworkExtensionContentFilter::addData): Stopped buffering the original data.
+        (WebCore::NetworkExtensionContentFilter::replacementData): Returned a SharedBuffer instead of a char* and int&.
+        (WebCore::NetworkExtensionContentFilter::canHandleResponse): Deleted.
+        (WebCore::createNEFilterSource): Deleted.
+        (WebCore::NetworkExtensionContentFilter::getReplacementData): Deleted.
+        * platform/cocoa/ParentalControlsContentFilter.h:
+        * platform/cocoa/ParentalControlsContentFilter.mm:
+        (WebCore::ParentalControlsContentFilter::enabled): Renamed from canHandleReponse(); only checks if the filter is enabled.
+        (WebCore::ParentalControlsContentFilter::create): Created a new object.
+        (WebCore::ParentalControlsContentFilter::ParentalControlsContentFilter): Initialized m_filterState to kWFEStateBuffering.
+        (WebCore::canHandleResponse): Added a helper to check if the response can be filtered.
+        (WebCore::ParentalControlsContentFilter::responseReceived): If !canHandleResponse(), set m_filterState to kWFEStateAllowed and return.
+        Otherwise created a new WebFilterEvaluator with the response.
+        (WebCore::ParentalControlsContentFilter::addData): Called updateFilterState().
+        (WebCore::ParentalControlsContentFilter::finishedAddingData): Ditto.
+        (WebCore::ParentalControlsContentFilter::needsMoreData): Changed to check m_filterState.
+        (WebCore::ParentalControlsContentFilter::didBlockData): Ditto.
+        (WebCore::ParentalControlsContentFilter::replacementData): Returned a SharedBuffer instead of a char* and int&.
+        (WebCore::ParentalControlsContentFilter::updateFilterState): Updated m_filterState by calling -[WebFilterEvaluator filterState].
+        (WebCore::ParentalControlsContentFilter::canHandleResponse): Deleted.
+        (WebCore::ParentalControlsContentFilter::getReplacementData): Deleted.
+        * platform/spi/cocoa/NEFilterSourceSPI.h:
+        * platform/spi/cocoa/WebFilterEvaluatorSPI.h:
+        * testing/MockContentFilter.cpp:
+        (WebCore::MockContentFilter::enabled): Renamed from canHandleReponse(); only checks if the filter is enabled.
+        (WebCore::MockContentFilter::create): Created a new object.
+        (WebCore::MockContentFilter::responseReceived): Called maybeDetermineStatus().
+        (WebCore::MockContentFilter::addData): Stopped buffering the original data.
+        (WebCore::MockContentFilter::replacementData): Returned a SharedBuffer instead of a char* and int&.
+        (WebCore::MockContentFilter::unblockHandler): Asserted that we blocked data.
+        (WebCore::MockContentFilter::canHandleResponse): Deleted.
+        (WebCore::MockContentFilter::MockContentFilter): Deleted.
+        (WebCore::MockContentFilter::getReplacementData): Deleted.
+        * testing/MockContentFilter.h:
+        * testing/MockContentFilterSettings.cpp:
+        (WebCore::MockContentFilterSettings::unblockRequestURL): Changed to use a StringBuilder.
+
 2015-04-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Heuristic: Avoid exposing an element as clickable if mouse event delegation is handled on an AXElement with more than one descendant AXElement

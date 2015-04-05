@@ -68,6 +68,7 @@ typedef void (^NEFilterSourceDecisionHandler)(NEFilterSourceStatus, NSDictionary
 - (void)finishedLoadingWithDecisionHandler:(NEFilterSourceDecisionHandler)decisionHandler;
 - (void)remediateWithDecisionHandler:(NEFilterSourceDecisionHandler)decisionHandler;
 @end
+
 #endif
 
 #endif

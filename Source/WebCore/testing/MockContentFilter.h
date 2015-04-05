@@ -32,18 +32,19 @@
 namespace WebCore {
 
 class MockContentFilter final : public PlatformContentFilter {
-    friend std::unique_ptr<MockContentFilter> std::make_unique<MockContentFilter>(const ResourceResponse&);
+    friend std::unique_ptr<MockContentFilter> std::make_unique<MockContentFilter>();
 
 public:
     static void ensureInstalled();
-    static bool canHandleResponse(const ResourceResponse&);
-    static std::unique_ptr<MockContentFilter> create(const ResourceResponse&);
+    static bool enabled();
+    static std::unique_ptr<MockContentFilter> create();
 
+    void responseReceived(const ResourceResponse&) override;
     void addData(const char* data, int length) override;
     void finishedAddingData() override;
     bool needsMoreData() const override;
     bool didBlockData() const override;
-    const char* getReplacementData(int& length) const override;
+    Ref<SharedBuffer> replacementData() const override;
     ContentFilterUnblockHandler unblockHandler() const override;
     String unblockRequestDeniedScript() const override;
 
@@ -54,7 +55,7 @@ private:
         Blocked
     };
 
-    explicit MockContentFilter(const ResourceResponse&);
+    MockContentFilter() = default;
     void maybeDetermineStatus(MockContentFilterSettings::DecisionPoint);
 
     Vector<char> m_replacementData;

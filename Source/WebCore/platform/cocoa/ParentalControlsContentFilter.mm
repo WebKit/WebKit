@@ -26,7 +26,9 @@
 #import "config.h"
 #import "ParentalControlsContentFilter.h"
 
+#import "ContentFilterUnblockHandler.h"
 #import "ResourceResponse.h"
+#import "SharedBuffer.h"
 #import "SoftLinking.h"
 #import "WebFilterEvaluatorSPI.h"
 #import <objc/runtime.h>
@@ -36,36 +38,49 @@ SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 
 namespace WebCore {
 
-bool ParentalControlsContentFilter::canHandleResponse(const ResourceResponse& response)
+bool ParentalControlsContentFilter::enabled()
 {
-    if (!response.url().protocolIsInHTTPFamily())
-        return false;
-
-    if ([getWebFilterEvaluatorClass() isManagedSession]) {
-#if PLATFORM(MAC)
-        if (response.url().protocolIs("https"))
-#endif
-            return true;
-    }
-
-    return false;
+    return [getWebFilterEvaluatorClass() isManagedSession];
 }
 
-std::unique_ptr<ParentalControlsContentFilter> ParentalControlsContentFilter::create(const ResourceResponse& response)
+std::unique_ptr<ParentalControlsContentFilter> ParentalControlsContentFilter::create()
 {
-    return std::make_unique<ParentalControlsContentFilter>(response);
+    return std::make_unique<ParentalControlsContentFilter>();
 }
 
-ParentalControlsContentFilter::ParentalControlsContentFilter(const ResourceResponse& response)
-    : m_webFilterEvaluator { adoptNS([allocWebFilterEvaluatorInstance() initWithResponse:response.nsURLResponse()]) }
+ParentalControlsContentFilter::ParentalControlsContentFilter()
+    : m_filterState { kWFEStateBuffering }
 {
     ASSERT([getWebFilterEvaluatorClass() isManagedSession]);
+}
+
+static inline bool canHandleResponse(const ResourceResponse& response)
+{
+#if PLATFORM(MAC)
+    return response.url().protocolIs("https");
+#else
+    return response.url().protocolIsInHTTPFamily();
+#endif
+}
+
+void ParentalControlsContentFilter::responseReceived(const ResourceResponse& response)
+{
+    ASSERT(!m_webFilterEvaluator);
+
+    if (!canHandleResponse(response)) {
+        m_filterState = kWFEStateAllowed;
+        return;
+    }
+
+    m_webFilterEvaluator = adoptNS([allocWebFilterEvaluatorInstance() initWithResponse:response.nsURLResponse()]);
+    updateFilterState();
 }
 
 void ParentalControlsContentFilter::addData(const char* data, int length)
 {
     ASSERT(![m_replacementData.get() length]);
     m_replacementData = [m_webFilterEvaluator addData:[NSData dataWithBytesNoCopy:(void*)data length:length freeWhenDone:NO]];
+    updateFilterState();
     ASSERT(needsMoreData() || [m_replacementData.get() length]);
 }
 
@@ -73,22 +88,23 @@ void ParentalControlsContentFilter::finishedAddingData()
 {
     ASSERT(![m_replacementData.get() length]);
     m_replacementData = [m_webFilterEvaluator dataComplete];
+    updateFilterState();
 }
 
 bool ParentalControlsContentFilter::needsMoreData() const
 {
-    return [m_webFilterEvaluator filterState] == kWFEStateBuffering;
+    return m_filterState == kWFEStateBuffering;
 }
 
 bool ParentalControlsContentFilter::didBlockData() const
 {
-    return [m_webFilterEvaluator wasBlocked];
+    return m_filterState == kWFEStateBlocked;
 }
 
-const char* ParentalControlsContentFilter::getReplacementData(int& length) const
+Ref<SharedBuffer> ParentalControlsContentFilter::replacementData() const
 {
-    length = [m_replacementData length];
-    return static_cast<const char*>([m_replacementData bytes]);
+    ASSERT(didBlockData());
+    return adoptRef(*SharedBuffer::wrapNSData(m_replacementData.get()).leakRef());
 }
 
 ContentFilterUnblockHandler ParentalControlsContentFilter::unblockHandler() const
@@ -98,6 +114,11 @@ ContentFilterUnblockHandler ParentalControlsContentFilter::unblockHandler() cons
 #else
     return { };
 #endif
+}
+
+void ParentalControlsContentFilter::updateFilterState()
+{
+    m_filterState = [m_webFilterEvaluator filterState];
 }
 
 } // namespace WebCore

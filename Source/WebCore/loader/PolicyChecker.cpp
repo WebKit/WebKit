@@ -56,13 +56,6 @@ PolicyChecker::PolicyChecker(Frame& frame)
 {
 }
 
-void PolicyChecker::prepareForLoadStart()
-{
-#if ENABLE(CONTENT_FILTERING)
-    m_contentFilterUnblockHandler = { };
-#endif
-}
-
 void PolicyChecker::checkNavigationPolicy(const ResourceRequest& newRequest, NavigationPolicyDecisionFunction function)
 {
     checkNavigationPolicy(newRequest, m_frame.loader().activeDocumentLoader(), nullptr, WTF::move(function));
@@ -120,7 +113,9 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, Docume
                 frame->loader().reload();
         });
         continueAfterNavigationPolicy(PolicyIgnore);
+        return;
     }
+    m_contentFilterUnblockHandler = { };
 #endif
 
     m_delegateIsDecidingNavigationPolicy = true;

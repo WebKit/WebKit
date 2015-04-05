@@ -28,9 +28,11 @@
 
 #if ENABLE(CONTENT_FILTERING)
 
+#include "ContentFilter.h"
 #include "ContentFilterUnblockHandler.h"
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -50,9 +52,11 @@ const String& MockContentFilterSettings::unblockRequestURL() const
     static LazyNeverDestroyed<String> unblockRequestURL;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        unblockRequestURL.construct(ContentFilterUnblockHandler::unblockURLScheme());
-        unblockRequestURL.get().append("://");
-        unblockRequestURL.get().append(unblockURLHost());
+        StringBuilder unblockRequestURLBuilder;
+        unblockRequestURLBuilder.append(ContentFilter::urlScheme());
+        unblockRequestURLBuilder.append("://");
+        unblockRequestURLBuilder.append(unblockURLHost());
+        unblockRequestURL.construct(unblockRequestURLBuilder.toString());
     });
     return unblockRequestURL;
 }

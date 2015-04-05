@@ -32,7 +32,10 @@
 #import <TargetConditionals.h>
 
 enum {
-    kWFEStateBuffering = 2
+    kWFEStateAllowed = 0,
+    kWFEStateBlocked = 1,
+    kWFEStateBuffering = 2,
+    kWFEStateEvaluating = 3
 };
 
 @interface WebFilterEvaluator : NSObject

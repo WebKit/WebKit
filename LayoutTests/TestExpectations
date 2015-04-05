@@ -497,9 +497,6 @@ webkit.org/b/114280 svg/animations/smil-leak-element-instances-noBaseValRef.svg 
 webkit.org/b/114280 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
 webkit.org/b/114280 svg/animations/smil-leak-elements.svg [ Pass Failure ]
 
-# contentfiltering/block-after-add-data.html times out unexpectedly
-webkit.org/b/142894 contentfiltering/block-after-add-data.html [ Skip ]
-
 webkit.org/b/143085 media/track/track-mode.html [ Pass Timeout ]
 
 # In ES6, Object type restrictions on a first parameter of several Object.* functions are relaxed.
