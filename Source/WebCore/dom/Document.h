@@ -240,6 +240,7 @@ enum NodeListInvalidationType {
 };
 const int numNodeListInvalidationTypes = InvalidateOnAnyAttrChange + 1;
 
+enum class EventHandlerRemoval { One, All };
 typedef HashCountedSet<Node*> EventTargetSet;
 
 enum DocumentClass {
@@ -1123,7 +1124,7 @@ public:
     void initDNSPrefetch();
 
     void didAddWheelEventHandler(Node&);
-    void didRemoveWheelEventHandler(Node&);
+    void didRemoveWheelEventHandler(Node&, EventHandlerRemoval = EventHandlerRemoval::One);
 
     double lastHandledUserGestureTimestamp() const { return m_lastHandledUserGestureTimestamp; }
     void updateLastHandledUserGestureTimestamp();
@@ -1139,7 +1140,7 @@ public:
     WEBCORE_EXPORT unsigned touchEventHandlerCount() const;
 
     void didAddTouchEventHandler(Node&);
-    void didRemoveTouchEventHandler(Node&);
+    void didRemoveTouchEventHandler(Node&, EventHandlerRemoval = EventHandlerRemoval::One);
 
     void didRemoveEventTargetNode(Node&);
 

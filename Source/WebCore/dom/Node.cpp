@@ -328,8 +328,11 @@ Node::~Node()
 void Node::willBeDeletedFrom(Document& document)
 {
     if (hasEventTargetData()) {
+        document.didRemoveWheelEventHandler(*this, EventHandlerRemoval::All);
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
         document.removeTouchEventListener(this, true);
+#else
+        // FIXME: This should call didRemoveTouchEventHandler().
 #endif
         clearEventTargetData();
     }

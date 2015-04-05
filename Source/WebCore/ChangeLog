@@ -1,5 +1,31 @@
 2015-04-04  Simon Fraser  <simon.fraser@apple.com>
 
+        Crash under Document::absoluteRegionForEventTargets on build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=143406
+        rdar://problem/20407080
+
+        Reviewed by Ryosuke Niwa.
+        
+        We failed to remove elements from Document's m_wheelEventTargets HashSet when the
+        elements were destroyed with wheel handlers still on them. Fix by removing the
+        node from the set via Node::willBeDeletedFrom().
+
+        Tests: platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/destroy-element-with-multiple-handlers-crash.html
+               platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/destroy-wheel-element-crash.html
+               platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/destroy-wheel-element-parent-crash.html
+
+        * dom/Document.cpp:
+        (WebCore::removeHandlerFromSet): Helper to remove one or all handlers on the given node.
+        (WebCore::Document::didRemoveWheelEventHandler): Add a parameter to specify whether we're
+        removing all handlers on the given node.
+        (WebCore::Document::didRemoveTouchEventHandler): Use removeHandlerFromSet().
+        * dom/Document.h:
+        * dom/Node.cpp:
+        (WebCore::Node::willBeDeletedFrom): Tell the document we're removing all handlers
+        for this node.
+
+2015-04-04  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r182215): Feedly crashes when closing article
         https://bugs.webkit.org/show_bug.cgi?id=143405
         rdar://problem/20382734, rdar://problem/20395497

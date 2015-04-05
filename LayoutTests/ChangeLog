@@ -1,5 +1,23 @@
 2015-04-04  Simon Fraser  <simon.fraser@apple.com>
 
+        Crash under Document::absoluteRegionForEventTargets on build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=143406
+        rdar://problem/20407080
+
+        Reviewed by Ryosuke Niwa.
+        
+        Test configurations of elements with different parenting and event handlers adding orders, and multiple handlers on
+        the same node.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/destroy-element-with-multiple-handlers-crash-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/destroy-element-with-multiple-handlers-crash.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/destroy-wheel-element-crash-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/destroy-wheel-element-crash.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/destroy-wheel-element-parent-crash-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/destroy-wheel-element-parent-crash.html: Added.
+
+2015-04-04  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r182215): Feedly crashes when closing article
         https://bugs.webkit.org/show_bug.cgi?id=143405
         rdar://problem/20382734, rdar://problem/20395497
