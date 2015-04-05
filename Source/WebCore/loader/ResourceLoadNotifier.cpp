@@ -139,7 +139,7 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
     InspectorInstrumentation::willSendRequest(&m_frame, identifier, loader, request, redirectResponse);
 
     // Report WebTiming for all frames.
-    if (loader && !request.isNull() && request.url() == loader->requestURL())
+    if (loader && !request.isNull() && request.url() == loader->url())
         request.setReportLoadTiming(true);
 
 #if ENABLE(RESOURCE_TIMING)

@@ -1,3 +1,19 @@
+2015-04-05  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Remove DocumentLoader::requestURL().
+        https://bugs.webkit.org/show_bug.cgi?id=140001
+
+        Reviewed by Darin Adler.
+
+        No new tests, no behavior change.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::documentURL):
+        (WebCore::DocumentLoader::requestURL): Deleted.
+        * loader/DocumentLoader.h:
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+
 2015-04-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use constants of sqlite3 directly for status of SQL result in webdatabase

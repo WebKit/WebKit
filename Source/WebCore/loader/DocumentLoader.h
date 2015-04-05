@@ -110,12 +110,10 @@ namespace WebCore {
 
         const SubstituteData& substituteData() const { return m_substituteData; }
 
-        // FIXME: This is the same as requestURL(). We should remove one of them.
         WEBCORE_EXPORT const URL& url() const;
         WEBCORE_EXPORT const URL& unreachableURL() const;
 
         const URL& originalURL() const;
-        WEBCORE_EXPORT const URL& requestURL() const;
         WEBCORE_EXPORT const URL& responseURL() const;
         WEBCORE_EXPORT const String& responseMIMEType() const;
 #if PLATFORM(IOS)

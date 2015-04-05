@@ -1223,11 +1223,6 @@ const URL& DocumentLoader::originalURL() const
     return m_originalRequestCopy.url();
 }
 
-const URL& DocumentLoader::requestURL() const
-{
-    return request().url();
-}
-
 const URL& DocumentLoader::responseURL() const
 {
     return m_response.url();
@@ -1241,7 +1236,7 @@ URL DocumentLoader::documentURL() const
         url = m_archive->mainResource()->url();
 #endif
     if (url.isEmpty())
-        url = requestURL();
+        url = m_request.url();
     if (url.isEmpty())
         url = m_response.url();
     return url;
