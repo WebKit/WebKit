@@ -1,3 +1,23 @@
+2015-04-04  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][Cocoa] Add a way to temporarily disable the WebKit Network Cache for testing
+        https://bugs.webkit.org/show_bug.cgi?id=143392
+        <rdar://problem/20315669>
+
+        Reviewed by Antti Koivisto.
+
+        Add a way to temporarily disable the WebKit Network Cache for testing.
+        It will be used temporarily for comparing page load times with and
+        without the WebKit network disk cache enabled.
+
+        This is in addition to the existing "WebKitNetworkCacheEnabled"
+        NSUserDefaults:
+        webkitNetworkCacheIsEnabled = [defaults boolForKey:WebKitNetworkCacheEnabledDefaultsKey]
+            && ![defaults boolForKey:WebKitNetworkCacheTemporarilyDisabledForTestingKey];
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2015-04-04  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r182215): Feedly crashes when closing article

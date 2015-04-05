@@ -81,6 +81,7 @@ static NSString * const WebKit2HTTPSProxyDefaultsKey = @"WebKit2HTTPSProxy";
 
 #if ENABLE(NETWORK_CACHE)
 static NSString * const WebKitNetworkCacheEnabledDefaultsKey = @"WebKitNetworkCacheEnabled";
+static NSString * const WebKitNetworkCacheTemporarilyDisabledForTestingKey = @"WebKitNetworkCacheTemporarilyDisabledForTesting"; // Temporary setting for <rdar://problem/20315669>.
 static NSString * const WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey = @"WebKitNetworkCacheEfficacyLoggingEnabled";
 #endif
 
@@ -252,15 +253,17 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     for (const auto& scheme : globalURLSchemesWithCustomProtocolHandlers())
         parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
 
-    parameters.httpProxy = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2HTTPProxyDefaultsKey];
-    parameters.httpsProxy = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2HTTPSProxyDefaultsKey];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+    parameters.httpProxy = [defaults stringForKey:WebKit2HTTPProxyDefaultsKey];
+    parameters.httpsProxy = [defaults stringForKey:WebKit2HTTPSProxyDefaultsKey];
 #if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 #endif
 
 #if ENABLE(NETWORK_CACHE)
-    parameters.shouldEnableNetworkCache = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitNetworkCacheEnabledDefaultsKey];
-    parameters.shouldEnableNetworkCacheEfficacyLogging = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
+    parameters.shouldEnableNetworkCache = [defaults boolForKey:WebKitNetworkCacheEnabledDefaultsKey] && ![defaults boolForKey:WebKitNetworkCacheTemporarilyDisabledForTestingKey];
+    parameters.shouldEnableNetworkCacheEfficacyLogging = [defaults boolForKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
 #endif
 }
 #endif
