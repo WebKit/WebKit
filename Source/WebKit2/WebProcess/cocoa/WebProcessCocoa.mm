@@ -267,31 +267,42 @@ void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& p
 #endif
 }
 
+#if PLATFORM(MAC)
+
+static NSURL *origin(WebPage& page)
+{
+    WebFrame* mainFrame = page.mainWebFrame();
+    if (!mainFrame)
+        return nil;
+
+    URL mainFrameURL(URL(), mainFrame->url());
+    RefPtr<SecurityOrigin> mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
+    String mainFrameOriginString;
+    if (!mainFrameOrigin->isUnique())
+        mainFrameOriginString = mainFrameOrigin->toRawString();
+    else
+        mainFrameOriginString = mainFrameURL.protocol() + ':'; // toRawString() is not supposed to work with unique origins, and would just return "://".
+
+    // +[NSURL URLWithString:] returns nil when its argument is malformed. It's unclear when we would have a malformed URL here,
+    // but it happens in practice according to <rdar://problem/14173389>. Leaving an assertion in to catch a reproducible case.
+    ASSERT([NSURL URLWithString:mainFrameOriginString]);
+
+    return [NSURL URLWithString:mainFrameOriginString];
+}
+
+#endif
+
 void WebProcess::updateActivePages()
 {
-#if USE(APPKIT)
+#if PLATFORM(MAC)
     RetainPtr<CFMutableArrayRef> activePageURLs = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
-    for (const auto& iter: m_pageMap) {
-        WebPage* page = iter.value.get();
-        WebFrame* mainFrame = page->mainWebFrame();
-        if (!mainFrame)
-            continue;
-        String mainFrameOriginString;
-        RefPtr<SecurityOrigin> mainFrameOrigin = SecurityOrigin::createFromString(mainFrame->url());
-        if (!mainFrameOrigin->isUnique())
-            mainFrameOriginString = mainFrameOrigin->toRawString();
-        else
-            mainFrameOriginString = URL(URL(), mainFrame->url()).protocol() + ':'; // toRawString() is not supposed to work with unique origins, and would just return "://".
-
-        NSURL *originAsNSURL = [NSURL URLWithString:mainFrameOriginString];
-        // +[NSURL URLWithString:] returns nil when its argument is malformed. It's unclear how we can possibly have a malformed URL here,
-        // but it happens in practice according to <rdar://problem/14173389>. Leaving an assertion in to catch a reproducible case.
-        ASSERT(originAsNSURL);
-        NSString *userVisibleOriginString = originAsNSURL ? userVisibleString(originAsNSURL) : @"(null)";
-
-        CFArrayAppendValue(activePageURLs.get(), userVisibleOriginString);
+    for (auto& page : m_pageMap.values()) {
+        if (NSURL *originAsURL = origin(*page))
+            CFArrayAppendValue(activePageURLs.get(), userVisibleString(originAsURL));
     }
-    WKSetApplicationInformationItem(CFSTR("LSActivePageUserVisibleOriginsKey"), activePageURLs.get());
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [activePageURLs] {
+        WKSetApplicationInformationItem(CFSTR("LSActivePageUserVisibleOriginsKey"), activePageURLs.get());
+    });
 #endif
 }
 
