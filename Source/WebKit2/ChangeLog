@@ -1,5 +1,27 @@
 2015-04-05  Antti Koivisto  <antti@apple.com>
 
+        Bloom filter should support longer hashes
+        https://bugs.webkit.org/show_bug.cgi?id=143419
+
+        Reviewed by Dan Bernstein.
+
+        Use the hash digest directly in the contents filter instead of going via shortHash.
+
+        * NetworkProcess/cache/NetworkCacheKey.h:
+        (WebKit::NetworkCache::Key::hash):
+        (WebKit::NetworkCache::Key::shortHash): Deleted.
+        (WebKit::NetworkCache::Key::toShortHash): Deleted.
+
+            No longer needed.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::synchronize):
+        (WebKit::NetworkCache::Storage::addToContentsFilter):
+        (WebKit::NetworkCache::Storage::mayContain):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
+2015-04-05  Antti Koivisto  <antti@apple.com>
+
         Network cache Bloom filter is too big
         https://bugs.webkit.org/show_bug.cgi?id=143400
 

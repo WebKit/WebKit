@@ -1,3 +1,19 @@
+2015-04-05  Antti Koivisto  <antti@apple.com>
+
+        Bloom filter should support longer hashes
+        https://bugs.webkit.org/show_bug.cgi?id=143419
+
+        Reviewed by Dan Bernstein.
+
+        It currently supports 'unsigned' hash only which is inconvenient and doesn't have enough independent bits for larger filters.
+
+        Support arbitrarily sized hashes of type std::array<uint8_t, hashSize> (like SHA1::Digest and MD5::Digest).
+
+        * wtf/BloomFilter.h:
+        (WTF::BloomFilter<keyBits>::keysFromHash):
+        (WTF::BloomFilter<keyBits>::mayContain):
+        (WTF::BloomFilter<keyBits>::add):
+
 2015-04-03  Antti Koivisto  <antti@apple.com>
 
         Add non-counting Bloom filter implementation

@@ -99,7 +99,7 @@ void Storage::synchronize()
             WebCore::getFileSize(filePath, fileSize);
             if (!fileSize)
                 return;
-            filter->add(Key::toShortHash(hash));
+            filter->add(hash);
             size += fileSize;
             ++count;
         });
@@ -126,17 +126,17 @@ void Storage::addToContentsFilter(const Key& key)
     ASSERT(RunLoop::isMain());
 
     if (m_contentsFilter)
-        m_contentsFilter->add(key.shortHash());
+        m_contentsFilter->add(key.hash());
 
     // If we get new entries during filter synchronization take care to add them to the new filter as well.
     if (m_synchronizationInProgress)
-        m_contentsFilterHashesAddedDuringSynchronization.append(key.shortHash());
+        m_contentsFilterHashesAddedDuringSynchronization.append(key.hash());
 }
 
 bool Storage::mayContain(const Key& key) const
 {
     ASSERT(RunLoop::isMain());
-    return !m_contentsFilter || m_contentsFilter->mayContain(key.shortHash());
+    return !m_contentsFilter || m_contentsFilter->mayContain(key.hash());
 }
 
 static String directoryPathForKey(const Key& key, const String& cachePath)

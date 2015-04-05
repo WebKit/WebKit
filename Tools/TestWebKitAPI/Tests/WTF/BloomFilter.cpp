@@ -27,6 +27,7 @@
 
 #include <wtf/BloomFilter.h>
 #include <wtf/RandomNumber.h>
+#include <wtf/SHA1.h>
 
 namespace TestWebKitAPI {
 
@@ -35,6 +36,20 @@ static Vector<unsigned> generateRandomHashes(size_t hashCount)
     Vector<unsigned> hashes;
     for (unsigned i = 0; i < hashCount; ++i)
         hashes.append(static_cast<unsigned>(randomNumber() * std::numeric_limits<unsigned>::max()));
+    return hashes;
+}
+
+static Vector<SHA1::Digest> generateRandomDigests(size_t hashCount)
+{
+    Vector<SHA1::Digest> hashes;
+    SHA1 sha1;
+    for (unsigned i = 0; i < hashCount; ++i) {
+        double random = randomNumber();
+        sha1.addBytes(reinterpret_cast<uint8_t*>(&random), sizeof(double));
+        SHA1::Digest digest;
+        sha1.computeHash(digest);
+        hashes.append(digest);
+    }
     return hashes;
 }
 
@@ -55,6 +70,34 @@ TEST(WTF_BloomFilter, Basic)
     for (auto hash : moreHashes)
         mayContainCount += filter.mayContain(hash) ? 1 : 0;
     // False positive rate is ~0.09% so this should always be true.
+    EXPECT_TRUE(mayContainCount < hashCount / 10);
+
+    for (auto hash : moreHashes)
+        filter.add(hash);
+
+    for (auto hash : hashes)
+        EXPECT_TRUE(filter.mayContain(hash));
+    for (auto hash : moreHashes)
+        EXPECT_TRUE(filter.mayContain(hash));
+}
+
+TEST(WTF_BloomFilter, BasicDigest)
+{
+    const unsigned hashCount = 1000;
+    auto hashes = generateRandomDigests(hashCount);
+
+    BloomFilter<20> filter;
+    for (auto hash : hashes)
+        filter.add(hash);
+
+    for (auto hash : hashes)
+        EXPECT_TRUE(filter.mayContain(hash));
+
+    auto moreHashes = generateRandomDigests(hashCount);
+    unsigned mayContainCount = 0;
+    for (auto hash : moreHashes)
+        mayContainCount += filter.mayContain(hash) ? 1 : 0;
+    // False positive rate is ~0.000004% so this should always be true.
     EXPECT_TRUE(mayContainCount < hashCount / 10);
 
     for (auto hash : moreHashes)

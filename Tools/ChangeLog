@@ -1,3 +1,14 @@
+2015-04-05  Antti Koivisto  <antti@apple.com>
+
+        Bloom filter should support longer hashes
+        https://bugs.webkit.org/show_bug.cgi?id=143419
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WTF/BloomFilter.cpp:
+        (TestWebKitAPI::generateRandomDigests):
+        (TestWebKitAPI::TEST):
+
 2015-04-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         run-jsc-stress-tests --remote should add libllvmForJSC.so to the bundle on Linux

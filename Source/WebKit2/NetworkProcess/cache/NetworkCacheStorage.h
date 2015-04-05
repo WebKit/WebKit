@@ -129,7 +129,7 @@ private:
     bool m_synchronizationInProgress { false };
     bool m_shrinkInProgress { false };
 
-    Vector<unsigned> m_contentsFilterHashesAddedDuringSynchronization;
+    Vector<Key::HashType> m_contentsFilterHashesAddedDuringSynchronization;
 
     static const int maximumRetrievePriority = 4;
     Deque<std::unique_ptr<const ReadOperation>> m_pendingReadOperationsByPriority[maximumRetrievePriority + 1];

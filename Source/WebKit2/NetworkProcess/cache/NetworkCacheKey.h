@@ -55,9 +55,7 @@ public:
     const String& identifier() const { return m_identifier; }
 
     HashType hash() const { return m_hash; }
-    unsigned shortHash() const  { return toShortHash(m_hash); }
 
-    static unsigned toShortHash(const HashType& hash) { return *reinterpret_cast<const unsigned*>(hash.data()); }
     static bool stringToHash(const String&, HashType&);
 
     static size_t hashStringLength() { return 2 * sizeof(m_hash); }

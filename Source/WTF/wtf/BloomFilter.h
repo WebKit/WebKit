@@ -44,11 +44,15 @@ public:
     BloomFilter();
 
     void add(unsigned hash);
+    // For example SHA1::Digest.
+    template <size_t hashSize> void add(const std::array<uint8_t, hashSize>&);
+
     void add(const BloomFilter&);
 
     // The filter may give false positives (claim it may contain a key it doesn't)
     // but never false negatives (claim it doesn't contain a key it does).
     bool mayContain(unsigned hash) const;
+    template <size_t hashSize> bool mayContain(const std::array<uint8_t, hashSize>&) const;
     
     void clear();
 
@@ -62,6 +66,7 @@ private:
     static const unsigned keyMask = (1 << keyBits) - 1;
     static unsigned arrayIndex(unsigned key) { return key / bitsPerPosition; }
     static unsigned bitMask(unsigned key) { return 1 << (key % bitsPerPosition); }
+    template <size_t hashSize> static std::pair<unsigned, unsigned> keysFromHash(const std::array<uint8_t, hashSize>&);
 
     bool isBitSet(unsigned key) const;
     void setBit(unsigned key);
@@ -88,6 +93,35 @@ inline void BloomFilter<keyBits>::add(unsigned hash)
 {
     setBit(hash);
     setBit(hash >> 16);
+}
+
+template <unsigned keyBits>
+template <size_t hashSize>
+inline std::pair<unsigned, unsigned> BloomFilter<keyBits>::keysFromHash(const std::array<uint8_t, hashSize>& hash)
+{
+    // We could use larger k value than 2 for long hashes.
+    static_assert(hashSize >= 2 * sizeof(unsigned), "Hash array too short");
+    return {
+        *reinterpret_cast<const unsigned*>(hash.data()),
+        *reinterpret_cast<const unsigned*>(hash.data() + sizeof(unsigned))
+    };
+}
+
+template <unsigned keyBits>
+template <size_t hashSize>
+inline bool BloomFilter<keyBits>::mayContain(const std::array<uint8_t, hashSize>& hash) const
+{
+    auto keys = keysFromHash(hash);
+    return isBitSet(keys.first) && isBitSet(keys.second);
+}
+
+template <unsigned keyBits>
+template <size_t hashSize>
+inline void BloomFilter<keyBits>::add(const std::array<uint8_t, hashSize>& hash)
+{
+    auto keys = keysFromHash(hash);
+    setBit(keys.first);
+    setBit(keys.second);
 }
 
 template <unsigned keyBits>
