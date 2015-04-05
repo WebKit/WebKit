@@ -1,5 +1,12 @@
 2015-04-04  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix EFL and Gtk build.
+
+        * dom/Document.cpp:
+        (WebCore::Document::didRemoveTouchEventHandler):
+
+2015-04-04  Simon Fraser  <simon.fraser@apple.com>
+
         Crash under Document::absoluteRegionForEventTargets on build.webkit.org/dashboard
         https://bugs.webkit.org/show_bug.cgi?id=143406
         rdar://problem/20407080

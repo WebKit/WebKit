@@ -6073,7 +6073,7 @@ void Document::didRemoveTouchEventHandler(Node& handler, EventHandlerRemoval rem
     if (!m_touchEventTargets)
         return;
 
-    removeHandlerFromSet(*m_touchEventTargets, handler, removal))
+    removeHandlerFromSet(*m_touchEventTargets, handler, removal);
 
     if (Document* parent = parentDocument()) {
         parent->didRemoveTouchEventHandler(*this);
