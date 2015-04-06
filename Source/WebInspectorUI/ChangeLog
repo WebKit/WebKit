@@ -1,3 +1,20 @@
+2015-04-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Regression: Map instances don't expand
+        https://bugs.webkit.org/show_bug.cgi?id=143428
+
+        Reviewed by Brian Burg.
+
+        Fix uses of "this" in super() calls. Also fix a style name
+        that no longer exists and was intended to be inlined.
+
+        * UserInterface/Views/IndexedDatabaseObjectStoreTreeElement.js:
+        (WebInspector.IndexedDatabaseObjectStoreTreeElement):
+        * UserInterface/Views/IndexedDatabaseTreeElement.js:
+        (WebInspector.IndexedDatabaseTreeElement):
+        * UserInterface/Views/ObjectTreeMapEntryTreeElement.js:
+        (WebInspector.ObjectTreeMapEntryTreeElement):
+
 2015-04-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: ObjectTree array index hints are clipped when shown in popover

@@ -29,9 +29,9 @@ WebInspector.IndexedDatabaseTreeElement = class IndexedDatabaseTreeElement exten
     {
         console.assert(indexedDatabase instanceof WebInspector.IndexedDatabase);
 
-        this._indexedDatabase = indexedDatabase;
+        super("database-icon", indexedDatabase.name, null, indexedDatabase, !!indexedDatabase.objectStores.length);
 
-        super("database-icon", indexedDatabase.name, null, indexedDatabase, !!this._indexedDatabase.objectStores.length);
+        this._indexedDatabase = indexedDatabase;
 
         this.small = true;
     }

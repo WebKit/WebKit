@@ -29,7 +29,7 @@ WebInspector.IndexedDatabaseObjectStoreTreeElement = class IndexedDatabaseObject
     {
         console.assert(objectStore instanceof WebInspector.IndexedDatabaseObjectStore);
 
-        super(WebInspector.IndexedDatabaseObjectStoreTreeElement.IconStyleClassName, objectStore.name, null, objectStore, !!this._objectStore.indexes.length);
+        super("database-table-icon", objectStore.name, null, objectStore, !!objectStore.indexes.length);
 
         this._objectStore = objectStore;
 

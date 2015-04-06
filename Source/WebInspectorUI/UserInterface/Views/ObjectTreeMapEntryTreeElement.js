@@ -30,7 +30,7 @@ WebInspector.ObjectTreeMapEntryTreeElement = class ObjectTreeMapEntryTreeElement
         console.assert(object instanceof WebInspector.RemoteObject);
 
         // Treat the same as an array-index just with different strings and widths.
-        super(this._object, propertyPath);
+        super(object, propertyPath);
 
         this._object = object;
 
