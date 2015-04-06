@@ -1,3 +1,17 @@
+2015-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Unit test /webkit2/WebKitWebView/page-visibility from WebKit2Gtk/TestWebKitWebView fails
+        https://bugs.webkit.org/show_bug.cgi?id=131731
+
+        Reviewed by Žan Doberšek.
+
+        A web page loaded offscreen is in prerender state not hidden.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Unskip /webkit2/WebKitWebView/page-visibility.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewPageVisibility):
+
 2015-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] [WK2] TestWebKitWebView snapshot fails

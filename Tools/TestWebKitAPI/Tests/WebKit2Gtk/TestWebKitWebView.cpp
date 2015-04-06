@@ -424,7 +424,7 @@ static void testWebViewSave(SaveWebViewTest* test, gconstpointer)
     g_assert_cmpint(g_file_info_get_size(fileInfo.get()), ==, totalBytesFromStream);
 }
 
-// To test page visibility API. Currently only 'visible' and 'hidden' states are implemented fully in WebCore.
+// To test page visibility API. Currently only 'visible', 'hidden' and 'prerender' states are implemented fully in WebCore.
 // See also http://www.w3.org/TR/2011/WD-page-visibility-20110602/ and https://developers.google.com/chrome/whitepapers/pagevisibility
 static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
 {
@@ -439,7 +439,7 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
         "</body></html>",
         0);
 
-    // Wait untill the page is loaded. Initial visibility should be 'hidden'.
+    // Wait until the page is loaded. Initial visibility should be 'prerender'.
     test->waitUntilLoadFinished();
 
     GUniqueOutPtr<GError> error;
@@ -447,7 +447,7 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
     g_assert(javascriptResult);
     g_assert(!error.get());
     GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
-    g_assert_cmpstr(valueString.get(), ==, "hidden");
+    g_assert_cmpstr(valueString.get(), ==, "prerender");
 
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.hidden;", &error.outPtr());
     g_assert(javascriptResult);
