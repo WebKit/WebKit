@@ -1,3 +1,17 @@
+2015-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Test /webkit2/WebKitWebView/sync-request-on-max-conns might fail after finished
+        https://bugs.webkit.org/show_bug.cgi?id=142385
+
+        Reviewed by Sergio Villar Senin.
+
+        Use stack allocated GMainLoopSources to make sure they are
+        cancelled automatically if the test finishes before they have
+        been processed.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestResources.cpp:
+        (testWebViewSyncRequestOnMaxConns):
+
 2015-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Synchronous XMLHttpRequests can time out when we reach the max connections limit

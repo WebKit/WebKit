@@ -706,9 +706,11 @@ static void testWebViewSyncRequestOnMaxConns(SyncRequestOnMaxConnsTest* test, gc
     }
 
     // By default sync XHRs have a 10 seconds timeout, we don't want to wait all that so use our own timeout.
-    GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy("Timeout", [] { g_assert_not_reached(); }, std::chrono::seconds(1));
+    GMainLoopSource timeoutSource;
+    timeoutSource.scheduleAfterDelay("Timeout", [] { g_assert_not_reached(); }, std::chrono::seconds(1));
 
-    GMainLoopSource::scheduleAndDeleteOnDestroy("Unlock Server Idle", [&lock] { lock.unlock(); });
+    GMainLoopSource unlockServerSource;
+    unlockServerSource.schedule("Unlock Server Idle", [&lock] { lock.unlock(); });
     test->waitUntilResourcesLoaded(s_maxConnectionsPerHost + 3); // s_maxConnectionsPerHost resource + main resource + 2 XHR.
 }
 
