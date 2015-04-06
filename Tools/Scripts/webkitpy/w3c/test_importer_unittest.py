@@ -34,6 +34,7 @@ from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.w3c.test_downloader import TestDownloader
 from webkitpy.w3c.test_importer import parse_args, TestImporter
 
 
@@ -92,12 +93,21 @@ class TestImporterTest(unittest.TestCase):
 
     def import_downloaded_tests(self, args, files):
         # files are passed as parameter as we cannot clone/fetch/checkout a repo in mock system.
+
+        class TestDownloaderMock(TestDownloader):
+            def __init__(self, repository_directory, host, options):
+                TestDownloader.__init__(self, repository_directory, host, options)
+
+            def _git_submodules_status(self, repository_directory):
+                return 'adb4d391a69877d4a1eaaf51d1725c99a5b8ed84 tools/resources'
+
         host = MockHost()
         host.executive = MockExecutive2()
         host.filesystem = MockFileSystem(files=files)
 
         options, args = parse_args(args)
         importer = TestImporter(host, None, options)
+        importer._test_downloader = TestDownloaderMock(importer.tests_download_path, importer.host, importer.options)
         importer.do_import()
         return host.filesystem
 
@@ -115,5 +125,18 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
         self.assertTrue('src="/resources/testharness.js"' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
         self.assertTrue('src="../' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/csswg-tests/t/test.html'))
+
+    def test_submodules_generation(self):
+        FAKE_FILES = {
+            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
+        }
+
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/resources/csswg-tests-modules.json'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/resources/web-platform-tests-modules.json'))
+        self.assertTrue('https://github.com/w3c/testharness.js/archive/db4d391a69877d4a1eaaf51d1725c99a5b8ed84.tar.gz' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/resources/web-platform-tests-modules.json'))
+
 
     # FIXME: Needs more tests.

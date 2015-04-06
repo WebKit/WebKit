@@ -10,7 +10,7 @@
         "paths_to_import": [
             "support"
         ],
-        "convert_test_harness_links": true
+        "import_options": ["convert_test_harness_links"]
     },
     {
         "name": "web-platform-tests",
@@ -30,6 +30,6 @@
             "config.default.json",
             "serve.py"
         ],
-        "convert_test_harness_links": false
+        "import_options": ["generate_git_submodules_description"]
     }
 ]

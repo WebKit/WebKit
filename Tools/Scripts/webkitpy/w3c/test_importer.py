@@ -190,6 +190,16 @@ class TestImporter(object):
 
         self.import_tests()
 
+        if self._importing_downloaded_tests:
+            self.generate_git_submodules_description_for_all_repositories()
+
+    def generate_git_submodules_description_for_all_repositories(self):
+        for test_repository in self._test_downloader.test_repositories:
+            if 'generate_git_submodules_description' in test_repository['import_options']:
+                self.filesystem.maybe_make_directory(self.filesystem.join(self.destination_directory, 'resources'))
+                self._test_downloader.generate_git_submodules_description(test_repository, self.filesystem.join(self.destination_directory, 'resources', test_repository['name'] + '-modules.json'))
+            # FIXME: Generate WPT .gitignore and  main __init__.py
+
     def test_downloader(self):
         if not self._test_downloader:
             download_options = TestDownloader.default_options()
@@ -281,7 +291,7 @@ class TestImporter(object):
         if self._importing_downloaded_tests:
             for test_repository in self.test_downloader().test_repositories:
                 if test.startswith(test_repository['name']):
-                    return test_repository['convert_test_harness_links']
+                    return 'convert_test_harness_links' in test_repository['import_options']
             return True
         return self.options.convert_test_harness_links
 

@@ -1,3 +1,33 @@
+2015-04-06  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C test importer should generate the modules installed dynamically to run wpt tests
+        https://bugs.webkit.org/show_bug.cgi?id=142738
+
+        Reviewed by Ryosuke Niwa.
+
+        The test importer can now generate the submodules description file based on information extracted from the corresponding git repository.
+        The implementation is done within TestDownloader and it is activated for the WPT repository.
+        LayoutTests/imported/w3c/resources/WPTModules is renamed as LayoutTests/imported/w3c/resources/web-platform-tests-modules.json for that reason.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer._install_modules): Updated to cope with path as array.
+        * Scripts/webkitpy/w3c/test_downloader.py:
+        (TestDownloader._git_submodules_status): Added so that it can be overriden for unit tests.
+        (TestDownloader):
+        (TestDownloader._git_submodules_description): Computes submodule description.
+        (TestDownloader.generate_git_submodules_description): Write submodule description in a file.
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.do_import): Added the possibility to post process the tests.
+        (TestImporter):
+        (TestImporter.generate_git_submodules_description_for_all_repositories): Enable generating module description file.
+        (TestImporter.should_convert_test_harness_links): Updated according new options format.
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.import_downloaded_tests): Making use of TestDownloaderMock. 
+        (TestImporterTest.import_downloaded_tests.TestDownloaderMock): Added to override submodule status gathering.
+        (TestImporterTest.import_downloaded_tests.TestDownloaderMock.__init__):
+        (TestImporterTest.import_downloaded_tests.TestDownloaderMock._git_submodules_status):
+        (TestImporterTest.test_submodules_generation): Added to check that modules description files works.
+
 2015-04-05  Antti Koivisto  <antti@apple.com>
 
         Bloom filter should support longer hashes
