@@ -86,6 +86,11 @@ int SVGFontFaceElement::xHeight() const
     return static_cast<int>(ceilf(fastGetAttribute(x_heightAttr).toFloat()));
 }
 
+int SVGFontFaceElement::capHeight() const
+{
+    return static_cast<int>(ceilf(fastGetAttribute(cap_heightAttr).toFloat()));
+}
+
 float SVGFontFaceElement::horizontalOriginX() const
 {
     if (!m_fontElement)

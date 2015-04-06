@@ -36,6 +36,7 @@ public:
 
     unsigned unitsPerEm() const;
     int xHeight() const;
+    int capHeight() const;
     float horizontalOriginX() const;
     float horizontalOriginY() const;
     float horizontalAdvanceX() const;

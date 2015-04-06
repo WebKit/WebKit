@@ -192,6 +192,8 @@ private:
 
     typedef void (SVGToOTFFontConverter::*FontAppendingFunction)();
     void appendTable(const char identifier[4], FontAppendingFunction);
+    void appendFormat12CMAPTable(const Vector<std::pair<UChar32, Glyph>>& codepointToGlyphMappings);
+    void appendFormat4CMAPTable(const Vector<std::pair<UChar32, Glyph>>& codepointToGlyphMappings);
     void appendCMAPTable();
     void appendGSUBTable();
     void appendHEADTable();
@@ -241,8 +243,13 @@ private:
     float m_advanceHeightMax;
     float m_minRightSideBearing;
     unsigned m_unitsPerEm;
+    int m_lineGap;
+    int m_xHeight;
+    int m_capHeight;
+    int m_ascent;
+    int m_descent;
     unsigned m_featureCountGSUB;
-    int m_tablesAppendedCount;
+    unsigned m_tablesAppendedCount;
     char m_weight;
     bool m_italic;
 };
@@ -264,16 +271,8 @@ static uint16_t integralLog2(uint16_t x)
     return result;
 }
 
-void SVGToOTFFontConverter::appendCMAPTable()
+void SVGToOTFFontConverter::appendFormat12CMAPTable(const Vector<std::pair<UChar32, Glyph>>& mappings)
 {
-    auto startingOffset = m_result.size();
-    append16(0);
-    append16(1); // Number subtables
-
-    append16(0); // Unicode
-    append16(3); // Unicode version 2.2+
-    append32(m_result.size() - startingOffset + sizeof(uint32_t)); // Byte offset of subtable
-
     // Braindead scheme: One segment for each character
     ASSERT(m_glyphs.size() < 0xFFFF);
     auto subtableLocation = m_result.size();
@@ -281,8 +280,77 @@ void SVGToOTFFontConverter::appendCMAPTable()
     append32(0); // Placeholder for byte length
     append32(0); // Language independent
     append32(0); // Placeholder for nGroups
+    for (auto& mapping : mappings) {
+        append32(mapping.first); // startCharCode
+        append32(mapping.first); // endCharCode
+        append32(mapping.second); // startGlyphCode
+    }
+    overwrite32(subtableLocation + 4, m_result.size() - subtableLocation);
+    overwrite32(subtableLocation + 12, mappings.size());
+}
 
-    uint16_t nGroups = 0;
+void SVGToOTFFontConverter::appendFormat4CMAPTable(const Vector<std::pair<UChar32, Glyph>>& bmpMappings)
+{
+    auto subtableLocation = m_result.size();
+    append16(4); // Format 4
+    append16(0); // Placeholder for length in bytes
+    append16(0); // Language independent
+    uint16_t segCount = bmpMappings.size() + 1;
+    append16(clampTo<uint16_t>(2 * segCount)); // segCountX2: "2 x segCount"
+    uint16_t originalSearchRange = roundDownToPowerOfTwo(segCount);
+    uint16_t searchRange = clampTo<uint16_t>(2 * originalSearchRange); // searchRange: "2 x (2**floor(log2(segCount)))"
+    append16(searchRange);
+    append16(integralLog2(originalSearchRange)); // entrySelector: "log2(searchRange/2)"  
+    append16(clampTo<uint16_t>((2 * segCount) - searchRange)); // rangeShift: "2 x segCount - searchRange"  
+
+    // Ending character codes
+    for (auto& mapping : bmpMappings)
+        append16(mapping.first); // startCharCode
+    append16(0xFFFF);
+
+    append16(0); // reserved
+
+    // Starting character codes
+    for (auto& mapping : bmpMappings)
+        append16(mapping.first); // startCharCode
+    append16(0xFFFF);
+
+    // idDelta
+    for (auto& mapping : bmpMappings)
+        append16(static_cast<uint16_t>(mapping.second) - static_cast<uint16_t>(mapping.first)); // startCharCode
+    append16(0x0001);
+
+    // idRangeOffset
+    for (size_t i = 0; i < bmpMappings.size(); ++i)
+        append16(0); // startCharCode
+    append16(0);
+
+    // Fonts strive to hold 2^16 glyphs, but with the current encoding scheme, we write 8 bytes per codepoint into this subtable.
+    // Because the size of this subtable must be represented as a 16-bit number, we are limiting the number of glyphs we support to 2^13.
+    // FIXME: If we hit this limit in the wild, use a more compact encoding scheme for this subtable.
+    overwrite16(subtableLocation + 2, clampTo<uint16_t>(m_result.size() - subtableLocation));
+}
+
+void SVGToOTFFontConverter::appendCMAPTable()
+{
+    auto startingOffset = m_result.size();
+    append16(0);
+    append16(3); // Number of subtables
+
+    append16(0); // Unicode
+    append16(3); // Unicode version 2.2+
+    append32(28); // Byte offset of subtable
+
+    append16(3); // Microsoft
+    append16(1); // Unicode BMP
+    auto format4OffsetLocation = m_result.size();
+    append32(0); // Byte offset of subtable
+
+    append16(3); // Microsoft
+    append16(10); // Unicode
+    append32(28); // Byte offset of subtable
+
+    Vector<std::pair<UChar32, Glyph>> mappings;
     UChar32 previousCodepoint = std::numeric_limits<UChar32>::max();
     for (size_t i = 0; i < m_glyphs.size(); ++i) {
         auto& glyph = m_glyphs[i];
@@ -299,14 +367,19 @@ void SVGToOTFFontConverter::appendCMAPTable()
                 continue;
         }
 
-        append32(codepoint); // startCharCode
-        append32(codepoint); // endCharCode
-        append32(i); // startGlyphCode
-        ++nGroups;
+        mappings.append(std::make_pair(codepoint, Glyph(i)));
         previousCodepoint = codepoint;
     }
-    overwrite32(subtableLocation + 4, m_result.size() - subtableLocation);
-    overwrite32(subtableLocation + 12, nGroups);
+
+    appendFormat12CMAPTable(mappings);
+
+    Vector<std::pair<UChar32, Glyph>> bmpMappings;
+    for (auto& mapping : mappings) {
+        if (mapping.first < 0x10000)
+            bmpMappings.append(mapping);
+    }
+    overwrite32(format4OffsetLocation, m_result.size() - startingOffset);
+    appendFormat4CMAPTable(bmpMappings);
 }
 
 void SVGToOTFFontConverter::appendHEADTable()
@@ -343,29 +416,11 @@ template<typename T1, typename T2> static inline T1 clampTo(T2 x)
 
 void SVGToOTFFontConverter::appendHHEATable()
 {
-    int16_t ascent;
-    int16_t descent;
-    if (!m_fontFaceElement) {
-        ascent = m_unitsPerEm;
-        descent = 1;
-    } else {
-        ascent = m_fontFaceElement->ascent();
-        descent = m_fontFaceElement->descent();
-
-        // Some platforms, including OS X, use 0 ascent and descent to mean that the platform should synthesize
-        // a value based on a heuristic. However, SVG fonts can legitimately have 0 for ascent or descent.
-        // Specifing a single FUnit gets us as close to 0 as we can without triggering the synthesis.
-        if (!ascent)
-            ascent = 1;
-        if (!descent)
-            descent = 1;
-    }
-
     append32(0x00010000); // Version
-    append16(ascent);
-    append16(descent);
+    append16(clampTo<int16_t>(m_ascent));
+    append16(clampTo<int16_t>(m_descent));
     // WebKit SVG font rendering has hard coded the line gap to be 1/10th of the font size since 2008 (see r29719).
-    append16(m_unitsPerEm / 10); // Line gap
+    append16(clampTo<int16_t>(m_lineGap));
     append16(clampTo<uint16_t>(m_advanceWidthMax));
     append16(clampTo<int16_t>(m_boundingBox.x())); // Minimum left side bearing
     append16(clampTo<int16_t>(m_minRightSideBearing)); // Minimum right side bearing
@@ -434,9 +489,9 @@ void SVGToOTFFontConverter::appendOS2Table()
     if (ok)
         averageAdvance = clampTo<int16_t>(value);
 
-    append16(0); // Version
-    append16(averageAdvance);
-    append16(m_weight); // Weight class
+    append16(2); // Version
+    append16(clampTo<int16_t>(averageAdvance));
+    append16(clampTo<uint16_t>(m_weight)); // Weight class
     append16(5); // Width class
     append16(0); // Protected font
     // WebKit handles these superscripts and subscripts
@@ -477,6 +532,20 @@ void SVGToOTFFontConverter::appendOS2Table()
     append16((m_weight >= 7 ? 1 << 5 : 0) | (m_italic ? 1 : 0)); // Font Patterns.
     append16(0); // First unicode index
     append16(0xFFFF); // Last unicode index
+    append16(clampTo<int16_t>(m_ascent)); // Typographical ascender
+    append16(clampTo<int16_t>(m_descent)); // Typographical descender
+    append16(clampTo<int16_t>(m_lineGap)); // Typographical line gap
+    append16(clampTo<uint16_t>(m_ascent)); // Windows-specific ascent
+    append16(clampTo<uint16_t>(m_descent)); // Windows-specific descent
+    append32(0xFF10FC07); // Bitmask for supported codepages (Part 1). Report all pages as supported.
+    append32(0x0000FFFF); // Bitmask for supported codepages (Part 2). Report all pages as supported.
+    append16(clampTo<int16_t>(m_xHeight)); // x-height
+    append16(clampTo<int16_t>(m_capHeight)); // Cap-height
+    append16(0); // Default char
+    append16(' '); // Break character
+    append16(3); // Maximum context needed to perform font features
+    append16(3); // Smallest optical point size
+    append16(0xFFFF); // Largest optical point size
 }
 
 void SVGToOTFFontConverter::appendPOSTTable()
@@ -548,8 +617,9 @@ void SVGToOTFFontConverter::appendCFFTable()
     const char fontBBoxKey = 5;
     const char charsetIndexKey = 15;
     const char charstringsIndexKey = 17;
+    const char privateDictIndexKey = 18;
     const uint32_t userDefinedStringStartIndex = 391;
-    const unsigned sizeOfTopIndex = 45 + (hasWeight ? 6 : 0);
+    const unsigned sizeOfTopIndex = 56 + (hasWeight ? 6 : 0);
 
     // Top DICT INDEX.
     append16(1); // INDEX contains 1 element
@@ -589,6 +659,11 @@ void SVGToOTFFontConverter::appendCFFTable()
     unsigned charstringsOffsetLocation = m_result.size();
     append32(0); // Offset of CharStrings INDEX. Will be overwritten later.
     m_result.append(charstringsIndexKey);
+    m_result.append(operand32Bit);
+    append32(0); // 0-sized private dict
+    m_result.append(operand32Bit);
+    append32(0); // no location for private dict
+    m_result.append(privateDictIndexKey); // Private dict size and offset
     ASSERT(m_result.size() == topDictStart + sizeOfTopIndex);
 
     // String INDEX
@@ -1273,7 +1348,6 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
     , m_advanceWidthMax(0)
     , m_advanceHeightMax(0)
     , m_minRightSideBearing(std::numeric_limits<float>::max())
-    , m_unitsPerEm(0)
     , m_featureCountGSUB(0)
     , m_tablesAppendedCount(0)
     , m_weight(5)
@@ -1286,6 +1360,30 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
 
     if (m_fontFaceElement)
         m_unitsPerEm = m_fontFaceElement->unitsPerEm();
+
+    if (!m_fontFaceElement) {
+        m_unitsPerEm = 1;
+        m_ascent = m_unitsPerEm;
+        m_descent = 1;
+        m_xHeight = m_unitsPerEm;
+        m_capHeight = m_ascent;
+    } else {
+        m_unitsPerEm = m_fontFaceElement->unitsPerEm();
+        m_ascent = m_fontFaceElement->ascent();
+        m_descent = m_fontFaceElement->descent();
+        m_xHeight = m_fontFaceElement->xHeight();
+        m_capHeight = m_fontFaceElement->capHeight();
+
+        // Some platforms, including OS X, use 0 ascent and descent to mean that the platform should synthesize
+        // a value based on a heuristic. However, SVG fonts can legitimately have 0 for ascent or descent.
+        // Specifing a single FUnit gets us as close to 0 as we can without triggering the synthesis.
+        if (!m_ascent)
+            m_ascent = 1;
+        if (!m_descent)
+            m_descent = 1;
+    }
+
+    m_lineGap = m_unitsPerEm / 10;
 
     populateEmptyGlyphCharString(m_emptyGlyphCharString, m_unitsPerEm);
 
@@ -1369,10 +1467,10 @@ uint32_t SVGToOTFFontConverter::calculateChecksum(size_t startingOffset, size_t 
     ASSERT(isFourByteAligned(endingOffset - startingOffset));
     uint32_t sum = 0;
     for (size_t offset = startingOffset; offset < endingOffset; offset += 4) {
-        sum += (static_cast<unsigned char>(m_result[offset + 3]) << 24)
-            | (static_cast<unsigned char>(m_result[offset + 2]) << 16)
-            | (static_cast<unsigned char>(m_result[offset + 1]) << 8)
-            | static_cast<unsigned char>(m_result[offset]);
+        sum += static_cast<unsigned char>(m_result[offset + 3])
+            | (static_cast<unsigned char>(m_result[offset + 2]) << 8)
+            | (static_cast<unsigned char>(m_result[offset + 1]) << 16)
+            | (static_cast<unsigned char>(m_result[offset]) << 24);
     }
     return sum;
 }

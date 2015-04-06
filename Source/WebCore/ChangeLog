@@ -1,3 +1,36 @@
+2015-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Win] [SVG -> OTF Converter] Support the SVG -> OTF Font Converter
+        https://bugs.webkit.org/show_bug.cgi?id=143402
+
+        Reviewed by Darin Adler.
+
+        There are a few pieces to the converter that Windows requires that we haven't already
+        implemented:
+        1. Checksums were being calculated with the wrong endianness
+        2. Windows requires a format 4 'cmap' subtable in addition to the format 12 one we already
+        were using
+        3. Windows requires a reference to a Private DICT inside the CFF table, even if the DICT
+        is of 0 length.
+
+        Covered by all our existing SVG font tests.
+
+        * svg/SVGFontFaceElement.h: Add capHeight accessor.
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::capHeight): Ditto.
+        * svg/SVGToOTFConversion.cpp: Update the conversion process according to the above
+        requirements.
+        (WebCore::SVGToOTFFontConverter::appendFormat12CMAPTable):
+        (WebCore::SVGToOTFFontConverter::appendFormat4CMAPTable):
+        (WebCore::SVGToOTFFontConverter::appendCMAPTable): Use helpers.
+        (WebCore::SVGToOTFFontConverter::appendHHEATable): Use member variables.
+        (WebCore::SVGToOTFFontConverter::appendOS2Table): Update to version 2.
+        (WebCore::SVGToOTFFontConverter::appendCFFTable): Create a reference to a
+        zero-sized Private DICT
+        (WebCore::SVGToOTFFontConverter::SVGToOTFFontConverter): Populate member
+        variables.
+        (WebCore::SVGToOTFFontConverter::calculateChecksum): Flip endianness
+
 2015-04-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Return Optional<uint32_t> from PropertyName::asIndex
