@@ -330,16 +330,21 @@ static bool handleUnignoredTLSErrors(ResourceHandle* handle, SoupMessage* messag
     return true;
 }
 
-static void gotHeadersCallback(SoupMessage* message, gpointer data)
+static void tlsErrorsChangedCallback(SoupMessage* message, GParamSpec*, gpointer data)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
     if (!handle || handle->cancelledOrClientless())
         return;
 
-    if (handleUnignoredTLSErrors(handle, message)) {
+    if (handleUnignoredTLSErrors(handle, message))
         handle->cancel();
+}
+
+static void gotHeadersCallback(SoupMessage* message, gpointer data)
+{
+    ResourceHandle* handle = static_cast<ResourceHandle*>(data);
+    if (!handle || handle->cancelledOrClientless())
         return;
-    }
 
     ResourceHandleInternal* d = handle->getInternal();
 
@@ -927,6 +932,7 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
         && (!request.httpBody() || request.httpBody()->isEmpty()))
         soup_message_headers_set_content_length(soupMessage->request_headers, 0);
 
+    g_signal_connect(d->m_soupMessage.get(), "notify::tls-errors", G_CALLBACK(tlsErrorsChangedCallback), handle);
     g_signal_connect(d->m_soupMessage.get(), "got-headers", G_CALLBACK(gotHeadersCallback), handle);
     g_signal_connect(d->m_soupMessage.get(), "wrote-body-data", G_CALLBACK(wroteBodyDataCallback), handle);
 
