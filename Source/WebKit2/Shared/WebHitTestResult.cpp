@@ -58,6 +58,7 @@ WebHitTestResult::Data::Data(const HitTestResult& hitTestResult)
     , isOverTextInsideFormControlElement(hitTestResult.isOverTextInsideFormControlElement())
     , allowsCopy(hitTestResult.allowsCopy())
     , isDownloadableMedia(hitTestResult.isDownloadableMedia())
+    , imageSize(0)
 {
 }
 
@@ -81,6 +82,23 @@ void WebHitTestResult::Data::encode(IPC::ArgumentEncoder& encoder) const
     encoder << isOverTextInsideFormControlElement;
     encoder << allowsCopy;
     encoder << isDownloadableMedia;
+    encoder << hitTestLocationInViewCooordinates;
+    encoder << lookupText;
+    encoder << dictionaryPopupInfo;
+
+    SharedMemory::Handle imageHandle;
+    if (imageSharedMemory && imageSharedMemory->data())
+        imageSharedMemory->createHandle(imageHandle, SharedMemory::ReadOnly);
+    encoder << imageHandle;
+    encoder << imageSize;
+    encoder << imageExtension;
+
+    bool hasLinkTextIndicator = linkTextIndicator;
+    encoder << hasLinkTextIndicator;
+    if (hasLinkTextIndicator)
+        encoder << linkTextIndicator->data();
+
+    platformEncode(encoder);
 }
 
 bool WebHitTestResult::Data::decode(IPC::ArgumentDecoder& decoder, WebHitTestResult::Data& hitTestResultData)
@@ -98,11 +116,50 @@ bool WebHitTestResult::Data::decode(IPC::ArgumentDecoder& decoder, WebHitTestRes
         || !decoder.decode(hitTestResultData.isTextNode)
         || !decoder.decode(hitTestResultData.isOverTextInsideFormControlElement)
         || !decoder.decode(hitTestResultData.allowsCopy)
-        || !decoder.decode(hitTestResultData.isDownloadableMedia))
+        || !decoder.decode(hitTestResultData.isDownloadableMedia)
+        || !decoder.decode(hitTestResultData.hitTestLocationInViewCooordinates)
+        || !decoder.decode(hitTestResultData.lookupText)
+        || !decoder.decode(hitTestResultData.dictionaryPopupInfo))
         return false;
 
+    SharedMemory::Handle imageHandle;
+    if (!decoder.decode(imageHandle))
+        return false;
+
+    if (!imageHandle.isNull())
+        hitTestResultData.imageSharedMemory = SharedMemory::create(imageHandle, SharedMemory::ReadOnly);
+
+    if (!decoder.decode(hitTestResultData.imageSize))
+        return false;
+
+    if (!decoder.decode(hitTestResultData.imageExtension))
+        return false;
+
+    bool hasLinkTextIndicator;
+    if (!decoder.decode(hasLinkTextIndicator))
+        return false;
+
+    if (hasLinkTextIndicator) {
+        WebCore::TextIndicatorData indicatorData;
+        if (!decoder.decode(indicatorData))
+            return false;
+
+        hitTestResultData.linkTextIndicator = WebCore::TextIndicator::create(indicatorData);
+    }
+
+    return platformDecode(decoder, hitTestResultData);
+}
+
+#if !PLATFORM(MAC)
+void WebHitTestResult::Data::platformEncode(IPC::ArgumentEncoder& encoder) const
+{
+}
+
+bool WebHitTestResult::Data::platformDecode(IPC::ArgumentDecoder& decoder, WebHitTestResult::Data& hitTestResultData)
+{
     return true;
 }
+#endif // !PLATFORM(MAC)
 
 IntRect WebHitTestResult::Data::elementBoundingBoxInWindowCoordinates(const HitTestResult& hitTestResult)
 {

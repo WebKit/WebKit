@@ -35,7 +35,6 @@
 
 #import "APILegacyContextHistoryClient.h"
 #import "APIPageConfiguration.h"
-#import "ActionMenuHitTestResult.h"
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
@@ -68,6 +67,7 @@
 #import "WKViewPrivate.h"
 #import "WebBackForwardList.h"
 #import "WebEventFactory.h"
+#import "WebHitTestResult.h"
 #import "WebInspectorProxy.h"
 #import "WebKit2Initialize.h"
 #import "WebPage.h"
@@ -3931,10 +3931,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [_data->_actionMenuController didCloseMenu:menu withEvent:event];
 }
 
-- (void)_didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult forImmediateAction:(BOOL)forImmediateAction userData:(API::Object*)userData
+- (void)_didPerformActionMenuHitTest:(const WebHitTestResult::Data&)hitTestResult forImmediateAction:(BOOL)forImmediateAction contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData
 {
     if (forImmediateAction)
-        [_data->_immediateActionController didPerformActionMenuHitTest:hitTestResult userData:userData];
+        [_data->_immediateActionController didPerformActionMenuHitTest:hitTestResult contentPreventsDefault:contentPreventsDefault userData:userData];
     else
         [_data->_actionMenuController didPerformActionMenuHitTest:hitTestResult userData:userData];
 }

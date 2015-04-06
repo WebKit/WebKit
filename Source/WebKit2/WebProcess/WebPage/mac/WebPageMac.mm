@@ -28,7 +28,6 @@
 
 #if PLATFORM(MAC)
 
-#import "ActionMenuHitTestResult.h"
 #import "AttributedString.h"
 #import "DataReference.h"
 #import "DictionaryPopupInfo.h"
@@ -45,6 +44,7 @@
 #import "WebEvent.h"
 #import "WebEventConversion.h"
 #import "WebFrame.h"
+#import "WebHitTestResult.h"
 #import "WebImage.h"
 #import "WebInspector.h"
 #import "WebPageOverlay.h"
@@ -1017,7 +1017,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
 
     MainFrame& mainFrame = corePage()->mainFrame();
     if (!mainFrame.view() || !mainFrame.view()->renderView()) {
-        send(Messages::WebPageProxy::DidPerformActionMenuHitTest(ActionMenuHitTestResult(), forImmediateAction, UserData()));
+        send(Messages::WebPageProxy::DidPerformActionMenuHitTest(WebHitTestResult::Data(), forImmediateAction, false, UserData()));
         return;
     }
 
@@ -1033,10 +1033,8 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
             m_lastActionMenuHitTestPreventsDefault = element->dispatchMouseForceWillBegin();
     }
 
-    ActionMenuHitTestResult actionMenuResult;
+    WebHitTestResult::Data actionMenuResult(hitTestResult);
     actionMenuResult.hitTestLocationInViewCooordinates = locationInViewCooordinates;
-    actionMenuResult.hitTestResult = WebHitTestResult::Data(hitTestResult);
-    actionMenuResult.contentPreventsDefault = m_lastActionMenuHitTestPreventsDefault;
 
     RefPtr<Range> selectionRange = corePage()->focusController().focusedOrMainFrame().selection().selection().firstRange();
 
@@ -1086,7 +1084,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
             continue;
 
         pageOverlayDidOverrideDataDetectors = true;
-        actionMenuResult.actionContext = actionContext;
+        actionMenuResult.detectedDataActionContext = actionContext;
 
         Vector<FloatQuad> quads;
         mainResultRange->textQuads(quads);
@@ -1107,8 +1105,8 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     if (!pageOverlayDidOverrideDataDetectors && hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode()) {
         FloatRect detectedDataBoundingBox;
         RefPtr<Range> detectedDataRange;
-        actionMenuResult.actionContext = DataDetection::detectItemAroundHitTestResult(hitTestResult, detectedDataBoundingBox, detectedDataRange);
-        if (actionMenuResult.actionContext && detectedDataRange) {
+        actionMenuResult.detectedDataActionContext = DataDetection::detectItemAroundHitTestResult(hitTestResult, detectedDataBoundingBox, detectedDataRange);
+        if (actionMenuResult.detectedDataActionContext && detectedDataRange) {
             actionMenuResult.detectedDataBoundingBox = detectedDataBoundingBox;
             actionMenuResult.detectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, textIndicatorTransitionForActionMenu(selectionRange.get(), *detectedDataRange, forImmediateAction, true));
             m_lastActionMenuRangeForSelection = detectedDataRange;
@@ -1118,7 +1116,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     RefPtr<API::Object> userData;
     injectedBundleContextMenuClient().prepareForActionMenu(*this, hitTestResult, userData);
 
-    send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult, forImmediateAction, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult, forImmediateAction, m_lastActionMenuHitTestPreventsDefault, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
 PassRefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInViewCooordinates, NSDictionary **options)

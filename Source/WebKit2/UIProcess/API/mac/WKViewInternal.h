@@ -29,6 +29,7 @@
 #import "PluginComplexTextInputState.h"
 #import "SameDocumentNavigationType.h"
 #import "WebFindOptions.h"
+#import "WebHitTestResult.h"
 #import <wtf/Forward.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -55,7 +56,6 @@ class DrawingAreaProxy;
 class LayerTreeContext;
 class ViewSnapshot;
 class WebProcessPool;
-struct ActionMenuHitTestResult;
 struct ColorSpaceData;
 struct EditorState;
 struct WebPageConfiguration;
@@ -140,7 +140,7 @@ struct WebPageConfiguration;
 - (void)_closeFullScreenWindowController;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-- (void)_didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult forImmediateAction:(BOOL)forImmediateAction userData:(API::Object*)userData;
+- (void)_didPerformActionMenuHitTest:(const WebKit::WebHitTestResult::Data&)hitTestResult forImmediateAction:(BOOL)forImmediateAction contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData;
 #endif
 
 @property (nonatomic, retain, setter=_setPrimaryTrackingArea:) NSTrackingArea *_primaryTrackingArea;

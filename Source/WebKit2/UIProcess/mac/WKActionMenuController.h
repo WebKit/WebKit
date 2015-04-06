@@ -28,9 +28,9 @@
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
-#import "ActionMenuHitTestResult.h"
 #import "WKActionMenuItemTypes.h"
 #import "WKActionMenuTypes.h"
+#import "WebHitTestResult.h"
 #import <AppKit/NSSharingService.h>
 #import <wtf/RetainPtr.h>
 
@@ -54,7 +54,7 @@ enum class ActionMenuState {
     WKView *_wkView;
 
     WebKit::ActionMenuState _state;
-    WebKit::ActionMenuHitTestResult _hitTestResult;
+    WebKit::WebHitTestResult::Data _hitTestResultData;
     RefPtr<API::Object> _userData;
     _WKActionMenuType _type;
     RetainPtr<NSSharingServicePicker> _sharingServicePicker;
@@ -72,7 +72,7 @@ enum class ActionMenuState {
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 - (void)wkView:(WKView *)wkView willHandleMouseDown:(NSEvent *)event;
 
-- (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
+- (void)didPerformActionMenuHitTest:(const WebKit::WebHitTestResult::Data&)hitTestResult userData:(API::Object*)userData;
 
 @end
 

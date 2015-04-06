@@ -1,3 +1,67 @@
+2015-04-06  Brady Eidson  <beidson@apple.com>
+
+        Combine ActionMenuHitTestResult with WebHitTestResult
+        https://bugs.webkit.org/show_bug.cgi?id=143444
+
+        Reviewed by Beth Dakin.
+
+        * Shared/mac/ActionMenuHitTestResult.h: Removed.
+        * Shared/mac/ActionMenuHitTestResult.mm: Removed.
+
+        * Shared/WebHitTestResult.cpp:
+        (WebKit::WebHitTestResult::Data::Data):
+        (WebKit::WebHitTestResult::Data::encode):
+        (WebKit::WebHitTestResult::Data::decode):
+        (WebKit::WebHitTestResult::Data::platformEncode):
+        (WebKit::WebHitTestResult::Data::platformDecode):
+        * Shared/WebHitTestResult.h:
+        * Shared/mac/WebHitTestResult.mm: Added.
+        (WebKit::WebHitTestResult::Data::platformEncode):
+        (WebKit::WebHitTestResult::Data::platformDecode):
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _didPerformActionMenuHitTest:forImmediateAction:contentPreventsDefault:userData:]):
+        (-[WKView _didPerformActionMenuHitTest:forImmediateAction:userData:]): Deleted.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didPerformActionMenuHitTest):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didPerformActionMenuHitTest):
+        * UIProcess/mac/WKActionMenuController.h:
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController willDestroyView:]):
+        (-[WKActionMenuController _clearActionMenuState]):
+        (-[WKActionMenuController didPerformActionMenuHitTest:userData:]):
+        (-[WKActionMenuController _hitTestResultDataImage]):
+        (-[WKActionMenuController _defaultMenuItemsForImage]):
+        (-[WKActionMenuController _copyImage:]):
+        (-[WKActionMenuController _addImageToPhotos:]):
+        (-[WKActionMenuController _defaultMenuItemsForDataDetectedText]):
+        (-[WKActionMenuController _defaultMenuItemsForEditableTextWithSuggestions]):
+        (-[WKActionMenuController _defaultMenuItemsForDataDetectableLink]):
+        (-[WKActionMenuController _webHitTestResult]):
+        (-[WKActionMenuController _defaultMenuItems]):
+        (-[WKActionMenuController _hitTestResultImage]): Deleted.
+        * UIProcess/mac/WKImmediateActionController.h:
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController willDestroyView:]):
+        (-[WKImmediateActionController _clearImmediateActionState]):
+        (-[WKImmediateActionController didPerformActionMenuHitTest:contentPreventsDefault:userData:]):
+        (-[WKImmediateActionController immediateActionRecognizerDidUpdateAnimation:]):
+        (-[WKImmediateActionController _webHitTestResult]):
+        (-[WKImmediateActionController _defaultAnimationController]):
+        (-[WKImmediateActionController _updateImmediateActionItem]):
+        (-[WKImmediateActionController _menuItemForDataDetectedText]):
+        (-[WKImmediateActionController _animationControllerForText]):
+        (-[WKImmediateActionController didPerformActionMenuHitTest:userData:]): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performActionMenuHitTestAtLocation):
+
 2015-04-06  Jer Noble  <jer.noble@apple.com>
 
         Synchronize fullscreen animation between processes.

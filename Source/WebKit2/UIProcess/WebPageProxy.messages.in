@@ -424,7 +424,7 @@ messages -> WebPageProxy {
     IsPlayingAudioDidChange(bool newIsPlayingAudio)
 
 #if PLATFORM(MAC)
-    DidPerformActionMenuHitTest(struct WebKit::ActionMenuHitTestResult result, bool forImmediateAction, WebKit::UserData userData)
+    DidPerformActionMenuHitTest(struct WebKit::WebHitTestResult::Data result, bool forImmediateAction, bool contentPreventsDefault, WebKit::UserData userData)
 #endif
     HandleMessage(String messageName, WebKit::UserData messageBody) WantsConnection
     HandleSynchronousMessage(String messageName, WebKit::UserData messageBody) -> (WebKit::UserData returnData) WantsConnection

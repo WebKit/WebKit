@@ -21,11 +21,17 @@
 #define WebHitTestResult_h
 
 #include "APIObject.h"
+#include "DictionaryPopupInfo.h"
+#include "SharedMemory.h"
+#include <WebCore/FloatPoint.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/PageOverlay.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
+
+OBJC_CLASS DDActionContext;
 
 namespace IPC {
 class ArgumentDecoder;
@@ -58,12 +64,32 @@ public:
         bool allowsCopy;
         bool isDownloadableMedia;
 
+        // FIXME: Added from ActionHitTestResult. All make sense?
+        WebCore::FloatPoint hitTestLocationInViewCooordinates;
+        String lookupText;
+        RefPtr<SharedMemory> imageSharedMemory;
+        uint64_t imageSize;
+        String imageExtension;
+
+#if PLATFORM(MAC)
+        RetainPtr<DDActionContext> detectedDataActionContext;
+#endif
+        WebCore::FloatRect detectedDataBoundingBox;
+        RefPtr<WebCore::TextIndicator> detectedDataTextIndicator;
+        WebCore::PageOverlay::PageOverlayID detectedDataOriginatingPageOverlay;
+
+        DictionaryPopupInfo dictionaryPopupInfo;
+
+        RefPtr<WebCore::TextIndicator> linkTextIndicator;
+
         Data();
         explicit Data(const WebCore::HitTestResult&);
         ~Data();
 
         void encode(IPC::ArgumentEncoder&) const;
+        void platformEncode(IPC::ArgumentEncoder&) const;
         static bool decode(IPC::ArgumentDecoder&, WebHitTestResult::Data&);
+        static bool platformDecode(IPC::ArgumentDecoder&, WebHitTestResult::Data&);
 
         WebCore::IntRect elementBoundingBoxInWindowCoordinates(const WebCore::HitTestResult&);
     };
