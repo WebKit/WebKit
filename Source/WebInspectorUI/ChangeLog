@@ -1,5 +1,14 @@
 2015-04-05  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Add String/Array "includes" parameter display string
+        https://bugs.webkit.org/show_bug.cgi?id=143434
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+
+2015-04-05  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Regression: Map instances don't expand
         https://bugs.webkit.org/show_bug.cgi?id=143428
 
