@@ -55,7 +55,7 @@ private:
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
     virtual void allClientsRemoved() override;
 
-    virtual void willSendRequest(ResourceRequest&, const ResourceResponse&) override;
+    virtual void redirectReceived(ResourceRequest&, const ResourceResponse&) override;
     virtual void responseReceived(const ResourceResponse&) override;
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
 

@@ -84,6 +84,18 @@ ContentFilter::~ContentFilter()
     m_mainResource->removeClient(this);
 }
 
+void ContentFilter::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
+{
+    ResourceRequest requestCopy { request };
+    ASSERT(m_state == State::Initialized || m_state == State::Filtering);
+    forEachContentFilterUntilBlocked([&requestCopy, &redirectResponse](PlatformContentFilter& contentFilter) {
+        contentFilter.willSendRequest(requestCopy, redirectResponse);
+        if (contentFilter.didBlockData())
+            requestCopy = ResourceRequest();
+    });
+    request = requestCopy;
+}
+
 void ContentFilter::startFilteringMainResource(CachedRawResource& resource)
 {
     ASSERT(m_state == State::Initialized);
@@ -134,6 +146,13 @@ void ContentFilter::dataReceived(CachedResource* resource, const char* data, int
     forEachContentFilterUntilBlocked([data, length](PlatformContentFilter& contentFilter) {
         contentFilter.addData(data, length);
     });
+}
+
+void ContentFilter::redirectReceived(CachedResource* resource, ResourceRequest& request, const ResourceResponse& redirectResponse)
+{
+    ASSERT(m_state == State::Filtering);
+    ASSERT_UNUSED(resource, resource == m_mainResource.get());
+    willSendRequest(request, redirectResponse);
 }
 
 void ContentFilter::notifyFinished(CachedResource* resource)

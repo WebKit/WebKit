@@ -42,6 +42,7 @@ public:
     static bool enabled();
     static std::unique_ptr<ParentalControlsContentFilter> create();
 
+    void willSendRequest(ResourceRequest&, const ResourceResponse&) override { }
     void responseReceived(const ResourceResponse&) override;
     void addData(const char* data, int length) override;
     void finishedAddingData() override;

@@ -1,3 +1,22 @@
+2015-04-05  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Tell the filter about requests and redirects
+        https://bugs.webkit.org/show_bug.cgi?id=143414
+        rdar://problem/19239549
+
+        Reviewed by Darin Adler.
+
+        * contentfiltering/allow-after-will-send-request-expected.html: Added.
+        * contentfiltering/allow-after-will-send-request.html: Added.
+        * contentfiltering/block-after-will-send-request-expected.html: Added.
+        * contentfiltering/block-after-will-send-request.html: Added.
+        * http/tests/contentfiltering/allow-after-redirect-expected.html: Added.
+        * http/tests/contentfiltering/allow-after-redirect.html: Added.
+        * http/tests/contentfiltering/block-after-redirect-expected.html: Added.
+        * http/tests/contentfiltering/block-after-redirect.html: Added.
+        * http/tests/contentfiltering/resources/fail.html: Added.
+        * http/tests/contentfiltering/resources/pass.html: Added.
+
 2015-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Skip fast/fixed-layout/fixed-layout.html on Windows.

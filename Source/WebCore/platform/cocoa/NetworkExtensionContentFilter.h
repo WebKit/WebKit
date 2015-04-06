@@ -38,9 +38,7 @@ enum NEFilterSourceStatus : NSInteger;
 
 OBJC_CLASS NEFilterSource;
 OBJC_CLASS NSData;
-OBJC_CLASS NSDictionary;
-OBJC_CLASS NSMutableData;
-OBJC_CLASS NSString;
+
 namespace WebCore {
 
 class NetworkExtensionContentFilter final : public PlatformContentFilter {
@@ -50,6 +48,7 @@ public:
     static bool enabled();
     static std::unique_ptr<NetworkExtensionContentFilter> create();
 
+    void willSendRequest(ResourceRequest&, const ResourceResponse&) override;
     void responseReceived(const ResourceResponse&) override;
     void addData(const char* data, int length) override;
     void finishedAddingData() override;

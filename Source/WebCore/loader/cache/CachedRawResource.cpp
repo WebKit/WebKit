@@ -156,7 +156,7 @@ void CachedRawResource::allClientsRemoved()
         m_loader->cancelIfNotFinishing();
 }
 
-void CachedRawResource::willSendRequest(ResourceRequest& request, const ResourceResponse& response)
+void CachedRawResource::redirectReceived(ResourceRequest& request, const ResourceResponse& response)
 {
     CachedResourceHandle<CachedRawResource> protect(this);
     if (!response.isNull()) {
@@ -165,7 +165,7 @@ void CachedRawResource::willSendRequest(ResourceRequest& request, const Resource
             c->redirectReceived(this, request, response);
         m_redirectChain.append(RedirectPair(request, response));
     }
-    CachedResource::willSendRequest(request, response);
+    CachedResource::redirectReceived(request, response);
 }
 
 void CachedRawResource::responseReceived(const ResourceResponse& response)

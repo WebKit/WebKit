@@ -1,3 +1,52 @@
+2015-04-05  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Tell the filter about requests and redirects
+        https://bugs.webkit.org/show_bug.cgi?id=143414
+        rdar://problem/19239549
+
+        Reviewed by Darin Adler.
+
+        Tests: contentfiltering/allow-after-will-send-request.html
+               contentfiltering/block-after-will-send-request.html
+               http/tests/contentfiltering/allow-after-redirect.html
+               http/tests/contentfiltering/block-after-redirect.html
+
+        NEFilterSource supports making filter decisions based on NSURLRequests, so this patch adds support for telling
+        ContentFilter about the original main resource request as well as redirect requests.
+
+        * bindings/js/JSMockContentFilterSettingsCustom.cpp: Updated decisionPoint values to include AfterWillSendRequest and AfterRedirect.
+        (WebCore::JSMockContentFilterSettings::decisionPoint):
+        (WebCore::JSMockContentFilterSettings::setDecisionPoint):
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::willSendRequest): Called willSendRequest() on each filter using forEachContentFilterUntilBlocked().
+        (WebCore::ContentFilter::redirectReceived): Called willSendRequest().
+        * loader/ContentFilter.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest): Called ContentFilter::willSendRequest() if there is a content filter.
+        Asserted that this is not a redirect, and that ContentFilter does not set the request to null.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequest): Called redirectReceived() instead of willSendRequest().
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::redirectReceived): Renamed from willSendRequest(), since this function is only called during redirects.
+        (WebCore::CachedRawResource::willSendRequest): Deleted.
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::redirectReceived): Renamed from willSendRequest(), since this function is only called during redirects.
+        (WebCore::CachedResource::willSendRequest): Deleted.
+        * loader/cache/CachedResource.h:
+        * platform/PlatformContentFilter.h:
+        * platform/cocoa/NetworkExtensionContentFilter.h:
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::willSendRequest): Called responseReceived() if there was a redirectResponse.
+        Then called -[NEFilterSource willSendRequest:decisionHandler:].
+        * platform/cocoa/ParentalControlsContentFilter.h:
+        * platform/spi/cocoa/NEFilterSourceSPI.h: Added a #define for NEFilterSourceOptionsPageData.
+        * testing/MockContentFilter.cpp:
+        (WebCore::MockContentFilter::willSendRequest): Added support for willSendRequest.
+        * testing/MockContentFilter.h: Added decision points for AfterWillSendRequest and AfterRedirect.
+        * testing/MockContentFilterSettings.h:
+        * testing/MockContentFilterSettings.idl:
+
 2015-04-05  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Remove DocumentLoader::requestURL().

@@ -534,6 +534,15 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
         }
     }
 
+#if ENABLE(CONTENT_FILTERING)
+    if (m_contentFilter) {
+        ASSERT(redirectResponse.isNull());
+        m_contentFilter->willSendRequest(newRequest, redirectResponse);
+        if (newRequest.isNull())
+            return;
+    }
+#endif
+
     setRequest(newRequest);
 
     if (!redirectResponse.isNull()) {

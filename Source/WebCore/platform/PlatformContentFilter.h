@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class ContentFilterUnblockHandler;
+class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
 
@@ -44,6 +45,7 @@ protected:
 
 public:
     virtual ~PlatformContentFilter() { }
+    virtual void willSendRequest(ResourceRequest&, const ResourceResponse&) = 0;
     virtual void responseReceived(const ResourceResponse&) = 0;
     virtual void addData(const char* data, int length) = 0;
     virtual void finishedAddingData() = 0;

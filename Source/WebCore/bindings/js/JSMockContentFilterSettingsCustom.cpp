@@ -39,15 +39,21 @@ using Decision = MockContentFilterSettings::Decision;
 using DecisionPoint = MockContentFilterSettings::DecisionPoint;
 
 // Must be kept in sync with values in MockContentFilterSettings.idl.
-const uint8_t decisionPointAfterResponse = 0;
-const uint8_t decisionPointAfterAddData = 1;
-const uint8_t decisionPointAfterFinishedAddingData = 2;
+const uint8_t decisionPointAfterWillSendRequest = 0;
+const uint8_t decisionPointAfterRedirect = 1;
+const uint8_t decisionPointAfterResponse = 2;
+const uint8_t decisionPointAfterAddData = 3;
+const uint8_t decisionPointAfterFinishedAddingData = 4;
 const uint8_t decisionAllow = 0;
 const uint8_t decisionBlock = 1;
 
 JSValue JSMockContentFilterSettings::decisionPoint(ExecState*) const
 {
     switch (impl().decisionPoint()) {
+    case DecisionPoint::AfterWillSendRequest:
+        return jsNumber(decisionPointAfterWillSendRequest);
+    case DecisionPoint::AfterRedirect:
+        return jsNumber(decisionPointAfterRedirect);
     case DecisionPoint::AfterResponse:
         return jsNumber(decisionPointAfterResponse);
     case DecisionPoint::AfterAddData:
@@ -67,6 +73,12 @@ void JSMockContentFilterSettings::setDecisionPoint(ExecState* exec, JSValue valu
         return;
 
     switch (nativeValue) {
+    case decisionPointAfterWillSendRequest:
+        impl().setDecisionPoint(DecisionPoint::AfterWillSendRequest);
+        return;
+    case decisionPointAfterRedirect:
+        impl().setDecisionPoint(DecisionPoint::AfterRedirect);
+        return;
     case decisionPointAfterResponse:
         impl().setDecisionPoint(DecisionPoint::AfterResponse);
         return;

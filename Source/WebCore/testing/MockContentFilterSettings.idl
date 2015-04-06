@@ -31,9 +31,11 @@
     attribute boolean enabled;
     attribute DOMString blockedString;
 
-    const octet DECISION_POINT_AFTER_RESPONSE = 0;
-    const octet DECISION_POINT_AFTER_ADD_DATA = 1;
-    const octet DECISION_POINT_AFTER_FINISHED_ADDING_DATA = 2;
+    const octet DECISION_POINT_AFTER_WILL_SEND_REQUEST = 0;
+    const octet DECISION_POINT_AFTER_REDIRECT = 1;
+    const octet DECISION_POINT_AFTER_RESPONSE = 2;
+    const octet DECISION_POINT_AFTER_ADD_DATA = 3;
+    const octet DECISION_POINT_AFTER_FINISHED_ADDING_DATA = 4;
     [Custom] attribute octet decisionPoint;
 
     const octet DECISION_ALLOW = 0;

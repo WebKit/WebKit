@@ -36,6 +36,8 @@ class MockContentFilterSettings {
 
 public:
     enum class DecisionPoint {
+        AfterWillSendRequest,
+        AfterRedirect,
         AfterResponse,
         AfterAddData,
         AfterFinishedAddingData

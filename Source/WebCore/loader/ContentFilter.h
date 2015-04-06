@@ -53,6 +53,7 @@ public:
 
     static const char* urlScheme() { return "x-apple-content-filter"; }
 
+    void willSendRequest(ResourceRequest&, const ResourceResponse&);
     void startFilteringMainResource(CachedRawResource&);
 
     enum class State {
@@ -81,6 +82,7 @@ private:
     // CachedRawResourceClient
     void responseReceived(CachedResource*, const ResourceResponse&) override;
     void dataReceived(CachedResource*, const char* data, int length) override;
+    void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) override;
 
     // CachedResourceClient
     void notifyFinished(CachedResource*) override;

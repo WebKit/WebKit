@@ -179,7 +179,7 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
             cancel();
             return;
         }
-        m_resource->willSendRequest(newRequest, redirectResponse);
+        m_resource->redirectReceived(newRequest, redirectResponse);
     }
 
     if (newRequest.isNull() || reachedTerminalState())

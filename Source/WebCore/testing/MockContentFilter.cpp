@@ -30,6 +30,8 @@
 
 #include "ContentFilter.h"
 #include "ContentFilterUnblockHandler.h"
+#include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include <mutex>
 #include <wtf/text/CString.h>
@@ -61,6 +63,14 @@ bool MockContentFilter::enabled()
 std::unique_ptr<MockContentFilter> MockContentFilter::create()
 {
     return std::make_unique<MockContentFilter>();
+}
+
+void MockContentFilter::willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse)
+{
+    if (redirectResponse.isNull())
+        maybeDetermineStatus(DecisionPoint::AfterWillSendRequest);
+    else
+        maybeDetermineStatus(DecisionPoint::AfterRedirect);
 }
 
 void MockContentFilter::responseReceived(const ResourceResponse&)

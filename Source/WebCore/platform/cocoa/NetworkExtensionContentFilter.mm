@@ -30,6 +30,7 @@
 
 #import "ContentFilterUnblockHandler.h"
 #import "NEFilterSourceSPI.h"
+#import "ResourceRequest.h"
 #import "ResourceResponse.h"
 #import "SharedBuffer.h"
 #import "SoftLinking.h"
@@ -69,6 +70,30 @@ NetworkExtensionContentFilter::NetworkExtensionContentFilter()
 #endif
 {
     ASSERT([getNEFilterSourceClass() filterRequired]);
+}
+
+void NetworkExtensionContentFilter::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
+{
+#if HAVE(MODERN_NE_FILTER_SOURCE)
+    ASSERT(!request.isNull());
+    if (!redirectResponse.isNull()) {
+        responseReceived(redirectResponse);
+        if (!needsMoreData())
+            return;
+    }
+
+    [m_neFilterSource willSendRequest:request.nsURLRequest(DoNotUpdateHTTPBody) decisionHandler:[this](NEFilterSourceStatus status, NSDictionary *decisionInfo) {
+        handleDecision(status, replacementDataFromDecisionInfo(decisionInfo));
+    }];
+
+    // FIXME: We have to block here since DocumentLoader expects to have a
+    // blocked/not blocked answer from the filter immediately after calling
+    // addData(). We should find a way to make this asynchronous.
+    dispatch_semaphore_wait(m_semaphore.get(), DISPATCH_TIME_FOREVER);
+#else
+    UNUSED_PARAM(request);
+    UNUSED_PARAM(redirectResponse);
+#endif
 }
 
 void NetworkExtensionContentFilter::responseReceived(const ResourceResponse& response)

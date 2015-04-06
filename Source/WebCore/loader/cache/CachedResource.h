@@ -193,7 +193,7 @@ public:
 
     SharedBuffer* resourceBuffer() const { return m_data.get(); }
 
-    virtual void willSendRequest(ResourceRequest&, const ResourceResponse&);
+    virtual void redirectReceived(ResourceRequest&, const ResourceResponse&);
     virtual void responseReceived(const ResourceResponse&);
     void setResponse(const ResourceResponse& response) { m_response = response; }
     const ResourceResponse& response() const { return m_response; }
