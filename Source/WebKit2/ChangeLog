@@ -1,3 +1,13 @@
+2015-03-16  Alexey Proskuryakov  <ap@apple.com>
+
+        ASSERT(m_plugin) on plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image.html
+        https://bugs.webkit.org/show_bug.cgi?id=142637
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/Plugins/PluginView.cpp: (WebKit::PluginView::pluginSnapshotTimerFired):
+        m_plugin can be legitimately null.
+
 2015-02-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Crash loading local file with WebPageProxy::loadAlternateHTMLString
