@@ -65,6 +65,7 @@ RenderFlowThread::RenderFlowThread(Document& document, Ref<RenderStyle>&& style)
     , m_needsTwoPhasesLayout(false)
     , m_layersToRegionMappingsDirty(true)
 {
+    setIsRenderFlowThread(true);
     setFlowThreadState(InsideOutOfFlowThread);
 }
 

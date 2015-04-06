@@ -350,7 +350,6 @@ public:
 #if ENABLE(CSS_GRID_LAYOUT)
     virtual bool isRenderGrid() const { return false; }
 #endif
-    virtual bool isRenderFlowThread() const { return false; }
     virtual bool isRenderNamedFlowThread() const { return false; }
     bool isInFlowRenderFlowThread() const { return isRenderFlowThread() && !isOutOfFlowPositioned(); }
     bool isOutOfFlowRenderFlowThread() const { return isRenderFlowThread() && isOutOfFlowPositioned(); }
@@ -518,6 +517,10 @@ public:
     bool isReplaced() const { return m_bitfields.isReplaced(); } // a "replaced" element (see CSS)
     bool isHorizontalWritingMode() const { return m_bitfields.horizontalWritingMode(); }
 
+    bool isDragging() const { return m_bitfields.hasRareData() && rareData().isDragging(); }
+    bool hasReflection() const { return m_bitfields.hasRareData() && rareData().hasReflection(); }
+    bool isRenderFlowThread() const { return m_bitfields.hasRareData() && rareData().isRenderFlowThread(); }
+
     bool hasLayer() const { return m_bitfields.hasLayer(); }
 
     enum BoxDecorationState {
@@ -623,11 +626,9 @@ public:
     void setHasLayer(bool b = true) { m_bitfields.setHasLayer(b); }
     void setHasTransformRelatedProperty(bool b = true) { m_bitfields.setHasTransformRelatedProperty(b); }
 
-    bool isDragging() const { return m_bitfields.hasRareData() && rareData().isDragging(); }
-    bool hasReflection() const { return m_bitfields.hasRareData() && rareData().hasReflection(); }
-
     void setIsDragging(bool);
     void setHasReflection(bool = true);
+    void setIsRenderFlowThread(bool = true);
 
     // Hook so that RenderTextControl can return the line height of its inner renderer.
     // For other renderers, the value is the same as lineHeight(false).
@@ -1015,11 +1016,13 @@ private:
         RenderObjectRareData()
             : m_isDragging(false)
             , m_hasReflection(false)
+            , m_isRenderFlowThread(false)
         {
         }
 
         ADD_BOOLEAN_BITFIELD(isDragging, IsDragging);
         ADD_BOOLEAN_BITFIELD(hasReflection, HasReflection);
+        ADD_BOOLEAN_BITFIELD(isRenderFlowThread, IsRenderFlowThread);
     };
     
     RenderObjectRareData rareData() const;

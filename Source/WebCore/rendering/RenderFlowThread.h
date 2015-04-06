@@ -235,8 +235,6 @@ public:
     virtual bool shouldCheckColumnBreaks() const { return false; }
 
 private:
-    virtual bool isRenderFlowThread() const override final { return true; }
-
     // Always create a RenderLayer for the RenderFlowThread so that we
     // can easily avoid drawing the children directly.
     virtual bool requiresLayer() const override final { return true; }

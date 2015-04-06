@@ -1,3 +1,24 @@
+2015-04-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Use a RenderObject bit for isRenderFlowThread()
+        https://bugs.webkit.org/show_bug.cgi?id=143439
+
+        Reviewed by Darin Adler.
+
+        Turning isRenderFlowThread() into a bit in rare data rather than a virtual function reduces
+        the time under RenderLayer::scrollTo() on a large overflow:scroll table from 56% to 44%.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setIsRenderFlowThread):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isDragging):
+        (WebCore::RenderObject::hasReflection):
+        (WebCore::RenderObject::isRenderFlowThread):
+        (WebCore::RenderObject::RenderObjectRareData::RenderObjectRareData):
+
 2015-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Win] [SVG -> OTF Converter] Support the SVG -> OTF Font Converter

@@ -2509,6 +2509,12 @@ void RenderObject::setHasReflection(bool hasReflection)
         ensureRareData().setHasReflection(hasReflection);
 }
 
+void RenderObject::setIsRenderFlowThread(bool isFlowThread)
+{
+    if (isFlowThread || hasRareData())
+        ensureRareData().setIsRenderFlowThread(isFlowThread);
+}
+
 RenderObject::RareDataHash& RenderObject::rareDataMap()
 {
     static NeverDestroyed<RareDataHash> map;
