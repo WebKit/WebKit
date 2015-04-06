@@ -52,7 +52,7 @@ private:
 
 public:
     static PassRefPtr<Array> create();
-    static PassRefPtr<Array> create(Vector<RefPtr<Object>> elements);
+    static PassRefPtr<Array> create(Vector<RefPtr<Object>>&&);
     static PassRefPtr<Array> createStringArray(const Vector<WTF::String>&);
     Vector<WTF::String> toStringVector();
     Ref<Array> copy();
@@ -85,7 +85,10 @@ public:
 
 
 private:
-    explicit Array(Vector<RefPtr<Object>> elements);
+    explicit Array(Vector<RefPtr<Object>>&& elements)
+        : m_elements(WTF::move(elements))
+    {
+    }
 
     Vector<RefPtr<Object>> m_elements;
 };

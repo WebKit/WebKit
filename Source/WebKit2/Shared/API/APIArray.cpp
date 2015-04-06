@@ -35,7 +35,7 @@ PassRefPtr<Array> Array::create()
     return create(Vector<RefPtr<Object>>());
 }
 
-PassRefPtr<Array> Array::create(Vector<RefPtr<Object>> elements)
+PassRefPtr<Array> Array::create(Vector<RefPtr<Object>>&& elements)
 {
     return adoptRef(*new Array(WTF::move(elements)));
 }
@@ -75,12 +75,7 @@ Ref<API::Array> Array::copy()
     elements.reserveInitialCapacity(size);
     for (const auto& entry : this->elements())
         elements.uncheckedAppend(entry);
-    return *Array::create(elements);
-}
-
-Array::Array(Vector<RefPtr<Object>> elements)
-    : m_elements(WTF::move(elements))
-{
+    return *Array::create(WTF::move(elements));
 }
 
 Array::~Array()
