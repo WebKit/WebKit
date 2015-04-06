@@ -1,5 +1,29 @@
 2015-04-05  Andy Estes  <aestes@apple.com>
 
+        [Content Filtering] Add some additional unblock tests
+        https://bugs.webkit.org/show_bug.cgi?id=143435
+
+        Reviewed by Dan Bernstein.
+
+        * contentfiltering/block-after-add-data-then-allow-unblock-expected.html: Copied from LayoutTests/contentfiltering/block-after-unblock-request-expected.html.
+        * contentfiltering/block-after-add-data-then-allow-unblock.html: Added.
+        * contentfiltering/block-after-add-data-then-deny-unblock-expected.html: Renamed from LayoutTests/contentfiltering/allow-after-unblock-request-expected.html.
+        * contentfiltering/block-after-add-data-then-deny-unblock.html: Added.
+        * contentfiltering/block-after-finished-adding-data-then-allow-unblock-expected.html: Copied from LayoutTests/contentfiltering/block-after-unblock-request-expected.html.
+        * contentfiltering/block-after-finished-adding-data-then-allow-unblock.html: Renamed from LayoutTests/contentfiltering/allow-after-unblock-request.html.
+        * contentfiltering/block-after-finished-adding-data-then-deny-unblock-expected.html: Copied from LayoutTests/contentfiltering/block-after-unblock-request-expected.html.
+        * contentfiltering/block-after-finished-adding-data-then-deny-unblock.html: Renamed from LayoutTests/contentfiltering/block-after-unblock-request.html.
+        * contentfiltering/block-after-response-then-allow-unblock-expected.html: Copied from LayoutTests/contentfiltering/block-after-unblock-request-expected.html.
+        * contentfiltering/block-after-response-then-allow-unblock.html: Added.
+        * contentfiltering/block-after-response-then-deny-unblock-expected.html: Copied from LayoutTests/contentfiltering/block-after-unblock-request-expected.html.
+        * contentfiltering/block-after-response-then-deny-unblock.html: Added.
+        * contentfiltering/block-after-will-send-request-then-allow-unblock-expected.html: Copied from LayoutTests/contentfiltering/block-after-unblock-request-expected.html.
+        * contentfiltering/block-after-will-send-request-then-allow-unblock.html: Added.
+        * contentfiltering/block-after-will-send-request-then-deny-unblock-expected.html: Renamed from LayoutTests/contentfiltering/block-after-unblock-request-expected.html.
+        * contentfiltering/block-after-will-send-request-then-deny-unblock.html: Added.
+
+2015-04-05  Andy Estes  <aestes@apple.com>
+
         [Content Filtering] Tell the filter about requests and redirects
         https://bugs.webkit.org/show_bug.cgi?id=143414
         rdar://problem/19239549
