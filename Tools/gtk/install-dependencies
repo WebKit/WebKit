@@ -22,17 +22,17 @@ function checkInstaller {
         exit 0
     fi
 
-    # yum - Fedora 21 and below
-    yum --version &> /dev/null
-    if [ $? -eq 0 ]; then
-        installFedoraDependencies yum
-        exit 0
-    fi
-
     # dnf - Fedora 22 and above
     dnf --version &> /dev/null
     if [ $? -eq 0 ]; then
         installFedoraDependencies dnf
+        exit 0
+    fi
+
+    # yum - Fedora 21 and below
+    yum --version &> /dev/null
+    if [ $? -eq 0 ]; then
+        installFedoraDependencies yum
         exit 0
     fi
 
