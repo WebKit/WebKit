@@ -122,8 +122,10 @@ void RunLoop::performWork()
 
 void RunLoop::dispatch(std::function<void ()> function)
 {
-    MutexLocker locker(m_functionQueueLock);
-    m_functionQueue.append(WTF::move(function));
+    {
+        MutexLocker locker(m_functionQueueLock);
+        m_functionQueue.append(WTF::move(function));
+    }
 
     wakeUp();
 }
