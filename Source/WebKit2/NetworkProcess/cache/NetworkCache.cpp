@@ -92,7 +92,7 @@ static Key makeCacheKey(const WebCore::ResourceRequest& request)
 #endif
     if (partition.isEmpty())
         partition = ASCIILiteral("No partition");
-    return { partition, request.url().string() };
+    return { request.httpMethod(), partition, request.url().string()  };
 }
 
 static String headerValueForVary(const WebCore::ResourceRequest& request, const String& headerName)

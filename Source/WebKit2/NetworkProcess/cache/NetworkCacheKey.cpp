@@ -37,14 +37,16 @@ namespace WebKit {
 namespace NetworkCache {
 
 Key::Key(const Key& o)
-    : m_partition(o.m_partition.isolatedCopy())
+    : m_method(o.m_method.isolatedCopy())
+    , m_partition(o.m_partition.isolatedCopy())
     , m_identifier(o.m_identifier.isolatedCopy())
     , m_hash(o.m_hash)
 {
 }
 
-Key::Key(const String& partition, const String& identifier)
-    : m_partition(partition.isolatedCopy())
+Key::Key(const String& method, const String& partition, const String& identifier)
+    : m_method(method.isolatedCopy())
+    , m_partition(partition.isolatedCopy())
     , m_identifier(identifier.isolatedCopy())
     , m_hash(computeHash())
 {
@@ -52,6 +54,7 @@ Key::Key(const String& partition, const String& identifier)
 
 Key& Key::operator=(const Key& other)
 {
+    m_method = other.m_method.isolatedCopy();
     m_partition = other.m_partition.isolatedCopy();
     m_identifier = other.m_identifier.isolatedCopy();
     m_hash = other.m_hash;
@@ -76,6 +79,7 @@ Key::HashType Key::computeHash() const
     // We don't really need a cryptographic hash. The key is always verified against the entry header.
     // MD5 just happens to be suitably sized, fast and available.
     MD5 md5;
+    hashString(md5, m_method);
     hashString(md5, m_partition);
     hashString(md5, m_identifier);
     MD5::Digest hash;
@@ -117,11 +121,12 @@ bool Key::stringToHash(const String& string, HashType& hash)
 
 bool Key::operator==(const Key& other) const
 {
-    return m_hash == other.m_hash && m_partition == other.m_partition && m_identifier == other.m_identifier;
+    return m_hash == other.m_hash && m_method == other.m_method && m_partition == other.m_partition && m_identifier == other.m_identifier;
 }
 
 void Key::encode(Encoder& encoder) const
 {
+    encoder << m_method;
     encoder << m_partition;
     encoder << m_identifier;
     encoder << m_hash;
@@ -129,7 +134,7 @@ void Key::encode(Encoder& encoder) const
 
 bool Key::decode(Decoder& decoder, Key& key)
 {
-    return decoder.decode(key.m_partition) && decoder.decode(key.m_identifier) && decoder.decode(key.m_hash);
+    return decoder.decode(key.m_method) && decoder.decode(key.m_partition) && decoder.decode(key.m_identifier) && decoder.decode(key.m_hash);
 }
 
 }
