@@ -519,8 +519,10 @@ void AnimationControllerPrivate::animationWillBeRemoved(AnimationBase* animation
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
 void AnimationControllerPrivate::scrollWasUpdated()
 {
-    m_scrollPosition = m_frame.view()->scrollOffsetForFixedPosition().height().toFloat();
-
+    auto* view = m_frame.view();
+    if (!view)
+        return;
+    m_scrollPosition = view->scrollOffsetForFixedPosition().height().toFloat();
     updateAnimations(CallSetChanged);
 }
 #endif

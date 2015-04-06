@@ -1,3 +1,18 @@
+2015-04-05  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r181778): Crash after scrolling Google search result page
+        https://bugs.webkit.org/show_bug.cgi?id=143431
+
+        Reviewed by Simon Fraser.
+
+        I can't reproduce this crash, nor was I able to make a regression test,
+        but the crash data makes it clear this is a null dereference.
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::scrollWasUpdated): Check the result
+        of Frame::view for null. We know this is only called when there is a
+        valid FrameView, but it can be called after Frame::m_view is already null.
+
 2015-04-05  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Tell the filter about requests and redirects
