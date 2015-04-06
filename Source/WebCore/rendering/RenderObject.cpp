@@ -2050,10 +2050,18 @@ void RenderObject::removeFromRenderFlowThreadIncludingDescendants(bool shouldUpd
 
     // We have to ask for our containing flow thread as it may be above the removed sub-tree.
     RenderFlowThread* flowThreadContainingBlock = this->flowThreadContainingBlock();
-    if (flowThreadContainingBlock)
+    while (flowThreadContainingBlock) {
         flowThreadContainingBlock->removeFlowChildInfo(this);
+        if (flowThreadContainingBlock->flowThreadState() == NotInsideFlowThread)
+            break;
+        RenderObject* parent = flowThreadContainingBlock->parent();
+        if (!parent)
+            break;
+        flowThreadContainingBlock = parent->flowThreadContainingBlock();
+    }
     if (isRenderBlock())
         toRenderBlock(this)->setCachedFlowThreadContainingBlockNeedsUpdate();
+
     if (shouldUpdateState)
         setFlowThreadState(NotInsideFlowThread);
 }
