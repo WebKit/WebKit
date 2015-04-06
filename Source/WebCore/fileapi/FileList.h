@@ -55,7 +55,9 @@ public:
 
 private:
     FileList();
-    FileList(Vector<RefPtr<File>>&& files) : m_files(files) { }
+    FileList(Vector<RefPtr<File>>&& files)
+        : m_files(WTF::move(files))
+    { }
 
     // FileLists can only be changed by their owners.
     friend class DataTransfer;
