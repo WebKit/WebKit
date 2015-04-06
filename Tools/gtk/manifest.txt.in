@@ -106,5 +106,5 @@ file Tools/Scripts/webkit-build-directory
 file Tools/Scripts/webkitdirs.pm
 file Tools/jhbuild/jhbuildutils.py
 
-directory $build/Documentation/webkit2gtk/html Documentation/webkit2gtk/html
-directory $build/Documentation/webkitdomgtk/html Documentation/webkitdomgtk/html
+directory ${CMAKE_BINARY_DIR}/Documentation/webkit2gtk/html Documentation/webkit2gtk/html
+directory ${CMAKE_BINARY_DIR}/Documentation/webkitdomgtk/html Documentation/webkitdomgtk/html

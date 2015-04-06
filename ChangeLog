@@ -1,3 +1,16 @@
+2015-01-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Generate the make dist manifest from a CMake template file
+        https://bugs.webkit.org/show_bug.cgi?id=139387
+
+        Reviewed by Martin Robinson.
+
+        Generate manifest.txt from manifest.txt.in. Only expose the dist and
+        distcheck targets for developer builds, as they won't work when
+        building from a tarball because the manifest is not distributed.
+
+        * Source/PlatformGTK.cmake:
+
 2015-01-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.5 release.

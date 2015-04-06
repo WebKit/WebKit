@@ -1,3 +1,21 @@
+2015-01-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Generate the make dist manifest from a CMake template file
+        https://bugs.webkit.org/show_bug.cgi?id=139387
+
+        Reviewed by Martin Robinson.
+
+        Remove the code that performs variable substitution on manifest.txt.
+        Replace the custom variables used in that file with CMake variables.
+
+        * gtk/make-dist.py:
+        (Manifest.add_directory):
+        (Manifest.get_full_source_path):
+        (Manifest.process_line):
+        (Manifest.resolve_variables): Deleted.
+        (Manifest.get_full_tarball_path): Deleted.
+        * gtk/manifest.txt.in: Renamed from Tools/gtk/manifest.txt.
+
 2015-01-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Build gtk-doc without gtkdoc-mktmpl

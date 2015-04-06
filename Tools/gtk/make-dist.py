@@ -159,27 +159,14 @@ class Manifest(object):
         self.current_directory = directory
         self.directories.append(directory)
 
-    def resolve_variables(self, string, strip=False):
-        if strip:
-            return string.replace('$source', '').replace('$build', '')
-
-        string = string.replace('$source', self.source_root)
-        if self.build_root:
-            string = string.replace('$build', self.build_root)
-        elif string.find('$build') != -1:
-            raise Exception('Manifest has $build but build root not given.')
-        return string
-
     def get_full_source_path(self, source_path):
-        full_source_path = self.resolve_variables(source_path)
-        if not os.path.exists(full_source_path):
-            full_source_path = os.path.join(self.source_root, source_path)
-        if not os.path.exists(full_source_path):
-            raise Exception('Could not find directory %s' % full_source_path)
-        return full_source_path
+        if not os.path.exists(source_path):
+            source_path = os.path.join(self.source_root, source_path)
+        if not os.path.exists(source_path):
+            raise Exception('Could not find directory %s' % source_path)
+        return source_path
 
     def get_full_tarball_path(self, path):
-        path = self.resolve_variables(path, strip=True)
         return self.tarball_root + path
 
     def get_source_and_tarball_paths_from_parts(self, parts):
@@ -202,9 +189,9 @@ class Manifest(object):
         elif parts[0] == "file" and len(parts) > 1:
             self.add_directory(File(*self.get_source_and_tarball_paths_from_parts(parts)))
         elif parts[0] == "exclude" and len(parts) > 1:
-            self.add_rule(Rule(Rule.Result.EXCLUDE, self.resolve_variables(parts[1])))
+            self.add_rule(Rule(Rule.Result.EXCLUDE, parts[1]))
         elif parts[0] == "include" and len(parts) > 1:
-            self.add_rule(Rule(Rule.Result.INCLUDE, self.resolve_variables(parts[1])))
+            self.add_rule(Rule(Rule.Result.INCLUDE, parts[1]))
 
     def should_skip_file(self, directory, filename):
         # Only allow files that are not in version control when they are explicitly included in the manifest from the build dir.
