@@ -1149,7 +1149,11 @@ App.AnalysisTaskController = Ember.Controller.extend({
             self.set('configurations', ['A', 'B']);
             self.set('rootConfigurations', triggerable.get('acceptedRepositories').map(function (repository) {
                 var repositoryId = repository.get('id');
-                var options = [{value: ' ', label: 'None'}].concat(repositoryToRevisions[repositoryId]);
+                var options = [{label: 'None'}].concat((repositoryToRevisions[repositoryId] || []).map(function (option, index) {
+                    if (!option || !option['value'])
+                        return {value: '', label: analysisPoints[index].label + ': None'}; 
+                    return option;
+                }));
                 return Ember.Object.create({
                     repository: repository,
                     name: repository.get('name'),
@@ -1178,11 +1182,27 @@ App.AnalysisTaskController = Ember.Controller.extend({
         },
         createTestGroup: function (name, repetitionCount)
         {
+            var analysisTask = this.get('model');
+            if (analysisTask.get('testGroups').isAny('name', name)) {
+                alert('Cannot create two test groups of the same name.');
+                return;
+            }
+
             var roots = {};
-            this.get('rootConfigurations').map(function (root) {
-                roots[root.get('name')] = root.get('sets').map(function (item) { return item.get('selection').value; });
-            });
-            App.TestGroup.create(this.get('model'), name, roots, repetitionCount).then(function () {
+            var rootConfigurations = this.get('rootConfigurations').toArray();
+            for (var root of rootConfigurations) {
+                var sets = root.get('sets');
+                var hasSelection = function (item) { return item.get('selection') && item.get('selection').value; };
+                if (!sets.any(hasSelection))
+                    continue;
+                if (!sets.every(hasSelection)) {
+                    alert('Only some configuration specifies ' + root.get('name'));
+                    return;
+                }
+                roots[root.get('name')] = sets.map(function (item) { return item.get('selection').value; });                
+            }
+
+            App.TestGroup.create(analysisTask, name, roots, repetitionCount).then(function () {
             }, function (error) {
                 alert('Failed to create a new test group:' + error);
             });
@@ -1216,7 +1236,7 @@ App.AnalysisTaskController = Ember.Controller.extend({
                 var selectedOption;
                 if (targetRevision)
                     selectedOption = set.get('options').find(function (option) { return option.value == targetRevision; });
-                set.set('selection', selectedOption || sets[i].get('options')[0]);
+                set.set('selection', selectedOption || set.get('options')[0]);
             });
         });
 

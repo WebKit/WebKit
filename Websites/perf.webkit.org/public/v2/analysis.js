@@ -12,7 +12,8 @@ App.AnalysisTask = App.NameLabelModel.extend({
     triggerable: function () {
         return this.store.find('triggerable', {task: this.get('id')}).then(function (triggerables) {
             return triggerables.objectAt(0);
-        }, function () {
+        }, function (error) {
+            console.log('Failed to fetch triggerables', error);
             return null;
         });
     }.property(),

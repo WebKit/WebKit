@@ -648,6 +648,7 @@
     </script>
 
     <script type="text/x-handlebars" data-template-name="testGroupForm">
+    {{#if rootConfigurations}}
         <form method="POST" {{action "createTestGroup" newTestGroupName repetitionCount on="submit"}}>
             <section class="analysis-group">
                 <h1>{{input name="name" value=newTestGroupName placeholder="Test group name" required=true type="text"}}</h1>
@@ -665,7 +666,7 @@
                             <tr>
                                 <th>{{name}}</th>
                                 {{#each sets}}
-                                    <td>{{view Ember.Select name=name content=options disabled=true
+                                    <td>{{view Ember.Select name=name content=options
                                         optionValuePath="content.value" optionLabelPath="content.label"
                                         selection=selection}}</td>
                                 {{/each}}
@@ -677,6 +678,7 @@
                 <button type="submit">Start A/B testing</button>
             </section>
         </form>
+    {{/if}}
     </script>
 
 </head>

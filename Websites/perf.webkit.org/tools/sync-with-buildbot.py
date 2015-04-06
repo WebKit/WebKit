@@ -72,7 +72,7 @@ def find_request_updates(configurations, lookback_count):
     for config in configurations:
         try:
             pending_builds = fetch_json(config['jsonURL'] + 'pendingBuilds')
-            scheduled_requests = filter(None, [request_id_from_build(build) for build in pending_builds])
+            scheduled_requests = filter(None, [request_id_from_build(config, build) for build in pending_builds])
             for request_id in scheduled_requests:
                 request_updates[request_id] = {'status': 'scheduled', 'url': config['url']}
             config['scheduledRequests'] = set(scheduled_requests)
@@ -85,7 +85,7 @@ def find_request_updates(configurations, lookback_count):
             build_index = -i
             try:
                 build = fetch_json(config['jsonURL'] + 'builds/%d' % build_index)
-                request_id = request_id_from_build(build)
+                request_id = request_id_from_build(config, build)
                 if not request_id:
                     continue
 
@@ -133,14 +133,25 @@ def find_stale_request_updates(configurations, open_requests, requests_on_buildb
 
 
 def schedule_request(config, request, root_sets):
-    replacements = root_sets.get(request['rootSet'], {})
-    replacements['buildRequest'] = request['id']
+    roots = root_sets.get(request['rootSet'], {})
+    replacements = roots.copy()
 
     payload = {}
     for property_name, property_value in config['arguments'].iteritems():
-        for key, value in replacements.iteritems():
-            property_value = property_value.replace('$' + key, value)
-        payload[property_name] = property_value
+        if not isinstance(property_value, dict):
+            payload[property_name] = property_value
+        elif 'root' in property_value:
+            payload[property_name] = replacements[property_value['root']]
+        elif 'rootsExcluding' in property_value:
+            excluded_roots = property_value['rootsExcluding']
+            filtered_roots = {}
+            for root_name in roots:
+                if root_name not in excluded_roots:
+                    filtered_roots[root_name] = roots[root_name]
+            payload[property_name] = json.dumps(filtered_roots)
+        else:
+            print >> sys.stderr, "Failed to process an argument %s: %s" % (property_name, property_value)
+    payload[config['buildRequestArgument']] = request['id']
 
     try:
         urllib2.urlopen(urllib2.Request(config['url'] + 'force'), urllib.urlencode(payload))
@@ -174,8 +185,8 @@ def property_value_from_build(build, name):
     return None
 
 
-def request_id_from_build(build):
-    job_id = property_value_from_build(build, 'jobid')
+def request_id_from_build(config, build):
+    job_id = property_value_from_build(build, config['buildRequestArgument'])
     return int(job_id) if job_id and job_id.isdigit() else None
 
 

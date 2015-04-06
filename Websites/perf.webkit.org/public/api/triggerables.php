@@ -27,7 +27,7 @@ function main($path) {
     }
 
     foreach ($db->select_rows('triggerable_repositories', 'trigrepo', array()) as $row) {
-        $triggerable = $id_to_triggerable[$row['trigrepo_triggerable']];
+        $triggerable = array_get($id_to_triggerable, $row['trigrepo_triggerable']);
         if ($triggerable)
             array_push($triggerable['acceptedRepositories'], $row['trigrepo_repository']);
     }

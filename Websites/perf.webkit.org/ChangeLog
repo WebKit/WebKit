@@ -1,5 +1,35 @@
 2015-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard should be able to trigger A/B testing jobs for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=143398
+
+        Reviewed by Chris Dumez.
+
+        Fix various bugs in the perf dashboard so that it can schedule A/B testing jobs for iOS.
+
+        Also generalized sync-with-buildbot.py slightly to meet the requirements of iOS builders.
+
+        * public/api/triggerables.php:
+        (main): Avoid spitting a warning when $id_to_triggerable doesn't contain the triggerable.
+        * public/v2/analysis.js:
+        (App.AnalysisTask.triggerable): Log an error when failed to fetch triggerables for debugging purposes.
+        * public/v2/app.js:
+        (App.AnalysisTaskController.updateRootConfigurations): Show 'None' when a revision is missing from
+        some of the data points. This will happen when we modify the list of projects we build for iOS.
+        (App.AnalysisTaskController.actions.createTestGroup): Gracefully fail by showing alerts when an user
+        attempts to create an invalid test group; when there is already another test group of the same or when
+        only either configuration specifies the revision for some repository.
+        (App.AnalysisTaskController._updateRootsBySelectedPoints): Fixed a typo: sets[i] -> set.
+        * public/v2/index.html: Don't show the form to create a new test group if it's not available.
+        * tools/sync-with-buildbot.py:
+        (find_request_updates):
+        (schedule_request): iOS builders take a JSON that contains the list of roots. Generate this JSON when
+        a dictionary of the form {rootsExcluding: ["WebKit"]} is specified. Also replaced the way we refer to
+        a revision from $-based text replacements to an explicit dictionary of the form {root: "WebKit"}.
+        (request_id_from_build): Don't hard code the parameter name here. Retrieve the name from the config.
+
+2015-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add time series segmentation algorithms as moving averages
         https://bugs.webkit.org/show_bug.cgi?id=143362
 
