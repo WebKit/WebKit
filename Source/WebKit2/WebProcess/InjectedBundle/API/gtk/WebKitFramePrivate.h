@@ -24,5 +24,6 @@
 #include "WebKitFrame.h"
 
 WebKitFrame* webkitFrameCreate(WebKit::WebFrame*);
+WebKit::WebFrame* webkitFrameGetWebFrame(WebKitFrame*);
 
 #endif // WebKitFramePrivate_h

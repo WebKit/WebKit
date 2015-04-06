@@ -47,6 +47,11 @@ WebKitFrame* webkitFrameCreate(WebFrame* webFrame)
     return frame;
 }
 
+WebFrame* webkitFrameGetWebFrame(WebKitFrame* frame)
+{
+    return frame->priv->webFrame.get();
+}
+
 /**
  * webkit_frame_is_main_frame:
  * @frame: a #WebKitFrame

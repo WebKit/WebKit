@@ -32,6 +32,7 @@ private:
     {
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
         g_assert(WEBKIT_IS_FRAME(frame));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(frame));
         g_assert(webkit_frame_is_main_frame(frame));
 
         return true;
@@ -41,6 +42,7 @@ private:
     {
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
         g_assert(WEBKIT_IS_FRAME(frame));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(frame));
         g_assert_cmpstr(webkit_web_page_get_uri(page), ==, webkit_frame_get_uri(frame));
 
         return true;
@@ -50,6 +52,7 @@ private:
     {
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
         g_assert(WEBKIT_IS_FRAME(frame));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(frame));
         g_assert(webkit_frame_get_javascript_global_context(frame));
 
         return true;

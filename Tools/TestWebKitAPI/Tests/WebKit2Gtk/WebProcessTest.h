@@ -28,6 +28,8 @@ public:
     virtual ~WebProcessTest() { }
     virtual bool runTest(const char* testName, WebKitWebPage*) = 0;
 
+    static void assertObjectIsDeletedWhenTestFinishes(GObject*);
+
     static void add(const String& testName, std::function<std::unique_ptr<WebProcessTest> ()>);
     static std::unique_ptr<WebProcessTest> create(const String& testName);
 };
