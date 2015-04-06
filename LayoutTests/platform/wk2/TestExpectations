@@ -280,9 +280,16 @@ http/tests/security/cross-frame-access-history-get-override.html
 http/tests/security/cross-frame-access-location-get-override.html
 http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame-2-level.html
 
-# These are plug-in tests that use Flash or QuickTime. We should convert these to use the test plug-in.
-plugins/iframe-shims.html
-plugins/embed-attributes-setting.html
+# These tests use Flash, which is not a good idea, because it is not installed on all machines that run tests.
+# WebKitTestRunner detects attempts to use Flash, and raises an assertion.
+editing/pasteboard/paste-noplugin.html [ Skip ]
+fast/dom/beforeload/flash-before-load.html [ Skip ]
+fast/dom/beforeload/remove-flash-in-beforeload-listener.html [ Skip ]
+fast/loader/sandboxed-plugin-crash.html [ Skip ]
+plugins/hidden-iframe-with-swf-plugin.html [ Skip ]
+plugins/plugin-document-load-prevented-userscript.html [ Skip ]
+plugins/plugin-document-willSendRequest-null.html [ Skip ]
+plugins/plugin-remove-readystatechange.html [ Skip ]
 
 # This test checks that NPN_GetURL with a blank target will return an error if the window isn't opened. This behavior doesn't
 # match Firefox or Chrome. We should either fix the test, or get rid of it.

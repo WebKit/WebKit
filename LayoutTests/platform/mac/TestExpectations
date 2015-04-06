@@ -180,9 +180,6 @@ webkit.org/b/43960 scrollbars/custom-scrollbar-with-incomplete-style.html
 # viewport meta tag support
 fast/viewport
 
-# The WebKit plugin implementation does not support iframe shims.
-webkit.org/b/46223 plugins/iframe-shims.html
-
 webkit.org/b/116640 plugins/plugin-initiate-popup-window.html
 
 # Requires WebP support.

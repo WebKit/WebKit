@@ -1,3 +1,39 @@
+2015-04-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reduce the dependency on Flash in regression tests
+        https://bugs.webkit.org/show_bug.cgi?id=143391
+
+        Reviewed by Anders Carlsson.
+
+        * accessibility/inline-block-assertion.html:
+        * accessibility/plugin.html:
+        * compositing/geometry/empty-embed-rects.html:
+        * fast/history/resources/subframe-with-plugin.html:
+        * fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html:
+        * fast/loader/loadInProgress.html:
+        * fast/replaced/border-radius-clip.html:
+        * fast/replaced/embed-display-none.html:
+        * plugins/crash-restoring-plugin-page-from-page-cache.html:
+        * plugins/object-embed-plugin-scripting.html:
+        * plugins/resources/plugin-frame.html:
+        Use TestNetscapePlugin, as the tests don't appear to have any real need for Flash.
+
+        * plugins/iframe-shims.html: Removed. This was a test for a chromium only feature
+        that never existed in WebKit.
+
+        * platform/mac/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        Removed the deleted plugins/iframe-shims.html.
+
+        * platform/mac-wk2/TestExpectations: Skip snapshotting tests that use Flash,
+        because they make WebKitTestRunner crash now. Marked all other snapshotting tests
+        as Pass/Failure, because they don't really make any sense, and are only useful for
+        finsing crashes.
+
+        * platform/wk2/TestExpectations: Skipped a few remaining tests that use Flash.
+        These tests still run (and pass) under WebKit1, regardless of whether Flash is
+        installed, so they don't seem like very accurate tests.
+
 2015-04-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test update after r182369.

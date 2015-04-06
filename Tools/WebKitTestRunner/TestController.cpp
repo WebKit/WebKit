@@ -46,6 +46,7 @@
 #include <WebKit/WKPageGroup.h>
 #include <WebKit/WKPageInjectedBundleClient.h>
 #include <WebKit/WKPagePrivate.h>
+#include <WebKit/WKPluginInformation.h>
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKProtectionSpace.h>
 #include <WebKit/WKRetainPtr.h>
@@ -1314,7 +1315,22 @@ WKPluginLoadPolicy TestController::decidePolicyForPluginLoad(WKPageRef, WKPlugin
 {
     if (m_shouldBlockAllPlugins)
         return kWKPluginLoadPolicyBlocked;
+
+#if PLATFORM(MAC)
+    WKStringRef bundleIdentifier = (WKStringRef)WKDictionaryGetItemForKey(pluginInformation, WKPluginInformationBundleIdentifierKey());
+    if (!bundleIdentifier)
+        return currentPluginLoadPolicy;
+
+    if (WKStringIsEqualToUTF8CString(bundleIdentifier, "com.apple.QuickTime Plugin.plugin"))
+        return currentPluginLoadPolicy;
+
+    if (WKStringIsEqualToUTF8CString(bundleIdentifier, "com.apple.testnetscapeplugin"))
+        return currentPluginLoadPolicy;
+
+    RELEASE_ASSERT_NOT_REACHED(); // Please don't use any other plug-ins in tests, as they will not be installed on all machines.
+#else
     return currentPluginLoadPolicy;
+#endif
 }
 
 void TestController::didCommitNavigation(WKPageRef page, WKNavigationRef navigation)

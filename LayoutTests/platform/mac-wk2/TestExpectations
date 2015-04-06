@@ -298,6 +298,14 @@ webkit.org/b/132766 fast/hidpi/filters-invert.html [ ImageOnlyFailure ]
 webkit.org/b/132766 fast/hidpi/filters-multiple.html [ ImageOnlyFailure ]
 webkit.org/b/132766 fast/hidpi/filters-reference.html [ ImageOnlyFailure ]
 
+# Plug-in snapshotting tests do not make much sense:
+# - snapshotting is only supported for Flash, but we can't use Flash because it isn't installed everywhere;
+# - so most of the tests use QuickTime, which doesn't support snapshotting, and is 32-bit only, thus failing to load in engineering builds.
+plugins/snapshotting [ Pass Failure ]
+# These two tests use Flash, so they trigger a release assertion.
+plugins/snapshotting/autoplay-similar-to-dominant-after-delay.html [ Skip ]
+plugins/snapshotting/print-snapshotted-plugin.html [ Skip ]
+
 webkit.org/b/133227 plugins/snapshotting/set-plugin-size-to-tiny.html [ Failure ]
 webkit.org/b/133227 plugins/snapshotting/quicktime-plugin-snapshotted.html [ Pass Failure ]
 
