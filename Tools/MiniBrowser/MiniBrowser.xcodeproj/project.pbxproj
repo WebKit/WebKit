@@ -16,6 +16,8 @@
 		256AC3DA0F4B6AC300CF3369 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* AppDelegate.m */; };
 		2DC37343198B62D300EC33E9 /* SettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC37342198B62D300EC33E9 /* SettingsController.m */; };
 		51E244FA11EFCE07008228D1 /* MBToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 51E244F911EFCE07008228D1 /* MBToolbarItem.m */; };
+		7CA379421AC381C10079DC37 /* ExtensionManagerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7CA379401AC381C10079DC37 /* ExtensionManagerWindowController.m */; };
+		7CA379431AC381C10079DC37 /* ExtensionManagerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7CA379411AC381C10079DC37 /* ExtensionManagerWindowController.xib */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		BC329487116A92E2008635D0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BC329486116A92E2008635D0 /* main.m */; };
 		BC329498116A941B008635D0 /* WK2BrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC329497116A941B008635D0 /* WK2BrowserWindowController.m */; };
@@ -73,6 +75,9 @@
 		2DC37342198B62D300EC33E9 /* SettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SettingsController.m; path = mac/SettingsController.m; sourceTree = "<group>"; };
 		51E244F811EFCE07008228D1 /* MBToolbarItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBToolbarItem.h; sourceTree = "<group>"; };
 		51E244F911EFCE07008228D1 /* MBToolbarItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBToolbarItem.m; sourceTree = "<group>"; };
+		7CA3793F1AC381C10079DC37 /* ExtensionManagerWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionManagerWindowController.h; path = mac/ExtensionManagerWindowController.h; sourceTree = "<group>"; };
+		7CA379401AC381C10079DC37 /* ExtensionManagerWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ExtensionManagerWindowController.m; path = mac/ExtensionManagerWindowController.m; sourceTree = "<group>"; };
+		7CA379411AC381C10079DC37 /* ExtensionManagerWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ExtensionManagerWindowController.xib; path = mac/ExtensionManagerWindowController.xib; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* MiniBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MiniBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC329486116A92E2008635D0 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = mac/main.m; sourceTree = "<group>"; };
 		BC329496116A941B008635D0 /* WK2BrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WK2BrowserWindowController.h; path = mac/WK2BrowserWindowController.h; sourceTree = "<group>"; };
@@ -114,16 +119,18 @@
 				256AC3D90F4B6AC300CF3369 /* AppDelegate.m */,
 				0FE6439F161FA8940059E3FF /* BrowserWindowController.h */,
 				0FE643A0161FA8940059E3FF /* BrowserWindowController.m */,
+				7CA3793F1AC381C10079DC37 /* ExtensionManagerWindowController.h */,
+				7CA379401AC381C10079DC37 /* ExtensionManagerWindowController.m */,
 				BC72B89A11E57E8A001EB4EA /* Info.plist */,
 				BC329486116A92E2008635D0 /* main.m */,
 				51E244F811EFCE07008228D1 /* MBToolbarItem.h */,
 				51E244F911EFCE07008228D1 /* MBToolbarItem.m */,
+				2DC37341198B62D300EC33E9 /* SettingsController.h */,
+				2DC37342198B62D300EC33E9 /* SettingsController.m */,
 				0FE643A2161FAC660059E3FF /* WK1BrowserWindowController.h */,
 				0FE643A3161FAC660059E3FF /* WK1BrowserWindowController.m */,
 				BC329496116A941B008635D0 /* WK2BrowserWindowController.h */,
 				BC329497116A941B008635D0 /* WK2BrowserWindowController.m */,
-				2DC37341198B62D300EC33E9 /* SettingsController.h */,
-				2DC37342198B62D300EC33E9 /* SettingsController.m */,
 			);
 			name = MiniBrowser;
 			sourceTree = "<group>";
@@ -187,6 +194,7 @@
 			children = (
 				BC3294A2116A9852008635D0 /* BrowserWindow.xib */,
 				1DDD58150DA1D0A300B32029 /* MainMenu.xib */,
+				7CA379411AC381C10079DC37 /* ExtensionManagerWindowController.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -303,6 +311,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC72B89611E57E0F001EB4EA /* BrowserWindow.xib in Resources */,
+				7CA379431AC381C10079DC37 /* ExtensionManagerWindowController.xib in Resources */,
 				BC72B89511E57E07001EB4EA /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -325,6 +334,7 @@
 				256AC3DA0F4B6AC300CF3369 /* AppDelegate.m in Sources */,
 				0FE643A1161FA8940059E3FF /* BrowserWindowController.m in Sources */,
 				2DC37343198B62D300EC33E9 /* SettingsController.m in Sources */,
+				7CA379421AC381C10079DC37 /* ExtensionManagerWindowController.m in Sources */,
 				BC329487116A92E2008635D0 /* main.m in Sources */,
 				51E244FA11EFCE07008228D1 /* MBToolbarItem.m in Sources */,
 				0FE643A4161FAC660059E3FF /* WK1BrowserWindowController.m in Sources */,
