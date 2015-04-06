@@ -1,3 +1,18 @@
+2015-02-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Crash loading local file with WebPageProxy::loadAlternateHTMLString
+        https://bugs.webkit.org/show_bug.cgi?id=141867
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKit2/LoadAlternateHTMLStringWithNonDirectoryURL.cpp:
+        (TestWebKitAPI::loadAlternateHTMLString): Split most of this test into a function so it can
+        be shared with the new test.
+        (TestWebKitAPI::TEST): Add a cross-platform test for this crash.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestLoaderClient.cpp: Add a GTK+ test for this crash.
+        (testLoadAlternateHTMLForLocalPage):
+        (beforeAll):
+
 2015-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitDOM objects leaking

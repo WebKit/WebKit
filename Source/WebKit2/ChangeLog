@@ -1,3 +1,17 @@
+2015-02-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Crash loading local file with WebPageProxy::loadAlternateHTMLString
+        https://bugs.webkit.org/show_bug.cgi?id=141867
+
+        Reviewed by Anders Carlsson.
+
+        WebPageProxy::loadAlternateHTMLString needs to assume read access to unreachableURL as well
+        as baseURL, because unreachableURL will get added to the back/forward list, causing us to
+        crash later on when we notice the unexpected URL received in checkURLReceivedFromWebProcess.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadAlternateHTMLString):
+
 2015-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitFrame objects are never released
