@@ -592,6 +592,7 @@ static gboolean webKitWebSrcQueryWithParent(GstPad* pad, GstObject* parent, GstQ
         result = TRUE;
         break;
     }
+#if GST_CHECK_VERSION(1, 2, 0)
     case GST_QUERY_SCHEDULING: {
         GstSchedulingFlags flags;
         int minSize, maxSize, align;
@@ -601,6 +602,7 @@ static gboolean webKitWebSrcQueryWithParent(GstPad* pad, GstObject* parent, GstQ
         result = TRUE;
         break;
     }
+#endif
     default: {
         GRefPtr<GstPad> target = adoptGRef(gst_ghost_pad_get_target(GST_GHOST_PAD_CAST(pad)));
 
