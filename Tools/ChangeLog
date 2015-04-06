@@ -1,5 +1,14 @@
 2015-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix /webkit2/WebKitDOMNode/dom-cache after r180214.
+
+        I forgot to add the return of a bool function.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMNodeTest.cpp:
+        (WebKitDOMNodeTest::testDOMCache):
+
+2015-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] GObject DOM bindings object are cached forever
         https://bugs.webkit.org/show_bug.cgi?id=141558
 
