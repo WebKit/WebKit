@@ -1,3 +1,18 @@
+2015-02-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Crash in DFGFrozenValue
+        https://bugs.webkit.org/show_bug.cgi?id=141883
+
+        Reviewed by Benjamin Poulain.
+        
+        If a value might be a cell, then we have to have Graph freeze it rather than trying to
+        create the FrozenValue directly. Creating it directly is just an optimization for when you
+        know for sure that it cannot be a cell.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * tests/stress/regress-141883.js: Added. Hacked the original test to be faster while still crashing before this fix.
+
 2014-12-12  Matthew Mirman  <mmirman@apple.com>
 
         shiftCountWithArrayStorage should exit to slow path if the object has a sparse map.
