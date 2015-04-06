@@ -1,3 +1,15 @@
+2015-04-05  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Only pass http(s) requests to -[NEFilterSource willSendRequest:...]
+        https://bugs.webkit.org/show_bug.cgi?id=143437
+
+        Reviewed by Dan Bernstein.
+
+        No new tests. We can't test NEFilterSource directly.
+
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::willSendRequest): Immediately allow requests with url schemes other than http and https.
+
 2015-04-05  Darin Adler  <darin@apple.com>
 
         FrameView code uses page() without null checking

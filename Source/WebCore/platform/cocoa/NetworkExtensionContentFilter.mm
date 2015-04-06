@@ -76,6 +76,11 @@ void NetworkExtensionContentFilter::willSendRequest(ResourceRequest& request, co
 {
 #if HAVE(MODERN_NE_FILTER_SOURCE)
     ASSERT(!request.isNull());
+    if (!request.url().protocolIsInHTTPFamily()) {
+        m_status = NEFilterSourceStatusPass;
+        return;
+    }
+
     if (!redirectResponse.isNull()) {
         responseReceived(redirectResponse);
         if (!needsMoreData())
