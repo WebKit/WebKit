@@ -1,3 +1,15 @@
+2015-04-06  Andy Estes  <aestes@apple.com>
+
+        [iOS] 'make clean' fails in Tools/WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=143455
+
+        Reviewed by Dan Bernstein.
+
+        This Makefile adds '-target WebKitTestRunnerApp' to OTHER_OPTIONS during iOS builds, but the top-level
+        Makefile.shared adds '-alltargets' for clean builds, and xcodebuild does not allow both -target and -alltargets.
+
+        * WebKitTestRunner/Makefile: Don't add '-target WebKitTestRunerApp' to OTHER_OPTIONS on clean builds.
+
 2015-04-06  Alexey Proskuryakov  <ap@apple.com>
 
         WebKit1.SetAndUpdateCacheModelPreferencesChangeMix fails on some machines

@@ -6,7 +6,9 @@ BUILD_WEBKITTESTRUNNER = $(shell (( $(OSX_VERSION) >= 6 )) && echo "YES" )
 ifeq "$(BUILD_WEBKITTESTRUNNER)" "YES"
 
 ifneq (,$(findstring iphone,$(SDKROOT)))
-	OTHER_OPTIONS += -target WebKitTestRunnerApp
+	ifeq (,$(findstring clean,$(MAKECMDGOALS)))
+		OTHER_OPTIONS += -target WebKitTestRunnerApp
+	endif
 endif
 
 SCRIPTS_PATH = ../Scripts
