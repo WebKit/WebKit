@@ -39,6 +39,10 @@
 #include <wtf/Forward.h>
 #include <wtf/NeverDestroyed.h>
 
+#if PLATFORM(IOS)
+#include "WebSQLiteDatabaseTracker.h"
+#endif
+
 namespace WebCore {
 class CertificateInfo;
 }
@@ -49,10 +53,6 @@ class NetworkConnectionToWebProcess;
 class NetworkProcessSupplement;
 struct NetworkProcessCreationParameters;
 struct SecurityOriginData;
-
-#if PLATFORM(IOS)
-class WebSQLiteDatabaseTracker;
-#endif
 
 class NetworkProcess : public ChildProcess, private DownloadManager::Client {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
@@ -178,7 +178,7 @@ private:
 #endif
 
 #if PLATFORM(IOS)
-    std::unique_ptr<WebSQLiteDatabaseTracker> m_webSQLiteDatabaseTracker;
+    WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
 #endif
 };
 

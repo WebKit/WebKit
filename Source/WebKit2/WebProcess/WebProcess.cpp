@@ -118,10 +118,6 @@
 #include "WebNotificationManager.h"
 #endif
 
-#if PLATFORM(IOS)
-#include "WebSQLiteDatabaseTracker.h"
-#endif
-
 #if ENABLE(BATTERY_STATUS)
 #include "WebBatteryManager.h"
 #endif
@@ -181,6 +177,9 @@ WebProcess::WebProcess()
 #endif
     , m_nonVisibleProcessCleanupTimer(*this, &WebProcess::nonVisibleProcessCleanupTimerFired)
     , m_webOriginDataManager(std::make_unique<WebOriginDataManager>(*this, *this))
+#if PLATFORM(IOS)
+    , m_webSQLiteDatabaseTracker(*this)
+#endif
 {
     // Initialize our platform strategies.
     WebPlatformStrategies::initialize();
@@ -235,10 +234,6 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 
 #if ENABLE(SEC_ITEM_SHIM)
     SecItemShim::singleton().initializeConnection(connection);
-#endif
-
-#if PLATFORM(IOS)
-    m_webSQLiteDatabaseTracker = std::make_unique<WebSQLiteDatabaseTracker>(*this);
 #endif
     
     WebProcessSupplementMap::const_iterator it = m_supplements.begin();

@@ -1,3 +1,33 @@
+2015-04-06  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Regression(r182323): ASSERTION FAILED: WebCore::SQLiteDatabaseTracker::hasTransactionInProgress() in NetworkCache::Statistics::initialize()
+        https://bugs.webkit.org/show_bug.cgi?id=143451
+        <rdar://problem/20437994>
+
+        Reviewed by Anders Carlsson.
+
+        Initialize WebProcess::m_webSQLiteDatabaseTracker and
+        NetworkProcess::m_webSQLiteDatabaseTracker in their respective class
+        constructors instead of doing it later in the initializeWebProcess() /
+        initializeNetworkProcess() methods.
+
+        If we do it later, it can happen that the tracker gets set after
+        a SQLiteTransactionInProgressAutoCounter initialization and before
+        the actual transaction. When this happens, the
+        SQLiteTransactionInProgressAutoCounter variable fails to increment the
+        transaction count. Then when the transaction is executed,
+        SQLiteDatabaseTracker::hasTransactionInProgress() can return false.
+        This would lead to possible assertions on start up on iOS.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/WebProcess.h:
+
 2015-04-06  Beth Dakin  <bdakin@apple.com>
 
         https://trac.webkit.org/changeset/182338 introduced a build failure that I 

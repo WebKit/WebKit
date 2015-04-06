@@ -52,6 +52,10 @@
 #include <WebCore/MachSendRight.h>
 #endif
 
+#if PLATFORM(IOS)
+#include "WebSQLiteDatabaseTracker.h"
+#endif
+
 namespace API {
 class Object;
 }
@@ -88,10 +92,6 @@ class WebResourceLoadScheduler;
 
 #if ENABLE(DATABASE_PROCESS)
 class WebToDatabaseProcessConnection;
-#endif
-
-#if PLATFORM(IOS)
-class WebSQLiteDatabaseTracker;
 #endif
 
 class WebProcess : public ChildProcess, public WebOriginDataManagerSupplement, private DownloadManager::Client {
@@ -379,7 +379,7 @@ private:
 
     std::unique_ptr<WebOriginDataManager> m_webOriginDataManager;
 #if PLATFORM(IOS)
-    std::unique_ptr<WebSQLiteDatabaseTracker> m_webSQLiteDatabaseTracker;
+    WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
 #endif
 };
 
