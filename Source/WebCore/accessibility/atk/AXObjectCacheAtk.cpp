@@ -80,6 +80,14 @@ void AXObjectCache::attachWrapper(AccessibilityObject* obj)
     if (obj->accessibilityIsIgnoredByDefault())
         return;
 
+    // Don't emit the signal if the object being added is not -- or not yet -- rendered,
+    // which can occur in nested iframes. In these instances we don't want to ignore the
+    // child. But if an assistive technology is listening, AT-SPI2 will attempt to create
+    // and cache the state set for the child upon emission of the signal. If the object
+    // has not yet been rendered, this will result in a crash.
+    if (!obj->renderer())
+        return;
+
     // Don't emit the signal for objects whose parents won't be exposed directly.
     AccessibilityObject* coreParent = obj->parentObjectUnignored();
     if (!coreParent || coreParent->accessibilityIsIgnoredByDefault())

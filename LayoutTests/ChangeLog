@@ -1,3 +1,24 @@
+2015-03-16  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Crash viewing http://www.last.fm/
+        https://bugs.webkit.org/show_bug.cgi?id=142309
+
+        Reviewed by Chris Fleizach.
+
+        This test doesn't verify the absence of the crash because the crash seems
+        to require that an assistive technology is listening for events, and that
+        AT-SPI2 is caching the tree for that assistive technology -- something we
+        cannot count on being the case on our bots. (I suspect that the reason non-
+        assistive technology users of Epiphany were getting hit by this is because
+        Caribou was listening for events in the background, thus they were AT users
+        without realizing it. That Caribou issue is in theory now resolved.) What
+        this test does verify is the absence of children-changed:add accessibility
+        signals for non-rendered objects, which is the source of the crash given
+        the aforementioned environment.
+
+        * platform/gtk/accessibility/no-notification-for-unrendered-iframe-children-expected.txt: Added.
+        * platform/gtk/accessibility/no-notification-for-unrendered-iframe-children.html: Added.
+
 2015-02-27  Zalan Bujtas  <zalan@apple.com>
 
         Use after free in WebCore::RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle
