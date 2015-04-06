@@ -1,3 +1,19 @@
+2015-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitDOM objects leaking
+        https://bugs.webkit.org/show_bug.cgi?id=118788
+
+        Reviewed by Darin Adler and Sergio Villar Senin.
+
+        Update DOMObjectCache unit test to check that DOM objects are also
+        released when new contents are loaded in the web view, and the old
+        document is detached from the frame.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDOMNode.cpp:
+        (testWebKitDOMObjectCache):
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTest.cpp:
+        (runTest):
+
 2015-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix /webkit2/WebKitDOMNode/dom-cache after r180214.

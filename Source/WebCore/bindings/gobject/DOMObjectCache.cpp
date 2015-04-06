@@ -19,7 +19,9 @@
 #include "config.h"
 #include "DOMObjectCache.h"
 
+#include "DOMWindowProperty.h"
 #include "Document.h"
+#include "Frame.h"
 #include "FrameDestructionObserver.h"
 #include "Node.h"
 #include <glib-object.h>
@@ -98,11 +100,38 @@ public:
     {
         ASSERT(!m_objects.contains(&data));
 
+        if (!m_domWindowObserver && m_frame->document()->domWindow())
+            m_domWindowObserver = std::make_unique<DOMWindowObserver>(*m_frame, *this);
+
         m_objects.append(&data);
         g_object_weak_ref(data.object, DOMObjectCacheFrameObserver::objectFinalizedCallback, this);
     }
 
 private:
+    class DOMWindowObserver final: public WebCore::DOMWindowProperty {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        DOMWindowObserver(WebCore::Frame& frame, DOMObjectCacheFrameObserver& frameObserver)
+            : DOMWindowProperty(&frame)
+            , m_frameObserver(frameObserver)
+        {
+        }
+
+        virtual ~DOMWindowObserver()
+        {
+        }
+
+    private:
+        virtual void willDetachGlobalObjectFromFrame() override
+        {
+            // Clear the DOMWindowProperty first, and then notify the Frame observer.
+            DOMWindowProperty::willDetachGlobalObjectFromFrame();
+            m_frameObserver.willDetachGlobalObjectFromFrame();
+        }
+
+        DOMObjectCacheFrameObserver& m_frameObserver;
+    };
+
     static void objectFinalizedCallback(gpointer userData, GObject* finalizedObject)
     {
         DOMObjectCacheFrameObserver* observer = static_cast<DOMObjectCacheFrameObserver*>(userData);
@@ -139,7 +168,14 @@ private:
         domObjectCacheFrameObservers().remove(frame);
     }
 
+    void willDetachGlobalObjectFromFrame()
+    {
+        clear();
+        m_domWindowObserver = nullptr;
+    }
+
     Vector<DOMObjectCacheData*, 8> m_objects;
+    std::unique_ptr<DOMWindowObserver> m_domWindowObserver;
 };
 
 typedef HashMap<void*, std::unique_ptr<DOMObjectCacheData>> DOMObjectMap;

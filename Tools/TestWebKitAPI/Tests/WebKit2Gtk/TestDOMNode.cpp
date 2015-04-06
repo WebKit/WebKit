@@ -62,10 +62,15 @@ static void testWebKitDOMNodeTagNames(WebViewTest* test, gconstpointer)
 static void testWebKitDOMObjectCache(WebViewTest* test, gconstpointer)
 {
     static const char* testHTML = "<html><body><div id='container'><p>DOM Cache test</p><a id='link href='#'>link</a></div></body></html>";
-    test->loadHtml(testHTML, nullptr);
-    test->waitUntilLoadFinished();
 
-    g_assert(test->runWebProcessTest("WebKitDOMNode", "dom-cache"));
+    // Run the test 3 times to make sure the DOM objects are correctly released when the
+    // document is detached from the frame for every new document created.
+    for (unsigned i = 0; i < 3; ++i) {
+        test->loadHtml(testHTML, nullptr);
+        test->waitUntilLoadFinished();
+
+        g_assert(test->runWebProcessTest("WebKitDOMNode", "dom-cache"));
+    }
 }
 
 
