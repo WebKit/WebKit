@@ -23,11 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class ExtensionManagerWindowController;
-
 @interface BrowserAppDelegate : NSObject <NSApplicationDelegate> {
     NSMutableSet *_browserWindowControllers;
-    ExtensionManagerWindowController *_extensionManagerWindowController;
 
     IBOutlet NSMenuItem *_newWebKit1WindowItem;
     IBOutlet NSMenuItem *_newWebKit2WindowItem;
@@ -36,7 +33,5 @@
 - (void)browserWindowWillClose:(NSWindow *)window;
 
 - (void)didChangeSettings;
-
-@property (readonly) WKUserContentController *userContentContoller;
 
 @end
