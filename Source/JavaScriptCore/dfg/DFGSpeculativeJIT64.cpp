@@ -4490,6 +4490,7 @@ void SpeculativeJIT::compile(Node* node)
 
             m_jit.loadDouble(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), scratchFPR);
             slowCases.append(m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, scratchFPR, scratchFPR));
+            moveTrueTo(resultGPR);
             break;
         }
         case Array::ArrayStorage: {
