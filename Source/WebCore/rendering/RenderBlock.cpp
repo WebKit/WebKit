@@ -1578,7 +1578,7 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOf
     }
 }
 
-bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
+bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect, PaintBlockType paintType)
 {
     // Check for page-break-before: always, and if it's set, break and bail.
     bool checkBeforeAlways = !childrenInline() && (usePrintRect && child.style().pageBreakBefore() == PBALWAYS);
@@ -1602,8 +1602,12 @@ bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const Layou
     }
 
     LayoutPoint childPoint = flipForWritingModeForChild(&child, paintOffset);
-    if (!child.hasSelfPaintingLayer() && !child.isFloating())
-        child.paint(paintInfoForChild, childPoint);
+    if (!child.hasSelfPaintingLayer() && !child.isFloating()) {
+        if (paintType == PaintAsInlineBlock)
+            child.paintAsInlineBlock(paintInfoForChild, childPoint);
+        else
+            child.paint(paintInfoForChild, childPoint);
+    }
 
     // Check for page-break-after: always, and if it's set, break and bail.
     bool checkAfterAlways = !childrenInline() && (usePrintRect && child.style().pageBreakAfter() == PBALWAYS);
@@ -1616,7 +1620,6 @@ bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const Layou
 
     return true;
 }
-
 
 void RenderBlock::paintCaret(PaintInfo& paintInfo, const LayoutPoint& paintOffset, CaretType type)
 {

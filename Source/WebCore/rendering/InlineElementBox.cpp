@@ -72,23 +72,7 @@ void InlineElementBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (renderer().isBox() && parent()->renderer().style().isFlippedBlocksWritingMode()) // Faster than calling containingBlock().
         childPoint = renderer().containingBlock()->flipForWritingModeForChild(&toRenderBox(renderer()), childPoint);
 
-    // Paint all phases of replaced elements atomically, as though the replaced element established its
-    // own stacking context.  (See Appendix E.2, section 6.4 on inline block/table elements in the CSS2.1
-    // specification.)
-    bool preservePhase = paintInfo.phase == PaintPhaseSelection || paintInfo.phase == PaintPhaseTextClip;
-    PaintInfo info(paintInfo);
-    info.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
-    renderer().paint(info, childPoint);
-    if (!preservePhase) {
-        info.phase = PaintPhaseChildBlockBackgrounds;
-        renderer().paint(info, childPoint);
-        info.phase = PaintPhaseFloat;
-        renderer().paint(info, childPoint);
-        info.phase = PaintPhaseForeground;
-        renderer().paint(info, childPoint);
-        info.phase = PaintPhaseOutline;
-        renderer().paint(info, childPoint);
-    }
+    renderer().paintAsInlineBlock(paintInfo, childPoint);
 }
 
 bool InlineElementBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/)
