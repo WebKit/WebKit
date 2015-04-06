@@ -1,3 +1,19 @@
+2015-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] DnD icon/widget has odd background
+        https://bugs.webkit.org/show_bug.cgi?id=143217
+
+        Reviewed by Martin Robinson.
+
+        Remove DragIcon class since it's no longer needed with GTK+3 and
+        the GTK+2 code there is unused. GTK+ knows what to do with a cairo
+        surface, I guess we migrated the GTK+2 code to GTK+3 without
+        realizing that using the surface was enough.
+
+        * PlatformGTK.cmake:
+        * platform/gtk/DragIcon.cpp: Removed.
+        * platform/gtk/DragIcon.h: Removed.
+
 2015-03-26  Zalan Bujtas  <zalan@apple.com>
 
         Inline continuation code should not take anonymous containing wrapper granted.

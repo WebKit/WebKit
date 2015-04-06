@@ -29,7 +29,7 @@
 #if ENABLE(DRAG_SUPPORT)
 
 #include <WebCore/DataObjectGtk.h>
-#include <WebCore/DragIcon.h>
+#include <WebCore/IntPoint.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 
@@ -38,7 +38,6 @@ typedef struct _GtkSelectionData GtkSelectionData;
 
 namespace WebCore {
 class DragData;
-class IntPoint;
 }
 
 namespace WebKit {
@@ -75,7 +74,6 @@ private:
     WebCore::DataObjectGtk* requestDragData(GdkDragContext*, const WebCore::IntPoint& position, unsigned time);
 
     WebPageProxy& m_page;
-    WebCore::DragIcon m_dragIcon;
     HashMap<GdkDragContext*, std::unique_ptr<DroppingContext>> m_droppingContexts;
     HashMap<GdkDragContext*, RefPtr<WebCore::DataObjectGtk>> m_draggingDataObjects;
 };

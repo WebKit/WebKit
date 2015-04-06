@@ -31,7 +31,6 @@
 #include "WebPageProxy.h"
 #include <WebCore/DataObjectGtk.h>
 #include <WebCore/DragData.h>
-#include <WebCore/DragIcon.h>
 #include <WebCore/GRefPtrGtk.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/PasteboardHelper.h>
@@ -121,8 +120,9 @@ void DragAndDropHandler::startDrag(const DragData& dragData, PassRefPtr<Shareabl
 
     if (dragImage) {
         RefPtr<cairo_surface_t> image(dragImage->createCairoSurface());
-        m_dragIcon.setImage(image.get());
-        m_dragIcon.useForDrag(context);
+        // Use the center of the drag image as hotspot.
+        cairo_surface_set_device_offset(image.get(), -cairo_image_surface_get_width(image.get()) / 2, -cairo_image_surface_get_height(image.get()) / 2);
+        gtk_drag_set_icon_surface(context, image.get());
     } else
         gtk_drag_set_icon_default(context);
 }
