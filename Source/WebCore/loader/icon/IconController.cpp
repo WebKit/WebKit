@@ -160,6 +160,10 @@ void IconController::startLoader()
     }
 
     if (iconDatabase().supportsAsynchronousMode()) {
+        // FIXME (<rdar://problem/9168605>) - We should support in-memory-only private browsing icons in asynchronous icon database mode.
+        if (m_frame.page() && m_frame.page()->usesEphemeralSession())
+            return;
+
         m_frame.loader().documentLoader()->getIconLoadDecisionForIconURL(urlString);
         // Commit the icon url mapping to the database just in case we don't end up loading later.
         commitToDatabase(iconURL);
@@ -202,10 +206,6 @@ void IconController::loadDecisionReceived(IconLoadDecision iconLoadDecision)
 void IconController::continueLoadWithDecision(IconLoadDecision iconLoadDecision)
 {
     ASSERT(iconLoadDecision != IconLoadUnknown);
-
-    //  FIXME (<rdar://problem/9168605>) - We should support in-memory-only private browsing icons in asynchronous icon database mode.
-    if (iconDatabase().supportsAsynchronousMode() && m_frame.page()->usesEphemeralSession())
-        return;
 
     if (iconLoadDecision == IconLoadNo) {
         URL iconURL(url());
