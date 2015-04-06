@@ -146,9 +146,9 @@ static RenderElement* inFlowPositionedInlineAncestor(RenderElement* p)
     return 0;
 }
 
-static void updateStyleOfAnonymousBlockContinuations(RenderBox* box, const RenderStyle* newStyle, const RenderStyle* oldStyle)
+static void updateStyleOfAnonymousBlockContinuations(RenderBlock& block, const RenderStyle* newStyle, const RenderStyle* oldStyle)
 {
-    for (;box && box->isAnonymousBlock(); box = box->nextSiblingBox()) {
+    for (RenderBox* box = &block; box && box->isAnonymousBlock(); box = box->nextSiblingBox()) {
         if (box->style().position() == newStyle->position())
             continue;
         
@@ -182,21 +182,24 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     // need to pass its style on to anyone else.
     RenderStyle& newStyle = style();
     RenderInline* continuation = inlineElementContinuation();
-    for (RenderInline* currCont = continuation; currCont; currCont = currCont->inlineElementContinuation()) {
-        RenderBoxModelObject* nextCont = currCont->continuation();
-        currCont->setContinuation(nullptr);
-        currCont->setStyle(newStyle);
-        currCont->setContinuation(nextCont);
-    }
+    if (continuation) {
+        for (RenderInline* currCont = continuation; currCont; currCont = currCont->inlineElementContinuation()) {
+            RenderBoxModelObject* nextCont = currCont->continuation();
+            currCont->setContinuation(nullptr);
+            currCont->setStyle(newStyle);
+            currCont->setContinuation(nextCont);
+        }
 
-    // If an inline's in-flow positioning has changed then any descendant blocks will need to change their in-flow positioning accordingly.
-    // Do this by updating the position of the descendant blocks' containing anonymous blocks - there may be more than one.
-    if (continuation && oldStyle && newStyle.position() != oldStyle->position()
-        && (newStyle.hasInFlowPosition() || oldStyle->hasInFlowPosition())) {
-        // If any descendant blocks exist then they will be in the next anonymous block and its siblings.
-        RenderObject* block = containingBlock()->nextSibling();
-        ASSERT(block && block->isAnonymousBlock());
-        updateStyleOfAnonymousBlockContinuations(toRenderBlock(block), &newStyle, oldStyle);
+        // If an inline's in-flow positioning has changed and it is part of an active continuation as a descendant of an anonymous containing block,
+        // then any descendant blocks will need to change their in-flow positioning accordingly.
+        // Do this by updating the position of the descendant blocks' containing anonymous blocks - there may be more than one.
+        if (containingBlock()->isAnonymousBlock() && oldStyle && newStyle.position() != oldStyle->position() && (newStyle.hasInFlowPosition() || oldStyle->hasInFlowPosition())) {
+            // If any descendant blocks exist then they will be in the next anonymous block and its siblings.
+            ASSERT(containingBlock()->nextSibling());
+            RenderObject* block = containingBlock()->nextSibling();
+            ASSERT(block && block->isAnonymousBlock());
+            updateStyleOfAnonymousBlockContinuations(*toRenderBlock(block), &newStyle, oldStyle);
+        }
     }
 
     if (!alwaysCreateLineBoxes()) {

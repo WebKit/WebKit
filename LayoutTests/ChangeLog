@@ -1,3 +1,19 @@
+2015-03-26  Zalan Bujtas  <zalan@apple.com>
+
+        Inline continuation code should not take anonymous containing wrapper granted.
+        https://bugs.webkit.org/show_bug.cgi?id=133312
+
+        Reviewed by Dave Hyatt.
+
+        It's wrong to assume that when RenderInline is part of an inline continuation, its containing block
+        is an anonymous wrapper and its sibling might be a block level renderer.
+        When the inline continuation is no longer needed, for example when the block level renderer that initiated the continuation
+        is detached from the render tree, the inline renderes still continue to form continuation.(however they no longer require
+        anonymous wrappers)
+
+        * fast/inline/crash-when-position-property-is-changed-and-no-longer-in-continuation-expected.txt: Added.
+        * fast/inline/crash-when-position-property-is-changed-and-no-longer-in-continuation.html: Added.
+
 2015-02-12  Chris Dumez  <cdumez@apple.com>
 
         Drop the quirks-mode exception for CSS MIME types
