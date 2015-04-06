@@ -1,3 +1,12 @@
+2015-04-06  Beth Dakin  <bdakin@apple.com>
+
+        https://trac.webkit.org/changeset/182338 introduced a build failure that I 
+        attempted to fix with https://trac.webkit.org/changeset/182341 , but that disabled 
+        the feature accidentally.  This should do the right thing.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView pressureChangeWithEvent:]):
+
 2015-04-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r182296.
