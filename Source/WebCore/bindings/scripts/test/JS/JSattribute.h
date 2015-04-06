@@ -24,6 +24,7 @@
 #include "JSDOMWrapper.h"
 #include "attribute.h"
 #include <runtime/ErrorPrototype.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -82,8 +83,8 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, attribute*)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSattributeOwner, jsattributeOwner, ());
-    return &jsattributeOwner;
+    static NeverDestroyed<JSattributeOwner> owner;
+    return &owner.get();
 }
 
 inline void* wrapperContext(DOMWrapperWorld& world, attribute*)

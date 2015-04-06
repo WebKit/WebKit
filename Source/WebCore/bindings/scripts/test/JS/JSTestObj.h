@@ -23,6 +23,7 @@
 
 #include "JSDOMWrapper.h"
 #include "TestObj.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -96,8 +97,8 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestObj*)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestObjOwner, jsTestObjOwner, ());
-    return &jsTestObjOwner;
+    static NeverDestroyed<JSTestObjOwner> owner;
+    return &owner.get();
 }
 
 inline void* wrapperContext(DOMWrapperWorld& world, TestObj*)

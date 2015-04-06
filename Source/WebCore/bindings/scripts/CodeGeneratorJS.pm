@@ -1146,6 +1146,7 @@ sub GenerateHeader
         } else {
             push(@headerContent, "class JS${interfaceName}Owner : public JSC::WeakHandleOwner {\n");
         }
+        $headerIncludes{"<wtf/NeverDestroyed.h>"} = 1;
         push(@headerContent, "public:\n");
         push(@headerContent, "    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);\n");
         push(@headerContent, "    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);\n");
@@ -1153,8 +1154,8 @@ sub GenerateHeader
         push(@headerContent, "\n");
         push(@headerContent, "inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, $implType*)\n");
         push(@headerContent, "{\n");
-        push(@headerContent, "    DEPRECATED_DEFINE_STATIC_LOCAL(JS${interfaceName}Owner, js${interfaceName}Owner, ());\n");
-        push(@headerContent, "    return &js${interfaceName}Owner;\n");
+        push(@headerContent, "    static NeverDestroyed<JS${interfaceName}Owner> owner;\n");
+        push(@headerContent, "    return &owner.get();\n");
         push(@headerContent, "}\n");
         push(@headerContent, "\n");
         push(@headerContent, "inline void* wrapperContext(DOMWrapperWorld& world, $implType*)\n");

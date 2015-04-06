@@ -25,6 +25,7 @@
 
 #include "JSDOMWrapper.h"
 #include "TestSerializedScriptValueInterface.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -87,8 +88,8 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestSerializedScriptValueInterface*)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestSerializedScriptValueInterfaceOwner, jsTestSerializedScriptValueInterfaceOwner, ());
-    return &jsTestSerializedScriptValueInterfaceOwner;
+    static NeverDestroyed<JSTestSerializedScriptValueInterfaceOwner> owner;
+    return &owner.get();
 }
 
 inline void* wrapperContext(DOMWrapperWorld& world, TestSerializedScriptValueInterface*)

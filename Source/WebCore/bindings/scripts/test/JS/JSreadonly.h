@@ -23,6 +23,7 @@
 
 #include "JSDOMWrapper.h"
 #include "readonly.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -81,8 +82,8 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, readonly*)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSreadonlyOwner, jsreadonlyOwner, ());
-    return &jsreadonlyOwner;
+    static NeverDestroyed<JSreadonlyOwner> owner;
+    return &owner.get();
 }
 
 inline void* wrapperContext(DOMWrapperWorld& world, readonly*)

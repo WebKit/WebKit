@@ -25,6 +25,7 @@
 
 #include "JSDOMWrapper.h"
 #include "TestInterface.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -110,8 +111,8 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestInterface*)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestInterfaceOwner, jsTestInterfaceOwner, ());
-    return &jsTestInterfaceOwner;
+    static NeverDestroyed<JSTestInterfaceOwner> owner;
+    return &owner.get();
 }
 
 inline void* wrapperContext(DOMWrapperWorld& world, TestInterface*)

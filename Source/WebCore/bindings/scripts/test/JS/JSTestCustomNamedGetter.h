@@ -23,6 +23,7 @@
 
 #include "JSDOMWrapper.h"
 #include "TestCustomNamedGetter.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -87,8 +88,8 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestCustomNamedGetter*)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestCustomNamedGetterOwner, jsTestCustomNamedGetterOwner, ());
-    return &jsTestCustomNamedGetterOwner;
+    static NeverDestroyed<JSTestCustomNamedGetterOwner> owner;
+    return &owner.get();
 }
 
 inline void* wrapperContext(DOMWrapperWorld& world, TestCustomNamedGetter*)
