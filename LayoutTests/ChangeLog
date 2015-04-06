@@ -1,3 +1,11 @@
+2015-04-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test update after r182369.
+
+        New test does not pass on Windows.
+
+        * platform/win/TestExpectations: Skip.
+
 2015-04-05  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Add some additional unblock tests

@@ -2310,6 +2310,8 @@ http/tests/xmlhttprequest/web-apps/013.html
 # Flaky
 http/tests/cache/network-error-during-revalidation.html [ Pass Crash ]
 http/tests/xmlhttprequest/workers/methods.html [ Pass Crash ]
+
+webkit.org/b/143414 http/tests/contentfiltering/block-after-redirect.html [ Failure ]
 ################################################################################
 #################            End HTTP Issues             #######################
 ################################################################################
