@@ -661,7 +661,17 @@ void WebChromeClient::print(Frame* frame)
     // the print operation is finished unexpectely and the web process crashes, see https://bugs.webkit.org/show_bug.cgi?id=126979.
     // The PrinterListGtk class gets the list of printers in the constructor so we just need to ensure there's an instance alive
     // during the synchronous print operation.
-    RefPtr<PrinterListGtk> printerList = PrinterListGtk::shared();
+    RefPtr<PrinterListGtk> printerList = PrinterListGtk::getOrCreate();
+    if (!printerList) {
+        // PrinterListGtk::getOrCreate() returns nullptr when called while a printers enumeration is ongoing.
+        // This can happen if a synchronous print is started by a JavaScript and another one is inmeditaley started
+        // from a JavaScript event listener. The second print operation is handled by the nested main loop used by GTK+
+        // to enumerate the printers, and we end up here trying to get a reference of an object that is being constructed.
+        // It's very unlikely that the user wants to print twice in a row, and other browsers don't do two print operations
+        // in this particular case either. So, the safest solution is to return early here and ignore the second print.
+        // See https://bugs.webkit.org/show_bug.cgi?id=141035
+        return;
+    }
 #endif
 
     unsigned syncSendFlags = IPC::InformPlatformProcessWillSuspend;

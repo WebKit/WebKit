@@ -67,7 +67,8 @@ public:
         m_printContext = printContext;
         m_callbackID = callbackID;
 
-        RefPtr<PrinterListGtk> printerList = PrinterListGtk::shared();
+        RefPtr<PrinterListGtk> printerList = PrinterListGtk::getOrCreate();
+        ASSERT(printerList);
         const char* printerName = gtk_print_settings_get_printer(m_printSettings.get());
         GtkPrinter* printer = printerName ? printerList->findPrinter(printerName) : printerList->defaultPrinter();
         if (!printer) {

@@ -1,3 +1,33 @@
+2015-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        ASSERTION FAILED: !m_adoptionIsRequired in WTF::RefCountedBase::ref
+        https://bugs.webkit.org/show_bug.cgi?id=141035
+
+        Reviewed by Sergio Villar Senin.
+
+        Rename PrinterListGtk::singleton() as PrinterListGtk::getOrCreate(), and
+        make it return nullptr when the shared PrinterListGtk object is
+        still being created. This can happen if the nested loop used by
+        gtk_enumerate_printers dispatches a GSource that starts a new
+        synchronous print operation. In that case we just ignore the
+        second print operation, since there's already one ongoing.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::print): Return early if
+        PrinterListGtk::getOrCreate() return nullptr.
+        * WebProcess/WebPage/gtk/PrinterListGtk.cpp:
+        (WebKit::PrinterListGtk::getOrCreate): Return nullptr if the
+        PrinterListGtk is still enumerating the printers.
+        (WebKit::PrinterListGtk::PrinterListGtk): Initialize
+        m_enumeratingPrinters to true before calling
+        gtk_enumerate_printers, and to false once it finishes.
+        (WebKit::PrinterListGtk::singleton): Deleted.
+        (WebKit::PrinterListGtk::enumeratePrintersFunction): Deleted.
+        * WebProcess/WebPage/gtk/PrinterListGtk.h:
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp: Add an
+        assertion here since PrinterListGtk::getOrCreate() should never
+        return nullptr at this point.
+
 2015-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] DnD icon/widget has odd background

@@ -34,27 +34,26 @@ namespace WebKit {
 
 PrinterListGtk* PrinterListGtk::s_sharedPrinterList = nullptr;
 
-RefPtr<PrinterListGtk> PrinterListGtk::shared()
+RefPtr<PrinterListGtk> PrinterListGtk::getOrCreate()
 {
     if (s_sharedPrinterList)
-        return s_sharedPrinterList;
+        return s_sharedPrinterList->isEnumeratingPrinters() ? nullptr : s_sharedPrinterList;
 
     return adoptRef(new PrinterListGtk);
 }
 
-gboolean PrinterListGtk::enumeratePrintersFunction(GtkPrinter* printer)
-{
-    ASSERT(s_sharedPrinterList);
-    s_sharedPrinterList->addPrinter(printer);
-    return FALSE;
-}
-
 PrinterListGtk::PrinterListGtk()
     : m_defaultPrinter(nullptr)
+    , m_enumeratingPrinters(true)
 {
     ASSERT(!s_sharedPrinterList);
     s_sharedPrinterList = this;
-    gtk_enumerate_printers(reinterpret_cast<GtkPrinterFunc>(&enumeratePrintersFunction), nullptr, nullptr, TRUE);
+    gtk_enumerate_printers([](GtkPrinter* printer, gpointer) -> gboolean {
+        ASSERT(s_sharedPrinterList);
+        s_sharedPrinterList->addPrinter(printer);
+        return FALSE;
+    }, nullptr, nullptr, TRUE);
+    m_enumeratingPrinters = false;
 }
 
 PrinterListGtk::~PrinterListGtk()
