@@ -1,3 +1,14 @@
+2015-04-06  Alexey Proskuryakov  <ap@apple.com>
+
+        WebKit1.SetAndUpdateCacheModelPreferencesChangeMix fails on some machines
+        https://bugs.webkit.org/show_bug.cgi?id=143450
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/mac/SetAndUpdateCacheModel.mm: (TestWebKitAPI::TEST):
+        Make sure that the view is actually closed, regardless of anything else that happens beneath.
+        Also, removed unnecessary get() calls.
+
 2015-04-03  Alexey Proskuryakov  <ap@apple.com>
 
         Reduce the dependency on Flash in regression tests

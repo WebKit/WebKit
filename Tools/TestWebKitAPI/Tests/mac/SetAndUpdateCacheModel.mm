@@ -74,29 +74,29 @@ TEST(WebKit1, SetAndUpdateCacheModelPreferencesChangeMix)
 
     [standardPreferences setCacheModel:WebCacheModelDocumentViewer];
     EXPECT_EQ((int)WebCacheModelDocumentViewer, (int)[WebView _cacheModel]);
-    [customPreferences.get() setCacheModel:WebCacheModelPrimaryWebBrowser];
+    [customPreferences setCacheModel:WebCacheModelPrimaryWebBrowser];
     EXPECT_EQ((int)WebCacheModelPrimaryWebBrowser, (int)[WebView _cacheModel]);
 
 
     // 2) The cache model should follow the highest value of cache model between the two preferences.
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    [webView.get() setPreferences:customPreferences.get()];
+    [webView setPreferences:customPreferences.get()];
     EXPECT_EQ((int)WebCacheModelPrimaryWebBrowser, (int)[WebView _cacheModel]);
 
-    [customPreferences.get() setCacheModel:WebCacheModelDocumentBrowser];
+    [customPreferences setCacheModel:WebCacheModelDocumentBrowser];
     EXPECT_EQ((int)WebCacheModelDocumentBrowser, (int)[WebView _cacheModel]);
 
     [standardPreferences setCacheModel:WebCacheModelPrimaryWebBrowser];
     EXPECT_EQ((int)WebCacheModelPrimaryWebBrowser, (int)[WebView _cacheModel]);
-    [customPreferences.get() setCacheModel:WebCacheModelDocumentViewer];
+    [customPreferences setCacheModel:WebCacheModelDocumentViewer];
     EXPECT_EQ((int)WebCacheModelPrimaryWebBrowser, (int)[WebView _cacheModel]);
 
     // 3) Resetting the view should fall back to standardPreferences.
     [standardPreferences setCacheModel:WebCacheModelDocumentViewer];
-    [customPreferences.get() setCacheModel:WebCacheModelPrimaryWebBrowser];
+    [customPreferences setCacheModel:WebCacheModelPrimaryWebBrowser];
     EXPECT_EQ((int)WebCacheModelPrimaryWebBrowser, (int)[WebView _cacheModel]);
 
-    webView.clear();
+    [webView close];
     EXPECT_EQ((int)WebCacheModelDocumentViewer, (int)[WebView _cacheModel]);
 }
 
