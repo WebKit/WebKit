@@ -1,3 +1,15 @@
+2015-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] GMutexLocker build issue
+        https://bugs.webkit.org/show_bug.cgi?id=141381
+
+        Reviewed by Žan Doberšek.
+
+        Remove using WTF::GMutexLocker from the header, since newer glib
+        versions have a GMutexLocker in the public API.
+
+        * wtf/gobject/GMutexLocker.h:
+
 2014-12-09  Alberto Garcia  <berto@igalia.com>
 
         Undefined Symbol build error "_objc_registerThreadWithCollector" when building WebKit GTK Mac OS X on Snow Leopard

@@ -97,8 +97,6 @@ private:
 
 } // namespace WTF
 
-using WTF::GMutexLocker;
-
 #endif // USE(GLIB)
 
 #endif // GMutexLocker_h

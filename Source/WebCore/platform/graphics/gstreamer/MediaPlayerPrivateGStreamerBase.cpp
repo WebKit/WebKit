@@ -137,7 +137,7 @@ IntSize MediaPlayerPrivateGStreamerBase::naturalSize() const
     if (!m_videoSize.isEmpty())
         return m_videoSize;
 
-    GMutexLocker<GMutex> lock(m_sampleMutex);
+    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
     if (!m_sample)
         return IntSize();
 
@@ -279,7 +279,7 @@ void MediaPlayerPrivateGStreamerBase::muteChanged()
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
 PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(TextureMapper* textureMapper)
 {
-    GMutexLocker<GMutex> lock(m_sampleMutex);
+    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
     if (!m_sample)
         return nullptr;
 
@@ -330,7 +330,7 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
     g_return_if_fail(GST_IS_SAMPLE(sample));
 
     {
-        GMutexLocker<GMutex> lock(m_sampleMutex);
+        WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
         if (m_sample)
             gst_sample_unref(m_sample);
         m_sample = gst_sample_ref(sample);
@@ -364,7 +364,7 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const IntR
     if (!m_player->visible())
         return;
 
-    GMutexLocker<GMutex> lock(m_sampleMutex);
+    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
     if (!m_sample)
         return;
 
