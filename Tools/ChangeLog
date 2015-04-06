@@ -1,3 +1,80 @@
+2014-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use custom JavaScript instead of DBus to implement WebProcess tests
+        https://bugs.webkit.org/show_bug.cgi?id=138834
+
+        Reviewed by Sergio Villar Senin.
+
+        It makes everyting simpler and the tests run faster too, since we
+        don't need to spawn the private bus and wait until the DBus name
+        is registered. The web extension registers a new JavaSCript class
+        with a status method to run the tests, similar to the DBus
+        method. In the UI process side, tests use webkit_web_view_run_java_script()
+        instead of sending a DBus message.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt:
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMNodeFilterTest.cpp:
+        (WebKitDOMNodeFilterTest::create):
+        (WebKitDOMNodeFilterTest::testTreeWalker):
+        (WebKitDOMNodeFilterTest::testNodeIterator):
+        (WebKitDOMNodeFilterTest::webPageFromArgs): Deleted.
+        (WebKitDOMNodeFilterTest::runTest): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMNodeTest.cpp:
+        (WebKitDOMNodeTest::create):
+        (WebKitDOMNodeTest::testHierarchyNavigation):
+        (WebKitDOMNodeTest::testInsertion):
+        (WebKitDOMNodeTest::testTagNames):
+        (WebKitDOMNodeTest::webPageFromArgs): Deleted.
+        (WebKitDOMNodeTest::runTest): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMXPathNSResolverTest.cpp:
+        (WebKitDOMXPathNSResolverTest::create):
+        (WebKitDOMXPathNSResolverTest::testXPathNSResolverNative):
+        (WebKitDOMXPathNSResolverTest::testXPathNSResolverCustom):
+        (WebKitDOMXPathNSResolverTest::webPageFromArgs): Deleted.
+        (WebKitDOMXPathNSResolverTest::runTest): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Gtk/FrameTest.cpp:
+        (WebKitFrameTest::create):
+        (WebKitFrameTest::testMainFrame):
+        (WebKitFrameTest::testURI):
+        (WebKitFrameTest::testJavaScriptContext):
+        (WebKitFrameTest::webPageFromArgs): Deleted.
+        (WebKitFrameTest::runTest): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDOMNode.cpp:
+        (testWebKitDOMNodeHierarchyNavigation):
+        (testWebKitDOMNodeInsertion):
+        (testWebKitDOMNodeTagNames):
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDOMNodeFilter.cpp:
+        (runTest):
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDOMXPathNSResolver.cpp:
+        (testWebKitDOMXPathNSResolverNative):
+        (testWebKitDOMXPathNSResolverCustom):
+        (beforeAll):
+        (afterAll):
+        (runTest): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestFrame.cpp:
+        (webkitFrameTestRun):
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTest.cpp:
+        (testsMap):
+        (WebProcessTest::add):
+        (WebProcessTest::create):
+        (runTest):
+        (windowObjectClearedCallback):
+        (webkit_web_extension_initialize):
+        (methodCallCallback): Deleted.
+        (webkit_web_extension_initialize_with_user_data): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTest.h:
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebProcessTestRunner.cpp: Removed.
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebProcessTestRunner.h: Removed.
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp:
+        (WebViewTest::runWebProcessTest):
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.h:
+
 2015-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Unit test /webkit2/WebKitWebView/page-visibility from WebKit2Gtk/TestWebKitWebView fails

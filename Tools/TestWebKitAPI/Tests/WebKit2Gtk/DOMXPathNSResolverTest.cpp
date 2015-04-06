@@ -57,25 +57,9 @@ static void webkit_xpath_ns_resolver_class_init(WebKitXPathNSResolverClass*)
 
 class WebKitDOMXPathNSResolverTest : public WebProcessTest {
 public:
-    static PassOwnPtr<WebProcessTest> create() { return adoptPtr(new WebKitDOMXPathNSResolverTest()); }
+    static std::unique_ptr<WebProcessTest> create() { return std::unique_ptr<WebProcessTest>(new WebKitDOMXPathNSResolverTest()); }
 
 private:
-    guint64 webPageFromArgs(GVariant* args)
-    {
-        GVariantIter iter;
-        g_variant_iter_init(&iter, args);
-
-        const char* key;
-        GVariant* value;
-        while (g_variant_iter_loop(&iter, "{&sv}", &key, &value)) {
-            if (!strcmp(key, "pageID") && g_variant_classify(value) == G_VARIANT_CLASS_UINT64)
-                return g_variant_get_uint64(value);
-        }
-
-        g_assert_not_reached();
-        return 0;
-    }
-
     void evaluateFooChildTextAndCheckResult(WebKitDOMDocument* document, WebKitDOMXPathNSResolver* resolver)
     {
         WebKitDOMElement* documentElement = webkit_dom_document_get_document_element(document);
@@ -91,10 +75,8 @@ private:
         g_assert_cmpstr(nodeValue.get(), ==, "SUCCESS");
     }
 
-    bool testXPathNSResolverNative(WebKitWebExtension* extension, GVariant* args)
+    bool testXPathNSResolverNative(WebKitWebPage* page)
     {
-        WebKitWebPage* page = webkit_web_extension_get_page(extension, webPageFromArgs(args));
-        g_assert(WEBKIT_IS_WEB_PAGE(page));
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
 
@@ -105,10 +87,8 @@ private:
         return true;
     }
 
-    bool testXPathNSResolverCustom(WebKitWebExtension* extension, GVariant* args)
+    bool testXPathNSResolverCustom(WebKitWebPage* page)
     {
-        WebKitWebPage* page = webkit_web_extension_get_page(extension, webPageFromArgs(args));
-        g_assert(WEBKIT_IS_WEB_PAGE(page));
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
 
@@ -118,12 +98,12 @@ private:
         return true;
     }
 
-    virtual bool runTest(const char* testName, WebKitWebExtension* extension, GVariant* args)
+    bool runTest(const char* testName, WebKitWebPage* page) override
     {
         if (!strcmp(testName, "native"))
-            return testXPathNSResolverNative(extension, args);
+            return testXPathNSResolverNative(page);
         if (!strcmp(testName, "custom"))
-            return testXPathNSResolverCustom(extension, args);
+            return testXPathNSResolverCustom(page);
 
         g_assert_not_reached();
         return false;
