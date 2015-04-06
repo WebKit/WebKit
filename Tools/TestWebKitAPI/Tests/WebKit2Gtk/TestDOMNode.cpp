@@ -59,6 +59,16 @@ static void testWebKitDOMNodeTagNames(WebViewTest* test, gconstpointer)
     g_assert(test->runWebProcessTest("WebKitDOMNode", "tag-names"));
 }
 
+static void testWebKitDOMObjectCache(WebViewTest* test, gconstpointer)
+{
+    static const char* testHTML = "<html><body><div id='container'><p>DOM Cache test</p><a id='link href='#'>link</a></div></body></html>";
+    test->loadHtml(testHTML, nullptr);
+    test->waitUntilLoadFinished();
+
+    g_assert(test->runWebProcessTest("WebKitDOMNode", "dom-cache"));
+}
+
+
 void beforeAll()
 {
     webkit_web_context_set_web_extensions_directory(webkit_web_context_get_default(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
@@ -66,6 +76,7 @@ void beforeAll()
     WebViewTest::add("WebKitDOMNode", "hierarchy-navigation", testWebKitDOMNodeHierarchyNavigation);
     WebViewTest::add("WebKitDOMNode", "insertion", testWebKitDOMNodeInsertion);
     WebViewTest::add("WebKitDOMNode", "tag-names", testWebKitDOMNodeTagNames);
+    WebViewTest::add("WebKitDOMNode", "dom-cache", testWebKitDOMObjectCache);
 }
 
 void afterAll()

@@ -64,12 +64,15 @@ private:
     {
         WebKitDOMElement* documentElement = webkit_dom_document_get_document_element(document);
         g_assert(WEBKIT_DOM_IS_ELEMENT(documentElement));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(documentElement));
 
-        WebKitDOMXPathResult* result = webkit_dom_document_evaluate(document, "foo:child/text()", WEBKIT_DOM_NODE(documentElement), resolver, WEBKIT_DOM_XPATH_RESULT_ORDERED_NODE_ITERATOR_TYPE, nullptr, nullptr);
-        g_assert(WEBKIT_DOM_IS_XPATH_RESULT(result));
+        GRefPtr<WebKitDOMXPathResult> result = adoptGRef(webkit_dom_document_evaluate(document, "foo:child/text()", WEBKIT_DOM_NODE(documentElement), resolver, WEBKIT_DOM_XPATH_RESULT_ORDERED_NODE_ITERATOR_TYPE, nullptr, nullptr));
+        g_assert(WEBKIT_DOM_IS_XPATH_RESULT(result.get()));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(result.get()));
 
-        WebKitDOMNode* nodeResult = webkit_dom_xpath_result_iterate_next(result, nullptr);
+        WebKitDOMNode* nodeResult = webkit_dom_xpath_result_iterate_next(result.get(), nullptr);
         g_assert(WEBKIT_DOM_IS_NODE(nodeResult));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(nodeResult));
 
         GUniquePtr<char> nodeValue(webkit_dom_node_get_node_value(nodeResult));
         g_assert_cmpstr(nodeValue.get(), ==, "SUCCESS");
@@ -79,10 +82,12 @@ private:
     {
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(document));
 
-        WebKitDOMXPathNSResolver* resolver = webkit_dom_document_create_ns_resolver(document, WEBKIT_DOM_NODE(webkit_dom_document_get_document_element(document)));
-        g_assert(WEBKIT_DOM_IS_XPATH_NS_RESOLVER(resolver));
-        evaluateFooChildTextAndCheckResult(document, resolver);
+        GRefPtr<WebKitDOMXPathNSResolver> resolver = adoptGRef(webkit_dom_document_create_ns_resolver(document, WEBKIT_DOM_NODE(webkit_dom_document_get_document_element(document))));
+        g_assert(WEBKIT_DOM_IS_XPATH_NS_RESOLVER(resolver.get()));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(resolver.get()));
+        evaluateFooChildTextAndCheckResult(document, resolver.get());
 
         return true;
     }
@@ -91,8 +96,10 @@ private:
     {
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(document));
 
         GRefPtr<WebKitDOMXPathNSResolver> resolver = adoptGRef(WEBKIT_DOM_XPATH_NS_RESOLVER(g_object_new(webkit_xpath_ns_resolver_get_type(), nullptr)));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(resolver.get()));
         evaluateFooChildTextAndCheckResult(document, resolver.get());
 
         return true;
