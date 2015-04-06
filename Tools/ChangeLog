@@ -1,3 +1,24 @@
+2015-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] [WK2] TestWebKitWebView snapshot fails
+        https://bugs.webkit.org/show_bug.cgi?id=120404
+
+        Reviewed by Žan Doberšek.
+
+        Rework the test to make sure the snapshot is always created at the
+        desired size.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Unskip /webkit2/WebKitWebView/snapshot.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewSnapshot): Use a fixed size for the document, and
+        disable scrollbars to make sure the visible area is always the
+        WebView size.
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp:
+        (WebViewTest::showInWindowAndWaitUntilMapped): Add optional width
+        and height parameters to create the window with a given size.
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.h:
+
 2015-01-26  Michael Catanzaro  <mcatanzaro@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] gtkdoc does not appear in DevHelp

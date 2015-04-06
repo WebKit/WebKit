@@ -64,7 +64,6 @@ class TestRunner:
         SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/mouse-target", "Test times out after r150890", 117689),
         SkippedTest("WebKit2Gtk/TestContextMenu", SkippedTest.ENTIRE_SUITE, "Test times out after r150890", 117689),
         SkippedTest("WebKit2APITests/TestWebKitAccessibility", "/webkit2/WebKitAccessibility/atspi-basic-hierarchy", "Test is flaky", 132134),
-        SkippedTest("WebKit2Gtk/TestWebKitWebView", "/webkit2/WebKitWebView/snapshot", "Test fails", 120404),
         SkippedTest("WebKit2Gtk/TestWebKitWebView", "/webkit2/WebKitWebView/page-visibility", "Test fails or times out", 131731),
         SkippedTest("WebKit2Gtk/TestCookieManager", "/webkit2/WebKitCookieManager/persistent-storage", "Test is flaky", 134580),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.MouseMoveAfterCrash", "Test is flaky", 85066),
