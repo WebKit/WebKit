@@ -1,3 +1,18 @@
+2015-04-06  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: RunResolver::Iterator class cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=143445
+
+        Reviewed by Antti Koivisto.
+
+        1. SimpleLineLayout::Run is an intermediate structure and should not be publicly accessible through RunResolver::Iterator.
+        RunResolver::Run is the class to use to access run properties.
+        2. Also move advance()/advanceLine() to private. Callers should use LineResolver to advance on lines.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayoutResolver.h:
+
 2015-04-06  Simon Fraser  <simon.fraser@apple.com>
 
         Use a RenderObject bit for isRenderFlowThread()

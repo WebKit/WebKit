@@ -72,6 +72,9 @@ public:
     };
 
     class Iterator {
+    friend class Run;
+    friend class RunResolver;
+    friend class LineResolver;
     public:
         Iterator(const RunResolver&, unsigned runIndex, unsigned lineIndex);
 
@@ -82,14 +85,13 @@ public:
 
         Run operator*() const;
 
-        Iterator& advance();
-        Iterator& advanceLines(unsigned);
-
-        const RunResolver& resolver() const { return m_resolver; }
+    private:
         const SimpleLineLayout::Run& simpleRun() const;
         unsigned lineIndex() const { return m_lineIndex; }
+        Iterator& advance();
+        Iterator& advanceLines(unsigned);
+        const RunResolver& resolver() const { return m_resolver; }
 
-    private:
         const RunResolver& m_resolver;
         unsigned m_runIndex;
         unsigned m_lineIndex;
