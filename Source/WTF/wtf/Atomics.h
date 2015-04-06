@@ -319,16 +319,24 @@ inline bool weakCompareAndSwap(uint8_t* location, uint8_t expected, uint8_t newV
     unsigned* alignedLocation = bitwise_cast<unsigned*>(alignedLocationValue);
     // Make sure that this load is always issued and never optimized away.
     unsigned oldAlignedValue = *const_cast<volatile unsigned*>(alignedLocation);
-    union {
-        uint8_t bytes[sizeof(unsigned)];
-        unsigned word;
-    } u;
-    u.word = oldAlignedValue;
-    if (u.bytes[locationOffset] != expected)
-        return false;
-    u.bytes[locationOffset] = newValue;
-    unsigned newAlignedValue = u.word;
-    return weakCompareAndSwap(alignedLocation, oldAlignedValue, newAlignedValue);
+
+    struct Splicer {
+        static unsigned splice(unsigned value, uint8_t byte, uintptr_t byteIndex)
+        {
+            union {
+                unsigned word;
+                uint8_t bytes[sizeof(unsigned)];
+            } u;
+            u.word = value;
+            u.bytes[byteIndex] = byte;
+            return u.word;
+        }
+    };
+    
+    unsigned expectedAlignedValue = Splicer::splice(oldAlignedValue, expected, locationOffset);
+    unsigned newAlignedValue = Splicer::splice(oldAlignedValue, newValue, locationOffset);
+
+    return weakCompareAndSwap(alignedLocation, expectedAlignedValue, newAlignedValue);
 #endif
 #else
     UNUSED_PARAM(location);

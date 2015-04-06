@@ -1,3 +1,37 @@
+2015-03-09  Mark Lam  <mark.lam@apple.com>
+
+        8-bit version of weakCompareAndSwap() can cause an infinite loop.
+        https://webkit.org/b/142513>
+
+        Reviewed by Filip Pizlo.
+
+        Presently, Bitmap::concurrentTestAndSet() uses the 8-bit version of
+        weakCompareAndSwap() (which compares and swaps an uint8_t value).
+        Bitmap::concurrentTestAndSet() has a loop that checks if a bit in the
+        byte of interest has been set.  If not, it will call the 8-bit CAS
+        function to set the bit.
+
+        Under the covers, for ARM, the 8-bit CAS function actually works with a
+        32-bit CAS.  The 8-bit CAS will first fetch the 32-bit value in memory
+        that should contain the 8-bit value, and check if it contains the
+        expected byte.  If the value in memory doesn't have the expected byte,
+        it will return early to its caller.  The expectation is that the caller
+        will reload the byte from memory and call the 8-bit CAS again.
+
+        Unfortunately, this code path that returns early does not have a
+        compiler fence.  Without a compiler fence, the C++ compiler can
+        optimize away the reloading of the expected byte value, leaving it
+        unchanged.  As a result, we'll have a infinite loop here that checks a
+        value that will never change, and the loop will not terminate until the
+        value changes.
+
+        The fix is to eliminate the early return check in the 8-bit CAS, and
+        have it always call down to the 32-bit CAS.  The 32-bit CAS has a
+        compiler fence which will prevent this issue.
+
+        * wtf/Atomics.h:
+        (WTF::weakCompareAndSwap):
+
 2015-02-20  Simon Fraser  <simon.fraser@apple.com>
 
         RunLoop::dispatch() should drop the mutex before calling wakeUp().

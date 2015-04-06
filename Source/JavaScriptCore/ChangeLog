@@ -1,3 +1,26 @@
+2015-03-09  Mark Lam  <mark.lam@apple.com>
+
+        8-bit version of weakCompareAndSwap() can cause an infinite loop.
+        https://webkit.org/b/142513>
+
+        Reviewed by Filip Pizlo.
+
+        Added a test that exercises the 8-bit CAS from multiple threads.  The threads
+        will contend to set bits in a large array of bytes using the CAS function.
+
+        * API/tests/CompareAndSwapTest.cpp: Added.
+        (Bitmap::Bitmap):
+        (Bitmap::numBits):
+        (Bitmap::clearAll):
+        (Bitmap::concurrentTestAndSet):
+        (setBitThreadFunc):
+        (testCompareAndSwap):
+        * API/tests/testapi.c:
+        (main):
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj:
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2015-02-22  Filip Pizlo  <fpizlo@apple.com>
 
         Crash in DFGFrozenValue
