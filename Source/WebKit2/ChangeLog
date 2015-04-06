@@ -1,3 +1,18 @@
+2015-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] DnD icon/widget has odd background
+        https://bugs.webkit.org/show_bug.cgi?id=143217
+
+        Reviewed by Martin Robinson.
+
+        Use gtk_drag_set_icon_surface() to set the drag icon image,
+        instead of DragIcon class.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::startDrag):
+        * UIProcess/gtk/DragAndDropHandler.h:
+
 2015-04-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix typo in API doc comment.

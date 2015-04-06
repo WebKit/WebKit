@@ -59,7 +59,6 @@
 #include "WebKitWindowPropertiesPrivate.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/CertificateInfo.h>
-#include <WebCore/DragIcon.h>
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GUniquePtrSoup.h>
 #include <WebCore/GtkUtilities.h>
