@@ -519,20 +519,6 @@ SOFT_LINK_CLASS(UIKit, UIColor)
 {
     return [NSSet setWithObjects:@"externalPlaybackActive", nil];
 }
-
-- (void)layoutSublayersOfLayer:(CALayer *)layer
-{
-    CGRect layerBounds = [layer bounds];
-    if (self.delegate)
-        self.delegate->setVideoLayerFrame(CGRectMake(0, 0, CGRectGetWidth(layerBounds), CGRectGetHeight(layerBounds)));
-    
-    [CATransaction begin];
-    for (CALayer *sublayer in [layer sublayers]) {
-        [sublayer setAnchorPoint:CGPointMake(0.5, 0.5)];
-        [sublayer setPosition:CGPointMake(CGRectGetMidX(layerBounds), CGRectGetMidY(layerBounds))];
-    }
-    [CATransaction commit];
-}
 @end
 
 @interface WebAVMediaSelectionOption : NSObject
@@ -573,6 +559,12 @@ SOFT_LINK_CLASS(UIKit, UIColor)
         [self setVideoLayerGravity:AVVideoLayerGravityResizeAspect];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
+    [super dealloc];
 }
 
 - (void)setPlayerController:(AVPlayerController *)playerController
@@ -621,27 +613,43 @@ SOFT_LINK_CLASS(UIKit, UIColor)
 {
     [super setBounds:bounds];
 
+    [_videoSublayer setPosition:CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds))];
+
     if (![_avPlayerController delegate] || !_avPlayerViewController)
         return;
 
-    UIView* rootView = [[_avPlayerViewController view] window];
-    if (!rootView)
-        return;
-    
-    [CATransaction begin];
-    NSTimeInterval animationDuration = [self animationForKey:@"bounds"].duration;
-    if (!animationDuration) // a duration of 0 for CA means 0.25. This is a way to approximate 0.
-        animationDuration = 0.001;
-    [CATransaction setAnimationDuration:animationDuration];
-    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-
-    FloatRect rootBounds = [rootView bounds];
-    [_avPlayerController delegate]->setVideoLayerFrame(rootBounds);
-
-    FloatRect sourceBounds = largestRectWithAspectRatioInsideRect(CGRectGetWidth(bounds) / CGRectGetHeight(bounds), rootBounds);
-    CATransform3D transform = CATransform3DMakeScale(bounds.size.width / sourceBounds.width(), bounds.size.height / sourceBounds.height(), 1);
-    [_videoSublayer setPosition:CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds))];
+    FloatRect videoFrame = [_avPlayerController delegate]->videoLayerFrame();
+    FloatRect targetFrame;
+    switch ([_avPlayerController delegate]->videoLayerGravity()) {
+    case WebCore::WebVideoFullscreenModel::VideoGravityResize:
+        targetFrame = bounds;
+        break;
+    case WebCore::WebVideoFullscreenModel::VideoGravityResizeAspect:
+        targetFrame = largestRectWithAspectRatioInsideRect(videoFrame.size().aspectRatio(), bounds);
+        break;
+    case WebCore::WebVideoFullscreenModel::VideoGravityResizeAspectFill:
+        targetFrame = smallestRectWithAspectRatioAroundRect(videoFrame.size().aspectRatio(), bounds);
+        break;
+    }
+    CATransform3D transform = CATransform3DMakeScale(targetFrame.width() / videoFrame.width(), targetFrame.height() / videoFrame.height(), 1);
     [_videoSublayer setSublayerTransform:transform];
+
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
+    [self performSelector:@selector(resolveBounds) withObject:nil afterDelay:[CATransaction animationDuration] + 0.1];
+}
+
+- (void)resolveBounds
+{
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
+    if (!_avPlayerController || ![_avPlayerController delegate])
+        return;
+
+    [CATransaction begin];
+    [CATransaction setAnimationDuration:0];
+
+    [_videoSublayer setSublayerTransform:CATransform3DIdentity];
+    [_avPlayerController delegate]->setVideoLayerFrame([self bounds]);
+
     [CATransaction commit];
 }
 
@@ -905,6 +913,8 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreenInternal(PlatformLayer& vi
     CGSize videoSize = [m_playerController contentDimensions];
     CGRect videoRect = CGRectMake(0, 0, videoSize.width, videoSize.height);
     [m_videoLayerContainer setVideoRect:videoRect];
+    if (m_videoFullscreenModel)
+        m_videoFullscreenModel->setVideoLayerFrame(videoRect);
 
     m_playerViewController = adoptNS([allocAVPlayerViewControllerInstance() initWithVideoLayer:m_videoLayerContainer.get()]);
     [m_playerViewController setShowsPlaybackControls:NO];

@@ -80,12 +80,16 @@ private:
     virtual void beginScanningBackward() override;
     virtual void endScanning() override;
     virtual void setVideoLayerFrame(WebCore::FloatRect) override;
+    virtual WebCore::FloatRect videoLayerFrame() const override;
     virtual void setVideoLayerGravity(WebCore::WebVideoFullscreenModel::VideoGravity) override;
+    virtual VideoGravity videoLayerGravity() const override;
     virtual void selectAudioMediaOption(uint64_t) override;
     virtual void selectLegibleMediaOption(uint64_t) override;
 
     WebPageProxy* m_page;
     RetainPtr<PlatformLayer> m_layerHost;
+    WebCore::FloatRect m_videoLayerFrame;
+    VideoGravity m_videoLayerGravity { VideoGravityResize };
 };
     
 } // namespace WebKit

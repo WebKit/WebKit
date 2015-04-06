@@ -1698,6 +1698,7 @@
 		CD73BA47131ACC9A00EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA45131ACC8800EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp */; };
 		CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */; };
 		CD73BA53131B645B00EEDED2 /* WebFullScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA37131A29FE00EEDED2 /* WebFullScreenManager.cpp */; };
+		CDA041F41ACE2105004A13EC /* BackBoardServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */; };
 		CDC382FE17211799008A2FC3 /* SecItemShimLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */; };
 		CDC38307172117DD008A2FC3 /* CookieStorageShimLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDC382F9172116D3008A2FC3 /* CookieStorageShimLibrary.cpp */; };
 		CDC3830817211890008A2FC3 /* WebProcessShim.dylib in Copy WebProcessShim */ = {isa = PBXBuildFile; fileRef = CDC3830617211799008A2FC3 /* WebProcessShim.dylib */; };
@@ -3953,6 +3954,7 @@
 		CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFullScreenManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		CD73BA49131ACD8E00EEDED2 /* WebFullScreenManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFullScreenManagerMessages.h; sourceTree = "<group>"; };
 		CD73BA4A131ACD8F00EEDED2 /* WebFullScreenManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFullScreenManagerProxyMessages.h; sourceTree = "<group>"; };
+		CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackBoardServicesSPI.h; sourceTree = "<group>"; };
 		CDC382F717211506008A2FC3 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = /System/Library/Frameworks/CFNetwork.framework; sourceTree = "<absolute>"; };
 		CDC382F9172116D3008A2FC3 /* CookieStorageShimLibrary.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CookieStorageShimLibrary.cpp; sourceTree = "<group>"; };
 		CDC3830617211799008A2FC3 /* WebProcessShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = WebProcessShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7422,6 +7424,7 @@
 		CE1A0BCB1A48E6C60054EF74 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */,
 				CE1A0BCC1A48E6C60054EF74 /* BKSProcessAssertionSPI.h */,
 				CE1A0BCD1A48E6C60054EF74 /* CorePDFSPI.h */,
 				CE1A0BCE1A48E6C60054EF74 /* DataDetectorsUISPI.h */,
@@ -7753,6 +7756,7 @@
 				C58CDF2E1887609F00871536 /* InteractionInformationAtPosition.h in Headers */,
 				C58CDF2A1887548B00871536 /* InteractionInformationAtPosition.h in Headers */,
 				1A4832C81A9BC13C008B4DFE /* APIWebsiteDataRecord.h in Headers */,
+				CDA041F41ACE2105004A13EC /* BackBoardServicesSPI.h in Headers */,
 				1AE49A4911FFA8CE0048B464 /* JSNPMethod.h in Headers */,
 				1AE4987811FF7FAA0048B464 /* JSNPObject.h in Headers */,
 				518353DF1887128B00D9FE44 /* KeyedDecoder.h in Headers */,

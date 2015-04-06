@@ -1,3 +1,28 @@
+2015-04-06  Jer Noble  <jer.noble@apple.com>
+
+        Synchronize fullscreen animation between processes.
+        https://bugs.webkit.org/show_bug.cgi?id=143131
+
+        Reviewed by Simon Fraser.
+
+        Support synchronize resizing by animating within the UIProcess. Since setVideoLayerFrameFenced() is now only
+        ever called from within a 0-duration transaction, make that the official contract of the function and wrap
+        the WebProcess side of that method in its own 0-duration transaction.
+
+        * Platform/spi/ios/BackBoardServicesSPI.h: Added.
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID): Remember the initial rect.
+        (WebKit::WebVideoFullscreenManagerProxy::videoLayerFrame): Added; simple getter.
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerFrame): Use a different synchronization fence primative.
+            Save the cached frame value.
+        (WebKit::WebVideoFullscreenManagerProxy::videoLayerGravity): Added; simple getter.
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerGravity): Save the cached gravity value.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::setVideoLayerFrameFenced): Wrap in a 0-length transaction.
+
 2015-04-06  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] Regression(r182323): ASSERTION FAILED: WebCore::SQLiteDatabaseTracker::hasTransactionInProgress() in NetworkCache::Statistics::initialize()

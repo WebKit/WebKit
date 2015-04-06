@@ -1,3 +1,35 @@
+2015-04-06  Jer Noble  <jer.noble@apple.com>
+
+        Synchronize fullscreen animation between processes.
+        https://bugs.webkit.org/show_bug.cgi?id=143131
+
+        Reviewed by Simon Fraser.
+
+        Rather than attempt to synchcronize animations across the WebProcess / UIProcess boundary,
+        do the bounds-change animation in-process by applying a sublayer transformation to the
+        video layer. This gives the same visual effect as a synchronized bounds animation, but
+        without needing a synchronization fence. Resolve the difference between the transformation
+        and bounds by doing a fence-synchronized bounds change after the current animation is
+        scheduled to complete.
+
+        To do this calculation correctly, WebAVPlayer needs to query both the effective
+        videoLayerFrame and the videoLayerGravity. To that end, add getter methods for
+        videoLayerFrame() and videoLayerGravity().
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::videoFullscreenGravity):
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVVideoLayer dealloc]): Cancel outstanding performSelector requests.
+        (-[WebAVVideoLayer setBounds:]): Add a scale transform to simulate a bonuds change.
+        (-[WebAVVideoLayer resolveBounds]): Reset the scale transform and set the bounds.
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreenInternal): Set the initial video frame bounds.
+        (-[WebAVPlayerController layoutSublayersOfLayer:]): Deleted.
+        * platform/ios/WebVideoFullscreenModel.h:
+        * platform/ios/WebVideoFullscreenModelVideoElement.h:
+        * platform/ios/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::videoLayerFrame): Added; simple getter.
+        (WebVideoFullscreenModelVideoElement::videoLayerGravity): Ditto.
+
 2015-04-06  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: RunResolver::Iterator class cleanup.

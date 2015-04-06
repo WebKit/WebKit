@@ -288,6 +288,11 @@ void WebVideoFullscreenModelVideoElement::setVideoLayerFrame(FloatRect rect)
     m_videoElement->setVideoFullscreenFrame(rect);
 }
 
+FloatRect WebVideoFullscreenModelVideoElement::videoLayerFrame() const
+{
+    return m_videoFrame;
+}
+
 void WebVideoFullscreenModelVideoElement::setVideoLayerGravity(WebVideoFullscreenModel::VideoGravity gravity)
 {
     MediaPlayer::VideoGravity videoGravity = MediaPlayer::VideoGravityResizeAspect;
@@ -301,6 +306,21 @@ void WebVideoFullscreenModelVideoElement::setVideoLayerGravity(WebVideoFullscree
         ASSERT_NOT_REACHED();
     
     m_videoElement->setVideoFullscreenGravity(videoGravity);
+}
+
+WebVideoFullscreenModel::VideoGravity WebVideoFullscreenModelVideoElement::videoLayerGravity() const
+{
+    switch (m_videoElement->videoFullscreenGravity()) {
+    case MediaPlayer::VideoGravityResize:
+        return VideoGravityResize;
+    case MediaPlayer::VideoGravityResizeAspect:
+        return VideoGravityResizeAspect;
+    case MediaPlayer::VideoGravityResizeAspectFill:
+        return VideoGravityResizeAspectFill;
+    }
+
+    ASSERT_NOT_REACHED();
+    return VideoGravityResize;
 }
 
 void WebVideoFullscreenModelVideoElement::selectAudioMediaOption(uint64_t selectedAudioIndex)

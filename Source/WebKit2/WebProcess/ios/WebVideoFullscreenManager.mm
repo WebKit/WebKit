@@ -272,10 +272,13 @@ void WebVideoFullscreenManager::fullscreenMayReturnToInline(bool isPageVisible)
     
 void WebVideoFullscreenManager::setVideoLayerFrameFenced(WebCore::FloatRect bounds, IPC::Attachment fencePort)
 {
+    [CATransaction begin];
+    [CATransaction setAnimationDuration:0];
     if (m_layerHostingContext)
         m_layerHostingContext->setFencePort(fencePort.port());
     setVideoLayerFrame(bounds);
     mach_port_deallocate(mach_task_self(), fencePort.port());
+    [CATransaction commit];
 }
 
 } // namespace WebKit

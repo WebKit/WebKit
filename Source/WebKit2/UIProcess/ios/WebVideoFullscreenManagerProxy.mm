@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "BackBoardServicesSPI.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "UIKitSPI.h"
 #import "WebPageProxy.h"
@@ -84,6 +85,8 @@ void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint32_t videoLayerID
         float inverseScale = 1 / hostingDeviceScaleFactor;
         [m_layerHost setTransform:CATransform3DMakeScale(inverseScale, inverseScale, 1)];
     }
+
+    m_videoLayerFrame = initialRect;
 
     UIView *parentView = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_page->drawingArea()).remoteLayerTreeHost().rootLayer();
     setupFullscreen(*m_layerHost.get(), initialRect, parentView, videoFullscreenMode, allowOptimizedFullscreen);
@@ -209,14 +212,30 @@ void WebVideoFullscreenManagerProxy::endScanning()
     m_page->send(Messages::WebVideoFullscreenManager::EndScanning(), m_page->pageID());
 }
 
+FloatRect WebVideoFullscreenManagerProxy::videoLayerFrame() const
+{
+    return m_videoLayerFrame;
+}
+
 void WebVideoFullscreenManagerProxy::setVideoLayerFrame(WebCore::FloatRect frame)
 {
-    IPC::Attachment fencePort([UIWindow _synchronizeDrawingAcrossProcesses], MACH_MSG_TYPE_MOVE_SEND);
-    m_page->send(Messages::WebVideoFullscreenManager::SetVideoLayerFrameFenced(frame, fencePort), m_page->pageID());
+    m_videoLayerFrame = frame;
+    @autoreleasepool {
+        BKSAnimationFenceHandle* synchronizationFence = [UIWindow _synchronizedDrawingFence];
+        mach_port_name_t fencePort = [synchronizationFence CAPort];
+
+        m_page->send(Messages::WebVideoFullscreenManager::SetVideoLayerFrameFenced(frame, IPC::Attachment(fencePort, MACH_MSG_TYPE_MOVE_SEND)), m_page->pageID());
+    }
+}
+
+WebCore::WebVideoFullscreenModel::VideoGravity WebVideoFullscreenManagerProxy::videoLayerGravity() const
+{
+    return m_videoLayerGravity;
 }
 
 void WebVideoFullscreenManagerProxy::setVideoLayerGravity(WebCore::WebVideoFullscreenModel::VideoGravity gravity)
 {
+    m_videoLayerGravity = gravity;
     m_page->send(Messages::WebVideoFullscreenManager::SetVideoLayerGravityEnum((unsigned)gravity), m_page->pageID());
 }
     

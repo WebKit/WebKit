@@ -623,7 +623,10 @@ typedef NS_ENUM(NSInteger, _UIBackdropViewStylePrivate) {
 - (UIPanGestureRecognizer *)gestureRecognizerForInteractiveTransition:(_UINavigationInteractiveTransitionBase *)interactiveTransition WithTarget:(id)target action:(SEL)action;
 @end
 
+@class BKSAnimationFenceHandle;
+
 @interface UIWindow (Details)
++ (BKSAnimationFenceHandle *)_synchronizedDrawingFence;
 + (mach_port_t)_synchronizeDrawingAcrossProcesses;
 @end
 

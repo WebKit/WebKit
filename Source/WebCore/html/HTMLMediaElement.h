@@ -130,6 +130,7 @@ public:
     void setVideoFullscreenLayer(PlatformLayer*);
     void setVideoFullscreenFrame(FloatRect);
     void setVideoFullscreenGravity(MediaPlayer::VideoGravity);
+    MediaPlayer::VideoGravity videoFullscreenGravity() const { return m_videoFullscreenGravity; }
 #endif
 
     enum DelayedActionType {
