@@ -1,3 +1,14 @@
+2015-01-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] gtkdoc does not appear in DevHelp
+        https://bugs.webkit.org/show_bug.cgi?id=139369
+
+        Reviewed by Philippe Normand.
+
+        * PlatformGTK.cmake: Include the API version in the gtkdoc filenames.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Renamed from Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-sections.txt.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0.types: Renamed from Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk.types.
+
 2015-01-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.5 release.

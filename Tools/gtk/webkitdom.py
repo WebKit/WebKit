@@ -171,7 +171,7 @@ class WebKitDOMDocGeneratorSections(WebKitDOMDocGenerator):
         self.write('</SECTION>\n\n')
 
 
-def write_doc_files():
+def write_doc_files(module_name):
     doc_dir = common.build_path('DerivedSources', 'webkitdom', 'docs')
 
     try:
@@ -181,7 +181,7 @@ def write_doc_files():
             sys.stderr.write("Could not create doc dir at %s: %s\n" % (doc_dir, str(e)))
             sys.exit(1)
 
-    with open(os.path.join(doc_dir, 'webkitdomgtk-sections.txt'), 'w') as sections_file:
+    with open(os.path.join(doc_dir, '%s-sections.txt' % module_name), 'w') as sections_file:
         generator = WebKitDOMDocGeneratorSections(get_all_webkitdom_symbol_files(), sections_file)
         generator.generate()
     with open(os.path.join(doc_dir, 'webkitdomgtk-docs.sgml'), 'w') as sgml_file:

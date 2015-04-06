@@ -1,3 +1,25 @@
+2015-01-26  Michael Catanzaro  <mcatanzaro@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] gtkdoc does not appear in DevHelp
+        https://bugs.webkit.org/show_bug.cgi?id=139369
+
+        Reviewed by Philippe Normand.
+
+        * gtk/generate-gtkdoc: Create the generators in the main function
+        and use them to get the local cross renference dependencies. Also
+        pass the generator module name to webkitdom.write_doc_files().
+        (get_gtkdoc_module_paths): Receive a list of local cross reference
+        dependencies.
+        (get_generator_for_config): Set the main_sgml_file property of the
+        GtkDoc object from the configuration file.
+        (generate_documentation): Generate the documentation for the given
+        generator.
+        (generate_documentation_for_config): Deleted.
+        * gtk/manifest.txt.in: Expect the API version in the gtkdoc filenames.
+        * gtk/webkitdom.py:
+        (write_doc_files): Receive the module name used to build the
+        -sections.txt filename.
+
 2015-01-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Generate the make dist manifest from a CMake template file
