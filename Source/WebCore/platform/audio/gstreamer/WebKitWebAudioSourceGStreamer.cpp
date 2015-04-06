@@ -26,8 +26,8 @@
 #include "AudioIOCallback.h"
 #include "GRefPtrGStreamer.h"
 #include "GStreamerUtilities.h"
-#include <gst/audio/audio.h>
-#include <gst/pbutils/pbutils.h>
+#include <gst/audio/audio-info.h>
+#include <gst/pbutils/missing-plugins.h>
 #include <wtf/gobject/GUniquePtr.h>
 
 using namespace WebCore;
