@@ -1,3 +1,16 @@
+2015-02-23  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Fails to compile with cmake 3.2.x
+        https://bugs.webkit.org/show_bug.cgi?id=141796
+
+        With cmake 3.2.x we have to explicitly ask for X11 otherwise the
+        X11_X11_LIB variable won't be set thus the X11 linker flags won't be
+        added and the build will fail.
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2015-01-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] gtkdoc does not appear in DevHelp

@@ -55,6 +55,10 @@ if (NOT GEOCLUE2_FOUND)
 endif ()
 
 if (ENABLE_X11_TARGET)
+    # With cmake 3.2.x we have to explicitly ask for X11 otherwise the X11_X11_LIB
+    # variable won't be set thus the X11 linker flags won't be added and the build
+    # will fail.
+    find_package(X11 REQUIRED)
     # We don't use find_package for GLX because it is part of -lGL, unlike EGL.
     check_include_files("GL/glx.h" GLX_FOUND)
 endif ()
