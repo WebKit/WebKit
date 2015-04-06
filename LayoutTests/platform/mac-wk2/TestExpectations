@@ -348,8 +348,6 @@ webkit.org/b/132100 fast/forms/hidpi-textarea-on-subpixel-position.html [ ImageO
 
 webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
 
-webkit.org/b/133692 platform/mac-wk2/plugins/destroy-during-async-npp-new.html [ Skip ]
-
 webkit.org/b/136554 platform/mac-wk2/tiled-drawing/scrolling/frames/frameset-nested-frame-scrollability.html [ Pass Failure ]
 
 ### END OF (1) Classified failures with bug reports
