@@ -424,7 +424,7 @@ static void webkitWebViewBaseConstructed(GObject* object)
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
     if (GDK_IS_X11_DISPLAY(display)) {
-        priv->redirectedWindow = RedirectedXCompositeWindow::create(IntSize(1, 1), RedirectedXCompositeWindow::DoNotCreateGLContext);
+        priv->redirectedWindow = RedirectedXCompositeWindow::create(IntSize(), RedirectedXCompositeWindow::DoNotCreateGLContext);
         if (priv->redirectedWindow)
             priv->redirectedWindow->setDamageNotifyCallback(redirectedWindowDamagedCallback, object);
     }
@@ -1168,4 +1168,30 @@ void webkitWebViewBaseUpdateTextInputState(WebKitWebViewBase* webkitWebViewBase)
 void webkitWebViewBaseResetClickCounter(WebKitWebViewBase* webkitWebViewBase)
 {
     webkitWebViewBase->priv->clickCounter.reset();
+}
+
+void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase)
+{
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    if (!priv->redirectedWindow)
+        return;
+    DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
+    if (!drawingArea)
+        return;
+    priv->redirectedWindow->resize(drawingArea->size());
+#else
+    UNUSED_PARAM(webkitWebViewBase);
+#endif
+}
+
+void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase)
+{
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    if (priv->redirectedWindow)
+        priv->redirectedWindow->resize(IntSize());
+#else
+    UNUSED_PARAM(webkitWebViewBase);
+#endif
 }

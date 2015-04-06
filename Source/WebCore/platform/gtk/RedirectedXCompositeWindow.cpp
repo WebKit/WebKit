@@ -129,15 +129,18 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(const IntSize& size, GLCo
 
     windowAttributes.event_mask = StructureNotifyMask;
     windowAttributes.override_redirect = False;
+    // Create the window of at last 1x1 since X doesn't allow to create empty windows.
     m_window = XCreateWindow(display,
-                             m_parentWindow,
-                             0, 0, size.width(), size.height(),
-                             0,
-                             CopyFromParent,
-                             InputOutput,
-                             CopyFromParent,
-                             CWEventMask,
-                             &windowAttributes);
+        m_parentWindow,
+        0, 0,
+        std::max(1, m_size.width()),
+        std::max(1, m_size.height()),
+        0,
+        CopyFromParent,
+        InputOutput,
+        CopyFromParent,
+        CWEventMask,
+        &windowAttributes);
     XMapWindow(display, m_window);
 
     if (getWindowHashMap().isEmpty())
@@ -178,8 +181,8 @@ void RedirectedXCompositeWindow::resize(const IntSize& size)
         return;
 
     Display* display = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
-    XResizeWindow(display, m_window, size.width(), size.height());
-
+    // Resize the window to at last 1x1 since X doesn't allow to create empty windows.
+    XResizeWindow(display, m_window, std::max(1, size.width()), std::max(1, size.height()));
     XFlush(display);
 
     if (m_needsContext == CreateGLContext) {
@@ -192,6 +195,8 @@ void RedirectedXCompositeWindow::resize(const IntSize& size)
 
     m_size = size;
     m_needsNewPixmapAfterResize = true;
+    if (m_size.isEmpty())
+        cleanupPixmapAndPixmapSurface();
 }
 
 GLContext* RedirectedXCompositeWindow::context()
@@ -218,6 +223,9 @@ void RedirectedXCompositeWindow::cleanupPixmapAndPixmapSurface()
 
 cairo_surface_t* RedirectedXCompositeWindow::cairoSurfaceForWidget(GtkWidget* widget)
 {
+    // This should never be called with an empty size (not in Accelerated Compositing mode).
+    ASSERT(!m_size.isEmpty());
+
     if (!m_needsNewPixmapAfterResize && m_surface)
         return m_surface.get();
 

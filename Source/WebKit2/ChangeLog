@@ -1,3 +1,37 @@
+2015-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Resize the redirected XComposite again after leaving accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=140935
+
+        Reviewed by Sergio Villar Senin.
+
+        Since r178414 we don't resize the redirected XComposite window
+        until we enter accelerated compositing mode, but after leaving it
+        the redirected window keeps its size. We should resize it to 1x1
+        again and free the XPixmap and cairo surface to save that memory
+        while not in accelerated compositing mode.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode): Notify
+        the WebKitWebViewBase.
+        (WebKit::PageClientImpl::exitAcceleratedCompositingMode): Ditto.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseEnterAcceleratedCompositingMode): Resize the
+        XComposite window to the current drawing area size.
+        (webkitWebViewBaseExitAcceleratedCompositingMode): Resize the
+        XComposite window to and empty size.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/gtk/RedirectedXCompositeWindow.cpp:
+        (WebKit::RedirectedXCompositeWindow::RedirectedXCompositeWindow):
+        Do not initialize m_size since we now handle the empty size as a
+        especial case. Make sure we always create the X window with at
+        least 1x1 size.
+        (WebKit::RedirectedXCompositeWindow::resize): Resize the window to
+        at least 1x1, but when en empty size is given, call
+        cleanupPixmapAndPixmapSurface() to release those resources.
+        (WebKit::RedirectedXCompositeWindow::surface): Create the cairo
+        surface with at least 1x1 size.
+
 2015-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         ASSERTION FAILED: !m_adoptionIsRequired in WTF::RefCountedBase::ref
