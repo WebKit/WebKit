@@ -897,6 +897,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
         
     case ToString:
+    case CallStringConstructor:
         switch (node->child1().useKind()) {
         case StringObjectUse:
         case StringOrStringObjectUse:

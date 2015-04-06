@@ -106,14 +106,18 @@ ConstructType StringConstructor::getConstructData(JSCell*, ConstructData& constr
     return ConstructTypeHost;
 }
 
+JSCell* stringConstructor(ExecState* exec, JSValue argument)
+{
+    if (argument.isSymbol())
+        return jsNontrivialString(exec, asSymbol(argument)->descriptiveString());
+    return argument.toString(exec);
+}
+
 static EncodedJSValue JSC_HOST_CALL callStringConstructor(ExecState* exec)
 {
     if (!exec->argumentCount())
         return JSValue::encode(jsEmptyString(exec));
-    JSValue argument = exec->uncheckedArgument(0);
-    if (argument.isSymbol())
-        return JSValue::encode(jsString(exec, asSymbol(argument)->descriptiveString()));
-    return JSValue::encode(argument.toString(exec));
+    return JSValue::encode(stringConstructor(exec, exec->uncheckedArgument(0)));
 }
 
 CallType StringConstructor::getCallData(JSCell*, CallData& callData)

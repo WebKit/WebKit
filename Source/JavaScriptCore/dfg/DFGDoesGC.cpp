@@ -143,6 +143,7 @@ bool doesGC(Graph& graph, Node* node)
     case LogicalNot:
     case ToPrimitive:
     case ToString:
+    case CallStringConstructor:
     case In:
     case Jump:
     case Branch:

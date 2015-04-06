@@ -345,7 +345,8 @@ private:
             break;
         }
             
-        case ToString: {
+        case ToString:
+        case CallStringConstructor: {
             node->child1()->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther);
             break;
         }

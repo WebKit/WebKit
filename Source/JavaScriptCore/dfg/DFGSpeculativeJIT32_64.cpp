@@ -3098,7 +3098,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case ToString: {
+    case ToString:
+    case CallStringConstructor: {
         if (node->child1().useKind() == UntypedUse) {
             JSValueOperand op1(this, node->child1());
             GPRReg op1PayloadGPR = op1.payloadGPR();
@@ -3118,14 +3119,19 @@ void SpeculativeJIT::compile(Node* node)
                 slowPath1.link(&m_jit);
                 slowPath2.link(&m_jit);
             }
-            callOperation(operationToString, resultGPR, op1TagGPR, op1PayloadGPR);
+            if (op == ToString)
+                callOperation(operationToString, resultGPR, op1TagGPR, op1PayloadGPR);
+            else {
+                ASSERT(op == CallStringConstructor);
+                callOperation(operationCallStringConstructor, resultGPR, op1TagGPR, op1PayloadGPR);
+            }
             if (done.isSet())
                 done.link(&m_jit);
             cellResult(resultGPR, node);
             break;
         }
         
-        compileToStringOnCell(node);
+        compileToStringOrCallStringConstructorOnCell(node);
         break;
     }
         

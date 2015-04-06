@@ -4848,7 +4848,7 @@ GPRReg SpeculativeJIT::temporaryRegisterForPutByVal(GPRTemporary& temporary, Arr
     return temporary.gpr();
 }
 
-void SpeculativeJIT::compileToStringOnCell(Node* node)
+void SpeculativeJIT::compileToStringOrCallStringConstructorOnCell(Node* node)
 {
     SpeculateCellOperand op1(this, node->child1());
     GPRReg op1GPR = op1.gpr();
@@ -4906,7 +4906,12 @@ void SpeculativeJIT::compileToStringOnCell(Node* node)
             done = m_jit.jump();
             needCall.link(&m_jit);
         }
-        callOperation(operationToStringOnCell, resultGPR, op1GPR);
+        if (node->op() == ToString)
+            callOperation(operationToStringOnCell, resultGPR, op1GPR);
+        else {
+            ASSERT(node->op() == CallStringConstructor);
+            callOperation(operationCallStringConstructorOnCell, resultGPR, op1GPR);
+        }
         if (done.isSet())
             done.link(&m_jit);
         cellResult(resultGPR, node);

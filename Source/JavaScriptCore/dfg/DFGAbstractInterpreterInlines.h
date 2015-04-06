@@ -1261,7 +1261,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
-    case ToString: {
+    case ToString:
+    case CallStringConstructor: {
         switch (node->child1().useKind()) {
         case StringObjectUse:
             // This also filters that the StringObject has the primordial StringObject

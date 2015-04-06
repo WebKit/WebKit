@@ -2138,7 +2138,7 @@ public:
     void emitSwitchString(Node*, SwitchData*);
     void emitSwitch(Node*);
     
-    void compileToStringOnCell(Node*);
+    void compileToStringOrCallStringConstructorOnCell(Node*);
     void compileNewStringObject(Node*);
     
     void compileNewTypedArray(Node*);

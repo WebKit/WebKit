@@ -111,6 +111,7 @@ public:
                     break;
                     
                 case ToString:
+                case CallStringConstructor:
                     registerStructure(m_graph.globalObjectFor(node->origin.semantic)->stringObjectStructure());
                     break;
                     

@@ -146,6 +146,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetCallee:
     case GetArgumentCount:
     case ToString:
+    case CallStringConstructor:
     case MakeRope:
     case NewArrayWithSize:
     case GetById:

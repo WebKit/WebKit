@@ -767,8 +767,9 @@ private:
             break;
         }
             
-        case ToString: {
-            fixupToString(node);
+        case ToString:
+        case CallStringConstructor: {
+            fixupToStringOrCallStringConstructor(node);
             break;
         }
             
@@ -1363,7 +1364,7 @@ private:
         }
     }
     
-    void fixupToString(Node* node)
+    void fixupToStringOrCallStringConstructor(Node* node)
     {
         if (node->child1()->shouldSpeculateString()) {
             fixEdge<StringUse>(node->child1());
@@ -1424,7 +1425,7 @@ private:
                 m_indexInBlock, SpecString, ToString, node->origin, Edge(toPrimitive));
             
             fixupToPrimitive(toPrimitive);
-            fixupToString(toString);
+            fixupToStringOrCallStringConstructor(toString);
             
             right.setNode(toString);
         }

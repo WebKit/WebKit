@@ -1,5 +1,72 @@
 2015-04-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [ES6] DFG and FTL should be aware of that StringConstructor behavior for symbols becomes different from ToString
+        https://bugs.webkit.org/show_bug.cgi?id=143424
+
+        Reviewed by Geoffrey Garen.
+
+        In ES6, StringConstructor behavior becomes different from ToString abstract operations in the spec. (and JSValue::toString).
+
+        ToString(symbol) throws a type error.
+        However, String(symbol) produces SymbolDescriptiveString(symbol).
+
+        So, in DFG and FTL phase, they should not inline StringConstructor to ToString.
+
+        Now, in the template literals patch, ToString DFG operation is planned to be used.
+        And current ToString behavior is aligned to the spec (and JSValue::toString) and it's better.
+        So intead of changing ToString behavior, this patch adds CallStringConstructor operation into DFG and FTL.
+        In CallStringConstructor, all behavior in DFG analysis is the same.
+        Only the difference from ToString is, when calling DFG operation functions, it calls
+        operationCallStringConstructorOnCell and operationCallStringConstructor instead of
+        operationToStringOnCell and operationToString.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupToStringOrCallStringConstructor):
+        (JSC::DFG::FixupPhase::attemptToMakeFastStringAdd):
+        (JSC::DFG::FixupPhase::fixupToString): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructorOnCell):
+        (JSC::DFG::SpeculativeJIT::compileToStringOnCell): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileToStringOrCallStringConstructor):
+        (JSC::FTL::LowerDFGToLLVM::compileToString): Deleted.
+        * runtime/StringConstructor.cpp:
+        (JSC::stringConstructor):
+        (JSC::callStringConstructor):
+        * runtime/StringConstructor.h:
+        * tests/stress/symbol-and-string-constructor.js: Added.
+        (performString):
+
+2015-04-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Return Optional<uint32_t> from PropertyName::asIndex
         https://bugs.webkit.org/show_bug.cgi?id=143422
 
