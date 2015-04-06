@@ -1,3 +1,9 @@
+2015-04-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix typo in API doc comment.
+
+        * UIProcess/API/gtk/WebKitUserContent.cpp:
+
 2015-01-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] gtkdoc does not appear in DevHelp
