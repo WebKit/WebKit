@@ -10,14 +10,17 @@
             
             var target = document.getElementById("target");
             var style = getComputedStyle(target);
-            target.innerText = style.position == "relative" ? "SUCCESS" : "FAIL";
+            target.innerText = style.position == "relative" ? "FAIL" : "SUCCESS";
         }
     </script>
 </head>
 <body onload="test()">
     <p>
-        Test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=11451">http://bugs.webkit.org/show_bug.cgi?id=11451</a>
-        REGRESSION: Dell.com does not render correctly in ToT (stylesheet not loaded)</i>.
+        This was a test for
+        <i><a href="http://bugs.webkit.org/show_bug.cgi?id=11451">http://bugs.webkit.org/show_bug.cgi?id=11451</a>
+        REGRESSION: Dell.com does not render correctly in ToT (stylesheet not loaded)</i>:
+        given the security implications of accepting bad MIME types, we're now
+        intentionally breaking this case to match other browsers.
     </p>
     <p id="target">
     </p>

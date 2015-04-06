@@ -1,3 +1,3 @@
-Test for http://bugs.webkit.org/show_bug.cgi?id=11451 REGRESSION: Dell.com does not render correctly in ToT (stylesheet not loaded).
+This was a test for http://bugs.webkit.org/show_bug.cgi?id=11451 REGRESSION: Dell.com does not render correctly in ToT (stylesheet not loaded): given the security implications of accepting bad MIME types, we're now intentionally breaking this case to match other browsers.
 
 SUCCESS
