@@ -1,3 +1,53 @@
+2015-03-22  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG OSR exit shouldn't assume that the frame count for exit is greater than the frame count in DFG
+        https://bugs.webkit.org/show_bug.cgi?id=142948
+
+        Reviewed by Sam Weinig.
+        
+        It's necessary to ensure that the stack pointer accounts for the extent of our stack usage
+        since a signal may clobber the area below the stack pointer. When the DFG is executing,
+        the stack pointer accounts for the DFG's worst-case stack usage. When we OSR exit back to
+        baseline, we will use a different amount of stack. This is because baseline is a different
+        compiler. It will make different decisions. So it will use a different amount of stack.
+        
+        This gets tricky when we are in the process of doing an OSR exit, because we are sort of
+        incrementally transforming the stack from how it looked in the DFG to how it will look in
+        baseline. The most conservative approach would be to set the stack pointer to the max of
+        DFG and baseline.
+        
+        When this code was written, a reckless assumption was made: that the stack usage in
+        baseline is always at least as large as the stack usage in DFG. Based on this incorrect
+        assumption, the code first adjusts the stack pointer to account for the baseline stack
+        usage. This sort of usually works, because usually baseline does happen to use more stack.
+        But that's not an invariant. Nobody guarantees this. We will never make any changes that
+        would make this be guaranteed, because that would be antithetical to how optimizing
+        compilers work. The DFG should be allowed to use however much stack it decides that it
+        should use in order to get good performance, and it shouldn't try to guarantee that it
+        always uses less stack than baseline.
+        
+        As such, we must always assume that the frame size for DFG execution (i.e.
+        frameRegisterCount) and the frame size in baseline once we exit (i.e.
+        requiredRegisterCountForExit) are two independent quantities and they have no
+        relationship.
+        
+        Fortunately, though, this code can be made correct by just moving the stack adjustment to
+        just before we do conversions. This is because we have since changed the OSR exit
+        algorithm to first lift up all state from the DFG state into a scratch buffer, and then to
+        drop it out of the scratch buffer and into the stack according to the baseline layout. The
+        point just before conversions is the point where we have finished reading the DFG frame
+        and will not read it anymore, and we haven't started writing the baseline frame. So, at
+        this point it is safe to set the stack pointer to account for the frame size at exit.
+        
+        This is benign because baseline happens to create larger frames than DFG.
+
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::adjustAndJumpToTarget):
+
 2015-03-09  Mark Lam  <mark.lam@apple.com>
 
         8-bit version of weakCompareAndSwap() can cause an infinite loop.
