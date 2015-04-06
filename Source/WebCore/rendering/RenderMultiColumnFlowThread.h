@@ -43,8 +43,6 @@ public:
 
     virtual bool isRenderMultiColumnFlowThread() const override { return true; }
 
-    virtual void removeFlowChildInfo(RenderObject*) override;
-
     RenderBlockFlow* multiColumnBlockFlow() const { return toRenderBlockFlow(parent()); }
 
     RenderMultiColumnSet* firstMultiColumnSet() const;

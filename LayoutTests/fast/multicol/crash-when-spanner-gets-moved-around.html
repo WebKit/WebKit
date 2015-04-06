@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<head>
+<title>This tests if we end up with a dangling spanner pointer in the spanner placeholder object, when the spanner renderer moves around.</title>
+<head>
+<style>
+  .outer { 
+	-webkit-column-width: 1px; 
+  }
+
+  span:nth-last-child(2) { 
+	-webkit-column-span: all; 
+  }
+
+  #d1 { 
+	-webkit-transform: translateX(10px);
+	-webkit-animation-name: name; 
+	-webkit-animation-duration: 10000s; 
+  }
+
+  @-webkit-keyframes name { 
+	from {} 
+	to { -webkit-column-rule: 1vh; }
+  }
+</style>
+</head>
+<body>
+PASS if no crash or assert in debug.
+<div class=outer>
+  <div id=d1>
+    <span style="display: block"></span>
+	<div></div>
+  </div>
+</div>
+<script>
+  if (window.testRunner) {
+      testRunner.dumpAsText();
+	  testRunner.waitUntilDone();
+  }
+  setTimeout(function() {
+    document.getElementById('d1').appendChild(document.createElement('div'));
+    document.body.offsetHeight;
+    
+    if (window.testRunner)
+      testRunner.notifyDone();
+    }, 0);
+</script>
+</body>
+</html>

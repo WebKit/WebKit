@@ -1,3 +1,17 @@
+2015-02-18  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r174761) Dangling spanner pointer in RenderMultiColumnSpannerPlaceholder.
+        https://bugs.webkit.org/show_bug.cgi?id=138224
+
+        Reviewed by Dave Hyatt.
+
+        It's wrong to call flowThreadRelativeWillBeRemoved(child).
+        RenderMultiColumnFlowThread::removeFlowChildInfo() does not mean that the child is actually about to be removed.
+        Should this introduce any regressions, we need to deal with those separately.
+
+        * fast/multicol/crash-when-spanner-gets-moved-around-expected.txt: Added.
+        * fast/multicol/crash-when-spanner-gets-moved-around.html: Added.
+
 2014-10-21  Manuel Rego Casasnovas  <rego@igalia.com>
 
         ASSERTION FAILED: !gridWasPopulated() in WebCore::RenderGrid::placeItemsOnGrid
