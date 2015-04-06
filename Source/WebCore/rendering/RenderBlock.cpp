@@ -933,12 +933,12 @@ void RenderBlock::layout()
     invalidateBackgroundObscurationStatus();
 }
 
-static RenderBlockRareData* getRareData(const RenderBlock* block)
+static RenderBlockRareData* getBlockRareData(const RenderBlock* block)
 {
-    return gRareDataMap ? gRareDataMap->get(block) : 0;
+    return gRareDataMap ? gRareDataMap->get(block) : nullptr;
 }
 
-static RenderBlockRareData& ensureRareData(const RenderBlock* block)
+static RenderBlockRareData& ensureBlockRareData(const RenderBlock* block)
 {
     if (!gRareDataMap)
         gRareDataMap = new RenderBlockRareDataMap;
@@ -3232,7 +3232,7 @@ void RenderBlock::updateFirstLetter()
 
 RenderFlowThread* RenderBlock::cachedFlowThreadContainingBlock() const
 {
-    RenderBlockRareData* rareData = getRareData(this);
+    RenderBlockRareData* rareData = getBlockRareData(this);
 
     if (!rareData || !rareData->m_flowThreadContainingBlock)
         return nullptr;
@@ -3242,7 +3242,7 @@ RenderFlowThread* RenderBlock::cachedFlowThreadContainingBlock() const
 
 bool RenderBlock::cachedFlowThreadContainingBlockNeedsUpdate() const
 {
-    RenderBlockRareData* rareData = getRareData(this);
+    RenderBlockRareData* rareData = getBlockRareData(this);
 
     if (!rareData || !rareData->m_flowThreadContainingBlock)
         return true;
@@ -3252,13 +3252,13 @@ bool RenderBlock::cachedFlowThreadContainingBlockNeedsUpdate() const
 
 void RenderBlock::setCachedFlowThreadContainingBlockNeedsUpdate()
 {
-    RenderBlockRareData& rareData = ensureRareData(this);
+    RenderBlockRareData& rareData = ensureBlockRareData(this);
     rareData.m_flowThreadContainingBlock = Nullopt;
 }
 
 RenderFlowThread* RenderBlock::updateCachedFlowThreadContainingBlock(RenderFlowThread* flowThread) const
 {
-    RenderBlockRareData& rareData = ensureRareData(this);
+    RenderBlockRareData& rareData = ensureBlockRareData(this);
     rareData.m_flowThreadContainingBlock = flowThread;
 
     return flowThread;
@@ -3266,7 +3266,7 @@ RenderFlowThread* RenderBlock::updateCachedFlowThreadContainingBlock(RenderFlowT
 
 RenderFlowThread* RenderBlock::locateFlowThreadContainingBlock() const
 {
-    RenderBlockRareData* rareData = getRareData(this);
+    RenderBlockRareData* rareData = getBlockRareData(this);
     if (!rareData || !rareData->m_flowThreadContainingBlock)
         return updateCachedFlowThreadContainingBlock(RenderBox::locateFlowThreadContainingBlock());
 
@@ -3276,34 +3276,34 @@ RenderFlowThread* RenderBlock::locateFlowThreadContainingBlock() const
 
 LayoutUnit RenderBlock::paginationStrut() const
 {
-    RenderBlockRareData* rareData = getRareData(this);
+    RenderBlockRareData* rareData = getBlockRareData(this);
     return rareData ? rareData->m_paginationStrut : LayoutUnit();
 }
 
 LayoutUnit RenderBlock::pageLogicalOffset() const
 {
-    RenderBlockRareData* rareData = getRareData(this);
+    RenderBlockRareData* rareData = getBlockRareData(this);
     return rareData ? rareData->m_pageLogicalOffset : LayoutUnit();
 }
 
 void RenderBlock::setPaginationStrut(LayoutUnit strut)
 {
-    RenderBlockRareData* rareData = getRareData(this);
+    RenderBlockRareData* rareData = getBlockRareData(this);
     if (!rareData) {
         if (!strut)
             return;
-        rareData = &ensureRareData(this);
+        rareData = &ensureBlockRareData(this);
     }
     rareData->m_paginationStrut = strut;
 }
 
 void RenderBlock::setPageLogicalOffset(LayoutUnit logicalOffset)
 {
-    RenderBlockRareData* rareData = getRareData(this);
+    RenderBlockRareData* rareData = getBlockRareData(this);
     if (!rareData) {
         if (!logicalOffset)
             return;
-        rareData = &ensureRareData(this);
+        rareData = &ensureBlockRareData(this);
     }
     rareData->m_pageLogicalOffset = logicalOffset;
 }

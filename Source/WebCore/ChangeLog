@@ -1,3 +1,51 @@
+2015-04-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Free up some bits in RenderObject by moving rarely used bits into a side table
+        https://bugs.webkit.org/show_bug.cgi?id=143432
+
+        Reviewed by Darin Adler.
+        
+        Add a side table (global hash) on RenderObject to store data that is rarely
+        used. Move the "isDragging" and "hasReflection" bits there. Re-use one of
+        those bits for "hasRareData", and leave the other unused (I have plans for it).
+        
+        * rendering/RenderBlock.cpp:
+        (WebCore::getBlockRareData): Renamed for consistency.
+        (WebCore::ensureBlockRareData): Renamed to avoid conflict with RenderObject::ensureRareData().
+        (WebCore::RenderBlock::cachedFlowThreadContainingBlock):
+        (WebCore::RenderBlock::cachedFlowThreadContainingBlockNeedsUpdate):
+        (WebCore::RenderBlock::setCachedFlowThreadContainingBlockNeedsUpdate):
+        (WebCore::RenderBlock::updateCachedFlowThreadContainingBlock):
+        (WebCore::RenderBlock::locateFlowThreadContainingBlock):
+        (WebCore::RenderBlock::paginationStrut):
+        (WebCore::RenderBlock::pageLogicalOffset):
+        (WebCore::RenderBlock::setPaginationStrut):
+        (WebCore::RenderBlock::setPageLogicalOffset):
+        (WebCore::getRareData): Deleted.
+        (WebCore::ensureRareData): Deleted.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::~RenderObject): Assert that rare data hasn't been resurrected
+        since willBeDestroyed().
+        (WebCore::RenderObject::willBeDestroyed): Clear the rare data.
+        (WebCore::RenderObject::setIsDragging): If setting, ensure that we have rare data and
+        set the bit. Otherwise, only clear the bit of we have rare data.
+        (WebCore::RenderObject::setHasReflection): Ditto.
+        (WebCore::RenderObject::rareDataMap):
+        (WebCore::RenderObject::rareData):
+        (WebCore::RenderObject::ensureRareData):
+        (WebCore::RenderObject::clearRareData):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isDragging): Fast-fail on the hasRareData() bit, then do the
+        slower lookup in rare data.
+        (WebCore::RenderObject::hasReflection): Ditto.
+        (WebCore::RenderObject::setEverHadLayout): Moved up to group with other bit setters.
+        (WebCore::RenderObject::hasRareData):
+        (WebCore::RenderObject::setHasRareData):
+        (WebCore::RenderObject::RenderObjectBitfields::RenderObjectBitfields):
+        (WebCore::RenderObject::RenderObjectRareData::RenderObjectRareData):
+        (WebCore::RenderObject::setHasReflection): Deleted. Out of line now.
+        (WebCore::RenderObject::setIsDragging): Deleted. Ditto.
+
 2015-04-05  Darin Adler  <darin@apple.com>
 
         REGRESSION (r181778): Crash after scrolling Google search result page

@@ -515,7 +515,6 @@ public:
     bool isBox() const { return m_bitfields.isBox(); }
     bool isRenderView() const  { return m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
     bool isInline() const { return m_bitfields.isInline(); } // inline object
-    bool isDragging() const { return m_bitfields.isDragging(); }
     bool isReplaced() const { return m_bitfields.isReplaced(); } // a "replaced" element (see CSS)
     bool isHorizontalWritingMode() const { return m_bitfields.horizontalWritingMode(); }
 
@@ -623,7 +622,12 @@ public:
     void setHasOverflowClip(bool b = true) { m_bitfields.setHasOverflowClip(b); }
     void setHasLayer(bool b = true) { m_bitfields.setHasLayer(b); }
     void setHasTransformRelatedProperty(bool b = true) { m_bitfields.setHasTransformRelatedProperty(b); }
-    void setHasReflection(bool b = true) { m_bitfields.setHasReflection(b); }
+
+    bool isDragging() const { return m_bitfields.hasRareData() && rareData().isDragging(); }
+    bool hasReflection() const { return m_bitfields.hasRareData() && rareData().hasReflection(); }
+
+    void setIsDragging(bool);
+    void setHasReflection(bool = true);
 
     // Hook so that RenderTextControl can return the line height of its inner renderer.
     // For other renderers, the value is the same as lineHeight(false).
@@ -755,8 +759,6 @@ public:
 
     bool isFloatingOrOutOfFlowPositioned() const { return (isFloating() || isOutOfFlowPositioned()); }
 
-    bool hasReflection() const { return m_bitfields.hasReflection(); }
-
     // Applied as a "slop" to dirty rect checks during the outline painting phase's dirty-rect checks.
     int maximalOutlineSize(PaintPhase) const;
 
@@ -883,6 +885,11 @@ private:
 
     virtual bool isWBR() const { ASSERT_NOT_REACHED(); return false; }
 
+    void setEverHadLayout(bool b) { m_bitfields.setEverHadLayout(b); }
+
+    bool hasRareData() const { return m_bitfields.hasRareData(); }
+    void setHasRareData(bool b) { m_bitfields.setHasRareData(b); }
+
 #ifndef NDEBUG
     void checkBlockPositionedObjectsNeedLayout();
 #endif
@@ -915,7 +922,8 @@ private:
 
     public:
         RenderObjectBitfields(const Node& node)
-            : m_beingDestroyed(false)
+            : m_hasRareData(false)
+            , m_beingDestroyed(false)
             , m_needsLayout(false)
             , m_needsPositionedMovementLayout(false)
             , m_normalChildNeedsLayout(false)
@@ -930,11 +938,9 @@ private:
             , m_isReplaced(false)
             , m_isLineBreak(false)
             , m_horizontalWritingMode(true)
-            , m_isDragging(false)
             , m_hasLayer(false)
             , m_hasOverflowClip(false)
             , m_hasTransformRelatedProperty(false)
-            , m_hasReflection(false)
             , m_everHadLayout(false)
             , m_childrenInline(false)
             , m_positionedState(IsStaticallyPositioned)
@@ -943,6 +949,8 @@ private:
             , m_boxDecorationState(NoBoxDecorations)
         {
         }
+
+        ADD_BOOLEAN_BITFIELD(hasRareData, HasRareData);
         
         ADD_BOOLEAN_BITFIELD(beingDestroyed, BeingDestroyed);
         ADD_BOOLEAN_BITFIELD(needsLayout, NeedsLayout);
@@ -960,12 +968,11 @@ private:
         ADD_BOOLEAN_BITFIELD(isReplaced, IsReplaced);
         ADD_BOOLEAN_BITFIELD(isLineBreak, IsLineBreak);
         ADD_BOOLEAN_BITFIELD(horizontalWritingMode, HorizontalWritingMode);
-        ADD_BOOLEAN_BITFIELD(isDragging, IsDragging);
 
         ADD_BOOLEAN_BITFIELD(hasLayer, HasLayer);
         ADD_BOOLEAN_BITFIELD(hasOverflowClip, HasOverflowClip); // Set in the case of overflow:auto/scroll/hidden
         ADD_BOOLEAN_BITFIELD(hasTransformRelatedProperty, HasTransformRelatedProperty);
-        ADD_BOOLEAN_BITFIELD(hasReflection, HasReflection);
+        ADD_BOOLEAN_BITFIELD(unused, Unused);
 
         ADD_BOOLEAN_BITFIELD(everHadLayout, EverHadLayout);
 
@@ -1001,12 +1008,30 @@ private:
         ALWAYS_INLINE void setBoxDecorationState(BoxDecorationState boxDecorationState) { m_boxDecorationState = boxDecorationState; }
     };
 
-#undef ADD_BOOLEAN_BITFIELD
-
     RenderObjectBitfields m_bitfields;
 
-    void setIsDragging(bool b) { m_bitfields.setIsDragging(b); }
-    void setEverHadLayout(bool b) { m_bitfields.setEverHadLayout(b); }
+    class RenderObjectRareData {
+    public:
+        RenderObjectRareData()
+            : m_isDragging(false)
+            , m_hasReflection(false)
+        {
+        }
+
+        ADD_BOOLEAN_BITFIELD(isDragging, IsDragging);
+        ADD_BOOLEAN_BITFIELD(hasReflection, HasReflection);
+    };
+    
+    RenderObjectRareData rareData() const;
+    RenderObjectRareData& ensureRareData();
+    void removeRareData();
+    
+    // Note: RenderObjectRareData is stored by value.
+    typedef HashMap<const RenderObject*, RenderObjectRareData> RareDataHash;
+
+    static RareDataHash& rareDataMap();
+
+#undef ADD_BOOLEAN_BITFIELD
 };
 
 inline Frame& RenderObject::frame() const

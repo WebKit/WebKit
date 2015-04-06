@@ -130,6 +130,7 @@ RenderObject::~RenderObject()
     renderObjectCounter.decrement();
 #endif
     view().didDestroyRenderer();
+    ASSERT(!hasRareData());
 }
 
 RenderTheme& RenderObject::theme() const
@@ -1903,6 +1904,7 @@ void RenderObject::willBeDestroyed()
     }
 
     clearLayoutRootIfNeeded();
+    removeRareData();
 }
 
 void RenderObject::insertedIntoTree()
@@ -2493,6 +2495,44 @@ void RenderObject::calculateBorderStyleColor(const EBorderStyle& style, const Bo
         if (differenceSquared(color, Color::white) > differenceSquared(baseLightColor, Color::white))
             color = color.light();
     }
+}
+
+void RenderObject::setIsDragging(bool isDragging)
+{
+    if (isDragging || hasRareData())
+        ensureRareData().setIsDragging(isDragging);
+}
+
+void RenderObject::setHasReflection(bool hasReflection)
+{
+    if (hasReflection || hasRareData())
+        ensureRareData().setHasReflection(hasReflection);
+}
+
+RenderObject::RareDataHash& RenderObject::rareDataMap()
+{
+    static NeverDestroyed<RareDataHash> map;
+    return map;
+}
+
+RenderObject::RenderObjectRareData RenderObject::rareData() const
+{
+    if (!hasRareData())
+        return RenderObjectRareData();
+
+    return rareDataMap().get(this);
+}
+
+RenderObject::RenderObjectRareData& RenderObject::ensureRareData()
+{
+    setHasRareData(true);
+    return rareDataMap().add(this, RenderObjectRareData()).iterator->value;
+}
+
+void RenderObject::removeRareData()
+{
+    rareDataMap().remove(this);
+    setHasRareData(false);
 }
 
 } // namespace WebCore
