@@ -33,8 +33,8 @@ void PropertyNameArray::add(StringImpl* identifier)
 {
     ASSERT(!identifier || (identifier == StringImpl::empty() || identifier->isAtomic() || identifier->isSymbol()));
     if (!ASSERT_DISABLED) {
-        uint32_t index = PropertyName(Identifier::fromUid(m_vm, identifier)).asIndex();
-        ASSERT_UNUSED(index, index == PropertyName::NotAnIndex || index >= m_previouslyEnumeratedLength);
+        Optional<uint32_t> index = parseIndex(Identifier::fromUid(m_vm, identifier));
+        ASSERT_UNUSED(index, !index || index.value() >= m_previouslyEnumeratedLength);
     }
 
     if (m_alternateSet && m_alternateSet->contains(identifier))

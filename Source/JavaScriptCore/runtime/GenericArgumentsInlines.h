@@ -49,9 +49,9 @@ bool GenericArguments<Type>::getOwnPropertySlot(JSObject* object, ExecState* exe
         }
     }
     
-    unsigned index = ident.asIndex();
-    if (thisObject->canAccessIndexQuickly(index)) {
-        slot.setValue(thisObject, None, thisObject->getIndexQuickly(index));
+    Optional<uint32_t> index = parseIndex(ident);
+    if (index && thisObject->canAccessIndexQuickly(index.value())) {
+        slot.setValue(thisObject, None, thisObject->getIndexQuickly(index.value()));
         return true;
     }
     
@@ -113,9 +113,9 @@ void GenericArguments<Type>::put(JSCell* cell, ExecState* exec, PropertyName ide
         return;
     }
     
-    unsigned index = ident.asIndex();
-    if (thisObject->canAccessIndexQuickly(index)) {
-        thisObject->setIndexQuickly(vm, index, value);
+    Optional<uint32_t> index = parseIndex(ident);
+    if (index && thisObject->canAccessIndexQuickly(index.value())) {
+        thisObject->setIndexQuickly(vm, index.value(), value);
         return;
     }
     
@@ -147,9 +147,9 @@ bool GenericArguments<Type>::deleteProperty(JSCell* cell, ExecState* exec, Prope
             || ident == vm.propertyNames->callee))
         thisObject->overrideThings(vm);
     
-    unsigned index = ident.asIndex();
-    if (thisObject->canAccessIndexQuickly(index)) {
-        thisObject->overrideArgument(vm, index);
+    Optional<uint32_t> index = parseIndex(ident);
+    if (index && thisObject->canAccessIndexQuickly(index.value())) {
+        thisObject->overrideArgument(vm, index.value());
         return true;
     }
     
@@ -180,8 +180,9 @@ bool GenericArguments<Type>::defineOwnProperty(JSObject* object, ExecState* exec
         || ident == vm.propertyNames->callee)
         thisObject->overrideThingsIfNecessary(vm);
     else {
-        unsigned index = ident.asIndex();
-        if (thisObject->canAccessIndexQuickly(index)) {
+        Optional<uint32_t> optionalIndex = parseIndex(ident);
+        if (optionalIndex && thisObject->canAccessIndexQuickly(optionalIndex.value())) {
+            uint32_t index = optionalIndex.value();
             if (!descriptor.isAccessorDescriptor()) {
                 // If the property is not deleted and we are using a non-accessor descriptor, then
                 // make sure that the aliased argument sees the value.

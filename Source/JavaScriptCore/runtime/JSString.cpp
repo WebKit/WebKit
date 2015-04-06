@@ -425,10 +425,9 @@ bool JSString::getStringPropertyDescriptor(ExecState* exec, PropertyName propert
         return true;
     }
     
-    unsigned i = propertyName.asIndex();
-    if (i < m_length) {
-        ASSERT(i != PropertyName::NotAnIndex); // No need for an explicit check, the above test would always fail!
-        descriptor.setDescriptor(getIndex(exec, i), DontDelete | ReadOnly);
+    Optional<uint32_t> index = parseIndex(propertyName);
+    if (index && index.value() < m_length) {
+        descriptor.setDescriptor(getIndex(exec, index.value()), DontDelete | ReadOnly);
         return true;
     }
     

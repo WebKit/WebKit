@@ -270,7 +270,7 @@ GetByIdStatus GetByIdStatus::computeFor(const StructureSet& set, AtomicStringImp
     if (set.isEmpty())
         return GetByIdStatus();
 
-    if (toUInt32FromStringImpl(uid) != PropertyName::NotAnIndex)
+    if (parseIndex(*uid))
         return GetByIdStatus(TakesSlowPath);
     
     GetByIdStatus result;
