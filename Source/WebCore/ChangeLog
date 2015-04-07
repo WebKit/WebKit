@@ -1,3 +1,69 @@
+2015-02-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Update track sizes after distributing extra space
+        https://bugs.webkit.org/show_bug.cgi?id=141422
+
+        Reviewed by Antti Koivisto.
+
+        Both old and new tracks sizing algorithms instruct us to update
+        the sizes of the content sized tracks only after distributing the
+        extra space for all the items in the same span group. So far we
+        were doing it inside distributeSpaceToTracks(), i.e., once for
+        every single item. That is wrong because it makes the algorithm
+        order dependent.
+
+        Our old implementation looked something like this (pseudocode):
+
+        resolveContentBasedTrackSizingFunctions()
+          foreach item
+            resolveContentBasedTrackSizingFunctionsForItems() (x4)
+              distributeSpaceToTracks()
+                updateTrackSizes()
+
+        Now it's done this way (pseudocode):
+
+        resolveContentBasedTrackSizingFunctions()
+          foreach spanGroup
+            resolveContentBasedTrackSizingFunctionsForItems() (x4)
+              foreach item in spanGroup
+                distributeSpaceToTracks()
+              updateTrackSizes()
+
+        As it can be seen the update of track sizes only happens after
+        processing all the items of a given span group. In order to
+        accomplish this a new field was added to GridTrack called
+        tempIncrease which stores per-track increases while distributing
+        the extra space among the items in the same span group. That
+        temporal increase could eventually be used to update the
+        plannedIncrease which is the one we use to finally set the new
+        size of the track.
+
+        This change makes our implementation closer to the spec, removes
+        the order dependency and ensures that every track satisfies their
+        min track sizing functions before starting to consider the max
+        track sizing functions.
+
+        Test: fast/css-grid-layout/grid-update-sizes-after-distributing-all.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::GridTrack::plannedSize):
+        (WebCore::GridTrack::setPlannedSize): New setter.
+        (WebCore::GridTrack::tempSize): New attribute.
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        RenderGrid::distributeSpaceToTracks() no longer updates the track
+        sizes so we have to do it after the call returns.
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+        Call RenderGrid::resolveContentBasedTrackSizingFunctionsForItems()
+        passing a span group instead of a single item.
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+        It now receives a span group instead of a single item. Apart from
+        that we need an extra function to get the unaltered track size (as
+        the current one returns the base size whenever the growth limit is
+        infinity).
+        (WebCore::RenderGrid::distributeSpaceToTracks): This no longer
+        updates track sizes but only the track's planned size;
+        * rendering/RenderGrid.h:
+
 2015-04-06  Chris Dumez  <cdumez@apple.com>
 
         Bing video search result pages are not PageCacheable
