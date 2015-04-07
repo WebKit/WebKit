@@ -24,7 +24,7 @@
 
 import json
 import re
-
+from sets import Set
 
 class JSONChecker(object):
     """Processes JSON lines for checking style."""
@@ -69,12 +69,42 @@ class JSONFeaturesChecker(JSONChecker):
                 self._handle_style_error(0, 'json/syntax', 5, '"features" key not found, the key is mandatory.')
                 return
 
+            specification_name_set = Set()
+            if 'specification' in features_definition:
+                previous_specification_name = ''
+                for specification_object in features_definition['specification']:
+                    if 'name' not in specification_object or not specification_object['name']:
+                        self._handle_style_error(0, 'json/syntax', 5, 'The "name" field is mandatory for specifications.')
+                        continue
+                    name = specification_object['name']
+
+                    if name < previous_specification_name:
+                        self._handle_style_error(0, 'json/syntax', 5, 'The specifications should be sorted alphabetically by name, "%s" appears after "%s".' % (name, previous_specification_name))
+                    previous_specification_name = name
+
+                    specification_name_set.add(name)
+                    if 'url' not in specification_object or not specification_object['url']:
+                        self._handle_style_error(0, 'json/syntax', 5, 'The specifciation "%s" does not have an URL' % name)
+                        continue
+
             features_list = features_definition['features']
+            previous_feature_name = ''
             for i in xrange(len(features_list)):
                 feature = features_list[i]
-                if 'name' not in feature:
+                feature_name = 'Feature %s' % i
+                if 'name' not in feature or not feature['name']:
                     self._handle_style_error(0, 'json/syntax', 5, 'The feature %d does not have the mandatory field "name".' % i)
-                if 'status' not in feature:
-                    self._handle_style_error(0, 'json/syntax', 5, 'The feature %d does not have the mandatory field "status".' % i)
+                else:
+                    feature_name = feature['name']
+
+                    if feature_name < previous_feature_name:
+                        self._handle_style_error(0, 'json/syntax', 5, 'The features should be sorted alphabetically by name, "%s" appears after "%s".' % (feature_name, previous_feature_name))
+                    previous_feature_name = feature_name
+
+                if 'status' not in feature or not feature['status']:
+                    self._handle_style_error(0, 'json/syntax', 5, 'The feature "%s" does not have the mandatory field "status".' % feature_name)
+                if 'specification' in feature:
+                    if feature['specification'] not in specification_name_set:
+                        self._handle_style_error(0, 'json/syntax', 5, 'The feature "%s" has a specification field but no specification of that name exists.' % feature_name)
         except:
             pass

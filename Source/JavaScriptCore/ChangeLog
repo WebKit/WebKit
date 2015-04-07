@@ -1,3 +1,12 @@
+2015-04-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        Get the features.json files ready for open contributions
+        https://bugs.webkit.org/show_bug.cgi?id=143436
+
+        Reviewed by Darin Adler.
+
+        * features.json:
+
 2015-04-07  Filip Pizlo  <fpizlo@apple.com>
 
         Constant folding of typed array properties should be handled by AI rather than strength reduction

@@ -1,22 +1,10 @@
 {
     "specification": [
     {
-        "name": "HTML5",
-        "url": "https://html.spec.whatwg.org",
-        "keywords": ["html", "html5", "html5.1"],
-        "category": "html"
-    },
-    {
-        "name": "DOM",
-        "url": "https://dom.spec.whatwg.org",
-        "keywords": ["dom", "dom4"],
-        "category": "html"
-    },
-    {
-        "name": "Streams",
-        "url": "https://streams.spec.whatwg.org",
-        "keywords": ["streams api"],
-        "category": "webapps"
+        "name": "CSS Media Queries Level 4",
+        "url": "http://dev.w3.org/csswg/mediaqueries-4/",
+        "keywords": ["css media queries", "media queries"],
+        "category": "css"
     },
     {
         "name": "CSS Selectors Level 4",
@@ -25,14 +13,101 @@
         "category": "css"
     },
     {
-        "name": "CSS Media Queries Level 4",
-        "url": "http://dev.w3.org/csswg/mediaqueries-4/",
-        "keywords": ["css media queries", "media queries"],
-        "category": "css"
+        "name": "DOM",
+        "url": "https://dom.spec.whatwg.org",
+        "keywords": ["dom", "dom4"],
+        "category": "html"
+    },
+    {
+        "name": "HTML5",
+        "url": "https://html.spec.whatwg.org",
+        "keywords": ["html", "html5", "html5.1"],
+        "category": "html"
+    },
+    {
+        "name": "Streams",
+        "url": "https://streams.spec.whatwg.org",
+        "keywords": ["streams api"],
+        "category": "webapps"
     }
     ],
 
     "features": [
+    {
+        "name": "CSS Selector :any-link",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://dev.w3.org/csswg/selectors-4/#the-any-link-pseudo",
+        "specification": "CSS Selectors Level 4",
+        "description": "The pseudo class :any-link matches any element that would match :link or :visisted.",
+        "comment": "A prefix version :-webkit-any-link has been available for a while but it was not 100% compliant to the specification."
+    },
+    {
+        "name": "CSS Selector :lang() level 4",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://dev.w3.org/csswg/selectors-4/#the-lang-pseudo",
+        "specification": "CSS Selectors Level 4",
+        "description": "The selector :lang() is extended in level 4 to support a list of language range, each range can contain a wildcard. For example: p:lang(\"*-be\", \"en\")."
+    },
+    {
+        "name": "CSS Selector :matches()",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://dev.w3.org/csswg/selectors-4/#matches",
+        "specification": "CSS Selectors Level 4",
+        "description": "The selector :matches() takes a selector list as argument and matches an element if any of them matches (e.g. :matches(article > section, #target)). When used for styling, the specificity of :matches() is the higest specificity of all selectors in the selector list.",
+        "comment": "The pseudo classes <em>:visited</em> and <em>:link</em> are not supported inside :matches()."
+    },
+    {
+        "name": "CSS Selector :not() level 4",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://dev.w3.org/csswg/selectors-4/#negation",
+        "specification": "CSS Selectors Level 4",
+        "description": "The selector :not() in level 4 supports full selector lists as argument. For example: :not(:any-link >> img, :any-link >> picture).",
+        "comment": "The pseudo classes <em>:visited</em> and <em>:link</em> are not supported inside :not()."
+    },
+    {
+        "name": "CSS Selector :nth-child(An+B of selector list) and :nth-last-child(An+B of selector list)",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://dev.w3.org/csswg/selectors-4/#the-nth-child-pseudo",
+        "specification": "CSS Selectors Level 4",
+        "description": "The pseudo classes :nth-child() and :nth-last-child() now supports a selector list that filters what to count. For example: \":nth-child(even of .visible)\".",
+        "comment": "The pseudo classes <em>:visited</em> and <em>:link</em> are not supported inside :nth-child() and :nth-last-child()."
+    },
+    {
+        "name": "CSS Selector :placeholder-shown",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://dev.w3.org/csswg/selectors-4/#placeholder",
+        "specification": "CSS Selectors Level 4",
+        "description": "The selector :placeholder-shown matches any input element that has a visible placeholder.",
+        "comment": "Styling the placeholder can be done through the WebKit pseudo-element \"::-webkit-input-placeholder\"."
+    },
+    {
+        "name": "Case-insensitive attribute selectors",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://dev.w3.org/csswg/selectors-4/#attribute-case",
+        "specification": "CSS Selectors Level 4",
+        "description": "Any attribute selector that test a value can take a flag \"i\" to use case insensitive checks. For example: input[type=number i] test the value \"number\" case-insensitively."
+    },
     {
         "name": "Element.closest()",
         "status": {
@@ -55,13 +130,35 @@
         "description": "Provide the events necessary to handle force click events in the page, overriding the default behavior."
     },
     {
+        "name": "Interaction Media Features (pointer, hover, any-pointer, any-hover)",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://dev.w3.org/csswg/mediaqueries-4/#mf-interaction",
+        "specification": "CSS Media Queries Level 4",
+        "description": "The \"pointer\" media defines how percise the pointing device is. The \"hover\" media defines the ability of the poiting device to hover elements."
+    },
+    {
+        "name": "Navigator.hardwareConcurrency",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://wiki.whatwg.org/wiki/Navigator_HW_Concurrency",
+        "webkit-url": "http://trac.webkit.org/changeset/169017",
+        "description": "Navigator.hardwareConcurrency provides the total number of logical processors available to the user agent."
+    },
+    {
         "name": "Readable Streams",
         "status": {
             "status": "In Development",
             "enabled-by-default": true
         },
         "url": "https://streams.spec.whatwg.org/#rs",
-        "specification": "Streams"
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=138967",
+        "specification": "Streams",
+        "comment": "The ReadableStream and ReadableStreamReader interfaces are available but not functional."
     }
     ]
 }
