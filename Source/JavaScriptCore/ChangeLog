@@ -1,3 +1,14 @@
+2015-04-06  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] Fix HPPA build
+        https://bugs.webkit.org/show_bug.cgi?id=143453
+
+        Reviewed by Darin Adler.
+
+        Add HPPA to the list of supported CPUs.
+
+        * CMakeLists.txt:
+
 2015-04-06  Mark Lam  <mark.lam@apple.com>
 
         In the 64-bit DFG and FTL, Array::Double case for HasIndexedProperty should set its result to true when all is well.
