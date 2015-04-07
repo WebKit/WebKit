@@ -80,16 +80,19 @@
 #endif
 #endif
 
-/* CPU(MIPS) - MIPS 32-bit */
-/* Note: Only O32 ABI is tested, so we enable it for O32 ABI for now.  */
-#if (defined(mips) || defined(__mips__) || defined(MIPS) || defined(_MIPS_)) \
-    && defined(_ABIO32)
+/* CPU(MIPS) - MIPS 32-bit and 64-bit */
+#if (defined(mips) || defined(__mips__) || defined(MIPS) || defined(_MIPS_) || defined(__mips64))
+#if defined(_MIPS_SIM_ABI64) && (_MIPS_SIM == _MIPS_SIM_ABI64)
+#define WTF_CPU_MIPS64 1
+#define WTF_MIPS_ARCH __mips64
+#else
 #define WTF_CPU_MIPS 1
+#define WTF_MIPS_ARCH __mips
+#endif
 #if defined(__MIPSEB__)
 #define WTF_CPU_BIG_ENDIAN 1
 #endif
 #define WTF_MIPS_PIC (defined __PIC__)
-#define WTF_MIPS_ARCH __mips
 #define WTF_MIPS_ISA(v) (defined WTF_MIPS_ARCH && WTF_MIPS_ARCH == v)
 #define WTF_MIPS_ISA_AT_LEAST(v) (defined WTF_MIPS_ARCH && WTF_MIPS_ARCH >= v)
 #define WTF_MIPS_ARCH_REV __mips_isa_rev
@@ -655,6 +658,7 @@
     || CPU(ALPHA) \
     || CPU(ARM64) \
     || CPU(S390X) \
+    || CPU(MIPS64) \
     || CPU(PPC64) \
     || CPU(PPC64LE)
 #define WTF_USE_JSVALUE64 1
