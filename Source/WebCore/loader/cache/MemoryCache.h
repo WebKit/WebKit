@@ -91,7 +91,6 @@ public:
 
     WEBCORE_EXPORT static MemoryCache& singleton();
 
-    WEBCORE_EXPORT CachedResource* resourceForURL(const URL&, SessionID = SessionID::defaultSessionID());
     WEBCORE_EXPORT CachedResource* resourceForRequest(const ResourceRequest&, SessionID);
 
     bool add(CachedResource&);

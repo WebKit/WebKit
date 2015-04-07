@@ -1,3 +1,62 @@
+2015-04-06  Chris Dumez  <cdumez@apple.com>
+
+        Bing video search result pages are not PageCacheable
+        https://bugs.webkit.org/show_bug.cgi?id=143463
+        <rdar://problem/20440916>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bing video search result pages are not PageCacheable (tested on iOS).
+        It both:
+        - is bad for power usage as it causes a reload when clicking one of the
+          results then navigating back in history.
+        - degrades user experience because the results page uses infinite
+          scrolling and the scroll position is not properly restored when
+          navigating back, not to mention the user has to wait for the reload
+          to complete.
+
+        The issue was that the bing search page was doing a ping load when
+        clicking on one of the search results. The ping load was done by
+        create an image and its 'src' attribute to the ping URL. This load
+        usually did not have time to complete when navigating away so we would
+        cancel it and the main document would end up with an error that would
+        prevent the page from entering the page cache. We already have code
+        making sure load cancellations do not prevent page caching as long as
+        the loads are for XHR or images. However, the latter check was broken
+        in the case where the ResourceRequest's cachePartition was non-empty.
+        This is because the check was using the MemoryCache::ResourceForUrl()
+        API which rarely does what we want because it will request a dummy
+        ResourceRequest (without cachePartition) and then call
+        MemoryCache::resourceForRequest(). This patch updates the check
+        to use resourceForRequest() directly as we have the ResourceRequest
+        at this point.
+
+        This patch also gets rid of the  MemoryCache::ResourceForUrl() API as
+        it rarely does what we want and it is bug prone. It was only used in
+        2 places, one of them causing this bug and the other in Internals.
+
+        Tests: http/tests/navigation/page-cache-pending-image-load-cache-partition.html
+               http/tests/navigation/page-cache-pending-image-load.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::areAllLoadersPageCacheAcceptable):
+        Use MemoryCache::resourceForRequest() instead of resourceForUrl() as
+        we have the ResourceRequest and calling resourceForUrl() would loose
+        the cachePartition.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::resourceForURL): Deleted.
+        Drop this API as it is bug prone and rarely does what we want.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::isLoadingFromMemoryCache):
+        Update call to create a dummy ResourceRequest and call
+        resourceForRequest() instead of resourceForUrl(), as this API no
+        longer exists. The new code also set the cachePartition on the
+        dummy request so that this function actually behaves as expected
+        if the cachePartition in the memory cache is non-empty.
+
+
 2015-04-06  Jer Noble  <jer.noble@apple.com>
 
         Synchronize fullscreen animation between processes.

@@ -168,11 +168,6 @@ void MemoryCache::revalidationFailed(CachedResource& revalidatingResource)
     revalidatingResource.clearResourceToRevalidate();
 }
 
-CachedResource* MemoryCache::resourceForURL(const URL& resourceURL, SessionID sessionID)
-{
-    return resourceForRequest(ResourceRequest(resourceURL), sessionID);
-}
-
 CachedResource* MemoryCache::resourceForRequest(const ResourceRequest& request, SessionID sessionID)
 {
     auto* resources = sessionResourceMap(sessionID);
