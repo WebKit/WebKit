@@ -1611,6 +1611,9 @@
     <ClCompile Include="JavaScriptCoreDLL.cpp">
       <Filter>API</Filter>
     </ClCompile>
+    <ClCompile Include="..\jit\ExecutableAllocatorFixedVMPool.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">

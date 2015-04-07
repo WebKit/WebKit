@@ -1,3 +1,18 @@
+2015-04-07  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r181628.
+
+    2015-03-16  Michael Saboff  <msaboff@apple.com>
+
+            Windows X86-64 should use the fixed executable allocator
+            https://bugs.webkit.org/show_bug.cgi?id=142749
+
+            Set ENABLE_EXECUTABLE_ALLOCATOR_FIXED for Windows.
+            Needed to export MetaAllocator::currentStatistics() for use in JavaScriptCore.
+
+            * wtf/MetaAllocator.h:
+            * wtf/Platform.h:
+
 2015-02-11  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r179993. <rdar://problem/19813975>
