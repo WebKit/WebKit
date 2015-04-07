@@ -619,6 +619,30 @@ double jsRound(double d)
     } \
     static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
 
+#elif CPU(X86) && COMPILER(GCC) && OS(LINUX) && defined(__PIC__)
+#define defineUnaryDoubleOpWrapper(function) \
+    asm( \
+        ".text\n" \
+        ".globl " SYMBOL_STRING(function##Thunk) "\n" \
+        HIDE_SYMBOL(function##Thunk) "\n" \
+        SYMBOL_STRING(function##Thunk) ":" "\n" \
+        "pushl %ebx\n" \
+        "subl $20, %esp\n" \
+        "movsd %xmm0, (%esp) \n" \
+        "call __x86.get_pc_thunk.bx\n" \
+        "addl $_GLOBAL_OFFSET_TABLE_, %ebx\n" \
+        "call " GLOBAL_REFERENCE(function) "\n" \
+        "fstpl (%esp) \n" \
+        "movsd (%esp), %xmm0 \n" \
+        "addl $20, %esp\n" \
+        "popl %ebx\n" \
+        "ret\n" \
+    );\
+    extern "C" { \
+        MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
+    } \
+    static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
+
 #elif CPU(X86) && COMPILER(GCC) && (OS(DARWIN) || OS(LINUX))
 #define defineUnaryDoubleOpWrapper(function) \
     asm( \
