@@ -1,5 +1,12 @@
 2015-04-07  Alex Christensen  <achristensen@webkit.org>
 
+        [Win] Unreviewed build fix after r182494.
+
+        * platform/win/ContextMenuItemWin.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem): Deleted.
+
+2015-04-07  Alex Christensen  <achristensen@webkit.org>
+
         Unreviewed fixing API tests.
 
         * contentextensions/ContentExtensionsBackend.cpp:
