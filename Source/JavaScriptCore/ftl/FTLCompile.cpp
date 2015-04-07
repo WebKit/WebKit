@@ -665,13 +665,13 @@ void compile(State& state, Safepoint::Result& safepointResult)
         options.NoFramePointerElim = true;
         if (Options::useLLVMSmallCodeModel())
             options.CodeModel = LLVMCodeModelSmall;
-        options.EnableFastISel = Options::enableLLVMFastISel();
+        options.EnableFastISel = enableLLVMFastISel;
         options.MCJMM = llvm->CreateSimpleMCJITMemoryManager(
             &state, mmAllocateCodeSection, mmAllocateDataSection, mmApplyPermissions, mmDestroy);
     
         LLVMExecutionEngineRef engine;
         
-        if (isARM64())
+        if (isARM64()) {
 #if OS(DARWIN)
             llvm->SetTarget(state.module, "arm64-apple-ios");
 #elif OS(LINUX)
@@ -679,6 +679,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
 #else
 #error "Unrecognized OS"
 #endif
+        }
 
         if (llvm->CreateMCJITCompilerForModule(&engine, state.module, &options, sizeof(options), &error)) {
             dataLog("FATAL: Could not create LLVM execution engine: ", error, "\n");
@@ -719,6 +720,9 @@ void compile(State& state, Safepoint::Result& safepointResult)
             llvm->AddGVNPass(modulePasses);
             llvm->AddCFGSimplificationPass(modulePasses);
             llvm->AddDeadStoreEliminationPass(modulePasses);
+            
+            if (enableLLVMFastISel)
+                llvm->AddLowerSwitchPass(modulePasses);
 
             llvm->RunPassManager(modulePasses, module);
         } else {

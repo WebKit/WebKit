@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,21 +33,17 @@
 
 namespace JSC {
 
-typedef LLVMAPI* (*InitializerFunction)(void(*)(const char*, ...));
-
-void initializeLLVMImpl()
+LLVMInitializerFunction getLLVMInitializerFunction(bool /* verbose */)
 {
     const wchar_t* libraryName = L"libllvmForJSC.dll";
 
     HMODULE library = ::LoadLibrary(libraryName);
 
     if (!library)
-        return;
+        return nullptr;
 
     const char* symbolName = "initializeAndGetJSCLLVMAPI";
-    InitializerFunction initializer = bitwise_cast<InitializerFunction>(GetProcAddress(library, symbolName));
-    if (initializer)
-        llvm = initializer(WTFLogAlwaysAndCrash);
+    return bitwise_cast<LLVMInitializerFunction>(GetProcAddress(library, symbolName));
 }
 
 } // namespace JSC

@@ -1,3 +1,40 @@
+2015-04-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Make it possible to enable LLVM FastISel
+        https://bugs.webkit.org/show_bug.cgi?id=143489
+
+        Reviewed by Michael Saboff.
+
+        The decision to enable FastISel is made by Options.h|cpp, but the LLVM library can disable it if it finds that it is built
+        against a version of LLVM that doesn't support it. Thereafter, JSC::enableLLVMFastISel is the flag that tells the system
+        if we should enable it.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * llvm/InitializeLLVM.cpp:
+        (JSC::initializeLLVMImpl):
+        * llvm/InitializeLLVM.h:
+        * llvm/InitializeLLVMLinux.cpp:
+        (JSC::getLLVMInitializerFunction):
+        (JSC::initializeLLVMImpl): Deleted.
+        * llvm/InitializeLLVMMac.cpp:
+        (JSC::getLLVMInitializerFunction):
+        (JSC::initializeLLVMImpl): Deleted.
+        * llvm/InitializeLLVMPOSIX.cpp:
+        (JSC::getLLVMInitializerFunctionPOSIX):
+        (JSC::initializeLLVMPOSIX): Deleted.
+        * llvm/InitializeLLVMPOSIX.h:
+        * llvm/InitializeLLVMWin.cpp:
+        (JSC::getLLVMInitializerFunction):
+        (JSC::initializeLLVMImpl): Deleted.
+        * llvm/LLVMAPI.cpp:
+        * llvm/LLVMAPI.h:
+        * llvm/library/LLVMExports.cpp:
+        (initCommandLine):
+        (initializeAndGetJSCLLVMAPI):
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+
 2015-04-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         put_by_val_direct need to check the property is index or not for using putDirect / putDirectIndex

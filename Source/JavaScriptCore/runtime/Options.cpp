@@ -312,6 +312,11 @@ void Options::initialize()
     name_##Default() = defaultValue_;
     JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
+    
+    // It *probably* makes sense for other platforms to enable this.
+#if PLATFORM(IOS) && CPU(ARM64)
+    enableLLVMFastISel() = true;
+#endif
         
     // Allow environment vars to override options if applicable.
     // The evn var should be the name of the option prefixed with

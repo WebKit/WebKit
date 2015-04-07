@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,11 +29,41 @@
 #if HAVE(LLVM)
 
 #include "LLVMAPI.h"
+#include "Options.h"
 #include <pthread.h>
+#include <wtf/DataLog.h>
 
 namespace JSC {
 
 static pthread_once_t initializeLLVMOnceKey = PTHREAD_ONCE_INIT;
+
+static void initializeLLVMImpl()
+{
+    const bool verbose =
+        Options::verboseFTLCompilation()
+        || Options::showFTLDisassembly()
+        || Options::verboseFTLFailure()
+        || Options::verboseCompilation()
+        || Options::showDFGDisassembly()
+        || Options::showDisassembly();
+    
+    LLVMInitializerFunction initializer = getLLVMInitializerFunction(verbose);
+    if (!initializer)
+        return;
+    
+    bool enableFastISel = Options::enableLLVMFastISel();
+    llvm = initializer(WTFLogAlwaysAndCrash, &enableFastISel);
+    if (!llvm) {
+        if (verbose)
+            dataLog("LLVM initilization failed.\n");
+    }
+    if (Options::enableLLVMFastISel() && !enableFastISel) {
+        if (verbose)
+            dataLog("Fast ISel requested but LLVM not new enough.\n");
+    }
+    
+    enableLLVMFastISel = enableFastISel;
+}
 
 bool initializeLLVM()
 {
