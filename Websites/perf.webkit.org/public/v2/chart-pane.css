@@ -44,11 +44,28 @@
 .chart-pane a.stat-button {
     display: inline-block;
     position: absolute;
-    right: 3.15rem;
+    right: 4.45rem;
     top: 0.55rem;
 }
 
-.chart-pane a.bugs-button {
+.chart-pane a.outlier-button {
+    display: inline-block;
+    position: absolute;
+    right: 3.25rem; /* Shifted to left by 0.1rem for better aesthetics */
+    top: 0.55rem;
+}
+
+a.outlier-button.hide g.show-outlier-icon {
+    fill: transparent;
+    stroke: transparent;
+}
+
+a.outlier-button.show g.hide-outlier-icon {
+    fill: transparent;
+    stroke: transparent;
+}
+
+.chart-pane a.analysis-button {
     display: inline-block;
     position: absolute;
     right: 1.85rem;
@@ -78,26 +95,25 @@
     display: none;
 }
 
-.stat-pane {
+.stat-pane,
+.annotation-pane {
     right: 2.6rem;
     padding: 0;
 }
 
-.stat-pane fieldset {
-    border: solid 1px #ccc;
-    border-radius: 0.5rem;
-    margin: 0.2rem;
-    padding: 0;
+.popup-pane > .caution {
+    margin: 0;
+    padding: 0.3rem 0.5rem;
 }
 
-.stat-option {
+.popup-pane > section {
     margin: 0;
     padding: 0;
     font-size: 0.8rem;
     max-width: 17rem;
 }
 
-.stat-option h1 {
+.popup-pane > section > h1 {
     font-size: inherit;
     line-height: 0.8rem;
     padding: 0.3rem 0.5rem;
@@ -106,11 +122,11 @@
     border-bottom: solid 1px #ccc;
 }
 
-.stat-option:first-child h1 {
+.popup-pane > section:first-child h1 {
     border-top: none;
 }
 
-.stat-option > * {
+.popup-pane > section > * {
     display: block;
     margin: 0.1rem 0.5rem 0.1rem 1rem;
 }
@@ -119,12 +135,8 @@
     width: 4rem;
 }
 
-.analysis-pane {
+.annotation-pane {
     right: 1.3rem;
-}
-
-.analysis-pane > * {
-    margin: 0.2rem;
 }
 
 .search-pane {

@@ -43,10 +43,10 @@ function main($path) {
         exit_with_error('ConfigurationNotFound');
 
     $test_group_id = array_get($_GET, 'testGroup');
+    $should_cache = array_get($_GET, 'cache');
     if ($test_group_id)
         $test_group_id = intval($test_group_id);
-    else {
-        // FIXME: We should support revalication as well as caching results in the server side.
+    else if ($should_cache) { // Only v1 UI needs caching.
         $maxage = config('jsonCacheMaxAge');
         header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $maxage) . ' GMT');
         header("Cache-Control: maxage=$maxage");
@@ -102,6 +102,7 @@ class RunsGenerator {
             'iterationCount' => intval($run['run_iteration_count_cache']),
             'sum' => floatval($run['run_sum_cache']),
             'squareSum' => floatval($run['run_square_sum_cache']),
+            'markedOutlier' => Database::is_true($run['run_marked_outlier']),
             'revisions' => self::parse_revisions_array($run['revisions']),
             'build' => $run['build_id'],
             'buildTime' => Database::to_js_time($run['build_time']),

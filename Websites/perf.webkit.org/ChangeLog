@@ -1,3 +1,80 @@
+2015-04-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard should have a way of marking outliers
+        https://bugs.webkit.org/show_bug.cgi?id=143466
+
+        Reviewed by Chris Dumez.
+
+        Added UI to mark a data point as an outlier as well as a button to toggle the visibility of outliers.
+        Added a new privileged API /privileged-api/update-run-status to store this boolean flag.
+
+        * init-database.sql: Added run_marked_outlier column to test_runs table.
+
+        * public/admin/tests.php:
+
+        * public/api/runs.php:
+        (main): Only emit Cache-Control and Expires headers in v1 UI.
+        (RunsGenerator::format_run): Emit markedOutlier.
+
+        * public/include/admin-header.php:
+
+        * public/include/db.php:
+        (Database::is_true): Made it static.
+
+        * public/include/manifest.php:
+        (Manifest::platforms):
+
+        * public/index.html: Call into /api/runs/ with ?cache=true.
+
+        * public/privileged-api/update-run-status.php: Added.
+        (main): Updates the newly added column in test_runs table.
+
+        * public/v2/app.js:
+        (App.Pane._fetch):
+        (App.Pane.refetchRuns): Extracted from App.Pane._fetch.
+        (App.Pane._didFetchRuns): Renamed from _updateChartData.
+        (App.Pane._setNewChartData): Added. Pick the right time series based based on the value of showOutlier.
+        Cloning chartData is necessary when toggling the outlier visibility or using statistics tools because
+        the interactive chart component only observes changes to chartData and not individual properties of it.
+        (App.Pane._highlightPointsMarkedAsOutlier): Added. Highlight points marked as outliers.
+        (App.Pane._movingAverageOrEnvelopeStrategyDidChange): Call to _setNewChartData replaced the code to
+        clone chartData here.
+
+        (App.PaneController.actions.toggleShowOutlier): Toggle the visibility of points marked as outliers by
+        invoking App.Pane._setNewChartData.
+        (App.PaneController._detailsChanged): Don't hide the analysis pane when details changed since keep
+        opening the pane for marking points as outliers would be annoying.
+        (App.PaneController._updateCanAnalyze): Update 'cannotMarkOutlier' as well as 'cannotAnalyze'.
+        (App.PaneController.selectedMeasurement): Added.
+        (App.PaneController.showOutlierTitle): Added.
+        (App.PaneController._selectedItemIsMarkedOutlierDidChange): Added. Call out to setMarkedOutlier to
+        mark the selected point as an outlier via the newly added privileged API.
+
+        * public/v2/chart-pane.css: Updated styles.
+
+        * public/v2/data.js:
+        (PrivilegedAPI._post): Report the semantic errors.
+        (Measurement.prototype.markedOutlier): Added.
+        (Measurement.prototype.setMarkedOutlier): Added. Uses PrivilegedAPI to update the database.
+        (RunsData.prototype.timeSeriesByCommitTime): Added a new argument, includeOutliers, to indicate
+        whether the time series should include measurements marked as outliers or not.
+        (RunsData.prototype.timeSeriesByBuildTime): Ditto.
+        (RunsData.prototype._timeSeriesByTimeInternal): Extracted from timeSeriesByCommitTime and
+        timeSeriesByBuildTime to share code. Now ignores measurements marked as outliers if needed.
+
+        * public/v2/index.html: Added an icon for showing and hiding outliers. Also added a checkbox to
+        mark individual points as outliers.
+
+        * public/v2/interactive-chart.js:
+        (App.InteractiveChartComponent._selectClosestPointToMouseAsCurrentItem): Re-enable the distance
+        heuristics that takes vertical closeness into account. This heuristics is more useful when marking
+        some points as outliers. This heuristics was disabled because the behavior was unpredictable but
+        with the arrow key navigation support, this is no longer an issue.
+
+        * public/v2/manifest.js:
+        (App.Manifest._formatFetchedData): Added showOutlier to the chart data. This function dynamically
+        updates the time series in this chart data in order to include or exclude outliers.
+
 2015-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard should be able to trigger A/B testing jobs for iOS

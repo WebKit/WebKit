@@ -333,10 +333,15 @@ App.Manifest = Ember.Controller.extend({
         var unitSuffix = unit ? ' ' + unit : '';
         var deltaFormatterWithoutSign = useSI ? d3.format('.2s') : d3.format('.2g');
 
+        var currentTimeSeries = configurations.current.timeSeriesByCommitTime(false);
+        var baselineTimeSeries = configurations.baseline ? configurations.baseline.timeSeriesByCommitTime(false) : null;
+        var targetTimeSeries = configurations.target ? configurations.target.timeSeriesByCommitTime(false) : null;
+        var unfilteredCurrentTimeSeries, unfilteredBaselineTimeSeries, unfilteredTargetTimeSeries;
+
         return {
-            current: configurations.current.timeSeriesByCommitTime(),
-            baseline: configurations.baseline ? configurations.baseline.timeSeriesByCommitTime() : null,
-            target: configurations.target ? configurations.target.timeSeriesByCommitTime() : null,
+            current: currentTimeSeries,
+            baseline: baselineTimeSeries,
+            target: targetTimeSeries,
             unit: unit,
             formatWithUnit: function (value) { return this.formatter(value) + unitSuffix; },
             formatWithDeltaAndUnit: function (value, delta)
@@ -346,6 +351,17 @@ App.Manifest = Ember.Controller.extend({
             formatter: useSI ? d3.format('.4s') : d3.format('.4g'),
             deltaFormatter: useSI ? d3.format('+.2s') : d3.format('+.2g'),
             smallerIsBetter: smallerIsBetter,
+            showOutlier: function (show)
+            {
+                if (!unfilteredCurrentTimeSeries) {
+                    unfilteredCurrentTimeSeries = configurations.current.timeSeriesByCommitTime(true);
+                    unfilteredBaselineTimeSeries = configurations.baseline ? configurations.baseline.timeSeriesByCommitTime(true) : null;
+                    unfilteredTargetTimeSeries = configurations.target ? configurations.target.timeSeriesByCommitTime(true) : null;
+                }
+                this.current = show ? unfilteredCurrentTimeSeries : currentTimeSeries;
+                this.baseline = show ? unfilteredBaselineTimeSeries : baselineTimeSeries;
+                this.target = show ? unfilteredTargetTimeSeries : targetTimeSeries;
+            },
         };
     }
 }).create();

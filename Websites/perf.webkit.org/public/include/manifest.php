@@ -79,7 +79,7 @@ class ManifestGenerator {
         $platform_metrics = array();
         if ($config_table) {
             foreach ($config_table as $config_row) {
-                if ($is_dashboard && !$this->db->is_true($config_row['config_is_in_dashboard']))
+                if ($is_dashboard && !Database::is_true($config_row['config_is_in_dashboard']))
                     continue;
 
                 $new_last_modified = array_get($config_row, 'config_runs_last_modified', 0);
@@ -104,7 +104,7 @@ class ManifestGenerator {
         $platforms = array();
         if ($platform_table) {
             foreach ($platform_table as $platform_row) {
-                if ($this->db->is_true($platform_row['platform_hidden']))
+                if (Database::is_true($platform_row['platform_hidden']))
                     continue;
                 $id = $platform_row['platform_id'];
                 if (array_key_exists($id, $platform_metrics)) {

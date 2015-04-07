@@ -39,9 +39,10 @@ PrivilegedAPI._post = function (url, parameters)
             data: parameters ? JSON.stringify(parameters) : '{}',
             dataType: 'json',
         }).done(function (data) {
-            if (data.status != 'OK')
+            if (data.status != 'OK') {
+                console.log('PrivilegedAPI failed', data);
                 reject(data.status);
-            else
+            } else
                 resolve(data);
         }).fail(function (xhr, status, error) {
             reject(xhr.status + (error ? ', ' + error : '') + '\n\nWith response:\n' + xhr.responseText);
@@ -288,6 +289,20 @@ Measurement.prototype.hasBugs = function ()
     return bugs && Object.keys(bugs).length;
 }
 
+Measurement.prototype.markedOutlier = function ()
+{
+    return this._raw['markedOutlier'];
+}
+
+Measurement.prototype.setMarkedOutlier = function (markedOutlier)
+{
+    var params = {'run': this.id(), 'markedOutlier': markedOutlier};
+    return PrivilegedAPI.sendRequest('update-run-status', params).then(function (data) {
+    }, function (error) {
+        alert('Failed to update the outlier status: ' + error);
+    });
+}
+
 function RunsData(rawData)
 {
     this._measurements = rawData.map(function (run) { return new Measurement(run); });
@@ -298,29 +313,32 @@ RunsData.prototype.count = function ()
     return this._measurements.length;
 }
 
-RunsData.prototype.timeSeriesByCommitTime = function ()
+RunsData.prototype.timeSeriesByCommitTime = function (includeOutliers)
 {
-    return new TimeSeries(this._measurements.map(function (measurement) {
-        var confidenceInterval = measurement.confidenceInterval();
-        return {
-            measurement: measurement,
-            time: measurement.latestCommitTime(),
-            value: measurement.mean(),
-            interval: measurement.confidenceInterval(),
-        };
-    }));
+    return this._timeSeriesByTimeInternal(true, includeOutliers);
 }
 
-RunsData.prototype.timeSeriesByBuildTime = function ()
+RunsData.prototype.timeSeriesByBuildTime = function (includeOutliers)
 {
-    return new TimeSeries(this._measurements.map(function (measurement) {
-        return {
+    return this._timeSeriesByTimeInternal(false, includeOutliers);
+}
+
+RunsData.prototype._timeSeriesByTimeInternal = function (useCommitType, includeOutliers)
+{
+    var series = new Array();
+    var seriesIndex = 0;
+    for (var measurement of this._measurements) {
+        if (measurement.markedOutlier() && !includeOutliers)
+            continue;
+        series.push({
             measurement: measurement,
-            time: measurement.buildTime(),
+            time: useCommitType ? measurement.latestCommitTime() : measurement.buildTime(),
             value: measurement.mean(),
             interval: measurement.confidenceInterval(),
-        };
-    }));
+            markedOutlier: measurement.markedOutlier(),
+        });
+    }
+    return new TimeSeries(series);
 }
 
 // FIXME: We need to devise a way to fetch runs in multiple chunks so that

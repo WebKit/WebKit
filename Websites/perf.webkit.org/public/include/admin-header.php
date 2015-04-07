@@ -130,7 +130,7 @@ END;
             $show_update_button = $show_update_button_if_needed;
             break;
         case 'boolean':
-            $checkedness = $this->db->is_true($value) ? ' checked' : '';
+            $checkedness = Database::is_true($value) ? ' checked' : '';
             echo <<< END
 <input type="checkbox" name="$name"$checkedness>
 END;

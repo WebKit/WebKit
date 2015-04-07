@@ -60,7 +60,7 @@ class Database
         $this->connection = false;
     }
 
-    function is_true($value) {
+    static function is_true($value) {
         return $value == 't';
     }
 

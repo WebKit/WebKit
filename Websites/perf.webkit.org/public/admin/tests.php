@@ -196,9 +196,9 @@ EOF;
                         if (!$configurations)
                             continue;
                         echo "<label><input type=\"checkbox\" name=\"metric_platforms[]\" value=\"{$platform['platform_id']}\"";
-                        if ($db->is_true($configurations[0]['config_is_in_dashboard']))
+                        if (Database::is_true($configurations[0]['config_is_in_dashboard']))
                             echo ' checked';
-                        else if ($db->is_true($platform['platform_hidden']))
+                        else if (Database::is_true($platform['platform_hidden']))
                             echo 'disabled';
                         echo ">$platform_name</label>";
                     }

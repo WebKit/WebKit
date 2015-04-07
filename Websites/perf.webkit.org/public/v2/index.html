@@ -150,13 +150,15 @@
                     {{#if movingAverageStrategies}}
                         <a href="javascript:false" title="Statistical Tools" class="stat-button" {{action "toggleStatPane"}}>{{partial "stat-button"}}</a>
                     {{/if}}
-                    {{#if App.Manifest.bugTrackers}}
-                        <a href="javascript:false" title="Analysis" class="bugs-button" {{action "toggleBugsPane"}}>
-                            {{partial "analysis-button"}}
-                        </a>
-                    {{/if}}
+                    <a href="javascript:false" {{bind-attr title=showOutlierTitle class=":outlier-button showOutlier:show:hide"}}
+                        {{action "toggleShowOutlier"}}>
+                        {{partial "outlier-button"}}
+                    </a>
+                    <a href="javascript:false" title="Analyze the selected range" class="analysis-button" {{action "toggleBugsPane"}}>
+                        {{partial "analysis-button"}}
+                    </a>
                     {{#if App.Manifest.repositoriesWithReportedCommits}}
-                        <a href="javascript:false" title="Search" class="search-button" {{action "toggleSearchPane"}}>{{partial "search-button"}}</a>
+                        <a href="javascript:false" title="Search commits by a keyword" class="search-button" {{action "toggleSearchPane"}}>{{partial "search-button"}}</a>
                     {{/if}}
                 </header>
 
@@ -204,8 +206,14 @@
                 </div>
 
                 <div {{bind-attr class=":popup-pane :analysis-pane showingAnalysisPane::hidden"}}>
-                    <label>Name: {{input type=text value=newAnalysisTaskName}}</label>
-                    <button {{action "createAnalysisTask"}} {{bind-attr disabled=cannotAnalyze}}>Analyze</button>
+                    <section class="analysis-option-option">
+                        <h1>Start A/B testing or associate bugs</h1>
+                        <label>Name: {{input type=text value=newAnalysisTaskName}} <button {{action "createAnalysisTask"}} {{bind-attr disabled=cannotAnalyze}}>Analyze</button></label>
+                    </section>
+                    <section class="analysis-option-option">
+                        <h1>Marking outliers</h1>
+                        <label>{{input type=checkbox checked=selectedItemIsMarkedOutlier disabled=cannotMarkOutlier}} Mark as an outlier and hide it.</label>
+                    </section>
                 </div>
 
                 <form {{bind-attr class=":popup-pane :search-pane showingSearchPane::hidden"}}>
@@ -402,6 +410,26 @@
                 </section>
             {{/if}}
         </section>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="outlier-button">
+        <svg class="outlier-button icon-button" viewBox="0 0 100 100">
+            <g stroke="black" fill="black" stroke-width="15">
+                <line x1="0" y1="70" x2="40" y2="70"/>
+                <circle cx="15" cy="70" r="8"/>
+                <circle cx="45" cy="70" r="8"/>
+                <circle cx="85" cy="70" r="8"/>
+                <line x1="85" y1="70" x2="100" y2="70"/>
+                <g class="show-outlier-icon">
+                    <line x1="45" y1="70" x2="65" y2="20"/>
+                    <line x1="65" y1="20" x2="85" y2="70"/>
+                    <circle cx="65" cy="20" r="8"/>
+                </g>
+                <g class="hide-outlier-icon">
+                    <line x1="45" y1="70" x2="85" y2="70"/>
+                </g>
+            </g>
+        </svg>
     </script>
 
     <script type="text/x-handlebars" data-template-name="analysis-button">
