@@ -2064,6 +2064,8 @@ policies and contribution forms [3].
 
     function AssertionError(message)
     {
+        var e = new Error();
+        this.stack = e.stack.substring(e.stack.indexOf('\n')+1, e.stack.length);
         this.message = message;
     }
 

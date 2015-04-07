@@ -54,9 +54,9 @@ ErrorPrototype::ErrorPrototype(VM& vm, Structure* structure)
 {
 }
 
-void ErrorPrototype::finishCreation(VM& vm, JSGlobalObject*)
+void ErrorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
-    Base::finishCreation(vm, "");
+    Base::finishCreation(globalObject->globalExec(), vm, "");
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("Error"))), DontEnum);
 }

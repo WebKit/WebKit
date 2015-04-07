@@ -540,98 +540,6 @@ void VM::releaseExecutableMemory()
     heap.collectAllGarbage();
 }
 
-static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, unsigned bytecodeOffset)
-{
-    ErrorInstance::SourceAppender appender = exception->sourceAppender();
-    exception->clearSourceAppender();
-    RuntimeType type = exception->runtimeTypeForCause();
-    exception->clearRuntimeTypeForCause();
-    
-    if (!callFrame->codeBlock()->hasExpressionInfo())
-        return;
-    
-    int startOffset = 0;
-    int endOffset = 0;
-    int divotPoint = 0;
-    unsigned line = 0;
-    unsigned column = 0;
-    
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divotPoint, startOffset, endOffset, line, column);
-    
-    int expressionStart = divotPoint - startOffset;
-    int expressionStop = divotPoint + endOffset;
-    
-    const String& sourceString = codeBlock->source()->source();
-    if (!expressionStop || expressionStart > static_cast<int>(sourceString.length()))
-        return;
-    
-    VM* vm = &callFrame->vm();
-    JSValue jsMessage = exception->getDirect(*vm, vm->propertyNames->message);
-    if (!jsMessage || !jsMessage.isString())
-        return;
-    
-    String message = asString(jsMessage)->value(callFrame);
-    
-    if (expressionStart < expressionStop)
-        message = appender(message, codeBlock->source()->getRange(expressionStart, expressionStop), type, ErrorInstance::FoundExactSource);
-    else {
-        // No range information, so give a few characters of context.
-        const StringImpl* data = sourceString.impl();
-        int dataLength = sourceString.length();
-        int start = expressionStart;
-        int stop = expressionStart;
-        // Get up to 20 characters of context to the left and right of the divot, clamping to the line.
-        // Then strip whitespace.
-        while (start > 0 && (expressionStart - start < 20) && (*data)[start - 1] != '\n')
-            start--;
-        while (start < (expressionStart - 1) && isStrWhiteSpace((*data)[start]))
-            start++;
-        while (stop < dataLength && (stop - expressionStart < 20) && (*data)[stop] != '\n')
-            stop++;
-        while (stop > expressionStart && isStrWhiteSpace((*data)[stop - 1]))
-            stop--;
-        message = appender(message, codeBlock->source()->getRange(start, stop), type, ErrorInstance::FoundApproximateSource);
-    }
-    
-    exception->putDirect(*vm, vm->propertyNames->message, jsString(vm, message));
-}
-
-class FindFirstCallerFrameWithCodeblockFunctor {
-public:
-    FindFirstCallerFrameWithCodeblockFunctor(CallFrame* startCallFrame)
-        : m_startCallFrame(startCallFrame)
-        , m_foundCallFrame(nullptr)
-        , m_foundStartCallFrame(false)
-        , m_index(0)
-    { }
-
-    StackVisitor::Status operator()(StackVisitor& visitor)
-    {
-        if (!m_foundStartCallFrame && (visitor->callFrame() == m_startCallFrame))
-            m_foundStartCallFrame = true;
-
-        if (m_foundStartCallFrame) {
-            if (visitor->callFrame()->codeBlock()) {
-                m_foundCallFrame = visitor->callFrame();
-                return StackVisitor::Done;
-            }
-            m_index++;
-        }
-
-        return StackVisitor::Continue;
-    }
-
-    CallFrame* foundCallFrame() const { return m_foundCallFrame; }
-    unsigned index() const { return m_index; }
-
-private:
-    CallFrame* m_startCallFrame;
-    CallFrame* m_foundCallFrame;
-    bool m_foundStartCallFrame;
-    unsigned m_index;
-};
-
 JSValue VM::throwException(ExecState* exec, JSValue error)
 {
     if (Options::breakOnThrow()) {
@@ -645,44 +553,7 @@ JSValue VM::throwException(ExecState* exec, JSValue error)
     interpreter->getStackTrace(stackTrace);
     m_exceptionStack = RefCountedArray<StackFrame>(stackTrace);
     m_exception = error;
-    
-    if (stackTrace.isEmpty() || !error.isObject())
-        return error;
-    JSObject* exception = asObject(error);
-    
-    StackFrame stackFrame;
-    for (unsigned i = 0 ; i < stackTrace.size(); ++i) {
-        stackFrame = stackTrace.at(i);
-        if (stackFrame.bytecodeOffset)
-            break;
-    }
-    if (!hasErrorInfo(exec, exception)) {
-        // FIXME: We should only really be adding these properties to VM generated exceptions,
-        // but the inspector currently requires these for all thrown objects.
-        unsigned line;
-        unsigned column;
-        stackFrame.computeLineAndColumn(line, column);
-        exception->putDirect(*this, Identifier::fromString(this, "line"), jsNumber(line), ReadOnly | DontDelete);
-        exception->putDirect(*this, Identifier::fromString(this, "column"), jsNumber(column), ReadOnly | DontDelete);
-        if (!stackFrame.sourceURL.isEmpty())
-            exception->putDirect(*this, Identifier::fromString(this, "sourceURL"), jsString(this, stackFrame.sourceURL), ReadOnly | DontDelete);
-    }
-    if (exception->isErrorInstance() && static_cast<ErrorInstance*>(exception)->hasSourceAppender()) {
-        FindFirstCallerFrameWithCodeblockFunctor functor(exec);
-        topCallFrame->iterate(functor);
-        CallFrame* callFrame = functor.foundCallFrame();
-        unsigned stackIndex = functor.index();
 
-        if (callFrame && callFrame->codeBlock()) {
-            stackFrame = stackTrace.at(stackIndex);
-            appendSourceToError(callFrame, static_cast<ErrorInstance*>(exception), stackFrame.bytecodeOffset);
-        }
-    }
-
-    if (exception->hasProperty(exec, this->propertyNames->stack))
-        return error;
-    
-    exception->putDirect(*this, propertyNames->stack, interpreter->stackTraceAsString(topCallFrame, stackTrace), DontEnum);
     return error;
 }
     

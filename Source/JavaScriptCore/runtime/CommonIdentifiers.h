@@ -82,6 +82,7 @@
     macro(clear) \
     macro(close) \
     macro(closed) \
+    macro(column) \
     macro(compilationKind) \
     macro(compilations) \
     macro(compile) \
@@ -127,6 +128,7 @@
     macro(keys) \
     macro(lastIndex) \
     macro(length) \
+    macro(line) \
     macro(message) \
     macro(multiline) \
     macro(name) \
@@ -153,6 +155,7 @@
     macro(size) \
     macro(slice) \
     macro(source) \
+    macro(sourceURL) \
     macro(sourceCode) \
     macro(stack) \
     macro(subarray) \

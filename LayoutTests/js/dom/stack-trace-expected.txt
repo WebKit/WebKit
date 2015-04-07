@@ -258,7 +258,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     2   selfRecursive3 at stack-trace.js
 
 --> Stack Trace:
-    0   throwError at stack-trace.js:139:13
+    0   throwError at stack-trace.js:139:20
     1   valueOf at stack-trace.js:146:27
     2   getter1 at stack-trace.js:149:11
     3   nonInlineable at stack-trace.js:175:17
@@ -270,7 +270,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     9   global code at stack-trace.js:205:16
 
 --> Stack Trace:
-    0   throwError at stack-trace.js:139:13
+    0   throwError at stack-trace.js:139:20
     1   getter2 at stack-trace.js:155:11
     2   nonInlineable at stack-trace.js:177:17
     3   inlineable at stack-trace.js:183:27
@@ -281,7 +281,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     8   global code at stack-trace.js:205:16
 
 --> Stack Trace:
-    0   throwError at stack-trace.js:139:13
+    0   throwError at stack-trace.js:139:20
     1   getter3 at stack-trace.js:167:16
     2   nonInlineable at stack-trace.js:179:17
     3   inlineable at stack-trace.js:183:27
@@ -292,7 +292,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     8   global code at stack-trace.js:205:16
 
 --> Stack Trace:
-    0   throwError at stack-trace.js:139:13
+    0   throwError at stack-trace.js:139:20
     1   valueOf at stack-trace.js:163:27
     2   getter3 at stack-trace.js:169:16
     3   nonInlineable at stack-trace.js:179:17
@@ -304,7 +304,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     9   global code at stack-trace.js:205:16
 
 --> Stack Trace:
-    0   h at stack-trace.js:213:17
+    0   h at stack-trace.js:213:24
     1   map at [native code]
     2   mapTest at stack-trace.js:220:10
     3   mapTestDriver at stack-trace.js:226:16
@@ -319,19 +319,19 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     5   global code at stack-trace.js:237:18
 
 --> Stack Trace:
-    0   throwError at stack-trace.js:139:13
+    0   throwError at stack-trace.js:139:20
     1   dfgFunction at stack-trace.js:246:19
     2   map at [native code]
     3   global code at stack-trace.js:255:18
 
 --> Stack Trace:
-    0   throwError at stack-trace.js:139:13
+    0   throwError at stack-trace.js:139:20
     1   dfgFunction at stack-trace.js:246:19
     2   f at stack-trace.js:264:10
     3   global code at stack-trace.js:270:6
 
 --> Stack Trace:
-    0   willThrow at stack-trace.js:308:21
+    0   willThrow at stack-trace.js:308:28
     1   dfg1 at stack-trace.js:319:13
     2   dfg2 at stack-trace.js:323:9
     3   dfg3 at stack-trace.js:327:9
@@ -339,7 +339,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     5   global code at stack-trace.js:366:8
 
 --> Stack Trace:
-    0   willThrowFunc at stack-trace.js:313:62
+    0   willThrowFunc at stack-trace.js:313:69
     1   dfg4 at stack-trace.js:331:27
     2   dfg5 at stack-trace.js:335:9
     3   dfg6 at stack-trace.js:339:9
@@ -347,7 +347,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     5   global code at stack-trace.js:367:8
 
 --> Stack Trace:
-    0   inlineableThrow at stack-trace.js:302:33
+    0   inlineableThrow at stack-trace.js:302:40
     1   willThrowEventually at stack-trace.js:311:24
     2   dfg7 at stack-trace.js:343:13
     3   dfg8 at stack-trace.js:347:9
@@ -356,7 +356,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     6   global code at stack-trace.js:368:8
 
 --> Stack Trace:
-    0   inlineableThrow at stack-trace.js:302:33
+    0   inlineableThrow at stack-trace.js:302:40
     1   willThrowEventuallyFunc at stack-trace.js:314:59
     2   dfga at stack-trace.js:355:37
     3   dfgb at stack-trace.js:359:9

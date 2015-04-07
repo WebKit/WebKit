@@ -1,3 +1,98 @@
+2015-04-07  Matthew Mirman  <mmirman@apple.com>
+
+        Source and stack information should get appended only to native errors
+        and should be added directly after construction rather than when thrown. 
+        This fixes frozen objects being unfrozen when thrown while conforming to 
+        ecma script standard and other browser behavior.
+        rdar://problem/19927293
+        https://bugs.webkit.org/show_bug.cgi?id=141871
+        
+        Reviewed by Geoffrey Garen.
+
+        Appending stack, source, line, and column information to an object whenever that object is thrown 
+        is incorrect because it violates the ecma script standard for the behavior of throw.  Suppose for example
+        that the object being thrown already has one of these properties or is frozen.  Adding the properties 
+        would then violate the frozen contract or overwrite those properties.  Other browsers do not do this,
+        and doing this causes unnecessary performance hits in code with heavy use of the throw construct as
+        a control flow construct rather than just an error reporting mechanism.  
+        
+        Because WebCore adds "native" errors which do not inherit from any JSC native error, 
+        appending the error properties as a seperate call after construction of the error is required 
+        to avoid having to manually truncate the stack and gather local source information due to 
+        the stack being extended by a nested call to construct one of the native jsc error.
+        
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * interpreter/Interpreter.h:
+        * parser/ParserError.h:
+        (JSC::ParserError::toErrorObject):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Error.cpp:
+        (JSC::createError):
+        (JSC::createEvalError):
+        (JSC::createRangeError):
+        (JSC::createReferenceError):
+        (JSC::createSyntaxError):
+        (JSC::createTypeError):
+        (JSC::createNotEnoughArgumentsError):
+        (JSC::createURIError):
+        (JSC::createOutOfMemoryError):
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::FindFirstCallerFrameWithCodeblockFunctor):
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::operator()):
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::foundCallFrame):
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::index):
+        (JSC::addErrorInfoAndGetBytecodeOffset):  Added.
+        (JSC::addErrorInfo): Added special case for appending complete error info 
+        to a newly constructed error object.
+        * runtime/Error.h:
+        * runtime/ErrorConstructor.cpp:
+        (JSC::Interpreter::constructWithErrorConstructor):
+        (JSC::Interpreter::callErrorConstructor):
+        * runtime/ErrorInstance.cpp:
+        (JSC::appendSourceToError): Moved from VM.cpp
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::FindFirstCallerFrameWithCodeblockFunctor):
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::operator()):
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::foundCallFrame):
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::index):
+        (JSC::addErrorInfoAndGetBytecodeOffset):
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::create):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::finishCreation):
+        * runtime/ExceptionFuzz.cpp:
+        (JSC::doExceptionFuzzing):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createError):
+        (JSC::createInvalidFunctionApplyParameterError):
+        (JSC::createInvalidInParameterError):
+        (JSC::createInvalidInstanceofParameterError):
+        (JSC::createNotAConstructorError):
+        (JSC::createNotAFunctionError):
+        (JSC::createNotAnObjectError):
+        (JSC::throwOutOfMemoryError):
+        (JSC::createStackOverflowError): Deleted.
+        (JSC::createOutOfMemoryError): Deleted.
+        * runtime/ExceptionHelpers.h:
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::constructArrayBuffer):
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::arrayBufferProtoFuncSlice):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::create):
+        (JSC::JSGenericTypedArrayView<Adaptor>::createUninitialized):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::Interpreter::constructWithNativeErrorConstructor):
+        (JSC::Interpreter::callNativeErrorConstructor):
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+        (JSC::appendSourceToError): Moved to Error.cpp
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::FindFirstCallerFrameWithCodeblockFunctor): Deleted.
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::operator()): Deleted.
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::foundCallFrame): Deleted.
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::index): Deleted.
+        * tests/stress/freeze_leek.js: Added.
+
 2015-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ES6: Show Symbol properties on Objects

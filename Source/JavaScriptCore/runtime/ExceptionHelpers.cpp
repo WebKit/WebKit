@@ -75,11 +75,6 @@ JSObject* createStackOverflowError(ExecState* exec)
     return createRangeError(exec, ASCIILiteral("Maximum call stack size exceeded."));
 }
 
-JSObject* createStackOverflowError(JSGlobalObject* globalObject)
-{
-    return createRangeError(globalObject, ASCIILiteral("Maximum call stack size exceeded."));
-}
-
 JSObject* createUndefinedVariableError(ExecState* exec, const Identifier& ident)
 {
     if (exec->propertyNames().isPrivateName(ident)) {
@@ -239,48 +234,44 @@ static String invalidParameterInstanceofSourceAppender(const String& originalMes
     return makeString(rightHandSide, " is not a function. (evaluating '", sourceText, "')");
 }
 
-JSObject* createError(ExecState* exec, ErrorFactory errorFactory, JSValue value, const String& message, ErrorInstance::SourceAppender appender)
+JSObject* createError(ExecState* exec, JSValue value, const String& message, ErrorInstance::SourceAppender appender)
 {
     String errorMessage = makeString(errorDescriptionForValue(exec, value)->value(exec), ' ', message);
-    JSObject* exception = errorFactory(exec, errorMessage);
+    JSObject* exception = createTypeError(exec, errorMessage, appender, runtimeTypeForValue(value));
     ASSERT(exception->isErrorInstance());
-    static_cast<ErrorInstance*>(exception)->setSourceAppender(appender);
-    static_cast<ErrorInstance*>(exception)->setRuntimeTypeForCause(runtimeTypeForValue(value));
     return exception;
 }
 
 JSObject* createInvalidFunctionApplyParameterError(ExecState* exec, JSValue value)
 {
-    JSObject* exception = createTypeError(exec, makeString("second argument to Function.prototype.apply must be an Array-like object"));
+    JSObject* exception = createTypeError(exec, makeString("second argument to Function.prototype.apply must be an Array-like object"), defaultSourceAppender, runtimeTypeForValue(value));
     ASSERT(exception->isErrorInstance());
-    static_cast<ErrorInstance*>(exception)->setSourceAppender(defaultSourceAppender);
-    static_cast<ErrorInstance*>(exception)->setRuntimeTypeForCause(runtimeTypeForValue(value));
     return exception;
 }
 
 JSObject* createInvalidInParameterError(ExecState* exec, JSValue value)
 {
-    return createError(exec, createTypeError, value, makeString("is not an Object."), invalidParameterInSourceAppender);
+    return createError(exec, value, makeString("is not an Object."), invalidParameterInSourceAppender);
 }
 
 JSObject* createInvalidInstanceofParameterError(ExecState* exec, JSValue value)
 {
-    return createError(exec, createTypeError, value, makeString("is not a function."), invalidParameterInstanceofSourceAppender);
+    return createError(exec, value, makeString("is not a function."), invalidParameterInstanceofSourceAppender);
 }
 
 JSObject* createNotAConstructorError(ExecState* exec, JSValue value)
 {
-    return createError(exec, createTypeError, value, ASCIILiteral("is not a constructor"), defaultSourceAppender);
+    return createError(exec, value, ASCIILiteral("is not a constructor"), defaultSourceAppender);
 }
 
 JSObject* createNotAFunctionError(ExecState* exec, JSValue value)
 {
-    return createError(exec, createTypeError, value, ASCIILiteral("is not a function"), notAFunctionSourceAppender);
+    return createError(exec, value, ASCIILiteral("is not a function"), notAFunctionSourceAppender);
 }
 
 JSObject* createNotAnObjectError(ExecState* exec, JSValue value)
 {
-    return createError(exec, createTypeError, value, ASCIILiteral("is not an object"), defaultSourceAppender);
+    return createError(exec, value, ASCIILiteral("is not an object"), defaultSourceAppender);
 }
 
 JSObject* createErrorForInvalidGlobalAssignment(ExecState* exec, const String& propertyName)
@@ -288,14 +279,9 @@ JSObject* createErrorForInvalidGlobalAssignment(ExecState* exec, const String& p
     return createReferenceError(exec, makeString("Strict mode forbids implicit creation of global property '", propertyName, '\''));
 }
 
-JSObject* createOutOfMemoryError(JSGlobalObject* globalObject)
-{
-    return createError(globalObject, ASCIILiteral("Out of memory"));
-}
-
 JSObject* throwOutOfMemoryError(ExecState* exec)
 {
-    return exec->vm().throwException(exec, createOutOfMemoryError(exec->lexicalGlobalObject()));
+    return exec->vm().throwException(exec, createOutOfMemoryError(exec));
 }
 
 JSObject* throwStackOverflowError(ExecState* exec)

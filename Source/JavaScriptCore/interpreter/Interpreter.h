@@ -267,6 +267,8 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE void dumpCallFrame(CallFrame*);
 
+        void getStackTrace(Vector<StackFrame>& results, size_t maxStackSize = std::numeric_limits<size_t>::max());
+
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
@@ -274,7 +276,7 @@ namespace JSC {
 
         JSValue execute(CallFrameClosure&);
 
-        void getStackTrace(Vector<StackFrame>& results, size_t maxStackSize = std::numeric_limits<size_t>::max());
+
 
         void dumpRegisters(CallFrame*);
         

@@ -24,12 +24,16 @@
 #include "Interpreter.h"
 #include "RuntimeType.h"
 #include "SourceProvider.h"
+#include <wtf/Vector.h>
 
 namespace JSC {
 
 class ErrorInstance : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
+
+    enum SourceTextWhereErrorOccurred { FoundExactSource, FoundApproximateSource };
+    typedef String (*SourceAppender) (const String& originalMessage, const String& sourceText, RuntimeType, SourceTextWhereErrorOccurred);
 
     DECLARE_INFO;
 
@@ -38,20 +42,21 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), info());
     }
 
-    static ErrorInstance* create(VM& vm, Structure* structure, const String& message, Vector<StackFrame> stackTrace = Vector<StackFrame>())
+    static ErrorInstance* create(ExecState* exec, VM& vm, Structure* structure, const String& message, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, bool useCurrentFrame = true)
     {
         ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm.heap)) ErrorInstance(vm, structure);
-        instance->finishCreation(vm, message, stackTrace);
+        instance->m_sourceAppender = appender;
+        instance->m_runtimeTypeForCause = type;
+        instance->finishCreation(exec, vm, message, useCurrentFrame);
         return instance;
     }
 
-    static ErrorInstance* create(ExecState* exec, Structure* structure, JSValue message, Vector<StackFrame> stackTrace = Vector<StackFrame>())
+    static ErrorInstance* create(ExecState* exec, Structure* structure, JSValue message, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, bool useCurrentFrame = true)
     {
-        return create(exec->vm(), structure, message.isUndefined() ? String() : message.toString(exec)->value(exec), stackTrace);
+        return create(exec, exec->vm(), structure, message.isUndefined() ? String() : message.toString(exec)->value(exec), appender, type, useCurrentFrame);
     }
 
-    enum SourceTextWhereErrorOccurred { FoundExactSource, FoundApproximateSource };
-    typedef String (*SourceAppender) (const String& originalMessage, const String& sourceText, RuntimeType, SourceTextWhereErrorOccurred);
+    static void addErrorInfo(ExecState*, VM&, JSObject*, bool = true);
 
     bool hasSourceAppender() const { return !!m_sourceAppender; }
     SourceAppender sourceAppender() const { return m_sourceAppender; }
@@ -64,7 +69,7 @@ public:
 protected:
     explicit ErrorInstance(VM&, Structure*);
 
-    void finishCreation(VM&, const String&, Vector<StackFrame> = Vector<StackFrame>());
+    void finishCreation(ExecState*, VM&, const String&, bool useCurrentFrame = true);
 
     SourceAppender m_sourceAppender { nullptr };
     RuntimeType m_runtimeTypeForCause { TypeNothing };

@@ -1,3 +1,42 @@
+2015-04-07  Matthew Mirman  <mmirman@apple.com>
+
+        Source and stack information should get appended only to native errors
+        and should be added after construction rather than when thrown.
+        This fixes frozen objects being unfrozen when thrown while conforming to 
+        ecma script standard and other browser behavior.
+        rdar://problem/19927293
+        https://bugs.webkit.org/show_bug.cgi?id=141871
+        
+        Reviewed by Geoffrey Garen.
+
+        Fixes tests to throw new Errors such that they will contain line, column, and stack information 
+        as expected, and fixes the column in the error in the expected output.
+        
+        * http/tests/w3c/resources/testharness.js:  Other browsers don't expect stack information
+        with this test, but we do, and so the AssertionError should include stack information gathered from Error. 
+        This could also have been fixed by changing expectations, but its a good idea to check the stack anyway.
+        * js/dom/exception-linenums-in-html-1.html: Throw "new Error()" rather than "{}".
+        * js/dom/exception-linenums-in-html-2.html: ditto.
+        * js/dom/exception-linenums-in-html-3.html: ditto.
+        * js/dom/script-tests/stack-trace.js: ditto.
+        (throwError): ditto.
+        (h): ditto.
+        (inlineableThrow): ditto.
+        (dfgThing.get willThrow): ditto.
+        (dfgThing.willThrowFunc): ditto.
+        * js/dom/stack-trace-expected.txt: fixed error column expectation. 
+        * js/exception-properties-expected.txt: ditto.
+        * js/script-tests/exception-linenums.js:
+        (exceptionInFunction): throw "new Error()" rather than "{}".
+        (firstPropIsGetter.get getter): ditto
+        (secondPropIsGetter.get getter): ditto
+        (firstPropIsSetter.set setter): ditto
+        (secondPropIsSetter.set setter): ditto
+        * js/script-tests/exception-properties.js: now checking that column, line, and sourceURL are existant on a "new Error"
+        since we now add these at error construction rather than at error throwing.
+        * platform/mac/http/tests/media/media-source/mediasource-addsourcebuffer-expected.txt: fixed expectation to match. 
+        * platform/mac/http/tests/media/media-source/mediasource-sourcebuffer-mode-expected.txt: ditto.
+
 2015-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ES6: Show Symbol properties on Objects

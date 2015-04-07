@@ -3,7 +3,7 @@ Test for correct properties on Error objects.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS enumerableProperties(error) is []
+PASS enumerableProperties(error).sort() is ["column", "line", "sourceURL"]
 PASS enumerableProperties(nativeError).sort() is ["column", "line", "sourceURL"]
 PASS Object.getPrototypeOf(nativeError).name is "RangeError"
 PASS Object.getPrototypeOf(nativeError).message is ""

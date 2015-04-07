@@ -65,10 +65,7 @@ EncodedJSValue JSC_HOST_CALL Interpreter::constructWithNativeErrorConstructor(Ex
     JSValue message = exec->argument(0);
     Structure* errorStructure = static_cast<NativeErrorConstructor*>(exec->callee())->errorStructure();
     ASSERT(errorStructure);
-    Vector<StackFrame> stackTrace;
-    exec->vm().interpreter->getStackTrace(stackTrace, std::numeric_limits<size_t>::max());
-    stackTrace.remove(0);
-    return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, stackTrace));
+    return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false));
 }
 
 ConstructType NativeErrorConstructor::getConstructData(JSCell*, ConstructData& constructData)
@@ -81,10 +78,7 @@ EncodedJSValue JSC_HOST_CALL Interpreter::callNativeErrorConstructor(ExecState* 
 {
     JSValue message = exec->argument(0);
     Structure* errorStructure = static_cast<NativeErrorConstructor*>(exec->callee())->errorStructure();
-    Vector<StackFrame> stackTrace;
-    exec->vm().interpreter->getStackTrace(stackTrace, std::numeric_limits<size_t>::max());
-    stackTrace.remove(0);
-    return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, stackTrace));
+    return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false));
 }
 
 CallType NativeErrorConstructor::getCallData(JSCell*, CallData& callData)

@@ -214,8 +214,9 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     switch (description.type) {
         DOM_EXCEPTION_INTERFACES_FOR_EACH(TRY_TO_CREATE_EXCEPTION)
     }
-
+    
     ASSERT(errorObject);
+    addErrorInfo(exec, asObject(errorObject), true);
     exec->vm().throwException(exec, errorObject);
 }
 

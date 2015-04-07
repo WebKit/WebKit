@@ -136,7 +136,7 @@ try {
 var callCount = 0;
 
 function throwError() {
-    throw {};
+    throw new Error();
 }
 
 var object = {
@@ -210,7 +210,7 @@ for (var k = 0; k < 4; k++) {
 
 function h() {
     if (callCount++ == 1000)
-        throw {};
+        throw new Error();
     if (callCount > 1000) {
         [].map.apply(undefined, throwError);
     }
@@ -299,18 +299,18 @@ function dfgTest(f) {
 }
 
 function inlineableThrow() {
-    if (dfgCount > 500) throw {};
+    if (dfgCount > 500) throw new Error();
 }
 
 var dfgThing = {
     get willThrow() {
         if (dfgCount > 500)
-            throw {};
+            throw new Error();
     },
     get willThrowEventually() {
         inlineableThrow();
     },
-    willThrowFunc: function () { if (dfgCount > 500) throw {}; },
+    willThrowFunc: function () { if (dfgCount > 500) throw new Error(); },
     willThrowEventuallyFunc: function () { inlineableThrow(); }
 }
 dfgThing.__defineGetter__("hostWillThrow", hostThrower);

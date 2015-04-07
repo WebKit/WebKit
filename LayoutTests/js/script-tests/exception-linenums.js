@@ -2,7 +2,7 @@ description('This test exercises the source URL and line number that is embedded
 
 function exceptionInFunction()
 {
-    throw Exception();
+    throw new Error();
 }
 
 var e = undefined;
@@ -71,18 +71,18 @@ shouldBe("typeof e.sourceURL", '"string"');
 shouldBe("e.line", '64');
 
 var firstPropIsGetter = {
-    get getter() { throw {} }
+    get getter() { throw new Error() }
 };
 var secondPropIsGetter = {
     prop: 1,
-    get getter() { throw {} }
+    get getter() { throw new Error() }
 };
 var firstPropIsSetter = {
-    set setter(a) { throw {} }
+    set setter(a) { throw new Error() }
 };
 var secondPropIsSetter = {
     prop: 1,
-    set setter(a) { throw {} }
+    set setter(a) { throw new Error() }
 };
 
 try {

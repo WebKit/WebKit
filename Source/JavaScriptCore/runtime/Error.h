@@ -23,10 +23,12 @@
 #ifndef Error_h
 #define Error_h
 
+#include "ErrorInstance.h"
 #include "InternalFunction.h"
 #include "Interpreter.h"
 #include "JSObject.h"
 #include <stdint.h>
+
 
 namespace JSC {
 
@@ -37,28 +39,33 @@ class JSObject;
 class SourceCode;
 class Structure;
 
-// Methods to create a range of internal errors.
-JSObject* createError(JSGlobalObject*, const String&);
-JSObject* createEvalError(JSGlobalObject*, const String&);
-JSObject* createRangeError(JSGlobalObject*, const String&);
-JSObject* createReferenceError(JSGlobalObject*, const String&);
-JSObject* createSyntaxError(JSGlobalObject*, const String&);
-JSObject* createTypeError(JSGlobalObject*, const String&);
-JSObject* createNotEnoughArgumentsError(JSGlobalObject*);
-JSObject* createURIError(JSGlobalObject*, const String&);
 // ExecState wrappers.
+JSObject* createError(ExecState*, const String&, ErrorInstance::SourceAppender);
+JSObject* createEvalError(ExecState*, const String&, ErrorInstance::SourceAppender);
+JSObject* createRangeError(ExecState*, const String&, ErrorInstance::SourceAppender);
+JSObject* createReferenceError(ExecState*, const String&, ErrorInstance::SourceAppender);
+JSObject* createSyntaxError(ExecState*, const String&, ErrorInstance::SourceAppender);
+JSObject* createTypeError(ExecState*, const String&, ErrorInstance::SourceAppender, RuntimeType);
+JSObject* createNotEnoughArgumentsError(ExecState*, ErrorInstance::SourceAppender);
+JSObject* createURIError(ExecState*, const String&, ErrorInstance::SourceAppender);
+JSObject* createOutOfMemoryError(ExecState*, ErrorInstance::SourceAppender);
+
+
 JS_EXPORT_PRIVATE JSObject* createError(ExecState*, const String&);
-JSObject* createEvalError(ExecState*, const String&);
+JS_EXPORT_PRIVATE JSObject* createEvalError(ExecState*, const String&);
 JS_EXPORT_PRIVATE JSObject* createRangeError(ExecState*, const String&);
 JS_EXPORT_PRIVATE JSObject* createReferenceError(ExecState*, const String&);
 JS_EXPORT_PRIVATE JSObject* createSyntaxError(ExecState*, const String&);
 JS_EXPORT_PRIVATE JSObject* createTypeError(ExecState*, const String&);
 JS_EXPORT_PRIVATE JSObject* createNotEnoughArgumentsError(ExecState*);
-JSObject* createURIError(ExecState*, const String&);
+JS_EXPORT_PRIVATE JSObject* createURIError(ExecState*, const String&);
+JS_EXPORT_PRIVATE JSObject* createOutOfMemoryError(ExecState*);
 
-// Methods to add 
+
+bool addErrorInfoAndGetBytecodeOffset(ExecState*, VM&, JSObject*, bool, CallFrame*&, unsigned&);
+
 bool hasErrorInfo(ExecState*, JSObject* error);
-// ExecState wrappers.
+JS_EXPORT_PRIVATE void addErrorInfo(ExecState*, JSObject*, bool); 
 JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&);
 
 // Methods to throw Errors.

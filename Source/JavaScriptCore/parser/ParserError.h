@@ -89,22 +89,23 @@ public:
         JSGlobalObject* globalObject, const SourceCode& source, 
         int overrideLineNumber = -1)
     {
+        ExecState* exec = globalObject->globalExec();
         switch (m_type) {
         case ErrorNone:
             return nullptr;
         case SyntaxError:
             return addErrorInfo(
-                globalObject->globalExec(), 
-                createSyntaxError(globalObject, m_message), 
+                exec, 
+                createSyntaxError(exec, m_message), 
                 overrideLineNumber == -1 ? m_line : overrideLineNumber, source);
         case EvalError:
-            return createSyntaxError(globalObject, m_message);
+            return createSyntaxError(exec, m_message);
         case StackOverflow: {
             ErrorHandlingScope errorScope(globalObject->vm());
-            return createStackOverflowError(globalObject);
+            return createStackOverflowError(exec);
         }
         case OutOfMemory:
-            return createOutOfMemoryError(globalObject);
+            return createOutOfMemoryError(exec);
         }
         CRASH();
         return nullptr;

@@ -763,7 +763,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
                         PropertySlot slot(globalObject);
                         if (!globalObject->getPropertySlot(callFrame, JSONPPath[i].m_pathEntryName, slot)) {
                             if (entry)
-                                return callFrame->vm().throwException(callFrame, createUndefinedVariableError(globalObject->globalExec(), JSONPPath[i].m_pathEntryName));
+                                return callFrame->vm().throwException(callFrame, createUndefinedVariableError(callFrame, JSONPPath[i].m_pathEntryName));
                             goto failedJSONP;
                         }
                         baseObject = slot.getValue(callFrame, JSONPPath[i].m_pathEntryName);
