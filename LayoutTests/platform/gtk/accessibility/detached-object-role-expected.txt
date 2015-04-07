@@ -1,0 +1,11 @@
+This tests that detached accessible objects report the correct role.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS role != detachedRole is true
+AXRole: AXButton AXRole: AXInvalid
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ Button 2

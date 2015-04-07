@@ -1,5 +1,15 @@
 2014-11-13  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        AX: [ATK] Do not return ATK_ROLE_UNKNOWN for null or otherwise invalid accessible objects
+        https://bugs.webkit.org/show_bug.cgi?id=137867
+
+        Reviewed by Chris Fleizach.
+
+        * platform/gtk/accessibility/detached-object-role-expected.txt: Added.
+        * platform/gtk/accessibility/detached-object-role.html: Added.
+
+2014-11-13  Joanmarie Diggs  <jdiggs@igalia.com>
+
         AX: [ATK] Accessible focus events are emitted when the selection is changed in non-focused combo boxes
         https://bugs.webkit.org/show_bug.cgi?id=137866
 
