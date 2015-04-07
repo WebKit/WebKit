@@ -7303,7 +7303,7 @@
 		078E43D81ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlaybackTargetPicker.h; sourceTree = "<group>"; };
 		078E43DB1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaPlaybackTargetPickerMac.h; path = objc/MediaPlaybackTargetPickerMac.h; sourceTree = "<group>"; };
 		078E43DC1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MediaPlaybackTargetPickerMac.mm; path = objc/MediaPlaybackTargetPickerMac.mm; sourceTree = "<group>"; };
-		079216531AA560AA00A3C049 /* MediaPlaybackTargetPickerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaPlaybackTargetPickerClient.h; path = graphics/MediaPlaybackTargetPickerClient.h; sourceTree = "<group>"; };
+		079216531AA560AA00A3C049 /* MediaPlaybackTargetPickerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlaybackTargetPickerClient.h; sourceTree = "<group>"; };
 		0794178F166E855F009416C2 /* InbandTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InbandTextTrack.cpp; sourceTree = "<group>"; };
 		07941790166E855F009416C2 /* InbandTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrack.h; sourceTree = "<group>"; };
 		07941793166EA04E009416C2 /* InbandTextTrackPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivate.h; sourceTree = "<group>"; };
@@ -20818,6 +20818,7 @@
 				6C568CAF19DAFEA000430CA2 /* MaskImageOperation.h */,
 				078E43D71ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.cpp */,
 				078E43D81ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.h */,
+				079216531AA560AA00A3C049 /* MediaPlaybackTargetPickerClient.h */,
 				E4B41E0C0CBF90BD00AF2ECE /* MediaPlayer.cpp */,
 				E4B41E0D0CBF90BD00AF2ECE /* MediaPlayer.h */,
 				079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */,
@@ -21623,7 +21624,6 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
-				079216531AA560AA00A3C049 /* MediaPlaybackTargetPickerClient.h */,
 				49E912A40EFAC8E6009D0CAF /* animation */,
 				FD31604012B026A300C1A359 /* audio */,
 				1AE42F670AA4B8CB00C8612D /* cf */,

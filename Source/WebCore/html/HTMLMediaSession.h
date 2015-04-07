@@ -63,6 +63,11 @@ public:
     void setWirelessVideoPlaybackDisabled(const HTMLMediaElement&, bool);
 
     void setHasPlaybackTargetAvailabilityListeners(const HTMLMediaElement&, bool);
+
+    virtual bool canPlayToWirelessPlaybackTarget() const override;
+    virtual bool isPlayingToWirelessPlaybackTarget() const override;
+    virtual void startPlayingToPlaybackTarget() override;
+    virtual void stopPlayingToPlaybackTarget() override;
 #endif
 
     bool requiresFullscreenForVideoPlayback(const HTMLMediaElement&) const;

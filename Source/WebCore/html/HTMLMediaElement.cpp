@@ -4885,13 +4885,22 @@ void HTMLMediaElement::setWirelessPlaybackTarget(const MediaPlaybackTarget& devi
         m_player->setWirelessPlaybackTarget(device);
 }
 
-bool HTMLMediaElement::canPlayToWirelessPlaybackTarget()
+bool HTMLMediaElement::canPlayToWirelessPlaybackTarget() const
 {
     bool canPlay = m_player && m_player->canPlayToWirelessPlaybackTarget();
 
     LOG(Media, "HTMLMediaElement::canPlayToWirelessPlaybackTarget(%p) - returning %s", this, boolString(canPlay));
 
     return canPlay;
+}
+
+bool HTMLMediaElement::isPlayingToWirelessPlaybackTarget() const
+{
+    bool isPlaying = m_player && m_player->isPlayingToWirelessPlaybackTarget();
+
+    LOG(Media, "HTMLMediaElement::isPlayingToWirelessPlaybackTarget(%p) - returning %s", this, boolString(isPlaying));
+    
+    return isPlaying;
 }
 
 void HTMLMediaElement::startPlayingToPlaybackTarget()

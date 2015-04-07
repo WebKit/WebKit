@@ -1,3 +1,65 @@
+2015-04-07  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] video playing to external device should not be interrupted
+        https://bugs.webkit.org/show_bug.cgi?id=143492
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.handlePanelTransitionEnd):  Drive-by fix to make sure the controls are 
+            not hidden if the opacity timer is primed before they go into a state where they should
+            never be hidden.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canPlayToWirelessPlaybackTarget): Make it const.
+        (WebCore::HTMLMediaElement::isPlayingToWirelessPlaybackTarget): New.
+        * html/HTMLMediaElement.h:
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::canPlayToWirelessPlaybackTarget): New. Short-circuit call to
+            client when we already know the answer.
+        (WebCore::HTMLMediaSession::isPlayingToWirelessPlaybackTarget): Ditto.
+        (WebCore::HTMLMediaSession::startPlayingToPlaybackTarget): Ditto.
+        (WebCore::HTMLMediaSession::stopPlayingToPlaybackTarget): Ditto.
+        * html/HTMLMediaSession.h:
+
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::canPlayToWirelessPlaybackTarget): Deleted, moved inline and neutered
+            because only HTMLMediaSession needs to use them.
+        (WebCore::MediaSession::startPlayingToPlaybackTarget): Ditto.
+        (WebCore::MediaSession::stopPlayingToPlaybackTarget): Ditto.
+        * platform/audio/MediaSession.h:
+        (WebCore::MediaSession::canPlayToWirelessPlaybackTarget):
+        (WebCore::MediaSession::isPlayingToWirelessPlaybackTarget):
+        (WebCore::MediaSession::startPlayingToPlaybackTarget):
+        (WebCore::MediaSession::stopPlayingToPlaybackTarget):
+        (WebCore::MediaSessionClient::canPlayToWirelessPlaybackTarget):
+        (WebCore::MediaSessionClient::isPlayingToWirelessPlaybackTarget):
+
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::MediaSessionManager):
+        (WebCore::MediaSessionManager::sessionShouldBeginPlayingToWirelessPlaybackTarget): New.
+        (WebCore::MediaSessionManager::sessionWillBeginPlayback): Don't interrupt an active session
+            playing to a target device.
+        * platform/audio/MediaSessionManager.h:
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::isPlayingToWirelessPlaybackTarget): New, passthrough.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::isPlayingToWirelessPlaybackTarget):
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::canPlayToWirelessPlaybackTarget):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget): Explicitly call 
+            when passed a nil or inactive target context.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::startPlayingToPlaybackTarget): Add logging.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::stopPlayingToPlaybackTarget): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::isPlayingToWirelessPlaybackTarget): New. Return
+            true when playing with an active context.
+        (WebCore::playerKVOProperties): "outputContext" is not observable.
+
 2015-04-07  Sam Weinig  <sam@webkit.org>
 
         Re-add JSReadableStream and JSReadableStreamReader the Xcode project to

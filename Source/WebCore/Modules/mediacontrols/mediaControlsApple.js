@@ -783,7 +783,7 @@ Controller.prototype = {
         var opacity = window.getComputedStyle(this.controls.panel).opacity;
         if (parseInt(opacity) > 0) {
             this.controls.panel.classList.remove(this.ClassNames.hidden);
-        } else {
+        } else if (!this.controlsAlwaysVisible()) {
             this.controls.panel.classList.add(this.ClassNames.hidden);
         }
     },

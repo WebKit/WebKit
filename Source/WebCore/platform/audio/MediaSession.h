@@ -117,9 +117,10 @@ public:
 
     bool isHidden() const;
 
-    bool canPlayToWirelessPlaybackTarget() const;
-    void startPlayingToPlaybackTarget();
-    void stopPlayingToPlaybackTarget();
+    virtual bool canPlayToWirelessPlaybackTarget() const { return false; }
+    virtual bool isPlayingToWirelessPlaybackTarget() const { return false; }
+    virtual void startPlayingToPlaybackTarget() { }
+    virtual void stopPlayingToPlaybackTarget() { }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     // MediaPlaybackTargetPickerClient
@@ -169,7 +170,8 @@ public:
 
     virtual void wirelessRoutesAvailableDidChange() { }
     virtual void setWirelessPlaybackTarget(const MediaPlaybackTarget&) { }
-    virtual bool canPlayToWirelessPlaybackTarget() { return false; }
+    virtual bool canPlayToWirelessPlaybackTarget() const { return false; }
+    virtual bool isPlayingToWirelessPlaybackTarget() const { return false; }
     virtual void startPlayingToPlaybackTarget() { }
     virtual void stopPlayingToPlaybackTarget() { }
 

@@ -480,6 +480,7 @@ public:
     void playbackTargetAvailabilityChanged();
 
     bool canPlayToWirelessPlaybackTarget() const;
+    bool isPlayingToWirelessPlaybackTarget() const;
     void setWirelessPlaybackTarget(const MediaPlaybackTarget&);
 
     void startPlayingToPlaybackTarget();

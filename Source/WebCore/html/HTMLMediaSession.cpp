@@ -317,6 +317,38 @@ bool HTMLMediaSession::requiresPlaybackTargetRouteMonitoring() const
 {
     return m_hasPlaybackTargetAvailabilityListeners;
 }
+
+bool HTMLMediaSession::canPlayToWirelessPlaybackTarget() const
+{
+    if (!m_playbackTarget || !m_playbackTarget->hasActiveRoute())
+        return false;
+
+    return client().canPlayToWirelessPlaybackTarget();
+}
+
+bool HTMLMediaSession::isPlayingToWirelessPlaybackTarget() const
+{
+    if (!m_playbackTarget || !m_playbackTarget->hasActiveRoute())
+        return false;
+
+    return client().isPlayingToWirelessPlaybackTarget();
+}
+
+void HTMLMediaSession::startPlayingToPlaybackTarget()
+{
+    if (!m_playbackTarget || !m_playbackTarget->hasActiveRoute())
+        return;
+
+    client().startPlayingToPlaybackTarget();
+}
+
+void HTMLMediaSession::stopPlayingToPlaybackTarget()
+{
+    if (!m_playbackTarget || !m_playbackTarget->hasActiveRoute())
+        return;
+
+    client().stopPlayingToPlaybackTarget();
+}    
 #endif
 
 MediaPlayer::Preload HTMLMediaSession::effectivePreloadForElement(const HTMLMediaElement& element) const

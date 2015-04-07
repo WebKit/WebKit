@@ -277,14 +277,15 @@ private:
     virtual MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const override;
     virtual bool wirelessVideoPlaybackDisabled() const override;
     virtual void setWirelessVideoPlaybackDisabled(bool) override;
+    virtual bool canPlayToWirelessPlaybackTarget() const { return true; }
     void updateDisableExternalPlayback();
-    bool canPlayToWirelessPlaybackTarget() const { return true; }
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
     virtual void setWirelessPlaybackTarget(const MediaPlaybackTarget&) override;
     virtual void startPlayingToPlaybackTarget() override;
     virtual void stopPlayingToPlaybackTarget() override;
+    virtual bool isPlayingToWirelessPlaybackTarget();
 #endif
 
     virtual double maxFastForwardRate() const override { return m_cachedCanPlayFastForward ? std::numeric_limits<double>::infinity() : 2.0; }

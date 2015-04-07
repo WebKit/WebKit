@@ -45,7 +45,6 @@ MediaSessionManager& MediaSessionManager::sharedManager()
 
 MediaSessionManager::MediaSessionManager()
     : m_systemSleepListener(SystemSleepListener::create(*this))
-    , m_interrupted(false)
 {
     resetRestrictions();
 }
@@ -167,6 +166,25 @@ MediaSessionManager::SessionRestrictions MediaSessionManager::restrictions(Media
     return m_restrictions[type];
 }
 
+bool MediaSessionManager::sessionShouldBeginPlayingToWirelessPlaybackTarget(MediaSession& session) const
+{
+    if (!session.canPlayToWirelessPlaybackTarget())
+        return false;
+
+    if (session.isPlayingToWirelessPlaybackTarget())
+        return false;
+
+    Vector<MediaSession*> sessions = m_sessions;
+    for (auto* oneSession : sessions) {
+        if (oneSession == &session)
+            continue;
+        if (oneSession->isPlayingToWirelessPlaybackTarget())
+            return false;
+    }
+
+    return true;
+}
+
 bool MediaSessionManager::sessionWillBeginPlayback(MediaSession& session)
 {
     LOG(Media, "MediaSessionManager::sessionWillBeginPlayback - %p", &session);
@@ -186,17 +204,19 @@ bool MediaSessionManager::sessionWillBeginPlayback(MediaSession& session)
     if (m_interrupted)
         endInterruption(MediaSession::NoFlags);
 
-    bool newSessionCanPlayToPlaybackTarget = session.canPlayToWirelessPlaybackTarget();
+    bool shouldPlayToPlaybackTarget = sessionShouldBeginPlayingToWirelessPlaybackTarget(session);
     Vector<MediaSession*> sessions = m_sessions;
     for (auto* oneSession : sessions) {
         if (oneSession == &session)
             continue;
-        if (newSessionCanPlayToPlaybackTarget)
+        if (shouldPlayToPlaybackTarget)
             oneSession->stopPlayingToPlaybackTarget();
         if (oneSession->mediaType() == sessionType && restrictions & ConcurrentPlaybackNotPermitted)
             oneSession->pauseSession();
     }
-    session.startPlayingToPlaybackTarget();
+
+    if (shouldPlayToPlaybackTarget)
+        session.startPlayingToPlaybackTarget();
 
     updateSessionState();
     return true;

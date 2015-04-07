@@ -227,21 +227,6 @@ MediaSession::DisplayType MediaSession::displayType() const
     return m_client.displayType();
 }
 
-bool MediaSession::canPlayToWirelessPlaybackTarget() const
-{
-    return m_client.canPlayToWirelessPlaybackTarget();
-}
-
-void MediaSession::startPlayingToPlaybackTarget()
-{
-    client().startPlayingToPlaybackTarget();
-}
-
-void MediaSession::stopPlayingToPlaybackTarget()
-{
-    client().stopPlayingToPlaybackTarget();
-}
-
 String MediaSessionClient::mediaSessionTitle() const
 {
     return String();

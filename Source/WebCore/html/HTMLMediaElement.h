@@ -361,7 +361,8 @@ public:
     virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
 
     virtual void wirelessRoutesAvailableDidChange() override;
-    virtual bool canPlayToWirelessPlaybackTarget() override;
+    virtual bool canPlayToWirelessPlaybackTarget() const override;
+    virtual bool isPlayingToWirelessPlaybackTarget() const override;
     virtual void setWirelessPlaybackTarget(const MediaPlaybackTarget&) override;
     virtual void startPlayingToPlaybackTarget() override;
     virtual void stopPlayingToPlaybackTarget() override;
