@@ -1,3 +1,14 @@
+2015-04-07  Philip Chimento  <philip.chimento@gmail.com>
+
+        configure check for clang version is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=126324
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/autotools/CheckSystemAndBasicDependencies.m4:
+        Change compiler version checks of Clang and GCC so that they
+        handle major/minor versions correctly.
+
 2015-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and Versions.m4 for 2.4.8 release.
