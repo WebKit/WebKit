@@ -46,9 +46,23 @@ struct _WebKitWebPolicyDecisionPrivate {
     gboolean isCancelled;
 };
 
+static void webkit_web_policy_decision_finalize(GObject *object)
+{
+    WebKitWebPolicyDecision *decision = WEBKIT_WEB_POLICY_DECISION (object);
+
+    decision->priv->framePolicyFunction = nullptr;
+
+    G_OBJECT_CLASS (webkit_web_policy_decision_parent_class)->finalize (object);
+}
+
 static void webkit_web_policy_decision_class_init(WebKitWebPolicyDecisionClass* decisionClass)
 {
+    GObjectClass *object_class;
+
     g_type_class_add_private(decisionClass, sizeof(WebKitWebPolicyDecisionPrivate));
+
+    object_class = G_OBJECT_CLASS (decisionClass);
+    object_class->finalize = webkit_web_policy_decision_finalize;
 }
 
 static void webkit_web_policy_decision_init(WebKitWebPolicyDecision* decision)
