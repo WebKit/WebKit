@@ -1,0 +1,18 @@
+This verifies that getting the orientation of combobox descendants won't crash if the combobox is removed from the document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXComboBox has orientation: AXOrientation: AXHorizontalOrientation
+
+Before combobox removal
+AXRole: AXMenu has orientation: AXOrientation: AXHorizontalOrientation
+AXRole: AXMenuItem has orientation: AXOrientation: AXHorizontalOrientation
+
+After combobox removal
+AXRole: AXInvalid has orientation: AXOrientation: AXHorizontalOrientation
+AXRole: AXInvalid has orientation: AXOrientation: AXHorizontalOrientation
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
