@@ -1549,9 +1549,14 @@ ApplicationCacheStorage::ApplicationCacheStorage()
 {
 }
 
+Ref<ApplicationCacheStorage> ApplicationCacheStorage::create()
+{
+    return adoptRef(*new ApplicationCacheStorage);
+}
+
 ApplicationCacheStorage& ApplicationCacheStorage::singleton()
 {
-    static NeverDestroyed<ApplicationCacheStorage> storage;
+    static ApplicationCacheStorage& storage = create().leakRef();
     return storage;
 }
 

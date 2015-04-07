@@ -44,8 +44,7 @@ class SecurityOrigin;
 class SharedBuffer;
 template <class T> class StorageIDJournal;
 
-class ApplicationCacheStorage {
-    WTF_MAKE_NONCOPYABLE(ApplicationCacheStorage); WTF_MAKE_FAST_ALLOCATED;
+class ApplicationCacheStorage : public RefCounted<ApplicationCacheStorage> {
 public:
     enum FailureReason {
         OriginQuotaReached,
@@ -53,7 +52,10 @@ public:
         DiskOrOperationFailure
     };
 
+    // FIXME: Migrate off of this singleton and towards a world where each page has a storage.
     WEBCORE_EXPORT static ApplicationCacheStorage& singleton();
+
+    WEBCORE_EXPORT static Ref<ApplicationCacheStorage> create();
 
     WEBCORE_EXPORT void setCacheDirectory(const String&);
     const String& cacheDirectory() const;

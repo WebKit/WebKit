@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PageConfiguration.h"
 
+#include "ApplicationCacheStorage.h"
 #include "BackForwardClient.h"
 #include "DatabaseProvider.h"
 #include "StorageNamespaceProvider.h"
@@ -35,19 +36,6 @@
 namespace WebCore {
 
 PageConfiguration::PageConfiguration()
-    : alternativeTextClient(nullptr)
-    , chromeClient(nullptr)
-#if ENABLE(CONTEXT_MENUS)
-    , contextMenuClient(nullptr)
-#endif
-    , editorClient(nullptr)
-    , dragClient(nullptr)
-    , inspectorClient(nullptr)
-    , plugInClient(nullptr)
-    , progressTrackerClient(nullptr)
-    , validationMessageClient(nullptr)
-    , loaderClientForMainFrame(nullptr)
-    , diagnosticLoggingClient(nullptr)
 {
 }
 

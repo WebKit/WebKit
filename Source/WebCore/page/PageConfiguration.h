@@ -32,11 +32,9 @@
 namespace WebCore {
 
 class AlternativeTextClient;
+class ApplicationCacheStorage;
 class BackForwardClient;
 class ChromeClient;
-#if ENABLE(CONTEXT_MENUS)
-class ContextMenuClient;
-#endif
 class DatabaseProvider;
 class DiagnosticLoggingClient;
 class DragClient;
@@ -50,27 +48,32 @@ class UserContentController;
 class ValidationMessageClient;
 class VisitedLinkStore;
 
+#if ENABLE(CONTEXT_MENUS)
+class ContextMenuClient;
+#endif
+
 class PageConfiguration {
     WTF_MAKE_NONCOPYABLE(PageConfiguration); WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT PageConfiguration();
     WEBCORE_EXPORT ~PageConfiguration();
 
-    AlternativeTextClient* alternativeTextClient;
-    ChromeClient* chromeClient;
+    AlternativeTextClient* alternativeTextClient { nullptr };
+    ChromeClient* chromeClient { nullptr };
 #if ENABLE(CONTEXT_MENUS)
-    ContextMenuClient* contextMenuClient;
+    ContextMenuClient* contextMenuClient { nullptr };
 #endif
-    EditorClient* editorClient;
-    DragClient* dragClient;
-    InspectorClient* inspectorClient;
-    PlugInClient* plugInClient;
-    ProgressTrackerClient* progressTrackerClient;
+    EditorClient* editorClient { nullptr };
+    DragClient* dragClient { nullptr };
+    InspectorClient* inspectorClient { nullptr };
+    PlugInClient* plugInClient { nullptr };
+    ProgressTrackerClient* progressTrackerClient { nullptr };
     RefPtr<BackForwardClient> backForwardClient;
-    ValidationMessageClient* validationMessageClient;
-    FrameLoaderClient* loaderClientForMainFrame;
-    DiagnosticLoggingClient* diagnosticLoggingClient;
+    ValidationMessageClient* validationMessageClient { nullptr };
+    FrameLoaderClient* loaderClientForMainFrame { nullptr };
+    DiagnosticLoggingClient* diagnosticLoggingClient { nullptr };
 
+    RefPtr<ApplicationCacheStorage> applicationCacheStorage;
     RefPtr<DatabaseProvider> databaseProvider;
     RefPtr<StorageNamespaceProvider> storageNamespaceProvider;
     RefPtr<UserContentController> userContentController;
