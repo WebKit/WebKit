@@ -52,12 +52,13 @@ void GObjectEventListener::gobjectDestroyed()
 {
     ASSERT(m_coreTarget);
 
-    // We must set m_coreTarget to null, because removeEventListener
-    // may call the destructor as a side effect and we must be in the
-    // proper state to prevent g_object_weak_unref.
-    EventTarget* target = m_coreTarget;
+    // Protect 'this' class in case the 'm_coreTarget' holds the last reference,
+    // which may cause, inside removeEventListener(), free of this object
+    // and later use-after-free with the m_handler = 0; assignment.
+    RefPtr<GObjectEventListener> protect(this);
+
+    m_coreTarget->removeEventListener(m_domEventName.data(), this, m_capture);
     m_coreTarget = 0;
-    target->removeEventListener(m_domEventName.data(), this, m_capture);
     m_handler = 0;
 }
 
