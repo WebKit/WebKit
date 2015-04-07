@@ -1,3 +1,13 @@
+2015-04-07  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: HierarchicalPathNavigationItem's additionalClassNames should be _additionalClassNames
+        https://bugs.webkit.org/show_bug.cgi?id=143487
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/HierarchicalPathNavigationItem.js:
+        (WebInspector.HierarchicalPathNavigationItem.prototype.get _additionalClassNames):
+
 2015-04-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add String/Array "includes" parameter display string
