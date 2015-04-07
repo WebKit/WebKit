@@ -1,3 +1,11 @@
+2015-04-07  Alex Christensen  <achristensen@webkit.org>
+
+        More unreviewed fixing API tests.
+
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
+        Don't check for javascript protocol.
+
 2015-04-07  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] never update caption user style sheet during parsing
