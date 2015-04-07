@@ -127,7 +127,6 @@ public:
     // terminated ASCII argument. The argument must be lower-case.
     WEBCORE_EXPORT bool protocolIs(const char*) const;
     bool protocolIsData() const { return protocolIs("data"); }
-    bool protocolIsJavaScript() const { return protocolIs("javascript"); }
     bool protocolIsInHTTPFamily() const;
     WEBCORE_EXPORT bool isLocalFile() const;
     bool isBlankURL() const;

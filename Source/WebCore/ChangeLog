@@ -1,3 +1,16 @@
+2015-04-07  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed fixing API tests.
+
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
+        * platform/URL.cpp:
+        (WebCore::URL::init):
+        * platform/URL.h:
+        (WebCore::URL::protocolIsData):
+        (WebCore::URL::protocolIsJavaScript): Deleted.
+        Revert part of r182492 that changed URL.h.
+
 2015-04-07  Anders Carlsson  <andersca@apple.com>
 
         More work on making the application cache storage be per page

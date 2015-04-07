@@ -77,7 +77,7 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
     double addedTimeStart = monotonicallyIncreasingTime();
 #endif
     if (resourceLoadInfo.resourceURL.protocolIsData()
-        || resourceLoadInfo.resourceURL.protocolIsJavaScript())
+        || resourceLoadInfo.resourceURL.protocolIs("javascript"))
         return Vector<Action>();
 
     const String& urlString = resourceLoadInfo.resourceURL.string();
