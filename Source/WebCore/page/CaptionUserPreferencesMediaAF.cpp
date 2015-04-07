@@ -193,7 +193,9 @@ void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
 
     if (!m_listeningForPreferenceChanges) {
         m_listeningForPreferenceChanges = true;
+        m_registeringForNotification = true;
         CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
+        m_registeringForNotification = false;
     }
 
     // Generating and registering the caption stylesheet can be expensive and this method is called indirectly when the parser creates an audio or
@@ -205,6 +207,9 @@ void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
 
 void CaptionUserPreferencesMediaAF::captionPreferencesChanged()
 {
+    if (m_registeringForNotification)
+        return;
+
     if (m_listeningForPreferenceChanges)
         updateCaptionStyleSheetOveride();
 

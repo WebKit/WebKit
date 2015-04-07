@@ -1,3 +1,17 @@
+2015-04-07  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] never update caption user style sheet during parsing
+        https://bugs.webkit.org/show_bug.cgi?id=143499
+
+        Reviewed by Jer Noble.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges):
+        (WebCore::CaptionUserPreferencesMediaAF::captionPreferencesChanged):  Ignore a
+            "preferences changed" notification fired while registering for said notification, we 
+            already create and insert the style sheet after a brief delay anyway.
+        * page/CaptionUserPreferencesMediaAF.h:
+
 2015-04-07  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Unreviewed build fix after r182494.

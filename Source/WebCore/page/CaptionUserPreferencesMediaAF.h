@@ -86,6 +86,7 @@ private:
     Timer m_updateStyleSheetTimer;
 
     bool m_listeningForPreferenceChanges;
+    bool m_registeringForNotification { false };
 #endif
 };
 
