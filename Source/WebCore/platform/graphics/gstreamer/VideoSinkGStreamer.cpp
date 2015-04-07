@@ -118,7 +118,7 @@ static gboolean webkitVideoSinkTimeoutCallback(gpointer data)
     WebKitVideoSink* sink = reinterpret_cast<WebKitVideoSink*>(data);
     WebKitVideoSinkPrivate* priv = sink->priv;
 
-    GMutexLocker lock(priv->bufferMutex);
+    WTF::GMutexLocker lock(priv->bufferMutex);
     GstBuffer* buffer = priv->buffer;
     priv->buffer = 0;
     priv->timeoutId = 0;
@@ -140,7 +140,7 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
     WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(baseSink);
     WebKitVideoSinkPrivate* priv = sink->priv;
 
-    GMutexLocker lock(priv->bufferMutex);
+    WTF::GMutexLocker lock(priv->bufferMutex);
 
     if (priv->unlocked)
         return GST_FLOW_OK;
@@ -279,7 +279,7 @@ static void webkitVideoSinkGetProperty(GObject* object, guint propertyId, GValue
 
 static void unlockBufferMutex(WebKitVideoSinkPrivate* priv)
 {
-    GMutexLocker lock(priv->bufferMutex);
+    WTF::GMutexLocker lock(priv->bufferMutex);
 
     if (priv->buffer) {
         gst_buffer_unref(priv->buffer);
@@ -305,7 +305,7 @@ static gboolean webkitVideoSinkUnlockStop(GstBaseSink* baseSink)
     WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(baseSink)->priv;
 
     {
-        GMutexLocker lock(priv->bufferMutex);
+        WTF::GMutexLocker lock(priv->bufferMutex);
         priv->unlocked = false;
     }
 
@@ -330,7 +330,7 @@ static gboolean webkitVideoSinkStart(GstBaseSink* baseSink)
 {
     WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(baseSink)->priv;
 
-    GMutexLocker lock(priv->bufferMutex);
+    WTF::GMutexLocker lock(priv->bufferMutex);
     priv->unlocked = false;
     return TRUE;
 }

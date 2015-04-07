@@ -27,7 +27,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
-namespace WebCore {
+namespace WTF {
 
 class GMutexLocker {
     WTF_MAKE_NONCOPYABLE(GMutexLocker); WTF_MAKE_FAST_ALLOCATED;
