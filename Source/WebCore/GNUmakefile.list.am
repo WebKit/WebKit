@@ -6254,9 +6254,13 @@ endif # END USE_GLX
 endif # END TARGET_X11
 
 if TARGET_WAYLAND
+if !TARGET_X11
+if ENABLE_WEBKIT2
 webcore_sources += \
 	Source/WebCore/plugins/PluginPackageNone.cpp \
 	Source/WebCore/plugins/PluginViewNone.cpp
+endif # END ENABLE_WEBKIT2
+endif # END !TARGET_X11
 endif # END TARGET_WAYLAND
 
 if TARGET_X11_OR_WAYLAND
@@ -6305,9 +6309,13 @@ webcoregtk_sources += \
 endif # END TARGET_WIN32
 
 if TARGET_QUARTZ
+if !TARGET_X11
+if ENABLE_WEBKIT2
 webcore_sources += \
 	Source/WebCore/plugins/PluginPackageNone.cpp \
 	Source/WebCore/plugins/PluginViewNone.cpp
+endif # END ENABLE_WEBKIT2
+endif # END !TARGET_X11
 platformgtk_sources += \
 	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.h \
 	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp

@@ -1,3 +1,15 @@
+2015-04-07  Tomas Popela  <tpopela@redhat.com>
+
+        REGRESSION(r177885): [GTK][WK1] Cannot compile 2.4.8 when WK2 is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=140241
+
+        Reviewed by Carlos Garcia Campos.
+
+        We have to compile the PluginPackageNone.cpp and PluginViewNone.cpp
+        just when WebKit2 is enabled and we are not building for X11.
+
+        * GNUmakefile.list.am:
+
 2015-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the build with newer GLib.
