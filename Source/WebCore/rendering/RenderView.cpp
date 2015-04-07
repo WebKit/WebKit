@@ -1002,7 +1002,7 @@ void RenderView::getSelection(RenderObject*& startRenderer, int& startOffset, Re
 void RenderView::clearSelection()
 {
     layer()->repaintBlockSelectionGaps();
-    setSelection(0, -1, 0, -1, RepaintNewMinusOld);
+    setSelection(nullptr, -1, nullptr, -1, RepaintNewMinusOld);
 }
 
 void RenderView::selectionStartEnd(int& startPos, int& endPos) const
