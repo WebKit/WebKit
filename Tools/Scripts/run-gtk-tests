@@ -66,7 +66,6 @@ class TestRunner:
         SkippedTest("WebKitGtk/testwebresource", "/webkit/webresource/sub_resource_loading", "Test fails in GTK Linux 64-bit Release bot", 82330),
         SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/mouse-target", "Test times out after r150890", 117689),
         SkippedTest("WebKit2Gtk/TestContextMenu", SkippedTest.ENTIRE_SUITE, "Test times out after r150890", 117689),
-        SkippedTest("WebKit2Gtk/TestWebKitWebView", "/webkit2/WebKitWebView/snapshot", "Test fails", 120404),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.MouseMoveAfterCrash", "Test is flaky", 85066),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutForImages", "Test is flaky", 85066),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutFrames", "Test fails", 85037),

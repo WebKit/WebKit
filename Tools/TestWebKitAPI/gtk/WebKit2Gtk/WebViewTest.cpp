@@ -187,10 +187,12 @@ void WebViewTest::showInWindow(GtkWindowType windowType)
     gtk_widget_show(m_parentWindow);
 }
 
-void WebViewTest::showInWindowAndWaitUntilMapped(GtkWindowType windowType)
+void WebViewTest::showInWindowAndWaitUntilMapped(GtkWindowType windowType, int width, int height)
 {
     g_assert(!m_parentWindow);
     m_parentWindow = gtk_window_new(windowType);
+    if (width && height)
+        gtk_window_resize(GTK_WINDOW(m_parentWindow), width, height);
     gtk_container_add(GTK_CONTAINER(m_parentWindow), GTK_WIDGET(m_webView));
     gtk_widget_show(GTK_WIDGET(m_webView));
 
