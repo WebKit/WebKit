@@ -32,6 +32,11 @@ namespace JSC {
 
 class ExecState;
 
+ALWAYS_INLINE bool isIndex(uint32_t index)
+{
+    return index != 0xFFFFFFFFU;
+}
+
 template <typename CharType>
 ALWAYS_INLINE Optional<uint32_t> parseIndex(const CharType* characters, unsigned length)
 {
@@ -67,7 +72,7 @@ ALWAYS_INLINE Optional<uint32_t> parseIndex(const CharType* characters, unsigned
         value = newValue;
     }
 
-    if (value == 0xFFFFFFFFU)
+    if (!isIndex(value))
         return Nullopt;
     return value;
 }

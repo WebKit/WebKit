@@ -1,3 +1,27 @@
+2015-04-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        put_by_val_direct need to check the property is index or not for using putDirect / putDirectIndex
+        https://bugs.webkit.org/show_bug.cgi?id=140426
+
+        Reviewed by Darin Adler.
+
+        In the put_by_val_direct operation, we use JSObject::putDirect.
+        However, it only accepts non-index property. For index property, we need to use JSObject::putDirectIndex.
+        This patch checks toString-ed Identifier is index or not to choose putDirect / putDirectIndex.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByVal):
+        (JSC::DFG::operationPutByValInternal):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Identifier.h:
+        (JSC::isIndex):
+        (JSC::parseIndex):
+        * tests/stress/dfg-put-by-val-direct-with-edge-numbers.js: Added.
+        (lookupWithKey):
+        (toStringThrowsError.toString):
+
 2015-04-06  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Fix HPPA build

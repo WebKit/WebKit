@@ -69,6 +69,7 @@ static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, 
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    ASSERT(isIndex(index));
     if (direct) {
         RELEASE_ASSERT(baseValue.isObject());
         asObject(baseValue)->putDirectIndex(exec, index, value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
@@ -99,6 +100,8 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
     JSValue value = JSValue::decode(encodedValue);
 
     if (LIKELY(property.isUInt32())) {
+        // Despite its name, JSValue::isUInt32 will return true only for positive boxed int32_t; all those values are valid array indices.
+        ASSERT(isIndex(property.asUInt32()));
         putByVal<strict, direct>(exec, baseValue, property.asUInt32(), value);
         return;
     }
@@ -106,7 +109,7 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
     if (property.isDouble()) {
         double propertyAsDouble = property.asDouble();
         uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
-        if (propertyAsDouble == propertyAsUInt32) {
+        if (propertyAsDouble == propertyAsUInt32 && isIndex(propertyAsUInt32)) {
             putByVal<strict, direct>(exec, baseValue, propertyAsUInt32, value);
             return;
         }
@@ -114,14 +117,18 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
 
     // Don't put to an object if toString throws an exception.
     auto propertyName = property.toPropertyKey(exec);
-    if (!vm->exception()) {
-        PutPropertySlot slot(baseValue, strict);
-        if (direct) {
-            RELEASE_ASSERT(baseValue.isObject());
+    if (vm->exception())
+        return;
+
+    PutPropertySlot slot(baseValue, strict);
+    if (direct) {
+        RELEASE_ASSERT(baseValue.isObject());
+        if (Optional<uint32_t> index = parseIndex(propertyName))
+            asObject(baseValue)->putDirectIndex(exec, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+        else
             asObject(baseValue)->putDirect(*vm, propertyName, value, slot);
-        } else
-            baseValue.put(exec, propertyName, value, slot);
-    }
+    } else
+        baseValue.put(exec, propertyName, value, slot);
 }
 
 template<typename ViewClass>
@@ -285,7 +292,7 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
         } else if (property.isDouble()) {
             double propertyAsDouble = property.asDouble();
             uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
-            if (propertyAsUInt32 == propertyAsDouble)
+            if (propertyAsUInt32 == propertyAsDouble && isIndex(propertyAsUInt32))
                 return getByVal(exec, base, propertyAsUInt32);
         } else if (property.isString()) {
             Structure& structure = *base->structure(vm);
