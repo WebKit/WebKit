@@ -79,7 +79,7 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         self._doc_root_path = port_obj.path_from_webkit_base("LayoutTests", self._doc_root)
 
     def _install_modules(self):
-        modules_file_path = self._filesystem.join(self._layout_root, "imported", "w3c", "resources", "web-platform-tests-modules.json")
+        modules_file_path = self._filesystem.join(self._doc_root_path, "..", "resources", "web-platform-tests-modules.json")
         if not self._filesystem.isfile(modules_file_path):
             _log.warning("Cannot read " + modules_file_path)
             return
