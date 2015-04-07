@@ -1,3 +1,16 @@
+2015-04-07  Beth Dakin  <bdakin@apple.com>
+
+        Should only propagate pressure events with relevant phases
+        https://bugs.webkit.org/show_bug.cgi?id=143494
+        -and corresponding-
+        rdar://problem/20453738
+
+        Reviewed by Tim Horton.
+
+        We only care about the changed, began, and ended phases. 
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView pressureChangeWithEvent:]):
+
 2015-04-07  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; make calls to new SPI conditional on iOS version.

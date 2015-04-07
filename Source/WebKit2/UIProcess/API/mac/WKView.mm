@@ -1395,7 +1395,8 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
 - (void)pressureChangeWithEvent:(NSEvent *)event
 {
 #if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
-    _data->_page->inputDeviceForceDidChange(event.pressure, event.stage);
+    if (event.phase == NSEventPhaseChanged || event.phase == NSEventPhaseBegan || event.phase == NSEventPhaseEnded)
+        _data->_page->inputDeviceForceDidChange(event.pressure, event.stage);
 #endif
 }
 
