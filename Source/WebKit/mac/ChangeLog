@@ -1,3 +1,13 @@
+2015-04-07  Brady Eidson  <beidson@apple.com>
+
+        ContextMenuItem refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=143485
+
+        Reviewed by Beth Dakin.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::contextMenuItemSelected):
+
 2015-04-06  Chris Dumez  <cdumez@apple.com>
 
         Bing video search result pages are not PageCacheable

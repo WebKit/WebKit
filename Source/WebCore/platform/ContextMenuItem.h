@@ -228,11 +228,17 @@ namespace WebCore {
 #else
     public:
         WEBCORE_EXPORT explicit ContextMenuItem(PlatformMenuItemDescription);
-        explicit ContextMenuItem(ContextMenu* subMenu = 0);
+        explicit ContextMenuItem(ContextMenu* subMenu);
         ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, Vector<ContextMenuItem>& submenuItems);
+        ContextMenuItem();
 
+        bool isNull() const { return !m_platformDescription; }
+
+#if PLATFORM(GTK)
         WEBCORE_EXPORT PlatformMenuItemDescription releasePlatformDescription();
-        WEBCORE_EXPORT PlatformMenuItemDescription getPlatformDescription() const;
+#endif
+
+        WEBCORE_EXPORT PlatformMenuItemDescription platformDescription() const;
 
         WEBCORE_EXPORT String title() const;
         void setTitle(const String&);

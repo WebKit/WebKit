@@ -43,6 +43,10 @@ static NSMutableArray* menuToArray(NSMenu* menu)
     return itemsArray;
 }
 
+ContextMenuItem::ContextMenuItem()
+{
+}
+
 ContextMenuItem::ContextMenuItem(NSMenuItem* item)
 {
     m_platformDescription = item;
@@ -96,14 +100,7 @@ ContextMenuItem::~ContextMenuItem()
 {
 }
 
-NSMenuItem *ContextMenuItem::releasePlatformDescription()
-{
-    NSMenuItem *item = [m_platformDescription.get() retain];
-    m_platformDescription = 0;
-    return item;
-}
-
-NSMenuItem *ContextMenuItem::getPlatformDescription() const
+NSMenuItem *ContextMenuItem::platformDescription() const
 {
     return m_platformDescription.get();
 }
@@ -164,7 +161,7 @@ void ContextMenuItem::setSubMenu(Vector<ContextMenuItem>& subMenuItems)
     NSMenu* subMenu = [[NSMenu alloc] init];
     [subMenu setAutoenablesItems:NO];
     for (unsigned i = 0; i < subMenuItems.size(); ++i)
-        [subMenu addItem:subMenuItems[i].releasePlatformDescription()];
+        [subMenu addItem:subMenuItems[i].platformDescription()];
         
     [m_platformDescription.get() setSubmenu:subMenu];
     [subMenu release];

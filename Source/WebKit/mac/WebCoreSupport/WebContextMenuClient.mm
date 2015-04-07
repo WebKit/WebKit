@@ -321,12 +321,10 @@ void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const 
     SEL selector = @selector(webView:contextMenuItemSelected:forElement:);
     if ([delegate respondsToSelector:selector]) {
         NSDictionary *element = [[WebElementDictionary alloc] initWithHitTestResult:[m_webView page]->contextMenuController().hitTestResult()];
-        NSMenuItem *platformItem = item->releasePlatformDescription();
 
-        CallUIDelegate(m_webView, selector, platformItem, element);
+        CallUIDelegate(m_webView, selector, item->platformDescription(), element);
 
         [element release];
-        [platformItem release];
     }
 }
 

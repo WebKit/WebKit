@@ -1,3 +1,31 @@
+2015-04-07  Brady Eidson  <beidson@apple.com>
+
+        ContextMenuItem refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=143485
+
+        Reviewed by Beth Dakin.
+
+        * platform/ContextMenuItem.h:
+        (WebCore::ContextMenuItem::isNull):
+
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+
+        * platform/mac/ContextMenuItemMac.mm:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::platformDescription):
+        (WebCore::ContextMenuItem::setSubMenu):
+        (WebCore::ContextMenuItem::releasePlatformDescription): Deleted.
+        (WebCore::ContextMenuItem::getPlatformDescription): Deleted.
+
+        * platform/mac/ContextMenuMac.mm:
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenu::insertItem):
+        (WebCore::platformMenuDescription):
+
+        * platform/win/ContextMenuItemWin.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+
 2015-04-07  Alex Christensen  <achristensen@webkit.org>
 
         Optimize content extensions interpreting speed.

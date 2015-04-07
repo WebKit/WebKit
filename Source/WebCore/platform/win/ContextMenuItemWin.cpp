@@ -30,6 +30,10 @@
 
 namespace WebCore {
 
+ContextMenuItem::ContextMenuItem()
+{
+}
+
 ContextMenuItem::ContextMenuItem(const MENUITEMINFO& info)
 {
     if (info.fMask & MIIM_FTYPE)

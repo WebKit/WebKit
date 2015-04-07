@@ -35,7 +35,7 @@ using namespace WebCore;
 namespace WebKit {
 
 NativeContextMenuItem::NativeContextMenuItem(const ContextMenuItem& coreItem)
-    : m_nsMenuItem(coreItem.getPlatformDescription())
+    : m_nsMenuItem(coreItem.platformDescription())
 {
 }
 

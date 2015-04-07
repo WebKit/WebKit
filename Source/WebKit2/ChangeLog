@@ -1,3 +1,13 @@
+2015-04-07  Brady Eidson  <beidson@apple.com>
+
+        ContextMenuItem refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=143485
+
+        Reviewed by Beth Dakin.
+
+        * Shared/mac/NativeContextMenuItem.mm:
+        (WebKit::NativeContextMenuItem::NativeContextMenuItem):
+
 2015-04-07  Simon Fraser  <simon.fraser@apple.com>
 
         Add a new setting, AntialiasedFontDilationEnabled, exposed via WK2.

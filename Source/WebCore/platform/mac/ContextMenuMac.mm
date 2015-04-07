@@ -48,18 +48,12 @@ ContextMenu::~ContextMenu()
 
 void ContextMenu::appendItem(ContextMenuItem& item)
 {
-    NSMenuItem* platformItem = item.releasePlatformDescription();
-
-    [m_platformDescription.get() addObject:platformItem];
-    [platformItem release];
+    [m_platformDescription.get() addObject:item.platformDescription()];
 }
 
 void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
 {
-    NSMenuItem* platformItem = item.releasePlatformDescription();
-
-    [m_platformDescription.get() insertObject:platformItem atIndex:position];
-    [platformItem release];
+    [m_platformDescription.get() insertObject:item.platformDescription() atIndex:position];
 }
 
 unsigned ContextMenu::itemCount() const
@@ -99,12 +93,9 @@ Vector<ContextMenuItem> contextMenuItemVector(PlatformMenuDescription menu)
 PlatformMenuDescription platformMenuDescription(Vector<ContextMenuItem>& menuItemVector)
 {
     PlatformMenuDescription platformMenu = [[NSMutableArray alloc] initWithCapacity:menuItemVector.size()];
-    for (unsigned i = 0; i < menuItemVector.size(); ++i) {
-        PlatformMenuItemDescription platformItem = menuItemVector[i].releasePlatformDescription();
-        [platformMenu addObject:platformItem];
-        [platformItem release];
-    }
-    
+    for (unsigned i = 0; i < menuItemVector.size(); ++i)
+        [platformMenu addObject:menuItemVector[i].platformDescription()];
+
     return [platformMenu autorelease];
 }
 
