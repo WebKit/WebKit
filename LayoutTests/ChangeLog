@@ -1,3 +1,15 @@
+2015-04-07  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+        [GTK] Gardening 7th April
+        https://bugs.webkit.org/show_bug.cgi?id=143467
+
+        Unreviewed
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/deleting/regional-indicators-expected.txt: Rebaselined after r182137.
+        * platform/gtk/editing/pasteboard/emacs-ctrl-k-y-001-expected.txt: Rebaselined after r181889.
+        * platform/gtk/inspector-protocol/debugger/regress-133182-expected.txt: Added. Rebaselined after r181810.
+
 2015-04-06  Chris Dumez  <cdumez@apple.com>
 
         Bing video search result pages are not PageCacheable

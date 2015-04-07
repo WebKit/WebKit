@@ -42,6 +42,7 @@
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/132275 fast/multicol/scrolling-column-rules.html [ Missing ]
+webkit.org/b/143474 fast/css/focus-ring-exists-for-search-field.html [ Missing ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Expected failures
@@ -1129,6 +1130,10 @@ webkit.org/b/139359 inspector-protocol/debugger/setBreakpoint-dfg-callee-and-exa
 
 webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Failure Pass ]
 
+webkit.org/b/143472 media/track/track-cue-mutable-fragment.html [ Failure Pass ]
+webkit.org/b/143475 media/audio-repaint.html [ Failure ImageOnlyFailure Pass ]
+webkit.org/b/143478 media/video-page-load-preload-none.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1268,8 +1273,6 @@ Bug(GTK) fast/forms/select/optgroup-clicking.html [ Timeout ]
 
 Bug(GTK) fast/media/media-query-list-04.html [ Timeout ]
 
-webkit.org/b/131545 media/media-event-listeners.html [ Timeout ]
-
 webkit.org/b/132128 fast/text/international/embed-bidi-style-in-isolate-crash.html [ Timeout Pass ]
 
 webkit.org/b/132266 js/slow-stress/emscripten-memops.html [ Timeout ]
@@ -1323,6 +1326,9 @@ webkit.org/b/142491 media/media-source/media-source-stalled-holds-sleep-assertio
 
 webkit.org/b/142820 fast/images/animated-gif-body-outside-viewport.html [ Timeout ]
 webkit.org/b/142491 media/click-volume-bar-not-pausing.html [ Timeout ]
+webkit.org/b/143473 editing/pasteboard/drag-and-drop-attachment-contenteditable.html [ Timeout ]
+
+webkit.org/b/143477 fast/writing-mode/broken-ideograph-small-caps.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -2124,8 +2130,7 @@ webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-b
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
 
-#Incorrect rebaseline
-webkit.org/b/107818 media/controls-styling.html [ Failure ]
+webkit.org/b/107818 media/controls-styling.html [ Failure Timeout ]
 
 # New chromium based controls
 webkit.org/b/107825 media/audio-delete-while-step-button-clicked.html [ Failure Timeout ]
@@ -2366,6 +2371,11 @@ webkit.org/b/142669 fast/regions/overflow/overflow-region-float.html [ ImageOnly
 
 webkit.org/b/143230 imported/mozilla/svg/filters/feImage-1.svg [ ImageOnlyFailure ]
 
+webkit.org/b/143468 accessibility/plugin.html [ Failure ]
+
+webkit.org/b/131545 media/media-event-listeners.html [ Failure ]
+webkit.org/b/143469 fast/borders/border-image-fill-no-border.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2377,6 +2387,7 @@ transitions/svg-text-shadow-transition.html [ Pass ]
 
 # This feature is only enabled on Mac and iOS right now
 contentfiltering [ Skip ]
+http/tests/contentfiltering [ Skip ]
 
 # Broken Ruby tests
 webkit.org/b/143354 fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
