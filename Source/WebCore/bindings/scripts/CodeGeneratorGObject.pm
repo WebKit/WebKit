@@ -45,6 +45,29 @@ my %baseTypeHash = ("Object" => 1, "Node" => 1, "NodeList" => 1, "NamedNodeMap" 
                     "NodeIterator" => 1, "TreeWalker" => 1, "AbstractView" => 1, "Blob" => 1, "DOMTokenList" => 1,
                     "HTMLCollection" => 1);
 
+# Only objects derived from Node are released by the DOM object cache and can be
+# transfer none. Ideally we could use GetBaseClass with the parent type to check
+# whether it's Node, but unfortunately we only have the name of the return type,
+# and we can't know its parent base class. Since there are fewer classes in the
+# API that are not derived from Node, we will list them here to decide the
+# transfer type.
+my %transferFullTypeHash = ("AudioTrack" => 1, "AudioTrackList" => 1, "BarProp" => 1, "BatteryManager" => 1,
+    "CSSRuleList" => 1, "CSSStyleDeclaration" => 1, "CSSStyleSheet" => 1,
+    "DOMApplicationCache" => 1, "DOMMimeType" => 1, "DOMMimeTypeArray" => 1, "DOMNamedFlowCollection" => 1,
+    "DOMPlugin" => 1, "DOMPluginArray" => 1, "DOMSecurityPolicy" => 1,
+    "DOMSelection" => 1, "DOMSettableTokenList" => 1, "DOMStringList" => 1,
+    "DOMWindow" => 1, "DOMWindowCSS" => 1, "EventTarget" => 1,
+    "File" => 1, "FileList" => 1, "Gamepad" => 1, "GamepadList" => 1,
+    "Geolocation" => 1, "HTMLOptionsCollection" => 1, "History" => 1,
+    "KeyboardEvent" => 1, "MediaError" => 1, "MediaController" => 1,
+    "MouseEvent" => 1, "MediaQueryList" => 1, "Navigator" => 1, "NodeFilter" => 1,
+    "Performance" => 1, "PerformanceEntry" => 1, "PerformanceEntryList" => 1, "PerformanceNavigation" => 1, "PerformanceTiming" => 1,
+    "Range" => 1, "Screen" => 1, "SpeechSynthesis" => 1, "SpeechSynthesisVoice" => 1,
+    "Storage" => 1, "StyleMedia" => 1, "TextTrack" => 1, "TextTrackCueList" => 1,
+    "TimeRanges" => 1, "Touch" => 1, "UIEvent" => 1, "UserMessageHandler" => 1, "UserMessageHandlersNamespace" => 1,
+    "ValidityState" => 1, "VideoTrack" => 1, "WebKitNamedFlow" => 1,
+    "WebKitNamespace" => 1, "WebKitPoint" => 1, "WheelEvent" => 1, "XPathNSResolver" => 1);
+
 # List of function parameters that are allowed to be NULL
 my $canBeNullParams = {
     'webkit_dom_document_create_attribute_ns' => ['namespaceURI'],
@@ -937,6 +960,20 @@ sub GetFunctionDeprecationInformation {
     return ($version, $replacement);
 }
 
+sub GetTransferTypeForReturnType {
+    my $returnType = shift;
+
+    # Node is always transfer none.
+    return "none" if $returnType eq "Node";
+
+    # Any base class but Node is transfer full.
+    return "full" if IsBaseType($returnType);
+
+    # Any other class not derived from Node is transfer full.
+    return "full" if $transferFullTypeHash{$returnType};
+    return "none";
+}
+
 sub GenerateFunction {
     my ($object, $interfaceName, $function, $prefix, $parentNode) = @_;
 
@@ -1017,7 +1054,8 @@ sub GenerateFunction {
     my $returnTypeName = $returnType;
     $returnTypeName =~ s/\*$//;
     if ($returnValueIsGDOMType) {
-        push(@hBody, " * Returns: (transfer none): A #${returnTypeName}\n");
+        my $transferType = GetTransferTypeForReturnType($functionSigType);
+        push(@hBody, " * Returns: (transfer $transferType): A #${returnTypeName}\n");
     } elsif ($returnType ne "void") {
         push(@hBody, " * Returns: A #${returnTypeName}\n");
     }

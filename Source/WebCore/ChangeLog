@@ -1,5 +1,24 @@
 2015-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Wrong transfer annotations used in GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=142780
+
+        Reviewed by Gustavo Noronha Silva.
+
+        We are using transfer none for all methods returning a GObject DOM
+        Object. That's not true. Only objects derived from Node are
+        automatically released by the DOM object cache and can be transfer
+        none. All other objects are added to the cache only to avoid
+        creating the same wrapper twice for the same core object, but
+        caller should release the returned reference.
+
+        * bindings/gobject/WebKitDOMCustomUnstable.h:
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GetTransferTypeForReturnType):
+        (GenerateFunction):
+
+2015-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] WebKitDOM objects leaking
         https://bugs.webkit.org/show_bug.cgi?id=118788
 
