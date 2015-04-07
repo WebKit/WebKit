@@ -1,4 +1,32 @@
 =================
+WebKitGTK+  2.6.6
+=================
+
+What's new in WebKitGTK+ 2.6.6?
+
+  - Check TLS errors as soon as they are set in the SoupMessage to prevent any
+    data from being sent to the server in case of invalid certificate.
+  - Fix synchronous loads when maximum connection limits are reached.
+  - Fix web timing calculations when loading resources from the disk cache.
+  - Ensure WebKitFrame objects are released when the frame is destroyed.
+  - Fix some transfer annotations used in GObject DOM bindings.
+  - Clear the GObject DOM bindings internal cache when frames are destroyed or
+    web view contents are updated.
+  - Fix a crash viewing http://www.last.fm/.
+  - Fix a crash due to empty drag image during drag and drop.
+  - Fix rendering of drag and drop icon.
+  - Resize the accelerating compositing window to a minimum size again after
+    leaving accelerated compositing mode to save memory.
+  - Fix a crash when loading a local file with webkit_web_view_load_alternate_html.
+  - Fix rendering of scrollbars with GTK+ >= 3.16.
+  - Fix the build with older versions of GStreamer.
+  - Fix the build with CMake 3.2.
+  - Fix the build for Linux/MIPS64EL.
+  - Fix the build for HPPA.
+  - Fix the build with recent versions of GLib that have GMutexLocker.
+  - Fix the gtk-doc generation to appear in DevHelp.
+
+=================
 WebKitGTK+  2.6.5
 =================
 
