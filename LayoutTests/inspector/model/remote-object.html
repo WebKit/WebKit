@@ -103,6 +103,7 @@ function test()
         {expression: "window.loadEvent"}, // window.loadEvent is set inside of <body onload="..."> below.
         {expression: "new ArrayBuffer(16)"},
         {expression: "new DataView(new ArrayBuffer(16))"},
+        {expression: "obj = {}; obj['prop'] = 1; obj[Symbol()] = 2; obj[Symbol('sym')] = 3; obj[Symbol('sym')] = 4; obj[Symbol.iterator] = Symbol(); obj"}, // Symbol properties
 
         // Node
         {expression: "document.body"},

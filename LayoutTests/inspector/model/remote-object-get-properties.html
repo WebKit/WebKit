@@ -43,6 +43,7 @@ var complexObject = new SuperFoo;
 var badGetterObject = new ClassWithBadGetter;
 var unboundFunction = function() { console.log(arguments); }
 var boundFunction = unboundFunction.bind(document.body, 1, 2, 3);
+var objectWithSymbolProperties = {prop:1, [Symbol()]:2, [Symbol('sym')]:3, [Symbol('sym')]:4, [Symbol()]: Symbol(), prop2: 5};
 
 
 // --------
@@ -59,6 +60,7 @@ function test()
         {expression: "window.badGetterObject"},
         {expression: "window.unboundFunction"},
         {expression: "window.boundFunction"},
+        {expression: "window.objectWithSymbolProperties"},
     ]
 
     function runNextStep() {

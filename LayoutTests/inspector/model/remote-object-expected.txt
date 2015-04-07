@@ -2047,6 +2047,48 @@ EXPRESSION: new DataView(new ArrayBuffer(16))
 }
 
 -----------------------------------------------------
+EXPRESSION: obj = {}; obj['prop'] = 1; obj[Symbol()] = 2; obj[Symbol('sym')] = 3; obj[Symbol('sym')] = 4; obj[Symbol.iterator] = Symbol(); obj
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "prop",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "Symbol()",
+        "_type": "number",
+        "_value": "2"
+      },
+      {
+        "_name": "Symbol(sym)",
+        "_type": "number",
+        "_value": "3"
+      },
+      {
+        "_name": "Symbol(sym)",
+        "_type": "number",
+        "_value": "4"
+      },
+      {
+        "_name": "Symbol(Symbol.iterator)",
+        "_type": "symbol",
+        "_value": "Symbol()"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
 EXPRESSION: document.body
 {
   "_type": "object",

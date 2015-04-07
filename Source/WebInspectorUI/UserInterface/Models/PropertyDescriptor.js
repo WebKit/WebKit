@@ -25,7 +25,7 @@
 
 WebInspector.PropertyDescriptor = class PropertyDescriptor extends WebInspector.Object
 {
-    constructor(descriptor, isOwnProperty, wasThrown, nativeGetter, isInternalProperty)
+    constructor(descriptor, symbol, isOwnProperty, wasThrown, nativeGetter, isInternalProperty)
     {
         super();
 
@@ -34,12 +34,14 @@ WebInspector.PropertyDescriptor = class PropertyDescriptor extends WebInspector.
         console.assert(!descriptor.value || descriptor.value instanceof WebInspector.RemoteObject);
         console.assert(!descriptor.get || descriptor.get instanceof WebInspector.RemoteObject);
         console.assert(!descriptor.set || descriptor.set instanceof WebInspector.RemoteObject);
+        console.assert(!symbol || symbol instanceof WebInspector.RemoteObject);
 
         this._name = descriptor.name;
         this._value = descriptor.value;
         this._hasValue = "value" in descriptor;
         this._get = descriptor.get;
         this._set = descriptor.set;
+        this._symbol = symbol;
 
         this._writable = descriptor.writable || false;
         this._configurable = descriptor.configurable || false;
@@ -63,13 +65,16 @@ WebInspector.PropertyDescriptor = class PropertyDescriptor extends WebInspector.
         if (payload.set)
             payload.set = WebInspector.RemoteObject.fromPayload(payload.set);
 
+        if (payload.symbol)
+            payload.symbol = WebInspector.RemoteObject.fromPayload(payload.symbol);
+
         if (internal) {
             console.assert(payload.value);
             payload.writable = payload.configurable = payload.enumerable = false;
             payload.isOwn = true;
         }
 
-        return new WebInspector.PropertyDescriptor(payload, payload.isOwn, payload.wasThrown, payload.nativeGetter, internal);
+        return new WebInspector.PropertyDescriptor(payload, payload.symbol, payload.isOwn, payload.wasThrown, payload.nativeGetter, internal);
     }
 
     // Public
@@ -107,6 +112,11 @@ WebInspector.PropertyDescriptor = class PropertyDescriptor extends WebInspector.
     get enumerable()
     {
         return this._enumerable;
+    }
+
+    get symbol()
+    {
+        return this._symbol;
     }
 
     get isOwnProperty()
@@ -147,5 +157,10 @@ WebInspector.PropertyDescriptor = class PropertyDescriptor extends WebInspector.
     isIndexProperty()
     {
         return !isNaN(Number(this._name));
+    }
+
+    isSymbolProperty()
+    {
+        return !!this._symbol;
     }
 };

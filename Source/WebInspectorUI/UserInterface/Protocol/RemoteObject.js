@@ -436,7 +436,7 @@ WebInspector.RemoteObject = class RemoteObject
             }
 
             var fakeDescriptor = {name: propertyName, value: result, writable: true, configurable: true, enumerable: false};
-            var fakePropertyDescriptor = new WebInspector.PropertyDescriptor(fakeDescriptor, true, false, false, false);
+            var fakePropertyDescriptor = new WebInspector.PropertyDescriptor(fakeDescriptor, null, true, false, false, false);
             callback(fakePropertyDescriptor);
         }
 

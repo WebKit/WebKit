@@ -1,3 +1,16 @@
+2015-04-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ES6: Show Symbol properties on Objects
+        https://bugs.webkit.org/show_bug.cgi?id=141279
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object-get-properties-expected.txt:
+        * inspector/model/remote-object-get-properties.html:
+        * inspector/model/remote-object.html:
+        Update tests to include objects with Symbol properties.
+
 2015-02-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Update track sizes after distributing extra space

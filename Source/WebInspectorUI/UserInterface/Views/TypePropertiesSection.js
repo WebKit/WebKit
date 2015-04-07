@@ -90,7 +90,7 @@ WebInspector.TypePropertiesSection.PropertyComparator = function(propertyA, prop
     if (b.indexOf("__proto__") !== -1)
         return -1;
     if (a === b)
-        return 1;
+        return 0;
 
     var diff = 0;
     var chunk = /^\d+|^\D+/;

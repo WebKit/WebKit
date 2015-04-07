@@ -265,5 +265,49 @@ ALL PROPERTIES:
     boundThis
     boundArgs
 -----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.objectWithSymbolProperties
+type: object
+description: Object
+
+OWN PROPERTIES:
+    prop
+    prop2
+    Symbol()
+    Symbol(sym)
+    Symbol(sym)
+    Symbol()
+    __proto__
+
+DISPLAYABLE PROPERTIES:
+    prop
+    prop2
+    Symbol()
+    Symbol(sym)
+    Symbol(sym)
+    Symbol()
+    __proto__
+
+ALL PROPERTIES:
+    prop
+    prop2
+    Symbol()
+    Symbol(sym)
+    Symbol(sym)
+    Symbol()
+    toString
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    constructor
+    __proto__
+-----------------------------------------------------
 DONE
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2014-2015 Apple Inc.  All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -239,6 +239,8 @@ InjectedScript.prototype = {
                 descriptor.configurable = false;
             if (!("enumerable" in descriptor))
                 descriptor.enumerable = false;
+            if ("symbol" in descriptor)
+                descriptor.symbol = this._wrapObject(descriptor.symbol, objectGroupName);
         }
 
         return descriptors;
@@ -607,20 +609,25 @@ InjectedScript.prototype = {
     _propertyDescriptors: function(object, collectionMode)
     {
         var descriptors = [];
-        var nameProcessed = {};
-        nameProcessed["__proto__"] = null;
+        var nameProcessed = new Set;
 
-        function createFakeValueDescriptor(name, descriptor, isOwnProperty, possibleNativeBindingGetter)
+        function createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty, possibleNativeBindingGetter)
         {
             try {
                 var descriptor = {name, value: object[name], writable: descriptor.writable || false, configurable: descriptor.configurable || false, enumerable: descriptor.enumerable || false};
                 if (possibleNativeBindingGetter)
                     descriptor.nativeGetter = true;
+                if (isOwnProperty)
+                    descriptor.isOwn = true;
+                if (symbol)
+                    descriptor.symbol = symbol;
                 return descriptor;
             } catch (e) {
                 var errorDescriptor = {name, value: e, wasThrown: true};
                 if (isOwnProperty)
                     errorDescriptor.isOwn = true;
+                if (symbol)
+                    errorDescriptor.symbol = symbol;
                 return errorDescriptor;
             }
         }
@@ -652,20 +659,23 @@ InjectedScript.prototype = {
             }
         }
 
-        function processPropertyNames(o, names, isOwnProperty)
+        function processProperties(o, properties, isOwnProperty)
         {
-            for (var i = 0; i < names.length; ++i) {
-                var name = names[i];
-                if (nameProcessed[name] || name === "__proto__")
+            for (var i = 0; i < properties.length; ++i) {
+                var property = properties[i];
+                if (nameProcessed.has(property) || property === "__proto__")
                     continue;
 
-                nameProcessed[name] = true;
+                nameProcessed.add(property);
 
-                var descriptor = Object.getOwnPropertyDescriptor(o, name);
+                var name = toString(property);
+                var symbol = isSymbol(property) ? property : null;
+
+                var descriptor = Object.getOwnPropertyDescriptor(o, property);
                 if (!descriptor) {
                     // FIXME: Bad descriptor. Can we get here?
                     // Fall back to very restrictive settings.
-                    var fakeDescriptor = createFakeValueDescriptor(name, {writable: false, configurable: false, enumerable: false}, isOwnProperty);
+                    var fakeDescriptor = createFakeValueDescriptor(name, symbol, {writable: false, configurable: false, enumerable: false}, isOwnProperty);
                     processDescriptor(fakeDescriptor, isOwnProperty);
                     continue;
                 }
@@ -674,7 +684,7 @@ InjectedScript.prototype = {
                     // FIXME: <https://webkit.org/b/140575> Web Inspector: Native Bindings Descriptors are Incomplete
                     // Developers may create such a descriptors, so we should be resilient:
                     // var x = {}; Object.defineProperty(x, "p", {get:undefined}); Object.getOwnPropertyDescriptor(x, "p")
-                    var fakeDescriptor = createFakeValueDescriptor(name, descriptor, isOwnProperty, true);
+                    var fakeDescriptor = createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty, true);
                     processDescriptor(fakeDescriptor, isOwnProperty, true);
                     continue;
                 }
@@ -682,6 +692,8 @@ InjectedScript.prototype = {
                 descriptor.name = name;
                 if (isOwnProperty)
                     descriptor.isOwn = true;
+                if (symbol)
+                    descriptor.symbol = symbol;
                 processDescriptor(descriptor, isOwnProperty);
             }
         }
@@ -689,7 +701,9 @@ InjectedScript.prototype = {
         // Iterate prototype chain.
         for (var o = object; this._isDefined(o); o = o.__proto__) {
             var isOwnProperty = o === object;
-            processPropertyNames(o, Object.getOwnPropertyNames(o), isOwnProperty);
+            processProperties(o, Object.getOwnPropertyNames(o), isOwnProperty);
+            if (Object.getOwnPropertySymbols)
+                processProperties(o, Object.getOwnPropertySymbols(o), isOwnProperty);
             if (collectionMode === InjectedScript.CollectionMode.OwnProperties)
                 break;
         }

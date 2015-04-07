@@ -1,3 +1,17 @@
+2015-04-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ES6: Show Symbol properties on Objects
+        https://bugs.webkit.org/show_bug.cgi?id=141279
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/Runtime.json:
+        Give PropertyDescriptor a reference to the Symbol RemoteObject
+        if the property is a symbol property.
+
+        * inspector/InjectedScriptSource.js:
+        Enumerate symbol properties on objects.
+
 2015-04-07  Filip Pizlo  <fpizlo@apple.com>
 
         Make it possible to enable LLVM FastISel

@@ -154,6 +154,16 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
 
     // Private
 
+    _logSymbolProperty()
+    {
+        var symbol = this._property.symbol;
+        if (!symbol)
+            return;
+
+        var text = WebInspector.UIString("Selected Symbol");
+        WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, symbol);
+    }
+
     _logValue(value)
     {
         var resolvedValue = value || this.resolvedValue();
@@ -177,6 +187,10 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
             return;
 
         var contextMenu = new WebInspector.ContextMenu(event);
+
+        if (this._property && this._property.symbol)
+            contextMenu.appendItem(WebInspector.UIString("Log Symbol"), this._logSymbolProperty.bind(this));
+
         contextMenu.appendItem(WebInspector.UIString("Log Value"), this._logValue.bind(this));
 
         var propertyPath = this.resolvedValuePropertyPath();
