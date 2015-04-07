@@ -1,0 +1,24 @@
+ OK
+This tests that changing the selection in a non-focused combo box doesn't result in erroneous focus claims.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Changing focus to button.
+AXFocusedUIElementChanged: AXRole: AXButton
+Focused element is: AXRole: AXButton
+
+Changing selected item in non-focused combobox.
+AXSelectedChildrenChanged: AXRole: AXComboBox
+Focused element is: AXRole: AXButton
+
+Changing selected item in non-focused combobox.
+AXSelectedChildrenChanged: AXRole: AXComboBox
+Focused element is: AXRole: AXButton
+
+AXChildrenAdded: AXRole: AXWebArea
+AXLoadComplete: AXRole: AXWebArea
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
