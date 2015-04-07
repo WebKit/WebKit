@@ -1,3 +1,10 @@
+2015-04-07  Sam Weinig  <sam@webkit.org>
+
+        Re-add JSReadableStream and JSReadableStreamReader the Xcode project to
+        make Xcode happy.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2015-02-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Update track sizes after distributing extra space
