@@ -1,3 +1,18 @@
+2015-04-07  Tim Horton  <timothy_horton@apple.com>
+
+        Expose and test fixedLayoutSize via modern WebKit SPI
+        https://bugs.webkit.org/show_bug.cgi?id=143500
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FixedLayoutSize.mm: Added.
+        (-[FixedLayoutSizeNavigationDelegate webView:didFinishNavigation:]):
+        (TEST):
+        Add a test that verifies that fixedLayoutSize works at all, that
+        it persists through a navigation, and that turning it back off reverts to
+        laying out at the size of the view.
+
 2015-04-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed. Add myself as a committer.

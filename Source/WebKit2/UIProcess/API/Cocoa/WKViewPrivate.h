@@ -90,6 +90,9 @@
 @property (nonatomic, setter=_setTopContentInset:) CGFloat _topContentInset;
 @property (nonatomic, setter=_setTotalHeightOfBanners:) CGFloat _totalHeightOfBanners;
 
+@property (nonatomic, getter=_isFixedLayoutEnabled, setter=_setFixedLayoutEnabled:) BOOL _fixedLayoutEnabled;
+@property (nonatomic, setter=_setFixedLayoutSize:) CGSize _fixedLayoutSize;
+
 @property (nonatomic, setter=_setOverrideDeviceScaleFactor:) CGFloat _overrideDeviceScaleFactor WK_AVAILABLE(WK_MAC_TBA, NA);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000

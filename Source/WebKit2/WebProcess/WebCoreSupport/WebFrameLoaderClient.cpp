@@ -1257,12 +1257,14 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     bool isTransparent = !webPage->drawsBackground();
     bool shouldUseFixedLayout = isMainFrame && webPage->useFixedLayout();
     bool shouldDisableScrolling = isMainFrame && !webPage->mainFrameIsScrollable();
-    bool shouldHideScrollbars = shouldUseFixedLayout || shouldDisableScrolling;
+    bool shouldHideScrollbars = shouldDisableScrolling;
     IntRect fixedVisibleContentRect;
 
 #if USE(TILED_BACKING_STORE)
     if (m_frame->coreFrame()->view())
         fixedVisibleContentRect = m_frame->coreFrame()->view()->fixedVisibleContentRect();
+    if (shouldUseFixedLayout)
+        shouldHideScrollbars = true;
 #endif
 
     const ResourceResponse& response = m_frame->coreFrame()->loader().documentLoader()->response();
@@ -1272,7 +1274,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     ScrollbarMode defaultScrollbarMode = shouldHideScrollbars ? ScrollbarAlwaysOff : ScrollbarAuto;
 
     m_frame->coreFrame()->createView(webPage->size(), backgroundColor, isTransparent,
-        IntSize(), fixedVisibleContentRect, shouldUseFixedLayout,
+        webPage->fixedLayoutSize(), fixedVisibleContentRect, shouldUseFixedLayout,
         defaultScrollbarMode, /* lock */ shouldHideScrollbars, defaultScrollbarMode, /* lock */ shouldHideScrollbars);
 
     if (int minimumLayoutWidth = webPage->minimumLayoutSize().width()) {

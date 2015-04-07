@@ -2232,6 +2232,26 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return _page->isShowingNavigationGestureSnapshot();
 }
 
+- (BOOL)_isFixedLayoutEnabled
+{
+    return _page->useFixedLayout();
+}
+
+- (void)_setFixedLayoutEnabled:(BOOL)fixedLayoutEnabled
+{
+    _page->setUseFixedLayout(fixedLayoutEnabled);
+}
+
+- (CGSize)_fixedLayoutSize
+{
+    return _page->fixedLayoutSize();
+}
+
+- (void)_setFixedLayoutSize:(CGSize)fixedLayoutSize
+{
+    _page->setFixedLayoutSize(WebCore::expandedIntSize(WebCore::FloatSize(fixedLayoutSize)));
+}
+
 #pragma mark scrollperf methods
 
 - (void)_setScrollPerformanceDataCollectionEnabled:(BOOL)enabled

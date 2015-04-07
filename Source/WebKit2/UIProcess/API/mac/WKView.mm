@@ -4322,6 +4322,26 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return _data->_overrideDeviceScaleFactor;
 }
 
+- (BOOL)_isFixedLayoutEnabled
+{
+    return _data->_page->useFixedLayout();
+}
+
+- (void)_setFixedLayoutEnabled:(BOOL)fixedLayoutEnabled
+{
+    _data->_page->setUseFixedLayout(fixedLayoutEnabled);
+}
+
+- (CGSize)_fixedLayoutSize
+{
+    return _data->_page->fixedLayoutSize();
+}
+
+- (void)_setFixedLayoutSize:(NSSize)fixedLayoutSize
+{
+    _data->_page->setFixedLayoutSize(expandedIntSize(FloatSize(fixedLayoutSize)));
+}
+
 - (void)_dispatchSetTopContentInset
 {
     if (!_data->_didScheduleSetTopContentInset)

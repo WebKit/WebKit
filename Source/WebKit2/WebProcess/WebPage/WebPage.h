@@ -359,6 +359,7 @@ public:
     void setUseFixedLayout(bool);
     bool useFixedLayout() const { return m_useFixedLayout; }
     void setFixedLayoutSize(const WebCore::IntSize&);
+    WebCore::IntSize fixedLayoutSize() const;
 
     void listenForLayoutMilestones(uint32_t /* LayoutMilestones */);
 

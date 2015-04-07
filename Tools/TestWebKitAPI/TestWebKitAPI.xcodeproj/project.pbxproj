@@ -27,6 +27,7 @@
 		290A9BB91735F63800D71BBC /* OpenNewWindow.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290A9BB81735F42300D71BBC /* OpenNewWindow.html */; };
 		290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */; };
 		297234B7173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 297234B5173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp */; };
+		2D1FE0B01AD465C1006CD9E6 /* FixedLayoutSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D1FE0AF1AD465C1006CD9E6 /* FixedLayoutSize.mm */; };
 		2D950FBE1A2217D300012434 /* ActionMenusBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D950FBB1A2217D000012434 /* ActionMenusBundle.mm */; };
 		2D950FC01A230C3A00012434 /* action-menu-targets.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2D950FBF1A230C1E00012434 /* action-menu-targets.html */; };
 		2DD7D3AF178227B30026E1E3 /* lots-of-text-vertical-lr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2DD7D3AE178227AC0026E1E3 /* lots-of-text-vertical-lr.html */; };
@@ -449,6 +450,7 @@
 		29AB8A9F164C735800D49BEC /* CustomProtocolsTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CustomProtocolsTest.mm; path = WebKit2ObjC/CustomProtocolsTest.mm; sourceTree = "<group>"; };
 		29AB8AA2164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestBrowsingContextLoadDelegate.mm; sourceTree = "<group>"; };
 		29AB8AA3164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBrowsingContextLoadDelegate.h; sourceTree = "<group>"; };
+		2D1FE0AF1AD465C1006CD9E6 /* FixedLayoutSize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FixedLayoutSize.mm; sourceTree = "<group>"; };
 		2D640B5417875DFF00BFAF99 /* ScrollPinningBehaviors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollPinningBehaviors.cpp; sourceTree = "<group>"; };
 		2D950FBA1A2217D000012434 /* ActionMenus.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActionMenus.mm; path = WebKit2ObjC/ActionMenus.mm; sourceTree = "<group>"; };
 		2D950FBB1A2217D000012434 /* ActionMenusBundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActionMenusBundle.mm; path = WebKit2ObjC/ActionMenusBundle.mm; sourceTree = "<group>"; };
@@ -811,6 +813,7 @@
 			children = (
 				7CEFA9641AC0B9E200B910FD /* _WKUserContentExtensionStore.mm */,
 				A1A4FE5D18DD3DB700B5EA8A /* Download.mm */,
+				2D1FE0AF1AD465C1006CD9E6 /* FixedLayoutSize.mm */,
 				1ABC3DED1899BE6D004F0626 /* Navigation.mm */,
 				CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */,
 				C95501BE19AD2FAF0049BE3E /* Preferences.mm */,
@@ -1562,6 +1565,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7AA021BB1AB09EA70052953F /* DateMath.cpp in Sources */,
+				2D1FE0B01AD465C1006CD9E6 /* FixedLayoutSize.mm in Sources */,
 				1CB9BC381A67482300FE5678 /* WeakPtr.cpp in Sources */,
 				2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */,
 				7AA6A1521AAC0B31002B2ED3 /* WorkQueue.cpp in Sources */,

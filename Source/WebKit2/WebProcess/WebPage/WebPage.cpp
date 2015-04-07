@@ -1494,6 +1494,14 @@ void WebPage::setFixedLayoutSize(const IntSize& size)
     view->setFixedLayoutSize(size);
 }
 
+IntSize WebPage::fixedLayoutSize() const
+{
+    FrameView* view = mainFrameView();
+    if (!view)
+        return IntSize();
+    return view->fixedLayoutSize();
+}
+
 void WebPage::listenForLayoutMilestones(uint32_t milestones)
 {
     if (!m_page)

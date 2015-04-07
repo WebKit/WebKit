@@ -1,3 +1,38 @@
+2015-04-07  Tim Horton  <timothy_horton@apple.com>
+
+        Expose and test fixedLayoutSize via modern WebKit SPI
+        https://bugs.webkit.org/show_bug.cgi?id=143500
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isFixedLayoutEnabled]):
+        (-[WKWebView _setFixedLayoutEnabled:]):
+        (-[WKWebView _fixedLayoutSize]):
+        (-[WKWebView _setFixedLayoutSize:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _isFixedLayoutEnabled]):
+        (-[WKView _setFixedLayoutEnabled:]):
+        (-[WKView _fixedLayoutSize]):
+        (-[WKView _setFixedLayoutSize:]):
+        Add API for adjusting the fixed layout size, and whether or not we use it.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        Repair a mistake I made in r139822, where I brought odd TILED_BACKING_STORE-only
+        logic (which disables scrollbars if fixedLayoutSize is enabled) to the rest of the ports.
+        Put it back as TILED_BACKING_STORE-only.
+
+        Persist the fixedLayoutSize through view creation; we already persist the enabled state,
+        but not the size, which doesn't make any sense.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::fixedLayoutSize):
+        * WebProcess/WebPage/WebPage.h:
+        Add a fixedLayoutSize() getter.
+
 2015-04-07  Brady Eidson  <beidson@apple.com>
 
         ContextMenuItem refactoring
