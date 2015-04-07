@@ -4337,7 +4337,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return _data->_page->fixedLayoutSize();
 }
 
-- (void)_setFixedLayoutSize:(NSSize)fixedLayoutSize
+- (void)_setFixedLayoutSize:(CGSize)fixedLayoutSize
 {
     _data->_page->setFixedLayoutSize(expandedIntSize(FloatSize(fixedLayoutSize)));
 }
