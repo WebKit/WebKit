@@ -2311,7 +2311,7 @@ http/tests/xmlhttprequest/web-apps/013.html
 http/tests/cache/network-error-during-revalidation.html [ Pass Crash ]
 http/tests/xmlhttprequest/workers/methods.html [ Pass Crash ]
 
-webkit.org/b/143414 http/tests/contentfiltering/block-after-redirect.html [ Failure ]
+webkit.org/b/143460 http/tests/contentfiltering/block-after-redirect.html [ ImageOnlyFailure ]
 ################################################################################
 #################            End HTTP Issues             #######################
 ################################################################################
