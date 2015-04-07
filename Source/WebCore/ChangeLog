@@ -1,3 +1,60 @@
+2015-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitDOM objects leaking
+        https://bugs.webkit.org/show_bug.cgi?id=118788
+
+        Reviewed by Darin Adler and Sergio Villar Senin.
+
+        Use a DOMwindowObserver class, derived from DOMWindowProperty to
+        be notified when the window object is detached from the frame to
+        clear the DOM objects associated to that frame in that case too.
+
+        * bindings/gobject/DOMObjectCache.cpp:
+
+2015-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] GObject DOM bindings object are cached forever
+        https://bugs.webkit.org/show_bug.cgi?id=141558
+
+        Reviewed by Sergio Villar Senin.
+
+        Rework the DOMObjectCache to avoid having to manually clear the
+        objects when the frame is destroyed, using a FrameDestructionObserver
+        instead. When a new object associated to a Frame is added to the
+        cache, a FrameDestructionObserver is created for the frame if
+        needed, and the DOM object is tracked by the observer too. When
+        the frame is detached from the page all its objects are cleared,
+        and if the aren't additional references, the object is finalized
+        and removed from the cache normally.
+        This patch also simplifies and modernizes the code to make it
+        easier to read an maintain.
+
+        * bindings/gobject/DOMObjectCache.cpp:
+        (WebKit::DOMObjectCacheData::DOMObjectCacheData): Add constructor
+        to initialize its members and simplify the callers.
+        (WebKit::DOMObjectCacheData::clearObject): Remove the references
+        added by the cache, ensuring the GObject is not finalized until
+        the method returns.
+        (WebKit::DOMObjectCacheData::refObject): Adds a reference owned by
+        the cache.
+        (WebKit::domObjectCacheFrameObservers): Map a frame to a FrameDestructionObserver.
+        (WebKit::getOrCreateDOMObjectCacheFrameObserver): Create a new
+        FrameDestructionObserver for the given Frame or return the
+        existing one.
+        (WebKit::domObjects): Map wrapped object to wrapper object.
+        (WebKit::DOMObjectCache::forget): Remove the wrapped object from
+        the cache.
+        (WebKit::DOMObjectCache::get): Return the wrapped object if it is
+        in the cache, increasing the cache references.
+        (WebKit::DOMObjectCache::put): Add the wrapper object to the cache
+        for the given wrapped object. If it's a Node and has a frame add
+        the node to the FrameDestructionObserver corresponding to the frame.
+        (WebKit::getFrameFromHandle): Deleted.
+        (WebKit::weakRefNotify): Deleted.
+        (WebKit::DOMObjectCache::clearByFrame): Deleted.
+        (WebKit::DOMObjectCache::~DOMObjectCache): Deleted.
+        * bindings/gobject/DOMObjectCache.h:
+
 2015-04-07  Milan Crha  <mcrha@redhat.com>
 
         [GTK] [WebKit1] Crash under WebCore::ScrollView::contentsToWindow()

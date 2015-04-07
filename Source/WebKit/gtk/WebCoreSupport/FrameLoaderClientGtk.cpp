@@ -29,7 +29,6 @@
 #include "ArchiveResource.h"
 #include "CachedFrame.h"
 #include "Color.h"
-#include "DOMObjectCache.h"
 #include "DocumentLoader.h"
 #include "DocumentLoaderGtk.h"
 #include "DumpRenderTreeSupportGtk.h"
@@ -579,8 +578,7 @@ void FrameLoaderClient::registerForIconNotification(bool shouldRegister)
 
 void FrameLoaderClient::setMainFrameDocumentReady(bool ready)
 {
-    if (!ready)
-        DOMObjectCache::clearByFrame(core(m_frame));
+    notImplemented();
 }
 
 bool FrameLoaderClient::hasWebView() const

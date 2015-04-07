@@ -29,7 +29,6 @@
 
 #include "AXObjectCache.h"
 #include "AnimationController.h"
-#include "DOMObjectCache.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentLoaderGtk.h"
@@ -172,8 +171,6 @@ void webkit_web_frame_core_frame_gone(WebKitWebFrame* frame)
 {
     ASSERT(WEBKIT_IS_WEB_FRAME(frame));
     WebKitWebFramePrivate* priv = frame->priv;
-    if (priv->coreFrame)
-        DOMObjectCache::clearByFrame(priv->coreFrame);
     priv->coreFrame = 0;
 }
 
@@ -188,7 +185,6 @@ static void webkit_web_frame_finalize(GObject* object)
     WebKitWebFramePrivate* priv = frame->priv;
 
     if (priv->coreFrame) {
-        DOMObjectCache::clearByFrame(priv->coreFrame);
         priv->coreFrame->loader().cancelAndClear();
         priv->coreFrame = 0;
     }
