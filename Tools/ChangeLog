@@ -1,3 +1,25 @@
+2015-04-06  Sam Weinig  <sam@webkit.org>
+
+        Use content extensions in MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=143446
+
+        Reviewed by Alex Christensen.
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowser/mac/AppDelegate.h:
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]):
+        (-[BrowserAppDelegate showExtensionsManager:]):
+        (-[BrowserAppDelegate userContentContoller]):
+        * MiniBrowser/mac/ExtensionManagerWindowController.h: Added.
+        * MiniBrowser/mac/ExtensionManagerWindowController.m: Added.
+        (-[ExtensionManagerWindowController init]):
+        (-[ExtensionManagerWindowController windowDidLoad]):
+        (-[ExtensionManagerWindowController add:]):
+        (-[ExtensionManagerWindowController remove:]):
+        * MiniBrowser/mac/ExtensionManagerWindowController.xib: Added.
+        * MiniBrowser/mac/MainMenu.xib:
+
 2015-04-07  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         web-platform-tests server should retrieve the modules file relatively to its docroot path

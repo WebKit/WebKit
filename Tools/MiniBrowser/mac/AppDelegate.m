@@ -25,14 +25,17 @@
 
 #import "AppDelegate.h"
 
+#import "ExtensionManagerWindowController.h"
 #import "SettingsController.h"
 #import "WK1BrowserWindowController.h"
 #import "WK2BrowserWindowController.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKUserContentExtensionStore.h>
 #import <WebKit/_WKWebsiteDataStore.h>
 
 enum {
@@ -47,6 +50,9 @@ enum {
     self = [super init];
     if (self) {
         _browserWindowControllers = [[NSMutableSet alloc] init];
+#if WK_API_ENABLED
+        _extensionManagerWindowController = [[ExtensionManagerWindowController alloc] init];
+#endif
     }
 
     return self;
@@ -210,5 +216,19 @@ static WKWebViewConfiguration *defaultConfiguration()
         [_newWebKit2WindowItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
     }
 }
+
+- (IBAction)showExtensionsManager:(id)sender
+{
+#if WK_API_ENABLED
+    [_extensionManagerWindowController showWindow:sender];
+#endif
+}
+
+#if WK_API_ENABLED
+- (WKUserContentController *)userContentContoller
+{
+    return defaultConfiguration().userContentController;
+}
+#endif
 
 @end
