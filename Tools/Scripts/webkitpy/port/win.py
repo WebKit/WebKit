@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# Copyright (C) 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -89,6 +89,11 @@ class WinPort(ApplePort):
         # FIXME: Perhaps we should get this list from MacPort?
         fallback_names.append('mac')
         return map(self._webkit_baseline_path, fallback_names)
+
+    def setup_environ_for_server(self, server_name=None):
+        env = super(WinPort, self).setup_environ_for_server(server_name)
+        env['XML_CATALOG_FILES'] = ''  # work around missing /etc/catalog <rdar://problem/4292995>
+        return env
 
     def operating_system(self):
         return 'win'
