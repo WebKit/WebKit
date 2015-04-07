@@ -1238,7 +1238,6 @@ private:
         case LoopHint:
         case StoreBarrier:
         case StoreBarrierWithNullCheck:
-        case TypedArrayWatchpoint:
         case MovHint:
         case ZombieHint:
         case BottomValue:

@@ -115,6 +115,30 @@ private:
                 break;
             }
                 
+            case GetIndexedPropertyStorage: {
+                JSArrayBufferView* view = m_graph.tryGetFoldableView(
+                    m_state.forNode(node->child1()).m_value, node->arrayMode());
+                if (!view)
+                    break;
+                
+                if (view->mode() == FastTypedArray) {
+                    // FIXME: It would be awesome to be able to fold the property storage for
+                    // these GC-allocated typed arrays. For now it doesn't matter because the
+                    // most common use-cases for constant typed arrays involve large arrays with
+                    // aliased buffer views.
+                    // https://bugs.webkit.org/show_bug.cgi?id=125425
+                    break;
+                }
+                
+                m_interpreter.execute(indexInBlock);
+                eliminated = true;
+                
+                m_insertionSet.insertNode(
+                    indexInBlock, SpecNone, Phantom, node->origin, node->children);
+                node->convertToConstantStoragePointer(view->vector());
+                break;
+            }
+                
             case CheckStructureImmediate: {
                 AbstractValue& value = m_state.forNode(node->child1());
                 StructureSet& set = node->structureSet();

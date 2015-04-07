@@ -251,7 +251,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case StoreBarrierWithNullCheck:
     case InvalidationPoint:
     case NotifyWrite:
-    case TypedArrayWatchpoint:
     case CheckInBounds:
     case ConstantStoragePointer:
     case Check:

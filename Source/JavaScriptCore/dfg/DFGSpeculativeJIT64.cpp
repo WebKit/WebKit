@@ -3608,8 +3608,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case AllocationProfileWatchpoint:
-    case TypedArrayWatchpoint: {
+    case AllocationProfileWatchpoint: {
         noResult(node);
         break;
     }

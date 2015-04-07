@@ -119,7 +119,6 @@ inline CapabilityLevel canCompile(Node* node)
     case StringCharCodeAt:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
-    case TypedArrayWatchpoint:
     case GetTypedArrayByteOffset:
     case NotifyWrite:
     case StoreBarrier:

@@ -146,33 +146,6 @@ private:
             }
             break;
 
-        case GetArrayLength:
-            if (JSArrayBufferView* view = m_graph.tryGetFoldableViewForChild1(m_node))
-                foldTypedArrayPropertyToConstant(view, jsNumber(view->length()));
-            break;
-            
-        case GetTypedArrayByteOffset:
-            if (JSArrayBufferView* view = m_graph.tryGetFoldableView(m_node->child1().node()))
-                foldTypedArrayPropertyToConstant(view, jsNumber(view->byteOffset()));
-            break;
-            
-        case GetIndexedPropertyStorage:
-            if (JSArrayBufferView* view = m_graph.tryGetFoldableViewForChild1(m_node)) {
-                if (view->mode() != FastTypedArray) {
-                    prepareToFoldTypedArray(view);
-                    m_node->convertToConstantStoragePointer(view->vector());
-                    m_changed = true;
-                    break;
-                } else {
-                    // FIXME: It would be awesome to be able to fold the property storage for
-                    // these GC-allocated typed arrays. For now it doesn't matter because the
-                    // most common use-cases for constant typed arrays involve large arrays with
-                    // aliased buffer views.
-                    // https://bugs.webkit.org/show_bug.cgi?id=125425
-                }
-            }
-            break;
-            
         case ValueRep:
         case Int52Rep:
         case DoubleRep: {
@@ -281,22 +254,6 @@ private:
     void convertToIdentityOverChild2()
     {
         convertToIdentityOverChild(1);
-    }
-    
-    void foldTypedArrayPropertyToConstant(JSArrayBufferView* view, JSValue constant)
-    {
-        prepareToFoldTypedArray(view);
-        m_graph.convertToConstant(m_node, constant);
-        m_changed = true;
-    }
-    
-    void prepareToFoldTypedArray(JSArrayBufferView* view)
-    {
-        m_insertionSet.insertNode(
-            m_nodeIndex, SpecNone, TypedArrayWatchpoint, m_node->origin,
-            OpInfo(view));
-        m_insertionSet.insertNode(
-            m_nodeIndex, SpecNone, Phantom, m_node->origin, m_node->children);
     }
     
     void handleCommutativity()

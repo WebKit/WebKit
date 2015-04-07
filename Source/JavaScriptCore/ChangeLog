@@ -1,3 +1,70 @@
+2015-04-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Constant folding of typed array properties should be handled by AI rather than strength reduction
+        https://bugs.webkit.org/show_bug.cgi?id=143496
+
+        Reviewed by Geoffrey Garen.
+        
+        Handling constant folding in AI is better because it precludes us from having to fixpoint the CFA
+        phase and whatever other phase did the folding in order to find all constants.
+        
+        This also removes the TypedArrayWatchpoint node type because we can just set the watchpoint
+        directly.
+        
+        This also fixes a bug in FTL lowering of GetTypedArrayByteOffset. The bug was previously not
+        found because all of the tests for it involved the property getting constant folded. I found that
+        the codegen was bad because an earlier version of the patch broke that constant folding. This
+        adds a new test for that node type, which makes constant folding impossible by allocating a new
+        typed array every type. The lesson here is: if you write a test for something, run the test with
+        full IR dumps to make sure it's actually testing the thing you want it to test.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::tryGetFoldableView):
+        (JSC::DFG::Graph::tryGetFoldableViewForChild1): Deleted.
+        * dfg/DFGGraph.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasTypedArray): Deleted.
+        (JSC::DFG::Node::typedArray): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::jumpForTypedArrayOutOfBounds):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        (JSC::DFG::StrengthReductionPhase::foldTypedArrayPropertyToConstant): Deleted.
+        (JSC::DFG::StrengthReductionPhase::prepareToFoldTypedArray): Deleted.
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        (JSC::DFG::WatchpointCollectionPhase::addLazily):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetTypedArrayByteOffset):
+        (JSC::FTL::LowerDFGToLLVM::typedArrayLength):
+        * tests/stress/fold-typed-array-properties.js:
+        (foo):
+        * tests/stress/typed-array-byte-offset.js: Added.
+        (foo):
+
 2015-04-07  Matthew Mirman  <mmirman@apple.com>
 
         Source and stack information should get appended only to native errors

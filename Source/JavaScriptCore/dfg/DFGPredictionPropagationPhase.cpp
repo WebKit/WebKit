@@ -645,7 +645,6 @@ private:
         case Unreachable:
         case LoopHint:
         case NotifyWrite:
-        case TypedArrayWatchpoint:
         case ConstantStoragePointer:
         case MovHint:
         case ZombieHint:

@@ -2268,7 +2268,9 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayOutOfBounds(Node* node, GPRRe
 {
     if (node->op() == PutByValAlias)
         return JITCompiler::Jump();
-    if (JSArrayBufferView* view = m_jit.graph().tryGetFoldableViewForChild1(node)) {
+    JSArrayBufferView* view = m_jit.graph().tryGetFoldableView(
+        m_state.forNode(m_jit.graph().child(node, 0)).m_value, node->arrayMode());
+    if (view) {
         uint32_t length = view->length();
         Node* indexNode = m_jit.graph().child(node, 1).node();
         if (indexNode->isInt32Constant() && indexNode->asUInt32() < length)

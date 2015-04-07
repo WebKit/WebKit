@@ -313,8 +313,6 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, RawPointer(node->executionCounter()));
     if (node->hasVariableWatchpointSet())
         out.print(comma, RawPointer(node->variableWatchpointSet()));
-    if (node->hasTypedArray())
-        out.print(comma, inContext(JSValue(node->typedArray()), context));
     if (node->hasStoragePointer())
         out.print(comma, RawPointer(node->storagePointer()));
     if (node->hasObjectMaterializationData())
@@ -1071,27 +1069,25 @@ JSValue Graph::tryGetConstantClosureVar(Node* node, ScopeOffset offset)
     return tryGetConstantClosureVar(node->asJSValue(), offset);
 }
 
-JSArrayBufferView* Graph::tryGetFoldableView(Node* node)
+JSArrayBufferView* Graph::tryGetFoldableView(JSValue value)
 {
-    JSArrayBufferView* view = node->dynamicCastConstant<JSArrayBufferView*>();
-    if (!view)
+    if (!value)
+        return nullptr;
+    JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(value);
+    if (!value)
         return nullptr;
     if (!view->length())
         return nullptr;
     WTF::loadLoadFence();
+    watchpoints().addLazily(view);
     return view;
 }
 
-JSArrayBufferView* Graph::tryGetFoldableView(Node* node, ArrayMode arrayMode)
+JSArrayBufferView* Graph::tryGetFoldableView(JSValue value, ArrayMode arrayMode)
 {
     if (arrayMode.typedArrayType() == NotTypedArray)
-        return 0;
-    return tryGetFoldableView(node);
-}
-
-JSArrayBufferView* Graph::tryGetFoldableViewForChild1(Node* node)
-{
-    return tryGetFoldableView(child(node, 0).node(), node->arrayMode());
+        return nullptr;
+    return tryGetFoldableView(value);
 }
 
 void Graph::registerFrozenValues()

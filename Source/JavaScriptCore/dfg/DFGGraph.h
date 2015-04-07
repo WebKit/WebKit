@@ -692,9 +692,8 @@ public:
     JSValue tryGetConstantClosureVar(const AbstractValue&, ScopeOffset);
     JSValue tryGetConstantClosureVar(Node*, ScopeOffset);
     
-    JSArrayBufferView* tryGetFoldableView(Node*);
-    JSArrayBufferView* tryGetFoldableView(Node*, ArrayMode);
-    JSArrayBufferView* tryGetFoldableViewForChild1(Node*);
+    JSArrayBufferView* tryGetFoldableView(JSValue);
+    JSArrayBufferView* tryGetFoldableView(JSValue, ArrayMode arrayMode);
     
     void registerFrozenValues();
     

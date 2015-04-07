@@ -92,14 +92,6 @@ private:
             
             if (m_node->arrayMode().type() == Array::String)
                 handleStringGetByVal();
-
-            if (JSArrayBufferView* view = m_graph.tryGetFoldableViewForChild1(m_node))
-                addLazily(view);
-            break;
-            
-        case PutByVal:
-            if (JSArrayBufferView* view = m_graph.tryGetFoldableViewForChild1(m_node))
-                addLazily(view);
             break;
             
         case StringCharAt:
@@ -119,10 +111,6 @@ private:
             
         case VarInjectionWatchpoint:
             addLazily(globalObject()->varInjectionWatchpoint());
-            break;
-            
-        case TypedArrayWatchpoint:
-            addLazily(m_node->typedArray());
             break;
             
         default:
@@ -153,10 +141,6 @@ private:
     void addLazily(InlineWatchpointSet& set)
     {
         m_graph.watchpoints().addLazily(set);
-    }
-    void addLazily(JSArrayBufferView* view)
-    {
-        m_graph.watchpoints().addLazily(view);
     }
     
     JSGlobalObject* globalObject()

@@ -846,7 +846,6 @@ private:
 
         case PhantomLocal:
         case LoopHint:
-        case TypedArrayWatchpoint:
         case AllocationProfileWatchpoint:
         case MovHint:
         case ZombieHint:
@@ -2105,9 +2104,9 @@ private:
         LBasicBlock wastefulCase = FTL_NEW_BLOCK(m_out, ("wasteful typed array"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("continuation branch"));
         
-        LValue baseAddress = m_out.addPtr(basePtr, JSArrayBufferView::offsetOfMode());
+        LValue mode = m_out.load32(basePtr, m_heaps.JSArrayBufferView_mode);
         m_out.branch(
-            m_out.notEqual(baseAddress , m_out.constIntPtr(WastefulTypedArray)),
+            m_out.notEqual(mode, m_out.constInt32(WastefulTypedArray)),
             unsure(simpleCase), unsure(wastefulCase));
 
         // begin simple case        
@@ -2125,7 +2124,7 @@ private:
         LValue arrayBufferPtr = m_out.loadPtr(butterflyPtr, m_heaps.Butterfly_arrayBuffer);
         LValue dataPtr = m_out.loadPtr(arrayBufferPtr, m_heaps.ArrayBuffer_data);
 
-        ValueFromBlock wastefulOut = m_out.anchor(m_out.sub(dataPtr, vectorPtr));        
+        ValueFromBlock wastefulOut = m_out.anchor(m_out.sub(vectorPtr, dataPtr));
 
         m_out.jump(continuation);
         m_out.appendTo(continuation, lastNext);
@@ -5785,7 +5784,9 @@ private:
     
     LValue typedArrayLength(Edge baseEdge, ArrayMode arrayMode, LValue base)
     {
-        if (JSArrayBufferView* view = m_graph.tryGetFoldableView(baseEdge.node(), arrayMode))
+        JSArrayBufferView* view = m_graph.tryGetFoldableView(
+            m_state.forNode(baseEdge).m_value, arrayMode);
+        if (view)
             return m_out.constInt32(view->length());
         return m_out.load32NonNegative(base, m_heaps.JSArrayBufferView_length);
     }

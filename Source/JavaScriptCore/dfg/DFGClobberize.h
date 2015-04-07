@@ -306,11 +306,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(SideState);
         return;
 
-    case TypedArrayWatchpoint:
-        read(Watchpoint_fire);
-        write(SideState);
-        return;
-        
     case NotifyWrite:
         write(Watchpoint_fire);
         write(SideState);
