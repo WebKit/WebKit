@@ -62,6 +62,9 @@ void GtkPluginWidget::invalidateRect(const IntRect& coreRect)
 
 void GtkPluginWidget::frameRectsChanged()
 {
+    if (!parent())
+        return;
+
     IntRect rect = frameRect();
     IntPoint loc = parent()->contentsToWindow(rect.location());
     GtkAllocation allocation = { loc.x(), loc.y(), rect.width(), rect.height() };

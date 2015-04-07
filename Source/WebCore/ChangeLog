@@ -1,3 +1,16 @@
+2015-04-07  Milan Crha  <mcrha@redhat.com>
+
+        [GTK] [WebKit1] Crash under WebCore::ScrollView::contentsToWindow()
+        https://bugs.webkit.org/show_bug.cgi?id=142343
+
+        Reviewed by Carlos Garcia Campos.
+
+        Return early from frameRectsChanged() if the plugin widget doesn't
+        have a parent.
+
+        * platform/gtk/GtkPluginWidget.cpp:
+        (WebCore::GtkPluginWidget::frameRectsChanged):
+
 2015-02-16  Milan Crha  <mcrha@redhat.com>
 
         [GTK] Loading page into WebView shows g_closure_unref warning
