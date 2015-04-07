@@ -68,6 +68,8 @@ public:
 
     cairo_surface_t* getSnapshotAndWaitUntilReady(WebKitSnapshotRegion, WebKitSnapshotOptions);
 
+    bool runWebProcessTest(const char* suiteName, const char* testName);
+
     WebKitWebView* m_webView;
     GMainLoop* m_mainLoop;
     CString m_activeURI;

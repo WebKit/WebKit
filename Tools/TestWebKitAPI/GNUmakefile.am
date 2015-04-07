@@ -99,8 +99,6 @@ Libraries_libTestWebKit2GtkAPI_la_SOURCES = \
 	Tools/TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestBus.h \
 	Tools/TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestServer.cpp \
 	Tools/TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestServer.h \
-	Tools/TestWebKitAPI/gtk/WebKit2Gtk/WebProcessTestRunner.cpp \
-	Tools/TestWebKitAPI/gtk/WebKit2Gtk/WebProcessTestRunner.h \
 	Tools/TestWebKitAPI/gtk/WebKit2Gtk/TestMain.cpp \
 	Tools/TestWebKitAPI/gtk/WebKit2Gtk/TestMain.h \
 	Tools/TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp \

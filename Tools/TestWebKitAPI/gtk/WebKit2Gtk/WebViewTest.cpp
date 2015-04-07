@@ -444,3 +444,12 @@ cairo_surface_t* WebViewTest::getSnapshotAndWaitUntilReady(WebKitSnapshotRegion 
     g_main_loop_run(m_mainLoop);
     return m_surface;
 }
+
+bool WebViewTest::runWebProcessTest(const char* suiteName, const char* testName)
+{
+    GUniquePtr<char> script(g_strdup_printf("WebProcessTestRunner.runTest('%s/%s');", suiteName, testName));
+    GUniqueOutPtr<GError> error;
+    WebKitJavascriptResult* javascriptResult = runJavaScriptAndWaitUntilFinished(script.get(), &error.outPtr());
+    g_assert(!error);
+    return javascriptResultToBoolean(javascriptResult);
+}

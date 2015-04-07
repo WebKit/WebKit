@@ -31,7 +31,6 @@ add_library(WebKit2APITestCore STATIC
     ${TOOLS_DIR}/TestWebKitAPI/gtk/WebKit2Gtk/LoadTrackingTest.cpp
     ${TOOLS_DIR}/TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestBus.cpp
     ${TOOLS_DIR}/TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestServer.cpp
-    ${TOOLS_DIR}/TestWebKitAPI/gtk/WebKit2Gtk/WebProcessTestRunner.cpp
     ${TOOLS_DIR}/TestWebKitAPI/gtk/WebKit2Gtk/TestMain.cpp
     ${TOOLS_DIR}/TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp
 )
