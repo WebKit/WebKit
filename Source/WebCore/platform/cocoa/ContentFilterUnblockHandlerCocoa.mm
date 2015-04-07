@@ -30,7 +30,12 @@
 
 #import "BlockExceptions.h"
 #import "ContentFilter.h"
+#import "Logging.h"
 #import "ResourceRequest.h"
+
+#if !LOG_DISABLED
+#import <wtf/text/CString.h>
+#endif
 
 #if PLATFORM(IOS)
 #import "SoftLinking.h"
@@ -52,6 +57,7 @@ ContentFilterUnblockHandler::ContentFilterUnblockHandler(String unblockURLHost, 
     : m_unblockURLHost { WTF::move(unblockURLHost) }
     , m_unblockRequester { WTF::move(unblockRequester) }
 {
+    LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with an unblock requester and unblock URL host <%s>.\n", unblockURLHost.ascii().data());
 }
 
 #if PLATFORM(IOS)
@@ -59,6 +65,7 @@ ContentFilterUnblockHandler::ContentFilterUnblockHandler(String unblockURLHost, 
     : m_unblockURLHost { WTF::move(unblockURLHost) }
     , m_webFilterEvaluator { WTF::move(evaluator) }
 {
+    LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with a WebFilterEvaluator and unblock URL host <%s>.\n", unblockURLHost.ascii().data());
 }
 #endif
 
@@ -123,7 +130,12 @@ bool ContentFilterUnblockHandler::canHandleRequest(const ResourceRequest& reques
 #endif
     }
 
-    return request.url().protocolIs(ContentFilter::urlScheme()) && equalIgnoringCase(request.url().host(), m_unblockURLHost);
+    bool isUnblockRequest = request.url().protocolIs(ContentFilter::urlScheme()) && equalIgnoringCase(request.url().host(), m_unblockURLHost);
+#if !LOG_DISABLED
+    if (isUnblockRequest)
+        LOG(ContentFiltering, "ContentFilterUnblockHandler will handle <%s> as an unblock request.\n", request.url().string().ascii().data());
+#endif
+    return isUnblockRequest;
 }
 
 static inline void dispatchToMainThread(void (^block)())
@@ -143,6 +155,7 @@ void ContentFilterUnblockHandler::requestUnblockAsync(DecisionHandlerFunction de
     if (m_webFilterEvaluator) {
         [m_webFilterEvaluator unblockWithCompletion:[decisionHandler](BOOL unblocked, NSError *) {
             dispatchToMainThread([decisionHandler, unblocked] {
+                LOG(ContentFiltering, "WebFilterEvaluator %s the unblock request.\n", unblocked ? "allowed" : "did not allow");
                 decisionHandler(unblocked);
             });
         }];

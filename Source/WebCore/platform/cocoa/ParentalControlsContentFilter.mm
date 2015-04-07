@@ -27,6 +27,7 @@
 #import "ParentalControlsContentFilter.h"
 
 #import "ContentFilterUnblockHandler.h"
+#import "Logging.h"
 #import "ResourceResponse.h"
 #import "SharedBuffer.h"
 #import "SoftLinking.h"
@@ -40,7 +41,9 @@ namespace WebCore {
 
 bool ParentalControlsContentFilter::enabled()
 {
-    return [getWebFilterEvaluatorClass() isManagedSession];
+    bool enabled = [getWebFilterEvaluatorClass() isManagedSession];
+    LOG(ContentFiltering, "ParentalControlsContentFilter is %s.\n", enabled ? "enabled" : "not enabled");
+    return enabled;
 }
 
 std::unique_ptr<ParentalControlsContentFilter> ParentalControlsContentFilter::create()
@@ -119,6 +122,10 @@ ContentFilterUnblockHandler ParentalControlsContentFilter::unblockHandler() cons
 void ParentalControlsContentFilter::updateFilterState()
 {
     m_filterState = [m_webFilterEvaluator filterState];
+#if !LOG_DISABLED
+    if (!needsMoreData())
+        LOG(ContentFiltering, "ParentalControlsContentFilter stopped buffering with state %d and replacement data length %zu.\n", m_filterState, [m_replacementData length]);
+#endif
 }
 
 } // namespace WebCore

@@ -29,6 +29,7 @@
 #if HAVE(NETWORK_EXTENSION)
 
 #import "ContentFilterUnblockHandler.h"
+#import "Logging.h"
 #import "NEFilterSourceSPI.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
@@ -53,7 +54,9 @@ namespace WebCore {
 
 bool NetworkExtensionContentFilter::enabled()
 {
-    return [getNEFilterSourceClass() filterRequired];
+    bool enabled = [getNEFilterSourceClass() filterRequired];
+    LOG(ContentFiltering, "NetworkExtensionContentFilter is %s.\n", enabled ? "enabled" : "not enabled");
+    return enabled;
 }
 
 std::unique_ptr<NetworkExtensionContentFilter> NetworkExtensionContentFilter::create()
@@ -188,6 +191,7 @@ ContentFilterUnblockHandler NetworkExtensionContentFilter::unblockHandler() cons
     return ContentFilterUnblockHandler {
         ASCIILiteral("nefilter-unblock"), [neFilterSource](DecisionHandlerFunction decisionHandler) {
             [neFilterSource remediateWithDecisionHandler:[decisionHandler](NEFilterSourceStatus status, NSDictionary *) {
+                LOG(ContentFiltering, "NEFilterSource %s the unblock request.\n", status == NEFilterSourceStatusPass ? "allowed" : "did not allow");
                 decisionHandler(status == NEFilterSourceStatusPass);
             }];
         }
@@ -202,6 +206,10 @@ void NetworkExtensionContentFilter::handleDecision(NEFilterSourceStatus status, 
     m_status = status;
     if (status == NEFilterSourceStatusBlock)
         m_replacementData = replacementData;
+#if !LOG_DISABLED
+    if (!needsMoreData())
+        LOG(ContentFiltering, "NetworkExtensionContentFilter stopped buffering with status %zd and replacement data length %zu.\n", status, replacementData.length);
+#endif
     dispatch_semaphore_signal(m_semaphore.get());
 }
 

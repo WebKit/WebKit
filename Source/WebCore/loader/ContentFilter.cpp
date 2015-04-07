@@ -30,11 +30,16 @@
 
 #include "CachedRawResource.h"
 #include "ContentFilterUnblockHandler.h"
+#include "Logging.h"
 #include "NetworkExtensionContentFilter.h"
 #include "ParentalControlsContentFilter.h"
 #include "SharedBuffer.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
+
+#if !LOG_DISABLED
+#include <wtf/text/CString.h>
+#endif
 
 namespace WebCore {
 
@@ -73,11 +78,13 @@ ContentFilter::ContentFilter(Container contentFilters, DecisionFunction decision
     : m_contentFilters { WTF::move(contentFilters) }
     , m_decisionFunction { WTF::move(decisionFunction) }
 {
+    LOG(ContentFiltering, "Creating ContentFilter with %zu platform content filter(s).\n", m_contentFilters.size());
     ASSERT(!m_contentFilters.isEmpty());
 }
 
 ContentFilter::~ContentFilter()
 {
+    LOG(ContentFiltering, "Destroying ContentFilter.\n");
     if (!m_mainResource)
         return;
     ASSERT(m_mainResource->hasClient(this));
@@ -86,6 +93,7 @@ ContentFilter::~ContentFilter()
 
 void ContentFilter::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
+    LOG(ContentFiltering, "ContentFilter received request for <%s> with redirect response from <%s>.\n", request.url().string().ascii().data(), redirectResponse.url().string().ascii().data());
     ResourceRequest requestCopy { request };
     ASSERT(m_state == State::Initialized || m_state == State::Filtering);
     forEachContentFilterUntilBlocked([&requestCopy, &redirectResponse](PlatformContentFilter& contentFilter) {
@@ -93,11 +101,16 @@ void ContentFilter::willSendRequest(ResourceRequest& request, const ResourceResp
         if (contentFilter.didBlockData())
             requestCopy = ResourceRequest();
     });
+#if !LOG_DISABLED
+    if (request != requestCopy)
+        LOG(ContentFiltering, "ContentFilter changed request url to <%s>.\n", requestCopy.url().string().ascii().data());
+#endif
     request = requestCopy;
 }
 
 void ContentFilter::startFilteringMainResource(CachedRawResource& resource)
 {
+    LOG(ContentFiltering, "ContentFilter will start filtering main resource at <%s>.\n", resource.url().string().ascii().data());
     ASSERT(m_state == State::Initialized);
     m_state = State::Filtering;
     ASSERT(!m_mainResource);
@@ -132,6 +145,7 @@ String ContentFilter::unblockRequestDeniedScript() const
 
 void ContentFilter::responseReceived(CachedResource* resource, const ResourceResponse& response)
 {
+    LOG(ContentFiltering, "ContentFilter received response from <%s>.\n", response.url().string().ascii().data());
     ASSERT(m_state == State::Filtering);
     ASSERT_UNUSED(resource, resource == m_mainResource.get());
     forEachContentFilterUntilBlocked([&response](PlatformContentFilter& contentFilter) {
@@ -141,6 +155,7 @@ void ContentFilter::responseReceived(CachedResource* resource, const ResourceRes
 
 void ContentFilter::dataReceived(CachedResource* resource, const char* data, int length)
 {
+    LOG(ContentFiltering, "ContentFilter received %d bytes of data from <%s>.\n", length, resource->url().string().ascii().data());
     ASSERT(m_state == State::Filtering);
     ASSERT_UNUSED(resource, resource == m_mainResource.get());
     forEachContentFilterUntilBlocked([data, length](PlatformContentFilter& contentFilter) {
@@ -157,6 +172,7 @@ void ContentFilter::redirectReceived(CachedResource* resource, ResourceRequest& 
 
 void ContentFilter::notifyFinished(CachedResource* resource)
 {
+    LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%s>.\n", resource->url().string().ascii().data());
     ASSERT(m_state == State::Filtering);
     ASSERT_UNUSED(resource, resource == m_mainResource.get());
     forEachContentFilterUntilBlocked([](PlatformContentFilter& contentFilter) {
@@ -193,6 +209,7 @@ void ContentFilter::didDecide(State state)
     ASSERT(m_state != State::Allowed);
     ASSERT(m_state != State::Blocked);
     ASSERT(state == State::Allowed || state == State::Blocked);
+    LOG(ContentFiltering, "ContentFilter decided load should be %s for main resource at <%s>.\n", state == State::Allowed ? "allowed" : "blocked", m_mainResource ? m_mainResource->url().string().ascii().data() : "");
     m_state = state;
 
     // Calling m_decisionFunction might delete |this|.
