@@ -470,7 +470,7 @@ void URL::init(const URL& base, const String& relative, const TextEncoding& enco
     // For compatibility with Win IE, treat backslashes as if they were slashes,
     // as long as we're not dealing with javascript: or data: URLs.
     String rel = relative;
-    if (rel.contains('\\') && !(protocolIsJavaScript(rel) || protocolIs(rel, "data")))
+    if (rel.contains('\\') && !(WebCore::protocolIsJavaScript(rel) || protocolIs(rel, "data")))
         rel = substituteBackslashes(rel);
 
     bool allASCII = rel.containsOnlyASCII();

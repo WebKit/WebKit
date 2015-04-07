@@ -62,7 +62,7 @@ private:
         unsigned destination;
         bool caseSensitive;
     };
-    void compileNode(unsigned);
+    void compileNode(unsigned, bool root);
     void compileNodeTransitions(const DFANode&);
     void compileCheckForRange(const Range&);
 

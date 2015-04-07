@@ -213,6 +213,8 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double dfaBuildTimeEnd = monotonicallyIncreasingTime();
     dataLogF("    Time spent building and compiling the DFAs: %f\n", (dfaBuildTimeEnd - dfaBuildTimeStart));
+    dataLogF("    Bytecode size %zu\n", bytecode.size());
+    dataLogF("    DFA count %zu\n", nfas.size());
 #endif
 
     client.writeBytecode(WTF::move(bytecode));

@@ -1,3 +1,25 @@
+2015-04-07  Alex Christensen  <achristensen@webkit.org>
+
+        Optimize content extensions interpreting speed.
+        https://bugs.webkit.org/show_bug.cgi?id=143490
+
+        Reviewed by Brady Eidson.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
+        Measure total time added by content extensions.
+        * contentextensions/DFABytecodeCompiler.cpp:
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compileNode):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compile):
+        When jumping to the root, don't re-add all the actions.
+        * contentextensions/DFABytecodeCompiler.h:
+        * platform/URL.cpp:
+        (WebCore::URL::init):
+        * platform/URL.h:
+        (WebCore::URL::protocolIsJavaScript): Added.
+
 2015-04-07  Simon Fraser  <simon.fraser@apple.com>
 
         Add a new setting, AntialiasedFontDilationEnabled, exposed via WK2.
