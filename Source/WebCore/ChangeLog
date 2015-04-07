@@ -1,3 +1,15 @@
+2015-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a new setting, AntialiasedFontDilationEnabled, exposed via WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=143495
+
+        Reviewed by Tim Horton.
+
+        Add a new Setting, antialiasedFontDilationEnabled, which defaults to true. This 
+        will be used in an upcoming patch.
+
+        * page/Settings.in:
+
 2015-04-07  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Add logging

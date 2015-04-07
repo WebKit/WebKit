@@ -1,3 +1,24 @@
+2015-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a new setting, AntialiasedFontDilationEnabled, exposed via WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=143495
+
+        Reviewed by Tim Horton.
+        
+        Exposed the antialiasedFontDilationEnabled setting via WK C SPI and Objective-C SPI.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAntialiasedFontDilationEnabled):
+        (WKPreferencesGetAntialiasedFontDilationEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _antialiasedFontDilationEnabled]):
+        (-[WKPreferences _setAntialiasedFontDilationEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2015-04-07  Beth Dakin  <bdakin@apple.com>
 
         Should only propagate pressure events with relevant phases

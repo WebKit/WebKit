@@ -297,6 +297,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setDiagnosticLoggingEnabled(diagnosticLoggingEnabled);
 }
 
+- (BOOL)_antialiasedFontDilationEnabled
+{
+    return _preferences->antialiasedFontDilationEnabled();
+}
+
+- (void)_setAntialiasedFontDilationEnabled:(BOOL)antialiasedFontDilationEnabled
+{
+    _preferences->setAntialiasedFontDilationEnabled(antialiasedFontDilationEnabled);
+}
+
 @end
 
 #endif // WK_API_ENABLED
