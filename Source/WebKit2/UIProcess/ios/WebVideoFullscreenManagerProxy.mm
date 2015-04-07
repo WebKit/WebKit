@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS)
 
-#import "BackBoardServicesSPI.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "UIKitSPI.h"
 #import "WebPageProxy.h"
@@ -38,6 +37,10 @@
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/TimeRanges.h>
 #import <WebKitSystemInterface.h>
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED > 90000
+#import "BackBoardServicesSPI.h"
+#endif
 
 using namespace WebCore;
 
@@ -221,8 +224,12 @@ void WebVideoFullscreenManagerProxy::setVideoLayerFrame(WebCore::FloatRect frame
 {
     m_videoLayerFrame = frame;
     @autoreleasepool {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED > 90000
         BKSAnimationFenceHandle* synchronizationFence = [UIWindow _synchronizedDrawingFence];
         mach_port_name_t fencePort = [synchronizationFence CAPort];
+#else
+        mach_port_name_t fencePort = [UIWindow _synchronizeDrawingAcrossProcesses];
+#endif
 
         m_page->send(Messages::WebVideoFullscreenManager::SetVideoLayerFrameFenced(frame, IPC::Attachment(fencePort, MACH_MSG_TYPE_MOVE_SEND)), m_page->pageID());
     }

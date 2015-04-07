@@ -1,3 +1,10 @@
+2015-04-07  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; make calls to new SPI conditional on iOS version.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerFrame):
+
 2015-04-06  Anders Carlsson  <andersca@apple.com>
 
         Create the web inspector process pool lazily
