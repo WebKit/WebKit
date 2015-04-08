@@ -1,3 +1,36 @@
+2015-04-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] System fonts do not get correct tracking
+        https://bugs.webkit.org/show_bug.cgi?id=143395
+
+        Reviewed by Ryosuke Niwa.
+
+        Inside FontPlatformData, we have two CTFonts. If the user has specified
+        -webkit-system-font, we will pass in a CTFont, and the FontPlatformData
+        will wrap it. However, we will then roundtrip through CGFont in order
+        to create a second CTFont. We were basing our tracking and system
+        font knowledge off of this round-tripped font instead of the original font.
+
+        Note that this design is terrible and needs to be overhauled.
+        FontPlatformData should only have a single platform font inside it.
+
+        This patch also caches whether or not a font is a system font.
+
+        No new tests because it is impossible to test the tracking of the
+        system font in a robust way.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font): Rearrange member variables.
+        * platform/graphics/Font.h: Move member variables around for better
+        packing, and cache whether or not the font is a system font.
+        * platform/graphics/FontData.h: Add comment
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformInit): Cache whether or not the font is a system
+        font.
+        (WebCore::hasCustomTracking): Use cached value.
+        (WebCore::canUseFastGlyphAdvanceGetter):
+        (WebCore::Font::platformWidthForGlyph):
+
 2015-04-07  Alex Christensen  <achristensen@webkit.org>
 
         Block popups from content extensions.

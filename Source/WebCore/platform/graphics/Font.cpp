@@ -50,20 +50,30 @@ unsigned GlyphPage::s_count = 0;
 const float smallCapsFontSizeMultiplier = 0.7f;
 const float emphasisMarkFontSizeMultiplier = 0.5f;
 
-Font::Font(const FontPlatformData& platformData, bool isCustomFont, bool isLoading, bool isTextOrientationFallback)
+Font::Font(const FontPlatformData& platformData, std::unique_ptr<SVGData>&& svgData, bool isCustomFont, bool isLoading, bool isTextOrientationFallback)
     : m_maxCharWidth(-1)
     , m_avgCharWidth(-1)
     , m_platformData(platformData)
+    , m_svgData(WTF::move(svgData))
+    , m_mathData(nullptr)
     , m_treatAsFixedPitch(false)
     , m_isCustomFont(isCustomFont)
     , m_isLoading(isLoading)
     , m_isTextOrientationFallback(isTextOrientationFallback)
     , m_isBrokenIdeographFallback(false)
-    , m_mathData(nullptr)
-#if ENABLE(OPENTYPE_VERTICAL)
-    , m_verticalData(0)
-#endif
     , m_hasVerticalGlyphs(false)
+    , m_isUsedInSystemFallbackCache(false)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
+    , m_isSystemFont(false)
+#endif
+#if PLATFORM(IOS)
+    , m_shouldNotBeUsedForArabic(false)
+#endif
+{
+}
+
+Font::Font(const FontPlatformData& platformData, bool isCustomFont, bool isLoading, bool isTextOrientationFallback)
+    : Font(platformData, std::unique_ptr<SVGData>(), isCustomFont, isLoading, isTextOrientationFallback)
 {
     platformInit();
     platformGlyphInit();
@@ -77,21 +87,7 @@ Font::Font(const FontPlatformData& platformData, bool isCustomFont, bool isLoadi
 }
 
 Font::Font(std::unique_ptr<SVGData> svgData, float fontSize, bool syntheticBold, bool syntheticItalic)
-    : m_platformData(FontPlatformData(fontSize, syntheticBold, syntheticItalic))
-    , m_svgData(WTF::move(svgData))
-    , m_treatAsFixedPitch(false)
-    , m_isCustomFont(true)
-    , m_isLoading(false)
-    , m_isTextOrientationFallback(false)
-    , m_isBrokenIdeographFallback(false)
-    , m_mathData(nullptr)
-#if ENABLE(OPENTYPE_VERTICAL)
-    , m_verticalData(0)
-#endif
-    , m_hasVerticalGlyphs(false)
-#if PLATFORM(IOS)
-    , m_shouldNotBeUsedForArabic(false)
-#endif
+    : Font(FontPlatformData(fontSize, syntheticBold, syntheticItalic), WTF::move(svgData), true, false, false)
 {
     m_svgData->initializeFont(this, fontSize);
 }

@@ -226,6 +226,7 @@ public:
 
 private:
 #if PLATFORM(COCOA)
+    // FIXME: Get rid of one of these. These two fonts are subtly different, and it is not obvious which one to use where.
     CTFontRef m_font { nullptr };
     mutable RetainPtr<CTFontRef> m_ctFont;
 #elif PLATFORM(WIN)

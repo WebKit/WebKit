@@ -267,15 +267,16 @@ void Font::platformInit()
     if (platformData().orientation() == Vertical && !isTextOrientationFallback())
         m_hasVerticalGlyphs = fontHasVerticalGlyphs(m_platformData.ctFont());
 
-    if (!m_platformData.m_isEmoji)
-        return;
-
-    int thirdOfSize = m_platformData.size() / 3;
-    m_fontMetrics.setAscent(thirdOfSize);
-    m_fontMetrics.setDescent(thirdOfSize);
-    m_fontMetrics.setLineGap(thirdOfSize);
-    m_fontMetrics.setLineSpacing(0);
+    if (m_platformData.m_isEmoji) {
+        int thirdOfSize = m_platformData.size() / 3;
+        m_fontMetrics.setAscent(thirdOfSize);
+        m_fontMetrics.setDescent(thirdOfSize);
+        m_fontMetrics.setLineGap(thirdOfSize);
+        m_fontMetrics.setLineSpacing(0);
+    }
 #endif
+
+    m_isSystemFont = CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(m_platformData.font())).get());
 }
 
 void Font::platformCharWidthInit()
@@ -454,9 +455,9 @@ static inline bool advanceForColorBitmapFont(const FontPlatformData& platformDat
 #endif
 }
 
-static bool hasCustomTracking(CTFontRef font)
+static inline bool hasCustomTracking(const Font& font)
 {
-    return CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(font)).get());
+    return font.isSystemFont();
 }
 
 static inline bool isEmoji(const FontPlatformData& platformData)
@@ -469,10 +470,11 @@ static inline bool isEmoji(const FontPlatformData& platformData)
 #endif
 }
 
-static inline bool canUseFastGlyphAdvanceGetter(const FontPlatformData& platformData, Glyph glyph, CGSize& advance, bool& populatedAdvance)
+static inline bool canUseFastGlyphAdvanceGetter(const Font& font, Glyph glyph, CGSize& advance, bool& populatedAdvance)
 {
+    const FontPlatformData& platformData = font.platformData();
     // Fast getter doesn't take custom tracking into account
-    if (hasCustomTracking(platformData.ctFont()))
+    if (hasCustomTracking(font))
         return false;
     // Fast getter doesn't work for emoji
     if (isEmoji(platformData))
@@ -490,7 +492,7 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     CGSize advance = CGSizeZero;
     bool horizontal = platformData().orientation() == Horizontal;
     bool populatedAdvance = false;
-    if ((horizontal || m_isBrokenIdeographFallback) && canUseFastGlyphAdvanceGetter(platformData(), glyph, advance, populatedAdvance)) {
+    if ((horizontal || m_isBrokenIdeographFallback) && canUseFastGlyphAdvanceGetter(*this, glyph, advance, populatedAdvance)) {
         float pointSize = platformData().m_size;
         CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
         if (!CGFontGetGlyphAdvancesForStyle(platformData().cgFont(), &m, renderingStyle(platformData()), &glyph, 1, &advance)) {
@@ -498,8 +500,15 @@ float Font::platformWidthForGlyph(Glyph glyph) const
             LOG_ERROR("Unable to cache glyph widths for %@ %f", fullName.get(), pointSize);
             advance.width = 0;
         }
-    } else if (!populatedAdvance)
-        CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), horizontal ? kCTFontOrientationHorizontal : kCTFontOrientationVertical, &glyph, &advance, 1);
+    } else if (!populatedAdvance) {
+        // m_platformData.font() returns the original font that was passed into the FontPlatformData constructor. In the case of fonts that have custom tracking,
+        // the custom tracking does not survive the transformation to either m_platformData.cgFont() nor m_platformData.ctFont(), so we must use the original
+        // font() that was passed in. However, for web fonts, m_platformData.font() is null, so we must use m_platformData.ctFont() for those cases.
+        if (hasCustomTracking(*this))
+            CTFontGetAdvancesForGlyphs(m_platformData.font(), horizontal ? kCTFontOrientationHorizontal : kCTFontOrientationVertical, &glyph, &advance, 1);
+        else
+            CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), horizontal ? kCTFontOrientationHorizontal : kCTFontOrientationVertical, &glyph, &advance, 1);
+    }
 
     return advance.width + m_syntheticBoldOffset;
 }
