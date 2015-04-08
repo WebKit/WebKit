@@ -1,3 +1,31 @@
+2015-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Open WebSockets should not prevent a page from entering PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=143505
+        <rdar://problem/19923085>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Open WebSockets should not prevent a page from entering PageCache. This
+        is currently causing mobile.nytimes.com to not be page-cacheable.
+
+        In this patch, We close open WebSockets when entering the page cache
+        and fire the "close" events after resuming, similarly to what we did
+        for XMLHttpRequest in r181480. This gives a chance for the content to
+        handle the 'close' event (with wasClean being false and code being
+        1006) in order to reopen the connection if necessary.
+
+        Test: http/tests/websocket/tests/hybi/closed-when-entering-page-cache.html
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::WebSocket):
+        (WebCore::WebSocket::canSuspend):
+        (WebCore::WebSocket::suspend):
+        (WebCore::WebSocket::resume):
+        (WebCore::WebSocket::resumeTimerFired):
+        (WebCore::WebSocket::didClose):
+        * Modules/websockets/WebSocket.h:
+
 2015-04-07  Simon Fraser  <simon.fraser@apple.com>
 
         Add experimental code to use custom font dilation when rendering into non-opaque contexts

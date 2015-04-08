@@ -46,6 +46,7 @@
 namespace WebCore {
 
 class Blob;
+class CloseEvent;
 class ThreadableWebSocketChannel;
 
 class WebSocket final : public RefCounted<WebSocket>, public EventTargetWithInlineData, public ActiveDOMObject, public WebSocketChannelClient {
@@ -108,6 +109,8 @@ public:
 private:
     explicit WebSocket(ScriptExecutionContext&);
 
+    void resumeTimerFired();
+
     // ActiveDOMObject API.
     void contextDestroyed() override;
     bool canSuspend() const override;
@@ -135,6 +138,10 @@ private:
     BinaryType m_binaryType;
     String m_subprotocol;
     String m_extensions;
+
+    Timer m_resumeTimer;
+    bool m_shouldDelayCloseEvent { false };
+    RefPtr<CloseEvent> m_pendingCloseEvent;
 };
 
 } // namespace WebCore

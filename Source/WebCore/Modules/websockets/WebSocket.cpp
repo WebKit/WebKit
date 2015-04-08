@@ -146,6 +146,7 @@ WebSocket::WebSocket(ScriptExecutionContext& context)
     , m_binaryType(BinaryTypeBlob)
     , m_subprotocol("")
     , m_extensions("")
+    , m_resumeTimer(*this, &WebSocket::resumeTimerFired)
 {
 }
 
@@ -462,19 +463,39 @@ void WebSocket::contextDestroyed()
 
 bool WebSocket::canSuspend() const
 {
-    return !m_channel;
+    return true;
 }
 
-void WebSocket::suspend(ReasonForSuspension)
+void WebSocket::suspend(ReasonForSuspension reason)
 {
-    if (m_channel)
-        m_channel->suspend();
+    if (m_resumeTimer.isActive())
+        m_resumeTimer.stop();
+
+    if (m_channel) {
+        if (reason == ActiveDOMObject::DocumentWillBecomeInactive) {
+            // The page will enter the page cache, close the channel but only fire the close event after resuming.
+            m_shouldDelayCloseEvent = true;
+            // This will cause didClose() to be called.
+            m_channel->fail("WebSocket is closed due to suspension.");
+        } else
+            m_channel->suspend();
+    }
 }
 
 void WebSocket::resume()
 {
     if (m_channel)
         m_channel->resume();
+    else if (m_pendingCloseEvent && !m_resumeTimer.isActive()) {
+        // Fire the close event in a timer as we are not allowed to execute arbitrary JS from resume().
+        m_resumeTimer.startOneShot(0);
+    }
+}
+
+void WebSocket::resumeTimerFired()
+{
+    ASSERT(m_pendingCloseEvent);
+    dispatchEvent(WTF::move(m_pendingCloseEvent));
 }
 
 void WebSocket::stop()
@@ -565,11 +586,17 @@ void WebSocket::didClose(unsigned long unhandledBufferedAmount, ClosingHandshake
     m_state = CLOSED;
     m_bufferedAmount = unhandledBufferedAmount;
     ASSERT(scriptExecutionContext());
+
     RefPtr<CloseEvent> event = CloseEvent::create(wasClean, code, reason);
-    dispatchEvent(event);
+    if (m_shouldDelayCloseEvent) {
+        m_pendingCloseEvent = WTF::move(event);
+        m_shouldDelayCloseEvent = false;
+    } else
+        dispatchEvent(event);
+
     if (m_channel) {
         m_channel->disconnect();
-        m_channel = 0;
+        m_channel = nullptr;
     }
     if (hasPendingActivity())
         ActiveDOMObject::unsetPendingActivity(this);
