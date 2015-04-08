@@ -1,3 +1,17 @@
+2015-04-07  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r182511.
+        https://bugs.webkit.org/show_bug.cgi?id=143507
+
+        caused debug test failures (Requested by alexchristensen on
+        #webkit).
+
+        Reverted changeset:
+
+        "Block popups from content extensions."
+        https://bugs.webkit.org/show_bug.cgi?id=143497
+        http://trac.webkit.org/changeset/182511
+
 2015-04-07  Alex Christensen  <achristensen@webkit.org>
 
         Block popups from content extensions.

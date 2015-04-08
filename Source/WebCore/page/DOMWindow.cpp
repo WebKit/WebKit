@@ -35,8 +35,6 @@
 #include "CSSRuleList.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "ContentExtensionActions.h"
-#include "ContentExtensionRule.h"
 #include "Crypto.h"
 #include "DOMApplicationCache.h"
 #include "DOMSelection.h"
@@ -83,7 +81,6 @@
 #include "PageTransitionEvent.h"
 #include "Performance.h"
 #include "PlatformScreen.h"
-#include "ResourceLoadInfo.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScheduledAction.h"
 #include "Screen.h"
@@ -2124,38 +2121,24 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
     DOMWindow& activeWindow, DOMWindow& firstWindow)
 {
     if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
+        return 0;
     Document* activeDocument = activeWindow.document();
     if (!activeDocument)
-        return nullptr;
+        return 0;
     Frame* firstFrame = firstWindow.frame();
     if (!firstFrame)
-        return nullptr;
-
-#if ENABLE(CONTENT_EXTENSIONS)
-    if (firstFrame
-        && firstFrame->mainFrame().page()
-        && firstFrame->mainFrame().page()->userContentController()
-        && firstFrame->mainFrame().document()) {
-        ResourceLoadInfo resourceLoadInfo = {URL(ParsedURLString, urlString), firstFrame->mainFrame().document()->url(), ResourceType::Popup};
-        Vector<ContentExtensions::Action> actions = firstFrame->mainFrame().page()->userContentController()->actionsForResourceLoad(resourceLoadInfo);
-        for (const ContentExtensions::Action& action : actions) {
-            if (action.type() == ContentExtensions::ActionType::BlockLoad)
-                return nullptr;
-        }
-    }
-#endif
+        return 0;
 
     if (!firstWindow.allowPopUp()) {
         // Because FrameTree::find() returns true for empty strings, we must check for empty frame names.
         // Otherwise, illegitimate window.open() calls with no name will pass right through the popup blocker.
         if (frameName.isEmpty() || !m_frame->tree().find(frameName))
-            return nullptr;
+            return 0;
     }
 
     // Get the target frame for the special cases of _top and _parent.
     // In those cases, we schedule a location change right now and return early.
-    Frame* targetFrame = nullptr;
+    Frame* targetFrame = 0;
     if (frameName == "_top")
         targetFrame = &m_frame->tree().top();
     else if (frameName == "_parent") {
@@ -2166,7 +2149,7 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
     }
     if (targetFrame) {
         if (!activeDocument->canNavigate(targetFrame))
-            return nullptr;
+            return 0;
 
         URL completedURL = firstFrame->document()->completeURL(urlString);
 
@@ -2186,7 +2169,7 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
 
     WindowFeatures windowFeatures(windowFeaturesString);
     RefPtr<Frame> result = createWindow(urlString, frameName, windowFeatures, activeWindow, firstFrame, m_frame);
-    return result ? result->document()->domWindow() : nullptr;
+    return result ? result->document()->domWindow() : 0;
 }
 
 void DOMWindow::showModalDialog(const String& urlString, const String& dialogFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow, std::function<void (DOMWindow&)> prepareDialogFunction)
