@@ -65,6 +65,7 @@
 #import "WKTextInputWindowController.h"
 #import "WKViewInternal.h"
 #import "WKViewPrivate.h"
+#import "WKWebView.h"
 #import "WebBackForwardList.h"
 #import "WebEventFactory.h"
 #import "WebHitTestResult.h"
@@ -128,6 +129,7 @@
 @interface NSWindow (WKNSWindowDetails)
 - (NSRect)_intersectBottomCornersWithRect:(NSRect)viewRect;
 - (void)_maskRoundedBottomCorners:(NSRect)clipRect;
+- (id)_newFirstResponderAfterResigning;
 @end
 
 #if USE(ASYNC_NSTEXTINPUTCLIENT)
@@ -219,6 +221,7 @@ struct WKViewInterpretKeyEventsParameters {
 
     bool _inBecomeFirstResponder;
     bool _inResignFirstResponder;
+    BOOL _willBecomeFirstResponderAgain;
     NSEvent *_mouseDownEvent;
     BOOL _ignoringMouseDraggedEvents;
 
@@ -441,6 +444,13 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (BOOL)becomeFirstResponder
 {
+    // If we just became first responder again, there is no need to do anything,
+    // since resignFirstResponder has correctly detected this situation.
+    if (_data->_willBecomeFirstResponderAgain) {
+        _data->_willBecomeFirstResponderAgain = NO;
+        return YES;
+    }
+
     NSSelectionDirection direction = [[self window] keyViewSelectionDirection];
 
     _data->_inBecomeFirstResponder = true;
@@ -464,6 +474,15 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (BOOL)resignFirstResponder
 {
+    // Predict the case where we are losing first responder status only to
+    // gain it back again. We want resignFirstResponder to do nothing in that case.
+    id nextResponder = [[self window] _newFirstResponderAfterResigning];
+    if ([nextResponder isKindOfClass:[WKWebView class]] && self.superview == nextResponder) {
+        _data->_willBecomeFirstResponderAgain = YES;
+        return YES;
+    }
+
+    _data->_willBecomeFirstResponderAgain = NO;
     _data->_inResignFirstResponder = true;
 
 #if USE(ASYNC_NSTEXTINPUTCLIENT)

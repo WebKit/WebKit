@@ -1622,6 +1622,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 #if PLATFORM(MAC)
 
+- (BOOL)becomeFirstResponder
+{
+    return [[self window] makeFirstResponder: _wkView.get()];
+}
+
+- (BOOL)acceptsFirstResponder
+{
+    return [_wkView acceptsFirstResponder];
+}
+
 - (void)resizeSubviewsWithOldSize:(NSSize)oldSize
 {
     [_wkView setFrame:self.bounds];
