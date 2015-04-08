@@ -284,7 +284,7 @@ void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const G
     if (antialiasedFontDilationEnabled() && !CGContextGetShouldSmoothFonts(cgContext) && matchAntialiasedAndSmoothedFonts) {
         resetAntialiasingStyle = true;
         oldAntialiasingStyle = CGContextGetFontAntialiasingStyle(cgContext);
-        CGContextSetFontAntialiasingStyle(cgContext, kCGFontAntialiasingStyleUnfilteredCustomDilation);
+        CGContextSetFontAntialiasingStyle(cgContext, kCGFontAntialiasingStyleCustomDilation);
         CGContextSetFontDilation(cgContext, dilationSizeForTextColor(context->fillColor()));
     }
 #endif
