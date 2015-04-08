@@ -40,7 +40,6 @@ public:
 
     static bool logToSystemConsole();
     static void setLogToSystemConsole(bool);
-    static void initializeLogToSystemConsole();
 
 protected:
     virtual void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, RefPtr<ScriptArguments>&&) override;
@@ -52,6 +51,8 @@ protected:
     virtual void timeStamp(JSC::ExecState*, RefPtr<ScriptArguments>&&) override;
 
 private:
+    static void initializeLogToSystemConsole();
+
     void warnUnimplemented(const String& method);
     void internalAddMessage(MessageType, MessageLevel, JSC::ExecState*, RefPtr<ScriptArguments>&&);
 

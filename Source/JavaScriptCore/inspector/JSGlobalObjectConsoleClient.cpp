@@ -41,19 +41,31 @@ using namespace JSC;
 namespace Inspector {
 
 static bool sLogToSystemConsole = false;
+static bool sSetLogToSystemConsole = false;
 
 bool JSGlobalObjectConsoleClient::logToSystemConsole()
 {
+    if (!sSetLogToSystemConsole) {
+        static std::once_flag initializeLogging;
+        std::call_once(initializeLogging, []{
+            JSGlobalObjectConsoleClient::initializeLogToSystemConsole();
+        });
+    }
     return sLogToSystemConsole;
 }
 
 void JSGlobalObjectConsoleClient::setLogToSystemConsole(bool shouldLog)
 {
+    sSetLogToSystemConsole = true;
     sLogToSystemConsole = shouldLog;
 }
 
 void JSGlobalObjectConsoleClient::initializeLogToSystemConsole()
 {
+    // If setLogToSystemConsole() was called, no need to query the default value.
+    if (sSetLogToSystemConsole)
+        return;
+
 #if !LOG_DISABLED
     sLogToSystemConsole = true;
 #elif USE(CF)
@@ -62,16 +74,13 @@ void JSGlobalObjectConsoleClient::initializeLogToSystemConsole()
     if (keyExistsAndHasValidFormat)
         sLogToSystemConsole = preference;
 #endif
+    sSetLogToSystemConsole = true;
 }
 
 JSGlobalObjectConsoleClient::JSGlobalObjectConsoleClient(InspectorConsoleAgent* consoleAgent)
     : ConsoleClient()
     , m_consoleAgent(consoleAgent)
 {
-    static std::once_flag initializeLogging;
-    std::call_once(initializeLogging, []{
-        JSGlobalObjectConsoleClient::initializeLogToSystemConsole();
-    });
 }
 
 void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, RefPtr<ScriptArguments>&& arguments)

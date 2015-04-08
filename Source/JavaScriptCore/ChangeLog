@@ -1,3 +1,18 @@
+2015-04-07  Michael Saboff  <msaboff@apple.com>
+
+        Lazily initialize LogToSystemConsole flag to reduce memory usage
+        https://bugs.webkit.org/show_bug.cgi?id=143506
+
+        Reviewed by Mark Lam.
+
+        Only call into CF preferences code when we need to in order to reduce memory usage.
+
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        (Inspector::JSGlobalObjectConsoleClient::logToSystemConsole):
+        (Inspector::JSGlobalObjectConsoleClient::setLogToSystemConsole):
+        (Inspector::JSGlobalObjectConsoleClient::initializeLogToSystemConsole):
+        (Inspector::JSGlobalObjectConsoleClient::JSGlobalObjectConsoleClient):
+
 2015-04-07  Benjamin Poulain  <benjamin@webkit.org>
 
         Get the features.json files ready for open contributions
