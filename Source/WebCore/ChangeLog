@@ -1,3 +1,11 @@
+2015-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, speculative iOS build fix after r182516.
+
+        Add #if PLATFORM(MAC) checks.
+
+        * platform/spi/cg/CoreGraphicsSPI.h:
+
 2015-04-07  Simon Fraser  <simon.fraser@apple.com>
 
         Try to fix incremental builds by forcing *InternalSettings* to get
