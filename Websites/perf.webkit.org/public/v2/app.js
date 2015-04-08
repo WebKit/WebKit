@@ -353,21 +353,24 @@ App.Pane = Ember.Object.extend({
             var useCache = true;
             App.Manifest.fetchRunsWithPlatformAndMetric(this.get('store'), platformId, metricId, null, useCache)
                 .then(function (result) {
-                    self._didFetchRuns(result);
-                    if (result.shouldRefetch)
-                        self.refetchRuns();
+                    if (result || result.shouldRefetch)
+                        self.refetchRuns(platformId, metricId);
+                    else
+                        self._didFetchRuns(result);
                 }, this._handleFetchErrors.bind(this, platformId, metricId));
             this.fetchAnalyticRanges();
         }
     }.observes('platformId', 'metricId').on('init'),
-    refetchRuns: function () {
-        var platform = this.get('platform');
-        var metric = this.get('metric');
-        Ember.assert('refetchRuns should be called only after platform and metric are resolved', platform && metric);
+    refetchRuns: function (platformId, metricId) {
+        if (!platformId)
+            platformId = this.get('platform').get('id');
+        if (!metricId)
+            metricId = this.get('metric').get('id');
+        Ember.assert('refetchRuns should be called only after platform and metric are resolved', platformId && metricId);
 
         var useCache = false;
-        App.Manifest.fetchRunsWithPlatformAndMetric(this.get('store'), platform.get('id'), metric.get('id'), null, useCache)
-            .then(this._didFetchRuns.bind(this), this._handleFetchErrors.bind(this, platform.get('id'), metric.get('id')));
+        App.Manifest.fetchRunsWithPlatformAndMetric(this.get('store'), platformId, metricId, null, useCache)
+            .then(this._didFetchRuns.bind(this), this._handleFetchErrors.bind(this, platformId, metricId));
     },
     _didFetchRuns: function (result)
     {

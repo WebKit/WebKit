@@ -1,3 +1,11 @@
+2015-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed fix after r182496 for when the cached runs JSON doesn't exist.
+
+        * public/v2/app.js:
+        (App.Pane._fetch):
+        (App.Pane.refetchRuns):
+
 2015-04-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard should have a way of marking outliers
