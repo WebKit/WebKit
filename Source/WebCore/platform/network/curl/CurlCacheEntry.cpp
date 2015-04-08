@@ -271,6 +271,8 @@ void CurlCacheEntry::invalidate()
 
 bool CurlCacheEntry::parseResponseHeaders(const ResourceResponse& response)
 {
+    using namespace std::chrono;
+
     double fileTime;
     time_t fileModificationDate;
 
@@ -283,53 +285,32 @@ bool CurlCacheEntry::parseResponseHeaders(const ResourceResponse& response)
     if (response.cacheControlContainsNoCache() || response.cacheControlContainsNoStore())
         return false;
 
-
-    double maxAge = 0;
-    bool maxAgeIsValid = false;
-
-    if (response.cacheControlContainsMustRevalidate())
-        maxAge = 0;
-    else {
-        maxAge = response.cacheControlMaxAge();
-        if (std::isnan(maxAge))
-            maxAge = 0;
-        else
-            maxAgeIsValid = true;
-    }
-
     if (!response.hasCacheValidatorFields())
         return false;
 
+    auto maxAge = response.cacheControlMaxAge();
+    auto lastModificationDate = response.lastModified();
+    auto responseDate = response.date();
+    auto expirationDate = response.expires();
 
-    double lastModificationDate = 0;
-    double responseDate = 0;
-    double expirationDate = 0;
-
-    lastModificationDate = response.lastModified();
-    if (std::isnan(lastModificationDate))
-        lastModificationDate = 0;
-
-    responseDate = response.date();
-    if (std::isnan(responseDate))
-        responseDate = 0;
-
-    expirationDate = response.expires();
-    if (std::isnan(expirationDate))
-        expirationDate = 0;
-
-
-    if (maxAgeIsValid) {
+    if (maxAge && !response.cacheControlContainsMustRevalidate()) {
         // When both the cache entry and the response contain max-age, the lesser one takes priority
-        double expires = fileTime + maxAge * 1000;
+        auto maxAgeMS = duration_cast<milliseconds>(maxAge.value()).count();
+        double expires = fileTime + maxAgeMS;
         if (m_expireDate == -1 || m_expireDate > expires)
             m_expireDate = expires;
-    } else if (responseDate > 0 && expirationDate >= responseDate)
-        m_expireDate = fileTime + (expirationDate - responseDate);
-
+    } else if (responseDate && expirationDate) {
+        auto expirationDateMS = duration_cast<milliseconds>(expirationDate.value().time_since_epoch()).count();
+        auto responseDateMS = duration_cast<milliseconds>(responseDate.value().time_since_epoch()).count();
+        if (expirationDateMS >= responseDateMS)
+            m_expireDate = fileTime + (expirationDateMS - responseDateMS);
+    }
     // If there is no lifetime information
     if (m_expireDate == -1) {
-        if (lastModificationDate > 0)
-            m_expireDate = fileTime + (fileTime - lastModificationDate) * 0.1;
+        if (lastModificationDate) {
+            auto lastModificationDateMS = duration_cast<milliseconds>(lastModificationDate.value().time_since_epoch()).count();
+            m_expireDate = fileTime + (fileTime - lastModificationDateMS) * 0.1;
+        }
         else
             m_expireDate = 0;
     }
