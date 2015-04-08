@@ -1072,9 +1072,10 @@ App.PaneController = Ember.ObjectController.extend({
             return;
         var pane = this.get('model');
         selectedMeasurement.setMarkedOutlier(!!selectedItemIsMarkedOutlier).then(function () {
+            alert(selectedItemIsMarkedOutlier ? 'Marked the point as an outlier' : 'The point is no longer marked as an outlier');
             pane.refetchRuns();
         }, function (error) {
-            alert(error);
+            alert('Failed to update the status:' + error);
         });
     }.observes('selectedItemIsMarkedOutlier'),
 });

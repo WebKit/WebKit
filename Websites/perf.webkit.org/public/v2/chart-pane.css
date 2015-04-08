@@ -96,7 +96,7 @@ a.outlier-button.show g.hide-outlier-icon {
 }
 
 .stat-pane,
-.annotation-pane {
+.analysis-pane {
     right: 2.6rem;
     padding: 0;
 }
