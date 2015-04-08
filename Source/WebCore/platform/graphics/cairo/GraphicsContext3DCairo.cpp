@@ -26,9 +26,9 @@
  */
 
 #include "config.h"
-#include "GraphicsContext3D.h"
 
 #if USE(3D_GRAPHICS)
+#include "GraphicsContext3D.h"
 
 #include "CairoUtilities.h"
 #include "GraphicsContext3DPrivate.h"
