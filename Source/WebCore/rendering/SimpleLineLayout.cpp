@@ -38,6 +38,7 @@
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderLineBreak.h"
 #include "RenderStyle.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
@@ -95,11 +96,14 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (!flow.firstChild())
         return false;
-    // This currently covers <blockflow>#text</blockflow> and mutiple (sibling) RenderText cases.
+    // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
     for (const auto& renderer : childrenOfType<RenderObject>(flow)) {
-        if (!is<RenderText>(renderer))
-            return false;
+        if (is<RenderText>(renderer))
+            continue;
+        if (is<RenderLineBreak>(renderer) && !downcast<RenderLineBreak>(renderer).isWBR() && renderer.style().clear() == CNONE)
+            continue;
+        return false;
     }
     if (!flow.isHorizontalWritingMode())
         return false;
@@ -155,6 +159,8 @@ bool canUseFor(const RenderBlockFlow& flow)
     if (style.textOverflow() || (flow.isAnonymousBlock() && flow.parent()->style().textOverflow()))
         return false;
     if (style.hasPseudoStyle(FIRST_LINE) || style.hasPseudoStyle(FIRST_LETTER))
+        return false;
+    else if (flow.isAnonymous() && flow.firstLineBlock())
         return false;
     if (style.hasTextCombine())
         return false;
@@ -339,11 +345,25 @@ public:
 
     void removeTrailingWhitespace(Layout::RunVector& runs)
     {
-        // FIXME: sync m_fragment, but it's ok for now as we don't use m_fragment anymore after removeTrailingWhitespace.
         if (!m_trailingWhitespaceLength)
             return;
         revertRuns(runs, m_trailingWhitespaceLength, m_trailingWhitespaceWidth);
         m_runsWidth -= m_trailingWhitespaceWidth;
+        ASSERT(m_fragments.last().type() == TextFragmentIterator::TextFragment::Whitespace);
+        while (m_fragments.size()) {
+            const auto& current = m_fragments.last();
+            if (current.type() != TextFragmentIterator::TextFragment::Whitespace)
+                break;
+#if !ASSERT_DISABLED
+            m_trailingWhitespaceLength -= (current.isCollapsed() ? 1 : current.end() - current.start());
+            m_trailingWhitespaceWidth -= current.width();
+#endif
+            m_fragments.removeLast();
+        }
+#if !ASSERT_DISABLED
+        ASSERT(!m_trailingWhitespaceLength);
+        ASSERT(!m_trailingWhitespaceWidth);
+#endif
         m_trailingWhitespaceLength = 0;
         m_trailingWhitespaceWidth = 0;
     }
@@ -395,7 +415,7 @@ static void removeTrailingWhitespace(LineState& lineState, Layout::RunVector& ru
 {
     if (!lineState.hasTrailingWhitespace())
         return;
-    
+
     // Remove collapsed whitespace, or non-collapsed pre-wrap whitespace, unless it's the only content on the line -so removing the whitesapce would produce an empty line.
     const auto& style = textFragmentIterator.style();
     bool collapseWhitespace = style.collapseWhitespace | preWrap(style);
@@ -431,49 +451,69 @@ static TextFragmentIterator::TextFragment splitFragmentToFitLine(TextFragmentIte
     return fragmentToSplit.split(splitPosition, textFragmentIterator);
 }
 
-static TextFragmentIterator::TextFragment firstFragment(TextFragmentIterator& textFragmentIterator, const LineState& previousLine)
+enum PreWrapLineBreakRule { Preserve, Ignore };
+
+static TextFragmentIterator::TextFragment consumeLineBreakIfNeeded(const TextFragmentIterator::TextFragment& fragment, TextFragmentIterator& textFragmentIterator, LineState& line, Layout::RunVector& runs,
+    PreWrapLineBreakRule preWrapLineBreakRule = PreWrapLineBreakRule::Preserve)
+{
+    if (!fragment.isLineBreak())
+        return fragment;
+
+    if (preWrap(textFragmentIterator.style()) && preWrapLineBreakRule != PreWrapLineBreakRule::Ignore)
+        return fragment;
+
+    // <br> always produces a run. (required by testing output)
+    if (fragment.type() == TextFragmentIterator::TextFragment::HardLineBreak)
+        line.appendFragmentAndCreateRunIfNeeded(fragment, runs);
+    return textFragmentIterator.nextTextFragment();
+}
+
+static TextFragmentIterator::TextFragment skipWhitespaceIfNeeded(const TextFragmentIterator::TextFragment& fragment, TextFragmentIterator& textFragmentIterator)
+{
+    if (!textFragmentIterator.style().collapseWhitespace)
+        return fragment;
+
+    TextFragmentIterator::TextFragment firstNonWhitespaceFragment = fragment;
+    while (firstNonWhitespaceFragment.type() == TextFragmentIterator::TextFragment::Whitespace)
+        firstNonWhitespaceFragment = textFragmentIterator.nextTextFragment();
+    return firstNonWhitespaceFragment;
+}
+
+static TextFragmentIterator::TextFragment firstFragment(TextFragmentIterator& textFragmentIterator, LineState& currentLine, const LineState& previousLine, Layout::RunVector& runs)
 {
     // Handle overflowed fragment from previous line.
     TextFragmentIterator::TextFragment firstFragment(previousLine.overflowedFragment());
-    const auto& style = textFragmentIterator.style();
 
     if (firstFragment.isEmpty())
         firstFragment = textFragmentIterator.nextTextFragment();
-    else {
-        // Special overflow pre-wrap whitespace handling: ignore the overflowed whitespace if we managed to fit at least one character on the previous line.
-        // When the line is too short to fit one character (thought it still stays on the line) we continue with the overflow whitespace content on this line.
-        if (firstFragment.type() == TextFragmentIterator::TextFragment::Whitespace && preWrap(style) && previousLine.firstCharacterFits()) {
-            firstFragment = textFragmentIterator.nextTextFragment();
-            // If skipping the whitespace puts us on a hard newline, skip the newline too as we already wrapped the line.
-            if (firstFragment.type() == TextFragmentIterator::TextFragment::LineBreak)
-                firstFragment = textFragmentIterator.nextTextFragment();
-        }
+    else if (firstFragment.type() == TextFragmentIterator::TextFragment::Whitespace && preWrap(textFragmentIterator.style()) && previousLine.firstCharacterFits()) {
+        // Special overflow pre-wrap whitespace handling: skip the overflowed whitespace (even when style says not-collapsible) if we managed to fit at least one character on the previous line.
+        firstFragment = textFragmentIterator.nextTextFragment();
+        // If skipping the whitespace puts us on a newline, skip the newline too as we already wrapped the line.
+        firstFragment = consumeLineBreakIfNeeded(firstFragment, textFragmentIterator, currentLine, runs, PreWrapLineBreakRule::Ignore);
     }
-
-    // Check if we need to skip the leading whitespace.
-    if (style.collapseWhitespace) {
-        while (firstFragment.type() == TextFragmentIterator::TextFragment::Whitespace)
-            firstFragment = textFragmentIterator.nextTextFragment();
-    }
-    return firstFragment;
+    return skipWhitespaceIfNeeded(firstFragment, textFragmentIterator);
 }
 
 static void forceFragmentToLine(LineState& line, TextFragmentIterator& textFragmentIterator, Layout::RunVector& runs, const TextFragmentIterator::TextFragment& fragment)
 {
     line.appendFragmentAndCreateRunIfNeeded(fragment, runs);
     // Check if there are more fragments to add to the current line.
-    if (!fragment.overlapsToNextRenderer())
-        return;
     auto nextFragment = textFragmentIterator.nextTextFragment();
-    while (true) {
-        if (nextFragment.type() != fragment.type())
-            break;
-        line.appendFragmentAndCreateRunIfNeeded(nextFragment, runs);
-        // Does it overlap to the next segment?
-        if (!nextFragment.overlapsToNextRenderer())
-            return;
-        nextFragment = textFragmentIterator.nextTextFragment();
+    if (fragment.overlapsToNextRenderer()) {
+        while (true) {
+            if (nextFragment.type() != fragment.type())
+                break;
+            line.appendFragmentAndCreateRunIfNeeded(nextFragment, runs);
+            // Does it overlap to the next segment?
+            if (!nextFragment.overlapsToNextRenderer())
+                return;
+            nextFragment = textFragmentIterator.nextTextFragment();
+        }
     }
+    // When the forced fragment is followed by either whitespace and/or line break, consume them too, otherwise we end up with an extra whitespace and/or line break.
+    nextFragment = skipWhitespaceIfNeeded(nextFragment, textFragmentIterator);
+    nextFragment = consumeLineBreakIfNeeded(nextFragment, textFragmentIterator, line, runs);
     line.setOverflowedFragment(nextFragment);
 }
 
@@ -482,13 +522,16 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
     const auto& style = textFragmentIterator.style();
     line.setCollapedWhitespaceWidth(style.spaceWidth);
     bool lineCanBeWrapped = style.wrapLines || style.breakWordOnOverflow;
-    auto fragment = firstFragment(textFragmentIterator, previousLine);
+    auto fragment = firstFragment(textFragmentIterator, line, previousLine, runs);
     while (fragment.type() != TextFragmentIterator::TextFragment::ContentEnd) {
         // Hard linebreak.
-        if (fragment.type() == TextFragmentIterator::TextFragment::LineBreak) {
+        if (fragment.isLineBreak()) {
             // Add the new line fragment only if there's nothing on the line. (otherwise the extra new line character would show up at the end of the content.)
-            if (!line.width())
+            if (line.isEmpty() || fragment.type() == TextFragmentIterator::TextFragment::HardLineBreak) {
+                if (style.textAlign == RIGHT || style.textAlign == WEBKIT_RIGHT)
+                    line.removeTrailingWhitespace(runs);
                 line.appendFragmentAndCreateRunIfNeeded(fragment, runs);
+            }
             break;
         }
         if (lineCanBeWrapped && !line.fits(fragment.width())) {
@@ -583,7 +626,7 @@ std::unique_ptr<Layout> create(RenderBlockFlow& flow)
 
     createTextRuns(runs, flow, lineCount);
     for (auto& renderer : childrenOfType<RenderObject>(flow)) {
-        ASSERT(is<RenderText>(renderer));
+        ASSERT(is<RenderText>(renderer) || is<RenderLineBreak>(renderer));
         renderer.clearNeedsLayout();
     }
     return Layout::create(runs, lineCount);

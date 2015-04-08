@@ -298,7 +298,7 @@ String RenderText::originalText() const
 
 void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    if (auto layout = simpleLineLayout()) {
+    if (auto* layout = simpleLineLayout()) {
         rects.appendVector(SimpleLineLayout::collectAbsoluteRects(*this, *layout, accumulatedOffset));
         return;
     }
@@ -401,7 +401,7 @@ void RenderText::collectSelectionRects(Vector<SelectionRect>& rects, unsigned st
 
 Vector<FloatQuad> RenderText::absoluteQuadsClippedToEllipsis() const
 {
-    if (auto layout = simpleLineLayout()) {
+    if (auto* layout = simpleLineLayout()) {
         ASSERT(style().textOverflow() != TextOverflowEllipsis);
         return SimpleLineLayout::collectAbsoluteQuads(*this, *layout, nullptr);
     }
@@ -410,7 +410,7 @@ Vector<FloatQuad> RenderText::absoluteQuadsClippedToEllipsis() const
 
 void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    if (auto layout = simpleLineLayout()) {
+    if (auto* layout = simpleLineLayout()) {
         quads.appendVector(SimpleLineLayout::collectAbsoluteQuads(*this, *layout, wasFixed));
         return;
     }
@@ -1256,7 +1256,7 @@ float RenderText::width(unsigned from, unsigned len, const FontCascade& f, float
 
 IntRect RenderText::linesBoundingBox() const
 {
-    if (auto layout = simpleLineLayout())
+    if (auto* layout = simpleLineLayout())
         return SimpleLineLayout::computeBoundingBox(*this, *layout);
 
     return m_lineBoxes.boundingBox(*this);
@@ -1344,14 +1344,14 @@ LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* rep
 
 int RenderText::caretMinOffset() const
 {
-    if (auto layout = simpleLineLayout())
+    if (auto* layout = simpleLineLayout())
         return SimpleLineLayout::findCaretMinimumOffset(*this, *layout);
     return m_lineBoxes.caretMinOffset();
 }
 
 int RenderText::caretMaxOffset() const
 {
-    if (auto layout = simpleLineLayout())
+    if (auto* layout = simpleLineLayout())
         return SimpleLineLayout::findCaretMaximumOffset(*this, *layout);
     return m_lineBoxes.caretMaxOffset(*this);
 }
@@ -1370,14 +1370,14 @@ bool RenderText::containsRenderedCharacterOffset(unsigned offset) const
 
 bool RenderText::containsCaretOffset(unsigned offset) const
 {
-    if (auto layout = simpleLineLayout())
+    if (auto* layout = simpleLineLayout())
         return SimpleLineLayout::containsCaretOffset(*this, *layout, offset);
     return m_lineBoxes.containsOffset(*this, offset, RenderTextLineBoxes::CaretOffset);
 }
 
 bool RenderText::hasRenderedText() const
 {
-    if (auto layout = simpleLineLayout())
+    if (auto* layout = simpleLineLayout())
         return SimpleLineLayout::isTextRendered(*this, *layout);
     return m_lineBoxes.hasRenderedText();
 }

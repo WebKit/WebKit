@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test that text content with <br> works fine with simple line layout.</title>
+</head>
+<body>
+<script>
+function injectTextNodes(container, style)
+{
+	container.appendChild(document.createElement("br"));
+	container.appendChild(document.createElement("br"));
+	container.appendChild(document.createTextNode("	"));
+	container.appendChild(document.createElement("br"));
+	container.appendChild(document.createTextNode("This tests"));
+	container.appendChild(document.createTextNode(" 	   "));
+	container.appendChild(document.createTextNode("line breaking"));
+	container.appendChild(document.createElement("br"));
+	container.appendChild(document.createTextNode(" with "));
+	container.appendChild(document.createElement("br"));
+	container.appendChild(document.createElement("br"));
+	container.appendChild(document.createTextNode("multiple     "));
+	container.appendChild(document.createElement("br"));
+	container.appendChild(document.createElement("br"));
+	container.appendChild(document.createTextNode("renderers."));
+	container.style.cssText = style;
+	document.body.appendChild(container);
+}
+
+if (window.internals)
+	internals.settings.setSimpleLineLayoutEnabled(false)
+injectTextNodes(document.createElement("div"));
+injectTextNodes(document.createElement("div"), "width: 0px");
+injectTextNodes(document.createElement("div"), "width: 10px");
+injectTextNodes(document.createElement("div"), "width: 100px");
+injectTextNodes(document.createElement("pre"));
+injectTextNodes(document.createElement("pre"), "white-space: pre-wrap");
+injectTextNodes(document.createElement("pre"), "white-space: pre-wrap; width: 100px");
+</script>
+</body>
+</html>

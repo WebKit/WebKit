@@ -1,3 +1,52 @@
+2015-04-08  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add <br> support.
+        https://bugs.webkit.org/show_bug.cgi?id=139012
+
+        This patch enables RenderBlockFlows to use simple line layout on text content when <br> is present.
+        Simple text with <br> is a fairly common pattern on discussion(forum)-like web pages. This patch reduces memory usage
+        and speeds up layout for such content.
+
+        Test output changes in 2 different ways:
+        1. Repositioned RenderLineBreak elements. (1px wide <br> is the result of integral pixel snapping)
+        2. Removed empty content (<br>).
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/simple-line-with-br-expected.html: Added.
+        * fast/text/simple-line-with-br.html: Added.
+        * platform/mac-mavericks/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/mac-mavericks/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/mac/fast/css/text-overflow-ellipsis-bidi-expected.txt:
+        * platform/mac/fast/dom/focus-contenteditable-expected.txt:
+        * platform/mac/fast/forms/range/slider-padding-expected.txt: Added.
+        * platform/mac/fast/forms/textarea-scroll-height-expected.txt:
+        * platform/mac/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/mac/fast/text/international/bidi-layout-across-linebreak-expected.txt:
+        * platform/mac/fast/text/svg-font-face-with-kerning-expected.txt: Added.
+        * platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/mac/http/tests/navigation/postredirect-basic-expected.txt:
+        * platform/mac/http/tests/navigation/postredirect-goback1-expected.txt:
+        * platform/mac/printing/single-line-must-not-be-split-into-two-pages-expected.txt:
+        * platform/mac/svg/wicd/test-rightsizing-b-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug106795-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1224-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug131020-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug131020_iframe-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1430-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug16252-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug19599-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug20579-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug32205-3-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug82946-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug92143-expected.txt:
+        * platform/mac/tables/mozilla/marvin/tables_cellpadding-expected.txt:
+        * platform/mac/tables/mozilla/marvin/tables_cellspacing-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug1262-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug56024-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/other/test4-expected.txt:
+
 2015-04-07  Michael Peechatt  <mpeechatt@gmail.com>
 
         Bug 142887 - role progress bar does not support indeterminate state

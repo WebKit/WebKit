@@ -80,7 +80,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
 
     auto resolver = runResolver(flow, layout);
     for (const auto& run : resolver.rangeForRect(paintRect)) {
-        if (!run.rect().intersects(paintRect))
+        if (!run.rect().intersects(paintRect) || run.start() == run.end())
             continue;
         TextRun textRun(run.text());
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
@@ -105,8 +105,7 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
     if (style.visibility() != VISIBLE || style.pointerEvents() == PE_NONE)
         return false;
 
-    RenderText& textRenderer = downcast<RenderText>(*flow.firstChild());
-
+    RenderObject& renderer = *flow.firstChild();
     LayoutRect rangeRect = locationInContainer.boundingBox();
     rangeRect.moveBy(-accumulatedOffset);
 
@@ -117,8 +116,8 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
         lineRect.moveBy(accumulatedOffset);
         if (!locationInContainer.intersects(lineRect))
             continue;
-        textRenderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
-        if (!result.addNodeToRectBasedTestResult(textRenderer.textNode(), request, locationInContainer, lineRect))
+        renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
+        if (!result.addNodeToRectBasedTestResult(renderer.node(), request, locationInContainer, lineRect))
             return true;
     }
 
@@ -202,8 +201,14 @@ void showLineLayoutForFlow(const RenderBlockFlow& flow, const Layout& layout, in
         const auto& run = *it;
         LayoutRect r = run.rect();
         printPrefix(printedCharacters, depth);
-        fprintf(stderr, "line %u run(%u, %u) (%.2f, %.2f) (%.2f, %.2f) \"%s\"\n", run.lineIndex(), run.start(), run.end(),
-            r.x().toFloat(), r.y().toFloat(), r.width().toFloat(), r.height().toFloat(), run.text().toStringWithoutCopying().utf8().data());
+        if (run.start() < run.end()) {
+            fprintf(stderr, "line %u run(%u, %u) (%.2f, %.2f) (%.2f, %.2f) \"%s\"\n", run.lineIndex(), run.start(), run.end(),
+                r.x().toFloat(), r.y().toFloat(), r.width().toFloat(), r.height().toFloat(), run.text().toStringWithoutCopying().utf8().data());
+        } else {
+            ASSERT(run.start() == run.end());
+            fprintf(stderr, "line break %u run(%u, %u) (%.2f, %.2f) (%.2f, %.2f)\n", run.lineIndex(), run.start(), run.end(),
+                r.x().toFloat(), r.y().toFloat(), r.width().toFloat(), r.height().toFloat());
+        }
     }
 }
 #endif

@@ -1,3 +1,82 @@
+2015-04-08  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add <br> support.
+        https://bugs.webkit.org/show_bug.cgi?id=139012
+
+        This patch enables RenderBlockFlows to use simple line layout on text content when <br> is present.
+        Simple text with <br> is a fairly common pattern on discussion(forum)-like web pages. This patch reduces memory usage
+        and speeds up layout for such content.
+
+        PerformanceTest/layout/line-layout-simple.html shows more than 2x speedup, when each paragraph is modified by appending <br> to the end.
+        With <br> support enabled:
+          mean: 70.02391461289068 runs/s
+          median: 70.47986488932318 runs/s
+    
+        While with <br> support disabled: 
+          mean: 30.417295049468184 runs/s
+          median: 30.36517778760357 runs/s
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/text/simple-line-with-br.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::setSelectionState):
+        (WebCore::RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::simpleLineLayout):
+        (WebCore::ensureLineBoxes):
+        (WebCore::RenderLineBreak::deleteLineBoxesBeforeSimpleLineLayout):
+        (WebCore::RenderLineBreak::positionForPoint):
+        (WebCore::RenderLineBreak::setSelectionState):
+        (WebCore::RenderLineBreak::linesBoundingBox):
+        (WebCore::RenderLineBreak::absoluteRects):
+        (WebCore::RenderLineBreak::absoluteQuads):
+        (WebCore::RenderLineBreak::collectSelectionRects):
+        * rendering/RenderLineBreak.h:
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        (WebCore::SimpleLineLayout::LineState::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::consumeLineBreakIfNeeded):
+        (WebCore::SimpleLineLayout::skipWhitespaceIfNeeded):
+        (WebCore::SimpleLineLayout::firstFragment):
+        (WebCore::SimpleLineLayout::forceFragmentToLine):
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::create):
+        * rendering/SimpleLineLayoutFlowContents.cpp:
+        (WebCore::SimpleLineLayout::initializeSegments):
+        (WebCore::SimpleLineLayout::FlowContents::segmentForRenderer): Deleted.
+        * rendering/SimpleLineLayoutFlowContents.h:
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        (WebCore::SimpleLineLayout::hitTestFlow):
+        (WebCore::SimpleLineLayout::showLineLayoutForFlow):
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::Run::rect):
+        (WebCore::SimpleLineLayout::RunResolver::RunResolver):
+        (WebCore::SimpleLineLayout::RunResolver::rangeForRenderer):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::inQuirksMode):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::operator--):
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::EndOfSegmentSetter::EndOfSegmentSetter):
+        (WebCore::SimpleLineLayout::EndOfSegmentSetter::~EndOfSegmentSetter):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::nextTextFragment):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::revertToFragment):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::skipToNextPosition):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::isLastInRenderer):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::isLineBreak):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::isEmpty):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::isSoftLineBreak):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::isHardLineBreak):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::isLineBreak): Deleted.
+
 2015-04-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] compress property for the HTTP source element

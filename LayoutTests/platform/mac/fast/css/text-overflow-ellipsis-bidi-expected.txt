@@ -9,7 +9,7 @@ layer at (0,0) size 800x200
         RenderBR {BR} at (579,0) size 1x18
         RenderText {#text} at (0,18) size 547x18
           text run at (0,18) width 547: "The ellipsis should appear on the left for the RTL case and on the right for LTR case. "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (546,18) size 1x18
         RenderBR {BR} at (0,36) size 0x18
         RenderText {#text} at (0,54) size 62x18
           text run at (0,54) width 62: "RTL text:"

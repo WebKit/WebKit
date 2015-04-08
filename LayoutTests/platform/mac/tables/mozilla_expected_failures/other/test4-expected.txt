@@ -446,7 +446,7 @@ layer at (0,0) size 785x2466
         RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 679x18
           text run at (0,18) width 679: "This is a table formed from a list with display of table-row-group and list items with display of table-cell. "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (678,32) size 1x0
       RenderTable at (0,1308) size 227x19
         RenderTableSection {UL} at (0,0) size 227x18
           RenderTableRow (anonymous) at (0,0) size 227x18
@@ -499,7 +499,7 @@ layer at (0,0) size 785x2466
         RenderBlock (anonymous) at (0,0) size 769x18
           RenderText {#text} at (0,0) size 439x18
             text run at (0,0) width 439: "The following table will have its rows and columns in red collapsed "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (438,14) size 1x0
         RenderTable {TABLE} at (0,18) size 139x94 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 139x18
             RenderInline {B} at (0,0) size 45x18
