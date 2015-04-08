@@ -62,7 +62,7 @@ class XvfbDriver(Driver):
             match = re.match('(X|Xvfb|Xorg|Xorg\.bin)\s+.*\s:(?P<screen_number>\d+)', pid)
             if match:
                 reserved_screens.add(int(match.group('screen_number')))
-        for i in range(99):
+        for i in range(1, 99):
             if i not in reserved_screens:
                 _guard_lock_file = self._port.host.filesystem.join('/tmp', 'WebKitXvfb.lock.%i' % i)
                 self._guard_lock = self._port.host.make_file_lock(_guard_lock_file)
