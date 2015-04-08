@@ -770,8 +770,13 @@ public:
         ANIMATIONITERATION_LISTENER          = 1 << 9,
         TRANSITIONEND_LISTENER               = 1 << 10,
         BEFORELOAD_LISTENER                  = 1 << 11,
-        SCROLL_LISTENER                      = 1 << 12
-        // 3 bits remaining
+        SCROLL_LISTENER                      = 1 << 12,
+        FORCEWILLBEGIN_LISTENER              = 1 << 13,
+        FORCECHANGED_LISTENER                = 1 << 14,
+        FORCEDOWN_LISTENER                   = 1 << 15,
+        FORCEUP_LISTENER                     = 1 << 16,
+        FORCECLICK_LISTENER                  = 1 << 17,
+        FORCECANCELLED_LISTENER              = 1 << 18
     };
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }
@@ -1400,7 +1405,7 @@ private:
     HashSet<NodeIterator*> m_nodeIterators;
     HashSet<Range*> m_ranges;
 
-    unsigned short m_listenerTypes;
+    unsigned m_listenerTypes;
 
     MutationObserverOptions m_mutationObserverTypes;
 

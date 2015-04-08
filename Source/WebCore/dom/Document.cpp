@@ -3999,6 +3999,18 @@ void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
         addListenerType(BEFORELOAD_LISTENER);
     else if (eventType == eventNames().scrollEvent)
         addListenerType(SCROLL_LISTENER);
+    else if (eventType == eventNames().webkitmouseforcewillbeginEvent)
+        addListenerType(FORCEWILLBEGIN_LISTENER);
+    else if (eventType == eventNames().webkitmouseforcechangedEvent)
+        addListenerType(FORCECHANGED_LISTENER);
+    else if (eventType == eventNames().webkitmouseforcedownEvent)
+        addListenerType(FORCEDOWN_LISTENER);
+    else if (eventType == eventNames().webkitmouseforceupEvent)
+        addListenerType(FORCEUP_LISTENER);
+    else if (eventType == eventNames().webkitmouseforceclickEvent)
+        addListenerType(FORCECLICK_LISTENER);
+    else if (eventType == eventNames().webkitmouseforcecancelledEvent)
+        addListenerType(FORCECANCELLED_LISTENER);
 }
 
 CSSStyleDeclaration* Document::getOverrideStyle(Element*, const String&)

@@ -2237,6 +2237,9 @@ void Element::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
 #if ENABLE(MOUSE_FORCE_EVENTS)
 bool Element::dispatchMouseForceWillBegin()
 {
+    if (!document().hasListenerType(Document::FORCEWILLBEGIN_LISTENER))
+        return false;
+
     Frame* frame = document().frame();
     if (!frame)
         return false;
@@ -2253,6 +2256,9 @@ bool Element::dispatchMouseForceWillBegin()
 
 void Element::dispatchMouseForceChanged(float force, const PlatformMouseEvent& platformMouseEvent)
 {
+    if (!document().hasListenerType(Document::FORCECHANGED_LISTENER))
+        return;
+
     RefPtr<WebKitMouseForceEvent> mouseForceChangedEvent = WebKitMouseForceEvent::create(eventNames().webkitmouseforcechangedEvent, force, platformMouseEvent, document().defaultView());
     mouseForceChangedEvent->setTarget(this);
     dispatchEvent(mouseForceChangedEvent);
@@ -2260,6 +2266,9 @@ void Element::dispatchMouseForceChanged(float force, const PlatformMouseEvent& p
 
 void Element::dispatchMouseForceDown(const PlatformMouseEvent& platformMouseEvent)
 {
+    if (!document().hasListenerType(Document::FORCEDOWN_LISTENER))
+        return;
+
     RefPtr<Event> mouseForceDownEvent = WebKitMouseForceEvent::create(eventNames().webkitmouseforcedownEvent, 1, platformMouseEvent, document().defaultView());
     mouseForceDownEvent->setTarget(this);
     dispatchEvent(mouseForceDownEvent);
@@ -2267,6 +2276,9 @@ void Element::dispatchMouseForceDown(const PlatformMouseEvent& platformMouseEven
 
 void Element::dispatchMouseForceUp(const PlatformMouseEvent& platformMouseEvent)
 {
+    if (!document().hasListenerType(Document::FORCEUP_LISTENER))
+        return;
+
     RefPtr<Event> mouseForceUpEvent = WebKitMouseForceEvent::create(eventNames().webkitmouseforceupEvent, 1, platformMouseEvent, document().defaultView());
     mouseForceUpEvent->setTarget(this);
     dispatchEvent(mouseForceUpEvent);
@@ -2274,6 +2286,9 @@ void Element::dispatchMouseForceUp(const PlatformMouseEvent& platformMouseEvent)
 
 void Element::dispatchMouseForceClick(const PlatformMouseEvent& platformMouseEvent)
 {
+    if (!document().hasListenerType(Document::FORCECLICK_LISTENER))
+        return;
+
     RefPtr<Event> mouseForceClickEvent = WebKitMouseForceEvent::create(eventNames().webkitmouseforceclickEvent, 1, platformMouseEvent, document().defaultView());
     mouseForceClickEvent->setTarget(this);
     dispatchEvent(mouseForceClickEvent);
@@ -2281,6 +2296,9 @@ void Element::dispatchMouseForceClick(const PlatformMouseEvent& platformMouseEve
 
 void Element::dispatchMouseForceCancelled(const PlatformMouseEvent& platformMouseEvent)
 {
+    if (!document().hasListenerType(Document::FORCECANCELLED_LISTENER))
+        return;
+
     RefPtr<Event> mouseForceCancelledEvent = WebKitMouseForceEvent::create(eventNames().webkitmouseforcecancelledEvent, 0, platformMouseEvent, document().defaultView());
     mouseForceCancelledEvent->setTarget(this);
     dispatchEvent(mouseForceCancelledEvent);

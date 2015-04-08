@@ -1,3 +1,27 @@
+2015-04-08  Beth Dakin  <bdakin@apple.com>
+
+        Force events should not require preventDefault in order to fire
+        https://bugs.webkit.org/show_bug.cgi?id=143503
+        -and corresponding-
+        rdar://problem/20458916
+
+        Reviewed by Tim Horton.
+
+        Since these events will fire whether or not preventDefault was set on the 
+        willBegin event, we should make sure we only send them when there are registered 
+        event listeners. These are new events, so we don’t want to spam the vast majority 
+        of web content that doesn’t use them yet.
+        * dom/Document.cpp:
+        (WebCore::Document::addListenerTypeIfNeeded):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseForceWillBegin):
+        (WebCore::Element::dispatchMouseForceChanged):
+        (WebCore::Element::dispatchMouseForceDown):
+        (WebCore::Element::dispatchMouseForceUp):
+        (WebCore::Element::dispatchMouseForceClick):
+        (WebCore::Element::dispatchMouseForceCancelled):
+
 2015-04-08  Jer Noble  <jer.noble@apple.com>
 
         [Mac][WebAudio] Update the AVAudioMix in the AudioSourceProviderAVFObjC when the list of enabled audio tracks change.

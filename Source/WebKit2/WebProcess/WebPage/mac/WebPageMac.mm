@@ -1024,13 +1024,13 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     IntPoint locationInContentCoordinates = mainFrame.view()->rootViewToContents(roundedIntPoint(locationInViewCooordinates));
     HitTestResult hitTestResult = mainFrame.eventHandler().hitTestResultAtPoint(locationInContentCoordinates);
 
-    m_lastActionMenuHitTestPreventsDefault = false;
+    bool actionMenuHitTestPreventsDefault = false;
     Element* element = hitTestResult.innerElement();
 
     if (forImmediateAction) {
         mainFrame.eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
         if (element)
-            m_lastActionMenuHitTestPreventsDefault = element->dispatchMouseForceWillBegin();
+            actionMenuHitTestPreventsDefault = element->dispatchMouseForceWillBegin();
     }
 
     WebHitTestResult::Data actionMenuResult(hitTestResult);
@@ -1116,7 +1116,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     RefPtr<API::Object> userData;
     injectedBundleContextMenuClient().prepareForActionMenu(*this, hitTestResult, userData);
 
-    send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult, forImmediateAction, m_lastActionMenuHitTestPreventsDefault, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult, forImmediateAction, actionMenuHitTestPreventsDefault, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
 PassRefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInViewCooordinates, NSDictionary **options)
@@ -1160,9 +1160,6 @@ void WebPage::inputDeviceForceDidChange(float force, int stage)
     if (!element)
         return;
 
-    if (!m_lastActionMenuHitTestPreventsDefault)
-        return;
-
     float overallForce = stage < 1 ? force : force + stage - 1;
     element->dispatchMouseForceChanged(overallForce, m_page->mainFrame().eventHandler().lastMouseDownEvent());
 
@@ -1187,9 +1184,6 @@ void WebPage::immediateActionDidCancel()
 
     Element* element = m_lastActionMenuHitTestResult.innerElement();
     if (!element)
-        return;
-
-    if (!m_lastActionMenuHitTestPreventsDefault)
         return;
 
     element->dispatchMouseForceCancelled(m_page->mainFrame().eventHandler().lastMouseDownEvent());

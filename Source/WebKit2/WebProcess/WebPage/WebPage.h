@@ -1348,7 +1348,6 @@ private:
     RefPtr<WebCore::Range> m_lastActionMenuRangeForSelection;
     WebCore::HitTestResult m_lastActionMenuHitTestResult;
     RefPtr<WebPageOverlay> m_lastActionMenuHitPageOverlay;
-    bool m_lastActionMenuHitTestPreventsDefault;
     int m_lastForceStage { 0 };
 #endif
 
