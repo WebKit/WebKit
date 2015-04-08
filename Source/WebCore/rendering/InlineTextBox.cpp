@@ -574,6 +574,10 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     const ShadowData* selectionShadow;
     TextPaintStyle selectionPaintStyle = computeTextSelectionPaintStyle(textPaintStyle, renderer(), lineStyle, paintInfo, paintSelectedTextOnly, paintSelectedTextSeparately, selectionShadow);
 
+    // Text with custom underlines does not have selection background painted, so selection paint style is not appropriate for it.
+    if (useCustomUnderlines)
+        selectionPaintStyle = textPaintStyle;
+
     // Set our font.
     const Font& font = fontToUse(lineStyle, renderer());
 
