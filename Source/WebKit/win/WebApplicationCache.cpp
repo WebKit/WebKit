@@ -58,6 +58,11 @@ WebApplicationCache* WebApplicationCache::createInstance()
     return instance;
 }
 
+WebCore::ApplicationCacheStorage& WebApplicationCache::storage()
+{
+    return WebCore::ApplicationCacheStorage::singleton();
+}
+
 // IUnknown -------------------------------------------------------------------
 
 HRESULT WebApplicationCache::QueryInterface(REFIID riid, void** ppvObject)
@@ -95,15 +100,14 @@ HRESULT WebApplicationCache::maximumSize(long long* size)
     if (!size)
         return E_POINTER;
 
-    *size = WebCore::ApplicationCacheStorage::singleton().maximumSize();
+    *size = storage().maximumSize();
     return S_OK;
 }
 
 HRESULT WebApplicationCache::setMaximumSize(long long size)
 {
-    auto& cacheStorage = WebCore::ApplicationCacheStorage::singleton();
-    cacheStorage.deleteAllEntries();
-    cacheStorage.setMaximumSize(size);
+    storage().deleteAllEntries();
+    storage().setMaximumSize(size);
     return S_OK;
 }
 
@@ -112,13 +116,13 @@ HRESULT WebApplicationCache::defaultOriginQuota(long long* quota)
     if (!quota)
         return E_POINTER;
 
-    *quota = WebCore::ApplicationCacheStorage::singleton().defaultOriginQuota();
+    *quota = storage().defaultOriginQuota();
     return S_OK;
 }
 
 HRESULT WebApplicationCache::setDefaultOriginQuota(long long quota)
 {
-    WebCore::ApplicationCacheStorage::singleton().setDefaultOriginQuota(quota);
+    storage().setDefaultOriginQuota(quota);
     return S_OK;
 }
 
@@ -131,13 +135,13 @@ HRESULT WebApplicationCache::diskUsageForOrigin(IWebSecurityOrigin* origin, long
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    *size = WebCore::ApplicationCache::diskUsageForOrigin(webSecurityOrigin->securityOrigin());
+    *size = storage().diskUsageForOrigin(*webSecurityOrigin->securityOrigin());
     return S_OK;
 }
 
 HRESULT WebApplicationCache::deleteAllApplicationCaches()
 {
-    WebCore::ApplicationCache::deleteAllCaches();
+    storage().deleteAllCaches();
     return S_OK;
 }
 
@@ -151,7 +155,7 @@ HRESULT WebApplicationCache::deleteCacheForOrigin(IWebSecurityOrigin* origin)
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    WebCore::ApplicationCache::deleteCacheForOrigin(webSecurityOrigin->securityOrigin());
+    storage().deleteCacheForOrigin(*webSecurityOrigin->securityOrigin());
     return S_OK;
 }
 
@@ -161,7 +165,7 @@ HRESULT WebApplicationCache::originsWithCache(IPropertyBag** origins)
         return E_POINTER;
 
     HashSet<RefPtr<WebCore::SecurityOrigin>> coreOrigins;
-    WebCore::ApplicationCacheStorage::singleton().getOriginsWithCache(coreOrigins);
+    storage().getOriginsWithCache(coreOrigins);
 
     RetainPtr<CFMutableArrayRef> arrayItem = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, coreOrigins.size(), &MarshallingHelpers::kIUnknownArrayCallBacks));
 

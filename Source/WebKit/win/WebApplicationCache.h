@@ -28,9 +28,16 @@
 
 #include "WebKit.h"
 
+namespace WebCore {
+class ApplicationCacheStorage;
+}
+
 class DECLSPEC_UUID("1119E970-4B13-4B9A-A049-41096104B689") WebApplicationCache : public IWebApplicationCache {
 public:
     static WebApplicationCache* createInstance();
+
+    WebCore::ApplicationCacheStorage& storage();
+
 protected:
     WebApplicationCache();
     ~WebApplicationCache();
