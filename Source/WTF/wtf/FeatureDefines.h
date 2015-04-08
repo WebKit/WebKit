@@ -268,6 +268,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #endif
 #endif
 
+#if !defined(ENABLE_GEOLOCATION)
+#define ENABLE_GEOLOCATION 1
+#endif
+
 #endif /* PLATFORM(WIN) && !PLATFORM(WIN_CAIRO) */
 
 /* --------- Windows CAIRO port --------- */
@@ -290,6 +294,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #else
 #define ENABLE_WEBGL 1
 #endif
+#endif
+
+#if !defined(ENABLE_GEOLOCATION)
+#define ENABLE_GEOLOCATION 1
 #endif
 
 #endif /* PLATFORM(WIN_CAIRO) */

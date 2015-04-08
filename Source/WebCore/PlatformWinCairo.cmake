@@ -29,6 +29,7 @@ list(APPEND WebCore_SOURCES
     platform/cf/CFURLExtras.cpp
     platform/cf/FileSystemCF.cpp
     platform/cf/SharedBufferCF.cpp
+    platform/cf/URLCF.cpp
 
     platform/cf/win/CertificateCFWin.cpp
 
@@ -57,6 +58,23 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cairo/RefPtrCairo.cpp
     platform/graphics/cairo/TransformationMatrixCairo.cpp
 
+    platform/graphics/texmap/BitmapTexture.cpp
+    platform/graphics/texmap/BitmapTextureGL.cpp
+    platform/graphics/texmap/BitmapTextureImageBuffer.cpp
+    platform/graphics/texmap/BitmapTexturePool.cpp
+    platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
+    platform/graphics/texmap/TextureMapper.cpp
+    platform/graphics/texmap/TextureMapperAnimation.cpp
+    platform/graphics/texmap/TextureMapperBackingStore.cpp
+    platform/graphics/texmap/TextureMapperFPSCounter.cpp
+    platform/graphics/texmap/TextureMapperGL.cpp
+    platform/graphics/texmap/TextureMapperImageBuffer.cpp
+    platform/graphics/texmap/TextureMapperLayer.cpp
+    platform/graphics/texmap/TextureMapperShaderProgram.cpp
+    platform/graphics/texmap/TextureMapperSurfaceBackingStore.cpp
+    platform/graphics/texmap/TextureMapperTile.cpp
+    platform/graphics/texmap/TextureMapperTiledBackingStore.cpp
+
     platform/graphics/win/DIBPixelData.cpp
     platform/graphics/win/FontCacheWin.cpp
     platform/graphics/win/FontCustomPlatformDataCairo.cpp
@@ -73,7 +91,23 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/TransformationMatrixWin.cpp
     platform/graphics/win/UniscribeController.cpp
 
+    platform/image-decoders/ImageDecoder.cpp
+
+    platform/image-decoders/bmp/BMPImageDecoder.cpp
+    platform/image-decoders/bmp/BMPImageReader.cpp
+
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
+
+    platform/image-decoders/gif/GIFImageDecoder.cpp
+    platform/image-decoders/gif/GIFImageReader.cpp
+
+    platform/image-decoders/ico/ICOImageDecoder.cpp
+
+    platform/image-decoders/jpeg/JPEGImageDecoder.cpp
+
+    platform/image-decoders/png/PNGImageDecoder.cpp
+
+    platform/image-decoders/webp/WEBPImageDecoder.cpp
 
     platform/network/CredentialStorage.cpp
     platform/network/NetworkStorageSessionStub.cpp
@@ -81,6 +115,8 @@ list(APPEND WebCore_SOURCES
 
     platform/network/curl/CookieJarCurl.cpp
     platform/network/curl/CredentialStorageCurl.cpp
+    platform/network/curl/CurlCacheEntry.cpp
+    platform/network/curl/CurlCacheManager.cpp
     platform/network/curl/CurlDownload.cpp
     platform/network/curl/DNSCurl.cpp
     platform/network/curl/FormDataStreamCurl.cpp
@@ -89,6 +125,7 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/ResourceHandleCurl.cpp
     platform/network/curl/ResourceHandleManager.cpp
     platform/network/curl/SocketStreamHandleCurl.cpp
+    platform/network/curl/SSLHandle.cpp
 
     platform/network/win/DownloadBundleWin.cpp
 

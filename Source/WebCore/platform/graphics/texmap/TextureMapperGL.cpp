@@ -246,7 +246,9 @@ TextureMapperGL::TextureMapperGL()
 {
     m_context3D = GraphicsContext3D::createForCurrentGLContext();
     m_data = new TextureMapperGLData(m_context3D.get());
+#if USE(TEXTURE_MAPPER_GL)
     m_texturePool = std::make_unique<BitmapTexturePool>(m_context3D);
+#endif
 }
 
 TextureMapperGL::ClipStack& TextureMapperGL::clipStack()

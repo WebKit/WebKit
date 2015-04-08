@@ -23,19 +23,21 @@ macro(ADD_SOURCE_DEPENDENCIES _source _deps)
     set_source_files_properties(${_source} PROPERTIES OBJECT_DEPENDS "${_tmp}")
 endmacro()
 
-macro(ADD_PRECOMPILED_HEADER _name _output_source)
+macro(ADD_PRECOMPILED_HEADER _header _cpp _source)
     if (MSVC)
-        set_source_files_properties(${_name}.cpp
-            PROPERTIES COMPILE_FLAGS "/Yc\"${_name}.h\" /Fp\"${_name}.pch\""
-            OBJECT_OUTPUTS "${_name}.pch")
-        foreach (_file ${_input_files})
-            set_source_files_properties(${_file}
-                PROPERTIES COMPILE_FLAGS "/Yu\"${_name}.h\" /FI\"${_name}.h\" /Fp\"${_name}.pch\""
-                OBJECT_DEPENDS "${PrecompiledBinary}")
-        endforeach ()
+        get_filename_component(PrecompiledBasename ${_header} NAME_WE)
+        set(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${PrecompiledBasename}.pch")
+        set(_sources ${${_source}})
+
+        set_source_files_properties(${_cpp}
+            PROPERTIES COMPILE_FLAGS "/Yc\"${_header}\" /Fp\"${PrecompiledBinary}\""
+            OBJECT_OUTPUTS "${PrecompiledBinary}")
+        set_source_files_properties(${_sources}
+            PROPERTIES COMPILE_FLAGS "/Yu\"${_header}\" /FI\"${_header}\" /Fp\"${PrecompiledBinary}\""
+            OBJECT_DEPENDS "${PrecompiledBinary}")
+        list(APPEND ${_source} ${_cpp})
     endif ()
-    #FIXME: Add Xcode precompiled header support.
-    list(APPEND ${_output_source} ${PrecompiledSource})
+    #FIXME: Add support for Xcode.
 endmacro()
 
 # Helper macro which wraps generate-bindings.pl script.

@@ -1,3 +1,16 @@
+2015-04-08  Alex Christensen  <achristensen@webkit.org> and Patrick Gansterer  <paroga@webkit.org>
+
+        Add CMake build system for WinCairo port.
+        https://bugs.webkit.org/show_bug.cgi?id=115944
+
+        Reviewed by Chris Dumez.
+
+        * CMakeLists.txt:
+        * PlatformWin.cmake:
+        * PlatformWinCairo.cmake:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::TextureMapperGL):
+
 2015-04-08  Chris Dumez  <cdumez@apple.com>
 
         Rename ActiveDOMObject::canSuspend() to canSuspendForPageCache() for clarity

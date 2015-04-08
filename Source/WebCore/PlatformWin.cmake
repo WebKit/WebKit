@@ -66,8 +66,6 @@ list(APPEND WebCore_SOURCES
     platform/win/WidgetWin.cpp
 )
 
-ADD_PRECOMPILED_HEADER("WebCorePrefix" WebCore_SOURCES)
-
 list(APPEND WebCore_SOURCES
     "${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreHeaderDetection.h"
 )
@@ -75,6 +73,14 @@ list(APPEND WebCore_SOURCES
 if (${WTF_PLATFORM_WIN_CAIRO})
     include(PlatformWinCairo.cmake)
 endif ()
+
+set(WebCore_FORWARDING_HEADERS_DIRECTORIES
+    bridge/c
+
+    Modules/indexeddb
+)
+
+WEBKIT_CREATE_FORWARDING_HEADERS(WebCore DIRECTORIES ${WebCore_FORWARDING_HEADERS_DIRECTORIES})
 
 # FIXME: This should test if AVF headers are available.
 # https://bugs.webkit.org/show_bug.cgi?id=135861
