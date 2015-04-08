@@ -71,3 +71,4 @@
 
     [RaisesException] void setMinimumTimerInterval(unrestricted double intervalInSeconds);
 };
+

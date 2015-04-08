@@ -1,3 +1,10 @@
+2015-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Try to fix incremental builds by forcing *InternalSettings* to get
+        regenerated.
+
+        * testing/InternalSettings.idl:
+
 2015-04-07  Chris Dumez  <cdumez@apple.com>
 
         Open WebSockets should not prevent a page from entering PageCache
