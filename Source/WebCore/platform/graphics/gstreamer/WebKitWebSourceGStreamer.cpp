@@ -24,6 +24,7 @@
 
 #include "GRefPtrGStreamer.h"
 #include "GStreamerUtilities.h"
+#include "GUniquePtrGStreamer.h"
 #include "HTTPHeaderNames.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
@@ -109,6 +110,8 @@ struct _WebKitWebSrcPrivate {
     GstAppSrc* appsrc;
     GstPad* srcpad;
     gchar* uri;
+    bool keepAlive;
+    GUniquePtr<GstStructure> extraHeaders;
 
     WebCore::MediaPlayer* player;
 
@@ -145,7 +148,9 @@ enum {
     PROP_IRADIO_GENRE,
     PROP_IRADIO_URL,
     PROP_IRADIO_TITLE,
-    PROP_LOCATION
+    PROP_LOCATION,
+    PROP_KEEP_ALIVE,
+    PROP_EXTRA_HEADERS
 };
 
 static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src",
@@ -242,6 +247,15 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
                                                         "Location to read from",
                                                         0,
                                                         (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+    g_object_class_install_property(oklass, PROP_KEEP_ALIVE,
+        g_param_spec_boolean("keep-alive", "keep-alive", "Use HTTP persistent connections",
+            FALSE, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+    g_object_class_install_property(oklass, PROP_EXTRA_HEADERS,
+        g_param_spec_boxed("extra-headers", "Extra Headers", "Extra headers to append to the HTTP request",
+            GST_TYPE_STRUCTURE, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
     eklass->change_state = webKitWebSrcChangeState;
 
     g_type_class_add_private(klass, sizeof(WebKitWebSrcPrivate));
@@ -327,6 +341,14 @@ static void webKitWebSrcSetProperty(GObject* object, guint propID, const GValue*
     case PROP_LOCATION:
         gst_uri_handler_set_uri(reinterpret_cast<GstURIHandler*>(src), g_value_get_string(value), 0);
         break;
+    case PROP_KEEP_ALIVE:
+        src->priv->keepAlive = g_value_get_boolean(value);
+        break;
+    case PROP_EXTRA_HEADERS: {
+        const GstStructure* s = gst_value_get_structure(value);
+        src->priv->extraHeaders.reset(s ? gst_structure_copy(s) : nullptr);
+        break;
+    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, pspec);
         break;
@@ -354,6 +376,12 @@ static void webKitWebSrcGetProperty(GObject* object, guint propID, GValue* value
         break;
     case PROP_LOCATION:
         g_value_set_string(value, priv->uri);
+        break;
+    case PROP_KEEP_ALIVE:
+        g_value_set_boolean(value, priv->keepAlive);
+        break;
+    case PROP_EXTRA_HEADERS:
+        gst_value_set_structure(value, priv->extraHeaders.get());
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, pspec);
@@ -389,7 +417,8 @@ static void webKitWebSrcStop(WebKitWebSrc* src)
         priv->client = 0;
     }
 
-    priv->loader = nullptr;
+    if (!priv->keepAlive)
+        priv->loader = nullptr;
 
     if (priv->buffer) {
         unmapGstBuffer(priv->buffer.get());
@@ -430,6 +459,57 @@ static void webKitWebSrcStop(WebKitWebSrc* src)
     GST_DEBUG_OBJECT(src, "Stopped request");
 }
 
+static bool webKitWebSrcSetExtraHeader(GQuark fieldId, const GValue* value, gpointer userData)
+{
+    GUniquePtr<gchar> fieldContent;
+
+    if (G_VALUE_HOLDS_STRING(value))
+        fieldContent.reset(g_value_dup_string(value));
+    else {
+        GValue dest = G_VALUE_INIT;
+
+        g_value_init(&dest, G_TYPE_STRING);
+        if (g_value_transform(value, &dest))
+            fieldContent.reset(g_value_dup_string(&dest));
+    }
+
+    const gchar* fieldName = g_quark_to_string(fieldId);
+    if (!fieldContent.get()) {
+        GST_ERROR("extra-headers field '%s' contains no value or can't be converted to a string", fieldName);
+        return false;
+    }
+
+    GST_DEBUG("Appending extra header: \"%s: %s\"", fieldName, fieldContent.get());
+    ResourceRequest* request = static_cast<ResourceRequest*>(userData);
+    request->setHTTPHeaderField(fieldName, fieldContent.get());
+    return true;
+}
+
+static gboolean webKitWebSrcProcessExtraHeaders(GQuark fieldId, const GValue* value, gpointer userData)
+{
+    if (G_VALUE_TYPE(value) == GST_TYPE_ARRAY) {
+        unsigned size = gst_value_array_get_size(value);
+
+        for (unsigned i = 0; i < size; i++) {
+            if (!webKitWebSrcSetExtraHeader(fieldId, gst_value_array_get_value(value, i), userData))
+                return FALSE;
+        }
+        return TRUE;
+    }
+
+    if (G_VALUE_TYPE(value) == GST_TYPE_LIST) {
+        unsigned size = gst_value_list_get_size(value);
+
+        for (unsigned i = 0; i < size; i++) {
+            if (!webKitWebSrcSetExtraHeader(fieldId, gst_value_list_get_value(value, i), userData))
+                return FALSE;
+        }
+        return TRUE;
+    }
+
+    return webKitWebSrcSetExtraHeader(fieldId, value, userData);
+}
+
 static void webKitWebSrcStart(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = src->priv;
@@ -449,13 +529,14 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
     }
 
     ASSERT(!priv->client);
-    ASSERT(!priv->loader);
 
     URL url = URL(URL(), priv->uri);
 
     ResourceRequest request(url);
     request.setAllowCookies(true);
     request.setFirstPartyForCookies(url);
+
+    priv->size = 0;
 
     if (priv->player)
         request.setHTTPReferrer(priv->player->referrer());
@@ -481,21 +562,27 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
     }
     priv->offset = priv->requestedOffset;
 
+    if (!priv->keepAlive) {
+        GST_DEBUG_OBJECT(src, "Persistent connection support disabled");
+        request.setHTTPHeaderField(HTTPHeaderName::Connection, "close");
+    }
+
+    if (priv->extraHeaders)
+        gst_structure_foreach(priv->extraHeaders.get(), webKitWebSrcProcessExtraHeaders, &request);
+
     // We always request Icecast/Shoutcast metadata, just in case ...
     request.setHTTPHeaderField(HTTPHeaderName::IcyMetadata, "1");
 
     bool loadFailed = true;
-    if (priv->player) {
+    if (priv->player && !priv->loader)
         priv->loader = priv->player->createResourceLoader(std::make_unique<CachedResourceStreamingClient>(src));
-        if (priv->loader) {
-            PlatformMediaResourceLoader::LoadOptions loadOptions = 0;
-            if (request.url().protocolIs("blob"))
-                loadOptions |= PlatformMediaResourceLoader::LoadOption::BufferData;
-            loadFailed = !priv->loader->start(request, loadOptions);
-        }
-    }
 
-    if (!priv->loader) {
+    if (priv->loader) {
+        PlatformMediaResourceLoader::LoadOptions loadOptions = 0;
+        if (request.url().protocolIs("blob"))
+            loadOptions |= PlatformMediaResourceLoader::LoadOption::BufferData;
+        loadFailed = !priv->loader->start(request, loadOptions);
+    } else {
         priv->client = new ResourceHandleStreamingClient(src, request);
         loadFailed = priv->client->loadFailed();
     }
