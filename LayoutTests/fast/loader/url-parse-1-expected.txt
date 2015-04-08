@@ -24,7 +24,15 @@ http:	http:/		/
 http:/	http:/		/
 http://	http:/		/
 http:///	http:/		/
-http:////	http://		//
+http:////	http:/		/
+http:webkit.org	http://webkit.org/	webkit.org	/
+http:/webkit.org	http://webkit.org/	webkit.org	/
+http://webkit.org	http://webkit.org/	webkit.org	/
+http:///webkit.org	http://webkit.org/	webkit.org	/
+http:////webkit.org	http://webkit.org/	webkit.org	/
+http://///webkit.org	http://webkit.org/	webkit.org	/
+http://////webkit.org	http://webkit.org/	webkit.org	/
+http:////////////////webkit.org	http://webkit.org/	webkit.org	/
 http://localhost	http://localhost/	localhost	/
 http://localhost/	http://localhost/	localhost	/
 http://localhost/test	http://localhost/test	localhost	/test

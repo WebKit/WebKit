@@ -1,3 +1,18 @@
+2014-10-14  Dan Bernstein  <mitz@apple.com>
+
+        URLs that start with http:/// and https:/// lose two slashes when parsed, causing assertion failure and inconsistent behavior
+        https://bugs.webkit.org/show_bug.cgi?id=137718
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/loader/url-parse-1-expected.txt: Updated results.
+        * fast/loader/url-parse-1.html: Added a few test cases.
+        * fast/url/file-http-base-expected.txt: Updated results.
+        * fast/url/host-expected.txt: Ditto.
+        * fast/url/invalid-urls-utf8-expected.txt: Ditto.
+        * fast/url/relative-expected.txt: Ditto.
+        * fast/url/standard-url-expected.txt: Ditto.
+
 2014-10-14  Youenn Fablet  <youennf@gmail.com>
 
         [XHR] Abort method execution when m_loader->cancel() in internalAbort() caused reentry
