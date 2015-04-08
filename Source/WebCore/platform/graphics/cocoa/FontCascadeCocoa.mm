@@ -203,7 +203,7 @@ static void setCGFontRenderingMode(CGContextRef cgContext, NSFontRenderingMode r
 }
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 static CGSize dilationSizeForTextColor(const Color& color)
 {
     double hue;

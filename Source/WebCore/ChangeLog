@@ -1,3 +1,12 @@
+2015-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, another iOS build fix after r182516.
+
+        I missed another use of __MAC_OS_X_VERSION_MIN_REQUIRED without a
+        PLATFORM(MAC) check.
+
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+
 2015-04-07  Michael Peechatt  <mpeechatt@gmail.com>
 
         Bug 142887 - role progress bar does not support indeterminate state
