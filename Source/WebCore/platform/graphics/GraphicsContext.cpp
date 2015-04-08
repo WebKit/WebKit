@@ -257,6 +257,11 @@ void GraphicsContext::setShouldSmoothFonts(bool shouldSmoothFonts)
     setPlatformShouldSmoothFonts(shouldSmoothFonts);
 }
 
+void GraphicsContext::setAntialiasedFontDilationEnabled(bool antialiasedFontDilationEnabled)
+{
+    m_state.antialiasedFontDilationEnabled = antialiasedFontDilationEnabled;
+}
+
 void GraphicsContext::setStrokePattern(Ref<Pattern>&& pattern)
 {
     m_state.strokeGradient.clear();

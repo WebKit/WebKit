@@ -109,6 +109,9 @@ public:
     const IntSize& textAutosizingWindowSizeOverride() const { return m_textAutosizingWindowSizeOverride; }
 #endif
 
+    WEBCORE_EXPORT void setAntialiasedFontDilationEnabled(bool);
+    bool antialiasedFontDilationEnabled() const { return m_antialiasedFontDilationEnabled; }
+
     // Only set by Layout Tests.
     WEBCORE_EXPORT void setMediaTypeOverride(const String&);
     const String& mediaTypeOverride() const { return m_mediaTypeOverride; }
@@ -295,6 +298,7 @@ private:
     bool m_needsAdobeFrameReloadingQuirk : 1;
     bool m_usesPageCache : 1;
     unsigned m_fontRenderingMode : 1;
+    bool m_antialiasedFontDilationEnabled : 1;
     bool m_showTiledScrollingIndicator : 1;
     bool m_backgroundShouldExtendBeyondPage : 1;
     bool m_dnsPrefetchingEnabled : 1;

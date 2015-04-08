@@ -36,7 +36,6 @@ minimumFontSize type=int, initial=0, setNeedsStyleRecalcInAllFrames=1
 minimumLogicalFontSize type=int, initial=0, setNeedsStyleRecalcInAllFrames=1
 defaultFontSize type=int, initial=0, setNeedsStyleRecalcInAllFrames=1
 defaultFixedFontSize type=int, initial=0, setNeedsStyleRecalcInAllFrames=1
-antialiasedFontDilationEnabled type=bool, initial=true, setNeedsStyleRecalcInAllFrames=1
 
 editingBehaviorType type=EditingBehaviorType, initial=editingBehaviorTypeForPlatform()
 maximumHTMLParserDOMTreeDepth type=unsigned, initial=defaultMaximumHTMLParserDOMTreeDepth

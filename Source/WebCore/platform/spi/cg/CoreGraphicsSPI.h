@@ -79,6 +79,9 @@ typedef uint32_t CGFontRenderingStyle;
 enum {
     kCGFontAntialiasingStyleUnfiltered = 0 << 7,
     kCGFontAntialiasingStyleFilterLight = 1 << 7,
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    kCGFontAntialiasingStyleUnfilteredCustomDilation = (8 << 7),
+#endif
 };
 typedef uint32_t CGFontAntialiasingStyle;
 
@@ -126,6 +129,9 @@ void CGContextSetBaseCTM(CGContextRef, CGAffineTransform);
 void CGContextSetCTM(CGContextRef, CGAffineTransform);
 void CGContextSetCompositeOperation(CGContextRef, CGCompositeOperation);
 void CGContextSetShouldAntialiasFonts(CGContextRef, bool shouldAntialiasFonts);
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+void CGContextSetFontDilation(CGContextRef, CGSize);
+#endif
 
 CFStringRef CGFontCopyFamilyName(CGFontRef);
 bool CGFontGetDescriptor(CGFontRef, CGFontDescriptor*);

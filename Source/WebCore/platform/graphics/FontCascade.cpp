@@ -592,6 +592,18 @@ bool FontCascade::shouldUseSmoothing()
     return shouldUseFontSmoothing;
 }
 
+static bool antialiasedFontDilationIsEnabled = true;
+
+void FontCascade::setAntialiasedFontDilationEnabled(bool enabled)
+{
+    antialiasedFontDilationIsEnabled = enabled;
+}
+
+bool FontCascade::antialiasedFontDilationEnabled()
+{
+    return antialiasedFontDilationIsEnabled;
+}
+
 void FontCascade::setCodePath(CodePath p)
 {
     s_codePath = p;
