@@ -1,3 +1,9 @@
+2015-04-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, revert accidental commit.
+
+        * Makefile.shared:
+
 2015-04-08  Alex Christensen  <achristensen@webkit.org> and Patrick Gansterer  <paroga@webkit.org>
 
         Add CMake build system for WinCairo port.
