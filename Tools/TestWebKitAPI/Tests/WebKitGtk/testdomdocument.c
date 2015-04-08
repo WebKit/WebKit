@@ -309,6 +309,23 @@ static void test_dom_document_garbage_collection(DomDocumentFixture* fixture, gc
     count = 0;
 
     document = webkit_web_view_get_dom_document(view);
+    body = webkit_dom_document_get_body(document);
+    WebKitDOMElement* p = webkit_dom_document_create_element(document, "P", NULL);
+    webkit_dom_node_append_child(WEBKIT_DOM_NODE(body), WEBKIT_DOM_NODE(p), NULL);
+    g_object_weak_ref(G_OBJECT(p), (GWeakNotify)weak_notify, &count);
+    /* This is wrong, p is transfer none and owned by the cache, but we shouldn't crash in that case. */
+    g_object_unref(p);
+
+    webkit_web_view_load_string(WEBKIT_WEB_VIEW(view), HTML_DOCUMENT_IFRAME, NULL, NULL, NULL);
+
+    while (g_main_context_pending(NULL))
+        g_main_context_iteration(NULL, FALSE);
+
+    g_assert_cmpuint(count, ==, 1);
+
+    count = 0;
+
+    document = webkit_web_view_get_dom_document(view);
     WebKitDOMElement* div = webkit_dom_document_get_element_by_id(document, "test");
     g_assert(div);
     g_object_weak_ref(G_OBJECT(div), (GWeakNotify)weak_notify, &count);

@@ -43,7 +43,11 @@ struct DOMObjectCacheData {
     {
         ASSERT(object);
         ASSERT(cacheReferences >= 1);
+        ASSERT(object->ref_count >= 1);
 
+        // Make sure we don't unref more than the references the object actually has. It can happen that user
+        // unreffed a reference owned by the cache.
+        cacheReferences = std::min(static_cast<unsigned>(object->ref_count), cacheReferences);
         GRefPtr<GObject> protect(object);
         do {
             g_object_unref(object);
