@@ -91,10 +91,13 @@ WebSocketChannel::WebSocketChannel(Document* document, WebSocketChannelClient* c
 {
     if (Page* page = m_document->page())
         m_identifier = page->progress().createUniqueIdentifier();
+
+    LOG(Network, "WebSocketChannel %p ctor, identifier %lu", this, m_identifier);
 }
 
 WebSocketChannel::~WebSocketChannel()
 {
+    LOG(Network, "WebSocketChannel %p dtor", this);
 }
 
 void WebSocketChannel::connect(const URL& url, const String& protocol)
@@ -187,6 +190,7 @@ void WebSocketChannel::close(int code, const String& reason)
     ASSERT(!m_suspended);
     if (!m_handle)
         return;
+    Ref<WebSocketChannel> protect(*this); // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.
     startClosingHandshake(code, reason);
     if (m_closing && !m_closingTimer.isActive())
         m_closingTimer.startOneShot(2 * TCPMaximumSegmentLifetime);
@@ -214,6 +218,8 @@ void WebSocketChannel::fail(const String& reason)
 
     if (m_handle && !m_closed)
         m_handle->disconnect(); // Will call didClose().
+
+    ASSERT(m_closed);
 }
 
 void WebSocketChannel::disconnect()
@@ -469,6 +475,7 @@ void WebSocketChannel::resumeTimerFired(Timer<WebSocketChannel>* timer)
 void WebSocketChannel::startClosingHandshake(int code, const String& reason)
 {
     LOG(Network, "WebSocketChannel %p startClosingHandshake() code=%d m_receivedClosingHandshake=%d", this, m_closing, m_receivedClosingHandshake);
+    ASSERT(!m_closed);
     if (m_closing)
         return;
     ASSERT(m_handle);
@@ -482,7 +489,13 @@ void WebSocketChannel::startClosingHandshake(int code, const String& reason)
         buf.append(reason.utf8().data(), reason.utf8().length());
     }
     enqueueRawFrame(WebSocketFrame::OpCodeClose, buf.data(), buf.size());
+    Ref<WebSocketChannel> protect(*this); // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.
     processOutgoingFrameQueue();
+
+    if (m_closed) {
+        // The channel got closed because processOutgoingFrameQueue() failed.
+        return;
+    }
 
     m_closing = true;
     if (m_client)
@@ -716,6 +729,8 @@ void WebSocketChannel::processOutgoingFrameQueue()
 {
     if (m_outgoingFrameQueueStatus == OutgoingFrameQueueClosed)
         return;
+
+    Ref<WebSocketChannel> protect(*this); // Any call to fail() will get the channel closed and dereferenced.
 
     while (!m_outgoingFrameQueue.isEmpty()) {
         OwnPtr<QueuedFrame> frame = m_outgoingFrameQueue.takeFirst();
