@@ -112,6 +112,7 @@ struct _WebKitWebSrcPrivate {
     gchar* uri;
     bool keepAlive;
     GUniquePtr<GstStructure> extraHeaders;
+    bool compress;
 
     WebCore::MediaPlayer* player;
 
@@ -150,7 +151,8 @@ enum {
     PROP_IRADIO_TITLE,
     PROP_LOCATION,
     PROP_KEEP_ALIVE,
-    PROP_EXTRA_HEADERS
+    PROP_EXTRA_HEADERS,
+    PROP_COMPRESS
 };
 
 static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src",
@@ -256,6 +258,10 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
         g_param_spec_boxed("extra-headers", "Extra Headers", "Extra headers to append to the HTTP request",
             GST_TYPE_STRUCTURE, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
+    g_object_class_install_property(oklass, PROP_COMPRESS,
+        g_param_spec_boolean("compress", "Compress", "Allow compressed content encodings",
+            FALSE, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
     eklass->change_state = webKitWebSrcChangeState;
 
     g_type_class_add_private(klass, sizeof(WebKitWebSrcPrivate));
@@ -349,6 +355,9 @@ static void webKitWebSrcSetProperty(GObject* object, guint propID, const GValue*
         src->priv->extraHeaders.reset(s ? gst_structure_copy(s) : nullptr);
         break;
     }
+    case PROP_COMPRESS:
+        src->priv->compress = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, pspec);
         break;
@@ -382,6 +391,9 @@ static void webKitWebSrcGetProperty(GObject* object, guint propID, GValue* value
         break;
     case PROP_EXTRA_HEADERS:
         gst_value_set_structure(value, priv->extraHeaders.get());
+        break;
+    case PROP_COMPRESS:
+        g_value_set_boolean(value, priv->compress);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, pspec);
@@ -542,13 +554,17 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
         request.setHTTPReferrer(priv->player->referrer());
 
 #if USE(SOUP)
-    // Let's disable HTTP Accept-Encoding here as we don't want the received response to be
-    // encoded in any way as we need to rely on the proper size of the returned data on
+    // By default, HTTP Accept-Encoding is disabled here as we don't
+    // want the received response to be encoded in any way as we need
+    // to rely on the proper size of the returned data on
     // didReceiveResponse.
     // If Accept-Encoding is used, the server may send the data in encoded format and
     // request.expectedContentLength() will have the "wrong" size (the size of the
     // compressed data), even though the data received in didReceiveData is uncompressed.
-    request.setAcceptEncoding(false);
+    // This is however useful to enable for adaptive streaming
+    // scenarios, when the demuxer needs to download playlists.
+    if (!priv->compress)
+        request.setAcceptEncoding(false);
 #endif
 
     // Let Apple web servers know we want to access their nice movie trailers.

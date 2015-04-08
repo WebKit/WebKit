@@ -1,3 +1,19 @@
+2015-04-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] compress property for the HTTP source element
+        https://bugs.webkit.org/show_bug.cgi?id=143518
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added a compress property so the default behavior or not
+        requesting content encoded to the server can be overridden if
+        needed. This is useful for adaptive streaming playback.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcSetProperty):
+        (webKitWebSrcGetProperty):
+        (webKitWebSrcStart):
+
 2015-04-08  Joonghun Park  <jh718.park@samsung.com>
 
         Remove CSS functions min() and max() which had been dropped from specification
