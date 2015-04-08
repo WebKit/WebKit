@@ -1,3 +1,17 @@
+2015-04-08  Joonghun Park  <jh718.park@samsung.com>
+
+        Remove CSS functions min() and max() which had been dropped from specification
+        https://bugs.webkit.org/show_bug.cgi?id=143440
+
+        Reviewed by Darin Adler.
+
+        No new tests, No Behavior changes.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcValue::create):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::isCalculation):
+
 2015-04-07  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] extra-headers and keep-alive properties for HTTP source element

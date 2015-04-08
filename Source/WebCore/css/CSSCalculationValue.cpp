@@ -758,7 +758,6 @@ PassRefPtr<CSSCalcValue> CSSCalcValue::create(CSSParserString name, CSSParserVal
 
     if (equalIgnoringCase(name, "calc(") || equalIgnoringCase(name, "-webkit-calc("))
         expression = parser.parseCalc(&parserValueList);
-    // FIXME: calc (http://webkit.org/b/16662) Add parsing for min and max here
 
     return expression ? adoptRef(new CSSCalcValue(expression.releaseNonNull(), range != CalculationRangeAll)) : nullptr;
 }

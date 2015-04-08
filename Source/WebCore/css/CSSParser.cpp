@@ -7223,9 +7223,7 @@ bool CSSParser::isCalculation(CSSParserValue& value)
 {
     return (value.unit == CSSParserValue::Function)
         && (equalIgnoringCase(value.function->name, "calc(")
-            || equalIgnoringCase(value.function->name, "-webkit-calc(")
-            || equalIgnoringCase(value.function->name, "-webkit-min(")
-            || equalIgnoringCase(value.function->name, "-webkit-max("));
+            || equalIgnoringCase(value.function->name, "-webkit-calc("));
 }
 
 inline int CSSParser::colorIntFromValue(ValueWithCalculation& valueWithCalculation)
