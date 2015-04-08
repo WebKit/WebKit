@@ -21,6 +21,7 @@
 
 #include "WidgetBackingStore.h"
 
+#if PLATFORM(GTK) && PLATFORM(X11) && defined(GDK_WINDOWING_X11)
 #include <X11/Xlib.h>
 
 namespace WebCore {
@@ -42,5 +43,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // PLATFORM(GTK) && PLATFORM(X11) && defined(GDK_WINDOWING_X11)
 
 #endif // GtkWidgetBackingStoreX11_h

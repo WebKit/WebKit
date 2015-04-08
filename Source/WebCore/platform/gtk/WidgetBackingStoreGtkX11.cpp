@@ -19,6 +19,8 @@
 #include "config.h"
 #include "WidgetBackingStoreGtkX11.h"
 
+#if PLATFORM(GTK) && PLATFORM(X11) && defined(GDK_WINDOWING_X11)
+
 #include "GtkVersioning.h"
 #include "RefPtrCairo.h"
 #include <cairo-xlib.h>
@@ -81,3 +83,5 @@ void WidgetBackingStoreGtkX11::scroll(const IntRect& scrollRect, const IntSize& 
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(GTK) && PLATFORM(X11) && defined(GDK_WINDOWING_X11)
