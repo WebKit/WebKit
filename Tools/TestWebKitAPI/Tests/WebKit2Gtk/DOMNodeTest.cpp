@@ -231,6 +231,12 @@ private:
         g_assert(WEBKIT_DOM_IS_HTML_PARAGRAPH_ELEMENT(p2.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(p2.get()));
 
+        // Manually handling a DOM object owned by the cache shouldn't crash when the cache has more than one reference.
+        GRefPtr<WebKitDOMElement> p3 = adoptGRef(webkit_dom_document_create_element(document, "P", nullptr));
+        g_assert(WEBKIT_DOM_IS_HTML_PARAGRAPH_ELEMENT(p3.get()));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(p3.get()));
+        webkit_dom_node_append_child(WEBKIT_DOM_NODE(div), WEBKIT_DOM_NODE(p3.get()), nullptr);
+
         // DOM objects removed from the document are also correctly handled by the cache.
         WebKitDOMElement* a = webkit_dom_document_create_element(document, "A", nullptr);
         g_assert(WEBKIT_DOM_IS_ELEMENT(a));
