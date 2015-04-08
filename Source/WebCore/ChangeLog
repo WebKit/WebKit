@@ -1,5 +1,22 @@
 2015-04-08  Anders Carlsson  <andersca@apple.com>
 
+        Remove ApplicationCacheGroup::m_isCopy
+        https://bugs.webkit.org/show_bug.cgi?id=143536
+
+        Reviewed by Tim Horton.
+
+        Code that used to set m_isCopy to true is long gone.
+
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::~ApplicationCache):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::ApplicationCacheGroup):
+        (WebCore::ApplicationCacheGroup::~ApplicationCacheGroup):
+        * loader/appcache/ApplicationCacheGroup.h:
+        (WebCore::ApplicationCacheGroup::isCopy): Deleted.
+
+2015-04-08  Anders Carlsson  <andersca@apple.com>
+
         Delete ApplicationCache static member functions
         https://bugs.webkit.org/show_bug.cgi?id=143534
 

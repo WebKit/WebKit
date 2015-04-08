@@ -50,7 +50,7 @@
 
 namespace WebCore {
 
-ApplicationCacheGroup::ApplicationCacheGroup(const URL& manifestURL, bool isCopy)
+ApplicationCacheGroup::ApplicationCacheGroup(const URL& manifestURL)
     : m_manifestURL(manifestURL)
     , m_origin(SecurityOrigin::create(manifestURL))
     , m_updateStatus(Idle)
@@ -61,7 +61,6 @@ ApplicationCacheGroup::ApplicationCacheGroup(const URL& manifestURL, bool isCopy
     , m_storageID(0)
     , m_isObsolete(false)
     , m_completionType(None)
-    , m_isCopy(isCopy)
     , m_calledReachedMaxAppCacheSize(false)
     , m_availableSpaceInQuota(ApplicationCacheStorage::unknownQuota())
     , m_originQuotaExceededPreviously(false)
@@ -70,18 +69,6 @@ ApplicationCacheGroup::ApplicationCacheGroup(const URL& manifestURL, bool isCopy
 
 ApplicationCacheGroup::~ApplicationCacheGroup()
 {
-    if (m_isCopy) {
-        ASSERT(m_newestCache);
-        ASSERT(m_caches.size() == 1);
-        ASSERT(m_caches.contains(m_newestCache.get()));
-        ASSERT(!m_cacheBeingUpdated);
-        ASSERT(m_associatedDocumentLoaders.isEmpty());
-        ASSERT(m_pendingMasterResourceLoaders.isEmpty());
-        ASSERT(m_newestCache->group() == this);
-        
-        return;
-    }
-               
     ASSERT(!m_newestCache);
     ASSERT(m_caches.isEmpty());
     
