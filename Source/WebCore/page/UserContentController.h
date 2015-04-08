@@ -93,6 +93,7 @@ public:
     WEBCORE_EXPORT void removeAllUserContentExtensions();
 
     void processContentExtensionRulesForLoad(ResourceRequest&, ResourceType, DocumentLoader& initiatingDocumentLoader);
+    Vector<ContentExtensions::Action> actionsForResourceLoad(const ResourceLoadInfo&);
 #endif
 
 private:

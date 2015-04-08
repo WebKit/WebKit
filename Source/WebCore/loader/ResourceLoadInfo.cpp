@@ -85,6 +85,8 @@ uint16_t readResourceType(const String& name)
         return static_cast<uint16_t>(ResourceType::SVGDocument);
     if (name == "media")
         return static_cast<uint16_t>(ResourceType::Media);
+    if (name == "popup")
+        return static_cast<uint16_t>(ResourceType::Popup);
     return static_cast<uint16_t>(ResourceType::Invalid);
 }
 
