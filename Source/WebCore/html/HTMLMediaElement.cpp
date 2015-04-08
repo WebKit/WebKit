@@ -2437,6 +2437,9 @@ bool HTMLMediaElement::seeking() const
 
 void HTMLMediaElement::refreshCachedTime() const
 {
+    if (!m_player)
+        return;
+
     m_cachedTime = m_player->currentTime();
     m_clockTimeAtLastCachedTimeUpdate = monotonicallyIncreasingTime();
 }
