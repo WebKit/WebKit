@@ -1,0 +1,4 @@
+ALERT: about:blank successfully blocked
+ALERT: data url should not be blocked
+ALERT: data url should not be blocked
+

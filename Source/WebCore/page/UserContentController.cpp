@@ -212,6 +212,13 @@ void UserContentController::processContentExtensionRulesForLoad(ResourceRequest&
     m_contentExtensionBackend->processContentExtensionRulesForLoad(request, resourceType, initiatingDocumentLoader);
 }
 
+Vector<ContentExtensions::Action> UserContentController::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo)
+{
+    if (!m_contentExtensionBackend)
+        return Vector<ContentExtensions::Action>();
+    
+    return m_contentExtensionBackend->actionsForResourceLoad(resourceLoadInfo);
+}
 #endif
 
 void UserContentController::removeAllUserContent()
