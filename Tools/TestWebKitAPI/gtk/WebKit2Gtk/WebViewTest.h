@@ -72,6 +72,8 @@ public:
 
     bool runWebProcessTest(const char* suiteName, const char* testName);
 
+    static gboolean webProcessCrashed(WebKitWebView*, WebViewTest*);
+
     WebKitWebView* m_webView;
     GMainLoop* m_mainLoop;
     CString m_activeURI;
@@ -82,6 +84,7 @@ public:
     GUniquePtr<char> m_resourceData;
     size_t m_resourceDataSize;
     cairo_surface_t* m_surface;
+    bool m_expectedWebProcessCrash;
 
 private:
     void doMouseButtonEvent(GdkEventType, int, int, unsigned, unsigned);

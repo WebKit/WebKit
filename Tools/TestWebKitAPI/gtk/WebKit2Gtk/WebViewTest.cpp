@@ -34,8 +34,10 @@ WebViewTest::WebViewTest(WebKitWebView* webView)
     , m_javascriptResult(0)
     , m_resourceDataSize(0)
     , m_surface(0)
+    , m_expectedWebProcessCrash(false)
 {
     assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webView));
+    g_signal_connect(m_webView, "web-process-crashed", G_CALLBACK(WebViewTest::webProcessCrashed), this);
 }
 
 WebViewTest::~WebViewTest()
@@ -48,6 +50,16 @@ WebViewTest::~WebViewTest()
         cairo_surface_destroy(m_surface);
     g_object_unref(m_webView);
     g_main_loop_unref(m_mainLoop);
+}
+
+gboolean WebViewTest::webProcessCrashed(WebKitWebView*, WebViewTest* test)
+{
+    if (test->m_expectedWebProcessCrash) {
+        test->m_expectedWebProcessCrash = false;
+        return FALSE;
+    }
+    g_assert_not_reached();
+    return TRUE;
 }
 
 void WebViewTest::loadURI(const char* uri)

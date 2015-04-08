@@ -86,8 +86,10 @@ static void testWebKitWebViewProcessCrashed(WebViewTest* test, gconstpointer)
     test->loadHtml("<html></html>", 0);
     test->waitUntilLoadFinished();
 
-    g_signal_connect(test->m_webView, "web-process-crashed",
+    g_signal_connect_after(test->m_webView, "web-process-crashed",
         G_CALLBACK(webProcessCrashedCallback), test);
+
+    test->m_expectedWebProcessCrash = true;
 
     GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy("org.webkit.gtk.WebExtensionTest",
         "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
@@ -100,6 +102,7 @@ static void testWebKitWebViewProcessCrashed(WebViewTest* test, gconstpointer)
         -1, 0, 0));
     g_assert(!result);
     g_main_loop_run(test->m_mainLoop);
+    test->m_expectedWebProcessCrash = false;
 }
 
 static void testWebExtensionWindowObjectCleared(WebViewTest* test, gconstpointer)
