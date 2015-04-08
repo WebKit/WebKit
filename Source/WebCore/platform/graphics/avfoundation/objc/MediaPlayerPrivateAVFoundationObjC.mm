@@ -349,6 +349,7 @@ static NSArray *assetMetadataKeyNames();
 static NSArray *itemKVOProperties();
 static NSArray *assetTrackMetadataKeyNames();
 static NSArray *playerKVOProperties();
+static AVAssetTrack* firstEnabledTrack(NSArray* tracks);
 
 #if !LOG_DISABLED
 static const char *boolString(bool val)
@@ -566,8 +567,10 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
     m_cachedTracks = nullptr;
 
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
-    if (m_provider)
+    if (m_provider) {
         m_provider->setPlayerItem(nullptr);
+        m_provider->setAudioTrack(nullptr);
+    }
 #endif
 
     setIgnoreLoadStateChanges(false);
@@ -998,8 +1001,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
 #endif
 
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
-    if (m_provider)
+    if (m_provider) {
         m_provider->setPlayerItem(m_avPlayerItem.get());
+        m_provider->setAudioTrack(firstEnabledTrack([m_avAsset tracksWithMediaCharacteristic:AVMediaCharacteristicAudible]));
+    }
 #endif
 
     setDelayCallbacks(false);
@@ -1917,6 +1922,11 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
     if (primaryAudioTrackLanguage != languageOfPrimaryAudioTrack())
         characteristicsChanged();
 
+#if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
+    if (m_provider)
+        m_provider->setAudioTrack(firstEnabledTrack([m_avAsset tracksWithMediaCharacteristic:AVMediaCharacteristicAudible]));
+#endif
+
     setDelayCharacteristicsChangedNotification(false);
 }
 
@@ -2127,8 +2137,11 @@ void MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation(TextTrackRep
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
 AudioSourceProvider* MediaPlayerPrivateAVFoundationObjC::audioSourceProvider()
 {
-    if (!m_provider)
+    if (!m_provider) {
         m_provider = AudioSourceProviderAVFObjC::create(m_avPlayerItem.get());
+        m_provider->setAudioTrack(firstEnabledTrack([m_avAsset tracksWithMediaCharacteristic:AVMediaCharacteristicAudible]));
+    }
+
     return m_provider.get();
 }
 #endif

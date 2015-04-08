@@ -38,7 +38,6 @@
 #import <AVFoundation/AVAudioMix.h>
 #import <AVFoundation/AVMediaFormat.h>
 #import <AVFoundation/AVPlayerItem.h>
-#import <AVFoundation/AVPlayerItemTrack.h>
 #import <objc/runtime.h>
 #import <wtf/MainThread.h>
 
@@ -151,7 +150,21 @@ void AudioSourceProviderAVFObjC::setPlayerItem(AVPlayerItem *avPlayerItem)
 
     m_avPlayerItem = avPlayerItem;
 
-    if (m_client && m_avPlayerItem)
+    if (m_client && m_avPlayerItem && m_avAssetTrack)
+        createMix();
+}
+
+void AudioSourceProviderAVFObjC::setAudioTrack(AVAssetTrack *avAssetTrack)
+{
+    if (m_avAssetTrack == avAssetTrack)
+        return;
+
+    if (m_avAudioMix)
+        destroyMix();
+
+    m_avAssetTrack = avAssetTrack;
+
+    if (m_client && m_avPlayerItem && m_avAssetTrack)
         createMix();
 }
 
@@ -190,15 +203,8 @@ void AudioSourceProviderAVFObjC::createMix()
     RetainPtr<AVMutableAudioMixInputParameters> parameters = adoptNS([allocAVMutableAudioMixInputParametersInstance() init]);
     [parameters setAudioTapProcessor:m_tap.get()];
 
-    CMPersistentTrackID firstEnabledAudioTrackID = kCMPersistentTrackID_Invalid;
-    NSArray* tracks = [m_avPlayerItem tracks];
-    for (AVPlayerItemTrack* track in tracks) {
-        if ([track.assetTrack hasMediaCharacteristic:AVMediaCharacteristicAudible] && track.enabled) {
-            firstEnabledAudioTrackID = track.assetTrack.trackID;
-            break;
-        }
-    }
-    [parameters setTrackID:firstEnabledAudioTrackID];
+    CMPersistentTrackID trackID = m_avAssetTrack.get().trackID;
+    [parameters setTrackID:trackID];
     
     [m_avAudioMix setInputParameters:@[parameters.get()]];
     [m_avPlayerItem setAudioMix:m_avAudioMix.get()];

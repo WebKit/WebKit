@@ -4273,6 +4273,14 @@ void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
 
     m_mediaSession->applyMediaPlayerRestrictions(*this);
 
+#if ENABLE(WEB_AUDIO)
+    if (m_audioSourceNode && audioSourceProvider()) {
+        m_audioSourceNode->lock();
+        audioSourceProvider()->setClient(m_audioSourceNode);
+        m_audioSourceNode->unlock();
+    }
+#endif
+
 #if PLATFORM(IOS)
     if (!m_player)
         return;

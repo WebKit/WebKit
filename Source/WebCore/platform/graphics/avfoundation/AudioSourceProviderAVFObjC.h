@@ -34,6 +34,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
+OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVPlayerItem;
 OBJC_CLASS AVMutableAudioMix;
 
@@ -54,6 +55,7 @@ public:
     virtual ~AudioSourceProviderAVFObjC();
 
     void setPlayerItem(AVPlayerItem *);
+    void setAudioTrack(AVAssetTrack *);
 
 private:
     AudioSourceProviderAVFObjC(AVPlayerItem *);
@@ -78,6 +80,7 @@ private:
     void process(CMItemCount numberFrames, MTAudioProcessingTapFlags flagsIn, AudioBufferList *bufferListInOut, CMItemCount *numberFramesOut, MTAudioProcessingTapFlags *flagsOut);
 
     RetainPtr<AVPlayerItem> m_avPlayerItem;
+    RetainPtr<AVAssetTrack> m_avAssetTrack;
     RetainPtr<AVMutableAudioMix> m_avAudioMix;
     RetainPtr<MTAudioProcessingTapRef> m_tap;
     RetainPtr<AudioConverterRef> m_converter;

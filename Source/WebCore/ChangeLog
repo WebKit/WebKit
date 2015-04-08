@@ -1,3 +1,33 @@
+2015-04-08  Jer Noble  <jer.noble@apple.com>
+
+        [Mac][WebAudio] Update the AVAudioMix in the AudioSourceProviderAVFObjC when the list of enabled audio tracks change.
+        https://bugs.webkit.org/show_bug.cgi?id=143332
+
+        Reviewed by Eric Carlson.
+
+        Some media assets (notably, mp3s) will not have an enabled audio track when the AVAsset is
+        first loaded, so the AVAudioMix will have no trackID in it's parameters. Whenever the list
+        of enabled tracks change, recreate the AVAudioMix with the new first enabled audio trackID.
+
+        To facilitate this, add a new setter to AudioSourceProviderAVFObjC taking an AVAssetTrack to
+        use with the AVAudioMix. Whenever this parameter changes, the AVAudioMix is destroyed and
+        recreated.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerEngineUpdated): Drive-by fix: when the media
+            player switches engines, re-associate the audio source node with its provider.
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h:
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::setPlayerItem): Only create the mix if there is a valid AVPlayerItem and AVAssetTrack
+        (WebCore::AudioSourceProviderAVFObjC::setAudioTrack): Ditto.
+        (WebCore::AudioSourceProviderAVFObjC::createMix): Don't iterate over the AVPlayerItem's tracks,
+            just use the one passed in through setAudioTrack().
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad): Clear the provider's track.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem): Set the provider's track.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::audioSourceProvider): Ditto.
+
 2015-04-08  Anders Carlsson  <andersca@apple.com>
 
         Move some ApplicationCache static member functions to ApplicationCacheStorage
