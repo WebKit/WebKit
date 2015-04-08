@@ -1,6 +1,8 @@
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
 
 function addElement() {
     document.documentElement.appendChild(document.createTextNode('X'));
@@ -12,7 +14,17 @@ var xhr = new XMLHttpRequest;
 function sendXHR()
 {
     xhr.open("GET", "", true);
-    xhr.send();
+    try {
+        xhr.send();
+    }
+    catch(e) {
+        // In case of reentrant call, the call to "open" will be aborted by reentrant call.
+        // The call to "send" following the "open" aborted call will throw an exception (XHR not in open mode)
+        if (e.name != "InvalidStateError") {
+            console.log("FAILED: Was expecting an InvalidStateError exception");
+        }
+        testRunner.notifyDone();
+    }
 }
 window.addEventListener("DOMSubtreeModified", sendXHR);
 addElement();
