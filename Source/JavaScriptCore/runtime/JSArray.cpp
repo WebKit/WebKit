@@ -1091,15 +1091,16 @@ void JSArray::sortNumeric(ExecState* exec, JSValue compareFunction, CallType cal
 
     switch (indexingType()) {
     case ArrayClass:
+    case ArrayWithUndecided:
         return;
         
     case ArrayWithInt32:
         sortNumericVector<ArrayWithInt32>(exec, compareFunction, callType, callData);
-        break;
+        return;
         
     case ArrayWithDouble:
         sortNumericVector<ArrayWithDouble>(exec, compareFunction, callType, callData);
-        break;
+        return;
         
     case ArrayWithContiguous:
         sortNumericVector<ArrayWithContiguous>(exec, compareFunction, callType, callData);
@@ -1110,7 +1111,8 @@ void JSArray::sortNumeric(ExecState* exec, JSValue compareFunction, CallType cal
         return;
         
     default:
-        CRASH();
+        dataLog("Indexing type: ", indexingType(), "\n");
+        RELEASE_ASSERT_NOT_REACHED();
         return;
     }
 }
