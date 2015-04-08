@@ -1,3 +1,14 @@
+2015-04-08  Brady Eidson  <beidson@apple.com>
+
+        Expose the "Share" menu for links, images, and media.
+        <rdar://problem/20435340> and https://bugs.webkit.org/show_bug.cgi?id=143502
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::shareMenuItem):
+        * WebCoreSupport/WebContextMenuClient.h:
+
 2015-04-08  Anders Carlsson  <andersca@apple.com>
 
         Add a WebApplicationCache::storage() and use it instead of the WebCore singleton

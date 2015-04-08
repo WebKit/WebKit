@@ -62,6 +62,38 @@ WebHitTestResult::Data::Data(const HitTestResult& hitTestResult)
 {
 }
 
+WebHitTestResult::Data::Data(const WebCore::HitTestResult& hitTestResult, bool includeImage)
+    : absoluteImageURL(hitTestResult.absoluteImageURL().string())
+    , absolutePDFURL(hitTestResult.absolutePDFURL().string())
+    , absoluteLinkURL(hitTestResult.absoluteLinkURL().string())
+    , absoluteMediaURL(hitTestResult.absoluteMediaURL().string())
+    , linkLabel(hitTestResult.textContent())
+    , linkTitle(hitTestResult.titleDisplayString())
+    , isContentEditable(hitTestResult.isContentEditable())
+    , elementBoundingBox(elementBoundingBoxInWindowCoordinates(hitTestResult))
+    , isScrollbar(hitTestResult.scrollbar())
+    , isSelected(hitTestResult.isSelected())
+    , isTextNode(hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode())
+    , isOverTextInsideFormControlElement(hitTestResult.isOverTextInsideFormControlElement())
+    , allowsCopy(hitTestResult.allowsCopy())
+    , isDownloadableMedia(hitTestResult.isDownloadableMedia())
+    , imageSize(0)
+{
+    if (!includeImage)
+        return;
+
+    if (Image* image = hitTestResult.image()) {
+        RefPtr<SharedBuffer> buffer = image->data();
+        String imageExtension = image->filenameExtension();
+        if (!imageExtension.isEmpty() && buffer) {
+            imageSharedMemory = SharedMemory::create(buffer->size());
+            memcpy(imageSharedMemory->data(), buffer->data(), buffer->size());
+            imageExtension = imageExtension;
+            imageSize = buffer->size();
+        }
+    }
+}
+
 WebHitTestResult::Data::~Data()
 {
 }

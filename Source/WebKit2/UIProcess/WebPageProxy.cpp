@@ -100,6 +100,7 @@
 #include "WebProtectionSpace.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteDataStore.h"
+#include <WebCore/BitmapImage.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
 #include <WebCore/FloatRect.h>
@@ -4042,8 +4043,23 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
             continue;
         }
 
-        // Currently we only support the share menu for text selection, so create the appropriate menu item for that text selection now.
-        ContextMenuItem coreItem = ContextMenuItem::shareSelectedTextMenuItem(contextMenuContextData.selectedText());
+        // Create the real Share menu item
+        URL absoluteLinkURL;
+        if (!contextMenuContextData.webHitTestResultData().absoluteLinkURL.isEmpty())
+            absoluteLinkURL = URL(ParsedURLString, contextMenuContextData.webHitTestResultData().absoluteLinkURL);
+
+        URL downloadableMediaURL;
+        if (!contextMenuContextData.webHitTestResultData().absoluteMediaURL.isEmpty() && contextMenuContextData.webHitTestResultData().isDownloadableMedia)
+            downloadableMediaURL = URL(ParsedURLString, contextMenuContextData.webHitTestResultData().absoluteMediaURL);
+
+        RefPtr<Image> image;
+        if (contextMenuContextData.webHitTestResultData().imageSharedMemory && contextMenuContextData.webHitTestResultData().imageSize) {
+            image = BitmapImage::create();
+            RefPtr<SharedBuffer> imageData = SharedBuffer::create((unsigned char*)contextMenuContextData.webHitTestResultData().imageSharedMemory->data(), contextMenuContextData.webHitTestResultData().imageSize);
+            image->setData(imageData.release(), true);
+        }
+
+        ContextMenuItem coreItem = ContextMenuItem::shareMenuItem(absoluteLinkURL, downloadableMediaURL, image.get(), contextMenuContextData.selectedText());
         proposedAPIItems.append(WebContextMenuItem::create(coreItem));
     }
 

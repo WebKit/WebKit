@@ -51,6 +51,7 @@
 #include "SVGNames.h"
 #include "Scrollbar.h"
 #include "ShadowRoot.h"
+#include "TextIterator.h"
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
 #include "XLinkNames.h"
@@ -187,6 +188,26 @@ bool HitTestResult::isSelected() const
         return false;
 
     return frame->selection().contains(m_hitTestLocation.point());
+}
+
+String HitTestResult::selectedText() const
+{
+    if (!m_innerNonSharedNode)
+        return emptyString();
+
+    Frame* frame = m_innerNonSharedNode->document().frame();
+    if (!frame)
+        return emptyString();
+
+    // Look for a character that's not just a separator.
+    for (TextIterator it(frame->selection().toNormalizedRange().get()); !it.atEnd(); it.advance()) {
+        int length = it.text().length();
+        for (int i = 0; i < length; ++i) {
+            if (!(U_GET_GC_MASK(it.text()[i]) & U_GC_Z_MASK))
+                return frame->displayStringModifiedByEncoding(frame->editor().selectedText());
+        }
+    }
+    return emptyString();
 }
 
 String HitTestResult::spellingToolTip(TextDirection& dir) const

@@ -1033,7 +1033,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
             actionMenuHitTestPreventsDefault = element->dispatchMouseForceWillBegin();
     }
 
-    WebHitTestResult::Data actionMenuResult(hitTestResult);
+    WebHitTestResult::Data actionMenuResult(hitTestResult, !forImmediateAction);
     actionMenuResult.hitTestLocationInViewCooordinates = locationInViewCooordinates;
 
     RefPtr<Range> selectionRange = corePage()->focusController().focusedOrMainFrame().selection().selection().firstRange();
@@ -1058,19 +1058,6 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
 
     m_lastActionMenuRangeForSelection = lookupRange;
     m_lastActionMenuHitTestResult = hitTestResult;
-
-    if (!forImmediateAction) {
-        if (Image* image = hitTestResult.image()) {
-            RefPtr<SharedBuffer> buffer = image->data();
-            String imageExtension = image->filenameExtension();
-            if (!imageExtension.isEmpty() && buffer) {
-                actionMenuResult.imageSharedMemory = SharedMemory::create(buffer->size());
-                memcpy(actionMenuResult.imageSharedMemory->data(), buffer->data(), buffer->size());
-                actionMenuResult.imageExtension = imageExtension;
-                actionMenuResult.imageSize = buffer->size();
-            }
-        }
-    }
 
     bool pageOverlayDidOverrideDataDetectors = false;
     for (const auto& overlay : mainFrame.pageOverlayController().pageOverlays()) {

@@ -84,6 +84,7 @@ public:
 
         Data();
         explicit Data(const WebCore::HitTestResult&);
+        Data(const WebCore::HitTestResult&, bool includeImage);
         ~Data();
 
         void encode(IPC::ArgumentEncoder&) const;

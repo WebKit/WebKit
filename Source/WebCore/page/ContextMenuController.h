@@ -48,6 +48,8 @@ public:
     ContextMenuController(Page&, ContextMenuClient&);
     ~ContextMenuController();
 
+    Page& page() { return m_page; }
+
     ContextMenu* contextMenu() const { return m_contextMenu.get(); }
     WEBCORE_EXPORT void clearContextMenu();
 

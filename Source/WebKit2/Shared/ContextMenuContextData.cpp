@@ -45,7 +45,7 @@ ContextMenuContextData::ContextMenuContextData()
 }
 
 ContextMenuContextData::ContextMenuContextData(const ContextMenuContext& context)
-    : m_webHitTestResultData(WebHitTestResult::Data(context.hitTestResult()))
+    : m_webHitTestResultData(context.hitTestResult(), true)
     , m_selectedText(context.selectedText())
 #if ENABLE(SERVICE_CONTROLS)
     , m_selectionIsEditable(false)

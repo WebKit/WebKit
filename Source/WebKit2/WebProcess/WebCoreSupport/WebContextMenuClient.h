@@ -57,10 +57,10 @@ private:
     virtual bool isSpeaking() override;
     virtual void speak(const String&) override;
     virtual void stopSpeaking() override;
-    
+    virtual WebCore::ContextMenuItem shareMenuItem(const WebCore::HitTestResult&) override;
+
 #if PLATFORM(COCOA)
     virtual void searchWithSpotlight() override;
-    virtual WebCore::ContextMenuItem shareSelectedTextMenuItem(const String&) override;
 #endif
 
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)

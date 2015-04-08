@@ -144,3 +144,9 @@ bool WebContextMenuClient::isSpeaking()
     notImplemented();
     return false;
 }
+
+ContextMenuItem WebContextMenuClient::shareMenuItem(const HitTestResult&)
+{
+    notImplemented();
+    return ContextMenuItem();
+}

@@ -731,19 +731,6 @@ void ContextMenuController::createAndAppendTransformationsSubMenu(ContextMenuIte
 
 #endif
 
-static bool selectionContainsPossibleWord(Frame* frame)
-{
-    // Current algorithm: look for a character that's not just a separator.
-    for (TextIterator it(frame->selection().toNormalizedRange().get()); !it.atEnd(); it.advance()) {
-        int length = it.text().length();
-        for (int i = 0; i < length; ++i) {
-            if (!(U_GET_GC_MASK(it.text()[i]) & U_GC_Z_MASK))
-                return true;
-        }
-    }
-    return false;
-}
-
 #if PLATFORM(COCOA)
 #define SUPPORTS_TOGGLE_VIDEO_FULLSCREEN 1
 #else
@@ -826,6 +813,8 @@ void ContextMenuController::populate()
     ContextMenuItem SelectAllItem(ActionType, ContextMenuItemTagSelectAll, contextMenuItemTagSelectAll());
 #endif
 
+    ContextMenuItem ShareMenuItem = m_client.shareMenuItem(m_context.hitTestResult());
+
     Node* node = m_context.hitTestResult().innerNonSharedNode();
     if (!node)
         return;
@@ -844,6 +833,9 @@ void ContextMenuController::populate()
 #endif
 
     if (!m_context.hitTestResult().isContentEditable()) {
+        String selectedString = m_context.hitTestResult().selectedText();
+        m_context.setSelectedText(selectedString);
+
         FrameLoader& loader = frame->loader();
         URL linkURL = m_context.hitTestResult().absoluteLinkURL();
         if (!linkURL.isEmpty()) {
@@ -892,10 +884,8 @@ void ContextMenuController::populate()
 
         if (imageURL.isEmpty() && linkURL.isEmpty() && mediaURL.isEmpty()) {
             if (m_context.hitTestResult().isSelected()) {
-                String selectedString;
-                if (selectionContainsPossibleWord(frame)) {
+                if (!selectedString.isEmpty()) {
 #if PLATFORM(COCOA)
-                    selectedString = frame->displayStringModifiedByEncoding(frame->editor().selectedText());
                     ContextMenuItem LookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedString));
 
                     appendItem(LookUpInDictionaryItem, m_contextMenu.get());
@@ -911,12 +901,9 @@ void ContextMenuController::populate()
 #if PLATFORM(COCOA)
                 appendItem(*separatorItem(), m_contextMenu.get());
 
-                if (!selectedString.isEmpty() && ContextMenuItem::supportsShareMenu()) {
-                    ContextMenuItem ShareItem(m_client.shareSelectedTextMenuItem(selectedString));
-                    appendItem(ShareItem, m_contextMenu.get());
+                if (!ShareMenuItem.isNull()) {
+                    appendItem(ShareMenuItem, m_contextMenu.get());
                     appendItem(*separatorItem(), m_contextMenu.get());
-
-                    m_context.setSelectedText(selectedString);
                 }
 
                 ContextMenuItem SpeechMenuItem(SubmenuType, ContextMenuItemTagSpeechMenu, contextMenuItemTagSpeechMenu());
@@ -950,7 +937,15 @@ void ContextMenuController::populate()
 
                 if (frame->page() && !frame->isMainFrame())
                     appendItem(OpenFrameItem, m_contextMenu.get());
+
+                if (!ShareMenuItem.isNull()) {
+                    appendItem(*separatorItem(), m_contextMenu.get());
+                    appendItem(ShareMenuItem, m_contextMenu.get());
+                }
             }
+        } else if (!ShareMenuItem.isNull()) {
+            appendItem(*separatorItem(), m_contextMenu.get());
+            appendItem(ShareMenuItem, m_contextMenu.get());
         }
     } else { // Make an editing context menu
         bool inPasswordField = frame->selection().selection().isInPasswordField();
@@ -1028,10 +1023,10 @@ void ContextMenuController::populate()
             appendItem(*separatorItem(), m_contextMenu.get());
         }
 
-        if (m_context.hitTestResult().isSelected() && !inPasswordField && selectionContainsPossibleWord(frame)) {
+        String selectedText = m_context.hitTestResult().selectedText();
+        if (m_context.hitTestResult().isSelected() && !inPasswordField && !selectedText.isEmpty()) {
 #if PLATFORM(COCOA)
-            String selectedString = frame->displayStringModifiedByEncoding(frame->editor().selectedText());
-            ContextMenuItem LookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedString));
+            ContextMenuItem LookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedText));
 
             appendItem(LookUpInDictionaryItem, m_contextMenu.get());
 #endif
@@ -1110,6 +1105,11 @@ void ContextMenuController::populate()
                 }
             }
 #endif
+        }
+
+        if (!ShareMenuItem.isNull()) {
+            appendItem(*separatorItem(), m_contextMenu.get());
+            appendItem(ShareMenuItem, m_contextMenu.get());
         }
     }
 }

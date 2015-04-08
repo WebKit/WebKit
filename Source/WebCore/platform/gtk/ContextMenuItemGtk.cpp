@@ -288,12 +288,7 @@ GtkAction* ContextMenuItem::gtkAction() const
     return gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription));
 }
 
-bool ContextMenuItem::supportsShareMenu()
-{
-    return false;
-}
-
-ContextMenuItem ContextMenuItem::shareSelectedTextMenuItem(const String&)
+ContextMenuItem ContextMenuItem::shareMenuItem(const URL&, const URL&, Image*, const String&)
 {
     return ContextMenuItem(SubmenuType, ContextMenuItemTagShareMenu, emptyString());
 }

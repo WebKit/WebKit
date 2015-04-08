@@ -1,3 +1,43 @@
+2015-04-08  Brady Eidson  <beidson@apple.com>
+
+        Expose the "Share" menu for links, images, and media.
+        <rdar://problem/20435340> and https://bugs.webkit.org/show_bug.cgi?id=143502
+
+        Reviewed by Tim Horton.
+
+        * loader/EmptyClients.h:
+        * page/ContextMenuClient.h:
+        (WebCore::ContextMenuClient::shareSelectedTextMenuItem): Deleted.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+        (WebCore::selectionContainsPossibleWord): Deleted.
+        * page/ContextMenuController.h:
+        (WebCore::ContextMenuController::page):
+
+        * platform/ContextMenuItem.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::isNull):
+        (WebCore::ContextMenuItem::shareMenuItem):
+        (WebCore::ContextMenuItem::supportsShareMenu): Deleted.
+        (WebCore::ContextMenuItem::shareSelectedTextMenuItem): Deleted.
+        * platform/ContextMenuItem.h:
+
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::ContextMenuItem::shareMenuItem): Return a null item.
+        (WebCore::ContextMenuItem::supportsShareMenu): Deleted.
+        (WebCore::ContextMenuItem::shareSelectedTextMenuItem): Deleted.
+
+        * platform/mac/ContextMenuItemMac.mm:
+        (WebCore::ContextMenuItem::shareMenuItem): Create a full-featured Share menu item instead of just for selected text.
+        (WebCore::ContextMenuItem::supportsShareMenu): Deleted.
+        (WebCore::ContextMenuItem::shareSelectedTextMenuItem): Deleted.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::selectedText): Instead of calculating selected text outside the HitTestResult, let the
+          HitTestResult do what it does best: Calculate things!
+        * rendering/HitTestResult.h:
+
 2015-04-08  Per Arne Vollan  <peavo@outlook.com>
 
         [Curl] Compile error in CurlCacheEntry::parseResponseHeaders method.
