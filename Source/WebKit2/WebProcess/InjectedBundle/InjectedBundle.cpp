@@ -356,8 +356,7 @@ void InjectedBundle::clearApplicationCache()
 
 void InjectedBundle::clearApplicationCacheForOrigin(const String& originString)
 {
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromString(originString);
-    ApplicationCache::deleteCacheForOrigin(origin.get());
+    ApplicationCacheStorage::singleton().deleteCacheForOrigin(SecurityOrigin::createFromString(originString));
 }
 
 void InjectedBundle::setAppCacheMaximumSize(uint64_t size)
@@ -367,8 +366,7 @@ void InjectedBundle::setAppCacheMaximumSize(uint64_t size)
 
 uint64_t InjectedBundle::appCacheUsageForOrigin(const String& originString)
 {
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromString(originString);
-    return ApplicationCache::diskUsageForOrigin(origin.get());
+    return ApplicationCacheStorage::singleton().diskUsageForOrigin(SecurityOrigin::createFromString(originString));
 }
 
 void InjectedBundle::setApplicationCacheOriginQuota(const String& originString, uint64_t bytes)

@@ -190,21 +190,6 @@ void ApplicationCache::clearStorageID()
         resource->clearStorageID();
 }
     
-void ApplicationCache::deleteCacheForOrigin(SecurityOrigin* origin)
-{
-    ApplicationCacheStorage::singleton().deleteCacheForOrigin(*origin);
-}
-
-void ApplicationCache::deleteAllCaches()
-{
-    ApplicationCacheStorage::singleton().deleteAllCaches();
-}
-
-int64_t ApplicationCache::diskUsageForOrigin(SecurityOrigin* origin)
-{
-    return ApplicationCacheStorage::singleton().diskUsageForOrigin(*origin);
-}
-
 #ifndef NDEBUG
 void ApplicationCache::dump()
 {
