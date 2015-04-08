@@ -1,5 +1,16 @@
 2015-04-08  Anders Carlsson  <andersca@apple.com>
 
+        Add encoding and decoding of ints to WKRemoteObjectCoder
+        https://bugs.webkit.org/show_bug.cgi?id=143538
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectEncoder encodeInt:forKey:]):
+        (-[WKRemoteObjectDecoder decodeIntForKey:]):
+
+2015-04-08  Anders Carlsson  <andersca@apple.com>
+
         Delete ApplicationCache static member functions
         https://bugs.webkit.org/show_bug.cgi?id=143534
 
