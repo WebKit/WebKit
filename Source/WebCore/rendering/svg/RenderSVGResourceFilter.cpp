@@ -78,6 +78,10 @@ void RenderSVGResourceFilter::removeClientFromCache(RenderObject& client, bool m
 
 std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter* filter)
 {
+    static const unsigned maxCountChildNodes = 200;
+    if (filterElement().childNodeCount() > maxCountChildNodes)
+        return nullptr;
+
     FloatRect targetBoundingBox = filter->targetBoundingBox();
 
     // Add effects to the builder
@@ -174,8 +178,9 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     // Set the scale level in SVGFilter.
     filterData->filter->setFilterResolution(scale);
 
+    static const unsigned maxTotalOfEffectInputs = 100;
     FilterEffect* lastEffect = filterData->builder->lastEffect();
-    if (!lastEffect)
+    if (!lastEffect || lastEffect->totalNumberOfEffectInputs() > maxTotalOfEffectInputs)
         return false;
 
     RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(lastEffect);
