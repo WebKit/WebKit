@@ -1,3 +1,14 @@
+2015-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Use HashMap::add instead of get/contains + set in DOMObjectCache
+        https://bugs.webkit.org/show_bug.cgi?id=141558
+
+        Rubber-stamped by Žan Doberšek.
+
+        * bindings/gobject/DOMObjectCache.cpp:
+        (WebKit::getOrCreateDOMObjectCacheFrameObserver):
+        (WebKit::DOMObjectCache::put):
+
 2014-10-22  Milan Crha  <mcrha@redhat.com>
 
         Do not include GraphicsContext3D.h when 3D_GRAPHICS is not used.

@@ -74,14 +74,10 @@ static DOMObjectCacheFrameObserverMap& domObjectCacheFrameObservers()
 
 static DOMObjectCacheFrameObserver& getOrCreateDOMObjectCacheFrameObserver(WebCore::Frame& frame)
 {
-    auto observerPtr = domObjectCacheFrameObservers().get(&frame);
-    if (observerPtr)
-        return *observerPtr;
-
-    std::unique_ptr<DOMObjectCacheFrameObserver> observer = std::make_unique<DOMObjectCacheFrameObserver>(frame);
-    observerPtr = observer.get();
-    domObjectCacheFrameObservers().set(&frame, std::move(observer));
-    return *observerPtr;
+    DOMObjectCacheFrameObserverMap::AddResult result = domObjectCacheFrameObservers().add(&frame, nullptr);
+    if (result.isNewEntry)
+        result.iterator->value = std::make_unique<DOMObjectCacheFrameObserver>(frame);
+    return *result.iterator->value;
 }
 
 class DOMObjectCacheFrameObserver final: public WebCore::FrameDestructionObserver {
@@ -200,22 +196,20 @@ void* DOMObjectCache::get(void* objectHandle)
 
 void DOMObjectCache::put(void* objectHandle, void* wrapper)
 {
-    if (domObjects().contains(objectHandle))
-        return;
-    domObjects().set(objectHandle, std::make_unique<DOMObjectCacheData>(G_OBJECT(wrapper)));
+    DOMObjectMap::AddResult result = domObjects().add(objectHandle, nullptr);
+    if (result.isNewEntry)
+        result.iterator->value = std::make_unique<DOMObjectCacheData>(G_OBJECT(wrapper));
 }
 
 void DOMObjectCache::put(WebCore::Node* objectHandle, void* wrapper)
 {
-    if (domObjects().contains(objectHandle))
+    DOMObjectMap::AddResult result = domObjects().add(objectHandle, nullptr);
+    if (!result.isNewEntry)
         return;
 
-    std::unique_ptr<DOMObjectCacheData> data = std::make_unique<DOMObjectCacheData>(G_OBJECT(wrapper));
-    auto dataPtr = data.get();
-    domObjects().set(objectHandle, std::move(data));
-
+    result.iterator->value = std::make_unique<DOMObjectCacheData>(G_OBJECT(wrapper));
     if (WebCore::Frame* frame = objectHandle->document().frame())
-        getOrCreateDOMObjectCacheFrameObserver(*frame).addObjectCacheData(*dataPtr);
+        getOrCreateDOMObjectCacheFrameObserver(*frame).addObjectCacheData(*result.iterator->value);
 }
 
 }
