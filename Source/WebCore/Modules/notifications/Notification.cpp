@@ -175,7 +175,7 @@ const char* Notification::activeDOMObjectName() const
     return "Notification";
 }
 
-bool Notification::canSuspend() const
+bool Notification::canSuspendForPageCache() const
 {
     // We can suspend if the Notification is not shown yet or after it is closed.
     return m_state == Idle || m_state == Closed;

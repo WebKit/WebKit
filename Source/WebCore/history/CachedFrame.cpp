@@ -92,7 +92,7 @@ void CachedFrameBase::restore()
         m_document->accessSVGExtensions().unpauseAnimations();
 
     frame.animation().resumeAnimationsForDocument(m_document.get());
-    m_document->resumeActiveDOMObjects(ActiveDOMObject::DocumentWillBecomeInactive);
+    m_document->resumeActiveDOMObjects(ActiveDOMObject::PageCache);
     m_document->resumeScriptedAnimationControllerCallbacks();
 
     // It is necessary to update any platform script objects after restoring the
@@ -167,7 +167,7 @@ CachedFrame::CachedFrame(Frame& frame)
     // those create more objects.
     m_document->documentWillSuspendForPageCache();
     m_document->suspendScriptedAnimationControllerCallbacks();
-    m_document->suspendActiveDOMObjects(ActiveDOMObject::DocumentWillBecomeInactive);
+    m_document->suspendActiveDOMObjects(ActiveDOMObject::PageCache);
     m_cachedFrameScriptData = std::make_unique<ScriptCachedFrameData>(frame);
 
     m_document->domWindow()->suspendForPageCache();

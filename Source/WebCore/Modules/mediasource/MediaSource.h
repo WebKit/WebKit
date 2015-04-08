@@ -119,7 +119,7 @@ protected:
 
     // ActiveDOMObject API.
     void stop() override;
-    bool canSuspend() const override;
+    bool canSuspendForPageCache() const override;
     const char* activeDOMObjectName() const override;
 
     void onReadyStateChange(const AtomicString& oldState, const AtomicString& newState);

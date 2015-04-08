@@ -86,7 +86,7 @@ const char* RTCVoidRequestImpl::activeDOMObjectName() const
     return "RTCVoidRequestImpl";
 }
 
-bool RTCVoidRequestImpl::canSuspend() const
+bool RTCVoidRequestImpl::canSuspendForPageCache() const
 {
     // FIXME: We should try and do better here.
     return false;

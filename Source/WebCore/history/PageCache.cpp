@@ -171,7 +171,7 @@ static unsigned logCanCacheFrameDecision(Frame& frame, DiagnosticLoggingClient& 
     }
 
     Vector<ActiveDOMObject*> unsuspendableObjects;
-    if (!frame.document()->canSuspendActiveDOMObjects(&unsuspendableObjects)) {
+    if (!frame.document()->canSuspendActiveDOMObjectsForPageCache(&unsuspendableObjects)) {
         PCLOG("   -The document cannot suspend its active DOM Objects");
         for (auto* activeDOMObject : unsuspendableObjects) {
             PCLOG("    - Unsuspendable: ", activeDOMObject->activeDOMObjectName());
@@ -310,7 +310,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame& frame)
         && !frameLoader.quickRedirectComing()
         && !documentLoader->isLoadingInAPISense()
         && !documentLoader->isStopping()
-        && document->canSuspendActiveDOMObjects()
+        && document->canSuspendActiveDOMObjectsForPageCache()
         // FIXME: We should investigating caching frames that have an associated
         // application cache. <rdar://problem/5917899> tracks that work.
         && documentLoader->applicationCacheHost()->canCacheInPageCache()

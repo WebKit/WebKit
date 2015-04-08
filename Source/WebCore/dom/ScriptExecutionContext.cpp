@@ -174,7 +174,7 @@ void ScriptExecutionContext::didLoadResourceSynchronously(const ResourceRequest&
 {
 }
 
-bool ScriptExecutionContext::canSuspendActiveDOMObjects(Vector<ActiveDOMObject*>* unsuspendableObjects)
+bool ScriptExecutionContext::canSuspendActiveDOMObjectsForPageCache(Vector<ActiveDOMObject*>* unsuspendableObjects)
 {
     checkConsistency();
 
@@ -190,7 +190,7 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjects(Vector<ActiveDOMObject*>
     // An ASSERT or RELEASE_ASSERT will fire if this happens, but it's important to code
     // canSuspend functions so it will not happen!
     for (auto* activeDOMObject : m_activeDOMObjects) {
-        if (!activeDOMObject->canSuspend()) {
+        if (!activeDOMObject->canSuspendForPageCache()) {
             canSuspend = false;
             if (unsuspendableObjects)
                 unsuspendableObjects->append(activeDOMObject);

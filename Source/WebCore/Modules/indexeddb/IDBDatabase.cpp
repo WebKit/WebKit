@@ -366,7 +366,7 @@ const char* IDBDatabase::activeDOMObjectName() const
     return "IDBDatabase";
 }
 
-bool IDBDatabase::canSuspend() const
+bool IDBDatabase::canSuspendForPageCache() const
 {
     return m_isClosed;
 }

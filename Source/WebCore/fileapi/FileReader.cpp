@@ -65,7 +65,7 @@ FileReader::~FileReader()
     terminate();
 }
 
-bool FileReader::canSuspend() const
+bool FileReader::canSuspendForPageCache() const
 {
     // FIXME: It is not currently possible to suspend a FileReader, so pages with FileReader can not go into page cache.
     return false;

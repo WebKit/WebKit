@@ -96,7 +96,7 @@ const char* RTCStatsRequestImpl::activeDOMObjectName() const
     return "RTCStatsRequestImpl";
 }
 
-bool RTCStatsRequestImpl::canSuspend() const
+bool RTCStatsRequestImpl::canSuspendForPageCache() const
 {
     // FIXME: We should try and do better here.
     return false;

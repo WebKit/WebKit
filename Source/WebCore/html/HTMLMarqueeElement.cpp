@@ -166,7 +166,7 @@ void HTMLMarqueeElement::setLoop(int loop, ExceptionCode& ec)
         setIntegralAttribute(loopAttr, loop);
 }
 
-bool HTMLMarqueeElement::canSuspend() const
+bool HTMLMarqueeElement::canSuspendForPageCache() const
 {
     return true;
 }

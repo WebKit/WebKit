@@ -461,7 +461,7 @@ void WebSocket::contextDestroyed()
     ActiveDOMObject::contextDestroyed();
 }
 
-bool WebSocket::canSuspend() const
+bool WebSocket::canSuspendForPageCache() const
 {
     return true;
 }
@@ -472,7 +472,7 @@ void WebSocket::suspend(ReasonForSuspension reason)
         m_resumeTimer.stop();
 
     if (m_channel) {
-        if (reason == ActiveDOMObject::DocumentWillBecomeInactive) {
+        if (reason == ActiveDOMObject::PageCache) {
             // The page will enter the page cache, close the channel but only fire the close event after resuming.
             m_shouldDelayCloseEvent = true;
             // This will cause didClose() to be called.

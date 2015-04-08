@@ -4684,7 +4684,7 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
     updateSleepDisabling();
 }
 
-bool HTMLMediaElement::canSuspend() const
+bool HTMLMediaElement::canSuspendForPageCache() const
 {
     return true; 
 }
@@ -4732,7 +4732,7 @@ void HTMLMediaElement::suspend(ReasonForSuspension why)
 
     switch (why)
     {
-        case DocumentWillBecomeInactive:
+        case PageCache:
             stop();
             m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequirePageConsentToResumeMedia);
             break;

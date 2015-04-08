@@ -60,7 +60,7 @@ protected:
 private:
     // ActiveDOMObject API.
     const char* activeDOMObjectName() const override;
-    bool canSuspend() const override;
+    bool canSuspendForPageCache() const override;
 
     RefPtr<ReadableStream> m_stream;
 };

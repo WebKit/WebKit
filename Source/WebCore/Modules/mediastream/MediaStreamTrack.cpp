@@ -293,7 +293,7 @@ const char* MediaStreamTrack::activeDOMObjectName() const
     return "MediaStreamTrack";
 }
 
-bool MediaStreamTrack::canSuspend() const
+bool MediaStreamTrack::canSuspendForPageCache() const
 {
     // FIXME: We should try and do better here.
     return false;

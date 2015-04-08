@@ -122,7 +122,7 @@ private:
     void unregisterOpenCursor(IDBCursor*);
 
     // ActiveDOMObject API.
-    bool canSuspend() const override;
+    bool canSuspendForPageCache() const override;
     void stop() override;
     const char* activeDOMObjectName() const override;
 

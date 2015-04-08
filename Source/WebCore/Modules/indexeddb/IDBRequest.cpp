@@ -443,7 +443,7 @@ void IDBRequest::stop()
         markEarlyDeath();
 }
 
-bool IDBRequest::canSuspend() const
+bool IDBRequest::canSuspendForPageCache() const
 {
     return !m_hasPendingActivity;
 }

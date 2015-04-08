@@ -58,7 +58,7 @@ private:
     // ActiveDOMObject
     void stop() override;
     const char* activeDOMObjectName() const override;
-    bool canSuspend() const override;
+    bool canSuspendForPageCache() const override;
 
     RefPtr<VoidCallback> m_successCallback;
     RefPtr<RTCPeerConnectionErrorCallback> m_errorCallback;

@@ -161,7 +161,7 @@ const char* FontLoader::activeDOMObjectName() const
     return "FontLoader";
 }
 
-bool FontLoader::canSuspend() const
+bool FontLoader::canSuspendForPageCache() const
 {
     return !m_numLoadingFromCSS && !m_numLoadingFromJS;
 }

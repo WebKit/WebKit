@@ -297,7 +297,7 @@ private:
 
     // ActiveDOMObject API.
     void stop() override;
-    bool canSuspend() const override;
+    bool canSuspendForPageCache() const override;
     const char* activeDOMObjectName() const override;
 
     // When the context goes away, there might still be some sources which haven't finished playing.

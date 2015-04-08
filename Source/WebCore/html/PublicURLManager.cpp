@@ -80,7 +80,7 @@ void PublicURLManager::stop()
     m_registryToURL.clear();
 }
 
-bool PublicURLManager::canSuspend() const
+bool PublicURLManager::canSuspendForPageCache() const
 {
     // Suspending an PublicURLManager is safe as it does not cause any JS to be executed.
     return true;

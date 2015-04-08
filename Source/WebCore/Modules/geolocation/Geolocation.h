@@ -78,7 +78,7 @@ private:
 
     // ActiveDOMObject
     void stop() override;
-    bool canSuspend() const override;
+    bool canSuspendForPageCache() const override;
     void suspend(ReasonForSuspension) override;
     void resume() override;
     const char* activeDOMObjectName() const override;

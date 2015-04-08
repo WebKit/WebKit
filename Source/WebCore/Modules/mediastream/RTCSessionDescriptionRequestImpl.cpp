@@ -89,7 +89,7 @@ const char* RTCSessionDescriptionRequestImpl::activeDOMObjectName() const
     return "RTCSessionDescriptionRequestImpl";
 }
 
-bool RTCSessionDescriptionRequestImpl::canSuspend() const
+bool RTCSessionDescriptionRequestImpl::canSuspendForPageCache() const
 {
     // FIXME: We should try and do better here.
     return false;

@@ -139,7 +139,7 @@ const char* RTCDTMFSender::activeDOMObjectName() const
     return "RTCDTMFSender";
 }
 
-bool RTCDTMFSender::canSuspend() const
+bool RTCDTMFSender::canSuspendForPageCache() const
 {
     // FIXME: We should try and do better here.
     return false;

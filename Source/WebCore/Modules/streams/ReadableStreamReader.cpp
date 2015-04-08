@@ -72,7 +72,7 @@ const char* ReadableStreamReader::activeDOMObjectName() const
     return "ReadableStreamReader";
 }
 
-bool ReadableStreamReader::canSuspend() const
+bool ReadableStreamReader::canSuspendForPageCache() const
 {
     // FIXME: We should try and do better here.
     return false;

@@ -695,7 +695,7 @@ const char* RTCPeerConnection::activeDOMObjectName() const
     return "RTCPeerConnection";
 }
 
-bool RTCPeerConnection::canSuspend() const
+bool RTCPeerConnection::canSuspendForPageCache() const
 {
     // FIXME: We should try and do better here.
     return false;

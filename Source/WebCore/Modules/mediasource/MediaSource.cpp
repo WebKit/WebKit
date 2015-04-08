@@ -809,7 +809,7 @@ void MediaSource::stop()
     m_private.clear();
 }
 
-bool MediaSource::canSuspend() const
+bool MediaSource::canSuspendForPageCache() const
 {
     return isClosed() && !m_asyncEventQueue.hasPendingEvents();
 }

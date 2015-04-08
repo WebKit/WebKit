@@ -162,7 +162,7 @@ Page* Geolocation::page() const
     return document() ? document()->page() : nullptr;
 }
 
-bool Geolocation::canSuspend() const
+bool Geolocation::canSuspendForPageCache() const
 {
     return !hasListeners();
 }
@@ -171,7 +171,7 @@ void Geolocation::suspend(ReasonForSuspension reason)
 {
     // Allow pages that no longer have listeners to enter the page cache.
     // Have them stop updating and reset geolocation permissions when the page is resumed.
-    if (reason == ActiveDOMObject::DocumentWillBecomeInactive) {
+    if (reason == ActiveDOMObject::PageCache) {
         ASSERT(!hasListeners());
         stop();
         m_resetOnResume = true;

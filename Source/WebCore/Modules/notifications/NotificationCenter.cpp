@@ -117,7 +117,7 @@ const char* NotificationCenter::activeDOMObjectName() const
     return "NotificationCenter";
 }
 
-bool NotificationCenter::canSuspend() const
+bool NotificationCenter::canSuspendForPageCache() const
 {
     // We don't need to worry about Notifications because those are ActiveDOMObject too.
     // The NotificationCenter can safely be suspended if there are no pending permission

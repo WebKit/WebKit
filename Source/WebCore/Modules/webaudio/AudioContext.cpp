@@ -355,7 +355,7 @@ void AudioContext::stop()
     callOnMainThread(stopDispatch, this);
 }
 
-bool AudioContext::canSuspend() const
+bool AudioContext::canSuspendForPageCache() const
 {
     // FIXME: We should be able to suspend while rendering as well with some more code.
     return m_state == State::Suspended || m_state == State::Closed;
