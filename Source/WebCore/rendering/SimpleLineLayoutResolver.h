@@ -79,7 +79,6 @@ public:
         Iterator(const RunResolver&, unsigned runIndex, unsigned lineIndex);
 
         Iterator& operator++();
-        Iterator& operator--();
 
         bool operator==(const Iterator&) const;
         bool operator!=(const Iterator&) const;
@@ -92,7 +91,6 @@ public:
         Iterator& advance();
         Iterator& advanceLines(unsigned);
         const RunResolver& resolver() const { return m_resolver; }
-        bool inQuirksMode() const { return m_resolver.m_inQuirksMode; }
 
         const RunResolver& m_resolver;
         unsigned m_runIndex;
@@ -118,7 +116,6 @@ private:
     const LayoutUnit m_borderAndPaddingBefore;
     const float m_ascent;
     const float m_descent;
-    const bool m_inQuirksMode;
 };
 
 class LineResolver {
@@ -178,15 +175,6 @@ inline RunResolver::Iterator& RunResolver::Iterator::operator++()
 {
     return advance();
 }
-
-inline RunResolver::Iterator& RunResolver::Iterator::operator--()
-{
-    --m_runIndex;
-    if (simpleRun().isEndOfLine)
-        --m_lineIndex;
-    return *this;
-}
-
 
 inline bool RunResolver::Iterator::operator==(const Iterator& other) const
 {

@@ -165,7 +165,7 @@ layer at (0,0) size 800x492
             RenderTableCell {TD} at (49,269) size 45x41 [border: (1px solid #008000)] [r=7 c=1 rs=1 cs=1]
               RenderText {#text} at (3,3) size 20x18
                 text run at (3,3) width 20: "a ("
-              RenderBR {BR} at (22,3) size 1x18
+              RenderBR {BR} at (22,18) size 1x0
               RenderText {#text} at (3,21) size 21x18
                 text run at (3,21) width 21: "] b"
             RenderTableCell {TD} at (94,269) size 33x41 [border: (1px solid #008000)] [r=7 c=2 rs=1 cs=1]

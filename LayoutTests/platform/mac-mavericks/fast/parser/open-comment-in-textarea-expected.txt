@@ -8,8 +8,11 @@ layer at (0,0) size 800x600
 layer at (10,10) size 161x32 clip at (11,11) size 144x30 scrollHeight 56
   RenderTextControl {TEXTAREA} at (2,2) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 140x52
-      RenderText {#text} at (0,0) size 138x39
+      RenderText {#text} at (0,0) size 140x39
         text run at (0,0) width 26: "<!--"
+        text run at (25,0) width 1: " "
         text run at (0,13) width 138: "This should be part of the"
+        text run at (137,13) width 3: " "
         text run at (0,26) width 47: "textarea."
+        text run at (46,26) width 1: " "
       RenderBR {BR} at (0,39) size 0x13

@@ -1,3 +1,17 @@
+2015-04-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r182536.
+        https://bugs.webkit.org/show_bug.cgi?id=143523
+
+        Made accessibility/table-sections.html time out on debug bots
+        (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "Simple line layout: Add <br> support."
+        https://bugs.webkit.org/show_bug.cgi?id=139012
+        http://trac.webkit.org/changeset/182536
+
 2015-04-08  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add <br> support.

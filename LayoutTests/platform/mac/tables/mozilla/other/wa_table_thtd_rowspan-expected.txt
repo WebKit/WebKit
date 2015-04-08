@@ -187,7 +187,7 @@ layer at (0,0) size 785x2538
               RenderTableCell {TH} at (2,5) size 97x40 [bgcolor=#FFE4C4] [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
                 RenderText {#text} at (17,2) size 63x18
                   text run at (17,2) width 63: "Header 1"
-                RenderBR {BR} at (79,19) size 1x0
+                RenderBR {BR} at (79,16) size 1x0
                 RenderText {#text} at (5,20) size 87x18
                   text run at (5,20) width 87: "span=2 rows"
               RenderTableCell {TD} at (101,2) size 39x22 [bgcolor=#EE82EE] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
@@ -249,7 +249,7 @@ layer at (0,0) size 785x2538
               RenderTableCell {TH} at (2,89) size 97x40 [bgcolor=#FFE4C4] [border: (1px inset #808080)] [r=2 c=0 rs=5 cs=1]
                 RenderText {#text} at (17,2) size 63x18
                   text run at (17,2) width 63: "Header 2"
-                RenderBR {BR} at (79,55) size 1x0
+                RenderBR {BR} at (79,16) size 1x0
                 RenderText {#text} at (5,20) size 87x18
                   text run at (5,20) width 87: "span=5 rows"
               RenderTableCell {TD} at (101,50) size 39x22 [bgcolor=#90EE90] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
@@ -395,7 +395,7 @@ layer at (0,0) size 785x2538
               RenderTableCell {TH} at (2,185) size 97x40 [bgcolor=#FFE4C4] [border: (1px inset #808080)] [r=7 c=0 rs=3 cs=1]
                 RenderText {#text} at (17,2) size 63x18
                   text run at (17,2) width 63: "Header 3"
-                RenderBR {BR} at (79,31) size 1x0
+                RenderBR {BR} at (79,16) size 1x0
                 RenderText {#text} at (5,20) size 87x18
                   text run at (5,20) width 87: "span=3 rows"
               RenderTableCell {TD} at (101,170) size 39x22 [bgcolor=#ADD8E6] [border: (1px inset #808080)] [r=7 c=1 rs=1 cs=1]
@@ -550,7 +550,7 @@ layer at (0,0) size 785x2538
               RenderTableCell {TD} at (45,14) size 85x58 [bgcolor=#FFFACD] [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=1]
                 RenderText {#text} at (2,2) size 43x18
                   text run at (2,2) width 43: "Data 1"
-                RenderBR {BR} at (44,28) size 1x0
+                RenderBR {BR} at (44,16) size 1x0
                 RenderText {#text} at (2,20) size 47x36
                   text run at (2,20) width 47: "span=2"
                   text run at (2,38) width 32: "rows"
@@ -625,7 +625,7 @@ layer at (0,0) size 785x2538
               RenderTableCell {TD} at (45,161) size 85x58 [bgcolor=#FFFACD] [border: (1px inset #808080)] [r=2 c=1 rs=5 cs=1]
                 RenderText {#text} at (2,2) size 43x18
                   text run at (2,2) width 43: "Data 2"
-                RenderBR {BR} at (44,91) size 1x0
+                RenderBR {BR} at (44,16) size 1x0
                 RenderText {#text} at (2,20) size 47x36
                   text run at (2,20) width 47: "span=5"
                   text run at (2,38) width 32: "rows"
@@ -802,7 +802,7 @@ layer at (0,0) size 785x2538
               RenderTableCell {TD} at (45,329) size 85x58 [bgcolor=#FFFACD] [border: (1px inset #808080)] [r=7 c=1 rs=3 cs=1]
                 RenderText {#text} at (2,2) size 43x18
                   text run at (2,2) width 43: "Data 3"
-                RenderBR {BR} at (44,49) size 1x0
+                RenderBR {BR} at (44,16) size 1x0
                 RenderText {#text} at (2,20) size 47x36
                   text run at (2,20) width 47: "span=3"
                   text run at (2,38) width 32: "rows"
@@ -948,14 +948,14 @@ layer at (0,0) size 785x2538
               RenderTableCell {TH} at (2,119) size 80x58 [bgcolor=#FFE4C4] [border: (1px inset #808080)] [r=0 c=0 rs=7 cs=1]
                 RenderText {#text} at (8,2) size 64x18
                   text run at (8,2) width 64: "Header 1"
-                RenderBR {BR} at (71,133) size 1x0
+                RenderBR {BR} at (71,16) size 1x0
                 RenderText {#text} at (15,20) size 50x36
                   text run at (15,20) width 50: "span=7"
                   text run at (23,38) width 34: "rows"
               RenderTableCell {TD} at (84,14) size 76x58 [bgcolor=#FFFACD] [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=1]
                 RenderText {#text} at (2,2) size 43x18
                   text run at (2,2) width 43: "Data 1"
-                RenderBR {BR} at (44,28) size 1x0
+                RenderBR {BR} at (44,16) size 1x0
                 RenderText {#text} at (2,20) size 47x36
                   text run at (2,20) width 47: "span=2"
                   text run at (2,38) width 32: "rows"
@@ -1036,7 +1036,7 @@ layer at (0,0) size 785x2538
               RenderTableCell {TD} at (84,161) size 76x58 [bgcolor=#FFFACD] [border: (1px inset #808080)] [r=2 c=1 rs=5 cs=1]
                 RenderText {#text} at (2,2) size 43x18
                   text run at (2,2) width 43: "Data 2"
-                RenderBR {BR} at (44,91) size 1x0
+                RenderBR {BR} at (44,16) size 1x0
                 RenderText {#text} at (2,20) size 47x36
                   text run at (2,20) width 47: "span=5"
                   text run at (2,38) width 32: "rows"
@@ -1228,14 +1228,14 @@ layer at (0,0) size 785x2538
               RenderTableCell {TH} at (2,329) size 80x58 [bgcolor=#FFE4C4] [border: (1px inset #808080)] [r=7 c=0 rs=3 cs=1]
                 RenderText {#text} at (8,2) size 64x18
                   text run at (8,2) width 64: "Header 2"
-                RenderBR {BR} at (71,49) size 1x0
+                RenderBR {BR} at (71,16) size 1x0
                 RenderText {#text} at (15,20) size 50x36
                   text run at (15,20) width 50: "span=3"
                   text run at (23,38) width 34: "rows"
               RenderTableCell {TD} at (84,329) size 76x58 [bgcolor=#FFFACD] [border: (1px inset #808080)] [r=7 c=1 rs=3 cs=1]
                 RenderText {#text} at (2,2) size 43x18
                   text run at (2,2) width 43: "Data 3"
-                RenderBR {BR} at (44,49) size 1x0
+                RenderBR {BR} at (44,16) size 1x0
                 RenderText {#text} at (2,20) size 47x36
                   text run at (2,20) width 47: "span=3"
                   text run at (2,38) width 32: "rows"

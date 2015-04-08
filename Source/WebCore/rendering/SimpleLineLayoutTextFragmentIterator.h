@@ -26,7 +26,6 @@
 #ifndef SimpleLineLayoutTextFragmentIterator_h
 #define SimpleLineLayoutTextFragmentIterator_h
 
-#include "RenderLineBreak.h"
 #include "RenderStyle.h"
 #include "SimpleLineLayoutFlowContents.h"
 #include "TextBreakIterator.h"
@@ -42,7 +41,7 @@ public:
     TextFragmentIterator(const RenderBlockFlow&);
     class TextFragment {
     public:
-        enum Type { ContentEnd, SoftLineBreak, HardLineBreak, Whitespace, NonWhitespace };
+        enum Type { ContentEnd, LineBreak, Whitespace, NonWhitespace };
         TextFragment() = default;
         TextFragment(unsigned start, unsigned end, float width, Type type, bool isLastInRenderer = false, bool overlapsToNextRenderer = false, bool isCollapsed = false, bool isCollapsible = false, bool isBreakable = false)
             : m_start(start)
@@ -61,14 +60,13 @@ public:
         unsigned end() const { return m_end; }
         float width() const { return m_width; }
         Type type() const { return m_type; }
-        bool overlapsToNextRenderer() const { return m_overlapsToNextRenderer; }
         bool isLastInRenderer() const { return m_isLastInRenderer; }
-        bool isLineBreak() const { return m_type == SoftLineBreak || m_type == HardLineBreak; }
+        bool overlapsToNextRenderer() const { return m_overlapsToNextRenderer; }
         bool isCollapsed() const { return m_isCollapsed; }
         bool isCollapsible() const { return m_isCollapsible; }
         bool isBreakable() const { return m_isBreakable; }
 
-        bool isEmpty() const { return start() == end() && !isLineBreak(); }
+        bool isEmpty() const { return start() == end(); }
         TextFragment split(unsigned splitPosition, const TextFragmentIterator&);
         bool operator==(const TextFragment& other) const
         {
@@ -114,11 +112,9 @@ public:
     const Style& style() const { return m_style; }
 
 private:
-    TextFragment findNextTextFragment(float xPosition);
     enum PositionType { Breakable, NonWhitespace };
     unsigned skipToNextPosition(PositionType, unsigned startPosition, float& width, float xPosition, bool& overlappingFragment);
-    bool isSoftLineBreak(unsigned position) const;
-    bool isHardLineBreak(const FlowContents::Iterator& segment) const;
+    bool isLineBreak(unsigned position) const;
     template <typename CharacterType> unsigned nextBreakablePosition(const FlowContents::Segment&, unsigned startPosition);
     template <typename CharacterType> unsigned nextNonWhitespacePosition(const FlowContents::Segment&, unsigned startPosition);
     template <typename CharacterType> float runWidth(const FlowContents::Segment&, unsigned startPosition, unsigned endPosition, float xPosition) const;
@@ -128,7 +124,6 @@ private:
     LazyLineBreakIterator m_lineBreakIterator;
     const Style m_style;
     unsigned m_position { 0 };
-    bool m_atEndOfSegment { false };
 };
 
 inline TextFragmentIterator::TextFragment TextFragmentIterator::TextFragment::split(unsigned splitPosition, const TextFragmentIterator& textFragmentIterator)
@@ -153,17 +148,11 @@ inline TextFragmentIterator::TextFragment TextFragmentIterator::TextFragment::sp
     return newFragment;
 }
 
-inline bool TextFragmentIterator::isSoftLineBreak(unsigned position) const
+inline bool TextFragmentIterator::isLineBreak(unsigned position) const
 {
     const auto& segment = *m_currentSegment;
     ASSERT(segment.start <= position && position < segment.end);
     return m_style.preserveNewline && segment.text[position - segment.start] == '\n';
-}
-
-inline bool TextFragmentIterator::isHardLineBreak(const FlowContents::Iterator& segment) const
-{
-    ASSERT(segment->start != segment->end || (segment->start == segment->end && is<RenderLineBreak>(segment->renderer)));
-    return segment->start == segment->end;
 }
 
 }

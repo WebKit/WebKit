@@ -29,4 +29,4 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (49,1) size 1x50 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 1x50
             RenderTableCell {TD} at (50,17) size 734x18 [r=0 c=2 rs=1 cs=1]
-              RenderBR {BR} at (0,17) size 0x18
+              RenderBR {BR} at (0,0) size 0x18

@@ -70,7 +70,7 @@ layer at (0,0) size 785x848
           RenderText {#text} at (0,0) size 675x32
             text run at (0,0) width 675: "Above there must be four times the same, square SVG child visible, each referenced by an object element with"
             text run at (0,16) width 381: "different widths (40%, 20%, 10%, 5%) and no height defined. "
-          RenderBR {br} at (380,16) size 1x16
+          RenderBR {br} at (0,0) size 0x0
           RenderBR {br} at (0,32) size 0x16
           RenderText {#text} at (0,48) size 398x16
             text run at (0,48) width 398: "Beyond there is the same, only with PNG images instead of SVG."

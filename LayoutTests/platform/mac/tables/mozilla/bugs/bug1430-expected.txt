@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
           text run at (239,90) width 449: "It's as though NGLayout thinks the Imagemap areas are located a few "
           text run at (688,90) width 95: "hundred pixels"
           text run at (0,108) width 70: "to the left. "
-        RenderBR {BR} at (69,122) size 1x0
+        RenderBR {BR} at (0,0) size 0x0
       RenderTable {TABLE} at (0,126) size 648x63
         RenderTableSection {TBODY} at (0,0) size 648x63
           RenderTableRow {TR} at (0,2) size 648x59

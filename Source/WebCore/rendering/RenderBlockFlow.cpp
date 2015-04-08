@@ -37,7 +37,6 @@
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
-#include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderMarquee.h"
 #include "RenderMultiColumnFlowThread.h"
@@ -3041,13 +3040,6 @@ Optional<int> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirecti
     return Optional<int>(style().overflowY() == OVISIBLE ? lastBaseline : std::min(boxHeight, lastBaseline));
 }
 
-void RenderBlockFlow::setSelectionState(SelectionState state)
-{
-    if (state != SelectionNone)
-        ensureLineBoxes();
-    RenderBoxModelObject::setSelectionState(state);
-}
-
 GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
     LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
 {
@@ -3543,14 +3535,9 @@ void RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout()
 {
     ASSERT(lineLayoutPath() == SimpleLinesPath);
     lineBoxes().deleteLineBoxes();
-    for (auto& renderer : childrenOfType<RenderObject>(*this)) {
-        if (is<RenderText>(renderer))
-            downcast<RenderText>(renderer).deleteLineBoxesBeforeSimpleLineLayout();
-        else if (is<RenderLineBreak>(renderer))
-            downcast<RenderLineBreak>(renderer).deleteLineBoxesBeforeSimpleLineLayout();
-        else
-            ASSERT_NOT_REACHED();
-    }
+    ASSERT(!childrenOfType<RenderElement>(*this).first());
+    for (auto& textRenderer : childrenOfType<RenderText>(*this))
+        textRenderer.deleteLineBoxesBeforeSimpleLineLayout();
 }
 
 void RenderBlockFlow::ensureLineBoxes()

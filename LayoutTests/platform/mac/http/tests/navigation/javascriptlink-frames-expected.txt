@@ -108,6 +108,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (3,3) size 211x26
               RenderText {#text} at (0,0) size 179x13
                 text run at (0,0) width 179: "More initial text before user input."
+                text run at (178,0) width 1: " "
               RenderBR {BR} at (0,13) size 0x13
       RenderFrame {FRAME} at (0,540) size 800x60
         layer at (0,0) size 785x90

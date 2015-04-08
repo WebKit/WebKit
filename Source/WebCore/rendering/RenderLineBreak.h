@@ -46,7 +46,6 @@ public:
     void deleteInlineBoxWrapper();
     void replaceInlineBoxWrapper(InlineElementBox&);
     void dirtyLineBoxes(bool fullLayout);
-    void deleteLineBoxesBeforeSimpleLineLayout();
 
     IntRect linesBoundingBox() const;
 

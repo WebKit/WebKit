@@ -28,7 +28,6 @@
 
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
-#include "RenderLineBreak.h"
 #include "RenderText.h"
 
 namespace WebCore {
@@ -38,13 +37,7 @@ static Vector<FlowContents::Segment> initializeSegments(const RenderBlockFlow& f
 {
     Vector<FlowContents::Segment, 8> segments;
     unsigned startPosition = 0;
-    for (const auto& child : childrenOfType<RenderObject>(flow)) {
-        if (is<RenderLineBreak>(child)) {
-            segments.append(FlowContents::Segment { startPosition, startPosition, String(), child });
-            continue;
-        }
-        ASSERT(is<RenderText>(child));
-        const auto& textChild = downcast<RenderText>(child);
+    for (auto& textChild : childrenOfType<RenderText>(flow)) {
         unsigned textLength = textChild.text()->length();
         segments.append(FlowContents::Segment { startPosition, startPosition + textLength, textChild.text(), textChild });
         startPosition += textLength;
@@ -68,6 +61,16 @@ unsigned FlowContents::segmentIndexForRunSlow(unsigned start, unsigned end) cons
     auto index = it - m_segments.begin();
     m_lastSegmentIndex = index;
     return index;
+}
+
+const FlowContents::Segment& FlowContents::segmentForRenderer(const RenderObject& renderer) const
+{
+    for (auto& segment : m_segments) {
+        if (&segment.renderer == &renderer)
+            return segment;
+    }
+    ASSERT_NOT_REACHED();
+    return m_segments.last();
 }
 
 }
