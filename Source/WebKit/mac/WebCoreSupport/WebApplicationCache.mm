@@ -82,17 +82,17 @@ using namespace WebCore;
 
 + (long long)diskUsageForOrigin:(WebSecurityOrigin *)origin
 {
-    return ApplicationCache::diskUsageForOrigin([origin _core]);
+    return webApplicationCacheStorage().diskUsageForOrigin(*[origin _core]);
 }
 
 + (void)deleteAllApplicationCaches
 {
-    ApplicationCache::deleteAllCaches();
+    webApplicationCacheStorage().deleteAllCaches();
 }
 
 + (void)deleteCacheForOrigin:(WebSecurityOrigin *)origin
 {
-    ApplicationCache::deleteCacheForOrigin([origin _core]);
+    webApplicationCacheStorage().deleteCacheForOrigin(*[origin _core]);
 }
 
 + (NSArray *)originsWithCache

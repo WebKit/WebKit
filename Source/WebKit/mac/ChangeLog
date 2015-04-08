@@ -1,3 +1,15 @@
+2015-04-08  Anders Carlsson  <andersca@apple.com>
+
+        Move some ApplicationCache static member functions to ApplicationCacheStorage
+        https://bugs.webkit.org/show_bug.cgi?id=143524
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebApplicationCache.mm:
+        (+[WebApplicationCache diskUsageForOrigin:]):
+        (+[WebApplicationCache deleteAllApplicationCaches]):
+        (+[WebApplicationCache deleteCacheForOrigin:]):
+
 2015-04-08  Chris Dumez  <cdumez@apple.com>
 
         Rename ActiveDOMObject::canSuspend() to canSuspendForPageCache() for clarity

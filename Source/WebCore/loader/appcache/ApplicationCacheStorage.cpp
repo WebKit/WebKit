@@ -1542,6 +1542,45 @@ void ApplicationCacheStorage::deleteAllEntries()
     vacuumDatabaseFile();
 }
 
+void ApplicationCacheStorage::deleteAllCaches()
+{
+    HashSet<RefPtr<SecurityOrigin>> origins;
+
+    getOriginsWithCache(origins);
+    for (auto& origin : origins)
+        deleteCacheForOrigin(*origin);
+
+    vacuumDatabaseFile();
+}
+
+void ApplicationCacheStorage::deleteCacheForOrigin(const SecurityOrigin& securityOrigin)
+{
+    Vector<URL> urls;
+    if (!getManifestURLs(&urls)) {
+        LOG_ERROR("Failed to retrieve ApplicationCache manifest URLs");
+        return;
+    }
+
+    URL originURL(URL(), securityOrigin.toString());
+
+    for (const auto& url : urls) {
+        if (!protocolHostAndPortAreEqual(url, originURL))
+            continue;
+
+        if (auto* group = findInMemoryCacheGroup(url))
+            group->makeObsolete();
+        else
+            deleteCacheGroup(url);
+    }
+}
+
+int64_t ApplicationCacheStorage::diskUsageForOrigin(const SecurityOrigin& securityOrigin)
+{
+    int64_t usage = 0;
+    calculateUsageForOrigin(&securityOrigin, usage);
+    return usage;
+}
+
 ApplicationCacheStorage::ApplicationCacheStorage()
     : m_maximumSize(ApplicationCacheStorage::noQuota())
     , m_isMaximumSizeReached(false)

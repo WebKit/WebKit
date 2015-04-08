@@ -99,6 +99,15 @@ public:
     WEBCORE_EXPORT void getOriginsWithCache(HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>&);
     WEBCORE_EXPORT void deleteAllEntries();
 
+    // FIXME: This should be consolidated with deleteAllEntries().
+    WEBCORE_EXPORT void deleteAllCaches();
+
+    // FIXME: This should be consolidated with deleteCacheGroup().
+    WEBCORE_EXPORT void deleteCacheForOrigin(const SecurityOrigin&);
+
+    // FIXME: This should be consolidated with calculateUsageForOrigin().
+    WEBCORE_EXPORT int64_t diskUsageForOrigin(const SecurityOrigin&);
+
     static int64_t unknownQuota() { return -1; }
     static int64_t noQuota() { return std::numeric_limits<int64_t>::max(); }
 private:
