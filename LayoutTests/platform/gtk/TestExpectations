@@ -501,7 +501,6 @@ webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Timeout ]
 webkit.org/b/142821 http/tests/cache/disk-cache [ Skip ]
 
 # HighDPI support is not enabled
-webkit.org/b/131347 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/backgrounds/hidpi-generated-gradient-background-on-subpixel-position.html [ ImageOnlyFailure Pass ]
 webkit.org/b/131347 fast/borders/hidpi-border-image-gradient-on-subpixels.html [ ImageOnlyFailure ]
@@ -632,6 +631,10 @@ webkit.org/b/142823 fast/attachment/attachment-title.html [ Missing ]
 
 webkit.org/b/142670 media/video-background-tab-playback.html [ Failure ]
 webkit.org/b/143233 media/media-source/media-source-append-buffer-with-append-window.html [ Pass Failure ]
+
+# This feature is only enabled on Mac and iOS right now
+contentfiltering [ Skip ]
+http/tests/contentfiltering [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -1132,6 +1135,8 @@ webkit.org/b/143472 media/track/track-cue-mutable-fragment.html [ Failure Pass ]
 webkit.org/b/143475 media/audio-repaint.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/143478 media/video-page-load-preload-none.html [ Failure Pass ]
 
+webkit.org/b/131545 media/media-event-listeners.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1489,7 +1494,6 @@ webkit.org/b/39160 security/block-test-no-port.html [ Failure ]
 Bug(GTK) editing/selection/5136696.html [ Failure ]
 Bug(GTK) editing/selection/inactive-selection.html [ Failure ]
 Bug(GTK) fast/css/disabled-author-styles.html [ Failure ]
-Bug(GTK) fast/events/backspace-navigates-back.html [ Failure ]
 Bug(GTK) fast/events/keydown-leftright-keys.html [ Failure ]
 Bug(GTK) fast/events/keydown-numpad-keys.html [ Failure ]
 Bug(GTK) fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
@@ -1760,9 +1764,6 @@ Bug(GTK) fast/frames/meta-refresh-user-gesture.html [ Failure Timeout ]
 
 # Rounding color problems inside pixman
 webkit.org/b/49964 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
-
-# See also https://bugs.webkit.org/show_bug.cgi?id=54926
-webkit.org/b/53707 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Failure ]
 
 # Needs grammar checking implementation.
 Bug(GTK) editing/spelling/grammar.html [ Skip ]
@@ -2368,8 +2369,14 @@ webkit.org/b/143230 imported/mozilla/svg/filters/feImage-1.svg [ ImageOnlyFailur
 
 webkit.org/b/143468 accessibility/plugin.html [ Failure ]
 
-webkit.org/b/131545 media/media-event-listeners.html [ Failure ]
 webkit.org/b/143469 fast/borders/border-image-fill-no-border.html [ ImageOnlyFailure ]
+
+# Broken Ruby tests
+webkit.org/b/143354 fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
+webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
+webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
+webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
+webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
@@ -2378,15 +2385,5 @@ webkit.org/b/143469 fast/borders/border-image-fill-no-border.html [ ImageOnlyFai
 # This tests are passing on GTK+ but they do not in the Apple ports
 imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
+mathml/presentation/style-changed.html [ Pass ]
 transitions/svg-text-shadow-transition.html [ Pass ]
-
-# This feature is only enabled on Mac and iOS right now
-contentfiltering [ Skip ]
-http/tests/contentfiltering [ Skip ]
-
-# Broken Ruby tests
-webkit.org/b/143354 fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
-webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
-webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
-webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
-webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]

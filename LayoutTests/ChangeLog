@@ -1,3 +1,12 @@
+2015-04-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unreviewed, update more test expectations
+
+        Remove some expected failures from tests that are passing. Also, copypaste some
+        expectations to more appropriate locations in the expectations file.
+
+        * platform/gtk/TestExpectations:
+
 2015-04-08  Filip Pizlo  <fpizlo@apple.com>
 
         JSArray::sortNumeric should handle ArrayWithUndecided
