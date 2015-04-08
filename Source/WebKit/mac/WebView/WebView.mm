@@ -38,7 +38,7 @@
 #import "DictionaryPopupInfo.h"
 #import "StorageThread.h"
 #import "WebAlternativeTextClient.h"
-#import "WebApplicationCache.h"
+#import "WebApplicationCacheInternal.h"
 #import "WebBackForwardListInternal.h"
 #import "WebBaseNetscapePluginView.h"
 #import "WebCache.h"
@@ -744,7 +744,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
     NSString* cacheDir = [NSString _webkit_localCacheDirectoryWithBundleIdentifier:appName];
 
-    ApplicationCacheStorage::singleton().setCacheDirectory(cacheDir);
+    webApplicationCacheStorage().setCacheDirectory(cacheDir);
     initialized = YES;
 }
 

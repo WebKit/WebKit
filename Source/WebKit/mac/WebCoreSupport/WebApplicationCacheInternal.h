@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebApplicationCacheQuotaManager.h"
+#import "WebApplicationCache.h"
 
-#import "WebApplicationCacheInternal.h"
-#import "WebSecurityOriginInternal.h"
-#import <WebCore/ApplicationCacheStorage.h>
-
-using namespace WebCore;
-
-@implementation WebApplicationCacheQuotaManager
-
-- (id)initWithOrigin:(WebSecurityOrigin *)origin
-{
-    self = [super init];
-    if (!self)
-        return nil;
-
-    _origin = origin;
-    return self;
+namespace WebCore {
+class ApplicationCacheStorage;
 }
 
-- (WebSecurityOrigin *)origin
-{
-    return _origin;
-}
+WebCore::ApplicationCacheStorage& webApplicationCacheStorage();
 
-- (unsigned long long)usage
-{
-    long long usage;
-    if (webApplicationCacheStorage().calculateUsageForOrigin([_origin _core], usage))
-        return usage;
-    return 0;
-}
-
-- (unsigned long long)quota
-{
-    long long quota;
-    if (webApplicationCacheStorage().calculateQuotaForOrigin([_origin _core], quota))
-        return quota;
-    return 0;
-}
-
-- (void)setQuota:(unsigned long long)quota
-{
-    webApplicationCacheStorage().storeUpdatedQuotaForOrigin([_origin _core], quota);
-}
-
-@end

@@ -25,6 +25,7 @@
 
 #import "WebCache.h"
 
+#import "WebApplicationCacheInternal.h"
 #import "WebNSObjectExtras.h"
 #import "WebPreferences.h"
 #import "WebSystemInterface.h"
@@ -119,7 +120,7 @@
     [WebView _setCacheModel:cacheModel];
 
     // Empty the application cache.
-    WebCore::ApplicationCacheStorage::singleton().empty();
+    webApplicationCacheStorage().empty();
 
     // Empty the Cross-Origin Preflight cache
     WebCore::CrossOriginPreflightResultCache::singleton().empty();

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "WebApplicationCache.h"
+#import "WebApplicationCacheInternal.h"
 
 #import "WebSecurityOriginInternal.h"
 #import <WebCore/ApplicationCache.h>
@@ -53,7 +53,7 @@ using namespace WebCore;
     
     SQLiteDatabaseTracker::setClient(WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient());
 
-    ApplicationCacheStorage::singleton().setCacheDirectory([NSString _webkit_localCacheDirectoryWithBundleIdentifier:bundleIdentifier]);
+    webApplicationCacheStorage().setCacheDirectory([NSString _webkit_localCacheDirectoryWithBundleIdentifier:bundleIdentifier]);
     
     initialized = YES;
 }
@@ -61,24 +61,23 @@ using namespace WebCore;
 
 + (long long)maximumSize
 {
-    return ApplicationCacheStorage::singleton().maximumSize();
+    return webApplicationCacheStorage().maximumSize();
 }
 
 + (void)setMaximumSize:(long long)size
 {
-    auto& cacheStorage = ApplicationCacheStorage::singleton();
-    cacheStorage.deleteAllEntries();
-    cacheStorage.setMaximumSize(size);
+    webApplicationCacheStorage().deleteAllEntries();
+    webApplicationCacheStorage().setMaximumSize(size);
 }
 
 + (long long)defaultOriginQuota
 {
-    return ApplicationCacheStorage::singleton().defaultOriginQuota();
+    return webApplicationCacheStorage().defaultOriginQuota();
 }
 
 + (void)setDefaultOriginQuota:(long long)size
 {
-    ApplicationCacheStorage::singleton().setDefaultOriginQuota(size);
+    webApplicationCacheStorage().setDefaultOriginQuota(size);
 }
 
 + (long long)diskUsageForOrigin:(WebSecurityOrigin *)origin
@@ -99,7 +98,7 @@ using namespace WebCore;
 + (NSArray *)originsWithCache
 {
     HashSet<RefPtr<SecurityOrigin>> coreOrigins;
-    ApplicationCacheStorage::singleton().getOriginsWithCache(coreOrigins);
+    webApplicationCacheStorage().getOriginsWithCache(coreOrigins);
     
     NSMutableArray *webOrigins = [[[NSMutableArray alloc] initWithCapacity:coreOrigins.size()] autorelease];
     
@@ -113,3 +112,8 @@ using namespace WebCore;
 }
 
 @end
+
+WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
+{
+    return ApplicationCacheStorage::singleton();
+}
