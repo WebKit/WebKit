@@ -474,6 +474,7 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (BOOL)resignFirstResponder
 {
+#if WK_API_ENABLED
     // Predict the case where we are losing first responder status only to
     // gain it back again. We want resignFirstResponder to do nothing in that case.
     id nextResponder = [[self window] _newFirstResponderAfterResigning];
@@ -481,6 +482,7 @@ struct WKViewInterpretKeyEventsParameters {
         _data->_willBecomeFirstResponderAgain = YES;
         return YES;
     }
+#endif
 
     _data->_willBecomeFirstResponderAgain = NO;
     _data->_inResignFirstResponder = true;

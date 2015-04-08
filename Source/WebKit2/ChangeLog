@@ -1,3 +1,10 @@
+2015-04-08  Enrica Casucci  <enrica@apple.com>
+
+        32-bit build fix after r182554.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView resignFirstResponder]):
+
 2015-04-08  Beth Dakin  <bdakin@apple.com>
 
         Force events should not require preventDefault in order to fire
