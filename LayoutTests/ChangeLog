@@ -1,3 +1,11 @@
+2015-04-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unreviewed test expectation sanity-check
+
+        Remove duplicate expectation, and some expectations for tests that no longer exist.
+
+        * platform/gtk/TestExpectations:
+
 2015-04-08  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Properly handle negative reference box widths and center coordinates

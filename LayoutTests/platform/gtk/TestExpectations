@@ -460,7 +460,7 @@ Bug(GTK) plugins/quicktime-plugin-replacement.html [ Skip ]
 Bug(GTK) fast/css/style-scoped [ Skip ]
 
 # ENABLE(CSS_SCROLL_SNAP) is disabled.
-css3/scroll-snap
+css3/scroll-snap [ Skip ]
 
 # TODO Animation triggers not supported
 animations/trigger-computed-style.html [ Skip ]
@@ -633,8 +633,6 @@ webkit.org/b/142823 fast/attachment/attachment-title.html [ Missing ]
 webkit.org/b/142670 media/video-background-tab-playback.html [ Failure ]
 webkit.org/b/143233 media/media-source/media-source-append-buffer-with-append-window.html [ Pass Failure ]
 
-# TODO Scroll snap points
-css3/scroll-snap [ Skip ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1720,7 +1718,6 @@ Bug(GTK) canvas/philip/tests/2d.drawImage.broken.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.missingargs.html [ Failure ]
-Bug(GTK) canvas/philip/tests/2d.pattern.image.incomplete.omitted.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.text.draw.baseline.bottom.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.text.draw.baseline.hanging.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.text.draw.baseline.ideographic.html [ Failure ]
@@ -2148,7 +2145,6 @@ webkit.org/b/107194 crypto/subtle/rsa-indexeddb.html [ Skip ]
 webkit.org/b/107194 inspector-protocol/indexeddb/basics.html [ Skip ]
 webkit.org/b/107194 fast/history/page-cache-indexed-closed-db.html [ Skip ]
 webkit.org/b/107194 fast/history/page-cache-indexed-opened-db.html [ Skip ]
-webkit.org/b/107194 fast/history/page-cache-webdatabase-opened-db.html [ Skip ]
 
 # Test marked in TestExpectations as failing on non-retina displays, passing on GTK port
 webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ Pass ]
@@ -2360,7 +2356,6 @@ webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ 
 webkit.org/b/142482 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
 
 webkit.org/b/142487 fast/regions/region-overflow-break.html [ ImageOnlyFailure ]
-webkit.org/b/142423 svg/fonts/svg-font-horiz-origin.html [ ImageOnlyFailure ]
 
 webkit.org/b/142666 fast/forms/input-auto-fill-button.html [ Failure ]
 webkit.org/b/142667 fast/forms/search-vertical-alignment.html [ Failure ]
