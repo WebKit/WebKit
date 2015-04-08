@@ -2496,12 +2496,20 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         const unichar ch = 0x2713; // ✓ used on Mac for selected menu items.
         return (m_object->isChecked()) ? [NSString stringWithCharacters:&ch length:1] : nil;
     }
-
-    if ([attributeName isEqualToString: NSAccessibilityMinValueAttribute])
-        return [NSNumber numberWithFloat:m_object->minValueForRange()];
     
-    if ([attributeName isEqualToString: NSAccessibilityMaxValueAttribute])
+    if ([attributeName isEqualToString: NSAccessibilityMinValueAttribute]) {
+        // Indeterminate progress indicator should return 0.
+        if (m_object->isProgressIndicator() && !m_object->hasAttribute(aria_valuenowAttr))
+            return @0;
+        return [NSNumber numberWithFloat:m_object->minValueForRange()];
+    }
+    
+    if ([attributeName isEqualToString: NSAccessibilityMaxValueAttribute]) {
+        // Indeterminate progress indicator should return 0.
+        if (m_object->isProgressIndicator() && !m_object->hasAttribute(aria_valuenowAttr))
+            return @0;
         return [NSNumber numberWithFloat:m_object->maxValueForRange()];
+    }
     
     if ([attributeName isEqualToString: NSAccessibilityHelpAttribute])
         return [self baseAccessibilityHelpText];

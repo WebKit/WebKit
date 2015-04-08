@@ -1,3 +1,15 @@
+2015-04-07  Michael Peechatt  <mpeechatt@gmail.com>
+
+        Bug 142887 - role progress bar does not support indeterminate state
+        https://bugs.webkit.org/show_bug.cgi?id=142887
+
+        Reviewed by Chris Fleizach.
+
+        * platform/mac/accessibility/progressbar-indeterminate-expected.txt: Added.
+        * platform/mac/accessibility/progressbar-indeterminate.html: Added.
+        Test that checks if 0 is returned for indetermiate progress indicators when
+        aria min and max values are non zero.
+
 2015-04-07  Chris Dumez  <cdumez@apple.com>
 
         Open WebSockets should not prevent a page from entering PageCache
