@@ -1,3 +1,12 @@
+2015-04-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Add pango to jhbuild-optional.modules
+        https://bugs.webkit.org/show_bug.cgi?id=143537
+
+        Reviewed by Martin Robinson.
+
+        * gtk/jhbuild-optional.modules: Add pango.
+
 2015-04-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [XvfbDriver] Regular expression used to match running X servers fails on Fedora 22.
