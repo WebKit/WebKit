@@ -4060,7 +4060,8 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
         }
 
         ContextMenuItem coreItem = ContextMenuItem::shareMenuItem(absoluteLinkURL, downloadableMediaURL, image.get(), contextMenuContextData.selectedText());
-        proposedAPIItems.append(WebContextMenuItem::create(coreItem));
+        if (!coreItem.isNull())
+            proposedAPIItems.append(WebContextMenuItem::create(coreItem));
     }
 
     Vector<RefPtr<WebContextMenuItem>> clientItems;

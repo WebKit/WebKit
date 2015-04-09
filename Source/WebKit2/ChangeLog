@@ -1,3 +1,18 @@
+2015-04-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Exception in console and broken right click after attempting to show context menu in Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=143556
+
+        Reviewed by Brady Eidson.
+
+        * Shared/mac/NativeContextMenuItem.mm:
+        (WebKit::NativeContextMenuItem::NativeContextMenuItem):
+        Add an ASSERT to immediately catch a menu item created with a nil native menu item.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        Gracefully handle a null share context menu item.
+
 2015-04-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Unreviewed test fix after r182584

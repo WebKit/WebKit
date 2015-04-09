@@ -37,6 +37,7 @@ namespace WebKit {
 NativeContextMenuItem::NativeContextMenuItem(const ContextMenuItem& coreItem)
     : m_nsMenuItem(coreItem.platformDescription())
 {
+    ASSERT(m_nsMenuItem);
 }
 
 } // namespace WebKit
