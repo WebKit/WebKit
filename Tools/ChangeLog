@@ -1,3 +1,16 @@
+2015-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Unreviewed test fix after r182584
+        https://bugs.webkit.org/show_bug.cgi?id=143452
+
+        Put both of these tests back to their original state now that the underlying
+        problem is fixed.
+
+        * TestWebKitAPI/Tests/WebKit2/MenuTypesForMouseEvents.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/MenuTypesForMouseEvents.mm:
+        (TestWebKitAPI::TEST):
+
 2015-04-08  Filip Pizlo  <fpizlo@apple.com>
 
         run-jsc-benchmarks geomean of preferred means shouldn't print the VMs header twice

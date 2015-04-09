@@ -347,7 +347,7 @@ static int typeForEvent(NSEvent *event)
     if (mouseButtonForEvent(event) == WebMouseEvent::RightButton)
         return static_cast<int>(NSMenuTypeContextMenu);
     
-    if (mouseButtonForEvent(event) == WebMouseEvent::LeftButton && (modifiersForEvent(event) & NSControlKeyMask))
+    if (mouseButtonForEvent(event) == WebMouseEvent::LeftButton && (modifiersForEvent(event) & WebEvent::ControlKey))
         return static_cast<int>(NSMenuTypeContextMenu);
     
     return static_cast<int>(NSMenuTypeNone);

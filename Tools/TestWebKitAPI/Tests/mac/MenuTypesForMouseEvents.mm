@@ -78,8 +78,7 @@ TEST(WebKit1, MenuAndButtonForNormalMiddleClick)
 
 TEST(WebKit1, MenuAndButtonForControlLeftClick)
 {
-    // Note: This is controlled by a Mouse system preference. Check settings if this is failing.
-    buildAndPerformTest(NSLeftMouseDown, NSControlKeyMask, WebCore::LeftButton, NSMenuTypeNone);
+    buildAndPerformTest(NSLeftMouseDown, NSControlKeyMask, WebCore::LeftButton, NSMenuTypeContextMenu);
 }
 
 TEST(WebKit1, MenuAndButtonForControlRightClick)

@@ -1,3 +1,13 @@
+2015-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Unreviewed test fix after r182584
+        https://bugs.webkit.org/show_bug.cgi?id=143452
+
+        Correct bit comparison to use the correct value for the Control-key
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::typeForEvent):
+
 2015-04-08  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [EFL] Create PageUIClientEfl after sending CreateWebPage message

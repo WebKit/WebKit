@@ -1,3 +1,13 @@
+2015-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Unreviewed test fix after r182584
+        https://bugs.webkit.org/show_bug.cgi?id=143452
+
+        Correct bit comparison to use the correct value for the Control-key
+
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::typeForEvent):
+
 2015-04-08  Simon Fraser  <simon.fraser@apple.com>
 
         Add a debug assertion that will fire if we try to paint layer contents on a background thread
