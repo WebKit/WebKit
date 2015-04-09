@@ -1,3 +1,17 @@
+2015-04-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert part of 182516: it broke tests
+        https://bugs.webkit.org/show_bug.cgi?id=143568
+        rdar://problem/20484578
+
+        Reviewed by Myles Maxfield.
+
+        Revert the FontCascadeCocoa parts of r182516, since it broke some CSS shapes tests.
+
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::drawGlyphs):
+        (WebCore::dilationSizeForTextColor): Deleted.
+
 2015-04-09  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout(regression): Calling innerText on RenderFlow with multiple children is slow.
