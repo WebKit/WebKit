@@ -1,3 +1,14 @@
+2015-04-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix uncaught exception seen in Inspector.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WebInspector.TreeOutline.prototype.removeChild):
+        Add a null check. Everywhere else null checks this member variable
+        which may not exist yet, this case was missing the check.
+
 2015-04-08  Tobias Reiss  <tobi+webkit@basecode.de>
 
         Web Inspector: Regression: Showing of color swatches no longer works in Details Sidebar

@@ -195,7 +195,8 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         this.removeChildAtIndex(childIndex, suppressOnDeselect, suppressSelectSibling);
 
         if (!this.children.length) {
-            this._listItemNode.classList.remove("parent");
+            if (this._listItemNode)
+                this._listItemNode.classList.remove("parent");
             this.hasChildren = false;
         }
     }
