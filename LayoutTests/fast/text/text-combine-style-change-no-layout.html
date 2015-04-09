@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .colorClass {
+                color: green;
+            }
+        </style>
+    </head>
+    <body style="-webkit-writing-mode: vertical-rl; font-size: 40px;">
+        <div id="word" style="-webkit-text-combine: horizontal;">39</div>
+        <script>
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+            window.setTimeout(function() {
+                document.querySelector("#word").className = "colorClass";
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        </script>
+    </body>
+</html>
