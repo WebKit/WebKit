@@ -99,6 +99,7 @@ private:
     virtual void terminate() override;
     void platformTerminate();
 
+    void lowMemoryHandler(bool critical);
     void platformLowMemoryHandler(bool critical);
 
     // ChildProcess

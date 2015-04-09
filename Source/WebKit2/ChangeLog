@@ -1,3 +1,25 @@
+2015-04-09  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Regression(r182194): The NetworkProcess is calling the wrong memory pressure handler before suspending
+        https://bugs.webkit.org/show_bug.cgi?id=143575
+        <rdar://problem/20484338>
+
+        Reviewed by Andreas Kling.
+
+        After r182194, the NetworkProcess is calling the memory pressure
+        handler before getting suspended to free-up as much memory as possible
+        at this point.
+
+        However, we were calling the default memory pressure handling code
+        instead of the custom handler registered by the NetworkProcess. This
+        patch fixes the problem.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::lowMemoryHandler):
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::processWillSuspend):
+        * NetworkProcess/NetworkProcess.h:
+
 2015-04-09  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r182573): Action Menus no longer appear for WebKit2 views displaying an image

@@ -166,6 +166,12 @@ AuthenticationManager& NetworkProcess::downloadsAuthenticationManager()
     return authenticationManager();
 }
 
+void NetworkProcess::lowMemoryHandler(bool critical)
+{
+    platformLowMemoryHandler(critical);
+    WTF::releaseFastMallocFreeMemory();
+}
+
 void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
     platformInitializeNetworkProcess(parameters);
@@ -174,8 +180,7 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
 
     auto& memoryPressureHandler = MemoryPressureHandler::singleton();
     memoryPressureHandler.setLowMemoryHandler([this] (bool critical) {
-        platformLowMemoryHandler(critical);
-        WTF::releaseFastMallocFreeMemory();
+        lowMemoryHandler(critical);
     });
     memoryPressureHandler.install();
 
@@ -506,7 +511,7 @@ void NetworkProcess::terminate()
 
 void NetworkProcess::processWillSuspend()
 {
-    MemoryPressureHandler::singleton().releaseMemory(true);
+    lowMemoryHandler(true);
     parentProcessConnection()->send(Messages::NetworkProcessProxy::ProcessReadyToSuspend(), 0);
 }
 
