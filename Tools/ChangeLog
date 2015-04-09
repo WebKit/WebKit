@@ -1,3 +1,14 @@
+2015-04-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Flakiness Dashboard not loading insecure content if loaded with https URL
+        https://bugs.webkit.org/show_bug.cgi?id=143570
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestResultServer/app.yaml:
+        * TestResultServer/static-dashboards/loader.js:
+        Switch to https scheme.
+
 2015-04-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL][GTK] WebKit2's generate-forwarding-headers.pl runs too many times

@@ -31,7 +31,7 @@ var loader = loader || {};
 
 (function() {
 
-var TEST_RESULTS_SERVER = 'http://webkit-test-results.appspot.com/';
+var TEST_RESULTS_SERVER = 'https://webkit-test-results.appspot.com/';
 
 function pathToBuilderResultsFile(builderName) {
     return TEST_RESULTS_SERVER + 'testfile?builder=' + builderName +
