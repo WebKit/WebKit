@@ -28,6 +28,7 @@
 
 #import "KeyEventCocoa.h"
 #import "Logging.h"
+#import "NSMenuSPI.h"
 #import "PlatformScreen.h"
 #import "Scrollbar.h"
 #import "WebCoreSystemInterface.h"
@@ -394,7 +395,20 @@ static inline PlatformEvent::Modifiers modifiersForEvent(NSEvent *event)
     return (PlatformEvent::Modifiers)modifiers;
 }
 
+static int typeForEvent(NSEvent *event)
+{
+    if ([NSMenu respondsToSelector:@selector(menuTypeForEvent:)])
+        return static_cast<int>([NSMenu menuTypeForEvent:event]);
 
+    if (mouseButtonForEvent(event) == RightButton)
+        return static_cast<int>(NSMenuTypeContextMenu);
+
+    if (mouseButtonForEvent(event) == LeftButton && (modifiersForEvent(event) & NSControlKeyMask))
+        return static_cast<int>(NSMenuTypeContextMenu);
+
+    return static_cast<int>(NSMenuTypeNone);
+}
+    
 class PlatformMouseEventBuilder : public PlatformMouseEvent {
 public:
     PlatformMouseEventBuilder(NSEvent *event, NSView *windowView)
@@ -413,6 +427,7 @@ public:
         // Mac specific
         m_modifierFlags                     = [event modifierFlags];
         m_eventNumber                       = [event eventNumber];
+        m_menuTypeForEvent                  = typeForEvent(event);
     }
 };
 

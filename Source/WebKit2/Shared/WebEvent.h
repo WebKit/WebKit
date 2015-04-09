@@ -124,7 +124,7 @@ public:
     WebMouseEvent();
 
 #if PLATFORM(MAC)
-    WebMouseEvent(Type, Button, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers, double timestamp, int eventNumber = -1);
+    WebMouseEvent(Type, Button, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers, double timestamp, int eventNumber = -1, int menuType = 0);
 #else
     WebMouseEvent(Type, Button, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers, double timestamp);
 #endif
@@ -138,6 +138,7 @@ public:
     int32_t clickCount() const { return m_clickCount; }
 #if PLATFORM(MAC)
     int32_t eventNumber() const { return m_eventNumber; }
+    int32_t menuTypeForEvent() const { return m_menuTypeForEvent; }
 #endif
 
     void encode(IPC::ArgumentEncoder&) const;
@@ -155,6 +156,7 @@ private:
     int32_t m_clickCount;
 #if PLATFORM(MAC)
     int32_t m_eventNumber;
+    int32_t m_menuTypeForEvent;
 #endif
 };
 

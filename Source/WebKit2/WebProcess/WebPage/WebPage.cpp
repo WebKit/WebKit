@@ -71,6 +71,7 @@
 #include "WebEditorClient.h"
 #include "WebEvent.h"
 #include "WebEventConversion.h"
+#include "WebEventFactory.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
 #include "WebFullScreenManager.h"
@@ -1822,16 +1823,11 @@ private:
 #if ENABLE(CONTEXT_MENUS)
 static bool isContextClick(const PlatformMouseEvent& event)
 {
-    if (event.button() == WebCore::RightButton)
-        return true;
-
 #if PLATFORM(COCOA)
-    // FIXME: this really should be about OSX-style UI, not about the Mac port
-    if (event.button() == WebCore::LeftButton && event.ctrlKey())
-        return true;
+    return WebEventFactory::shouldBeHandledAsContextClick(event);
+#else
+    return event.button() == WebCore::RightButton;
 #endif
-
-    return false;
 }
 
 static bool handleContextMenuEvent(const PlatformMouseEvent& platformMouseEvent, WebPage* page)

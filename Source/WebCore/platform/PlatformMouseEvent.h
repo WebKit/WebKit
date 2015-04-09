@@ -55,6 +55,7 @@ namespace WebCore {
             , m_modifierFlags(0)
 #if PLATFORM(MAC)
             , m_eventNumber(0)
+            , m_menuTypeForEvent(0)
 #elif PLATFORM(WIN)
             , m_didActivateWebView(false)
 #endif
@@ -71,6 +72,7 @@ namespace WebCore {
             , m_modifierFlags(0)
 #if PLATFORM(MAC)
             , m_eventNumber(0)
+            , m_menuTypeForEvent(0)
 #elif PLATFORM(WIN)
             , m_didActivateWebView(false)
 #endif
@@ -103,6 +105,7 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
         int eventNumber() const { return m_eventNumber; }
+        int menuTypeForEvent() const { return m_menuTypeForEvent; }
 #endif
 
 #if PLATFORM(WIN)
@@ -123,6 +126,7 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
         int m_eventNumber;
+        int m_menuTypeForEvent;
 #elif PLATFORM(WIN)
         bool m_didActivateWebView;
 #endif

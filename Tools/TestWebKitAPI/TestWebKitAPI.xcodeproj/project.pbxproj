@@ -57,6 +57,9 @@
 		7673499D1930C5BB00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad_bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7673499A1930182E00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad_bundle.cpp */; };
 		76E182DD1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */; };
 		76E182DF154767E600F1FADD /* auto-submitting-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 76E182DE15475A8300F1FADD /* auto-submitting-form.html */; };
+		7A1458FC1AD5C07000E06772 /* mouse-button-listener.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A1458FB1AD5C03500E06772 /* mouse-button-listener.html */; };
+		7A5623111AD5AF3E0096B920 /* MenuTypesForMouseEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A5623101AD5AF3E0096B920 /* MenuTypesForMouseEvents.cpp */; };
+		7A99D9941AD4A29D00373141 /* MenuTypesForMouseEvents.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A99D9931AD4A29D00373141 /* MenuTypesForMouseEvents.mm */; };
 		7AA021BB1AB09EA70052953F /* DateMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA021BA1AB09EA70052953F /* DateMath.cpp */; };
 		7AA6A1521AAC0B31002B2ED3 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA6A1511AAC0B31002B2ED3 /* WorkQueue.cpp */; };
 		7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7C486BA01AA1254B003F6F9B /* bundle-file.html */; };
@@ -325,6 +328,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				7A1458FC1AD5C07000E06772 /* mouse-button-listener.html in Copy Resources */,
 				7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */,
@@ -521,6 +525,9 @@
 		76E182D91547550100F1FADD /* WillSendSubmitEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillSendSubmitEvent.cpp; sourceTree = "<group>"; };
 		76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillSendSubmitEvent_Bundle.cpp; sourceTree = "<group>"; };
 		76E182DE15475A8300F1FADD /* auto-submitting-form.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "auto-submitting-form.html"; sourceTree = "<group>"; };
+		7A1458FB1AD5C03500E06772 /* mouse-button-listener.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "mouse-button-listener.html"; sourceTree = "<group>"; };
+		7A5623101AD5AF3E0096B920 /* MenuTypesForMouseEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MenuTypesForMouseEvents.cpp; sourceTree = "<group>"; };
+		7A99D9931AD4A29D00373141 /* MenuTypesForMouseEvents.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MenuTypesForMouseEvents.mm; sourceTree = "<group>"; };
 		7AA021BA1AB09EA70052953F /* DateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateMath.cpp; sourceTree = "<group>"; };
 		7AA6A1511AAC0B31002B2ED3 /* WorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueue.cpp; sourceTree = "<group>"; };
 		7C486BA01AA1254B003F6F9B /* bundle-file.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "bundle-file.html"; sourceTree = "<group>"; };
@@ -1011,6 +1018,7 @@
 				7C54A4BC1AA11CCA00380F78 /* WKBundleFileHandle.cpp */,
 				7C54A4BF1AA11CE400380F78 /* WKBundleFileHandle_Bundle.cpp */,
 				A1FDFD2E19C288BB005148A4 /* WKImageCreateCGImageCrash.cpp */,
+				7A5623101AD5AF3E0096B920 /* MenuTypesForMouseEvents.cpp */,
 				7C89D2AA1A69B80D003A5FDE /* WKPageConfiguration.cpp */,
 				51E93016156B13E1004C99DF /* WKPageGetScaleFactorNotZero.cpp */,
 				524BBC9C19DF377A002F1AF1 /* WKPageIsPlayingAudio.cpp */,
@@ -1068,6 +1076,7 @@
 		BC90977B125571AE00083756 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7A1458FB1AD5C03500E06772 /* mouse-button-listener.html */,
 				C045F9461385C2F800C0F3CD /* 18-characters.html */,
 				2D950FBF1A230C1E00012434 /* action-menu-targets.html */,
 				93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */,
@@ -1174,6 +1183,7 @@
 				4BB4160116815B2600824238 /* JSWrapperForNodeInWebFrame.mm */,
 				E1220D9F155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm */,
 				517E7DFB15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm */,
+				7A99D9931AD4A29D00373141 /* MenuTypesForMouseEvents.mm */,
 				A57A34EF16AF677200C2501F /* PageVisibilityStateWithWindowChanges.mm */,
 				00BC16851680FE810065F1E5 /* PublicSuffix.mm */,
 				37C784DE197C8F2E0010A496 /* RenderedImageFromDOMNode.mm */,
@@ -1570,6 +1580,8 @@
 				2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */,
 				7AA6A1521AAC0B31002B2ED3 /* WorkQueue.cpp in Sources */,
 				2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */,
+				7A5623111AD5AF3E0096B920 /* MenuTypesForMouseEvents.cpp in Sources */,
+				7A99D9941AD4A29D00373141 /* MenuTypesForMouseEvents.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -30,6 +30,7 @@
 
 #import "WebKitSystemInterface.h"
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/NSMenuSPI.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/Scrollbar.h>
 #import <WebCore/WindowsKeyboardCodes.h>
@@ -338,6 +339,25 @@ static inline WebEvent::Modifiers modifiersForEvent(NSEvent *event)
     return (WebEvent::Modifiers)modifiers;
 }
 
+static int typeForEvent(NSEvent *event)
+{
+    if ([NSMenu respondsToSelector:@selector(menuTypeForEvent:)])
+        return static_cast<int>([NSMenu menuTypeForEvent:event]);
+    
+    if (mouseButtonForEvent(event) == WebMouseEvent::RightButton)
+        return static_cast<int>(NSMenuTypeContextMenu);
+    
+    if (mouseButtonForEvent(event) == WebMouseEvent::LeftButton && (modifiersForEvent(event) & NSControlKeyMask))
+        return static_cast<int>(NSMenuTypeContextMenu);
+    
+    return static_cast<int>(NSMenuTypeNone);
+}
+
+bool WebEventFactory::shouldBeHandledAsContextClick(const WebCore::PlatformMouseEvent& event)
+{
+    return (static_cast<NSMenuType>(event.menuTypeForEvent()) == NSMenuTypeContextMenu);
+}
+
 WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSView *windowView)
 {
     NSPoint position = pointForEvent(event, windowView);
@@ -352,8 +372,9 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSView *windo
     WebEvent::Modifiers modifiers           = modifiersForEvent(event);
     double timestamp                        = eventTimeStampSince1970(event);
     int eventNumber                         = [event eventNumber];
+    int menuTypeForEvent                    = typeForEvent(event);
 
-    return WebMouseEvent(type, button, IntPoint(position), IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp, eventNumber);
+    return WebMouseEvent(type, button, IntPoint(position), IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp, eventNumber, menuTypeForEvent);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windowView)

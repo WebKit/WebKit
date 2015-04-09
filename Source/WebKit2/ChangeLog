@@ -1,3 +1,18 @@
+2015-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] WebKit is not honoring OS preferences for secondary click behaviors
+        https://bugs.webkit.org/show_bug.cgi?id=143452
+        <rdar://problem/20437483>
+
+        Reviewed by Tim Horton.
+
+        We cannot rely on the event's button number to decide behavior. The OS settings might have
+        mapped middle button to context menu, etc. Instead, we should ask the OS (via NSMenu) what
+        the proper button press behavior is.
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::mouseButtonForEvent): Ask NSMenu what kind of button press we have received.
+
 2015-04-08  Brady Eidson  <beidson@apple.com>
 
         Expose the "Share" menu for links, images, and media.

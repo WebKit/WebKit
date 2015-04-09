@@ -84,6 +84,7 @@ public:
         m_clickCount = webEvent.clickCount();
 #if PLATFORM(MAC)
         m_eventNumber = webEvent.eventNumber();
+        m_menuTypeForEvent = webEvent.menuTypeForEvent();
 #endif
 
         m_modifierFlags = 0;

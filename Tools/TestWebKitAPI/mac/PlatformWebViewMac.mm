@@ -193,4 +193,50 @@ void PlatformWebView::simulateMouseMove(unsigned x, unsigned y)
     
 }
 
+static NSEventType eventTypeForButton(WKEventMouseButton button)
+{
+    switch (button) {
+    case kWKEventMouseButtonLeftButton:
+        return NSLeftMouseDown;
+    case kWKEventMouseButtonRightButton:
+        return NSRightMouseDown;
+    case kWKEventMouseButtonMiddleButton:
+        return NSOtherMouseDown;
+    case kWKEventMouseButtonNoButton:
+        return NSLeftMouseDown;
+    }
+
+    return NSLeftMouseDown;
+}
+
+static NSEventModifierFlags modifierFlagsForWKModifiers(WKEventModifiers modifiers)
+{
+    NSEventModifierFlags returnVal = 0;
+    if (modifiers & kWKEventModifiersShiftKey)
+        returnVal |= NSShiftKeyMask;
+    if (modifiers & kWKEventModifiersControlKey)
+        returnVal |= NSControlKeyMask;
+    if (modifiers & kWKEventModifiersAltKey)
+        returnVal |= NSAlternateKeyMask;
+    if (modifiers & kWKEventModifiersMetaKey)
+        returnVal |= NSCommandKeyMask;
+
+    return returnVal;
+}
+    
+void PlatformWebView::simulateButtonClick(WKEventMouseButton button, unsigned x, unsigned y, WKEventModifiers modifiers)
+{
+    NSEvent *event = [NSEvent mouseEventWithType:eventTypeForButton(button)
+                                        location:NSMakePoint(x, y)
+                                   modifierFlags:modifierFlagsForWKModifiers(modifiers)
+                                       timestamp:GetCurrentEventTime()
+                                    windowNumber:[m_window windowNumber]
+                                         context:[NSGraphicsContext currentContext]
+                                     eventNumber:0
+                                      clickCount:0
+                                        pressure:0];
+
+    [m_view mouseDown:event];
+}
+
 } // namespace TestWebKitAPI

@@ -73,6 +73,9 @@ public:
     void simulateAltKeyPress();
     void simulateRightClick(unsigned x, unsigned y);
     void simulateMouseMove(unsigned x, unsigned y);
+#if PLATFORM(MAC)
+    void simulateButtonClick(WKEventMouseButton, unsigned x, unsigned y, WKEventModifiers);
+#endif
 
 private:
 #if PLATFORM(MAC)
