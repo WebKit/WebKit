@@ -84,11 +84,11 @@ WebHitTestResult::Data::Data(const WebCore::HitTestResult& hitTestResult, bool i
 
     if (Image* image = hitTestResult.image()) {
         RefPtr<SharedBuffer> buffer = image->data();
-        String imageExtension = image->filenameExtension();
-        if (!imageExtension.isEmpty() && buffer) {
+        String filenameExtension = image->filenameExtension();
+        if (!filenameExtension.isEmpty() && buffer) {
             imageSharedMemory = SharedMemory::create(buffer->size());
             memcpy(imageSharedMemory->data(), buffer->data(), buffer->size());
-            imageExtension = imageExtension;
+            imageExtension = filenameExtension;
             imageSize = buffer->size();
         }
     }

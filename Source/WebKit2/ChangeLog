@@ -1,3 +1,13 @@
+2015-04-09  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r182573): Action Menus no longer appear for WebKit2 views displaying an image
+        rdar://problem/20486551 and https://bugs.webkit.org/show_bug.cgi?id=143574
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/WebHitTestResult.cpp:
+        (WebKit::WebHitTestResult::Data::Data): Clear up a name scoping issue.
+
 2015-04-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] editorState() should not cause a synchronous layout
