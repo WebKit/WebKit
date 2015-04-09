@@ -3,6 +3,15 @@
         [EFL][GTK] WebKit2's generate-forwarding-headers.pl runs too many times
         https://bugs.webkit.org/show_bug.cgi?id=142907
 
+        Unreviewed typo fix after r182595.
+
+        * PlatformGTK.cmake:
+
+2015-04-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL][GTK] WebKit2's generate-forwarding-headers.pl runs too many times
+        https://bugs.webkit.org/show_bug.cgi?id=142907
+
         Reviewed by Carlos Garcia Campos.
 
         * PlatformEfl.cmake:
