@@ -1,3 +1,10 @@
+2015-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Layout Test inspector/console/console-api.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=143548
+
+        * platform/win/TestExpectations: Skipped new timeout.
+
 2015-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Split ConsoleMessageImpl into the View and the Model

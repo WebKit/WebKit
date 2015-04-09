@@ -2356,6 +2356,7 @@ inspector-protocol/debugger/searchInContent-linebreaks.html [ Pass Crash ] # Fla
 webkit.org/b/143542 inspector-protocol/debugger/setPauseOnExceptions-all.html [ Failure ]
 webkit.org/b/143542 inspector-protocol/debugger/setPauseOnExceptions-none.html [ Failure ]
 webkit.org/b/143542 inspector-protocol/debugger/setPauseOnExceptions-uncaught.html [ Failure ]
+webkit.org/b/143548 inspector/console/console-api.html [ Skip ] # Timeout
 ################################################################################
 #################        End Inspector Issues               ####################
 ################################################################################
