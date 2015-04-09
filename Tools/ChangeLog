@@ -1,3 +1,14 @@
+2015-04-08  Filip Pizlo  <fpizlo@apple.com>
+
+        run-jsc-benchmarks geomean of preferred means shouldn't print the VMs header twice
+        https://bugs.webkit.org/show_bug.cgi?id=143553
+
+        Reviewed by Ryosuke Niwa.
+        
+        Remove the spurious printVMs left over from an earlier change.
+
+        * Scripts/run-jsc-benchmarks:
+
 2015-04-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Unreviewed test fix after r182581
