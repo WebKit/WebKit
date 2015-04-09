@@ -137,7 +137,6 @@ WebInspector.ConsoleMessage.MessageType = {
 };
 
 WebInspector.ConsoleMessage.MessageLevel = {
-    Tip: "tip", // COMPATIBILITY (iOS 6)
     Log: "log",
     Warning: "warning",
     Error: "error",

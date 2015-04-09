@@ -46,7 +46,6 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         this._element.__messageView = this;
 
         switch (this._message.level) {
-        case WebInspector.ConsoleMessage.MessageLevel.Tip: // COMPATIBILITY (iOS 6).
         case WebInspector.ConsoleMessage.MessageLevel.Log:
             this._element.classList.add("console-log-level");
             this._element.setAttribute("data-labelprefix", WebInspector.UIString("Log: "));
@@ -647,8 +646,6 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
     _levelString()
     {
         switch (this._message.level) {
-        case WebInspector.ConsoleMessage.MessageLevel.Tip:
-            return "Tip";
         case WebInspector.ConsoleMessage.MessageLevel.Log:
             return "Log";
         case WebInspector.ConsoleMessage.MessageLevel.Warning:

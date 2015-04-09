@@ -1,5 +1,21 @@
 2015-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Simplify Legacy Tips support
+        https://bugs.webkit.org/show_bug.cgi?id=143551
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/ConsoleMessage.js:
+        * UserInterface/Protocol/ConsoleObserver.js:
+        (WebInspector.ConsoleObserver.prototype.messageAdded):
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView):
+        (WebInspector.ConsoleMessageView.prototype._levelString):
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._filterMessageElements):
+
+2015-04-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed Test Fix after r182579. Add missing include.
 
         * UserInterface/Test.html:

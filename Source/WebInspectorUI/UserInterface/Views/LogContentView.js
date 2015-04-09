@@ -683,7 +683,6 @@ WebInspector.LogContentView.prototype = {
                 case WebInspector.ConsoleMessage.MessageLevel.Error:
                     visible = showsErrors;
                     break;
-                case WebInspector.ConsoleMessage.MessageLevel.Tip: // COMPATIBILITY (iOS 6): Treat Tips like Logs.
                 case WebInspector.ConsoleMessage.MessageLevel.Log:
                 case WebInspector.ConsoleMessage.MessageLevel.Debug:
                     visible = showsLogs;
