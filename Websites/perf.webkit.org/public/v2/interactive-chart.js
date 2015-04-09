@@ -653,6 +653,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
                 linkRoute: linkRoute,
                 linkId: range.get('id'),
                 label: range.get('label'),
+                status: range.get('status'),
             });
         }));
 

@@ -135,7 +135,7 @@ a.outlier-button.show g.hide-outlier-icon {
     width: 4rem;
 }
 
-.annotation-pane {
+.analysis-pane {
     right: 1.3rem;
 }
 
@@ -460,4 +460,8 @@ a.outlier-button.show g.hide-outlier-icon {
     display: block;
     background-color: #fc6;
     position: absolute;
+}
+
+.chart .rangeBar.testingRange {
+    background-color: #333;
 }

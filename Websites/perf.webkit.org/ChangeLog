@@ -1,3 +1,42 @@
+2015-04-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard should automatically select ranges for A/B testing
+        https://bugs.webkit.org/show_bug.cgi?id=143580
+
+        Reviewed by Chris Dumez.
+
+        Added a new statistics option for picking a A/B test range selection strategy.
+        The selected ranges are shown in the graph using the same UI to show analysis tasks.
+
+        * public/v2/app.js:
+        (App.DashboardPaneProxyForPicker._platformOrMetricIdChanged): Updated the query parameters for
+        charts page used by the dashboard since we've added a new parameter at the end.
+        (App.Pane.ranges): Added. Merges ranges created for analysis tasks and A/B testing.
+        (App.Pane.updateStatisticsTools): Clone and set the test range selection strategies.
+        (App.Pane._cloneStrategy): Copy isSegmentation.
+        (App.Pane._updateMovingAverageAndEnvelope): Set testRangeCandidates.
+        (App.Pane._movingAverageOrEnvelopeStrategyDidChange): Update the charts when a new text range
+        selection strategy is picked by the user.
+        (App.Pane._computeMovingAverageAndOutliers): Compute the test ranges using the chosen strategy.
+        Avoid going through isAnomalyArray when no anomaly detection strategy is enabled. Also changed
+        the return value from the moving average time series to a dictionary that contains the moving
+        average time series, a dictionary of anomalies, and an array of test ranges.
+        (App.ChartsController._parsePaneList): Parse the test range selection strategy configuration.
+        (App.ChartsController._serializePaneList): Ditto for serialization.
+        (App.ChartsController._scheduleQueryStringUpdate): Update the URL hash when the user picks a new
+        test range selection strategy.
+
+        * public/v2/chart-pane.css: Fixed a typo as well as added a CSS rule for test ranges markers.
+
+        * public/v2/index.html: Added UI for selecting a test range selection strategy.
+
+        * public/v2/interactive-chart.js:
+        (App.InteractiveChartComponent._rangesChanged): Pass down "status" to be used as a class name.
+
+        * public/v2/js/statistics.js:
+        (Statistics.MovingAverageStrategies): Added isSegmentation to segmentation strategies.
+        (Statistics.TestRangeSelectionStrategies): Added.
+
 2015-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         The results of A/B testing should state statistical significance

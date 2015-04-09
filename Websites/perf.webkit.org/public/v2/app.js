@@ -52,7 +52,7 @@ App.DashboardPaneProxyForPicker = Ember.ObjectProxy.extend({
             .then(function (platforms) { self.set('pickerData', platforms); });
     }.observes('platformId', 'metricId').on('init'),
     paneList: function () {
-        return App.encodePrettifiedJSON([[this.get('platformId'), this.get('metricId'), null, null, false]]);
+        return App.encodePrettifiedJSON([[this.get('platformId'), this.get('metricId'), null, null, null, null, null]]);
     }.property('platformId', 'metricId'),
 });
 
@@ -425,6 +425,10 @@ App.Pane = Ember.Object.extend({
                 self.set('analyticRanges', tasks.filter(function (task) { return task.get('startRun') && task.get('endRun'); }));
             });
     },
+    ranges: function ()
+    {
+        return this.getWithDefault('analyticRanges', []).concat(this.getWithDefault('testRangeCandidates', []));
+    }.property('analyticRanges', 'testRangeCandidates'),
     _isValidId: function (id)
     {
         if (typeof(id) == "number")
@@ -500,6 +504,10 @@ App.Pane = Ember.Object.extend({
         this.set('envelopingStrategies', [{label: 'None'}].concat(envelopingStrategies));
         this.set('chosenEnvelopingStrategy', this._configureStrategy(envelopingStrategies, this.get('envelopingConfig')));
 
+        var testRangeSelectionStrategies = Statistics.TestRangeSelectionStrategies.map(this._cloneStrategy.bind(this));
+        this.set('testRangeSelectionStrategies', [{label: 'None'}].concat(testRangeSelectionStrategies));
+        this.set('chosenTestRangeSelectionStrategy', this._configureStrategy(testRangeSelectionStrategies, this.get('testRangeSelectionConfig')));
+
         var anomalyDetectionStrategies = Statistics.AnomalyDetectionStrategy.map(this._cloneStrategy.bind(this));
         this.set('anomalyDetectionStrategies', anomalyDetectionStrategies);
     }.on('init'),
@@ -509,6 +517,7 @@ App.Pane = Ember.Object.extend({
         return Ember.Object.create({
             id: strategy.id,
             label: strategy.label,
+            isSegmentation: strategy.isSegmentation,
             description: strategy.description,
             parameterList: parameterList,
             execute: strategy.execute,
@@ -542,11 +551,25 @@ App.Pane = Ember.Object.extend({
 
         var envelopingStrategy = this.get('chosenEnvelopingStrategy');
         this._updateStrategyConfigIfNeeded(envelopingStrategy, 'envelopingConfig');
-        
+
+        var testRangeSelectionStrategy = this.get('chosenTestRangeSelectionStrategy');
+        this._updateStrategyConfigIfNeeded(testRangeSelectionStrategy, 'testRangeSelectionConfig');
+
         var anomalyDetectionStrategies = this.get('anomalyDetectionStrategies').filterBy('enabled');
-        var anomalies = {};
-        chartData.movingAverage = this._computeMovingAverageAndOutliers(chartData, movingAverageStrategy, envelopingStrategy, anomalyDetectionStrategies, anomalies);
-        this.set('highlightedItems', anomalies);
+        var result = this._computeMovingAverageAndOutliers(chartData, movingAverageStrategy, envelopingStrategy, testRangeSelectionStrategy, anomalyDetectionStrategies);
+        if (!result)
+            return;
+
+        chartData.movingAverage = result.movingAverage;
+        this.set('highlightedItems', result.anomalies);
+        var currentTimeSeriesData = chartData.current.series();
+        this.set('testRangeCandidates', result.testRangeCandidates.map(function (range) {
+            return Ember.Object.create({
+                startRun: currentTimeSeriesData[range[0]].measurement.id(),
+                endRun: currentTimeSeriesData[range[1]].measurement.id(),
+                status: 'testingRange',
+            });
+        }));
     },
     _movingAverageOrEnvelopeStrategyDidChange: function () {
         var chartData = this.get('chartData');
@@ -555,8 +578,9 @@ App.Pane = Ember.Object.extend({
         this._setNewChartData(chartData);
     }.observes('chosenMovingAverageStrategy', 'chosenMovingAverageStrategy.parameterList.@each.value',
         'chosenEnvelopingStrategy', 'chosenEnvelopingStrategy.parameterList.@each.value',
+        'chosenTestRangeSelectionStrategy', 'chosenTestRangeSelectionStrategy.parameterList.@each.value',
         'anomalyDetectionStrategies.@each.enabled'),
-    _computeMovingAverageAndOutliers: function (chartData, movingAverageStrategy, envelopingStrategy, anomalyDetectionStrategies, anomalies)
+    _computeMovingAverageAndOutliers: function (chartData, movingAverageStrategy, envelopingStrategy, testRangeSelectionStrategy, anomalyDetectionStrategies)
     {
         var currentTimeSeriesData = chartData.current.series();
         var movingAverageIsSetByUser = movingAverageStrategy && movingAverageStrategy.execute;
@@ -564,6 +588,10 @@ App.Pane = Ember.Object.extend({
             movingAverageIsSetByUser ? movingAverageStrategy : Statistics.MovingAverageStrategies[0], currentTimeSeriesData);
         if (!movingAverageValues)
             return null;
+
+        var testRangeCandidates = [];
+        if (movingAverageStrategy && movingAverageStrategy.isSegmentation && testRangeSelectionStrategy && testRangeSelectionStrategy.execute)
+            testRangeCandidates = this._executeStrategy(testRangeSelectionStrategy, currentTimeSeriesData, [movingAverageValues]);
 
         var envelopeIsSetByUser = envelopingStrategy && envelopingStrategy.execute;
         var envelopeDelta = this._executeStrategy(envelopeIsSetByUser ? envelopingStrategy : Statistics.EnvelopingStrategies[0],
@@ -578,22 +606,26 @@ App.Pane = Ember.Object.extend({
         if (!envelopeIsSetByUser)
             envelopeDelta = null;
 
-        var isAnomalyArray = new Array(currentTimeSeriesData.length);
-        for (var strategy of anomalyDetectionStrategies) {
-            var anomalyLengths = this._executeStrategy(strategy, currentTimeSeriesData, [movingAverageValues, envelopeDelta]);
-            for (var i = 0; i < currentTimeSeriesData.length; i++)
-                isAnomalyArray[i] = isAnomalyArray[i] || anomalyLengths[i];
-        }
-        for (var i = 0; i < isAnomalyArray.length; i++) {
-            if (!isAnomalyArray[i])
-                continue;
-            anomalies[currentTimeSeriesData[i].measurement.id()] = true;
-            while (isAnomalyArray[i] && i < isAnomalyArray.length)
-                ++i;
+        var anomalies = {};
+        if (anomalyDetectionStrategies.length) {
+            var isAnomalyArray = new Array(currentTimeSeriesData.length);
+            for (var strategy of anomalyDetectionStrategies) {
+                var anomalyLengths = this._executeStrategy(strategy, currentTimeSeriesData, [movingAverageValues, envelopeDelta]);
+                for (var i = 0; i < currentTimeSeriesData.length; i++)
+                    isAnomalyArray[i] = isAnomalyArray[i] || anomalyLengths[i];
+            }
+            for (var i = 0; i < isAnomalyArray.length; i++) {
+                if (!isAnomalyArray[i])
+                    continue;
+                anomalies[currentTimeSeriesData[i].measurement.id()] = true;
+                while (isAnomalyArray[i] && i < isAnomalyArray.length)
+                    ++i;
+            }
         }
 
+        var movingAverageTimeSeries = null;
         if (movingAverageIsSetByUser) {
-            return new TimeSeries(currentTimeSeriesData.map(function (point, index) {
+            movingAverageTimeSeries = new TimeSeries(currentTimeSeriesData.map(function (point, index) {
                 var value = movingAverageValues[index];
                 return {
                     measurement: point.measurement,
@@ -601,8 +633,14 @@ App.Pane = Ember.Object.extend({
                     value: value,
                     interval: envelopeDelta !== null ? [value - envelopeDelta, value + envelopeDelta] : null,
                 }
-            }));            
+            }));
         }
+
+        return {
+            movingAverage: movingAverageTimeSeries,
+            anomalies: anomalies,
+            testRangeCandidates: testRangeCandidates,
+        };
     },
     _executeStrategy: function (strategy, currentTimeSeriesData, additionalArguments)
     {
@@ -804,6 +842,7 @@ App.ChartsController = Ember.Controller.extend({
                 showFullYAxis: paneInfo[3],
                 movingAverageConfig: paneInfo[4],
                 envelopingConfig: paneInfo[5],
+                testRangeSelectionConfig: paneInfo[6],
             });
         });
     },
@@ -821,6 +860,7 @@ App.ChartsController = Ember.Controller.extend({
                 pane.get('showFullYAxis'),
                 pane.get('movingAverageConfig'),
                 pane.get('envelopingConfig'),
+                pane.get('testRangeSelectionConfig'),
             ];
         }));
     },
@@ -829,7 +869,7 @@ App.ChartsController = Ember.Controller.extend({
     {
         Ember.run.debounce(this, '_updateQueryString', 1000);
     }.observes('sharedZoom', 'panes.@each.platform', 'panes.@each.metric', 'panes.@each.selectedItem', 'panes.@each.timeRange',
-        'panes.@each.showFullYAxis', 'panes.@each.movingAverageConfig', 'panes.@each.envelopingConfig'),
+        'panes.@each.showFullYAxis', 'panes.@each.movingAverageConfig', 'panes.@each.envelopingConfig', 'panes.@each.testRangeSelectionConfig'),
 
     _updateQueryString: function ()
     {

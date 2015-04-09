@@ -248,6 +248,7 @@ var Statistics = new (function () {
         },
         {
             id: 4,
+            isSegmentation: true,
             label: 'Segmentation: Recursive t-test',
             description: "Recursively split values into two segments if Welch's t-test detects a statistically significant difference.",
             parameterList: [{label: "Minimum segment length", value: 20, min: 5}],
@@ -271,6 +272,7 @@ var Statistics = new (function () {
         },
         {
             id: 5,
+            isSegmentation: true,
             label: 'Segmentation: Schwarz criterion',
             description: 'Adaptive algorithm that maximizes the Schwarz criterion (BIC).',
             // Based on Detection of Multiple Change–Points in Multivariate Time Series by Marc Lavielle (July 2006).
@@ -465,6 +467,42 @@ var Statistics = new (function () {
         },
     ];
 
+    this.debuggingTestingRangeNomination = false;
+
+    this.TestRangeSelectionStrategies = [
+        {
+            id: 301,
+            label: "t-test 99% significance",
+            execute: function (values, segmentedValues) {
+                if (!values.length)
+                    return [];
+
+                var previousMean = segmentedValues[0];
+                var selectedRanges = new Array;
+                for (var i = 1; i < segmentedValues.length; i++) {
+                    var currentMean = segmentedValues[i];
+                    if (currentMean == previousMean)
+                        continue;
+                    var found = false;
+                    for (var leftEdge = i - 2, rightEdge = i + 2; leftEdge >= 0 && rightEdge <= values.length; leftEdge--, rightEdge++) {
+                        if (segmentedValues[leftEdge] != previousMean || segmentedValues[rightEdge - 1] != currentMean)
+                            break;
+                        var result = Statistics.computeWelchsT(values, leftEdge, i - leftEdge, values, i, rightEdge - i);
+                        if (result.significantlyDifferent) {
+                            selectedRanges.push([leftEdge, rightEdge - 1]);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found && Statistics.debuggingTestingRangeNomination)
+                        console.log('Failed to find a testing range at', i, 'changing from', previousValue, 'to', currentValue);
+                    previousMean = currentMean;
+                }
+                return selectedRanges;
+            }
+        }
+    ];
+
     function createWesternElectricRule(windowSize, minOutlinerCount, limitFactor) {
         return function (values, movingAverages, deviation) {
             var results = new Array(values.length);
@@ -486,7 +524,6 @@ var Statistics = new (function () {
         }
         return Math.max(valuesAboveLimit, valuesBelowLimit);
     }
-    window.countValuesOnSameSide = countValuesOnSameSide;
 
     this.AnomalyDetectionStrategy = [
         // Western Electric rules: http://en.wikipedia.org/wiki/Western_Electric_rules

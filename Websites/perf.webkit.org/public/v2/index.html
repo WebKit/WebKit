@@ -167,7 +167,7 @@
                     {{#if chartData}}
                         {{interactive-chart
                             chartData=chartData
-                            ranges=analyticRanges
+                            ranges=ranges
                             domain=mainPlotDomain
                             interactive=true
                             chartPointRadius=2
@@ -249,7 +249,7 @@
         <div class="rangeBarsContainerInlineStyle">
             {{#each rangeBars}}
                 {{#link-to linkRoute linkId title=label}}
-                    <span class="rangeBar" {{bind-attr style=inlineStyle}}></span>
+                    <span {{bind-attr class=":rangeBar status" style=inlineStyle}}></span>
                 {{/link-to}}
             {{/each}}
         </div>
@@ -399,6 +399,19 @@
                     {{#each chosenEnvelopingStrategy.parameterList}}
                         <label>{{label}}: <input type="number" {{bind-attr value=value min=min max=max step=step}}></label>
                     {{/each}}
+                </section>
+            {{/if}}
+            {{#if chosenMovingAverageStrategy.isSegmentation}}
+                <section class="stat-option">
+                    <h1>A/B Test Range Selection</h1>
+                    <label>Type: {{view Ember.Select
+                        content=testRangeSelectionStrategies
+                        optionValuePath='content'
+                        optionLabelPath='content.label'
+                        selection=chosenTestRangeSelectionStrategy}}</label>
+                    {{#if chosenTestRangeSelectionStrategy.description}}
+                        <p class="description">{{chosenTestRangeSelectionStrategy.description}}</p>
+                    {{/if}}
                 </section>
             {{/if}}
             {{#if chosenEnvelopingStrategy.execute}}
@@ -573,7 +586,7 @@
                 <div class="svg-container">
                     {{interactive-chart
                         chartData=pane.chartData
-                        ranges=pane.analyticRanges
+                        ranges=pane.ranges
                         domain=overviewDomain
                         interactive=true
                         chartPointRadius=2
