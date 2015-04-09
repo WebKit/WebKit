@@ -634,7 +634,7 @@
                                 {{partial "testGroupRow"}}
                             {{/with}}
                         </tr>
-                        {{#each items}}
+                        {{#each requests}}
                             <tr class="request">
                                 {{#with ../this}}
                                     <td class="config-letter" {{action toggleShowRequestList this}}></td>
@@ -643,6 +643,19 @@
                                 {{partial "testGroupRow"}}
                             </tr>
                         {{/each}}
+                    </tbody>
+                {{/each}}
+                {{#each comparisons}}
+                    <tbody>
+                        <tr>
+                            <td colspan="2">{{label}}</td>
+                            {{#with ../this}}
+                                {{#each repositories}}
+                                    <td></td>
+                                {{/each}}
+                            {{/with}}
+                            <td colspan="2">{{result}}</td>
+                        </tr>
                     </tbody>
                 {{/each}}
             </table>

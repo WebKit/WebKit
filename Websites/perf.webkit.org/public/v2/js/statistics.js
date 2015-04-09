@@ -26,21 +26,21 @@ var Statistics = new (function () {
 
     this.supportedConfidenceIntervalProbabilities = function () {
         var supportedProbabilities = [];
-        for (var quantile in tDistributionQuantiles)
-            supportedProbabilities.push((1 - (1 - quantile) * 2).toFixed(2));
+        for (var probability in tDistributionByOneSidedProbability)
+            supportedProbabilities.push(oneSidedToTwoSidedProbability(probability).toFixed(2));
         return supportedProbabilities
     }
 
     // Computes the delta d s.t. (mean - d, mean + d) is the confidence interval with the specified probability in O(1).
     this.confidenceIntervalDelta = function (probability, numberOfSamples, sum, squareSum) {
-        var quantile = (1 - (1 - probability) / 2);
-        if (!(quantile in tDistributionQuantiles)) {
+        var oneSidedProbability = twoSidedToOneSidedProbability(probability);
+        if (!(oneSidedProbability in tDistributionByOneSidedProbability)) {
             throw 'We only support ' + this.supportedConfidenceIntervalProbabilities().map(function (probability)
             { return probability * 100 + '%'; } ).join(', ') + ' confidence intervals.';
         }
         if (numberOfSamples - 2 < 0)
             return NaN;
-        var deltas = tDistributionQuantiles[quantile];
+        var deltas = tDistributionByOneSidedProbability[oneSidedProbability];
         var degreesOfFreedom = numberOfSamples - 1;
         if (degreesOfFreedom > deltas.length)
             throw 'We only support up to ' + deltas.length + ' degrees of freedom';
@@ -61,6 +61,25 @@ var Statistics = new (function () {
         return this.computeWelchsT(values1, 0, values1.length, values2, 0, values2.length, probability).significantlyDifferent;
     }
 
+    this.probabilityRangeForWelchsT = function (values1, values2) {
+        var result = this.computeWelchsT(values1, 0, values1.length, values2, 0, values2.length);
+        if (isNaN(result.t) || isNaN(result.degreesOfFreedom))
+            return {t: NaN, degreesOfFreedom:NaN, range: [null, null]};
+
+        var lowerBound = null;
+        var upperBound = null;
+        for (var probability in tDistributionByOneSidedProbability) {
+            var twoSidedProbability = oneSidedToTwoSidedProbability(probability);
+            if (result.t > tDistributionByOneSidedProbability[probability][Math.round(result.degreesOfFreedom - 1)])
+                lowerBound = twoSidedProbability;
+            else if (lowerBound) {
+                upperBound = twoSidedProbability;
+                break;
+            }
+        }
+        return {t: result.t, degreesOfFreedom: result.degreesOfFreedom, range: [lowerBound, upperBound]};
+    }
+
     this.computeWelchsT = function (values1, startIndex1, length1, values2, startIndex2, length2, probability) {
         var stat1 = sampleMeanAndVarianceForValues(values1, startIndex1, length1);
         var stat2 = sampleMeanAndVarianceForValues(values2, startIndex2, length2);
@@ -71,10 +90,11 @@ var Statistics = new (function () {
         var degreesOfFreedom = sumOfSampleVarianceOverSampleSize * sumOfSampleVarianceOverSampleSize
             / (stat1.variance * stat1.variance / stat1.size / stat1.size / stat1.degreesOfFreedom
                 + stat2.variance * stat2.variance / stat2.size / stat2.size / stat2.degreesOfFreedom);
+        var minT = tDistributionByOneSidedProbability[twoSidedToOneSidedProbability(probability || 0.8)][Math.round(degreesOfFreedom - 1)];
         return {
             t: t,
             degreesOfFreedom: degreesOfFreedom,
-            significantlyDifferent: t > tDistributionQuantiles[probability || 0.9][Math.round(degreesOfFreedom - 1)],
+            significantlyDifferent: t > minT,
         };
     }
 
@@ -118,8 +138,7 @@ var Statistics = new (function () {
         recursivelySplitIntoTwoSegmentsAtMaxTIfSignificantlyDifferent(values, startIndex + argTMax, length - argTMax, minLength, segments);
     }
 
-    // One-sided t-distribution.
-    var tDistributionQuantiles = {
+    var tDistributionByOneSidedProbability = {
         0.9: [
             3.077684, 1.885618, 1.637744, 1.533206, 1.475884, 1.439756, 1.414924, 1.396815, 1.383029, 1.372184,
             1.363430, 1.356217, 1.350171, 1.345030, 1.340606, 1.336757, 1.333379, 1.330391, 1.327728, 1.325341,
@@ -169,6 +188,8 @@ var Statistics = new (function () {
             2.373270, 2.372687, 2.372119, 2.371564, 2.371022, 2.370493, 2.369977, 2.369472, 2.368979, 2.368497,
             2.368026, 2.367566, 2.367115, 2.366674, 2.366243, 2.365821, 2.365407, 2.365002, 2.364606, 2.364217]
     };
+    function oneSidedToTwoSidedProbability(probability) { return 2 * probability - 1; }
+    function twoSidedToOneSidedProbability(probability) { return (1 - (1 - probability) / 2); }
 
     this.MovingAverageStrategies = [
         {
@@ -501,7 +522,7 @@ var Statistics = new (function () {
                 var results = new Array(values.length);
                 var p = false;
                 for (var i = 20; i < values.length - 5; i++)
-                    results[i] = Statistics.testWelchsT(values.slice(i - 20, i), values.slice(i, i + 5), 0.99) ? 5 : 0;
+                    results[i] = Statistics.testWelchsT(values.slice(i - 20, i), values.slice(i, i + 5), 0.98) ? 5 : 0;
                 return results;
             }
         },

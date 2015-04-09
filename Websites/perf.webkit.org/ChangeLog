@@ -1,5 +1,40 @@
 2015-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        The results of A/B testing should state statistical significance
+        https://bugs.webkit.org/show_bug.cgi?id=143552
+
+        Reviewed by Chris Dumez.
+
+        Added statistical comparisons between results for each configuration on analysis task page using
+        Welch's t-test. The probability as well as t-statistics and the degrees of freedoms are reported.
+
+        * public/v2/app.js:
+        (App.TestGroupPane._populate): Report the list of statistical comparison between every pair of
+        root configurations in the results. e.g. if we've got A, B, C configurations then compare A/B, A/C
+        and B/C.
+        (App.TestGroupPane._computeStatisticalSignificance): Compute the statistical significance using
+        Welch's t-test. Report the probability by which two samples do not come from the same distribution.
+        (App.TestGroupPane._createConfigurationSummary): Include the array of results for this configuration.
+        Also renamed "items" to "requests" for clarity.
+
+        * public/v2/index.html: Added the template for showing statistical comparisons.
+
+        * public/v2/js/statistics.js: Renamed tDistributionQuantiles to tDistributionByOneSidedProbability
+        for clarity. Also factored out the functions to convert from one-sided probability to two-sided
+        probability and vice versa.
+        (Statistics.supportedConfidenceIntervalProbabilities):
+        (Statistics.confidenceIntervalDelta):
+        (Statistics.probabilityRangeForWelchsT): Added. Computes the lower bound and the upper bound for
+        the probability that two values are sampled from distinct distributions using Welch's t-test.
+        (Statistics.computeWelchsT): This function now takes two-sided probability like all other functions.
+        (.tDistributionByOneSidedProbability): Renamed from tDistributionQuantiles.
+        (.oneSidedToTwoSidedProbability): Extracted.
+        (.twoSidedToOneSidedProbability): Extracted.
+        (Statistics.MovingAverageStrategies): Converted the one-sided probability to the two-sided probability
+        now that computeWelchsT takes two-sided probability.
+
+2015-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed fix after r182496 for when the cached runs JSON doesn't exist.
 
         * public/v2/app.js:

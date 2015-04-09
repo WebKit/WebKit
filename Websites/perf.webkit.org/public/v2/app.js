@@ -1334,7 +1334,39 @@ App.TestGroupPane = Ember.ObjectProxy.extend({
         range.min -= margin;
 
         this.set('configurations', configurations);
+
+        var comparisons = [];
+        for (var i = 0; i < configurations.length - 1; i++) {
+            var summary1 = configurations[i].summary;
+            for (var j = i + 1; j < configurations.length; j++) {
+                var summary2 = configurations[j].summary;
+                comparisons.push({
+                    label: summary1.configLetter + ' / ' + summary2.configLetter,
+                    result: this._computeStatisticalSignificance(summary1.measuredValues, summary2.measuredValues)
+                });
+            }
+        }
+        this.set('comparisons', comparisons);
     }.observes('testResults', 'buildRequests'),
+    _computeStatisticalSignificance: function (values1, values2)
+    {
+        var tFormatter = d3.format('.3g');
+        var probabilityFormatter = d3.format('.2p');
+        var statistics = Statistics.probabilityRangeForWelchsT(values1, values2);
+        if (isNaN(statistics.t) || isNaN(statistics.degreesOfFreedom))
+            return 'N/A';
+
+        var details = ' (t=' + tFormatter(statistics.t) + ' df=' + tFormatter(statistics.degreesOfFreedom) + ')';
+
+        if (!statistics.range[0])
+            return 'Not statistically significant' + details;
+
+        var lowerLimit = probabilityFormatter(statistics.range[0]);
+        if (!statistics.range[1])
+            return 'Statistical significance > ' + lowerLimit + details;
+
+        return lowerLimit + ' < Statistical significance < ' + probabilityFormatter(statistics.range[1]) + details;
+    },
     _updateReferenceChart: function ()
     {
         var configurations = this.get('configurations');
@@ -1458,12 +1490,13 @@ App.TestGroupPane = Ember.ObjectProxy.extend({
             revisionList: summaryRevisions,
             formattedValue: isNaN(mean) ? null : testResults.formatWithDeltaAndUnit(mean, ciDelta),
             value: mean,
+            measuredValues: valuesInConfig,
             confidenceIntervalDelta: ciDelta,
             valueRange: range,
             statusLabel: App.BuildRequest.aggregateStatuses(requests),
         });
 
-        return Ember.Object.create({summary: summary, items: requests, rootSet: rootSet});
+        return Ember.Object.create({summary: summary, requests: requests, rootSet: rootSet});
     },
 });
 
