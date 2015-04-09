@@ -1,3 +1,17 @@
+2015-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a debug assertion that will fire if we try to paint layer contents on a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=143547
+
+        Reviewed by Alexey Proskuryakov.
+
+        New assertion to catch cases where other frameworks erroneously trigger painting
+        on a non-main (or non-Web) thread.
+
+        * platform/graphics/mac/WebLayer.mm:
+        (-[WebSimpleLayer display]):
+        (-[WebSimpleLayer drawInContext:]):
+
 2015-04-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] WebKit is not honoring OS preferences for secondary click behaviors

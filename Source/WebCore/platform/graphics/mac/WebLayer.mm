@@ -107,6 +107,7 @@ using namespace WebCore;
     if (pthread_main_np())
         WebThreadLock();
 #endif
+    ASSERT(isMainThread());
     [super display];
     PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
     if (layer && layer->owner())
@@ -119,6 +120,7 @@ using namespace WebCore;
     if (pthread_main_np())
         WebThreadLock();
 #endif
+    ASSERT(isMainThread());
     PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
     if (layer && layer->owner()) {
         GraphicsContext graphicsContext(context);
