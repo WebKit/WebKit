@@ -446,6 +446,7 @@ public:
     virtual void didBeginEditing() override { }
     virtual void respondToChangedContents() override { }
     virtual void respondToChangedSelection(Frame*) override { }
+    virtual void didChangeSelectionAndUpdateLayout() override { }
     virtual void discardedComposition(Frame*) override { }
     virtual void didEndEditing() override { }
     virtual void willWriteSelectionToPasteboard(Range*) override { }

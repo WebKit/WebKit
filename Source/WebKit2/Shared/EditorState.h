@@ -44,52 +44,41 @@ enum TypingAttributes {
 };
 
 struct EditorState {
-    EditorState()
-        : shouldIgnoreCompositionSelectionChange(false)
-        , selectionIsNone(true)
-        , selectionIsRange(false)
-        , isContentEditable(false)
-        , isContentRichlyEditable(false)
-        , isInPasswordField(false)
-        , isInPlugin(false)
-        , hasComposition(false)
-#if PLATFORM(IOS)
-        , isReplaceAllowed(false)
-        , hasContent(false)
-        , characterAfterSelection(0)
-        , characterBeforeSelection(0)
-        , twoCharacterBeforeSelection(0)
-        , selectedTextLength(0)
-        , typingAttributes(AttributeNone)
-#endif
-    {
-    }
+    bool shouldIgnoreCompositionSelectionChange { false };
 
-    bool shouldIgnoreCompositionSelectionChange;
-
-    bool selectionIsNone; // This will be false when there is a caret selection.
-    bool selectionIsRange;
-    bool isContentEditable;
-    bool isContentRichlyEditable;
-    bool isInPasswordField;
-    bool isInPlugin;
-    bool hasComposition;
+    bool selectionIsNone { true }; // This will be false when there is a caret selection.
+    bool selectionIsRange { false };
+    bool isContentEditable { false };
+    bool isContentRichlyEditable { false };
+    bool isInPasswordField { false };
+    bool isInPlugin { false };
+    bool hasComposition { false };
+    bool isMissingPostLayoutData { false };
 
 #if PLATFORM(IOS)
-    bool isReplaceAllowed;
-    bool hasContent;
-    UChar32 characterAfterSelection;
-    UChar32 characterBeforeSelection;
-    UChar32 twoCharacterBeforeSelection;
-    WebCore::IntRect caretRectAtStart;
-    WebCore::IntRect caretRectAtEnd;
-    Vector<WebCore::SelectionRect> selectionRects;
-    uint64_t selectedTextLength;
-    String wordAtSelection;
     WebCore::IntRect firstMarkedRect;
     WebCore::IntRect lastMarkedRect;
     String markedText;
-    uint32_t typingAttributes;
+
+    struct PostLayoutData {
+        Vector<WebCore::SelectionRect> selectionRects;
+        WebCore::IntRect caretRectAtStart;
+        WebCore::IntRect caretRectAtEnd;
+        String wordAtSelection;
+        uint64_t selectedTextLength { 0 };
+        UChar32 characterAfterSelection { 0 };
+        UChar32 characterBeforeSelection { 0 };
+        UChar32 twoCharacterBeforeSelection { 0 };
+        uint32_t typingAttributes { AttributeNone };
+        bool isReplaceAllowed { false };
+        bool hasContent { false };
+
+        void encode(IPC::ArgumentEncoder&) const;
+        static bool decode(IPC::ArgumentDecoder&, PostLayoutData&);
+    };
+
+    const PostLayoutData& postLayoutData() const;
+    PostLayoutData& postLayoutData();
 #endif
 
 #if PLATFORM(GTK)
@@ -98,7 +87,26 @@ struct EditorState {
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, EditorState&);
+
+#if PLATFORM(IOS)
+private:
+    PostLayoutData m_postLayoutData;
+#endif
 };
+
+#if PLATFORM(IOS)
+inline auto EditorState::postLayoutData() -> PostLayoutData&
+{
+    ASSERT_WITH_MESSAGE(!isMissingPostLayoutData, "Attempt to access post layout data before receiving it");
+    return m_postLayoutData;
+}
+
+inline auto EditorState::postLayoutData() const -> const PostLayoutData&
+{
+    ASSERT_WITH_MESSAGE(!isMissingPostLayoutData, "Attempt to access post layout data before receiving it");
+    return m_postLayoutData;
+}
+#endif
 
 }
 

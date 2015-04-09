@@ -1,3 +1,15 @@
+2015-04-09  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] editorState() should not cause a synchronous layout
+        https://bugs.webkit.org/show_bug.cgi?id=142536
+        <rdar://problem/20041506>
+
+        Reviewed by Enrica Casucci.
+
+        Provide implementation for EditorClient::didChangeSelectionAndUpdateLayout().
+
+        * WebCoreSupport/WebEditorClient.h:
+
 2015-04-08  Brady Eidson  <beidson@apple.com>
 
         Expose the "Share" menu for links, images, and media.

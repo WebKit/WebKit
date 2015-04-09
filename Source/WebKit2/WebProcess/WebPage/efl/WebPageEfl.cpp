@@ -82,7 +82,7 @@ void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
     notImplemented();
 }
 
-void WebPage::platformEditorState(Frame&, EditorState&) const
+void WebPage::platformEditorState(Frame&, EditorState&, IncludePostLayoutDataHint) const
 {
 }
 

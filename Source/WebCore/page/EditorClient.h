@@ -93,6 +93,7 @@ public:
     virtual void didBeginEditing() = 0;
     virtual void respondToChangedContents() = 0;
     virtual void respondToChangedSelection(Frame*) = 0;
+    virtual void didChangeSelectionAndUpdateLayout() = 0;
     virtual void didEndEditing() = 0;
     virtual void willWriteSelectionToPasteboard(Range*) = 0;
     virtual void didWriteSelectionToPasteboard() = 0;

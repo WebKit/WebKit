@@ -739,7 +739,7 @@ WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame*, const Stri
 }
 #endif
 
-EditorState WebPage::editorState() const
+EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayoutData) const
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
@@ -764,7 +764,7 @@ EditorState WebPage::editorState() const
     result.hasComposition = frame.editor().hasComposition();
     result.shouldIgnoreCompositionSelectionChange = frame.editor().ignoreCompositionSelectionChange();
     
-    platformEditorState(frame, result);
+    platformEditorState(frame, result, shouldIncludePostLayoutData);
 
     return result;
 }
@@ -4365,24 +4365,43 @@ void WebPage::cancelComposition()
 
 void WebPage::didChangeSelection()
 {
-#if PLATFORM(MAC) && USE(ASYNC_NSTEXTINPUTCLIENT)
     Frame& frame = m_page->focusController().focusedOrMainFrame();
+    FrameView* view = frame.view();
+    bool needsLayout = view && view->needsLayout();
+
+    // If there is a layout pending, we should avoid populating EditorState that require layout to be done or it will
+    // trigger a synchronous layout every time the selection changes. sendPostLayoutEditorStateIfNeeded() will be called
+    // to send the full editor state after layout is done if we send a partial editor state here.
+    auto editorState = this->editorState(needsLayout ? IncludePostLayoutDataHint::No : IncludePostLayoutDataHint::Yes);
+    ASSERT_WITH_MESSAGE(needsLayout == (view && view->needsLayout()), "Calling editorState() should not cause a synchronous layout.");
+    m_isEditorStateMissingPostLayoutData = editorState.isMissingPostLayoutData;
+
+#if PLATFORM(MAC) && USE(ASYNC_NSTEXTINPUTCLIENT)
     // Abandon the current inline input session if selection changed for any other reason but an input method direct action.
     // FIXME: This logic should be in WebCore.
     // FIXME: Many changes that affect composition node do not go through didChangeSelection(). We need to do something when DOM manipulation affects the composition, because otherwise input method's idea about it will be different from Editor's.
     // FIXME: We can't cancel composition when selection changes to NoSelection, but we probably should.
     if (frame.editor().hasComposition() && !frame.editor().ignoreCompositionSelectionChange() && !frame.selection().isNone()) {
         frame.editor().cancelComposition();
-        send(Messages::WebPageProxy::CompositionWasCanceled(editorState()));
+        send(Messages::WebPageProxy::CompositionWasCanceled(editorState));
     } else
-        send(Messages::WebPageProxy::EditorStateChanged(editorState()));
+        send(Messages::WebPageProxy::EditorStateChanged(editorState));
 #else
-    send(Messages::WebPageProxy::EditorStateChanged(editorState()), pageID(), IPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::WebPageProxy::EditorStateChanged(editorState), pageID(), IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 #endif
 
 #if PLATFORM(IOS)
     m_drawingArea->scheduleCompositingLayerFlush();
 #endif
+}
+
+void WebPage::sendPostLayoutEditorStateIfNeeded()
+{
+    if (!m_isEditorStateMissingPostLayoutData)
+        return;
+
+    send(Messages::WebPageProxy::EditorStateChanged(editorState(IncludePostLayoutDataHint::Yes)), pageID(), IPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_isEditorStateMissingPostLayoutData = false;
 }
 
 void WebPage::discardedComposition()

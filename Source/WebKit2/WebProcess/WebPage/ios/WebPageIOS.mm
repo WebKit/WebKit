@@ -128,9 +128,8 @@ void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
     notImplemented();
 }
 
-void WebPage::platformEditorState(Frame& frame, EditorState& result) const
+void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint shouldIncludePostLayoutData) const
 {
-    const VisibleSelection& selection = frame.selection().selection();
     if (frame.editor().hasComposition()) {
         RefPtr<Range> compositionRange = frame.editor().compositionRange();
         Vector<WebCore::SelectionRect> compositionRects;
@@ -145,34 +144,46 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result) const
             result.markedText = plainTextReplacingNoBreakSpace(compositionRange.get());
         }
     }
+
+    // We only set the remaining EditorState entries if the layout is done. To compute these
+    // entries, we need the layout to be done and we don't want to trigger a synchronous
+    // layout as this would be bad for performance. If we have a composition, we send everything
+    // right away as the UIProcess needs the caretRects ASAP for marked text.
+    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::No && !frame.editor().hasComposition()) {
+        result.isMissingPostLayoutData = true;
+        return;
+    }
+
+    auto& postLayoutData = result.postLayoutData();
     FrameView* view = frame.view();
+    const VisibleSelection& selection = frame.selection().selection();
     if (selection.isCaret()) {
-        result.caretRectAtStart = view->contentsToRootView(frame.selection().absoluteCaretBounds());
-        result.caretRectAtEnd = result.caretRectAtStart;
+        postLayoutData.caretRectAtStart = view->contentsToRootView(frame.selection().absoluteCaretBounds());
+        postLayoutData.caretRectAtEnd = postLayoutData.caretRectAtStart;
         // FIXME: The following check should take into account writing direction.
-        result.isReplaceAllowed = result.isContentEditable && atBoundaryOfGranularity(selection.start(), WordGranularity, DirectionForward);
-        result.wordAtSelection = plainTextReplacingNoBreakSpace(wordRangeFromPosition(selection.start()).get());
+        postLayoutData.isReplaceAllowed = result.isContentEditable && atBoundaryOfGranularity(selection.start(), WordGranularity, DirectionForward);
+        postLayoutData.wordAtSelection = plainTextReplacingNoBreakSpace(wordRangeFromPosition(selection.start()).get());
         if (selection.isContentEditable()) {
-            charactersAroundPosition(selection.start(), result.characterAfterSelection, result.characterBeforeSelection, result.twoCharacterBeforeSelection);
+            charactersAroundPosition(selection.start(), postLayoutData.characterAfterSelection, postLayoutData.characterBeforeSelection, postLayoutData.twoCharacterBeforeSelection);
             Node* root = selection.rootEditableElement();
-            result.hasContent = root && root->hasChildNodes() && !isEndOfEditableOrNonEditableContent(firstPositionInNode(root));
+            postLayoutData.hasContent = root && root->hasChildNodes() && !isEndOfEditableOrNonEditableContent(firstPositionInNode(root));
         }
     } else if (selection.isRange()) {
-        result.caretRectAtStart = view->contentsToRootView(VisiblePosition(selection.start()).absoluteCaretBounds());
-        result.caretRectAtEnd = view->contentsToRootView(VisiblePosition(selection.end()).absoluteCaretBounds());
+        postLayoutData.caretRectAtStart = view->contentsToRootView(VisiblePosition(selection.start()).absoluteCaretBounds());
+        postLayoutData.caretRectAtEnd = view->contentsToRootView(VisiblePosition(selection.end()).absoluteCaretBounds());
         RefPtr<Range> selectedRange = selection.toNormalizedRange();
         String selectedText;
         if (selectedRange) {
-            selectedRange->collectSelectionRects(result.selectionRects);
-            convertSelectionRectsToRootView(view, result.selectionRects);
+            selectedRange->collectSelectionRects(postLayoutData.selectionRects);
+            convertSelectionRectsToRootView(view, postLayoutData.selectionRects);
             selectedText = plainTextReplacingNoBreakSpace(selectedRange.get(), TextIteratorDefaultBehavior, true);
-            result.selectedTextLength = selectedText.length();
+            postLayoutData.selectedTextLength = selectedText.length();
             const int maxSelectedTextLength = 200;
             if (selectedText.length() <= maxSelectedTextLength)
-                result.wordAtSelection = selectedText;
+                postLayoutData.wordAtSelection = selectedText;
         }
         // FIXME: We should disallow replace when the string contains only CJ characters.
-        result.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.containsOnlyWhitespace();
+        postLayoutData.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.containsOnlyWhitespace();
     }
     if (!selection.isNone()) {
         Node* nodeToRemove;
@@ -181,18 +192,18 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result) const
             CTFontSymbolicTraits traits = font ? CTFontGetSymbolicTraits(font) : 0;
             
             if (traits & kCTFontTraitBold)
-                result.typingAttributes |= AttributeBold;
+                postLayoutData.typingAttributes |= AttributeBold;
             if (traits & kCTFontTraitItalic)
-                result.typingAttributes |= AttributeItalics;
+                postLayoutData.typingAttributes |= AttributeItalics;
             
             RefPtr<EditingStyle> typingStyle = frame.selection().typingStyle();
             if (typingStyle && typingStyle->style()) {
                 String value = typingStyle->style()->getPropertyValue(CSSPropertyWebkitTextDecorationsInEffect);
                 if (value.contains("underline"))
-                    result.typingAttributes |= AttributeUnderline;
+                    postLayoutData.typingAttributes |= AttributeUnderline;
             } else {
                 if (style->textDecorationsInEffect() & TextDecorationUnderline)
-                    result.typingAttributes |= AttributeUnderline;
+                    postLayoutData.typingAttributes |= AttributeUnderline;
             }
             
             if (nodeToRemove)

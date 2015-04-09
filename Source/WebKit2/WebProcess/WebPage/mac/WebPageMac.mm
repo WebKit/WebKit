@@ -122,7 +122,7 @@ void WebPage::platformDetach()
     [m_mockAccessibilityElement setWebPage:nullptr];
 }
 
-void WebPage::platformEditorState(Frame& frame, EditorState& result) const
+void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint) const
 {
 }
 

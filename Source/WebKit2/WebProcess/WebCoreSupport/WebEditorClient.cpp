@@ -190,6 +190,11 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
 #endif
 }
 
+void WebEditorClient::didChangeSelectionAndUpdateLayout()
+{
+    m_page->sendPostLayoutEditorStateIfNeeded();
+}
+
 void WebEditorClient::discardedComposition(Frame*)
 {
     m_page->discardedComposition();

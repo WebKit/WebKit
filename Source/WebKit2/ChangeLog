@@ -1,3 +1,67 @@
+2015-04-09  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] editorState() should not cause a synchronous layout
+        https://bugs.webkit.org/show_bug.cgi?id=142536
+        <rdar://problem/20041506>
+
+        Reviewed by Enrica Casucci.
+
+        platformEditorState() on iOS does a synchronous layout to compute some
+        of the EditorState members (e.g. caretRectAtStart / caretRectAtEnd).
+        This is bad for performance as this is called every time the selection
+        is changed (which happens for e.g. when you set the value of a focused
+        HTMLInputElement).
+
+        This patch updates the behavior on iOS to only send a partial EditorState
+        on selection change so that the UIProcess gets most of the information
+        (the ones that do not require style recalc or layout) ASAP. A full Editor
+        state is then sent after the asynchronous layout is done.
+
+        With this change, I see a 38% improvement on Speedometer (26.4 +/- 0.37
+        -> 36.5 +/- 0.54) on iPhone 6 Plus.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode):
+        (WebKit::EditorState::decode):
+        (WebKit::EditorState::PostLayoutData::encode):
+        (WebKit::EditorState::PostLayoutData::decode):
+        * Shared/EditorState.h:
+        (WebKit::EditorState::EditorState): Deleted.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _didCommitLayerTree:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (WebKit::WKSelectionDrawingInfo::WKSelectionDrawingInfo):
+        (-[WKContentView webSelectionRects]):
+        (-[WKContentView _addShortcut:]):
+        (-[WKContentView selectedText]):
+        (-[WKContentView isReplaceAllowed]):
+        (-[WKContentView _promptForReplace:]):
+        (-[WKContentView _transliterateChinese:]):
+        (-[WKContentView textStylingAtPosition:inDirection:]):
+        (-[WKContentView canPerformAction:withSender:]):
+        (-[WKContentView _showDictionary:]):
+        (-[WKContentView _characterBeforeCaretSelection]):
+        (-[WKContentView _characterInRelationToCaretSelection:]):
+        (-[WKContentView _selectionAtDocumentStart]):
+        (-[WKContentView selectedTextRange]):
+        (-[WKContentView hasContent]):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::didChangeSelectionAndUpdateLayout):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        (WebKit::WebPage::didChangeSelection):
+        (WebKit::WebPage::sendPostLayoutEditorStateIfNeeded):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::WebPage::platformEditorState):
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformEditorState):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformEditorState):
+
 2015-04-09  Antti Koivisto  <antti@apple.com>
 
         Network Cache: Crash in WebCore::CachedResource::tryReplaceEncodedData

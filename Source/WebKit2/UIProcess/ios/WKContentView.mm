@@ -490,7 +490,11 @@ private:
         [_webView _updateVisibleContentRects];
     }
     
-    [self _updateChangedSelection];
+    // Updating the selection requires a full editor state. If the editor state is missing post layout
+    // data then it means there is a layout pending and we're going to be called again after the layout
+    // so we delay the selection update.
+    if (!_page->editorState().isMissingPostLayoutData)
+        [self _updateChangedSelection];
 }
 
 - (void)_setAcceleratedCompositingRootView:(UIView *)rootView

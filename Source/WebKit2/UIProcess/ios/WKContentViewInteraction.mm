@@ -85,8 +85,9 @@ WKSelectionDrawingInfo::WKSelectionDrawingInfo(const EditorState& editorState)
     }
 
     type = SelectionType::Range;
-    caretRect = editorState.caretRectAtEnd;
-    selectionRects = editorState.selectionRects;
+    auto& postLayoutData = editorState.postLayoutData();
+    caretRect = postLayoutData.caretRectAtEnd;
+    selectionRects = postLayoutData.selectionRects;
 }
 
 inline bool operator==(const WKSelectionDrawingInfo& a, const WKSelectionDrawingInfo& b)
@@ -986,13 +987,14 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (NSArray *)webSelectionRects
 {
-    unsigned size = _page->editorState().selectionRects.size();
+    const auto& selectionRects = _page->editorState().postLayoutData().selectionRects;
+    unsigned size = selectionRects.size();
     if (!size)
         return nil;
 
     NSMutableArray *webRects = [NSMutableArray arrayWithCapacity:size];
     for (unsigned i = 0; i < size; i++) {
-        const WebCore::SelectionRect& coreRect = _page->editorState().selectionRects[i];
+        const WebCore::SelectionRect& coreRect = selectionRects[i];
         WebSelectionRect *webRect = [WebSelectionRect selectionRect];
         webRect.rect = coreRect.rect();
         webRect.writingDirection = coreRect.direction() == LTR ? WKWritingDirectionLeftToRight : WKWritingDirectionRightToLeft;
@@ -1277,19 +1279,19 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (void)_addShortcut:(id)sender
 {
     if (_textSelectionAssistant && [_textSelectionAssistant respondsToSelector:@selector(showTextServiceFor:fromRect:)])
-        [_textSelectionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().selectionRects[0].rect()];
+        [_textSelectionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().postLayoutData().selectionRects[0].rect()];
     else if (_webSelectionAssistant && [_webSelectionAssistant respondsToSelector:@selector(showTextServiceFor:fromRect:)])
-        [_webSelectionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().selectionRects[0].rect()];
+        [_webSelectionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().postLayoutData().selectionRects[0].rect()];
 }
 
 - (NSString *)selectedText
 {
-    return (NSString *)_page->editorState().wordAtSelection;
+    return (NSString *)_page->editorState().postLayoutData().wordAtSelection;
 }
 
 - (BOOL)isReplaceAllowed
 {
-    return _page->editorState().isReplaceAllowed;
+    return _page->editorState().postLayoutData().isReplaceAllowed;
 }
 
 - (void)replaceText:(NSString *)text withText:(NSString *)word
@@ -1304,17 +1306,18 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_promptForReplace:(id)sender
 {
-    if (_page->editorState().wordAtSelection.isEmpty())
+    const auto& wordAtSelection = _page->editorState().postLayoutData().wordAtSelection;
+    if (wordAtSelection.isEmpty())
         return;
 
     if ([_textSelectionAssistant respondsToSelector:@selector(scheduleReplacementsForText:)])
-        [_textSelectionAssistant scheduleReplacementsForText:_page->editorState().wordAtSelection];
+        [_textSelectionAssistant scheduleReplacementsForText:wordAtSelection];
 }
 
 - (void)_transliterateChinese:(id)sender
 {
     if ([_textSelectionAssistant respondsToSelector:@selector(scheduleChineseTransliterationForText:)])
-        [_textSelectionAssistant scheduleChineseTransliterationForText:_page->editorState().wordAtSelection];
+        [_textSelectionAssistant scheduleChineseTransliterationForText:_page->editorState().postLayoutData().wordAtSelection];
 }
 
 - (void)_reanalyze:(id)sender
@@ -1334,10 +1337,11 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     NSMutableDictionary* result = [NSMutableDictionary dictionary];
 
+    auto typingAttributes = _page->editorState().postLayoutData().typingAttributes;
     CTFontSymbolicTraits symbolicTraits = 0;
-    if (_page->editorState().typingAttributes & AttributeBold)
+    if (typingAttributes & AttributeBold)
         symbolicTraits |= kCTFontBoldTrait;
-    if (_page->editorState().typingAttributes & AttributeItalics)
+    if (typingAttributes & AttributeItalics)
         symbolicTraits |= kCTFontTraitItalic;
 
     // We chose a random font family and size.
@@ -1351,7 +1355,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if (font)
         [result setObject:(id)font.get() forKey:NSFontAttributeName];
     
-    if (_page->editorState().typingAttributes & AttributeUnderline)
+    if (typingAttributes & AttributeUnderline)
         [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
 
     return result;
@@ -1389,7 +1393,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         if (_page->editorState().isInPasswordField || !(hasWebSelection || _page->editorState().selectionIsRange))
             return NO;
 
-        NSUInteger textLength = _page->editorState().selectedTextLength;
+        NSUInteger textLength = _page->editorState().postLayoutData().selectedTextLength;
         // FIXME: We should be calling UIReferenceLibraryViewController to check if the length is
         // acceptable, but the interface takes a string.
         // <rdar://problem/15254406>
@@ -1418,7 +1422,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     }
 
     if (action == @selector(_promptForReplace:)) {
-        if (!_page->editorState().selectionIsRange || !_page->editorState().isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
+        if (!_page->editorState().selectionIsRange || !_page->editorState().postLayoutData().isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
             return NO;
         if ([[self selectedText] _containsCJScriptsOnly])
             return NO;
@@ -1426,13 +1430,13 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     }
 
     if (action == @selector(_transliterateChinese:)) {
-        if (!_page->editorState().selectionIsRange || !_page->editorState().isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
+        if (!_page->editorState().selectionIsRange || !_page->editorState().postLayoutData().isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
             return NO;
         return UIKeyboardEnabledInputModesAllowChineseTransliterationForText([self selectedText]);
     }
 
     if (action == @selector(_reanalyze:)) {
-        if (!_page->editorState().selectionIsRange || !_page->editorState().isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
+        if (!_page->editorState().selectionIsRange || !_page->editorState().postLayoutData().isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
             return NO;
         return UIKeyboardCurrentInputModeAllowsChineseOrJapaneseReanalysisForText([self selectedText]);
     }
@@ -1530,7 +1534,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_showDictionary:(NSString *)text
 {
-    CGRect presentationRect = _page->editorState().selectionRects[0].rect();
+    CGRect presentationRect = _page->editorState().postLayoutData().selectionRects[0].rect();
     if (_textSelectionAssistant)
         [_textSelectionAssistant showDictionaryFor:text fromRect:presentationRect];
     else
@@ -1937,18 +1941,18 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (UTF32Char)_characterBeforeCaretSelection
 {
-    return _page->editorState().characterBeforeSelection;
+    return _page->editorState().postLayoutData().characterBeforeSelection;
 }
 
 - (UTF32Char)_characterInRelationToCaretSelection:(int)amount
 {
     switch (amount) {
     case 0:
-        return _page->editorState().characterAfterSelection;
+        return _page->editorState().postLayoutData().characterAfterSelection;
     case -1:
-        return _page->editorState().characterBeforeSelection;
+        return _page->editorState().postLayoutData().characterBeforeSelection;
     case -2:
-        return _page->editorState().twoCharacterBeforeSelection;
+        return _page->editorState().postLayoutData().twoCharacterBeforeSelection;
     default:
         return 0;
     }
@@ -1956,7 +1960,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (BOOL)_selectionAtDocumentStart
 {
-    return !_page->editorState().characterBeforeSelection;
+    return !_page->editorState().postLayoutData().characterBeforeSelection;
 }
 
 - (CGRect)textFirstRect
@@ -2130,8 +2134,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (UITextRange *)selectedTextRange
 {
-    FloatRect startRect = _page->editorState().caretRectAtStart;
-    FloatRect endRect = _page->editorState().caretRectAtEnd;
+    auto& postLayoutEditorStateData = _page->editorState().postLayoutData();
+    FloatRect startRect = postLayoutEditorStateData.caretRectAtStart;
+    FloatRect endRect = postLayoutEditorStateData.caretRectAtEnd;
     double inverseScale = [self inverseScale];
     // We want to keep the original caret width, while the height scales with
     // the content taking orientation into account.
@@ -2159,7 +2164,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
                                  startRect:startRect
                                    endRect:endRect
                             selectionRects:[self webSelectionRects]
-                        selectedTextLength:_page->editorState().selectedTextLength];
+                        selectedTextLength:postLayoutEditorStateData.selectedTextLength];
 }
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
@@ -2680,7 +2685,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
 - (BOOL)hasContent
 {
-    return _page->editorState().hasContent;
+    return _page->editorState().postLayoutData().hasContent;
 }
 
 - (void)selectAll

@@ -327,7 +327,9 @@ public:
     WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(WebFrame*, const String&);
 #endif // ENABLE(WEBGL)
     
-    EditorState editorState() const;
+    enum class IncludePostLayoutDataHint { No, Yes };
+    EditorState editorState(IncludePostLayoutDataHint = IncludePostLayoutDataHint::Yes) const;
+    void sendPostLayoutEditorStateIfNeeded();
 
     String renderTreeExternalRepresentation() const;
     String renderTreeExternalRepresentationForPrinting() const;
@@ -878,7 +880,7 @@ private:
 
     void platformInitialize();
     void platformDetach();
-    void platformEditorState(WebCore::Frame&, EditorState& result) const;
+    void platformEditorState(WebCore::Frame&, EditorState& result, IncludePostLayoutDataHint) const;
 
     void didReceiveWebPageMessage(IPC::Connection&, IPC::MessageDecoder&);
     void didReceiveSyncWebPageMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
@@ -1353,6 +1355,7 @@ private:
 
     bool m_mainFrameProgressCompleted;
     bool m_shouldDispatchFakeMouseMoveEvents;
+    bool m_isEditorStateMissingPostLayoutData { false };
 };
 
 } // namespace WebKit

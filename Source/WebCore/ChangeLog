@@ -1,3 +1,19 @@
+2015-04-09  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] editorState() should not cause a synchronous layout
+        https://bugs.webkit.org/show_bug.cgi?id=142536
+        <rdar://problem/20041506>
+
+        Reviewed by Enrica Casucci.
+
+        Add didChangeSelectionAndUpdateLayout() callback to EditorClient
+        that is called at the end of FrameSelection::updateAndRevealSelection().
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::updateAndRevealSelection):
+        * loader/EmptyClients.h:
+        * page/EditorClient.h:
+
 2015-04-08  Anders Carlsson  <andersca@apple.com>
 
         Give each cache group a storage and use it in place of the singleton

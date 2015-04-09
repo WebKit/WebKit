@@ -68,7 +68,7 @@ void WebPage::platformDetach()
 {
 }
 
-void WebPage::platformEditorState(Frame& frame, EditorState& result) const
+void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint) const
 {
     result.cursorRect = frame.selection().absoluteCaretBounds();
 }
