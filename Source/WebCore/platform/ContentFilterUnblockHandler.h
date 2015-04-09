@@ -50,7 +50,7 @@ public:
 
     ContentFilterUnblockHandler() = default;
     WEBCORE_EXPORT ContentFilterUnblockHandler(String unblockURLHost, UnblockRequesterFunction);
-#if PLATFORM(IOS)
+#if HAVE(PARENTAL_CONTROLS)
     ContentFilterUnblockHandler(String unblockURLHost, RetainPtr<WebFilterEvaluator>);
 #endif
 
@@ -69,7 +69,7 @@ private:
     String m_unblockURLHost;
     URL m_unreachableURL;
     UnblockRequesterFunction m_unblockRequester;
-#if PLATFORM(IOS)
+#if HAVE(PARENTAL_CONTROLS)
     RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
 #endif
 };

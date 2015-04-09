@@ -1,3 +1,15 @@
+2015-04-09  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Add a HAVE(PARENTAL_CONTROLS) and use it
+        https://bugs.webkit.org/show_bug.cgi?id=143559
+
+        Reviewed by David Kilzer.
+
+        Added PLATFORM(WATCHOS). Used PLATFORM() since Watch OS is just a variant of OS(IOS).
+        Defined HAVE(PARENTAL_CONTROLS) to be true on all Cocoa platforms except Watch OS.
+
+        * wtf/Platform.h:
+
 2015-04-08  Alex Christensen  <achristensen@webkit.org> and Patrick Gansterer  <paroga@webkit.org>
 
         Add CMake build system for WinCairo port.

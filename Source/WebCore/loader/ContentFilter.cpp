@@ -47,7 +47,9 @@ Vector<ContentFilter::Type>& ContentFilter::types()
 {
     static NeverDestroyed<Vector<ContentFilter::Type>> types {
         Vector<ContentFilter::Type> {
+#if HAVE(PARENTAL_CONTROLS)
             type<ParentalControlsContentFilter>(),
+#endif
 #if HAVE(NETWORK_EXTENSION)
             type<NetworkExtensionContentFilter>()
 #endif

@@ -1,3 +1,22 @@
+2015-04-09  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Add a HAVE(PARENTAL_CONTROLS) and use it
+        https://bugs.webkit.org/show_bug.cgi?id=143559
+
+        Reviewed by David Kilzer.
+
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::types): Only registered ParentalControlsContentFilter if HAVE(PARENTAL_CONTROLS).
+        * platform/ContentFilterUnblockHandler.h: Changed PLATFORM(IOS) to HAVE(PARENTAL_CONTROLS).
+        * platform/cocoa/ContentFilterUnblockHandlerCocoa.mm:
+        (WebCore::ContentFilterUnblockHandler::wrapWithDecisionHandler): Ditto.
+        (WebCore::ContentFilterUnblockHandler::needsUIProcess): Ditto.
+        (WebCore::ContentFilterUnblockHandler::encode): Ditto.
+        (WebCore::ContentFilterUnblockHandler::decode): Ditto.
+        (WebCore::ContentFilterUnblockHandler::canHandleRequest): Ditto.
+        (WebCore::ContentFilterUnblockHandler::requestUnblockAsync): Ditto.
+        * platform/cocoa/ParentalControlsContentFilter.mm: Wrapped the file with HAVE(PARENTAL_CONTROLS)
+
 2015-04-09  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, added CSS Grid Layout to features.json file.

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ParentalControlsContentFilter.h"
 
+#if HAVE(PARENTAL_CONTROLS)
+
 #import "ContentFilterUnblockHandler.h"
 #import "Logging.h"
 #import "ResourceResponse.h"
@@ -129,3 +131,5 @@ void ParentalControlsContentFilter::updateFilterState()
 }
 
 } // namespace WebCore
+
+#endif // HAVE(PARENTAL_CONTROLS)

@@ -464,6 +464,11 @@
 #define WTF_PLATFORM_APPLETV 1
 #endif
 
+/* PLATFORM(WATCHOS) */
+#if defined(TARGET_OS_WATCH) && TARGET_OS_WATCH
+#define WTF_PLATFORM_WATCHOS 1
+#endif
+
 /* Graphics engines */
 
 /* USE(CG) and PLATFORM(CI) */
@@ -496,6 +501,10 @@
 #define ENABLE_USER_MESSAGE_HANDLERS 1
 #define HAVE_OUT_OF_PROCESS_LAYER_HOSTING 1
 #define HAVE_DTRACE 1
+
+#if !PLATFORM(WATCHOS)
+#define HAVE_PARENTAL_CONTROLS 1
+#endif
 
 #endif
 
