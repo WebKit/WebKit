@@ -978,8 +978,7 @@ add_custom_command(
             ${PluginProcessGTK2_SOURCES}
             ${PluginProcess_SOURCES}
             ${WebKit2_HEADERS}
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${FORWARDING_HEADERS_DIR} gtk
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${FORWARDING_HEADERS_DIR} soup
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl --input-path ${WEBKIT2_DIR} --output ${FORWARDING_HEADERS_DIR} --platform gtk --platform soup
     COMMAND touch ${CMAKE_BINARY_DIR}/WebKit2-forwarding-headers.stamp
 )
 add_custom_target(WebKit2-forwarding-headers

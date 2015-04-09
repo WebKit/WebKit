@@ -1,6 +1,5 @@
 add_custom_target(forwarding-headersEflForWebKitTestRunner
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT_TESTRUNNER_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include efl
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT_TESTRUNNER_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include soup
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${WEBKIT_TESTRUNNER_DIR} --output ${DERIVED_SOURCES_WEBKIT2_DIR}/include --platform efl --platform soup
 )
 set(ForwardingHeadersForWebKitTestRunner_NAME forwarding-headersEflForWebKitTestRunner)
 

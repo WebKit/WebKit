@@ -140,7 +140,7 @@ add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/TestWebKitAPI-forwarding-headers.stamp
     DEPENDS ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl
             ${TestWebKitAPI_SOURCES}
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${TESTWEBKITAPI_DIR} ${FORWARDING_HEADERS_DIR} gtk
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${TESTWEBKITAPI_DIR} --output ${FORWARDING_HEADERS_DIR} --platform gtk
     COMMAND touch ${CMAKE_BINARY_DIR}/TestWebKitAPI-forwarding-headers.stamp
 )
 add_custom_target(TestWebKitAPI-forwarding-headers

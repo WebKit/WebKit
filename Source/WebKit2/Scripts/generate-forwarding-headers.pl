@@ -32,9 +32,9 @@ use File::Find;
 use File::Basename;
 use File::Path qw(mkpath);
 use File::Spec::Functions;
+use Getopt::Long;
 
 my $srcRoot = realpath(File::Spec->catfile(dirname(abs_path($0)), "../.."));
-my $incFromRoot = abs_path($ARGV[0]);
 my @platformPrefixes = ("cf", "Cocoa", "CoordinatedGraphics", "curl", "efl", "gtk", "mac", "soup", "win");
 my @frameworks = ("JavaScriptCore", "WebCore", "WebKit");
 my @skippedPrefixes;
@@ -44,13 +44,20 @@ my $frameworkDirectoryName;
 my %neededHeaders;
 my $verbose = 0; # enable it for debugging purpose
 
-shift;
-my $outputDirectory = $ARGV[0];
-shift;
-my $platform  = $ARGV[0];
+my @incFromRoot;
+my $outputDirectory;
+my @platform;
+
+my %options = (
+    'include-path=s' => \@incFromRoot,
+    'output=s' => \$outputDirectory,
+    'platform=s' => \@platform
+);
+
+GetOptions(%options);
 
 foreach my $prefix (@platformPrefixes) {
-    push(@skippedPrefixes, $prefix) unless ($prefix =~ $platform);
+    push(@skippedPrefixes, $prefix) if grep($_ =~ "$prefix", @platform) == 0;
 }
 
 foreach (@frameworks) {
@@ -59,7 +66,7 @@ foreach (@frameworks) {
     @frameworkHeaders = ();
     %neededHeaders = ();
 
-    find(\&collectNeededHeaders, $incFromRoot);
+    foreach (@incFromRoot) { find(\&collectNeededHeaders, abs_path($_) ); };
     find(\&collectFrameworkHeaderPaths, File::Spec->catfile($srcRoot, $frameworkDirectoryName));
     createForwardingHeadersForFramework();
 }

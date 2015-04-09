@@ -1,3 +1,14 @@
+2015-04-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL][GTK] WebKit2's generate-forwarding-headers.pl runs too many times
+        https://bugs.webkit.org/show_bug.cgi?id=142907
+
+        Reviewed by Carlos Garcia Campos.
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * Scripts/generate-forwarding-headers.pl: Make it work with more path and platform arguments.
+
 2015-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Exception in console and broken right click after attempting to show context menu in Inspector
