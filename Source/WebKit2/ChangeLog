@@ -1,3 +1,16 @@
+2015-04-08  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL] Create PageUIClientEfl after sending CreateWebPage message
+        https://bugs.webkit.org/show_bug.cgi?id=143514
+
+        Reviewed by Gyuyoung Kim.
+
+        UIProcess sends some messages to WebPage before WebPage is created. It makes some error logs on debug build.
+        So this patch moves the initialization of m_pageUIClient after calling WKViewInitialize().
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+
 2015-04-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] WebKit is not honoring OS preferences for secondary click behaviors

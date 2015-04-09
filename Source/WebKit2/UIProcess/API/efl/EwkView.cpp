@@ -280,7 +280,6 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
     , m_pageGroup(EwkPageGroup::findOrCreateWrapper(WKPageGetPageGroup(wkPage())))
     , m_pageLoadClient(std::make_unique<PageLoadClientEfl>(this))
     , m_pagePolicyClient(std::make_unique<PagePolicyClientEfl>(this))
-    , m_pageUIClient(std::make_unique<PageUIClientEfl>(this))
     , m_contextMenuClient(std::make_unique<ContextMenuClientEfl>(this))
     , m_findClient(std::make_unique<FindClientEfl>(this))
     , m_formClient(std::make_unique<FormClientEfl>(this))
@@ -327,6 +326,8 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
 
     m_pendingSurfaceResize = m_isAccelerated;
     WKViewInitialize(wkView());
+
+    m_pageUIClient = std::make_unique<PageUIClientEfl>(this);
 
     WKPageGroupRef wkPageGroup = WKPageGetPageGroup(wkPage());
     WKPreferencesRef wkPreferences = WKPageGroupGetPreferences(wkPageGroup);
