@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,34 +27,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ConsoleSession = class ConsoleSession extends WebInspector.Object
+WebInspector.ConsoleCommandResultMessage = class ConsoleCommandResult extends WebInspector.ConsoleMessage
 {
-    constructor()
+    constructor(result, wasThrown, savedResultIndex)
     {
-        super();
+        var source = WebInspector.ConsoleMessage.MessageSource.JS;
+        var level = (wasThrown ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
+        var type = WebInspector.ConsoleMessage.MessageType.Result;
 
-        var element = document.createElement("div");
-        element.className = "console-session";
-        this.element = element;
-        this._messagesElement = element;
+        super(source, level, "", type, undefined, undefined, undefined, 0, [result], undefined, undefined);
+
+        this._savedResultIndex = savedResultIndex;
+
+        if (this._savedResultIndex && this._savedResultIndex > WebInspector.ConsoleCommandResultMessage.maximumSavedResultIndex)
+            WebInspector.ConsoleCommandResultMessage.maximumSavedResultIndex = this._savedResultIndex;
+    }
+
+    // Static
+
+    static clearMaximumSavedResultIndex()
+    {
+        WebInspector.ConsoleCommandResultMessage.maximumSavedResultIndex = 0;
     }
 
     // Public
 
-    addMessageView(messageView)
+    get savedResultIndex()
     {
-        var messageElement = messageView.element;
-        messageElement.classList.add(WebInspector.LogContentView.ItemWrapperStyleClassName);
-        this._messagesElement.appendChild(messageElement);
-    }
-
-    append(messageOrGroupElement)
-    {
-        this._messagesElement.appendChild(messageOrGroupElement);
-    }
-
-    hasMessages()
-    {
-        return !!this._messagesElement.childNodes.length;
+        return this._savedResultIndex;
     }
 };
+
+WebInspector.ConsoleCommandResultMessage.maximumSavedResultIndex = 0;

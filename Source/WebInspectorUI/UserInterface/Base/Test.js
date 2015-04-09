@@ -37,6 +37,7 @@ WebInspector.loaded = function()
     // The initialization order should match the same in Main.js.
     InspectorBackend.registerInspectorDispatcher(new WebInspector.InspectorObserver);
     InspectorBackend.registerPageDispatcher(new WebInspector.PageObserver);
+    InspectorBackend.registerConsoleDispatcher(new WebInspector.ConsoleObserver);
     InspectorBackend.registerDOMDispatcher(new WebInspector.DOMObserver);
     InspectorBackend.registerNetworkDispatcher(new WebInspector.NetworkObserver);
     InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerObserver);
@@ -50,6 +51,8 @@ WebInspector.loaded = function()
     this.frameResourceManager = new WebInspector.FrameResourceManager;
     this.domTreeManager = new WebInspector.DOMTreeManager;
     this.cssStyleManager = new WebInspector.CSSStyleManager;
+    this.logManager = new WebInspector.LogManager;
+    this.issueManager = new WebInspector.IssueManager;
     this.runtimeManager = new WebInspector.RuntimeManager;
     this.timelineManager = new WebInspector.TimelineManager;
     this.debuggerManager = new WebInspector.DebuggerManager;
@@ -63,6 +66,7 @@ WebInspector.loaded = function()
 
     // Enable agents.
     InspectorAgent.enable();
+    ConsoleAgent.enable();
 
     // Perform one-time tasks.
     WebInspector.CSSCompletions.requestCSSNameCompletions();

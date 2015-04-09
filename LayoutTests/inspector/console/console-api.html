@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+var string = "string";
+var object = {a:1};
+
+function test()
+{
+    var currentStepIndex = 0;
+    var steps = [
+        "console.log('console.log')",
+        "console.warn('console.warn')",
+        "console.error('console.error')",
+        "console.debug('console.debug')",
+        "console.info('console.info')",
+        "console.assert(false, 'assertion message')",
+        "console.trace()",
+        "console.log('string message', string)",
+        "console.log('message', object, object)",
+        "console.error('message', object)",
+        "console.warn('message', object)",
+        "console.debug('message', object)",
+        "console.info('message', object)",
+        "console.dir(object)",
+        "console.dirxml(object)",
+        "console.group('groupName')",
+        "console.groupEnd('groupName')",
+        "console.groupCollapsed('collapsedGroupName')",
+        "console.groupEnd('collapsedGroupName')",
+        "console.count()",
+    ];
+
+    function remoteObjectJSONFilter(key, value)
+    {
+        if (key === "_objectId" || key === "_stackTrace")
+            return "<filtered>";
+
+        return value;
+    }
+
+    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, function(event) {
+        var message = event.data.message;
+        InspectorTest.assert(message instanceof WebInspector.ConsoleMessage);
+        InspectorTest.log("\nSTEP: " + steps[currentStepIndex]);
+        InspectorTest.log(JSON.stringify(message, remoteObjectJSONFilter, "  "));
+
+        if (++currentStepIndex >= steps.length)
+            InspectorTest.completeTest();
+    });
+
+    for (var step of steps)
+        WebInspector.runtimeManager.evaluateInInspectedWindow(step, "test", false, true, false, true, false, function(){});
+}
+</script>
+</head>
+<body onload="runTest();">
+</body>
+</html>

@@ -1,5 +1,167 @@
 2015-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Split ConsoleMessageImpl into the View and the Model
+        https://bugs.webkit.org/show_bug.cgi?id=142599
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/ConsoleMessage.js: Added.
+        (WebInspector.ConsoleMessage):
+        (WebInspector.ConsoleMessage.prototype.get source):
+        (WebInspector.ConsoleMessage.prototype.get level):
+        (WebInspector.ConsoleMessage.prototype.get messageText):
+        (WebInspector.ConsoleMessage.prototype.get type):
+        (WebInspector.ConsoleMessage.prototype.get url):
+        (WebInspector.ConsoleMessage.prototype.get line):
+        (WebInspector.ConsoleMessage.prototype.get column):
+        (WebInspector.ConsoleMessage.prototype.get repeatCount):
+        (WebInspector.ConsoleMessage.prototype.get parameters):
+        (WebInspector.ConsoleMessage.prototype.get stackTrace):
+        (WebInspector.ConsoleMessage.prototype.get request):
+        New readonly model object for console messages.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * UserInterface/Base/Test.js:
+        (WebInspector.loaded):
+        Load the new files in the main / test page.
+
+        * UserInterface/Views/LegacyConsoleMessage.js: Removed.
+        * UserInterface/Views/LegacyConsoleMessageImpl.js: Removed.
+        Remove Legacy versions.
+
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController):
+        (WebInspector.JavaScriptLogViewController.prototype.startNewSession):
+        (WebInspector.JavaScriptLogViewController.prototype.appendImmediateExecutionWithResult.saveResultCallback):
+        (WebInspector.JavaScriptLogViewController.prototype.appendImmediateExecutionWithResult):
+        (WebInspector.JavaScriptLogViewController.prototype.appendConsoleMessage):
+        (WebInspector.JavaScriptLogViewController.prototype.updatePreviousMessageRepeatCount):
+        (WebInspector.JavaScriptLogViewController.prototype.consolePromptTextCommitted.printResult):
+        (WebInspector.JavaScriptLogViewController.prototype.consolePromptTextCommitted):
+        (WebInspector.JavaScriptLogViewController.prototype._appendConsoleMessageView):
+        (WebInspector.JavaScriptLogViewController.prototype._appendConsoleMessage): Deleted.
+        Update LogViewController to create ConsoleMessageViews from ConsoleMessages when applicable.
+        Also clarify when we have a view versus model object.
+
+        * UserInterface/Protocol/ConsoleObserver.js:
+        (WebInspector.ConsoleObserver.prototype.messageAdded):
+        * UserInterface/Controllers/LogManager.js:
+        (WebInspector.LogManager.prototype.messageWasAdded):
+        (WebInspector.LogManager.prototype.messagesCleared):
+        (WebInspector.LogManager.prototype._mainResourceDidChange):
+        Create model objects and issue events for the model objects.
+
+        * UserInterface/Models/DefaultDashboard.js:
+        (WebInspector.DefaultDashboard.prototype._consoleMessageAdded):
+        (WebInspector.DefaultDashboard.prototype._incrementConsoleMessageType):
+        Update now that the event gives us a model object.
+
+        * UserInterface/Views/ConsoleMessageView.js: Added.
+        (WebInspector.ConsoleMessageView):
+        (WebInspector.ConsoleMessageView.prototype.get element):
+        (WebInspector.ConsoleMessageView.prototype.get message):
+        (WebInspector.ConsoleMessageView.prototype.get repeatCount):
+        (WebInspector.ConsoleMessageView.prototype.set repeatCount):
+        (WebInspector.ConsoleMessageView.prototype.toClipboardString):
+        (WebInspector.ConsoleMessageView.prototype._appendMessageTextAndArguments):
+        (WebInspector.ConsoleMessageView.prototype._appendSavedResultIndex):
+        (WebInspector.ConsoleMessageView.prototype._appendLocationLink):
+        (WebInspector.ConsoleMessageView.prototype._appendParameters):
+        (WebInspector.ConsoleMessageView.prototype._appendStackTrace):
+        (WebInspector.ConsoleMessageView.prototype._appendFormattedArguments):
+        (WebInspector.ConsoleMessageView.prototype._formatParameter):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsValue):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsString):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsNode):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsObject):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsArray):
+        (WebInspector.ConsoleMessageView.prototype._rootPropertyPathForObject):
+        (WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString.parameterFormatter):
+        (WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString.stringFormatter):
+        (WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString.floatFormatter):
+        (WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString.integerFormatter):
+        (WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString.styleFormatter):
+        (WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString.isWhitelistedProperty):
+        (WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString.append):
+        (WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString):
+        (WebInspector.ConsoleMessageView.prototype._shouldShowStackTrace):
+        (WebInspector.ConsoleMessageView.prototype._shouldHideURL):
+        (WebInspector.ConsoleMessageView.prototype._firstNonNativeCallFrame):
+        (WebInspector.ConsoleMessageView.prototype._linkifyLocation):
+        (WebInspector.ConsoleMessageView.prototype._linkifyCallFrame):
+        (WebInspector.ConsoleMessageView.prototype._userProvidedColumnNames):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsTable):
+        (WebInspector.ConsoleMessageView.prototype._levelString):
+        (WebInspector.ConsoleMessageView.prototype._enforcesClipboardPrefixString):
+        (WebInspector.ConsoleMessageView.prototype._clipboardPrefixString):
+        New View class for a ConsoleMessage. This is a near direct port of the old code
+        to a view class that has a root element.
+
+        * UserInterface/Models/ConsoleCommandResultMessage.js: Renamed from Source/WebInspectorUI/UserInterface/Views/ConsoleCommandResult.js.
+        (WebInspector.ConsoleCommandResultMessage):
+        (WebInspector.ConsoleCommandResultMessage.clearMaximumSavedResultIndex):
+        (WebInspector.ConsoleCommandResultMessage.prototype.get savedResultIndex):
+        Rename, as this is a ConsoleMessage subclass with a specific type for console evaluation results.
+
+        * UserInterface/Views/ConsoleCommandView.js: Renamed from Source/WebInspectorUI/UserInterface/Views/ConsoleCommand.js.
+        (WebInspector.ConsoleCommandView):
+        (WebInspector.ConsoleCommandView.prototype.get element):
+        (WebInspector.ConsoleCommandView.prototype.get commandText):
+        (WebInspector.ConsoleCommandView.prototype.get message):
+        (WebInspector.ConsoleCommandView.prototype.toClipboardString):
+        * UserInterface/Views/ConsoleGroup.js:
+        (WebInspector.ConsoleGroup):
+        (WebInspector.ConsoleGroup.prototype.get parentGroup):
+        (WebInspector.ConsoleGroup.prototype.render):
+        (WebInspector.ConsoleGroup.prototype.addMessageView):
+        (WebInspector.ConsoleGroup.prototype.append):
+        (WebInspector.ConsoleGroup.prototype._titleMouseDown):
+        (WebInspector.ConsoleGroup.prototype.addMessage): Deleted.
+        (WebInspector.ConsoleGroup.prototype._titleClicked): Deleted.
+        * UserInterface/Views/ConsoleSession.js:
+        (WebInspector.ConsoleSession):
+        (WebInspector.ConsoleSession.prototype.addMessageView):
+        (WebInspector.ConsoleSession.prototype.append):
+        (WebInspector.ConsoleSession.prototype.addMessage): Deleted.
+        (WebInspector.ConsoleSession.prototype.hasMessages): Deleted.
+        Convert to classes, and clarify these deal with View objects.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-message .repeat-count):
+        (.console-message .bubble): Deleted.
+        Better class name for the repeat count element.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype.didAppendConsoleMessageView):
+        (WebInspector.LogContentView.prototype._formatMessagesAsData):
+        (WebInspector.LogContentView.prototype._messageAdded):
+        (WebInspector.LogContentView.prototype._updateMessagesSelection):
+        (WebInspector.LogContentView.prototype._selectAllMessages):
+        (WebInspector.LogContentView.prototype._allMessageElements):
+        (WebInspector.LogContentView.prototype._unfilteredMessageElements):
+        (WebInspector.LogContentView.prototype._visibleMessageElements):
+        (WebInspector.LogContentView.prototype._scopeBarSelectionDidChange):
+        (WebInspector.LogContentView.prototype._filterMessageElements):
+        (WebInspector.LogContentView.prototype._upArrowWasPressed):
+        (WebInspector.LogContentView.prototype._downArrowWasPressed):
+        (WebInspector.LogContentView.prototype._previousMessage):
+        (WebInspector.LogContentView.prototype._nextMessage):
+        (WebInspector.LogContentView.prototype._performSearch):
+        (WebInspector.LogContentView.prototype._highlightRanges):
+        (WebInspector.LogContentView.prototype._reappendProvisionalMessages):
+        (WebInspector.LogContentView.prototype.didAppendConsoleMessage): Deleted.
+        (WebInspector.LogContentView.prototype._allMessages): Deleted.
+        (WebInspector.LogContentView.prototype._unfilteredMessages): Deleted.
+        (WebInspector.LogContentView.prototype._visibleMessages): Deleted.
+        (WebInspector.LogContentView.prototype._filterMessages): Deleted.
+        Rename lots of things to make it clear when we are dealing with
+        elements, model objects, or view objects. This class is still heavily
+        dealing with elements, and needs to be cleaned up later.
+
+2015-04-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Fix uncaught exception seen in Inspector.
 
         Reviewed by Timothy Hatcher.

@@ -38,19 +38,21 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
     {
         // Called from WebInspector.ConsoleObserver.
 
-        // FIXME: Pass a request. We need a way to get it from the request ID.
-        var consoleMessage = WebInspector.LegacyConsoleMessage.create(source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, null);
+        // FIXME: stackTrace should be converted to a model object.
+        // FIXME: Get a request from request ID.
 
-        this.dispatchEventToListeners(WebInspector.LogManager.Event.MessageAdded, {message: consoleMessage});
+        if (parameters)
+            parameters = parameters.map(function(x) { return WebInspector.RemoteObject.fromPayload(x); });
 
-        console.assert(!consoleMessage._element || !consoleMessage._element.parentNode, "This console message shouldn't be added to a view. To add it you need to use clone().");
+        var message = new WebInspector.ConsoleMessage(source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, null);
+        this.dispatchEventToListeners(WebInspector.LogManager.Event.MessageAdded, {message});
     }
 
     messagesCleared()
     {
         // Called from WebInspector.ConsoleObserver.
 
-        WebInspector.ConsoleCommandResult.clearMaximumSavedResultIndex();
+        WebInspector.ConsoleCommandResultMessage.clearMaximumSavedResultIndex();
 
         // We don't want to clear messages on reloads. We can't determine that easily right now.
         // FIXME: <rdar://problem/13767079> Console.messagesCleared should include a reason
@@ -90,7 +92,7 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
         else
             this.dispatchEventToListeners(WebInspector.LogManager.Event.SessionStarted);
 
-        WebInspector.ConsoleCommandResult.clearMaximumSavedResultIndex();
+        WebInspector.ConsoleCommandResultMessage.clearMaximumSavedResultIndex();
 
         delete this._shouldClearMessages;
     }

@@ -233,7 +233,7 @@ WebInspector.DefaultDashboard = class DefaultDashboard extends WebInspector.Obje
     {
         var message = event.data.message;
         this._lastConsoleMessageType = message.level;
-        this._incrementConsoleMessageType(message.level, message.totalRepeatCount);
+        this._incrementConsoleMessageType(message.level, message.repeatCount);
     }
 
     _consoleMessageWasRepeated(event)
@@ -244,13 +244,13 @@ WebInspector.DefaultDashboard = class DefaultDashboard extends WebInspector.Obje
     _incrementConsoleMessageType(type, increment)
     {
         switch (type) {
-        case WebInspector.LegacyConsoleMessage.MessageLevel.Log:
+        case WebInspector.ConsoleMessage.MessageLevel.Log:
             this.logs += increment;
             break;
-        case WebInspector.LegacyConsoleMessage.MessageLevel.Warning:
+        case WebInspector.ConsoleMessage.MessageLevel.Warning:
             this.issues += increment;
             break;
-        case WebInspector.LegacyConsoleMessage.MessageLevel.Error:
+        case WebInspector.ConsoleMessage.MessageLevel.Error:
             this.errors += increment;
             break;
         }

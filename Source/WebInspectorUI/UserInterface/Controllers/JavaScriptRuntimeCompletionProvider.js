@@ -180,7 +180,7 @@ WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeComple
                     propertyNames[commandLineAPI[i]] = true;
 
                 // FIXME: Due to caching, sometimes old $n values show up as completion results even though they are not available. We should clear that proactively.
-                for (var i = 1; i <= WebInspector.ConsoleCommandResult.maximumSavedResultIndex; ++i)
+                for (var i = 1; i <= WebInspector.ConsoleCommandResultMessage.maximumSavedResultIndex; ++i)
                     propertyNames["$" + i] = true;
             }
 

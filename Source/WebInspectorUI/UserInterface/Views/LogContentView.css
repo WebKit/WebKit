@@ -111,7 +111,7 @@
     width: 12px;
 }
 
-.console-message .bubble {
+.console-message .repeat-count {
     display: inline-block;
     height: 15px;
     background-color: rgb(128, 151, 189);

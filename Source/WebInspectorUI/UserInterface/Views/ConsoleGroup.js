@@ -27,31 +27,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ConsoleGroup = function(parentGroup)
+WebInspector.ConsoleGroup = class ConsoleGroup extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(parentGroup)
+    {
+        super();
 
-    this.parentGroup = parentGroup;
-};
-
-WebInspector.ConsoleGroup.prototype = {
-    constructor: WebInspector.ConsoleGroup,
+        this._parentGroup = parentGroup;
+    }
 
     // Public
 
-    render: function(message)
+    get parentGroup()
+    {
+        return this._parentGroup;
+    }
+
+    render(messageView)
     {
         var groupElement = document.createElement("div");
         groupElement.className = "console-group";
         groupElement.group = this;
         this.element = groupElement;
 
-        var titleElement = message.toMessageElement();
+        var titleElement = messageView.element;
         titleElement.classList.add(WebInspector.LogContentView.ItemWrapperStyleClassName);
         titleElement.addEventListener("click", this._titleClicked.bind(this));
         titleElement.addEventListener("mousedown", this._titleMouseDown.bind(this));
-        if (groupElement && message.type === WebInspector.LegacyConsoleMessage.MessageType.StartGroupCollapsed)
+
+        if (groupElement && messageView.message.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed)
             groupElement.classList.add("collapsed");
 
         groupElement.appendChild(titleElement);
@@ -62,28 +66,28 @@ WebInspector.ConsoleGroup.prototype = {
         groupElement.appendChild(messagesElement);
 
         return groupElement;
-    },
+    }
 
-    addMessage: function(message)
+    addMessageView(messageView)
     {
-        var element = message.toMessageElement();
+        var element = messageView.element;
         element.classList.add(WebInspector.LogContentView.ItemWrapperStyleClassName);
         this.append(element);
-    },
+    }
 
-    append: function(messageElement)
+    append(messageOrGroupElement)
     {
-        this._messagesElement.appendChild(messageElement);
-    },
+        this._messagesElement.appendChild(messageOrGroupElement);
+    }
 
     // Private
 
-    _titleMouseDown: function(event)
+    _titleMouseDown(event)
     {
         event.preventDefault();
-    },
+    }
 
-    _titleClicked: function(event)
+    _titleClicked(event)
     {
         var groupTitleElement = event.target.enclosingNodeOrSelfWithClass("console-group-title");
         if (groupTitleElement) {
@@ -97,5 +101,3 @@ WebInspector.ConsoleGroup.prototype = {
         }
     }
 };
-
-WebInspector.ConsoleGroup.prototype.__proto__ = WebInspector.Object.prototype;

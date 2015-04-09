@@ -44,7 +44,7 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         this.delegate = delegate;
 
         this._cleared = true;
-        this._previousMessage = null;
+        this._previousMessageView = null;
         this._repeatCountWasInterrupted = false;
 
         this._sessions = [];
@@ -106,9 +106,9 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
             return;
         }
 
-        var consoleSession = new WebInspector.ConsoleSession();
+        var consoleSession = new WebInspector.ConsoleSession;
 
-        this._previousMessage = null;
+        this._previousMessageView = null;
         this._repeatCountWasInterrupted = false;
 
         this._sessions.push(consoleSession);
@@ -124,13 +124,14 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
     {
         console.assert(result instanceof WebInspector.RemoteObject);
 
-        var commandMessage = new WebInspector.ConsoleCommand(text);
-        this._appendConsoleMessage(commandMessage, true);
+        var commandMessageView = new WebInspector.ConsoleCommandView(text);
+        this._appendConsoleMessageView(commandMessageView, true);
 
         function saveResultCallback(savedResultIndex)
         {
-            var commandResultMessage = new WebInspector.ConsoleCommandResult(result, false, commandMessage, savedResultIndex);
-            this._appendConsoleMessage(commandResultMessage, true);
+            var commandResultMessage = new WebInspector.ConsoleCommandResultMessage(result, false, savedResultIndex);
+            var commandResultMessageView = new WebInspector.ConsoleMessageView(commandResultMessage);
+            this._appendConsoleMessageView(commandResultMessageView, true);
         }
 
         WebInspector.runtimeManager.saveResult(result, saveResultCallback.bind(this));
@@ -138,36 +139,30 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
 
     appendConsoleMessage(consoleMessage)
     {
-        // Clone the message since there might be multiple clients using the message,
-        // and since the message has a DOM element it can't be two places at once.
-        var messageClone = consoleMessage.clone();
-
-        this._appendConsoleMessage(messageClone);
-
-        return messageClone;
+        var consoleMessageView = new WebInspector.ConsoleMessageView(consoleMessage);
+        this._appendConsoleMessageView(consoleMessageView);
+        return consoleMessageView;
     }
 
     updatePreviousMessageRepeatCount(count)
     {
-        console.assert(this._previousMessage);
-        if (!this._previousMessage)
+        console.assert(this._previousMessageView);
+        if (!this._previousMessageView)
             return;
 
+        var previousIgnoredCount = this._previousMessageView[WebInspector.JavaScriptLogViewController.IgnoredRepeatCount] || 0;
+        var previousVisibleCount = this._previousMessageView.repeatCount;
+
         if (!this._repeatCountWasInterrupted) {
-            this._previousMessage.repeatCount = count - (this._previousMessage.ignoredCount || 0);
-            this._previousMessage.updateRepeatCount();
-        } else {
-            var newMessage = this._previousMessage.clone();
-
-            // If this message is repeated after being cloned, messageRepeatCountUpdated will be called with a
-            // count that includes the count of this message before cloning. We should ignore instances of this
-            // log that occurred before we cloned, so set a property on the message with the number of previous
-            // instances of this log that we should ignore.
-            newMessage.ignoredCount = newMessage.repeatCount + (this._previousMessage.ignoredCount || 0);
-            newMessage.repeatCount = 1;
-
-            this._appendConsoleMessage(newMessage);
+            this._previousMessageView.repeatCount = count - previousIgnoredCount;
+            return;
         }
+
+        var consoleMessage = this._previousMessageView.message;
+        var duplicatedConsoleMessageView = new WebInspector.ConsoleMessageView(consoleMessage);
+        duplicatedConsoleMessageView[WebInspector.JavaScriptLogViewController.IgnoredRepeatCount] = previousIgnoredCount + previousVisibleCount;
+        duplicatedConsoleMessageView.repeatCount = 1;
+        this._appendConsoleMessageView(duplicatedConsoleMessageView);
     }
 
     isScrolledToBottom()
@@ -225,15 +220,17 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
     {
         console.assert(text);
 
-        var commandMessage = new WebInspector.ConsoleCommand(text);
-        this._appendConsoleMessage(commandMessage, true);
+        var commandMessageView = new WebInspector.ConsoleCommandView(text);
+        this._appendConsoleMessageView(commandMessageView, true);
 
         function printResult(result, wasThrown, savedResultIndex)
         {
             if (!result || this._cleared)
                 return;
 
-            this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage, savedResultIndex), true);
+            var commandResultMessage = new WebInspector.ConsoleCommandResultMessage(result, wasThrown, savedResultIndex);
+            var commandResultMessageView = new WebInspector.ConsoleMessageView(commandResultMessage);
+            this._appendConsoleMessageView(commandResultMessageView, true);
         }
 
         text += "\n//# sourceURL=__WebInspectorConsole__\n";
@@ -263,7 +260,7 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         this.delegate.highlightPreviousSearchMatch();
     }
 
-    _appendConsoleMessage(msg, repeatCountWasInterrupted)
+    _appendConsoleMessageView(messageView, repeatCountWasInterrupted)
     {
         var wasScrolledToBottom = this.isScrolledToBottom();
 
@@ -271,28 +268,30 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         this._repeatCountWasInterrupted = repeatCountWasInterrupted || false;
 
         if (!repeatCountWasInterrupted)
-            this._previousMessage = msg;
+            this._previousMessageView = messageView;
 
-        if (msg.type === WebInspector.LegacyConsoleMessage.MessageType.EndGroup) {
+        var type = messageView instanceof WebInspector.ConsoleCommandView ? null : messageView.message.type;
+        if (type === WebInspector.ConsoleMessage.MessageType.EndGroup) {
             var parentGroup = this._currentConsoleGroup.parentGroup;
             if (parentGroup)
                 this._currentConsoleGroup = parentGroup;
         } else {
-            if (msg.type === WebInspector.LegacyConsoleMessage.MessageType.StartGroup || msg.type === WebInspector.LegacyConsoleMessage.MessageType.StartGroupCollapsed) {
+            if (type === WebInspector.ConsoleMessage.MessageType.StartGroup || type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed) {
                 var group = new WebInspector.ConsoleGroup(this._currentConsoleGroup);
-                var groupElement = group.render(msg);
+                var groupElement = group.render(messageView);
                 this._currentConsoleGroup.append(groupElement);
                 this._currentConsoleGroup = group;
             } else
-                this._currentConsoleGroup.addMessage(msg);
+                this._currentConsoleGroup.addMessageView(messageView);
         }
 
-        if (msg.type === WebInspector.LegacyConsoleMessage.MessageType.Result || wasScrolledToBottom)
+        if (type === WebInspector.ConsoleMessage.MessageType.Result || wasScrolledToBottom)
             this.scrollToBottom();
 
-        if (this.delegate && typeof this.delegate.didAppendConsoleMessage === "function")
-            this.delegate.didAppendConsoleMessage(msg);
+        if (this.delegate && typeof this.delegate.didAppendConsoleMessageView === "function")
+            this.delegate.didAppendConsoleMessageView(messageView);
     }
 };
 
 WebInspector.JavaScriptLogViewController.CachedPropertiesDuration = 30000;
+WebInspector.JavaScriptLogViewController.IgnoredRepeatCount = Symbol("ignored-repeat-count");

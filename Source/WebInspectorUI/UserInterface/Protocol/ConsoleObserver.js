@@ -29,6 +29,8 @@ WebInspector.ConsoleObserver = class ConsoleObserver
 
     messageAdded(message)
     {
+        // FIXME: We should convert "Tip" to "Log" here immediately.
+
         if (message.type === "assert" && !message.text)
             message.text = WebInspector.UIString("Assertion");
 

@@ -27,56 +27,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ConsoleCommand = function(command)
+WebInspector.ConsoleCommandView = class ConsoleCommandView extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    constructor(commandText)
+    {
+        super();
 
-    this.command = command;
-};
+        this._commandText = commandText;
 
-WebInspector.ConsoleCommand.prototype = {
-    constructor: WebInspector.ConsoleCommand,
-
-    // Public
-
-    decorateMessageElement: function(element) {
-        if (this._element)
-            return this._element;
-
-        this._element = element;
-        this._element.command = this;
+        this._element = document.createElement("div");
         this._element.classList.add("console-user-command");
         this._element.setAttribute("data-labelprefix", WebInspector.UIString("Input: "));
 
-        this._formatCommand();
-        this._element.appendChild(this._formattedCommand);
+        this._formattedCommandElement = this._element.appendChild(document.createElement("span"));
+        this._formattedCommandElement.classList.add("console-message-text");
+        this._formattedCommandElement.textContent = this._commandText;
 
+        // FIXME: <https://webkit.org/b/143545> Web Inspector: LogContentView should use higher level objects
+        this._element.__commandView = this;
+    }
+
+    // Public
+
+    get element()
+    {
         return this._element;
-    },
+    }
 
-    toMessageElement: function()
+    get commandText()
     {
-        if (this._element)
-            return this._element;
+        return this._commandText;
+    }
 
-        var element = document.createElement("div");
-        return this.decorateMessageElement(element);
-    },
-
-    // Private
-
-    _formatCommand: function()
+    toClipboardString(isPrefixOptional)
     {
-        this._formattedCommand = document.createElement("span");
-        this._formattedCommand.className = "console-message-text source-code";
-        this._formattedCommand.textContent = this.command;
-    },
-
-    toClipboardString: function(isPrefixOptional)
-    {
-        return (isPrefixOptional ? "" : "> ") + this.command;
+        return (isPrefixOptional ? "" : "> ") + this._commandText;
     }
 };
-
-WebInspector.ConsoleCommand.prototype.__proto__ = WebInspector.Object.prototype;
