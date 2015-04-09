@@ -2352,9 +2352,6 @@ webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertie
 inspector-protocol/debugger/removeBreakpoint.html [ Skip ] # Crashing
 inspector-protocol/debugger/searchInContent-linebreaks.html [ Pass Crash ] # Flaky
 
-webkit.org/b/143542 inspector-protocol/debugger/setPauseOnExceptions-all.html [ Failure ]
-webkit.org/b/143542 inspector-protocol/debugger/setPauseOnExceptions-none.html [ Failure ]
-webkit.org/b/143542 inspector-protocol/debugger/setPauseOnExceptions-uncaught.html [ Failure ]
 webkit.org/b/143548 inspector/console/console-api.html [ Skip ] # Timeout
 ################################################################################
 #################        End Inspector Issues               ####################
