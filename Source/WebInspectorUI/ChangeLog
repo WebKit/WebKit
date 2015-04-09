@@ -1,5 +1,12 @@
 2015-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed Test Fix after r182579. Add missing include.
+
+        * UserInterface/Test.html:
+        Missing file was causing inspector/page/main-frame-resource.html to fail.
+
+2015-04-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Split ConsoleMessageImpl into the View and the Model
         https://bugs.webkit.org/show_bug.cgi?id=142599
 
