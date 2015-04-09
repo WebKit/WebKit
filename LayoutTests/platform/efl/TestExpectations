@@ -2170,6 +2170,7 @@ webkit.org/b/142483 fast/css/font-face-in-media-rule.html [ Failure ]
 
 # This feature is only enabled on Mac and iOS right now
 contentfiltering [ Skip ]
+http/tests/contentfiltering [ Skip ]
 
 # small-leak-foo tests have been failed since r181345
 webkit.org/b/142561 svg/animations/smil-leak-dynamically-added-element-instances.svg [ Failure ]

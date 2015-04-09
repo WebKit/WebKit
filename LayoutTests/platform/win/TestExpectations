@@ -2311,7 +2311,6 @@ http/tests/xmlhttprequest/web-apps/013.html
 http/tests/cache/network-error-during-revalidation.html [ Pass Crash ]
 http/tests/xmlhttprequest/workers/methods.html [ Pass Crash ]
 
-webkit.org/b/143460 http/tests/contentfiltering/block-after-redirect.html [ ImageOnlyFailure ]
 ################################################################################
 #################            End HTTP Issues             #######################
 ################################################################################
@@ -3049,6 +3048,7 @@ webkit.org/b/139968 fast/regions/overflow/overflow-first-and-last-regions.html [
 
 # This feature is only enabled on Mac and iOS right now
 contentfiltering [ Skip ]
+http/tests/contentfiltering [ Skip ]
 
 # The following are flaky on EWS bots. Revisit after next Windows update
 [ Release ] animations/trigger-container-scroll-empty.html [ Pass Failure ]
