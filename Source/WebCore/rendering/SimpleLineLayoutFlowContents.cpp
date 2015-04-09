@@ -35,7 +35,13 @@ namespace SimpleLineLayout {
 
 static Vector<FlowContents::Segment> initializeSegments(const RenderBlockFlow& flow)
 {
-    Vector<FlowContents::Segment, 8> segments;
+
+    unsigned numberOfChildren = 0;
+    auto children = childrenOfType<RenderText>(flow);
+    for (auto it = children.begin(), end = children.end(); it != end; ++it)
+        ++numberOfChildren;
+    Vector<FlowContents::Segment> segments;
+    segments.reserveCapacity(numberOfChildren);
     unsigned startPosition = 0;
     for (auto& textChild : childrenOfType<RenderText>(flow)) {
         unsigned textLength = textChild.text()->length();

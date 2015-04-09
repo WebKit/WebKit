@@ -99,6 +99,7 @@ public:
 
     RunResolver(const RenderBlockFlow&, const Layout&);
 
+    const RenderBlockFlow& flow() const { return m_flowRenderer; }
     Iterator begin() const;
     Iterator end() const;
 
@@ -109,6 +110,7 @@ private:
     enum class IndexType { First, Last };
     unsigned lineIndexForHeight(LayoutUnit, IndexType) const;
 
+    const RenderBlockFlow& m_flowRenderer;
     const Layout& m_layout;
     const FlowContents m_flowContents;
     const LayoutUnit m_lineHeight;

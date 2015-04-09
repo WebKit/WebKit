@@ -1,3 +1,21 @@
+2015-04-09  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout(regression): Calling innerText on RenderFlow with multiple children is slow.
+        https://bugs.webkit.org/show_bug.cgi?id=143554
+
+        Reviewed by Antti Koivisto.
+
+        Initialize render flow's segments only when the render flow changes in TextIterator.
+        The included performance test shows 6x speedup. (from ~10 runs/sec to ~60 runs/sec)
+
+        Test: PerformanceTests/Layout/simple-line-layout-innertext.html.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode):
+        * editing/TextIterator.h:
+        * rendering/SimpleLineLayoutFlowContents.cpp: Instruments log shows that vector's expandCapacity could be expensive when flow has large amount of children.
+        (WebCore::SimpleLineLayout::initializeSegments):
+
 2015-04-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] editorState() should not cause a synchronous layout

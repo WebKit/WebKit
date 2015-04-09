@@ -116,7 +116,8 @@ RunResolver::Iterator& RunResolver::Iterator::advanceLines(unsigned lineCount)
 }
 
 RunResolver::RunResolver(const RenderBlockFlow& flow, const Layout& layout)
-    : m_layout(layout)
+    : m_flowRenderer(flow)
+    , m_layout(layout)
     , m_flowContents(flow)
     , m_lineHeight(lineHeightFromFlow(flow))
     , m_baseline(baselineFromFlow(flow))
