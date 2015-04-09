@@ -50,10 +50,15 @@ public:
     static Ref<ReadableStreamJSSource> create(JSC::ExecState*);
     ~ReadableStreamJSSource() { }
 
-    void start(JSC::ExecState*);
+    void start(JSC::ExecState*, JSReadableStream*);
 
 private:
     ReadableStreamJSSource(JSC::ExecState*);
+
+    // Object passed to constructor.
+    JSC::Strong<JSC::JSObject> m_source;
+
+    JSC::Strong<JSC::JSObject> m_controller;
 };
 
 class ReadableJSStream: public ReadableStream {

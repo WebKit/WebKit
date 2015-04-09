@@ -87,7 +87,7 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStream(ExecState* exec)
     JSGlobalObject* globalObject = exec->callee()->globalObject();
     JSReadableStream* jsReadableStream = JSReadableStream::create(JSReadableStream::createStructure(vm, globalObject, JSReadableStream::createPrototype(vm, globalObject)), jsCast<JSDOMGlobalObject*>(globalObject), readableStream.releaseNonNull());
 
-    source->start(exec);
+    source->start(exec, jsReadableStream);
 
     return JSValue::encode(jsReadableStream);
 }

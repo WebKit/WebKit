@@ -1,3 +1,35 @@
+2015-04-08  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Support the start function parameter in ReadableStream constructor
+        https://bugs.webkit.org/show_bug.cgi?id=141160
+
+        Reviewed by Benjamin Poulain.
+
+        Stores the JS source object in ReadableStreamJSSource and calls its "start" function.
+        This function takes a controller object that has three JS functions as members: close, enqueue and error.
+        This controller is stored in ReadableStreamJSSource as it will be reused as "pull" parameter.
+        All three JS functions do not currently do anything.
+
+        Test: streams/readablestream-start.html
+
+        * Modules/streams/ReadableStream.cpp:
+        (WebCore::ReadableStream::start): Place holder for step 11 of https://streams.spec.whatwg.org/#rs-constructor.
+        * Modules/streams/ReadableStream.h:
+        * bindings/js/JSReadableStreamCustom.cpp:
+        (WebCore::constructJSReadableStream):
+        * bindings/js/ReadableStreamJSSource.cpp:
+        (WebCore::getPropertyFromObject): Helper function to get a public property from an object.
+        (WebCore::setPropertyToObject): Helper function to set a public property to an object.
+        (WebCore::callFunction): Helper function to call a JS function from C++.
+        (WebCore::ReadableStreamJSSource::ReadableStreamJSSource):
+        (WebCore::notImplementedFunction):
+        (WebCore::createReadableStreamEnqueueFunction): Creates the JS function for enqueue.
+        (WebCore::createReadableStreamCloseFunction): Creates the JS function for close.
+        (WebCore::createReadableStreamErrorFunction): Creates the JS function for error.
+        (WebCore::startReadableStreamAsync): Equivalent of promise resolution for start.
+        (WebCore::ReadableStreamJSSource::start): Calls the "start" function of the JS source with all three JS functions (enqueue, close, error) as parameters.
+        * bindings/js/ReadableStreamJSSource.h:
+
 2015-04-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Unreviewed test fix after r182584

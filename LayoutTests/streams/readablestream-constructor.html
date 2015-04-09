@@ -7,6 +7,13 @@ test(function() {
     assert_throws(new TypeError(), function() {
         new ReadableStream('potato');
     });
+    var x
+    assert_throws(new TypeError(), function() {
+        new ReadableStream(x);
+    });
+    assert_throws(new TypeError(), function() {
+        new ReadableStream(null);
+    });
 }, 'ReadableStream constructor should get an object as argument');
 
 test(function() {

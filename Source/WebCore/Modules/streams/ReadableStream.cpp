@@ -58,6 +58,11 @@ ReadableStream::~ReadableStream()
 #endif
 }
 
+void ReadableStream::start()
+{
+    notImplemented();
+}
+
 const char* ReadableStream::activeDOMObjectName() const
 {
     return "ReadableStream";
