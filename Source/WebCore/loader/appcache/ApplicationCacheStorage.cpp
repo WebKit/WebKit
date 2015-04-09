@@ -45,8 +45,6 @@
 
 namespace WebCore {
 
-static const char flatFileSubdirectory[] = "ApplicationCache";
-
 template <class T>
 class StorageIDJournal {
 public:  
@@ -828,7 +826,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
             return false;
         }
         
-        String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, flatFileSubdirectory);
+        String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
         makeAllDirectories(flatFileDirectory);
 
         String extension;
@@ -1134,7 +1132,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
 
     RefPtr<ApplicationCache> cache = ApplicationCache::create();
 
-    String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, flatFileSubdirectory);
+    String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
 
     int result;
     while ((result = cacheStatement.step()) == SQLITE_ROW) {
@@ -1483,7 +1481,7 @@ void ApplicationCacheStorage::checkForDeletedResources()
         if (path.isEmpty())
             continue;
         
-        String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, flatFileSubdirectory);
+        String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
         String fullPath = pathByAppendingComponent(flatFileDirectory, path);
         
         // Don't exit the flatFileDirectory! This should only happen if the "path" entry contains a directory 
@@ -1511,7 +1509,7 @@ long long ApplicationCacheStorage::flatFileAreaSize()
     }
 
     long long totalSize = 0;
-    String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, flatFileSubdirectory);
+    String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
     while (selectPaths.step() == SQLITE_ROW) {
         String path = selectPaths.getColumnText(0);
         String fullPath = pathByAppendingComponent(flatFileDirectory, path);
@@ -1581,21 +1579,23 @@ int64_t ApplicationCacheStorage::diskUsageForOrigin(const SecurityOrigin& securi
     return usage;
 }
 
-ApplicationCacheStorage::ApplicationCacheStorage()
-    : m_maximumSize(ApplicationCacheStorage::noQuota())
+ApplicationCacheStorage::ApplicationCacheStorage(const String& cacheDirectory, const String& flatFileSubdirectoryName)
+    : m_cacheDirectory(cacheDirectory)
+    , m_flatFileSubdirectoryName(flatFileSubdirectoryName)
+    , m_maximumSize(ApplicationCacheStorage::noQuota())
     , m_isMaximumSizeReached(false)
     , m_defaultOriginQuota(ApplicationCacheStorage::noQuota())
 {
 }
 
-Ref<ApplicationCacheStorage> ApplicationCacheStorage::create()
+Ref<ApplicationCacheStorage> ApplicationCacheStorage::create(const String& cacheDirectory, const String& flatFileSubdirectoryName)
 {
-    return adoptRef(*new ApplicationCacheStorage);
+    return adoptRef(*new ApplicationCacheStorage(cacheDirectory, flatFileSubdirectoryName));
 }
 
 ApplicationCacheStorage& ApplicationCacheStorage::singleton()
 {
-    static ApplicationCacheStorage& storage = create().leakRef();
+    static ApplicationCacheStorage& storage = create(String(), "ApplicationCache").leakRef();
     return storage;
 }
 

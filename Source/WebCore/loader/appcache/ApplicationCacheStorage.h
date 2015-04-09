@@ -55,7 +55,7 @@ public:
     // FIXME: Migrate off of this singleton and towards a world where each page has a storage.
     WEBCORE_EXPORT static ApplicationCacheStorage& singleton();
 
-    WEBCORE_EXPORT static Ref<ApplicationCacheStorage> create();
+    WEBCORE_EXPORT static Ref<ApplicationCacheStorage> create(const String& cacheDirectory, const String& flatFileSubdirectoryName);
 
     WEBCORE_EXPORT void setCacheDirectory(const String&);
     const String& cacheDirectory() const;
@@ -111,7 +111,7 @@ public:
     static int64_t unknownQuota() { return -1; }
     static int64_t noQuota() { return std::numeric_limits<int64_t>::max(); }
 private:
-    ApplicationCacheStorage();
+    ApplicationCacheStorage(const String& cacheDirectory, const String& flatFileSubdirectoryName);
 
     PassRefPtr<ApplicationCache> loadCache(unsigned storageID);
     ApplicationCacheGroup* loadCacheGroup(const URL& manifestURL);
@@ -141,9 +141,10 @@ private:
     void checkForMaxSizeReached();
     void checkForDeletedResources();
     long long flatFileAreaSize();
-    
+
     String m_cacheDirectory;
     String m_cacheFile;
+    const String m_flatFileSubdirectoryName;
 
     int64_t m_maximumSize;
     bool m_isMaximumSizeReached;
