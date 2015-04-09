@@ -128,7 +128,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const URL& manife
     if (!cache)
         return 0;
         
-    ApplicationCacheGroup* group = new ApplicationCacheGroup(manifestURL);
+    ApplicationCacheGroup* group = new ApplicationCacheGroup(*this, manifestURL);
       
     group->setStorageID(static_cast<unsigned>(statement.getColumnInt64(0)));
     group->setNewestCache(cache.release());
@@ -152,7 +152,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const URL
     
     // If the group was not found we need to create it
     if (!group) {
-        group = new ApplicationCacheGroup(manifestURL);
+        group = new ApplicationCacheGroup(*this, manifestURL);
         m_cacheHostSet.add(urlHostHash(manifestURL));
     }
     
@@ -252,7 +252,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
         if (resource->type() & ApplicationCacheResource::Foreign)
             continue;
 
-        ApplicationCacheGroup* group = new ApplicationCacheGroup(manifestURL);
+        ApplicationCacheGroup* group = new ApplicationCacheGroup(*this, manifestURL);
         
         group->setStorageID(static_cast<unsigned>(statement.getColumnInt64(0)));
         group->setNewestCache(cache.release());
@@ -322,7 +322,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const U
         if (cache->resourceForURL(fallbackURL)->type() & ApplicationCacheResource::Foreign)
             continue;
 
-        ApplicationCacheGroup* group = new ApplicationCacheGroup(manifestURL);
+        ApplicationCacheGroup* group = new ApplicationCacheGroup(*this, manifestURL);
         
         group->setStorageID(static_cast<unsigned>(statement.getColumnInt64(0)));
         group->setNewestCache(cache.release());

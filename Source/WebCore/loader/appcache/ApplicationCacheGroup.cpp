@@ -50,8 +50,9 @@
 
 namespace WebCore {
 
-ApplicationCacheGroup::ApplicationCacheGroup(const URL& manifestURL)
-    : m_manifestURL(manifestURL)
+ApplicationCacheGroup::ApplicationCacheGroup(Ref<ApplicationCacheStorage>&& storage, const URL& manifestURL)
+    : m_storage(WTF::move(storage))
+    , m_manifestURL(manifestURL)
     , m_origin(SecurityOrigin::create(manifestURL))
     , m_updateStatus(Idle)
     , m_downloadingPendingMasterResourceLoadersCount(0)
@@ -73,33 +74,34 @@ ApplicationCacheGroup::~ApplicationCacheGroup()
     ASSERT(m_caches.isEmpty());
     
     stopLoading();
-    
-    ApplicationCacheStorage::singleton().cacheGroupDestroyed(this);
+
+    m_storage->cacheGroupDestroyed(this);
 }
     
 ApplicationCache* ApplicationCacheGroup::cacheForMainRequest(const ResourceRequest& request, DocumentLoader* documentLoader)
 {
     if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
-        return 0;
+        return nullptr;
 
     URL url(request.url());
     if (url.hasFragmentIdentifier())
         url.removeFragmentIdentifier();
 
-    if (documentLoader->frame() && documentLoader->frame()->page()->usesEphemeralSession())
-        return 0;
+    auto* page = documentLoader->frame() ? documentLoader->frame()->page() : nullptr;
+    if (!page || page->usesEphemeralSession())
+        return nullptr;
 
-    if (ApplicationCacheGroup* group = ApplicationCacheStorage::singleton().cacheGroupForURL(url)) {
+    if (ApplicationCacheGroup* group = page->applicationCacheStorage().cacheGroupForURL(url)) {
         ASSERT(group->newestCache());
         ASSERT(!group->isObsolete());
         
         return group->newestCache();
     }
     
-    return 0;
+    return nullptr;
 }
     
-ApplicationCache* ApplicationCacheGroup::fallbackCacheForMainRequest(const ResourceRequest& request, DocumentLoader*)
+ApplicationCache* ApplicationCacheGroup::fallbackCacheForMainRequest(const ResourceRequest& request, DocumentLoader* documentLoader)
 {
     if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
         return 0;
@@ -108,7 +110,11 @@ ApplicationCache* ApplicationCacheGroup::fallbackCacheForMainRequest(const Resou
     if (url.hasFragmentIdentifier())
         url.removeFragmentIdentifier();
 
-    if (ApplicationCacheGroup* group = ApplicationCacheStorage::singleton().fallbackCacheGroupForURL(url)) {
+    auto* page = documentLoader->frame() ? documentLoader->frame()->page() : nullptr;
+    if (!page)
+        return nullptr;
+
+    if (ApplicationCacheGroup* group = page->applicationCacheStorage().fallbackCacheGroupForURL(url)) {
         ASSERT(group->newestCache());
         ASSERT(!group->isObsolete());
 
@@ -162,7 +168,7 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const URL& passedManifestU
             bool inStorage = resource->storageID();
             resource->addType(ApplicationCacheResource::Foreign);
             if (inStorage)
-                ApplicationCacheStorage::singleton().storeUpdatedType(resource, mainResourceCache);
+                frame->page()->applicationCacheStorage().storeUpdatedType(resource, mainResourceCache);
 
             // Restart the current navigation from the top of the navigation algorithm, undoing any changes that were made
             // as part of the initial load.
@@ -183,7 +189,7 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const URL& passedManifestU
     if (!protocolHostAndPortAreEqual(manifestURL, request.url()))
         return;
 
-    ApplicationCacheGroup* group = ApplicationCacheStorage::singleton().findOrCreateCacheGroup(manifestURL);
+    ApplicationCacheGroup* group = frame->page()->applicationCacheStorage().findOrCreateCacheGroup(manifestURL);
 
     documentLoader->applicationCacheHost()->setCandidateApplicationCacheGroup(group);
     group->m_pendingMasterResourceLoaders.add(documentLoader);
@@ -396,7 +402,7 @@ void ApplicationCacheGroup::makeObsolete()
         return;
 
     m_isObsolete = true;
-    ApplicationCacheStorage::singleton().cacheGroupMadeObsolete(this);
+    m_storage->cacheGroupMadeObsolete(this);
     ASSERT(!m_storageID);
 }
 
@@ -760,7 +766,7 @@ void ApplicationCacheGroup::didReachMaxAppCacheSize()
 {
     ASSERT(m_frame);
     ASSERT(m_cacheBeingUpdated);
-    m_frame->page()->chrome().client().reachedMaxAppCacheSize(ApplicationCacheStorage::singleton().spaceNeeded(m_cacheBeingUpdated->estimatedSizeInStorage()));
+    m_frame->page()->chrome().client().reachedMaxAppCacheSize(m_frame->page()->applicationCacheStorage().spaceNeeded(m_cacheBeingUpdated->estimatedSizeInStorage()));
     m_calledReachedMaxAppCacheSize = true;
     checkIfLoadIsComplete();
 }
@@ -784,7 +790,7 @@ void ApplicationCacheGroup::cacheUpdateFailed()
 
 void ApplicationCacheGroup::recalculateAvailableSpaceInQuota()
 {
-    if (!ApplicationCacheStorage::singleton().calculateRemainingSizeForOriginExcludingCache(m_origin.get(), m_newestCache.get(), m_availableSpaceInQuota)) {
+    if (!m_frame->page()->applicationCacheStorage().calculateRemainingSizeForOriginExcludingCache(m_origin.get(), m_newestCache.get(), m_availableSpaceInQuota)) {
         // Failed to determine what is left in the quota. Fallback to allowing anything.
         m_availableSpaceInQuota = ApplicationCacheStorage::noQuota();
     }
@@ -841,7 +847,7 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
 
         // The storage could have been manually emptied by the user.
         if (!m_storageID)
-            ApplicationCacheStorage::singleton().storeNewestCache(this);
+            m_storage->storeNewestCache(this);
 
         postListenerTask(ApplicationCacheHost::NOUPDATE_EVENT, m_associatedDocumentLoaders);
         break;
@@ -866,7 +872,7 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
             // the maximum size. In such a case, m_manifestResource may be 0, as
             // the manifest was already set on the newest cache object.
             ASSERT(m_cacheBeingUpdated->manifestResource());
-            ASSERT(ApplicationCacheStorage::singleton().isMaximumSizeReached());
+            ASSERT(m_storage->isMaximumSizeReached());
             ASSERT(m_calledReachedMaxAppCacheSize);
         }
 
@@ -875,16 +881,15 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
         // If we exceeded the origin quota while downloading we can request a quota
         // increase now, before we attempt to store the cache.
         int64_t totalSpaceNeeded;
-        auto& cacheStorage = ApplicationCacheStorage::singleton();
-        if (!cacheStorage.checkOriginQuota(this, oldNewestCache.get(), m_cacheBeingUpdated.get(), totalSpaceNeeded))
+        if (!m_storage->checkOriginQuota(this, oldNewestCache.get(), m_cacheBeingUpdated.get(), totalSpaceNeeded))
             didReachOriginQuota(totalSpaceNeeded);
 
         ApplicationCacheStorage::FailureReason failureReason;
         setNewestCache(m_cacheBeingUpdated.release());
-        if (cacheStorage.storeNewestCache(this, oldNewestCache.get(), failureReason)) {
+        if (m_storage->storeNewestCache(this, oldNewestCache.get(), failureReason)) {
             // New cache stored, now remove the old cache.
             if (oldNewestCache)
-                cacheStorage.remove(oldNewestCache.get());
+                m_storage->remove(oldNewestCache.get());
 
             // Fire the final progress event.
             ASSERT(m_progressDone == m_progressTotal);

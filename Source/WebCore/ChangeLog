@@ -1,3 +1,29 @@
+2015-04-08  Anders Carlsson  <andersca@apple.com>
+
+        Give each cache group a storage and use it in place of the singleton
+        https://bugs.webkit.org/show_bug.cgi?id=143540
+
+        Reviewed by Sam Weinig.
+
+        This is another step towards making the cache storage be per page.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::ApplicationCacheGroup):
+        (WebCore::ApplicationCacheGroup::~ApplicationCacheGroup):
+        (WebCore::ApplicationCacheGroup::cacheForMainRequest):
+        (WebCore::ApplicationCacheGroup::fallbackCacheForMainRequest):
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::makeObsolete):
+        (WebCore::ApplicationCacheGroup::didReachMaxAppCacheSize):
+        (WebCore::ApplicationCacheGroup::recalculateAvailableSpaceInQuota):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::loadCacheGroup):
+        (WebCore::ApplicationCacheStorage::findOrCreateCacheGroup):
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL):
+
 2015-04-09  Andy Estes  <aestes@apple.com>
 
         Try to fix the Mac build after r182596.

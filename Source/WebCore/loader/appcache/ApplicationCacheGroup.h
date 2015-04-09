@@ -38,6 +38,7 @@ namespace WebCore {
 
 class ApplicationCache;
 class ApplicationCacheResource;
+class ApplicationCacheStorage;
 class Document;
 class DocumentLoader;
 class Frame;
@@ -52,7 +53,7 @@ enum ApplicationCacheUpdateOption {
 class ApplicationCacheGroup : ResourceHandleClient {
     WTF_MAKE_NONCOPYABLE(ApplicationCacheGroup); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit ApplicationCacheGroup(const URL& manifestURL);
+    explicit ApplicationCacheGroup(Ref<ApplicationCacheStorage>&&, const URL& manifestURL);
     virtual ~ApplicationCacheGroup();
     
     enum UpdateStatus { Idle, Checking, Downloading };
@@ -129,7 +130,9 @@ private:
     void associateDocumentLoaderWithCache(DocumentLoader*, ApplicationCache*);
     
     void stopLoading();
-    
+
+    Ref<ApplicationCacheStorage> m_storage;
+
     URL m_manifestURL;
     RefPtr<SecurityOrigin> m_origin;
     UpdateStatus m_updateStatus;
