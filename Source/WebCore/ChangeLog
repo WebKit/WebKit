@@ -1,3 +1,16 @@
+2015-04-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix -Wformat in AnimationBase.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=143541
+
+        Reviewed by Simon Fraser.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::nameForStateInput): Added. Converts an AnimationBase::AnimationStateInput to a
+        string.
+        (WebCore::AnimationBase::updateStateMachine): Print AnimationBase::AnimationStateInput as a
+        string, instead of passing it to %d and assuming that works, to silence GCC's -Wformat.
+
 2015-04-08  Brady Eidson  <beidson@apple.com>
 
         Expose the "Share" menu for links, images, and media.

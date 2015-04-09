@@ -131,6 +131,26 @@ static const char* nameForState(AnimationBase::AnimationState state)
     }
     return "";
 }
+
+static const char* nameForStateInput(AnimationBase::AnimationStateInput input)
+{
+    switch (input) {
+    case AnimationBase::AnimationStateInput::MakeNew: return "MakeNew";
+    case AnimationBase::AnimationStateInput::StartAnimation: return "StartAnimation";
+    case AnimationBase::AnimationStateInput::RestartAnimation: return "RestartAnimation";
+    case AnimationBase::AnimationStateInput::StartTimerFired: return "StartTimerFired";
+    case AnimationBase::AnimationStateInput::StyleAvailable: return "StyleAvailable";
+    case AnimationBase::AnimationStateInput::StartTimeSet: return "StartTimeSet";
+    case AnimationBase::AnimationStateInput::LoopTimerFired: return "LoopTimerFired";
+    case AnimationBase::AnimationStateInput::EndTimerFired: return "EndTimerFired";
+    case AnimationBase::AnimationStateInput::PauseOverride: return "PauseOverride";
+    case AnimationBase::AnimationStateInput::ResumeOverride: return "ResumeOverride";
+    case AnimationBase::AnimationStateInput::PlayStateRunning: return "PlayStateRunning";
+    case AnimationBase::AnimationStateInput::PlayStatePaused: return "PlayStatePaused";
+    case AnimationBase::AnimationStateInput::EndAnimation: return "EndAnimation";
+    }
+    return "";
+}
 #endif
 
 void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
@@ -318,7 +338,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
         case AnimationState::Ending:
 #if !LOG_DISABLED
             if (input != AnimationStateInput::EndTimerFired && input != AnimationStateInput::PlayStatePaused)
-                LOG_ERROR("State is AnimationState::Ending, but input is not AnimationStateInput::EndTimerFired or AnimationStateInput::PlayStatePaused. It is %d.", input);
+                LOG_ERROR("State is AnimationState::Ending, but input is not AnimationStateInput::EndTimerFired or AnimationStateInput::PlayStatePaused. It is %s.", nameForStateInput(input));
 #endif
             if (input == AnimationStateInput::EndTimerFired) {
 
