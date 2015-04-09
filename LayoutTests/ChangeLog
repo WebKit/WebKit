@@ -1,3 +1,13 @@
+2015-04-09  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed EFL gardening. Added missing results after r182546. 
+        https://bugs.webkit.org/show_bug.cgi?id=143557
+
+        * platform/efl/fast/backgrounds/selection-background-color-of-image-list-style-expected.png: Added.
+        * platform/efl/fast/backgrounds/selection-background-color-of-image-list-style-expected.txt: Added.
+        * platform/efl/fast/backgrounds/selection-background-color-of-list-style-expected.png: Added.
+        * platform/efl/fast/backgrounds/selection-background-color-of-list-style-expected.txt: Added.
+
 2015-04-09  Andy Estes  <aestes@apple.com>
 
         Skip http/tests/contentfiltering/ on all the platforms that skipped contentfiltering/
