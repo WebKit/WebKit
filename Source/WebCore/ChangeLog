@@ -1,3 +1,9 @@
+2015-04-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, added CSS Grid Layout to features.json file.
+
+        * features.json:
+
 2015-04-08  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Support the start function parameter in ReadableStream constructor

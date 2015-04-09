@@ -1,6 +1,21 @@
 {
     "specification": [
     {
+        "name": "CSS Grid Layout Level 1",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": true
+        },
+        "url": "http://dev.w3.org/csswg/css-grid/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=60731",
+        "keywords": ["css grid layout", "css grid", "grid"],
+        "category": "css",
+        "contact": {
+            "name": "Sergio Villar Senin",
+            "email": "svillar@igalia.com"
+        }
+    },
+    {
         "name": "CSS Media Queries Level 4",
         "url": "http://dev.w3.org/csswg/mediaqueries-4/",
         "keywords": ["css media queries", "media queries"],
