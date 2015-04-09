@@ -86,7 +86,8 @@ TEST(WebKit2, MenuAndButtonForNormalMiddleClick)
 
 TEST(WebKit2, MenuAndButtonForControlLeftClick)
 {
-    buildAndPerformTest(kWKEventMouseButtonLeftButton, kWKEventModifiersControlKey, "0", "context");
+    // Note: This is controlled by a Mouse system preference. Check settings if this is failing.
+    buildAndPerformTest(kWKEventMouseButtonLeftButton, kWKEventModifiersControlKey, "0", "none");
 }
 
 TEST(WebKit2, MenuAndButtonForControlRightClick)

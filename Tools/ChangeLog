@@ -1,5 +1,17 @@
 2015-04-08  Brent Fulgham  <bfulgham@apple.com>
 
+        [Mac] Unreviewed test fix after r182581
+
+        The behavior of control-left-click is controlled by a system preference.
+        Our test bots have this turned off.
+
+        * TestWebKitAPI/Tests/WebKit2/MenuTypesForMouseEvents.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/MenuTypesForMouseEvents.mm:
+        (TestWebKitAPI::TEST):
+
+2015-04-08  Brent Fulgham  <bfulgham@apple.com>
+
         [Mac] WebKit is not honoring OS preferences for secondary click behaviors
         https://bugs.webkit.org/show_bug.cgi?id=143452
         <rdar://problem/20437483>
