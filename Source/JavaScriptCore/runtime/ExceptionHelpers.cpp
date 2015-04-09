@@ -101,7 +101,7 @@ JSString* errorDescriptionForValue(ExecState* exec, JSValue v)
     if (v.isFalse())
         return vm.smallStrings.falseString();
     if (v.isString())
-        return jsString(&vm, makeString('"',  asString(v)->value(exec), '"'));
+        return jsNontrivialString(&vm, makeString('"',  asString(v)->value(exec), '"'));
     if (v.isObject()) {
         CallData callData;
         JSObject* object = asObject(v);

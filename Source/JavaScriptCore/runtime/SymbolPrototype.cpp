@@ -83,7 +83,7 @@ EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(ExecState* exec)
         symbol = asSymbol(jsCast<SymbolObject*>(thisObject)->internalValue());
     }
 
-    return JSValue::encode(jsString(exec, symbol->descriptiveString()));
+    return JSValue::encode(jsNontrivialString(exec, symbol->descriptiveString()));
 }
 
 EncodedJSValue JSC_HOST_CALL symbolProtoFuncValueOf(ExecState* exec)

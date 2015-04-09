@@ -1,3 +1,19 @@
+2015-04-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Use jsNontrivialString in more places if the string is guaranteed to be 2 or more characters
+        https://bugs.webkit.org/show_bug.cgi?id=143430
+
+        Reviewed by Darin Adler.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::errorDescriptionForValue):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToPrecision):
+        (JSC::numberProtoFuncToString):
+        * runtime/SymbolPrototype.cpp:
+        (JSC::symbolProtoFuncToString):
+
 2015-04-08  Filip Pizlo  <fpizlo@apple.com>
 
         JSArray::sortNumeric should handle ArrayWithUndecided

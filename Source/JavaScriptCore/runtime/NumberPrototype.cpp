@@ -378,7 +378,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
-        return JSValue::encode(jsString(exec, String::numberToStringECMAScript(x)));
+        return JSValue::encode(jsNontrivialString(exec, String::numberToStringECMAScript(x)));
 
     // Round if the argument is not undefined, always format as exponential.
     char buffer[WTF::NumberToStringBufferLength];
@@ -446,7 +446,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
 
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
-        return JSValue::encode(jsString(exec, String::numberToStringECMAScript(x)));
+        return JSValue::encode(jsNontrivialString(exec, String::numberToStringECMAScript(x)));
 
     NumberToStringBuffer buffer;
     return JSValue::encode(jsString(exec, String(numberToFixedPrecisionString(x, significantFigures, buffer))));
@@ -540,7 +540,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
     }
 
     if (!std::isfinite(doubleValue))
-        return JSValue::encode(jsString(exec, String::numberToStringECMAScript(doubleValue)));
+        return JSValue::encode(jsNontrivialString(exec, String::numberToStringECMAScript(doubleValue)));
 
     RadixBuffer s;
     return JSValue::encode(jsString(exec, toStringWithRadix(s, doubleValue, radix)));
