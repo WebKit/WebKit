@@ -190,6 +190,10 @@ private:
     void getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>);
 #endif
 
+    void retainIconForPageURL(const String& pageURL);
+    void releaseIconForPageURL(const String& pageURL);
+    void releaseRemainingIconsForPageURLs();
+
     // IPC::Connection::Client
     friend class WebConnectionToWebProcess;
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
@@ -243,6 +247,8 @@ private:
 #if PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)
     ProcessThrottler::ForegroundActivityToken m_tokenForNetworkProcess;
 #endif
+
+    HashMap<String, uint64_t> m_pageURLRetainCountMap;
 };
 
 } // namespace WebKit

@@ -38,6 +38,7 @@
 #include "TextCheckerState.h"
 #include "UserData.h"
 #include "WebBackForwardListItem.h"
+#include "WebIconDatabase.h"
 #include "WebInspectorProxy.h"
 #include "WebNavigationDataStore.h"
 #include "WebNotificationManagerProxy.h"
@@ -117,6 +118,7 @@ WebProcessProxy::~WebProcessProxy()
     ASSERT(m_pendingFetchWebsiteDataCallbacks.isEmpty());
     ASSERT(m_pendingDeleteWebsiteDataCallbacks.isEmpty());
     ASSERT(m_pendingDeleteWebsiteDataForOriginsCallbacks.isEmpty());
+    ASSERT(m_pageURLRetainCountMap.isEmpty());
 
     if (m_webConnection)
         m_webConnection->invalidate();
@@ -163,6 +165,8 @@ void WebProcessProxy::connectionDidClose(IPC::Connection& connection)
 
     for (auto& page : m_pageMap.values())
         page->connectionDidClose(connection);
+
+    releaseRemainingIconsForPageURLs();
 }
 
 void WebProcessProxy::disconnect()
@@ -432,6 +436,53 @@ void WebProcessProxy::getDatabaseProcessConnection(PassRefPtr<Messages::WebProce
     m_processPool->getDatabaseProcessConnection(reply);
 }
 #endif // ENABLE(DATABASE_PROCESS)
+
+void WebProcessProxy::retainIconForPageURL(const String& pageURL)
+{
+    WebIconDatabase* iconDatabase = processPool().iconDatabase();
+    if (!iconDatabase || pageURL.isEmpty())
+        return;
+
+    // Track retain counts so we can release them if the WebProcess terminates early.
+    auto result = m_pageURLRetainCountMap.add(pageURL, 1);
+    if (!result.isNewEntry)
+        ++result.iterator->value;
+
+    iconDatabase->retainIconForPageURL(pageURL);
+}
+
+void WebProcessProxy::releaseIconForPageURL(const String& pageURL)
+{
+    WebIconDatabase* iconDatabase = processPool().iconDatabase();
+    if (!iconDatabase || pageURL.isEmpty())
+        return;
+
+    // Track retain counts so we can release them if the WebProcess terminates early.
+    auto result = m_pageURLRetainCountMap.find(pageURL);
+    if (result == m_pageURLRetainCountMap.end())
+        return;
+
+    --result->value;
+    if (!result->value)
+        m_pageURLRetainCountMap.remove(result);
+
+    iconDatabase->releaseIconForPageURL(pageURL);
+}
+
+void WebProcessProxy::releaseRemainingIconsForPageURLs()
+{
+    WebIconDatabase* iconDatabase = processPool().iconDatabase();
+    if (!iconDatabase)
+        return;
+
+    for (auto iter : m_pageURLRetainCountMap) {
+        uint64_t count = iter.value;
+        for (uint64_t i = 0; i < count; ++i)
+            iconDatabase->releaseIconForPageURL(iter.key);
+    }
+
+    m_pageURLRetainCountMap.clear();
+}
 
 void WebProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {

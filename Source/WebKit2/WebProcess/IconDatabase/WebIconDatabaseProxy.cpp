@@ -30,6 +30,7 @@
 #include "WebIconDatabaseMessages.h"
 #include "WebIconDatabaseProxyMessages.h"
 #include "WebProcess.h"
+#include "WebProcessProxyMessages.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/text/WTFString.h>
 
@@ -64,12 +65,12 @@ void WebIconDatabaseProxy::setEnabled(bool enabled)
 
 void WebIconDatabaseProxy::retainIconForPageURL(const String& pageURL)
 {
-    m_process->parentProcessConnection()->send(Messages::WebIconDatabase::RetainIconForPageURL(pageURL), 0);
+    m_process->parentProcessConnection()->send(Messages::WebProcessProxy::RetainIconForPageURL(pageURL), 0);
 }
 
 void WebIconDatabaseProxy::releaseIconForPageURL(const String& pageURL)
 {
-    m_process->parentProcessConnection()->send(Messages::WebIconDatabase::ReleaseIconForPageURL(pageURL), 0);
+    m_process->parentProcessConnection()->send(Messages::WebProcessProxy::ReleaseIconForPageURL(pageURL), 0);
 }
 
 Image* WebIconDatabaseProxy::synchronousIconForPageURL(const String& pageURL, const IntSize& /*size*/)

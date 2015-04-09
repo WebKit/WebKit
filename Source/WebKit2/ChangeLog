@@ -1,3 +1,40 @@
+2015-04-09  Gordon Sheridan  <gordon_sheridan@apple.com>
+
+        Track IconDatabase retain counts for WebContent processes. Balance retain/releases for processes that terminate before successfully doing it themselves.
+        https://bugs.webkit.org/show_bug.cgi?id=143517.
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/WebIconDatabase.messages.in:
+        Move RetainIconForPageURL and ReleaseIconForPageURL messages to WebProcessProxy so they can be associated with the appropriate web process.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connectionDidClose):
+        Call releaseRemainingIconsForPageURLs() to balance retains/releases for this process.
+
+        (WebKit::WebProcessProxy::retainIconForPageURL):
+        Track retain counts for page URLs and call through to WebIconDatabase.
+
+        (WebKit::WebProcessProxy::releaseIconForPageURL):
+        Ditto.
+
+        (WebKit::WebProcessProxy::releaseRemainingIconsForPageURLs):
+        Call releaseIconForPageURL() once for each outstanding retain count, for each page URL.
+
+        * UIProcess/WebProcessProxy.h:
+        Declare methods for retainIconForPageURL(), releaseIconForPageURL(), and releaseRemainingIconsForPageURLs().
+        Declare hash map to track number of retains per page URL.
+
+        * UIProcess/WebProcessProxy.messages.in:
+        Moved RetainIconForPageURL and ReleaseIconForPageURL messages here from WebIconDatabase.
+
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.cpp:
+        (WebKit::WebIconDatabaseProxy::retainIconForPageURL):
+        Modify the receiver of the message to be WebProcessProxy.
+
+        (WebKit::WebIconDatabaseProxy::releaseIconForPageURL):
+        Ditto.
+
 2015-04-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Regression(r182194): The NetworkProcess is calling the wrong memory pressure handler before suspending
