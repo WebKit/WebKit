@@ -393,6 +393,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                 swatchElement.appendChild(swatchInnerElement);
 
                 var codeMirrorTextMarker = marker.codeMirrorTextMarker;
+                this._codeMirror.setUniqueBookmark(codeMirrorTextMarker.find().from, swatchElement);
 
                 swatchInnerElement.__colorTextMarker = codeMirrorTextMarker;
                 swatchInnerElement.__color = color;
