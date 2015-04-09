@@ -153,6 +153,7 @@ flex-direction: row;
 flex-wrap: nowrap;
 justify-content: flex-start;
 justify-self: start;
+justify-items: start;
 -webkit-font-kerning: auto;
 -webkit-font-smoothing: auto;
 -webkit-font-variant-ligatures: normal;

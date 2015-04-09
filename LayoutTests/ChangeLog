@@ -1,3 +1,23 @@
+2015-04-09  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Implement justify-self and justify-item css properties.
+        https://bugs.webkit.org/show_bug.cgi?id=133281
+
+        Reviewed by David Hyatt.
+
+        Implement the new property 'justify-items', defined in the CSS Box Alignment
+        specification to desribe the container's alignment behavior, in the same way
+        the 'align-items' property does.
+
+        * fast/css/parse-justify-items-expected.txt: Added.
+        * fast/css/parse-justify-items.html: Added.
+        * fast/css/resources/alignment-parsing-utils.js: Added.
+        (checkValues):
+        (checkBadValues):
+        (checkInitialValues):
+        (checkInheritValues):
+        (checkLegacyValues):
+
 2015-04-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text-combine erroneously draws vertically after non-layout-causing style change

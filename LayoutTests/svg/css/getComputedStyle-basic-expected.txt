@@ -304,6 +304,8 @@ rect: style.getPropertyValue(justify-content) : flex-start
 rect: style.getPropertyCSSValue(justify-content) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(justify-self) : start
 rect: style.getPropertyCSSValue(justify-self) : [object CSSValueList]
+rect: style.getPropertyValue(justify-items) : start
+rect: style.getPropertyCSSValue(justify-items) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-font-kerning) : auto
 rect: style.getPropertyCSSValue(-webkit-font-kerning) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-smoothing) : auto
@@ -820,6 +822,8 @@ g: style.getPropertyValue(justify-content) : flex-start
 g: style.getPropertyCSSValue(justify-content) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(justify-self) : start
 g: style.getPropertyCSSValue(justify-self) : [object CSSValueList]
+g: style.getPropertyValue(justify-items) : start
+g: style.getPropertyCSSValue(justify-items) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-font-kerning) : auto
 g: style.getPropertyCSSValue(-webkit-font-kerning) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-smoothing) : auto

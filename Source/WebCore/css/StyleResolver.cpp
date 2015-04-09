@@ -1434,6 +1434,13 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         if ((e->hasTagName(SVGNames::foreignObjectTag) || e->hasTagName(SVGNames::textTag)) && style.isDisplayInlineType())
             style.setDisplay(BLOCK);
     }
+
+    // If the inherited value of justify-items includes the legacy keyword, 'auto'
+    // computes to the the inherited value.
+    if (parentStyle.justifyItemsPositionType() == LegacyPosition && style.justifyItems() == ItemPositionAuto) {
+        style.setJustifyItems(parentStyle.justifyItems());
+        style.setJustifyItemsPositionType(parentStyle.justifyItemsPositionType());
+    }
 }
 
 bool StyleResolver::checkRegionStyle(Element* regionElement)

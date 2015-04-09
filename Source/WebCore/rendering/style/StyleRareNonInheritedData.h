@@ -194,6 +194,10 @@ public:
     unsigned m_alignSelfOverflowAlignment : 2; // OverflowAlignment
     unsigned m_justifyContent : 3; // EJustifyContent
 
+    unsigned m_justifyItems : 4; // ItemPosition
+    unsigned m_justifyItemsOverflowAlignment : 2; // OverflowAlignment
+    unsigned m_justifyItemsPositionType: 1; // Whether or not alignment uses the 'legacy' keyword.
+
     unsigned m_justifySelf : 4; // ItemPosition
     unsigned m_justifySelfOverflowAlignment : 2; // OverflowAlignment
 

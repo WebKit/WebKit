@@ -87,6 +87,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_alignSelf(RenderStyle::initialAlignSelf())
     , m_alignSelfOverflowAlignment(RenderStyle::initialAlignSelfOverflowAlignment())
     , m_justifyContent(RenderStyle::initialJustifyContent())
+    , m_justifyItems(RenderStyle::initialJustifyItems())
+    , m_justifyItemsOverflowAlignment(RenderStyle::initialJustifyItemsOverflowAlignment())
+    , m_justifyItemsPositionType(NonLegacyPosition)
     , m_justifySelf(RenderStyle::initialJustifySelf())
     , m_justifySelfOverflowAlignment(RenderStyle::initialJustifySelfOverflowAlignment())
     , userDrag(RenderStyle::initialUserDrag())
@@ -177,6 +180,9 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_alignSelf(o.m_alignSelf)
     , m_alignSelfOverflowAlignment(o.m_alignSelfOverflowAlignment)
     , m_justifyContent(o.m_justifyContent)
+    , m_justifyItems(o.m_justifyItems)
+    , m_justifyItemsOverflowAlignment(o.m_justifyItemsOverflowAlignment)
+    , m_justifyItemsPositionType(o.m_justifyItemsPositionType)
     , m_justifySelf(o.m_justifySelf)
     , m_justifySelfOverflowAlignment(o.m_justifySelfOverflowAlignment)
     , userDrag(o.userDrag)
@@ -292,6 +298,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 #endif
         && m_aspectRatioType == o.m_aspectRatioType
         && m_objectFit == o.m_objectFit
+        && m_justifyItems == o.m_justifyItems
+        && m_justifyItemsOverflowAlignment == o.m_justifyItemsOverflowAlignment
+        && m_justifyItemsPositionType == o.m_justifyItemsPositionType
         && m_justifySelf == o.m_justifySelf
         && m_justifySelfOverflowAlignment == o.m_justifySelfOverflowAlignment;
 }

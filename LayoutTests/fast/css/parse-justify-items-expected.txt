@@ -1,0 +1,159 @@
+Test that setting and getting justify-items works as expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test getting justify-items set through CSS
+PASS getComputedStyle(justifyItemsBaseline, '').getPropertyValue('justify-items') is 'baseline'
+PASS getComputedStyle(justifyItemsLastBaseline, '').getPropertyValue('justify-items') is 'last-baseline'
+PASS getComputedStyle(justifyItemsStretch, '').getPropertyValue('justify-items') is 'stretch'
+PASS getComputedStyle(justifyItemsStart, '').getPropertyValue('justify-items') is 'start'
+PASS getComputedStyle(justifyItemsEnd, '').getPropertyValue('justify-items') is 'end'
+PASS getComputedStyle(justifyItemsCenter, '').getPropertyValue('justify-items') is 'center'
+PASS getComputedStyle(justifyItemsSelfEnd, '').getPropertyValue('justify-items') is 'self-end'
+PASS getComputedStyle(justifyItemsSelfStart, '').getPropertyValue('justify-items') is 'self-start'
+PASS getComputedStyle(justifyItemsLeft, '').getPropertyValue('justify-items') is 'left'
+PASS getComputedStyle(justifyItemsRight, '').getPropertyValue('justify-items') is 'right'
+PASS getComputedStyle(justifyItemsFlexStart, '').getPropertyValue('justify-items') is 'flex-start'
+PASS getComputedStyle(justifyItemsFlexEnd, '').getPropertyValue('justify-items') is 'flex-end'
+PASS getComputedStyle(justifyItemsEndTrue, '').getPropertyValue('justify-items') is 'end true'
+PASS getComputedStyle(justifyItemsCenterTrue, '').getPropertyValue('justify-items') is 'center true'
+PASS getComputedStyle(justifyItemsSelfEndSafe, '').getPropertyValue('justify-items') is 'self-end safe'
+PASS getComputedStyle(justifyItemsSelfStartSafe, '').getPropertyValue('justify-items') is 'self-start safe'
+PASS getComputedStyle(justifyItemsRightSafe, '').getPropertyValue('justify-items') is 'right safe'
+PASS getComputedStyle(justifyItemsLeftTrue, '').getPropertyValue('justify-items') is 'left true'
+PASS getComputedStyle(justifyItemsFlexStartTrue, '').getPropertyValue('justify-items') is 'flex-start true'
+PASS getComputedStyle(justifyItemsFlexEndSafe, '').getPropertyValue('justify-items') is 'flex-end safe'
+PASS getComputedStyle(justifyItemsLegacyLeft, '').getPropertyValue('justify-items') is 'legacy left'
+PASS getComputedStyle(justifyItemsLegacyCenter, '').getPropertyValue('justify-items') is 'legacy center'
+PASS getComputedStyle(justifyItemsLegacyRight, '').getPropertyValue('justify-items') is 'legacy right'
+PASS getComputedStyle(justifyItemsLeftLegacy, '').getPropertyValue('justify-items') is 'legacy left'
+PASS getComputedStyle(justifyItemsCenterLegacy, '').getPropertyValue('justify-items') is 'legacy center'
+PASS getComputedStyle(justifyItemsRightLegacy, '').getPropertyValue('justify-items') is 'legacy right'
+
+Test initial value of justify-items through JS
+PASS getComputedStyle(element, '').getPropertyValue('justify-items') is 'start'
+
+Test getting and setting justify-items through JS
+PASS element.style.justifyItems is "center"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "center"
+PASS element.style.justifyItems is "start true"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start true"
+PASS element.style.justifyItems is "flex-end safe"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "flex-end safe"
+PASS element.style.justifyItems is "legacy right"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "legacy right"
+PASS element.style.justifyItems is "legacy center"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "legacy center"
+PASS element.style.justifyItems is "legacy left"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "legacy left"
+PASS element.style.justifyItems is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "stretch"
+PASS element.style.justifyItems is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "stretch"
+PASS getComputedStyle(element, '').getPropertyValue('justify-items') is 'stretch'
+PASS element.style.justifyItems is 'auto'
+PASS element.style.justifyItems is "self-end"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "self-end"
+
+Test bad combinations of justify-items
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+
+Test the value 'initial'
+PASS element.style.justifyItems is "center"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "center"
+PASS element.style.justifyItems is "initial"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
+
+Test the value 'initial' for grid containers
+PASS element.style.justifyItems is "left safe"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "left safe"
+PASS element.style.justifyItems is "initial"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "stretch"
+
+Test the value 'initial' for flex containers
+PASS element.style.justifyItems is "right true"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "right true"
+PASS element.style.justifyItems is "initial"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "stretch"
+
+Test the value 'inherit'
+PASS element.style.justifyItems is "end"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "end"
+PASS element.style.justifyItems is "inherit"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "end"
+PASS element.style.justifyItems is "left safe"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "left safe"
+PASS element.style.justifyItems is "inherit"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "left safe"
+PASS element.style.justifyItems is "center true"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "center true"
+PASS element.style.justifyItems is "inherit"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "center true"
+
+Test the value 'legacy'
+PASS element.style.justifyItems is "legacy left"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "legacy left"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "legacy left"
+PASS element.style.justifyItems is "legacy center"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "legacy center"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "legacy center"
+PASS element.style.justifyItems is "legacy right"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "legacy right"
+PASS element.style.justifyItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "legacy right"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

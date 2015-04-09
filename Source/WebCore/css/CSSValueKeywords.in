@@ -553,7 +553,7 @@ last-baseline
 // space-between
 // space-around
 
-// CSS_PROP_JUSTIFY_SELF
+// CSS_PROP_JUSTIFY_ITEMS / CSS_PROP_JUSTIFY_SELF
 // auto
 // stretch
 // baseline
@@ -569,6 +569,7 @@ self-end
 // right
 true
 safe
+legacy
 
 // CSS_PROP_FLEX_FLOW
 row

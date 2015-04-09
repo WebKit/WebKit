@@ -1,3 +1,43 @@
+2015-04-09  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Implement justify-self and justify-item css properties.
+        https://bugs.webkit.org/show_bug.cgi?id=133281
+
+        Reviewed by David Hyatt.
+
+        Implement the new property 'justify-items', defined in the CSS Box Alignment
+        specification to describe the container's alignment behavior, in the same way
+        the 'align-items' property does. The 'justify-self' 'auto' value of any relative
+        positioned element will be resolved to its container's 'justify-items' value.
+
+        Test: fast/css/parse-justify-items.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::resolveContainerAlignmentAuto): Function to resolve 'auto' values for 'align-items' or 'justify-items'.
+        (WebCore::resolveSelfAlignmentAuto): Function to resolve 'auto' values for 'align-self' or 'justify-self'.
+        (WebCore::valueForItemPositionWithOverflowAlignment): Take into account the 'legacy' keyword.
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        (WebCore::resolveAlignmentAuto): Deleted (renamed to resolveContainerAlignmentAuto).
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Refactoring to share logic between justify-xxx and align-xxx properties.
+        (WebCore::CSSParser::parseLegacyPosition): Parsing logic of 'legacy' keyword,
+        (WebCore::CSSParser::parseItemPositionOverflowPosition): Take into account the 'legacy' keyword.
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInheritJustifyItems): Added.
+        (WebCore::StyleBuilderCustom::applyInitialJustifyItems): Added.
+        (WebCore::StyleBuilderCustom::applyValueJustifyItems): Added.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle): Resolve 'auto' values for justify-items when parents have the 'legacy' keyword.
+        * rendering/style/RenderStyle.h: Managing the new ItemPositionType fields.
+        * rendering/style/RenderStyleConstants.h: Added the ItemPositionType enumeration for handling the 'legacy' keyword.
+        * rendering/style/StyleRareNonInheritedData.cpp: Managing the new ItemPositionType fields.
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2015-04-09  Anders Carlsson  <andersca@apple.com>
 
         Make it possible to create an application cache storage with custom directories

@@ -152,6 +152,7 @@ flex-direction: row
 flex-wrap: nowrap
 justify-content: flex-start
 justify-self: auto
+justify-items: auto
 -webkit-font-kerning: auto
 -webkit-font-smoothing: auto
 -webkit-font-variant-ligatures: normal

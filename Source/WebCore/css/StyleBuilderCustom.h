@@ -103,6 +103,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitTextEmphasisStyle);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Zoom);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(JustifySelf);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(JustifyItems);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(AlignItems);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(AlignSelf);
 
@@ -576,6 +577,39 @@ inline void StyleBuilderCustom::applyValueJustifySelf(StyleResolver& styleResolv
         styleResolver.style()->setJustifySelf(primitiveValue);
         styleResolver.style()->setJustifySelfOverflowAlignment(RenderStyle::initialJustifySelfOverflowAlignment());
     }
+}
+
+inline void StyleBuilderCustom::applyInheritJustifyItems(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setJustifyItems(styleResolver.parentStyle()->justifyItems());
+    styleResolver.style()->setJustifyItemsOverflowAlignment(styleResolver.parentStyle()->justifyItemsOverflowAlignment());
+    styleResolver.style()->setJustifyItemsPositionType(styleResolver.parentStyle()->justifyItemsPositionType());
+}
+
+inline void StyleBuilderCustom::applyInitialJustifyItems(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setJustifyItems(RenderStyle::initialJustifyItems());
+    styleResolver.style()->setJustifyItemsOverflowAlignment(RenderStyle::initialJustifyItemsOverflowAlignment());
+    styleResolver.style()->setJustifyItemsPositionType(RenderStyle::initialJustifyItemsPositionType());
+}
+
+inline void StyleBuilderCustom::applyValueJustifyItems(StyleResolver& styleResolver, CSSValue& value)
+{
+    styleResolver.style()->setJustifyItems(RenderStyle::initialJustifyItems());
+    styleResolver.style()->setJustifyItemsOverflowAlignment(RenderStyle::initialJustifyItemsOverflowAlignment());
+    styleResolver.style()->setJustifyItemsPositionType(RenderStyle::initialJustifyItemsPositionType());
+
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (Pair* pairValue = primitiveValue.getPairValue()) {
+        if (pairValue->first()->getValueID() == CSSValueLegacy) {
+            styleResolver.style()->setJustifyItemsPositionType(LegacyPosition);
+            styleResolver.style()->setJustifyItems(*pairValue->second());
+        } else {
+            styleResolver.style()->setJustifyItems(*pairValue->first());
+            styleResolver.style()->setJustifyItemsOverflowAlignment(*pairValue->second());
+        }
+    } else
+        styleResolver.style()->setJustifyItems(primitiveValue);
 }
 
 enum BorderImageType { BorderImage, WebkitMaskBoxImage };
