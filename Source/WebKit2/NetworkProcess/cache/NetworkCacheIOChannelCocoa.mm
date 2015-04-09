@@ -43,12 +43,15 @@ IOChannel::IOChannel(const String& filePath, Type type)
     : m_path(filePath)
     , m_type(type)
 {
+    auto path = WebCore::fileSystemRepresentation(filePath);
     int oflag;
     mode_t mode;
 
     switch (m_type) {
     case Type::Create:
-        oflag = O_RDWR | O_CREAT | O_TRUNC | O_NONBLOCK;
+        // We don't want to truncate any existing file (with O_TRUNC) as another thread might be mapping it.
+        unlink(path.data());
+        oflag = O_RDWR | O_CREAT | O_NONBLOCK;
         mode = S_IRUSR | S_IWUSR;
         break;
     case Type::Write:
@@ -60,7 +63,6 @@ IOChannel::IOChannel(const String& filePath, Type type)
         mode = 0;
     }
 
-    CString path = WebCore::fileSystemRepresentation(filePath);
     int fd = ::open(path.data(), oflag, mode);
     m_fileDescriptor = fd;
 
