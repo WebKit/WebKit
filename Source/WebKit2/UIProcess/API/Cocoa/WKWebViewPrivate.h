@@ -28,6 +28,7 @@
 #if WK_API_ENABLED
 
 #import <WebKit/_WKFindOptions.h>
+#import <WebKit/_WKLayoutMode.h>
 #import <WebKit/_WKRenderingProgressEvents.h>
 
 typedef NS_ENUM(NSInteger, _WKPaginationMode) {
@@ -91,7 +92,7 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
 
 - (void)_close;
 
-@property (nonatomic, getter=_isFixedLayoutEnabled, setter=_setFixedLayoutEnabled:) BOOL _fixedLayoutEnabled;
+@property (nonatomic, setter=_setLayoutMode:) _WKLayoutMode _layoutMode;
 @property (nonatomic, setter=_setFixedLayoutSize:) CGSize _fixedLayoutSize;
 
 #if TARGET_OS_IPHONE

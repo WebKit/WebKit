@@ -2242,14 +2242,14 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return _page->isShowingNavigationGestureSnapshot();
 }
 
-- (BOOL)_isFixedLayoutEnabled
+- (_WKLayoutMode)_layoutMode
 {
-    return _page->useFixedLayout();
+    return _page->useFixedLayout() ? _WKLayoutModeFixedSize : _WKLayoutModeViewSize;
 }
 
-- (void)_setFixedLayoutEnabled:(BOOL)fixedLayoutEnabled
+- (void)_setLayoutMode:(_WKLayoutMode)layoutMode
 {
-    _page->setUseFixedLayout(fixedLayoutEnabled);
+    _page->setUseFixedLayout(layoutMode == _WKLayoutModeFixedSize);
 }
 
 - (CGSize)_fixedLayoutSize

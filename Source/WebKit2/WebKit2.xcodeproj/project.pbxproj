@@ -625,6 +625,8 @@
 		2D6CD119189058A500E5A4A0 /* ViewSnapshotStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */; };
 		2D6CD11A189058A500E5A4A0 /* ViewSnapshotStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D6CD118189058A500E5A4A0 /* ViewSnapshotStore.mm */; };
 		2D7303791A7C2B7500F8F487 /* WKPageNavigationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7303781A7C2B7500F8F487 /* WKPageNavigationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D790A9D1AD7050D00AB90B3 /* _WKLayoutMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D790A9C1AD7050D00AB90B3 /* _WKLayoutMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D790A9F1AD7164900AB90B3 /* WKLayoutMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D790A9E1AD7164900AB90B3 /* WKLayoutMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D7AAFD318C8640600A7ACD4 /* WKWebViewContentProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */; };
 		2D7AAFD618C956AF00A7ACD4 /* WKWebViewConfigurationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7AAFD518C956AF00A7ACD4 /* WKWebViewConfigurationInternal.h */; };
 		2D7F13101A702FBA009A6FBD /* ProcessType.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7F130F1A702FBA009A6FBD /* ProcessType.h */; };
@@ -2785,6 +2787,8 @@
 		2D70AB1318A1D51A00026D6E /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
 		2D70AB1418A1D57C00026D6E /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
 		2D7303781A7C2B7500F8F487 /* WKPageNavigationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageNavigationClient.h; sourceTree = "<group>"; };
+		2D790A9C1AD7050D00AB90B3 /* _WKLayoutMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKLayoutMode.h; sourceTree = "<group>"; };
+		2D790A9E1AD7164900AB90B3 /* WKLayoutMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKLayoutMode.h; sourceTree = "<group>"; };
 		2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewContentProvider.h; sourceTree = "<group>"; };
 		2D7AAFD518C956AF00A7ACD4 /* WKWebViewConfigurationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewConfigurationInternal.h; sourceTree = "<group>"; };
 		2D7F130F1A702FBA009A6FBD /* ProcessType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessType.h; sourceTree = "<group>"; };
@@ -5346,6 +5350,7 @@
 				2DEAC5CE1AC368BB00A195D8 /* _WKFindOptions.h */,
 				37A64E5418F38E3C00EB30F1 /* _WKFormDelegate.h */,
 				37A64E5618F38F4600EB30F1 /* _WKFormInputSession.h */,
+				2D790A9C1AD7050D00AB90B3 /* _WKLayoutMode.h */,
 				1A43E828188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h */,
 				1A43E827188F3CDC009E4D30 /* _WKProcessPoolConfiguration.mm */,
 				7C89D2D61A6C6BE6003A5FDE /* _WKProcessPoolConfigurationInternal.h */,
@@ -6382,6 +6387,7 @@
 				1C8E293712761E5B00BC7BD0 /* WKInspector.h */,
 				51A9E1081315CD18009E7031 /* WKKeyValueStorageManager.cpp */,
 				51A9E1091315CD18009E7031 /* WKKeyValueStorageManager.h */,
+				2D790A9E1AD7164900AB90B3 /* WKLayoutMode.h */,
 				33D3A3B31339600B00709BE4 /* WKMediaCacheManager.cpp */,
 				33D3A3B41339600B00709BE4 /* WKMediaCacheManager.h */,
 				C09AE5E8125257C20025825D /* WKNativeEvent.h */,
@@ -7911,6 +7917,7 @@
 				1A57109F1ABA0027002FABBE /* WKWebsiteDataStoreRef.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
 				753E3E0E1887398900188496 /* SessionTracker.h in Headers */,
+				2D790A9F1AD7164900AB90B3 /* WKLayoutMode.h in Headers */,
 				1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */,
 				51217461164C20E30037A5C1 /* ShareableResource.h in Headers */,
 				1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */,
@@ -8327,6 +8334,7 @@
 				BCD597D7112B56DC00EC8C23 /* WKPage.h in Headers */,
 				1AB8A1F818400BB800E9AE69 /* WKPageContextMenuClient.h in Headers */,
 				1AB8A1F418400B8F00E9AE69 /* WKPageFindClient.h in Headers */,
+				2D790A9D1AD7050D00AB90B3 /* _WKLayoutMode.h in Headers */,
 				1AB8A1F618400B9D00E9AE69 /* WKPageFindMatchesClient.h in Headers */,
 				1AB8A1F018400B0000E9AE69 /* WKPageFormClient.h in Headers */,
 				BC7B633712A45ABA00D174A4 /* WKPageGroup.h in Headers */,

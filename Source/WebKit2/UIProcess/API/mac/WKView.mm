@@ -59,6 +59,7 @@
 #import "WKActionMenuItemTypes.h"
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
+#import "WKLayoutMode.h"
 #import "WKPrintingView.h"
 #import "WKProcessPoolInternal.h"
 #import "WKStringCF.h"
@@ -4343,14 +4344,14 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return _data->_overrideDeviceScaleFactor;
 }
 
-- (BOOL)_isFixedLayoutEnabled
+- (WKLayoutMode)_layoutMode
 {
-    return _data->_page->useFixedLayout();
+    return _data->_page->useFixedLayout() ? kWKLayoutModeFixedSize : kWKLayoutModeViewSize;
 }
 
-- (void)_setFixedLayoutEnabled:(BOOL)fixedLayoutEnabled
+- (void)_setLayoutMode:(WKLayoutMode)layoutMode
 {
-    _data->_page->setUseFixedLayout(fixedLayoutEnabled);
+    _data->_page->setUseFixedLayout(layoutMode == kWKLayoutModeFixedSize);
 }
 
 - (CGSize)_fixedLayoutSize
