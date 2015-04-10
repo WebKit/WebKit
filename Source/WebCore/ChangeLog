@@ -1,3 +1,34 @@
+2015-04-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Fix raw function pointer usages
+        https://bugs.webkit.org/show_bug.cgi?id=143481
+
+        Reviewed by Antti Koivisto.
+
+        The argument list of
+        resolveContentBasedTrackSizingFunctionsForItems() became too long
+        and rather incomprehensible as it included up to 6 function
+        pointers. This replaces all of them by an enum which describes the
+        phase of the algorithm that is currently running. With that phase
+        we have enough information to select the right function to call.
+
+        In order not to tangle up too much the method, the new explicit
+        switch statements where moved to static helper functions.
+
+        No new tests as this is just a code refactoring.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+        (WebCore::RenderGrid::trackSizeForTrackSizeComputationPhase): New helper function.
+        (WebCore::RenderGrid::shouldProcessTrackForTrackSizeComputationPhase): Ditto.
+        (WebCore::RenderGrid::trackShouldGrowBeyondGrowthLimitsForTrackSizeComputationPhase): Ditto.
+        (WebCore::RenderGrid::updateTrackSizeForTrackSizeComputationPhase): Ditto.
+        (WebCore::RenderGrid::currentItemSizeForTrackSizeComputationPhase): Ditto.
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+        (WebCore::RenderGrid::distributeSpaceToTracks):
+        * rendering/RenderGrid.h:
+
 2015-04-10  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Remove AudioStreamTrack and VideoStreamTrack (removed in spec)
