@@ -47,7 +47,7 @@
 #import "OutOfBandTextTrackPrivateAVF.h"
 #import "URL.h"
 #import "Logging.h"
-#import "MediaPlaybackTarget.h"
+#import "MediaPlaybackTargetMac.h"
 #import "MediaSelectionGroupAVFObjC.h"
 #import "MediaTimeAVFoundation.h"
 #import "PlatformTimeRanges.h"
@@ -2777,9 +2777,11 @@ void MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled(bool d
 }
 
 #if !PLATFORM(IOS)
-void MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(const MediaPlaybackTarget& target)
+void MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
 {
-    m_outputContext = target.devicePickerContext();
+    MediaPlaybackTargetMac* macTarget = toMediaPlaybackTargetMac(&target.get());
+
+    m_outputContext = macTarget->outputContext();
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(%p) - target = %p", this, m_outputContext.get());
 
     if (!m_outputContext || !m_outputContext.get().deviceName)

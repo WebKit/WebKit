@@ -181,7 +181,7 @@ private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual bool isCurrentPlaybackTargetSupported() const override;
-    virtual void setWirelessPlaybackTarget(const MediaPlaybackTarget&);
+    virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&);
     virtual void startPlayingToPlaybackTarget() override;
     virtual void stopPlayingToPlaybackTarget() override;
     void togglePlayingToPlaybackTarget();
@@ -215,7 +215,7 @@ private:
     mutable MediaTime m_maxTimeLoadedAtLastDidLoadingProgress;
     mutable FloatSize m_cachedNaturalSize;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    std::unique_ptr<MediaPlaybackTarget> m_playbackTarget;
+    RefPtr<MediaPlaybackTarget> m_playbackTarget;
     bool m_currentPlaybackTargetIsSupported { true };
 #endif
 };

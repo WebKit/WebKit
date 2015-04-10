@@ -23,32 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaPlaybackTarget_h
-#define MediaPlaybackTarget_h
+#ifndef MediaPlaybackTargetMac_h
+#define MediaPlaybackTargetMac_h
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#include "MediaPlaybackTargetContext.h"
-#include <wtf/RefCounted.h>
+#include "MediaPlaybackTarget.h"
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
-class MediaPlaybackTarget : public RefCounted<MediaPlaybackTarget> {
+class MediaPlaybackTargetMac : public MediaPlaybackTarget {
 public:
-    virtual ~MediaPlaybackTarget() { }
+    WEBCORE_EXPORT static Ref<MediaPlaybackTarget> create(AVOutputContext *);
 
-    enum TargetType {
-        None,
-        AVFoundation,
-    };
-    virtual TargetType targetType() const { return None; }
+    virtual ~MediaPlaybackTargetMac();
 
-    virtual const MediaPlaybackTargetContext& targetContext() const { return NoMediaPlaybackTargetContext; }
-    virtual bool hasActiveRoute() const { return false; }
+    virtual TargetType targetType() const { return AVFoundation; }
+
+    virtual const MediaPlaybackTargetContext& targetContext() const;
+    virtual bool hasActiveRoute() const;
+
+    AVOutputContext *outputContext() const { return m_outputContext.get(); }
 
 protected:
-    MediaPlaybackTarget() { }
+    MediaPlaybackTargetMac(AVOutputContext *);
+
+    RetainPtr<AVOutputContext> m_outputContext;
+    mutable MediaPlaybackTargetContext m_context;
 };
+
+MediaPlaybackTargetMac* toMediaPlaybackTargetMac(MediaPlaybackTarget*);
+const MediaPlaybackTargetMac* toMediaPlaybackTargetMac(const MediaPlaybackTarget*);
 
 }
 

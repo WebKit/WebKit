@@ -1549,11 +1549,9 @@ bool MediaPlayerPrivateQTKit::isCurrentPlaybackTargetSupported() const
     return !m_playbackTarget->hasActiveRoute();
 }
 
-void MediaPlayerPrivateQTKit::setWirelessPlaybackTarget(const MediaPlaybackTarget& target)
+void MediaPlayerPrivateQTKit::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
 {
-    if (!m_playbackTarget)
-        m_playbackTarget = std::make_unique<MediaPlaybackTarget>();
-    m_playbackTarget->setDevicePickerContext(target.devicePickerContext());
+    m_playbackTarget = WTF::move(target);
 }
 
 void MediaPlayerPrivateQTKit::togglePlayingToPlaybackTarget()

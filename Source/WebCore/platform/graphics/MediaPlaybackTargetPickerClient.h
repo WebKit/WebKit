@@ -38,7 +38,7 @@ class MediaPlaybackTargetPickerClient {
 public:
     virtual ~MediaPlaybackTargetPickerClient() { }
 
-    virtual void didChoosePlaybackTarget(const MediaPlaybackTarget&) = 0;
+    virtual void didChoosePlaybackTarget(Ref<MediaPlaybackTarget>&&) = 0;
     virtual void externalOutputDeviceAvailableDidChange(bool) const = 0;
 
     virtual bool requiresPlaybackTargetRouteMonitoring() const = 0;

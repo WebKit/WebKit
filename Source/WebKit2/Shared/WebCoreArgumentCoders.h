@@ -117,7 +117,7 @@ class ContentFilterUnblockHandler;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 namespace WebCore {
-class MediaPlaybackTarget;
+struct MediaPlaybackTargetContext;
 }
 #endif
 
@@ -461,9 +461,11 @@ template<> struct ArgumentCoder<WebCore::TextIndicatorData> {
 };
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-template<> struct ArgumentCoder<WebCore::MediaPlaybackTarget> {
-    static void encode(ArgumentEncoder&, const WebCore::MediaPlaybackTarget&);
-    static bool decode(ArgumentDecoder&, WebCore::MediaPlaybackTarget&);
+template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
+    static void encode(ArgumentEncoder&, const WebCore::MediaPlaybackTargetContext&);
+    static bool decode(ArgumentDecoder&, WebCore::MediaPlaybackTargetContext&);
+    static void encodePlatformData(ArgumentEncoder&, const WebCore::MediaPlaybackTargetContext&);
+    static bool decodePlatformData(ArgumentDecoder&, WebCore::MediaPlaybackTargetContext&);
 };
 #endif
 

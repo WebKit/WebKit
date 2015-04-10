@@ -124,7 +124,7 @@ public:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     // MediaPlaybackTargetPickerClient
-    virtual void didChoosePlaybackTarget(const MediaPlaybackTarget&) override { }
+    virtual void didChoosePlaybackTarget(Ref<MediaPlaybackTarget>&&) override { }
     virtual void externalOutputDeviceAvailableDidChange(bool) const override { }
     virtual bool requiresPlaybackTargetRouteMonitoring() const override { return false; }
 #endif
@@ -169,7 +169,7 @@ public:
     virtual bool overrideBackgroundPlaybackRestriction() const = 0;
 
     virtual void wirelessRoutesAvailableDidChange() { }
-    virtual void setWirelessPlaybackTarget(const MediaPlaybackTarget&) { }
+    virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) { }
     virtual bool canPlayToWirelessPlaybackTarget() const { return false; }
     virtual bool isPlayingToWirelessPlaybackTarget() const { return false; }
     virtual void startPlayingToPlaybackTarget() { }

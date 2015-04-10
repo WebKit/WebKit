@@ -430,10 +430,10 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void showPlaybackTargetPicker(const WebCore::IntPoint&, bool);
     bool hasWirelessPlaybackTarget() const { return m_hasWirelessPlaybackTarget; }
-    MediaPlaybackTarget& playbackTarget() const { return *m_playbackTarget.get(); }
+    RefPtr<MediaPlaybackTarget> playbackTarget() const;
     void configurePlaybackTargetMonitoring();
 
-    WEBCORE_EXPORT void didChoosePlaybackTarget(const MediaPlaybackTarget&);
+    WEBCORE_EXPORT void didChoosePlaybackTarget(Ref<MediaPlaybackTarget>&&);
     WEBCORE_EXPORT void playbackTargetAvailabilityDidChange(bool);
 #endif
 
@@ -590,7 +590,7 @@ private:
     SessionID m_sessionID;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    std::unique_ptr<MediaPlaybackTarget> m_playbackTarget;
+    RefPtr<MediaPlaybackTarget> m_playbackTarget;
     bool m_hasWirelessPlaybackTarget { false };
 #endif
 

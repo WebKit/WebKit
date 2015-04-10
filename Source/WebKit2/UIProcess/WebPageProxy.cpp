@@ -152,6 +152,10 @@
 #include <WebCore/CairoUtilities.h>
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#include <WebCore/MediaPlaybackTarget.h>
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -5719,12 +5723,12 @@ void WebPageProxy::stopMonitoringPlaybackTargets()
     devicePickerProxy().stopMonitoringPlaybackTargets();
 }
 
-void WebPageProxy::didChoosePlaybackTarget(const WebCore::MediaPlaybackTarget& target)
+void WebPageProxy::didChoosePlaybackTarget(Ref<MediaPlaybackTarget>&& target)
 {
     if (!isValid())
         return;
 
-    m_process->send(Messages::WebPage::PlaybackTargetSelected(target), m_pageID);
+    m_process->send(Messages::WebPage::PlaybackTargetSelected(target->targetContext()), m_pageID);
 }
 
 void WebPageProxy::externalOutputDeviceAvailableDidChange(bool available)

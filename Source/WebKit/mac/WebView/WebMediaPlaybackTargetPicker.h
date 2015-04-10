@@ -44,7 +44,7 @@ public:
     void stopMonitoringPlaybackTargets();
 
     // WebCore::MediaPlaybackTargetPicker::Client
-    virtual void didChoosePlaybackTarget(const WebCore::MediaPlaybackTarget&) override;
+    virtual void didChoosePlaybackTarget(Ref<WebCore::MediaPlaybackTarget>&&) override;
     virtual void externalOutputDeviceAvailableDidChange(bool) override;
 
     void invalidate();

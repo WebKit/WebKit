@@ -23,35 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaPlaybackTarget_h
-#define MediaPlaybackTarget_h
+#ifndef MediaPlaybackTargetContext_h
+#define MediaPlaybackTargetContext_h
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#include "MediaPlaybackTargetContext.h"
-#include <wtf/RefCounted.h>
+OBJC_CLASS AVOutputContext;
+
+#if PLATFORM(COCOA)
+OBJC_CLASS NSKeyedArchiver;
+OBJC_CLASS NSKeyedUnarchiver;
+#endif
 
 namespace WebCore {
 
-class MediaPlaybackTarget : public RefCounted<MediaPlaybackTarget> {
-public:
-    virtual ~MediaPlaybackTarget() { }
+struct MediaPlaybackTargetContext {
 
-    enum TargetType {
+    enum ContextType : int32_t {
         None,
-        AVFoundation,
-    };
-    virtual TargetType targetType() const { return None; }
+        AVOutputContextType,
+    } type;
 
-    virtual const MediaPlaybackTargetContext& targetContext() const { return NoMediaPlaybackTargetContext; }
-    virtual bool hasActiveRoute() const { return false; }
+    union {
+        AVOutputContext* avOutputContext;
+    } context;
 
-protected:
-    MediaPlaybackTarget() { }
+    bool encodingRequiresPlatformData() const { return type == AVOutputContextType; }
 };
+
+const MediaPlaybackTargetContext NoMediaPlaybackTargetContext = { MediaPlaybackTargetContext::None, {nullptr} };
 
 }
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#endif
+#endif // MediaPlaybackTargetContext 

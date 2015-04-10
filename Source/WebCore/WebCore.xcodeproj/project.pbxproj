@@ -121,6 +121,8 @@
 		0711589117DF6F6600EDFE2B /* MediaStreamPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0711588F17DF633700EDFE2B /* MediaStreamPrivate.cpp */; };
 		071A9EC2168FBC43002629F9 /* TextTrackCueGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 071A9EC0168FB56C002629F9 /* TextTrackCueGeneric.cpp */; };
 		071A9EC3168FBC55002629F9 /* TextTrackCueGeneric.h in Headers */ = {isa = PBXBuildFile; fileRef = 071A9EC1168FB56C002629F9 /* TextTrackCueGeneric.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		071E496E1AD5AA0D008A50B4 /* MediaPlaybackTargetMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 071E496D1AD5AA0D008A50B4 /* MediaPlaybackTargetMac.mm */; };
+		071E49701AD5AB5E008A50B4 /* MediaPlaybackTargetMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 071E496F1AD5AB5E008A50B4 /* MediaPlaybackTargetMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0720B0A014D3323500642955 /* GenericEventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0720B09E14D3323500642955 /* GenericEventQueue.cpp */; };
 		0720B0A114D3323500642955 /* GenericEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0720B09F14D3323500642955 /* GenericEventQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07277E4C17D018CC0015534D /* JSMediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07277E4017D018CC0015534D /* JSMediaStream.cpp */; };
@@ -175,7 +177,6 @@
 		074E82BB18A69F0E007EF54C /* PlatformTimeRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = 074E82B918A69F0E007EF54C /* PlatformTimeRanges.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0753860214489E9800B78452 /* CachedTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0753860014489E9800B78452 /* CachedTextTrack.cpp */; };
 		0753860314489E9800B78452 /* CachedTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 0753860114489E9800B78452 /* CachedTextTrack.h */; };
-		0760C17A1AA8FC7D009ED7B8 /* MediaPlaybackTargetMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07E3DFD21A9E78A500764CA8 /* MediaPlaybackTargetMac.mm */; };
 		076306D017E1478D005A7C4E /* MediaStreamTrackSourcesCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 076306CC17E1478D005A7C4E /* MediaStreamTrackSourcesCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		076306D217E1478D005A7C4E /* MediaStreamTrackSourcesRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076306CE17E1478D005A7C4E /* MediaStreamTrackSourcesRequest.cpp */; };
 		076306D317E1478D005A7C4E /* MediaStreamTrackSourcesRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 076306CF17E1478D005A7C4E /* MediaStreamTrackSourcesRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -341,7 +342,8 @@
 		07E9E13018F62B370011A3A4 /* InbandMetadataTextTrackPrivateAVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07E9E12F18F62B370011A3A4 /* InbandMetadataTextTrackPrivateAVF.cpp */; };
 		07EDC3EE1AACB75D00983EB5 /* MediaSessionManagerMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07EDC3ED1AACB75D00983EB5 /* MediaSessionManagerMac.cpp */; };
 		07F0B97A1AC5DB3300E535D9 /* AVKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F0B9791AC5DB3300E535D9 /* AVKitSPI.h */; };
-		07F0B97C1AC5DB4600E535D9 /* AVFoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F0B97B1AC5DB4600E535D9 /* AVFoundationSPI.h */; };
+		07F0B97C1AC5DB4600E535D9 /* AVFoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F0B97B1AC5DB4600E535D9 /* AVFoundationSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		07F876841AD580F900905849 /* MediaPlaybackTargetContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F876831AD4A94500905849 /* MediaPlaybackTargetContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F944161864D046005D31CB /* MediaSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CDAE8C081746B95700532D78 /* MediaSessionManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07FBDE2C18FED178001A7CFF /* JSDataCueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07FBDE2B18FED178001A7CFF /* JSDataCueCustom.cpp */; };
 		07FE99DC18807A7D00256648 /* HTMLMediaSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07FE99DA18807A7D00256648 /* HTMLMediaSession.cpp */; };
@@ -7112,6 +7114,8 @@
 		0711588F17DF633700EDFE2B /* MediaStreamPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamPrivate.cpp; sourceTree = "<group>"; };
 		071A9EC0168FB56C002629F9 /* TextTrackCueGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackCueGeneric.cpp; sourceTree = "<group>"; };
 		071A9EC1168FB56C002629F9 /* TextTrackCueGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackCueGeneric.h; sourceTree = "<group>"; };
+		071E496D1AD5AA0D008A50B4 /* MediaPlaybackTargetMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPlaybackTargetMac.mm; sourceTree = "<group>"; };
+		071E496F1AD5AB5E008A50B4 /* MediaPlaybackTargetMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlaybackTargetMac.h; sourceTree = "<group>"; };
 		0720B09E14D3323500642955 /* GenericEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GenericEventQueue.cpp; sourceTree = "<group>"; };
 		0720B09F14D3323500642955 /* GenericEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericEventQueue.h; sourceTree = "<group>"; };
 		07221B4A17CEC32700848E51 /* MediaConstraintsImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaConstraintsImpl.cpp; sourceTree = "<group>"; };
@@ -7365,12 +7369,12 @@
 		07E116B01489C9A100EC5ACE /* JSTextTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCustom.cpp; sourceTree = "<group>"; };
 		07E117061489EBEB00EC5ACE /* JSTextTrackCueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCueCustom.cpp; sourceTree = "<group>"; };
 		07E3DFD01A9E786500764CA8 /* MediaPlaybackTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlaybackTarget.h; sourceTree = "<group>"; };
-		07E3DFD21A9E78A500764CA8 /* MediaPlaybackTargetMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MediaPlaybackTargetMac.mm; path = platform/graphics/avfoundation/MediaPlaybackTargetMac.mm; sourceTree = SOURCE_ROOT; };
 		07E9E12D18F5E2760011A3A4 /* InbandMetadataTextTrackPrivateAVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandMetadataTextTrackPrivateAVF.h; sourceTree = "<group>"; };
 		07E9E12F18F62B370011A3A4 /* InbandMetadataTextTrackPrivateAVF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InbandMetadataTextTrackPrivateAVF.cpp; sourceTree = "<group>"; };
 		07EDC3ED1AACB75D00983EB5 /* MediaSessionManagerMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSessionManagerMac.cpp; sourceTree = "<group>"; };
 		07F0B9791AC5DB3300E535D9 /* AVKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVKitSPI.h; sourceTree = "<group>"; };
 		07F0B97B1AC5DB4600E535D9 /* AVFoundationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationSPI.h; sourceTree = "<group>"; };
+		07F876831AD4A94500905849 /* MediaPlaybackTargetContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlaybackTargetContext.h; sourceTree = "<group>"; };
 		07FBDE2B18FED178001A7CFF /* JSDataCueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDataCueCustom.cpp; sourceTree = "<group>"; };
 		07FE99DA18807A7D00256648 /* HTMLMediaSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLMediaSession.cpp; sourceTree = "<group>"; };
 		07FE99DB18807A7D00256648 /* HTMLMediaSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLMediaSession.h; sourceTree = "<group>"; };
@@ -14724,6 +14728,8 @@
 		076F0D0812B8192700C26AA4 /* avfoundation */ = {
 			isa = PBXGroup;
 			children = (
+				071E496F1AD5AB5E008A50B4 /* MediaPlaybackTargetMac.h */,
+				071E496D1AD5AA0D008A50B4 /* MediaPlaybackTargetMac.mm */,
 				DF9AFD6F13FC31B00015FEB7 /* objc */,
 				CDE3A85217F5FCE600C5BE20 /* AudioTrackPrivateAVF.h */,
 				07E9E12F18F62B370011A3A4 /* InbandMetadataTextTrackPrivateAVF.cpp */,
@@ -14732,7 +14738,6 @@
 				07B442D5166C70B000556CAD /* InbandTextTrackPrivateAVF.h */,
 				078E43DB1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.h */,
 				078E43DC1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.mm */,
-				07E3DFD21A9E78A500764CA8 /* MediaPlaybackTargetMac.mm */,
 				076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */,
 				076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */,
 				CD641EBD1819B35900EE4C41 /* MediaTimeAVFoundation.cpp */,
@@ -20788,6 +20793,7 @@
 				141DC04E164834B900371E5A /* LayoutSize.h */,
 				6C568CAE19DAFEA000430CA2 /* MaskImageOperation.cpp */,
 				6C568CAF19DAFEA000430CA2 /* MaskImageOperation.h */,
+				07F876831AD4A94500905849 /* MediaPlaybackTargetContext.h */,
 				078E43D71ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.cpp */,
 				078E43D81ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.h */,
 				079216531AA560AA00A3C049 /* MediaPlaybackTargetPickerClient.h */,
@@ -25440,6 +25446,7 @@
 				B2FA3D9D0AB75A6F000E5AC4 /* JSSVGGradientElement.h in Headers */,
 				7BE7427381FA906FBB4F0F2C /* JSSVGGraphicsElement.h in Headers */,
 				8485227C1190162C006EDC7F /* JSSVGHKernElement.h in Headers */,
+				07F876841AD580F900905849 /* MediaPlaybackTargetContext.h in Headers */,
 				B2FA3D9F0AB75A6F000E5AC4 /* JSSVGImageElement.h in Headers */,
 				B2FA3DA10AB75A6F000E5AC4 /* JSSVGLength.h in Headers */,
 				B2FA3DA30AB75A6F000E5AC4 /* JSSVGLengthList.h in Headers */,
@@ -25689,6 +25696,7 @@
 				CDC8B5A3180463470016E685 /* MediaPlayerPrivateMediaSourceAVFObjC.h in Headers */,
 				E44613E60CD681A900FADA75 /* MediaPlayerPrivateQTKit.h in Headers */,
 				4E19592A0A39DACC00220FE5 /* MediaQuery.h in Headers */,
+				071E49701AD5AB5E008A50B4 /* MediaPlaybackTargetMac.h in Headers */,
 				4E19592C0A39DACC00220FE5 /* MediaQueryEvaluator.h in Headers */,
 				4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */,
 				D3A94A39122DABAC00A37BBC /* MediaQueryList.h in Headers */,
@@ -28042,7 +28050,6 @@
 				9BAB6C6D12550631001626D4 /* EditingStyle.cpp in Sources */,
 				4B3043CC0AE0373B00A82647 /* Editor.cpp in Sources */,
 				93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */,
-				0760C17A1AA8FC7D009ED7B8 /* MediaPlaybackTargetMac.mm in Sources */,
 				FED13D3A0CEA934600D89466 /* EditorIOS.mm in Sources */,
 				ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */,
 				A8C4A80809D563270003AC8D /* Element.cpp in Sources */,
@@ -30355,6 +30362,7 @@
 				A7D6B34A0F61104500B79FD1 /* WorkerScriptLoader.cpp in Sources */,
 				2E4346540F546A8200B0F1BA /* WorkerThread.cpp in Sources */,
 				0B9056F80F2685F30095FF6A /* WorkerThreadableLoader.cpp in Sources */,
+				071E496E1AD5AA0D008A50B4 /* MediaPlaybackTargetMac.mm in Sources */,
 				97AABD2C14FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp in Sources */,
 				93309E23099E64920056E581 /* WrapContentsInDummySpanCommand.cpp in Sources */,
 				51B45D201AB8D1E200117CD2 /* ContentExtension.cpp in Sources */,

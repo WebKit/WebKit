@@ -44,7 +44,13 @@
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#import <WebCore/MediaPlaybackTarget.h>
+#import <WebCore/AVFoundationSPI.h>
+#import <WebCore/MediaPlaybackTargetContext.h>
+#import <WebCore/SoftLinking.h>
+#import <objc/runtime.h>
+
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+SOFT_LINK_CLASS(AVFoundation, AVOutputContext)
 #endif
 
 using namespace WebCore;
@@ -437,26 +443,52 @@ bool ArgumentCoder<ContentFilterUnblockHandler>::decode(ArgumentDecoder& decoder
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-void ArgumentCoder<MediaPlaybackTarget>::encode(ArgumentEncoder& encoder, const MediaPlaybackTarget& target)
+
+static NSString *deviceContextKey()
 {
+    static NSString * const key = @"deviceContext";
+    return key;
+}
+
+void ArgumentCoder<MediaPlaybackTargetContext>::encodePlatformData(ArgumentEncoder& encoder, const MediaPlaybackTargetContext& target)
+{
+    ASSERT(target.type == MediaPlaybackTargetContext::AVOutputContextType);
+
     RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
     RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
     [archiver setRequiresSecureCoding:YES];
-    target.encode(archiver.get());
+
+    if ([getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
+        [archiver encodeObject:target.context.avOutputContext forKey:deviceContextKey()];
+
     [archiver finishEncoding];
     IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
+
 }
 
-bool ArgumentCoder<MediaPlaybackTarget>::decode(ArgumentDecoder& decoder, MediaPlaybackTarget& target)
+bool ArgumentCoder<MediaPlaybackTargetContext>::decodePlatformData(ArgumentDecoder& decoder, MediaPlaybackTargetContext& target)
 {
+    ASSERT(target.type == MediaPlaybackTargetContext::AVOutputContextType);
+
+    if (![getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
+        return false;
+
     RetainPtr<CFDataRef> data;
     if (!IPC::decode(decoder, data))
         return false;
 
     RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)data.get()]);
     [unarchiver setRequiresSecureCoding:YES];
-    if (!MediaPlaybackTarget::decode(unarchiver.get(), target))
+
+    AVOutputContext *context = nil;
+    @try {
+        context = [unarchiver decodeObjectOfClass:getAVOutputContextClass() forKey:deviceContextKey()];
+    } @catch (NSException *exception) {
+        LOG_ERROR("The target picker being decoded is not a AVOutputContext.");
         return false;
+    }
+
+    target.context.avOutputContext = context;
     
     [unarchiver finishDecoding];
     return true;

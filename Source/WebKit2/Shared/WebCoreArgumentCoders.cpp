@@ -83,6 +83,10 @@
 #include <WebCore/SharedBuffer.h>
 #endif // PLATFORM(IOS)
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#import <WebCore/MediaPlaybackTargetContext.h>
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -2131,5 +2135,31 @@ bool ArgumentCoder<TextIndicatorData>::decode(ArgumentDecoder& decoder, TextIndi
 
     return true;
 }
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+void ArgumentCoder<MediaPlaybackTargetContext>::encode(ArgumentEncoder& encoder, const MediaPlaybackTargetContext& target)
+{
+    int32_t targetType = target.type;
+    encoder << targetType;
+
+    if (!target.encodingRequiresPlatformData())
+        return;
+
+    encodePlatformData(encoder, target);
+}
+
+bool ArgumentCoder<MediaPlaybackTargetContext>::decode(ArgumentDecoder& decoder, MediaPlaybackTargetContext& target)
+{
+    int32_t targetType;
+    if (!decoder.decode(targetType))
+        return false;
+
+    target.type = static_cast<MediaPlaybackTargetContext::ContextType>(targetType);
+    if (!target.encodingRequiresPlatformData())
+        return false;
+
+    return decodePlatformData(decoder, target);
+}
+#endif
 
 } // namespace IPC

@@ -126,7 +126,6 @@ class HTMLPlugInElement;
 class HTMLPlugInImageElement;
 class IntPoint;
 class KeyboardEvent;
-class MediaPlaybackTarget;
 class Page;
 class PrintContext;
 class Range;
@@ -139,6 +138,7 @@ class URL;
 class VisibleSelection;
 struct Highlight;
 struct KeypressCommand;
+struct MediaPlaybackTargetContext;
 struct TextCheckingResult;
 }
 
@@ -1105,7 +1105,7 @@ private:
     void setShouldDispatchFakeMouseMoveEvents(bool dispatch) { m_shouldDispatchFakeMouseMoveEvents = dispatch; }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
-    void playbackTargetSelected(const WebCore::MediaPlaybackTarget& outputDevice) const;
+    void playbackTargetSelected(const WebCore::MediaPlaybackTargetContext& outputDevice) const;
     void playbackTargetAvailabilityDidChange(bool);
 #endif
 

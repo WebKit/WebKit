@@ -815,11 +815,9 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetSupported() co
     return !m_playbackTarget->hasActiveRoute();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::setWirelessPlaybackTarget(const MediaPlaybackTarget& target)
+void MediaPlayerPrivateMediaSourceAVFObjC::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
 {
-    if (!m_playbackTarget)
-        m_playbackTarget = std::make_unique<MediaPlaybackTarget>();
-    m_playbackTarget->setDevicePickerContext(target.devicePickerContext());
+    m_playbackTarget = WTF::move(target);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::togglePlayingToPlaybackTarget()

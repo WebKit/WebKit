@@ -55,12 +55,12 @@ void WebMediaPlaybackTargetPicker::stopMonitoringPlaybackTargets()
     targetPicker().stopMonitoringPlaybackTargets();
 }
 
-void WebMediaPlaybackTargetPicker::didChoosePlaybackTarget(const WebCore::MediaPlaybackTarget& target)
+void WebMediaPlaybackTargetPicker::didChoosePlaybackTarget(Ref<WebCore::MediaPlaybackTarget>&& target)
 {
     if (!m_page)
         return;
 
-    m_page->didChoosePlaybackTarget(target);
+    m_page->didChoosePlaybackTarget(WTF::move(target));
 }
 
 void WebMediaPlaybackTargetPicker::externalOutputDeviceAvailableDidChange(bool available)

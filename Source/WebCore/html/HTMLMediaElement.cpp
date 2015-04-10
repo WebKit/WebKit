@@ -4886,11 +4886,11 @@ void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent()
     m_asyncEventQueue.enqueueEvent(event.release());
 }
 
-void HTMLMediaElement::setWirelessPlaybackTarget(const MediaPlaybackTarget& device)
+void HTMLMediaElement::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& device)
 {
     LOG(Media, "HTMLMediaElement::setWirelessPlaybackTarget(%p)", this);
     if (m_player)
-        m_player->setWirelessPlaybackTarget(device);
+        m_player->setWirelessPlaybackTarget(WTF::move(device));
 }
 
 bool HTMLMediaElement::canPlayToWirelessPlaybackTarget() const

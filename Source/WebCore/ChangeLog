@@ -1,3 +1,87 @@
+2015-04-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Refactor MediaPlaybackTarget
+        https://bugs.webkit.org/show_bug.cgi?id=143571
+
+        Reviewed by Jer Noble.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::addPlaybackTargetPickerClient): Don't call client if page playback target
+            is NULL.
+        (WebCore::Document::didChoosePlaybackTarget): MediaPlaybackTarget is passed as a Ref<>
+        * dom/Document.h:
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setWirelessPlaybackTarget): MediaPlaybackTarget is passed as a Ref<>
+        * html/HTMLMediaElement.h:
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::HTMLMediaSession): Don't initialize m_playbackTarget.
+        (WebCore::HTMLMediaSession::didChoosePlaybackTarget): MediaPlaybackTarget is passed as a Ref<>
+        * html/HTMLMediaSession.h:
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::playbackTarget): m_playbackTarget is a RefPtr<MediaPlaybackTarget>
+        (WebCore::Page::didChoosePlaybackTarget): Ditto.
+        * page/Page.h:
+
+        * platform/audio/MediaSession.h:
+        (WebCore::MediaSessionClient::setWirelessPlaybackTarget): Take a Ref<MediaPlaybackTarget>&&.
+
+        Make MediaPlaybackTarget RefCounted, and don't require it to be serializable so it can be
+        subclassed to keep port-specific iformation out of the base class.
+        * platform/graphics/MediaPlaybackTarget.h: 
+        (WebCore::MediaPlaybackTarget::targetType):
+        (WebCore::MediaPlaybackTarget::targetContext):
+        (WebCore::MediaPlaybackTarget::hasActiveRoute):
+        (WebCore::MediaPlaybackTarget::MediaPlaybackTarget):
+        (WebCore::MediaPlaybackTarget::setDevicePickerContext): Deleted.
+        (WebCore::MediaPlaybackTarget::devicePickerContext): Deleted.
+
+        MediaPlaybackTargetContext is the struct that is serialized to pass across the process boudary.
+        It has union to hold port-specific data.
+        * platform/graphics/MediaPlaybackTargetContext.h: Added.
+
+        * platform/graphics/MediaPlaybackTargetPicker.h: didChoosePlaybackTarget takes a Ref<MediaPlaybackTarget>&&
+        * platform/graphics/MediaPlaybackTargetPickerClient.h: Ditto.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setWirelessPlaybackTarget): Ditto.
+        * platform/graphics/MediaPlayer.h:
+
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setWirelessPlaybackTarget):
+
+        * platform/graphics/avfoundation/MediaPlaybackTargetMac.h: Added.
+        (WebCore::MediaPlaybackTargetMac::targetType):
+        (WebCore::MediaPlaybackTargetMac::outputContext):
+        * platform/graphics/avfoundation/MediaPlaybackTargetMac.mm:
+        (WebCore::MediaPlaybackTargetMac::create):
+        (WebCore::MediaPlaybackTargetMac::MediaPlaybackTargetMac):
+        (WebCore::MediaPlaybackTargetMac::~MediaPlaybackTargetMac):
+        (WebCore::MediaPlaybackTargetMac::targetContext):
+        (WebCore::MediaPlaybackTargetMac::hasActiveRoute):
+        (WebCore::toMediaPlaybackTargetMac):
+        (WebCore::MediaPlaybackTarget::encode): Deleted.
+        (WebCore::MediaPlaybackTarget::decode): Deleted.
+        (WebCore::MediaPlaybackTarget::hasActiveRoute): Deleted.
+
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::currentDeviceDidChange): Allocate and pass a MediaPlaybackTargetMac
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget): Take a Ref<MediaPlaybackTarget&&
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setWirelessPlaybackTarget): Ditto.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::setWirelessPlaybackTarget): Ditto.
+
 2015-04-09  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Fix raw function pointer usages

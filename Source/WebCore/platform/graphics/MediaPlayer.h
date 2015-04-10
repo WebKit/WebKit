@@ -481,7 +481,7 @@ public:
 
     bool canPlayToWirelessPlaybackTarget() const;
     bool isPlayingToWirelessPlaybackTarget() const;
-    void setWirelessPlaybackTarget(const MediaPlaybackTarget&);
+    void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&);
 
     void startPlayingToPlaybackTarget();
     void stopPlayingToPlaybackTarget();

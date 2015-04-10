@@ -1,3 +1,27 @@
+2015-04-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Refactor MediaPlaybackTarget
+        https://bugs.webkit.org/show_bug.cgi?id=143571
+
+        Reviewed by Jer Noble.
+
+        Pass a MediaPlaybackTargetContext across process boundary instead of a MediaPlaybackTarget.
+        * Shared/WebCoreArgumentCoders.h:
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::encode): New.
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::decode): New.
+        * Shared/mac/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::encodePlatformData): New.
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::decodePlatformData): New.
+        (IPC::ArgumentCoder<MediaPlaybackTarget>::encode): Deleted.
+        (IPC::ArgumentCoder<MediaPlaybackTarget>::decode): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChoosePlaybackTarget): Take a Ref<MediaPlaybackTarget>&&.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::playbackTargetSelected): Take a Ref<MediaPlaybackTarget>&&.
+
 2015-04-10  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Fix some minor typos related to the WebProcessCreationParameter. 

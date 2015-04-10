@@ -363,7 +363,7 @@ public:
     virtual void wirelessRoutesAvailableDidChange() override;
     virtual bool canPlayToWirelessPlaybackTarget() const override;
     virtual bool isPlayingToWirelessPlaybackTarget() const override;
-    virtual void setWirelessPlaybackTarget(const MediaPlaybackTarget&) override;
+    virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
     virtual void startPlayingToPlaybackTarget() override;
     virtual void stopPlayingToPlaybackTarget() override;
 #endif

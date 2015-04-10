@@ -28,6 +28,8 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
+#include <wtf/Ref.h>
+
 namespace WebCore {
 
 class FloatRect;
@@ -40,7 +42,7 @@ public:
         virtual ~Client() { }
 
     public:
-        virtual void didChoosePlaybackTarget(const MediaPlaybackTarget&) = 0;
+        virtual void didChoosePlaybackTarget(Ref<MediaPlaybackTarget>&&) = 0;
         virtual void externalOutputDeviceAvailableDidChange(bool) = 0;
 
         void invalidate();

@@ -6539,7 +6539,9 @@ void Document::addPlaybackTargetPickerClient(MediaPlaybackTargetPickerClient& cl
 
     m_playbackTargetClients.add(&client);
 
-    client.didChoosePlaybackTarget(page->playbackTarget());
+    RefPtr<MediaPlaybackTarget> target = page->playbackTarget();
+    if (target)
+        client.didChoosePlaybackTarget(*target);
     client.externalOutputDeviceAvailableDidChange(page->hasWirelessPlaybackTarget());
 }
 
@@ -6580,10 +6582,10 @@ void Document::playbackTargetAvailabilityDidChange(bool available)
         client->externalOutputDeviceAvailableDidChange(available);
 }
 
-void Document::didChoosePlaybackTarget(const MediaPlaybackTarget& device)
+void Document::didChoosePlaybackTarget(Ref<MediaPlaybackTarget>&& device)
 {
     for (auto* client : m_playbackTargetClients)
-        client->didChoosePlaybackTarget(device);
+        client->didChoosePlaybackTarget(device.copyRef());
 }
 
 #endif

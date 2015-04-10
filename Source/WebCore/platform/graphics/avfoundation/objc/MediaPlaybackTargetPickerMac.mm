@@ -31,7 +31,7 @@
 #import <WebCore/AVFoundationSPI.h>
 #import <WebCore/AVKitSPI.h>
 #import <WebCore/FloatRect.h>
-#import <WebCore/MediaPlaybackTarget.h>
+#import <WebCore/MediaPlaybackTargetMac.h>
 #import <WebCore/SoftLinking.h>
 #import <objc/runtime.h>
 #import <wtf/MainThread.h>
@@ -133,10 +133,7 @@ void MediaPlaybackTargetPickerMac::currentDeviceDidChange()
     if (!devicePicker)
         return;
 
-    if (devicePicker.isExternalOutputDevicePicked)
-        m_client->didChoosePlaybackTarget(WebCore::MediaPlaybackTarget([devicePicker outputContext]));
-    else
-        m_client->didChoosePlaybackTarget(WebCore::MediaPlaybackTarget(nil));
+    m_client->didChoosePlaybackTarget(WebCore::MediaPlaybackTargetMac::create([devicePicker outputContext]));
 }
 
 void MediaPlaybackTargetPickerMac::startingMonitoringPlaybackTargets()
