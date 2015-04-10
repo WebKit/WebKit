@@ -332,28 +332,40 @@ HRESULT STDMETHODCALLTYPE DOMHTMLDocument::setCookie(
     
 HRESULT STDMETHODCALLTYPE DOMHTMLDocument::open( void)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!m_document)
+        return E_FAIL;
+
+    m_document->open();
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLDocument::close( void)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!m_document)
+        return E_FAIL;
+
+    m_document->close();
+    return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DOMHTMLDocument::write( 
-        /* [in] */ BSTR /*text*/)
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::write(/* [in] */ BSTR text)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!m_document)
+        return E_FAIL;
+
+    String string(text);
+    m_document->write(string);
+    return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DOMHTMLDocument::writeln( 
-        /* [in] */ BSTR /*text*/)
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::writeln(/* [in] */ BSTR text)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!m_document)
+        return E_FAIL;
+
+    String string(text);
+    m_document->writeln(string);
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLDocument::getElementById_( 

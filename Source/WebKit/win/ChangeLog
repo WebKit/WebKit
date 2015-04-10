@@ -1,3 +1,16 @@
+2015-04-10  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Implement some methods in DOMHTMLDocument interface.
+        https://bugs.webkit.org/show_bug.cgi?id=143602
+
+        Reviewed by Alex Christensen.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLDocument::open):
+        (DOMHTMLDocument::close):
+        (DOMHTMLDocument::write):
+        (DOMHTMLDocument::writeln):
+
 2015-04-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] editorState() should not cause a synchronous layout
