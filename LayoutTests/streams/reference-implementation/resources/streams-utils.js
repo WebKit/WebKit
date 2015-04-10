@@ -1,3 +1,5 @@
+var standardTimeout = 100;
+
 function RandomPushSource(toPush) {
     this.pushed = 0;
     this.toPush = toPush;

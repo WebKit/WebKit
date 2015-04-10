@@ -1,3 +1,21 @@
+2015-04-10  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar <calvaris@igalia.com>
+
+        Add total test test of Streams API
+        https://bugs.webkit.org/show_bug.cgi?id=142682
+
+        Unreviewed.
+
+        Increased the callbacks timeouts to make tests pass in slower bots
+        like Yosemite Debug.
+
+        * streams/reference-implementation/resources/streams-utils.js:
+        Created a standardTimeout variable with 100 as default.
+        * streams/reference-implementation/readable-stream-cancel.html:
+        * streams/reference-implementation/readable-stream-reader.html:
+        * streams/reference-implementation/readable-stream-templated.html:
+        * streams/reference-implementation/readable-stream.html: Used
+        standardTimeout for the test timeout callbacks.
+
 2015-04-10  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Add total test test of Streams API
