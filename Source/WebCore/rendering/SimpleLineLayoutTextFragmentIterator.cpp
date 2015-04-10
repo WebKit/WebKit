@@ -56,26 +56,35 @@ TextFragmentIterator::TextFragmentIterator(const RenderBlockFlow& flow)
 
 TextFragmentIterator::TextFragment TextFragmentIterator::nextTextFragment(float xPosition)
 {
+    TextFragmentIterator::TextFragment nextFragment = findNextTextFragment(xPosition);
+    m_atEndOfSegment = (m_currentSegment == m_flowContents.end()) || (m_position == m_currentSegment->end);
+    return nextFragment;
+}
+
+TextFragmentIterator::TextFragment TextFragmentIterator::findNextTextFragment(float xPosition)
+{
     // A fragment can either be
-    // 1. new line character when preserveNewline is on (not considered as whitespace) or
+    // 1. line break when <br> is present or preserveNewline is on (not considered as whitespace) or
     // 2. whitespace (collasped, non-collapsed multi or single) or
     // 3. non-whitespace characters.
-    // 4. empty, indicating content end.
+    // 4. content end.
     ASSERT(m_currentSegment != m_flowContents.end());
-    if (m_position == m_currentSegment->end)
-        ++m_currentSegment;
-    // Is it content end?
-    if (m_currentSegment == m_flowContents.end())
-        return TextFragment(m_position, m_position, 0, TextFragment::ContentEnd);
-    unsigned segmentEndPosition = m_currentSegment->end;
     unsigned startPosition = m_position;
-    if (isLineBreak(m_position)) {
+    if (m_atEndOfSegment)
+        ++m_currentSegment;
+
+    if (m_currentSegment == m_flowContents.end())
+        return TextFragment(startPosition, startPosition, 0, TextFragment::ContentEnd);
+    if (isHardLineBreak(m_currentSegment))
+        return TextFragment(startPosition, startPosition, 0, TextFragment::HardLineBreak);
+    if (isSoftLineBreak(startPosition)) {
         unsigned endPosition = ++m_position;
-        return TextFragment(startPosition, endPosition, 0, TextFragment::LineBreak);
+        return TextFragment(startPosition, endPosition, 0, TextFragment::SoftLineBreak);
     }
     float width = 0;
     bool overlappingFragment = false;
     unsigned endPosition = skipToNextPosition(PositionType::NonWhitespace, startPosition, width, xPosition, overlappingFragment);
+    unsigned segmentEndPosition = m_currentSegment->end;
     ASSERT(startPosition <= endPosition);
     if (startPosition < endPosition) {
         bool multipleWhitespace = startPosition + 1 < endPosition;
@@ -98,6 +107,7 @@ void TextFragmentIterator::revertToFragment(const TextFragment& fragment)
     // TODO: It reverts to the last fragment on the same position, but that's ok for now as we don't need to
     // differentiate multiple renderers on the same position.
     m_position = fragment.start();
+    m_atEndOfSegment = false;
 }
 
 template <typename CharacterType>
@@ -157,7 +167,7 @@ unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, uns
         // We need to know whether the word actually finishes at the end of this renderer or not.
         if (nextPosition == m_currentSegment->end) {
             const auto nextSegment = m_currentSegment + 1;
-            if (nextSegment != m_flowContents.end())
+            if (nextSegment != m_flowContents.end() && !isHardLineBreak(nextSegment))
                 overlappingFragment = nextPosition < (nextSegment->text.is8Bit() ? nextBreakablePosition<LChar>(*nextSegment, nextPosition) : nextBreakablePosition<UChar>(*nextSegment, nextPosition));
         } else if (nextPosition == currentPosition) {
             if (++nextPosition < m_currentSegment->end)

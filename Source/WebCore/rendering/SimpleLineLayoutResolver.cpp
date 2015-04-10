@@ -60,6 +60,14 @@ LayoutRect RunResolver::Run::rect() const
     float baseline = baselinePosition(resolver.m_lineHeight, resolver.m_baseline, m_iterator.lineIndex());
     LayoutPoint position = linePosition(run.logicalLeft, baseline - resolver.m_ascent + resolver.m_borderAndPaddingBefore);
     LayoutSize size = lineSize(run.logicalLeft, run.logicalRight, resolver.m_ascent + resolver.m_descent);
+    bool moveLineBreakToBaseline = false;
+    if (run.start == run.end && m_iterator != resolver.begin() && m_iterator.inQuirksMode()) {
+        auto previousRun = m_iterator;
+        --previousRun;
+        moveLineBreakToBaseline = !previousRun.simpleRun().isEndOfLine;
+    }
+    if (moveLineBreakToBaseline)
+        return LayoutRect(LayoutPoint(position.x(), baseline + resolver.m_borderAndPaddingBefore), LayoutSize(size.width(), std::max<float>(0, resolver.m_ascent - resolver.m_baseline.toFloat())));
     return LayoutRect(position, size);
 }
 
@@ -124,6 +132,7 @@ RunResolver::RunResolver(const RenderBlockFlow& flow, const Layout& layout)
     , m_borderAndPaddingBefore(flow.borderAndPaddingBefore())
     , m_ascent(flow.style().fontCascade().fontMetrics().ascent())
     , m_descent(flow.style().fontCascade().fontMetrics().descent())
+    , m_inQuirksMode(flow.document().inQuirksMode())
 {
 }
 
@@ -159,15 +168,35 @@ Range<RunResolver::Iterator> RunResolver::rangeForRect(const LayoutRect& rect) c
 
 Range<RunResolver::Iterator> RunResolver::rangeForRenderer(const RenderObject& renderer) const
 {
-    auto& segment = m_flowContents.segmentForRenderer(renderer);
+    if (begin() == end())
+        return Range<Iterator>(end(), end());
+    FlowContents::Iterator segment = m_flowContents.begin();
+    auto run = begin();
+    ASSERT(segment->start <= (*run).start());
+    // Move run to the beginning of the segment.
+    while (&segment->renderer != &renderer && run != end()) {
+        if ((*run).start() == segment->start && (*run).end() == segment->end) {
+            ++run;
+            ++segment;
+        } else if ((*run).start() < segment->end)
+            ++run;
+        else
+            ++segment;
+        ASSERT(segment != m_flowContents.end());
+    }
+    // Do we actually have a run for this renderer?
+    // Collapsed whitespace with dedicated renderer could end up with no run at all.
+    if (run == end() || (segment->start != segment->end && segment->end <= (*run).start()))
+        return Range<Iterator>(end(), end());
 
-    auto rangeBegin = begin();
-    for (;rangeBegin != end() && (*rangeBegin).start() < segment.start; ++rangeBegin) { }
-
-    auto rangeEnd = rangeBegin;
-    for (;rangeEnd != end() && (*rangeEnd).end() <= segment.end; ++rangeEnd) { }
-
-    return Range<Iterator>(rangeBegin, rangeEnd);
+    auto rangeBegin = run;
+    // Move beyond the end of the segment.
+    while (run != end() && (*run).start() < segment->end)
+        ++run;
+    // Special case when segment == run.
+    if (run == rangeBegin)
+        ++run;
+    return Range<Iterator>(rangeBegin, run);
 }
 
 LineResolver::Iterator::Iterator(RunResolver::Iterator runIterator)

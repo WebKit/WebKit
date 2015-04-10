@@ -44,7 +44,6 @@ public:
         const RenderObject& renderer;
     };
     const Segment& segmentForRun(unsigned start, unsigned end) const;
-    const Segment& segmentForRenderer(const RenderObject&) const;
 
     typedef Vector<Segment, 8>::const_iterator Iterator;
     Iterator begin() const { return m_segments.begin(); }

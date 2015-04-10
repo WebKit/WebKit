@@ -564,6 +564,10 @@ bool TextIterator::handleTextNode()
         auto end = range.end();
         while (it != end && (*it).end() <= (static_cast<unsigned>(m_offset) + m_previousTextLengthInFlow))
             ++it;
+        if (m_nextRunNeedsWhitespace && rendererText[m_offset - 1] == '\n') {
+            emitCharacter(' ', textNode, nullptr, m_offset, m_offset + 1);
+            return it == end;
+        }
         if (it == end) {
             // Collapsed trailing whitespace.
             m_offset = endPosition;
@@ -601,7 +605,7 @@ bool TextIterator::handleTextNode()
             ++stopPosition;
         }
         emitText(textNode, renderer, contentStart, contentEnd);
-        // When line ending with collapsed whitespace is present, we need to carry over one whitespace: foo\nbar -> foo bar (otherwise we would end up with foobar).
+        // When line ending with collapsed whitespace is present, we need to carry over one whitespace: foo(end of line)bar -> foo bar (otherwise we would end up with foobar).
         m_nextRunNeedsWhitespace = run.isEndOfLine() && contentEnd < endPosition && renderer.style().isCollapsibleWhiteSpace(rendererText[contentEnd]);
         m_offset = contentEnd;
         return static_cast<unsigned>(m_offset) == endPosition;
