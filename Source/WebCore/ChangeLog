@@ -1,3 +1,32 @@
+2015-04-09  Roger Fong  <roger_fong@apple.com>
+
+        Update wireless player placard for OSX.
+        https://bugs.webkit.org/show_bug.cgi?id=143585.
+        <rdar://problem/12067439>
+
+        Reviewed by Eric Carlson.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        Adjust button positioning and svg.
+        (audio::-webkit-media-controls-wireless-playback-picker-button):
+        (audio::-webkit-media-controls-wireless-playback-picker-button.playing):
+        Style the wireless playback status placard, small and big versions.
+        (audio::-webkit-media-controls-wireless-playback-status):
+        (audio::-webkit-media-controls-wireless-playback-text):
+        (audio::-webkit-media-controls-wireless-playback-text-top):
+        (audio::-webkit-media-controls-wireless-playback-text-bottom):
+        (audio::-webkit-media-controls-wireless-playback-status.small):
+        (audio::-webkit-media-controls-wireless-playback-text-top.small):
+        (audio::-webkit-media-controls-wireless-playback-text-bottom.small):
+        * Modules/mediacontrols/mediaControlsApple.js:
+        Add new wireless player placard elements.
+        (Controller.prototype.createControls):
+        (Controller.prototype.configureInlineControls):
+        Make sure to switch between small and big placards when switching between fullscreen and small videos.
+        (Controller.prototype.configureFullScreenControls):
+        (Controller.prototype.handleFullscreenChange):
+        (Controller.prototype.updateWirelessPlaybackStatus):
+
 2015-04-10  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Refactor MediaPlaybackTarget
