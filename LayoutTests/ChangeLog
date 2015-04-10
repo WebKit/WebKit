@@ -1,3 +1,55 @@
+2015-04-10  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Add total test test of Streams API
+        https://bugs.webkit.org/show_bug.cgi?id=142682
+
+        Reviewed by Benjamin Poulain.
+
+        This is the full test set that we have for the implementation of
+        Streams API. When we add more features/code the number of passing
+        tests will increase.
+
+        We have the tests translated from the reference implementation at
+        streams/reference-implementation and our own tests for some other
+        things at the streams upper level.
+
+        We removed testharness stacktrace in case of failure because it
+        dumps the filenames with paths. You can activate it for a specific
+        test by setting its dumpStack attribute to true.
+
+        All our former custom tests were integrated in the spec so we they
+        are now in their appropriate places in the reference
+        implementation ones. Some of them were changed to match the actual
+        spec and they are failing now, but we only have to progressively
+        fix them.
+
+        * resources/testharnessreport.js: Avoid printing the stack in case
+        of test failure to be able to have failing tests as expected
+        unless commanded otherwise.
+        * streams/readablestream-constructor-expected.txt: Removed.
+        * streams/readablestream-constructor.html: Removed.
+        * streams/readablestream-start-expected.txt: Removed.
+        * streams/readablestream-start.html: Removed.
+        * streams/readablestreamreader-constructor-expected.txt: Removed.
+        * streams/readablestreamreader-constructor.html: Removed.
+        * streams/reference-implementation/bad-underlying-sources-expected.txt: Added.
+        * streams/reference-implementation/bad-underlying-sources.html: Added.
+        * streams/reference-implementation/brand-checks-expected.txt: Added.
+        * streams/reference-implementation/brand-checks.html: Added.
+        * streams/reference-implementation/count-queuing-strategy-expected.txt: Added.
+        * streams/reference-implementation/count-queuing-strategy.html: Added.
+        * streams/reference-implementation/readable-stream-cancel-expected.txt: Added.
+        * streams/reference-implementation/readable-stream-cancel.html: Added.
+        * streams/reference-implementation/readable-stream-expected.txt: Added.
+        * streams/reference-implementation/readable-stream-reader-expected.txt: Added.
+        * streams/reference-implementation/readable-stream-reader.html: Added.
+        * streams/reference-implementation/readable-stream-templated-expected.txt: Added.
+        * streams/reference-implementation/readable-stream-templated.html: Added.
+        * streams/reference-implementation/readable-stream.html: Added.
+        * streams/reference-implementation/resources/byte-length-queuing-strategy.js: Added.
+        * streams/reference-implementation/resources/count-queuing-strategy.js: Added.
+        * streams/reference-implementation/resources/streams-utils.js: Added.
+
 2015-04-09  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add <br> support.

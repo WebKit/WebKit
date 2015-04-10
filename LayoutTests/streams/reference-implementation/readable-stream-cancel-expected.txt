@@ -1,0 +1,12 @@
+
+FAIL ReadableStream cancellation: integration test on an infinite stream derived from a random push source read is not implemented
+FAIL ReadableStream cancellation: cancel(reason) should pass through the given reason to the underlying source cancel is not implemented
+FAIL ReadableStream cancellation: cancel() on a locked stream should fail and not call the underlying source cancel cancel is not implemented
+FAIL ReadableStream cancellation: returning a value from the underlying source's cancel should not affect the fulfillment value of the promise returned by the stream's cancel cancel is not implemented
+FAIL ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should fulfill when that one does cancel is not implemented
+FAIL ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should reject when that one does cancel is not implemented
+FAIL ReadableStream cancellation: cancelling before start finishes should prevent pull() from being called cancel is not implemented
+FAIL ReadableStream cancel should fulfill promise when cancel callback went fine cancel is not implemented
+FAIL ReadableStream cancel should reject promise when cancel callback raises an exception cancel is not implemented
+FAIL ReadableStream cancel should fulfill promise when cancel callback went fine after returning a promise cancel is not implemented
+

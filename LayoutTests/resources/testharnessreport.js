@@ -61,9 +61,18 @@ add_completion_callback(function (tests, harness_status){
 		// Iterate through tests array and build string that contains
 		// results for all tests
 		for(var i=0; i<tests.length; i++){				 
+			var message = (tests[i].message != null) ? tests[i].message : "";
+			if (tests[i].status == 1 && !tests[i].dumpStack) {
+				// Remove stack for failed tests for proper string comparison without file paths.
+				// For a test to dump the stack set its dumpStack attribute to true.
+				var stackIndex = message.indexOf("(stack:");
+				if (stackIndex > 0) {
+					message = message.substr(0, stackIndex);
+				}
+			}
 			resultStr += convertResult(tests[i].status) + " " + 
 						( (tests[i].name!=null) ? tests[i].name : "" ) + " " +
-						( (tests[i].message!=null) ? tests[i].message : "" ) + 
+						message +
 						"\n";
 		}			
 	}

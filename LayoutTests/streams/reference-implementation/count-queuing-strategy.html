@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<script src='../../resources/testharness.js'></script>
+<script src='../../resources/testharnessreport.js'></script>
+<script src='resources/streams-utils.js'></script>
+<script src='resources/count-queuing-strategy.js'></script>
+<script>
+test(function() {
+    new CountQueuingStrategy({ "highWaterMark": 4});
+}, 'Can construct a CountQueuingStrategy with a valid high water mark');
+
+test(function() {
+    assert_throws(new RangeError(), function() { new CountQueuingStrategy({ "highWaterMark": -4 }) }, 'throws for { highWaterMark: -4 }');
+    assert_throws(new RangeError(), function() { new CountQueuingStrategy({ "highWaterMark": '-4' }) }, 'throws for { highWaterMark: \'-4\' }');
+}, 'Gives a RangeError when the number is negative');
+
+test(function() {
+    new ReadableStream({ strategy: new CountQueuingStrategy({ "highWaterMark": 4 }) });
+}, 'Can construct a readable stream with a valid CountQueuingStrategy');
+
+var test1 = async_test('Correctly governs the return value of a ReadableStream\'s enqueue function (HWM = 0)');
+test1.step(function() {
+    var enqueue;
+    var rs = new ReadableStream({
+        start: function(c) { enqueue = c.enqueue.bind(c); },
+        strategy: new CountQueuingStrategy({ "highWaterMark": 0 })
+    });
+    var reader = rs.getReader();
+
+    assert_equals(enqueue('a'), false, 'After 0 reads, 1st enqueue should return false (queue now contains 1 chunk)');
+    assert_equals(enqueue('b'), false, 'After 0 reads, 2nd enqueue should return false (queue now contains 2 chunks)');
+    assert_equals(enqueue('c'), false, 'After 0 reads, 3rd enqueue should return false (queue now contains 3 chunks)');
+    assert_equals(enqueue('d'), false, 'After 0 reads, 4th enqueue should return false (queue now contains 4 chunks)');
+
+    reader.read().then(test1.step_func(function(result) {
+        assert_object_equals(result, { value: 'a', done: false }, '1st read gives back the 1st chunk enqueued (queue now contains 3 chunks)');
+        return reader.read();
+    })).then(test1.step_func(function(result) {
+        assert_object_equals(result, { value: 'b', done: false }, '2nd read gives back the 2nd chunk enqueued (queue now contains 2 chunks)');
+        return reader.read();
+    })).then(test1.step_func(function(result) {
+        assert_object_equals(result, { value: 'c', done: false }, '3rd read gives back the 3rd chunk enqueued (queue now contains 1 chunk)');
+        assert_equals(enqueue('e'), false, 'After 3 reads, 5th enqueue should return false (queue now contains 2 chunks)');
+        return reader.read();
+    })).then(test1.step_func(function(result) {
+        assert_object_equals(result, { value: 'd', done: false }, '4th read gives back the 4th chunk enqueued (queue now contains 1 chunks)');
+        return reader.read();
+    })).then(test1.step_func(function(result) {
+        assert_object_equals(result, { value: 'e', done: false }, '5th read gives back the 5th chunk enqueued (queue now contains 0 chunks)');
+        assert_equals(enqueue('f'), false, 'After 5 reads, 6th enqueue should return false (queue now contains 1 chunk)');
+        assert_equals(enqueue('g'), false, 'After 5 reads, 7th enqueue should return false (queue now contains 2 chunks)');
+        test1.done();
+    })).catch(test1.step_func(function(e) { assert_unreached(e); } ));
+});
+
+var test2 = async_test('Correctly governs the return value of a ReadableStream\'s enqueue function (HWM = 1)');
+test2.step(function() {
+    var enqueue;
+    var rs = new ReadableStream({
+        start: function(c) { enqueue = c.enqueue.bind(c); },
+        strategy: new CountQueuingStrategy({ "highWaterMark": 1 })
+    });
+    var reader = rs.getReader();
+
+    assert_equals(enqueue('a'), true, 'After 0 reads, 1st enqueue should return true (queue now contains 1 chunk)');
+    assert_equals(enqueue('b'), false, 'After 0 reads, 2nd enqueue should return false (queue now contains 2 chunks)');
+    assert_equals(enqueue('c'), false, 'After 0 reads, 3rd enqueue should return false (queue now contains 3 chunks)');
+    assert_equals(enqueue('d'), false, 'After 0 reads, 4th enqueue should return false (queue now contains 4 chunks)');
+
+    reader.read().then(test2.step_func(function(result) {
+        assert_object_equals(result, { value: 'a', done: false }, '1st read gives back the 1st chunk enqueued (queue now contains 3 chunks)');
+        return reader.read();
+    })).then(test2.step_func(function(result) {
+        assert_object_equals(result, { value: 'b', done: false }, '2nd read gives back the 2nd chunk enqueued (queue now contains 2 chunks)');
+        return reader.read();
+    })).then(test2.step_func(function(result) {
+        assert_object_equals(result, { value: 'c', done: false }, '3rd read gives back the 3rd chunk enqueued (queue now contains 1 chunk)');
+        assert_equals(enqueue('e'), false, 'After 3 reads, 5th enqueue should return false (queue now contains 2 chunks)');
+        return reader.read();
+    })).then(test2.step_func(function(result) {
+        assert_object_equals(result, { value: 'd', done: false }, '4th read gives back the 4th chunk enqueued (queue now contains 1 chunks)');
+        return reader.read();
+    })).then(test2.step_func(function(result) {
+        assert_object_equals(result, { value: 'e', done: false }, '5th read gives back the 5th chunk enqueued (queue now contains 0 chunks)');
+        assert_equals(enqueue('f'), true, 'After 5 reads, 6th enqueue should return true (queue now contains 1 chunk)');
+        assert_equals(enqueue('g'), false, 'After 5 reads, 7th enqueue should return false (queue now contains 2 chunks)');
+        test2.done();
+    })).catch(test2.step_func(function(e) { assert_unreached(e); } ));
+});
+
+var test3 = async_test('Correctly governs the return value of a ReadableStream\'s enqueue function (HWM = 4)');
+test3.step(function() {
+    var enqueue;
+    var rs = new ReadableStream({
+        start: function(c) { enqueue = c.enqueue.bind(c); },
+        strategy: new CountQueuingStrategy({ "highWaterMark": 4 })
+    });
+    var reader = rs.getReader();
+
+    assert_equals(enqueue('a'), true, 'After 0 reads, 1st enqueue should return true (queue now contains 1 chunk)');
+    assert_equals(enqueue('b'), true, 'After 0 reads, 2nd enqueue should return true (queue now contains 2 chunks)');
+    assert_equals(enqueue('c'), true, 'After 0 reads, 3rd enqueue should return true (queue now contains 3 chunks)');
+    assert_equals(enqueue('d'), true, 'After 0 reads, 4th enqueue should return true (queue now contains 4 chunks)');
+    assert_equals(enqueue('e'), false, 'After 0 reads, 5th enqueue should return false (queue now contains 5 chunks)');
+    assert_equals(enqueue('f'), false, 'After 0 reads, 6th enqueue should return false (queue now contains 6 chunks)');
+
+    reader.read().then(test3.step_func(function(result) {
+        assert_object_equals(result, { value: 'a', done: false }, '1st read gives back the 1st chunk enqueued (queue now contains 5 chunks)');
+        return reader.read();
+    })).then(test3.step_func(function(result) {
+        assert_object_equals(result, { value: 'b', done: false }, '2nd read gives back the 2nd chunk enqueued (queue now contains 4 chunks)');
+        assert_equals(enqueue('g'), false, 'After 2 reads, 7th enqueue should return false (queue now contains 5 chunks)');
+        return reader.read();
+    })).then(test3.step_func(function(result) {
+        assert_object_equals(result, { value: 'c', done: false }, '3rd read gives back the 3rd chunk enqueued (queue now contains 4 chunks)');
+        return reader.read();
+    })).then(test3.step_func(function(result) {
+        assert_object_equals(result, { value: 'd', done: false }, '4th read gives back the 4th chunk enqueued (queue now contains 3 chunks)');
+        return reader.read();
+    })).then(test3.step_func(function(result) {
+        assert_object_equals(result, { value: 'e', done: false }, '5th read gives back the 5th chunk enqueued (queue now contains 2 chunks)');
+        return reader.read();
+    })).then(test3.step_func(function(result) {
+        assert_object_equals(result, { value: 'f', done: false }, '6th read gives back the 6th chunk enqueued (queue now contains 1 chunk)');
+        assert_equals(enqueue('h'), true, 'After 6 reads, 8th enqueue should return true (queue now contains 2 chunks)');
+        assert_equals(enqueue('i'), true, 'After 6 reads, 9th enqueue should return true (queue now contains 3 chunks)');
+        assert_equals(enqueue('j'), true, 'After 6 reads, 10th enqueue should return true (queue now contains 4 chunks)');
+        assert_equals(enqueue('k'), false, 'After 6 reads, 11th enqueue should return false (queue now contains 5 chunks)');
+        test3.done();
+    })).catch(test3.step_func(function(e) { assert_reached(e); } ));
+});
+</script>
