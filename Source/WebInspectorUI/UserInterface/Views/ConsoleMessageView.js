@@ -528,19 +528,19 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         if (!columnNamesArgument)
             return null;
 
-        var remoteObject = WebInspector.RemoteObject.fromPayload(columnNamesArgument);
+        console.assert(columnNamesArgument instanceof WebInspector.RemoteObject);
 
         // Single primitive argument.
-        if (remoteObject.type === "string" || remoteObject.type === "number")
+        if (columnNamesArgument.type === "string" || columnNamesArgument.type === "number")
             return [String(columnNamesArgument.value)];
 
         // Ignore everything that is not an array with property previews.
-        if (remoteObject.type !== "object" || remoteObject.subtype !== "array" || !remoteObject.preview || !remoteObject.preview.propertyPreviews)
+        if (columnNamesArgument.type !== "object" || columnNamesArgument.subtype !== "array" || !columnNamesArgument.preview || !columnNamesArgument.preview.propertyPreviews)
             return null;
 
         // Array. Look into the preview and get string values.
         var extractedColumnNames = [];
-        for (var propertyPreview of remoteObject.preview.propertyPreviews) {
+        for (var propertyPreview of columnNamesArgument.preview.propertyPreviews) {
             if (propertyPreview.type === "string" || propertyPreview.type === "number")
                 extractedColumnNames.push(String(propertyPreview.value));
         }

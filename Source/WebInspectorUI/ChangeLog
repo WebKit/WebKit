@@ -1,5 +1,17 @@
 2015-04-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Uncaught exception using console.table with filter argument
+        https://bugs.webkit.org/show_bug.cgi?id=143579
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._userProvidedColumnNames):
+        Reordering in the refactoring would have already converted this argument
+        to a RemoteObject. Assert that here instead of trying to convert.
+
+2015-04-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: ObjectTree Property Path tooltip has a few issues
         https://bugs.webkit.org/show_bug.cgi?id=143587
 
