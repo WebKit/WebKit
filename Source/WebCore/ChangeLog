@@ -1,3 +1,9 @@
+2015-04-10  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Unreviewed, added CSS Shapes to features.json file.
+
+        * features.json:
+
 2015-04-10  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Support modifying request URLs
