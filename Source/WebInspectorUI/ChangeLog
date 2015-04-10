@@ -1,3 +1,27 @@
+2015-04-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ObjectTree Property Path tooltip has a few issues
+        https://bugs.webkit.org/show_bug.cgi?id=143587
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/PropertyPath.js:
+        (WebInspector.PropertyPath.prototype.appendSymbolProperty):
+        (WebInspector.PropertyPath.prototype.appendPropertyDescriptor):
+        Handle Symbol properties. They are treated as an impossible path
+        because we cannot guarentee a reference to the Symbol right now.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._rootPropertyPathForObject):
+        The savedResultIndex is on message.
+
+        * UserInterface/Views/ObjectTreeMapEntryTreeElement.js:
+        (WebInspector.ObjectTreeMapEntryTreeElement):
+        (WebInspector.ObjectTreeMapKeyTreeElement):
+        (WebInspector.ObjectTreeMapValueTreeElement):
+        In order for "key" to be available setup the mainTitle after
+        the call to the base's constructor.
+
 2015-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Simplify Legacy Tips support

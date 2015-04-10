@@ -387,7 +387,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         if (!this._message.savedResultIndex)
             return null;
 
-        return new WebInspector.PropertyPath(object, "$" + this.savedResultIndex);
+        return new WebInspector.PropertyPath(object, "$" + this._message.savedResultIndex);
     }
 
     _formatWithSubstitutionString(parameters, formattedResult)

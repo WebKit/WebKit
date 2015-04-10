@@ -231,10 +231,20 @@ WebInspector.PropertyPath = class PropertyPath extends WebInspector.Object
         return new WebInspector.PropertyPath(object, component, this);
     }
 
+    appendSymbolProperty(object)
+    {
+        var component = WebInspector.PropertyPath.SpecialPathComponent.SymbolPropertyName;
+        return new WebInspector.PropertyPath(object, component, this);
+    }
+
     appendPropertyDescriptor(object, descriptor, type)
     {
+        console.assert(descriptor instanceof WebInspector.PropertyDescriptor);
+
         if (descriptor.isInternalProperty)
             return this.appendInternalPropertyName(object, descriptor.name);
+        if (descriptor.symbol)
+            return this.appendSymbolProperty(object);
 
         if (type === WebInspector.PropertyPath.Type.Getter)
             return this.appendGetterPropertyName(object, descriptor.name);
@@ -242,8 +252,6 @@ WebInspector.PropertyPath = class PropertyPath extends WebInspector.Object
             return this.appendSetterPropertyName(object, descriptor.name);
 
         console.assert(type === WebInspector.PropertyPath.Type.Value);
-
-        // FIXME: We don't yet have Symbol descriptors.
 
         if (this._object.subtype === "array" && !isNaN(parseInt(descriptor.name)))
             return this.appendArrayIndex(object, descriptor.name);
