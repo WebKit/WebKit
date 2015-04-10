@@ -1,3 +1,30 @@
+2015-04-10  Anders Carlsson  <andersca@apple.com>
+
+        _WKWebsiteDataStore doesn't track and remove offline application cache entries
+        https://bugs.webkit.org/show_bug.cgi?id=143614
+        rdar://problem/20243235
+
+        Reviewed by Andreas Kling.
+
+        * Shared/WebsiteData/WebsiteDataTypes.h:
+        Add WebsiteDataTypeOfflineWebApplicationCache.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecord.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecord.mm:
+        (dataTypesToString):
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataTypes):
+        (WebKit::toWKWebsiteDataTypes):
+        Add WKWebsiteDataTypeOfflineWebApplicationCache.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        Create a custom application cache storage and fetch the origins from it.
+
+        (WebKit::WebsiteDataStore::removeData):
+        Delete either all the cache entries (since we don't track time in the application cache),
+        or the ones specified by the given entries.
+
 2015-04-10  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Refactor MediaPlaybackTarget

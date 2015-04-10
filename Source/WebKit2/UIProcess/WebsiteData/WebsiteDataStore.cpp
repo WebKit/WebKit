@@ -30,6 +30,7 @@
 #include "StorageManager.h"
 #include "WebProcessPool.h"
 #include "WebsiteData.h"
+#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/OriginLock.h>
 #include <wtf/RunLoop.h>
@@ -277,6 +278,28 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
         });
     }
 
+    if (dataTypes & WebsiteDataTypeOfflineWebApplicationCache && !isNonPersistent()) {
+        StringCapture applicationCacheDirectory { m_applicationCacheDirectory };
+
+        callbackAggregator->addPendingCallback();
+
+        m_queue->dispatch([applicationCacheDirectory, callbackAggregator] {
+            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "Files");
+
+            HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
+            storage->getOriginsWithCache(origins);
+
+            WTF::RunLoop::main().dispatch([callbackAggregator, origins]() mutable {
+                WebsiteData websiteData;
+
+                for (auto& origin : origins)
+                    websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataTypeOfflineWebApplicationCache });
+
+                callbackAggregator->removePendingCallback(WTF::move(websiteData));
+            });
+        });
+    }
+
     if (dataTypes & WebsiteDataTypeWebSQLDatabases && !isNonPersistent()) {
         StringCapture webSQLDatabaseDirectory { m_webSQLDatabaseDirectory };
 
@@ -286,7 +309,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
             Vector<RefPtr<WebCore::SecurityOrigin>> origins;
             WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory.string())->origins(origins);
 
-            RunLoop::main().dispatch([webSQLDatabaseDirectory, callbackAggregator, origins]() mutable {
+            RunLoop::main().dispatch([callbackAggregator, origins]() mutable {
                 WebsiteData websiteData;
                 for (auto& origin : origins)
                     websiteData.entries.append(WebsiteData::Entry { WTF::move(origin), WebsiteDataTypeWebSQLDatabases });
@@ -422,6 +445,22 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         });
     }
 
+    if (dataTypes & WebsiteDataTypeOfflineWebApplicationCache && !isNonPersistent()) {
+        StringCapture applicationCacheDirectory { m_applicationCacheDirectory };
+
+        callbackAggregator->addPendingCallback();
+
+        m_queue->dispatch([applicationCacheDirectory, callbackAggregator] {
+            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "Files");
+
+            storage->deleteAllEntries();
+
+            WTF::RunLoop::main().dispatch([callbackAggregator] {
+                callbackAggregator->removePendingCallback();
+            });
+        });
+    }
+
     if (dataTypes & WebsiteDataTypeWebSQLDatabases && !isNonPersistent()) {
         StringCapture webSQLDatabaseDirectory { m_webSQLDatabaseDirectory };
 
@@ -545,6 +584,28 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
 
         m_storageManager->deleteEntriesForOrigins(origins, [callbackAggregator] {
             callbackAggregator->removePendingCallback();
+        });
+    }
+
+    if (dataTypes & WebsiteDataTypeOfflineWebApplicationCache && !isNonPersistent()) {
+        StringCapture applicationCacheDirectory { m_applicationCacheDirectory };
+
+        HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
+        for (const auto& dataRecord : dataRecords) {
+            for (const auto& origin : dataRecord.origins)
+                origins.add(origin);
+        }
+
+        callbackAggregator->addPendingCallback();
+        m_queue->dispatch([origins, applicationCacheDirectory, callbackAggregator] {
+            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "Files");
+
+            for (const auto& origin : origins)
+                storage->deleteCacheForOrigin(*origin);
+
+            WTF::RunLoop::main().dispatch([callbackAggregator] {
+                callbackAggregator->removePendingCallback();
+            });
         });
     }
 

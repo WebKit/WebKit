@@ -50,6 +50,8 @@ static inline WebKit::WebsiteDataTypes toWebsiteDataTypes(WKWebsiteDataTypes wkW
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeDiskCache;
     if (wkWebsiteDataTypes & WKWebsiteDataTypeMemoryCache)
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeMemoryCache;
+    if (wkWebsiteDataTypes & WKWebsiteDataTypeOfflineWebApplicationCache)
+        websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeOfflineWebApplicationCache;
     if (wkWebsiteDataTypes & WKWebsiteDataTypeLocalStorage)
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeLocalStorage;
     if (wkWebsiteDataTypes & WKWebsiteDataTypeWebSQLDatabases)
@@ -70,6 +72,8 @@ static inline WKWebsiteDataTypes toWKWebsiteDataTypes(int websiteDataTypes)
         wkWebsiteDataTypes |= WKWebsiteDataTypeDiskCache;
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeMemoryCache)
         wkWebsiteDataTypes |= WKWebsiteDataTypeMemoryCache;
+    if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeOfflineWebApplicationCache)
+        wkWebsiteDataTypes |= WKWebsiteDataTypeOfflineWebApplicationCache;
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeLocalStorage)
         wkWebsiteDataTypes |= WKWebsiteDataTypeLocalStorage;
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeWebSQLDatabases)
