@@ -116,7 +116,7 @@ void InlineBox::showLineBox(bool mark, int depth) const
     }
     while (++printedCharacters <= depth * 2)
         fputc(' ', stderr);
-    fprintf(stderr, "%s  (%.2f, %.2f) (%.2f, %.2f) (%p)\n", boxName(), x(), y(), width(), height(), this);
+    fprintf(stderr, "%s  (%.2f, %.2f) (%.2f, %.2f) (%p) renderer->(%p)\n", boxName(), x(), y(), width(), height(), this, &renderer());
 }
 
 #endif // ENABLE(TREE_DEBUGGING)

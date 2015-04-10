@@ -1,3 +1,15 @@
+2015-04-10  Zalan Bujtas  <zalan@apple.com>
+
+        showRenderTree: Include the render object to the inlinebox output.
+        https://bugs.webkit.org/show_bug.cgi?id=143610
+
+        This helps to match the inlinebox and its renderer.
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::showLineBox):
+
 2015-04-09  Roger Fong  <roger_fong@apple.com>
 
         Update wireless player placard for OSX.
