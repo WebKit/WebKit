@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<script>
+if (window.internals) {
+    var settings = window.internals.mockContentFilterSettings;
+    settings.enabled = true;
+    settings.decisionPoint = settings.DECISION_POINT_AFTER_WILL_SEND_REQUEST;
+    settings.decision = settings.DECISION_ALLOW;
+    settings.modifiedRequestURL = "pass.html";
+}
+</script>
+<iframe src="resources/fail.html"></iframe>

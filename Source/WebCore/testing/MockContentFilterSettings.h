@@ -73,6 +73,9 @@ public:
 
     const String& unblockRequestURL() const;
 
+    const String& modifiedRequestURL() const { return m_modifiedRequestURL; }
+    void setModifiedRequestURL(const String& modifiedRequestURL) { m_modifiedRequestURL = modifiedRequestURL; }
+
 private:
     MockContentFilterSettings() = default;
     MockContentFilterSettings(const MockContentFilterSettings&) = delete;
@@ -83,6 +86,7 @@ private:
     Decision m_decision { Decision::Allow };
     Decision m_unblockRequestDecision { Decision::Block };
     String m_blockedString;
+    String m_modifiedRequestURL;
 };
 
 } // namespace WebCore

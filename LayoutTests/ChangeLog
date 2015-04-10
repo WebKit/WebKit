@@ -1,3 +1,36 @@
+2015-04-10  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Support modifying request URLs
+        https://bugs.webkit.org/show_bug.cgi?id=143599
+        rdar://problem/20442560
+
+        Reviewed by Darin Adler.
+
+        * contentfiltering/allow-after-add-data-expected.html: Changed to use pass.html.
+        * contentfiltering/allow-after-finished-adding-data-expected.html: Ditto.
+        * contentfiltering/allow-after-response-expected.html: Ditto.
+        * contentfiltering/allow-after-will-send-request-expected.html: Ditto.
+        * contentfiltering/block-after-add-data-expected.html: Ditto.
+        * contentfiltering/block-after-add-data-then-allow-unblock-expected.html: Ditto.
+        * contentfiltering/block-after-add-data-then-deny-unblock-expected.html: Ditto.
+        * contentfiltering/block-after-finished-adding-data-expected.html: Ditto.
+        * contentfiltering/block-after-finished-adding-data-then-allow-unblock-expected.html: Ditto.
+        * contentfiltering/block-after-finished-adding-data-then-deny-unblock-expected.html: Ditto.
+        * contentfiltering/block-after-response-expected.html: Ditto.
+        * contentfiltering/block-after-response-then-allow-unblock-expected.html: Ditto.
+        * contentfiltering/block-after-response-then-deny-unblock-expected.html: Ditto.
+        * contentfiltering/block-after-will-send-request-expected.html: Ditto.
+        * contentfiltering/block-after-will-send-request-then-allow-unblock-expected.html: Ditto.
+        * contentfiltering/block-after-will-send-request-then-deny-unblock-expected.html: Ditto.
+        * contentfiltering/modify-request-url-expected.html: Added.
+        * contentfiltering/modify-request-url.html: Added.
+        * contentfiltering/resources/fail.html: Added.
+        * contentfiltering/resources/pass.html: Added.
+        * http/tests/contentfiltering/allow-after-redirect-expected.html: Removed the body tag.
+        * http/tests/contentfiltering/block-after-redirect-expected.html: Ditto.
+        * http/tests/contentfiltering/modify-redirect-request-url-expected.html: Added.
+        * http/tests/contentfiltering/modify-redirect-request-url.html: Added.
+
 2015-04-10  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [Win] Layout Test fast/backgrounds/selection-background-color-of-list-style.html is failing

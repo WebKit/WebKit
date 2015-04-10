@@ -30,6 +30,7 @@
 ] interface MockContentFilterSettings {
     attribute boolean enabled;
     attribute DOMString blockedString;
+    attribute DOMString modifiedRequestURL;
 
     const octet DECISION_POINT_AFTER_WILL_SEND_REQUEST = 0;
     const octet DECISION_POINT_AFTER_REDIRECT = 1;

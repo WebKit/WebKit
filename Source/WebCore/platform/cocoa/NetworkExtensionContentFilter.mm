@@ -90,7 +90,10 @@ void NetworkExtensionContentFilter::willSendRequest(ResourceRequest& request, co
             return;
     }
 
-    [m_neFilterSource willSendRequest:request.nsURLRequest(DoNotUpdateHTTPBody) decisionHandler:[this](NEFilterSourceStatus status, NSDictionary *decisionInfo) {
+    RetainPtr<NSString> modifiedRequestURLString;
+    [m_neFilterSource willSendRequest:request.nsURLRequest(DoNotUpdateHTTPBody) decisionHandler:[this, &modifiedRequestURLString](NEFilterSourceStatus status, NSDictionary *decisionInfo) {
+        modifiedRequestURLString = decisionInfo[NEFilterSourceOptionsRedirectURL];
+        ASSERT(!modifiedRequestURLString || [modifiedRequestURLString isKindOfClass:[NSString class]]);
         handleDecision(status, replacementDataFromDecisionInfo(decisionInfo));
     }];
 
@@ -98,6 +101,17 @@ void NetworkExtensionContentFilter::willSendRequest(ResourceRequest& request, co
     // blocked/not blocked answer from the filter immediately after calling
     // addData(). We should find a way to make this asynchronous.
     dispatch_semaphore_wait(m_semaphore.get(), DISPATCH_TIME_FOREVER);
+
+    if (!modifiedRequestURLString)
+        return;
+
+    URL modifiedRequestURL { URL(), modifiedRequestURLString.get() };
+    if (!modifiedRequestURL.isValid()) {
+        LOG(ContentFiltering, "NetworkExtensionContentFilter failed to convert modified URL string %@ to a WebCore::URL.\n", modifiedRequestURLString.get());
+        return;
+    }
+
+    request.setURL(modifiedRequestURL);
 #else
     UNUSED_PARAM(request);
     UNUSED_PARAM(redirectResponse);

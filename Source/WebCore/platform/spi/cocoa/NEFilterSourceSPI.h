@@ -74,4 +74,9 @@ typedef void (^NEFilterSourceDecisionHandler)(NEFilterSourceStatus, NSDictionary
 
 #endif
 
+#endif // !USE(APPLE_INTERNAL_SDK)
+
+// FIXME: Remove once NEFilterSourceOptionsRedirectURL is defined in the SDK.
+#ifndef NEFilterSourceOptionsRedirectURL
+#define NEFilterSourceOptionsRedirectURL @"RedirectURL"
 #endif

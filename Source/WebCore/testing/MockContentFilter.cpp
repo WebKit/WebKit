@@ -68,12 +68,27 @@ std::unique_ptr<MockContentFilter> MockContentFilter::create()
     return std::make_unique<MockContentFilter>();
 }
 
-void MockContentFilter::willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse)
+void MockContentFilter::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     if (redirectResponse.isNull())
         maybeDetermineStatus(DecisionPoint::AfterWillSendRequest);
     else
         maybeDetermineStatus(DecisionPoint::AfterRedirect);
+
+    if (m_status == Status::NeedsMoreData)
+        return;
+
+    String modifiedRequestURLString { settings().modifiedRequestURL() };
+    if (modifiedRequestURLString.isEmpty())
+        return;
+
+    URL modifiedRequestURL { request.url(), modifiedRequestURLString };
+    if (!modifiedRequestURL.isValid()) {
+        LOG(ContentFiltering, "MockContentFilter failed to convert %s to a WebCore::URL.\n", modifiedRequestURL.string().ascii().data());
+        return;
+    }
+
+    request.setURL(modifiedRequestURL);
 }
 
 void MockContentFilter::responseReceived(const ResourceResponse&)

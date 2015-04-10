@@ -1,3 +1,29 @@
+2015-04-10  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Support modifying request URLs
+        https://bugs.webkit.org/show_bug.cgi?id=143599
+        rdar://problem/20442560
+
+        Reviewed by Darin Adler.
+
+        Tests: contentfiltering/modify-request-url.html
+               http/tests/contentfiltering/modify-redirect-request-url.html
+
+        Allow NEFilterSource to modifiy request URLs. Also teach MockContentFilter to do the same for testing.
+
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::willSendRequest): If NEFilterSource provided a string representing a
+        valid URL in decisionInfo[NEFilterSourceOptionsRedirectURL], then used that as the request URL.
+        * platform/spi/cocoa/NEFilterSourceSPI.h: Temporarily defined NEFilterSourceOptionsRedirectURL.
+        * testing/MockContentFilter.cpp:
+        (WebCore::MockContentFilter::willSendRequest): If settings() has a valid modifiedRequestURL, use it as the
+        request URL. Only do so once MockContentFilter has reached its decision point so that both initial requests and
+        redirect requests can be tested.
+        * testing/MockContentFilterSettings.h: Added modifiedRequestURL.
+        (WebCore::MockContentFilterSettings::modifiedRequestURL): Ditto.
+        (WebCore::MockContentFilterSettings::setModifiedRequestURL): Ditto.
+        * testing/MockContentFilterSettings.idl: Ditto.
+
 2015-04-10  Zalan Bujtas  <zalan@apple.com>
 
         showRenderTree: Include the render object to the inlinebox output.
