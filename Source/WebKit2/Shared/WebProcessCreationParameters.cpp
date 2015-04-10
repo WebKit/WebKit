@@ -82,7 +82,7 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << mediaKeyStorageDirectory;
     encoder << mediaKeyStorageDirectoryExtensionHandle;
     encoder << shouldUseTestingNetworkSession;
-    encoder << urlSchemesRegistererdAsEmptyDocument;
+    encoder << urlSchemesRegisteredAsEmptyDocument;
     encoder << urlSchemesRegisteredAsSecure;
     encoder << urlSchemesRegisteredAsBypassingContentSecurityPolicy;
     encoder << urlSchemesForWhichDomainRelaxationIsForbidden;
@@ -192,7 +192,7 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
         return false;
     if (!decoder.decode(parameters.shouldUseTestingNetworkSession))
         return false;
-    if (!decoder.decode(parameters.urlSchemesRegistererdAsEmptyDocument))
+    if (!decoder.decode(parameters.urlSchemesRegisteredAsEmptyDocument))
         return false;
     if (!decoder.decode(parameters.urlSchemesRegisteredAsSecure))
         return false;

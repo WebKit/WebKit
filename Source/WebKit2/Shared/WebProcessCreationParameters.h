@@ -85,7 +85,7 @@ struct WebProcessCreationParameters {
 
     bool shouldUseTestingNetworkSession;
 
-    Vector<String> urlSchemesRegistererdAsEmptyDocument;
+    Vector<String> urlSchemesRegisteredAsEmptyDocument;
     Vector<String> urlSchemesRegisteredAsSecure;
     Vector<String> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
     Vector<String> urlSchemesForWhichDomainRelaxationIsForbidden;

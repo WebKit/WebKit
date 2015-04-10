@@ -634,7 +634,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     parameters.cacheModel = m_cacheModel;
     parameters.languages = userPreferredLanguages();
 
-    copyToVector(m_schemesToRegisterAsEmptyDocument, parameters.urlSchemesRegistererdAsEmptyDocument);
+    copyToVector(m_schemesToRegisterAsEmptyDocument, parameters.urlSchemesRegisteredAsEmptyDocument);
     copyToVector(m_schemesToRegisterAsSecure, parameters.urlSchemesRegisteredAsSecure);
     copyToVector(m_schemesToRegisterAsBypassingContentSecurityPolicy, parameters.urlSchemesRegisteredAsBypassingContentSecurityPolicy);
     copyToVector(m_schemesToSetDomainRelaxationForbiddenFor, parameters.urlSchemesForWhichDomainRelaxationIsForbidden);

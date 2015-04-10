@@ -309,7 +309,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     m_fullKeyboardAccessEnabled = parameters.fullKeyboardAccessEnabled;
 
-    for (auto& scheme : parameters.urlSchemesRegistererdAsEmptyDocument)
+    for (auto& scheme : parameters.urlSchemesRegisteredAsEmptyDocument)
         registerURLSchemeAsEmptyDocument(scheme);
 
     for (auto& scheme : parameters.urlSchemesRegisteredAsSecure)
