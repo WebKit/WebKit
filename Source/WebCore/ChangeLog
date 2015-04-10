@@ -1,3 +1,14 @@
+2015-04-09  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add a HAVE(AVKIT) and use it
+        https://bugs.webkit.org/show_bug.cgi?id=143593
+
+        Reviewed by David Kilzer.
+
+        * page/Settings.h: Only defined setAVKitEnabled() if HAVE(AVKIT).
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm: Only compiled if HAVE(AVKIT).
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm: Ditto.
+
 2015-04-09  Simon Fraser  <simon.fraser@apple.com>
 
         Some CSS3 filters tests crash under iOS testing

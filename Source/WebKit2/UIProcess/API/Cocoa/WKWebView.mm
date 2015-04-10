@@ -247,7 +247,7 @@ static int32_t deviceOrientation()
 
 - (BOOL)_mayAutomaticallyShowVideoOptimized
 {
-#if (__IPHONE_OS_VERSION_MIN_REQUIRED <= 80200)
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED <= 80200) || !HAVE(AVKIT)
     return false;
 #else
     if (!_page || !_page->videoFullscreenManager())

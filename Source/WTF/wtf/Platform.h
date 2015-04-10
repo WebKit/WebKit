@@ -503,6 +503,7 @@
 #define HAVE_DTRACE 1
 
 #if !PLATFORM(WATCHOS)
+#define HAVE_AVKIT 1
 #define HAVE_PARENTAL_CONTROLS 1
 #endif
 

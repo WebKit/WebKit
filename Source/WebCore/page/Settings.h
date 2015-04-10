@@ -251,7 +251,9 @@ public:
     WEBCORE_EXPORT static void setNetworkInterfaceName(const String&);
     static const String& networkInterfaceName();
 
+#if HAVE(AVKIT)
     static void setAVKitEnabled(bool flag) { gAVKitEnabled = flag; }
+#endif
     static bool avKitEnabled() { return gAVKitEnabled; }
 
     static void setShouldOptOutOfNetworkStateObservation(bool flag) { gShouldOptOutOfNetworkStateObservation = flag; }

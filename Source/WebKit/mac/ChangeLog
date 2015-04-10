@@ -1,3 +1,16 @@
+2015-04-09  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add a HAVE(AVKIT) and use it
+        https://bugs.webkit.org/show_bug.cgi?id=143593
+
+        Reviewed by David Kilzer.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Only set WebKitAVKitEnabled to YES if HAVE(AVKIT).
+        (-[WebPreferences setAVKitEnabled:]): Only set value for WebKitAVKitEnabled if HAVE(AVKIT).
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Only called Settings::setAVKitEnabled() if HAVE(AVKIT).
+
 2015-04-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] editorState() should not cause a synchronous layout

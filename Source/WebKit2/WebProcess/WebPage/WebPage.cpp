@@ -2740,7 +2740,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setQTKitEnabled(store.getBoolValueForKey(WebPreferencesKey::isQTKitEnabledKey()));
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && HAVE(AVKIT)
     settings.setAVKitEnabled(true);
 #endif
 

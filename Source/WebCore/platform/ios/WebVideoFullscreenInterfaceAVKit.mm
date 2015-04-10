@@ -26,7 +26,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 80200
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 80200 && HAVE(AVKIT)
 
 #import "WebVideoFullscreenInterfaceAVKit.h"
 

@@ -2340,7 +2340,9 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setAudioSessionCategoryOverride([preferences audioSessionCategoryOverride]);
     settings.setNetworkDataUsageTrackingEnabled([preferences networkDataUsageTrackingEnabled]);
     settings.setNetworkInterfaceName([preferences networkInterfaceName]);
+#if HAVE(AVKIT)
     settings.setAVKitEnabled([preferences avKitEnabled]);
+#endif
     settings.setShouldTransformsAffectOverflow(shouldTransformsAffectOverflow());
     settings.setShouldDispatchJavaScriptWindowOnErrorEvents(shouldDispatchJavaScriptWindowOnErrorEvents());
 

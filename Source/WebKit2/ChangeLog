@@ -1,3 +1,21 @@
+2015-04-09  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add a HAVE(AVKIT) and use it
+        https://bugs.webkit.org/show_bug.cgi?id=143593
+
+        Reviewed by David Kilzer.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _mayAutomaticallyShowVideoOptimized]): Returned false if !HAVE(AVKIT).
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Removed the check for < iOS 8.2.
+        (WebKit::WebPageProxy::reattachToWebProcess): Ditto.
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::create): Created a version of this function that returns nullptr if
+        the minimum required version of iOS is less than 8.2 or if !HAVE(AVKIT).
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Only called Settings::setAVKitEnabled(true) if HAVE(AVKIT).
+
 2015-04-09  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Use modern loops in WebProcess 
