@@ -30,13 +30,11 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "AudioStreamTrack.h"
 #include "Event.h"
 #include "ExceptionCode.h"
 #include "MediaStreamRegistry.h"
 #include "MediaStreamTrackEvent.h"
 #include "RealtimeMediaSource.h"
-#include "VideoStreamTrack.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -94,7 +92,7 @@ MediaStream::MediaStream(ScriptExecutionContext& context, PassRefPtr<MediaStream
     size_t numberOfAudioTracks = m_private->numberOfAudioTracks();
     m_audioTracks.reserveCapacity(numberOfAudioTracks);
     for (size_t i = 0; i < numberOfAudioTracks; i++) {
-        track = AudioStreamTrack::create(context, *m_private->audioTracks(i));
+        track = MediaStreamTrack::create(context, *m_private->audioTracks(i));
         track->addObserver(this);
         m_audioTracks.append(track.release());
     }
@@ -102,7 +100,7 @@ MediaStream::MediaStream(ScriptExecutionContext& context, PassRefPtr<MediaStream
     size_t numberOfVideoTracks = m_private->numberOfVideoTracks();
     m_videoTracks.reserveCapacity(numberOfVideoTracks);
     for (size_t i = 0; i < numberOfVideoTracks; i++) {
-        track = VideoStreamTrack::create(context, *m_private->videoTracks(i));
+        track = MediaStreamTrack::create(context, *m_private->videoTracks(i));
         track->addObserver(this);
         m_videoTracks.append(track.release());
     }
@@ -324,10 +322,8 @@ void MediaStream::addRemoteTrack(MediaStreamTrackPrivate* privateTrack)
     RefPtr<MediaStreamTrack> track;
     switch (privateTrack->type()) {
     case RealtimeMediaSource::Audio:
-        track = AudioStreamTrack::create(*scriptExecutionContext(), *privateTrack);
-        break;
     case RealtimeMediaSource::Video:
-        track = VideoStreamTrack::create(*scriptExecutionContext(), *privateTrack);
+        track = MediaStreamTrack::create(*scriptExecutionContext(), *privateTrack);
         break;
     case RealtimeMediaSource::None:
         ASSERT_NOT_REACHED();

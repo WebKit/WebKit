@@ -115,7 +115,6 @@ NON_SVG_BINDING_IDLS = \
 	$(WebCore)/Modules/mediasource/VideoPlaybackQuality.idl \
 	$(WebCore)/Modules/mediastream/AllVideoCapabilities.idl \
 	$(WebCore)/Modules/mediastream/AllAudioCapabilities.idl \
-	$(WebCore)/Modules/mediastream/AudioStreamTrack.idl \
     $(WebCore)/Modules/mediastream/CapabilityRange.idl \
     $(WebCore)/Modules/mediastream/HTMLMediaElementMediaStream.idl \
     $(WebCore)/Modules/mediastream/MediaSourceStates.idl \
@@ -149,7 +148,6 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/mediastream/RTCStatsCallback.idl \
     $(WebCore)/Modules/mediastream/RTCStatsReport.idl \
     $(WebCore)/Modules/mediastream/RTCStatsResponse.idl \
-	$(WebCore)/Modules/mediastream/VideoStreamTrack.idl \
     $(WebCore)/Modules/mediastream/SourceInfo.idl \
     $(WebCore)/Modules/notifications/DOMWindowNotifications.idl \
     $(WebCore)/Modules/notifications/Notification.idl \

@@ -32,7 +32,6 @@
 
 #include "AllAudioCapabilities.h"
 #include "AllVideoCapabilities.h"
-#include "AudioStreamTrack.h"
 #include "Dictionary.h"
 #include "Event.h"
 #include "ExceptionCode.h"
@@ -46,13 +45,22 @@
 #include "MediaTrackConstraints.h"
 #include "NotImplemented.h"
 #include "RealtimeMediaSourceCenter.h"
-#include "VideoStreamTrack.h"
 #include <wtf/Functional.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, MediaStreamTrackPrivate& privateTrack, const Dictionary* constraints)
+RefPtr<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, MediaStreamTrackPrivate& privateTrack)
+{
+    return adoptRef(new MediaStreamTrack(context, privateTrack));
+}
+
+RefPtr<MediaStreamTrack> MediaStreamTrack::create(MediaStreamTrack& track)
+{
+    return adoptRef(new MediaStreamTrack(track));
+}
+
+MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, MediaStreamTrackPrivate& privateTrack)
     : RefCounted()
     , ActiveDOMObject(&context)
     , m_privateTrack(privateTrack)
@@ -62,9 +70,6 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, MediaStreamT
     suspendIfNeeded();
 
     m_privateTrack->setClient(this);
-
-    if (constraints)
-        applyConstraints(*constraints);
 }
 
 MediaStreamTrack::MediaStreamTrack(MediaStreamTrack& other)
@@ -87,6 +92,16 @@ MediaStreamTrack::~MediaStreamTrack()
 void MediaStreamTrack::setSource(PassRefPtr<RealtimeMediaSource> newSource)
 {
     m_privateTrack->setSource(newSource);
+}
+
+const AtomicString& MediaStreamTrack::kind() const
+{
+    static NeverDestroyed<AtomicString> audioKind("audio", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> videoKind("video", AtomicString::ConstructFromLiteral);
+
+    if (m_privateTrack->type() == RealtimeMediaSource::Audio)
+        return audioKind;
+    return videoKind;
 }
 
 const String& MediaStreamTrack::id() const
@@ -194,10 +209,7 @@ void MediaStreamTrack::applyConstraints(PassRefPtr<MediaConstraints>)
 
 RefPtr<MediaStreamTrack> MediaStreamTrack::clone()
 {
-    if (m_privateTrack->type() == RealtimeMediaSource::Audio)
-        return AudioStreamTrack::create(*this);
-
-    return VideoStreamTrack::create(*this);
+    return MediaStreamTrack::create(*this);
 }
 
 void MediaStreamTrack::stopProducingData()

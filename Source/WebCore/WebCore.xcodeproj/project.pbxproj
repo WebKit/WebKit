@@ -324,14 +324,6 @@
 		07B5A2DC1464320A00A81ECE /* JSTextTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B5A2DA1464320A00A81ECE /* JSTextTrackList.h */; };
 		07B5A30D14687D7100A81ECE /* JSTextTrackListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B5A30C14687D7100A81ECE /* JSTextTrackListCustom.cpp */; };
 		07BDD6EC1469B4C2009C9F85 /* JSTrackEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B5A30A14687B8400A81ECE /* JSTrackEventCustom.cpp */; };
-		07C59B5317F4AC15000FBCBB /* AudioStreamTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C59B4D17F4AC15000FBCBB /* AudioStreamTrack.cpp */; };
-		07C59B5417F4AC15000FBCBB /* AudioStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C59B4E17F4AC15000FBCBB /* AudioStreamTrack.h */; };
-		07C59B5617F4AC15000FBCBB /* VideoStreamTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C59B5017F4AC15000FBCBB /* VideoStreamTrack.cpp */; };
-		07C59B5717F4AC15000FBCBB /* VideoStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C59B5117F4AC15000FBCBB /* VideoStreamTrack.h */; };
-		07C59B5D17F4B208000FBCBB /* JSAudioStreamTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C59B5917F4B208000FBCBB /* JSAudioStreamTrack.cpp */; };
-		07C59B5E17F4B208000FBCBB /* JSAudioStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C59B5A17F4B208000FBCBB /* JSAudioStreamTrack.h */; };
-		07C59B5F17F4B208000FBCBB /* JSVideoStreamTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C59B5B17F4B208000FBCBB /* JSVideoStreamTrack.cpp */; };
-		07C59B6017F4B208000FBCBB /* JSVideoStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C59B5C17F4B208000FBCBB /* JSVideoStreamTrack.h */; };
 		07C59B6817F784BA000FBCBB /* MediaSourceStates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C59B6517F784BA000FBCBB /* MediaSourceStates.cpp */; };
 		07C59B6917F784BA000FBCBB /* MediaSourceStates.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C59B6617F784BA000FBCBB /* MediaSourceStates.h */; };
 		07C59B6E17F794F6000FBCBB /* JSMediaSourceStatesCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C59B6D17F794F6000FBCBB /* JSMediaSourceStatesCustom.cpp */; };
@@ -7357,16 +7349,6 @@
 		07B5A3061468537100A81ECE /* TextTrackList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextTrackList.idl; sourceTree = "<group>"; };
 		07B5A30A14687B8400A81ECE /* JSTrackEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTrackEventCustom.cpp; sourceTree = "<group>"; };
 		07B5A30C14687D7100A81ECE /* JSTextTrackListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackListCustom.cpp; sourceTree = "<group>"; };
-		07C59B4D17F4AC15000FBCBB /* AudioStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioStreamTrack.cpp; sourceTree = "<group>"; };
-		07C59B4E17F4AC15000FBCBB /* AudioStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioStreamTrack.h; sourceTree = "<group>"; };
-		07C59B4F17F4AC15000FBCBB /* AudioStreamTrack.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioStreamTrack.idl; sourceTree = "<group>"; };
-		07C59B5017F4AC15000FBCBB /* VideoStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoStreamTrack.cpp; sourceTree = "<group>"; };
-		07C59B5117F4AC15000FBCBB /* VideoStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoStreamTrack.h; sourceTree = "<group>"; };
-		07C59B5217F4AC15000FBCBB /* VideoStreamTrack.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoStreamTrack.idl; sourceTree = "<group>"; };
-		07C59B5917F4B208000FBCBB /* JSAudioStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioStreamTrack.cpp; sourceTree = "<group>"; };
-		07C59B5A17F4B208000FBCBB /* JSAudioStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioStreamTrack.h; sourceTree = "<group>"; };
-		07C59B5B17F4B208000FBCBB /* JSVideoStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVideoStreamTrack.cpp; sourceTree = "<group>"; };
-		07C59B5C17F4B208000FBCBB /* JSVideoStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVideoStreamTrack.h; sourceTree = "<group>"; };
 		07C59B6517F784BA000FBCBB /* MediaSourceStates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSourceStates.cpp; sourceTree = "<group>"; };
 		07C59B6617F784BA000FBCBB /* MediaSourceStates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSourceStates.h; sourceTree = "<group>"; };
 		07C59B6717F784BA000FBCBB /* MediaSourceStates.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaSourceStates.idl; sourceTree = "<group>"; };
@@ -14547,9 +14529,6 @@
 				0705850617FA4689005F2BCB /* AllAudioCapabilities.idl */,
 				073AB4B017F8BACA006E0D6F /* AllVideoCapabilities.h */,
 				07C59B7317F7D09D000FBCBB /* AllVideoCapabilities.idl */,
-				07C59B4D17F4AC15000FBCBB /* AudioStreamTrack.cpp */,
-				07C59B4E17F4AC15000FBCBB /* AudioStreamTrack.h */,
-				07C59B4F17F4AC15000FBCBB /* AudioStreamTrack.idl */,
 				070584FE17F9F05E005F2BCB /* CapabilityRange.cpp */,
 				07C59B7417F7D09D000FBCBB /* CapabilityRange.h */,
 				07C59B7517F7D09D000FBCBB /* CapabilityRange.idl */,
@@ -14666,9 +14645,6 @@
 				07221B8F17CEC32700848E51 /* UserMediaController.h */,
 				07221B9017CEC32700848E51 /* UserMediaRequest.cpp */,
 				07221B9117CEC32700848E51 /* UserMediaRequest.h */,
-				07C59B5017F4AC15000FBCBB /* VideoStreamTrack.cpp */,
-				07C59B5117F4AC15000FBCBB /* VideoStreamTrack.h */,
-				07C59B5217F4AC15000FBCBB /* VideoStreamTrack.idl */,
 			);
 			path = mediastream;
 			sourceTree = "<group>";
@@ -14769,8 +14745,6 @@
 		07CFD99317D01405001C4FFC /* MediaStream */ = {
 			isa = PBXGroup;
 			children = (
-				07C59B5917F4B208000FBCBB /* JSAudioStreamTrack.cpp */,
-				07C59B5A17F4B208000FBCBB /* JSAudioStreamTrack.h */,
 				07C59B6F17F79C7C000FBCBB /* JSMediaSourceStates.cpp */,
 				07C59B7017F79C7C000FBCBB /* JSMediaSourceStates.h */,
 				07277E4017D018CC0015534D /* JSMediaStream.cpp */,
@@ -14833,8 +14807,6 @@
 				07969DAA17D14151007FF842 /* JSRTCStatsResponse.h */,
 				076306DE17E16089005A7C4E /* JSSourceInfo.cpp */,
 				076306DF17E16089005A7C4E /* JSSourceInfo.h */,
-				07C59B5B17F4B208000FBCBB /* JSVideoStreamTrack.cpp */,
-				07C59B5C17F4B208000FBCBB /* JSVideoStreamTrack.h */,
 			);
 			name = MediaStream;
 			sourceTree = "<group>";
@@ -23747,7 +23719,6 @@
 				FD31608912B026F700C1A359 /* AudioSourceProvider.h in Headers */,
 				CD8A7BBC197735FE00CBD643 /* AudioSourceProviderAVFObjC.h in Headers */,
 				FD62F52E145898D80094B0ED /* AudioSourceProviderClient.h in Headers */,
-				07C59B5417F4AC15000FBCBB /* AudioStreamTrack.h in Headers */,
 				FDB052E01561A42C00B500D6 /* AudioSummingJunction.h in Headers */,
 				BE88E0D91715D2A200658D98 /* AudioTrack.h in Headers */,
 				BE88E0DC1715D2A200658D98 /* AudioTrackList.h in Headers */,
@@ -25050,7 +25021,6 @@
 				FDA15EB012B03EE1003A583A /* JSAudioNode.h in Headers */,
 				FDA15EB412B03EE1003A583A /* JSAudioParam.h in Headers */,
 				FDA15EB612B03EE1003A583A /* JSAudioProcessingEvent.h in Headers */,
-				07C59B5E17F4B208000FBCBB /* JSAudioStreamTrack.h in Headers */,
 				BE8EF043171C8FF9009B48C3 /* JSAudioTrack.h in Headers */,
 				BE8EF045171C8FF9009B48C3 /* JSAudioTrackList.h in Headers */,
 				76FB9FF919A73E3A00420562 /* JSAutocompleteErrorEvent.h in Headers */,
@@ -25563,7 +25533,6 @@
 				7C73FB12191EF6F4007DE061 /* JSUserMessageHandler.h in Headers */,
 				7C73FB0D191EF5A8007DE061 /* JSUserMessageHandlersNamespace.h in Headers */,
 				15C77093100D3CA8005BA267 /* JSValidityState.h in Headers */,
-				07C59B6017F4B208000FBCBB /* JSVideoStreamTrack.h in Headers */,
 				BE8EF04B171C9014009B48C3 /* JSVideoTrack.h in Headers */,
 				BE8EF04D171C9014009B48C3 /* JSVideoTrackList.h in Headers */,
 				BE20508218A460C30080647E /* JSVTTCue.h in Headers */,
@@ -26931,7 +26900,6 @@
 				FD3160AF12B026F700C1A359 /* VectorMath.h in Headers */,
 				BCA257151293C010007A263D /* VerticalPositionCache.h in Headers */,
 				CDE83DB2183C44060031EAA3 /* VideoPlaybackQuality.h in Headers */,
-				07C59B5717F4AC15000FBCBB /* VideoStreamTrack.h in Headers */,
 				46DBB6501AB8C96F00D9A813 /* PowerObserverMac.h in Headers */,
 				BE88E0DF1715D2A200658D98 /* VideoTrack.h in Headers */,
 				BE88E0E21715D2A200658D98 /* VideoTrackList.h in Headers */,
@@ -27517,7 +27485,6 @@
 				CDA79827170A279100D45C55 /* AudioSessionIOS.mm in Sources */,
 				CD54DE4B17469C6D005E5B36 /* AudioSessionMac.cpp in Sources */,
 				CD8A7BBB197735FE00CBD643 /* AudioSourceProviderAVFObjC.mm in Sources */,
-				07C59B5317F4AC15000FBCBB /* AudioStreamTrack.cpp in Sources */,
 				FDB052DF1561A42C00B500D6 /* AudioSummingJunction.cpp in Sources */,
 				BE88E0D81715D2A200658D98 /* AudioTrack.cpp in Sources */,
 				BE88E0DB1715D2A200658D98 /* AudioTrackList.cpp in Sources */,
@@ -28518,7 +28485,6 @@
 				FDA15EAF12B03EE1003A583A /* JSAudioNode.cpp in Sources */,
 				FDA15EB312B03EE1003A583A /* JSAudioParam.cpp in Sources */,
 				FDA15EB512B03EE1003A583A /* JSAudioProcessingEvent.cpp in Sources */,
-				07C59B5D17F4B208000FBCBB /* JSAudioStreamTrack.cpp in Sources */,
 				BE8EF042171C8FF9009B48C3 /* JSAudioTrack.cpp in Sources */,
 				BE6DF711171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp in Sources */,
 				BE8EF044171C8FF9009B48C3 /* JSAudioTrackList.cpp in Sources */,
@@ -29133,7 +29099,6 @@
 				15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */,
 				D3F3D3671A69B1A50059FC2B /* JSWebGLRenderingContextBase.cpp in Sources */,
 				CDE83DB6183D352A0031EAA3 /* JSVideoPlaybackQuality.cpp in Sources */,
-				07C59B5F17F4B208000FBCBB /* JSVideoStreamTrack.cpp in Sources */,
 				BE8EF04A171C9014009B48C3 /* JSVideoTrack.cpp in Sources */,
 				BE6DF70B171CA2C500DD52B8 /* JSVideoTrackCustom.cpp in Sources */,
 				BE8EF04C171C9014009B48C3 /* JSVideoTrackList.cpp in Sources */,
@@ -30233,7 +30198,6 @@
 				F5A154271279534D00D0B0C0 /* ValidationMessage.cpp in Sources */,
 				FD3160AE12B026F700C1A359 /* VectorMath.cpp in Sources */,
 				CDE83DB1183C44060031EAA3 /* VideoPlaybackQuality.cpp in Sources */,
-				07C59B5617F4AC15000FBCBB /* VideoStreamTrack.cpp in Sources */,
 				BE88E0DE1715D2A200658D98 /* VideoTrack.cpp in Sources */,
 				BE88E0E11715D2A200658D98 /* VideoTrackList.cpp in Sources */,
 				CD336F6717FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp in Sources */,

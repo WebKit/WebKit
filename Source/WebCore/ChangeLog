@@ -1,3 +1,38 @@
+2015-04-10  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Remove AudioStreamTrack and VideoStreamTrack (removed in spec)
+        https://bugs.webkit.org/show_bug.cgi?id=143336
+
+        Reviewed by Philippe Normand.
+
+        The specific MediaStreamTrakc types (AudioStreamTrack and VideoStreamTrack) have been
+        removed from the Media Capture and Streams [1] specification.
+
+        [1] http://w3c.github.io/mediacapture-main/archives/20150324/getusermedia.html
+
+        There are no test for this feature to remove.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/mediastream/AudioStreamTrack.cpp: Removed.
+        * Modules/mediastream/AudioStreamTrack.h: Removed.
+        * Modules/mediastream/AudioStreamTrack.idl: Removed.
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::addRemoteTrack):
+        (WebCore::MediaStream::active): Deleted.
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::create):
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        (WebCore::MediaStreamTrack::kind):
+        (WebCore::MediaStreamTrack::clone):
+        (WebCore::MediaStreamTrack::trackEnded): Deleted.
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/VideoStreamTrack.cpp: Removed.
+        * Modules/mediastream/VideoStreamTrack.h: Removed.
+        * Modules/mediastream/VideoStreamTrack.idl: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2015-04-09  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add a HAVE(AVKIT) and use it

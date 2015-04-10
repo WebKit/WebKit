@@ -49,7 +49,7 @@ class MediaStreamTrackSourcesCallback;
 class MediaStreamCapabilities;
 class MediaTrackConstraints;
 
-class MediaStreamTrack : public RefCounted<MediaStreamTrack>, public ScriptWrappable, public ActiveDOMObject, public EventTargetWithInlineData, public MediaStreamTrackPrivateClient {
+class MediaStreamTrack final : public RefCounted<MediaStreamTrack>, public ScriptWrappable, public ActiveDOMObject, public EventTargetWithInlineData, public MediaStreamTrackPrivateClient {
 public:
     class Observer {
     public:
@@ -57,9 +57,11 @@ public:
         virtual void trackDidEnd() = 0;
     };
 
+    static RefPtr<MediaStreamTrack> create(ScriptExecutionContext&, MediaStreamTrackPrivate&);
+    static RefPtr<MediaStreamTrack> create(MediaStreamTrack&);
     virtual ~MediaStreamTrack();
 
-    virtual const AtomicString& kind() const = 0;
+    const AtomicString& kind() const;
     const String& id() const;
     const String& label() const;
 
@@ -99,13 +101,12 @@ public:
     using RefCounted<MediaStreamTrack>::ref;
     using RefCounted<MediaStreamTrack>::deref;
 
-protected:
+private:
+    MediaStreamTrack(ScriptExecutionContext&, MediaStreamTrackPrivate&);
     explicit MediaStreamTrack(MediaStreamTrack&);
-    MediaStreamTrack(ScriptExecutionContext&, MediaStreamTrackPrivate&, const Dictionary*);
 
     void setSource(PassRefPtr<RealtimeMediaSource>);
 
-private:
     void configureTrackRendering();
     void trackDidEnd();
     void scheduleEventDispatch(PassRefPtr<Event>);
