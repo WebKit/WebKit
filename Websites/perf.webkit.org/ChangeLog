@@ -1,3 +1,35 @@
+2015-04-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make the analysis page more useful
+        https://bugs.webkit.org/show_bug.cgi?id=143617
+
+        Reviewed by Chris Dumez.
+
+        * public/api/analysis-tasks.php:
+        (fetch_and_push_bugs_to_tasks): Added total and finished numbers of build requests associated
+        with the fetched analysis tasks as buildRequestCount and finishedBuildRequestCount respectively.
+        * public/v2/analysis.js:
+        (App.AnalysisTask.formattedCreatedAt): Added.
+        (App.AnalysisTask._addLeadingZero): Added.
+        (App.AnalysisTask.buildRequestCount): Added.
+        (App.AnalysisTask.finishedBuildRequestCount): Added.
+        (App.AnalysisTask.statusLabel): Added. Status total and finished numbers of build requests.
+        (App.AnalysisTask.testGroups):
+        (App.AnalysisTask.triggerable):
+        (App.AnalysisTask.label):
+
+        * public/v2/app.css: Tweaked style rules for the analysis page.
+
+        * public/v2/app.js:
+        (App.buildPopup): Sort the list of platforms by name.
+        (App.AnalysisRoute.model): Sort the list of analysis tasks by the order they are created.
+        (App.AnalysisTaskController._fetchedManifest): Added elementId to associate bug tracker names
+        such as "Bugzilla" with the corresponding text field.
+
+        * public/v2/index.html: Added a bunch of columns to the analysis page and also wrapped the table
+        showing A/B testing results in a div with overflow: scroll so that it always leaves enough space
+        for the accompanying graph.
+
 2015-04-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard should automatically select ranges for A/B testing

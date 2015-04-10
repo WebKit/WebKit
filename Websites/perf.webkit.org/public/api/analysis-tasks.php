@@ -57,6 +57,22 @@ function fetch_and_push_bugs_to_tasks($db, &$tasks) {
         array_push($associated_task['bugs'], $bug['id']);
     }
 
+    $task_build_counts = $db->query_and_fetch_all('SELECT
+        testgroup_task AS "task",
+        count(testgroup_id) as "total",
+        sum(case when request_status = \'failed\' or request_status = \'completed\' then 1 else 0 end) as "finished"
+        FROM analysis_test_groups, build_requests
+        WHERE request_group = testgroup_id AND testgroup_task = ANY($1) GROUP BY testgroup_task',
+        array('{' . implode(', ', $task_ids) . '}'));
+    if (!is_array($task_build_counts))
+        exit_with_error('FailedToFetchTestGroups');
+
+    foreach ($task_build_counts as $build_count) {
+        $task = &$task_by_id[$build_count['task']];
+        $task['buildRequestCount'] = $build_count['total'];
+        $task['finishedBuildRequestCount'] = $build_count['finished'];
+    }
+
     return $bugs;
 }
 

@@ -88,6 +88,7 @@ body {
 
 .popup li .label {
     display: block;
+    font-size: 0.8rem;
     max-width: 15rem;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -437,45 +438,55 @@ form .analysis-group > * {
 }
 
 #analysis-tasks,
-.analysis-group > table {
+.analysis-group table {
     border: solid 0px #999;
     border-collapse: collapse;
 }
 
 #analysis-tasks thead,
-.analysis-group > table thead {
+.analysis-group table thead {
     color: #c93;
 }
 
 #analysis-tasks th,
-.analysis-group > table th {
+.analysis-group table th {
     font-weight: normal;
 }
 
 #analysis-tasks td,
 #analysis-tasks th,
-.analysis-group > table td,
-.analysis-group > table th {
+.analysis-group table td,
+.analysis-group table th {
     padding: 0.2rem 0.5rem;
+}
+
+#analysis-tasks .status,
+#analysis-tasks .author,
+#analysis-tasks .created-at,
+#analysis-tasks .platform-name {
+    white-space: nowrap;
+}
+
+#analysis-tasks .test-name {
 }
 
 #analysis-tasks tbody td,
 #analysis-tasks tbody th,
-.analysis-group > table tbody td,
-.analysis-group > table tbody th {
+.analysis-group table tbody td,
+.analysis-group table tbody th {
     border-top: solid 1px #ddd;
 }
 
-.analysis-group .results .summary td {
+.analysis-group table .summary td {
     vertical-align: top;
 }
 
-.analysis-group .results thead td {
+.analysis-group table thead td {
     text-align: center;
 }
 
-.analysis-group .results .config-letter,
-.analysis-group .results .summary {
+.analysis-group table .config-letter,
+.analysis-group table .summary {
     cursor: pointer;
 }
 
@@ -487,9 +498,10 @@ form .analysis-group > * {
     display: none;
 }
 
-.analysis-group .results {
+.analysis-group .table-container {
     margin: 0.5rem;
-    margin-right: 20rem;
+    margin-right: 19rem;
+    overflow: scroll;
 }
 
 .analysis-group .reference-chart {

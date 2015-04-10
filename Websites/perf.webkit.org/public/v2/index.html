@@ -554,17 +554,23 @@
         <table id="analysis-tasks">
             <thead>
                 <tr>
-                    <td>ID</td>
                     <td>Name</td>
+                    <td>Status</td>
+                    <td>Author</td>
                     <td>Created at</td>
+                    <td>Platform</td>
+                    <td>Test</td>
                 </tr>
             </thead>
             <tbody>
                 {{#each model.tasks}}
                     <tr>
-                        <td>{{#link-to 'analysisTask' id}}{{id}}{{/link-to}}</td>
-                        <td>{{name}}</td>
-                        <td>{{createdAt}}</td>
+                        <td class="task-name">{{#link-to 'analysisTask' id}}{{name}}{{/link-to}}</td>
+                        <td class="status">{{statusLabel}}</td>
+                        <td class="author">{{author}}</td>
+                        <td class="created-at">{{formattedCreatedAt}}</td>
+                        <td class="platform-name">{{platform.label}}</td>
+                        <td class="test-name">{{metric.fullName}}</td>
                     </tr>
                 {{/each}}
             </tbody>
@@ -602,10 +608,10 @@
                             <tbody>
                                 {{#each bugTrackers}}
                                     <tr>
-                                        <th>{{label}}</th>
+                                        <th><label {{bind-attr for=elementId}}>{{label}}</label></th>
                                         <td>
                                             <form {{action "associateBug" this editedBugNumber on="submit"}}>
-                                                {{input type=text value=editedBugNumber}}
+                                                {{input id=elementId type=text value=editedBugNumber}}
                                             </form>
                                         </td>
                                     </tr>
@@ -628,50 +634,52 @@
     <script type="text/x-handlebars" data-template-name="testGroup">
         <section class="analysis-group">
             <h1>{{name}}</h1>
-            <table class="results">
-                <thead>
-                    <tr>
-                        <td colspan="2">Configuration</td>
-                        {{#each repositories}}
-                            <td>{{name}}</td>
-                        {{/each}}
-                        <td>Results</td>
-                        <td>Status</td>
-                    </tr>
-                </thead>
-                {{#each configurations}}
-                    <tbody {{bind-attr class="showRequestList::hideRequests"}}>
-                        <tr class="summary" {{action toggleShowRequestList this}}>
-                            <td class="config-letter" colspan="2">{{summary.configLetter}}</td>
-                            {{#with summary}}
-                                {{partial "testGroupRow"}}
-                            {{/with}}
-                        </tr>
-                        {{#each requests}}
-                            <tr class="request">
-                                {{#with ../this}}
-                                    <td class="config-letter" {{action toggleShowRequestList this}}></td>
-                                {{/with}}
-                                <td>Run {{orderLabel}}</td>
-                                {{partial "testGroupRow"}}
-                            </tr>
-                        {{/each}}
-                    </tbody>
-                {{/each}}
-                {{#each comparisons}}
-                    <tbody>
+            <div class="table-container">
+                <table class="results">
+                    <thead>
                         <tr>
-                            <td colspan="2">{{label}}</td>
-                            {{#with ../this}}
-                                {{#each repositories}}
-                                    <td></td>
-                                {{/each}}
-                            {{/with}}
-                            <td colspan="2">{{result}}</td>
+                            <td colspan="2">Configuration</td>
+                            {{#each repositories}}
+                                <td>{{name}}</td>
+                            {{/each}}
+                            <td>Results</td>
+                            <td>Status</td>
                         </tr>
-                    </tbody>
-                {{/each}}
-            </table>
+                    </thead>
+                    {{#each configurations}}
+                        <tbody {{bind-attr class="showRequestList::hideRequests"}}>
+                            <tr class="summary" {{action toggleShowRequestList this}}>
+                                <td class="config-letter" colspan="2">{{summary.configLetter}}</td>
+                                {{#with summary}}
+                                    {{partial "testGroupRow"}}
+                                {{/with}}
+                            </tr>
+                            {{#each requests}}
+                                <tr class="request">
+                                    {{#with ../this}}
+                                        <td class="config-letter" {{action toggleShowRequestList this}}></td>
+                                    {{/with}}
+                                    <td>Run {{orderLabel}}</td>
+                                    {{partial "testGroupRow"}}
+                                </tr>
+                            {{/each}}
+                        </tbody>
+                    {{/each}}
+                    {{#each comparisons}}
+                        <tbody>
+                            <tr>
+                                <td colspan="2">{{label}}</td>
+                                {{#with ../this}}
+                                    {{#each repositories}}
+                                        <td></td>
+                                    {{/each}}
+                                {{/with}}
+                                <td colspan="2">{{result}}</td>
+                            </tr>
+                        </tbody>
+                    {{/each}}
+                </table>
+            </div>
             <div class="reference-chart">
                 {{#if referenceChart}}
                     {{interactive-chart

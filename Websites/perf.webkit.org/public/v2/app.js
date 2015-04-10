@@ -911,7 +911,7 @@ App.ChartsController = Ember.Controller.extend({
 App.buildPopup = function(store, action, position)
 {
     return App.Manifest.fetch(store).then(function () {
-        return App.Manifest.get('platforms').map(function (platform) {
+        return App.Manifest.get('platforms').sortBy('label').map(function (platform) {
             return App.PlatformProxyForPopup.create({content: platform,
                 action: action, position: position});
         });
@@ -1126,7 +1126,7 @@ App.PaneController = Ember.ObjectController.extend({
 App.AnalysisRoute = Ember.Route.extend({
     model: function () {
         return this.store.findAll('analysisTask').then(function (tasks) {
-            return Ember.Object.create({'tasks': tasks});
+            return Ember.Object.create({'tasks': tasks.sortBy('createdAt').toArray().reverse()});
         });
     },
 });
@@ -1174,6 +1174,7 @@ App.AnalysisTaskController = Ember.Controller.extend({
         this.set('bugTrackers', App.Manifest.get('bugTrackers').map(function (bugTracker) {
             var bugNumber = trackerIdToBugNumber[bugTracker.get('id')];
             return Ember.ObjectProxy.create({
+                elementId: 'bug-' + bugTracker.get('id'),
                 content: bugTracker,
                 bugNumber: bugNumber,
                 editedBugNumber: bugNumber,

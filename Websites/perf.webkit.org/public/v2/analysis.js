@@ -1,15 +1,33 @@
 App.AnalysisTask = App.NameLabelModel.extend({
     author: DS.attr('string'),
     createdAt: DS.attr('date'),
+    formattedCreatedAt: function () {
+        var format = d3.time.format("%Y-%m-%d");
+        return format(this.get('createdAt'));
+    }.property('createdAt'),
     platform: DS.belongsTo('platform'),
     metric: DS.belongsTo('metric'),
     startRun: DS.attr('number'),
     endRun: DS.attr('number'),
     bugs: DS.hasMany('bugs'),
-    testGroups: function (key, value, oldValue) {
+    buildRequestCount: DS.attr('number'),
+    finishedBuildRequestCount: DS.attr('number'),
+    statusLabel: function ()
+    {
+        var total = this.get('buildRequestCount');
+        var finished = this.get('finishedBuildRequestCount');
+        if (!total)
+            return 'Empty';
+        if (total != finished)
+            return finished + ' out of ' + total;
+        return 'Done';
+    }.property('buildRequestCount', 'finishedBuildRequestCount'),
+    testGroups: function (key, value, oldValue)
+    {
         return this.store.find('testGroup', {task: this.get('id')});
     }.property(),
-    triggerable: function () {
+    triggerable: function ()
+    {
         return this.store.find('triggerable', {task: this.get('id')}).then(function (triggerables) {
             return triggerables.objectAt(0);
         }, function (error) {
@@ -17,7 +35,8 @@ App.AnalysisTask = App.NameLabelModel.extend({
             return null;
         });
     }.property(),
-    label: function () {
+    label: function ()
+    {
         var label = this.get('name');
         var bugs = this.get('bugs').map(function (bug) { return bug.get('label'); }).join(' / ');
         return bugs ? label + ' (' + bugs + ')' : label;
