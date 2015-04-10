@@ -1,3 +1,9 @@
+2015-04-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix.
+
+        * Misc/WebNSURLExtras.mm: (-[NSString _webkit_unescapedQueryValue]): Ignore a deprecation.
+
 2015-04-10  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Refactor MediaPlaybackTarget

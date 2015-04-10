@@ -295,9 +295,12 @@ using namespace WTF;
 
 - (NSString *)_webkit_unescapedQueryValue
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSMutableString *string = [[[self stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] mutableCopy] autorelease];
     if (!string) // If we failed to decode the URL as UTF8, fall back to Latin1
         string = [[[self stringByReplacingPercentEscapesUsingEncoding:NSISOLatin1StringEncoding] mutableCopy] autorelease];
+#pragma clang diagnostic pop
     [string replaceOccurrencesOfString:@"+" withString:@" " options:NSLiteralSearch range:NSMakeRange(0, [string length])];
     return string;
 }
