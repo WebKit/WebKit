@@ -382,7 +382,8 @@ void FrameSelection::updateAndRevealSelection()
 
     notifyAccessibilityForSelectionChange();
 
-    m_frame->editor().client()->didChangeSelectionAndUpdateLayout();
+    if (auto* client = m_frame->editor().client())
+        client->didChangeSelectionAndUpdateLayout();
 }
 
 void FrameSelection::updateDataDetectorsForSelection()

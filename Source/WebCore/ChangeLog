@@ -1,3 +1,16 @@
+2015-04-09  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r182603): editing/selection/selection-invalid-offset.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=143591
+
+        Reviewed by Ryosuke Niwa.
+
+        Add missing null-check for m_frame->editor().client() in
+        FrameSelection::updateAndRevealSelection().
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::updateAndRevealSelection):
+
 2015-04-09  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Minor cleanups to WebCore/plugins
