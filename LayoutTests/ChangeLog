@@ -1,3 +1,18 @@
+2015-04-10  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [Win] Layout Test fast/backgrounds/selection-background-color-of-list-style.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=143543
+
+        Reviewed by Brent Fulgham.
+
+        Added missing test results after r182546 for windows.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/backgrounds/selection-background-color-of-image-list-style-expected.png: Added.
+        * platform/win/fast/backgrounds/selection-background-color-of-image-list-style-expected.txt: Added.
+        * platform/win/fast/backgrounds/selection-background-color-of-list-style-expected.png: Added.
+        * platform/win/fast/backgrounds/selection-background-color-of-list-style-expected.txt: Added.
+
 2015-04-10  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar <calvaris@igalia.com>
 
         Add total test test of Streams API
