@@ -1,3 +1,22 @@
+2015-04-09  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Use modern loops in WebProcess 
+        https://bugs.webkit.org/show_bug.cgi?id=143302
+
+        Reviewed by Darin Adler.
+
+        Use modern range for-loops in WebProcess.
+
+        No new tests, no behavior change.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::focusedWebPage):
+        (WebKit::WebProcess::webPageGroup):
+        (WebKit::WebProcess::setTextCheckerState):
+        (WebKit::WebProcess::resetAllGeolocationPermissions):
+
 2015-04-09  Gordon Sheridan  <gordon_sheridan@apple.com>
 
         Track IconDatabase retain counts for WebContent processes. Balance retain/releases for processes that terminate before successfully doing it themselves.

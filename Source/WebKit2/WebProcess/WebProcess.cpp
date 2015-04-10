@@ -235,11 +235,9 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 #if ENABLE(SEC_ITEM_SHIM)
     SecItemShim::singleton().initializeConnection(connection);
 #endif
-    
-    WebProcessSupplementMap::const_iterator it = m_supplements.begin();
-    WebProcessSupplementMap::const_iterator end = m_supplements.end();
-    for (; it != end; ++it)
-        it->value->initializeConnection(connection);
+
+    for (auto& supplement : m_supplements.values())
+        supplement->initializeConnection(connection);
 
     m_webConnection = WebConnectionToUIProcess::create(this);
 
@@ -291,10 +289,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     if (!parameters.injectedBundlePath.isEmpty())
         m_injectedBundle = InjectedBundle::create(parameters, transformHandlesToObjects(parameters.initializationUserData.object()).get());
 
-    WebProcessSupplementMap::const_iterator it = m_supplements.begin();
-    WebProcessSupplementMap::const_iterator end = m_supplements.end();
-    for (; it != end; ++it)
-        it->value->initialize(parameters);
+    for (auto& supplement : m_supplements.values())
+        supplement->initialize(parameters);
 
 #if ENABLE(ICONDATABASE)
     m_iconDatabaseProxy->setEnabled(parameters.iconDatabaseEnabled);
@@ -313,29 +309,29 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     m_fullKeyboardAccessEnabled = parameters.fullKeyboardAccessEnabled;
 
-    for (size_t i = 0; i < parameters.urlSchemesRegistererdAsEmptyDocument.size(); ++i)
-        registerURLSchemeAsEmptyDocument(parameters.urlSchemesRegistererdAsEmptyDocument[i]);
+    for (auto& scheme : parameters.urlSchemesRegistererdAsEmptyDocument)
+        registerURLSchemeAsEmptyDocument(scheme);
 
-    for (size_t i = 0; i < parameters.urlSchemesRegisteredAsSecure.size(); ++i)
-        registerURLSchemeAsSecure(parameters.urlSchemesRegisteredAsSecure[i]);
+    for (auto& scheme : parameters.urlSchemesRegisteredAsSecure)
+        registerURLSchemeAsSecure(scheme);
 
-    for (size_t i = 0; i < parameters.urlSchemesRegisteredAsBypassingContentSecurityPolicy.size(); ++i)
-        registerURLSchemeAsBypassingContentSecurityPolicy(parameters.urlSchemesRegisteredAsBypassingContentSecurityPolicy[i]);
+    for (auto& scheme : parameters.urlSchemesRegisteredAsBypassingContentSecurityPolicy)
+        registerURLSchemeAsBypassingContentSecurityPolicy(scheme);
 
-    for (size_t i = 0; i < parameters.urlSchemesForWhichDomainRelaxationIsForbidden.size(); ++i)
-        setDomainRelaxationForbiddenForURLScheme(parameters.urlSchemesForWhichDomainRelaxationIsForbidden[i]);
+    for (auto& scheme : parameters.urlSchemesForWhichDomainRelaxationIsForbidden)
+        setDomainRelaxationForbiddenForURLScheme(scheme);
 
-    for (size_t i = 0; i < parameters.urlSchemesRegisteredAsLocal.size(); ++i)
-        registerURLSchemeAsLocal(parameters.urlSchemesRegisteredAsLocal[i]);
+    for (auto& scheme : parameters.urlSchemesRegisteredAsLocal)
+        registerURLSchemeAsLocal(scheme);
 
-    for (size_t i = 0; i < parameters.urlSchemesRegisteredAsNoAccess.size(); ++i)
-        registerURLSchemeAsNoAccess(parameters.urlSchemesRegisteredAsNoAccess[i]);
+    for (auto& scheme : parameters.urlSchemesRegisteredAsNoAccess)
+        registerURLSchemeAsNoAccess(scheme);
 
-    for (size_t i = 0; i < parameters.urlSchemesRegisteredAsDisplayIsolated.size(); ++i)
-        registerURLSchemeAsDisplayIsolated(parameters.urlSchemesRegisteredAsDisplayIsolated[i]);
+    for (auto& scheme : parameters.urlSchemesRegisteredAsDisplayIsolated)
+        registerURLSchemeAsDisplayIsolated(scheme);
 
-    for (size_t i = 0; i < parameters.urlSchemesRegisteredAsCORSEnabled.size(); ++i)
-        registerURLSchemeAsCORSEnabled(parameters.urlSchemesRegisteredAsCORSEnabled[i]);
+    for (auto& scheme : parameters.urlSchemesRegisteredAsCORSEnabled)
+        registerURLSchemeAsCORSEnabled(scheme);
 
 #if ENABLE(CACHE_PARTITIONING)
     for (auto& scheme : parameters.urlSchemesRegisteredAsCachePartitioned)
@@ -368,8 +364,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     setTerminationTimeout(parameters.terminationTimeout);
 
     resetPlugInAutoStartOriginHashes(parameters.plugInAutoStartOriginHashes);
-    for (size_t i = 0; i < parameters.plugInAutoStartOrigins.size(); ++i)
-        m_plugInAutoStartOrigins.add(parameters.plugInAutoStartOrigins[i]);
+    for (auto& origin : parameters.plugInAutoStartOrigins)
+        m_plugInAutoStartOrigins.add(origin);
 
     setMemoryCacheDisabled(parameters.memoryCacheDisabled);
 
@@ -538,11 +534,9 @@ void WebProcess::setCacheModel(uint32_t cm)
 
 WebPage* WebProcess::focusedWebPage() const
 {    
-    HashMap<uint64_t, RefPtr<WebPage>>::const_iterator end = m_pageMap.end();
-    for (HashMap<uint64_t, RefPtr<WebPage>>::const_iterator it = m_pageMap.begin(); it != end; ++it) {
-        WebPage* page = (*it).value.get();
+    for (auto& page : m_pageMap.values()) {
         if (page->windowAndWebPageAreFocused())
-            return page;
+            return page.get();
     }
     return 0;
 }
@@ -695,9 +689,9 @@ void WebProcess::removeWebFrame(uint64_t frameID)
 
 WebPageGroupProxy* WebProcess::webPageGroup(PageGroup* pageGroup)
 {
-    for (HashMap<uint64_t, RefPtr<WebPageGroupProxy>>::const_iterator it = m_pageGroupMap.begin(), end = m_pageGroupMap.end(); it != end; ++it) {
-        if (it->value->corePageGroup() == pageGroup)
-            return it->value.get();
+    for (auto& page : m_pageGroupMap.values()) {
+        if (page->corePageGroup() == pageGroup)
+            return page.get();
     }
 
     return 0;
@@ -1143,9 +1137,7 @@ void WebProcess::setTextCheckerState(const TextCheckerState& textCheckerState)
     if (!continuousSpellCheckingTurnedOff && !grammarCheckingTurnedOff)
         return;
 
-    HashMap<uint64_t, RefPtr<WebPage>>::iterator end = m_pageMap.end();
-    for (HashMap<uint64_t, RefPtr<WebPage>>::iterator it = m_pageMap.begin(); it != end; ++it) {
-        WebPage* page = (*it).value.get();
+    for (auto& page : m_pageMap.values()) {
         if (continuousSpellCheckingTurnedOff)
             page->unmarkAllMisspellings();
         if (grammarCheckingTurnedOff)
@@ -1219,8 +1211,7 @@ void WebProcess::updateActivePages()
 #if PLATFORM(IOS)
 void WebProcess::resetAllGeolocationPermissions()
 {
-    for (auto it = m_pageMap.begin(), end = m_pageMap.end(); it != end; ++it) {
-        WebPage* page = (*it).value.get();
+    for (auto& page : m_pageMap.values()) {
         if (Frame* mainFrame = page->mainFrame())
             mainFrame->resetAllGeolocationPermission();
     }
