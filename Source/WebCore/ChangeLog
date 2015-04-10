@@ -1,3 +1,17 @@
+2015-04-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Some CSS3 filters tests crash under iOS testing
+        https://bugs.webkit.org/show_bug.cgi?id=143594
+        rdar://problem/20491140
+
+        Reviewed by David Kilzer.
+
+        Some tests disable accelerated compositing via testRunner.overridePreference(). In this case,
+        we'd not create a root scrolling tree node, so null-check it in AsyncScrollingCoordinator::updateNonFastScrollableRegion().
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateNonFastScrollableRegion):
+
 2015-04-09  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add <br> support.

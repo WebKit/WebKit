@@ -90,6 +90,9 @@ void AsyncScrollingCoordinator::updateNonFastScrollableRegion()
     if (!m_nonFastScrollableRegionDirty)
         return;
 
+    if (!m_scrollingStateTree->rootStateNode())
+        return;
+
     m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(m_page->mainFrame(), IntPoint()));
     m_nonFastScrollableRegionDirty = false;
 }
