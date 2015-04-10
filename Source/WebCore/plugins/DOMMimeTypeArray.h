@@ -24,10 +24,8 @@
 #include "DOMMimeType.h"
 #include "DOMWindowProperty.h"
 #include "ScriptWrappable.h"
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -51,4 +49,4 @@ private:
 
 } // namespace WebCore
 
-#endif // MimeTypeArray_h
+#endif // DOMMimeTypeArray_h

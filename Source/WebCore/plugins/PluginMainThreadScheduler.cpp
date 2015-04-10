@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "PluginMainThreadScheduler.h"
-#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 

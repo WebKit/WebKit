@@ -23,7 +23,6 @@
 #include "FrameDestructionObserver.h"
 #include "PluginData.h"
 
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -50,6 +49,6 @@ private:
     unsigned m_index;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // DOMMimeType_h

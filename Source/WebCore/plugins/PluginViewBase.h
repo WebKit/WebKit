@@ -22,8 +22,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginWidget_h
-#define PluginWidget_h
+#ifndef PluginViewBase_h
+#define PluginViewBase_h
 
 #include "AudioHardwareListener.h"
 #include "BridgeJSC.h"
@@ -90,4 +90,4 @@ protected:
 
 SPECIALIZE_TYPE_TRAITS_WIDGET(PluginViewBase, isPluginViewBase())
 
-#endif // PluginWidget_h
+#endif // PluginViewBase_h

@@ -120,4 +120,4 @@ void PluginData::initPlugins()
     platformStrategies()->pluginStrategy()->getPluginInfo(m_page, m_plugins);
 }
 
-}
+} // namespace WebCore

@@ -23,9 +23,8 @@
 #include "FrameDestructionObserver.h"
 #include "DOMMimeType.h"
 #include "ScriptWrappable.h"
-#include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -57,4 +56,4 @@ private:
 
 } // namespace WebCore
 
-#endif // Plugin_h
+#endif // DOMPlugin_h

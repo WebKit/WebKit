@@ -21,11 +21,9 @@
 
 #include "DOMPlugin.h"
 #include "FrameLoader.h"
-#include "FrameLoaderClient.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PluginData.h"
-#include "Settings.h"
 #include "SubframeLoader.h"
 #include <wtf/text/StringBuilder.h>
 

@@ -110,6 +110,6 @@ protected:
     Vector<PluginInfo> m_plugins;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // PluginData_h
