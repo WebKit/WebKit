@@ -45,8 +45,10 @@
 #include <wtf/Stopwatch.h>
 
 #include <cxxabi.h>
+#if OS(DARWIN) || (OS(LINUX) && !PLATFORM(GTK))
 #include <dlfcn.h>
 #include <execinfo.h>
+#endif
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "JSGlobalObjectDebuggable.h"
@@ -147,6 +149,7 @@ void JSGlobalObjectInspectorController::dispatchMessageFromFrontend(const String
 
 void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack* callStack)
 {
+#if OS(DARWIN) || (OS(LINUX) && !PLATFORM(GTK))
     static const int framesToShow = 31;
     static const int framesToSkip = 3; // WTFGetBacktrace, appendAPIBacktrace, reportAPIException.
 
@@ -170,6 +173,9 @@ void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack* call
             callStack->append(ScriptCallFrame(ASCIILiteral("?"), ASCIILiteral("[native code]"), 0, 0));
         free(cxaDemangled);
     }
+#else
+    UNUSED_PARAM(callStack);
+#endif
 }
 
 void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, JSValue exception)

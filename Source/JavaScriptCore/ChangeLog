@@ -1,3 +1,13 @@
+2015-04-10  Milan Crha  <mcrha@redhat.com>
+
+        Disable Linux-specific code in a Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=137973
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::appendAPIBacktrace):
+
 2015-04-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Fix calleeSaveRegisters() on non iOS platforms after r180516
