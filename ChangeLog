@@ -1,3 +1,18 @@
+2015-04-10  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [CMake] Remove unnecessary ENABLE_WEBCORE switch
+        https://bugs.webkit.org/show_bug.cgi?id=143584
+
+        Reviewed by Csaba Osztrogonác.
+
+        WebCore should be built for all ports. So ENABLE_WEBCORE switch looks be redundant.
+        Remove it.
+
+        * CMakeLists.txt:
+        * Source/CMakeLists.txt:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/WebKitFS.cmake:
+
 2015-04-08  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, revert accidental commit.
