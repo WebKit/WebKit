@@ -1,3 +1,21 @@
+2015-04-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        ES6: Iterator toString names should be consistent
+        https://bugs.webkit.org/show_bug.cgi?id=142424
+
+        Reviewed by Geoffrey Garen.
+
+        Iterator Object Names in the spec right now have spaces.
+        In our implementation some do and some don't.
+        This patch aligns JSC to the spec.
+
+        * runtime/JSArrayIterator.cpp:
+        * runtime/JSStringIterator.cpp:
+        * tests/stress/iterator-names.js: Added.
+        (test):
+        (iter):
+        (check):
+
 2015-04-10  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (182567): regress/script-tests/sorting-benchmark.js fails on 32 bit dfg-eager tests

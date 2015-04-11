@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo JSArrayIterator::s_info = { "ArrayIterator", &Base::s_info, 0, CREATE_METHOD_TABLE(JSArrayIterator) };
+const ClassInfo JSArrayIterator::s_info = { "Array Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(JSArrayIterator) };
 
 void JSArrayIterator::finishCreation(VM& vm, JSGlobalObject*, ArrayIterationKind kind, JSObject* iteratedObject)
 {
