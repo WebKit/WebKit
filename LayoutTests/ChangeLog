@@ -1,3 +1,12 @@
+2015-04-11  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unskip media test on EFL port
+
+        Unreviewed, media tests are being passed except for 25 tests.
+        The failing tests need to be investigated by Bug 131044.
+
+        * platform/efl/TestExpectations:
+
 2015-04-10  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Unreviewed, EFL gardening on 11th April.
