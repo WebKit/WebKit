@@ -50,11 +50,6 @@
     text-align: center;
 }
 
-/* FIXME: Should this be all the time? */
-.object-tree-array-index .index-value .object-tree {
-    display: inline-block;
-}
-
 /* An array inside an array we should reduce the padding-start. */
 .object-tree-array-index .index-value .object-tree .object-tree-outline {
     -webkit-padding-start: 6px;

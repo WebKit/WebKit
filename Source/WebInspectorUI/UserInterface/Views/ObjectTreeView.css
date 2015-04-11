@@ -26,6 +26,8 @@
 .object-tree {
     position: relative;
 
+    display: inline-block;
+
     color: black;
     font-family: Menlo, monospace;
     font-size: 11px;

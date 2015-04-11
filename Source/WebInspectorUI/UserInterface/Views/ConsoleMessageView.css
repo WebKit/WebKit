@@ -1,0 +1,216 @@
+/*
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.console-message, .console-user-command {
+    position: relative;
+    padding: 4px 12px 2px 20px;
+    min-height: 21px;
+}
+
+.console-message .repeat-count {
+    display: inline-block;
+    float: left;
+
+    padding: 1px 4px;
+    margin: 0 2px 0 -18px;
+
+    height: 15px;
+    background-color: rgb(128, 151, 189);
+    vertical-align: middle;
+    white-space: nowrap;
+
+    font-size: 11px;
+    text-align: left;
+    line-height: normal;
+    font-weight: bold;
+    color: white;
+    border-radius: 7px;
+}
+
+.console-message-text {
+    white-space: pre-wrap;
+}
+
+.console-message-text > span {
+    -webkit-user-select: text;
+}
+
+.console-message.expandable .console-top-level-message::before {
+    display: inline-block;
+
+    vertical-align: baseline;
+    margin-bottom: -2px;
+    margin-right: 2px;
+
+    width: 13px;
+    height: 13px;
+
+    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-closed-normal);
+    background-size: 13px 13px;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    content: "";
+}
+
+.console-message.expandable.expanded .console-top-level-message::before {
+    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-normal);
+}
+
+.console-message.expandable.expanded :matches(.console-message-preview, .console-message-preview-divider) {
+    display: none;
+}
+
+.console-message-preview-divider {
+    color: rgba(0, 0, 0, 0.33);
+}
+
+.console-message-enclosed {
+    font-family: Menlo, monospace;
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.33);
+}
+
+.console-message .console-message-extra-parameters-container,
+.console-message .console-message-stack-trace-container {
+    margin: 0;
+    padding: 2px 0 0 0;
+    list-style: none;
+    outline: none;
+    display: none;
+}
+
+.console-message .console-message-stack-trace-container {
+    margin-left: 20px;
+}
+
+.console-message.expandable.expanded .console-message-extra-parameters-container,
+.console-message.expandable.expanded .console-message-stack-trace-container {
+    display: block;
+}
+
+.console-message .console-message-extra-parameters-container > li,
+.console-message .console-message-stack-trace-container > li {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-user-select: text;
+    cursor: default;
+    padding: 2px 0;
+}
+
+.console-message .console-message-extra-parameters-container > li::before {
+    display: inline-block;
+
+    width: 13px;
+    height: 13px;
+    content: "•";
+
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 11px;
+    color: hsla(0, 0%, 0%, 0.33);
+
+    vertical-align: top;
+    margin-left: 3px;
+}
+
+.console-error-level {
+    background-color: hsl(0, 100%, 96%);
+    border-color: hsl(0, 100%, 92%);
+}
+
+.console-error-level .console-message-text {
+    color: hsl(0, 75%, 45%);
+}
+
+.console-debug-level .console-message-text {
+    color: blue;
+}
+
+.console-warning-level {
+    background-color: hsl(50, 100%, 94%);
+    border-color: hsl(40, 100%, 90%);
+}
+
+.console-warning-level .console-message-text {
+    color: hsl(30, 90%, 35%);
+}
+
+.console-user-command .console-message {
+    margin-left: -24px;
+    padding-right: 0;
+}
+
+.console-error-level::before {
+    content: url(../Images/Error.svg);
+}
+
+.console-warning-level::before {
+    content: url(../Images/Warning.svg);
+}
+
+.console-user-command::before {
+    content: url(../Images/UserInputPromptPrevious.svg);
+}
+
+.console-debug-level::before {
+    background-color: blue;
+}
+
+:matches(.console-warning-level, .console-error-level, .console-log-level).console-message {
+ /* Move non-monospace log/warning/error text up a bit. */
+    padding: 3px 12px 3px 20px;
+}
+
+:matches(.console-warning-level, .console-error-level, .console-log-level)::before {
+ /* Re-center log/warning/error icons. */
+    padding-top: 1px;
+}
+
+.console-user-command > .console-message-text {
+    color: rgb(0, 128, 255);
+}
+
+.console-message-url {
+    float: right;
+    margin-left: 4px;
+    font-weight: normal;
+}
+
+.console-saved-variable {
+    font-style: normal;
+    color: rgba(0, 0, 0, 0.33);
+}
+
+.console-user-command,
+.console-user-command-result {
+    font-family: Menlo, monospace;
+    font-size: 11px;
+}
+
+.console-user-command-result.console-log-level::before {
+    content: url(../Images/UserInputResult.svg);
+    margin-left: 1px;
+}

@@ -151,12 +151,6 @@ body.mac-platform.legacy .dom-tree-outline:focus li.selected .selection {
     background-image: -webkit-canvas(disclosure-triangle-tiny-open-selected);
 }
 
-.dom-tree-outline .add-attribute {
-    margin-left: 1px;
-    margin-right: 1px;
-    white-space: nowrap;
-}
-
 .dom-tree-outline .html-text-node.large {
     display: inline-block;
     min-width: 100%;
@@ -167,4 +161,8 @@ body.mac-platform.legacy .dom-tree-outline:focus li.selected .selection {
     color: black;
     background-color: rgba(235, 215, 38, 0.2);
     border-bottom: 1px solid rgb(237, 202, 71);
+}
+
+.webkit-html-fragment.shadow {
+    opacity: 0.6;
 }

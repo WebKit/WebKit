@@ -576,10 +576,6 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         if (tagName)
             return this._startEditingTagName(tagName);
 
-        var newAttribute = eventTarget.enclosingNodeOrSelfWithClass("add-attribute");
-        if (newAttribute)
-            return this._addNewAttribute();
-
         return false;
     }
 
@@ -588,11 +584,10 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         var node = this.representedObject;
         if (!node.isInShadowTree()) {
             var attribute = event.target.enclosingNodeOrSelfWithClass("html-attribute");
-            var newAttribute = event.target.enclosingNodeOrSelfWithClass("add-attribute");
 
             // Add attribute-related actions.
             contextMenu.appendItem(WebInspector.UIString("Add Attribute"), this._addNewAttribute.bind(this));
-            if (attribute && !newAttribute)
+            if (attribute)
                 contextMenu.appendItem(WebInspector.UIString("Edit Attribute"), this._startEditingAttribute.bind(this, attribute, event.target));
             contextMenu.appendSeparator();
 

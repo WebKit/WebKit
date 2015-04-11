@@ -41,5 +41,5 @@
 
 .object-preview > .size {
     font-style: normal;
-    color: hsl(0, 0%, 67%);
+    color: rgba(0, 0, 0, 0.33);
 }

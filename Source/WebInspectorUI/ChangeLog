@@ -1,3 +1,163 @@
+2015-04-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve Console Message Formatting
+        https://bugs.webkit.org/show_bug.cgi?id=143623
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        Misc.
+
+        * UserInterface/Views/ConsoleMessageView.css: Added.
+        (.console-message.expandable .console-top-level-message::before):
+        (.console-message.expandable.expanded .console-top-level-message::before):
+        (.console-message.expandable.expanded :matches(.console-message-preview, .console-message-preview-divider)):
+        (.console-message-preview-divider):
+        (.console-message-enclosed):
+        (.console-message .console-message-stack-trace-container):
+        (.console-message.expandable.expanded .console-message-stack-trace-container):
+        (.console-message .console-message-stack-trace-container > li):
+        (.console-message .console-message-extra-parameters-container > li::before):
+        New styles for the new ConsoleMessageView children.
+        Handle console message expansion, a list of extra parameters
+        and a potential list of stack frames.
+
+        (.console-message, .console-user-command):
+        (.console-message .repeat-count):
+        (.console-message-text):
+        (.console-message-text > span):
+        (.console-error-level):
+        (.console-error-level .console-message-text):
+        (.console-debug-level .console-message-text):
+        (.console-warning-level):
+        (.console-warning-level .console-message-text):
+        (.console-user-command .console-message):
+        (.console-error-level::before):
+        (.console-warning-level::before):
+        (.console-user-command::before):
+        (.console-debug-level::before):
+        (:matches(.console-warning-level, .console-error-level, .console-log-level).console-message):
+        (:matches(.console-warning-level, .console-error-level, .console-log-level)::before):
+        (.console-user-command > .console-message-text):
+        (.console-message-url):
+        (.console-saved-variable):
+        (.console-user-command-result):
+        (.console-user-command-result.console-log-level::before):
+        Moved from LogContentView.css to here where it is more appropriate
+        since ConsoleMessageView added them.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView):
+        (WebInspector.ConsoleMessageView.prototype.get expandable):
+        (WebInspector.ConsoleMessageView.set expandable.this._boundExpandClickHandler):
+        (WebInspector.ConsoleMessageView.prototype.set expandable):
+        (WebInspector.ConsoleMessageView.prototype.expand):
+        (WebInspector.ConsoleMessageView.prototype.collapse):
+        (WebInspector.ConsoleMessageView.prototype.toggle):
+        Provide high level constructs for making a ConsoleMessageView
+        expandable, and APIs to expand/collapse.
+
+        (WebInspector.ConsoleMessageView.prototype._appendExtraParameters):
+        Add and style the new list of extra parameters.
+
+        (WebInspector.ConsoleMessageView.prototype._appendStackTrace):
+        Add and style the new list stack frames.
+
+        (WebInspector.ConsoleMessageView.prototype._appendFormattedArguments):
+        (WebInspector.ConsoleMessageView.prototype._shouldConsiderObjectLossless):
+        Handling the top level message text line for all the different cases.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._startEditingTarget):
+        (WebInspector.DOMTreeElement.prototype._populateTagContextMenu):
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.dom-tree-outline .add-attribute): Deleted.
+        CSS class .add-attribute was not used. Remove all references.
+        
+        (.webkit-html-fragment.shadow):
+        Moved from LogContentView.css to a more appropriate place.
+        
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createObjectPreviewOrFormattedValueForRemoteObject):
+        Helper to create a preview or a formatted value for a given object.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView):
+        (WebInspector.LogContentView.prototype._updateMessagesSelection):
+        (WebInspector.LogContentView.prototype._leftArrowWasPressed):
+        (WebInspector.LogContentView.prototype._rightArrowWasPressed):
+        (WebInspector.LogContentView.prototype._rightArrowWasPressed.else.outlineTitle.treeElement.onexpand): Deleted.
+        (WebInspector.LogContentView.prototype._propertiesSectionDidUpdateContent): Deleted.
+        Lots of this code no longer makes sense. Delete some and put FIXMEs
+        where it makes sense to re-add back useful features.
+
+        * UserInterface/Views/ObjectPreviewView.css:
+        (.object-preview > .size):
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.css:
+        (.object-tree-array-index .index-value .object-tree): Deleted.
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree):
+        Tweak styles. Opacity instead of a specific gray to better work
+        with other colors. Always make objects be inline-block.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-error-level + .console-item):
+        (.console-warning-level + .console-item):
+        (.console-item::before):
+        (.console-user-command-result): Deleted.
+        (.console-user-command-result.console-log-level::before): Deleted.
+        (.console-message, .console-user-command): Deleted.
+        (.console-message .repeat-count): Deleted.
+        (.console-message-text): Deleted.
+        (.console-message-text > span): Deleted.
+        (.console-error-level): Deleted.
+        (.console-error-level .section .header .title): Deleted.
+        (.console-debug-level .console-message-text): Deleted.
+        (.console-debug-level::before): Deleted.
+        (.console-error-level::before): Deleted.
+        (.console-warning-level): Deleted.
+        (.console-warning-level .console-message-text): Deleted.
+        (.console-warning-level::before): Deleted.
+        (.console-user-command .console-message): Deleted.
+        (.console-user-command::before): Deleted.
+        (:matches(.console-warning-level, .console-error-level, .console-log-level).console-message): Deleted.
+        (:matches(.console-warning-level, .console-error-level, .console-log-level)::before): Deleted.
+        (.console-user-command > .console-message-text): Deleted.
+        (.console-saved-variable): Deleted.
+        (.console-message-url): Deleted.
+        (.console-group-messages .section): Deleted.
+        (.console-group-messages .section .header): Deleted.
+        (.console-group-messages .section .header::before): Deleted.
+        (.console-group-messages .section .header .title): Deleted.
+        (.console-group-messages .section .properties li .info): Deleted.
+        (.console-group-messages .outline-disclosure): Deleted.
+        (.console-group-messages .outline-disclosure > ol): Deleted.
+        (.console-group-messages .outline-disclosure li .selection): Deleted.
+        (.console-group-messages .add-attribute): Deleted.
+        (.error-message): Deleted.
+        (.auto-complete-text, .editing .auto-complete-text): Deleted.
+        (.outline-disclosure li.hovered:not(.selected) .selection): Deleted.
+        (.outline-disclosure li.highlighted .highlight): Deleted.
+        (.outline-disclosure li.selected.highlighted .highlight): Deleted.
+        (.outline-disclosure li .selection): Deleted.
+        (.outline-disclosure li.selected .selection): Deleted.
+        (.outline-disclosure li.elements-drag-over .selection): Deleted.
+        (.outline-disclosure ol:focus li.selected .selection): Deleted.
+        (.outline-disclosure ol.search-match-not-found li.selected .selection): Deleted.
+        (.outline-disclosure > ol): Deleted.
+        (.outline-disclosure, .outline-disclosure ol): Deleted.
+        (.outline-disclosure li): Deleted.
+        (.outline-disclosure .expanded li): Deleted.
+        (.outline-disclosure > li.parent): Deleted.
+        (.outline-disclosure li .webkit-html-tag.close): Deleted.
+        (.outline-disclosure > li.parent::before): Deleted.
+        (.outline-disclosure li.parent.expanded::before): Deleted.
+        (.outline-disclosure ol.children): Deleted.
+        (.outline-disclosure ol.children.expanded): Deleted.
+        (.webkit-html-fragment.shadow): Deleted.
+        Delete now unused styles and move other styles to more appropriate places.
+
 2015-04-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught exception using console.table with filter argument
