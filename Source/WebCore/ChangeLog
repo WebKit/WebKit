@@ -1,3 +1,23 @@
+2015-04-11  Chris Dumez  <cdumez@apple.com>
+
+        Stop referring to outdated RFC2616 in CacheValidation.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=143619
+
+        Reviewed by Darin Adler.
+
+        Stop referring to outdated RFC2616 in CacheValidation.cpp and refer to
+        the newer RFC7230 & RFC7234. Also update some variables to match the
+        naming in the RFC for clarity.
+
+        No behavior change.
+
+        * platform/network/CacheValidation.cpp:
+        (WebCore::updateResponseHeadersAfterRevalidation):
+        (WebCore::computeCurrentAge):
+        (WebCore::computeFreshnessLifetimeForHTTPFamily):
+        (WebCore::isCacheHeaderSeparator):
+        (WebCore::parseCacheControlDirectives):
+
 2015-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebKit places caret in front of pasted Numbers cells instead of behind

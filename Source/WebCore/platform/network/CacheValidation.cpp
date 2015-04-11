@@ -75,8 +75,8 @@ static inline bool shouldUpdateHeaderAfterRevalidation(const String& header)
 
 void updateResponseHeadersAfterRevalidation(ResourceResponse& response, const ResourceResponse& validatingResponse)
 {
-    // RFC2616 10.3.5
-    // Update cached headers from the 304 response
+    // Freshening stored response upon validation:
+    // http://tools.ietf.org/html/rfc7234#section-4.3.4
     for (const auto& header : validatingResponse.httpHeaderFields()) {
         // Entity headers should not be sent by servers when generating a 304
         // response; misconfigured servers send them anyway. We shouldn't allow
@@ -89,37 +89,43 @@ void updateResponseHeadersAfterRevalidation(ResourceResponse& response, const Re
     }
 }
 
-std::chrono::microseconds computeCurrentAge(const ResourceResponse& response, std::chrono::system_clock::time_point responseTimestamp)
+std::chrono::microseconds computeCurrentAge(const ResourceResponse& response, std::chrono::system_clock::time_point responseTime)
 {
     using namespace std::chrono;
 
-    // RFC2616 13.2.3
-    // No compensation for latency as that is not terribly important in practice
+    // Age calculation:
+    // http://tools.ietf.org/html/rfc7234#section-4.2.3
+    // No compensation for latency as that is not terribly important in practice.
     auto dateValue = response.date();
-    auto apparentAge = dateValue ? std::max(microseconds::zero(), duration_cast<microseconds>(responseTimestamp - dateValue.value())) : microseconds::zero();
-    auto ageValue = response.age();
-    auto correctedReceivedAge = ageValue ? std::max(apparentAge, ageValue.value()) : apparentAge;
-    auto residentTime = duration_cast<microseconds>(system_clock::now() - responseTimestamp);
-    return correctedReceivedAge + residentTime;
+    auto apparentAge = dateValue ? std::max(microseconds::zero(), duration_cast<microseconds>(responseTime - dateValue.value())) : microseconds::zero();
+    auto ageValue = response.age().valueOr(microseconds::zero());
+    auto correctedInitialAge = std::max(apparentAge, ageValue);
+    auto residentTime = duration_cast<microseconds>(system_clock::now() - responseTime);
+    return correctedInitialAge + residentTime;
 }
 
-std::chrono::microseconds computeFreshnessLifetimeForHTTPFamily(const ResourceResponse& response, std::chrono::system_clock::time_point responseTimestamp)
+std::chrono::microseconds computeFreshnessLifetimeForHTTPFamily(const ResourceResponse& response, std::chrono::system_clock::time_point responseTime)
 {
     using namespace std::chrono;
     ASSERT(response.url().protocolIsInHTTPFamily());
 
-    // RFC2616 13.2.4
+    // Freshness Lifetime:
+    // http://tools.ietf.org/html/rfc7234#section-4.2.1
     auto maxAge = response.cacheControlMaxAge();
     if (maxAge)
         return maxAge.value();
     auto expires = response.expires();
     auto date = response.date();
-    auto creationTime = date ? date.value() : responseTimestamp;
+    auto dateValue = date ? date.value() : responseTime;
     if (expires)
-        return duration_cast<microseconds>(expires.value() - creationTime);
+        return duration_cast<microseconds>(expires.value() - dateValue);
+
+    // Heuristic Freshness:
+    // http://tools.ietf.org/html/rfc7234#section-4.2.2
     auto lastModified = response.lastModified();
     if (lastModified)
-        return duration_cast<microseconds>((creationTime - lastModified.value()) * 0.1);
+        return duration_cast<microseconds>((dateValue - lastModified.value()) * 0.1);
+
     // If no cache headers are present, the specification leaves the decision to the UA. Other browsers seem to opt for 0.
     return microseconds::zero();
 }
@@ -158,7 +164,7 @@ bool redirectChainAllowsReuse(RedirectChainCacheStatus redirectChainCacheStatus,
 
 inline bool isCacheHeaderSeparator(UChar c)
 {
-    // See RFC 2616, Section 2.2
+    // http://tools.ietf.org/html/rfc7230#section-3.2.6
     switch (c) {
     case '(':
     case ')':
@@ -265,8 +271,9 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
 
         size_t directivesSize = directives.size();
         for (size_t i = 0; i < directivesSize; ++i) {
-            // RFC2616 14.9.1: A no-cache directive with a value is only meaningful for proxy caches.
+            // A no-cache directive with a value is only meaningful for proxy caches.
             // It should be ignored by a browser level cache.
+            // http://tools.ietf.org/html/rfc7234#section-5.2.2.2
             if (equalIgnoringCase(directives[i].first, "no-cache") && directives[i].second.isEmpty())
                 result.noCache = true;
             else if (equalIgnoringCase(directives[i].first, "no-store"))
