@@ -178,3 +178,8 @@ add_subdirectory(Source)
 if (ENABLE_TOOLS)
     add_subdirectory(Tools)
 endif ()
+
+# -----------------------------------------------------------------------------
+# Print the features list last, for maximum visibility.
+# -----------------------------------------------------------------------------
+PRINT_WEBKIT_OPTIONS()

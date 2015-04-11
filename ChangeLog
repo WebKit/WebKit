@@ -1,5 +1,17 @@
 2015-04-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [CMake] Print sorted feature list at the very end of the configure process
+        https://bugs.webkit.org/show_bug.cgi?id=143596
+
+        Reviewed by Martin Robinson.
+
+        * CMakeLists.txt: Call PRINT_WEBKIT_OPTIONS at the bottom of the file.
+        * Source/cmake/WebKitFeatures.cmake: Split option printing into PRINT_WEBKIT_OPTIONS macro,
+        and sort the options before printing. Reorder some code so that features still get
+        propagated to the bindings generators.
+
+2015-04-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [CMake] Options should be marked as advanced by default
         https://bugs.webkit.org/show_bug.cgi?id=143572
 
