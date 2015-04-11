@@ -1,3 +1,14 @@
+2015-04-10  Roger Fong  <roger_fong@apple.com>
+
+        Hide volume controls when playing wirelessly.
+        https://bugs.webkit.org/show_bug.cgi?id=143621.
+        <rdar://problem/20490673>
+
+        Reviewed by Darin Adler.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.updateWirelessPlaybackStatus):
+
 2015-04-10  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.
