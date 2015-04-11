@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This tests pasting a table with a new line character between each element.
+The caret should appear after the table, not before, upon paste.</p>
+<div id="editor" contenteditable>line 1<br><br></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+var editor = document.getElementById('editor');
+editor.focus();
+getSelection().collapse(editor, editor.childNodes.length);
+Markup.dump(editor, 'Initial state');
+
+document.execCommand('insertHTML', false, '<table border=1>\n<tbody>\n<tr>\n<td>line 2 table A</td>\n</tr>\n</tbody>\n</table>\n');
+Markup.dump(editor, 'After pasting line 2 (table A)');
+
+document.execCommand('insertText', false, 'line 3');
+Markup.dump(editor, 'After typing ling 3');
+
+document.execCommand('insertHTML', false, '<table border=1>\n<tbody>\n<tr>\n<td>line 4</td>\n<td>table B</td>\n</tr>\n</tbody>\n</table>\n');
+Markup.dump(editor, 'After pasting ling 4 (table B)');
+
+document.execCommand('insertText', false, 'line 5');
+Markup.dump(editor, 'After typing ling 5');
+
+</script>
+</body>
+</html>

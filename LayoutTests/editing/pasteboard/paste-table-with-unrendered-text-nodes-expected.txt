@@ -1,0 +1,141 @@
+
+Initial state:
+| "line 1"
+| <br>
+| <br>
+
+After pasting line 2 (table A):
+| "line 1"
+| <br>
+| <table>
+|   border="1"
+|   "
+"
+|   <tbody>
+|     "
+"
+|     <tr>
+|       "
+"
+|       <td>
+|         "line 2 table A"
+|       "
+"
+|     "
+"
+|   "
+"
+
+After typing ling 3:
+| "line 1"
+| <br>
+| <table>
+|   border="1"
+|   "
+"
+|   <tbody>
+|     "
+"
+|     <tr>
+|       "
+"
+|       <td>
+|         "line 2 table A"
+|       "
+"
+|     "
+"
+|   "
+"
+| "line 3<#selection-caret>"
+
+After pasting ling 4 (table B):
+| "line 1"
+| <br>
+| <table>
+|   border="1"
+|   "
+"
+|   <tbody>
+|     "
+"
+|     <tr>
+|       "
+"
+|       <td>
+|         "line 2 table A"
+|       "
+"
+|     "
+"
+|   "
+"
+| "line 3"
+| <table>
+|   border="1"
+|   "
+"
+|   <tbody>
+|     "
+"
+|     <tr>
+|       "
+"
+|       <td>
+|         "line 4"
+|       "
+"
+|       <td>
+|         "table B"
+|       "
+"
+|     "
+"
+|   "
+"
+
+After typing ling 5:
+| "line 1"
+| <br>
+| <table>
+|   border="1"
+|   "
+"
+|   <tbody>
+|     "
+"
+|     <tr>
+|       "
+"
+|       <td>
+|         "line 2 table A"
+|       "
+"
+|     "
+"
+|   "
+"
+| "line 3"
+| <table>
+|   border="1"
+|   "
+"
+|   <tbody>
+|     "
+"
+|     <tr>
+|       "
+"
+|       <td>
+|         "line 4"
+|       "
+"
+|       <td>
+|         "table B"
+|       "
+"
+|     "
+"
+|   "
+"
+| "line 5<#selection-caret>"

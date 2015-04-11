@@ -809,7 +809,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
 
         // Return position before tables and nodes which have content that can be ignored.
         if (editingIgnoresContent(currentNode) || isRenderedTable(currentNode)) {
-            if (currentPos.offsetInLeafNode() <= renderer->caretMinOffset())
+            if (currentPos.atStartOfNode())
                 return positionBeforeNode(currentNode);
             continue;
         }
