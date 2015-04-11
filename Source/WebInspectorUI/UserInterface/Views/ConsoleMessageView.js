@@ -145,12 +145,15 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         if (x === this.expandable)
             return;
 
+        if (!this._boundClickHandler)
+            this._boundClickHandler = this.toggle.bind(this);
+
         var becameExpandable = this._element.classList.toggle("expandable", x);
 
         if (becameExpandable)
-            this._messageTextElement.addEventListener("click", this.toggle);
+            this._messageTextElement.addEventListener("click", this._boundClickHandler);
         else
-            this._messageTextElement.removeEventListener("click", this.toggle);
+            this._messageTextElement.removeEventListener("click", this._boundClickHandler);
     }
 
     expand()

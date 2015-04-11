@@ -1,5 +1,15 @@
 2015-04-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Fix Console Message Toggle
+
+        Unreviewed. Correct a post-review comment fix that went too far.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype.set expandable):
+        The handler needed to be bound to the object.
+
+2015-04-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Fix Console Filter Search, Uncaught Exception
 
         Rubber-stamped by Timothy Hatcher.
