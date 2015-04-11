@@ -31,8 +31,7 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
 
         this._level = level;
         this._text = text;
-
-        // FIXME: Move to a SourceCodeLocation.
+        this._source = source;
 
         // FIXME <http://webkit.org/b/76404>: Remove the string equality checks for undefined
         // once we don't get that value anymore from WebCore.
@@ -41,11 +40,8 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
         if (url && url !== "undefined")
             this._url = url;
 
-        if (typeof lineNumber === "number" && lineNumber >= 0)
-            this._lineNumber = lineNumber;
-
-        if (typeof columnNumber === "number" && columnNumber >= 0)
-            this._columnNumber = columnNumber;
+        if (typeof lineNumber === "number" && lineNumber >= 0 && this._url)
+            this._sourceCodeLocation = new WebInspector.SourceCodeLocation(WebInspector.frameResourceManager.resourceForURL(url), lineNumber, columnNumber);
 
         // FIXME: <https://webkit.org/b/142553> Web Inspector: Merge IssueMessage/ConsoleMessage - both attempt to modify the Console Messages parameter independently
 
@@ -99,6 +95,9 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
             console.error("Unknown issue source:", source);
             this._type = WebInspector.IssueMessage.Type.OtherIssue;
         }
+
+        if (this._sourceCodeLocation)
+            this._sourceCodeLocation.addEventListener(WebInspector.SourceCodeLocation.Event.DisplayLocationChanged, this._sourceCodeLocationDisplayLocationChanged, this);
     }
 
     // Static
@@ -145,6 +144,11 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
         return this._text;
     }
 
+    get source()
+    {
+        return this._source;
+    }
+
     get url()
     {
         return this._url;
@@ -152,12 +156,38 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
 
     get lineNumber()
     {
-        return this._lineNumber;
+        if (this._sourceCodeLocation)
+            return this._sourceCodeLocation.lineNumber;
     }
 
     get columnNumber()
     {
-        return this._columnNumber;
+        if (this._sourceCodeLocation)
+            return this._sourceCodeLocation.columnNumber;
+    }
+
+    get displayLineNumber()
+    {
+        if (this._sourceCodeLocation)
+            return this._sourceCodeLocation.displayLineNumber;
+    }
+
+    get displayColumnNumber()
+    {
+        if (this._sourceCodeLocation)
+            return this._sourceCodeLocation.displayColumnNumber;
+    }
+
+    get sourceCodeLocation()
+    {
+        return this._sourceCodeLocation;
+    }
+
+    saveIdentityToCookie(cookie)
+    {
+        cookie[WebInspector.IssueMessage.URLCookieKey] = this.url;
+        cookie[WebInspector.IssueMessage.LineNumberCookieKey] = this.sourceCodeLocation.lineNumber;
+        cookie[WebInspector.IssueMessage.ColumnNumberCookieKey] = this.sourceCodeLocation.columnNumber;
     }
 
     // Private
@@ -196,6 +226,11 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
 
         this._text = resultText;
     }
+
+    _sourceCodeLocationDisplayLocationChanged(event)
+    {
+        this.dispatchEventToListeners(WebInspector.IssueMessage.Event.DisplayLocationDidChange, event.data);
+    }
 };
 
 WebInspector.IssueMessage.Level = {
@@ -212,6 +247,16 @@ WebInspector.IssueMessage.Type = {
     NetworkIssue: "issue-message-type-network-issue",
     SecurityIssue: "issue-message-type-security-issue",
     OtherIssue: "issue-message-type-other-issue"
+};
+
+WebInspector.IssueMessage.TypeIdentifier = "issue-message";
+WebInspector.IssueMessage.URLCookieKey = "issue-message-url";
+WebInspector.IssueMessage.LineNumberCookieKey = "issue-message-line-number";
+WebInspector.IssueMessage.ColumnNumberCookieKey = "issue-message-column-number";
+
+WebInspector.IssueMessage.Event = {
+    LocationDidChange: "issue-message-location-did-change",
+    DisplayLocationDidChange: "issue-message-display-location-did-change"
 };
 
 WebInspector.IssueMessage.Type._prefixTypeMap = {

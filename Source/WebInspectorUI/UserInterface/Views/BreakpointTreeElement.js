@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInspector.GeneralTreeElement
+WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInspector.DebuggerTreeElement
 {
     constructor(breakpoint, className, title)
     {
@@ -236,7 +236,6 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
             this.element.classList.remove(WebInspector.BreakpointTreeElement.ProbeDataUpdatedStyleClassName);
         }.bind(this), WebInspector.BreakpointTreeElement.ProbeDataUpdatedAnimationDuration);
     }
-
 
     _breakpointLocationDidChange(event)
     {

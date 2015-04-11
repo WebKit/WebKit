@@ -1,3 +1,67 @@
+2015-04-11  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: Debugger sidebar should show errors underneath scripts
+        https://bugs.webkit.org/show_bug.cgi?id=143464
+
+        Reviewed by Timothy Hatcher.
+
+        Add a new tree element called IssueTreeElement. This shows warnings and errors in the debugger sidebar. These
+        can be clicked to jump to the line of source code for which the error was thrown. BreakpointTreeElement and
+        IssueTreeElement now inherit from DebuggerTreeElement to support any needed commonalities among the interfaces
+        of elements in the debugger sidebar panel.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+        * UserInterface/Main.html: Add new files.
+
+        * UserInterface/Models/IssueMessage.js:
+        (WebInspector.IssueMessage):
+        (WebInspector.IssueMessage.prototype.get source):
+        (WebInspector.IssueMessage.prototype.get lineNumber):
+        (WebInspector.IssueMessage.prototype.get columnNumber):
+        (WebInspector.IssueMessage.prototype.get displayLineNumber):
+        (WebInspector.IssueMessage.prototype.get displayColumnNumber):
+        (WebInspector.IssueMessage.prototype.get sourceCodeLocation):
+        (WebInspector.IssueMessage.prototype.saveIdentityToCookie):
+        (WebInspector.IssueMessage.prototype._sourceCodeLocationDisplayLocationChanged):
+        Convert to use a backing SourceCodeLocation. Expand API.
+
+        * UserInterface/Views/BreakpointTreeElement.js: Inherits now from DebuggerTreeElement.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.showResourcesWithBreakpointsOnlyFilterFunction):
+        (WebInspector.DebuggerSidebarPanel.showResourcesWithIssuesOnlyFilterFunction):
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._addBreakpoint):
+        (WebInspector.DebuggerSidebarPanel.prototype._breakpointRemoved):
+        (WebInspector.DebuggerSidebarPanel.prototype._handleDebuggerObjectDisplayLocationDidChange):
+        (WebInspector.DebuggerSidebarPanel.prototype._removeDebuggerTreeElement):
+        (WebInspector.DebuggerSidebarPanel.prototype._treeElementSelected):
+        (WebInspector.DebuggerSidebarPanel.prototype._compareDebuggerTreeElements):
+        (WebInspector.DebuggerSidebarPanel.prototype._addDebuggerObject):
+        (WebInspector.DebuggerSidebarPanel.prototype._addIssue):
+        (WebInspector.DebuggerSidebarPanel.prototype._handleIssueAdded):
+        (WebInspector.DebuggerSidebarPanel.prototype._handleIssuesCleared):
+        (WebInspector.DebuggerSidebarPanel.prototype._breakpointDisplayLocationDidChange): Deleted.
+        (WebInspector.DebuggerSidebarPanel.prototype._removeBreakpointTreeElement): Deleted.
+        (WebInspector.DebuggerSidebarPanel.prototype._compareBreakpointTreeElements): Deleted.
+        Add IssueTreeElements to the sidebar whenever a warning or error corresponding to a line of code is found.
+        Add a filter function and button to filter down to just these. Ensure issue and breakpoint elements can be
+        properly compared.
+
+        * UserInterface/Views/DebuggerTreeElement.js: Added.
+        (WebInspector.DebuggerTreeElement):
+        (WebInspector.DebuggerTreeElement.prototype.get debuggerObject):
+
+        * UserInterface/Views/IssueTreeElement.css: Added.
+        (.issue .icon):
+        (.issue.error .icon):
+        (.navigation-sidebar-panel-content-tree-outline .item.small.issue .icon):
+
+        * UserInterface/Views/IssueTreeElement.js: Added.
+        (WebInspector.IssueTreeElement):
+        (WebInspector.IssueTreeElement.prototype.get issueMessage):
+        (WebInspector.IssueTreeElement.prototype._updateTitles):
+
 2015-04-11  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: create content view and details sidebar for Frames timeline
