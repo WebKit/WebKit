@@ -64,6 +64,10 @@
 #import <WebCore/Credential.h>
 #import <wtf/NeverDestroyed.h>
 
+#if HAVE(APP_LINKS)
+#import <WebCore/LaunchServicesSPI.h>
+#endif
+
 #if USE(QUICK_LOOK)
 #import "QuickLookDocumentData.h"
 #endif
@@ -224,28 +228,58 @@ NavigationState::NavigationClient::~NavigationClient()
 {
 }
 
+static void tryAppLink(RefPtr<API::NavigationAction> navigationAction, std::function<void (bool)> completionHandler)
+{
+#if HAVE(APP_LINKS)
+    bool mainFrameNavigation = !navigationAction->targetFrame() || navigationAction->targetFrame()->isMainFrame();
+    bool isProcessingUserGesture = navigationAction->isProcessingUserGesture();
+    if (mainFrameNavigation && isProcessingUserGesture) {
+        auto* localCompletionHandler = new std::function<void (bool)>(WTF::move(completionHandler));
+        [LSAppLink openWithURL:navigationAction->request().url() completionHandler:[localCompletionHandler](BOOL success, NSError *) {
+            dispatch_async(dispatch_get_main_queue(), [localCompletionHandler, success] {
+                (*localCompletionHandler)(success);
+                delete localCompletionHandler;
+            });
+        }];
+        return;
+    }
+#endif
+
+    completionHandler(false);
+}
+
 void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy&, API::NavigationAction& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler) {
-        RetainPtr<NSURLRequest> nsURLRequest = adoptNS(wrapper(*API::URLRequest::create(navigationAction.request()).leakRef()));
+        RefPtr<API::NavigationAction> localNavigationAction = &navigationAction;
+        RefPtr<WebFramePolicyListenerProxy> localListener = WTF::move(listener);
 
-        if (!navigationAction.targetFrame()) {
-            listener->use();
-            return;
-        }
+        tryAppLink(localNavigationAction, [localListener, localNavigationAction] (bool followedLinkToApp) {
+            if (followedLinkToApp) {
+                localListener->ignore();
+                return;
+            }
 
-        if ([NSURLConnection canHandleRequest:nsURLRequest.get()]) {
-            listener->use();
-            return;
-        }
+            if (!localNavigationAction->targetFrame()) {
+                localListener->use();
+                return;
+            }
+
+            RetainPtr<NSURLRequest> nsURLRequest = adoptNS(wrapper(*API::URLRequest::create(localNavigationAction->request()).leakRef()));
+            if ([NSURLConnection canHandleRequest:nsURLRequest.get()]) {
+                localListener->use();
+                return;
+            }
 
 #if PLATFORM(MAC)
-        // A file URL shouldn't fall through to here, but if it did,
-        // it would be a security risk to open it.
-        if (![[nsURLRequest URL] isFileURL])
-            [[NSWorkspace sharedWorkspace] openURL:[nsURLRequest URL]];
+            // A file URL shouldn't fall through to here, but if it did,
+            // it would be a security risk to open it.
+            if (![[nsURLRequest URL] isFileURL])
+                [[NSWorkspace sharedWorkspace] openURL:[nsURLRequest URL]];
 #endif
-        listener->ignore();
+            localListener->ignore();
+        });
+
         return;
     }
 
@@ -253,14 +287,23 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     if (!navigationDelegate)
         return;
 
+    RefPtr<API::NavigationAction> localNavigationAction = &navigationAction;
     RefPtr<WebFramePolicyListenerProxy> localListener = WTF::move(listener);
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:wrapper(navigationAction) decisionHandler:[localListener, checker](WKNavigationActionPolicy actionPolicy) {
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:wrapper(navigationAction) decisionHandler:[localListener, localNavigationAction, checker](WKNavigationActionPolicy actionPolicy) {
         checker->didCallCompletionHandler();
 
         switch (actionPolicy) {
         case WKNavigationActionPolicyAllow:
-            localListener->use();
+            tryAppLink(localNavigationAction, [localListener](bool followedLinkToApp) {
+                if (followedLinkToApp) {
+                    localListener->ignore();
+                    return;
+                }
+
+                localListener->use();
+            });
+        
             break;
 
         case WKNavigationActionPolicyCancel:

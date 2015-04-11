@@ -151,6 +151,11 @@
 #import <WebCore/RuntimeApplicationChecksIOS.h>
 #endif
 
+#if HAVE(APP_LINKS)
+#import <WebCore/LaunchServicesSPI.h>
+#import <WebCore/WebCoreThreadRun.h>
+#endif
+
 #if ENABLE(CONTENT_FILTERING)
 #import <WebCore/PolicyChecker.h>
 #endif
@@ -172,9 +177,16 @@ NSString *WebPluginContainerKey = @"WebPluginContainer";
 @interface WebFramePolicyListener : NSObject <WebPolicyDecisionListener, WebFormSubmissionListener> {
     RefPtr<Frame> _frame;
     FramePolicyFunction _policyFunction;
+#if HAVE(APP_LINKS)
+    RetainPtr<NSURL> _appLinkURL;
+#endif
 }
 
 - (id)initWithFrame:(Frame*)frame policyFunction:(FramePolicyFunction)policyFunction;
+#if HAVE(APP_LINKS)
+- (id)initWithFrame:(Frame*)frame policyFunction:(FramePolicyFunction)policyFunction appLinkURL:(NSURL *)url;
+#endif
+
 - (void)invalidate;
 
 @end
@@ -871,24 +883,45 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
                                decisionListener:setUpPolicyListener(WTF::move(function)).get()];
 }
 
+
+static BOOL shouldTryAppLink(WebView *webView, const NavigationAction& action, Frame* targetFrame)
+{
+#if HAVE(APP_LINKS)
+    BOOL mainFrameNavigation = !targetFrame || targetFrame->isMainFrame();
+    if (!mainFrameNavigation)
+        return NO;
+
+    if (!action.processingUserGesture())
+        return NO;
+
+    return YES;
+#else
+    return NO;
+#endif
+}
+
 void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, FramePolicyFunction function)
 {
     WebView *webView = getWebView(m_webFrame.get());
+    BOOL tryAppLink = shouldTryAppLink(webView, action, nullptr);
+
     [[webView _policyDelegateForwarder] webView:webView
             decidePolicyForNewWindowAction:actionDictionary(action, formState)
                                    request:request.nsURLRequest(UpdateHTTPBody)
                               newFrameName:frameName
-                          decisionListener:setUpPolicyListener(WTF::move(function)).get()];
+                          decisionListener:setUpPolicyListener(WTF::move(function), tryAppLink ? (NSURL *)request.url() : nil).get()];
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState, FramePolicyFunction function)
 {
     WebView *webView = getWebView(m_webFrame.get());
+    BOOL tryAppLink = shouldTryAppLink(webView, action, core(m_webFrame.get()));
+
     [[webView _policyDelegateForwarder] webView:webView
                 decidePolicyForNavigationAction:actionDictionary(action, formState)
                                         request:request.nsURLRequest(UpdateHTTPBody)
                                           frame:m_webFrame.get()
-                               decisionListener:setUpPolicyListener(WTF::move(function)).get()];
+                               decisionListener:setUpPolicyListener(WTF::move(function), tryAppLink ? (NSURL *)request.url() : nil).get()];
 }
 
 void WebFrameLoaderClient::cancelPolicyCheck()
@@ -1472,12 +1505,17 @@ void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool)
 {
 }
 
-RetainPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(FramePolicyFunction function)
+RetainPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(FramePolicyFunction function, NSURL *appLinkURL)
 {
     // FIXME: <rdar://5634381> We need to support multiple active policy listeners.
     [m_policyListener invalidate];
 
-    m_policyListener = adoptNS([[WebFramePolicyListener alloc] initWithFrame:core(m_webFrame.get()) policyFunction:function]);
+#if HAVE(APP_LINKS)
+    if (appLinkURL)
+        m_policyListener = adoptNS([[WebFramePolicyListener alloc] initWithFrame:core(m_webFrame.get()) policyFunction:function appLinkURL:appLinkURL]);
+    else
+#endif
+        m_policyListener = adoptNS([[WebFramePolicyListener alloc] initWithFrame:core(m_webFrame.get()) policyFunction:function]);
 
     return m_policyListener;
 }
@@ -2271,6 +2309,19 @@ void WebFrameLoaderClient::contentFilterDidBlockLoad(WebCore::ContentFilterUnblo
     return self;
 }
 
+#if HAVE(APP_LINKS)
+- (id)initWithFrame:(Frame*)frame policyFunction:(FramePolicyFunction)policyFunction appLinkURL:(NSURL *)appLinkURL
+{
+    self = [self initWithFrame:frame policyFunction:policyFunction];
+    if (!self)
+        return nil;
+
+    _appLinkURL = appLinkURL;
+
+    return self;
+}
+#endif
+
 - (void)invalidate
 {
     _frame = nullptr;
@@ -2309,6 +2360,20 @@ void WebFrameLoaderClient::contentFilterDidBlockLoad(WebCore::ContentFilterUnblo
 
 - (void)use
 {
+#if HAVE(APP_LINKS)
+    if (_appLinkURL && _frame) {
+        [LSAppLink openWithURL:_appLinkURL.get() completionHandler:^(BOOL success, NSError *) {
+            WebThreadRun(^{
+                if (success)
+                    [self receivedPolicyDecision:PolicyIgnore];
+                else
+                    [self receivedPolicyDecision:PolicyUse];
+            });
+        }];
+        return;
+    }
+#endif
+
     [self receivedPolicyDecision:PolicyUse];
 }
 

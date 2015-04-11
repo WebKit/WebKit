@@ -71,7 +71,7 @@ INSTALLHDRS_SCRIPT_PHASE = YES;
 PRODUCT_NAME = WebKitLegacy;
 UMBRELLA_FRAMEWORKS_DIR = $(PRODUCTION_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/Frameworks;
 
-OTHER_LDFLAGS[sdk=iphone*] = $(inherited) -lobjc -lsqlite3 -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework OpenGLES -lMobileGestalt;
+OTHER_LDFLAGS[sdk=iphone*] = $(inherited) -lobjc -lsqlite3 -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework OpenGLES -framework MobileCoreServices -lMobileGestalt;
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -framework Carbon -framework Cocoa -framework DiskArbitration -framework IOKit -framework OpenGL;
 
 SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
