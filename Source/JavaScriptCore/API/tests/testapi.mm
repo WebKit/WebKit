@@ -484,9 +484,35 @@ static void* threadMain(void* contextPtr)
     pthread_exit(nullptr);
 }
 
-void testObjectiveCAPI()
+// This test is flaky. Since GC marks C stack and registers as roots conservatively,
+// objects not referenced logically can be accidentally marked and alive.
+// To avoid this situation as possible as we can,
+// 1. run this test first before stack is polluted,
+// 2. extract this test as a function to suppress stack height.
+static void testWeakValue()
 {
-    NSLog(@"Testing Objective-C API");
+    @autoreleasepool {
+        JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
+        TestObject *testObject = [TestObject testObject];
+        JSManagedValue *weakValue;
+        @autoreleasepool {
+            JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
+            context[@"testObject"] = testObject;
+            weakValue = [[JSManagedValue alloc] initWithValue:context[@"testObject"]];
+        }
+
+        @autoreleasepool {
+            JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
+            context[@"testObject"] = testObject;
+            JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+            checkResult(@"weak value == nil", ![weakValue value]);
+            checkResult(@"root is still alive", !context[@"testObject"].isUndefined);
+        }
+    }
+}
+
+static void testObjectiveCAPIMain()
+{
     @autoreleasepool {
         JSVirtualMachine* vm = [[JSVirtualMachine alloc] init];
         JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
@@ -1063,25 +1089,6 @@ void testObjectiveCAPI()
     }
 
     @autoreleasepool {
-        JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
-        TestObject *testObject = [TestObject testObject];
-        JSManagedValue *weakValue;
-        @autoreleasepool {
-            JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
-            context[@"testObject"] = testObject;
-            weakValue = [[JSManagedValue alloc] initWithValue:context[@"testObject"]];
-        }
-
-        @autoreleasepool {
-            JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
-            context[@"testObject"] = testObject;
-            JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
-            checkResult(@"weak value == nil", ![weakValue value]);
-            checkResult(@"root is still alive", !context[@"testObject"].isUndefined);
-        }
-    }
-
-    @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
         TinyDOMNode *root = [[TinyDOMNode alloc] initWithVirtualMachine:context.virtualMachine];
         TinyDOMNode *lastNode = root;
@@ -1407,6 +1414,13 @@ void testObjectiveCAPI()
     runJSExportTests();
     runRegress141275();
     runRegress141809();
+}
+
+void testObjectiveCAPI()
+{
+    NSLog(@"Testing Objective-C API");
+    testWeakValue();
+    testObjectiveCAPIMain();
 }
 
 #else

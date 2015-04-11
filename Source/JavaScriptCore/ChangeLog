@@ -1,3 +1,26 @@
+2015-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Run flaky conservative GC related test first before polluting stack and registers
+        https://bugs.webkit.org/show_bug.cgi?id=143634
+
+        Reviewed by Ryosuke Niwa.
+
+        After r182653, JSC API tests fail. However, it's not related to the change.
+        After investigating the cause of this failure, I've found that the failed test is flaky
+        because JSC's GC is conservative. If previously allocated JSGlobalObject is accidentally alive
+        due to conservative roots in C stack and registers, this test fails.
+
+        Since GC marks C stack and registers as roots conservatively,
+        objects not referenced logically can be accidentally marked and alive.
+        To avoid this situation as possible as we can,
+        1. run this test first before stack is polluted,
+        2. extract this test as a function to suppress stack height.
+
+        * API/tests/testapi.mm:
+        (testWeakValue):
+        (testObjectiveCAPIMain):
+        (testObjectiveCAPI):
+
 2015-04-11  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: create content view and details sidebar for Frames timeline
