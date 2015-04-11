@@ -1,5 +1,28 @@
 2015-04-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [CMake] Miscellaneous issues in WebKitFeatures.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=143636
+
+        Reviewed by Martin Robinson.
+
+        Rename _WEBKIT_AVAILABLE_OPTIONS_INITIALVALUE_ variables to
+        _WEBKIT_AVAILABLE_OPTIONS_INITIAL_VALUE_
+
+        Rename _WEBKIT_AVAILABLE_OPTIONS_ISPUBLIC_ variables to
+        _WEBKIT_AVAILABLE_OPTIONS_IS_PUBLIC_
+
+        Rename _SHOULD_PRINT_POINTS to _SHOULD_PRINT_DOTS
+
+        Update USE_SYSTEM_MALLOC description to not mention TCmalloc
+
+        Fix ENABLE_TOUCH_SLIDER so that it can be used
+
+        Add a comment
+
+        * Source/cmake/WebKitFeatures.cmake:
+
+2015-04-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [CMake] Print sorted feature list at the very end of the configure process
         https://bugs.webkit.org/show_bug.cgi?id=143596
 
