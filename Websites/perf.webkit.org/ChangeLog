@@ -1,5 +1,11 @@
 2015-04-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed build fix. Updated config.json after recent changes.
+
+        * config.json:
+
+2015-04-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         Make the analysis page more useful
         https://bugs.webkit.org/show_bug.cgi?id=143617
 

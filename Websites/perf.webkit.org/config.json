@@ -1,7 +1,7 @@
 {
     "debug": true,
     "jsonCacheMaxAge": 600,
-    "JSONDirectory": "../public/data/",
+    "dataDirectory": "public/data/",
     "database": {
         "host": "localhost",
         "port": "5432",
@@ -13,5 +13,6 @@
         "hostname": "localhost",
         "port": 80
     },
-    "defaultDashboard": [[]]
+    "defaultDashboard": [[]],
+    "dashboards": {}
 }
