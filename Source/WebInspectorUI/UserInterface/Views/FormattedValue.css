@@ -26,7 +26,6 @@
 .formatted-object, .formatted-node, .formatted-error, .formatted-map, .formatted-set, .formatted-weakmap {
     position: relative;
     display: inline-block;
-    vertical-align: top;
     color: black;
 }
 
