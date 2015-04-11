@@ -1,3 +1,18 @@
+2015-04-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Options should be marked as advanced by default
+        https://bugs.webkit.org/show_bug.cgi?id=143572
+
+        Reviewed by Gyuyoung Kim.
+
+        Options defined with WEBKIT_OPTION_DEFINE are now advanced so that they are hidden from
+        users by default, unless WEBKIT_OPTION_DEFAULT_PORT_VALUE is used. Add new macros
+        WEBKIT_OPTION_DEFINE_PUBLIC to define an option that's not hidden by default, to be used
+        for adding port-specific options, and WEBKIT_OPTION_PRIVATE_PORT_VALUE to override an
+        option without making it public.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2015-04-10  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [CMake] Remove unnecessary ENABLE_WEBCORE switch

@@ -6,7 +6,17 @@ macro(WEBKIT_OPTION_DEFINE _name _description _initialvalue)
     list(APPEND _WEBKIT_AVAILABLE_OPTIONS ${_name})
 endmacro()
 
+macro(WEBKIT_OPTION_DEFINE_PUBLIC _name _description _initialvalue)
+    WEBKIT_OPTION_DEFINE(${_name} ${_description} ${_initialvalue})
+    set(_WEBKIT_AVAILABLE_OPTIONS_ISPUBLIC_${_name} TRUE)
+endmacro()
+
 macro(WEBKIT_OPTION_DEFAULT_PORT_VALUE _name _value)
+    set(_WEBKIT_AVAILABLE_OPTIONS_INITIALVALUE_${_name} ${_value})
+    set(_WEBKIT_AVAILABLE_OPTIONS_ISPUBLIC_${_name} TRUE)
+endmacro()
+
+macro(WEBKIT_OPTION_PRIVATE_PORT_VALUE _name _value)
     set(_WEBKIT_AVAILABLE_OPTIONS_INITIALVALUE_${_name} ${_value})
 endmacro()
 
@@ -160,6 +170,9 @@ endmacro()
 macro(WEBKIT_OPTION_END)
     foreach (_name ${_WEBKIT_AVAILABLE_OPTIONS})
         option(${_name} "${_WEBKIT_AVAILABLE_OPTIONS_DESCRIPTION_${_name}}" ${_WEBKIT_AVAILABLE_OPTIONS_INITIALVALUE_${_name}})
+        if (NOT _WEBKIT_AVAILABLE_OPTIONS_ISPUBLIC_${_name})
+            mark_as_advanced(FORCE ${_name})
+        endif ()
     endforeach ()
 
     set(_MAX_FEATURE_LENGTH 0)
@@ -203,6 +216,9 @@ macro(WEBKIT_OPTION_END)
         endif ()
 
         set(_MESSAGE "${_MESSAGE} ${${_name}}")
-        message(STATUS "${_MESSAGE}")
+
+        if (_WEBKIT_AVAILABLE_OPTIONS_ISPUBLIC_${_name})
+            message(STATUS "${_MESSAGE}")
+        endif ()
     endforeach ()
 endmacro()
