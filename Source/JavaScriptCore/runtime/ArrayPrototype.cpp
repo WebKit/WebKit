@@ -142,7 +142,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     vm.prototypeMap.addPrototype(this);
     JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, arrayProtoFuncValues, DontEnum, 0);
 
-    if (globalObject->runtimeFlags().isSymbolEnabled()) {
+    if (!globalObject->runtimeFlags().isSymbolDisabled()) {
         JSObject* unscopables = constructEmptyObject(globalObject->globalExec(), globalObject->nullPrototypeObjectStructure());
         const char* unscopableNames[] = {
             "copyWithin",

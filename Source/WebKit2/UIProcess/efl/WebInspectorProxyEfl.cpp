@@ -114,7 +114,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 
     WKPreferencesRef wkPreferences = WKPageGroupGetPreferences(wkPageGroup);
     WKPreferencesSetFileAccessFromFileURLsAllowed(wkPreferences, true);
-    WKPreferencesSetJavaScriptRuntimeFlags(wkPreferences, kWKJavaScriptRuntimeFlagsSymbolEnabled);
+    WKPreferencesSetJavaScriptRuntimeFlags(wkPreferences, 0);
 
     return toImpl(WKViewGetPage(wkView));
 }

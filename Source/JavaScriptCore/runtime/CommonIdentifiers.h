@@ -223,17 +223,19 @@
     macro(with) \
     macro(yield)
 
-#define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(macro) \
+#define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL_NOT_IMPLEMENTED_YET(macro)\
     macro(hasInstance) \
     macro(isConcatSpreadable) \
-    macro(iterator) \
     macro(match) \
     macro(replace) \
     macro(search) \
     macro(species) \
     macro(split) \
     macro(toPrimitive) \
-    macro(toStringTag) \
+    macro(toStringTag)
+
+#define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(macro) \
+    macro(iterator) \
     macro(unscopables)
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \

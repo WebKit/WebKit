@@ -1,3 +1,12 @@
+2015-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Enable Symbol in web pages
+        https://bugs.webkit.org/show_bug.cgi?id=143375
+
+        Reviewed by Ryosuke Niwa.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+
 2015-04-10  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Implement some methods in DOMHTMLDocument interface.

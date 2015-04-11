@@ -32,7 +32,7 @@ namespace JSC {
 
 // macro(name, isEnabledFlag)
 #define JSC_RUNTIME_FLAG(macro) \
-    macro(SymbolEnabled, true)\
+    macro(SymbolDisabled, false)\
     macro(PromiseDisabled, false)
 
 

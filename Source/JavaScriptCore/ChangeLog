@@ -1,3 +1,31 @@
+2015-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Enable Symbol in web pages
+        https://bugs.webkit.org/show_bug.cgi?id=143375
+
+        Reviewed by Ryosuke Niwa.
+
+        Expose Symbol to web pages.
+        Symbol was exposed, but it was hidden since it breaks Facebook comments.
+        This is because at that time Symbol is implemented,
+        but methods for Symbol.iterator and Object.getOwnPropertySymbols are not implemented yet
+        and it breaks React.js and immutable.js.
+
+        Now methods for Symbol.iterator and Object.getOwnPropertySymbols are implemented
+        and make sure that Facebook comment input functionality is not broken with exposed Symbol.
+
+        So this patch replaces runtime flags SymbolEnabled to SymbolDisabled
+        and makes enabling symbols by default.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        * runtime/RuntimeFlags.h:
+
 2015-04-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         ES6: Iterator toString names should be consistent

@@ -70,7 +70,6 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 #endif
     preferences->setAllowFileAccessFromFileURLs(true);
     preferences->setJavaScriptRuntimeFlags({
-        JSC::RuntimeFlags::SymbolEnabled
     });
     RefPtr<WebPageGroup> pageGroup = WebPageGroup::create(inspectorPageGroupIdentifier(), false, false);
     m_inspectorView = GTK_WIDGET(webkitWebViewBaseCreate(&inspectorProcessPool(), preferences.get(), pageGroup.get(), nullptr, nullptr));

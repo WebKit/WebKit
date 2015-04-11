@@ -383,7 +383,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
 
     FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE)
 
-    if (m_runtimeFlags.isSymbolEnabled())
+    if (!m_runtimeFlags.isSymbolDisabled())
         putDirectWithoutTransition(vm, vm.propertyNames->Symbol, symbolConstructor, DontEnum);
 
 #undef PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE
