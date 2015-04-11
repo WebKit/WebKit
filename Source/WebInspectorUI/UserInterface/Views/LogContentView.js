@@ -884,7 +884,7 @@ WebInspector.LogContentView.prototype = {
                 this._highlightRanges(message, matchRanges);
 
             var classList = message.classList;
-            if (!isEmptyObject(matchRanges) || message.command instanceof WebInspector.ConsoleCommand || message.message instanceof WebInspector.ConsoleCommandResultMessage)
+            if (!isEmptyObject(matchRanges) || message.__commandView instanceof WebInspector.ConsoleCommandView || message.__message instanceof WebInspector.ConsoleCommandResultMessage)
                 classList.remove(WebInspector.LogContentView.FilteredOutBySearchStyleClassName);
             else
                 classList.add(WebInspector.LogContentView.FilteredOutBySearchStyleClassName);
