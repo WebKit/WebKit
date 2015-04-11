@@ -1,5 +1,18 @@
 2015-04-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Use semi-transparent map item dividers
+        https://bugs.webkit.org/show_bug.cgi?id=143630
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectTreeMapEntryTreeElement.css:
+        (.object-tree-map-entry.key:not(:first-child)):
+        (.object-tree-map-entry.key): Deleted.
+        (.object-tree-map-entry.key:first-of-type): Deleted.
+        Use one selector instead of two.
+
+2015-04-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Objects are vertically misaligned by 1px
         https://bugs.webkit.org/show_bug.cgi?id=143629
 

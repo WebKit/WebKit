@@ -29,12 +29,8 @@
     margin-right: 5px;
 }
 
-.object-tree-map-entry.key {
-    border-top: 1px solid hsl(0, 0%, 96%);
-}
-
-.object-tree-map-entry.key:first-of-type {
-    border-top: none;
+.object-tree-map-entry.key:not(:first-child) {
+    border-top: 1px solid hsla(0, 0%, 0%, 0.05);
 }
 
 .object-tree-map-entry {
