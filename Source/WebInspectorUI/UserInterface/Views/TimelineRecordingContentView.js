@@ -494,6 +494,9 @@ WebInspector.TimelineRecordingContentView.prototype = {
             timeline = timelineOrEvent.data.timeline;
 
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
+        if (!WebInspector.TimelineManager.shouldShowViewForTimeline(timeline))
+            return;
+
         console.assert(!this._timelineViewMap.has(timeline), timeline);
 
         this._timelineViewMap.set(timeline, new WebInspector.ContentView(timeline));
@@ -509,6 +512,9 @@ WebInspector.TimelineRecordingContentView.prototype = {
     {
         var timeline = event.data.timeline;
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
+        if (!WebInspector.TimelineManager.shouldShowViewForTimeline(timeline))
+            return;
+
         console.assert(this._timelineViewMap.has(timeline), timeline);
 
         var timelineView = this._timelineViewMap.take(timeline);
@@ -532,7 +538,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
             previousPathComponent = pathComponent;
         }
 
-        var timelineCount = this._recording.timelines.size;
+        var timelineCount = this._timelineViewMap.size;
         const timelineHeight = 36;
         const extraOffset = 22;
         this._timelineOverview.element.style.height = (timelineCount * timelineHeight + extraOffset) + "px";
@@ -574,6 +580,8 @@ WebInspector.TimelineRecordingContentView.prototype = {
         if (this.currentTimelineView) {
             this.currentTimelineView.startTime = this._timelineOverview.selectionStartTime;
             this.currentTimelineView.endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
+
+            WebInspector.renderingFrameDetailsSidebarPanel.updateRangeSelection(this.currentTimelineView.startTime, this.currentTimelineView.endTime);
         }
 
         // Delay until the next frame to stay in sync with the current timeline view's time-based layout changes.

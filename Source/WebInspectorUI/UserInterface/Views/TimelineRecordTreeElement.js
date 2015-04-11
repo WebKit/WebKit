@@ -100,9 +100,9 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
 
             break;
 
-        case WebInspector.TimelineRecord.Type.RunLoop:
-            title = WebInspector.UIString("Runloop Executed");
-            iconStyleClass = WebInspector.TimelineRecordTreeElement.RunLoopRecordIconStyleClass;
+        case WebInspector.TimelineRecord.Type.RenderingFrame:
+            title = WebInspector.UIString("Frame %d").format(timelineRecord.frameNumber);
+            iconStyleClass = WebInspector.TimelineRecordTreeElement.RenderingFrameRecordIconStyleClass;
             break;
 
         default:
@@ -152,7 +152,7 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
 WebInspector.TimelineRecordTreeElement.StyleRecordIconStyleClass = "style-record";
 WebInspector.TimelineRecordTreeElement.LayoutRecordIconStyleClass = "layout-record";
 WebInspector.TimelineRecordTreeElement.PaintRecordIconStyleClass = "paint-record";
-WebInspector.TimelineRecordTreeElement.RunLoopRecordIconStyleClass = "runloop-record";
+WebInspector.TimelineRecordTreeElement.RenderingFrameRecordIconStyleClass = "rendering-frame-record";
 WebInspector.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass = "evaluated-record";
 WebInspector.TimelineRecordTreeElement.EventRecordIconStyleClass = "event-record";
 WebInspector.TimelineRecordTreeElement.TimerRecordIconStyleClass = "timer-record";

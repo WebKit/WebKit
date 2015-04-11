@@ -109,6 +109,8 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         for (var timeline of this._timelines.values())
             timeline.reset(suppressEvents);
 
+        WebInspector.RenderingFrameTimelineRecord.resetFrameNumber();
+
         if (!suppressEvents) {
             this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.Reset);
             this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimesUpdated);
@@ -161,8 +163,8 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         // Add the record to the global timeline by type.
         this._timelines.get(record.type).addRecord(record);
 
-        // Network records don't have source code timelines.
-        if (record.type === WebInspector.TimelineRecord.Type.Network)
+        // Network and RenderingFrame records don't have source code timelines.
+        if (record.type === WebInspector.TimelineRecord.Type.Network || record.type === WebInspector.TimelineRecord.Type.RenderingFrame)
             return;
 
         // Add the record to the source code timelines.

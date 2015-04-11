@@ -25,23 +25,24 @@
 
 WebInspector.Timeline = class Timeline extends WebInspector.Object
 {
-    constructor(type)
+    constructor(type, recording)
     {
         super();
 
         this._type = type;
+        this._recording = recording;
 
         this.reset(true);
     }
 
     // Static
 
-    static create(type)
+    static create(type, recording)
     {
         if (type === WebInspector.TimelineRecord.Type.Network)
-            return new WebInspector.NetworkTimeline(type);
+            return new WebInspector.NetworkTimeline(type, recording);
 
-        return new WebInspector.Timeline(type);
+        return new WebInspector.Timeline(type, recording);
     }
 
     // Public
@@ -66,6 +67,11 @@ WebInspector.Timeline = class Timeline extends WebInspector.Object
         return this._type;
     }
 
+    get recording()
+    {
+        return this._recording;
+    }
+
     get displayName()
     {
         if (this._type === WebInspector.TimelineRecord.Type.Network)
@@ -74,8 +80,8 @@ WebInspector.Timeline = class Timeline extends WebInspector.Object
             return WebInspector.UIString("Layout & Rendering");
         if (this._type === WebInspector.TimelineRecord.Type.Script)
             return WebInspector.UIString("JavaScript & Events");
-        if (this._type === WebInspector.TimelineRecord.Type.RunLoop)
-            return WebInspector.UIString("Frames");
+        if (this._type === WebInspector.TimelineRecord.Type.RenderingFrame)
+            return WebInspector.UIString("Rendering Frames");
 
         console.error("Timeline has unknown type:", this._type, this);
     }
@@ -86,10 +92,10 @@ WebInspector.Timeline = class Timeline extends WebInspector.Object
             return WebInspector.TimelineSidebarPanel.NetworkIconStyleClass;
         if (this._type === WebInspector.TimelineRecord.Type.Layout)
             return WebInspector.TimelineSidebarPanel.ColorsIconStyleClass;
-        if (this._type === WebInspector.TimelineRecord.Type.RunLoop)
-            return WebInspector.TimelineSidebarPanel.RunLoopIconStyleClass;
         if (this._type === WebInspector.TimelineRecord.Type.Script)
             return WebInspector.TimelineSidebarPanel.ScriptIconStyleClass;
+        if (this._type === WebInspector.TimelineRecord.Type.RenderingFrame)
+            return WebInspector.TimelineSidebarPanel.RenderingFrameIconStyleClass;
 
         console.error("Timeline has unknown type:", this._type, this);
     }

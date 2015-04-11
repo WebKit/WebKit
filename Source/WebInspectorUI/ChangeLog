@@ -1,3 +1,189 @@
+2015-04-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: create content view and details sidebar for Frames timeline
+        https://bugs.webkit.org/show_bug.cgi?id=143533
+
+        Reviewed by Timothy Hatcher.
+
+        Added new Rendering Frames timeline content view and details sidebar, and added minor visual tweeks to the
+        timeline graph such as ensuring 60 FPS budget line is always visible, and large combined frames are split
+        up once they reach a maximum pixel width.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New UI strings.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        Support for new details sidebar panel.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.shouldShowViewForTimeline):
+        (WebInspector.TimelineManager.prototype._processRecord):
+        (WebInspector.TimelineManager.prototype._loadNewRecording):
+        Layout timeline is no longer added to timeline graphs, skip Rendering Frame records that have no child events.
+
+        * UserInterface/Images/NavigationItemDoughnutChart.svg: Added.
+        * UserInterface/Images/TimelineRecordRenderingFrame.svg: Added.
+        New artwork.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        New files.
+
+        * UserInterface/Models/RenderingFrameTimelineRecord.js: Renamed from Source/WebInspectorUI/UserInterface/Models/RunLoopTimelineRecord.js.
+        (WebInspector.RenderingFrameTimelineRecord):
+        (WebInspector.RenderingFrameTimelineRecord.resetFrameNumber):
+        (WebInspector.RenderingFrameTimelineRecord.prototype.get frameNumber):
+        (WebInspector.RenderingFrameTimelineRecord.prototype.get children):
+        (WebInspector.RenderingFrameTimelineRecord.prototype.get durationRemainder):
+        (WebInspector.RenderingFrameTimelineRecord.prototype.durationForRecords.get var):
+        Added frame numbering and improved the accuracy of sub-frame duratation calculation.
+        Refactoring: RunLoop prefix changed to RenderingFrame.
+
+        * UserInterface/Models/Timeline.js:
+        (WebInspector.Timeline):
+        (WebInspector.Timeline.create):
+        (WebInspector.Timeline.prototype.get recording):
+        (WebInspector.Timeline.prototype.get displayName):
+        (WebInspector.Timeline.prototype.get iconClassName):
+        Added up-pointer to parent recording.
+
+        * UserInterface/Models/TimelineRecord.js:
+        Refactoring: RunLoop prefix changed to RenderingFrame.
+        
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording.prototype.reset):
+        Support for new timeline type.
+
+        * UserInterface/Views/ChartDetailsSectionLegendRow.js: Added.
+        (WebInspector.ChartDetailsSectionLegendRow):
+        New details section row type for chart legend items.
+
+        * UserInterface/Views/ChartDetailsSectionRow.css: Added.
+        (.details-section .row.chart):
+        (.details-section .row.chart canvas):
+        (.details-section .row.chart.empty canvas):
+        (.details-section > .content > .group > .row.legend-item > .label > .color-swatch):
+        * UserInterface/Views/ChartDetailsSectionRow.js: Added.
+        (WebInspector.ChartDetailsSectionRow):
+        (WebInspector.ChartDetailsSectionRow.prototype.get legendGroup):
+        (WebInspector.ChartDetailsSectionRow.prototype.set innerLabel):
+        (WebInspector.ChartDetailsSectionRow.prototype.addChartValue):
+        (WebInspector.ChartDetailsSectionRow.prototype.clearChart):
+        (WebInspector.ChartDetailsSectionRow.prototype._refresh.drawSlice):
+        (WebInspector.ChartDetailsSectionRow.prototype._refresh):
+        New details section row type for pie/doughnut charts.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView):
+        Support for new timeline view type.
+
+        * UserInterface/Views/LayoutTimelineDataGridNode.js:
+        (WebInspector.LayoutTimelineDataGridNode.prototype.get data):
+        (WebInspector.LayoutTimelineDataGridNode.prototype.createCellContent):
+        Updated for use in rendering frame timeline view.
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView.prototype._layoutTimelineRecordAdded):
+        Removed references to old RunLoop objects.
+
+        * UserInterface/Views/RenderingFrameDetailsSidebarPanel.js: Added.
+        (WebInspector.RenderingFrameDetailsSidebarPanel.formatChartValue):
+        (WebInspector.RenderingFrameDetailsSidebarPanel):
+        (WebInspector.RenderingFrameDetailsSidebarPanel.prototype.inspect):
+        (WebInspector.RenderingFrameDetailsSidebarPanel.prototype.updateRangeSelection):
+        (WebInspector.RenderingFrameDetailsSidebarPanel.prototype.get renderingFrameTimeline):
+        (WebInspector.RenderingFrameDetailsSidebarPanel.prototype.set renderingFrameTimeline):
+        (WebInspector.RenderingFrameDetailsSidebarPanel.prototype.refresh.durationForRecordType):
+        (WebInspector.RenderingFrameDetailsSidebarPanel.prototype.refresh):
+        (WebInspector.RenderingFrameDetailsSidebarPanel.prototype._resetAll):
+        (WebInspector.RenderingFrameDetailsSidebarPanel.prototype._recordAdded):
+        (WebInspector.RenderingFrameDetailsSidebarPanel.prototype._timelineReset):
+        (WebInspector.RenderingFrameDetailsSidebarPanel.prototype._getSelectedRecords):
+        New sidebar panel for showing time breakdown for current frame selection.
+
+        * UserInterface/Views/RenderingFrameTimelineDataGridNode.js: Added.
+        (WebInspector.RenderingFrameTimelineDataGridNode):
+        (WebInspector.RenderingFrameTimelineDataGridNode.prototype.get record):
+        (WebInspector.RenderingFrameTimelineDataGridNode.prototype.get records):
+        (WebInspector.RenderingFrameTimelineDataGridNode.prototype.get data):
+        (WebInspector.RenderingFrameTimelineDataGridNode.prototype.createCellContent):
+        New data grid row type.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.css: Renamed from Source/WebInspectorUI/UserInterface/Views/RunLoopTimelineOverviewGraph.css.
+        (.timeline-overview-graph.rendering-frame > .divider):
+        (.timeline-overview-graph.rendering-frame > .divider > .label):
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js: Renamed from Source/WebInspectorUI/UserInterface/Views/RunLoopTimelineOverviewGraph.js.
+        (WebInspector.RenderingFrameTimelineOverviewGraph):
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype.get graphHeightSeconds):
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype.updateLayout.createFrame):
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype._updateDividers.createDividerAtPosition.get if):
+        * UserInterface/Views/RenderingFrameTimelineView.css: Renamed from Source/WebInspectorUI/UserInterface/Views/RunLoopTimelineOverviewGraph.css.
+        (.timeline-view.rendering-frame > .data-grid):
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .navigation-sidebar-panel-content-tree-outline.rendering-frame .item .subtitle):
+        Visual tweeks.
+        Refactoring: RunLoop prefix changed to RenderingFrame.
+
+        * UserInterface/Views/RenderingFrameTimelineView.js: Added.
+        (WebInspector.RenderingFrameTimelineView):
+        (WebInspector.RenderingFrameTimelineView.prototype.get navigationSidebarTreeOutlineLabel):
+        (WebInspector.RenderingFrameTimelineView.prototype.shown):
+        (WebInspector.RenderingFrameTimelineView.prototype.hidden):
+        (WebInspector.RenderingFrameTimelineView.prototype.updateLayout):
+        (WebInspector.RenderingFrameTimelineView.prototype.get selectionPathComponents):
+        (WebInspector.RenderingFrameTimelineView.prototype.filterDidChange):
+        (WebInspector.RenderingFrameTimelineView.prototype.matchTreeElementAgainstCustomFilters):
+        (WebInspector.RenderingFrameTimelineView.prototype.reset):
+        (WebInspector.RenderingFrameTimelineView.prototype.treeElementPathComponentSelected):
+        (WebInspector.RenderingFrameTimelineView.prototype.dataGridNodeForTreeElement):
+        (WebInspector.RenderingFrameTimelineView.prototype._processPendingRecords):
+        (WebInspector.RenderingFrameTimelineView.prototype._renderingFrameTimelineRecordAdded):
+        (WebInspector.RenderingFrameTimelineView.prototype._dataGridNodeSelected):
+        New content view type.
+
+        * UserInterface/Views/TimelineIcons.css:
+        (.rendering-frame-icon .icon):
+        (.rendering-frame-icon.large .icon):
+        (.rendering-frame-record .icon):
+        (.runloop-record .icon):
+        (.runloop-icon .icon): Deleted.
+        (.runloop-icon.large .icon): Deleted.
+        Refactoring: runloop prefix changed to rendering-frame.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype._timelineRemoved):
+        Support for timelines without associated views.
+
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WebInspector.TimelineOverviewGraph):
+        Refactoring: RunLoop prefix changed to RenderingFrame.
+
+        * UserInterface/Views/TimelineRecordFrame.css:
+        (.timeline-record-frame):
+        (.timeline-record-frame > .frame):
+        * UserInterface/Views/TimelineRecordFrame.js:
+        (WebInspector.TimelineRecordFrame.createCombinedFrames):
+        Visual tweeks, splitting up large combined frames.
+
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement):
+        Refactoring: runloop prefix changed to rendering-frame.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._timelineRemoved):
+        (WebInspector.TimelineRecordingContentView.prototype._timelineCountChanged):
+        (WebInspector.TimelineRecordingContentView.prototype._timeRangeSelectionChanged):
+        Added support for new details sidebar and timelines without associated views.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel._timelineAdded.set this):
+        Support for timelines without associated views.
+        Refactoring: runloop prefix changed to rendering-frame.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+        New files.
+
 2015-04-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Use semi-transparent map item dividers

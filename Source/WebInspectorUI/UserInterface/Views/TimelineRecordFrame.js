@@ -40,7 +40,8 @@ WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.TimelineRecor
 
 WebInspector.TimelineRecordFrame.StyleClassName = "timeline-record-frame";
 WebInspector.TimelineRecordFrame.SixtyFpsFrameBudget = 0.0166;
-WebInspector.TimelineRecordFrame.MinimumWidthPixels = 6;
+WebInspector.TimelineRecordFrame.MaximumCombinedWidthPixels = 12;
+WebInspector.TimelineRecordFrame.MinimumWidthPixels = 4;
 WebInspector.TimelineRecordFrame.MinimumMarginPixels = 1;
 
 WebInspector.TimelineRecordFrame.createCombinedFrames = function(records, secondsPerPixel, graphDataSource, createFrameCallback)
@@ -73,6 +74,7 @@ WebInspector.TimelineRecordFrame.createCombinedFrames = function(records, second
     if (!visibleRecords.length)
         return;
 
+    var maximumCombinedFrameDuration = secondsPerPixel * WebInspector.TimelineRecordFrame.MaximumCombinedWidthPixels;
     var minimumFrameDuration = secondsPerPixel * WebInspector.TimelineRecordFrame.MinimumWidthPixels;
     var minimumMargin = secondsPerPixel * WebInspector.TimelineRecordFrame.MinimumMarginPixels;
 
@@ -80,14 +82,22 @@ WebInspector.TimelineRecordFrame.createCombinedFrames = function(records, second
     var activeEndTime = NaN;
     var activeRecords = [];
 
+    function createFrameFromActiveRecords()
+    {
+        createFrameCallback(activeRecords);
+        activeRecords = [];
+        activeStartTime = NaN;
+        activeEndTime = NaN;
+    }
+
     for (var record of visibleRecords) {
         // Check if the previous record is far enough away to create the frame.
-        if (!isNaN(activeStartTime) && (activeStartTime + Math.max(activeEndTime - activeStartTime, minimumFrameDuration) + minimumMargin <= record.startTime)) {
-            createFrameCallback(activeRecords);
-            activeRecords = [];
-            activeStartTime = NaN;
-            activeEndTime = NaN;
-        }
+        if (!isNaN(activeStartTime) && (activeStartTime + Math.max(activeEndTime - activeStartTime, minimumFrameDuration) + minimumMargin <= record.startTime))
+            createFrameFromActiveRecords();
+
+        // Check if active records exceeds the maximum combined frame width.
+        if (!isNaN(activeStartTime) && (activeEndTime - activeStartTime) > maximumCombinedFrameDuration)
+            createFrameFromActiveRecords();
 
         // If this is a new frame, peg the start time.
         if (isNaN(activeStartTime))
@@ -169,7 +179,7 @@ WebInspector.TimelineRecordFrame.prototype = {
         var recordLeftPosition = (frameStartTime - graphStartTime) / graphDuration;
         this._updateElementPosition(this._element, recordLeftPosition, "left");
 
-        var recordWidth = ((frameEndTime - graphStartTime) / graphDuration) - recordLeftPosition;
+        var recordWidth = (frameEndTime - frameStartTime) / graphDuration;
         this._updateElementPosition(this._element, recordWidth, "width");
 
         this._updateChildElements(graphDataSource);
@@ -212,6 +222,9 @@ WebInspector.TimelineRecordFrame.prototype = {
             return element;
         }
 
+        if (displayRecord.durationRemainder > 0)
+            frameElement.appendChild(createDurationElement.call(this, displayRecord.durationRemainder));
+
         for (var type in WebInspector.TimelineRecord.Type) {
             var recordType = WebInspector.TimelineRecord.Type[type];
             var duration = displayRecord.durationForRecords(recordType);
@@ -219,9 +232,6 @@ WebInspector.TimelineRecordFrame.prototype = {
                 continue;
             frameElement.appendChild(createDurationElement.call(this, duration, recordType));
         }
-
-        if (displayRecord.durationRemainder > 0)
-            frameElement.appendChild(createDurationElement.call(this, displayRecord.durationRemainder));
 
         // Add "includes-dropped" style class if multiple records are being combined in the frame,
         // and one of those records exceeds the 60 fps frame budget.

@@ -297,6 +297,9 @@
     <None Include="..\UserInterface\CanvasProfileObject.js" />
     <None Include="..\UserInterface\CanvasProfileType.js" />
     <None Include="..\UserInterface\CanvasProfileView.js" />
+    <None Include="..\UserInterface\ChartDetailsSectionLegendRow.js" />
+    <None Include="..\UserInterface\ChartDetailsSectionRow.js" />
+    <None Include="..\UserInterface\ChartDetailsSectionRow.css" />
     <None Include="..\UserInterface\ClusterContentView.css" />
     <None Include="..\UserInterface\ClusterContentView.js" />
     <None Include="..\UserInterface\CodeMirrorAdditions.js" />
@@ -563,6 +566,7 @@
     <None Include="..\UserInterface\Images\NavigationItemBrushAndRuler.svg" />
     <None Include="..\UserInterface\Images\NavigationItemBug.svg" />
     <None Include="..\UserInterface\Images\NavigationItemCurleyBraces.svg" />
+    <None Include="..\UserInterface\Images\NavigationItemDoughnutChart.svg" />
     <None Include="..\UserInterface\Images\NavigationItemFile.svg" />
     <None Include="..\UserInterface\Images\NavigationItemLayers.svg" />
     <None Include="..\UserInterface\Images\NavigationItemLog.svg" />
@@ -686,7 +690,6 @@
     <None Include="..\UserInterface\LayerTreeObserver.js" />
     <None Include="..\UserInterface\LayerTreeDetailsSidebarPanel.css" />
     <None Include="..\UserInterface\LayerTreeDetailsSidebarPanel.js" />
-    <None Include="..\UserInterface\LayoutTimelineDataGrid.js" />
     <None Include="..\UserInterface\LayoutTimelineDataGridNode.js" />
     <None Include="..\UserInterface\LayoutTimelineRecord.js" />
     <None Include="..\UserInterface\Legacy\6.0\InspectorBackendCommands.js" />
@@ -734,6 +737,13 @@
     <None Include="..\UserInterface\RadioButtonNavigationItem.css" />
     <None Include="..\UserInterface\RadioButtonNavigationItem.js" />
     <None Include="..\UserInterface\RemoteObject.js" />
+    <None Include="..\UserInterface\RenderingFrameDetailsSidebarPanel.js" />
+    <None Include="..\UserInterface\RenderingFrameTimeDataGridNode.js" />
+    <None Include="..\UserInterface\RenderingFrameTimelineOverviewGraph.css" />
+    <None Include="..\UserInterface\RenderingFrameTimelineOverviewGraph.js" />
+    <None Include="..\UserInterface\RenderingFrameTimelineRecord.js" />
+    <None Include="..\UserInterface\RenderingFrameTimelineView.css" />
+    <None Include="..\UserInterface\RenderingFrameTimelineView.js" />
     <None Include="..\UserInterface\Resource.js" />
     <None Include="..\UserInterface\ResourceClusterContentView.js" />
     <None Include="..\UserInterface\ResourceCollection.js" />
@@ -750,9 +760,6 @@
     <None Include="..\UserInterface\Revision.js" />
     <None Include="..\UserInterface\RulesStyleDetailsPanel.css" />
     <None Include="..\UserInterface\RulesStyleDetailsPanel.js" />
-    <None Include="..\UserInterface\RunLoopTimelineOverviewGraph.css" />
-    <None Include="..\UserInterface\RunLoopTimelineOverviewGraph.js" />
-    <None Include="..\UserInterface\RunLoopTimelineRecord.js" />
     <None Include="..\UserInterface\RuntimeObserver.js" />
     <None Include="..\UserInterface\ScopeBar.css" />
     <None Include="..\UserInterface\ScopeBar.js" />

@@ -437,6 +437,9 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             timeline = timelineOrEvent.data.timeline;
 
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
+        if (!WebInspector.TimelineManager.shouldShowViewForTimeline(timeline))
+            return;
+
         console.assert(!this._timelineTreeElementMap.has(timeline), timeline);
 
         var timelineTreeElement = new WebInspector.GeneralTreeElement([timeline.iconClassName, WebInspector.TimelineSidebarPanel.LargeIconStyleClass], timeline.displayName, null, timeline);
@@ -456,6 +459,9 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
     {
         var timeline = event.data.timeline;
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
+        if (!WebInspector.TimelineManager.shouldShowViewForTimeline(timeline))
+            return;
+
         console.assert(this._timelineTreeElementMap.has(timeline), timeline);
 
         var timelineTreeElement = this._timelineTreeElementMap.take(timeline);
@@ -482,7 +488,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         var timelineHeight = 36;
         var eventTitleBarOffset = 51;
         var contentElementOffset = 74;
-        var timelineCount = this._displayedRecording.timelines.size;
+        var timelineCount = this._timelineTreeElementMap.size;
         this._timelinesContentContainerElement.style.height = (timelineHeight * timelineCount) + "px";
         this._timelineEventsTitleBarElement.style.top = (timelineHeight * timelineCount + eventTitleBarOffset) + "px";
         this.contentElement.style.top = (timelineHeight * timelineCount + contentElementOffset) + "px";
@@ -614,7 +620,7 @@ WebInspector.TimelineSidebarPanel.StopwatchIconStyleClass = "stopwatch-icon";
 WebInspector.TimelineSidebarPanel.NetworkIconStyleClass = "network-icon";
 WebInspector.TimelineSidebarPanel.ColorsIconStyleClass = "colors-icon";
 WebInspector.TimelineSidebarPanel.ScriptIconStyleClass = "script-icon";
-WebInspector.TimelineSidebarPanel.RunLoopIconStyleClass = "runloop-icon";
+WebInspector.TimelineSidebarPanel.RenderingFrameIconStyleClass = "rendering-frame-icon";
 WebInspector.TimelineSidebarPanel.TimelineRecordingContentViewShowingStyleClass = "timeline-recording-content-view-showing";
 
 WebInspector.TimelineSidebarPanel.ShowingTimelineRecordingContentViewCookieKey = "timeline-sidebar-panel-showing-timeline-recording-content-view";

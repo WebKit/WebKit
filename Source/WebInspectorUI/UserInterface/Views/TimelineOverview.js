@@ -397,6 +397,9 @@ WebInspector.TimelineOverview.prototype = {
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
         console.assert(!this._timelineOverviewGraphsMap.has(timeline), timeline);
 
+        if (!WebInspector.TimelineManager.shouldShowViewForTimeline(timeline))
+            return;
+
         var overviewGraph = new WebInspector.TimelineOverviewGraph(timeline);
         overviewGraph.timelineOverview = this;
         this._timelineOverviewGraphsMap.set(timeline, overviewGraph);
@@ -407,6 +410,9 @@ WebInspector.TimelineOverview.prototype = {
     {
         var timeline = event.data.timeline;
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
+        if (!WebInspector.TimelineManager.shouldShowViewForTimeline(timeline))
+            return;
+
         console.assert(this._timelineOverviewGraphsMap.has(timeline), timeline);
 
         var overviewGraph = this._timelineOverviewGraphsMap.take(timeline);

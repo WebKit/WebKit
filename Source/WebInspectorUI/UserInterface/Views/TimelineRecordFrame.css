@@ -26,7 +26,7 @@
 .timeline-record-frame {
     position: absolute;
     height: 36px;
-    min-width: 6px;
+    min-width: 4px;
 
     overflow: hidden;
 
@@ -37,7 +37,7 @@
     position: absolute;
     z-index: 1;
     bottom: 1px;
-    min-width: 6px;
+    min-width: 4px;
 
     box-sizing: border-box;
 }

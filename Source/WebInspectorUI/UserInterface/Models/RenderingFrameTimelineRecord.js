@@ -23,18 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RunLoopTimelineRecord = class RunLoopTimelineRecord extends WebInspector.TimelineRecord
+WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord extends WebInspector.TimelineRecord
 {
     constructor(startTime, endTime, children)
     {
-        super(WebInspector.TimelineRecord.Type.RunLoop, startTime, endTime);
+        super(WebInspector.TimelineRecord.Type.RenderingFrame, startTime, endTime);
 
         this._children = children || [];
         this._durationByRecordType = new Map;
         this._durationRemainder = NaN;
+        this._frameNumber = WebInspector.RenderingFrameTimelineRecord._nextFrameNumber++;
+    }
+
+    // Static
+
+    static resetFrameNumber()
+    {
+        WebInspector.RenderingFrameTimelineRecord._nextFrameNumber = 1;
     }
 
     // Public
+
+    get frameNumber()
+    {
+        return this._frameNumber;
+    }
 
     get children()
     {
@@ -59,18 +72,30 @@ WebInspector.RunLoopTimelineRecord = class RunLoopTimelineRecord extends WebInsp
             return this._durationByRecordType.get(recordType);
 
         var duration = this._children.reduce(function(previousValue, currentValue) {
-            if (currentValue.type === recordType) {
-                var currentDuration = currentValue.duration;
-                if (currentValue.usesActiveStartTime)
-                    currentDuration -= currentValue.inactiveDuration;
-                return previousValue + currentDuration;
-            }
-            return previousValue;
+            if (currentValue.type !== recordType)
+                return previousValue;
+
+            var currentDuration = currentValue.duration;
+            if (currentValue.usesActiveStartTime)
+                currentDuration -= currentValue.inactiveDuration;
+            return previousValue + currentDuration;
         }, 0);
+
+        // Time spent in layout events which were synchronously triggered from JavaScript must be deducted from the
+        // rendering frame's script duration, to prevent the time from being counted twice.
+        if (recordType === WebInspector.TimelineRecord.Type.Script) {
+            duration -= this._children.reduce(function(previousValue, currentValue) {
+                if (currentValue.type === WebInspector.TimelineRecord.Type.Layout && (currentValue.sourceCodeLocation || currentValue.callFrames))
+                    return previousValue + currentValue.duration;
+                return previousValue;
+            }, 0);
+        }
 
         this._durationByRecordType.set(recordType, duration);
         return duration;
     }
 };
 
-WebInspector.RunLoopTimelineRecord.TypeIdentifier = "runloop-timeline-record";
+WebInspector.RenderingFrameTimelineRecord.TypeIdentifier = "rendering-frame-timeline-record";
+
+WebInspector.RenderingFrameTimelineRecord._nextFrameNumber = 1;

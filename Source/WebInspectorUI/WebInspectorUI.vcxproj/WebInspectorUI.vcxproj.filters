@@ -141,6 +141,15 @@
     <None Include="..\UserInterface\CanvasProfileView.js">
       <Filter>UserInterface</Filter>
     </None>
+    <None Include="..\UserInterface\ChartDetailsSectionLegendRow.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ChartDetailsSectionRow.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ChartDetailsSectionRow.css">
+      <Filter>UserInterface</Filter>
+    </None>
     <None Include="..\UserInterface\ClusterContentView.css">
       <Filter>UserInterface</Filter>
     </None>
@@ -639,9 +648,6 @@
     <None Include="..\UserInterface\LayerTreeDetailsSidebarPanel.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\LayoutTimelineDataGrid.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\LayoutTimelineDataGridNode.js">
       <Filter>UserInterface</Filter>
     </None>
@@ -774,6 +780,27 @@
     <None Include="..\UserInterface\RemoteObject.js">
       <Filter>UserInterface</Filter>
     </None>
+    <None Include="..\UserInterface\RenderingFrameDetailsSidebarPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RenderingFrameTimelineDataGridNode.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RenderingFrameTimelineOverviewGraph.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RenderingFrameTimelineOverviewGraph.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RenderingFrameTimelineRecord.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RenderingFrameTimelineView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RenderingFrameTimelineView.js">
+      <Filter>UserInterface</Filter>
+    </None>
     <None Include="..\UserInterface\Resource.js">
       <Filter>UserInterface</Filter>
     </None>
@@ -820,15 +847,6 @@
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\RulesStyleDetailsPanel.js">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\RunLoopTimelineOverviewGraph.css">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\RunLoopTimelineOverviewGraph.js">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\RunLoopTimelineRecord.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\RuntimeObserver.js">
@@ -1420,6 +1438,9 @@
       <Filter>Images</Filter>
     </None>
     <None Include="..\UserInterface\Images\NavigationItemCurleyBraces.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NavigationItemDoughnutChart.svg">
       <Filter>Images</Filter>
     </None>
     <None Include="..\UserInterface\Images\NavigationItemFile.svg">

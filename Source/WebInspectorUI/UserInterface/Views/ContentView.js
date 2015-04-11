@@ -47,11 +47,14 @@ WebInspector.ContentView = function(representedObject)
             if (timelineType === WebInspector.TimelineRecord.Type.Network)
                 return new WebInspector.NetworkTimelineView(representedObject);
 
-            if (timelineType === WebInspector.TimelineRecord.Type.Layout || timelineType === WebInspector.TimelineRecord.Type.RunLoop)
+            if (timelineType === WebInspector.TimelineRecord.Type.Layout)
                 return new WebInspector.LayoutTimelineView(representedObject);
 
             if (timelineType === WebInspector.TimelineRecord.Type.Script)
                 return new WebInspector.ScriptTimelineView(representedObject);
+
+            if (timelineType === WebInspector.TimelineRecord.Type.RenderingFrame)
+                return new WebInspector.RenderingFrameTimelineView(representedObject);
         }
 
         if (representedObject instanceof WebInspector.DOMStorageObject)

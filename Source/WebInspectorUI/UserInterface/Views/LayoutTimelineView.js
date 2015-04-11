@@ -27,7 +27,7 @@ WebInspector.LayoutTimelineView = function(timeline)
 {
     WebInspector.TimelineView.call(this, timeline);
 
-    console.assert(timeline.type === WebInspector.TimelineRecord.Type.Layout || WebInspector.TimelineRecord.Type.RunLoop);
+    console.assert(timeline.type === WebInspector.TimelineRecord.Type.Layout);
 
     this.navigationSidebarTreeOutline.onselect = this._treeElementSelected.bind(this);
     this.navigationSidebarTreeOutline.ondeselect = this._treeElementDeselected.bind(this);
@@ -185,7 +185,7 @@ WebInspector.LayoutTimelineView.prototype = {
     _layoutTimelineRecordAdded: function(event)
     {
         var layoutTimelineRecord = event.data.record;
-        console.assert(layoutTimelineRecord instanceof WebInspector.LayoutTimelineRecord || layoutTimelineRecord instanceof WebInspector.RunLoopTimelineRecord);
+        console.assert(layoutTimelineRecord instanceof WebInspector.LayoutTimelineRecord);
 
         this._pendingRecords.push(layoutTimelineRecord);
 

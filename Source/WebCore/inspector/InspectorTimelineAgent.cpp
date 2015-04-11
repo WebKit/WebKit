@@ -156,7 +156,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
         if (!m_enabled || m_didStartRecordingRunLoop)
             return;
 
-        pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RunLoop, false, nullptr);
+        pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RenderingFrame, false, nullptr);
         m_didStartRecordingRunLoop = true;
     });
 
@@ -164,7 +164,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
         if (!m_enabled || !m_didStartRecordingRunLoop)
             return;
 
-        didCompleteCurrentRecord(TimelineRecordType::RunLoop);
+        didCompleteCurrentRecord(TimelineRecordType::RenderingFrame);
         m_didStartRecordingRunLoop = false;
     });
 
@@ -172,7 +172,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
     m_frameStopObserver->schedule(currentRunLoop(), kCFRunLoopBeforeWaiting | kCFRunLoopExit);
 
     // Create a runloop record immediately in order to capture the rest of the current runloop.
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RunLoop, false, nullptr);
+    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RenderingFrame, false, nullptr);
     m_didStartRecordingRunLoop = true;
 #endif
 
@@ -598,8 +598,8 @@ static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType ty
         return Inspector::Protocol::Timeline::EventType::Layout;
     case TimelineRecordType::Paint:
         return Inspector::Protocol::Timeline::EventType::Paint;
-    case TimelineRecordType::RunLoop:
-        return Inspector::Protocol::Timeline::EventType::RunLoop;
+    case TimelineRecordType::RenderingFrame:
+        return Inspector::Protocol::Timeline::EventType::RenderingFrame;
     case TimelineRecordType::ScrollLayer:
         return Inspector::Protocol::Timeline::EventType::ScrollLayer;
 

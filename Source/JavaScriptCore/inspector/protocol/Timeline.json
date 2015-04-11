@@ -13,7 +13,7 @@
                 "InvalidateLayout",
                 "Layout",
                 "Paint",
-                "RunLoop",
+                "RenderingFrame",
                 "ScrollLayer",
                 "ParseHTML",
                 "TimerInstall",

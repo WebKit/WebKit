@@ -72,7 +72,7 @@ enum class TimelineRecordType {
     InvalidateLayout,
     Layout,
     Paint,
-    RunLoop,
+    RenderingFrame,
     ScrollLayer,
 
     ParseHTML,

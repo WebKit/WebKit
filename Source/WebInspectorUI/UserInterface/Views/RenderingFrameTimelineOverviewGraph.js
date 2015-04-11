@@ -23,27 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RunLoopTimelineOverviewGraph = function(timeline)
+WebInspector.RenderingFrameTimelineOverviewGraph = function(timeline)
 {
     WebInspector.TimelineOverviewGraph.call(this, timeline);
 
-    this.element.classList.add(WebInspector.RunLoopTimelineOverviewGraph.StyleClassName);
+    this.element.classList.add(WebInspector.RenderingFrameTimelineOverviewGraph.StyleClassName);
 
-    this._runLoopTimeline = timeline;
+    this._renderingFrameTimeline = timeline;
     this._timelineRecordFrames = [];
     this._graphHeightSeconds = NaN;
     this._framesPerSecondDividers = new Map;
 
-    this._runLoopTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._timelineRecordAdded, this);
+    this._renderingFrameTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._timelineRecordAdded, this);
 
     this.reset();
 };
 
-WebInspector.RunLoopTimelineOverviewGraph.StyleClassName = "runloop";
-WebInspector.RunLoopTimelineOverviewGraph.MaximumGraphHeightSeconds = 0.05;
+WebInspector.RenderingFrameTimelineOverviewGraph.StyleClassName = "rendering-frame";
+WebInspector.RenderingFrameTimelineOverviewGraph.MaximumGraphHeightSeconds = 0.05;
+WebInspector.RenderingFrameTimelineOverviewGraph.MinimumGraphHeightSeconds = 0.0185;
 
-WebInspector.RunLoopTimelineOverviewGraph.prototype = {
-    constructor: WebInspector.RunLoopTimelineOverviewGraph,
+WebInspector.RenderingFrameTimelineOverviewGraph.prototype = {
+    constructor: WebInspector.RenderingFrameTimelineOverviewGraph,
     __proto__: WebInspector.TimelineOverviewGraph.prototype,
 
     // Public
@@ -53,12 +54,13 @@ WebInspector.RunLoopTimelineOverviewGraph.prototype = {
         if (!isNaN(this._graphHeightSeconds))
             return this._graphHeightSeconds;
 
-        var maximumFrameDuration = this._runLoopTimeline.records.reduce(function(previousValue, currentValue) {
+        var maximumFrameDuration = this._renderingFrameTimeline.records.reduce(function(previousValue, currentValue) {
             return Math.max(previousValue, currentValue.duration);
         }, 0);
 
         this._graphHeightSeconds = maximumFrameDuration * 1.1;  // Add 10% margin above frames.
-        this._graphHeightSeconds = Math.min(this._graphHeightSeconds, WebInspector.RunLoopTimelineOverviewGraph.MaximumGraphHeightSeconds);
+        this._graphHeightSeconds = Math.min(this._graphHeightSeconds, WebInspector.RenderingFrameTimelineOverviewGraph.MaximumGraphHeightSeconds);
+        this._graphHeightSeconds = Math.max(this._graphHeightSeconds, WebInspector.RenderingFrameTimelineOverviewGraph.MinimumGraphHeightSeconds);
         return this._graphHeightSeconds;
     },
 
@@ -75,8 +77,10 @@ WebInspector.RunLoopTimelineOverviewGraph.prototype = {
     {
         WebInspector.TimelineOverviewGraph.prototype.updateLayout.call(this);
 
-        var secondsPerPixel = this.timelineOverview.secondsPerPixel;
+        if (!this._renderingFrameTimeline.records.length)
+            return;
 
+        var secondsPerPixel = this.timelineOverview.secondsPerPixel;
         var recordFrameIndex = 0;
 
         function createFrame(records)
@@ -93,7 +97,7 @@ WebInspector.RunLoopTimelineOverviewGraph.prototype = {
             ++recordFrameIndex;
         }
 
-        WebInspector.TimelineRecordFrame.createCombinedFrames(this._runLoopTimeline.records, secondsPerPixel, this, createFrame.bind(this));
+        WebInspector.TimelineRecordFrame.createCombinedFrames(this._renderingFrameTimeline.records, secondsPerPixel, this, createFrame.bind(this));
 
         // Remove the remaining unused TimelineRecordFrames.
         for (; recordFrameIndex < this._timelineRecordFrames.length; ++recordFrameIndex) {
@@ -132,7 +136,8 @@ WebInspector.RunLoopTimelineOverviewGraph.prototype = {
                 divider = document.createElement("div");
                 divider.classList.add("divider");
 
-                var label = document.createElement("span");
+                var label = document.createElement("div");
+                label.classList.add("label");
                 label.innerText = framesPerSecond + " fps";
                 divider.appendChild(label);
 
