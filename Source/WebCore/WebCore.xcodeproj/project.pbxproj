@@ -2508,7 +2508,7 @@
 		7C4C96DD1AD4483500365A50 /* JSReadableStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96D91AD4483500365A50 /* JSReadableStream.h */; };
 		7C4C96DE1AD4483500365A50 /* JSReadableStreamReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C96DA1AD4483500365A50 /* JSReadableStreamReader.cpp */; };
 		7C4C96DF1AD4483500365A50 /* JSReadableStreamReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96DB1AD4483500365A50 /* JSReadableStreamReader.h */; };
-		7C4C96E31AD44ABF00365A50 /* LaunchServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96E21AD44ABF00365A50 /* LaunchServicesSPI.h */; };
+		7C4C96E31AD44ABF00365A50 /* LaunchServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96E21AD44ABF00365A50 /* LaunchServicesSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C4EDD741A7B607800198C4D /* FontCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C4EDD731A7B607800198C4D /* FontCocoa.mm */; };
 		7C522D4B15B477E8009B7C95 /* InspectorOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */; };
 		7C5343FC17B74B63004232F0 /* JSMediaQueryListListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5343FA17B74B63004232F0 /* JSMediaQueryListListener.cpp */; };
