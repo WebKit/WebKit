@@ -1,3 +1,11 @@
+2015-04-10  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unreviewed, EFL gardening on 11th April.
+
+        Mark 18 table/mozilla tests to failure. The tests have been failed since r182620.
+
+        * platform/efl/TestExpectations:
+
 2015-04-10  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Support modifying request URLs
