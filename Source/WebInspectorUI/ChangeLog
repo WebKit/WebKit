@@ -1,3 +1,24 @@
+2015-04-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Hide Frames Timeline if the backend doesn't support it
+        https://bugs.webkit.org/show_bug.cgi?id=142800
+
+        Reviewed by Timothy Hatcher.
+
+        Fallback to showing the layout timeline if the backend doesn't support the rendering frames timeline.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.shouldShowViewForTimeline):
+        (WebInspector.TimelineManager.prototype._loadNewRecording):
+        Added iOS 8 compatibility check for RenderingFrame timeline record type.
+
+        * UserInterface/Views/LayoutTimelineDataGridNode.js:
+        (WebInspector.LayoutTimelineDataGridNode.prototype.get data):
+        Restored fields used by Layout timeline view.
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        Updated to be compatible with both RenderingFrame and Layout timeline views.
+
 2015-04-11  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: Debugger sidebar should show errors underneath scripts

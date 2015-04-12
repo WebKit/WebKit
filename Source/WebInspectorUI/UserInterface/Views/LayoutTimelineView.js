@@ -34,7 +34,7 @@ WebInspector.LayoutTimelineView = function(timeline)
     this.navigationSidebarTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
     this.navigationSidebarTreeOutline.element.classList.add(WebInspector.LayoutTimelineView.TreeOutlineStyleClassName);
 
-    var columns = {eventType: {}, initiatorCallFrame: {}, width: {}, height: {}, startTime: {}, duration: {}};
+    var columns = {eventType: {}, initiatorCallFrame: {}, width: {}, height: {}, startTime: {}, totalTime: {}};
 
     columns.eventType.title = WebInspector.UIString("Type");
     columns.eventType.width = "15%";
@@ -61,9 +61,9 @@ WebInspector.LayoutTimelineView = function(timeline)
     columns.startTime.width = "8%";
     columns.startTime.aligned = "right";
 
-    columns.duration.title = WebInspector.UIString("Duration");
-    columns.duration.width = "8%";
-    columns.duration.aligned = "right";
+    columns.totalTime.title = WebInspector.UIString("Duration");
+    columns.totalTime.width = "8%";
+    columns.totalTime.aligned = "right";
 
     for (var column in columns)
         columns[column].sortable = true;

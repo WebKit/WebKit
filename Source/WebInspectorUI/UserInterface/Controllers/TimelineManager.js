@@ -54,6 +54,12 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
     static shouldShowViewForTimeline(timeline)
     {
+        // COMPATIBILITY (iOS 8): TimelineAgent.EventType.RenderingFrame did not exist,
+        // fallback to displaying all other timelines.
+        if (!TimelineAgent.EventType.RenderingFrame)
+            return timeline.type !== WebInspector.TimelineRecord.Type.RenderingFrame;
+
+        // Don't show the Layout timeline view when the RenderingFrame timeline exists.
         return timeline.type !== WebInspector.TimelineRecord.Type.Layout;
     }
 
@@ -429,7 +435,11 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         var identifier = this._nextRecordingIdentifier++;
         var newRecording = new WebInspector.TimelineRecording(identifier, WebInspector.UIString("Timeline Recording %d").format(identifier));
         newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.Network, newRecording));
-        newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.RenderingFrame, newRecording));
+
+        // COMPATIBILITY (iOS 8): TimelineAgent.EventType.RenderingFrame did not exist.
+        if (TimelineAgent.EventType.RenderingFrame)
+            newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.RenderingFrame, newRecording));
+
         newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.Layout, newRecording));
         newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.Script, newRecording));
 

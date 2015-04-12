@@ -55,7 +55,7 @@ WebInspector.LayoutTimelineDataGridNode.prototype = {
 
     get data()
     {
-        return {eventType: this._record.eventType, startTime: this._record.startTime, totalTime: this._record.duration, location: this._record.initiatorCallFrame};
+        return {eventType: this._record.eventType, width: this._record.width, height: this._record.height, area: this._record.width * this._record.height, startTime: this._record.startTime, totalTime: this._record.duration, location: this._record.initiatorCallFrame};
     },
 
     createCellContent: function(columnIdentifier, cell)
