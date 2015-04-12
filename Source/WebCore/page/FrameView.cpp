@@ -1867,25 +1867,12 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
 
 void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
 {
-    if (usesCompositedScrolling()) {
-        // FIXME: respect paintsEntireContents()?
-        IntRect updateRect = visibleContentRect(LegacyIOSDocumentVisibleRect);
-
-        // Make sure to "apply" the scale factor here since we're converting from frame view
-        // coordinates to layer backing coordinates.
-        updateRect.scale(1 / frame().frameScaleFactor());
-
-        ASSERT(renderView());
-        renderView()->layer()->setBackingNeedsRepaintInRect(updateRect, GraphicsLayer::DoNotClipToLayer);
-    }
-
     repaintSlowRepaintObjects();
 
-    if (RenderWidget* frameRenderer = frame().ownerRenderer()) {
-        if (isEnclosedInCompositingLayer()) {
-            LayoutRect rect(frameRenderer->borderLeft() + frameRenderer->paddingLeft(),
-                            frameRenderer->borderTop() + frameRenderer->paddingTop(),
-                            visibleWidth(), visibleHeight());
+    if (!usesCompositedScrolling() && isEnclosedInCompositingLayer()) {
+        if (RenderWidget* frameRenderer = frame().ownerRenderer()) {
+            LayoutRect rect(frameRenderer->borderLeft() + frameRenderer->paddingLeft(), frameRenderer->borderTop() + frameRenderer->paddingTop(),
+                visibleWidth(), visibleHeight());
             frameRenderer->repaintRectangle(rect);
             return;
         }

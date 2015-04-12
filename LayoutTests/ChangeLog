@@ -1,3 +1,35 @@
+2015-04-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Too much repainting on scrolling with fixed backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=143637
+        rdar://problem/20245243
+
+        Reviewed by Darin Adler.
+        
+        Tests with various configurations of iframes and compositing, which dump layer trees with
+        repaint rectangles.
+        
+        Also tiled-scrolling test that exercises the simple case.
+        
+        Put WebKit1-specific results in platform/mac-wk1, since they are very different from
+        WK2 and other platforms, due to WK1-specific layer hosting and repaint behaviors.
+
+        * compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint-expected.txt: Added.
+        * compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html: Added.
+        * compositing/repaint/iframes/compositing-iframe-scroll-repaint-expected.txt: Added.
+        * compositing/repaint/iframes/compositing-iframe-scroll-repaint.html: Added.
+        * compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint-expected.txt: Added.
+        * compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint.html: Added.
+        * compositing/repaint/iframes/resources/compositing-document.html: Added.
+        * compositing/repaint/iframes/resources/compositing-fixed-background-document.html: Added.
+        * compositing/repaint/iframes/resources/fixed-background-document.html: Added.
+        * platform/mac-wk1/compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint-expected.txt: Added.
+        * platform/mac-wk1/compositing/repaint/iframes/compositing-iframe-scroll-repaint-expected.txt: Added.
+        * platform/mac-wk1/compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint-expected.txt: Added.
+        * platform/mac-wk2/compositing/repaint/fixed-background-scroll-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed-background-scroll-repaint-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/fixed-background-scroll-repaint.html: Added.
+
 2015-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement Array.prototype.values
