@@ -175,7 +175,7 @@ PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-sna
 subpixel destination : 0.125px 2.4375px
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0.125px 2.4375px'
 
-subpixel cordinate : 110.125px 25.4375px
+subpixel coordinate : 110.125px 25.4375px
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '110.125px 25.4375px'
 PASS successfullyParsed is true
 

@@ -114,7 +114,7 @@ void WebHitTestResult::Data::encode(IPC::ArgumentEncoder& encoder) const
     encoder << isOverTextInsideFormControlElement;
     encoder << allowsCopy;
     encoder << isDownloadableMedia;
-    encoder << hitTestLocationInViewCooordinates;
+    encoder << hitTestLocationInViewCoordinates;
     encoder << lookupText;
     encoder << dictionaryPopupInfo;
 
@@ -149,7 +149,7 @@ bool WebHitTestResult::Data::decode(IPC::ArgumentDecoder& decoder, WebHitTestRes
         || !decoder.decode(hitTestResultData.isOverTextInsideFormControlElement)
         || !decoder.decode(hitTestResultData.allowsCopy)
         || !decoder.decode(hitTestResultData.isDownloadableMedia)
-        || !decoder.decode(hitTestResultData.hitTestLocationInViewCooordinates)
+        || !decoder.decode(hitTestResultData.hitTestLocationInViewCoordinates)
         || !decoder.decode(hitTestResultData.lookupText)
         || !decoder.decode(hitTestResultData.dictionaryPopupInfo))
         return false;

@@ -65,7 +65,7 @@ public:
         bool isDownloadableMedia;
 
         // FIXME: Added from ActionHitTestResult. All make sense?
-        WebCore::FloatPoint hitTestLocationInViewCooordinates;
+        WebCore::FloatPoint hitTestLocationInViewCoordinates;
         String lookupText;
         RefPtr<SharedMemory> imageSharedMemory;
         uint64_t imageSize;

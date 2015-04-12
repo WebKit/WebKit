@@ -80,6 +80,6 @@ testComputedScrollSnapRule("in/cm coordinate", "coordinate", "2in 5cm 5in 2cm", 
 
 testComputedScrollSnapRule("subpixel along x axis with pixel repeat", "points-x", "100.5px repeat(50.25px)", "100.5px repeat(50.25px)");
 testComputedScrollSnapRule("subpixel destination", "destination", "0.125px 2.4375px", "0.125px 2.4375px");
-testComputedScrollSnapRule("subpixel cordinate", "coordinate", "110.125px 25.4375px", "110.125px 25.4375px");
+testComputedScrollSnapRule("subpixel coordinate", "coordinate", "110.125px 25.4375px", "110.125px 25.4375px");
 
 successfullyParsed = true;

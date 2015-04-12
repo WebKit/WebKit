@@ -4634,7 +4634,7 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(RenderStyle* parentStyle)
 
 LayoutRect RenderBox::flippedClientBoxRect() const
 {
-    // Because of the special coodinate system used for overflow rectangles (not quite logical, not
+    // Because of the special coordinate system used for overflow rectangles (not quite logical, not
     // quite physical), we need to flip the block progression coordinate in vertical-rl and
     // horizontal-bt writing modes. Apart from that, this method does the same as clientBoxRect().
 

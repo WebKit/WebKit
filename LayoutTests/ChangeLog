@@ -1,3 +1,23 @@
+2015-04-12  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Fix trival typos related to the word "coordinate".
+        https://bugs.webkit.org/show_bug.cgi?id=143644
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, no behavior change.
+
+        * css3/scroll-snap/scroll-snap-property-computed-style-expected.txt:
+        * css3/scroll-snap/scroll-snap-property-computed-style.js:
+        * platform/gtk/svg/custom/svg-curve-with-relative-cordinates-expected.png: Removed.
+        * platform/gtk/svg/custom/svg-curve-with-relative-cordinates-expected.txt: Removed.
+        * platform/ios-sim-deprecated/svg/custom/svg-curve-with-relative-cordinates-expected.txt: Removed.
+        * platform/ios-simulator/svg/custom/svg-curve-with-relative-cordinates-expected.txt: Removed.
+        * platform/mac/svg/custom/svg-curve-with-relative-cordinates-expected.png: Removed.
+        * platform/mac/svg/custom/svg-curve-with-relative-cordinates-expected.txt: Removed.
+        * platform/win/svg/custom/svg-curve-with-relative-cordinates-expected.txt: Removed.
+        * svg/custom/svg-curve-with-relative-cordinates.html: Removed.
+
 2015-04-12  Simon Fraser  <simon.fraser@apple.com>
 
         Selects don't scroll at some aspect ratios

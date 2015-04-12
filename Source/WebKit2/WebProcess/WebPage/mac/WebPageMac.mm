@@ -1011,7 +1011,7 @@ static TextIndicatorPresentationTransition textIndicatorTransitionForActionMenu(
     return forImmediateAction ? TextIndicatorPresentationTransition::FadeIn : TextIndicatorPresentationTransition::Bounce;
 }
 
-void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInViewCooordinates, bool forImmediateAction)
+void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInViewCoordinates, bool forImmediateAction)
 {
     layoutIfNeeded();
 
@@ -1021,7 +1021,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
         return;
     }
 
-    IntPoint locationInContentCoordinates = mainFrame.view()->rootViewToContents(roundedIntPoint(locationInViewCooordinates));
+    IntPoint locationInContentCoordinates = mainFrame.view()->rootViewToContents(roundedIntPoint(locationInViewCoordinates));
     HitTestResult hitTestResult = mainFrame.eventHandler().hitTestResultAtPoint(locationInContentCoordinates);
 
     bool actionMenuHitTestPreventsDefault = false;
@@ -1034,7 +1034,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     }
 
     WebHitTestResult::Data actionMenuResult(hitTestResult, !forImmediateAction);
-    actionMenuResult.hitTestLocationInViewCooordinates = locationInViewCooordinates;
+    actionMenuResult.hitTestLocationInViewCoordinates = locationInViewCoordinates;
 
     RefPtr<Range> selectionRange = corePage()->focusController().focusedOrMainFrame().selection().selection().firstRange();
 
@@ -1046,7 +1046,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     }
 
     NSDictionary *options = nil;
-    RefPtr<Range> lookupRange = lookupTextAtLocation(locationInViewCooordinates, &options);
+    RefPtr<Range> lookupRange = lookupTextAtLocation(locationInViewCoordinates, &options);
     actionMenuResult.lookupText = lookupRange ? lookupRange->text() : String();
 
     if (lookupRange) {
@@ -1106,13 +1106,13 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult, forImmediateAction, actionMenuHitTestPreventsDefault, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-PassRefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInViewCooordinates, NSDictionary **options)
+PassRefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInViewCoordinates, NSDictionary **options)
 {
     MainFrame& mainFrame = corePage()->mainFrame();
     if (!mainFrame.view() || !mainFrame.view()->renderView())
         return nullptr;
 
-    IntPoint point = roundedIntPoint(locationInViewCooordinates);
+    IntPoint point = roundedIntPoint(locationInViewCoordinates);
     HitTestResult result = mainFrame.eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point));
     return rangeForDictionaryLookupAtHitTestResult(result, options);
 }
