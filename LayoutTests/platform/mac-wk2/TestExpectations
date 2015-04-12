@@ -266,12 +266,9 @@ editing/spelling/grammar-markers-hidpi.html [ Skip ]
 editing/spelling/inline-spelling-markers.html [ Skip ]
 editing/spelling/inline-spelling-markers-hidpi.html [ Skip ]
 editing/spelling/spellcheck-async-mutation.html [ Skip ]
-editing/spelling/spellcheck-async-remove-frame.html [ Skip ]
 editing/spelling/spellcheck-async.html [ Skip ]
 editing/spelling/spellcheck-queue.html [ Skip ]
-editing/spelling/spellcheck-sequencenum.html [ Skip ]
 editing/spelling/spelling-insert-html.html [ Skip ]
-editing/spelling/spelling-marker-description.html [ Skip ]
 
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################

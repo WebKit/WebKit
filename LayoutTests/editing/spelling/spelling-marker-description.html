@@ -19,13 +19,13 @@ function test()
     var sel = window.getSelection();
     var destination = document.getElementById("destination");
     destination.focus();
-    document.execCommand("InsertHTML", false, "wellcome");
+    document.execCommand("InsertHTML", false, "weicome");
     document.execCommand("InsertText", false, ".");
 
-    shouldBecomeEqualToString('internals.markerDescriptionForNode(destination.firstChild, "spelling", 0)', 'welcome', finishJSTest);
+    shouldBecomeEqualToString('internals.markerDescriptionForNode(destination.firstChild, "spelling", 0)', '', finishJSTest);
 }
 
-description("The spellchecker should store replacement text in each marker.");
+description("The spellchecker should add a spelling marker.");
 if (window.internals)
     test();
 

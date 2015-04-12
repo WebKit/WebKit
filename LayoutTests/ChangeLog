@@ -1,3 +1,18 @@
+2015-04-11  Alexey Proskuryakov  <ap@apple.com>
+
+        editing/spelling/spelling-marker-description.html times out on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=143639
+
+        Reviewed by Darin Adler.
+
+        * editing/spelling/spelling-marker-description-expected.txt:
+        * editing/spelling/spelling-marker-description.html:
+        Changed the test to match reality.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        Removed expectations.
+
 2015-04-11  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Unskip media test on EFL port
