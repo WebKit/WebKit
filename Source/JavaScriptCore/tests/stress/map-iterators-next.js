@@ -23,25 +23,23 @@ var value = keys.next().value;
 if (value !== undefined)
     throw "Error: bad value: " + value;
 
-// TODO: Map.prototype.values() is not exposed.
-//
-// var values = testMap.values();
-// var i = 0;
-// while (true) {
-//     var {done, value} = values.next();
-//     if (done)
-//         break;
-//     i++;
-//     if (testArray.indexOf(value) === -1)
-//         throw "Error: bad value: " + value;
-// }
-//
-// if (testMap.size !== i)
-//     throw "Error: bad value: " + i;
-//
-// var value = values.next().value;
-// if (value !== undefined)
-//     throw "Error: bad value: " + value;
+var values = testMap.values();
+var i = 0;
+while (true) {
+    var {done, value} = values.next();
+    if (done)
+        break;
+    i++;
+    if (testArray.indexOf(value) === -1)
+        throw "Error: bad value: " + value;
+}
+
+if (testMap.size !== i)
+    throw "Error: bad value: " + i;
+
+var value = values.next().value;
+if (value !== undefined)
+    throw "Error: bad value: " + value;
 
 var entries = testMap.entries();
 var i = 0;

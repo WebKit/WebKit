@@ -37,6 +37,24 @@ var value = values.next().value;
 if (value !== undefined)
     throw "Error: bad value: " + value;
 
+var values = testArray.values();
+var i = 0;
+while (true) {
+    var {done, value} = values.next();
+    if (done)
+        break;
+    i++;
+    if (value !== i)
+        throw "Error: bad value: " + value;
+}
+
+if (testArray.length !== i)
+    throw "Error: bad value: " + i;
+
+var value = values.next().value;
+if (value !== undefined)
+    throw "Error: bad value: " + value;
+
 var entries = testArray.entries();
 var i = 0;
 do {

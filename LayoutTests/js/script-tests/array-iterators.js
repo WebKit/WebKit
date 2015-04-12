@@ -2,7 +2,58 @@ description(
 "This test checks the behavior of the iterator methods on Array objects."
 );
 
-shouldBeFalse("'values' in []");
+shouldBeTrue("'values' in []");
+
+var testArray = [1,2,3,4,5,6]
+var values = testArray.values();
+var i = 0;
+for (var value of values) {
+    shouldBe("value", "testArray[i]")
+    i++
+    shouldBe("value", String(i))
+}
+
+shouldBe("testArray.length", String(i))
+
+var testArray = [1,2,3,4,5,6]
+var values = testArray.values();
+var i = 0;
+for (var value of values) {
+    shouldBe("value", "testArray[i]")
+    i++
+    if (i % 2 == 0)
+        testArray[i] *= 2;
+    if (i < 4)
+        testArray.push(testArray.length)
+    if (i == 4)
+        delete testArray[4]
+    if (i == 5)
+        testArray[4] = 5
+}
+shouldBe("testArray.length", String(i))
+
+var o = {};
+for (var i =0; i < 6; i++)
+    o[i]=i+1
+
+
+var values = Array.prototype.values.call(o);
+var i = 0;
+for (var value of values) {
+    fail();
+}
+shouldBe("i", "0")
+
+o.length=6;
+
+var values = Array.prototype.values.call(o);
+var i = 0;
+for (var value of values) {
+    shouldBe("value", "o[i]")
+    i++
+    shouldBe("value", String(i))
+}
+shouldBe("o.length", String(i))
 
 var testArray = [1,2,3,4,5,6]
 var keys = testArray.keys();

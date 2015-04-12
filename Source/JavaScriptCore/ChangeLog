@@ -1,3 +1,26 @@
+2015-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Array.prototype.values
+        https://bugs.webkit.org/show_bug.cgi?id=143633
+
+        Reviewed by Darin Adler.
+
+        Symbol.unscopables is implemented, so we can implement Array.prototype.values
+        without largely breaking the web. The following script passes.
+
+        var array = [];
+        var values = 42;
+        with (array) {
+            assert(values, 42);
+        }
+
+        * runtime/ArrayPrototype.cpp:
+        * tests/stress/array-iterators-next.js:
+        * tests/stress/map-iterators-next.js:
+        * tests/stress/set-iterators-next.js:
+        * tests/stress/values-unscopables.js: Added.
+        (test):
+
 2015-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Run flaky conservative GC related test first before polluting stack and registers
