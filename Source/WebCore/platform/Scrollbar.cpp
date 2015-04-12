@@ -530,7 +530,8 @@ bool Scrollbar::supportsUpdateOnSecondaryThread() const
     // the necessary support within AppKit.
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     return !m_scrollableArea.forceUpdateScrollbarsOnMainThreadForPerformanceTesting()
-        && (m_scrollableArea.hasLayerForVerticalScrollbar() || m_scrollableArea.hasLayerForHorizontalScrollbar());
+        && (m_scrollableArea.hasLayerForVerticalScrollbar() || m_scrollableArea.hasLayerForHorizontalScrollbar())
+        && m_scrollableArea.usesAsyncScrolling();
 #else
     return false;
 #endif

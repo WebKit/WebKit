@@ -1,5 +1,24 @@
 2015-04-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Scrollbars in composited overflow and iframes fail to render on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=143647
+        rdar://problem/20340544
+
+        Reviewed by Darin Adler.
+
+        When adding support for drawing scrollbars on the scrolling thread, we inadvertently
+        disabled scrollbar drawing in other composited, main-thread scrolling configurations.
+        
+        Fix by having Scrollbar::supportsUpdateOnSecondaryThread() only return true if
+        the scrollable area is using async scrolling.
+        
+        Sadly, we can't layout-test this.
+
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::supportsUpdateOnSecondaryThread):
+
+2015-04-12  Simon Fraser  <simon.fraser@apple.com>
+
         Selects don't scroll at some aspect ratios
         https://bugs.webkit.org/show_bug.cgi?id=143649
         rdar://problem/19365694
