@@ -1,3 +1,17 @@
+2015-04-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Use en_US spell checker for tests on Mac instead of Multilingual
+        https://bugs.webkit.org/show_bug.cgi?id=143641
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: (setDefaultsToConsistentValuesForTesting):
+        While at it, override NSUserDictionaryReplacementItems, so that user replacements
+        cannot affect tests.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm: (WTR::InjectedBundle::platformInitialize):
+        Made this more like WebKit1 version.
+
 2015-04-10  Tim Horton  <timothy_horton@apple.com>
 
         Replace setFixedLayoutSizeEnabled: with an enum of layout modes

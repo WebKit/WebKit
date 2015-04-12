@@ -57,9 +57,14 @@ void InjectedBundle::platformInitialize(WKTypeRef)
         // FIXME (<rdar://problem/13396515>): It is too late to set AppleLanguages here, as loaded frameworks localizations cannot be changed.
         // This breaks some accessibility tests on machines with non-English user language.
         @"AppleLanguages": @[ @"en" ],
-        // FIXME: Why does this dictionary not match the one in DumpRenderTree?
+        @"NSPreferredSpellServerLanguage": @"en_US",
+        @"NSUserDictionaryReplacementItems": @[],
         @"NSTestCorrectionDictionary": @{
-            @"notationl": @"notational"
+            @"notationl": @"notational",
+            @"mesage": @"message",
+            @"wouldn": @"would",
+            @"wellcome": @"welcome",
+            @"hellolfworld": @"hello\nworld"
         },
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 101000
         @"AppleSystemFontOSSubversion": @(10),

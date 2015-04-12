@@ -964,6 +964,8 @@ static void setDefaultsToConsistentValuesForTesting()
         WebKitFullScreenEnabledPreferenceKey: @YES,
         @"UseWebKitWebInspector": @YES,
 #if !PLATFORM(IOS)
+        @"NSPreferredSpellServerLanguage": @"en_US",
+        @"NSUserDictionaryReplacementItems": @[],
         @"NSTestCorrectionDictionary": @{
             @"notationl": @"notational",
             @"mesage": @"message",
