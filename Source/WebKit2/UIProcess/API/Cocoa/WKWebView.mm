@@ -1682,6 +1682,31 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_wkView _setIgnoresNonWheelEvents:ignoresNonWheelEvents];
 }
 
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+{
+    return [_wkView draggingEntered:sender];
+}
+
+- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
+{
+    return [_wkView draggingUpdated:sender];
+    
+}
+
+- (void)draggingExited:(id <NSDraggingInfo>)sender
+{
+    [_wkView draggingExited:sender];
+}
+
+- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
+{
+    return [_wkView prepareForDragOperation:sender];
+}
+
+- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+{
+    return [_wkView performDragOperation:sender];
+}
 #endif
 
 @end

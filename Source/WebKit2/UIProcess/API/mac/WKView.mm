@@ -3444,25 +3444,22 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [self _setPluginComplexTextInputState:pluginComplexTextInputState];
 }
 
-- (void)_setDragImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag
+- (void)_dragImageForView:(NSView *)view withImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag
 {
-    IntSize size([image size]);
-    size.scale(1.0 / _data->_page->deviceScaleFactor());
-    [image setSize:size];
-    
     // The call below could release this WKView.
     RetainPtr<WKView> protector(self);
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [self dragImage:image
+    [view dragImage:image
                  at:clientPoint
              offset:NSZeroSize
-              event:(linkDrag) ? [NSApp currentEvent] :_data->_mouseDownEvent
+              event:(linkDrag) ? [NSApp currentEvent] : _data->_mouseDownEvent
          pasteboard:[NSPasteboard pasteboardWithName:NSDragPboard]
              source:self
           slideBack:YES];
 #pragma clang diagnostic pop
+    
 }
 
 static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension)
