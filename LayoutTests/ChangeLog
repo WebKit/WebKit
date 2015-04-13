@@ -1,3 +1,21 @@
+2015-03-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        border-image with 'fill' keyword does not fill the middle area unless the border width is greater than zero.
+        https://bugs.webkit.org/show_bug.cgi?id=142650.
+
+        Reviewed by Simon Fraser.
+
+        Add tests to ensure the middle area of a RenderBox is going to be drawn
+        even if the border width is not greater than zero.
+        
+        * fast/borders/border-image-fill-inline-no-border-expected.html: Added.
+        * fast/borders/border-image-fill-inline-no-border.html: Added.
+        * fast/borders/border-image-fill-no-border-expected.html: Added.
+        * fast/borders/border-image-fill-no-border.html: Added.
+        * fast/borders/resources/button-border-cropped.svg: Added.
+        * fast/borders/resources/button-border.svg: Added.
+        * fast/borders/resources/svg-100x100-intrinsic.svg: Added.
+
 2015-03-31  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r173484): Reducing content of scrollable region does not reset scroll 

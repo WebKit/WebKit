@@ -526,6 +526,8 @@ public:
     bool isFloating() const { return noninherited_flags.isFloating(); }
     bool hasMargin() const { return surround->margin.nonZero(); }
     bool hasBorder() const { return surround->border.hasBorder(); }
+    bool hasBorderFill() const { return surround->border.hasFill(); }
+    bool hasBorderDecoration() const { return hasBorder() || hasBorderFill(); }
     bool hasPadding() const { return surround->padding.nonZero(); }
     bool hasOffset() const { return surround->offset.nonZero(); }
     bool hasMarginBeforeQuirk() const { return marginBefore().hasQuirk(); }

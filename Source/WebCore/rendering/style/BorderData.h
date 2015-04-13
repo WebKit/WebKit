@@ -47,6 +47,11 @@ public:
         return m_left.nonZero(!haveImage) || m_right.nonZero(!haveImage) || m_top.nonZero(!haveImage) || m_bottom.nonZero(!haveImage);
     }
 
+    bool hasFill() const
+    {
+        return m_image.hasImage() && m_image.fill();
+    }
+
     bool hasBorderRadius() const
     {
         if (!m_topLeft.width().isZero())

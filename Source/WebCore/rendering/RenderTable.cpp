@@ -735,7 +735,7 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& p
     paintBackground(paintInfo, rect, bleedAvoidance);
     paintBoxShadow(paintInfo, rect, style(), Inset);
 
-    if (style().hasBorder() && !collapseBorders())
+    if (style().hasBorderDecoration() && !collapseBorders())
         paintBorder(paintInfo, rect, style());
 }
 

@@ -1347,7 +1347,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
 
     // :first-line cannot be used to put borders on a line. Always paint borders with our
     // non-first-line style.
-    if (!parent() || !renderer().style().hasBorder())
+    if (!parent() || !renderer().style().hasBorderDecoration())
         return;
     const NinePieceImage& borderImage = renderer().style().borderImage();
     StyleImage* borderImageSource = borderImage.image();

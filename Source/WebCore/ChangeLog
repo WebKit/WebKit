@@ -1,3 +1,29 @@
+2015-03-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        border-image with 'fill' keyword does not fill the middle area unless the border width is greater than zero.
+        https://bugs.webkit.org/show_bug.cgi?id=142650.
+
+        Reviewed by Simon Fraser.
+
+        The decoration of a RenderBox, a RenderTable or an InlineFlowBox should be
+        drawn if its RenderStyle has a non-zero width border or the border-image
+        has the keyword fill.
+
+        Tests: fast/borders/border-image-fill-inline-no-border.html
+               fast/borders/border-image-fill-no-border.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::hasBoxDecorationStyle):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/style/BorderData.h:
+        (WebCore::BorderData::hasFill):
+        * rendering/style/RenderStyle.h:
+
 2015-03-31  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r173484): Reducing content of scrollable region does not reset scroll 
