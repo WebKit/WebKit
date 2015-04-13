@@ -758,10 +758,6 @@ void CodeBlock::dumpBytecode(
             printLocationAndOp(out, exec, location, it, "enter");
             break;
         }
-        case op_touch_entry: {
-            printLocationAndOp(out, exec, location, it, "touch_entry");
-            break;
-        }
         case op_create_lexical_environment: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
@@ -1957,7 +1953,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             instructions[i + 4].u.operand = op.type;
             instructions[i + 5].u.operand = op.depth;
             if (op.lexicalEnvironment)
-                instructions[i + 6].u.lexicalEnvironment.set(*vm(), ownerExecutable, op.lexicalEnvironment);
+                instructions[i + 6].u.symbolTable.set(*vm(), ownerExecutable, op.lexicalEnvironment->symbolTable());
             break;
         }
 
@@ -1985,7 +1981,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             else if (op.structure)
                 instructions[i + 5].u.structure.set(*vm(), ownerExecutable, op.structure);
             instructions[i + 6].u.pointer = reinterpret_cast<void*>(op.operand);
-
             break;
         }
 
@@ -2001,7 +1996,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
                     ConcurrentJITLocker locker(m_symbolTable->m_lock);
                     SymbolTable::Map::iterator iter = m_symbolTable->find(locker, uid);
                     ASSERT(iter != m_symbolTable->end(locker));
-                    iter->value.prepareToWatch(symbolTable());
+                    iter->value.prepareToWatch();
                     instructions[i + 5].u.watchpointSet = iter->value.watchpointSet();
                 } else
                     instructions[i + 5].u.watchpointSet = nullptr;
@@ -2546,12 +2541,15 @@ void CodeBlock::finalizeUnconditionally()
                     curInstruction[3].u.toThisStatus, ToThisClearedByGC);
                 break;
             case op_resolve_scope: {
-                WriteBarrierBase<JSLexicalEnvironment>& lexicalEnvironment = curInstruction[6].u.lexicalEnvironment;
-                if (!lexicalEnvironment || Heap::isMarked(lexicalEnvironment.get()))
+                // Right now this isn't strictly necessary. Any symbol tables that this will refer to
+                // are for outer functions, and we refer to those functions strongly, and they refer
+                // to the symbol table strongly. But it's nice to be on the safe side.
+                WriteBarrierBase<SymbolTable>& symbolTable = curInstruction[6].u.symbolTable;
+                if (!symbolTable || Heap::isMarked(symbolTable.get()))
                     break;
                 if (Options::verboseOSR())
-                    dataLogF("Clearing dead lexicalEnvironment %p.\n", lexicalEnvironment.get());
-                lexicalEnvironment.clear();
+                    dataLogF("Clearing dead symbolTable %p.\n", symbolTable.get());
+                symbolTable.clear();
                 break;
             }
             case op_get_from_scope:
@@ -3813,6 +3811,18 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
         return String::format("arguments[%3d]", virtualRegister.toArgument());
 
     return "";
+}
+
+ValueProfile* CodeBlock::valueProfileForBytecodeOffset(int bytecodeOffset)
+{
+    ValueProfile* result = binarySearch<ValueProfile, int>(
+        m_valueProfiles, m_valueProfiles.size(), bytecodeOffset,
+        getValueProfileBytecodeOffset<ValueProfile>);
+    ASSERT(result->m_bytecodeOffset != -1);
+    ASSERT(instructions()[bytecodeOffset + opcodeLength(
+        m_vm->interpreter->getOpcodeID(
+            instructions()[bytecodeOffset].u.opcode)) - 1].u.profile == result);
+    return result;
 }
 
 void CodeBlock::validate()

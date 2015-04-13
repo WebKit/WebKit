@@ -335,7 +335,7 @@ protected:
 
     struct NewGlobalVar {
         ScopeOffset offset;
-        VariableWatchpointSet* set;
+        WatchpointSet* set;
     };
     NewGlobalVar addGlobalVar(const Identifier&, ConstantMode);
 

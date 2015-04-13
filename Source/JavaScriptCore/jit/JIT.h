@@ -457,7 +457,6 @@ namespace JSC {
         
         void assertStackPointerOffset();
 
-        void emit_op_touch_entry(Instruction*);
         void emit_op_add(Instruction*);
         void emit_op_bitand(Instruction*);
         void emit_op_bitor(Instruction*);
@@ -640,13 +639,9 @@ namespace JSC {
         void emitGetGlobalVar(uintptr_t operand);
         void emitGetClosureVar(int scope, uintptr_t operand);
         void emitPutGlobalProperty(uintptr_t* operandSlot, int value);
-#if USE(JSVALUE64)
-        void emitNotifyWrite(RegisterID value, RegisterID scratch, VariableWatchpointSet*);
-#else
-        void emitNotifyWrite(RegisterID tag, RegisterID payload, RegisterID scratch, VariableWatchpointSet*);
-#endif
-        void emitPutGlobalVar(uintptr_t operand, int value, VariableWatchpointSet*);
-        void emitPutClosureVar(int scope, uintptr_t operand, int value, VariableWatchpointSet*);
+        void emitNotifyWrite(WatchpointSet*);
+        void emitPutGlobalVar(uintptr_t operand, int value, WatchpointSet*);
+        void emitPutClosureVar(int scope, uintptr_t operand, int value, WatchpointSet*);
 
         void emitInitRegister(int dst);
 

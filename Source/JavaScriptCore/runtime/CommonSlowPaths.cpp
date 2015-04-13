@@ -55,7 +55,6 @@
 #include "ScopedArguments.h"
 #include "StructureRareDataInlines.h"
 #include "TypeProfilerLog.h"
-#include "VariableWatchpointSetInlines.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {
@@ -204,13 +203,6 @@ SLOW_PATH_DECL(slow_path_construct_arityCheck)
         RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), exec);
     }
     RETURN_TWO(0, setupArityCheckData(vm, slotsToAdd));
-}
-
-SLOW_PATH_DECL(slow_path_touch_entry)
-{
-    BEGIN();
-    exec->codeBlock()->symbolTable()->m_functionEnteredOnce.touch("Function (re)entered");
-    END();
 }
 
 SLOW_PATH_DECL(slow_path_create_direct_arguments)

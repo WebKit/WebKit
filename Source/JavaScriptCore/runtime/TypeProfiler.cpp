@@ -28,6 +28,7 @@
 
 #include "InspectorProtocolObjects.h"
 #include "TypeLocation.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 

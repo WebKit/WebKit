@@ -805,14 +805,6 @@ _llint_op_mov:
     dispatch(3)
 
 
-macro notifyWrite(set, valueTag, valuePayload, scratch, slow)
-    loadb VariableWatchpointSet::m_state[set], scratch
-    bieq scratch, IsInvalidated, .done
-    bineq valuePayload, VariableWatchpointSet::m_inferredValue + PayloadOffset[set], slow
-    bineq valueTag, VariableWatchpointSet::m_inferredValue + TagOffset[set], slow
-.done:
-end
-
 _llint_op_not:
     traceExecution()
     loadi 8[PC], t0
@@ -2204,7 +2196,7 @@ macro putGlobalVar()
     loadisFromInstruction(3, t0)
     loadConstantOrVariable(t0, t1, t2)
     loadpFromInstruction(5, t3)
-    notifyWrite(t3, t1, t2, t0, .pDynamic)
+    notifyWrite(t3, .pDynamic)
     loadpFromInstruction(6, t0)
     storei t1, TagOffset[t0]
     storei t2, PayloadOffset[t0]
@@ -2223,7 +2215,7 @@ macro putLocalClosureVar()
     loadConstantOrVariable(t1, t2, t3)
     loadpFromInstruction(5, t4)
     btpz t4, .noVariableWatchpointSet
-    notifyWrite(t4, t2, t3, t1, .pDynamic)
+    notifyWrite(t4, .pDynamic)
 .noVariableWatchpointSet:
     loadisFromInstruction(6, t1)
     storei t2, JSEnvironmentRecord_variables + TagOffset[t0, t1, 8]

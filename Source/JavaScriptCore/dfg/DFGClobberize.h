@@ -311,10 +311,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(SideState);
         return;
 
-    case CreateActivation:
+    case CreateActivation: {
+        SymbolTable* table = graph.symbolTableFor(node->origin.semantic);
+        if (table->singletonScope()->isStillValid())
+            write(Watchpoint_fire);
         read(HeapObjectCount);
         write(HeapObjectCount);
         return;
+    }
         
     case CreateDirectArguments:
     case CreateScopedArguments:
@@ -858,11 +862,17 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case NewStringObject:
     case PhantomNewObject:
     case MaterializeNewObject:
-    case NewFunction:
         read(HeapObjectCount);
         write(HeapObjectCount);
         return;
         
+    case NewFunction:
+        if (node->castOperand<FunctionExecutable*>()->singletonFunction()->isStillValid())
+            write(Watchpoint_fire);
+        read(HeapObjectCount);
+        write(HeapObjectCount);
+        return;
+
     case RegExpExec:
     case RegExpTest:
         read(RegExpState);

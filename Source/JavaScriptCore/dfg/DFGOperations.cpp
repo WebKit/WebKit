@@ -1077,13 +1077,12 @@ char* JIT_OPERATION operationSwitchString(ExecState* exec, size_t tableIndex, JS
     return static_cast<char*>(exec->codeBlock()->stringSwitchJumpTable(tableIndex).ctiForValue(string->value(exec).impl()).executableAddress());
 }
 
-void JIT_OPERATION operationNotifyWrite(ExecState* exec, VariableWatchpointSet* set, EncodedJSValue encodedValue)
+void JIT_OPERATION operationNotifyWrite(ExecState* exec, WatchpointSet* set)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    JSValue value = JSValue::decode(encodedValue);
 
-    set->notifyWrite(vm, value, "Executed NotifyWrite");
+    set->touch("Executed NotifyWrite");
 }
 
 void JIT_OPERATION operationThrowStackOverflowForVarargs(ExecState* exec)

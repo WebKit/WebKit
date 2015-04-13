@@ -105,7 +105,7 @@ namespace JSC { namespace FTL {
     macro(V_JITOperation_EOZJ, functionType(voidType, intPtr, intPtr, int32, int64)) \
     macro(V_JITOperation_EC, functionType(voidType, intPtr, intPtr)) \
     macro(V_JITOperation_ECb, functionType(voidType, intPtr, intPtr)) \
-    macro(V_JITOperation_EVwsJ, functionType(voidType, intPtr, intPtr, int64)) \
+    macro(V_JITOperation_EWs, functionType(voidType, intPtr, intPtr)) \
     macro(V_JITOperation_EZJZZZ, functionType(voidType, intPtr, int32, int64, int32, int32, int32)) \
     macro(V_JITOperation_J, functionType(voidType, int64)) \
     macro(V_JITOperation_Z, functionType(voidType, int32)) \

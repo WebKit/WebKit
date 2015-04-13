@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,13 @@ void ArrayBufferViewWatchpointAdaptor::add(
     codeBlock->vm()->heap.addReference(neuteringWatchpoint, view->buffer());
 }
 
+void InferredValueAdaptor::add(
+    CodeBlock* codeBlock, InferredValue* inferredValue, Watchpoint* watchpoint)
+{
+    codeBlock->addConstant(inferredValue); // For common users, it doesn't really matter if it's weak or not. If references to it go away, we go away, too.
+    inferredValue->add(watchpoint);
+}
+
 DesiredWatchpoints::DesiredWatchpoints() { }
 DesiredWatchpoints::~DesiredWatchpoints() { }
 
@@ -55,6 +62,11 @@ void DesiredWatchpoints::addLazily(WatchpointSet* set)
 void DesiredWatchpoints::addLazily(InlineWatchpointSet& set)
 {
     m_inlineSets.addLazily(&set);
+}
+
+void DesiredWatchpoints::addLazily(InferredValue* inferredValue)
+{
+    m_inferredValues.addLazily(inferredValue);
 }
 
 void DesiredWatchpoints::addLazily(JSArrayBufferView* view)
@@ -74,6 +86,7 @@ void DesiredWatchpoints::reallyAdd(CodeBlock* codeBlock, CommonData& commonData)
 {
     m_sets.reallyAdd(codeBlock, commonData);
     m_inlineSets.reallyAdd(codeBlock, commonData);
+    m_inferredValues.reallyAdd(codeBlock, commonData);
     m_bufferViews.reallyAdd(codeBlock, commonData);
 }
 
@@ -81,6 +94,7 @@ bool DesiredWatchpoints::areStillValid() const
 {
     return m_sets.areStillValid()
         && m_inlineSets.areStillValid()
+        && m_inferredValues.areStillValid()
         && m_bufferViews.areStillValid();
 }
 

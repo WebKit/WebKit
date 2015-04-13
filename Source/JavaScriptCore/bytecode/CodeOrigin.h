@@ -28,7 +28,6 @@
 
 #include "CodeBlockHash.h"
 #include "CodeSpecializationKind.h"
-#include "JSFunction.h"
 #include "ValueRecovery.h"
 #include "WriteBarrier.h"
 #include <wtf/BitVector.h>
@@ -207,17 +206,8 @@ struct InlineCallFrame {
     
     CodeSpecializationKind specializationKind() const { return specializationKindFor(static_cast<Kind>(kind)); }
 
-    JSFunction* calleeConstant() const
-    {
-        if (calleeRecovery.isConstant())
-            return jsCast<JSFunction*>(calleeRecovery.constant());
-        return 0;
-    }
-
-    void visitAggregate(SlotVisitor& visitor)
-    {
-        visitor.append(&executable);
-    }
+    JSFunction* calleeConstant() const;
+    void visitAggregate(SlotVisitor&);
     
     // Get the callee given a machine call frame to which this InlineCallFrame belongs.
     JSFunction* calleeForCallFrame(ExecState*) const;

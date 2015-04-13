@@ -60,14 +60,10 @@ public:
     const static unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
 
     JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, int length, const String& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
+    
+    static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, FunctionExecutable*, JSScope*);
 
-    static JSFunction* create(VM& vm, FunctionExecutable* executable, JSScope* scope)
-    {
-        JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, executable, scope);
-        ASSERT(function->structure()->globalObject());
-        function->finishCreation(vm);
-        return function;
-    }
+    static JSFunction* create(VM&, FunctionExecutable*, JSScope*);
 
     static JSFunction* createBuiltinFunction(VM&, FunctionExecutable*, JSGlobalObject*);
 
@@ -148,6 +144,14 @@ protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
+    static JSFunction* createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope)
+    {
+        JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, executable, scope);
+        ASSERT(function->structure()->globalObject());
+        function->finishCreation(vm);
+        return function;
+    }
+    
     friend class LLIntOffsetsExtractor;
 
     static EncodedJSValue argumentsGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);

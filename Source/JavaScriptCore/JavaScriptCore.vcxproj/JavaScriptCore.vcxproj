@@ -352,7 +352,7 @@
     <ClCompile Include="..\bytecode\UnlinkedCodeBlock.cpp" />
     <ClCompile Include="..\bytecode\UnlinkedInstructionStream.cpp" />
     <ClCompile Include="..\bytecode\ValueRecovery.cpp" />
-    <ClCompile Include="..\bytecode\VariableWatchpointSet.cpp" />
+    <ClCompile Include="..\bytecode\VariableWriteFireDetail.cpp" />
     <ClCompile Include="..\bytecode\VirtualRegister.cpp" />
     <ClCompile Include="..\bytecode\Watchpoint.cpp" />
     <ClCompile Include="..\bytecompiler\BytecodeGenerator.cpp" />
@@ -720,6 +720,7 @@
     <ClCompile Include="..\runtime\GetterSetter.cpp" />
     <ClCompile Include="..\runtime\Identifier.cpp" />
     <ClCompile Include="..\runtime\IndexingType.cpp" />
+    <ClCompile Include="..\runtime\InferredValue.cpp" />
     <ClCompile Include="..\runtime\InitializeThreading.cpp" />
     <ClCompile Include="..\runtime\IntendedStructureChain.cpp" />
     <ClCompile Include="..\runtime\InternalFunction.cpp" />
@@ -1004,7 +1005,7 @@
     <ClInclude Include="..\bytecode\UnlinkedInstructionStream.h" />
     <ClInclude Include="..\bytecode\ValueProfile.h" />
     <ClInclude Include="..\bytecode\ValueRecovery.h" />
-    <ClInclude Include="..\bytecode\VariableWatchpointSet.h" />
+    <ClInclude Include="..\bytecode\VariableWriteFireDetail.h" />
     <ClInclude Include="..\bytecode\VirtualRegister.h" />
     <ClInclude Include="..\bytecode\Watchpoint.h" />
     <ClInclude Include="..\bytecompiler\BytecodeGenerator.h" />
@@ -1507,6 +1508,7 @@
     <ClInclude Include="..\runtime\IndexingHeader.h" />
     <ClInclude Include="..\runtime\IndexingHeaderInlines.h" />
     <ClInclude Include="..\runtime\IndexingType.h" />
+    <ClInclude Include="..\runtime\InferredValue.h" />
     <ClInclude Include="..\runtime\InitializeThreading.h" />
     <ClInclude Include="..\runtime\Int16Array.h" />
     <ClInclude Include="..\runtime\Int32Array.h" />

@@ -33,8 +33,7 @@
 #include "CompilationResult.h"
 #include "DFGPlan.h"
 #include "HandlerInfo.h"
-#include "JSFunction.h"
-#include "Interpreter.h"
+#include "InferredValue.h"
 #include "JITCode.h"
 #include "JSGlobalObject.h"
 #include "RegisterPreservationMode.h"
@@ -653,11 +652,15 @@ public:
     void unlinkCalls();
 
     void clearCode();
+    
+    InferredValue* singletonFunction() { return m_singletonFunction.get(); }
 
 private:
     FunctionExecutable(
         VM&, const SourceCode&, UnlinkedFunctionExecutable*, unsigned firstLine, 
         unsigned lastLine, unsigned startColumn, unsigned endColumn);
+    
+    void finishCreation(VM&);
 
     bool isCompiling()
     {
@@ -671,12 +674,13 @@ private:
     }
 
     friend class ScriptExecutable;
-
+    
     WriteBarrier<UnlinkedFunctionExecutable> m_unlinkedExecutable;
     RefPtr<FunctionCodeBlock> m_codeBlockForCall;
     RefPtr<FunctionCodeBlock> m_codeBlockForConstruct;
     RefPtr<TypeSet> m_returnStatementTypeSet;
     unsigned m_parametersStartOffset;
+    WriteBarrier<InferredValue> m_singletonFunction;
 };
 
 inline void ExecutableBase::clearCodeVirtual(ExecutableBase* executable)

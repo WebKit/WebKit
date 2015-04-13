@@ -32,6 +32,7 @@
 #include "BasicBlockLocation.h"
 #include "MacroAssembler.h"
 #include "Opcode.h"
+#include "SymbolTable.h"
 #include "TypeLocation.h"
 #include "PropertySlot.h"
 #include "SpecialPointer.h"
@@ -46,7 +47,7 @@ namespace JSC {
 class ArrayAllocationProfile;
 class ArrayProfile;
 class ObjectAllocationProfile;
-class VariableWatchpointSet;
+class WatchpointSet;
 struct LLIntCallLinkInfo;
 struct ValueProfile;
 
@@ -106,6 +107,7 @@ struct Instruction {
         Opcode opcode;
         int operand;
         WriteBarrierBase<Structure> structure;
+        WriteBarrierBase<SymbolTable> symbolTable;
         WriteBarrierBase<StructureChain> structureChain;
         WriteBarrierBase<JSCell> jsCell;
         WriteBarrier<Unknown>* variablePointer;
@@ -117,8 +119,7 @@ struct Instruction {
         ArrayProfile* arrayProfile;
         ArrayAllocationProfile* arrayAllocationProfile;
         ObjectAllocationProfile* objectAllocationProfile;
-        VariableWatchpointSet* watchpointSet;
-        WriteBarrierBase<JSLexicalEnvironment> lexicalEnvironment;
+        WatchpointSet* watchpointSet;
         void* pointer;
         bool* predicatePointer;
         ToThisStatus toThisStatus;

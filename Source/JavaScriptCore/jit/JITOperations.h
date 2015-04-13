@@ -37,7 +37,6 @@
 #include "PutKind.h"
 #include "SpillRegistersMode.h"
 #include "StructureStubInfo.h"
-#include "VariableWatchpointSet.h"
 
 
 namespace JSC {
@@ -85,7 +84,7 @@ extern "C" {
     Symtab: SymbolTable*
     V: void
     Vm: VM*
-    Vws: VariableWatchpointSet*
+    Ws: WatchpointSet*
     Z: int32_t
 */
 
@@ -191,7 +190,7 @@ typedef void JIT_OPERATION (*V_JITOperation_EOZJ)(ExecState*, JSObject*, int32_t
 typedef void JIT_OPERATION (*V_JITOperation_EPc)(ExecState*, Instruction*);
 typedef void JIT_OPERATION (*V_JITOperation_EPZJ)(ExecState*, void*, int32_t, EncodedJSValue);
 typedef void JIT_OPERATION (*V_JITOperation_ESsiJJI)(ExecState*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, StringImpl*);
-typedef void JIT_OPERATION (*V_JITOperation_EVwsJ)(ExecState*, VariableWatchpointSet*, EncodedJSValue);
+typedef void JIT_OPERATION (*V_JITOperation_EWs)(ExecState*, WatchpointSet*);
 typedef void JIT_OPERATION (*V_JITOperation_EZ)(ExecState*, int32_t);
 typedef void JIT_OPERATION (*V_JITOperation_EZJ)(ExecState*, int32_t, EncodedJSValue);
 typedef void JIT_OPERATION (*V_JITOperation_EZJZZZ)(ExecState*, int32_t, EncodedJSValue, int32_t, int32_t, int32_t);
@@ -278,6 +277,7 @@ EncodedJSValue JIT_OPERATION operationNewArrayWithProfile(ExecState*, ArrayAlloc
 EncodedJSValue JIT_OPERATION operationNewArrayBufferWithProfile(ExecState*, ArrayAllocationProfile*, const JSValue* values, int32_t size) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationNewArrayWithSizeAndProfile(ExecState*, ArrayAllocationProfile*, EncodedJSValue size) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationNewFunction(ExecState*, JSScope*, JSCell*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationNewFunctionWithInvalidatedReallocationWatchpoint(ExecState*, JSScope*, JSCell*) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationNewObject(ExecState*, Structure*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState*, void*) WTF_INTERNAL;
 void JIT_OPERATION operationHandleWatchdogTimer(ExecState*) WTF_INTERNAL;

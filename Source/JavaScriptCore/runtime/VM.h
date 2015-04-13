@@ -270,6 +270,7 @@ public:
     Strong<Structure> unlinkedFunctionCodeBlockStructure;
     Strong<Structure> propertyTableStructure;
     Strong<Structure> weakMapDataStructure;
+    Strong<Structure> inferredValueStructure;
 #if ENABLE(PROMISES)
     Strong<Structure> promiseDeferredStructure;
     Strong<Structure> promiseReactionStructure;

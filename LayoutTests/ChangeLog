@@ -1,3 +1,20 @@
+2015-04-08  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should detect singleton functions
+        https://bugs.webkit.org/show_bug.cgi?id=143232
+
+        Reviewed by Geoffrey Garen and Michael Saboff.
+
+        * js/regress/create-lots-of-functions-expected.txt: Added.
+        * js/regress/create-lots-of-functions.html: Added.
+        * js/regress/no-inline-constructor-expected.txt: Added.
+        * js/regress/no-inline-constructor.html: Added.
+        * js/regress/script-tests/create-lots-of-functions.js: Added.
+        * js/regress/script-tests/no-inline-constructor.js: Added.
+        * js/regress/script-tests/singleton-scope.js: Added.
+        * js/regress/singleton-scope-expected.txt: Added.
+        * js/regress/singleton-scope.html: Added.
+
 2015-04-13  Simon Fraser  <simon.fraser@apple.com>
 
         Add missing layout test result.

@@ -311,8 +311,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, "^", node->phi()->index());
     if (node->hasExecutionCounter())
         out.print(comma, RawPointer(node->executionCounter()));
-    if (node->hasVariableWatchpointSet())
-        out.print(comma, RawPointer(node->variableWatchpointSet()));
+    if (node->hasWatchpointSet())
+        out.print(comma, RawPointer(node->watchpointSet()));
     if (node->hasStoragePointer())
         out.print(comma, RawPointer(node->storagePointer()));
     if (node->hasObjectMaterializationData())
@@ -1026,6 +1026,8 @@ JSValue Graph::tryGetConstantProperty(const AbstractValue& base, PropertyOffset 
 
 JSValue Graph::tryGetConstantClosureVar(JSValue base, ScopeOffset offset)
 {
+    // This has an awesome concurrency story. See comment for GetGlobalVar in ByteCodeParser.
+    
     if (!base)
         return JSValue();
     
@@ -1034,24 +1036,28 @@ JSValue Graph::tryGetConstantClosureVar(JSValue base, ScopeOffset offset)
         return JSValue();
     
     SymbolTable* symbolTable = activation->symbolTable();
-    ConcurrentJITLocker locker(symbolTable->m_lock);
+    JSValue value;
+    WatchpointSet* set;
+    {
+        ConcurrentJITLocker locker(symbolTable->m_lock);
+        
+        SymbolTableEntry* entry = symbolTable->entryFor(locker, offset);
+        if (!entry)
+            return JSValue();
+        
+        set = entry->watchpointSet();
+        if (!set)
+            return JSValue();
+        
+        if (set->state() != IsWatched)
+            return JSValue();
+        
+        ASSERT(entry->scopeOffset() == offset);
+        value = activation->variableAt(offset).get();
+        if (!value)
+            return JSValue();
+    }
     
-    if (symbolTable->m_functionEnteredOnce.hasBeenInvalidated())
-        return JSValue();
-    
-    SymbolTableEntry* entry = symbolTable->entryFor(locker, offset);
-    if (!entry)
-        return JSValue();
-    
-    VariableWatchpointSet* set = entry->watchpointSet();
-    if (!set)
-        return JSValue();
-    
-    JSValue value = set->inferredValue();
-    if (!value)
-        return JSValue();
-    
-    watchpoints().addLazily(symbolTable->m_functionEnteredOnce);
     watchpoints().addLazily(set);
     
     return value;

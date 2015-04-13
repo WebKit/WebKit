@@ -33,7 +33,6 @@
 #include "ArgList.h"
 #include "JSCJSValue.h"
 #include "JSCell.h"
-#include "JSFunction.h"
 #include "JSObject.h"
 #include "JSStack.h"
 #include "LLIntData.h"
@@ -51,6 +50,7 @@ namespace JSC {
     class ExecutableBase;
     class FunctionExecutable;
     class VM;
+    class JSFunction;
     class JSGlobalObject;
     class LLIntOffsetsExtractor;
     class ProgramExecutable;
@@ -90,45 +90,8 @@ namespace JSC {
         unsigned bytecodeOffset;
         String sourceURL;
         JS_EXPORT_PRIVATE String toString(CallFrame*);
-        String friendlySourceURL() const
-        {
-            String traceLine;
-
-            switch (codeType) {
-            case StackFrameEvalCode:
-            case StackFrameFunctionCode:
-            case StackFrameGlobalCode:
-                if (!sourceURL.isEmpty())
-                    traceLine = sourceURL.impl();
-                break;
-            case StackFrameNativeCode:
-                traceLine = "[native code]";
-                break;
-            }
-            return traceLine.isNull() ? emptyString() : traceLine;
-        }
-        String friendlyFunctionName(CallFrame* callFrame) const
-        {
-            String traceLine;
-            JSObject* stackFrameCallee = callee.get();
-
-            switch (codeType) {
-            case StackFrameEvalCode:
-                traceLine = "eval code";
-                break;
-            case StackFrameNativeCode:
-                if (callee)
-                    traceLine = getCalculatedDisplayName(callFrame, stackFrameCallee).impl();
-                break;
-            case StackFrameFunctionCode:
-                traceLine = getCalculatedDisplayName(callFrame, stackFrameCallee).impl();
-                break;
-            case StackFrameGlobalCode:
-                traceLine = "global code";
-                break;
-            }
-            return traceLine.isNull() ? emptyString() : traceLine;
-        }
+        String friendlySourceURL() const;
+        String friendlyFunctionName(CallFrame*) const;
         JS_EXPORT_PRIVATE void computeLineAndColumn(unsigned& line, unsigned& column);
 
     private:

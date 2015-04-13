@@ -57,6 +57,10 @@ class JSSegmentedVariableObject : public JSSymbolTableObject {
 public:
     typedef JSSymbolTableObject Base;
 
+    // This is not thread-safe, since m_variables is a segmented vector, and its spine can resize with
+    // malloc/free if new variables - unrelated to the one you are accessing - are added. You can get
+    // around this by grabbing m_lock, or finding some other way to get to the variable pointer (global
+    // variable access bytecode instructions will have a direct pointer already).
     WriteBarrier<Unknown>& variableAt(ScopeOffset offset) { return m_variables[offset.offset()]; }
     
     // This is a slow method call, which searches the register bank to find the index
@@ -86,7 +90,7 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        m_symbolTable.set(vm, this, SymbolTable::create(vm));
+        setSymbolTable(vm, SymbolTable::create(vm));
     }
     
     SegmentedVector<WriteBarrier<Unknown>, 16> m_variables;

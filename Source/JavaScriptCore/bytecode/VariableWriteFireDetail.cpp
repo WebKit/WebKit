@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "VariableWatchpointSet.h"
+#include "VariableWriteFireDetail.h"
 
 #include "JSCInlines.h"
 
@@ -35,14 +35,9 @@ void VariableWriteFireDetail::dump(PrintStream& out) const
     out.print("Write to ", m_name, " in ", JSValue(m_object));
 }
 
-void VariableWatchpointSet::notifyWrite(VM& vm, JSValue value, JSObject* baseObject, const PropertyName& propertyName)
+void VariableWriteFireDetail::touch(WatchpointSet* set, JSObject* object, const PropertyName& name)
 {
-    notifyWrite(vm, value, VariableWriteFireDetail(baseObject, propertyName));
-}
-
-void VariableWatchpointSet::notifyWrite(VM& vm, JSValue value, const char* reason)
-{
-    notifyWrite(vm, value, StringFireDetail(reason));
+    set->touch(VariableWriteFireDetail(object, name));
 }
 
 } // namespace JSC

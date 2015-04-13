@@ -40,7 +40,7 @@ void JSEnvironmentRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSEnvironmentRecord* thisObject = jsCast<JSEnvironmentRecord*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.appendValues(thisObject->variables(), thisObject->m_symbolTable->scopeSize());
+    visitor.appendValues(thisObject->variables(), thisObject->symbolTable()->scopeSize());
 }
 
 } // namespace JSC

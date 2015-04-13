@@ -414,6 +414,12 @@ FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source,
     m_typeProfilingEndOffset = unlinkedExecutable->typeProfilingEndOffset();
 }
 
+void FunctionExecutable::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    m_singletonFunction.set(vm, this, InferredValue::create(vm));
+}
+
 void FunctionExecutable::destroy(JSCell* cell)
 {
     static_cast<FunctionExecutable*>(cell)->FunctionExecutable::~FunctionExecutable();
@@ -567,6 +573,7 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     if (thisObject->m_codeBlockForConstruct)
         thisObject->m_codeBlockForConstruct->visitAggregate(visitor);
     visitor.append(&thisObject->m_unlinkedExecutable);
+    visitor.append(&thisObject->m_singletonFunction);
 }
 
 SymbolTable* FunctionExecutable::symbolTable(CodeSpecializationKind kind)

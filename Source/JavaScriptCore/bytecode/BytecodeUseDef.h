@@ -50,7 +50,6 @@ void computeUsesForBytecodeOffset(
     case op_new_object:
     case op_enter:
     case op_catch:
-    case op_touch_entry:
     case op_profile_control_flow:
     case op_create_direct_arguments:
     case op_create_out_of_band_arguments:
@@ -278,7 +277,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_put_by_index:
     case op_profile_type:
     case op_profile_control_flow:
-    case op_touch_entry:
     case op_put_to_arguments:
 #define LLINT_HELPER_OPCODES(opcode, length) case opcode:
         FOR_EACH_LLINT_OPCODE_EXTENSION(LLINT_HELPER_OPCODES);

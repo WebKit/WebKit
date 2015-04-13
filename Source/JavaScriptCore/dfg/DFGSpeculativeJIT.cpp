@@ -4367,8 +4367,13 @@ void SpeculativeJIT::compileNewFunction(Node* node)
     SpeculateCellOperand scope(this, node->child1());
     GPRReg scopeGPR = scope.gpr();
     flushRegisters();
-    callOperation(
-        operationNewFunction, resultGPR, scopeGPR, node->castOperand<FunctionExecutable*>());
+    FunctionExecutable* executable = node->castOperand<FunctionExecutable*>();
+    J_JITOperation_EJscC function;
+    if (executable->singletonFunction()->isStillValid())
+        function = operationNewFunction;
+    else
+        function = operationNewFunctionWithInvalidatedReallocationWatchpoint;
+    callOperation(function, resultGPR, scopeGPR, executable);
     cellResult(resultGPR, node);
 }
 
@@ -4436,18 +4441,30 @@ void SpeculativeJIT::compileForwardVarargs(Node* node)
 
 void SpeculativeJIT::compileCreateActivation(Node* node)
 {
-    SpeculateCellOperand scope(this, node->child1());
-    GPRTemporary result(this);
-    GPRTemporary scratch1(this);
-    GPRTemporary scratch2(this);
-    GPRReg scopeGPR = scope.gpr();
-    GPRReg resultGPR = result.gpr();
-    GPRReg scratch1GPR = scratch1.gpr();
-    GPRReg scratch2GPR = scratch2.gpr();
-        
     SymbolTable* table = m_jit.graph().symbolTableFor(node->origin.semantic);
     Structure* structure = m_jit.graph().globalObjectFor(
         node->origin.semantic)->activationStructure();
+        
+    SpeculateCellOperand scope(this, node->child1());
+    GPRReg scopeGPR = scope.gpr();
+    
+    if (table->singletonScope()->isStillValid()) {
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        
+        flushRegisters();
+        
+        callOperation(operationCreateActivationDirect, resultGPR, structure, scopeGPR, table);
+        cellResult(resultGPR, node);
+        return;
+    }
+    
+    GPRTemporary result(this);
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+    GPRReg resultGPR = result.gpr();
+    GPRReg scratch1GPR = scratch1.gpr();
+    GPRReg scratch2GPR = scratch2.gpr();
         
     JITCompiler::JumpList slowPath;
     emitAllocateJSObjectWithKnownSize<JSLexicalEnvironment>(
@@ -4712,6 +4729,21 @@ void SpeculativeJIT::compileCreateClonedArguments(Node* node)
     appendCallWithExceptionCheckSetResult(operationCreateClonedArguments, resultGPR);
     
     cellResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileNotifyWrite(Node* node)
+{
+    WatchpointSet* set = node->watchpointSet();
+    
+    JITCompiler::Jump slowCase = m_jit.branch8(
+        JITCompiler::NotEqual,
+        JITCompiler::AbsoluteAddress(set->addressOfState()),
+        TrustedImm32(IsInvalidated));
+    
+    addSlowPathGenerator(
+        slowPathCall(slowCase, this, operationNotifyWrite, NoResult, set));
+    
+    noResult(node);
 }
 
 bool SpeculativeJIT::compileRegExpExec(Node* node)

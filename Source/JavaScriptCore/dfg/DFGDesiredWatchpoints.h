@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "CodeOrigin.h"
 #include "DFGCommonData.h"
+#include "InferredValue.h"
 #include "JSArrayBufferView.h"
 #include "Watchpoint.h"
 #include <wtf/HashMap.h>
@@ -48,6 +49,14 @@ struct GenericSetAdaptor {
         return set->add(watchpoint);
     }
     static bool hasBeenInvalidated(T* set) { return set->hasBeenInvalidated(); }
+};
+
+struct InferredValueAdaptor {
+    static void add(CodeBlock*, InferredValue*, Watchpoint*);
+    static bool hasBeenInvalidated(InferredValue* inferredValue)
+    {
+        return inferredValue->hasBeenInvalidated();
+    }
 };
 
 struct ArrayBufferViewWatchpointAdaptor {
@@ -119,6 +128,7 @@ public:
     
     void addLazily(WatchpointSet*);
     void addLazily(InlineWatchpointSet&);
+    void addLazily(InferredValue*);
     void addLazily(JSArrayBufferView*);
     
     bool consider(Structure*);
@@ -135,6 +145,10 @@ public:
     {
         return m_inlineSets.isWatched(&set);
     }
+    bool isWatched(InferredValue* inferredValue)
+    {
+        return m_inferredValues.isWatched(inferredValue);
+    }
     bool isWatched(JSArrayBufferView* view)
     {
         return m_bufferViews.isWatched(view);
@@ -143,6 +157,7 @@ public:
 private:
     GenericDesiredWatchpoints<WatchpointSet> m_sets;
     GenericDesiredWatchpoints<InlineWatchpointSet> m_inlineSets;
+    GenericDesiredWatchpoints<InferredValue, InferredValueAdaptor> m_inferredValues;
     GenericDesiredWatchpoints<JSArrayBufferView, ArrayBufferViewWatchpointAdaptor> m_bufferViews;
 };
 

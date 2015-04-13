@@ -466,9 +466,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         }
     }
     
-    if (m_symbolTable->scopeSize())
-        emitOpcode(op_touch_entry);
-
     if (isConstructor()) {
         if (constructorKind() == ConstructorKind::Derived) {
             m_newTargetRegister = addVar();

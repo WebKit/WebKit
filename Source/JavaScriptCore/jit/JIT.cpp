@@ -105,6 +105,14 @@ void JIT::emitEnterOptimizationCheck()
 }
 #endif
 
+void JIT::emitNotifyWrite(WatchpointSet* set)
+{
+    if (!set || set->state() == IsInvalidated)
+        return;
+    
+    addSlowCase(branch8(NotEqual, AbsoluteAddress(set->addressOfState()), TrustedImm32(IsInvalidated)));
+}
+
 void JIT::assertStackPointerOffset()
 {
     if (ASSERT_DISABLED)
@@ -189,7 +197,6 @@ void JIT::privateCompileMainPass()
         DEFINE_SLOW_OP(is_object_or_null)
         DEFINE_SLOW_OP(typeof)
 
-        DEFINE_OP(op_touch_entry)
         DEFINE_OP(op_add)
         DEFINE_OP(op_bitand)
         DEFINE_OP(op_bitor)

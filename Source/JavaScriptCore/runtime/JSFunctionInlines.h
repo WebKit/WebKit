@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,13 @@
 #include "JSFunction.h"
 
 namespace JSC {
+
+inline JSFunction* JSFunction::createWithInvalidatedReallocationWatchpoint(
+    VM& vm, FunctionExecutable* executable, JSScope* scope)
+{
+    ASSERT(executable->singletonFunction()->hasBeenInvalidated());
+    return createImpl(vm, executable, scope);
+}
 
 inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* scope)
     : Base(vm, scope, scope->globalObject()->functionStructure())

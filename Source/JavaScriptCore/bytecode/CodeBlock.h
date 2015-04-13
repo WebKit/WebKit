@@ -386,17 +386,7 @@ public:
 
     unsigned numberOfValueProfiles() { return m_valueProfiles.size(); }
     ValueProfile* valueProfile(int index) { return &m_valueProfiles[index]; }
-    ValueProfile* valueProfileForBytecodeOffset(int bytecodeOffset)
-    {
-        ValueProfile* result = binarySearch<ValueProfile, int>(
-            m_valueProfiles, m_valueProfiles.size(), bytecodeOffset,
-            getValueProfileBytecodeOffset<ValueProfile>);
-        ASSERT(result->m_bytecodeOffset != -1);
-        ASSERT(instructions()[bytecodeOffset + opcodeLength(
-            m_vm->interpreter->getOpcodeID(
-                instructions()[bytecodeOffset].u.opcode)) - 1].u.profile == result);
-        return result;
-    }
+    ValueProfile* valueProfileForBytecodeOffset(int bytecodeOffset);
     SpeculatedType valueProfilePredictionForBytecodeOffset(const ConcurrentJITLocker& locker, int bytecodeOffset)
     {
         return valueProfileForBytecodeOffset(bytecodeOffset)->computeUpdatedPrediction(locker);

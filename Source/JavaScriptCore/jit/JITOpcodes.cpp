@@ -879,15 +879,6 @@ void JIT::emitSlow_op_to_number(Instruction* currentInstruction, Vector<SlowCase
 
 #endif // USE(JSVALUE64)
 
-void JIT::emit_op_touch_entry(Instruction* currentInstruction)
-{
-    if (m_codeBlock->symbolTable()->m_functionEnteredOnce.hasBeenInvalidated())
-        return;
-    
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_touch_entry);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_loop_hint(Instruction*)
 {
     // Emit the JIT optimization check: 

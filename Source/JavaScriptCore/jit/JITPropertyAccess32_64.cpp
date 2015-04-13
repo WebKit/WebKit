@@ -750,36 +750,19 @@ void JIT::emitPutGlobalProperty(uintptr_t* operandSlot, int value)
     store32(regT2, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
 }
 
-void JIT::emitNotifyWrite(RegisterID tag, RegisterID payload, RegisterID scratch, VariableWatchpointSet* set)
-{
-    if (!set || set->state() == IsInvalidated)
-        return;
-    
-    load8(set->addressOfState(), scratch);
-    Jump isDone = branch32(Equal, scratch, TrustedImm32(IsInvalidated));
-
-    JumpList notifySlow = branch32(
-        NotEqual, AbsoluteAddress(set->addressOfInferredValue()->payloadPointer()), payload);
-    notifySlow.append(branch32(
-        NotEqual, AbsoluteAddress(set->addressOfInferredValue()->tagPointer()), tag));
-    addSlowCase(notifySlow);
-
-    isDone.link(this);
-}
-
-void JIT::emitPutGlobalVar(uintptr_t operand, int value, VariableWatchpointSet* set)
+void JIT::emitPutGlobalVar(uintptr_t operand, int value, WatchpointSet* set)
 {
     emitLoad(value, regT1, regT0);
-    emitNotifyWrite(regT1, regT0, regT2, set);
+    emitNotifyWrite(set);
     store32(regT1, reinterpret_cast<char*>(operand) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     store32(regT0, reinterpret_cast<char*>(operand) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
 }
 
-void JIT::emitPutClosureVar(int scope, uintptr_t operand, int value, VariableWatchpointSet* set)
+void JIT::emitPutClosureVar(int scope, uintptr_t operand, int value, WatchpointSet* set)
 {
     emitLoad(value, regT3, regT2);
     emitLoad(scope, regT1, regT0);
-    emitNotifyWrite(regT3, regT2, regT4, set);
+    emitNotifyWrite(set);
     store32(regT3, Address(regT0, JSEnvironmentRecord::offsetOfVariables() + operand * sizeof(Register) + TagOffset));
     store32(regT2, Address(regT0, JSEnvironmentRecord::offsetOfVariables() + operand * sizeof(Register) + PayloadOffset));
 }
@@ -826,7 +809,7 @@ void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowC
         linkCount++;
     if ((resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == LocalClosureVar)
         && currentInstruction[5].u.watchpointSet->state() != IsInvalidated)
-        linkCount += 2;
+        linkCount++;
     if (!linkCount)
         return;
     while (linkCount--)

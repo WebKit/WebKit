@@ -1,3 +1,257 @@
+2015-04-08  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should detect singleton functions
+        https://bugs.webkit.org/show_bug.cgi?id=143232
+
+        Reviewed by Geoffrey Garen.
+        
+        This started out as an attempt to make constructors faster by detecting when a constructor is a
+        singleton. The idea is that each FunctionExecutable has a VariableWatchpointSet - a watchpoint
+        along with an inferred value - that detects if only one JSFunction has been allocated for that
+        executable, and if so, what that JSFunction is. Then, inside the code for the FunctionExecutable,
+        if the watchpoint set has an inferred value (i.e. it's been initialized and it is still valid),
+        we can constant-fold GetCallee.
+        
+        Unfortunately, constructors don't use GetCallee anymore, so that didn't pan out. But in the
+        process I realized a bunch of things:
+        
+        - This allows us to completely eliminate the GetCallee/GetScope sequence that we still sometimes
+          had even in code where our singleton-closure detection worked. That's because singleton-closure
+          inference worked at the op_resolve_scope, and that op_resolve_scope still needed to keep alive
+          the incoming scope in case we OSR exit. But by constant-folding GetCallee, that sequence
+          disappears. OSR exit can rematerialize the callee or the scope by just knowing their constant
+          values.
+          
+        - Singleton detection should be a reusable thing. So, I got rid of VariableWatchpointSet and
+          created InferredValue. InferredValue is a cell, so it can handle its own GC magic.
+          FunctionExecutable uses an InferredValue to tell you about singleton JSFunctions.
+        
+        - The old singleton-scope detection in op_resolve_scope is better abstracted as a SymbolTable
+          detecting a singleton JSSymbolTableObject. So, SymbolTable uses an InferredValue to tell you
+          about singleton JSSymbolTableObjects. It's curious that we want to have singleton detection in
+          SymbolTable if we already have it in FunctionExecutable. This comes into play in two ways.
+          First, it means that the DFG can realize sooner that a resolve_scope resolves to a constant
+          scope. Ths saves compile times and it allows prediction propagation to benefit from the
+          constant folding. Second, it means that we will detect a singleton scope even if it is
+          referenced from a non-singleton scope that is nearer to us in the scope chain. This refactoring
+          allows us to eliminate the function reentry watchpoint.
+        
+        - This allows us to use a normal WatchpointSet, instead of a VariableWatchpointSet, for inferring
+          constant values in scopes. Previously when the DFG inferred that a closure variable was
+          constant, it wouldn't know which closure that variable was in and so it couldn't just load that
+          value. But now we are first inferring that the function is a singleton, which means that we
+          know exactly what scope it points to, and we can load the value from the scope. Using a
+          WatchpointSet instead of a VariableWatchpointSet saves some memory and simplifies a bunch of
+          code. This also means that now, the only user of VariableWatchpointSet is FunctionExecutable.
+          I've tweaked the code of VariableWatchpointSet to reduce its power to just be what
+          FunctionExecutable wants.
+        
+        This also has the effect of simplifying the implementation of block scoping. Prior to this
+        change, block scoping would have needed to have some story for the function reentry watchpoint on
+        any nested symbol table. That's totally weird to think about; it's not really a function reentry
+        but a scope reentry. Now we don't have to think about this. Constant inference on nested scopes
+        will "just work": if we prove that we know the constant value of the scope then the machinery
+        kicks in, otherwise it doesn't.
+        
+        This is a small Octane and AsmBench speed-up. AsmBench sees 1% while Octane sees sub-1%.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::valueProfileForBytecodeOffset):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::valueProfileForBytecodeOffset): Deleted.
+        * bytecode/CodeOrigin.cpp:
+        (JSC::InlineCallFrame::calleeConstant):
+        (JSC::InlineCallFrame::visitAggregate):
+        * bytecode/CodeOrigin.h:
+        (JSC::InlineCallFrame::calleeConstant): Deleted.
+        (JSC::InlineCallFrame::visitAggregate): Deleted.
+        * bytecode/Instruction.h:
+        * bytecode/VariableWatchpointSet.cpp: Removed.
+        * bytecode/VariableWatchpointSet.h: Removed.
+        * bytecode/VariableWatchpointSetInlines.h: Removed.
+        * bytecode/VariableWriteFireDetail.cpp: Added.
+        (JSC::VariableWriteFireDetail::dump):
+        (JSC::VariableWriteFireDetail::touch):
+        * bytecode/VariableWriteFireDetail.h: Added.
+        (JSC::VariableWriteFireDetail::VariableWriteFireDetail):
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::stateOnJSThread):
+        (JSC::WatchpointSet::startWatching):
+        (JSC::WatchpointSet::fireAll):
+        (JSC::WatchpointSet::touch):
+        (JSC::WatchpointSet::invalidate):
+        (JSC::InlineWatchpointSet::stateOnJSThread):
+        (JSC::InlineWatchpointSet::state):
+        (JSC::InlineWatchpointSet::hasBeenInvalidated):
+        (JSC::InlineWatchpointSet::invalidate):
+        (JSC::InlineWatchpointSet::touch):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::getScope): Deleted.
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::InferredValueAdaptor::add):
+        (JSC::DFG::DesiredWatchpoints::addLazily):
+        (JSC::DFG::DesiredWatchpoints::reallyAdd):
+        (JSC::DFG::DesiredWatchpoints::areStillValid):
+        * dfg/DFGDesiredWatchpoints.h:
+        (JSC::DFG::InferredValueAdaptor::hasBeenInvalidated):
+        (JSC::DFG::DesiredWatchpoints::isWatched):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::tryGetConstantClosureVar):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasWatchpointSet):
+        (JSC::DFG::Node::watchpointSet):
+        (JSC::DFG::Node::hasVariableWatchpointSet): Deleted.
+        (JSC::DFG::Node::variableWatchpointSet): Deleted.
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+        (JSC::DFG::SpeculativeJIT::compileCreateActivation):
+        (JSC::DFG::SpeculativeJIT::compileNotifyWrite):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCreateActivation):
+        (JSC::FTL::LowerDFGToLLVM::compileNewFunction):
+        (JSC::FTL::LowerDFGToLLVM::compileNotifyWrite):
+        * interpreter/Interpreter.cpp:
+        (JSC::StackFrame::friendlySourceURL):
+        (JSC::StackFrame::friendlyFunctionName):
+        * interpreter/Interpreter.h:
+        (JSC::StackFrame::friendlySourceURL): Deleted.
+        (JSC::StackFrame::friendlyFunctionName): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::emitNotifyWrite):
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_touch_entry): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitPutGlobalVar):
+        (JSC::JIT::emitPutClosureVar):
+        (JSC::JIT::emitNotifyWrite): Deleted.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitPutGlobalVar):
+        (JSC::JIT::emitPutClosureVar):
+        (JSC::JIT::emitNotifyWrite): Deleted.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL): Deleted.
+        * runtime/CommonSlowPaths.h:
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::finishCreation):
+        (JSC::FunctionExecutable::visitChildren):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::singletonFunction):
+        * runtime/InferredValue.cpp: Added.
+        (JSC::InferredValue::create):
+        (JSC::InferredValue::destroy):
+        (JSC::InferredValue::createStructure):
+        (JSC::InferredValue::visitChildren):
+        (JSC::InferredValue::InferredValue):
+        (JSC::InferredValue::~InferredValue):
+        (JSC::InferredValue::notifyWriteSlow):
+        (JSC::InferredValue::ValueCleanup::ValueCleanup):
+        (JSC::InferredValue::ValueCleanup::~ValueCleanup):
+        (JSC::InferredValue::ValueCleanup::finalizeUnconditionally):
+        * runtime/InferredValue.h: Added.
+        (JSC::InferredValue::inferredValue):
+        (JSC::InferredValue::state):
+        (JSC::InferredValue::isStillValid):
+        (JSC::InferredValue::hasBeenInvalidated):
+        (JSC::InferredValue::add):
+        (JSC::InferredValue::notifyWrite):
+        (JSC::InferredValue::invalidate):
+        * runtime/JSEnvironmentRecord.cpp:
+        (JSC::JSEnvironmentRecord::visitChildren):
+        * runtime/JSEnvironmentRecord.h:
+        (JSC::JSEnvironmentRecord::isValid):
+        (JSC::JSEnvironmentRecord::finishCreation):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::createWithInvalidatedReallocationWatchpoint):
+        (JSC::JSFunction::createImpl):
+        (JSC::JSFunction::create): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::addGlobalVar):
+        (JSC::JSGlobalObject::addFunction):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::symbolTablePut):
+        * runtime/JSScope.h:
+        (JSC::ResolveOp::ResolveOp):
+        * runtime/JSSegmentedVariableObject.h:
+        (JSC::JSSegmentedVariableObject::finishCreation):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::JSSymbolTableObject::JSSymbolTableObject):
+        (JSC::JSSymbolTableObject::setSymbolTable):
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutWithAttributes):
+        * runtime/PutPropertySlot.h:
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTableEntry::prepareToWatch):
+        (JSC::SymbolTable::SymbolTable):
+        (JSC::SymbolTable::finishCreation):
+        (JSC::SymbolTable::visitChildren):
+        (JSC::SymbolTableEntry::inferredValue): Deleted.
+        (JSC::SymbolTableEntry::notifyWriteSlow): Deleted.
+        (JSC::SymbolTable::WatchpointCleanup::WatchpointCleanup): Deleted.
+        (JSC::SymbolTable::WatchpointCleanup::~WatchpointCleanup): Deleted.
+        (JSC::SymbolTable::WatchpointCleanup::finalizeUnconditionally): Deleted.
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTableEntry::disableWatching):
+        (JSC::SymbolTableEntry::watchpointSet):
+        (JSC::SymbolTable::singletonScope):
+        (JSC::SymbolTableEntry::notifyWrite): Deleted.
+        * runtime/TypeProfiler.cpp:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * tests/stress/infer-uninitialized-closure-var.js: Added.
+        (foo.f):
+        (foo):
+        * tests/stress/singleton-scope-then-overwrite.js: Added.
+        (foo.f):
+        (foo):
+        * tests/stress/singleton-scope-then-realloc-and-overwrite.js: Added.
+        (foo):
+        * tests/stress/singleton-scope-then-realloc.js: Added.
+        (foo):
+
 2015-04-13  Andreas Kling  <akling@apple.com>
 
         Don't segregate heap objects based on Structure immortality.

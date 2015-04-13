@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef VariableWatchpointSetInlines_h
-#define VariableWatchpointSetInlines_h
+#ifndef VariableWriteFireDetail_h
+#define VariableWriteFireDetail_h
 
-#include "SymbolTable.h"
-#include "VariableWatchpointSet.h"
+#include "Watchpoint.h"
 
 namespace JSC {
 
-inline void VariableWatchpointSet::notifyWrite(VM& vm, JSValue value, const FireDetail& detail)
-{
-    ASSERT(!!value);
-    switch (state()) {
-    case ClearWatchpoint:
-        m_inferredValue.set(vm, &m_symbolTable, value);
-        startWatching();
-        return;
+class JSObject;
+class PropertyName;
 
-    case IsWatched:
-        ASSERT(!!m_inferredValue);
-        if (value == m_inferredValue.get())
-            return;
-        invalidate(detail);
-        return;
-            
-    case IsInvalidated:
-        ASSERT(!m_inferredValue);
-        return;
+class VariableWriteFireDetail : public FireDetail {
+public:
+    VariableWriteFireDetail(JSObject* object, const PropertyName& name)
+        : m_object(object)
+        , m_name(name)
+    {
     }
-        
-    ASSERT_NOT_REACHED();
-}
+    
+    virtual void dump(PrintStream&) const override;
+    
+    JS_EXPORT_PRIVATE static void touch(WatchpointSet*, JSObject*, const PropertyName&);
+
+private:
+    JSObject* m_object;
+    const PropertyName& m_name;
+};
 
 } // namespace JSC
 
-#endif // VariableWatchpointSetInlines_h
+#endif // VariableWriteFireDetail_h

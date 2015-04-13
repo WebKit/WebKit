@@ -6,7 +6,6 @@
             { "name" : "op_enter", "length" : 1 },
             { "name" : "op_create_lexical_environment", "length" : 3 },
             { "name" : "op_get_scope", "length" : 2 },
-            { "name" : "op_touch_entry", "length" : 1 },
             { "name" : "op_create_direct_arguments", "length" : 2 },
             { "name" : "op_create_scoped_arguments", "length" : 3 },
             { "name" : "op_create_out_of_band_arguments", "length" : 2 },

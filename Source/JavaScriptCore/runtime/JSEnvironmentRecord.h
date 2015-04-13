@@ -54,7 +54,7 @@ public:
     
     bool isValid(ScopeOffset offset)
     {
-        return !!offset && offset.offset() < m_symbolTable->scopeSize();
+        return !!offset && offset.offset() < symbolTable()->scopeSize();
     }
     
     WriteBarrierBase<Unknown>& variableAt(ScopeOffset offset)
@@ -103,7 +103,7 @@ protected:
     void finishCreation(VM& vm)
     {
         finishCreationUninitialized(vm);
-        for (unsigned i = m_symbolTable->scopeSize(); i--;) {
+        for (unsigned i = symbolTable()->scopeSize(); i--;) {
             // Filling this with undefined is useful because that's what variables start out as.
             variableAt(ScopeOffset(i)).setUndefined();
         }

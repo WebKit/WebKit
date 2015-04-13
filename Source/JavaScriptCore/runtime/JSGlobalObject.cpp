@@ -124,7 +124,7 @@
 #include "Symbol.h"
 #include "SymbolConstructor.h"
 #include "SymbolPrototype.h"
-#include "VariableWatchpointSetInlines.h"
+#include "VariableWriteFireDetail.h"
 #include "WeakGCMapInlines.h"
 #include "WeakMapConstructor.h"
 #include "WeakMapPrototype.h"
@@ -489,7 +489,7 @@ JSGlobalObject::NewGlobalVar JSGlobalObject::addGlobalVar(const Identifier& iden
     ScopeOffset offset = symbolTable()->takeNextScopeOffset(locker);
     SymbolTableEntry newEntry(VarOffset(offset), (constantMode == IsConstant) ? ReadOnly : 0);
     if (constantMode == IsVariable)
-        newEntry.prepareToWatch(symbolTable());
+        newEntry.prepareToWatch();
     else
         newEntry.disableWatching();
     symbolTable()->add(locker, ident.impl(), newEntry);
@@ -510,7 +510,7 @@ void JSGlobalObject::addFunction(ExecState* exec, const Identifier& propertyName
     NewGlobalVar var = addGlobalVar(propertyName, IsVariable);
     variableAt(var.offset).set(exec->vm(), this, value);
     if (var.set)
-        var.set->notifyWrite(vm, value, VariableWriteFireDetail(this, propertyName));
+        var.set->touch(VariableWriteFireDetail(this, propertyName));
 }
 
 static inline JSObject* lastInPrototypeChain(JSObject* object)

@@ -215,8 +215,6 @@ private:
         bool isDirect);
     void emitChecks(const ConstantStructureCheckVector&);
 
-    Node* getScope(VirtualRegister scopeChain, unsigned skipCount);
-    
     void prepareToParseBlock();
     void clearCaches();
 
@@ -279,8 +277,20 @@ private:
                 if (operand.offset() == JSStack::Callee)
                     return weakJSConstant(callee);
             }
-        } else if (operand.offset() == JSStack::Callee)
+        } else if (operand.offset() == JSStack::Callee) {
+            // We have to do some constant-folding here because this enables CreateThis folding. Note
+            // that we don't have such watchpoint-based folding for inlined uses of Callee, since in that
+            // case if the function is a singleton then we already know it.
+            if (FunctionExecutable* executable = jsDynamicCast<FunctionExecutable*>(m_codeBlock->ownerExecutable())) {
+                InferredValue* singleton = executable->singletonFunction();
+                if (JSValue value = singleton->inferredValue()) {
+                    m_graph.watchpoints().addLazily(singleton);
+                    JSFunction* function = jsCast<JSFunction*>(value);
+                    return weakJSConstant(function);
+                }
+            }
             return addToGraph(GetCallee);
+        }
         
         return getDirect(m_inlineStackTop->remapOperand(operand));
     }
@@ -2534,14 +2544,6 @@ void ByteCodeParser::clearCaches()
     m_constants.resize(0);
 }
 
-Node* ByteCodeParser::getScope(VirtualRegister scopeChain, unsigned skipCount)
-{
-    Node* localBase = get(scopeChain);
-    for (unsigned n = skipCount; n--;)
-        localBase = addToGraph(SkipScope, localBase);
-    return localBase;
-}
-
 bool ByteCodeParser::parseBlock(unsigned limit)
 {
     bool shouldContinueParsing = true;
@@ -2610,11 +2612,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 set(virtualRegisterForLocal(i), undefined, ImmediateNakedSet);
             NEXT_OPCODE(op_enter);
         }
-            
-        case op_touch_entry:
-            if (m_inlineStackTop->m_codeBlock->symbolTable()->m_functionEnteredOnce.isStillValid())
-                addToGraph(ForceOSRExit);
-            NEXT_OPCODE(op_touch_entry);
             
         case op_to_this: {
             Node* op1 = getThis();
@@ -3393,17 +3390,28 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case LocalClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
-                JSLexicalEnvironment* lexicalEnvironment = currentInstruction[6].u.lexicalEnvironment.get();
-                if (lexicalEnvironment
-                    && lexicalEnvironment->symbolTable()->m_functionEnteredOnce.isStillValid()) {
-                    m_graph.watchpoints().addLazily(lexicalEnvironment->symbolTable()->m_functionEnteredOnce);
-                    addToGraph(Phantom, getDirect(m_inlineStackTop->remapOperand(VirtualRegister(currentInstruction[2].u.operand))));
-                    set(VirtualRegister(dst), weakJSConstant(lexicalEnvironment));
+                Node* localBase = get(VirtualRegister(currentInstruction[2].u.operand));
+                addToGraph(Phantom, localBase); // OSR exit cannot handle resolve_scope on a DCE'd scope.
+                
+                // We have various forms of constant folding here. This is necessary to avoid
+                // spurious recompiles in dead-but-foldable code.
+                if (SymbolTable* symbolTable = currentInstruction[6].u.symbolTable.get()) {
+                    InferredValue* singleton = symbolTable->singletonScope();
+                    if (JSValue value = singleton->inferredValue()) {
+                        m_graph.watchpoints().addLazily(singleton);
+                        set(VirtualRegister(dst), weakJSConstant(value));
+                        break;
+                    }
+                }
+                if (JSScope* scope = localBase->dynamicCastConstant<JSScope*>()) {
+                    for (unsigned n = depth; n--;)
+                        scope = scope->next();
+                    set(VirtualRegister(dst), weakJSConstant(scope));
                     break;
                 }
-                set(VirtualRegister(dst), getScope(VirtualRegister(currentInstruction[2].u.operand), depth));
-                if (inlineCallFrame())
-                    addToGraph(Phantom, getDirect(m_inlineStackTop->remapOperand(VirtualRegister(currentInstruction[2].u.operand))));
+                for (unsigned n = depth; n--;)
+                    localBase = addToGraph(SkipScope, localBase);
+                set(VirtualRegister(dst), localBase);
                 break;
             }
             case Dynamic:
@@ -3455,19 +3463,67 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case GlobalVar:
             case GlobalVarWithVarInjectionChecks: {
                 addToGraph(Phantom, get(VirtualRegister(scope)));
-                ConcurrentJITLocker locker(globalObject->symbolTable()->m_lock);
-                SymbolTableEntry entry = globalObject->symbolTable()->get(locker, uid);
-                VariableWatchpointSet* watchpointSet = entry.watchpointSet();
-                JSValue inferredValue =
-                    watchpointSet ? watchpointSet->inferredValue() : JSValue();
-                if (!inferredValue) {
-                    SpeculatedType prediction = getPrediction();
-                    set(VirtualRegister(dst), addToGraph(GetGlobalVar, OpInfo(operand), OpInfo(prediction)));
-                    break;
+                WatchpointSet* watchpointSet;
+                ScopeOffset offset;
+                {
+                    ConcurrentJITLocker locker(globalObject->symbolTable()->m_lock);
+                    SymbolTableEntry entry = globalObject->symbolTable()->get(locker, uid);
+                    watchpointSet = entry.watchpointSet();
+                    offset = entry.scopeOffset();
+                }
+                if (watchpointSet && watchpointSet->state() == IsWatched) {
+                    // This has a fun concurrency story. There is the possibility of a race in two
+                    // directions:
+                    //
+                    // We see that the set IsWatched, but in the meantime it gets invalidated: this is
+                    // fine because if we saw that it IsWatched then we add a watchpoint. If it gets
+                    // invalidated, then this compilation is invalidated. Note that in the meantime we
+                    // may load an absurd value from the global object. It's fine to load an absurd
+                    // value if the compilation is invalidated anyway.
+                    //
+                    // We see that the set IsWatched, but the value isn't yet initialized: this isn't
+                    // possible because of the ordering of operations.
+                    //
+                    // Here's how we order operations:
+                    //
+                    // Main thread stores to the global object: always store a value first, and only
+                    // after that do we touch the watchpoint set. There is a fence in the touch, that
+                    // ensures that the store to the global object always happens before the touch on the
+                    // set.
+                    //
+                    // Compilation thread: always first load the state of the watchpoint set, and then
+                    // load the value. The WatchpointSet::state() method does fences for us to ensure
+                    // that the load of the state happens before our load of the value.
+                    //
+                    // Finalizing compilation: this happens on the main thread and synchronously checks
+                    // validity of all watchpoint sets.
+                    //
+                    // We will only perform optimizations if the load of the state yields IsWatched. That
+                    // means that at least one store would have happened to initialize the original value
+                    // of the variable (that is, the value we'd like to constant fold to). There may be
+                    // other stores that happen after that, but those stores will invalidate the
+                    // watchpoint set and also the compilation.
+                    
+                    // Note that we need to use the operand, which is a direct pointer at the global,
+                    // rather than looking up the global by doing variableAt(offset). That's because the
+                    // internal data structures of JSSegmentedVariableObject are not thread-safe even
+                    // though accessing the global itself is. The segmentation involves a vector spine
+                    // that resizes with malloc/free, so if new globals unrelated to the one we are
+                    // reading are added, we might access freed memory if we do variableAt().
+                    WriteBarrier<Unknown>* pointer = bitwise_cast<WriteBarrier<Unknown>*>(operand);
+                    
+                    ASSERT(globalObject->findVariableIndex(pointer) == offset);
+                    
+                    JSValue value = pointer->get();
+                    if (value) {
+                        m_graph.watchpoints().addLazily(watchpointSet);
+                        set(VirtualRegister(dst), weakJSConstant(value));
+                        break;
+                    }
                 }
                 
-                m_graph.watchpoints().addLazily(watchpointSet);
-                set(VirtualRegister(dst), weakJSConstant(inferredValue));
+                SpeculatedType prediction = getPrediction();
+                set(VirtualRegister(dst), addToGraph(GetGlobalVar, OpInfo(operand), OpInfo(prediction)));
                 break;
             }
             case LocalClosureVar:
@@ -3484,6 +3540,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 // won't be able to handle an Undefined scope.
                 addToGraph(Phantom, scopeNode);
                 
+                // Constant folding in the bytecode parser is important for performance. This may not
+                // have executed yet. If it hasn't, then we won't have a prediction. Lacking a
+                // prediction, we'd otherwise think that it has to exit. Then when it did execute, we
+                // would recompile. But if we can fold it here, we avoid the exit.
                 if (JSValue value = m_graph.tryGetConstantClosureVar(scopeNode, ScopeOffset(operand))) {
                     set(VirtualRegister(dst), weakJSConstant(value));
                     break;
@@ -3514,7 +3574,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 uid = nullptr;
             
             Structure* structure = nullptr;
-            VariableWatchpointSet* watchpoints = nullptr;
+            WatchpointSet* watchpoints = nullptr;
             uintptr_t operand;
             {
                 ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
@@ -3557,8 +3617,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 }
                 Node* valueNode = get(VirtualRegister(value));
                 addToGraph(PutGlobalVar, OpInfo(operand), valueNode);
-                if (watchpoints && watchpoints->state() != IsInvalidated)
-                    addToGraph(NotifyWrite, OpInfo(watchpoints), valueNode);
+                if (watchpoints && watchpoints->state() != IsInvalidated) {
+                    // Must happen after the store. See comment for GetGlobalVar.
+                    addToGraph(NotifyWrite, OpInfo(watchpoints));
+                }
                 // Keep scope alive until after put.
                 addToGraph(Phantom, get(VirtualRegister(scope)));
                 break;
@@ -3569,10 +3631,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 Node* scopeNode = get(VirtualRegister(scope));
                 Node* valueNode = get(VirtualRegister(value));
 
-                if (watchpoints && watchpoints->state() != IsInvalidated)
-                    addToGraph(NotifyWrite, OpInfo(watchpoints), valueNode);
-
                 addToGraph(PutClosureVar, OpInfo(operand), scopeNode, valueNode);
+
+                if (watchpoints && watchpoints->state() != IsInvalidated) {
+                    // Must happen after the store. See comment for GetGlobalVar.
+                    addToGraph(NotifyWrite, OpInfo(watchpoints));
+                }
                 break;
             }
             case Dynamic:

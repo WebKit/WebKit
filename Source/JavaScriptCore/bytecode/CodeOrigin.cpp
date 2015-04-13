@@ -141,6 +141,18 @@ void CodeOrigin::dumpInContext(PrintStream& out, DumpContext*) const
     dump(out);
 }
 
+JSFunction* InlineCallFrame::calleeConstant() const
+{
+    if (calleeRecovery.isConstant())
+        return jsCast<JSFunction*>(calleeRecovery.constant());
+    return nullptr;
+}
+
+void InlineCallFrame::visitAggregate(SlotVisitor& visitor)
+{
+    visitor.append(&executable);
+}
+
 JSFunction* InlineCallFrame::calleeForCallFrame(ExecState* exec) const
 {
     return jsCast<JSFunction*>(calleeRecovery.recover(exec));

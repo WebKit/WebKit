@@ -4019,26 +4019,7 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case NotifyWrite: {
-        VariableWatchpointSet* set = node->variableWatchpointSet();
-    
-        JSValueOperand value(this, node->child1());
-        GPRReg valueGPR = value.gpr();
-    
-        GPRTemporary temp(this);
-        GPRReg tempGPR = temp.gpr();
-    
-        m_jit.load8(set->addressOfState(), tempGPR);
-    
-        JITCompiler::Jump isDone =
-            m_jit.branch32(JITCompiler::Equal, tempGPR, TrustedImm32(IsInvalidated));
-        JITCompiler::Jump slowCase = m_jit.branch64(JITCompiler::NotEqual,
-            JITCompiler::AbsoluteAddress(set->addressOfInferredValue()), valueGPR);
-        isDone.link(&m_jit);
-    
-        addSlowPathGenerator(
-            slowPathCall(slowCase, this, operationNotifyWrite, NoResult, set, valueGPR));
-
-        noResult(node);
+        compileNotifyWrite(node);
         break;
     }
 

@@ -28,6 +28,7 @@
 #define PutPropertySlot_h
 
 #include "JSCJSValue.h"
+#include "PropertyOffset.h"
 
 #include <wtf/Assertions.h>
 

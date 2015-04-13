@@ -1219,14 +1219,14 @@ struct Node {
         m_opInfo = bitwise_cast<uintptr_t>(value);
     }
     
-    bool hasVariableWatchpointSet()
+    bool hasWatchpointSet()
     {
         return op() == NotifyWrite;
     }
     
-    VariableWatchpointSet* variableWatchpointSet()
+    WatchpointSet* watchpointSet()
     {
-        return reinterpret_cast<VariableWatchpointSet*>(m_opInfo);
+        return reinterpret_cast<WatchpointSet*>(m_opInfo);
     }
     
     bool hasStoragePointer()

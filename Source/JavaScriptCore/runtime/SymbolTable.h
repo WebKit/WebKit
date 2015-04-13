@@ -31,16 +31,19 @@
 
 #include "ConcurrentJITLock.h"
 #include "ConstantMode.h"
+#include "InferredValue.h"
 #include "JSObject.h"
 #include "ScopedArgumentsTable.h"
 #include "TypeLocation.h"
 #include "VarOffset.h"
-#include "VariableWatchpointSet.h"
+#include "Watchpoint.h"
 #include <memory>
 #include <wtf/HashTraits.h>
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {
+
+class SymbolTable;
 
 static ALWAYS_INLINE int missingSymbolMarker() { return std::numeric_limits<int>::max(); }
 
@@ -63,11 +66,11 @@ static ALWAYS_INLINE int missingSymbolMarker() { return std::numeric_limits<int>
 // counted pointer to a shared WatchpointSet. Thus, in-place edits of the
 // WatchpointSet will manifest in all copies. Here's a picture:
 //
-// SymbolTableEntry --> FatEntry --> VariableWatchpointSet
+// SymbolTableEntry --> FatEntry --> WatchpointSet
 //
 // If you make a copy of a SymbolTableEntry, you will have:
 //
-// original: SymbolTableEntry --> FatEntry --> VariableWatchpointSet
+// original: SymbolTableEntry --> FatEntry --> WatchpointSet
 // copy:     SymbolTableEntry --> FatEntry -----^
 
 struct SymbolTableEntry {
@@ -260,30 +263,42 @@ public:
         return bits() & DontEnumFlag;
     }
     
-    JSValue inferredValue();
-
     void disableWatching()
     {
+        if (WatchpointSet* set = watchpointSet())
+            set->invalidate("Disabling watching in symbol table");
         if (varOffset().isScope())
             pack(varOffset(), false, isReadOnly(), isDontEnum());
     }
     
-    void prepareToWatch(SymbolTable*);
+    void prepareToWatch();
     
     void addWatchpoint(Watchpoint*);
     
-    VariableWatchpointSet* watchpointSet()
+    // This watchpoint set is initialized clear, and goes through the following state transitions:
+    // 
+    // First write to this var, in any scope that has this symbol table: Clear->IsWatched.
+    //
+    // Second write to this var, in any scope that has this symbol table: IsWatched->IsInvalidated.
+    //
+    // We ensure that we touch the set (i.e. trigger its state transition) after we do the write. This
+    // means that if you're in the compiler thread, and you:
+    //
+    // 1) Observe that the set IsWatched and commit to adding your watchpoint.
+    // 2) Load a value from any scope that has this watchpoint set.
+    //
+    // Then you can be sure that that value is either going to be the correct value for that var forever,
+    // or the watchpoint set will invalidate and you'll get fired.
+    //
+    // It's possible to write a program that first creates multiple scopes with the same var, and then
+    // initializes that var in just one of them. This means that a compilation could constant-fold to one
+    // of the scopes that still has an undefined value for this variable. That's fine, because at that
+    // point any write to any of the instances of that variable would fire the watchpoint.
+    WatchpointSet* watchpointSet()
     {
         if (!isFat())
             return 0;
         return fatEntry()->m_watchpoints.get();
-    }
-    
-    ALWAYS_INLINE void notifyWrite(VM& vm, JSValue value, const FireDetail& detail)
-    {
-        if (LIKELY(!isFat()))
-            return;
-        notifyWriteSlow(vm, value, detail);
     }
     
 private:
@@ -308,7 +323,7 @@ private:
         
         intptr_t m_bits; // always has FatFlag set and exactly matches what the bits would have been if this wasn't fat.
         
-        RefPtr<VariableWatchpointSet> m_watchpoints;
+        RefPtr<WatchpointSet> m_watchpoints;
     };
     
     SymbolTableEntry& copySlow(const SymbolTableEntry&);
@@ -637,26 +652,18 @@ public:
     SymbolTable* cloneScopePart(VM&);
 
     void prepareForTypeProfiling(const ConcurrentJITLocker&);
+    
+    InferredValue* singletonScope() { return m_singletonScope.get(); }
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
     DECLARE_EXPORT_INFO;
 
 private:
-    class WatchpointCleanup : public UnconditionalFinalizer {
-    public:
-        WatchpointCleanup(SymbolTable*);
-        virtual ~WatchpointCleanup();
-        
-    protected:
-        virtual void finalizeUnconditionally() override;
-
-    private:
-        SymbolTable* m_symbolTable;
-    };
-    
     JS_EXPORT_PRIVATE SymbolTable(VM&);
     ~SymbolTable();
+    
+    JS_EXPORT_PRIVATE void finishCreation(VM&);
 
     Map m_map;
     ScopeOffset m_maxScopeOffset;
@@ -671,13 +678,11 @@ private:
     bool m_usesNonStrictEval;
     
     WriteBarrier<ScopedArgumentsTable> m_arguments;
+    WriteBarrier<InferredValue> m_singletonScope;
     
-    std::unique_ptr<WatchpointCleanup> m_watchpointCleanup;
     std::unique_ptr<LocalToEntryVec> m_localToEntry;
 
 public:
-    InlineWatchpointSet m_functionEnteredOnce;
-    
     mutable ConcurrentJITLock m_lock;
 };
 
