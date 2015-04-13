@@ -33,7 +33,7 @@ public:
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
-    virtual LayoutUnit containingBlockLogicalWidthForContent() const override;
+    virtual LayoutUnit containingBlockLogicalWidthForContent() const override { return containingBlock()->logicalWidth(); }
     
 private:
     virtual bool isTableCaption() const override { return true; }

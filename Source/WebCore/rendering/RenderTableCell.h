@@ -41,84 +41,24 @@ public:
     RenderTableCell(Element&, Ref<RenderStyle>&&);
     RenderTableCell(Document&, Ref<RenderStyle>&&);
     
-    unsigned colSpan() const
-    {
-        if (!m_hasColSpan)
-            return 1;
-        return parseColSpanFromDOM();
-    }
-    unsigned rowSpan() const
-    {
-        if (!m_hasRowSpan)
-            return 1;
-        return parseRowSpanFromDOM();
-    }
+    unsigned colSpan() const;
+    unsigned rowSpan() const;
 
     // Called from HTMLTableCellElement.
     void colSpanOrRowSpanChanged();
 
-    void setCol(unsigned column)
-    {
-        if (UNLIKELY(column > maxColumnIndex))
-            CRASH();
-
-        m_column = column;
-    }
-
-    unsigned col() const
-    {
-        ASSERT(m_column != unsetColumnIndex);
-        return m_column;
-    }
+    void setCol(unsigned column);
+    unsigned col() const;
 
     RenderTableCell* nextCell() const;
     RenderTableCell* previousCell() const;
 
     RenderTableRow* row() const { return downcast<RenderTableRow>(parent()); }
-    RenderTableSection* section() const
-    {
-        RenderTableRow* row = this->row();
-        if (!row)
-            return nullptr;
-        return downcast<RenderTableSection>(row->parent());
-    }
-    RenderTable* table() const
-    {
-        RenderTableSection* section = this->section();
-        if (!section)
-            return nullptr;
-        return downcast<RenderTable>(section->parent());
-    }
-
-    unsigned rowIndex() const
-    {
-        // This function shouldn't be called on a detached cell.
-        ASSERT(row());
-        return row()->rowIndex();
-    }
-
-    Length styleOrColLogicalWidth() const
-    {
-        Length styleWidth = style().logicalWidth();
-        if (!styleWidth.isAuto())
-            return styleWidth;
-        if (RenderTableCol* firstColumn = table()->colElement(col()))
-            return logicalWidthFromColumns(firstColumn, styleWidth);
-        return styleWidth;
-    }
-
-    int logicalHeightForRowSizing() const
-    {
-        // FIXME: This function does too much work, and is very hot during table layout!
-        int adjustedLogicalHeight = pixelSnappedLogicalHeight() - (intrinsicPaddingBefore() + intrinsicPaddingAfter());
-        int styleLogicalHeight = valueForLength(style().logicalHeight(), 0);
-        // In strict mode, box-sizing: content-box do the right thing and actually add in the border and padding.
-        // Call computedCSSPadding* directly to avoid including implicitPadding.
-        if (!document().inQuirksMode() && style().boxSizing() != BORDER_BOX)
-            styleLogicalHeight += (computedCSSPaddingBefore() + computedCSSPaddingAfter()).floor() + (borderBefore() + borderAfter()).floor();
-        return std::max(styleLogicalHeight, adjustedLogicalHeight);
-    }
-
+    RenderTableSection* section() const;
+    RenderTable* table() const;
+    unsigned rowIndex() const;
+    Length styleOrColLogicalWidth() const;
+    int logicalHeightForRowSizing() const;
 
     void setCellLogicalWidth(int constrainedLogicalWidth);
 
@@ -142,11 +82,7 @@ public:
     void paintBackgroundsBehindCell(PaintInfo&, const LayoutPoint&, RenderElement* backgroundObject);
 
     LayoutUnit cellBaselinePosition() const;
-    bool isBaselineAligned() const 
-    { 
-        EVerticalAlign va = style().verticalAlign();
-        return va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP || va == SUPER || va == SUB || va == LENGTH; 
-    }
+    bool isBaselineAligned() const;
 
     void computeIntrinsicPadding(int rowHeight);
     void clearIntrinsicPadding() { setIntrinsicPadding(0, 0); }
@@ -173,60 +109,23 @@ public:
     void setCellWidthChanged(bool b = true) { m_cellWidthChanged = b; }
 
     static RenderTableCell* createAnonymousWithParentRenderer(const RenderObject*);
-    virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override
-    {
-        return createAnonymousWithParentRenderer(parent);
-    }
+    virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override { return createAnonymousWithParentRenderer(parent); }
 
     // This function is used to unify which table part's style we use for computing direction and
     // writing mode. Writing modes are not allowed on row group and row but direction is.
     // This means we can safely use the same style in all cases to simplify our code.
     // FIXME: Eventually this function should replaced by style() once we support direction
     // on all table parts and writing-mode on cells.
-    const RenderStyle& styleForCellFlow() const
-    {
-        return row()->style();
-    }
+    const RenderStyle& styleForCellFlow() const { return row()->style(); }
 
-    const BorderValue& borderAdjoiningTableStart() const
-    {
-        ASSERT(isFirstOrLastCellInRow());
-        if (section()->hasSameDirectionAs(table()))
-            return style().borderStart();
-
-        return style().borderEnd();
-    }
-
-    const BorderValue& borderAdjoiningTableEnd() const
-    {
-        ASSERT(isFirstOrLastCellInRow());
-        if (section()->hasSameDirectionAs(table()))
-            return style().borderEnd();
-
-        return style().borderStart();
-    }
-
-    const BorderValue& borderAdjoiningCellBefore(const RenderTableCell* cell)
-    {
-        ASSERT_UNUSED(cell, table()->cellAfter(cell) == this);
-        // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
-        return style().borderStart();
-    }
-
-    const BorderValue& borderAdjoiningCellAfter(const RenderTableCell* cell)
-    {
-        ASSERT_UNUSED(cell, table()->cellBefore(cell) == this);
-        // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
-        return style().borderEnd();
-    }
+    const BorderValue& borderAdjoiningTableStart() const;
+    const BorderValue& borderAdjoiningTableEnd() const;
+    const BorderValue& borderAdjoiningCellBefore(const RenderTableCell*);
+    const BorderValue& borderAdjoiningCellAfter(const RenderTableCell*);
 
     using RenderBlockFlow::nodeAtPoint;
-
 #ifndef NDEBUG
-    bool isFirstOrLastCellInRow() const
-    {
-        return !table()->cellAfter(this) || !table()->cellBefore(this);
-    }
+    bool isFirstOrLastCellInRow() const { return !table()->cellAfter(this) || !table()->cellBefore(this); }
 #endif
     
     virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
@@ -304,8 +203,8 @@ private:
     unsigned m_cellWidthChanged : 1;
     unsigned m_hasColSpan: 1;
     unsigned m_hasRowSpan: 1;
-    int m_intrinsicPaddingBefore;
-    int m_intrinsicPaddingAfter;
+    int m_intrinsicPaddingBefore { 0 };
+    int m_intrinsicPaddingAfter { 0 };
 };
 
 inline RenderTableCell* RenderTableCell::nextCell() const
@@ -316,6 +215,116 @@ inline RenderTableCell* RenderTableCell::nextCell() const
 inline RenderTableCell* RenderTableCell::previousCell() const
 {
     return downcast<RenderTableCell>(RenderBlockFlow::previousSibling());
+}
+
+inline unsigned RenderTableCell::colSpan() const
+{
+    if (!m_hasColSpan)
+        return 1;
+    return parseColSpanFromDOM();
+}
+
+inline unsigned RenderTableCell::rowSpan() const
+{
+    if (!m_hasRowSpan)
+        return 1;
+    return parseRowSpanFromDOM();
+}
+
+inline void RenderTableCell::setCol(unsigned column)
+{
+    if (UNLIKELY(column > maxColumnIndex))
+        CRASH();
+    m_column = column;
+}
+
+inline unsigned RenderTableCell::col() const
+{
+    ASSERT(m_column != unsetColumnIndex);
+    return m_column;
+}
+
+inline RenderTableSection* RenderTableCell::section() const
+{
+    RenderTableRow* row = this->row();
+    if (!row)
+        return nullptr;
+    return downcast<RenderTableSection>(row->parent());
+}
+
+inline RenderTable* RenderTableCell::table() const
+{
+    RenderTableSection* section = this->section();
+    if (!section)
+        return nullptr;
+    return downcast<RenderTable>(section->parent());
+}
+
+inline unsigned RenderTableCell::rowIndex() const
+{
+    // This function shouldn't be called on a detached cell.
+    ASSERT(row());
+    return row()->rowIndex();
+}
+
+inline Length RenderTableCell::styleOrColLogicalWidth() const
+{
+    Length styleWidth = style().logicalWidth();
+    if (!styleWidth.isAuto())
+        return styleWidth;
+    if (RenderTableCol* firstColumn = table()->colElement(col()))
+        return logicalWidthFromColumns(firstColumn, styleWidth);
+    return styleWidth;
+}
+
+inline int RenderTableCell::logicalHeightForRowSizing() const
+{
+    // FIXME: This function does too much work, and is very hot during table layout!
+    int adjustedLogicalHeight = pixelSnappedLogicalHeight() - (intrinsicPaddingBefore() + intrinsicPaddingAfter());
+    int styleLogicalHeight = valueForLength(style().logicalHeight(), 0);
+    // In strict mode, box-sizing: content-box do the right thing and actually add in the border and padding.
+    // Call computedCSSPadding* directly to avoid including implicitPadding.
+    if (!document().inQuirksMode() && style().boxSizing() != BORDER_BOX)
+        styleLogicalHeight += (computedCSSPaddingBefore() + computedCSSPaddingAfter()).floor() + (borderBefore() + borderAfter()).floor();
+    return std::max(styleLogicalHeight, adjustedLogicalHeight);
+}
+
+inline bool RenderTableCell::isBaselineAligned() const
+{
+    EVerticalAlign va = style().verticalAlign();
+    return va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP || va == SUPER || va == SUB || va == LENGTH;
+}
+
+inline const BorderValue& RenderTableCell::borderAdjoiningTableStart() const
+{
+    ASSERT(isFirstOrLastCellInRow());
+    if (section()->hasSameDirectionAs(table()))
+        return style().borderStart();
+
+    return style().borderEnd();
+}
+
+inline const BorderValue& RenderTableCell::borderAdjoiningTableEnd() const
+{
+    ASSERT(isFirstOrLastCellInRow());
+    if (section()->hasSameDirectionAs(table()))
+        return style().borderEnd();
+
+    return style().borderStart();
+}
+
+inline const BorderValue& RenderTableCell::borderAdjoiningCellBefore(const RenderTableCell* cell)
+{
+    ASSERT_UNUSED(cell, table()->cellAfter(cell) == this);
+    // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
+    return style().borderStart();
+}
+
+inline const BorderValue& RenderTableCell::borderAdjoiningCellAfter(const RenderTableCell* cell)
+{
+    ASSERT_UNUSED(cell, table()->cellBefore(cell) == this);
+    // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
+    return style().borderEnd();
 }
 
 inline RenderTableCell* RenderTableRow::firstCell() const

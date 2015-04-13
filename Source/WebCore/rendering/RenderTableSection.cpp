@@ -84,28 +84,12 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
 
 RenderTableSection::RenderTableSection(Element& element, Ref<RenderStyle>&& style)
     : RenderBox(element, WTF::move(style), 0)
-    , m_cCol(0)
-    , m_cRow(0)
-    , m_outerBorderStart(0)
-    , m_outerBorderEnd(0)
-    , m_outerBorderBefore(0)
-    , m_outerBorderAfter(0)
-    , m_needsCellRecalc(false)
-    , m_hasMultipleCellLevels(false)
 {
     setInline(false);
 }
 
 RenderTableSection::RenderTableSection(Document& document, Ref<RenderStyle>&& style)
     : RenderBox(document, WTF::move(style), 0)
-    , m_cCol(0)
-    , m_cRow(0)
-    , m_outerBorderStart(0)
-    , m_outerBorderEnd(0)
-    , m_outerBorderBefore(0)
-    , m_outerBorderAfter(0)
-    , m_needsCellRecalc(false)
-    , m_hasMultipleCellLevels(false)
 {
     setInline(false);
 }
@@ -1044,11 +1028,11 @@ CellSpan RenderTableSection::dirtiedRows(const LayoutRect& damageRect) const
     CellSpan coveredRows = spannedRows(damageRect, IncludeAllIntersectingCells);
 
     // To repaint the border we might need to repaint first or last row even if they are not spanned themselves.
-    if (coveredRows.start() >= m_rowPos.size() - 1 && m_rowPos[m_rowPos.size() - 1] + table()->outerBorderAfter() >= damageRect.y())
-        --coveredRows.start();
+    if (coveredRows.start >= m_rowPos.size() - 1 && m_rowPos[m_rowPos.size() - 1] + table()->outerBorderAfter() >= damageRect.y())
+        --coveredRows.start;
 
-    if (!coveredRows.end() && m_rowPos[0] - table()->outerBorderBefore() <= damageRect.maxY())
-        ++coveredRows.end();
+    if (!coveredRows.end && m_rowPos[0] - table()->outerBorderBefore() <= damageRect.maxY())
+        ++coveredRows.end;
 
     return coveredRows;
 }
@@ -1062,11 +1046,11 @@ CellSpan RenderTableSection::dirtiedColumns(const LayoutRect& damageRect) const
 
     const Vector<int>& columnPos = table()->columnPositions();
     // To repaint the border we might need to repaint first or last column even if they are not spanned themselves.
-    if (coveredColumns.start() >= columnPos.size() - 1 && columnPos[columnPos.size() - 1] + table()->outerBorderEnd() >= damageRect.x())
-        --coveredColumns.start();
+    if (coveredColumns.start >= columnPos.size() - 1 && columnPos[columnPos.size() - 1] + table()->outerBorderEnd() >= damageRect.x())
+        --coveredColumns.start;
 
-    if (!coveredColumns.end() && columnPos[0] - table()->outerBorderStart() <= damageRect.maxX())
-        ++coveredColumns.end();
+    if (!coveredColumns.end && columnPos[0] - table()->outerBorderStart() <= damageRect.maxX())
+        ++coveredColumns.end;
 
     return coveredColumns;
 }
@@ -1253,17 +1237,17 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
     CellSpan dirtiedRows = this->dirtiedRows(tableAlignedRect);
     CellSpan dirtiedColumns = this->dirtiedColumns(tableAlignedRect);
 
-    if (dirtiedColumns.start() < dirtiedColumns.end()) {
+    if (dirtiedColumns.start < dirtiedColumns.end) {
         if (!m_hasMultipleCellLevels && !m_overflowingCells.size()) {
             if (paintInfo.phase == PaintPhaseCollapsedTableBorders) {
                 // Collapsed borders are painted from the bottom right to the top left so that precedence
                 // due to cell position is respected. We need to paint one row beyond the topmost dirtied
                 // row to calculate its collapsed border value.
-                unsigned startRow = dirtiedRows.start() ? dirtiedRows.start() - 1 : 0;
-                for (unsigned r = dirtiedRows.end(); r > startRow; r--) {
+                unsigned startRow = dirtiedRows.start ? dirtiedRows.start - 1 : 0;
+                for (unsigned r = dirtiedRows.end; r > startRow; r--) {
                     unsigned row = r - 1;
                     bool shouldPaintRowGroupBorder = false;
-                    for (unsigned c = dirtiedColumns.end(); c > dirtiedColumns.start(); c--) {
+                    for (unsigned c = dirtiedColumns.end; c > dirtiedColumns.start; c--) {
                         unsigned col = c - 1;
                         CellStruct& current = cellAt(row, col);
                         RenderTableCell* cell = current.primaryCell();
@@ -1275,7 +1259,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
                             shouldPaintRowGroupBorder = true;
                             continue;
                         }
-                        if ((row > dirtiedRows.start() && primaryCellAt(row - 1, col) == cell) || (col > dirtiedColumns.start() && primaryCellAt(row, col - 1) == cell))
+                        if ((row > dirtiedRows.start && primaryCellAt(row - 1, col) == cell) || (col > dirtiedColumns.start && primaryCellAt(row, col - 1) == cell))
                             continue;
                         
                         // If we had a run of null cells paint their corresponding section of the row group's border if necessary. Note that
@@ -1294,14 +1278,14 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
                 }
             } else {
                 // Draw the dirty cells in the order that they appear.
-                for (unsigned r = dirtiedRows.start(); r < dirtiedRows.end(); r++) {
+                for (unsigned r = dirtiedRows.start; r < dirtiedRows.end; r++) {
                     RenderTableRow* row = m_grid[r].rowRenderer;
                     if (row && !row->hasSelfPaintingLayer())
                         row->paintOutlineForRowIfNeeded(paintInfo, paintOffset);
-                    for (unsigned c = dirtiedColumns.start(); c < dirtiedColumns.end(); c++) {
+                    for (unsigned c = dirtiedColumns.start; c < dirtiedColumns.end; c++) {
                         CellStruct& current = cellAt(r, c);
                         RenderTableCell* cell = current.primaryCell();
-                        if (!cell || (r > dirtiedRows.start() && primaryCellAt(r - 1, c) == cell) || (c > dirtiedColumns.start() && primaryCellAt(r, c - 1) == cell))
+                        if (!cell || (r > dirtiedRows.start && primaryCellAt(r - 1, c) == cell) || (c > dirtiedColumns.start && primaryCellAt(r, c - 1) == cell))
                             continue;
                         paintCell(cell, paintInfo, paintOffset);
                     }
@@ -1321,11 +1305,11 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
 
             HashSet<RenderTableCell*> spanningCells;
 
-            for (unsigned r = dirtiedRows.start(); r < dirtiedRows.end(); r++) {
+            for (unsigned r = dirtiedRows.start; r < dirtiedRows.end; r++) {
                 RenderTableRow* row = m_grid[r].rowRenderer;
                 if (row && !row->hasSelfPaintingLayer())
                     row->paintOutlineForRowIfNeeded(paintInfo, paintOffset);
-                for (unsigned c = dirtiedColumns.start(); c < dirtiedColumns.end(); c++) {
+                for (unsigned c = dirtiedColumns.start; c < dirtiedColumns.end; c++) {
                     CellStruct& current = cellAt(r, c);
                     if (!current.hasCells())
                         continue;
@@ -1535,8 +1519,8 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     CellSpan columnSpan = spannedColumns(tableAlignedRect, DoNotIncludeAllIntersectingCells);
 
     // Now iterate over the spanned rows and columns.
-    for (unsigned hitRow = rowSpan.start(); hitRow < rowSpan.end(); ++hitRow) {
-        for (unsigned hitColumn = columnSpan.start(); hitColumn < columnSpan.end(); ++hitColumn) {
+    for (unsigned hitRow = rowSpan.start; hitRow < rowSpan.end; ++hitRow) {
+        for (unsigned hitColumn = columnSpan.start; hitColumn < columnSpan.end; ++hitColumn) {
             CellStruct& current = cellAt(hitRow, hitColumn);
 
             // If the cell is empty, there's nothing to do

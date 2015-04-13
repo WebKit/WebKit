@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class RenderTableCell;
 class RenderTableRow;
 
 enum CollapsedBorderSide {
@@ -40,27 +41,17 @@ enum CollapsedBorderSide {
 };
 
 // Helper class for paintObject.
-class CellSpan {
+struct CellSpan {
 public:
     CellSpan(unsigned start, unsigned end)
-        : m_start(start)
-        , m_end(end)
+        : start(start)
+        , end(end)
     {
     }
 
-    unsigned start() const { return m_start; }
-    unsigned end() const { return m_end; }
-
-    unsigned& start() { return m_start; }
-    unsigned& end() { return m_end; }
-
-private:
-    unsigned m_start;
-    unsigned m_end;
+    unsigned start;
+    unsigned end;
 };
-
-class RenderTableCell;
-class RenderTableRow;
 
 class RenderTableSection final : public RenderBox {
 public:
@@ -85,87 +76,33 @@ public:
 
     struct CellStruct {
         Vector<RenderTableCell*, 1> cells; 
-        bool inColSpan; // true for columns after the first in a colspan
+        bool inColSpan { false }; // true for columns after the first in a colspan
 
-        CellStruct()
-            : inColSpan(false)
-        {
-        }
-
-        RenderTableCell* primaryCell()
-        {
-            return hasCells() ? cells[cells.size() - 1] : 0;
-        }
-
-        const RenderTableCell* primaryCell() const
-        {
-            return hasCells() ? cells[cells.size() - 1] : 0;
-        }
-
+        RenderTableCell* primaryCell() { return hasCells() ? cells[cells.size() - 1] : 0; }
+        const RenderTableCell* primaryCell() const { return hasCells() ? cells[cells.size() - 1] : 0; }
         bool hasCells() const { return cells.size() > 0; }
     };
 
     typedef Vector<CellStruct> Row;
-
     struct RowStruct {
-        RowStruct()
-            : rowRenderer(0)
-            , baseline()
-        {
-        }
-
         Row row;
-        RenderTableRow* rowRenderer;
+        RenderTableRow* rowRenderer { nullptr };
         LayoutUnit baseline;
         Length logicalHeight;
     };
 
-    const BorderValue& borderAdjoiningTableStart() const
-    {
-        if (hasSameDirectionAs(table()))
-            return style().borderStart();
-
-        return style().borderEnd();
-    }
-
-    const BorderValue& borderAdjoiningTableEnd() const
-    {
-        if (hasSameDirectionAs(table()))
-            return style().borderEnd();
-
-        return style().borderStart();
-    }
-
+    const BorderValue& borderAdjoiningTableStart() const;
+    const BorderValue& borderAdjoiningTableEnd() const;
     const BorderValue& borderAdjoiningStartCell(const RenderTableCell*) const;
     const BorderValue& borderAdjoiningEndCell(const RenderTableCell*) const;
 
     const RenderTableCell* firstRowCellAdjoiningTableStart() const;
     const RenderTableCell* firstRowCellAdjoiningTableEnd() const;
 
-    CellStruct& cellAt(unsigned row,  unsigned col)
-    {
-        recalcCellsIfNeeded();
-        return m_grid[row].row[col];
-    }
-
-    const CellStruct& cellAt(unsigned row, unsigned col) const
-    {
-        ASSERT(!m_needsCellRecalc);
-        return m_grid[row].row[col];
-    }
-
-    RenderTableCell* primaryCellAt(unsigned row, unsigned col)
-    {
-        recalcCellsIfNeeded();
-        CellStruct& c = m_grid[row].row[col];
-        return c.primaryCell();
-    }
-
-    RenderTableRow* rowRendererAt(unsigned row) const
-    {
-        ASSERT(!m_needsCellRecalc);
-        return m_grid[row].rowRenderer;
-    }
+    CellStruct& cellAt(unsigned row,  unsigned col);
+    const CellStruct& cellAt(unsigned row, unsigned col) const;
+    RenderTableCell* primaryCellAt(unsigned row, unsigned col);
+    RenderTableRow* rowRendererAt(unsigned row) const;
 
     void appendColumn(unsigned pos);
     void splitColumn(unsigned pos, unsigned first);
@@ -181,57 +118,20 @@ public:
     int outerBorderStart() const { return m_outerBorderStart; }
     int outerBorderEnd() const { return m_outerBorderEnd; }
 
-    int outerBorderLeft(const RenderStyle* styleForCellFlow) const
-    {
-    if (styleForCellFlow->isHorizontalWritingMode())
-        return styleForCellFlow->isLeftToRightDirection() ? outerBorderStart() : outerBorderEnd();
-    return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderAfter() : outerBorderBefore();
-    }
+    int outerBorderLeft(const RenderStyle* styleForCellFlow) const;
+    int outerBorderRight(const RenderStyle* styleForCellFlow) const;
+    int outerBorderTop(const RenderStyle* styleForCellFlow) const;
+    int outerBorderBottom(const RenderStyle* styleForCellFlow) const;
 
-    int outerBorderRight(const RenderStyle* styleForCellFlow) const
-    {
-    if (styleForCellFlow->isHorizontalWritingMode())
-        return styleForCellFlow->isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
-    return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderBefore() : outerBorderAfter();
-    }
-
-    int outerBorderTop(const RenderStyle* styleForCellFlow) const
-    {
-    if (styleForCellFlow->isHorizontalWritingMode())
-        return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderAfter() : outerBorderBefore();
-    return styleForCellFlow->isLeftToRightDirection() ? outerBorderStart() : outerBorderEnd();
-    }
-
-    int outerBorderBottom(const RenderStyle* styleForCellFlow) const
-    {
-    if (styleForCellFlow->isHorizontalWritingMode())
-        return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderBefore() : outerBorderAfter();
-    return styleForCellFlow->isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
-    }
-
-    unsigned numRows() const
-    {
-        ASSERT(!m_needsCellRecalc);
-        return m_grid.size();
-    }
-
+    unsigned numRows() const;
     unsigned numColumns() const;
     void recalcCells();
-    void recalcCellsIfNeeded()
-    {
-        if (m_needsCellRecalc)
-            recalcCells();
-    }
+    void recalcCellsIfNeeded();
 
     bool needsCellRecalc() const { return m_needsCellRecalc; }
     void setNeedsCellRecalc();
 
-    LayoutUnit rowBaseline(unsigned row)
-    {
-        recalcCellsIfNeeded();
-        return m_grid[row].baseline;
-    }
-
+    LayoutUnit rowBaseline(unsigned row);
     void rowLogicalHeightChanged(unsigned rowIndex);
 
     void removeCachedCollapsedBorders(const RenderTableCell*);
@@ -243,10 +143,7 @@ public:
     int distributeExtraLogicalHeightToRows(int extraLogicalHeight);
 
     static RenderTableSection* createAnonymousWithParentRenderer(const RenderObject*);
-    virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override
-    {
-        return createAnonymousWithParentRenderer(parent);
-    }
+    virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override { return createAnonymousWithParentRenderer(parent); }
     
     virtual void paint(PaintInfo&, const LayoutPoint&) override;
 
@@ -292,12 +189,7 @@ private:
     bool hasOverflowingCell() const { return m_overflowingCells.size() || m_forceSlowPaintPathWithOverflowingCell; }
     void computeOverflowFromCells(unsigned totalRows, unsigned nEffCols);
 
-    CellSpan fullTableRowSpan() const
-    {
-        ASSERT(!m_needsCellRecalc);
-        return CellSpan(0, m_grid.size());
-    }
-
+    CellSpan fullTableRowSpan() const;
     CellSpan fullTableColumnSpan() const { return CellSpan(0, table()->columns().size()); }
 
     // Flip the rect so it aligns with the coordinates used by the rowPos and columnPos vectors.
@@ -324,28 +216,119 @@ private:
     Vector<int> m_rowPos;
 
     // the current insertion position
-    unsigned m_cCol;
-    unsigned m_cRow;
+    unsigned m_cCol { 0 };
+    unsigned m_cRow  { 0 };
 
-    int m_outerBorderStart;
-    int m_outerBorderEnd;
-    int m_outerBorderBefore;
-    int m_outerBorderAfter;
+    int m_outerBorderStart  { 0 };
+    int m_outerBorderEnd  { 0 };
+    int m_outerBorderBefore  { 0 };
+    int m_outerBorderAfter  { 0 };
 
-    bool m_needsCellRecalc;
+    bool m_needsCellRecalc  { false };
 
     // This HashSet holds the overflowing cells for faster painting.
     // If we have more than gMaxAllowedOverflowingCellRatio * total cells, it will be empty
     // and m_forceSlowPaintPathWithOverflowingCell will be set to save memory.
     HashSet<RenderTableCell*> m_overflowingCells;
-    bool m_forceSlowPaintPathWithOverflowingCell;
+    bool m_forceSlowPaintPathWithOverflowingCell { false };
 
-    bool m_hasMultipleCellLevels;
+    bool m_hasMultipleCellLevels { false };
 
     // This map holds the collapsed border values for cells with collapsed borders.
     // It is held at RenderTableSection level to spare memory consumption by table cells.
     HashMap<std::pair<const RenderTableCell*, int>, CollapsedBorderValue > m_cellsCollapsedBorders;
 };
+
+inline const BorderValue& RenderTableSection::borderAdjoiningTableStart() const
+{
+    if (hasSameDirectionAs(table()))
+        return style().borderStart();
+    return style().borderEnd();
+}
+
+inline const BorderValue& RenderTableSection::borderAdjoiningTableEnd() const
+{
+    if (hasSameDirectionAs(table()))
+        return style().borderEnd();
+    return style().borderStart();
+}
+
+inline RenderTableSection::CellStruct& RenderTableSection::cellAt(unsigned row,  unsigned col)
+{
+    recalcCellsIfNeeded();
+    return m_grid[row].row[col];
+}
+
+inline const RenderTableSection::CellStruct& RenderTableSection::cellAt(unsigned row, unsigned col) const
+{
+    ASSERT(!m_needsCellRecalc);
+    return m_grid[row].row[col];
+}
+
+inline RenderTableCell* RenderTableSection::primaryCellAt(unsigned row, unsigned col)
+{
+    recalcCellsIfNeeded();
+    CellStruct& c = m_grid[row].row[col];
+    return c.primaryCell();
+}
+
+inline RenderTableRow* RenderTableSection::rowRendererAt(unsigned row) const
+{
+    ASSERT(!m_needsCellRecalc);
+    return m_grid[row].rowRenderer;
+}
+
+inline int RenderTableSection::outerBorderLeft(const RenderStyle* styleForCellFlow) const
+{
+    if (styleForCellFlow->isHorizontalWritingMode())
+        return styleForCellFlow->isLeftToRightDirection() ? outerBorderStart() : outerBorderEnd();
+    return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderAfter() : outerBorderBefore();
+}
+
+inline int RenderTableSection::outerBorderRight(const RenderStyle* styleForCellFlow) const
+{
+    if (styleForCellFlow->isHorizontalWritingMode())
+        return styleForCellFlow->isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
+    return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderBefore() : outerBorderAfter();
+}
+
+inline int RenderTableSection::outerBorderTop(const RenderStyle* styleForCellFlow) const
+{
+    if (styleForCellFlow->isHorizontalWritingMode())
+        return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderAfter() : outerBorderBefore();
+    return styleForCellFlow->isLeftToRightDirection() ? outerBorderStart() : outerBorderEnd();
+}
+
+inline int RenderTableSection::outerBorderBottom(const RenderStyle* styleForCellFlow) const
+{
+    if (styleForCellFlow->isHorizontalWritingMode())
+        return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderBefore() : outerBorderAfter();
+    return styleForCellFlow->isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
+}
+
+inline unsigned RenderTableSection::numRows() const
+{
+    ASSERT(!m_needsCellRecalc);
+    return m_grid.size();
+}
+
+inline void RenderTableSection::recalcCellsIfNeeded()
+{
+    if (m_needsCellRecalc)
+        recalcCells();
+}
+
+inline LayoutUnit RenderTableSection::rowBaseline(unsigned row)
+{
+    recalcCellsIfNeeded();
+    return m_grid[row].baseline;
+}
+
+inline CellSpan RenderTableSection::fullTableRowSpan() const
+{
+    ASSERT(!m_needsCellRecalc);
+    return CellSpan(0, m_grid.size());
+}
 
 } // namespace WebCore
 

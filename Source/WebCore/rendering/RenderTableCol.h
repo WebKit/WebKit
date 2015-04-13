@@ -48,20 +48,8 @@ public:
     bool isTableColumnGroup() const { return style().display() == TABLE_COLUMN_GROUP; }
 
     RenderTableCol* enclosingColumnGroup() const;
-    RenderTableCol* enclosingColumnGroupIfAdjacentBefore() const
-    {
-        if (previousSibling())
-            return 0;
-        return enclosingColumnGroup();
-    }
-
-    RenderTableCol* enclosingColumnGroupIfAdjacentAfter() const
-    {
-        if (nextSibling())
-            return 0;
-        return enclosingColumnGroup();
-    }
-
+    RenderTableCol* enclosingColumnGroupIfAdjacentBefore() const;
+    RenderTableCol* enclosingColumnGroupIfAdjacentAfter() const;
 
     // Returns the next column or column-group.
     RenderTableCol* nextColumn() const;
@@ -97,8 +85,22 @@ private:
 
     RenderTable* table() const;
 
-    unsigned m_span;
+    unsigned m_span { 1 };
 };
+
+inline RenderTableCol* RenderTableCol::enclosingColumnGroupIfAdjacentBefore() const
+{
+    if (previousSibling())
+        return nullptr;
+    return enclosingColumnGroup();
+}
+
+inline RenderTableCol* RenderTableCol::enclosingColumnGroupIfAdjacentAfter() const
+{
+    if (nextSibling())
+        return nullptr;
+    return enclosingColumnGroup();
+}
 
 } // namespace WebCore
 

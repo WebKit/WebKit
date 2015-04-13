@@ -1,3 +1,75 @@
+2015-02-17  Zalan Bujtas  <zalan@apple.com>
+
+        Minor RenderTable* class cleanups.
+        https://bugs.webkit.org/show_bug.cgi?id=141707
+
+        Reviewed by Andreas Kling.
+
+        Use in-class initializer where possible.
+        Remove redundant code.
+        Move multiline implementations out of class declaration.
+
+        No change in functionality.
+
+        * rendering/RenderTableCaption.cpp:
+        (WebCore::RenderTableCaption::insertedIntoTree):
+        (WebCore::RenderTableCaption::willBeRemovedFromTree):
+        (WebCore::RenderTableCaption::containingBlockLogicalWidthForContent): Deleted.
+        * rendering/RenderTableCaption.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell):
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::colSpan):
+        (WebCore::RenderTableCell::rowSpan):
+        (WebCore::RenderTableCell::setCol):
+        (WebCore::RenderTableCell::col):
+        (WebCore::RenderTableCell::section):
+        (WebCore::RenderTableCell::table):
+        (WebCore::RenderTableCell::rowIndex):
+        (WebCore::RenderTableCell::styleOrColLogicalWidth):
+        (WebCore::RenderTableCell::logicalHeightForRowSizing):
+        (WebCore::RenderTableCell::isBaselineAligned):
+        (WebCore::RenderTableCell::borderAdjoiningTableStart):
+        (WebCore::RenderTableCell::borderAdjoiningTableEnd):
+        (WebCore::RenderTableCell::borderAdjoiningCellBefore):
+        (WebCore::RenderTableCell::borderAdjoiningCellAfter):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::RenderTableCol):
+        * rendering/RenderTableCol.h:
+        (WebCore::RenderTableCol::enclosingColumnGroupIfAdjacentBefore):
+        (WebCore::RenderTableCol::enclosingColumnGroupIfAdjacentAfter):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::setRowIndex):
+        (WebCore::RenderTableRow::rowIndex):
+        (WebCore::RenderTableRow::borderAdjoiningTableStart):
+        (WebCore::RenderTableRow::borderAdjoiningTableEnd):
+        (WebCore::RenderTableRow::table):
+        (WebCore::RenderTableSection::firstRow):
+        (WebCore::RenderTableSection::lastRow):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::RenderTableSection):
+        (WebCore::RenderTableSection::dirtiedRows):
+        (WebCore::RenderTableSection::dirtiedColumns):
+        (WebCore::RenderTableSection::paintObject):
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTableSection.h:
+        (WebCore::CellSpan::CellSpan):
+        (WebCore::RenderTableSection::borderAdjoiningTableStart):
+        (WebCore::RenderTableSection::borderAdjoiningTableEnd):
+        (WebCore::RenderTableSection::cellAt):
+        (WebCore::RenderTableSection::primaryCellAt):
+        (WebCore::RenderTableSection::rowRendererAt):
+        (WebCore::RenderTableSection::outerBorderLeft):
+        (WebCore::RenderTableSection::outerBorderRight):
+        (WebCore::RenderTableSection::outerBorderTop):
+        (WebCore::RenderTableSection::outerBorderBottom):
+        (WebCore::RenderTableSection::numRows):
+        (WebCore::RenderTableSection::recalcCellsIfNeeded):
+        (WebCore::RenderTableSection::rowBaseline):
+        (WebCore::RenderTableSection::fullTableRowSpan):
+        (WebCore::CellSpan::start): Deleted.
+        (WebCore::CellSpan::end): Deleted.
+
 2015-04-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake][GTK] Use the right variable to include the Wayland headers.
