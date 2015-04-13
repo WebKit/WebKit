@@ -49,10 +49,10 @@ struct CrossThreadResourceResponseData;
 class ResourceResponseBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<ResourceResponse> adopt(PassOwnPtr<CrossThreadResourceResponseData>);
+    static std::unique_ptr<ResourceResponse> adopt(std::unique_ptr<CrossThreadResourceResponseData>);
 
     // Gets a copy of the data suitable for passing to another thread.
-    PassOwnPtr<CrossThreadResourceResponseData> copyData() const;
+    std::unique_ptr<CrossThreadResourceResponseData> copyData() const;
 
     bool isNull() const { return m_isNull; }
     WEBCORE_EXPORT bool isHTTP() const;

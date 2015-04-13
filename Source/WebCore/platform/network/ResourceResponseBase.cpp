@@ -62,9 +62,9 @@ ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeTyp
 {
 }
 
-PassOwnPtr<ResourceResponse> ResourceResponseBase::adopt(PassOwnPtr<CrossThreadResourceResponseData> data)
+std::unique_ptr<ResourceResponse> ResourceResponseBase::adopt(std::unique_ptr<CrossThreadResourceResponseData> data)
 {
-    OwnPtr<ResourceResponse> response = adoptPtr(new ResourceResponse);
+    auto response = std::make_unique<ResourceResponse>();
     response->setURL(data->m_url);
     response->setMimeType(data->m_mimeType);
     response->setExpectedContentLength(data->m_expectedContentLength);
@@ -76,13 +76,13 @@ PassOwnPtr<ResourceResponse> ResourceResponseBase::adopt(PassOwnPtr<CrossThreadR
     response->lazyInit(AllFields);
     response->m_httpHeaderFields.adopt(WTF::move(data->m_httpHeaders));
     response->m_resourceLoadTiming = data->m_resourceLoadTiming;
-    response->doPlatformAdopt(data);
-    return response.release();
+    response->doPlatformAdopt(WTF::move(data));
+    return response;
 }
 
-PassOwnPtr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() const
+std::unique_ptr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() const
 {
-    OwnPtr<CrossThreadResourceResponseData> data = adoptPtr(new CrossThreadResourceResponseData);
+    auto data = std::make_unique<CrossThreadResourceResponseData>();
     data->m_url = url().copy();
     data->m_mimeType = mimeType().isolatedCopy();
     data->m_expectedContentLength = expectedContentLength();
@@ -91,7 +91,7 @@ PassOwnPtr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() con
     data->m_httpStatusText = httpStatusText().isolatedCopy();
     data->m_httpHeaders = httpHeaderFields().copyData();
     data->m_resourceLoadTiming = m_resourceLoadTiming;
-    return asResourceResponse().doPlatformCopyData(data.release());
+    return asResourceResponse().doPlatformCopyData(WTF::move(data));
 }
 
 bool ResourceResponseBase::isHTTP() const
