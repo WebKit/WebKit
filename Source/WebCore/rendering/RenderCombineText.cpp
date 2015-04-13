@@ -42,7 +42,8 @@ void RenderCombineText::styleDidChange(StyleDifference diff, const RenderStyle* 
 
     RenderText::styleDidChange(diff, oldStyle);
 
-    if (m_isCombined) {
+    if (m_isCombined && selfNeedsLayout()) {
+        // Layouts cause the text to be recombined; therefore, only only un-combine when the style diff causes a layout.
         RenderText::setRenderedText(originalText()); // This RenderCombineText has been combined once. Restore the original text for the next combineText().
         m_isCombined = false;
     }

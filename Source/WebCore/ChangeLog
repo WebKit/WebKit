@@ -1,3 +1,20 @@
+2015-04-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text-combine erroneously draws vertically after non-layout-causing style change
+        https://bugs.webkit.org/show_bug.cgi?id=143461
+        <rdar://problem/19285490>
+
+        Reviewed by Darin Adler.
+
+        RenderCombineText::styleDidChange() unconditionally uncombines its text. Layout then
+        recombines it. However, if there is a style change that does not cause layout, the
+        RenderCombineText will be left uncombined until the next layout.
+
+        Test: fast/text/text-combine-style-change-no-layout.html
+
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::styleDidChange):
+
 2015-04-08  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Properly handle negative reference box widths and center coordinates

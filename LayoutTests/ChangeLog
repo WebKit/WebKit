@@ -1,3 +1,14 @@
+2015-04-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text-combine erroneously draws vertically after non-layout-causing style change
+        https://bugs.webkit.org/show_bug.cgi?id=143461
+        <rdar://problem/19285490>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/text-combine-style-change-no-layout-expected.html: Added.
+        * fast/text/text-combine-style-change-no-layout.html: Added.
+
 2015-04-08  Filip Pizlo  <fpizlo@apple.com>
 
         JSArray::sortNumeric should handle ArrayWithUndecided
