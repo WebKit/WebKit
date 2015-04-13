@@ -47,7 +47,6 @@ public:
     static InferredValue* create(VM&);
     
     static const bool needsDestruction = true;
-    static const bool hasImmortalStructure = true;
     static void destroy(JSCell*);
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
@@ -95,7 +94,6 @@ public:
         m_set.invalidate(detail);
     }
     
-protected:
     static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
     
 private:
