@@ -1,3 +1,11 @@
+2015-04-13  Alexey Proskuryakov  <ap@apple.com>
+
+        js/regress-141098.html often times out in debug builds.
+
+        This test is slow in debug, sometimes barely passing, and other times timing out.
+
+        * TestExpectations:
+
 2015-04-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test correction after r182635.
