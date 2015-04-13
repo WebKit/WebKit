@@ -1,3 +1,28 @@
+2015-04-08  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Properly handle negative reference box widths and center coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=142610
+
+        Reviewed by Rob Buis.
+
+        Fix a few cases where values that should not be negative end up that
+        way.
+
+        This patch is based on a couple of Blink patches by Rob Buis.
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-floats-circle-negative-radius-crash.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-negative-width-crash.html
+
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::computeDeltasForContainingBlockLine): A
+            negative margin box width means that the shape has no extent, so
+            clamp to zero.
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeCircle::floatValueForRadiusInBox): When computing
+            the radii, take the absolute value, since the radii is based on
+            the distance, which is always positive.
+        (WebCore::BasicShapeEllipse::floatValueForRadiusInBox): Ditto.
+
 2015-04-08  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Fill list style background with same color with that of list background.
