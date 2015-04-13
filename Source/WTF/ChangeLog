@@ -1,3 +1,17 @@
+2015-04-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix -Wparentheses warning with GCC 5 in SaturatedArithmetic.h
+        https://bugs.webkit.org/show_bug.cgi?id=143457
+
+        Reviewed by Benjamin Poulain.
+
+        Tested by WTF.SaturatedArithmeticAddition and WTF.SaturatedArithmeticSubtraction.
+
+        * wtf/SaturatedArithmetic.h:
+        (signedAddOverflows): Use && instead of & to avoid triggering -Wparentheses in newer
+        versions of GCC and Clang, and to improve the clarity of the function.
+        (signedSubtractOverflows): Changed correspondingly, although there was no warning here.
+
 2015-03-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Enable generating idiv instructions if it is supported

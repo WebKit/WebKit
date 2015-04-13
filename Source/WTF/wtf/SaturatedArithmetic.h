@@ -46,7 +46,7 @@ inline bool signedAddOverflows(int32_t a, int32_t b, int32_t& result)
 
     // Can only overflow if the signed bit of the two values match. If the signed
     // bit of the result and one of the values differ it did overflow.
-    return !((ua ^ ub) >> 31) & (uresult ^ ua) >> 31;
+    return !((ua ^ ub) >> 31) && (uresult ^ ua) >> 31;
 }
 
 inline int32_t saturatedAddition(int32_t a, int32_t b)
@@ -74,7 +74,7 @@ inline bool signedSubtractOverflows(int32_t a, int32_t b, int32_t& result)
 
     // Can only overflow if the signed bit of the two values do not match. If the
     // signed bit of the result and the first value differ it did overflow.
-    return (ua ^ ub) >> 31 & (uresult ^ ua) >> 31;
+    return (ua ^ ub) >> 31 && (uresult ^ ua) >> 31;
 }
 
 inline int32_t saturatedSubtraction(int32_t a, int32_t b)
