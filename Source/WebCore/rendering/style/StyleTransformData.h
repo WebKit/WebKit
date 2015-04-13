@@ -42,6 +42,8 @@ public:
     {
         return !(*this == o);
     }
+    
+    bool hasTransform() const { return m_operations.size(); }
 
     TransformOperations m_operations;
     Length m_x;
