@@ -1,3 +1,12 @@
+2015-04-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Enable Media Source
+        https://bugs.webkit.org/show_bug.cgi?id=143635
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/efl/TestExpectations: Update failing tests.
+
 2015-04-12  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Fix trival typos related to the word "coordinate".

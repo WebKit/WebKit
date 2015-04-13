@@ -1101,13 +1101,15 @@ Bug(EFL) fast/images/webp-color-profile-lossless.html [ Skip ]
 Bug(EFL) fast/images/webp-color-profile-lossy-alpha.html [ Skip ]
 Bug(EFL) fast/images/webp-color-profile-lossy.html [ Skip ]
 
-# Requires MEDIA_SOURCE support.
-webkit.org/b/95296 http/tests/media/media-source [ Skip ]
-webkit.org/b/95296 media/media-source [ Skip ]
-webkit.org/b/95296 fast/history/page-cache-media-source-opened.html [ Skip ]
-webkit.org/b/95296 fast/history/page-cache-media-source-closed.html [ Skip ]
-webkit.org/b/95296 fast/history/page-cache-media-source-closed-2.html [ Skip ]
-webkit.org/b/95296 fast/history/page-cache-removed-source-buffer.html [ Skip ]
+# Though MEDIA_SOURCE is enabled, below tests are still failing.
+webkit.org/b/134974 http/tests/media/media-source [ Skip ]
+webkit.org/b/134974 media/media-source/media-source-append-failed.html [ Timeout ]
+webkit.org/b/134974 media/media-source/media-source-seek-complete.html [ Timeout ]
+webkit.org/b/134974 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
+webkit.org/b/134974 media/track/track-cues-pause-on-exit.html [ Timeout ]
+webkit.org/b/134974 media/media-source/media-source-duplicate-seeked.html [ Failure ]
+webkit.org/b/134974 media/media-source/media-source-play.html [ Failure ]
+webkit.org/b/134974 media/media-source/media-source-append-buffer-with-append-window.html [ Failure Pass ]
 
 # Requires ENCRYPTED_MEDIA support.
 webkit.org/b/95297 media/encrypted-media [ Pass ]
