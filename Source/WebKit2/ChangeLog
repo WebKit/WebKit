@@ -1,3 +1,28 @@
+2015-03-27  Andreas Kling  <akling@apple.com>
+
+        WebProcessProxy should not retain WebBackForwardListItems forever.
+        <https://webkit.org/b/143152>
+        <rdar://problem/19925709>
+
+        Reviewed by Anders Carlsson.
+
+        Have WebProcessProxy actually forget about a WebBackForwardListItem after it's removed from
+        the WebBackForwardList.
+
+        This ensures that we don't accumulate too many of these objects, which can get quite large
+        due to the session state encoded in them.
+
+        We already have graceful handling of the case where an incoming IPC message references
+        a removed back/forward list item.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::didRemoveItem):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::backForwardRemovedItem):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::removeBackForwardItem):
+        * UIProcess/WebProcessProxy.h:
+
 2015-03-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Avoid the Vector<> copy in WebTouchEvent constructor
