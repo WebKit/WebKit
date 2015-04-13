@@ -1,3 +1,14 @@
+2015-03-24  Zhuo Li  <zachli@apple.com>
+
+        Scripts running in isolated world should not subject to a page's CSP about 'eval'.
+        https://bugs.webkit.org/show_bug.cgi?id=141316.
+
+        Reviewed by Geoffrey Garen.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::initScript):
+        We should not impose the main world Content Security Policy onto the isolated world.
+
 2015-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] DnD icon/widget has odd background
