@@ -1,3 +1,18 @@
+2015-03-27  Michael Saboff  <msaboff@apple.com>
+
+        Objects with numeric properties intermittently get a phantom 'length' property
+        https://bugs.webkit.org/show_bug.cgi?id=142792
+
+        Reviewed by Csaba Osztrogonác.
+
+        New regression test.
+
+        * js/regress-142792-expected.txt: Added.
+        * js/regress-142792.html: Added.
+        * js/script-tests/regress-142792.js: Added.
+        (isArrayLike):
+        (filter):
+
 2015-03-24  Zhuo Li  <zachli@apple.com>
 
         Scripts running in isolated world should not subject to a page's CSP about 'eval'.
