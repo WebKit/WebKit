@@ -77,6 +77,7 @@ my (
     $fullscreenAPISupport,
     $gamepadSupport,
     $geolocationSupport,
+    $hardwareConcurrencySupport,
     $highDPICanvasSupport,
     $icondatabaseSupport,
     $indexedDatabaseSupport,
@@ -102,7 +103,6 @@ my (
     $mhtmlSupport,
     $mouseCursorScaleSupport,
     $netscapePluginAPISupport,
-    $networkInfoSupport,
     $nosniffSupport,
     $notificationsSupport,
     $orientationEventsSupport,
@@ -321,7 +321,7 @@ my @features = (
       define => "ENABLE_NAVIGATOR_CONTENT_UTILS", default => isEfl(), value => \$registerProtocolHandlerSupport },
 
     { option => "navigator-hardware-concurrency", desc => "Toggle Navigator hardware concurrenct support",
-      define => "ENABLE_NAVIGATOR_HWCONCURRENCY", default => 1, value => \$registerProtocolHandlerSupport },
+      define => "ENABLE_NAVIGATOR_HWCONCURRENCY", default => 1, value => \$hardwareConcurrencySupport },
 
     { option => "netscape-plugin-api", desc => "Toggle Netscape Plugin API support",
       define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isIOSWebKit(), value => \$netscapePluginAPISupport },

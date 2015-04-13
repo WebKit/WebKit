@@ -1,3 +1,17 @@
+2015-04-13  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Fix wrong value variable in ENABLE_NAVIGATOR_HWCONCURRENCY
+        https://bugs.webkit.org/show_bug.cgi?id=143667
+
+        Reviewed by Csaba Osztrogonác.
+
+        ENABLE_NAVIGATOR_HWCONCURRENCY has used $registerProtocolHandlerSupport value variable
+        since r169017. Added $hardwareConcurrencySupport for it.
+
+        Additionally networkInfoSupport is removed because this feature was removed due to spec out.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2015-04-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cmake] Add ENABLE(ATTACHMENT_ELEMENT) to the build system
