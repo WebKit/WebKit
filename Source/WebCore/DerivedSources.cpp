@@ -510,7 +510,6 @@
 #include "JSWebKitCSSTransformValue.cpp"
 #include "JSWebKitCSSMatrix.cpp"
 #include "JSWebKitCSSRegionRule.cpp"
-#include "JSWebKitMouseForceEvent.cpp"
 #include "JSWebKitNamedFlow.cpp"
 #include "JSWebKitPoint.cpp"
 #include "JSWebKitTransitionEvent.cpp"

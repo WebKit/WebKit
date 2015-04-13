@@ -358,7 +358,7 @@ bool WebEventFactory::shouldBeHandledAsContextClick(const WebCore::PlatformMouse
     return (static_cast<NSMenuType>(event.menuTypeForEvent()) == NSMenuTypeContextMenu);
 }
 
-WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSView *windowView)
+WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *pressureEvent, NSView *windowView)
 {
     NSPoint position = pointForEvent(event, windowView);
     NSPoint globalPosition = globalPointForEvent(event);
@@ -374,7 +374,12 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSView *windo
     int eventNumber                         = [event eventNumber];
     int menuTypeForEvent                    = typeForEvent(event);
 
-    return WebMouseEvent(type, button, IntPoint(position), IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp, eventNumber, menuTypeForEvent);
+    double force = 0;
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+    force = pressureEvent.stage < 1 ? pressureEvent.pressure : pressureEvent.pressure + pressureEvent.stage - 1;
+#endif
+
+    return WebMouseEvent(type, button, IntPoint(position), IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp, force, eventNumber, menuTypeForEvent);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windowView)

@@ -312,7 +312,6 @@ public:
     bool isHandlingWheelEvent() const { return m_isHandlingWheelEvent; }
 
     WEBCORE_EXPORT void setImmediateActionStage(ImmediateActionStage stage);
-    WEBCORE_EXPORT const PlatformMouseEvent& lastMouseDownEvent() const;
 
 private:
 #if ENABLE(DRAG_SUPPORT)

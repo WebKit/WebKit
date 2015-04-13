@@ -1433,7 +1433,7 @@ void ContextMenuController::showContextMenuAt(Frame* frame, const IntPoint& clic
     clearContextMenu();
     
     // Simulate a click in the middle of the accessibility object.
-    PlatformMouseEvent mouseEvent(clickPoint, clickPoint, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime());
+    PlatformMouseEvent mouseEvent(clickPoint, clickPoint, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime(), ForceAtClick);
     frame->eventHandler().handleMousePressEvent(mouseEvent);
     bool handled = frame->eventHandler().sendContextMenuEvent(mouseEvent);
     if (handled)

@@ -1,3 +1,16 @@
+2015-04-13  Beth Dakin  <bdakin@apple.com>
+
+        Add force property to MouseEvents
+        https://bugs.webkit.org/show_bug.cgi?id=143569
+        -and corresponding-
+        rdar://problem/20472954
+
+        Reviewed by Darin Adler.
+
+        PlatformMouseEvent takes a force parameter.
+        * WebDropSource.cpp:
+        (generateMouseEvent):
+
 2015-04-13  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Incorrect parameter order in call to WebView::repaint.

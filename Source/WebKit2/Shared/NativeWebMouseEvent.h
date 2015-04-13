@@ -49,7 +49,7 @@ namespace WebKit {
 class NativeWebMouseEvent : public WebMouseEvent {
 public:
 #if USE(APPKIT)
-    NativeWebMouseEvent(NSEvent *, NSView *);
+    NativeWebMouseEvent(NSEvent *, NSEvent *pressureEvent, NSView *);
 #elif PLATFORM(GTK)
     NativeWebMouseEvent(const NativeWebMouseEvent&);
     NativeWebMouseEvent(GdkEvent*, int);

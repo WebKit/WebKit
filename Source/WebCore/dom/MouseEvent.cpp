@@ -66,7 +66,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, PassRefPtr<Abs
         event.movementDelta().x(), event.movementDelta().y(),
 #endif
         event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.button(),
-        relatedTarget);
+        relatedTarget, event.force());
 }
 
 Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, PassRefPtr<AbstractView> view,
@@ -75,7 +75,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, boo
     int movementX, int movementY,
 #endif
     bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
-    PassRefPtr<EventTarget> relatedTarget)
+    PassRefPtr<EventTarget> relatedTarget, double force)
 
 {
     return MouseEvent::create(type, canBubble, cancelable, timestamp, view,
@@ -83,7 +83,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, boo
 #if ENABLE(POINTER_LOCK)
         movementX, movementY,
 #endif
-        ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, 0, false);
+        ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, force, 0, false);
 }
 
 Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, PassRefPtr<AbstractView> view,
@@ -92,14 +92,14 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, boo
     int movementX, int movementY,
 #endif
     bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
-    PassRefPtr<EventTarget> relatedTarget, PassRefPtr<DataTransfer> dataTransfer, bool isSimulated)
+    PassRefPtr<EventTarget> relatedTarget, double force, PassRefPtr<DataTransfer> dataTransfer, bool isSimulated)
 {
     return adoptRef(*new MouseEvent(type, canBubble, cancelable, timestamp, view,
         detail, screenX, screenY, pageX, pageY,
 #if ENABLE(POINTER_LOCK)
         movementX, movementY,
 #endif
-        ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, dataTransfer, isSimulated));
+        ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, force, dataTransfer, isSimulated));
 }
 
 MouseEvent::MouseEvent()
@@ -114,7 +114,7 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
                        int movementX, int movementY,
 #endif
                        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-                       unsigned short button, PassRefPtr<EventTarget> relatedTarget,
+                       unsigned short button, PassRefPtr<EventTarget> relatedTarget, double force,
                        PassRefPtr<DataTransfer> dataTransfer, bool isSimulated)
     : MouseRelatedEvent(eventType, canBubble, cancelable, timestamp, view, detail, IntPoint(screenX, screenY),
                         IntPoint(pageX, pageY),
@@ -125,6 +125,7 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
     , m_button(button == (unsigned short)-1 ? 0 : button)
     , m_buttonDown(button != (unsigned short)-1)
     , m_relatedTarget(relatedTarget)
+    , m_force(force)
     , m_dataTransfer(dataTransfer)
 {
 }
@@ -254,6 +255,7 @@ PassRefPtr<Event> MouseEvent::cloneFor(HTMLIFrameElement* iframe) const
         button(),
         // Nullifies relatedTarget.
         0);
+    clonedMouseEvent->setForce(force());
     return clonedMouseEvent.release();
 }
 
@@ -271,7 +273,7 @@ SimulatedMouseEvent::SimulatedMouseEvent(const AtomicString& eventType, PassRefP
 #if ENABLE(POINTER_LOCK)
                  0, 0,
 #endif
-                 false, false, false, false, 0, 0, 0, true)
+                 false, false, false, false, 0, 0, 0, 0, true)
 {
     if (UIEventWithKeyState* keyStateEvent = findEventWithKeyState(underlyingEvent.get())) {
         m_ctrlKey = keyStateEvent->ctrlKey();

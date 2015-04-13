@@ -42,7 +42,10 @@ typedef struct _Evas_Event_Mouse_Move Evas_Event_Mouse_Move;
 #endif
 
 namespace WebCore {
-    
+
+const double ForceAtClick = 0;
+const double ForceAtForceClick = 1;
+
     // These button numbers match the ones used in the DOM API, 0 through 2, except for NoButton which isn't specified.
     enum MouseButton : int8_t { NoButton = -1, LeftButton, MiddleButton, RightButton };
 
@@ -63,13 +66,14 @@ namespace WebCore {
         }
 
         PlatformMouseEvent(const IntPoint& position, const IntPoint& globalPosition, MouseButton button, PlatformEvent::Type type,
-                           int clickCount, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, double timestamp)
+                           int clickCount, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, double timestamp, double force)
             : PlatformEvent(type, shiftKey, ctrlKey, altKey, metaKey, timestamp)
             , m_position(position)
             , m_globalPosition(globalPosition)
             , m_button(button)
             , m_clickCount(clickCount)
             , m_modifierFlags(0)
+            , m_force(force)
 #if PLATFORM(MAC)
             , m_eventNumber(0)
             , m_menuTypeForEvent(0)
@@ -88,6 +92,7 @@ namespace WebCore {
         MouseButton button() const { return m_button; }
         int clickCount() const { return m_clickCount; }
         unsigned modifierFlags() const { return m_modifierFlags; }
+        double force() const { return m_force; }
         
 
 #if PLATFORM(GTK) 
@@ -123,6 +128,7 @@ namespace WebCore {
         MouseButton m_button;
         int m_clickCount;
         unsigned m_modifierFlags;
+        double m_force { 0 };
 
 #if PLATFORM(MAC)
         int m_eventNumber;

@@ -1,3 +1,18 @@
+2015-04-13  Beth Dakin  <bdakin@apple.com>
+
+        Add force property to MouseEvents
+        https://bugs.webkit.org/show_bug.cgi?id=143569
+        -and corresponding-
+        rdar://problem/20472954
+
+        Reviewed by Darin Adler.
+
+        PlatformMouseEvent and MouseEvent now take force parameters.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _dragSourceEndedAt:operation:]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+
 2015-04-12  Darin Adler  <darin@apple.com>
 
         [Cocoa] Localizable strings are inconsistent and need to be regenerated

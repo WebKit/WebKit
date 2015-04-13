@@ -314,7 +314,6 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/dom/TreeWalker.idl \
     $(WebCore)/dom/UIEvent.idl \
     $(WebCore)/dom/WebKitAnimationEvent.idl \
-	$(WebCore)/dom/WebKitMouseForceEvent.idl \
     $(WebCore)/dom/WebKitNamedFlow.idl \
     $(WebCore)/dom/WebKitTransitionEvent.idl \
     $(WebCore)/dom/WheelEvent.idl \

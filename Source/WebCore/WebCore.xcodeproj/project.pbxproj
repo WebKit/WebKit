@@ -3427,10 +3427,6 @@
 		93C4F6EB1108F9A50099D0DB /* AccessibilityScrollbar.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C4F6E91108F9A50099D0DB /* AccessibilityScrollbar.h */; };
 		93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CCF0260AF6C52900018E89 /* NavigationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93CCF0600AF6CA7600018E89 /* NavigationAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93CCF05F0AF6CA7600018E89 /* NavigationAction.cpp */; };
-		93D200ED1AB8ED090025E851 /* WebKitMouseForceEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93D200EB1AB8ED090025E851 /* WebKitMouseForceEvent.cpp */; };
-		93D200EE1AB8ED090025E851 /* WebKitMouseForceEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D200EC1AB8ED090025E851 /* WebKitMouseForceEvent.h */; };
-		93D200F21AB8F81F0025E851 /* JSWebKitMouseForceEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93D200F01AB8F81F0025E851 /* JSWebKitMouseForceEvent.cpp */; };
-		93D200F31AB8F8200025E851 /* JSWebKitMouseForceEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D200F11AB8F81F0025E851 /* JSWebKitMouseForceEvent.h */; };
 		93D3C1590F97A9D70053C013 /* DOMHTMLCanvasElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D3C1580F97A9D70053C013 /* DOMHTMLCanvasElement.h */; };
 		93D3C17D0F97AA760053C013 /* DOMHTMLCanvasElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 93D3C1580F97A9D70053C013 /* DOMHTMLCanvasElement.h */; };
 		93D9D53C0DA27E180077216C /* RangeBoundaryPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D9D53B0DA27E180077216C /* RangeBoundaryPoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10679,11 +10675,6 @@
 		93CA4CA209DF93FA00DF8677 /* svg.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = svg.css; sourceTree = "<group>"; };
 		93CCF0260AF6C52900018E89 /* NavigationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationAction.h; sourceTree = "<group>"; };
 		93CCF05F0AF6CA7600018E89 /* NavigationAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationAction.cpp; sourceTree = "<group>"; };
-		93D200EB1AB8ED090025E851 /* WebKitMouseForceEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitMouseForceEvent.cpp; sourceTree = "<group>"; };
-		93D200EC1AB8ED090025E851 /* WebKitMouseForceEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitMouseForceEvent.h; sourceTree = "<group>"; };
-		93D200EF1AB8ED640025E851 /* WebKitMouseForceEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebKitMouseForceEvent.idl; sourceTree = "<group>"; };
-		93D200F01AB8F81F0025E851 /* JSWebKitMouseForceEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitMouseForceEvent.cpp; sourceTree = "<group>"; };
-		93D200F11AB8F81F0025E851 /* JSWebKitMouseForceEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitMouseForceEvent.h; sourceTree = "<group>"; };
 		93D3C1580F97A9D70053C013 /* DOMHTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLCanvasElement.h; sourceTree = "<group>"; };
 		93D9D53B0DA27E180077216C /* RangeBoundaryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RangeBoundaryPoint.h; sourceTree = "<group>"; };
 		93E227DB0AF589AD00D48324 /* DocumentLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentLoader.cpp; sourceTree = "<group>"; };
@@ -19733,8 +19724,6 @@
 				A86629C909DA2B47009633A5 /* JSUIEvent.h */,
 				31C0FF390E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.cpp */,
 				31C0FF3A0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h */,
-				93D200F01AB8F81F0025E851 /* JSWebKitMouseForceEvent.cpp */,
-				93D200F11AB8F81F0025E851 /* JSWebKitMouseForceEvent.h */,
 				31C0FF3B0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.cpp */,
 				31C0FF3C0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.h */,
 				65DF31F109D1CC60000BE325 /* JSWheelEvent.cpp */,
@@ -23207,9 +23196,6 @@
 				31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */,
 				31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */,
 				31C0FF1D0E4CEB6E007D6FE5 /* WebKitAnimationEvent.idl */,
-				93D200EB1AB8ED090025E851 /* WebKitMouseForceEvent.cpp */,
-				93D200EC1AB8ED090025E851 /* WebKitMouseForceEvent.h */,
-				93D200EF1AB8ED640025E851 /* WebKitMouseForceEvent.idl */,
 				D7613A4E1474F13F00DB8606 /* WebKitNamedFlow.cpp */,
 				D7613A4D1474F13F00DB8606 /* WebKitNamedFlow.h */,
 				D7613A4A1474EE9500DB8606 /* WebKitNamedFlow.idl */,
@@ -24248,7 +24234,6 @@
 				7CC289DF1AA0FE5D009A9CE3 /* URLRegistry.h in Headers */,
 				BC1A37B6097C715F0019F3D8 /* DOMHTML.h in Headers */,
 				319848081A1E6CB500A13318 /* DOMAnimationEvent.h in Headers */,
-				93D200F31AB8F8200025E851 /* JSWebKitMouseForceEvent.h in Headers */,
 				85DF81270AA7787200486AD7 /* DOMHTMLAnchorElement.h in Headers */,
 				85E7119B0AC5D5350053270F /* DOMHTMLAnchorElementInternal.h in Headers */,
 				854075690AD6CBF900620C57 /* DOMHTMLAppletElement.h in Headers */,
@@ -26613,7 +26598,6 @@
 				B2227A390D00BF220071B782 /* SVGLinearGradientElement.h in Headers */,
 				B2227A3C0D00BF220071B782 /* SVGLineElement.h in Headers */,
 				0810764412828556007C63BA /* SVGListProperty.h in Headers */,
-				93D200EE1AB8ED090025E851 /* WebKitMouseForceEvent.h in Headers */,
 				088A0E09126EF1DB00978F7A /* SVGListPropertyTearOff.h in Headers */,
 				B2227A410D00BF220071B782 /* SVGLocatable.h in Headers */,
 				436708EE12D9CA4B00044234 /* SVGMarkerData.h in Headers */,
@@ -27544,7 +27528,6 @@
 				976D6C78122B8A3D001FD1F7 /* Blob.cpp in Sources */,
 				2EDEF1F3121B0EFC00726DB2 /* BlobData.cpp in Sources */,
 				E1D31CDC19196020001005A3 /* BlobDataFileReference.cpp in Sources */,
-				93D200ED1AB8ED090025E851 /* WebKitMouseForceEvent.cpp in Sources */,
 				E164A2ED191AE6350010737D /* BlobDataFileReferenceMac.mm in Sources */,
 				E14A94D716DFDF950068DE82 /* BlobRegistry.cpp in Sources */,
 				2EDEF1F6121B0EFC00726DB2 /* BlobRegistryImpl.cpp in Sources */,
@@ -27573,7 +27556,6 @@
 				BCB16C290979C3BD00467741 /* CachedResourceLoader.cpp in Sources */,
 				4634592C1AC2271000ECB71C /* PowerObserverMac.cpp in Sources */,
 				5081E3C33CE580C16EF8B48B /* CachedResourceRequest.cpp in Sources */,
-				93D200F21AB8F81F0025E851 /* JSWebKitMouseForceEvent.cpp in Sources */,
 				6C638896A96CCEE50C8C946C /* CachedResourceRequestInitiators.cpp in Sources */,
 				BCB16C230979C3BD00467741 /* CachedScript.cpp in Sources */,
 				A104F24314C71F7A009E2C23 /* CachedSVGDocument.cpp in Sources */,

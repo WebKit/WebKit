@@ -1,3 +1,64 @@
+2015-04-13  Beth Dakin  <bdakin@apple.com>
+
+        Add force property to MouseEvents
+        https://bugs.webkit.org/show_bug.cgi?id=143569
+        -and corresponding-
+        rdar://problem/20472954
+
+        Reviewed by Darin Adler.
+
+        In order to accommodate adding force to all PlatformMouseEvents, we have to add it 
+        to pass a caches pressure event to NativeWebMouseEvent and add force to 
+        WebMouseEvent.
+
+        NativeWebMouseEvent now requires a second NSEvent for the pressureEvent. 
+        * Shared/NativeWebMouseEvent.h:
+
+        WebMouseEvent takes a force parameter.
+        * Shared/WebEvent.h:
+        (WebKit::WebMouseEvent::force):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        (WebKit::WebMouseEvent::encode):
+        (WebKit::WebMouseEvent::decode):
+        * Shared/mac/NativeWebMouseEventMac.mm:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * Shared/mac/WebEventFactory.h:
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+
+        Cache the most recent pressureEvent in _data so that it can be sent along to the 
+        NativeWebMouseEvent constructor.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView pressureChangeWithEvent:]):
+        (-[WKView acceptsFirstMouse:]):
+        (-[WKView shouldDelayWindowOrderingForEvent:]):
+        (-[WKView _postFakeMouseMovedEventForFlagsChangedEvent:]):
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+
+        WebMouseEvent takes a force parameter.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::showContextMenuAtPoint):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::createWebEvent):
+
+        MouseEvent and PlatformMouseEvent both take force parameters too.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToURLWithSimulatedClick):
+        (WebKit::WebPage::contextMenuAtPointInWindow):
+        (WebKit::WebPage::dragEnded):
+        (WebKit::WebPage::simulateMouseDown):
+        (WebKit::WebPage::simulateMouseUp):
+        (WebKit::WebPage::simulateMouseMotion):
+
+        The functions that dispatch the force events no longer take a PlatformMouseEvent 
+        as a parameter.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::inputDeviceForceDidChange):
+        (WebKit::WebPage::immediateActionDidCancel):
+
 2015-04-13  Andreas Kling  <akling@apple.com>
 
         Don't segregate heap objects based on Structure immortality.

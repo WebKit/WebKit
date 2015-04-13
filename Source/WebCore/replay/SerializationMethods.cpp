@@ -314,6 +314,7 @@ EncodedValue EncodingTraits<PlatformMouseEvent>::encodeValue(const PlatformMouse
     ENCODE_TYPE_WITH_KEY(encodedValue, bool, altKey, input.altKey());
     ENCODE_TYPE_WITH_KEY(encodedValue, bool, metaKey, input.metaKey());
     ENCODE_TYPE_WITH_KEY(encodedValue, int, timestamp, input.timestamp());
+    ENCODE_TYPE_WITH_KEY(encodedValue, double, force, input.force());
 
     return encodedValue;
 }
@@ -332,11 +333,12 @@ bool EncodingTraits<PlatformMouseEvent>::decodeValue(EncodedValue& encodedValue,
     DECODE_TYPE_WITH_KEY(encodedValue, bool, altKey);
     DECODE_TYPE_WITH_KEY(encodedValue, bool, metaKey);
     DECODE_TYPE_WITH_KEY(encodedValue, int, timestamp);
+    DECODE_TYPE_WITH_KEY(encodedValue, double, force);
 
     input = std::make_unique<PlatformMouseEvent>(IntPoint(positionX, positionY),
         IntPoint(globalPositionX, globalPositionY),
         button, type, clickCount,
-        shiftKey, ctrlKey, altKey, metaKey, timestamp);
+        shiftKey, ctrlKey, altKey, metaKey, timestamp, force);
     return true;
 }
 

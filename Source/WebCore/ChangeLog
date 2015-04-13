@@ -1,3 +1,83 @@
+2015-04-13  Beth Dakin  <bdakin@apple.com>
+
+        Add force property to MouseEvents
+        https://bugs.webkit.org/show_bug.cgi?id=143569
+        -and corresponding-
+        rdar://problem/20472954
+
+        Reviewed by Darin Adler.
+
+        This patch removes WebKitMouseForceEvent and uses a MouseEvent everywhere that it 
+        was used. That’s possible because this patch also adds a force property to all 
+        MouseEvents and to PlatformMouseEvent.
+
+        Remove WebKitMouseForceEvent.
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+
+        Create MouseEvents with the appropriate force instead of WebKitMouseForceEvents. 
+        This patch also gets rid of the PlatformMouseEvent parameter for these events. 
+        They were re-using the cached mousedown event before, which they never should have 
+        done. Instead, we create PlatformMouseEvents inside these functions and then use 
+        that to make MouseEvents.
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseForceWillBegin):
+        (WebCore::Element::dispatchMouseForceChanged):
+        (WebCore::Element::dispatchMouseForceDown):
+        (WebCore::Element::dispatchMouseForceUp):
+        (WebCore::Element::dispatchMouseForceClick):
+        (WebCore::Element::dispatchMouseForceCancelled):
+        * dom/Element.h:
+
+        No More WebKitMouseForceEvent.
+        * dom/EventNames.in:
+
+        Add force to MouseEvent.
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        (WebCore::MouseEvent::MouseEvent):
+        (WebCore::MouseEvent::cloneFor):
+        (WebCore::SimulatedMouseEvent::SimulatedMouseEvent):
+        * dom/MouseEvent.h:
+        (WebCore::MouseEvent::force):
+        (WebCore::MouseEvent::setForce):
+        * dom/MouseEvent.idl:
+
+        No More WebKitMouseForceEvent.
+        * dom/WebKitMouseForceEvent.cpp: Removed.
+        * dom/WebKitMouseForceEvent.h: Removed.
+        * dom/WebKitMouseForceEvent.idl: Removed.
+
+        PlatformMouseEvent now takes a force parameter.
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::showContextMenuAt):
+        * page/DragController.cpp:
+        (WebCore::createMouseEvent):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent):
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        (WebCore::EventHandler::fakeMouseMoveEventTimerFired):
+
+        We don’t need lastMouseDownEvent() anymore. We were using it to avoid creating new 
+        PlatformMouseEvents for the force events, but we fix that in this patch.
+        (WebCore::EventHandler::lastMouseDownEvent): Deleted.
+        * page/EventHandler.h:
+
+        At force to PlatformMouseEvent.
+        * platform/PlatformMouseEvent.h:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        (WebCore::PlatformMouseEvent::force):
+        * replay/SerializationMethods.cpp:
+        (JSC::EncodingTraits<PlatformMouseEvent>::encodeValue):
+        (JSC::EncodingTraits<PlatformMouseEvent>::decodeValue):
+
 2015-04-13  Andreas Kling  <akling@apple.com>
 
         Don't segregate heap objects based on Structure immortality.

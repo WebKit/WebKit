@@ -224,6 +224,7 @@ struct WKViewInterpretKeyEventsParameters {
     bool _inResignFirstResponder;
     BOOL _willBecomeFirstResponderAgain;
     NSEvent *_mouseDownEvent;
+    NSEvent *_pressureEvent;
     BOOL _ignoringMouseDraggedEvents;
 
     id _flagsChangedEventMonitor;
@@ -1249,7 +1250,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
                 if (handled) \
                     LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
                 else { \
-                    NativeWebMouseEvent webEvent(theEvent, self); \
+                    NativeWebMouseEvent webEvent(theEvent, _data->_pressureEvent, self); \
                     _data->_page->handleMouseEvent(webEvent); \
                 } \
             }]; \
@@ -1259,7 +1260,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
             [super Selector:theEvent]; \
             return; \
         } \
-        NativeWebMouseEvent webEvent(theEvent, self); \
+        NativeWebMouseEvent webEvent(theEvent, _data->_pressureEvent, self); \
         _data->_page->handleMouseEvent(webEvent); \
     }
 #define NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(Selector) \
@@ -1272,13 +1273,13 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
                 if (handled) \
                     LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
                 else { \
-                    NativeWebMouseEvent webEvent(theEvent, self); \
+                    NativeWebMouseEvent webEvent(theEvent, _data->_pressureEvent, self); \
                     _data->_page->handleMouseEvent(webEvent); \
                 } \
             }]; \
             return; \
         } \
-        NativeWebMouseEvent webEvent(theEvent, self); \
+        NativeWebMouseEvent webEvent(theEvent, _data->_pressureEvent, self); \
         _data->_page->handleMouseEvent(webEvent); \
     }
 #else
@@ -1295,7 +1296,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
             [super Selector:theEvent]; \
             return; \
         } \
-        NativeWebMouseEvent webEvent(theEvent, self); \
+        NativeWebMouseEvent webEvent(theEvent, _data->_pressureEvent, self); \
         _data->_page->handleMouseEvent(webEvent); \
     }
 #define NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(Selector) \
@@ -1307,7 +1308,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
             LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
             return; \
         } \
-        NativeWebMouseEvent webEvent(theEvent, self); \
+        NativeWebMouseEvent webEvent(theEvent, _data->_pressureEvent, self); \
         _data->_page->handleMouseEvent(webEvent); \
     }
 #endif
@@ -1417,8 +1418,16 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
 - (void)pressureChangeWithEvent:(NSEvent *)event
 {
 #if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
-    if (event.phase == NSEventPhaseChanged || event.phase == NSEventPhaseBegan || event.phase == NSEventPhaseEnded)
-        _data->_page->inputDeviceForceDidChange(event.pressure, event.stage);
+    if (event == _data->_pressureEvent)
+        return;
+
+    if (event.phase != NSEventPhaseChanged && event.phase != NSEventPhaseBegan && event.phase != NSEventPhaseEnded)
+        return;
+
+    [_data->_pressureEvent release];
+    _data->_pressureEvent = [event retain];
+
+    _data->_page->inputDeviceForceDidChange(event.pressure, event.stage);
 #endif
 }
 
@@ -1433,7 +1442,7 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
         return NO;
     
     [self _setMouseDownEvent:event];
-    bool result = _data->_page->acceptsFirstMouse([event eventNumber], WebEventFactory::createWebMouseEvent(event, self));
+    bool result = _data->_page->acceptsFirstMouse([event eventNumber], WebEventFactory::createWebMouseEvent(event, _data->_pressureEvent, self));
     [self _setMouseDownEvent:nil];
     return result;
 }
@@ -1454,7 +1463,7 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
         return NO;
     
     [self _setMouseDownEvent:event];
-    bool result = _data->_page->shouldDelayWindowOrderingForEvent(WebEventFactory::createWebMouseEvent(event, self));
+    bool result = _data->_page->shouldDelayWindowOrderingForEvent(WebEventFactory::createWebMouseEvent(event, _data->_pressureEvent, self));
     [self _setMouseDownEvent:nil];
     return result;
 }
@@ -2970,7 +2979,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved location:[[flagsChangedEvent window] mouseLocationOutsideOfEventStream]
         modifierFlags:[flagsChangedEvent modifierFlags] timestamp:[flagsChangedEvent timestamp] windowNumber:[flagsChangedEvent windowNumber]
         context:[flagsChangedEvent context] eventNumber:0 clickCount:0 pressure:0];
-    NativeWebMouseEvent webEvent(fakeEvent, self);
+    NativeWebMouseEvent webEvent(fakeEvent, _data->_pressureEvent, self);
     _data->_page->handleMouseEvent(webEvent);
 }
 
@@ -3775,6 +3784,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_page->initializeWebPage();
 
     _data->_mouseDownEvent = nil;
+    _data->_pressureEvent = nil;
     _data->_ignoringMouseDraggedEvents = NO;
     _data->_clipsToVisibleRect = NO;
     _data->_useContentPreparationRectForVisibleRect = NO;

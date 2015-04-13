@@ -59,7 +59,7 @@ public:
         int movementX, int movementY,
 #endif
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
-        PassRefPtr<EventTarget> relatedTarget);
+        PassRefPtr<EventTarget> relatedTarget, double force);
 
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, PassRefPtr<AbstractView>,
         int detail, int screenX, int screenY, int pageX, int pageY,
@@ -67,7 +67,7 @@ public:
         int movementX, int movementY,
 #endif
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
-        PassRefPtr<EventTarget> relatedTarget, PassRefPtr<DataTransfer>, bool isSimulated = false);
+        PassRefPtr<EventTarget> relatedTarget, double force, PassRefPtr<DataTransfer>, bool isSimulated = false);
 
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& eventType, PassRefPtr<AbstractView>, const PlatformMouseEvent&, int detail, PassRefPtr<Node> relatedTarget);
 
@@ -86,7 +86,8 @@ public:
     bool buttonDown() const { return m_buttonDown; }
     virtual EventTarget* relatedTarget() const override final { return m_relatedTarget.get(); }
     void setRelatedTarget(PassRefPtr<EventTarget> relatedTarget) { m_relatedTarget = relatedTarget; }
-
+    double force() const { return m_force; }
+    void setForce(double force) { m_force = force; }
 
     Node* toElement() const;
     Node* fromElement() const;
@@ -112,7 +113,7 @@ protected:
         int movementX, int movementY,
 #endif
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
-        PassRefPtr<EventTarget> relatedTarget, PassRefPtr<DataTransfer>, bool isSimulated);
+        PassRefPtr<EventTarget> relatedTarget, double force, PassRefPtr<DataTransfer>, bool isSimulated);
 
     MouseEvent(const AtomicString& type, const MouseEventInit&);
 
@@ -122,6 +123,7 @@ private:
     unsigned short m_button;
     bool m_buttonDown;
     RefPtr<EventTarget> m_relatedTarget;
+    double m_force { 0 };
     RefPtr<DataTransfer> m_dataTransfer;
 };
 

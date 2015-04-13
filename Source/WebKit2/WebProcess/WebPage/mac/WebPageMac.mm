@@ -1148,13 +1148,13 @@ void WebPage::inputDeviceForceDidChange(float force, int stage)
         return;
 
     float overallForce = stage < 1 ? force : force + stage - 1;
-    element->dispatchMouseForceChanged(overallForce, m_page->mainFrame().eventHandler().lastMouseDownEvent());
+    element->dispatchMouseForceChanged(overallForce);
 
     if (m_lastForceStage == 1 && stage == 2)
-        element->dispatchMouseForceDown(m_page->mainFrame().eventHandler().lastMouseDownEvent());
+        element->dispatchMouseForceDown();
     else if (m_lastForceStage == 2 && stage == 1) {
-        element->dispatchMouseForceUp(m_page->mainFrame().eventHandler().lastMouseDownEvent());
-        element->dispatchMouseForceClick(m_page->mainFrame().eventHandler().lastMouseDownEvent());
+        element->dispatchMouseForceUp();
+        element->dispatchMouseForceClick();
     }
 
     m_lastForceStage = stage;
@@ -1173,7 +1173,7 @@ void WebPage::immediateActionDidCancel()
     if (!element)
         return;
 
-    element->dispatchMouseForceCancelled(m_page->mainFrame().eventHandler().lastMouseDownEvent());
+    element->dispatchMouseForceCancelled();
 }
 
 void WebPage::immediateActionDidComplete()
