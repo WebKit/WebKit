@@ -1,3 +1,12 @@
+2015-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix compositing/geometry/fixed-transformed.html on Mavericks.
+
+        To get consistent results on Mavericks, call
+        internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+
+        * compositing/geometry/fixed-transformed.html:
+
 2015-04-08  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should detect singleton functions

@@ -20,6 +20,8 @@
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
+            if (window.internals)
+                internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
         }
         window.addEventListener('load', function() {
             window.setTimeout(function() {
