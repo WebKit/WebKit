@@ -1,3 +1,31 @@
+2015-04-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] extra-headers and keep-alive properties for HTTP source element
+        https://bugs.webkit.org/show_bug.cgi?id=143480
+
+        Reviewed by Carlos Garcia Campos.
+
+        Keep the resource loader around when persistent HTTP connection
+        support is enabled. The keep-alive property is set to false by
+        default. Also before sending the HTTP request we now check the
+        contents of the extra-headers GstStructure and set additional
+        headers based on the structure contents.
+
+        Patch inspired by GStreamer's souphttpsrc element.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init):
+        (webKitWebSrcFinalize):
+        (webKitWebSrcSetProperty):
+        (webKitWebSrcGetProperty):
+        (webKitWebSrcStop): Clear resource loader only for non-persistent connections.
+        (webKitWebSrcSetExtraHeader): Utility function to append headers
+        to an existing request based on a GValue contents.
+        (webKitWebSrcProcessExtraHeaders): Parse a GValue and set headers
+        based on its contents.
+        (webKitWebSrcStart): Extra headers and persistent connection
+        support. The resource loader is now lazily initialized here.
+
 2015-04-06  Žan Doberšek  <zdobersek@igalia.com>
 
         FileList constructor should move the passed-in Vector<> rvalue reference into the member variable
