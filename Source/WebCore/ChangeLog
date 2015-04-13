@@ -1,3 +1,24 @@
+2015-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Crash when laying out (char)0
+        https://bugs.webkit.org/show_bug.cgi?id=143103
+
+        Reviewed by Dean Jackson.
+
+        We currently cache a character -> Font mapping in a HashMap.
+        However, keys in Hashmaps can't be 0. This patch simply skips
+        the cache in this case.
+
+        No new tests, for now. I'm having trouble creating a test because
+        the site that causes this bug generates their page using script,
+        and the script is all minified, and difficult to understand. I
+        will contact the owner of the site and ask for and unminified
+        version of their sources. However, I don't want to that to block
+        this tiny fix from going in.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::systemFallbackFontForCharacter):
+
 2015-03-24  Zhuo Li  <zachli@apple.com>
 
         Scripts running in isolated world should not subject to a page's CSP about 'eval'.
