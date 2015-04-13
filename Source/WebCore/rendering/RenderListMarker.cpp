@@ -1424,8 +1424,10 @@ void RenderListMarker::updateContent()
     if (isImage()) {
         // FIXME: This is a somewhat arbitrary width.  Generated images for markers really won't become particularly useful
         // until we support the CSS3 marker pseudoclass to allow control over the width and height of the marker box.
-        int bulletWidth = style().fontMetrics().ascent() / 2;
-        m_image->setContainerSizeForRenderer(this, FloatSize(bulletWidth, bulletWidth), style().effectiveZoom());
+        LayoutUnit bulletWidth = style().fontMetrics().ascent() / LayoutUnit(2);
+        LayoutSize defaultBulletSize(bulletWidth, bulletWidth);
+        LayoutSize imageSize = calculateImageIntrinsicDimensions(m_image.get(), defaultBulletSize, DoNotScaleByEffectiveZoom);
+        m_image->setContainerSizeForRenderer(this, imageSize, style().effectiveZoom());
         return;
     }
 

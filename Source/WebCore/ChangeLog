@@ -1,5 +1,23 @@
 2015-04-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        list-style-image with SVG image renders at incorrect size.
+        https://bugs.webkit.org/show_bug.cgi?id=141367.
+
+        Reviewed by Darin Adler.
+        
+        This patch imports https://codereview.chromium.org/197203003.
+
+        When using an SVG as list marker image, don't unconditionally set the
+        dimensions to a square with the dimensions of ascent / 2, but rather
+        determine a suitable size using intrinsic dimensions (and ratio).
+
+        Test: svg/as-list-image/svg-list-image-intrinsic-size-1.html
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::updateContent):
+
+2015-04-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Canvas drawImage() has a security hole when the image isn't yet fully loaded.
         https://bugs.webkit.org/show_bug.cgi?id=58681.
 
