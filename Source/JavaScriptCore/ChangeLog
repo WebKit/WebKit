@@ -1,3 +1,13 @@
+2015-04-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Fix calleeSaveRegisters() on non iOS platforms after r180516
+        https://bugs.webkit.org/show_bug.cgi?id=143368
+
+        Reviewed by Michael Saboff.
+
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::calleeSaveRegisters):
+
 2015-04-10  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (182567): regress/script-tests/sorting-benchmark.js fails on 32 bit dfg-eager tests
