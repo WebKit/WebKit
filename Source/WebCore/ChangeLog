@@ -1,3 +1,39 @@
+2015-04-05  Darin Adler  <darin@apple.com>
+
+        FrameView code uses page() without null checking
+        https://bugs.webkit.org/show_bug.cgi?id=143425
+        rdar://problem/18920601
+
+        Reviewed by Anders Carlsson.
+
+        While we don't have tests that cover this, we are seeing crashes coming in
+        that indicate the shouldEnableSpeculativeTilingDuringLoading function is
+        being called when the page is null. This patch adds null checks to all the
+        places in FrameView that use page() without doing null checking.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): If page is null, don't try to do the
+        auto-sizing logic that involves the textAutosizingWidth value from the page.
+        (WebCore::FrameView::setFixedVisibleContentRect): Get settings from the
+        frame rather than the page to avoid possible null-dereference.
+        (WebCore::FrameView::scrollPositionChanged): Check the page for null when
+        getting the event throttling delay.
+        (WebCore::FrameView::updateLayerFlushThrottling): Check the page for null,
+        and return early if it is null.
+        (WebCore::shouldEnableSpeculativeTilingDuringLoading): Check the page for
+        null, and return false if it is null.
+        (WebCore::FrameView::performPostLayoutTasks): Guard the code that calls
+        didLayout on the page client by a check if the page is null.
+        (WebCore::FrameView::pagination): Don't call Page::pagination on a null
+        page here.
+        (WebCore::FrameView::visibleContentScaleFactor): Use a scale factor of 1
+        if the page is null.
+        (WebCore::FrameView::setVisibleScrollerThumbRect): Don't call through to
+        the page client if the page is null.
+        (WebCore::FrameView::scrollbarStyleChanged): Ditto.
+        (WebCore::FrameView::setScrollPinningBehavior): Check the page for null
+        before asking it for the scrolling coordinator.
+
 2015-04-01  Zalan Bujtas  <zalan@apple.com>
 
         Lots of time spent querying table cell borders, when there are none.
