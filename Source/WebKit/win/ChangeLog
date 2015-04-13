@@ -1,3 +1,17 @@
+2015-04-13  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Incorrect parameter order in call to WebView::repaint.
+        https://bugs.webkit.org/show_bug.cgi?id=143666
+
+        Reviewed by Brent Fulgham.
+
+        The 'immediate' default parameter has been forgotten.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::invalidateRootView):
+        (WebChromeClient::invalidateContentsAndRootView):
+        (WebChromeClient::invalidateContentsForSlowScroll):
+
 2015-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Enable Symbol in web pages

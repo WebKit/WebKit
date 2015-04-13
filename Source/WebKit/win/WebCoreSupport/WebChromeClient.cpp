@@ -463,19 +463,19 @@ IntRect WebChromeClient::windowResizerRect() const
 void WebChromeClient::invalidateRootView(const IntRect& windowRect)
 {
     ASSERT(core(m_webView->topLevelFrame()));
-    m_webView->repaint(windowRect, false /*contentChanged*/, false /*repaintContentOnly*/);
+    m_webView->repaint(windowRect, false /*contentChanged*/, false /*immediate*/, false /*repaintContentOnly*/);
 }
 
 void WebChromeClient::invalidateContentsAndRootView(const IntRect& windowRect)
 {
     ASSERT(core(m_webView->topLevelFrame()));
-    m_webView->repaint(windowRect, true /*contentChanged*/, false /*repaintContentOnly*/);
+    m_webView->repaint(windowRect, true /*contentChanged*/, false /*immediate*/, false /*repaintContentOnly*/);
 }
 
 void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& windowRect)
 {
     ASSERT(core(m_webView->topLevelFrame()));
-    m_webView->repaint(windowRect, true /*contentChanged*/, true /*repaintContentOnly*/);
+    m_webView->repaint(windowRect, true /*contentChanged*/, false /*immediate*/, true /*repaintContentOnly*/);
 }
 
 void WebChromeClient::scroll(const IntSize& delta, const IntRect& scrollViewRect, const IntRect& clipRect)
