@@ -49,6 +49,7 @@ namespace WebCore {
     M(FTP) \
     M(FileAPI) \
     M(Frames) \
+    M(Fullscreen) \
     M(Gamepad) \
     M(History) \
     M(IconDatabase) \

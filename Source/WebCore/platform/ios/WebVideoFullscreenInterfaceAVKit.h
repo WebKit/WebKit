@@ -96,7 +96,15 @@ public:
     HTMLMediaElement::VideoFullscreenMode mode() const { return m_mode; }
     void setIsOptimized(bool);
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoOptimized();
-    void fullscreenMayReturnToInline();
+    void fullscreenMayReturnToInline(std::function<void(bool)> callback);
+
+    void willStartOptimizedFullscreen();
+    void didStartOptimizedFullscreen();
+    void willStopOptimizedFullscreen();
+    void didStopOptimizedFullscreen();
+    void willCancelOptimizedFullscreen();
+    void didCancelOptimizedFullscreen();
+    void prepareForOptimizedFullscreenStopWithCompletionHandler(void (^)(BOOL));
 
 protected:
     void beginSession();
@@ -105,6 +113,11 @@ protected:
     void enterFullscreenStandard();
     void exitFullscreenInternal(const IntRect& finalRect);
     void cleanupFullscreenInternal();
+
+    void setMode(HTMLMediaElement::VideoFullscreenMode);
+    void clearMode(HTMLMediaElement::VideoFullscreenMode);
+    bool hasMode(HTMLMediaElement::VideoFullscreenMode mode) const { return m_mode & mode; }
+    bool isMode(HTMLMediaElement::VideoFullscreenMode mode) const { return m_mode == mode; }
 
     RetainPtr<WebAVPlayerController> m_playerController;
     RetainPtr<AVPlayerViewController> m_playerViewController;
@@ -119,6 +132,7 @@ protected:
     RetainPtr<UIView> m_parentView;
     RetainPtr<UIWindow> m_parentWindow;
     HTMLMediaElement::VideoFullscreenMode m_mode;
+    std::function<void(bool)> m_prepareToInlineCallback;
     bool m_exitRequested;
     bool m_exitCompleted;
     bool m_enterRequested;

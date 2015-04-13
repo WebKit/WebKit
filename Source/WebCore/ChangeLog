@@ -1,3 +1,51 @@
+2015-04-13  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] When entering optimized fullscreen, standard fullscreen view should exit.
+        https://bugs.webkit.org/show_bug.cgi?id=143615
+
+        Reviewed by Simon Fraser.
+
+        When entering optimized fullscreen from standard fullscreen, the original fullscreen
+        view should animate out.
+
+        The original method for entering optimized fullscreen is deprecated, so replace it with
+        the new method (which doesn't take completion blocks) and use delegate methods to detect
+        when the animation transition completes.
+
+        * platform/Logging.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (boolString): Added; use for logging boolean parameters.
+        (-[WebAVPlayerController playerViewControllerWillStartOptimizedFullscreen:]): Pass to WebVideoFullscreenInterfaceAVKit.
+        (-[WebAVPlayerController playerViewControllerDidStartOptimizedFullscreen:]): Ditto.
+        (-[WebAVPlayerController playerViewControllerWillStopOptimizedFullscreen:]): Ditto.
+        (-[WebAVPlayerController playerViewControllerDidStopOptimizedFullscreen:]): Ditto.
+        (-[WebAVPlayerController playerViewControllerWillCancelOptimizedFullscreen:]): Ditto.
+        (-[WebAVPlayerController playerViewControllerDidCancelOptimizedFullscreen:]): Ditto.
+        (-[WebAVPlayerController playerViewController:restoreUserInterfaceForOptimizedFullscreenStopWithCompletionHandler:]): Ditto.
+        (-[WebAVVideoLayer setPlayerViewController:]): Remove the KVO registration; now handled by above delegate methods.
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreenInternal): Add logging.
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreenOptimized): Use new -startOptimizedFullscreen method.
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreenStandard): Add logging.
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreenInternal): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal): Use hasMode() & isMode() rather than checking m_mode directly.
+        (WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::preparedToReturnToInline): Callback now stored on this object rather than the WebAVPlayerController.
+        (WebVideoFullscreenInterfaceAVKit::mayAutomaticallyShowVideoOptimized): Moved.
+        (WebVideoFullscreenInterfaceAVKit::fullscreenMayReturnToInline): Added; store the passed callback.
+        (WebVideoFullscreenInterfaceAVKit::willStartOptimizedFullscreen): Exit out of standard fullscreen mode if necessary.
+        (WebVideoFullscreenInterfaceAVKit::didStartOptimizedFullscreen): Moved from the start lambda in enterFullscreenOptimized().
+        (WebVideoFullscreenInterfaceAVKit::willStopOptimizedFullscreen): Call the model's requestExitFullscreen() method.
+        (WebVideoFullscreenInterfaceAVKit::didStopOptimizedFullscreen): Moved from the stop lambda in enterFullscreenOptimized().
+        (WebVideoFullscreenInterfaceAVKit::willCancelOptimizedFullscreen): Call the model's requestExitFullscreen() method.
+        (WebVideoFullscreenInterfaceAVKit::didCancelOptimizedFullscreen): Moved from the stop lambda in enterFullscreenOptimized().
+        (WebVideoFullscreenInterfaceAVKit::prepareForOptimizedFullscreenStopWithCompletionHandler): Moved from -playerViewController:shouldExitFullScreenWithReason:.
+        (WebVideoFullscreenInterfaceAVKit::setMode): Added; Call fullscreenModeChanged() if necessary.
+        (WebVideoFullscreenInterfaceAVKit::clearMode): Ditto.
+        (-[WebAVVideoLayer observeValueForKeyPath:ofObject:change:context:]): Deleted.
+        (WebVideoFullscreenInterfaceAVKit::setIsOptimized): Deleted.
+
 2015-04-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed fix after r182757.
