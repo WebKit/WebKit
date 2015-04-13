@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+  <canvas id="sourceCanvas" width="100" height="100"></canvas>
+  <canvas id="dataURLSynchronousCanvas" width="100" height="100"></canvas>
+  <canvas id="dataURLAsynchronousCanvas" width="100" height="100"></canvas>
+  <canvas id="sameDomainSynchronousCanvas" width="100" height="100"></canvas>
+  <canvas id="sameDomainAsynchronousCanvas" width="100" height="100"></canvas>
+  <canvas id="crossDomainSynchronousCanvas" width="100" height="100"></canvas>
+  <canvas id="crossDomainAsynchronousCanvas" width="100" height="100"></canvas>
+  <script>
+    function drawCanvasBackground(id, color) {
+      var canvas = document.getElementById(id);
+      var context = canvas.getContext("2d");
+      context.fillStyle = color;
+      context.fillRect(0, 0, 100, 100);
+      return context;
+    }
+    
+    function incrementLoadedImagesCount() {
+      if (typeof incrementLoadedImagesCount.counter == 'undefined')
+        incrementLoadedImagesCount.counter = 0;
+        
+      if (++incrementLoadedImagesCount.counter == 6) {
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }
+    }
+
+    function drawAndGetImageDataSynchronous(id, color, imageSrc, shouldTaint) {
+      var context = drawCanvasBackground(id, color);
+      var image =  new Image();
+      image.src = imageSrc;
+      context.drawImage(image, 0, 0);
+
+      try {
+        var pixels = new Uint32Array(context.getImageData(0, 0, 1, 1).data.buffer);
+        if (pixels[0] == 0xFF0000FF)
+          debug(shouldTaint ? "Tainting works correctly." : "Tainting works incorrectly.");
+        else
+          debug(shouldTaint ? "Tainting works incorrectly." : "Tainting works correctly.");
+      }
+      catch (error) {
+        debug(shouldTaint ? "Tainting works correctly." : "Tainting works incorrectly.");
+      }
+      
+      incrementLoadedImagesCount();
+    }
+    
+    function drawAndGetImageDataAsynchronous(canvasId, imageSrc, shouldTaint) {
+      var context = drawCanvasBackground(canvasId, '#f00');
+      var image =  new Image();
+
+      image.onload = function() {
+        context.drawImage(image, 0, 0);
+        try {
+          var pixels = new Uint32Array(context.getImageData(0, 0, 1, 1).data.buffer);
+          debug(shouldTaint ? "Tainting works incorrectly." : "Tainting works correctly.");
+        }
+        catch (error) {
+          debug(shouldTaint ? "Tainting works correctly." : "Tainting works incorrectly.");
+        }
+
+        incrementLoadedImagesCount();
+      }
+      image.src = imageSrc;
+    }
+
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+
+    drawCanvasBackground("sourceCanvas", '#0f0');
+        
+    drawAndGetImageDataSynchronous("dataURLSynchronousCanvas", sourceCanvas.toDataURL(), false);
+    drawAndGetImageDataAsynchronous("dataURLAsynchronousCanvas", sourceCanvas.toDataURL(), false);
+    
+    drawAndGetImageDataSynchronous("sameDomainSynchronousCanvas", "http://127.0.0.1:8000/canvas/resources/100x100-lime-rect.svg", false);
+    drawAndGetImageDataAsynchronous("sameDomainAsynchronousCanvas", "http://127.0.0.1:8000/canvas/resources/100x100-lime-rect.svg", false);
+    
+    drawAndGetImageDataSynchronous("crossDomainSynchronousCanvas", "http://localhost:8000/canvas/resources/100x100-lime-rect.svg", true);
+    drawAndGetImageDataAsynchronous("crossDomainAsynchronousCanvas", "http://localhost:8000/canvas/resources/100x100-lime-rect.svg", true);
+  </script>
+  <script src="../resources/js-test-post.js"></script>
+</body>
+</html>

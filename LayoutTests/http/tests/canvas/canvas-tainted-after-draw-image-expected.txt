@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 60: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+Tainting works correctly.
+Tainting works correctly.
+Tainting works correctly.
+Tainting works correctly.
+Tainting works correctly.
+Tainting works correctly.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+      
