@@ -28,6 +28,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "NetworkCacheData.h"
 #include "SharedMemory.h"
 #include <wtf/RefPtr.h>
 
@@ -44,8 +45,9 @@ public:
     {
     }
     
-    WebCompiledContentExtensionData(RefPtr<SharedMemory> data, unsigned actionsOffset, unsigned actionsSize, unsigned bytecodeOffset, unsigned bytecodeSize)
-        : data(data)
+    WebCompiledContentExtensionData(RefPtr<SharedMemory>&& data, NetworkCache::Data fileData, unsigned actionsOffset, unsigned actionsSize, unsigned bytecodeOffset, unsigned bytecodeSize)
+        : data(WTF::move(data))
+        , fileData(fileData)
         , actionsOffset(actionsOffset)
         , actionsSize(actionsSize)
         , bytecodeOffset(bytecodeOffset)
@@ -57,6 +59,7 @@ public:
     static bool decode(IPC::ArgumentDecoder&, WebCompiledContentExtensionData&);
 
     RefPtr<SharedMemory> data;
+    NetworkCache::Data fileData;
     unsigned actionsOffset { 0 };
     unsigned actionsSize { 0 };
     unsigned bytecodeOffset { 0 };

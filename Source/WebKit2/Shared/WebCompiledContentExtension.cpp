@@ -52,12 +52,8 @@ Ref<WebCompiledContentExtension> WebCompiledContentExtension::createFromCompiled
     memcpy(static_cast<char*>(sharedMemory->data()), compilerData.actions.data(), compilerData.actions.size());
     memcpy(static_cast<char*>(sharedMemory->data()) + compilerData.actions.size(), compilerData.bytecode.data(), compilerData.bytecode.size());
 
-    WebCompiledContentExtensionData data;
-    data.data = WTF::move(sharedMemory);
-    data.actionsOffset = 0;
-    data.actionsSize = compilerData.actions.size();
-    data.bytecodeOffset = compilerData.actions.size();
-    data.bytecodeSize = compilerData.bytecode.size();
+    NetworkCache::Data fileData; // We don't have an mmap'd file to keep alive here, so just use an empty Data object.
+    WebCompiledContentExtensionData data(WTF::move(sharedMemory), fileData, 0, compilerData.actions.size(), compilerData.actions.size(), compilerData.bytecode.size());
 
     return create(WTF::move(data));
 }

@@ -235,7 +235,8 @@ static RefPtr<API::UserContentExtension> createExtension(const String& identifie
 {
     auto sharedMemory = WebKit::SharedMemory::createFromVMBuffer(const_cast<uint8_t*>(fileData.data()), fileData.size());
     auto compiledContentExtensionData = WebKit::WebCompiledContentExtensionData(
-        sharedMemory,
+        WTF::move(sharedMemory),
+        fileData,
         metaData.actionsOffset,
         metaData.actionsSize,
         metaData.bytecodeOffset,

@@ -1,3 +1,18 @@
+2015-04-10  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Don't unmap shared memory while using it.
+        https://bugs.webkit.org/show_bug.cgi?id=143625
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebCompiledContentExtension.cpp:
+        (WebKit::WebCompiledContentExtension::createFromCompiledContentExtensionData):
+        * Shared/WebCompiledContentExtensionData.h:
+        (WebKit::WebCompiledContentExtensionData::WebCompiledContentExtensionData):
+        * UIProcess/API/APIUserContentExtensionStore.cpp:
+        (API::createExtension):
+        Keep the Data object alive as long as the SharedMemory that uses it.
+
 2015-04-12  Darin Adler  <darin@apple.com>
 
         [Cocoa] Localizable strings are inconsistent and need to be regenerated
