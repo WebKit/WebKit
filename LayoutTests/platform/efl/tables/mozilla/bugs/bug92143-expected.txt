@@ -19,7 +19,7 @@ layer at (0,0) size 800x585
         RenderBR {BR} at (0,18) size 0x17
         RenderText {#text} at (0,36) size 437x17
           text run at (0,36) width 437: "the next table must overrun the visible part of the view (width=2400) "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (437,50) size 0x0
         RenderBR {BR} at (0,54) size 0x17
       RenderTable {TABLE} at (0,148) size 2402x58 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 2400x56

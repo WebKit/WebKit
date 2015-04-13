@@ -1,5 +1,50 @@
 2015-04-13  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] Update table/mozilla expected files after r182620
+        https://bugs.webkit.org/show_bug.cgi?id=143626
+
+        Unreviewed gardening.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/tables/mozilla/bugs/bug106795-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug106795-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug1224-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug1224-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug131020-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug131020-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug131020_iframe-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug131020_iframe-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug1430-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug1430-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug157890-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug157890-expected.txt: Added.
+        * platform/efl/tables/mozilla/bugs/bug16252-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug16252-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug19599-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug19599-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug20579-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug20579-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug32205-3-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug32205-3-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug82946-2-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug82946-2-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug92143-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug92143-expected.txt:
+        * platform/efl/tables/mozilla/marvin/tables_cellpadding-expected.png:
+        * platform/efl/tables/mozilla/marvin/tables_cellpadding-expected.txt:
+        * platform/efl/tables/mozilla/marvin/tables_cellspacing-expected.png:
+        * platform/efl/tables/mozilla/marvin/tables_cellspacing-expected.txt:
+        * platform/efl/tables/mozilla/other/wa_table_thtd_rowspan-expected.png:
+        * platform/efl/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug1262-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug1262-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug56024-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug56024-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/other/test4-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/other/test4-expected.txt:
+
+2015-04-13  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] Unreviewed gardening, skip fast/attachment tests, there is
         no reason to run these tests before enabling ATTACHMENT_ELEMENT.
 
