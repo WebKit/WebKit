@@ -1,3 +1,14 @@
+2015-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build with REDIRECTED_XCOMPOSITE_WINDOW disabled in X11 platform.
+
+        Also fix some unused parameter warnings when
+        REDIRECTED_XCOMPOSITE_WINDOW is disabled.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewRenderAcceleratedCompositingResults):
+        (resizeWebKitWebViewBaseFromAllocation):
+
 2015-03-27  Andreas Kling  <akling@apple.com>
 
         WebProcessProxy should not retain WebBackForwardListItems forever.
