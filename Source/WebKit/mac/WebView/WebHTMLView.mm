@@ -38,6 +38,7 @@
 #import "WebActionMenuController.h"
 #import "WebArchive.h"
 #import "WebClipView.h"
+#import "WebContextMenuClient.h"
 #import "WebDOMOperationsInternal.h"
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
@@ -67,6 +68,7 @@
 #import "WebPreferences.h"
 #import "WebPreferencesPrivate.h"
 #import "WebResourcePrivate.h"
+#import "WebSharingServicePickerController.h"
 #import "WebTextCompletionController.h"
 #import "WebTypesInternal.h"
 #import "WebUIDelegatePrivate.h"
@@ -623,6 +625,10 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 
 #ifndef NDEBUG
     BOOL enumeratingSubviews;
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+    RetainPtr<WebSharingServicePickerController> currentSharingServicePickerController;
 #endif
 }
 - (void)clear;
@@ -3357,6 +3363,21 @@ static void setMenuTargets(NSMenu* menu)
     ContextMenu* coreMenu = page->contextMenuController().contextMenu();
     if (!coreMenu)
         return nil;
+
+    auto menuItemVector = contextMenuItemVector(coreMenu->platformDescription());
+    for (auto& menuItem : menuItemVector) {
+        if (menuItem.action() != ContextMenuItemTagShareMenu)
+            continue;
+
+        NSMenuItem *nsItem = menuItem.platformDescription();
+        if (![nsItem.representedObject isKindOfClass:[NSSharingServicePicker class]]) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+#if ENABLE(SERVICE_CONTROLS)
+        _private->currentSharingServicePickerController = adoptNS([[WebSharingServicePickerController alloc] initWithSharingServicePicker:nsItem.representedObject client:static_cast<WebContextMenuClient&>(page->contextMenuController().client())]);
+#endif
+    }
 
     NSArray* menuItems = coreMenu->platformDescription();
     if (!menuItems)

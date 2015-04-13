@@ -34,10 +34,11 @@
 #import "ServicesController.h"
 #import "ShareableBitmap.h"
 #import "StringUtilities.h"
+#import "WKSharingServicePickerDelegate.h"
+#import "WKView.h"
 #import "WebContextMenuItem.h"
 #import "WebContextMenuItemData.h"
 #import "WebProcessProxy.h"
-#import "WKView.h"
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/NSSharingServicePickerSPI.h>
@@ -146,119 +147,6 @@ using namespace WebCore;
 }
 
 @end
-
-#if ENABLE(SERVICE_CONTROLS)
-@interface WKSharingServicePickerDelegate : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate> {
-    WebKit::WebContextMenuProxyMac* _menuProxy;
-    RetainPtr<NSSharingServicePicker> _picker;
-    BOOL _includeEditorServices;
-}
-
-+ (WKSharingServicePickerDelegate *)sharedSharingServicePickerDelegate;
-- (WebKit::WebContextMenuProxyMac*)menuProxy;
-- (void)setMenuProxy:(WebKit::WebContextMenuProxyMac*)menuProxy;
-- (void)setPicker:(NSSharingServicePicker *)picker;
-- (void)setIncludeEditorServices:(BOOL)includeEditorServices;
-@end
-
-// FIXME: We probably need to hang on the picker itself until the context menu operation is done, and this object will probably do that.
-@implementation WKSharingServicePickerDelegate
-+ (WKSharingServicePickerDelegate*)sharedSharingServicePickerDelegate
-{
-    static WKSharingServicePickerDelegate* delegate = [[WKSharingServicePickerDelegate alloc] init];
-    return delegate;
-}
-
-- (WebKit::WebContextMenuProxyMac*)menuProxy
-{
-    return _menuProxy;
-}
-
-- (void)setMenuProxy:(WebKit::WebContextMenuProxyMac*)menuProxy
-{
-    _menuProxy = menuProxy;
-}
-
-- (void)setPicker:(NSSharingServicePicker *)picker
-{
-    _picker = picker;
-}
-
-- (void)setIncludeEditorServices:(BOOL)includeEditorServices
-{
-    _includeEditorServices = includeEditorServices;
-}
-
-- (NSArray *)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)mask proposedSharingServices:(NSArray *)proposedServices
-{
-    if (_includeEditorServices)
-        return proposedServices;
-
-    NSMutableArray *services = [[NSMutableArray alloc] initWithCapacity:[proposedServices count]];
-    
-    for (NSSharingService *service in proposedServices) {
-        if (service.type != NSSharingServiceTypeEditor)
-            [services addObject:service];
-    }
-    
-    return services;
-}
-
-- (id <NSSharingServiceDelegate>)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker delegateForSharingService:(NSSharingService *)sharingService
-{
-    return self;
-}
-
-- (void)sharingService:(NSSharingService *)sharingService willShareItems:(NSArray *)items
-{
-    _menuProxy->clearServicesMenu();
-}
-
-- (void)sharingService:(NSSharingService *)sharingService didShareItems:(NSArray *)items
-{
-    // We only care about what item was shared if we were interested in editor services
-    // (i.e., if we plan on replacing the selection with the returned item)
-    if (!_includeEditorServices)
-        return;
-
-    Vector<String> types;
-    IPC::DataReference dataReference;
-
-    id item = [items objectAtIndex:0];
-
-    if ([item isKindOfClass:[NSAttributedString class]]) {
-        NSData *data = [item RTFDFromRange:NSMakeRange(0, [item length]) documentAttributes:nil];
-        dataReference = IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
-
-        types.append(NSPasteboardTypeRTFD);
-        types.append(NSRTFDPboardType);
-    } else if ([item isKindOfClass:[NSData class]]) {
-        NSData *data = (NSData *)item;
-        RetainPtr<CGImageSourceRef> source = adoptCF(CGImageSourceCreateWithData((CFDataRef)data, NULL));
-        RetainPtr<CGImageRef> image = adoptCF(CGImageSourceCreateImageAtIndex(source.get(), 0, NULL));
-
-        if (!image)
-            return;
-
-        dataReference = IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
-        types.append(NSPasteboardTypeTIFF);
-    } else {
-        LOG_ERROR("sharingService:didShareItems: - Unknown item type returned\n");
-        return;
-    }
-
-    // FIXME: We should adopt replaceSelectionWithAttributedString instead of bouncing through the (fake) pasteboard.
-    _menuProxy->page().replaceSelectionWithPasteboardData(types, dataReference);
-}
-
-- (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope
-{
-    return _menuProxy->window();
-}
-
-@end
-
-#endif
 
 namespace WebKit {
 
@@ -392,7 +280,8 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
     [picker setStyle:hasControlledImage ? NSSharingServicePickerStyleRollover : NSSharingServicePickerStyleTextSelection];
     [picker setDelegate:[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate]];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:picker.get()];
-    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setIncludeEditorServices:includeEditorServices];
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setFiltersEditingServices:!includeEditorServices];
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setHandlesEditingReplacement:includeEditorServices];
 
     m_servicesMenu = adoptNS([[picker menu] copy]);
 

@@ -1,3 +1,45 @@
+2015-04-13  Brady Eidson  <beidson@apple.com>
+
+        Share sheets from Share menus appear outside the browser window.
+        <rdar://problem/20455592> and https://bugs.webkit.org/show_bug.cgi?id=143620
+
+        Reviewed by Darin Adler.
+
+        Refactor existing Sharing Service Picker code to also be used for the Share menu NSMenuItem.
+
+        * Misc/WebSharingServicePickerController.h:
+        (WebSharingServicePickerClient::webView):
+        * Misc/WebSharingServicePickerController.mm:
+        (WebSharingServicePickerClient::WebSharingServicePickerClient):
+        (WebSharingServicePickerClient::sharingServicePickerWillBeDestroyed):
+        (WebSharingServicePickerClient::pageForSharingServicePicker):
+        (WebSharingServicePickerClient::windowForSharingServicePicker):
+        (WebSharingServicePickerClient::screenRectForCurrentSharingServicePickerItem):
+        (WebSharingServicePickerClient::imageForCurrentSharingServicePickerItem):
+        (-[WebSharingServicePickerController initWithItems:includeEditorServices:client:style:]):
+        (-[WebSharingServicePickerController initWithSharingServicePicker:client:]):
+        (-[WebSharingServicePickerController sharingService:didShareItems:]):
+
+        * WebCoreSupport/WebContextMenuClient.h:
+        (WebContextMenuClient::webView): Deleted.
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::WebContextMenuClient):
+        (WebContextMenuClient::pageForSharingServicePicker): Deleted.
+        (WebContextMenuClient::windowForSharingServicePicker): Deleted.
+
+        * WebCoreSupport/WebSelectionServiceController.h:
+        * WebCoreSupport/WebSelectionServiceController.mm:
+        (WebSelectionServiceController::WebSelectionServiceController):
+        (WebSelectionServiceController::handleSelectionServiceClick):
+        (WebSelectionServiceController::pageForSharingServicePicker): Deleted.
+        (WebSelectionServiceController::windowForSharingServicePicker): Deleted.
+        (WebSelectionServiceController::screenRectForCurrentSharingServicePickerItem): Deleted.
+        (WebSelectionServiceController::imageForCurrentSharingServicePickerItem): Deleted.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView menuForEvent:]):
+        * WebView/WebViewData.h:
+
 2015-04-13  Beth Dakin  <bdakin@apple.com>
 
         Add force property to MouseEvents

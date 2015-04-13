@@ -1,3 +1,49 @@
+2015-04-13  Brady Eidson  <beidson@apple.com>
+
+        Share sheets from Share menus appear outside the browser window.
+        <rdar://problem/20455592> and https://bugs.webkit.org/show_bug.cgi?id=143620
+
+        Reviewed by Darin Adler.
+
+        Refactor existing Sharing Service Picker code to also be used for the Share menu NSMenuItem.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        (WebKit::WebPageProxy::platformInitializeShareMenuItem):
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/mac/WKSharingServicePickerDelegate.h: Added.
+        * UIProcess/mac/WKSharingServicePickerDelegate.mm: Added.
+        (+[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate]):
+        (-[WKSharingServicePickerDelegate menuProxy]):
+        (-[WKSharingServicePickerDelegate setMenuProxy:]):
+        (-[WKSharingServicePickerDelegate setPicker:]):
+        (-[WKSharingServicePickerDelegate setFiltersEditingServices:]):
+        (-[WKSharingServicePickerDelegate setHandlesEditingReplacement:]):
+        (-[WKSharingServicePickerDelegate sharingServicePicker:sharingServicesForItems:mask:proposedSharingServices:]):
+        (-[WKSharingServicePickerDelegate sharingServicePicker:delegateForSharingService:]):
+        (-[WKSharingServicePickerDelegate sharingService:willShareItems:]):
+        (-[WKSharingServicePickerDelegate sharingService:didShareItems:]):
+        (-[WKSharingServicePickerDelegate sharingService:sourceWindowForShareItems:sharingContentScope:]):
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+        (+[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate]): Deleted.
+        (-[WKSharingServicePickerDelegate menuProxy]): Deleted.
+        (-[WKSharingServicePickerDelegate setMenuProxy:]): Deleted.
+        (-[WKSharingServicePickerDelegate setPicker:]): Deleted.
+        (-[WKSharingServicePickerDelegate setIncludeEditorServices:]): Deleted.
+        (-[WKSharingServicePickerDelegate sharingServicePicker:sharingServicesForItems:mask:proposedSharingServices:]): Deleted.
+        (-[WKSharingServicePickerDelegate sharingServicePicker:delegateForSharingService:]): Deleted.
+        (-[WKSharingServicePickerDelegate sharingService:willShareItems:]): Deleted.
+        (-[WKSharingServicePickerDelegate sharingService:didShareItems:]): Deleted.
+        (-[WKSharingServicePickerDelegate sharingService:sourceWindowForShareItems:sharingContentScope:]): Deleted.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::platformInitializeShareMenuItem):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-04-13  Anders Carlsson  <andersca@apple.com>
 
         Begin cleaning up the shared memory interface

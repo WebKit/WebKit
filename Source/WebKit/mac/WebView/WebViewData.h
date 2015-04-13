@@ -93,7 +93,10 @@ extern int pluginDatabaseClientCount;
 
 class LayerFlushController;
 class WebViewGroup;
+
+#if ENABLE(SERVICE_CONTROLS)
 class WebSelectionServiceController;
+#endif
 
 class WebViewLayerFlushScheduler : public WebCore::LayerFlushScheduler {
 public:

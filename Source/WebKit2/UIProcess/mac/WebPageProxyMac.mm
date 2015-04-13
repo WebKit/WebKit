@@ -43,6 +43,8 @@
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "WKBrowsingContextControllerInternal.h"
+#import "WKSharingServicePickerDelegate.h"
+#import "WebContextMenuProxyMac.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import <WebCore/DictationAlternative.h>
@@ -743,6 +745,23 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
         cancelComposition();
         m_pageClient.notifyInputContextAboutDiscardedComposition();
     }
+#endif
+}
+
+void WebPageProxy::platformInitializeShareMenuItem(ContextMenuItem& item)
+{
+#if ENABLE(SERVICE_CONTROLS)
+    NSMenuItem *nsItem = item.platformDescription();
+
+    NSSharingServicePicker *sharingServicePicker = [nsItem representedObject];
+    sharingServicePicker.delegate = [WKSharingServicePickerDelegate sharedSharingServicePickerDelegate];
+    
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setFiltersEditingServices:NO];
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setHandlesEditingReplacement:NO];
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setMenuProxy:static_cast<WebContextMenuProxyMac*>(m_activeContextMenu.get())];
+
+    // Setting the picker lets the delegate retain it to keep it alive, but this picker is kept alive by the menu item.
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:nil];
 #endif
 }
     

@@ -926,6 +926,8 @@
 		513A163D163088F6005D7D22 /* NetworkProcessProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 513A163B163088F6005D7D22 /* NetworkProcessProxyMessages.h */; };
 		513A164C1630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 513A16491630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp */; };
 		513A164D1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 513A164A1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h */; };
+		513E462D1AD837560016234A /* WKSharingServicePickerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 513E462B1AD837560016234A /* WKSharingServicePickerDelegate.h */; };
+		513E462E1AD837560016234A /* WKSharingServicePickerDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 513E462C1AD837560016234A /* WKSharingServicePickerDelegate.mm */; };
 		514BDED316C98EDD00E4E25E /* StatisticsRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 514BDED216C98EDD00E4E25E /* StatisticsRequest.h */; };
 		514D9F5719119D35000063A7 /* ServicesController.h in Headers */ = {isa = PBXBuildFile; fileRef = 514D9F5519119D35000063A7 /* ServicesController.h */; };
 		514D9F5819119D35000063A7 /* ServicesController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514D9F5619119D35000063A7 /* ServicesController.mm */; };
@@ -3117,6 +3119,8 @@
 		513A16491630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkConnectionToWebProcess.cpp; path = NetworkProcess/NetworkConnectionToWebProcess.cpp; sourceTree = "<group>"; };
 		513A164A1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkConnectionToWebProcess.h; path = NetworkProcess/NetworkConnectionToWebProcess.h; sourceTree = "<group>"; };
 		513A164B1630A9BF005D7D22 /* NetworkConnectionToWebProcess.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NetworkConnectionToWebProcess.messages.in; path = NetworkProcess/NetworkConnectionToWebProcess.messages.in; sourceTree = "<group>"; };
+		513E462B1AD837560016234A /* WKSharingServicePickerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSharingServicePickerDelegate.h; sourceTree = "<group>"; };
+		513E462C1AD837560016234A /* WKSharingServicePickerDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSharingServicePickerDelegate.mm; sourceTree = "<group>"; };
 		514BDED216C98EDD00E4E25E /* StatisticsRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatisticsRequest.h; sourceTree = "<group>"; };
 		514D9F5519119D35000063A7 /* ServicesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServicesController.h; sourceTree = "<group>"; };
 		514D9F5619119D35000063A7 /* ServicesController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServicesController.mm; sourceTree = "<group>"; };
@@ -7066,6 +7070,8 @@
 				0FCB4E5D18BBE3D9000FCFC9 /* WKPrintingView.mm */,
 				0FCB4E5E18BBE3D9000FCFC9 /* WKTextInputWindowController.h */,
 				0FCB4E5F18BBE3D9000FCFC9 /* WKTextInputWindowController.mm */,
+				513E462B1AD837560016234A /* WKSharingServicePickerDelegate.h */,
+				513E462C1AD837560016234A /* WKSharingServicePickerDelegate.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -7939,6 +7945,7 @@
 				1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */,
 				CE1A0BD71A48E6C60054EF74 /* TextInputSPI.h in Headers */,
 				1AAF263914687C39004A1E8A /* TiledCoreAnimationDrawingArea.h in Headers */,
+				513E462D1AD837560016234A /* WKSharingServicePickerDelegate.h in Headers */,
 				1AF05D8714688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h in Headers */,
 				1AFE436618B6C081009C7A48 /* UIDelegate.h in Headers */,
 				CEE4AE2B1A5DCF430002F49B /* UIKitSPI.h in Headers */,
@@ -9868,6 +9875,7 @@
 				31A2EC48148997C200810D71 /* WebNotification.cpp in Sources */,
 				31099973146C75A20029DEB9 /* WebNotificationClient.cpp in Sources */,
 				31312620148FF82C00BA2A39 /* WebNotificationManager.cpp in Sources */,
+				513E462E1AD837560016234A /* WKSharingServicePickerDelegate.mm in Sources */,
 				31BA924D148831260062EDB5 /* WebNotificationManagerMessageReceiver.cpp in Sources */,
 				31A2EC4A148997C200810D71 /* WebNotificationManagerProxy.cpp in Sources */,
 				31A2EC4D148997C200810D71 /* WebNotificationProvider.cpp in Sources */,

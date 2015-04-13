@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSelectionServiceController_h
-#define WebSelectionServiceController_h
+#ifndef WKSharingServicePickerDelegate_h
+#define WKSharingServicePickerDelegate_h
 
 #if ENABLE(SERVICE_CONTROLS)
 
-#import "WebSharingServicePickerController.h"
-#import <wtf/RetainPtr.h>
-#import <wtf/Vector.h>
-#import <wtf/text/WTFString.h>
+#include <wtf/RetainPtr.h>
 
-OBJC_CLASS NSImage;
-OBJC_CLASS NSWindow;
-OBJC_CLASS WebView;
-
-namespace WebCore {
-class FrameSelection;
-class IntPoint;
+namespace WebKit {
+class WebContextMenuProxyMac;
 }
 
-class WebSelectionServiceController : public WebSharingServicePickerClient {
-public:
-    WebSelectionServiceController(WebView*);
+@class NSSharingServicePicker;
 
-    void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&);
-    bool hasRelevantSelectionServices(bool isTextOnly) const;
+@interface WKSharingServicePickerDelegate : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate> {
+    WebKit::WebContextMenuProxyMac* _menuProxy;
+    RetainPtr<NSSharingServicePicker> _picker;
+    BOOL _filterEditingServices;
+    BOOL _handleEditingReplacement;
+}
 
-    // WebSharingServicePickerClient
-    virtual void sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &) override;
-
-private:
-    RetainPtr<WebSharingServicePickerController> m_sharingServicePickerController;
-};
++ (WKSharingServicePickerDelegate *)sharedSharingServicePickerDelegate;
+- (WebKit::WebContextMenuProxyMac*)menuProxy;
+- (void)setMenuProxy:(WebKit::WebContextMenuProxyMac*)menuProxy;
+- (void)setPicker:(NSSharingServicePicker *)picker;
+- (void)setFiltersEditingServices:(BOOL)filtersEditingServices;
+- (void)setHandlesEditingReplacement:(BOOL)handlesEditingReplacement;
+@end
 
 #endif // ENABLE(SERVICE_CONTROLS)
-
-#endif // WebSelectionServiceController_h
+#endif // WKSharingServicePickerDelegate_h

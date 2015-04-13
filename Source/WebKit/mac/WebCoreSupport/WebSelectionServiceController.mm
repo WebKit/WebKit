@@ -37,7 +37,7 @@
 using namespace WebCore;
 
 WebSelectionServiceController::WebSelectionServiceController(WebView *webView) 
-    : m_webView(webView)
+    : WebSharingServicePickerClient(webView)
 {
 }
 
@@ -58,6 +58,7 @@ void WebSelectionServiceController::handleSelectionServiceClick(WebCore::FrameSe
     NSArray *items = @[ attributedSelection.get() ];
 
     bool isEditable = selection.selection().isContentEditable();
+    
     m_sharingServicePickerController = adoptNS([[WebSharingServicePickerController alloc] initWithItems:items includeEditorServices:isEditable client:this style:NSSharingServicePickerStyleTextSelection]);
 
     RetainPtr<NSMenu> menu = adoptNS([[m_sharingServicePickerController menu] copy]);
@@ -94,26 +95,6 @@ bool WebSelectionServiceController::hasRelevantSelectionServices(bool isTextOnly
 void WebSelectionServiceController::sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &)
 {
     m_sharingServicePickerController = nil;
-}
-
-WebCore::Page* WebSelectionServiceController::pageForSharingServicePicker(WebSharingServicePickerController &)
-{
-    return [m_webView page];
-}
-
-RetainPtr<NSWindow> WebSelectionServiceController::windowForSharingServicePicker(WebSharingServicePickerController &)
-{
-    return [m_webView window];
-}
-
-FloatRect WebSelectionServiceController::screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &)
-{
-    return FloatRect();
-}
-
-RetainPtr<NSImage> WebSelectionServiceController::imageForCurrentSharingServicePickerItem(WebSharingServicePickerController &)
-{
-    return nil;
 }
 
 #endif

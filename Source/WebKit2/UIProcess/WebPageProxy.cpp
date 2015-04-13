@@ -4064,8 +4064,10 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
         }
 
         ContextMenuItem coreItem = ContextMenuItem::shareMenuItem(absoluteLinkURL, downloadableMediaURL, image.get(), contextMenuContextData.selectedText());
-        if (!coreItem.isNull())
+        if (!coreItem.isNull()) {
+            platformInitializeShareMenuItem(coreItem);
             proposedAPIItems.append(WebContextMenuItem::create(coreItem));
+        }
     }
 
     Vector<RefPtr<WebContextMenuItem>> clientItems;
@@ -4080,6 +4082,12 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
 
     m_contextMenuClient->contextMenuDismissed(*this);
 }
+
+#if !PLATFORM(MAC)
+void WebPageProxy::platformInitializeShareMenuItem(ContextMenuItem&)
+{
+}
+#endif
 
 void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 {

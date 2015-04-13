@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if ENABLE(CONTEXT_MENUS)
+
 #import "WebSharingServicePickerController.h"
 #import <WebCore/ContextMenuClient.h>
 #import <WebCore/IntRect.h>
@@ -39,7 +41,7 @@ class Node;
 
 class WebContextMenuClient : public WebCore::ContextMenuClient
 #if ENABLE(SERVICE_CONTROLS)
-, public WebSharingServicePickerClient
+    , public WebSharingServicePickerClient
 #endif
 {
 public:
@@ -64,21 +66,21 @@ public:
 #if ENABLE(SERVICE_CONTROLS)
     // WebSharingServicePickerClient
     virtual void sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &) override;
-    virtual WebCore::Page* pageForSharingServicePicker(WebSharingServicePickerController &) override;
-    virtual RetainPtr<NSWindow> windowForSharingServicePicker(WebSharingServicePickerController &) override;
     virtual WebCore::FloatRect screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &) override;
     virtual RetainPtr<NSImage> imageForCurrentSharingServicePickerItem(WebSharingServicePickerController &) override;
 #endif
 
-    WebView *webView() { return m_webView; }
-        
 private:
     NSMenu *contextMenuForEvent(NSEvent *, NSView *, bool& isServicesMenu);
 
     bool clientFloatRectForNode(WebCore::Node&, WebCore::FloatRect&) const;
 
-    WebView *m_webView;
 #if ENABLE(SERVICE_CONTROLS)
     RetainPtr<WebSharingServicePickerController> m_sharingServicePickerController;
+#else
+    WebView* m_webView;
 #endif
 };
+
+#endif // ENABLE(CONTEXT_MENUS)
+

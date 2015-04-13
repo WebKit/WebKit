@@ -67,8 +67,12 @@ using namespace WebCore;
 - (void)speakString:(NSString *)string;
 @end
 
-WebContextMenuClient::WebContextMenuClient(WebView *webView) 
+WebContextMenuClient::WebContextMenuClient(WebView *webView)
+#if ENABLE(SERVICE_CONTROLS)
+    : WebSharingServicePickerClient(webView)
+#else
     : m_webView(webView)
+#endif
 {
 }
 
@@ -410,16 +414,6 @@ bool WebContextMenuClient::clientFloatRectForNode(Node& node, FloatRect& rect) c
 void WebContextMenuClient::sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &)
 {
     m_sharingServicePickerController = nil;
-}
-
-WebCore::Page* WebContextMenuClient::pageForSharingServicePicker(WebSharingServicePickerController &)
-{
-    return [m_webView page];
-}
-
-RetainPtr<NSWindow> WebContextMenuClient::windowForSharingServicePicker(WebSharingServicePickerController &)
-{
-    return [m_webView window];
 }
 
 WebCore::FloatRect WebContextMenuClient::screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &)

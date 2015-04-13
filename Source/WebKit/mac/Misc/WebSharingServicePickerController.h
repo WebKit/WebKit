@@ -26,10 +26,14 @@
 #if ENABLE(SERVICE_CONTROLS)
 
 #import <wtf/RetainPtr.h>
+
+#if PLATFORM(MAC)
 #import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/NSSharingServiceSPI.h>
+#endif
 
 @class WebSharingServicePickerController;
+@class WebView;
 
 namespace WebCore {
 class FloatRect;
@@ -42,21 +46,29 @@ class WebSharingServicePickerClient {
 public:
     virtual ~WebSharingServicePickerClient() { }
 
-    virtual void sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &) = 0;
-    virtual WebCore::Page* pageForSharingServicePicker(WebSharingServicePickerController &) = 0;
-    virtual RetainPtr<NSWindow> windowForSharingServicePicker(WebSharingServicePickerController &) = 0;
+    virtual void sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &);
+    virtual WebCore::Page* pageForSharingServicePicker(WebSharingServicePickerController &);
+    virtual RetainPtr<NSWindow> windowForSharingServicePicker(WebSharingServicePickerController &);
 
-    virtual WebCore::FloatRect screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &) = 0;
-    virtual RetainPtr<NSImage> imageForCurrentSharingServicePickerItem(WebSharingServicePickerController &) = 0;
+    virtual WebCore::FloatRect screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &);
+    virtual RetainPtr<NSImage> imageForCurrentSharingServicePickerItem(WebSharingServicePickerController &);
+
+    WebView *webView() { return m_webView; }
+
+protected:
+    explicit WebSharingServicePickerClient(WebView *);
+    WebView *m_webView;
 };
 
 @interface WebSharingServicePickerController : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate> {
     WebSharingServicePickerClient* _pickerClient;
     RetainPtr<NSSharingServicePicker> _picker;
     BOOL _includeEditorServices;
+    BOOL _handleEditingReplacement;
 }
 
 - (instancetype)initWithItems:(NSArray *)items includeEditorServices:(BOOL)includeEditorServices client:(WebSharingServicePickerClient*)pickerClient style:(NSSharingServicePickerStyle)style;
+- (instancetype)initWithSharingServicePicker:(NSSharingServicePicker *)sharingServicePicker client:(WebSharingServicePickerClient&)pickerClient;
 - (NSMenu *)menu;
 - (void)didShareImageData:(NSData *)data confirmDataIsValidTIFFData:(BOOL)confirmData;
 - (void)clear;
