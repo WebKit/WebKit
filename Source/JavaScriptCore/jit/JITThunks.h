@@ -45,6 +45,7 @@ class VM;
 class NativeExecutable;
 
 class JITThunks {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     JITThunks();
     ~JITThunks();

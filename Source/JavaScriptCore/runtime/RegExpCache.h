@@ -39,8 +39,10 @@
 namespace JSC {
 
 class RegExpCache : private WeakHandleOwner {
-friend class RegExp;
-typedef HashMap<RegExpKey, Weak<RegExp>> RegExpCacheMap;
+    WTF_MAKE_FAST_ALLOCATED;
+
+    friend class RegExp;
+    typedef HashMap<RegExpKey, Weak<RegExp>> RegExpCacheMap;
 
 public:
     RegExpCache(VM* vm);

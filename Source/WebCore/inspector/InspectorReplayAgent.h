@@ -59,6 +59,7 @@ typedef int SegmentIdentifier;
 class InspectorReplayAgent final
     : public InspectorAgentBase
     , public Inspector::ReplayBackendDispatcherHandler {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(InspectorReplayAgent);
 public:
     InspectorReplayAgent(InstrumentingAgents*, InspectorPageAgent*);

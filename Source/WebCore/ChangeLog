@@ -1,3 +1,32 @@
+2015-03-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Make some more objects use FastMalloc
+        https://bugs.webkit.org/show_bug.cgi?id=143122
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Modules/geolocation/GeolocationController.h:
+        * Modules/geolocation/NavigatorGeolocation.h:
+        * Modules/indexeddb/DOMWindowIndexedDatabase.h:
+        * Modules/notifications/NotificationController.h:
+        * Modules/webdatabase/DatabaseServer.h:
+        * css/CSSFontFaceSource.h:
+        * html/HTMLMediaSession.h:
+        * inspector/InspectorIndexedDBAgent.h:
+        * inspector/InspectorReplayAgent.h:
+        * page/CaptionUserPreferencesMediaAF.h:
+        * page/PageConsoleClient.h:
+        * page/PageDebuggable.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        * page/mac/ServicesOverlayController.h:
+        * platform/RemoteCommandListener.h:
+        * platform/Timer.h:
+        * platform/audio/MediaSessionManager.h:
+        * platform/mac/SystemSleepListenerMac.h:
+        * platform/mac/ThemeMac.h:
+        * rendering/svg/RenderSVGResourceSolidColor.h:
+        * replay/ReplayController.h:
+
 2015-03-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         FEMorphology::platformApplyGeneric() should bail out if the radius is less than or equal to zero.

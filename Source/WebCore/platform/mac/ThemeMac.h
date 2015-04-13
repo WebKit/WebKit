@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class ThemeMac : public Theme {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ThemeMac() { }
     virtual ~ThemeMac() { }

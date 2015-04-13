@@ -26,6 +26,7 @@
 namespace WebCore {
 
 class RenderSVGResourceSolidColor final : public RenderSVGResource {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     RenderSVGResourceSolidColor();
     virtual ~RenderSVGResourceSolidColor();

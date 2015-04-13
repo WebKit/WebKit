@@ -43,6 +43,7 @@ class GeolocationPosition;
 class Page;
 
 class GeolocationController : public Supplement<Page>, private ViewStateChangeObserver {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(GeolocationController);
 public:
     GeolocationController(Page&, GeolocationClient&);

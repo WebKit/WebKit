@@ -37,6 +37,7 @@ class HTMLMediaElement;
 class SourceBuffer;
 
 class HTMLMediaSession final : public MediaSession {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<HTMLMediaSession> create(MediaSessionClient&);
 

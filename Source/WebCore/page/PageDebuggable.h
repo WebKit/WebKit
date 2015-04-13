@@ -36,6 +36,7 @@ namespace WebCore {
 class Page;
 
 class PageDebuggable final : public Inspector::RemoteInspectorDebuggable {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PageDebuggable);
 public:
     PageDebuggable(Page&);

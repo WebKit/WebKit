@@ -398,6 +398,7 @@ private:
 
 template <typename T>
 class PropertyWrapperGetter : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperGetter(CSSPropertyID prop, T (RenderStyle::*getter)() const)
         : AnimationPropertyWrapperBase(prop)
@@ -422,6 +423,7 @@ protected:
 
 template <typename T>
 class PropertyWrapper : public PropertyWrapperGetter<T> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapper(CSSPropertyID prop, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T))
         : PropertyWrapperGetter<T>(prop, getter)
@@ -440,6 +442,7 @@ protected:
 
 template <typename T>
 class RefCountedPropertyWrapper : public PropertyWrapperGetter<T*> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     RefCountedPropertyWrapper(CSSPropertyID prop, T* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<T>))
         : PropertyWrapperGetter<T*>(prop, getter)
@@ -458,6 +461,7 @@ protected:
 
 template <typename T>
 class LengthPropertyWrapper : public PropertyWrapperGetter<const T&> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LengthPropertyWrapper(CSSPropertyID prop, const T& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T))
         : PropertyWrapperGetter<const T&>(prop, getter)
@@ -475,6 +479,7 @@ protected:
 };
 
 class PropertyWrapperClipPath : public RefCountedPropertyWrapper<ClipPathOperation> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperClipPath(CSSPropertyID prop, ClipPathOperation* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<ClipPathOperation>))
         : RefCountedPropertyWrapper<ClipPathOperation>(prop, getter, setter)
@@ -484,6 +489,7 @@ public:
 
 #if ENABLE(CSS_SHAPES)
 class PropertyWrapperShape : public RefCountedPropertyWrapper<ShapeValue> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperShape(CSSPropertyID prop, ShapeValue* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<ShapeValue>))
         : RefCountedPropertyWrapper<ShapeValue>(prop, getter, setter)
@@ -493,6 +499,7 @@ public:
 #endif
 
 class StyleImagePropertyWrapper : public RefCountedPropertyWrapper<StyleImage> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     StyleImagePropertyWrapper(CSSPropertyID prop, StyleImage* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<StyleImage>))
         : RefCountedPropertyWrapper<StyleImage>(prop, getter, setter)
@@ -515,6 +522,7 @@ public:
 };
 
 class MaskImagePropertyWrapper : public PropertyWrapper<const RefPtr<MaskImageOperation>> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     MaskImagePropertyWrapper()
         : PropertyWrapper<const RefPtr<MaskImageOperation>>(CSSPropertyWebkitMaskImage, &RenderStyle::maskImage, &RenderStyle::setMaskImage)
@@ -539,6 +547,7 @@ public:
 };
 
 class PropertyWrapperColor : public PropertyWrapperGetter<Color> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperColor(CSSPropertyID prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
         : PropertyWrapperGetter<Color>(prop, getter)
@@ -557,6 +566,7 @@ protected:
 
 
 class PropertyWrapperAcceleratedOpacity : public PropertyWrapper<float> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperAcceleratedOpacity()
         : PropertyWrapper<float>(CSSPropertyOpacity, &RenderStyle::opacity, &RenderStyle::setOpacity)
@@ -575,6 +585,7 @@ public:
 };
 
 class PropertyWrapperAcceleratedTransform : public PropertyWrapper<const TransformOperations&> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperAcceleratedTransform()
         : PropertyWrapper<const TransformOperations&>(CSSPropertyWebkitTransform, &RenderStyle::transform, &RenderStyle::setTransform)
@@ -590,6 +601,7 @@ public:
 };
 
 class PropertyWrapperAcceleratedFilter : public PropertyWrapper<const FilterOperations&> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperAcceleratedFilter()
         : PropertyWrapper<const FilterOperations&>(CSSPropertyWebkitFilter, &RenderStyle::filter, &RenderStyle::setFilter)
@@ -630,6 +642,7 @@ static inline const ShadowData* shadowForBlending(const ShadowData* srcShadow, c
 }
 
 class PropertyWrapperShadow : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperShadow(CSSPropertyID prop, const ShadowData* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(std::unique_ptr<ShadowData>, bool))
         : AnimationPropertyWrapperBase(prop)
@@ -745,6 +758,7 @@ private:
 };
 
 class PropertyWrapperMaybeInvalidColor : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperMaybeInvalidColor(CSSPropertyID prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
         : AnimationPropertyWrapperBase(prop)
@@ -792,6 +806,7 @@ private:
 
 enum MaybeInvalidColorTag { MaybeInvalidColor };
 class PropertyWrapperVisitedAffectedColor : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperVisitedAffectedColor(CSSPropertyID prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&),
                                         Color (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
@@ -824,6 +839,7 @@ private:
 
 // Wrapper base class for an animatable property in a FillLayer
 class FillLayerAnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FillLayerAnimationPropertyWrapperBase()
     {
@@ -837,6 +853,7 @@ public:
 
 template <typename T>
 class FillLayerPropertyWrapperGetter : public FillLayerAnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(FillLayerPropertyWrapperGetter);
 public:
     FillLayerPropertyWrapperGetter(T (FillLayer::*getter)() const)
@@ -861,6 +878,7 @@ protected:
 
 template <typename T>
 class FillLayerPropertyWrapper : public FillLayerPropertyWrapperGetter<const T&> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FillLayerPropertyWrapper(const T& (FillLayer::*getter)() const, void (FillLayer::*setter)(T))
         : FillLayerPropertyWrapperGetter<const T&>(getter)
@@ -879,6 +897,7 @@ protected:
 
 template <typename T>
 class FillLayerRefCountedPropertyWrapper : public FillLayerPropertyWrapperGetter<T*> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FillLayerRefCountedPropertyWrapper(T* (FillLayer::*getter)() const, void (FillLayer::*setter)(PassRefPtr<T>))
         : FillLayerPropertyWrapperGetter<T*>(getter)
@@ -896,6 +915,7 @@ protected:
 };
 
 class FillLayerStyleImagePropertyWrapper : public FillLayerRefCountedPropertyWrapper<StyleImage> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FillLayerStyleImagePropertyWrapper(StyleImage* (FillLayer::*getter)() const, void (FillLayer::*setter)(PassRefPtr<StyleImage>))
         : FillLayerRefCountedPropertyWrapper<StyleImage>(getter, setter)
@@ -918,6 +938,7 @@ public:
 };
 
 class FillLayersPropertyWrapper : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef const FillLayer* (RenderStyle::*LayersGetter)() const;
     typedef FillLayer& (RenderStyle::*LayersAccessor)();
@@ -987,6 +1008,7 @@ private:
 };
 
 class ShorthandPropertyWrapper : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ShorthandPropertyWrapper(CSSPropertyID property, Vector<AnimationPropertyWrapperBase*> longhandWrappers)
         : AnimationPropertyWrapperBase(property)
@@ -1020,6 +1042,7 @@ private:
 };
 
 class PropertyWrapperFlex : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperFlex()
         : AnimationPropertyWrapperBase(CSSPropertyFlex)
@@ -1047,6 +1070,7 @@ public:
 };
 
 class PropertyWrapperSVGPaint : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperSVGPaint(CSSPropertyID prop, const SVGPaint::SVGPaintType& (RenderStyle::*paintTypeGetter)() const, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
         : AnimationPropertyWrapperBase(prop)
@@ -1107,6 +1131,7 @@ private:
 };
 
 class CSSPropertyAnimationWrapperMap {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static CSSPropertyAnimationWrapperMap& instance()
     {

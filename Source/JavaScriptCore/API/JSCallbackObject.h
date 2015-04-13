@@ -34,6 +34,8 @@
 namespace JSC {
 
 struct JSCallbackObjectData : WeakHandleOwner {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     JSCallbackObjectData(void* privateData, JSClassRef jsClass)
         : privateData(privateData)
         , jsClass(jsClass)

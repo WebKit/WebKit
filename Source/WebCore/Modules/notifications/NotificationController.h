@@ -37,6 +37,7 @@ namespace WebCore {
 class NotificationClient;
 
 class NotificationController : public Supplement<Page> {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(NotificationController);
 public:
     explicit NotificationController(NotificationClient*);

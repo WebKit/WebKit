@@ -37,6 +37,7 @@ class IDBFactory;
 class DOMWindow;
 
 class DOMWindowIndexedDatabase : public DOMWindowProperty, public Supplement<DOMWindow> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DOMWindowIndexedDatabase(DOMWindow*);
     virtual ~DOMWindowIndexedDatabase();
