@@ -123,7 +123,9 @@ static void testInsecureContent(InsecureContentTest* test, gconstpointer)
     test->loadURI(kHttpsServer->getURIForPath("/insecure-content/").data());
     test->waitUntilLoadFinished();
 
-    g_assert(test->m_insecureContentRun);
+    g_assert(!test->m_insecureContentRun);
+    // Images are currently always displayed, even bypassing mixed content settings. Check
+    // https://bugs.webkit.org/show_bug.cgi?id=142469
     g_assert(test->m_insecureContentDisplayed);
 
     webkit_web_context_set_tls_errors_policy(context, originalPolicy);

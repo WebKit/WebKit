@@ -1,3 +1,16 @@
+2015-04-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        REGRESSION(r181134): [GTK] Test /webkit2/WebKitWebView/insecure-content is failing after r181134
+        https://bugs.webkit.org/show_bug.cgi?id=142387
+
+        Reviewed by Carlos Garcia Campos.
+
+        Running mixed content is blocked by default since r181134. Updated
+        the test case to reflect the new default settings.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestSSL.cpp:
+        (testInsecureContent):
+
 2015-04-13  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Fix wrong value variable in ENABLE_NAVIGATOR_HWCONCURRENCY
