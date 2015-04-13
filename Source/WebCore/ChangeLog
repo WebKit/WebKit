@@ -1,5 +1,17 @@
 2015-04-06  Žan Doberšek  <zdobersek@igalia.com>
 
+        FileList constructor should move the passed-in Vector<> rvalue reference into the member variable
+        https://bugs.webkit.org/show_bug.cgi?id=143412
+
+        Reviewed by Darin Adler.
+
+        * fileapi/FileList.h:
+        (WebCore::FileList::FileList): An explicit move of the passed-in rvalue
+        reference into the member variable is required, otherwise a copy is
+        performed since an rvalue reference is just an lvalue.
+
+2015-04-06  Žan Doberšek  <zdobersek@igalia.com>
+
         UserScript, UserStyleSheet constructors should take in Vector<String> rvalue references
         https://bugs.webkit.org/show_bug.cgi?id=143411
 
