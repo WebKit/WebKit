@@ -1,3 +1,17 @@
+2015-04-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Fix LayoutTests/http/tests/canvas/canvas-tainted-after-draw-image.html on all bots
+        following http://trac.webkit.org/changeset/182750.
+
+        Reviewed by Daniel Bates.
+
+        * http/tests/canvas/canvas-tainted-after-draw-image-expected.txt:
+        * http/tests/canvas/canvas-tainted-after-draw-image.html:
+        Set window.jsTestIsAsync true and call finishJSTest() to make the test 
+        asynchronous, so the "TEST COMPLETE" message will be output after all the
+        test messages. Also delete the synchronous tests for data url image and
+        same-domain image since they can't be reliably tested.
+
 2015-04-13  Simon Fraser  <simon.fraser@apple.com>
 
         Fix compositing/geometry/fixed-transformed.html on Mavericks.
