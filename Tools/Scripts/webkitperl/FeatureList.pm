@@ -44,6 +44,7 @@ BEGIN {
 my (
     $threeDRenderingSupport,
     $accelerated2DCanvasSupport,
+    $attachmentElementSupport,
     $batteryStatusSupport,
     $canvasPathSupport,
     $canvasProxySupport,
@@ -153,6 +154,9 @@ my @features = (
 
     { option => "accelerated-2d-canvas", desc => "Toggle Accelerated 2D Canvas support",
       define => "ENABLE_ACCELERATED_2D_CANVAS", default => isGtk(), value => \$accelerated2DCanvasSupport },
+
+    { option => "attachment-element", desc => "Toggle Attachment Element support",
+      define => "ENABLE_ATTACHMENT_ELEMENT", default => 0, value => \$attachmentElementSupport },
 
     { option => "battery-status", desc => "Toggle Battery Status support",
       define => "ENABLE_BATTERY_STATUS", default => isEfl(), value => \$batteryStatusSupport },

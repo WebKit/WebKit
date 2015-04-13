@@ -1,3 +1,15 @@
+2015-04-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [cmake] Add ENABLE(ATTACHMENT_ELEMENT) to the build system
+        https://bugs.webkit.org/show_bug.cgi?id=143664
+
+        Reviewed by Gyuyoung Kim.
+
+        * page/efl/DragControllerEfl.cpp:
+        (WebCore::DragController::declareAndWriteAttachment): Added stub implementation to fix the build.
+        * page/gtk/DragControllerGtk.cpp:
+        (WebCore::DragController::declareAndWriteAttachment): Added stub implementation to fix the build.
+
 2015-04-13  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         [Curl] Small improvements to CurlCacheEntry::parseResponseHeaders()

@@ -81,4 +81,10 @@ void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Elemen
     frame->editor().writeImageToPasteboard(dataTransfer.pasteboard(), element, url, label);
 }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+void DragController::declareAndWriteAttachment(DataTransfer&, Element&, const URL&)
+{
+}
+#endif
+
 }

@@ -73,4 +73,10 @@ void DragController::declareAndWriteDragImage(DataTransfer&, Element&, const URL
 {
 }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+void DragController::declareAndWriteAttachment(DataTransfer&, Element&, const URL&)
+{
+}
+#endif
+
 }
