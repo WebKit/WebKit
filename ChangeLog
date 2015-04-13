@@ -1,3 +1,14 @@
+2015-04-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [cmake] REGRESSION(182663): It broke feature dependency handling
+        https://bugs.webkit.org/show_bug.cgi?id=143665
+
+        Reviewed by Csaba Osztrogonác.
+
+        Don't try to check the value of options before defining the options.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2015-04-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cmake] Add ENABLE(ATTACHMENT_ELEMENT) to the build system
