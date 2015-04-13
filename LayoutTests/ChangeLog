@@ -1,3 +1,22 @@
+2015-04-08  Filip Pizlo  <fpizlo@apple.com>
+
+        JSArray::sortNumeric should handle ArrayWithUndecided
+        https://bugs.webkit.org/show_bug.cgi?id=143535
+
+        Reviewed by Geoffrey Garen.
+        
+        Upload the original test that first spotted this. Shortened it a bit so that it runs fast enough.
+
+        * js/regress/script-tests/sorting-benchmark.js: Added.
+        (log):
+        (bottom_up_merge_sort):
+        (aMinusB):
+        (verify):
+        (benchmark):
+        (makeArrays):
+        * js/regress/sorting-benchmark-expected.txt: Added.
+        * js/regress/sorting-benchmark.html: Added.
+
 2015-04-08  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Properly handle negative reference box widths and center coordinates

@@ -1,5 +1,18 @@
 2015-04-08  Filip Pizlo  <fpizlo@apple.com>
 
+        JSArray::sortNumeric should handle ArrayWithUndecided
+        https://bugs.webkit.org/show_bug.cgi?id=143535
+
+        Reviewed by Geoffrey Garen.
+        
+        ArrayWithUndecided is what you get if you haven't stored anything into the array yet. We need to handle it.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sortNumeric):
+        * tests/stress/sort-array-with-undecided.js: Added.
+
+2015-04-08  Filip Pizlo  <fpizlo@apple.com>
+
         DFG::IntegerCheckCombiningPhase's wrap-around check shouldn't trigger C++ undef behavior on wrap-around
         https://bugs.webkit.org/show_bug.cgi?id=143532
 
