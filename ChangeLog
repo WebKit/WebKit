@@ -1,3 +1,14 @@
+2015-04-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Cannot click "Next" button on Google two-factor auth setup page
+
+        <https://bugs.webkit.org/show_bug.cgi?id=143624>
+        <rdar://problem/19175714>
+
+        Reviewed by Darin Adler.
+
+        * ManualTests/button-that-focuses-itself-on-click.html: Added.
+
 2015-04-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [cmake] REGRESSION(182663): It broke feature dependency handling

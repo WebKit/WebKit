@@ -2765,6 +2765,36 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     return _formAccessoryView.get();
 }
 
+static bool isAssistableInputType(InputType type)
+{
+    switch (type) {
+    case InputType::ContentEditable:
+    case InputType::Text:
+    case InputType::Password:
+    case InputType::TextArea:
+    case InputType::Search:
+    case InputType::Email:
+    case InputType::URL:
+    case InputType::Phone:
+    case InputType::Number:
+    case InputType::NumberPad:
+    case InputType::Date:
+    case InputType::DateTime:
+    case InputType::DateTimeLocal:
+    case InputType::Month:
+    case InputType::Week:
+    case InputType::Time:
+    case InputType::Select:
+        return true;
+
+    case InputType::None:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 - (void)_startAssistingNode:(const AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode userObject:(NSObject <NSSecureCoding> *)userObject
 {
     if (!userIsInteracting && !_textSelectionAssistant)
@@ -2772,6 +2802,9 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
     if (blurPreviousNode)
         [self _stopAssistingNode];
+
+    if (!isAssistableInputType(information.elementType))
+        return;
 
     // FIXME: We should remove this check when we manage to send StartAssistingNode from the WebProcess
     // only when it is truly time to show the keyboard.
