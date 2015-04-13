@@ -1,3 +1,51 @@
+2015-04-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Support marking/unmarking tracks as infinitely growable
+        https://bugs.webkit.org/show_bug.cgi?id=141431
+
+        Reviewed by Darin Adler.
+
+        As explained here
+        http://lists.w3.org/Archives/Public/www-style/2014Mar/0512.html we
+        sometimes need to consider that some tracks are infinitely
+        growable even when they are really not, in order to produce more
+        "natural" results.
+
+        For example the following case:
+          grid-template-columns: auto auto;
+          item 1 in column 1 with min-content = max-content = 10px;
+          item 2 in columns 1-2 with min-content = 30, max-content = 100px;
+
+        will produce (45px, 55px) without this patch. But considering the
+        second column as infinitely growable the result is (10px, 90px), a
+        more "natural" result because column 1 just needs to be 10px to
+        accommodate item 1. From now on we can flag GridTracks so that
+        they can infinitely grow even when the growth limit is finite.
+
+        Apart from that distributeSpaceToTracks() is now unconditionally
+        called even though the extra space is 0. That's because it
+        computes the plannedSize value.
+
+        Test: fast/css-grid-layout/mark-as-infinitely-growable.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::GridTrack::infiniteGrowthPotential):
+        (WebCore::GridTrack::infinitelyGrowable):
+        (WebCore::GridTrack::setInfinitelyGrowable):
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::trackSizeForTrackSizeComputationPhase): Updated with new phase.
+        (WebCore::RenderGrid::shouldProcessTrackForTrackSizeComputationPhase): Ditto.
+        (WebCore::RenderGrid::trackShouldGrowBeyondGrowthLimitsForTrackSizeComputationPhase): Ditto.
+        (WebCore::RenderGrid::updateTrackSizeForTrackSizeComputationPhase): Ditto.
+        (WebCore::RenderGrid::currentItemSizeForTrackSizeComputationPhase): Ditto.
+        (WebCore::RenderGrid::markAsInfinitelyGrowableForTrackSizeComputationPhase):
+        New helper method which does the mark/unmark just for growth limits.
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+        (WebCore::sortByGridTrackGrowthPotential): Use
+        infiniteGrowthPotential() for sorting.
+        (WebCore::RenderGrid::distributeSpaceToTracks):
+        * rendering/RenderGrid.h:
+
 2015-04-12  Benjamin Poulain  <benjamin@webkit.org>
 
         Legacy scroll behavior on HTMLBodyElement should only apply to the first body element of a document
