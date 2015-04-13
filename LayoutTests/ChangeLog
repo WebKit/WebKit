@@ -1,3 +1,9 @@
+2015-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Add missing layout test result.
+
+        * compositing/geometry/fixed-transformed-expected.txt: Added.
+
 2015-04-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         list-style-image with SVG image renders at incorrect size.
