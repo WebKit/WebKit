@@ -1,3 +1,20 @@
+2015-04-08  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Fill list style background with same color with that of list background.
+        https://bugs.webkit.org/show_bug.cgi?id=143483
+
+        Reviewed by Simon Fraser.
+
+        LayoutListMarker does not have a node so its selectionBackgroundColor alway returns
+        the default theme color for selection. We can make it more natural by filling
+        the same color with that of LayoutListItem into it.
+
+        Tests: fast/backgrounds/selection-background-color-of-image-list-style.html
+               fast/backgrounds/selection-background-color-of-list-style.html
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+
 2015-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash in DOMObjectCache when a wrapped object owned by the cache is unreffed by the user

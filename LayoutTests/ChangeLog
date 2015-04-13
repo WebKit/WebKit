@@ -1,3 +1,21 @@
+2015-04-08  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Fill list style background with same color with that of list background.
+        https://bugs.webkit.org/show_bug.cgi?id=143483
+
+        Reviewed by Simon Fraser.
+
+        * fast/backgrounds/selection-background-color-of-image-list-style.html: Added.
+        * fast/backgrounds/selection-background-color-of-list-style.html: Added.
+        * platform/gtk/fast/backgrounds/selection-background-color-of-image-list-style-expected.png: Added.
+        * platform/gtk/fast/backgrounds/selection-background-color-of-image-list-style-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/selection-background-color-of-list-style-expected.png: Added.
+        * platform/gtk/fast/backgrounds/selection-background-color-of-list-style-expected.txt: Added.
+        * platform/mac/fast/backgrounds/selection-background-color-of-image-list-style-expected.png: Added.
+        * platform/mac/fast/backgrounds/selection-background-color-of-image-list-style-expected.txt: Added.
+        * platform/mac/fast/backgrounds/selection-background-color-of-list-style-expected.png: Added.
+        * platform/mac/fast/backgrounds/selection-background-color-of-list-style-expected.txt: Added.
+
 2015-03-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         border-image with 'fill' keyword does not fill the middle area unless the border width is greater than zero.
