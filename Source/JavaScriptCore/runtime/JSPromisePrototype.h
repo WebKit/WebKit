@@ -35,6 +35,7 @@ namespace JSC {
 class JSPromisePrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static JSPromisePrototype* create(ExecState*, JSGlobalObject*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
@@ -43,7 +44,6 @@ public:
 
 protected:
     void finishCreation(VM&, Structure*);
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
 
 private:
     JSPromisePrototype(ExecState*, Structure*);

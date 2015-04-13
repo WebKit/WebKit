@@ -3419,7 +3419,7 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
         
         MarkedAllocator& allocator =
-            vm().heap.allocatorForObjectWithImmortalStructureDestructor(sizeof(JSRopeString));
+            vm().heap.allocatorForObjectWithDestructor(sizeof(JSRopeString));
         
         LValue result = allocateCell(
             m_out.constIntPtr(&allocator),

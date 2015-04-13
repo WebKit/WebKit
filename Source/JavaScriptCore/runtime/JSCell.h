@@ -73,7 +73,6 @@ public:
     static const unsigned StructureFlags = 0;
 
     static const bool needsDestruction = false;
-    static const bool hasImmortalStructure = false;
 
     enum CreatingEarlyCellTag { CreatingEarlyCell };
     JSCell(CreatingEarlyCellTag);

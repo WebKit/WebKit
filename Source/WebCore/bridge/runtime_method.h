@@ -35,6 +35,7 @@ namespace JSC {
 class WEBCORE_EXPORT RuntimeMethod : public InternalFunction {
 public:
     typedef InternalFunction Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static RuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const String& name, Bindings::Method* method)
     {
@@ -60,7 +61,6 @@ public:
 protected:
     RuntimeMethod(JSGlobalObject*, Structure*, Bindings::Method*);
     void finishCreation(VM&, const String&);
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
     static CallType getCallData(JSCell*, CallData&);
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);

@@ -29,6 +29,7 @@ namespace JSC {
 class RegExpPrototype : public RegExpObject {
 public:
     typedef RegExpObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static RegExpPrototype* create(VM& vm, Structure* structure, RegExp* regExp)
     {
@@ -46,7 +47,6 @@ public:
 
 protected:
     RegExpPrototype(VM&, Structure*, RegExp*);
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | RegExpObject::StructureFlags;
 
 private:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);

@@ -41,6 +41,7 @@ namespace JSC {
 class ClonedArguments : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
     
 private:
     ClonedArguments(VM&, Structure*);
@@ -53,8 +54,6 @@ public:
     static ClonedArguments* createByCopyingFrom(ExecState*, Structure*, Register* argumentsStart, unsigned length, JSFunction* callee);
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
-
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
 
     DECLARE_INFO;
 

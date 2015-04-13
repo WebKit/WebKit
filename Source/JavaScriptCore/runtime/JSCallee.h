@@ -46,6 +46,7 @@ class JSCallee : public JSDestructibleObject {
 
 public:
     typedef JSDestructibleObject Base;
+    const static unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance;
 
     static JSCallee* create(VM& vm, JSGlobalObject* globalObject, JSScope* scope)
     {
@@ -90,8 +91,6 @@ public:
     }
 
 protected:
-    const static unsigned StructureFlags = ImplementsHasInstance | JSObject::StructureFlags;
-
     JS_EXPORT_PRIVATE JSCallee(VM&, JSGlobalObject*, Structure*);
     JSCallee(VM&, JSScope*, Structure*);
 

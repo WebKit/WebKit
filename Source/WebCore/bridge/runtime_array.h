@@ -35,6 +35,7 @@ namespace JSC {
 class RuntimeArray : public JSArray {
 public:
     typedef JSArray Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames;
 
     static RuntimeArray* create(ExecState* exec, Bindings::Array* array)
     {
@@ -79,8 +80,6 @@ public:
 
 protected:
     void finishCreation(VM&, Bindings::Array*);
-
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | JSArray::StructureFlags;
 
 private:
     RuntimeArray(ExecState*, Structure*);

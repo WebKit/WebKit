@@ -33,6 +33,7 @@ namespace JSC {
 class JSProxy : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
     static JSProxy* create(VM& vm, Structure* structure, JSObject* target)
     {
@@ -67,8 +68,6 @@ protected:
         Base::finishCreation(vm);
         m_target.set(vm, this, target);
     }
-
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | Base::StructureFlags;
 
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 

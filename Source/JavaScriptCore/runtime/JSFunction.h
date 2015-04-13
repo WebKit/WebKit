@@ -57,6 +57,7 @@ class JSFunction : public JSCallee {
 
 public:
     typedef JSCallee Base;
+    const static unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
 
     JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, int length, const String& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
 
@@ -128,8 +129,6 @@ public:
     bool isClassConstructorFunction() const;
 
 protected:
-    const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesGetPropertyNames | JSObject::StructureFlags;
-
     JS_EXPORT_PRIVATE JSFunction(VM&, JSGlobalObject*, Structure*);
     JSFunction(VM&, FunctionExecutable*, JSScope*);
 

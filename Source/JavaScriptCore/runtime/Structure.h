@@ -92,11 +92,12 @@ struct PropertyMapEntry {
     }
 };
 
-class Structure : public JSCell {
+class Structure final : public JSCell {
 public:
     friend class StructureTransitionTable;
 
     typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
     
     static Structure* create(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
 
@@ -153,7 +154,6 @@ public:
     JS_EXPORT_PRIVATE Structure* flattenDictionaryStructure(VM&, JSObject*);
 
     static const bool needsDestruction = true;
-    static const bool hasImmortalStructure = true;
     static void destroy(JSCell*);
 
     // These should be used with caution.  

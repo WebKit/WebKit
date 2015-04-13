@@ -34,6 +34,7 @@ namespace JSC {
 class JSCallbackConstructor : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance;
 
     static JSCallbackConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, JSObjectCallAsConstructorCallback callback) 
     {
@@ -56,7 +57,6 @@ public:
 protected:
     JSCallbackConstructor(JSGlobalObject*, Structure*, JSClassRef, JSObjectCallAsConstructorCallback);
     void finishCreation(JSGlobalObject*, JSClassRef);
-    static const unsigned StructureFlags = ImplementsHasInstance | JSObject::StructureFlags;
 
 private:
     friend struct APICallbackFunction;

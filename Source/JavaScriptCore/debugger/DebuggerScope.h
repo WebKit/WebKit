@@ -36,6 +36,7 @@ class JSScope;
 class DebuggerScope : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
 
     static DebuggerScope* create(VM& vm, JSScope* scope)
     {
@@ -97,8 +98,6 @@ private:
     JS_EXPORT_PRIVATE void finishCreation(VM&);
 
     JSScope* jsScope() const { return m_scope.get(); }
-
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
 
     WriteBarrier<JSScope> m_scope;
     WriteBarrier<DebuggerScope> m_next;

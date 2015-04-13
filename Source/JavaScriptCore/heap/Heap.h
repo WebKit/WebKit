@@ -137,12 +137,10 @@ public:
     // true if an allocation or collection is in progress
     bool isBusy();
     MarkedSpace::Subspace& subspaceForObjectWithoutDestructor() { return m_objectSpace.subspaceForObjectsWithoutDestructor(); }
-    MarkedSpace::Subspace& subspaceForObjectNormalDestructor() { return m_objectSpace.subspaceForObjectsWithNormalDestructor(); }
-    MarkedSpace::Subspace& subspaceForObjectsWithImmortalStructure() { return m_objectSpace.subspaceForObjectsWithImmortalStructure(); }
+    MarkedSpace::Subspace& subspaceForObjectDestructor() { return m_objectSpace.subspaceForObjectsWithDestructor(); }
     template<typename ClassType> MarkedSpace::Subspace& subspaceForObjectOfType();
     MarkedAllocator& allocatorForObjectWithoutDestructor(size_t bytes) { return m_objectSpace.allocatorFor(bytes); }
-    MarkedAllocator& allocatorForObjectWithNormalDestructor(size_t bytes) { return m_objectSpace.normalDestructorAllocatorFor(bytes); }
-    MarkedAllocator& allocatorForObjectWithImmortalStructureDestructor(size_t bytes) { return m_objectSpace.immortalStructureDestructorAllocatorFor(bytes); }
+    MarkedAllocator& allocatorForObjectWithDestructor(size_t bytes) { return m_objectSpace.destructorAllocatorFor(bytes); }
     template<typename ClassType> MarkedAllocator& allocatorForObjectOfType(size_t bytes);
     CopiedAllocator& storageAllocator() { return m_storageSpace.allocator(); }
     CheckedBoolean tryAllocateStorage(JSCell* intendedOwner, size_t, void**);
@@ -266,8 +264,7 @@ private:
     template<typename T> friend void* allocateCell(Heap&);
     template<typename T> friend void* allocateCell(Heap&, size_t);
 
-    void* allocateWithImmortalStructureDestructor(size_t); // For use with special objects whose Structures never die.
-    void* allocateWithNormalDestructor(size_t); // For use with objects that inherit directly or indirectly from JSDestructibleObject.
+    void* allocateWithDestructor(size_t); // For use with objects with destructors.
     void* allocateWithoutDestructor(size_t); // For use with objects without destructors.
     template<typename ClassType> void* allocateObjectOfType(size_t); // Chooses one of the methods above based on type.
 

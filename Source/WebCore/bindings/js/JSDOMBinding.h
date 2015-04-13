@@ -84,15 +84,16 @@ WEBCORE_EXPORT JSC::EncodedJSValue throwThisTypeError(JSC::ExecState&, const cha
 
 // Base class for all constructor objects in the JSC bindings.
 class DOMConstructorObject : public JSDOMWrapper {
-    typedef JSDOMWrapper Base;
 public:
+    typedef JSDOMWrapper Base;
+    static const unsigned StructureFlags = Base::StructureFlags | JSC::ImplementsHasInstance;
+
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
         return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
 protected:
-    static const unsigned StructureFlags = JSC::ImplementsHasInstance | JSDOMWrapper::StructureFlags;
     DOMConstructorObject(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
         : JSDOMWrapper(structure, globalObject)
     {

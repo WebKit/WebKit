@@ -209,22 +209,13 @@ template<typename Functor> inline void Heap::forEachCodeBlock(Functor& functor)
     return m_codeBlocks.iterate<Functor>(functor);
 }
 
-inline void* Heap::allocateWithNormalDestructor(size_t bytes)
+inline void* Heap::allocateWithDestructor(size_t bytes)
 {
 #if ENABLE(ALLOCATION_LOGGING)
     dataLogF("JSC GC allocating %lu bytes with normal destructor.\n", bytes);
 #endif
     ASSERT(isValidAllocation(bytes));
-    return m_objectSpace.allocateWithNormalDestructor(bytes);
-}
-
-inline void* Heap::allocateWithImmortalStructureDestructor(size_t bytes)
-{
-#if ENABLE(ALLOCATION_LOGGING)
-    dataLogF("JSC GC allocating %lu bytes with immortal structure destructor.\n", bytes);
-#endif
-    ASSERT(isValidAllocation(bytes));
-    return m_objectSpace.allocateWithImmortalStructureDestructor(bytes);
+    return m_objectSpace.allocateWithDestructor(bytes);
 }
 
 inline void* Heap::allocateWithoutDestructor(size_t bytes)
@@ -240,12 +231,10 @@ template<typename ClassType>
 void* Heap::allocateObjectOfType(size_t bytes)
 {
     // JSCell::classInfo() expects objects allocated with normal destructor to derive from JSDestructibleObject.
-    ASSERT((!ClassType::needsDestruction || ClassType::hasImmortalStructure || std::is_convertible<ClassType, JSDestructibleObject>::value));
+    ASSERT((!ClassType::needsDestruction || (ClassType::StructureFlags & StructureIsImmortal) || std::is_convertible<ClassType, JSDestructibleObject>::value));
 
-    if (ClassType::needsDestruction && ClassType::hasImmortalStructure)
-        return allocateWithImmortalStructureDestructor(bytes);
     if (ClassType::needsDestruction)
-        return allocateWithNormalDestructor(bytes);
+        return allocateWithDestructor(bytes);
     return allocateWithoutDestructor(bytes);
 }
 
@@ -253,12 +242,10 @@ template<typename ClassType>
 MarkedSpace::Subspace& Heap::subspaceForObjectOfType()
 {
     // JSCell::classInfo() expects objects allocated with normal destructor to derive from JSDestructibleObject.
-    ASSERT((!ClassType::needsDestruction || ClassType::hasImmortalStructure || std::is_convertible<ClassType, JSDestructibleObject>::value));
+    ASSERT((!ClassType::needsDestruction || (ClassType::StructureFlags & StructureIsImmortal) || std::is_convertible<ClassType, JSDestructibleObject>::value));
     
-    if (ClassType::needsDestruction && ClassType::hasImmortalStructure)
-        return subspaceForObjectsWithImmortalStructure();
     if (ClassType::needsDestruction)
-        return subspaceForObjectNormalDestructor();
+        return subspaceForObjectDestructor();
     return subspaceForObjectWithoutDestructor();
 }
 
@@ -266,12 +253,10 @@ template<typename ClassType>
 MarkedAllocator& Heap::allocatorForObjectOfType(size_t bytes)
 {
     // JSCell::classInfo() expects objects allocated with normal destructor to derive from JSDestructibleObject.
-    ASSERT((!ClassType::needsDestruction || ClassType::hasImmortalStructure || std::is_convertible<ClassType, JSDestructibleObject>::value));
+    ASSERT((!ClassType::needsDestruction || (ClassType::StructureFlags & StructureIsImmortal) || std::is_convertible<ClassType, JSDestructibleObject>::value));
     
-    if (ClassType::needsDestruction && ClassType::hasImmortalStructure)
-        return allocatorForObjectWithImmortalStructureDestructor(bytes);
     if (ClassType::needsDestruction)
-        return allocatorForObjectWithNormalDestructor(bytes);
+        return allocatorForObjectWithDestructor(bytes);
     return allocatorForObjectWithoutDestructor(bytes);
 }
 

@@ -31,6 +31,7 @@ private:
 
 public:
     typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static MathObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
@@ -48,7 +49,6 @@ public:
 
 protected:
     void finishCreation(VM&, JSGlobalObject*);
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
 };
 
 } // namespace JSC

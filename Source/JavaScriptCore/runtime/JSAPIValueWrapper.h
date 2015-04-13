@@ -34,6 +34,7 @@ class JSAPIValueWrapper : public JSCell {
     friend JSValue jsAPIValueWrapper(ExecState*, JSValue);
 public:
     typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     JSValue value() const { return m_value.get(); }
 

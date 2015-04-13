@@ -111,8 +111,7 @@ namespace JSC {
             ReturnType m_count;
         };
 
-        enum DestructorType { None, ImmortalStructure, Normal };
-        static MarkedBlock* create(MarkedAllocator*, size_t capacity, size_t cellSize, DestructorType);
+        static MarkedBlock* create(MarkedAllocator*, size_t capacity, size_t cellSize, bool needsDestruction);
         static void destroy(MarkedBlock*);
 
         static bool isAtomAligned(const void*);
@@ -155,7 +154,7 @@ namespace JSC {
         bool isEmpty();
 
         size_t cellSize();
-        DestructorType destructorType();
+        bool needsDestruction() const;
 
         size_t size();
         size_t capacity();
@@ -190,15 +189,15 @@ namespace JSC {
         static const size_t atomAlignmentMask = atomSize - 1; // atomSize must be a power of two.
 
         enum BlockState { New, FreeListed, Allocated, Marked, Retired };
-        template<DestructorType> FreeList sweepHelper(SweepMode = SweepOnly);
+        template<bool callDestructors> FreeList sweepHelper(SweepMode = SweepOnly);
 
         typedef char Atom[atomSize];
 
-        MarkedBlock(MarkedAllocator*, size_t capacity, size_t cellSize, DestructorType);
+        MarkedBlock(MarkedAllocator*, size_t capacity, size_t cellSize, bool needsDestruction);
         Atom* atoms();
         size_t atomNumber(const void*);
-        template<DestructorType> void callDestructor(JSCell*);
-        template<BlockState, SweepMode, DestructorType> FreeList specializedSweep();
+        void callDestructor(JSCell*);
+        template<BlockState, SweepMode, bool callDestructors> FreeList specializedSweep();
         
         MarkedBlock* m_prev;
         MarkedBlock* m_next;
@@ -215,7 +214,7 @@ namespace JSC {
         std::unique_ptr<WTF::Bitmap<atomsPerBlock>> m_newlyAllocated;
 
         size_t m_capacity;
-        DestructorType m_destructorType;
+        bool m_needsDestruction;
         MarkedAllocator* m_allocator;
         BlockState m_state;
         WeakSet m_weakSet;
@@ -325,9 +324,9 @@ namespace JSC {
         return m_atomsPerCell * atomSize;
     }
 
-    inline MarkedBlock::DestructorType MarkedBlock::destructorType()
+    inline bool MarkedBlock::needsDestruction() const
     {
-        return m_destructorType; 
+        return m_needsDestruction;
     }
 
     inline size_t MarkedBlock::size()

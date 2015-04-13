@@ -45,6 +45,7 @@ class JSEnvironmentRecord : public JSSymbolTableObject {
 
 public:
     typedef JSSymbolTableObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags;
 
     WriteBarrierBase<Unknown>* variables()
     {
@@ -85,8 +86,6 @@ public:
     }
     
 protected:
-    static const unsigned StructureFlags = Base::StructureFlags;
-
     JSEnvironmentRecord(
         VM& vm,
         Structure* structure,

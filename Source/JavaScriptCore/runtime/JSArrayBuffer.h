@@ -34,6 +34,7 @@ namespace JSC {
 class JSArrayBuffer : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetPropertyNames | OverridesGetOwnPropertySlot;
     
 protected:
     JSArrayBuffer(VM&, Structure*, PassRefPtr<ArrayBuffer>);
@@ -55,8 +56,6 @@ protected:
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     
     static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-
-    static const unsigned StructureFlags = OverridesGetPropertyNames | OverridesGetOwnPropertySlot | Base::StructureFlags;
 
 private:
     ArrayBuffer* m_impl;

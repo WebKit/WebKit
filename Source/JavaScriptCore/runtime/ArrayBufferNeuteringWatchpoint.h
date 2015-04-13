@@ -31,20 +31,16 @@
 
 namespace JSC {
 
-class ArrayBufferNeuteringWatchpoint : public JSCell {
+class ArrayBufferNeuteringWatchpoint final : public JSCell {
 public:
     typedef JSCell Base;
-    
-private:
-    ArrayBufferNeuteringWatchpoint(VM&);
-    
-public:
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+
     DECLARE_INFO;
     
     static ArrayBufferNeuteringWatchpoint* create(VM&);
 
     static const bool needsDestruction = true;
-    static const bool hasImmortalStructure = true;
     static void destroy(JSCell*);
     
     static Structure* createStructure(VM&);
@@ -54,6 +50,8 @@ public:
     void fireAll();
 
 private:
+    explicit ArrayBufferNeuteringWatchpoint(VM&);
+    
     RefPtr<WatchpointSet> m_set;
 };
 

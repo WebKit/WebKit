@@ -44,6 +44,7 @@ private:
     
 public:
     typedef JSEnvironmentRecord Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
 
     static JSLexicalEnvironment* create(
         VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable)
@@ -77,9 +78,6 @@ public:
     DECLARE_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject) { return Structure::create(vm, globalObject, jsNull(), TypeInfo(ActivationObjectType, StructureFlags), info()); }
-
-protected:
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | Base::StructureFlags;
 
 private:
     bool symbolTableGet(PropertyName, PropertySlot&);

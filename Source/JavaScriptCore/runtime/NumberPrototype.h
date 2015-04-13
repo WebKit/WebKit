@@ -28,6 +28,7 @@ namespace JSC {
 class NumberPrototype : public NumberObject {
 public:
     typedef NumberObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static NumberPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
@@ -45,7 +46,6 @@ public:
 
 protected:
     void finishCreation(VM&, JSGlobalObject*);
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NumberObject::StructureFlags;
 
 private:
     NumberPrototype(VM&, Structure*);

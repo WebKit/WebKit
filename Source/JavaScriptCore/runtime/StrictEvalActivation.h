@@ -33,6 +33,7 @@ namespace JSC {
 class StrictEvalActivation : public JSScope {
 public:
     typedef JSScope Base;
+    static const unsigned StructureFlags = Base::StructureFlags | IsEnvironmentRecord;
 
     static StrictEvalActivation* create(ExecState* exec, JSScope* currentScope)
     {
@@ -50,9 +51,6 @@ public:
     }
     
     DECLARE_INFO;
-
-protected:
-    static const unsigned StructureFlags = IsEnvironmentRecord | Base::StructureFlags;
 
 private:
     StrictEvalActivation(ExecState*, JSScope*);

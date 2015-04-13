@@ -93,6 +93,7 @@ inline bool hasArrayBuffer(TypedArrayMode mode)
 class JSArrayBufferView : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetPropertyNames | OverridesGetOwnPropertySlot;
     
     static const unsigned fastSizeLimit = 1000;
     
@@ -174,8 +175,6 @@ private:
     static void finalize(JSCell*);
 
 protected:
-    static const unsigned StructureFlags = OverridesGetPropertyNames | OverridesGetOwnPropertySlot | Base::StructureFlags;
-    
     ArrayBuffer* existingBufferInButterfly();
 
     void* m_vector;

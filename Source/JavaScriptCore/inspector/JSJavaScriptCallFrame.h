@@ -34,6 +34,7 @@ namespace Inspector {
 class JSJavaScriptCallFrame : public JSC::JSDestructibleObject {
 public:
     typedef JSC::JSDestructibleObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags;
 
     DECLARE_INFO;
 
@@ -78,8 +79,6 @@ public:
     static const unsigned short FUNCTION_NAME_SCOPE = 5;
 
 protected:
-    static const unsigned StructureFlags = Base::StructureFlags;
-
     void finishCreation(JSC::VM&);
 
 private:

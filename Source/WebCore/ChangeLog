@@ -1,3 +1,19 @@
+2015-04-13  Andreas Kling  <akling@apple.com>
+
+        Don't segregate heap objects based on Structure immortality.
+        <https://webkit.org/b/143638>
+
+        Reviewed by Darin Adler.
+
+        * bindings/js/JSDOMBinding.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GeneratePrototypeDeclaration):
+        * bridge/objc/objc_runtime.h:
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.h:
+
 2015-04-13  Simon Fraser  <simon.fraser@apple.com>
 
         Fixed position element is truncated if moved onscreen by a transform

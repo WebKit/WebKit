@@ -73,9 +73,9 @@ public:
     friend struct ThunkHelpers;
 
     typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal;
 
     static const bool needsDestruction = true;
-    static const bool hasImmortalStructure = true;
     static void destroy(JSCell*);
 
 private:
@@ -182,8 +182,6 @@ public:
     };
 
 protected:
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal;
-
     friend class JSValue;
 
     bool isRope() const { return m_value.isNull(); }
@@ -219,7 +217,7 @@ private:
     friend JSString* jsSubstring(ExecState*, JSString*, unsigned offset, unsigned length);
 };
 
-class JSRopeString : public JSString {
+class JSRopeString final : public JSString {
     friend class JSString;
 
     friend JSRopeString* jsStringBuilder(VM*);

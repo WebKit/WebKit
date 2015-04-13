@@ -36,6 +36,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState*);
 class JSBoundFunction : public JSFunction {
 public:
     typedef JSFunction Base;
+    const static unsigned StructureFlags = OverridesHasInstance | Base::StructureFlags;
 
     static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int, const String&);
     
@@ -56,8 +57,6 @@ public:
     DECLARE_INFO;
 
 protected:
-    const static unsigned StructureFlags = OverridesHasInstance | Base::StructureFlags;
-
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:

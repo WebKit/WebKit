@@ -29,6 +29,7 @@ namespace JSC {
 class RegExpObject : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
 
     static RegExpObject* create(VM& vm, Structure* structure, RegExp* regExp)
     {
@@ -76,8 +77,6 @@ public:
 protected:
     JS_EXPORT_PRIVATE RegExpObject(VM&, Structure*, RegExp*);
     JS_EXPORT_PRIVATE void finishCreation(VM&);
-
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | Base::StructureFlags;
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

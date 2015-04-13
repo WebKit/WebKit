@@ -41,6 +41,7 @@ class JSSymbolTableObject;
 class JSSymbolTableObject : public JSScope {
 public:
     typedef JSScope Base;
+    static const unsigned StructureFlags = Base::StructureFlags | IsEnvironmentRecord | OverridesGetPropertyNames;
     
     SymbolTable* symbolTable() const { return m_symbolTable.get(); }
     
@@ -50,8 +51,6 @@ public:
     static ptrdiff_t offsetOfSymbolTable() { return OBJECT_OFFSETOF(JSSymbolTableObject, m_symbolTable); }
     
 protected:
-    static const unsigned StructureFlags = IsEnvironmentRecord | OverridesGetPropertyNames | Base::StructureFlags;
-    
     JSSymbolTableObject(VM& vm, Structure* structure, JSScope* scope)
         : Base(vm, structure, scope)
     {

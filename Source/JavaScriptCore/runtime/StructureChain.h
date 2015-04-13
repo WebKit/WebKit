@@ -40,11 +40,12 @@ namespace JSC {
 class LLIntOffsetsExtractor;
 class Structure;
 
-class StructureChain : public JSCell {
+class StructureChain final : public JSCell {
     friend class JIT;
 
 public:
     typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     static StructureChain* create(VM& vm, Structure* head)
     { 
@@ -63,12 +64,9 @@ public:
     DECLARE_INFO;
 
     static const bool needsDestruction = true;
-    static const bool hasImmortalStructure = true;
     static void destroy(JSCell*);
 
 protected:
-    static const unsigned StructureFlags = StructureIsImmortal;
-
     void finishCreation(VM& vm, Structure* head)
     {
         Base::finishCreation(vm);

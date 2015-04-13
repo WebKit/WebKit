@@ -30,6 +30,7 @@ class DatePrototype;
 class DateConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static DateConstructor* create(VM& vm, Structure* structure, DatePrototype* datePrototype)
     {
@@ -47,7 +48,6 @@ public:
 
 protected:
     void finishCreation(VM&, DatePrototype*);
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
 private:
     DateConstructor(VM&, Structure*);

@@ -35,15 +35,15 @@ namespace JSC {
 
 class Identifier;
 
-class JSPropertyNameEnumerator : public JSCell {
+class JSPropertyNameEnumerator final : public JSCell {
 public:
     typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     static JSPropertyNameEnumerator* create(VM&);
     static JSPropertyNameEnumerator* create(VM&, Structure*, uint32_t, uint32_t, PropertyNameArray&);
 
     static const bool needsDestruction = true;
-    static const bool hasImmortalStructure = true;
     static void destroy(JSCell*);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -92,8 +92,6 @@ public:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
-
     JSPropertyNameEnumerator(VM&, StructureID, uint32_t, RefCountedIdentifierSet*);
     void finishCreation(VM&, uint32_t, uint32_t, PassRefPtr<PropertyNameArrayData>);
 

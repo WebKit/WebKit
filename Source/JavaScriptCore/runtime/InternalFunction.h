@@ -34,6 +34,7 @@ class FunctionPrototype;
 class InternalFunction : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance;
 
     DECLARE_EXPORT_INFO;
 
@@ -47,8 +48,6 @@ public:
     }
 
 protected:
-    static const unsigned StructureFlags = ImplementsHasInstance | JSObject::StructureFlags;
-
     JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*);
 
     JS_EXPORT_PRIVATE void finishCreation(VM&, const String& name);

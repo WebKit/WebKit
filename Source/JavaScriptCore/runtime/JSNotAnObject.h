@@ -36,7 +36,7 @@ namespace JSC {
 // This unholy class is used to allow us to avoid multiple exception checks
 // in certain SquirrelFish bytecodes -- effectively it just silently consumes
 // any operations performed on the result of a failed toObject call.
-class JSNotAnObject : public JSNonFinalObject {
+class JSNotAnObject final : public JSNonFinalObject {
 private:
     explicit JSNotAnObject(VM& vm)
         : JSNonFinalObject(vm, vm.notAnObjectStructure.get())
@@ -45,6 +45,7 @@ private:
 
 public:
     typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames;
 
     static JSNotAnObject* create(VM& vm)
     {
@@ -61,9 +62,6 @@ public:
     DECLARE_INFO;
 
 private:
-
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | JSObject::StructureFlags;
-
     // JSValue methods
     static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 

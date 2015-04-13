@@ -33,6 +33,7 @@ namespace JSC {
 class ArrayIteratorPrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
 
     static ArrayIteratorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
@@ -47,9 +48,6 @@ public:
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
-
-protected:
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
 
 private:
     ArrayIteratorPrototype(VM& vm, Structure* structure)

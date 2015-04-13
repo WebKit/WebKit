@@ -51,9 +51,10 @@ struct SparseArrayEntry : public WriteBarrier<Unknown> {
     unsigned attributes;
 };
 
-class SparseArrayValueMap : public JSCell {
+class SparseArrayValueMap final : public JSCell {
 public:
     typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
     
 private:
     typedef HashMap<uint64_t, SparseArrayEntry, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> Map;
@@ -69,8 +70,6 @@ private:
     
     void finishCreation(VM&);
 
-    static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
-
 public:
     DECLARE_EXPORT_INFO;
     
@@ -81,7 +80,6 @@ public:
     static SparseArrayValueMap* create(VM&);
     
     static const bool needsDestruction = true;
-    static const bool hasImmortalStructure = true;
     static void destroy(JSCell*);
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);

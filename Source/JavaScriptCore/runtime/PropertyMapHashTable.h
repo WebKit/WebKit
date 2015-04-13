@@ -77,7 +77,7 @@ inline unsigned nextPowerOf2(unsigned v)
     return v;
 }
 
-class PropertyTable : public JSCell {
+class PropertyTable final : public JSCell {
 
     // This is the implementation for 'iterator' and 'const_iterator',
     // used for iterating over the table in insertion order.
@@ -120,8 +120,10 @@ class PropertyTable : public JSCell {
     };
 
 public:
+    typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+
     static const bool needsDestruction = true;
-    static const bool hasImmortalStructure = true;
     static void destroy(JSCell*);
 
     DECLARE_EXPORT_INFO;
@@ -189,9 +191,6 @@ public:
     size_t sizeInMemory();
     void checkConsistency();
 #endif
-
-protected:
-    static const unsigned StructureFlags = StructureIsImmortal;
 
 private:
     PropertyTable(VM&, unsigned initialCapacity);

@@ -180,7 +180,7 @@ MarkedBlock* MarkedAllocator::allocateBlock(size_t bytes)
 
     size_t cellSize = m_cellSize ? m_cellSize : WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(bytes);
 
-    return MarkedBlock::create(this, blockSize, cellSize, m_destructorType);
+    return MarkedBlock::create(this, blockSize, cellSize, m_needsDestruction);
 }
 
 void MarkedAllocator::addBlock(MarkedBlock* block)

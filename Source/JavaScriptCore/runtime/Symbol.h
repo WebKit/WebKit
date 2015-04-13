@@ -34,14 +34,14 @@
 
 namespace JSC {
 
-class Symbol : public JSCell {
+class Symbol final : public JSCell {
 public:
     typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal;
 
     DECLARE_EXPORT_INFO;
 
     static const bool needsDestruction = true;
-    static const bool hasImmortalStructure = true;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -81,8 +81,6 @@ public:
     double toNumber(ExecState*) const;
 
 protected:
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal;
-
     static void destroy(JSCell*);
 
     Symbol(VM&);

@@ -296,6 +296,7 @@ protected:
         
 public:
     typedef JSSegmentedVariableObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
 
     static JSGlobalObject* create(VM& vm, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable = nullptr)
     {
@@ -604,9 +605,6 @@ public:
     UnlinkedEvalCodeBlock* createEvalCodeBlock(CallFrame*, EvalExecutable*, ThisTDZMode);
 
 protected:
-
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | Base::StructureFlags;
-
     struct GlobalPropertyInfo {
         GlobalPropertyInfo(const Identifier& i, JSValue v, unsigned a)
             : identifier(i)

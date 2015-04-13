@@ -1031,6 +1031,7 @@ class JSFinalObject : public JSObject {
 
 public:
     typedef JSObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags;
 
     static size_t allocationSize(size_t inlineCapacity)
     {
@@ -1077,8 +1078,6 @@ private:
         : JSObject(vm, structure, butterfly)
     {
     }
-
-    static const unsigned StructureFlags = JSObject::StructureFlags;
 };
 
 inline JSFinalObject* JSFinalObject::create(

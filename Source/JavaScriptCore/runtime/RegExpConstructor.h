@@ -33,6 +33,7 @@ class RegExpPrototype;
 class RegExpConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static RegExpConstructor* create(VM& vm, Structure* structure, RegExpPrototype* regExpPrototype)
     {
@@ -68,7 +69,6 @@ public:
 
 protected:
     void finishCreation(VM&, RegExpPrototype*);
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
 
 private:
     RegExpConstructor(VM&, Structure*, RegExpPrototype*);

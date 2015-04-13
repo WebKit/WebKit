@@ -2795,7 +2795,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
     GPRReg scratchGPR = scratch.gpr();
     
     JITCompiler::JumpList slowPath;
-    MarkedAllocator& markedAllocator = m_jit.vm()->heap.allocatorForObjectWithImmortalStructureDestructor(sizeof(JSRopeString));
+    MarkedAllocator& markedAllocator = m_jit.vm()->heap.allocatorForObjectWithDestructor(sizeof(JSRopeString));
     m_jit.move(TrustedImmPtr(&markedAllocator), allocatorGPR);
     emitAllocateJSCell(resultGPR, allocatorGPR, TrustedImmPtr(m_jit.vm()->stringStructure.get()), scratchGPR, slowPath);
         

@@ -240,7 +240,7 @@ inline bool JSCell::canUseFastGetOwnProperty(const Structure& structure)
 inline const ClassInfo* JSCell::classInfo() const
 {
     MarkedBlock* block = MarkedBlock::blockFor(this);
-    if (block->destructorType() == MarkedBlock::Normal)
+    if (block->needsDestruction() && !(inlineTypeFlags() & StructureIsImmortal))
         return static_cast<const JSDestructibleObject*>(this)->classInfo();
     return structure(*block->vm())->classInfo();
 }

@@ -149,6 +149,7 @@ enum GetOrPut { Get, Put };
 class JSScope : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags;
 
     friend class LLIntOffsetsExtractor;
     static size_t offsetOfNext();

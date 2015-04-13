@@ -103,14 +103,11 @@ public:
 
     MarkedAllocator& firstAllocator();
     MarkedAllocator& allocatorFor(size_t);
-    MarkedAllocator& immortalStructureDestructorAllocatorFor(size_t);
-    MarkedAllocator& normalDestructorAllocatorFor(size_t);
-    void* allocateWithNormalDestructor(size_t);
-    void* allocateWithImmortalStructureDestructor(size_t);
+    MarkedAllocator& destructorAllocatorFor(size_t);
+    void* allocateWithDestructor(size_t);
     void* allocateWithoutDestructor(size_t);
 
-    Subspace& subspaceForObjectsWithNormalDestructor() { return m_normalDestructorSpace; }
-    Subspace& subspaceForObjectsWithImmortalStructure() { return m_immortalStructureDestructorSpace; }
+    Subspace& subspaceForObjectsWithDestructor() { return m_destructorSpace; }
     Subspace& subspaceForObjectsWithoutDestructor() { return m_normalSpace; }
 
     void resetAllocators();
@@ -168,8 +165,7 @@ private:
     template<typename Functor> void forEachAllocator(Functor&);
     template<typename Functor> void forEachAllocator();
 
-    Subspace m_normalDestructorSpace;
-    Subspace m_immortalStructureDestructorSpace;
+    Subspace m_destructorSpace;
     Subspace m_normalSpace;
 
     Heap* m_heap;
@@ -219,24 +215,14 @@ inline MarkedAllocator& MarkedSpace::allocatorFor(size_t bytes)
     return m_normalSpace.largeAllocator;
 }
 
-inline MarkedAllocator& MarkedSpace::immortalStructureDestructorAllocatorFor(size_t bytes)
+inline MarkedAllocator& MarkedSpace::destructorAllocatorFor(size_t bytes)
 {
     ASSERT(bytes);
     if (bytes <= preciseCutoff)
-        return m_immortalStructureDestructorSpace.preciseAllocators[(bytes - 1) / preciseStep];
+        return m_destructorSpace.preciseAllocators[(bytes - 1) / preciseStep];
     if (bytes <= impreciseCutoff)
-        return m_immortalStructureDestructorSpace.impreciseAllocators[(bytes - 1) / impreciseStep];
-    return m_immortalStructureDestructorSpace.largeAllocator;
-}
-
-inline MarkedAllocator& MarkedSpace::normalDestructorAllocatorFor(size_t bytes)
-{
-    ASSERT(bytes);
-    if (bytes <= preciseCutoff)
-        return m_normalDestructorSpace.preciseAllocators[(bytes - 1) / preciseStep];
-    if (bytes <= impreciseCutoff)
-        return m_normalDestructorSpace.impreciseAllocators[(bytes - 1) / impreciseStep];
-    return m_normalDestructorSpace.largeAllocator;
+        return m_destructorSpace.impreciseAllocators[(bytes - 1) / impreciseStep];
+    return m_destructorSpace.largeAllocator;
 }
 
 inline void* MarkedSpace::allocateWithoutDestructor(size_t bytes)
@@ -244,14 +230,9 @@ inline void* MarkedSpace::allocateWithoutDestructor(size_t bytes)
     return allocatorFor(bytes).allocate(bytes);
 }
 
-inline void* MarkedSpace::allocateWithImmortalStructureDestructor(size_t bytes)
+inline void* MarkedSpace::allocateWithDestructor(size_t bytes)
 {
-    return immortalStructureDestructorAllocatorFor(bytes).allocate(bytes);
-}
-
-inline void* MarkedSpace::allocateWithNormalDestructor(size_t bytes)
-{
-    return normalDestructorAllocatorFor(bytes).allocate(bytes);
+    return destructorAllocatorFor(bytes).allocate(bytes);
 }
 
 template <typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachBlock(Functor& functor)
@@ -263,16 +244,10 @@ template <typename Functor> inline typename Functor::ReturnType MarkedSpace::for
     m_normalSpace.largeAllocator.forEachBlock(functor);
 
     for (size_t i = 0; i < preciseCount; ++i)
-        m_normalDestructorSpace.preciseAllocators[i].forEachBlock(functor);
+        m_destructorSpace.preciseAllocators[i].forEachBlock(functor);
     for (size_t i = 0; i < impreciseCount; ++i)
-        m_normalDestructorSpace.impreciseAllocators[i].forEachBlock(functor);
-    m_normalDestructorSpace.largeAllocator.forEachBlock(functor);
-
-    for (size_t i = 0; i < preciseCount; ++i)
-        m_immortalStructureDestructorSpace.preciseAllocators[i].forEachBlock(functor);
-    for (size_t i = 0; i < impreciseCount; ++i)
-        m_immortalStructureDestructorSpace.impreciseAllocators[i].forEachBlock(functor);
-    m_immortalStructureDestructorSpace.largeAllocator.forEachBlock(functor);
+        m_destructorSpace.impreciseAllocators[i].forEachBlock(functor);
+    m_destructorSpace.largeAllocator.forEachBlock(functor);
 
     return functor.returnValue();
 }

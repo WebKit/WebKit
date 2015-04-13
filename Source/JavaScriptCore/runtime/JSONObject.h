@@ -35,6 +35,7 @@ class Stringifier;
 class JSONObject : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static JSONObject* create(VM& vm, Structure* structure)
     {
@@ -52,7 +53,6 @@ public:
 
 protected:
     void finishCreation(VM&);
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
 
 private:
     JSONObject(VM&, Structure*);

@@ -33,9 +33,10 @@
 
 namespace JSC {
 
-class JSPromiseDeferred : public JSCell {
+class JSPromiseDeferred final : public JSCell {
 public:
     typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     JS_EXPORT_PRIVATE static JSPromiseDeferred* create(ExecState*, JSGlobalObject*);
     JS_EXPORT_PRIVATE static JSPromiseDeferred* create(VM&, JSObject* promise, JSValue resolve, JSValue reject);
@@ -44,8 +45,6 @@ public:
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
     }
-
-    static const bool hasImmortalStructure = true;
 
     DECLARE_EXPORT_INFO;
 

@@ -33,6 +33,7 @@ private:
 
 public:
     typedef DateInstance Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static DatePrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
@@ -51,7 +52,6 @@ public:
 
 protected:
     void finishCreation(VM&, JSGlobalObject*);
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | DateInstance::StructureFlags;
 };
 
 } // namespace JSC

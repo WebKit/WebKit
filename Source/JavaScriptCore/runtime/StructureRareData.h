@@ -36,12 +36,14 @@ namespace JSC {
 class JSPropertyNameEnumerator;
 class Structure;
 
-class StructureRareData : public JSCell {
+class StructureRareData final : public JSCell {
 public:
+    typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+
     static StructureRareData* create(VM&, Structure*);
 
     static const bool needsDestruction = true;
-    static const bool hasImmortalStructure = true;
     static void destroy(JSCell*);
 
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -64,8 +66,6 @@ private:
     friend class Structure;
     
     StructureRareData(VM&, Structure*);
-
-    static const unsigned StructureFlags = JSCell::StructureFlags;
 
     WriteBarrier<Structure> m_previous;
     WriteBarrier<JSString> m_objectToStringValue;

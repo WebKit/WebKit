@@ -38,9 +38,10 @@ namespace JSC {
 // and aliases one of these and then decides to modify it; in that case we do copy-on-write. This
 // makes sense because such modifications are so uncommon. You'd have to do something crazy like
 // "delete arguments[i]" or some variant of defineOwnProperty.
-class ScopedArgumentsTable : public JSCell {
+class ScopedArgumentsTable final : public JSCell {
 public:
     typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
     
 private:
     ScopedArgumentsTable(VM&);
@@ -51,7 +52,6 @@ public:
     static ScopedArgumentsTable* create(VM&, uint32_t length);
     
     static const bool needsDestruction = true;
-    static const bool hasImmortalStructure = true;
     static void destroy(JSCell*);
 
     ScopedArgumentsTable* clone(VM&);
@@ -79,8 +79,6 @@ public:
     static ptrdiff_t offsetOfArguments() { return OBJECT_OFFSETOF(ScopedArgumentsTable, m_arguments); }
 
 private:
-    static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
-
     ScopeOffset& at(uint32_t i)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(i < m_length);

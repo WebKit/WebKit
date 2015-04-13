@@ -28,6 +28,7 @@ namespace JSC {
 class BooleanPrototype : public BooleanObject {
 public:
     typedef BooleanObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static BooleanPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
@@ -45,7 +46,6 @@ public:
 
 protected:
     void finishCreation(VM&, JSGlobalObject*);
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | BooleanObject::StructureFlags;
 
 private:
     BooleanPrototype(VM&, Structure*);

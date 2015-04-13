@@ -87,6 +87,8 @@ template<typename Adaptor>
 class JSGenericTypedArrayView : public JSArrayBufferView {
 public:
     typedef JSArrayBufferView Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetPropertyNames | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
+
     static const unsigned elementSize = sizeof(typename Adaptor::Type);
     
 protected:
@@ -228,8 +230,6 @@ public:
     
 protected:
     friend struct TypedArrayClassInfos;
-    
-    static const unsigned StructureFlags = OverridesGetPropertyNames | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | Base::StructureFlags;
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);

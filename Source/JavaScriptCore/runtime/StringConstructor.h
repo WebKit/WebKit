@@ -30,6 +30,7 @@ class StringPrototype;
 class StringConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static StringConstructor* create(VM& vm, Structure* structure, StringPrototype* stringPrototype)
     {
@@ -44,9 +45,6 @@ public:
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
-
-protected:
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
 private:
     StringConstructor(VM&, Structure*);

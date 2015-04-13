@@ -1,3 +1,164 @@
+2015-04-13  Andreas Kling  <akling@apple.com>
+
+        Don't segregate heap objects based on Structure immortality.
+        <https://webkit.org/b/143638>
+
+        Reviewed by Darin Adler.
+
+        Put all objects that need a destructor call into the same MarkedBlock.
+        This reduces memory consumption in many situations, while improving locality,
+        since much more of the MarkedBlock space can be shared.
+
+        Instead of branching on the MarkedBlock type, we now check a bit in the
+        JSCell's inline type flags (StructureIsImmortal) to see whether it's safe
+        to access the cell's Structure during destruction or not.
+
+        Performance benchmarks look mostly neutral. Maybe a small regression on
+        SunSpider's date objects.
+
+        On the amazon.com landing page, this saves us 50 MarkedBlocks (3200kB) along
+        with a bunch of WeakBlocks that were hanging off of them. That's on the higher
+        end of savings we can get from this, but still a very real improvement.
+
+        Most of this patch is removing the "hasImmortalStructure" constant from JSCell
+        derived classes and passing that responsibility to the StructureIsImmortal flag.
+        StructureFlags is made public so that it's accessible from non-member functions.
+        I made sure to declare it everywhere and make classes final to try to make it
+        explicit what each class is doing to its inherited flags.
+
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackObject.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        * debugger/DebuggerScope.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileMakeRope):
+        * heap/Heap.h:
+        (JSC::Heap::subspaceForObjectDestructor):
+        (JSC::Heap::allocatorForObjectWithDestructor):
+        (JSC::Heap::subspaceForObjectNormalDestructor): Deleted.
+        (JSC::Heap::subspaceForObjectsWithImmortalStructure): Deleted.
+        (JSC::Heap::allocatorForObjectWithNormalDestructor): Deleted.
+        (JSC::Heap::allocatorForObjectWithImmortalStructureDestructor): Deleted.
+        * heap/HeapInlines.h:
+        (JSC::Heap::allocateWithDestructor):
+        (JSC::Heap::allocateObjectOfType):
+        (JSC::Heap::subspaceForObjectOfType):
+        (JSC::Heap::allocatorForObjectOfType):
+        (JSC::Heap::allocateWithNormalDestructor): Deleted.
+        (JSC::Heap::allocateWithImmortalStructureDestructor): Deleted.
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateBlock):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::needsDestruction):
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::init):
+        (JSC::MarkedAllocator::destructorType): Deleted.
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::callDestructor):
+        (JSC::MarkedBlock::specializedSweep):
+        (JSC::MarkedBlock::sweep):
+        (JSC::MarkedBlock::sweepHelper):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::needsDestruction):
+        (JSC::MarkedBlock::destructorType): Deleted.
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::forEachAllocator):
+        (JSC::MarkedSpace::isPagedOut):
+        (JSC::MarkedSpace::clearNewlyAllocated):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::subspaceForObjectsWithDestructor):
+        (JSC::MarkedSpace::destructorAllocatorFor):
+        (JSC::MarkedSpace::allocateWithDestructor):
+        (JSC::MarkedSpace::forEachBlock):
+        (JSC::MarkedSpace::subspaceForObjectsWithNormalDestructor): Deleted.
+        (JSC::MarkedSpace::subspaceForObjectsWithImmortalStructure): Deleted.
+        (JSC::MarkedSpace::immortalStructureDestructorAllocatorFor): Deleted.
+        (JSC::MarkedSpace::normalDestructorAllocatorFor): Deleted.
+        (JSC::MarkedSpace::allocateWithImmortalStructureDestructor): Deleted.
+        (JSC::MarkedSpace::allocateWithNormalDestructor): Deleted.
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSInjectedScriptHostPrototype.h:
+        * inspector/JSJavaScriptCallFrame.h:
+        * inspector/JSJavaScriptCallFramePrototype.h:
+        * jsc.cpp:
+        * runtime/ArrayBufferNeuteringWatchpoint.h:
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayIteratorPrototype.h:
+        * runtime/BooleanPrototype.h:
+        * runtime/ClonedArguments.h:
+        * runtime/CustomGetterSetter.h:
+        * runtime/DateConstructor.h:
+        * runtime/DatePrototype.h:
+        * runtime/ErrorPrototype.h:
+        * runtime/ExceptionHelpers.h:
+        * runtime/Executable.h:
+        * runtime/GenericArguments.h:
+        * runtime/GetterSetter.h:
+        * runtime/InternalFunction.h:
+        * runtime/JSAPIValueWrapper.h:
+        * runtime/JSArgumentsIterator.h:
+        * runtime/JSArray.h:
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCallee.h:
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::classInfo):
+        * runtime/JSDataViewPrototype.h:
+        * runtime/JSEnvironmentRecord.h:
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSNameScope.h:
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.h:
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::JSFinalObject):
+        * runtime/JSPromiseConstructor.h:
+        * runtime/JSPromiseDeferred.h:
+        * runtime/JSPromisePrototype.h:
+        * runtime/JSPromiseReaction.h:
+        * runtime/JSPropertyNameEnumerator.h:
+        * runtime/JSProxy.h:
+        * runtime/JSScope.h:
+        * runtime/JSString.h:
+        * runtime/JSSymbolTableObject.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::structureIsImmortal):
+        * runtime/MathObject.h:
+        * runtime/NumberConstructor.h:
+        * runtime/NumberPrototype.h:
+        * runtime/ObjectConstructor.h:
+        * runtime/PropertyMapHashTable.h:
+        * runtime/RegExp.h:
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.h:
+        * runtime/ScopedArgumentsTable.h:
+        * runtime/SparseArrayValueMap.h:
+        * runtime/StrictEvalActivation.h:
+        * runtime/StringConstructor.h:
+        * runtime/StringIteratorPrototype.h:
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        * runtime/Structure.h:
+        * runtime/StructureChain.h:
+        * runtime/StructureRareData.h:
+        * runtime/Symbol.h:
+        * runtime/SymbolPrototype.h:
+        * runtime/SymbolTable.h:
+        * runtime/WeakMapData.h:
+
 2015-04-13  Mark Lam  <mark.lam@apple.com>
 
         DFG inlining of op_call_varargs should keep the callee alive in case of OSR exit.

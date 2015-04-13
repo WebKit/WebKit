@@ -36,17 +36,16 @@ namespace JSC {
 class JSPromiseDeferred;
 class Microtask;
 
-class JSPromiseReaction : public JSCell {
+class JSPromiseReaction final : public JSCell {
 public:
     typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     static JSPromiseReaction* create(VM&, JSPromiseDeferred*, JSValue);
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
     }
-
-    static const bool hasImmortalStructure = true;
 
     DECLARE_INFO;
 

@@ -26,7 +26,7 @@ public:
     void stopAllocating();
     void resumeAllocating();
     size_t cellSize() { return m_cellSize; }
-    MarkedBlock::DestructorType destructorType() { return m_destructorType; }
+    bool needsDestruction() { return m_needsDestruction; }
     void* allocate(size_t);
     Heap* heap() { return m_heap; }
     MarkedBlock* takeLastActiveBlock()
@@ -40,7 +40,7 @@ public:
     
     void addBlock(MarkedBlock*);
     void removeBlock(MarkedBlock*);
-    void init(Heap*, MarkedSpace*, size_t cellSize, MarkedBlock::DestructorType);
+    void init(Heap*, MarkedSpace*, size_t cellSize, bool needsDestruction);
 
     bool isPagedOut(double deadline);
    
@@ -59,7 +59,7 @@ private:
     DoublyLinkedList<MarkedBlock> m_blockList;
     DoublyLinkedList<MarkedBlock> m_retiredBlocks;
     size_t m_cellSize;
-    MarkedBlock::DestructorType m_destructorType;
+    bool m_needsDestruction { false };
     Heap* m_heap;
     MarkedSpace* m_markedSpace;
 };
@@ -74,18 +74,17 @@ inline MarkedAllocator::MarkedAllocator()
     , m_lastActiveBlock(0)
     , m_nextBlockToSweep(0)
     , m_cellSize(0)
-    , m_destructorType(MarkedBlock::None)
     , m_heap(0)
     , m_markedSpace(0)
 {
 }
 
-inline void MarkedAllocator::init(Heap* heap, MarkedSpace* markedSpace, size_t cellSize, MarkedBlock::DestructorType destructorType)
+inline void MarkedAllocator::init(Heap* heap, MarkedSpace* markedSpace, size_t cellSize, bool needsDestruction)
 {
     m_heap = heap;
     m_markedSpace = markedSpace;
     m_cellSize = cellSize;
-    m_destructorType = destructorType;
+    m_needsDestruction = needsDestruction;
 }
 
 inline void* MarkedAllocator::allocate(size_t bytes)

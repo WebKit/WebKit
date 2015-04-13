@@ -1103,6 +1103,16 @@ sub GenerateHeader
         push(@headerContent, "    }\n");
     }
 
+    # structure flags
+    if (%structureFlags) {
+        push(@headerContent, "public:\n");
+        push(@headerContent, "    static const unsigned StructureFlags = ");
+        foreach my $structureFlag (sort (keys %structureFlags)) {
+            push(@headerContent, $structureFlag . " | ");
+        }
+        push(@headerContent, "Base::StructureFlags;\n");
+    }
+
     push(@headerContent, "protected:\n");
 
     # Constructor
@@ -1117,15 +1127,6 @@ sub GenerateHeader
         push(@headerContent, "        Base::finishCreation(vm);\n");
         push(@headerContent, "        ASSERT(inherits(info()));\n");
         push(@headerContent, "    }\n\n");
-    }
-
-    # structure flags
-    if (%structureFlags) {
-        push(@headerContent, "    static const unsigned StructureFlags = ");
-        foreach my $structureFlag (sort (keys %structureFlags)) {
-            push(@headerContent, $structureFlag . " | ");
-        }
-        push(@headerContent, "Base::StructureFlags;\n");
     }
 
     # Index setter
@@ -4303,7 +4304,7 @@ sub GeneratePrototypeDeclaration
 
     # structure flags
     if (%structureFlags) {
-        push(@$outputArray, "protected:\n");
+        push(@$outputArray, "public:\n");
         push(@$outputArray, "    static const unsigned StructureFlags = ");
         foreach my $structureFlag (sort (keys %structureFlags)) {
             push(@$outputArray, $structureFlag . " | ");

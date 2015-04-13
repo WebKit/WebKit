@@ -33,6 +33,7 @@ private:
 
 public:
     typedef StringObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags;
 
     static StringPrototype* create(VM&, JSGlobalObject*, Structure*);
 
@@ -45,7 +46,6 @@ public:
 
 protected:
     void finishCreation(VM&, JSGlobalObject*, JSString*);
-    static const unsigned StructureFlags = StringObject::StructureFlags;
 };
 
 } // namespace JSC

@@ -30,6 +30,7 @@ class ObjectPrototype;
 class ErrorPrototype : public ErrorInstance {
 public:
     typedef ErrorInstance Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static ErrorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
@@ -48,8 +49,6 @@ public:
 protected:
     ErrorPrototype(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);
-
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ErrorInstance::StructureFlags;
 
 private:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);

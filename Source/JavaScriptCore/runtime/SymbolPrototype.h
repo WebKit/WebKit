@@ -36,6 +36,7 @@ namespace JSC {
 class SymbolPrototype : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static SymbolPrototype* create(VM& vm, JSGlobalObject*, Structure* structure)
     {
@@ -54,8 +55,6 @@ public:
 protected:
     SymbolPrototype(VM&, Structure*);
     void finishCreation(VM&);
-
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
 
 private:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);

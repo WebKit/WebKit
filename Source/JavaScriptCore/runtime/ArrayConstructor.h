@@ -32,6 +32,7 @@ class JSArray;
 class ArrayConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
     static ArrayConstructor* create(VM& vm, Structure* structure, ArrayPrototype* arrayPrototype)
     {
@@ -49,7 +50,6 @@ public:
 
 protected:
     void finishCreation(VM&, ArrayPrototype*);
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
 private:
     ArrayConstructor(VM&, Structure*);

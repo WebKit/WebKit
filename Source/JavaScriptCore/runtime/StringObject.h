@@ -29,6 +29,7 @@ namespace JSC {
 class StringObject : public JSWrapperObject {
 public:
     typedef JSWrapperObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames;
 
     static StringObject* create(VM& vm, Structure* structure)
     {
@@ -67,7 +68,6 @@ public:
 
 protected:
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSString*);
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | JSWrapperObject::StructureFlags;
     JS_EXPORT_PRIVATE StringObject(VM&, Structure*);
 };
 
