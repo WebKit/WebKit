@@ -1066,7 +1066,7 @@ String RenderThemeWin::stringWithContentsOfFile(CFStringRef name, CFStringRef ty
         return String();
 
     long long filesize = -1;
-    if (!getFileSize(requestedFilePath, filesize)) {
+    if (!getFileSize(requestedFileHandle, filesize)) {
         closeFile(requestedFileHandle);
         return String();
     }

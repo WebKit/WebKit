@@ -1,3 +1,26 @@
+2015-04-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed fix after r182161.
+
+        The change caused Windows to lose Media UI, since the new 'getFileSize'
+        signature was being improperly used for a 'UInt8'-based string.
+
+        Fix was to provide implementations for the two new methods, and to make
+        sure RenderThemeWin was using the proper signature.
+
+        This should actually be a little more efficient, since we have the file
+        handle when we call this new method. Previously, a Windows 'find file' was
+        being done with the requested path, which was unnecessary work.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::getFileSizeFromByHandleFileInformationStructure): Added helper function.
+        (WebCore::getFileSize): Provide implementation.
+        (WebCore::renameFile):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::stringWithContentsOfFile): Use the file handle to
+        get the file size, rather than using the path-based size lookup (which involves
+        performing an unnecessary file search.
+
 2015-04-13  Brady Eidson  <beidson@apple.com>
 
         Share sheets from Share menus appear outside the browser window.
