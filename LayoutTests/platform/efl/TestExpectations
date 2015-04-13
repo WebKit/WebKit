@@ -459,13 +459,7 @@ Bug(EFL) editing/selection/doubleclick-crash.html [ Failure ]
 Bug(EFL) editing/selection/move-by-word-visually-mac.html [ Failure ]
 
 # EFL port doesn't support attachment feature yet. It was added by r180193, r181056, r181114, r181118 and r181418.
-webkit.org/b/141894 fast/attachment/attachment-disabled-rendering.html [ Failure ]
-webkit.org/b/141894 fast/attachment/attachment-rendering.html [ Failure ]
-webkit.org/b/141894 fast/attachment/attachment-progress.html [ Missing ]
-webkit.org/b/141894 fast/attachment/attachment-select-on-click-inside-user-select-all.html [ Missing ]
-webkit.org/b/141894 fast/attachment/attachment-select-on-click.html [ Missing ]
-webkit.org/b/141894 fast/attachment/attachment-subtitle.html [ Missing ]
-webkit.org/b/141894 fast/attachment/attachment-title.html [ Missing ]
+webkit.org/b/141894 fast/attachment [ Skip ]
 
 # EFL port doesn't fully support EME yet.
 webkit.org/b/141959 http/tests/media/clearkey/clear-key-hls-aes128.html [ Timeout ]

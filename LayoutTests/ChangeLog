@@ -1,3 +1,10 @@
+2015-04-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Unreviewed gardening, skip fast/attachment tests, there is
+        no reason to run these tests before enabling ATTACHMENT_ELEMENT.
+
+        * platform/efl/TestExpectations:
+
 2015-04-10  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Support marking/unmarking tracks as infinitely growable
