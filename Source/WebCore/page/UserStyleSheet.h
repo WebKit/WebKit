@@ -42,11 +42,11 @@ public:
     {
     }
 
-    UserStyleSheet(const String& source, const URL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level)
+    UserStyleSheet(const String& source, const URL& url, Vector<String>&& whitelist, Vector<String>&& blacklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level)
         : m_source(source)
         , m_url(url)
-        , m_whitelist(whitelist)
-        , m_blacklist(blacklist)
+        , m_whitelist(WTF::move(whitelist))
+        , m_blacklist(WTF::move(blacklist))
         , m_injectedFrames(injectedFrames)
         , m_level(level)
     {

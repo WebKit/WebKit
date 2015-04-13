@@ -1,3 +1,24 @@
+2015-04-06  Žan Doberšek  <zdobersek@igalia.com>
+
+        UserScript, UserStyleSheet constructors should take in Vector<String> rvalue references
+        https://bugs.webkit.org/show_bug.cgi?id=143411
+
+        Reviewed by Darin Adler.
+
+        Have the UserScript and UserStyleSheet constructors take in Vector<String>
+        rvalue references for the whitelist and blacklist parameters. Both classes
+        store these Vector<String> objects, so the referenced objects can simply be
+        moved into the member variable.
+
+        Because the constructor is now demanding an rvalue, it's up to the caller
+        to move in the desired object if possible, or create an explicit copy
+        otherwise.
+
+        * page/UserScript.h:
+        (WebCore::UserScript::UserScript):
+        * page/UserStyleSheet.h:
+        (WebCore::UserStyleSheet::UserStyleSheet):
+
 2015-04-05  Darin Adler  <darin@apple.com>
 
         FrameView code uses page() without null checking

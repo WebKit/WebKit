@@ -1299,7 +1299,7 @@ bool ArgumentCoder<UserStyleSheet>::decode(ArgumentDecoder& decoder, UserStyleSh
     if (!decoder.decodeEnum(level))
         return false;
 
-    userStyleSheet = UserStyleSheet(source, url, whitelist, blacklist, injectedFrames, level);
+    userStyleSheet = UserStyleSheet(source, url, WTF::move(whitelist), WTF::move(blacklist), injectedFrames, level);
     return true;
 }
 
@@ -1339,7 +1339,7 @@ bool ArgumentCoder<UserScript>::decode(ArgumentDecoder& decoder, UserScript& use
     if (!decoder.decodeEnum(injectedFrames))
         return false;
 
-    userScript = UserScript(source, url, whitelist, blacklist, injectionTime, injectedFrames);
+    userScript = UserScript(source, url, WTF::move(whitelist), WTF::move(blacklist), injectionTime, injectedFrames);
     return true;
 }
 

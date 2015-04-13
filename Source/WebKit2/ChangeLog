@@ -1,3 +1,18 @@
+2015-04-06  Žan Doberšek  <zdobersek@igalia.com>
+
+        UserScript, UserStyleSheet constructors should take in Vector<String> rvalues
+        https://bugs.webkit.org/show_bug.cgi?id=143411
+
+        Reviewed by Darin Adler.
+
+        Move the whitelist and blacklist Vector<String> objects into the
+        UserScript and UserStyleSheet constructors in ArgumentCoder<T>::decode
+        functions.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<UserStyleSheet>::decode):
+        (IPC::ArgumentCoder<UserScript>::decode):
+
 2015-04-02  Alexey Proskuryakov  <ap@apple.com>
 
         Make checkURLReceivedFromWebProcess not rely on details of platform URL implementation.
