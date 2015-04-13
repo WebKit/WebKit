@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+    .test-case {
+        color: rgb(1, 2, 3);
+    }
+    .wrapper {
+        color: rgb(4, 5, 6);
+    }
+    target {
+        border-color: currentcolor;
+        background-color: currentcolor;
+    }
+</style>
+<script>
+    jsTestIsAsync = true;
+    function testColor(expectedColor) {
+        var allTargets = document.querySelectorAll(".test-case >> target");
+        for (var i = 0; i < allTargets.length; ++i) {
+            shouldBeEqualToString('getComputedStyle(document.querySelectorAll(".test-case >> target")[' + i + ']).borderColor', expectedColor);
+            shouldBeEqualToString('getComputedStyle(document.querySelectorAll(".test-case >> target")[' + i + ']).backgroundColor', expectedColor);
+        }
+    }
+
+    function runTest() {
+        description('Test that the properties that use the CSS Value "currentcolor" to define the color are updated correctly when the inherited color changes.');
+
+        debug("");
+        debug("Initial state.");
+        testColor("rgb(4, 5, 6)");
+
+        debug("");
+        debug("Let's override the style of the wrapper through their style object.");
+        var allWrappers = document.querySelectorAll(".wrapper");
+        for (var i = 0; i < allWrappers.length; ++i) {
+            allWrappers[i].style.color = "rgb(7, 8, 9)";
+        }
+        testColor("rgb(7, 8, 9)");
+
+        debug("");
+        debug("Let's remove the style attribute on the wrapper.");
+        for (var i = 0; i < allWrappers.length; ++i) {
+            allWrappers[i].removeAttribute("style");
+        }
+        testColor("rgb(4, 5, 6)");
+
+        debug("");
+        debug("Let's remove class on the wrappers.");
+        for (var i = 0; i < allWrappers.length; ++i) {
+            allWrappers[i].classList.remove("wrapper");
+        }
+        testColor("rgb(1, 2, 3)");
+
+        debug("");
+        debug("Then add it back.");
+        for (var i = 0; i < allWrappers.length; ++i) {
+            allWrappers[i].classList.add("wrapper");
+        }
+        testColor("rgb(4, 5, 6)");
+
+        finishJSTest();
+    }
+    window.addEventListener("load", runTest);
+</script>
+</head>
+<body>
+    <div class="test-case">
+        <div class="wrapper">
+            <target></target>
+        </div>
+        <div class="wrapper">
+            <target></target>
+        </div>
+    </div>
+    <div class="test-case" style="display:none;">
+        <div class="wrapper">
+            <target></target>
+        </div>
+        <div class="wrapper">
+            <target></target>
+        </div>
+    </div>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

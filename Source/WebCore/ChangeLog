@@ -1,3 +1,46 @@
+2015-03-29  Benjamin Poulain  <benjamin@webkit.org>
+
+        `currentColor` computes to the same colour on all elements, even if 'color' is inherited differently
+        https://bugs.webkit.org/show_bug.cgi?id=133420
+
+        Reviewed by Darin Adler.
+
+        When resolving a style with the help of the property cache, we were
+        completely ignoring currentColor.
+
+        Since you can set currentColor on properties that are not inherited,
+        those properties would just be copied from the cached style, which
+        may have a completely different inherited color.
+
+        This pacth fixes the issue by preventing any MatchResult from hitting
+        the cache if it contains any non-inherited property that would require
+        resolution by the cache:
+        -Using the inherit value.
+        -Using the currentColor value.
+
+        Tests: fast/css/currentColor-on-before-after-pseudo-elements.html
+               fast/css/currentColor-style-update-reftest.html
+               fast/css/currentColor-value-style-update.html
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::addElementStyleProperties):
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        (WebCore::ElementRuleCollector::matchUserRules):
+        (WebCore::ElementRuleCollector::matchUARules):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::MatchResult::addMatchedProperties):
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::findFromMatchedPropertiesCache):
+        (WebCore::StyleResolver::addToMatchedPropertiesCache):
+        (WebCore::extractDirectionAndWritingMode):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::CascadedProperties::addStyleProperties):
+        (WebCore::StyleResolver::CascadedProperties::addMatches):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::MatchResult::matchedProperties):
+
 2015-03-29  Darin Adler  <darin@apple.com>
 
         HTMLCollection caches incorrect length if item(0) is called before length on an empty collection

@@ -185,7 +185,7 @@ public:
 
     bool hasProperty(CSSPropertyID id) const;
     Property& property(CSSPropertyID);
-    bool addMatches(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly = false);
+    void addMatches(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly = false);
 
     void set(CSSPropertyID, CSSValue&, unsigned linkMatchType);
     void setDeferred(CSSPropertyID, CSSValue&, unsigned linkMatchType);
@@ -193,7 +193,7 @@ public:
     void applyDeferredProperties(StyleResolver&);
 
 private:
-    bool addStyleProperties(const StyleProperties&, StyleRule&, bool isImportant, bool inheritedOnly, PropertyWhitelistType, unsigned linkMatchType);
+    void addStyleProperties(const StyleProperties&, StyleRule&, bool isImportant, bool inheritedOnly, PropertyWhitelistType, unsigned linkMatchType);
     static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType);
 
     Property m_properties[numCSSProperties + 1];
@@ -246,12 +246,41 @@ inline void StyleResolver::State::clear()
 
 void StyleResolver::MatchResult::addMatchedProperties(const StyleProperties& properties, StyleRule* rule, unsigned linkMatchType, PropertyWhitelistType propertyWhitelistType)
 {
-    matchedProperties.grow(matchedProperties.size() + 1);
-    StyleResolver::MatchedProperties& newProperties = matchedProperties.last();
+    m_matchedProperties.grow(m_matchedProperties.size() + 1);
+    StyleResolver::MatchedProperties& newProperties = m_matchedProperties.last();
     newProperties.properties = const_cast<StyleProperties*>(&properties);
     newProperties.linkMatchType = linkMatchType;
     newProperties.whitelistType = propertyWhitelistType;
     matchedRules.append(rule);
+
+    if (isCacheable) {
+        for (unsigned i = 0, count = properties.propertyCount(); i < count; ++i) {
+            // Currently the property cache only copy the non-inherited values and resolve
+            // the inherited ones.
+            // Here we define some exception were we have to resolve some properties that are not inherited
+            // by default. If those exceptions become too common on the web, it should be possible
+            // to build a list of exception to resolve instead of completely disabling the cache.
+
+            StyleProperties::PropertyReference current = properties.propertyAt(i);
+            if (!current.isInherited()) {
+                // If the property value is explicitly inherited, we need to apply further non-inherited properties
+                // as they might override the value inherited here. For this reason we don't allow declarations with
+                // explicitly inherited properties to be cached.
+                const CSSValue& value = *current.value();
+                if (value.isInheritedValue()) {
+                    isCacheable = false;
+                    break;
+                }
+
+                // The value currentColor has implicitely the same side effect. It depends on the value of color,
+                // which is an inherited value, making the non-inherited property implicitely inherited.
+                if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueCurrentcolor) {
+                    isCacheable = false;
+                    break;
+                }
+            }
+        }
+    }
 }
 
 StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
@@ -836,7 +865,7 @@ Ref<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle
     // We don't need to bother with !important. Since there is only ever one
     // decl, there's nothing to override. So just add the first properties.
     CascadedProperties cascade(direction, writingMode);
-    cascade.addMatches(result, false, 0, result.matchedProperties.size() - 1);
+    cascade.addMatches(result, false, 0, result.matchedProperties().size() - 1);
 
     applyCascadedProperties(cascade, firstCSSProperty, lastHighPriorityProperty);
 
@@ -963,7 +992,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* element, c
         collector.matchAuthorRules(false);
     }
 
-    if (collector.matchedResult().matchedProperties.isEmpty())
+    if (collector.matchedResult().matchedProperties().isEmpty())
         return 0;
 
     state.style()->setStyleType(pseudoStyleRequest.pseudoId);
@@ -1002,7 +1031,7 @@ Ref<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     extractDirectionAndWritingMode(*m_state.style(), result, direction, writingMode);
 
     CascadedProperties cascade(direction, writingMode);
-    cascade.addMatches(result, false, 0, result.matchedProperties.size() - 1);
+    cascade.addMatches(result, false, 0, result.matchedProperties().size() - 1);
 
     applyCascadedProperties(cascade, firstCSSProperty, lastHighPriorityProperty);
 
@@ -1611,11 +1640,11 @@ const StyleResolver::MatchedPropertiesCacheItem* StyleResolver::findFromMatchedP
         return 0;
     MatchedPropertiesCacheItem& cacheItem = it->value;
 
-    size_t size = matchResult.matchedProperties.size();
+    size_t size = matchResult.matchedProperties().size();
     if (size != cacheItem.matchedProperties.size())
         return 0;
     for (size_t i = 0; i < size; ++i) {
-        if (matchResult.matchedProperties[i] != cacheItem.matchedProperties[i])
+        if (matchResult.matchedProperties()[i] != cacheItem.matchedProperties[i])
             return 0;
     }
     if (cacheItem.ranges != matchResult.ranges)
@@ -1634,7 +1663,7 @@ void StyleResolver::addToMatchedPropertiesCache(const RenderStyle* style, const 
 
     ASSERT(hash);
     MatchedPropertiesCacheItem cacheItem;
-    cacheItem.matchedProperties.appendVector(matchResult.matchedProperties);
+    cacheItem.matchedProperties.appendVector(matchResult.matchedProperties());
     cacheItem.ranges = matchResult.ranges;
     // Note that we don't cache the original RenderStyle instance. It may be further modified.
     // The RenderStyle in the cache is really just a holder for the substructures and never used as-is.
@@ -1686,7 +1715,7 @@ void extractDirectionAndWritingMode(const RenderStyle& style, const StyleResolve
     bool hadImportantWebkitWritingMode = false;
     bool hadImportantDirection = false;
 
-    for (auto& matchedProperties : matchResult.matchedProperties) {
+    for (const auto& matchedProperties : matchResult.matchedProperties()) {
         for (unsigned i = 0, count = matchedProperties.properties->propertyCount(); i < count; ++i) {
             auto property = matchedProperties.properties->propertyAt(i);
             if (!property.value()->isPrimitiveValue())
@@ -1715,7 +1744,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
 {
     ASSERT(element);
     State& state = m_state;
-    unsigned cacheHash = shouldUseMatchedPropertiesCache && matchResult.isCacheable ? computeMatchedPropertiesHash(matchResult.matchedProperties.data(), matchResult.matchedProperties.size()) : 0;
+    unsigned cacheHash = shouldUseMatchedPropertiesCache && matchResult.isCacheable ? computeMatchedPropertiesHash(matchResult.matchedProperties().data(), matchResult.matchedProperties().size()) : 0;
     bool applyInheritedOnly = false;
     const MatchedPropertiesCacheItem* cacheItem = 0;
     if (cacheHash && (cacheItem = findFromMatchedPropertiesCache(cacheHash, matchResult))
@@ -1749,9 +1778,8 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         // If so, we cache the border and background styles so that RenderTheme::adjustStyle()
         // can look at them later to figure out if this is a styled form control or not.
         CascadedProperties cascade(direction, writingMode);
-        if (!cascade.addMatches(matchResult, false, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly)
-            || !cascade.addMatches(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly))
-            return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
+        cascade.addMatches(matchResult, false, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
+        cascade.addMatches(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
 
         applyCascadedProperties(cascade, CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
         adjustStyleForInterCharacterRuby();
@@ -1766,11 +1794,10 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     }
 
     CascadedProperties cascade(direction, writingMode);
-    if (!cascade.addMatches(matchResult, false, 0, matchResult.matchedProperties.size() - 1, applyInheritedOnly)
-        || !cascade.addMatches(matchResult, true, matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, applyInheritedOnly)
-        || !cascade.addMatches(matchResult, true, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly)
-        || !cascade.addMatches(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly))
-        return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
+    cascade.addMatches(matchResult, false, 0, matchResult.matchedProperties().size() - 1, applyInheritedOnly);
+    cascade.addMatches(matchResult, true, matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, applyInheritedOnly);
+    cascade.addMatches(matchResult, true, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly);
+    cascade.addMatches(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
 
     applyCascadedProperties(cascade, CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
     
@@ -2624,18 +2651,16 @@ void StyleResolver::CascadedProperties::setDeferred(CSSPropertyID id, CSSValue& 
     m_deferredProperties.append(property);
 }
 
-bool StyleResolver::CascadedProperties::addStyleProperties(const StyleProperties& properties, StyleRule&, bool isImportant, bool inheritedOnly, PropertyWhitelistType propertyWhitelistType, unsigned linkMatchType)
+void StyleResolver::CascadedProperties::addStyleProperties(const StyleProperties& properties, StyleRule&, bool isImportant, bool inheritedOnly, PropertyWhitelistType propertyWhitelistType, unsigned linkMatchType)
 {
     for (unsigned i = 0, count = properties.propertyCount(); i < count; ++i) {
         auto current = properties.propertyAt(i);
         if (isImportant != current.isImportant())
             continue;
         if (inheritedOnly && !current.isInherited()) {
-            // If the property value is explicitly inherited, we need to apply further non-inherited properties
-            // as they might override the value inherited here. For this reason we don't allow declarations with
-            // explicitly inherited properties to be cached.
-            if (current.value()->isInheritedValue())
-                return false;
+            // We apply the inherited properties only when using the property cache.
+            // A match with a value that is explicitely inherited should never have been cached.
+            ASSERT(!current.value()->isInheritedValue());
             continue;
         }
         CSSPropertyID propertyID = current.id();
@@ -2652,20 +2677,17 @@ bool StyleResolver::CascadedProperties::addStyleProperties(const StyleProperties
         else
             set(propertyID, *current.value(), linkMatchType);
     }
-    return true;
 }
 
-bool StyleResolver::CascadedProperties::addMatches(const MatchResult& matchResult, bool important, int startIndex, int endIndex, bool inheritedOnly)
+void StyleResolver::CascadedProperties::addMatches(const MatchResult& matchResult, bool important, int startIndex, int endIndex, bool inheritedOnly)
 {
     if (startIndex == -1)
-        return true;
+        return;
 
     for (int i = startIndex; i <= endIndex; ++i) {
-        const MatchedProperties& matchedProperties = matchResult.matchedProperties[i];
-        if (!addStyleProperties(*matchedProperties.properties, *matchResult.matchedRules[i], important, inheritedOnly, static_cast<PropertyWhitelistType>(matchedProperties.whitelistType), matchedProperties.linkMatchType))
-            return false;
+        const MatchedProperties& matchedProperties = matchResult.matchedProperties()[i];
+        addStyleProperties(*matchedProperties.properties, *matchResult.matchedRules[i], important, inheritedOnly, static_cast<PropertyWhitelistType>(matchedProperties.whitelistType), matchedProperties.linkMatchType);
     }
-    return true;
 }
 
 void StyleResolver::CascadedProperties::applyDeferredProperties(StyleResolver& resolver)
