@@ -82,6 +82,9 @@ BuildbotTesterQueueView.prototype = {
                     if (layoutTestResults.tooManyFailures) {
                         var status = new StatusLineView(messageElement, StatusLineView.Status.Danger, "failure limit exceeded", undefined, iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration));
                         new PopoverTracker(status.statusBubbleElement, this._presentPopoverForLayoutTestRegressions.bind(this), iteration);
+                    } else if (layoutTestResults.errorOccurred) {
+                        var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
+                        var status = new StatusLineView(messageElement, StatusLineView.Status.Danger, iteration.text, undefined, url);
                     } else if (!layoutTestResults.crashCount) {
                         var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
                         var status = new StatusLineView(messageElement, StatusLineView.Status.Good, "no crashes found", undefined, url);
