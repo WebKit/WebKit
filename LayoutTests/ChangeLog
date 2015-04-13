@@ -1,3 +1,13 @@
+2015-03-29  Darin Adler  <darin@apple.com>
+
+        HTMLCollection caches incorrect length if item(0) is called before length on an empty collection
+        https://bugs.webkit.org/show_bug.cgi?id=143203
+
+        Reviewed by Antti Koivisto.
+
+        * fast/dom/htmlcollection-length-after-item-2-expected.txt: Added.
+        * fast/dom/htmlcollection-length-after-item-2.html: Added.
+
 2015-03-27  Michael Saboff  <msaboff@apple.com>
 
         Fix flakey dfg-int8array.js and dfg-int16array.js tests for ARM64

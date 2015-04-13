@@ -204,7 +204,7 @@ inline typename CollectionIndexCache<Collection, Iterator>::NodeType* Collection
     }
     if (m_current == end) {
         // Failed to find the index but at least we now know the size.
-        m_nodeCount = m_currentIndex + 1;
+        m_nodeCount = index ? m_currentIndex + 1 : 0;
         m_nodeCountValid = true;
         return nullptr;
     }

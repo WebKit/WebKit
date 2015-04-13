@@ -1,3 +1,17 @@
+2015-03-29  Darin Adler  <darin@apple.com>
+
+        HTMLCollection caches incorrect length if item(0) is called before length on an empty collection
+        https://bugs.webkit.org/show_bug.cgi?id=143203
+        rdar://problem/18460462
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/dom/htmlcollection-length-after-item-2.html
+
+        * dom/CollectionIndexCache.h:
+        (CollectionIndexCache::nodeAt): If we hit the end looking for index 0, cache a length
+        of 0, not a length of 1.
+
 2015-03-28  Simon Fraser  <simon.fraser@apple.com>
 
         Optimize RenderLayer::intersectsDamageRect() slightly
