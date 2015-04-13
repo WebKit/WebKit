@@ -1,3 +1,24 @@
+2015-03-25  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION(169139): LLINT intermittently fails JSC testapi tests.
+        <https://webkit.org/b/135719>
+
+        Reviewed by Geoffrey Garen.
+
+        This is a regression introduced in http://trac.webkit.org/changeset/169139 which
+        changed VM::watchdog from an embedded field into a std::unique_ptr, but did not
+        update the LLINT to access it as such.
+
+        The issue has only manifested so far on the CLoop tests because those are LLINT
+        only.  In the non-CLoop cases, the JIT kicks in and does the right thing, thereby
+        hiding the bug in the LLINT.
+
+        * API/JSContextRef.cpp:
+        (createWatchdogIfNeeded):
+        (JSContextGroupSetExecutionTimeLimit):
+        (JSContextGroupClearExecutionTimeLimit):
+        * llint/LowLevelInterpreter.asm:
+
 2015-03-22  Filip Pizlo  <fpizlo@apple.com>
 
         DFG OSR exit shouldn't assume that the frame count for exit is greater than the frame count in DFG
