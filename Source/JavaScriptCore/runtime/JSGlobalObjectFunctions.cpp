@@ -42,6 +42,7 @@
 #include <stdlib.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
+#include <wtf/HexNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -65,9 +66,8 @@ static JSValue encode(ExecState* exec, const char* doNotEscape)
         if (c && strchr(doNotEscape, c))
             builder.append(static_cast<LChar>(c));
         else {
-            char tmp[4];
-            snprintf(tmp, sizeof(tmp), "%%%02X", static_cast<unsigned char>(c));
-            builder.append(tmp);
+            builder.append(static_cast<LChar>('%'));
+            appendByteAsHex(c, builder);
         }
     }
     return builder.build(exec);
@@ -625,9 +625,8 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
             if (u && strchr(do_not_escape, static_cast<char>(u)))
                 builder.append(*c);
             else {
-                char tmp[4];
-                snprintf(tmp, sizeof(tmp), "%%%02X", u);
-                builder.append(tmp);
+                builder.append(static_cast<LChar>('%'));
+                appendByteAsHex(static_cast<LChar>(u), builder);
             }
         }
 
@@ -638,15 +637,15 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
     for (unsigned k = 0; k < str.length(); k++, c++) {
         int u = c[0];
         if (u > 255) {
-            char tmp[7];
-            snprintf(tmp, sizeof(tmp), "%%u%04X", u);
-            builder.append(tmp);
+            builder.append(static_cast<LChar>('%'));
+            builder.append(static_cast<LChar>('u'));
+            appendByteAsHex(u >> 8, builder);
+            appendByteAsHex(u & 0xFF, builder);
         } else if (u != 0 && strchr(do_not_escape, static_cast<char>(u)))
             builder.append(*c);
         else {
-            char tmp[4];
-            snprintf(tmp, sizeof(tmp), "%%%02X", u);
-            builder.append(tmp);
+            builder.append(static_cast<LChar>('%'));
+            appendByteAsHex(u, builder);
         }
     }
 

@@ -1,3 +1,20 @@
+2015-04-05  Andreas Kling  <akling@apple.com>
+
+        URI encoding/escaping should use efficient string building instead of calling snprintf().
+        <https://webkit.org/b/143426>
+
+        Reviewed by Gavin Barraclough.
+
+        I saw 0.5% of main thread time in snprintf() on <http://polymerlabs.github.io/benchmarks/>
+        which seemed pretty silly. This change gets that down to nothing in favor of using our
+        existing JSStringBuilder and HexNumber.h facilities.
+
+        These APIs are well-exercised by our existing test suite.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::globalFuncEscape):
+
 2015-03-27  Michael Saboff  <msaboff@apple.com>
 
         load8Signed() and load16Signed() should be renamed to avoid confusion
