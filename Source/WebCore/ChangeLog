@@ -1,3 +1,30 @@
+2015-03-31  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION (r173484): Reducing content of scrollable region does not reset scroll 
+        position
+        https://bugs.webkit.org/show_bug.cgi?id=138525
+        -and corresponding-
+        rdar://problem/18166043
+
+        Reviewed by Simon Fraser.
+
+        The change that caused this regression was correct. That change does not allow 
+        RenderLayer to update scroll position after a layout if a rubber-band is currently 
+        happening. The change caused this regression because all of the member variables 
+        in ScrollController that attempt to keep track of the current state of the scroll 
+        gesture (m_inScrollGesture, m_momentumScrollInProgress, and 
+        m_snapRubberbandTimerIsActive) all indicated that a momentum scroll gesture was 
+        still in action for this div even though it very much is not when the bug happens. 
+        Those variables were never properly re-set because the 
+        PlatformWheelEventPhaseEnded events never got dispatched to the ScrollController, 
+        which brought the investigation back to Element.
+
+        We must still dispatch events that have zero delta so that the default event 
+        handlers can handle them, but we should stopPropagation() so that these events are 
+        not sent to the DOM. Websites will break if they get wheel events with no delta.
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchWheelEvent):
+
 2015-03-29  Benjamin Poulain  <benjamin@webkit.org>
 
         `currentColor` computes to the same colour on all elements, even if 'color' is inherited differently

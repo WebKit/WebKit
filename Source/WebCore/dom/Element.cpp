@@ -279,10 +279,16 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
 
 bool Element::dispatchWheelEvent(const PlatformWheelEvent& event)
 {
-    if (!event.deltaX() && !event.deltaY())
-        return true;
-
     RefPtr<WheelEvent> wheelEvent = WheelEvent::create(event, document().defaultView());
+
+    // Events with no deltas are important because they convey platform information about scroll gestures
+    // and momentum beginning or ending. However, those events should not be sent to the DOM since some
+    // websites will break. They need to be dispatched because dispatching them will call into the default
+    // event handler, and our platform code will correctly handle the phase changes. Calling stopPropogation()
+    // will prevent the event from being sent to the DOM, but will still call the default event handler.
+    if (!event.deltaX() && !event.deltaY())
+        wheelEvent->stopPropagation();
+
     return EventDispatcher::dispatchEvent(this, wheelEvent) && !wheelEvent->defaultHandled();
 }
 
