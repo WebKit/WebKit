@@ -1,3 +1,17 @@
+2015-03-27  Michael Saboff  <msaboff@apple.com>
+
+        Fix flakey dfg-int8array.js and dfg-int16array.js tests for ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=138390
+
+        Reviewed by Mark Lam.
+
+        Changed load8Signed() and load16Signed() to only sign extend the loaded value to 32 bits
+        instead of 64 bits.  This is what X86-64 does.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load16Signed):
+        (JSC::MacroAssemblerARM64::load8Signed):
+
 2015-03-26  Geoffrey Garen  <ggaren@apple.com>
 
         Make some more objects use FastMalloc

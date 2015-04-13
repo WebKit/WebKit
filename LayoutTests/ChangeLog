@@ -1,3 +1,16 @@
+2015-03-27  Michael Saboff  <msaboff@apple.com>
+
+        Fix flakey dfg-int8array.js and dfg-int16array.js tests for ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=138390
+
+        Reviewed by Mark Lam.
+
+        Reenabled the tests for ARM64/iOS.  Left the tests disabled for ARM64/linux and will let linux
+        developers test and reenable under existing but https://bugs.webkit.org/show_bug.cgi?id=142629.
+
+        * js/script-tests/dfg-int16array.js:
+        * js/script-tests/dfg-int8array.js:
+
 2015-03-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         FEMorphology::platformApplyGeneric() should bail out if the radius is less than or equal to zero.
