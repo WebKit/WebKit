@@ -1,3 +1,26 @@
+2015-04-12  Benjamin Poulain  <benjamin@webkit.org> and Diego Perini  <diego.perini@gmail.com>
+
+        Legacy scroll behavior on HTMLBodyElement should only apply to the first body element of a document
+        https://bugs.webkit.org/show_bug.cgi?id=143651
+
+        Reviewed by Sam Weinig.
+
+        * fast/dom/Element/body-scrollHeight-basics-quirks-expected.txt: Added.
+        * fast/dom/Element/body-scrollHeight-basics-quirks.html: Added.
+        * fast/dom/Element/body-scrollLeft-basics-quirks-expected.txt: Added.
+        * fast/dom/Element/body-scrollLeft-basics-quirks.html: Added.
+        * fast/dom/Element/body-scrollTop-basics-quirks-expected.txt: Added.
+        * fast/dom/Element/body-scrollTop-basics-quirks.html: Added.
+        * fast/dom/Element/body-scrollWidth-basics-quirks-expected.txt: Added.
+        * fast/dom/Element/body-scrollWidth-basics-quirks.html: Added.
+        Test the various behaviors.
+
+        * fast/dom/Element/detached-body-element-does-not-scroll-main-frame-with-scrollLeft-expected.txt: Added.
+        * fast/dom/Element/detached-body-element-does-not-scroll-main-frame-with-scrollLeft.html: Added.
+        * fast/dom/Element/detached-body-element-does-not-scroll-main-frame-with-scrollTop-expected.txt: Added.
+        * fast/dom/Element/detached-body-element-does-not-scroll-main-frame-with-scrollTop.html: Added.
+        Those tests target specifically the bug.
+
 2015-04-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Enable Media Source

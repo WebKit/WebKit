@@ -1,3 +1,36 @@
+2015-04-12  Benjamin Poulain  <benjamin@webkit.org>
+
+        Legacy scroll behavior on HTMLBodyElement should only apply to the first body element of a document
+        https://bugs.webkit.org/show_bug.cgi?id=143651
+
+        Reviewed by Sam Weinig.
+
+        WebKit has some very weird behaviors for the scroll methods on body. This patch
+        address the first bug: only the first body element should have the legacy behavior.
+
+        The relevant text in spec:
+        -http://dev.w3.org/csswg/cssom-view/#dom-element-scrollleft
+        -http://dev.w3.org/csswg/cssom-view/#dom-element-scrolltop
+        -http://dev.w3.org/csswg/cssom-view/#dom-element-scrollwidth
+        -http://dev.w3.org/csswg/cssom-view/#dom-element-scrollheight
+
+        Tests: fast/dom/Element/body-scrollHeight-basics-quirks.html
+               fast/dom/Element/body-scrollLeft-basics-quirks.html
+               fast/dom/Element/body-scrollTop-basics-quirks.html
+               fast/dom/Element/body-scrollWidth-basics-quirks.html
+               fast/dom/Element/detached-body-element-does-not-scroll-main-frame-with-scrollLeft.html
+               fast/dom/Element/detached-body-element-does-not-scroll-main-frame-with-scrollTop.html
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::isFirstBodyElementOfDocument):
+        (WebCore::HTMLBodyElement::scrollLeft):
+        (WebCore::HTMLBodyElement::setScrollLeft):
+        (WebCore::HTMLBodyElement::scrollTop):
+        (WebCore::HTMLBodyElement::setScrollTop):
+        (WebCore::HTMLBodyElement::scrollHeight):
+        (WebCore::HTMLBodyElement::scrollWidth):
+        * html/HTMLBodyElement.h:
+
 2015-04-12  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Fix trival typos related to the word "coordinate".

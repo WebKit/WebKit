@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <style>
+            div {
+                height: 9999px;
+                width: 9999px;
+            }
+        </style>
+        <script src="../../../resources/js-test-pre.js"></script>
+        <script>
+            jsTestIsAsync = true;
+
+            function runTest() {
+                description('Test the "scrollHeight" properties on the body element in quirks mode.');
+
+                debug("Initial values");
+                shouldBe("document.body.scrollHeight", "document.documentElement.scrollHeight");
+
+                debug("");
+                debug("Now we create a body element, it should not have a scrollHeight since it is not the first body element of the document.");
+                floatingBody = document.createElement('body');
+                shouldBe("document.body.scrollHeight", "document.documentElement.scrollHeight");
+                shouldBe("floatingBody.scrollHeight", "0");
+
+                secondSiblingBody = document.createElement('body');
+                document.documentElement.appendChild(secondSiblingBody);
+                debug("");
+                debug("We add a new body element after the first body element, this should have no impact on the state.");
+                shouldBe("document.body.scrollHeight", "document.documentElement.scrollHeight");
+                shouldBe("secondSiblingBody.scrollHeight", "secondSiblingBody.clientHeight");
+                shouldNotBe("document.body.scrollHeight", "secondSiblingBody.scrollHeight");
+
+                bodyChildOfMainBody = document.createElement('body');
+                document.body.appendChild(bodyChildOfMainBody);
+                debug("");
+                debug("We add a new body element inside the first body element, this should have no impact on the state.");
+                shouldBe("document.body.scrollHeight", "document.documentElement.scrollHeight");
+                shouldBe("bodyChildOfMainBody.scrollHeight", "bodyChildOfMainBody.clientHeight");
+                shouldNotBe("document.body.scrollHeight", "bodyChildOfMainBody.scrollHeight");
+
+                debug("");
+                debug("Getting the scrollHeight should not require a renderer.");
+                shouldBe("document.body.style.display = 'none'", "'none'");
+                shouldBe("document.body.scrollHeight", "document.documentElement.scrollHeight");
+
+                // Finally, let's clear the state to make this simpler for manual testing.
+                document.body.style.display = "block";
+                window.scrollTo(0, 0);
+
+                finishJSTest();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <div></div>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>

@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006-2010, 2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,6 +45,13 @@ HTMLBodyElement::HTMLBodyElement(const QualifiedName& tagName, Document& documen
     : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(bodyTag));
+}
+
+bool HTMLBodyElement::isFirstBodyElementOfDocument() const
+{
+    // By spec http://dev.w3.org/csswg/cssom-view/#the-html-body-element
+    // "The HTML body element is the first body HTML element child of the root HTML element html."
+    return document().body() == this;
 }
 
 Ref<HTMLBodyElement> HTMLBodyElement::create(Document& document)
@@ -225,76 +232,94 @@ static int adjustForZoom(int value, const Frame& frame)
 
 int HTMLBodyElement::scrollLeft()
 {
-    document().updateLayoutIgnorePendingStylesheets();
-    Frame* frame = document().frame();
-    if (!frame)
-        return 0;
-    FrameView* view = frame->view();
-    if (!view)
-        return 0;
-    return adjustForZoom(view->contentsScrollPosition().x(), *frame);
+    if (isFirstBodyElementOfDocument()) {
+        document().updateLayoutIgnorePendingStylesheets();
+        Frame* frame = document().frame();
+        if (!frame)
+            return 0;
+        FrameView* view = frame->view();
+        if (!view)
+            return 0;
+        return adjustForZoom(view->contentsScrollPosition().x(), *frame);
+    }
+    return HTMLElement::scrollLeft();
 }
 
 void HTMLBodyElement::setScrollLeft(int scrollLeft)
 {
-    document().updateLayoutIgnorePendingStylesheets();
-    Frame* frame = document().frame();
-    if (!frame)
-        return;
-    FrameView* view = frame->view();
-    if (!view)
-        return;
-    view->setScrollPosition(IntPoint(static_cast<int>(scrollLeft * frame->pageZoomFactor() * frame->frameScaleFactor()), view->scrollY()));
+    if (isFirstBodyElementOfDocument()) {
+        document().updateLayoutIgnorePendingStylesheets();
+        Frame* frame = document().frame();
+        if (!frame)
+            return;
+        FrameView* view = frame->view();
+        if (!view)
+            return;
+        view->setScrollPosition(IntPoint(static_cast<int>(scrollLeft * frame->pageZoomFactor() * frame->frameScaleFactor()), view->scrollY()));
+    }
+    HTMLElement::setScrollLeft(scrollLeft);
 }
 
 int HTMLBodyElement::scrollTop()
 {
-    document().updateLayoutIgnorePendingStylesheets();
-    Frame* frame = document().frame();
-    if (!frame)
-        return 0;
-    FrameView* view = frame->view();
-    if (!view)
-        return 0;
-    return adjustForZoom(view->contentsScrollPosition().y(), *frame);
+    if (isFirstBodyElementOfDocument()) {
+        document().updateLayoutIgnorePendingStylesheets();
+        Frame* frame = document().frame();
+        if (!frame)
+            return 0;
+        FrameView* view = frame->view();
+        if (!view)
+            return 0;
+        return adjustForZoom(view->contentsScrollPosition().y(), *frame);
+    }
+    return HTMLElement::scrollTop();
 }
 
 void HTMLBodyElement::setScrollTop(int scrollTop)
 {
-    document().updateLayoutIgnorePendingStylesheets();
-    Frame* frame = document().frame();
-    if (!frame)
-        return;
-    FrameView* view = frame->view();
-    if (!view)
-        return;
-    view->setScrollPosition(IntPoint(view->scrollX(), static_cast<int>(scrollTop * frame->pageZoomFactor() * frame->frameScaleFactor())));
+    if (isFirstBodyElementOfDocument()) {
+        document().updateLayoutIgnorePendingStylesheets();
+        Frame* frame = document().frame();
+        if (!frame)
+            return;
+        FrameView* view = frame->view();
+        if (!view)
+            return;
+        view->setScrollPosition(IntPoint(view->scrollX(), static_cast<int>(scrollTop * frame->pageZoomFactor() * frame->frameScaleFactor())));
+    }
+    return HTMLElement::setScrollTop(scrollTop);
 }
 
 int HTMLBodyElement::scrollHeight()
 {
-    // Update the document's layout.
-    document().updateLayoutIgnorePendingStylesheets();
-    Frame* frame = document().frame();
-    if (!frame)
-        return 0;
-    FrameView* view = frame->view();
-    if (!view)
-        return 0;
-    return adjustForZoom(view->contentsHeight(), *frame);
+    if (isFirstBodyElementOfDocument()) {
+        // Update the document's layout.
+        document().updateLayoutIgnorePendingStylesheets();
+        Frame* frame = document().frame();
+        if (!frame)
+            return 0;
+        FrameView* view = frame->view();
+        if (!view)
+            return 0;
+        return adjustForZoom(view->contentsHeight(), *frame);
+    }
+    return HTMLElement::scrollHeight();
 }
 
 int HTMLBodyElement::scrollWidth()
 {
-    // Update the document's layout.
-    document().updateLayoutIgnorePendingStylesheets();
-    Frame* frame = document().frame();
-    if (!frame)
-        return 0;
-    FrameView* view = frame->view();
-    if (!view)
-        return 0;
-    return adjustForZoom(view->contentsWidth(), *frame);
+    if (isFirstBodyElementOfDocument()) {
+        // Update the document's layout.
+        document().updateLayoutIgnorePendingStylesheets();
+        Frame* frame = document().frame();
+        if (!frame)
+            return 0;
+        FrameView* view = frame->view();
+        if (!view)
+            return 0;
+        return adjustForZoom(view->contentsWidth(), *frame);
+    }
+    return HTMLElement::scrollWidth();
 }
 
 void HTMLBodyElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
