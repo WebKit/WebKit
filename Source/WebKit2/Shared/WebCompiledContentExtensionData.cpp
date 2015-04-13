@@ -49,7 +49,7 @@ bool WebCompiledContentExtensionData::decode(IPC::ArgumentDecoder& decoder, WebC
     SharedMemory::Handle handle;
     if (!decoder.decode(handle))
         return false;
-    compiledContentExtensionData.data = SharedMemory::create(handle, SharedMemory::Protection::ReadOnly);
+    compiledContentExtensionData.data = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
 
     if (!decoder.decode(compiledContentExtensionData.actionsOffset))
         return false;

@@ -1,3 +1,51 @@
+2015-04-13  Anders Carlsson  <andersca@apple.com>
+
+        Rename SharedMemory::create overloads
+        https://bugs.webkit.org/show_bug.cgi?id=143679
+
+        Reviewed by Beth Dakin.
+
+        Rename the SharedMemory::create overload that allocates memory to SharedMemory::allocate,
+        and the SharedMemory::create overload that maps in a handle to SharedMemory::map.
+
+        * Platform/SharedMemory.h:
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::allocate):
+        (WebKit::SharedMemory::map):
+        (WebKit::SharedMemory::create): Deleted.
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::createShareable):
+        (WebKit::ShareableBitmap::create):
+        * Shared/ShareableResource.cpp:
+        (WebKit::ShareableResource::create):
+        * Shared/ShareableResource.h:
+        * Shared/WebCompiledContentExtension.cpp:
+        (WebKit::WebCompiledContentExtension::createFromCompiledContentExtensionData):
+        * Shared/WebCompiledContentExtensionData.cpp:
+        (WebKit::WebCompiledContentExtensionData::decode):
+        * Shared/WebHitTestResult.cpp:
+        (WebKit::WebHitTestResult::Data::Data):
+        (WebKit::WebHitTestResult::Data::decode):
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::resizeTable):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::dataSelectionForPasteboard):
+        (WebKit::WebPageProxy::setPromisedDataForImage):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::writeItemsToPasteboard):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::bufferForType):
+        (WebKit::WebPlatformStrategies::setBufferForType):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::setVisitedLinkTable):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getDataSelectionForPasteboard):
+
 2015-04-13  Brady Eidson  <beidson@apple.com>
 
         Share sheets from Share menus appear outside the browser window.

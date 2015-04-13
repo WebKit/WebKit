@@ -98,7 +98,7 @@ static inline mach_vm_address_t toVMAddress(void* pointer)
     return static_cast<mach_vm_address_t>(reinterpret_cast<uintptr_t>(pointer));
 }
     
-RefPtr<SharedMemory> SharedMemory::create(size_t size)
+RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 {
     ASSERT(size);
 
@@ -162,14 +162,13 @@ static inline vm_prot_t machProtection(SharedMemory::Protection protection)
     return VM_PROT_NONE;    
 }
 
-RefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection protection)
+RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protection)
 {
     if (handle.isNull())
         return 0;
     
     ASSERT(round_page(handle.m_size) == handle.m_size);
 
-    // Map the memory.
     vm_prot_t vmProtection = machProtection(protection);
     mach_vm_address_t mappedAddress = 0;
     kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, round_page(handle.m_size), 0, VM_FLAGS_ANYWHERE, handle.m_port, 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);

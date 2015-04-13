@@ -410,7 +410,7 @@ PassRefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const Str
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardBufferForType(pasteboardName, pasteboardType), Messages::WebPasteboardProxy::GetPasteboardBufferForType::Reply(handle, size), 0);
     if (handle.isNull())
         return 0;
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::Protection::ReadOnly);
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
     return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
 }
 
@@ -479,7 +479,7 @@ long WebPlatformStrategies::setBufferForType(PassRefPtr<SharedBuffer> buffer, co
 {
     SharedMemory::Handle handle;
     if (buffer) {
-        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(buffer->size());
+        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(buffer->size());
         // FIXME: Null check prevents crashing, but it is not great that we will have empty pasteboard content for this type,
         // because we've already set the types.
         if (sharedMemoryBuffer) {
@@ -536,7 +536,7 @@ PassRefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboar
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadBufferFromPasteboard(index, pasteboardType), Messages::WebPasteboardProxy::ReadBufferFromPasteboard::Reply(handle, size), 0);
     if (handle.isNull())
         return 0;
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::Protection::ReadOnly);
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
     return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
 }
 

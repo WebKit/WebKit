@@ -73,6 +73,7 @@ public:
     static PassRefPtr<ShareableResource> create(PassRefPtr<SharedMemory>, unsigned offset, unsigned size);
 
     // Create a shareable resource from a handle.
+    // FIXME: Rename this to map.
     static PassRefPtr<ShareableResource> create(const Handle&);
 
     // Create a handle.

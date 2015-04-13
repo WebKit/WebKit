@@ -86,7 +86,7 @@ WebHitTestResult::Data::Data(const WebCore::HitTestResult& hitTestResult, bool i
         RefPtr<SharedBuffer> buffer = image->data();
         String filenameExtension = image->filenameExtension();
         if (!filenameExtension.isEmpty() && buffer) {
-            imageSharedMemory = SharedMemory::create(buffer->size());
+            imageSharedMemory = SharedMemory::allocate(buffer->size());
             memcpy(imageSharedMemory->data(), buffer->data(), buffer->size());
             imageExtension = filenameExtension;
             imageSize = buffer->size();
@@ -159,7 +159,7 @@ bool WebHitTestResult::Data::decode(IPC::ArgumentDecoder& decoder, WebHitTestRes
         return false;
 
     if (!imageHandle.isNull())
-        hitTestResultData.imageSharedMemory = SharedMemory::create(imageHandle, SharedMemory::Protection::ReadOnly);
+        hitTestResultData.imageSharedMemory = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
 
     if (!decoder.decode(hitTestResultData.imageSize))
         return false;

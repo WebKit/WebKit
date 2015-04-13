@@ -135,7 +135,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     size_t imageSize = imageBuffer->size();
     SharedMemory::Handle imageHandle;
     
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(imageBuffer->size());
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(imageBuffer->size());
     if (!sharedMemoryBuffer)
         return;
     memcpy(sharedMemoryBuffer->data(), imageBuffer->data(), imageSize);
@@ -146,7 +146,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     size_t archiveSize = 0;
     if (data) {
         RefPtr<SharedBuffer> archiveBuffer = SharedBuffer::wrapNSData((NSData *)data.get());
-        RefPtr<SharedMemory> archiveSharedMemoryBuffer = SharedMemory::create(archiveBuffer->size());
+        RefPtr<SharedMemory> archiveSharedMemoryBuffer = SharedMemory::allocate(archiveBuffer->size());
         if (!archiveSharedMemoryBuffer)
             return;
         archiveSize = archiveBuffer->size();

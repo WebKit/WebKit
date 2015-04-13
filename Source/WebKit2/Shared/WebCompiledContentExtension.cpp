@@ -48,7 +48,7 @@ void LegacyContentExtensionCompilationClient::writeActions(Vector<WebCore::Conte
 
 Ref<WebCompiledContentExtension> WebCompiledContentExtension::createFromCompiledContentExtensionData(const WebCore::ContentExtensions::CompiledContentExtensionData& compilerData)
 {
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::create(compilerData.bytecode.size() + compilerData.actions.size());
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(compilerData.bytecode.size() + compilerData.actions.size());
     memcpy(static_cast<char*>(sharedMemory->data()), compilerData.actions.data(), compilerData.actions.size());
     memcpy(static_cast<char*>(sharedMemory->data()) + compilerData.actions.size(), compilerData.bytecode.data(), compilerData.bytecode.size());
 

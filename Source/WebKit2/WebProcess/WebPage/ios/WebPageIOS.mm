@@ -2177,7 +2177,7 @@ void WebPage::performActionOnElement(uint32_t action)
         if (!buffer)
             return;
         uint64_t bufferSize = buffer->size();
-        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(bufferSize);
+        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(bufferSize);
         memcpy(sharedMemoryBuffer->data(), buffer->data(), bufferSize);
         SharedMemory::Handle handle;
         sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);

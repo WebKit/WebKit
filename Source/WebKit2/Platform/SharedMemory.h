@@ -26,9 +26,9 @@
 #ifndef SharedMemory_h
 #define SharedMemory_h
 
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 #if PLATFORM(GTK) || PLATFORM(EFL)
 #include "Attachment.h"
@@ -75,10 +75,10 @@ public:
 #endif
         size_t m_size;
     };
-    
-    static RefPtr<SharedMemory> create(size_t);
-    static RefPtr<SharedMemory> create(const Handle&, Protection);
+
+    static RefPtr<SharedMemory> allocate(size_t);
     static RefPtr<SharedMemory> create(void*, size_t, Protection);
+    static RefPtr<SharedMemory> map(const Handle&, Protection);
 
     ~SharedMemory();
 

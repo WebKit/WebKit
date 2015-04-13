@@ -200,7 +200,7 @@ void VisitedLinkProvider::pendingVisitedLinksTimerFired()
 
 void VisitedLinkProvider::resizeTable(unsigned newTableSize)
 {
-    RefPtr<SharedMemory> newTableMemory = SharedMemory::create(newTableSize * sizeof(LinkHash));
+    RefPtr<SharedMemory> newTableMemory = SharedMemory::allocate(newTableSize * sizeof(LinkHash));
 
     if (!newTableMemory) {
         LOG_ERROR("Could not allocate shared memory for visited link table");

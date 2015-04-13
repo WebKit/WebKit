@@ -710,7 +710,7 @@ void WebPage::getDataSelectionForPasteboard(const String pasteboardType, SharedM
         return;
     }
     size = buffer->size();
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(size);
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(size);
     memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
     sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
 }

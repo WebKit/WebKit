@@ -561,7 +561,7 @@ void WebPageProxy::performActionOnElement(uint32_t action)
 
 void WebPageProxy::saveImageToLibrary(const SharedMemory::Handle& imageHandle, uint64_t imageSize)
 {
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(imageHandle, SharedMemory::Protection::ReadOnly);
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
     RefPtr<SharedBuffer> buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), imageSize);
     m_pageClient.saveImageToLibrary(buffer);
 }

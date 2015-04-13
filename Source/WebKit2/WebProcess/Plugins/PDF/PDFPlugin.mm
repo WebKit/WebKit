@@ -1690,7 +1690,7 @@ void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items,
                 continue;
 
             SharedMemory::Handle handle;
-            RefPtr<SharedMemory> sharedMemory = SharedMemory::create(buffer->size());
+            RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(buffer->size());
             memcpy(sharedMemory->data(), buffer->data(), buffer->size());
             sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
             webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardBufferForType(pasteboardName, type, handle, buffer->size()), Messages::WebPasteboardProxy::SetPasteboardBufferForType::Reply(newChangeCount), 0);
