@@ -1,5 +1,11 @@
 2015-04-13  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix Windows build. Windows doesn't take kindly to private classes that use FAST_ALLOCATED.
+
+        * runtime/InferredValue.h:
+
+2015-04-13  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix build. I introduced a new cell type at the same time as kling changed how new cell types are written.
 
         * runtime/InferredValue.h:

@@ -96,15 +96,10 @@ public:
     
     static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
     
-private:
-    InferredValue(VM&);
-    ~InferredValue();
-    
-    JS_EXPORT_PRIVATE void notifyWriteSlow(VM&, JSValue, const FireDetail&);
-    JS_EXPORT_PRIVATE void notifyWriteSlow(VM&, JSValue, const char* reason);
-    
     // We could have used Weak<>. But we want arbitrary JSValues, not just cells. It's also somewhat
     // convenient to have eager notification of death.
+    //
+    // Also note that this should be a private class, but it isn't because Windows.
     class ValueCleanup : public UnconditionalFinalizer {
         WTF_MAKE_FAST_ALLOCATED;
         
@@ -118,6 +113,13 @@ private:
     private:
         InferredValue* m_owner;
     };
+    
+private:
+    InferredValue(VM&);
+    ~InferredValue();
+    
+    JS_EXPORT_PRIVATE void notifyWriteSlow(VM&, JSValue, const FireDetail&);
+    JS_EXPORT_PRIVATE void notifyWriteSlow(VM&, JSValue, const char* reason);
     
     friend class ValueCleanup;
     
