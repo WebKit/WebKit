@@ -1,3 +1,34 @@
+2015-04-13  Zalan Bujtas  <zalan@apple.com>
+
+        [Win] Unreviewed gardening after r182620. (<br> updates mostly)
+
+        * platform/win/fast/dom/focus-contenteditable-expected.txt:
+        * platform/win/fast/forms/listbox-hit-test-zoomed-expected.txt:
+        * platform/win/fast/forms/range/slider-padding-expected.txt:
+        * platform/win/fast/forms/textarea-scroll-height-expected.txt:
+        * platform/win/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/win/fast/text/international/bidi-layout-across-linebreak-expected.txt:
+        * platform/win/fast/text/svg-font-face-with-kerning-expected.txt: Added.
+        * platform/win/http/tests/navigation/postredirect-basic-expected.txt:
+        * platform/win/http/tests/navigation/postredirect-goback1-expected.txt:
+        * platform/win/printing/single-line-must-not-be-split-into-two-pages-expected.txt:
+        * platform/win/svg/wicd/test-rightsizing-b-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug1224-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug131020-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug131020_iframe-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug1430-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug16252-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug19599-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug20579-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug32205-3-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug82946-2-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug92143-expected.txt:
+        * platform/win/tables/mozilla/marvin/tables_cellpadding-expected.txt:
+        * platform/win/tables/mozilla/marvin/tables_cellspacing-expected.txt:
+        * platform/win/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/win/tables/mozilla_expected_failures/bugs/bug56024-expected.txt:
+        * platform/win/tables/mozilla_expected_failures/other/test4-expected.txt:
+
 2015-04-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Update table/mozilla expected files after r182620
