@@ -1,3 +1,22 @@
+2015-04-10  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (182567): regress/script-tests/sorting-benchmark.js fails on 32 bit dfg-eager tests
+        https://bugs.webkit.org/show_bug.cgi?id=143582
+
+        Reviewed by Mark Lam.
+
+        For 32 bit builds, we favor spilling unboxed values.  The ASSERT at the root of this bug doesn't
+        fire for 64 bit builds, because we spill an "Other" value as a full JS value (DataFormatJS).
+        For 32 bit builds however, if we are able, we spill Other values as JSCell* (DataFormatCell).
+        The fix is to add a check in fillSpeculateInt32Internal() before the ASSERT that always OSR exits
+        if the spillFormat is DataFormatCell.  Had we spilled in DataFormatJS and the value was a JSCell*,
+        we would still OSR exit after the speculation check.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode): Fixed an error in a comment while debugging.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+
 2015-04-08  Filip Pizlo  <fpizlo@apple.com>
 
         JSArray::sortNumeric should handle ArrayWithUndecided

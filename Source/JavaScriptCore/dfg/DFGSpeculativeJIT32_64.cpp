@@ -755,6 +755,13 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         }
 
         DataFormat spillFormat = info.spillFormat();
+
+        if (spillFormat == DataFormatCell) {
+            terminateSpeculativeExecution(BadType, JSValueRegs(), edge);
+            returnFormat = DataFormatInt32;
+            return allocate();
+        }
+
         ASSERT_UNUSED(spillFormat, (spillFormat & DataFormatJS) || spillFormat == DataFormatInt32);
 
         // If we know this was spilled as an integer we can fill without checking.

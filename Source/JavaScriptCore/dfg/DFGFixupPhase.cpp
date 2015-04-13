@@ -120,7 +120,7 @@ private:
 
         switch (op) {
         case SetLocal: {
-            // This gets handled by fixupSetLocalsInBlock().
+            // This gets handled by fixupGetAndSetLocalsInBlock().
             return;
         }
             
