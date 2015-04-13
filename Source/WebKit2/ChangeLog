@@ -1,5 +1,28 @@
 2015-04-06  Žan Doberšek  <zdobersek@igalia.com>
 
+        [WK2] API::Array::copy() should move the resulting Vector<> of copies into the Array::create() call
+        https://bugs.webkit.org/show_bug.cgi?id=143413
+
+        Reviewed by Darin Adler.
+
+        Move the Vector<> object containing the copied elements into the Array::create()
+        call, avoiding copying all the elements again.
+
+        While here, change the Vector<> parameters for Array::create() and the Array
+        constructor to rvalue references. This will ensure that the passed-in object
+        is moved into the Array::create() call if possible, or explicitly copied
+        otherwise. The constructor is moved into the header for inlining opportunities
+        and the unnecessary parameter in the create(Vector<>&&) method declaration
+        removed.
+
+        * Shared/API/APIArray.cpp:
+        (API::Array::create):
+        (API::Array::copy):
+        (API::Array::Array): Deleted.
+        * Shared/API/APIArray.h:
+
+2015-04-06  Žan Doberšek  <zdobersek@igalia.com>
+
         UserScript, UserStyleSheet constructors should take in Vector<String> rvalues
         https://bugs.webkit.org/show_bug.cgi?id=143411
 
