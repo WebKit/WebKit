@@ -1,3 +1,14 @@
+2015-03-24  Tobias Reiss  <tobi+webkit@basecode.de>
+
+        Web Inspector: REGRESSION (r179286): ReferenceError: Can't find variable: selector
+        https://bugs.webkit.org/show_bug.cgi?id=143022
+
+        Reviewed by Timothy Hatcher.
+
+        Fix a regression where a missing variable statement causes a ReferenceError.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+
 2015-02-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Tweak the styles on the Console

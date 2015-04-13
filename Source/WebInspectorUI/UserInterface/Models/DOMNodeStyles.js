@@ -260,7 +260,7 @@ WebInspector.DOMNodeStyles.prototype = {
             this.refresh();
         }
 
-        selector = this._node.appropriateSelectorFor(true);
+        var selector = this._node.appropriateSelectorFor(true);
 
         CSSAgent.addRule.invoke({contextNodeId: this._node.id, selector: selector}, addedRule.bind(this));
     },
