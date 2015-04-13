@@ -1,3 +1,43 @@
+2015-03-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        FEMorphology::platformApplyGeneric() should bail out if the radius is less than or equal to zero.
+        https://bugs.webkit.org/show_bug.cgi?id=142885.
+
+        Reviewed by Dean Jackson.
+
+        FEMorphology class implementation code clean up.
+        
+        Tests: svg/filters/feMorphology-radius-cases.svg
+
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::shouldSupersedeExtremum): Reuse code instead of repeating it and
+        use < and > instead of =< and >=.
+        
+        (WebCore::pixelArrayIndex): Returns the array index of a pixel in an image
+        buffer, given: position(x, y), image width and the color channel.
+        
+        (WebCore::columnExtremum): Returns the extremum of a column of pixels.
+        
+        (WebCore::kernelExtremum): Returns the extremum of a filter kernel.
+        
+        (WebCore::FEMorphology::platformApplyGeneric): Apply some code clean-up.
+        The kernel size should be equal to radius of the filter. The extra pixel
+        was causing the resulted image to be asymmetric in some cases.
+        
+        (WebCore::FEMorphology::platformApplyDegenerate):
+        (WebCore::FEMorphology::platformApplySoftware): After applying scaling, we
+        still need to check the resulted radius is negative (overflow case) or less
+        than one (zero radius case) and treat these cases differently.
+        
+        (WebCore::FEMorphology::morphologyOperator): Deleted.
+        (WebCore::FEMorphology::radiusX): Deleted.
+        (WebCore::FEMorphology::radiusY): Deleted.
+        * platform/graphics/filters/FEMorphology.h:
+        (WebCore::FEMorphology::morphologyOperator):
+        (WebCore::FEMorphology::radiusX):
+        (WebCore::FEMorphology::radiusY):
+        Move a single line functions from the source file to the header file.
+
 2015-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Crash when laying out (char)0

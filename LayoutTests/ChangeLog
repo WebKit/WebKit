@@ -1,3 +1,18 @@
+2015-03-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        FEMorphology::platformApplyGeneric() should bail out if the radius is less than or equal to zero.
+        https://bugs.webkit.org/show_bug.cgi?id=142885.
+
+        Reviewed by Dean Jackson.
+
+        * svg/filters/feMorphology-radius-cases-expected.svg: Added.
+        * svg/filters/feMorphology-radius-cases.svg: Added.
+        Test different cases for radius of the feMorphology filter. There are three 
+        cases for the radius:
+            1. radius < 0: This is an error case, the source image should not be rendered.
+            2. radius = 0: This case is treated as if the filter never exists.
+            3. radius > 0: If the scaled radius is > 0, the filter is applied.
+
 2015-03-27  Michael Saboff  <msaboff@apple.com>
 
         Objects with numeric properties intermittently get a phantom 'length' property
