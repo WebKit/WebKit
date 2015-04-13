@@ -1,5 +1,14 @@
 2015-04-13  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] Unreviewed gardening, update platform specifix expected files after r181889.
+
+        * platform/efl/css3/selectors3/xhtml/css3-modsel-15c-expected.txt:
+        * platform/efl/css3/selectors3/xml/css3-modsel-15c-expected.txt:
+        * platform/efl/plugins/npruntime/object-from-destroyed-plugin-expected.txt:
+        * platform/efl/plugins/npruntime/object-from-destroyed-plugin-in-subframe-expected.txt:
+
+2015-04-13  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] Rebaseline accessibility/aria-toggle-button-with-title.html
         https://bugs.webkit.org/show_bug.cgi?id=143229
 
