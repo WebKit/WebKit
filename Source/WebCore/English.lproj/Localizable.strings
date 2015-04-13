@@ -91,8 +91,14 @@
 /* WKErrorJavaScriptExceptionOccurred description */
 "A JavaScript exception occurred" = "A JavaScript exception occurred";
 
+/* action menu item */
+"Add to Photos (action menu item)" = "Add to Photos";
+
 /* Title for Add to Reading List action button */
 "Add to Reading List" = "Add to Reading List";
+
+/* action menu item */
+"Add to Reading List (action menu item)" = "Add to Reading List";
 
 /* Undo action name */
 "Align Left (Undo action name)" = "Align Left";
@@ -181,6 +187,15 @@
 /* Copy context menu item */
 "Copy" = "Copy";
 
+/* image action menu item */
+"Copy (image action menu item)" = "Copy";
+
+/* text action menu item */
+"Copy (text action menu item)" = "Copy";
+
+/* video action menu item */
+"Copy (video action menu item)" = "Copy";
+
 /* Title for Copy Link or Image action button */
 "Copy ActionSheet Link" = "Copy";
 
@@ -211,13 +226,13 @@
 /* Default writing direction context menu item */
 "Default" = "Default";
 
-/* Undo action name (Used only by PLATFORM(IOS) code) */
+/* Undo action name */
 "Delete (Undo action name)" = "Delete";
 
 /* text to display in <details> tag when it has no <summary> child */
 "Details" = "Details";
 
-/* Undo action name (Used only by PLATFORM(IOS) code) */
+/* Undo action name */
 "Dictation (Undo action name)" = "Dictation";
 
 /* Download Audio To Disk context menu item */
@@ -364,6 +379,9 @@
 /* Menu item label for the track that represents disabling closed captions */
 "Off" = "Off";
 
+/* action menu item */
+"Open (action menu item)" = "Open";
+
 /* Title for Open Link action button */
 "Open ActionSheet Link" = "Open";
 
@@ -405,6 +423,9 @@
 
 /* Undo action name */
 "Paste (Undo action name)" = "Paste";
+
+/* action menu item */
+"Paste (action menu item)" = "Paste";
 
 /* Undo action name */
 "Paste Font (Undo action name)" = "Paste Font";
@@ -456,6 +477,12 @@
 
 /* Title for Save Image action button */
 "Save Image" = "Save Image";
+
+/* image action menu item */
+"Save to Downloads (image action menu item)" = "Save to Downloads";
+
+/* video action menu item */
+"Save to Downloads (video action menu item)" = "Save to Downloads";
 
 /* Search in Spotlight context menu item */
 "Search in Spotlight" = "Search in Spotlight";
@@ -562,6 +589,9 @@
 /* Menu section heading for subtitles */
 "Subtitles" = "Subtitles";
 
+/* action menu item */
+"Suggestions (action menu item)" = "Suggestions";
+
 /* Undo action name */
 "Superscript (Undo action name)" = "Superscript";
 
@@ -628,7 +658,7 @@
 /* Undo action name */
 "Turn Off Ligatures (Undo action name)" = "Turn Off Ligatures";
 
-/* We don't care if we find this string, but searching for it will load the plist and save the results. */
+/* Undo action name */
 "Typing (Undo action name)" = "Typing";
 
 /* Underline context menu item */
@@ -636,6 +666,9 @@
 
 /* Undo action name */
 "Underline (Undo action name)" = "Underline";
+
+/* Menu item label for an audio track that has no other name */
+"Unknown (audio track)" = "Unknown";
 
 /* Unknown filesize FTP directory listing item */
 "Unknown (filesize)" = "Unknown";
@@ -1075,38 +1108,3 @@
 /* accessibility label for video element controller */
 "video playback" = "video playback";
 
-/* "Open Link in Default Browser" action menu item */
-"Open (action menu item)" = "Open";
-
-/* "Preview Link" action menu item */
-"Preview (action menu item)" = "Preview";
-
-/* "Add to Reading List" action menu item */
-"Add to Reading List (action menu item)" = "Add to Reading List";
-
-/* "Copy" action menu item in image menu */
-"Copy (image action menu item)" = "Copy";
-
-/* "Add to Photos" action menu item */
-"Add to Photos (action menu item)" = "Add to Photos";
-
-/* "Save to Downloads" action menu item in image menu */
-"Save to Downloads (image action menu item)" = "Save to Downloads";
-
-/* "Copy" action menu item in text menu */
-"Copy (text action menu item)" = "Copy";
-
-/* "Look Up" action menu item */
-"Look Up (action menu item)" = "Look Up";
-
-/* "Paste" action menu item */
-"Paste (action menu item)" = "Paste";
-
-/* "Suggestions" action menu item */
-"Suggestions (action menu item)" = "Suggestions";
-
-/* "Copy" action menu item in video menu */
-"Copy (video action menu item)" = "Copy";
-
-/* "Save to Downloads" action menu item in video menu */
-"Save to Downloads (video action menu item)" = "Save to Downloads";

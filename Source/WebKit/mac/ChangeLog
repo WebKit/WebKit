@@ -1,3 +1,22 @@
+2015-04-12  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Localizable strings are inconsistent and need to be regenerated
+        https://bugs.webkit.org/show_bug.cgi?id=143661
+        rdar://problem/19634388
+
+        Reviewed by Dan Bernstein.
+
+        * Misc/WebLocalizableStrings.mm:
+        (LoadWebLocalizedStringsTimerCallback): Moved the comment, useful for programmers but
+        not for localization, into a C++ source code comment, and made the localizer comment
+        consistent with the place this localizable string is used for actual localization.
+        * WebCoreSupport/WebEditorClient.mm:
+        (undoNameForEditAction): Changed the localizer comments for Delete and Dictation
+        to match the ones in WebKit2; no need to specify that these are iOS only, and if we do
+        want to specify that, we should not be using the term PLATFORM(IOS) since there is no
+        reason for us to expect localizers to understand that terminology. Also added a comment
+        about the fact that we have two copies of all the localizable strings.
+
 2015-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Enable Symbol in web pages

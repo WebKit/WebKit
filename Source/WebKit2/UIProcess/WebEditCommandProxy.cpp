@@ -70,6 +70,7 @@ void WebEditCommandProxy::reapply()
 
 String WebEditCommandProxy::nameForEditAction(EditAction editAction)
 {
+    // FIXME: This is identical to code in WebKit's WebEditorClient class; would be nice to share the strings instead of having two copies.
     switch (editAction) {
     case EditActionUnspecified:
         return String();
