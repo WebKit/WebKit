@@ -1,3 +1,10 @@
+2015-04-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, build fix after r182704.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+
 2015-04-13  Joonghun Park  <jh718.park@samsung.com>
 
         Use std::unique_ptr instead of PassOwnPtr|OwnPtr for ResourceResponse
