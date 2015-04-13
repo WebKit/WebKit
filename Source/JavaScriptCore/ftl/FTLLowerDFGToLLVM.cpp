@@ -4251,9 +4251,8 @@ private:
 
             LBasicBlock lastNext = m_out.appendTo(checkHole, slowCase);
             LValue doubleValue = m_out.loadDouble(baseIndex(heap, storage, index, m_node->child2()));
-            ValueFromBlock checkHoleResult = m_out.anchor(
-                m_out.doubleNotEqualOrUnordered(doubleValue, doubleValue));
-            m_out.branch(checkHoleResult.value(), rarely(slowCase), usually(continuation));
+            ValueFromBlock checkHoleResult = m_out.anchor(m_out.doubleEqual(doubleValue, doubleValue));
+            m_out.branch(checkHoleResult.value(), usually(continuation), rarely(slowCase));
             
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(m_out.equal(

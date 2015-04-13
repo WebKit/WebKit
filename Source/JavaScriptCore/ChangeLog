@@ -1,3 +1,21 @@
+2015-04-06  Mark Lam  <mark.lam@apple.com>
+
+        In the 64-bit DFG and FTL, Array::Double case for HasIndexedProperty should set its result to true when all is well.
+        <https://webkit.org/b/143396>
+
+        Reviewed by Filip Pizlo.
+
+        The DFG was neglecting to set the result boolean.  The FTL was setting it with
+        an inverted value.  Both of these are now resolved.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileHasIndexedProperty):
+        * tests/stress/for-in-array-mode.js: Added.
+        (.):
+        (test):
+
 2015-04-05  Andreas Kling  <akling@apple.com>
 
         URI encoding/escaping should use efficient string building instead of calling snprintf().
