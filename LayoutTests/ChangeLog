@@ -1,5 +1,14 @@
 2015-04-13  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] Rebaseline accessibility/aria-toggle-button-with-title.html
+        https://bugs.webkit.org/show_bug.cgi?id=143229
+
+        Unreviewed gardening after r182012.
+
+        * platform/efl/accessibility/aria-toggle-button-with-title-expected.txt: Added.
+
+2015-04-13  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] accessibility/plugin.html fails
         https://bugs.webkit.org/show_bug.cgi?id=143663
 
