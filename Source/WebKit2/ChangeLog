@@ -1,3 +1,18 @@
+2015-04-12  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Remove PluginModuleInfo.cpp from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=143643
+
+        Reviewed by Darin Adler.
+
+        Remove PluginModuleInfo.cpp from WebKit2 because it is totally empty.
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * Shared/Plugins/PluginModuleInfo.cpp: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-04-06  Anders Carlsson  <andersca@apple.com>
 
         Create the web inspector process pool lazily
