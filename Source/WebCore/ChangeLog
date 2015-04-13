@@ -1,3 +1,15 @@
+2015-04-13  Andreas Kling  <akling@apple.com>
+
+        Rebaseline bindings tests.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+
 2015-04-13  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Treat a 'not found' media option index as the 'off' track.

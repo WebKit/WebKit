@@ -66,6 +66,8 @@ public:
 
 private:
     TestCustomNamedGetter* m_impl;
+public:
+    static const unsigned StructureFlags = JSC::HasImpureGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 protected:
     JSTestCustomNamedGetter(JSC::Structure*, JSDOMGlobalObject*, Ref<TestCustomNamedGetter>&&);
 
@@ -75,7 +77,6 @@ protected:
         ASSERT(inherits(info()));
     }
 
-    static const unsigned StructureFlags = JSC::HasImpureGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 private:
     static bool canGetItemsForName(JSC::ExecState*, TestCustomNamedGetter*, JSC::PropertyName);
     static JSC::EncodedJSValue nameGetter(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);

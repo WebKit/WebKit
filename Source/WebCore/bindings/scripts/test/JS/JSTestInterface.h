@@ -92,6 +92,8 @@ public:
 
 private:
     TestInterface* m_impl;
+public:
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 protected:
     JSTestInterface(JSC::Structure*, JSDOMGlobalObject*, Ref<TestInterface>&&);
 
@@ -101,7 +103,6 @@ protected:
         ASSERT(inherits(info()));
     }
 
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
 class JSTestInterfaceOwner : public JSC::WeakHandleOwner {

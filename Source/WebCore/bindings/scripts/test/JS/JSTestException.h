@@ -66,6 +66,8 @@ public:
 
 private:
     TestException* m_impl;
+public:
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 protected:
     JSTestException(JSC::Structure*, JSDOMGlobalObject*, Ref<TestException>&&);
 
@@ -75,7 +77,6 @@ protected:
         ASSERT(inherits(info()));
     }
 
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
 class JSTestExceptionOwner : public JSC::WeakHandleOwner {

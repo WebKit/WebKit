@@ -65,6 +65,8 @@ public:
 
 private:
     TestTypedefs* m_impl;
+public:
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 protected:
     JSTestTypedefs(JSC::Structure*, JSDOMGlobalObject*, Ref<TestTypedefs>&&);
 
@@ -74,7 +76,6 @@ protected:
         ASSERT(inherits(info()));
     }
 
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
 class JSTestTypedefsOwner : public JSC::WeakHandleOwner {

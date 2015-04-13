@@ -78,6 +78,8 @@ public:
 
 private:
     TestObj* m_impl;
+public:
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 protected:
     JSTestObj(JSC::Structure*, JSDOMGlobalObject*, Ref<TestObj>&&);
 
@@ -87,7 +89,6 @@ protected:
         ASSERT(inherits(info()));
     }
 
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
 class JSTestObjOwner : public JSC::WeakHandleOwner {
