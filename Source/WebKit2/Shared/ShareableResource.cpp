@@ -104,7 +104,7 @@ PassRefPtr<ShareableResource> ShareableResource::create(PassRefPtr<SharedMemory>
 
 PassRefPtr<ShareableResource> ShareableResource::create(const Handle& handle)
 {
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle.m_handle, SharedMemory::ReadOnly);
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle.m_handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return 0;
 
@@ -128,7 +128,7 @@ ShareableResource::~ShareableResource()
 
 bool ShareableResource::createHandle(Handle& handle)
 {
-    if (!m_sharedMemory->createHandle(handle.m_handle, SharedMemory::ReadOnly))
+    if (!m_sharedMemory->createHandle(handle.m_handle, SharedMemory::Protection::ReadOnly))
         return false;
 
     handle.m_offset = m_offset;

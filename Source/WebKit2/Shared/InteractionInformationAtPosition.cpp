@@ -46,7 +46,7 @@ void InteractionInformationAtPosition::encode(IPC::ArgumentEncoder& encoder) con
 
     ShareableBitmap::Handle handle;
     if (image)
-        image->createHandle(handle, SharedMemory::ReadOnly);
+        image->createHandle(handle, SharedMemory::Protection::ReadOnly);
     encoder << handle;
 }
 
@@ -84,7 +84,7 @@ bool InteractionInformationAtPosition::decode(IPC::ArgumentDecoder& decoder, Int
         return false;
 
     if (!handle.isNull())
-        result.image = ShareableBitmap::create(handle, SharedMemory::ReadOnly);
+        result.image = ShareableBitmap::create(handle, SharedMemory::Protection::ReadOnly);
 
     return true;
 }

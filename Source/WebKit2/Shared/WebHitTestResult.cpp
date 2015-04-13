@@ -120,7 +120,7 @@ void WebHitTestResult::Data::encode(IPC::ArgumentEncoder& encoder) const
 
     SharedMemory::Handle imageHandle;
     if (imageSharedMemory && imageSharedMemory->data())
-        imageSharedMemory->createHandle(imageHandle, SharedMemory::ReadOnly);
+        imageSharedMemory->createHandle(imageHandle, SharedMemory::Protection::ReadOnly);
     encoder << imageHandle;
     encoder << imageSize;
     encoder << imageExtension;
@@ -159,7 +159,7 @@ bool WebHitTestResult::Data::decode(IPC::ArgumentDecoder& decoder, WebHitTestRes
         return false;
 
     if (!imageHandle.isNull())
-        hitTestResultData.imageSharedMemory = SharedMemory::create(imageHandle, SharedMemory::ReadOnly);
+        hitTestResultData.imageSharedMemory = SharedMemory::create(imageHandle, SharedMemory::Protection::ReadOnly);
 
     if (!decoder.decode(hitTestResultData.imageSize))
         return false;

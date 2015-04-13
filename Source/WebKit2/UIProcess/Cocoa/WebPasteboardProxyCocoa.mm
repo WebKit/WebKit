@@ -60,7 +60,7 @@ void WebPasteboardProxy::getPasteboardBufferForType(const String& pasteboardName
     if (!sharedMemoryBuffer)
         return;
     memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
-    sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
+    sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
 }
 
 void WebPasteboardProxy::pasteboardCopy(const String& fromPasteboard, const String& toPasteboard, uint64_t& newChangeCount)
@@ -114,7 +114,7 @@ void WebPasteboardProxy::setPasteboardBufferForType(const String& pasteboardName
         newChangeCount = PlatformPasteboard(pasteboardName).setBufferForType(0, pasteboardType);
         return;
     }
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::ReadOnly);
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::Protection::ReadOnly);
     RefPtr<SharedBuffer> buffer = SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
     newChangeCount = PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
 }
@@ -155,7 +155,7 @@ void WebPasteboardProxy::readBufferFromPasteboard(uint64_t index, const String& 
     if (!sharedMemoryBuffer)
         return;
     memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
-    sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
+    sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
 }
 
 void WebPasteboardProxy::getPasteboardItemsCount(uint64_t& itemsCount)

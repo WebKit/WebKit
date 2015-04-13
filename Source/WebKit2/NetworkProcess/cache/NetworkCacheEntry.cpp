@@ -107,7 +107,7 @@ void Entry::initializeBufferFromStorageRecord() const
     auto* data = m_sourceStorageRecord.body.data();
     size_t size = m_sourceStorageRecord.body.size();
 #if ENABLE(SHAREABLE_RESOURCE)
-    RefPtr<SharedMemory> sharedMemory = m_sourceStorageRecord.body.isMap() ? SharedMemory::createFromVMBuffer(const_cast<uint8_t*>(data), size) : nullptr;
+    RefPtr<SharedMemory> sharedMemory = m_sourceStorageRecord.body.isMap() ? SharedMemory::create(const_cast<uint8_t*>(data), size, SharedMemory::Protection::ReadOnly) : nullptr;
     RefPtr<ShareableResource> shareableResource = sharedMemory ? ShareableResource::create(sharedMemory.release(), 0, m_sourceStorageRecord.body.size()) : nullptr;
 
     if (shareableResource && shareableResource->createHandle(m_shareableResourceHandle))

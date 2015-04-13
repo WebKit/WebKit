@@ -1,3 +1,67 @@
+2015-04-13  Anders Carlsson  <andersca@apple.com>
+
+        Begin cleaning up the shared memory interface
+        https://bugs.webkit.org/show_bug.cgi?id=143677
+
+        Reviewed by Andreas Kling.
+
+        Rename createFromVMBuffer to create and add a protection parameter (which is currently unused).
+        Also, turn SharedMemory::Protection into a proper enum class.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::store):
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::initializeBufferFromStorageRecord):
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (WebKit::tryGetShareableHandleFromCFData):
+        * Platform/SharedMemory.h:
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::create):
+        (WebKit::machProtection):
+        (WebKit::SharedMemory::createHandle):
+        (WebKit::SharedMemory::createFromVMBuffer): Deleted.
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::encode):
+        (WebKit::ContextMenuContextData::decode):
+        * Shared/ShareableBitmap.h:
+        * Shared/ShareableResource.cpp:
+        (WebKit::ShareableResource::create):
+        (WebKit::ShareableResource::createHandle):
+        * Shared/WebCompiledContentExtensionData.cpp:
+        (WebKit::WebCompiledContentExtensionData::encode):
+        (WebKit::WebCompiledContentExtensionData::decode):
+        * Shared/WebHitTestResult.cpp:
+        (WebKit::WebHitTestResult::Data::encode):
+        (WebKit::WebHitTestResult::Data::decode):
+        * UIProcess/API/APIUserContentExtensionStore.cpp:
+        (API::createExtension):
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::sendTable):
+        * UIProcess/mac/WKPrintingView.mm:
+        (pageDidDrawToImage):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::dataSelectionForPasteboard):
+        (WebKit::WebPageProxy::setPromisedDataForImage):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::writeItemsToPasteboard):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::bufferForType):
+        (WebKit::WebPlatformStrategies::setBufferForType):
+        (WebKit::WebPlatformStrategies::readBufferFromPasteboard):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::setVisitedLinkTable):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::takeSnapshot):
+        (WebKit::WebPage::drawRectToImage):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getDataSelectionForPasteboard):
+
 2015-04-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Cannot click "Next" button on Google two-factor auth setup page

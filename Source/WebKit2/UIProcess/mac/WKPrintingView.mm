@@ -222,7 +222,7 @@ static void pageDidDrawToImage(const ShareableBitmap::Handle& imageHandle, IPCCa
         ASSERT([view _isPrintingPreview]);
 
         if (!imageHandle.isNull()) {
-            RefPtr<ShareableBitmap> image = ShareableBitmap::create(imageHandle, SharedMemory::ReadOnly);
+            RefPtr<ShareableBitmap> image = ShareableBitmap::create(imageHandle, SharedMemory::Protection::ReadOnly);
 
             if (image)
                 view->_pagePreviews.add(iter->value, image);

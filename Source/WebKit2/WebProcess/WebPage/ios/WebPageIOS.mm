@@ -2180,7 +2180,7 @@ void WebPage::performActionOnElement(uint32_t action)
         RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(bufferSize);
         memcpy(sharedMemoryBuffer->data(), buffer->data(), bufferSize);
         SharedMemory::Handle handle;
-        sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
+        sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
         send(Messages::WebPageProxy::SaveImageToLibrary(handle, bufferSize));
     }
 }

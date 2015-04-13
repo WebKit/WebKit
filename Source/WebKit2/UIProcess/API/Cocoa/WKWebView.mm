@@ -2610,7 +2610,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
             return;
         }
 
-        RefPtr<WebKit::ShareableBitmap> bitmap = WebKit::ShareableBitmap::create(imageHandle, WebKit::SharedMemory::ReadOnly);
+        RefPtr<WebKit::ShareableBitmap> bitmap = WebKit::ShareableBitmap::create(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
 
         if (!bitmap) {
             copiedCompletionHandler(nullptr);

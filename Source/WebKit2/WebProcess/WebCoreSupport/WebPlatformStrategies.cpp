@@ -410,7 +410,7 @@ PassRefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const Str
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardBufferForType(pasteboardName, pasteboardType), Messages::WebPasteboardProxy::GetPasteboardBufferForType::Reply(handle, size), 0);
     if (handle.isNull())
         return 0;
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::ReadOnly);
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::Protection::ReadOnly);
     return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
 }
 
@@ -484,7 +484,7 @@ long WebPlatformStrategies::setBufferForType(PassRefPtr<SharedBuffer> buffer, co
         // because we've already set the types.
         if (sharedMemoryBuffer) {
             memcpy(sharedMemoryBuffer->data(), buffer->data(), buffer->size());
-            sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
+            sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
         }
     }
     uint64_t newChangeCount;
@@ -536,7 +536,7 @@ PassRefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboar
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadBufferFromPasteboard(index, pasteboardType), Messages::WebPasteboardProxy::ReadBufferFromPasteboard::Reply(handle, size), 0);
     if (handle.isNull())
         return 0;
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::ReadOnly);
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::Protection::ReadOnly);
     return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
 }
 

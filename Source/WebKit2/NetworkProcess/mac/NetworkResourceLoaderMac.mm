@@ -40,7 +40,7 @@ namespace WebKit {
 
 static void tryGetShareableHandleFromCFData(ShareableResource::Handle& handle, CFDataRef data)
 {
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::createFromVMBuffer((void*)CFDataGetBytePtr(data), CFDataGetLength(data));
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::create((void*)CFDataGetBytePtr(data), CFDataGetLength(data), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory) {
         LOG_ERROR("Failed to create VM shared memory for cached resource.");
         return;

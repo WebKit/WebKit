@@ -27,8 +27,8 @@
 #define SharedMemory_h
 
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 #if PLATFORM(GTK) || PLATFORM(EFL)
 #include "Attachment.h"
@@ -36,15 +36,15 @@
 #endif
 
 namespace IPC {
-    class ArgumentDecoder;
-    class ArgumentEncoder;
+class ArgumentDecoder;
+class ArgumentEncoder;
 }
 
 namespace WebKit {
 
 class SharedMemory : public RefCounted<SharedMemory> {
 public:
-    enum Protection {
+    enum class Protection {
         ReadOnly,
         ReadWrite
     };
@@ -76,15 +76,9 @@ public:
         size_t m_size;
     };
     
-    // Create a shared memory object with the given size. Will return 0 on failure.
-    static PassRefPtr<SharedMemory> create(size_t);
-
-    // Create a shared memory object from the given handle and the requested protection. Will return 0 on failure.
-    static PassRefPtr<SharedMemory> create(const Handle&, Protection);
-
-    // Create a shared memory object with the given size by vm_copy'ing the given buffer.
-    // Will return 0 on failure.
-    static PassRefPtr<SharedMemory> createFromVMBuffer(void*, size_t);
+    static RefPtr<SharedMemory> create(size_t);
+    static RefPtr<SharedMemory> create(const Handle&, Protection);
+    static RefPtr<SharedMemory> create(void*, size_t, Protection);
 
     ~SharedMemory();
 
@@ -92,9 +86,6 @@ public:
 
     size_t size() const { return m_size; }
     void* data() const { return m_data; }
-
-    // Creates a copy-on-write copy of the first |size| bytes.
-    PassRefPtr<SharedMemory> createCopyOnWriteCopy(size_t) const;
 
     // Return the system page size in bytes.
     static unsigned systemPageSize();

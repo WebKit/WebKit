@@ -1170,7 +1170,7 @@ static void encodeSharedBuffer(ArgumentEncoder& encoder, SharedBuffer* buffer)
     if (buffer) {
         RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(buffer->size());
         memcpy(sharedMemoryBuffer->data(), buffer->data(), buffer->size());
-        sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
+        sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
         encoder << handle;
     }
 }
@@ -1186,7 +1186,7 @@ static bool decodeSharedBuffer(ArgumentDecoder& decoder, RefPtr<SharedBuffer>& b
         if (!decoder.decode(handle))
             return false;
 
-        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::ReadOnly);
+        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::Protection::ReadOnly);
         buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), bufferSize);
     }
 

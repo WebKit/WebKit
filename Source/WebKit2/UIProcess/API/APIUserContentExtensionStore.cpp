@@ -233,7 +233,7 @@ static std::error_code compiledToFile(const String& json, const String& finalFil
 
 static RefPtr<API::UserContentExtension> createExtension(const String& identifier, const ContentExtensionMetaData& metaData, const Data& fileData)
 {
-    auto sharedMemory = WebKit::SharedMemory::createFromVMBuffer(const_cast<uint8_t*>(fileData.data()), fileData.size());
+    auto sharedMemory = WebKit::SharedMemory::create(const_cast<uint8_t*>(fileData.data()), fileData.size(), WebKit::SharedMemory::Protection::ReadOnly);
     auto compiledContentExtensionData = WebKit::WebCompiledContentExtensionData(
         WTF::move(sharedMemory),
         fileData,

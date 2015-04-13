@@ -712,7 +712,7 @@ void WebPage::getDataSelectionForPasteboard(const String pasteboardType, SharedM
     size = buffer->size();
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(size);
     memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
-    sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
+    sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
 }
 
 WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()

@@ -98,7 +98,7 @@ static inline mach_vm_address_t toVMAddress(void* pointer)
     return static_cast<mach_vm_address_t>(reinterpret_cast<uintptr_t>(pointer));
 }
     
-PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
+RefPtr<SharedMemory> SharedMemory::create(size_t size)
 {
     ASSERT(size);
 
@@ -109,7 +109,7 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
         return 0;
     }
 
-    RefPtr<SharedMemory> sharedMemory = createFromVMBuffer(toPointer(address), size);
+    RefPtr<SharedMemory> sharedMemory = create(toPointer(address), size, Protection::ReadWrite);
     if (!sharedMemory) {
         mach_vm_deallocate(mach_task_self(), address, round_page(size));
         return 0;
@@ -119,7 +119,7 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
     return sharedMemory.release();
 }
 
-PassRefPtr<SharedMemory> SharedMemory::createFromVMBuffer(void* data, size_t size)  
+RefPtr<SharedMemory> SharedMemory::create(void* data, size_t size, Protection)
 {
     ASSERT(size);
     
@@ -152,9 +152,9 @@ PassRefPtr<SharedMemory> SharedMemory::createFromVMBuffer(void* data, size_t siz
 static inline vm_prot_t machProtection(SharedMemory::Protection protection)
 {
     switch (protection) {
-    case SharedMemory::ReadOnly:
+    case SharedMemory::Protection::ReadOnly:
         return VM_PROT_READ;
-    case SharedMemory::ReadWrite:
+    case SharedMemory::Protection::ReadWrite:
         return VM_PROT_READ | VM_PROT_WRITE;
     }
 
@@ -162,7 +162,7 @@ static inline vm_prot_t machProtection(SharedMemory::Protection protection)
     return VM_PROT_NONE;    
 }
 
-PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection protection)
+RefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection protection)
 {
     if (handle.isNull())
         return 0;
@@ -208,7 +208,7 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
 
     mach_port_t port;
 
-    if (protection == ReadWrite && m_port) {
+    if (protection == Protection::ReadWrite && m_port) {
         // Just re-use the port we have.
         port = m_port;
         if (mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_SEND, 1) != KERN_SUCCESS)

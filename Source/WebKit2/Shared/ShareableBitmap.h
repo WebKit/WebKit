@@ -85,10 +85,10 @@ public:
     static PassRefPtr<ShareableBitmap> create(const WebCore::IntSize&, Flags, PassRefPtr<SharedMemory>);
 
     // Create a shareable bitmap from a handle.
-    static PassRefPtr<ShareableBitmap> create(const Handle&, SharedMemory::Protection = SharedMemory::ReadWrite);
+    static PassRefPtr<ShareableBitmap> create(const Handle&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite);
 
     // Create a handle.
-    bool createHandle(Handle&, SharedMemory::Protection = SharedMemory::ReadWrite);
+    bool createHandle(Handle&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite);
 
     ~ShareableBitmap();
 

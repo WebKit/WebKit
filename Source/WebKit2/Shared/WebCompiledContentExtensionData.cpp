@@ -35,7 +35,7 @@ namespace WebKit {
 void WebCompiledContentExtensionData::encode(IPC::ArgumentEncoder& encoder) const
 {
     SharedMemory::Handle handle;
-    data->createHandle(handle, SharedMemory::ReadOnly);
+    data->createHandle(handle, SharedMemory::Protection::ReadOnly);
     encoder << handle;
 
     encoder << actionsOffset;
@@ -49,7 +49,7 @@ bool WebCompiledContentExtensionData::decode(IPC::ArgumentDecoder& decoder, WebC
     SharedMemory::Handle handle;
     if (!decoder.decode(handle))
         return false;
-    compiledContentExtensionData.data = SharedMemory::create(handle, SharedMemory::ReadOnly);
+    compiledContentExtensionData.data = SharedMemory::create(handle, SharedMemory::Protection::ReadOnly);
 
     if (!decoder.decode(compiledContentExtensionData.actionsOffset))
         return false;

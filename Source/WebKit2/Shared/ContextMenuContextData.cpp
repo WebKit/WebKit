@@ -70,7 +70,7 @@ void ContextMenuContextData::encode(IPC::ArgumentEncoder& encoder) const
 #if ENABLE(SERVICE_CONTROLS)
     ShareableBitmap::Handle handle;
     if (m_controlledImage)
-        m_controlledImage->createHandle(handle, SharedMemory::ReadOnly);
+        m_controlledImage->createHandle(handle, SharedMemory::Protection::ReadOnly);
     encoder << handle;
 #endif
 }
@@ -89,7 +89,7 @@ bool ContextMenuContextData::decode(IPC::ArgumentDecoder& decoder, ContextMenuCo
         return false;
 
     if (!handle.isNull())
-        contextMenuContextData.m_controlledImage = ShareableBitmap::create(handle, SharedMemory::ReadOnly);
+        contextMenuContextData.m_controlledImage = ShareableBitmap::create(handle, SharedMemory::Protection::ReadOnly);
 #endif
 
     return true;

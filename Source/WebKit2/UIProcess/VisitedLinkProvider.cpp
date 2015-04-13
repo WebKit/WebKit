@@ -248,7 +248,7 @@ void VisitedLinkProvider::sendTable(WebProcessProxy& process)
     ASSERT(process.processPool().processes().contains(&process));
 
     SharedMemory::Handle handle;
-    if (!m_table.sharedMemory()->createHandle(handle, SharedMemory::ReadOnly))
+    if (!m_table.sharedMemory()->createHandle(handle, SharedMemory::Protection::ReadOnly))
         return;
 
     process.connection()->send(Messages::VisitedLinkTableController::SetVisitedLinkTable(handle), m_identifier);

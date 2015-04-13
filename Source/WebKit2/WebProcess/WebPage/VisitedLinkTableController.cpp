@@ -90,7 +90,7 @@ void VisitedLinkTableController::addVisitedLink(Page& page, LinkHash linkHash)
 
 void VisitedLinkTableController::setVisitedLinkTable(const SharedMemory::Handle& handle)
 {
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle, SharedMemory::ReadOnly);
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return;
 

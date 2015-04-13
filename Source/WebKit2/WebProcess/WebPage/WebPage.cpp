@@ -1625,7 +1625,7 @@ void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t op
 
     ShareableBitmap::Handle handle;
     if (image)
-        image->bitmap()->createHandle(handle, SharedMemory::ReadOnly);
+        image->bitmap()->createHandle(handle, SharedMemory::Protection::ReadOnly);
 
     send(Messages::WebPageProxy::ImageCallback(handle, callbackID));
 }
@@ -3835,7 +3835,7 @@ void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, cons
     ShareableBitmap::Handle handle;
 
     if (image)
-        image->bitmap()->createHandle(handle, SharedMemory::ReadOnly);
+        image->bitmap()->createHandle(handle, SharedMemory::Protection::ReadOnly);
 
     send(Messages::WebPageProxy::ImageCallback(handle, callbackID));
 }
