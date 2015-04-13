@@ -242,11 +242,9 @@ public:
     RenderTableCell* cellAfter(const RenderTableCell*) const;
  
     typedef Vector<CollapsedBorderValue> CollapsedBorderValues;
-    void invalidateCollapsedBorders()
-    {
-        m_collapsedBordersValid = false;
-        m_collapsedBorders.clear();
-    }
+    bool collapsedBordersAreValid() const { return m_collapsedBordersValid; }
+    void invalidateCollapsedBorders();
+    void collapsedEmptyBorderIsPresent() { m_collapsedEmptyBorderIsPresent = true; }
     const CollapsedBorderValue* currentBorderValue() const { return m_currentBorder; }
     
     bool hasSections() const { return m_head || m_foot || m_firstBody; }
@@ -348,6 +346,7 @@ private:
     CollapsedBorderValues m_collapsedBorders;
     const CollapsedBorderValue* m_currentBorder;
     bool m_collapsedBordersValid : 1;
+    bool m_collapsedEmptyBorderIsPresent : 1;
 
     mutable bool m_hasColElements : 1;
     mutable bool m_needsSectionRecalc : 1;

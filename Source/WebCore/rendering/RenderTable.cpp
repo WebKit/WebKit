@@ -57,6 +57,7 @@ RenderTable::RenderTable(Element& element, Ref<RenderStyle>&& style)
     , m_firstBody(nullptr)
     , m_currentBorder(nullptr)
     , m_collapsedBordersValid(false)
+    , m_collapsedEmptyBorderIsPresent(false)
     , m_hasColElements(false)
     , m_needsSectionRecalc(false)
     , m_columnLogicalWidthChanged(false)
@@ -80,6 +81,7 @@ RenderTable::RenderTable(Document& document, Ref<RenderStyle>&& style)
     , m_firstBody(nullptr)
     , m_currentBorder(nullptr)
     , m_collapsedBordersValid(false)
+    , m_collapsedEmptyBorderIsPresent(false)
     , m_hasColElements(false)
     , m_needsSectionRecalc(false)
     , m_columnLogicalWidthChanged(false)
@@ -120,7 +122,7 @@ void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     }
 
     // If border was changed, invalidate collapsed borders cache.
-    if (!needsLayout() && oldStyle && oldStyle->border() != style().border())
+    if (oldStyle && oldStyle->border() != style().border())
         invalidateCollapsedBorders();
 }
 
@@ -586,14 +588,30 @@ void RenderTable::layout()
     clearNeedsLayout();
 }
 
+void RenderTable::invalidateCollapsedBorders()
+{
+    m_collapsedBordersValid = false;
+    m_collapsedBorders.clear();
+    for (auto& section : childrenOfType<RenderTableSection>(*this)) {
+        section.clearCachedCollapsedBorders();
+        if (!m_collapsedEmptyBorderIsPresent)
+            continue;
+        for (auto* row = section.firstRow(); row; row = row->nextRow()) {
+            for (auto* cell = row->firstCell(); cell; cell = cell->nextCell()) {
+                ASSERT(cell->table() == this);
+                cell->invalidateHasEmptyCollapsedBorders();
+            }
+        }
+    }
+    m_collapsedEmptyBorderIsPresent = false;
+}
+
 // Collect all the unique border values that we want to paint in a sorted list.
 void RenderTable::recalcCollapsedBorders()
 {
     if (m_collapsedBordersValid)
         return;
-    m_collapsedBordersValid = true;
     m_collapsedBorders.clear();
-
     for (auto& section : childrenOfType<RenderTableSection>(*this)) {
         for (RenderTableRow* row = section.firstRow(); row; row = row->nextRow()) {
             for (RenderTableCell* cell = row->firstCell(); cell; cell = cell->nextCell()) {
@@ -603,8 +621,8 @@ void RenderTable::recalcCollapsedBorders()
         }
     }
     RenderTableCell::sortBorderValues(m_collapsedBorders);
+    m_collapsedBordersValid = true;
 }
-
 
 void RenderTable::addOverflowFromChildren()
 {

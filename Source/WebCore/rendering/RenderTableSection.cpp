@@ -105,7 +105,7 @@ void RenderTableSection::styleDidChange(StyleDifference diff, const RenderStyle*
 
     // If border was changed, notify table.
     RenderTable* table = this->table();
-    if (table && !table->selfNeedsLayout() && !table->normalChildNeedsLayout() && oldStyle && oldStyle->border() != style().border())
+    if (table && oldStyle && oldStyle->border() != style().border())
         table->invalidateCollapsedBorders();
 }
 
@@ -1546,26 +1546,36 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     return false;
 }
 
-void RenderTableSection::removeCachedCollapsedBorders(const RenderTableCell* cell)
+void RenderTableSection::clearCachedCollapsedBorders()
+{
+    if (!table()->collapseBorders())
+        return;
+    m_cellsCollapsedBorders.clear();
+}
+
+void RenderTableSection::removeCachedCollapsedBorders(const RenderTableCell& cell)
 {
     if (!table()->collapseBorders())
         return;
     
     for (int side = CBSBefore; side <= CBSEnd; ++side)
-        m_cellsCollapsedBorders.remove(std::make_pair(cell, side));
+        m_cellsCollapsedBorders.remove(std::make_pair(&cell, side));
 }
 
-void RenderTableSection::setCachedCollapsedBorder(const RenderTableCell* cell, CollapsedBorderSide side, CollapsedBorderValue border)
+void RenderTableSection::setCachedCollapsedBorder(const RenderTableCell& cell, CollapsedBorderSide side, CollapsedBorderValue border)
 {
     ASSERT(table()->collapseBorders());
-    m_cellsCollapsedBorders.set(std::make_pair(cell, side), border);
+    ASSERT(border.width());
+    m_cellsCollapsedBorders.set(std::make_pair(&cell, side), border);
 }
 
-CollapsedBorderValue& RenderTableSection::cachedCollapsedBorder(const RenderTableCell* cell, CollapsedBorderSide side)
+CollapsedBorderValue RenderTableSection::cachedCollapsedBorder(const RenderTableCell& cell, CollapsedBorderSide side)
 {
-    ASSERT(table()->collapseBorders());
-    HashMap<std::pair<const RenderTableCell*, int>, CollapsedBorderValue>::iterator it = m_cellsCollapsedBorders.find(std::make_pair(cell, side));
-    ASSERT(it != m_cellsCollapsedBorders.end());
+    ASSERT(table()->collapseBorders() && table()->collapsedBordersAreValid());
+    auto it = m_cellsCollapsedBorders.find(std::make_pair(&cell, side));
+    // Only non-empty collapsed borders are in the hashmap.
+    if (it == m_cellsCollapsedBorders.end())
+        return CollapsedBorderValue(BorderValue(), Color(), BCELL);
     return it->value;
 }
 

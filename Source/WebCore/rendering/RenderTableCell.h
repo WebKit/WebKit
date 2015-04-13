@@ -31,8 +31,9 @@
 
 namespace WebCore {
 
-static const unsigned unsetColumnIndex = 0x1FFFFFFF;
-static const unsigned maxColumnIndex = 0x1FFFFFFE; // 536,870,910
+// These is limited by the size of RenderTableCell::m_column bitfield.
+static const unsigned unsetColumnIndex = 0x1FFFFFF;
+static const unsigned maxColumnIndex = 0x1FFFFFE; // 33554430
 
 enum IncludeBorderColorOrNot { DoNotIncludeBorderColor, IncludeBorderColor };
 
@@ -130,6 +131,9 @@ public:
     
     virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
 
+    void invalidateHasEmptyCollapsedBorders();
+    void setHasEmptyCollapsedBorder(CollapsedBorderSide, bool empty) const;
+
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     virtual void computePreferredLogicalWidths() override;
@@ -173,20 +177,15 @@ private:
     CollapsedBorderValue collapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue collapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
 
-    CollapsedBorderValue cachedCollapsedLeftBorder(const RenderStyle*) const;
-    CollapsedBorderValue cachedCollapsedRightBorder(const RenderStyle*) const;
-    CollapsedBorderValue cachedCollapsedTopBorder(const RenderStyle*) const;
-    CollapsedBorderValue cachedCollapsedBottomBorder(const RenderStyle*) const;
+    CollapsedBorderValue cachedCollapsedLeftBorder(const RenderStyle&) const;
+    CollapsedBorderValue cachedCollapsedRightBorder(const RenderStyle&) const;
+    CollapsedBorderValue cachedCollapsedTopBorder(const RenderStyle&) const;
+    CollapsedBorderValue cachedCollapsedBottomBorder(const RenderStyle&) const;
 
     CollapsedBorderValue computeCollapsedStartBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue computeCollapsedEndBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue computeCollapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue computeCollapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
-
-    RenderTableCell* cellAtLeft(const RenderStyle*) const;
-    RenderTableCell* cellAtRight(const RenderStyle*) const;
-    RenderTableCell* cellAtTop(const RenderStyle*) const;
-    RenderTableCell* cellAtBottom(const RenderStyle*) const;
 
     Length logicalWidthFromColumns(RenderTableCol* firstColForThisCell, Length widthFromStyle) const;
 
@@ -199,10 +198,14 @@ private:
     void previousSibling() const = delete;
 
     // Note MSVC will only pack members if they have identical types, hence we use unsigned instead of bool here.
-    unsigned m_column : 29;
+    unsigned m_column : 25;
     unsigned m_cellWidthChanged : 1;
     unsigned m_hasColSpan: 1;
     unsigned m_hasRowSpan: 1;
+    mutable unsigned m_hasEmptyCollapsedBeforeBorder: 1;
+    mutable unsigned m_hasEmptyCollapsedAfterBorder: 1;
+    mutable unsigned m_hasEmptyCollapsedStartBorder: 1;
+    mutable unsigned m_hasEmptyCollapsedEndBorder: 1;
     int m_intrinsicPaddingBefore { 0 };
     int m_intrinsicPaddingAfter { 0 };
 };
@@ -335,6 +338,38 @@ inline RenderTableCell* RenderTableRow::firstCell() const
 inline RenderTableCell* RenderTableRow::lastCell() const
 {
     return downcast<RenderTableCell>(RenderBox::lastChild());
+}
+
+inline void RenderTableCell::setHasEmptyCollapsedBorder(CollapsedBorderSide side, bool empty) const
+{
+    switch (side) {
+    case CBSAfter: {
+        m_hasEmptyCollapsedAfterBorder = empty;
+        break;
+    }
+    case CBSBefore: {
+        m_hasEmptyCollapsedBeforeBorder = empty;
+        break;
+    }
+    case CBSStart: {
+        m_hasEmptyCollapsedStartBorder = empty;
+        break;
+    }
+    case CBSEnd: {
+        m_hasEmptyCollapsedEndBorder = empty;
+        break;
+    }
+    }
+    if (empty)
+        table()->collapsedEmptyBorderIsPresent();
+}
+
+inline void RenderTableCell::invalidateHasEmptyCollapsedBorders()
+{
+    m_hasEmptyCollapsedBeforeBorder = false;
+    m_hasEmptyCollapsedAfterBorder = false;
+    m_hasEmptyCollapsedStartBorder = false;
+    m_hasEmptyCollapsedEndBorder = false;
 }
 
 } // namespace WebCore

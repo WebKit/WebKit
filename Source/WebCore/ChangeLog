@@ -1,3 +1,58 @@
+2015-04-01  Zalan Bujtas  <zalan@apple.com>
+
+        Lots of time spent querying table cell borders, when there are none.
+        https://bugs.webkit.org/show_bug.cgi?id=143277
+
+        Reviewed by Simon Fraser.
+
+        This patch speeds up collapsed border queries by using existing collapsed border
+        cache to calculate repaint rects and by introducing a fast path for zero width collapsed borders.
+
+        It reduces the number of calls to recompute collapsed borders from 36 000 to 1 600, while loading a page with a table of 400 rows (1 cell per row).
+        When scrolling the same page all the way down to the bottom, the number of calls to recompute collapsed borders falls from 290 000 to 0.
+
+        Covered by existing tests.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::styleDidChange): This moves invalidation time from RenderTable::layout() to styleDidChange(). 
+        (WebCore::RenderTable::invalidateCollapsedBorders):
+        (WebCore::RenderTable::recalcCollapsedBorders):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::collapsedBordersAreValid):
+        (WebCore::RenderTable::invalidateCollapsedBorders): Deleted.
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell):
+        (WebCore::RenderTableCell::willBeRemovedFromTree): Invalidate caches so that when repaint rect is calculated, we don't end up using stale values.
+        (WebCore::RenderTableCell::styleDidChange): Same as willBeRemovedFromTree.
+        (WebCore::RenderTableCell::collapsedStartBorder): Check if collapsed border is zero -also query cache. 
+        (WebCore::RenderTableCell::collapsedEndBorder):
+        (WebCore::RenderTableCell::collapsedBeforeBorder):
+        (WebCore::RenderTableCell::collapsedAfterBorder):
+        (WebCore::RenderTableCell::cachedCollapsedLeftBorder):
+        (WebCore::RenderTableCell::cachedCollapsedRightBorder):
+        (WebCore::RenderTableCell::cachedCollapsedTopBorder):
+        (WebCore::RenderTableCell::cachedCollapsedBottomBorder):
+        (WebCore::RenderTableCell::paintCollapsedBorders):
+        (WebCore::RenderTableCell::cellAtLeft): Deleted.
+        (WebCore::RenderTableCell::cellAtRight): Deleted.
+        (WebCore::RenderTableCell::cellAtTop): Deleted.
+        (WebCore::RenderTableCell::cellAtBottom): Deleted.
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::invalidateHasEmptyCollapsedBorders):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::styleDidChange):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::styleDidChange):
+        (WebCore::RenderTableRow::addChild):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::styleDidChange):
+        (WebCore::RenderTableSection::clearCachedCollapsedBorders): This is just an extra safety to invalidate collapsed border cache. This is always
+        called together with RenderTable::invalidateCollapsedBorders() -and that should prevent the RenderCells to use the cache.  
+        (WebCore::RenderTableSection::removeCachedCollapsedBorders):
+        (WebCore::RenderTableSection::setCachedCollapsedBorder):
+        (WebCore::RenderTableSection::cachedCollapsedBorder):
+        * rendering/RenderTableSection.h:
+
 2015-02-17  Zalan Bujtas  <zalan@apple.com>
 
         Minor RenderTable* class cleanups.
