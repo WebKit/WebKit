@@ -39,7 +39,7 @@ public:
     static WebMouseEvent createWebMouseEvent(const GdkEvent*, int);
     static WebWheelEvent createWebWheelEvent(const GdkEvent*);
     static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*, const WebCore::CompositionResults&);
-    static WebTouchEvent createWebTouchEvent(const GdkEvent*, const Vector<WebPlatformTouchPoint>&);
+    static WebTouchEvent createWebTouchEvent(const GdkEvent*, Vector<WebPlatformTouchPoint>&&);
 };
 
 } // namespace WebKit

@@ -31,14 +31,14 @@
 
 namespace WebKit {
 
-NativeWebTouchEvent::NativeWebTouchEvent(GdkEvent* event, const Vector<WebPlatformTouchPoint>& touchPoints)
-    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event, touchPoints))
+NativeWebTouchEvent::NativeWebTouchEvent(GdkEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
+    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event, WTF::move(touchPoints)))
     , m_nativeEvent(gdk_event_copy(event))
 {
 }
 
 NativeWebTouchEvent::NativeWebTouchEvent(const NativeWebTouchEvent& event)
-    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event.nativeEvent(), event.touchPoints()))
+    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event.nativeEvent(), Vector<WebPlatformTouchPoint>(event.touchPoints())))
     , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
 {
 }
