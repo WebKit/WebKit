@@ -1,3 +1,12 @@
+2015-04-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] accessibility/plugin.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=143663
+
+        Unreviewed gardening, mark accessibility/plugin.html as failing test.
+
+        * platform/efl/TestExpectations:
+
 2015-04-12  Benjamin Poulain  <benjamin@webkit.org> and Diego Perini  <diego.perini@gmail.com>
 
         Legacy scroll behavior on HTMLBodyElement should only apply to the first body element of a document

@@ -2259,3 +2259,5 @@ webkit.org/b/131044 media/track/track-in-band-subtitles-too-large.html [ Timeout
 webkit.org/b/131044 media/track/track-remove-track.html [ Timeout ]
 webkit.org/b/131044 media/video-controls-drag.html [ Timeout ]
 webkit.org/b/131044 media/video-controls-toggling.html [ Timeout ]
+
+webkit.org/b/143663 accessibility/plugin.html [ Failure ]
