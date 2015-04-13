@@ -1570,7 +1570,12 @@ bool ByteCodeParser::handleInlining(
                     data->mandatoryMinimum = mandatoryMinimum;
             
                     addToGraph(LoadVarargs, OpInfo(data), get(argumentsArgument));
-            
+
+                    // LoadVarargs may OSR exit. Hence, we need to keep alive callTargetNode, thisArgument
+                    // and argumentsArgument for the baseline JIT. However, we only need a Phantom for
+                    // callTargetNode because the other 2 are still in use and alive at this point.
+                    addToGraph(Phantom, callTargetNode);
+
                     // In DFG IR before SSA, we cannot insert control flow between after the
                     // LoadVarargs and the last SetArgument. This isn't a problem once we get to DFG
                     // SSA. Fortunately, we also have other reasons for not inserting control flow

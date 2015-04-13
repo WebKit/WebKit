@@ -1,3 +1,32 @@
+2015-04-13  Mark Lam  <mark.lam@apple.com>
+
+        DFG inlining of op_call_varargs should keep the callee alive in case of OSR exit.
+        https://bugs.webkit.org/show_bug.cgi?id=143407
+
+        Reviewed by Filip Pizlo.
+
+        DFG inlining of a varargs call / construct needs to keep the local
+        containing the callee alive with a Phantom node because the LoadVarargs
+        node may OSR exit.  After the OSR exit, the baseline JIT executes the
+        op_call_varargs with that callee in the local.
+
+        Previously, because that callee local was not explicitly kept alive,
+        the op_call_varargs case can OSR exit a DFG function and leave an
+        undefined value in that local.  As a result, the baseline observes the
+        side effect of an op_call_varargs on an undefined value instead of the
+        function it expected.
+
+        Note: this issue does not manifest with op_construct_varargs because
+        the inlined constructor will have an op_create_this which operates on
+        the incoming callee value, thereby keeping it alive.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        * tests/stress/call-varargs-with-different-arguments-length-after-warmup.js: Added.
+        (foo):
+        (Foo):
+        (doTest):
+
 2015-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement Array.prototype.values
