@@ -1,3 +1,15 @@
+2015-04-13  Timothy Horton  <timothy_horton@apple.com>
+
+        javascript: links in inline PDFs shouldn't execute JavaScript in the context of the host website
+        https://bugs.webkit.org/show_bug.cgi?id=143642
+        <rdar://problem/18259355>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::clickedLink):
+        Don't follow javascript: URLs.
+
 2015-04-10  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Don't unmap shared memory while using it.
