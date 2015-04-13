@@ -1,3 +1,19 @@
+2015-04-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::IntegerCheckCombiningPhase's wrap-around check shouldn't trigger C++ undef behavior on wrap-around
+        https://bugs.webkit.org/show_bug.cgi?id=143532
+
+        Reviewed by Gavin Barraclough.
+        
+        Oh the irony!  We were protecting an optimization that only worked if there was no wrap-around in JavaScript.
+        But the C++ code had wrap-around, which is undef in C++.  So, if the compiler was smart enough, our compiler
+        would think that there never was wrap-around.
+        
+        This fixes a failure in stress/tricky-array-boiunds-checks.js when JSC is compiled with bleeding-edge clang.
+
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::IntegerCheckCombiningPhase::isValid):
+
 2015-04-06  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Fix HPPA build

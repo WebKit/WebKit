@@ -355,8 +355,17 @@ private:
             return false;
         
         switch (key.m_kind) {
-        case ArrayBounds:
-            return (range.m_maxBound - range.m_minBound) >= 0;
+        case ArrayBounds: {
+            // Have to do this carefully because C++ compilers are too smart. But all we're really doing is detecting if
+            // the difference between the bounds is 2^31 or more. If it was, then we'd have to worry about wrap-around.
+            // The way we'd like to write this expression is (range.m_maxBound - range.m_minBound) >= 0, but that is a
+            // signed subtraction and compare, which allows the C++ compiler to do anything it wants in case of
+            // wrap-around.
+            uint32_t maxBound = range.m_maxBound;
+            uint32_t minBound = range.m_minBound;
+            uint32_t unsignedDifference = maxBound - minBound;
+            return !(unsignedDifference >> 31);
+        }
             
         default:
             return true;
