@@ -1,3 +1,21 @@
+2015-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash in DOMObjectCache when a wrapped object owned by the cache is unreffed by the user
+        https://bugs.webkit.org/show_bug.cgi?id=143521
+
+        Reviewed by Martin Robinson.
+
+        This is a case we claim to support, but it only works if the
+        object has only one reference. In that case, when the user unrefs
+        it, the weak ref notify callback removes the object from the
+        cache. However, if the object has more than one ref, the cache
+        doesn't know the user unreffed it, and when clearing the cache we
+        try to remove more references than what the object actually has,
+        causing a crash in g_object_unref.
+
+        * bindings/gobject/DOMObjectCache.cpp:
+        (WebKit::DOMObjectCacheData::clearObject):
+
 2015-04-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] compress property for the HTTP source element
