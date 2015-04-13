@@ -525,12 +525,12 @@ public:
         m_assembler.movzbl_mr(address.offset, address.base, dest);
     }
     
-    void load8Signed(BaseIndex address, RegisterID dest)
+    void load8SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
         m_assembler.movsbl_mr(address.offset, address.base, address.index, address.scale, dest);
     }
 
-    void load8Signed(ImplicitAddress address, RegisterID dest)
+    void load8SignedExtendTo32(ImplicitAddress address, RegisterID dest)
     {
         m_assembler.movsbl_mr(address.offset, address.base, dest);
     }
@@ -545,12 +545,12 @@ public:
         m_assembler.movzwl_mr(address.offset, address.base, dest);
     }
 
-    void load16Signed(BaseIndex address, RegisterID dest)
+    void load16SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
         m_assembler.movswl_mr(address.offset, address.base, address.index, address.scale, dest);
     }
     
-    void load16Signed(Address address, RegisterID dest)
+    void load16SignedExtendTo32(Address address, RegisterID dest)
     {
         m_assembler.movswl_mr(address.offset, address.base, dest);
     }

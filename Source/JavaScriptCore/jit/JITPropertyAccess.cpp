@@ -1076,13 +1076,13 @@ JIT::JumpList JIT::emitIntTypedArrayGetByVal(Instruction*, PatchableJump& badTyp
     switch (elementSize(type)) {
     case 1:
         if (isSigned(type))
-            load8Signed(BaseIndex(base, property, TimesOne), resultPayload);
+            load8SignedExtendTo32(BaseIndex(base, property, TimesOne), resultPayload);
         else
             load8(BaseIndex(base, property, TimesOne), resultPayload);
         break;
     case 2:
         if (isSigned(type))
-            load16Signed(BaseIndex(base, property, TimesTwo), resultPayload);
+            load16SignedExtendTo32(BaseIndex(base, property, TimesTwo), resultPayload);
         else
             load16(BaseIndex(base, property, TimesTwo), resultPayload);
         break;

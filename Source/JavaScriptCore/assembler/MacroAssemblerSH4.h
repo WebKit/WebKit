@@ -718,13 +718,13 @@ public:
         m_assembler.extub(dest, dest);
     }
 
-    void load8Signed(BaseIndex address, RegisterID dest)
+    void load8SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
         RegisterID scr = claimScratch();
         move(address.index, scr);
         lshift32(TrustedImm32(address.scale), scr);
         add32(address.base, scr);
-        load8Signed(scr, address.offset, dest);
+        load8SignedExtendTo32(scr, address.offset, dest);
         releaseScratch(scr);
     }
 
@@ -770,7 +770,7 @@ public:
             releaseScratch(scr);
     }
 
-    void load8Signed(RegisterID base, int offset, RegisterID dest)
+    void load8SignedExtendTo32(RegisterID base, int offset, RegisterID dest)
     {
         if (!offset) {
             m_assembler.movbMemReg(base, dest);
@@ -798,7 +798,7 @@ public:
 
     void load8(RegisterID base, int offset, RegisterID dest)
     {
-        load8Signed(base, offset, dest);
+        load8SignedExtendTo32(base, offset, dest);
         m_assembler.extub(dest, dest);
     }
 
@@ -858,14 +858,14 @@ public:
         m_assembler.extuw(dest, dest);
     }
 
-    void load16Signed(RegisterID src, RegisterID dest)
+    void load16SignedExtendTo32(RegisterID src, RegisterID dest)
     {
         m_assembler.movwMemReg(src, dest);
     }
 
     void load16(BaseIndex address, RegisterID dest)
     {
-        load16Signed(address, dest);
+        load16SignedExtendTo32(address, dest);
         m_assembler.extuw(dest, dest);
     }
 
@@ -875,7 +875,7 @@ public:
         m_assembler.extuw(dest, dest);
     }
 
-    void load16Signed(BaseIndex address, RegisterID dest)
+    void load16SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
         RegisterID scr = claimScratch();
 
@@ -887,7 +887,7 @@ public:
             m_assembler.movwR0mr(scr, dest);
         else {
             add32(address.base, scr);
-            load16Signed(scr, dest);
+            load16SignedExtendTo32(scr, dest);
         }
 
         releaseScratch(scr);

@@ -546,7 +546,7 @@ private:
         }
     }
     
-    void load16Signed(ArmAddress address, RegisterID dest)
+    void load16SignedExtendTo32(ArmAddress address, RegisterID dest)
     {
         ASSERT(address.type == ArmAddress::HasIndex);
         m_assembler.ldrsh(dest, address.base, address.u.index, address.u.scale);
@@ -566,7 +566,7 @@ private:
         }
     }
     
-    void load8Signed(ArmAddress address, RegisterID dest)
+    void load8SignedExtendTo32(ArmAddress address, RegisterID dest)
     {
         ASSERT(address.type == ArmAddress::HasIndex);
         m_assembler.ldrsb(dest, address.base, address.u.index, address.u.scale);
@@ -668,7 +668,7 @@ public:
         load8(setupArmAddress(address), dest);
     }
 
-    void load8Signed(ImplicitAddress, RegisterID)
+    void load8SignedExtendTo32(ImplicitAddress, RegisterID)
     {
         UNREACHABLE_FOR_PLATFORM();
     }
@@ -678,9 +678,9 @@ public:
         load8(setupArmAddress(address), dest);
     }
     
-    void load8Signed(BaseIndex address, RegisterID dest)
+    void load8SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
-        load8Signed(setupArmAddress(address), dest);
+        load8SignedExtendTo32(setupArmAddress(address), dest);
     }
 
     void load8(const void* address, RegisterID dest)
@@ -714,9 +714,9 @@ public:
         m_assembler.ldrh(dest, makeBaseIndexBase(address), address.index, address.scale);
     }
     
-    void load16Signed(BaseIndex address, RegisterID dest)
+    void load16SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
-        load16Signed(setupArmAddress(address), dest);
+        load16SignedExtendTo32(setupArmAddress(address), dest);
     }
     
     void load16(ImplicitAddress address, RegisterID dest)
@@ -730,7 +730,7 @@ public:
         }
     }
     
-    void load16Signed(ImplicitAddress, RegisterID)
+    void load16SignedExtendTo32(ImplicitAddress, RegisterID)
     {
         UNREACHABLE_FOR_PLATFORM();
     }
