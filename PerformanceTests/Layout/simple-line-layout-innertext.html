@@ -19,7 +19,12 @@
                 result.innerText += target.innerText;
             result.innerText = "";
         }
-        PerfTestRunner.measureRunsPerSecond({ run: test });
+        
+        function done() {
+        	target.innerHTML = "";
+        }
+        
+        PerfTestRunner.measureRunsPerSecond({ run: test, done: done });
     </script>
 </body>
 </html>

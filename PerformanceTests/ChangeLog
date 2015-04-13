@@ -1,3 +1,11 @@
+2015-04-13  Zalan Bujtas  <zalan@apple.com>
+
+        Clear up the test content when test is done.
+
+        Unreviewed fix.
+
+        * Layout/simple-line-layout-innertext.html:
+
 2015-04-09  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout(regression): Calling innerText on RenderFlow with multiple children is slow.
