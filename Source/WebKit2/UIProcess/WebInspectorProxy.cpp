@@ -297,17 +297,27 @@ void WebInspectorProxy::togglePageProfiling()
     m_isProfilingPage = !m_isProfilingPage;
 }
 
+static WebProcessPool* s_processPool;
+
 WebProcessPool& WebInspectorProxy::inspectorProcessPool()
 {
     // Having our own process pool removes us from the main process pool and
     // guarantees no process sharing for our user interface.
-    static WebProcessPool* processPool = []{
+    if (!s_processPool) {
         auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
         configuration->setProcessModel(ProcessModelMultipleSecondaryProcesses);
-        return &WebProcessPool::create(configuration.get()).leakRef();
-    }();
+        s_processPool = &WebProcessPool::create(configuration.get()).leakRef();
+    };
 
-    return *processPool;
+    return *s_processPool;
+}
+
+bool WebInspectorProxy::isInspectorProcessPool(WebProcessPool& processPool)
+{
+    if (!s_processPool)
+        return false;
+
+    return s_processPool == &processPool;
 }
 
 bool WebInspectorProxy::isInspectorPage(WebPageProxy& webPage)

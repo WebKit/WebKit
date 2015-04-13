@@ -116,7 +116,7 @@ WebProcessProxy::~WebProcessProxy()
 void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     launchOptions.processType = ProcessLauncher::WebProcess;
-    if (&m_processPool.get() == &WebInspectorProxy::inspectorProcessPool())
+    if (WebInspectorProxy::isInspectorProcessPool(m_processPool))
         launchOptions.extraInitializationData.add(ASCIILiteral("inspector-process"), ASCIILiteral("1"));
     platformGetLaunchOptions(launchOptions);
 }

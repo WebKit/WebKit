@@ -130,7 +130,7 @@ public:
     bool isProfilingPage() const { return m_isProfilingPage; }
     void togglePageProfiling();
 
-    static WebProcessPool& inspectorProcessPool();
+    static bool isInspectorProcessPool(WebProcessPool&);
     static bool isInspectorPage(WebPageProxy&);
 
     // Provided by platform WebInspectorProxy implementations.
@@ -148,6 +148,8 @@ public:
 
 private:
     explicit WebInspectorProxy(WebPageProxy*);
+
+    static WebProcessPool& inspectorProcessPool();
 
     void eagerlyCreateInspectorPage();
 

@@ -1,3 +1,23 @@
+2015-04-06  Anders Carlsson  <andersca@apple.com>
+
+        Create the web inspector process pool lazily
+        https://bugs.webkit.org/show_bug.cgi?id=143456
+        rdar://problem/20146520
+
+        Reviewed by Mark Lam.
+
+        Add and implement WebInspectorProxy::isInspectorProcessPool instead of always creating the inspector process pool
+        when trying to determine if a given process pool is the inspector process pool.
+
+        This should speed up initialization somewhat and avoid creating a storage manager for example.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::inspectorProcessPool):
+        (WebKit::WebInspectorProxy::isInspectorProcessPool):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions):
+
 2015-04-06  Žan Doberšek  <zdobersek@igalia.com>
 
         [WK2] API::Array::copy() should move the resulting Vector<> of copies into the Array::create() call
