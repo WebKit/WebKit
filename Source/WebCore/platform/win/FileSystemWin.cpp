@@ -186,8 +186,7 @@ bool renameFile(const String& oldPath, const String& newPath)
     if (!newPathFsRep.data() || newPathFsRep.data()[0] == '\0')
         return false;
 
-    notImplemented();
-    return false;
+    return ::MoveFileA(oldPathFsRep.data(), newPathFsRep.data());
 }
 
 String pathByAppendingComponent(const String& path, const String& component)

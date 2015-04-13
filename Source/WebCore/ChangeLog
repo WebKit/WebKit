@@ -1,5 +1,12 @@
 2015-04-13  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed fix after r182757.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::renameFile): Checked in wrong version.
+
+2015-04-13  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed fix after r182161.
 
         The change caused Windows to lose Media UI, since the new 'getFileSize'
