@@ -343,6 +343,8 @@ void WebVideoFullscreenModelVideoElement::selectLegibleMediaOption(uint64_t inde
     
     if (index < m_legibleTracksForMenu.size())
         textTrack = m_legibleTracksForMenu[static_cast<size_t>(index)].get();
+    else
+        textTrack = TextTrack::captionMenuOffItem();
     
     m_videoElement->setSelectedTextTrack(textTrack);
 }

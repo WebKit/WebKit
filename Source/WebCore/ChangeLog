@@ -1,3 +1,16 @@
+2015-04-13  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Treat a 'not found' media option index as the 'off' track.
+        https://bugs.webkit.org/show_bug.cgi?id=143672
+
+        Reviewed by Eric Carlson.
+
+        The UIProcess will pass in UINT64_MAX for the index of the legible option to select. Treat this
+        as if the captionOffMenuItem() had been selected to avoid a null dereference.
+
+        * platform/ios/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::selectLegibleMediaOption):
+
 2015-04-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         list-style-image with SVG image renders at incorrect size.
