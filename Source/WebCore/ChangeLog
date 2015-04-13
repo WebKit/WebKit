@@ -1,3 +1,21 @@
+2015-03-27  Jer Noble  <jer.noble@apple.com>
+
+        HTMLMediaElement will fire 'seeked' before seek completes, leading to currentTime discontinuities.
+        https://bugs.webkit.org/show_bug.cgi?id=143132
+
+        Reviewed by Eric Carlson.
+
+        When seeking, if the ready state rises to >= HAVE_CURRENT_DATA, we will fire the 'seeked'
+        event and continue playback. However, if a media engine updates the ready state before its
+        seek operation actually completes, the currentTime it returns may still be the time before
+        the seek.
+
+        Wait until both the ready state rises to HAVE_CURRENT_DATA and m_player->seeking() returns
+        false before firing the 'seeked' event.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
 2015-03-26  Geoffrey Garen  <ggaren@apple.com>
 
         Make some more objects use FastMalloc

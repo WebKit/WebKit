@@ -2019,7 +2019,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
             scheduleEvent(eventNames().waitingEvent);
 
         // 4.8.10.10 step 14 & 15.
-        if (m_readyState >= HAVE_CURRENT_DATA)
+        if (!m_player->seeking() && m_readyState >= HAVE_CURRENT_DATA)
             finishSeek();
     } else {
         if (wasPotentiallyPlaying && m_readyState < HAVE_FUTURE_DATA) {
