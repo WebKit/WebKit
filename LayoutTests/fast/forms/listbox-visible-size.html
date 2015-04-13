@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        select {
+            width: 12em;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <select id="select" size="5">
+        <option>Monday</option>
+        <option>Tuesday</option>
+        <option>Wednesday</option>
+        <option>Thursday</option>
+        <option>Friday</option>
+        <option>Saturday</option>
+        <option>Sunday</option>
+    </select>
+    <script>
+    const targetTop = 28;
+    var select;
+    function scrollSelect(newTop)
+    {
+        var select = document.getElementById('select');
+        select.scrollTop = newTop;
+    }
+
+    scrollSelect(targetTop);
+    shouldBe('select.scrollTop', 'targetTop');
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

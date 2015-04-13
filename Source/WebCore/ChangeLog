@@ -1,3 +1,21 @@
+2015-04-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Selects don't scroll at some aspect ratios
+        https://bugs.webkit.org/show_bug.cgi?id=143649
+        rdar://problem/19365694
+
+        Reviewed by Darin Adler.
+        
+        Fix width/height flip in RenderListBox which caused us to fail to scroll when
+        the list was wider than the scroll height.
+        
+        We're generally confused about RenderListBox scroll offsets (webkit.org/b/143648)
+        but this fixes the immediate problem.
+
+        Test: fast/forms/listbox-visible-size.html
+
+        * rendering/RenderListBox.h:
+
 2015-04-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text-combine erroneously draws vertically after non-layout-causing style change

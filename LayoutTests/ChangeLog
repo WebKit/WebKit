@@ -1,3 +1,14 @@
+2015-04-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Selects don't scroll at some aspect ratios
+        https://bugs.webkit.org/show_bug.cgi?id=143649
+        rdar://problem/19365694
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/listbox-visible-size-expected.txt: Added.
+        * fast/forms/listbox-visible-size.html: Added.
+
 2015-04-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text-combine erroneously draws vertically after non-layout-causing style change
