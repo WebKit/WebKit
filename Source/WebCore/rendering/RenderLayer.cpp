@@ -5722,6 +5722,9 @@ bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const Layo
     if (isRootLayer() || renderer().isRoot())
         return true;
 
+    if (damageRect.isEmpty())
+        return false;
+
     // If we aren't an inline flow, and our layer bounds do intersect the damage rect, then we 
     // can go ahead and return true.
     if (!renderer().isRenderInline()) {
