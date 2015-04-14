@@ -1,5 +1,12 @@
 2015-04-14  Alexey Proskuryakov  <ap@apple.com>
 
+        inspector/console/console-api.html is very slow, frequently timing out
+        https://bugs.webkit.org/show_bug.cgi?id=143719
+
+        * TestExpectations: Marking as slow.
+
+2015-04-14  Alexey Proskuryakov  <ap@apple.com>
+
         fast/sub-pixel/input-caret-on-subpixel-bound.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=143697
 
