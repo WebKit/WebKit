@@ -1752,6 +1752,7 @@ Controller.prototype = {
                 deviceName = this.UIString('##TVOUT_DEVICE_NAME##');
             }
 
+            this.controls.inlinePlaybackPlaceholderTextTop.innerText = deviceType;
             this.controls.inlinePlaybackPlaceholderTextBottom.innerText = deviceName;
             this.controls.inlinePlaybackPlaceholder.setAttribute('aria-label', deviceType + ", " + deviceName);
             this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.hidden);

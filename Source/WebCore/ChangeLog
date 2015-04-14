@@ -1,3 +1,12 @@
+2015-04-13  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Set the title text of the placard added in r182631.
+        https://bugs.webkit.org/show_bug.cgi?id=143585.
+        <rdar://problem/12067439>
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.updateWirelessPlaybackStatus):
+
 2015-04-10  Brent Fulgham  <bfulgham@apple.com>
 
         Expand test infrastructure to support scrolling tests
