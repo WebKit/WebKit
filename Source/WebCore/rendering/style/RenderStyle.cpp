@@ -474,10 +474,13 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
             && *rareNonInheritedData->m_multiCol.get() != *other.rareNonInheritedData->m_multiCol.get())
             return true;
 
-        if (rareNonInheritedData->m_transform.get() != other.rareNonInheritedData->m_transform.get()
-            && *rareNonInheritedData->m_transform.get() != *other.rareNonInheritedData->m_transform.get()) {
-            changedContextSensitiveProperties |= ContextSensitivePropertyTransform;
-            // Don't return; keep looking for another change
+        if (rareNonInheritedData->m_transform != other.rareNonInheritedData->m_transform) {
+            if (rareNonInheritedData->m_transform->hasTransform() != other.rareNonInheritedData->m_transform->hasTransform())
+                return true;
+            if (*rareNonInheritedData->m_transform != *other.rareNonInheritedData->m_transform) {
+                changedContextSensitiveProperties |= ContextSensitivePropertyTransform;
+                // Don't return; keep looking for another change
+            }
         }
 
 #if ENABLE(CSS_GRID_LAYOUT)

@@ -1,3 +1,14 @@
+2015-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Fixed position element is truncated if moved onscreen by a transform
+        https://bugs.webkit.org/show_bug.cgi?id=143655
+
+        Reviewed by Darin Adler.
+        
+        Test that moves a position:fixed element on-screen using a transform.
+
+        * compositing/geometry/fixed-transformed.html: Added.
+
 2015-04-12  Simon Fraser  <simon.fraser@apple.com>
 
         Selects don't scroll at some aspect ratios

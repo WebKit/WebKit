@@ -1,3 +1,25 @@
+2015-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Fixed position element is truncated if moved onscreen by a transform
+        https://bugs.webkit.org/show_bug.cgi?id=143655
+        rdar://problem/15020044
+
+        Reviewed by Darin Adler.
+        
+        Our "don't do layout if transform changes" code was too aggressive.
+        If an element changes between having a transform and not having one, we
+        really need to do a layout since so much else depends on transforms. In
+        this particular case, we clip position:fixed elements to the viewport if
+        they are not transformed, and were failing to re-evaluate this when a
+        transform was added. Doing a layout fixes this.
+
+        Test: compositing/geometry/fixed-transformed.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        * rendering/style/StyleTransformData.h:
+        (WebCore::StyleTransformData::hasTransform):
+
 2015-04-13  Darin Adler  <darin@apple.com>
 
         Remove needless recreation of URL in NavigationScheduler::scheduleLocationChange
