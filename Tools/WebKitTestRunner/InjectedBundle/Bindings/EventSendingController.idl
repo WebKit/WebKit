@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,9 @@ interface EventSendingController {
     void zoomPageIn();
     void zoomPageOut();
     void scalePageBy(double scale, double x, double y);
+
+    void monitorWheelEvents();
+    void callAfterScrollingCompletes(object functionCallback);
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
     // Touch events.

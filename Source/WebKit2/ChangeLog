@@ -1,3 +1,19 @@
+2015-04-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Expand test infrastructure to support scrolling tests
+        https://bugs.webkit.org/show_bug.cgi?id=143286
+        <rdar://problem/20375516>
+
+        Reviewed by Simon Fraser.
+
+        Extend the WK2 testing API to include a method for setting a JSC callback function to be triggered
+        by the new WebCore::WheelEventTestTrigger singleton.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageStartMonitoringScrollOperations): WK2 method that causes the testing system to begin tracking wheel events.
+        (WKBundlePageRegisterScrollOperationCompletionCallback): WK2 method to set the callback function for testing.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
 2015-04-13  Enrica Casucci  <enrica@apple.com>
 
         Clients of WKWebView should be able to override drag functions.

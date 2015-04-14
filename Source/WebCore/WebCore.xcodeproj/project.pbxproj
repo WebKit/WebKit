@@ -2484,6 +2484,8 @@
 		7ACD88D314C08BD60084EDD2 /* InspectorIndexedDBAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7ACD88D114C08BD60084EDD2 /* InspectorIndexedDBAgent.cpp */; };
 		7ACD88D414C08BD60084EDD2 /* InspectorIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ACD88D214C08BD60084EDD2 /* InspectorIndexedDBAgent.h */; };
 		7ADE722610CBBB9B006B3B3A /* ContextMenuProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ADE722510CBBB9B006B3B3A /* ContextMenuProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7AE335F11ACB09E200E401EF /* WheelEventTestTrigger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AE335EF1ACB09E200E401EF /* WheelEventTestTrigger.cpp */; };
+		7AE335F21ACB09E200E401EF /* WheelEventTestTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AE335F01ACB09E200E401EF /* WheelEventTestTrigger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AF9B20218CFB2DF00C64BEF /* VTTRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF9B1FC18CFB2DF00C64BEF /* VTTRegion.cpp */; };
 		7AF9B20318CFB2DF00C64BEF /* VTTRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF9B1FD18CFB2DF00C64BEF /* VTTRegion.h */; };
 		7AF9B20518CFB2DF00C64BEF /* VTTRegionList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF9B1FF18CFB2DF00C64BEF /* VTTRegionList.cpp */; };
@@ -9731,6 +9733,8 @@
 		7ACD88D114C08BD60084EDD2 /* InspectorIndexedDBAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorIndexedDBAgent.cpp; sourceTree = "<group>"; };
 		7ACD88D214C08BD60084EDD2 /* InspectorIndexedDBAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorIndexedDBAgent.h; sourceTree = "<group>"; };
 		7ADE722510CBBB9B006B3B3A /* ContextMenuProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextMenuProvider.h; sourceTree = "<group>"; };
+		7AE335EF1ACB09E200E401EF /* WheelEventTestTrigger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WheelEventTestTrigger.cpp; sourceTree = "<group>"; };
+		7AE335F01ACB09E200E401EF /* WheelEventTestTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WheelEventTestTrigger.h; sourceTree = "<group>"; };
 		7AF9B1FC18CFB2DF00C64BEF /* VTTRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VTTRegion.cpp; sourceTree = "<group>"; };
 		7AF9B1FD18CFB2DF00C64BEF /* VTTRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VTTRegion.h; sourceTree = "<group>"; };
 		7AF9B1FE18CFB2DF00C64BEF /* VTTRegion.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VTTRegion.idl; sourceTree = "<group>"; };
@@ -16976,6 +16980,8 @@
 				494BD7940F55C8EE00747828 /* WebKitPoint.idl */,
 				93EC449F188F4BB800661DF1 /* WheelEventDeltaTracker.cpp */,
 				93EC44A0188F4BB800661DF1 /* WheelEventDeltaTracker.h */,
+				7AE335EF1ACB09E200E401EF /* WheelEventTestTrigger.cpp */,
+				7AE335F01ACB09E200E401EF /* WheelEventTestTrigger.h */,
 				BC8243E60D0CFD7500460C8F /* WindowFeatures.cpp */,
 				BC8243E70D0CFD7500460C8F /* WindowFeatures.h */,
 				7E99AF520B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp */,
@@ -23609,6 +23615,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE115FAB167988CD00249134 /* AbstractDatabaseServer.h in Headers */,
+				7AE335F21ACB09E200E401EF /* WheelEventTestTrigger.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
 				29A812330FBB9C1D00510293 /* AccessibilityARIAGridRow.h in Headers */,
@@ -28075,6 +28082,7 @@
 				7728694E14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp in Sources */,
 				A75E8B880E1DE2D6007F2481 /* FEBlend.cpp in Sources */,
 				A75E8B8A0E1DE2D6007F2481 /* FEColorMatrix.cpp in Sources */,
+				7AE335F11ACB09E200E401EF /* WheelEventTestTrigger.cpp in Sources */,
 				A75E8B8C0E1DE2D6007F2481 /* FEComponentTransfer.cpp in Sources */,
 				A75E8B8E0E1DE2D6007F2481 /* FEComposite.cpp in Sources */,
 				84730D781248F0B300D3A9C9 /* FEConvolveMatrix.cpp in Sources */,

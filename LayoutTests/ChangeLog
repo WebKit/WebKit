@@ -1,3 +1,18 @@
+2015-04-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Expand test infrastructure to support scrolling tests
+        https://bugs.webkit.org/show_bug.cgi?id=143286
+        <rdar://problem/20375516>
+
+        Reviewed by Simon Fraser.
+
+        Correct a scrolling test that had not been issuing wheel events to a valid
+        view. This was found by some new logging in this patch.
+
+        * platform/mac/fast/scrolling/scroll-div-latched-div-expected.txt:
+        * platform/mac/fast/scrolling/scroll-div-latched-div.html:
+        * platform/mac-wk1/scrollbars/scrollevent-iframe-no-scrolling-wheel-expected.txt: Added.*
+
 2015-04-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Fix LayoutTests/http/tests/canvas/canvas-tainted-after-draw-image.html on all bots

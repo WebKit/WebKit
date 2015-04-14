@@ -7222,6 +7222,7 @@
     <ClCompile Include="..\page\VisitedLinkStore.cpp" />
     <ClCompile Include="..\fileapi\WebKitBlobBuilder.cpp" />
     <ClCompile Include="..\page\WheelEventDeltaTracker.cpp" />
+    <ClCompile Include="..\page\WheelEventTestTrigger.cpp" />
     <ClCompile Include="..\page\WindowFeatures.cpp" />
     <ClCompile Include="..\page\WindowFocusAllowedIndicator.cpp" />
     <ClCompile Include="..\page\WorkerNavigator.cpp" />
@@ -19619,6 +19620,7 @@
     <ClInclude Include="..\fileapi\WebKitBlobBuilder.h" />
     <ClInclude Include="..\page\WebKitPoint.h" />
     <ClInclude Include="..\page\WheelEventDeltaTracker.h" />
+    <ClInclude Include="..\page\WheelEventTestTrigger.h" />
     <ClInclude Include="..\page\WindowFeatures.h" />
     <ClInclude Include="..\page\WindowFocusAllowedIndicator.h" />
     <ClInclude Include="..\page\WorkerNavigator.h" />

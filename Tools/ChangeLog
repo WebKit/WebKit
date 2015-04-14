@@ -1,3 +1,37 @@
+2015-04-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Expand test infrastructure to support scrolling tests
+        https://bugs.webkit.org/show_bug.cgi?id=143286
+        <rdar://problem/20375516>
+
+        Reviewed by Simon Fraser.
+
+        Extend the WK1 and WK2 test programs to support two new EventSender commands:
+        (1) monitorWheelEvents: Tells DRT and WKTR to track the wheel event and animation state, so that we can
+        block executing tests until WebKit has completed any rubberband, scroll, or scroll-snap animations.
+        (2) callAfterScrollingCompletes: Provide a callback method to be executed when WebKit determines that
+        relevant rubberband, scroll, and scroll-snap animations are finished.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]): Update to recognize 'callAfterScrollingCompletes:'
+        and 'monitorWheelEvents'.
+        (+[EventSendingController webScriptNameForSelector:]): Ditto.
+        (-[EventSendingController mouseScrollByX:andY:continuously:]): Add some stderr logging to help when
+        debugging test failures.
+        (-[EventSendingController mouseScrollByX:andY:withWheel:andMomentumPhases:]): Ditto.
+        (-[EventSendingController callAfterScrollingCompletes:]): Added. Protects the JSObject representing the callback
+        function, then passes it to WebCore to be called once the test deferrals have been cleared.
+        (-[EventSendingController monitorWheelEvents:]): Added. Activates the wheel event tracking used by the
+        'callAfterScrollingCompletes' method.
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl: Added signatures for 'callAfterScrollingCompletes'
+        and 'monitorWheelEvents'.
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::callAfterScrollingCompletes): Added. Protects the JSObject representing the
+        callback function, then passes it to WebCore to be called once the test deferrals have been cleared
+        (WTR::EventSendingController::monitorWheelEvents): Added. Activates the wheel event tracking used by the
+        'callAfterScrollingComplates' method.
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+
 2015-04-13  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard: Crash-only queues should show failure when testing fails to start

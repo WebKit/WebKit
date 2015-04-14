@@ -1,3 +1,40 @@
+2015-04-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Expand test infrastructure to support scrolling tests
+        https://bugs.webkit.org/show_bug.cgi?id=143286
+        <rdar://problem/20375516>
+
+        Reviewed by Simon Fraser.
+
+        No new functionality.
+
+        This series of changes adds a new singleton class, 'WheelEventTestTrigger', which encapsulates a
+        function object to be fired when scroll events are finished. The object also keeps track of reasons
+        why the test should not yet fire (e.g., 'rubberbanding' is active) so that tests do not incorrectly
+        check rendering state in the middle of an animation.
+
+        This code is not yet hooked up to the rendering system, and so does not have any effect on behavior.
+
+        * CMakeLists.txt: Add new WheelEventTestTrigger files.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * page/MainFrame.cpp:
+        (WebCore::MainFrame::MainFrame): Add new member to constructor.
+        (WebCore::MainFrame::testTrigger): Added.
+        (WebCore::MainFrame::ensureTestTrigger): Added.
+        (WebCore::MainFrame::clearTrigger): Added.
+        * page/MainFrame.h:
+        * page/WheelEventTestTrigger.cpp: Added.
+        (WebCore::WheelEventTestTrigger::WheelEventTestTrigger):
+        (WebCore::WheelEventTestTrigger::createWeakPtr):
+        (WebCore::WheelEventTestTrigger::clearAllTestDeferrals):
+        (WebCore::WheelEventTestTrigger::setTestNotificationCallback):
+        (WebCore::WheelEventTestTrigger::deferTestsForReason):
+        (WebCore::WheelEventTestTrigger::removeTestDeferralForReason):
+        (WebCore::WheelEventTestTrigger::triggerTestTimerFired):
+        * page/WheelEventTestTrigger.h: Added.
+
 2015-04-13  Jer Noble  <jer.noble@apple.com>
 
         [iOS] When entering optimized fullscreen, standard fullscreen view should exit.
@@ -3260,6 +3297,9 @@
         3. Remove a number of unneeded null checks in EventHandler.
         4. ScrollController must always have a client, so hold a reference instead of using a pointer.
 
+        * WebCore.vcxproj/WebCore.vcxproj: Add new WheelEventTestTrigger files.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
         * page/EventHandler.cpp:
         (WebCore::EventHandler::platformNotifyIfEndGesture): Renamed from 'platformNotifySnapIfNecessary'.
         (WebCore::EventHandler::handleWheelEvent): Call 'platformNotifySnapIfNecessary' at method exit points.

@@ -1968,6 +1968,7 @@ set(WebCore_SOURCES
     page/UserContentURLPattern.cpp
     page/VisitedLinkStore.cpp
     page/WheelEventDeltaTracker.cpp
+    page/WheelEventTestTrigger.cpp
     page/WindowFeatures.cpp
     page/WindowFocusAllowedIndicator.cpp
     page/WorkerNavigator.cpp

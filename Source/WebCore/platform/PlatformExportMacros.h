@@ -43,7 +43,6 @@
 #endif
 
 #else // !USE(EXPORT_MACROS)
-
 #define WEBCORE_EXPORT
 #define WEBCORE_TESTSUPPORT_EXPORT
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -499,6 +499,54 @@ void EventSendingController::scalePageBy(double scale, double x, double y)
 {
     WKPoint origin = { x, y };
     WKBundlePageSetScaleAtOrigin(InjectedBundle::singleton().page()->page(), scale, origin);
+}
+
+void EventSendingController::monitorWheelEvents()
+{
+    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
+    
+    WKBundlePageStartMonitoringScrollOperations(page);
+}
+
+struct ScrollCompletionCallbackData {
+    JSContextRef m_context;
+    JSObjectRef m_function;
+
+    ScrollCompletionCallbackData(JSContextRef context, JSObjectRef function)
+        : m_context(context), m_function(function)
+    {
+    }
+};
+
+static void executeCallback(void* context)
+{
+    if (!context)
+        return;
+
+    std::unique_ptr<ScrollCompletionCallbackData> callBackData(reinterpret_cast<ScrollCompletionCallbackData*>(context));
+
+    JSObjectCallAsFunction(callBackData->m_context, callBackData->m_function, nullptr, 0, nullptr, nullptr);
+    JSValueUnprotect(callBackData->m_context, callBackData->m_function);
+}
+
+void EventSendingController::callAfterScrollingCompletes(JSValueRef functionCallback)
+{
+    if (!functionCallback)
+        return;
+
+    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    
+    JSObjectRef functionCallbackObject = JSValueToObject(context, functionCallback, nullptr);
+    if (!functionCallbackObject)
+        return;
+    
+    JSValueProtect(context, functionCallbackObject);
+
+    auto scrollCompletionCallbackData = std::make_unique<ScrollCompletionCallbackData>(context, functionCallbackObject);
+
+    WKBundlePageRegisterScrollOperationCompletionCallback(page, executeCallback, scrollCompletionCallbackData.release());
 }
 
 #if ENABLE(TOUCH_EVENTS)

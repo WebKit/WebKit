@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,6 +108,11 @@ WK_EXPORT void WKBundlePageListenForLayoutMilestones(WKBundlePageRef page, WKLay
 WK_EXPORT WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef page);
 
 WK_EXPORT bool WKBundlePageIsUsingEphemeralSession(WKBundlePageRef page);
+
+WK_EXPORT void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef);
+
+typedef void (*WKBundlePageTestNotificationCallback)(void* context);
+WK_EXPORT void WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef, WKBundlePageTestNotificationCallback, void* context);
 
 WK_EXPORT void WKBundlePagePostMessage(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody);
 WK_EXPORT void WKBundlePagePostSynchronousMessage(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData);

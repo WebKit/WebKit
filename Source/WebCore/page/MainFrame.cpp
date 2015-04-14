@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "ScrollLatchingState.h"
 #include "Settings.h"
 #include "WheelEventDeltaTracker.h"
+#include "WheelEventTestTrigger.h"
 #include <wtf/NeverDestroyed.h>
 
 #if PLATFORM(MAC)
@@ -122,7 +123,24 @@ void MainFrame::popLatchingState()
 {
     m_latchingState.removeLast();
 }
-
 #endif
+
+WheelEventTestTrigger* MainFrame::testTrigger() const
+{
+    return m_testTrigger.get();
+}
+
+WheelEventTestTrigger* MainFrame::ensureTestTrigger()
+{
+    if (!m_testTrigger)
+        m_testTrigger = std::make_unique<WheelEventTestTrigger>();
+
+    return m_testTrigger.get();
+}
+
+void MainFrame::clearTrigger()
+{
+    m_testTrigger = nullptr;
+}
 
 }

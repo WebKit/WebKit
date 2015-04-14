@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2014-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Jonas Witt <jonas.witt@gmail.com>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
@@ -35,13 +35,17 @@
 #import "DumpRenderTree.h"
 #import "DumpRenderTreeDraggingInfo.h"
 #import "DumpRenderTreeFileDraggingSource.h"
-
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
+#import <functional>
 
 #if !PLATFORM(IOS)
 #import <Carbon/Carbon.h> // for GetCurrentEventTime()
+#import <JavaScriptCore/JSRetainPtr.h>
+#import <WebCore/MainFrame.h>
+#import <WebCore/Page.h>
+#import <WebCore/WheelEventTestTrigger.h>
 #endif
 
 #if PLATFORM(IOS)
@@ -128,6 +132,12 @@ BOOL replayingSavedEvents;
 @end // SyntheticTouch
 #endif
 
+#if !PLATFORM(IOS)
+@interface WebView (WebViewInternalForTesting)
+- (WebCore::Frame*)_mainCoreFrame;
+@end
+#endif
+
 @implementation EventSendingController
 
 + (void)initialize
@@ -204,6 +214,8 @@ BOOL replayingSavedEvents;
             || aSelector == @selector(mouseScrollByX:andY:)
             || aSelector == @selector(mouseScrollByX:andY:withWheel:andMomentumPhases:)
             || aSelector == @selector(continuousMouseScrollByX:andY:)
+            || aSelector == @selector(monitorWheelEvents)
+            || aSelector == @selector(callAfterScrollingCompletes:)
 #if PLATFORM(IOS)
             || aSelector == @selector(addTouchAtX:y:)
             || aSelector == @selector(updateTouchAtIndex:x:y:)
@@ -261,6 +273,10 @@ BOOL replayingSavedEvents;
         return @"continuousMouseScrollBy";
     if (aSelector == @selector(scalePageBy:atX:andY:))
         return @"scalePageBy";
+    if (aSelector == @selector(monitorWheelEvents))
+        return @"monitorWheelEvents";
+    if (aSelector == @selector(callAfterScrollingCompletes:))
+        return @"callAfterScrollingCompletes";
 #if PLATFORM(IOS)
     if (aSelector == @selector(addTouchAtX:y:))
         return @"addTouchPoint";
@@ -687,7 +703,8 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
         [NSApp _setCurrentEvent:scrollEvent];
         [subView scrollWheel:scrollEvent];
         [NSApp _setCurrentEvent:nil];
-    }
+    } else
+        printf("mouseScrollByXandYContinuously: Unable to locate target view for current mouse location.");
 #endif
 }
 
@@ -746,7 +763,8 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
         [NSApp _setCurrentEvent:scrollEvent];
         [targetView scrollWheel:scrollEvent];
         [NSApp _setCurrentEvent:nil];
-    }
+    } else
+        printf("mouseScrollByX...andMomentumPhases: Unable to locate target view for current mouse location.");
 #endif
 }
 
@@ -1241,6 +1259,39 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                                            metaKey:NO];
     [target dispatchEvent:domEvent];   
     
+}
+
+- (void)monitorWheelEvents
+{
+#if PLATFORM(MAC)
+    WebCore::Frame* frame = [[mainFrame webView] _mainCoreFrame];
+    if (!frame)
+        return;
+    
+    frame->mainFrame().ensureTestTrigger();
+#endif
+}
+
+- (void)callAfterScrollingCompletes:(WebScriptObject*)callback
+{
+#if PLATFORM(MAC)
+    JSObjectRef jsCallbackFunction = [callback JSObject];
+    if (!jsCallbackFunction)
+        return;
+
+    WebCore::Frame* frame = [[mainFrame webView] _mainCoreFrame];
+    if (!frame)
+        return;
+
+    WebCore::WheelEventTestTrigger* trigger = frame->mainFrame().ensureTestTrigger();
+    JSGlobalContextRef globalContext = [mainFrame globalContext];
+    JSValueProtect(globalContext, jsCallbackFunction);
+
+    trigger->setTestCallbackAndStartNotificationTimer([=](void) {
+        JSObjectCallAsFunction(globalContext, jsCallbackFunction, nullptr, 0, nullptr, nullptr);
+        JSValueUnprotect(globalContext, jsCallbackFunction);
+    });
+#endif
 }
 
 #if PLATFORM(IOS)

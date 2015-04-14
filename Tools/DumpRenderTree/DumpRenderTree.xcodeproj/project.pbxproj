@@ -1133,6 +1133,7 @@
 			buildSettings = {
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
 				PRODUCT_NAME = All;
+				WTF_USE_EXPORT_MACROS = 0;
 			};
 			name = Production;
 		};
@@ -1223,6 +1224,7 @@
 					"-Wno-four-char-constants",
 					"-Wno-unknown-pragmas",
 				);
+				WTF_USE_EXPORT_MACROS = 0;
 			};
 			name = Debug;
 		};
@@ -1240,6 +1242,7 @@
 					"-Wno-four-char-constants",
 					"-Wno-unknown-pragmas",
 				);
+				WTF_USE_EXPORT_MACROS = 0;
 			};
 			name = Release;
 		};
