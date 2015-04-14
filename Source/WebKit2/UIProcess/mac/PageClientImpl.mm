@@ -407,9 +407,11 @@ void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<Sha
     size.scale(1.0 / toImpl([m_wkView pageRef])->deviceScaleFactor());
     [dragNSImage setSize:size];
 
+#if WK_API_ENABLED
     if (m_webView)
         [m_wkView _dragImageForView:m_webView withImage:dragNSImage.get() at:clientPosition linkDrag:isLinkDrag];
     else
+#endif
         [m_wkView _dragImageForView:m_wkView withImage:dragNSImage.get() at:clientPosition linkDrag:isLinkDrag];
 }
 
