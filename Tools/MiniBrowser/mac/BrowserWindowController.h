@@ -45,6 +45,8 @@
 
 - (IBAction)toggleZoomMode:(id)sender;
 
+- (IBAction)setScale:(id)sender;
+
 - (IBAction)dumpSourceToConsole:(id)sender;
 - (IBAction)find:(id)sender;
 

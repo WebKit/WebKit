@@ -146,4 +146,7 @@ struct WebPageConfiguration;
 
 @property (readonly) NSWindow *_targetWindowForMovePreparation;
 
+@property (nonatomic, setter=_setAutomaticallyComputesFixedLayoutSizeFromViewScale:) BOOL _automaticallyComputesFixedLayoutSizeFromViewScale;
+- (void)_updateAutomaticallyComputedFixedLayoutSize;
+
 @end

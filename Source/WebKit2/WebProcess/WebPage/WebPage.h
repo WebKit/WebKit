@@ -357,6 +357,9 @@ public:
     void scalePage(double scale, const WebCore::IntPoint& origin);
     void scalePageInViewCoordinates(double scale, WebCore::IntPoint centerInViewCoordinates);
     double pageScaleFactor() const;
+    double totalScaleFactor() const;
+    double viewScaleFactor() const { return m_viewScaleFactor; }
+    void scaleView(double scale);
 
     void setUseFixedLayout(bool);
     bool useFixedLayout() const { return m_useFixedLayout; }
@@ -1341,6 +1344,8 @@ private:
     UserActivity m_userActivity;
 
     uint64_t m_pendingNavigationID;
+
+    double m_viewScaleFactor { 1 };
 
 #if ENABLE(WEBGL)
     WebCore::WebGLLoadPolicy m_systemWebGLPolicy;

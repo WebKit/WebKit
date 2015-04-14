@@ -93,6 +93,7 @@ struct WebPageCreationParameters {
     bool canRunModal;
 
     float deviceScaleFactor;
+    float viewScaleFactor;
 
     float topContentInset;
     

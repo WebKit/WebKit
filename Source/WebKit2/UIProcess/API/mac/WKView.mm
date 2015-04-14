@@ -268,6 +268,7 @@ struct WKViewInterpretKeyEventsParameters {
     BOOL _ignoresNonWheelEvents;
     BOOL _ignoresAllEvents;
     BOOL _allowsBackForwardNavigationGestures;
+    BOOL _automaticallyComputesFixedLayoutSizeFromViewScale;
 
     RetainPtr<CALayer> _rootLayer;
 
@@ -557,7 +558,16 @@ struct WKViewInterpretKeyEventsParameters {
         if (_data->_clipsToVisibleRect)
             [self _updateViewExposedRect];
         [self _setDrawingAreaSize:size];
+        if (_data->_automaticallyComputesFixedLayoutSizeFromViewScale)
+            [self _updateAutomaticallyComputedFixedLayoutSize];
     }
+}
+
+- (void)_updateAutomaticallyComputedFixedLayoutSize
+{
+    ASSERT(_data->_automaticallyComputesFixedLayoutSizeFromViewScale);
+    CGFloat inverseScale = 1 / _data->_page->viewScaleFactor();
+    [self _setFixedLayoutSize:NSMakeSize(self.frame.size.width * inverseScale, self.frame.size.height * inverseScale)];
 }
 
 - (void)_updateWindowAndViewFrames
@@ -4353,12 +4363,23 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (WKLayoutMode)_layoutMode
 {
-    return _data->_page->useFixedLayout() ? kWKLayoutModeFixedSize : kWKLayoutModeViewSize;
+    if (_data->_page->useFixedLayout()) {
+#if PLATFORM(MAC)
+        if (self._automaticallyComputesFixedLayoutSizeFromViewScale)
+            return kWKLayoutModeDynamicSizeComputedFromViewScale;
+#endif
+        return kWKLayoutModeFixedSize;
+    }
+    return kWKLayoutModeViewSize;
 }
 
 - (void)_setLayoutMode:(WKLayoutMode)layoutMode
 {
-    _data->_page->setUseFixedLayout(layoutMode == kWKLayoutModeFixedSize);
+    _data->_page->setUseFixedLayout(layoutMode == kWKLayoutModeFixedSize || layoutMode == kWKLayoutModeDynamicSizeComputedFromViewScale);
+
+#if PLATFORM(MAC)
+    self._automaticallyComputesFixedLayoutSizeFromViewScale = (layoutMode == kWKLayoutModeDynamicSizeComputedFromViewScale);
+#endif
 }
 
 - (CGSize)_fixedLayoutSize
@@ -4369,6 +4390,20 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)_setFixedLayoutSize:(CGSize)fixedLayoutSize
 {
     _data->_page->setFixedLayoutSize(expandedIntSize(FloatSize(fixedLayoutSize)));
+}
+
+- (CGFloat)_viewScale
+{
+    return _data->_page->viewScaleFactor();
+}
+
+- (void)_setViewScale:(CGFloat)viewScale
+{
+    if (viewScale <= 0 || isnan(viewScale) || isinf(viewScale))
+        [NSException raise:NSInvalidArgumentException format:@"View scale should be a positive number"];
+
+    _data->_page->scaleView(viewScale);
+    [self _updateAutomaticallyComputedFixedLayoutSize];
 }
 
 - (void)_dispatchSetTopContentInset
@@ -4497,6 +4532,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)setMagnification:(double)magnification centeredAtPoint:(NSPoint)point
 {
+    if (magnification <= 0 || isnan(magnification) || isinf(magnification))
+        [NSException raise:NSInvalidArgumentException format:@"Magnification should be a positive number"];
+
     [self _dismissContentRelativeChildWindows];
 
     _data->_page->scalePageInViewCoordinates(magnification, roundedIntPoint(point));
@@ -4504,6 +4542,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)setMagnification:(double)magnification
 {
+    if (magnification <= 0 || isnan(magnification) || isinf(magnification))
+        [NSException raise:NSInvalidArgumentException format:@"Magnification should be a positive number"];
+
     [self _dismissContentRelativeChildWindows];
 
     FloatPoint viewCenter(NSMidX([self bounds]), NSMidY([self bounds]));
@@ -4636,6 +4677,24 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 }
 
 #endif
+
+- (void)_setAutomaticallyComputesFixedLayoutSizeFromViewScale:(BOOL)automaticallyComputesFixedLayoutSizeFromViewScale
+{
+    if (_data->_automaticallyComputesFixedLayoutSizeFromViewScale == automaticallyComputesFixedLayoutSizeFromViewScale)
+        return;
+
+    _data->_automaticallyComputesFixedLayoutSizeFromViewScale = automaticallyComputesFixedLayoutSizeFromViewScale;
+
+    if (!_data->_automaticallyComputesFixedLayoutSizeFromViewScale)
+        return;
+
+    [self _updateAutomaticallyComputedFixedLayoutSize];
+}
+
+- (BOOL)_automaticallyComputesFixedLayoutSizeFromViewScale
+{
+    return _data->_automaticallyComputesFixedLayoutSizeFromViewScale;
+}
 
 @end
 

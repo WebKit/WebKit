@@ -94,6 +94,8 @@
 @property (nonatomic, setter=_setLayoutMode:) WKLayoutMode _layoutMode;
 @property (nonatomic, setter=_setFixedLayoutSize:) CGSize _fixedLayoutSize;
 
+@property (nonatomic, setter=_setViewScale:) CGFloat _viewScale;
+
 @property (nonatomic, setter=_setOverrideDeviceScaleFactor:) CGFloat _overrideDeviceScaleFactor WK_AVAILABLE(WK_MAC_TBA, NA);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000

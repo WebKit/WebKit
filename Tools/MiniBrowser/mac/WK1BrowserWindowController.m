@@ -100,6 +100,11 @@
     }
 }
 
+- (IBAction)setScale:(id)sender
+{
+    
+}
+
 - (IBAction)reload:(id)sender
 {
     [_webView reload:sender];

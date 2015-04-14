@@ -338,6 +338,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_processSuppressionEnabled(true)
     , m_userActivity("Process suppression disabled for page.")
     , m_pendingNavigationID(0)
+    , m_viewScaleFactor(parameters.viewScaleFactor)
 #if ENABLE(WEBGL)
     , m_systemWebGLPolicy(WebGLAllowCreation)
 #endif
@@ -504,6 +505,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
         m_page->settings().setMediaKeysStorageDirectory(manager->mediaKeyStorageDirectory());
 #endif
     m_page->settings().setAppleMailPaginationQuirkEnabled(parameters.appleMailPaginationQuirkEnabled);
+
+    if (m_viewScaleFactor != 1)
+        scalePage(1, IntPoint());
 }
 
 void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)
@@ -1367,7 +1371,8 @@ void WebPage::windowScreenDidChange(uint32_t displayID)
 
 void WebPage::scalePage(double scale, const IntPoint& origin)
 {
-    bool willChangeScaleFactor = scale != pageScaleFactor();
+    double totalScale = scale * m_viewScaleFactor;
+    bool willChangeScaleFactor = totalScale != totalScaleFactor();
 
 #if PLATFORM(IOS)
     if (willChangeScaleFactor) {
@@ -1378,11 +1383,11 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
 #endif
     PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
     if (pluginView && pluginView->handlesPageScaleFactor()) {
-        pluginView->setPageScaleFactor(scale, origin);
+        pluginView->setPageScaleFactor(totalScale, origin);
         return;
     }
 
-    m_page->setPageScaleFactor(scale, origin);
+    m_page->setPageScaleFactor(totalScale, origin);
 
     // We can't early return before setPageScaleFactor because the origin might be different.
     if (!willChangeScaleFactor)
@@ -1399,7 +1404,8 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
 
 void WebPage::scalePageInViewCoordinates(double scale, IntPoint centerInViewCoordinates)
 {
-    if (scale == pageScaleFactor())
+    double totalScale = scale * m_viewScaleFactor;
+    if (totalScale == totalScaleFactor())
         return;
 
     IntPoint scrollPositionAtNewScale = mainFrameView()->rootViewToContents(-centerInViewCoordinates);
@@ -1408,13 +1414,34 @@ void WebPage::scalePageInViewCoordinates(double scale, IntPoint centerInViewCoor
     scalePage(scale, scrollPositionAtNewScale);
 }
 
-double WebPage::pageScaleFactor() const
+double WebPage::totalScaleFactor() const
 {
     PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
     if (pluginView && pluginView->handlesPageScaleFactor())
         return pluginView->pageScaleFactor();
 
     return m_page->pageScaleFactor();
+}
+
+double WebPage::pageScaleFactor() const
+{
+    return totalScaleFactor() / m_viewScaleFactor;
+}
+
+void WebPage::scaleView(double scale)
+{
+    float pageScale = pageScaleFactor();
+
+    double scaleRatio = scale / m_viewScaleFactor;
+
+    IntPoint scrollPositionAtNewScale;
+    if (FrameView* mainFrameView = m_page->mainFrame().view()) {
+        scrollPositionAtNewScale = mainFrameView->scrollPosition();
+        scrollPositionAtNewScale.scale(scaleRatio, scaleRatio);
+    }
+
+    m_viewScaleFactor = scale;
+    scalePage(pageScale, scrollPositionAtNewScale);
 }
 
 void WebPage::setDeviceScaleFactor(float scaleFactor)

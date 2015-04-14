@@ -639,6 +639,8 @@ public:
     void scalePage(double scale, const WebCore::IntPoint& origin);
     void scalePageInViewCoordinates(double scale, const WebCore::IntPoint& centerInViewCoordinates);
     double pageScaleFactor() const;
+    double viewScaleFactor() const { return m_viewScaleFactor; }
+    void scaleView(double scale);
 
     float deviceScaleFactor() const;
     void setIntrinsicDeviceScaleFactor(float);
@@ -1535,6 +1537,7 @@ private:
     double m_pageScaleFactor;
     double m_pluginZoomFactor;
     double m_pluginScaleFactor;
+    double m_viewScaleFactor { 1 };
     float m_intrinsicDeviceScaleFactor;
     float m_customDeviceScaleFactor;
     float m_topContentInset;

@@ -30,6 +30,7 @@
 typedef NS_ENUM(NSUInteger, _WKLayoutMode) {
     _WKLayoutModeViewSize,
     _WKLayoutModeFixedSize,
+    _WKLayoutModeDynamicSizeComputedFromViewScale
 } WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 #endif

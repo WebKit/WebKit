@@ -1,3 +1,25 @@
+2015-04-13  Tim Horton  <timothy_horton@apple.com>
+
+        Add a persistent, fixed scale factor to make it easy to scale down WK(Web)Views
+        https://bugs.webkit.org/show_bug.cgi?id=143560
+        <rdar://problem/16302047>
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/MainMenu.xib:
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController setScale:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (viewScaleForMenuItemTag):
+        (-[WK2BrowserWindowController setScale:]):
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        Add a submenu with four view scale options: 100%, 75%, 50%, and 25%.
+        When in use, we resize the window so that the view fits correctly, and
+        use automaticallyComputesFixedlayoutSizeFromViewScale so that the page's
+        layout size will not change when scaling down (but will update appropriately
+        when the view is resized).
+
 2015-04-13  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard shows obsolete results when builds are substantially out of order

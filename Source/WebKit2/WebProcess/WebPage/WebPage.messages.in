@@ -196,6 +196,7 @@ messages -> WebPage LegacyReceiver {
 
     ScalePage(double scale, WebCore::IntPoint origin)
     ScalePageInViewCoordinates(double scale, WebCore::IntPoint centerInViewCoordinates)
+    ScaleView(double scale)
 
     SetUseFixedLayout(bool fixed)
     SetFixedLayoutSize(WebCore::IntSize size)

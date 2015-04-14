@@ -2269,12 +2269,23 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (_WKLayoutMode)_layoutMode
 {
-    return _page->useFixedLayout() ? _WKLayoutModeFixedSize : _WKLayoutModeViewSize;
+    if (_page->useFixedLayout()) {
+#if PLATFORM(MAC)
+        if ([_wkView _automaticallyComputesFixedLayoutSizeFromViewScale])
+            return _WKLayoutModeDynamicSizeComputedFromViewScale;
+#endif
+        return _WKLayoutModeFixedSize;
+    }
+    return _WKLayoutModeViewSize;
 }
 
 - (void)_setLayoutMode:(_WKLayoutMode)layoutMode
 {
-    _page->setUseFixedLayout(layoutMode == _WKLayoutModeFixedSize);
+    _page->setUseFixedLayout(layoutMode == _WKLayoutModeFixedSize || layoutMode == _WKLayoutModeDynamicSizeComputedFromViewScale);
+
+#if PLATFORM(MAC)
+    [_wkView _setAutomaticallyComputesFixedLayoutSizeFromViewScale:(layoutMode == _WKLayoutModeDynamicSizeComputedFromViewScale)];
+#endif
 }
 
 - (CGSize)_fixedLayoutSize
@@ -2285,6 +2296,24 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (void)_setFixedLayoutSize:(CGSize)fixedLayoutSize
 {
     _page->setFixedLayoutSize(WebCore::expandedIntSize(WebCore::FloatSize(fixedLayoutSize)));
+}
+
+- (CGFloat)_viewScale
+{
+    return _page->viewScaleFactor();
+}
+
+- (void)_setViewScale:(CGFloat)viewScale
+{
+    if (viewScale <= 0 || isnan(viewScale) || isinf(viewScale))
+        [NSException raise:NSInvalidArgumentException format:@"View scale should be a positive number"];
+
+    _page->scaleView(viewScale);
+
+#if PLATFORM(MAC)
+    if ([_wkView _automaticallyComputesFixedLayoutSizeFromViewScale])
+        [_wkView _updateAutomaticallyComputedFixedLayoutSize];
+#endif
 }
 
 #pragma mark scrollperf methods
@@ -2302,8 +2331,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (NSArray *)_scrollPerformanceData
 {
 #if PLATFORM(IOS)
-    if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPefData = _page->scrollingPerformanceData())
-        return scrollPefData->data();
+    if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = _page->scrollingPerformanceData())
+        return scrollPerfData->data();
 #endif
     return nil;
 }

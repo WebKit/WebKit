@@ -95,6 +95,8 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
 @property (nonatomic, setter=_setLayoutMode:) _WKLayoutMode _layoutMode;
 @property (nonatomic, setter=_setFixedLayoutSize:) CGSize _fixedLayoutSize;
 
+@property (nonatomic, setter=_setViewScale:) CGFloat _viewScale;
+
 #if TARGET_OS_IPHONE
 // DERECATED: The setters of the three following function are deprecated, please use overrideLayoutParameters.
 // Define the smallest size a page take with a regular viewport.

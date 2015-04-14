@@ -616,9 +616,11 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToLayers(double scale, Flo
 
 void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint origin)
 {
+    scale *= m_webPage.viewScaleFactor();
+
     applyTransientZoomToLayers(scale, origin);
 
-    double currentPageScale = m_webPage.pageScaleFactor();
+    double currentPageScale = m_webPage.totalScaleFactor();
     if (scale > currentPageScale)
         return;
 
@@ -644,6 +646,8 @@ static RetainPtr<CABasicAnimation> transientZoomSnapAnimationForKeyPath(String k
 
 void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint origin)
 {
+    scale *= m_webPage.viewScaleFactor();
+
     FrameView& frameView = *m_webPage.mainFrameView();
     FloatRect visibleContentRect = frameView.visibleContentRectIncludingScrollbars();
 
@@ -651,7 +655,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     constrainedOrigin.moveBy(-origin);
 
     IntSize scaledTotalContentsSize = frameView.totalContentsSize();
-    scaledTotalContentsSize.scale(scale / m_webPage.pageScaleFactor());
+    scaledTotalContentsSize.scale(scale / m_webPage.totalScaleFactor());
 
     // Scaling may have exposed the overhang area, so we need to constrain the final
     // layer position exactly like scrolling will once it's committed, to ensure that
@@ -730,7 +734,7 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
     FloatPoint unscrolledOrigin(origin);
     FloatRect unobscuredContentRect = frameView.unobscuredContentRectIncludingScrollbars();
     unscrolledOrigin.moveBy(-unobscuredContentRect.location());
-    m_webPage.scalePage(scale, roundedIntPoint(-unscrolledOrigin));
+    m_webPage.scalePage(scale / m_webPage.viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
     m_transientZoomScale = 1;
     flushLayers();
 }

@@ -1,3 +1,100 @@
+2015-04-13  Tim Horton  <timothy_horton@apple.com>
+
+        Add a persistent, fixed scale factor to make it easy to scale down WK(Web)Views
+        https://bugs.webkit.org/show_bug.cgi?id=143560
+        <rdar://problem/16302047>
+
+        Reviewed by Darin Adler.
+
+        Add a new "view" scale factor to WKView and WKWebView.
+
+        Unlike page scale (or "magnification" in the API), view scale:
+            - persists between page loads
+            - persists between Web process crashes
+            - is not user adjustable
+            - can reliably be < 1
+
+        The page scale and view scale are multiplied together whenever we push
+        a new page scale down into WebCore, so the implementation of view scale
+        is transparent to WebCore, and acts effectively as a constant multiplier
+        for the (user-adjustable) page scale factor.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scaleView):
+        Add scaleView, which updates our cached viewScaleFactor and pushes it to the Web process.
+
+        (WebKit::WebPageProxy::creationParameters):
+        Plumb viewScaleFactor through the page creation parameters.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::viewScaleFactor): Added.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        If the viewScaleFactor is not 1 at creation time, call scalePage with a page scale of 1.
+        Internally, scalePage will multiply in the viewScaleFactor and push it all to the Web process.
+
+        (WebKit::WebPage::scalePage):
+        Multiply the page scale factor by the view scale factor before passing it to WebCore.
+
+        (WebKit::WebPage::scalePageInViewCoordinates):
+        Early returns need to check the total scale, not just the new page scale.
+
+        (WebKit::WebPage::totalScaleFactor):
+        The scale that we get back from WebCore::Page::pageScaleFactor is the product
+        of WebKit2's view and page scales. So, here we'll call that the totalScaleFactor.
+        (Might need a different name because it seems like "total" should include deviceScale too).
+
+        (WebKit::WebPage::pageScaleFactor):
+        WebKit2's notion of the pageScaleFactor does not include the view scale, so
+        divide it out of WebCore's page scale.
+
+        (WebKit::WebPage::scaleView):
+        Apply a new view scale, maintaining the current scroll position.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::viewScaleFactor):
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        Plumb viewScaleFactor through the page creation parameters.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _viewScale]):
+        (-[WKWebView _setViewScale:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _viewScale]):
+        (-[WKView _setViewScale:]):
+        Push the new view scale to WebPage.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setAutomaticallyComputesFixedLayoutSizeFromViewScale:]):
+        (-[WKWebView _automaticallyComputesFixedLayoutSizeFromViewScale]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setFrameSize:]):
+        (-[WKView _updateAutomaticallyComputedFixedLayoutSize]):
+        (-[WKView _setAutomaticallyComputesFixedLayoutSizeFromViewScale:]):
+        (-[WKView _automaticallyComputesFixedLayoutSizeFromViewScale]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        Add a new layout mode, "DynamicSizeComputedFromViewScale",
+        which turns on fixed layout size mode, and sets the fixed layout size
+        based on the view's frame and view scale. The fixed layout size is maintained
+        as the frame of the view scaled by the inverse of the view scale. This
+        makes it very easy to maintain a WK(Web)View that is scaled down by
+        a constant amount, but is laid out as if it were not.
+        
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::adjustTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToPage):
+        Because the transient zoom mechanism touches layers that WebCore owns,
+        it mostly need to operate with totalScaleFactor, because that is what WebCore sees.
+
 2015-04-10  Brent Fulgham  <bfulgham@apple.com>
 
         Expand test infrastructure to support scrolling tests

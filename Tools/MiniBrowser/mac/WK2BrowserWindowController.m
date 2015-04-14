@@ -33,7 +33,6 @@
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegate.h>
-#import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebNSURLExtras.h>
@@ -124,6 +123,37 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     }
 }
 
+static CGFloat viewScaleForMenuItemTag(NSInteger tag)
+{
+    if (tag == 1)
+        return 1;
+    if (tag == 2)
+        return 0.75;
+    if (tag == 3)
+        return 0.5;
+    if (tag == 4)
+        return 0.25;
+
+    return 1;
+}
+
+- (IBAction)setScale:(id)sender
+{
+    CGFloat scale = viewScaleForMenuItemTag([sender tag]);
+    CGFloat oldScale = [_webView _viewScale];
+
+    if (scale == oldScale)
+        return;
+
+    [_webView _setLayoutMode:_WKLayoutModeDynamicSizeComputedFromViewScale];
+
+    NSRect oldFrame = self.window.frame;
+    NSSize newFrameSize = NSMakeSize(oldFrame.size.width * (scale / oldScale), oldFrame.size.height * (scale / oldScale));
+    [self.window setFrame:NSMakeRect(oldFrame.origin.x, oldFrame.origin.y - (newFrameSize.height - oldFrame.size.height), newFrameSize.width, newFrameSize.height) display:NO animate:NO];
+
+    [_webView _setViewScale:scale];
+}
+
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
     SEL action = [menuItem action];
@@ -147,6 +177,9 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         [menuItem setTitle:[_webView window] ? @"Remove Web View" : @"Insert Web View"];
     else if (action == @selector(toggleZoomMode:))
         [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
+
+    if (action == @selector(setScale:))
+        [menuItem setState:[_webView _viewScale] == viewScaleForMenuItemTag([menuItem tag])];
 
     return YES;
 }

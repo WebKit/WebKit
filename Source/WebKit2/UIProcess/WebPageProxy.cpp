@@ -2216,6 +2216,8 @@ double WebPageProxy::pageScaleFactor() const
 
 void WebPageProxy::scalePage(double scale, const IntPoint& origin)
 {
+    ASSERT(scale > 0);
+
     if (!isValid())
         return;
 
@@ -2225,11 +2227,24 @@ void WebPageProxy::scalePage(double scale, const IntPoint& origin)
 
 void WebPageProxy::scalePageInViewCoordinates(double scale, const IntPoint& centerInViewCoordinates)
 {
+    ASSERT(scale > 0);
+
     if (!isValid())
         return;
 
     m_pageScaleFactor = scale;
     m_process->send(Messages::WebPage::ScalePageInViewCoordinates(scale, centerInViewCoordinates), m_pageID);
+}
+
+void WebPageProxy::scaleView(double scale)
+{
+    ASSERT(scale > 0);
+
+    if (!isValid())
+        return;
+
+    m_viewScaleFactor = scale;
+    m_process->send(Messages::WebPage::ScaleView(scale), m_pageID);
 }
 
 void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
@@ -4901,6 +4916,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient->canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_canRunModal;
     parameters.deviceScaleFactor = deviceScaleFactor();
+    parameters.viewScaleFactor = m_viewScaleFactor;
     parameters.topContentInset = m_topContentInset;
     parameters.mediaVolume = m_mediaVolume;
     parameters.muted = m_muted;
