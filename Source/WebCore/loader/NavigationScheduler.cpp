@@ -366,8 +366,7 @@ void NavigationScheduler::scheduleLocationChange(SecurityOrigin* securityOrigin,
 
     // If the URL we're going to navigate to is the same as the current one, except for the
     // fragment part, we don't need to schedule the location change.
-    URL parsedURL(ParsedURLString, url);
-    if (parsedURL.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(m_frame.document()->url(), parsedURL)) {
+    if (url.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(m_frame.document()->url(), url)) {
         loader.changeLocation(securityOrigin, m_frame.document()->completeURL(url), referrer, lockHistory, lockBackForwardList, false, AllowNavigationToInvalidURL::No);
         return;
     }

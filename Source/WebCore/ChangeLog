@@ -1,3 +1,14 @@
+2015-04-13  Darin Adler  <darin@apple.com>
+
+        Remove needless recreation of URL in NavigationScheduler::scheduleLocationChange
+        https://bugs.webkit.org/show_bug.cgi?id=143662
+
+        Reviewed by Sam Weinig.
+
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::scheduleLocationChange): Removed unnecessary code
+        to convert a URL to a String and then back into a URL.
+
 2015-04-12  Simon Fraser  <simon.fraser@apple.com>
 
         Selects don't scroll at some aspect ratios
