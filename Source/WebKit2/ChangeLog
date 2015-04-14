@@ -1,3 +1,24 @@
+2015-04-14  Anders Carlsson  <andersca@apple.com>
+
+        More work on making the SharedMemory interface more sane
+        https://bugs.webkit.org/show_bug.cgi?id=143718
+
+        Reviewed by Andreas Kling.
+
+        Get rid of m_shouldVMDeallocateData. The idea is that shared memory created by calling
+        SharedMemory::allocate has a non-null m_data pointer, and a null m_port. Shared memory created
+        by calling SharedMemory::create with a pointer and a length has a non-null port but a null m_data
+        since the data can be unmapped by the caller and we don't want to hold on to dangling pointers.
+
+        * Platform/SharedMemory.h:
+        (WebKit::SharedMemory::data):
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::allocate):
+        (WebKit::SharedMemory::create):
+        (WebKit::SharedMemory::map):
+        (WebKit::SharedMemory::~SharedMemory):
+        (WebKit::SharedMemory::createHandle):
+
 2015-04-14  Antti Koivisto  <antti@apple.com>
 
         Network Cache: Deduplicate body data

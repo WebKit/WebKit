@@ -85,7 +85,11 @@ public:
     bool createHandle(Handle&, Protection);
 
     size_t size() const { return m_size; }
-    void* data() const { return m_data; }
+    void* data() const
+    {
+        ASSERT(m_data);
+        return m_data;
+    }
 
     // Return the system page size in bytes.
     static unsigned systemPageSize();
@@ -93,7 +97,6 @@ public:
 private:
     size_t m_size;
     void* m_data;
-    bool m_shouldVMDeallocateData;
     Protection m_protection;
 
 #if OS(DARWIN)
