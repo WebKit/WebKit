@@ -1,3 +1,19 @@
+2015-04-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct layering violation in DumpRenderTree Build
+        https://bugs.webkit.org/show_bug.cgi?id=143732
+
+        Reviewed by Simon Fraser.
+
+        Correct a layering violation in DumpRenderTree by calling functions on the
+        WebCoreTestSupport library, rather than attempting to work with WebCore
+        types directly.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController monitorWheelEvents]): Call methods on WebCoreTestSupport, rather
+        than WebCore itself.,
+        (-[EventSendingController callAfterScrollingCompletes:]): Ditto.
+
 2015-04-14  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a conservative DFA minimizer for the content extension matcher

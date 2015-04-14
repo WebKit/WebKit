@@ -35,6 +35,7 @@
 #import "DumpRenderTree.h"
 #import "DumpRenderTreeDraggingInfo.h"
 #import "DumpRenderTreeFileDraggingSource.h"
+#import "WebCoreTestSupport.h"
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
@@ -42,10 +43,6 @@
 
 #if !PLATFORM(IOS)
 #import <Carbon/Carbon.h> // for GetCurrentEventTime()
-#import <JavaScriptCore/JSRetainPtr.h>
-#import <WebCore/MainFrame.h>
-#import <WebCore/Page.h>
-#import <WebCore/WheelEventTestTrigger.h>
 #endif
 
 #if PLATFORM(IOS)
@@ -1267,8 +1264,8 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     WebCore::Frame* frame = [[mainFrame webView] _mainCoreFrame];
     if (!frame)
         return;
-    
-    frame->mainFrame().ensureTestTrigger();
+
+    WebCoreTestSupport::monitorWheelEvents(*frame);
 #endif
 }
 
@@ -1283,14 +1280,8 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     if (!frame)
         return;
 
-    WebCore::WheelEventTestTrigger* trigger = frame->mainFrame().ensureTestTrigger();
     JSGlobalContextRef globalContext = [mainFrame globalContext];
-    JSValueProtect(globalContext, jsCallbackFunction);
-
-    trigger->setTestCallbackAndStartNotificationTimer([=](void) {
-        JSObjectCallAsFunction(globalContext, jsCallbackFunction, nullptr, 0, nullptr, nullptr);
-        JSValueUnprotect(globalContext, jsCallbackFunction);
-    });
+    WebCoreTestSupport::setTestCallbackAndStartNotificationTimer(*frame, globalContext, jsCallbackFunction);
 #endif
 }
 

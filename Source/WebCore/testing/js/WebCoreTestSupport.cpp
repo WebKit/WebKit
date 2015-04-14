@@ -31,7 +31,10 @@
 #include "Internals.h"
 #include "JSDocument.h"
 #include "JSInternals.h"
+#include "MainFrame.h"
+#include "WheelEventTestTrigger.h"
 #include <JavaScriptCore/APICast.h>
+#include <JavaScriptCore/JSValueRef.h>
 #include <JavaScriptCore/Profile.h>
 #include <interpreter/CallFrame.h>
 #include <runtime/IdentifierInlines.h>
@@ -60,6 +63,22 @@ void resetInternalsObject(JSContextRef context)
     Page* page = downcast<Document>(scriptContext)->frame()->page();
     Internals::resetToConsistentState(page);
     InternalSettings::from(page)->resetToConsistentState();
+}
+
+void monitorWheelEvents(WebCore::Frame& frame)
+{
+    frame.mainFrame().ensureTestTrigger();
+}
+
+void setTestCallbackAndStartNotificationTimer(WebCore::Frame& frame, JSContextRef context, JSObjectRef jsCallbackFunction)
+{
+    WheelEventTestTrigger* trigger = frame.mainFrame().ensureTestTrigger();
+    JSValueProtect(context, jsCallbackFunction);
+    
+    trigger->setTestCallbackAndStartNotificationTimer([=](void) {
+        JSObjectCallAsFunction(context, jsCallbackFunction, nullptr, 0, nullptr, nullptr);
+        JSValueUnprotect(context, jsCallbackFunction);
+    });
 }
 
 }
