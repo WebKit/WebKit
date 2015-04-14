@@ -5,7 +5,7 @@ This test validates the values of the window.performance.redirectCount and the w
 
 
 
-FAIL Starting document.location.hostname is correct (127.0.0.1:8000) assert_equals: Starting document.location.hostname is correct (127.0.0.1:8000) expected "127.0.0.1:8000" but got "127.0.0.1"(stack: assert@http://127.0.0.1:8000/w3c/resources/testharness.js:2061:73
+FAIL Starting document.location.hostname is correct (127.0.0.1:8000) assert_equals: Starting document.location.hostname is correct (127.0.0.1:8000) expected "127.0.0.1:8000" but got "127.0.0.1"(stack: assert@http://127.0.0.1:8000/w3c/resources/testharness.js:2060:37
 assert_equals@http://127.0.0.1:8000/w3c/resources/testharness.js:699:15
 http://127.0.0.1:8000/w3c/webperf/resources/webperftestharness.js:145:40
 step@http://127.0.0.1:8000/w3c/resources/testharness.js:1160:30
