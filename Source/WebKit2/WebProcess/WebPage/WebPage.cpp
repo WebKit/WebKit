@@ -4400,7 +4400,9 @@ void WebPage::didChangeSelection()
     // trigger a synchronous layout every time the selection changes. sendPostLayoutEditorStateIfNeeded() will be called
     // to send the full editor state after layout is done if we send a partial editor state here.
     auto editorState = this->editorState(needsLayout ? IncludePostLayoutDataHint::No : IncludePostLayoutDataHint::Yes);
+#if PLATFORM(COCOA)
     ASSERT_WITH_MESSAGE(needsLayout == (view && view->needsLayout()), "Calling editorState() should not cause a synchronous layout.");
+#endif
     m_isEditorStateMissingPostLayoutData = editorState.isMissingPostLayoutData;
 
 #if PLATFORM(MAC) && USE(ASYNC_NSTEXTINPUTCLIENT)
