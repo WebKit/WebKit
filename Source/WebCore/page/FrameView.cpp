@@ -2620,6 +2620,9 @@ void FrameView::setNeedsLayout()
 
 void FrameView::unscheduleRelayout()
 {
+    if (m_postLayoutTasksTimer.isActive())
+        m_postLayoutTasksTimer.stop();
+
     if (!m_layoutTimer.isActive())
         return;
 

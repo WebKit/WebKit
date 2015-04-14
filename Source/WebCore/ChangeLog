@@ -1,5 +1,31 @@
 2015-04-14  Chris Dumez  <cdumez@apple.com>
 
+        ASSERT(frame().view() == this) assertion hit in FrameView::windowClipRect() on Windows bots
+        https://bugs.webkit.org/show_bug.cgi?id=143723
+
+        Reviewed by Brent Fulgham.
+
+        ASSERT(frame().view() == this) in FrameView::windowClipRect() can be hit
+        if the post layout timer timer fires after the page has entered page
+        cache. Upon entering page cache, we call FrameView::unscheduleRelayout()
+        to stop the layout timer if it is active, however, we don't stop the
+        post-layout timer. Therefore, there was nothing preventing the
+        post-layout timer from firing after entering page cache.
+
+        In this patch, we unschedule the post-layout timer in
+        FrameView::unscheduleRelayout() to protect ourselves against this.
+
+        I think we were only seeing the assertion hit on Windows because this
+        timer probably gets scheduled more frequently on Windows. On Mac, I
+        rarely see it getting scheduled.
+
+        No new tests, should fix crashing tests on the bots.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::unscheduleRelayout):
+
+2015-04-14  Chris Dumez  <cdumez@apple.com>
+
         FrameView::m_frame should be a Ref<Frame>
         https://bugs.webkit.org/show_bug.cgi?id=143716
 
