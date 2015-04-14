@@ -1,3 +1,11 @@
+2015-04-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test correction after r182737.
+
+        New test expectation was missing a newline at the end of the file.
+
+        * platform/win/printing/single-line-must-not-be-split-into-two-pages-expected.txt:
+
 2015-04-14  Simon Fraser  <simon.fraser@apple.com>
 
         Set the font size to 11px explicitly to try to fix this test on Windows.
