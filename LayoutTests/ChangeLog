@@ -1,3 +1,9 @@
+2015-04-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Set the font size to 11px explicitly to try to fix this test on Windows.
+
+        * fast/forms/listbox-visible-size.html:
+
 2015-04-14  Alexey Proskuryakov  <ap@apple.com>
 
         inspector/console/console-api.html is very slow, frequently timing out
