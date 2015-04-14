@@ -327,6 +327,7 @@ public:
 
     bool isURLKnownHSTSHost(const String& urlString, bool privateBrowsingEnabled) const;
     void resetHSTSHosts();
+    void resetHSTSHostsAddedAfterDate(double startDateIntervalSince1970);
 
     void registerSchemeForCustomProtocol(const String&);
     void unregisterSchemeForCustomProtocol(const String&);

@@ -48,6 +48,9 @@ WK_EXPORT void WKContextGetInfoForInstalledPlugIns(WKContextRef context, WKConte
 
 WK_EXPORT void WKContextResetHSTSHosts(WKContextRef context);
 
+// The time here is relative to the Unix epoch.
+WK_EXPORT void WKContextResetHSTSHostsAddedAfterDate(WKContextRef context, double startDateIntervalSince1970);
+
 WK_EXPORT void WKContextRegisterSchemeForCustomProtocol(WKContextRef context, WKStringRef scheme);
 WK_EXPORT void WKContextUnregisterSchemeForCustomProtocol(WKContextRef context, WKStringRef scheme);
 

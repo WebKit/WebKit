@@ -1,3 +1,20 @@
+2015-04-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Add SPI to clear HSTS hosts added since a date.
+        https://bugs.webkit.org/show_bug.cgi?id=143726
+        and
+        rdar://problem/16664597
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/mac/WKContextPrivateMac.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextResetHSTSHostsAddedAfterDate): Call into the WebProcessPool.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::resetHSTSHostsAddedAfterDate): Call CFNetwork SPI to clear HSTS hosts added
+        after the given date.
+        * UIProcess/WebProcessPool.h:
+
 2015-04-14  Anders Carlsson  <andersca@apple.com>
 
         More work on making the SharedMemory interface more sane

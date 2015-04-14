@@ -469,6 +469,15 @@ void WebProcessPool::resetHSTSHosts()
     _CFNetworkResetHSTSHostsWithSession(privateBrowsingSession());
 }
 
+void WebProcessPool::resetHSTSHostsAddedAfterDate(double startDateIntervalSince1970)
+{
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
+    NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:startDateIntervalSince1970];
+    _CFNetworkResetHSTSHostsSinceDate(nullptr, (__bridge CFDateRef)startDate);
+    _CFNetworkResetHSTSHostsSinceDate(privateBrowsingSession(), (__bridge CFDateRef)startDate);
+#endif
+}
+
 int networkProcessLatencyQOS()
 {
     static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitNetworkProcessLatencyQOS"];

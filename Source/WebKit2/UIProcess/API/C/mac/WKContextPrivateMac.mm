@@ -107,7 +107,10 @@ void WKContextResetHSTSHosts(WKContextRef context)
     return toImpl(context)->resetHSTSHosts();
 }
 
-
+void WKContextResetHSTSHostsAddedAfterDate(WKContextRef context, double startDateIntervalSince1970)
+{
+    return toImpl(context)->resetHSTSHostsAddedAfterDate(startDateIntervalSince1970);
+}
 
 void WKContextRegisterSchemeForCustomProtocol(WKContextRef context, WKStringRef scheme)
 {

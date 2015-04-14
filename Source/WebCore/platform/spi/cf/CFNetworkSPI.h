@@ -116,4 +116,8 @@ EXTERN_C CFDataRef _CFNetworkCopyATSContext(void);
 EXTERN_C Boolean _CFNetworkSetATSContext(CFDataRef);
 #endif
 
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
+EXTERN_C void _CFNetworkResetHSTSHostsSinceDate(CFURLStorageSessionRef, CFDateRef);
+#endif
+
 #endif // CFNetworkSPI_h

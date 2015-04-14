@@ -1,3 +1,16 @@
+2015-04-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Add SPI to clear HSTS hosts added since a date.
+        https://bugs.webkit.org/show_bug.cgi?id=143726
+        and
+        rdar://problem/16664597
+
+        Declare _CFNetworkResetHSTSHostsSinceDate in CFNetworkSPI.h.
+
+        Reviewed by Anders Carlsson.
+
+        * platform/spi/cf/CFNetworkSPI.h:
+
 2015-04-14  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Time numbers on media controls move as they update on OSX.
