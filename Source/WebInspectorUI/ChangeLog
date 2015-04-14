@@ -1,5 +1,17 @@
 2015-04-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Expanding window.navigator.mimeTypes in ObjectTree shows no native properties
+        https://bugs.webkit.org/show_bug.cgi?id=143690
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement):
+        Fix a typo that resulted in hiding properties of native objects
+        in the Properties section of an Object Tree.
+
+2015-04-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove unnecessary 3 second delay when archiving page
         https://bugs.webkit.org/show_bug.cgi?id=143688
 

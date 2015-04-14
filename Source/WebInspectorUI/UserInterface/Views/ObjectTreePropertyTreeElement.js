@@ -355,7 +355,7 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
         var resolvedValue = this.resolvedValue();
         var isArray = resolvedValue.isArray();
         var isPropertyMode = mode === WebInspector.ObjectTreeView.Mode.Properties || this._getterValue;
-        var isAPI = mode !== WebInspector.ObjectTreeView.Mode.Prototype;
+        var isAPI = mode !== WebInspector.ObjectTreeView.Mode.Properties;
 
         var prototypeName;
         if (this.property.name === "__proto__") {
