@@ -30,6 +30,7 @@
 
 #include <dispatch/dispatch.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -45,6 +46,11 @@ Data::Data(DispatchPtr<dispatch_data_t> dispatchData, Backing backing)
     , m_size(m_dispatchData ? dispatch_data_get_size(m_dispatchData.get()) : 0)
     , m_isMap(m_size && backing == Backing::Map)
 {
+}
+
+Data Data::empty()
+{
+    return { DispatchPtr<dispatch_data_t>(dispatch_data_empty) };
 }
 
 const uint8_t* Data::data() const
@@ -87,15 +93,62 @@ Data concatenate(const Data& a, const Data& b)
     return { adoptDispatch(dispatch_data_create_concat(a.dispatchData(), b.dispatchData())) };
 }
 
-Data mapFile(int fd, size_t offset, size_t size)
+Data Data::adoptMap(void* map, size_t size)
 {
-    void* map = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, offset);
-    if (map == MAP_FAILED)
-        return { };
+    ASSERT(map && map != MAP_FAILED);
     auto bodyMap = adoptDispatch(dispatch_data_create(map, size, dispatch_get_main_queue(), [map, size] {
         munmap(map, size);
     }));
     return { bodyMap, Data::Backing::Map };
+}
+
+Data mapFile(int fd, size_t offset, size_t size)
+{
+    if (!size)
+        return Data::empty();
+
+    void* map = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, offset);
+    if (map == MAP_FAILED)
+        return { };
+    return Data::adoptMap(map, size);
+}
+
+Data mapFile(const char* path)
+{
+    int fd = open(path, O_RDONLY, 0);
+    if (fd < 0)
+        return { };
+    struct stat stat;
+    if (fstat(fd, &stat) < 0) {
+        close(fd);
+        return { };
+    }
+    size_t size = stat.st_size;
+    auto data = mapFile(fd, 0, size);
+    close(fd);
+
+    return data;
+}
+
+SHA1::Digest computeSHA1(const Data& data)
+{
+    SHA1 sha1;
+    data.apply([&sha1](const uint8_t* data, size_t size) {
+        sha1.addBytes(data, size);
+        return true;
+    });
+    SHA1::Digest digest;
+    sha1.computeHash(digest);
+    return digest;
+}
+
+bool bytesEqual(const Data& a, const Data& b)
+{
+    if (a.isNull() || b.isNull())
+        return false;
+    if (a.size() != b.size())
+        return false;
+    return !memcmp(a.data(), b.data(), a.size());
 }
 
 }

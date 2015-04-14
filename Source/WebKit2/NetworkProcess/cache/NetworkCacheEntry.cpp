@@ -165,6 +165,12 @@ void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
     json.appendLiteral("\"URL\": ");
     JSC::appendQuotedJSONStringToBuilder(json, m_response.url().string());
     json.appendLiteral(",\n");
+    json.appendLiteral("\"bodyHash\": ");
+    JSC::appendQuotedJSONStringToBuilder(json, info.bodyHash);
+    json.appendLiteral(",\n");
+    json.appendLiteral("\"bodyShareCount\": ");
+    json.appendNumber(info.bodyShareCount);
+    json.appendLiteral(",\n");
     json.appendLiteral("\"headers\": {\n");
     bool firstHeader = true;
     for (auto& header : m_response.httpHeaderFields()) {

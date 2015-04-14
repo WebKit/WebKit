@@ -36,6 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MD5.h>
+#include <wtf/SHA1.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -260,6 +261,11 @@ template<> struct Coder<WebCore::CertificateInfo> {
 template<> struct Coder<MD5::Digest> {
     static void encode(Encoder&, const MD5::Digest&);
     static bool decode(Decoder&, MD5::Digest&);
+};
+
+template<> struct Coder<SHA1::Digest> {
+    static void encode(Encoder&, const SHA1::Digest&);
+    static bool decode(Decoder&, SHA1::Digest&);
 };
 
 }

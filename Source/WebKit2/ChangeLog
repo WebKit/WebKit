@@ -1,3 +1,153 @@
+2015-04-14  Antti Koivisto  <antti@apple.com>
+
+        Network Cache: Deduplicate body data
+        https://bugs.webkit.org/show_bug.cgi?id=143652
+
+        Reviewed by Darin Adler.
+
+        It is common to have cache entries with identical body data. This happens when the same resource is loaded from
+        a different URL (https vs http, slash vs no-slash at end, etc.). It also happens when the same URL is
+        referenced from different cache partitions.
+
+        We can improve disk space efficiency and use less memory by sharing identical body data between cache entries.
+
+        This patch splits the body data out from the record file. The new record file contains meta data and response
+        headers only. Body data is stored using the new BlobStorage interface. Files are deduplicated by computing
+        SHA1 hash over the data and looking for an existing blob with the same hash. If found the existing entry
+        is reused by creating a hard link to it.
+
+        The new disk structure looks like this:
+
+        WebKitCache/
+            Version 3/
+                Blobs/
+                    0A3C9A970ADA27FAE9BD7BC630BAD0B929C293C0
+                    0A6B8060BA77DF92C82A2FD7AF58F79524D8F34C
+                    ...
+                Records/
+                    apple.com/
+                        0B8645B04E7EC78C178B7460052601C2
+                        0B8645B04E7EC78C178B7460052601C2-body
+                        0CB1A3638D1C5A09C5E3283A74FA040B
+                        0CB1A3638D1C5A09C5E3283A74FA040B-body
+                        ...
+
+        Each record file has an associated -body which is a hard link to a file in the Blobs directory.
+
+        The patch increases effective capacity by 10-20% with a typical cache. It also saves memory especially when identical
+        resources are used in multiple tabs.
+
+        Currently all >0 sized resources are stored as shared blobs. In future small resources should be integrated into record
+        files and blobs used for larger files only.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::store):
+        (WebKit::NetworkCache::Cache::update):
+
+            Adopt the new storage interface.
+
+        (WebKit::NetworkCache::Cache::dumpContentsToFile):
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp: Added.
+        (WebKit::NetworkCache::BlobStorage::BlobStorage):
+        (WebKit::NetworkCache::BlobStorage::synchronize):
+
+            Compute size and delete unused files from the Blobs directory (link count == 1).
+
+        (WebKit::NetworkCache::BlobStorage::blobPath):
+        (WebKit::NetworkCache::BlobStorage::add):
+        (WebKit::NetworkCache::BlobStorage::get):
+
+            Interface for storing and retrieving data blobs. Blobs are deduplicated on add.
+
+        (WebKit::NetworkCache::BlobStorage::remove):
+
+            Removes the link but doesn't remove the blob even if there are no other clients. That happens on next synchronize().
+
+        (WebKit::NetworkCache::BlobStorage::shareCount):
+
+            Checks the link count to get the number of clients.
+
+        * NetworkProcess/cache/NetworkCacheBlobStorage.h: Added.
+        (WebKit::NetworkCache::BlobStorage::approximateSize):
+        * NetworkProcess/cache/NetworkCacheCoders.cpp:
+        (WebKit::NetworkCache::Coder<SHA1::Digest>::encode):
+        (WebKit::NetworkCache::Coder<SHA1::Digest>::decode):
+        * NetworkProcess/cache/NetworkCacheCoders.h:
+        * NetworkProcess/cache/NetworkCacheData.h:
+        (WebKit::NetworkCache::Data::isEmpty):
+        * NetworkProcess/cache/NetworkCacheDataCocoa.mm:
+        (WebKit::NetworkCache::Data::empty):
+        (WebKit::NetworkCache::Data::fromMap):
+        (WebKit::NetworkCache::mapFile):
+        (WebKit::NetworkCache::computeSHA1):
+        (WebKit::NetworkCache::bytesEqual):
+
+            Add some helpers.
+
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::asJSON):
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        (WebKit::NetworkCache::IOChannel::IOChannel):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::makeRecordDirectoryPath):
+        (WebKit::NetworkCache::makeBlobDirectoryPath):
+        (WebKit::NetworkCache::Storage::Storage):
+        (WebKit::NetworkCache::Storage::approximateSize):
+        (WebKit::NetworkCache::Storage::synchronize):
+        (WebKit::NetworkCache::partitionPathForKey):
+        (WebKit::NetworkCache::recordPathForKey):
+        (WebKit::NetworkCache::bodyPath):
+        (WebKit::NetworkCache::decodeRecordMetaData):
+        (WebKit::NetworkCache::decodeRecordHeader):
+        (WebKit::NetworkCache::createRecord):
+        (WebKit::NetworkCache::encodeRecordMetaData):
+        (WebKit::NetworkCache::encodeRecordHeader):
+        (WebKit::NetworkCache::Storage::remove):
+        (WebKit::NetworkCache::Storage::updateFileModificationTime):
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+
+            Read both the blob and the record entry.
+
+        (WebKit::NetworkCache::Storage::finishReadOperation):
+
+            Factor to a function.
+
+        (WebKit::NetworkCache::Storage::store):
+        (WebKit::NetworkCache::Storage::traverse):
+        (WebKit::NetworkCache::Storage::dispatchPendingWriteOperations):
+        (WebKit::NetworkCache::Storage::dispatchWriteOperation):
+
+            We don't need separate full write and header write paths anymore. Everything is treated
+            as a full write and deduplication stops us writing the body again.
+
+            This simplifies the code and data structures.
+
+        (WebKit::NetworkCache::Storage::finishWriteOperation):
+
+            Factor to a function.
+
+        (WebKit::NetworkCache::Storage::clear):
+        (WebKit::NetworkCache::deletionProbability):
+
+            Take the sharing count into account when computing deletion probability.
+            It is less useful to delete a record that shares its body with others as data won't get deleted.
+
+        (WebKit::NetworkCache::Storage::shrinkIfNeeded):
+        (WebKit::NetworkCache::Storage::shrink):
+        (WebKit::NetworkCache::Storage::deleteOldVersions):
+        (WebKit::NetworkCache::directoryPathForKey): Deleted.
+        (WebKit::NetworkCache::filePathForKey): Deleted.
+        (WebKit::NetworkCache::openFileForKey): Deleted.
+        (WebKit::NetworkCache::decodeRecord): Deleted.
+        (WebKit::NetworkCache::Storage::update): Deleted.
+
+            No need for separate update interface anymore. Regular store() avoids unnecessary body write.
+
+        (WebKit::NetworkCache::Storage::dispatchFullWriteOperation): Deleted.
+        (WebKit::NetworkCache::Storage::dispatchHeaderWriteOperation): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-04-14  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r182603): [GTK] More than 500 crashes on the layout tests with the debug build.

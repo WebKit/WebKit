@@ -30,6 +30,7 @@
 
 #include <functional>
 #include <wtf/FunctionDispatcher.h>
+#include <wtf/SHA1.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -98,11 +99,15 @@ public:
     Data() { }
     Data(const uint8_t*, size_t);
 
+    static Data empty();
+    static Data adoptMap(void* map, size_t);
+
     enum class Backing { Buffer, Map };
 #if PLATFORM(COCOA)
     Data(DispatchPtr<dispatch_data_t>, Backing = Backing::Buffer);
 #endif
     bool isNull() const;
+    bool isEmpty() const { return !m_size; }
 
     const uint8_t* data() const;
     size_t size() const { return m_size; }
@@ -125,7 +130,10 @@ private:
 };
 
 Data concatenate(const Data&, const Data&);
+bool bytesEqual(const Data&, const Data&);
 Data mapFile(int fd, size_t offset, size_t);
+Data mapFile(const char* path);
+SHA1::Digest computeSHA1(const Data&);
 
 }
 }

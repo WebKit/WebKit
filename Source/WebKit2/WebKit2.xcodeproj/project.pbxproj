@@ -1796,6 +1796,8 @@
 		E489D28E1A0A2DB80078C06A /* NetworkCacheDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E489D2871A0A2DB80078C06A /* NetworkCacheDecoder.h */; };
 		E489D28F1A0A2DB80078C06A /* NetworkCacheEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E489D2881A0A2DB80078C06A /* NetworkCacheEncoder.cpp */; };
 		E489D2901A0A2DB80078C06A /* NetworkCacheEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E489D2891A0A2DB80078C06A /* NetworkCacheEncoder.h */; };
+		E49D40D71AD3FB170066B7B9 /* NetworkCacheBlobStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E49D40D61AD3FB170066B7B9 /* NetworkCacheBlobStorage.h */; };
+		E49D40D91AD3FB210066B7B9 /* NetworkCacheBlobStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E49D40D81AD3FB210066B7B9 /* NetworkCacheBlobStorage.cpp */; };
 		ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDCA71B7128DDA8C00201B26 /* WKBundlePageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A22F1001289FCD90085E74F /* WKBundlePageOverlay.cpp */; };
 		F036978815F4BF0500C3A80E /* WebColorPicker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F036978715F4BF0500C3A80E /* WebColorPicker.cpp */; };
@@ -4059,6 +4061,8 @@
 		E489D2871A0A2DB80078C06A /* NetworkCacheDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheDecoder.h; sourceTree = "<group>"; };
 		E489D2881A0A2DB80078C06A /* NetworkCacheEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheEncoder.cpp; sourceTree = "<group>"; };
 		E489D2891A0A2DB80078C06A /* NetworkCacheEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheEncoder.h; sourceTree = "<group>"; };
+		E49D40D61AD3FB170066B7B9 /* NetworkCacheBlobStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheBlobStorage.h; sourceTree = "<group>"; };
+		E49D40D81AD3FB210066B7B9 /* NetworkCacheBlobStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheBlobStorage.cpp; sourceTree = "<group>"; };
 		F036978715F4BF0500C3A80E /* WebColorPicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorPicker.cpp; sourceTree = "<group>"; };
 		F6113E24126CE1820057D0A7 /* APIUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIUserContentURLPattern.h; sourceTree = "<group>"; };
 		F6113E26126CE19B0057D0A7 /* WKUserContentURLPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserContentURLPattern.cpp; sourceTree = "<group>"; };
@@ -7498,6 +7502,8 @@
 		E489D2821A0A2BE80078C06A /* cache */ = {
 			isa = PBXGroup;
 			children = (
+				E49D40D81AD3FB210066B7B9 /* NetworkCacheBlobStorage.cpp */,
+				E49D40D61AD3FB170066B7B9 /* NetworkCacheBlobStorage.h */,
 				E4436EBE1A0CFDB200EAD204 /* NetworkCache.cpp */,
 				E4436EBF1A0CFDB200EAD204 /* NetworkCache.h */,
 				E489D2831A0A2DB80078C06A /* NetworkCacheCoder.h */,
@@ -8149,6 +8155,7 @@
 				1AAF08A2192681D100B6390C /* WebUserContentControllerProxy.h in Headers */,
 				7C361D79192803BD0036A59D /* WebUserContentControllerProxyMessages.h in Headers */,
 				3F889D15188778C900FEADAF /* WebVideoFullscreenManagerProxy.h in Headers */,
+				E49D40D71AD3FB170066B7B9 /* NetworkCacheBlobStorage.h in Headers */,
 				29CD55AA128E294F00133C85 /* WKAccessibilityWebPageObjectBase.h in Headers */,
 				29232DF418B29D6800D0596F /* WKAccessibilityWebPageObjectMac.h in Headers */,
 				2D0730A319F9C7DA00E9D9C4 /* WKActionMenuController.h in Headers */,
@@ -9512,6 +9519,7 @@
 				CD67D30E15C08F9A00843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp in Sources */,
 				E1EE53E711F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp in Sources */,
 				BC14E109120B905E00826C0C /* InjectedBundlePageFormClient.cpp in Sources */,
+				E49D40D91AD3FB210066B7B9 /* NetworkCacheBlobStorage.cpp in Sources */,
 				CD5C66A0134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.cpp in Sources */,
 				BCA8C6A811E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.cpp in Sources */,
 				BC8147AA12F64CDA007B2C32 /* InjectedBundlePagePolicyClient.cpp in Sources */,
