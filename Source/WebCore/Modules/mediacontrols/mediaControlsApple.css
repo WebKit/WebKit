@@ -492,8 +492,6 @@ audio::-webkit-media-controls-current-time-display {
     margin-right: 8px;
     width: 32px;
     min-width: 32px;
-    -webkit-align-items: flex-end;
-    -webkit-justify-content: flex-end;
 }
 
 video::-webkit-media-controls-time-remaining-display,
@@ -502,8 +500,6 @@ audio::-webkit-media-controls-time-remaining-display {
     margin-right: 16px;
     width: 36px;
     min-width: 36px;
-    -webkit-align-items: flex-start;
-    -webkit-justify-content: flex-start;
 }
 
 video::-webkit-media-controls-time-remaining-display.five-digit-time,
