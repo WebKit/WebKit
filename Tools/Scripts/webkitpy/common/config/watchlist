@@ -222,12 +222,6 @@
             "filename": r"Source/WebCore/accessibility"
                         r"|LayoutTests/.*accessibility",
         },
-        "Cairo": {
-            "filename": r"Source/WebCore/platform/graphics/cairo",
-        },
-        "Harfbuzz": {
-            "filename": r"Source/WebCore/platform/graphics/harfbuzz",
-        },
         "PerformanceTests": {
             "filename": r"PerformanceTests"
                         r"|Tools/Scripts/webkitpy/performance_tests",
@@ -334,7 +328,6 @@
         "AppleMacPublicApi": [ "timothy@apple.com" ],
         "Battery": [ "gyuyoung.kim@webkit.org", "dchris@gmail.com" ],
         "BindingsScripts": [ "dchris@gmail.com", "cgarcia@igalia.com" ],
-        "Cairo": [ "dominik.rottsches@intel.com" ],
         "CMake": [ "rakuco@webkit.org", "gyuyoung.kim@webkit.org", "ryuan.choi@gmail.com", "sergio.correia@openbossa.org" ],
         "CoordinatedGraphics" : [ "noam@webkit.org", "zeno@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org", "ryuan.choi@gmail.com", "sergio.correia@openbossa.org", "gyuyoung.kim@webkit.org" ],
         "ConsoleUsage" : [ "mkwst@chromium.org" ],
@@ -357,7 +350,6 @@
         "GStreamerGraphics": [ "alexis@webkit.org", "pnormand@igalia.com", "gns@gnome.org", "mrobinson@webkit.org", "cgarcia@igalia.com", "calvaris@igalia.com", "vjaquez@igalia.com", "agomez@igalia.com" ],
         "GStreamerAudio": [ "pnormand@igalia.com", "dchris@gmail.com", "sergio.correia@openbossa.org", "calvaris@igalia.com", "vjaquez@igalia.com", "agomez@igalia.com" ],
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org", "mrobinson@webkit.org", "berto@igalia.com" ],
-        "Harfbuzz": [ "dominik.rottsches@intel.com" ],
         "HTML": [ "esprehn+autocc@chromium.org", "gyuyoung.kim@webkit.org" ],
         "IndexedDB": [ "alecflett@chromium.org", "jsbell@chromium.org" ],
         "Loader": [ "japhet@chromium.org" ],
@@ -373,7 +365,7 @@
         "RegionsDevelopment|RegionsExpectationsMore|RegionsExpectationsLess|RegionsUsage": [ "WebkitBugTracker@adobe.com" ],
         "Rendering": [ "esprehn+autocc@chromium.org", "glenn@skynav.com", "kondapallykalyan@gmail.com" ],
         "RenderLayers" : [ "simon.fraser@apple.com", "kondapallykalyan@gmail.com" ],
-        "SVG": ["schenney@chromium.org", "pdr@google.com", "fmalita@chromium.org", "dominik.rottsches@intel.com", "gyuyoung.kim@webkit.org", "sergio.correia@openbossa.org" ],
+        "SVG": ["schenney@chromium.org", "pdr@google.com", "fmalita@chromium.org", "gyuyoung.kim@webkit.org", "sergio.correia@openbossa.org" ],
         "SVNScripts": [ "dbates@webkit.org" ],
         "ScrollingCoordinator": [ "jamesr@chromium.org", "tonikitoo@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org" ],
         "Selectors": [ "allan.jensen@digia.com" ],
