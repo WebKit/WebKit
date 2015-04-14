@@ -342,7 +342,7 @@ void MultipartHandle::didReceiveResponse()
 {
     ResourceHandleInternal* d = m_resourceHandle->getInternal();
     if (d->client()) {
-        OwnPtr<ResourceResponse> response = ResourceResponseBase::adopt(d->m_response.copyData());
+        std::unique_ptr<ResourceResponse> response = ResourceResponseBase::adopt(d->m_response.copyData());
 
         HTTPHeaderMap::const_iterator end = m_headers.end();
         for (HTTPHeaderMap::const_iterator it = m_headers.begin(); it != end; ++it)
