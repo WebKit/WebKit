@@ -45,9 +45,9 @@
     top: -1px;
 
     display: inline-block;
-    width: 22px;
-    margin-left: 13px;
-    text-align: center;
+    width: 30px;
+    margin-right: 7px;
+    text-align: right;
 }
 
 /* An array inside an array we should reduce the padding-start. */

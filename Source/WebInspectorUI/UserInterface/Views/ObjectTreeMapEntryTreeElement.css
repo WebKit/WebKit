@@ -24,7 +24,7 @@
  */
 
 .object-tree-array-index.object-tree-map-entry > .titles > .title > .index-name {
-    width: 37px;
+    width: 40px;
     text-align: right;
     margin-right: 5px;
 }
@@ -36,4 +36,9 @@
 .object-tree-map-entry {
     padding-top: 2px;
     padding-bottom: 2px;
+    left: -2px;
+}
+
+.object-tree-property + ol .object-tree-map-entry {
+    left: -8px;
 }
