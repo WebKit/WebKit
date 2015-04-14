@@ -1,5 +1,12 @@
 2015-04-14  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Skip failling test due to list box scroll behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=143739
+
+        * platform/win/TestExpectations:
+
+2015-04-14  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed test correction after r182737.
 
         New test expectation was missing a newline at the end of the file.

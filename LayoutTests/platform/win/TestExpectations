@@ -2034,6 +2034,7 @@ fast/dom/adopt-node-crash-2.html [ Skip ] # Debug Assertion
 ################################################################################
 # Not putting 'focused' text
 fast/forms/legend-access-key.html [ Failure ]
+webkit.org/b/143739 fast/forms/listbox-visible-size.html [ Failure ]
 
 webkit.org/b/97026 fast/forms/state-restore-broken-state.html [ Failure ]
 fast/forms/select/listbox-click-on-scrollbar.html [ Failure ]
