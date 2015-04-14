@@ -15,10 +15,10 @@ FAIL canceling via the stream should fail cancel is not implemented
 PASS Running templatedRSClosed with ReadableStream (closed via call in start) 
 FAIL cancel() should return a distinct fulfilled promise each time cancel is not implemented
 PASS getReader() should be OK 
-PASS should be able to acquire multiple readers, since they are all auto-released 
+FAIL should be able to acquire multiple readers, since they are all auto-released ReadableStream is locked
 PASS Running templatedRSClosedReader with ReadableStream (closed via call in start) reader 
 FAIL read() should fulfill with { value: undefined, done: true } read is not implemented
-PASS closed should fulfill with undefined 
+TIMEOUT closed should fulfill with undefined Test timed out
 FAIL cancel() should return a distinct fulfilled promise each time cancel is not implemented
 PASS Running templatedRSClosed with ReadableStream (closed via cancel) 
 FAIL cancel() should return a distinct fulfilled promise each time cancel is not implemented

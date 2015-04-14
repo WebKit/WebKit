@@ -41,13 +41,14 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, readableStreamReaderCounter
 
 ReadableStreamReader::ReadableStreamReader(ReadableStream& stream)
     : ActiveDOMObject(stream.scriptExecutionContext())
-    , m_stream(&stream)
 {
 #ifndef NDEBUG
     readableStreamReaderCounter.increment();
 #endif
     suspendIfNeeded();
-    initialize();
+    ASSERT_WITH_MESSAGE(!stream.reader(), "A ReadableStream cannot be locked by two readers at the same time.");
+    m_stream = &stream;
+    stream.lock(*this);
 }
 
 ReadableStreamReader::~ReadableStreamReader()
@@ -61,44 +62,9 @@ ReadableStreamReader::~ReadableStreamReader()
     }
 }
 
-void ReadableStreamReader::initialize()
+void ReadableStreamReader::closed(ClosedSuccessCallback, ClosedErrorCallback)
 {
-    ASSERT_WITH_MESSAGE(!m_stream->isLocked(), "A ReadableStream cannot be locked by two readers at the same time.");
-    m_stream->lock(*this);
-    if (m_stream->internalState() == ReadableStream::State::Closed) {
-        changeStateToClosed();
-        return;
-    }
-}
-
-void ReadableStreamReader::releaseStream()
-{
-    ASSERT(m_stream);
-    m_stream->release();
-    m_stream = nullptr;
-}
-
-void ReadableStreamReader::closed(ClosedSuccessCallback successCallback, ClosedErrorCallback)
-{
-    if (m_state == State::Closed) {
-        successCallback();
-        return;
-    }
-    m_closedSuccessCallback = WTF::move(successCallback);
-}
-
-void ReadableStreamReader::changeStateToClosed()
-{
-    ASSERT(m_state == State::Readable);
-    m_state = State::Closed;
-
-    if (m_closedSuccessCallback) {
-        ClosedSuccessCallback closedSuccessCallback = WTF::move(m_closedSuccessCallback);
-        closedSuccessCallback();
-    }
-    ASSERT(!m_closedSuccessCallback);
-    releaseStream();
-    // FIXME: Implement read promise fulfilling.
+    notImplemented();    
 }
 
 const char* ReadableStreamReader::activeDOMObjectName() const

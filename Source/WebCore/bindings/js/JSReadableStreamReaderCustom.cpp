@@ -71,8 +71,9 @@ JSValue JSReadableStreamReader::closed(ExecState* exec) const
 {
     JSPromiseDeferred* promiseDeferred = getOrCreatePromiseDeferredFromObject(exec, this, globalObject(), closedPromiseSlotName());
     DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
-    auto successCallback = [wrapper]() mutable {
-        wrapper.resolve(jsUndefined());
+    auto successCallback = [this, wrapper]() mutable {
+        // FIXME: return jsUndefined().
+        wrapper.resolve(&impl());
     };
     auto failureCallback = [this, wrapper]() mutable {
         // FIXME: return stored error.

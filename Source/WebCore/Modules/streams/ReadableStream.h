@@ -68,7 +68,6 @@ public:
     State internalState() { return m_state; }
 
     void start();
-    void changeStateToClosed();
 
 protected:
     ReadableStream(ScriptExecutionContext&, Ref<ReadableStreamSource>&&);

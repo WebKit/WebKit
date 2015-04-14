@@ -58,16 +58,6 @@ ReadableStream::~ReadableStream()
 #endif
 }
 
-void ReadableStream::changeStateToClosed()
-{
-    if (m_state != State::Readable)
-        return;
-    m_state = State::Closed;
-    if (m_reader)
-        m_reader->changeStateToClosed();
-    ASSERT(!m_reader);
-}
-
 void ReadableStream::start()
 {
     notImplemented();
