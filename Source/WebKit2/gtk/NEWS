@@ -1,4 +1,18 @@
 =================
+WebKitGTK+  2.8.1
+=================
+
+What's new in WebKitGTK+ 2.8.1?
+
+  - Handle keep-alive connections in GStreamer HTTP source element.
+  - Fix a crash in DOMObjectCache when a wrapped object owned by the cache is
+    unreffed by the user.
+  - Fix rendering of drag and drop icon.
+  - Fix the build with REDIRECTED_XCOMPOSITE_WINDOW disabled in X11 platform.
+  - Fix the build with Wayland target enabled.
+  - Fix the build for HPPA.
+
+=================
 WebKitGTK+  2.8.0
 =================
 
