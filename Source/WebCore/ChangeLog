@@ -1,3 +1,14 @@
+2015-04-14  Roger Fong  <roger_fong@apple.com>
+
+        Insert volume control in correct place after exiting wireless play.
+        https://bugs.webkit.org/show_bug.cgi?id=143721.
+        <rdar://problem/20526106>
+
+        Reviewed by Darin Adler.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.updateWirelessPlaybackStatus):
+
 2015-04-14  Brady Eidson  <beidson@apple.com>
 
         Media elements not in a page shouldn't load.

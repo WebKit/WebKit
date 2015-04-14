@@ -1767,19 +1767,16 @@ Controller.prototype = {
                 this.controls.inlinePlaybackPlaceholderTextBottom.classList.remove(this.ClassNames.small);
             }
             if (this.isFullScreen())
-                this.controls.panel.removeChild(this.controls.volumeBox);
+                this.controls.volumeBox.style.display = "none";
             else
-                this.controls.panel.removeChild(this.controls.muteBox);
+                this.controls.muteBox.style.display = "none";
         } else {
             this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.hidden);
             this.controls.wirelessTargetPicker.classList.remove(this.ClassNames.playing);
-            if (this.isFullScreen()) {
-                if (!this.controls.volumeBox.parentNode)
-                    this.controls.panel.appendChild(this.controls.volumeBox);
-            } else {
-                if (!this.controls.muteBox.parentNode)
-                    this.controls.panel.appendChild(this.controls.muteBox);
-            }
+            if (this.isFullScreen())
+                this.controls.volumeBox.style.display = "-webkit-flex";
+            else
+                this.controls.muteBox.style.display = "-webkit-flex";
         }
     },
 
