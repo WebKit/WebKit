@@ -683,13 +683,13 @@ static void
 on_url_changed(void *user_data, Evas_Object *ewk_view, void *event_info)
 {
     Browser_Window *window = (Browser_Window *)user_data;
-
-    char *url = elm_entry_utf8_to_markup(ewk_view_url_get(window->ewk_view));
-    elm_entry_entry_set(window->url_bar, url);
+    const char *url = ewk_view_url_get(window->ewk_view);
+    char *converted_url = elm_entry_utf8_to_markup(url); 
+    elm_entry_entry_set(window->url_bar, converted_url);
 
     on_icon_changed_cb(ewk_context_favicon_database_get(ewk_view_context_get(ewk_view)), url, user_data);
 
-    free(url);
+    free(converted_url);
 
     search_box_hide(window);
 }

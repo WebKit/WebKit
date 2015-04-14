@@ -1,3 +1,16 @@
+2015-04-14  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] favicon wasn't updated for google.com sometimes.
+        https://bugs.webkit.org/show_bug.cgi?id=141940
+
+        Reviewed by Gyuyoung Kim.
+
+        As elm_entry_utf8_to_markup can include additional characters, parameter for the
+        on_icon_changed_cb was just set by using url string retrieved by ewk_view_url_get().
+
+        * MiniBrowser/efl/main.c:
+        (on_url_changed):
+
 2015-04-13  Tim Horton  <timothy_horton@apple.com>
 
         Add a persistent, fixed scale factor to make it easy to scale down WK(Web)Views
