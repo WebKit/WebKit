@@ -730,4 +730,190 @@ TEST_F(ContentExtensionTest, PatternMatchingTheEmptyString)
     testPatternStatus("((foo)?((.)*)(bar)*)", ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
 }
 
+TEST_F(ContentExtensionTest, MinimizingWithMoreFinalStatesThanNonFinalStates)
+{
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^h[a-z://]+\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^http://foo.com/\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^http://bar.com/\"}}]");
+
+    testRequest(backend, mainDocumentRequest("http://foo.com/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://bar.com/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("attp://foo.com/"), { });
+    testRequest(backend, mainDocumentRequest("attp://bar.com/"), { });
+
+    testRequest(backend, mainDocumentRequest("http://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("https://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bttp://webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("bttps://webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/b"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("https://webkit.org/b"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("cttp://webkit.org/B"), { });
+    testRequest(backend, mainDocumentRequest("cttps://webkit.org/B"), { });
+}
+
+TEST_F(ContentExtensionTest, StatesWithDifferentActionsAreNotUnified1)
+{
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^http://www.webkit.org/\"}},"
+        "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"^https://www.webkit.org/\"}},"
+        "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"^attps://www.webkit.org/\"}}]");
+
+    testRequest(backend, mainDocumentRequest("http://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("https://www.webkit.org/"), { ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend, mainDocumentRequest("attps://www.webkit.org/"), { ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend, mainDocumentRequest("http://www.webkit.org/a"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("https://www.webkit.org/B"), { ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend, mainDocumentRequest("attps://www.webkit.org/c"), { ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend, mainDocumentRequest("http://www.whatwg.org/"), { });
+    testRequest(backend, mainDocumentRequest("https://www.whatwg.org/"), { });
+    testRequest(backend, mainDocumentRequest("attps://www.whatwg.org/"), { });
+}
+
+TEST_F(ContentExtensionTest, StatesWithDifferentActionsAreNotUnified2)
+{
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^http://www.webkit.org/\"}},"
+        "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"^https://www.webkit.org/\"}},"
+        "{\"action\":{\"type\":\"css-display-none\", \"selector\":\"#foo\"},\"trigger\":{\"url-filter\":\"^https://www.webkit.org/\"}}]");
+
+    testRequest(backend, mainDocumentRequest("http://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("https://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend, mainDocumentRequest("https://www.whatwg.org/"), { });
+    testRequest(backend, mainDocumentRequest("attps://www.whatwg.org/"), { });
+}
+
+// The order in which transitions from the root will be processed is unpredictable.
+// To exercises the various options, this test exists in various version exchanging the transition to the final state.
+TEST_F(ContentExtensionTest, FallbackTransitionsWithDifferentiatorDoNotMerge1)
+{
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^a.a\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^b.a\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^bac\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^bbc\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^BCC\"}}]");
+
+    testRequest(backend, mainDocumentRequest("aza://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bza://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bac://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bbc://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bcc://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+
+    testRequest(backend, mainDocumentRequest("aac://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("abc://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("acc://www.webkit.org/"), { });
+
+    testRequest(backend, mainDocumentRequest("bzc://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("bzc://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("bzc://www.webkit.org/"), { });
+}
+TEST_F(ContentExtensionTest, FallbackTransitionsWithDifferentiatorDoNotMerge2)
+{
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^bac\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^bbc\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^BCC\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^a.a\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^b.a\"}}]");
+
+    testRequest(backend, mainDocumentRequest("aza://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bza://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bac://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bbc://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bcc://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+
+    testRequest(backend, mainDocumentRequest("aac://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("abc://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("acc://www.webkit.org/"), { });
+
+    testRequest(backend, mainDocumentRequest("bzc://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("bzc://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("bzc://www.webkit.org/"), { });
+}
+TEST_F(ContentExtensionTest, FallbackTransitionsWithDifferentiatorDoNotMerge3)
+{
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^a.c\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^b.c\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^baa\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^bba\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^BCA\"}}]");
+
+    testRequest(backend, mainDocumentRequest("azc://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bzc://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("baa://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bba://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bca://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+
+    testRequest(backend, mainDocumentRequest("aaa://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("aba://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("aca://www.webkit.org/"), { });
+
+    testRequest(backend, mainDocumentRequest("bza://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("bza://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("bza://www.webkit.org/"), { });
+}
+TEST_F(ContentExtensionTest, FallbackTransitionsWithDifferentiatorDoNotMerge4)
+{
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^baa\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^bba\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^BCA\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^a.c\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^b.c\"}}]");
+
+    testRequest(backend, mainDocumentRequest("azc://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bzc://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("baa://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bba://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bca://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+
+    testRequest(backend, mainDocumentRequest("aaa://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("aba://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("aca://www.webkit.org/"), { });
+
+    testRequest(backend, mainDocumentRequest("bza://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("bza://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("bza://www.webkit.org/"), { });
+}
+
+TEST_F(ContentExtensionTest, FallbackTransitionsToOtherNodeInSameGroupDoesNotDifferentiateGroup)
+{
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^aac\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^a.c\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^b.c\"}}]");
+
+    testRequest(backend, mainDocumentRequest("aac://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("abc://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("bac://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("abc://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+
+    testRequest(backend, mainDocumentRequest("aaa://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("aca://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("baa://www.webkit.org/"), { });
+}
+
+TEST_F(ContentExtensionTest, SimpleFallBackTransitionDifferentiator1)
+{
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^a.bc.de\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^a.bd.ef\"}}]");
+
+    testRequest(backend, mainDocumentRequest("abbccde://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("aabcdde://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("aabddef://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("aabddef://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+
+    testRequest(backend, mainDocumentRequest("abcde://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("abdef://www.webkit.org/"), { });
+}
+
+TEST_F(ContentExtensionTest, SimpleFallBackTransitionDifferentiator2)
+{
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^cb.\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^db.b\"}}]");
+
+    testRequest(backend, mainDocumentRequest("cba://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("cbb://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("dbab://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("dbxb://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+
+    testRequest(backend, mainDocumentRequest("cca://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("dddd://www.webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("bbbb://www.webkit.org/"), { });
+}
+
 } // namespace TestWebKitAPI

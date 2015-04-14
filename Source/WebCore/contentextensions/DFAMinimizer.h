@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DFANode_h
-#define DFANode_h
+#ifndef DFAMinimizer_h
+#define DFAMinimizer_h
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtensionsDebugging.h"
-#include <wtf/HashMap.h>
+#include "DFANode.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
 namespace ContentExtensions {
 
-// A DFANode abstract the transition table out of a DFA state. If a state is accepting, the DFANode also have
-// the actions for that state.
-
-typedef HashMap<uint16_t, unsigned, DefaultHash<uint16_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>> DFANodeTransitions;
-
-class DFANode {
+class DFAMinimizer {
 public:
-    DFANodeTransitions transitions;
-    bool hasFallbackTransition { false };
-    bool isKilled { false };
-    unsigned fallbackTransition;
-    Vector<uint64_t> actions;
-
-#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-    Vector<unsigned> correspondingNFANodes;
-#endif
+    WEBCORE_EXPORT static unsigned minimize(Vector<DFANode>& dfaGraph, unsigned rootNode);
 };
 
-}
-
+} // namespace ContentExtensions
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
 
-#endif // DFANode_h
+#endif // DFAMinimizer_h

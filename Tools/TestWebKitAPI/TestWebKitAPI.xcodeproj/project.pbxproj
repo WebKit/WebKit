@@ -24,6 +24,7 @@
 		26F52EAF18288C230023D412 /* geolocationGetCurrentPositionWithHighAccuracy.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EAE18288C040023D412 /* geolocationGetCurrentPositionWithHighAccuracy.html */; };
 		26F52EB218288F240023D412 /* geolocationWatchPosition.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EB018288F0F0023D412 /* geolocationWatchPosition.html */; };
 		26F52EB318288F240023D412 /* geolocationWatchPositionWithHighAccuracy.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EB118288F0F0023D412 /* geolocationWatchPositionWithHighAccuracy.html */; };
+		26F6E1F01ADC749B00DE696B /* DFAMinimizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F6E1EF1ADC749B00DE696B /* DFAMinimizer.cpp */; };
 		290A9BB91735F63800D71BBC /* OpenNewWindow.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290A9BB81735F42300D71BBC /* OpenNewWindow.html */; };
 		290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */; };
 		297234B7173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 297234B5173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp */; };
@@ -441,6 +442,7 @@
 		26F52EAE18288C040023D412 /* geolocationGetCurrentPositionWithHighAccuracy.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = geolocationGetCurrentPositionWithHighAccuracy.html; sourceTree = "<group>"; };
 		26F52EB018288F0F0023D412 /* geolocationWatchPosition.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = geolocationWatchPosition.html; sourceTree = "<group>"; };
 		26F52EB118288F0F0023D412 /* geolocationWatchPositionWithHighAccuracy.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = geolocationWatchPositionWithHighAccuracy.html; sourceTree = "<group>"; };
+		26F6E1EF1ADC749B00DE696B /* DFAMinimizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFAMinimizer.cpp; sourceTree = "<group>"; };
 		290A9BB51735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CloseNewWindowInNavigationPolicyDelegate.mm; sourceTree = "<group>"; };
 		290A9BB81735F42300D71BBC /* OpenNewWindow.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = OpenNewWindow.html; sourceTree = "<group>"; };
 		290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "custom-protocol-sync-xhr.html"; sourceTree = "<group>"; };
@@ -845,6 +847,7 @@
 				93A720E518F1A0E800A848E1 /* CalculationValue.cpp */,
 				7CB184C41AA3F2100066EDFD /* ContentExtensions.cpp */,
 				CD5451E919E41F9D0016936F /* CSSParser.cpp */,
+				26F6E1EF1ADC749B00DE696B /* DFAMinimizer.cpp */,
 				14464012167A8305000BD218 /* LayoutUnit.cpp */,
 				CDC2C7141797089D00E627FB /* TimeRanges.cpp */,
 				440A1D3814A0103A008A66F2 /* URL.cpp */,
@@ -1581,6 +1584,7 @@
 				7AA6A1521AAC0B31002B2ED3 /* WorkQueue.cpp in Sources */,
 				2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */,
 				7A5623111AD5AF3E0096B920 /* MenuTypesForMouseEvents.cpp in Sources */,
+				26F6E1F01ADC749B00DE696B /* DFAMinimizer.cpp in Sources */,
 				7A99D9941AD4A29D00373141 /* MenuTypesForMouseEvents.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

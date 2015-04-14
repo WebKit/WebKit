@@ -1003,16 +1003,18 @@
 		26601EBF14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 26601EBD14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		26601EC014B3B9AD0012C0FE /* PlatformEventFactoryIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26601EBE14B3B9AD0012C0FE /* PlatformEventFactoryIOS.mm */; };
 		267725FC1A5B3AD9003C24DD /* DFA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 267725F61A5B3AD9003C24DD /* DFA.cpp */; };
-		267725FD1A5B3AD9003C24DD /* DFA.h in Headers */ = {isa = PBXBuildFile; fileRef = 267725F71A5B3AD9003C24DD /* DFA.h */; };
-		267725FF1A5B3AD9003C24DD /* DFANode.h in Headers */ = {isa = PBXBuildFile; fileRef = 267725F91A5B3AD9003C24DD /* DFANode.h */; };
+		267725FD1A5B3AD9003C24DD /* DFA.h in Headers */ = {isa = PBXBuildFile; fileRef = 267725F71A5B3AD9003C24DD /* DFA.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		267725FF1A5B3AD9003C24DD /* DFANode.h in Headers */ = {isa = PBXBuildFile; fileRef = 267725F91A5B3AD9003C24DD /* DFANode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		267726001A5B3AD9003C24DD /* NFAToDFA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 267725FA1A5B3AD9003C24DD /* NFAToDFA.cpp */; };
-		267726011A5B3AD9003C24DD /* NFAToDFA.h in Headers */ = {isa = PBXBuildFile; fileRef = 267725FB1A5B3AD9003C24DD /* NFAToDFA.h */; };
+		267726011A5B3AD9003C24DD /* NFAToDFA.h in Headers */ = {isa = PBXBuildFile; fileRef = 267725FB1A5B3AD9003C24DD /* NFAToDFA.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		267726041A5DF6F2003C24DD /* URLFilterParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 267726021A5DF6F2003C24DD /* URLFilterParser.cpp */; };
 		267726051A5DF6F2003C24DD /* URLFilterParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 267726031A5DF6F2003C24DD /* URLFilterParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		269239961505E1AA009E57FC /* JSIDBVersionChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 269239921505E1AA009E57FC /* JSIDBVersionChangeEvent.h */; };
 		269397221A4A412F00E8349D /* NFANode.h in Headers */ = {isa = PBXBuildFile; fileRef = 269397201A4A412F00E8349D /* NFANode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		269397241A4A5B6400E8349D /* NFA.h in Headers */ = {isa = PBXBuildFile; fileRef = 269397231A4A5B6400E8349D /* NFA.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		269397261A4A5FBD00E8349D /* NFA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 269397251A4A5FBD00E8349D /* NFA.cpp */; };
+		26A517FD1AB92238006335DF /* DFAMinimizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26A517FB1AB92238006335DF /* DFAMinimizer.cpp */; };
+		26A517FE1AB92238006335DF /* DFAMinimizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 26A517FC1AB92238006335DF /* DFAMinimizer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		26AA0F9E18D2A18B00419381 /* SelectorPseudoElementTypeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26AA0F9D18D2A18B00419381 /* SelectorPseudoElementTypeMap.cpp */; };
 		26B9998F1803AE7200D01121 /* RegisterAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 26B9998E1803AE7200D01121 /* RegisterAllocator.h */; };
 		26B999911803B3C900D01121 /* StackAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 26B999901803B3C900D01121 /* StackAllocator.h */; };
@@ -8102,6 +8104,8 @@
 		269397201A4A412F00E8349D /* NFANode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NFANode.h; sourceTree = "<group>"; };
 		269397231A4A5B6400E8349D /* NFA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NFA.h; sourceTree = "<group>"; };
 		269397251A4A5FBD00E8349D /* NFA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NFA.cpp; sourceTree = "<group>"; };
+		26A517FB1AB92238006335DF /* DFAMinimizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFAMinimizer.cpp; sourceTree = "<group>"; };
+		26A517FC1AB92238006335DF /* DFAMinimizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFAMinimizer.h; sourceTree = "<group>"; };
 		26AA0F9918D2973D00419381 /* makeSelectorPseudoElementsMap.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = makeSelectorPseudoElementsMap.py; sourceTree = "<group>"; };
 		26AA0F9A18D2973D00419381 /* SelectorPseudoElementTypeMap.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SelectorPseudoElementTypeMap.in; sourceTree = "<group>"; };
 		26AA0F9D18D2A18B00419381 /* SelectorPseudoElementTypeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorPseudoElementTypeMap.cpp; sourceTree = "<group>"; };
@@ -15535,6 +15539,8 @@
 				5C39305F1AA0F6A90029C816 /* DFABytecodeCompiler.h */,
 				5C3930601AA0F6A90029C816 /* DFABytecodeInterpreter.cpp */,
 				5C3930611AA0F6A90029C816 /* DFABytecodeInterpreter.h */,
+				26A517FB1AB92238006335DF /* DFAMinimizer.cpp */,
+				26A517FC1AB92238006335DF /* DFAMinimizer.h */,
 				267725F91A5B3AD9003C24DD /* DFANode.h */,
 				269397251A4A5FBD00E8349D /* NFA.cpp */,
 				269397231A4A5B6400E8349D /* NFA.h */,
@@ -23659,6 +23665,7 @@
 				316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */,
 				316FE1140E6E1DA700BF6088 /* AnimationController.h in Headers */,
 				0F15DA8A0F3AAEE70000CE47 /* AnimationControllerPrivate.h in Headers */,
+				26A517FE1AB92238006335DF /* DFAMinimizer.h in Headers */,
 				5CBC8DAD1AAA302200E1C803 /* MediaAccessibilitySoftLink.h in Headers */,
 				49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */,
 				6C568CB119DAFEA000430CA2 /* MaskImageOperation.h in Headers */,
@@ -30363,6 +30370,7 @@
 				A833C7CC0A2CF07400D57664 /* XLinkNames.cpp in Sources */,
 				00B9318713BA8DB30035A948 /* XMLDocumentParser.cpp in Sources */,
 				00B9318913BA8DBC0035A948 /* XMLDocumentParserLibxml2.cpp in Sources */,
+				26A517FD1AB92238006335DF /* DFAMinimizer.cpp in Sources */,
 				00B9318B13BA8DC90035A948 /* XMLDocumentParserScope.cpp in Sources */,
 				59C28045138DC2410079B7E2 /* XMLErrors.cpp in Sources */,
 				BC772C460C4EB2C60083285F /* XMLHttpRequest.cpp in Sources */,

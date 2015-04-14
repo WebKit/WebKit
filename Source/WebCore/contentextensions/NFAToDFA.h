@@ -39,7 +39,7 @@ class NFA;
 // NFAToDFA provides a way to build a DFA corresponding to a NFA.
 class NFAToDFA {
 public:
-    static DFA convert(NFA&);
+    WEBCORE_EXPORT static DFA convert(NFA&);
 };
 
 }

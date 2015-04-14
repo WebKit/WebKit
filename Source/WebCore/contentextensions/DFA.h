@@ -37,7 +37,7 @@ namespace WebCore {
 namespace ContentExtensions {
 
 // The DFA abstract a partial DFA graph in a compact form.
-class DFA {
+class WEBCORE_EXPORT DFA {
 public:
     DFA();
     DFA(Vector<DFANode>&& nodes, unsigned rootIndex);
@@ -49,6 +49,8 @@ public:
     unsigned size() const { return m_nodes.size(); }
     const DFANode& nodeAt(unsigned i) const { return m_nodes[i]; }
     DFANode& nodeAt(unsigned i) { return m_nodes[i]; }
+
+    void minimize();
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
     void debugPrintDot() const;

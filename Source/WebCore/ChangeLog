@@ -1,3 +1,152 @@
+2015-04-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add a conservative DFA minimizer for the content extension matcher
+        https://bugs.webkit.org/show_bug.cgi?id=143501
+
+        Reviewed by Alex Christensen.
+
+        This patch adds a simple minimizer for DFA graphs. It is not a perfect minimizer:
+        some indistinguishable are not merged, but no two distinguishable are merged.
+
+        The general idea of the algorithm is to put all the state into a single set
+        and partition iteratively until it is impossible to split any subset by using
+        a transition to distinguish two states.
+
+        Let's ignore fallback transition for now, and I'll explain later how they fit in
+        the big picture.
+
+
+        The first thing we do is create a partition of the transition by grouping every
+        transition by the same character in the same subset. This partition of transitions
+        is the base by which we will partition the states.
+
+        Each subset in the transition partition is a "distinguisher" by which we can
+        separate the state partition.
+
+        We also create a second partition, the state partition. This is where we keep
+        all the subsets of states that have been split so far.
+
+        Let say we have the following graph.
+
+            1 --a--> 2
+            1 --b--> 3
+            2 --c--> 4 (final)
+            3 --c--> 4 (final)
+
+        The partition of transition would start with:
+        Set 0:
+            1 --a--> 2
+        Set 1:
+            1 --b--> 3
+        Set 2:
+            2 --c--> 4
+            3 --c--> 4
+
+        The state partition would have a single set with { 1, 2, 3, 4 }.
+
+
+        Next, we split the state partition by distinguishable final states. In this case,
+        we would split it into { 1, 2, 3 }, { 4 }.
+
+        We then refine the transition partition by splitting it by the states that have
+        been distinguished. Here, the only transitions to 4 are both is the same set (set 2),
+        so the transition partition remains the same.
+
+
+        We can now execute the main loop of the algorithm:
+        1) Split the states by the transitions.
+        2) Split the transitions that are now reaching two different sets of the state partition.
+        3) Add any newly discovered "distinguisher" (the ones we split) to the list of "distinguisher"
+           to process.
+
+        In this case, we just iterate over the partition set in order, and add newly split transitions
+        to the end of the list.
+
+        In the example, we would first visit set 0. We have that state 1 is distinguishable
+        by "a", and the state partition would become { 1 }, { 2, 3 }, { 4 }.
+
+        We then visit transition set 1, it distinguishes state 1 which is already alone -> nothing to do.
+
+        Finally, we process the transition set 2, it distinguishes 2 and 3, they are already in the same
+        set -> nothing to do.
+
+        There is no more transition to process, we have 3 unique subsets and we should merge 2 and 3.
+
+        ---
+
+        Okay, now how to we fit fallback transition in this model. In this patch, I take the conservative
+        approach: we split everything assuming fallback transition do not exist, then we refine
+        by the fallback transitions.
+
+        Let's take the following example:
+            1 --a--> 3
+            2 --a--> 3
+            1 -[f]-> 4
+            2 -[f]-> 5
+
+        and at this stage in the algorithm, we have the sets { 1, 2 }, { 3 }, { 4 }, { 5 }.
+        The states 1 and 2 are together because they cannot be distinguished by 'a', but
+        the fallback transition distinguishes them.
+
+        Since we have done every other split, we have one useful property: we know that every
+        state in every set transition with the exact set of characters within that set.
+        If that was not true, there would be one "distinguisher" 'x' that could spit the set
+        into two subsets: the one with the transition 'x' and the ones without.
+
+        Since all the transitions are the same, there is no overlap between the defined transition
+        and the fallback transition. Consequently, we can use the fallback transition as a whole
+        transition and use it to distinguish the states.
+
+        The fallback transitions are handled like any other transition, we have a partition of such
+        transitions and split by each of them. BUT, we can only use them after every unique transition
+        has been covered.
+
+        This trick is also what makes the minimization imperfect: it should be possible to merge
+        states with overlap in their fallback transitions but we would split them.
+
+        ---
+
+        Antti Valmari, Petri Lehtinen, Marie-Pierre Béal and Maxime Crochemore deserve credit for their indirect
+        work on this patch. Thanks for your wonderful papers about DFA minimization.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/DFA.cpp:
+        (WebCore::ContentExtensions::DFA::minimize):
+        (WebCore::ContentExtensions::DFA::debugPrintDot):
+        * contentextensions/DFA.h:
+        * contentextensions/DFABytecodeCompiler.cpp:
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compileNode):
+        * contentextensions/DFAMinimizer.cpp: Added.
+        (WebCore::ContentExtensions::DFAMinimizer::simplifyTransitions):
+        (WebCore::ContentExtensions::DFAMinimizer::Partition::initialize):
+        (WebCore::ContentExtensions::DFAMinimizer::Partition::markElementInCurrentGeneration):
+        (WebCore::ContentExtensions::DFAMinimizer::Partition::refineGeneration):
+        (WebCore::ContentExtensions::DFAMinimizer::Partition::iterateSet):
+        (WebCore::ContentExtensions::DFAMinimizer::Partition::setIndex):
+        (WebCore::ContentExtensions::DFAMinimizer::Partition::firstElementInSet):
+        (WebCore::ContentExtensions::DFAMinimizer::Partition::size):
+        (WebCore::ContentExtensions::DFAMinimizer::Partition::SetDescriptor::indexAfterMarkedElements):
+        (WebCore::ContentExtensions::DFAMinimizer::Partition::SetDescriptor::end):
+        (WebCore::ContentExtensions::DFAMinimizer::FullGraphPartition::FullGraphPartition):
+        (WebCore::ContentExtensions::DFAMinimizer::FullGraphPartition::markNode):
+        (WebCore::ContentExtensions::DFAMinimizer::FullGraphPartition::refinePartitions):
+        (WebCore::ContentExtensions::DFAMinimizer::FullGraphPartition::splitByUniqueTransitions):
+        (WebCore::ContentExtensions::DFAMinimizer::FullGraphPartition::splitByFallbackTransitions):
+        (WebCore::ContentExtensions::DFAMinimizer::FullGraphPartition::nodeReplacement):
+        (WebCore::ContentExtensions::DFAMinimizer::ActionKey::ActionKey):
+        (WebCore::ContentExtensions::DFAMinimizer::ActionKey::isEmptyValue):
+        (WebCore::ContentExtensions::DFAMinimizer::ActionKey::isDeletedValue):
+        (WebCore::ContentExtensions::DFAMinimizer::ActionKeyHash::hash):
+        (WebCore::ContentExtensions::DFAMinimizer::ActionKeyHash::equal):
+        (WebCore::ContentExtensions::DFAMinimizer::minimize):
+        * contentextensions/DFAMinimizer.h: Copied from Source/WebCore/contentextensions/DFA.h.
+        * contentextensions/DFANode.h:
+        * contentextensions/NFAToDFA.cpp:
+        (WebCore::ContentExtensions::NFAToDFA::convert):
+        (WebCore::ContentExtensions::simplifyTransitions): Deleted.
+
 2015-04-14  Chris Dumez  <cdumez@apple.com>
 
         ASSERT(frame().view() == this) assertion hit in FrameView::windowClipRect() on Windows bots

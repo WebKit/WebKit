@@ -28,6 +28,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "DFAMinimizer.h"
 #include <wtf/DataLog.h>
 
 namespace WebCore {
@@ -57,6 +58,11 @@ DFA& DFA::operator=(const DFA& dfa)
     m_nodes = dfa.m_nodes;
     m_root = dfa.m_root;
     return *this;
+}
+
+void DFA::minimize()
+{
+    m_root = DFAMinimizer::minimize(m_nodes, m_root);
 }
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
@@ -129,6 +135,9 @@ void DFA::debugPrintDot() const
     dataLogF("    node [shape=circle];\n");
     dataLogF("    {\n");
     for (unsigned i = 0; i < m_nodes.size(); ++i) {
+        if (m_nodes[i].isKilled)
+            continue;
+
         dataLogF("         %d [label=<Node %d", i, i);
         const Vector<uint64_t>& actions = m_nodes[i].actions;
         if (!actions.isEmpty()) {
