@@ -35,10 +35,10 @@
             el.focus();
             var step = function() {
                 var value = el.value;
-                if (value) {
+                if (el.value)
                     el.value = value.substr(0, value.length - 1);
+                if (el.value)
                     window.setTimeout(step, 10);
-                }
                 else if (window.testRunner)
                     testRunner.notifyDone();
             };
