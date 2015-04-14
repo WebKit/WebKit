@@ -785,6 +785,8 @@ private:
     bool m_visualUpdatesAllowedByClient;
     
     ScrollPinningBehavior m_scrollPinningBehavior;
+
+    IntRect* m_cachedWindowClipRect { nullptr };
 };
 
 inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)
