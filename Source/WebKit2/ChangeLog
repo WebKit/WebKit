@@ -1,3 +1,19 @@
+2015-04-13  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL][GTK] Fix build break after r182753 
+        https://bugs.webkit.org/show_bug.cgi?id=143689
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::processMessage):
+        (IPC::Connection::sendOutgoingMessage):
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::allocate):
+        (WebKit::accessModeMMap):
+        (WebKit::SharedMemory::map):
+        (WebKit::SharedMemory::create): Deleted.
+
 2015-04-13  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.

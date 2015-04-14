@@ -249,7 +249,7 @@ bool Connection::processMessage()
         WebKit::SharedMemory::Handle handle;
         handle.adoptFromAttachment(m_fileDescriptors[attachmentFileDescriptorCount - 1], attachmentInfo[attachmentCount].getSize());
 
-        oolMessageBody = WebKit::SharedMemory::create(handle, WebKit::SharedMemory::ReadOnly);
+        oolMessageBody = WebKit::SharedMemory::map(handle, WebKit::SharedMemory::Protection::ReadOnly);
         if (!oolMessageBody) {
             ASSERT_NOT_REACHED();
             return false;
@@ -433,12 +433,12 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
     MessageInfo messageInfo(encoder->bufferSize(), attachments.size());
     size_t messageSizeWithBodyInline = sizeof(messageInfo) + (attachments.size() * sizeof(AttachmentInfo)) + encoder->bufferSize();
     if (messageSizeWithBodyInline > messageMaxSize && encoder->bufferSize()) {
-        RefPtr<WebKit::SharedMemory> oolMessageBody = WebKit::SharedMemory::create(encoder->bufferSize());
+        RefPtr<WebKit::SharedMemory> oolMessageBody = WebKit::SharedMemory::allocate(encoder->bufferSize());
         if (!oolMessageBody)
             return false;
 
         WebKit::SharedMemory::Handle handle;
-        if (!oolMessageBody->createHandle(handle, WebKit::SharedMemory::ReadOnly))
+        if (!oolMessageBody->createHandle(handle, WebKit::SharedMemory::Protection::ReadOnly))
             return false;
 
         messageInfo.setMessageBodyIsOutOfLine();

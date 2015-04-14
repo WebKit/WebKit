@@ -102,7 +102,7 @@ void SharedMemory::Handle::adoptFromAttachment(int fileDescriptor, size_t size)
     m_size = size;
 }
 
-PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
+RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 {
     CString tempName;
 
@@ -147,9 +147,9 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 static inline int accessModeMMap(SharedMemory::Protection protection)
 {
     switch (protection) {
-    case SharedMemory::ReadOnly:
+    case SharedMemory::Protection::ReadOnly:
         return PROT_READ;
-    case SharedMemory::ReadWrite:
+    case SharedMemory::Protection::ReadWrite:
         return PROT_READ | PROT_WRITE;
     }
 
@@ -157,7 +157,7 @@ static inline int accessModeMMap(SharedMemory::Protection protection)
     return PROT_READ | PROT_WRITE;
 }
 
-PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection protection)
+RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protection)
 {
     ASSERT(!handle.isNull());
 
