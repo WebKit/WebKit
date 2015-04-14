@@ -64,6 +64,21 @@ JSValue getInternalSlotFromObject(ExecState* exec, JSValue objectValue, PrivateN
     return propertySlot.getValue(exec, propertyName);
 }
 
+// This slot name is used to store the JSReadableStream in created JS functions (enqueue, close...).
+// This allows retrieving the corresponding JSReadableStream when executing the JS function.
+static JSC::PrivateName& readableStreamSlotName()
+{
+    static NeverDestroyed<JSC::PrivateName> readableStreamSlotName("readableStream");
+    return readableStreamSlotName;
+}
+
+static ReadableJSStream& getReadableJSStream(ExecState* exec)
+{
+    JSReadableStream* jsReadableStream = jsDynamicCast<JSReadableStream*>(getInternalSlotFromObject(exec, exec->callee(), readableStreamSlotName()));
+    ASSERT(jsReadableStream);
+    return static_cast<ReadableJSStream&>(jsReadableStream->impl());
+}
+
 static inline JSValue getPropertyFromObject(ExecState* exec, JSObject* object, const char* identifier)
 {
     return object->get(exec, Identifier::fromString(exec, identifier));
@@ -106,9 +121,17 @@ static inline JSFunction* createReadableStreamEnqueueFunction(ExecState* exec)
     return JSFunction::create(exec->vm(), exec->callee()->globalObject(), 1, String(), notImplementedFunction);
 }
 
-static inline JSFunction* createReadableStreamCloseFunction(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL closeReadableStreamFunction(ExecState* exec)
 {
-    return JSFunction::create(exec->vm(), exec->callee()->globalObject(), 0, String(), notImplementedFunction);
+    getReadableJSStream(exec).changeStateToClosed();
+    return JSValue::encode(jsUndefined());
+}
+
+static inline JSFunction* createReadableStreamCloseFunction(ExecState* exec, JSReadableStream* readableStream)
+{
+    JSFunction* closeFunction = JSFunction::create(exec->vm(), exec->callee()->globalObject(), 0, String(), closeReadableStreamFunction);
+    setInternalSlotToObject(exec, closeFunction, readableStreamSlotName(), readableStream);
+    return closeFunction;
 }
 
 static inline JSFunction* createReadableStreamErrorFunction(ExecState* exec)
@@ -124,10 +147,10 @@ static void startReadableStreamAsync(ReadableStream& readableStream)
     });
 }
 
-static inline JSObject* createReadableStreamController(JSC::ExecState* exec)
+static inline JSObject* createReadableStreamController(JSC::ExecState* exec, JSReadableStream* readableStream)
 {
     JSFunction* enqueueFunction = createReadableStreamEnqueueFunction(exec);
-    JSFunction* closeFunction = createReadableStreamCloseFunction(exec);
+    JSFunction* closeFunction = createReadableStreamCloseFunction(exec, readableStream);
     JSFunction* errorFunction = createReadableStreamErrorFunction(exec);
 
     JSObject* controller =  JSFinalObject::create(exec->vm(), JSFinalObject::createStructure(exec->vm(), exec->callee()->globalObject(), jsNull(), 3));
@@ -141,7 +164,7 @@ void ReadableStreamJSSource::start(JSC::ExecState* exec, JSReadableStream* reada
 {
     JSLockHolder lock(exec);
 
-    m_controller.set(exec->vm(), createReadableStreamController(exec));
+    m_controller.set(exec->vm(), createReadableStreamController(exec, readableStream));
 
     JSValue startFunction = getPropertyFromObject(exec, m_source.get(), "start");
     if (!startFunction.isFunction()) {

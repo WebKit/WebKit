@@ -1,3 +1,43 @@
+2015-04-14  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] ReadableStream constructor start function should be able to close the stream
+        https://bugs.webkit.org/show_bug.cgi?id=143363
+
+        Reviewed by Benjamin Poulain.
+
+        Implements https://streams.spec.whatwg.org/#close-readable-stream.
+        When the "close" JS function is called, the stream is getting closed.
+        The stream state is changed to close and if it has a reader, the reader gets closed as well:
+        The reader resolves the closed promise and release the stream.
+
+        Enabled the possibility to resolve a promise with any JS value.
+        This is used to resolve closed promise with jsUndefined and will be used for read promises.
+
+        Covered by reference tests that are now passing.
+
+        * Modules/streams/ReadableStream.cpp:
+        (WebCore::ReadableStream::changeStateToClosed): Called by the JS function 'close'.
+        * Modules/streams/ReadableStream.h:
+        * Modules/streams/ReadableStreamReader.cpp:
+        (WebCore::ReadableStreamReader::ReadableStreamReader):
+        (WebCore::ReadableStreamReader::initialize): Added to handle state change at constructor time (in particular closed/errored state).
+        (WebCore::ReadableStreamReader::releaseStream):
+        (WebCore::ReadableStreamReader::closed): Storing the closed promise callbacks.
+        (WebCore::ReadableStreamReader::changeStateToClosed): Resolution of closed promise.
+        * Modules/streams/ReadableStreamReader.h:
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DeferredWrapper::resolve<JSC::JSValue>):
+        * bindings/js/JSReadableStreamReaderCustom.cpp:
+        (WebCore::JSReadableStreamReader::closed):
+        * bindings/js/ReadableStreamJSSource.cpp:
+        (WebCore::readableStreamSlotName):
+        (WebCore::getReadableJSStream): Helper function to retrieve the stream from the exec state.
+        (WebCore::closeReadableStreamFunction):
+        (WebCore::createReadableStreamCloseFunction):
+        (WebCore::createReadableStreamController):
+        (WebCore::ReadableStreamJSSource::start):
+        (WebCore::ReadableJSStreamReader::ReadableJSStreamReader): Deleted.
+
 2015-04-13  Joonghun Park  <jh718.park@samsung.com>
 
         Use modern for-loops in Document

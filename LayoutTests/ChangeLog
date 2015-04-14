@@ -1,3 +1,15 @@
+2015-04-14  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] ReadableStream constructor start function should be able to close the stream
+        https://bugs.webkit.org/show_bug.cgi?id=143363
+
+        Reviewed by Benjamin Poulain.
+
+        Rebased tests as some are now passing.
+
+        * streams/reference-implementation/readable-stream-reader-expected.txt:
+        * streams/reference-implementation/readable-stream-templated-expected.txt:
+
 2015-04-14  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         [GTK] Gardening 14th April
