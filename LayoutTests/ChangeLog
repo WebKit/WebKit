@@ -1,3 +1,25 @@
+2015-04-14  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar <calvaris@igalia.com>
+
+        Sync Streams API tests with spec
+        https://bugs.webkit.org/show_bug.cgi?id=143669
+
+        Reviewed by Darin Adler.
+
+        Some tests were moved from the spec tests to our custom ones
+        because they were not approved (yet, or they won't be).
+
+        Some nuances from the spec tests were also fixed.
+
+        * streams/readable-stream-expected.txt: Added.
+        * streams/readable-stream-reader-expected.txt: Added.
+        * streams/readable-stream-reader.html: Added.
+        * streams/readable-stream.html: Added.
+        * streams/reference-implementation/readable-stream-expected.txt:
+        * streams/reference-implementation/readable-stream-reader-expected.txt:
+        * streams/reference-implementation/readable-stream-reader.html:
+        * streams/reference-implementation/readable-stream.html: Nuances
+        fixed and tests moved to custom.
+
 2015-04-13  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Columns set in percentages collapse to auto width

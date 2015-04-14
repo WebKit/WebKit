@@ -1,17 +1,13 @@
 
 FAIL ReadableStream can be constructed with no errors ReadableStream constructor should get an object as argument.
-PASS ReadableStream can't be constructed with garbage 
-FAIL ReadableStream instances should have the correct list of properties assert_array_equals: lengths differ, expected 6 got 5
-PASS ReadableStream constructor should get a function as start argument 
-FAIL ReadableStream start should be called with the proper parameters null is not an object (evaluating 'Object.getOwnPropertyNames(Object.getPrototypeOf(controller))')
-FAIL ReadableStream start controller parameter should be updatable null is not an object (evaluating 'Object.getOwnPropertyNames(Object.getPrototypeOf(controller))')
-PASS ReadableStream should be able to call start method within prototype chain of its source 
+FAIL ReadableStream instances should have the correct list of properties assert_array_equals: should have all the correct methods lengths differ, expected 6 got 5
+PASS ReadableStream constructor should throw for non-function start arguments 
 PASS ReadableStream constructor can get initial garbage as cancel argument 
 PASS ReadableStream constructor can get initial garbage as pull argument 
 PASS ReadableStream constructor can get initial garbage as strategy argument 
 FAIL ReadableStream start should be able to return a promise read is not implemented
 TIMEOUT ReadableStream start should be able to return a promise and reject it Test timed out
-FAIL ReadableStream should be able to queue different objects. read is not implemented
+FAIL ReadableStream should be able to enqueue different objects. read is not implemented
 PASS ReadableStream: if start throws an error, it should be re-thrown 
 FAIL ReadableStream: if pull rejects, it should error the stream read is not implemented
 FAIL ReadableStream: should only call pull once upon starting the stream assert_equals: pull should be called once start finishes expected 1 but got 0
