@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,272) size 364x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 80x17
                 text run at (2,2) width 80: "Outer Table:"
-              RenderBR {BR} at (82,16) size 0x0
+              RenderBR {BR} at (82,286) size 0x0
               RenderText {#text} at (2,19) size 327x17
                 text run at (2,19) width 327: "<table border=\"1\" width=\"100%\" height=\"100%\">"
             RenderTableCell {TD} at (368,2) size 412x578 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
@@ -19,10 +19,10 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (2,258) size 366x55 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 88x17
                         text run at (2,2) width 88: "Nested Table:"
-                      RenderBR {BR} at (90,16) size 0x0
+                      RenderBR {BR} at (90,272) size 0x0
                       RenderText {#text} at (2,19) size 327x17
                         text run at (2,19) width 327: "<table border=\"1\" width=\"100%\" height=\"100%\">"
-                      RenderBR {BR} at (329,33) size 0x0
+                      RenderBR {BR} at (329,289) size 0x0
                       RenderText {#text} at (2,36) size 133x17
                         text run at (2,36) width 133: "<td height=\"100%\">"
                     RenderTableCell {TD} at (370,275) size 34x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]

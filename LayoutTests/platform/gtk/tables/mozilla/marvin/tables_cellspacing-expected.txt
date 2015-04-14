@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
           text run at (0,17) width 250: "the second table isn't using cellspacing. "
           text run at (250,17) width 492: "Notice the difference here. The first table should be rendered with a wider gap"
           text run at (0,34) width 116: "between the cells. "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (116,48) size 0x0
       RenderTable {TABLE} at (0,51) size 258x83
         RenderTableSection {TBODY} at (0,0) size 258x83
           RenderTableRow {TR} at (0,15) size 258x19

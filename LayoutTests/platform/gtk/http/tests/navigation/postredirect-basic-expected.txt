@@ -6,18 +6,18 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 747x72
         text run at (0,0) width 747: "This is just a minimal page that we navigate in response to"
         text run at (0,36) width 222: "an HTTP POST. "
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (222,65) size 0x0
       RenderBR {BR} at (0,72) size 0x36
       RenderText {#text} at (0,108) size 763x108
         text run at (0,108) width 743: "If the next line is empty after the colon, it probably means"
         text run at (0,144) width 178: "that we made "
         text run at (178,144) width 585: "a mistake and requested this page with a GET"
         text run at (0,180) width 436: "with no query instead of a POST. "
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (436,209) size 0x0
       RenderBR {BR} at (0,216) size 0x36
       RenderText {#text} at (0,252) size 709x36
         text run at (0,252) width 709: "The first text field contained: New form text from user "
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (709,281) size 0x0
       RenderText {#text} at (0,288) size 575x36
         text run at (0,288) width 575: "This page was requested with an HTTP GET"
 

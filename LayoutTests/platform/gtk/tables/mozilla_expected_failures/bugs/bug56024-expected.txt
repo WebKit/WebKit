@@ -16,7 +16,7 @@ layer at (0,0) size 800x92
                         text run at (1,18) width 295: "Al Gore are expected to show a kinder, gentler"
                         text run at (1,35) width 242: "side Wednesday in the second of three"
                         text run at (1,52) width 180: "nationally televised debates. "
-                      RenderBR {BR} at (181,66) size 0x0
+                      RenderBR {BR} at (181,52) size 0x17
             RenderTableCell {TD} at (302,2) size 96x70 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderBlock (anonymous) at (1,1) size 94x68
                 RenderInline {FONT} at (0,0) size 83x68 [color=#CC3333]

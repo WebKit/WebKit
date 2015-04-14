@@ -15,10 +15,10 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (101,5) size 86x38 [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=1]
               RenderText {#text} at (2,2) size 78x17
                 text run at (2,2) width 78: "img-features"
-              RenderBR {BR} at (80,16) size 0x0
+              RenderBR {BR} at (80,19) size 0x0
               RenderText {#text} at (2,19) size 82x17
                 text run at (2,19) width 82: "img-holidays"
-              RenderBR {BR} at (84,33) size 0x0
+              RenderBR {BR} at (84,36) size 0x0
           RenderTableRow {TR} at (0,25) size 189x21
             RenderTableCell {TD} at (2,25) size 97x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 93x17
