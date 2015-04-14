@@ -1,5 +1,16 @@
 2015-04-13  Alexey Proskuryakov  <ap@apple.com>
 
+        Build fixes after r182772.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateAutomaticallyComputedFixedLayoutSize]): Make a CGSize, not an NSSize.
+        (-[WKView _setAutomaticallyComputesFixedLayoutSizeFromViewScale:]): Moved implementation
+        to the correct place.
+        (-[WKView _automaticallyComputesFixedLayoutSizeFromViewScale]): Ditto.
+        (-[WKView _layoutMode]): Use a memeber from _data directly, not via a method.
+
+2015-04-13  Alexey Proskuryakov  <ap@apple.com>
+
         More build fix.
 
         * UIProcess/mac/PageClientImpl.mm:

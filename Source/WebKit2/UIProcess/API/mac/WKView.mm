@@ -567,7 +567,7 @@ struct WKViewInterpretKeyEventsParameters {
 {
     ASSERT(_data->_automaticallyComputesFixedLayoutSizeFromViewScale);
     CGFloat inverseScale = 1 / _data->_page->viewScaleFactor();
-    [self _setFixedLayoutSize:NSMakeSize(self.frame.size.width * inverseScale, self.frame.size.height * inverseScale)];
+    [self _setFixedLayoutSize:CGSizeMake(self.frame.size.width * inverseScale, self.frame.size.height * inverseScale)];
 }
 
 - (void)_updateWindowAndViewFrames
@@ -3981,6 +3981,24 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
+- (void)_setAutomaticallyComputesFixedLayoutSizeFromViewScale:(BOOL)automaticallyComputesFixedLayoutSizeFromViewScale
+{
+    if (_data->_automaticallyComputesFixedLayoutSizeFromViewScale == automaticallyComputesFixedLayoutSizeFromViewScale)
+        return;
+
+    _data->_automaticallyComputesFixedLayoutSizeFromViewScale = automaticallyComputesFixedLayoutSizeFromViewScale;
+
+    if (!_data->_automaticallyComputesFixedLayoutSizeFromViewScale)
+        return;
+
+    [self _updateAutomaticallyComputedFixedLayoutSize];
+}
+
+- (BOOL)_automaticallyComputesFixedLayoutSizeFromViewScale
+{
+    return _data->_automaticallyComputesFixedLayoutSizeFromViewScale;
+}
+
 @end
 
 @implementation WKView (Private)
@@ -4365,7 +4383,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 {
     if (_data->_page->useFixedLayout()) {
 #if PLATFORM(MAC)
-        if (self._automaticallyComputesFixedLayoutSizeFromViewScale)
+        if (_data->_automaticallyComputesFixedLayoutSizeFromViewScale)
             return kWKLayoutModeDynamicSizeComputedFromViewScale;
 #endif
         return kWKLayoutModeFixedSize;
@@ -4677,24 +4695,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 }
 
 #endif
-
-- (void)_setAutomaticallyComputesFixedLayoutSizeFromViewScale:(BOOL)automaticallyComputesFixedLayoutSizeFromViewScale
-{
-    if (_data->_automaticallyComputesFixedLayoutSizeFromViewScale == automaticallyComputesFixedLayoutSizeFromViewScale)
-        return;
-
-    _data->_automaticallyComputesFixedLayoutSizeFromViewScale = automaticallyComputesFixedLayoutSizeFromViewScale;
-
-    if (!_data->_automaticallyComputesFixedLayoutSizeFromViewScale)
-        return;
-
-    [self _updateAutomaticallyComputedFixedLayoutSize];
-}
-
-- (BOOL)_automaticallyComputesFixedLayoutSizeFromViewScale
-{
-    return _data->_automaticallyComputesFixedLayoutSizeFromViewScale;
-}
 
 @end
 
