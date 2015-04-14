@@ -2140,10 +2140,23 @@ void FrameView::scrollPositionChanged(const IntPoint& oldPosition, const IntPoin
 
 void FrameView::resumeVisibleImageAnimationsIncludingSubframes()
 {
-    // A change in scroll position may affect image visibility in subframes.
-    for (auto* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
-        if (auto* renderView = frame->contentRenderer())
-            renderView->resumePausedImageAnimationsIfNeeded();
+    auto* renderView = frame().contentRenderer();
+    if (!renderView)
+        return;
+
+    IntRect windowClipRect = this->windowClipRect();
+    auto visibleRect = windowToContents(windowClipRect);
+    if (visibleRect.isEmpty())
+        return;
+
+    // Resume paused image animations in this frame.
+    renderView->resumePausedImageAnimationsIfNeeded(visibleRect);
+
+    // Recursive call for subframes. We cache the current FrameView's windowClipRect to avoid recomputing it for every subframe.
+    TemporaryChange<IntRect*> windowClipRectCache(m_cachedWindowClipRect, &windowClipRect);
+    for (Frame* childFrame = frame().tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
+        if (auto* childView = childFrame->view())
+            childView->resumeVisibleImageAnimationsIncludingSubframes();
     }
 }
 
@@ -3265,6 +3278,9 @@ void FrameView::setPagination(const Pagination& pagination)
 IntRect FrameView::windowClipRect() const
 {
     ASSERT(frame().view() == this);
+
+    if (m_cachedWindowClipRect)
+        return *m_cachedWindowClipRect;
 
     if (paintsEntireContents())
         return contentsToWindow(IntRect(IntPoint(), totalContentsSize()));
