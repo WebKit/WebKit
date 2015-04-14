@@ -1,3 +1,16 @@
+2015-04-14  Daniel Bates  <dabates@apple.com>
+
+        Skip failing test Tests/WebKit2Cocoa/FixedLayoutSize.mm on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=143693
+        <rdar://problem/20530316>
+
+        Reviewed by Tim Horton.
+
+        Skip the test Tests/WebKit2Cocoa/FixedLayoutSize.mm as we do not plan
+        to use the fixed layout code on iOS at this time.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FixedLayoutSize.mm: Add !PLATFORM(IOS)-guard.
+
 2015-04-14  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         Remove myself from watchlist, remove empty Cairo and HarfBuzz watchlists

@@ -30,7 +30,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && !PLATFORM(IOS)
 
 static bool fixedLayoutSizeDone;
 static bool fixedLayoutSizeAfterNavigationDone;
