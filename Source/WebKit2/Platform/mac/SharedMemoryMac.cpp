@@ -119,14 +119,27 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
     return sharedMemory.release();
 }
 
-RefPtr<SharedMemory> SharedMemory::create(void* data, size_t size, Protection)
+static inline vm_prot_t machProtection(SharedMemory::Protection protection)
+{
+    switch (protection) {
+    case SharedMemory::Protection::ReadOnly:
+        return VM_PROT_READ;
+    case SharedMemory::Protection::ReadWrite:
+        return VM_PROT_READ | VM_PROT_WRITE;
+    }
+
+    ASSERT_NOT_REACHED();
+    return VM_PROT_NONE;
+}
+
+RefPtr<SharedMemory> SharedMemory::create(void* data, size_t size, Protection protection)
 {
     ASSERT(size);
     
     // Create a Mach port that represents the shared memory.
     mach_port_t port;
     memory_object_size_t memoryObjectSize = round_page(size);
-    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, toVMAddress(data), VM_PROT_DEFAULT | VM_PROT_IS_MASK, &port, MACH_PORT_NULL);
+    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, toVMAddress(data), machProtection(protection) | VM_PROT_IS_MASK, &port, MACH_PORT_NULL);
     
     if (kr != KERN_SUCCESS) {
         LOG_ERROR("Failed to create a mach port for shared memory. %s (%x)", mach_error_string(kr), kr);
@@ -145,21 +158,9 @@ RefPtr<SharedMemory> SharedMemory::create(void* data, size_t size, Protection)
     sharedMemory->m_data = data;
     sharedMemory->m_shouldVMDeallocateData = false;
     sharedMemory->m_port = port;
+    sharedMemory->m_protection = protection;
 
     return sharedMemory.release();
-}
-
-static inline vm_prot_t machProtection(SharedMemory::Protection protection)
-{
-    switch (protection) {
-    case SharedMemory::Protection::ReadOnly:
-        return VM_PROT_READ;
-    case SharedMemory::Protection::ReadWrite:
-        return VM_PROT_READ | VM_PROT_WRITE;
-    }
-
-    ASSERT_NOT_REACHED();
-    return VM_PROT_NONE;    
 }
 
 RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protection)
@@ -173,15 +174,16 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
     mach_vm_address_t mappedAddress = 0;
     kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, round_page(handle.m_size), 0, VM_FLAGS_ANYWHERE, handle.m_port, 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
     if (kr != KERN_SUCCESS)
-        return 0;
+        return nullptr;
 
     RefPtr<SharedMemory> sharedMemory(adoptRef(new SharedMemory));
     sharedMemory->m_size = handle.m_size;
     sharedMemory->m_data = toPointer(mappedAddress);
     sharedMemory->m_shouldVMDeallocateData = true;
     sharedMemory->m_port = MACH_PORT_NULL;
+    sharedMemory->m_protection = protection;
 
-    return sharedMemory.release();
+    return sharedMemory;
 }
 
 SharedMemory::~SharedMemory()
@@ -199,6 +201,8 @@ SharedMemory::~SharedMemory()
     
 bool SharedMemory::createHandle(Handle& handle, Protection protection)
 {
+    ASSERT(m_protection == protection || m_protection == Protection::ReadWrite && protection == Protection::ReadOnly);
+
     ASSERT(!handle.m_port);
     ASSERT(!handle.m_size);
 
@@ -207,7 +211,7 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
 
     mach_port_t port;
 
-    if (protection == Protection::ReadWrite && m_port) {
+    if (protection == m_protection && m_port) {
         // Just re-use the port we have.
         port = m_port;
         if (mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_SEND, 1) != KERN_SUCCESS)

@@ -94,6 +94,7 @@ private:
     size_t m_size;
     void* m_data;
     bool m_shouldVMDeallocateData;
+    Protection m_protection;
 
 #if OS(DARWIN)
     mach_port_t m_port;

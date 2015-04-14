@@ -1,3 +1,17 @@
+2015-04-13  Anders Carlsson  <andersca@apple.com>
+
+        Keep track of each shared memory object's protection when deciding whether to return our existing port
+        https://bugs.webkit.org/show_bug.cgi?id=143687
+
+        Reviewed by Tim Horton.
+
+        * Platform/SharedMemory.h:
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::machProtection):
+        (WebKit::SharedMemory::create):
+        (WebKit::SharedMemory::map):
+        (WebKit::SharedMemory::createHandle):
+
 2015-04-13  Tim Horton  <timothy_horton@apple.com>
 
         Add a persistent, fixed scale factor to make it easy to scale down WK(Web)Views
