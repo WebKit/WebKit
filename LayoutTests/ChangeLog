@@ -1,3 +1,18 @@
+2015-04-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Two flaky tests in http/tests/security/mixedContent
+        https://bugs.webkit.org/show_bug.cgi?id=143695
+
+        Reviewed by Csaba Osztrogonác.
+
+        Speculative fix. Do not start opening a secondary window until fully done with the
+        main document.
+
+        * http/tests/security/mixedContent/data-url-iframe-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/data-url-iframe-in-main-frame.html:
+        * http/tests/security/mixedContent/insecure-css-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/insecure-css-in-main-frame.html:
+
 2015-04-13  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Interactive elements of developer.apple.com are broken
