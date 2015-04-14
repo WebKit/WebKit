@@ -84,7 +84,7 @@ public:
     virtual bool scheduleAnimation() override;
 #endif
 
-    Frame& frame() const { return *m_frame; }
+    Frame& frame() const { return const_cast<Frame&>(m_frame.get()); }
 
     WEBCORE_EXPORT RenderView* renderView() const;
 
@@ -659,7 +659,7 @@ private:
     LayoutSize m_margins;
 
     std::unique_ptr<ListHashSet<RenderEmbeddedObject*>> m_embeddedObjectsToUpdate;
-    const RefPtr<Frame> m_frame;
+    const Ref<Frame> m_frame;
 
     std::unique_ptr<HashSet<RenderElement*>> m_slowRepaintObjects;
 

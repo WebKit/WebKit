@@ -161,7 +161,7 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle& style)
 }
 
 FrameView::FrameView(Frame& frame)
-    : m_frame(&frame)
+    : m_frame(frame)
     , m_canHaveScrollbars(true)
     , m_layoutTimer(*this, &FrameView::layoutTimerFired)
     , m_layoutRoot(nullptr)
@@ -909,7 +909,7 @@ bool FrameView::flushCompositingStateForThisFrame(Frame* rootFrameForFlush)
         tileCache->doPendingRepaints();
 #endif
 
-    renderView->compositor().flushPendingLayerChanges(rootFrameForFlush == &frame());
+    renderView->compositor().flushPendingLayerChanges(rootFrameForFlush == m_frame.ptr());
 
     return true;
 }
@@ -1014,7 +1014,7 @@ bool FrameView::hasCompositedContent() const
 
 bool FrameView::hasCompositedContentIncludingDescendants() const
 {
-    for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
+    for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
         RenderView* renderView = frame->contentRenderer();
         if (RenderLayerCompositor* compositor = renderView ? &renderView->compositor() : nullptr) {
             if (compositor->inCompositingMode())
@@ -1063,7 +1063,7 @@ bool FrameView::flushCompositingStateIncludingSubframes()
 {
     bool allFramesFlushed = flushCompositingStateForThisFrame(&frame());
     
-    for (Frame* child = frame().tree().firstChild(); child; child = child->tree().traverseNext(&frame())) {
+    for (Frame* child = frame().tree().firstChild(); child; child = child->tree().traverseNext(m_frame.ptr())) {
         bool flushed = child->view()->flushCompositingStateForThisFrame(&frame());
         allFramesFlushed &= flushed;
     }
@@ -1511,7 +1511,7 @@ bool FrameView::useSlowRepaintsIfNotOverlapped() const
 
 void FrameView::updateCanBlitOnScrollRecursively()
 {
-    for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
+    for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
         if (FrameView* view = frame->view())
             view->setCanBlitOnScroll(!view->useSlowRepaints());
     }
@@ -1915,7 +1915,7 @@ void FrameView::setIsOverlapped(bool isOverlapped)
         if (RenderLayerCompositor::allowsIndependentlyCompositedFrames(this)) {
             // We also need to trigger reevaluation for this and all descendant frames,
             // since a frame uses compositing if any ancestor is compositing.
-            for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
+            for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
                 if (RenderView* view = frame->contentRenderer()) {
                     RenderLayerCompositor& compositor = view->compositor();
                     compositor.setCompositingLayersNeedRebuild();
@@ -2177,7 +2177,7 @@ bool FrameView::shouldUpdateCompositingLayersAfterScrolling() const
     if (!page)
         return true;
 
-    if (&page->mainFrame() != &frame())
+    if (&page->mainFrame() != m_frame.ptr())
         return true;
 
     ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator();
@@ -2294,9 +2294,9 @@ static unsigned countRenderedCharactersInRenderObjectWithThreshold(const RenderE
 
 bool FrameView::renderedCharactersExceed(unsigned threshold)
 {
-    if (!m_frame->contentRenderer())
+    if (!frame().contentRenderer())
         return false;
-    return countRenderedCharactersInRenderObjectWithThreshold(*m_frame->contentRenderer(), threshold) >= threshold;
+    return countRenderedCharactersInRenderObjectWithThreshold(*frame().contentRenderer(), threshold) >= threshold;
 }
 
 void FrameView::availableContentSizeChanged(AvailableSizeChangeReason reason)
@@ -2400,7 +2400,7 @@ void FrameView::updateLayerFlushThrottling()
     if (page->chrome().client().adjustLayerFlushThrottling(flags))
         return;
 
-    for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
+    for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
         if (RenderView* renderView = frame->contentRenderer())
             renderView->compositor().setLayerFlushThrottlingEnabled(flags & LayerFlushThrottleState::Enabled);
     }
@@ -2635,13 +2635,13 @@ void FrameView::unscheduleRelayout()
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 void FrameView::serviceScriptedAnimations(double monotonicAnimationStartTime)
 {
-    for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext()) {
         frame->view()->serviceScrollAnimations();
         frame->animation().serviceAnimations();
     }
 
     Vector<RefPtr<Document>> documents;
-    for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext())
+    for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext())
         documents.append(frame->document());
 
     for (size_t i = 0; i < documents.size(); ++i)
@@ -2699,7 +2699,7 @@ void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
 
 void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool transparent)
 {
-    for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
+    for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
         if (FrameView* view = frame->view()) {
             view->setTransparent(transparent);
             view->setBaseBackgroundColor(backgroundColor);
@@ -3356,7 +3356,7 @@ float FrameView::adjustScrollStepForFixedContent(float step, ScrollbarOrientatio
         return step;
 
     TrackedRendererListHashSet* positionedObjects = nullptr;
-    if (RenderView* root = m_frame->contentRenderer()) {
+    if (RenderView* root = frame().contentRenderer()) {
         if (!root->hasPositionedObjects())
             return step;
         positionedObjects = root->positionedObjects();
@@ -3982,7 +3982,7 @@ void FrameView::paintContentsForSnapshot(GraphicsContext* context, const IntRect
     // in the render tree only. This will allow us to restore the selection from the DOM
     // after we paint the snapshot.
     if (shouldPaintSelection == ExcludeSelection) {
-        for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
+        for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
             if (RenderView* root = frame->contentRenderer())
                 root->clearSelection();
         }
@@ -3998,7 +3998,7 @@ void FrameView::paintContentsForSnapshot(GraphicsContext* context, const IntRect
 
     // Restore selection.
     if (shouldPaintSelection == ExcludeSelection) {
-        for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get()))
+        for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr()))
             frame->selection().updateAppearance();
     }
 
@@ -4492,7 +4492,7 @@ bool FrameView::isFlippedDocument() const
 
 void FrameView::notifyWidgetsInAllFrames(WidgetNotification notification)
 {
-    for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
+    for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
         if (FrameView* view = frame->view())
             view->notifyWidgets(notification);
     }
@@ -4763,7 +4763,7 @@ void FrameView::setExposedRect(FloatRect exposedRect)
     m_exposedRect = exposedRect;
 
     // FIXME: We should support clipping to the exposed rect for subframes as well.
-    if (!m_frame->isMainFrame())
+    if (!frame().isMainFrame())
         return;
     if (TiledBacking* tiledBacking = this->tiledBacking()) {
         adjustTiledBackingCoverage();
@@ -4784,7 +4784,7 @@ void FrameView::setViewportSizeForCSSViewportUnits(IntSize size)
     m_overrideViewportSize = size;
     m_hasOverrideViewportSize = true;
     
-    if (Document* document = m_frame->document()) {
+    if (Document* document = frame().document()) {
         // FIXME: this should probably be updateViewportUnitsOnResize(), but synchronously
         // dirtying style here causes assertions on iOS (rdar://problem/19998166).
         document->styleResolverChanged(DeferRecalcStyle);

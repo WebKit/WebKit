@@ -1,3 +1,32 @@
+2015-04-14  Chris Dumez  <cdumez@apple.com>
+
+        FrameView::m_frame should be a Ref<Frame>
+        https://bugs.webkit.org/show_bug.cgi?id=143716
+
+        Reviewed by Andreas Kling.
+
+        FrameView::m_frame should be a Ref<Frame> instead of a RefPtr<Frame> as
+        it can never be null.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::flushCompositingStateForThisFrame):
+        (WebCore::FrameView::hasCompositedContentIncludingDescendants):
+        (WebCore::FrameView::flushCompositingStateIncludingSubframes):
+        (WebCore::FrameView::updateCanBlitOnScrollRecursively):
+        (WebCore::FrameView::setIsOverlapped):
+        (WebCore::FrameView::shouldUpdateCompositingLayersAfterScrolling):
+        (WebCore::FrameView::renderedCharactersExceed):
+        (WebCore::FrameView::updateLayerFlushThrottling):
+        (WebCore::FrameView::serviceScriptedAnimations):
+        (WebCore::FrameView::updateBackgroundRecursively):
+        (WebCore::FrameView::adjustScrollStepForFixedContent):
+        (WebCore::FrameView::paintContentsForSnapshot):
+        (WebCore::FrameView::notifyWidgetsInAllFrames):
+        (WebCore::FrameView::setExposedRect):
+        (WebCore::FrameView::setViewportSizeForCSSViewportUnits):
+        * page/FrameView.h:
+
 2015-04-13  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Interactive elements of developer.apple.com are broken
