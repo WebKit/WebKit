@@ -1,3 +1,31 @@
+2015-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Interactive elements of developer.apple.com are broken
+        https://bugs.webkit.org/show_bug.cgi?id=143692
+        rdar://problem/19320087
+
+        Reviewed by Sam Weinig.
+        
+        When a composited RenderLayer had nodes in the scrolling tree by virtue of
+        both position and overflow:scroll, and one of those reasons disappeared,
+        we'd fail to remove the corresponding node from the scrolling tree. This
+        could leave an overflow:scroll element behaving as if it were position:fixed.
+        
+        Fix by having RenderLayerCompositor::updateScrollCoordinationForThisFrame()
+        detach the layer on a per-role basis.
+
+        Test: platform/ios-simulator-wk2/scrolling/remove-scrolling-role.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinatorForRole):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayerForRole):
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayer): Just moved.
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer): Call detachScrollCoordinatedLayerForRole()
+        if the layer doesn't have the relevant scrolling reasons.
+        * rendering/RenderLayerCompositor.h:
+
 2015-04-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r182794.

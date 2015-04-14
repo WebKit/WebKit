@@ -1570,6 +1570,20 @@ void RenderLayerBacking::detachFromScrollingCoordinator()
     m_viewportConstrainedNodeID = 0;
 }
 
+void RenderLayerBacking::detachFromScrollingCoordinatorForRole(ScrollingNodeType role)
+{
+    ScrollingNodeID nodeID = scrollingNodeIDForRole(role);
+    if (!nodeID)
+        return;
+
+    ScrollingCoordinator* scrollingCoordinator = scrollingCoordinatorFromLayer(m_owningLayer);
+    if (!scrollingCoordinator)
+        return;
+
+    scrollingCoordinator->detachFromStateTree(nodeID);
+    setScrollingNodeIDForRole(0, role);
+}
+
 GraphicsLayerPaintingPhase RenderLayerBacking::paintingPhaseForPrimaryLayer() const
 {
     unsigned phase = 0;

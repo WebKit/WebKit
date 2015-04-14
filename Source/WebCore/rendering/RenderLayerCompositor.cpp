@@ -3813,6 +3813,33 @@ ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, S
     return nodeID;
 }
 
+void RenderLayerCompositor::detachScrollCoordinatedLayerForRole(RenderLayer& layer, ScrollingNodeType role)
+{
+    RenderLayerBacking* backing = layer.backing();
+    if (!backing)
+        return;
+
+    if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(role))
+        m_scrollingNodeToLayerMap.remove(nodeID);
+
+    backing->detachFromScrollingCoordinatorForRole(role);
+}
+
+void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer)
+{
+    RenderLayerBacking* backing = layer.backing();
+    if (!backing)
+        return;
+
+    if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(FrameScrollingNode))
+        m_scrollingNodeToLayerMap.remove(nodeID);
+
+    if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(FixedNode))
+        m_scrollingNodeToLayerMap.remove(nodeID);
+
+    backing->detachFromScrollingCoordinator();
+}
+
 void RenderLayerCompositor::updateScrollCoordinationForThisFrame(ScrollingNodeID parentNodeID)
 {
     ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator();
@@ -3883,7 +3910,8 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Scr
         }
         
         parentNodeID = nodeID;
-    }
+    } else
+        detachScrollCoordinatedLayerForRole(layer, FixedNode);
 
     if (reasons & Scrolling) {
         if (isRootLayer)
@@ -3908,22 +3936,8 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Scr
 #endif
             scrollingCoordinator->updateOverflowScrollingNode(nodeID, backing->scrollingLayer(), backing->scrollingContentsLayer(), &scrollingGeometry);
         }
-    }
-}
-
-void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer)
-{
-    RenderLayerBacking* backing = layer.backing();
-    if (!backing)
-        return;
-
-    if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(FrameScrollingNode))
-        m_scrollingNodeToLayerMap.remove(nodeID);
-
-    if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(FixedNode))
-        m_scrollingNodeToLayerMap.remove(nodeID);
-
-    backing->detachFromScrollingCoordinator();
+    } else
+        detachScrollCoordinatedLayerForRole(layer, OverflowScrollingNode);
 }
 
 ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollLayerID(ScrollingNodeID nodeID) const

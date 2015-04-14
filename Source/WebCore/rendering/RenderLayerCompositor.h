@@ -434,6 +434,7 @@ private:
     ScrollingNodeID attachScrollingNode(RenderLayer&, ScrollingNodeType, ScrollingNodeID parentNodeID);
     void updateScrollCoordinatedLayer(RenderLayer&, ScrollCoordinationReasons);
     void detachScrollCoordinatedLayer(RenderLayer&);
+    void detachScrollCoordinatedLayerForRole(RenderLayer&, ScrollingNodeType);
     void reattachSubframeScrollLayers();
     
     FixedPositionViewportConstraints computeFixedViewportConstraints(RenderLayer&) const;

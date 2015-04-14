@@ -108,6 +108,7 @@ public:
     GraphicsLayer* scrollingContentsLayer() const { return m_scrollingContentsLayer.get(); }
 
     void detachFromScrollingCoordinator();
+    void detachFromScrollingCoordinatorForRole(ScrollingNodeType);
     
     ScrollingNodeID scrollingNodeIDForRole(ScrollingNodeType nodeType) const
     {

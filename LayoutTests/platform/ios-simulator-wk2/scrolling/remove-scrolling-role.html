@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0;
+            height: 2500px;
+        }
+
+        #fixed {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            -webkit-overflow-scrolling: touch;
+            height: 400px;
+            width: 300px;
+            overflow: auto;
+            border: 4px solid black;
+        }
+
+        #fixed.changed {
+            position: absolute;
+            border: 4px solid green;
+        }
+
+        .content {
+            height: 2000px;
+            background-color: silver;
+        }
+
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function doTest()
+        {
+            window.setTimeout(function() {
+                document.getElementById('fixed').classList.add('changed');
+
+                if (window.internals)
+                    document.getElementById('results').innerText = internals.scrollingStateTreeAsText();
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+
+                }, 0);
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+  <pre id="results"></pre>
+  <div id="fixed">
+    <div class="content">
+    </div>
+  </div>
+</body>
+</html>
