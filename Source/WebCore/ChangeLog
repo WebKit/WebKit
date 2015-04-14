@@ -1,3 +1,32 @@
+2015-04-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Canvas drawImage() has a security hole when the image isn't yet fully loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=58681.
+
+        Reviewed by Darin Adler.
+
+        There is a race condition which may happen if an image from a different
+        origin is drawn on a canvas before it finishes loading. The check to taint
+        the canvas comes before drawing it. This check returns false if the image
+        is not completely loaded because we check the URL of the resource response.
+        If after this check and before the drawing, the image finishes loading, the
+        canvas will not be tainted but the image will be drawn.
+        
+        The fix is to move the check to taint the canvas after drawing the image.
+        The only problem with this solution is basically the opposite of this bug:
+        we will become stricter than before with images which are from a different
+        origin and before they finish loading. The image has not finished loading,
+        so we do not draw it. Before we check for tainting, the image finishes
+        loading. So we decide to taint the canvas even the image is not drawn.
+        
+        But this should not be a security issue anymore. I personally do not know
+        if it is even a correctness issue or not.
+
+        Test: http/tests/canvas/canvas-tainted-after-draw-image.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+
 2015-04-13  Simon Fraser  <simon.fraser@apple.com>
 
         Fixed position element is truncated if moved onscreen by a transform

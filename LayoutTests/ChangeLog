@@ -1,3 +1,33 @@
+2015-04-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Fix LayoutTests/http/tests/canvas/canvas-tainted-after-draw-image.html on all bots
+        following http://trac.webkit.org/changeset/182750.
+
+        Reviewed by Daniel Bates.
+
+        * http/tests/canvas/canvas-tainted-after-draw-image-expected.txt:
+        * http/tests/canvas/canvas-tainted-after-draw-image.html:
+        Set window.jsTestIsAsync true and call finishJSTest() to make the test 
+        asynchronous, so the "TEST COMPLETE" message will be output after all the
+        test messages. Also delete the synchronous tests for data url image and
+        same-domain image since they can't be reliably tested.
+
+2015-04-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Canvas drawImage() has a security hole when the image isn't yet fully loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=58681.
+
+        Reviewed by Darin Adler.
+
+        This test confirms when we load an image from a different origin and try
+        drawing it on a canvas, the canvas is tainted if the image is completely
+        loaded and drawn. Otherwise the image is not drawn.
+
+        * http/tests/canvas/canvas-tainted-after-draw-image-expected.txt: Added.
+        * http/tests/canvas/canvas-tainted-after-draw-image.html: Added.
+        * http/tests/canvas/resources: Added.
+        * http/tests/canvas/resources/100x100-lime-rect.svg: Added.
+
 2015-04-13  Simon Fraser  <simon.fraser@apple.com>
 
         Fixed position element is truncated if moved onscreen by a transform
