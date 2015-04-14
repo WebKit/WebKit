@@ -1,3 +1,9 @@
+2015-04-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix.
+
+        * UIProcess/mac/PageClientImpl.mm: (WebKit::PageClientImpl::setDragImage):
+
 2015-04-13  Anders Carlsson  <andersca@apple.com>
 
         Keep track of each shared memory object's protection when deciding whether to return our existing port
