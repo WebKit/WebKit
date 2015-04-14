@@ -4452,6 +4452,39 @@ void RenderBox::clearOverflow()
         flowThread->clearRegionsOverflow(this);
 }
 
+static bool logicalWidthIsResolvable(const RenderBox& renderBox)
+{
+    const RenderBox* box = &renderBox;
+    while (!box->isRenderView() && !box->isOutOfFlowPositioned()
+#if ENABLE(CSS_GRID_LAYOUT)
+        && !box->hasOverrideContainingBlockLogicalWidth()
+#endif
+        && (box->style().logicalWidth().isAuto() || box->isAnonymousBlock()))
+        box = box->containingBlock();
+
+    if (box->style().logicalWidth().isFixed())
+        return true;
+    if (box->isRenderView())
+        return true;
+    // The size of the containing block of an absolutely positioned element is always definite with respect to that
+    // element (http://dev.w3.org/csswg/css-sizing-3/#definite).
+    if (box->isOutOfFlowPositioned())
+        return true;
+#if ENABLE(CSS_GRID_LAYOUT)
+    if (box->hasOverrideContainingBlockLogicalWidth())
+        return box->overrideContainingBlockContentLogicalWidth() != -1;
+#endif
+    if (box->style().logicalWidth().isPercent())
+        return logicalWidthIsResolvable(*box->containingBlock());
+
+    return false;
+}
+
+bool RenderBox::hasDefiniteLogicalWidth() const
+{
+    return logicalWidthIsResolvable(*this);
+}
+
 inline static bool percentageLogicalHeightIsResolvable(const RenderBox* box)
 {
     return RenderBox::percentageLogicalHeightIsResolvableFromBlock(box->containingBlock(), box->isOutOfFlowPositioned());
@@ -4469,6 +4502,11 @@ bool RenderBox::percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* 
     while (!cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isOutOfFlowPositioned() && cb->style().logicalHeight().isAuto()) {
         if (!inQuirksMode && !cb->isAnonymousBlock())
             break;
+#if ENABLE(CSS_GRID_LAYOUT)
+        if (cb->hasOverrideContainingBlockLogicalHeight())
+            return cb->overrideContainingBlockContentLogicalHeight() != -1;
+#endif
+
         cb = cb->containingBlock();
     }
 
@@ -4499,6 +4537,25 @@ bool RenderBox::percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* 
     }
 
     return false;
+}
+
+bool RenderBox::hasDefiniteLogicalHeight() const
+{
+    const Length& logicalHeight = style().logicalHeight();
+    if (logicalHeight.isIntrinsicOrAuto())
+        return false;
+    if (logicalHeight.isFixed())
+        return true;
+    // The size of the containing block of an absolutely positioned element is always definite with respect to that
+    // element (http://dev.w3.org/csswg/css-sizing-3/#definite).
+    if (isOutOfFlowPositioned())
+        return true;
+#if ENABLE(CSS_GRID_LAYOUT)
+    if (hasOverrideContainingBlockLogicalHeight())
+        return overrideContainingBlockContentLogicalHeight() != -1;
+#endif
+
+    return percentageLogicalHeightIsResolvable(this);
 }
 
 bool RenderBox::hasUnsplittableScrollingOverflow() const
@@ -4779,6 +4836,13 @@ bool RenderBox::hasRelativeLogicalHeight() const
     return style().logicalHeight().isPercent()
             || style().logicalMinHeight().isPercent()
             || style().logicalMaxHeight().isPercent();
+}
+
+bool RenderBox::hasRelativeLogicalWidth() const
+{
+    return style().logicalWidth().isPercent()
+        || style().logicalMinWidth().isPercent()
+        || style().logicalMaxWidth().isPercent();
 }
 
 static void markBoxForRelayoutAfterSplit(RenderBox& box)

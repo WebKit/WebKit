@@ -143,6 +143,8 @@ private:
         return m_grid.size();
     }
 
+    bool hasDefiniteLogicalSize(GridTrackSizingDirection) const;
+
     Vector<Vector<Vector<RenderBox*, 1>>> m_grid;
     Vector<LayoutUnit> m_columnPositions;
     Vector<LayoutUnit> m_rowPositions;

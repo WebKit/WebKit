@@ -1,3 +1,47 @@
+2015-04-13  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Columns set in percentages collapse to auto width
+        https://bugs.webkit.org/show_bug.cgi?id=141435
+
+        Reviewed by David Hyatt.
+
+        Based on a patch by Sergio Villar Senin  <svillar@igalia.com>.
+
+        This patch adds 2 new new methods in RenderBox to determine if the grid
+        has a definite size or not.
+
+        RenderGrid::gridTrackSize() was not checking properly if the grid has or
+        not an indefinite size.
+        The condition was including auto which is not indefinite per se. For
+        example, auto is definite if the containing block is definite.
+        As the new method is more expensive, we just call it when it's really
+        needed to avoid performance regressions.
+
+        Finally we were setting the override logical width/height to -1 (no
+        possible resolution) for all the items regardless if they've a relative
+        width/height or a fixed one.
+        Added the condition, including not only items with percentage logical
+        width/height but also relative, to avoid overriding the value for items
+        with fixed width/height as it's not needed.
+
+        Tests: fast/css-grid-layout/grid-item-with-percent-height-in-auto-height-grid-resolution.html
+               fast/css-grid-layout/percent-intrinsic-track-breadth.html
+               fast/css-grid-layout/percent-track-breadths-regarding-container-size.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::logicalWidthIsResolvable):
+        (WebCore::RenderBox::hasDefiniteLogicalWidth):
+        (WebCore::RenderBox::percentageLogicalHeightIsResolvableFromBlock):
+        (WebCore::RenderBox::hasRelativeLogicalWidth):
+        * rendering/RenderBox.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::hasDefiniteLogicalSize):
+        (WebCore::RenderGrid::gridTrackSize):
+        (WebCore::RenderGrid::logicalContentHeightForChild):
+        (WebCore::RenderGrid::minContentForChild):
+        (WebCore::RenderGrid::maxContentForChild):
+        * rendering/RenderGrid.h:
+
 2015-04-13  Chris Dumez  <cdumez@apple.com>
 
         Regression: Scrolling on popsci.com spends too much time in FrameView::viewportsContentsChanged()

@@ -442,7 +442,9 @@ public:
     virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const;
     virtual LayoutUnit computeReplacedLogicalHeight() const;
 
+    bool hasDefiniteLogicalWidth() const;
     static bool percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* containingBlock, bool outOfFlowPositioned);
+    bool hasDefiniteLogicalHeight() const;
     LayoutUnit computePercentageLogicalHeight(const Length& height) const;
 
     virtual LayoutUnit availableLogicalWidth() const { return contentLogicalWidth(); }
@@ -569,6 +571,7 @@ public:
 
     virtual bool hasRelativeDimensions() const;
     virtual bool hasRelativeLogicalHeight() const;
+    virtual bool hasRelativeLogicalWidth() const;
 
     bool hasHorizontalLayoutOverflow() const
     {

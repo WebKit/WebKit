@@ -1,3 +1,21 @@
+2015-04-13  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Columns set in percentages collapse to auto width
+        https://bugs.webkit.org/show_bug.cgi?id=141435
+
+        Reviewed by David Hyatt.
+
+        Added new tests to check that percentage track breadths are properly
+        calculated under different sizing conditions.
+        Modified one test to include relative sizes too.
+
+        * fast/css-grid-layout/grid-item-with-percent-height-in-auto-height-grid-resolution-expected.txt:
+        * fast/css-grid-layout/grid-item-with-percent-height-in-auto-height-grid-resolution.html:
+        * fast/css-grid-layout/percent-intrinsic-track-breadth-expected.txt: Added.
+        * fast/css-grid-layout/percent-intrinsic-track-breadth.html: Added.
+        * fast/css-grid-layout/percent-track-breadths-regarding-container-size-expected.txt: Added.
+        * fast/css-grid-layout/percent-track-breadths-regarding-container-size.html: Added.
+
 2015-04-10  Brent Fulgham  <bfulgham@apple.com>
 
         Expand test infrastructure to support scrolling tests

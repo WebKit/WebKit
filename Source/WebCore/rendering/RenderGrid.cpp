@@ -518,35 +518,44 @@ double RenderGrid::computeNormalizedFractionBreadth(Vector<GridTrack>& tracks, c
     return availableLogicalSpaceIgnoringFractionTracks / accumulatedFractions;
 }
 
+bool RenderGrid::hasDefiniteLogicalSize(GridTrackSizingDirection direction) const
+{
+    return (direction == ForRows) ? hasDefiniteLogicalHeight() : hasDefiniteLogicalWidth();
+}
+
 GridTrackSize RenderGrid::gridTrackSize(GridTrackSizingDirection direction, unsigned i) const
 {
     bool isForColumns = (direction == ForColumns);
     auto& trackStyles =  isForColumns ? style().gridColumns() : style().gridRows();
     auto& trackSize = (i >= trackStyles.size()) ? (isForColumns ? style().gridAutoColumns() : style().gridAutoRows()) : trackStyles[i];
 
-    // If the logical width/height of the grid container is indefinite, percentage values are treated as <auto> (or in
-    // the case of minmax() as min-content for the first position and max-content for the second).
-    Length logicalSize = isForColumns ? style().logicalWidth() : style().logicalHeight();
-    if (logicalSize.isIntrinsicOrAuto()) {
-        const GridLength& oldMinTrackBreadth = trackSize.minTrackBreadth();
-        const GridLength& oldMaxTrackBreadth = trackSize.maxTrackBreadth();
-        return GridTrackSize(oldMinTrackBreadth.isPercentage() ? Length(MinContent) : oldMinTrackBreadth, oldMaxTrackBreadth.isPercentage() ? Length(MaxContent) : oldMaxTrackBreadth);
+    GridLength minTrackBreadth = trackSize.minTrackBreadth();
+    GridLength maxTrackBreadth = trackSize.maxTrackBreadth();
+
+    if (minTrackBreadth.isPercentage() || maxTrackBreadth.isPercentage()) {
+        if (!hasDefiniteLogicalSize(direction)) {
+            if (minTrackBreadth.isPercentage())
+                minTrackBreadth = Length(MinContent);
+            if (maxTrackBreadth.isPercentage())
+                maxTrackBreadth = Length(MaxContent);
+        }
     }
 
-    return trackSize;
+    return GridTrackSize(minTrackBreadth, maxTrackBreadth);
 }
 
 LayoutUnit RenderGrid::logicalContentHeightForChild(RenderBox& child, Vector<GridTrack>& columnTracks)
 {
     LayoutUnit oldOverrideContainingBlockContentLogicalWidth = child.hasOverrideContainingBlockLogicalWidth() ? child.overrideContainingBlockContentLogicalWidth() : LayoutUnit();
     LayoutUnit overrideContainingBlockContentLogicalWidth = gridAreaBreadthForChild(child, ForColumns, columnTracks);
-    if (child.style().logicalHeight().isPercent() || oldOverrideContainingBlockContentLogicalWidth != overrideContainingBlockContentLogicalWidth)
+    if (child.hasRelativeLogicalHeight() || oldOverrideContainingBlockContentLogicalWidth != overrideContainingBlockContentLogicalWidth)
         child.setNeedsLayout(MarkOnlyThis);
 
     child.setOverrideContainingBlockContentLogicalWidth(overrideContainingBlockContentLogicalWidth);
-    // If |child| has a percentage logical height, we shouldn't let it override its intrinsic height, which is
+    // If |child| has a relative logical height, we shouldn't let it override its intrinsic height, which is
     // what we are interested in here. Thus we need to set the override logical height to -1 (no possible resolution).
-    child.setOverrideContainingBlockContentLogicalHeight(-1);
+    if (child.hasRelativeLogicalHeight())
+        child.setOverrideContainingBlockContentLogicalHeight(-1);
     child.layoutIfNeeded();
     return child.logicalHeight() + child.marginLogicalHeight();
 }
@@ -559,6 +568,11 @@ LayoutUnit RenderGrid::minContentForChild(RenderBox& child, GridTrackSizingDirec
         return 0;
 
     if (direction == ForColumns) {
+        // If |child| has a relative logical width, we shouldn't let it override its intrinsic width, which is
+        // what we are interested in here. Thus we need to set the override logical width to -1 (no possible resolution).
+        if (child.hasRelativeLogicalWidth())
+            child.setOverrideContainingBlockContentLogicalWidth(-1);
+
         // FIXME: It's unclear if we should return the intrinsic width or the preferred width.
         // See http://lists.w3.org/Archives/Public/www-style/2013Jan/0245.html
         return child.minPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(child);
@@ -575,6 +589,11 @@ LayoutUnit RenderGrid::maxContentForChild(RenderBox& child, GridTrackSizingDirec
         return LayoutUnit();
 
     if (direction == ForColumns) {
+        // If |child| has a relative logical width, we shouldn't let it override its intrinsic width, which is
+        // what we are interested in here. Thus we need to set the override logical width to -1 (no possible resolution).
+        if (child.hasRelativeLogicalWidth())
+            child.setOverrideContainingBlockContentLogicalWidth(-1);
+
         // FIXME: It's unclear if we should return the intrinsic width or the preferred width.
         // See http://lists.w3.org/Archives/Public/www-style/2013Jan/0245.html
         return child.maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(child);
