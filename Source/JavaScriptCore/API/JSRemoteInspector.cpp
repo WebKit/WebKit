@@ -28,9 +28,8 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "RemoteInspector.h"
-#endif
-
 using namespace Inspector;
+#endif
 
 void JSRemoteInspectorDisableAutoStart(void)
 {
