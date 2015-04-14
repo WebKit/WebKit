@@ -1,3 +1,41 @@
+2015-04-14  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Clean up registration of layers with the ScrollingCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=143725
+
+        Reviewed by Tim Horton.
+
+        Simplify a couple of bits of code related to the registration of layers with
+        the ScrollingCoordinator in RenderLayerCompositor.
+
+        First, RenderLayerBacking was using ScrollingNodeTypes to choose which scrolling
+        roles a layer has, which let to ambiguous code where we hardcoded a ScrollingNodeType
+        with knowledge of what RenderLayerBacking did with it. Clean up by using LayerScrollCoordinationRole,
+        which is moved to RenderLayer.h so that RenderLayerCompositor.h and RenderLayerBacking.h
+        both see it.
+
+        Secondly, avoid having both detachFromScrollingCoordinator() and detachFromScrollingCoordinatorForRole()
+        by passing in the bitmask of roles.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollLayerID):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::~RenderLayerBacking):
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinator):
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinatorForRole): Deleted.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedStatus):
+        (WebCore::RenderLayerCompositor::removeFromScrollCoordinatedLayers):
+        (WebCore::scrollCoordinationRoleForNodeType):
+        (WebCore::RenderLayerCompositor::attachScrollingNode):
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayer):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+        (WebCore::RenderLayerCompositor::willRemoveScrollingLayerWithBacking):
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayerForRole): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2015-04-14  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a conservative DFA minimizer for the content extension matcher

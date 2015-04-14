@@ -104,6 +104,12 @@ enum ShouldApplyRootOffsetToFragments {
     IgnoreRootOffsetForFragments
 };
 
+enum LayerScrollCoordinationRole {
+    ViewportConstrained = 1 << 0,
+    Scrolling           = 1 << 1
+};
+typedef unsigned LayerScrollCoordinationRoles;
+
 class RenderLayer final : public ScrollableArea {
     WTF_MAKE_FAST_ALLOCATED;
 public:

@@ -151,7 +151,7 @@ RenderLayerBacking::~RenderLayerBacking()
     updateBackgroundLayer(false);
     updateMaskingLayer(false, false);
     updateScrollingLayers(false);
-    detachFromScrollingCoordinator();
+    detachFromScrollingCoordinator(Scrolling | ViewportConstrained);
     destroyGraphicsLayers();
 }
 
@@ -1551,7 +1551,7 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
     return true;
 }
 
-void RenderLayerBacking::detachFromScrollingCoordinator()
+void RenderLayerBacking::detachFromScrollingCoordinator(LayerScrollCoordinationRoles roles)
 {
     if (!m_scrollingNodeID && !m_viewportConstrainedNodeID)
         return;
@@ -1560,28 +1560,15 @@ void RenderLayerBacking::detachFromScrollingCoordinator()
     if (!scrollingCoordinator)
         return;
 
-    if (m_scrollingNodeID)
+    if ((roles & Scrolling) && m_scrollingNodeID) {
         scrollingCoordinator->detachFromStateTree(m_scrollingNodeID);
-
-    if (m_viewportConstrainedNodeID)
+        m_scrollingNodeID = 0;
+    }
+    
+    if ((roles & ViewportConstrained) && m_viewportConstrainedNodeID) {
         scrollingCoordinator->detachFromStateTree(m_viewportConstrainedNodeID);
-
-    m_scrollingNodeID = 0;
-    m_viewportConstrainedNodeID = 0;
-}
-
-void RenderLayerBacking::detachFromScrollingCoordinatorForRole(ScrollingNodeType role)
-{
-    ScrollingNodeID nodeID = scrollingNodeIDForRole(role);
-    if (!nodeID)
-        return;
-
-    ScrollingCoordinator* scrollingCoordinator = scrollingCoordinatorFromLayer(m_owningLayer);
-    if (!scrollingCoordinator)
-        return;
-
-    scrollingCoordinator->detachFromStateTree(nodeID);
-    setScrollingNodeIDForRole(0, role);
+        m_viewportConstrainedNodeID = 0;
+    }
 }
 
 GraphicsLayerPaintingPhase RenderLayerBacking::paintingPhaseForPrimaryLayer() const

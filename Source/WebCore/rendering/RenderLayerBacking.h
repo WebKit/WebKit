@@ -107,31 +107,26 @@ public:
     GraphicsLayer* scrollingLayer() const { return m_scrollingLayer.get(); }
     GraphicsLayer* scrollingContentsLayer() const { return m_scrollingContentsLayer.get(); }
 
-    void detachFromScrollingCoordinator();
-    void detachFromScrollingCoordinatorForRole(ScrollingNodeType);
+    void detachFromScrollingCoordinator(LayerScrollCoordinationRoles);
     
-    ScrollingNodeID scrollingNodeIDForRole(ScrollingNodeType nodeType) const
+    ScrollingNodeID scrollingNodeIDForRole(LayerScrollCoordinationRole role) const
     {
-        switch (nodeType) {
-        case FrameScrollingNode:
-        case OverflowScrollingNode:
+        switch (role) {
+        case Scrolling:
             return m_scrollingNodeID;
-        case FixedNode:
-        case StickyNode:
+        case ViewportConstrained:
             return m_viewportConstrainedNodeID;
         }
         return 0;
     }
     
-    void setScrollingNodeIDForRole(ScrollingNodeID nodeID, ScrollingNodeType nodeType)
+    void setScrollingNodeIDForRole(ScrollingNodeID nodeID, LayerScrollCoordinationRole role)
     {
-        switch (nodeType) {
-        case FrameScrollingNode:
-        case OverflowScrollingNode:
+        switch (role) {
+        case Scrolling:
             m_scrollingNodeID = nodeID;
             break;
-        case FixedNode:
-        case StickyNode:
+        case ViewportConstrained:
             m_viewportConstrainedNodeID = nodeID;
             break;
         }

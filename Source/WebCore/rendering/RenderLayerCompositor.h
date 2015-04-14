@@ -424,17 +424,10 @@ private:
 
 #endif
 
-    enum ScrollCoordinationReason {
-        FixedOrSticky = 1 << 0,
-        Scrolling = 1 << 1
-    };
-    typedef unsigned ScrollCoordinationReasons;
-
     void updateScrollCoordinationForThisFrame(ScrollingNodeID);
     ScrollingNodeID attachScrollingNode(RenderLayer&, ScrollingNodeType, ScrollingNodeID parentNodeID);
-    void updateScrollCoordinatedLayer(RenderLayer&, ScrollCoordinationReasons);
-    void detachScrollCoordinatedLayer(RenderLayer&);
-    void detachScrollCoordinatedLayerForRole(RenderLayer&, ScrollingNodeType);
+    void updateScrollCoordinatedLayer(RenderLayer&, LayerScrollCoordinationRoles);
+    void detachScrollCoordinatedLayer(RenderLayer&, LayerScrollCoordinationRoles);
     void reattachSubframeScrollLayers();
     
     FixedPositionViewportConstraints computeFixedViewportConstraints(RenderLayer&) const;
