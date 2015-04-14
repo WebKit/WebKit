@@ -1,3 +1,33 @@
+2015-04-13  Joonghun Park  <jh718.park@samsung.com>
+
+        Use modern for-loops in Document
+        https://bugs.webkit.org/show_bug.cgi?id=143600
+
+        Reviewed by Darin Adler.
+
+        No new tests, no behavior changes.
+
+        * dom/Document.cpp:
+        (WebCore::Document::visibilityStateChanged):
+        (WebCore::Document::processBaseElement):
+        (WebCore::Document::moveNodeIteratorsToNewDocument):
+        (WebCore::Document::updateRangesAfterChildrenChanged):
+        (WebCore::Document::nodeChildrenWillBeRemoved):
+        (WebCore::Document::nodeWillBeRemoved):
+        (WebCore::Document::textInserted):
+        (WebCore::Document::textRemoved):
+        (WebCore::Document::textNodesMerged):
+        (WebCore::Document::textNodeSplit):
+        (WebCore::Document::documentWillSuspendForPageCache):
+        (WebCore::Document::documentDidResumeFromPageCache):
+        (WebCore::Document::mediaVolumeDidChange):
+        (WebCore::Document::privateBrowsingStateDidChange):
+        (WebCore::Document::captionPreferencesChanged):
+        (WebCore::Document::validateAutoSizingNodes):
+        (WebCore::Document::resetAutoSizingNodes):
+        (WebCore::Document::webkitExitFullscreen):
+        (WebCore::Document::absoluteRegionForEventTargets):
+
 2015-04-13  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Columns set in percentages collapse to auto width
