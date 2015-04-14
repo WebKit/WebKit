@@ -1,5 +1,6 @@
 2d.text.measure.width.empty
 The empty string has zero width
-Spec references: 2d.text.measure
 Actual output:
+
+PASS The empty string has zero width 
 

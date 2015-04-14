@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <title>Canvas test: 2d.text.measure.width.empty</title>
-<meta name="author" content="Philip Taylor">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
 <script src="../common/canvas-tests.js"></script>
 <link rel="stylesheet" href="../common/canvas-tests.css">
 <style>
@@ -11,14 +12,9 @@
 </style>
 <body class="show_output">
 
-<h1><a href="index.2d.html">2d</a>.<a href="index.2d.text.html">text</a>.<a href="index.2d.text.measure.html">measure</a>.<a href="index.2d.text.measure.width.html">width</a>.empty</h1>
+<h1>2d.text.measure.width.empty</h1>
 <p class="desc">The empty string has zero width</p>
 
-<div class="refs">Spec references:
-<ul>
-<li><a href="../annotated-spec/canvas.html#testrefs.2d.text.measure">2d.text.measure</a>
-</ul>
-</div>
 
 <span style="font-family: CanvasTest; position: absolute; visibility: hidden">A</span>
 <p class="output">Actual output:</p>
@@ -26,10 +22,11 @@
 
 <ul id="d"></ul>
 <script>
+var t = async_test("The empty string has zero width");
 _addTest(function(canvas, ctx) {
 
 deferTest();
-setTimeout(wrapFunction(function () {
+setTimeout(t.step_func_done(function () {
     ctx.font = '50px CanvasTest';
     _assertSame(ctx.measureText("").width, 0, "ctx.measureText(\"\").width", "0");
 }), 500);
@@ -37,4 +34,3 @@ setTimeout(wrapFunction(function () {
 
 });
 </script>
-
