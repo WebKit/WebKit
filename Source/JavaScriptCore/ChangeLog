@@ -1,3 +1,20 @@
+2015-04-14  Mark Lam  <mark.lam@apple.com>
+
+        Rename JSC_dfgFunctionWhitelistFile to JSC_dfgWhitelist.
+        https://bugs.webkit.org/show_bug.cgi?id=143722
+
+        Reviewed by Michael Saboff.
+
+        Renaming JSC_dfgFunctionWhitelistFile to JSC_dfgWhitelist so that it is
+        shorter, and easier to remember (without having to look it up) and to
+        type.  JSC options now support descriptions, and one can always look up
+        the description if the option's purpose is not already obvious.
+
+        * dfg/DFGFunctionWhitelist.cpp:
+        (JSC::DFG::FunctionWhitelist::ensureGlobalWhitelist):
+        (JSC::DFG::FunctionWhitelist::contains):
+        * runtime/Options.h:
+
 2015-04-13  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix Windows build. Windows doesn't take kindly to private classes that use FAST_ALLOCATED.
