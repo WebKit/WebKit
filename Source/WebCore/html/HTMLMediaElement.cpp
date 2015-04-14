@@ -72,6 +72,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
+#include "ResourceLoadInfo.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "SecurityPolicy.h"
@@ -79,6 +80,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "TimeRanges.h"
+#include "UserContentController.h"
 #include <limits>
 #include <runtime/Uint8Array.h>
 #include <wtf/CurrentTime.h>
@@ -1090,7 +1092,8 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         return;
     }
 
-    if (!frame->page()) {
+    Page* page = frame->page();
+    if (!page) {
         mediaLoadingFailed(MediaPlayer::FormatError);
         return;
     }
@@ -1100,6 +1103,19 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         mediaLoadingFailed(MediaPlayer::FormatError);
         return;
     }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    ResourceRequest request(url);
+    DocumentLoader* documentLoader = frame->loader().documentLoader();
+
+    if (page->userContentController() && documentLoader)
+        page->userContentController()->processContentExtensionRulesForLoad(request, ResourceType::Media, *documentLoader);
+
+    if (request.isNull()) {
+        mediaLoadingFailed(MediaPlayer::FormatError);
+        return;
+    }
+#endif
 
     // The resource fetch algorithm 
     m_networkState = NETWORK_LOADING;
