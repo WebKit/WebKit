@@ -1,3 +1,15 @@
+2015-04-13  Jer Noble  <jer.noble@apple.com>
+
+        [Fullscreen] ChromeClient::exitVideoFullscreen() should take a pointer to a HTMLVideoElement.
+        https://bugs.webkit.org/show_bug.cgi?id=143674
+
+        Reviewed by Darin Adler.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen): Pass a reference.
+        (WebCore::HTMLMediaElement::exitFullscreen): exitVideoFullscreen() -> exitVideoFullscreenForVideoElement(...).
+        * page/ChromeClient.h:
+
 2015-04-14  Anders Carlsson  <andersca@apple.com>
 
         Make creating send rights from shared memory more robust

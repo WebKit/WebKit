@@ -6356,14 +6356,14 @@ HRESULT WebView::setCanStartPlugins(BOOL canStartPlugins)
     return S_OK;
 }
 
-void WebView::enterVideoFullscreenForVideoElement(HTMLVideoElement* videoElement)
+void WebView::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement)
 {
 #if ENABLE(VIDEO) && !USE(GSTREAMER) && !USE(MEDIA_FOUNDATION)
     if (m_fullScreenVideoController) {
-        if (m_fullScreenVideoController->videoElement() == videoElement) {
+        if (m_fullScreenVideoController->videoElement() == &videoElement) {
             // The backend may just warn us that the underlaying plaftormMovie()
             // has changed. Just force an update.
-            m_fullScreenVideoController->setVideoElement(videoElement);
+            m_fullScreenVideoController->setVideoElement(&videoElement);
             return; // No more to do.
         }
 
@@ -6375,12 +6375,12 @@ void WebView::enterVideoFullscreenForVideoElement(HTMLVideoElement* videoElement
     }
 
     m_fullScreenVideoController = std::make_unique<FullscreenVideoController>();
-    m_fullScreenVideoController->setVideoElement(videoElement);
+    m_fullScreenVideoController->setVideoElement(&videoElement);
     m_fullScreenVideoController->enterFullscreen();
 #endif
 }
 
-void WebView::exitVideoFullscreen()
+void WebView::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&)
 {
 #if ENABLE(VIDEO) && !USE(GSTREAMER) && !USE(MEDIA_FOUNDATION)
     if (!m_fullScreenVideoController)

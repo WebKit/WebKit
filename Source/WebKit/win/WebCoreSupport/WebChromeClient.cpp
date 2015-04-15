@@ -766,14 +766,14 @@ bool WebChromeClient::supportsVideoFullscreen()
     return true;
 }
 
-void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement* videoElement)
+void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement)
 {
     m_webView->enterVideoFullscreenForVideoElement(videoElement);
 }
 
-void WebChromeClient::exitVideoFullscreen()
+void WebChromeClient::exitVideoFullscreenForVideoElement(HTMLVideoElement& videoElement)
 {
-    m_webView->exitVideoFullscreen();
+    m_webView->exitVideoFullscreenForVideoElement(videoElement);
 }
 
 #endif

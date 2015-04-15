@@ -1,3 +1,16 @@
+2015-04-13  Jer Noble  <jer.noble@apple.com>
+
+        [Fullscreen] ChromeClient::exitVideoFullscreen() should take a pointer to a HTMLVideoElement.
+        https://bugs.webkit.org/show_bug.cgi?id=143674
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::enterVideoFullscreenForVideoElement): Takes a reference.
+        (WebChromeClient::exitVideoFullscreenForVideoElement): Renamed from exitVideoFullscreen().
+        (WebChromeClient::exitVideoFullscreen): Deleted.
+
 2015-04-14  Simon Fraser  <simon.fraser@apple.com>
 
         Re-enable custom dilation for antialiased fonts

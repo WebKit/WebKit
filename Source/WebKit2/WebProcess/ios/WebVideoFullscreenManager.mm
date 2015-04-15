@@ -86,11 +86,11 @@ bool WebVideoFullscreenManager::supportsVideoFullscreen() const
     return Settings::avKitEnabled();
 }
 
-void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElement* videoElement, HTMLMediaElement::VideoFullscreenMode mode)
+void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, HTMLMediaElement::VideoFullscreenMode mode)
 {
     ASSERT(mode != HTMLMediaElement::VideoFullscreenModeNone);
 
-    m_videoElement = videoElement;
+    m_videoElement = &videoElement;
 
     m_targetIsFullscreen = true;
     m_fullscreenMode = mode;
@@ -99,15 +99,15 @@ void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoEle
         return;
 
     m_isAnimating = true;
-    setVideoElement(videoElement);
+    setVideoElement(&videoElement);
 
     m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
     bool allowOptimizedFullscreen = m_videoElement->mediaSession().allowsAlternateFullscreen(*m_videoElement.get());
     
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetupFullscreenWithID(m_layerHostingContext->contextID(), clientRectForElement(videoElement), m_page->deviceScaleFactor(), m_fullscreenMode, allowOptimizedFullscreen), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetupFullscreenWithID(m_layerHostingContext->contextID(), clientRectForElement(&videoElement), m_page->deviceScaleFactor(), m_fullscreenMode, allowOptimizedFullscreen), m_page->pageID());
 }
 
-void WebVideoFullscreenManager::exitVideoFullscreen()
+void WebVideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&)
 {
     RefPtr<HTMLVideoElement> videoElement = m_videoElement.release();
     m_targetIsFullscreen = false;
@@ -219,7 +219,7 @@ void WebVideoFullscreenManager::didEnterFullscreen()
     // exit fullscreen now if it was previously requested during an animation.
     __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
     WebThreadRun(^ {
-        exitVideoFullscreen();
+        exitVideoFullscreenForVideoElement(*m_videoElement);
         protect.clear();
     });
 }
@@ -253,7 +253,7 @@ void WebVideoFullscreenManager::didCleanupFullscreen()
     // enter fullscreen now if it was previously requested during an animation.
     __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
     WebThreadRun(^ {
-        enterVideoFullscreenForVideoElement(m_videoElement.get(), m_fullscreenMode);
+        enterVideoFullscreenForVideoElement(*m_videoElement, m_fullscreenMode);
         protect.clear();
     });
 }

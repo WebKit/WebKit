@@ -60,8 +60,8 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
     
     bool supportsVideoFullscreen() const;
-    void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*, WebCore::HTMLMediaElement::VideoFullscreenMode);
-    void exitVideoFullscreen();
+    void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElement::VideoFullscreenMode);
+    void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&);
     
 protected:
     explicit WebVideoFullscreenManager(PassRefPtr<WebPage>);

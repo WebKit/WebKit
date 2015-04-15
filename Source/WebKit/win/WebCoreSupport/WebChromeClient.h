@@ -146,8 +146,8 @@ public:
 
 #if ENABLE(VIDEO)
     virtual bool supportsVideoFullscreen();
-    virtual void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*);
-    virtual void exitVideoFullscreen();
+    virtual void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&);
+    virtual void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&);
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

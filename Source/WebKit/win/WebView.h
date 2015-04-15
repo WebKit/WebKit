@@ -944,8 +944,8 @@ public:
     WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const;
 #endif
 
-    void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*);
-    void exitVideoFullscreen();
+    void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&);
+    void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&);
 
     void setLastCursor(HCURSOR cursor) { m_lastSetCursor = cursor; }
 

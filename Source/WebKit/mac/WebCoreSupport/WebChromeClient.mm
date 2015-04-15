@@ -933,15 +933,15 @@ bool WebChromeClient::supportsVideoFullscreen()
     return true;
 }
 
-void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement* videoElement, HTMLMediaElement::VideoFullscreenMode mode)
+void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, HTMLMediaElement::VideoFullscreenMode mode)
 {
     ASSERT(mode != HTMLMediaElement::VideoFullscreenModeNone);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_webView _enterVideoFullscreenForVideoElement:videoElement mode:mode];
+    [m_webView _enterVideoFullscreenForVideoElement:&videoElement mode:mode];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void WebChromeClient::exitVideoFullscreen()
+void WebChromeClient::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_webView _exitVideoFullscreen];

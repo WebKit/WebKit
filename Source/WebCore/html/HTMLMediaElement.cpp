@@ -4999,7 +4999,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     if (document().page() && is<HTMLVideoElement>(*this)) {
         HTMLVideoElement& asVideo = downcast<HTMLVideoElement>(*this);
         if (document().page()->chrome().client().supportsVideoFullscreen()) {
-            document().page()->chrome().client().enterVideoFullscreenForVideoElement(&asVideo, m_videoFullscreenMode);
+            document().page()->chrome().client().enterVideoFullscreenForVideoElement(asVideo, m_videoFullscreenMode);
             scheduleEvent(eventNames().webkitbeginfullscreenEvent);
         }
     }
@@ -5030,7 +5030,7 @@ void HTMLMediaElement::exitFullscreen()
             pauseInternal();
 
         if (document().page()->chrome().client().supportsVideoFullscreen()) {
-            document().page()->chrome().client().exitVideoFullscreen();
+            document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
             scheduleEvent(eventNames().webkitendfullscreenEvent);
         }
     }

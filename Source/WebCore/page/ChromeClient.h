@@ -331,9 +331,9 @@ public:
 
     virtual bool supportsVideoFullscreen() { return false; }
 #if ENABLE(VIDEO)
-    virtual void enterVideoFullscreenForVideoElement(HTMLVideoElement*, HTMLMediaElement::VideoFullscreenMode) { }
+    virtual void enterVideoFullscreenForVideoElement(HTMLVideoElement&, HTMLMediaElement::VideoFullscreenMode) { }
 #endif
-    virtual void exitVideoFullscreen() { }
+    virtual void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&) { }
     virtual bool requiresFullscreenForVideoPlayback() { return false; } 
 
 #if ENABLE(FULLSCREEN_API)
