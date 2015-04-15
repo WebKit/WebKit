@@ -1,3 +1,32 @@
+2015-04-14  Tim Horton  <timothy_horton@apple.com>
+
+        Update gesture swipe shadow style
+        https://bugs.webkit.org/show_bug.cgi?id=143616
+        <rdar://problem/19295843>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        For the modern shadow style, use a layer stretched along the edge of the swiping content
+        with the newly added PNGs as the layer contents.
+
+        Add a dimming layer over the lower layer of content which fades in/out
+        during the swipe.
+
+        (WebKit::ViewGestureController::handleSwipeGesture):
+        Fade the dimming layer in and out during the entire swipe.
+        Fade the shadow layer out during the last few pixels of the swipe.
+
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        Unparent the new layers.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * Resources/SwipeShadow.png:
+        * Resources/SwipeShadow@2x.png:
+        Add the new resources.
+
 2015-04-14  Brian Weinstein  <bweinstein@apple.com>
 
         Add SPI to clear HSTS hosts added since a date.

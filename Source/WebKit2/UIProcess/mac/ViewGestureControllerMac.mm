@@ -46,6 +46,12 @@
 
 using namespace WebCore;
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
+#define ENABLE_LEGACY_SWIPE_SHADOW_STYLE 1
+#else
+#define ENABLE_LEGACY_SWIPE_SHADOW_STYLE 0
+#endif
+
 static const double minMagnification = 1;
 static const double maxMagnification = 3;
 
@@ -58,8 +64,13 @@ static const double zoomOutResistance = 0.10;
 static const float smartMagnificationElementPadding = 0.05;
 static const float smartMagnificationPanScrollThreshold = 100;
 
+#if ENABLE(LEGACY_SWIPE_SHADOW_STYLE)
 static const double swipeOverlayShadowOpacity = 0.66;
 static const double swipeOverlayShadowRadius = 3;
+#else
+static const double swipeOverlayShadowOpacity = 0.47;
+static const double swipeOverlayDimmingOpacity = 0.12;
+#endif
 
 static const CGFloat minimumHorizontalSwipeDistance = 15;
 static const float minimumScrollEventRatioForSwipe = 0.5;
@@ -564,8 +575,9 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     [m_swipeLayer setGeometryFlipped:geometryIsFlippedToRoot];
     [m_swipeLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 
+    float deviceScaleFactor = m_webPageProxy.deviceScaleFactor();
     [m_swipeSnapshotLayer setContentsGravity:kCAGravityTopLeft];
-    [m_swipeSnapshotLayer setContentsScale:m_webPageProxy.deviceScaleFactor()];
+    [m_swipeSnapshotLayer setContentsScale:deviceScaleFactor];
     [m_swipeSnapshotLayer setAnchorPoint:CGPointZero];
     [m_swipeSnapshotLayer setFrame:CGRectMake(0, 0, swipeArea.width(), swipeArea.height() - topContentInset)];
     [m_swipeSnapshotLayer setName:@"Gesture Swipe Snapshot Layer"];
@@ -576,8 +588,16 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     if (m_webPageProxy.preferences().viewGestureDebuggingEnabled())
         applyDebuggingPropertiesToSwipeViews();
 
+
+    CALayer *layerAdjacentToSnapshot = determineLayerAdjacentToSnapshotForParent(direction, snapshotLayerParent);
+    if (direction == SwipeDirection::Back)
+        [snapshotLayerParent insertSublayer:m_swipeLayer.get() below:layerAdjacentToSnapshot];
+    else
+        [snapshotLayerParent insertSublayer:m_swipeLayer.get() above:layerAdjacentToSnapshot];
+
     // We don't know enough about the custom views' hierarchy to apply a shadow.
     if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap && m_customSwipeViews.isEmpty()) {
+#if ENABLE(LEGACY_SWIPE_SHADOW_STYLE)
         if (direction == SwipeDirection::Back) {
             float topContentInset = m_webPageProxy.topContentInset();
             FloatRect shadowRect(FloatPoint(0, topContentInset), m_webPageProxy.viewSize() - FloatSize(0, topContentInset));
@@ -593,13 +613,37 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
             [m_swipeLayer setShadowRadius:swipeOverlayShadowRadius];
             [m_swipeLayer setShadowPath:shadowPath.get()];
         }
-    }
+#else
+        FloatRect dimmingRect(FloatPoint(), m_webPageProxy.viewSize());
+        m_swipeDimmingLayer = adoptNS([[CALayer alloc] init]);
+        [m_swipeDimmingLayer setName:@"Gesture Swipe Dimming Layer"];
+        [m_swipeDimmingLayer setBackgroundColor:[NSColor blackColor].CGColor];
+        [m_swipeDimmingLayer setOpacity:swipeOverlayDimmingOpacity];
+        [m_swipeDimmingLayer setAnchorPoint:CGPointZero];
+        [m_swipeDimmingLayer setFrame:dimmingRect];
+        [m_swipeDimmingLayer setGeometryFlipped:geometryIsFlippedToRoot];
+        [m_swipeDimmingLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 
-    CALayer *layerAdjacentToSnapshot = determineLayerAdjacentToSnapshotForParent(direction, snapshotLayerParent);
-    if (direction == SwipeDirection::Back)
-        [snapshotLayerParent insertSublayer:m_swipeLayer.get() below:layerAdjacentToSnapshot];
-    else
-        [snapshotLayerParent insertSublayer:m_swipeLayer.get() above:layerAdjacentToSnapshot];
+        NSImage *shadowImage = [[NSBundle bundleForClass:[WKSwipeCancellationTracker class]] imageForResource:@"SwipeShadow"];
+        FloatRect shadowRect(-shadowImage.size.width, topContentInset, shadowImage.size.width, m_webPageProxy.viewSize().height() - topContentInset);
+        m_swipeShadowLayer = adoptNS([[CALayer alloc] init]);
+        [m_swipeShadowLayer setName:@"Gesture Swipe Shadow Layer"];
+        [m_swipeShadowLayer setBackgroundColor:[NSColor colorWithPatternImage:shadowImage].CGColor];
+        [m_swipeShadowLayer setContentsScale:deviceScaleFactor];
+        [m_swipeShadowLayer setOpacity:swipeOverlayShadowOpacity];
+        [m_swipeShadowLayer setAnchorPoint:CGPointZero];
+        [m_swipeShadowLayer setFrame:shadowRect];
+        [m_swipeShadowLayer setGeometryFlipped:geometryIsFlippedToRoot];
+        [m_swipeShadowLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
+
+        if (direction == SwipeDirection::Back)
+            [snapshotLayerParent insertSublayer:m_swipeDimmingLayer.get() above:m_swipeLayer.get()];
+        else
+            [snapshotLayerParent insertSublayer:m_swipeDimmingLayer.get() below:m_swipeLayer.get()];
+
+        [snapshotLayerParent insertSublayer:m_swipeShadowLayer.get() above:m_swipeLayer.get()];
+#endif
+    }
 }
 
 void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetItem, double progress, SwipeDirection direction)
@@ -616,6 +660,23 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetIte
         width = m_webPageProxy.drawingArea()->size().width();
 
     double swipingLayerOffset = floor(width * progress);
+
+#if !ENABLE(LEGACY_SWIPE_SHADOW_STYLE)
+    double dimmingProgress = (direction == SwipeDirection::Back) ? 1 - progress : -progress;
+    dimmingProgress = std::min(1., std::max(dimmingProgress, 0.));
+    [m_swipeDimmingLayer setOpacity:dimmingProgress * swipeOverlayDimmingOpacity];
+
+    double absoluteProgress = fabs(progress);
+    double remainingSwipeDistance = width - fabs(absoluteProgress * width);
+    double shadowFadeDistance = [m_swipeShadowLayer bounds].size.width;
+    if (remainingSwipeDistance < shadowFadeDistance)
+        [m_swipeShadowLayer setOpacity:(remainingSwipeDistance / shadowFadeDistance) * swipeOverlayShadowOpacity];
+    else
+        [m_swipeShadowLayer setOpacity:swipeOverlayShadowOpacity];
+
+    if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap)
+        [m_swipeShadowLayer setTransform:CATransform3DMakeTranslation((direction == SwipeDirection::Back ? 0 : width) + swipingLayerOffset, 0, 0)];
+#endif
 
     if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap) {
         if (direction == SwipeDirection::Forward) {
@@ -789,6 +850,14 @@ void ViewGestureController::removeSwipeSnapshot()
 
     [m_swipeLayer removeFromSuperlayer];
     m_swipeLayer = nullptr;
+
+#if !ENABLE(LEGACY_SWIPE_SHADOW_STYLE)
+    [m_swipeShadowLayer removeFromSuperlayer];
+    m_swipeShadowLayer = nullptr;
+
+    [m_swipeDimmingLayer removeFromSuperlayer];
+    m_swipeDimmingLayer = nullptr;
+#endif
 
     m_currentSwipeLiveLayers.clear();
 

@@ -186,6 +186,8 @@ private:
     RetainPtr<WKSwipeCancellationTracker> m_swipeCancellationTracker;
     RetainPtr<CALayer> m_swipeLayer;
     RetainPtr<CALayer> m_swipeSnapshotLayer;
+    RetainPtr<CALayer> m_swipeShadowLayer;
+    RetainPtr<CALayer> m_swipeDimmingLayer;
     Vector<RetainPtr<CALayer>> m_currentSwipeLiveLayers;
 
     SwipeTransitionStyle m_swipeTransitionStyle { SwipeTransitionStyle::Overlap };
