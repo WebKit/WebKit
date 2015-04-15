@@ -1,3 +1,20 @@
+2015-04-15  Alexey Proskuryakov  <ap@apple.com>
+
+        No thread safety when passing ThreadableLoaderOptions from a worker thread
+        https://bugs.webkit.org/show_bug.cgi?id=143790
+
+        Reviewed by Geoffrey Garen.
+
+        * loader/ThreadableLoader.h:
+        * loader/ThreadableLoader.cpp: (WebCore::ThreadableLoaderOptions::isolatedCopy): Added.
+
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge): Don't just send
+        a structure with strings to a different thread, that's bad.
+
+        * platform/CrossThreadCopier.h: I think that this is dead code, but for this bug,
+        just removing a clearly wrong specialization.
+
 2015-04-15  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.

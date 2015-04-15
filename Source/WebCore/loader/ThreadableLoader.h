@@ -63,6 +63,8 @@ namespace WebCore {
         ThreadableLoaderOptions();
         ~ThreadableLoaderOptions();
 
+        std::unique_ptr<ThreadableLoaderOptions> isolatedCopy() const;
+
         PreflightPolicy preflightPolicy; // If AccessControl is used, how to determine if a preflight is needed.
         CrossOriginRequestPolicy crossOriginRequestPolicy;
         RefPtr<SecurityOrigin> securityOrigin;
