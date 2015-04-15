@@ -129,7 +129,7 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "tan"), 1, mathProtoFuncTan, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "tanh"), 1, mathProtoFuncTanh, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "trunc"), 1, mathProtoFuncTrunc, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "imul"), 1, mathProtoFuncIMul, IMulIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "imul"), 2, mathProtoFuncIMul, IMulIntrinsic, DontEnum | Function);
 }
 
 // ------------------------------ Functions --------------------------------

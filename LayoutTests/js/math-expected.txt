@@ -102,6 +102,7 @@ PASS Math.hypot(NaN, NaN, {valueOf:function(){throw "err"}}) threw exception err
 PASS Math.hypot({valueOf:function(){throw "error1"}}, {valueOf:function(){sideEffect = 1}}) threw exception error1.
 PASS sideEffect is 0
 PASS Math.hypot(3, 4, 'foo') is NaN
+PASS Math.imul.length is 2
 PASS Math.log(NaN) is NaN
 PASS Math.log(0) is -Infinity
 PASS Math.log(-0) is -Infinity
