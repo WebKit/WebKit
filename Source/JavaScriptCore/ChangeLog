@@ -1,3 +1,36 @@
+2015-04-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Harden DFGForAllKills
+        https://bugs.webkit.org/show_bug.cgi?id=143792
+
+        Reviewed by Geoffrey Garen.
+        
+        Unfortunately, we don't have a good way to test this yet - but it will be needed to prevent
+        bugs in https://bugs.webkit.org/show_bug.cgi?id=143734.
+        
+        Previously ForAllKills used the bytecode kill analysis. That seemed like a good idea because
+        that analysis is cheaper than the full liveness analysis. Unfortunately, it's probably wrong:
+        
+        - It looks for kill sites at forExit origin boundaries. But, something might have been killed
+          by an operation that was logically in between the forExit origins at the boundary, but was
+          removed from the DFG for whatever reason. The DFG is allowed to have bytecode instruction
+          gaps.
+        
+        - It overlooked the fact that a MovHint that addresses a local that is always live kills that
+          local. For example, storing to an argument means that the prior value of the argument is
+          killed.
+        
+        This fixes the analysis by making it handle MovHints directly, and making it define kills in
+        the most conservative way possible: it asks if you were live before but dead after. If we
+        have the compile time budget to afford this more direct approach, then it's definitel a good
+        idea since it's so fool-proof.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllKilledOperands):
+        (JSC::DFG::forAllKilledNodesAtNodeIndex):
+        (JSC::DFG::forAllDirectlyKilledOperands): Deleted.
+
 2015-04-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Provide SPI to allow changing whether JSContexts are remote debuggable by default

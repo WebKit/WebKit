@@ -72,18 +72,9 @@ void forAllLiveNodesAtTail(Graph& graph, BasicBlock* block, const Functor& funct
 }
 
 template<typename Functor>
-void forAllDirectlyKilledOperands(Graph& graph, CodeOrigin origin, const Functor& functor)
+void forAllKilledOperands(Graph& graph, CodeOrigin before, Node* nodeAfter, const Functor& functor)
 {
-    graph.killsFor(origin.inlineCallFrame).forEachOperandKilledAt(origin.bytecodeIndex, functor);
-}
-
-template<typename Functor>
-void forAllKilledOperands(Graph& graph, CodeOrigin before, CodeOrigin after, const Functor& functor)
-{
-    // The philosophy here is that if we're on the boundary between exiting to origin A and exiting
-    // to origin B, then we note the kills for A. Kills for A are the bytecode kills plus the things
-    // that were live at whatever callsites are popped between A and B. It's legal to conservatively
-    // just consider everything live at A.
+    CodeOrigin after = nodeAfter->origin.forExit;
     
     if (!before) {
         if (!after)
@@ -99,43 +90,30 @@ void forAllKilledOperands(Graph& graph, CodeOrigin before, CodeOrigin after, con
         return;
     }
     
+    // If we MovHint something that is live at the time, then we kill the old value.
+    VirtualRegister alreadyNoted;
+    if (nodeAfter->containsMovHint()) {
+        VirtualRegister reg = nodeAfter->unlinkedLocal();
+        if (graph.isLiveInBytecode(reg, after)) {
+            functor(reg);
+            alreadyNoted = reg;
+        }
+    }
+    
     if (before == after)
         return;
     
     // before could be unset even if after is, but the opposite cannot happen.
     ASSERT(!!after);
     
-    if (before.inlineCallFrame != after.inlineCallFrame) {
-        // Is before deeper than after?
-        bool beforeIsDeeper;
-        if (!after.inlineCallFrame)
-            beforeIsDeeper = true;
-        else {
-            beforeIsDeeper = false;
-            for (InlineCallFrame* current = before.inlineCallFrame; current; current = current->caller.inlineCallFrame) {
-                if (current == after.inlineCallFrame) {
-                    beforeIsDeeper = true;
-                    break;
-                }
-            }
-        }
-        if (beforeIsDeeper) {
-            ASSERT(before.inlineCallFrame);
-            for (CodeOrigin current = before; current.inlineCallFrame != after.inlineCallFrame; current = current.inlineCallFrame->caller) {
-                ASSERT(current.inlineCallFrame);
-                CodeBlock* codeBlock = graph.baselineCodeBlockFor(current.inlineCallFrame);
-                FullBytecodeLiveness& liveness = graph.livenessFor(codeBlock);
-                for (unsigned i = codeBlock->m_numCalleeRegisters; i--;) {
-                    VirtualRegister reg = virtualRegisterForLocal(i);
-                    if (liveness.operandIsLive(reg.offset(), current.bytecodeIndex))
-                        functor(reg + current.inlineCallFrame->stackOffset);
-                }
-                forAllDirectlyKilledOperands(graph, current.inlineCallFrame->caller, functor);
-            }
-        }
+    // Detect kills the super conservative way: it is killed if it was live before and dead after.
+    for (unsigned i = graph.block(0)->variablesAtHead.numberOfLocals(); i--;) {
+        VirtualRegister reg = virtualRegisterForLocal(i);
+        if (reg == alreadyNoted)
+            continue;
+        if (graph.isLiveInBytecode(reg, before) && !graph.isLiveInBytecode(reg, after))
+            functor(reg);
     }
-    
-    forAllDirectlyKilledOperands(graph, before, functor);
 }
     
 // Tells you all of the nodes that would no longer be live across the node at this nodeIndex.
@@ -167,7 +145,7 @@ void forAllKilledNodesAtNodeIndex(
         before = block->at(nodeIndex - 1)->origin.forExit;
 
     forAllKilledOperands(
-        graph, before, node->origin.forExit,
+        graph, before, node,
         [&] (VirtualRegister reg) {
             availabilityMap.closeStartingWithLocal(
                 reg,

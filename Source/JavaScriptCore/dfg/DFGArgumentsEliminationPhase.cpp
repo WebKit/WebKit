@@ -293,6 +293,7 @@ private:
                         return;
                     }
                     
+                    // This loop considers all nodes up to the nodeIndex, excluding the nodeIndex.
                     while (nodeIndex--) {
                         Node* node = block->at(nodeIndex);
                         if (node == candidate)
