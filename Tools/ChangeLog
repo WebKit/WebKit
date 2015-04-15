@@ -1,5 +1,11 @@
 2015-04-15  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed gardening; Make the previous commit apply only _post_ Yosemite.
+
+        * TestWebKitAPI/Tests/mac/FullscreenZoomInitialFrame.mm:
+
+2015-04-15  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed gardening; disable FullscreenZoomInitialFrame.WebKit2 API test post-Yosemite.
 
         * TestWebKitAPI/Tests/mac/FullscreenZoomInitialFrame.mm:
