@@ -30,6 +30,7 @@
 #include "ArgumentEncoder.h"
 #include "Arguments.h"
 #include "MachPort.h"
+#include <WebCore/MachSendRight.h>
 #include <WebCore/MachVMSPI.h>
 #include <mach/mach_error.h>
 #include <mach/mach_port.h>
@@ -131,31 +132,34 @@ static inline vm_prot_t machProtection(SharedMemory::Protection protection)
     return VM_PROT_NONE;
 }
 
+static WebCore::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, SharedMemory::Protection protection, mach_port_t parentEntry)
+{
+    memory_object_size_t memoryObjectSize = round_page(size);
+
+    mach_port_t port;
+    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE, &port, parentEntry);
+    if (kr != KERN_SUCCESS) {
+        LOG_ERROR("Failed to create a mach port for shared memory. %s (%x)", mach_error_string(kr), kr);
+        return { };
+    }
+
+    RELEASE_ASSERT(memoryObjectSize >= size);
+
+    return WebCore::MachSendRight::adopt(port);
+}
+
 RefPtr<SharedMemory> SharedMemory::create(void* data, size_t size, Protection protection)
 {
     ASSERT(size);
-    
-    // Create a Mach port that represents the shared memory.
-    mach_port_t port;
-    memory_object_size_t memoryObjectSize = round_page(size);
-    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, toVMAddress(data), machProtection(protection) | VM_PROT_IS_MASK, &port, MACH_PORT_NULL);
-    
-    if (kr != KERN_SUCCESS) {
-        LOG_ERROR("Failed to create a mach port for shared memory. %s (%x)", mach_error_string(kr), kr);
-        return 0;
-    }
 
-    if (memoryObjectSize < round_page(size)) {
-        // There is a limit on how large a shared memory object can be (see <rdar://problem/16595870>).
-        LOG_ERROR("Failed to create a mach port for shared memory of size %lu (got %llu bytes).", round_page(size), memoryObjectSize);
-        mach_port_deallocate(mach_task_self(), port);
-        return 0;
-    }
+    auto sendRight = makeMemoryEntry(size, toVMAddress(data), protection, MACH_PORT_NULL);
+    if (!sendRight)
+        return nullptr;
 
     RefPtr<SharedMemory> sharedMemory(adoptRef(new SharedMemory));
     sharedMemory->m_size = size;
     sharedMemory->m_data = nullptr;
-    sharedMemory->m_port = port;
+    sharedMemory->m_port = sendRight.leakSendRight();
     sharedMemory->m_protection = protection;
 
     return sharedMemory.release();
@@ -198,38 +202,15 @@ SharedMemory::~SharedMemory()
     
 bool SharedMemory::createHandle(Handle& handle, Protection protection)
 {
-    ASSERT(m_protection == protection || m_protection == Protection::ReadWrite && protection == Protection::ReadOnly);
-
     ASSERT(!handle.m_port);
     ASSERT(!handle.m_size);
 
-    memory_object_size_t size = round_page(m_size);
+    auto sendRight = createSendRight(protection);
+    if (!sendRight)
+        return false;
 
-    mach_port_t port;
-
-    if (protection == m_protection && m_port) {
-        // Just re-use the port we have.
-        port = m_port;
-        if (mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_SEND, 1) != KERN_SUCCESS)
-            return false;
-    } else {
-        ASSERT(m_data);
-        mach_vm_address_t address = toVMAddress(m_data);
-
-        // Create a mach port that represents the shared memory.
-        kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &size, address, machProtection(protection), &port, MACH_PORT_NULL);
-        if (kr != KERN_SUCCESS)
-            return false;
-
-        ASSERT(size >= round_page(m_size));
-        if (size < round_page(m_size)) {
-            mach_port_deallocate(mach_task_self(), port);
-            return false;
-        }
-    }
-
-    handle.m_port = port;
-    handle.m_size = size;
+    handle.m_port = sendRight.leakSendRight();
+    handle.m_size = round_page(m_size);
 
     return true;
 }
@@ -237,6 +218,18 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
 unsigned SharedMemory::systemPageSize()
 {
     return vm_page_size;
+}
+
+WebCore::MachSendRight SharedMemory::createSendRight(Protection protection) const
+{
+    ASSERT(m_protection == protection || m_protection == Protection::ReadWrite && protection == Protection::ReadOnly);
+    ASSERT(!!m_data ^ !!m_port);
+
+    if (m_port && m_protection == protection)
+        return WebCore::MachSendRight::create(m_port);
+
+    ASSERT(m_data);
+    return makeMemoryEntry(m_size, toVMAddress(m_data), protection, MACH_PORT_NULL);
 }
 
 } // namespace WebKit

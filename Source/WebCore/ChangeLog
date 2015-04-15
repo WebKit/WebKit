@@ -1,3 +1,17 @@
+2015-04-14  Anders Carlsson  <andersca@apple.com>
+
+        Make creating send rights from shared memory more robust
+        https://bugs.webkit.org/show_bug.cgi?id=143730
+        rdar://problem/16595870
+
+        Reviewed by Darin Adler.
+
+        Add a bool conversion operator to MachSendRight and tidy up the default constructor.
+
+        * platform/cocoa/MachSendRight.h:
+        (WebCore::MachSendRight::operator bool):
+        (WebCore::MachSendRight::MachSendRight): Deleted.
+
 2015-04-15  Eric Carlson  <eric.carlson@apple.com>
 
         Generalize "isPlayingAudio" to include other media characteristics

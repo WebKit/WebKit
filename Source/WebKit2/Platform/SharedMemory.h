@@ -40,6 +40,12 @@ class ArgumentDecoder;
 class ArgumentEncoder;
 }
 
+#if OS(DARWIN)
+namespace WebCore {
+class MachSendRight;
+}
+#endif
+
 namespace WebKit {
 
 class SharedMemory : public RefCounted<SharedMemory> {
@@ -95,6 +101,10 @@ public:
     static unsigned systemPageSize();
 
 private:
+#if OS(DARWIN)
+    WebCore::MachSendRight createSendRight(Protection) const;
+#endif
+
     size_t m_size;
     void* m_data;
     Protection m_protection;

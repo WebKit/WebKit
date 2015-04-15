@@ -35,15 +35,13 @@ public:
     WEBCORE_EXPORT static MachSendRight adopt(mach_port_t);
     WEBCORE_EXPORT static MachSendRight create(mach_port_t);
 
-    MachSendRight()
-        : m_port(MACH_PORT_NULL)
-    {
-    }
-
+    MachSendRight() = default;
     MachSendRight(MachSendRight&&);
     WEBCORE_EXPORT ~MachSendRight();
 
     WEBCORE_EXPORT MachSendRight& operator=(MachSendRight&&);
+
+    explicit operator bool() const { return m_port != MACH_PORT_NULL; }
 
     mach_port_t sendRight() const { return m_port; }
 
@@ -53,7 +51,7 @@ public:
 private:
     explicit MachSendRight(mach_port_t);
 
-    mach_port_t m_port;
+    mach_port_t m_port { MACH_PORT_NULL };
 };
 
 }
