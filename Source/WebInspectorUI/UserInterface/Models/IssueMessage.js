@@ -75,9 +75,8 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
                 this._type = WebInspector.IssueMessage.Type.OtherIssue;
             break;
 
-        case "html":
+        case "html": // COMPATIBILITY (iOS 6).
         case "css":
-        case "wml":
         case "xml":
             this._type = WebInspector.IssueMessage.Type.PageIssue;
             break;
@@ -86,7 +85,14 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
             this._type = WebInspector.IssueMessage.Type.NetworkIssue;
             break;
 
+        case "security":
+            this._type = WebInspector.IssueMessage.Type.SecurityIssue;
+            break;
+
         case "console-api":
+        case "storage":
+        case "appcache":
+        case "rendering":
         case "other":
             this._type = WebInspector.IssueMessage.Type.OtherIssue;
             break;

@@ -1,3 +1,15 @@
+2015-04-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Handle all possible Console message Source types in IssueMessage
+        https://bugs.webkit.org/show_bug.cgi?id=143803
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/IssueMessage.js:
+        (WebInspector.IssueMessage):
+        Update the switch to handle all possible console message sources.
+        "wml" was legacy and no longer supported.
+
 2015-04-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught exception in JSContext inspector when opening
