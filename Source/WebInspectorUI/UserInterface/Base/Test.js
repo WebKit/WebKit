@@ -185,7 +185,7 @@ InspectorTest.evaluateInPage = function(codeString, callback)
 {
     // If we load this page outside of the inspector, or hit an early error when loading
     // the test frontend, then defer evaluating the commands (indefinitely in the former case).
-    if (!RuntimeAgent) {
+    if (!window.RuntimeAgent) {
         this._originalConsoleMethods["error"]("Tried to evaluate in test page, but connection not yet established:", codeString);
         return;
     }
@@ -265,10 +265,16 @@ InspectorTest._originalConsoleMethods = {};
 // Catch syntax errors, type errors, and other exceptions.
 window.onerror = InspectorTest.reportUncaughtException.bind(InspectorTest);
 
-for (var logType of ["log", "error", "info"]) {
-    // Redirect console methods to log messages into the test page's DOM.
-    InspectorTest._originalConsoleMethods[logType] = console[logType].bind(console);
-    console[logType] = function() {
-        InspectorTest.addResult(logType.toUpperCase() + ": " + Array.from(arguments).toString());
-    };
-}
+// Redirect frontend console methods to log messages into the test result.
+(function() {
+    function createProxyConsoleHandler(type) {
+        return function() {
+            InspectorTest.addResult(type + ": " + Array.from(arguments).join(" "));
+        };
+    }
+
+    for (var type of ["log", "error", "info"]) {
+        InspectorTest._originalConsoleMethods[type] = console[type].bind(console);
+        console[type] = createProxyConsoleHandler(type.toUpperCase());
+    }
+})();
