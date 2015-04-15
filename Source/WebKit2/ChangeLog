@@ -1,3 +1,17 @@
+2015-04-15  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/20549298> No matching __NSi_ definition for postprocessed value of WK_{MAC,IOS}_TBA
+        https://bugs.webkit.org/show_bug.cgi?id=143786
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/WKFoundation.h: Added a placeholder for the postprocessing script to
+        insert a definition of __NSi_* for the current deployment target. Import CoreFoundation.h so
+        that we can check if the macro is already defined.
+        * WebKit2.xcodeproj/project.pbxproj: In the Postprocess WKFoundation.h script build phase,
+        replace the placeholder with a definition of __NSi_{current deployment target} if not
+        already defined.
+
 2015-04-14  Anders Carlsson  <andersca@apple.com>
 
         Make creating send rights from shared memory more robust
