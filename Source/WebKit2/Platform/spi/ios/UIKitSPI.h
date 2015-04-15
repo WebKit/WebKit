@@ -697,6 +697,8 @@ extern NSString * const UIWindowDidRotateNotification;
 extern NSString * const UIWindowNewScreenUserInfoKey;
 extern NSString * const UIWindowWillRotateNotification;
 
+extern NSString * const UIKeyboardIsLocalUserInfoKey;
+
 extern UIApplication *UIApp;
 void _UIApplicationLoadWebKit(void);
 BOOL _UIApplicationUsesLegacyUI(void);

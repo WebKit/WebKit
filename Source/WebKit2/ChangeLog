@@ -4,6 +4,15 @@
         https://bugs.webkit.org/show_bug.cgi?id=143791
         <rdar://problem/18974020>
 
+        * Platform/spi/ios/UIKitSPI.h:
+        Fix the build.
+
+2015-04-15  Tim Horton  <timothy_horton@apple.com>
+
+        Non-local keyboards don't update scroll view parameters
+        https://bugs.webkit.org/show_bug.cgi?id=143791
+        <rdar://problem/18974020>
+
         Reviewed by Enrica Casucci.
 
         * UIProcess/API/Cocoa/WKWebView.mm:
