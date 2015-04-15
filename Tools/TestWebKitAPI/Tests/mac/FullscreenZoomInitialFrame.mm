@@ -179,13 +179,18 @@ void FullscreenZoomInitialFrame::runTest(View view)
     sendMouseDownEvent(view, event);
     Util::run(&didGetPageSignalToContinue);
 }
-    
+
 TEST_F(FullscreenZoomInitialFrame, WebKit)
 {
     runWebKit1Test();
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+// FIXME:<rdar://problem/20504403>
+TEST_F(FullscreenZoomInitialFrame, DISABLED_WebKit2)
+#else
 TEST_F(FullscreenZoomInitialFrame, WebKit2)
+#endif
 {
     runWebKit2Test();
 }
