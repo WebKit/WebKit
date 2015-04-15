@@ -105,7 +105,7 @@ inspector/model/remote-object.html [ Skip ]
 # Doesn't work yet, relies on network replay functionality (webkit.org/b/130728, webkit.org/b/129391)
 webkit.org/b/131318 http/tests/inspector/replay/document-last-modified-fallback-value.html [ Skip ]
 
-[ Debug ] inspector/console/console-api.html [ Slow ]
+[ Debug ] inspector/console/console-api.html [ Pass Timeout ]
 
 # Collecting region's children in a named flow not supported yet
 webkit.org/b/74144 fast/regions/flow-body-in-html.html [ Skip ]
