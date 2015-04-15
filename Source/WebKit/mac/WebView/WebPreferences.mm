@@ -417,6 +417,7 @@ public:
         @"0",                           WebKitMinimumFontSizePreferenceKey,
         @"9",                           WebKitMinimumLogicalFontSizePreferenceKey, 
         @"16",                          WebKitDefaultFontSizePreferenceKey,
+        @(YES),                         WebKitAntialiasedFontDilationEnabledKey,
         @"13",                          WebKitDefaultFixedFontSizePreferenceKey,
         @"ISO-8859-1",                  WebKitDefaultTextEncodingNamePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUsesEncodingDetectorPreferenceKey,
@@ -2481,6 +2482,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setMediaKeysStorageDirectory:(NSString *)directory
 {
     [self _setStringValue:directory forKey:WebKitMediaKeysStorageDirectoryKey];
+}
+
+- (void)setAntialiasedFontDilationEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitAntialiasedFontDilationEnabledKey];
+}
+
+- (BOOL)antialiasedFontDilationEnabled
+{
+    return [self _boolValueForKey:WebKitAntialiasedFontDilationEnabledKey];
 }
 
 @end

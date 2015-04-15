@@ -436,6 +436,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setMediaKeysStorageDirectory:(NSString *)directory;
 - (NSString *)mediaKeysStorageDirectory;
 
+- (void)setAntialiasedFontDilationEnabled:(BOOL)flag;
+- (BOOL)antialiasedFontDilationEnabled;
+
 #if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
 - (void)_setAllowCompositingLayerVisualDegradation:(BOOL)flag;
 #endif

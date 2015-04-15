@@ -2212,6 +2212,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setUsesEncodingDetector([preferences usesEncodingDetector]);
     settings.setFantasyFontFamily([preferences fantasyFontFamily]);
     settings.setFixedFontFamily([preferences fixedFontFamily]);
+    settings.setAntialiasedFontDilationEnabled([preferences antialiasedFontDilationEnabled]);
     settings.setForceFTPDirectoryListings([preferences _forceFTPDirectoryListings]);
     settings.setFTPDirectoryTemplatePath([preferences _ftpDirectoryTemplatePath]);
     settings.setLocalStorageDatabasePath([preferences _localStorageDatabasePath]);
@@ -2259,8 +2260,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setXSSAuditorEnabled([preferences isXSSAuditorEnabled]);
     settings.setDNSPrefetchingEnabled([preferences isDNSPrefetchingEnabled]);
     
-    // FIXME: Enabling accelerated compositing when WebGL is enabled causes tests to fail on Leopard which expect HW compositing to be disabled.
-    // Until we fix that, I will comment out the test (CFM)
     settings.setAcceleratedCompositingEnabled([preferences acceleratedCompositingEnabled]);
     settings.setAcceleratedDrawingEnabled([preferences acceleratedDrawingEnabled]);
     settings.setCanvasUsesAcceleratedDrawing([preferences canvasUsesAcceleratedDrawing]);    

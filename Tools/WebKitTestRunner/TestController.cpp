@@ -560,6 +560,7 @@ void TestController::resetPreferencesToConsistentValues()
     WKPreferencesResetTestRunnerOverrides(preferences);
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
     WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);
+    WKPreferencesSetAntialiasedFontDilationEnabled(preferences, false);
     WKPreferencesSetXSSAuditorEnabled(preferences, false);
     WKPreferencesSetWebAudioEnabled(preferences, true);
     WKPreferencesSetMediaStreamEnabled(preferences, true);
