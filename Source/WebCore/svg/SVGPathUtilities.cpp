@@ -285,7 +285,7 @@ bool getSVGPathSegAtLengthFromSVGPathByteStream(SVGPathByteStream* stream, float
     if (stream->isEmpty())
         return false;
 
-    PathTraversalState traversalState(PathTraversalState::TraversalSegmentAtLength);
+    PathTraversalState traversalState(PathTraversalState::Action::SegmentAtLength);
     SVGPathTraversalStateBuilder* builder = globalSVGPathTraversalStateBuilder(traversalState, length);
 
     auto source = std::make_unique<SVGPathByteStreamSource>(stream);
@@ -302,7 +302,7 @@ bool getTotalLengthOfSVGPathByteStream(SVGPathByteStream* stream, float& totalLe
     if (stream->isEmpty())
         return false;
 
-    PathTraversalState traversalState(PathTraversalState::TraversalTotalLength);
+    PathTraversalState traversalState(PathTraversalState::Action::TotalLength);
     SVGPathTraversalStateBuilder* builder = globalSVGPathTraversalStateBuilder(traversalState, 0);
 
     auto source = std::make_unique<SVGPathByteStreamSource>(stream);
@@ -319,7 +319,7 @@ bool getPointAtLengthOfSVGPathByteStream(SVGPathByteStream* stream, float length
     if (stream->isEmpty())
         return false;
 
-    PathTraversalState traversalState(PathTraversalState::TraversalPointAtLength);
+    PathTraversalState traversalState(PathTraversalState::Action::VectorAtLength);
     SVGPathTraversalStateBuilder* builder = globalSVGPathTraversalStateBuilder(traversalState, length);
 
     auto source = std::make_unique<SVGPathByteStreamSource>(stream);

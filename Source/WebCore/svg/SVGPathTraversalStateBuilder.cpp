@@ -29,68 +29,57 @@ namespace WebCore {
 
 SVGPathTraversalStateBuilder::SVGPathTraversalStateBuilder()
     : m_traversalState(0)
+    , m_segmentIndex(0)
 {
 }
 
 void SVGPathTraversalStateBuilder::moveTo(const FloatPoint& targetPoint, bool, PathCoordinateMode)
 {
     ASSERT(m_traversalState);
-    m_traversalState->m_totalLength += m_traversalState->moveTo(targetPoint);
+    m_traversalState->processPathElement(PathElementMoveToPoint, &targetPoint);
 }
 
 void SVGPathTraversalStateBuilder::lineTo(const FloatPoint& targetPoint, PathCoordinateMode)
 {
     ASSERT(m_traversalState);
-    m_traversalState->m_totalLength += m_traversalState->lineTo(targetPoint);
+    m_traversalState->processPathElement(PathElementAddLineToPoint, &targetPoint);
 }
 
 void SVGPathTraversalStateBuilder::curveToCubic(const FloatPoint& point1, const FloatPoint& point2, const FloatPoint& targetPoint, PathCoordinateMode)
 {
+    FloatPoint points[] = { point1, point2, targetPoint };
     ASSERT(m_traversalState);
-    m_traversalState->m_totalLength += m_traversalState->cubicBezierTo(point1, point2, targetPoint);
+    m_traversalState->processPathElement(PathElementAddCurveToPoint, points);
 }
 
 void SVGPathTraversalStateBuilder::closePath()
 {
     ASSERT(m_traversalState);
-    m_traversalState->m_totalLength += m_traversalState->closeSubpath();
+    m_traversalState->processPathElement(PathElementCloseSubpath, nullptr);
 }
 
 void SVGPathTraversalStateBuilder::setDesiredLength(float desiredLength)
 {
     ASSERT(m_traversalState);
-    m_traversalState->m_desiredLength = desiredLength;
+    m_traversalState->setDesiredLength(desiredLength);
 }
 
 bool SVGPathTraversalStateBuilder::continueConsuming()
 {
     ASSERT(m_traversalState);    
-    m_traversalState->processSegment();
-    return !m_traversalState->m_success;
-}
-
-void SVGPathTraversalStateBuilder::incrementPathSegmentCount()
-{
-    ASSERT(m_traversalState);
-    ++m_traversalState->m_segmentIndex;
-}
-
-unsigned SVGPathTraversalStateBuilder::pathSegmentIndex()
-{
-    ASSERT(m_traversalState);
-    return m_traversalState->m_segmentIndex;
+    return !m_traversalState->success();
 }
 
 float SVGPathTraversalStateBuilder::totalLength()
 {
     ASSERT(m_traversalState);
-    return m_traversalState->m_totalLength;
+    return m_traversalState->totalLength();
 }
 
 SVGPoint SVGPathTraversalStateBuilder::currentPoint()
 {
     ASSERT(m_traversalState);
-    return m_traversalState->m_current;
+    return m_traversalState->current();
 }
 
 }

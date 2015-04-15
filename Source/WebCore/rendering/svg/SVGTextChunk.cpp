@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,57 +25,185 @@
 
 namespace WebCore {
 
-SVGTextChunk::SVGTextChunk(unsigned chunkStyle, float desiredTextLength)
-    : m_chunkStyle(chunkStyle)
-    , m_desiredTextLength(desiredTextLength)
+SVGTextChunk::SVGTextChunk(const Vector<SVGInlineTextBox*>& lineLayoutBoxes, unsigned first, unsigned limit)
 {
-}
+    ASSERT(first < limit);
+    ASSERT(first >= 0 && limit <= lineLayoutBoxes.size());
 
-void SVGTextChunk::calculateLength(float& length, unsigned& characters) const
-{
-    SVGTextFragment* lastFragment = 0;
+    const SVGInlineTextBox* box = lineLayoutBoxes[first];
+    const RenderStyle& style = box->renderer().style();
+    const SVGRenderStyle& svgStyle = style.svgStyle();
 
-    unsigned boxCount = m_boxes.size();
-    for (unsigned boxPosition = 0; boxPosition < boxCount; ++boxPosition) {
-        SVGInlineTextBox* textBox = m_boxes.at(boxPosition);
-        Vector<SVGTextFragment>& fragments = textBox->textFragments();
+    if (!style.isLeftToRightDirection())
+        m_chunkStyle |= SVGTextChunk::RightToLeftText;
 
-        unsigned size = fragments.size();
-        if (!size)
-            continue;
+    if (svgStyle.isVerticalWritingMode())
+        m_chunkStyle |= SVGTextChunk::VerticalText;
+    
+    switch (svgStyle.textAnchor()) {
+    case TA_START:
+        break;
+    case TA_MIDDLE:
+        m_chunkStyle |= MiddleAnchor;
+        break;
+    case TA_END:
+        m_chunkStyle |= EndAnchor;
+        break;
+    }
 
-        for (unsigned i = 0; i < size; ++i) {
-            SVGTextFragment& fragment = fragments.at(i);
-            characters += fragment.length;
+    if (auto* textContentElement = SVGTextContentElement::elementFromRenderer(box->renderer().parent())) {
+        SVGLengthContext lengthContext(textContentElement);
+        m_desiredTextLength = textContentElement->specifiedTextLength().value(lengthContext);
 
-            if (m_chunkStyle & VerticalText)
-                length += fragment.height;
-            else
-                length += fragment.width;
-
-            if (!lastFragment) {
-                lastFragment = &fragment;
-                continue;
-            }
-
-            // Resepect gap between chunks.
-            if (m_chunkStyle & VerticalText)
-                 length += fragment.y - (lastFragment->y + lastFragment->height);
-            else
-                 length += fragment.x - (lastFragment->x + lastFragment->width);
-
-            lastFragment = &fragment;
+        switch (textContentElement->lengthAdjust()) {
+        case SVGLengthAdjustUnknown:
+            break;
+        case SVGLengthAdjustSpacing:
+            m_chunkStyle |= LengthAdjustSpacing;
+            break;
+        case SVGLengthAdjustSpacingAndGlyphs:
+            m_chunkStyle |= LengthAdjustSpacingAndGlyphs;
+            break;
         }
     }
+
+    for (unsigned i = first; i < limit; ++i)
+        m_boxes.append(lineLayoutBoxes[i]);
 }
 
-float SVGTextChunk::calculateTextAnchorShift(float length) const
+unsigned SVGTextChunk::totalCharacters() const
 {
+    unsigned characters = 0;
+    for (auto* box : m_boxes) {
+        for (auto& fragment : box->textFragments())
+            characters += fragment.length;
+    }
+    return characters;
+}
+
+float SVGTextChunk::totalLength() const
+{
+    const SVGTextFragment* firstFragment = nullptr;
+    const SVGTextFragment* lastFragment = nullptr;
+
+    for (auto* box : m_boxes) {
+        auto& fragments = box->textFragments();
+        if (fragments.size()) {
+            firstFragment = &(*fragments.begin());
+            break;
+        }
+    }
+
+    for (auto it = m_boxes.rbegin(), end = m_boxes.rend(); it != end; ++it) {
+        auto& fragments = (*it)->textFragments();
+        if (fragments.size()) {
+            lastFragment = &(*fragments.rbegin());
+            break;
+        }
+    }
+
+    ASSERT(!firstFragment == !lastFragment);
+    if (!firstFragment)
+        return 0;
+
+    if (m_chunkStyle & VerticalText)
+        return (lastFragment->y + lastFragment->height) - firstFragment->y;
+
+    return (lastFragment->x + lastFragment->width) - firstFragment->x;
+}
+
+float SVGTextChunk::totalAnchorShift() const
+{
+    float length = totalLength();
     if (m_chunkStyle & MiddleAnchor)
         return -length / 2;
     if (m_chunkStyle & EndAnchor)
         return m_chunkStyle & RightToLeftText ? 0 : -length;
     return m_chunkStyle & RightToLeftText ? -length : 0;
+}
+
+void SVGTextChunk::layout(HashMap<SVGInlineTextBox*, AffineTransform>& textBoxTransformations) const
+{
+    if (hasDesiredTextLength()) {
+        if (hasLengthAdjustSpacing())
+            processTextLengthSpacingCorrection();
+        else {
+            ASSERT(hasLengthAdjustSpacingAndGlyphs());
+            buildBoxTransformations(textBoxTransformations);
+        }
+    }
+
+    if (hasTextAnchor())
+        processTextAnchorCorrection();
+}
+
+void SVGTextChunk::processTextLengthSpacingCorrection() const
+{
+    float textLengthShift = (desiredTextLength() - totalLength()) / totalCharacters();
+    bool isVerticalText = m_chunkStyle & VerticalText;
+    unsigned atCharacter = 0;
+
+    for (auto* box : m_boxes) {
+        for (auto& fragment : box->textFragments()) {
+            if (isVerticalText)
+                fragment.y += textLengthShift * atCharacter;
+            else
+                fragment.x += textLengthShift * atCharacter;
+            
+            atCharacter += fragment.length;
+        }
+    }
+}
+
+void SVGTextChunk::buildBoxTransformations(HashMap<SVGInlineTextBox*, AffineTransform>& textBoxTransformations) const
+{
+    AffineTransform spacingAndGlyphsTransform;
+    bool foundFirstFragment = false;
+
+    for (auto* box : m_boxes) {
+        if (!foundFirstFragment) {
+            if (!boxSpacingAndGlyphsTransform(box, spacingAndGlyphsTransform))
+                continue;
+            foundFirstFragment = true;
+        }
+
+        textBoxTransformations.set(box, spacingAndGlyphsTransform);
+    }
+}
+
+bool SVGTextChunk::boxSpacingAndGlyphsTransform(const SVGInlineTextBox* box, AffineTransform& spacingAndGlyphsTransform) const
+{
+    auto& fragments = box->textFragments();
+    if (fragments.isEmpty())
+        return false;
+
+    const SVGTextFragment& fragment = fragments.first();
+    float scale = desiredTextLength() / totalLength();
+
+    spacingAndGlyphsTransform.translate(fragment.x, fragment.y);
+
+    if (m_chunkStyle & VerticalText)
+        spacingAndGlyphsTransform.scaleNonUniform(1, scale);
+    else
+        spacingAndGlyphsTransform.scaleNonUniform(scale, 1);
+
+    spacingAndGlyphsTransform.translate(-fragment.x, -fragment.y);
+    return true;
+}
+
+void SVGTextChunk::processTextAnchorCorrection() const
+{
+    float textAnchorShift = totalAnchorShift();
+    bool isVerticalText = m_chunkStyle & VerticalText;
+
+    for (auto* box : m_boxes) {
+        for (auto& fragment : box->textFragments()) {
+            if (isVerticalText)
+                fragment.y += textAnchorShift;
+            else
+                fragment.x += textAnchorShift;
+        }
+    }
 }
 
 } // namespace WebCore

@@ -32,15 +32,15 @@ class SVGPathTraversalStateBuilder : public SVGPathConsumer {
 public:
     SVGPathTraversalStateBuilder();
 
-    unsigned pathSegmentIndex();
+    unsigned pathSegmentIndex() { return m_segmentIndex; }
     float totalLength();
     SVGPoint currentPoint();
 
     void setCurrentTraversalState(PathTraversalState* traversalState) { m_traversalState = traversalState; }
     void setDesiredLength(float);
-    virtual void incrementPathSegmentCount() override;
+    virtual void incrementPathSegmentCount() override { ++m_segmentIndex; }
     virtual bool continueConsuming() override;
-    virtual void cleanup() override { m_traversalState = 0; }
+    virtual void cleanup() override { m_traversalState = nullptr, m_segmentIndex = 0; }
 
 private:
     // Used in UnalteredParsing/NormalizedParsing modes.
@@ -59,6 +59,7 @@ private:
     virtual void arcTo(float, float, float, bool, bool, const FloatPoint&, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
 
     PathTraversalState* m_traversalState;
+    unsigned m_segmentIndex;
 };
 
 } // namespace WebCore

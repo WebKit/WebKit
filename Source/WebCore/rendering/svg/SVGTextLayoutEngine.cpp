@@ -20,6 +20,7 @@
 #include "config.h"
 #include "SVGTextLayoutEngine.h"
 
+#include "PathTraversalState.h"
 #include "RenderSVGTextPath.h"
 #include "SVGElement.h"
 #include "SVGInlineTextBox.h"
@@ -170,48 +171,32 @@ void SVGTextLayoutEngine::beginTextPathLayout(RenderObject* object, SVGTextLayou
     m_textPath = textPath.layoutPath();
     if (m_textPath.isEmpty())
         return;
+
     m_textPathStartOffset = textPath.startOffset();
     m_textPathLength = m_textPath.length();
     if (m_textPathStartOffset > 0 && m_textPathStartOffset <= 1)
         m_textPathStartOffset *= m_textPathLength;
 
-    float totalLength = 0;
-    unsigned totalCharacters = 0;
-
     lineLayout.m_chunkLayoutBuilder.buildTextChunks(lineLayout.m_lineLayoutBoxes);
-    const Vector<SVGTextChunk>& textChunks = lineLayout.m_chunkLayoutBuilder.textChunks();
 
-    unsigned size = textChunks.size();
-    for (unsigned i = 0; i < size; ++i) {
-        const SVGTextChunk& chunk = textChunks.at(i);
-
-        float length = 0;
-        unsigned characters = 0;
-        chunk.calculateLength(length, characters);
-
-        // Handle text-anchor as additional start offset for text paths.
-        m_textPathStartOffset += chunk.calculateTextAnchorShift(length);
-
-        totalLength += length;
-        totalCharacters += characters;
-    }
-
+    // Handle text-anchor as additional start offset for text paths.
+    m_textPathStartOffset += lineLayout.m_chunkLayoutBuilder.totalAnchorShift();
     m_textPathCurrentOffset = m_textPathStartOffset;
 
     // Eventually handle textLength adjustments.
-    SVGLengthAdjustType lengthAdjust = SVGLengthAdjustUnknown;
-    float desiredTextLength = 0;
+    auto* textContentElement = SVGTextContentElement::elementFromRenderer(&textPath);
+    if (!textContentElement)
+        return;
 
-    if (SVGTextContentElement* textContentElement = SVGTextContentElement::elementFromRenderer(&textPath)) {
-        SVGLengthContext lengthContext(textContentElement);
-        lengthAdjust = textContentElement->lengthAdjust();
-        desiredTextLength = textContentElement->specifiedTextLength().value(lengthContext);
-    }
-
+    SVGLengthContext lengthContext(textContentElement);
+    float desiredTextLength = textContentElement->specifiedTextLength().value(lengthContext);
     if (!desiredTextLength)
         return;
 
-    if (lengthAdjust == SVGLengthAdjustSpacing)
+    float totalLength = lineLayout.m_chunkLayoutBuilder.totalLength();
+    unsigned totalCharacters = lineLayout.m_chunkLayoutBuilder.totalCharacters();
+
+    if (textContentElement->lengthAdjust() == SVGLengthAdjustSpacing)
         m_textPathSpacing = (desiredTextLength - totalLength) / totalCharacters;
     else
         m_textPathScaling = desiredTextLength / totalLength;
@@ -290,7 +275,7 @@ void SVGTextLayoutEngine::finalizeTransformMatrices(Vector<SVGInlineTextBox*>& b
 
         unsigned fragmentCount = fragments.size();
         for (unsigned i = 0; i < fragmentCount; ++i) {
-            m_chunkLayoutBuilder.transformationForTextBox(textBox, textBoxTransformation);
+            textBoxTransformation = m_chunkLayoutBuilder.transformationForTextBox(textBox);
             if (textBoxTransformation.isIdentity())
                 continue;
             ASSERT(fragments[i].lengthAdjustTransform.isIdentity());
@@ -553,14 +538,15 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
             if (textPathOffset > m_textPathLength)
                 break;
 
-            bool ok = false;
-            FloatPoint point = m_textPath.pointAtLength(textPathOffset, ok);
-            ASSERT(ok);
+            bool success = false;
+            auto traversalState(m_textPath.traversalStateAtLength(textPathOffset, success));
+            ASSERT(success);
 
+            FloatPoint point = traversalState.current();
             x = point.x();
             y = point.y();
-            angle = m_textPath.normalAngleAtLength(textPathOffset, ok);
-            ASSERT(ok);
+
+            angle = traversalState.normalAngle();
 
             // For vertical text on path, the actual angle has to be rotated 90 degrees anti-clockwise, not the orientation angle!
             if (m_isVerticalText)

@@ -1,3 +1,17 @@
+2015-04-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        textPath layout performance improvement.
+        https://bugs.webkit.org/show_bug.cgi?id=141570.
+
+        Reviewed by Darin Adler.
+
+        Cut down the time spent in traversing the path for text by 50%. Instead
+        of traversing the path twice at a certain length: one time for the position
+        and the second time for the angle, we can merge these two passes into one.
+
+        * SVG/TextOnPathSimple.html: Added.
+        * SVG/resources/TextOnPathSimple.svg: Added.
+
 2015-04-13  Zalan Bujtas  <zalan@apple.com>
 
         Clear up the test content when test is done.

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2015 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,7 +35,9 @@ static inline FloatPoint midPoint(const FloatPoint& first, const FloatPoint& sec
 
 static inline float distanceLine(const FloatPoint& start, const FloatPoint& end)
 {
-    return sqrtf((end.x() - start.x()) * (end.x() - start.x()) + (end.y() - start.y()) * (end.y() - start.y()));
+    float dx = end.x() - start.x();
+    float dy = end.y() - start.y();
+    return sqrtf(dx * dx + dy * dy);
 }
 
 struct QuadraticBezier {
@@ -114,110 +117,149 @@ struct CubicBezier {
 // Another check which is possible up-front (to send us down the fast path) would be to check if
 // approximateDistance() + current total distance > desired distance
 template<class CurveType>
-static float curveLength(PathTraversalState& traversalState, CurveType curve)
+static float curveLength(const PathTraversalState& traversalState, const CurveType& originalCurve, FloatPoint& previous, FloatPoint& current)
 {
     static const unsigned curveStackDepthLimit = 20;
-
-    Vector<CurveType> curveStack;
-    curveStack.append(curve);
-
+    CurveType curve = originalCurve;
+    Vector<CurveType, curveStackDepthLimit> curveStack;
     float totalLength = 0;
-    do {
+
+    while (true) {
         float length = curve.approximateDistance();
-        if ((length - distanceLine(curve.start, curve.end)) > kPathSegmentLengthTolerance && curveStack.size() <= curveStackDepthLimit) {
+
+        if ((length - distanceLine(curve.start, curve.end)) > kPathSegmentLengthTolerance && curveStack.size() < curveStackDepthLimit) {
             CurveType leftCurve;
             CurveType rightCurve;
             curve.split(leftCurve, rightCurve);
             curve = leftCurve;
             curveStack.append(rightCurve);
-        } else {
-            totalLength += length;
-            if (traversalState.m_action == PathTraversalState::TraversalPointAtLength
-             || traversalState.m_action == PathTraversalState::TraversalNormalAngleAtLength) {
-                traversalState.m_previous = curve.start;
-                traversalState.m_current = curve.end;
-                if (traversalState.m_totalLength + totalLength > traversalState.m_desiredLength)
-                    return totalLength;
-            }
-            curve = curveStack.last();
-            curveStack.removeLast();
+            continue;
         }
-    } while (!curveStack.isEmpty());
-    
+
+        totalLength += length;
+        if (traversalState.action() == PathTraversalState::Action::VectorAtLength) {
+            previous = curve.start;
+            current = curve.end;
+            if (traversalState.totalLength() + totalLength > traversalState.desiredLength())
+                break;
+        }
+
+        if (curveStack.isEmpty())
+            break;
+
+        curve = curveStack.last();
+        curveStack.removeLast();
+    }
+
+    if (traversalState.action() != PathTraversalState::Action::VectorAtLength) {
+        ASSERT(curve.end == originalCurve.end);
+        previous = curve.start;
+        current = curve.end;
+    }
+
     return totalLength;
 }
 
-PathTraversalState::PathTraversalState(PathTraversalAction action)
+PathTraversalState::PathTraversalState(Action action, float desiredLength)
     : m_action(action)
-    , m_success(false)
-    , m_totalLength(0)
-    , m_segmentIndex(0)
-    , m_desiredLength(0)
-    , m_normalAngle(0)
+    , m_desiredLength(desiredLength)
 {
+    ASSERT(action != Action::TotalLength || !desiredLength);
 }
 
-float PathTraversalState::closeSubpath()
+void PathTraversalState::closeSubpath()
 {
-    float distance = distanceLine(m_current, m_start);
-    m_current = m_control1 = m_control2 = m_start;
-    return distance;
+    m_totalLength += distanceLine(m_current, m_start);
+    m_current = m_start;
 }
 
-float PathTraversalState::moveTo(const FloatPoint& point)
+void PathTraversalState::moveTo(const FloatPoint& point)
 {
-    m_current = m_start = m_control1 = m_control2 = point;
-    return 0;
+    m_previous = m_current = m_start = point;
 }
 
-float PathTraversalState::lineTo(const FloatPoint& point)
+void PathTraversalState::lineTo(const FloatPoint& point)
 {
-    float distance = distanceLine(m_current, point);
-    m_current = m_control1 = m_control2 = point;
-    return distance;
+    m_totalLength += distanceLine(m_current, point);
+    m_current = point;
 }
 
-float PathTraversalState::quadraticBezierTo(const FloatPoint& newControl, const FloatPoint& newEnd)
+void PathTraversalState::quadraticBezierTo(const FloatPoint& newControl, const FloatPoint& newEnd)
 {
-    float distance = curveLength<QuadraticBezier>(*this, QuadraticBezier(m_current, newControl, newEnd));
-
-    m_control1 = newControl;
-    m_control2 = newEnd;
-
-    if (m_action != TraversalPointAtLength && m_action != TraversalNormalAngleAtLength) 
-        m_current = newEnd;
-
-    return distance;
+    m_totalLength += curveLength<QuadraticBezier>(*this, QuadraticBezier(m_current, newControl, newEnd), m_previous, m_current);
 }
 
-float PathTraversalState::cubicBezierTo(const FloatPoint& newControl1, const FloatPoint& newControl2, const FloatPoint& newEnd)
+void PathTraversalState::cubicBezierTo(const FloatPoint& newControl1, const FloatPoint& newControl2, const FloatPoint& newEnd)
 {
-    float distance = curveLength<CubicBezier>(*this, CubicBezier(m_current, newControl1, newControl2, newEnd));
-
-    m_control1 = newEnd;
-    m_control2 = newControl2;
- 
-    if (m_action != TraversalPointAtLength && m_action != TraversalNormalAngleAtLength) 
-        m_current = newEnd;
-
-    return distance;
+    m_totalLength += curveLength<CubicBezier>(*this, CubicBezier(m_current, newControl1, newControl2, newEnd), m_previous, m_current);
 }
 
-void PathTraversalState::processSegment()
+bool PathTraversalState::finalizeAppendPathElement()
 {
-    if (m_action == TraversalSegmentAtLength && m_totalLength >= m_desiredLength)
-        m_success = true;
-        
-    if ((m_action == TraversalPointAtLength || m_action == TraversalNormalAngleAtLength) && m_totalLength >= m_desiredLength) {
-        float slope = FloatPoint(m_current - m_previous).slopeAngleRadians();
-        if (m_action == TraversalPointAtLength) {
-            float offset = m_desiredLength - m_totalLength;
-            m_current.move(offset * cosf(slope), offset * sinf(slope));
-        } else
-            m_normalAngle = rad2deg(slope);
-        m_success = true;
+    if (m_action == Action::TotalLength)
+        return false;
+
+    if (m_action == Action::SegmentAtLength) {
+        if (m_totalLength >= m_desiredLength)
+            m_success = true;
+        return m_success;
     }
+
+    ASSERT(m_action == Action::VectorAtLength);
+
+    if (m_totalLength >= m_desiredLength) {
+        float slope = FloatPoint(m_current - m_previous).slopeAngleRadians();
+        float offset = m_desiredLength - m_totalLength;
+        m_current.move(offset * cosf(slope), offset * sinf(slope));
+
+        if (!m_isZeroVector && !m_desiredLength)
+            m_isZeroVector = true;
+        else {
+            m_success = true;
+            m_normalAngle = rad2deg(slope);
+        }
+    }
+
     m_previous = m_current;
+    return m_success;
+}
+
+bool PathTraversalState::appendPathElement(PathElementType type, const FloatPoint* points)
+{
+    switch (type) {
+    case PathElementMoveToPoint:
+        moveTo(points[0]);
+        break;
+    case PathElementAddLineToPoint:
+        lineTo(points[0]);
+        break;
+    case PathElementAddQuadCurveToPoint:
+        quadraticBezierTo(points[0], points[1]);
+        break;
+    case PathElementAddCurveToPoint:
+        cubicBezierTo(points[0], points[1], points[2]);
+        break;
+    case PathElementCloseSubpath:
+        closeSubpath();
+        break;
+    }
+    
+    return finalizeAppendPathElement();
+}
+
+bool PathTraversalState::processPathElement(PathElementType type, const FloatPoint* points)
+{
+    if (m_success)
+        return true;
+
+    if (m_isZeroVector) {
+        PathTraversalState traversalState(*this);
+        m_success = traversalState.appendPathElement(type, points);
+        m_normalAngle = traversalState.m_normalAngle;
+        return m_success;
+    }
+
+    return appendPathElement(type, points);
 }
 
 }

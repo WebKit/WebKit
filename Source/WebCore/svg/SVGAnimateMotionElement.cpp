@@ -24,6 +24,7 @@
 
 #include "AffineTransform.h"
 #include "ElementIterator.h"
+#include "PathTraversalState.h"
 #include "RenderSVGResource.h"
 #include "SVGImageElement.h"
 #include "SVGMPathElement.h"
@@ -212,16 +213,19 @@ void SVGAnimateMotionElement::buildTransformForProgress(AffineTransform* transfo
 {
     ASSERT(!m_animationPath.isEmpty());
 
-    bool ok = false;
+    bool success = false;
     float positionOnPath = m_animationPath.length() * percentage;
-    FloatPoint position = m_animationPath.pointAtLength(positionOnPath, ok);
-    if (!ok)
+    auto traversalState(m_animationPath.traversalStateAtLength(positionOnPath, success));
+    if (!success)
         return;
+
+    FloatPoint position = traversalState.current();
+    float angle = traversalState.normalAngle();
+
     transform->translate(position.x(), position.y());
     RotateMode rotateMode = this->rotateMode();
     if (rotateMode != RotateAuto && rotateMode != RotateAutoReverse)
         return;
-    float angle = m_animationPath.normalAngleAtLength(positionOnPath, ok);
     if (rotateMode == RotateAutoReverse)
         angle += 180;
     transform->rotate(angle);

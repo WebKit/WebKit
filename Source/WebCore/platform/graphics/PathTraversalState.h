@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,45 +28,60 @@
 #define PathTraversalState_h
 
 #include "FloatPoint.h"
+#include "Path.h"
 
 namespace WebCore {
 
 class PathTraversalState {
 public:
-    enum PathTraversalAction {
-        TraversalTotalLength,
-        TraversalPointAtLength,
-        TraversalSegmentAtLength,
-        TraversalNormalAngleAtLength
+    enum class Action {
+        TotalLength,
+        VectorAtLength,
+        SegmentAtLength,
     };
 
-    PathTraversalState(PathTraversalAction);
-
-    float closeSubpath();
-    float moveTo(const FloatPoint&);
-    float lineTo(const FloatPoint&);
-    float quadraticBezierTo(const FloatPoint& newControl, const FloatPoint& newEnd);
-    float cubicBezierTo(const FloatPoint& newControl1, const FloatPoint& newControl2, const FloatPoint& newEnd);
-    
-    void processSegment();
+    PathTraversalState(Action, float desiredLength = 0);
 
 public:
-    PathTraversalAction m_action;
-    bool m_success;
+    bool processPathElement(PathElementType, const FloatPoint*);
+    bool processPathElement(const PathElement* element) { return processPathElement(element->type, element->points); }
+
+    Action action() const { return m_action; }
+    void setAction(Action action) { m_action = action; }
+    float desiredLength() const { return m_desiredLength; }
+    void setDesiredLength(float desiredLength) { m_desiredLength = desiredLength; }
+
+    // Traversing output -- should be read only
+    bool success() const { return m_success; }
+    float totalLength() const { return m_totalLength; }
+    FloatPoint current() const { return m_current; }
+    float normalAngle() const { return m_normalAngle; }
+
+private:
+    void closeSubpath();
+    void moveTo(const FloatPoint&);
+    void lineTo(const FloatPoint&);
+    void quadraticBezierTo(const FloatPoint&, const FloatPoint&);
+    void cubicBezierTo(const FloatPoint&, const FloatPoint&, const FloatPoint&);
+
+    bool finalizeAppendPathElement();
+    bool appendPathElement(PathElementType, const FloatPoint*);
+
+private:
+    Action m_action;
+    bool m_success { false };
 
     FloatPoint m_current;
     FloatPoint m_start;
-    FloatPoint m_control1;
-    FloatPoint m_control2;
 
-    float m_totalLength;
-    unsigned m_segmentIndex;
-    float m_desiredLength;
+    float m_totalLength { 0 };
+    float m_desiredLength { 0 };
 
     // For normal calculations
     FloatPoint m_previous;
-    float m_normalAngle; // degrees
-};    
+    float m_normalAngle { 0 }; // degrees
+    bool m_isZeroVector { false };
+};
 }
 
 #endif

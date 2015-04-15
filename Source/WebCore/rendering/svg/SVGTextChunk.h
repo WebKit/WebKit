@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,28 +41,34 @@ public:
         LengthAdjustSpacingAndGlyphs = 1 << 6
     };
 
-    SVGTextChunk(unsigned chunkStyle, float desiredTextLength);
+    SVGTextChunk(const Vector<SVGInlineTextBox*>&, unsigned first, unsigned limit);
 
-    void calculateLength(float& length, unsigned& characters) const;
-    float calculateTextAnchorShift(float length) const;
+    unsigned totalCharacters() const;
+    float totalLength() const;
+    float totalAnchorShift() const;
+    void layout(HashMap<SVGInlineTextBox*, AffineTransform>&) const;
+
+private:
+    void processTextAnchorCorrection() const;
+    void buildBoxTransformations(HashMap<SVGInlineTextBox*, AffineTransform>&) const;
+    void processTextLengthSpacingCorrection() const;
 
     bool isVerticalText() const { return m_chunkStyle & VerticalText; }
     float desiredTextLength() const { return m_desiredTextLength; }
 
-    Vector<SVGInlineTextBox*>& boxes() { return m_boxes; }
-    const Vector<SVGInlineTextBox*>& boxes() const { return m_boxes; }
-
     bool hasDesiredTextLength() const { return m_desiredTextLength > 0 && ((m_chunkStyle & LengthAdjustSpacing) || (m_chunkStyle & LengthAdjustSpacingAndGlyphs)); }
-    bool hasTextAnchor() const {  return m_chunkStyle & RightToLeftText ? !(m_chunkStyle & EndAnchor) : (m_chunkStyle & MiddleAnchor) || (m_chunkStyle & EndAnchor); }
+    bool hasTextAnchor() const {  return m_chunkStyle & RightToLeftText ? !(m_chunkStyle & EndAnchor) : (m_chunkStyle & (MiddleAnchor | EndAnchor)); }
     bool hasLengthAdjustSpacing() const { return m_chunkStyle & LengthAdjustSpacing; }
     bool hasLengthAdjustSpacingAndGlyphs() const { return m_chunkStyle & LengthAdjustSpacingAndGlyphs; }
+
+    bool boxSpacingAndGlyphsTransform(const SVGInlineTextBox*, AffineTransform&) const;
 
 private:
     // Contains all SVGInlineTextBoxes this chunk spans.
     Vector<SVGInlineTextBox*> m_boxes;
 
-    unsigned m_chunkStyle;
-    float m_desiredTextLength;
+    unsigned m_chunkStyle { DefaultStyle };
+    float m_desiredTextLength { 0 };
 };
 
 } // namespace WebCore

@@ -42,54 +42,32 @@ namespace WebCore {
 static void pathLengthApplierFunction(void* info, const PathElement* element)
 {
     PathTraversalState& traversalState = *static_cast<PathTraversalState*>(info);
-    if (traversalState.m_success)
-        return;
-    FloatPoint* points = element->points;
-    float segmentLength = 0;
-    switch (element->type) {
-        case PathElementMoveToPoint:
-            segmentLength = traversalState.moveTo(points[0]);
-            break;
-        case PathElementAddLineToPoint:
-            segmentLength = traversalState.lineTo(points[0]);
-            break;
-        case PathElementAddQuadCurveToPoint:
-            segmentLength = traversalState.quadraticBezierTo(points[0], points[1]);
-            break;
-        case PathElementAddCurveToPoint:
-            segmentLength = traversalState.cubicBezierTo(points[0], points[1], points[2]);
-            break;
-        case PathElementCloseSubpath:
-            segmentLength = traversalState.closeSubpath();
-            break;
-    }
-    traversalState.m_totalLength += segmentLength; 
-    traversalState.processSegment();
+    traversalState.processPathElement(element);
 }
 
 float Path::length() const
 {
-    PathTraversalState traversalState(PathTraversalState::TraversalTotalLength);
+    PathTraversalState traversalState(PathTraversalState::Action::TotalLength);
     apply(&traversalState, pathLengthApplierFunction);
-    return traversalState.m_totalLength;
+    return traversalState.totalLength();
 }
 
-FloatPoint Path::pointAtLength(float length, bool& ok) const
+PathTraversalState Path::traversalStateAtLength(float length, bool& success) const
 {
-    PathTraversalState traversalState(PathTraversalState::TraversalPointAtLength);
-    traversalState.m_desiredLength = length;
+    PathTraversalState traversalState(PathTraversalState::Action::VectorAtLength, length);
     apply(&traversalState, pathLengthApplierFunction);
-    ok = traversalState.m_success;
-    return traversalState.m_current;
+    success = traversalState.success();
+    return traversalState;
 }
 
-float Path::normalAngleAtLength(float length, bool& ok) const
+FloatPoint Path::pointAtLength(float length, bool& success) const
 {
-    PathTraversalState traversalState(PathTraversalState::TraversalNormalAngleAtLength);
-    traversalState.m_desiredLength = length ? length : std::numeric_limits<float>::epsilon();
-    apply(&traversalState, pathLengthApplierFunction);
-    ok = traversalState.m_success;
-    return traversalState.m_normalAngle;
+    return traversalStateAtLength(length, success).current();
+}
+
+float Path::normalAngleAtLength(float length, bool& success) const
+{
+    return traversalStateAtLength(length, success).normalAngle();
 }
 
 void Path::addRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii, RoundedRectStrategy strategy)

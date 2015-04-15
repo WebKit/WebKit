@@ -1,3 +1,195 @@
+2015-04-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        textPath layout performance improvement.
+        https://bugs.webkit.org/show_bug.cgi?id=141570.
+
+        Reviewed by Darin Adler.
+
+        The bottleneck of the text-on-path performance is the position and angle
+        calculations for every single character. If the number of characters is
+        'n' and the number of path elements is 'm', the total number of processing
+        the path elements is O(2 x n x m). What makes it really worse is, for every
+        curve we keep splitting the curve till the split curve is almost a straight
+        line. The changes we need to do are:
+        1. Merge the position and the angle traversals in one pass since they are
+           returning info for the same length on the path. There is a degenerate
+           case for the starting point when calculating the angle. The original
+           code was solving this problem by passing an epsilon instead of zero but
+           because traversing the path for position and angle are now merged, we
+           will pass zero for the starting point as is. All we need is to move one
+           step ahead without moving the position. We need the extra step forward
+           to calculate the slope of the path at the starting point.
+        2. We need to add a new mode to traversing a path. The new mode will take
+           a vector of lengths and returns a vector of arrow vectors. Every arrow
+           vector represents a position and an angle on the path at a certain length.
+           This requires changing the SVGTextLayoutEngine to calculate the lengths
+           of the characters on the curve first and then passing all of them to the
+           path traversal function. Instead of traversing the path for every length,
+           we are going to get the required point and angle from the vector of arrow
+           vectors.
+
+        This patch is addressing the first fix only. The second one will require
+        refactoring the SVGTextLayoutEngine so I am going to address it in a
+        different patch.
+
+        * platform/graphics/Path.cpp:
+        (WebCore::pathLengthApplierFunction): It is cleaner to move the function
+        of this method to PathTraversalState::processPathElement().
+        
+        (WebCore::Path::length): Use new enum Action value and access methods.
+        
+        (WebCore::Path::traversalStateAtLength): New function which returns the
+        traversalState at a certain length on a path.
+        
+        (WebCore::Path::pointAtLength):
+        (WebCore::Path::normalAngleAtLength): Use traversalStateAtLength() to get
+        the traversalState and from it return either the position or the angle.
+        
+        * platform/graphics/Path.h: Define traversalStateAtLength().
+        
+        * platform/graphics/PathTraversalState.cpp:
+        (WebCore::distanceLine): Code clean up.
+        
+        (WebCore::curveLength): Make the setting of m_previous and m_current happens
+        only in this function.
+        
+        (WebCore::PathTraversalState::PathTraversalState): Add an optional parameter
+        for the desired length and move the initialization of the other members to
+        the class definition.
+        
+        (WebCore::PathTraversalState::closeSubpath):
+        (WebCore::PathTraversalState::moveTo):
+        (WebCore::PathTraversalState::lineTo): Add the distance to the m_totalLength
+        instead of returning it since this is what all the callers were doing.
+        
+        (WebCore::PathTraversalState::quadraticBezierTo):
+        (WebCore::PathTraversalState::cubicBezierTo): Add the distance to the
+        m_totalLength. Move the setting of m_previous and m_current to curveLength().
+        Remove unused members m_control1 and m_control2.
+
+        (WebCore::PathTraversalState::processSegment): Deleted.        
+        (WebCore::PathTraversalState::finalizeAppendPathElement): Create a new
+        name for the function. Handle the case of the angle at the starting point
+        where m_desiredLength is set to zero. The new flag m_isZeroVector will be
+        set to notify the caller that the  next iteration will be the last one and
+        it is only needed for the calculating the angle of a zero vector. m_current
+        should not change by this last iteration.
+        
+        (WebCore::PathTraversalState::appendPathElement): This code is moved from
+        pathLengthApplierFunction().
+        
+        (WebCore::PathTraversalState::processPathElement): This function is used
+        by the class Path. It is a wrapper for appendPathElement(). If m_isZeroVector
+        is set we append the new element to a copy for the PathTraversalState just
+        to get the angle for the zero vector.
+
+        * platform/graphics/PathTraversalState.h: Change the enum values to not
+        not include the class or the enum class. Make the data members private and
+        expose the needed ones through access methods. Make all the internal methods
+        to be private.
+        
+        (WebCore::PathTraversalState::processPathElement):  Another wrapper for
+        appendPathElement() which is used by SVGPathTraversalStateBuilder.
+        
+        (WebCore::PathTraversalState::action):
+        (WebCore::PathTraversalState::setAction):
+        (WebCore::PathTraversalState::desiredLength):
+        (WebCore::PathTraversalState::setDesiredLength):
+        (WebCore::PathTraversalState::success):
+        (WebCore::PathTraversalState::totalLength):
+        (WebCore::PathTraversalState::current):
+        (WebCore::PathTraversalState::normalAngle): New access methods which are now
+        needed after making the data members private.
+        
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::layoutCharactersInTextBoxes): Make the casting
+        of the renderer on the caller side.
+        
+        * rendering/svg/SVGTextChunk.cpp:
+        (WebCore::SVGTextChunk::SVGTextChunk): The constructor should append the
+        elements of m_boxes instead of making this from outside the class.
+        
+        (WebCore::SVGTextChunk::totalCharacters):
+        (WebCore::SVGTextChunk::totalLength):
+        (WebCore::SVGTextChunk::calculateLength): Deleted.
+        Replace calculateLength() by totalCharacters() and totalLength() to make
+        the interface cleaner.
+        
+        (WebCore::SVGTextChunk::totalAnchorShift):
+        (WebCore::SVGTextChunk::calculateTextAnchorShift): Deleted.
+        Rename the function name.
+        
+        (WebCore::SVGTextChunk::layout):
+        (WebCore::SVGTextChunk::processTextLengthSpacingCorrection):
+        (WebCore::SVGTextChunk::buildBoxTransformations):
+        (WebCore::SVGTextChunk::boxSpacingAndGlyphsTransform):
+        (WebCore::SVGTextChunk::processTextAnchorCorrection):
+        Move the chunk layout code from SVGTextChunkBuilder::layoutTextChunks()
+        to the SVGTextChunk::layout(). Move all the helper functions as well.
+        
+        * rendering/svg/SVGTextChunk.h:
+        (WebCore::SVGTextChunk::hasTextAnchor):
+        (WebCore::SVGTextChunk::boxes): Deleted.
+        Add the new methods and change most of the public methods to be private.
+        
+        * rendering/svg/SVGTextChunkBuilder.cpp:
+        (WebCore::SVGTextChunkBuilder::totalCharacters):
+        (WebCore::SVGTextChunkBuilder::totalLength):
+        (WebCore::SVGTextChunkBuilder::totalAnchorShift): This code is moved from
+        SVGTextLayoutEngine. It scans the boxes stored in the SVGTextChunkBuilder
+        and sums up the total values.
+        
+        (WebCore::SVGTextChunkBuilder::transformationForTextBox):
+        (WebCore::SVGTextChunkBuilder::buildTextChunks):
+        (WebCore::SVGTextChunkBuilder::layoutTextChunks): Code clean up.
+        
+        (WebCore::SVGTextChunkBuilder::addTextChunk): Deleted.
+        (WebCore::SVGTextChunkBuilder::processTextChunk): Deleted.
+        (WebCore::SVGTextChunkBuilder::processTextLengthSpacingCorrection): Deleted.
+        (WebCore::SVGTextChunkBuilder::processTextAnchorCorrection): Deleted.
+        (WebCore::SVGTextChunkBuilder::buildSpacingAndGlyphsTransform): Deleted.
+        This code now lives in SVGTextChunk.
+        
+        * rendering/svg/SVGTextChunkBuilder.h: Add new methods for code which was
+        moved from SVGTextLayoutEngine and remove methods for code which was removed
+        to SVGTextChunk.
+        
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::beginTextPathLayout): Use the sum up methods
+        from SVGTextChunkBuilder instead of looping through the chunks. Also get a
+        clean order for defining variables and doing the calculations.
+        
+        (WebCore::SVGTextLayoutEngine::finalizeTransformMatrices): Code clean up.
+        
+        (WebCore::SVGTextLayoutEngine::layoutTextOnLineOrPath): Do a single path
+        traversal to get the position and the angle for a length on a path.
+        
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::buildTransformForProgress): Do a single
+        path traversal to get the position and the angle at a length on a path.
+        
+        * svg/SVGPathTraversalStateBuilder.cpp:
+        (WebCore::SVGPathTraversalStateBuilder::SVGPathTraversalStateBuilder):
+        (WebCore::SVGPathTraversalStateBuilder::moveTo):
+        (WebCore::SVGPathTraversalStateBuilder::lineTo):
+        (WebCore::SVGPathTraversalStateBuilder::curveToCubic):
+        (WebCore::SVGPathTraversalStateBuilder::closePath):
+        (WebCore::SVGPathTraversalStateBuilder::setDesiredLength):
+        (WebCore::SVGPathTraversalStateBuilder::continueConsuming):
+        (WebCore::SVGPathTraversalStateBuilder::totalLength):
+        (WebCore::SVGPathTraversalStateBuilder::currentPoint):
+        (WebCore::SVGPathTraversalStateBuilder::incrementPathSegmentCount): Deleted.
+        (WebCore::SVGPathTraversalStateBuilder::pathSegmentIndex): Deleted.
+        * svg/SVGPathTraversalStateBuilder.h:
+        (WebCore::SVGPathTraversalStateBuilder::pathSegmentIndex):
+        Code clean up.
+        
+        * svg/SVGPathUtilities.cpp:
+        (WebCore::getSVGPathSegAtLengthFromSVGPathByteStream):
+        (WebCore::getTotalLengthOfSVGPathByteStream):
+        (WebCore::getPointAtLengthOfSVGPathByteStream): Use new TraversalState::Action
+        enum values.
+
 2015-04-14  Simon Fraser  <simon.fraser@apple.com>
 
         Re-enable custom dilation for antialiased fonts

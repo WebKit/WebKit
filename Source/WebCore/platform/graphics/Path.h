@@ -60,6 +60,7 @@ namespace WebCore {
     class FloatRoundedRect;
     class FloatSize;
     class GraphicsContext;
+    class PathTraversalState;
     class RoundedRect;
     class StrokeStyleApplier;
 
@@ -100,10 +101,11 @@ namespace WebCore {
         FloatRect boundingRect() const;
         FloatRect fastBoundingRect() const;
         FloatRect strokeBoundingRect(StrokeStyleApplier* = 0) const;
-        
+
         float length() const;
-        FloatPoint pointAtLength(float length, bool& ok) const;
-        float normalAngleAtLength(float length, bool& ok) const;
+        PathTraversalState traversalStateAtLength(float length, bool& success) const;
+        FloatPoint pointAtLength(float length, bool& success) const;
+        float normalAngleAtLength(float length, bool& success) const;
 
         WEBCORE_EXPORT void clear();
         bool isNull() const { return !m_path; }
