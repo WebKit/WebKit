@@ -127,13 +127,6 @@ static bool enableAssembler(ExecutableAllocator& executableAllocator)
         return false;
     }
 
-#if USE(CF)
-    CFStringRef canUseJITKey = CFSTR("JavaScriptCoreUseJIT");
-    RetainPtr<CFTypeRef> canUseJIT = adoptCF(CFPreferencesCopyAppValue(canUseJITKey, kCFPreferencesCurrentApplication));
-    if (canUseJIT)
-        return kCFBooleanTrue == canUseJIT.get();
-#endif
-
 #if USE(CF) || OS(UNIX)
     char* canUseJITString = getenv("JavaScriptCoreUseJIT");
     return !canUseJITString || atoi(canUseJITString);

@@ -1,3 +1,13 @@
+2015-04-14  Michael Saboff  <msaboff@apple.com>
+
+        Remove JavaScriptCoreUseJIT default from JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=143746
+
+        Reviewed by Mark Lam.
+
+        * runtime/VM.cpp:
+        (JSC::enableAssembler):
+
 2015-04-14  Chris Dumez  <cdumez@apple.com>
 
         Regression(r180020): Web Inspector crashes on pages that have a stylesheet with an invalid MIME type
