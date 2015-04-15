@@ -84,7 +84,7 @@ static void RemoteInspectorInitializeGlobalQueue()
         rwiQueueMutex = std::make_unique<std::mutex>().release();
 
         CFRunLoopSourceContext runLoopSourceContext = {0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, RemoteInspectorHandleRunSourceGlobal};
-        rwiRunLoopSource = CFRunLoopSourceCreate(nullptr, 1, &runLoopSourceContext);
+        rwiRunLoopSource = CFRunLoopSourceCreate(kCFAllocatorDefault, 1, &runLoopSourceContext);
 
         // Add to the default run loop mode for default handling, and the JSContext remote inspector run loop mode when paused.
         CFRunLoopAddSource(CFRunLoopGetMain(), rwiRunLoopSource, kCFRunLoopDefaultMode);
@@ -237,7 +237,7 @@ void RemoteInspectorDebuggableConnection::setupRunLoop()
     m_runLoop = debuggerRunLoop;
 
     CFRunLoopSourceContext runLoopSourceContext = {0, this, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, RemoteInspectorHandleRunSourceWithInfo};
-    m_runLoopSource = adoptCF(CFRunLoopSourceCreate(nullptr, 1, &runLoopSourceContext));
+    m_runLoopSource = adoptCF(CFRunLoopSourceCreate(kCFAllocatorDefault, 1, &runLoopSourceContext));
 
     CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopDefaultMode);
     CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), EventLoop::remoteInspectorRunLoopMode());
