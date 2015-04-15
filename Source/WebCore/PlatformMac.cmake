@@ -2,6 +2,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/mac"
     "${WEBCORE_DIR}/bindings/objc"
     "${WEBCORE_DIR}/bridge/objc"
+    "${WEBCORE_DIR}/editing/cocoa"
     "${WEBCORE_DIR}/editing/mac"
     "${WEBCORE_DIR}/icu"
     "${WEBCORE_DIR}/loader/archive/cf"
@@ -44,6 +45,22 @@ list(APPEND WebCore_SOURCES
     accessibility/mac/WebAccessibilityObjectWrapperBase.mm
     accessibility/mac/WebAccessibilityObjectWrapperMac.mm
 
+    bindings/objc/DOM.mm
+    bindings/objc/DOMAbstractView.mm
+    bindings/objc/DOMCSS.mm
+    bindings/objc/DOMCustomXPathNSResolver.mm
+    bindings/objc/DOMEvents.mm
+    bindings/objc/DOMHTML.mm
+    bindings/objc/DOMInternal.mm
+    bindings/objc/DOMObject.mm
+    bindings/objc/DOMUIKitExtensions.mm
+    bindings/objc/DOMUtility.mm
+    bindings/objc/DOMXPath.mm
+    bindings/objc/ExceptionHandlers.mm
+    bindings/objc/ObjCEventListener.mm
+    bindings/objc/ObjCNodeFilterCondition.mm
+    bindings/objc/WebScriptObject.mm
+
     crypto/CommonCryptoUtilities.cpp
     crypto/CryptoAlgorithm.cpp
     crypto/CryptoAlgorithmDescriptionBuilder.cpp
@@ -51,6 +68,48 @@ list(APPEND WebCore_SOURCES
     crypto/CryptoKey.cpp
     crypto/CryptoKeyPair.cpp
     crypto/SubtleCrypto.cpp
+
+    crypto/algorithms/CryptoAlgorithmAES_CBC.cpp
+    crypto/algorithms/CryptoAlgorithmAES_KW.cpp
+    crypto/algorithms/CryptoAlgorithmHMAC.cpp
+    crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp
+    crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp
+    crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp
+    crypto/algorithms/CryptoAlgorithmSHA1.cpp
+    crypto/algorithms/CryptoAlgorithmSHA224.cpp
+    crypto/algorithms/CryptoAlgorithmSHA256.cpp
+    crypto/algorithms/CryptoAlgorithmSHA384.cpp
+    crypto/algorithms/CryptoAlgorithmSHA512.cpp
+
+    crypto/keys/CryptoKeyAES.cpp
+    crypto/keys/CryptoKeyDataOctetSequence.cpp
+    crypto/keys/CryptoKeyDataRSAComponents.cpp
+    crypto/keys/CryptoKeyHMAC.cpp
+    crypto/keys/CryptoKeySerializationRaw.cpp
+
+    crypto/mac/CryptoAlgorithmAES_CBCMac.cpp
+    crypto/mac/CryptoAlgorithmAES_KWMac.cpp
+    crypto/mac/CryptoAlgorithmHMACMac.cpp
+    crypto/mac/CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp
+    crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp
+    crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp
+    crypto/mac/CryptoAlgorithmRegistryMac.cpp
+    crypto/mac/CryptoDigestMac.cpp
+    crypto/mac/CryptoKeyMac.cpp
+    crypto/mac/CryptoKeyRSAMac.cpp
+    crypto/mac/SerializedCryptoKeyWrapMac.mm
+
+    editing/cocoa/HTMLConverter.mm
+
+    editing/mac/AlternativeTextUIController.mm
+    editing/mac/DataDetection.mm
+    editing/mac/DictionaryLookup.mm
+    editing/mac/EditorMac.mm
+    editing/mac/FrameSelectionMac.mm
+    editing/mac/TextAlternativeWithRange.mm
+    editing/mac/TextUndoInsertionMarkupMac.mm
+
+    history/mac/HistoryItemMac.mm
 
     loader/archive/cf/LegacyWebArchive.cpp
     loader/archive/cf/LegacyWebArchiveMac.mm
@@ -87,6 +146,7 @@ list(APPEND WebCore_SOURCES
     platform/cf/SharedTimerCF.cpp
     platform/cf/URLCF.cpp
 
+    platform/cocoa/ContentFilterUnblockHandlerCocoa.mm
     platform/cocoa/DisplaySleepDisablerCocoa.cpp
     platform/cocoa/KeyEventCocoa.mm
     platform/cocoa/MemoryPressureHandlerCocoa.mm
@@ -131,6 +191,14 @@ list(APPEND WebCore_SOURCES
     platform/graphics/ca/mac/PlatformCAFiltersMac.mm
     platform/graphics/ca/mac/PlatformCALayerMac.mm
     platform/graphics/ca/mac/WebTiledBackingLayer.mm
+
+    platform/graphics/cocoa/FontCascadeCocoa.mm
+    platform/graphics/cocoa/FontCocoa.mm
+    platform/graphics/cocoa/FontPlatformDataCocoa.mm
+    platform/graphics/cocoa/IOSurface.mm
+    platform/graphics/cocoa/IOSurfacePoolCocoa.mm
+    platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
+    platform/graphics/cocoa/WebCoreCALayerExtras.mm
 
     platform/graphics/cg/BitmapImageCG.cpp
     platform/graphics/cg/ColorCG.cpp
@@ -315,6 +383,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     inspector
     loader
 
+    bridge/jsc
     loader/appcache
     loader/archive
     loader/archive/cf
@@ -335,6 +404,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     page/animation
     page/mac
     page/scrolling
+
+    page/cocoa
 
     platform/animation
     platform/audio
@@ -438,7 +509,7 @@ set(ADDITIONAL_BINDINGS_DEPENDENCIES
     ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
     ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
 )
-GENERATE_BINDINGS(OBJC_BINDINGS
+GENERATE_BINDINGS(WebCore_SOURCES
     "${OBJC_BINDINGS_IDL_FILES}"
     "${WEBCORE_DIR}"
     "${IDL_INCLUDES}"
@@ -447,4 +518,135 @@ GENERATE_BINDINGS(OBJC_BINDINGS
     ${IDL_ATTRIBUTES_FILE}
     ${SUPPLEMENTAL_DEPENDENCY_FILE}
     ${ADDITIONAL_BINDINGS_DEPENDENCIES})
-# FIXME: Add the needed ObjC bindings to WebCore_SOURCES.
+
+list(REMOVE_ITEM WebCore_SOURCES
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMAbstractView.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMAbstractWorker.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMAnalyserNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMAudioBuffer.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMAudioBufferSourceNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMAudioContext.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMAudioDestinationNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMAudioNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMAudioParam.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMBiquadFilterNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCanvasRenderingContext2D.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMChannelMergerNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMChannelSplitterNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMChildNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCommandLineAPIHost.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMConvolverNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCoordinates.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCrypto.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCryptoKey.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCustomEvent.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDataCue.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDataTransfer.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDedicatedWorkerGlobalScope.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDelayNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMCoreException.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMFormData.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMPath.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMSettableTokenList.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMStringMap.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMURL.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMURLMediaSource.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMURLMediaStream.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMWindow.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMWindowIndexedDatabase.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMWindowNotifications.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMWindowSpeechSynthesis.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMWindowWebDatabase.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDynamicsCompressorNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMEventListener.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMEventTarget.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMFileException.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMFileReader.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMFileReaderSync.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMGainNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMGeolocation.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHistory.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLFormControlsCollection.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLMediaElement.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLMediaElementMediaStream.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLTrackElement.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLVideoElement.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBAny.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBCursor.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBCursor.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBCursorWithValue.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBCursorWithValue.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBDatabase.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBDatabase.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBFactory.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBFactory.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBIndex.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBIndex.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBKeyRange.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBKeyRange.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBObjectStore.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBObjectStore.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBOpenDBRequest.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBOpenDBRequest.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBRequest.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBRequest.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBTransaction.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBTransaction.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBVersionChangeEvent.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMIDBVersionChangeEvent.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMInspectorFrontendHost.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMLocation.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMMediaControlsHost.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMMediaElementAudioSourceNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMMediaSource.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMMutationObserver.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMNavigator.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMNavigatorBattery.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMNavigatorContentUtils.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMNavigatorGamepad.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMNavigatorGeolocation.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMNavigatorMediaDevices.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMNavigatorUserMedia.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMNavigatorVibration.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMNodeFilter.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMNotification.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMOfflineAudioContext.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMOscillatorNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMPannerNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMPopStateEvent.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMRadioNodeList.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMReadableStream.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMReadableStreamReader.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMScriptProcessorNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMScriptProfile.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMScriptProfileNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMSourceBuffer.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMSourceBufferList.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMSQLError.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMSQLException.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMSQLResultSetRowList.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMSQLStatementErrorCallback.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMSQLTransaction.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMSQLTransactionErrorCallback.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMSubtleCrypto.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMTrackEvent.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMUIRequestEvent.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMURLUtils.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMVTTCue.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWaveShaperNode.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWebGL2RenderingContext.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWebGLRenderingContext.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWebGLRenderingContextBase.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWebSocket.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWindowBase64.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWindowIndexedDatabase.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWindowTimers.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWorker.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWorkerGlobalScope.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWorkerGlobalScopeIndexedDatabase.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWorkerGlobalScopeIndexedDatabase.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWorkerGlobalScopeNotifications.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMXMLHttpRequest.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMXMLHttpRequestProgressEvent.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMXPathNSResolver.mm
+)

@@ -1214,6 +1214,21 @@ set(WebCore_SOURCES
 
     bridge/jsc/BridgeJSC.cpp
 
+    contentextensions/CombinedURLFilters.cpp
+    contentextensions/CompiledContentExtension.cpp
+    contentextensions/ContentExtension.cpp
+    contentextensions/ContentExtensionCompiler.cpp
+    contentextensions/ContentExtensionError.cpp
+    contentextensions/ContentExtensionParser.cpp
+    contentextensions/ContentExtensionRule.cpp
+    contentextensions/ContentExtensionsBackend.cpp
+    contentextensions/DFA.cpp
+    contentextensions/DFABytecodeCompiler.cpp
+    contentextensions/DFABytecodeInterpreter.cpp
+    contentextensions/NFA.cpp
+    contentextensions/NFAToDFA.cpp
+    contentextensions/URLFilterParser.cpp
+
     css/BasicShapeFunctions.cpp
     css/CSSAspectRatioValue.cpp
     css/CSSBasicShapes.cpp
@@ -1822,6 +1837,7 @@ set(WebCore_SOURCES
     inspector/WorkerRuntimeAgent.cpp
 
     loader/CookieJar.cpp
+    loader/ContentFilter.cpp
     loader/CrossOriginAccessControl.cpp
     loader/CrossOriginPreflightResultCache.cpp
     loader/DocumentLoadTiming.cpp
@@ -2035,6 +2051,7 @@ set(WebCore_SOURCES
     platform/ScrollbarThemeComposite.cpp
     platform/SharedBuffer.cpp
     platform/SharedBufferChunkReader.cpp
+    platform/Theme.cpp
     platform/ThreadGlobalData.cpp
     platform/ThreadTimers.cpp
     platform/Timer.cpp
@@ -2086,6 +2103,7 @@ set(WebCore_SOURCES
     platform/graphics/BitmapImage.cpp
     platform/graphics/Color.cpp
     platform/graphics/CrossfadeGeneratedImage.cpp
+    platform/graphics/DisplayRefreshMonitorClient.cpp
     platform/graphics/FloatPoint.cpp
     platform/graphics/FloatPoint3D.cpp
     platform/graphics/FloatPolygon.cpp
@@ -2929,6 +2947,8 @@ if (ENABLE_VIDEO_TRACK)
         html/track/VideoTrack.cpp
         html/track/VideoTrackList.cpp
         html/track/VTTCue.cpp
+        html/track/VTTRegion.cpp
+        html/track/VTTRegionList.cpp
         html/track/VTTScanner.cpp
         html/track/WebVTTElement.cpp
         html/track/WebVTTParser.cpp

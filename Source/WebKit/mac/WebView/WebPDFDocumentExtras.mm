@@ -30,7 +30,11 @@
 #import <wtf/RetainPtr.h>
 
 #if !PLATFORM(IOS)
+#ifdef BUILDING_WITH_CMAKE
+#import <PDFDocument.h>
+#else
 #import <PDFKit/PDFDocument.h>
+#endif
 #endif
 
 static void appendValuesInPDFNameSubtreeToVector(CGPDFDictionaryRef subtree, Vector<CGPDFObjectRef>& values)

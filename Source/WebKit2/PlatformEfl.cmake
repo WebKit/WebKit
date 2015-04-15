@@ -58,6 +58,7 @@ list(APPEND WebKit2_SOURCES
 
     Shared/unix/ChildProcessMain.cpp
 
+    UIProcess/BackingStore.cpp
     UIProcess/DefaultUndoController.cpp
 
     UIProcess/API/C/CoordinatedGraphics/WKView.cpp

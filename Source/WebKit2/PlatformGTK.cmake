@@ -77,6 +77,8 @@ list(APPEND WebKit2_SOURCES
 
     Shared/unix/ChildProcessMain.cpp
 
+    UIProcess/BackingStore.cpp
+
     UIProcess/Databases/gtk/DatabaseProcessProxyGtk.cpp
 
     UIProcess/DefaultUndoController.cpp

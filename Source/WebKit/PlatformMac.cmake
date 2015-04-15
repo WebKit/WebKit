@@ -1,14 +1,22 @@
 find_library(ACCELERATE_LIBRARY accelerate)
+find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox)
 find_library(AUDIOUNIT_LIBRARY AudioUnit)
 find_library(CARBON_LIBRARY Carbon)
 find_library(COCOA_LIBRARY Cocoa)
+find_library(COREAUDIO_LIBRARY CoreAudio)
 find_library(DISKARBITRATION_LIBRARY DiskArbitration)
 find_library(IOKIT_LIBRARY IOKit)
+find_library(IOSURFACE_LIBRARY IOSurface)
 find_library(OPENGL_LIBRARY OpenGL)
+find_library(QUARTZ_LIBRARY Quartz)
 find_library(QUARTZCORE_LIBRARY QuartzCore)
+find_library(SECURITY_LIBRARY Security)
 find_library(SQLITE3_LIBRARY sqlite3)
 find_library(XML2_LIBRARY XML2)
 find_package(ZLIB REQUIRED)
+
+find_library(PDFKIT_FRAMEWORK PDFKit HINTS ${QUARTZ_LIBRARY}/Versions/*/Frameworks)
+find_path(PDFKIT_INCLUDE_DIRECTORY PDFKit.h HINTS ${PDFKIT_FRAMEWORK}/Versions/*/Headers)
 
 if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
 set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceMavericks.a)
@@ -19,26 +27,37 @@ link_directories(../../WebKitLibraries)
 
 list(APPEND WebKit_LIBRARIES
     ${ACCELERATE_LIBRARY}
+    ${AUDIOTOOLBOX_LIBRARY}
     ${AUDIOUNIT_LIBRARY}
     ${CARBON_LIBRARY}
     ${COCOA_LIBRARY}
+    ${COREAUDIO_LIBRARY}
     ${DISKARBITRATION_LIBRARY}
     ${IOKIT_LIBRARY}
+    ${IOSURFACE_LIBRARY}
     ${OPENGL_LIBRARY}
+    ${PDFKIT_FRAMEWORK}/PDFKit
+    ${QUARTZ_LIBRARY}
     ${QUARTZCORE_LIBRARY}
+    ${SECURITY_LIBRARY}
     ${SQLITE3_LIBRARY}
     ${WEBKITSYSTEMINTERFACE_LIBRARY}
     ${XML2_LIBRARY}
+    ${ZLIB_LIBRARIES}
 )
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${DERIVED_SOURCES_DIR}"
     "${DERIVED_SOURCES_WEBCORE_DIR}"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}"
     "${JAVASCRIPTCORE_DIR}/dfg"
+    "${PDFKIT_INCLUDE_DIRECTORY}"
     "${WEBCORE_DIR}/accessibility/mac"
     "${WEBCORE_DIR}/bindings/objc"
     "${WEBCORE_DIR}/bridge"
     "${WEBCORE_DIR}/bridge/jsc"
     "${WEBCORE_DIR}/bridge/objc"
+    "${WEBCORE_DIR}/ForwardingHeaders/inspector"
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/loader/cf"
     "${WEBCORE_DIR}/loader/mac"
@@ -78,6 +97,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     mac/WebInspector
     mac/WebView
     Storage
+    ../../WebKitLibraries
 )
 
 list(APPEND WebKit_SOURCES
@@ -236,6 +256,15 @@ list(APPEND WebKit_SOURCES
     mac/WebView/WebTextIterator.mm
     mac/WebView/WebView.mm
     mac/WebView/WebViewData.mm
+
+    Storage/StorageAreaImpl.cpp
+    Storage/StorageAreaSync.cpp
+    Storage/StorageNamespaceImpl.cpp
+    Storage/StorageSyncManager.cpp
+    Storage/StorageThread.cpp
+    Storage/StorageTracker.cpp
+    Storage/WebDatabaseProvider.cpp
+    Storage/WebStorageNamespaceProvider.cpp
 )
 
 set(WebKit_LIBRARY_TYPE SHARED)
@@ -320,5 +349,44 @@ set_source_files_properties(
 
     mac/WebView/WebFormDelegate.m
 PROPERTIES COMPILE_FLAGS -std=c99)
+
+file(COPY
+    mac/Plugins/Hosted/WebKitPluginAgent.defs
+    mac/Plugins/Hosted/WebKitPluginAgentReply.defs
+    mac/Plugins/Hosted/WebKitPluginClient.defs
+    mac/Plugins/Hosted/WebKitPluginHost.defs
+    mac/Plugins/Hosted/WebKitPluginHostTypes.defs
+    mac/Plugins/Hosted/WebKitPluginHostTypes.h
+DESTINATION ${DERIVED_SOURCES_WEBKITLEGACY_DIR})
+add_custom_command(
+    OUTPUT
+        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentReplyServer.c
+        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentReplyUser.c
+        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentServer.c
+        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentUser.c
+        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginHostServer.c
+        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginHostUser.c
+    MAIN_DEPENDENCY mac/Plugins/Hosted/WebKitPluginAgent.defs
+    WORKING_DIRECTORY ${DERIVED_SOURCES_WEBKITLEGACY_DIR}
+    COMMAND mig -I.. WebKitPluginAgent.defs WebKitPluginAgentReply.defs WebKitPluginHost.defs
+    VERBATIM)
+add_custom_command(
+    OUTPUT
+        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginClientServer.c
+        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginClientUser.c
+    MAIN_DEPENDENCY mac/Plugins/Hosted/WebKitPluginAgent.defs
+    WORKING_DIRECTORY ${DERIVED_SOURCES_WEBKITLEGACY_DIR}
+    COMMAND mig -I.. -sheader WebKitPluginClientServer.h WebKitPluginClient.defs
+    VERBATIM)
+list(APPEND WebKit_SOURCES
+    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentReplyServer.c
+    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentReplyUser.c
+    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentServer.c
+    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentUser.c
+    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginClientServer.c
+    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginClientUser.c
+    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginHostServer.c
+    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginHostUser.c
+)
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebKitLegacy DIRECTORIES ${WebKitLegacy_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebKitLegacy_FORWARDING_HEADERS_FILES})

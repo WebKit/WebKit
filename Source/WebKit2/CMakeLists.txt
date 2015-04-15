@@ -320,7 +320,6 @@ set(WebKit2_SOURCES
 
     Shared/WebsiteData/WebsiteData.cpp
 
-    UIProcess/BackingStore.cpp
     UIProcess/DrawingAreaProxy.cpp
     UIProcess/FrameLoadState.cpp
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
