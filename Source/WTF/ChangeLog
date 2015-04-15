@@ -1,3 +1,50 @@
+2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
+
+        Harmonize binary semaphore ifdefs
+
+        They should be either OS(WINDOWS) (in which case we'd need
+        BinarySemaphoreWin.cpp, which is not shipped by WebKitGTK)
+        or PLATFORM(WIN) (in which case Mutex/ThreadCondition-based
+        implementation is used).
+
+        This fixes errors like:
+          CXX      Source/WTF/wtf/threads/libWTF_la-BinarySemaphore.lo
+        ../webkitgtk-2.4.8/Source/WTF/wtf/threads/BinarySemaphore.cpp: In constructor 'WTF::BinarySemaphore::BinarySemaphore()':
+        ../webkitgtk-2.4.8/Source/WTF/wtf/threads/BinarySemaphore.cpp:34:7: error: class 'WTF::BinarySemaphore' does not have any field named 'm_isSet'
+             : m_isSet(false)
+               ^
+        ../webkitgtk-2.4.8/Source/WTF/wtf/threads/BinarySemaphore.cpp: In member function 'void WTF::BinarySemaphore::signal()':
+        ../webkitgtk-2.4.8/Source/WTF/wtf/threads/BinarySemaphore.cpp:44:24: error: 'm_mutex' was not declared in this scope
+             MutexLocker locker(m_mutex);
+                                ^
+        ../webkitgtk-2.4.8/Source/WTF/wtf/threads/BinarySemaphore.cpp:46:5: error: 'm_isSet' was not declared in this scope
+             m_isSet = true;
+             ^
+        ../webkitgtk-2.4.8/Source/WTF/wtf/threads/BinarySemaphore.cpp:47:5: error: 'm_condition' was not declared in this scope
+             m_condition.signal();
+             ^
+        ../webkitgtk-2.4.8/Source/WTF/wtf/threads/BinarySemaphore.cpp: In member function 'bool WTF::BinarySemaphore::wait(double)':
+        ../webkitgtk-2.4.8/Source/WTF/wtf/threads/BinarySemaphore.cpp:52:24: error: 'm_mutex' was not declared in this scope
+             MutexLocker locker(m_mutex);
+                                ^
+        ../webkitgtk-2.4.8/Source/WTF/wtf/threads/BinarySemaphore.cpp:55:13: error: 'm_isSet' was not declared in this scope
+             while (!m_isSet) {
+                     ^
+        ../webkitgtk-2.4.8/Source/WTF/wtf/threads/BinarySemaphore.cpp:56:21: error: 'm_condition' was not declared in this scope
+                 timedOut = !m_condition.timedWait(m_mutex, absoluteTime);
+                             ^
+        ../webkitgtk-2.4.8/Source/WTF/wtf/threads/BinarySemaphore.cpp:62:5: error: 'm_isSet' was not declared in this scope
+             m_isSet = false;
+             ^
+        GNUmakefile:52762: recipe for target 'Source/WTF/wtf/threads/libWTF_la-BinarySemaphore.lo' failed
+
+        [W32] Inconsistent ifdefs in BinarySemaphore.h and BinarySemaphore.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=143756
+
+        Reviewed by Darin Adler.
+
+        * wtf/threads/BinarySemaphore.h:
+
 2015-04-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fix -Wparentheses warning with GCC 5 in SaturatedArithmetic.h
