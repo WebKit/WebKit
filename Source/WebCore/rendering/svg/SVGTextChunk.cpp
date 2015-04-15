@@ -28,7 +28,7 @@ namespace WebCore {
 SVGTextChunk::SVGTextChunk(const Vector<SVGInlineTextBox*>& lineLayoutBoxes, unsigned first, unsigned limit)
 {
     ASSERT(first < limit);
-    ASSERT(first >= 0 && limit <= lineLayoutBoxes.size());
+    ASSERT(limit <= lineLayoutBoxes.size());
 
     const SVGInlineTextBox* box = lineLayoutBoxes[first];
     const RenderStyle& style = box->renderer().style();
