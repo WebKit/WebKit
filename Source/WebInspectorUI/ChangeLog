@@ -1,3 +1,16 @@
+2015-04-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught exception in JSContext inspector when opening
+        https://bugs.webkit.org/show_bug.cgi?id=143741
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.shouldShowViewForTimeline):
+        (WebInspector.TimelineManager.prototype._loadNewRecording):
+        Before using TimelineAgent, check for its existence first. It may
+        not exist in JSContext inspection.
+
 2015-04-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Align array's indices and set's bullet points under the property icon

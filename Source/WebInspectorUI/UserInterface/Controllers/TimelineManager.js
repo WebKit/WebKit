@@ -56,7 +56,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
     {
         // COMPATIBILITY (iOS 8): TimelineAgent.EventType.RenderingFrame did not exist,
         // fallback to displaying all other timelines.
-        if (!TimelineAgent.EventType.RenderingFrame)
+        if (window.TimelineAgent && !TimelineAgent.EventType.RenderingFrame)
             return timeline.type !== WebInspector.TimelineRecord.Type.RenderingFrame;
 
         // Don't show the Layout timeline view when the RenderingFrame timeline exists.
@@ -437,7 +437,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.Network, newRecording));
 
         // COMPATIBILITY (iOS 8): TimelineAgent.EventType.RenderingFrame did not exist.
-        if (TimelineAgent.EventType.RenderingFrame)
+        if (window.TimelineAgent && TimelineAgent.EventType.RenderingFrame)
             newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.RenderingFrame, newRecording));
 
         newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.Layout, newRecording));
