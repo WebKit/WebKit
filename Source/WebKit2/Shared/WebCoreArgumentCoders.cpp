@@ -766,6 +766,9 @@ void ArgumentCoder<Cursor>::encode(ArgumentEncoder& encoder, const Cursor& curso
     encoder << true;
     encodeImage(encoder, cursor.image());
     encoder << cursor.hotSpot();
+#if ENABLE(MOUSE_CURSOR_SCALE)
+    encoder << cursor.imageScaleFactor();
+#endif
 }
 
 bool ArgumentCoder<Cursor>::decode(ArgumentDecoder& decoder, Cursor& cursor)
@@ -807,7 +810,15 @@ bool ArgumentCoder<Cursor>::decode(ArgumentDecoder& decoder, Cursor& cursor)
     if (!image->rect().contains(hotSpot))
         return false;
 
+#if ENABLE(MOUSE_CURSOR_SCALE)
+    float scale;
+    if (!decoder.decode(scale))
+        return false;
+
+    cursor = Cursor(image.get(), hotSpot, scale);
+#else
     cursor = Cursor(image.get(), hotSpot);
+#endif
     return true;
 }
 #endif

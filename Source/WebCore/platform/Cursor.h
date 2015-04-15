@@ -146,7 +146,7 @@ namespace WebCore {
 
 #if ENABLE(MOUSE_CURSOR_SCALE)
         // Hot spot is in image pixels.
-        Cursor(Image*, const IntPoint& hotSpot, float imageScaleFactor);
+        WEBCORE_EXPORT Cursor(Image*, const IntPoint& hotSpot, float imageScaleFactor);
 #endif
 
         WEBCORE_EXPORT ~Cursor();

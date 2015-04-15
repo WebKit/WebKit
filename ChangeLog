@@ -1,3 +1,15 @@
+2015-04-15  Timothy Horton  <timothy_horton@apple.com>
+
+        Custom CSS cursors do not use -webkit-image-set on retina displays
+        https://bugs.webkit.org/show_bug.cgi?id=120783
+
+        Reviewed by Beth Dakin.
+        Patch by Evan Wallace <evan.exe@gmail.com>.
+
+        Add a manual test for custom CSS cursors on retina displays.
+
+        * ManualTests/retina-cursors.html: Added.
+
 2015-04-15  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.

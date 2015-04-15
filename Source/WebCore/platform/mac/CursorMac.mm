@@ -41,16 +41,43 @@ namespace WebCore {
 // Simple NSCursor calls shouldn't need protection,
 // but creating a cursor with a bad image might throw.
 
+#if ENABLE(MOUSE_CURSOR_SCALE)
+static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotSpot, float scale)
+#else
 static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotSpot)
+#endif
 {
     // FIXME: The cursor won't animate.  Not sure if that's a big deal.
     NSImage* nsImage = image->getNSImage();
     if (!nsImage)
         return 0;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+#if ENABLE(MOUSE_CURSOR_SCALE)
+    NSSize size = NSMakeSize(image->width() / scale, image->height() / scale);
+    NSSize expandedSize = NSMakeSize(ceil(size.width), ceil(size.height));
+
+    // Pad the image with transparent pixels so it has an integer boundary.
+    if (size.width != expandedSize.width || size.height != expandedSize.height) {
+        RetainPtr<NSImage> expandedImage = adoptNS([[NSImage alloc] initWithSize:expandedSize]);
+        NSRect toRect = NSMakeRect(0, expandedSize.height - size.height, size.width, size.height);
+        NSRect fromRect = NSMakeRect(0, 0, image->width(), image->height());
+
+        [expandedImage lockFocus];
+        [nsImage drawInRect:toRect fromRect:fromRect operation:NSCompositeSourceOver fraction:1];
+        [expandedImage unlockFocus];
+
+        return adoptNS([[NSCursor alloc] initWithImage:expandedImage.get() hotSpot:hotSpot]);
+    }
+
+    // Scale the image and its representation to match retina resolution.
+    [nsImage setSize:expandedSize];
+    [[[nsImage representations] objectAtIndex:0] setSize:expandedSize];
+#endif
+
     return adoptNS([[NSCursor alloc] initWithImage:nsImage hotSpot:hotSpot]);
     END_BLOCK_OBJC_EXCEPTIONS;
-    return 0;
+    return nullptr;
 }
 
 void Cursor::ensurePlatformCursor() const
@@ -205,7 +232,11 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::Custom:
+#if ENABLE(MOUSE_CURSOR_SCALE)
+        m_platformCursor = createCustomCursor(m_image.get(), m_hotSpot, m_imageScaleFactor);
+#else
         m_platformCursor = createCustomCursor(m_image.get(), m_hotSpot);
+#endif
         break;
     }
 }
