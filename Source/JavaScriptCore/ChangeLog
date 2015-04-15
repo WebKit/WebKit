@@ -1,3 +1,18 @@
+2015-04-14  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r180020): Web Inspector crashes on pages that have a stylesheet with an invalid MIME type
+        https://bugs.webkit.org/show_bug.cgi?id=143745
+        <rdar://problem/20243916>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add assertion in ContentSearchUtilities::findMagicComment() to make
+        sure the content String is not null or we would crash in
+        JSC::Yarr::interpret() later.
+
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::findMagicComment):
+
 2015-04-14  Michael Saboff  <msaboff@apple.com>
 
         DFG register fillSpeculate*() functions should validate incoming spill format is compatible with requested fill format

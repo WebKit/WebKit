@@ -1,3 +1,21 @@
+2015-04-14  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r180020): Web Inspector crashes on pages that have a stylesheet with an invalid MIME type
+        https://bugs.webkit.org/show_bug.cgi?id=143745
+        <rdar://problem/20243916>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add layout test that shows the Web inspector on a page that has
+        a stylesheet with an invalid MIME type, to make sure we don't
+        crash.
+
+        * http/tests/inspector/css/bad-mime-type-expected.txt: Added.
+        * http/tests/inspector/css/bad-mime-type.html: Added.
+        * http/tests/misc/css-accept-any-type.html:
+        * http/tests/misc/css-reject-any-type-in-strict-mode.html:
+        * http/tests/misc/resources/stylesheet-bad-mime-type.php: Renamed from LayoutTests/http/tests/misc/resources/stylesheet.php.
+
 2015-04-14  Brady Eidson  <beidson@apple.com>
 
         Make sure media element loads hit content filter extensions.

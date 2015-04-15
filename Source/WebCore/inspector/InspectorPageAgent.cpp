@@ -155,8 +155,9 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
     if (cachedResource) {
         switch (cachedResource->type()) {
         case CachedResource::CSSStyleSheet:
+            // This can return a null String if the MIME type is invalid.
             *result = downcast<CachedCSSStyleSheet>(*cachedResource).sheetText();
-            return true;
+            return !result->isNull();
         case CachedResource::Script:
             *result = downcast<CachedScript>(*cachedResource).script();
             return true;

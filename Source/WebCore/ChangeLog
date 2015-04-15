@@ -1,3 +1,30 @@
+2015-04-14  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r180020): Web Inspector crashes on pages that have a stylesheet with an invalid MIME type
+        https://bugs.webkit.org/show_bug.cgi?id=143745
+        <rdar://problem/20243916>
+
+        Reviewed by Joseph Pecoraro.
+
+        After r180020, we are stricter and no longer accept CSS resources that
+        are not served with a CSS MIME type. Showing Web inspector on a page
+        with such bad resource would crash because
+        InspectorPageAgent::cachedResourceContent() would return true but
+        the result String would be null. This null String would then later
+        be passed to the Yarr interpreter and crash on a String::is8Bit()
+        call.
+
+        cachedResourceContent() calls CachedCSSStyleSheet::sheetText(). Before
+        r180020, it would return the text, even if the MIME type was incorrect.
+        However, this is no longer the case and we now need to make sure that
+        cachedResourceContent() returns false if sheetText() returns a null
+        String.
+
+        Test: http/tests/inspector/css/bad-mime-type.html
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceContent):
+
 2015-04-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         textPath layout performance improvement.
