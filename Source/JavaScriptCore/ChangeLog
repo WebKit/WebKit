@@ -1,3 +1,16 @@
+2015-04-15  Jordan Harband  <ljharb@gmail.com>
+
+        Number.parseInt in nightly r182673 has wrong length
+        https://bugs.webkit.org/show_bug.cgi?id=143657
+
+        Reviewed by Benjamin Poulain.
+
+        Correcting funciton length from 1, to 2, to match spec
+        https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.parseint
+
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::finishCreation):
+
 2015-04-15  Filip Pizlo  <fpizlo@apple.com>
 
         Harden DFGForAllKills
