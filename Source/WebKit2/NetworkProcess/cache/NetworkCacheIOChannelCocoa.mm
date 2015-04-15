@@ -79,11 +79,12 @@ Ref<IOChannel> IOChannel::open(const String& filePath, IOChannel::Type type)
     return adoptRef(*new IOChannel(filePath, type));
 }
 
-void IOChannel::read(size_t offset, size_t size, std::function<void (Data&, int error)> completionHandler)
+void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, std::function<void (Data&, int error)> completionHandler)
 {
     RefPtr<IOChannel> channel(this);
     bool didCallCompletionHandler = false;
-    dispatch_io_read(m_dispatchIO.get(), offset, size, dispatch_get_main_queue(), [channel, completionHandler, didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
+    auto dispatchQueue = queue ? queue->dispatchQueue() : dispatch_get_main_queue();
+    dispatch_io_read(m_dispatchIO.get(), offset, size, dispatchQueue, [channel, completionHandler, didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
         ASSERT_UNUSED(done, done || !didCallCompletionHandler);
         if (didCallCompletionHandler)
             return;
@@ -95,21 +96,22 @@ void IOChannel::read(size_t offset, size_t size, std::function<void (Data&, int 
 }
 
 // FIXME: It would be better to do without this.
-void IOChannel::readSync(size_t offset, size_t size, std::function<void (Data&, int error)> completionHandler)
+void IOChannel::readSync(size_t offset, size_t size, WorkQueue* queue, std::function<void (Data&, int error)> completionHandler)
 {
     auto semaphore = adoptDispatch(dispatch_semaphore_create(0));
-    read(offset, size, [semaphore, &completionHandler](Data& data, int error) {
+    read(offset, size, queue, [semaphore, &completionHandler](Data& data, int error) {
         completionHandler(data, error);
         dispatch_semaphore_signal(semaphore.get());
     });
     dispatch_semaphore_wait(semaphore.get(), DISPATCH_TIME_FOREVER);
 }
 
-void IOChannel::write(size_t offset, const Data& data, std::function<void (int error)> completionHandler)
+void IOChannel::write(size_t offset, const Data& data, WorkQueue* queue, std::function<void (int error)> completionHandler)
 {
     RefPtr<IOChannel> channel(this);
     auto dispatchData = data.dispatchData();
-    dispatch_io_write(m_dispatchIO.get(), offset, dispatchData, dispatch_get_main_queue(), [channel, completionHandler](bool done, dispatch_data_t fileData, int error) {
+    auto dispatchQueue = queue ? queue->dispatchQueue() : dispatch_get_main_queue();
+    dispatch_io_write(m_dispatchIO.get(), offset, dispatchData, dispatchQueue, [channel, completionHandler](bool done, dispatch_data_t fileData, int error) {
         ASSERT_UNUSED(done, done);
         completionHandler(error);
     });

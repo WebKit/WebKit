@@ -111,6 +111,10 @@ private:
     void dispatchPendingWriteOperations();
     void finishWriteOperation(const WriteOperation&);
 
+    Optional<BlobStorage::Blob> storeBodyAsBlob(const Record&, const MappedBodyHandler&);
+    Data encodeRecord(const Record&, Optional<BlobStorage::Blob>);
+    std::unique_ptr<Record> decodeRecord(const Data&, const Key&);
+
     void updateFileModificationTime(const String& path);
 
     WorkQueue& ioQueue() { return m_ioQueue.get(); }

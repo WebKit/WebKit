@@ -225,6 +225,7 @@ struct RecordMetaData {
     uint64_t headerSize;
     SHA1::Digest bodyHash;
     uint64_t bodySize;
+    bool isBodyInline;
 };
 
 static bool decodeRecordMetaData(RecordMetaData& metaData, const Data& fileData)
@@ -246,6 +247,8 @@ static bool decodeRecordMetaData(RecordMetaData& metaData, const Data& fileData)
             return false;
         if (!decoder.decode(metaData.bodySize))
             return false;
+        if (!decoder.decode(metaData.isBodyInline))
+            return false;
         if (!decoder.verifyChecksum())
             return false;
         metaData.headerOffset = decoder.currentOffset();
@@ -255,7 +258,7 @@ static bool decodeRecordMetaData(RecordMetaData& metaData, const Data& fileData)
     return success;
 }
 
-static bool decodeRecordHeader(const Data& fileData, RecordMetaData& metaData, Data& data)
+static bool decodeRecordHeader(const Data& fileData, RecordMetaData& metaData, Data& headerData)
 {
     if (!decodeRecordMetaData(metaData, fileData)) {
         LOG(NetworkCacheStorage, "(NetworkProcess) meta data decode failure");
@@ -267,17 +270,18 @@ static bool decodeRecordHeader(const Data& fileData, RecordMetaData& metaData, D
         return false;
     }
 
-    auto headerData = fileData.subrange(metaData.headerOffset, metaData.headerSize);
+    headerData = fileData.subrange(metaData.headerOffset, metaData.headerSize);
     if (metaData.headerChecksum != hashData(headerData)) {
         LOG(NetworkCacheStorage, "(NetworkProcess) header checksum mismatch");
         return false;
     }
-    data = { headerData };
     return true;
 }
 
-static std::unique_ptr<Storage::Record> createRecord(const Data& recordData, const BlobStorage::Blob& bodyBlob, const Key& key)
+std::unique_ptr<Storage::Record> Storage::decodeRecord(const Data& recordData, const Key& key)
 {
+    ASSERT(!RunLoop::isMain());
+
     RecordMetaData metaData;
     Data headerData;
     if (!decodeRecordHeader(recordData, metaData, headerData))
@@ -290,16 +294,30 @@ static std::unique_ptr<Storage::Record> createRecord(const Data& recordData, con
     auto timeStamp = std::chrono::system_clock::time_point(metaData.epochRelativeTimeStamp);
     if (timeStamp > std::chrono::system_clock::now())
         return nullptr;
-    if (metaData.bodySize != bodyBlob.data.size())
-        return nullptr;
-    if (metaData.bodyHash != bodyBlob.hash)
-        return nullptr;
+
+    Data bodyData;
+    if (metaData.isBodyInline) {
+        size_t bodyOffset = metaData.headerOffset + headerData.size();
+        if (bodyOffset + metaData.bodySize != recordData.size())
+            return nullptr;
+        bodyData = recordData.subrange(bodyOffset, metaData.bodySize);
+        if (metaData.bodyHash != computeSHA1(bodyData))
+            return nullptr;
+    } else {
+        auto bodyPath = bodyPathForKey(key, recordsPath());
+        auto bodyBlob = m_blobStorage.get(bodyPath);
+        if (metaData.bodySize != bodyBlob.data.size())
+            return nullptr;
+        if (metaData.bodyHash != bodyBlob.hash)
+            return nullptr;
+        bodyData = bodyBlob.data;
+    }
 
     return std::make_unique<Storage::Record>(Storage::Record {
         metaData.key,
         timeStamp,
         headerData,
-        bodyBlob.data
+        bodyData
     });
 }
 
@@ -314,23 +332,49 @@ static Data encodeRecordMetaData(const RecordMetaData& metaData)
     encoder << metaData.headerSize;
     encoder << metaData.bodyHash;
     encoder << metaData.bodySize;
+    encoder << metaData.isBodyInline;
 
     encoder.encodeChecksum();
 
     return Data(encoder.buffer(), encoder.bufferSize());
 }
 
-static Data encodeRecordHeader(const Storage::Record& record, SHA1::Digest bodyHash)
+Optional<BlobStorage::Blob> Storage::storeBodyAsBlob(const Record& record, const MappedBodyHandler& mappedBodyHandler)
 {
+    auto bodyPath = bodyPathForKey(record.key, recordsPath());
+
+    // Store the body.
+    auto blob = m_blobStorage.add(bodyPath, record.body);
+    if (blob.data.isNull())
+        return { };
+
+    // Tell the client we now have a disk-backed map for this data.
+    if (mappedBodyHandler) {
+        RunLoop::main().dispatch([blob, mappedBodyHandler] {
+            mappedBodyHandler(blob.data);
+        });
+    }
+    return blob;
+}
+
+Data Storage::encodeRecord(const Record& record, Optional<BlobStorage::Blob> blob)
+{
+    ASSERT(!blob || bytesEqual(blob.value().data, record.body));
+
     RecordMetaData metaData(record.key);
     metaData.epochRelativeTimeStamp = std::chrono::duration_cast<std::chrono::milliseconds>(record.timeStamp.time_since_epoch());
     metaData.headerChecksum = hashData(record.header);
     metaData.headerSize = record.header.size();
-    metaData.bodyHash = bodyHash;
+    metaData.bodyHash = blob ? blob.value().hash : computeSHA1(record.body);
     metaData.bodySize = record.body.size();
+    metaData.isBodyInline = !blob;
 
     auto encodedMetaData = encodeRecordMetaData(metaData);
     auto headerData = concatenate(encodedMetaData, record.header);
+
+    if (metaData.isBodyInline)
+        return concatenate(headerData, record.body);
+
     return { headerData };
 }
 
@@ -362,16 +406,16 @@ void Storage::dispatchReadOperation(const ReadOperation& read)
     ASSERT(RunLoop::isMain());
     ASSERT(m_activeReadOperations.contains(&read));
 
-    ioQueue().dispatch([this, &read] {
-        auto recordsPath = this->recordsPath();
-        auto recordPath = recordPathForKey(read.key, recordsPath);
-        auto bodyPath = bodyPathForKey(read.key, recordsPath);
-        // FIXME: Body and header retrieves can be done in parallel.
-        auto bodyBlob = m_blobStorage.get(bodyPath);
+    auto recordsPath = this->recordsPath();
+    auto recordPath = recordPathForKey(read.key, recordsPath);
 
-        RefPtr<IOChannel> channel = IOChannel::open(recordPath, IOChannel::Type::Read);
-        channel->read(0, std::numeric_limits<size_t>::max(), [this, &read, bodyBlob](Data& fileData, int error) {
-            auto record = error ? nullptr : createRecord(fileData, bodyBlob, read.key);
+    RefPtr<IOChannel> channel = IOChannel::open(recordPath, IOChannel::Type::Read);
+    channel->read(0, std::numeric_limits<size_t>::max(), &ioQueue(), [this, &read](const Data& fileData, int error) {
+        auto record = error ? nullptr : decodeRecord(fileData, read.key);
+
+        auto* recordPtr = record.release();
+        RunLoop::main().dispatch([this, &read, recordPtr] {
+            auto record = std::unique_ptr<Record>(recordPtr);
             finishReadOperation(read, WTF::move(record));
         });
     });
@@ -448,6 +492,12 @@ void Storage::dispatchPendingWriteOperations()
     }
 }
 
+static bool shouldStoreBodyAsBlob(const Data& bodyData)
+{
+    const size_t maximumInlineBodySize { 16 * 1024 };
+    return bodyData.size() > maximumInlineBodySize;
+}
+
 void Storage::dispatchWriteOperation(const WriteOperation& write)
 {
     ASSERT(RunLoop::isMain());
@@ -460,36 +510,19 @@ void Storage::dispatchWriteOperation(const WriteOperation& write)
         auto recordsPath = this->recordsPath();
         auto partitionPath = partitionPathForKey(write.record.key, recordsPath);
         auto recordPath = recordPathForKey(write.record.key, recordsPath);
-        auto bodyPath = bodyPathForKey(write.record.key, recordsPath);
 
         WebCore::makeAllDirectories(partitionPath);
 
-        // Store the body.
-        auto blob = m_blobStorage.add(bodyPath, write.record.body);
-        if (blob.data.isNull()) {
-            RunLoop::main().dispatch([this, &write] {
-                finishWriteOperation(write);
-            });
-            return;
-        }
+        bool shouldStoreAsBlob = shouldStoreBodyAsBlob(write.record.body);
+        auto bodyBlob = shouldStoreAsBlob ? storeBodyAsBlob(write.record, write.mappedBodyHandler) : Nullopt;
 
-        // Tell the client we now have a disk-backed map for this data.
-        size_t minimumMapSize = pageSize();
-        if (blob.data.size() >= minimumMapSize && blob.data.isMap() && write.mappedBodyHandler) {
-            auto& mappedBodyHandler = write.mappedBodyHandler;
-            RunLoop::main().dispatch([blob, mappedBodyHandler] {
-                mappedBodyHandler(blob.data);
-            });
-        }
+        auto recordData = encodeRecord(write.record, bodyBlob);
 
-        // Store the header and meta data.
-        auto encodedHeader = encodeRecordHeader(write.record, blob.hash);
         auto channel = IOChannel::open(recordPath, IOChannel::Type::Create);
-        int fd = channel->fileDescriptor();
-        size_t headerSize = encodedHeader.size();
-        channel->write(0, encodedHeader, [this, &write, headerSize, fd](int error) {
+        size_t recordSize = recordData.size();
+        channel->write(0, recordData, nullptr, [this, &write, recordSize](int error) {
             // On error the entry still stays in the contents filter until next synchronization.
-            m_approximateSize += headerSize;
+            m_approximateSize += recordSize;
             finishWriteOperation(write);
 
             LOG(NetworkCacheStorage, "(NetworkProcess) write complete error=%d", error);
@@ -561,7 +594,7 @@ void Storage::traverse(TraverseFlags flags, std::function<void (const Record*, c
 
             auto channel = IOChannel::open(recordPath, IOChannel::Type::Read);
             // FIXME: Traversal is slower than it should be due to lack of parallelism.
-            channel->readSync(0, std::numeric_limits<size_t>::max(), [this, &traverseHandler, &info](Data& fileData, int) {
+            channel->readSync(0, std::numeric_limits<size_t>::max(), nullptr, [this, &traverseHandler, &info](Data& fileData, int) {
                 RecordMetaData metaData;
                 Data headerData;
                 if (decodeRecordHeader(fileData, metaData, headerData)) {

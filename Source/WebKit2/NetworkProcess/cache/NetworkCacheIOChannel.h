@@ -31,6 +31,7 @@
 #include "NetworkCacheData.h"
 #include <functional>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -41,9 +42,11 @@ public:
     enum class Type { Read, Write, Create };
     static Ref<IOChannel> open(const String& file, Type);
 
-    void read(size_t offset, size_t, std::function<void (Data&, int error)>);
-    void readSync(size_t offset, size_t, std::function<void (Data&, int error)>);
-    void write(size_t offset, const Data&, std::function<void (int error)>);
+    // Using nullptr as queue submits the result to the main queue.
+    // FIXME: We should add WorkQueue::main() instead.
+    void read(size_t offset, size_t, WorkQueue*, std::function<void (Data&, int error)>);
+    void readSync(size_t offset, size_t, WorkQueue*, std::function<void (Data&, int error)>);
+    void write(size_t offset, const Data&, WorkQueue*, std::function<void (int error)>);
 
     const String& path() const { return m_path; }
     Type type() const { return m_type; }

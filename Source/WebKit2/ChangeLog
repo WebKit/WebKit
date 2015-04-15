@@ -1,3 +1,48 @@
+2015-04-15  Antti Koivisto  <antti@apple.com>
+
+        Network Cache: Inline small body data to record file
+        https://bugs.webkit.org/show_bug.cgi?id=143783
+
+        Reviewed by Chris Dumez.
+
+        We currently save all body data as separate files. We can improve space efficiency and do less reads and writes
+        by inlining smaller resource bodies with the header.
+
+        * NetworkProcess/cache/NetworkCacheIOChannel.h:
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::IOChannel::readSync):
+        (WebKit::NetworkCache::IOChannel::write):
+
+            Add WorkQueue argument to allow specifying which queue the result is submitted to.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::decodeRecordMetaData):
+
+            Add a boolean indicating whether the body is inlined.
+
+        (WebKit::NetworkCache::decodeRecordHeader):
+        (WebKit::NetworkCache::Storage::decodeRecord):
+        (WebKit::NetworkCache::encodeRecordMetaData):
+        (WebKit::NetworkCache::Storage::storeBodyAsBlob):
+        (WebKit::NetworkCache::Storage::encodeRecord):
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+
+            Read the record first, then read the blob if needed.
+            Submit the read operation directly from the main queue. Only thing we do is opening an IO channel
+            and that uses O_NONBLOCK.
+            Process the read results in the IO work queue where we now do the blob retrieval.
+
+        (WebKit::NetworkCache::shouldStoreBodyAsBlob):
+
+            The current threshold for saving a separate blob is 16KB.
+
+        (WebKit::NetworkCache::Storage::dispatchWriteOperation):
+        (WebKit::NetworkCache::Storage::traverse):
+        (WebKit::NetworkCache::createRecord): Deleted.
+        (WebKit::NetworkCache::encodeRecordHeader): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2015-04-15  Tim Horton  <timothy_horton@apple.com>
 
         Non-local keyboards don't update scroll view parameters
