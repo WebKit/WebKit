@@ -162,7 +162,7 @@ fast/events/drag-and-drop-subframe-dataTransfer.html
 fast/events/drag-selects-image.html
 fast/events/remove-target-with-shadow-in-drag.html
 
-webkit.org/b/81833 fast/events/drag-link.html [ Failure ]
+webkit.org/b/81833 fast/events/drag-and-drop-link-into-focused-contenteditable.html [ Failure ]
 
 # Missing functionality of textInputController
 # https://bugs.webkit.org/show_bug.cgi?id=89401

@@ -343,7 +343,7 @@ webkit.org/b/86623 fast/events/drag-customData.html
 webkit.org/b/86623 fast/events/drag-dataTransferItemList.html
 webkit.org/b/86623 fast/events/drag-image-filename.html [ Timeout ]
 webkit.org/b/86623 fast/events/drag-in-frames.html [ Failure ]
-webkit.org/b/86623 fast/events/drag-link.html [ Failure ]
+webkit.org/b/86623 fast/events/drag-and-drop-link-into-focused-contenteditable.html [ Failure ]
 webkit.org/b/86623 fast/events/drag-parent-node.html [ Failure ]
 webkit.org/b/86623 fast/events/drag-selects-image.html
 webkit.org/b/86623 fast/events/dropzone-001.html
