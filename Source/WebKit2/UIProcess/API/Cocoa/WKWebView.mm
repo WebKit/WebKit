@@ -1548,9 +1548,18 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         [_scrollView _adjustForAutomaticKeyboardInfo:keyboardInfo animated:YES lastAdjustment:&_lastAdjustmentForScroller];
 }
 
-- (void)_keyboardWillChangeFrame:(NSNotification *)notification
+- (BOOL)_shouldUpdateKeyboardWithInfo:(NSDictionary *)keyboardInfo
 {
     if ([_contentView isAssistingNode])
+        return YES;
+
+    NSNumber *isLocalKeyboard = [keyboardInfo valueForKey:UIKeyboardIsLocalUserInfoKey];
+    return isLocalKeyboard && !isLocalKeyboard.boolValue;
+}
+
+- (void)_keyboardWillChangeFrame:(NSNotification *)notification
+{
+    if ([self _shouldUpdateKeyboardWithInfo:notification.userInfo])
         [self _keyboardChangedWithInfo:notification.userInfo adjustScrollView:YES];
 }
 
@@ -1561,7 +1570,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_keyboardWillShow:(NSNotification *)notification
 {
-    if ([_contentView isAssistingNode])
+    if ([self _shouldUpdateKeyboardWithInfo:notification.userInfo])
         [self _keyboardChangedWithInfo:notification.userInfo adjustScrollView:YES];
 }
 

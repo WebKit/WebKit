@@ -1,3 +1,18 @@
+2015-04-15  Tim Horton  <timothy_horton@apple.com>
+
+        Non-local keyboards don't update scroll view parameters
+        https://bugs.webkit.org/show_bug.cgi?id=143791
+        <rdar://problem/18974020>
+
+        Reviewed by Enrica Casucci.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _shouldUpdateKeyboardWithInfo:]):
+        (-[WKWebView _keyboardWillChangeFrame:]):
+        (-[WKWebView _keyboardWillShow:]):
+        Make sure that we update scroll view parameters (obscured insets, etc.)
+        if we have a non-local keyboard, in addition to the cases where we have an assisted node.
+
 2015-04-15  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/20549298> No matching __NSi_ definition for postprocessed value of WK_{MAC,IOS}_TBA
