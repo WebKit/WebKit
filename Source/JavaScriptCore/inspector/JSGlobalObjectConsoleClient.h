@@ -51,8 +51,6 @@ protected:
     virtual void timeStamp(JSC::ExecState*, RefPtr<ScriptArguments>&&) override;
 
 private:
-    static void initializeLogToSystemConsole();
-
     void warnUnimplemented(const String& method);
     void internalAddMessage(MessageType, MessageLevel, JSC::ExecState*, RefPtr<ScriptArguments>&&);
 

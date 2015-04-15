@@ -1,5 +1,27 @@
 2015-04-14  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Replace JavaScriptCoreOutputConsoleMessagesToSystemConsole default with an SPI
+        https://bugs.webkit.org/show_bug.cgi?id=143691
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSRemoteInspector.h:
+        * API/JSRemoteInspector.cpp:
+        (JSRemoteInspectorSetLogToSystemConsole):
+        Add SPI to enable/disable logging to the system console.
+        This only affects JSContext `console` logs and warnings.
+
+        * inspector/JSGlobalObjectConsoleClient.h:
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        (Inspector::JSGlobalObjectConsoleClient::logToSystemConsole):
+        (Inspector::JSGlobalObjectConsoleClient::setLogToSystemConsole):
+        (Inspector::JSGlobalObjectConsoleClient::messageWithTypeAndLevel):
+        (Inspector::JSGlobalObjectConsoleClient::initializeLogToSystemConsole): Deleted.
+        Simplify access to the setting now that it doesn't need to
+        initialize its value from preferences.
+
+2015-04-14  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Auto-attach fails after r179562, initialization too late after dispatch
         https://bugs.webkit.org/show_bug.cgi?id=143682
 

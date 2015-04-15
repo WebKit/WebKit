@@ -37,6 +37,8 @@ JS_EXPORT void JSRemoteInspectorDisableAutoStart(void) CF_AVAILABLE(10_11, 9_0);
 JS_EXPORT void JSRemoteInspectorStart(void) CF_AVAILABLE(10_11, 9_0);
 JS_EXPORT void JSRemoteInspectorSetParentProcessInformation(pid_t, const uint8_t* auditData, size_t auditLength) CF_AVAILABLE(10_11, 9_0);
 
+JS_EXPORT void JSRemoteInspectorSetLogToSystemConsole(bool) CF_AVAILABLE(10_11, 9_0);
+
 #ifdef __cplusplus
 }
 #endif

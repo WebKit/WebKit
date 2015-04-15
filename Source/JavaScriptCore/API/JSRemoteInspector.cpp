@@ -26,10 +26,13 @@
 #include "config.h"
 #include "JSRemoteInspector.h"
 
+#include "JSGlobalObjectConsoleClient.h"
+
 #if ENABLE(REMOTE_INSPECTOR)
 #include "RemoteInspector.h"
-using namespace Inspector;
 #endif
+
+using namespace Inspector;
 
 void JSRemoteInspectorDisableAutoStart(void)
 {
@@ -55,4 +58,9 @@ void JSRemoteInspectorSetParentProcessInformation(pid_t pid, const UInt8* auditD
     UNUSED_PARAM(auditData);
     UNUSED_PARAM(auditLength);
 #endif
+}
+
+void JSRemoteInspectorSetLogToSystemConsole(bool logToSystemConsole)
+{
+    JSGlobalObjectConsoleClient::setLogToSystemConsole(logToSystemConsole);
 }
