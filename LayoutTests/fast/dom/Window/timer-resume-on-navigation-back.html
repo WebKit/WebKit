@@ -2,8 +2,20 @@
 <script>
 var timeoutValue = 100; //ms
 
+var restoredFromPageCache = false;
+onpageshow = function(event) {
+    if (event.persisted)
+        restoredFromPageCache = true;
+}
+
 var timestamp;
 function verify() {
+    if (!restoredFromPageCache) {
+      // The timer fired too early, we haven't navigated yet.
+      window.setTimeout(verify, timeoutValue);
+      timestamp = new Date().getTime();
+      return;
+    }
     var actualTimerDelay =  new Date().getTime() - timestamp;
     document.getElementById("result").innerHTML =
         actualTimerDelay >= timeoutValue ? 'PASS' : 'FAIL with ' + actualTimerDelay + ' ms delay.';

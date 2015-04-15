@@ -1,3 +1,17 @@
+2015-04-14  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/dom/Window/timer-resume-on-navigation-back.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=33685
+
+        Reviewed by Brady Eidson.
+
+        If the timer fired before navigation, the test passed without going down the code
+        path that it was supposed to test. If it fired when navigation was in provisional
+        state, then dumping results was delayed until the navigation was finished, and
+        thus the intermediate page got dumped, and the test failed.
+
+        * fast/dom/Window/timer-resume-on-navigation-back.html:
+
 2015-04-14  Zalan Bujtas  <zalan@apple.com>
 
         Make inline continuation style change logic consistent.
