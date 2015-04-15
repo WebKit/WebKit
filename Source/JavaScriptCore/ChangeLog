@@ -1,3 +1,24 @@
+2015-04-14  Michael Saboff  <msaboff@apple.com>
+
+        DFG register fillSpeculate*() functions should validate incoming spill format is compatible with requested fill format
+        https://bugs.webkit.org/show_bug.cgi?id=143727
+
+        Reviewed by Geoffrey Garen.
+
+        Used the result of AbstractInterpreter<>::filter() to check that the current spill format is compatible
+        with the requested fill format.  If filter() reports a contradiction, then we force an OSR exit.
+        Removed individual checks made redundant by the new check.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt52):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+
 2015-04-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Replace JavaScriptCoreOutputConsoleMessagesToSystemConsole default with an SPI

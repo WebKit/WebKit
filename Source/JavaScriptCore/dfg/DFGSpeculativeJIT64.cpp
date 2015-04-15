@@ -817,20 +817,16 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
     ASSERT(edge.useKind() != KnownInt32Use || !(value.m_type & ~SpecInt32));
-    m_interpreter.filter(value, SpecInt32);
-    VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
-    if (edge->hasConstant() && !edge->isInt32Constant()) {
-        // Protect the silent spill/fill logic by failing early. If we "speculate" on
-        // the constant then the silent filler may think that we have an int32 and a
-        // constant, so it will try to fill this as an int32 constant. Bad things will
-        // happen.
+    if (m_interpreter.filter(value, SpecInt32) == Contradiction) {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
         returnFormat = DataFormatInt32;
         return allocate();
     }
-    
+
+    VirtualRegister virtualRegister = edge->virtualRegister();
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
+
     switch (info.registerFormat()) {
     case DataFormatNone: {
         GPRReg gpr = allocate();
@@ -929,12 +925,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     case DataFormatCell:
     case DataFormatBoolean:
     case DataFormatJSCell:
-    case DataFormatJSBoolean: {
-        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
-        returnFormat = DataFormatInt32;
-        return allocate();
-    }
-
+    case DataFormatJSBoolean:
     case DataFormatDouble:
     case DataFormatStorage:
     case DataFormatInt52:
@@ -967,17 +958,17 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
 {
     ASSERT(desiredFormat == DataFormatInt52 || desiredFormat == DataFormatStrictInt52);
     AbstractValue& value = m_state.forNode(edge);
-    m_interpreter.filter(value, SpecMachineInt);
+
+    if (m_interpreter.filter(value, SpecMachineInt) == Contradiction) {
+        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
+        return allocate();
+    }
+
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
-        if (edge->hasConstant() && !edge->isMachineIntConstant()) {
-            terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
-            return allocate();
-        }
-        
         GPRReg gpr = allocate();
 
         if (edge->hasConstant()) {
@@ -1096,15 +1087,14 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
     ASSERT((edge.useKind() != KnownCellUse && edge.useKind() != KnownStringUse) || !(value.m_type & ~SpecCell));
-    m_interpreter.filter(value, SpecCell);
-    VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
-    if (edge->hasConstant() && !edge->isCellConstant()) {
-        // Better to fail early on constants.
+    if (m_interpreter.filter(value, SpecCell) == Contradiction) {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
         return allocate();
     }
+
+    VirtualRegister virtualRegister = edge->virtualRegister();
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
@@ -1117,12 +1107,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
             info.fillJSValue(*m_stream, gpr, DataFormatJSCell);
             return gpr;
         }
-        
-        if (!(info.spillFormat() & DataFormatJS)) {
-            terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
-            return gpr;
-        }
-        
+
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
 
@@ -1158,11 +1143,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     case DataFormatInt32:
     case DataFormatJSDouble:
     case DataFormatJSBoolean:
-    case DataFormatBoolean: {
-        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
-        return allocate();
-    }
-
+    case DataFormatBoolean:
     case DataFormatDouble:
     case DataFormatStorage:
     case DataFormatInt52:
@@ -1179,28 +1160,24 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
 {
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
-    m_interpreter.filter(value, SpecBoolean);
+
+    if (m_interpreter.filter(value, SpecBoolean) == Contradiction) {
+        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
+        return allocate();
+    }
+
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
-        if (info.spillFormat() == DataFormatInt32) {
-            terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
-            return allocate();
-        }
-        
         GPRReg gpr = allocate();
 
         if (edge->hasConstant()) {
             JSValue jsValue = edge->asJSValue();
-            if (jsValue.isBoolean()) {
-                m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-                m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsValue)), gpr);
-                info.fillJSValue(*m_stream, gpr, DataFormatJSBoolean);
-                return gpr;
-            }
-            terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
+            m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
+            m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsValue)), gpr);
+            info.fillJSValue(*m_stream, gpr, DataFormatJSBoolean);
             return gpr;
         }
         DFG_ASSERT(m_jit.graph(), m_currentNode, info.spillFormat() & DataFormatJS);
@@ -1241,9 +1218,6 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
     case DataFormatJSDouble:
     case DataFormatJSCell:
     case DataFormatCell:
-        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
-        return allocate();
-        
     case DataFormatDouble:
     case DataFormatStorage:
     case DataFormatInt52:
