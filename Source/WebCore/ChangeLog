@@ -1,3 +1,28 @@
+2015-04-15  Daniel Bates  <dabates@apple.com>
+
+        Clean up: Have SVGTextLayoutEngine::beginTextPathLayout() take a reference to a
+        RenderSVGTextPath instead of a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=143787
+
+        Reviewed by Andreas Kling.
+
+        SVGTextLayoutEngine::beginTextPathLayout() assumes that the passed RenderObject is a
+        non-null pointer to a RenderSVGTextPath object. Instead we should have this function take a
+        reference to a RenderSVGTextPath object to help callers catch bad usage and better document
+        the expectation of a valid RenderSVGTextPath object.
+
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::layoutCharactersInTextBoxes): Downcast the renderer of the
+        inline box to a RenderSVGTextPath object and pass it to SVGTextLayoutEngine::beginTextPathLayout().
+        We ensured that this cast is safe earlier in this function.
+        SVGTextLayoutEngine::beginTextPathLayout().
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::beginTextPathLayout): Change type of first parameter from
+        RenderObject* to RenderSVGTextPath. Remove ASSERT() that was checking for a non-null
+        RenderObject pointer since we are passing the renderer by reference and a well-formed
+        reference must refer to a valid object.
+        * rendering/svg/SVGTextLayoutEngine.h: Substitute RenderSVGTextPath& for RenderObject*.
+
 2015-04-13  Jer Noble  <jer.noble@apple.com>
 
         [Fullscreen] ChromeClient::exitVideoFullscreen() should take a pointer to a HTMLVideoElement.

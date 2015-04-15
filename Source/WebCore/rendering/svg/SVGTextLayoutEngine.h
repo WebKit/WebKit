@@ -30,6 +30,7 @@ namespace WebCore {
 class RenderObject;
 class RenderStyle;
 class RenderSVGInlineText;
+class RenderSVGTextPath;
 class SVGElement;
 class SVGInlineTextBox;
 class SVGRenderStyle;
@@ -50,7 +51,7 @@ public:
     Vector<SVGTextLayoutAttributes*>& layoutAttributes() { return m_layoutAttributes; }
     SVGTextChunkBuilder& chunkLayoutBuilder() { return m_chunkLayoutBuilder; }
 
-    void beginTextPathLayout(RenderObject*, SVGTextLayoutEngine& lineLayout);
+    void beginTextPathLayout(RenderSVGTextPath&, SVGTextLayoutEngine& lineLayout);
     void endTextPathLayout();
 
     void layoutInlineTextBox(SVGInlineTextBox*);

@@ -161,12 +161,9 @@ bool SVGTextLayoutEngine::parentDefinesTextLength(RenderObject* parent) const
     return false;
 }
 
-void SVGTextLayoutEngine::beginTextPathLayout(RenderObject* object, SVGTextLayoutEngine& lineLayout)
+void SVGTextLayoutEngine::beginTextPathLayout(RenderSVGTextPath& textPath, SVGTextLayoutEngine& lineLayout)
 {
-    ASSERT(object);
-
     m_inPathLayout = true;
-    RenderSVGTextPath& textPath = downcast<RenderSVGTextPath>(*object);
 
     m_textPath = textPath.layoutPath();
     if (m_textPath.isEmpty())
