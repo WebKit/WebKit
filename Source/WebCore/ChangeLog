@@ -1,3 +1,14 @@
+2015-04-14  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Use ASSERT_WITH_SECURITY_IMPLICATION for verifying types from NEFilterSource
+        https://bugs.webkit.org/show_bug.cgi?id=143742
+
+        Reviewed by David Kilzer.
+
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (replacementDataFromDecisionInfo): ASSERT_WITH_SECURITY_IMPLICATION that decisionInfo is really a NSDictionary.
+        (WebCore::NetworkExtensionContentFilter::handleDecision): ASSERT_WITH_SECURITY_IMPLICATION that replacementData is really a NSData.
+
 2015-04-14  Brent Fulgham  <bfulgham@apple.com>
 
         Correct layering violation in DumpRenderTree Build

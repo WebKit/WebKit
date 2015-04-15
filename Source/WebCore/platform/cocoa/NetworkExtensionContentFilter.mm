@@ -44,9 +44,8 @@ SOFT_LINK_CLASS(NetworkExtension, NEFilterSource);
 #if HAVE(MODERN_NE_FILTER_SOURCE)
 static inline NSData *replacementDataFromDecisionInfo(NSDictionary *decisionInfo)
 {
-    id replacementData = decisionInfo[NEFilterSourceOptionsPageData];
-    ASSERT(!replacementData || [replacementData isKindOfClass:[NSData class]]);
-    return replacementData;
+    ASSERT_WITH_SECURITY_IMPLICATION(!decisionInfo || [decisionInfo isKindOfClass:[NSDictionary class]]);
+    return decisionInfo[NEFilterSourceOptionsPageData];
 }
 #endif
 
@@ -217,6 +216,7 @@ ContentFilterUnblockHandler NetworkExtensionContentFilter::unblockHandler() cons
 
 void NetworkExtensionContentFilter::handleDecision(NEFilterSourceStatus status, NSData *replacementData)
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(!replacementData || [replacementData isKindOfClass:[NSData class]]);
     m_status = status;
     if (status == NEFilterSourceStatusBlock)
         m_replacementData = replacementData;
