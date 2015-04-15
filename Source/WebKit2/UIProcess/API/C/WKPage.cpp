@@ -1933,10 +1933,10 @@ void WKPageRunJavaScriptInMainFrame_b(WKPageRef pageRef, WKStringRef scriptRef, 
 }
 #endif
 
-static std::function<void (const String&, CallbackBase::Error)> toGenericCallbackFunction(void* context, void (*callback)(WKStringRef, WKErrorRef, void*))
+static std::function<void (const String&, WebKit::CallbackBase::Error)> toGenericCallbackFunction(void* context, void (*callback)(WKStringRef, WKErrorRef, void*))
 {
-    return [context, callback](const String& returnValue, CallbackBase::Error error) {
-        callback(toAPI(API::String::create(returnValue).get()), error != CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
+    return [context, callback](const String& returnValue, WebKit::CallbackBase::Error error) {
+        callback(toAPI(API::String::create(returnValue).get()), error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
     };
 }
 
@@ -1979,8 +1979,8 @@ void WKPageGetContentsAsMHTMLData(WKPageRef pageRef, bool useBinaryEncoding, voi
 
 void WKPageForceRepaint(WKPageRef pageRef, void* context, WKPageForceRepaintFunction callback)
 {
-    toImpl(pageRef)->forceRepaint(VoidCallback::create([context, callback](CallbackBase::Error error) {
-        callback(error == CallbackBase::Error::None ? nullptr : toAPI(API::Error::create().get()), context);
+    toImpl(pageRef)->forceRepaint(VoidCallback::create([context, callback](WebKit::CallbackBase::Error error) {
+        callback(error == WebKit::CallbackBase::Error::None ? nullptr : toAPI(API::Error::create().get()), context);
     }));
 }
 
@@ -2016,8 +2016,8 @@ WKStringRef WKPageCopyStandardUserAgentWithApplicationName(WKStringRef applicati
 
 void WKPageValidateCommand(WKPageRef pageRef, WKStringRef command, void* context, WKPageValidateCommandCallback callback)
 {
-    toImpl(pageRef)->validateCommand(toImpl(command)->string(), [context, callback](const String& commandName, bool isEnabled, int32_t state, CallbackBase::Error error) {
-        callback(toAPI(API::String::create(commandName).get()), isEnabled, state, error != CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
+    toImpl(pageRef)->validateCommand(toImpl(command)->string(), [context, callback](const String& commandName, bool isEnabled, int32_t state, WebKit::CallbackBase::Error error) {
+        callback(toAPI(API::String::create(commandName).get()), isEnabled, state, error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
     });
 }
 
@@ -2038,11 +2038,11 @@ static PrintInfo printInfoFromWKPrintInfo(const WKPrintInfo& printInfo)
 
 void WKPageComputePagesForPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo, WKPageComputePagesForPrintingFunction callback, void* context)
 {
-    toImpl(page)->computePagesForPrinting(toImpl(frame), printInfoFromWKPrintInfo(printInfo), ComputedPagesCallback::create([context, callback](const Vector<WebCore::IntRect>& rects, double scaleFactor, CallbackBase::Error error) {
+    toImpl(page)->computePagesForPrinting(toImpl(frame), printInfoFromWKPrintInfo(printInfo), ComputedPagesCallback::create([context, callback](const Vector<WebCore::IntRect>& rects, double scaleFactor, WebKit::CallbackBase::Error error) {
         Vector<WKRect> wkRects(rects.size());
         for (size_t i = 0; i < rects.size(); ++i)
             wkRects[i] = toAPI(rects[i]);
-        callback(wkRects.data(), wkRects.size(), scaleFactor, error != CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
+        callback(wkRects.data(), wkRects.size(), scaleFactor, error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
     }));
 }
 

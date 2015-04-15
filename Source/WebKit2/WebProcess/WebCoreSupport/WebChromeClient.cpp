@@ -1050,9 +1050,9 @@ bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView* frameVi
     return m_page->drawingArea()->shouldUseTiledBackingForFrameView(frameView);
 }
 
-void WebChromeClient::isPlayingAudioDidChange(bool newIsPlayingAudio)
+void WebChromeClient::isPlayingMediaDidChange(MediaStateFlags state)
 {
-    m_page->send(Messages::WebPageProxy::IsPlayingAudioDidChange(newIsPlayingAudio));
+    m_page->send(Messages::WebPageProxy::IsPlayingMediaDidChange(state));
 }
 
 void WebChromeClient::setPageActivityState(PageActivityState::Flags activityState)

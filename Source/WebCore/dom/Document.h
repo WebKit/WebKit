@@ -1229,7 +1229,7 @@ public:
     WEBCORE_EXPORT void addAudioProducer(AudioProducer*);
     WEBCORE_EXPORT void removeAudioProducer(AudioProducer*);
     bool isPlayingAudio() const { return m_isPlayingAudio; }
-    WEBCORE_EXPORT void updateIsPlayingAudio();
+    WEBCORE_EXPORT void updateIsPlayingMedia();
     void pageMutedStateDidChange();
     WeakPtr<Document> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 

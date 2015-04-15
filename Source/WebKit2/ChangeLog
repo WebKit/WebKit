@@ -1,3 +1,54 @@
+2015-04-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Generalize "isPlayingAudio" to include other media characteristics
+        https://bugs.webkit.org/show_bug.cgi?id=143713
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (toGenericCallbackFunction): Scope CallbackBase.
+        (WKPageForceRepaint): Ditto.
+        (WKPageValidateCommand): Ditto.
+        (WKPageComputePagesForPrinting): Ditto.
+
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView _requestSnapshotIfNeeded]): Ditto.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView becomeFirstResponder]): Ditto.
+        (-[WKView updateFontPanelIfNeeded]): Ditto.
+        (-[WKView validateUserInterfaceItem:]): Ditto.
+        (-[WKView startSpeaking:]): Ditto.
+        (-[WKView selectedRangeWithCompletionHandler:]): Ditto.
+        (-[WKView markedRangeWithCompletionHandler:]): Ditto.
+        (-[WKView hasMarkedTextWithCompletionHandler:]): Ditto.
+        (-[WKView attributedSubstringForProposedRange:completionHandler:]): Ditto.
+        (-[WKView firstRectForCharacterRange:completionHandler:]): Ditto.
+        (-[WKView characterIndexForPoint:completionHandler:]): Ditto.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isPlayingMediaDidChange): Rename from isPlayingAudioDidChange.
+        (WebKit::WebPageProxy::isPlayingAudioDidChange): Deleted.
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController dealloc]): Scope CallbackBase.
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]): Ditto.
+
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]): Ditto.
+        (-[WKPrintingView _askPageToComputePageRects]): Ditto.
+        (-[WKPrintingView _drawPreview:]): Ditto.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setPluginIsPlayingAudio):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::isPlayingMediaDidChange):
+        (WebKit::WebChromeClient::isPlayingAudioDidChange): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2015-04-15  Antti Koivisto  <antti@apple.com>
 
         Network Cache: Add thread-safe accessors for storage paths

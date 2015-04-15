@@ -1456,7 +1456,7 @@ void PluginView::setPluginIsPlayingAudio(bool pluginIsPlayingAudio)
         return;
 
     m_pluginIsPlayingAudio = pluginIsPlayingAudio;
-    m_pluginElement->document().updateIsPlayingAudio();
+    m_pluginElement->document().updateIsPlayingMedia();
 }
 
 bool PluginView::isMuted() const

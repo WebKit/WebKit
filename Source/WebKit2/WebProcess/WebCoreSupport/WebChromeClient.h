@@ -292,7 +292,7 @@ private:
 
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) const override;
 
-    virtual void isPlayingAudioDidChange(bool) override;
+    virtual void isPlayingMediaDidChange(MediaStateFlags) override;
     virtual void setPageActivityState(WebCore::PageActivityState::Flags) override;
 
 #if ENABLE(SUBTLE_CRYPTO)

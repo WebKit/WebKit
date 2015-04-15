@@ -421,7 +421,7 @@ messages -> WebPageProxy {
     ContentFilterDidBlockLoadForFrame(WebCore::ContentFilterUnblockHandler unblockHandler, uint64_t frameID)
 #endif
 
-    IsPlayingAudioDidChange(bool newIsPlayingAudio)
+    IsPlayingMediaDidChange(unsigned state)
 
 #if PLATFORM(MAC)
     DidPerformActionMenuHitTest(struct WebKit::WebHitTestResult::Data result, bool forImmediateAction, bool contentPreventsDefault, WebKit::UserData userData)

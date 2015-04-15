@@ -265,7 +265,7 @@ static void pageDidDrawToImage(const ShareableBitmap::Handle& imageHandle, IPCCa
     _webFrame->page()->beginPrinting(_webFrame.get(), printInfo);
 
     IPCCallbackContext* context = new IPCCallbackContext;
-    RefPtr<DataCallback> callback = DataCallback::create([context](API::Data* data, CallbackBase::Error) {
+    RefPtr<DataCallback> callback = DataCallback::create([context](API::Data* data, WebKit::CallbackBase::Error) {
         ASSERT(RunLoop::isMain());
 
         std::unique_ptr<IPCCallbackContext> contextDeleter(context);
@@ -340,7 +340,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
     ASSERT(!_expectedComputedPagesCallback);
 
     IPCCallbackContext* context = new IPCCallbackContext;
-    RefPtr<ComputedPagesCallback> callback = ComputedPagesCallback::create([context](const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, CallbackBase::Error) {
+    RefPtr<ComputedPagesCallback> callback = ComputedPagesCallback::create([context](const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, WebKit::CallbackBase::Error) {
         std::unique_ptr<IPCCallbackContext> contextDeleter(context);
         pageDidComputePageRects(pageRects, totalScaleFactorForPrinting, context);
     });
@@ -492,7 +492,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
                 _webFrame->page()->beginPrinting(_webFrame.get(), PrintInfo([_printOperation printInfo]));
 
                 IPCCallbackContext* context = new IPCCallbackContext;
-                RefPtr<ImageCallback> callback = ImageCallback::create([context](const ShareableBitmap::Handle& imageHandle, CallbackBase::Error) {
+                RefPtr<ImageCallback> callback = ImageCallback::create([context](const ShareableBitmap::Handle& imageHandle, WebKit::CallbackBase::Error) {
                     std::unique_ptr<IPCCallbackContext> contextDeleter(context);
                     pageDidDrawToImage(imageHandle, context);
                 });

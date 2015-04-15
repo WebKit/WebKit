@@ -108,7 +108,6 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "HTMLVideoElement.h"
 #include "MediaPlaybackTarget.h"
-#include "MediaPlaybackTargetPickerClient.h"
 #endif
 
 namespace WebCore {
@@ -1198,7 +1197,7 @@ void Page::enableLegacyPrivateBrowsing(bool privateBrowsingEnabled)
     setSessionID(privateBrowsingEnabled ? SessionID::legacyPrivateSessionID() : SessionID::defaultSessionID());
 }
 
-void Page::updateIsPlayingAudio()
+void Page::updateIsPlayingMedia()
 {
     bool isPlayingAudio = false;
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
@@ -1213,7 +1212,7 @@ void Page::updateIsPlayingAudio()
 
     m_isPlayingAudio = isPlayingAudio;
 
-    chrome().client().isPlayingAudioDidChange(m_isPlayingAudio);
+    chrome().client().isPlayingMediaDidChange(m_isPlayingAudio ? ChromeClient::IsPlayingAudio : ChromeClient::IsNotPlaying);
 }
 
 void Page::setMuted(bool muted)

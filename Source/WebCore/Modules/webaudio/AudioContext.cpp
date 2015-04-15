@@ -344,7 +344,7 @@ void AudioContext::stop()
         return;
     m_isStopScheduled = true;
 
-    document()->updateIsPlayingAudio();
+    document()->updateIsPlayingMedia();
 
     m_eventQueue->close();
 
@@ -1038,7 +1038,7 @@ void AudioContext::pageMutedStateDidChange()
 
 void AudioContext::isPlayingAudioDidChange()
 {
-    document()->updateIsPlayingAudio();
+    document()->updateIsPlayingMedia();
 }
 
 void AudioContext::fireCompletionEvent()

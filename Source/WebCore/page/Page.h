@@ -423,7 +423,7 @@ public:
     bool usesEphemeralSession() const { return m_sessionID.isEphemeral(); }
 
     bool isPlayingAudio() const { return m_isPlayingAudio; }
-    void updateIsPlayingAudio();
+    void updateIsPlayingMedia();
     bool isMuted() const { return m_muted; }
     WEBCORE_EXPORT void setMuted(bool);
 

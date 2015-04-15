@@ -3016,7 +3016,7 @@ void HTMLMediaElement::setMuted(bool muted)
             }
         }
         scheduleEvent(eventNames().volumechangeEvent);
-        document().updateIsPlayingAudio();
+        document().updateIsPlayingMedia();
     }
 #endif
 }
@@ -4344,7 +4344,7 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged(MediaPlayer*)
     if (renderer())
         renderer()->updateFromElement();
 
-    document().updateIsPlayingAudio();
+    document().updateIsPlayingMedia();
 
     endProcessingMediaPlayerCallback();
 }
@@ -4599,7 +4599,7 @@ void HTMLMediaElement::setPlaying(bool playing)
         return;
     
     m_playing = playing;
-    document().updateIsPlayingAudio();
+    document().updateIsPlayingMedia();
 }
 
 void HTMLMediaElement::setPausedInternal(bool b)

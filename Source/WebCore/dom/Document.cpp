@@ -3416,16 +3416,16 @@ void Document::updateViewportUnitsOnResize()
 void Document::addAudioProducer(AudioProducer* audioProducer)
 {
     m_audioProducers.add(audioProducer);
-    updateIsPlayingAudio();
+    updateIsPlayingMedia();
 }
 
 void Document::removeAudioProducer(AudioProducer* audioProducer)
 {
     m_audioProducers.remove(audioProducer);
-    updateIsPlayingAudio();
+    updateIsPlayingMedia();
 }
 
-void Document::updateIsPlayingAudio()
+void Document::updateIsPlayingMedia()
 {
     bool isPlayingAudio = false;
     for (auto audioProducer : m_audioProducers) {
@@ -3441,7 +3441,7 @@ void Document::updateIsPlayingAudio()
     m_isPlayingAudio = isPlayingAudio;
 
     if (page())
-        page()->updateIsPlayingAudio();
+        page()->updateIsPlayingMedia();
 }
 
 void Document::pageMutedStateDidChange()

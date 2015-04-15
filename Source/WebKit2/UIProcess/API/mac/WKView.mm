@@ -470,7 +470,7 @@ struct WKViewInterpretKeyEventsParameters {
         NSEvent *keyboardEvent = nil;
         if ([event type] == NSKeyDown || [event type] == NSKeyUp)
             keyboardEvent = event;
-        _data->_page->setInitialFocus(direction == NSSelectingNext, keyboardEvent != nil, NativeWebKeyboardEvent(keyboardEvent, false, Vector<KeypressCommand>()), [](CallbackBase::Error) { });
+        _data->_page->setInitialFocus(direction == NSSelectingNext, keyboardEvent != nil, NativeWebKeyboardEvent(keyboardEvent, false, Vector<KeypressCommand>()), [](WebKit::CallbackBase::Error) { });
     }
     return YES;
 }
@@ -835,7 +835,7 @@ WEBCORE_COMMAND(yankAndSelect)
     if (editorState.selectionIsNone || !editorState.isContentEditable)
         return;
     if ([NSFontPanel sharedFontPanelExists] && [[NSFontPanel sharedFontPanel] isVisible]) {
-        _data->_page->fontAtSelection([](const String& fontName, double fontSize, bool selectionHasMultipleFonts, CallbackBase::Error error) {
+        _data->_page->fontAtSelection([](const String& fontName, double fontSize, bool selectionHasMultipleFonts, WebKit::CallbackBase::Error error) {
             NSFont *font = [NSFont fontWithName:fontName size:fontSize];
             if (font)
                 [[NSFontManager sharedFontManager] setSelectedFont:font isMultiple:selectionHasMultipleFonts];
@@ -995,9 +995,9 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
         // If we are not already awaiting validation for this command, start the asynchronous validation process.
         // FIXME: Theoretically, there is a race here; when we get the answer it might be old, from a previous time
         // we asked for the same command; there is no guarantee the answer is still valid.
-        _data->_page->validateCommand(commandName, [self](const String& commandName, bool isEnabled, int32_t state, CallbackBase::Error error) {
+        _data->_page->validateCommand(commandName, [self](const String& commandName, bool isEnabled, int32_t state, WebKit::CallbackBase::Error error) {
             // If the process exits before the command can be validated, we'll be called back with an error.
-            if (error != CallbackBase::Error::None)
+            if (error != WebKit::CallbackBase::Error::None)
                 return;
             
             [self _setUserInterfaceItemState:commandName enabled:isEnabled state:state];
@@ -1012,8 +1012,8 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
 
 - (IBAction)startSpeaking:(id)sender
 {
-    _data->_page->getSelectionOrContentsAsString([self](const String& string, CallbackBase::Error error) {
-        if (error != CallbackBase::Error::None)
+    _data->_page->getSelectionOrContentsAsString([self](const String& string, WebKit::CallbackBase::Error error) {
+        if (error != WebKit::CallbackBase::Error::None)
             return;
         if (!string)
             return;
@@ -1676,9 +1676,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     RetainPtr<id> completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "selectedRange");
-    _data->_page->getSelectedRangeAsync([completionHandler](const EditingRange& editingRangeResult, CallbackBase::Error error) {
+    _data->_page->getSelectedRangeAsync([completionHandler](const EditingRange& editingRangeResult, WebKit::CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSRange) = (void (^)(NSRange))completionHandler.get();
-        if (error != CallbackBase::Error::None) {
+        if (error != WebKit::CallbackBase::Error::None) {
             LOG(TextInput, "    ...selectedRange failed.");
             completionHandlerBlock(NSMakeRange(NSNotFound, 0));
             return;
@@ -1697,9 +1697,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     RetainPtr<id> completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "markedRange");
-    _data->_page->getMarkedRangeAsync([completionHandler](const EditingRange& editingRangeResult, CallbackBase::Error error) {
+    _data->_page->getMarkedRangeAsync([completionHandler](const EditingRange& editingRangeResult, WebKit::CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSRange) = (void (^)(NSRange))completionHandler.get();
-        if (error != CallbackBase::Error::None) {
+        if (error != WebKit::CallbackBase::Error::None) {
             LOG(TextInput, "    ...markedRange failed.");
             completionHandlerBlock(NSMakeRange(NSNotFound, 0));
             return;
@@ -1718,9 +1718,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     RetainPtr<id> completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "hasMarkedText");
-    _data->_page->getMarkedRangeAsync([completionHandler](const EditingRange& editingRangeResult, CallbackBase::Error error) {
+    _data->_page->getMarkedRangeAsync([completionHandler](const EditingRange& editingRangeResult, WebKit::CallbackBase::Error error) {
         void (^completionHandlerBlock)(BOOL) = (void (^)(BOOL))completionHandler.get();
-        if (error != CallbackBase::Error::None) {
+        if (error != WebKit::CallbackBase::Error::None) {
             LOG(TextInput, "    ...hasMarkedText failed.");
             completionHandlerBlock(NO);
             return;
@@ -1736,9 +1736,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     RetainPtr<id> completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "attributedSubstringFromRange:(%u, %u)", nsRange.location, nsRange.length);
-    _data->_page->attributedSubstringForCharacterRangeAsync(nsRange, [completionHandler](const AttributedString& string, const EditingRange& actualRange, CallbackBase::Error error) {
+    _data->_page->attributedSubstringForCharacterRangeAsync(nsRange, [completionHandler](const AttributedString& string, const EditingRange& actualRange, WebKit::CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSAttributedString *, NSRange) = (void (^)(NSAttributedString *, NSRange))completionHandler.get();
-        if (error != CallbackBase::Error::None) {
+        if (error != WebKit::CallbackBase::Error::None) {
             LOG(TextInput, "    ...attributedSubstringFromRange failed.");
             completionHandlerBlock(0, NSMakeRange(NSNotFound, 0));
             return;
@@ -1766,9 +1766,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         return;
     }
 
-    _data->_page->firstRectForCharacterRangeAsync(theRange, [self, completionHandler](const IntRect& rect, const EditingRange& actualRange, CallbackBase::Error error) {
+    _data->_page->firstRectForCharacterRangeAsync(theRange, [self, completionHandler](const IntRect& rect, const EditingRange& actualRange, WebKit::CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSRect, NSRange) = (void (^)(NSRect, NSRange))completionHandler.get();
-        if (error != CallbackBase::Error::None) {
+        if (error != WebKit::CallbackBase::Error::None) {
             LOG(TextInput, "    ...firstRectForCharacterRange failed.");
             completionHandlerBlock(NSZeroRect, NSMakeRange(NSNotFound, 0));
             return;
@@ -1797,9 +1797,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 #pragma clang diagnostic pop
     thePoint = [self convertPoint:thePoint fromView:nil];  // the point is relative to the main frame
 
-    _data->_page->characterIndexForPointAsync(IntPoint(thePoint), [completionHandler](uint64_t result, CallbackBase::Error error) {
+    _data->_page->characterIndexForPointAsync(IntPoint(thePoint), [completionHandler](uint64_t result, WebKit::CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSUInteger) = (void (^)(NSUInteger))completionHandler.get();
-        if (error != CallbackBase::Error::None) {
+        if (error != WebKit::CallbackBase::Error::None) {
             LOG(TextInput, "    ...characterIndexForPoint failed.");
             completionHandlerBlock(0);
             return;

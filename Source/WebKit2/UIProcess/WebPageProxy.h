@@ -63,6 +63,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenuProxy.h"
 #include "WebProcessLifetimeTracker.h"
+#include <WebCore/ChromeClient.h>
 #include <WebCore/Color.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/HitTestResult.h>
@@ -982,7 +983,7 @@ public:
 
     bool isShowingNavigationGestureSnapshot() const { return m_isShowingNavigationGestureSnapshot; }
 
-    void isPlayingAudioDidChange(bool);
+    void isPlayingMediaDidChange(WebCore::ChromeClient::MediaStateFlags);
     bool isPlayingAudio() const { return m_isPlayingAudio; }
 
 #if PLATFORM(MAC)

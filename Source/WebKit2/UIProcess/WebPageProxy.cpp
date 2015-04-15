@@ -5640,12 +5640,13 @@ void WebPageProxy::navigationGestureSnapshotWasRemoved()
     m_isShowingNavigationGestureSnapshot = false;
 }
 
-void WebPageProxy::isPlayingAudioDidChange(bool newIsPlayingAudio)
+void WebPageProxy::isPlayingMediaDidChange(WebCore::ChromeClient::MediaStateFlags state)
 {
-    if (m_isPlayingAudio == newIsPlayingAudio)
+    bool isPlayingAudio = state & WebCore::ChromeClient::IsPlayingAudio;
+    if (m_isPlayingAudio == isPlayingAudio)
         return;
 
-    m_isPlayingAudio = newIsPlayingAudio;
+    m_isPlayingAudio = isPlayingAudio;
     m_uiClient->isPlayingAudioDidChange(*this);
 }
 

@@ -423,7 +423,15 @@ public:
 
     virtual bool shouldUseTiledBackingForFrameView(const FrameView*) const { return false; }
 
-    virtual void isPlayingAudioDidChange(bool) { }
+    enum MediaState {
+        IsNotPlaying = 0,
+        IsPlayingAudio = 1 << 0,
+        IsPlayingVideo = 1 << 1,
+        IsPlayingToExternalDevice = 1 << 2,
+    };
+    typedef unsigned MediaStateFlags;
+    virtual void isPlayingMediaDidChange(MediaStateFlags) { }
+
     virtual void setPageActivityState(PageActivityState::Flags) { }
 
 #if ENABLE(SUBTLE_CRYPTO)
