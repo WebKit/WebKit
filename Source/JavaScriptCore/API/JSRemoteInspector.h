@@ -39,6 +39,9 @@ JS_EXPORT void JSRemoteInspectorSetParentProcessInformation(pid_t, const uint8_t
 
 JS_EXPORT void JSRemoteInspectorSetLogToSystemConsole(bool) CF_AVAILABLE(10_11, 9_0);
 
+JS_EXPORT bool JSRemoteInspectorGetInspectionEnabledByDefault(void) CF_AVAILABLE(10_11, 9_0);
+JS_EXPORT void JSRemoteInspectorSetInspectionEnabledByDefault(bool) CF_AVAILABLE(10_11, 9_0);
+
 #ifdef __cplusplus
 }
 #endif

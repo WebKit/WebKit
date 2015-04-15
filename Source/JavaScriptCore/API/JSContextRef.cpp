@@ -44,6 +44,7 @@
 #if ENABLE(REMOTE_INSPECTOR)
 #include "JSGlobalObjectDebuggable.h"
 #include "JSGlobalObjectInspectorController.h"
+#include "JSRemoteInspector.h"
 #endif
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -162,7 +163,8 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
     if (!globalObjectClass) {
         JSGlobalObject* globalObject = JSGlobalObject::create(*vm, JSGlobalObject::createStructure(*vm, jsNull()), &javaScriptCoreAPIGlobalObjectMethodTable);
 #if ENABLE(REMOTE_INSPECTOR)
-        globalObject->setRemoteDebuggingEnabled(true);
+        if (JSRemoteInspectorGetInspectionEnabledByDefault())
+            globalObject->setRemoteDebuggingEnabled(true);
 #endif
         return JSGlobalContextRetain(toGlobalRef(globalObject->globalExec()));
     }
@@ -174,7 +176,8 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
         prototype = jsNull();
     globalObject->resetPrototype(*vm, prototype);
 #if ENABLE(REMOTE_INSPECTOR)
-    globalObject->setRemoteDebuggingEnabled(true);
+    if (JSRemoteInspectorGetInspectionEnabledByDefault())
+        globalObject->setRemoteDebuggingEnabled(true);
 #endif
     return JSGlobalContextRetain(toGlobalRef(exec));
 }

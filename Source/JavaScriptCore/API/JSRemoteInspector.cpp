@@ -34,6 +34,8 @@
 
 using namespace Inspector;
 
+static bool remoteInspectionEnabledByDefault = true;
+
 void JSRemoteInspectorDisableAutoStart(void)
 {
 #if ENABLE(REMOTE_INSPECTOR)
@@ -63,4 +65,14 @@ void JSRemoteInspectorSetParentProcessInformation(pid_t pid, const UInt8* auditD
 void JSRemoteInspectorSetLogToSystemConsole(bool logToSystemConsole)
 {
     JSGlobalObjectConsoleClient::setLogToSystemConsole(logToSystemConsole);
+}
+
+bool JSRemoteInspectorGetInspectionEnabledByDefault(void)
+{
+    return remoteInspectionEnabledByDefault;
+}
+
+void JSRemoteInspectorSetInspectionEnabledByDefault(bool enabledByDefault)
+{
+    remoteInspectionEnabledByDefault = enabledByDefault;
 }
