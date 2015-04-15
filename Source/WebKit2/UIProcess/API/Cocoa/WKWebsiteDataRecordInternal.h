@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKWebsiteDataRecord.h"
+#import "WKWebsiteDataRecord.h"
 
 #if WK_API_ENABLED
 
@@ -32,10 +32,10 @@
 
 namespace WebKit {
 
-inline _WKWebsiteDataRecord *wrapper(API::WebsiteDataRecord& websiteDataRecord)
+inline WKWebsiteDataRecord *wrapper(API::WebsiteDataRecord& websiteDataRecord)
 {
-    ASSERT([websiteDataRecord.wrapper() isKindOfClass:[_WKWebsiteDataRecord class]]);
-    return (_WKWebsiteDataRecord *)websiteDataRecord.wrapper();
+    ASSERT([websiteDataRecord.wrapper() isKindOfClass:[WKWebsiteDataRecord class]]);
+    return (WKWebsiteDataRecord *)websiteDataRecord.wrapper();
 }
 
 static inline WebKit::WebsiteDataTypes toWebsiteDataTypes(WKWebsiteDataTypes wkWebsiteDataTypes)
@@ -84,7 +84,7 @@ static inline WKWebsiteDataTypes toWKWebsiteDataTypes(int websiteDataTypes)
 
 }
 
-@interface _WKWebsiteDataRecord () <WKObject> {
+@interface WKWebsiteDataRecord () <WKObject> {
 @package
     API::ObjectStorage<API::WebsiteDataRecord> _websiteDataRecord;
 }

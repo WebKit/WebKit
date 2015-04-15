@@ -1,3 +1,35 @@
+2015-04-15  Anders Carlsson  <andersca@apple.com>
+
+        Make WKWebsiteDataRecord public
+        https://bugs.webkit.org/show_bug.cgi?id=143796
+
+        Reviewed by Dan Bernstein.
+
+        Rename _WKWebsiteDataRecord and associated files to WKWebsiteDataRecord and
+        add a new _WKWebsiteDataRecord.h with a class @interface declaration that just
+        inherits from WKWebsiteDataRecord. We don't need an @implementation since nobody is expected
+        to allocate _WKWebsiteDataRecord objects.
+
+        * Shared/API/Cocoa/WebKit.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKWebsiteDataRecord.h.
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm: Renamed from Source/WebKit2/UIProcess/API/Cocoa/_WKWebsiteDataRecord.mm.
+        (-[WKWebsiteDataRecord dealloc]):
+        (dataTypesToString):
+        (-[WKWebsiteDataRecord description]):
+        (-[WKWebsiteDataRecord displayName]):
+        (-[WKWebsiteDataRecord dataTypes]):
+        (-[WKWebsiteDataRecord _apiObject]):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h: Renamed from Source/WebKit2/UIProcess/API/Cocoa/_WKWebsiteDataRecordInternal.h.
+        (WebKit::wrapper):
+        (WebKit::toWebsiteDataTypes):
+        (WebKit::toWKWebsiteDataTypes):
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecord.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        (toWebsiteDataRecords):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-04-13  Jer Noble  <jer.noble@apple.com>
 
         [Fullscreen] ChromeClient::exitVideoFullscreen() should take a pointer to a HTMLVideoElement.

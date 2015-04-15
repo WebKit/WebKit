@@ -24,11 +24,11 @@
  */
 
 #import "config.h"
-#import "_WKWebsiteDataRecordInternal.h"
+#import "WKWebsiteDataRecordInternal.h"
 
 #if WK_API_ENABLED
 
-@implementation _WKWebsiteDataRecord
+@implementation WKWebsiteDataRecord
 
 - (void)dealloc
 {

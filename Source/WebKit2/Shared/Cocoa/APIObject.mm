@@ -57,13 +57,13 @@
 #import "WKWebProcessPlugInNodeHandleInternal.h"
 #import "WKWebProcessPlugInPageGroupInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
+#import "WKWebsiteDataRecordInternal.h"
 #import "_WKDownloadInternal.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import "_WKUserContentExtensionStoreInternal.h"
 #import "_WKUserContentFilterInternal.h"
 #import "_WKVisitedLinkProviderInternal.h"
-#import "_WKWebsiteDataRecordInternal.h"
 #import "_WKWebsiteDataStoreInternal.h"
 #import <objc/objc-auto.h>
 
@@ -205,7 +205,7 @@ void* Object::newObject(size_t size, Type type)
         break;
 
     case Type::WebsiteDataRecord:
-        wrapper = [_WKWebsiteDataRecord alloc];
+        wrapper = [WKWebsiteDataRecord alloc];
         break;
 
     case Type::WebsiteDataStore:

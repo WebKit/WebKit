@@ -30,7 +30,7 @@
 
 #import "APIArray.h"
 #import "WKNSArray.h"
-#import "_WKWebsiteDataRecordInternal.h"
+#import "WKWebsiteDataRecordInternal.h"
 
 @implementation _WKWebsiteDataStore
 
@@ -94,7 +94,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 {
     Vector<WebKit::WebsiteDataRecord> result;
 
-    for (_WKWebsiteDataRecord *dataRecord in dataRecords)
+    for (WKWebsiteDataRecord *dataRecord in dataRecords)
         result.append(dataRecord->_websiteDataRecord->websiteDataRecord());
 
     return result;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKBackForwardList.h>
-#import <WebKit/WKBackForwardListItem.h>
-#import <WebKit/WKError.h>
 #import <WebKit/WKFoundation.h>
-#import <WebKit/WKFrameInfo.h>
-#import <WebKit/WKNavigation.h>
-#import <WebKit/WKNavigationAction.h>
-#import <WebKit/WKNavigationDelegate.h>
-#import <WebKit/WKNavigationResponse.h>
-#import <WebKit/WKPreferences.h>
-#import <WebKit/WKProcessPool.h>
-#import <WebKit/WKScriptMessage.h>
-#import <WebKit/WKScriptMessageHandler.h>
-#import <WebKit/WKUIDelegate.h>
-#import <WebKit/WKUserContentController.h>
-#import <WebKit/WKUserScript.h>
-#import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewConfiguration.h>
-#import <WebKit/WKWebsiteDataRecord.h>
-#import <WebKit/WKWindowFeatures.h>
-#import <WebKit/WebKitLegacy.h>
+
+#if WK_API_ENABLED
+
+#import <Foundation/Foundation.h>
+
+WK_ASSUME_NONNULL_BEGIN
+
+typedef NS_OPTIONS(NSUInteger, WKWebsiteDataTypes) {
+    WKWebsiteDataTypeCookies = 1 << 0,
+    WKWebsiteDataTypeDiskCache = 1 << 1,
+    WKWebsiteDataTypeMemoryCache = 1 << 2,
+    WKWebsiteDataTypeOfflineWebApplicationCache = 1 << 3,
+
+    WKWebsiteDataTypeLocalStorage = 1 << 4,
+    WKWebsiteDataTypeWebSQLDatabases = 1 << 5,
+
+    WKWebsiteDataTypeAll = NSUIntegerMax,
+} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
+@interface WKWebsiteDataRecord : NSObject
+
+@property (nonatomic, readonly, copy) NSString *displayName;
+
+@property (nonatomic, readonly) WKWebsiteDataTypes dataTypes;
+
+@end
+
+WK_ASSUME_NONNULL_END
+
+#endif
