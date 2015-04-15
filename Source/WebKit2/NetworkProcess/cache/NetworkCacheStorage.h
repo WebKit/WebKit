@@ -83,8 +83,9 @@ public:
 
     static const unsigned version = 3;
 
-    const String& baseDirectoryPath() const { return m_baseDirectoryPath; }
-    const String& directoryPath() const { return m_directoryPath; }
+    String basePath() const;
+    String versionPath() const;
+    String recordsPath() const;
 
 private:
     Storage(const String& directoryPath);
@@ -120,8 +121,8 @@ private:
 
     void addToContentsFilter(const Key&);
 
-    const String m_baseDirectoryPath;
-    const String m_directoryPath;
+    const String m_basePath;
+    const String m_recordsPath;
 
     size_t m_capacity { std::numeric_limits<size_t>::max() };
     size_t m_approximateSize { 0 };

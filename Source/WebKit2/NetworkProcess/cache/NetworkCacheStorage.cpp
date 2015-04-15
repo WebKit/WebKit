@@ -65,7 +65,7 @@ static String makeVersionedDirectoryPath(const String& baseDirectoryPath)
     return WebCore::pathByAppendingComponent(baseDirectoryPath, versionSubdirectory);
 }
 
-static String makeRecordDirectoryPath(const String& baseDirectoryPath)
+static String makeRecordsDirectoryPath(const String& baseDirectoryPath)
 {
     return WebCore::pathByAppendingComponent(makeVersionedDirectoryPath(baseDirectoryPath), recordsDirectoryName);
 }
@@ -76,8 +76,8 @@ static String makeBlobDirectoryPath(const String& baseDirectoryPath)
 }
 
 Storage::Storage(const String& baseDirectoryPath)
-    : m_baseDirectoryPath(baseDirectoryPath)
-    , m_directoryPath(makeRecordDirectoryPath(baseDirectoryPath))
+    : m_basePath(baseDirectoryPath)
+    , m_recordsPath(makeRecordsDirectoryPath(baseDirectoryPath))
     , m_ioQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage", WorkQueue::Type::Concurrent))
     , m_backgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage.background", WorkQueue::Type::Concurrent, WorkQueue::QOS::Background))
     , m_serialBackgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage.serialBackground", WorkQueue::Type::Serial, WorkQueue::QOS::Background))
@@ -85,6 +85,22 @@ Storage::Storage(const String& baseDirectoryPath)
 {
     deleteOldVersions();
     synchronize();
+}
+
+
+String Storage::basePath() const
+{
+    return m_basePath.isolatedCopy();
+}
+
+String Storage::versionPath() const
+{
+    return makeVersionedDirectoryPath(basePath());
+}
+
+String Storage::recordsPath() const
+{
+    return m_recordsPath.isolatedCopy();
 }
 
 size_t Storage::approximateSize() const
@@ -102,14 +118,11 @@ void Storage::synchronize()
 
     LOG(NetworkCacheStorage, "(NetworkProcess) synchronizing cache");
 
-    StringCapture cachePathCapture(m_directoryPath);
-    backgroundIOQueue().dispatch([this, cachePathCapture] {
-        String cachePath = cachePathCapture.string();
-
+    backgroundIOQueue().dispatch([this] {
         auto filter = std::make_unique<ContentsFilter>();
         size_t size = 0;
         unsigned count = 0;
-        traverseCacheFiles(cachePath, [&filter, &size, &count](const String& fileName, const String& partitionPath) {
+        traverseCacheFiles(recordsPath(), [&filter, &size, &count](const String& fileName, const String& partitionPath) {
             Key::HashType hash;
             if (!Key::stringToHash(fileName, hash))
                 return;
@@ -329,11 +342,10 @@ void Storage::remove(const Key& key)
     // For simplicity we also don't reduce m_approximateSize on removals.
     // The next synchronization will update everything.
 
-    StringCapture recordPathCapture(recordPathForKey(key, m_directoryPath));
-    StringCapture bodyPathCapture(bodyPathForKey(key, m_directoryPath));
-    serialBackgroundIOQueue().dispatch([this, recordPathCapture, bodyPathCapture] {
-        WebCore::deleteFile(recordPathCapture.string());
-        m_blobStorage.remove(bodyPathCapture.string());
+    serialBackgroundIOQueue().dispatch([this, key] {
+        auto recordsPath = this->recordsPath();
+        WebCore::deleteFile(recordPathForKey(key, recordsPath));
+        m_blobStorage.remove(bodyPathForKey(key, recordsPath));
     });
 }
 
@@ -350,10 +362,10 @@ void Storage::dispatchReadOperation(const ReadOperation& read)
     ASSERT(RunLoop::isMain());
     ASSERT(m_activeReadOperations.contains(&read));
 
-    StringCapture cachePathCapture(m_directoryPath);
-    ioQueue().dispatch([this, &read, cachePathCapture] {
-        auto recordPath = recordPathForKey(read.key, cachePathCapture.string());
-        auto bodyPath = bodyPathForKey(read.key, cachePathCapture.string());
+    ioQueue().dispatch([this, &read] {
+        auto recordsPath = this->recordsPath();
+        auto recordPath = recordPathForKey(read.key, recordsPath);
+        auto bodyPath = bodyPathForKey(read.key, recordsPath);
         // FIXME: Body and header retrieves can be done in parallel.
         auto bodyBlob = m_blobStorage.get(bodyPath);
 
@@ -371,7 +383,7 @@ void Storage::finishReadOperation(const ReadOperation& read, std::unique_ptr<Rec
 
     bool success = read.completionHandler(WTF::move(record));
     if (success)
-        updateFileModificationTime(recordPathForKey(read.key, m_directoryPath));
+        updateFileModificationTime(recordPathForKey(read.key, recordsPath()));
     else
         remove(read.key);
     ASSERT(m_activeReadOperations.contains(&read));
@@ -444,11 +456,11 @@ void Storage::dispatchWriteOperation(const WriteOperation& write)
     // This was added already when starting the store but filter might have been wiped.
     addToContentsFilter(write.record.key);
 
-    StringCapture cachePathCapture(m_directoryPath);
-    backgroundIOQueue().dispatch([this, &write, cachePathCapture] {
-        auto partitionPath = partitionPathForKey(write.record.key, cachePathCapture.string());
-        auto recordPath = recordPathForKey(write.record.key, cachePathCapture.string());
-        auto bodyPath = bodyPathForKey(write.record.key, cachePathCapture.string());
+    backgroundIOQueue().dispatch([this, &write] {
+        auto recordsPath = this->recordsPath();
+        auto partitionPath = partitionPathForKey(write.record.key, recordsPath);
+        auto recordPath = recordPathForKey(write.record.key, recordsPath);
+        auto bodyPath = bodyPathForKey(write.record.key, recordsPath);
 
         WebCore::makeAllDirectories(partitionPath);
 
@@ -537,10 +549,8 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler)
 
 void Storage::traverse(TraverseFlags flags, std::function<void (const Record*, const RecordInfo&)>&& traverseHandler)
 {
-    StringCapture cachePathCapture(m_directoryPath);
-    ioQueue().dispatch([this, flags, cachePathCapture, traverseHandler] {
-        String cachePath = cachePathCapture.string();
-        traverseCacheFiles(cachePath, [this, flags, &traverseHandler](const String& fileName, const String& partitionPath) {
+    ioQueue().dispatch([this, flags, traverseHandler] {
+        traverseCacheFiles(recordsPath(), [this, flags, &traverseHandler](const String& fileName, const String& partitionPath) {
             auto recordPath = WebCore::pathByAppendingComponent(partitionPath, fileName);
 
             RecordInfo info;
@@ -595,12 +605,10 @@ void Storage::clear()
         m_contentsFilter->clear();
     m_approximateSize = 0;
 
-    StringCapture directoryPathCapture(m_directoryPath);
-
-    ioQueue().dispatch([this, directoryPathCapture] {
-        String directoryPath = directoryPathCapture.string();
-        traverseDirectory(directoryPath, DT_DIR, [&directoryPath](const String& subdirName) {
-            String subdirPath = WebCore::pathByAppendingComponent(directoryPath, subdirName);
+    ioQueue().dispatch([this] {
+        auto recordsPath = this->recordsPath();
+        traverseDirectory(recordsPath, DT_DIR, [&recordsPath](const String& subdirName) {
+            String subdirPath = WebCore::pathByAppendingComponent(recordsPath, subdirName);
             traverseDirectory(subdirPath, DT_REG, [&subdirPath](const String& fileName) {
                 WebCore::deleteFile(WebCore::pathByAppendingComponent(subdirPath, fileName));
             });
@@ -664,10 +672,9 @@ void Storage::shrink()
 
     LOG(NetworkCacheStorage, "(NetworkProcess) shrinking cache approximateSize=%zu capacity=%zu", approximateSize(), m_capacity);
 
-    StringCapture cachePathCapture(m_directoryPath);
-    backgroundIOQueue().dispatch([this, cachePathCapture] {
-        String cachePath = cachePathCapture.string();
-        traverseCacheFiles(cachePath, [this](const String& fileName, const String& partitionPath) {
+    backgroundIOQueue().dispatch([this] {
+        auto recordsPath = this->recordsPath();
+        traverseCacheFiles(recordsPath, [this](const String& fileName, const String& partitionPath) {
             auto recordPath = WebCore::pathByAppendingComponent(partitionPath, fileName);
             auto bodyPath = bodyPathForRecordPath(recordPath);
 
@@ -686,8 +693,8 @@ void Storage::shrink()
         });
 
         // Let system figure out if they are really empty.
-        traverseDirectory(cachePath, DT_DIR, [&cachePath](const String& subdirName) {
-            auto partitionPath = WebCore::pathByAppendingComponent(cachePath, subdirName);
+        traverseDirectory(recordsPath, DT_DIR, [&recordsPath](const String& subdirName) {
+            auto partitionPath = WebCore::pathByAppendingComponent(recordsPath, subdirName);
             WebCore::deleteEmptyDirectory(partitionPath);
         });
 
@@ -704,9 +711,8 @@ void Storage::shrink()
 void Storage::deleteOldVersions()
 {
     // Delete V1 cache.
-    StringCapture cachePathCapture(m_baseDirectoryPath);
-    backgroundIOQueue().dispatch([cachePathCapture] {
-        String cachePath = cachePathCapture.string();
+    backgroundIOQueue().dispatch([this] {
+        auto cachePath = basePath();
         traverseDirectory(cachePath, DT_DIR, [&cachePath](const String& subdirName) {
             if (subdirName.startsWith(versionDirectoryPrefix))
                 return;

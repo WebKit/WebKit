@@ -1,3 +1,35 @@
+2015-04-15  Antti Koivisto  <antti@apple.com>
+
+        Network Cache: Add thread-safe accessors for storage paths
+        https://bugs.webkit.org/show_bug.cgi?id=143668
+
+        Reviewed by Darin Adler.
+
+        Less need to use StringCapture.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::dumpFilePath):
+        (WebKit::NetworkCache::Cache::storagePath):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::makeRecordsDirectoryPath):
+        (WebKit::NetworkCache::Storage::Storage):
+        (WebKit::NetworkCache::Storage::basePath):
+        (WebKit::NetworkCache::Storage::versionPath):
+        (WebKit::NetworkCache::Storage::recordsPath):
+        (WebKit::NetworkCache::Storage::synchronize):
+        (WebKit::NetworkCache::Storage::remove):
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::Storage::finishReadOperation):
+        (WebKit::NetworkCache::Storage::dispatchWriteOperation):
+        (WebKit::NetworkCache::Storage::traverse):
+        (WebKit::NetworkCache::Storage::clear):
+        (WebKit::NetworkCache::Storage::shrink):
+        (WebKit::NetworkCache::Storage::deleteOldVersions):
+        (WebKit::NetworkCache::makeRecordDirectoryPath): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::baseDirectoryPath): Deleted.
+        (WebKit::NetworkCache::Storage::directoryPath): Deleted.
+
 2015-04-14  Tim Horton  <timothy_horton@apple.com>
 
         Update gesture swipe shadow style

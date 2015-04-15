@@ -426,7 +426,7 @@ void Cache::traverse(std::function<void (const Entry*)>&& traverseHandler)
 
 String Cache::dumpFilePath() const
 {
-    return WebCore::pathByAppendingComponent(m_storage->baseDirectoryPath(), "dump.json");
+    return WebCore::pathByAppendingComponent(m_storage->versionPath(), "dump.json");
 }
 
 void Cache::dumpContentsToFile()
@@ -499,7 +499,7 @@ void Cache::clear()
 
 String Cache::storagePath() const
 {
-    return m_storage ? m_storage->directoryPath() : String();
+    return m_storage ? m_storage->versionPath() : String();
 }
 
 }
