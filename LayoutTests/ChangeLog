@@ -1,3 +1,12 @@
+2015-04-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, skip http/tests/inspector/css/bad-mime-type.html on Windows
+
+        Skip http/tests/inspector/css/bad-mime-type.html on Windows as it times
+        out. This is already the case for a lot of inspector tests on Windows.
+
+        * platform/win/TestExpectations:
+
 2015-04-15  Alexey Proskuryakov  <ap@apple.com>
 
         streams/reference-implementation/readable-stream.html is flaky

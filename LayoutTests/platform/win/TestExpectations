@@ -2331,6 +2331,7 @@ webkit.org/b/137157 [ Release ] inspector/model/remote-object-get-properties.htm
 webkit.org/b/137157 [ Debug ] inspector/model/remote-object-get-properties.html [ Skip ] # Debug Assertion
 webkit.org/b/137157 inspector/page/main-frame-resource.html [ Skip ]
 webkit.org/b/137157 inspector/protocol-promise-result.html [ Skip ]
+http/tests/inspector/css/bad-mime-type.html [ Skip ]
 inspector/test-harness-trivially-works.html [ Skip ]
 inspector/dom/content-node-region-info.html [ Crash Pass Failure Timeout ]
 inspector/css/selector-specificity.html [ Skip ]
