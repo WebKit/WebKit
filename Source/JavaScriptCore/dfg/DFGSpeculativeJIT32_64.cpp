@@ -3497,12 +3497,16 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg allocatorGPR = allocator.gpr();
         GPRReg structureGPR = structure.gpr();
         GPRReg scratchGPR = scratch.gpr();
+        // Rare data is only used to access the allocator & structure
+        // We can avoid using an additional GPR this way
+        GPRReg rareDataGPR = structureGPR;
         
         MacroAssembler::JumpList slowPath;
 
-        m_jit.loadPtr(JITCompiler::Address(calleeGPR, JSFunction::offsetOfAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorGPR);
-        m_jit.loadPtr(JITCompiler::Address(calleeGPR, JSFunction::offsetOfAllocationProfile() + ObjectAllocationProfile::offsetOfStructure()), structureGPR);
-        slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, allocatorGPR));
+        m_jit.loadPtr(JITCompiler::Address(calleeGPR, JSFunction::offsetOfRareData()), rareDataGPR);
+        slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, rareDataGPR));
+        m_jit.loadPtr(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorGPR);
+        m_jit.loadPtr(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfAllocationProfile() + ObjectAllocationProfile::offsetOfStructure()), structureGPR);
         emitAllocateJSObject(resultGPR, allocatorGPR, structureGPR, TrustedImmPtr(0), scratchGPR, slowPath);
 
         addSlowPathGenerator(slowPathCall(slowPath, this, operationCreateThis, resultGPR, calleeGPR, node->inlineCapacity()));

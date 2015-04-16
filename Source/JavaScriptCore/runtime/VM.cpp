@@ -231,6 +231,7 @@ VM::VM(VMType vmType, HeapType heapType)
     propertyTableStructure.set(*this, PropertyTable::createStructure(*this, 0, jsNull()));
     weakMapDataStructure.set(*this, WeakMapData::createStructure(*this, 0, jsNull()));
     inferredValueStructure.set(*this, InferredValue::createStructure(*this, 0, jsNull()));
+    functionRareDataStructure.set(*this, FunctionRareData::createStructure(*this, 0, jsNull()));
 #if ENABLE(PROMISES)
     promiseDeferredStructure.set(*this, JSPromiseDeferred::createStructure(*this, 0, jsNull()));
     promiseReactionStructure.set(*this, JSPromiseReaction::createStructure(*this, 0, jsNull()));

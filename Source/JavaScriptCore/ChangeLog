@@ -1,3 +1,74 @@
+2015-04-16  Basile Clement  <basile_clement@apple.com>
+ 
+        Extract the allocation profile from JSFunction into a rare object
+        https://bugs.webkit.org/show_bug.cgi?id=143807
+ 
+        Reviewed by Filip Pizlo.
+ 
+        The allocation profile is only needed for those functions that are used
+        to create objects with [new].
+        Extracting it into its own JSCell removes the need for JSFunction and
+        JSCallee to be JSDestructibleObjects, which should improve performances in most
+        cases at the cost of an extra pointer dereference when the allocation profile
+        is actually needed.
+ 
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_this):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/FunctionRareData.cpp: Added.
+        (JSC::FunctionRareData::create):
+        (JSC::FunctionRareData::destroy):
+        (JSC::FunctionRareData::createStructure):
+        (JSC::FunctionRareData::visitChildren):
+        (JSC::FunctionRareData::FunctionRareData):
+        (JSC::FunctionRareData::~FunctionRareData):
+        (JSC::FunctionRareData::finishCreation):
+        * runtime/FunctionRareData.h: Added.
+        (JSC::FunctionRareData::offsetOfAllocationProfile):
+        (JSC::FunctionRareData::allocationProfile):
+        (JSC::FunctionRareData::allocationStructure):
+        (JSC::FunctionRareData::allocationProfileWatchpointSet):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::destroy): Deleted.
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCallee.cpp:
+        (JSC::JSCallee::destroy): Deleted.
+        * runtime/JSCallee.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::createRareData):
+        (JSC::JSFunction::visitChildren):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        (JSC::JSFunction::destroy): Deleted.
+        (JSC::JSFunction::createAllocationProfile): Deleted.
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::offsetOfRareData):
+        (JSC::JSFunction::rareData):
+        (JSC::JSFunction::allocationStructure):
+        (JSC::JSFunction::allocationProfileWatchpointSet):
+        (JSC::JSFunction::offsetOfAllocationProfile): Deleted.
+        (JSC::JSFunction::allocationProfile): Deleted.
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::JSFunction):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+ 
 2015-04-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove the unnecessary WTF_CHANGES define

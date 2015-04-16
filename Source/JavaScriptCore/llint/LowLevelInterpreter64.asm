@@ -626,9 +626,10 @@ _llint_op_create_this:
     traceExecution()
     loadisFromInstruction(2, t0)
     loadp [cfr, t0, 8], t0
-    loadp JSFunction::m_allocationProfile + ObjectAllocationProfile::m_allocator[t0], t1
-    loadp JSFunction::m_allocationProfile + ObjectAllocationProfile::m_structure[t0], t2
-    btpz t1, .opCreateThisSlow
+    loadp JSFunction::m_rareData[t0], t4
+    btpz t4, .opCreateThisSlow
+    loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_allocator[t4], t1
+    loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_structure[t4], t2
     allocateJSObject(t1, t2, t0, t3, .opCreateThisSlow)
     loadisFromInstruction(1, t1)
     storeq t0, [cfr, t1, 8]

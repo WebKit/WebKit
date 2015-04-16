@@ -229,7 +229,7 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
     ASSERT(jsCast<JSFunction*>(constructor)->methodTable(vm)->getConstructData(jsCast<JSFunction*>(constructor), constructData) == ConstructTypeJS);
 #endif
     
-    return constructEmptyObject(exec, jsCast<JSFunction*>(constructor)->allocationProfile(exec, inlineCapacity)->structure());
+    return constructEmptyObject(exec, jsCast<JSFunction*>(constructor)->rareData(exec, inlineCapacity)->allocationProfile()->structure());
 }
 
 EncodedJSValue JIT_OPERATION operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)

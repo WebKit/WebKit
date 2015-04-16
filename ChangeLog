@@ -1,3 +1,12 @@
+2015-04-16  Basile Clement  <basile_clement@apple.com>
+
+        Extract the allocation profile from JSFunction into a rare object
+        https://bugs.webkit.org/show_bug.cgi?id=143807
+
+        Reviewed by Filip Pizlo.
+
+        * WebKit.xcworkspace/contents.xcworkspacedata:
+
 2015-04-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Bump LLVM to version 3.6.0 on X86_64

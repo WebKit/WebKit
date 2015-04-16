@@ -716,6 +716,7 @@
     <ClCompile Include="..\runtime\FunctionExecutableDump.cpp" />
     <ClCompile Include="..\runtime\FunctionHasExecutedCache.cpp" />
     <ClCompile Include="..\runtime\FunctionPrototype.cpp" />
+    <ClCompile Include="..\runtime\FunctionRareData.cpp" />
     <ClCompile Include="..\runtime\GetterSetter.cpp" />
     <ClCompile Include="..\runtime\Identifier.cpp" />
     <ClCompile Include="..\runtime\IndexingType.cpp" />
@@ -1496,6 +1497,7 @@
     <ClInclude Include="..\runtime\FunctionExecutableDump.h" />
     <ClInclude Include="..\runtime\FunctionHasExecutedCache.h" />
     <ClInclude Include="..\runtime\FunctionPrototype.h" />
+    <ClInclude Include="..\runtime\FunctionRareData.h" />
     <ClInclude Include="..\runtime\GenericArguments.h" />
     <ClInclude Include="..\runtime\GenericArgumentsInlines.h" />
     <ClInclude Include="..\runtime\GenericOffset.h" />

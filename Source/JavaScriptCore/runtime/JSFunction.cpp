@@ -85,24 +85,9 @@ JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, int length,
     return function;
 }
 
-void JSFunction::destroy(JSCell* cell)
-{
-    static_cast<JSFunction*>(cell)->JSFunction::~JSFunction();
-}
-
 JSFunction::JSFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, globalObject, structure)
     , m_executable()
-    // We initialize blind so that changes to the prototype after function creation but before
-    // the optimizer kicks in don't disable optimizations. Once the optimizer kicks in, the
-    // watchpoint will start watching and any changes will both force deoptimization and disable
-    // future attempts to optimize. This is necessary because we are guaranteed that the
-    // allocation profile is changed exactly once prior to optimizations kicking in. We could be
-    // smarter and count the number of times the prototype is clobbered and only optimize if it
-    // was clobbered exactly once, but that seems like overkill. In almost all cases it will be
-    // clobbered once, and if it's clobbered more than once, that will probably only occur
-    // before we started optimizing, anyway.
-    , m_allocationProfileWatchpoint(ClearWatchpoint)
 {
 }
 
@@ -123,14 +108,15 @@ JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* execut
     return function;
 }
 
-ObjectAllocationProfile* JSFunction::createAllocationProfile(ExecState* exec, size_t inlineCapacity)
+FunctionRareData* JSFunction::createRareData(ExecState* exec, size_t inlineCapacity)
 {
     VM& vm = exec->vm();
     JSObject* prototype = jsDynamicCast<JSObject*>(get(exec, vm.propertyNames->prototype));
     if (!prototype)
         prototype = globalObject()->objectPrototype();
-    m_allocationProfile.initialize(globalObject()->vm(), this, prototype, inlineCapacity);
-    return &m_allocationProfile;
+    FunctionRareData* rareData = FunctionRareData::create(vm, prototype, inlineCapacity);
+    m_rareData.set(vm, this, rareData);
+    return m_rareData.get();
 }
 
 String JSFunction::name(ExecState* exec)
@@ -176,7 +162,8 @@ void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
 
     visitor.append(&thisObject->m_executable);
-    thisObject->m_allocationProfile.visitAggregate(visitor);
+    if (thisObject->m_rareData)
+        visitor.append(&thisObject->m_rareData);
 }
 
 CallType JSFunction::getCallData(JSCell* cell, CallData& callData)
@@ -402,9 +389,11 @@ void JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         // following the rules set out in ECMA-262 8.12.9.
         PropertySlot slot(thisObject);
         thisObject->methodTable(exec->vm())->getOwnPropertySlot(thisObject, exec, propertyName, slot);
-        thisObject->m_allocationProfile.clear();
-        thisObject->m_allocationProfileWatchpoint.fireAll("Store to prototype property of a function");
-        // Don't allow this to be cached, since a [[Put]] must clear m_allocationProfile.
+        if (thisObject->m_rareData) {
+            thisObject->m_rareData->allocationProfileWatchpointSet().fireAll("Store to prototype property of a function");
+            thisObject->m_rareData.clear();
+        }
+        // Don't allow this to be cached, since a [[Put]] must clear m_rareData.
         PutPropertySlot dontCache(thisObject);
         Base::put(thisObject, exec, propertyName, value, dontCache);
         return;
@@ -449,8 +438,10 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
         // following the rules set out in ECMA-262 8.12.9.
         PropertySlot slot(thisObject);
         thisObject->methodTable(exec->vm())->getOwnPropertySlot(thisObject, exec, propertyName, slot);
-        thisObject->m_allocationProfile.clear();
-        thisObject->m_allocationProfileWatchpoint.fireAll("Store to prototype property of a function");
+        if (thisObject->m_rareData) {
+            thisObject->m_rareData->allocationProfileWatchpointSet().fireAll("Store to prototype property of a function");
+            thisObject->m_rareData.clear();
+        }
         return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
     }
 

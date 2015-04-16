@@ -606,6 +606,9 @@
     <ClCompile Include="..\runtime\FunctionPrototype.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\FunctionRareData.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\GetterSetter.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -2631,6 +2634,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\FunctionPrototype.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\FunctionRareData.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\GetterSetter.h">

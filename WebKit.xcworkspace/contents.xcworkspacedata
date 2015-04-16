@@ -2,6 +2,15 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Source/JavaScriptCore/runtime/FunctionRareData.cpp">
+   </FileRef>
+   <FileRef
+      location = "group:Source/JavaScriptCore/runtime/FunctionRareData.h">
+   </FileRef>
+   <FileRef
+      location = "group:Source">
+   </FileRef>
+   <FileRef
       location = "group:Source/bmalloc/bmalloc.xcodeproj">
    </FileRef>
    <FileRef

@@ -40,8 +40,6 @@ public:
 
     static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int, const String&);
     
-    static void destroy(JSCell*);
-
     static bool customHasInstance(JSObject*, ExecState*, JSValue);
 
     JSObject* targetFunction() { return m_targetFunction.get(); }

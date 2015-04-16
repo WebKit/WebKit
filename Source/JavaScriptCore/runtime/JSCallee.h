@@ -26,8 +26,8 @@
 #ifndef JSCallee_h
 #define JSCallee_h
 
-#include "JSDestructibleObject.h"
 #include "JSGlobalObject.h"
+#include "JSObject.h"
 #include "JSScope.h"
 
 namespace JSC {
@@ -36,7 +36,7 @@ class JSGlobalObject;
 class LLIntOffsetsExtractor;
 
 
-class JSCallee : public JSDestructibleObject {
+class JSCallee : public JSNonFinalObject {
     friend class JIT;
 #if ENABLE(DFG_JIT)
     friend class DFG::SpeculativeJIT;
@@ -45,7 +45,7 @@ class JSCallee : public JSDestructibleObject {
     friend class VM;
 
 public:
-    typedef JSDestructibleObject Base;
+    typedef JSNonFinalObject Base;
     const static unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance;
 
     static JSCallee* create(VM& vm, JSGlobalObject* globalObject, JSScope* scope)
@@ -55,8 +55,6 @@ public:
         return callee;
     }
     
-    static void destroy(JSCell*);
-
     JSScope* scope()
     {
         return m_scope.get();
