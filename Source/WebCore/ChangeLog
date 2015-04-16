@@ -1,5 +1,13 @@
 2015-04-16  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed attempt to fix Windows build after r182881.
+
+        Add missing header include.
+
+        * page/PageConsoleClient.h:
+
+2015-04-16  Chris Dumez  <cdumez@apple.com>
+
         Tests introduced in r182877 are flaky
         https://bugs.webkit.org/show_bug.cgi?id=143784
 

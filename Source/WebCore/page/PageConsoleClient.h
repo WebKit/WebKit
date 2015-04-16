@@ -30,12 +30,12 @@
 #define PageConsoleClient_h
 
 #include <inspector/ScriptCallStack.h>
+#include <profiler/Profile.h>
 #include <runtime/ConsoleClient.h>
 #include <wtf/Forward.h>
 
 namespace JSC {
 class ExecState;
-class Profile;
 }
 
 namespace WebCore {
