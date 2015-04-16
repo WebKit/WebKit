@@ -1,3 +1,13 @@
+2015-04-16  Brady Eidson  <beidson@apple.com>
+
+        Media element can manipulate DOM during Document destruction.
+        rdar://problem/20553898 and https://bugs.webkit.org/show_bug.cgi?id=143780
+
+        Reviewed by Jer Noble.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::configureMediaControls): Bail if the element has no active document.
+
 2015-04-13  Jer Noble  <jer.noble@apple.com>
 
         [iOS] When simultaneously exiting-and-entering fullscreen, WebVideoFullscreenManager/Proxy becomes confused about what video element it represents.
