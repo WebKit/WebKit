@@ -1,5 +1,42 @@
 2015-04-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Allow toggling the edibility of a DOMTreeOutline
+        https://bugs.webkit.org/show_bug.cgi?id=143814
+
+        Reviewed by Brian Burg.
+
+        By default a DOMTreeOutline will not be editable, but it will
+        provide a setter to enable editability for DOMTreeContentViews.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView):
+        Content Views always have editable DOM trees.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype.get editable):
+        (WebInspector.DOMTreeElement.prototype.onattach):
+        (WebInspector.DOMTreeElement.prototype.ondelete):
+        (WebInspector.DOMTreeElement.prototype.onenter):
+        (WebInspector.DOMTreeElement.prototype.ondblclick):
+        (WebInspector.DOMTreeElement.prototype._populateTagContextMenu):
+        (WebInspector.DOMTreeElement.prototype._populateTextContextMenu):
+        (WebInspector.DOMTreeElement.prototype._populateNodeContextMenu):
+        (WebInspector.DOMTreeElement.prototype._startEditing):
+        Do not provide editability options for shadow DOM or non-editable DOM tree.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline):
+        (WebInspector.DOMTreeOutline.prototype.get editable):
+        (WebInspector.DOMTreeOutline.prototype.set editable):
+        New state.
+
+        * UserInterface/Views/FormattedValue.css:
+        (.formatted-node > .dom-tree-outline li):
+        Nodes inside object trees were showing text selection when you right
+        clicked them. Normal selection is not possible. So force no selection.
+
+2015-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Give DOM Nodes a Context Menu to Log Element to the console
         https://bugs.webkit.org/show_bug.cgi?id=143813
 

@@ -72,6 +72,10 @@
     -webkit-padding-start: 12px;
 }
 
+.formatted-node > .dom-tree-outline li {
+    -webkit-user-select: none !important;
+}
+
 .formatted-node > .dom-tree-outline li.hovered:not(.selected) .selection {
     display: block;
     left: -1px;

@@ -54,6 +54,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         this._rootDOMNode = null;
         this._selectedDOMNode = null;
 
+        this._editable = false;
         this._editing = false;
         this._visible = false;
 
@@ -135,6 +136,16 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         // Note that _revealAndSelectNode will not do anything for a null node.
         if (!node || this._selectedDOMNode === node)
             this._selectedNodeChanged();
+    }
+
+    get editable()
+    {
+        return this._editable;
+    }
+
+    set editable(x)
+    {
+        this._editable = x;
     }
 
     get editing()

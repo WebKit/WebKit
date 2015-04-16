@@ -157,6 +157,14 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         }
     }
 
+    get editable()
+    {
+        if (this.representedObject.isInShadowTree())
+            return false;
+
+        return this.treeOutline.editable;
+    }
+
     get expandedChildrenLimit()
     {
         return this._expandedChildrenLimit;
@@ -268,8 +276,11 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         }
 
         this.updateTitle();
-        this.listItemElement.draggable = true;
-        this.listItemElement.addEventListener("dragstart", this);
+
+        if (this.editable) {
+            this.listItemElement.draggable = true;
+            this.listItemElement.addEventListener("dragstart", this);
+        }
     }
 
     onpopulate()
@@ -490,7 +501,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     ondelete()
     {
-        if (this.representedObject.isInShadowTree())
+        if (!this.editable)
             return false;
 
         var startTagTreeElement = this.treeOutline.findTreeElement(this.representedObject);
@@ -503,6 +514,9 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     onenter()
     {
+        if (!this.editable)
+            return false;
+
         // On Enter or Return start editing the first attribute
         // or create a new attribute on the selected element.
         if (this.treeOutline.editing)
@@ -528,6 +542,9 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     ondblclick(event)
     {
+        if (!this.editable)
+            return false;
+
         if (this._editing || this._elementCloseTag)
             return;
 
@@ -586,10 +603,12 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             var attribute = event.target.enclosingNodeOrSelfWithClass("html-attribute");
 
             // Add attribute-related actions.
-            contextMenu.appendItem(WebInspector.UIString("Add Attribute"), this._addNewAttribute.bind(this));
-            if (attribute)
-                contextMenu.appendItem(WebInspector.UIString("Edit Attribute"), this._startEditingAttribute.bind(this, attribute, event.target));
-            contextMenu.appendSeparator();
+            if (this.editable) {
+                contextMenu.appendItem(WebInspector.UIString("Add Attribute"), this._addNewAttribute.bind(this));
+                if (attribute)
+                    contextMenu.appendItem(WebInspector.UIString("Edit Attribute"), this._startEditingAttribute.bind(this, attribute, event.target));
+                contextMenu.appendSeparator();
+            }
 
             if (WebInspector.cssStyleManager.canForcePseudoClasses()) {
                 var pseudoSubMenu = contextMenu.appendSubMenuItem(WebInspector.UIString("Forced Pseudo-Classes"));
@@ -618,8 +637,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     _populateTextContextMenu(contextMenu, textNode)
     {
-        var node = this.representedObject;
-        if (!node.isInShadowTree())
+        if (this.editable)
             contextMenu.appendItem(WebInspector.UIString("Edit Text"), this._startEditingTextNode.bind(this, textNode));
 
         this._populateNodeContextMenu(contextMenu);
@@ -628,11 +646,10 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
     _populateNodeContextMenu(contextMenu)
     {
         // Add free-form node-related actions.
-        var node = this.representedObject;
-        if (!node.isInShadowTree())
+        if (this.editable)
             contextMenu.appendItem(WebInspector.UIString("Edit as HTML"), this._editAsHTML.bind(this));
         contextMenu.appendItem(WebInspector.UIString("Copy as HTML"), this._copyHTML.bind(this));
-        if (!node.isInShadowTree())
+        if (this.editable)
             contextMenu.appendItem(WebInspector.UIString("Delete Node"), this.remove.bind(this));
     }
 
@@ -641,7 +658,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         if (this.treeOutline.selectedDOMNode() !== this.representedObject)
             return false;
 
-        if (this.representedObject.isInShadowTree())
+        if (!this.editable)
             return false;
 
         var listItem = this._listItemNode;
