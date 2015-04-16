@@ -30,7 +30,7 @@
 
 WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutline
 {
-    constructor(omitRootDOMNode, selectEnabled, showInElementsPanelEnabled)
+    constructor(omitRootDOMNode, selectEnabled, excludeRevealElementContextMenu)
     {
         var element = document.createElement("ol");
 
@@ -50,7 +50,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
         this._includeRootDOMNode = !omitRootDOMNode;
         this._selectEnabled = selectEnabled;
-        this._showInElementsPanelEnabled = showInElementsPanelEnabled;
+        this._excludeRevealElementContextMenu = excludeRevealElementContextMenu;
         this._rootDOMNode = null;
         this._selectedDOMNode = null;
 
@@ -483,16 +483,27 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
     _populateContextMenu(contextMenu, domNode)
     {
-        if (!this._showInElementsPanelEnabled)
-            return;
-
         function revealElement()
         {
             WebInspector.domTreeManager.inspectElement(domNode.id);
         }
 
+        function logElement()
+        {
+            WebInspector.RemoteObject.resolveNode(domNode, "console", function(remoteObject) {
+                if (!remoteObject)
+                    return;
+                var text = WebInspector.UIString("Selected Element");
+                WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject);
+            });
+        }
+
         contextMenu.appendSeparator();
-        contextMenu.appendItem(WebInspector.UIString("Reveal in DOM Tree"), revealElement);
+
+        if (!this._excludeRevealElementContextMenu)
+            contextMenu.appendItem(WebInspector.UIString("Reveal in DOM Tree"), revealElement);
+
+        contextMenu.appendItem(WebInspector.UIString("Log Element"), logElement);
     }
 
     _showShadowDOMSettingChanged(event)

@@ -1,5 +1,36 @@
 2015-04-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Give DOM Nodes a Context Menu to Log Element to the console
+        https://bugs.webkit.org/show_bug.cgi?id=143813
+
+        Reviewed by Brian Burg.
+
+        Always give DOM Nodes a "Log Element" context menu to log it to the console.
+        This will give a $n reference, and is a convenient alternative to $0 or
+        the now removed $1-$9.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New "Log Element" and "Selected Element" strings.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline):
+        (WebInspector.DOMTreeOutline.prototype._contextMenuEventFired):
+        (WebInspector.DOMTreeOutline.prototype._updateModifiedNodes):
+        (WebInspector.DOMTreeOutline.prototype._populateContextMenu.revealElement):
+        (WebInspector.DOMTreeOutline.prototype._populateContextMenu.logElement):
+        (WebInspector.DOMTreeOutline.prototype._populateContextMenu):
+        Always include the "Log Element" context menu/
+
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createElementForNode):
+        This uses all the defaults.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView):
+        This enables all the extra behavior.
+
+2015-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove unnecessary intermediate object from DOMTreeOutline
         https://bugs.webkit.org/show_bug.cgi?id=143811
 

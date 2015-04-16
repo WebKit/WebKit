@@ -56,7 +56,7 @@ WebInspector.FormattedValue.createElementForNode = function(object)
             return;
         }
 
-        var treeOutline = new WebInspector.DOMTreeOutline(false, false, true);
+        var treeOutline = new WebInspector.DOMTreeOutline;
         treeOutline.setVisible(true);
         treeOutline.rootDOMNode = WebInspector.domTreeManager.nodeForId(nodeId);
         if (!treeOutline.children[0].hasChildren)

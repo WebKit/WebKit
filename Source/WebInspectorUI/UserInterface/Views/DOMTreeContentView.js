@@ -56,7 +56,7 @@ WebInspector.DOMTreeContentView = function(representedObject)
     this.element.classList.add(WebInspector.DOMTreeContentView.StyleClassName);
     this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
 
-    this._domTreeOutline = new WebInspector.DOMTreeOutline(true, true, false);
+    this._domTreeOutline = new WebInspector.DOMTreeOutline(true, true, true);
     this._domTreeOutline.addEventListener(WebInspector.DOMTreeOutline.Event.SelectedNodeChanged, this._selectedNodeDidChange, this);
     this._domTreeOutline.wireToDomAgent();
     this.element.appendChild(this._domTreeOutline.element);
