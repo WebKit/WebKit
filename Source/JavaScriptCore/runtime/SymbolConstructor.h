@@ -37,6 +37,7 @@ class SymbolPrototype;
 class SymbolConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
 
     static SymbolConstructor* create(VM& vm, Structure* structure, SymbolPrototype* prototype)
     {
@@ -54,8 +55,6 @@ public:
 
 protected:
     void finishCreation(VM&, SymbolPrototype*);
-
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
 
 private:
     SymbolConstructor(VM&, Structure*);
