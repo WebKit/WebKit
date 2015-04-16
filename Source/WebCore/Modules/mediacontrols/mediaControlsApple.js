@@ -17,6 +17,7 @@ function Controller(root, video, host)
     this.isListeningForPlaybackTargetAvailabilityEvent = false;
     this.currentTargetIsWireless = false;
     this.wirelessPlaybackDisabled = false;
+    this.isVolumeSliderActive = false;
 
     this.addVideoListeners();
     this.createBase();
@@ -430,6 +431,8 @@ Controller.prototype = {
         volume.max = 1;
         volume.step = .01;
         this.listenFor(volume, 'input', this.handleVolumeSliderInput);
+        this.listenFor(volume, 'mousedown', this.handleVolumeSliderMouseDown);
+        this.listenFor(volume, 'mouseup', this.handleVolumeSliderMouseUp);
 
         this.volumeContextName = "_webkit-media-controls-volume-" + this.host.generateUUID();
         volume.style.backgroundImage = '-webkit-canvas(' + this.volumeContextName + ')';
@@ -949,6 +952,18 @@ Controller.prototype = {
         this.drawVolumeBackground();
     },
 
+    handleVolumeSliderMouseDown: function(event)
+    {
+        this.isVolumeSliderActive = true;
+        this.drawVolumeBackground();
+    },
+
+    handleVolumeSliderMouseUp: function(event)
+    {
+        this.isVolumeSliderActive = false;
+        this.drawVolumeBackground();
+    },
+
     handleCaptionButtonClicked: function(event)
     {
         if (this.captionMenu)
@@ -1137,7 +1152,7 @@ Controller.prototype = {
         
         // Draw buffered section.
         ctx.save();
-        ctx.fillStyle = "rgb(100, 100, 100)";
+        ctx.fillStyle = "rgb(30, 30, 30)";
         ctx.fillRect(1, 8, Math.round(width * buffered) - borderSize, trackHeight);
         ctx.restore();
         
@@ -1148,7 +1163,7 @@ Controller.prototype = {
         this.addRoundedRect(ctx, scrubberPosition + 1, 8, width - scrubberPosition - borderSize , trackHeight, trackHeight / 2.0);
         ctx.closePath();
         ctx.clip("evenodd");
-        ctx.fillStyle = "rgb(100, 100, 100)";
+        ctx.fillStyle = "rgb(30, 30, 30)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
         
@@ -1158,7 +1173,7 @@ Controller.prototype = {
         this.addRoundedRect(ctx, 0, 7, width, timelineHeight, timelineHeight / 2.0);
         ctx.closePath();
         ctx.clip();
-        ctx.fillStyle = "rgb(140, 140, 140)";
+        ctx.fillStyle = "rgb(75, 75, 75)";
         ctx.fillRect(0, 0, width * played, height);
         ctx.restore();
         
@@ -1169,7 +1184,7 @@ Controller.prototype = {
         this.addRoundedRect(ctx, scrubberPosition, 1, scrubberWidth, scrubberHeight, 1);
         ctx.closePath();
         ctx.clip();
-        ctx.fillStyle = "rgb(175, 175, 175)";
+        ctx.fillStyle = "rgb(140, 140, 140)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
         
@@ -1209,7 +1224,7 @@ Controller.prototype = {
         this.addRoundedRect(ctx, 0, 3, scrubberPosition + 2, timelineHeight, timelineHeight / 2.0);
         ctx.closePath();
         ctx.clip();
-        ctx.fillStyle = "rgb(140, 140, 140)";
+        ctx.fillStyle = "rgb(75, 75, 75)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
         
@@ -1220,7 +1235,7 @@ Controller.prototype = {
         this.addRoundedRect(ctx, scrubberPosition + 1, 4, width - borderSize - scrubberPosition - 1, trackHeight, trackHeight / 2.0);
         ctx.closePath();
         ctx.clip("evenodd");
-        ctx.fillStyle = "rgb(100, 100, 100)";
+        ctx.fillStyle = "rgb(30, 30, 30)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
         
@@ -1239,12 +1254,14 @@ Controller.prototype = {
         this.addRoundedRect(ctx, scrubberPosition + 1, 1, scrubberDiameter, scrubberDiameter, scrubberRadius);
         ctx.closePath();
         ctx.clip();
-        ctx.fillStyle = "rgb(175, 175, 175)";
+        if (this.isVolumeSliderActive)
+            ctx.fillStyle = "white";
+        else
+            ctx.fillStyle = "rgb(140, 140, 140)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
         
         ctx.restore();
-        
     },
     
     formatTime: function(time)

@@ -1,3 +1,65 @@
+2015-04-15  Roger Fong  <roger_fong@apple.com>
+
+        Adjustments to button graphics for media controls.
+        https://bugs.webkit.org/show_bug.cgi?id=143797.
+        <rdar://problem/20083708>
+
+        Reviewed by Dean Jackson.
+
+        These changes are visual in nature and mainly affect the buttons.
+        I've gotten rid of the text-shadow for all the buttons,
+        used plus-lighter blending mode and changed the button opacity to reflect the specs,
+        and made all the buttons turn opaque white when active.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-panel button):
+        (audio::-webkit-media-controls-rewind-button):
+        (audio::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-play-button.paused):
+        (video::-webkit-media-controls-volume-max-button):
+        (video::-webkit-media-controls-volume-slider):
+        (video::-webkit-media-controls-volume-min-button):
+        (audio::-webkit-media-controls-wireless-playback-picker-button):
+        (audio::-webkit-media-controls-toggle-closed-captions-button):
+        (audio::-webkit-media-controls-closed-captions-container li.selected:hover::before):
+        (audio::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-fullscreen-button.exit):
+        (audio::-webkit-media-controls-status-display):
+        (audio::-webkit-media-controls-timeline):
+        (audio::-webkit-media-controls-time-remaining-display):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-max-button):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-min-button):
+        (video:-webkit-full-screen::-webkit-media-controls-play-button):
+        (video:-webkit-full-screen::-webkit-media-controls-play-button.paused):
+        (video:-webkit-full-screen::-webkit-media-controls-seek-back-button):
+        (video:-webkit-full-screen::-webkit-media-controls-seek-forward-button):
+        (video::-webkit-media-controls-volume-max-button:active):
+        (video::-webkit-media-controls-volume-min-button:active):
+        (audio::-webkit-media-controls-toggle-closed-captions-button:active):
+        (audio::-webkit-media-controls-rewind-button:active):
+        (audio::-webkit-media-controls-play-button:active):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-max-button:active):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-min-button:active):
+        (video:-webkit-full-screen::-webkit-media-controls-play-button:active):
+        (video:-webkit-full-screen::-webkit-media-controls-seek-back-button:active):
+        (video:-webkit-full-screen::-webkit-media-controls-seek-forward-button:active):
+        (audio::-webkit-media-controls-fullscreen-button:active):
+
+        Using the pseudo id itself here currently does not work, which is why we rely on the button.* selector for these.
+        (video:-webkit-full-screen::-webkit-media-controls-panel button.paused:active):
+        (audio::-webkit-media-controls-panel button.paused:active):
+        (audio::-webkit-media-controls-panel button.exit:active):
+ 
+        Draw volume slider knob as opaque white when active.
+        Adjust colors of timeline and volume sliders now that we are using plus-lighter blending.
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller):
+        (Controller.prototype.createControls):
+        (Controller.prototype.handleVolumeSliderMouseDown):
+        (Controller.prototype.handleVolumeSliderMouseUp):
+        (Controller.prototype.drawTimelineBackground):
+        (Controller.prototype.drawVolumeBackground):
+
 2015-04-15  Simon Fraser  <simon.fraser@apple.com>
 
         Pull emoji-position adjustment code into its own function
