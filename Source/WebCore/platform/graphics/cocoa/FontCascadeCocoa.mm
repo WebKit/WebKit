@@ -223,6 +223,42 @@ static CGSize dilationSizeForTextColor(const Color& color)
 }
 #endif
 
+static FloatPoint pointAdjustedForEmoji(const FontPlatformData& platformData, FloatPoint point)
+{
+#if PLATFORM(IOS)
+    if (!platformData.m_isEmoji)
+        return point;
+
+    // Mimic the positioining of non-bitmap glyphs, which are not subpixel-positioned.
+    point.setY(ceilf(point.y()));
+
+    // Emoji glyphs snap to the CSS pixel grid.
+    point.setX(floorf(point.x()));
+
+    // Emoji glyphs are offset one CSS pixel to the right.
+    point.move(1, 0);
+
+    // Emoji glyphs are offset vertically based on font size.
+    float fontSize = platformData.size();
+    float y = point.y();
+    if (fontSize <= 15) {
+        // Undo Core Text's y adjustment.
+        static float yAdjustmentFactor = iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_6_0) ? .19 : .1;
+        point.setY(floorf(y - yAdjustmentFactor * (fontSize + 2) + 2));
+    } else {
+        if (fontSize < 26)
+            y -= .35f * fontSize - 10;
+
+        // Undo Core Text's y adjustment.
+        static float yAdjustment = iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_6_0) ? 3.8 : 2;
+        point.setY(floorf(y - yAdjustment));
+    }
+#else
+    UNUSED_PARAM(platformData);
+#endif
+    return point;
+}
+
 void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& anchorPoint) const
 {
     const FontPlatformData& platformData = font->platformData();
@@ -297,35 +333,11 @@ void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const G
     CGContextSetFont(cgContext, platformData.cgFont());
 
     bool useLetterpressEffect = shouldUseLetterpressEffect(*context);
-    FloatPoint point = anchorPoint;
+    FloatPoint point = pointAdjustedForEmoji(platformData, anchorPoint);
+
 #if PLATFORM(IOS)
     float fontSize = platformData.size();
     CGAffineTransform matrix = useLetterpressEffect || platformData.isColorBitmapFont() ? CGAffineTransformIdentity : CGAffineTransformMakeScale(fontSize, fontSize);
-    if (platformData.m_isEmoji) {
-        // Mimic the positioining of non-bitmap glyphs, which are not subpixel-positioned.
-        point.setY(ceilf(point.y()));
-
-        // Emoji glyphs snap to the CSS pixel grid.
-        point.setX(floorf(point.x()));
-
-        // Emoji glyphs are offset one CSS pixel to the right.
-        point.move(1, 0);
-
-        // Emoji glyphs are offset vertically based on font size.
-        float y = point.y();
-        if (fontSize <= 15) {
-            // Undo Core Text's y adjustment.
-            static float yAdjustmentFactor = iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_6_0) ? .19 : .1;
-            point.setY(floorf(y - yAdjustmentFactor * (fontSize + 2) + 2));
-        } else {
-            if (fontSize < 26)
-                y -= .35f * fontSize - 10;
-
-            // Undo Core Text's y adjustment.
-            static float yAdjustment = iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_6_0) ? 3.8 : 2;
-            point.setY(floorf(y - yAdjustment));
-        }
-    }
 #else
     CGAffineTransform matrix = CGAffineTransformIdentity;
     if (drawFont && !platformData.isColorBitmapFont())
