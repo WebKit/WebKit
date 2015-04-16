@@ -28,6 +28,8 @@
 #include "Document.h"
 #include "MediaList.h"
 #include "Node.h"
+#include "Page.h"
+#include "PageConsoleClient.h"
 #include "RuleSet.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
@@ -291,8 +293,10 @@ void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
 
     if (!hasValidMIMEType) {
         ASSERT(sheetText.isNull());
-        if (auto* document = singleOwnerDocument())
-            document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Did not parse stylesheet at '" + cachedStyleSheet->url().stringCenterEllipsizedToLength() + "' because its MIME type was invalid.");
+        if (auto* document = singleOwnerDocument()) {
+            if (auto* page = document->page())
+                page->console().addMessage(MessageSource::Security, MessageLevel::Error, "Did not parse stylesheet at '" + cachedStyleSheet->url().stringCenterEllipsizedToLength() + "' because its MIME type was invalid.");
+        }
         return;
     }
 

@@ -1,3 +1,19 @@
+2015-04-16  Chris Dumez  <cdumez@apple.com>
+
+        Tests introduced in r182877 are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=143784
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tests introduced in r182877 are flaky as the line number sometimes
+        appears in the console messages. This patch updates the console
+        logging code so that no Document is provided when logging. Therefore,
+        no line number will ever be displayed. In this case, I don't think
+        having the line number is terribly useful anyway.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+
 2015-04-15  Simon Fraser  <simon.fraser@apple.com>
 
         We should dump GraphicsLayer's anchorPoint z component
