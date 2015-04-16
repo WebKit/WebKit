@@ -71,9 +71,7 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, c
         context.baseURL = baseURL;
 
     m_styleSheet = StyleSheetContents::create(this, href, context);
-
-    Document* document = m_parentStyleSheet ? m_parentStyleSheet->singleOwnerDocument() : 0;
-    m_styleSheet->parseAuthorStyleSheet(cachedStyleSheet, document ? document->securityOrigin() : 0);
+    m_styleSheet->parseAuthorStyleSheet(cachedStyleSheet);
 
     m_loading = false;
 

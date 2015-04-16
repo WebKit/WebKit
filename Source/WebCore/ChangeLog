@@ -1,3 +1,41 @@
+2015-04-15  Chris Dumez  <cdumez@apple.com>
+
+        Add a console message when a stylesheet is not parsed due to invalid MIME type
+        https://bugs.webkit.org/show_bug.cgi?id=143784
+
+        Reviewed by Joseph Pecoraro.
+
+        After r180020, we no longer have a quirks mode exception for CSS MIME
+        types. This means that we'll start rejecting stylesheets that were
+        previously accepted due to this quirk. In this case we log a console
+        message to help Web developers understand why their stylesheet is being
+        rejected.
+
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::setCSSStyleSheet):
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+        - Initialize hasValidMIMEType to true so that it ends up being false
+          only when canUseSheet(hasValidMIMEType) is called and we've determined
+          the MIME type is indeed invalid. Otherwise, hasValidMIMEType would
+          also be false when m_data is null or empty in
+          CachedCSSStyleSheet::sheetText() and we don't want to display the MIME
+          type error in this case.
+        - If hasValidMIMEType is false, display the console message and abort
+          early. We don't need to execute the rest of the function in this case
+          as sheetText is a null String and there is no point in trying to parse
+          it.
+        - Drop handling of !hasValidMIMEType && !hasSyntacticallyValidCSSHeader()
+          as this can no longer be reached. This handling no longer makes sense
+          after r180020 as sheetText() will now always return a null String if
+          the MIME type is invalid (as we no longer support the CSS MIME type
+          quirks mode).
+
+        * css/StyleSheetContents.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+
 2015-04-15  Said Abou-Hallawa  <said@apple.com>
 
         Minimum font size pref breaks SVG text very badly.

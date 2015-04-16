@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cross-origin CSS</title>
+
+<script src="/w3c/resources/testharness.js"></script>
+<script src="/w3c/resources/testharnessreport.js"></script>
+
+<link rel="stylesheet" href="resources/xorigincss3.html"></link>
+
+<script>
+function getBackgroundColorForId(id) {
+    return window.getComputedStyle(document.getElementById(id), null).getPropertyValue('background-color')
+}
+
+var onloadTest = async_test("Testing cross-origin and MIME behavior for CSS.");
+
+window.onload = function () {
+    test(function () {
+        assert_equals(getBackgroundColorForId('id4'), 'rgba(0, 0, 0, 0)');
+    }, 'xorigincss3.html should not be loaded, even though it is same-origin');
+
+    onloadTest.done();
+};
+</script>
+</head>
+<body>
+    <div id="id4" class="id4"></div>
+</body>
+</html>

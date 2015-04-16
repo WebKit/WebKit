@@ -1,3 +1,43 @@
+2015-04-15  Chris Dumez  <cdumez@apple.com>
+
+        Add a console message when a stylesheet is not parsed due to invalid MIME type
+        https://bugs.webkit.org/show_bug.cgi?id=143784
+
+        Reviewed by Joseph Pecoraro.
+
+        Update expectations for tests that are using stylesheets served with wrong
+        MIME type as we now display a console message in this case.
+
+        * http/tests/inspector/css/bad-mime-type-expected.txt:
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-and-css-extension-expected.txt:
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-expected.txt:
+        * http/tests/misc/css-accept-any-type-expected.txt:
+        * http/tests/misc/css-reject-any-type-in-strict-mode-expected.txt:
+
+        * http/tests/security/cross-origin-css-1-expected.txt: Added.
+        * http/tests/security/cross-origin-css-1.html: Added.
+        * http/tests/security/cross-origin-css-2-expected.txt: Added.
+        * http/tests/security/cross-origin-css-2.html: Added.
+        * http/tests/security/cross-origin-css-3-expected.txt: Added.
+        * http/tests/security/cross-origin-css-3.html: Added.
+        * http/tests/security/cross-origin-css-4-expected.txt: Added.
+        * http/tests/security/cross-origin-css-4.html: Added.
+        * http/tests/security/cross-origin-css-5-expected.txt: Added.
+        * http/tests/security/cross-origin-css-5.html: Added.
+        * http/tests/security/cross-origin-css-6-expected.txt: Added.
+        * http/tests/security/cross-origin-css-6.html: Added.
+        * http/tests/security/cross-origin-css-7-expected.txt: Added.
+        * http/tests/security/cross-origin-css-7.html: Added.
+        * http/tests/security/cross-origin-css-8-expected.txt: Added.
+        * http/tests/security/cross-origin-css-8.html: Added.
+        * http/tests/security/cross-origin-css-expected.txt: Removed.
+        * http/tests/security/cross-origin-css.html: Removed.
+        Split http/tests/security/cross-origin-css.html into several tests. The
+        test would be flaky otherwise as console messages could appear in
+        different order for every run.
+
+        * platform/mac/http/tests/misc/acid3-expected.txt:
+
 2015-04-15  Said Abou-Hallawa  <said@apple.com>
 
         Minimum font size pref breaks SVG text very badly.

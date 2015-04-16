@@ -29,7 +29,6 @@
 #include "MediaList.h"
 #include "Node.h"
 #include "RuleSet.h"
-#include "SecurityOrigin.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
@@ -285,24 +284,21 @@ const AtomicString& StyleSheetContents::determineNamespace(const AtomicString& p
     return it->value;
 }
 
-void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cachedStyleSheet, const SecurityOrigin* securityOrigin)
+void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cachedStyleSheet)
 {
-    bool hasValidMIMEType = false;
+    bool hasValidMIMEType = true;
     String sheetText = cachedStyleSheet->sheetText(&hasValidMIMEType);
+
+    if (!hasValidMIMEType) {
+        ASSERT(sheetText.isNull());
+        if (auto* document = singleOwnerDocument())
+            document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Did not parse stylesheet at '" + cachedStyleSheet->url().stringCenterEllipsizedToLength() + "' because its MIME type was invalid.");
+        return;
+    }
 
     CSSParser p(parserContext());
     p.parseSheet(this, sheetText, TextPosition(), nullptr, true);
 
-    // If we're loading a stylesheet cross-origin, and the MIME type is not standard, require the CSS
-    // to at least start with a syntactically valid CSS rule.
-    // This prevents an attacker playing games by injecting CSS strings into HTML, XML, JSON, etc. etc.
-    if (!hasValidMIMEType && !hasSyntacticallyValidCSSHeader()) {
-        bool isCrossOriginCSS = !securityOrigin || !securityOrigin->canRequest(baseURL());
-        if (isCrossOriginCSS) {
-            clearRules();
-            return;
-        }
-    }
     if (m_parserContext.needsSiteSpecificQuirks && isStrictParserMode(m_parserContext.mode)) {
         // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
         DEPRECATED_DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, (ASCIILiteral("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n")));
