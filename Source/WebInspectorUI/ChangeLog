@@ -1,3 +1,19 @@
+2015-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unnecessary intermediate object from DOMTreeOutline
+        https://bugs.webkit.org/show_bug.cgi?id=143811
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline):
+        (WebInspector.DOMTreeOutline.prototype._selectedNodeChanged):
+        (WebInspector.DOMTreeOutline.prototype.addEventListener): Deleted.
+        (WebInspector.DOMTreeOutline.prototype.removeEventListener): Deleted.
+        This object used to be used to handle event dispatching, but
+        TreeOutlines themselves are now WebInspector.Objects so we
+        can remove the intermediary.
+
 2015-04-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: InspectorTest frontend console methods redirected to the frontend are wrong

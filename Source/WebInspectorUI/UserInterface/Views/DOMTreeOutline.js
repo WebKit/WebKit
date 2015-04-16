@@ -53,9 +53,8 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         this._showInElementsPanelEnabled = showInElementsPanelEnabled;
         this._rootDOMNode = null;
         this._selectedDOMNode = null;
-        this._eventSupport = new WebInspector.Object();
-        this._editing = false;
 
+        this._editing = false;
         this._visible = false;
 
         this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
@@ -90,16 +89,6 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         this._updateModifiedNodes();
         if (this._selectedDOMNode)
             this._revealAndSelectNode(this._selectedDOMNode, omitFocus);
-    }
-
-    addEventListener(eventType, listener, thisObject)
-    {
-        this._eventSupport.addEventListener(eventType, listener, thisObject);
-    }
-
-    removeEventListener(eventType, listener, thisObject)
-    {
-        this._eventSupport.removeEventListener(eventType, listener, thisObject);
     }
 
     get rootDOMNode()
@@ -192,7 +181,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
     _selectedNodeChanged()
     {
-        this._eventSupport.dispatchEventToListeners(WebInspector.DOMTreeOutline.Event.SelectedNodeChanged);
+        this.dispatchEventToListeners(WebInspector.DOMTreeOutline.Event.SelectedNodeChanged);
     }
 
     findTreeElement(node)
