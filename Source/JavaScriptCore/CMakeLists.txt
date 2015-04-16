@@ -400,8 +400,6 @@ set(JavaScriptCore_SOURCES
 
 set(JavaScriptCore_RUNTIME_SOURCES
     runtime/ArgList.cpp
-    runtime/ArgumentsIteratorConstructor.cpp
-    runtime/ArgumentsIteratorPrototype.cpp
     runtime/ArrayBuffer.cpp
     runtime/ArrayBufferNeuteringWatchpoint.cpp
     runtime/ArrayBufferView.cpp
@@ -460,7 +458,6 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/IteratorOperations.cpp
     runtime/JSAPIValueWrapper.cpp
     runtime/JSLexicalEnvironment.cpp
-    runtime/JSArgumentsIterator.cpp
     runtime/JSArray.cpp
     runtime/JSArrayBuffer.cpp
     runtime/JSArrayBufferConstructor.cpp

@@ -48,6 +48,8 @@ protected:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncValues(ExecState*);
+
 } // namespace JSC
 
 #endif // ArrayPrototype_h

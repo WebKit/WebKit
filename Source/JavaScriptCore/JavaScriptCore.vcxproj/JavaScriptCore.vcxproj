@@ -668,8 +668,6 @@
     <ClCompile Include="..\profiler\ProfilerOSRExitSite.cpp" />
     <ClCompile Include="..\profiler\ProfilerProfiledBytecodes.cpp" />
     <ClCompile Include="..\runtime\ArgList.cpp" />
-    <ClCompile Include="..\runtime\ArgumentsIteratorConstructor.cpp" />
-    <ClCompile Include="..\runtime\ArgumentsIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\ArrayBuffer.cpp" />
     <ClCompile Include="..\runtime\ArrayBufferNeuteringWatchpoint.cpp" />
     <ClCompile Include="..\runtime\ArrayBufferView.cpp" />
@@ -727,7 +725,6 @@
     <ClCompile Include="..\runtime\IteratorOperations.cpp" />
     <ClCompile Include="..\runtime\JSAPIValueWrapper.cpp" />
     <ClCompile Include="..\runtime\JSLexicalEnvironment.cpp" />
-    <ClCompile Include="..\runtime\JSArgumentsIterator.cpp" />
     <ClCompile Include="..\runtime\JSArray.cpp" />
     <ClCompile Include="..\runtime\JSArrayIterator.cpp" />
     <ClCompile Include="..\runtime\JSArrayBuffer.cpp" />
@@ -1520,7 +1517,6 @@
     <ClInclude Include="..\runtime\IteratorOperations.h" />
     <ClInclude Include="..\runtime\JSAPIValueWrapper.h" />
     <ClInclude Include="..\runtime\JSLexicalEnvironment.h" />
-    <ClInclude Include="..\runtime\JSArgumentsIterator.h" />
     <ClInclude Include="..\runtime\JSArray.h" />
     <ClInclude Include="..\runtime\JSArrayBuffer.h" />
     <ClInclude Include="..\runtime\JSArrayBufferConstructor.h" />

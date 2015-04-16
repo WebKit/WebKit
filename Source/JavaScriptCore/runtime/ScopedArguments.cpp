@@ -27,7 +27,6 @@
 #include "ScopedArguments.h"
 
 #include "GenericArgumentsInlines.h"
-#include "JSArgumentsIterator.h"
 #include "JSCInlines.h"
 
 namespace JSC {
@@ -125,6 +124,7 @@ void ScopedArguments::overrideThings(VM& vm)
     
     putDirect(vm, vm.propertyNames->length, jsNumber(m_table->length()), DontEnum);
     putDirect(vm, vm.propertyNames->callee, m_callee.get(), DontEnum);
+    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), DontEnum);
     
     m_overrodeThings = true;
 }

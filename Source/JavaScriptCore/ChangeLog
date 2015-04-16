@@ -1,3 +1,77 @@
+2015-04-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Use specific functions for @@iterator functions
+        https://bugs.webkit.org/show_bug.cgi?id=143838
+
+        Reviewed by Geoffrey Garen.
+
+        In ES6, some methods are defined with the different names.
+
+        For example,
+
+        Map.prototype[Symbol.iterator] === Map.prototype.entries
+        Set.prototype[Symbol.iterator] === Set.prototype.values
+        Array.prototype[Symbol.iterator] === Array.prototype.values
+        %Arguments%[Symbol.iterator] === Array.prototype.values
+
+        However, current implementation creates different function objects per name.
+        This patch fixes it by setting the object that is used for the other method to @@iterator.
+        e.g. Setting Array.prototype.values function object to Array.prototype[Symbol.iterator].
+
+        And we drop Arguments' iterator implementation and replace Argument[@@iterator] implementation
+        with Array.prototype.values to conform to the spec.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * runtime/ArgumentsIteratorConstructor.cpp: Removed.
+        * runtime/ArgumentsIteratorConstructor.h: Removed.
+        * runtime/ArgumentsIteratorPrototype.cpp: Removed.
+        * runtime/ArgumentsIteratorPrototype.h: Removed.
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/ArrayPrototype.h:
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::getOwnPropertySlot):
+        (JSC::ClonedArguments::put):
+        (JSC::ClonedArguments::deleteProperty):
+        (JSC::ClonedArguments::defineOwnProperty):
+        (JSC::ClonedArguments::materializeSpecials):
+        * runtime/ClonedArguments.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::overrideThings):
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::getOwnPropertySlot):
+        (JSC::GenericArguments<Type>::getOwnPropertyNames):
+        (JSC::GenericArguments<Type>::put):
+        (JSC::GenericArguments<Type>::deleteProperty):
+        (JSC::GenericArguments<Type>::defineOwnProperty):
+        * runtime/JSArgumentsIterator.cpp: Removed.
+        * runtime/JSArgumentsIterator.h: Removed.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arrayProtoValuesFunction):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/ScopedArguments.cpp:
+        (JSC::ScopedArguments::overrideThings):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        * tests/stress/arguments-iterator.js: Added.
+        (test):
+        (testArguments):
+        * tests/stress/iterator-functions.js: Added.
+        (test):
+        (argumentsTests):
+
 2015-04-14  Mark Lam  <mark.lam@apple.com>
 
         Add JSC_functionOverrides=<overrides file> debugging tool.

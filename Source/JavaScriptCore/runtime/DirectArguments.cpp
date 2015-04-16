@@ -28,7 +28,6 @@
 
 #include "CopyVisitorInlines.h"
 #include "GenericArgumentsInlines.h"
-#include "JSArgumentsIterator.h"
 #include "JSCInlines.h"
 
 namespace JSC {
@@ -130,6 +129,7 @@ void DirectArguments::overrideThings(VM& vm)
     
     putDirect(vm, vm.propertyNames->length, jsNumber(m_length), DontEnum);
     putDirect(vm, vm.propertyNames->callee, m_callee.get(), DontEnum);
+    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), DontEnum);
     
     void* backingStore;
     RELEASE_ASSERT(vm.heap.tryAllocateStorage(this, overridesSize(), &backingStore));

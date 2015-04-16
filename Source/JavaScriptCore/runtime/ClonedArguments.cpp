@@ -27,7 +27,6 @@
 #include "ClonedArguments.h"
 
 #include "GetterSetter.h"
-#include "JSArgumentsIterator.h"
 #include "JSCInlines.h"
 
 namespace JSC {
@@ -133,19 +132,13 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
     ClonedArguments* thisObject = jsCast<ClonedArguments*>(object);
     VM& vm = exec->vm();
     
-    if (ident == vm.propertyNames->caller
-        || ident == vm.propertyNames->callee)
+    if (ident == vm.propertyNames->callee
+        || ident == vm.propertyNames->caller
+        || ident == vm.propertyNames->iteratorSymbol)
         thisObject->materializeSpecialsIfNecessary(exec);
     
     if (Base::getOwnPropertySlot(thisObject, exec, ident, slot))
         return true;
-    
-    if (ident == vm.propertyNames->iteratorSymbol) {
-        JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-        thisObject->JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, argumentsFuncIterator, DontEnum, 0);
-        if (JSObject::getOwnPropertySlot(thisObject, exec, ident, slot))
-            return true;
-    }
     
     return false;
 }
@@ -163,7 +156,8 @@ void ClonedArguments::put(JSCell* cell, ExecState* exec, PropertyName ident, JSV
     VM& vm = exec->vm();
     
     if (ident == vm.propertyNames->callee
-        || ident == vm.propertyNames->caller) {
+        || ident == vm.propertyNames->caller
+        || ident == vm.propertyNames->iteratorSymbol) {
         thisObject->materializeSpecialsIfNecessary(exec);
         PutPropertySlot dummy = slot; // Shadow the given PutPropertySlot to prevent caching.
         Base::put(thisObject, exec, ident, value, dummy);
@@ -179,7 +173,8 @@ bool ClonedArguments::deleteProperty(JSCell* cell, ExecState* exec, PropertyName
     VM& vm = exec->vm();
     
     if (ident == vm.propertyNames->callee
-        || ident == vm.propertyNames->caller)
+        || ident == vm.propertyNames->caller
+        || ident == vm.propertyNames->iteratorSymbol)
         thisObject->materializeSpecialsIfNecessary(exec);
     
     return Base::deleteProperty(thisObject, exec, ident);
@@ -191,7 +186,8 @@ bool ClonedArguments::defineOwnProperty(JSObject* object, ExecState* exec, Prope
     VM& vm = exec->vm();
     
     if (ident == vm.propertyNames->callee
-        || ident == vm.propertyNames->caller)
+        || ident == vm.propertyNames->caller
+        || ident == vm.propertyNames->iteratorSymbol)
         thisObject->materializeSpecialsIfNecessary(exec);
     
     return Base::defineOwnProperty(object, exec, ident, descriptor, shouldThrow);
@@ -210,6 +206,8 @@ void ClonedArguments::materializeSpecials(ExecState* exec)
         putDirectAccessor(exec, vm.propertyNames->caller, globalObject()->throwTypeErrorGetterSetter(vm), DontDelete | DontEnum | Accessor);
     } else
         putDirect(vm, vm.propertyNames->callee, JSValue(m_callee.get()));
+
+    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), DontEnum);
     
     m_callee.clear();
 }

@@ -107,7 +107,6 @@ struct HashTable;
     FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
     FOR_EACH_EXPERIMENTAL_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
     DEFINE_STANDARD_BUILTIN(macro, ArrayIterator, arrayIterator) \
-    DEFINE_STANDARD_BUILTIN(macro, ArgumentsIterator, argumentsIterator) \
     DEFINE_STANDARD_BUILTIN(macro, MapIterator, mapIterator) \
     DEFINE_STANDARD_BUILTIN(macro, SetIterator, setIterator) \
     DEFINE_STANDARD_BUILTIN(macro, StringIterator, stringIterator) \
@@ -189,6 +188,7 @@ protected:
     WriteBarrier<JSFunction> m_evalFunction;
     WriteBarrier<JSFunction> m_callFunction;
     WriteBarrier<JSFunction> m_applyFunction;
+    WriteBarrier<JSFunction> m_arrayProtoValuesFunction;
     WriteBarrier<GetterSetter> m_throwTypeErrorGetterSetter;
 
     WriteBarrier<ObjectPrototype> m_objectPrototype;
@@ -394,6 +394,7 @@ public:
     JSFunction* evalFunction() const { return m_evalFunction.get(); }
     JSFunction* callFunction() const { return m_callFunction.get(); }
     JSFunction* applyFunction() const { return m_applyFunction.get(); }
+    JSFunction* arrayProtoValuesFunction() const { return m_arrayProtoValuesFunction.get(); }
     GetterSetter* throwTypeErrorGetterSetter(VM& vm)
     {
         if (!m_throwTypeErrorGetterSetter)

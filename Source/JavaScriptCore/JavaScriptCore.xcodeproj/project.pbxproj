@@ -1341,12 +1341,6 @@
 		A74DEF96182D991400522C22 /* JSMapIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = A74DEF90182D991400522C22 /* JSMapIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A75706DE118A2BCF0057F88F /* JITArithmetic32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */; };
 		A75EE9B218AAB7E200AAD043 /* BuiltinNames.h in Headers */ = {isa = PBXBuildFile; fileRef = A75EE9B018AAB7E200AAD043 /* BuiltinNames.h */; };
-		A76140CD182982CB00750624 /* ArgumentsIteratorConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A76140C7182982CB00750624 /* ArgumentsIteratorConstructor.cpp */; };
-		A76140CE182982CB00750624 /* ArgumentsIteratorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A76140C8182982CB00750624 /* ArgumentsIteratorConstructor.h */; };
-		A76140CF182982CB00750624 /* ArgumentsIteratorPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A76140C9182982CB00750624 /* ArgumentsIteratorPrototype.cpp */; };
-		A76140D0182982CB00750624 /* ArgumentsIteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A76140CA182982CB00750624 /* ArgumentsIteratorPrototype.h */; };
-		A76140D1182982CB00750624 /* JSArgumentsIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A76140CB182982CB00750624 /* JSArgumentsIterator.cpp */; };
-		A76140D2182982CB00750624 /* JSArgumentsIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = A76140CC182982CB00750624 /* JSArgumentsIterator.h */; };
 		A766B44F0EE8DCD1009518CA /* ExecutableAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A767B5B517A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A767B5B317A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.cpp */; };
 		A767B5B617A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = A767B5B417A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3088,12 +3082,6 @@
 		A74DEF90182D991400522C22 /* JSMapIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMapIterator.h; sourceTree = "<group>"; };
 		A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic32_64.cpp; sourceTree = "<group>"; };
 		A75EE9B018AAB7E200AAD043 /* BuiltinNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltinNames.h; sourceTree = "<group>"; };
-		A76140C7182982CB00750624 /* ArgumentsIteratorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArgumentsIteratorConstructor.cpp; sourceTree = "<group>"; };
-		A76140C8182982CB00750624 /* ArgumentsIteratorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentsIteratorConstructor.h; sourceTree = "<group>"; };
-		A76140C9182982CB00750624 /* ArgumentsIteratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ArgumentsIteratorPrototype.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		A76140CA182982CB00750624 /* ArgumentsIteratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentsIteratorPrototype.h; sourceTree = "<group>"; };
-		A76140CB182982CB00750624 /* JSArgumentsIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSArgumentsIterator.cpp; sourceTree = "<group>"; };
-		A76140CC182982CB00750624 /* JSArgumentsIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArgumentsIterator.h; sourceTree = "<group>"; };
 		A767B5B317A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGLoopPreHeaderCreationPhase.cpp; path = dfg/DFGLoopPreHeaderCreationPhase.cpp; sourceTree = "<group>"; };
 		A767B5B417A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGLoopPreHeaderCreationPhase.h; path = dfg/DFGLoopPreHeaderCreationPhase.h; sourceTree = "<group>"; };
 		A76C51741182748D00715B05 /* JSInterfaceJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInterfaceJIT.h; sourceTree = "<group>"; };
@@ -4292,10 +4280,6 @@
 			children = (
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
-				A76140C7182982CB00750624 /* ArgumentsIteratorConstructor.cpp */,
-				A76140C8182982CB00750624 /* ArgumentsIteratorConstructor.h */,
-				A76140C9182982CB00750624 /* ArgumentsIteratorPrototype.cpp */,
-				A76140CA182982CB00750624 /* ArgumentsIteratorPrototype.h */,
 				0FE0500C1AA9091100D33B33 /* ArgumentsMode.h */,
 				0F6B1CB71861244C00845D97 /* ArityCheckMode.h */,
 				A7A8AF2517ADB5F2005AB174 /* ArrayBuffer.cpp */,
@@ -4435,8 +4419,6 @@
 				86BF642A148DB2B5004DE36A /* Intrinsic.h */,
 				70113D491A8DB093003848C4 /* IteratorOperations.cpp */,
 				70113D4A1A8DB093003848C4 /* IteratorOperations.h */,
-				A76140CB182982CB00750624 /* JSArgumentsIterator.cpp */,
-				A76140CC182982CB00750624 /* JSArgumentsIterator.h */,
 				93ADFCE60CCBD7AC00D30B08 /* JSArray.cpp */,
 				938772E5038BFE19008635CE /* JSArray.h */,
 				0F2B66B417B6B5AB00A7AE3F /* JSArrayBuffer.cpp */,
@@ -5552,8 +5534,6 @@
 				BC18C3E50E16F5CD00B34460 /* APICast.h in Headers */,
 				BCF605140E203EF800B9A64D /* ArgList.h in Headers */,
 				2A88067919107D5500CB0BBB /* DFGFunctionWhitelist.h in Headers */,
-				A76140CE182982CB00750624 /* ArgumentsIteratorConstructor.h in Headers */,
-				A76140D0182982CB00750624 /* ArgumentsIteratorPrototype.h in Headers */,
 				0F6B1CCA18641DF800845D97 /* ArityCheckFailReturnThunks.h in Headers */,
 				0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */,
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
@@ -6045,7 +6025,6 @@
 				BC18C4160E16F5CD00B34460 /* JSLexicalEnvironment.h in Headers */,
 				840480131021A1D9008E7F01 /* JSAPIValueWrapper.h in Headers */,
 				C2CF39C216E15A8100DD69BE /* JSAPIWrapperObject.h in Headers */,
-				A76140D2182982CB00750624 /* JSArgumentsIterator.h in Headers */,
 				BC18C4170E16F5CD00B34460 /* JSArray.h in Headers */,
 				0F2B66E317B6B5AB00A7AE3F /* JSArrayBuffer.h in Headers */,
 				0F2B66E517B6B5AB00A7AE3F /* JSArrayBufferConstructor.h in Headers */,
@@ -6941,8 +6920,6 @@
 				0FE050151AA9091100D33B33 /* DirectArgumentsOffset.cpp in Sources */,
 				0F55F0F414D1063900AC7649 /* AbstractPC.cpp in Sources */,
 				147F39BD107EC37600427A48 /* ArgList.cpp in Sources */,
-				A76140CD182982CB00750624 /* ArgumentsIteratorConstructor.cpp in Sources */,
-				A76140CF182982CB00750624 /* ArgumentsIteratorPrototype.cpp in Sources */,
 				0F6B1CC918641DF800845D97 /* ArityCheckFailReturnThunks.cpp in Sources */,
 				0F743BAA16B88249009F9277 /* ARM64Disassembler.cpp in Sources */,
 				86D3B2C310156BDE002865E7 /* ARMAssembler.cpp in Sources */,
@@ -7269,7 +7246,6 @@
 				140B7D1D0DC69AF7009C42B8 /* JSLexicalEnvironment.cpp in Sources */,
 				140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */,
 				C2CF39C116E15A8100DD69BE /* JSAPIWrapperObject.mm in Sources */,
-				A76140D1182982CB00750624 /* JSArgumentsIterator.cpp in Sources */,
 				147F39D0107EC37600427A48 /* JSArray.cpp in Sources */,
 				0F2B66E217B6B5AB00A7AE3F /* JSArrayBuffer.cpp in Sources */,
 				0F2B66E417B6B5AB00A7AE3F /* JSArrayBufferConstructor.cpp in Sources */,
