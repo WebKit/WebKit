@@ -1,3 +1,14 @@
+2015-04-16  Beth Dakin  <bdakin@apple.com>
+
+        Rubber-stamped by Tim Horton.
+
+        Fixing a small mistake in http://trac.webkit.org/changeset/182912 which should 
+        make sure to use the most up-to-date pressure information when setting the force 
+        on a WebMouseEvent.
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+
 2015-04-13  Jer Noble  <jer.noble@apple.com>
 
         [iOS] When simultaneously exiting-and-entering fullscreen, WebVideoFullscreenManager/Proxy becomes confused about what video element it represents.
