@@ -1,3 +1,18 @@
+2015-04-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Disable "Save to Downloads" option for local files
+        https://bugs.webkit.org/show_bug.cgi?id=143794
+
+        Reviewed by Tim Horton.
+
+        Disable the Image and Media download options if the download
+        target is a local file. We can only download web resources;
+        anything else is actually a no-op.
+
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController _defaultMenuItemsForVideo]):
+        (-[WKActionMenuController _defaultMenuItemsForImage]):
+
 2015-04-15  Anders Carlsson  <andersca@apple.com>
 
         Make websiteDataStore on WKWebViewConfiguration public

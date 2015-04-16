@@ -1334,10 +1334,15 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagDownloadLinkToDisk:
         case ContextMenuItemTagCopyLinkToClipboard:
         case ContextMenuItemTagOpenImageInNewWindow:
-        case ContextMenuItemTagDownloadImageToDisk:
         case ContextMenuItemTagCopyImageToClipboard:
 #if PLATFORM(GTK) || PLATFORM(EFL)
         case ContextMenuItemTagCopyImageUrlToClipboard:
+#endif
+            break;
+        case ContextMenuItemTagDownloadImageToDisk:
+#if PLATFORM(MAC)
+            if (WebCore::protocolIs(m_context.hitTestResult().absoluteImageURL(), "file"))
+                shouldEnable = false;
 #endif
             break;
         case ContextMenuItemTagOpenMediaInNewWindow:
@@ -1351,6 +1356,8 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
                 item.setTitle(contextMenuItemTagDownloadVideoToDisk());
             else
                 item.setTitle(contextMenuItemTagDownloadAudioToDisk());
+            if (WebCore::protocolIs(m_context.hitTestResult().absoluteImageURL(), "file"))
+                shouldEnable = false;
             break;
         case ContextMenuItemTagCopyMediaLinkToClipboard:
             if (m_context.hitTestResult().mediaIsVideo())

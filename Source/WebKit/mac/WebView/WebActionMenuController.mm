@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -686,6 +686,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         selector = @selector(_saveImageToDownloads:);
         title = WEB_UI_STRING_KEY("Save to Downloads", "Save to Downloads (image action menu item)", "image action menu item");
         image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
+        enabled = WebCore::protocolIs(_hitTestResult.absoluteImageURL(), "file");
         break;
 
     case WebActionMenuItemTagCopyVideoURL:
@@ -698,6 +699,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         selector = @selector(_saveVideoToDownloads:);
         title = WEB_UI_STRING_KEY("Save to Downloads", "Save to Downloads (video action menu item)", "video action menu item");
         image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
+        enabled = WebCore::protocolIs(_hitTestResult.absoluteMediaURL(), "file");
         break;
 
     default:

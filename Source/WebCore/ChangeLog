@@ -1,3 +1,18 @@
+2015-04-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Disable "Save to Downloads" option for local files
+        https://bugs.webkit.org/show_bug.cgi?id=143794
+
+        Reviewed by Tim Horton.
+
+        Disable the Image and Media download options if the download
+        target is a local file. We can only download web resources;
+        anything else is actually a no-op.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded): Disable
+        menu item if appropriate.
+
 2015-04-15  Chris Dumez  <cdumez@apple.com>
 
         Add a console message when a stylesheet is not parsed due to invalid MIME type
