@@ -53,6 +53,7 @@ static inline bool requiresCustomFallbackFont(const UInt32 character)
     return character == AppleLogo || character == blackCircle || character == narrowNonBreakingSpace;
 }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 90000
 static CFCharacterSetRef copyFontCharacterSet(CFStringRef fontName)
 {
     // The size, 10, is arbitrary.
@@ -72,6 +73,7 @@ static CFCharacterSetRef phoneFallbackCharacterSet()
     static CFCharacterSetRef characterSet = copyFontCharacterSet(CFSTR(".PhoneFallback"));
     return characterSet;
 }
+#endif
 
 PassRefPtr<Font> FontCache::getSystemFontFallbackForCharacters(const FontDescription& description, const Font* originalFontData, const UChar* characters, unsigned length)
 {
@@ -81,7 +83,7 @@ PassRefPtr<Font> FontCache::getSystemFontFallbackForCharacters(const FontDescrip
     CFIndex coveredLength = 0;
     RetainPtr<CTFontRef> substituteFont = adoptCF(CTFontCreatePhysicalFontForCharactersWithLanguage(ctFont, (const UTF16Char*)characters, (CFIndex)length, 0, &coveredLength));
     if (!substituteFont)
-        return 0;
+        return nullptr;
 
     CTFontSymbolicTraits originalTraits = CTFontGetSymbolicTraits(ctFont);
     CTFontSymbolicTraits actualTraits = 0;
@@ -97,6 +99,7 @@ PassRefPtr<Font> FontCache::getSystemFontFallbackForCharacters(const FontDescrip
     return fontForPlatformData(alternateFont);
 }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 90000
 enum class LanguageSpecificFont {
     None,
     ChineseJapanese,
@@ -193,6 +196,7 @@ static LanguageSpecificFont languageSpecificFallbackFont(UChar32 c)
         return LanguageSpecificFont::ChineseJapanese;
     return LanguageSpecificFont::None;
 }
+#endif
 
 RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, bool, const UChar* characters, unsigned length)
 {
@@ -216,11 +220,12 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
             return getSystemFontFallbackForCharacters(description, originalFontData, characters, length);
     }
 
+    RefPtr<Font> font;
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 90000
     LanguageSpecificFont languageSpecificFont = LanguageSpecificFont::None;
     if (length)
         languageSpecificFont = languageSpecificFallbackFont(c);
-
-    RefPtr<Font> font;
 
     switch (languageSpecificFont) {
     case LanguageSpecificFont::ChineseJapanese: {
@@ -439,6 +444,11 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
         break;
     }
     }
+#else
+    RetainPtr<CTFontDescriptorRef> fallbackFontDescriptor = adoptCF(CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(originalFontData->getCTFont(), characters, length, nullptr, nullptr));
+    if (RetainPtr<CFStringRef> foundFontName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fallbackFontDescriptor.get(), kCTFontNameAttribute))))
+        font = fontForFamily(description, foundFontName.get(), false);
+#endif
 
     if (font)
         return font.release();

@@ -1,3 +1,19 @@
+2015-04-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Delete hardcoded font fallback tables
+        https://bugs.webkit.org/show_bug.cgi?id=143583
+
+        Reviewed by Darin Adler
+
+        Updating expected results.
+
+        * editing/selection/vertical-rl-rtl-extend-line-backward-br.html: Updating expected results
+        * editing/selection/vertical-rl-rtl-extend-line-backward-p.html: Updating expected results
+        * editing/selection/vertical-rl-rtl-extend-line-forward-br.html: Updating expected results
+        * editing/selection/vertical-rl-rtl-extend-line-forward-p.html: Updating expected results
+        * fast/text/international/danda-space.html: Updating expected results
+        * fast/text/international/thai-baht-space.html: Updating expected results
+
 2015-04-16  Alexey Proskuryakov  <ap@apple.com>
 
         More flaky tests in http/tests/security/mixedContent
