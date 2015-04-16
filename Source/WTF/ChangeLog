@@ -1,3 +1,12 @@
+2015-04-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove the unnecessary WTF_CHANGES define
+        https://bugs.webkit.org/show_bug.cgi?id=143825
+
+        Reviewed by Andreas Kling.
+
+        * config.h:
+
 2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
 
         Harmonize binary semaphore ifdefs

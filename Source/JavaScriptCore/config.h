@@ -48,8 +48,6 @@
 
 #endif // OS(WINDOWS)
 
-#define WTF_CHANGES 1
-
 #ifdef __cplusplus
 #undef new
 #undef delete
