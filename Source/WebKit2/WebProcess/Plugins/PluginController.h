@@ -48,9 +48,6 @@ namespace WebKit {
 
 class PluginController {
 public:
-    // Returns false if the plugin has explicitly been hidden. Returns true otherwise (even if the plugin is currently obscured from view on screen.)
-    virtual bool isPluginVisible() = 0;
-
     // Tells the controller that the plug-in wants the given rect to be repainted. The rect is in the plug-in's coordinate system.
     virtual void invalidate(const WebCore::IntRect&) = 0;
 

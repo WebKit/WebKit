@@ -220,13 +220,6 @@ void PluginControllerProxy::startPaintTimer()
     m_waitingForDidUpdate = true;
 }
 
-bool PluginControllerProxy::isPluginVisible()
-{
-    // FIXME: Implement this.
-    notImplemented();
-    return false;
-}
-
 void PluginControllerProxy::invalidate(const IntRect& rect)
 {
     IntRect dirtyRect = rect;

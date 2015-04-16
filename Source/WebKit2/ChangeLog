@@ -1,3 +1,24 @@
+2015-04-16  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Remove PluginController::isPluginVisible().
+        https://bugs.webkit.org/show_bug.cgi?id=143830
+
+        Reviewed by Darin Adler.
+
+        PluginController::isPluginVisible() was introduced by http://webkit.org/b/60285.
+        This method had been used only for WebKit2 on Windows, and no one uses it now.
+        So we can remove it.
+
+        No new tests, no behavior change.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::isPluginVisible): Deleted.
+        * PluginProcess/PluginControllerProxy.h:
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::isPluginVisible): Deleted.
+        * WebProcess/Plugins/PluginView.h:
+
 2015-04-16  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Disable a flaky ewk_context_network_process_model() API test

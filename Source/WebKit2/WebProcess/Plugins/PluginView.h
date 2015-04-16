@@ -186,7 +186,6 @@ private:
     virtual void pageMutedStateDidChange() override;
 
     // PluginController
-    virtual bool isPluginVisible() override;
     virtual void invalidate(const WebCore::IntRect&) override;
     virtual String userAgent() override;
     virtual void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) override;

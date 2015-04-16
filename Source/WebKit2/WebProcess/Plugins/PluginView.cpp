@@ -1340,11 +1340,6 @@ void PluginView::pageMutedStateDidChange()
 #endif
 }
 
-bool PluginView::isPluginVisible()
-{
-    return isVisible();
-}
-
 void PluginView::invalidate(const IntRect& dirtyRect)
 {
     invalidateRect(dirtyRect);
