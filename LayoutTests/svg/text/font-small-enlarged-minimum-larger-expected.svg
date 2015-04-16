@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="width: 400px; height: 400px;">
+  <script>
+    internals.settings.setMinimumFontSize(80.0);
+  </script>
+  <rect x="40" y="40" width="320" height="320" stroke="green" fill="none" stroke-width="2"/>
+  <text x="200" y="200" font-size="40.0" fill="black">1</text>
+</svg>

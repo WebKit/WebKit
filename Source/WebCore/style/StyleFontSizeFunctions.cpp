@@ -39,9 +39,13 @@ namespace WebCore {
 
 namespace Style {
 
-enum ESmartMinimumForFontSize { DoNotUseSmartMinimumForFontSize, UseSmartMinimumForFontFize };
+enum MinimumFontSizeRule {
+    DonNotApplyMinimumFontSize,
+    DoNotUseSmartMinimumForFontSize,
+    UseSmartMinimumForFontFize
+};
 
-static float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, float zoomFactor, ESmartMinimumForFontSize useSmartMinimumForFontSize, const Settings* settings)
+static float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule minimumForFontSizeRule, const Settings* settings)
 {
     // Text with a 0px font size should not be visible and therefore needs to be
     // exempt from minimum font size rules. Acid3 relies on this for pixel-perfect
@@ -63,6 +67,9 @@ static float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsol
     if (!settings)
         return 1.0f;
 
+    if (minimumForFontSizeRule == DonNotApplyMinimumFontSize)
+        return specifiedSize;
+
     int minSize = settings->minimumFontSize();
     int minLogicalSize = settings->minimumLogicalFontSize();
     float zoomedSize = specifiedSize * zoomFactor;
@@ -75,7 +82,7 @@ static float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsol
     // after zooming. The font size must either be relative to the user default or the original size
     // must have been acceptable. In other words, we only apply the smart minimum whenever we're positive
     // doing so won't disrupt the layout.
-    if (useSmartMinimumForFontSize && zoomedSize < minLogicalSize && (specifiedSize >= minLogicalSize || !isAbsoluteSize))
+    if (minimumForFontSizeRule ==  UseSmartMinimumForFontFize && zoomedSize < minLogicalSize && (specifiedSize >= minLogicalSize || !isAbsoluteSize))
         zoomedSize = minLogicalSize;
 
     // Also clamp to a reasonable maximum to prevent insane font sizes from causing crashes on various
@@ -91,7 +98,7 @@ float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize
         if (Frame* frame = document.frame())
             zoomFactor *= frame->textZoomFactor();
     }
-    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, UseSmartMinimumForFontFize, document.settings());
+    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, useSVGZoomRules ? DonNotApplyMinimumFontSize : UseSmartMinimumForFontFize, document.settings());
 }
 
 float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document& document)

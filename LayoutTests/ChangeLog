@@ -1,3 +1,24 @@
+2015-04-15  Said Abou-Hallawa  <said@apple.com>
+
+        Minimum font size pref breaks SVG text very badly.
+        https://bugs.webkit.org/show_bug.cgi?id=143590.
+
+        Reviewed by Simon Fraser.
+
+        When enabling the minimum font size perf, the SVG text element should
+        apply the minimum font size rules on the scaled font. 
+
+        * svg/text/font-small-enlarged-minimum-larger-expected.svg: Added.
+        * svg/text/font-small-enlarged-minimum-larger.svg: Added.
+        Minimum font size is larger than the scaled font size. Also the expected
+        file makes sure the minimum font size rules are still applied if no scaling
+        is applied.
+
+        * svg/text/font-small-enlarged-minimum-smaller-expected.svg: Added.
+        * svg/text/font-small-enlarged-minimum-smaller.svg: Added.
+        Minimum font size is smaller than the scaled font size. So the minimim font
+        size rule should not have any effect on the final computed font size.
+
 2015-04-15  Jordan Harband  <ljharb@gmail.com>
 
         String.prototype.startsWith/endsWith/includes have wrong length in r182673

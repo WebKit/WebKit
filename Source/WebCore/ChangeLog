@@ -1,3 +1,33 @@
+2015-04-15  Said Abou-Hallawa  <said@apple.com>
+
+        Minimum font size pref breaks SVG text very badly.
+        https://bugs.webkit.org/show_bug.cgi?id=143590.
+
+        Reviewed by Simon Fraser.
+
+        When enabling the minimum font size perf, the computed font size is set
+        to the minimum font size if the computed value is smaller than the minimum.
+        The bug happens because the SVG text element applies its scaling on the
+        computed value after applying the minimum fort size rule. This means the
+        final computed value for the font size will be the scaling of the minimum
+        font size and not minimum font size itself. What we need is to postpone
+        applying the minimum font size rules, till the SVG scaling is applied.
+
+        Tests: svg/text/font-small-enlarged-minimum-larger.svg
+               svg/text/font-small-enlarged-minimum-smaller.svg
+
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::computeNewScaledFontForStyle): Call
+        computedFontSizeFromSpecifiedSizeForSVGInlineText() even if scalingFactor
+        is 1. We need to make sure the minimum font size rules are applied. This
+        function was assuming the mininum font size rule was applied when resolving
+        the style. This is not true anymore for the SVG text.
+
+        * style/StyleFontSizeFunctions.cpp:
+        (WebCore::Style::computedFontSizeFromSpecifiedSize): Do not apply the
+        minimum size rules for the SVG element until it applies its scaling to
+        the font size.
+
 2015-04-15  Mark Lam  <mark.lam@apple.com>
 
         Remove obsolete VMInspector debugging tool.
