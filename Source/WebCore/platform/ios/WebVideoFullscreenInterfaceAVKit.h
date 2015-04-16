@@ -68,7 +68,10 @@ class WEBCORE_EXPORT WebVideoFullscreenInterfaceAVKit
     , public ThreadSafeRefCounted<WebVideoFullscreenInterfaceAVKit> {
 
 public:
-    WEBCORE_EXPORT WebVideoFullscreenInterfaceAVKit();
+    static Ref<WebVideoFullscreenInterfaceAVKit> create()
+    {
+        return adoptRef(*new WebVideoFullscreenInterfaceAVKit());
+    }
     virtual ~WebVideoFullscreenInterfaceAVKit() { }
     WEBCORE_EXPORT void setWebVideoFullscreenModel(WebVideoFullscreenModel*);
     WEBCORE_EXPORT void setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver*);
@@ -95,7 +98,7 @@ public:
 
     HTMLMediaElement::VideoFullscreenMode mode() const { return m_mode; }
     void setIsOptimized(bool);
-    WEBCORE_EXPORT bool mayAutomaticallyShowVideoOptimized();
+    WEBCORE_EXPORT bool mayAutomaticallyShowVideoOptimized() const;
     void fullscreenMayReturnToInline(std::function<void(bool)> callback);
 
     void willStartOptimizedFullscreen();
@@ -106,18 +109,19 @@ public:
     void didCancelOptimizedFullscreen();
     void prepareForOptimizedFullscreenStopWithCompletionHandler(void (^)(BOOL));
 
+    void setMode(HTMLMediaElement::VideoFullscreenMode);
+    void clearMode(HTMLMediaElement::VideoFullscreenMode);
+    bool hasMode(HTMLMediaElement::VideoFullscreenMode mode) const { return m_mode & mode; }
+    bool isMode(HTMLMediaElement::VideoFullscreenMode mode) const { return m_mode == mode; }
+
 protected:
+    WEBCORE_EXPORT WebVideoFullscreenInterfaceAVKit();
     void beginSession();
     void setupFullscreenInternal(PlatformLayer&, const IntRect& initialRect, UIView *, HTMLMediaElement::VideoFullscreenMode, bool allowOptimizedFullscreen);
     void enterFullscreenOptimized();
     void enterFullscreenStandard();
     void exitFullscreenInternal(const IntRect& finalRect);
     void cleanupFullscreenInternal();
-
-    void setMode(HTMLMediaElement::VideoFullscreenMode);
-    void clearMode(HTMLMediaElement::VideoFullscreenMode);
-    bool hasMode(HTMLMediaElement::VideoFullscreenMode mode) const { return m_mode & mode; }
-    bool isMode(HTMLMediaElement::VideoFullscreenMode mode) const { return m_mode == mode; }
 
     RetainPtr<WebAVPlayerController> m_playerController;
     RetainPtr<AVPlayerViewController> m_playerViewController;

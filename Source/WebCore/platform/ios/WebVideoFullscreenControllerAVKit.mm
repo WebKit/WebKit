@@ -125,9 +125,9 @@ public:
 {
     [self retain]; // Balanced by -release in didExitFullscreen:
     
-    _interface = adoptRef(new WebVideoFullscreenInterfaceAVKit);
+    _interface = WebVideoFullscreenInterfaceAVKit::create();
     _interface->setWebVideoFullscreenChangeObserver(&_changeObserver);
-    _model = adoptRef(new WebVideoFullscreenModelVideoElement);
+    _model = WebVideoFullscreenModelVideoElement::create();
     _model->setWebVideoFullscreenInterface(_interface.get());
     _interface->setWebVideoFullscreenModel(_model.get());
     _model->setVideoElement(_videoElement.get());

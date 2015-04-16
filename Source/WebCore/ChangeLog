@@ -1,3 +1,25 @@
+2015-04-13  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] When simultaneously exiting-and-entering fullscreen, WebVideoFullscreenManager/Proxy becomes confused about what video element it represents.
+        https://bugs.webkit.org/show_bug.cgi?id=143680
+
+        Reviewed by Simon Fraser.
+
+        Add getters for the video's fullscreen layer, and be more tolerant about the order in which setVideoElement() and 
+        setWebVideoFullscreenInterface are called.
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::videoFullscreenLayer): Added simple getter.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenModelVideoElement.h:
+        (WebCore::WebVideoFullscreenModelVideoElement::videoElement): Added simple getter.
+        (WebCore::WebVideoFullscreenModelVideoElement::setWebVideoFullscreenInterface): Deleted. Moved to .mm file.
+        * platform/ios/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::WebVideoFullscreenModelVideoElement): Initialize ivars in the .h file.
+        (WebVideoFullscreenModelVideoElement::setWebVideoFullscreenInterface): Call those methods skipped in setVideoElement()
+            if m_videoFullscreenInterface had not yet been set.
+        (WebVideoFullscreenModelVideoElement::setVideoElement): Null-check m_videoFullscreenInterface.
+
 2015-04-16  Beth Dakin  <bdakin@apple.com>
 
         Force mouse events should go through normal mouse event handling code paths

@@ -53,13 +53,25 @@ using namespace WebCore;
 
 WebVideoFullscreenModelVideoElement::WebVideoFullscreenModelVideoElement()
     : EventListener(EventListener::CPPEventListenerType)
-    , m_isListening(false)
-    , m_videoFullscreenInterface(nullptr)
 {
 }
 
 WebVideoFullscreenModelVideoElement::~WebVideoFullscreenModelVideoElement()
 {
+}
+
+void WebVideoFullscreenModelVideoElement::setWebVideoFullscreenInterface(WebVideoFullscreenInterface* interface)
+{
+    if (interface == m_videoFullscreenInterface)
+        return;
+
+    m_videoFullscreenInterface = interface;
+
+    if (m_videoFullscreenInterface) {
+        m_videoFullscreenInterface->resetMediaState();
+        if (m_videoElement)
+            m_videoFullscreenInterface->setVideoDimensions(true, m_videoElement->videoWidth(), m_videoElement->videoHeight());
+    }
 }
 
 void WebVideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* videoElement)
@@ -69,7 +81,13 @@ void WebVideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* vide
 
     if (m_videoFullscreenInterface)
         m_videoFullscreenInterface->resetMediaState();
-    
+
+    if (m_videoElement && m_videoElement->fullscreenMode())
+        m_videoElement->fullscreenModeChanged(HTMLMediaElement::VideoFullscreenModeNone);
+
+    if (m_videoElement && m_videoElement->videoFullscreenLayer())
+        m_videoElement->setVideoFullscreenLayer(nullptr);
+
     if (m_videoElement && m_isListening) {
         for (auto eventName : observedEventNames())
             m_videoElement->removeEventListener(eventName, this, false);
@@ -87,7 +105,8 @@ void WebVideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* vide
 
     updateForEventName(eventNameAll());
 
-    m_videoFullscreenInterface->setVideoDimensions(true, videoElement->videoWidth(), videoElement->videoHeight());
+    if (m_videoFullscreenInterface)
+        m_videoFullscreenInterface->setVideoDimensions(true, videoElement->videoWidth(), videoElement->videoHeight());
 }
 
 void WebVideoFullscreenModelVideoElement::handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event* event)

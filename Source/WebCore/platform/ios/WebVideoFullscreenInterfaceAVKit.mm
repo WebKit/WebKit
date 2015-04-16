@@ -1175,7 +1175,7 @@ void WebVideoFullscreenInterfaceAVKit::preparedToReturnToInline(bool visible, co
     });
 }
 
-bool WebVideoFullscreenInterfaceAVKit::mayAutomaticallyShowVideoOptimized()
+bool WebVideoFullscreenInterfaceAVKit::mayAutomaticallyShowVideoOptimized() const
 {
     return [m_playerController isPlaying] && m_mode == HTMLMediaElement::VideoFullscreenModeStandard && wkIsOptimizedFullscreenSupported();
 }

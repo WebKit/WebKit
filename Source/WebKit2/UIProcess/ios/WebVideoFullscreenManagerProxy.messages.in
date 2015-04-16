@@ -22,21 +22,21 @@
 
 #if PLATFORM(IOS)
 messages -> WebVideoFullscreenManagerProxy {
-    ResetMediaState()
-    SetCurrentTime(double currentTime, double hostTime)
-    SetBufferedTime(double bufferedTime)
-    SetVideoDimensions(bool hasVideo, unsigned width, unsigned height)
-    SetSeekableRangesVector(Vector<std::pair<double, double>> ranges);
-    SetCanPlayFastReverse(bool value);
-    SetAudioMediaSelectionOptions(Vector<String> options, uint64_t selectedIndex);
-    SetLegibleMediaSelectionOptions(Vector<String> options, uint64_t selectedIndex);
-    SetExternalPlaybackProperties(bool enabled, uint32_t targetType, String localizedDeviceName);
-    SetDuration(double duration)
-    SetRate(bool isPlaying, double rate)
-    SetupFullscreenWithID(uint32_t videoLayerID, WebCore::IntRect initialRect, float hostingScaleFactor, WebCore::HTMLMediaElement::VideoFullscreenMode videoFullscreenMode, bool allowOptimizedFullscreen)
-    EnterFullscreen()
-    ExitFullscreen(WebCore::IntRect finalRect)
-    CleanupFullscreen()
-    PreparedToReturnToInline(bool visible, WebCore::IntRect inlineRect)
+    ResetMediaState(uint64_t contextId)
+    SetCurrentTime(uint64_t contextId, double currentTime, double hostTime)
+    SetBufferedTime(uint64_t contextId, double bufferedTime)
+    SetVideoDimensions(uint64_t contextId, bool hasVideo, unsigned width, unsigned height)
+    SetSeekableRangesVector(uint64_t contextId, Vector<std::pair<double, double>> ranges)
+    SetCanPlayFastReverse(uint64_t contextId, bool value)
+    SetAudioMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex)
+    SetLegibleMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex)
+    SetExternalPlaybackProperties(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName)
+    SetDuration(uint64_t contextId, double duration)
+    SetRate(uint64_t contextId, bool isPlaying, double rate)
+    SetupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, WebCore::IntRect initialRect, float hostingScaleFactor, WebCore::HTMLMediaElement::VideoFullscreenMode videoFullscreenMode, bool allowOptimizedFullscreen)
+    EnterFullscreen(uint64_t contextId)
+    ExitFullscreen(uint64_t contextId, WebCore::IntRect finalRect)
+    CleanupFullscreen(uint64_t contextId)
+    PreparedToReturnToInline(uint64_t contextId, bool visible, WebCore::IntRect inlineRect)
 }
 #endif

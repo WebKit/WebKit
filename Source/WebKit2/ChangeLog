@@ -1,3 +1,198 @@
+2015-04-13  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] When simultaneously exiting-and-entering fullscreen, WebVideoFullscreenManager/Proxy becomes confused about what video element it represents.
+        https://bugs.webkit.org/show_bug.cgi?id=143680
+
+        Reviewed by Simon Fraser.
+
+        The original assumption of WebVideoFullscreenManager and -Proxy was that the two classes would represent a
+        single video element and its full screen state. With multiple animations in and out of fullscreen combined with
+        multiple fullscreen modes, this assumption no longer holds true.
+
+        Rather than having a WebVideoFullscreenManager which /isa/ WebVideoFullscreenModelVideoElement, the manager now
+        /hasa/ WebVideoFullscreenModelVideoElement (or has many such models). Ditto for WebVideoFullscreenManager and
+        WebVideoFullscreenInterfaceAVKit. The WebVideoFullscreenInterfaceAVKit still needs a WebVideoFullscreenModel to
+        communicate with, so a new wrapper class is used for that purpose, WebVideoFullscreenModelContext. Ditto for
+        WebVideoFullscreenModelVideoElement and the new class WebVideoFullscreenInterfaceContext. These context classes
+        are paired and share a contextId, allowing the manager and its proxy to route messages between the UIProcess's
+        WebVideoFullscreenInterfaceAVKit to-and-from the WebProcess's WebVideoFullscreenModelVideoElement.
+
+        Both the WebVideoFullscreenModelContext and the WebVideoFullscreenInterfaceContext take a back-pointer to their
+        manager or manager proxy, and each method on the context simply calls the matching method on the manager and
+        passes its contextId as a parameter.
+
+        Both the WebVideoFullscreenManager and the WebVideoFullscreenManagerProxy pass that contextId in each of their
+        cross-process messages.
+
+        On the other side, the manager and proxy also have a map between contextIds and their matching
+        WebVideoFullscreenModelVideoElement (in the case of WebVideoFullscreenManager) or
+        WebVideoFullscreenInterfaceAVKit (in the case of WebVideoFullscreenManagerProxy).
+
+        While this change is large by LoC, it is almost entirely boilerplate.  The new and interesting pieces are these:
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::WebVideoFullscreenManagerProxy): No longer a WebVideoFullscreenInterfaceAVKit.
+        (WebKit::WebVideoFullscreenManagerProxy::invalidate): Walk through the models and interfaces, invalidating each.
+        (WebKit::WebVideoFullscreenManagerProxy::createModelAndInterface): Added. Return a new model and interface tuple.
+        (WebKit::WebVideoFullscreenManagerProxy::ensureModelAndInterface): Added. Lazily create, and add to the m_contextMap
+            a new model and interface object.
+        (WebKit::WebVideoFullscreenManagerProxy::ensureModel): Return the model half of ensureModelAndInterface().
+        (WebKit::WebVideoFullscreenManagerProxy::ensureInterface): Return the interface half of ensureModelAndInterface().
+        (WebKit::WebVideoFullscreenManagerProxy::enterFullscreen): Walk through the outstanding interface objects, and if 
+            any have a fullscreen mode which matches the about-to-be-fullscreen interface, request that that other interface
+            exit fullscreen.
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::nextContextId): Static, incrementing counter used as a contextId source.
+        (WebKit::WebVideoFullscreenManager::WebVideoFullscreenManager): No longer a WebVideoFullscreenModelVideoElement.
+        (WebKit::WebVideoFullscreenManager::~WebVideoFullscreenManager): Walk through the models and interfaces, invalidating each.
+        (WebKit::WebVideoFullscreenManager::ensureModelAndInterface): Added. Return a new model and interface tuple.
+        (WebKit::WebVideoFullscreenManager::ensureModelAndInterface):  Added. Lazily create, and add to the m_contextMap
+            a new model and interface object.
+        (WebKit::WebVideoFullscreenManager::ensureModel): Return the model half of ensureModelAndInterface().
+        (WebKit::WebVideoFullscreenManager::ensureInterface): Return the interface half of ensureModelAndInterface().
+
+        New classes and methods which just forward on to their owning objects:
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        (WebKit::WebVideoFullscreenModelContext::create):
+        (WebKit::WebVideoFullscreenModelContext::~WebVideoFullscreenModelContext):
+        (WebKit::WebVideoFullscreenModelContext::invalidate):
+        (WebKit::WebVideoFullscreenModelContext::layerHost):
+        (WebKit::WebVideoFullscreenModelContext::setLayerHost):
+        (WebKit::WebVideoFullscreenModelContext::setInitialVideoLayerFrame):
+        (WebKit::WebVideoFullscreenModelContext::WebVideoFullscreenModelContext):
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenModelContext::play):
+        (WebKit::WebVideoFullscreenModelContext::pause):
+        (WebKit::WebVideoFullscreenModelContext::togglePlayState):
+        (WebKit::WebVideoFullscreenModelContext::beginScrubbing):
+        (WebKit::WebVideoFullscreenModelContext::endScrubbing):
+        (WebKit::WebVideoFullscreenModelContext::seekToTime):
+        (WebKit::WebVideoFullscreenModelContext::fastSeek):
+        (WebKit::WebVideoFullscreenModelContext::beginScanningForward):
+        (WebKit::WebVideoFullscreenModelContext::beginScanningBackward):
+        (WebKit::WebVideoFullscreenModelContext::endScanning):
+        (WebKit::WebVideoFullscreenModelContext::requestExitFullscreen):
+        (WebKit::WebVideoFullscreenModelContext::setVideoLayerFrame):
+        (WebKit::WebVideoFullscreenModelContext::videoLayerFrame):
+        (WebKit::WebVideoFullscreenModelContext::setVideoLayerGravity):
+        (WebKit::WebVideoFullscreenModelContext::videoLayerGravity):
+        (WebKit::WebVideoFullscreenModelContext::selectAudioMediaOption):
+        (WebKit::WebVideoFullscreenModelContext::selectLegibleMediaOption):
+        (WebKit::WebVideoFullscreenModelContext::fullscreenModeChanged):
+        (WebKit::WebVideoFullscreenModelContext::didSetupFullscreen):
+        (WebKit::WebVideoFullscreenModelContext::didEnterFullscreen):
+        (WebKit::WebVideoFullscreenModelContext::didExitFullscreen):
+        (WebKit::WebVideoFullscreenModelContext::didCleanupFullscreen):
+        (WebKit::WebVideoFullscreenModelContext::fullscreenMayReturnToInline):
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+        (WebKit::WebVideoFullscreenInterfaceContext::create):
+        (WebKit::WebVideoFullscreenInterfaceContext::invalidate):
+        (WebKit::WebVideoFullscreenInterfaceContext::layerHostingContext):
+        (WebKit::WebVideoFullscreenInterfaceContext::isAnimating):
+        (WebKit::WebVideoFullscreenInterfaceContext::setIsAnimating):
+        (WebKit::WebVideoFullscreenInterfaceContext::targetIsFullscreen):
+        (WebKit::WebVideoFullscreenInterfaceContext::setTargetIsFullscreen):
+        (WebKit::WebVideoFullscreenInterfaceContext::fullscreenMode):
+        (WebKit::WebVideoFullscreenInterfaceContext::setFullscreenMode):
+        (WebKit::WebVideoFullscreenInterfaceContext::isFullscreen):
+        (WebKit::WebVideoFullscreenInterfaceContext::setIsFullscreen):
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenInterfaceContext::WebVideoFullscreenInterfaceContext):
+        (WebKit::WebVideoFullscreenInterfaceContext::~WebVideoFullscreenInterfaceContext):
+        (WebKit::WebVideoFullscreenInterfaceContext::setLayerHostingContext):
+        (WebKit::WebVideoFullscreenInterfaceContext::resetMediaState):
+        (WebKit::WebVideoFullscreenInterfaceContext::setDuration):
+        (WebKit::WebVideoFullscreenInterfaceContext::setCurrentTime):
+        (WebKit::WebVideoFullscreenInterfaceContext::setBufferedTime):
+        (WebKit::WebVideoFullscreenInterfaceContext::setRate):
+        (WebKit::WebVideoFullscreenInterfaceContext::setVideoDimensions):
+        (WebKit::WebVideoFullscreenInterfaceContext::setSeekableRanges):
+        (WebKit::WebVideoFullscreenInterfaceContext::setCanPlayFastReverse):
+        (WebKit::WebVideoFullscreenInterfaceContext::setAudioMediaSelectionOptions):
+        (WebKit::WebVideoFullscreenInterfaceContext::setLegibleMediaSelectionOptions):
+        (WebKit::WebVideoFullscreenInterfaceContext::setExternalPlayback):
+
+        Cross-process methods which now take a contextId parameter:
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID):
+        (WebKit::WebVideoFullscreenManagerProxy::resetMediaState):
+        (WebKit::WebVideoFullscreenManagerProxy::setCurrentTime):
+        (WebKit::WebVideoFullscreenManagerProxy::setBufferedTime):
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoDimensions):
+        (WebKit::WebVideoFullscreenManagerProxy::setSeekableRangesVector):
+        (WebKit::WebVideoFullscreenManagerProxy::setCanPlayFastReverse):
+        (WebKit::WebVideoFullscreenManagerProxy::setAudioMediaSelectionOptions):
+        (WebKit::WebVideoFullscreenManagerProxy::setLegibleMediaSelectionOptions):
+        (WebKit::WebVideoFullscreenManagerProxy::setExternalPlaybackProperties):
+        (WebKit::WebVideoFullscreenManagerProxy::setDuration):
+        (WebKit::WebVideoFullscreenManagerProxy::setRate):
+        (WebKit::WebVideoFullscreenManagerProxy::exitFullscreen):
+        (WebKit::WebVideoFullscreenManagerProxy::cleanupFullscreen):
+        (WebKit::WebVideoFullscreenManagerProxy::preparedToReturnToInline):
+        (WebKit::WebVideoFullscreenManagerProxy::play):
+        (WebKit::WebVideoFullscreenManagerProxy::pause):
+        (WebKit::WebVideoFullscreenManagerProxy::togglePlayState):
+        (WebKit::WebVideoFullscreenManagerProxy::beginScrubbing):
+        (WebKit::WebVideoFullscreenManagerProxy::endScrubbing):
+        (WebKit::WebVideoFullscreenManagerProxy::seekToTime):
+        (WebKit::WebVideoFullscreenManagerProxy::fastSeek):
+        (WebKit::WebVideoFullscreenManagerProxy::beginScanningForward):
+        (WebKit::WebVideoFullscreenManagerProxy::beginScanningBackward):
+        (WebKit::WebVideoFullscreenManagerProxy::endScanning):
+        (WebKit::WebVideoFullscreenManagerProxy::requestExitFullscreen):
+        (WebKit::WebVideoFullscreenManagerProxy::didSetupFullscreen):
+        (WebKit::WebVideoFullscreenManagerProxy::didExitFullscreen):
+        (WebKit::WebVideoFullscreenManagerProxy::didEnterFullscreen):
+        (WebKit::WebVideoFullscreenManagerProxy::didCleanupFullscreen):
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerFrame):
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerGravity):
+        (WebKit::WebVideoFullscreenManagerProxy::selectAudioMediaOption):
+        (WebKit::WebVideoFullscreenManagerProxy::selectLegibleMediaOption):
+        (WebKit::WebVideoFullscreenManagerProxy::fullscreenModeChanged):
+        (WebKit::WebVideoFullscreenManagerProxy::fullscreenMayReturnToInline):
+        (WebKit::WebVideoFullscreenManagerProxy::videoLayerFrame): Deleted.
+        (WebKit::WebVideoFullscreenManagerProxy::videoLayerGravity): Deleted.
+        * WebProcess/ios/WebVideoFullscreenManager.messages.in:
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::enterVideoFullscreenForVideoElement):
+        (WebKit::WebVideoFullscreenManager::exitVideoFullscreenForVideoElement):
+        (WebKit::WebVideoFullscreenManager::resetMediaState):
+        (WebKit::WebVideoFullscreenManager::setDuration):
+        (WebKit::WebVideoFullscreenManager::setCurrentTime):
+        (WebKit::WebVideoFullscreenManager::setBufferedTime):
+        (WebKit::WebVideoFullscreenManager::setRate):
+        (WebKit::WebVideoFullscreenManager::setVideoDimensions):
+        (WebKit::WebVideoFullscreenManager::setSeekableRanges):
+        (WebKit::WebVideoFullscreenManager::setCanPlayFastReverse):
+        (WebKit::WebVideoFullscreenManager::setAudioMediaSelectionOptions):
+        (WebKit::WebVideoFullscreenManager::setLegibleMediaSelectionOptions):
+        (WebKit::WebVideoFullscreenManager::setExternalPlayback):
+        (WebKit::WebVideoFullscreenManager::play):
+        (WebKit::WebVideoFullscreenManager::pause):
+        (WebKit::WebVideoFullscreenManager::togglePlayState):
+        (WebKit::WebVideoFullscreenManager::beginScrubbing):
+        (WebKit::WebVideoFullscreenManager::endScrubbing):
+        (WebKit::WebVideoFullscreenManager::seekToTime):
+        (WebKit::WebVideoFullscreenManager::fastSeek):
+        (WebKit::WebVideoFullscreenManager::beginScanningForward):
+        (WebKit::WebVideoFullscreenManager::beginScanningBackward):
+        (WebKit::WebVideoFullscreenManager::endScanning):
+        (WebKit::WebVideoFullscreenManager::requestExitFullscreen):
+        (WebKit::WebVideoFullscreenManager::selectAudioMediaOption):
+        (WebKit::WebVideoFullscreenManager::selectLegibleMediaOption):
+        (WebKit::WebVideoFullscreenManager::fullscreenModeChanged):
+        (WebKit::WebVideoFullscreenManager::didSetupFullscreen):
+        (WebKit::WebVideoFullscreenManager::didEnterFullscreen):
+        (WebKit::WebVideoFullscreenManager::didExitFullscreen):
+        (WebKit::WebVideoFullscreenManager::didCleanupFullscreen):
+        (WebKit::WebVideoFullscreenManager::setVideoLayerGravityEnum):
+        (WebKit::WebVideoFullscreenManager::fullscreenMayReturnToInline):
+        (WebKit::WebVideoFullscreenManager::setVideoLayerFrameFenced):
+        (WebKit::WebVideoFullscreenManager::exitVideoFullscreen): Deleted.
+
 2015-04-16  Beth Dakin  <bdakin@apple.com>
 
         Force mouse events should go through normal mouse event handling code paths
