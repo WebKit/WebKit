@@ -1,3 +1,7 @@
+add_custom_target(WebKitTestRunner-forwarding-headers
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${WEBKIT_TESTRUNNER_DIR} --output ${FORWARDING_HEADERS_DIR} --platform gtk
+)
+
 set(ForwardingHeadersForWebKitTestRunner_NAME WebKitTestRunner-forwarding-headers)
 
 list(APPEND WebKitTestRunner_SOURCES
@@ -54,21 +58,4 @@ list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
 add_definitions(
     -DFONTS_CONF_DIR="${TOOLS_DIR}/WebKitTestRunner/gtk/fonts"
     -DTOP_LEVEL_DIR="${CMAKE_SOURCE_DIR}"
-)
-
-file(GLOB_RECURSE WebKitTestRunner_HEADERS
-    *.h
-)
-
-add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/WebKitTestRunner-forwarding-headers.stamp
-    DEPENDS ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl
-            ${WebKitTestRunner_SOURCES}
-            ${WebKitTestRunner_HEADERS}
-            ${WebKitTestRunnerInjectedBundle_SOURCES}
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${WEBKIT_TESTRUNNER_DIR} --output ${FORWARDING_HEADERS_DIR} --platform gtk
-    COMMAND touch ${CMAKE_BINARY_DIR}/WebKitTestRunner-forwarding-headers.stamp
-)
-add_custom_target(WebKitTestRunner-forwarding-headers
-    DEPENDS ${CMAKE_BINARY_DIR}/WebKitTestRunner-forwarding-headers.stamp
 )

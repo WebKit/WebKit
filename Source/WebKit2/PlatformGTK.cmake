@@ -966,25 +966,8 @@ file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkit2gtk.cfg
     "main_sgml_file=webkit2gtk-docs.sgml\n"
 )
 
-file(GLOB_RECURSE WebKit2_HEADERS
-    *.h
-)
-
-add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-forwarding-headers.stamp
-    DEPENDS ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl
-            ${WebKit2_SOURCES}
-            ${WebProcess_SOURCES}
-            ${NetworkProcess_SOURCES}
-            ${DatabaseProcess_SOURCES}
-            ${PluginProcessGTK2_SOURCES}
-            ${PluginProcess_SOURCES}
-            ${WebKit2_HEADERS}
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${WEBKIT2_DIR} --output ${FORWARDING_HEADERS_DIR} --platform gtk --platform soup
-    COMMAND touch ${CMAKE_BINARY_DIR}/WebKit2-forwarding-headers.stamp
-)
 add_custom_target(WebKit2-forwarding-headers
-    DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-forwarding-headers.stamp
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${WEBKIT2_DIR} --output ${FORWARDING_HEADERS_DIR} --platform gtk --platform soup
 )
 
 # These symbolic link allows includes like #include <webkit2/WebkitWebView.h> which simulates installed headers.
