@@ -3,6 +3,7 @@ This test checks the ES6 string functions startsWith(), endsWith() and includes(
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS String.prototype.includes.length is 1
 PASS 'foo bar'.includes('bar') is true
 PASS 'foo bar'.includes('bar', 4) is true
 PASS 'foo bar'.includes('ar', 5) is true
@@ -31,6 +32,7 @@ PASS 'foo 1e+100 bar'.includes(1e+100) is true
 PASS 'foo 1e100 bar'.includes(1e100) is false
 PASS 'フーバー'.includes('ーバ') is true
 PASS 'フーバー'.includes('クー') is false
+PASS String.prototype.startsWith.length is 1
 PASS 'foo bar'.startsWith('foo') is true
 PASS 'foo bar'.startsWith('foo', 0) is true
 PASS 'foo bar'.startsWith('foo', -1) is true
@@ -58,6 +60,7 @@ PASS 'フーバー'.startsWith('abc') is false
 PASS 'フーバー'.startsWith('abc', 1) is false
 PASS 'foo bar'.startsWith('フー') is false
 PASS 'foo bar'.startsWith('フー', 1) is false
+PASS String.prototype.endsWith.length is 1
 PASS 'foo bar'.endsWith('bar') is true
 PASS 'foo bar'.endsWith('ba', 6) is true
 PASS 'foo bar'.endsWith(' ba', 6) is true

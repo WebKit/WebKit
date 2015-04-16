@@ -1,3 +1,18 @@
+2015-04-15  Jordan Harband  <ljharb@gmail.com>
+
+        String.prototype.startsWith/endsWith/includes have wrong length in r182673
+        https://bugs.webkit.org/show_bug.cgi?id=143659
+
+        Reviewed by Benjamin Poulain.
+
+        Fix lengths of String.prototype.{includes,startsWith,endsWith} per spec
+        https://people.mozilla.org/~jorendorff/es6-draft.html#sec-string.prototype.includes
+        https://people.mozilla.org/~jorendorff/es6-draft.html#sec-string.prototype.startswith
+        https://people.mozilla.org/~jorendorff/es6-draft.html#sec-string.prototype.endswith
+
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+
 2015-04-15  Mark Lam  <mark.lam@apple.com>
 
         Remove obsolete VMInspector debugging tool.

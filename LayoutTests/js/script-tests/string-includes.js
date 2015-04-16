@@ -1,6 +1,7 @@
 description("This test checks the ES6 string functions startsWith(), endsWith() and includes().");
 
 // Test includes
+shouldBe("String.prototype.includes.length", "1");
 shouldBe("'foo bar'.includes('bar')", "true");
 shouldBe("'foo bar'.includes('bar', 4)", "true");
 shouldBe("'foo bar'.includes('ar', 5)", "true");
@@ -31,6 +32,7 @@ shouldBe("'フーバー'.includes('ーバ')", "true");
 shouldBe("'フーバー'.includes('クー')", "false");
 
 // Test startsWith
+shouldBe("String.prototype.startsWith.length", "1");
 shouldBe("'foo bar'.startsWith('foo')", "true");
 shouldBe("'foo bar'.startsWith('foo', 0)", "true");
 shouldBe("'foo bar'.startsWith('foo', -1)", "true");
@@ -60,6 +62,7 @@ shouldBe("'foo bar'.startsWith('フー')", "false");
 shouldBe("'foo bar'.startsWith('フー', 1)", "false");
 
 // Test endsWith
+shouldBe("String.prototype.endsWith.length", "1");
 shouldBe("'foo bar'.endsWith('bar')", "true");
 shouldBe("'foo bar'.endsWith('ba', 6)", "true");
 shouldBe("'foo bar'.endsWith(' ba', 6)", "true");
