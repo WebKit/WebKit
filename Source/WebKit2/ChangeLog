@@ -1,3 +1,17 @@
+2015-04-16  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Disable a flaky ewk_context_network_process_model() API test
+        https://bugs.webkit.org/show_bug.cgi?id=143824
+
+        Reviewed by Csaba Osztrogonác.
+
+        ewk_context_network_process_model has been often failed. Though Bug 142967
+        was filed to fix this issue, it is not solved yet. To maintain EFL bot, this patch
+        disables it until fixing it.
+
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (TEST_F):
+
 2015-04-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] Forwarding headers generator shouldn't generate unnecessary headers

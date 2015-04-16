@@ -215,7 +215,7 @@ TEST_F(EWK2ContextTest, ewk_context_network_process_model)
 }
 
 
-TEST_F(EWK2ContextTestMultipleProcesses, ewk_context_network_process_model)
+TEST_F(EWK2ContextTestMultipleProcesses, DISABLED_ewk_context_network_process_model)
 {
     Ewk_Context* context = ewk_view_context_get(webView());
 
