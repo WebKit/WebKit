@@ -31,6 +31,7 @@
 #include "ClassInfo.h"
 #include "CodeCache.h"
 #include "Executable.h"
+#include "FunctionOverrides.h"
 #include "JSString.h"
 #include "JSCInlines.h"
 #include "Parser.h"
@@ -137,17 +138,40 @@ FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& o
     SourceCode source = m_sourceOverride ? SourceCode(m_sourceOverride) : ownerSource;
     unsigned firstLine = source.firstLine() + m_firstLineOffset;
     unsigned startOffset = source.startOffset() + m_startOffset;
+    unsigned lineCount = m_lineCount;
 
     // Adjust to one-based indexing.
     bool startColumnIsOnFirstSourceLine = !m_firstLineOffset;
     unsigned startColumn = m_unlinkedBodyStartColumn + (startColumnIsOnFirstSourceLine ? source.startColumn() : 1);
-    bool endColumnIsOnStartLine = !m_lineCount;
+    bool endColumnIsOnStartLine = !lineCount;
     unsigned endColumn = m_unlinkedBodyEndColumn + (endColumnIsOnStartLine ? startColumn : 1);
 
     SourceCode code(source.provider(), startOffset, startOffset + m_sourceLength, firstLine, startColumn);
-    FunctionExecutable* result = FunctionExecutable::create(vm, code, this, firstLine, firstLine + m_lineCount, startColumn, endColumn);
+    FunctionOverrides::OverrideInfo overrideInfo;
+    bool hasFunctionOverride = false;
+
+    if (UNLIKELY(Options::functionOverrides())) {
+        hasFunctionOverride = FunctionOverrides::initializeOverrideFor(code, overrideInfo);
+        if (hasFunctionOverride) {
+            firstLine = overrideInfo.firstLine;
+            lineCount = overrideInfo.lineCount;
+            startColumn = overrideInfo.startColumn;
+            endColumn = overrideInfo.endColumn;
+            code = overrideInfo.sourceCode;
+        }
+    }
+
+    FunctionExecutable* result = FunctionExecutable::create(vm, code, this, firstLine, firstLine + lineCount, startColumn, endColumn);
     if (overrideLineNumber != -1)
         result->setOverrideLineNumber(overrideLineNumber);
+
+    if (UNLIKELY(hasFunctionOverride)) {
+        result->overrideParameterAndTypeProfilingStartEndOffsets(
+            overrideInfo.parametersStartOffset,
+            overrideInfo.typeProfilingStartOffset,
+            overrideInfo.typeProfilingEndOffset);
+    }
+
     return result;
 }
 

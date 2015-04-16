@@ -1,3 +1,88 @@
+2015-04-14  Mark Lam  <mark.lam@apple.com>
+
+        Add JSC_functionOverrides=<overrides file> debugging tool.
+        https://bugs.webkit.org/show_bug.cgi?id=143717
+
+        Reviewed by Geoffrey Garen.
+
+        This tool allows us to do runtime replacement of function bodies with alternatives
+        for debugging purposes.  For example, this is useful when we need to debug VM bugs
+        which manifest in scripts executing in webpages downloaded from remote servers
+        that we don't control.  The tool allows us to augment those scripts with logging
+        or test code to help isolate the bugs.
+
+        This tool works by substituting the SourceCode at FunctionExecutable creation
+        time.  It identifies which SourceCode to substitute by comparing the source
+        string against keys in a set of key value pairs.
+
+        The keys are function body strings defined by 'override' clauses in the overrides
+        file specified by in the JSC_functionOverrides option.  The values are function
+        body strings defines by 'with' clauses in the overrides file.
+        See comment blob at top of FunctionOverrides.cpp on the formatting
+        of the overrides file.
+
+        At FunctionExecutable creation time, if the SourceCode string matches one of the
+        'override' keys from the overrides file, the tool will replace the SourceCode with
+        a new one based on the corresponding 'with' value string.  The FunctionExecutable
+        will then be created with the new SourceCode instead.
+
+        Some design decisions:
+        1. We opted to require that the 'with' clause appear on a separate line than the
+           'override' clause because this makes it easier to read and write when the
+           'override' clause's function body is single lined and long.
+
+        2. The user can use any sequence of characters for the delimiter (except for '{',
+           '}' and white space characters) because this ensures that there can always be
+           some delimiter pattern that does not appear in the function body in the clause
+           e.g. in the body of strings in the JS code.
+
+           '{' and '}' are disallowed because they are used to mark the boundaries of the
+           function body string.  White space characters are disallowed because they can
+           be error prone (the user may not be able to tell between spaces and tabs).
+
+        3. The start and end delimiter must be an identical sequence of characters.
+
+           I had considered allowing the use of complementary characters like <>, [], and
+           () for making delimiter pairs like:
+               [[[[ ... ]]]]
+               <[([( ... )])]>
+
+           But in the end, decided against it because:
+           a. These sequences of complementary characters can exists in JS code.
+              In contrast, a repeating delimiter like %%%% is unlikely to appear in JS
+              code.
+           b. It can be error prone for the user to have to type the exact complement
+              character for the end delimiter in reverse order.
+              In contrast, a repeating delimiter like %%%% is much easier to type and
+              less error prone.  Even a sequence like @#$%^ is less error prone than
+              a complementary sequence because it can be copy-pasted, and need not be
+              typed in reverse order.
+           c. It is easier to parse for the same delimiter string for both start and end.
+
+        4. The tool does a lot of checks for syntax errors in the overrides file because
+           we don't want any overrides to fail silently.  If a syntax error is detected,
+           the tool will print an error message and call exit().  This avoids the user
+           wasting time doing debugging only to be surprised later that their specified
+           overrides did not take effect because of some unnoticed typo.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::link):
+        * runtime/Executable.h:
+        * runtime/Options.h:
+        * tools/FunctionOverrides.cpp: Added.
+        (JSC::FunctionOverrides::overrides):
+        (JSC::FunctionOverrides::FunctionOverrides):
+        (JSC::initializeOverrideInfo):
+        (JSC::FunctionOverrides::initializeOverrideFor):
+        (JSC::hasDisallowedCharacters):
+        (JSC::parseClause):
+        (JSC::FunctionOverrides::parseOverridesInFile):
+        * tools/FunctionOverrides.h: Added.
+
 2015-04-16  Basile Clement  <basile_clement@apple.com>
  
         Extract the allocation profile from JSFunction into a rare object

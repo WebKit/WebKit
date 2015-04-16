@@ -647,6 +647,13 @@ public:
 
     unsigned parametersStartOffset() const { return m_parametersStartOffset; }
 
+    void overrideParameterAndTypeProfilingStartEndOffsets(unsigned parametersStartOffset, unsigned typeProfilingStartOffset, unsigned typeProfilingEndOffset)
+    {
+        m_parametersStartOffset = parametersStartOffset;
+        m_typeProfilingStartOffset = typeProfilingStartOffset;
+        m_typeProfilingEndOffset = typeProfilingEndOffset;
+    }
+
     DECLARE_INFO;
         
     void unlinkCalls();

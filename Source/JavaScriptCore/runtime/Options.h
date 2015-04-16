@@ -304,7 +304,9 @@ typedef const char* optionString;
     v(bool, enableExecutableAllocationFuzz, false, nullptr) \
     v(unsigned, fireExecutableAllocationFuzzAt, 0, nullptr) \
     v(unsigned, fireExecutableAllocationFuzzAtOrAfter, 0, nullptr) \
-    v(bool, verboseExecutableAllocationFuzz, false, nullptr)
+    v(bool, verboseExecutableAllocationFuzz, false, nullptr) \
+    \
+    v(optionString, functionOverrides, nullptr, "file with debugging overrides for function bodies") \
 
 class Options {
 public:

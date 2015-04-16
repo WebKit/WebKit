@@ -897,6 +897,9 @@
     <ClCompile Include="..\tools\CodeProfiling.cpp">
       <Filter>tools</Filter>
     </ClCompile>
+    <ClCompile Include="..\tools\FunctionOverrides.cpp">
+      <Filter>tools</Filter>
+    </ClCompile>
     <ClCompile Include="..\yarr\RegularExpression.cpp">
       <Filter>yarr</Filter>
     </ClCompile>
@@ -2973,6 +2976,9 @@
       <Filter>tools</Filter>
     </ClInclude>
     <ClInclude Include="..\tools\CodeProfiling.h">
+      <Filter>tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tools\FunctionOverrides.h">
       <Filter>tools</Filter>
     </ClInclude>
     <ClInclude Include="..\tools\ProfileTreeNode.h">

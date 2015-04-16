@@ -388,6 +388,7 @@ set(JavaScriptCore_SOURCES
 
     tools/CodeProfile.cpp
     tools/CodeProfiling.cpp
+    tools/FunctionOverrides.cpp
 
     yarr/RegularExpression.cpp
     yarr/YarrCanonicalizeUCS2.cpp
