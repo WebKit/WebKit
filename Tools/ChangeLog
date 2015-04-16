@@ -1,3 +1,21 @@
+2015-04-16  Alexey Proskuryakov  <ap@apple.com>
+
+        It is very hard to attach a debugger to WebProcess to debug tests
+        https://bugs.webkit.org/show_bug.cgi?id=143837
+
+        Reviewed by Chris Dumez.
+
+        --no-timeout used to only affect waitUntilDone timeout, but not IPC timeout in
+        WebKitTestRunner, and not pipe reading timeout in run-webkit-tests.
+
+        Now it disables all timeouts in tools, as is best for debugging tests.
+
+        * Scripts/webkitpy/port/driver.py: (Driver.run_test): Respect --no-timeout, so
+        that the script doesn't terminate DRT/WKTR when there is no output for a long time.
+
+        * WebKitTestRunner/Options.cpp: Removed --no-timeout-at-all, as --no-timeout
+        now has the same functionality.
+
 2015-04-16  Beth Dakin  <bdakin@apple.com>
 
         Force mouse events should go through normal mouse event handling code paths

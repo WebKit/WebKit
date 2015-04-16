@@ -186,7 +186,10 @@ class Driver(object):
         # by 5 seconds to avoid racing for which timeout is detected first.
         # FIXME: It's not the job of the driver to decide what the timeouts should be.
         # Move the additional timeout to driver_input.
-        deadline = test_begin_time + int(driver_input.timeout) / 1000.0 + 5
+        if self._no_timeout:
+            deadline = test_begin_time + 60 * 60 * 24 * 7  # 7 days. Using sys.maxint causes a hang.
+        else:
+            deadline = test_begin_time + int(driver_input.timeout) / 1000.0 + 5
 
         self._server_process.write(command)
         text, audio = self._read_first_block(deadline)  # First block is either text or audio

@@ -47,12 +47,6 @@ Options::Options()
 bool handleOptionNoTimeout(Options& options, const char*, const char*)
 {
     options.useWaitToDumpWatchdogTimer = false;
-    return true;
-}
-
-bool handleOptionNoTimeoutAtAll(Options& options, const char*, const char*)
-{
-    options.useWaitToDumpWatchdogTimer = false;
     options.forceNoTimeout = true;
     return true;
 }
@@ -116,8 +110,7 @@ bool handleOptionUnmatched(Options& options, const char* option, const char*)
 OptionsHandler::OptionsHandler(Options& o)
     : options(o)
 {
-    optionList.append(Option("--no-timeout", "Disables waitUntilDone timeout.", handleOptionNoTimeout));
-    optionList.append(Option("--no-timeout-at-all", "Disables all timeouts.", handleOptionNoTimeoutAtAll));
+    optionList.append(Option("--no-timeout", "Disables all timeouts.", handleOptionNoTimeout));
     optionList.append(Option("--verbose", "Turns on messages.", handleOptionVerbose));
     optionList.append(Option("--gc-between-tests", "Garbage collection between tests.", handleOptionGcBetweenTests));
     optionList.append(Option("--pixel-tests", "Check pixels.", handleOptionPixelTests));
