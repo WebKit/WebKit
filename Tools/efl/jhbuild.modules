@@ -150,16 +150,24 @@
     </branch>
   </autotools>
 
-  <autotools id="llvm"
+  <autotools id="llvm-3.5-for-AArch64"
              autogen-sh="configure"
              autogenargs="--enable-optimized=yes --enable-backtraces=no --enable-targets=host --enable-zlib=no --enable-terminfo=no --enable-crash-overrides=no --disable-expensive-checks --disable-debug-runtime --disable-assertions">
     <branch repo="llvm-tar"
-            module="/releases/3.5.0/llvm-3.5.0.src.tar.xz" version="3.5.0" checkoutdir="llvm"
+            module="/releases/3.5.0/llvm-3.5.0.src.tar.xz" version="3.5.0" checkoutdir="llvm-3.5.0"
             hash="sha256:28e199f368ef0a4666708f31c7991ad3bcc3a578342b0306526dd35f07595c03">
-      <patch file="llvm-elf-allow-fde-references-outside-the-2gb-range.patch" strip="1"/>
       <patch file="llvm-elf-allow-fde-references-outside-the-2gb-range-arm64.patch" strip="1"/>
-      <patch file="llvm-elf-add-stackmaps.patch" strip="1"/>
       <patch file="llvm-elf-add-stackmaps-arm64.patch" strip="1"/>
+      <patch file="llvm-version-arm64.patch" strip="1"/>
+    </branch>
+  </autotools>
+
+  <autotools id="llvm-3.6-for-X86_64"
+             autogen-sh="configure"
+             autogenargs="--enable-optimized=yes --enable-backtraces=no --enable-targets=host --enable-zlib=no --enable-terminfo=no --enable-crash-overrides=no --disable-expensive-checks --disable-debug-runtime --disable-assertions">
+    <branch repo="llvm-tar"
+            module="/releases/3.6.0/llvm-3.6.0.src.tar.xz" version="3.6.0" checkoutdir="llvm-3.6.0"
+            hash="sha256:b39a69e501b49e8f73ff75c9ad72313681ee58d6f430bfad4d81846fe92eb9ce">
     </branch>
   </autotools>
 

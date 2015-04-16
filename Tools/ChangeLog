@@ -1,5 +1,18 @@
 2015-04-16  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] Bump LLVM to version 3.6.0 on X86_64
+        https://bugs.webkit.org/show_bug.cgi?id=143604
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/jhbuild.modules:
+        * efl/patches/llvm-elf-add-stackmaps-arm64.patch: Added the necessary part of llvm-elf-add-stackmaps.patch.
+        * efl/patches/llvm-elf-add-stackmaps.patch: Removed, it is included in LLVM 3.6.0 release.
+        * efl/patches/llvm-elf-allow-fde-references-outside-the-2gb-range.patch: Removed, it is included in LLVM 3.6.0 release.
+        * efl/patches/llvm-version-arm64.patch: Added. Set PACKAGE_VERSION to "3.5.0ftl" to be able to ensure we use patched LLVM on AArch64.
+
+2015-04-16  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] Remove an unnecessary workaround from jhbuildrc
         https://bugs.webkit.org/show_bug.cgi?id=143823
 

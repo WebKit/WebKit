@@ -17,7 +17,8 @@ execute_process(COMMAND ${LLVM_CONFIG_EXE} --libfiles OUTPUT_VARIABLE LLVM_STATI
 separate_arguments(LLVM_STATIC_LIBRARIES)
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(LLVM DEFAULT_MSG
-                                  LLVM_VERSION LLVM_INCLUDE_DIRS LLVM_STATIC_LIBRARIES)
+find_package_handle_standard_args(LLVM
+                                  REQUIRED_VARS LLVM_VERSION LLVM_INCLUDE_DIRS LLVM_STATIC_LIBRARIES
+                                  VERSION_VAR LLVM_VERSION)
 
 mark_as_advanced(LLVM_VERSION LLVM_INCLUDE_DIRS LLVM_STATIC_LIBRARIES)
