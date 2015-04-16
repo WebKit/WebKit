@@ -1,5 +1,54 @@
 2015-04-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [ES6] Implement Symbol.for and Symbol.keyFor
+        https://bugs.webkit.org/show_bug.cgi?id=143404
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements Symbol.for and Symbol.keyFor.
+        SymbolRegistry maintains registered StringImpl* symbols.
+        And to make this mapping enabled over realms,
+        VM owns this mapping (not JSGlobalObject).
+
+        While there's Default AtomicStringTable per thread,
+        SymbolRegistry should not exist over VMs.
+        So everytime VM is created, SymbolRegistry is also created.
+
+        In SymbolRegistry implementation, we don't leverage WeakGCMap (or weak reference design).
+        Theres are several reasons.
+        1. StringImpl* which represents identity of Symbols is not GC-managed object.
+           So we cannot use WeakGCMap directly.
+           While Symbol* is GC-managed object, holding weak reference to Symbol* doesn't maintain JS symbols (exposed primitive values to users) liveness,
+           because distinct Symbol* can exist.
+           Distinct Symbol* means the Symbol* object that pointer value (Symbol*) is different from weakly referenced Symbol* but held StringImpl* is the same.
+
+        2. We don't use WTF::WeakPtr. If we add WeakPtrFactory into StringImpl's member, we can track StringImpl*'s liveness by WeakPtr.
+           However there's problem about when we prune staled entries in SymbolRegistry.
+           Since the memory allocated for the Symbol is typically occupied by allocated symbolized StringImpl*'s content,
+           and it is not in GC-heap.
+           While heavily registering Symbols and storing StringImpl* into SymbolRegistry, Heap's EdenSpace is not so occupied.
+           So GC typically attempt to perform EdenCollection, and it doesn't call WeakGCMap's pruleStaleEntries callback.
+           As a result, before pruning staled entries in SymbolRegistry, fast malloc-ed memory fills up the system memory.
+
+        So instead of using Weak reference, we take relatively easy design.
+        When we register symbolized StringImpl* into SymbolRegistry, symbolized StringImpl* is aware of that.
+        And when destructing it, it removes its reference from SymbolRegistry as if atomic StringImpl do so with AtomicStringTable.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * runtime/SymbolConstructor.cpp:
+        (JSC::SymbolConstructor::getOwnPropertySlot):
+        (JSC::symbolConstructorFor):
+        (JSC::symbolConstructorKeyFor):
+        * runtime/SymbolConstructor.h:
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+        (JSC::VM::symbolRegistry):
+        * tests/stress/symbol-registry.js: Added.
+        (test):
+
+2015-04-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [ES6] Use specific functions for @@iterator functions
         https://bugs.webkit.org/show_bug.cgi?id=143838
 

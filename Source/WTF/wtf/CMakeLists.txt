@@ -132,6 +132,7 @@ set(WTF_HEADERS
     text/StringHash.h
     text/StringImpl.h
     text/StringView.h
+    text/SymbolRegistry.h
     text/WTFString.h
 
     threads/BinarySemaphore.h
@@ -199,6 +200,7 @@ set(WTF_SOURCES
     text/StringImpl.cpp
     text/StringStatics.cpp
     text/StringView.cpp
+    text/SymbolRegistry.cpp
     text/WTFString.cpp
 
     threads/BinarySemaphore.cpp

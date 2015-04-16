@@ -30,13 +30,31 @@
 #include "Error.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
+#include "Symbol.h"
 #include "SymbolPrototype.h"
+#include <wtf/text/SymbolRegistry.h>
+
+namespace JSC {
+
+static EncodedJSValue JSC_HOST_CALL symbolConstructorFor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL symbolConstructorKeyFor(ExecState*);
+
+}
+
+#include "SymbolConstructor.lut.h"
 
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(SymbolConstructor);
 
 const ClassInfo SymbolConstructor::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(SymbolConstructor) };
+
+/* Source for SymbolConstructor.lut.h
+@begin symbolConstructorTable
+  for       symbolConstructorFor       DontEnum|Function 1
+  keyFor    symbolConstructorKeyFor    DontEnum|Function 1
+@end
+*/
 
 SymbolConstructor::SymbolConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure)
@@ -55,6 +73,13 @@ void SymbolConstructor::finishCreation(VM& vm, SymbolPrototype* prototype)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_WELL_KNOWN_SYMBOLS)
 }
 
+bool SymbolConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
+{
+    return getStaticFunctionSlot<Base>(exec, symbolConstructorTable, jsCast<SymbolConstructor*>(object), propertyName, slot);
+}
+
+// ------------------------------ Functions ---------------------------
+
 static EncodedJSValue JSC_HOST_CALL callSymbol(ExecState* exec)
 {
     JSValue description = exec->argument(0);
@@ -72,6 +97,34 @@ CallType SymbolConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callSymbol;
     return CallTypeHost;
+}
+
+EncodedJSValue JSC_HOST_CALL symbolConstructorFor(ExecState* exec)
+{
+    JSString* stringKey = exec->argument(0).toString(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    String string = stringKey->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    Ref<StringImpl> uid = exec->vm().symbolRegistry().symbolForKey(string);
+    return JSValue::encode(Symbol::create(exec->vm(), static_cast<AtomicStringImpl*>(&uid.get())));
+}
+
+EncodedJSValue JSC_HOST_CALL symbolConstructorKeyFor(ExecState* exec)
+{
+    JSValue symbolValue = exec->argument(0);
+    if (!symbolValue.isSymbol())
+        return JSValue::encode(throwTypeError(exec));
+
+    AtomicStringImpl* uid = asSymbol(symbolValue)->privateName().uid();
+    ASSERT(uid->isSymbol());
+    if (!uid->symbolRegistry())
+        return JSValue::encode(jsUndefined());
+
+    ASSERT(uid->symbolRegistry() == &exec->vm().symbolRegistry());
+    return JSValue::encode(jsString(exec, exec->vm().symbolRegistry().keyForSymbol(uid)));
 }
 
 } // namespace JSC

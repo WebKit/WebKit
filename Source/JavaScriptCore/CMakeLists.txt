@@ -564,9 +564,9 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/StructureIDTable.cpp
     runtime/StructureRareData.cpp
     runtime/Symbol.cpp
+    runtime/SymbolConstructor.cpp
     runtime/SymbolObject.cpp
     runtime/SymbolPrototype.cpp
-    runtime/SymbolConstructor.cpp
     runtime/SymbolTable.cpp
     runtime/TestRunnerUtils.cpp
     runtime/TypeLocationCache.cpp
@@ -610,6 +610,7 @@ set(JavaScriptCore_LUT_FILES
     runtime/RegExpPrototype.cpp
     runtime/StringConstructor.cpp
     runtime/StringIteratorPrototype.cpp
+    runtime/SymbolConstructor.cpp
     runtime/SymbolPrototype.cpp
 )
 

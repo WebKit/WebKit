@@ -64,6 +64,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/WTFThreadData.h>
+#include <wtf/text/SymbolRegistry.h>
 #include <wtf/text/WTFString.h>
 #if ENABLE(REGEXP_TRACING)
 #include <wtf/ListHashSet.h>
@@ -280,6 +281,7 @@ public:
     Strong<JSCell> emptyPropertyNameEnumerator;
 
     AtomicStringTable* m_atomicStringTable;
+    WTF::SymbolRegistry m_symbolRegistry;
     CommonIdentifiers* propertyNames;
     const MarkedArgumentBuffer* emptyList; // Lists are supposed to be allocated on the stack to have their elements properly marked, which is not the case here - but this list has nothing to mark.
     SmallStrings smallStrings;
@@ -290,6 +292,7 @@ public:
     Strong<JSString> lastCachedString;
 
     AtomicStringTable* atomicStringTable() const { return m_atomicStringTable; }
+    WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }
 
     void setInDefineOwnProperty(bool inDefineOwnProperty)
     {

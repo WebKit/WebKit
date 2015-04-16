@@ -134,6 +134,7 @@
     <ClCompile Include="..\wtf\text\StringImpl.cpp" />
     <ClCompile Include="..\wtf\text\StringStatics.cpp" />
     <ClCompile Include="..\wtf\text\StringView.cpp" />
+    <ClCompile Include="..\wtf\text\SymbolRegistry.cpp" />
     <ClCompile Include="..\wtf\text\WTFString.cpp" />
     <ClCompile Include="..\wtf\text\cf\AtomicStringCF.cpp" />
     <ClCompile Include="..\wtf\text\cf\StringCF.cpp" />
@@ -295,6 +296,7 @@
     <ClInclude Include="..\wtf\text\StringImpl.h" />
     <ClInclude Include="..\wtf\text\StringOperators.h" />
     <ClInclude Include="..\wtf\text\StringView.h" />
+    <ClInclude Include="..\wtf\text\SymbolRegistry.h" />
     <ClInclude Include="..\wtf\text\WTFString.h" />
     <ClInclude Include="..\wtf\Threading.h" />
     <ClInclude Include="..\wtf\ThreadingPrimitives.h" />

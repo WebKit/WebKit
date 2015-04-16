@@ -1,3 +1,16 @@
+2015-04-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Symbol.for and Symbol.keyFor
+        https://bugs.webkit.org/show_bug.cgi?id=143404
+
+        Reviewed by Geoffrey Garen.
+
+        Add tests to check Symbol's identity over different realms.
+
+        * js/dom/cross-frame-symbols-expected.txt: Added.
+        * js/dom/cross-frame-symbols.html: Added.
+        * js/dom/script-tests/cross-frame-symbols.js: Added.
+
 2015-04-16  Beth Dakin  <bdakin@apple.com>
 
         Forgot to edit this TestExpectation file for 

@@ -58,6 +58,7 @@ all : \
     RegExpObject.lut.h \
     StringConstructor.lut.h \
     StringIteratorPrototype.lut.h \
+    SymbolConstructor.lut.h \
     SymbolPrototype.lut.h \
     udis86_itab.h \
     Bytecodes.h \

@@ -78,6 +78,9 @@
     <ClCompile Include="..\wtf\text\StringImpl.cpp">
       <Filter>text</Filter>
     </ClCompile>
+    <ClCompile Include="..\wtf\text\SymbolRegistry.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
     <ClCompile Include="..\wtf\text\WTFString.cpp">
       <Filter>text</Filter>
     </ClCompile>
@@ -341,6 +344,9 @@
     </ClInclude>
     <ClInclude Include="..\wtf\text\StringView.h">
       <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\SymbolRegistry.h">
+      <Filter>text</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\text\WTFString.h">
       <Filter>text</Filter>

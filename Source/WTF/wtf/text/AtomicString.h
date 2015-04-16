@@ -86,8 +86,14 @@ public:
     AtomicString(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_string.isHashTableDeletedValue(); }
 
-    WTF_EXPORT_STRING_API static AtomicStringImpl* find(LChar*, unsigned length);
-    WTF_EXPORT_STRING_API static AtomicStringImpl* find(UChar*, unsigned length);
+    static AtomicStringImpl* find(LChar* characters, unsigned length)
+    {
+        return findInternal(characters, length);
+    }
+    static AtomicStringImpl* find(UChar* characters, unsigned length)
+    {
+        return findInternal(characters, length);
+    }
     static AtomicStringImpl* find(StringImpl* string)
     {
         if (!string || string->isAtomic())
@@ -249,6 +255,9 @@ private:
 
     WTF_EXPORT_STRING_API static AtomicStringImpl* findSlowCase(StringImpl&);
     WTF_EXPORT_STRING_API static AtomicString fromUTF8Internal(const char*, const char*);
+
+    WTF_EXPORT_STRING_API static AtomicStringImpl* findInternal(const LChar*, unsigned length);
+    WTF_EXPORT_STRING_API static AtomicStringImpl* findInternal(const UChar*, unsigned length);
 };
 
 inline bool operator==(const AtomicString& a, const AtomicString& b) { return a.impl() == b.impl(); }

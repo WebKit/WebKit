@@ -57,6 +57,7 @@ struct CharBufferFromLiteralDataTranslator;
 struct SubstringTranslator;
 struct UCharBufferTranslator;
 template<typename> class RetainPtr;
+class SymbolRegistry;
 
 enum TextCaseSensitivity {
     TextCaseSensitive,
@@ -292,18 +293,39 @@ private:
         STRING_STATS_ADD_16BIT_STRING2(m_length, true);
     }
 
-    enum CreateSymbolEmptyTag { CreateSymbolEmpty };
-    StringImpl(CreateSymbolEmptyTag)
+    enum CreateSymbolTag { CreateSymbol };
+    // Used to create new symbol strings that holds existing 8-bit [[Description]] string as a substring buffer (BufferSubstring).
+    StringImpl(CreateSymbolTag, const LChar* characters, unsigned length, PassRefPtr<StringImpl> base)
         : m_refCount(s_refCountIncrement)
-        , m_length(0)
-        // We expect m_length to be initialized to 0 as we use it
-        // to represent a null terminated buffer.
-        , m_data8(reinterpret_cast<const LChar*>(&m_length))
-        , m_hashAndFlags(hashAndFlagsForSymbol(s_hashFlag8BitBuffer | BufferInternal))
+        , m_length(length)
+        , m_data8(characters)
+        , m_hashAndFlags(hashAndFlagsForSymbol(s_hashFlag8BitBuffer | StringSymbol | BufferSubstring))
     {
+        ASSERT(is8Bit());
         ASSERT(m_data8);
+        ASSERT(base->bufferOwnership() != BufferSubstring);
 
-        STRING_STATS_ADD_8BIT_STRING(m_length);
+        substringBuffer() = base.leakRef();
+        symbolRegistry() = nullptr;
+
+        STRING_STATS_ADD_8BIT_STRING2(m_length, true);
+    }
+
+    // Used to create new symbol strings that holds existing 16-bit [[Description]] string as a substring buffer (BufferSubstring).
+    StringImpl(CreateSymbolTag, const UChar* characters, unsigned length, PassRefPtr<StringImpl> base)
+        : m_refCount(s_refCountIncrement)
+        , m_length(length)
+        , m_data16(characters)
+        , m_hashAndFlags(hashAndFlagsForSymbol(StringSymbol | BufferSubstring))
+    {
+        ASSERT(!is8Bit());
+        ASSERT(m_data16);
+        ASSERT(base->bufferOwnership() != BufferSubstring);
+
+        substringBuffer() = base.leakRef();
+        symbolRegistry() = nullptr;
+
+        STRING_STATS_ADD_16BIT_STRING2(m_length, true);
     }
 
     ~StringImpl();
@@ -397,11 +419,7 @@ public:
         return constructInternal<T>(resultImpl, length);
     }
 
-    ALWAYS_INLINE static Ref<StringImpl> createSymbolEmpty()
-    {
-        return adoptRef(*new StringImpl(CreateSymbolEmpty));
-    }
-
+    WTF_EXPORT_STRING_API static Ref<StringImpl> createSymbolEmpty();
     WTF_EXPORT_STRING_API static Ref<StringImpl> createSymbol(PassRefPtr<StringImpl> rep);
 
     // Reallocate the StringImpl. The originalString must be only owned by the PassRefPtr,
@@ -741,14 +759,25 @@ public:
 
     WTF_EXPORT_STRING_API static const UChar latin1CaseFoldTable[256];
 
-    StringImpl& extractFoldedStringInSymbol()
+    Ref<StringImpl> extractFoldedStringInSymbol()
     {
-        ASSERT(length());
         ASSERT(isSymbol());
         ASSERT(bufferOwnership() == BufferSubstring);
         ASSERT(substringBuffer());
         ASSERT(!substringBuffer()->isSymbol());
-        return *substringBuffer();
+        return createSubstringSharingImpl(this, 0, length());
+    }
+
+    SymbolRegistry* const& symbolRegistry() const
+    {
+        ASSERT(isSymbol());
+        return *(tailPointer<SymbolRegistry*>() + 1);
+    }
+
+    SymbolRegistry*& symbolRegistry()
+    {
+        ASSERT(isSymbol());
+        return *(tailPointer<SymbolRegistry*>() + 1);
     }
 
 private:

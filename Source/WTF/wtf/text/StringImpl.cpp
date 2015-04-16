@@ -33,6 +33,7 @@
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/SymbolRegistry.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/UTF8.h>
 
@@ -111,6 +112,9 @@ StringImpl::~StringImpl()
 
     if (isAtomic() && length() && !isSymbol())
         AtomicString::remove(this);
+
+    if (isSymbol() && symbolRegistry())
+        symbolRegistry()->remove(this);
 
     BufferOwnership ownership = bufferOwnership();
 
@@ -288,13 +292,21 @@ Ref<StringImpl> StringImpl::create(const LChar* string)
 
 Ref<StringImpl> StringImpl::createSymbol(PassRefPtr<StringImpl> rep)
 {
-    unsigned length = rep->length();
-    if (!length)
-        return createSymbolEmpty();
-    Ref<StringImpl> string = createSubstringSharingImpl(rep, 0, length);
-    ASSERT(!string->isAtomic());
-    string->m_hashAndFlags = hashAndFlagsForSymbol(string->m_hashAndFlags);
-    return string;
+    StringImpl* ownerRep = (rep->bufferOwnership() == BufferSubstring) ? rep->substringBuffer() : rep.get();
+
+    // We allocate a buffer that contains
+    // 1. the StringImpl struct
+    // 2. the pointer to the owner string
+    // 3. the pointer to the symbol registry
+    StringImpl* stringImpl = static_cast<StringImpl*>(fastMalloc(allocationSize<StringImpl*>(2)));
+    if (rep->is8Bit())
+        return adoptRef(*new (NotNull, stringImpl) StringImpl(CreateSymbol, rep->m_data8, rep->length(), ownerRep));
+    return adoptRef(*new (NotNull, stringImpl) StringImpl(CreateSymbol, rep->m_data16, rep->length(), ownerRep));
+}
+
+Ref<StringImpl> StringImpl::createSymbolEmpty()
+{
+    return createSymbol(empty());
 }
 
 bool StringImpl::containsOnlyWhitespace()

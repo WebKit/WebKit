@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,46 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SymbolConstructor_h
-#define SymbolConstructor_h
+#include "config.h"
+#include "SymbolRegistry.h"
 
-#include "InternalFunction.h"
-#include "Symbol.h"
+namespace WTF {
 
-namespace JSC {
+SymbolRegistry::~SymbolRegistry()
+{
+    for (auto& key : m_table)
+        key.impl()->symbolRegistry() = nullptr;
+}
 
-class SymbolPrototype;
+Ref<StringImpl> SymbolRegistry::symbolForKey(const String& rep)
+{
+    auto addResult = m_table.add(SymbolRegistryKey(rep.impl()));
+    if (!addResult.isNewEntry)
+        return *addResult.iterator->impl();
 
-class SymbolConstructor : public InternalFunction {
-public:
-    typedef InternalFunction Base;
+    Ref<StringImpl> symbol = StringImpl::createSymbol(rep.impl());
+    symbol->symbolRegistry() = this;
+    *addResult.iterator = SymbolRegistryKey(&symbol.get());
+    return symbol;
+}
 
-    static SymbolConstructor* create(VM& vm, Structure* structure, SymbolPrototype* prototype)
-    {
-        SymbolConstructor* constructor = new (NotNull, allocateCell<SymbolConstructor>(vm.heap)) SymbolConstructor(vm, structure);
-        constructor->finishCreation(vm, prototype);
-        return constructor;
-    }
+String SymbolRegistry::keyForSymbol(StringImpl* uid)
+{
+    ASSERT(uid->isSymbol());
+    ASSERT(uid->symbolRegistry() == this);
+    return uid->extractFoldedStringInSymbol();
+}
 
-    DECLARE_INFO;
+void SymbolRegistry::remove(StringImpl* uid)
+{
+    ASSERT(uid->isSymbol());
+    ASSERT(uid->symbolRegistry() == this);
+    auto iterator = m_table.find(SymbolRegistryKey(uid));
+    ASSERT_WITH_MESSAGE(iterator != m_table.end(), "The string being removed is registered in the string table of an other thread!");
+    m_table.remove(iterator);
+}
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-    }
-
-protected:
-    void finishCreation(VM&, SymbolPrototype*);
-
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
-
-private:
-    SymbolConstructor(VM&, Structure*);
-    static ConstructType getConstructData(JSCell*, ConstructData&);
-    static CallType getCallData(JSCell*, CallData&);
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-};
-
-} // namespace JSC
-
-#endif // SymbolConstructor_h
+}

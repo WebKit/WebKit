@@ -1,3 +1,53 @@
+2015-04-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Symbol.for and Symbol.keyFor
+        https://bugs.webkit.org/show_bug.cgi?id=143404
+
+        Reviewed by Geoffrey Garen.
+
+        When we register symbolized StringImpl* into SymbolRegistry, symbolized StringImpl* is aware of that.
+        And when destructing it, it removes its reference from SymbolRegistry as if atomic StringImpl do so with AtomicStringTable.
+        While AtomicStringTable (in WebCore case) exists in thread local storage,
+        SymbolRegistry exists per VM and StringImpl* has a reference to the registered SymbolRegistry.
+
+        Since StringImpl has isSymbol etc. members, it's class is aware of Symbol use cases.
+        So introduce SymbolRegistry in WTF layers as if AtomicStringTable.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::addSlowCase):
+        (WTF::AtomicString::findSlowCase):
+        (WTF::AtomicString::findInternal):
+        (WTF::AtomicString::find): Deleted.
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::find):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+        (WTF::StringImpl::createSymbol):
+        (WTF::StringImpl::createSymbolEmpty):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::extractFoldedStringInSymbol):
+        (WTF::StringImpl::symbolRegistry):
+        (WTF::StringImpl::createSymbolEmpty): Deleted.
+        * wtf/text/SymbolRegistry.cpp: Copied from Source/JavaScriptCore/runtime/SymbolConstructor.h.
+        (WTF::SymbolRegistry::~SymbolRegistry):
+        (WTF::SymbolRegistry::symbolForKey):
+        (WTF::SymbolRegistry::keyForSymbol):
+        (WTF::SymbolRegistry::remove):
+        * wtf/text/SymbolRegistry.h: Added.
+        (WTF::SymbolRegistryKey::hash):
+        (WTF::SymbolRegistryKey::impl):
+        (WTF::SymbolRegistryKey::isHashTableDeletedValue):
+        (WTF::SymbolRegistryKey::hashTableDeletedValue):
+        (WTF::DefaultHash<SymbolRegistryKey>::Hash::hash):
+        (WTF::DefaultHash<SymbolRegistryKey>::Hash::equal):
+        (WTF::HashTraits<SymbolRegistryKey>::isEmptyValue):
+        (WTF::SymbolRegistryKey::SymbolRegistryKey):
+
 2015-04-16  Antti Koivisto  <antti@apple.com>
 
         Use CommonCrypto for SHA1 and MD5

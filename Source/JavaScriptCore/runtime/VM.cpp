@@ -87,13 +87,14 @@
 #include "UnlinkedCodeBlock.h"
 #include "WeakGCMapInlines.h"
 #include "WeakMapData.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/AtomicStringTable.h>
-#include <wtf/CurrentTime.h>
+#include <wtf/text/SymbolRegistry.h>
 
 #if ENABLE(DFG_JIT)
 #include "ConservativeRoots.h"

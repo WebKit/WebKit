@@ -74,6 +74,8 @@
 		2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0F118115C85004DBA70 /* RunLoop.cpp */; };
 		2CDED0F418115C85004DBA70 /* RunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CDED0F218115C85004DBA70 /* RunLoop.h */; };
 		430B47891AAAAC1A001223DA /* StringCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 430B47871AAAAC1A001223DA /* StringCommon.h */; };
+		70A993FE1AD7151300FA615B /* SymbolRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */; };
+		70A993FF1AD7151300FA615B /* SymbolRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 70A993FD1AD7151300FA615B /* SymbolRegistry.h */; };
 		7CBBA07419BB7FDC00BBF025 /* OSObjectPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */; };
 		7CDD7FF8186D291E007433CD /* IteratorAdaptors.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */; };
 		7CDD7FFA186D2A54007433CD /* IteratorRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CDD7FF9186D2A54007433CD /* IteratorRange.h */; };
@@ -362,6 +364,8 @@
 		5D247B7014689C4700E78B76 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		5D247B7314689C4700E78B76 /* WTF.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WTF.xcconfig; sourceTree = "<group>"; };
 		6541CAF41630DB26006D0DEC /* CopyWTFHeaders.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CopyWTFHeaders.xcconfig; sourceTree = "<group>"; };
+		70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolRegistry.cpp; sourceTree = "<group>"; };
+		70A993FD1AD7151300FA615B /* SymbolRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolRegistry.h; sourceTree = "<group>"; };
 		7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSObjectPtr.h; sourceTree = "<group>"; };
 		7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorAdaptors.h; sourceTree = "<group>"; };
 		7CDD7FF9186D2A54007433CD /* IteratorRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorRange.h; sourceTree = "<group>"; };
@@ -954,6 +958,8 @@
 				93F1993D19D7958D00C2390B /* StringView.cpp */,
 				A8A4732A151A825B004123FF /* StringOperators.h */,
 				A8A4732B151A825B004123FF /* StringStatics.cpp */,
+				70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */,
+				70A993FD1AD7151300FA615B /* SymbolRegistry.h */,
 				A8A4732C151A825B004123FF /* TextPosition.h */,
 				A8A4732D151A825B004123FF /* WTFString.cpp */,
 				A8A4732E151A825B004123FF /* WTFString.h */,
@@ -1127,6 +1133,7 @@
 				A8A473EE151A825B004123FF /* MetaAllocatorHandle.h in Headers */,
 				CE46516E19DB1FB4003ECA05 /* NSMapTableSPI.h in Headers */,
 				0F0D85B417234CC100338210 /* NoLock.h in Headers */,
+				70A993FF1AD7151300FA615B /* SymbolRegistry.h in Headers */,
 				A8A473EF151A825B004123FF /* Noncopyable.h in Headers */,
 				A8A473F5151A825B004123FF /* NumberOfCores.h in Headers */,
 				7E29C33E15FFD79B00516D61 /* ObjcRuntimeExtras.h in Headers */,
@@ -1378,6 +1385,7 @@
 				A5BA15FC182435A600A82E69 /* StringImplCF.cpp in Sources */,
 				A5BA15F51824348000A82E69 /* StringImplMac.mm in Sources */,
 				A5BA15F3182433A900A82E69 /* StringMac.mm in Sources */,
+				70A993FE1AD7151300FA615B /* SymbolRegistry.cpp in Sources */,
 				0FDDBFA71666DFA300C55FEF /* StringPrintStream.cpp in Sources */,
 				A8A47443151A825B004123FF /* StringStatics.cpp in Sources */,
 				93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */,

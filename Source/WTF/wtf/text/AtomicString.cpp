@@ -403,8 +403,11 @@ Ref<StringImpl> AtomicString::addSlowCase(StringImpl& string)
     if (!string.length())
         return *StringImpl::empty();
 
-    if (string.isSymbol())
-        return add(string.extractFoldedStringInSymbol());
+    if (string.isSymbol()) {
+        if (string.is8Bit())
+            return *add(string.characters8(), string.length());
+        return *add(string.characters16(), string.length());
+    }
 
     ASSERT_WITH_MESSAGE(!string.isAtomic(), "AtomicString should not hit the slow case if the string is already atomic.");
 
@@ -424,8 +427,11 @@ Ref<StringImpl> AtomicString::addSlowCase(AtomicStringTable& stringTable, String
     if (!string.length())
         return *StringImpl::empty();
 
-    if (string.isSymbol())
-        return add(stringTable, string.extractFoldedStringInSymbol());
+    if (string.isSymbol()) {
+        if (string.is8Bit())
+            return *add(string.characters8(), string.length());
+        return *add(string.characters16(), string.length());
+    }
 
     ASSERT_WITH_MESSAGE(!string.isAtomic(), "AtomicString should not hit the slow case if the string is already atomic.");
 
@@ -512,8 +518,11 @@ AtomicStringImpl* AtomicString::findSlowCase(StringImpl& string)
     if (!string.length())
         return static_cast<AtomicStringImpl*>(StringImpl::empty());
 
-    if (string.isSymbol())
-        return find(&string.extractFoldedStringInSymbol());
+    if (string.isSymbol()) {
+        if (string.is8Bit())
+            return findInternal(string.characters8(), string.length());
+        return findInternal(string.characters16(), string.length());
+    }
 
     AtomicStringTableLocker locker;
     HashSet<StringImpl*>& atomicStringTable = stringTable();
@@ -553,7 +562,7 @@ AtomicString AtomicString::number(double number)
     return String(numberToFixedPrecisionString(number, 6, buffer, true));
 }
 
-AtomicStringImpl* AtomicString::find(LChar* characters, unsigned length)
+AtomicStringImpl* AtomicString::findInternal(const LChar* characters, unsigned length)
 {
     AtomicStringTableLocker locker;
     auto& table = stringTable();
@@ -565,7 +574,7 @@ AtomicStringImpl* AtomicString::find(LChar* characters, unsigned length)
     return nullptr;
 }
 
-AtomicStringImpl* AtomicString::find(UChar* characters, unsigned length)
+AtomicStringImpl* AtomicString::findInternal(const UChar* characters, unsigned length)
 {
     AtomicStringTableLocker locker;
     auto& table = stringTable();
