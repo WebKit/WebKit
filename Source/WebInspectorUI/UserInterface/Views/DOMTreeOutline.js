@@ -58,7 +58,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         this._editing = false;
         this._visible = false;
 
-        this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
+        this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this));
 
         this._hideElementKeyboardShortcut = new WebInspector.KeyboardShortcut(null, "H", this._hideElement.bind(this), this.element);
         this._hideElementKeyboardShortcut.implicitlyPreventsDefault = false;

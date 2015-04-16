@@ -1,5 +1,34 @@
 2015-04-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: "Log Value" of a value inside of an array, does not log the innermost value
+        https://bugs.webkit.org/show_bug.cgi?id=143793
+
+        Reviewed by Brian Burg.
+
+        Context menu handlers were being handled in the capturing event phase, so
+        the outer most handler, instead of the inner most handler, was getting
+        first access. Change this so the events happen in the bubbling phase.
+
+        DOM Nodes may appear inside of Object Trees, for instance when shown
+        in a collection like an array or set. In an effort to standardize on
+        "inner most" behavior, change the DOMTreeOutline context handler
+        to also be in bubbling.
+
+        In the rare instances where a node object is in the console but
+        not displayed in an outline (console.dir(node)), then include a
+        Copy as HTML context menu like you would expect in a DOM tree.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline):
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WebInspector.GeneralTreeElement.prototype.onattach):
+        (WebInspector.GeneralTreeElement.prototype.ondetach):
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._appendMenusItemsForObject):
+        (WebInspector.ObjectTreeBaseTreeElement):
+
+2015-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Allow toggling the edibility of a DOMTreeOutline
         https://bugs.webkit.org/show_bug.cgi?id=143814
 
