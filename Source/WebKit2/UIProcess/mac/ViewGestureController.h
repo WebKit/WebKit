@@ -146,6 +146,7 @@ private:
     void trackSwipeGesture(NSEvent *, SwipeDirection);
     void beginSwipeGesture(WebBackForwardListItem* targetItem, SwipeDirection);
     void handleSwipeGesture(WebBackForwardListItem* targetItem, double progress, SwipeDirection);
+    void willEndSwipeGesture(WebBackForwardListItem& targetItem, bool cancelled);
     void endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled);
     bool deltaIsSufficientToBeginSwipe(NSEvent *);
     bool scrollEventCanBecomeSwipe(NSEvent *, SwipeDirection&);

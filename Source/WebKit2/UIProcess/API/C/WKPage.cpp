@@ -83,7 +83,7 @@ using namespace WebKit;
 
 namespace API {
 template<> struct ClientTraits<WKPageLoaderClientBase> {
-    typedef std::tuple<WKPageLoaderClientV0, WKPageLoaderClientV1, WKPageLoaderClientV2, WKPageLoaderClientV3, WKPageLoaderClientV4, WKPageLoaderClientV5> Versions;
+    typedef std::tuple<WKPageLoaderClientV0, WKPageLoaderClientV1, WKPageLoaderClientV2, WKPageLoaderClientV3, WKPageLoaderClientV4, WKPageLoaderClientV5, WKPageLoaderClientV6> Versions;
 };
 
 template<> struct ClientTraits<WKPageNavigationClientBase> {
@@ -1136,6 +1136,24 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
         virtual PassRefPtr<API::Data> webCryptoMasterKey(WebPageProxy& page) override
         {
             return page.process().processPool().client().copyWebCryptoMasterKey(&page.process().processPool());
+        }
+
+        virtual void navigationGestureDidBegin(WebPageProxy& page) override
+        {
+            if (m_client.navigationGestureDidBegin)
+                m_client.navigationGestureDidBegin(toAPI(&page), m_client.base.clientInfo);
+        }
+
+        virtual void navigationGestureWillEnd(WebPageProxy& page, bool willNavigate, WebBackForwardListItem& item) override
+        {
+            if (m_client.navigationGestureWillEnd)
+                m_client.navigationGestureWillEnd(toAPI(&page), willNavigate, toAPI(&item), m_client.base.clientInfo);
+        }
+
+        virtual void navigationGestureDidEnd(WebPageProxy& page, bool willNavigate, WebBackForwardListItem& item) override
+        {
+            if (m_client.navigationGestureDidEnd)
+                m_client.navigationGestureDidEnd(toAPI(&page), willNavigate, toAPI(&item), m_client.base.clientInfo);
         }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

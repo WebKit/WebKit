@@ -1,3 +1,39 @@
+2015-04-16  Timothy Horton  <timothy_horton@apple.com>
+
+        Provide a mechanism through the legacy SPI to know when swipe gestures begin and end
+        https://bugs.webkit.org/show_bug.cgi?id=143740
+        <rdar://problem/20468540>
+
+        Reviewed by Dan Bernstein.
+
+        In the C SPI, add three WKPageLoaderClient callbacks for the three
+        navigation gesture events (did begin, will end, did end).
+
+        * UIProcess/API/C/WKPageLoaderClient.h:
+        Add the callbacks.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::navigationGestureDidBegin):
+        (API::LoaderClient::navigationGestureWillEnd):
+        (API::LoaderClient::navigationGestureDidEnd):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::navigationGestureDidBegin):
+        (WebKit::WebPageProxy::navigationGestureWillEnd):
+        (WebKit::WebPageProxy::navigationGestureDidEnd):
+        Dispatch navigation gesture events to the loader client as well as
+        (after a bounce through the PageClient) the navigation delegate.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        Call the callbacks.
+
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::trackSwipeGesture):
+        (WebKit::ViewGestureController::willEndSwipeGesture):
+        While we were already informing WebPageProxy of 'did begin' and 'did end'
+        navigation gesture events, we were missing 'will end'. Add it.
+
 2015-04-16  Tim Horton  <timothy_horton@apple.com>
 
         Dispatching multiple asynchronous animated resizes in parallel causes page scale to detach from reality

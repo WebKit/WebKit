@@ -417,9 +417,16 @@ void ViewGestureController::trackSwipeGesture(NSEvent *event, SwipeDirection dir
         this->handleSwipeGesture(targetItem.get(), clampedProgress, direction);
         if (phase == NSEventPhaseCancelled)
             swipeCancelled = true;
+        if (phase == NSEventPhaseEnded || phase == NSEventPhaseCancelled)
+            this->willEndSwipeGesture(*targetItem, swipeCancelled);
         if (isComplete)
             this->endSwipeGesture(targetItem.get(), swipeCancelled);
     }];
+}
+
+void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetItem, bool cancelled)
+{
+    m_webPageProxy.navigationGestureWillEnd(!cancelled, targetItem);
 }
 
 FloatRect ViewGestureController::windowRelativeBoundsForCustomSwipeViews() const

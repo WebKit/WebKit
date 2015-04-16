@@ -5618,16 +5618,19 @@ void WebPageProxy::navigationGestureDidBegin()
 {
     m_isShowingNavigationGestureSnapshot = true;
     m_pageClient.navigationGestureDidBegin();
+    m_loaderClient->navigationGestureDidBegin(*this);
 }
 
 void WebPageProxy::navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem& item)
 {
     m_pageClient.navigationGestureWillEnd(willNavigate, item);
+    m_loaderClient->navigationGestureWillEnd(*this, willNavigate, item);
 }
 
 void WebPageProxy::navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem& item)
 {
     m_pageClient.navigationGestureDidEnd(willNavigate, item);
+    m_loaderClient->navigationGestureDidEnd(*this, willNavigate, item);
 }
 
 void WebPageProxy::willRecordNavigationSnapshot(WebBackForwardListItem& item)
