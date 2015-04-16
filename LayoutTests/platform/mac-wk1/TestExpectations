@@ -94,5 +94,10 @@ compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
 # Disk cache is WK2 only
 http/tests/cache/disk-cache
 
+# There is not yet support for force events in WK1.
+fast/events/mouse-force-changed.html [ Skip ]
+fast/events/mouse-force-down.html [ Skip ]
+fast/events/mouse-force-up.html [ Skip ]
+
 ### END OF (2) Failures without bug reports
 ########################################
