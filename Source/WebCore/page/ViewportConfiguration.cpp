@@ -119,7 +119,7 @@ bool ViewportConfiguration::shouldIgnoreVerticalScalingConstraints() const
         return false;
 
     bool laidOutTallerThanViewport = m_contentSize.height() > layoutHeight();
-    if (m_viewportArguments.height == ViewportArguments::ValueDeviceHeight)
+    if (m_viewportArguments.height == ViewportArguments::ValueDeviceHeight && m_viewportArguments.width == ViewportArguments::ValueAuto)
         return laidOutTallerThanViewport;
 
     return false;
