@@ -244,9 +244,17 @@ bool Element::shouldUseInputMethod()
     return computeEditability(UserSelectAllIsAlwaysNonEditable, ShouldUpdateStyle::Update) != Editability::ReadOnly;
 }
 
+static bool isForceEvent(const PlatformMouseEvent& platformEvent)
+{
+    return platformEvent.type() == PlatformEvent::MouseForceChanged || platformEvent.type() == PlatformEvent::MouseForceDown || platformEvent.type() == PlatformEvent::MouseForceUp;
+}
+
 bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomicString& eventType, int detail, Element* relatedTarget)
 {
     if (isDisabledFormControl())
+        return false;
+
+    if (isForceEvent(platformEvent) && !document().hasListenerTypeForEventType(platformEvent.type()))
         return false;
 
     RefPtr<MouseEvent> mouseEvent = MouseEvent::create(eventType, document().defaultView(), platformEvent, detail, relatedTarget);
@@ -2253,54 +2261,6 @@ bool Element::dispatchMouseForceWillBegin()
     return false;
 }
 
-void Element::dispatchMouseForceChanged(float force)
-{
-    if (!document().hasListenerType(Document::FORCECHANGED_LISTENER))
-        return;
-
-    Frame* frame = document().frame();
-    if (!frame)
-        return;
-
-    PlatformMouseEvent platformMouseEvent(frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), NoButton, PlatformEvent::NoType, 1, false, false, false, false, WTF::currentTime(), force);
-    RefPtr<MouseEvent> mouseForceChangedEvent =  MouseEvent::create(eventNames().webkitmouseforcechangedEvent, document().defaultView(), platformMouseEvent, 0, nullptr);
-
-    mouseForceChangedEvent->setTarget(this);
-    dispatchEvent(mouseForceChangedEvent);
-}
-
-void Element::dispatchMouseForceDown()
-{
-    if (!document().hasListenerType(Document::FORCEDOWN_LISTENER))
-        return;
-
-    Frame* frame = document().frame();
-    if (!frame)
-        return;
-
-    PlatformMouseEvent platformMouseEvent(frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), NoButton, PlatformEvent::NoType, 1, false, false, false, false, WTF::currentTime(), ForceAtForceClick);
-    RefPtr<MouseEvent> mouseForceDownEvent =  MouseEvent::create(eventNames().webkitmouseforcedownEvent, document().defaultView(), platformMouseEvent, 0, nullptr);
-
-    mouseForceDownEvent->setTarget(this);
-    dispatchEvent(mouseForceDownEvent);
-}
-
-void Element::dispatchMouseForceUp()
-{
-    if (!document().hasListenerType(Document::FORCEUP_LISTENER))
-        return;
-
-    Frame* frame = document().frame();
-    if (!frame)
-        return;
-
-    PlatformMouseEvent platformMouseEvent(frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), NoButton, PlatformEvent::NoType, 1, false, false, false, false, WTF::currentTime(), ForceAtForceClick);
-    RefPtr<MouseEvent> mouseForceUpEvent =  MouseEvent::create(eventNames().webkitmouseforceupEvent, document().defaultView(), platformMouseEvent, 0, nullptr);
-
-    mouseForceUpEvent->setTarget(this);
-    dispatchEvent(mouseForceUpEvent);
-}
-
 void Element::dispatchMouseForceClick()
 {
     if (!document().hasListenerType(Document::FORCECLICK_LISTENER))
@@ -2338,18 +2298,6 @@ void Element::dispatchMouseForceCancelled()
 bool Element::dispatchMouseForceWillBegin()
 {
     return false;
-}
-
-void Element::dispatchMouseForceChanged(float)
-{
-}
-
-void Element::dispatchMouseForceDown()
-{
-}
-
-void Element::dispatchMouseForceUp()
-{
 }
 
 void Element::dispatchMouseForceClick()

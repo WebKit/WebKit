@@ -1903,6 +1903,12 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page, boo
             if (onlyUpdateScrollbars)
                 return page->corePage()->userInputBridge().handleMouseMoveOnScrollbarEvent(platformMouseEvent);
             return page->corePage()->userInputBridge().handleMouseMoveEvent(platformMouseEvent);
+
+        case PlatformEvent::MouseForceChanged:
+        case PlatformEvent::MouseForceDown:
+        case PlatformEvent::MouseForceUp:
+            return page->corePage()->userInputBridge().handleMouseForceEvent(platformMouseEvent);
+
         default:
             ASSERT_NOT_REACHED();
             return false;

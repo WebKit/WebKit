@@ -1,3 +1,62 @@
+2015-04-16  Beth Dakin  <bdakin@apple.com>
+
+        Force mouse events should go through normal mouse event handling code paths
+        https://bugs.webkit.org/show_bug.cgi?id=143749
+        -and corresponding-
+        rdar://problem/20472895
+
+        Reviewed by Dean Jackson.
+
+        This patch makes pressureChangeWithEvent create NativeWebMouseEvents with the 
+        NSEventTypePressures that is gets and sends those down to the web process.
+
+        Re-name pressureEvent to lastPressureEvent. Now that event can sometimes be an 
+        NSEventTypePressure, the new name makes it clear how the second parameter differs 
+        from the first.
+        * Shared/NativeWebMouseEvent.h:
+
+        New event types for the new types of events.
+        * Shared/WebEvent.h:
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
+        * Shared/mac/NativeWebMouseEventMac.mm:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * Shared/mac/WebEventFactory.h:
+
+        All of the square-peg, round-hole problems of massaging the NSEventTypePressures 
+        events into WebMouseEvents is taken care of here.
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::mouseButtonForEvent):
+        (WebKit::globalPointForEvent):
+        (WebKit::pointForEvent):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+
+        Instead of calling the old inputDeviceForceDidChange, create a NativeWebMouseEvent 
+        and handle it.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView pressureChangeWithEvent:]):
+
+        Handle the new types.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent):
+
+        Can delete inputDeviceForceDidChange since it’s no longer used.
+        (WebKit::WebPageProxy::inputDeviceForceDidChange): Deleted.
+        * UIProcess/WebPageProxy.h:
+
+        Handle the new types of mouse events properly.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleMouseEvent):
+
+        Delete inputDeviceForceDidChange() and m_lastForceStage.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::inputDeviceForceDidChange): Deleted.
+
+        Handle new WebEvent types.
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+
 2015-04-16  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/20575744> Also include a definition of __NSd_{current deployment target} in WKFoundation.h.

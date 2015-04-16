@@ -1,2 +1,7 @@
 # https://bugs.webkit.org/show_bug.cgi?id=143258
 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html
+
+# No support for force events
+fast/events/mouse-force-changed.html [ Skip ]
+fast/events/mouse-force-down.html [ Skip ]
+fast/events/mouse-force-up.html [ Skip ]
