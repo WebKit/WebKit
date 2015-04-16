@@ -35,7 +35,7 @@ use File::Spec::Functions;
 use Getopt::Long;
 
 my $srcRoot = realpath(File::Spec->catfile(dirname(abs_path($0)), "../.."));
-my @platformPrefixes = ("cf", "Cocoa", "CoordinatedGraphics", "curl", "efl", "gtk", "mac", "soup", "win");
+my @platformPrefixes = ("ca", "cf", "cocoa", "Cocoa", "CoordinatedGraphics", "curl", "efl", "gtk", "ios", "mac", "soup", "win");
 my @frameworks = ("JavaScriptCore", "WebCore", "WebKit");
 my @skippedPrefixes;
 my @frameworkHeaders;
@@ -74,7 +74,7 @@ foreach (@frameworks) {
 sub collectNeededHeaders {
     my $filePath = $File::Find::name;
     my $file = $_;
-    if ($filePath =~ '\.h$|\.cpp$|\.c$|\.mm$') {
+    if ($filePath =~ '\.h$|\.cpp$|\.c$') {
         open(FILE, "<$file") or die "Could not open $filePath.\n";
         while (<FILE>) {
            if (m/^#.*<$framework\/(.*\.h)/) {
