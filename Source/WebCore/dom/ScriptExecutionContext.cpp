@@ -227,6 +227,7 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForS
     // functions should not add new active DOM objects, nor execute arbitrary JavaScript.
     // An ASSERT or RELEASE_ASSERT will fire if this happens, but it's important to code
     // suspend functions so it will not happen!
+    NoEventDispatchAssertion assertNoEventDispatch;
     for (auto* activeDOMObject : m_activeDOMObjects)
         activeDOMObject->suspend(why);
 
@@ -256,6 +257,7 @@ void ScriptExecutionContext::resumeActiveDOMObjects(ActiveDOMObject::ReasonForSu
     // functions should not add new active DOM objects, nor execute arbitrary JavaScript.
     // An ASSERT or RELEASE_ASSERT will fire if this happens, but it's important to code
     // resume functions so it will not happen!
+    NoEventDispatchAssertion assertNoEventDispatch;
     for (auto* activeDOMObject : m_activeDOMObjects)
         activeDOMObject->resume();
 
@@ -283,6 +285,7 @@ void ScriptExecutionContext::stopActiveDOMObjects()
     // stop functions should not add new active DOM objects, nor execute arbitrary JavaScript.
     // A RELEASE_ASSERT will fire if this happens, but it's important to code stop functions
     // so it will not happen!
+    NoEventDispatchAssertion assertNoEventDispatch;
     for (auto* activeDOMObject : possibleActiveDOMObjects) {
         // Check if this object was deleted already. If so, just skip it.
         // Calling contains on a possibly-already-deleted object is OK because we guarantee

@@ -1265,8 +1265,6 @@ const char* XMLHttpRequest::activeDOMObjectName() const
 
 void XMLHttpRequest::suspend(ReasonForSuspension reason)
 {
-    NoEventDispatchAssertion assertNoEventDispatch;
-
     m_progressEventThrottle.suspend();
 
     if (m_resumeTimer.isActive()) {
@@ -1287,8 +1285,6 @@ void XMLHttpRequest::suspend(ReasonForSuspension reason)
 
 void XMLHttpRequest::resume()
 {
-    NoEventDispatchAssertion assertNoEventDispatch;
-
     m_progressEventThrottle.resume();
 
     // We are not allowed to execute arbitrary JS in resume() so dispatch
@@ -1306,7 +1302,6 @@ void XMLHttpRequest::resumeTimerFired()
 
 void XMLHttpRequest::stop()
 {
-    NoEventDispatchAssertion assertNoEventDispatch;
     internalAbort();
 }
 

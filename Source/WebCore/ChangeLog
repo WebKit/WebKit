@@ -1,3 +1,28 @@
+2015-04-16  Chris Dumez  <cdumez@apple.com>
+
+        Add assertions to make sure ActiveDOMObject::suspend() / resume() / stop() overrides don't fire events
+        https://bugs.webkit.org/show_bug.cgi?id=143850
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add assertions to make sure ActiveDOMObject::suspend() / resume() / stop()
+        overrides don't fire events as this is not allowed. This would cause
+        arbitrary JS execution which would be very dangerous in these stages.
+
+        Firing JS events from these functions is a common source of crashes.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::suspend):
+        (WebCore::WebSocket::resume):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::stopActiveDOMObjects):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::suspend):
+        (WebCore::XMLHttpRequest::resume):
+        (WebCore::XMLHttpRequest::stop):
+
 2015-04-16  Brady Eidson  <beidson@apple.com>
 
         Media element can manipulate DOM during Document destruction.

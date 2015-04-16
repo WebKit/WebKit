@@ -468,8 +468,6 @@ bool WebSocket::canSuspendForPageCache() const
 
 void WebSocket::suspend(ReasonForSuspension reason)
 {
-    NoEventDispatchAssertion assertNoEventDispatch;
-
     if (m_resumeTimer.isActive())
         m_resumeTimer.stop();
 
@@ -486,8 +484,6 @@ void WebSocket::suspend(ReasonForSuspension reason)
 
 void WebSocket::resume()
 {
-    NoEventDispatchAssertion assertNoEventDispatch;
-
     if (m_channel)
         m_channel->resume();
     else if (!m_pendingEvents.isEmpty() && !m_resumeTimer.isActive()) {
