@@ -57,6 +57,7 @@ video:-webkit-full-page-media::-webkit-media-controls-panel.no-video {
     -webkit-justify-content: flex-end;
     -webkit-flex-direction: column;
     font: -webkit-small-control;
+    white-space: nowrap;
     -webkit-font-smoothing: subpixel-antialiased;
 }
 
@@ -485,6 +486,7 @@ audio::-webkit-media-controls-time-remaining-display {
     position: relative;
     bottom: 0.5px;
     font-family: -apple-system-font-monospaced-numbers;
+    -webkit-text-size-adjust:none;
     mix-blend-mode: plus-lighter;
 }
 
@@ -500,13 +502,13 @@ video::-webkit-media-controls-time-remaining-display,
 audio::-webkit-media-controls-time-remaining-display {
     margin-left: 8px;
     margin-right: 16px;
-    width: 36px;
-    min-width: 36px;
+    width: 37px;
+    min-width: 37px;
 }
 
 video::-webkit-media-controls-time-remaining-display.five-digit-time,
 audio::-webkit-media-controls-time-remaining-display.five-digit-time {
-    min-width: 46px;
+    min-width: 47px;
 }
 
 video::-webkit-media-controls-current-time-display.five-digit-time,
@@ -516,7 +518,7 @@ audio::-webkit-media-controls-current-time-display.five-digit-time {
 
 video::-webkit-media-controls-time-remaining-display.six-digit-time,
 audio::-webkit-media-controls-time-remaining-display.six-digit-time {
-    min-width: 53px;
+    min-width: 54px;
 }
 
 video::-webkit-media-controls-current-time-display.six-digit-time,

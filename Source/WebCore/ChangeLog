@@ -1,3 +1,17 @@
+2015-04-16  Roger Fong  <roger_fong@apple.com>
+
+        Media element time displays shouldn't wrap.
+        https://bugs.webkit.org/show_bug.cgi?id=143854.
+        <rdar://problem/20284766>
+
+        Reviewed by Brent Fulgham.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (::-webkit-media-controls): Don't wrap any text.
+        (audio::-webkit-media-controls-time-remaining-display): Also increase remaining time display width by 1.
+        (audio::-webkit-media-controls-time-remaining-display.five-digit-time): Ditto.
+        (audio::-webkit-media-controls-time-remaining-display.six-digit-time): Ditto.
+
 2015-04-16  Chris Dumez  <cdumez@apple.com>
 
         Add assertions to make sure ActiveDOMObject::suspend() / resume() / stop() overrides don't fire events
