@@ -163,9 +163,6 @@
     <ClCompile Include="..\Tests\WebCore\CSSParser.cpp">
       <Filter>Tests\WebCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\Tests\JavaScriptCore\VMInspector.cpp">
-      <Filter>Tests\JavaScriptCore</Filter>
-    </ClCompile>
     <ClCompile Include="..\Tests\WTF\WorkQueue.cpp">
       <Filter>Tests\WTF</Filter>
     </ClCompile>

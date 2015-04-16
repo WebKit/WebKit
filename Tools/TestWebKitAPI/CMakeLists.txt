@@ -169,7 +169,6 @@ set_tests_properties(TestWTF PROPERTIES TIMEOUT 60)
 add_executable(TestJavaScriptCore
     ${test_main_SOURCES}
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/JavaScriptCore/VMInspector.cpp
 )
 
 target_link_libraries(TestJavaScriptCore ${TestJavaScriptCore_LIBRARIES})

@@ -310,7 +310,6 @@ namespace JSC  {
         const CallerFrameAndPC& callerFrameAndPC() const { return *reinterpret_cast<const CallerFrameAndPC*>(this); }
 
         friend class JSStack;
-        friend class VMInspector;
     };
 
 } // namespace JSC

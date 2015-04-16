@@ -363,9 +363,6 @@
     <ClCompile Include="..\interpreter\StackVisitor.cpp">
       <Filter>interpreter</Filter>
     </ClCompile>
-    <ClCompile Include="..\interpreter\VMInspector.cpp">
-      <Filter>interpreter</Filter>
-    </ClCompile>
     <ClCompile Include="..\jit\ExecutableAllocator.cpp">
       <Filter>jit</Filter>
     </ClCompile>
@@ -2316,9 +2313,6 @@
       <Filter>interpreter</Filter>
     </ClInclude>
     <ClInclude Include="..\interpreter\StackVisitor.h">
-      <Filter>interpreter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\interpreter\VMInspector.h">
       <Filter>interpreter</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\CompactJITCodeMap.h">

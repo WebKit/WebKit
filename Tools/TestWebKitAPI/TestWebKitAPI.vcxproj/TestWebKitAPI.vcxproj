@@ -291,7 +291,6 @@
   <ItemGroup>
     <ClCompile Include="..\Counters.cpp" />
     <ClCompile Include="..\TestsController.cpp" />
-    <ClCompile Include="..\Tests\JavaScriptCore\VMInspector.cpp" />
     <ClCompile Include="..\Tests\WebCore\CalculationValue.cpp" />
     <ClCompile Include="..\Tests\WebCore\CSSParser.cpp" />
     <ClCompile Include="..\Tests\WebCore\LayoutUnit.cpp" />

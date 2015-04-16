@@ -322,7 +322,6 @@ set(JavaScriptCore_SOURCES
     interpreter/JSStack.cpp
     interpreter/ProtoCallFrame.cpp
     interpreter/StackVisitor.cpp
-    interpreter/VMInspector.cpp
 
     jit/AccessorCallJITStubRoutine.cpp
     jit/AssemblyHelpers.cpp

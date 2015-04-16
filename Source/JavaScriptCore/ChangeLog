@@ -1,3 +1,23 @@
+2015-04-15  Mark Lam  <mark.lam@apple.com>
+
+        Remove obsolete VMInspector debugging tool.
+        https://bugs.webkit.org/show_bug.cgi?id=143798
+
+        Reviewed by Michael Saboff.
+
+        I added the VMInspector tool 3 years ago to aid in VM hacking work.  Some of it
+        has bit rotted, and now the VM also has better ways to achieve its functionality.
+        Hence this code is now obsolete and should be removed.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/CallFrame.h:
+        * interpreter/VMInspector.cpp: Removed.
+        * interpreter/VMInspector.h: Removed.
+        * llint/LowLevelInterpreter.cpp:
+
 2015-04-15  Jordan Harband  <ljharb@gmail.com>
 
         Math.imul has wrong length in Safari 8.0.4

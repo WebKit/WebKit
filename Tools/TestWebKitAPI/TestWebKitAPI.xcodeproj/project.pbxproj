@@ -82,7 +82,6 @@
 		7CCE7EAE1A411A3400447C4C /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
 		7CCE7EAF1A411A3800447C4C /* PlatformUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */; };
 		7CCE7EB01A411A4400447C4C /* URLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A7EB3C18FA63A4009E7670 /* URLExtras.mm */; };
-		7CCE7EB11A411A4B00447C4C /* VMInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE217ECC1640A54A0052988B /* VMInspector.cpp */; };
 		7CCE7EB21A411A5100447C4C /* MemoryCacheAddImageToCacheIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */; };
 		7CCE7EB31A411A7E00447C4C /* AcceptsFirstMouse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 379028B514FABD92007E6B43 /* AcceptsFirstMouse.mm */; };
 		7CCE7EB41A411A7E00447C4C /* AttributedString.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55F119F1516834F00915916 /* AttributedString.mm */; };
@@ -715,7 +714,6 @@
 		F6F49C6715545C8D0007F39D /* DOMWindowExtensionNoCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionNoCache.cpp; sourceTree = "<group>"; };
 		F6FDDDD214241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateBrowsingPushStateNoHistoryCallback.cpp; sourceTree = "<group>"; };
 		F6FDDDD514241C48004F1729 /* push-state.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "push-state.html"; sourceTree = "<group>"; };
-		FE217ECC1640A54A0052988B /* VMInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMInspector.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1280,7 +1278,6 @@
 		FE217ECB1640A54A0052988B /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
-				FE217ECC1640A54A0052988B /* VMInspector.cpp */,
 			);
 			path = JavaScriptCore;
 			sourceTree = "<group>";
@@ -1548,7 +1545,6 @@
 				7CCE7F171A411AE600447C4C /* UserMedia.cpp in Sources */,
 				7CCE7F181A411AE600447C4C /* UserMessage.cpp in Sources */,
 				7CCE7F4A1A411B8E00447C4C /* Vector.cpp in Sources */,
-				7CCE7EB11A411A4B00447C4C /* VMInspector.cpp in Sources */,
 				0F139E771A423A5B00F590F5 /* WeakObjCPtr.mm in Sources */,
 				7CCE7F191A411AE600447C4C /* WebArchive.cpp in Sources */,
 				7CCE7F1A1A411AE600447C4C /* WebCoreStatisticsWithNoWebProcess.cpp in Sources */,
