@@ -31,9 +31,11 @@
 #import "PoseAsClass.h"
 #import "TestInvocation.h"
 #import "WebKitTestRunnerPasteboard.h"
+#import <WebKit/WKPageGroup.h>
 #import <WebKit/WKStringCF.h>
 #import <WebKit/WKURLCF.h>
-#import <WebKit/WKUserContentFilterRef.h>
+#import <WebKit/_WKUserContentExtensionStore.h>
+#import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <mach-o/dyld.h>
 
 @interface NSSound (Details)
@@ -82,6 +84,7 @@ static bool shouldUseThreadedScrolling(const TestInvocation& test)
 
 void TestController::platformResetPreferencesToConsistentValues()
 {
+    [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)
@@ -107,12 +110,15 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
     NSString *contentExtensionString = [NSString stringWithContentsOfURL:filterURL usedEncoding:&encoding error:NULL];
     if (!contentExtensionString)
         return;
-
-    WKRetainPtr<WKStringRef> name = adoptWK(WKStringCreateWithUTF8CString("TestContentExtensions"));
-    WKRetainPtr<WKStringRef> contentExtensionStringWK = adoptWK(WKStringCreateWithCFString((CFStringRef)contentExtensionString));
-    WKRetainPtr<WKUserContentFilterRef> filter = adoptWK(WKUserContentFilterCreate(name.get(), contentExtensionStringWK.get()));
-
-    WKPageGroupAddUserContentFilter(WKPageGetPageGroup(TestController::singleton().mainWebView()->page()), filter.get());
+    
+    __block bool done = false;
+    [[_WKUserContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"TestContentExtensions" encodedContentExtension:contentExtensionString completionHandler:^(_WKUserContentFilter *filter, NSError *error)
+    {
+        if (!error)
+            WKPageGroupAddUserContentFilter(WKPageGetPageGroup(TestController::singleton().mainWebView()->page()), (__bridge WKUserContentFilterRef)filter);
+        done = true;
+    }];
+    platformRunUntil(done, 0);
 }
 
 void TestController::platformRunUntil(bool& done, double timeout)

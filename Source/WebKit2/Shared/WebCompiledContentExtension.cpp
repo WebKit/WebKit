@@ -30,34 +30,6 @@
 
 namespace WebKit {
 
-LegacyContentExtensionCompilationClient::LegacyContentExtensionCompilationClient(WebCore::ContentExtensions::CompiledContentExtensionData& data)
-    : m_data(data)
-{
-}
-
-void LegacyContentExtensionCompilationClient::writeBytecode(Vector<WebCore::ContentExtensions::DFABytecode>&& bytecode)
-{
-    m_data.bytecode = WTF::move(bytecode);
-}
-
-void LegacyContentExtensionCompilationClient::writeActions(Vector<WebCore::ContentExtensions::SerializedActionByte>&& actions)
-{
-    m_data.actions = WTF::move(actions);
-}
-
-
-Ref<WebCompiledContentExtension> WebCompiledContentExtension::createFromCompiledContentExtensionData(const WebCore::ContentExtensions::CompiledContentExtensionData& compilerData)
-{
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(compilerData.bytecode.size() + compilerData.actions.size());
-    memcpy(static_cast<char*>(sharedMemory->data()), compilerData.actions.data(), compilerData.actions.size());
-    memcpy(static_cast<char*>(sharedMemory->data()) + compilerData.actions.size(), compilerData.bytecode.data(), compilerData.bytecode.size());
-
-    NetworkCache::Data fileData; // We don't have an mmap'd file to keep alive here, so just use an empty Data object.
-    WebCompiledContentExtensionData data(WTF::move(sharedMemory), fileData, 0, compilerData.actions.size(), compilerData.actions.size(), compilerData.bytecode.size());
-
-    return create(WTF::move(data));
-}
-
 Ref<WebCompiledContentExtension> WebCompiledContentExtension::create(WebCompiledContentExtensionData&& data)
 {
     return adoptRef(*new WebCompiledContentExtension(WTF::move(data)));

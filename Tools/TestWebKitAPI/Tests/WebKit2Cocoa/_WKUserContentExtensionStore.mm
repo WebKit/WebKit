@@ -31,7 +31,6 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
-#import <WebKit/_WKUserContentFilter.h>
 #import <wtf/RetainPtr.h>
 
 class _WKUserContentExtensionStoreTest : public testing::Test {

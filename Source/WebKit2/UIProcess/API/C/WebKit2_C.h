@@ -59,7 +59,6 @@
 #include <WebKit/WKURLRequest.h>
 #include <WebKit/WKURLResponse.h>
 #include <WebKit/WKUserContentControllerRef.h>
-#include <WebKit/WKUserContentFilterRef.h>
 #include <WebKit/WKUserMediaPermissionRequest.h>
 #include <WebKit/WKUserScriptRef.h>
 

@@ -1,3 +1,24 @@
+2015-04-16  Alex Christensen  <achristensen@webkit.org>
+
+        Removed unused WKUserContentFilterRef.
+        https://bugs.webkit.org/show_bug.cgi?id=143852
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebCompiledContentExtension.cpp:
+        (WebKit::LegacyContentExtensionCompilationClient::LegacyContentExtensionCompilationClient): Deleted.
+        (WebKit::LegacyContentExtensionCompilationClient::writeBytecode): Deleted.
+        (WebKit::LegacyContentExtensionCompilationClient::writeActions): Deleted.
+        (WebKit::WebCompiledContentExtension::createFromCompiledContentExtensionData): Deleted.
+        * Shared/WebCompiledContentExtension.h:
+        * UIProcess/API/C/WKUserContentFilterRef.cpp: Removed.
+        * UIProcess/API/C/WKUserContentFilterRef.h: Removed.
+        * UIProcess/API/C/WebKit2_C.h:
+        * UIProcess/API/Cocoa/_WKUserContentFilter.h:
+        * UIProcess/API/Cocoa/_WKUserContentFilter.mm:
+        (-[_WKUserContentFilter initWithName:serializedRules:]): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-04-16  Beth Dakin  <bdakin@apple.com>
 
         Rubber-stamped by Tim Horton.

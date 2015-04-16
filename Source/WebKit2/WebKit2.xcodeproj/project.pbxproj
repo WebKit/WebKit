@@ -1143,8 +1143,6 @@
 		7C89D2B91A6B0F2C003A5FDE /* _WKUserContentFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C89D2B71A6B0F2C003A5FDE /* _WKUserContentFilter.mm */; };
 		7C89D2BA1A6B0F2C003A5FDE /* _WKUserContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C89D2B81A6B0F2C003A5FDE /* _WKUserContentFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C89D2BC1A6B0F5B003A5FDE /* _WKUserContentFilterInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C89D2BB1A6B0F5B003A5FDE /* _WKUserContentFilterInternal.h */; };
-		7C89D2BF1A6B11EF003A5FDE /* WKUserContentFilterRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C89D2BD1A6B11EF003A5FDE /* WKUserContentFilterRef.cpp */; };
-		7C89D2C01A6B11EF003A5FDE /* WKUserContentFilterRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C89D2BE1A6B11EF003A5FDE /* WKUserContentFilterRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C89D2D71A6C6BE6003A5FDE /* _WKProcessPoolConfigurationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C89D2D61A6C6BE6003A5FDE /* _WKProcessPoolConfigurationInternal.h */; };
 		7C8EB11718DB6A19007917C2 /* WKPreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8EB11618DB6A19007917C2 /* WKPreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C9D1537184584DA009D3918 /* WKBrowsingContextGroupInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9D1536184584DA009D3918 /* WKBrowsingContextGroupInternal.h */; };
@@ -3368,8 +3366,6 @@
 		7C89D2B71A6B0F2C003A5FDE /* _WKUserContentFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKUserContentFilter.mm; sourceTree = "<group>"; };
 		7C89D2B81A6B0F2C003A5FDE /* _WKUserContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentFilter.h; sourceTree = "<group>"; };
 		7C89D2BB1A6B0F5B003A5FDE /* _WKUserContentFilterInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentFilterInternal.h; sourceTree = "<group>"; };
-		7C89D2BD1A6B11EF003A5FDE /* WKUserContentFilterRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserContentFilterRef.cpp; sourceTree = "<group>"; };
-		7C89D2BE1A6B11EF003A5FDE /* WKUserContentFilterRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentFilterRef.h; sourceTree = "<group>"; };
 		7C89D2D61A6C6BE6003A5FDE /* _WKProcessPoolConfigurationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKProcessPoolConfigurationInternal.h; sourceTree = "<group>"; };
 		7C8EB11618DB6A19007917C2 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
 		7C9D1536184584DA009D3918 /* WKBrowsingContextGroupInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextGroupInternal.h; sourceTree = "<group>"; };
@@ -6471,8 +6467,6 @@
 				7C89D29E1A678554003A5FDE /* WKUserContentControllerRef.h */,
 				7C2413061AACFCB400A58C15 /* WKUserContentExtensionStoreRef.cpp */,
 				7C2413071AACFCB400A58C15 /* WKUserContentExtensionStoreRef.h */,
-				7C89D2BD1A6B11EF003A5FDE /* WKUserContentFilterRef.cpp */,
-				7C89D2BE1A6B11EF003A5FDE /* WKUserContentFilterRef.h */,
 				4A410F3519AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.cpp */,
 				4A410F3619AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.h */,
 				7C89D2A11A678875003A5FDE /* WKUserScriptRef.cpp */,

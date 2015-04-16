@@ -30,8 +30,6 @@
 WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 @interface _WKUserContentFilter : NSObject
 
-- (instancetype)initWithName:(NSString *)name serializedRules:(NSString *)serializedRules;
-
 @end
 
 #endif // WK_API_ENABLED

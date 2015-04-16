@@ -1,3 +1,15 @@
+2015-04-16  Alex Christensen  <achristensen@webkit.org>
+
+        Removed unused WKUserContentFilterRef.
+        https://bugs.webkit.org/show_bug.cgi?id=143852
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/_WKUserContentExtensionStore.mm:
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+        (WTR::TestController::platformConfigureViewForTest):
+
 2015-04-16  Jake Nielsen  <jacob_nielsen@apple.com>
 
         Unreviewed. Adding myself as a commiter in contributers.json.
