@@ -1174,6 +1174,12 @@
             "jaepark"
          ]
       },
+      "Jake Nielsen" : {
+         "emails" : [
+            "jake.nielsen.webkit@gmail.com",
+            "jacob_nielsen@gmail.com"
+         ]
+      },
       "Jakob Petsovits" : {
          "emails" : [
             "jpetsovits@blackberry.com",
@@ -3176,11 +3182,6 @@
          ],
          "nicks" : [
             "hixie"
-         ]
-      },
-      "Jake Nielsen" : {
-         "emails" : [
-            "jake.nielsen.webkit@gmail.com"
          ]
       },
       "Jeff Timanus" : {

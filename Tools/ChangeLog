@@ -1,3 +1,9 @@
+2015-04-16  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        Unreviewed. Adding myself as a commiter in contributers.json.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-04-16  Alexey Proskuryakov  <ap@apple.com>
 
         It is very hard to attach a debugger to WebProcess to debug tests
