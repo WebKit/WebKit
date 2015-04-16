@@ -588,9 +588,9 @@ void WebPage::completeSyntheticClick(Node* nodeRespondingToClick, const WebCore:
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(location)));
 }
 
-void WebPage::handleTap(const IntPoint& point, uint64_t lastLayerTreeTranscationId)
+void WebPage::handleTap(const IntPoint& point, uint64_t lastLayerTreeTransactionId)
 {
-    if (lastLayerTreeTranscationId < m_firstLayerTreeTransactionIDAfterDidCommitLoad) {
+    if (lastLayerTreeTransactionId < m_firstLayerTreeTransactionIDAfterDidCommitLoad) {
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(m_potentialTapLocation)));
         return;
     }
@@ -642,9 +642,9 @@ void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoi
     sendTapHighlightForNodeIfNecessary(requestID, m_potentialTapNode.get());
 }
 
-void WebPage::commitPotentialTap(uint64_t lastLayerTreeTranscationId)
+void WebPage::commitPotentialTap(uint64_t lastLayerTreeTransactionId)
 {
-    if (!m_potentialTapNode || !m_potentialTapNode->renderer() || lastLayerTreeTranscationId < m_firstLayerTreeTransactionIDAfterDidCommitLoad) {
+    if (!m_potentialTapNode || !m_potentialTapNode->renderer() || lastLayerTreeTransactionId < m_firstLayerTreeTransactionIDAfterDidCommitLoad) {
         commitPotentialTapFailed();
         return;
     }
@@ -2436,7 +2436,7 @@ void WebPage::resetTextAutosizingBeforeLayoutIfNeeded(const FloatSize& oldSize, 
     }
 }
 
-void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, double targetScale, int32_t deviceOrientation)
+void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, double targetScale, int32_t deviceOrientation, uint64_t dynamicViewportSizeUpdateID)
 {
     TemporaryChange<bool> dynamicSizeUpdateGuard(m_inDynamicSizeUpdate, true);
     // FIXME: this does not handle the cases where the content would change the content size or scroll position from JavaScript.
@@ -2600,7 +2600,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
 
     m_drawingArea->scheduleCompositingLayerFlush();
 
-    send(Messages::WebPageProxy::DynamicViewportUpdateChangedTarget(pageScaleFactor(), frameView.scrollPosition()));
+    send(Messages::WebPageProxy::DynamicViewportUpdateChangedTarget(pageScaleFactor(), frameView.scrollPosition(), dynamicViewportSizeUpdateID));
 }
 
 void WebPage::synchronizeDynamicViewportUpdate(double& newTargetScale, FloatPoint& newScrollPosition, uint64_t& nextValidLayerTreeTransactionID)

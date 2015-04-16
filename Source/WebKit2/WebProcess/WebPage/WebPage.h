@@ -479,9 +479,9 @@ public:
     bool allowsUserScaling() const;
     bool hasStablePageScaleFactor() const { return m_hasStablePageScaleFactor; }
 
-    void handleTap(const WebCore::IntPoint&, uint64_t lastLayerTreeTranscationId);
+    void handleTap(const WebCore::IntPoint&, uint64_t lastLayerTreeTransactionId);
     void potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint&);
-    void commitPotentialTap(uint64_t lastLayerTreeTranscationId);
+    void commitPotentialTap(uint64_t lastLayerTreeTransactionId);
     void commitPotentialTapFailed();
     void cancelPotentialTap();
     void tapHighlightAtPosition(uint64_t requestID, const WebCore::FloatPoint&);
@@ -775,7 +775,7 @@ public:
     void setViewportConfigurationMinimumLayoutSize(const WebCore::FloatSize&);
     void setMaximumUnobscuredSize(const WebCore::FloatSize&);
     void setDeviceOrientation(int32_t);
-    void dynamicViewportSizeUpdate(const WebCore::FloatSize& minimumLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, double scale, int32_t deviceOrientation);
+    void dynamicViewportSizeUpdate(const WebCore::FloatSize& minimumLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, double scale, int32_t deviceOrientation, uint64_t dynamicViewportSizeUpdateID);
     void synchronizeDynamicViewportUpdate(double& newTargetScale, WebCore::FloatPoint& newScrollPosition, uint64_t& nextValidLayerTreeTransactionID);
     void updateVisibleContentRects(const VisibleContentRectUpdateInfo&, double oldestTimestamp);
     bool scaleWasSetByUIProcess() const { return m_scaleWasSetByUIProcess; }

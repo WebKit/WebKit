@@ -1353,7 +1353,7 @@ private:
     WebCore::FloatSize availableScreenSize();
     float textAutosizingWidth();
 
-    void dynamicViewportUpdateChangedTarget(double newTargetScale, const WebCore::FloatPoint& newScrollPosition);
+    void dynamicViewportUpdateChangedTarget(double newTargetScale, const WebCore::FloatPoint& newScrollPosition, uint64_t dynamicViewportSizeUpdateID);
     void restorePageState(const WebCore::FloatRect&, double scale);
     void restorePageCenterAndScale(const WebCore::FloatPoint&, double scale);
 
@@ -1486,6 +1486,7 @@ private:
     bool m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit;
     uint64_t m_dynamicViewportSizeUpdateLayerTreeTransactionID;
     uint64_t m_layerTreeTransactionIdAtLastTouchStart;
+    uint64_t m_currentDynamicViewportSizeUpdateID { 0 };
 #endif
 
 #if ENABLE(VIBRATION)

@@ -45,7 +45,7 @@ public:
     {
     }
 
-    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate, uint64_t lastLayerTreeTranscationId)
+    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate, uint64_t lastLayerTreeTransactionId)
         : m_exposedRect(exposedRect)
         , m_unobscuredRect(unobscuredRect)
         , m_unobscuredRectInScrollViewCoordinates(unobscuredRectInScrollViewCoordinates)
@@ -57,7 +57,7 @@ public:
         , m_horizontalVelocity(horizontalVelocity)
         , m_verticalVelocity(verticalVelocity)
         , m_scaleChangeRate(scaleChangeRate)
-        , m_lastLayerTreeTransactionID(lastLayerTreeTranscationId)
+        , m_lastLayerTreeTransactionID(lastLayerTreeTransactionId)
     {
     }
 
