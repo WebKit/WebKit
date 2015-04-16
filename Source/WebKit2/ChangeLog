@@ -1,3 +1,11 @@
+2015-04-16  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/20575744> Also include a definition of __NSd_{current deployment target} in WKFoundation.h.
+
+        Reviewed by Tim Horton.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-04-16  Timothy Horton  <timothy_horton@apple.com>
 
         Provide a mechanism through the legacy SPI to know when swipe gestures begin and end
