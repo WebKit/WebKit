@@ -20,7 +20,9 @@ window.addEventListener("message", function (e) {
 trigger a mixed content callback because the main frame in the window is HTTPS but
 now has insecure data.</p>
 <script>
-window.open("https://127.0.0.1:8443/xmlhttprequest/access-control-response-with-body.html");
+onload = function() {
+    window.open("https://127.0.0.1:8443/xmlhttprequest/access-control-response-with-body.html");
+}
 </script>
 </body>
 </html>

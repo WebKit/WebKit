@@ -1,3 +1,25 @@
+2015-04-16  Alexey Proskuryakov  <ap@apple.com>
+
+        More flaky tests in http/tests/security/mixedContent
+        https://bugs.webkit.org/show_bug.cgi?id=143804
+
+        Reviewed by Csaba Osztrogonác.
+
+        Start secondary window loading in onload, so that it doesn't race with main document
+        finishing to load.
+
+        * http/tests/security/mixedContent/about-blank-iframe-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html:
+        * http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html:
+        * http/tests/security/mixedContent/insecure-iframe-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/insecure-iframe-in-main-frame.html:
+        * http/tests/security/mixedContent/insecure-image-in-main-frame.html:
+        * http/tests/security/mixedContent/insecure-xhr-in-main-frame.html:
+        * http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html:
+        * http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html:
+
 2015-04-15  Chris Dumez  <cdumez@apple.com>
 
         Add a console message when a stylesheet is not parsed due to invalid MIME type
