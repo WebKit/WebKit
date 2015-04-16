@@ -1,5 +1,22 @@
 2015-04-15  Anders Carlsson  <andersca@apple.com>
 
+        Make websiteDataStore on WKWebViewConfiguration public
+        https://bugs.webkit.org/show_bug.cgi?id=143810
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration websiteDataStore]):
+        (-[WKWebViewConfiguration setWebsiteDataStore:]):
+        (-[WKWebViewConfiguration _websiteDataStore]):
+        (-[WKWebViewConfiguration _setWebsiteDataStore:]):
+
+2015-04-15  Anders Carlsson  <andersca@apple.com>
+
         Make WKWebsiteDataStore public
         https://bugs.webkit.org/show_bug.cgi?id=143805
 

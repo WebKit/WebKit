@@ -123,8 +123,8 @@ private:
     configuration.processPool = self.processPool;
     configuration.preferences = self.preferences;
     configuration.userContentController = self.userContentController;
+    configuration.websiteDataStore = self.websiteDataStore;
     configuration._visitedLinkProvider = self._visitedLinkProvider;
-    configuration._websiteDataStore = self._websiteDataStore;
     configuration._relatedWebView = _relatedWebView.get().get();
     configuration._alternateWebViewForNavigationGestures = _alternateWebViewForNavigationGestures.get().get();
     configuration->_treatsSHA1SignedCertificatesAsInsecure = _treatsSHA1SignedCertificatesAsInsecure;
@@ -176,6 +176,16 @@ private:
     _userContentController.set(userContentController);
 }
 
+- (WKWebsiteDataStore *)websiteDataStore
+{
+    return _websiteDataStore.get([] { return [WKWebsiteDataStore defaultDataStore]; });
+}
+
+- (void)setWebsiteDataStore:(WKWebsiteDataStore *)websiteDataStore
+{
+    _websiteDataStore.set(websiteDataStore);
+}
+
 static NSString *defaultApplicationNameForUserAgent()
 {
 #if PLATFORM(IOS)
@@ -207,12 +217,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (_WKWebsiteDataStore *)_websiteDataStore
 {
-    return (_WKWebsiteDataStore *)_websiteDataStore.get([] { return [WKWebsiteDataStore defaultDataStore]; });
+    return (_WKWebsiteDataStore *)self.websiteDataStore;
 }
 
 - (void)_setWebsiteDataStore:(_WKWebsiteDataStore *)websiteDataStore
 {
-    _websiteDataStore.set(websiteDataStore);
+    self.websiteDataStore = websiteDataStore;
 }
 
 #if PLATFORM(IOS)

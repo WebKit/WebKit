@@ -291,7 +291,7 @@ static int32_t deviceOrientation()
 
     webPageConfiguration.userContentController = [_configuration userContentController]->_userContentControllerProxy.get();
     webPageConfiguration.visitedLinkProvider = [_configuration _visitedLinkProvider]->_visitedLinkProvider.get();
-    webPageConfiguration.websiteDataStore = &((WKWebsiteDataStore *)[_configuration _websiteDataStore])->_websiteDataStore->websiteDataStore();
+    webPageConfiguration.websiteDataStore = &[_configuration websiteDataStore]->_websiteDataStore->websiteDataStore();
     webPageConfiguration.sessionID = webPageConfiguration.websiteDataStore->sessionID();
     webPageConfiguration.treatsSHA1SignedCertificatesAsInsecure = [_configuration _treatsSHA1SignedCertificatesAsInsecure];
 

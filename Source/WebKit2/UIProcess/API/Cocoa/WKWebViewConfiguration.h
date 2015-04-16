@@ -34,6 +34,7 @@ WK_ASSUME_NONNULL_BEGIN
 @class WKPreferences;
 @class WKProcessPool;
 @class WKUserContentController;
+@class WKWebsiteDataStore;
 
 #if TARGET_OS_IPHONE
 /*! @enum WKSelectionGranularity
@@ -72,6 +73,10 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 /*! @abstract The user content controller to associate with the web view.
 */
 @property (nonatomic, strong) WKUserContentController *userContentController;
+
+/*! @abstract The website data store to be used by the web view.
+ */
+@property (nonatomic, strong) WKWebsiteDataStore *websiteDataStore WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 /*! @abstract A Boolean value indicating whether the web view suppresses
  content rendering until it is fully loaded into memory.
