@@ -1,3 +1,19 @@
+2015-04-15  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Add gnutls to jhbuild.module
+        https://bugs.webkit.org/show_bug.cgi?id=143777
+
+        Reviewed by Csaba Osztrogonác.
+
+        EFL port has required at least 3.0.0 version of gnutls since r176712.
+        However some old linux distributions don't support 3.0.0 version. Besides
+        other projects sometimes need to use lower version of gnutls.
+
+        This patch supports to download gnutls through jhbuild, and use it.
+
+        * efl/install-dependencies: Add nettle-dev dependency and remove libgnutls28-dev. 
+        * efl/jhbuild.modules: Download 3.3 version because 3.3 version is stable version.
+
 2015-04-15  Mark Lam  <mark.lam@apple.com>
 
         Remove obsolete VMInspector debugging tool.

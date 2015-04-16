@@ -11,6 +11,7 @@
       <dep package="freetype6"/>
       <dep package="harfbuzz"/>
       <dep package="glib"/>
+      <dep package="gnutls"/>
       <dep package="glib-networking"/>
       <dep package="libsoup"/>
       <dep package="elementary"/>
@@ -56,6 +57,8 @@
       href="http://llvm.org/svn/llvm-project/"/>
   <repository type="tarball" name="llvm-tar"
       href="http://llvm.org"/>
+  <repository type="tarball" name="gnutls"
+      href="ftp://ftp.gnutls.org"/>
 
   <autotools id="cairo" autogen-sh="configure"
              makeargs="CFLAGS='-fno-lto' CXXFLAGS='-fno-lto' LDFLAGS='-fno-lto'">
@@ -114,6 +117,13 @@
             repo="ftp.gnome.org"
             hash="sha256:da1f7258655f0e196b9304cb9515784634f3797437923e236bb3466348811c96"
             md5sum="9636f60e99b98fd0fdb5239f905ac008"/>
+  </autotools>
+
+  <autotools id="gnutls" autogen-sh="configure">
+    <branch module="/gcrypt/gnutls/v3.3/gnutls-3.3.0.tar.xz" version="3.3"
+            repo="gnutls"
+            hash="sha256:7b87a4319f74cae3a5f204b810000f06b8efa1ed0f57c684b9bc454f444fdf13"
+            md5sum="4aeb8014feb4016c73a60f4e1ac73c9f"/>
   </autotools>
 
   <autotools id="glib-networking">
