@@ -1,3 +1,20 @@
+2015-04-15  Simon Fraser  <simon.fraser@apple.com>
+
+        We should dump GraphicsLayer's anchorPoint z component
+        https://bugs.webkit.org/show_bug.cgi?id=143815
+
+        Reviewed by Tim Horton.
+
+        We didn't include the z component of a layer's anchor point when dumping.
+        Dump if it's non-zero (to avoid having to change lots of test output).
+        No test with non-zero z appears to dump layers.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::requireTransformOrigin): Remove a FIXME which, on further consideration,
+        is wrong.
+
 2015-04-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Disable "Save to Downloads" option for local files

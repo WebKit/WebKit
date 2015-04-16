@@ -691,7 +691,10 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
 
     if (m_anchorPoint != FloatPoint3D(0.5f, 0.5f, 0)) {
         writeIndent(ts, indent + 1);
-        ts << "(anchor " << m_anchorPoint.x() << " " << m_anchorPoint.y() << ")\n";
+        ts << "(anchor " << m_anchorPoint.x() << " " << m_anchorPoint.y();
+        if (m_anchorPoint.z())
+            ts << " " << m_anchorPoint.z();
+        ts << ")\n";
     }
 
     if (m_size != IntSize()) {
