@@ -35,6 +35,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
+#if PLATFORM(COCOA)
+#include <CommonCrypto/CommonDigest.h>
+#endif
+
 namespace WTF {
 
 class SHA1 {
@@ -63,7 +67,6 @@ public:
     // type for computing SHA1 hash
     typedef std::array<uint8_t, hashSize> Digest;
 
-    // computeHash has a side effect of resetting the state of the object.
     WTF_EXPORT_PRIVATE void computeHash(Digest&);
     
     // Get a hex hash from the digest.
@@ -73,6 +76,9 @@ public:
     WTF_EXPORT_PRIVATE CString computeHexDigest();
 
 private:
+#if PLATFORM(COCOA)
+    CC_SHA1_CTX m_context;
+#else
     void finalize();
     void processBlock();
     void reset();
@@ -81,6 +87,7 @@ private:
     size_t m_cursor; // Number of bytes filled in m_buffer (0-64).
     uint64_t m_totalBytes; // Number of bytes added so far.
     uint32_t m_hash[5];
+#endif
 };
 
 } // namespace WTF

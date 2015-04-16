@@ -34,6 +34,10 @@
 #include <array>
 #include <wtf/Vector.h>
 
+#if PLATFORM(COCOA)
+#include <CommonCrypto/CommonDigest.h>
+#endif
+
 namespace WTF {
 
 class MD5 {
@@ -56,9 +60,13 @@ public:
     WTF_EXPORT_PRIVATE void checksum(Digest&);
 
 private:
+#if PLATFORM(COCOA)
+    CC_MD5_CTX m_context;
+#else
     uint32_t m_buf[4];
     uint32_t m_bits[2];
     uint8_t m_in[64];
+#endif
 };
 
 } // namespace WTF

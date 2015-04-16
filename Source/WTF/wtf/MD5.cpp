@@ -2,6 +2,7 @@
 // Modifications Copyright 2006 Google Inc. All Rights Reserved
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -57,6 +58,25 @@
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
+
+#if PLATFORM(COCOA)
+
+MD5::MD5()
+{
+    CC_MD5_Init(&m_context);
+}
+
+void MD5::addBytes(const uint8_t* input, size_t length)
+{
+    CC_MD5_Update(&m_context, input, length);
+}
+
+void MD5::checksum(Digest& hash)
+{
+    CC_MD5_Final(hash.data(), &m_context);
+}
+    
+#else
 
 // Note: this code is harmless on little-endian machines.
 
@@ -263,5 +283,7 @@ void MD5::checksum(Digest& digest)
     memset(m_bits, 0, sizeof(m_bits));
     memset(m_in, 0, sizeof(m_in));
 }
+
+#endif
 
 } // namespace WTF

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,10 +29,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// A straightforward SHA-1 implementation based on RFC 3174.
-// http://www.ietf.org/rfc/rfc3174.txt
-// The names of functions and variables (such as "a", "b", and "f") follow notations in RFC 3174.
-
 #include "config.h"
 #include "SHA1.h"
 
@@ -41,6 +38,29 @@
 #include "text/CString.h"
 
 namespace WTF {
+
+#if PLATFORM(COCOA)
+
+SHA1::SHA1()
+{
+    CC_SHA1_Init(&m_context);
+}
+
+void SHA1::addBytes(const uint8_t* input, size_t length)
+{
+    CC_SHA1_Update(&m_context, input, length);
+}
+
+void SHA1::computeHash(Digest& hash)
+{
+    CC_SHA1_Final(hash.data(), &m_context);
+}
+
+#else
+
+// A straightforward SHA-1 implementation based on RFC 3174.
+// http://www.ietf.org/rfc/rfc3174.txt
+// The names of functions and variables (such as "a", "b", and "f") follow notations in RFC 3174.
 
 static inline uint32_t f(int t, uint32_t b, uint32_t c, uint32_t d)
 {
@@ -102,25 +122,6 @@ void SHA1::computeHash(Digest& digest)
     }
 
     reset();
-}
-
-CString SHA1::hexDigest(const Digest& digest)
-{
-    char* start = 0;
-    CString result = CString::newUninitialized(40, start);
-    char* buffer = start;
-    for (size_t i = 0; i < hashSize; ++i) {
-        snprintf(buffer, 3, "%02X", digest.at(i));
-        buffer += 2;
-    }
-    return result;
-}
-
-CString SHA1::computeHexDigest()
-{
-    Digest digest;
-    computeHash(digest);
-    return hexDigest(digest);
 }
 
 void SHA1::finalize()
@@ -193,6 +194,27 @@ void SHA1::reset()
 
     // Clear the buffer after use in case it's sensitive.
     memset(m_buffer, 0, sizeof(m_buffer));
+}
+
+#endif
+
+CString SHA1::hexDigest(const Digest& digest)
+{
+    char* start = 0;
+    CString result = CString::newUninitialized(40, start);
+    char* buffer = start;
+    for (size_t i = 0; i < hashSize; ++i) {
+        snprintf(buffer, 3, "%02X", digest.at(i));
+        buffer += 2;
+    }
+    return result;
+}
+
+CString SHA1::computeHexDigest()
+{
+    Digest digest;
+    computeHash(digest);
+    return hexDigest(digest);
 }
 
 } // namespace WTF

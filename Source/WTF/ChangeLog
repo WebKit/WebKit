@@ -1,3 +1,30 @@
+2015-04-16  Antti Koivisto  <antti@apple.com>
+
+        Use CommonCrypto for SHA1 and MD5
+        https://bugs.webkit.org/show_bug.cgi?id=143826
+
+        Reviewed by Anders Carlsson.
+
+        CommonCrypto SHA1 implementation is ~4x faster than the naive WTF one. Use it when available.
+
+        These are covered by existing API tests.
+
+        * wtf/MD5.cpp:
+        (WTF::MD5::MD5):
+        (WTF::MD5::addBytes):
+        (WTF::MD5::checksum):
+        * wtf/MD5.h:
+        * wtf/SHA1.cpp:
+        (WTF::SHA1::SHA1):
+        (WTF::SHA1::addBytes):
+        (WTF::SHA1::computeHash):
+
+            Remove the side effect where computeHash resets the state. No one relies on it.
+
+        (WTF::SHA1::hexDigest):
+        (WTF::SHA1::computeHexDigest):
+        * wtf/SHA1.h:
+
 2015-04-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove the unnecessary WTF_CHANGES define
