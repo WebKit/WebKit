@@ -23,27 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKWebsiteDataStore.h"
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import "APIWebsiteDataStore.h"
-#import "WKObject.h"
+#import <WebKit/WKWebsiteDataRecord.h>
 
-namespace WebKit {
+WK_ASSUME_NONNULL_BEGIN
 
-inline _WKWebsiteDataStore *wrapper(API::WebsiteDataStore& websiteDataStore)
-{
-    ASSERT([websiteDataStore.wrapper() isKindOfClass:[_WKWebsiteDataStore class]]);
-    return (_WKWebsiteDataStore *)websiteDataStore.wrapper();
-}
+WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
+@interface WKWebsiteDataStore : NSObject
 
-}
+// Returns the shared default data store.
++ (WKWebsiteDataStore *)defaultDataStore;
 
-@interface _WKWebsiteDataStore () <WKObject> {
-@package
-    API::ObjectStorage<API::WebsiteDataStore> _websiteDataStore;
-}
+// Returns a new non-persistent data store.
++ (WKWebsiteDataStore *)nonPersistentDataStore;
+
+- (instancetype)init WK_UNAVAILABLE;
+
+@property (readonly, getter=isNonPersistent) BOOL nonPersistent;
+
+- (void)fetchDataRecordsOfTypes:(WKWebsiteDataTypes)websiteDataTypes completionHandler:(void (^)(NSArray *))completionHandler;
+- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes forDataRecords:(NSArray *)dataRecords completionHandler:(void (^)())completionHandler;
+- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler;
+
 @end
 
-#endif // WK_API_ENABLED
+WK_ASSUME_NONNULL_END
+
+#endif

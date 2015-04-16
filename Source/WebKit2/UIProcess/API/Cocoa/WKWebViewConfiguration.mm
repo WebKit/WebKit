@@ -84,7 +84,7 @@ private:
     LazyInitialized<RetainPtr<WKPreferences>> _preferences;
     LazyInitialized<RetainPtr<WKUserContentController>> _userContentController;
     LazyInitialized<RetainPtr<_WKVisitedLinkProvider>> _visitedLinkProvider;
-    LazyInitialized<RetainPtr<_WKWebsiteDataStore>> _websiteDataStore;
+    LazyInitialized<RetainPtr<WKWebsiteDataStore>> _websiteDataStore;
     WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
     WebKit::WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
     BOOL _treatsSHA1SignedCertificatesAsInsecure;
@@ -207,7 +207,7 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (_WKWebsiteDataStore *)_websiteDataStore
 {
-    return _websiteDataStore.get([] { return [_WKWebsiteDataStore defaultDataStore]; });
+    return (_WKWebsiteDataStore *)_websiteDataStore.get([] { return [WKWebsiteDataStore defaultDataStore]; });
 }
 
 - (void)_setWebsiteDataStore:(_WKWebsiteDataStore *)websiteDataStore

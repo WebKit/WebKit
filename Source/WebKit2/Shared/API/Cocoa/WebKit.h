@@ -42,5 +42,6 @@
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebsiteDataRecord.h>
+#import <WebKit/WKWebsiteDataStore.h>
 #import <WebKit/WKWindowFeatures.h>
 #import <WebKit/WebKitLegacy.h>

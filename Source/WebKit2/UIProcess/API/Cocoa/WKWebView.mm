@@ -59,6 +59,7 @@
 #import "WKUserContentControllerInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProvider.h"
+#import "WKWebsiteDataStoreInternal.h"
 #import "WebBackForwardList.h"
 #import "WebCertificateInfo.h"
 #import "WebFormSubmissionListenerProxy.h"
@@ -74,7 +75,6 @@
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
 #import "_WKVisitedLinkProviderInternal.h"
-#import "_WKWebsiteDataStoreInternal.h"
 #import <JavaScriptCore/JSContext.h>
 #import <JavaScriptCore/JSValue.h>
 #import <WebCore/IOSurface.h>
@@ -291,7 +291,7 @@ static int32_t deviceOrientation()
 
     webPageConfiguration.userContentController = [_configuration userContentController]->_userContentControllerProxy.get();
     webPageConfiguration.visitedLinkProvider = [_configuration _visitedLinkProvider]->_visitedLinkProvider.get();
-    webPageConfiguration.websiteDataStore = &[_configuration _websiteDataStore]->_websiteDataStore->websiteDataStore();
+    webPageConfiguration.websiteDataStore = &((WKWebsiteDataStore *)[_configuration _websiteDataStore])->_websiteDataStore->websiteDataStore();
     webPageConfiguration.sessionID = webPageConfiguration.websiteDataStore->sessionID();
     webPageConfiguration.treatsSHA1SignedCertificatesAsInsecure = [_configuration _treatsSHA1SignedCertificatesAsInsecure];
 

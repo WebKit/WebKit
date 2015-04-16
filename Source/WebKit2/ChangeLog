@@ -1,3 +1,49 @@
+2015-04-15  Anders Carlsson  <andersca@apple.com>
+
+        Make WKWebsiteDataStore public
+        https://bugs.webkit.org/show_bug.cgi?id=143805
+
+        Reviewed by Dan Bernstein.
+
+        Rename the current _WKWebsiteDataStore to WKWebsiteDataStore. Make init unavailable and tighten up the
+        types of the defaultDataStore and nonPersistentDataStore class methods.
+        
+        Add a new _WKWebsiteDataStore @interface and @implementation that derives from WKWebsiteDataStore
+        and forwards the defaultDataStore and nonPersistentDataStore method calls.
+
+        * Shared/API/Cocoa/WebKit.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _websiteDataStore]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKWebsiteDataStore.h.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKWebsiteDataStore.mm.
+        (+[WKWebsiteDataStore defaultDataStore]):
+        (+[WKWebsiteDataStore nonPersistentDataStore]):
+        (-[WKWebsiteDataStore dealloc]):
+        (-[WKWebsiteDataStore isNonPersistent]):
+        (toSystemClockTime):
+        (-[WKWebsiteDataStore fetchDataRecordsOfTypes:completionHandler:]):
+        (-[WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:]):
+        (toWebsiteDataRecords):
+        (-[WKWebsiteDataStore removeDataOfTypes:forDataRecords:completionHandler:]):
+        (-[WKWebsiteDataStore _apiObject]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStoreInternal.h: Renamed from Source/WebKit2/UIProcess/API/Cocoa/_WKWebsiteDataStoreInternal.h.
+        (WebKit::wrapper):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        (+[_WKWebsiteDataStore defaultDataStore]):
+        (+[_WKWebsiteDataStore nonPersistentDataStore]):
+        (-[_WKWebsiteDataStore dealloc]): Deleted.
+        (-[_WKWebsiteDataStore isNonPersistent]): Deleted.
+        (toWebsiteDataTypes): Deleted.
+        (toSystemClockTime): Deleted.
+        (-[_WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:]): Deleted.
+        (-[_WKWebsiteDataStore _apiObject]): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-04-15  Timothy Horton  <timothy_horton@apple.com>
 
         Custom CSS cursors do not use -webkit-image-set on retina displays

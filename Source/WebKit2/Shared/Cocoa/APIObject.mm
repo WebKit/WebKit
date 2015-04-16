@@ -58,13 +58,13 @@
 #import "WKWebProcessPlugInPageGroupInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 #import "WKWebsiteDataRecordInternal.h"
+#import "WKWebsiteDataStoreInternal.h"
 #import "_WKDownloadInternal.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import "_WKUserContentExtensionStoreInternal.h"
 #import "_WKUserContentFilterInternal.h"
 #import "_WKVisitedLinkProviderInternal.h"
-#import "_WKWebsiteDataStoreInternal.h"
 #import <objc/objc-auto.h>
 
 namespace API {
@@ -209,7 +209,7 @@ void* Object::newObject(size_t size, Type type)
         break;
 
     case Type::WebsiteDataStore:
-        wrapper = [_WKWebsiteDataStore alloc];
+        wrapper = [WKWebsiteDataStore alloc];
         break;
 
     case Type::BundleFrame:

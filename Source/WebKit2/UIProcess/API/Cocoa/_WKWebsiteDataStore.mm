@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,99 +24,22 @@
  */
 
 #import "config.h"
-#import "_WKWebsiteDataStoreInternal.h"
+#import "_WKWebsiteDataStore.h"
 
 #if WK_API_ENABLED
 
-#import "APIArray.h"
-#import "WKNSArray.h"
-#import "WKWebsiteDataRecordInternal.h"
-
 @implementation _WKWebsiteDataStore
 
-+ (instancetype)defaultDataStore
++ (_WKWebsiteDataStore *)defaultDataStore
 {
-    return WebKit::wrapper(*API::WebsiteDataStore::defaultDataStore().get());
+    return (_WKWebsiteDataStore *)[WKWebsiteDataStore defaultDataStore];
 }
 
-+ (instancetype)nonPersistentDataStore
++ (_WKWebsiteDataStore *)nonPersistentDataStore
 {
-    return [WebKit::wrapper(*API::WebsiteDataStore::createNonPersistentDataStore().release().leakRef()) autorelease];
-}
-
-- (void)dealloc
-{
-    _websiteDataStore->API::WebsiteDataStore::~WebsiteDataStore();
-
-    [super dealloc];
-}
-
-- (BOOL)isNonPersistent
-{
-    return _websiteDataStore->isNonPersistent();
-}
-
-static std::chrono::system_clock::time_point toSystemClockTime(NSDate *date)
-{
-    ASSERT(date);
-    using namespace std::chrono;
-
-    return system_clock::time_point(duration_cast<system_clock::duration>(duration<double>(date.timeIntervalSince1970)));
-}
-
-- (void)fetchDataRecordsOfTypes:(WKWebsiteDataTypes)websiteDataTypes completionHandler:(void (^)(NSArray *))completionHandler
-{
-    auto completionHandlerCopy = Block_copy(completionHandler);
-
-    _websiteDataStore->websiteDataStore().fetchData(WebKit::toWebsiteDataTypes(websiteDataTypes), [completionHandlerCopy](Vector<WebKit::WebsiteDataRecord> websiteDataRecords) {
-        Vector<RefPtr<API::Object>> elements;
-        elements.reserveInitialCapacity(websiteDataRecords.size());
-
-        for (auto& websiteDataRecord : websiteDataRecords)
-            elements.uncheckedAppend(API::WebsiteDataRecord::create(WTF::move(websiteDataRecord)));
-
-        completionHandlerCopy(wrapper(*API::Array::create(WTF::move(elements))));
-
-        Block_release(completionHandlerCopy);
-    });
-}
-
-- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler
-{
-    auto completionHandlerCopy = Block_copy(completionHandler);
-    _websiteDataStore->websiteDataStore().removeData(WebKit::toWebsiteDataTypes(websiteDataTypes), toSystemClockTime(date ? date : [NSDate distantPast]), [completionHandlerCopy] {
-        completionHandlerCopy();
-        Block_release(completionHandlerCopy);
-    });
-}
-
-static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecords)
-{
-    Vector<WebKit::WebsiteDataRecord> result;
-
-    for (WKWebsiteDataRecord *dataRecord in dataRecords)
-        result.append(dataRecord->_websiteDataRecord->websiteDataRecord());
-
-    return result;
-}
-
-- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes forDataRecords:(NSArray *)dataRecords completionHandler:(void (^)())completionHandler
-{
-    auto completionHandlerCopy = Block_copy(completionHandler);
-
-    _websiteDataStore->websiteDataStore().removeData(WebKit::toWebsiteDataTypes(websiteDataTypes), toWebsiteDataRecords(dataRecords), [completionHandlerCopy] {
-        completionHandlerCopy();
-        Block_release(completionHandlerCopy);
-    });
-}
-
-#pragma mark WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *_websiteDataStore;
+    return (_WKWebsiteDataStore *)[WKWebsiteDataStore nonPersistentDataStore];
 }
 
 @end
 
-#endif // WK_API_ENABLED
+#endif
