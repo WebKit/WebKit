@@ -1,3 +1,11 @@
+2015-04-16  Mark Lam  <mark.lam@apple.com>
+
+        Fixed some typos in a comment.
+
+        Not reviewed.
+
+        * dfg/DFGGenerationInfo.h:
+
 2015-04-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement Symbol.for and Symbol.keyFor
