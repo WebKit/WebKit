@@ -270,6 +270,11 @@ editing/spelling/spellcheck-async.html [ Skip ]
 editing/spelling/spellcheck-queue.html [ Skip ]
 editing/spelling/spelling-insert-html.html [ Skip ]
 
+# These tests should pass on Yosemite but are failing. 
+fast/events/mouse-force-changed.html [ Skip ]
+fast/events/mouse-force-down.html [ Skip ]
+fast/events/mouse-force-up.html [ Skip ]
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

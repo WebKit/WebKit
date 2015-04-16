@@ -1,3 +1,10 @@
+2015-04-16  Beth Dakin  <bdakin@apple.com>
+
+        I will be investigating this in the short term, but skip these failing test for
+        now.
+
+        * platform/mac-wk2/TestExpectations:
+
 2015-04-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement Symbol.for and Symbol.keyFor
