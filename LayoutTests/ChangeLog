@@ -1,3 +1,23 @@
+2015-04-16  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r182517): WebSocket::suspend() causes error event to be fired
+        https://bugs.webkit.org/show_bug.cgi?id=143806
+        <rdar://problem/20559812>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/websocket/tests/hybi/closed-when-entering-page-cache-expected.txt:
+        * http/tests/websocket/tests/hybi/closed-when-entering-page-cache.html:
+        Extend WebSocket PageCache test to make sure that the error event is
+        fired after restoring the page from the PageCache and before the close
+        Event is fired.
+
+        * http/tests/websocket/tests/hybi/resources/page-cache-websocket.html: Added.
+        * http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler-expected.txt: Copied from LayoutTests/http/tests/websocket/tests/hybi/closed-when-entering-page-cache-expected.txt.
+        * http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html: Copied from LayoutTests/http/tests/websocket/tests/hybi/closed-when-entering-page-cache.html.
+        Add layout test to cover the case where WebSocket::stop() is called
+        while firing the pending events upon restoring the page from PageCache.
+
 2015-04-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Delete hardcoded font fallback tables

@@ -1,3 +1,38 @@
+2015-04-16  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r182517): WebSocket::suspend() causes error event to be fired
+        https://bugs.webkit.org/show_bug.cgi?id=143806
+        <rdar://problem/20559812>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket::suspend() causes an error event to be fired after r182517.
+        This is not allowed as firing the event could trigger arbitrary JS
+        execution, which is no longer allowed at this point.
+
+        This patch delays the error event firing until after
+        WebSocket::resume() is called, similarly to what we already do for
+        the close event.
+
+        Also add assertions in WebSocket::suspend() / WebSocket::resume()
+        that will be hit if JS events are fired from within these functions.
+        The pre-existing closed-when-entering-page-cache.html test is hitting
+        one of these assertions without the fix above.
+
+        Tests:
+          - http/tests/websocket/tests/hybi/closed-when-entering-page-cache.html
+          - http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::suspend):
+        (WebCore::WebSocket::resume):
+        (WebCore::WebSocket::resumeTimerFired):
+        (WebCore::WebSocket::stop):
+        (WebCore::WebSocket::didReceiveMessageError):
+        (WebCore::WebSocket::didClose):
+        (WebCore::WebSocket::dispatchOrQueueEvent):
+        * Modules/websockets/WebSocket.h:
+
 2015-04-15  Roger Fong  <roger_fong@apple.com>
 
         Adjustments to button graphics for media controls.
