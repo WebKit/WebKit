@@ -187,42 +187,43 @@ AudioContext::~AudioContext()
 #if DEBUG_AUDIONODE_REFERENCES
     fprintf(stderr, "%p: AudioContext::~AudioContext()\n", this);
 #endif
-    // AudioNodes keep a reference to their context, so there should be no way to be in the destructor if there are still AudioNodes around.
     ASSERT(!m_isInitialized);
     ASSERT(m_isStopScheduled);
-    ASSERT(!m_nodesToDelete.size());
-    ASSERT(!m_referencedNodes.size());
-    ASSERT(!m_finishedNodes.size());
-    ASSERT(!m_automaticPullNodes.size());
+    ASSERT(m_nodesToDelete.isEmpty());
+    ASSERT(m_referencedNodes.isEmpty());
+    ASSERT(m_finishedNodes.isEmpty()); // FIXME (bug 105870): This assertion fails on tests sometimes.
+    ASSERT(m_automaticPullNodes.isEmpty());
     if (m_automaticPullNodesNeedUpdating)
         m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
-    ASSERT(!m_renderingAutomaticPullNodes.size());
+    ASSERT(m_renderingAutomaticPullNodes.isEmpty());
+    // FIXME: Can we assert that m_deferredFinishDerefList is empty?
 }
 
 void AudioContext::lazyInitialize()
 {
-    if (!m_isInitialized) {
-        // Don't allow the context to initialize a second time after it's already been explicitly uninitialized.
-        ASSERT(!m_isAudioThreadFinished);
-        if (!m_isAudioThreadFinished) {
-            if (m_destinationNode.get()) {
-                m_destinationNode->initialize();
+    if (m_isInitialized)
+        return;
 
-                if (!isOfflineContext()) {
-                    document()->addAudioProducer(this);
+    // Don't allow the context to initialize a second time after it's already been explicitly uninitialized.
+    ASSERT(!m_isAudioThreadFinished);
+    if (m_isAudioThreadFinished)
+        return;
 
-                    // This starts the audio thread. The destination node's provideInput() method will now be called repeatedly to render audio.
-                    // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
-                    // NOTE: for now default AudioContext does not need an explicit startRendering() call from JavaScript.
-                    // We may want to consider requiring it for symmetry with OfflineAudioContext.
-                    startRendering();
-                    ++s_hardwareContextCount;
-                }
+    if (m_destinationNode.get()) {
+        m_destinationNode->initialize();
 
-            }
-            m_isInitialized = true;
+        if (!isOfflineContext()) {
+            document()->addAudioProducer(this);
+
+            // This starts the audio thread. The destination node's provideInput() method will now be called repeatedly to render audio.
+            // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
+            // NOTE: for now default AudioContext does not need an explicit startRendering() call from JavaScript.
+            // We may want to consider requiring it for symmetry with OfflineAudioContext.
+            startRendering();
+            ++s_hardwareContextCount;
         }
     }
+    m_isInitialized = true;
 }
 
 void AudioContext::clear()
@@ -326,19 +327,10 @@ const AtomicString& AudioContext::state() const
     return suspended;
 }
 
-void AudioContext::stopDispatch(void* userData)
-{
-    AudioContext* context = reinterpret_cast<AudioContext*>(userData);
-    ASSERT(context);
-    if (!context)
-        return;
-
-    context->uninitialize();
-    context->clear();
-}
-
 void AudioContext::stop()
 {
+    ASSERT(isMainThread());
+
     // Usually ScriptExecutionContext calls stop twice.
     if (m_isStopScheduled)
         return;
@@ -352,7 +344,12 @@ void AudioContext::stop()
     // of dealing with all of its ActiveDOMObjects at this point. uninitialize() can de-reference other
     // ActiveDOMObjects so let's schedule uninitialize() to be called later.
     // FIXME: see if there's a more direct way to handle this issue.
-    callOnMainThread(stopDispatch, this);
+    // FIXME: This sounds very wrong. The whole idea of stop() is that it stops everything, and if we
+    // schedule some observable work for later, the work likely happens at an inappropriate time.
+    callOnMainThread([this] {
+        uninitialize();
+        clear();
+    });
 }
 
 bool AudioContext::canSuspendForPageCache() const
@@ -688,12 +685,8 @@ void AudioContext::derefNode(AudioNode* node)
     
     node->deref(AudioNode::RefTypeConnection);
 
-    for (unsigned i = 0; i < m_referencedNodes.size(); ++i) {
-        if (node == m_referencedNodes[i]) {
-            m_referencedNodes.remove(i);
-            break;
-        }
-    }
+    ASSERT(m_referencedNodes.contains(node));
+    m_referencedNodes.removeFirst(node);
 }
 
 void AudioContext::derefUnfinishedSourceNodes()
@@ -870,22 +863,11 @@ void AudioContext::scheduleNodeDeletion()
 
         m_isDeletionScheduled = true;
 
-        // Don't let ourself get deleted before the callback.
-        // See matching deref() in deleteMarkedNodesDispatch().
-        ref();
-        callOnMainThread(deleteMarkedNodesDispatch, this);
+        RefPtr<AudioContext> strongThis(this);
+        callOnMainThread([strongThis] {
+            strongThis->deleteMarkedNodes();
+        });
     }
-}
-
-void AudioContext::deleteMarkedNodesDispatch(void* userData)
-{
-    AudioContext* context = reinterpret_cast<AudioContext*>(userData);
-    ASSERT(context);
-    if (!context)
-        return;
-
-    context->deleteMarkedNodes();
-    context->deref();
 }
 
 void AudioContext::deleteMarkedNodes()
@@ -897,9 +879,8 @@ void AudioContext::deleteMarkedNodes()
     {
         AutoLocker locker(*this);
 
-        while (size_t n = m_nodesToDelete.size()) {
-            AudioNode* node = m_nodesToDelete[n - 1];
-            m_nodesToDelete.removeLast();
+        while (m_nodesToDelete.size()) {
+            AudioNode* node = m_nodesToDelete.takeLast();
 
             // Before deleting the node, clear out any AudioNodeInputs from m_dirtySummingJunctions.
             unsigned numberOfInputs = node->numberOfInputs();
