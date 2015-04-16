@@ -31,7 +31,7 @@ import os
 
 
 def lookFor(relativePath):
-    return os.path.isfile(os.environ['WEBKIT_LIBRARIES'] + relativePath) or os.path.isfile(os.environ['WEBKITLIBRARIESDIR'] + relativePath)
+    return os.path.isfile(os.environ['WEBKIT_LIBRARIES'] + relativePath)
 
 print "/* Identifying AVFoundation Support */"
 if lookFor("/include/AVFoundationCF/AVCFBase.h"):

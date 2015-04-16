@@ -1,3 +1,16 @@
+2015-04-16  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Compile error when environment variable WEBKITLIBRARIESDIR is not defined.
+        https://bugs.webkit.org/show_bug.cgi?id=143828
+
+        Reviewed by Brent Fulgham.
+
+        Python throws an exception when calling os.environ['WEBKITLIBRARIESDIR'] and
+        WEBKITLIBRARIESDIR is not defined. WEBKITLIBRARIESDIR is obsolete, we can remove it.
+
+        * AVFoundationSupport.py:
+        (lookFor):
+
 2015-04-16  Alexey Proskuryakov  <ap@apple.com>
 
         Minor AudioContext cleanup
