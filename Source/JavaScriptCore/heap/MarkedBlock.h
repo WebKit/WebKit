@@ -74,7 +74,7 @@ namespace JSC {
     public:
         static const size_t atomSize = 16; // bytes
         static const size_t atomShiftAmount = 4; // log_2(atomSize) FIXME: Change atomSize to 16.
-        static const size_t blockSize = 64 * KB;
+        static const size_t blockSize = 16 * KB;
         static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
         static const size_t atomsPerBlock = blockSize / atomSize;

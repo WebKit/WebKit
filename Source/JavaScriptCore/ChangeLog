@@ -1,3 +1,30 @@
+2015-04-15  Andreas Kling  <akling@apple.com>
+
+        Make MarkedBlock and WeakBlock 4x smaller.
+        <https://webkit.org/b/143802>
+
+        Reviewed by Mark Hahnenberg.
+
+        To reduce GC heap fragmentation and generally use less memory, reduce the size of MarkedBlock
+        and its buddy WeakBlock by 4x, bringing them from 64kB+4kB to 16kB+1kB.
+
+        In a sampling of cool web sites, I'm seeing ~8% average reduction in overall GC heap size.
+        Some examples:
+
+                   apple.com:  6.3MB ->  5.5MB (14.5% smaller)
+                  reddit.com:  4.5MB ->  4.1MB ( 9.7% smaller)
+                 twitter.com: 23.2MB -> 21.4MB ( 8.4% smaller)
+            cuteoverload.com: 24.5MB -> 23.6MB ( 3.8% smaller)
+
+        Benchmarks look mostly neutral.
+        Some small slowdowns on Octane, some slightly bigger speedups on Kraken and SunSpider.
+
+        * heap/MarkedBlock.h:
+        * heap/WeakBlock.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+
 2015-04-15  Jordan Harband  <ljharb@gmail.com>
 
         String.prototype.startsWith/endsWith/includes have wrong length in r182673

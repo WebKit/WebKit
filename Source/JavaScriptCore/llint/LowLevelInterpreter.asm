@@ -196,7 +196,7 @@ const Dynamic = 7
 
 const ResolveModeMask = 0xffff
 
-const MarkedBlockSize = 64 * 1024
+const MarkedBlockSize = 16 * 1024
 const MarkedBlockMask = ~(MarkedBlockSize - 1)
 # Constants for checking mark bits.
 const AtomNumberShift = 3
