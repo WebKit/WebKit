@@ -22,9 +22,6 @@ import platform
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild") )
 import jhbuildrc_common
 
-# FIXME: The depedencies of EFL 1.9 can not be updated unless MAKEFLAGS is set to '-j1'.
-os.environ['MAKEFLAGS'] = '-j1'
-
 # Setting use_lib64 to False is necessary, otherwise CMake will not find
 # the lib64/cmake/<name> folder that contains the <Name>Config.cmake files.
 use_lib64 = False
