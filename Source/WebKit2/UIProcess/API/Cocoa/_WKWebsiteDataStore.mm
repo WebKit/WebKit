@@ -28,6 +28,9 @@
 
 #if WK_API_ENABLED
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 @implementation _WKWebsiteDataStore
 
 + (_WKWebsiteDataStore *)defaultDataStore
@@ -41,5 +44,7 @@
 }
 
 @end
+
+#pragma clang diagnostic pop
 
 #endif

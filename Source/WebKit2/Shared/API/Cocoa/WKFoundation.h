@@ -50,6 +50,7 @@
 #define WK_AVAILABLE(_mac, _ios)
 #define WK_CLASS_AVAILABLE(_mac, _ios) __attribute__((visibility ("default")))
 #define WK_DEPRECATED(_macIntro, _macDep, _iosIntro, _iosDep, ...) __attribute__((deprecated(__VA_ARGS__)))
+#define WK_CLASS_DEPRECATED(_macIntro, _macDep, _iosIntro, _iosDep, ...) __attribute__((visibility("default"))) __attribute__((deprecated(__VA_ARGS__)))
 #define WK_ENUM_AVAILABLE(_mac, _ios)
 #define WK_ENUM_AVAILABLE_IOS(_ios)
 

@@ -36,7 +36,6 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebNSURLExtras.h>
-#import <WebKit/_WKWebsiteDataStore.h>
 
 static void* keyValueObservingContext = &keyValueObservingContext;
 
@@ -79,7 +78,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         return nil;
 
     _configuration = [configuration copy];
-    _isPrivateBrowsingWindow = _configuration._websiteDataStore.isNonPersistent;
+    _isPrivateBrowsingWindow = _configuration.websiteDataStore.isNonPersistent;
 
     return self;
 }
@@ -445,16 +444,16 @@ static const WKWebsiteDataTypes dataTypes = WKWebsiteDataTypeAll;
 
 - (IBAction)fetchWebsiteData:(id)sender
 {
-    [_configuration._websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray *websiteDataRecords) {
+    [_configuration.websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray *websiteDataRecords) {
         NSLog(@"did fetch website data %@.", websiteDataRecords);
     }];
 }
 
 - (IBAction)fetchAndClearWebsiteData:(id)sender
 {
-    [_configuration._websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray *websiteDataRecords) {
-        [_configuration._websiteDataStore removeDataOfTypes:dataTypes forDataRecords:websiteDataRecords completionHandler:^{
-            [_configuration._websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray *websiteDataRecords) {
+    [_configuration.websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray *websiteDataRecords) {
+        [_configuration.websiteDataStore removeDataOfTypes:dataTypes forDataRecords:websiteDataRecords completionHandler:^{
+            [_configuration.websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray *websiteDataRecords) {
                 NSLog(@"did clear website data, after clearing data is %@.", websiteDataRecords);
             }];
         }];
@@ -463,7 +462,7 @@ static const WKWebsiteDataTypes dataTypes = WKWebsiteDataTypeAll;
 
 - (IBAction)clearWebsiteData:(id)sender
 {
-    [_configuration._websiteDataStore removeDataOfTypes:dataTypes modifiedSince:[NSDate distantPast] completionHandler:^{
+    [_configuration.websiteDataStore removeDataOfTypes:dataTypes modifiedSince:[NSDate distantPast] completionHandler:^{
         NSLog(@"Did clear website data.");
     }];
 }

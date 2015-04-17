@@ -36,7 +36,6 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserContentExtensionStore.h>
-#import <WebKit/_WKWebsiteDataStore.h>
 
 enum {
     WebKit1NewWindowTag = 1,
@@ -118,7 +117,7 @@ static WKWebViewConfiguration *defaultConfiguration()
 {
 #if WK_API_ENABLED
     WKWebViewConfiguration *privateConfiguraton = [defaultConfiguration() copy];
-    privateConfiguraton._websiteDataStore = [_WKWebsiteDataStore nonPersistentDataStore];
+    privateConfiguraton.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
 
     BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:privateConfiguraton];
     [privateConfiguraton release];

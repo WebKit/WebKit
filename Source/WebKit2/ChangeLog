@@ -1,3 +1,18 @@
+2015-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Deprecate _WKWebsiteDataStore in favor of WKWebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=143844
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/Cocoa/WKFoundation.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _validate]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecord.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.h:
+        * mac/postprocess-framework-headers.sh:
+
 2015-04-16  Alex Christensen  <achristensen@webkit.org>
 
         Removed unused WKUserContentFilterRef.

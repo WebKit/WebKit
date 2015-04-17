@@ -215,6 +215,9 @@ static NSString *defaultApplicationNameForUserAgent()
     _visitedLinkProvider.set(visitedLinkProvider);
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 - (_WKWebsiteDataStore *)_websiteDataStore
 {
     return (_WKWebsiteDataStore *)self.websiteDataStore;
@@ -224,6 +227,8 @@ static NSString *defaultApplicationNameForUserAgent()
 {
     self.websiteDataStore = websiteDataStore;
 }
+
+#pragma clang diagnostic pop
 
 #if PLATFORM(IOS)
 - (WKWebViewContentProviderRegistry *)_contentProviderRegistry
@@ -248,11 +253,11 @@ static NSString *defaultApplicationNameForUserAgent()
     if (!self.userContentController)
         [NSException raise:NSInvalidArgumentException format:@"configuration.userContentController is nil"];
 
+    if (!self.websiteDataStore)
+        [NSException raise:NSInvalidArgumentException format:@"configuration.websiteDataStore is nil"];
+
     if (!self._visitedLinkProvider)
         [NSException raise:NSInvalidArgumentException format:@"configuration._visitedLinkProvider is nil"];
-
-    if (!self._websiteDataStore)
-        [NSException raise:NSInvalidArgumentException format:@"configuration._websiteDataStore is nil"];
 
 #if PLATFORM(IOS)
     if (!self._contentProviderRegistry)

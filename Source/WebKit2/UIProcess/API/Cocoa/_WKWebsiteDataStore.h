@@ -29,7 +29,7 @@
 
 #import <WebKit/WKWebsiteDataStore.h>
 
-WK_CLASS_AVAILABLE(10_10, 8_0)
+WK_CLASS_DEPRECATED(10_10, WK_MAC_TBA, 8_0, WK_IOS_TBA, "Please use WKWebsiteDataStore instead")
 @interface _WKWebsiteDataStore : WKWebsiteDataStore
 
 + (_WKWebsiteDataStore *)defaultDataStore;
