@@ -1,3 +1,16 @@
+2015-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] ResourceRequest cache policy is not encoded/decoded in IPC messages
+        https://bugs.webkit.org/show_bug.cgi?id=143867
+
+        Reviewed by Sergio Villar Senin.
+
+        Encode/Decode the ResourceRequest cache policy.
+
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceRequest>::decodePlatformData):
+
 2015-04-16  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Use UNUSED_PARAM instead of the void casting to suppress unused parameter warnings.
