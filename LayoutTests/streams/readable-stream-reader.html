@@ -3,10 +3,16 @@
 <script src='../resources/testharnessreport.js'></script>
 <script src='../resources/gc.js'></script>
 <script>
-test(function() {
+
+t1 = async_test('Collecting a ReadableStreamReader should not unlock its stream');
+t1.step(function() {
     var rs = new ReadableStream({});
     rs.getReader();
-    window.gc();
-    assert_throws(new TypeError(), function() { rs.getReader(); }, 'old reader should still be locking a new one even after garbage collection');
-}, 'Collecting a ReadableStreamReader should not unlock its stream');
+    setTimeout(t1.step_func(function() {
+        window.gc();
+        assert_throws(new TypeError(), function() { rs.getReader(); }, 'old reader should still be locking a new one even after garbage collection');
+        t1.done();
+    }), 10);
+});
+
 </script>

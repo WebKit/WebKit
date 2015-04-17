@@ -1,3 +1,14 @@
+2015-04-16  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        streams/readablestream-reader.html test should really test collected stream case.
+        https://bugs.webkit.org/show_bug.cgi?id=143818
+
+        Reviewed by Darin Adler.
+
+        Making the test async so that the stream start async callback is made and the stream be collected.
+
+        * streams/readable-stream-reader.html:
+
 2015-04-16  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/misc/DOMContentLoaded-event.html is flaky
