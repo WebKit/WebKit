@@ -1,3 +1,15 @@
+2015-04-17  Daniel Bates  <dabates@apple.com>
+
+        Not able to build WebKit against iOS Simulator 8.3 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=143883
+
+        Reviewed by David Kilzer.
+
+        Add WebKitSystemInterface for iOS 8.3.
+
+        * libWebKitSystemInterfaceIOSDevice8.3.a: Added.
+        * libWebKitSystemInterfaceIOSSimulator8.3.a: Added.
+
 2015-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Win] [SVG -> OTF Converter] Turn off on Windows until I can get the tests under control

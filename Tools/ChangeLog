@@ -1,3 +1,15 @@
+2015-04-17  Daniel Bates  <dabates@apple.com>
+
+        Not able to build WebKit against iOS Simulator 8.3 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=143883
+
+        Reviewed by David Kilzer.
+
+        Copy libraries libWebKitSystemInterfaceIOS{Device, Simulator}8.3.a to the built product directory
+        so that Xcode uses them.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2015-04-17  Beth Dakin  <bdakin@apple.com>
 
         Force mouse events should go through normal mouse event handling code paths
