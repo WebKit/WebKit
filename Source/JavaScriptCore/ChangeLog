@@ -1,3 +1,12 @@
+2015-04-16  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fix CLOOP build after r182927.
+
+        Not reviewed.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::print):
+
 2015-04-16  Basile Clement  <basile_clement@apple.com>
 
         Inline JSFunction allocation in FTL

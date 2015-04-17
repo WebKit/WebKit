@@ -364,7 +364,9 @@ void StackVisitor::Frame::print(int indent)
         log(indent, "name: ", functionName(), "\n");
         log(indent, "sourceURL: ", sourceURL(), "\n");
 
+        bool isInlined = false;
 #if ENABLE(DFG_JIT)
+        isInlined = isInlinedFrame();
         log(indent, "isInlinedFrame: ", isInlinedFrame(), "\n");
         if (isInlinedFrame())
             logF(indent, "InlineCallFrame: %p\n", m_inlineCallFrame);
@@ -379,7 +381,7 @@ void StackVisitor::Frame::print(int indent)
         if (codeBlock)
             dataLog(*codeBlock);
         dataLog("\n");
-        if (codeBlock && !isInlinedFrame()) {
+        if (codeBlock && !isInlined) {
             indent++;
 
             if (callFrame->hasLocationAsBytecodeOffset()) {
