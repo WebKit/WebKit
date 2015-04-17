@@ -1,3 +1,18 @@
+2015-04-16  Basile Clement  <basile_clement@apple.com>
+
+        Inline JSFunction allocation in FTL
+        https://bugs.webkit.org/show_bug.cgi?id=143851
+
+        Reviewed by Filip Pizlo.
+
+        JSFunction allocation is a simple operation that should be inlined when possible.
+
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNewFunction):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::allocationSize):
+
 2015-04-16  Mark Lam  <mark.lam@apple.com>
 
         Add $vm debugging tool.

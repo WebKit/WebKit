@@ -59,6 +59,12 @@ public:
     typedef JSCallee Base;
     const static unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
 
+    static size_t allocationSize(size_t inlineCapacity)
+    {
+        ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
+        return sizeof(JSFunction);
+    }
+
     JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, int length, const String& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
     
     static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, FunctionExecutable*, JSScope*);

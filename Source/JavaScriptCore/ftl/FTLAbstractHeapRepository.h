@@ -60,6 +60,7 @@ namespace JSC { namespace FTL {
     macro(JSCell_gcData, JSCell::gcDataOffset()) \
     macro(JSFunction_executable, JSFunction::offsetOfExecutable()) \
     macro(JSFunction_scope, JSFunction::offsetOfScopeChain()) \
+    macro(JSFunction_rareData, JSFunction::offsetOfRareData()) \
     macro(JSObject_butterfly, JSObject::butterflyOffset()) \
     macro(JSPropertyNameEnumerator_cachedInlineCapacity, JSPropertyNameEnumerator::cachedInlineCapacityOffset()) \
     macro(JSPropertyNameEnumerator_cachedPropertyNamesVector, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset()) \

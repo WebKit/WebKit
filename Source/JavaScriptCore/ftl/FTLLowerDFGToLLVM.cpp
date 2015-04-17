@@ -2920,17 +2920,43 @@ private:
     
     void compileNewFunction()
     {
+        LValue scope = lowCell(m_node->child1());
         FunctionExecutable* executable = m_node->castOperand<FunctionExecutable*>();
-        J_JITOperation_EJscC function;
-        if (executable->singletonFunction()->isStillValid())
-            function = operationNewFunction;
-        else
-            function = operationNewFunctionWithInvalidatedReallocationWatchpoint;
+        if (executable->singletonFunction()->isStillValid()) {
+            LValue callResult = vmCall(
+                m_out.operation(operationNewFunction), m_callFrame, scope, weakPointer(executable));
+            setJSValue(callResult);
+            return;
+        }
         
-        LValue result = vmCall(
-            m_out.operation(function), m_callFrame, lowCell(m_node->child1()),
-            weakPointer(executable));
-        setJSValue(result);
+        Structure* structure = m_graph.globalObjectFor(m_node->origin.semantic)->functionStructure();
+        
+        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("NewFunction slow path"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("NewFunction continuation"));
+        
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
+        
+        LValue fastObject = allocateObject<JSFunction>(
+            structure, m_out.intPtrZero, slowPath);
+        
+        // We don't need memory barriers since we just fast-created the function, so it
+        // must be young.
+        m_out.storePtr(scope, fastObject, m_heaps.JSFunction_scope);
+        m_out.storePtr(weakPointer(executable), fastObject, m_heaps.JSFunction_executable);
+        m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.JSFunction_rareData);
+        
+        ValueFromBlock fastResult = m_out.anchor(fastObject);
+        m_out.jump(continuation);
+        
+        m_out.appendTo(slowPath, continuation);
+        LValue callResult = vmCall(
+            m_out.operation(operationNewFunctionWithInvalidatedReallocationWatchpoint),
+            m_callFrame, scope, weakPointer(executable));
+        ValueFromBlock slowResult = m_out.anchor(callResult);
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(m_out.intPtr, fastResult, slowResult));
     }
     
     void compileCreateDirectArguments()
