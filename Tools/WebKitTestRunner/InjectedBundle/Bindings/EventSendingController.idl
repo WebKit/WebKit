@@ -27,6 +27,9 @@ interface EventSendingController {
     void mouseDown(long buttonNumber, object modifierArray);
     void mouseUp(long buttonNumber, object modifierArray);
     void mouseMoveTo(long x, long y);
+    void mouseForceDown();
+    void mouseForceUp();
+    void mouseForceChanged(double force);
     void mouseScrollBy(long x, long y);
     void mouseScrollByWithWheelAndMomentumPhases(long x, long y, DOMString phase, DOMString momentum, optional boolean asyncScrolling);
     void continuousMouseScrollBy(long x, long y, optional boolean paged);

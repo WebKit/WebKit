@@ -205,6 +205,11 @@ editing/pasteboard/dataTransfer-setData-getData.html
 http/tests/local/fileapi/send-dragged-file.html
 http/tests/local/fileapi/send-sliced-dragged-file.html
 
+# No support for force events
+fast/events/mouse-force-changed.html [ Skip ]
+fast/events/mouse-force-down.html [ Skip ]
+fast/events/mouse-force-up.html [ Skip ]
+
 ###
 # Known failures
 ##

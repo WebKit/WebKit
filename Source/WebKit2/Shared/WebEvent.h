@@ -58,6 +58,9 @@ public:
         MouseDown,
         MouseUp,
         MouseMove,
+        MouseForceChanged,
+        MouseForceDown,
+        MouseForceUp,
 
         // WebWheelEvent
         Wheel,

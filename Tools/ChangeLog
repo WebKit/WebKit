@@ -1,3 +1,39 @@
+2015-04-17  Beth Dakin  <bdakin@apple.com>
+
+        Force mouse events should go through normal mouse event handling code paths
+        https://bugs.webkit.org/show_bug.cgi?id=143749
+        -and corresponding-
+        rdar://problem/20472895
+
+        Reviewed by Dean Jackson.
+
+        Add mouseForceDown/mouseForceUp/mouseForceChanged support to WebKitTestRunner. 
+        Since there is not a way to create an NSEventTypePressure from scratch, we 
+        subclass NSEvent and override all of the critical methods.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::mouseForceDown):
+        (WTR::EventSendingController::mouseForceUp):
+        (WTR::EventSendingController::mouseForceChanged):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (-[EventSenderPressureEvent initAtLocation:globalLocation:stage:pressure:phase:time:eventNumber:]):
+        (-[EventSenderPressureEvent timestamp]):
+        (-[EventSenderPressureEvent type]):
+        (-[EventSenderPressureEvent locationInWindow]):
+        (-[EventSenderPressureEvent location]):
+        (-[EventSenderPressureEvent stage]):
+        (-[EventSenderPressureEvent pressure]):
+        (-[EventSenderPressureEvent phase]):
+        (-[EventSenderPressureEvent eventNumber]):
+        (WTR::EventSenderProxy::mouseForceDown):
+        (WTR::EventSenderProxy::mouseForceUp):
+        (WTR::EventSenderProxy::mouseForceChanged):
+
 2015-04-17  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard still shows obsolete results for out of order builds sometimes

@@ -1,3 +1,47 @@
+2015-04-17  Beth Dakin  <bdakin@apple.com>
+
+        Force mouse events should go through normal mouse event handling code paths
+        https://bugs.webkit.org/show_bug.cgi?id=143749
+        -and corresponding-
+        rdar://problem/20472895
+
+        Reviewed by Dean Jackson.
+
+        This patch moves all of the code to dispatch mouseforcedown, mouseforceup, and 
+        mouseforcechanged into normal mouse event dispatching code. This patch leaves 
+        behind the cancel and click events because we plan to remove those, and it also 
+        leaves mouseforcewillbegin because that is necessarily a very different event more 
+        tied to the NSImmediateActionGestureRecognizer than these other events which are 
+        tied to NSResponder’s pressureChangeWithEvent.
+
+        New helper functions.
+        * dom/Document.cpp:
+        (WebCore::Document::hasListenerTypeForEventType):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::isForceEvent):
+
+        Move the code to ensure the force events have listeners in order to fire to 
+        dispatchMouseEvent, and delete the old implementations.
+        (WebCore::Element::dispatchMouseEvent):
+        (WebCore::Element::dispatchMouseForceChanged): Deleted.
+        (WebCore::Element::dispatchMouseForceDown): Deleted.
+        (WebCore::Element::dispatchMouseForceUp): Deleted.
+        * dom/Element.h:
+
+        Perform a hit test and pipe the events through dispatchMouseEvent(). 
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseForceEvent):
+        * page/EventHandler.h:
+
+        New types for the new events.
+        * platform/PlatformEvent.h:
+
+        Forward to EventHandler. 
+        * replay/UserInputBridge.cpp:
+        (WebCore::UserInputBridge::handleMouseForceEvent):
+        * replay/UserInputBridge.h:
+
 2015-04-17  Zalan Bujtas  <zalan@apple.com>
 
         RenderTableCell::computeCollapsed*Border() should check if the cell is still attached to the render tree.

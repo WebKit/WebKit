@@ -1427,17 +1427,21 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
 
 - (void)pressureChangeWithEvent:(NSEvent *)event
 {
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
     if (event == _data->_pressureEvent)
+        return;
+
+    if (_data->_ignoresNonWheelEvents)
         return;
 
     if (event.phase != NSEventPhaseChanged && event.phase != NSEventPhaseBegan && event.phase != NSEventPhaseEnded)
         return;
 
+    NativeWebMouseEvent webEvent(event, _data->_pressureEvent, self);
+    _data->_page->handleMouseEvent(webEvent);
+
     [_data->_pressureEvent release];
     _data->_pressureEvent = [event retain];
-
-    _data->_page->inputDeviceForceDidChange(event.pressure, event.stage);
 #endif
 }
 

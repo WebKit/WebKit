@@ -1,3 +1,27 @@
+2015-04-17  Beth Dakin  <bdakin@apple.com>
+
+        Force mouse events should go through normal mouse event handling code paths
+        https://bugs.webkit.org/show_bug.cgi?id=143749
+        -and corresponding-
+        rdar://problem/20472895
+
+        Reviewed by Dean Jackson.
+
+        Just a few new tests. More to come.
+        * fast/events/mouse-force-changed-expected.txt: Added.
+        * fast/events/mouse-force-changed.html: Added.
+        * fast/events/mouse-force-down-expected.txt: Added.
+        * fast/events/mouse-force-down.html: Added.
+        * fast/events/mouse-force-up-expected.txt: Added.
+        * fast/events/mouse-force-up.html: Added.
+
+        Right now the new tests will only work on Mac 10.10.3 and beyond.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac-mavericks/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-04-17  Daniel Bates  <dabates@apple.com>
 
         REGRESSION: SVG does not support link dragging

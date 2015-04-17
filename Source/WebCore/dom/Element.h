@@ -469,9 +469,6 @@ public:
     virtual void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement);
 
     WEBCORE_EXPORT bool dispatchMouseForceWillBegin();
-    WEBCORE_EXPORT void dispatchMouseForceChanged(float force);
-    WEBCORE_EXPORT void dispatchMouseForceDown();
-    WEBCORE_EXPORT void dispatchMouseForceUp();
     WEBCORE_EXPORT void dispatchMouseForceClick();
     WEBCORE_EXPORT void dispatchMouseForceCancelled();
 

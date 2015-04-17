@@ -276,6 +276,11 @@ fast/events/mouse-force-changed.html [ Skip ]
 fast/events/mouse-force-down.html [ Skip ]
 fast/events/mouse-force-up.html [ Skip ]
 
+# These should work on 10.10.3 and later, but our bots need to get the 10.10.3 SDK first.
+fast/events/mouse-force-changed.html [ Skip ]
+fast/events/mouse-force-down.html [ Skip ]
+fast/events/mouse-force-up.html [ Skip ]
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

@@ -3966,6 +3966,22 @@ RefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& ec)
     return nullptr;
 }
 
+bool Document::hasListenerTypeForEventType(PlatformEvent::Type eventType) const
+{
+    switch (eventType) {
+    case PlatformEvent::MouseForceChanged:
+        return m_listenerTypes & Document::FORCECHANGED_LISTENER;
+    case PlatformEvent::MouseForceDown:
+        return m_listenerTypes & Document::FORCEDOWN_LISTENER;
+    case PlatformEvent::MouseForceUp:
+        return m_listenerTypes & Document::FORCEUP_LISTENER;
+    case PlatformEvent::MouseScroll:
+        return m_listenerTypes & Document::SCROLL_LISTENER;
+    default:
+        return false;
+    }
+}
+
 void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
 {
     if (eventType == eventNames().DOMSubtreeModifiedEvent)

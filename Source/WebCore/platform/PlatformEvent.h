@@ -43,6 +43,9 @@ public:
         MouseMoved,
         MousePressed,
         MouseReleased,
+        MouseForceChanged,
+        MouseForceDown,
+        MouseForceUp,
         MouseScroll,
 
         // PlatformWheelEvent

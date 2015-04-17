@@ -474,6 +474,9 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
     case WebEvent::MouseMove:
         setXMotionEventFields(xEvent, event, convertToRootView(IntPoint()));
         break;
+    case WebEvent::MouseForceChanged:
+    case WebEvent::MouseForceDown:
+    case WebEvent::MouseForceUp:
     case WebEvent::NoType:
     case WebEvent::Wheel:
     case WebEvent::KeyDown:

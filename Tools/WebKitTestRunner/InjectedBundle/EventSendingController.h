@@ -46,6 +46,9 @@ public:
     void mouseDown(int button, JSValueRef modifierArray);
     void mouseUp(int button, JSValueRef modifierArray);
     void mouseMoveTo(int x, int y);
+    void mouseForceDown();
+    void mouseForceUp();
+    void mouseForceChanged(double force);
     void mouseScrollBy(int x, int y);
     void mouseScrollByWithWheelAndMomentumPhases(int x, int y, JSStringRef phase, JSStringRef momentum, bool asyncScrolling);
     void continuousMouseScrollBy(int x, int y, bool paged);
