@@ -720,8 +720,6 @@ webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered
 # New test failing, needs investigation.
 webkit.org/b/103857 fast/events/mouse-cursor-change.html
 
-webkit.org/b/116244 fast/events/mouse-cursor-image-set.html [ Failure Pass ]
-
 webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass Failure ]
 
 webkit.org/b/120387 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
