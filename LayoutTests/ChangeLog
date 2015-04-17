@@ -1,3 +1,30 @@
+2015-04-17  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar <calvaris@igalia.com>
+
+        streams/reference-implementation/readable-stream.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=143778
+
+        Unreviewed.
+
+        Comment out flaky subtests while working on a more complete
+        solution.
+
+        The problem with these tests is that they set a timeout before the
+        calling done() and this causes some tests to behave
+        undeterministically, specilly code related to promise
+        resolution. This could even cause indetermination if the tests
+        were expected to run correctly.
+
+        We think it is better to comment them out and find a more long
+        term solution that could involve submitting change requests to the
+        reference tests in the spec. This will be tackled in bug 143774.
+
+        * streams/reference-implementation/readable-stream-expected.txt:
+        * streams/reference-implementation/readable-stream-reader-expected.txt:
+        * streams/reference-implementation/readable-stream-reader.html:
+        * streams/reference-implementation/readable-stream-templated-expected.txt:
+        * streams/reference-implementation/readable-stream-templated.html:
+        * streams/reference-implementation/readable-stream.html:
+
 2015-04-16  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         streams/readablestream-reader.html test should really test collected stream case.

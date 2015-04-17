@@ -174,199 +174,199 @@ test4.step(function() {
     }));
 });
 
-var test5 = async_test('ReadableStream: should only call pull once upon starting the stream');
-test5.step(function() {
-    var pullCount = 0;
-    var startPromise = Promise.resolve();
-    var rs = new ReadableStream({
-        start: function() {
-            return startPromise;
-        },
-        pull: function() {
-            pullCount++;
-        }
-    });
+// var test5 = async_test('ReadableStream: should only call pull once upon starting the stream');
+// test5.step(function() {
+//     var pullCount = 0;
+//     var startPromise = Promise.resolve();
+//     var rs = new ReadableStream({
+//         start: function() {
+//             return startPromise;
+//         },
+//         pull: function() {
+//             pullCount++;
+//         }
+//     });
 
-    startPromise.then(test5.step_func(function() {
-        assert_equals(pullCount, 1, 'pull should be called once start finishes');
-    }));
+//     startPromise.then(test5.step_func(function() {
+//         assert_equals(pullCount, 1, 'pull should be called once start finishes');
+//     }));
 
-    setTimeout(test5.step_func(function() {
-        assert_equals(pullCount, 1, 'pull should be called exactly once');
-        test5.done();
-    }), standardTimeout);
-});
+//     setTimeout(test5.step_func(function() {
+//         assert_equals(pullCount, 1, 'pull should be called exactly once');
+//         test5.done();
+//     }), standardTimeout);
+// });
 
-var test6 = async_test('ReadableStream: should only call pull once for a forever-empty stream, even after reading');
-test6.step(function() {
-    var pullCount = 0;
-    var startPromise = Promise.resolve();
-    var rs = new ReadableStream({
-        start: function() {
-            return startPromise;
-        },
-        pull: function() {
-            pullCount++;
-        }
-    });
+// var test6 = async_test('ReadableStream: should only call pull once for a forever-empty stream, even after reading');
+// test6.step(function() {
+//     var pullCount = 0;
+//     var startPromise = Promise.resolve();
+//     var rs = new ReadableStream({
+//         start: function() {
+//             return startPromise;
+//         },
+//         pull: function() {
+//             pullCount++;
+//         }
+//     });
 
-    startPromise.then(test6.step_func(function() {
-        assert_equals(pullCount, 1, 'pull should be called once start finishes');
-    }));
+//     startPromise.then(test6.step_func(function() {
+//         assert_equals(pullCount, 1, 'pull should be called once start finishes');
+//     }));
 
-    rs.getReader().read();
+//     rs.getReader().read();
 
-    setTimeout(test6.step_func(function() {
-        assert_equals(pullCount, 1, 'pull should be called exactly once');
-        test6.done();
-    }), standardTimeout);
-});
+//     setTimeout(test6.step_func(function() {
+//         assert_equals(pullCount, 1, 'pull should be called exactly once');
+//         test6.done();
+//     }), standardTimeout);
+// });
 
-var test7 = async_test('ReadableStream: should only call pull once on a non-empty stream read from before start fulfills');
-test7.step(function() {
-    var pullCount = 0;
-    var startPromise = Promise.resolve();
-    var rs = new ReadableStream({
-        start: function(c) {
-            c.enqueue('a');
-            return startPromise;
-        },
-        pull: function() {
-            pullCount++;
-        }
-    });
+// var test7 = async_test('ReadableStream: should only call pull once on a non-empty stream read from before start fulfills');
+// test7.step(function() {
+//     var pullCount = 0;
+//     var startPromise = Promise.resolve();
+//     var rs = new ReadableStream({
+//         start: function(c) {
+//             c.enqueue('a');
+//             return startPromise;
+//         },
+//         pull: function() {
+//             pullCount++;
+//         }
+//     });
 
-    startPromise.then(test7.step_func(function() {
-        assert_equals(pullCount, 1, 'pull should be called once start finishes');
-    }));
+//     startPromise.then(test7.step_func(function() {
+//         assert_equals(pullCount, 1, 'pull should be called once start finishes');
+//     }));
 
-    rs.getReader().read().then(test7.step_func(function(r) {
-        assert_object_equals(r, { value: 'a', done: false }, 'first read() should return first chunk');
-        assert_equals(pullCount, 1, 'pull should not have been called again');
-    }));
+//     rs.getReader().read().then(test7.step_func(function(r) {
+//         assert_object_equals(r, { value: 'a', done: false }, 'first read() should return first chunk');
+//         assert_equals(pullCount, 1, 'pull should not have been called again');
+//     }));
 
-    assert_equals(pullCount, 0, 'calling read() should not cause pull to be called yet');
+//     assert_equals(pullCount, 0, 'calling read() should not cause pull to be called yet');
 
-    setTimeout(test7.step_func(function() {
-        assert_equals(pullCount, 1, 'pull should be called exactly once');
-        test7.done();
-    }), standardTimeout);
-});
+//     setTimeout(test7.step_func(function() {
+//         assert_equals(pullCount, 1, 'pull should be called exactly once');
+//         test7.done();
+//     }), standardTimeout);
+// });
 
-var test8 = async_test('ReadableStream: should only call pull twice on a non-empty stream read from after start fulfills');
-test8.step(function() {
-    var pullCount = 0;
-    var startPromise = Promise.resolve();
-    var rs = new ReadableStream({
-        start: function(c) {
-            c.enqueue('a');
-            return startPromise;
-        },
-        pull: function() {
-            pullCount++;
-        }
-    });
+// var test8 = async_test('ReadableStream: should only call pull twice on a non-empty stream read from after start fulfills');
+// test8.step(function() {
+//     var pullCount = 0;
+//     var startPromise = Promise.resolve();
+//     var rs = new ReadableStream({
+//         start: function(c) {
+//             c.enqueue('a');
+//             return startPromise;
+//         },
+//         pull: function() {
+//             pullCount++;
+//         }
+//     });
 
-    startPromise.then(test8.step_func(function() {
-        assert_equals(pullCount, 1, 'pull should be called once start finishes');
+//     startPromise.then(test8.step_func(function() {
+//         assert_equals(pullCount, 1, 'pull should be called once start finishes');
 
-        rs.getReader().read().then(test8.step_func(function(r) {
-            assert_object_equals(r, { value: 'a', done: false }, 'first read() should return first chunk');
-            assert_equals(pullCount, 2, 'pull should be called again once read fulfills');
-        }));
-    }));
+//         rs.getReader().read().then(test8.step_func(function(r) {
+//             assert_object_equals(r, { value: 'a', done: false }, 'first read() should return first chunk');
+//             assert_equals(pullCount, 2, 'pull should be called again once read fulfills');
+//         }));
+//     }));
 
-    assert_equals(pullCount, 0, 'calling read() should not cause pull to be called yet');
+//     assert_equals(pullCount, 0, 'calling read() should not cause pull to be called yet');
 
-    setTimeout(test8.step_func(function() {
-        assert_equals(pullCount, 2, 'pull should be called exactly twice')
-        test8.done();
-    }), standardTimeout);
-});
+//     setTimeout(test8.step_func(function() {
+//         assert_equals(pullCount, 2, 'pull should be called exactly twice')
+//         test8.done();
+//     }), standardTimeout);
+// });
 
-var test9 = async_test('ReadableStream: should call pull in reaction to read()ing the last chunk, if not draining');
-test9.step(function() {
-    var pullCount = 0;
-    var controller;
-    var startPromise = Promise.resolve();
-    var pullPromise = Promise.resolve();
-    var rs = new ReadableStream({
-        start: function(c) {
-            controller = c;
-            return startPromise;
-        },
-        pull: function() {
-            ++pullCount;
-            return pullPromise;
-        }
-    });
+// var test9 = async_test('ReadableStream: should call pull in reaction to read()ing the last chunk, if not draining');
+// test9.step(function() {
+//     var pullCount = 0;
+//     var controller;
+//     var startPromise = Promise.resolve();
+//     var pullPromise = Promise.resolve();
+//     var rs = new ReadableStream({
+//         start: function(c) {
+//             controller = c;
+//             return startPromise;
+//         },
+//         pull: function() {
+//             ++pullCount;
+//             return pullPromise;
+//         }
+//     });
 
-    var reader = rs.getReader();
+//     var reader = rs.getReader();
 
-    startPromise.then(test9.step_func(function() {
-        assert_equals(pullCount, 1, 'pull should have been called once after read');
+//     startPromise.then(test9.step_func(function() {
+//         assert_equals(pullCount, 1, 'pull should have been called once after read');
 
-        controller.enqueue('a');
+//         controller.enqueue('a');
 
-        return pullPromise.then(test9.step_func(function() {
-            assert_equals(pullCount, 2, 'pull should have been called a second time after enqueue');
+//         return pullPromise.then(test9.step_func(function() {
+//             assert_equals(pullCount, 2, 'pull should have been called a second time after enqueue');
 
-            return reader.read().then(test9.step_func(function() {
-                assert_equals(pullCount, 3, 'pull should have been called a third time after read');
-            }));
-        }));
-    })).catch(test9.step_func(function(e) {
-        assert_unreached(e);
-    }));
+//             return reader.read().then(test9.step_func(function() {
+//                 assert_equals(pullCount, 3, 'pull should have been called a third time after read');
+//             }));
+//         }));
+//     })).catch(test9.step_func(function(e) {
+//         assert_unreached(e);
+//     }));
 
-    setTimeout(test9.step_func(function() {
-        assert_equals(pullCount, 3, 'pull should be called exactly thrice')
-        test9.done();
-    }), standardTimeout);
-});
+//     setTimeout(test9.step_func(function() {
+//         assert_equals(pullCount, 3, 'pull should be called exactly thrice')
+//         test9.done();
+//     }), standardTimeout);
+// });
 
-var test10 = async_test('ReadableStream: should not call pull() in reaction to read()ing the last chunk, if draining');
-test10.step(function() {
-    var pullCount = 0;
-    var controller;
-    var startPromise = Promise.resolve();
-    var pullPromise = Promise.resolve();
-    var rs = new ReadableStream({
-        start: function(c) {
-            controller = c;
-            return startPromise;
-        },
-        pull: function() {
-            ++pullCount;
-            return pullPromise;
-        }
-    });
+// var test10 = async_test('ReadableStream: should not call pull() in reaction to read()ing the last chunk, if draining');
+// test10.step(function() {
+//     var pullCount = 0;
+//     var controller;
+//     var startPromise = Promise.resolve();
+//     var pullPromise = Promise.resolve();
+//     var rs = new ReadableStream({
+//         start: function(c) {
+//             controller = c;
+//             return startPromise;
+//         },
+//         pull: function() {
+//             ++pullCount;
+//             return pullPromise;
+//         }
+//     });
 
-    var reader = rs.getReader();
+//     var reader = rs.getReader();
 
-    startPromise.then(test10.step_func(function() {
-        assert_equals(pullCount, 1, 'pull should have been called once after read');
+//     startPromise.then(test10.step_func(function() {
+//         assert_equals(pullCount, 1, 'pull should have been called once after read');
 
-        controller.enqueue('a');
+//         controller.enqueue('a');
 
-        return pullPromise.then(test10.step_func(function() {
-            assert_equals(pullCount, 2, 'pull should have been called a second time after enqueue');
+//         return pullPromise.then(test10.step_func(function() {
+//             assert_equals(pullCount, 2, 'pull should have been called a second time after enqueue');
 
-            controller.close();
+//             controller.close();
 
-            return reader.read().then(test10.step_func(function() {
-                assert_equals(pullCount, 2, 'pull should not have been called a third time after read');
-            }));
-        }));
-    })).catch(test10.step_func(function(e) {
-        assert_unreached(e)
-    }));
+//             return reader.read().then(test10.step_func(function() {
+//                 assert_equals(pullCount, 2, 'pull should not have been called a third time after read');
+//             }));
+//         }));
+//     })).catch(test10.step_func(function(e) {
+//         assert_unreached(e)
+//     }));
 
-    setTimeout(test10.step_func(function() {
-        assert_equals(pullCount, 2, 'pull should be called exactly twice')
-        test10.done();
-    }), standardTimeout);
-});
+//     setTimeout(test10.step_func(function() {
+//         assert_equals(pullCount, 2, 'pull should be called exactly twice')
+//         test10.done();
+//     }), standardTimeout);
+// });
 
 var test11 = async_test('ReadableStream: should not call pull until the previous pull call\'s promise fulfills');
 test11.step(function() {
@@ -408,51 +408,51 @@ test11.step(function() {
     }));
 });
 
-var test12 = async_test('ReadableStream: should pull after start, and after every read');
-test12.step(function() {
-    var timesCalled = 0;
-    var startPromise = Promise.resolve();
-    var rs = new ReadableStream({
-        start: function(c) {
-            c.enqueue('a');
-            c.enqueue('b');
-            c.enqueue('c');
-            return startPromise;
-        },
-        pull: function() {
-            ++timesCalled;
-        },
-        strategy: {
-            size: function() {
-                return 1;
-            },
-            shouldApplyBackpressure: function() {
-                return false;
-            }
-        }
-    });
-    var reader = rs.getReader();
+// var test12 = async_test('ReadableStream: should pull after start, and after every read');
+// test12.step(function() {
+//     var timesCalled = 0;
+//     var startPromise = Promise.resolve();
+//     var rs = new ReadableStream({
+//         start: function(c) {
+//             c.enqueue('a');
+//             c.enqueue('b');
+//             c.enqueue('c');
+//             return startPromise;
+//         },
+//         pull: function() {
+//             ++timesCalled;
+//         },
+//         strategy: {
+//             size: function() {
+//                 return 1;
+//             },
+//             shouldApplyBackpressure: function() {
+//                 return false;
+//             }
+//         }
+//     });
+//     var reader = rs.getReader();
 
-    startPromise.then(test12.step_func(function() {
-        return reader.read().then(test12.step_func(function(result1) {
-            assert_object_equals(result1, { value: 'a', done: false }, 'first chunk should be as expected');
+//     startPromise.then(test12.step_func(function() {
+//         return reader.read().then(test12.step_func(function(result1) {
+//             assert_object_equals(result1, { value: 'a', done: false }, 'first chunk should be as expected');
 
-            return reader.read().then(test12.step_func(function(result2) {
-                assert_object_equals(result2, { value: 'b', done: false }, 'second chunk should be as expected');
+//             return reader.read().then(test12.step_func(function(result2) {
+//                 assert_object_equals(result2, { value: 'b', done: false }, 'second chunk should be as expected');
 
-                return reader.read().then(test12.step_func(function(result3) {
-                    assert_object_equals(result3, { value: 'c', done: false }, 'third chunk should be as expected');
+//                 return reader.read().then(test12.step_func(function(result3) {
+//                     assert_object_equals(result3, { value: 'c', done: false }, 'third chunk should be as expected');
 
-                    setTimeout(test12.step_func(function() {
-                        // Once for after start, and once for every read.
-                        assert_equals(timesCalled, 4, 'pull() should be called exactly four times');
-                        test12.done();
-                    }), standardTimeout);
-                }));
-            }));
-        }));
-    })).catch(test12.step_func(function(e) { assert_unreached(e); }));
-});
+//                     setTimeout(test12.step_func(function() {
+//                         // Once for after start, and once for every read.
+//                         assert_equals(timesCalled, 4, 'pull() should be called exactly four times');
+//                         test12.done();
+//                     }), standardTimeout);
+//                 }));
+//             }));
+//         }));
+//     })).catch(test12.step_func(function(e) { assert_unreached(e); }));
+// });
 
 var test13 = async_test('ReadableStream: should not call pull after start if the stream is now closed');
 test13.step(function() {

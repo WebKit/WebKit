@@ -13,8 +13,6 @@ FAIL Reading from a reader for an empty stream will wait until a chunk is availa
 FAIL cancel() on a reader releases the reader before calling through cancel is not implemented
 TIMEOUT closed should be fulfilled after stream is closed (.closed access before acquiring) Test timed out
 FAIL closed should be fulfilled after reader releases its lock (multiple stream locks) releaseLock is not implemented
-FAIL Multiple readers can access the stream in sequence read is not implemented
 FAIL Cannot use an already-released reader to unlock a stream again releaseLock is not implemented
-FAIL cancel() on a released reader is a no-op and does not pass through releaseLock is not implemented
 FAIL Getting a second reader after erroring the stream should succeed read is not implemented
 
