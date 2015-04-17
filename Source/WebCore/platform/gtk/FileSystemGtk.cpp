@@ -111,12 +111,6 @@ bool deleteEmptyDirectory(const String& path)
     return filename ? g_rmdir(filename.get()) != -1 : false;
 }
 
-bool renameFile(const String&, const String&)
-{
-    notImplemented();
-    return false;
-}
-
 static bool getFileStat(const String& path, GStatBuf* statBuffer)
 {
     GUniquePtr<gchar> filename = unescapedFilename(path);

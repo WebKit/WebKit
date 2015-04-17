@@ -176,19 +176,6 @@ bool deleteEmptyDirectory(const String& path)
     return !!RemoveDirectoryW(filename.charactersWithNullTermination().data());
 }
 
-bool renameFile(const String& oldPath, const String& newPath)
-{
-    CString oldPathFsRep = fileSystemRepresentation(oldPath);
-    if (!oldPathFsRep.data() || oldPathFsRep.data()[0] == '\0')
-        return false;
-
-    CString newPathFsRep = fileSystemRepresentation(newPath);
-    if (!newPathFsRep.data() || newPathFsRep.data()[0] == '\0')
-        return false;
-
-    return ::MoveFileA(oldPathFsRep.data(), newPathFsRep.data());
-}
-
 String pathByAppendingComponent(const String& path, const String& component)
 {
     Vector<UChar> buffer(MAX_PATH);

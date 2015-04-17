@@ -67,6 +67,11 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileH
     return String::fromUTF8(temporaryFilePath.data());
 }
 
+bool moveFile(const String& oldPath, const String& newPath)
+{
+    return [[NSFileManager defaultManager] moveItemAtURL:[NSURL fileURLWithPath:oldPath] toURL:[NSURL fileURLWithPath:newPath] error:nil];
+}
+
 #if !PLATFORM(IOS)
 
 void setMetadataURL(String& URLString, const String& referrer, const String& path)

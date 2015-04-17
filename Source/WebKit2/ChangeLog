@@ -1,3 +1,13 @@
+2015-04-16  Brady Eidson  <beidson@apple.com>
+
+        Compiling a content extension fails when user's home directory is on a different volume from /var/tmp.
+        https://bugs.webkit.org/show_bug.cgi?id=143834
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/APIUserContentExtensionStore.cpp:
+        (API::compiledToFile): Use moveFile() instead of renameFile()
+
 2015-04-16  Anders Carlsson  <andersca@apple.com>
 
         Deprecate _WKWebsiteDataStore in favor of WKWebsiteDataStore

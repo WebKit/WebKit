@@ -1,3 +1,27 @@
+2015-04-16  Brady Eidson  <beidson@apple.com>
+
+        Compiling a content extension fails when user's home directory is on a different volume from /var/tmp.
+        https://bugs.webkit.org/show_bug.cgi?id=143834
+
+        Reviewed by Anders Carlsson.
+
+        - Add moveFile() for a WK2 call site to use.
+        - Remove renameFile() as it is now dead code.
+
+        * platform/FileSystem.h:
+
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::renameFile): Deleted.
+
+        * platform/mac/FileSystemMac.mm:
+        (WebCore::moveFile):
+
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::renameFile): Deleted.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::renameFile): Deleted.
+
 2015-04-16  Roger Fong  <roger_fong@apple.com>
 
         Media element time displays shouldn't wrap.

@@ -225,7 +225,7 @@ static std::error_code compiledToFile(const String& json, const String& finalFil
     if (mappedData.isNull())
         return UserContentExtensionStore::Error::CompileFailed;
 
-    if (!WebCore::renameFile(temporaryFilePath, finalFilePath))
+    if (!WebCore::moveFile(temporaryFilePath, finalFilePath))
         return UserContentExtensionStore::Error::CompileFailed;
 
     return { };
