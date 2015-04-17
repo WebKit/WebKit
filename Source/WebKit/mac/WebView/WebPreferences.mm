@@ -432,6 +432,7 @@ public:
         [NSNumber numberWithBool:YES],  WebKitJavaEnabledPreferenceKey,
 #endif
         [NSNumber numberWithBool:YES],  WebKitJavaScriptEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitJavaScriptMarkupEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitWebSecurityEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAllowUniversalAccessFromFileURLsPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAllowFileAccessFromFileURLsPreferenceKey,
@@ -2492,6 +2493,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)antialiasedFontDilationEnabled
 {
     return [self _boolValueForKey:WebKitAntialiasedFontDilationEnabledKey];
+}
+
+- (BOOL)javaScriptMarkupEnabled
+{
+    return [self _boolValueForKey:WebKitJavaScriptMarkupEnabledPreferenceKey];
+}
+
+- (void)setJavaScriptMarkupEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitJavaScriptMarkupEnabledPreferenceKey];
 }
 
 @end

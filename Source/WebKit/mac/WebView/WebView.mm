@@ -2218,6 +2218,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setLocalStorageDatabasePath([preferences _localStorageDatabasePath]);
     settings.setJavaEnabled([preferences isJavaEnabled]);
     settings.setScriptEnabled([preferences isJavaScriptEnabled]);
+    settings.setScriptMarkupEnabled([preferences javaScriptMarkupEnabled]);
     settings.setWebSecurityEnabled([preferences isWebSecurityEnabled]);
     settings.setAllowUniversalAccessFromFileURLs([preferences allowUniversalAccessFromFileURLs]);
     settings.setAllowFileAccessFromFileURLs([preferences allowFileAccessFromFileURLs]);
