@@ -1,3 +1,18 @@
+2015-04-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [GTK] Unreviewed speculative clean build fix after r182882.
+
+        TestWebKitAPI's forwarding header generator depended on WeKit2's
+        which generated SOUP related forwarding headers too.
+
+        This dependency isn't necessary and was removed by r182882 to make
+        forwarding header generators parallelizable. But in this case
+        TestWebKitAPI's and WebKitTestRunner's forwarding header generator
+        should generate SOUP related forwarding headers too similar to EFL.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * WebKitTestRunner/PlatformGTK.cmake:
+
 2015-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Redirect to non HTTP destination is broken
