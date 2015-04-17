@@ -154,7 +154,8 @@ public:
     void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
     bool isSafeToCollect() const { return m_isSafeToCollect; }
 
-    JS_EXPORT_PRIVATE void collectAllGarbage();
+    void collectAllGarbage() { collectAndSweep(FullCollection); }
+    JS_EXPORT_PRIVATE void collectAndSweep(HeapOperation collectionType = AnyCollection);
     bool shouldCollect();
     JS_EXPORT_PRIVATE void collect(HeapOperation collectionType = AnyCollection);
     bool collectIfNecessaryOrDefer(); // Returns true if it did collect.

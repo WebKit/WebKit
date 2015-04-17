@@ -852,6 +852,8 @@
     <ClCompile Include="..\tools\CodeProfile.cpp" />
     <ClCompile Include="..\tools\CodeProfiling.cpp" />
     <ClCompile Include="..\tools\FunctionOverrides.cpp" />
+    <ClCompile Include="..\tools\JSDollarVM.cpp" />
+    <ClCompile Include="..\tools\JSDollarVMPrototype.cpp" />
     <ClCompile Include="..\yarr\RegularExpression.cpp" />
     <ClCompile Include="..\yarr\YarrCanonicalizeUCS2.cpp" />
     <ClCompile Include="..\yarr\YarrInterpreter.cpp" />
@@ -1698,6 +1700,8 @@
     <ClInclude Include="..\tools\CodeProfile.h" />
     <ClInclude Include="..\tools\CodeProfiling.h" />
     <ClInclude Include="..\tools\FunctionOverrides.h" />
+    <ClInclude Include="..\tools\JSDollarVM.h" />
+    <ClInclude Include="..\tools\JSDollarVMPrototype.h" />
     <ClInclude Include="..\tools\ProfileTreeNode.h" />
     <ClInclude Include="..\tools\TieredMMapArray.h" />
     <ClInclude Include="..\yarr\RegularExpression.h" />

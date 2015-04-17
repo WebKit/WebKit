@@ -313,34 +313,23 @@ void StackVisitor::Frame::setToEnd()
 #endif
 }
 
-#ifndef NDEBUG
-
-static const char* jitTypeName(JITCode::JITType jitType)
-{
-    switch (jitType) {
-    case JITCode::None: return "None";
-    case JITCode::HostCallThunk: return "HostCallThunk";
-    case JITCode::InterpreterThunk: return "InterpreterThunk";
-    case JITCode::BaselineJIT: return "BaselineJIT";
-    case JITCode::DFGJIT: return "DFGJIT";
-    case JITCode::FTLJIT: return "FTLJIT";
-    }
-    return "<unknown>";
-}
-
 static void printIndents(int levels)
 {
     while (levels--)
         dataLogFString("   ");
 }
 
-static void printif(int indentLevels, const char* format, ...)
+template<typename... Types>
+void log(unsigned indent, const Types&... values)
 {
-    va_list argList;
-    va_start(argList, format);
+    printIndents(indent);
+    dataLog(values...);
+}
 
-    if (indentLevels)
-        printIndents(indentLevels);
+template<typename... Types>
+void logF(unsigned indent, const char* format, const Types&... values)
+{
+    printIndents(indent);
 
 #if COMPILER(CLANG) || COMPILER(GCC)
 #pragma GCC diagnostic push
@@ -348,121 +337,80 @@ static void printif(int indentLevels, const char* format, ...)
 #pragma GCC diagnostic ignored "-Wmissing-format-attribute"
 #endif
 
-    WTF::dataLogFV(format, argList);
+    dataLogF(format, values...);
 
 #if COMPILER(CLANG) || COMPILER(GCC)
 #pragma GCC diagnostic pop
 #endif
-
-    va_end(argList);
 }
 
-void StackVisitor::Frame::print(int indentLevel)
+void StackVisitor::Frame::print(int indent)
 {
-    int i = indentLevel;
-
     if (!this->callFrame()) {
-        printif(i, "frame 0x0\n");
+        log(indent, "frame 0x0\n");
         return;
     }
 
     CodeBlock* codeBlock = this->codeBlock();
-    printif(i, "frame %p {\n", this->callFrame());
+    logF(indent, "frame %p {\n", this->callFrame());
 
-    CallFrame* callFrame = m_callFrame;
-    CallFrame* callerFrame = this->callerFrame();
-    void* returnPC = callFrame->hasReturnPC() ? callFrame->returnPC().value() : nullptr;
+    {
+        indent++;
 
-    printif(i, "   name '%s'\n", functionName().utf8().data());
-    printif(i, "   sourceURL '%s'\n", sourceURL().utf8().data());
+        CallFrame* callFrame = m_callFrame;
+        CallFrame* callerFrame = this->callerFrame();
+        void* returnPC = callFrame->hasReturnPC() ? callFrame->returnPC().value() : nullptr;
+
+        log(indent, "name: ", functionName(), "\n");
+        log(indent, "sourceURL: ", sourceURL(), "\n");
 
 #if ENABLE(DFG_JIT)
-    printif(i, "   isInlinedFrame %d\n", isInlinedFrame());
-    if (isInlinedFrame())
-        printif(i, "   InlineCallFrame %p\n", m_inlineCallFrame);
+        log(indent, "isInlinedFrame: ", isInlinedFrame(), "\n");
+        if (isInlinedFrame())
+            logF(indent, "InlineCallFrame: %p\n", m_inlineCallFrame);
 #endif
 
-    printif(i, "   callee %p\n", callee());
-    printif(i, "   returnPC %p\n", returnPC);
-    printif(i, "   callerFrame %p\n", callerFrame);
-    unsigned locationRawBits = callFrame->locationAsRawBits();
-    printif(i, "   rawLocationBits %u 0x%x\n", locationRawBits, locationRawBits);
-    printif(i, "   codeBlock %p\n", codeBlock);
-    if (codeBlock) {
-        JITCode::JITType jitType = codeBlock->jitType();
-        if (callFrame->hasLocationAsBytecodeOffset()) {
-            unsigned bytecodeOffset = callFrame->locationAsBytecodeOffset();
-            printif(i, "      bytecodeOffset %u %p / %zu\n", bytecodeOffset, reinterpret_cast<void*>(bytecodeOffset), codeBlock->instructions().size());
+        logF(indent, "callee: %p\n", callee());
+        logF(indent, "returnPC: %p\n", returnPC);
+        logF(indent, "callerFrame: %p\n", callerFrame);
+        unsigned locationRawBits = callFrame->locationAsRawBits();
+        logF(indent, "rawLocationBits: %u 0x%x\n", locationRawBits, locationRawBits);
+        logF(indent, "codeBlock: %p ", codeBlock);
+        if (codeBlock)
+            dataLog(*codeBlock);
+        dataLog("\n");
+        if (codeBlock && !isInlinedFrame()) {
+            indent++;
+
+            if (callFrame->hasLocationAsBytecodeOffset()) {
+                unsigned bytecodeOffset = callFrame->locationAsBytecodeOffset();
+                log(indent, "bytecodeOffset: ", bytecodeOffset, " of ", codeBlock->instructions().size(), "\n");
 #if ENABLE(DFG_JIT)
-        } else {
-            unsigned codeOriginIndex = callFrame->locationAsCodeOriginIndex();
-            printif(i, "      codeOriginIdex %u %p / %zu\n", codeOriginIndex, reinterpret_cast<void*>(codeOriginIndex), codeBlock->codeOrigins().size());
+            } else {
+                log(indent, "hasCodeOrigins: ", codeBlock->hasCodeOrigins(), "\n");
+                if (codeBlock->hasCodeOrigins()) {
+                    unsigned codeOriginIndex = callFrame->locationAsCodeOriginIndex();
+                    log(indent, "codeOriginIndex: ", codeOriginIndex, " of ", codeBlock->codeOrigins().size(), "\n");
+
+                    JITCode::JITType jitType = codeBlock->jitType();
+                    if (jitType != JITCode::FTLJIT) {
+                        JITCode* jitCode = codeBlock->jitCode().get();
+                        logF(indent, "jitCode: %p start %p end %p\n", jitCode, jitCode->start(), jitCode->end());
+                    }
+                }
 #endif
+            }
+            unsigned line = 0;
+            unsigned column = 0;
+            computeLineAndColumn(line, column);
+            log(indent, "line: ", line, "\n");
+            log(indent, "column: ", column, "\n");
+
+            indent--;
         }
-        unsigned line = 0;
-        unsigned column = 0;
-        computeLineAndColumn(line, column);
-        printif(i, "      line %d\n", line);
-        printif(i, "      column %d\n", column);
-        printif(i, "      jitType %d <%s> isOptimizingJIT %d\n", jitType, jitTypeName(jitType), JITCode::isOptimizingJIT(jitType));
-#if ENABLE(DFG_JIT)
-        printif(i, "      hasCodeOrigins %d\n", codeBlock->hasCodeOrigins());
-        if (codeBlock->hasCodeOrigins()) {
-            JITCode* jitCode = codeBlock->jitCode().get();
-            printif(i, "         jitCode %p start %p end %p\n", jitCode, jitCode->start(), jitCode->end());
-        }
-#endif
+        indent--;
     }
-    printif(i, "}\n");
+    log(indent, "}\n");
 }
-
-#endif // NDEBUG
 
 } // namespace JSC
-
-#ifndef NDEBUG
-using JSC::StackVisitor;
-
-// For debugging use
-JS_EXPORT_PRIVATE void debugPrintCallFrame(JSC::CallFrame*);
-JS_EXPORT_PRIVATE void debugPrintStack(JSC::CallFrame* topCallFrame);
-
-class DebugPrintFrameFunctor {
-public:
-    enum Action {
-        PrintOne,
-        PrintAll
-    };
-
-    DebugPrintFrameFunctor(Action action)
-        : m_action(action)
-    {
-    }
-
-    StackVisitor::Status operator()(StackVisitor& visitor)
-    {
-        visitor->print(2);
-        return m_action == PrintAll ? StackVisitor::Continue : StackVisitor::Done;
-    }
-
-private:
-    Action m_action;
-};
-
-void debugPrintCallFrame(JSC::CallFrame* callFrame)
-{
-    if (!callFrame)
-        return;
-    DebugPrintFrameFunctor functor(DebugPrintFrameFunctor::PrintOne);
-    callFrame->iterate(functor);
-}
-
-void debugPrintStack(JSC::CallFrame* topCallFrame)
-{
-    if (!topCallFrame)
-        return;
-    DebugPrintFrameFunctor functor(DebugPrintFrameFunctor::PrintAll);
-    topCallFrame->iterate(functor);
-}
-
-#endif // !NDEBUG

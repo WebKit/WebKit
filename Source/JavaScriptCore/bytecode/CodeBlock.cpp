@@ -531,7 +531,9 @@ void CodeBlock::printCallOp(PrintStream& out, ExecState* exec, int location, con
             if (target)
                 out.printf(" jit(%p, exec %p)", target, target->executable());
         }
-        out.print(" status(", CallLinkStatus::computeFor(this, location, map), ")");
+        
+        if (jitType() != JITCode::FTLJIT)
+            out.print(" status(", CallLinkStatus::computeFor(this, location, map), ")");
 #else
         UNUSED_PARAM(map);
 #endif

@@ -67,6 +67,8 @@
 #include "JSConsole.h"
 #include "JSDataView.h"
 #include "JSDataViewPrototype.h"
+#include "JSDollarVM.h"
+#include "JSDollarVMPrototype.h"
 #include "JSFunction.h"
 #include "JSFunctionNameScope.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"
@@ -450,6 +452,13 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     JSConsole* consoleObject = JSConsole::create(vm, m_consoleStructure.get());
     putDirectWithoutTransition(vm, Identifier::fromString(exec, "console"), consoleObject, DontEnum);
 
+    if (UNLIKELY(Options::enableDollarVM())) {
+        JSDollarVMPrototype* dollarVMPrototype = JSDollarVMPrototype::create(vm, this, JSDollarVMPrototype::createStructure(vm, this, m_objectPrototype.get()));
+        m_dollarVMStructure.set(vm, this, JSDollarVM::createStructure(vm, this, dollarVMPrototype));
+        JSDollarVM* dollarVM = JSDollarVM::create(vm, m_dollarVMStructure.get());
+        putDirectWithoutTransition(vm, Identifier::fromString(exec, "$vm"), dollarVM, DontEnum);
+    }
+
     resetPrototype(vm, prototype());
 }
 
@@ -729,6 +738,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_regExpMatchesArrayStructure);
     visitor.append(&thisObject->m_regExpStructure);
     visitor.append(&thisObject->m_consoleStructure);
+    visitor.append(&thisObject->m_dollarVMStructure);
     visitor.append(&thisObject->m_internalFunctionStructure);
 
 #if ENABLE(PROMISES)

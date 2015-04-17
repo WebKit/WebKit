@@ -1,3 +1,146 @@
+2015-04-16  Mark Lam  <mark.lam@apple.com>
+
+        Add $vm debugging tool.
+        https://bugs.webkit.org/show_bug.cgi?id=143809
+
+        Reviewed by Geoffrey Garen.
+
+        For debugging VM bugs, it would be useful to be able to dump VM data structures
+        from JS code that we instrument.  To this end, let's introduce a
+        JS_enableDollarVM option that, if true, installs an $vm property into each JS
+        global object at creation time.  The $vm property refers to an object that
+        provides a collection of useful utility functions.  For this initial
+        implementation, $vm will have the following:
+
+            crash() - trigger an intentional crash.
+
+            dfgTrue() - returns true if the current function is DFG compiled, else returns false.
+            jitTrue() - returns true if the current function is compiled by the baseline JIT, else returns false.
+            llintTrue() - returns true if the current function is interpreted by the LLINT, else returns false.
+
+            gc() - runs a full GC.
+            edenGC() - runs an eden GC.
+
+            codeBlockForFrame(frameNumber) - gets the codeBlock at the specified frame (0 = current, 1 = caller, etc).
+            printSourceFor(codeBlock) - prints the source code for the codeBlock.
+            printByteCodeFor(codeBlock) - prints the bytecode for the codeBlock.
+
+            print(str) - prints a string to dataLog output.
+            printCallFrame() - prints the current CallFrame.
+            printStack() - prints the JS stack.
+            printInternal(value) - prints the JSC internal info for the specified value.
+
+        With JS_enableDollarVM=true, JS code can use the above functions like so:
+
+            $vm.print("Using $vm features\n");
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printCallOp):
+        - FTL compiled functions don't like it when we try to compute the CallLinkStatus.
+          Hence, we skip this step if we're dumping an FTL codeBlock.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collectAndSweep):
+        (JSC::Heap::collectAllGarbage): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::collectAllGarbage):
+        - Add ability to do an Eden collection and sweep.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::printIndents):
+        (JSC::log):
+        (JSC::logF):
+        (JSC::StackVisitor::Frame::print):
+        (JSC::jitTypeName): Deleted.
+        (JSC::printif): Deleted.
+        - Modernize the implementation of StackVisitor::Frame::print(), and remove some
+          now redundant code.
+        - Also fix it so that it downgrades gracefully when encountering inlined DFG
+          and compiled FTL functions.
+
+        (DebugPrintFrameFunctor::DebugPrintFrameFunctor): Deleted.
+        (DebugPrintFrameFunctor::operator()): Deleted.
+        (debugPrintCallFrame): Deleted.
+        (debugPrintStack): Deleted.
+        - these have been moved into JSDollarVMPrototype.cpp. 
+
+        * interpreter/StackVisitor.h:
+        - StackVisitor::Frame::print() is now enabled for release builds as well so that
+          we can call it from $vm.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        - Added the $vm instance to global objects conditional on the JSC_enableDollarVM
+          option.
+
+        * runtime/Options.h:
+        - Added the JSC_enableDollarVM option.
+
+        * tools/JSDollarVM.cpp: Added.
+        * tools/JSDollarVM.h: Added.
+        (JSC::JSDollarVM::createStructure):
+        (JSC::JSDollarVM::create):
+        (JSC::JSDollarVM::JSDollarVM):
+
+        * tools/JSDollarVMPrototype.cpp: Added.
+        - This file contains 2 sets of functions:
+
+          a. a C++ implementation of debugging utility functions that are callable when
+             doing debugging from lldb.  To the extent possible, these functions try to
+             be cautious and not cause unintended crashes should the user call them with
+             the wrong info.  Hence, they are designed to be robust rather than speedy.
+
+          b. the native implementations of JS functions in the $vm object.  Where there
+             is overlapping functionality, these are built on top of the C++ functions
+             above to do the work.
+
+          Note: it does not make sense for all of the $vm functions to have a C++
+          counterpart for lldb debugging.  For example, the $vm.dfgTrue() function is
+          only useful for JS code, and works via the DFG intrinsics mechanism.
+          When doing debugging via lldb, the optimization level of the currently
+          executing JS function can be gotten by dumping the current CallFrame instead.
+
+        (JSC::currentThreadOwnsJSLock):
+        (JSC::ensureCurrentThreadOwnsJSLock):
+        (JSC::JSDollarVMPrototype::addFunction):
+        (JSC::functionCrash): - $vm.crash()
+        (JSC::functionDFGTrue): - $vm.dfgTrue()
+        (JSC::CallerFrameJITTypeFunctor::CallerFrameJITTypeFunctor):
+        (JSC::CallerFrameJITTypeFunctor::operator()):
+        (JSC::CallerFrameJITTypeFunctor::jitType):
+        (JSC::functionLLintTrue): - $vm.llintTrue()
+        (JSC::functionJITTrue): - $vm.jitTrue()
+        (JSC::gc):
+        (JSC::functionGC): - $vm.gc()
+        (JSC::edenGC):
+        (JSC::functionEdenGC): - $vm.edenGC()
+        (JSC::isValidCodeBlock):
+        (JSC::codeBlockForFrame):
+        (JSC::functionCodeBlockForFrame): - $vm.codeBlockForFrame(frameNumber)
+        (JSC::codeBlockFromArg):
+        (JSC::functionPrintSourceFor): - $vm.printSourceFor(codeBlock)
+        (JSC::functionPrintByteCodeFor): - $vm.printBytecodeFor(codeBlock)
+        (JSC::functionPrint): - $vm.print(str)
+        (JSC::PrintFrameFunctor::PrintFrameFunctor):
+        (JSC::PrintFrameFunctor::operator()):
+        (JSC::printCallFrame):
+        (JSC::printStack):
+        (JSC::functionPrintCallFrame): - $vm.printCallFrame()
+        (JSC::functionPrintStack): - $vm.printStack()
+        (JSC::printValue):
+        (JSC::functionPrintValue): - $vm.printValue()
+        (JSC::JSDollarVMPrototype::finishCreation):
+        * tools/JSDollarVMPrototype.h: Added.
+        (JSC::JSDollarVMPrototype::create):
+        (JSC::JSDollarVMPrototype::createStructure):
+        (JSC::JSDollarVMPrototype::JSDollarVMPrototype):
+
 2015-04-16  Geoffrey Garen  <ggaren@apple.com>
 
         Speculative fix after r182915

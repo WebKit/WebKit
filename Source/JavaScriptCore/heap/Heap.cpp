@@ -992,12 +992,12 @@ void Heap::addToRememberedSet(const JSCell* cell)
     m_slotVisitor.unconditionallyAppend(const_cast<JSCell*>(cell));
 }
 
-void Heap::collectAllGarbage()
+void Heap::collectAndSweep(HeapOperation collectionType)
 {
     if (!m_isSafeToCollect)
         return;
 
-    collect(FullCollection);
+    collect(collectionType);
 
     SamplingRegion samplingRegion("Garbage Collection: Sweeping");
 

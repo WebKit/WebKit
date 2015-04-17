@@ -900,6 +900,12 @@
     <ClCompile Include="..\tools\FunctionOverrides.cpp">
       <Filter>tools</Filter>
     </ClCompile>
+    <ClCompile Include="..\tools\JSDollarVM.cpp">
+      <Filter>tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tools\JSDollarVMPrototype.cpp">
+      <Filter>tools</Filter>
+    </ClCompile>
     <ClCompile Include="..\yarr\RegularExpression.cpp">
       <Filter>yarr</Filter>
     </ClCompile>
@@ -2970,6 +2976,12 @@
       <Filter>tools</Filter>
     </ClInclude>
     <ClInclude Include="..\tools\FunctionOverrides.h">
+      <Filter>tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tools\JSDollarVM.h">
+      <Filter>tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tools\JSDollarVMPrototype.h">
       <Filter>tools</Filter>
     </ClInclude>
     <ClInclude Include="..\tools\ProfileTreeNode.h">

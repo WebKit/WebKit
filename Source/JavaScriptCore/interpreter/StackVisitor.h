@@ -82,9 +82,7 @@ public:
         VMEntryFrame* vmEntryFrame() const { return m_VMEntryFrame; }
         CallFrame* callFrame() const { return m_callFrame; }
         
-#ifndef NDEBUG
         JS_EXPORT_PRIVATE void print(int indentLevel);
-#endif
 
     private:
         Frame() { }
