@@ -59,4 +59,6 @@ PASS: window.resizeTo.call(targetWindow, 0, 0); should be 'undefined' and is.
 PASS: window.showModalDialog.call(targetWindow); should be 'undefined' and is.
 PASS: window.eval.call(targetWindow, '1+2'); should be '3' and is.
 PASS: window.location.toString.call(targetWindow.location) should be 'undefined' and is.
+PASS: history.pushState.call(targetWindow.history, {}, '', 'http://localhost:8000/foobar') should be 'undefined' and is.
+PASS: history.replaceState.call(targetWindow.history, {}, '', 'http://localhost:8000/foobar') should be 'undefined' and is.
 

@@ -1,5 +1,24 @@
 2015-04-17  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r182284
+
+    2015-04-02  Alexey Proskuryakov  <ap@apple.com>
+
+            Clean up access checks in JSHistoryCustom.cpp
+            https://bugs.webkit.org/show_bug.cgi?id=143227
+
+            Reviewed by Sam Weinig.
+
+            * bindings/js/JSHistoryCustom.cpp:
+            (WebCore::JSHistory::putDelegate):
+            (WebCore::JSHistory::deleteProperty):
+            (WebCore::JSHistory::deletePropertyByIndex):
+            (WebCore::JSHistory::getOwnPropertyNames):
+            (WebCore::JSHistory::pushState):
+            (WebCore::JSHistory::replaceState):
+
+2015-04-17  Lucas Forschler  <lforschler@apple.com>
+
         Merge r182051
 
     2015-03-26  Zalan Bujtas  <zalan@apple.com>
