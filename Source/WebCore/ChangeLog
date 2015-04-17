@@ -1,3 +1,20 @@
+2015-04-17  Zalan Bujtas  <zalan@apple.com>
+
+        RenderTableCell::computeCollapsed*Border() should check if the cell is still attached to the render tree.
+        https://bugs.webkit.org/show_bug.cgi?id=143887
+        rdar://problem/20568989
+
+        Reviewed by Simon Fraser.
+
+        Detached table cell has no access to its parent table. This is a speculative fix to
+        avoid dereferencing the invalid table pointer.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeCollapsedStartBorder):
+        (WebCore::RenderTableCell::computeCollapsedEndBorder):
+        (WebCore::RenderTableCell::computeCollapsedBeforeBorder):
+        (WebCore::RenderTableCell::computeCollapsedAfterBorder):
+
 2015-04-16  Roger Fong  <roger_fong@apple.com>
 
         Update fullscreen button visibility on fullscreen change.

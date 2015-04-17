@@ -537,14 +537,15 @@ CollapsedBorderValue RenderTableCell::collapsedStartBorder(IncludeBorderColorOrN
 
 CollapsedBorderValue RenderTableCell::computeCollapsedStartBorder(IncludeBorderColorOrNot includeColor) const
 {
-    RenderTable* table = this->table();
-
     // For the start border, we need to check, in order of precedence:
     // (1) Our start border.
     int startColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderStartColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
     int endColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderEndColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
     CollapsedBorderValue result(style().borderStart(), includeColor ? style().visitedDependentColor(startColorProperty) : Color(), BCELL);
 
+    RenderTable* table = this->table();
+    if (!table)
+        return result;
     // (2) The end border of the preceding cell.
     RenderTableCell* cellBefore = table->cellBefore(this);
     if (cellBefore) {
@@ -647,17 +648,18 @@ CollapsedBorderValue RenderTableCell::collapsedEndBorder(IncludeBorderColorOrNot
 
 CollapsedBorderValue RenderTableCell::computeCollapsedEndBorder(IncludeBorderColorOrNot includeColor) const
 {
-    RenderTable* table = this->table();
-    // Note: We have to use the effective column information instead of whether we have a cell after as a table doesn't
-    // have to be regular (any row can have less cells than the total cell count).
-    bool isEndColumn = table->colToEffCol(col() + colSpan() - 1) == table->numEffCols() - 1;
-
     // For end border, we need to check, in order of precedence:
     // (1) Our end border.
     int startColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderStartColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
     int endColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderEndColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
     CollapsedBorderValue result = CollapsedBorderValue(style().borderEnd(), includeColor ? style().visitedDependentColor(endColorProperty) : Color(), BCELL);
-    
+
+    RenderTable* table = this->table();
+    if (!table)
+        return result;
+    // Note: We have to use the effective column information instead of whether we have a cell after as a table doesn't
+    // have to be regular (any row can have less cells than the total cell count).
+    bool isEndColumn = table->colToEffCol(col() + colSpan() - 1) == table->numEffCols() - 1;
     // (2) The start border of the following cell.
     if (!isEndColumn) {
         if (RenderTableCell* cellAfter = table->cellAfter(this)) {
@@ -759,14 +761,15 @@ CollapsedBorderValue RenderTableCell::collapsedBeforeBorder(IncludeBorderColorOr
 
 CollapsedBorderValue RenderTableCell::computeCollapsedBeforeBorder(IncludeBorderColorOrNot includeColor) const
 {
-    RenderTable* table = this->table();
-
     // For before border, we need to check, in order of precedence:
     // (1) Our before border.
     int beforeColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderBeforeColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
     int afterColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderAfterColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
     CollapsedBorderValue result = CollapsedBorderValue(style().borderBefore(), includeColor ? style().visitedDependentColor(beforeColorProperty) : Color(), BCELL);
     
+    RenderTable* table = this->table();
+    if (!table)
+        return result;
     RenderTableCell* prevCell = table->cellAbove(this);
     if (prevCell) {
         // (2) A before cell's after border.
@@ -855,14 +858,15 @@ CollapsedBorderValue RenderTableCell::collapsedAfterBorder(IncludeBorderColorOrN
 
 CollapsedBorderValue RenderTableCell::computeCollapsedAfterBorder(IncludeBorderColorOrNot includeColor) const
 {
-    RenderTable* table = this->table();
-
     // For after border, we need to check, in order of precedence:
     // (1) Our after border.
     int beforeColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderBeforeColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
     int afterColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderAfterColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
     CollapsedBorderValue result = CollapsedBorderValue(style().borderAfter(), includeColor ? style().visitedDependentColor(afterColorProperty) : Color(), BCELL);
     
+    RenderTable* table = this->table();
+    if (!table)
+        return result;
     RenderTableCell* nextCell = table->cellBelow(this);
     if (nextCell) {
         // (2) An after cell's before border.
