@@ -1,3 +1,16 @@
+2015-04-17  Basile Clement  <basile_clement@apple.com>
+
+        Inline JSFunction allocation in DFG
+        https://bugs.webkit.org/show_bug.cgi?id=143858
+
+        Reviewed by Filip Pizlo.
+
+        Followup to my previous patch which inlines JSFunction allocation when
+        using FTL, now also enabled in DFG.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+
 2015-04-16  Jordan Harband  <ljharb@gmail.com>
 
         Number.parseInt is not === global parseInt in nightly r182673

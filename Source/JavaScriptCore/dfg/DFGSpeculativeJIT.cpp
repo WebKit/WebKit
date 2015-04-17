@@ -4362,18 +4362,54 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
 
 void SpeculativeJIT::compileNewFunction(Node* node)
 {
-    GPRFlushedCallResult result(this);
-    GPRReg resultGPR = result.gpr();
     SpeculateCellOperand scope(this, node->child1());
     GPRReg scopeGPR = scope.gpr();
-    flushRegisters();
+
     FunctionExecutable* executable = node->castOperand<FunctionExecutable*>();
-    J_JITOperation_EJscC function;
-    if (executable->singletonFunction()->isStillValid())
-        function = operationNewFunction;
-    else
-        function = operationNewFunctionWithInvalidatedReallocationWatchpoint;
-    callOperation(function, resultGPR, scopeGPR, executable);
+
+    if (executable->singletonFunction()->isStillValid()) {
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+
+        flushRegisters();
+
+        callOperation(operationNewFunction, resultGPR, scopeGPR, executable);
+        cellResult(resultGPR, node);
+        return;
+    }
+
+    Structure* structure = m_jit.graph().globalObjectFor(
+        node->origin.semantic)->functionStructure();
+
+    GPRTemporary result(this);
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+    GPRReg resultGPR = result.gpr();
+    GPRReg scratch1GPR = scratch1.gpr();
+    GPRReg scratch2GPR = scratch2.gpr();
+
+    JITCompiler::JumpList slowPath;
+    emitAllocateJSObjectWithKnownSize<JSFunction>(
+        resultGPR, TrustedImmPtr(structure), TrustedImmPtr(0),
+        scratch1GPR, scratch2GPR, slowPath, JSFunction::allocationSize(0));
+
+    // Don't need a memory barriers since we just fast-created the function, so it
+    // must be young.
+    m_jit.storePtr(
+        scopeGPR,
+        JITCompiler::Address(resultGPR, JSFunction::offsetOfScopeChain()));
+    m_jit.storePtr(
+        TrustedImmPtr(executable),
+        JITCompiler::Address(resultGPR, JSFunction::offsetOfExecutable()));
+    m_jit.storePtr(
+        TrustedImmPtr(0),
+        JITCompiler::Address(resultGPR, JSFunction::offsetOfRareData()));
+
+
+    addSlowPathGenerator(
+        slowPathCall(
+            slowPath, this, operationNewFunctionWithInvalidatedReallocationWatchpoint, resultGPR, scopeGPR, executable));
+
     cellResult(resultGPR, node);
 }
 
