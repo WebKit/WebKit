@@ -1,3 +1,14 @@
+2015-04-16  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/misc/DOMContentLoaded-event.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=143382
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/misc/DOMContentLoaded-event-expected.txt:
+        * http/tests/misc/DOMContentLoaded-event.html:
+        Don't race with a timer, just check if some time passes between DOMContentLoaded and load events.
+
 2015-04-16  Jordan Harband  <ljharb@gmail.com>
 
         Number.parseInt is not === global parseInt in nightly r182673
