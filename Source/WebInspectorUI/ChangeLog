@@ -1,3 +1,22 @@
+2015-04-16  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: Breakpoint icons should not get pushed off of debugger sidebar due to long resource names
+        https://bugs.webkit.org/show_bug.cgi?id=142714
+
+        Reviewed by Timothy Hatcher.
+
+        Modify the styles for content and group containers inside the debugger sidebar panel's detail sections
+        such that the rules "display: table" and "display: table-row-group" no longer apply. This will make
+        the file names which use the rule "text-overflow: ellipsis" truncate as expected.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger .details-section > .content):
+        (.sidebar > .panel.navigation.debugger .details-section.collapsed > .content):
+        (.sidebar > .panel.navigation.debugger .details-section > .content > .group):
+        (.sidebar > .panel.navigation.debugger .details-section.scripts):
+        (.sidebar > .panel.navigation.debugger .details-section.scripts .header):
+        (.sidebar > .panel.navigation.debugger .details-section.scripts.collapsed > .content):
+
 2015-04-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Should include "Log Value" context menu item in Preview and Collapsed ObjectTree
