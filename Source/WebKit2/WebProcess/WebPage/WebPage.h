@@ -1094,6 +1094,7 @@ private:
     PassRefPtr<WebCore::Range> lookupTextAtLocation(WebCore::FloatPoint, NSDictionary **options);
     void selectLastActionMenuRange();
     void focusAndSelectLastActionMenuHitTestResult();
+    void inputDeviceForceDidChange(float force, int stage);
     void immediateActionDidUpdate();
     void immediateActionDidCancel();
     void immediateActionDidComplete();
@@ -1354,6 +1355,7 @@ private:
     RefPtr<WebCore::Range> m_lastActionMenuRangeForSelection;
     WebCore::HitTestResult m_lastActionMenuHitTestResult;
     RefPtr<WebPageOverlay> m_lastActionMenuHitPageOverlay;
+    int m_lastForceStage { 0 };
 #endif
 
     bool m_mainFrameProgressCompleted;

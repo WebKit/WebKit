@@ -253,46 +253,6 @@ void EventSendingController::mouseMoveTo(int x, int y)
     WKBundlePagePostSynchronousMessage(InjectedBundle::singleton().page()->page(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
 }
 
-void EventSendingController::mouseForceDown()
-{
-    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
-    WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
-
-    WKRetainPtr<WKStringRef> subMessageKey(AdoptWK, WKStringCreateWithUTF8CString("SubMessage"));
-    WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("MouseForceDown"));
-    WKDictionarySetItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
-
-    WKBundlePagePostSynchronousMessage(InjectedBundle::singleton().page()->page(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
-}
-
-void EventSendingController::mouseForceUp()
-{
-    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
-    WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
-
-    WKRetainPtr<WKStringRef> subMessageKey(AdoptWK, WKStringCreateWithUTF8CString("SubMessage"));
-    WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("MouseForceUp"));
-    WKDictionarySetItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
-
-    WKBundlePagePostSynchronousMessage(InjectedBundle::singleton().page()->page(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
-}
-
-void EventSendingController::mouseForceChanged(double force)
-{
-    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
-    WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
-
-    WKRetainPtr<WKStringRef> subMessageKey(AdoptWK, WKStringCreateWithUTF8CString("SubMessage"));
-    WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("MouseForceChanged"));
-    WKDictionarySetItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
-
-    WKRetainPtr<WKStringRef> forceKey(AdoptWK, WKStringCreateWithUTF8CString("Force"));
-    WKRetainPtr<WKDoubleRef> forceRef(AdoptWK, WKDoubleCreate(force));
-    WKDictionarySetItem(EventSenderMessageBody.get(), forceKey.get(), forceRef.get());
-
-    WKBundlePagePostSynchronousMessage(InjectedBundle::singleton().page()->page(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
-}
-
 void EventSendingController::leapForward(int milliseconds)
 {
     WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));

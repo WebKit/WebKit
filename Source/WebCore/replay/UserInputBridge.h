@@ -78,7 +78,6 @@ public:
     WEBCORE_EXPORT bool handleMouseReleaseEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
     WEBCORE_EXPORT bool handleMouseMoveEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
     WEBCORE_EXPORT bool handleMouseMoveOnScrollbarEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
-    WEBCORE_EXPORT bool handleMouseForceEvent(const PlatformMouseEvent&, InputSource = InputSource::User);
     WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&, InputSource source = InputSource::User);
     WEBCORE_EXPORT bool handleKeyEvent(const PlatformKeyboardEvent&, InputSource source = InputSource::User);
     WEBCORE_EXPORT bool handleAccessKeyEvent(const PlatformKeyboardEvent&, InputSource source = InputSource::User);

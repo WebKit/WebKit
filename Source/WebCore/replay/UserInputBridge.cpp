@@ -147,11 +147,6 @@ bool UserInputBridge::handleMouseMoveOnScrollbarEvent(const PlatformMouseEvent& 
     return m_page.mainFrame().eventHandler().passMouseMovedEventToScrollbars(mouseEvent);
 }
 
-bool UserInputBridge::handleMouseForceEvent(const PlatformMouseEvent& mouseEvent, InputSource)
-{
-    return m_page.mainFrame().eventHandler().handleMouseForceEvent(mouseEvent);
-}
-
 bool UserInputBridge::handleKeyEvent(const PlatformKeyboardEvent& keyEvent, InputSource inputSource)
 {
 #if ENABLE(WEB_REPLAY)

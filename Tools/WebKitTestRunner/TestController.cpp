@@ -1102,32 +1102,6 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
             return 0;
         }
 
-#if PLATFORM(MAC)
-        if (WKStringIsEqualToUTF8CString(subMessageName, "MouseForceDown")) {
-            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), true);
-            m_eventSenderProxy->mouseForceDown();
-            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), false);
-            return 0;
-        }
-
-        if (WKStringIsEqualToUTF8CString(subMessageName, "MouseForceUp")) {
-            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), true);
-            m_eventSenderProxy->mouseForceUp();
-            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), false);
-            return 0;
-        }
-
-        if (WKStringIsEqualToUTF8CString(subMessageName, "MouseForceChanged")) {
-            WKRetainPtr<WKStringRef> forceKey = adoptWK(WKStringCreateWithUTF8CString("Force"));
-            double force = WKDoubleGetValue(static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, forceKey.get())));
-
-            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), true);
-            m_eventSenderProxy->mouseForceChanged(force);
-            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), false);
-            return 0;
-        }
-#endif // PLATFORM(MAC)
-
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseScrollBy")) {
             WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("X"));
             double x = WKDoubleGetValue(static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, xKey.get())));

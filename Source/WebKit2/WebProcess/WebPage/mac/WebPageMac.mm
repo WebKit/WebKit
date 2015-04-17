@@ -1141,6 +1141,25 @@ void WebPage::focusAndSelectLastActionMenuHitTestResult()
     frame->selection().setSelection(position);
 }
 
+void WebPage::inputDeviceForceDidChange(float force, int stage)
+{
+    Element* element = m_lastActionMenuHitTestResult.innerElement();
+    if (!element)
+        return;
+
+    float overallForce = stage < 1 ? force : force + stage - 1;
+    element->dispatchMouseForceChanged(overallForce);
+
+    if (m_lastForceStage == 1 && stage == 2)
+        element->dispatchMouseForceDown();
+    else if (m_lastForceStage == 2 && stage == 1) {
+        element->dispatchMouseForceUp();
+        element->dispatchMouseForceClick();
+    }
+
+    m_lastForceStage = stage;
+}
+
 void WebPage::immediateActionDidUpdate()
 {
     m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);

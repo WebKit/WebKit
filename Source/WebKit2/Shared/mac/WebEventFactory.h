@@ -42,7 +42,7 @@ namespace WebKit {
 class WebEventFactory {
 public:
 #if USE(APPKIT)
-    static WebMouseEvent createWebMouseEvent(NSEvent *, NSEvent *lastPressureEvent, NSView *windowView);
+    static WebMouseEvent createWebMouseEvent(NSEvent *, NSEvent *pressureEvent, NSView *windowView);
     static WebWheelEvent createWebWheelEvent(NSEvent *, NSView *windowView);
     static WebKeyboardEvent createWebKeyboardEvent(NSEvent *, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>&);
     static bool shouldBeHandledAsContextClick(const WebCore::PlatformMouseEvent&);

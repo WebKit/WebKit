@@ -4397,9 +4397,6 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
     case WebEvent::MouseDown:
     case WebEvent::MouseUp:
-    case WebEvent::MouseForceChanged:
-    case WebEvent::MouseForceDown:
-    case WebEvent::MouseForceUp:
     case WebEvent::Wheel:
     case WebEvent::KeyDown:
     case WebEvent::KeyUp:
@@ -4429,10 +4426,6 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         break;
     case WebEvent::MouseUp:
         m_currentlyProcessedMouseDownEvent = nullptr;
-        break;
-    case WebEvent::MouseForceChanged:
-    case WebEvent::MouseForceDown:
-    case WebEvent::MouseForceUp:
         break;
 
     case WebEvent::Wheel: {
@@ -5679,6 +5672,11 @@ void WebPageProxy::selectLastActionMenuRange()
 void WebPageProxy::focusAndSelectLastActionMenuHitTestResult()
 {
     m_process->send(Messages::WebPage::FocusAndSelectLastActionMenuHitTestResult(), m_pageID);
+}
+
+void WebPageProxy::inputDeviceForceDidChange(float force, int stage)
+{
+    m_process->send(Messages::WebPage::InputDeviceForceDidChange(force, stage), m_pageID);
 }
 
 void WebPageProxy::immediateActionDidUpdate()

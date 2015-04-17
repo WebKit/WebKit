@@ -38,7 +38,6 @@
 #include "FontSelector.h"
 #include "MutationObserver.h"
 #include "PageVisibilityState.h"
-#include "PlatformEvent.h"
 #include "PlatformScreen.h"
 #include "ReferrerPolicy.h"
 #include "Region.h"
@@ -781,7 +780,6 @@ public:
     };
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }
-    bool hasListenerTypeForEventType(PlatformEvent::Type) const;
     void addListenerTypeIfNeeded(const AtomicString& eventType);
 
     bool hasMutationObserversOfType(MutationObserver::MutationType type) const
