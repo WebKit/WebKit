@@ -1,3 +1,18 @@
+2015-04-17  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r180110
+
+    2015-02-14  Alexey Proskuryakov  <ap@apple.com>
+
+            rel="noreferrer" should make window.opener null
+            https://bugs.webkit.org/show_bug.cgi?id=141579
+
+            Reviewed by Darin Adler.
+
+            * WebView/WebPDFViewPlaceholder.mm:
+            (-[WebPDFViewPlaceholder simulateClickOnLinkToURL:]): Updated for a new WebCore
+            function signature. There is no rel="noreferrer" in PDF, so we can just always allow.
+
 2014-07-03  Daniel Bates  <dabates@apple.com>
 
         Add WTF::move()

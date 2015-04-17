@@ -206,7 +206,7 @@ static void openNewWindow(const URL& urlToLoad, Frame* frame)
     if (!newPage)
         return;
     newPage->chrome().show();
-    newPage->mainFrame().loader().loadFrameRequest(request, LockHistory::No, LockBackForwardList::No, 0, 0, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes);
+    newPage->mainFrame().loader().loadFrameRequest(request, LockHistory::No, LockBackForwardList::No, 0, 0, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress);
 }
 
 #if PLATFORM(GTK)
@@ -405,12 +405,12 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         break;
     case ContextMenuItemTagOpenLink:
         if (Frame* targetFrame = m_context.hitTestResult().targetFrame())
-            targetFrame->loader().loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(m_context.hitTestResult().absoluteLinkURL(), frame->loader().outgoingReferrer())), LockHistory::No, LockBackForwardList::No, 0, 0, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes);
+            targetFrame->loader().loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(m_context.hitTestResult().absoluteLinkURL(), frame->loader().outgoingReferrer())), LockHistory::No, LockBackForwardList::No, 0, 0, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress);
         else
             openNewWindow(m_context.hitTestResult().absoluteLinkURL(), frame);
         break;
     case ContextMenuItemTagOpenLinkInThisWindow:
-        frame->loader().loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(m_context.hitTestResult().absoluteLinkURL(), frame->loader().outgoingReferrer())), LockHistory::No, LockBackForwardList::No, 0, 0, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes);
+        frame->loader().loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(m_context.hitTestResult().absoluteLinkURL(), frame->loader().outgoingReferrer())), LockHistory::No, LockBackForwardList::No, 0, 0, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress);
         break;
     case ContextMenuItemTagBold:
         frame->editor().command("ToggleBold").execute();
