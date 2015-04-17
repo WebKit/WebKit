@@ -204,8 +204,7 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
 
         this._appendMenusItemsForObject(contextMenu, resolvedValue);
 
-        if (!contextMenu.isEmpty())
-            contextMenu.show();
+        contextMenu.show();
     }
 
     _appendMenusItemsForObject(contextMenu, resolvedValue)

@@ -90,6 +90,18 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
         this._previewElement.hidden = false;
     }
 
+    setOriginatingObjectInfo(remoteObject, propertyPath)
+    {
+        console.assert(!this._remoteObject);
+        console.assert(remoteObject instanceof WebInspector.RemoteObject);
+        console.assert(!propertyPath || propertyPath instanceof WebInspector.PropertyPath);
+
+        this._remoteObject = remoteObject;
+        this._propertyPath = propertyPath || null;
+
+        this.element.addEventListener("contextmenu", this._contextMenuHandler.bind(this));
+    }
+
     // Private
 
     _initTitleElement()
@@ -222,6 +234,24 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
     {
         element.appendChild(WebInspector.FormattedValue.createElementForObjectPreview(preview));
         return true;
+    }
+
+    _contextMenuHandler(event)
+    {
+        var contextMenu = new WebInspector.ContextMenu(event);
+
+        contextMenu.appendItem(WebInspector.UIString("Log Value"), function() {
+            var remoteObject = this._remoteObject;
+            var isImpossible = !this._propertyPath || this._propertyPath.isFullPathImpossible();
+            var text = isImpossible ? WebInspector.UIString("Selected Value") : this._propertyPath.displayPath(WebInspector.PropertyPath.Type.Value);
+
+            if (!isImpossible)
+                WebInspector.quickConsole.prompt.pushHistoryItem(text);
+
+            WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, this._remoteObject);
+        }.bind(this));
+
+        contextMenu.show();        
     }
 };
 

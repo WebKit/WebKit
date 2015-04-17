@@ -1,5 +1,35 @@
 2015-04-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Should include "Log Value" context menu item in Preview and Collapsed ObjectTree
+        https://bugs.webkit.org/show_bug.cgi?id=143845
+
+        Reviewed by Timothy Hatcher.
+
+        Give previews the same "Log Value" context menu so that if you just log
+        a bunch of objects to the console you can quickly turn that entire object
+        into a $n reference in the console to interact with.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView.prototype.setOriginatingObjectInfo):
+        (WebInspector.ObjectPreviewView.prototype._contextMenuHandler):
+        Provide API to refer to a RemoteObject and optional PropertyPath
+        that can be used to give the preview a "Log Value" context menu.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendFormattedArguments):
+        Include the RemoteObject without a path for a preview context menu.
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView):
+        Include the RemoteObject with a path if we knew it for a preview context menu.
+
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.createGetterElement):
+        The context menu can never be empty, since we always added at least one item above.
+
+
+2015-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: "Log Value" of a value inside of an array, does not log the innermost value
         https://bugs.webkit.org/show_bug.cgi?id=143793
 

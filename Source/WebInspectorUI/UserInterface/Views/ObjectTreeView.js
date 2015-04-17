@@ -32,6 +32,8 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
         console.assert(object instanceof WebInspector.RemoteObject);
         console.assert(!propertyPath || propertyPath instanceof WebInspector.PropertyPath);
 
+        var providedPropertyPath = propertyPath instanceof WebInspector.PropertyPath;
+
         this._object = object;
         this._mode = mode || WebInspector.ObjectTreeView.defaultModeForObject(object);
         this._propertyPath = propertyPath || new WebInspector.PropertyPath(this._object, "this");
@@ -52,6 +54,7 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
 
         if (this._object.preview) {
             this._previewView = new WebInspector.ObjectPreviewView(this._object.preview);
+            this._previewView.setOriginatingObjectInfo(this._object, providedPropertyPath ? propertyPath : null);
             this._previewView.element.addEventListener("click", this._handlePreviewOrTitleElementClick.bind(this));
             this._element.appendChild(this._previewView.element);
 

@@ -390,6 +390,10 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
                 var parameter = parameters[0];
                 var preview = WebInspector.FormattedValue.createObjectPreviewOrFormattedValueForRemoteObject(parameter, WebInspector.ObjectPreviewView.Mode.Brief);
                 var isPreviewView = preview instanceof WebInspector.ObjectPreviewView;
+
+                if (isPreviewView)
+                    preview.setOriginatingObjectInfo(parameter, null);
+
                 var previewElement = isPreviewView ? preview.element : preview;
                 previewContainer.appendChild(previewElement);
 
