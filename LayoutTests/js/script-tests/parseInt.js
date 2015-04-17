@@ -1,5 +1,8 @@
 description('Tests for the parseInt function.');
 
+shouldBe("parseInt.length", "2");
+shouldBe('var origParseInt = parseInt; Number.parseInt = function () {}; origParseInt', 'parseInt');
+
 // Simple hex & dec integer values.
 shouldBe("parseInt('123')", '123');
 shouldBe("parseInt('123x4')", '123');

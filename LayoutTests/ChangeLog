@@ -1,3 +1,15 @@
+2015-04-16  Jordan Harband  <ljharb@gmail.com>
+
+        Number.parseInt is not === global parseInt in nightly r182673
+        https://bugs.webkit.org/show_bug.cgi?id=143799
+
+        Reviewed by Darin Adler.
+
+        * js/number-constructor-expected.txt:
+        * js/parseInt-expected.txt:
+        * js/script-tests/number-constructor.js:
+        * js/script-tests/parseInt.js:
+
 2015-04-16  Tim Horton  <timothy_horton@apple.com>
 
         Rebaseline mouse-cursor-image-set results after r182869
