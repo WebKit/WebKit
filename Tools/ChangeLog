@@ -1,3 +1,17 @@
+2015-04-17  Alexey Proskuryakov  <ap@apple.com>
+
+        build.webkit.org/dashboard still shows obsolete results for out of order builds sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=143885
+
+        Reviewed by Tim Horton.
+
+        Fixed a case where we have two builds with the same revision(s). An in order build
+        is one for which the revision is strictly higher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue.prototype._checkForInOrderResult):
+        (BuildbotQueue.prototype.compareIterationsByRevisions):
+
 2015-04-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r182912 and r182920.

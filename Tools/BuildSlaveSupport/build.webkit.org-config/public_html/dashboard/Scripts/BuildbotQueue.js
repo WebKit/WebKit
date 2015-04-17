@@ -237,7 +237,7 @@ BuildbotQueue.prototype = {
         for (var i = 0; i < iterationsInOriginalOrder.length - 1; ++i) {
             var i1 = iterationsInOriginalOrder[i];
             var i2 = iterationsInOriginalOrder[i + 1];
-            if (i1.productive && i2.loaded && this.compareIterations(i1, i2) < 0) {
+            if (i1.productive && i2.loaded && this.compareIterationsByRevisions(i1, i2) < 0) {
                 this._hasLoadedIterationForInOrderResult = true;
                 return;
             }
@@ -280,6 +280,19 @@ BuildbotQueue.prototype = {
             return result;
 
         return b.id - a.id;
+    },
+
+    compareIterationsByRevisions: function(a, b)
+    {
+        var result = b.openSourceRevision - a.openSourceRevision;
+        if (result)
+            return result;
+
+        result = b.internalRevision - a.internalRevision;
+        if (result)
+            return result;
+
+        return 0;
     },
 
     sortIterations: function()
