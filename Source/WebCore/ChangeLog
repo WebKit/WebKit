@@ -1,3 +1,24 @@
+2015-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Redirect to non HTTP destination is broken
+        https://bugs.webkit.org/show_bug.cgi?id=143866
+
+        Reviewed by Sergio Villar Senin.
+
+        This is because we are passing true unconditionally as
+        isHTTPFamilyRequest parameter of
+        createSoupRequestAndMessageForHandle in continueAfterWillSendRequest.
+        We don't actually need to pass isHTTPFamilyRequest parameter to
+        createSoupRequestAndMessageForHandle, since it can simply check
+        that from the given request.
+
+        Covered by unit tets and also cache/disk-cache/disk-cache-redirect-to-data.html.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::continueAfterWillSendRequest):
+        (WebCore::createSoupRequestAndMessageForHandle):
+        (WebCore::ResourceHandle::start):
+
 2015-04-16  Alex Christensen  <achristensen@webkit.org>
 
         Use less memory when compiling content extensions

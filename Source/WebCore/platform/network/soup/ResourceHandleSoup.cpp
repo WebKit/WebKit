@@ -227,7 +227,7 @@ private:
     HashSet<String> m_certificates;
 };
 
-static bool createSoupRequestAndMessageForHandle(ResourceHandle*, const ResourceRequest&, bool isHTTPFamilyRequest);
+static bool createSoupRequestAndMessageForHandle(ResourceHandle*, const ResourceRequest&);
 static void cleanupSoupRequestOperation(ResourceHandle*, bool isDestroying = false);
 static void sendRequestCallback(GObject*, GAsyncResult*, gpointer);
 static void readCallback(GObject*, GAsyncResult*, gpointer);
@@ -468,7 +468,7 @@ static void continueAfterWillSendRequest(ResourceHandle* handle, const ResourceR
     if (protocolHostAndPortAreEqual(newRequest.url(), d->m_response.url()))
         applyAuthenticationToRequest(handle, newRequest, true);
 
-    if (!createSoupRequestAndMessageForHandle(handle, newRequest, true)) {
+    if (!createSoupRequestAndMessageForHandle(handle, newRequest)) {
         d->client()->cannotShowURL(handle);
         return;
     }
@@ -967,7 +967,7 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     return true;
 }
 
-static bool createSoupRequestAndMessageForHandle(ResourceHandle* handle, const ResourceRequest& request, bool isHTTPFamilyRequest)
+static bool createSoupRequestAndMessageForHandle(ResourceHandle* handle, const ResourceRequest& request)
 {
     ResourceHandleInternal* d = handle->getInternal();
 
@@ -983,7 +983,7 @@ static bool createSoupRequestAndMessageForHandle(ResourceHandle* handle, const R
     }
 
     // SoupMessages are only applicable to HTTP-family requests.
-    if (isHTTPFamilyRequest && !createSoupMessageForHandleAndRequest(handle, request)) {
+    if (request.url().protocolIsInHTTPFamily() && !createSoupMessageForHandleAndRequest(handle, request)) {
         d->m_soupRequest.clear();
         return false;
     }
@@ -1007,15 +1007,14 @@ bool ResourceHandle::start()
 
     // Only allow the POST and GET methods for non-HTTP requests.
     const ResourceRequest& request = firstRequest();
-    bool isHTTPFamilyRequest = request.url().protocolIsInHTTPFamily();
-    if (!isHTTPFamilyRequest && request.httpMethod() != "GET" && request.httpMethod() != "POST") {
+    if (!request.url().protocolIsInHTTPFamily() && request.httpMethod() != "GET" && request.httpMethod() != "POST") {
         this->scheduleFailure(InvalidURLFailure); // Error must not be reported immediately
         return true;
     }
 
     applyAuthenticationToRequest(this, firstRequest(), false);
 
-    if (!createSoupRequestAndMessageForHandle(this, request, isHTTPFamilyRequest)) {
+    if (!createSoupRequestAndMessageForHandle(this, request)) {
         this->scheduleFailure(InvalidURLFailure); // Error must not be reported immediately
         return true;
     }
