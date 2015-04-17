@@ -57,13 +57,16 @@ PassRefPtr<NotificationPermissionRequestManager> NotificationPermissionRequestMa
     return adoptRef(new NotificationPermissionRequestManager(page));
 }
 
-NotificationPermissionRequestManager::NotificationPermissionRequestManager(WebPage* page)
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+NotificationPermissionRequestManager::NotificationPermissionRequestManager(WebPage* page)
     : m_page(page)
-#endif
 {
-    (void)page;
 }
+#else
+NotificationPermissionRequestManager::NotificationPermissionRequestManager(WebPage*)
+{
+}
+#endif
 
 #if ENABLE(NOTIFICATIONS)
 void NotificationPermissionRequestManager::startRequest(SecurityOrigin* origin, PassRefPtr<NotificationPermissionCallback> callback)
