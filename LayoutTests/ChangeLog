@@ -1,5 +1,18 @@
 2015-04-17  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r181409
+
+    2015-03-10  Andy Estes  <aestes@apple.com>
+
+            REGRESSION (r180985): contentfiltering/block-after-add-data.html crashes with GuardMalloc
+            https://bugs.webkit.org/show_bug.cgi?id=142526
+
+            Reviewed by Darin Adler.
+
+            * TestExpectations: Un-skipped contentfiltering/block-after-add-data.html.
+
+2015-04-17  Lucas Forschler  <lforschler@apple.com>
+
         Merge r180110
 
     2015-02-14  Alexey Proskuryakov  <ap@apple.com>
