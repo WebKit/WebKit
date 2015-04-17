@@ -52,6 +52,11 @@ CombinedURLFilters::~CombinedURLFilters()
 {
 }
 
+void CombinedURLFilters::clear()
+{
+    m_prefixTreeRoot = std::make_unique<PrefixTreeVertex>();
+}
+
 void CombinedURLFilters::addPattern(uint64_t actionId, const Vector<Term>& pattern)
 {
     ASSERT_WITH_MESSAGE(!pattern.isEmpty(), "The parser should have excluded empty patterns before reaching CombinedURLFilters.");

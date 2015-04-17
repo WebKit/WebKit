@@ -133,6 +133,9 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
 
     Vector<SerializedActionByte> actions;
     Vector<unsigned> actionLocations = serializeActions(parsedRuleList, actions);
+    client.writeActions(WTF::move(actions));
+    actions.clear();
+
     HashSet<uint64_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> universalActionLocations;
 
     CombinedURLFilters combinedURLFilters;
@@ -161,6 +164,8 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
         if (contentExtensionRule.action().type() == ActionType::IgnorePreviousRules)
             ignorePreviousRulesSeen = true;
     }
+    parsedRuleList.clear();
+    actionLocations.clear();
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double patternPartitioningEnd = monotonicallyIncreasingTime();
@@ -172,6 +177,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
 #endif
 
     Vector<NFA> nfas = combinedURLFilters.createNFAs();
+    combinedURLFilters.clear();
     if (!nfas.size() && universalActionLocations.size())
         nfas.append(NFA());
 
@@ -226,6 +232,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
         DFABytecodeCompiler compiler(dfa, bytecode);
         compiler.compile();
     }
+    universalActionLocations.clear();
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double totalNFAToByteCodeBuildTimeEnd = monotonicallyIncreasingTime();
@@ -233,9 +240,9 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
     dataLogF("    Bytecode size %zu\n", bytecode.size());
     dataLogF("    DFA count %zu\n", nfas.size());
 #endif
+    nfas.clear();
 
     client.writeBytecode(WTF::move(bytecode));
-    client.writeActions(WTF::move(actions));
 
     return { };
 }

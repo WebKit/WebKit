@@ -1,3 +1,32 @@
+2015-04-16  Alex Christensen  <achristensen@webkit.org>
+
+        Use less memory when compiling content extensions
+        https://bugs.webkit.org/show_bug.cgi?id=143857
+
+        Reviewed by Benjamin Poulain.
+
+        When compiling a content extension, we convert the rule list into several intermediate forms:
+
+        1) A String.
+        2) A JSValue from JSONParse in loadEncodedRules.
+        3) A Vector of ContentExtensionRules.
+        4) A CombinedURLFilters object representing the pieces of the regular expressions from the triggers.
+        5) A Vector of NFAs.
+        6) A DFA for each NFA.
+        7) A Vector of DFABytecode.
+        
+        Each one of these contains all the information contained in the content extension,
+        so we do not need to keep them all in memory at the same time like we are doing now.
+        When we are done with one, we can free that memory to greatly reduce the maximum memory usage while compiling.
+        The next step will be to reduce the copies of the original JSON String and to generate NFAs one at a time.
+
+        * contentextensions/CombinedURLFilters.cpp:
+        (WebCore::ContentExtensions::CombinedURLFilters::clear):
+        * contentextensions/CombinedURLFilters.h:
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        Clear structures when finished using them.
+
 2015-04-16  Brady Eidson  <beidson@apple.com>
 
         Compiling a content extension fails when user's home directory is on a different volume from /var/tmp.
