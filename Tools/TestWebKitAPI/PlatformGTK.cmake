@@ -4,6 +4,7 @@ add_definitions(-DBUILDING_WEBKIT2__)
 
 add_custom_target(TestWebKitAPI-forwarding-headers
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${TESTWEBKITAPI_DIR} --output ${FORWARDING_HEADERS_DIR} --platform gtk --platform soup
+    DEPENDS WebKit2-forwarding-headers
 )
 
 set(ForwardingHeadersForTestWebKitAPI_NAME TestWebKitAPI-forwarding-headers)
