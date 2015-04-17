@@ -111,7 +111,6 @@ public:
     WEBCORE_EXPORT URL absoluteAttachmentURL() const;
 #endif
     WEBCORE_EXPORT String textContent() const;
-    WEBCORE_EXPORT bool isLiveLink() const;
     bool isOverLink() const;
     WEBCORE_EXPORT bool isContentEditable() const;
     void toggleMediaControlsDisplay() const;

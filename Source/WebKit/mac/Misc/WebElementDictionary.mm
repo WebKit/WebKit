@@ -36,6 +36,7 @@
 #import "WebTypesInternal.h"
 #import "WebView.h"
 #import "WebViewPrivate.h"
+#import <WebCore/DragController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
@@ -265,7 +266,8 @@ static NSString* NSStringOrNil(String coreString)
 
 - (NSNumber *)_isLiveLink
 {
-    return [NSNumber numberWithBool:_result->isLiveLink()];
+    Element* urlElement = _result->URLElement();
+    return [NSNumber numberWithBool:(urlElement && isDraggableLink(*urlElement))];
 }
 
 - (NSNumber *)_isContentEditable

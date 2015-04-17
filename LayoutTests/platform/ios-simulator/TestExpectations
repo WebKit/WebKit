@@ -157,6 +157,7 @@ fast/events/drag-display-none-element.html
 fast/events/drag-file-crash.html
 fast/events/drag-image-filename.html
 fast/events/drag-in-frames.html
+fast/events/drag-and-drop-link.html
 fast/events/drag-and-drop-link-into-focused-contenteditable.html
 fast/events/drag-outside-window.html
 fast/events/drag-parent-node.html

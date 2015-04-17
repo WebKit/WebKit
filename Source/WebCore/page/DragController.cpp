@@ -26,8 +26,10 @@
 #include "config.h"
 #include "DragController.h"
 
-#if ENABLE(DRAG_SUPPORT)
+#include "HTMLAnchorElement.h"
+#include "SVGAElement.h"
 
+#if ENABLE(DRAG_SUPPORT)
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "DataTransfer.h"
@@ -40,7 +42,6 @@
 #include "DragState.h"
 #include "Editor.h"
 #include "EditorClient.h"
-#include "Element.h"
 #include "EventHandler.h"
 #include "ExceptionCodePlaceholder.h"
 #include "FloatRect.h"
@@ -48,7 +49,6 @@
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
-#include "HTMLAnchorElement.h"
 #include "HTMLAttachmentElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
@@ -80,9 +80,21 @@
 #include "markup.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/RefPtr.h>
+#endif
 
 namespace WebCore {
 
+bool isDraggableLink(const Element& element)
+{
+    if (is<HTMLAnchorElement>(element))
+        return downcast<HTMLAnchorElement>(element).isLiveLink();
+    if (is<SVGAElement>(element))
+        return element.isLink();
+    return false;
+}
+
+#if ENABLE(DRAG_SUPPORT)
+    
 static PlatformMouseEvent createMouseEvent(DragData& dragData)
 {
     int keyState = dragData.modifierKeyState();
@@ -652,9 +664,7 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
                 state.type = static_cast<DragSourceAction>(state.type | DragSourceActionImage);
                 return element;
             }
-            if ((m_dragSourceAction & DragSourceActionLink)
-                && is<HTMLAnchorElement>(*element)
-                && downcast<HTMLAnchorElement>(*element).isLiveLink()) {
+            if ((m_dragSourceAction & DragSourceActionLink) && isDraggableLink(*element)) {
                 state.type = static_cast<DragSourceAction>(state.type | DragSourceActionLink);
                 return element;
             }
@@ -988,6 +998,6 @@ void DragController::placeDragCaret(const IntPoint& windowPoint)
     m_page.dragCaretController().setCaretPosition(frame->visiblePositionForPoint(framePoint));
 }
 
-} // namespace WebCore
-
 #endif // ENABLE(DRAG_SUPPORT)
+
+} // namespace WebCore

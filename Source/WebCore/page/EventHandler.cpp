@@ -598,17 +598,17 @@ void EventHandler::selectClosestWordFromMouseEvent(const MouseEventWithHitTestRe
 
 void EventHandler::selectClosestWordOrLinkFromMouseEvent(const MouseEventWithHitTestResults& result)
 {
-    if (!result.hitTestResult().isLiveLink())
+    Element* urlElement = result.hitTestResult().URLElement();
+    if (!urlElement || !isDraggableLink(*urlElement))
         return selectClosestWordFromMouseEvent(result);
 
     Node* targetNode = result.targetNode();
 
     if (targetNode && targetNode->renderer() && m_mouseDownMayStartSelect) {
         VisibleSelection newSelection;
-        Element* URLElement = result.hitTestResult().URLElement();
         VisiblePosition pos(targetNode->renderer()->positionForPoint(result.localPoint(), nullptr));
-        if (pos.isNotNull() && pos.deepEquivalent().deprecatedNode()->isDescendantOf(URLElement))
-            newSelection = VisibleSelection::selectionFromContentsOfNode(URLElement);
+        if (pos.isNotNull() && pos.deepEquivalent().deprecatedNode()->isDescendantOf(urlElement))
+            newSelection = VisibleSelection::selectionFromContentsOfNode(urlElement);
 
         updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(*targetNode, newSelection), WordGranularity);
     }

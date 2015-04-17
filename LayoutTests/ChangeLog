@@ -1,3 +1,22 @@
+2015-04-17  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION: SVG does not support link dragging
+        https://bugs.webkit.org/show_bug.cgi?id=141597
+
+        Reviewed by Darin Adler.
+
+        Add a test to ensure we do not regress dragging of a HTML hyperlink or a SVG hyperlink.
+
+        * fast/events/drag-and-drop-link-expected.txt: Added.
+        * fast/events/drag-and-drop-link.html: Added.
+        * platform/efl/TestExpectations: Mark the test as "failure" since EFL does not support drag-and-drop.
+        * platform/gtk/TestExpectations: Mark the test as "failure" until we implement drag-and-drop support for
+        GTK+ as part of fixing <https://bugs.webkit.org/show_bug.cgi?id=42194>.
+        * platform/ios-simulator/TestExpectations: Skip the test since iOS does not implement
+        drag-and-drop support.
+        * platform/mac-wk2/TestExpectations: Skip the test until we implement drag-and-drop support in EventSender
+        for Mac as part of fixing <https://bugs.webkit.org/show_bug.cgi?id=42194>.
+
 2015-04-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r182912 and r182920.

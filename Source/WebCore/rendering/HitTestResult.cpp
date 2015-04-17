@@ -608,20 +608,6 @@ URL HitTestResult::absoluteLinkURL() const
     return URL();
 }
 
-bool HitTestResult::isLiveLink() const
-{
-    if (!m_innerURLElement)
-        return false;
-
-    if (is<HTMLAnchorElement>(*m_innerURLElement))
-        return downcast<HTMLAnchorElement>(*m_innerURLElement).isLiveLink();
-
-    if (is<SVGAElement>(*m_innerURLElement))
-        return m_innerURLElement->isLink();
-
-    return false;
-}
-
 bool HitTestResult::isOverLink() const
 {
     return m_innerURLElement && m_innerURLElement->isLink();

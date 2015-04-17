@@ -140,6 +140,8 @@ namespace WebCore {
 #endif
     };
 
+    WEBCORE_EXPORT bool isDraggableLink(const Element&);
+
 }
 
 #endif

@@ -1,3 +1,15 @@
+2015-04-17  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION: SVG does not support link dragging
+        https://bugs.webkit.org/show_bug.cgi?id=141597
+
+        Reviewed by Darin Adler.
+
+        Write -[WebElementDictionary _isLiveLink] in terms of WebCore::isDraggableLink().
+
+        * Misc/WebElementDictionary.mm:
+        (-[WebElementDictionary _isLiveLink]):
+
 2015-04-16  Sam Weinig  <sam@webkit.org>
 
         Expose JavaScriptMarkupEnabled preference for WebKit1
