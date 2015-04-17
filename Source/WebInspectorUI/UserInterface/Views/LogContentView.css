@@ -38,6 +38,8 @@
     font-size: 12px;
 
     min-height: 100%;
+
+    outline: none;
 }
 
 .console-messages > :first-child {
