@@ -1,3 +1,14 @@
+2015-04-17  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Silent WebAudio buffers support
+        https://bugs.webkit.org/show_bug.cgi?id=143869
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcLoop): Set gap flag on silent buffers. The audio
+        sink can then drop them and avoid un-necessary buffer processing.
+
 2015-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Redirect to non HTTP destination is broken
