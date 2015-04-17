@@ -1,3 +1,17 @@
+2015-04-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Fix review comments for https://bugs.webkit.org/show_bug.cgi?id=143590
+        following http://trac.webkit.org/changeset/182876.
+
+        Reviewed by Daniel Bates.
+
+        * ChangeLog:
+        Fixed typo.
+        
+        * style/StyleFontSizeFunctions.cpp:
+        (WebCore::Style::computedFontSizeFromSpecifiedSize):
+        Fixed a typo in an enum definition and changed the name of an argument.
+
 2015-04-17  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Silent WebAudio buffers support
@@ -489,7 +503,7 @@
         When enabling the minimum font size perf, the computed font size is set
         to the minimum font size if the computed value is smaller than the minimum.
         The bug happens because the SVG text element applies its scaling on the
-        computed value after applying the minimum fort size rule. This means the
+        computed value after applying the minimum font size rule. This means the
         final computed value for the font size will be the scaling of the minimum
         font size and not minimum font size itself. What we need is to postpone
         applying the minimum font size rules, till the SVG scaling is applied.
