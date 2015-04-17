@@ -1105,7 +1105,6 @@ webkit.org/b/134974 http/tests/media/media-source [ Skip ]
 webkit.org/b/134974 media/media-source/media-source-append-failed.html [ Timeout ]
 webkit.org/b/134974 media/media-source/media-source-seek-complete.html [ Timeout ]
 webkit.org/b/134974 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
-webkit.org/b/134974 media/track/track-cues-pause-on-exit.html [ Timeout ]
 webkit.org/b/134974 media/media-source/media-source-duplicate-seeked.html [ Failure ]
 webkit.org/b/134974 media/media-source/media-source-play.html [ Failure ]
 webkit.org/b/134974 media/media-source/media-source-append-buffer-with-append-window.html [ Failure Pass ]
@@ -1832,9 +1831,6 @@ webkit.org/b/127107 media/volume-bar-empty-when-muted.html [ Failure ]
 # Failing after r159674
 webkit.org/b/127475 fast/dom/inline-event-attributes-release.html [ Failure ]
 
-# Failing after r155363
-webkit.org/b/127476 fast/history/go-back-to-iframe-with-plugin.html [ Timeout ]
-
 webkit.org/b/127477 css2.1/t1604-c542-letter-sp-00-b-a.html [ Missing ]
 
 webkit.org/b/127489 http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
@@ -2240,3 +2236,13 @@ webkit.org/b/131044 media/video-controls-drag.html [ Timeout ]
 webkit.org/b/131044 media/video-controls-toggling.html [ Timeout ]
 
 webkit.org/b/143663 accessibility/plugin.html [ Failure ]
+
+webkit.org/b/143877 fast/forms/input-auto-fill-button.html [ Failure ]
+webkit.org/b/143877 fast/forms/listbox-hit-test-zoomed.html [ Failure ]
+webkit.org/b/143877 fast/forms/listbox-visible-size.html [ Failure ]
+webkit.org/b/143877 fast/forms/range/slider-padding.html [ Failure ]
+webkit.org/b/143877 fast/forms/textarea-scroll-height.html [ Failure ]
+
+webkit.org/b/143878 http/tests/navigation/javascriptlink-frames.html [ Failure ]
+webkit.org/b/143878 http/tests/navigation/postredirect-basic.html [ Failure ]
+webkit.org/b/143878 http/tests/navigation/postredirect-goback1.html [ Failure ]

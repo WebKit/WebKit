@@ -1,3 +1,11 @@
+2015-04-17  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unreviewed EFL gardening on 17 April.
+
+        Mark 5 form tests and 3 navigation tests to failure.
+
+        * platform/efl/TestExpectations:
+
 2015-04-17  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar <calvaris@igalia.com>
 
         streams/reference-implementation/readable-stream.html is flaky
