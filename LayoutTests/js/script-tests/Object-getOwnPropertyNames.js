@@ -36,6 +36,8 @@ var expectedPropertyNamesSet = {
      "argumentsObject(1)": "['0', 'callee', 'length']",
      "argumentsObject(1,2,3)": "['0', '1', '2', 'callee', 'length']",
     "(function(){arguments.__proto__=[1,2,3];return arguments;})()": "['callee', 'length']",
+// Symbol objects
+    "Object(Symbol.iterator)": "[]",
 // Built-in ECMA functions
     "parseInt": "['length', 'name']",
     "parseFloat": "['length', 'name']",
@@ -67,7 +69,9 @@ var expectedPropertyNamesSet = {
     "Error": "['length', 'name', 'prototype']",
     "Error.prototype": "['constructor', 'message', 'name', 'toString']",
     "Math": "['E','LN10','LN2','LOG10E','LOG2E','PI','SQRT1_2','SQRT2','abs','acos','acosh','asin','asinh','atan','atan2','atanh','cbrt','ceil','cos','cosh','exp','expm1','floor','fround','hypot','imul','log','log10','log1p','log2','max','min','pow','random','round','sign','sin','sinh','sqrt','tan','tanh','trunc']",
-    "JSON": "['parse', 'stringify']"
+    "JSON": "['parse', 'stringify']",
+    "Symbol": "['for', 'iterator', 'keyFor', 'length', 'name', 'prototype', 'unscopables']",
+    "Symbol.prototype": "['constructor', 'toString', 'valueOf']"
 };
 
 function getSortedOwnPropertyNames(obj)
@@ -99,6 +103,7 @@ var expectedGlobalPropertyNames = [
     "Function",
     "Array",
     "String",
+    "Symbol",
     "Boolean",
     "Number",
     "Date",

@@ -1,3 +1,15 @@
+2015-04-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Fix name enumeration of static functions for Symbol constructor
+        https://bugs.webkit.org/show_bug.cgi?id=143891
+
+        Reviewed by Geoffrey Garen.
+
+        Add property names tests for Symbol constructor, Symbol object and Symbol.prototype.
+
+        * js/Object-getOwnPropertyNames-expected.txt: Removed.
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2015-04-17  Beth Dakin  <bdakin@apple.com>
 
         Force mouse events should go through normal mouse event handling code paths

@@ -1,3 +1,15 @@
+2015-04-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Fix name enumeration of static functions for Symbol constructor
+        https://bugs.webkit.org/show_bug.cgi?id=143891
+
+        Reviewed by Geoffrey Garen.
+
+        Fix missing symbolPrototypeTable registration to the js class object.
+        This patch fixes name enumeration of static functions (Symbol.key, Symbol.keyFor) for Symbol constructor.
+
+        * runtime/SymbolConstructor.cpp:
+
 2015-04-17  Basile Clement  <basile_clement@apple.com>
 
         Inline JSFunction allocation in DFG
