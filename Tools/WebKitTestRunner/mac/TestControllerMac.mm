@@ -84,7 +84,9 @@ static bool shouldUseThreadedScrolling(const TestInvocation& test)
 
 void TestController::platformResetPreferencesToConsistentValues()
 {
+#if WK_API_ENABLED
     [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
+#endif
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)
@@ -111,6 +113,7 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
     if (!contentExtensionString)
         return;
     
+#if WK_API_ENABLED
     __block bool done = false;
     [[_WKUserContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"TestContentExtensions" encodedContentExtension:contentExtensionString completionHandler:^(_WKUserContentFilter *filter, NSError *error)
     {
@@ -119,6 +122,7 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
         done = true;
     }];
     platformRunUntil(done, 0);
+#endif
 }
 
 void TestController::platformRunUntil(bool& done, double timeout)
