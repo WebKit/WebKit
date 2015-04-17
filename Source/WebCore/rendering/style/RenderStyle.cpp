@@ -1408,7 +1408,7 @@ int RenderStyle::computedLineHeight() const
     if (lh.isPercent())
         return minimumValueForLength(lh, fontSize());
 
-    return lh.value();
+    return clampTo<int>(lh.value());
 }
 
 void RenderStyle::setWordSpacing(Length value)

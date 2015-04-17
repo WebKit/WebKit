@@ -1,3 +1,15 @@
+2015-04-17  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Large values for line-height cause integer overflow in RenderStyle::computedLineHeight
+        https://bugs.webkit.org/show_bug.cgi?id=143863
+
+        Reviewed by Rob Buis.
+
+        Simplified test from a fuzzer.
+
+        * fast/shapes/shape-outside-floats/shape-outside-negative-line-height-crash-expected.txt: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-negative-line-height-crash.html: Added.
+
 2015-04-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Fix name enumeration of static functions for Symbol constructor

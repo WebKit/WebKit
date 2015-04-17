@@ -1,3 +1,26 @@
+2015-04-17  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Large values for line-height cause integer overflow in RenderStyle::computedLineHeight
+        https://bugs.webkit.org/show_bug.cgi?id=143863
+
+        Reviewed by Rob Buis.
+
+        When we compute huge values for line-height through percentage or CSS
+        calc, we'll overflow the integer and later on
+        ShapeOutsideInfo::computeDeltasForContainingBlockLine will ASSERT
+        because it expects non-negative line height.  So for the computed
+        line-height, clamp to an integer range to avoid overflow. Note that
+        the code path for percentages here is safe because LayoutUnit clamps
+        to an int on conversion.
+
+        This is based on a Blink patch by Rob Buis.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-negative-line-height-crash.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::computedLineHeight): Clamp line-height to an
+            int to avoid overflow.
+
 2015-04-17  Beth Dakin  <bdakin@apple.com>
 
         Force mouse events should go through normal mouse event handling code paths
