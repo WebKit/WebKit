@@ -1,3 +1,14 @@
+2015-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Stop installing WebKit2.framework
+        https://bugs.webkit.org/show_bug.cgi?id=143860
+        rdar://problem/18298491
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebKit2.xcconfig:
+        Set SKIP_INSTALL=YES for all SDKs except 10.9 where we still need it.
+
 2015-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the build with ENABLE(NETWORK_CACHE) and !ENABLE(SHAREABLE_RESOURCE).
