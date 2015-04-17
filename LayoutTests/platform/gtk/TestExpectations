@@ -725,7 +725,6 @@ webkit.org/b/135051 fast/regions/repaint/region-painting-invalidation.html [ Cra
 
 webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ ImageOnlyFailure Crash Pass ]
 
-webkit.org/b/139364 inspector-protocol/debugger/setBreakpoint-dfg.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -985,7 +984,8 @@ webkit.org/b/132248 media/media-fragments/TC0051.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0052.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0053.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0054.html [ Failure Pass ]
-webkit.org/b/132248 media/media-fragments/TC0055.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0055.html [ Failure Pass Timeout ]
+webkit.org/b/132248 media/media-fragments/TC0058.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0059.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0072.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0078.html [ Failure Crash Pass ]
@@ -1144,6 +1144,10 @@ webkit.org/b/131545 media/media-event-listeners.html [ Failure Pass ]
 
 webkit.org/b/143702 media/progress-events-generated-correctly.html [ Timeout Crash ]
 webkit.org/b/143704 media/media-source/media-source-append-media-segment-without-init.html [ Failure Pass ]
+
+webkit.org/b/139364 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure Pass ]
+webkit.org/b/143876 css3/viewport-percentage-lengths/vh-resize.html [ ImageOnlyFailure Pass ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1343,6 +1347,9 @@ webkit.org/b/143706 media/media-source/media-source-end-of-stream-readyState.htm
 webkit.org/b/143707 media/track/track-cue-rendering-on-resize.html [ Timeout Pass ]
 webkit.org/b/143708 media/track/track-cue-container-rendering-position.html [ Timeout Pass ]
 webkit.org/b/143709 media/media-fragments/TC0064.html [ Timeout Pass ]
+
+webkit.org/b/143873 media/track/track-css-property-whitelist.html [ Timeout Pass ]
+webkit.org/b/143875 media/track/track-css-matching.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -2390,6 +2397,9 @@ webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
 webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
 
 webkit.org/b/85594 fast/dom/navigator-detached-no-crash.html [ Failure ]
+
+webkit.org/b/143471 canvas/philip/tests/2d.drawImage.animated.poster.html [ Failure ]
+webkit.org/b/143871 svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

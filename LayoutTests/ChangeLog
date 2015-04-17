@@ -1,3 +1,12 @@
+2015-04-17  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+        [GTK] Gardening 17th April.
+        https://bugs.webkit.org/show_bug.cgi?id=143870
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations:
+
 2015-04-17  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Unreviewed EFL gardening on 17 April.
