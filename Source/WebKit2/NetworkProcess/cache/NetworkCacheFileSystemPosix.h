@@ -28,7 +28,6 @@
 
 #if ENABLE(NETWORK_CACHE)
 
-#include "NetworkCacheKey.h"
 #include <WebCore/FileSystem.h>
 #include <dirent.h>
 #include <sys/stat.h>
@@ -62,8 +61,6 @@ inline void traverseCacheFiles(const String& cachePath, const Function& function
     traverseDirectory(cachePath, DT_DIR, [&cachePath, &function](const String& subdirName) {
         String partitionPath = WebCore::pathByAppendingComponent(cachePath, subdirName);
         traverseDirectory(partitionPath, DT_REG, [&function, &partitionPath](const String& fileName) {
-            if (fileName.length() != Key::hashStringLength())
-                return;
             function(fileName, partitionPath);
         });
     });

@@ -105,7 +105,7 @@ String Storage::recordsPath() const
 
 size_t Storage::approximateSize() const
 {
-    return m_approximateSize + m_blobStorage.approximateSize();
+    return m_approximateRecordsSize + m_blobStorage.approximateSize();
 }
 
 void Storage::synchronize()
@@ -119,58 +119,77 @@ void Storage::synchronize()
     LOG(NetworkCacheStorage, "(NetworkProcess) synchronizing cache");
 
     backgroundIOQueue().dispatch([this] {
-        auto filter = std::make_unique<ContentsFilter>();
-        size_t size = 0;
+        auto recordFilter = std::make_unique<ContentsFilter>();
+        auto bodyFilter = std::make_unique<ContentsFilter>();
+        size_t recordsSize = 0;
         unsigned count = 0;
-        traverseCacheFiles(recordsPath(), [&filter, &size, &count](const String& fileName, const String& partitionPath) {
-            Key::HashType hash;
-            if (!Key::stringToHash(fileName, hash))
-                return;
+        traverseCacheFiles(recordsPath(), [&recordFilter, &bodyFilter, &recordsSize, &count](const String& fileName, const String& partitionPath) {
             auto filePath = WebCore::pathByAppendingComponent(partitionPath, fileName);
+
+            bool isBody = fileName.endsWith(bodyPostfix);
+            String hashString = isBody ? fileName.substring(0, Key::hashStringLength()) : fileName;
+            Key::HashType hash;
+            if (!Key::stringToHash(hashString, hash)) {
+                WebCore::deleteFile(filePath);
+                return;
+            }
             long long fileSize = 0;
             WebCore::getFileSize(filePath, fileSize);
-            if (!fileSize)
+            if (!fileSize) {
+                WebCore::deleteFile(filePath);
                 return;
-            filter->add(hash);
-            size += fileSize;
+            }
+            if (isBody) {
+                bodyFilter->add(hash);
+                return;
+            }
+            recordFilter->add(hash);
+            recordsSize += fileSize;
             ++count;
         });
 
-        auto* filterPtr = filter.release();
-        RunLoop::main().dispatch([this, filterPtr, size] {
-            auto filter = std::unique_ptr<ContentsFilter>(filterPtr);
+        auto* recordFilterPtr = recordFilter.release();
+        auto* bodyFilterPtr = bodyFilter.release();
+        RunLoop::main().dispatch([this, recordFilterPtr, bodyFilterPtr, recordsSize] {
+            auto recordFilter = std::unique_ptr<ContentsFilter>(recordFilterPtr);
+            auto bodyFilter = std::unique_ptr<ContentsFilter>(bodyFilterPtr);
 
-            for (auto hash : m_contentsFilterHashesAddedDuringSynchronization)
-                filter->add(hash);
-            m_contentsFilterHashesAddedDuringSynchronization.clear();
+            for (auto hash : m_recordFilterHashesAddedDuringSynchronization)
+                recordFilter->add(hash);
+            m_recordFilterHashesAddedDuringSynchronization.clear();
 
-            m_contentsFilter = WTF::move(filter);
-            m_approximateSize = size;
+            for (auto hash : m_bodyFilterHashesAddedDuringSynchronization)
+                bodyFilter->add(hash);
+            m_bodyFilterHashesAddedDuringSynchronization.clear();
+
+            m_recordFilter = WTF::move(recordFilter);
+            m_bodyFilter = WTF::move(bodyFilter);
+            m_approximateRecordsSize = recordsSize;
             m_synchronizationInProgress = false;
         });
 
         m_blobStorage.synchronize();
 
-        LOG(NetworkCacheStorage, "(NetworkProcess) cache synchronization completed size=%zu count=%d", size, count);
+        LOG(NetworkCacheStorage, "(NetworkProcess) cache synchronization completed size=%zu count=%d", recordsSize, count);
     });
 }
 
-void Storage::addToContentsFilter(const Key& key)
+void Storage::addToRecordFilter(const Key& key)
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_contentsFilter)
-        m_contentsFilter->add(key.hash());
+    if (m_recordFilter)
+        m_recordFilter->add(key.hash());
 
     // If we get new entries during filter synchronization take care to add them to the new filter as well.
     if (m_synchronizationInProgress)
-        m_contentsFilterHashesAddedDuringSynchronization.append(key.hash());
+        m_recordFilterHashesAddedDuringSynchronization.append(key.hash());
 }
 
 bool Storage::mayContain(const Key& key) const
 {
     ASSERT(RunLoop::isMain());
-    return !m_contentsFilter || m_contentsFilter->mayContain(key.hash());
+    return !m_recordFilter || m_recordFilter->mayContain(key.hash());
 }
 
 static String partitionPathForKey(const Key& key, const String& cachePath)
@@ -278,42 +297,35 @@ static bool decodeRecordHeader(const Data& fileData, RecordMetaData& metaData, D
     return true;
 }
 
-std::unique_ptr<Storage::Record> Storage::decodeRecord(const Data& recordData, const Key& key)
+void Storage::readRecord(ReadOperation& readOperation, const Data& recordData)
 {
     ASSERT(!RunLoop::isMain());
 
     RecordMetaData metaData;
     Data headerData;
     if (!decodeRecordHeader(recordData, metaData, headerData))
-        return nullptr;
+        return;
 
-    if (metaData.key != key)
-        return nullptr;
+    if (metaData.key != readOperation.key)
+        return;
 
     // Sanity check against time stamps in future.
     auto timeStamp = std::chrono::system_clock::time_point(metaData.epochRelativeTimeStamp);
     if (timeStamp > std::chrono::system_clock::now())
-        return nullptr;
+        return;
 
     Data bodyData;
     if (metaData.isBodyInline) {
         size_t bodyOffset = metaData.headerOffset + headerData.size();
         if (bodyOffset + metaData.bodySize != recordData.size())
-            return nullptr;
+            return;
         bodyData = recordData.subrange(bodyOffset, metaData.bodySize);
         if (metaData.bodyHash != computeSHA1(bodyData))
-            return nullptr;
-    } else {
-        auto bodyPath = bodyPathForKey(key, recordsPath());
-        auto bodyBlob = m_blobStorage.get(bodyPath);
-        if (metaData.bodySize != bodyBlob.data.size())
-            return nullptr;
-        if (metaData.bodyHash != bodyBlob.hash)
-            return nullptr;
-        bodyData = bodyBlob.data;
+            return;
     }
 
-    return std::make_unique<Storage::Record>(Storage::Record {
+    readOperation.expectedBodyHash = metaData.bodyHash;
+    readOperation.resultRecord = std::make_unique<Storage::Record>(Storage::Record {
         metaData.key,
         timeStamp,
         headerData,
@@ -348,12 +360,17 @@ Optional<BlobStorage::Blob> Storage::storeBodyAsBlob(const Record& record, const
     if (blob.data.isNull())
         return { };
 
-    // Tell the client we now have a disk-backed map for this data.
-    if (mappedBodyHandler) {
-        RunLoop::main().dispatch([blob, mappedBodyHandler] {
+    auto hash = record.key.hash();
+    RunLoop::main().dispatch([this, blob, hash, mappedBodyHandler] {
+        if (m_bodyFilter)
+            m_bodyFilter->add(hash);
+        if (m_synchronizationInProgress)
+            m_bodyFilterHashesAddedDuringSynchronization.append(hash);
+
+        if (mappedBodyHandler)
             mappedBodyHandler(blob.data);
-        });
-    }
+
+    });
     return blob;
 }
 
@@ -401,40 +418,60 @@ void Storage::updateFileModificationTime(const String& path)
     });
 }
 
-void Storage::dispatchReadOperation(const ReadOperation& read)
+void Storage::dispatchReadOperation(ReadOperation& readOperation)
 {
     ASSERT(RunLoop::isMain());
-    ASSERT(m_activeReadOperations.contains(&read));
+    ASSERT(m_activeReadOperations.contains(&readOperation));
 
-    auto recordsPath = this->recordsPath();
-    auto recordPath = recordPathForKey(read.key, recordsPath);
+    auto recordPath = recordPathForKey(readOperation.key, recordsPath());
 
     RefPtr<IOChannel> channel = IOChannel::open(recordPath, IOChannel::Type::Read);
-    channel->read(0, std::numeric_limits<size_t>::max(), &ioQueue(), [this, &read](const Data& fileData, int error) {
-        auto record = error ? nullptr : decodeRecord(fileData, read.key);
+    channel->read(0, std::numeric_limits<size_t>::max(), &ioQueue(), [this, &readOperation](const Data& fileData, int error) {
+        if (!error)
+            readRecord(readOperation, fileData);
+        finishReadOperation(readOperation);
+    });
 
-        auto* recordPtr = record.release();
-        RunLoop::main().dispatch([this, &read, recordPtr] {
-            auto record = std::unique_ptr<Record>(recordPtr);
-            finishReadOperation(read, WTF::move(record));
-        });
+    bool shouldGetBodyBlob = !m_bodyFilter || m_bodyFilter->mayContain(readOperation.key.hash());
+    if (!shouldGetBodyBlob) {
+        finishReadOperation(readOperation);
+        return;
+    }
+
+    // Read the body blob in parallel with the record read.
+    ioQueue().dispatch([this, &readOperation] {
+        auto bodyPath = bodyPathForKey(readOperation.key, this->recordsPath());
+        readOperation.resultBodyBlob = m_blobStorage.get(bodyPath);
+        finishReadOperation(readOperation);
     });
 }
 
-void Storage::finishReadOperation(const ReadOperation& read, std::unique_ptr<Record> record)
+void Storage::finishReadOperation(ReadOperation& readOperation)
 {
-    ASSERT(RunLoop::isMain());
+    // Record and body blob reads must finish.
+    bool isComplete = ++readOperation.finishedCount == 2;
+    if (!isComplete)
+        return;
 
-    bool success = read.completionHandler(WTF::move(record));
-    if (success)
-        updateFileModificationTime(recordPathForKey(read.key, recordsPath()));
-    else
-        remove(read.key);
-    ASSERT(m_activeReadOperations.contains(&read));
-    m_activeReadOperations.remove(&read);
-    dispatchPendingReadOperations();
+    RunLoop::main().dispatch([this, &readOperation] {
+        if (readOperation.resultRecord && readOperation.resultRecord->body.isNull()) {
+            if (readOperation.resultBodyBlob.hash == readOperation.expectedBodyHash)
+                readOperation.resultRecord->body = readOperation.resultBodyBlob.data;
+            else
+                readOperation.resultRecord = nullptr;
+        }
 
-    LOG(NetworkCacheStorage, "(NetworkProcess) read complete success=%d", success);
+        bool success = readOperation.completionHandler(WTF::move(readOperation.resultRecord));
+        if (success)
+            updateFileModificationTime(recordPathForKey(readOperation.key, recordsPath()));
+        else
+            remove(readOperation.key);
+        ASSERT(m_activeReadOperations.contains(&readOperation));
+        m_activeReadOperations.remove(&readOperation);
+        dispatchPendingReadOperations();
+
+        LOG(NetworkCacheStorage, "(NetworkProcess) read complete success=%d", success);
+    });
 }
 
 void Storage::dispatchPendingReadOperations()
@@ -498,42 +535,42 @@ static bool shouldStoreBodyAsBlob(const Data& bodyData)
     return bodyData.size() > maximumInlineBodySize;
 }
 
-void Storage::dispatchWriteOperation(const WriteOperation& write)
+void Storage::dispatchWriteOperation(const WriteOperation& writeOperation)
 {
     ASSERT(RunLoop::isMain());
-    ASSERT(m_activeWriteOperations.contains(&write));
+    ASSERT(m_activeWriteOperations.contains(&writeOperation));
 
     // This was added already when starting the store but filter might have been wiped.
-    addToContentsFilter(write.record.key);
+    addToRecordFilter(writeOperation.record.key);
 
-    backgroundIOQueue().dispatch([this, &write] {
+    backgroundIOQueue().dispatch([this, &writeOperation] {
         auto recordsPath = this->recordsPath();
-        auto partitionPath = partitionPathForKey(write.record.key, recordsPath);
-        auto recordPath = recordPathForKey(write.record.key, recordsPath);
+        auto partitionPath = partitionPathForKey(writeOperation.record.key, recordsPath);
+        auto recordPath = recordPathForKey(writeOperation.record.key, recordsPath);
 
         WebCore::makeAllDirectories(partitionPath);
 
-        bool shouldStoreAsBlob = shouldStoreBodyAsBlob(write.record.body);
-        auto bodyBlob = shouldStoreAsBlob ? storeBodyAsBlob(write.record, write.mappedBodyHandler) : Nullopt;
+        bool shouldStoreAsBlob = shouldStoreBodyAsBlob(writeOperation.record.body);
+        auto bodyBlob = shouldStoreAsBlob ? storeBodyAsBlob(writeOperation.record, writeOperation.mappedBodyHandler) : Nullopt;
 
-        auto recordData = encodeRecord(write.record, bodyBlob);
+        auto recordData = encodeRecord(writeOperation.record, bodyBlob);
 
         auto channel = IOChannel::open(recordPath, IOChannel::Type::Create);
         size_t recordSize = recordData.size();
-        channel->write(0, recordData, nullptr, [this, &write, recordSize](int error) {
+        channel->write(0, recordData, nullptr, [this, &writeOperation, recordSize](int error) {
             // On error the entry still stays in the contents filter until next synchronization.
-            m_approximateSize += recordSize;
-            finishWriteOperation(write);
+            m_approximateRecordsSize += recordSize;
+            finishWriteOperation(writeOperation);
 
             LOG(NetworkCacheStorage, "(NetworkProcess) write complete error=%d", error);
         });
     });
 }
 
-void Storage::finishWriteOperation(const WriteOperation& write)
+void Storage::finishWriteOperation(const WriteOperation& writeOperation)
 {
-    ASSERT(m_activeWriteOperations.contains(&write));
-    m_activeWriteOperations.remove(&write);
+    ASSERT(m_activeWriteOperations.contains(&writeOperation));
+    m_activeWriteOperations.remove(&writeOperation);
     dispatchPendingWriteOperations();
 
     shrinkIfNeeded();
@@ -560,7 +597,7 @@ void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHand
     if (retrieveFromMemory(m_activeWriteOperations, key, completionHandler))
         return;
 
-    m_pendingReadOperationsByPriority[priority].append(new ReadOperation { key, WTF::move(completionHandler) });
+    m_pendingReadOperationsByPriority[priority].append(new ReadOperation { key, WTF::move(completionHandler) } );
     dispatchPendingReadOperations();
 }
 
@@ -575,7 +612,7 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler)
     m_pendingWriteOperations.append(new WriteOperation { record, WTF::move(mappedBodyHandler) });
 
     // Add key to the filter already here as we do lookups from the pending operations too.
-    addToContentsFilter(record.key);
+    addToRecordFilter(record.key);
 
     dispatchPendingWriteOperations();
 }
@@ -584,6 +621,8 @@ void Storage::traverse(TraverseFlags flags, std::function<void (const Record*, c
 {
     ioQueue().dispatch([this, flags, traverseHandler] {
         traverseCacheFiles(recordsPath(), [this, flags, &traverseHandler](const String& fileName, const String& partitionPath) {
+            if (fileName.length() != Key::hashStringLength())
+                return;
             auto recordPath = WebCore::pathByAppendingComponent(partitionPath, fileName);
 
             RecordInfo info;
@@ -634,9 +673,11 @@ void Storage::clear()
     ASSERT(RunLoop::isMain());
     LOG(NetworkCacheStorage, "(NetworkProcess) clearing cache");
 
-    if (m_contentsFilter)
-        m_contentsFilter->clear();
-    m_approximateSize = 0;
+    if (m_recordFilter)
+        m_recordFilter->clear();
+    if (m_bodyFilter)
+        m_bodyFilter->clear();
+    m_approximateRecordsSize = 0;
 
     ioQueue().dispatch([this] {
         auto recordsPath = this->recordsPath();
@@ -708,6 +749,8 @@ void Storage::shrink()
     backgroundIOQueue().dispatch([this] {
         auto recordsPath = this->recordsPath();
         traverseCacheFiles(recordsPath, [this](const String& fileName, const String& partitionPath) {
+            if (fileName.length() != Key::hashStringLength())
+                return;
             auto recordPath = WebCore::pathByAppendingComponent(partitionPath, fileName);
             auto bodyPath = bodyPathForRecordPath(recordPath);
 

@@ -1,3 +1,52 @@
+2015-04-17  Antti Koivisto  <antti@apple.com>
+
+        Network Cache: Read resource record and body in parallel
+        https://bugs.webkit.org/show_bug.cgi?id=143879
+
+        Reviewed by Chris Dumez.
+
+        We currently first fetch the record file and then fetch the body blob if needed.
+        We can do both operations in parallel to reduce latency.
+
+        * NetworkProcess/cache/NetworkCacheFileSystemPosix.h:
+        (WebKit::NetworkCache::traverseCacheFiles):
+
+            Do all validation in the client.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::synchronize):
+
+            Maintain a bloom filter that contains the body blobs to avoid unnecessary IO attempts.
+            Delete any unknown file in cache directory.
+
+        (WebKit::NetworkCache::Storage::addToRecordFilter):
+
+            More informative name for record filter.
+
+        (WebKit::NetworkCache::Storage::mayContain):
+        (WebKit::NetworkCache::Storage::readRecord):
+        (WebKit::NetworkCache::Storage::storeBodyAsBlob):
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+
+            Start record read IO and body blob read IO in parallel.
+
+        (WebKit::NetworkCache::Storage::finishReadOperation):
+
+            The read is finished when we have both the record and the blob.
+
+        (WebKit::NetworkCache::Storage::dispatchWriteOperation):
+        (WebKit::NetworkCache::Storage::retrieve):
+        (WebKit::NetworkCache::Storage::store):
+        (WebKit::NetworkCache::Storage::traverse):
+        (WebKit::NetworkCache::Storage::clear):
+        (WebKit::NetworkCache::Storage::shrink):
+        (WebKit::NetworkCache::Storage::addToContentsFilter): Deleted.
+        (WebKit::NetworkCache::Storage::decodeRecord): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::ReadOperation::ReadOperation):
+
+            ReadOperation is now mutable and gathers the read result.
+
 2015-04-16  Anders Carlsson  <andersca@apple.com>
 
         Stop installing WebKit2.framework
