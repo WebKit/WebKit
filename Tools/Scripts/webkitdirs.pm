@@ -2125,7 +2125,7 @@ sub relaunchIOSSimulator($)
 sub quitIOSSimulator(;$)
 {
     my ($waitForShutdownOfSimulatedDeviceUDID) = @_;
-    exitStatus(system {"osascript"} "osascript", "-e", 'tell application "iOS Simulator" to quit') == 0 or die "Failed to quit iOS Simulator: $!";
+    exitStatus(system {"osascript"} "osascript", "-e", 'tell application id "com.apple.iphonesimulator" to quit') == 0 or die "Failed to quit iOS Simulator: $!";
     if (!defined($waitForShutdownOfSimulatedDeviceUDID)) {
         return;
     }

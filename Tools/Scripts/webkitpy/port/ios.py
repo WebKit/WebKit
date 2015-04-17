@@ -248,7 +248,7 @@ class IOSSimulatorPort(Port):
         # testing_device will fail to boot if it is already booted. We assume that if testing_device
         # is booted that it was booted by the iOS Simulator app (as opposed to simctl). So, quit the
         # iOS Simulator app to shutdown testing_device.
-        self._executive.run_command(['osascript', '-e', 'tell application "iOS Simulator" to quit'])
+        self._executive.run_command(['osascript', '-e', 'tell application id "com.apple.iphonesimulator" to quit'])
         Simulator.wait_until_device_is_in_state(testing_device.udid, Simulator.DeviceState.SHUTDOWN)
 
         if not Simulator.check_simulator_device_and_erase_if_needed(self.host, testing_device.udid):
