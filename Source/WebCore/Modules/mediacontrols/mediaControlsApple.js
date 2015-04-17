@@ -12,7 +12,6 @@ function Controller(root, video, host)
     this.listeners = {};
     this.isLive = false;
     this.statusHidden = true;
-    this.hasVisualMedia = false;
     this.hasWirelessPlaybackTargets = false;
     this.isListeningForPlaybackTargetAvailabilityEvent = false;
     this.currentTargetIsWireless = false;
@@ -646,7 +645,6 @@ Controller.prototype = {
 
     handleReadyStateChange: function(event)
     {
-        this.hasVisualMedia = this.video.videoTracks && this.video.videoTracks.length > 0;
         this.updateReadyState();
         this.updateDuration();
         this.updateCaptionButton();
@@ -739,6 +737,7 @@ Controller.prototype = {
     {
         this.updateBase();
         this.updateControls();
+        this.updateFullscreenButtons();
         this.updateWirelessPlaybackStatus();
 
         if (this.isFullScreen()) {
@@ -975,7 +974,8 @@ Controller.prototype = {
 
     updateFullscreenButtons: function()
     {
-        var shouldBeHidden = !this.video.webkitSupportsFullscreen || !this.hasVisualMedia;
+        var hasVisualMedia = this.video.videoTracks && this.video.videoTracks.length > 0;
+        var shouldBeHidden = !this.video.webkitSupportsFullscreen || !hasVisualMedia;
         this.controls.fullscreenButton.classList.toggle(this.ClassNames.hidden, shouldBeHidden);
         this.controls.optimizedFullscreenButton.classList.toggle(this.ClassNames.hidden, shouldBeHidden);
     },

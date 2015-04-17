@@ -1,3 +1,17 @@
+2015-04-16  Roger Fong  <roger_fong@apple.com>
+
+        Update fullscreen button visibility on fullscreen change.
+        https://bugs.webkit.org/show_bug.cgi?id=143861.
+        <rdar://problem/20143218>
+
+        Reviewed by Eric Carlson.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller): There is no need for hasVisualMedia to be a class variable.
+        (Controller.prototype.handleReadyStateChange):
+        (Controller.prototype.handleFullscreenChange):
+        (Controller.prototype.updateFullscreenButtons):
+
 2015-04-17  Daniel Bates  <dabates@apple.com>
 
         REGRESSION: SVG does not support link dragging
