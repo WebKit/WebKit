@@ -125,6 +125,7 @@ WebCore::SharedBuffer* Entry::buffer() const
     return m_buffer.get();
 }
 
+#if ENABLE(SHAREABLE_RESOURCE)
 ShareableResource::Handle& Entry::shareableResourceHandle() const
 {
     if (!m_buffer)
@@ -132,6 +133,7 @@ ShareableResource::Handle& Entry::shareableResourceHandle() const
 
     return m_shareableResourceHandle;
 }
+#endif
 
 bool Entry::needsValidation() const
 {
