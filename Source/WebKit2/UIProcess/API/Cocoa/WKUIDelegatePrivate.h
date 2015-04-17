@@ -30,6 +30,7 @@
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <WebKit/_WKSecurityOrigin.h>
 
+@class UIViewController;
 @class _WKFrameHandle;
 
 @protocol WKUIDelegatePrivate <WKUIDelegate>
@@ -53,6 +54,9 @@
 - (NSArray *)_webView:(WKWebView *)webView actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(NSArray *)defaultActions;
 - (void)_webView:(WKWebView *)webView didNotHandleTapAsClickAtPoint:(CGPoint)point;
 - (BOOL)_webView:(WKWebView *)webView shouldRequestGeolocationAuthorizationForURL:(NSURL *)url isMainFrame:(BOOL)isMainFrame mainFrameURL:(NSURL *)mainFrameURL;
+- (UIViewController *)_webView:(WKWebView *)webView previewViewControllerForURL:(NSURL *)url;
+- (void)_webView:(WKWebView *)webView commitPreviewedViewController:(UIViewController *)previewedViewController;
+- (void)_webView:(WKWebView *)webView didDismissPreviewViewController:(UIViewController *)previewedViewController;
 #endif
 
 @end

@@ -41,6 +41,7 @@
 #import "WKFormInputControl.h"
 #import "WKFormSelectControl.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
+#import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfiguration.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
@@ -368,6 +369,9 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 
     [_twoFingerDoubleTapGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
+
+    [_previewGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_previewGestureRecognizer.get()];
 
     _inspectorNodeSearchEnabled = NO;
     if (_inspectorNodeSearchGestureRecognizer) {
@@ -817,7 +821,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius)
 {
     // A long-press gesture can not be recognized while panning, but a pan can be recognized
     // during a long-press gesture.
-    BOOL shouldNotPreventScrollViewGestures = preventingGestureRecognizer == _highlightLongPressGestureRecognizer || preventingGestureRecognizer == _longPressGestureRecognizer;
+    BOOL shouldNotPreventScrollViewGestures = preventingGestureRecognizer == _highlightLongPressGestureRecognizer || preventingGestureRecognizer == _longPressGestureRecognizer || preventingGestureRecognizer == _previewGestureRecognizer;
     return !(shouldNotPreventScrollViewGestures
         && ([preventedGestureRecognizer isKindOfClass:NSClassFromString(@"UIScrollViewPanGestureRecognizer")] || [preventedGestureRecognizer isKindOfClass:NSClassFromString(@"UIScrollViewPinchGestureRecognizer")]));
 }
@@ -846,6 +850,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return YES;
 
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), _textSelectionAssistant.get().singleTapGesture))
+        return YES;
+
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _previewGestureRecognizer.get()))
         return YES;
 
     return NO;
@@ -940,6 +947,16 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
             // Prevent the gesture if there is no action for the node.
             return [self _actionForLongPress] != nil;
         }
+    }
+
+    if (gestureRecognizer == _previewGestureRecognizer) {
+        [self ensurePositionInformationIsUpToDate:point];
+        if (_positionInformation.clickableElementName != "A")
+            return NO;
+
+        String absoluteLinkURL = _positionInformation.url;
+        if (absoluteLinkURL.isEmpty() || !WebCore::protocolIsInHTTPFamily(absoluteLinkURL))
+            return NO;
     }
 
     return YES;
@@ -2986,6 +3003,55 @@ static bool isAssistableInputType(InputType type)
 }
 
 @end
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+
+@implementation WKContentView (WKInteractionPreview)
+
+- (UIViewController *)previewViewControllerForPosition:(CGPoint)position inSourceView:(UIView *)sourceView
+{
+    ASSERT(self == sourceView);
+
+    if (_positionInformation.clickableElementName != "A")
+        return nil;
+
+    String absoluteLinkURL = _positionInformation.url;
+    if (absoluteLinkURL.isEmpty() || !WebCore::protocolIsInHTTPFamily(absoluteLinkURL))
+        return nil;
+
+    _highlightLongPressCanClick = NO;
+
+    NSURL *targetURL = [NSURL URLWithString:_positionInformation.url];
+    id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+    if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)])
+        return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL];
+
+    return nil;
+}
+
+- (void)commitPreviewViewController:(UIViewController *)viewController
+{
+    id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+    if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedViewController:)])
+        [uiDelegate _webView:_webView commitPreviewedViewController:viewController];
+}
+
+- (void)willPresentPreviewViewController:(UIViewController *)viewController forPosition:(CGPoint)position inSourceView:(UIView *)sourceView
+{
+    [self _cancelInteraction];
+    [[viewController presentationController] setSourceRect:_positionInformation.bounds];
+}
+
+- (void)didDismissPreviewViewController:(UIViewController *)viewController committing:(BOOL)committing
+{
+    id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+    if ([uiDelegate respondsToSelector:@selector(_webView:didDismissPreviewViewController:)])
+        [uiDelegate _webView:_webView didDismissPreviewViewController:viewController];
+}
+
+@end
+
+#endif
 
 // UITextRange, UITextPosition and UITextSelectionRect implementations for WK2
 

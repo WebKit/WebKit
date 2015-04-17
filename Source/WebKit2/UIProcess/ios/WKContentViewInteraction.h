@@ -115,6 +115,7 @@ struct WKAutoCorrectionData {
     RetainPtr<WKAirPlayRoutePicker> _airPlayRoutePicker;
     RetainPtr<WKFormInputSession> _formInputSession;
     RetainPtr<WKFileUploadPanel> _fileUploadPanel;
+    RetainPtr<UIGestureRecognizer> _previewGestureRecognizer;
 
     std::unique_ptr<WebKit::SmartMagnificationController> _smartMagnificationController;
 
@@ -198,5 +199,10 @@ struct WKAutoCorrectionData {
 - (void)_disableInspectorNodeSearch;
 - (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler;
 @end
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+@interface WKContentView (WKInteractionPreview) <UIViewControllerPreviewingDelegate>
+@end
+#endif
 
 #endif // PLATFORM(IOS)

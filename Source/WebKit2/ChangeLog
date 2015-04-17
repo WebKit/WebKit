@@ -1,3 +1,30 @@
+2015-04-17  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        WebKit client should be able to add view controller for link preview.
+        https://bugs.webkit.org/show_bug.cgi?id=143686
+
+        Add delegate methods to WKUIDelegatePrivate so that a WebKit client can prepare a view controller
+        for link preview and react to the dismissal of this view controller. Also connect WKContentView to
+        preview gesture recognizer and forwards the delegate callbacks to corresponding delegate methods
+        in WKUIDelegatePrivate.
+
+        Reviewed by Beth Dakin.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView willMoveToWindow:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView gestureRecognizer:canPreventGestureRecognizer:]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView previewViewControllerForPosition:inSourceView:]):
+        (-[WKContentView commitPreviewViewController:]):
+        (-[WKContentView willPresentPreviewViewController:forPosition:inSourceView:]):
+        (-[WKContentView didDismissPreviewViewController:committing:]):
+
 2015-04-17  Beth Dakin  <bdakin@apple.com>
 
         Force mouse events should go through normal mouse event handling code paths
