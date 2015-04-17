@@ -80,6 +80,14 @@ body.mac-platform.legacy.window-inactive .sidebar {
     border-left: 1px solid rgb(179, 179, 179);
 }
 
+body.window-inactive .sidebar.left {
+    border-right-color: rgb(219, 219, 219);
+}
+
+body.window-inactive .sidebar.right {
+    border-left-color: rgb(219, 219, 219);
+}
+
 body.mac-platform.legacy .sidebar.right {
     background-color: rgb(231, 231, 231);
 }

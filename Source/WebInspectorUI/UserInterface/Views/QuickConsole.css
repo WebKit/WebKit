@@ -43,8 +43,12 @@ body.mac-platform.legacy .quick-console {
     padding: 0;
 }
 
+body.window-inactive .quick-console {
+    border-top-color: rgb(219, 219, 219);
+}
+
 .quick-console.showing-log {
-    border-top-color: rgb(240, 240, 240);
+    border-top-color: rgb(240, 240, 240) !important;
 }
 
 .quick-console > .console-prompt {

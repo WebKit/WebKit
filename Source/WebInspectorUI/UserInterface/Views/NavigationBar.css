@@ -39,6 +39,10 @@
     outline: none;
 }
 
+body.window-inactive .navigation-bar {
+    border-bottom-color: rgb(219, 219, 219);
+}
+
 body.mac-platform.legacy .navigation-bar {
     height: 22px;
 }

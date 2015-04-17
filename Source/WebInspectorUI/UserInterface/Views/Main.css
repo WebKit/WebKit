@@ -69,6 +69,14 @@ body.docked.right {
     border-left: 1px solid rgb(179, 179, 179);
 }
 
+body.window-inactive.docked.bottom {
+    border-top-color: rgb(219, 219, 219);
+}
+
+body.window-inactive.docked.right {
+    border-left-color: rgb(219, 219, 219);
+}
+
 body.docked.bottom.mac-platform.legacy {
     border-top-color: rgb(85, 85, 85);
 }
@@ -146,6 +154,10 @@ body.docked.right #navigation-sidebar.collapsed > .resizer {
 
 #split-content-browser {
     border-top: 1px solid rgb(179, 179, 179);
+}
+
+body.window-inactive #split-content-browser {
+    border-top-color: rgb(219, 219, 219);
 }
 
 #split-content-browser > .navigation-bar {

@@ -1,3 +1,25 @@
+2015-04-17  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Have better inactive window color for pixel borders
+        https://bugs.webkit.org/show_bug.cgi?id=143888
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/FindBanner.css:
+        (body.window-inactive .find-banner):
+        * UserInterface/Views/Main.css:
+        (body.window-inactive.docked.bottom):
+        (body.window-inactive.docked.right):
+        (body.window-inactive #split-content-browser):
+        * UserInterface/Views/NavigationBar.css:
+        (body.window-inactive .navigation-bar):
+        * UserInterface/Views/QuickConsole.css:
+        (body.window-inactive .quick-console):
+        (.quick-console.showing-log):
+        * UserInterface/Views/Sidebar.css:
+        (body.window-inactive .sidebar.left):
+        (body.window-inactive .sidebar.right):
+
 2015-04-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Unexpected background at top of console when rubber-banding with selection

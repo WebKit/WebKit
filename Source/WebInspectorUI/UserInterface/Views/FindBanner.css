@@ -44,6 +44,10 @@
     z-index: 500;
 }
 
+body.window-inactive .find-banner {
+    border-bottom-color: rgb(219, 219, 219);
+}
+
 .find-banner.showing {
     top: 0;
     transition-timing-function: ease-out;
