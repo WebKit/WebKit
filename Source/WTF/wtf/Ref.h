@@ -31,6 +31,12 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/StdLibExtras.h>
 
+#if ASAN_ENABLED
+extern "C" void __asan_poison_memory_region(void const volatile *addr, size_t size);
+extern "C" void __asan_unpoison_memory_region(void const volatile *addr, size_t size);
+extern "C" bool __asan_address_is_poisoned(void const volatile *addr);
+#endif
+
 namespace WTF {
 
 inline void adopted(const void*) { }
@@ -42,6 +48,10 @@ template<typename T> class Ref {
 public:
     ~Ref()
     {
+#if ASAN_ENABLED
+        if (__asan_address_is_poisoned(this))
+            __asan_unpoison_memory_region(this, sizeof(*this));
+#endif
         if (m_ptr)
             m_ptr->deref();
     }
@@ -126,7 +136,11 @@ public:
     {
         ASSERT(m_ptr);
 
-        return *std::exchange(m_ptr, nullptr);
+        T& result = *std::exchange(m_ptr, nullptr);
+#if ASAN_ENABLED
+        __asan_poison_memory_region(this, sizeof(*this));
+#endif
+        return result;
     }
 
 private:
