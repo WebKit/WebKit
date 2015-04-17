@@ -7,7 +7,6 @@ set(WTF_HEADERS
     BagToHashMap.h
     BitVector.h
     Bitmap.h
-    BoundsCheckedPointer.h
     BumpPointerAllocator.h
     ByteOrder.h
     CompilationThread.h

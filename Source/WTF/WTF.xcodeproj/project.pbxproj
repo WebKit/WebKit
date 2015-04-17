@@ -114,7 +114,6 @@
 		A8A4738C151A825B004123FF /* BitVector.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47261151A825A004123FF /* BitVector.h */; };
 		A8A4738E151A825B004123FF /* BlockStack.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47264151A825A004123FF /* BlockStack.h */; };
 		A8A4738F151A825B004123FF /* BloomFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47265151A825A004123FF /* BloomFilter.h */; };
-		A8A47390151A825B004123FF /* BoundsCheckedPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47266151A825A004123FF /* BoundsCheckedPointer.h */; };
 		A8A47391151A825B004123FF /* BumpPointerAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47267151A825A004123FF /* BumpPointerAllocator.h */; };
 		A8A47394151A825B004123FF /* CheckedArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4726A151A825A004123FF /* CheckedArithmetic.h */; };
 		A8A47395151A825B004123FF /* CheckedBoolean.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4726B151A825A004123FF /* CheckedBoolean.h */; };
@@ -404,7 +403,6 @@
 		A8A47261151A825A004123FF /* BitVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitVector.h; sourceTree = "<group>"; };
 		A8A47264151A825A004123FF /* BlockStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockStack.h; sourceTree = "<group>"; };
 		A8A47265151A825A004123FF /* BloomFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BloomFilter.h; sourceTree = "<group>"; };
-		A8A47266151A825A004123FF /* BoundsCheckedPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundsCheckedPointer.h; sourceTree = "<group>"; };
 		A8A47267151A825A004123FF /* BumpPointerAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpPointerAllocator.h; sourceTree = "<group>"; };
 		A8A4726A151A825A004123FF /* CheckedArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckedArithmetic.h; sourceTree = "<group>"; };
 		A8A4726B151A825A004123FF /* CheckedBoolean.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckedBoolean.h; sourceTree = "<group>"; };
@@ -714,7 +712,6 @@
 				A8A47261151A825A004123FF /* BitVector.h */,
 				A8A47264151A825A004123FF /* BlockStack.h */,
 				A8A47265151A825A004123FF /* BloomFilter.h */,
-				A8A47266151A825A004123FF /* BoundsCheckedPointer.h */,
 				A8A47267151A825A004123FF /* BumpPointerAllocator.h */,
 				EB95E1EF161A72410089A2F5 /* ByteOrder.h */,
 				0FEC3EE4171B834700FDAC8D /* ByteSpinLock.h */,
@@ -1064,7 +1061,6 @@
 				A8A4738C151A825B004123FF /* BitVector.h in Headers */,
 				A8A4738E151A825B004123FF /* BlockStack.h in Headers */,
 				A8A4738F151A825B004123FF /* BloomFilter.h in Headers */,
-				A8A47390151A825B004123FF /* BoundsCheckedPointer.h in Headers */,
 				A8A47391151A825B004123FF /* BumpPointerAllocator.h in Headers */,
 				EB95E1F0161A72410089A2F5 /* ByteOrder.h in Headers */,
 				A8A473AD151A825B004123FF /* cached-powers.h in Headers */,

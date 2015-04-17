@@ -170,7 +170,6 @@
     <ClInclude Include="..\wtf\BitVector.h" />
     <ClInclude Include="..\wtf\BlockStack.h" />
     <ClInclude Include="..\wtf\BloomFilter.h" />
-    <ClInclude Include="..\wtf\BoundsCheckedPointer.h" />
     <ClInclude Include="..\wtf\BumpPointerAllocator.h" />
     <ClInclude Include="..\wtf\CheckedArithmetic.h" />
     <ClInclude Include="..\wtf\CheckedBoolean.h" />

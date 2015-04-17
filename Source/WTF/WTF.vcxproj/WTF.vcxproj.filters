@@ -396,9 +396,6 @@
     <ClInclude Include="..\wtf\BloomFilter.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\BoundsCheckedPointer.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\BumpPointerAllocator.h">
       <Filter>wtf</Filter>
     </ClInclude>

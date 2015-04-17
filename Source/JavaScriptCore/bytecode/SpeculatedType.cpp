@@ -36,7 +36,6 @@
 #include "ScopedArguments.h"
 #include "StringObject.h"
 #include "ValueProfile.h"
-#include <wtf/BoundsCheckedPointer.h>
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {
