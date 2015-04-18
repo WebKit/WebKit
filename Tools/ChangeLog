@@ -1,3 +1,15 @@
+2015-04-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix lldb_webkit.py to show StringImpls correctly
+        https://bugs.webkit.org/show_bug.cgi?id=143920
+
+        Reviewed by Andreas Kling.
+        
+        Update WTFStringImplProvider's is_8bit to use the correct bitmask.
+
+        * lldb/lldb_webkit.py:
+        (WTFStringImplProvider.is_8bit):
+
 2015-04-17  Daniel Bates  <dabates@apple.com>
 
         Not able to build WebKit against iOS Simulator 8.3 SDK

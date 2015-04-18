@@ -241,7 +241,7 @@ class WTFStringImplProvider:
     def is_8bit(self):
         # FIXME: find a way to access WTF::StringImpl::s_hashFlag8BitBuffer
         return bool(self.valobj.GetChildMemberWithName('m_hashAndFlags').GetValueAsUnsigned(0) \
-            & 1 << 5)
+            & 1 << 3)
 
     def is_initialized(self):
         return self.valobj.GetValueAsUnsigned() != 0
