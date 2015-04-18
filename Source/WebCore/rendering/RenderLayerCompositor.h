@@ -307,6 +307,10 @@ public:
     void setRootExtendedBackgroundColor(const Color&);
     Color rootExtendedBackgroundColor() const { return m_rootExtendedBackgroundColor; }
 
+    // For testing.
+    WEBCORE_EXPORT void startTrackingLayerFlushes();
+    WEBCORE_EXPORT unsigned layerFlushCount() const;
+
 private:
     class OverlapMap;
     struct CompositingState;
@@ -319,7 +323,7 @@ private:
     virtual bool isTrackingRepaints() const override;
     
     // GraphicsLayerUpdaterClient implementation
-    virtual void flushLayersSoon(GraphicsLayerUpdater*) override;
+    virtual void flushLayersSoon(GraphicsLayerUpdater&) override;
 
     // Whether the given RL needs a compositing layer.
     bool needsToBeComposited(const RenderLayer&, RenderLayer::ViewportConstrainedNotCompositedReason* = nullptr) const;
@@ -399,7 +403,7 @@ private:
     ScrollingCoordinator* scrollingCoordinator() const;
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    Optional<RefPtr<DisplayRefreshMonitor>> createDisplayRefreshMonitor(PlatformDisplayID) const override;
+    RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
 #endif
 
     bool requiresCompositingForAnimation(RenderLayerModelObject&) const;
@@ -473,7 +477,6 @@ private:
     bool m_hasAcceleratedCompositing;
     ChromeClient::CompositingTriggerFlags m_compositingTriggers;
 
-    int m_compositedLayerCount;
     bool m_showDebugBorders;
     bool m_showRepaintCounter;
     bool m_acceleratedDrawingEnabled;
@@ -492,7 +495,9 @@ private:
 
     bool m_isTrackingRepaints; // Used for testing.
 
-    unsigned m_layersWithTiledBackingCount;
+    int m_compositedLayerCount { 0 };
+    unsigned m_layersWithTiledBackingCount { 0 };
+    unsigned m_layerFlushCount { 0 };
 
     RootLayerAttachment m_rootLayerAttachment;
 
@@ -533,11 +538,11 @@ private:
     Timer m_paintRelatedMilestonesTimer;
 
 #if !LOG_DISABLED
-    int m_rootLayerUpdateCount;
-    int m_obligateCompositedLayerCount; // count of layer that have to be composited.
-    int m_secondaryCompositedLayerCount; // count of layers that have to be composited because of stacking or overlap.
-    double m_obligatoryBackingStoreBytes;
-    double m_secondaryBackingStoreBytes;
+    int m_rootLayerUpdateCount { 0 };
+    int m_obligateCompositedLayerCount { 0 }; // count of layer that have to be composited.
+    int m_secondaryCompositedLayerCount { 0 }; // count of layers that have to be composited because of stacking or overlap.
+    double m_obligatoryBackingStoreBytes { 0 };
+    double m_secondaryBackingStoreBytes { 0 };
 #endif
 
     Color m_rootExtendedBackgroundColor;

@@ -271,6 +271,9 @@ enum ResourceLoadPriority {
     [RaisesException] void startTrackingRepaints();
     [RaisesException] void stopTrackingRepaints();
 
+    [RaisesException] void startTrackingLayerFlushes();
+    [RaisesException] unsigned long layerFlushCount();
+
     // Query if a timer is currently throttled, to debug timer throttling.
     [RaisesException] boolean isTimerThrottled(long timerHandle);
 

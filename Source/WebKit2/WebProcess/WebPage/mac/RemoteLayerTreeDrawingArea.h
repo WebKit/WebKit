@@ -71,7 +71,7 @@ private:
 
     virtual void addTransactionCallbackID(uint64_t callbackID) override;
 
-    virtual PassRefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) override;
+    virtual RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) override;
     void willDestroyDisplayRefreshMonitor(WebCore::DisplayRefreshMonitor*);
 
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) override;

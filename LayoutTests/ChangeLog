@@ -1,3 +1,17 @@
+2015-04-18  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r181656): Animated tiled layers are missing content
+        https://bugs.webkit.org/show_bug.cgi?id=143911
+        rdar://problem/20596328
+
+        Reviewed by Darin Adler.
+        
+        Test that animates a tiled layer, and checks that layer flushes occur while the
+        animation is running.
+
+        * compositing/animation/animation-backing-expected.txt: Added.
+        * compositing/animation/animation-backing.html: Added.
+
 2015-04-17  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Large values for line-height cause integer overflow in RenderStyle::computedLineHeight
