@@ -1,3 +1,21 @@
+2015-04-17  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: All sans-serif font family rules should be set the same way.
+        https://bugs.webkit.org/show_bug.cgi?id=143909
+
+        Reviewed by Timothy Hatcher.
+
+        Update styles so that all uses of sans-serif font use -webkit-system-font consistently.
+
+        * UserInterface/Views/DefaultDashboardView.css:
+        (body.mac-platform.legacy .toolbar .dashboard.default > .item):
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (.object-tree-property .prototype-name):
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree-outline li .empty-message):
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.css:
+        (.timeline-overview-graph.rendering-frame > .divider > .label):
+
 2015-04-17  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Have better inactive window color for pixel borders

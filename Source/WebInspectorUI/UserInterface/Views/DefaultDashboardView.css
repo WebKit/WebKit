@@ -54,7 +54,7 @@ body.javascript .toolbar .dashboard.default > :matches(.time, .resourcesSize, .r
 }
 
 body.mac-platform.legacy .toolbar .dashboard.default > .item {
-    font-family: Helvetica, sans-serif;
+    font-family: -webkit-system-font, sans-serif;
     font-weight: bold;
 }
 

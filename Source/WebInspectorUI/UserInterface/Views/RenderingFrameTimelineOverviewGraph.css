@@ -36,7 +36,7 @@
 
 .timeline-overview-graph.rendering-frame > .divider > .label {
     padding: 2px;
-    font-family: Helvetica, sans-serif;
+    font-family: -webkit-system-font, sans-serif;
     font-size: 8px;
 
     color: rgb(155, 155, 155);
