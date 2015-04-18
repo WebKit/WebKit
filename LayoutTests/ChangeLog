@@ -1,3 +1,18 @@
+2015-04-18  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Unreviewed gardening
+
+        Update test expectations for failing tests.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/css/text-overflow-ellipsis-bidi-expected.txt: Rebaseline after r182620.
+        * platform/efl/fast/dom/focus-contenteditable-expected.txt: Ditto.
+        * platform/efl/fast/forms/listbox-hit-test-zoomed-expected.txt: Ditto.
+        * platform/efl/fast/parser/open-comment-in-textarea-expected.txt: Ditto.
+        * platform/efl/fast/text/international/bidi-layout-across-linebreak-expected.txt: Ditto.
+        * platform/efl/inspector-protocol/debugger/regress-133182-expected.txt: Rebaseline after r181810.
+        * platform/efl/svg/wicd/test-rightsizing-b-expected.txt: Rebaseline after r182620.
+
 2015-04-18  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r181656): Animated tiled layers are missing content

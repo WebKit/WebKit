@@ -20,6 +20,6 @@ layer at (0,0) size 800x585
         RenderBlock {PRE} at (0,81) size 781x37
           RenderText {#text} at (0,0) size 1150x18
             text run at (0,0) width 1150: "     Expected: false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false"
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (1150,13) size 0x0
           RenderText {#text} at (0,18) size 1130x18
             text run at (0,18) width 1130: "     Actual: false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false"

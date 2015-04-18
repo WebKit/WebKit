@@ -347,7 +347,7 @@ webkit.org/b/86623 fast/events/drag-and-drop.html
 webkit.org/b/86623 fast/events/drag-customData.html
 webkit.org/b/86623 fast/events/drag-dataTransferItemList.html
 webkit.org/b/86623 fast/events/drag-image-filename.html [ Timeout ]
-webkit.org/b/86623 fast/events/drag-in-frames.html [ Failure ]
+webkit.org/b/86623 fast/events/drag-in-frames.html [ Failure Timeout ]
 webkit.org/b/86623 fast/events/drag-and-drop-link.html [ Failure ]
 webkit.org/b/86623 fast/events/drag-and-drop-link-into-focused-contenteditable.html [ Failure ]
 webkit.org/b/86623 fast/events/drag-parent-node.html [ Failure ]
@@ -522,8 +522,6 @@ webkit.org/b/124574 fast/css/object-fit/object-fit-embed.html [ Crash Timeout Pa
 # A lot of crash happen since buildbot bagan to use Ubuntu 13.10.
 webkit.org/b/131729 fast/events/touch [ Skip ]
 
-webkit.org/b/142766 fast/overflow/overflow-height-float-not-removed-crash2.html [ Crash ]
-
 # REGRESSION(r174107): [EFL] WebGL broken
 # https://bugs.webkit.org/show_bug.cgi?id=137842
 fast/canvas/webgl [ Skip ]
@@ -660,7 +658,7 @@ webkit.org/b/136099 fast/harness/show-modal-dialog.html [ Crash Timeout ]
 
 webkit.org/b/136227 mathml/very-large-stretchy-operators.html [ Crash Timeout Pass ]
 
-webkit.org/b/142158 inspector-protocol/dom/remove-multiple-nodes.html [ Crash ]
+webkit.org/b/142158 inspector-protocol/dom/remove-multiple-nodes.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
@@ -801,7 +799,6 @@ webkit.org/b/102201 fast/dom/Window/window-resize.html [ Failure Pass ]
 webkit.org/b/102201 fast/dom/Window/window-resize-contents.html [ Timeout Pass ]
 
 webkit.org/b/103396 [ Debug ] fast/forms/state-restore-per-form.html [ Failure Pass ]
-webkit.org/b/103399 [ Debug ] fast/forms/basic-buttons.html [ Failure Pass ]
 
 webkit.org/b/103400 [ Debug ] compositing/overflow/content-gains-scrollbars.html [ Crash Failure ]
 webkit.org/b/103400 [ Debug ] compositing/overflow/content-loses-scrollbars.html [ Crash Failure ]
@@ -939,6 +936,8 @@ webkit.org/b/141458 imported/mozilla/svg/text-layout-05.svg [ Failure Pass Image
 webkit.org/b/141458 imported/mozilla/svg/text-white-space-01.svg [ Failure Pass ImageOnlyFailure ]
 webkit.org/b/141458 imported/w3c/canvas/2d.line.cap.round.html [ Failure Pass ImageOnlyFailure ]
 
+webkit.org/b/142766 fast/overflow/overflow-height-float-not-removed-crash2.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -946,9 +945,6 @@ webkit.org/b/141458 imported/w3c/canvas/2d.line.cap.round.html [ Failure Pass Im
 # Regression from r133898
 Bug(EFL) fast/forms/input-disabled-color.html [ Pass ]
 Bug(EFL) fast/forms/input-readonly-dimmed.html [ Pass ]
-
-# Test 2 in below test is failing.
-webkit.org/b/94877 fast/forms/listbox-hit-test-zoomed.html [ Pass ]
 
 # Intrusive theming overrides collide with style-related LayoutTests.
 webkit.org/b/85877 fast/forms/menulist-narrow-width.html [ Pass ]
@@ -1786,7 +1782,7 @@ webkit.org/b/124589 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
 webkit.org/b/124589 http/tests/cache/partitioned-cache.html [ Failure ]
 
 webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
-webkit.org/b/118126 fast/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
+webkit.org/b/118126 fast/flexbox/image-percent-max-height.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/124656 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
 webkit.org/b/124656 fast/css3-text/css3-text-decoration/text-decoration-skip/decoration-skip-crash-fallback-svg.html [ ImageOnlyFailure ]
@@ -1888,8 +1884,6 @@ webkit.org/b/125631 compositing/columns/composited-lr-paginated-repaint.html [ F
 webkit.org/b/125631 compositing/columns/composited-rl-paginated-repaint.html [ Failure ]
 
 webkit.org/b/125632 compositing/layer-creation/fixed-position-transformed-outside-view.html [ Failure ]
-
-webkit.org/b/125633 compositing/repaint/fixed-background-scroll.html [ Failure ]
 
 # Failing after r159030
 webkit.org/b/125635 compositing/repaint/positioned-movement.html [ Failure ]
@@ -2094,7 +2088,6 @@ webkit.org/b/114340 compositing/overlap-blending/nested-overlap.html [ ImageOnly
 # Probably started failing since r159110
 webkit.org/b/141591 inspector-protocol/debugger/breakpoint-eval-with-exception.html [ Failure ]
 webkit.org/b/141591 inspector-protocol/debugger/setBreakpoint-actions.html [ Failure ]
-webkit.org/b/141591 inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure ]
 
 # Doesn't support inter-ideograph justification
 webkit.org/b/141593 fast/text/justify-ideograph-complex.html [ Failure ]
@@ -2193,18 +2186,18 @@ compositing/contents-opaque/opaque-with-clip-path.html [ Crash ]
 compositing/masks/become-tiled-mask.html [ Crash ]
 compositing/masks/cease-tiled-mask.html [ Crash ]
 compositing/masks/compositing-clip-path-and-mask.html [ Crash ]
-compositing/masks/compositing-clip-path-change-no-repaint.html [ Crash ]
+compositing/masks/compositing-clip-path-change-no-repaint.html [ Crash Failure ]
 compositing/masks/compositing-clip-path-mask-change.html [ Crash ]
 compositing/masks/compositing-clip-path.html [ Crash ]
-compositing/masks/direct-image-mask.html [ Crash ]
-compositing/masks/mask-layer-size.html [ Crash ]
-compositing/masks/masked-ancestor.html [ Crash ]
+compositing/masks/direct-image-mask.html [ Crash Pass ]
+compositing/masks/mask-layer-size.html [ Crash Pass ]
+compositing/masks/masked-ancestor.html [ Crash Pass ]
 compositing/masks/reference-clip-path-on-composited.html [ Crash ]
 compositing/masks/solid-color-masked.html [ Crash ]
 compositing/masks/tiled-mask.html [ Crash ]
-compositing/masks/toggle-mask.html [ Crash ]
+compositing/masks/toggle-mask.html [ Crash Pass ]
 compositing/overlap-blending/nested-overlap-overflow.html [ Crash ]
-compositing/reflections/nested-reflection-on-overflow.html [ Crash ]
+compositing/reflections/nested-reflection-on-overflow.html [ Crash Pass ]
 compositing/text-on-scaled-surface.html [ Crash ]
 
 webkit.org/b/143415 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
@@ -2231,7 +2224,7 @@ webkit.org/b/131044 media/video-fullscreeen-only-controls.html [ Failure ]
 webkit.org/b/131044 media/video-page-load-preload-none.html [ Failure ]
 webkit.org/b/131044 media/video-volume-slider-drag.html [ Failure ]
 webkit.org/b/131044 media/track/track-datacue.html [ Timeout ]
-webkit.org/b/131044 media/track/track-in-band-subtitles-too-large.html [ Timeout ]
+webkit.org/b/131044 media/track/track-in-band-subtitles-too-large.html [ Timeout Crash Failure ]
 webkit.org/b/131044 media/track/track-remove-track.html [ Timeout ]
 webkit.org/b/131044 media/video-controls-drag.html [ Timeout ]
 webkit.org/b/131044 media/video-controls-toggling.html [ Timeout ]
