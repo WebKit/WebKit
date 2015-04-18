@@ -873,9 +873,6 @@ void DocumentLoader::dataReceived(CachedResource* resource, const char* data, in
 
         data = m_contentFilter->getReplacementData(length);
         loadWasBlockedBeforeFinishing = m_contentFilter->didBlockData();
-
-        if (loadWasBlockedBeforeFinishing)
-            frameLoader()->client().contentFilterDidBlockLoad(WTF::move(m_contentFilter));
     }
 #endif
 
@@ -889,8 +886,10 @@ void DocumentLoader::dataReceived(CachedResource* resource, const char* data, in
         commitLoad(data, length);
 
 #if USE(CONTENT_FILTERING)
-    if (loadWasBlockedBeforeFinishing)
+    if (loadWasBlockedBeforeFinishing) {
+        frameLoader()->client().contentFilterDidBlockLoad(WTF::move(m_contentFilter));
         cancelMainResourceLoad(frameLoader()->cancelledError(m_request));
+    }
 #endif
 }
 

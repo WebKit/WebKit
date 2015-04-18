@@ -1,5 +1,19 @@
 2015-04-17  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r181409
+
+    2015-03-10  Andy Estes  <aestes@apple.com>
+
+            REGRESSION (r180985): contentfiltering/block-after-add-data.html crashes with GuardMalloc
+            https://bugs.webkit.org/show_bug.cgi?id=142526
+
+            Reviewed by Darin Adler.
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::dataReceived): Don't delete m_contentFilter until after we're done using its replacement data.
+
+2015-04-17  Lucas Forschler  <lforschler@apple.com>
+
     Rollout r182965
 
 2015-04-17  Lucas Forschler  <lforschler@apple.com>
