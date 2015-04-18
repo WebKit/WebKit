@@ -418,6 +418,8 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
 {
     ASSERT(&m_clientRunLoop == &RunLoop::current());
 
+    bool hasIncomingSynchronousMessage = false;
+
     // First, check if this message is already in the incoming messages queue.
     {
         std::lock_guard<std::mutex> lock(m_incomingMessagesMutex);
@@ -431,7 +433,16 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
                 m_incomingMessages.remove(it);
                 return returnedMessage;
             }
+
+            if (message->isSyncMessage())
+                hasIncomingSynchronousMessage = true;
         }
+    }
+
+    // Don't even start waiting if we have InterruptWaitingIfSyncMessageArrives and there's a sync message already in the queue.
+    if (hasIncomingSynchronousMessage && waitForMessageFlags & InterruptWaitingIfSyncMessageArrives) {
+        m_waitingForMessage = nullptr;
+        return nullptr;
     }
 
     WaitForMessageState waitingForMessage(messageReceiverName, messageName, destinationID, waitForMessageFlags);
@@ -444,7 +455,7 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
 
         m_waitingForMessage = &waitingForMessage;
     }
-    
+
     // Now wait for it to be set.
     while (true) {
         std::unique_lock<std::mutex> lock(m_waitForMessageMutex);
