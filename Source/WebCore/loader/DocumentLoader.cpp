@@ -889,10 +889,8 @@ void DocumentLoader::dataReceived(CachedResource* resource, const char* data, in
         commitLoad(data, length);
 
 #if USE(CONTENT_FILTERING)
-    if (loadWasBlockedBeforeFinishing) {
+    if (loadWasBlockedBeforeFinishing)
         cancelMainResourceLoad(frameLoader()->cancelledError(m_request));
-        m_contentFilter = nullptr;
-    }
 #endif
 }
 
