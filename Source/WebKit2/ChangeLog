@@ -1,3 +1,21 @@
+2015-04-18  Dan Bernstein  <mitz@apple.com>
+
+        SwipeShadow images are installed on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=143915
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebKit.xcconfig: Added Resources/Mac/* to
+        EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*]. We could move more resources there and remove
+        individual patterns.
+        * Resources/SwipeShadow.png: Moved to mac.
+        * Resources/SwipeShadow@2x.png: Moved to mac.
+        * Resources/mac: Added.
+        * Resources/mac/SwipeShadow.png: Moved from Source/WebKit2/Resources/SwipeShadow.png.
+        * Resources/mac/SwipeShadow@2x.png: Moved from Source/WebKit2/Resources/SwipeShadow@2x.png.
+        * WebKit2.xcodeproj/project.pbxproj: Created mac group in the Resources group and moved
+        SwipeShadow*.png into it. Updated for file moves.
+
 2015-04-18  Chris Dumez  <cdumez@apple.com>
 
         Fix NetworkCache Statistics database bootstrapping after r182803
