@@ -1,3 +1,23 @@
+2015-04-18  Chris Dumez  <cdumez@apple.com>
+
+        Fix NetworkCache Statistics database bootstrapping after r182803
+        https://bugs.webkit.org/show_bug.cgi?id=143890
+
+        Reviewed by Darin Adler.
+
+        Update the NetworkCache Statistics database bootstrapping code to use
+        the records path instead of the version path. Also check that the
+        filenames in the folder are valid hashes to discard the *-body files.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::recordsPath):
+        (WebKit::NetworkCache::Cache::storagePath): Deleted.
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::Statistics::initialize):
+        (WebKit::NetworkCache::Statistics::bootstrapFromNetworkCache):
+        (WebKit::NetworkCache::Statistics::shrinkIfNeeded):
+
 2015-04-17  Tim Horton  <timothy_horton@apple.com>
 
         Clients sometimes block for 500ms in waitForPossibleGeometryUpdates

@@ -103,7 +103,7 @@ public:
 
     void dumpContentsToFile();
 
-    String storagePath() const;
+    String recordsPath() const;
 
 private:
     Cache() = default;

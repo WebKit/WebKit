@@ -95,7 +95,7 @@ void Statistics::initialize(const String& databasePath)
     auto startTime = std::chrono::system_clock::now();
 
     StringCapture databasePathCapture(databasePath);
-    StringCapture networkCachePathCapture(singleton().storagePath());
+    StringCapture networkCachePathCapture(singleton().recordsPath());
     serialBackgroundIOQueue().dispatch([this, databasePathCapture, networkCachePathCapture, startTime] {
         WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
 
@@ -144,8 +144,12 @@ void Statistics::bootstrapFromNetworkCache(const String& networkCachePath)
     LOG(NetworkCache, "(NetworkProcess) Bootstrapping the network cache statistics database from the network cache...");
 
     Vector<StringCapture> hashes;
-    traverseCacheFiles(networkCachePath, [&hashes](const String& hash, const String&) {
-        hashes.append(hash);
+    traverseCacheFiles(networkCachePath, [&hashes](const String& hashString, const String&) {
+        Key::HashType hash;
+        if (!Key::stringToHash(hashString, hash))
+            return;
+
+        hashes.append(hashString);
     });
 
     WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
@@ -169,7 +173,7 @@ void Statistics::shrinkIfNeeded()
 
     clear();
 
-    StringCapture networkCachePathCapture(singleton().storagePath());
+    StringCapture networkCachePathCapture(singleton().recordsPath());
     serialBackgroundIOQueue().dispatch([this, networkCachePathCapture] {
         bootstrapFromNetworkCache(networkCachePathCapture.string());
         LOG(NetworkCache, "(NetworkProcess) statistics cache shrink completed m_approximateEntryCount=%lu", static_cast<size_t>(m_approximateEntryCount));

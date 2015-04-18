@@ -497,9 +497,9 @@ void Cache::clear()
         m_statistics->clear();
 }
 
-String Cache::storagePath() const
+String Cache::recordsPath() const
 {
-    return m_storage ? m_storage->versionPath() : String();
+    return m_storage ? m_storage->recordsPath() : String();
 }
 
 }
