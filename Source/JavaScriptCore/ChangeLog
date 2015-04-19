@@ -1,3 +1,65 @@
+2015-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement WeakSet
+        https://bugs.webkit.org/show_bug.cgi?id=142408
+
+        Reviewed by Darin Adler.
+
+        This patch implements ES6 WeakSet.
+        Current implementation simply leverages WeakMapData with undefined value.
+        This WeakMapData should be optimized in the same manner as MapData/SetData in the subsequent patch[1].
+
+        And in this patch, we also fix WeakMap/WeakSet behavior to conform the ES6 spec.
+        Except for adders (WeakMap.prototype.set/WeakSet.prototype.add),
+        methods return false (or undefined for WeakMap.prototype.get)
+        when a key is not Object instead of throwing a type error.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=143919
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSWeakSet.cpp: Added.
+        (JSC::JSWeakSet::finishCreation):
+        (JSC::JSWeakSet::visitChildren):
+        * runtime/JSWeakSet.h: Added.
+        (JSC::JSWeakSet::createStructure):
+        (JSC::JSWeakSet::create):
+        (JSC::JSWeakSet::weakMapData):
+        (JSC::JSWeakSet::JSWeakSet):
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::getWeakMapData):
+        (JSC::protoFuncWeakMapDelete):
+        (JSC::protoFuncWeakMapGet):
+        (JSC::protoFuncWeakMapHas):
+        * runtime/WeakSetConstructor.cpp: Added.
+        (JSC::WeakSetConstructor::finishCreation):
+        (JSC::callWeakSet):
+        (JSC::constructWeakSet):
+        (JSC::WeakSetConstructor::getConstructData):
+        (JSC::WeakSetConstructor::getCallData):
+        * runtime/WeakSetConstructor.h: Added.
+        (JSC::WeakSetConstructor::create):
+        (JSC::WeakSetConstructor::createStructure):
+        (JSC::WeakSetConstructor::WeakSetConstructor):
+        * runtime/WeakSetPrototype.cpp: Added.
+        (JSC::WeakSetPrototype::finishCreation):
+        (JSC::getWeakMapData):
+        (JSC::protoFuncWeakSetDelete):
+        (JSC::protoFuncWeakSetHas):
+        (JSC::protoFuncWeakSetAdd):
+        * runtime/WeakSetPrototype.h: Added.
+        (JSC::WeakSetPrototype::create):
+        (JSC::WeakSetPrototype::createStructure):
+        (JSC::WeakSetPrototype::WeakSetPrototype):
+        * tests/stress/weak-set-constructor-adder.js: Added.
+        (WeakSet.prototype.add):
+        * tests/stress/weak-set-constructor.js: Added.
+
 2015-04-17  Alexey Proskuryakov  <ap@apple.com>
 
         Remove unused BoundsCheckedPointer

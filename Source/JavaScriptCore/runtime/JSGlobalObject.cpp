@@ -87,6 +87,7 @@
 #include "JSTypedArrayPrototypes.h"
 #include "JSTypedArrays.h"
 #include "JSWeakMap.h"
+#include "JSWeakSet.h"
 #include "JSWithScope.h"
 #include "LegacyProfiler.h"
 #include "Lookup.h"
@@ -127,6 +128,8 @@
 #include "WeakGCMapInlines.h"
 #include "WeakMapConstructor.h"
 #include "WeakMapPrototype.h"
+#include "WeakSetConstructor.h"
+#include "WeakSetPrototype.h"
 
 #if ENABLE(PROMISES)
 #include "JSPromise.h"

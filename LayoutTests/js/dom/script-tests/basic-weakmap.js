@@ -16,28 +16,36 @@ shouldThrow("map.set(true, 1)")
 shouldThrow("map.set(false, 1)")
 shouldThrow("map.set(null, 1)")
 shouldThrow("map.set(undefined, 1)")
-shouldThrow("map.get(0)")
-shouldThrow("map.get(0.5)")
-shouldThrow("map.get('foo')")
-shouldThrow("map.get(true)")
-shouldThrow("map.get(false)")
-shouldThrow("map.get(null)")
-shouldThrow("map.get(undefined)")
-shouldThrow("map.has(0)")
-shouldThrow("map.has(0.5)")
-shouldThrow("map.has('foo')")
-shouldThrow("map.has(true)")
-shouldThrow("map.has(false)")
-shouldThrow("map.has(null)")
-shouldThrow("map.has(undefined)")
-shouldThrow("map.delete(0)")
-shouldThrow("map.delete(0.5)")
-shouldThrow("map.delete('foo')")
-shouldThrow("map.delete(true)")
-shouldThrow("map.delete(false)")
-shouldThrow("map.delete(null)")
-shouldThrow("map.delete(undefined)")
+shouldBeUndefined("map.get(0)")
+shouldBeUndefined("map.get(0.5)")
+shouldBeUndefined("map.get('foo')")
+shouldBeUndefined("map.get(true)")
+shouldBeUndefined("map.get(false)")
+shouldBeUndefined("map.get(null)")
+shouldBeUndefined("map.get(undefined)")
+shouldBeFalse("map.has(0)")
+shouldBeFalse("map.has(0.5)")
+shouldBeFalse("map.has('foo')")
+shouldBeFalse("map.has(true)")
+shouldBeFalse("map.has(false)")
+shouldBeFalse("map.has(null)")
+shouldBeFalse("map.has(undefined)")
+shouldBeFalse("map.delete(0)")
+shouldBeFalse("map.delete(0.5)")
+shouldBeFalse("map.delete('foo')")
+shouldBeFalse("map.delete(true)")
+shouldBeFalse("map.delete(false)")
+shouldBeFalse("map.delete(null)")
+shouldBeFalse("map.delete(undefined)")
 
+var object = new String('hello');
 shouldBe("map.set(new String('foo'), 'foo')", "map");
-shouldBe("map.get(new String('foo'))", "undefined");
+shouldBeUndefined("map.get(new String('foo'))");
 shouldBeFalse("map.has(new String('foo'))");
+shouldBe("map.set(object, 'foo')", "map");
+shouldBeTrue("map.has(object)");
+shouldBe("map.get(object)", "'foo'");
+shouldBeTrue("map.delete(object)");
+shouldBeFalse("map.has(object)");
+shouldBeFalse("map.delete(object)");
+shouldBeUndefined("map.get(object)");

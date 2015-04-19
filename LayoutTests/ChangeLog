@@ -1,3 +1,18 @@
+2015-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement WeakSet
+        https://bugs.webkit.org/show_bug.cgi?id=142408
+
+        Reviewed by Darin Adler.
+
+        Add basic-weakset test and fix WeakMap behavior to conform the latest spec.
+
+        * js/dom/basic-weakmap-expected.txt:
+        * js/dom/basic-weakset-expected.txt: Added.
+        * js/dom/basic-weakset.html: Added.
+        * js/dom/script-tests/basic-weakmap.js:
+        * js/dom/script-tests/basic-weakset.js: Added.
+
 2015-04-18  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Unreviewed gardening

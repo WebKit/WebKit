@@ -57,6 +57,7 @@
     macro(URIError) \
     macro(UTC) \
     macro(WeakMap)\
+    macro(WeakSet)\
     macro(__defineGetter__) \
     macro(__defineSetter__) \
     macro(__lookupGetter__) \

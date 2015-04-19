@@ -772,6 +772,7 @@
     <ClCompile Include="..\runtime\JSTypedArrays.cpp" />
     <ClCompile Include="..\runtime\JSEnvironmentRecord.cpp" />
     <ClCompile Include="..\runtime\JSWeakMap.cpp" />
+    <ClCompile Include="..\runtime\JSWeakSet.cpp" />
     <ClCompile Include="..\runtime\JSWithScope.cpp" />
     <ClCompile Include="..\runtime\JSWrapperObject.cpp" />
     <ClCompile Include="..\runtime\LiteralParser.cpp" />
@@ -849,6 +850,8 @@
     <ClCompile Include="..\runtime\WeakMapConstructor.cpp" />
     <ClCompile Include="..\runtime\WeakMapData.cpp" />
     <ClCompile Include="..\runtime\WeakMapPrototype.cpp" />
+    <ClCompile Include="..\runtime\WeakSetConstructor.cpp" />
+    <ClCompile Include="..\runtime\WeakSetPrototype.cpp" />
     <ClCompile Include="..\tools\CodeProfile.cpp" />
     <ClCompile Include="..\tools\CodeProfiling.cpp" />
     <ClCompile Include="..\tools\FunctionOverrides.cpp" />
@@ -1589,6 +1592,7 @@
     <ClInclude Include="..\runtime\JSUint8ClampedArray.h" />
     <ClInclude Include="..\runtime\JSEnvironmentRecord.h" />
     <ClInclude Include="..\runtime\JSWeakMap.h" />
+    <ClInclude Include="..\runtime\JSWeakSet.h" />
     <ClInclude Include="..\runtime\JSWithScope.h" />
     <ClInclude Include="..\runtime\JSWrapperObject.h" />
     <ClInclude Include="..\runtime\LiteralParser.h" />
@@ -1694,6 +1698,8 @@
     <ClInclude Include="..\runtime\WeakMapConstructor.h" />
     <ClInclude Include="..\runtime\WeakMapData.h" />
     <ClInclude Include="..\runtime\WeakMapPrototype.h" />
+    <ClInclude Include="..\runtime\WeakSetConstructor.h" />
+    <ClInclude Include="..\runtime\WeakSetPrototype.h" />
     <ClInclude Include="..\runtime\WeakRandom.h" />
     <ClInclude Include="..\runtime\WriteBarrier.h" />
     <ClInclude Include="..\runtime\WriteBarrierInlines.h" />

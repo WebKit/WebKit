@@ -508,6 +508,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/JSTypedArrayPrototypes.cpp
     runtime/JSTypedArrays.cpp
     runtime/JSWeakMap.cpp
+    runtime/JSWeakSet.cpp
     runtime/JSWithScope.cpp
     runtime/JSWrapperObject.cpp
     runtime/LiteralParser.cpp
@@ -585,6 +586,8 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/WeakMapConstructor.cpp
     runtime/WeakMapData.cpp
     runtime/WeakMapPrototype.cpp
+    runtime/WeakSetConstructor.cpp
+    runtime/WeakSetPrototype.cpp
 )
 
 list(APPEND JavaScriptCore_SOURCES

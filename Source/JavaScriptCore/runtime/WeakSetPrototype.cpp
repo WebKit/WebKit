@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple, Inc. All rights reserved.
+ * Copyright (C) 2015 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,60 +24,47 @@
  */
 
 #include "config.h"
-#include "WeakMapPrototype.h"
+#include "WeakSetPrototype.h"
 
 #include "JSCJSValueInlines.h"
-#include "JSWeakMap.h"
+#include "JSWeakSet.h"
 #include "StructureInlines.h"
 #include "WeakMapData.h"
 
 namespace JSC {
 
-const ClassInfo WeakMapPrototype::s_info = { "WeakMap", &Base::s_info, 0, CREATE_METHOD_TABLE(WeakMapPrototype) };
+const ClassInfo WeakSetPrototype::s_info = { "WeakSet", &Base::s_info, 0, CREATE_METHOD_TABLE(WeakSetPrototype) };
 
-static EncodedJSValue JSC_HOST_CALL protoFuncWeakMapClear(ExecState*);
-static EncodedJSValue JSC_HOST_CALL protoFuncWeakMapDelete(ExecState*);
-static EncodedJSValue JSC_HOST_CALL protoFuncWeakMapGet(ExecState*);
-static EncodedJSValue JSC_HOST_CALL protoFuncWeakMapHas(ExecState*);
-static EncodedJSValue JSC_HOST_CALL protoFuncWeakMapSet(ExecState*);
+static EncodedJSValue JSC_HOST_CALL protoFuncWeakSetDelete(ExecState*);
+static EncodedJSValue JSC_HOST_CALL protoFuncWeakSetHas(ExecState*);
+static EncodedJSValue JSC_HOST_CALL protoFuncWeakSetAdd(ExecState*);
 
-void WeakMapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
+void WeakSetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_NATIVE_FUNCTION(vm.propertyNames->clear, protoFuncWeakMapClear, DontEnum, 0);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->deleteKeyword, protoFuncWeakMapDelete, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->get, protoFuncWeakMapGet, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->has, protoFuncWeakMapHas, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->set, protoFuncWeakMapSet, DontEnum, 2);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->deleteKeyword, protoFuncWeakSetDelete, DontEnum, 1);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->has, protoFuncWeakSetHas, DontEnum, 1);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->add, protoFuncWeakSetAdd, DontEnum, 1);
 }
 
 static WeakMapData* getWeakMapData(CallFrame* callFrame, JSValue value)
 {
     if (!value.isObject()) {
-        throwTypeError(callFrame, WTF::ASCIILiteral("Called WeakMap function on non-object"));
+        throwTypeError(callFrame, WTF::ASCIILiteral("Called WeakSet function on non-object"));
         return nullptr;
     }
 
-    if (JSWeakMap* weakMap = jsDynamicCast<JSWeakMap*>(value))
-        return weakMap->weakMapData();
+    if (JSWeakSet* weakSet = jsDynamicCast<JSWeakSet*>(value))
+        return weakSet->weakMapData();
 
-    throwTypeError(callFrame, WTF::ASCIILiteral("Called WeakMap function on a non-WeakMap object"));
+    throwTypeError(callFrame, WTF::ASCIILiteral("Called WeakSet function on a non-WeakSet object"));
     return nullptr;
 }
 
-EncodedJSValue JSC_HOST_CALL protoFuncWeakMapClear(CallFrame* callFrame)
-{
-    WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
-    if (!map)
-        return JSValue::encode(jsUndefined());
-    map->clear();
-    return JSValue::encode(jsUndefined());
-}
-
-EncodedJSValue JSC_HOST_CALL protoFuncWeakMapDelete(CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL protoFuncWeakSetDelete(CallFrame* callFrame)
 {
     WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
     if (!map)
@@ -86,18 +73,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakMapDelete(CallFrame* callFrame)
     return JSValue::encode(jsBoolean(key.isObject() && map->remove(asObject(key))));
 }
 
-EncodedJSValue JSC_HOST_CALL protoFuncWeakMapGet(CallFrame* callFrame)
-{
-    WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
-    if (!map)
-        return JSValue::encode(jsUndefined());
-    JSValue key = callFrame->argument(0);
-    if (!key.isObject())
-        return JSValue::encode(jsUndefined());
-    return JSValue::encode(map->get(asObject(key)));
-}
-
-EncodedJSValue JSC_HOST_CALL protoFuncWeakMapHas(CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL protoFuncWeakSetHas(CallFrame* callFrame)
 {
     WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
     if (!map)
@@ -106,15 +82,15 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakMapHas(CallFrame* callFrame)
     return JSValue::encode(jsBoolean(key.isObject() && map->contains(asObject(key))));
 }
 
-EncodedJSValue JSC_HOST_CALL protoFuncWeakMapSet(CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL protoFuncWeakSetAdd(CallFrame* callFrame)
 {
     WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
     if (!map)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
     if (!key.isObject())
-        return JSValue::encode(throwTypeError(callFrame, WTF::ASCIILiteral("Attempted to set a non-object key in a WeakMap")));
-    map->set(callFrame->vm(), asObject(key), callFrame->argument(1));
+        return JSValue::encode(throwTypeError(callFrame, WTF::ASCIILiteral("Attempted to add a non-object key to a WeakSet")));
+    map->set(callFrame->vm(), asObject(key), jsUndefined());
     return JSValue::encode(callFrame->thisValue());
 }
 
