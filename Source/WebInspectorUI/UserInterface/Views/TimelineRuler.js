@@ -291,8 +291,7 @@ WebInspector.TimelineRuler.prototype = {
         marker.addEventListener(WebInspector.TimelineMarker.Event.TimeChanged, this._timelineMarkerTimeChanged, this);
 
         var markerElement = document.createElement("div");
-        markerElement.classList.add(WebInspector.TimelineRuler.BaseMarkerElementStyleClassName);
-        markerElement.classList.add(marker.type);
+        markerElement.classList.add(marker.type, WebInspector.TimelineRuler.BaseMarkerElementStyleClassName);
 
         this._markerElementMap.set(marker, markerElement);
 

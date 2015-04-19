@@ -29,9 +29,7 @@ WebInspector.DatabaseContentView = function(representedObject)
 
     this.database = representedObject;
 
-    this.element.classList.add("storage-view");
-    this.element.classList.add("query");
-    this.element.classList.add("monospace");
+    this.element.classList.add("storage-view", "query", "monospace");
 
     this._promptElement = document.createElement("div");
     this._promptElement.className = "database-query-prompt";

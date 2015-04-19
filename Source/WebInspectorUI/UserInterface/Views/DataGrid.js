@@ -1454,8 +1454,7 @@ WebInspector.DataGridNode.prototype = {
         }
         else
         {
-            this._element.classList.remove("parent");
-            this._element.classList.remove("expanded");
+            this._element.classList.remove("parent", "expanded");
         }
     },
 

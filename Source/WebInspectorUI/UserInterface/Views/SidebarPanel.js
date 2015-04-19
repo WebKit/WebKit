@@ -36,8 +36,7 @@ WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.Object
         this._toolbarItem.enabled = false;
 
         this._element = element || document.createElement("div");
-        this._element.classList.add("panel");
-        this._element.classList.add(identifier);
+        this._element.classList.add("panel", identifier);
 
         this._element.setAttribute("role", role || "group");
         this._element.setAttribute("aria-label", label || displayName);

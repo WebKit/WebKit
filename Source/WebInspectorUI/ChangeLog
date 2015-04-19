@@ -1,5 +1,45 @@
 2015-04-18  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Pass multiple arguments to classList.add and classList.remove
+        https://bugs.webkit.org/show_bug.cgi?id=143914
+
+        classList.add and classList.remove can accept multiple arguments, use that.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.updateDockedState):
+        * UserInterface/Views/DOMTreeDataGrid.js:
+        (WebInspector.DOMTreeDataGrid):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline):
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGridNode.prototype.set hasChildren):
+        * UserInterface/Views/DatabaseContentView.js:
+        (WebInspector.DatabaseContentView):
+        * UserInterface/Views/DetailsSection.js:
+        (WebInspector.DetailsSection):
+        * UserInterface/Views/DetailsSectionPropertiesRow.js:
+        (WebInspector.DetailsSectionPropertiesRow):
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WebInspector.GeneralTreeElement.prototype.set classNames):
+        * UserInterface/Views/NavigationItem.js:
+        (WebInspector.NavigationItem):
+        * UserInterface/Views/ResourceContentView.js:
+        (WebInspector.ResourceContentView):
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.createCellContent):
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar):
+        * UserInterface/Views/SidebarPanel.js:
+        (WebInspector.SidebarPanel):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor):
+        * UserInterface/Views/TimelineRuler.js:
+
+2015-04-18  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Make prototype pill’s background semi-transparent
         https://bugs.webkit.org/show_bug.cgi?id=143928
 

@@ -30,8 +30,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
         super();
 
         this._element = element || document.createElement("div");
-        this._element.classList.add("text-editor");
-        this._element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
+        this._element.classList.add("text-editor", WebInspector.SyntaxHighlightedStyleClassName);
 
         this._codeMirror = CodeMirror(this.element, {
             readOnly: true,

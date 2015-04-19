@@ -32,8 +32,7 @@ WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
         console.assert(identifier);
 
         this._element = document.createElement("div");
-        this._element.className = WebInspector.DetailsSection.StyleClassName;
-        this._element.classList.add(identifier);
+        this._element.classList.add(identifier, "details-section");
 
         this._headerElement = document.createElement("div");
         this._headerElement.addEventListener("click", this._headerElementClicked.bind(this));
@@ -161,7 +160,6 @@ WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
     }
 };
 
-WebInspector.DetailsSection.StyleClassName = "details-section";
 WebInspector.DetailsSection.HeaderElementStyleClassName = "header";
 WebInspector.DetailsSection.TitleElementStyleClassName = "title";
 WebInspector.DetailsSection.ContentElementStyleClassName = "content";

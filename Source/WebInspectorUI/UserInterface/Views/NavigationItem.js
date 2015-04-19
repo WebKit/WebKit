@@ -37,10 +37,7 @@ WebInspector.NavigationItem = function(identifier, role, label) {
     if (label)
         this._element.setAttribute("aria-label", label);
 
-    var classNames = this._classNames;
-    for (var i = 0; i < classNames.length; ++i)
-        this._element.classList.add(classNames[i]);
-
+    this._element.classList.add(...this._classNames);
     this._element.navigationItem = this;
 };
 

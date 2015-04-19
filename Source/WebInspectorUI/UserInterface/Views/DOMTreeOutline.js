@@ -45,8 +45,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         element.addEventListener("drop", this._ondrop.bind(this), false);
         element.addEventListener("dragend", this._ondragend.bind(this), false);
 
-        element.classList.add("dom-tree-outline");
-        element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
+        element.classList.add("dom-tree-outline", WebInspector.SyntaxHighlightedStyleClassName);
 
         this._includeRootDOMNode = !omitRootDOMNode;
         this._selectEnabled = selectEnabled;

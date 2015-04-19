@@ -107,8 +107,7 @@ WebInspector.ResourceTimelineDataGridNode.prototype = {
 
         switch (columnIdentifier) {
         case "name":
-            cell.classList.add(WebInspector.ResourceTreeElement.ResourceIconStyleClassName);
-            cell.classList.add(resource.type);
+            cell.classList.add(resource.type, WebInspector.ResourceTreeElement.ResourceIconStyleClassName);
 
             var fragment = document.createDocumentFragment();
 

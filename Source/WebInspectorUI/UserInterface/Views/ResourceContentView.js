@@ -32,8 +32,7 @@ WebInspector.ResourceContentView = function(resource, styleClassName)
 
     this._resource = resource;
 
-    this.element.classList.add(WebInspector.ResourceContentView.StyleClassName);
-    this.element.classList.add(styleClassName);
+    this.element.classList.add(styleClassName, "resource");
 
     // Append a spinner while waiting for contentAvailable. The subclasses are responsible for removing
     // the spinner before showing the resource content.
@@ -53,8 +52,6 @@ WebInspector.ResourceContentView = function(resource, styleClassName)
             this.addIssue(issues[i]);
     }
 };
-
-WebInspector.ResourceContentView.StyleClassName = "resource";
 
 WebInspector.ResourceContentView.prototype = {
     constructor: WebInspector.ResourceContentView,

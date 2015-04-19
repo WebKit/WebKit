@@ -29,8 +29,7 @@ WebInspector.DetailsSectionPropertiesRow = class DetailsSectionPropertiesRow ext
     {
         super(emptyMessage);
 
-        this.element.classList.add("properties");
-        this.element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
+        this.element.classList.add("properties", WebInspector.SyntaxHighlightedStyleClassName);
 
         this.propertiesSection = propertiesSection;
     }

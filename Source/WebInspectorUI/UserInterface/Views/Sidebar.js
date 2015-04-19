@@ -33,9 +33,7 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.Object
         this._side = side || WebInspector.Sidebar.Sides.Left;
 
         this._element = element || document.createElement("div");
-        this._element.classList.add("sidebar");
-        this._element.classList.add(WebInspector.Sidebar.CollapsedStyleClassName);
-        this._element.classList.add(this._side);
+        this._element.classList.add("sidebar", this._side, WebInspector.Sidebar.CollapsedStyleClassName);
 
         this._element.setAttribute("role", role || "group");
         if (label)

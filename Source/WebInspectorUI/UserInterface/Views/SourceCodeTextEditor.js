@@ -840,8 +840,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             return null;
 
         var widgetElement = widget.widgetElement;
-        widgetElement.classList.add("issue-widget");
-        widgetElement.classList.add("inline");
+        widgetElement.classList.add("issue-widget", "inline");
         widgetElement.addEventListener("click", this._handleWidgetClick.bind(this, widget, lineNumber));
 
         this._widgetMap.set(lineNumber, widget);

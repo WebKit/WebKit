@@ -457,27 +457,19 @@ WebInspector.updateDockedState = function(side)
     this._ignoreToolbarModeDidChangeEvents = true;
 
     if (side === "bottom") {
-        document.body.classList.add("docked");
-        document.body.classList.add("bottom");
-
-        document.body.classList.remove("window-inactive");
-        document.body.classList.remove("right");
+        document.body.classList.add("docked", "bottom");
+        document.body.classList.remove("window-inactive", "right");
 
         this.toolbar.displayMode = this._toolbarDockedBottomDisplayModeSetting.value;
         this.toolbar.sizeMode = this._toolbarDockedBottomSizeModeSetting.value;
     } else if (side === "right") {
-        document.body.classList.add("docked");
-        document.body.classList.add("right");
-
-        document.body.classList.remove("window-inactive");
-        document.body.classList.remove("bottom");
+        document.body.classList.add("docked", "right");
+        document.body.classList.remove("window-inactive", "bottom");
 
         this.toolbar.displayMode = this._toolbarDockedRightDisplayModeSetting.value;
         this.toolbar.sizeMode = this._toolbarDockedRightSizeModeSetting.value;
     } else {
-        document.body.classList.remove("docked");
-        document.body.classList.remove("right");
-        document.body.classList.remove("bottom");
+        document.body.classList.remove("docked", "right", "bottom");
 
         this.toolbar.displayMode = this._toolbarUndockedDisplayModeSetting.value;
         this.toolbar.sizeMode = this._toolbarUndockedSizeModeSetting.value;
