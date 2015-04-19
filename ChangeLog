@@ -1,3 +1,11 @@
+2015-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Restore the WebKit.xcworkspace to the way it was before r182899,
+        which inadvertently added the Source directory and a couple of source
+        files.
+
+        * WebKit.xcworkspace/contents.xcworkspacedata:
+
 2015-04-16  Basile Clement  <basile_clement@apple.com>
 
         Extract the allocation profile from JSFunction into a rare object
