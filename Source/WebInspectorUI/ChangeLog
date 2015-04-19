@@ -1,3 +1,16 @@
+2015-04-18  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Make prototype pill’s background semi-transparent
+        https://bugs.webkit.org/show_bug.cgi?id=143928
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (.object-tree-property.prototype-property):
+
+        (.object-tree-property.prototype-property:hover, .object-tree-property.prototype-property:focus):
+        Slightly highlight the prototype pill when hovering over.
+
 2015-04-17  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: All sans-serif font family rules should be set the same way.

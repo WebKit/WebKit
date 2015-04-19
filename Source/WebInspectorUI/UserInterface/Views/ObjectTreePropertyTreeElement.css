@@ -133,12 +133,16 @@
 .object-tree-property.prototype-property {
     display: inline-block;
 
-    border: 1px solid rgb(222, 222, 222);
-    background-color: rgb(242, 242, 242);
+    border: 1px solid hsla(0, 0%, 0%, 0.06);
+    background-color: hsla(0, 0%, 0%, 0.03);
     border-radius: 3px;
 
     padding: 0 10px 1px 0;
     margin: 3px 0 2px 0;
+}
+
+.object-tree-property.prototype-property:hover, .object-tree-property.prototype-property:focus {
+    border-color: hsla(0, 0%, 0%, 0.1);
 }
 
 .object-tree-property.prototype-property > .icon {
