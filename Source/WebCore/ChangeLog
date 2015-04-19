@@ -1,3 +1,16 @@
+2015-04-18  Jon Lee  <jonlee@apple.com>
+
+        [Mac] Time elapsed should be right-aligned
+        https://bugs.webkit.org/show_bug.cgi?id=143927
+
+        Reviewed by Eric Carlson.
+
+        Current time is left-aligned, which is visually jarring when going from < 1 hour to > 1 hour.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-current-time-display): Set justify-content to flex-end.
+        (audio::-webkit-media-controls-time-remaining-display): Explicitly set justify-content to flex-start.
+
 2015-04-18  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r181656): Animated tiled layers are missing content
