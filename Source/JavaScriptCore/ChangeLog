@@ -1,5 +1,31 @@
 2015-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Make Builtin functions non constructible
+        https://bugs.webkit.org/show_bug.cgi?id=143923
+
+        Reviewed by Darin Adler.
+
+        Builtin functions defined by builtins/*.js accidentally have [[Construct]].
+        According to the spec, these functions except for explicitly defined as a constructor do not have [[Construct]].
+        This patch fixes it. When the JS function used for a construction is builtin function, throw not a constructor error.
+
+        Ideally, returning ConstructTypeNone in JSFunction::getConstructData is enough.
+        However, to avoid calling getConstructData (it involves indirect call of function pointer of getConstructData), some places do not check ConstructType.
+        In these places, they only check the target function is JSFunction because previously JSFunction always has [[Construct]].
+        So in this patch, we check `isBuiltinFunction()` in those places.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getConstructData):
+        * tests/stress/builtin-function-is-construct-type-none.js: Added.
+        (shouldThrow):
+
+2015-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [ES6] Implement WeakSet
         https://bugs.webkit.org/show_bug.cgi?id=142408
 

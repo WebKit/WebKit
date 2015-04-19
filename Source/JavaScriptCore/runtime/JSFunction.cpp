@@ -501,6 +501,10 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
 ConstructType JSFunction::getConstructData(JSCell* cell, ConstructData& constructData)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
+
+    if (thisObject->isBuiltinFunction())
+        return ConstructTypeNone;
+
     if (thisObject->isHostFunction()) {
         constructData.native.function = thisObject->nativeConstructor();
         return ConstructTypeHost;

@@ -1208,11 +1208,12 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
     }
     
     // Do we have a code block, and does the code block's size match the heuristics/requirements for
-    // being an inline candidate? We might not have a code block if code was thrown away or if we
-    // simply hadn't actually made this call yet. We could still theoretically attempt to inline it
-    // if we had a static proof of what was being called; this might happen for example if you call a
-    // global function, where watchpointing gives us static information. Overall, it's a rare case
-    // because we expect that any hot callees would have already been compiled.
+    // being an inline candidate? We might not have a code block (1) if code was thrown away,
+    // (2) if we simply hadn't actually made this call yet or (3) code is a builtin function and
+    // specialization kind is construct. In the former 2 cases, we could still theoretically attempt
+    // to inline it if we had a static proof of what was being called; this might happen for example
+    // if you call a global function, where watchpointing gives us static information. Overall,
+    // it's a rare case because we expect that any hot callees would have already been compiled.
     CodeBlock* codeBlock = executable->baselineCodeBlockFor(kind);
     if (!codeBlock) {
         if (verbose)
