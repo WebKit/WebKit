@@ -1,3 +1,17 @@
+2015-04-20  Brady Eidson  <beidson@apple.com>
+
+        Crash in StyleResolver::invalidateMatchedPropertiesCache() when using content extensions.
+        <rdar://problem/20554405> and https://bugs.webkit.org/show_bug.cgi?id=143892
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/contentextensions/resources/woff-stylesheet.css: Added.
+        (@font-face):
+        * http/tests/contentextensions/style-resolver-changed-reentrancy-expected.txt: Added.
+        * http/tests/contentextensions/style-resolver-changed-reentrancy.html: Added.
+        * http/tests/contentextensions/style-resolver-changed-reentrancy.html.json: Added.
+        * http/tests/resources/Ahem.woff: Added.
+
 2015-04-20  Per Arne Vollan  <peavo@outlook.com>
 
         Favicons are not always loaded.

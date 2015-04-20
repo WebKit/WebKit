@@ -28,6 +28,7 @@
 #ifndef DocumentStyleSheetCollection_h
 #define DocumentStyleSheetCollection_h
 
+#include "Timer.h"
 #include <memory>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
@@ -70,6 +71,7 @@ public:
 
     WEBCORE_EXPORT void addAuthorSheet(Ref<StyleSheetContents>&& authorSheet);
     WEBCORE_EXPORT void addUserSheet(Ref<StyleSheetContents>&& userSheet);
+    void addContentExtensionUserSheet(Ref<StyleSheetContents>&& userSheet);
     void maybeAddContentExtensionSheet(const String& identifier, StyleSheetContents&);
 
     enum UpdateFlag { NoUpdate = 0, OptimizedUpdate, FullUpdate };
@@ -126,6 +128,8 @@ private:
     };
     void analyzeStyleSheetChange(UpdateFlag, const Vector<RefPtr<CSSStyleSheet>>& newStylesheets, StyleResolverUpdateType&, bool& requiresFullStyleRecalc);
 
+    void styleResolverChangedTimerFired();
+
     Document& m_document;
 
     Vector<RefPtr<StyleSheet>> m_styleSheetsForStyleSheetList;
@@ -163,6 +167,8 @@ private:
     bool m_usesFirstLetterRules;
     bool m_usesRemUnits;
     bool m_usesStyleBasedEditability;
+
+    Timer m_styleResolverChangedTimer;
 };
 
 }

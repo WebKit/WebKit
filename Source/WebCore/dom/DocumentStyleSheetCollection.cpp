@@ -61,6 +61,7 @@ DocumentStyleSheetCollection::DocumentStyleSheetCollection(Document& document)
     , m_usesFirstLetterRules(false)
     , m_usesRemUnits(false)
     , m_usesStyleBasedEditability(false)
+    , m_styleResolverChangedTimer(*this, &DocumentStyleSheetCollection::styleResolverChangedTimerFired)
 {
 }
 
@@ -191,6 +192,13 @@ void DocumentStyleSheetCollection::addUserSheet(Ref<StyleSheetContents>&& userSh
     m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
+void DocumentStyleSheetCollection::addContentExtensionUserSheet(Ref<StyleSheetContents>&& userSheet)
+{
+    ASSERT(userSheet.get().isUserStyleSheet());
+    m_userStyleSheets.append(CSSStyleSheet::create(WTF::move(userSheet), &m_document));
+    m_styleResolverChangedTimer.startOneShot(0);
+}
+
 void DocumentStyleSheetCollection::maybeAddContentExtensionSheet(const String& identifier, StyleSheetContents& sheet)
 {
     ASSERT(sheet.isUserStyleSheet());
@@ -201,6 +209,12 @@ void DocumentStyleSheetCollection::maybeAddContentExtensionSheet(const String& i
     Ref<CSSStyleSheet> cssSheet = CSSStyleSheet::create(sheet, &m_document);
     m_contentExtensionSheets.set(identifier, &cssSheet.get());
     m_userStyleSheets.append(adoptRef(cssSheet.leakRef()));
+    m_styleResolverChangedTimer.startOneShot(0);
+}
+
+void DocumentStyleSheetCollection::styleResolverChangedTimerFired()
+{
+    m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
 // This method is called whenever a top-level stylesheet has finished loading.

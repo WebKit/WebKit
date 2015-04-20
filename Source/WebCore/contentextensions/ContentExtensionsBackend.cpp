@@ -190,7 +190,7 @@ void ContentExtensionsBackend::processContentExtensionRulesForLoad(ResourceReque
             if (resourceType == ResourceType::Document)
                 initiatingDocumentLoader.addPendingContentExtensionSheet(styleSheet);
             else if (currentDocument)
-                currentDocument->styleSheetCollection().addUserSheet(WTF::move(styleSheet));
+                currentDocument->styleSheetCollection().addContentExtensionUserSheet(WTF::move(styleSheet));
         }
     }
 
