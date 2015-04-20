@@ -558,9 +558,9 @@ void HTMLCanvasElement::createImageBuffer() const
 
     if (deviceSize.width() * deviceSize.height() > MaxCanvasArea) {
         StringBuilder stringBuilder;
-        stringBuilder.append("Canvas area exceeds the maximum limit (width * height > ");
+        stringBuilder.appendLiteral("Canvas area exceeds the maximum limit (width * height > ");
         stringBuilder.appendNumber(MaxCanvasArea);
-        stringBuilder.append(").");
+        stringBuilder.appendLiteral(").");
         document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, stringBuilder.toString());
         return;
     }

@@ -40,7 +40,7 @@ static uint64_t generateIdentifier()
 WebCore::URL UserScript::generateUniqueURL()
 {
     StringBuilder urlStringBuilder;
-    urlStringBuilder.append("user-script:");
+    urlStringBuilder.appendLiteral("user-script:");
     urlStringBuilder.appendNumber(generateIdentifier());
     return WebCore::URL { WebCore::URL { }, urlStringBuilder.toString() };
 }

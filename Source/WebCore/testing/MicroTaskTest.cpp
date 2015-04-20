@@ -27,12 +27,8 @@ namespace WebCore {
 
 void MicroTaskTest::run()
 {
-    StringBuilder message;
-    message.append("MicroTask #");
-    message.append(String::number(m_testNumber));
-    message.append(" has run.");
     if (m_document)
-        m_document->addConsoleMessage(MessageSource::JS, MessageLevel::Debug, message.toString());
+        m_document->addConsoleMessage(MessageSource::JS, MessageLevel::Debug, makeString("MicroTask #", String::number(m_testNumber), " has run."));
 }
 
 } // namespace WebCore

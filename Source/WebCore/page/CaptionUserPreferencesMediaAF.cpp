@@ -234,12 +234,7 @@ String CaptionUserPreferencesMediaAF::captionsWindowCSS() const
     if (!opacity)
         return windowStyle;
 
-    StringBuilder builder;
-    builder.append(windowStyle);
-    builder.append(getPropertyNameString(CSSPropertyPadding));
-    builder.append(": .4em !important;");
-
-    return builder.toString();
+    return makeString(windowStyle, getPropertyNameString(CSSPropertyPadding), ": .4em !important;");
 }
 
 String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
@@ -300,7 +295,7 @@ String CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
     builder.append(getPropertyNameString(CSSPropertyBorderRadius));
     builder.append(String::format(":%.02fpx", radius));
     if (behavior == kMACaptionAppearanceBehaviorUseValue)
-        builder.append(" !important");
+        builder.appendLiteral(" !important");
     builder.append(';');
 
     return builder.toString();
@@ -327,7 +322,7 @@ String CaptionUserPreferencesMediaAF::cssPropertyWithTextEdgeColor(CSSPropertyID
     builder.append(' ');
     builder.append(captionsEdgeColorForTextColor(textColor).serialized());
     if (important)
-        builder.append(" !important");
+        builder.appendLiteral(" !important");
     builder.append(';');
     
     return builder.toString();
@@ -341,7 +336,7 @@ String CaptionUserPreferencesMediaAF::colorPropertyCSS(CSSPropertyID id, const C
     builder.append(':');
     builder.append(color.serialized());
     if (important)
-        builder.append(" !important");
+        builder.appendLiteral(" !important");
     builder.append(';');
     
     return builder.toString();
@@ -399,11 +394,11 @@ String CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
     StringBuilder builder;
     
     builder.append(getPropertyNameString(CSSPropertyFontFamily));
-    builder.append(": \"");
+    builder.appendLiteral(": \"");
     builder.append(static_cast<CFStringRef>(name.get()));
     builder.append('"');
     if (behavior == kMACaptionAppearanceBehaviorUseValue)
-        builder.append(" !important");
+        builder.appendLiteral(" !important");
     builder.append(';');
     
     return builder.toString();
@@ -490,7 +485,7 @@ String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
     String fontName = captionsDefaultFontCSS();
     String background = captionsBackgroundCSS();
     if (!background.isEmpty() || !captionsColor.isEmpty() || !edgeStyle.isEmpty() || !fontName.isEmpty()) {
-        captionsOverrideStyleSheet.append(" video::");
+        captionsOverrideStyleSheet.appendLiteral(" video::");
         captionsOverrideStyleSheet.append(TextTrackCue::cueShadowPseudoId());
         captionsOverrideStyleSheet.append('{');
         
@@ -509,7 +504,7 @@ String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
     String windowColor = captionsWindowCSS();
     String windowCornerRadius = windowRoundedCornerRadiusCSS();
     if (!windowColor.isEmpty() || !windowCornerRadius.isEmpty()) {
-        captionsOverrideStyleSheet.append(" video::");
+        captionsOverrideStyleSheet.appendLiteral(" video::");
         captionsOverrideStyleSheet.append(VTTCue::cueBackdropShadowPseudoId());
         captionsOverrideStyleSheet.append('{');
         

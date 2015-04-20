@@ -35,10 +35,10 @@ namespace WebCore {
 String CSSAnimationTriggerScrollValue::customCSSText() const
 {
     StringBuilder result;
-    result.append("container-scroll(");
+    result.appendLiteral("container-scroll(");
     result.append(m_startValue->cssText());
     if (m_endValue) {
-        result.append(", ");
+        result.appendLiteral(", ");
         result.append(m_endValue->cssText());
     }
     result.append(')');

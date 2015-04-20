@@ -158,7 +158,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 if (static_cast<CFBooleanRef>(value) != kCFBooleanTrue)
                     continue;
 
-                tagStart.append("<b>");
+                tagStart.appendLiteral("<b>");
                 tagEnd = "</b>" + tagEnd;
                 continue;
             }
@@ -167,7 +167,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 if (static_cast<CFBooleanRef>(value) != kCFBooleanTrue)
                     continue;
 
-                tagStart.append("<i>");
+                tagStart.appendLiteral("<i>");
                 tagEnd = "</i>" + tagEnd;
                 continue;
             }
@@ -176,7 +176,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 if (static_cast<CFBooleanRef>(value) != kCFBooleanTrue)
                     continue;
 
-                tagStart.append("<u>");
+                tagStart.appendLiteral("<u>");
                 tagEnd = "</u>" + tagEnd;
                 continue;
             }

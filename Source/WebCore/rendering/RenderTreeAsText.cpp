@@ -667,9 +667,9 @@ static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, 
             RenderElement* renderElementForRegion = isRenderNamedFlowFragment ? renderRegion->parent() : renderRegion;
             if (renderElementForRegion->isPseudoElement()) {
                 if (renderElementForRegion->element()->isBeforePseudoElement())
-                    tagName.append("::before");
+                    tagName.appendLiteral("::before");
                 else if (renderElementForRegion->element()->isAfterPseudoElement())
-                    tagName.append("::after");
+                    tagName.appendLiteral("::after");
             }
 
             ts << " {" << tagName.toString() << "}";

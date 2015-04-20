@@ -1,3 +1,20 @@
+2015-04-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Cleanup some StringBuilder use
+        https://bugs.webkit.org/show_bug.cgi?id=143550
+
+        Reviewed by Darin Adler.
+
+        * runtime/Symbol.cpp:
+        (JSC::Symbol::descriptiveString):
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::typeInformationForExpressionAtOffset):
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::toJSONString):
+        (JSC::StructureShape::propertyHash):
+        (JSC::StructureShape::stringRepresentation):
+        (JSC::StructureShape::toJSONString):
+
 2015-04-20  Mark Lam  <mark.lam@apple.com>
 
         Add debugging tools to test if a given pointer is a valid object and in the heap.

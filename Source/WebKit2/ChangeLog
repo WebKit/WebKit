@@ -1,3 +1,23 @@
+2015-04-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Cleanup some StringBuilder use
+        https://bugs.webkit.org/show_bug.cgi?id=143550
+
+        Reviewed by Darin Adler.
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::buildObjectStoreStatement):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::v2RecordsTableSchema):
+        * Shared/Databases/IndexedDB/IDBUtilities.cpp:
+        (WebKit::uniqueDatabaseIdentifier):
+        * UIProcess/API/APIUserScript.cpp:
+        (API::UserScript::generateUniqueURL):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::didReceiveInvalidMessage):
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp:
+        (WebKit::combinedSecurityOriginIdentifier):
+
 2015-04-20  Anders Carlsson  <andersca@apple.com>
 
         Modify the WKWebsiteDataStore API to take a NSSet of types instead of a bitmask

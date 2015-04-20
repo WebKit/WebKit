@@ -42,14 +42,14 @@ String uniqueDatabaseIdentifier(const String& databaseName, const WebCore::Secur
     if (originString == "null")
         return String();
     stringBuilder.append(originString);
-    stringBuilder.append("_");
+    stringBuilder.append('_');
 
     originString = mainFrameOrigin.toString();
     if (originString == "null")
         return String();
     stringBuilder.append(originString);
 
-    stringBuilder.append("_");
+    stringBuilder.append('_');
     stringBuilder.append(databaseName);
 
     return stringBuilder.toString();

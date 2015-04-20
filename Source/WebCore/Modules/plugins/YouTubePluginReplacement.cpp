@@ -326,13 +326,13 @@ String YouTubePluginReplacement::youTubeURL(const String& srcString)
     // See: <rdar://problem/11535155>
     StringBuilder finalURL;
     if (isYouTubeShortenedURL)
-        finalURL.append("http://www.youtube.com");
+        finalURL.appendLiteral("http://www.youtube.com");
     else
         finalURL.append(srcURLPrefix);
     finalURL.appendLiteral("/embed/");
     finalURL.append(videoID);
     if (!query.isEmpty()) {
-        finalURL.appendLiteral("?");
+        finalURL.append('?');
         finalURL.append(query);
     }
     return finalURL.toString();

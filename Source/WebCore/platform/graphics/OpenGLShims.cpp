@@ -70,26 +70,18 @@ static void* lookupOpenGLFunctionAddress(const char* functionName, bool* success
     if (target)
         return target;
 
-    String fullFunctionName(functionName);
-    fullFunctionName.append("ARB");
-    target = getProcAddress(fullFunctionName.utf8().data());
+    target = getProcAddress(makeString(functionName, "ARB").characters8());
     if (target)
         return target;
 
-    fullFunctionName = functionName;
-    fullFunctionName.append("EXT");
-    target = getProcAddress(fullFunctionName.utf8().data());
+    target = getProcAddress(makeString(functionName, "EXT").characters8());
 
 #if defined(GL_ES_VERSION_2_0)
-    fullFunctionName = functionName;
-    fullFunctionName.append("ANGLE");
-    target = getProcAddress(fullFunctionName.utf8().data());
+    target = getProcAddress(makeString(functionName, "ANGLE").characters8());
     if (target)
         return target;
 
-    fullFunctionName = functionName;
-    fullFunctionName.append("APPLE");
-    target = getProcAddress(fullFunctionName.utf8().data());
+    target = getProcAddress(makeString(functionName, "APPLE").characters8());
 #endif
 
     // A null address is still a failure case.

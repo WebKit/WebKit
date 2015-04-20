@@ -250,73 +250,73 @@ String TypeSet::toJSONString() const
     //     structures: 'Array<JSON<StructureShape>>'
 
     StringBuilder json;
-    json.append("{");
+    json.append('{');
 
-    json.append("\"displayTypeName\":");
-    json.append("\"");
+    json.appendLiteral("\"displayTypeName\":");
+    json.append('"');
     json.append(displayName());
-    json.append("\"");
-    json.append(",");
+    json.append('"');
+    json.append(',');
 
-    json.append("\"primitiveTypeNames\":");
-    json.append("[");
+    json.appendLiteral("\"primitiveTypeNames\":");
+    json.append('[');
     bool hasAnItem = false;
     if (m_seenTypes & TypeUndefined) {
         hasAnItem = true;
-        json.append("\"Undefined\"");
+        json.appendLiteral("\"Undefined\"");
     }
     if (m_seenTypes & TypeNull) {
         if (hasAnItem)
-            json.append(",");
+            json.append(',');
         hasAnItem = true;
-        json.append("\"Null\"");
+        json.appendLiteral("\"Null\"");
     }
     if (m_seenTypes & TypeBoolean) {
         if (hasAnItem)
-            json.append(",");
+            json.append(',');
         hasAnItem = true;
-        json.append("\"Boolean\"");
+        json.appendLiteral("\"Boolean\"");
     }
     if (m_seenTypes & TypeMachineInt) {
         if (hasAnItem)
-            json.append(",");
+            json.append(',');
         hasAnItem = true;
-        json.append("\"Integer\"");
+        json.appendLiteral("\"Integer\"");
     }
     if (m_seenTypes & TypeNumber) {
         if (hasAnItem)
-            json.append(",");
+            json.append(',');
         hasAnItem = true;
-        json.append("\"Number\"");
+        json.appendLiteral("\"Number\"");
     }
     if (m_seenTypes & TypeString) {
         if (hasAnItem)
-            json.append(",");
+            json.append(',');
         hasAnItem = true;
-        json.append("\"String\"");
+        json.appendLiteral("\"String\"");
     }
     if (m_seenTypes & TypeSymbol) {
         if (hasAnItem)
-            json.append(",");
+            json.append(',');
         hasAnItem = true;
-        json.append("\"Symbol\"");
+        json.appendLiteral("\"Symbol\"");
     }
-    json.append("]");
+    json.append(']');
 
-    json.append(",");
+    json.append(',');
 
-    json.append("\"structures\":");
-    json.append("[");
+    json.appendLiteral("\"structures\":");
+    json.append('[');
     hasAnItem = false;
     for (size_t i = 0; i < m_structureHistory.size(); i++) {
         if (hasAnItem)
-            json.append(",");
+            json.append(',');
         hasAnItem = true;
         json.append(m_structureHistory[i]->toJSONString());
     }
-    json.append("]");
+    json.append(']');
 
-    json.append("}");
+    json.append('}');
     return json.toString();
 }
 
@@ -359,7 +359,7 @@ String StructureShape::propertyHash()
 
     if (m_proto) {
         builder.append(':');
-        builder.append("__proto__");
+        builder.appendLiteral("__proto__");
         builder.append(m_proto->propertyHash());
     }
 
@@ -409,13 +409,13 @@ String StructureShape::stringRepresentation()
         for (auto it = curShape->m_fields.begin(), end = curShape->m_fields.end(); it != end; ++it) {
             String prop((*it).get());
             representation.append(prop);
-            representation.append(", ");
+            representation.appendLiteral(", ");
         }
 
         if (curShape->m_proto) {
-            String prot = makeString("__proto__ [", curShape->m_proto->m_constructorName, ']');
-            representation.append(prot);
-            representation.append(", ");
+            representation.appendLiteral("__proto__ [");
+            representation.append(curShape->m_proto->m_constructorName);
+            representation.appendLiteral("], ");
         }
 
         curShape = curShape->m_proto;
@@ -438,60 +438,60 @@ String StructureShape::toJSONString() const
     //     proto: 'JSON<StructureShape> | null'
 
     StringBuilder json;
-    json.append("{");
+    json.append('{');
 
-    json.append("\"constructorName\":");
-    json.append("\"");
+    json.appendLiteral("\"constructorName\":");
+    json.append('"');
     json.append(m_constructorName);
-    json.append("\"");
-    json.append(",");
+    json.append('"');
+    json.append(',');
 
-    json.append("\"isInDictionaryMode\":");
+    json.appendLiteral("\"isInDictionaryMode\":");
     if (m_isInDictionaryMode)
-        json.append("true");
+        json.appendLiteral("true");
     else
-        json.append("false");
-    json.append(",");
+        json.appendLiteral("false");
+    json.append(',');
 
-    json.append("\"fields\":");
-    json.append("[");
+    json.appendLiteral("\"fields\":");
+    json.append('[');
     bool hasAnItem = false;
     for (auto it = m_fields.begin(), end = m_fields.end(); it != end; ++it) {
         if (hasAnItem)
-            json.append(",");
+            json.append(',');
         hasAnItem = true;
 
         String fieldName((*it).get());
-        json.append("\"");
+        json.append('"');
         json.append(fieldName);
-        json.append("\"");
+        json.append('"');
     }
-    json.append("]");
-    json.append(",");
+    json.append(']');
+    json.append(',');
 
-    json.append("\"optionalFields\":");
-    json.append("[");
+    json.appendLiteral("\"optionalFields\":");
+    json.append('[');
     hasAnItem = false;
     for (auto it = m_optionalFields.begin(), end = m_optionalFields.end(); it != end; ++it) {
         if (hasAnItem)
-            json.append(",");
+            json.append(',');
         hasAnItem = true;
 
         String fieldName((*it).get());
-        json.append("\"");
+        json.append('"');
         json.append(fieldName);
-        json.append("\"");
+        json.append('"');
     }
-    json.append("]");
-    json.append(",");
+    json.append(']');
+    json.append(',');
 
-    json.append("\"proto\":");
+    json.appendLiteral("\"proto\":");
     if (m_proto)
         json.append(m_proto->toJSONString());
     else
-        json.append("null");
+        json.appendLiteral("null");
 
-    json.append("}");
+    json.append('}');
 
     return json.toString();
 }

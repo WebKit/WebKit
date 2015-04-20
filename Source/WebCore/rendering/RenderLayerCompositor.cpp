@@ -837,17 +837,17 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, int depth)
         absoluteBounds.x().toFloat(), absoluteBounds.y().toFloat(), absoluteBounds.maxX().toFloat(), absoluteBounds.maxY().toFloat(),
         backing->backingStoreMemoryEstimate() / 1024));
     
-    logString.append(" (");
+    logString.appendLiteral(" (");
     logString.append(logReasonsForCompositing(layer));
-    logString.append(") ");
+    logString.appendLiteral(") ");
 
     if (backing->graphicsLayer()->contentsOpaque() || backing->paintsIntoCompositedAncestor()) {
         logString.append('[');
         if (backing->graphicsLayer()->contentsOpaque())
-            logString.append("opaque");
+            logString.appendLiteral("opaque");
         if (backing->paintsIntoCompositedAncestor())
-            logString.append("paints into ancestor");
-        logString.append("] ");
+            logString.appendLiteral("paints into ancestor");
+        logString.appendLiteral("] ");
     }
 
     logString.append(layer.name());

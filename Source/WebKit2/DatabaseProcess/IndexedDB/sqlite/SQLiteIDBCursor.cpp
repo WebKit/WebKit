@@ -117,7 +117,7 @@ static String buildObjectStoreStatement(const IDBKeyRangeData& keyRange, Indexed
     builder.appendLiteral(" CAST(? AS TEXT) ORDER BY key");
 
     if (cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::PrevNoDuplicate)
-        builder.append(" DESC");
+        builder.appendLiteral(" DESC");
 
     builder.append(';');
 

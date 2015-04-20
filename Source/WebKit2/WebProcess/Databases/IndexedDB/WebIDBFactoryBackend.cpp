@@ -70,7 +70,7 @@ static String combinedSecurityOriginIdentifier(const WebCore::SecurityOrigin& op
     if (originString == "null")
         return String();
     stringBuilder.append(originString);
-    stringBuilder.append("_");
+    stringBuilder.append('_');
 
     originString = mainFrameOrigin.toString();
     if (originString == "null")

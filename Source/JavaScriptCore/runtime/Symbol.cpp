@@ -95,11 +95,7 @@ void Symbol::destroy(JSCell* cell)
 
 String Symbol::descriptiveString() const
 {
-    StringBuilder builder;
-    builder.appendLiteral("Symbol(");
-    builder.append(privateName().uid());
-    builder.append(')');
-    return builder.toString();
+    return makeString("Symbol(", String(privateName().uid()), ')');
 }
 
 } // namespace JSC

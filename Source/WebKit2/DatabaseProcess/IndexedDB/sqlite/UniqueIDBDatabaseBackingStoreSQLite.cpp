@@ -64,10 +64,9 @@ static const String& v1RecordsTableSchema()
 static const String v2RecordsTableSchema(const String& tableName)
 {
     StringBuilder builder;
-    builder.append("CREATE TABLE ");
+    builder.appendLiteral("CREATE TABLE ");
     builder.append(tableName);
-    builder.append(" (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value NOT NULL ON CONFLICT FAIL)");
-
+    builder.appendLiteral(" (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value NOT NULL ON CONFLICT FAIL)");
     return builder.toString();
 }
 

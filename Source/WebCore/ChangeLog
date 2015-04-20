@@ -1,3 +1,46 @@
+2015-04-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Cleanup some StringBuilder use
+        https://bugs.webkit.org/show_bug.cgi?id=143550
+
+        Reviewed by Darin Adler.
+
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::YouTubePluginReplacement::youTubeURL):
+        * css/CSSAnimationTriggerScrollValue.cpp:
+        (WebCore::CSSAnimationTriggerScrollValue::customCSSText):
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::customCSSText):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsWindowCSS):
+        (WebCore::CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS):
+        (WebCore::CaptionUserPreferencesMediaAF::cssPropertyWithTextEdgeColor):
+        (WebCore::CaptionUserPreferencesMediaAF::colorPropertyCSS):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsDefaultFontCSS):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsStyleSheetOverride):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::didReceiveResponse):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeCSSStyleSheet):
+        * platform/graphics/OpenGLShims.cpp:
+        (WebCore::lookupOpenGLFunctionAddress):
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processCueAttributes):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::generateHashedName):
+        * platform/text/DateTimeFormat.cpp:
+        (WebCore::DateTimeFormat::quoteAndAppendLiteral):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderRegionList):
+        * testing/MicroTaskTest.cpp:
+        (WebCore::MicroTaskTest::run):
+        * testing/MockContentFilterSettings.cpp:
+        (WebCore::MockContentFilterSettings::unblockRequestURL):
+
 2015-04-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVGFitToViewBox::viewBoxToViewTransform() has to count for zero physical width and height before calling SVGPreserveAspectRatio::getCTM()
