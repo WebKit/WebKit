@@ -1141,6 +1141,9 @@ public:
     WEBCORE_EXPORT unsigned wheelEventHandlerCount() const;
     WEBCORE_EXPORT unsigned touchEventHandlerCount() const;
 
+    WEBCORE_EXPORT void startTrackingStyleRecalcs();
+    WEBCORE_EXPORT unsigned styleRecalcCount() const;
+
     void didAddTouchEventHandler(Node&);
     void didRemoveTouchEventHandler(Node&, EventHandlerRemoval = EventHandlerRemoval::One);
 
@@ -1439,6 +1442,8 @@ private:
 
     // http://www.whatwg.org/specs/web-apps/current-work/#ignore-destructive-writes-counter
     unsigned m_ignoreDestructiveWriteCount;
+
+    unsigned m_styleRecalcCount { 0 };
 
     StringWithDirection m_title;
     StringWithDirection m_rawTitle;

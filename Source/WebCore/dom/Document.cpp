@@ -1790,6 +1790,8 @@ void Document::recalcStyle(Style::Change change)
         m_closeAfterStyleRecalc = false;
         implicitClose();
     }
+    
+    ++m_styleRecalcCount;
 
     InspectorInstrumentation::didRecalculateStyle(cookie);
 
@@ -6137,6 +6139,16 @@ Document::RegionFixedPair Document::absoluteRegionForEventTargets(const EventTar
 void Document::updateLastHandledUserGestureTimestamp()
 {
     m_lastHandledUserGestureTimestamp = monotonicallyIncreasingTime();
+}
+
+void Document::startTrackingStyleRecalcs()
+{
+    m_styleRecalcCount = 0;
+}
+
+unsigned Document::styleRecalcCount() const
+{
+    return m_styleRecalcCount;
 }
 
 DocumentLoader* Document::loader() const

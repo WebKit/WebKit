@@ -1,3 +1,55 @@
+2015-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Setting inline style to the same value it already has triggers a style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=143922
+
+        Reviewed by Antti Koivisto.
+
+        MutableStyleProperties::setProperty() was taking the result of CSSParser::parseValue()
+        to mean "parsing changed the style", but it actually just means "parsing succeeded".
+        Add a new out param, piped through various parser functions, to indicate whether
+        parsing actually changed style, and instead return that from setProperty().
+
+        Add internals.startTrackingStyleRecalcs() and internals.styleRecalcCount() so
+        we can write tests for style recalc.
+
+        Test: fast/css/set-inline-style-recalc.html
+
+        * WebCore.xcodeproj/project.pbxproj: Let Xcode have it's way.
+        * css/CSSParser.cpp:
+        (WebCore::parseColorValue):
+        (WebCore::parseSimpleLengthValue):
+        (WebCore::parseKeywordValue):
+        (WebCore::parseTranslateTransformValue):
+        (WebCore::CSSParser::parseFontFaceValue):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSParser.h:
+        * css/CSSProperty.h:
+        (WebCore::StylePropertyMetadata::operator==):
+        (WebCore::CSSProperty::operator==):
+        * css/DOMWindowCSS.cpp:
+        (WebCore::DOMWindowCSS::supports):
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::setProperty):
+        (WebCore::MutableStyleProperties::appendPrefixingVariantProperty):
+        (WebCore::MutableStyleProperties::addParsedProperties):
+        (WebCore::MutableStyleProperties::addParsedProperty):
+        * css/StyleProperties.h:
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::setMatrixValue):
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::startTrackingStyleRecalcs):
+        (WebCore::Document::styleRecalcCount):
+        * dom/Document.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont):
+        * testing/Internals.cpp:
+        (WebCore::Internals::startTrackingStyleRecalcs):
+        (WebCore::Internals::styleRecalcCount):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2015-04-20  Brady Eidson  <beidson@apple.com>
 
         Crash in StyleResolver::invalidateMatchedPropertiesCache() when using content extensions.

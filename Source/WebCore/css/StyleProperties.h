@@ -193,8 +193,8 @@ public:
 
     PropertySetCSSStyleDeclaration* cssStyleDeclaration();
 
-    void addParsedProperties(const Vector<CSSProperty>&);
-    void addParsedProperty(const CSSProperty&);
+    bool addParsedProperties(const Vector<CSSProperty>&);
+    bool addParsedProperty(const CSSProperty&);
 
     // These expand shorthand properties into multiple properties.
     bool setProperty(CSSPropertyID, const String& value, bool important = false, StyleSheetContents* contextStyleSheet = 0);
@@ -203,11 +203,11 @@ public:
     // These do not. FIXME: This is too messy, we can do better.
     bool setProperty(CSSPropertyID, CSSValueID identifier, bool important = false);
     bool setProperty(CSSPropertyID, CSSPropertyID identifier, bool important = false);
-    void appendPrefixingVariantProperty(const CSSProperty&);
+    bool appendPrefixingVariantProperty(const CSSProperty&);
     void setPrefixingVariantProperty(const CSSProperty&);
-    void setProperty(const CSSProperty&, CSSProperty* slot = 0);
+    bool setProperty(const CSSProperty&, CSSProperty* slot = nullptr);
 
-    bool removeProperty(CSSPropertyID, String* returnText = 0);
+    bool removeProperty(CSSPropertyID, String* returnText = nullptr);
     void removePrefixedOrUnprefixedProperty(CSSPropertyID);
     void removeBlockProperties();
     bool removePropertiesInSet(const CSSPropertyID* set, unsigned length);

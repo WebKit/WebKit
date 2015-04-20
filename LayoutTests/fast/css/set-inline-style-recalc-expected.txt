@@ -1,0 +1,21 @@
+Test to count the number of recalcStyle calls on inline style and class changes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS numStyleRecalcs is 1
+PASS numStyleRecalcs is 1
+PASS numStyleRecalcs is 0
+PASS numStyleRecalcs is 1
+PASS numStyleRecalcs is 0
+PASS numStyleRecalcs is 1
+PASS numStyleRecalcs is 0
+PASS numStyleRecalcs is 1
+PASS numStyleRecalcs is 0
+PASS numStyleRecalcs is 1
+PASS numStyleRecalcs is 0
+PASS numStyleRecalcs is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

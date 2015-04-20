@@ -1,3 +1,16 @@
+2015-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Setting inline style to the same value it already has triggers a style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=143922
+
+        Reviewed by Antti Koivisto.
+
+        Test that changes inline-style (to test this bug fix), and classes (for
+        proactive testing) and counts style recalcs.
+
+        * fast/css/set-inline-style-recalc-expected.txt: Added.
+        * fast/css/set-inline-style-recalc.html: Added.
+
 2015-04-20  Brady Eidson  <beidson@apple.com>
 
         Crash in StyleResolver::invalidateMatchedPropertiesCache() when using content extensions.

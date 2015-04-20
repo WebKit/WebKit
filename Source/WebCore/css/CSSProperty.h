@@ -44,6 +44,16 @@ struct StylePropertyMetadata {
     }
 
     CSSPropertyID shorthandID() const;
+    
+    bool operator==(const StylePropertyMetadata& other) const
+    {
+        return m_propertyID == other.m_propertyID
+            && m_isSetFromShorthand == other.m_isSetFromShorthand
+            && m_indexInShorthandsVector == other.m_indexInShorthandsVector
+            && m_important == other.m_important
+            && m_implicit == other.m_implicit
+            && m_inherited == other.m_inherited;
+    }
 
     uint16_t m_propertyID : 10;
     uint16_t m_isSetFromShorthand : 1;
@@ -75,6 +85,20 @@ public:
     static bool isDirectionAwareProperty(CSSPropertyID);
 
     const StylePropertyMetadata& metadata() const { return m_metadata; }
+
+    bool operator==(const CSSProperty& other) const
+    {
+        if (!(m_metadata == other.m_metadata))
+            return false;
+
+        if (!m_value && !other.m_value)
+            return true;
+
+        if (!m_value || !other.m_value)
+            return false;
+        
+        return m_value->equals(*other.m_value);
+    }
 
 private:
     StylePropertyMetadata m_metadata;

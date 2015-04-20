@@ -2089,6 +2089,27 @@ unsigned long Internals::layerFlushCount(ExceptionCode& ec)
     return document->renderView()->compositor().layerFlushCount();
 }
 
+void Internals::startTrackingStyleRecalcs(ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    document->startTrackingStyleRecalcs();
+}
+
+unsigned long Internals::styleRecalcCount(ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+    
+    return document->styleRecalcCount();
+}
+
 void Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(ExceptionCode& ec)
 {
     updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(nullptr, ec);

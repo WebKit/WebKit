@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+    .test {
+        position: relative;
+    }
+    
+    .foo {
+        font-size: 10px;
+    }
+    
+    .bar {
+    }
+</style>
+</head>
+<body>
+<script>
+function setStyleAndForceLayout(changeFunc)
+{
+    if (window.internals) {
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+        internals.startTrackingStyleRecalcs();
+    }
+
+    changeFunc();
+
+    var numStyleRecalcs = 0;
+    if (window.internals) {
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+        numStyleRecalcs = internals.styleRecalcCount();
+    }
+    return numStyleRecalcs;
+}
+
+description("Test to count the number of recalcStyle calls on inline style and class changes.")
+
+var testContainer = document.createElement("div");
+testContainer.className = 'test';
+document.body.appendChild(testContainer);
+
+var style = testContainer.style;
+
+var numStyleRecalcs = setStyleAndForceLayout(function() { style.height = "10px"; });
+shouldBe("numStyleRecalcs", "1");
+numStyleRecalcs = setStyleAndForceLayout(function() { style.height = "20px"; });
+shouldBe("numStyleRecalcs", "1");
+numStyleRecalcs = setStyleAndForceLayout(function() { style.height = "20px"; });
+shouldBe("numStyleRecalcs", "0");
+
+numStyleRecalcs = setStyleAndForceLayout(function() { style.backgroundPosition = "10px 10%"; });
+shouldBe("numStyleRecalcs", "1");
+numStyleRecalcs = setStyleAndForceLayout(function() { style.backgroundPosition = "10px 10%"; });
+shouldBe("numStyleRecalcs", "0");
+
+numStyleRecalcs = setStyleAndForceLayout(function() { style.backgroundColor = "red"; });
+shouldBe("numStyleRecalcs", "1");
+numStyleRecalcs = setStyleAndForceLayout(function() { style.backgroundColor = "red"; });
+shouldBe("numStyleRecalcs", "0");
+
+numStyleRecalcs = setStyleAndForceLayout(function() { style.transform = "translate(10px, 10px) rotate(10deg)"; });
+shouldBe("numStyleRecalcs", "1");
+numStyleRecalcs = setStyleAndForceLayout(function() { style.transform = "translate(10px, 10px) rotate(10deg)"; });
+shouldBe("numStyleRecalcs", "0");
+
+numStyleRecalcs = setStyleAndForceLayout(function() { testContainer.classList.add('foo'); });
+shouldBe("numStyleRecalcs", "1");
+numStyleRecalcs = setStyleAndForceLayout(function() { testContainer.classList.add('foo'); });
+shouldBe("numStyleRecalcs", "0");
+numStyleRecalcs = setStyleAndForceLayout(function() { testContainer.classList.add('bar'); });
+shouldBe("numStyleRecalcs", "1");
+
+document.body.removeChild(testContainer);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

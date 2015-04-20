@@ -520,26 +520,26 @@ static bool validPrimitiveValueColor(CSSValueID valueID, bool strict = false)
         || (valueID >= CSSValueWebkitFocusRingColor && valueID < CSSValueWebkitText && !strict));
 }
 
-static bool parseColorValue(MutableStyleProperties* declaration, CSSPropertyID propertyId, const String& string, bool important, CSSParserMode cssParserMode)
+static CSSParser::ParseResult parseColorValue(MutableStyleProperties* declaration, CSSPropertyID propertyId, const String& string, bool important, CSSParserMode cssParserMode)
 {
     ASSERT(!string.isEmpty());
     bool strict = isStrictParserMode(cssParserMode);
     if (!isColorPropertyID(propertyId))
-        return false;
+        return CSSParser::ParseResult::Error;
+
     CSSParserString cssString;
     cssString.init(string);
     CSSValueID valueID = cssValueKeywordID(cssString);
     if (validPrimitiveValueColor(valueID, strict)) {
         RefPtr<CSSValue> value = cssValuePool().createIdentifierValue(valueID);
-        declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important));
-        return true;
+        return declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important)) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
     }
     RGBA32 color;
     if (!CSSParser::fastParseColor(color, string, strict && string[0] != '#'))
-        return false;
+        return CSSParser::ParseResult::Error;
+
     RefPtr<CSSValue> value = cssValuePool().createColorValue(color);
-    declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important));
-    return true;
+    return declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important)) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
 }
 
 static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acceptsNegativeNumbers)
@@ -614,12 +614,12 @@ static inline bool parseSimpleLength(const CharacterType* characters, unsigned& 
     return ok;
 }
 
-static bool parseSimpleLengthValue(MutableStyleProperties* declaration, CSSPropertyID propertyId, const String& string, bool important, CSSParserMode cssParserMode)
+static CSSParser::ParseResult parseSimpleLengthValue(MutableStyleProperties* declaration, CSSPropertyID propertyId, const String& string, bool important, CSSParserMode cssParserMode)
 {
     ASSERT(!string.isEmpty());
     bool acceptsNegativeNumbers;
     if (!isSimpleLengthPropertyID(propertyId, acceptsNegativeNumbers))
-        return false;
+        return CSSParser::ParseResult::Error;
 
     unsigned length = string.length();
     double number;
@@ -627,25 +627,24 @@ static bool parseSimpleLengthValue(MutableStyleProperties* declaration, CSSPrope
 
     if (string.is8Bit()) {
         if (!parseSimpleLength(string.characters8(), length, unit, number))
-            return false;
+            return CSSParser::ParseResult::Error;
     } else {
         if (!parseSimpleLength(string.characters16(), length, unit, number))
-            return false;
+            return CSSParser::ParseResult::Error;
     }
 
     if (unit == CSSPrimitiveValue::CSS_NUMBER) {
         if (number && isStrictParserMode(cssParserMode))
-            return false;
+            return CSSParser::ParseResult::Error;
         unit = CSSPrimitiveValue::CSS_PX;
     }
     if (number < 0 && !acceptsNegativeNumbers)
-        return false;
+        return CSSParser::ParseResult::Error;
     if (std::isinf(number))
-        return false;
+        return CSSParser::ParseResult::Error;
 
     RefPtr<CSSValue> value = cssValuePool().createValue(number, unit);
-    declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important));
-    return true;
+    return declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important)) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
 }
 
 static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int valueID, const CSSParserContext& parserContext, StyleSheetContents* styleSheetContents)
@@ -1178,7 +1177,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     }
 }
 
-static bool parseKeywordValue(MutableStyleProperties* declaration, CSSPropertyID propertyId, const String& string, bool important, const CSSParserContext& parserContext, StyleSheetContents* styleSheetContents)
+static CSSParser::ParseResult parseKeywordValue(MutableStyleProperties* declaration, CSSPropertyID propertyId, const String& string, bool important, const CSSParserContext& parserContext, StyleSheetContents* styleSheetContents)
 {
     ASSERT(!string.isEmpty());
 
@@ -1186,11 +1185,11 @@ static bool parseKeywordValue(MutableStyleProperties* declaration, CSSPropertyID
         // All properties accept the values of "initial" and "inherit".
         String lowerCaseString = string.lower();
         if (lowerCaseString != "initial" && lowerCaseString != "inherit")
-            return false;
+            return CSSParser::ParseResult::Error;
 
         // Parse initial/inherit shorthands using the CSSParser.
         if (shorthandForProperty(propertyId).length())
-            return false;
+            return CSSParser::ParseResult::Error;
     }
 
     CSSParserString cssString;
@@ -1198,7 +1197,7 @@ static bool parseKeywordValue(MutableStyleProperties* declaration, CSSPropertyID
     CSSValueID valueID = cssValueKeywordID(cssString);
 
     if (!valueID)
-        return false;
+        return CSSParser::ParseResult::Error;
 
     RefPtr<CSSValue> value;
     if (valueID == CSSValueInherit)
@@ -1208,10 +1207,9 @@ static bool parseKeywordValue(MutableStyleProperties* declaration, CSSPropertyID
     else if (isValidKeywordPropertyAndValue(propertyId, valueID, parserContext, styleSheetContents))
         value = cssValuePool().createIdentifierValue(valueID);
     else
-        return false;
+        return CSSParser::ParseResult::Error;
 
-    declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important));
-    return true;
+    return declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important)) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
 }
 
 template <typename CharacterType>
@@ -1235,16 +1233,19 @@ static bool parseTransformTranslateArguments(WebKitCSSTransformValue& transformV
     return true;
 }
 
-static bool parseTranslateTransformValue(MutableStyleProperties* properties, CSSPropertyID propertyID, const String& string, bool important)
+static CSSParser::ParseResult parseTranslateTransformValue(MutableStyleProperties* properties, CSSPropertyID propertyID, const String& string, bool important)
 {
     if (propertyID != CSSPropertyTransform)
-        return false;
+        return CSSParser::ParseResult::Error;
+
     static const unsigned shortestValidTransformStringLength = 12;
     static const unsigned likelyMultipartTransformStringLengthCutoff = 32;
     if (string.length() < shortestValidTransformStringLength || string.length() > likelyMultipartTransformStringLengthCutoff)
-        return false;
+        return CSSParser::ParseResult::Error;
+
     if (!string.startsWith("translate", false))
-        return false;
+        return CSSParser::ParseResult::Error;
+
     UChar c9 = toASCIILower(string[9]);
     UChar c10 = toASCIILower(string[10]);
 
@@ -1266,7 +1267,7 @@ static bool parseTranslateTransformValue(MutableStyleProperties* properties, CSS
         expectedArgumentCount = 3;
         argumentStart = 12;
     } else
-        return false;
+        return CSSParser::ParseResult::Error;
 
     RefPtr<WebKitCSSTransformValue> transformValue = WebKitCSSTransformValue::create(transformType);
     bool success;
@@ -1275,11 +1276,11 @@ static bool parseTranslateTransformValue(MutableStyleProperties* properties, CSS
     else
         success = parseTransformTranslateArguments(*transformValue, string.characters16(), string.length(), argumentStart, expectedArgumentCount);
     if (!success)
-        return false;
+        return CSSParser::ParseResult::Error;
+
     RefPtr<CSSValueList> result = CSSValueList::createSpaceSeparated();
     result->append(transformValue.releaseNonNull());
-    properties->addParsedProperty(CSSProperty(CSSPropertyTransform, result.release(), important));
-    return true;
+    return properties->addParsedProperty(CSSProperty(CSSPropertyTransform, result.release(), important)) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
 }
 
 PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& string)
@@ -1287,7 +1288,8 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& strin
     if (string.isEmpty())
         return nullptr;
     RefPtr<MutableStyleProperties> dummyStyle = MutableStyleProperties::create();
-    if (!parseValue(dummyStyle.get(), CSSPropertyFontFamily, string, false, CSSQuirksMode, nullptr))
+
+    if (parseValue(dummyStyle.get(), CSSPropertyFontFamily, string, false, CSSQuirksMode, nullptr) == ParseResult::Error)
         return nullptr;
 
     RefPtr<CSSValue> fontFamily = dummyStyle->getPropertyCSSValue(CSSPropertyFontFamily);
@@ -1296,13 +1298,16 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& strin
     return static_pointer_cast<CSSValueList>(fontFamily.release());
 }
 
-bool CSSParser::parseValue(MutableStyleProperties* declaration, CSSPropertyID propertyID, const String& string, bool important, CSSParserMode cssParserMode, StyleSheetContents* contextStyleSheet)
+CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties* declaration, CSSPropertyID propertyID, const String& string, bool important, CSSParserMode cssParserMode, StyleSheetContents* contextStyleSheet)
 {
     ASSERT(!string.isEmpty());
-    if (parseSimpleLengthValue(declaration, propertyID, string, important, cssParserMode))
-        return true;
-    if (parseColorValue(declaration, propertyID, string, important, cssParserMode))
-        return true;
+    CSSParser::ParseResult result = parseSimpleLengthValue(declaration, propertyID, string, important, cssParserMode);
+    if (result != ParseResult::Error)
+        return result;
+
+    result = parseColorValue(declaration, propertyID, string, important, cssParserMode);
+    if (result != ParseResult::Error)
+        return result;
 
     CSSParserContext context(cssParserMode);
     if (contextStyleSheet) {
@@ -1310,16 +1315,19 @@ bool CSSParser::parseValue(MutableStyleProperties* declaration, CSSPropertyID pr
         context.mode = cssParserMode;
     }
 
-    if (parseKeywordValue(declaration, propertyID, string, important, context, contextStyleSheet))
-        return true;
-    if (parseTranslateTransformValue(declaration, propertyID, string, important))
-        return true;
+    result = parseKeywordValue(declaration, propertyID, string, important, context, contextStyleSheet);
+    if (result != ParseResult::Error)
+        return result;
+
+    result = parseTranslateTransformValue(declaration, propertyID, string, important);
+    if (result != ParseResult::Error)
+        return result;
 
     CSSParser parser(context);
     return parser.parseValue(declaration, propertyID, string, important, contextStyleSheet);
 }
 
-bool CSSParser::parseValue(MutableStyleProperties* declaration, CSSPropertyID propertyID, const String& string, bool important, StyleSheetContents* contextStyleSheet)
+CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties* declaration, CSSPropertyID propertyID, const String& string, bool important, StyleSheetContents* contextStyleSheet)
 {
     setStyleSheet(contextStyleSheet);
 
@@ -1332,16 +1340,16 @@ bool CSSParser::parseValue(MutableStyleProperties* declaration, CSSPropertyID pr
 
     m_rule = nullptr;
 
-    bool ok = false;
+    ParseResult result = ParseResult::Error;
     if (m_hasFontFaceOnlyValues)
         deleteFontFaceOnlyValues();
+
     if (!m_parsedProperties.isEmpty()) {
-        ok = true;
-        declaration->addParsedProperties(m_parsedProperties);
+        result = declaration->addParsedProperties(m_parsedProperties) ? ParseResult::Changed : ParseResult::Unchanged;
         clearProperties();
     }
 
-    return ok;
+    return result;
 }
 
 // The color will only be changed when string contains a valid CSS color, so callers

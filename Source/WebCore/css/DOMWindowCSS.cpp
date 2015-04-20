@@ -72,7 +72,7 @@ bool DOMWindowCSS::supports(const String& property, const String& value) const
         return false;
 
     RefPtr<MutableStyleProperties> dummyStyle = MutableStyleProperties::create();
-    return CSSParser::parseValue(dummyStyle.get(), propertyID, normalizedValue, false, CSSStrictMode, 0);
+    return CSSParser::parseValue(dummyStyle.get(), propertyID, normalizedValue, false, CSSStrictMode, nullptr) != CSSParser::ParseResult::Error;
 }
 
 bool DOMWindowCSS::supports(const String& conditionText) const
