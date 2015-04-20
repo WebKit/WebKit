@@ -1,3 +1,12 @@
+2015-04-19  Darin Adler  <darin@apple.com>
+
+        Update RefPtr documentation and deprecation
+        https://bugs.webkit.org/show_bug.cgi?id=143936
+
+        Reviewed by Andreas Kling.
+
+        * coding/RefPtr.html: Updated.
+
 2015-03-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix warning about loading insecure content from secure webkit.org/blog

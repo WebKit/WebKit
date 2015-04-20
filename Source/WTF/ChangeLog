@@ -1,3 +1,15 @@
+2015-04-19  Darin Adler  <darin@apple.com>
+
+        Update RefPtr documentation and deprecation
+        https://bugs.webkit.org/show_bug.cgi?id=143936
+
+        Reviewed by Andreas Kling.
+
+        * WTF.vcxproj/WTF.vcxproj: Removed PassRef.h
+        * WTF.vcxproj/WTF.vcxproj.filters: Ditto.
+        * WTF.xcodeproj/project.pbxproj: Ditto.
+        * wtf/CMakeLists.txt: Ditto.
+
 2015-04-17  Alexey Proskuryakov  <ap@apple.com>
 
         Use ASan poisoning to taint moved-out-of Refs

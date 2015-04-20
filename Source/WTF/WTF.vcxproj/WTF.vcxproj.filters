@@ -561,9 +561,6 @@
     <ClInclude Include="..\wtf\PassOwnPtr.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\PassRef.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\PassRefPtr.h">
       <Filter>wtf</Filter>
     </ClInclude>
