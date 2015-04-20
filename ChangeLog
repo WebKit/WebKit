@@ -1,3 +1,16 @@
+2015-04-19  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [CMake] Synchronize variables between WebKitFeatures.cmake and cmakedonfig.h.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=143935
+
+        Reviewed by Darin Adler.
+
+        Some variables aren't defined in these files or unused variables aren't removed. This
+        patch cleans up it as well as fix wrong alphabet order.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2015-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         Restore the WebKit.xcworkspace to the way it was before r182899,
