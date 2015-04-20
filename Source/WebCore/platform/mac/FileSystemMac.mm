@@ -31,9 +31,26 @@
 
 #import "WebCoreNSURLExtras.h"
 #import "WebCoreSystemInterface.h"
+#import <Foundation/FoundationErrors.h>
+#import <Foundation/NSFileManager.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
+
+@interface WebFileManagerDelegate : NSObject <NSFileManagerDelegate>
+@end
+
+@implementation WebFileManagerDelegate
+
+- (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error movingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL
+{
+    UNUSED_PARAM(fileManager);
+    UNUSED_PARAM(srcURL);
+    UNUSED_PARAM(dstURL);    
+    return error.code == NSFileWriteFileExistsError;
+}
+
+@end
 
 namespace WebCore {
 
@@ -69,7 +86,12 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileH
 
 bool moveFile(const String& oldPath, const String& newPath)
 {
-    return [[NSFileManager defaultManager] moveItemAtURL:[NSURL fileURLWithPath:oldPath] toURL:[NSURL fileURLWithPath:newPath] error:nil];
+    // Overwrite existing files.
+    auto manager = adoptNS([[NSFileManager alloc] init]);
+    auto delegate = adoptNS([[WebFileManagerDelegate alloc] init]);
+    [manager setDelegate:delegate.get()];
+    
+    return [manager moveItemAtURL:[NSURL fileURLWithPath:oldPath] toURL:[NSURL fileURLWithPath:newPath] error:nil];
 }
 
 #if !PLATFORM(IOS)
