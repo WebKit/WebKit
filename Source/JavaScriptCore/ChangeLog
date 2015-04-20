@@ -1,3 +1,18 @@
+2015-04-20  Jordan Harband  <ljharb@gmail.com>
+
+        Implement `Object.is`
+        https://bugs.webkit.org/show_bug.cgi?id=143865
+
+        Reviewed by Darin Adler.
+
+        Expose sameValue to JS, via Object.is
+        https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.is
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorIs):
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::sameValue):
+
 2015-04-19  Darin Adler  <darin@apple.com>
 
         Remove all the remaining uses of OwnPtr and PassOwnPtr in JavaScriptCore

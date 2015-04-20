@@ -52,6 +52,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorPreventExtensions(ExecState*);
 EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState*);
 EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState*);
 EncodedJSValue JSC_HOST_CALL objectConstructorIsExtensible(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorIs(ExecState*);
 
 }
 
@@ -78,6 +79,7 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
   isSealed                  objectConstructorIsSealed                   DontEnum|Function 1
   isFrozen                  objectConstructorIsFrozen                   DontEnum|Function 1
   isExtensible              objectConstructorIsExtensible               DontEnum|Function 1
+  is                        objectConstructorIs                         DontEnum|Function 2
 @end
 */
 
@@ -577,6 +579,11 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsExtensible(ExecState* exec)
     if (!obj.isObject())
         return JSValue::encode(jsBoolean(false));
     return JSValue::encode(jsBoolean(asObject(obj)->isExtensible()));
+}
+
+EncodedJSValue JSC_HOST_CALL objectConstructorIs(ExecState* exec)
+{
+    return JSValue::encode(jsBoolean(sameValue(exec, exec->argument(0), exec->argument(1))));
 }
 
 } // namespace JSC

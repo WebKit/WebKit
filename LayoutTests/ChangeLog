@@ -1,3 +1,16 @@
+2015-04-20  Jordan Harband  <ljharb@gmail.com>
+
+        Implement `Object.is`
+        https://bugs.webkit.org/show_bug.cgi?id=143865
+
+        Reviewed by Darin Adler.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/Object-is-expected.txt: Added.
+        * js/Object-is.html: Added.
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/Object-is.js: Added.
+
 2015-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement WeakSet

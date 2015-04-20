@@ -1,0 +1,26 @@
+Test to ensure correct behavior of Object.is
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Object.is.length is 2
+PASS Object.is.name is 'is'
+PASS Object.is(NaN, NaN) is true
+PASS Object.is(null, null) is true
+PASS Object.is(null) is false
+PASS Object.is(undefined, undefined) is true
+PASS Object.is(true, true) is true
+PASS Object.is(false, false) is true
+PASS Object.is('abc', 'abc') is true
+PASS Object.is(Infinity, Infinity) is true
+PASS Object.is(0, 0) is true
+PASS Object.is(-0, -0) is true
+PASS Object.is(0, -0) is false
+PASS Object.is(-0, 0) is false
+PASS var obj = {}; Object.is(obj, obj) is true
+PASS var arr = []; Object.is(arr, arr) is true
+PASS var sym = Symbol(); Object.is(sym, sym) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -186,8 +186,10 @@ bool sameValue(ExecState* exec, JSValue a, JSValue b)
         return false;
     double x = a.asNumber();
     double y = b.asNumber();
-    if (std::isnan(x))
-        return std::isnan(y);
+    bool xIsNaN = std::isnan(x);
+    bool yIsNaN = std::isnan(y);
+    if (xIsNaN || yIsNaN)
+        return xIsNaN && yIsNaN;
     return bitwise_cast<uint64_t>(x) == bitwise_cast<uint64_t>(y);
 }
 
