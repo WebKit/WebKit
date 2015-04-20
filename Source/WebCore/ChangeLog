@@ -1,5 +1,23 @@
 2015-04-20  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r180520
+
+    2015-02-22  Dean Jackson  <dino@apple.com>
+
+            [iOS] Max canvas size is lower than expected
+            https://bugs.webkit.org/show_bug.cgi?id=141886
+            <rdar://problem/19729246>
+
+            Reviewed by Tim Horton.
+
+            Use the same maximum canvas area for all ports,
+            which bumps the iOS limit up from 4580 * 1145
+            to 16k * 16k.
+
+            * html/HTMLCanvasElement.cpp: Update MaxCanvasArea.
+
+2015-04-20  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179850
 
     2015-02-09  Timothy Horton  <timothy_horton@apple.com>
