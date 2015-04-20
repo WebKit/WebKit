@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSDollarVMPrototype.h"
 
+#include "Heap.h"
+#include "HeapIterationScope.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
 #include "StackVisitor.h"
@@ -33,34 +35,21 @@
 
 namespace JSC {
 
-// The following are exported because they are designed to be callable from
-// lldb. The JS versions in JSDollarVMPrototype are implemented on top of these.
-
-JS_EXPORT_PRIVATE bool currentThreadOwnsJSLock(ExecState*);
-JS_EXPORT_PRIVATE void gc(ExecState*);
-JS_EXPORT_PRIVATE void edenGC(ExecState*);
-JS_EXPORT_PRIVATE bool isValidCodeBlock(ExecState*, CodeBlock*);
-JS_EXPORT_PRIVATE CodeBlock* codeBlockForFrame(CallFrame* topCallFrame, unsigned frameNumber);
-JS_EXPORT_PRIVATE void printCallFrame(CallFrame*);
-JS_EXPORT_PRIVATE void printStack(CallFrame* topCallFrame);
-JS_EXPORT_PRIVATE void printValue(JSValue);
-
-bool currentThreadOwnsJSLock(ExecState* exec)
+const ClassInfo JSDollarVMPrototype::s_info = { "DollarVMPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSDollarVMPrototype) };
+    
+    
+bool JSDollarVMPrototype::currentThreadOwnsJSLock(ExecState* exec)
 {
     return exec->vm().apiLock().currentThreadIsHoldingLock();
 }
 
 static bool ensureCurrentThreadOwnsJSLock(ExecState* exec)
 {
-    if (currentThreadOwnsJSLock(exec))
+    if (JSDollarVMPrototype::currentThreadOwnsJSLock(exec))
         return true;
     dataLog("ERROR: current thread does not own the JSLock\n");
     return false;
 }
-
-
-const ClassInfo JSDollarVMPrototype::s_info = { "DollarVMPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSDollarVMPrototype) };
-
 
 void JSDollarVMPrototype::addFunction(VM& vm, JSGlobalObject* globalObject, const char* name, NativeFunction function, unsigned arguments)
 {
@@ -120,7 +109,7 @@ static EncodedJSValue JSC_HOST_CALL functionJITTrue(ExecState* exec)
     return JSValue::encode(jsBoolean(functor.jitType() == JITCode::BaselineJIT));
 }
 
-void gc(ExecState* exec)
+void JSDollarVMPrototype::gc(ExecState* exec)
 {
     if (!ensureCurrentThreadOwnsJSLock(exec))
         return;
@@ -129,11 +118,11 @@ void gc(ExecState* exec)
     
 static EncodedJSValue JSC_HOST_CALL functionGC(ExecState* exec)
 {
-    gc(exec);
+    JSDollarVMPrototype::gc(exec);
     return JSValue::encode(jsUndefined());
 }
 
-void edenGC(ExecState* exec)
+void JSDollarVMPrototype::edenGC(ExecState* exec)
 {
     if (!ensureCurrentThreadOwnsJSLock(exec))
         return;
@@ -142,11 +131,52 @@ void edenGC(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState* exec)
 {
-    edenGC(exec);
+    JSDollarVMPrototype::edenGC(exec);
     return JSValue::encode(jsUndefined());
 }
 
-bool isValidCodeBlock(ExecState* exec, CodeBlock* candidate)
+bool JSDollarVMPrototype::isInHeap(Heap* heap, void* ptr)
+{
+    return isInObjectSpace(heap, ptr) || isInStorageSpace(heap, ptr);
+}
+
+bool JSDollarVMPrototype::isInObjectSpace(Heap* heap, void* ptr)
+{
+    MarkedBlock* candidate = MarkedBlock::blockFor(ptr);
+    return heap->objectSpace().blocks().set().contains(candidate);
+}
+
+bool JSDollarVMPrototype::isInStorageSpace(Heap* heap, void* ptr)
+{
+    CopiedBlock* candidate = CopiedSpace::blockFor(ptr);
+    return heap->storageSpace().contains(candidate);
+}
+
+struct ObjectAddressCheckFunctor : MarkedBlock::CountFunctor {
+    ObjectAddressCheckFunctor(JSCell* candidate)
+        : candidate(candidate)
+    {
+    }
+
+    void operator()(JSCell* cell)
+    {
+        if (cell == candidate)
+            found = true;
+    }
+
+    JSCell* candidate;
+    bool found { false };
+};
+
+bool JSDollarVMPrototype::isValidCell(Heap* heap, JSCell* candidate)
+{
+    HeapIterationScope iterationScope(*heap);
+    ObjectAddressCheckFunctor functor(candidate);
+    heap->objectSpace().forEachLiveCell(iterationScope, functor);
+    return functor.found;
+}
+
+bool JSDollarVMPrototype::isValidCodeBlock(ExecState* exec, CodeBlock* candidate)
 {
     if (!ensureCurrentThreadOwnsJSLock(exec))
         return false;
@@ -174,7 +204,7 @@ bool isValidCodeBlock(ExecState* exec, CodeBlock* candidate)
     return functor.found;
 }
 
-CodeBlock* codeBlockForFrame(CallFrame* topCallFrame, unsigned frameNumber)
+CodeBlock* JSDollarVMPrototype::codeBlockForFrame(CallFrame* topCallFrame, unsigned frameNumber)
 {
     if (!ensureCurrentThreadOwnsJSLock(topCallFrame))
         return nullptr;
@@ -222,7 +252,7 @@ static EncodedJSValue JSC_HOST_CALL functionCodeBlockForFrame(ExecState* exec)
     // its own frame as frame 0. Hence, we need discount the frame for this
     // function.
     unsigned frameNumber = value.asUInt32() + 1;
-    CodeBlock* codeBlock = codeBlockForFrame(exec, frameNumber);
+    CodeBlock* codeBlock = JSDollarVMPrototype::codeBlockForFrame(exec, frameNumber);
     return JSValue::encode(JSValue(bitwise_cast<double>(reinterpret_cast<uint64_t>(codeBlock))));
 }
 
@@ -238,7 +268,7 @@ static CodeBlock* codeBlockFromArg(ExecState* exec)
     }
 
     CodeBlock* codeBlock = reinterpret_cast<CodeBlock*>(bitwise_cast<uint64_t>(value.asDouble()));
-    if (isValidCodeBlock(exec, codeBlock))
+    if (JSDollarVMPrototype::isValidCodeBlock(exec, codeBlock))
         return codeBlock;
 
     dataLogF("Invalid codeBlock: %p ", codeBlock);
@@ -311,9 +341,9 @@ static void printCallFrame(CallFrame* callFrame, unsigned framesToSkip)
     callFrame->iterate(functor);
 }
 
-void printCallFrame(CallFrame* callFrame)
+void JSDollarVMPrototype::printCallFrame(CallFrame* callFrame)
 {
-    printCallFrame(callFrame, 0);
+    JSC::printCallFrame(callFrame, 0);
 }
 
 static void printStack(CallFrame* topCallFrame, unsigned framesToSkip)
@@ -326,9 +356,9 @@ static void printStack(CallFrame* topCallFrame, unsigned framesToSkip)
     topCallFrame->iterate(functor);
 }
 
-void printStack(CallFrame* topCallFrame)
+void JSDollarVMPrototype::printStack(CallFrame* topCallFrame)
 {
-    printStack(topCallFrame, 0);
+    JSC::printStack(topCallFrame, 0);
 }
 
 static EncodedJSValue JSC_HOST_CALL functionPrintCallFrame(ExecState* exec)
@@ -347,7 +377,7 @@ static EncodedJSValue JSC_HOST_CALL functionPrintStack(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-void printValue(JSValue value)
+void JSDollarVMPrototype::printValue(JSValue value)
 {
     dataLog(value);
 }

@@ -1,3 +1,56 @@
+2015-04-20  Mark Lam  <mark.lam@apple.com>
+
+        Add debugging tools to test if a given pointer is a valid object and in the heap.
+        https://bugs.webkit.org/show_bug.cgi?id=143910
+
+        Reviewed by Geoffrey Garen.
+
+        When doing debugging from lldb, sometimes, it is useful to be able to tell if a
+        purported JSObject is really a valid object in the heap or not.  We can add the
+        following utility functions to help:
+            isValidCell(heap, candidate) - returns true if the candidate is a "live" cell in the heap.
+            isInHeap(heap, candidate) - returns true if the candidate is the heap's Object space or Storage space.
+            isInObjectSpace(heap, candidate) - returns true if the candidate is the heap's Object space.
+            isInStorageSpace(heap, candidate) - returns true if the candidate is the heap's Storage space.
+
+        Also moved lldb callable debug utility function prototypes from
+        JSDollarVMPrototype.cpp to JSDollarVMPrototype.h as static members of the
+        JSDollarVMPrototype class.  This is so that we can conveniently #include that
+        file to get the prototypes when we need to call them programmatically from
+        instrumentation that we add while debugging an issue.
+
+        * heap/Heap.h:
+        (JSC::Heap::storageSpace):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::JSDollarVMPrototype::currentThreadOwnsJSLock):
+        (JSC::ensureCurrentThreadOwnsJSLock):
+        (JSC::JSDollarVMPrototype::gc):
+        (JSC::functionGC):
+        (JSC::JSDollarVMPrototype::edenGC):
+        (JSC::functionEdenGC):
+        (JSC::JSDollarVMPrototype::isInHeap):
+        (JSC::JSDollarVMPrototype::isInObjectSpace):
+        (JSC::JSDollarVMPrototype::isInStorageSpace):
+        (JSC::ObjectAddressCheckFunctor::ObjectAddressCheckFunctor):
+        (JSC::ObjectAddressCheckFunctor::operator()):
+        (JSC::JSDollarVMPrototype::isValidCell):
+        (JSC::JSDollarVMPrototype::isValidCodeBlock):
+        (JSC::JSDollarVMPrototype::codeBlockForFrame):
+        (JSC::functionCodeBlockForFrame):
+        (JSC::codeBlockFromArg):
+        (JSC::JSDollarVMPrototype::printCallFrame):
+        (JSC::JSDollarVMPrototype::printStack):
+        (JSC::JSDollarVMPrototype::printValue):
+        (JSC::currentThreadOwnsJSLock): Deleted.
+        (JSC::gc): Deleted.
+        (JSC::edenGC): Deleted.
+        (JSC::isValidCodeBlock): Deleted.
+        (JSC::codeBlockForFrame): Deleted.
+        (JSC::printCallFrame): Deleted.
+        (JSC::printStack): Deleted.
+        (JSC::printValue): Deleted.
+        * tools/JSDollarVMPrototype.h:
+
 2015-04-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve Support for WeakSet in Console

@@ -118,6 +118,7 @@ public:
 
     VM* vm() const { return m_vm; }
     MarkedSpace& objectSpace() { return m_objectSpace; }
+    CopiedSpace& storageSpace() { return m_storageSpace; }
     MachineThreads& machineThreads() { return m_machineThreads; }
 
     const SlotVisitor& slotVisitor() const { return m_slotVisitor; }

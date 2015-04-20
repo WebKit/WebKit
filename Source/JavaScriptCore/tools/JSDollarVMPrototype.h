@@ -30,6 +30,8 @@
 
 namespace JSC {
 
+class Heap;
+
 class JSDollarVMPrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
@@ -47,6 +49,22 @@ public:
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
+
+    // The following are exported because they are designed to be callable from
+    // lldb. The JS versions are implemented on top of these.
+    
+    JS_EXPORT_PRIVATE static bool currentThreadOwnsJSLock(ExecState*);
+    JS_EXPORT_PRIVATE static void gc(ExecState*);
+    JS_EXPORT_PRIVATE static void edenGC(ExecState*);
+    JS_EXPORT_PRIVATE static bool isInHeap(Heap*, void*);
+    JS_EXPORT_PRIVATE static bool isInObjectSpace(Heap*, void*);
+    JS_EXPORT_PRIVATE static bool isInStorageSpace(Heap*, void*);
+    JS_EXPORT_PRIVATE static bool isValidCell(Heap*, JSCell*);
+    JS_EXPORT_PRIVATE static bool isValidCodeBlock(ExecState*, CodeBlock*);
+    JS_EXPORT_PRIVATE static CodeBlock* codeBlockForFrame(CallFrame* topCallFrame, unsigned frameNumber);
+    JS_EXPORT_PRIVATE static void printCallFrame(CallFrame*);
+    JS_EXPORT_PRIVATE static void printStack(CallFrame* topCallFrame);
+    JS_EXPORT_PRIVATE static void printValue(JSValue);
 
 private:
     JSDollarVMPrototype(VM& vm, Structure* structure)
