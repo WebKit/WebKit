@@ -1,3 +1,16 @@
+2015-04-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Disable mixed content blocking for existing WebKit1 clients
+        https://bugs.webkit.org/show_bug.cgi?id=143955
+        rdar://problem/20177186
+
+        Reviewed by Oliver Hunt.
+
+        * Misc/WebKitVersionChecks.h:
+        * WebView/WebView.mm:
+        (shouldAllowInsecureContent):
+        (-[WebView _preferencesChanged:]):
+
 2015-04-20  Tim Horton  <timothy_horton@apple.com>
 
         Implement immediate action support for tel: and mailto: URLs

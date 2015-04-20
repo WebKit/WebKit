@@ -846,6 +846,12 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     return shouldUseLegacyBackgroundSizeShorthandBehavior;
 }
 
+static bool shouldAllowDisplayAndRunningOfInsecureContent()
+{
+    static bool shouldAllowDisplayAndRunningOfInsecureContent = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_INSECURE_CONTENT_BLOCKING);
+    return shouldAllowDisplayAndRunningOfInsecureContent;
+}
+
 #if ENABLE(GAMEPAD)
 static void WebKitInitializeGamepadProviderIfNecessary()
 {
@@ -2304,6 +2310,9 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setShouldConvertPositionStyleOnCopy([preferences shouldConvertPositionStyleOnCopy]);
     settings.setEnableInheritURIQueryComponent([preferences isInheritURIQueryComponentEnabled]);
+
+    settings.setAllowDisplayOfInsecureContent(shouldAllowDisplayAndRunningOfInsecureContent());
+    settings.setAllowRunningOfInsecureContent(shouldAllowDisplayAndRunningOfInsecureContent());
 
     switch ([preferences storageBlockingPolicy]) {
     case WebAllowAllStorage:
