@@ -1,3 +1,17 @@
+2015-04-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVGFitToViewBox::viewBoxToViewTransform() has to count for zero physical width and height before calling SVGPreserveAspectRatio::getCTM()
+        https://bugs.webkit.org/show_bug.cgi?id=143903
+
+        Reviewed by Daniel Bates.
+
+        * svg/css/crash-path-zero-height-viewbox-expected.txt: Added.
+        * svg/css/crash-path-zero-height-viewbox.svg: Added.
+        * svg/css/crash-path-zero-width-viewbox-expected.txt: Added.
+        * svg/css/crash-path-zero-width-viewbox.svg: Added.
+        Make sure if the physical width or the physical height of an SVG is zero
+        and a viewBox is specified, we do not crash.
+
 2015-04-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve Support for WeakSet in Console

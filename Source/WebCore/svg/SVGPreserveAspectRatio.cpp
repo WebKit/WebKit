@@ -275,6 +275,11 @@ void SVGPreserveAspectRatio::transformRect(FloatRect& destRect, FloatRect& srcRe
 AffineTransform SVGPreserveAspectRatio::getCTM(float logicalX, float logicalY, float logicalWidth, float logicalHeight, float physicalWidth, float physicalHeight) const
 {
     AffineTransform transform;
+    if (!logicalWidth || !logicalHeight || !physicalWidth || !physicalHeight) {
+        ASSERT_NOT_REACHED();
+        return transform;
+    }
+
     if (m_align == SVG_PRESERVEASPECTRATIO_UNKNOWN)
         return transform;
 

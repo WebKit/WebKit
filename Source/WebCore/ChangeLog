@@ -1,3 +1,26 @@
+2015-04-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVGFitToViewBox::viewBoxToViewTransform() has to count for zero physical width and height before calling SVGPreserveAspectRatio::getCTM()
+        https://bugs.webkit.org/show_bug.cgi?id=143903
+
+        Reviewed by Daniel Bates.
+
+        Ensure that the SVG viewBoxToView transformation is always invertible.
+        CG path drawing functions crash if the context is transformed to non-
+        invertible matrix.
+
+        Tests: svg/css/crash-path-zero-height-viewbox.svg
+               svg/css/crash-path-zero-width-viewbox.svg
+
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::viewBoxToViewTransform):
+        Do not call SVGPreserveAspectRatio::getCTM() if the physical width or the
+        physical height is zero.
+
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::getCTM):
+        Ensure that we are not dividing by zero in this function.
+
 2015-04-20  Chris Dumez  <cdumez@apple.com>
 
         CSSParser::parseValue() copies the m_parsedProperties vector at addParsedProperties()
