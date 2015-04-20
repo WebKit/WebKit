@@ -1,5 +1,47 @@
 2015-04-17  Matthew Hanson  <matthew_hanson@apple.com>
 
+        prepare-ChangeLog should ignore the preceeding function when processing the removal of a function.
+        https://bugs.webkit.org/show_bug.cgi?id=143897
+
+        Reviewed by David Kilzer.
+
+        This is a speculative fix that addresses two issues:
+
+        1. An off-by-one error which allowed ending lines to be less than starting lines when a hunk was a pure delete.
+        We were determining ending lines from combined diffs using the logic: End = Start + Offset - 1.
+
+        So for a hunk like "@@ -723,10 +721,0 @@ bool foobar", we were generating the following starting/ending line pairs:
+        Before: (723, 729)
+        After: (721, 720)
+
+        Before is correct, but After should be (721, 721), since it represents the beginning and ending lines for the hunk.
+        Whether there are zero lines or one line in the hunk, the starting and ending line are the same.
+
+        This error was causing bad behavior on purely additive and purely subtractive hunks, but since we only refer
+        to After when generating ChangeLog output, the extractLineRangeBeforeChange had no visible effect on program output.
+
+        The fix is to set End to the max of Start + Offset - 1 and Start, rather than always using the former.
+
+        2. Creating git diffs from HEAD and not origin/master by default.
+
+        Hard-coding origin/master into the originalFile command has the disadvantage of causing the diff to fail entirely
+        when origin/master does not exist, and to do the wrong thing when determining deleted functions/methods.
+
+        * Scripts/prepare-ChangeLog:
+        (originalFile):
+        Use HEAD instead of origin/master in default Git case.
+
+        (generateFunctionLists):
+        Ensure that the end line is not less than the start line.
+
+        (extractLineRangeAfterChange):
+        Set the end line to the start line if the end line is less than the start line.
+
+        (extractLineRangeBeforeChange):
+        Ditto.
+
+2015-04-17  Matthew Hanson  <matthew_hanson@apple.com>
+
         Suppress warning in prepare-ChangeLog.
         https://bugs.webkit.org/show_bug.cgi?id=143882
 

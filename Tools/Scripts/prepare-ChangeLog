@@ -60,7 +60,7 @@ use File::Spec;
 use FindBin;
 use Getopt::Long;
 use lib $FindBin::Bin;
-use List::Util qw/any/;
+use List::Util qw/any max/;
 use POSIX qw(strftime);
 use VCSUtils;
 
@@ -257,7 +257,7 @@ sub originalFile($$$$)
         if ($mergeBase) {
             $command .= "$mergeBase";
         } else {
-            $command .= "origin/master";
+            $command .= "HEAD";
         }
         $command .= ":$file";
     }
@@ -287,7 +287,7 @@ sub generateFunctionLists($$$$$)
                     print STDERR "WARNING: file $file contains the string DO_NOT_COMMIT, line $.\n";
                 }
                 my ($after_start, $after_end) = extractLineRangeAfterChange($_);
-                if ($after_start >= 0 && $after_end >= 0) {
+                if ($after_start >= 0 && $after_end >= 0 && $after_end >= $after_start) {
                     push @{$line_ranges_after_changed{$file}}, [ $after_start, $after_end ];
                 } elsif (/DO_NOT_COMMIT/) {
                     print STDERR "WARNING: file $file contains the string DO_NOT_COMMIT, line $.\n";
@@ -2108,7 +2108,7 @@ sub extractLineRangeAfterChange($)
         $end = $4 || $2;
     } elsif (isGit() && $string =~ /^@@ -\d+(,\d+)? \+(\d+)(,(\d+))? @@/) {
         $start = $2;
-        $end = defined($4) ? $4 + $2 - 1 : $2;
+        $end = defined($4) ? max($start + $4 - 1, $start) : $start;
     }
 
     return ($start, $end);
@@ -2125,7 +2125,7 @@ sub extractLineRangeBeforeChange($)
         $end = $3 || $1 if $4 ne "a";
     } elsif (isGit() && $string =~ /^@@ -(\d+)(,(\d+))? \+\d+(,\d+)? @@/) {
         $start = $1;
-        $end = defined($3) ? $3 + $1 - 1 : $1;
+        $end = defined($3) ? max($start + $3 - 1, $start) : $start;
     }
 
     return ($start, $end);
