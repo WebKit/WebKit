@@ -1,3 +1,9 @@
+2015-04-20  Beth Dakin  <bdakin@apple.com>
+
+        Should not list these tests twice.
+
+        * platform/mac-wk2/TestExpectations:
+
 2015-04-20  Simon Fraser  <simon.fraser@apple.com>
 
         Setting inline style to the same value it already has triggers a style recalc
