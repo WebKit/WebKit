@@ -1,3 +1,11 @@
+2015-04-20  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Unreviewed gardening
+
+        Rebaseline after r177774.
+
+        * platform/efl/css2.1/t1508-c527-font-00-b-expected.txt: Added.
+
 2015-04-20  Jordan Harband  <ljharb@gmail.com>
 
         Implement `Object.is`
