@@ -63,9 +63,9 @@ function from(arrayLike /*, mapFn, thisArg */) {
     while (k < itemsLength) {
         var value = items[k];
         if (mapFn)
-            result[k] = typeof thisArg === "undefined" ? mapFn(value, k) : mapFn.@call(thisArg, value, k);
+            @putByValDirect(result, k, typeof thisArg === "undefined" ? mapFn(value, k) : mapFn.@call(thisArg, value, k));
         else
-            result[k] = value;
+            @putByValDirect(result, k, value);
         k += 1;
     }
 

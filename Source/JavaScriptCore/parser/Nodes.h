@@ -696,6 +696,26 @@ namespace JSC {
         ArgumentsNode* m_args;
     };
 
+    class BytecodeIntrinsicNode : public ExpressionNode, public ThrowableExpressionData {
+    public:
+        typedef RegisterID* (BytecodeIntrinsicNode::* EmitterType)(BytecodeGenerator&, RegisterID*);
+
+        BytecodeIntrinsicNode(const JSTokenLocation&, EmitterType, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+
+        const Identifier& identifier() const { return m_ident; }
+
+#define JSC_DECLARE_BYTECODE_INTRINSIC_FUNCTIONS(name) RegisterID* emit_intrinsic_##name(BytecodeGenerator&, RegisterID*);
+        JSC_COMMON_BYTECODE_INTRINSICS_EACH_NAME(JSC_DECLARE_BYTECODE_INTRINSIC_FUNCTIONS)
+#undef JSC_DECLARE_BYTECODE_INTRINSIC_FUNCTIONS
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        EmitterType m_emitter;
+        const Identifier& m_ident;
+        ArgumentsNode* m_args;
+    };
+
     class CallFunctionCallDotNode : public FunctionCallDotNode {
     public:
         CallFunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);

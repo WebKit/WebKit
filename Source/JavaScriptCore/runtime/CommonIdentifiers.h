@@ -21,6 +21,7 @@
 #ifndef CommonIdentifiers_h
 #define CommonIdentifiers_h
 
+#include "BytecodeIntrinsicRegistry.h"
 #include "Identifier.h"
 #include <wtf/Noncopyable.h>
 
@@ -239,7 +240,11 @@
     macro(iterator) \
     macro(unscopables)
 
+#define JSC_COMMON_BYTECODE_INTRINSICS_EACH_NAME(macro) \
+    macro(putByValDirect)
+
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
+    JSC_COMMON_BYTECODE_INTRINSICS_EACH_NAME(macro) \
     macro(iteratedObject) \
     macro(arrayIteratorNextIndex) \
     macro(arrayIterationKind) \
@@ -313,6 +318,11 @@ namespace JSC {
 
         const Identifier* getPrivateName(const Identifier&) const;
         Identifier getPublicName(const Identifier&) const;
+
+        const BytecodeIntrinsicRegistry& bytecodeIntrinsicRegistry() const { return m_bytecodeIntrinsicRegistry; }
+
+    private:
+        BytecodeIntrinsicRegistry m_bytecodeIntrinsicRegistry;
     };
 
 } // namespace JSC

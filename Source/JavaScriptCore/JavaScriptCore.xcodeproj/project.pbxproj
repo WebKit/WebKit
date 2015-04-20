@@ -985,6 +985,8 @@
 		705B41B01A6E501E00716757 /* SymbolObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 705B41A81A6E501E00716757 /* SymbolObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		705B41B11A6E501E00716757 /* SymbolPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 705B41A91A6E501E00716757 /* SymbolPrototype.cpp */; };
 		705B41B21A6E501E00716757 /* SymbolPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 705B41AA1A6E501E00716757 /* SymbolPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7094C4DE1AE439530041A2EE /* BytecodeIntrinsicRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7094C4DC1AE439530041A2EE /* BytecodeIntrinsicRegistry.cpp */; };
+		7094C4DF1AE439530041A2EE /* BytecodeIntrinsicRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 7094C4DD1AE439530041A2EE /* BytecodeIntrinsicRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		709FB8671AE335C60039D069 /* JSWeakSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 709FB8611AE335C60039D069 /* JSWeakSet.cpp */; };
 		709FB8681AE335C60039D069 /* JSWeakSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 709FB8621AE335C60039D069 /* JSWeakSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		709FB8691AE335C60039D069 /* WeakSetConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 709FB8631AE335C60039D069 /* WeakSetConstructor.cpp */; };
@@ -2711,6 +2713,8 @@
 		705B41A81A6E501E00716757 /* SymbolObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolObject.h; sourceTree = "<group>"; };
 		705B41A91A6E501E00716757 /* SymbolPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolPrototype.cpp; sourceTree = "<group>"; };
 		705B41AA1A6E501E00716757 /* SymbolPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolPrototype.h; sourceTree = "<group>"; };
+		7094C4DC1AE439530041A2EE /* BytecodeIntrinsicRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BytecodeIntrinsicRegistry.cpp; sourceTree = "<group>"; };
+		7094C4DD1AE439530041A2EE /* BytecodeIntrinsicRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeIntrinsicRegistry.h; sourceTree = "<group>"; };
 		709FB8611AE335C60039D069 /* JSWeakSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWeakSet.cpp; sourceTree = "<group>"; };
 		709FB8621AE335C60039D069 /* JSWeakSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakSet.h; sourceTree = "<group>"; };
 		709FB8631AE335C60039D069 /* WeakSetConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakSetConstructor.cpp; sourceTree = "<group>"; };
@@ -5204,6 +5208,8 @@
 				C2FCAE0C17A9C24E0034C735 /* BytecodeBasicBlock.cpp */,
 				C2FCAE0D17A9C24E0034C735 /* BytecodeBasicBlock.h */,
 				0F21C27E14BEAA8000ADC64B /* BytecodeConventions.h */,
+				7094C4DC1AE439530041A2EE /* BytecodeIntrinsicRegistry.cpp */,
+				7094C4DD1AE439530041A2EE /* BytecodeIntrinsicRegistry.h */,
 				0F2DD80A1AB3D85800BBB8E8 /* BytecodeKills.h */,
 				6529FB3118B2D99900C61102 /* BytecodeList.json */,
 				C2FCAE0E17A9C24E0034C735 /* BytecodeLivenessAnalysis.cpp */,
@@ -5889,6 +5895,7 @@
 				A7A8AF3817ADB5F3005AB174 /* Float32Array.h in Headers */,
 				A7A8AF3917ADB5F3005AB174 /* Float64Array.h in Headers */,
 				0F24E54317EA9F5900ABB217 /* FPRInfo.h in Headers */,
+				7094C4DF1AE439530041A2EE /* BytecodeIntrinsicRegistry.h in Headers */,
 				0FDB2CC9173DA520007B3C1B /* FTLAbbreviatedTypes.h in Headers */,
 				0FEA0A08170513DB00BB722C /* FTLAbbreviations.h in Headers */,
 				A53CE08A18BC21C300BEDF76 /* ConsoleClient.h in Headers */,
@@ -7017,6 +7024,7 @@
 				147F39C3107EC37600427A48 /* DateConstructor.cpp in Sources */,
 				147F39C4107EC37600427A48 /* DateConversion.cpp in Sources */,
 				147F39C5107EC37600427A48 /* DateInstance.cpp in Sources */,
+				7094C4DE1AE439530041A2EE /* BytecodeIntrinsicRegistry.cpp in Sources */,
 				147F39C6107EC37600427A48 /* DatePrototype.cpp in Sources */,
 				14280823107EC02C0013E7B2 /* Debugger.cpp in Sources */,
 				149559EE0DDCDDF700648087 /* DebuggerCallFrame.cpp in Sources */,

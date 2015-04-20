@@ -1,5 +1,69 @@
 2015-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Introduce bytecode intrinsics
+        https://bugs.webkit.org/show_bug.cgi?id=143926
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces bytecode level intrinsics into builtins/*.js JS code.
+        When implementing functions in builtins/*.js,
+        sometimes we require lower level functionality.
+
+        For example, in the current Array.from, we use `result[k] = value`.
+        The spec requires `[[DefineOwnProperty]]` operation here.
+        However, usual `result[k] = value` is evaluated as `[[Set]]`. (`PutValue` => `[[Set]]`)
+        So if we implement `Array.prototype[k]` getter/setter, the difference is observable.
+
+        Ideally, reaching here, we would like to use put_by_val_direct bytecode.
+        However, there's no syntax to generate it directly.
+
+        This patch introduces bytecode level intrinsics into JSC BytecodeCompiler.
+        Like @call, @apply, we introduce a new node, Intrinsic.
+        These are generated when calling appropriate private symbols in privileged code.
+        AST parser detects them and generates Intrinsic nodes and
+        BytecodeCompiler detects them and generate required bytecodes.
+
+        Currently, Array.from implementation works fine without this patch.
+        This is because when the target code is builtin JS,
+        BytecodeGenerator emits put_by_val_direct instead of put_by_val.
+        This solves the above issue. However, instead of solving this issue,
+        it raises another issue; There's no way to emit `[[Set]]` operation.
+        `[[Set]]` operation is actually used in the spec (Array.from's "length" is set by `[[Set]]`).
+        So to implement it precisely, introducing bytecode level intrinsics is necessary.
+
+        In the subsequent fixes, we'll remove that special path emitting put_by_val_direct
+        for `result[k] = value` under builtin JS environment. Instead of that special handling,
+        use bytecode intrinsics instead. It solves problems and it is more intuitive
+        because written JS code in builtin works as the same to the usual JS code.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/ArrayConstructor.js:
+        (from):
+        * bytecode/BytecodeIntrinsicRegistry.cpp: Added.
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        (JSC::BytecodeIntrinsicRegistry::lookup):
+        * bytecode/BytecodeIntrinsicRegistry.h: Added.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emitBytecode):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putByValDirect):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        * parser/NodeConstructors.h:
+        (JSC::BytecodeIntrinsicNode::BytecodeIntrinsicNode):
+        * parser/Nodes.h:
+        (JSC::BytecodeIntrinsicNode::identifier):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        * runtime/CommonIdentifiers.h:
+        (JSC::CommonIdentifiers::bytecodeIntrinsicRegistry):
+        * tests/stress/array-from-with-accessors.js: Added.
+        (shouldBe):
+
+2015-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Make Builtin functions non constructible
         https://bugs.webkit.org/show_bug.cgi?id=143923
 

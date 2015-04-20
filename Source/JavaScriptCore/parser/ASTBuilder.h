@@ -27,6 +27,7 @@
 #define ASTBuilder_h
 
 #include "BuiltinNames.h"
+#include "BytecodeIntrinsicRegistry.h"
 #include "NodeConstructors.h"
 #include "SyntaxChecker.h"
 #include <utility>
@@ -978,6 +979,8 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location
             usesEval();
             return new (m_parserArena) EvalFunctionCallNode(location, args, divot, divotStart, divotEnd);
         }
+        if (BytecodeIntrinsicNode::EmitterType emitter = m_vm->propertyNames->bytecodeIntrinsicRegistry().lookup(identifier))
+            return new (m_parserArena) BytecodeIntrinsicNode(location, emitter, identifier, args, divot, divotStart, divotEnd);
         return new (m_parserArena) FunctionCallResolveNode(location, identifier, args, divot, divotStart, divotEnd);
     }
     if (func->isBracketAccessorNode()) {

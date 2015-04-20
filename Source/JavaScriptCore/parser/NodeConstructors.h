@@ -314,6 +314,15 @@ namespace JSC {
     {
     }
 
+    inline BytecodeIntrinsicNode::BytecodeIntrinsicNode(const JSTokenLocation& location, EmitterType emitter, const Identifier& ident, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+        : ExpressionNode(location)
+        , ThrowableExpressionData(divot, divotStart, divotEnd)
+        , m_emitter(emitter)
+        , m_ident(ident)
+        , m_args(args)
+    {
+    }
+
     inline CallFunctionCallDotNode::CallFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
         : FunctionCallDotNode(location, base, ident, args, divot, divotStart, divotEnd)
     {

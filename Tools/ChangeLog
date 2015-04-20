@@ -1,3 +1,15 @@
+2015-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Introduce bytecode intrinsics
+        https://bugs.webkit.org/show_bug.cgi?id=143926
+
+        Reviewed by Filip Pizlo.
+
+        Change cpplint to accept emit_intrinsic_XXX.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_identifier_name_in_declaration):
+
 2015-04-18  Simon Fraser  <simon.fraser@apple.com>
 
         Fix lldb_webkit.py to show StringImpls correctly
