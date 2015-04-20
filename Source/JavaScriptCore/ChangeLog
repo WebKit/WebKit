@@ -1,3 +1,9 @@
+2015-04-19  Benjamin Poulain  <benjamin@webkit.org>
+
+        Improve the feature.json files
+
+        * features.json:
+
 2015-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Introduce bytecode intrinsics

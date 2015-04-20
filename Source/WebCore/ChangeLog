@@ -1,3 +1,9 @@
+2015-04-19  Benjamin Poulain  <benjamin@webkit.org>
+
+        Improve the feature.json files
+
+        * features.json:
+
 2015-04-18  Jon Lee  <jonlee@apple.com>
 
         [Mac] Time elapsed should be right-aligned

@@ -22,10 +22,21 @@
         "category": "css"
     },
     {
+        "name": "CSS Positioned Layout Module Level 3",
+        "url": "http://dev.w3.org/csswg/css-position/",
+        "keywords": ["css positioning"],
+        "category": "css"
+    },
+    {
         "name": "CSS Selectors Level 4",
         "url": "http://dev.w3.org/csswg/selectors-4/",
         "keywords": ["css selectors", "selectors"],
-        "category": "css"
+        "category": "css",
+        "contact": {
+            "name": "Benjamin Poulain",
+            "twitter": "@awfulben",
+            "email": "benjamin@webkit.org"
+        }
     },
     {
         "name": "CSS Shapes Level 1",
@@ -63,7 +74,12 @@
         "url": "http://dev.w3.org/csswg/selectors-4/#the-any-link-pseudo",
         "specification": "CSS Selectors Level 4",
         "description": "The pseudo class :any-link matches any element that would match :link or :visisted.",
-        "comment": "A prefix version :-webkit-any-link has been available for a while but it was not 100% compliant to the specification."
+        "comment": "A prefix version :-webkit-any-link has been available for a while but it was not 100% compliant to the specification.",
+        "contact": {
+            "name": "Benjamin Poulain",
+            "twitter": "@awfulben",
+            "email": "benjamin@webkit.org"
+        }
     },
     {
         "name": "CSS Selector :lang() level 4",
@@ -84,7 +100,12 @@
         "url": "http://dev.w3.org/csswg/selectors-4/#matches",
         "specification": "CSS Selectors Level 4",
         "description": "The selector :matches() takes a selector list as argument and matches an element if any of them matches (e.g. :matches(article > section, #target)). When used for styling, the specificity of :matches() is the higest specificity of all selectors in the selector list.",
-        "comment": "The pseudo classes <em>:visited</em> and <em>:link</em> are not supported inside :matches()."
+        "comment": "The pseudo classes <em>:visited</em> and <em>:link</em> are not supported inside :matches().",
+        "contact": {
+            "name": "Benjamin Poulain",
+            "twitter": "@awfulben",
+            "email": "benjamin@webkit.org"
+        }
     },
     {
         "name": "CSS Selector :not() level 4",
@@ -95,7 +116,12 @@
         "url": "http://dev.w3.org/csswg/selectors-4/#negation",
         "specification": "CSS Selectors Level 4",
         "description": "The selector :not() in level 4 supports full selector lists as argument. For example: :not(:any-link >> img, :any-link >> picture).",
-        "comment": "The pseudo classes <em>:visited</em> and <em>:link</em> are not supported inside :not()."
+        "comment": "The pseudo classes <em>:visited</em> and <em>:link</em> are not supported inside :not().",
+        "contact": {
+            "name": "Benjamin Poulain",
+            "twitter": "@awfulben",
+            "email": "benjamin@webkit.org"
+        }
     },
     {
         "name": "CSS Selector :nth-child(An+B of selector list) and :nth-last-child(An+B of selector list)",
@@ -106,7 +132,12 @@
         "url": "http://dev.w3.org/csswg/selectors-4/#the-nth-child-pseudo",
         "specification": "CSS Selectors Level 4",
         "description": "The pseudo classes :nth-child() and :nth-last-child() now supports a selector list that filters what to count. For example: \":nth-child(even of .visible)\".",
-        "comment": "The pseudo classes <em>:visited</em> and <em>:link</em> are not supported inside :nth-child() and :nth-last-child()."
+        "comment": "The pseudo classes <em>:visited</em> and <em>:link</em> are not supported inside :nth-child() and :nth-last-child().",
+        "contact": {
+            "name": "Benjamin Poulain",
+            "twitter": "@awfulben",
+            "email": "benjamin@webkit.org"
+        }
     },
     {
         "name": "CSS Selector :placeholder-shown",
@@ -117,7 +148,12 @@
         "url": "http://dev.w3.org/csswg/selectors-4/#placeholder",
         "specification": "CSS Selectors Level 4",
         "description": "The selector :placeholder-shown matches any input element that has a visible placeholder.",
-        "comment": "Styling the placeholder can be done through the WebKit pseudo-element \"::-webkit-input-placeholder\"."
+        "comment": "Styling the placeholder can be done through the WebKit pseudo-element \"::-webkit-input-placeholder\".",
+        "contact": {
+            "name": "Benjamin Poulain",
+            "twitter": "@awfulben",
+            "email": "benjamin@webkit.org"
+        }
     },
     {
         "name": "Case-insensitive attribute selectors",
@@ -127,7 +163,12 @@
         },
         "url": "http://dev.w3.org/csswg/selectors-4/#attribute-case",
         "specification": "CSS Selectors Level 4",
-        "description": "Any attribute selector that test a value can take a flag \"i\" to use case insensitive checks. For example: input[type=number i] test the value \"number\" case-insensitively."
+        "description": "Any attribute selector that test a value can take a flag \"i\" to use case insensitive checks. For example: input[type=number i] test the value \"number\" case-insensitively.",
+        "contact": {
+            "name": "Benjamin Poulain",
+            "twitter": "@awfulben",
+            "email": "benjamin@webkit.org"
+        }
     },
     {
         "name": "Element.closest()",
@@ -139,7 +180,12 @@
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/closest",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=137418",
         "specification": "DOM",
-        "description": "Find the closest ancestor matching the selector passed as argument. The element itself is returned if it matches the selector."
+        "description": "Find the closest ancestor matching the selector passed as argument. The element itself is returned if it matches the selector.",
+        "contact": {
+            "name": "Benjamin Poulain",
+            "twitter": "@awfulben",
+            "email": "benjamin@webkit.org"
+        }
     },
     {
         "name": "Force Click Events",
@@ -161,6 +207,16 @@
         "description": "The \"pointer\" media defines how percise the pointing device is. The \"hover\" media defines the ability of the poiting device to hover elements."
     },
     {
+        "name": "MicroData",
+        "status": {
+            "status": "Removed"
+        },
+        "url": "https://html.spec.whatwg.org/multipage/microdata.html",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=119480",
+        "specification": "HTML5",
+        "comment": "WebKit used to support MicroData. The feature never gained any traction and was eventually removed to clean up the codebase."
+    },
+    {
         "name": "Navigator.hardwareConcurrency",
         "status": {
             "status": "Done",
@@ -169,6 +225,17 @@
         "url": "https://wiki.whatwg.org/wiki/Navigator_HW_Concurrency",
         "webkit-url": "http://trac.webkit.org/changeset/169017",
         "description": "Navigator.hardwareConcurrency provides the total number of logical processors available to the user agent."
+    },
+    {
+        "name": "Position: sticky",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://dev.w3.org/csswg/css-position/#sticky-pos",
+        "specification": "CSS Positioned Layout Module Level 3",
+        "description": "Sticky positioning provides a way to position element out of the normal flow when scrolling. Unlike solutions based on JavaScript, the change of position is synchronized with scrolling.",
+        "comment": "The feature is prefixed with <em>-webkit-</em>. There are some remaining issues to resolve in the specification."
     },
     {
         "name": "Readable Streams",
@@ -191,6 +258,16 @@
         "specification": "CSS Shapes Level 1",
         "description": "CSS Shapes describe geometric shapes for use in CSS. For Level 1, CSS Shapes can be applied to floats.",
         "comment": "The implementation is feature complete and shipping, but is -webkit prefixed."
+    },
+    {
+        "name": "Shared Web Workers",
+        "status": {
+            "status": "Removed"
+        },
+        "url": "https://html.spec.whatwg.org/multipage/workers.html#shared-workers-introduction",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=140344",
+        "specification": "HTML5",
+        "comment": "The implementation of Shared Web Workers was imposing undesirable constraints on the engine. The feature never gained any adoption and was eventually removed from the engine."
     }
     ]
 }

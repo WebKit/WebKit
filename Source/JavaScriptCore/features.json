@@ -14,6 +14,16 @@
 
     "features": [
     {
+        "name": "ASM.js",
+        "status": {
+            "status": "Continuously improving",
+            "enabled-by-default": true
+        },
+        "url": "http://asmjs.org",
+        "description": "ASM.js defines a subset of JavaScript that enforce stronger typing and has specific patterns of memory access. ASM.js is rarely hand-written, it is typically generated from other languages by compiler such as Emscripten.",
+        "comment": "There is no \"use asm\" mode in JavaScriptCore. Instead WebKit integrates ASM.js optimizations directly in the optimizer. As a result, it is possible to mix ASM-style typing with regular code and still get great performance and power efficiency."
+    },
+    {
         "name": "Array.prototype.includes",
         "status": {
             "status": "Done",
@@ -23,6 +33,53 @@
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=142707",
         "specification": "ES7"
+    },
+    {
+        "name": "Classes",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-class-definitions",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=142774",
+        "specification": "ES6",
+        "description": "The new class syntax of ES6 provides a new syntax to define and extend JavaScript objects. The class syntax is a new notation, objects still use prototypal inheritance."
+    },
+    {
+        "name": "Map data structure",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-map-constructor",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=120333",
+        "description": "Map provides an <a href=\"https://en.wikipedia.org/wiki/Associative_array\">associative array data</a> structure that maps keys to values.",
+        "specification": "ES6"
+    },
+    {
+        "name": "Number extensions (ES6)",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-number-objects",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=131707",
+        "specification": "ES6",
+        "description": "ES6 extend Number with the methods Number.isFinite(), Number.isInteger(), Number.isSafeInteger(), Number.isNaN() and the attributes Number.EPSILON, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER."
+    },
+    {
+        "name": "Octal and binary literals",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-literals-numeric-literals",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=142681",
+        "specification": "ES6",
+        "description": "New syntax for number literals. Numbers can be provided as binary (e.g. 0b001001) or octal (e.g. 0o24)."
     },
     {
         "name": "Promise Objects",
@@ -37,6 +94,18 @@
         "specification": "ES6"
     },
     {
+        "name": "Set data structure",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-set-constructor",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=120549",
+        "description": "Set is a collection of unique objects.",
+        "specification": "ES6"
+    },
+    {
         "name": "Symbol Objects",
         "status": {
             "status": "Done",
@@ -46,6 +115,30 @@
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=140435",
         "specification": "ES6"
+    },
+    {
+        "name": "WeakMap",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-weakmap-objects",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=120912",
+        "description": "Map provides an <a href=\"https://en.wikipedia.org/wiki/Associative_array\">associative array data</a> structure that maps keys to values. WeakMap's keys must be objects.",
+        "specification": "ES6"
+    },
+    {
+        "name": "for...of loops",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-for-in-and-for-of-statements",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of",
+        "description": "The for...of loops iterate over the values provided by the iterator of the target object.",
+        "specification": "ES6",
+        "comment": "Older versions of WebKit only supported iterating JavaScript arrays."
     }
     ]
 }
