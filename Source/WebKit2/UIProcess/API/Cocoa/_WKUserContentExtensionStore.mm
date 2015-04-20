@@ -30,6 +30,7 @@
 
 #import "WKErrorInternal.h"
 #import "_WKUserContentFilterInternal.h"
+#import <string>
 
 @implementation _WKUserContentExtensionStore
 
@@ -53,9 +54,8 @@
         if (error) {
             auto rawHandler = (void (^)(_WKUserContentFilter *, NSError *))handler.get();
             
-            // FIXME: Pass real error.
-            auto error = createNSError(WKErrorUnknown);
-            rawHandler(nil, error.get());
+            auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Extension compilation failed: %s", error.message().c_str()]};
+            rawHandler(nil, [NSError errorWithDomain:@"ContentExtensionsDomain" code:error.value() userInfo:userInfo]);
             return;
         }
 
@@ -72,9 +72,8 @@
         if (error) {
             auto rawHandler = (void (^)(_WKUserContentFilter *, NSError *))handler.get();
 
-            // FIXME: Pass real error.
-            auto error = createNSError(WKErrorUnknown);
-            rawHandler(nil, error.get());
+            auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Extension lookup failed: %s", error.message().c_str()]};
+            rawHandler(nil, [NSError errorWithDomain:@"ContentExtensionsDomain" code:error.value() userInfo:userInfo]);
             return;
         }
 
@@ -91,9 +90,8 @@
         if (error) {
             auto rawHandler = (void (^)(NSError *))handler.get();
 
-            // FIXME: Pass real error.
-            auto error = createNSError(WKErrorUnknown);
-            rawHandler(error.get());
+            auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Extension removal failed: %s", error.message().c_str()]};
+            rawHandler([NSError errorWithDomain:@"ContentExtensionsDomain" code:error.value() userInfo:userInfo]);
             return;
         }
 

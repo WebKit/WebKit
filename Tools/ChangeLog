@@ -1,3 +1,13 @@
+2015-04-20  Alex Christensen  <achristensen@webkit.org>
+
+        Properly report errors from _WKUserContentExtensionStore.
+        https://bugs.webkit.org/show_bug.cgi?id=143808
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/_WKUserContentExtensionStore.mm:
+        (TEST_F):
+
 2015-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add a rule for NetworkCache to watchlist file
