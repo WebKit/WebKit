@@ -1,3 +1,20 @@
+2015-04-20  Chris Dumez  <cdumez@apple.com>
+
+        CSSParser::parseValue() copies the m_parsedProperties vector at addParsedProperties()
+        https://bugs.webkit.org/show_bug.cgi?id=143925
+
+        Reviewed by Simon Fraser.
+
+        Update MutableStyleProperties::addParsedProperties() to use
+        CSSParser::ParsedPropertyVector type (i.e. Vector<CSSProperty, 256>)
+        instead of Vector<CSSProperty> so that the properties vector is no
+        longer copied unnecessarily to convert one type to the other.
+
+        * css/CSSParser.h:
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::addParsedProperties):
+        * css/StyleProperties.h:
+
 2015-04-20  Beth Dakin  <bdakin@apple.com>
 
         Should remove mouseForceClick and mouseForceCancelled from DOM force events

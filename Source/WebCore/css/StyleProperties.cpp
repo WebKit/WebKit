@@ -767,12 +767,12 @@ void MutableStyleProperties::parseDeclaration(const String& styleDeclaration, St
     parser.parseDeclaration(this, styleDeclaration, 0, contextStyleSheet);
 }
 
-bool MutableStyleProperties::addParsedProperties(const Vector<CSSProperty>& properties)
+bool MutableStyleProperties::addParsedProperties(const CSSParser::ParsedPropertyVector& properties)
 {
     bool anyChanged = false;
     m_propertyVector.reserveCapacity(m_propertyVector.size() + properties.size());
-    for (unsigned i = 0; i < properties.size(); ++i) {
-        if (addParsedProperty(properties[i]))
+    for (const auto& property : properties) {
+        if (addParsedProperty(property))
             anyChanged = true;
     }
 
