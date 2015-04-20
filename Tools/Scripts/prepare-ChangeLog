@@ -60,6 +60,7 @@ use File::Spec;
 use FindBin;
 use Getopt::Long;
 use lib $FindBin::Bin;
+use List::Util qw/any/;
 use POSIX qw(strftime);
 use VCSUtils;
 
@@ -874,7 +875,7 @@ sub get_function_line_ranges_for_cpp($$)
 
             # Open parenthesis.
             if ($1 eq "(") {
-                $potential_name = $word unless $in_parentheses || $skip_til_brace_or_semicolon || $word ~~ ["CF_ENUM", "CF_OPTIONS", "NS_ENUM", "NS_OPTIONS"];
+                $potential_name = $word unless $in_parentheses || $skip_til_brace_or_semicolon || any { $word eq $_ } ("CF_ENUM", "CF_OPTIONS", "NS_ENUM", "NS_OPTIONS");
                 $in_parentheses++;
                 next;
             }
