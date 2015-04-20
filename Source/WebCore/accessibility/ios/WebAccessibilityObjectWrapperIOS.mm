@@ -1354,6 +1354,14 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return [[self _accessibilityWebDocumentView] _accessibilityPreviousElementsWithCount:count];
 }
 
+- (BOOL)accessibilityCanSetValue
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+    
+    return m_object->canSetValueAttribute();
+}
+
 - (BOOL)accessibilityRequired
 {
     if (![self _prepareAccessibilityCall])
