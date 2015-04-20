@@ -425,8 +425,8 @@ public:
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     typedef HashMap<RefPtr<StringImpl>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<StringImpl>>, SymbolTableIndexHashTraits> Map;
-    typedef HashMap<RefPtr<StringImpl>, GlobalVariableID> UniqueIDMap;
-    typedef HashMap<RefPtr<StringImpl>, RefPtr<TypeSet>> UniqueTypeSetMap;
+    typedef HashMap<RefPtr<StringImpl>, GlobalVariableID, IdentifierRepHash> UniqueIDMap;
+    typedef HashMap<RefPtr<StringImpl>, RefPtr<TypeSet>, IdentifierRepHash> UniqueTypeSetMap;
     typedef HashMap<VarOffset, RefPtr<StringImpl>> OffsetToVariableMap;
     typedef Vector<SymbolTableEntry*> LocalToEntryVec;
 
