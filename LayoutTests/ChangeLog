@@ -2,6 +2,18 @@
 
         [EFL] Unreviewed gardening
 
+        Update test expectations for failing tests.
+
+        * platform/efl/fast/box-sizing/box-sizing-expected.png: Rebaseline after 176978.
+        * platform/efl/fast/box-sizing/box-sizing-expected.txt: Ditto.
+        * platform/efl/fast/css/image-rendering-expected.txt: Added. Rebaseline after r177774.
+        * platform/efl/fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt: 
+        Rebaseline after r173857.
+
+2015-04-20  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Unreviewed gardening
+
         Rebaseline after r177774.
 
         * platform/efl/css2.1/t1508-c527-font-00-b-expected.txt: Added.
