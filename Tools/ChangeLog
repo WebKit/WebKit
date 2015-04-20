@@ -1,3 +1,16 @@
+2015-04-20  Anders Carlsson  <andersca@apple.com>
+
+        Modify the WKWebsiteDataStore API to take a NSSet of types instead of a bitmask
+        https://bugs.webkit.org/show_bug.cgi?id=143966
+
+        Reviewed by Dan Bernstein.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (dataTypes):
+        (-[WK2BrowserWindowController fetchWebsiteData:]):
+        (-[WK2BrowserWindowController fetchAndClearWebsiteData:]):
+        (-[WK2BrowserWindowController clearWebsiteData:]):
+
 2015-04-20  Alex Christensen  <achristensen@webkit.org>
 
         Fix content extension test flakiness.

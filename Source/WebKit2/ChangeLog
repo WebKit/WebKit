@@ -1,3 +1,31 @@
+2015-04-20  Anders Carlsson  <andersca@apple.com>
+
+        Modify the WKWebsiteDataStore API to take a NSSet of types instead of a bitmask
+        https://bugs.webkit.org/show_bug.cgi?id=143966
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm:
+        (dataTypesToString):
+        (-[WKWebsiteDataRecord dataTypes]):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataTypes):
+        (WebKit::toWKWebsiteDataTypes):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore allWebsiteDataTypes]):
+        (-[WKWebsiteDataStore fetchDataRecordsOfTypes:completionHandler:]):
+        (-[WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:]):
+        (-[WKWebsiteDataStore removeDataOfTypes:forDataRecords:completionHandler:]):
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecord.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        (toWKWebsiteDataTypes):
+        (-[_WKWebsiteDataStore fetchDataRecordsOfTypes:completionHandler:]):
+        (-[_WKWebsiteDataStore removeDataOfTypes:forDataRecords:completionHandler:]):
+        (-[_WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:]):
+
 2015-04-20  Beth Dakin  <bdakin@apple.com>
 
         Should remove mouseForceClick and mouseForceCancelled from DOM force events

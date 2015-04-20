@@ -29,11 +29,20 @@
 
 #import <WebKit/WKWebsiteDataStore.h>
 
+typedef NS_OPTIONS(NSUInteger, WKWebsiteDataTypes) {
+    WKWebsiteDataTypeAll = NSUIntegerMax,
+} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+
 WK_CLASS_DEPRECATED(10_10, WK_MAC_TBA, 8_0, WK_IOS_TBA, "Please use WKWebsiteDataStore instead")
 @interface _WKWebsiteDataStore : WKWebsiteDataStore
 
 + (_WKWebsiteDataStore *)defaultDataStore;
 + (_WKWebsiteDataStore *)nonPersistentDataStore;
+
+- (void)fetchDataRecordsOfTypes:(WKWebsiteDataTypes)websiteDataTypes completionHandler:(void (^)(NSArray *))completionHandler;
+- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes forDataRecords:(NSArray *)dataRecords completionHandler:(void (^)())completionHandler;
+- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler;
 
 @end
 

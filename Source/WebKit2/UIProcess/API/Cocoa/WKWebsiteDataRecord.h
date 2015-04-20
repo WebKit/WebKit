@@ -31,24 +31,20 @@
 
 WK_ASSUME_NONNULL_BEGIN
 
-typedef NS_OPTIONS(NSUInteger, WKWebsiteDataTypes) {
-    WKWebsiteDataTypeCookies = 1 << 0,
-    WKWebsiteDataTypeDiskCache = 1 << 1,
-    WKWebsiteDataTypeMemoryCache = 1 << 2,
-    WKWebsiteDataTypeOfflineWebApplicationCache = 1 << 3,
+WK_EXTERN NSString * const WKWebsiteDataTypeDiskCache WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+WK_EXTERN NSString * const WKWebsiteDataTypeMemoryCache WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+WK_EXTERN NSString * const WKWebsiteDataTypeOfflineWebApplicationCache WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
-    WKWebsiteDataTypeLocalStorage = 1 << 4,
-    WKWebsiteDataTypeWebSQLDatabases = 1 << 5,
-
-    WKWebsiteDataTypeAll = NSUIntegerMax,
-} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+WK_EXTERN NSString * const WKWebsiteDataTypeCookies WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+WK_EXTERN NSString * const WKWebsiteDataTypeLocalStorage WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+WK_EXTERN NSString * const WKWebsiteDataTypeWebSQLDatabases WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 @interface WKWebsiteDataRecord : NSObject
 
 @property (nonatomic, readonly, copy) NSString *displayName;
 
-@property (nonatomic, readonly) WKWebsiteDataTypes dataTypes;
+@property (nonatomic, readonly, copy) NSSet *dataTypes;
 
 @end
 

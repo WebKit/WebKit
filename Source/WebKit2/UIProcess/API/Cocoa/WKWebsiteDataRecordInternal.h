@@ -38,46 +38,46 @@ inline WKWebsiteDataRecord *wrapper(API::WebsiteDataRecord& websiteDataRecord)
     return (WKWebsiteDataRecord *)websiteDataRecord.wrapper();
 }
 
-static inline WebKit::WebsiteDataTypes toWebsiteDataTypes(WKWebsiteDataTypes wkWebsiteDataTypes)
+static inline WebKit::WebsiteDataTypes toWebsiteDataTypes(NSSet *wkWebsiteDataTypes)
 {
     using WebsiteDataTypes = WebKit::WebsiteDataTypes;
 
     int websiteDataTypes = 0;
 
-    if (wkWebsiteDataTypes & WKWebsiteDataTypeCookies)
+    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeCookies])
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeCookies;
-    if (wkWebsiteDataTypes & WKWebsiteDataTypeDiskCache)
+    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeDiskCache])
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeDiskCache;
-    if (wkWebsiteDataTypes & WKWebsiteDataTypeMemoryCache)
+    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeMemoryCache])
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeMemoryCache;
-    if (wkWebsiteDataTypes & WKWebsiteDataTypeOfflineWebApplicationCache)
+    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeOfflineWebApplicationCache])
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeOfflineWebApplicationCache;
-    if (wkWebsiteDataTypes & WKWebsiteDataTypeLocalStorage)
+    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeLocalStorage])
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeLocalStorage;
-    if (wkWebsiteDataTypes & WKWebsiteDataTypeWebSQLDatabases)
+    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeWebSQLDatabases])
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeWebSQLDatabases;
 
     return static_cast<WebsiteDataTypes>(websiteDataTypes);
 }
 
-static inline WKWebsiteDataTypes toWKWebsiteDataTypes(int websiteDataTypes)
+static inline RetainPtr<NSSet> toWKWebsiteDataTypes(int websiteDataTypes)
 {
     using WebsiteDataTypes = WebKit::WebsiteDataTypes;
 
-    WKWebsiteDataTypes wkWebsiteDataTypes = 0;
+    auto wkWebsiteDataTypes = adoptNS([[NSMutableSet alloc] init]);
 
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeCookies)
-        wkWebsiteDataTypes |= WKWebsiteDataTypeCookies;
+        [wkWebsiteDataTypes addObject:WKWebsiteDataTypeCookies];
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeDiskCache)
-        wkWebsiteDataTypes |= WKWebsiteDataTypeDiskCache;
+        [wkWebsiteDataTypes addObject:WKWebsiteDataTypeDiskCache];
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeMemoryCache)
-        wkWebsiteDataTypes |= WKWebsiteDataTypeMemoryCache;
+        [wkWebsiteDataTypes addObject:WKWebsiteDataTypeMemoryCache];
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeOfflineWebApplicationCache)
-        wkWebsiteDataTypes |= WKWebsiteDataTypeOfflineWebApplicationCache;
+        [wkWebsiteDataTypes addObject:WKWebsiteDataTypeOfflineWebApplicationCache];
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeLocalStorage)
-        wkWebsiteDataTypes |= WKWebsiteDataTypeLocalStorage;
+        [wkWebsiteDataTypes addObject:WKWebsiteDataTypeLocalStorage];
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeWebSQLDatabases)
-        wkWebsiteDataTypes |= WKWebsiteDataTypeWebSQLDatabases;
+        [wkWebsiteDataTypes addObject:WKWebsiteDataTypeWebSQLDatabases];
 
     return wkWebsiteDataTypes;
 }

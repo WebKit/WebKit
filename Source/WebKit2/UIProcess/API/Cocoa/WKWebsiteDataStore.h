@@ -44,9 +44,11 @@ WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 
 @property (readonly, getter=isNonPersistent) BOOL nonPersistent;
 
-- (void)fetchDataRecordsOfTypes:(WKWebsiteDataTypes)websiteDataTypes completionHandler:(void (^)(NSArray *))completionHandler;
-- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes forDataRecords:(NSArray *)dataRecords completionHandler:(void (^)())completionHandler;
-- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler;
++ (NSSet *)allWebsiteDataTypes;
+
+- (void)fetchDataRecordsOfTypes:(NSSet *)websiteDataTypes completionHandler:(void (^)(NSArray *))completionHandler;
+- (void)removeDataOfTypes:(NSSet *)websiteDataTypes forDataRecords:(NSArray *)dataRecords completionHandler:(void (^)())completionHandler;
+- (void)removeDataOfTypes:(NSSet *)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler;
 
 @end
 

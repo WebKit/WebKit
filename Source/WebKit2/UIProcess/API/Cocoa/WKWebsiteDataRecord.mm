@@ -28,6 +28,14 @@
 
 #if WK_API_ENABLED
 
+NSString * const WKWebsiteDataTypeDiskCache = @"WKWebsiteDataTypeDiskCache";
+NSString * const WKWebsiteDataTypeMemoryCache = @"WKWebsiteDataTypeMemoryCache";
+NSString * const WKWebsiteDataTypeOfflineWebApplicationCache = @"WKWebsiteDataTypeOfflineWebApplicationCache";
+
+NSString * const WKWebsiteDataTypeCookies = @"WKWebsiteDataTypeCookies";
+NSString * const WKWebsiteDataTypeLocalStorage = @"WKWebsiteDataTypeLocalStorage";
+NSString * const WKWebsiteDataTypeWebSQLDatabases = @"WKWebsiteDataTypeWebSQLDatabases";
+
 @implementation WKWebsiteDataRecord
 
 - (void)dealloc
@@ -37,21 +45,21 @@
     [super dealloc];
 }
 
-static NSString *dataTypesToString(WKWebsiteDataTypes dataTypes)
+static NSString *dataTypesToString(NSSet *dataTypes)
 {
     auto array = adoptNS([[NSMutableArray alloc] init]);
 
-    if (dataTypes & WKWebsiteDataTypeCookies)
-        [array addObject:@"Cookies"];
-    if (dataTypes & WKWebsiteDataTypeDiskCache)
+    if ([dataTypes containsObject:WKWebsiteDataTypeDiskCache])
         [array addObject:@"Disk Cache"];
-    if (dataTypes & WKWebsiteDataTypeMemoryCache)
+    if ([dataTypes containsObject:WKWebsiteDataTypeMemoryCache])
         [array addObject:@"Memory Cache"];
-    if (dataTypes & WKWebsiteDataTypeOfflineWebApplicationCache)
+    if ([dataTypes containsObject:WKWebsiteDataTypeOfflineWebApplicationCache])
         [array addObject:@"Offline Web Application Cache"];
-    if (dataTypes & WKWebsiteDataTypeLocalStorage)
+    if ([dataTypes containsObject:WKWebsiteDataTypeCookies])
+        [array addObject:@"Cookies"];
+    if ([dataTypes containsObject:WKWebsiteDataTypeLocalStorage])
         [array addObject:@"Local Storage"];
-    if (dataTypes & WKWebsiteDataTypeWebSQLDatabases)
+    if ([dataTypes containsObject:WKWebsiteDataTypeWebSQLDatabases])
         [array addObject:@"Web SQL"];
 
     return [array componentsJoinedByString:@", "];
@@ -67,9 +75,9 @@ static NSString *dataTypesToString(WKWebsiteDataTypes dataTypes)
     return _websiteDataRecord->websiteDataRecord().displayName;
 }
 
-- (WKWebsiteDataTypes)dataTypes
+- (NSSet *)dataTypes
 {
-    return WebKit::toWKWebsiteDataTypes(_websiteDataRecord->websiteDataRecord().types);
+    return WebKit::toWKWebsiteDataTypes(_websiteDataRecord->websiteDataRecord().types).autorelease();
 }
 
 #pragma mark WKObject protocol implementation
