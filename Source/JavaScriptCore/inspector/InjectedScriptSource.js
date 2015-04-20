@@ -853,6 +853,11 @@ InjectedScript.prototype = {
         return InjectedScriptHost.weakMapEntries(object, numberToFetch);
     },
 
+    _getWeakSetEntries: function(object, numberToFetch)
+    {
+        return InjectedScriptHost.weakSetEntries(object, numberToFetch);
+    },
+
     _getIteratorEntries: function(object, numberToFetch)
     {
         return InjectedScriptHost.iteratorEntries(object, numberToFetch);
@@ -866,6 +871,8 @@ InjectedScript.prototype = {
             return this._getMapEntries(object, startIndex, numberToFetch);
         if (subtype === "weakmap")
             return this._getWeakMapEntries(object, numberToFetch);
+        if (subtype === "weakset")
+            return this._getWeakSetEntries(object, numberToFetch);
         if (subtype === "iterator")
             return this._getIteratorEntries(object, numberToFetch);
 
@@ -939,6 +946,8 @@ InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType, 
         this.size = object.size;
     else if (subtype === "weakmap")
         this.size = InjectedScriptHost.weakMapSize(object);
+    else if (subtype === "weakset")
+        this.size = InjectedScriptHost.weakSetSize(object);
     else if (subtype === "class")
         this.classPrototype = injectedScript._wrapObject(object.prototype, objectGroupName);
 
@@ -998,7 +1007,7 @@ InjectedScript.RemoteObject.prototype = {
 
         try {
             // Maps, Sets, and Iterators have entries.
-            if (this.subtype === "map" || this.subtype === "set" || this.subtype === "weakmap" || this.subtype === "iterator")
+            if (this.subtype === "map" || this.subtype === "set" || this.subtype === "weakmap" || this.subtype === "weakset" || this.subtype === "iterator")
                 this._appendEntryPreviews(object, preview);
 
             preview.properties = [];

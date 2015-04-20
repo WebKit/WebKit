@@ -112,6 +112,6 @@ WebInspector.ObjectPreview = class ObjectPreview extends WebInspector.Object
 
     hasSize()
     {
-        return this._size !== undefined && (this._subtype === "array" || this._subtype === "set" || this._subtype === "map" || this._subtype === "weakmap");
+        return this._size !== undefined && (this._subtype === "array" || this._subtype === "set" || this._subtype === "map" || this._subtype === "weakmap" || this._subtype === "weakset");
     }
 };

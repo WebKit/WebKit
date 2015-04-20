@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.formatted-object, .formatted-node, .formatted-error, .formatted-map, .formatted-set, .formatted-weakmap {
+.formatted-object, .formatted-node, .formatted-error, .formatted-map, .formatted-set, .formatted-weakmap, .formatted-weakset {
     position: relative;
     display: inline-block;
     color: black;
 }
 
-:matches(.formatted-array, .formatted-map, .formatted-set, .formatted-weakmap) > .size {
+:matches(.formatted-array, .formatted-map, .formatted-set, .formatted-weakmap, .formatted-weakset) > .size {
     font-style: normal;
     color: rgba(0, 0, 0, 0.33);
 }

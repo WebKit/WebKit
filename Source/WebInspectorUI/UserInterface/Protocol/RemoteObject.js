@@ -342,12 +342,12 @@ WebInspector.RemoteObject = class RemoteObject
 
     isCollectionType()
     {
-        return this._subtype === "map" || this._subtype === "set" || this._subtype === "weakmap";
+        return this._subtype === "map" || this._subtype === "set" || this._subtype === "weakmap" || this._subtype === "weakset";
     }
 
     isWeakCollection()
     {
-        return this._subtype === "weakmap";
+        return this._subtype === "weakmap" || this._subtype === "weakset";
     }
 
     getCollectionEntries(start, numberToFetch, callback)
@@ -359,8 +359,9 @@ WebInspector.RemoteObject = class RemoteObject
         console.assert(numberToFetch >= 0);
         console.assert(this.isCollectionType());
 
-        // WeakMaps are not ordered. We should never send a non-zero start.
+        // WeakMaps and WeakSets are not ordered. We should never send a non-zero start.
         console.assert((this._subtype === "weakmap" && start === 0) || this._subtype !== "weakmap");
+        console.assert((this._subtype === "weakset" && start === 0) || this._subtype !== "weakset");
 
         var objectGroup = this.isWeakCollection() ? this._weakCollectionObjectGroup() : "";
 
@@ -476,7 +477,7 @@ WebInspector.RemoteObject = class RemoteObject
 
     _weakCollectionObjectGroup()
     {
-        return JSON.stringify(this._objectId) + "-WeakMap";
+        return JSON.stringify(this._objectId) + "-" + this._subtype;
     }
 
     _getPropertyDescriptors(ownProperties, callback)

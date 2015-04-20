@@ -129,11 +129,12 @@ function test()
         {expression: "map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map"},
         {expression: "map = new WeakMap; strongKey = {id:1}; map.set(strongKey, [1,2]); map"},
 
-        // Set
+        // Set / WeakSet
         {expression: "new Set"},
         {expression: "set = new Set; set.add(1); set.add(2); set.add('key'); set"},
         {expression: "set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]); set"},
         {expression: "set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set"},
+        {expression: "set = new WeakSet; strongKey = {id:1}; set.add(strongKey); set"},
 
         // Iterators
         {expression: "'a'[Symbol.iterator]()"},

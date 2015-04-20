@@ -2063,6 +2063,7 @@ WebInspector.NativePrototypeFunctionParameters = {
 };
 
 WebInspector.NativePrototypeFunctionParameters.WeakMap = WebInspector.NativePrototypeFunctionParameters.Map;
+WebInspector.NativePrototypeFunctionParameters.WeakSet = WebInspector.NativePrototypeFunctionParameters.Set;
 
 (function() {
     function mixin(o, mixin) {

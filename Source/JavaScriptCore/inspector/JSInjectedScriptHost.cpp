@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@
 #include "JSStringIterator.h"
 #include "JSTypedArrays.h"
 #include "JSWeakMap.h"
+#include "JSWeakSet.h"
 #include "ObjectConstructor.h"
 #include "RegExpObject.h"
 #include "SourceCode.h"
@@ -158,6 +159,8 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
         return jsNontrivialString(exec, ASCIILiteral("set"));
     if (value.inherits(JSWeakMap::info()))
         return jsNontrivialString(exec, ASCIILiteral("weakmap"));
+    if (value.inherits(JSWeakSet::info()))
+        return jsNontrivialString(exec, ASCIILiteral("weakset"));
 
     if (value.inherits(JSArrayIterator::info())
         || value.inherits(JSMapIterator::info())
@@ -374,6 +377,49 @@ JSValue JSInjectedScriptHost::weakMapEntries(ExecState* exec)
         JSObject* entry = constructEmptyObject(exec);
         entry->putDirect(exec->vm(), Identifier::fromString(exec, "key"), it->key);
         entry->putDirect(exec->vm(), Identifier::fromString(exec, "value"), it->value.get());
+        array->putDirectIndex(exec, fetched++, entry);
+        if (numberToFetch && fetched >= numberToFetch)
+            break;
+    }
+
+    return array;
+}
+
+JSValue JSInjectedScriptHost::weakSetSize(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return jsUndefined();
+
+    JSValue value = exec->uncheckedArgument(0);
+    JSWeakSet* weakSet = jsDynamicCast<JSWeakSet*>(value);
+    if (!weakSet)
+        return jsUndefined();
+
+    return jsNumber(weakSet->weakMapData()->size());
+}
+
+JSValue JSInjectedScriptHost::weakSetEntries(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return jsUndefined();
+
+    JSValue value = exec->uncheckedArgument(0);
+    JSWeakSet* weakSet = jsDynamicCast<JSWeakSet*>(value);
+    if (!weakSet)
+        return jsUndefined();
+
+    unsigned fetched = 0;
+    unsigned numberToFetch = 100;
+
+    JSValue numberToFetchArg = exec->argument(1);
+    double fetchDouble = numberToFetchArg.toInteger(exec);
+    if (fetchDouble >= 0)
+        numberToFetch = static_cast<unsigned>(fetchDouble);
+
+    JSArray* array = constructEmptyArray(exec, nullptr);
+    for (auto it = weakSet->weakMapData()->begin(); it != weakSet->weakMapData()->end(); ++it) {
+        JSObject* entry = constructEmptyObject(exec);
+        entry->putDirect(exec->vm(), Identifier::fromString(exec, "value"), it->key);
         array->putDirectIndex(exec, fetched++, entry);
         if (numberToFetch && fetched >= numberToFetch)
             break;

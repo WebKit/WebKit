@@ -1,3 +1,33 @@
+2015-04-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve Support for WeakSet in Console
+        https://bugs.webkit.org/show_bug.cgi?id=143951
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+        WeakSet has the same APIs and parameters as Set for the functions it implements.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.isCollectionType):
+        (WebInspector.RemoteObject.prototype.isWeakCollection):
+        (WebInspector.RemoteObject.prototype.getCollectionEntries):
+        (WebInspector.RemoteObject.prototype._weakCollectionObjectGroup):
+        WeakSet is a weak collection.
+
+        * UserInterface/Models/ObjectPreview.js:
+        (WebInspector.ObjectPreview.prototype.hasSize):
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._formatParameter):
+        * UserInterface/Views/FormattedValue.css:
+        (.formatted-object, .formatted-node, .formatted-error, .formatted-map, .formatted-set, .formatted-weakmap, .formatted-weakset):
+        (:matches(.formatted-array, .formatted-map, .formatted-set, .formatted-weakmap, .formatted-weakset) > .size):
+        (.formatted-object, .formatted-node, .formatted-error, .formatted-map, .formatted-set, .formatted-weakmap): Deleted.
+        (:matches(.formatted-array, .formatted-map, .formatted-set, .formatted-weakmap) > .size): Deleted.
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createElementForTypesAndValue):
+        Treat a WeakSet like a set in more places.
+
 2015-04-18  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Pass multiple arguments to classList.add and classList.remove

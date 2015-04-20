@@ -1,3 +1,15 @@
+2015-04-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve Support for WeakSet in Console
+        https://bugs.webkit.org/show_bug.cgi?id=143951
+
+        Reviewed by Darin Adler.
+
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object.html:
+        Update the test to include a WeakSet example.
+        Also rebaseline for iterator changes that landed recently.
+
 2015-04-20  Alex Christensen  <achristensen@webkit.org>
 
         Fix content extension test flakiness.

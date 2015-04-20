@@ -3128,16 +3128,53 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set
 }
 
 -----------------------------------------------------
+EXPRESSION: set = new WeakSet; strongKey = {id:1}; set.add(strongKey); set
+{
+  "_type": "object",
+  "_subtype": "weakset",
+  "_objectId": "<filtered>",
+  "_description": "WeakSet",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "weakset",
+    "_description": "WeakSet",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "id",
+              "_type": "number",
+              "_value": "1"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
 EXPRESSION: 'a'[Symbol.iterator]()
 {
   "_type": "object",
   "_subtype": "iterator",
   "_objectId": "<filtered>",
-  "_description": "StringIterator",
+  "_description": "String Iterator",
   "_preview": {
     "_type": "object",
     "_subtype": "iterator",
-    "_description": "StringIterator",
+    "_description": "String Iterator",
     "_lossless": true,
     "_overflow": false,
     "_properties": [
@@ -3169,11 +3206,11 @@ EXPRESSION: 'long string'[Symbol.iterator]()
   "_type": "object",
   "_subtype": "iterator",
   "_objectId": "<filtered>",
-  "_description": "StringIterator",
+  "_description": "String Iterator",
   "_preview": {
     "_type": "object",
     "_subtype": "iterator",
-    "_description": "StringIterator",
+    "_description": "String Iterator",
     "_lossless": false,
     "_overflow": true,
     "_properties": [
@@ -3245,11 +3282,11 @@ EXPRESSION: [][Symbol.iterator]()
   "_type": "object",
   "_subtype": "iterator",
   "_objectId": "<filtered>",
-  "_description": "ArrayIterator",
+  "_description": "Array Iterator",
   "_preview": {
     "_type": "object",
     "_subtype": "iterator",
-    "_description": "ArrayIterator",
+    "_description": "Array Iterator",
     "_lossless": true,
     "_overflow": false,
     "_properties": [
@@ -3286,11 +3323,11 @@ EXPRESSION: [1][Symbol.iterator]()
   "_type": "object",
   "_subtype": "iterator",
   "_objectId": "<filtered>",
-  "_description": "ArrayIterator",
+  "_description": "Array Iterator",
   "_preview": {
     "_type": "object",
     "_subtype": "iterator",
-    "_description": "ArrayIterator",
+    "_description": "Array Iterator",
     "_lossless": true,
     "_overflow": false,
     "_properties": [
@@ -3344,11 +3381,11 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'][Symbol.iterator]()
   "_type": "object",
   "_subtype": "iterator",
   "_objectId": "<filtered>",
-  "_description": "ArrayIterator",
+  "_description": "Array Iterator",
   "_preview": {
     "_type": "object",
     "_subtype": "iterator",
-    "_description": "ArrayIterator",
+    "_description": "Array Iterator",
     "_lossless": false,
     "_overflow": true,
     "_properties": [
@@ -3427,11 +3464,11 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].keys()
   "_type": "object",
   "_subtype": "iterator",
   "_objectId": "<filtered>",
-  "_description": "ArrayIterator",
+  "_description": "Array Iterator",
   "_preview": {
     "_type": "object",
     "_subtype": "iterator",
-    "_description": "ArrayIterator",
+    "_description": "Array Iterator",
     "_lossless": false,
     "_overflow": true,
     "_properties": [
@@ -3510,11 +3547,11 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
   "_type": "object",
   "_subtype": "iterator",
   "_objectId": "<filtered>",
-  "_description": "ArrayIterator",
+  "_description": "Array Iterator",
   "_preview": {
     "_type": "object",
     "_subtype": "iterator",
-    "_description": "ArrayIterator",
+    "_description": "Array Iterator",
     "_lossless": false,
     "_overflow": true,
     "_properties": [
@@ -4005,16 +4042,16 @@ EXPRESSION: x = undefined; (function() { x = arguments; })(1, 'two'); x[Symbol.i
   "_type": "object",
   "_subtype": "iterator",
   "_objectId": "<filtered>",
-  "_description": "ArgumentsIterator",
+  "_description": "Array Iterator",
   "_preview": {
     "_type": "object",
     "_subtype": "iterator",
-    "_description": "ArgumentsIterator",
+    "_description": "Array Iterator",
     "_lossless": true,
     "_overflow": false,
     "_properties": [
       {
-        "_name": "arguments",
+        "_name": "array",
         "_type": "object",
         "_subtype": "array",
         "_valuePreview": {
@@ -4038,6 +4075,12 @@ EXPRESSION: x = undefined; (function() { x = arguments; })(1, 'two'); x[Symbol.i
           ],
           "_entries": null
         },
+        "_internal": true
+      },
+      {
+        "_name": "kind",
+        "_type": "string",
+        "_value": "value",
         "_internal": true
       }
     ],
