@@ -1,3 +1,28 @@
+2015-04-20  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r179850
+
+    2015-02-09  Timothy Horton  <timothy_horton@apple.com>
+
+            Avoid using a HashMap for DisplayRefreshMonitorManager, which rarely has more than one item
+            https://bugs.webkit.org/show_bug.cgi?id=141353
+
+            Reviewed by Anders Carlsson.
+
+            No new tests, because there's no behavior change.
+
+            * platform/graphics/DisplayRefreshMonitorManager.cpp:
+            (WebCore::DisplayRefreshMonitorManager::ensureMonitorForClient):
+            (WebCore::DisplayRefreshMonitorManager::unregisterClient):
+            (WebCore::DisplayRefreshMonitorManager::displayDidRefresh):
+            * platform/graphics/DisplayRefreshMonitorManager.h:
+            Use a Vector of RefPtr<DisplayRefreshMonitor> instead of a HashMap
+            from uint64_t to RefPtr<DisplayRefreshMonitor>. There's usually only one
+            display, so there's usually only one DisplayRefreshMonitor. Linear search
+            on the Vector will be faster than the hash lookup in all conceivable cases.
+            This also avoids the situation mentioned in the comments in DisplayRefreshMonitorManager.h
+            where we don't know enough about PlatformDisplayID to safely hash it.
+
 2015-03-11  Babak Shafiei  <bshafiei@apple.com>
 
         Merge patch for rdar://problem/20128911.
