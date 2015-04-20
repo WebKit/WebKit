@@ -287,12 +287,15 @@ void Node::trackForDebugging()
 }
 
 Node::Node(Document& document, ConstructionType type)
-    : m_nodeFlags(type)
+    : m_refCount(1)
+    , m_nodeFlags(type)
     , m_parentNode(nullptr)
     , m_treeScope(&document)
     , m_previous(nullptr)
     , m_next(nullptr)
 {
+    ASSERT(isMainThread());
+
     document.incrementReferencingNodeCount();
 
 #if !defined(NDEBUG) || (defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS)
@@ -302,6 +305,11 @@ Node::Node(Document& document, ConstructionType type)
 
 Node::~Node()
 {
+    ASSERT(isMainThread());
+    ASSERT(!m_refCount);
+    ASSERT(m_deletionHasBegun);
+    ASSERT(!m_adoptionIsRequired);
+
 #ifndef NDEBUG
     if (!ignoreSet().remove(this))
         nodeCounter.decrement();

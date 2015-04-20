@@ -32,19 +32,10 @@
 #include "RenderStyleConstants.h"
 #include "ScriptWrappable.h"
 #include "TreeScope.h"
-#include "TreeShared.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/MainThread.h>
 #include <wtf/TypeCasts.h>
-
-namespace JSC {
-class VM;
-class SlotVisitor;
-}
-
-namespace WTF {
-class AtomicString;
-}
 
 // This needs to be here because Document.h also depends on it.
 #define DUMP_NODE_STATISTICS 0
@@ -120,7 +111,7 @@ private:
     RenderObject* m_renderer;
 };
 
-class Node : public EventTarget, public ScriptWrappable, public TreeShared<Node> {
+class Node : public EventTarget, public ScriptWrappable {
     friend class Document;
     friend class TreeScope;
     friend class TreeScopeAdopter;
@@ -544,8 +535,16 @@ public:
     // Perform the default action for an event.
     virtual void defaultEventHandler(Event*);
 
-    using TreeShared<Node>::ref;
-    using TreeShared<Node>::deref;
+    void ref();
+    void deref();
+    bool hasOneRef() const;
+    int refCount() const;
+
+#ifndef NDEBUG
+    bool m_deletionHasBegun { false };
+    bool m_inRemovedLastRefFunction { false };
+    bool m_adoptionIsRequired { true };
+#endif
 
     virtual EventTargetData* eventTargetData() override final;
     virtual EventTargetData& ensureEventTargetData() override final;
@@ -668,8 +667,6 @@ protected:
     void updateAncestorsForStyleRecalc();
 
 private:
-    friend class TreeShared<Node>;
-
     virtual PseudoId customPseudoId() const
     {
         ASSERT(hasCustomStyleResolveCallbacks());
@@ -677,7 +674,6 @@ private:
     }
 
     WEBCORE_EXPORT void removedLastRef();
-    bool hasTreeSharedParent() const { return !!parentNode(); }
 
     virtual void refEventTarget() override;
     virtual void derefEventTarget() override;
@@ -690,7 +686,9 @@ private:
     Vector<std::unique_ptr<MutationObserverRegistration>>* mutationObserverRegistry();
     HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry();
 
+    int m_refCount;
     mutable uint32_t m_nodeFlags;
+
     ContainerNode* m_parentNode;
     TreeScope* m_treeScope;
     Node* m_previous;
@@ -707,6 +705,53 @@ protected:
     void setIsParsingChildrenFinished() { setFlag(IsParsingChildrenFinishedFlag); }
     void clearIsParsingChildrenFinished() { clearFlag(IsParsingChildrenFinishedFlag); }
 };
+
+#ifndef NDEBUG
+inline void adopted(Node* node)
+{
+    if (!node)
+        return;
+    ASSERT(!node->m_deletionHasBegun);
+    ASSERT(!node->m_inRemovedLastRefFunction);
+    node->m_adoptionIsRequired = false;
+}
+#endif
+
+inline void Node::ref()
+{
+    ASSERT(isMainThread());
+    ASSERT(!m_deletionHasBegun);
+    ASSERT(!m_inRemovedLastRefFunction);
+    ASSERT(!m_adoptionIsRequired);
+    ++m_refCount;
+}
+
+inline void Node::deref()
+{
+    ASSERT(isMainThread());
+    ASSERT(m_refCount >= 0);
+    ASSERT(!m_deletionHasBegun);
+    ASSERT(!m_inRemovedLastRefFunction);
+    ASSERT(!m_adoptionIsRequired);
+    if (--m_refCount <= 0 && !parentNode()) {
+#ifndef NDEBUG
+        m_inRemovedLastRefFunction = true;
+#endif
+        removedLastRef();
+    }
+}
+
+inline bool Node::hasOneRef() const
+{
+    ASSERT(!m_deletionHasBegun);
+    ASSERT(!m_inRemovedLastRefFunction);
+    return m_refCount == 1;
+}
+
+inline int Node::refCount() const
+{
+    return m_refCount;
+}
 
 // Used in Node::addSubresourceAttributeURLs() and in addSubresourceStyleURLs()
 inline void addSubresourceURL(ListHashSet<URL>& urls, const URL& url)

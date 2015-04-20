@@ -1,3 +1,27 @@
+2015-04-20  Andreas Kling  <akling@apple.com>
+
+        Merge TreeShared into Node.
+        <https://webkit.org/b/143942>
+
+        Reviewed by Darin Adler.
+
+        Node was the only remaining user of TreeShared, so just fold the class into Node.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Node.cpp:
+        (WebCore::Node::Node):
+        (WebCore::Node::~Node):
+        * dom/Node.h:
+        (WebCore::Node::ref):
+        (WebCore::Node::deref):
+        (WebCore::Node::hasOneRef):
+        (WebCore::Node::refCount):
+        (WebCore::adopted):
+        (WebCore::Node::hasTreeSharedParent): Deleted.
+        * platform/TreeShared.h: Removed.
+
 2015-04-19  Benjamin Poulain  <benjamin@webkit.org>
 
         Improve the feature.json files

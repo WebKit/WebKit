@@ -19897,7 +19897,6 @@
     <ClInclude Include="..\platform\ThreadGlobalData.h" />
     <ClInclude Include="..\platform\ThreadTimers.h" />
     <ClInclude Include="..\platform\Timer.h" />
-    <ClInclude Include="..\platform\TreeShared.h" />
     <ClInclude Include="..\platform\UserActivity.h" />
     <ClInclude Include="..\platform\HysteresisActivity.h" />
     <ClInclude Include="..\platform\UUID.h" />

@@ -8310,9 +8310,6 @@
     <ClInclude Include="..\platform\Timer.h">
       <Filter>platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\TreeShared.h">
-      <Filter>platform</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\UserActivity.h">
       <Filter>platform</Filter>
     </ClInclude>
