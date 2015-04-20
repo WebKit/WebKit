@@ -1,3 +1,15 @@
+2015-04-20  Per Arne Vollan  <peavo@outlook.com>
+
+        Favicons are not always loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=143880
+
+        Reviewed by Darin Adler.
+
+        Added new test for icon link elements without mime type.
+
+        * fast/dom/icon-url-without-mimetype-expected.txt: Added.
+        * fast/dom/icon-url-without-mimetype.html: Added.
+
 2015-04-20  Alexey Proskuryakov  <ap@apple.com>
 
         Contentextensions tests are flaky

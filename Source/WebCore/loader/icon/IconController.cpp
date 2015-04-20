@@ -52,8 +52,6 @@
 
 namespace WebCore {
 
-enum class LinkElementSelector { All, WithMIMEType };
-
 IconController::IconController(Frame& frame)
     : m_frame(frame)
 {
@@ -63,11 +61,14 @@ IconController::~IconController()
 {
 }
 
-// FIXME: Given how this is used, there's no real need to use a vector here.
-// Should straighten this out and tighten up the code.
-static Vector<URL> iconsFromLinkElements(Frame& frame, LinkElementSelector selector)
+static URL iconFromLinkElements(Frame& frame)
 {
-    Vector<URL> result;
+    // This function returns the first icon with a mime type.
+    // If no icon with mime type exists, the last icon is returned.
+    // It may make more sense to always return the last icon,
+    // but this implementation is consistent with previous behavior.
+
+    URL result;
 
     auto* document = frame.document();
     if (!document)
@@ -82,13 +83,10 @@ static Vector<URL> iconsFromLinkElements(Frame& frame, LinkElementSelector selec
             continue;
         if (linkElement.href().isEmpty())
             continue;
-        if (selector == LinkElementSelector::WithMIMEType && linkElement.type().isEmpty())
-            continue;
-        result.append(linkElement.href());
+        result = linkElement.href();
+        if (!linkElement.type().isEmpty())
+            break;
     }
-
-    // Put last icon seen at the front. This helps us implement a rule that says that icons seen later should take precedence.
-    result.reverse();
 
     return result;
 }
@@ -98,12 +96,7 @@ URL IconController::url()
     if (!m_frame.isMainFrame())
         return URL();
 
-    // FIXME: This implements a rule that says "first icon seen with a MIME type wins".
-    // But that is not consistent with the comment in iconsFromLinkElements that says
-    // that icons seen *later* should take precedence.
-    URL icon;
-    for (auto& candidate : iconsFromLinkElements(m_frame, LinkElementSelector::WithMIMEType))
-        icon = candidate;
+    auto icon = iconFromLinkElements(m_frame);
     if (!icon.isEmpty())
         return icon;
 
@@ -115,9 +108,6 @@ URL IconController::url()
         icon.setPass(String());
         return icon;
     }
-
-    for (auto& candidate : iconsFromLinkElements(m_frame, LinkElementSelector::All))
-        return candidate;
 
     return URL();
 }
