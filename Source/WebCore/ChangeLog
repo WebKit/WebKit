@@ -1,3 +1,16 @@
+2015-04-20  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] Include ICU unconditionally on the source lists
+        https://bugs.webkit.org/show_bug.cgi?id=143900
+
+        Reviewed by Darin Adler.
+
+        No new tests. This is just a build file change.
+
+        * CMakeLists.txt: Integrate ICU source files, includes, and libraries into the main
+        sections. They are shared by all platforms.
+        * PlatformGTK.cmake: Eliminate build rules that are duplicated from the main CMakeLists.txt.
+
 2015-04-20  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS: Text input field ignores value of read-only and aria-readonly attributes
