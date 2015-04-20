@@ -88,8 +88,6 @@ void TestController::platformResetPreferencesToConsistentValues()
     __block bool doneRemoving = false;
     [[_WKUserContentExtensionStore defaultStore] removeContentExtensionForIdentifier:@"TestContentExtensions" completionHandler:^(NSError *error)
     {
-        if (error)
-            NSLog(@"%@", [error helpAnchor]);
         doneRemoving = true;
     }];
     platformRunUntil(doneRemoving, 0);
