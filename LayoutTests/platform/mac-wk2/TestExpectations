@@ -531,4 +531,5 @@ webkit.org/b/141085 [ Yosemite ] http/tests/media/video-query-url.html [ Pass Ti
 ### END OF (7) New WebKit2-only failures in Yosemite
 ########################################
 
-http/tests/contentextensions [ Pass ]
+# Once flakiness is fixed, the expectation should be changed to [ Pass ], because these tests are disabled, and need to be re-enabled.
+webkit.org/b/143950 http/tests/contentextensions [ Pass Failure ]

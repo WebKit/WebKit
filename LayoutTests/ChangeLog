@@ -1,3 +1,10 @@
+2015-04-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Contentextensions tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=143950
+
+        * platform/mac-wk2/TestExpectations: Marking them as such.
+
 2015-04-20  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Unreviewed gardening
