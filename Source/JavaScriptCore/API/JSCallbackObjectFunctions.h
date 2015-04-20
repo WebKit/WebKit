@@ -58,7 +58,7 @@ inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(Enco
 template <class Parent>
 JSCallbackObject<Parent>::JSCallbackObject(ExecState* exec, Structure* structure, JSClassRef jsClass, void* data)
     : Parent(exec->vm(), structure)
-    , m_callbackObjectData(adoptPtr(new JSCallbackObjectData(data, jsClass)))
+    , m_callbackObjectData(std::make_unique<JSCallbackObjectData>(data, jsClass))
 {
 }
 
@@ -69,7 +69,7 @@ extern const GlobalObjectMethodTable javaScriptCoreAPIGlobalObjectMethodTable;
 template <class Parent>
 JSCallbackObject<Parent>::JSCallbackObject(VM& vm, JSClassRef jsClass, Structure* structure)
     : Parent(vm, structure, &javaScriptCoreAPIGlobalObjectMethodTable)
-    , m_callbackObjectData(adoptPtr(new JSCallbackObjectData(0, jsClass)))
+    , m_callbackObjectData(std::make_unique<JSCallbackObjectData>(nullptr, jsClass))
 {
 }
 

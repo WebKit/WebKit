@@ -48,7 +48,7 @@ class ObjCCallbackFunction : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    static ObjCCallbackFunction* create(VM&, JSGlobalObject*, const String& name, PassOwnPtr<ObjCCallbackFunctionImpl>);
+    static ObjCCallbackFunction* create(VM&, JSGlobalObject*, const String& name, std::unique_ptr<ObjCCallbackFunctionImpl>);
     static void destroy(JSCell*);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -62,7 +62,7 @@ public:
     ObjCCallbackFunctionImpl* impl() const { return m_impl.get(); }
 
 protected:
-    ObjCCallbackFunction(VM&, JSGlobalObject*, JSObjectCallAsFunctionCallback, JSObjectCallAsConstructorCallback, PassOwnPtr<ObjCCallbackFunctionImpl>);
+    ObjCCallbackFunction(VM&, JSGlobalObject*, JSObjectCallAsFunctionCallback, JSObjectCallAsConstructorCallback, std::unique_ptr<ObjCCallbackFunctionImpl>);
 
 private:
     static CallType getCallData(JSCell*, CallData&);
@@ -73,7 +73,7 @@ private:
 
     JSObjectCallAsFunctionCallback m_functionCallback;
     JSObjectCallAsConstructorCallback m_constructCallback;
-    OwnPtr<ObjCCallbackFunctionImpl> m_impl;
+    std::unique_ptr<ObjCCallbackFunctionImpl> m_impl;
 };
 
 } // namespace JSC

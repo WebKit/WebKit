@@ -212,7 +212,7 @@ private:
     static EncodedJSValue staticFunctionGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
     static EncodedJSValue callbackGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
 
-    OwnPtr<JSCallbackObjectData> m_callbackObjectData;
+    std::unique_ptr<JSCallbackObjectData> m_callbackObjectData;
 };
 
 } // namespace JSC

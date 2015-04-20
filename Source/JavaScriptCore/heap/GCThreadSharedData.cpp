@@ -86,9 +86,7 @@ GCThreadSharedData::GCThreadSharedData(VM* vm)
     std::unique_lock<std::mutex> lock(m_phaseMutex);
     for (unsigned i = 1; i < Options::numberOfGCMarkers(); ++i) {
         m_numberOfActiveGCThreads++;
-        SlotVisitor* slotVisitor = new SlotVisitor(*this);
-        CopyVisitor* copyVisitor = new CopyVisitor(*this);
-        GCThread* newThread = new GCThread(*this, slotVisitor, copyVisitor);
+        GCThread* newThread = new GCThread(*this, std::make_unique<SlotVisitor>(*this), std::make_unique<CopyVisitor>(*this));
         ThreadIdentifier threadID = createThread(GCThread::gcThreadStartFunc, newThread, "JavaScriptCore::Marking");
         newThread->initializeThreadID(threadID);
         m_gcThreads.append(newThread);

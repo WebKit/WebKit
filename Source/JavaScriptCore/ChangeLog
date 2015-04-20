@@ -1,3 +1,60 @@
+2015-04-19  Darin Adler  <darin@apple.com>
+
+        Remove all the remaining uses of OwnPtr and PassOwnPtr in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=143941
+
+        Reviewed by Gyuyoung Kim.
+
+        * API/JSCallbackObject.h: Use unique_ptr for m_callbackObjectData.
+        * API/JSCallbackObjectFunctions.h: Ditto.
+
+        * API/ObjCCallbackFunction.h: Use unique_ptr for the arguments to the
+        create function and the constructor and for m_impl.
+        * API/ObjCCallbackFunction.mm:
+        (CallbackArgumentOfClass::CallbackArgumentOfClass): Streamline this
+        class by using RetainPtr<Class>.
+        (ArgumentTypeDelegate::typeInteger): Use make_unique.
+        (ArgumentTypeDelegate::typeDouble): Ditto.
+        (ArgumentTypeDelegate::typeBool): Ditto.
+        (ArgumentTypeDelegate::typeVoid): Ditto.
+        (ArgumentTypeDelegate::typeId): Ditto.
+        (ArgumentTypeDelegate::typeOfClass): Ditto.
+        (ArgumentTypeDelegate::typeBlock): Ditto.
+        (ArgumentTypeDelegate::typeStruct): Ditto.
+        (ResultTypeDelegate::typeInteger): Ditto.
+        (ResultTypeDelegate::typeDouble): Ditto.
+        (ResultTypeDelegate::typeBool): Ditto.
+        (ResultTypeDelegate::typeVoid): Ditto.
+        (ResultTypeDelegate::typeId): Ditto.
+        (ResultTypeDelegate::typeOfClass): Ditto.
+        (ResultTypeDelegate::typeBlock): Ditto.
+        (ResultTypeDelegate::typeStruct): Ditto.
+        (JSC::ObjCCallbackFunctionImpl::ObjCCallbackFunctionImpl): Use
+        unique_ptr for the arguments to the constructor, m_arguments, and m_result.
+        Use RetainPtr<Class> for m_instanceClass.
+        (JSC::objCCallbackFunctionCallAsConstructor): Use nullptr instead of nil or 0
+        for non-Objective-C object pointer null.
+        (JSC::ObjCCallbackFunction::ObjCCallbackFunction): Use unique_ptr for
+        the arguments to the constructor and for m_impl.
+        (JSC::ObjCCallbackFunction::create): Use unique_ptr for arguments.
+        (skipNumber): Mark this static since it's local to this source file.
+        (objCCallbackFunctionForInvocation): Call parseObjCType without doing any
+        explicit adoptPtr since the types in the traits are now unique_ptr. Also use
+        nullptr instead of nil for JSObjectRef values.
+        (objCCallbackFunctionForMethod): Tweaked comment.
+        (objCCallbackFunctionForBlock): Use nullptr instead of 0 for JSObjectRef.
+
+        * bytecode/CallLinkInfo.h: Removed unneeded include of OwnPtr.h.
+
+        * heap/GCThread.cpp:
+        (JSC::GCThread::GCThread): Use unique_ptr.
+        * heap/GCThread.h: Use unique_ptr for arguments to the constructor and for
+        m_slotVisitor and m_copyVisitor.
+        * heap/GCThreadSharedData.cpp:
+        (JSC::GCThreadSharedData::GCThreadSharedData): Ditto.
+
+        * parser/SourceProvider.h: Removed unneeded include of PassOwnPtr.h.
+
 2015-04-19  Benjamin Poulain  <benjamin@webkit.org>
 
         Improve the feature.json files

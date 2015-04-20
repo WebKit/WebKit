@@ -47,7 +47,7 @@ public:
     virtual ~CallbackArgument();
     virtual void set(NSInvocation *, NSInteger, JSContext *, JSValueRef, JSValueRef*) = 0;
 
-    OwnPtr<CallbackArgument> m_next;
+    std::unique_ptr<CallbackArgument> m_next;
 };
 
 CallbackArgument::~CallbackArgument()
@@ -99,24 +99,17 @@ class CallbackArgumentId : public CallbackArgument {
 class CallbackArgumentOfClass : public CallbackArgument {
 public:
     CallbackArgumentOfClass(Class cls)
-        : CallbackArgument()
-        , m_class(cls)
+        : m_class(cls)
     {
-        [m_class retain];
     }
 
 private:
-    virtual ~CallbackArgumentOfClass()
-    {
-        [m_class release];
-    }
-
     virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
         JSGlobalContextRef contextRef = [context JSGlobalContextRef];
 
         id object = tryUnwrapObjcObject(contextRef, argument);
-        if (object && [object isKindOfClass:m_class]) {
+        if (object && [object isKindOfClass:m_class.get()]) {
             [invocation setArgument:&object atIndex:argumentNumber];
             return;
         }
@@ -130,7 +123,7 @@ private:
         *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("Argument does not match Objective-C Class")));
     }
 
-    Class m_class;
+    RetainPtr<Class> m_class;
 };
 
 class CallbackArgumentNSNumber : public CallbackArgument {
@@ -196,34 +189,34 @@ private:
 
 class ArgumentTypeDelegate {
 public:
-    typedef CallbackArgument* ResultType;
+    typedef std::unique_ptr<CallbackArgument> ResultType;
 
     template<typename T>
     static ResultType typeInteger()
     {
-        return new CallbackArgumentInteger<T>;
+        return std::make_unique<CallbackArgumentInteger<T>>();
     }
 
     template<typename T>
     static ResultType typeDouble()
     {
-        return new CallbackArgumentDouble<T>;
+        return std::make_unique<CallbackArgumentDouble<T>>();
     }
 
     static ResultType typeBool()
     {
-        return new CallbackArgumentBoolean;
+        return std::make_unique<CallbackArgumentBoolean>();
     }
 
     static ResultType typeVoid()
     {
         RELEASE_ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
 
     static ResultType typeId()
     {
-        return new CallbackArgumentId;
+        return std::make_unique<CallbackArgumentId>();
     }
 
     static ResultType typeOfClass(const char* begin, const char* end)
@@ -231,35 +224,35 @@ public:
         StringRange copy(begin, end);
         Class cls = objc_getClass(copy);
         if (!cls)
-            return 0;
+            return nullptr;
 
         if (cls == [JSValue class])
-            return new CallbackArgumentJSValue;
+            return std::make_unique<CallbackArgumentJSValue>();
         if (cls == [NSString class])
-            return new CallbackArgumentNSString;
+            return std::make_unique<CallbackArgumentNSString>();
         if (cls == [NSNumber class])
-            return new CallbackArgumentNSNumber;
+            return std::make_unique<CallbackArgumentNSNumber>();
         if (cls == [NSDate class])
-            return new CallbackArgumentNSDate;
+            return std::make_unique<CallbackArgumentNSDate>();
         if (cls == [NSArray class])
-            return new CallbackArgumentNSArray;
+            return std::make_unique<CallbackArgumentNSArray>();
         if (cls == [NSDictionary class])
-            return new CallbackArgumentNSDictionary;
+            return std::make_unique<CallbackArgumentNSDictionary>();
 
-        return new CallbackArgumentOfClass(cls);
+        return std::make_unique<CallbackArgumentOfClass>(cls);
     }
 
     static ResultType typeBlock(const char*, const char*)
     {
-        return nil;
+        return nullptr;
     }
 
     static ResultType typeStruct(const char* begin, const char* end)
     {
         StringRange copy(begin, end);
         if (NSInvocation *invocation = valueToTypeInvocationFor(copy))
-            return new CallbackArgumentStruct(invocation, copy);
-        return 0;
+            return std::make_unique<CallbackArgumentStruct>(invocation, copy);
+        return nullptr;
     }
 };
 
@@ -335,51 +328,51 @@ private:
 
 class ResultTypeDelegate {
 public:
-    typedef CallbackResult* ResultType;
+    typedef std::unique_ptr<CallbackResult> ResultType;
 
     template<typename T>
     static ResultType typeInteger()
     {
-        return new CallbackResultNumeric<T>;
+        return std::make_unique<CallbackResultNumeric<T>>();
     }
 
     template<typename T>
     static ResultType typeDouble()
     {
-        return new CallbackResultNumeric<T>;
+        return std::make_unique<CallbackResultNumeric<T>>();
     }
 
     static ResultType typeBool()
     {
-        return new CallbackResultBoolean;
+        return std::make_unique<CallbackResultBoolean>();
     }
 
     static ResultType typeVoid()
     {
-        return new CallbackResultVoid;
+        return std::make_unique<CallbackResultVoid>();
     }
 
     static ResultType typeId()
     {
-        return new CallbackResultId();
+        return std::make_unique<CallbackResultId>();
     }
 
     static ResultType typeOfClass(const char*, const char*)
     {
-        return new CallbackResultId();
+        return std::make_unique<CallbackResultId>();
     }
 
     static ResultType typeBlock(const char*, const char*)
     {
-        return new CallbackResultId();
+        return std::make_unique<CallbackResultId>();
     }
 
     static ResultType typeStruct(const char* begin, const char* end)
     {
         StringRange copy(begin, end);
         if (NSInvocation *invocation = typeToValueInvocationFor(copy))
-            return new CallbackResultStruct(invocation, copy);
-        return 0;
+            return std::make_unique<CallbackResultStruct>(invocation, copy);
+        return nullptr;
     }
 };
 
@@ -394,12 +387,12 @@ namespace JSC {
 
 class ObjCCallbackFunctionImpl {
 public:
-    ObjCCallbackFunctionImpl(NSInvocation *invocation, CallbackType type, Class instanceClass, PassOwnPtr<CallbackArgument> arguments, PassOwnPtr<CallbackResult> result)
+    ObjCCallbackFunctionImpl(NSInvocation *invocation, CallbackType type, Class instanceClass, std::unique_ptr<CallbackArgument> arguments, std::unique_ptr<CallbackResult> result)
         : m_type(type)
-        , m_instanceClass([instanceClass retain])
+        , m_instanceClass(instanceClass)
         , m_invocation(invocation)
-        , m_arguments(arguments)
-        , m_result(result)
+        , m_arguments(WTF::move(arguments))
+        , m_result(WTF::move(result))
     {
         ASSERT((type != CallbackInstanceMethod && type != CallbackInitMethod) || instanceClass);
     }
@@ -410,7 +403,7 @@ public:
         // -retainArguments on m_invocation (and we don't want to do so).
         if (m_type == CallbackBlock || m_type == CallbackClassMethod)
             heap.releaseSoon(adoptNS([m_invocation.get() target]));
-        [m_instanceClass release];
+        m_instanceClass = nil;
     }
 
     JSValueRef call(JSContext *context, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
@@ -426,7 +419,7 @@ public:
         case CallbackBlock:
             return [m_invocation target];
         case CallbackInitMethod:
-            return m_instanceClass;
+            return m_instanceClass.get();
         default:
             return nil;
         }
@@ -441,10 +434,10 @@ public:
 
 private:
     CallbackType m_type;
-    Class m_instanceClass;
+    RetainPtr<Class> m_instanceClass;
     RetainPtr<NSInvocation> m_invocation;
-    OwnPtr<CallbackArgument> m_arguments;
-    OwnPtr<CallbackResult> m_result;
+    std::unique_ptr<CallbackArgument> m_arguments;
+    std::unique_ptr<CallbackResult> m_result;
 };
 
 static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -482,8 +475,8 @@ static JSObjectRef objCCallbackFunctionCallAsConstructor(JSContextRef callerCont
     CallbackData callbackData;
     JSValueRef result;
     @autoreleasepool {
-        [context beginCallbackWithData:&callbackData calleeValue:constructor thisValue:nil argumentCount:argumentCount arguments:arguments];
-        result = impl->call(context, NULL, argumentCount, arguments, exception);
+        [context beginCallbackWithData:&callbackData calleeValue:constructor thisValue:nullptr argumentCount:argumentCount arguments:arguments];
+        result = impl->call(context, nullptr, argumentCount, arguments, exception);
         if (context.exception)
             *exception = valueInternalValue(context.exception);
         [context endCallbackWithData:&callbackData];
@@ -491,28 +484,28 @@ static JSObjectRef objCCallbackFunctionCallAsConstructor(JSContextRef callerCont
 
     JSGlobalContextRef contextRef = [context JSGlobalContextRef];
     if (*exception)
-        return 0;
+        return nullptr;
 
     if (!JSValueIsObject(contextRef, result)) {
         *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("Objective-C blocks called as constructors must return an object.")));
-        return 0;
+        return nullptr;
     }
     return (JSObjectRef)result;
 }
 
 const JSC::ClassInfo ObjCCallbackFunction::s_info = { "CallbackFunction", &Base::s_info, 0, CREATE_METHOD_TABLE(ObjCCallbackFunction) };
 
-ObjCCallbackFunction::ObjCCallbackFunction(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback functionCallback, JSObjectCallAsConstructorCallback constructCallback, PassOwnPtr<ObjCCallbackFunctionImpl> impl)
+ObjCCallbackFunction::ObjCCallbackFunction(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback functionCallback, JSObjectCallAsConstructorCallback constructCallback, std::unique_ptr<ObjCCallbackFunctionImpl> impl)
     : Base(vm, globalObject->objcCallbackFunctionStructure())
     , m_functionCallback(functionCallback)
     , m_constructCallback(constructCallback)
-    , m_impl(impl)
+    , m_impl(WTF::move(impl))
 {
 }
 
-ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, const String& name, PassOwnPtr<ObjCCallbackFunctionImpl> impl)
+ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, const String& name, std::unique_ptr<ObjCCallbackFunctionImpl> impl)
 {
-    ObjCCallbackFunction* function = new (NotNull, allocateCell<ObjCCallbackFunction>(vm.heap)) ObjCCallbackFunction(vm, globalObject, objCCallbackFunctionCallAsFunction, objCCallbackFunctionCallAsConstructor, impl);
+    ObjCCallbackFunction* function = new (NotNull, allocateCell<ObjCCallbackFunction>(vm.heap)) ObjCCallbackFunction(vm, globalObject, objCCallbackFunctionCallAsFunction, objCCallbackFunctionCallAsConstructor, WTF::move(impl));
     function->finishCreation(vm, name);
     return function;
 }
@@ -543,7 +536,7 @@ ConstructType ObjCCallbackFunction::getConstructData(JSCell* cell, ConstructData
 String ObjCCallbackFunctionImpl::name()
 {
     if (m_type == CallbackInitMethod)
-        return class_getName(m_instanceClass);
+        return class_getName(m_instanceClass.get());
     // FIXME: Maybe we could support having the selector as the name of the non-init 
     // functions to make it a bit more user-friendly from the JS side?
     return "";
@@ -559,7 +552,7 @@ JSValueRef ObjCCallbackFunctionImpl::call(JSContext *context, JSObjectRef thisOb
     case CallbackInitMethod: {
         RELEASE_ASSERT(!thisObject);
         target = [m_instanceClass alloc];
-        if (!target || ![target isKindOfClass:m_instanceClass]) {
+        if (!target || ![target isKindOfClass:m_instanceClass.get()]) {
             *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("self type check failed for Objective-C instance method")));
             return JSValueMakeUndefined(contextRef);
         }
@@ -569,7 +562,7 @@ JSValueRef ObjCCallbackFunctionImpl::call(JSContext *context, JSObjectRef thisOb
     }
     case CallbackInstanceMethod: {
         target = tryUnwrapObjcObject(contextRef, thisObject);
-        if (!target || ![target isKindOfClass:m_instanceClass]) {
+        if (!target || ![target isKindOfClass:m_instanceClass.get()]) {
             *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("self type check failed for Objective-C instance method")));
             return JSValueMakeUndefined(contextRef);
         }
@@ -620,7 +613,7 @@ static bool blockSignatureContainsClass()
     return containsClass;
 }
 
-inline bool skipNumber(const char*& position)
+static inline bool skipNumber(const char*& position)
 {
     if (!isASCIIDigit(*position))
         return false;
@@ -631,13 +624,13 @@ inline bool skipNumber(const char*& position)
 static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvocation *invocation, CallbackType type, Class instanceClass, const char* signatureWithObjcClasses)
 {
     if (!signatureWithObjcClasses)
-        return nil;
+        return nullptr;
 
     const char* position = signatureWithObjcClasses;
 
-    OwnPtr<CallbackResult> result = adoptPtr(parseObjCType<ResultTypeDelegate>(position));
+    auto result = parseObjCType<ResultTypeDelegate>(position);
     if (!result || !skipNumber(position))
-        return nil;
+        return nullptr;
 
     switch (type) {
     case CallbackInitMethod:
@@ -645,35 +638,36 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
     case CallbackClassMethod:
         // Methods are passed two implicit arguments - (id)self, and the selector.
         if ('@' != *position++ || !skipNumber(position) || ':' != *position++ || !skipNumber(position))
-            return nil;
+            return nullptr;
         break;
     case CallbackBlock:
         // Blocks are passed one implicit argument - the block, of type "@?".
         if (('@' != *position++) || ('?' != *position++) || !skipNumber(position))
-            return nil;
+            return nullptr;
         // Only allow arguments of type 'id' if the block signature contains the NS type information.
         if ((!blockSignatureContainsClass() && strchr(position, '@')))
-            return nil;
+            return nullptr;
         break;
     }
 
-    OwnPtr<CallbackArgument> arguments = 0;
-    OwnPtr<CallbackArgument>* nextArgument = &arguments;
+    std::unique_ptr<CallbackArgument> arguments;
+    auto* nextArgument = &arguments;
     unsigned argumentCount = 0;
     while (*position) {
-        OwnPtr<CallbackArgument> argument = adoptPtr(parseObjCType<ArgumentTypeDelegate>(position));
+        auto argument = parseObjCType<ArgumentTypeDelegate>(position);
         if (!argument || !skipNumber(position))
-            return nil;
+            return nullptr;
 
-        *nextArgument = argument.release();
+        *nextArgument = WTF::move(argument);
         nextArgument = &(*nextArgument)->m_next;
         ++argumentCount;
     }
 
     JSC::ExecState* exec = toJS([context JSGlobalContextRef]);
     JSC::JSLockHolder locker(exec);
-    OwnPtr<JSC::ObjCCallbackFunctionImpl> impl = adoptPtr(new JSC::ObjCCallbackFunctionImpl(invocation, type, instanceClass, arguments.release(), result.release()));
-    return toRef(JSC::ObjCCallbackFunction::create(exec->vm(), exec->lexicalGlobalObject(), impl->name(), impl.release()));
+    auto impl = std::make_unique<JSC::ObjCCallbackFunctionImpl>(invocation, type, instanceClass, WTF::move(arguments), WTF::move(result));
+    const String& name = impl->name();
+    return toRef(JSC::ObjCCallbackFunction::create(exec->vm(), exec->lexicalGlobalObject(), name, WTF::move(impl)));
 }
 
 JSObjectRef objCCallbackFunctionForInit(JSContext *context, Class cls, Protocol *protocol, SEL sel, const char* types)
@@ -687,8 +681,8 @@ JSObjectRef objCCallbackFunctionForMethod(JSContext *context, Class cls, Protoco
 {
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:types]];
     [invocation setSelector:sel];
-    // We need to retain the target Class because m_invocation doesn't retain it
-    // by default (and we don't want it to).
+    // We need to retain the target Class because m_invocation doesn't retain it by default (and we don't want it to).
+    // FIXME: What releases it?
     if (!isInstanceMethod)
         [invocation setTarget:[cls retain]];
     return objCCallbackFunctionForInvocation(context, invocation, isInstanceMethod ? CallbackInstanceMethod : CallbackClassMethod, isInstanceMethod ? cls : nil, _protocol_getMethodTypeEncoding(protocol, sel, YES, isInstanceMethod));
@@ -697,7 +691,7 @@ JSObjectRef objCCallbackFunctionForMethod(JSContext *context, Class cls, Protoco
 JSObjectRef objCCallbackFunctionForBlock(JSContext *context, id target)
 {
     if (!_Block_has_signature(target))
-        return 0;
+        return nullptr;
     const char* signature = _Block_signature(target);
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:signature]];
 

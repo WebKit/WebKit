@@ -28,7 +28,6 @@
 
 #include <GCThreadSharedData.h>
 #include <wtf/Deque.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
 
 namespace JSC {
@@ -39,7 +38,7 @@ class SlotVisitor;
 
 class GCThread {
 public:
-    GCThread(GCThreadSharedData&, SlotVisitor*, CopyVisitor*);
+    GCThread(GCThreadSharedData&, std::unique_ptr<SlotVisitor>, std::unique_ptr<CopyVisitor>);
 
     SlotVisitor* slotVisitor();
     CopyVisitor* copyVisitor();
@@ -54,8 +53,8 @@ private:
 
     ThreadIdentifier m_threadID;
     GCThreadSharedData& m_shared;
-    OwnPtr<SlotVisitor> m_slotVisitor;
-    OwnPtr<CopyVisitor> m_copyVisitor;
+    std::unique_ptr<SlotVisitor> m_slotVisitor;
+    std::unique_ptr<CopyVisitor> m_copyVisitor;
 };
 
 } // namespace JSC

@@ -33,7 +33,6 @@
 #include "Opcode.h"
 #include "PolymorphicCallStubRoutine.h"
 #include "WriteBarrier.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/SentinelLinkedList.h>
 
 namespace JSC {
