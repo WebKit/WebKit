@@ -149,7 +149,9 @@ typedef enum {
     WebImmediateActionNone = 0,
     WebImmediateActionLinkPreview,
     WebImmediateActionDataDetectedItem,
-    WebImmediateActionText
+    WebImmediateActionText,
+    WebImmediateActionMailtoLink,
+    WebImmediateActionTelLink
 } WebImmediateActionType;
 
 // Message Sources.
