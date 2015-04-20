@@ -318,6 +318,9 @@
                         r"|Source/WebCore/platform/graphics/WidthIterator\.(h|cpp)"
                         r"|Source/WebCore/platform/text/BidiResolver.h",
         },
+        "NetworkCache": {
+            "filename": r"Source/WebKit2/NetworkProcess/cache/",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -357,6 +360,7 @@
         "MathML": [ "dbarton@mathscribe.com", "mrobinson@webkit.org", "fred.wang@free.fr" ],
         "Media": [ "eric.carlson@apple.com", "jer.noble@apple.com", "glenn@skynav.com", "philipj@opera.com", "sergio.correia@openbossa.org" ],
         "MSEEME": [ "eric.carlson@apple.com", "calvaris@igalia.com" ],
+        "NetworkCache": [ "cgarcia@igalia.com" ],
         "StreamsAPI": [ "benjamin@webkit.org", "calvaris@igalia.com", "youennf@gmail.com" ],
         "Track": [ "eric.carlson@apple.com", "philipj@opera.com", "calvaris@igalia.com" ],
         "MediaStream": [ "tommyw@google.com", "hta@google.com", "sergio.correia@openbossa.org" ],

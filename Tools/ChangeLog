@@ -1,3 +1,14 @@
+2015-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add a rule for NetworkCache to watchlist file
+        https://bugs.webkit.org/show_bug.cgi?id=143945
+
+        Reviewed by Sergio Villar Senin.
+
+        And add myself to the list of watchers.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2015-04-19  Darin Adler  <darin@apple.com>
 
         Update RefPtr documentation and deprecation
