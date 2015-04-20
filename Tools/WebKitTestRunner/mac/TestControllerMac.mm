@@ -85,6 +85,14 @@ static bool shouldUseThreadedScrolling(const TestInvocation& test)
 void TestController::platformResetPreferencesToConsistentValues()
 {
 #if WK_API_ENABLED
+    __block bool doneRemoving = false;
+    [[_WKUserContentExtensionStore defaultStore] removeContentExtensionForIdentifier:@"TestContentExtensions" completionHandler:^(NSError *error)
+    {
+        if (error)
+            NSLog(@"%@", [error helpAnchor]);
+        doneRemoving = true;
+    }];
+    platformRunUntil(doneRemoving, 0);
     [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
 #endif
 }
@@ -114,14 +122,16 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
         return;
     
 #if WK_API_ENABLED
-    __block bool done = false;
+    __block bool doneCompiling = false;
     [[_WKUserContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"TestContentExtensions" encodedContentExtension:contentExtensionString completionHandler:^(_WKUserContentFilter *filter, NSError *error)
     {
         if (!error)
             WKPageGroupAddUserContentFilter(WKPageGetPageGroup(TestController::singleton().mainWebView()->page()), (__bridge WKUserContentFilterRef)filter);
-        done = true;
+        else
+            NSLog(@"%@", [error helpAnchor]);
+        doneCompiling = true;
     }];
-    platformRunUntil(done, 0);
+    platformRunUntil(doneCompiling, 0);
 #endif
 }
 

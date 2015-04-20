@@ -1,3 +1,13 @@
+2015-04-20  Alex Christensen  <achristensen@webkit.org>
+
+        Fix content extension test flakiness.
+        https://bugs.webkit.org/show_bug.cgi?id=143950
+
+        Reviewed by Brady Eidson.
+
+        * platform/mac-wk2/TestExpectations:
+        Mark contentextensions tests as not flaky any more.
+
 2015-04-20  Beth Dakin  <bdakin@apple.com>
 
         Should not list these tests twice.
