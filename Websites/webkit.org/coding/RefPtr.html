@@ -329,7 +329,7 @@ returns a <span class="class">Ref</span>.</li>
 <li>Giving a function argument a type of Ref, RefPtr, Ref&amp;&amp;, or RefPtr&amp;&amp;
 when it should instead be a raw reference or raw pointer. A function that sometimes takes ownership
 can work just fine with a raw reference or raw pointer. The rvalue reference form is appropriate
-when passing ownership is the primary way the function is used and the is case that needs to be optimized.
+when passing ownership is the primary way the function is used and is the case that needs to be optimized.
 Not all setters need to take an rvalue reference.</li>
 <li>Forgetting to call WTF::move can result in unnecessary reference count churn.</li>
 </ul>
