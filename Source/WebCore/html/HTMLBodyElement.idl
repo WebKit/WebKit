@@ -45,9 +45,7 @@ interface HTMLBodyElement : HTMLElement {
     [NotEnumerable, WindowEventHandler] attribute EventHandler onstorage;
     [NotEnumerable, WindowEventHandler] attribute EventHandler onunload;
 
-    [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcecancelled;
     [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
-    [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceclick;
     [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
     [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
     [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;

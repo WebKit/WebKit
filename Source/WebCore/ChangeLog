@@ -1,3 +1,37 @@
+2015-04-20  Beth Dakin  <bdakin@apple.com>
+
+        Should remove mouseForceClick and mouseForceCancelled from DOM force events
+        https://bugs.webkit.org/show_bug.cgi?id=143904
+        -and corresponding-
+        rdar://problem/20578842
+
+        Reviewed by Dan Bernstein.
+
+        After more thought and discussion, we decided to remove mouseForceClick and 
+        mouseForceCancelled from DOM force events. mouseForceClick is confusing and 
+        redundant. mouseForceCancelled is confusing as it is currently implemented, and 
+        all of its functionality can be filled by exisiting events such as mouseup, 
+        mouseout, etc.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addListenerTypeIfNeeded):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseForceWillBegin):
+        (WebCore::Element::dispatchMouseForceClick): Deleted.
+        (WebCore::Element::dispatchMouseForceCancelled): Deleted.
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/EventNames.h:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::createWindowEventHandlerNameMap):
+        * html/HTMLBodyElement.idl:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createEventHandlerNameMap):
+        * page/DOMWindow.idl:
+
 2015-04-20  Simon Fraser  <simon.fraser@apple.com>
 
         Setting inline style to the same value it already has triggers a style recalc

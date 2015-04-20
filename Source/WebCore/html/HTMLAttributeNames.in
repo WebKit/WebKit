@@ -270,9 +270,7 @@ onwebkitfullscreenerror
 onwebkitkeyadded
 onwebkitkeyerror
 onwebkitkeymessage
-onwebkitmouseforcecancelled
 onwebkitmouseforcechanged
-onwebkitmouseforceclick
 onwebkitmouseforcedown
 onwebkitmouseforceup
 onwebkitmouseforcewillbegin

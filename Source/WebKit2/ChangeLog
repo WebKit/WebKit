@@ -1,3 +1,15 @@
+2015-04-20  Beth Dakin  <bdakin@apple.com>
+
+        Should remove mouseForceClick and mouseForceCancelled from DOM force events
+        https://bugs.webkit.org/show_bug.cgi?id=143904
+        -and corresponding-
+        rdar://problem/20578842
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::immediateActionDidCancel):
+
 2015-04-20  Tim Horton  <timothy_horton@apple.com>
 
         Implement immediate action support for tel: and mailto: URLs

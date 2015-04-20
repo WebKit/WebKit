@@ -285,9 +285,7 @@
     [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealright;
     [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealtop;
 
-    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcecancelled;
     [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
-    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceclick;
     [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
     [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
     [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;

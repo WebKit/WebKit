@@ -1149,12 +1149,6 @@ void WebPage::immediateActionDidUpdate()
 void WebPage::immediateActionDidCancel()
 {
     m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelled);
-
-    Element* element = m_lastActionMenuHitTestResult.innerElement();
-    if (!element)
-        return;
-
-    element->dispatchMouseForceCancelled();
 }
 
 void WebPage::immediateActionDidComplete()

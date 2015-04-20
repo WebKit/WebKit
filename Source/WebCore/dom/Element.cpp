@@ -2260,52 +2260,10 @@ bool Element::dispatchMouseForceWillBegin()
         return true;
     return false;
 }
-
-void Element::dispatchMouseForceClick()
-{
-    if (!document().hasListenerType(Document::FORCECLICK_LISTENER))
-        return;
-
-    Frame* frame = document().frame();
-    if (!frame)
-        return;
-
-    PlatformMouseEvent platformMouseEvent(frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), NoButton, PlatformEvent::NoType, 1, false, false, false, false, WTF::currentTime(), ForceAtForceClick);
-    RefPtr<MouseEvent> mouseForceClickEvent =  MouseEvent::create(eventNames().webkitmouseforceclickEvent, document().defaultView(), platformMouseEvent, 0, nullptr);
-
-    mouseForceClickEvent->setTarget(this);
-    dispatchEvent(mouseForceClickEvent);
-}
-
-void Element::dispatchMouseForceCancelled()
-{
-    if (!document().hasListenerType(Document::FORCECANCELLED_LISTENER))
-        return;
-
-    Frame* frame = document().frame();
-    if (!frame)
-        return;
-
-    PlatformMouseEvent platformMouseEvent(frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), NoButton, PlatformEvent::NoType, 1, false, false, false, false, WTF::currentTime(), 0);
-    RefPtr<MouseEvent> mouseForceCancelledEvent =  MouseEvent::create(eventNames().webkitmouseforcecancelledEvent, document().defaultView(), platformMouseEvent, 0, nullptr);
-
-    mouseForceCancelledEvent->setTarget(this);
-    dispatchEvent(mouseForceCancelledEvent);
-}
-
-#else // #if ENABLE(MOUSE_FORCE_EVENTS)
-
+#else
 bool Element::dispatchMouseForceWillBegin()
 {
     return false;
-}
-
-void Element::dispatchMouseForceClick()
-{
-}
-
-void Element::dispatchMouseForceCancelled()
-{
 }
 #endif // #if ENABLE(MOUSE_FORCE_EVENTS)
 
