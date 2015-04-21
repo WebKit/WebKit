@@ -9766,15 +9766,22 @@ bool CSSParser::parseMaskImage(CSSParserValueList& valueList, RefPtr<CSSValue>& 
 {
     outValue = nullptr;
     CSSParserValue* value = valueList.current();
-    if (value->id == CSSValueNone)
+    if (value->id == CSSValueNone) {
         outValue = WebKitCSSResourceValue::create(cssValuePool().createIdentifierValue(CSSValueNone));
-    else if (value->unit == CSSPrimitiveValue::CSS_URI)
-        outValue = WebKitCSSResourceValue::create(CSSPrimitiveValue::create(completeURL(value->string), CSSPrimitiveValue::CSS_URI));
-    else {
-        RefPtr<CSSValue> fillImageValue;
-        if (parseFillImage(valueList, fillImageValue))
-            outValue = WebKitCSSResourceValue::create(fillImageValue);
+        return outValue.get();
     }
+
+    RefPtr<CSSValue> resourceValue;
+    if (value->unit == CSSPrimitiveValue::CSS_URI) {
+        if (protocolIs(value->string, "data"))
+            parseFillImage(valueList, resourceValue);
+        else
+            resourceValue = CSSPrimitiveValue::create(completeURL(value->string), CSSPrimitiveValue::CSS_URI);
+    } else
+        parseFillImage(valueList, resourceValue);
+
+    if (resourceValue)
+        outValue = WebKitCSSResourceValue::create(resourceValue);
 
     return outValue.get();
 }

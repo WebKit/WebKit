@@ -1,3 +1,23 @@
+2015-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r177494): -webkit-mask-image: with data URI fails on non-local files
+        https://bugs.webkit.org/show_bug.cgi?id=141857
+
+        Reviewed by Dirk Schulze.
+        
+        r177494 regressed loading of data URIs in masks with remote content, triggering
+        a cross-domain error which occurs because the mask loading happened via a separate
+        SVGDocument.
+        
+        Fix by checking for data URIs at parsing time, which is what we used to do.
+
+        Test: http/tests/css/data-uri-mask.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseMaskImage):
+        * svg/SVGURIReference.h:
+        (WebCore::SVGURIReference::isExternalURIReference):
+
 2015-04-20  Chris Dumez  <cdumez@apple.com>
 
         Crash when showing Web Inspector on page with 'multipart/x-mixed-replace' main resource
