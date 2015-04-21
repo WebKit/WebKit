@@ -140,10 +140,6 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("VarInjectionWatchpointLoc");
         return;
         
-    case AllocationProfileWatchpointLoc:
-        out.print("AllocationProfileWatchpointLoc");
-        return;
-        
     case StructureLoc:
         out.print("StructureLoc");
         return;

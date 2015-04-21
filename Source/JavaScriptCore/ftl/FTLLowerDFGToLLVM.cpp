@@ -846,7 +846,6 @@ private:
 
         case PhantomLocal:
         case LoopHint:
-        case AllocationProfileWatchpoint:
         case MovHint:
         case ZombieHint:
         case PhantomNewObject:

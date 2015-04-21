@@ -105,10 +105,6 @@ private:
                 addLazily(globalObject()->havingABadTimeWatchpoint());
             break;
             
-        case AllocationProfileWatchpoint:
-            addLazily(m_node->castOperand<JSFunction*>()->allocationProfileWatchpointSet());
-            break;
-            
         case VarInjectionWatchpoint:
             addLazily(globalObject()->varInjectionWatchpoint());
             break;

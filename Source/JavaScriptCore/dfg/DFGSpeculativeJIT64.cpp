@@ -3592,11 +3592,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case AllocationProfileWatchpoint: {
-        noResult(node);
-        break;
-    }
-
     case NewObject: {
         GPRTemporary result(this);
         GPRTemporary allocator(this);

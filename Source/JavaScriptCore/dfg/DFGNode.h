@@ -1190,7 +1190,6 @@ struct Node {
     bool hasCellOperand()
     {
         switch (op()) {
-        case AllocationProfileWatchpoint:
         case CheckCell:
         case NativeConstruct:
         case NativeCall:

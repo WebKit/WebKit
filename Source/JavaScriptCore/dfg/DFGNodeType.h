@@ -194,7 +194,6 @@ namespace JSC { namespace DFG {
     macro(CheckCell, NodeMustGenerate) \
     macro(CheckNotEmpty, NodeMustGenerate) \
     macro(CheckBadCell, NodeMustGenerate) \
-    macro(AllocationProfileWatchpoint, NodeMustGenerate) \
     macro(CheckInBounds, NodeMustGenerate) \
     \
     /* Optimizations for array mutation. */\

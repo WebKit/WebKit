@@ -179,7 +179,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CheckCell:
     case CheckBadCell:
     case CheckNotEmpty:
-    case AllocationProfileWatchpoint:
     case RegExpExec:
     case RegExpTest:
     case CompareLess:

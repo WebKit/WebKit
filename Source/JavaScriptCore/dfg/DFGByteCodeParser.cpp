@@ -2640,12 +2640,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Node* callee = get(VirtualRegister(calleeOperand));
             bool alreadyEmitted = false;
             if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>()) {
-                if (Structure* structure = function->allocationStructure()) {
-                    addToGraph(AllocationProfileWatchpoint, OpInfo(m_graph.freeze(function)));
-                    // The callee is still live up to this point.
-                    addToGraph(Phantom, callee);
-                    set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewObject, OpInfo(structure)));
-                    alreadyEmitted = true;
+                if (FunctionRareData* rareData = function->rareData()) {
+                    if (Structure* structure = rareData->allocationStructure()) {
+                        m_graph.freeze(rareData);
+                        m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                        // The callee is still live up to this point.
+                        addToGraph(Phantom, callee);
+                        set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewObject, OpInfo(structure)));
+                        alreadyEmitted = true;
+                    }
                 }
             }
             if (!alreadyEmitted) {

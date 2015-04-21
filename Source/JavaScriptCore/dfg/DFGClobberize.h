@@ -352,11 +352,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(VarInjectionWatchpointLoc, MiscFields), node);
         return;
 
-    case AllocationProfileWatchpoint:
-        read(MiscFields);
-        def(HeapLocation(AllocationProfileWatchpointLoc, MiscFields), node);
-        return;
-        
     case IsObjectOrNull:
         read(MiscFields);
         def(HeapLocation(IsObjectOrNullLoc, MiscFields, node->child1()), node);

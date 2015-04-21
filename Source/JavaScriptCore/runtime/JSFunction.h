@@ -116,18 +116,14 @@ public:
         return m_rareData.get();
     }
 
+    FunctionRareData* rareData() { return m_rareData.get(); }
+
     Structure* allocationStructure()
     {
         if (!m_rareData)
             return nullptr;
 
         return m_rareData.get()->allocationStructure();
-    }
-
-    InlineWatchpointSet& allocationProfileWatchpointSet()
-    {
-        ASSERT(m_rareData);
-        return m_rareData.get()->allocationProfileWatchpointSet();
     }
 
     bool isHostOrBuiltinFunction() const;

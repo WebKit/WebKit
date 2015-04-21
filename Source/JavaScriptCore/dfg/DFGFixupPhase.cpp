@@ -1200,7 +1200,6 @@ private:
         case GetGlobalVar:
         case NotifyWrite:
         case VarInjectionWatchpoint:
-        case AllocationProfileWatchpoint:
         case Call:
         case Construct:
         case CallVarargs:

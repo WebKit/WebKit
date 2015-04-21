@@ -637,7 +637,6 @@ private:
         case CheckBadCell:
         case PutStructure:
         case VarInjectionWatchpoint:
-        case AllocationProfileWatchpoint:
         case Phantom:
         case Check:
         case PutGlobalVar:

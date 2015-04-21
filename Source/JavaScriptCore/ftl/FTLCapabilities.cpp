@@ -141,7 +141,6 @@ inline CapabilityLevel canCompile(Node* node)
     case CountExecution:
     case GetExecutable:
     case GetScope:
-    case AllocationProfileWatchpoint:
     case GetCallee:
     case GetArgumentCount:
     case ToString:
