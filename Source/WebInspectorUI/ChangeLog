@@ -1,5 +1,29 @@
 2015-04-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Unify PrettyPrinting Tool and UserInterface resources
+        https://bugs.webkit.org/show_bug.cgi?id=143969
+
+        Reviewed by Timothy Hatcher.
+
+        Have the PrettyPrinting tool just use the CodeMirror and WebInspector
+        resources from the relative UserInterface directory. This avoids
+        having duplicate resources in the tree which offered few advantages.
+
+        * Scripts/update-pretty-printer.rb: Removed.
+        * Tools/PrettyPrinting/CodeMirrorFormatters.js: Removed.
+        * Tools/PrettyPrinting/Formatter.js: Removed.
+        * Tools/PrettyPrinting/FormatterContentBuilder.js: Removed.
+        * Tools/PrettyPrinting/codemirror.css: Removed.
+        * Tools/PrettyPrinting/codemirror.js: Removed.
+        * Tools/PrettyPrinting/css.js: Removed.
+        * Tools/PrettyPrinting/index.html:
+        * Tools/PrettyPrinting/javascript.js: Removed.
+
+        * UserInterface/Views/CodeMirrorFormatters.js:
+        Fix style issues.
+
+2015-04-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Improve Support for WeakSet in Console
         https://bugs.webkit.org/show_bug.cgi?id=143951
 
