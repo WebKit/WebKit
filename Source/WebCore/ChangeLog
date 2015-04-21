@@ -1,3 +1,43 @@
+2015-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Use ASSERT_WITH_SECURITY_IMPLICATION() for NoEventDispatchAssertion
+        https://bugs.webkit.org/show_bug.cgi?id=143971
+
+        Reviewed by Darin Adler.
+
+        Use ASSERT_WITH_SECURITY_IMPLICATION() for NoEventDispatchAssertion as
+        firing JS events can cause arbitrary JS execution which often leads to
+        security bugs when event firing is forbidden. For e.g. firing events
+        from ActiveDOMObject::suspend() means JS can construct or destroy
+        ActiveDOMObjects while we are iterating over them.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::dispatchChildInsertionEvents):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::ChildNodeInsertionNotifier::notify):
+        * dom/Document.cpp:
+        (WebCore::Document::dispatchWindowEvent):
+        (WebCore::Document::dispatchWindowLoadEvent):
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchFocusInEvent):
+        (WebCore::Element::dispatchFocusOutEvent):
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchSubtreeModifiedEvent):
+        (WebCore::Node::dispatchDOMActivateEvent):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::canSuspendActiveDOMObjectsForPageCache):
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::stopActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::willDestroyActiveDOMObject):
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::dispatchRegionOversetChangeEvent):
+
 2015-04-21  Darin Adler  <darin@apple.com>
 
         Remove some stray uses of OwnPtr and PassOwnPtr in WTF (outside of the template definitions and traits)

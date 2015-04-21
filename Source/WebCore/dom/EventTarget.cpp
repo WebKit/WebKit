@@ -190,7 +190,7 @@ static const AtomicString& legacyType(const Event* event)
 
 bool EventTarget::fireEventListeners(Event* event)
 {
-    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(event && !event->type().isEmpty());
 
     EventTargetData* d = eventTargetData();

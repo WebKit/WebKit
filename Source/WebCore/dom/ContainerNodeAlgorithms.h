@@ -214,7 +214,7 @@ inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoTree(ContainerNode
 
 inline void ChildNodeInsertionNotifier::notify(Node& node)
 {
-    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
 
     InspectorInstrumentation::didInsertDOMNode(node.document(), node);
 
