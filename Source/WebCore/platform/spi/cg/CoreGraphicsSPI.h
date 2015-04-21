@@ -113,6 +113,17 @@ static inline CGFloat CGFloatMin(CGFloat a, CGFloat b) { return isnan(a) ? b : (
 
 typedef struct CGFontCache CGFontCache;
 
+typedef uint32_t CGSConnectionID;
+typedef uint32_t CGSWindowID;
+typedef uint32_t CGSWindowCount;
+typedef CGSWindowID *CGSWindowIDList;
+
+enum {
+    kCGSWindowCaptureNominalResolution = 0x0200,
+    kCGSCaptureIgnoreGlobalClipShape = 0x0800,
+};
+typedef uint32_t CGSWindowCaptureOptions;
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 WTF_EXTERN_C_BEGIN
@@ -161,6 +172,9 @@ CGFontCache* CGFontCacheGetLocalCache();
 void CGFontCacheSetShouldAutoExpire(CGFontCache*, bool);
 void CGFontCacheSetMaxSize(CGFontCache*, size_t);
 #endif
+
+CGSConnectionID CGSMainConnectionID(void);
+CFArrayRef CGSHWCaptureWindowList(CGSConnectionID cid, CGSWindowIDList windowList, CGSWindowCount windowCount, CGSWindowCaptureOptions options);
 
 WTF_EXTERN_C_END
 

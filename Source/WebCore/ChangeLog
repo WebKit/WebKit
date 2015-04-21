@@ -1,3 +1,14 @@
+2015-04-21  Tim Horton  <timothy_horton@apple.com>
+
+        Long pause under _takeViewSnapshot when screen updates are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=144017
+        <rdar://problem/20548397>
+
+        Reviewed by Simon Fraser.
+
+        * platform/spi/cg/CoreGraphicsSPI.h:
+        Add some SPI.
+
 2015-04-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183077.
