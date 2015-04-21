@@ -1,5 +1,25 @@
 2015-04-20  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179958
+
+    2015-02-11  Chris Dumez  <cdumez@apple.com>
+
+            Turn recent assertions into release assertions to help track down crash in DocumentLoader::stopLoadingForPolicyChange()
+            https://bugs.webkit.org/show_bug.cgi?id=141484
+            <rdar://problem/13811738>
+
+            Reviewed by Andy Estes.
+
+            Turn recent assertions into release assertions to help track down crash in
+            DocumentLoader::stopLoadingForPolicyChange(). This should increase the
+            likelyhood of tripping them so that we better understand why this happens.
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::~DocumentLoader):
+            (WebCore::DocumentLoader::detachFromFrame):
+
+2015-04-20  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179895
 
     2015-02-10  Chris Dumez  <cdumez@apple.com>

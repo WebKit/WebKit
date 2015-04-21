@@ -162,7 +162,7 @@ ResourceLoader* DocumentLoader::mainResourceLoader() const
 DocumentLoader::~DocumentLoader()
 {
     ASSERT(!m_frame || frameLoader()->activeDocumentLoader() != this || !isLoading());
-    ASSERT(!m_waitingForContentPolicy);
+    RELEASE_ASSERT_WITH_MESSAGE(!m_waitingForContentPolicy, "The content policy callback should never outlive its DocumentLoader.");
     if (m_iconLoadDecisionCallback)
         m_iconLoadDecisionCallback->invalidate();
     if (m_iconDataCallback)
@@ -675,7 +675,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
 
 void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
 {
-    ASSERT(m_waitingForContentPolicy);
+    RELEASE_ASSERT(m_waitingForContentPolicy);
     m_waitingForContentPolicy = false;
     if (isStopping())
         return;
@@ -952,7 +952,7 @@ void DocumentLoader::detachFromFrame()
     InspectorInstrumentation::loaderDetachedFromFrame(m_frame, this);
     m_frame = nullptr;
     // The call to stopLoading() above should have canceled any pending content policy check.
-    ASSERT_WITH_MESSAGE(!m_waitingForContentPolicy, "The content policy callback needs a valid frame.");
+    RELEASE_ASSERT_WITH_MESSAGE(!m_waitingForContentPolicy, "The content policy callback needs a valid frame.");
 }
 
 void DocumentLoader::clearMainResourceLoader()
