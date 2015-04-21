@@ -1,3 +1,15 @@
+2015-04-21  Basile Clement  <basile_clement@apple.com>
+
+        REGRESSION (r182899): icloud.com crashes
+        https://bugs.webkit.org/show_bug.cgi?id=143960
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::allocationStructure):
+        * tests/stress/dfg-rare-data.js: Added.
+        (F): Regression test
+
 2015-04-21  Michael Saboff  <msaboff@apple.com>
 
         Crash in JSC::Interpreter::execute

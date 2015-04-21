@@ -118,7 +118,9 @@ public:
 
     Structure* allocationStructure()
     {
-        ASSERT(m_rareData);
+        if (!m_rareData)
+            return nullptr;
+
         return m_rareData.get()->allocationStructure();
     }
 
