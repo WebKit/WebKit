@@ -238,7 +238,7 @@ namespace JSC { namespace DFG {
     macro(NewRegexp, NodeResultJS) \
     \
     /* Support for allocation sinking. */\
-    macro(PhantomNewObject, NodeResultJS) \
+    macro(PhantomNewObject, NodeResultJS | NodeMustGenerate) \
     macro(PutHint, NodeMustGenerate) \
     macro(CheckStructureImmediate, NodeMustGenerate) \
     macro(MaterializeNewObject, NodeResultJS | NodeHasVarArgs) \
