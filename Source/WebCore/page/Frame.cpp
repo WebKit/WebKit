@@ -284,6 +284,8 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
     // that the document is not destroyed during this function call.
     if (newDocument)
         newDocument->didBecomeCurrentDocumentInFrame();
+
+    InspectorInstrumentation::frameDocumentUpdated(this);
 }
 
 #if ENABLE(ORIENTATION_EVENTS)

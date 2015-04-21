@@ -1,3 +1,41 @@
+2015-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Crash when showing Web Inspector on page with 'multipart/x-mixed-replace' main resource
+        https://bugs.webkit.org/show_bug.cgi?id=143979
+        <rdar://problem/20594948>
+
+        Reviewed by Timothy Hatcher.
+
+        InspectorDOMAgent::m_document was updated only once per load, from
+        FrameLoader::dispatchDidCommitLoad(). However, dispatchDidCommitLoad()
+        is not called for follow-up multipart replacing loads. You can see this
+        from the following check in DocumentLoader::commitData():
+            if (!isMultipartReplacingLoad())
+                frameLoader()->receivedFirstData();
+
+        As a result, in the case of a 'multipart/x-mixed-replace' main resource
+        InspectorDOMAgent::m_document would quickly get outdated as we create
+        a new Document for each replacing load. This would lead to Web Inspector
+        code using a Document without frame and causing crashes.
+
+        This patch calls InspectorInstrumentation::frameDocumentUpdated() from
+        Frame::setDocument() so that InspectorDOMAgent::m_document is always up
+        to date.
+
+        No new tests, not easily testable as the main resource needs to be
+        'multipart/x-mixed-replace'.
+
+        * dom/Document.cpp:
+        (WebCore::Document::applyXSLTransform):
+        Stop calling InspectorInstrumentation::frameDocumentUpdated() here as
+        XSLTProcessor::createDocumentFromSource() will call Frame::setDocument()
+        and frameDocumentUpdated() will be called there.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument):
+        Call InspectorInstrumentation::frameDocumentUpdated() to make sure
+        InspectorDOMAgent::m_document gets updated.
+
 2015-04-20  Alex Christensen  <achristensen@webkit.org>
 
         Overwrite existing files with moveFile.

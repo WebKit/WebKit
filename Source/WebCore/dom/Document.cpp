@@ -4584,7 +4584,6 @@ void Document::applyXSLTransform(ProcessingInstruction* pi)
     // FIXME: If the transform failed we should probably report an error (like Mozilla does).
     Frame* ownerFrame = frame();
     processor->createDocumentFromSource(newSource, resultEncoding, resultMIMEType, this, ownerFrame);
-    InspectorInstrumentation::frameDocumentUpdated(ownerFrame);
 }
 
 void Document::setTransformSource(std::unique_ptr<TransformSource> source)
