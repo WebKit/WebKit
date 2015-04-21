@@ -1,3 +1,23 @@
+2015-04-21  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG Call/ConstructForwardVarargs fails to restore the stack pointer
+        https://bugs.webkit.org/show_bug.cgi?id=144007
+
+        Reviewed by Mark Lam.
+        
+        We were conditioning the stack pointer restoration on isVarargs, but we also need to do it
+        if isForwardVarargs.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * tests/stress/varargs-then-slow-call.js: Added.
+        (foo):
+        (bar):
+        (fuzz):
+        (baz):
+
 2015-04-21  Basile Clement  <basile_clement@apple.com>
 
         Remove AllocationProfileWatchpoint node
