@@ -1,3 +1,12 @@
+2015-04-21  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] jhbuild should not use a branch for openwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=143981
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/jhbuild.modules:
+
 2015-04-20  Matthew Hanson  <matthew_hanson@apple.com>
 
         Fix compilation error for prepare-ChangeLog running with Perl version < v5.18.2.

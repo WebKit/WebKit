@@ -386,7 +386,7 @@
       <dep package="gst-plugins-openwebrtc"/>
       <dep package="libnice"/>
      </dependencies>
-    <branch repo="github.com" module="WebRTCinWebKit/openwebrtc.git" checkoutdir="openwebrtc" tag="configurable-sinks"/>
+    <branch repo="github.com" module="WebRTCinWebKit/openwebrtc.git" checkoutdir="openwebrtc" tag="1598e6f612d257196db70d0cf930ede94f83497a"/>
   </autotools>
 
 </moduleset>
