@@ -1,3 +1,27 @@
+2015-04-21  Timothy Horton  <timothy_horton@apple.com>
+
+        PDFs still don't snapshot properly in iOS Safari
+        https://bugs.webkit.org/show_bug.cgi?id=143976
+        <rdar://problem/18283459>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didLayoutForCustomContentProvider):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:data:]):
+        Inform the client that we've passed all reasonable layout milestones
+        as soon as the custom content provider has been handed its data.
+        WKPDFView, the only custom content provider, synchronously lays out
+        its subviews upon initial receipt of data, so this works fine for it.
+        This ensures that clients that normally depend on layout milestones firing
+        won't break when a custom content view is installed.
+
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+        Fall back to renderInContext: if the custom content view is not parented
+        when a snapshot is requested.
+
 2015-04-21  Dan Bernstein  <mitz@apple.com>
 
         Merged WKBackForwardListItem’s Internal category into the class extension in WKBackForwardListItemInternal.h.

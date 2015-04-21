@@ -717,6 +717,10 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
 {
     ASSERT(_customContentView);
     [_customContentView web_setContentProviderData:data suggestedFilename:suggestedFilename];
+
+    // FIXME: It may make more sense for custom content providers to invoke this when they're ready,
+    // because there's no guarantee that all custom content providers will lay out synchronously.
+    _page->didLayoutForCustomContentProvider();
 }
 
 - (void)_setViewportMetaTagWidth:(float)newWidth
@@ -2637,7 +2641,15 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         destinationRect.origin.y = -snapshotRectInContentCoordinates.origin.y * imageScale;
         destinationRect.size.width *= imageScale;
         destinationRect.size.height *= imageScale;
-        [customContentView drawViewHierarchyInRect:destinationRect afterScreenUpdates:NO];
+
+        if ([_customContentView window])
+            [customContentView drawViewHierarchyInRect:destinationRect afterScreenUpdates:NO];
+        else {
+            CGContextRef context = UIGraphicsGetCurrentContext();
+            CGContextTranslateCTM(context, destinationRect.origin.x, destinationRect.origin.y);
+            CGContextScaleCTM(context, imageScale, imageScale);
+            [customContentView.layer renderInContext:context];
+        }
 
         completionHandler([UIGraphicsGetImageFromCurrentImageContext() CGImage]);
 

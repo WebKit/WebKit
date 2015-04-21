@@ -1031,6 +1031,7 @@ public:
 #endif
 
     void didChangeBackgroundColor();
+    void didLayoutForCustomContentProvider();
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);

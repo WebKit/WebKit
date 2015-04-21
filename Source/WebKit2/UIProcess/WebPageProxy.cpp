@@ -3072,6 +3072,15 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, cons
         m_pageClient.didFirstVisuallyNonEmptyLayoutForMainFrame();
 }
 
+void WebPageProxy::didLayoutForCustomContentProvider()
+{
+    LayoutMilestones milestones = DidFirstLayout | DidFirstVisuallyNonEmptyLayout | DidHitRelevantRepaintedObjectsAreaThreshold;
+    if (m_navigationClient)
+        m_navigationClient->renderingProgressDidChange(*this, milestones, nullptr);
+    else
+        m_loaderClient->didLayout(*this, milestones, nullptr);
+}
+
 void WebPageProxy::didLayout(uint32_t layoutMilestones, const UserData& userData)
 {
     if (m_navigationClient)
