@@ -86,7 +86,7 @@ body.mac-platform.legacy .dom-tree-outline:focus li.selected .selection {
 
 .dom-tree-outline ol {
     list-style-type: none;
-    padding-left: 14px;
+    padding-left: 1.2em;
     margin: 0;
 }
 
@@ -99,7 +99,7 @@ body.mac-platform.legacy .dom-tree-outline:focus li.selected .selection {
 }
 
 .dom-tree-outline li {
-    padding: 0 0 0 12px;
+    padding: 0 0 0 17px;
     word-wrap: break-word;
 }
 
@@ -116,11 +116,11 @@ body.mac-platform.legacy .dom-tree-outline:focus li.selected .selection {
 }
 
 .dom-tree-outline li.parent {
-    margin-left: -10px;
+    margin-left: -15px;
 }
 
 .dom-tree-outline li .html-tag.close {
-    margin-left: -14px;
+    margin-left: -13px;
 }
 
 .dom-tree-outline li.parent::before {
@@ -128,27 +128,27 @@ body.mac-platform.legacy .dom-tree-outline:focus li.selected .selection {
 
     content: "";
 
-    background-image: -webkit-canvas(disclosure-triangle-tiny-closed-normal);
-    background-size: 8px 8px;
+    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-closed-normal);
+    background-size: 13px 13px;
     background-repeat: no-repeat;
 
-    width: 8px;
-    height: 8px;
+    width: 13px;
+    height: 13px;
 
-    margin-top: 2px;
+    margin-left: 0;
     padding-right: 2px;
 }
 
 .dom-tree-outline:focus li.parent.selected::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-closed-selected);
+    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-closed-selected);
 }
 
 .dom-tree-outline li.parent.expanded::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-open-normal);
+    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-normal);
 }
 
 .dom-tree-outline:focus li.parent.expanded.selected::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-open-selected);
+    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-selected);
 }
 
 .dom-tree-outline .html-text-node.large {

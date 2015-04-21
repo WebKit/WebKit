@@ -52,7 +52,7 @@
 }
 
 .object-tree:not(.lossless-preview) > :matches(.title, .object-preview) {
-    margin-left: 1px;
+    margin-left: 0;
 }
 
 .object-tree.expanded > :matches(.title, .object-preview)::before {

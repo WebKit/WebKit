@@ -69,7 +69,7 @@
 }
 
 .formatted-node > .dom-tree-outline ol {
-    -webkit-padding-start: 12px;
+    -webkit-padding-start: 1.2em;
 }
 
 .formatted-node > .dom-tree-outline li {
