@@ -196,8 +196,8 @@ void InlineCallFrame::dumpInContext(PrintStream& out, DumpContext* context) cons
     else
         out.print(", known callee: ", inContext(calleeRecovery.constant(), context));
     out.print(", numArgs+this = ", arguments.size());
-    out.print(", stack < loc", VirtualRegister(stackOffset).toLocal());
-    out.print(">");
+    out.print(", stackOffset = ", stackOffset);
+    out.print(" (", virtualRegisterForLocal(0), " maps to ", virtualRegisterForLocal(0) + stackOffset, ")>");
 }
 
 void InlineCallFrame::dump(PrintStream& out) const

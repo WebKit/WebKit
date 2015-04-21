@@ -112,8 +112,6 @@ Vector<Disassembler::DumpedOp> Disassembler::createDumpList(LinkBuffer& linkBuff
         append(result, out, previousOrigin);
         Node* lastNodeForDisassembly = block->at(0);
         for (size_t i = 0; i < block->size(); ++i) {
-            if (!block->at(i)->willHaveCodeGenOrOSR() && !Options::showAllDFGNodes())
-                continue;
             MacroAssembler::Label currentLabel;
             HashMap<Node*, MacroAssembler::Label>::iterator iter = m_labelForNode.find(block->at(i));
             if (iter != m_labelForNode.end())

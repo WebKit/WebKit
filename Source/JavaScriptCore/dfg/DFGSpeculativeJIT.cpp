@@ -1429,31 +1429,9 @@ void SpeculativeJIT::compileCurrentBlock()
         m_codeOriginForExitProfile = m_currentNode->origin.semantic;
         m_lastGeneratedNode = m_currentNode->op();
         if (!m_currentNode->shouldGenerate()) {
-            switch (m_currentNode->op()) {
-            case JSConstant:
+            if (belongsInMinifiedGraph(m_currentNode->op()))
                 m_minifiedGraph->append(MinifiedNode::fromNode(m_currentNode));
-                break;
-                
-            case SetLocal:
-                RELEASE_ASSERT_NOT_REACHED();
-                break;
-                
-            case MovHint:
-                compileMovHint(m_currentNode);
-                break;
-                
-            case ZombieHint: {
-                recordSetLocal(m_currentNode->unlinkedLocal(), VirtualRegister(), DataFormatDead);
-                break;
-            }
-
-            default:
-                if (belongsInMinifiedGraph(m_currentNode->op()))
-                    m_minifiedGraph->append(MinifiedNode::fromNode(m_currentNode));
-                break;
-            }
         } else {
-            
             if (verboseCompilationEnabled()) {
                 dataLogF(
                     "SpeculativeJIT generating Node @%d (bc#%u) at JIT offset 0x%x",

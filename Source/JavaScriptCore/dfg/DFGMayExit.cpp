@@ -59,6 +59,9 @@ private:
 bool mayExit(Graph& graph, Node* node)
 {
     switch (node->op()) {
+    // This is a carefully curated list of nodes that definitely do not exit. We try to be very
+    // conservative when maintaining this list, because adding new node types to it doesn't
+    // generally make things a lot better but it might introduce insanely subtle bugs.
     case SetArgument:
     case JSConstant:
     case DoubleConstant:

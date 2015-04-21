@@ -184,6 +184,7 @@ typedef const char* optionString;
     v(unsigned, frequentCallThreshold, 2, nullptr) \
     v(double, minimumCallToKnownRate, 0.51, nullptr) \
     v(bool, optimizeNativeCalls, false, nullptr) \
+    v(bool, enableMovHintRemoval, true, nullptr) \
     v(bool, enableObjectAllocationSinking, true, nullptr) \
     \
     v(bool, enableConcurrentJIT, true, "allows the DFG / FTL compilation in threads other than the executing JS thread") \

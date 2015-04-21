@@ -47,6 +47,7 @@
 #include "DFGLICMPhase.h"
 #include "DFGLivenessAnalysisPhase.h"
 #include "DFGLoopPreHeaderCreationPhase.h"
+#include "DFGMovHintRemovalPhase.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSREntrypointCreationPhase.h"
 #include "DFGObjectAllocationSinkingPhase.h"
@@ -392,6 +393,8 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performCFA(dfg);
         if (Options::validateFTLOSRExitLiveness())
             performResurrectionForValidation(dfg);
+        if (Options::enableMovHintRemoval())
+            performMovHintRemoval(dfg);
         performDCE(dfg); // We rely on this to kill dead code that won't be recognized as dead by LLVM.
         performStackLayout(dfg);
         performLivenessAnalysis(dfg);

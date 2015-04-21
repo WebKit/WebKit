@@ -1,3 +1,52 @@
+2015-04-19  Filip Pizlo  <fpizlo@apple.com>
+
+        MovHint should be a strong use
+        https://bugs.webkit.org/show_bug.cgi?id=143734
+
+        Reviewed by Geoffrey Garen.
+        
+        This disables any DCE that assumes equivalence between DFG IR uses and bytecode uses. Doing
+        so is a major step towards allowing more fancy DFG transformations and also probably fixing
+        some bugs.
+        
+        Just making MovHint a strong use would also completely disable DCE. So we mitigate this by
+        introducing a MovHint removal phase that runs in FTL.
+        
+        This is a slight slowdown on Octane/gbemu, but it's basically neutral on suite averages.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeOrigin.cpp:
+        (JSC::InlineCallFrame::dumpInContext):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::fixupBlock):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::createDumpList):
+        * dfg/DFGEpoch.cpp: Added.
+        (JSC::DFG::Epoch::dump):
+        * dfg/DFGEpoch.h: Added.
+        (JSC::DFG::Epoch::Epoch):
+        (JSC::DFG::Epoch::first):
+        (JSC::DFG::Epoch::operator!):
+        (JSC::DFG::Epoch::next):
+        (JSC::DFG::Epoch::bump):
+        (JSC::DFG::Epoch::operator==):
+        (JSC::DFG::Epoch::operator!=):
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        * dfg/DFGMovHintRemovalPhase.cpp: Added.
+        (JSC::DFG::performMovHintRemoval):
+        * dfg/DFGMovHintRemovalPhase.h: Added.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/Options.h:
+
 2015-04-21  Basile Clement  <basile_clement@apple.com>
 
         REGRESSION (r182899): icloud.com crashes

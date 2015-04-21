@@ -1921,9 +1921,15 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case MovHint:
+    case MovHint: {
+        compileMovHint(m_currentNode);
+        noResult(node);
+        break;
+    }
+        
     case ZombieHint: {
-        DFG_CRASH(m_jit.graph(), node, "Unexpected node");
+        recordSetLocal(m_currentNode->unlinkedLocal(), VirtualRegister(), DataFormatDead);
+        noResult(node);
         break;
     }
 

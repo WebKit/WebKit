@@ -400,6 +400,7 @@
     <ClCompile Include="..\dfg\DFGDominators.cpp" />
     <ClCompile Include="..\dfg\DFGDriver.cpp" />
     <ClCompile Include="..\dfg\DFGEdge.cpp" />
+    <ClCompile Include="..\dfg\DFGEpoch.cpp" />
     <ClCompile Include="..\dfg\DFGFailedFinalizer.cpp" />
     <ClCompile Include="..\dfg\DFGFinalizer.cpp" />
     <ClCompile Include="..\dfg\DFGFixupPhase.cpp" />
@@ -425,6 +426,7 @@
     <ClCompile Include="..\dfg\DFGLoopPreHeaderCreationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGMayExit.cpp" />
     <ClCompile Include="..\dfg\DFGMinifiedNode.cpp" />
+    <ClCompile Include="..\dfg\DFGMovHintRemovalPhase.cpp" />
     <ClCompile Include="..\dfg\DFGNaiveDominators.cpp" />
     <ClCompile Include="..\dfg\DFGNaturalLoops.cpp" />
     <ClCompile Include="..\dfg\DFGNode.cpp" />
@@ -1081,6 +1083,7 @@
     <ClInclude Include="..\dfg\DFGEdge.h" />
     <ClInclude Include="..\dfg\DFGEdgeDominates.h" />
     <ClInclude Include="..\dfg\DFGEdgeUsesStructure.h" />
+    <ClInclude Include="..\dfg\DFGEpoch.h" />
     <ClInclude Include="..\dfg\DFGFailedFinalizer.h" />
     <ClInclude Include="..\dfg\DFGFiltrationResult.h" />
     <ClInclude Include="..\dfg\DFGFinalizer.h" />
@@ -1115,6 +1118,7 @@
     <ClInclude Include="..\dfg\DFGMinifiedGraph.h" />
     <ClInclude Include="..\dfg\DFGMinifiedID.h" />
     <ClInclude Include="..\dfg\DFGMinifiedNode.h" />
+    <ClInclude Include="..\dfg\DFGMovHintRemovalPhase.h" />
     <ClInclude Include="..\dfg\DFGNaiveDominators.h" />
     <ClInclude Include="..\dfg\DFGNaturalLoops.h" />
     <ClInclude Include="..\dfg\DFGNode.h" />
