@@ -1,3 +1,17 @@
+2015-04-20  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Fix compilation error for prepare-ChangeLog running with Perl version < v5.18.2.
+
+        Unreviewed build fix.
+
+        The any function was added to List::Utils between Perl v5.16.2 and Perl v5.18.2.
+        However, it has been exposed by List::MoreUtils since its inception. This patch uses
+        the any function exposed by List::MoreUtils for greater compatibility.
+
+        * Scripts/prepare-ChangeLog:
+        Use any from List::MoreUtils instead of List::Utils, as List::MoreUtils exposes
+        the any function in all of versions of Perl used by our infrastructure.
+
 2015-04-20  Alex Christensen  <achristensen@webkit.org>
 
         Remove unnecessary logs when resetting tests.
