@@ -1,3 +1,13 @@
+2015-04-21  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Use grep instead of any in prepare-ChangeLog, to avoid Windows compatibility issues.
+
+        Unreviewed build fix.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_cpp):
+        Use grep instead of any to determine if a string is an element of an array.
+
 2015-04-21  Anders Carlsson  <andersca@apple.com>
 
         Fix block signatures
