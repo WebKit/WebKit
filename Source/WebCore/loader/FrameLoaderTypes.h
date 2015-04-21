@@ -57,6 +57,11 @@ enum class FrameLoadType {
     ReloadFromOrigin,
 };
 
+enum class NewFrameOpenerPolicy {
+    Suppress,
+    Allow
+};
+
     enum NavigationType {
         NavigationTypeLinkClicked,
         NavigationTypeFormSubmitted,

@@ -1,5 +1,29 @@
 2015-04-21  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r180110
+
+    2015-02-14  Alexey Proskuryakov  <ap@apple.com>
+
+            rel="noreferrer" should make window.opener null
+            https://bugs.webkit.org/show_bug.cgi?id=141579
+
+            Reviewed by Darin Adler.
+
+            Unfortunately, these tests are not quite real, because they pass even without the
+            fix. There reason is that delegates respond synchronously in WKTR and DRT.
+
+            But if there is any large refactoring, there is a non-zero chance that the tests
+            will catch future mistakes.
+
+            * http/tests/navigation/resources/target-blank-opener-post-window.php: Added.
+            * http/tests/navigation/resources/target-blank-opener-window.php: Added.
+            * http/tests/navigation/target-blank-opener-expected.txt: Added.
+            * http/tests/navigation/target-blank-opener-post-expected.txt: Added.
+            * http/tests/navigation/target-blank-opener-post.html: Added.
+            * http/tests/navigation/target-blank-opener.html: Added.
+
+2015-04-21  Lucas Forschler  <lforschler@apple.com>
+
         Merge r182835
 
     2015-04-14  Zalan Bujtas  <zalan@apple.com>

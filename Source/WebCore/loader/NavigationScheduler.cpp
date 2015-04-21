@@ -240,7 +240,7 @@ public:
             return;
         FrameLoadRequest frameRequest(requestingDocument->securityOrigin());
         m_submission->populateFrameLoadRequest(frameRequest);
-        frame.loader().loadFrameRequest(frameRequest, lockHistory(), lockBackForwardList(), m_submission->event(), m_submission->state(), MaybeSendReferrer);
+        frame.loader().loadFrameRequest(frameRequest, lockHistory(), lockBackForwardList(), m_submission->event(), m_submission->state(), MaybeSendReferrer, NewFrameOpenerPolicy::Allow);
     }
     
     virtual void didStartTimer(Frame& frame, Timer<NavigationScheduler>& timer) override
