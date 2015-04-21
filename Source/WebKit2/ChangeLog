@@ -1,3 +1,15 @@
+2015-04-21  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Framework header postprocessing should respect additional definitions
+        https://bugs.webkit.org/show_bug.cgi?id=144018
+
+        Reviewed by Anders Carlsson.
+
+        * mac/postprocess-framework-headers.sh: Read definitons from
+        /usr/local/include/WebKitAdditions/Scripts/postprocess-framework-headers-definitions, and
+        have them take precedence over OSX_VERSION and IOS_VERSION and supply additional options to
+        sed.
+
 2015-04-21  Anders Carlsson  <andersca@apple.com>
 
         Fix block signatures

@@ -34,30 +34,46 @@ if [[ -e $TIMESTAMP_PATH && $0 -nt $TIMESTAMP_PATH ]]; then
     rm "${TIMESTAMP_PATH}";
 fi
 
+function process_definitions () {
+    local DEFINITIONS_FILE=$1
+
+    if [[ ! -f "${DEFINITIONS_FILE}" ]]; then
+        return 1
+    fi
+
+    if [[ -e $TIMESTAMP_PATH && "${DEFINITIONS_FILE}" -nt $TIMESTAMP_PATH ]]; then
+        rm "${TIMESTAMP_PATH}";
+    fi
+
+    source "${DEFINITIONS_FILE}"
+}
+
 function rewrite_headers () {
     if [[ "${PLATFORM_NAME}" == "macosx" ]]; then
-        OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET/\./_}
-        IOS_VERSION="NA"
+        [[ -n ${OSX_VERSION} ]] || OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET/\./_}
+        [[ -n ${IOS_VERSION} ]] || IOS_VERSION="NA"
     elif [[ "${PLATFORM_NAME}" =~ "iphone" ]]; then
-        IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET/\./_}
-        OSX_VERSION="NA"
+        [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET/\./_}
+        [[ -n ${OSX_VERSION} ]] || OSX_VERSION="NA"
     fi
 
     for HEADER_PATH in $1/*.h; do
         if [[ $HEADER_PATH -nt $TIMESTAMP_PATH ]]; then
             ditto ${HEADER_PATH} ${TARGET_TEMP_DIR}/${HEADER_PATH##*/}
-
             if [[ -n "$OSX_VERSION" ]] && [[ -n "$IOS_VERSION" ]]; then
                 sed -i .tmp -e s/WK_MAC_TBA/${OSX_VERSION}/g -e s/WK_IOS_TBA/${IOS_VERSION}/g ${TARGET_TEMP_DIR}/${HEADER_PATH##*/} || exit $_
             else
                 sed -i .tmp -E -e 's/WK_(CLASS_|ENUM_)?AVAILABLE(_IOS|_MAC)?\(.+\)//g' -e 's/WK_(CLASS_?)DEPRECATED\(.+\)//g' ${TARGET_TEMP_DIR}/${HEADER_PATH##*/} || exit $_
             fi
 
-            sed -i .tmp -e s/^WK_CLASS_AVAILABLE/NS_CLASS_AVAILABLE/ -e s/WK_AVAILABLE/NS_AVAILABLE/ -e s/^WK_CLASS_DEPRECATED/NS_CLASS_DEPRECATED/ -e s/WK_DEPRECATED/NS_DEPRECATED/ -e s/WK_DESIGNATED_INITIALIZER/NS_DESIGNATED_INITIALIZER/ -e s/WK_ENUM_AVAILABLE/NS_ENUM_AVAILABLE/ -e s/WK_UNAVAILABLE/NS_UNAVAILABLE/ -e s/WK_ASSUME_NONNULL_BEGIN/NS_ASSUME_NONNULL_BEGIN/ -e s/WK_ASSUME_NONNULL_END/NS_ASSUME_NONNULL_END/ -e s/WK_NULLABLE_PROPERTY/nullable,/ -e s/WK_NULLABLE_SPECIFIER/__nullable/g -e s/WK_NULLABLE/nullable/g -e s/WK_NULL_UNSPECIFIED/null_unspecified/ ${TARGET_TEMP_DIR}/${HEADER_PATH##*/} || exit $_
+            sed -i .tmp -e s/^WK_CLASS_AVAILABLE/NS_CLASS_AVAILABLE/ -e s/WK_AVAILABLE/NS_AVAILABLE/ -e s/^WK_CLASS_DEPRECATED/NS_CLASS_DEPRECATED/ -e s/WK_DEPRECATED/NS_DEPRECATED/ -e s/WK_DESIGNATED_INITIALIZER/NS_DESIGNATED_INITIALIZER/ -e s/WK_ENUM_AVAILABLE/NS_ENUM_AVAILABLE/ -e s/WK_UNAVAILABLE/NS_UNAVAILABLE/ -e s/WK_ASSUME_NONNULL_BEGIN/NS_ASSUME_NONNULL_BEGIN/ -e s/WK_ASSUME_NONNULL_END/NS_ASSUME_NONNULL_END/ -e s/WK_NULLABLE_PROPERTY/nullable,/ -e s/WK_NULLABLE_SPECIFIER/__nullable/g -e s/WK_NULLABLE/nullable/g -e s/WK_NULL_UNSPECIFIED/null_unspecified/ ${OTHER_SED_OPTIONS[*]} ${TARGET_TEMP_DIR}/${HEADER_PATH##*/} || exit $_
             mv ${TARGET_TEMP_DIR}/${HEADER_PATH##*/} $HEADER_PATH
         fi
     done
 }
+
+DEFINITIONS_PATH=usr/local/include/WebKitAdditions/Scripts/postprocess-framework-headers-definitions
+process_definitions "${BUILT_PRODUCTS_DIR}/${DEFINITIONS_PATH}" || process_definitions "${SDKROOT}/${DEFINITIONS_PATH}"
 
 rewrite_headers ${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}
 rewrite_headers ${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}
