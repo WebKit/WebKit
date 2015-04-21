@@ -31,6 +31,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DataTransfer.h"
+#include "DictionaryLookup.h"
 #include "DragController.h"
 #include "EventNames.h"
 #include "FocusController.h"
@@ -45,6 +46,7 @@
 #include "Page.h"
 #include "Pasteboard.h"
 #include "PlatformEventFactoryMac.h"
+#include "Range.h"
 #include "RenderLayer.h"
 #include "RenderListBox.h"
 #include "RenderWidget.h"
@@ -1005,6 +1007,15 @@ void EventHandler::platformNotifyIfEndGesture(const PlatformWheelEvent& wheelEve
     if (ScrollAnimator* scrollAnimator = scrollableArea->existingScrollAnimator())
         scrollAnimator->processWheelEventForScrollSnap(wheelEvent);
 #endif
+}
+
+VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(const HitTestResult& result)
+{
+    NSDictionary *options = nil;
+    if (RefPtr<Range> range = rangeForDictionaryLookupAtHitTestResult(result, &options))
+        return VisibleSelection(range.get());
+
+    return VisibleSelection();
 }
 
 }

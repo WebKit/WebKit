@@ -1,3 +1,22 @@
+2015-04-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Context menu doesn't account for selection semantics
+        https://bugs.webkit.org/show_bug.cgi?id=143958
+        <rdar://problem/19735706>
+
+        Reviewed by Tim Horton.
+
+        Before using the default word-only selection, check with the
+        lookup service to see if we can get a semantically appropriate
+        selection.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromHitTestResultBasedOnLookup):
+        (WebCore::EventHandler::selectClosestWordFromHitTestResult):
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::selectClosestWordFromHitTestResultBasedOnLookup):
+
 2015-04-21  Anders Carlsson  <andersca@apple.com>
 
         Get rid of an unneeded function from LoaderNSURLExtras.mm
