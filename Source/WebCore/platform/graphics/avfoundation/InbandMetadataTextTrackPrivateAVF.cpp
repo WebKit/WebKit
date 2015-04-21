@@ -74,7 +74,7 @@ void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(double time)
     if (time >= m_currentCueStartTime) {
         if (client()) {
             for (auto& partialCue : m_incompleteCues) {
-                LOG(Media, "InbandMetadataTextTrackPrivateAVF::addDataCue(%p) - updating cue: start=%s, end=%s", this, toString(partialCue.startTime).utf8().data(), toString(time).utf8().data());
+                LOG(Media, "InbandMetadataTextTrackPrivateAVF::addDataCue(%p) - updating cue: start=%s, end=%s", this, toString(partialCue->startTime()).utf8().data(), toString(time).utf8().data());
                 client()->updateDataCue(this, partialCue->startTime(), time, partialCue->cueData());
             }
         }
