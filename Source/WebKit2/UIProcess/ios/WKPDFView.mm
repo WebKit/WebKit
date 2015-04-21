@@ -373,7 +373,7 @@ typedef struct {
     _isStartingZoom = NO;
 }
 
-- (void)_highlightLinkAnnotation:(UIPDFLinkAnnotation *)linkAnnotation forDuration:(NSTimeInterval)duration completionHandler:(void (^)())completionHandler
+- (void)_highlightLinkAnnotation:(UIPDFLinkAnnotation *)linkAnnotation forDuration:(NSTimeInterval)duration completionHandler:(void (^)(void))completionHandler
 {
     static const CGFloat highlightBorderRadius = 3;
     static const CGFloat highlightColorComponent = 26.0 / 255;

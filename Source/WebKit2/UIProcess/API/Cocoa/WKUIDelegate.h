@@ -71,7 +71,7 @@ WK_ASSUME_NONNULL_BEGIN
 
  If you do not implement this method, the web view will behave as if the user selected the OK button.
  */
-- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler;
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler;
 
 /*! @abstract Displays a JavaScript confirm panel.
  @param webView The web view invoking the delegate method.

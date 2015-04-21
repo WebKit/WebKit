@@ -47,8 +47,8 @@ WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 + (NSSet *)allWebsiteDataTypes;
 
 - (void)fetchDataRecordsOfTypes:(NSSet *)websiteDataTypes completionHandler:(void (^)(NSArray *))completionHandler;
-- (void)removeDataOfTypes:(NSSet *)websiteDataTypes forDataRecords:(NSArray *)dataRecords completionHandler:(void (^)())completionHandler;
-- (void)removeDataOfTypes:(NSSet *)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler;
+- (void)removeDataOfTypes:(NSSet *)websiteDataTypes forDataRecords:(NSArray *)dataRecords completionHandler:(void (^)(void))completionHandler;
+- (void)removeDataOfTypes:(NSSet *)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)(void))completionHandler;
 
 @end
 

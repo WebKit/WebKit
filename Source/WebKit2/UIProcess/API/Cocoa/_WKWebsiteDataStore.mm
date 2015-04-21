@@ -80,12 +80,12 @@ static RetainPtr<NSSet> toWKWebsiteDataTypes(_WKWebsiteDataTypes websiteDataType
     [super fetchDataRecordsOfTypes:toWKWebsiteDataTypes(websiteDataTypes).get() completionHandler:completionHandler];
 }
 
-- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes forDataRecords:(NSArray *)dataRecords completionHandler:(void (^)())completionHandler
+- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes forDataRecords:(NSArray *)dataRecords completionHandler:(void (^)(void))completionHandler
 {
     [super removeDataOfTypes:toWKWebsiteDataTypes(websiteDataTypes).get() forDataRecords:dataRecords completionHandler:completionHandler];
 }
 
-- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler
+- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)(void))completionHandler
 {
     [super removeDataOfTypes:toWKWebsiteDataTypes(websiteDataTypes).get() modifiedSince:date completionHandler:completionHandler];
 }

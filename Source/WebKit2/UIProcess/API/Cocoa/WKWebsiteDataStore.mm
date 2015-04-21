@@ -91,7 +91,7 @@ static std::chrono::system_clock::time_point toSystemClockTime(NSDate *date)
     });
 }
 
-- (void)removeDataOfTypes:(NSSet *)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler
+- (void)removeDataOfTypes:(NSSet *)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)(void))completionHandler
 {
     auto completionHandlerCopy = Block_copy(completionHandler);
     _websiteDataStore->websiteDataStore().removeData(WebKit::toWebsiteDataTypes(websiteDataTypes), toSystemClockTime(date ? date : [NSDate distantPast]), [completionHandlerCopy] {
@@ -110,7 +110,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     return result;
 }
 
-- (void)removeDataOfTypes:(NSSet *)websiteDataTypes forDataRecords:(NSArray *)dataRecords completionHandler:(void (^)())completionHandler
+- (void)removeDataOfTypes:(NSSet *)websiteDataTypes forDataRecords:(NSArray *)dataRecords completionHandler:(void (^)(void))completionHandler
 {
     auto completionHandlerCopy = Block_copy(completionHandler);
 
