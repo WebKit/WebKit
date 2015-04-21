@@ -41,7 +41,7 @@ DisplayRefreshMonitorClient::DisplayRefreshMonitorClient()
 
 DisplayRefreshMonitorClient::~DisplayRefreshMonitorClient()
 {
-    DisplayRefreshMonitorManager::sharedManager().unregisterClient(this);
+    DisplayRefreshMonitorManager::sharedManager().unregisterClient(*this);
 }
 
 void DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded(double timestamp)

@@ -295,7 +295,7 @@ public:
     virtual GraphicsLayerFactory* graphicsLayerFactory() const { return nullptr; }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    virtual PassRefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const { return nullptr; }
+    virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const { return nullptr; }
 #endif
 
     // Pass 0 as the GraphicsLayer to detatch the root layer.

@@ -104,7 +104,7 @@ GraphicsLayerFactory* RemoteLayerTreeDrawingArea::graphicsLayerFactory()
     return m_remoteLayerTreeContext.get();
 }
 
-PassRefPtr<DisplayRefreshMonitor> RemoteLayerTreeDrawingArea::createDisplayRefreshMonitor(PlatformDisplayID displayID)
+RefPtr<DisplayRefreshMonitor> RemoteLayerTreeDrawingArea::createDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
     RefPtr<RemoteLayerTreeDisplayRefreshMonitor> monitor = RemoteLayerTreeDisplayRefreshMonitor::create(displayID, *this);
     m_displayRefreshMonitors.add(monitor.get());

@@ -81,6 +81,7 @@
 #include "PseudoElement.h"
 #include "Range.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderLayerCompositor.h"
 #include "RenderMenuList.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
@@ -1942,6 +1943,28 @@ void Internals::stopTrackingRepaints(ExceptionCode& ec)
 
     FrameView* frameView = document->view();
     frameView->setTracksRepaints(false);
+}
+
+void Internals::startTrackingLayerFlushes(ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->renderView()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    document->renderView()->compositor().startTrackingLayerFlushes();
+}
+
+unsigned long Internals::layerFlushCount(ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->renderView()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return document->renderView()->compositor().layerFlushCount();
 }
 
 void Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(ExceptionCode& ec)

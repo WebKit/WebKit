@@ -1,18 +1,53 @@
-2015-03-16  Babak Shafiei  <bshafiei@apple.com>
+2015-04-20  Lucas Forschler  <lforschler@apple.com>
 
-        Merge patch for rdar://problem/20155503.
+        Merge r181656 & r182985.
 
-    2015-03-13  Enrica Casucci  <enrica@apple.com>
+    2015-04-18  Simon Fraser  <simon.fraser@apple.com>
 
-            Webkit crash in WebKit::nextFocusableElement() when typing TAB on external keyboard
-            rdar://problem/20155503
+            REGRESSION (r181656): Animated tiled layers are missing content
+            https://bugs.webkit.org/show_bug.cgi?id=143911
+            rdar://problem/20596328
 
-            Reviewed by David Kilzer.
+            Reviewed by Darin Adler.
+        
+            After r181656, all requestAnimationFrame was falling back to timers, and not
+            using the platform's DisplayRefreshMonitor, because of a Nullopt vs nullptr
+            fumble.
+        
+            Replace this confusing Optional<> code with simpler code that just forces the
+            clients to make a DisplayRefreshMonitor if they can, first asking
+            ChromeClient, and then falling back to createDefaultDisplayRefreshMonitor().
+        
+            Make lots of things into references, and use C++11 initialization in some places.
 
-            Adding null check!
+            * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+            (WebKit::WebChromeClient::createDisplayRefreshMonitor):
+            * WebProcess/WebCoreSupport/WebChromeClient.h:
 
-            * WebProcess/WebPage/ios/WebPageIOS.mm:
-            (WebKit::nextFocusableElement):
+    2015-03-17  Timothy Horton  <timothy_horton@apple.com>
+
+            Reproducible null deref under ScriptedAnimationController::createDisplayRefreshMonitor
+            https://bugs.webkit.org/show_bug.cgi?id=142776
+            <rdar://problem/18921338>
+
+            Reviewed by Alexey Proskuryakov.
+
+            * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+            (WebKit::WebChromeClient::createDisplayRefreshMonitor):
+            * WebProcess/WebCoreSupport/WebChromeClient.h:
+            Adjust to the new signature.
+
+2015-03-13  Enrica Casucci  <enrica@apple.com>
+
+        Webkit crash in WebKit::nextFocusableElement() when typing TAB on external keyboard
+        rdar://problem/20155503
+
+        Reviewed by David Kilzer.
+
+        Adding null check!
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::nextFocusableElement):
 
 2015-03-12  Babak Shafiei  <bshafiei@apple.com>
 

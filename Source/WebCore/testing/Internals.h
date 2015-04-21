@@ -279,6 +279,10 @@ public:
 
     void startTrackingRepaints(ExceptionCode&);
     void stopTrackingRepaints(ExceptionCode&);
+
+    void startTrackingLayerFlushes(ExceptionCode&);
+    unsigned long layerFlushCount(ExceptionCode&);
+    
     void updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(ExceptionCode&);
     void updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node*, ExceptionCode&);
 

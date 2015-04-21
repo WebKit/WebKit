@@ -241,6 +241,9 @@
     [RaisesException] void startTrackingRepaints();
     [RaisesException] void stopTrackingRepaints();
 
+    [RaisesException] void startTrackingLayerFlushes();
+    [RaisesException] unsigned long layerFlushCount();
+
     // |node| should be Document, HTMLIFrameElement, or unspecified.
     // If |node| is an HTMLIFrameElement, it assumes node.contentDocument is
     // specified without security checks. Unspecified means this document.

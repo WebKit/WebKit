@@ -36,9 +36,9 @@ class GraphicsLayerUpdater;
 class GraphicsLayerUpdaterClient {
 public:
     virtual ~GraphicsLayerUpdaterClient() { }
-    virtual void flushLayersSoon(GraphicsLayerUpdater*) = 0;
+    virtual void flushLayersSoon(GraphicsLayerUpdater&) = 0;
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    virtual PassRefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const = 0;
+    virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const = 0;
 #endif
 };
 
@@ -48,21 +48,21 @@ class GraphicsLayerUpdater
 #endif
 {
 public:
-    GraphicsLayerUpdater(GraphicsLayerUpdaterClient*, PlatformDisplayID);
+    GraphicsLayerUpdater(GraphicsLayerUpdaterClient&, PlatformDisplayID);
     virtual ~GraphicsLayerUpdater();
 
     void scheduleUpdate();
     void screenDidChange(PlatformDisplayID);
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    virtual PassRefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
+    virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
 #endif
 
 private:
     virtual void displayRefreshFired(double timestamp);
 
-    GraphicsLayerUpdaterClient* m_client;
-    bool m_scheduled;
+    GraphicsLayerUpdaterClient& m_client;
+    bool m_scheduled { false };
 };
 
 } // namespace WebCore

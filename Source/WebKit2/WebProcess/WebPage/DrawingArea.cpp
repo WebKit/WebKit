@@ -93,7 +93,7 @@ TransformationMatrix DrawingArea::rootLayerTransform() const
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-PassRefPtr<WebCore::DisplayRefreshMonitor> DrawingArea::createDisplayRefreshMonitor(PlatformDisplayID)
+RefPtr<WebCore::DisplayRefreshMonitor> DrawingArea::createDisplayRefreshMonitor(PlatformDisplayID)
 {
     return nullptr;
 }
