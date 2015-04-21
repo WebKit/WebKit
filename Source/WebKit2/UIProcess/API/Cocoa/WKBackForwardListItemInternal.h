@@ -35,9 +35,6 @@ inline WKBackForwardListItem *wrapper(WebBackForwardListItem& item) { ASSERT([it
 }
 
 @interface WKBackForwardListItem () <WKObject>
-@end
-
-@interface WKBackForwardListItem (Internal)
 
 @property (readonly) WebKit::WebBackForwardListItem& _item;
 

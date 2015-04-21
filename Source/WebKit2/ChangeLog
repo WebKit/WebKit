@@ -1,3 +1,14 @@
+2015-04-21  Dan Bernstein  <mitz@apple.com>
+
+        Merged WKBackForwardListItem’s Internal category into the class extension in WKBackForwardListItemInternal.h.
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKBackForwardListItem.mm:
+        (-[WKBackForwardListItem _item]):
+        (-[WKBackForwardListItem _apiObject]):
+        * UIProcess/API/Cocoa/WKBackForwardListItemInternal.h:
+
 2015-04-21  Chris Dumez  <cdumez@apple.com>
 
         Make Vector(const Vector<T, otherCapacity, otherOverflowBehaviour>&) constructor explicit

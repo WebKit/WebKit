@@ -61,18 +61,14 @@ using namespace WebKit;
     return [NSURL _web_URLWithWTFString:_item->originalURL()];
 }
 
-#pragma mark WKObject protocol implementation
-
-- (API::Object&)_apiObject
+- (WebKit::WebBackForwardListItem&)_item
 {
     return *_item;
 }
 
-@end
+#pragma mark WKObject protocol implementation
 
-@implementation WKBackForwardListItem (Internal)
-
-- (WebKit::WebBackForwardListItem&)_item
+- (API::Object&)_apiObject
 {
     return *_item;
 }
