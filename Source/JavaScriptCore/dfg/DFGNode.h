@@ -575,6 +575,7 @@ struct Node {
         ASSERT(m_op == NewObject || m_op == MaterializeNewObject);
         m_op = PhantomNewObject;
         m_flags &= ~NodeHasVarArgs;
+        m_flags |= NodeMustGenerate;
         m_opInfo = 0;
         m_opInfo2 = 0;
         children = AdjacencyList();
