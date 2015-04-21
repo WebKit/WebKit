@@ -1126,10 +1126,6 @@ void Graph::registerFrozenValues()
     }
     m_codeBlock->constants().shrinkToFit();
     m_codeBlock->constantsSourceCodeRepresentation().shrinkToFit();
-    
-    // We have no use DFG IR have no need for FunctionExecutable*'s in the CodeBlock, since we
-    // use frozen values to refer to them.
-    m_codeBlock->jettisonFunctionDeclsAndExprs();
 }
 
 void Graph::visitChildren(SlotVisitor& visitor)

@@ -599,8 +599,6 @@ public:
     int numberOfFunctionDecls() { return m_functionDecls.size(); }
     FunctionExecutable* functionExpr(int index) { return m_functionExprs[index].get(); }
     
-    void jettisonFunctionDeclsAndExprs();
-
     RegExp* regexp(int index) const { return m_unlinkedCode->regexp(index); }
 
     unsigned numberOfConstantBuffers() const

@@ -2936,12 +2936,6 @@ bool CodeBlock::findConstant(JSValue v, unsigned& index)
     return false;
 }
 
-void CodeBlock::jettisonFunctionDeclsAndExprs()
-{
-    m_functionDecls.clear();
-    m_functionExprs.clear();
-}
-
 #if ENABLE(JIT)
 void CodeBlock::unlinkCalls()
 {
