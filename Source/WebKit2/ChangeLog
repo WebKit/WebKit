@@ -1,5 +1,23 @@
 2015-04-20  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r181919
+
+    2015-03-24  Enrica Casucci  <enrica@apple.com>
+
+            [iOS] Remove unused keyboard code in WKSelectPopover class.
+            https://bugs.webkit.org/show_bug.cgi?id=143021
+
+            Reviewed by Joseph Pecoraro.
+
+            WKSelectPopover created an instance of UIKeyboard that was
+            initialized in initWithView but never used. Removing the
+            obsolete code.
+
+            * UIProcess/ios/forms/WKFormSelectPopover.mm:
+            (-[WKSelectPopover initWithView:hasGroups:]):
+
+2015-04-20  Lucas Forschler  <lforschler@apple.com>
+
         Merge r181869
 
     2015-03-23  Enrica Casucci  <enrica@apple.com>
