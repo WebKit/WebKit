@@ -64,6 +64,10 @@ class Database
         return $value == 't';
     }
 
+    static function to_database_boolean($value) {
+        return $value ? 't' : 'f';
+    }
+
     static function to_js_time($time_str) {
         $timestamp_in_s = strtotime($time_str);
         $dot_index = strrpos($time_str, '.');

@@ -1146,6 +1146,32 @@ App.AnalysisTaskController = Ember.Controller.extend({
     roots: [],
     bugTrackers: [],
     possibleRepetitionCounts: [1, 2, 3, 4, 5, 6],
+    analysisResultOptions: [
+        {label: 'Still in investigation', result: null},
+        {label: 'Inconclusive', result: 'inconclusive', needed: true},
+        {label: 'Definite progression', result: 'progression', needed: true},
+        {label: 'Definite regression', result: 'regression', needed: true},
+        {label: 'No change', result: 'unchanged', needsFeedback: true},
+    ],
+    shouldNotHaveBeenCreated: false,
+    needsFeedback: function ()
+    {
+        var chosen = this.get('chosenAnalysisResult');
+        return chosen && chosen.needsFeedback;
+    }.property('chosenAnalysisResult'),
+    _updateChosenAnalysisResult: function ()
+    {
+        var analysisTask = this.get('model');
+        if (!analysisTask)
+            return;
+        var currentResult = analysisTask.get('result');
+        for (var option of this.analysisResultOptions) {
+            if (option.result == currentResult) {
+                this.set('chosenAnalysisResult', option);
+                break;                
+            }
+        }
+    }.observes('model'),
     _taskUpdated: function ()
     {
         var model = this.get('model');
@@ -1285,6 +1311,24 @@ App.AnalysisTaskController = Ember.Controller.extend({
                 }, function (error) {
                     alert('Failed to associate the bug: ' + error);
                 });
+        },
+        saveStatus: function ()
+        {
+            var chosenResult = this.get('chosenAnalysisResult');
+            var analysisTask = this.get('model');
+            analysisTask.set('result', chosenResult.result);
+            if (chosenResult.needed)
+                analysisTask.set('needed', true);
+            else if (chosenResult.needsFeedback && this.get('notNeeded'))
+                analysisTask.set('needed', false);
+            else
+                analysisTask.set('needed', null);
+
+            analysisTask.saveStatus().then(function () {
+                alert('Saved the status');
+            }, function (error) {
+                alert('Failed to save the status: ' + error);
+            });
         },
         createTestGroup: function (name, repetitionCount)
         {

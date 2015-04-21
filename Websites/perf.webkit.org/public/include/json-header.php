@@ -56,6 +56,11 @@ function require_format($name, $value, $pattern) {
         exit_with_error('Invalid' . $name, array('value' => $value));
 }
 
+function require_match_one_of_values($name, $value, $valid_values) {
+    if (!in_array($value, $valid_values))
+        exit_with_error('Invalid' . $name, array('value' => $value));
+}
+
 function require_existence_of($array, $list_of_arguments, $prefix = '') {
     if ($prefix)
         $prefix .= '_';

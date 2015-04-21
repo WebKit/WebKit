@@ -174,6 +174,7 @@ CREATE TABLE reports (
     report_failure varchar(64),
     report_failure_details text);
 
+CREATE TYPE analysis_task_result_type as ENUM ('progression', 'regression', 'unchanged', 'inconclusive');
 CREATE TABLE analysis_tasks (
     task_id serial PRIMARY KEY,
     task_name varchar(256) NOT NULL,
@@ -183,6 +184,8 @@ CREATE TABLE analysis_tasks (
     task_metric integer REFERENCES test_metrics NOT NULL,
     task_start_run integer REFERENCES test_runs,
     task_end_run integer REFERENCES test_runs,
+    task_result analysis_task_result_type,
+    task_needed boolean,
     CONSTRAINT analysis_task_should_be_unique_for_range UNIQUE(task_start_run, task_end_run),
     CONSTRAINT analysis_task_should_not_be_associated_with_single_run
         CHECK ((task_start_run IS NULL AND task_end_run IS NULL) OR (task_start_run IS NOT NULL AND task_end_run IS NOT NULL)));

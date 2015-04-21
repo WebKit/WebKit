@@ -12,10 +12,23 @@ App.AnalysisTask = App.NameLabelModel.extend({
     bugs: DS.hasMany('bugs'),
     buildRequestCount: DS.attr('number'),
     finishedBuildRequestCount: DS.attr('number'),
+    result: DS.attr('string'),
+    needed: DS.attr('number'), // DS.attr('boolean') treats null as false.
+    saveStatus: function ()
+    {
+        return PrivilegedAPI.sendRequest('update-analysis-task', {
+            task: this.get('id'),
+            result: this.get('result'),
+            needed: this.get('needed'),
+        });
+    },
     statusLabel: function ()
     {
         var total = this.get('buildRequestCount');
         var finished = this.get('finishedBuildRequestCount');
+        var result = this.get('result');
+        if (result && total == finished)
+            return result.capitalize();
         if (!total)
             return 'Empty';
         if (total != finished)

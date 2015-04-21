@@ -604,21 +604,11 @@
                 </div>
                 <div class="details">
                     <div class="details-table-container">
-                        <table class="analysis-bugs">
-                            <tbody>
-                                {{#each bugTrackers}}
-                                    <tr>
-                                        <th><label {{bind-attr for=elementId}}>{{label}}</label></th>
-                                        <td>
-                                            <form {{action "associateBug" this editedBugNumber on="submit"}}>
-                                                {{input id=elementId type=text value=editedBugNumber}}
-                                            </form>
-                                        </td>
-                                    </tr>
-                                {{/each}}
-                            </tbody>
-                        </table>
-                        {{partial "chart-details"}}
+                        {{#if details}}
+                            {{partial "chart-details"}}
+                        {{else}}
+                            {{partial "analysisStatusForm"}}
+                        {{/if}}
                     </div>
                 </div>
             </section>
@@ -741,6 +731,36 @@
             </section>
         </form>
     {{/if}}
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="analysisStatusForm">
+        <table class="analysis-bugs">
+            <tbody>
+                {{#each bugTrackers}}
+                    <tr>
+                        <th><label {{bind-attr for=elementId}}>{{label}}</label></th>
+                        <td>
+                            <form {{action "associateBug" this editedBugNumber on="submit"}}>
+                                {{input id=elementId type=text value=editedBugNumber}}
+                            </form>
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+            <tbody>
+                <tr>
+                    <th><label for="analysis-status">Status<label></th>
+                    <td>
+                        <form class="analysis-bugs" {{action "saveStatus" on="submit"}}>
+                            {{view Ember.Select id="analysis-status" content=analysisResultOptions optionValuePath="content"
+                                optionLabelPath="content.label" selection=chosenAnalysisResult}}
+                            <input type="submit" value="Save"><br>
+                            <label {{bind-attr class="needsFeedback::hidden"}}>{{input type=checkbox checked=notNeeded}} This should not have been created</label>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </script>
 
 </head>

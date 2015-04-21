@@ -86,6 +86,8 @@ function format_task($task_row) {
         'metric' => $task_row['task_metric'],
         'startRun' => $task_row['task_start_run'],
         'endRun' => $task_row['task_end_run'],
+        'result' => $task_row['task_result'],
+        'needed' => $task_row['task_needed'] ? Database::is_true($task_row['task_needed']) : null,
         'bugs' => array(),
     );
 }

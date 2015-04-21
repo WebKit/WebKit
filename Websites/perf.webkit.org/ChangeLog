@@ -1,3 +1,39 @@
+2015-04-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard should have UI to set status on analysis tasks
+        https://bugs.webkit.org/show_bug.cgi?id=143977
+
+        Reviewed by Chris Dumez.
+
+        Added the UI to set the result of an analysis task to 'progression', 'regression', 'unchanged', and 'inconclusive'
+        as well as a boolean indicating whether creating the analysis task was the right thing to do or not.
+        The latter will be a useful metric once we start automatically creating analysis tasks.
+
+        * init-database.sql: Added two columns to analysis_tasks table.
+        * public/api/analysis-tasks.php: Include the added columns in the JSON.
+        * public/include/db.php:
+        (Database::to_database_boolean): Added.
+        * public/include/json-header.php:
+        (require_match_one_of_values): Added.
+        * public/privileged-api/update-analysis-task.php: Added. Updates 'result' and 'needed' values of an analysis task.
+        (main):
+        * public/v2/analysis.js:
+        (App.AnalysisTask.result): Added.
+        (App.AnalysisTask.needed): Added. We don't use DS.attr('boolean') here since that would coerce null into false
+        and we want to differentiate null from false in order to differentiate the null-ness of the value.
+        (App.AnalysisTask.saveStatus): Added.
+        (App.AnalysisTask.statusLabel): Use 'result' as the label if it's set and all build requests have been processed.
+        * public/v2/app.css:
+        * public/v2/app.js:
+        (App.AnalysisTaskController.analysisResultOptions): Added.
+        (App.AnalysisTaskController.shouldNotHaveBeenCreated): Added.
+        (App.AnalysisTaskController.needsFeedback): Added. Show the checkbox to indicate the analysis task should not have
+        been created if 'no change' is selected.
+        (App.AnalysisTaskController._updateChosenAnalysisResult): Added.
+        (App.AnalysisTaskController.actions.saveStatus): Added.
+        * public/v2/index.html: Extracted a partial template for updating the bug numbers. Also added the UI to update
+        'result' and 'needed' values of the analysis task.
+
 2015-04-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix. Updated config.json after recent changes.

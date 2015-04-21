@@ -570,7 +570,23 @@ form .analysis-group > * {
     margin: 0.2rem 0;
 }
 
+.analysis-bugs {
+    margin: 0;
+    padding: 0;
+}
+
 .analysis-bugs th {
     font-weight: normal;
     text-align: right;
+    width: 8rem;
+}
+
+.analysis-bugs td {
+    font-weight: normal;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.analysis-bugs .hidden {
+    display: none;
 }
