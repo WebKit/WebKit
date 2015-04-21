@@ -1,5 +1,58 @@
 2015-04-20  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r181991
+
+    2015-03-25  Chris Dumez  <cdumez@apple.com>
+
+            [WK2] WebFrameLoaderClient::dispatchDecidePolicyForResponse() should always call the FramePolicyFunction
+            https://bugs.webkit.org/show_bug.cgi?id=143036
+            <rdar://problem/20252438>
+            <rdar://problem/13811738>
+
+            Reviewed by Alexey Proskuryakov.
+
+            WebFrameLoaderClient::dispatchDecidePolicyForResponse() should always
+            call the FramePolicyFunction. Previously, it would fail to do in 2
+            cases:
+            - m_frame->page() returns null
+            or
+            - webPage->sendSync() returns false
+
+            If the FramePolicyFunction is not called, we will fail to clear the
+            callback in the PolicyChecker and
+            DocumentLoader::continueAfterContentPolicy() will not be called.
+
+            DocumentLoader::continueAfterContentPolicy() is in charge of resetting
+            m_waitingForContentPolicy flag to false. This could therefore explain
+            the following assertion being hit in DocumentLoader::detachFromFrame()
+            (see <rdar://problem/20252438>):
+            RELEASE_ASSERT(!m_waitingForContentPolicy)
+
+            Also, as the PolicyChecker callback is not cleared, it could make it
+            possible for DocumentLoader::continueAfterContentPolicy() to be called
+            *after* the load is finished, when later canceling the PolicyCallback:
+            FrameLoader::stopAllLoaders()
+             -> PolicyChecker::stopCheck()
+              -> PolicyCallback::cancel()
+               -> DocumentLoader::continueAfterContentPolicy(PolicyIgnore)
+
+            Calling continueAfterContentPolicy(PolicyIgnore) after the load is
+            finished would be bad and could explain some of the crashes we've seen
+            in DocumentLoader::continueAfterContentPolicy() ->
+            DocumentLoader:: stopLoadingForPolicyChange() (see
+            <rdar://problem/13811738>).
+
+            This patch also applies the same fix to
+            dispatchDecidePolicyForNewWindowAction() and
+            dispatchDecidePolicyForNavigationAction() as they use the same pattern.
+
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+            (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+            (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
+2015-04-20  Lucas Forschler  <lforschler@apple.com>
+
         Merge r181919
 
     2015-03-24  Enrica Casucci  <enrica@apple.com>
