@@ -1,3 +1,20 @@
+2015-04-20  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Unreviewed, update test expectations and rebaseline failing tests.
+
+        Remove some expected failures from tests that are passing.
+        Also rebaselined failing tests.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/dom/Element/getClientRects-expected.txt: Added. Rebaselined after r177774.
+        * platform/efl/fast/dom/Range/getClientRects-expected.txt: Ditto.
+        * platform/efl/fast/line-grid/line-align-right-edges-expected.png: Rebaselined after r177128.
+        * platform/efl/fast/line-grid/line-align-right-edges-expected.txt: Ditto.
+        * platform/efl/fast/table/022-expected.png: Rebaselined after r177774.
+        * platform/efl/fast/table/022-expected.txt: Added. Ditto.
+        * platform/efl/fast/text/wbr-pre-expected.png: Rebaselined after r177774.
+        * platform/efl/fast/text/wbr-pre-expected.txt: Added. Ditto.
+
 2015-04-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVGFitToViewBox::viewBoxToViewTransform() has to count for zero physical width and height before calling SVGPreserveAspectRatio::getCTM()

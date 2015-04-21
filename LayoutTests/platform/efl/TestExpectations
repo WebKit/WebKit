@@ -2232,7 +2232,6 @@ webkit.org/b/131044 media/video-controls-toggling.html [ Timeout ]
 webkit.org/b/143663 accessibility/plugin.html [ Failure ]
 
 webkit.org/b/143877 fast/forms/input-auto-fill-button.html [ Failure ]
-webkit.org/b/143877 fast/forms/listbox-hit-test-zoomed.html [ Failure ]
 webkit.org/b/143877 fast/forms/listbox-visible-size.html [ Failure ]
 webkit.org/b/143877 fast/forms/range/slider-padding.html [ Failure ]
 webkit.org/b/143877 fast/forms/textarea-scroll-height.html [ Failure ]
@@ -2240,3 +2239,7 @@ webkit.org/b/143877 fast/forms/textarea-scroll-height.html [ Failure ]
 webkit.org/b/143878 http/tests/navigation/javascriptlink-frames.html [ Failure ]
 webkit.org/b/143878 http/tests/navigation/postredirect-basic.html [ Failure ]
 webkit.org/b/143878 http/tests/navigation/postredirect-goback1.html [ Failure ]
+
+# This tests are passing on EFL but they do not in the Apple ports
+mathml/presentation/style-changed.html [ Pass ]
+transitions/svg-text-shadow-transition.html [ Pass ]
