@@ -246,7 +246,7 @@ void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, cons
     if (m_cacheEntryForValidation) {
         bool validationSucceeded = m_response.httpStatusCode() == 304; // 304 Not Modified
         if (validationSucceeded)
-            NetworkCache::singleton().update(originalRequest(), *m_cacheEntryForValidation, m_response);
+            NetworkCache::singleton().update(originalRequest(), m_parameters.webPageID, *m_cacheEntryForValidation, m_response);
         else
             m_cacheEntryForValidation = nullptr;
     }

@@ -52,6 +52,7 @@ public:
     void recordNotUsingCacheForRequest(uint64_t webPageID, const Key&, const WebCore::ResourceRequest&, RetrieveDecision);
     void recordRetrievalFailure(uint64_t webPageID, const Key&, const WebCore::ResourceRequest&);
     void recordRetrievedCachedEntry(uint64_t webPageID, const Key&, const WebCore::ResourceRequest&, UseDecision);
+    void recordRevalidationSuccess(uint64_t webPageID, const Key&, const WebCore::ResourceRequest&);
 
 private:
     explicit Statistics(const String& databasePath);

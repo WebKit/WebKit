@@ -385,7 +385,7 @@ void Cache::store(const WebCore::ResourceRequest& originalRequest, const WebCore
     });
 }
 
-void Cache::update(const WebCore::ResourceRequest& originalRequest, const Entry& existingEntry, const WebCore::ResourceResponse& validatingResponse)
+void Cache::update(const WebCore::ResourceRequest& originalRequest, uint64_t webPageID, const Entry& existingEntry, const WebCore::ResourceResponse& validatingResponse)
 {
     LOG(NetworkCache, "(NetworkProcess) updating %s", originalRequest.url().string().latin1().data());
 
@@ -397,6 +397,9 @@ void Cache::update(const WebCore::ResourceRequest& originalRequest, const Entry&
     auto updateRecord = updateEntry.encodeAsStorageRecord();
 
     m_storage->store(updateRecord, { });
+
+    if (m_statistics)
+        m_statistics->recordRevalidationSuccess(webPageID, existingEntry.key(), originalRequest);
 }
 
 void Cache::remove(const Key& key)

@@ -1,3 +1,17 @@
+2015-04-21  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NetworkCache] Better account of resource revalidations in efficacy logging
+        https://bugs.webkit.org/show_bug.cgi?id=144014
+
+        Reviewed by Antti Koivisto.
+
+        Add additional diagnostic logging key for network cache efficacy
+        logging.
+
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::needsRevalidationKey):
+        * page/DiagnosticLoggingKeys.h:
+
 2015-04-21  Brent Fulgham  <bfulgham@apple.com>
 
         Context menu doesn't account for selection semantics

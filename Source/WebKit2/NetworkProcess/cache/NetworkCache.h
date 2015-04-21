@@ -94,7 +94,7 @@ public:
     // Completion handler may get called back synchronously on failure.
     void retrieve(const WebCore::ResourceRequest&, uint64_t webPageID, std::function<void (std::unique_ptr<Entry>)>);
     void store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&, std::function<void (MappedBody&)>);
-    void update(const WebCore::ResourceRequest&, const Entry&, const WebCore::ResourceResponse& validatingResponse);
+    void update(const WebCore::ResourceRequest&, uint64_t webPageID, const Entry&, const WebCore::ResourceResponse& validatingResponse);
 
     void traverse(std::function<void (const Entry*)>&&);
     void remove(const Key&);

@@ -103,6 +103,11 @@ String DiagnosticLoggingKeys::navigationKey()
     return ASCIILiteral("navigation");
 }
 
+String DiagnosticLoggingKeys::needsRevalidationKey()
+{
+    return ASCIILiteral("needsRevalidation");
+}
+
 String DiagnosticLoggingKeys::networkCacheKey()
 {
     return ASCIILiteral("networkCache");

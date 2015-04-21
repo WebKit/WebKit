@@ -287,15 +287,29 @@ static String cachedEntryReuseFailureToDiagnosticKey(UseDecision decision)
 void Statistics::recordRetrievedCachedEntry(uint64_t webPageID, const Key& key, const WebCore::ResourceRequest& request, UseDecision decision)
 {
     WebCore::URL requestURL = request.url();
-    if (decision == UseDecision::Use || decision == UseDecision::Validate) {
+    if (decision == UseDecision::Use) {
         LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s is in the cache and is used", webPageID, requestURL.string().ascii().data());
         NetworkProcess::singleton().logDiagnosticMessageWithResult(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::retrievalKey(), WebCore::DiagnosticLoggingResultPass, WebCore::ShouldSample::Yes);
+        return;
+    }
+
+    if (decision == UseDecision::Validate) {
+        LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s is in the cache but needs revalidation", webPageID, requestURL.string().ascii().data());
+        NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::retrievalKey(), WebCore::DiagnosticLoggingKeys::needsRevalidationKey(), WebCore::ShouldSample::Yes);
         return;
     }
 
     String diagnosticKey = cachedEntryReuseFailureToDiagnosticKey(decision);
     LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s is in the cache but wasn't used, reason: %s", webPageID, requestURL.string().ascii().data(), diagnosticKey.utf8().data());
     NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::unusableCachedEntryKey(), diagnosticKey, WebCore::ShouldSample::Yes);
+}
+
+void Statistics::recordRevalidationSuccess(uint64_t webPageID, const Key& key, const WebCore::ResourceRequest& request)
+{
+    WebCore::URL requestURL = request.url();
+    LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s was successfully revalidated", webPageID, requestURL.string().ascii().data());
+
+    NetworkProcess::singleton().logDiagnosticMessageWithResult(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::revalidatingKey(), WebCore::DiagnosticLoggingResultPass, WebCore::ShouldSample::Yes);
 }
 
 void Statistics::markAsRequested(const String& hash)

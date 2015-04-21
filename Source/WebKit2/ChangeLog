@@ -1,3 +1,28 @@
+2015-04-21  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NetworkCache] Better account of resource revalidations in efficacy logging
+        https://bugs.webkit.org/show_bug.cgi?id=144014
+
+        Reviewed by Antti Koivisto.
+
+        Better account of resource revalidations in efficacy logging.
+        Prevously, resources that were in the cache but needed revalidation
+        were counted as retrieval successes, which is not entirely accurate.
+
+        We now distinguish "is in the cache and is directly usable" from
+        "is in the cache but needs revalidation". We also log how many of these
+        revalidations are successful.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponseAsync):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::update):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::Statistics::recordRetrievedCachedEntry):
+        (WebKit::NetworkCache::Statistics::recordRevalidationSuccess):
+        * NetworkProcess/cache/NetworkCacheStatistics.h:
+
 2015-04-21  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Framework header postprocessing should respect additional definitions
