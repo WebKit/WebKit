@@ -1,3 +1,18 @@
+2015-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Make Vector(const Vector<T, otherCapacity, otherOverflowBehaviour>&) constructor explicit
+        https://bugs.webkit.org/show_bug.cgi?id=143970
+
+        Reviewed by Darin Adler.
+
+        Make Vector(const Vector<T, otherCapacity, otherOverflowBehaviour>&)
+        constructor explicit as it copies the vector and it is easy to call it
+        by mistake.
+
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::setIndexKeys):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+
 2015-04-20  Dan Bernstein  <mitz@apple.com>
 
         Expose more bundle form client functions as WKWebProcessPlugInFormDelegatePrivate methods

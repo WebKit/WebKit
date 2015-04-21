@@ -639,7 +639,7 @@ public:
 
     Vector(const Vector&);
     template<size_t otherCapacity, typename otherOverflowBehaviour>
-    Vector(const Vector<T, otherCapacity, otherOverflowBehaviour>&);
+    explicit Vector(const Vector<T, otherCapacity, otherOverflowBehaviour>&);
 
     Vector& operator=(const Vector&);
     template<size_t otherCapacity, typename otherOverflowBehaviour>

@@ -148,7 +148,7 @@ void SVGRenderStyle::copyNonInheritedFrom(const SVGRenderStyle* other)
     resources = other->resources;
 }
 
-Vector<PaintType> SVGRenderStyle::paintTypesForPaintOrder() const
+Vector<PaintType, 3> SVGRenderStyle::paintTypesForPaintOrder() const
 {
     Vector<PaintType, 3> paintOrder;
     switch (this->paintOrder()) {

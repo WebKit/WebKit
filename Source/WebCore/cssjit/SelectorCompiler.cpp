@@ -308,7 +308,7 @@ private:
     void generateElementAttributeFunctionCallValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomicString& expectedValue, AttributeCaseSensitivity valueCaseSensitivity, JSC::FunctionPtr caseSensitiveTest, JSC::FunctionPtr caseInsensitiveTest);
     void generateElementHasTagName(Assembler::JumpList& failureCases, const CSSSelector& tagMatchingSelector);
     void generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomicString& idToMatch);
-    void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*>& classNames);
+    void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*, 8>& classNames);
     void generateElementIsLink(Assembler::JumpList& failureCases);
     void generateElementIsNthChild(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsNthChildOf(Assembler::JumpList& failureCases, const SelectorFragment&);
@@ -1092,7 +1092,7 @@ static const unsigned minimumRequiredRegisterCountForNthChildFilter = 6;
 static unsigned minimumRegisterRequirements(const SelectorFragment& selectorFragment)
 {
     unsigned minimum = minimumRequiredRegisterCount;
-    const Vector<AttributeMatchingInfo>& attributes = selectorFragment.attributes;
+    const auto& attributes = selectorFragment.attributes;
 
     // Attributes cause some register pressure.
     unsigned attributeCount = attributes.size();
@@ -3530,7 +3530,7 @@ void SelectorCodeGenerator::generateElementHasId(Assembler::JumpList& failureCas
     failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(elementDataAddress, ElementData::idForStyleResolutionMemoryOffset()), idToMatchRegister));
 }
 
-void SelectorCodeGenerator::generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*>& classNames)
+void SelectorCodeGenerator::generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*, 8>& classNames)
 {
     // Load m_classNames.
     LocalRegister spaceSplitStringData(m_registerAllocator);

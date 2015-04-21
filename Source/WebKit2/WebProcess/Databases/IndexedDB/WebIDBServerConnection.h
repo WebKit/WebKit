@@ -68,7 +68,7 @@ public:
     virtual void rollbackTransaction(int64_t transactionID, std::function<void ()> completionCallback) override;
     virtual bool rollbackTransactionSync(int64_t transactionID) override;
 
-    virtual void setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const WebCore::IDBObjectStoreMetadata&, WebCore::IDBKey& primaryKey, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<WebCore::IDBKey>>>& indexKeys, std::function<void (PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const WebCore::IDBObjectStoreMetadata&, WebCore::IDBKey& primaryKey, const Vector<int64_t, 1>& indexIDs, const Vector<Vector<RefPtr<WebCore::IDBKey>>, 1>& indexKeys, std::function<void (PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
 
     virtual void createObjectStore(WebCore::IDBTransactionBackend&, const WebCore::CreateObjectStoreOperation&, std::function<void (PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
     virtual void createIndex(WebCore::IDBTransactionBackend&, const WebCore::CreateIndexOperation&, std::function<void (PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;

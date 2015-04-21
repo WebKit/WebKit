@@ -1300,7 +1300,7 @@ void SVGToOTFFontConverter::appendLigatureGlyphs()
     for (auto codepoint : ligatureCodepoints) {
         auto codepoints = codepointToString(codepoint);
         if (!codepoints.isNull())
-            m_glyphs.append(GlyphData(Vector<char, 17>(m_emptyGlyphCharString), nullptr, m_unitsPerEm, m_unitsPerEm, FloatRect(), codepoints));
+            m_glyphs.append(GlyphData(Vector<char>(m_emptyGlyphCharString), nullptr, m_unitsPerEm, m_unitsPerEm, FloatRect(), codepoints));
     }
 }
 
@@ -1390,7 +1390,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
     if (m_missingGlyphElement)
         processGlyphElement(*m_missingGlyphElement, nullptr, defaultHorizontalAdvance, defaultVerticalAdvance, String(), initialGlyph);
     else
-        m_glyphs.append(GlyphData(Vector<char, 17>(m_emptyGlyphCharString), nullptr, m_unitsPerEm, m_unitsPerEm, FloatRect(), String()));
+        m_glyphs.append(GlyphData(Vector<char>(m_emptyGlyphCharString), nullptr, m_unitsPerEm, m_unitsPerEm, FloatRect(), String()));
 
     for (auto& glyphElement : childrenOfType<SVGGlyphElement>(m_fontElement)) {
         auto& unicodeAttribute = glyphElement.fastGetAttribute(SVGNames::unicodeAttr);

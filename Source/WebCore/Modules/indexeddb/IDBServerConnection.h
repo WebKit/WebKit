@@ -74,7 +74,7 @@ public:
     virtual void rollbackTransaction(int64_t transactionID, std::function<void()> completionCallback) = 0;
     virtual bool rollbackTransactionSync(int64_t transactionID) = 0;
 
-    virtual void setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const IDBObjectStoreMetadata&, IDBKey& primaryKey, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<IDBKey>>>& indexKeys, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const IDBObjectStoreMetadata&, IDBKey& primaryKey, const Vector<int64_t, 1>& indexIDs, const Vector<Vector<RefPtr<IDBKey>>, 1>& indexKeys, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
 
     virtual void createObjectStore(IDBTransactionBackend&, const CreateObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void createIndex(IDBTransactionBackend&, const CreateIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;

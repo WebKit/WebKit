@@ -244,7 +244,7 @@ void IDBDatabaseBackend::put(int64_t transactionId, int64_t objectStoreId, PassR
     transaction->schedulePutOperation(objectStoreMetadata, value, key, putMode, callbacks, indexIds, indexKeys);
 }
 
-void IDBDatabaseBackend::setIndexKeys(int64_t transactionID, int64_t objectStoreID, PassRefPtr<IDBKey> prpPrimaryKey, const Vector<int64_t>& indexIDs, const Vector<IndexKeys>& indexKeys)
+void IDBDatabaseBackend::setIndexKeys(int64_t transactionID, int64_t objectStoreID, PassRefPtr<IDBKey> prpPrimaryKey, const Vector<int64_t, 1>& indexIDs, const Vector<IndexKeys, 1>& indexKeys)
 {
     LOG(StorageAPI, "IDBDatabaseBackend::setIndexKeys");
     ASSERT(prpPrimaryKey);
@@ -262,7 +262,7 @@ void IDBDatabaseBackend::setIndexKeys(int64_t transactionID, int64_t objectStore
     });
 }
 
-void IDBDatabaseBackend::setIndexesReady(int64_t transactionId, int64_t, const Vector<int64_t>& indexIds)
+void IDBDatabaseBackend::setIndexesReady(int64_t transactionId, int64_t, const Vector<int64_t, 1>& indexIds)
 {
     LOG(StorageAPI, "IDBDatabaseBackend::setIndexesReady");
 

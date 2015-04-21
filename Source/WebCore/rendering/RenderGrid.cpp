@@ -153,7 +153,7 @@ public:
         unsigned& varyingTrackIndex = (m_direction == ForColumns) ? m_rowIndex : m_columnIndex;
         const unsigned endOfVaryingTrackIndex = (m_direction == ForColumns) ? m_grid.size() : m_grid[0].size();
         for (; varyingTrackIndex < endOfVaryingTrackIndex; ++varyingTrackIndex) {
-            const Vector<RenderBox*>& children = m_grid[m_rowIndex][m_columnIndex];
+            const auto& children = m_grid[m_rowIndex][m_columnIndex];
             if (m_childIndex < children.size())
                 return children[m_childIndex++];
 
@@ -171,7 +171,7 @@ public:
         // This adds a O(N^2) behavior that shouldn't be a big deal as we expect spanning areas to be small.
         for (unsigned row = m_rowIndex; row < maxRows; ++row) {
             for (unsigned column = m_columnIndex; column < maxColumns; ++column) {
-                const Vector<RenderBox*>& children = m_grid[row][column];
+                auto& children = m_grid[row][column];
                 if (!children.isEmpty())
                     return false;
             }

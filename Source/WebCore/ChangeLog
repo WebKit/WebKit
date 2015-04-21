@@ -1,5 +1,41 @@
 2015-04-21  Chris Dumez  <cdumez@apple.com>
 
+        Make Vector(const Vector<T, otherCapacity, otherOverflowBehaviour>&) constructor explicit
+        https://bugs.webkit.org/show_bug.cgi?id=143970
+
+        Reviewed by Darin Adler.
+
+        Make Vector(const Vector<T, otherCapacity, otherOverflowBehaviour>&)
+        constructor explicit as it copies the vector and it is easy to call it
+        by mistake.
+
+        * Modules/indexeddb/IDBDatabaseBackend.cpp:
+        (WebCore::IDBDatabaseBackend::setIndexKeys):
+        (WebCore::IDBDatabaseBackend::setIndexesReady):
+        * Modules/indexeddb/IDBDatabaseBackend.h:
+        * Modules/indexeddb/IDBServerConnection.h:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::minimumRegisterRequirements):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasClasses):
+        * cssjit/StackAllocator.h:
+        (WebCore::StackAllocator::push):
+        (WebCore::StackAllocator::pop):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::GridIterator::nextGridItem):
+        (WebCore::RenderGrid::GridIterator::isEmptyAreaEnough):
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::paintTypesForPaintOrder):
+        * rendering/style/SVGRenderStyle.h:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::fillStrokeMarkers):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paint):
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::appendLigatureGlyphs):
+        (WebCore::SVGToOTFFontConverter::SVGToOTFFontConverter):
+
+2015-04-21  Chris Dumez  <cdumez@apple.com>
+
         Use ASSERT_WITH_SECURITY_IMPLICATION() for NoEventDispatchAssertion
         https://bugs.webkit.org/show_bug.cgi?id=143971
 

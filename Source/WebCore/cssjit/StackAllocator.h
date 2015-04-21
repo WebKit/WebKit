@@ -100,7 +100,8 @@ public:
         return stackReferences;
     }
 
-    StackReferenceVector push(const Vector<JSC::MacroAssembler::RegisterID>& registerIDs)
+    template<size_t inlineCapacity, typename OverflowHandler>
+    StackReferenceVector push(const Vector<JSC::MacroAssembler::RegisterID, inlineCapacity, OverflowHandler>& registerIDs)
     {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
 
@@ -134,7 +135,8 @@ public:
         return StackReference(m_offsetFromTop);
     }
 
-    void pop(const StackReferenceVector& stackReferences, const Vector<JSC::MacroAssembler::RegisterID>& registerIDs)
+    template<size_t inlineCapacity, typename OverflowHandler>
+    void pop(const StackReferenceVector& stackReferences, const Vector<JSC::MacroAssembler::RegisterID, inlineCapacity, OverflowHandler>& registerIDs)
     {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
 

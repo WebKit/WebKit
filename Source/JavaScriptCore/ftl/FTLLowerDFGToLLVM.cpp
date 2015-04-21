@@ -152,7 +152,7 @@ public:
         m_out.appendTo(m_prologue, stackOverflow);
         createPhiVariables();
 
-        Vector<BasicBlock*> preOrder = m_graph.blocksInPreOrder();
+        auto preOrder = m_graph.blocksInPreOrder();
 
         int maxNumberOfArguments = -1;
         for (BasicBlock* block : preOrder) {

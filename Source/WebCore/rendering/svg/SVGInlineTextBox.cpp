@@ -300,7 +300,7 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         if (decorations & TextDecorationOverline)
             paintDecoration(paintInfo.context, TextDecorationOverline, fragment);
 
-        Vector<PaintType> paintOrder = style.svgStyle().paintTypesForPaintOrder();
+        auto paintOrder = style.svgStyle().paintTypesForPaintOrder();
         for (unsigned i = 0; i < paintOrder.size(); ++i) {
             switch (paintOrder.at(i)) {
             case PaintTypeFill:

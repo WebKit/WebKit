@@ -75,7 +75,7 @@ static void append32(unsigned char*& ptr, unsigned value)
     *(ptr++) = (value >> 24) & 0xff;
 }
 
-UnlinkedInstructionStream::UnlinkedInstructionStream(const Vector<UnlinkedInstruction>& instructions)
+UnlinkedInstructionStream::UnlinkedInstructionStream(const Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>& instructions)
     : m_instructionCount(instructions.size())
 {
     Vector<unsigned char> buffer;

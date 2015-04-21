@@ -72,7 +72,8 @@ public:
         VectorTypeOperations<T>::initialize(begin(), end());
     }
 
-    explicit RefCountedArray(const Vector<T>& other)
+    template<size_t inlineCapacity, typename OverflowHandler>
+    explicit RefCountedArray(const Vector<T, inlineCapacity, OverflowHandler>& other)
     {
         if (other.isEmpty()) {
             m_data = 0;

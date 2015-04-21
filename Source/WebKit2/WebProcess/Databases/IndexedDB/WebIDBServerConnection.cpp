@@ -305,7 +305,7 @@ bool WebIDBServerConnection::rollbackTransactionSync(int64_t transactionID)
     return success;
 }
 
-void WebIDBServerConnection::setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const IDBObjectStoreMetadata&, IDBKey& primaryKey, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<IDBKey>>>& indexKeys, std::function<void (PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const IDBObjectStoreMetadata&, IDBKey& primaryKey, const Vector<int64_t, 1>& indexIDs, const Vector<Vector<RefPtr<WebCore::IDBKey>>, 1>& indexKeys, std::function<void (PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
 }
 

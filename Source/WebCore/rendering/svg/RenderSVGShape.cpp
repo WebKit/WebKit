@@ -271,7 +271,7 @@ void RenderSVGShape::strokeShape(GraphicsContext* context)
 
 void RenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
 {
-    Vector<PaintType> paintOrder = style().svgStyle().paintTypesForPaintOrder();
+    auto paintOrder = style().svgStyle().paintTypesForPaintOrder();
     for (unsigned i = 0; i < paintOrder.size(); ++i) {
         switch (paintOrder.at(i)) {
         case PaintTypeFill:
