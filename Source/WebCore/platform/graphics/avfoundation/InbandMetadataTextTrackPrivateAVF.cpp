@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,11 +72,11 @@ void InbandMetadataTextTrackPrivateAVF::addDataCue(double start, double end, Pas
 void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(double time)
 {
     if (time >= m_currentCueStartTime) {
-        for (size_t i = 0; i < m_incompleteCues.size(); i++) {
-            IncompleteMetaDataCue* partialCue = m_incompleteCues[i];
-
-            LOG(Media, "InbandMetadataTextTrackPrivateAVF::addDataCue(%p) - updating cue: start=%.2f, end=%.2f", this, partialCue->startTime(), time);
-            client()->updateDataCue(this, partialCue->startTime(), time, partialCue->cueData());
+        if (client()) {
+            for (auto& partialCue : m_incompleteCues) {
+                LOG(Media, "InbandMetadataTextTrackPrivateAVF::addDataCue(%p) - updating cue: start=%s, end=%s", this, toString(partialCue.startTime).utf8().data(), toString(time).utf8().data());
+                client()->updateDataCue(this, partialCue->startTime(), time, partialCue->cueData());
+            }
         }
     } else
         LOG(Media, "InbandMetadataTextTrackPrivateAVF::addDataCue negative length cue(s) ignored: start=%.2f, end=%.2f\n", m_currentCueStartTime, time);

@@ -1,5 +1,21 @@
 2015-04-20  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r182076
+
+    2015-03-27  Brent Fulgham  <bfulgham@apple.com>
+
+            Null dereference in InbandMetadataTextTrack handling
+            https://bugs.webkit.org/show_bug.cgi?id=143144
+            <rdar://problem/18983250>
+
+            Reviewed by Eric Carlson.
+
+            * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp:
+            (WebCore::InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes): Check for null return value from
+            'client()', just like we do in all other methods.
+
+2015-04-20  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179958
 
     2015-02-11  Chris Dumez  <cdumez@apple.com>
