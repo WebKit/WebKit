@@ -765,11 +765,13 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
 
     Node* bestChoice = currentNode;
     while (currentNode) {
-        boundingRectInScrollViewCoordinates = currentNode->renderer()->absoluteBoundingBoxRect(true);
-        boundingRectInScrollViewCoordinates.scale(m_page->pageScaleFactor());
-        if (boundingRectInScrollViewCoordinates.width() > m_blockSelectionDesiredSize.width() && boundingRectInScrollViewCoordinates.height() > m_blockSelectionDesiredSize.height())
-            break;
-        bestChoice = currentNode;
+        if (currentNode->renderer()) {
+            boundingRectInScrollViewCoordinates = currentNode->renderer()->absoluteBoundingBoxRect(true);
+            boundingRectInScrollViewCoordinates.scale(m_page->pageScaleFactor());
+            if (boundingRectInScrollViewCoordinates.width() > m_blockSelectionDesiredSize.width() && boundingRectInScrollViewCoordinates.height() > m_blockSelectionDesiredSize.height())
+                break;
+            bestChoice = currentNode;
+        }
         currentNode = currentNode->parentElement();
     }
 

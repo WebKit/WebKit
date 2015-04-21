@@ -1,5 +1,24 @@
 2015-04-20  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r181869
+
+    2015-03-23  Enrica Casucci  <enrica@apple.com>
+
+            [iOS] WebContent crash attempting to select text with a gesture at RenderObject::absoluteBoundingBoxRect.
+            https://bugs.webkit.org/show_bug.cgi?id=142913
+            rdar://problem/16400033
+
+            Reviewed by Sam Weinig.
+
+            When looking for the best candidate range at the given position,
+            we should skip nodes that don't have a renderer.
+            This is a speculative fix.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::rangeForWebSelectionAtPosition):
+
+2015-04-20  Lucas Forschler  <lforschler@apple.com>
+
         Merge r181656 & r182985.
 
     2015-04-18  Simon Fraser  <simon.fraser@apple.com>
