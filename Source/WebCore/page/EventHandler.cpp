@@ -569,30 +569,20 @@ bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targe
     return true;
 }
 
-#if !PLATFORM(MAC)
-VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(const HitTestResult&)
-{
-    return VisibleSelection();
-}
-#endif
-
 void EventHandler::selectClosestWordFromHitTestResult(const HitTestResult& result, AppendTrailingWhitespace appendTrailingWhitespace)
 {
     Node* targetNode = result.targetNode();
     VisibleSelection newSelection;
 
     if (targetNode && targetNode->renderer()) {
-        newSelection = selectClosestWordFromHitTestResultBasedOnLookup(result);
-        if (newSelection.isNone()) {
-            VisiblePosition pos(targetNode->renderer()->positionForPoint(result.localPoint(), nullptr));
-            if (pos.isNotNull()) {
-                newSelection = VisibleSelection(pos);
-                newSelection.expandUsingGranularity(WordGranularity);
-            }
-
-            if (appendTrailingWhitespace == ShouldAppendTrailingWhitespace && newSelection.isRange())
-                newSelection.appendTrailingWhitespace();
+        VisiblePosition pos(targetNode->renderer()->positionForPoint(result.localPoint(), nullptr));
+        if (pos.isNotNull()) {
+            newSelection = VisibleSelection(pos);
+            newSelection.expandUsingGranularity(WordGranularity);
         }
+
+        if (appendTrailingWhitespace == ShouldAppendTrailingWhitespace && newSelection.isRange())
+            newSelection.appendTrailingWhitespace();
 
         updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(*targetNode, newSelection), WordGranularity);
     }
