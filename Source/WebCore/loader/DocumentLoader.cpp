@@ -948,9 +948,11 @@ void DocumentLoader::detachFromFrame()
     if (m_mainResource && m_mainResource->hasClient(this))
         m_mainResource->removeClient(this);
 
-    m_applicationCacheHost->setDOMApplicationCache(0);
+    m_applicationCacheHost->setDOMApplicationCache(nullptr);
     InspectorInstrumentation::loaderDetachedFromFrame(m_frame, this);
-    m_frame = 0;
+    m_frame = nullptr;
+    // The call to stopLoading() above should have canceled any pending content policy check.
+    ASSERT_WITH_MESSAGE(!m_waitingForContentPolicy, "The content policy callback needs a valid frame.");
 }
 
 void DocumentLoader::clearMainResourceLoader()
