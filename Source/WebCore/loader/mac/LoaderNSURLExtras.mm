@@ -40,15 +40,6 @@
 
 using namespace WebCore;
 
-static bool vectorContainsString(const Vector<String>& vector, const String& string)
-{
-    int size = vector.size();
-    for (int i = 0; i < size; i++)
-        if (vector[i] == string)
-            return true;
-    return false;
-}
-
 NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
 {
     // Get the filename from the URL. Try the lastPathComponent first.
@@ -83,7 +74,7 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
     if (mimeType != "application/octet-stream" && mimeType != "text/plain") {
         Vector<String> extensions = MIMETypeRegistry::getExtensionsForMIMEType(mimeType);
 
-        if (extensions.isEmpty() || !vectorContainsString(extensions, extension)) {
+        if (extensions.isEmpty() || !extensions.contains(String(extension))) {
             // The extension doesn't match the MIME type. Correct this.
             NSString *correctExtension = MIMETypeRegistry::getPreferredExtensionForMIMEType(mimeType);
             if ([correctExtension length] != 0) {
