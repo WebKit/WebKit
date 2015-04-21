@@ -962,6 +962,10 @@ webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ Pass ]
 
 webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ Pass ]
 
+# This tests are passing on EFL but they do not in the Apple ports
+mathml/presentation/style-changed.html [ Pass ]
+transitions/svg-text-shadow-transition.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2240,6 +2244,8 @@ webkit.org/b/143878 http/tests/navigation/javascriptlink-frames.html [ Failure ]
 webkit.org/b/143878 http/tests/navigation/postredirect-basic.html [ Failure ]
 webkit.org/b/143878 http/tests/navigation/postredirect-goback1.html [ Failure ]
 
-# This tests are passing on EFL but they do not in the Apple ports
-mathml/presentation/style-changed.html [ Pass ]
-transitions/svg-text-shadow-transition.html [ Pass ]
+webkit.org/b/144004 compositing/animation/matrix-animation.html [ ImageOnlyFailure ]
+
+webkit.org/b/144005 compositing/backgrounds/background-image-with-negative-zindex.html [ ImageOnlyFailure ]
+
+webkit.org/b/144006 compositing/backing/solid-color-with-paints-into-ancestor.html [ ImageOnlyFailure ]

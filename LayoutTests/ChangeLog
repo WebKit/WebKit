@@ -1,3 +1,12 @@
+2015-04-21  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unreviewed gardening on 22th April
+
+        Mark 3 compositing tests to image only failure. Additionally move
+        wrong categorized 2 tests to a correct place.
+
+        * platform/efl/TestExpectations:
+
 2015-04-21  Michael Saboff  <msaboff@apple.com>
 
         Crash in JSC::Interpreter::execute
