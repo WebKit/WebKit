@@ -1,3 +1,21 @@
+2015-04-21  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r182835
+
+    2015-04-14  Zalan Bujtas  <zalan@apple.com>
+
+            Make inline continuation style change logic consistent.
+            https://bugs.webkit.org/show_bug.cgi?id=143737
+            rdar://problem/20486596
+
+            Reviewed by Simon Fraser.
+
+            Do not force RenderBlock type-casting on the first sibling of the continuation's container.
+            The first sibling of the container of a continuation should be handled as the rest of the siblings.
+
+            * fast/inline/inline-with-column-span-and-remove-block-child-crash-expected.txt: Added.
+            * fast/inline/inline-with-column-span-and-remove-block-child-crash.html: Added.
+
 2015-04-21  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r182299
