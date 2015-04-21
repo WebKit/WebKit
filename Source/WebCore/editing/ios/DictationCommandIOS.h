@@ -26,8 +26,9 @@
 #ifndef DictationCommandIOS_h
 #define DictationCommandIOS_h
 
-#include "CompositeEditCommand.h"
-
+#import "CompositeEditCommand.h"
+#import <wtf/OwnPtr.h>
+#import <wtf/PassOwnPtr.h>
 #import <wtf/RetainPtr.h>
 
 typedef struct objc_object *id;

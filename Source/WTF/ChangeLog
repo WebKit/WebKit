@@ -1,3 +1,19 @@
+2015-04-21  Darin Adler  <darin@apple.com>
+
+        Remove some stray uses of OwnPtr and PassOwnPtr in WTF (outside of the template definitions and traits)
+        https://bugs.webkit.org/show_bug.cgi?id=143944
+
+        Reviewed by Andreas Kling.
+
+        * wtf/FilePrintStream.h: Removed unneeded include.
+        * wtf/HashTable.h: Fixed class template name in comment.
+        * wtf/HashTraits.h: Removed unneeded forward declaration.
+        * wtf/ListHashSet.h: Removed unneeded includes.
+        * wtf/ThreadingWin.cpp: Removed unneeded includes.
+        (WTF::wtfThreadEntryPoint): Changed code to use unique_ptr.
+        (WTF::createThreadInternal): Changed code to use make_unique and release.
+        * wtf/efl/RunLoopEfl.cpp: Removed unneeded includes.
+
 2015-04-19  Darin Adler  <darin@apple.com>
 
         Update RefPtr documentation and deprecation

@@ -28,8 +28,6 @@
 #include "RunLoop.h"
 
 #include <Ecore.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 static const int ecorePipeMessageSize = 1;
 static const char wakupEcorePipeMessage[] = "W";

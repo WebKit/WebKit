@@ -1,3 +1,12 @@
+2015-04-21  Darin Adler  <darin@apple.com>
+
+        Remove some stray uses of OwnPtr and PassOwnPtr in WTF (outside of the template definitions and traits)
+        https://bugs.webkit.org/show_bug.cgi?id=143944
+
+        Reviewed by Andreas Kling.
+
+        * editing/ios/DictationCommandIOS.h: Added now-needed include of PassOwnPtr.h.
+
 2015-04-20  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r177494): -webkit-mask-image: with data URI fails on non-local files

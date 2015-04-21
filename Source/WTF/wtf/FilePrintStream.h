@@ -28,7 +28,6 @@
 
 #include <stdio.h>
 #include <wtf/PrintStream.h>
-#include <wtf/OwnPtr.h>
 
 namespace WTF {
 
