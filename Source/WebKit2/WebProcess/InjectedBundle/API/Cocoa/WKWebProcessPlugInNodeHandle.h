@@ -54,6 +54,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @property (nonatomic, readonly) BOOL HTMLInputElementIsUserEdited;
 @property (nonatomic, readonly) BOOL HTMLTextAreaElementIsUserEdited;
 @property (nonatomic, readonly) WKWebProcessPlugInNodeHandle *HTMLTableCellElementCellAbove;
+@property (nonatomic, readonly) WKWebProcessPlugInFrame *frame;
 
 - (BOOL)isTextField;
 

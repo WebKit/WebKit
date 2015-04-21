@@ -125,6 +125,11 @@ using namespace WebKit;
     return [wrapper(*nodeHandle.leakRef()) autorelease];
 }
 
+- (WKWebProcessPlugInFrame *)frame
+{
+    return [wrapper(*_nodeHandle->document()->documentFrame().leakRef()) autorelease];
+}
+
 - (InjectedBundleNodeHandle&)_nodeHandle
 {
     return *_nodeHandle;

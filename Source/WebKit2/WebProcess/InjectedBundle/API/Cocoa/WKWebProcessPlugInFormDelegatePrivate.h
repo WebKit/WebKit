@@ -45,6 +45,9 @@
 // The return value is exposed in the UI process via the userObject property of the _WKFormInputSession object.
 - (NSObject <NSSecureCoding> *)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller willBeginInputSessionForElement:(WKWebProcessPlugInNodeHandle *)node inFrame:(WKWebProcessPlugInFrame *)frame;
 
+- (BOOL)_webProcessPlugInBrowserContextControllerShouldNotifyOnFormChanges:(WKWebProcessPlugInBrowserContextController *)controller;
+- (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller didAssociateFormControls:(NSArray *)elements;
+
 @end
 
 #endif // WK_API_ENABLED

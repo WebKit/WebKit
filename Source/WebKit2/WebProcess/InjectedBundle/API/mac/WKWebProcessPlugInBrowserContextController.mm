@@ -523,6 +523,29 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
             encodeUserObject(userObject, userData);
         }
 
+        virtual bool shouldNotifyOnFormChanges(WebKit::WebPage*) override
+        {
+            auto formDelegate = m_controller->_formDelegate.get();
+
+            if (![formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextControllerShouldNotifyOnFormChanges:)])
+                return false;
+
+            return [formDelegate _webProcessPlugInBrowserContextControllerShouldNotifyOnFormChanges:m_controller];
+        }
+
+        virtual void didAssociateFormControls(WebKit::WebPage*, const Vector<RefPtr<WebCore::Element>>& elements) override
+        {
+            auto formDelegate = m_controller->_formDelegate.get();
+
+            if (![formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:didAssociateFormControls:)])
+                return;
+
+            auto controls = adoptNS([[NSMutableArray alloc] initWithCapacity:elements.size()]);
+            for (const auto& element : elements)
+                [controls addObject:wrapper(*WebKit::InjectedBundleNodeHandle::getOrCreate(element.get()))];
+            return [formDelegate _webProcessPlugInBrowserContextController:m_controller didAssociateFormControls:controls.get()];
+        }
+
     private:
         WKWebProcessPlugInBrowserContextController *m_controller;
     };
