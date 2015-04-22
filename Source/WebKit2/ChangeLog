@@ -1,3 +1,17 @@
+2015-04-22  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r174288. rdar://problem/20368461
+
+    2014-10-03  Jer Noble  <jer.noble@apple.com>
+
+            Revert an accidental change introduced by r173318.
+
+            Rubber-stamped by Tim Horton.
+
+            * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+            (WebKit::TiledCoreAnimationDrawingArea::suspendPainting):
+            (WebKit::TiledCoreAnimationDrawingArea::resumePainting):
+
 2015-04-17  Lucas Forschler  <lforschler@apple.com>
 
         Merge r182285
