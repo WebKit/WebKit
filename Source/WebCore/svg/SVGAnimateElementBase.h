@@ -53,11 +53,11 @@ protected:
 
     virtual void setTargetElement(SVGElement*) override;
     virtual void setAttributeName(const QualifiedName&) override;
+    virtual void resetAnimatedPropertyType() override;
 
     AnimatedPropertyType m_animatedPropertyType;
 
 private:
-    void resetAnimatedPropertyType();
     SVGAnimatedTypeAnimator* ensureAnimator();
     bool animatedPropertyTypeSupportsAddition() const;
 

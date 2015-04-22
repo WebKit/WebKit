@@ -1,3 +1,30 @@
+2015-04-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVGAnimateElementBase::calculateAnimatedValue() asserts when reinserting an SVG animating element within the same animation limits
+        https://bugs.webkit.org/show_bug.cgi?id=143994
+
+        Reviewed by Simon Fraser.
+
+        Make sure the SVG animation variables are reset cleanly such that if the
+        animation restarts it can rebuild its limit values reliably and correctly.
+
+        Tests: svg/animations/crash-reinsert-animate-length-same-limits.svg
+               svg/animations/crash-reinsert-animate-transform-same-limits.svg
+
+        * svg/SVGAnimateElementBase.h:
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::resetAnimatedPropertyType):
+        Call the base class resetAnimatedPropertyType() from the derived class.
+
+        * svg/SVGAnimationElement.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::resetAnimatedPropertyType):
+        Make resetAnimatedPropertyType() virtual. The implementation of the base
+        class of this function resets the values of the animation limits. When
+        updateAnimation() is called, it will be forced to recalculate the animation
+        limits by calling calculateFromAndToValues() even if the limits have not
+        changed.
+
 2015-04-21  Tim Horton  <timothy_horton@apple.com>
 
         Long pause under _takeViewSnapshot when screen updates are disabled

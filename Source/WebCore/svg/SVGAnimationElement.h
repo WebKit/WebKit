@@ -168,6 +168,7 @@ protected:
 
     void computeCSSPropertyValue(SVGElement*, CSSPropertyID, String& value);
     virtual void determinePropertyValueTypes(const String& from, const String& to);
+    virtual void resetAnimatedPropertyType();
 
     static bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;

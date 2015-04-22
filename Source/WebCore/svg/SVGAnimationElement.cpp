@@ -674,6 +674,11 @@ void SVGAnimationElement::determinePropertyValueTypes(const String& from, const 
     if (inheritsFromProperty(targetElement, attributeName, to))
         m_toPropertyValueType = InheritValue;
 }
+void SVGAnimationElement::resetAnimatedPropertyType()
+{
+    m_lastValuesAnimationFrom = String();
+    m_lastValuesAnimationTo = String();
+}
 
 void SVGAnimationElement::setTargetElement(SVGElement* target)
 {

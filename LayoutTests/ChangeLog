@@ -1,3 +1,17 @@
+2015-04-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVGAnimateElementBase::calculateAnimatedValue() asserts when reinserting an SVG animating element within the same animation limits
+        https://bugs.webkit.org/show_bug.cgi?id=143994
+
+        Reviewed by Simon Fraser.
+
+        * svg/animations/crash-reinsert-animate-length-same-limits-expected.txt: Added.
+        * svg/animations/crash-reinsert-animate-length-same-limits.svg: Added.
+        * svg/animations/crash-reinsert-animate-transform-same-limits-expected.txt: Added.
+        * svg/animations/crash-reinsert-animate-transform-same-limits.svg: Added.
+        Make sure when removing an SVG animating element and reinserting it back
+        within the same animation length or transform limits, we do not crash.
+
 2015-04-21  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Unreviewed gardening

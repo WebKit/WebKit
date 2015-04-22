@@ -431,6 +431,7 @@ void SVGAnimateElementBase::setAttributeName(const QualifiedName& attributeName)
 
 void SVGAnimateElementBase::resetAnimatedPropertyType()
 {
+    SVGAnimationElement::resetAnimatedPropertyType();
     ASSERT(!m_animatedType);
     m_fromType = nullptr;
     m_toType = nullptr;
