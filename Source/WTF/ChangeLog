@@ -1,3 +1,13 @@
+2015-04-22  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] In nightlies and local builds, WebKit services can get terminated under memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=144052
+        rdar://problem/19754404
+
+        Build fix. Landing a forward declaration that should have been part of the original patch.
+
+        * wtf/spi/darwin/XPCSPI.h:
+
 2015-04-21  Chris Dumez  <cdumez@apple.com>
 
         Make Vector(const Vector<T, otherCapacity, otherOverflowBehaviour>&) constructor explicit

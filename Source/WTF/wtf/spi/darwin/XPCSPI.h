@@ -131,6 +131,7 @@ EXTERN_C xpc_object_t xpc_retain(xpc_object_t);
 EXTERN_C void xpc_release(xpc_object_t);
 EXTERN_C const char* xpc_string_get_string_ptr(xpc_object_t);
 EXTERN_C void xpc_transaction_begin(void);
+EXTERN_C void xpc_track_activity(void);
 
 EXTERN_C xpc_object_t xpc_connection_copy_entitlement_value(xpc_connection_t, const char* entitlement);
 EXTERN_C void xpc_connection_get_audit_token(xpc_connection_t, audit_token_t*);
