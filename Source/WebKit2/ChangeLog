@@ -1,3 +1,10 @@
+2015-04-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r183136.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm: Correct capitalization of
+        'HTMLPluginImageElement.h' -> 'HTMLPlugInImageElement.h'
+
 2015-04-21  Brent Fulgham  <bfulgham@apple.com>
 
         Extend action menus to support PDF
