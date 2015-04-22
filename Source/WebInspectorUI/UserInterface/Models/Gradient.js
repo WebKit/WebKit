@@ -91,7 +91,7 @@ WebInspector.Gradient = {
             gradient = WebInspector.RadialGradient.radialGradientWithComponents(components);
 
         if (gradient)
-            gradient.repeats = typeString.indexOf("repeating") === 0;
+            gradient.repeats = typeString.startsWith("repeating");
 
         return gradient;
     },

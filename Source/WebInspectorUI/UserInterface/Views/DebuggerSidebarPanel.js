@@ -379,7 +379,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             return;
 
         // Exclude inspector scripts.
-        if (script.url && script.url.indexOf("__WebInspector") === 0)
+        if (script.url && script.url.startsWith("__WebInspector"))
             return;
 
         // Don't add breakpoints if the script is represented by a Resource. They were

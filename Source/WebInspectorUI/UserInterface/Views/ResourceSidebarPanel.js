@@ -679,7 +679,7 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
             return;
 
         // Exclude inspector scripts.
-        if (script.url.indexOf("__WebInspector") === 0)
+        if (script.url.startsWith("__WebInspector"))
             return;
 
         // If the script URL matches a resource we can assume it is part of that resource and does not need added.

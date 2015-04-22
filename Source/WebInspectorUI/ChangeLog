@@ -1,3 +1,16 @@
+2015-04-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Use String.prototype.startsWith in more places
+        https://bugs.webkit.org/show_bug.cgi?id=144025
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/Gradient.js:
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._scriptAdded):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasAdded):
+
 2015-04-21  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Make formatted nodes more consistent with formatted objects
