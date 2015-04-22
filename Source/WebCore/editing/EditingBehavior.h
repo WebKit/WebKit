@@ -89,6 +89,8 @@ public:
     // space when deleting password cause space been showed insecurely.
     bool shouldRebalanceWhiteSpacesInSecureField() const { return m_type != EditingIOSBehavior; }
 
+    bool shouldSelectBasedOnDictionaryLookup() const { return m_type == EditingMacBehavior; }
+
 private:
     EditingBehaviorType m_type;
 };

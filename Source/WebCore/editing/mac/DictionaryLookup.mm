@@ -143,6 +143,10 @@ PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult& h
     if (shouldUseSelection(position, selection))
         return rangeForDictionaryLookupForSelection(selection, options);
 
+    VisibleSelection selectionAccountingForLineRules = VisibleSelection(position);
+    selectionAccountingForLineRules.expandUsingGranularity(WordGranularity);
+    position = selectionAccountingForLineRules.start();
+
     // As context, we are going to use 250 characters of text before and after the point.
     RefPtr<Range> fullCharacterRange = rangeExpandedAroundPositionByCharacters(position, 250);
     if (!fullCharacterRange)

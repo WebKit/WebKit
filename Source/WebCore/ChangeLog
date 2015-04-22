@@ -1,3 +1,30 @@
+2015-04-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Context menu doesn't account for selection semantics
+        https://bugs.webkit.org/show_bug.cgi?id=143958
+        <rdar://problem/19735706>
+
+        Reviewed by Tim Horton.
+
+        Before using the default word-only selection for context menus, check with the
+        lookup service to see if we can get a semantically appropriate selection.
+
+        * editing/EditingBehavior.h:
+        (WebCore::EditingBehavior::shouldSelectBasedOnDictionaryLookup): Added, so that we can
+        behavior correctly when using non-Mac editing behavior.
+        * editing/mac/DictionaryLookup.mm:
+        (WebCore::rangeForDictionaryLookupAtHitTestResult): Modified to honor standard WebKit
+        behavior when hit testing at end-of-line/end-of-paragraph, etc.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::shouldAppendTrailingWhitespace): New helper function to share code.
+        (WebCore::EventHandler::selectClosestWordFromHitTestResultBasedOnLookup): Added.
+        (WebCore::EventHandler::selectClosestContextualWordFromMouseEvent): Added.
+        (WebCore::EventHandler::selectClosestContextualWordOrLinkFromMouseEvent): Renamed from selectClosestWordOrLinkFromMouseEvent.
+        Have this call the new 'selectClosestContextualWordFromMouseEvent' instead of the vanilla 'selectClosestWordFromMouseEvent'.
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::selectClosestWordFromHitTestResultBasedOnLookup): Added.
+
 2015-04-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Extend action menus to support PDF
