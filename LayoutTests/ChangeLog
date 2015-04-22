@@ -1,5 +1,11 @@
 2015-04-22  Andy Estes  <aestes@apple.com>
 
+        Rebaseline cross-frame-access-call-expected.txt on safari-600.6-branch.
+
+        * http/tests/security/cross-frame-access-call-expected.txt: Get rid of the line numbers.
+
+2015-04-22  Andy Estes  <aestes@apple.com>
+
         Rebaseline video-controls-live-stream-expected.txt on safari-600.6-branch.
 
         * platform/mac/http/tests/media/hls/video-controls-live-stream-expected.txt:
