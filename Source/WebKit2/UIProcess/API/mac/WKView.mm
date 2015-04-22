@@ -3640,9 +3640,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         self.actionMenu.autoenablesItems = NO;
     }
 
-    // FIXME: We should not permanently disable this for iBooks. rdar://problem/19585689
-    Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer");
-    if (gestureClass && !applicationIsIBooks()) {
+    if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
         _data->_immediateActionGestureRecognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] initWithTarget:nil action:NULL]);
         _data->_immediateActionController = adoptNS([[WKImmediateActionController alloc] initWithPage:*_data->_page view:self recognizer:_data->_immediateActionGestureRecognizer.get()]);
         [_data->_immediateActionGestureRecognizer setDelegate:_data->_immediateActionController.get()];
