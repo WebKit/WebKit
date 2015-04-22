@@ -1,3 +1,47 @@
+2015-04-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [[Set]] should be properly executed in JS builtins
+        https://bugs.webkit.org/show_bug.cgi?id=143996
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, all assignments in builtins JS code is compiled into put_by_val_direct.
+        However,
+
+        1. Some functions (like Array.from) needs [[Set]]. (but it is now compiled into put_by_val_direct, [[DefineOwnProperty]]).
+        2. It's different from the default JS behavior.
+
+        In this patch, we implement the bytecode intrinsic emitting put_by_val_direct and use it explicitly.
+        And dropping the current hack for builtins.
+
+        * builtins/Array.prototype.js:
+        (filter):
+        (map):
+        (find):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPutByVal):
+        * tests/stress/array-fill-put-by-val.js: Added.
+        (shouldThrow):
+        (.set get array):
+        * tests/stress/array-filter-put-by-val-direct.js: Added.
+        (shouldBe):
+        (.set get var):
+        * tests/stress/array-find-does-not-lookup-twice.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (.get shouldBe):
+        * tests/stress/array-from-put-by-val-direct.js: Added.
+        (shouldBe):
+        (.set get var):
+        * tests/stress/array-from-set-length.js: Added.
+        (shouldBe):
+        (ArrayLike):
+        (ArrayLike.prototype.set length):
+        (ArrayLike.prototype.get length):
+        * tests/stress/array-map-put-by-val-direct.js: Added.
+        (shouldBe):
+        (.set get var):
+
 2015-04-22  Basile Clement  <basile_clement@apple.com>
  
         Don't de-allocate FunctionRareData

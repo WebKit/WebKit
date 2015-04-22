@@ -92,8 +92,10 @@ function filter(callback /*, thisArg */) {
         if (!(i in array))
             continue;
         var current = array[i]
-        if (callback.@call(thisArg, current, i, array))
-            result[nextIndex++] = current;
+        if (callback.@call(thisArg, current, i, array)) {
+            @putByValDirect(result, nextIndex, current);
+            ++nextIndex;
+        }
     }
     return result;
 }
@@ -119,7 +121,8 @@ function map(callback /*, thisArg */) {
     for (var i = 0; i < length; i++) {
         if (!(i in array))
             continue;
-        result[i] = callback.@call(thisArg, array[i], i, array)
+        var mappedValue = callback.@call(thisArg, array[i], i, array);
+        @putByValDirect(result, i, mappedValue);
     }
     return result;
 }
@@ -207,8 +210,9 @@ function find(callback /*, thisArg */) {
     for (var i = 0; i < length; i++) {
         if (!(i in array))
             continue;
-        if (callback.@call(thisArg, array[i], i, array))
-            return array[i];
+        var kValue = array[i];
+        if (callback.@call(thisArg, kValue, i, array))
+            return kValue;
     }
     return undefined;
 }
