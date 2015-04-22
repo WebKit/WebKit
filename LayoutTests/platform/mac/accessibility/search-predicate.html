@@ -215,7 +215,7 @@
         startElement = accessibilityController.focusedElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXOutlineSearchKey", "", false);
         shouldBe("resultElement.role", "'AXRole: AXOutline'");
-        shouldBe("resultElement.childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: tree item'");
+        shouldBe("resultElement.childAtIndex(0).childAtIndex(1).stringValue", "'AXValue: tree item'");
         
         // Plain text.
         startElement = accessibilityController.focusedElement.childAtIndex(0);

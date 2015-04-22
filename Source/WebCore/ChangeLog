@@ -1,3 +1,18 @@
+2015-04-22  Nan Wang  <nanwang1101@yahoo.com>
+
+        AX: WebKit does not expose text fields inside tree views.
+        https://bugs.webkit.org/show_bug.cgi?id=142196
+
+        Reviewed by Chris Fleizach.
+
+        The problem is that any object in a tree which is not a static text 
+        or treeitem will be ignored. Fixed it by exposing the children of treeitem.
+
+        Test: accessibility/treeitem-child-exposed.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isAllowedChildOfTree):
+
 2015-04-22  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Implement ReadableStreamController
