@@ -30,9 +30,9 @@
 
 #include "DisplayRefreshMonitor.h"
 #include "PlatformScreen.h"
-#include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -56,11 +56,7 @@ private:
 
     DisplayRefreshMonitor* ensureMonitorForClient(DisplayRefreshMonitorClient*);
 
-    // We know nothing about the values of PlatformDisplayIDs, so use UnsignedWithZeroKeyHashTraits.
-    // FIXME: Since we know nothing about these values, this is not sufficient.
-    // Even with UnsignedWithZeroKeyHashTraits, there are still two special values used for empty and deleted hash table slots.
-    typedef HashMap<uint64_t, RefPtr<DisplayRefreshMonitor>, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> DisplayRefreshMonitorMap;
-    DisplayRefreshMonitorMap m_monitors;
+    Vector<RefPtr<DisplayRefreshMonitor>> m_monitors;
 };
 
 }
