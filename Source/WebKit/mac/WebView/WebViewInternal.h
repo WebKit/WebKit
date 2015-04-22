@@ -271,9 +271,10 @@ OBJC_CLASS NSTextAlternatives;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS) && defined(__cplusplus)
 - (WebMediaPlaybackTargetPicker *) _devicePicker;
-- (void)_showPlaybackTargetPicker:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo;
-- (void)_startingMonitoringPlaybackTargets;
-- (void)_stopMonitoringPlaybackTargets;
+- (void)_addPlaybackTargetPickerClient:(uint64_t)clientId;
+- (void)_removePlaybackTargetPickerClient:(uint64_t)contextId;
+- (void)_showPlaybackTargetPicker:(uint64_t)contextId location:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo;
+- (void)_playbackTargetPickerClientStateDidChange:(uint64_t)contextId state:(WebCore::MediaProducer::MediaStateFlags)state;
 #endif
 
 @end

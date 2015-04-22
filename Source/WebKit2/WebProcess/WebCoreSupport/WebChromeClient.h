@@ -292,7 +292,7 @@ private:
 
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) const override;
 
-    virtual void isPlayingMediaDidChange(MediaStateFlags) override;
+    virtual void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags) override;
     virtual void setPageActivityState(WebCore::PageActivityState::Flags) override;
 
 #if ENABLE(SUBTLE_CRYPTO)
@@ -313,9 +313,10 @@ private:
     virtual void handleAutoFillButtonClick(WebCore::HTMLInputElement&) override;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
-    virtual void showPlaybackTargetPicker(const WebCore::IntPoint&, bool) override;
-    virtual void startingMonitoringPlaybackTargets() override;
-    virtual void stopMonitoringPlaybackTargets() override;
+    virtual void addPlaybackTargetPickerClient(uint64_t /*contextId*/) override;
+    virtual void removePlaybackTargetPickerClient(uint64_t /*contextId*/) override;
+    virtual void showPlaybackTargetPicker(uint64_t contextId, const WebCore::IntPoint&, bool) override;
+    virtual void playbackTargetPickerClientStateDidChange(uint64_t, WebCore::MediaProducer::MediaStateFlags) override;
 #endif
 
     String m_cachedToolTip;

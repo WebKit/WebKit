@@ -25,34 +25,37 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
-#import <WebCore/MediaPlaybackTargetPicker.h>
+#import <WebCore/MediaPlaybackTarget.h>
+#import <WebCore/WebMediaSessionManagerClient.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 class FloatRect;
+class MediaPlaybackTarget;
 class Page;
 }
 
-class WebMediaPlaybackTargetPicker : public WebCore::MediaPlaybackTargetPicker::Client {
+class WebMediaPlaybackTargetPicker : public WebCore::WebMediaSessionManagerClient {
 public:
     static std::unique_ptr<WebMediaPlaybackTargetPicker> create(WebCore::Page&);
 
     explicit WebMediaPlaybackTargetPicker(WebCore::Page&);
     virtual ~WebMediaPlaybackTargetPicker() { }
 
-    void showPlaybackTargetPicker(const WebCore::FloatRect&, bool /* hasVideo */);
-    void startingMonitoringPlaybackTargets();
-    void stopMonitoringPlaybackTargets();
+    void addPlaybackTargetPickerClient(uint64_t);
+    void removePlaybackTargetPickerClient(uint64_t);
+    void showPlaybackTargetPicker(uint64_t, const WebCore::FloatRect&, bool hasVideo);
+    void playbackTargetPickerClientStateDidChange(uint64_t, WebCore::MediaProducer::MediaStateFlags);
 
-    // WebCore::MediaPlaybackTargetPicker::Client
-    virtual void didChoosePlaybackTarget(Ref<WebCore::MediaPlaybackTarget>&&) override;
-    virtual void externalOutputDeviceAvailableDidChange(bool) override;
+    // WebMediaSessionManagerClient
+    virtual void setPlaybackTarget(uint64_t, Ref<WebCore::MediaPlaybackTarget>&&) override;
+    virtual void externalOutputDeviceAvailableDidChange(uint64_t, bool) override;
+    virtual void setShouldPlayToPlaybackTarget(uint64_t, bool) override;
 
     void invalidate();
 
 private:
-    WebCore::MediaPlaybackTargetPicker& targetPicker();
-
     WebCore::Page* m_page;
-    std::unique_ptr<WebCore::MediaPlaybackTargetPicker> m_targetPicker;
 };
+
 #endif

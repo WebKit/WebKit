@@ -29,12 +29,12 @@
 #if ENABLE(VIDEO)
 #include "HTMLElement.h"
 #include "ActiveDOMObject.h"
-#include "AudioProducer.h"
 #include "GenericEventQueue.h"
 #include "HTMLMediaSession.h"
 #include "MediaCanStartListener.h"
 #include "MediaControllerInterface.h"
 #include "MediaPlayer.h"
+#include "MediaProducer.h"
 #include "PageThrottler.h"
 
 #if ENABLE(VIDEO_TRACK)
@@ -95,7 +95,7 @@ class MediaStream;
 
 class HTMLMediaElement
     : public HTMLElement
-    , private MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface , public MediaSessionClient, private AudioProducer
+    , private MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface , public MediaSessionClient, private MediaProducer
 #if ENABLE(VIDEO_TRACK)
     , private AudioTrackClient
     , private TextTrackClient
@@ -365,8 +365,7 @@ public:
     virtual bool canPlayToWirelessPlaybackTarget() const override;
     virtual bool isPlayingToWirelessPlaybackTarget() const override;
     virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
-    virtual void startPlayingToPlaybackTarget() override;
-    virtual void stopPlayingToPlaybackTarget() override;
+    virtual void setShouldPlayToPlaybackTarget(bool) override;
 #endif
 
     // EventTarget function.
@@ -456,6 +455,8 @@ public:
     bool isDisablingSleep() const { return m_sleepDisabler.get(); }
 
     double maxBufferedTime() const;
+
+    virtual MediaProducer::MediaStateFlags mediaState() const override;
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool);
@@ -723,8 +724,6 @@ private:
     virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override;
     virtual bool overrideBackgroundPlaybackRestriction() const override;
 
-    // AudioProducer overrides
-    virtual bool isPlayingAudio() override;
     virtual void pageMutedStateDidChange() override;
 
     bool effectiveMuted() const;
@@ -918,6 +917,10 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaStream> m_mediaStreamSrcObject;
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    bool m_hasPlaybackTargetAvailabilityListeners { false };
 #endif
 };
 

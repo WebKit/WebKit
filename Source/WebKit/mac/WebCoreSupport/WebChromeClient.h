@@ -214,9 +214,10 @@ public:
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
-    virtual void showPlaybackTargetPicker(const WebCore::IntPoint&, bool /* hasVideo */) override;
-    virtual void startingMonitoringPlaybackTargets() override;
-    virtual void stopMonitoringPlaybackTargets() override;
+    virtual void addPlaybackTargetPickerClient(uint64_t /*contextId*/) override;
+    virtual void removePlaybackTargetPickerClient(uint64_t /*contextId*/) override;
+    virtual void showPlaybackTargetPicker(uint64_t /*contextId*/, const WebCore::IntPoint&, bool /* hasVideo */) override;
+    virtual void playbackTargetPickerClientStateDidChange(uint64_t /*contextId*/, WebCore::MediaProducer::MediaStateFlags) override;
 #endif
 
 private:

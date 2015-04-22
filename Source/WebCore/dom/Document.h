@@ -36,6 +36,7 @@
 #include "DocumentTiming.h"
 #include "FocusDirection.h"
 #include "FontSelector.h"
+#include "MediaProducer.h"
 #include "MutationObserver.h"
 #include "PageVisibilityState.h"
 #include "PlatformEvent.h"
@@ -69,7 +70,6 @@ namespace WebCore {
 
 class AXObjectCache;
 class Attr;
-class AudioProducer;
 class CDATASection;
 class CSSFontSelector;
 class CSSStyleDeclaration;
@@ -126,7 +126,7 @@ class JSNode;
 class Locale;
 class MediaCanStartListener;
 class MediaPlaybackTarget;
-class MediaPlaybackTargetPickerClient;
+class MediaPlaybackTargetClient;
 class MediaQueryList;
 class MediaQueryMatcher;
 class MouseEventWithHitTestResults;
@@ -1229,21 +1229,22 @@ public:
     bool hasStyleWithViewportUnits() const { return m_hasStyleWithViewportUnits; }
     void updateViewportUnitsOnResize();
 
-    WEBCORE_EXPORT void addAudioProducer(AudioProducer*);
-    WEBCORE_EXPORT void removeAudioProducer(AudioProducer*);
-    bool isPlayingAudio() const { return m_isPlayingAudio; }
+    WEBCORE_EXPORT void addAudioProducer(MediaProducer*);
+    WEBCORE_EXPORT void removeAudioProducer(MediaProducer*);
+    MediaProducer::MediaStateFlags mediaState() const { return m_mediaState; }
     WEBCORE_EXPORT void updateIsPlayingMedia();
     void pageMutedStateDidChange();
     WeakPtr<Document> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    void showPlaybackTargetPicker(const HTMLMediaElement&);
-    void didChoosePlaybackTarget(Ref<MediaPlaybackTarget>&&);
-    void addPlaybackTargetPickerClient(MediaPlaybackTargetPickerClient&);
-    void removePlaybackTargetPickerClient(MediaPlaybackTargetPickerClient&);
-    bool requiresPlaybackTargetRouteMonitoring();
-    void configurePlaybackTargetMonitoring();
-    void playbackTargetAvailabilityDidChange(bool);
+    void addPlaybackTargetPickerClient(MediaPlaybackTargetClient&);
+    void removePlaybackTargetPickerClient(MediaPlaybackTargetClient&);
+    void showPlaybackTargetPicker(MediaPlaybackTargetClient&, bool);
+    void playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClient&, MediaProducer::MediaStateFlags);
+
+    void setPlaybackTarget(uint64_t, Ref<MediaPlaybackTarget>&&);
+    void playbackTargetAvailabilityDidChange(uint64_t, bool);
+    void setShouldPlayToPlaybackTarget(uint64_t, bool);
 #endif
 
 protected:
@@ -1684,12 +1685,14 @@ private:
 
     bool m_hasStyleWithViewportUnits;
 
-    HashSet<AudioProducer*> m_audioProducers;
-    bool m_isPlayingAudio;
+    HashSet<MediaProducer*> m_audioProducers;
+    MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    HashSet<WebCore::MediaPlaybackTargetPickerClient*> m_playbackTargetClients;
-    bool m_playbackTargetsAvailable { false };
+    typedef HashMap<uint64_t, WebCore::MediaPlaybackTargetClient*> TargetClientToIdMap;
+    TargetClientToIdMap m_idToClientMap;
+    typedef HashMap<WebCore::MediaPlaybackTargetClient*, uint64_t> TargetIdToClientMap;
+    TargetIdToClientMap m_clientToIDMap;
 #endif
 };
 

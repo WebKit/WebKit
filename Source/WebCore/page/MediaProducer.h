@@ -23,18 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioProducer_h
-#define AudioProducer_h
+#ifndef MediaProducer_h
+#define MediaProducer_h
 
 namespace WebCore {
 
-class AudioProducer {
+class MediaProducer {
 public:
-    virtual bool isPlayingAudio() = 0;
+    enum MediaState {
+        IsNotPlaying = 0,
+        IsPlayingAudio = 1 << 0,
+        IsPlayingVideo = 1 << 1,
+        IsPlayingToExternalDevice = 1 << 2,
+        RequiresPlaybackTargetMonitoring = 1 << 3,
+    };
+    typedef unsigned MediaStateFlags;
+
+    virtual MediaStateFlags mediaState() const = 0;
     virtual void pageMutedStateDidChange() = 0;
 
 protected:
-    virtual ~AudioProducer() { }
+    virtual ~MediaProducer() { }
 };
 
 }

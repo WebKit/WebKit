@@ -23,29 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaPlaybackTargetPickerClient_h
-#define MediaPlaybackTargetPickerClient_h
+#ifndef WebMediaSessionManagerMac_h
+#define WebMediaSessionManagerMac_h
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
-#include "MediaPlaybackTarget.h"
+#include "WebMediaSessionManager.h"
 
 namespace WebCore {
 
-class MediaPlaybackTarget;
-
-class MediaPlaybackTargetPickerClient {
+class WebMediaSessionManagerMac : public WebMediaSessionManager {
+    friend class NeverDestroyed<WebMediaSessionManagerMac>;
 public:
-    virtual ~MediaPlaybackTargetPickerClient() { }
+    WEBCORE_EXPORT static WebMediaSessionManager& singleton();
 
-    virtual void didChoosePlaybackTarget(Ref<MediaPlaybackTarget>&&) = 0;
-    virtual void externalOutputDeviceAvailableDidChange(bool) const = 0;
+private:
+    WebMediaSessionManagerMac();
+    virtual ~WebMediaSessionManagerMac();
 
-    virtual bool requiresPlaybackTargetRouteMonitoring() const = 0;
+    virtual WebCore::MediaPlaybackTargetPicker& targetPicker();
+
+    std::unique_ptr<WebCore::MediaPlaybackTargetPicker> m_targetPicker;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#endif // MediaPlaybackTargetPickerClient_h
+#endif // WebMediaSessionManagerMac_h

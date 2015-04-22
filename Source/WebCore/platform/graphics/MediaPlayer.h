@@ -483,8 +483,7 @@ public:
     bool isPlayingToWirelessPlaybackTarget() const;
     void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&);
 
-    void startPlayingToPlaybackTarget();
-    void stopPlayingToPlaybackTarget();
+    void setShouldPlayToPlaybackTarget(bool);
 #endif
 
     double minFastReverseRate() const;

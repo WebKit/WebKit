@@ -1107,8 +1107,9 @@ private:
     void setShouldDispatchFakeMouseMoveEvents(bool dispatch) { m_shouldDispatchFakeMouseMoveEvents = dispatch; }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
-    void playbackTargetSelected(const WebCore::MediaPlaybackTargetContext& outputDevice) const;
-    void playbackTargetAvailabilityDidChange(bool);
+    void playbackTargetSelected(uint64_t, const WebCore::MediaPlaybackTargetContext& outputDevice) const;
+    void playbackTargetAvailabilityDidChange(uint64_t, bool);
+    void setShouldPlayToPlaybackTarget(uint64_t, bool);
 #endif
 
     uint64_t m_pageID;

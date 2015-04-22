@@ -31,7 +31,6 @@
 #include "AXObjectCache.h"
 #include "AnimationController.h"
 #include "Attr.h"
-#include "AudioProducer.h"
 #include "CDATASection.h"
 #include "CSSFontSelector.h"
 #include "CSSStyleDeclaration.h"
@@ -100,6 +99,7 @@
 #include "Logging.h"
 #include "MainFrame.h"
 #include "MediaCanStartListener.h"
+#include "MediaProducer.h"
 #include "MediaQueryList.h"
 #include "MediaQueryMatcher.h"
 #include "MouseEventWithHitTestResults.h"
@@ -230,7 +230,7 @@
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#include "HTMLVideoElement.h"
+#include "MediaPlaybackTargetClient.h"
 #endif
 
 using namespace WTF;
@@ -523,7 +523,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_renderTreeBeingDestroyed(false)
     , m_hasPreparedForDestruction(false)
     , m_hasStyleWithViewportUnits(false)
-    , m_isPlayingAudio(false)
 {
     allDocuments().add(this);
 
@@ -3415,13 +3414,13 @@ void Document::updateViewportUnitsOnResize()
     }
 }
 
-void Document::addAudioProducer(AudioProducer* audioProducer)
+void Document::addAudioProducer(MediaProducer* audioProducer)
 {
     m_audioProducers.add(audioProducer);
     updateIsPlayingMedia();
 }
 
-void Document::removeAudioProducer(AudioProducer* audioProducer)
+void Document::removeAudioProducer(MediaProducer* audioProducer)
 {
     m_audioProducers.remove(audioProducer);
     updateIsPlayingMedia();
@@ -3429,18 +3428,14 @@ void Document::removeAudioProducer(AudioProducer* audioProducer)
 
 void Document::updateIsPlayingMedia()
 {
-    bool isPlayingAudio = false;
-    for (auto audioProducer : m_audioProducers) {
-        if (audioProducer->isPlayingAudio()) {
-            isPlayingAudio = true;
-            break;
-        }
-    }
+    MediaProducer::MediaStateFlags state = MediaProducer::IsNotPlaying;
+    for (auto audioProducer : m_audioProducers)
+        state |= audioProducer->mediaState();
 
-    if (isPlayingAudio == m_isPlayingAudio)
+    if (state == m_mediaState)
         return;
 
-    m_isPlayingAudio = isPlayingAudio;
+    m_mediaState = state;
 
     if (page())
         page()->updateIsPlayingMedia();
@@ -6533,72 +6528,85 @@ void Document::setInputCursor(PassRefPtr<InputCursor> cursor)
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-void Document::showPlaybackTargetPicker(const HTMLMediaElement& element)
+static uint64_t nextPlaybackTargetClientContextId()
+{
+    static uint64_t contextId = 0;
+    return ++contextId;
+}
+
+void Document::addPlaybackTargetPickerClient(MediaPlaybackTargetClient& client)
 {
     Page* page = this->page();
     if (!page)
         return;
 
-    page->showPlaybackTargetPicker(view()->lastKnownMousePosition(), is<HTMLVideoElement>(element));
+    ASSERT(!m_clientToIDMap.contains(&client));
+
+    uint64_t contextId = nextPlaybackTargetClientContextId();
+    m_clientToIDMap.add(&client, contextId);
+    m_idToClientMap.add(contextId, &client);
+    page->addPlaybackTargetPickerClient(contextId);
 }
 
-void Document::addPlaybackTargetPickerClient(MediaPlaybackTargetPickerClient& client)
+void Document::removePlaybackTargetPickerClient(MediaPlaybackTargetClient& client)
+{
+    ASSERT(m_clientToIDMap.contains(&client));
+    uint64_t contextId = m_clientToIDMap.get(&client);
+    m_idToClientMap.remove(contextId);
+    m_clientToIDMap.remove(&client);
+
+    Page* page = this->page();
+    if (!page)
+        return;
+    page->removePlaybackTargetPickerClient(contextId);
+}
+
+void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool isVideo)
 {
     Page* page = this->page();
     if (!page)
         return;
 
-    m_playbackTargetClients.add(&client);
-
-    RefPtr<MediaPlaybackTarget> target = page->playbackTarget();
-    if (target)
-        client.didChoosePlaybackTarget(*target);
-    client.externalOutputDeviceAvailableDidChange(page->hasWirelessPlaybackTarget());
+    ASSERT(m_clientToIDMap.contains(&client));
+    page->showPlaybackTargetPicker(m_clientToIDMap.get(&client), view()->lastKnownMousePosition(), isVideo);
 }
 
-void Document::removePlaybackTargetPickerClient(MediaPlaybackTargetPickerClient& client)
-{
-    m_playbackTargetClients.remove(&client);
-    configurePlaybackTargetMonitoring();
-}
-
-void Document::configurePlaybackTargetMonitoring()
+void Document::playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClient& client, MediaProducer::MediaStateFlags state)
 {
     Page* page = this->page();
     if (!page)
         return;
 
-    page->configurePlaybackTargetMonitoring();
+    ASSERT(m_clientToIDMap.contains(&client));
+    page->playbackTargetPickerClientStateDidChange(m_clientToIDMap.get(&client), state);
 }
 
-bool Document::requiresPlaybackTargetRouteMonitoring()
+void Document::playbackTargetAvailabilityDidChange(uint64_t clientId, bool available)
 {
-    for (auto* client : m_playbackTargetClients) {
-        if (client->requiresPlaybackTargetRouteMonitoring()) {
-            return true;
-            break;
-        }
-    }
-
-    return false;
-}
-
-void Document::playbackTargetAvailabilityDidChange(bool available)
-{
-    if (m_playbackTargetsAvailable == available)
+    TargetClientToIdMap::iterator it = m_idToClientMap.find(clientId);
+    if (it == m_idToClientMap.end())
         return;
-    m_playbackTargetsAvailable = available;
 
-    for (auto* client : m_playbackTargetClients)
-        client->externalOutputDeviceAvailableDidChange(available);
+    it->value->externalOutputDeviceAvailableDidChange(available);
 }
 
-void Document::didChoosePlaybackTarget(Ref<MediaPlaybackTarget>&& device)
+void Document::setPlaybackTarget(uint64_t clientId, Ref<MediaPlaybackTarget>&& target)
 {
-    for (auto* client : m_playbackTargetClients)
-        client->didChoosePlaybackTarget(device.copyRef());
+    TargetClientToIdMap::iterator it = m_idToClientMap.find(clientId);
+    if (it == m_idToClientMap.end())
+        return;
+
+    it->value->setPlaybackTarget(target.copyRef());
 }
 
-#endif
+void Document::setShouldPlayToPlaybackTarget(uint64_t clientId, bool shouldPlay)
+{
+    TargetClientToIdMap::iterator it = m_idToClientMap.find(clientId);
+    if (it == m_idToClientMap.end())
+        return;
+
+    it->value->setShouldPlayToPlaybackTarget(shouldPlay);
+}
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 } // namespace WebCore

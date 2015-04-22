@@ -293,6 +293,7 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 #import "WebMediaPlaybackTargetPicker.h"
+#import <WebCore/WebMediaSessionManagerMac.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -8669,30 +8670,29 @@ bool LayerFlushController::flushLayers()
     return _private->m_playbackTargetPicker.get();
 }
 
-- (void)_showPlaybackTargetPicker:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo
+- (void)_addPlaybackTargetPickerClient:(uint64_t)clientId
+{
+    [self _devicePicker]->addPlaybackTargetPickerClient(clientId);
+}
+
+- (void)_removePlaybackTargetPickerClient:(uint64_t)clientId
+{
+    [self _devicePicker]->removePlaybackTargetPickerClient(clientId);
+}
+
+- (void)_showPlaybackTargetPicker:(uint64_t)clientId location:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo
 {
     if (!_private->page)
         return;
 
     NSRect rectInWindowCoordinates = [self convertRect:[self _convertRectFromRootView:NSMakeRect(location.x(), location.y(), 0, 0)] toView:nil];
     NSRect rectInScreenCoordinates = [self.window convertRectToScreen:rectInWindowCoordinates];
-    [self _devicePicker]->showPlaybackTargetPicker(rectInScreenCoordinates, hasVideo);
+    [self _devicePicker]->showPlaybackTargetPicker(clientId, rectInScreenCoordinates, hasVideo);
 }
 
-- (void)_startingMonitoringPlaybackTargets
+- (void)_playbackTargetPickerClientStateDidChange:(uint64_t)clientId state:(WebCore::MediaProducer::MediaStateFlags)state
 {
-    if (!_private->page)
-        return;
-
-    [self _devicePicker]->startingMonitoringPlaybackTargets();
-}
-
-- (void)_stopMonitoringPlaybackTargets
-{
-    if (!_private->page)
-        return;
-
-    [self _devicePicker]->stopMonitoringPlaybackTargets();
+    [self _devicePicker]->playbackTargetPickerClientStateDidChange(clientId, state);
 }
 #endif
 

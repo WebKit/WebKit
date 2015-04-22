@@ -283,8 +283,7 @@ private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
     virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
-    virtual void startPlayingToPlaybackTarget() override;
-    virtual void stopPlayingToPlaybackTarget() override;
+    virtual void setShouldPlayToPlaybackTarget(bool) override;
     virtual bool isPlayingToWirelessPlaybackTarget();
 #endif
 

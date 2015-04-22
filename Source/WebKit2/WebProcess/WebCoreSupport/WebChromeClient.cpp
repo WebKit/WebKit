@@ -1050,7 +1050,7 @@ bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView* frameVi
     return m_page->drawingArea()->shouldUseTiledBackingForFrameView(frameView);
 }
 
-void WebChromeClient::isPlayingMediaDidChange(MediaStateFlags state)
+void WebChromeClient::isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags state)
 {
     m_page->send(Messages::WebPageProxy::IsPlayingMediaDidChange(state));
 }
@@ -1115,21 +1115,27 @@ void WebChromeClient::handleAutoFillButtonClick(HTMLInputElement& inputElement)
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
-void WebChromeClient::showPlaybackTargetPicker(const WebCore::IntPoint& position, bool isVideo)
+void WebChromeClient::addPlaybackTargetPickerClient(uint64_t contextId)
+{
+    m_page->send(Messages::WebPageProxy::AddPlaybackTargetPickerClient(contextId));
+}
+
+void WebChromeClient::removePlaybackTargetPickerClient(uint64_t contextId)
+{
+    m_page->send(Messages::WebPageProxy::RemovePlaybackTargetPickerClient(contextId));
+}
+
+
+void WebChromeClient::showPlaybackTargetPicker(uint64_t contextId, const WebCore::IntPoint& position, bool isVideo)
 {
     FrameView* frameView = m_page->mainFrame()->view();
     FloatRect rect(frameView->contentsToRootView(frameView->windowToContents(position)), FloatSize());
-    m_page->send(Messages::WebPageProxy::ShowPlaybackTargetPicker(rect, isVideo));
+    m_page->send(Messages::WebPageProxy::ShowPlaybackTargetPicker(contextId, rect, isVideo));
 }
 
-void WebChromeClient::startingMonitoringPlaybackTargets()
+void WebChromeClient::playbackTargetPickerClientStateDidChange(uint64_t contextId, WebCore::MediaProducer::MediaStateFlags state)
 {
-    m_page->send(Messages::WebPageProxy::StartingMonitoringPlaybackTargets());
-}
-
-void WebChromeClient::stopMonitoringPlaybackTargets()
-{
-    m_page->send(Messages::WebPageProxy::StopMonitoringPlaybackTargets());
+    m_page->send(Messages::WebPageProxy::PlaybackTargetPickerClientStateDidChange(contextId, state));
 }
 #endif
 

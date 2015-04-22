@@ -43,19 +43,16 @@ MediaPlaybackTargetPicker::~MediaPlaybackTargetPicker()
 void MediaPlaybackTargetPicker::showPlaybackTargetPicker(const FloatRect&, bool)
 {
     ASSERT_NOT_REACHED();
-    return;
 }
 
 void MediaPlaybackTargetPicker::startingMonitoringPlaybackTargets()
 {
     ASSERT_NOT_REACHED();
-    return;
 }
 
 void MediaPlaybackTargetPicker::stopMonitoringPlaybackTargets()
 {
     ASSERT_NOT_REACHED();
-    return;
 }
 
 } // namespace WebCore

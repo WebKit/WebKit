@@ -401,8 +401,10 @@ HTMLMediaElement::~HTMLMediaElement()
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent))
+    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent)) {
+        m_hasPlaybackTargetAvailabilityListeners = false;
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(*this, false);
+    }
 #endif
 
     if (m_mediaController) {
@@ -428,7 +430,7 @@ HTMLMediaElement::~HTMLMediaElement()
 
 void HTMLMediaElement::registerWithDocument(Document& document)
 {
-    m_mediaSession->registerWithDocument(document);
+    m_mediaSession->registerWithDocument(*this);
 
     if (m_isWaitingUntilMediaCanStart)
         document.addMediaCanStartListener(this);
@@ -455,7 +457,7 @@ void HTMLMediaElement::registerWithDocument(Document& document)
 
 void HTMLMediaElement::unregisterWithDocument(Document& document)
 {
-    m_mediaSession->unregisterWithDocument(document);
+    m_mediaSession->unregisterWithDocument(*this);
 
     if (m_isWaitingUntilMediaCanStart)
         document.removeMediaCanStartListener(this);
@@ -3017,6 +3019,10 @@ void HTMLMediaElement::setMuted(bool muted)
         }
         scheduleEvent(eventNames().volumechangeEvent);
         document().updateIsPlayingMedia();
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+        m_mediaSession->mediaStateDidChange(*this, mediaState());
+#endif
     }
 #endif
 }
@@ -4292,7 +4298,7 @@ void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
 
     m_havePreparedToPlay = false;
 
-    m_mediaSession->applyMediaPlayerRestrictions(*this);
+    m_mediaSession->mediaEngineUpdated(*this);
 
 #if ENABLE(WEB_AUDIO)
     if (m_audioSourceNode && audioSourceProvider()) {
@@ -4597,9 +4603,13 @@ void HTMLMediaElement::setPlaying(bool playing)
 {
     if (m_playing == playing)
         return;
-    
+
     m_playing = playing;
     document().updateIsPlayingMedia();
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    m_mediaSession->mediaStateDidChange(*this, mediaState());
+#endif
 }
 
 void HTMLMediaElement::setPausedInternal(bool b)
@@ -4689,6 +4699,7 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent)) {
+        m_hasPlaybackTargetAvailabilityListeners = false;
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(*this, false);
 
         // Send an availability event in case scripts want to hide the picker when the element
@@ -4863,6 +4874,10 @@ void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPl
 {
     LOG(Media, "HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(%p) - webkitCurrentPlaybackTargetIsWireless = %s", this, boolString(webkitCurrentPlaybackTargetIsWireless()));
     scheduleEvent(eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent);
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    m_mediaSession->mediaStateDidChange(*this, mediaState());
+#endif
 }
 
 bool HTMLMediaElement::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
@@ -4874,8 +4889,10 @@ bool HTMLMediaElement::addEventListener(const AtomicString& eventType, PassRefPt
     if (!Node::addEventListener(eventType, listener, useCapture))
         return false;
 
-    if (isFirstAvailabilityChangedListener)
+    if (isFirstAvailabilityChangedListener) {
+        m_hasPlaybackTargetAvailabilityListeners = true;
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(*this, true);
+    }
 
     LOG(Media, "HTMLMediaElement::addEventListener(%p) - 'webkitplaybacktargetavailabilitychanged'", this);
     
@@ -4893,8 +4910,10 @@ bool HTMLMediaElement::removeEventListener(const AtomicString& eventType, EventL
 
     bool didRemoveLastAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent);
     LOG(Media, "HTMLMediaElement::removeEventListener(%p) - removed last listener = %s", this, boolString(didRemoveLastAvailabilityChangedListener));
-    if (didRemoveLastAvailabilityChangedListener)
+    if (didRemoveLastAvailabilityChangedListener) {
+        m_hasPlaybackTargetAvailabilityListeners = false;
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(*this, false);
+    }
 
     return true;
 }
@@ -4932,16 +4951,10 @@ bool HTMLMediaElement::isPlayingToWirelessPlaybackTarget() const
     return isPlaying;
 }
 
-void HTMLMediaElement::startPlayingToPlaybackTarget()
+void HTMLMediaElement::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
     if (m_player)
-        m_player->startPlayingToPlaybackTarget();
-}
-
-void HTMLMediaElement::stopPlayingToPlaybackTarget()
-{
-    if (m_player)
-        m_player->stopPlayingToPlaybackTarget();
+        m_player->setShouldPlayToPlaybackTarget(shouldPlay);
 }
 #endif
 
@@ -5473,6 +5486,7 @@ void HTMLMediaElement::createMediaPlayer()
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent)) {
+        m_hasPlaybackTargetAvailabilityListeners = true;
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(*this, true);
         enqueuePlaybackTargetAvailabilityChangedEvent(); // Ensure the event listener gets at least one event.
     }
@@ -6171,9 +6185,29 @@ bool HTMLMediaElement::overrideBackgroundPlaybackRestriction() const
     return false;
 }
 
-bool HTMLMediaElement::isPlayingAudio()
+MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
 {
-    return isPlaying() && hasAudio() && !muted();
+
+    MediaStateFlags state = IsNotPlaying;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    if (isPlayingToWirelessPlaybackTarget())
+        state |= IsPlayingToExternalDevice;
+
+    if (m_hasPlaybackTargetAvailabilityListeners)
+        state |= RequiresPlaybackTargetMonitoring;
+#endif
+
+    if (!isPlaying())
+        return state;
+
+    if (hasAudio() && !muted())
+        state |= IsPlayingAudio;
+
+    if (hasVideo())
+        state |= IsPlayingVideo;
+
+    return state;
 }
 
 void HTMLMediaElement::pageMutedStateDidChange()

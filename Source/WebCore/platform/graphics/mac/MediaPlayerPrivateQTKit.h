@@ -182,8 +182,7 @@ private:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual bool isCurrentPlaybackTargetSupported() const override;
     virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&);
-    virtual void startPlayingToPlaybackTarget() override;
-    virtual void stopPlayingToPlaybackTarget() override;
+    virtual void setShouldPlayToPlaybackTarget(bool) override;
     void togglePlayingToPlaybackTarget();
 #endif
 

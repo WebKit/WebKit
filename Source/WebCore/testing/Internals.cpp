@@ -2642,7 +2642,7 @@ bool Internals::isPagePlayingAudio()
     if (!document || !document->page())
         return false;
 
-    return document->page()->isPlayingAudio();
+    return !!(document->page()->mediaState() & MediaProducer::IsPlayingAudio);
 }
 
 RefPtr<File> Internals::createFile(const String& path)

@@ -1006,9 +1006,12 @@ void AudioContext::mediaCanStart()
     removeBehaviorRestriction(AudioContext::RequirePageConsentForAudioStartRestriction);
 }
 
-bool AudioContext::isPlayingAudio()
+MediaProducer::MediaStateFlags AudioContext::mediaState() const
 {
-    return !m_isStopScheduled && m_destinationNode && m_destinationNode->isPlayingAudio();
+    if (!m_isStopScheduled && m_destinationNode && m_destinationNode->isPlayingAudio())
+        return MediaProducer::IsPlayingAudio;
+
+    return MediaProducer::IsNotPlaying;
 }
 
 void AudioContext::pageMutedStateDidChange()

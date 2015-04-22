@@ -1,3 +1,44 @@
+2015-04-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Use one playback target for all web processes
+        https://bugs.webkit.org/show_bug.cgi?id=144009
+
+        Reviewed by Tim Horton.
+
+        Update to use WebMediaSessionManager for playback target management.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::addPlaybackTargetPickerClient):
+        (WebChromeClient::removePlaybackTargetPickerClient):
+        (WebChromeClient::showPlaybackTargetPicker):
+        (WebChromeClient::playbackTargetPickerClientStateDidChange):
+        (WebChromeClient::startingMonitoringPlaybackTargets): Deleted.
+        (WebChromeClient::stopMonitoringPlaybackTargets): Deleted.
+        * WebView/WebMediaPlaybackTargetPicker.h:
+        * WebView/WebMediaPlaybackTargetPicker.mm:
+        (WebMediaPlaybackTargetPicker::addPlaybackTargetPickerClient):
+        (WebMediaPlaybackTargetPicker::removePlaybackTargetPickerClient):
+        (WebMediaPlaybackTargetPicker::showPlaybackTargetPicker):
+        (WebMediaPlaybackTargetPicker::playbackTargetPickerClientStateDidChange):
+        (WebMediaPlaybackTargetPicker::setPlaybackTarget):
+        (WebMediaPlaybackTargetPicker::externalOutputDeviceAvailableDidChange):
+        (WebMediaPlaybackTargetPicker::setShouldPlayToPlaybackTarget):
+        (WebMediaPlaybackTargetPicker::invalidate):
+        (WebMediaPlaybackTargetPicker::startingMonitoringPlaybackTargets): Deleted.
+        (WebMediaPlaybackTargetPicker::stopMonitoringPlaybackTargets): Deleted.
+        (WebMediaPlaybackTargetPicker::didChoosePlaybackTarget): Deleted.
+        (WebMediaPlaybackTargetPicker::targetPicker): Deleted.
+        * WebView/WebView.mm:
+        (-[WebView _addPlaybackTargetPickerClient:]):
+        (-[WebView _removePlaybackTargetPickerClient:]):
+        (-[WebView _showPlaybackTargetPicker:location:hasVideo:]):
+        (-[WebView _playbackTargetPickerClientStateDidChange:state:]):
+        (-[WebView _showPlaybackTargetPicker:hasVideo:]): Deleted.
+        (-[WebView _startingMonitoringPlaybackTargets]): Deleted.
+        (-[WebView _stopMonitoringPlaybackTargets]): Deleted.
+        * WebView/WebViewInternal.h:
+
 2015-04-20  Alexey Proskuryakov  <ap@apple.com>
 
         Disable mixed content blocking for existing WebKit1 clients

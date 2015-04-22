@@ -1554,23 +1554,13 @@ void MediaPlayerPrivateQTKit::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>
     m_playbackTarget = WTF::move(target);
 }
 
-void MediaPlayerPrivateQTKit::togglePlayingToPlaybackTarget()
+void MediaPlayerPrivateQTKit::setShouldPlayToPlaybackTarget(bool shouldPlayToTarget)
 {
     bool oldSupported = m_currentPlaybackTargetIsSupported;
-    m_currentPlaybackTargetIsSupported = !m_playbackTarget || !m_playbackTarget->hasActiveRoute();
+    m_currentPlaybackTargetIsSupported = !shouldPlayToTarget;
 
     if (m_player && oldSupported != m_currentPlaybackTargetIsSupported)
         m_player->currentPlaybackTargetIsWirelessChanged();
-}
-
-void MediaPlayerPrivateQTKit::startPlayingToPlaybackTarget()
-{
-    togglePlayingToPlaybackTarget();
-}
-
-void MediaPlayerPrivateQTKit::stopPlayingToPlaybackTarget()
-{
-    togglePlayingToPlaybackTarget();
 }
 #endif
 

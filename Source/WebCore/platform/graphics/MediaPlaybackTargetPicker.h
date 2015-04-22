@@ -42,7 +42,7 @@ public:
         virtual ~Client() { }
 
     public:
-        virtual void didChoosePlaybackTarget(Ref<MediaPlaybackTarget>&&) = 0;
+        virtual void setPlaybackTarget(Ref<MediaPlaybackTarget>&&) = 0;
         virtual void externalOutputDeviceAvailableDidChange(bool) = 0;
 
         void invalidate();

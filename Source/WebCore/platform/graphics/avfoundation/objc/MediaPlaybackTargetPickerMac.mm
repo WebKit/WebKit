@@ -133,7 +133,7 @@ void MediaPlaybackTargetPickerMac::currentDeviceDidChange()
     if (!devicePicker)
         return;
 
-    m_client->didChoosePlaybackTarget(WebCore::MediaPlaybackTargetMac::create([devicePicker outputContext]));
+    m_client->setPlaybackTarget(WebCore::MediaPlaybackTargetMac::create([devicePicker outputContext]));
 }
 
 void MediaPlaybackTargetPickerMac::startingMonitoringPlaybackTargets()

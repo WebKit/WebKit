@@ -26,12 +26,13 @@
 #ifndef MediaSession_h
 #define MediaSession_h
 
+#include "MediaProducer.h"
 #include "Timer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#include "MediaPlaybackTargetPickerClient.h"
+#include "MediaPlaybackTargetClient.h"
 #endif
 
 namespace WebCore {
@@ -41,7 +42,7 @@ class MediaSessionClient;
 
 class MediaSession
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    : public MediaPlaybackTargetPickerClient
+    : public MediaPlaybackTargetClient
 #endif
 {
 public:
@@ -119,14 +120,16 @@ public:
 
     virtual bool canPlayToWirelessPlaybackTarget() const { return false; }
     virtual bool isPlayingToWirelessPlaybackTarget() const { return false; }
-    virtual void startPlayingToPlaybackTarget() { }
-    virtual void stopPlayingToPlaybackTarget() { }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    // MediaPlaybackTargetPickerClient
-    virtual void didChoosePlaybackTarget(Ref<MediaPlaybackTarget>&&) override { }
-    virtual void externalOutputDeviceAvailableDidChange(bool) const override { }
-    virtual bool requiresPlaybackTargetRouteMonitoring() const override { return false; }
+    // MediaPlaybackTargetClient
+    virtual void setPlaybackTarget(Ref<MediaPlaybackTarget>&&) override { }
+    virtual void externalOutputDeviceAvailableDidChange(bool) override { }
+    virtual void setShouldPlayToPlaybackTarget(bool) override { }
+#endif
+
+#if PLATFORM(IOS)
+    virtual bool requiresPlaybackTargetRouteMonitoring() const { return false; }
 #endif
 
 protected:
@@ -172,8 +175,7 @@ public:
     virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) { }
     virtual bool canPlayToWirelessPlaybackTarget() const { return false; }
     virtual bool isPlayingToWirelessPlaybackTarget() const { return false; }
-    virtual void startPlayingToPlaybackTarget() { }
-    virtual void stopPlayingToPlaybackTarget() { }
+    virtual void setShouldPlayToPlaybackTarget(bool) { }
 
 protected:
     virtual ~MediaSessionClient() { }

@@ -1,3 +1,167 @@
+2015-04-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Use one playback target for all web processes
+        https://bugs.webkit.org/show_bug.cgi?id=144009
+
+        Reviewed by Tim Horton.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.updateWirelessPlaybackStatus): Drive-by fix to show controls when
+            we show the placeholder image.
+
+        Instead of having each Page/Document pair manage access to the playback target for the videos
+        in a web process, put all of the logic into a new class - WebMediaSessionManager. A singleton
+        instance talks to the target picker and manages video element access for all web processes.
+        All playback target logic was removed from Document, Page, and MediaSessionManager.
+
+        * Modules/mediasession: Added.
+        * Modules/mediasession/WebMediaSessionManager.cpp: Added.
+        (WebCore::ClientState::ClientState):
+        (WebCore::flagsAreSet):
+        (WebCore::WebMediaSessionManager::WebMediaSessionManager):
+        (WebCore::WebMediaSessionManager::~WebMediaSessionManager):
+        (WebCore::WebMediaSessionManager::addPlaybackTargetPickerClient):
+        (WebCore::WebMediaSessionManager::removePlaybackTargetPickerClient):
+        (WebCore::WebMediaSessionManager::removeAllPlaybackTargetPickerClients):
+        (WebCore::WebMediaSessionManager::showPlaybackTargetPicker):
+        (WebCore::WebMediaSessionManager::clientStateDidChange):
+        (WebCore::WebMediaSessionManager::setPlaybackTarget):
+        (WebCore::WebMediaSessionManager::externalOutputDeviceAvailableDidChange):
+        (WebCore::WebMediaSessionManager::configurePlaybackTargetMonitoring):
+        (WebCore::WebMediaSessionManager::taskTimerFired):
+        (WebCore::WebMediaSessionManager::find):
+        (WebCore::WebMediaSessionManager::forEachClient):
+        * Modules/mediasession/WebMediaSessionManager.h: Added.
+        * Modules/mediasession/WebMediaSessionManagerClient.h: Added.
+        (WebCore::WebMediaSessionManagerClient::~WebMediaSessionManagerClient):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::mediaState): Replaces isPlayingAudio.
+        (WebCore::AudioContext::isPlayingAudio): Deleted.
+        * Modules/webaudio/AudioContext.h:
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::addAudioProducer): Take a MediaProducer instead of an AudioProducer.
+        (WebCore::Document::removeAudioProducer):
+        (WebCore::Document::updateIsPlayingMedia):
+        (WebCore::nextPlaybackTargetClientContextId):
+        (WebCore::Document::addPlaybackTargetPickerClient):
+        (WebCore::Document::removePlaybackTargetPickerClient):
+        (WebCore::Document::showPlaybackTargetPicker):
+        (WebCore::Document::playbackTargetPickerClientStateDidChange):
+        (WebCore::Document::playbackTargetAvailabilityDidChange):
+        (WebCore::Document::setPlaybackTarget):
+        (WebCore::Document::setShouldPlayToPlaybackTarget):
+        (WebCore::Document::configurePlaybackTargetMonitoring): Deleted.
+        (WebCore::Document::requiresPlaybackTargetRouteMonitoring): Deleted.
+        (WebCore::Document::didChoosePlaybackTarget): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::mediaState):
+        (WebCore::Document::isPlayingAudio): Deleted.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::registerWithDocument):
+        (WebCore::HTMLMediaElement::setMuted): 
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::registerWithDocument):
+        (WebCore::HTMLMediaSession::unregisterWithDocument):
+        (WebCore::HTMLMediaSession::showPlaybackTargetPicker):
+        (WebCore::HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners):
+        (WebCore::HTMLMediaSession::setPlaybackTarget):
+        (WebCore::HTMLMediaSession::externalOutputDeviceAvailableDidChange):
+        (WebCore::HTMLMediaSession::setShouldPlayToPlaybackTarget):
+        (WebCore::HTMLMediaSession::mediaStateDidChange):
+        (WebCore::HTMLMediaSession::didChoosePlaybackTarget): Deleted.
+        (WebCore::HTMLMediaSession::requiresPlaybackTargetRouteMonitoring): Deleted.
+        (WebCore::HTMLMediaSession::startPlayingToPlaybackTarget): Deleted.
+        (WebCore::HTMLMediaSession::stopPlayingToPlaybackTarget): Deleted.
+        * html/HTMLMediaSession.h:
+        * page/AudioProducer.h: Removed.
+        * page/ChromeClient.h:
+        * page/MediaProducer.h: Copied from Source/WebCore/page/AudioProducer.h.
+        (WebCore::MediaProducer::~MediaProducer):
+        (WebCore::AudioProducer::~AudioProducer): Deleted.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::updateIsPlayingMedia):
+        (WebCore::Page::addPlaybackTargetPickerClient):
+        (WebCore::Page::removePlaybackTargetPickerClient):
+        (WebCore::Page::showPlaybackTargetPicker):
+        (WebCore::Page::playbackTargetPickerClientStateDidChange):
+        (WebCore::Page::setPlaybackTarget):
+        (WebCore::Page::playbackTargetAvailabilityDidChange):
+        (WebCore::Page::setShouldPlayToPlaybackTarget):
+        (WebCore::Page::playbackTarget): Deleted.
+        (WebCore::Page::didChoosePlaybackTarget): Deleted.
+        (WebCore::Page::configurePlaybackTargetMonitoring): Deleted.
+        * page/Page.h:
+        (WebCore::Page::mediaState):
+        (WebCore::Page::isPlayingAudio): Deleted.
+        (WebCore::Page::hasWirelessPlaybackTarget): Deleted.
+        * platform/audio/MediaSession.h:
+        (WebCore::MediaSession::isPlayingToWirelessPlaybackTarget):
+        (WebCore::MediaSession::requiresPlaybackTargetRouteMonitoring):
+        (WebCore::MediaSessionClient::setShouldPlayToPlaybackTarget):
+        (WebCore::MediaSession::startPlayingToPlaybackTarget): Deleted.
+        (WebCore::MediaSession::stopPlayingToPlaybackTarget): Deleted.
+        (WebCore::MediaSessionClient::startPlayingToPlaybackTarget): Deleted.
+        (WebCore::MediaSessionClient::stopPlayingToPlaybackTarget): Deleted.
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::sessionWillBeginPlayback):
+        (WebCore::MediaSessionManager::sessionCanLoadMedia):
+        (WebCore::MediaSessionManager::sessionShouldBeginPlayingToWirelessPlaybackTarget): Deleted.
+        * platform/audio/MediaSessionManager.h:
+        * platform/graphics/MediaPlaybackTargetClient.h: Copied from Source/WebCore/platform/graphics/MediaPlaybackTargetPickerClient.h.
+        (WebCore::MediaPlaybackTargetClient::~MediaPlaybackTargetClient):
+        (WebCore::MediaPlaybackTargetPickerClient::~MediaPlaybackTargetPickerClient): Deleted.
+        * platform/graphics/MediaPlaybackTargetPicker.cpp:
+        (WebCore::MediaPlaybackTargetPicker::showPlaybackTargetPicker):
+        (WebCore::MediaPlaybackTargetPicker::startingMonitoringPlaybackTargets):
+        (WebCore::MediaPlaybackTargetPicker::stopMonitoringPlaybackTargets):
+        * platform/graphics/MediaPlaybackTargetPicker.h:
+        * platform/graphics/MediaPlaybackTargetPickerClient.h: Removed.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setShouldPlayToPlaybackTarget):
+        (WebCore::MediaPlayer::startPlayingToPlaybackTarget): Deleted.
+        (WebCore::MediaPlayer::stopPlayingToPlaybackTarget): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setShouldPlayToPlaybackTarget):
+        (WebCore::MediaPlayerPrivateInterface::startPlayingToPlaybackTarget): Deleted.
+        (WebCore::MediaPlayerPrivateInterface::stopPlayingToPlaybackTarget): Deleted.
+        * platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp: Added.
+        (WebCore::WebMediaSessionManagerMac::singleton):
+        (WebCore::WebMediaSessionManagerMac::WebMediaSessionManagerMac):
+        (WebCore::WebMediaSessionManagerMac::~WebMediaSessionManagerMac):
+        (WebCore::WebMediaSessionManagerMac::targetPicker):
+        * platform/graphics/avfoundation/WebMediaSessionManagerMac.h: Added.
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.h:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::currentDeviceDidChange):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::startPlayingToPlaybackTarget): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::stopPlayingToPlaybackTarget): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setShouldPlayToPlaybackTarget):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::togglePlayingToPlaybackTarget): Deleted.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::startPlayingToPlaybackTarget): Deleted.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::stopPlayingToPlaybackTarget): Deleted.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::setShouldPlayToPlaybackTarget):
+        (WebCore::MediaPlayerPrivateQTKit::togglePlayingToPlaybackTarget): Deleted.
+        (WebCore::MediaPlayerPrivateQTKit::startPlayingToPlaybackTarget): Deleted.
+        (WebCore::MediaPlayerPrivateQTKit::stopPlayingToPlaybackTarget): Deleted.
+        * testing/Internals.cpp:
+        (WebCore::Internals::isPagePlayingAudio):
+
 2015-04-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] When computing visible rects for tiling, stop searching at UIWindows

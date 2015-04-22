@@ -211,7 +211,7 @@ private:
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    virtual std::unique_ptr<WebCore::MediaPlaybackTargetPicker> createPlaybackTargetPicker(WebPageProxy*) override;
+    virtual WebCore::WebMediaSessionManager& mediaSessionManager() override;
 #endif
 };
 

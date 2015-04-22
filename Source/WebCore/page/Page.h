@@ -25,6 +25,7 @@
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestones.h"
 #include "LayoutRect.h"
+#include "MediaProducer.h"
 #include "PageThrottler.h"
 #include "PageVisibilityState.h"
 #include "Pagination.h"
@@ -422,19 +423,20 @@ public:
     WEBCORE_EXPORT void enableLegacyPrivateBrowsing(bool privateBrowsingEnabled);
     bool usesEphemeralSession() const { return m_sessionID.isEphemeral(); }
 
-    bool isPlayingAudio() const { return m_isPlayingAudio; }
+    MediaProducer::MediaStateFlags mediaState() const { return m_mediaState; }
     void updateIsPlayingMedia();
     bool isMuted() const { return m_muted; }
     WEBCORE_EXPORT void setMuted(bool);
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    void showPlaybackTargetPicker(const WebCore::IntPoint&, bool);
-    bool hasWirelessPlaybackTarget() const { return m_hasWirelessPlaybackTarget; }
-    RefPtr<MediaPlaybackTarget> playbackTarget() const;
-    void configurePlaybackTargetMonitoring();
+    void addPlaybackTargetPickerClient(uint64_t);
+    void removePlaybackTargetPickerClient(uint64_t);
+    void showPlaybackTargetPicker(uint64_t, const WebCore::IntPoint&, bool);
+    void playbackTargetPickerClientStateDidChange(uint64_t, MediaProducer::MediaStateFlags);
 
-    WEBCORE_EXPORT void didChoosePlaybackTarget(Ref<MediaPlaybackTarget>&&);
-    WEBCORE_EXPORT void playbackTargetAvailabilityDidChange(bool);
+    WEBCORE_EXPORT void setPlaybackTarget(uint64_t, Ref<MediaPlaybackTarget>&&);
+    WEBCORE_EXPORT void playbackTargetAvailabilityDidChange(uint64_t, bool);
+    WEBCORE_EXPORT void setShouldPlayToPlaybackTarget(uint64_t, bool);
 #endif
 
 private:
@@ -589,14 +591,9 @@ private:
 
     SessionID m_sessionID;
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    RefPtr<MediaPlaybackTarget> m_playbackTarget;
-    bool m_hasWirelessPlaybackTarget { false };
-#endif
-
     bool m_isClosing;
 
-    bool m_isPlayingAudio;
+    MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
 };
 
 inline PageGroup& Page::group()

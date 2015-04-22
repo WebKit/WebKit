@@ -166,25 +166,6 @@ MediaSessionManager::SessionRestrictions MediaSessionManager::restrictions(Media
     return m_restrictions[type];
 }
 
-bool MediaSessionManager::sessionShouldBeginPlayingToWirelessPlaybackTarget(MediaSession& session) const
-{
-    if (!session.canPlayToWirelessPlaybackTarget())
-        return false;
-
-    if (session.isPlayingToWirelessPlaybackTarget())
-        return false;
-
-    Vector<MediaSession*> sessions = m_sessions;
-    for (auto* oneSession : sessions) {
-        if (oneSession == &session)
-            continue;
-        if (oneSession->isPlayingToWirelessPlaybackTarget())
-            return false;
-    }
-
-    return true;
-}
-
 bool MediaSessionManager::sessionWillBeginPlayback(MediaSession& session)
 {
     LOG(Media, "MediaSessionManager::sessionWillBeginPlayback - %p", &session);
@@ -204,19 +185,13 @@ bool MediaSessionManager::sessionWillBeginPlayback(MediaSession& session)
     if (m_interrupted)
         endInterruption(MediaSession::NoFlags);
 
-    bool shouldPlayToPlaybackTarget = sessionShouldBeginPlayingToWirelessPlaybackTarget(session);
     Vector<MediaSession*> sessions = m_sessions;
     for (auto* oneSession : sessions) {
         if (oneSession == &session)
             continue;
-        if (shouldPlayToPlaybackTarget)
-            oneSession->stopPlayingToPlaybackTarget();
         if (oneSession->mediaType() == sessionType && restrictions & ConcurrentPlaybackNotPermitted)
             oneSession->pauseSession();
     }
-
-    if (shouldPlayToPlaybackTarget)
-        session.startPlayingToPlaybackTarget();
 
     updateSessionState();
     return true;
@@ -294,7 +269,7 @@ bool MediaSessionManager::sessionRestrictsInlineVideoPlayback(const MediaSession
 
 bool MediaSessionManager::sessionCanLoadMedia(const MediaSession& session) const
 {
-    return session.state() == MediaSession::Playing || !session.isHidden();
+    return session.state() == MediaSession::Playing || !session.isHidden() || session.isPlayingToWirelessPlaybackTarget();
 }
 
 void MediaSessionManager::applicationWillEnterBackground() const

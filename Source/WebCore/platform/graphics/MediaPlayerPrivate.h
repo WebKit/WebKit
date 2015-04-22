@@ -173,8 +173,7 @@ public:
     virtual bool isPlayingToWirelessPlaybackTarget() { return false; }
     virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) { }
 
-    virtual void startPlayingToPlaybackTarget() { }
-    virtual void stopPlayingToPlaybackTarget() { }
+    virtual void setShouldPlayToPlaybackTarget(bool) { }
 #endif
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)

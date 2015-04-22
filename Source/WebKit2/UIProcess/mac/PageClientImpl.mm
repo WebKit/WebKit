@@ -71,7 +71,7 @@
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#include <WebCore/MediaPlaybackTargetPickerMac.h>
+#include <WebCore/WebMediaSessionManagerMac.h>
 #endif
 
 @interface NSApplication (WebNSApplicationDetails)
@@ -813,9 +813,9 @@ void PageClientImpl::showPlatformContextMenu(NSMenu *menu, IntPoint location)
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-std::unique_ptr<WebCore::MediaPlaybackTargetPicker> PageClientImpl::createPlaybackTargetPicker(WebPageProxy* page)
+WebCore::WebMediaSessionManager& PageClientImpl::mediaSessionManager()
 {
-    return MediaPlaybackTargetPickerMac::create(*page);
+    return WebMediaSessionManagerMac::singleton();
 }
 #endif
 

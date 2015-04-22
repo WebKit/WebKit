@@ -31,10 +31,10 @@
 #include "Plugin.h"
 #include "PluginController.h"
 #include "WebFrame.h"
-#include <WebCore/AudioProducer.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/Image.h>
 #include <WebCore/MediaCanStartListener.h>
+#include <WebCore/MediaProducer.h>
 #include <WebCore/PluginViewBase.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
@@ -58,7 +58,7 @@ namespace WebKit {
 
 class WebEvent;
 
-class PluginView : public WebCore::PluginViewBase, public PluginController, private WebCore::MediaCanStartListener, private WebFrame::LoadListener, private WebCore::AudioProducer {
+class PluginView : public WebCore::PluginViewBase, public PluginController, private WebCore::MediaCanStartListener, private WebFrame::LoadListener, private WebCore::MediaProducer {
 public:
     static PassRefPtr<PluginView> create(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters&);
 
@@ -181,8 +181,8 @@ private:
     // WebCore::MediaCanStartListener
     virtual void mediaCanStart() override;
 
-    // WebCore::AudioProducer
-    virtual bool isPlayingAudio() override { return m_pluginIsPlayingAudio; }
+    // WebCore::MediaProducer
+    virtual MediaProducer::MediaStateFlags mediaState() const override { return m_pluginIsPlayingAudio ? MediaProducer::IsPlayingAudio : MediaProducer::IsNotPlaying; }
     virtual void pageMutedStateDidChange() override;
 
     // PluginController

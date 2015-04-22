@@ -23,47 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaPlaybackTargetPickerMac_h
-#define MediaPlaybackTargetPickerMac_h
+#include "config.h"
+#include "WebMediaSessionManagerMac.h"
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
-#import "MediaPlaybackTargetPicker.h"
-#include <wtf/RetainPtr.h>
-#include <wtf/RunLoop.h>
-
-OBJC_CLASS AVOutputDeviceMenuController;
-OBJC_CLASS WebAVOutputDeviceMenuControllerHelper;
+#include "MediaPlaybackTargetPickerMac.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-class MediaPlaybackTargetPickerMac final : public MediaPlaybackTargetPicker {
-    WTF_MAKE_NONCOPYABLE(MediaPlaybackTargetPickerMac);
-public:
-    virtual ~MediaPlaybackTargetPickerMac();
+WebMediaSessionManager& WebMediaSessionManagerMac::singleton()
+{
+    static NeverDestroyed<WebMediaSessionManagerMac> sharedManager;
+    return sharedManager;
+}
 
-    WEBCORE_EXPORT static std::unique_ptr<MediaPlaybackTargetPickerMac> create(MediaPlaybackTargetPicker::Client&);
+WebMediaSessionManagerMac::WebMediaSessionManagerMac()
+    : WebMediaSessionManager()
+{
+}
 
-    virtual void showPlaybackTargetPicker(const FloatRect&, bool) override;
-    virtual void startingMonitoringPlaybackTargets() override;
-    virtual void stopMonitoringPlaybackTargets() override;
-    
-    void availableDevicesDidChange();
-    void currentDeviceDidChange();
+WebMediaSessionManagerMac::~WebMediaSessionManagerMac()
+{
+}
 
-private:
-    explicit MediaPlaybackTargetPickerMac(MediaPlaybackTargetPicker::Client&);
+WebCore::MediaPlaybackTargetPicker& WebMediaSessionManagerMac::targetPicker()
+{
+    if (!m_targetPicker)
+        m_targetPicker = MediaPlaybackTargetPickerMac::create(*this);
 
-    AVOutputDeviceMenuController *devicePicker();
-    void outputeDeviceAvailabilityChangedTimerFired();
-
-    RetainPtr<AVOutputDeviceMenuController> m_outputDeviceMenuController;
-    RetainPtr<WebAVOutputDeviceMenuControllerHelper> m_outputDeviceMenuControllerDelegate;
-    RunLoop::Timer<MediaPlaybackTargetPickerMac> m_deviceChangeTimer;
-};
+    return *m_targetPicker.get();
+}
 
 } // namespace WebCore
 
-#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
-
-#endif // WebContextMenuProxyMac_h
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)

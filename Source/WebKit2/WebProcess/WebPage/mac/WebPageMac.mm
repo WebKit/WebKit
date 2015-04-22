@@ -1203,16 +1203,21 @@ void WebPage::setFont(const String& fontFamily, double fontSize, uint64_t fontTr
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
-void WebPage::playbackTargetSelected(const WebCore::MediaPlaybackTargetContext& targetContext) const
+void WebPage::playbackTargetSelected(uint64_t contextId, const WebCore::MediaPlaybackTargetContext& targetContext) const
 {
     ASSERT(targetContext.type == MediaPlaybackTargetContext::AVOutputContextType);
 
-    m_page->didChoosePlaybackTarget(WebCore::MediaPlaybackTargetMac::create(targetContext.context.avOutputContext));
+    m_page->setPlaybackTarget(contextId, WebCore::MediaPlaybackTargetMac::create(targetContext.context.avOutputContext));
 }
 
-void WebPage::playbackTargetAvailabilityDidChange(bool changed)
+void WebPage::playbackTargetAvailabilityDidChange(uint64_t contextId, bool changed)
 {
-    m_page->playbackTargetAvailabilityDidChange(changed);
+    m_page->playbackTargetAvailabilityDidChange(contextId, changed);
+}
+
+void WebPage::setShouldPlayToPlaybackTarget(uint64_t contextId, bool shouldPlay)
+{
+    m_page->setShouldPlayToPlaybackTarget(contextId, shouldPlay);
 }
 #endif
 

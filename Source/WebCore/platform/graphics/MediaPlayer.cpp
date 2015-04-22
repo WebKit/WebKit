@@ -888,14 +888,9 @@ void MediaPlayer::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& device)
     m_private->setWirelessPlaybackTarget(WTF::move(device));
 }
 
-void MediaPlayer::startPlayingToPlaybackTarget()
+void MediaPlayer::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
-    m_private->startPlayingToPlaybackTarget();
-}
-
-void MediaPlayer::stopPlayingToPlaybackTarget()
-{
-    m_private->stopPlayingToPlaybackTarget();
+    m_private->setShouldPlayToPlaybackTarget(shouldPlay);
 }
 #endif
 

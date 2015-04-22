@@ -101,7 +101,6 @@ private:
     friend class Internals;
 
     void updateSessionState();
-    bool sessionShouldBeginPlayingToWirelessPlaybackTarget(MediaSession&) const;
 
     // RemoteCommandListenerClient
     WEBCORE_EXPORT virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override;
@@ -116,12 +115,16 @@ private:
     virtual void systemDidWake() override;
 
     SessionRestrictions m_restrictions[MediaSession::WebAudio + 1];
-
     Vector<MediaSession*> m_sessions;
-
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
     std::unique_ptr<SystemSleepListener> m_systemSleepListener;
     RefPtr<AudioHardwareListener> m_audioHardwareListener;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+    RefPtr<MediaPlaybackTarget> m_playbackTarget;
+    bool m_canPlayToTarget { false };
+#endif
+
     bool m_interrupted { false };
 };
 

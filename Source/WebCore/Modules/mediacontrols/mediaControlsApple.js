@@ -1787,6 +1787,7 @@ Controller.prototype = {
                 this.controls.volumeBox.style.display = "none";
             else
                 this.controls.muteBox.style.display = "none";
+            this.showControls();
         } else {
             this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.hidden);
             this.controls.wirelessTargetPicker.classList.remove(this.ClassNames.playing);

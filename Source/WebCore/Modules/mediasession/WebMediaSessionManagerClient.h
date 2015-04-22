@@ -23,47 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaPlaybackTargetPickerMac_h
-#define MediaPlaybackTargetPickerMac_h
+#ifndef WebMediaSessionManagerClient_h
+#define WebMediaSessionManagerClient_h
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#import "MediaPlaybackTargetPicker.h"
-#include <wtf/RetainPtr.h>
-#include <wtf/RunLoop.h>
-
-OBJC_CLASS AVOutputDeviceMenuController;
-OBJC_CLASS WebAVOutputDeviceMenuControllerHelper;
+#include "MediaPlaybackTarget.h"
+#include "MediaProducer.h"
 
 namespace WebCore {
 
-class MediaPlaybackTargetPickerMac final : public MediaPlaybackTargetPicker {
-    WTF_MAKE_NONCOPYABLE(MediaPlaybackTargetPickerMac);
+class MediaPlaybackTarget;
+
+class WebMediaSessionManagerClient {
 public:
-    virtual ~MediaPlaybackTargetPickerMac();
+    virtual ~WebMediaSessionManagerClient() { }
 
-    WEBCORE_EXPORT static std::unique_ptr<MediaPlaybackTargetPickerMac> create(MediaPlaybackTargetPicker::Client&);
-
-    virtual void showPlaybackTargetPicker(const FloatRect&, bool) override;
-    virtual void startingMonitoringPlaybackTargets() override;
-    virtual void stopMonitoringPlaybackTargets() override;
-    
-    void availableDevicesDidChange();
-    void currentDeviceDidChange();
-
-private:
-    explicit MediaPlaybackTargetPickerMac(MediaPlaybackTargetPicker::Client&);
-
-    AVOutputDeviceMenuController *devicePicker();
-    void outputeDeviceAvailabilityChangedTimerFired();
-
-    RetainPtr<AVOutputDeviceMenuController> m_outputDeviceMenuController;
-    RetainPtr<WebAVOutputDeviceMenuControllerHelper> m_outputDeviceMenuControllerDelegate;
-    RunLoop::Timer<MediaPlaybackTargetPickerMac> m_deviceChangeTimer;
+    virtual void setPlaybackTarget(uint64_t, Ref<MediaPlaybackTarget>&&) = 0;
+    virtual void externalOutputDeviceAvailableDidChange(uint64_t, bool) = 0;
+    virtual void setShouldPlayToPlaybackTarget(uint64_t, bool) = 0;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#endif // WebContextMenuProxyMac_h
+#endif // WebMediaSessionManagerClient_h

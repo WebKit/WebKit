@@ -1,3 +1,61 @@
+2015-04-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Use one playback target for all web processes
+        https://bugs.webkit.org/show_bug.cgi?id=144009
+
+        Reviewed by Tim Horton.
+
+        Every WebPageProxy uses the WebMediaSessionManager singleton to talk to the playback target
+        picker.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+        (WebKit::WebPageProxy::addPlaybackTargetPickerClient):
+        (WebKit::WebPageProxy::removePlaybackTargetPickerClient):
+        (WebKit::WebPageProxy::showPlaybackTargetPicker):
+        (WebKit::WebPageProxy::playbackTargetPickerClientStateDidChange):
+        (WebKit::WebPageProxy::setPlaybackTarget):
+        (WebKit::WebPageProxy::externalOutputDeviceAvailableDidChange):
+        (WebKit::WebPageProxy::setShouldPlayToPlaybackTarget):
+        (WebKit::WebPageProxy::devicePickerProxy): Deleted.
+        (WebKit::WebPageProxy::startingMonitoringPlaybackTargets): Deleted.
+        (WebKit::WebPageProxy::stopMonitoringPlaybackTargets): Deleted.
+        (WebKit::WebPageProxy::didChoosePlaybackTarget): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isPlayingAudio):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::mediaSessionManager):
+        (WebKit::PageClientImpl::createPlaybackTargetPicker): Deleted.
+        * UIProcess/mac/WebMediaSessionManagerMac.cpp: Added.
+        (WebKit::WebMediaSessionManagerMac::singleton):
+        (WebKit::WebMediaSessionManagerMac::WebMediaSessionManagerMac):
+        (WebKit::WebMediaSessionManagerMac::~WebMediaSessionManagerMac):
+        (WebKit::WebMediaSessionManagerMac::targetPicker):
+        * UIProcess/mac/WebMediaSessionManagerMac.h: Added.
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::isPlayingMediaDidChange):
+        (WebKit::WebChromeClient::addPlaybackTargetPickerClient):
+        (WebKit::WebChromeClient::removePlaybackTargetPickerClient):
+        (WebKit::WebChromeClient::showPlaybackTargetPicker):
+        (WebKit::WebChromeClient::playbackTargetPickerClientStateDidChange):
+        (WebKit::WebChromeClient::startingMonitoringPlaybackTargets): Deleted.
+        (WebKit::WebChromeClient::stopMonitoringPlaybackTargets): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::playbackTargetSelected):
+        (WebKit::WebPage::playbackTargetAvailabilityDidChange):
+        (WebKit::WebPage::setShouldPlayToPlaybackTarget):
+
 2015-04-21  Anders Carlsson  <andersca@apple.com>
 
         WKWebsiteDataStore doesn't track and remove IndexedDB databases

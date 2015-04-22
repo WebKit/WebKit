@@ -34,10 +34,6 @@
 #include <WebCore/EditorClient.h>
 #include <wtf/Forward.h>
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#include <WebCore/MediaPlaybackTargetPicker.h>
-#endif
-
 #if PLATFORM(COCOA)
 #include "PluginComplexTextInputState.h"
 
@@ -52,6 +48,7 @@ OBJC_CLASS NSTextAlternatives;
 namespace WebCore {
 class Cursor;
 class TextIndicator;
+class WebMediaSessionManager;
 struct Highlight;
 struct ViewportAttributes;
 }
@@ -325,7 +322,7 @@ public:
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
-    virtual std::unique_ptr<WebCore::MediaPlaybackTargetPicker> createPlaybackTargetPicker(WebPageProxy*) = 0;
+    virtual WebCore::WebMediaSessionManager& mediaSessionManager() = 0;
 #endif
 
 };

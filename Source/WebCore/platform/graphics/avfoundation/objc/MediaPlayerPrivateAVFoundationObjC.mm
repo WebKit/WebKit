@@ -942,11 +942,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     updateDisableExternalPlayback();
     [m_avPlayer.get() setAllowsExternalPlayback:m_allowsWirelessVideoPlayback];
-
-#if !PLATFORM(IOS)
-    if (m_outputContext)
-        m_avPlayer.get().outputContext = m_outputContext.get();
-#endif
 #endif
 
     if (player()->client().mediaPlayerIsVideo())
@@ -2785,35 +2780,24 @@ void MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(Ref<MediaPlay
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(%p) - target = %p", this, m_outputContext.get());
 
     if (!m_outputContext || !m_outputContext.get().deviceName)
-        stopPlayingToPlaybackTarget();
+        setShouldPlayToPlaybackTarget(false);
 }
 
-void MediaPlayerPrivateAVFoundationObjC::startPlayingToPlaybackTarget()
+void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
     if (!m_avPlayer)
         return;
 
-    if ([m_avPlayer.get().outputContext isEqual:m_outputContext.get()])
+    AVOutputContext *newContext = shouldPlay ? m_outputContext.get() : nil;
+    AVOutputContext *currentContext = m_avPlayer.get().outputContext;
+    if ((!newContext && !currentContext) || [currentContext isEqual:newContext])
         return;
 
     setDelayCallbacks(true);
-    m_avPlayer.get().outputContext = m_outputContext.get();
+    m_avPlayer.get().outputContext = newContext;
     setDelayCallbacks(false);
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::startPlayingToPlaybackTarget(%p) - target = %p", this, m_avPlayer.get().outputContext);
-}
-
-void MediaPlayerPrivateAVFoundationObjC::stopPlayingToPlaybackTarget()
-{
-    if (!m_avPlayer)
-        return;
-
-    setDelayCallbacks(true);
-    // FIXME: uncomment the following line once rdar://20335217 has been fixed.
-    // m_avPlayer.get().outputContext = nil;
-    setDelayCallbacks(false);
-
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::stopPlayingToPlaybackTarget(%p) - target = %p", this, m_avPlayer.get().outputContext);
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(%p) - target = %p, playing to target = %s", this, m_avPlayer.get().outputContext, boolString(shouldPlay));
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::isPlayingToWirelessPlaybackTarget()
