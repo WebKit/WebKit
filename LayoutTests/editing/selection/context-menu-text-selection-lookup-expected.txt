@@ -1,7 +1,6 @@
-CONSOLE MESSAGE: line 31: ReferenceError: Can't find variable: expectedText
 This test checks that triggering the context menu selects/doesn't select using surround text as context (as platform-appropriate).
 
 New York
-RUNNING
-RUNNING
-RUNNING
+SUCCESS
+SUCCESS
+SUCCESS

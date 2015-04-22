@@ -1,3 +1,10 @@
+2015-04-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix after r183138.
+
+        * editing/selection/context-menu-text-selection-lookup-expected.txt: The wrong
+        expectations were committed.
+
 2015-04-22  Alexey Proskuryakov  <ap@apple.com>
 
         Update results for two CSS tests affected by new fonts in OS X 10.10.3.
