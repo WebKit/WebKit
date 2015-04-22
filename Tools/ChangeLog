@@ -1,3 +1,11 @@
+2015-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Do not run GTK+ user media unit tests when ENABLE_MEDIA_STREAM is disabled.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestUIClient.cpp:
+        (beforeAll):
+        (testWebViewAudioOnlyUserMediaPermissionRequests):
+
 2015-04-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Add myself to watchlist

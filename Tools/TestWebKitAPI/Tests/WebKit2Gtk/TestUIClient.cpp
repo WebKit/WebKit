@@ -673,6 +673,7 @@ static void testWebViewGeolocationPermissionRequests(UIClientTest* test, gconstp
     test->addLogFatalFlag(G_LOG_LEVEL_WARNING);
 }
 
+#if ENABLE(MEDIA_STREAM)
 static void testWebViewUserMediaPermissionRequests(UIClientTest* test, gconstpointer)
 {
     WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
@@ -741,6 +742,7 @@ static void testWebViewAudioOnlyUserMediaPermissionRequests(UIClientTest* test, 
 
     webkit_settings_set_enable_media_stream(settings, enabled);
 }
+#endif // ENABLE(MEDIA_STREAM)
 
 class FileChooserTest: public UIClientTest {
 public:
@@ -969,8 +971,10 @@ void beforeAll()
     UIClientTest::add("WebKitWebView", "window-properties", testWebViewWindowProperties);
     UIClientTest::add("WebKitWebView", "mouse-target", testWebViewMouseTarget);
     UIClientTest::add("WebKitWebView", "geolocation-permission-requests", testWebViewGeolocationPermissionRequests);
+#if ENABLE(MEDIA_STREAM)
     UIClientTest::add("WebKitWebView", "usermedia-permission-requests", testWebViewUserMediaPermissionRequests);
     UIClientTest::add("WebKitWebView", "audio-usermedia-permission-request", testWebViewAudioOnlyUserMediaPermissionRequests);
+#endif
     FileChooserTest::add("WebKitWebView", "file-chooser-request", testWebViewFileChooserRequest);
     ColorChooserTest::add("WebKitWebView", "color-chooser-request", testWebViewColorChooserRequest);
 }
