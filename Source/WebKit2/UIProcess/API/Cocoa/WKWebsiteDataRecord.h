@@ -45,7 +45,7 @@ WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 
 @property (nonatomic, readonly, copy) NSString *displayName;
 
-@property (nonatomic, readonly, copy) NSSet *dataTypes;
+@property (nonatomic, readonly, copy) WK_SET(NSString *) *dataTypes;
 
 @end
 

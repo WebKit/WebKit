@@ -54,6 +54,9 @@
 #define WK_ENUM_AVAILABLE(_mac, _ios)
 #define WK_ENUM_AVAILABLE_IOS(_ios)
 
+#define WK_ARRAY(...) NSArray
+#define WK_SET(...) NSSet
+
 #ifndef __NSi_8_3
 #define __NSi_8_3 introduced=8.3
 #endif

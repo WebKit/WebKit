@@ -1,3 +1,18 @@
+2015-04-22  Anders Carlsson  <andersca@apple.com>
+
+        Add WK_ARRAY and WK_SET annotations
+        https://bugs.webkit.org/show_bug.cgi?id=144075
+        rdar://problem/19417770
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/Cocoa/WKFoundation.h:
+        * UIProcess/API/Cocoa/WKBackForwardList.h:
+        * UIProcess/API/Cocoa/WKUserContentController.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h:
+        * mac/postprocess-framework-headers.sh:
+
 2015-04-22  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix after r183136.
