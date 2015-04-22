@@ -1,3 +1,10 @@
+2015-04-22  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed post-review clean up after r183096.
+
+        * Modules/mediasession/WebMediaSessionManagerClient.h:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.h:
+
 2015-04-22  Nan Wang  <nanwang1101@yahoo.com>
 
         AX: WebKit does not expose text fields inside tree views.

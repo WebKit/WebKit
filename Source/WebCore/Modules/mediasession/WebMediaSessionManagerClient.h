@@ -30,6 +30,7 @@
 
 #include "MediaPlaybackTarget.h"
 #include "MediaProducer.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

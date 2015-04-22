@@ -28,7 +28,7 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
-#import "MediaPlaybackTargetPicker.h"
+#include "MediaPlaybackTargetPicker.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
 

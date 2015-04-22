@@ -25,8 +25,8 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
-#import <WebCore/MediaPlaybackTarget.h>
-#import <WebCore/WebMediaSessionManagerClient.h>
+#include <WebCore/MediaPlaybackTarget.h>
+#include <WebCore/WebMediaSessionManagerClient.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {

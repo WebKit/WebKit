@@ -1,3 +1,9 @@
+2015-04-22  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed post-review clean up after r183096.
+
+        * WebView/WebMediaPlaybackTargetPicker.h:
+
 2015-04-21  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Use one playback target for all web processes
