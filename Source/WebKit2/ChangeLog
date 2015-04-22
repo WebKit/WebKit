@@ -1,3 +1,19 @@
+2015-04-22  Dana Burkart  <matthew_hanson@apple.com>
+
+        Merge r181580 for rdar://problem/20545393.
+
+    2015-03-13  Enrica Casucci  <enrica@apple.com>
+
+            Webkit crash in WebKit::nextFocusableElement() when typing TAB on external keyboard
+            rdar://problem/20155503
+
+            Reviewed by David Kilzer.
+
+            Adding null check!
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::nextFocusableElement):
+
 2015-04-22  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r182746. rdar://problem/20645260
