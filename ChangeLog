@@ -1,3 +1,17 @@
+2015-04-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r183116.
+        https://bugs.webkit.org/show_bug.cgi?id=144060
+
+        Inadvertently deleted a file... (Requested by mcatanzaro on
+        #webkit).
+
+        Reverted changeset:
+
+        "[CMake] Use lowercase for local variables in macros"
+        https://bugs.webkit.org/show_bug.cgi?id=144059
+        http://trac.webkit.org/changeset/183116
+
 2015-04-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Use lowercase for local variables in macros
