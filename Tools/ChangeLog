@@ -1,3 +1,16 @@
+2015-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] MiniBrowser should use NetworkProcess by default
+        https://bugs.webkit.org/show_bug.cgi?id=143948
+
+        Reviewed by Sergio Villar Senin.
+
+        Use WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES by default
+        unless MINIBROWSER_SINGLEPROCESS environment variable is present.
+
+        * MiniBrowser/gtk/main.c:
+        (main):
+
 2015-04-21  Matthew Hanson  <matthew_hanson@apple.com>
 
         Use grep instead of any in prepare-ChangeLog, to avoid Windows compatibility issues.
