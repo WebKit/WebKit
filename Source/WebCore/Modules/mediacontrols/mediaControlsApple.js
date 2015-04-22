@@ -802,8 +802,12 @@ Controller.prototype = {
         var opacity = window.getComputedStyle(this.controls.panel).opacity;
         if (parseInt(opacity) > 0) {
             this.controls.panel.classList.remove(this.ClassNames.hidden);
+            if (this.controls.panelBackground)
+                this.controls.panelBackground.classList.remove(this.ClassNames.hidden);
         } else if (!this.controlsAlwaysVisible()) {
             this.controls.panel.classList.add(this.ClassNames.hidden);
+            if (this.controls.panelBackground)
+                this.controls.panelBackground.classList.add(this.ClassNames.hidden);
         }
     },
 
@@ -1293,10 +1297,14 @@ Controller.prototype = {
 
         if (!isPlaying) {
             this.controls.panel.classList.add(this.ClassNames.paused);
+            if (this.controls.panelBackground)
+                this.controls.panelBackground.classList.add(this.ClassNames.paused);
             this.controls.playButton.classList.add(this.ClassNames.paused);
             this.controls.playButton.setAttribute('aria-label', this.UIString('Play'));
         } else {
             this.controls.panel.classList.remove(this.ClassNames.paused);
+            if (this.controls.panelBackground)
+               this.controls.panelBackground.classList.remove(this.ClassNames.paused);
             this.controls.playButton.classList.remove(this.ClassNames.paused);
             this.controls.playButton.setAttribute('aria-label', this.UIString('Pause'));
             this.resetHideControlsTimer();
@@ -1313,6 +1321,11 @@ Controller.prototype = {
 
         this.controls.panel.classList.add(this.ClassNames.show);
         this.controls.panel.classList.remove(this.ClassNames.hidden);
+        
+        if (this.controls.panelBackground) {
+            this.controls.panelBackground.classList.add(this.ClassNames.show);
+            this.controls.panelBackground.classList.remove(this.ClassNames.hidden);
+        }
 
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
     },
@@ -1324,6 +1337,8 @@ Controller.prototype = {
 
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
         this.controls.panel.classList.remove(this.ClassNames.show);
+        if (this.controls.panelBackground)
+            this.controls.panelBackground.classList.remove(this.ClassNames.show);
     },
 
     controlsAlwaysVisible: function()

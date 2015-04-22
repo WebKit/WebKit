@@ -1,3 +1,14 @@
+2015-04-22  Roger Fong  <roger_fong@apple.com>
+
+        Rollout part of r182263 that broke inline media controls on iOS.
+        <rdar://problem/20654260>
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.handlePanelTransitionEnd):
+        (Controller.prototype.setPlaying):
+        (Controller.prototype.showControls):
+        (Controller.prototype.hideControls):
+
 2015-04-22  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed post-review clean up after r183096.
