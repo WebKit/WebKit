@@ -115,6 +115,15 @@ ControllerIOS.prototype = {
         spacer.setAttribute('pseudo', '-webkit-media-controls-spacer');
         spacer.classList.add(this.ClassNames.hidden);
 
+        var inlinePlaybackPlaceholderText = this.controls.inlinePlaybackPlaceholderText = document.createElement('div');
+        inlinePlaybackPlaceholderText.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-text');
+
+        var inlinePlaybackPlaceholderTextTop = this.controls.inlinePlaybackPlaceholderTextTop = document.createElement('p');
+        inlinePlaybackPlaceholderTextTop.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-text-top');
+
+        var inlinePlaybackPlaceholderTextBottom = this.controls.inlinePlaybackPlaceholderTextBottom = document.createElement('p');
+        inlinePlaybackPlaceholderTextBottom.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-text-bottom');
+
         var wirelessTargetPicker = this.controls.wirelessTargetPicker
         this.listenFor(wirelessTargetPicker, 'touchstart', this.handleWirelessPickerButtonTouchStart);
         this.listenFor(wirelessTargetPicker, 'touchend', this.handleWirelessPickerButtonTouchEnd);
@@ -170,6 +179,9 @@ ControllerIOS.prototype = {
     },
 
     configureInlineControls: function() {
+        this.controls.inlinePlaybackPlaceholder.appendChild(this.controls.inlinePlaybackPlaceholderText);
+        this.controls.inlinePlaybackPlaceholderText.appendChild(this.controls.inlinePlaybackPlaceholderTextTop);
+        this.controls.inlinePlaybackPlaceholderText.appendChild(this.controls.inlinePlaybackPlaceholderTextBottom);
         this.controls.panel.appendChild(this.controls.playButton);
         this.controls.panel.appendChild(this.controls.statusDisplay);
         this.controls.panel.appendChild(this.controls.spacer);

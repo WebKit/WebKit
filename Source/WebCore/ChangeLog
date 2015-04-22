@@ -1,5 +1,23 @@
 2015-04-22  Roger Fong  <roger_fong@apple.com>
 
+        Show correct wireless play placard on iOS.
+        <rdar://problem/20656596>
+
+        Copy wireless player placard code from r182631 to iOS.
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-wireless-playback-status):
+        (audio::-webkit-media-controls-wireless-playback-text):
+        (audio::-webkit-media-controls-wireless-playback-text-top):
+        (audio::-webkit-media-controls-wireless-playback-text-bottom):
+        (audio::-webkit-media-controls-wireless-playback-status.small):
+        (audio::-webkit-media-controls-wireless-playback-text-top.small):
+        (audio::-webkit-media-controls-wireless-playback-text-bottom.small):
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.createControls):
+        (ControllerIOS.prototype.configureInlineControls):
+
+2015-04-22  Roger Fong  <roger_fong@apple.com>
+
         Rollout part of r182263 that broke inline media controls on iOS.
         <rdar://problem/20654260>
 
