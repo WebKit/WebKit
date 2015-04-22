@@ -22,9 +22,10 @@ SVG/HereGear.html
 # Takes 22s on MacBookPro
 SVG/MtSaintHelens.html
 
-# Do not conform to WebKit or Chromium perf test styles
+# Do not conform to WebKit perf test style
 SunSpider
 XSSAuditor
+JetStream
 
 # https://bugs.webkit.org/show_bug.cgi?id=95376
 Dromaeo/jslib-modify-jquery.html
