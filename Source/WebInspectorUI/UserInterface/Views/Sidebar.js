@@ -72,7 +72,7 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.Object
         return sidebarPanel;
     }
 
-    removeSidebarPanel(sidebarPanelOrIdentifierOrIndex, index)
+    removeSidebarPanel(sidebarPanelOrIdentifierOrIndex)
     {
         var sidebarPanel = this.findSidebarPanel(sidebarPanelOrIdentifierOrIndex);
         if (!sidebarPanel)

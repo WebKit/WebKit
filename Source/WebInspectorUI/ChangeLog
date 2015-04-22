@@ -1,5 +1,14 @@
 2015-04-22  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Remove an unused index argument from Sidebar.removeSidebarPanel
+        https://bugs.webkit.org/show_bug.cgi?id=144054
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/Sidebar.js:
+
+2015-04-22  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Fix an exception preventing switching timelines
         https://bugs.webkit.org/show_bug.cgi?id=144053
 
