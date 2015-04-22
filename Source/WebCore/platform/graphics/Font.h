@@ -195,6 +195,7 @@ public:
 #endif
 #if PLATFORM(COCOA)
     CFDictionaryRef getCFStringAttributes(TypesettingFeatures, FontOrientation) const;
+    bool hasCustomTracking() const { return isSystemFont(); }
 #endif
 
 #if PLATFORM(COCOA) || USE(HARFBUZZ)

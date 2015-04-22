@@ -455,11 +455,6 @@ static inline bool advanceForColorBitmapFont(const FontPlatformData& platformDat
 #endif
 }
 
-static inline bool hasCustomTracking(const Font& font)
-{
-    return font.isSystemFont();
-}
-
 static inline bool isEmoji(const FontPlatformData& platformData)
 {
 #if PLATFORM(IOS)
@@ -474,7 +469,7 @@ static inline bool canUseFastGlyphAdvanceGetter(const Font& font, Glyph glyph, C
 {
     const FontPlatformData& platformData = font.platformData();
     // Fast getter doesn't take custom tracking into account
-    if (hasCustomTracking(font))
+    if (font.hasCustomTracking())
         return false;
     // Fast getter doesn't work for emoji
     if (isEmoji(platformData))
@@ -501,13 +496,10 @@ float Font::platformWidthForGlyph(Glyph glyph) const
             advance.width = 0;
         }
     } else if (!populatedAdvance) {
-        // m_platformData.font() returns the original font that was passed into the FontPlatformData constructor. In the case of fonts that have custom tracking,
+        // m_platformData.font() returns the original font that was passed into the FontPlatformData constructor. In the case of fonts that have custom tracking,
         // the custom tracking does not survive the transformation to either m_platformData.cgFont() nor m_platformData.ctFont(), so we must use the original
         // font() that was passed in. However, for web fonts, m_platformData.font() is null, so we must use m_platformData.ctFont() for those cases.
-        if (hasCustomTracking(*this))
-            CTFontGetAdvancesForGlyphs(m_platformData.font(), horizontal ? kCTFontOrientationHorizontal : kCTFontOrientationVertical, &glyph, &advance, 1);
-        else
-            CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), horizontal ? kCTFontOrientationHorizontal : kCTFontOrientationVertical, &glyph, &advance, 1);
+        CTFontGetAdvancesForGlyphs(hasCustomTracking() ? m_platformData.font() : m_platformData.ctFont(), horizontal ? kCTFontOrientationHorizontal : kCTFontOrientationVertical, &glyph, &advance, 1);
     }
 
     return advance.width + m_syntheticBoldOffset;
