@@ -1,3 +1,18 @@
+2015-04-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Require specifying visibility of WebKit options
+        https://bugs.webkit.org/show_bug.cgi?id=143831
+
+        Reviewed by Alex Christensen.
+
+        * Source/cmake/OptionsEfl.cmake: Specify all options as PUBLIC
+        * Source/cmake/OptionsGTK.cmake: Specify all options as PUBLIC
+        * Source/cmake/OptionsMac.cmake: Specify all options as PRIVATE
+        * Source/cmake/OptionsWindows.cmake: Specify all options as PUBLIC
+        * Source/cmake/WebKitFeatures.cmake: Require specifying options as PUBLIC or PRIVATE.
+          Remove WEBKIT_OPTION_DEFINE_PUBLIC and WEBKIT_OPTION_PRIVATE_PORT_VALUE. Specify all
+          cross-platform options as PRIVATE.
+
 2015-04-19  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [CMake] Synchronize variables between WebKitFeatures.cmake and cmakedonfig.h.cmake
