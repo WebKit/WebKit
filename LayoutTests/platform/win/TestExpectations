@@ -3046,6 +3046,9 @@ webkit.org/b/139968 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlin
 webkit.org/b/139968 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
 
+# rdar://problem/20656948
+accessibility/treeitem-child-exposed.html [ Failure ]
+
 ################################################################################
 ######################### End list of UNREVIEWED failures ##########################
 ################################################################################

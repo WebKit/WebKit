@@ -1,3 +1,14 @@
+2015-04-22  Jeremy Jones  <jeremyj@apple.com>
+
+        Expect failure on windows for treeitem-child-exposed test.
+        https://bugs.webkit.org/show_bug.cgi?id=144070
+
+        Unreviewed.
+
+        Mark accessibility/treeitem-child-exposed.html as failing on windows.
+
+        * platform/win/TestExpectations:
+
 2015-04-22  Nan Wang  <nanwang1101@yahoo.com>
 
         AX: WebKit does not expose text fields inside tree views.
