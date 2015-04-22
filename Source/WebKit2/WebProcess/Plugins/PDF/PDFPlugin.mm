@@ -56,6 +56,7 @@
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/Cursor.h>
+#import <WebCore/DictionaryLookup.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FormState.h>
@@ -390,6 +391,11 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
     _pdfPlugin->notifySelectionChanged(selection);
 }
 
+@end
+
+@interface PDFViewLayout
+- (NSPoint)convertPoint:(NSPoint)point toPage:(PDFPage *)page forScaleFactor:(CGFloat)scaleFactor;
+- (PDFPage *)pageNearestPoint:(NSPoint)point currentPage:(PDFPage *)currentPage;
 @end
 
 static const char* postScriptMIMEType = "application/postscript";
@@ -1827,6 +1833,104 @@ void PDFPlugin::notifySelectionChanged(PDFSelection *)
 String PDFPlugin::getSelectionString() const
 {
     return [[m_pdfLayerController currentSelection] string];
+}
+
+String PDFPlugin::getSelectionForWordAtPoint(const WebCore::FloatPoint& point) const
+{
+    IntPoint pointInView = convertFromPluginToPDFView(convertFromRootViewToPlugin(roundedIntPoint(point)));
+    PDFSelection *selectionForWord = [m_pdfLayerController getSelectionForWordAtPoint:pointInView];
+    [m_pdfLayerController setCurrentSelection:selectionForWord];
+    
+    return [selectionForWord string];
+}
+
+bool PDFPlugin::existingSelectionContainsPoint(const WebCore::FloatPoint& point) const
+{
+    PDFSelection *currentSelection = [m_pdfLayerController currentSelection];
+    if (!currentSelection)
+        return false;
+    
+    IntPoint pointInView = convertFromPluginToPDFView(roundedIntPoint(point));
+    PDFSelection *selectionForWord = [m_pdfLayerController getSelectionForWordAtPoint:pointInView];
+
+    NSUInteger currentPageIndex = [m_pdfLayerController currentPageIndex];
+    
+    NSArray *selectionRects = [m_pdfLayerController rectsForSelectionInLayoutSpace:currentSelection];
+    if (!selectionRects || !selectionRects.count)
+        return false;
+    
+    if (currentPageIndex >= selectionRects.count)
+        currentPageIndex = selectionRects.count - 1;
+
+    NSArray *wordSelectionRects = [m_pdfLayerController rectsForSelectionInLayoutSpace:selectionForWord];
+    if (!wordSelectionRects || !wordSelectionRects.count)
+        return false;
+
+    NSValue *selectionBounds = [selectionRects objectAtIndex:currentPageIndex];
+    NSValue *wordSelectionBounds = [wordSelectionRects objectAtIndex:0];
+
+    NSRect selectionBoundsRect = selectionBounds.rectValue;
+    NSRect wordSelectionBoundsRect = wordSelectionBounds.rectValue;
+    return NSIntersectsRect(wordSelectionBoundsRect, selectionBoundsRect);
+}
+
+static NSPoint pointInLayoutSpaceForPointInWindowSpace(PDFLayerController* pdfLayerController, NSPoint pointInView)
+{
+    CGPoint point = NSPointToCGPoint(pointInView);
+    CGPoint scrollOffset = [pdfLayerController scrollPosition];
+    CGFloat scaleFactor = [pdfLayerController contentScaleFactor];
+
+    scrollOffset.y = [pdfLayerController contentSizeRespectingZoom].height - NSRectToCGRect([pdfLayerController frame]).size.height - scrollOffset.y;
+    
+    CGPoint newPoint = CGPointMake(scrollOffset.x + point.x, scrollOffset.y + point.y);
+    newPoint.x /= scaleFactor;
+    newPoint.y /= scaleFactor;
+    return NSPointFromCGPoint(newPoint);
+}
+
+String PDFPlugin::lookupTextAtLocation(const WebCore::FloatPoint& locationInViewCoordinates, WebHitTestResult::Data& data, PDFSelection **selectionPtr, NSDictionary **options) const
+{
+    PDFSelection*& selection = *selectionPtr;
+
+    selection = [m_pdfLayerController currentSelection];
+    if (existingSelectionContainsPoint(locationInViewCoordinates))
+        return [selection string];
+        
+    IntPoint pointInView = convertFromPluginToPDFView(roundedIntPoint(locationInViewCoordinates));
+    selection = [m_pdfLayerController getSelectionForWordAtPoint:pointInView];
+    if (!selection)
+        return @"";
+
+    NSPoint pointInLayoutSpace = pointInLayoutSpaceForPointInWindowSpace(m_pdfLayerController.get(), pointInView);
+
+    PDFPage *currentPage = [[m_pdfLayerController layout] pageNearestPoint:pointInLayoutSpace currentPage:[m_pdfLayerController currentPage]];
+    
+    NSPoint pointInPageSpace = [[m_pdfLayerController layout] convertPoint:pointInLayoutSpace toPage:currentPage forScaleFactor:1.0];
+    
+    for (PDFAnnotation *annotation in [currentPage annotations]) {
+        if (![annotation isKindOfClass:pdfAnnotationLinkClass()])
+            continue;
+    
+        NSRect bounds = [annotation bounds];
+        if (!NSPointInRect(pointInPageSpace, bounds))
+            continue;
+        
+        PDFAnnotationLink *linkAnnotation = (PDFAnnotationLink *)annotation;
+        NSURL *url = [linkAnnotation URL];
+        if (!url)
+            continue;
+        
+        data.absoluteLinkURL = [url absoluteString];
+        data.linkLabel = [selection string];
+        return [selection string];
+    }
+    
+    NSString *lookupText = dictionaryLookupForPDFSelection(selection, options);
+    if (!lookupText || !lookupText.length)
+        return @"";
+
+    [m_pdfLayerController setCurrentSelection:selection];
+    return lookupText;
 }
 
 void PDFPlugin::performWebSearch(NSString *string)

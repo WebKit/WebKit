@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include <wtf/PassRefPtr.h>
 
 OBJC_CLASS NSDictionary;
+OBJC_CLASS PDFSelection;
 
 namespace WebCore {
 
@@ -47,6 +48,7 @@ bool shouldUseSelection(const VisiblePosition&, const VisibleSelection&);
 PassRefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition&, int numberOfCharactersToExpand);
 WEBCORE_EXPORT PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection&, NSDictionary **options);
 WEBCORE_EXPORT PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult&, NSDictionary **options);
+WEBCORE_EXPORT NSString *dictionaryLookupForPDFSelection(PDFSelection *, NSDictionary **options);
 
 } // namespace WebCore
 

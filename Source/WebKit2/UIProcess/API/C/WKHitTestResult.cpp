@@ -67,6 +67,11 @@ WKStringRef WKHitTestResultCopyLinkTitle(WKHitTestResultRef hitTestResultRef)
     return toCopiedAPI(toImpl(hitTestResultRef)->linkTitle());
 }
 
+WKStringRef WKHitTestResultCopyLookupText(WKHitTestResultRef hitTestResult)
+{
+    return toCopiedAPI(toImpl(hitTestResult)->lookupText());
+}
+
 bool WKHitTestResultIsContentEditable(WKHitTestResultRef hitTestResultRef)
 {
     return toImpl(hitTestResultRef)->isContentEditable();

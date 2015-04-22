@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +65,7 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/HTMLConverter.h>
+#import <WebCore/HTMLPluginImageElement.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MIMETypeRegistry.h>
@@ -1099,6 +1100,30 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
             m_lastActionMenuRangeForSelection = detectedDataRange;
         }
     }
+
+#if ENABLE(PDFKIT_PLUGIN)
+    // See if we have a PDF
+    if (element && is<HTMLPlugInImageElement>(*element)) {
+        HTMLPlugInImageElement& pluginImageElement = downcast<HTMLPlugInImageElement>(*element);
+        if (PluginView* pluginView = reinterpret_cast<PluginView*>(pluginImageElement.pluginWidget())) {
+            // FIXME: We don't have API to identify images inside PDFs based on position.
+            NSDictionary *options = nil;
+            PDFSelection *selection = nil;
+            String selectedText = pluginView->lookupTextAtLocation(locationInContentCoordinates, actionMenuResult, &selection, &options);
+            if (!selectedText.isEmpty()) {
+                if (element->document().isPluginDocument()) {
+                    // FIXME(144030): Focus does not seem to get set to the PDF when invoking the menu.
+                    PluginDocument& pluginDocument = static_cast<PluginDocument&>(element->document());
+                    pluginDocument.setFocusedElement(element);
+                }
+
+                actionMenuResult.lookupText = selectedText;
+                actionMenuResult.isSelected = true;
+                actionMenuResult.allowsCopy = true;
+            }
+        }
+    }
+#endif
 
     RefPtr<API::Object> userData;
     injectedBundleContextMenuClient().prepareForActionMenu(*this, hitTestResult, userData);

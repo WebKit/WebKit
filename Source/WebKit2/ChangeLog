@@ -1,3 +1,45 @@
+2015-04-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Extend action menus to support PDF
+        https://bugs.webkit.org/show_bug.cgi?id=143895
+        <rdar://problem/19003333>
+
+        Reviewed by Tim Horton.
+
+        If the mouse pointer is over a PDF, try to provide a relevant action menu for whatever
+        content is under the mouse. For now, we only support copying text and handling URLs.
+
+        If no text is selected, use the dictionary lookup service to find a semantically appropriate
+        selection underneath the mouse. This is consistent with how normal text is treated in pure HTML
+        views. If some text is already selected, and the mouse is over the existing selection, continue
+        using the selected text. Otherwise, discard the old selection and select the most appropriate
+        region under the mouse pointer.
+
+        * Shared/API/c/WKActionMenuTypes.h: Add PDF menu option.
+        * Shared/WebMouseEvent.cpp: Recognize mouse force events as valid mouse events.
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController _defaultMenuItemsForPDF]): Add simply copy text option.
+        (-[WKActionMenuController _defaultMenuItems]): Recognize PDFs and add relevant action
+        menu entries.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h: Provide stub for new method.
+        * WebProcess/Plugins/PDF/PDFLayerControllerDetails.h: Expose 'rectsForSelectionInLayerSpace',
+        'rectsForAnnotationInLayoutSpace', 'layout', and 'currentPage'.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::getSelectionForWordAtPoint): Added.
+        (WebKit::PDFPlugin::existingSelectionContainsPoint): Added.
+        (WebKit::PDFPlugin::lookupTextAtLocation): Added.
+        * WebProcess/Plugins/Plugin.h: Add declaration for new 'getSelectionForWordAtPoint' method.
+        * WebProcess/Plugins/PluginProxy.h: Provide stub for new method.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::getSelectionForWordAtPoint): Added.
+        (WebKit::PluginView::existingSelectionContainsPoint): Added.
+        (WebKit::PluginView::lookupTextAtLocation): Added.
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performActionMenuHitTestAtLocation): Update to support PDF documents and retrieve
+        relevant content to support later action menu handling.
+
 2015-04-22  Eric Carlson  <eric.carlson@apple.com>
 
         Update AirPlay sandbox rules

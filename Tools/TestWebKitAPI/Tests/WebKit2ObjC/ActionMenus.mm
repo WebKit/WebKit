@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +81,9 @@ struct ActionMenuResult {
 {
     if (type != kWKActionMenuNone)
         EXPECT_GT(defaultMenuItems.count, (NSUInteger)0);
+
+    if (!hitTestResult)
+        return defaultMenuItems;
 
     // Clients should be able to pass userData from the Web to UI process, between
     // the WKBundlePageContextMenuClient's prepareForActionMenu, and here.
@@ -363,6 +366,8 @@ enum class TargetType {
     PageWhitespace,
     Video,
     MSEVideo,
+    PDFEmbed,
+    PDFDocument
 };
 
 static NSPoint windowPointForTarget(TargetType target)
@@ -432,15 +437,29 @@ static NSPoint windowPointForTarget(TargetType target)
     case TargetType::MSEVideo:
         contentPoint = NSMakePoint(200, 350);
         break;
+    case TargetType::PDFEmbed:
+        contentPoint = NSMakePoint(410, 420);
+        break;
+    case TargetType::PDFDocument:
+        contentPoint = NSMakePoint(141, 374);
+        break;
     }
 
     return NSMakePoint(contentPoint.x + 8, 600 - contentPoint.y - 8);
 }
 
+static void waitForPDFToLoad(ActionMenusTestWKView* wkView)
+{
+    __block bool pdfSeemsLoaded = false;
+    [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::PDFEmbed) preDidCloseMenuHandler:^() {
+        pdfSeemsLoaded = kWKActionMenuReadOnlyText == [wkView _actionMenuResult].type;
+    }];
+    Util::run(&didFinishLoad);
+}
+
 // FIXME: Ideally, each of these would be able to run as its own subtest in a suite, sharing a WKView (for performance reasons),
 // but we cannot because run-api-tests explicitly runs each test in a separate process. So, we use a single test for many tests instead.
-// FIXME: Temporarily disabled.
-TEST(WebKit2, DISABLED_ActionMenusTest)
+TEST(WebKit2, ActionMenusTest)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("ActionMenusTest"));
 
@@ -452,7 +471,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     PlatformWebView platformWebView(context.get(), pageGroup.get(), [ActionMenusTestWKView class]);
     RetainPtr<ActionMenusTestWKView> wkView = (ActionMenusTestWKView *)platformWebView.platformView();
 
-    if (![wkView respondsToSelector:@selector(setActionMenu:)])
+    if (![wkView respondsToSelector:@selector(_setActionMenu:)])
         return;
 
     WKPageLoaderClientV0 loaderClient;
@@ -476,6 +495,11 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
 
     Util::run(&didFinishLoad);
 
+    waitForVideoReady([wkView pageRef]);
+
+    // PDF embeds should have selectable/copyable text.
+    waitForPDFToLoad(wkView.get());
+
     // Read-only text.
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::Word) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuReadOnlyText, [wkView _actionMenuResult].type);
@@ -494,18 +518,14 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
 
     // Read-only text, on an address.
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::Address) preDidCloseMenuHandler:^() {
-        EXPECT_EQ(kWKActionMenuDataDetectedItem, [wkView _actionMenuResult].type);
-
-        // Addresses don't get selected, because they immediately show a TextIndicator.
-        EXPECT_WK_STREQ(@"<no selection>", retrieveSelection([wkView pageRef]));
+        EXPECT_EQ(kWKActionMenuReadOnlyText, [wkView _actionMenuResult].type);
+        EXPECT_WK_STREQ(@"1 Infinite Loop, Cupertino, CA 95014", retrieveSelection([wkView pageRef]));
     }];
 
     // Read-only text, on a date.
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::Date) preDidCloseMenuHandler:^() {
-        EXPECT_EQ(kWKActionMenuDataDetectedItem, [wkView _actionMenuResult].type);
-
-        // Dates don't get selected, because they immediately show a TextIndicator.
-        EXPECT_WK_STREQ(@"<no selection>", retrieveSelection([wkView pageRef]));
+        EXPECT_EQ(kWKActionMenuReadOnlyText, [wkView _actionMenuResult].type);
+        EXPECT_WK_STREQ(@"May 17th, 2012", retrieveSelection([wkView pageRef]));
     }];
 
     // Read-only text, on a phone number.
@@ -662,8 +682,6 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
         EXPECT_EQ(kWKActionMenuLink, [wkView _actionMenuResult].type);
     }];
 
-    waitForVideoReady([wkView pageRef]);
-
     // Copy a video URL.
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::Video) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuVideo, [wkView _actionMenuResult].type);
@@ -716,6 +734,14 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
         EXPECT_FALSE(callJavaScriptReturningBool([wkView pageRef], "wasFailCalled()"));
     }];
 
+    // PDF text content
+    [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::PDFEmbed) preDidCloseMenuHandler:^() {
+        EXPECT_EQ(kWKActionMenuReadOnlyText, [wkView _actionMenuResult].type);
+        EXPECT_WK_STREQ("Test", WKHitTestResultCopyLookupText([wkView _actionMenuResult].hitTestResult.get()));
+
+        // FIXME(14408): You cannot copy from PDFs hosted in <embed> tags. When this is fixed, we should test it works here.
+    }];
+
     // Clients should be able to customize the menu by overriding WKView's _actionMenuItemsForHitTestResult.
     // http://trac.webkit.org/changeset/174908
     RetainPtr<NSMenuItem> item = adoptNS([[NSMenuItem alloc] initWithTitle:@"Some Action" action:@selector(copy:) keyEquivalent:@""]);
@@ -737,6 +763,42 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::PageWhitespace) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuNone, [wkView _actionMenuResult].type);
         EXPECT_EQ(0, [wkView _actionMenu].numberOfItems);
+    }];
+}
+
+TEST(WebKit2, ActionMenusPDFTest)
+{
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("ActionMenusTest"));
+    
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("ActionMenusPDFTestGroup").get()));
+    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
+    WKPreferencesSetMediaSourceEnabled(preferences, true);
+    WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
+    
+    PlatformWebView platformWebView(context.get(), pageGroup.get(), [ActionMenusTestWKView class]);
+    RetainPtr<ActionMenusTestWKView> wkView = (ActionMenusTestWKView *)platformWebView.platformView();
+    
+    if (![wkView respondsToSelector:@selector(_setActionMenu:)])
+        return;
+    
+    WKPageLoaderClientV0 loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
+    loaderClient.base.version = 0;
+    loaderClient.didFinishLoadForFrame = didFinishLoadForFrameCallback;
+    WKPageSetPageLoaderClient([wkView pageRef], &loaderClient.base);
+    
+    ActiveDownloadContext activeDownloadContext;
+    
+    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("action-menu-target", "pdf"));
+    WKPageLoadURL([wkView pageRef], url.get());
+    
+    Util::run(&didFinishLoad);
+
+    [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::PDFDocument) preDidCloseMenuHandler:^() {
+        EXPECT_EQ(kWKActionMenuReadOnlyText, [wkView _actionMenuResult].type);
+        EXPECT_WK_STREQ("Happiness", WKHitTestResultCopyLookupText([wkView _actionMenuResult].hitTestResult.get()));
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 0, kWKContextActionItemTagCopyText);
+        EXPECT_WK_STREQ(@"Happiness", watchPasteboardForString());
     }];
 }
 

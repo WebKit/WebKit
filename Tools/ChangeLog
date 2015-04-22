@@ -1,3 +1,23 @@
+2015-04-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Extend action menus to support PDF
+        https://bugs.webkit.org/show_bug.cgi?id=143895
+        <rdar://problem/19003333>
+
+        Reviewed by Tim Horton.
+
+        Reactivate the action menu tests, and add a new PDF-based test to make sure that selection
+        of PDF content works.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add new 'test.pdf' resource to bundle.
+        * TestWebKitAPI/Tests/WebKit2/action-menu-targets.html: Update with a new PDF pane.
+        * TestWebKitAPI/Tests/WebKit2/test.pdf: Added.
+        * TestWebKitAPI/Tests/WebKit2ObjC/ActionMenus.mm:
+        (-[ActionMenusTestWKView _actionMenuItemsForHitTestResult:withType:defaultActionMenuItems:userData:]):
+        Update to support PDF tests.
+        (TestWebKitAPI::windowPointForTarget): Add new target for PDF test.
+        (TestWebKitAPI::waitForPDFToLoad): New helper function to avoid starting test before the PDF is available.
+
 2015-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Do not run GTK+ user media unit tests when ENABLE_MEDIA_STREAM is disabled.

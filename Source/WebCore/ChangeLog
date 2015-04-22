@@ -1,3 +1,23 @@
+2015-04-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Extend action menus to support PDF
+        https://bugs.webkit.org/show_bug.cgi?id=143895
+        <rdar://problem/19003333>
+
+        Reviewed by Tim Horton.
+
+        Tested by TestWebKitAPI ActionMenus.mm.
+
+        Add a new dictionary lookup method to support PDF Selections. This code replicates the
+        DOM Range-based logic used for HTML documents, but does so using the PDFKit API and
+        its support types.
+
+        * Configurations/Base.xcconfig: Add PDFKit include path for build.
+        * editing/mac/DictionaryLookup.h:
+        * editing/mac/DictionaryLookup.mm:
+        (WebCore::expandSelectionByCharacters): Helper function for PDF support.
+        (WebCore::dictionaryLookupForPDFSelection): Added.
+
 2015-04-22  Zalan Bujtas  <zalan@apple.com>
 
         Move render ruby initialization logic from RenderElement::createFor() to *::createElementRenderer()

@@ -120,7 +120,7 @@ bool WebMouseEvent::decode(IPC::ArgumentDecoder& decoder, WebMouseEvent& result)
 
 bool WebMouseEvent::isMouseEventType(Type type)
 {
-    return type == MouseDown || type == MouseUp || type == MouseMove;
+    return type == MouseDown || type == MouseUp || type == MouseMove || type == MouseForceUp || type == MouseForceDown || type == MouseForceChanged;
 }
     
 } // namespace WebKit

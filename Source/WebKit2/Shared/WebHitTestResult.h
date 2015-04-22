@@ -104,6 +104,7 @@ public:
 
     String linkLabel() const { return m_data.linkLabel; }
     String linkTitle() const { return m_data.linkTitle; }
+    String lookupText() const { return m_data.lookupText; }
 
     bool isContentEditable() const { return m_data.isContentEditable; }
 

@@ -30,11 +30,13 @@
 #import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "WebDataSource.h"
 #import "WebDocumentInternal.h"
 #import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
 #import "WebHTMLView.h"
 #import "WebHTMLViewInternal.h"
+#import "WebPDFView.h"
 #import "WebSystemInterface.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
@@ -94,12 +96,15 @@ using namespace WebCore;
 
 - (WebElementDictionary *)performHitTestAtPoint:(NSPoint)windowPoint
 {
-    WebHTMLView *documentView = [[[_webView _selectedOrMainFrame] frameView] documentView];
-    NSPoint point = [documentView convertPoint:windowPoint fromView:nil];
-
-    Frame* coreFrame = core([documentView _frame]);
+    NSView<WebDocumentView> *documentView = [[[_webView _selectedOrMainFrame] frameView] documentView];
+    if (![documentView isKindOfClass:[WebHTMLView class]])
+        return nil;
+        
+    Frame* coreFrame = core([(WebHTMLView *)documentView _frame]);
     if (!coreFrame)
         return nil;
+
+    NSPoint point = [documentView convertPoint:windowPoint fromView:nil];
     _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(IntPoint(point));
 
     return [[[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult] autorelease];

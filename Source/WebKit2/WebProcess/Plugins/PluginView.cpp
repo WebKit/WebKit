@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -992,6 +992,32 @@ bool PluginView::performDictionaryLookupAtLocation(const WebCore::FloatPoint& po
 
     return m_plugin->performDictionaryLookupAtLocation(point);
 }
+
+String PluginView::getSelectionForWordAtPoint(const WebCore::FloatPoint& point) const
+{
+    if (!m_isInitialized || !m_plugin)
+        return String();
+    
+    return m_plugin->getSelectionForWordAtPoint(point);
+}
+
+bool PluginView::existingSelectionContainsPoint(const WebCore::FloatPoint& point) const
+{
+    if (!m_isInitialized || !m_plugin)
+        return false;
+    
+    return m_plugin->existingSelectionContainsPoint(point);
+}
+
+#if PLATFORM(COCOA)
+String PluginView::lookupTextAtLocation(const WebCore::FloatPoint& point, WebHitTestResult::Data& data, PDFSelection **selection, NSDictionary **options) const
+{
+    if (!m_isInitialized || !m_plugin)
+        return String();
+
+    return m_plugin->lookupTextAtLocation(point, data, selection, options);
+}
+#endif
 
 void PluginView::notifyWidget(WidgetNotification notification)
 {

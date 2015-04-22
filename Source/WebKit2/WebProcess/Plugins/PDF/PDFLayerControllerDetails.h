@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #import <PDFKit/PDFKit.h>
 
 @class CPReadingModel;
+@class PDFViewLayout;
 
 @protocol PDFLayerControllerDelegate <NSObject>
 
@@ -95,7 +96,12 @@
 - (void)setSearchSelection:(PDFSelection *)selection;
 - (void)gotoSelection:(PDFSelection *)selection;
 - (PDFSelection *)getSelectionForWordAtPoint:(CGPoint)point;
+- (NSArray *)rectsForSelectionInLayoutSpace:(PDFSelection *)selection;
+- (NSArray *)rectsForAnnotationInLayoutSpace:(PDFAnnotation *)annotation;
+- (PDFViewLayout *)layout;
+- (NSRect)frame;
 
+- (PDFPage *)currentPage;
 - (NSUInteger)lastPageIndex;
 - (NSUInteger)currentPageIndex;
 - (void)gotoNextPage;

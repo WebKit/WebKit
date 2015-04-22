@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,9 +38,12 @@
 
 #if PLATFORM(COCOA)
 #include "LayerHostingContext.h"
+#include "WebHitTestResult.h"
 
+OBJC_CLASS NSDictionary;
 OBJC_CLASS NSObject;
 OBJC_CLASS PDFDocument;
+OBJC_CLASS PDFSelection;
 #endif
 
 struct NPObject;
@@ -277,7 +280,12 @@ public:
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
 
     virtual String getSelectionString() const = 0;
-    
+    virtual String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const = 0;
+    virtual bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const = 0;
+#if PLATFORM(COCOA)
+    virtual String lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResult::Data&, PDFSelection**, NSDictionary**) const = 0;
+#endif
+
     virtual WebCore::AudioHardwareActivityType audioHardwareActivity() const { return WebCore::AudioHardwareActivityType::Unknown; }
 
     virtual void mutedStateChanged(bool) { }

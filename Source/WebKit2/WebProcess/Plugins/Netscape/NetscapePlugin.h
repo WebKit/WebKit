@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,10 @@
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
+
+#if PLATFORM(COCOA)
+#include "WebHitTestResult.h"
+#endif
 
 namespace WebCore {
 class MachSendRight;
@@ -237,6 +241,7 @@ private:
     void setComplexTextInputEnabled(bool);
 
     void updatePluginLayer();
+    String lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResult::Data&, PDFSelection** selection, NSDictionary**) const override { return String(); }
 #endif
 
     virtual void contentsScaleFactorChanged(float) override;
@@ -260,7 +265,9 @@ private:
 
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override { return false; }
 
-    virtual String getSelectionString() const override { return String(); }
+    String getSelectionString() const override { return String(); }
+    String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const override { return String(); }
+    bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override { return false; }
 
     virtual void mutedStateChanged(bool) override;
 

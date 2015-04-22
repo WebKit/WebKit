@@ -1,3 +1,26 @@
+2015-04-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Extend action menus to support PDF
+        https://bugs.webkit.org/show_bug.cgi?id=143895
+        <rdar://problem/19003333>
+
+        Reviewed by Tim Horton.
+
+        Prevent a crash when someone attempts to invoke an action menu on a PDF hosted
+        in a WK1 view.
+
+        * WebView/WebActionMenuController.mm:
+        (-[WebActionMenuController performHitTestAtPoint:]): Handle WebPDFView as well as
+        the WebHTMLView case.
+        * WebView/WebDocument.h:
+        * WebView/WebHTMLView.h:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _frame]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebPDFView.h:
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView _frame]): Added.
+
 2015-04-22  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed post-review clean up after r183096.

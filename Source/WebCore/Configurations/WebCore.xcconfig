@@ -32,7 +32,7 @@ FRAMEWORK_SEARCH_PATHS_ios_Release = $(FRAMEWORK_SEARCH_PATHS_ios_Debug);
 FRAMEWORK_SEARCH_PATHS_ios_Production = $(PRODUCTION_FRAMEWORKS_DIR);
 FRAMEWORK_SEARCH_PATHS[sdk=macosx*] = $(STAGED_FRAMEWORKS_SEARCH_PATH) $(FRAMEWORK_SEARCH_PATHS);
 
-OTHER_CFLAGS = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
+OTHER_CFLAGS = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS);
 
 STAGED_FRAMEWORKS_SEARCH_PATH = $(STAGED_FRAMEWORKS_SEARCH_PATH_$(USE_STAGING_INSTALL_PATH));

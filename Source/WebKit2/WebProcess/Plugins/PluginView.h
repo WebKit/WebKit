@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +46,13 @@
 
 // FIXME: Eventually this should move to WebCore.
 
+#if PLATFORM(COCOA)
+#include "WebHitTestResult.h"
+
+OBJC_CLASS NSDictionary;
+OBJC_CLASS PDFSelection;
+#endif
+
 namespace WebCore {
 class Frame;
 class HTMLPlugInElement;
@@ -82,6 +89,7 @@ public:
     bool sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return m_plugin->pdfDocumentForPrinting(); }
     NSObject *accessibilityObject() const;
+    String lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResult::Data&, PDFSelection**, NSDictionary**) const;
 #endif
 
     WebCore::HTMLPlugInElement* pluginElement() const { return m_pluginElement.get(); }
@@ -111,6 +119,8 @@ public:
 
     PassRefPtr<WebCore::SharedBuffer> liveResourceData() const;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
+    String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const;
+    bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const;
     virtual WebCore::AudioHardwareActivityType audioHardwareActivity() const override;
 
 private:
