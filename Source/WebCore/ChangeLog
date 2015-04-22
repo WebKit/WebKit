@@ -1,3 +1,18 @@
+2015-04-21  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [Cairo] Implement Path::addPath
+        https://bugs.webkit.org/show_bug.cgi?id=130580
+
+        Reviewed by Dirk Schulze.
+
+        Add support for addPath method for ports using cairo.
+        This patch is originally authored by Jae Hyun Park <jaepark@webkit.org>.
+
+        Test: fast/canvas/canvas-path-addPath.html
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::addPath): Implement addPath for cairo.
+
 2015-04-21  Tim Horton  <timothy_horton@apple.com>
 
         Fix the iOS build.

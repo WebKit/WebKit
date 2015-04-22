@@ -31,7 +31,6 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
-#include "NotImplemented.h"
 #include "OwnPtrCairo.h"
 #include "PlatformPathCairo.h"
 #include "StrokeStyleApplier.h"
@@ -312,10 +311,23 @@ void Path::addEllipse(const FloatRect& rect)
     cairo_restore(cr);
 }
 
-void Path::addPath(const Path&, const AffineTransform&)
+void Path::addPath(const Path& path, const AffineTransform& transform)
 {
-    // FIXME: This should probably be very similar to Path::transform.
-    notImplemented();
+    if (path.isNull())
+        return;
+
+    cairo_matrix_t matrix(transform);
+    if (cairo_matrix_invert(&matrix) != CAIRO_STATUS_SUCCESS)
+        return;
+
+    cairo_t* cr = path.platformPath()->context();
+    cairo_save(cr);
+    cairo_transform(cr, &matrix);
+    std::unique_ptr<cairo_path_t, void(*)(cairo_path_t*)> pathCopy(cairo_copy_path(cr), [](cairo_path_t* path) {
+        cairo_path_destroy(path);
+    });
+    cairo_restore(cr);
+    cairo_append_path(ensurePlatformPath()->context(), pathCopy.get());
 }
 
 void Path::closeSubpath()
