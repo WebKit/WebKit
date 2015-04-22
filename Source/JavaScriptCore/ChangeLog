@@ -1,3 +1,118 @@
+2015-04-21  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should allow Phantoms after terminals
+        https://bugs.webkit.org/show_bug.cgi?id=126778
+
+        Reviewed by Mark Lam.
+        
+        It's important for us to be able to place liveness-marking nodes after nodes that do
+        things. These liveness-marking nodes are nops. Previously, we disallowed such nodes after
+        terminals. That made things awkward, especially for Switch and Branch, which may do
+        things that necessitate liveness markers (for example they might want to use a converted
+        version of a value rather than the value that was MovHinted). We previously made this
+        work by disallowing certain optimizations on Switch and Branch, which was probably a bad
+        thing.
+        
+        This changes our IR to allow for the terminal to not be the last node in a block. Asking
+        for the terminal involves a search. DFG::validate() checks that the nodes after the
+        terminal are liveness markers that have no effects or checks.
+        
+        This is perf-neutral but will allow more optimizations in the future. It will also make
+        it cleaner to fix https://bugs.webkit.org/show_bug.cgi?id=143735.
+
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::replaceTerminal):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::findTerminal):
+        (JSC::DFG::BasicBlock::terminal):
+        (JSC::DFG::BasicBlock::insertBeforeTerminal):
+        (JSC::DFG::BasicBlock::numSuccessors):
+        (JSC::DFG::BasicBlock::successor):
+        (JSC::DFG::BasicBlock::successorForCondition):
+        (JSC::DFG::BasicBlock::successors):
+        (JSC::DFG::BasicBlock::last): Deleted.
+        (JSC::DFG::BasicBlock::takeLast): Deleted.
+        (JSC::DFG::BasicBlock::insertBeforeLast): Deleted.
+        (JSC::DFG::BasicBlock::SuccessorsIterable::SuccessorsIterable): Deleted.
+        (JSC::DFG::BasicBlock::SuccessorsIterable::iterator::iterator): Deleted.
+        (JSC::DFG::BasicBlock::SuccessorsIterable::iterator::operator*): Deleted.
+        (JSC::DFG::BasicBlock::SuccessorsIterable::iterator::operator++): Deleted.
+        (JSC::DFG::BasicBlock::SuccessorsIterable::iterator::operator==): Deleted.
+        (JSC::DFG::BasicBlock::SuccessorsIterable::iterator::operator!=): Deleted.
+        (JSC::DFG::BasicBlock::SuccessorsIterable::begin): Deleted.
+        (JSC::DFG::BasicBlock::SuccessorsIterable::end): Deleted.
+        * dfg/DFGBasicBlockInlines.h:
+        (JSC::DFG::BasicBlock::appendNonTerminal):
+        (JSC::DFG::BasicBlock::replaceTerminal):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::linkBlock):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        (JSC::DFG::CFGSimplificationPhase::convertToJump):
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeLocalsInBlock):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::NodeAndIndex::NodeAndIndex):
+        (JSC::DFG::NodeAndIndex::operator!):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupBlock):
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::injectTypeConversionsInBlock):
+        (JSC::DFG::FixupPhase::clearPhantomsAtEnd): Deleted.
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllLiveNodesAtTail):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::terminalsAreValid):
+        (JSC::DFG::Graph::dumpBlockHeader):
+        * dfg/DFGGraph.h:
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::mergeToSuccessors):
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * dfg/DFGMovHintRemovalPhase.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::SuccessorsIterable::SuccessorsIterable):
+        (JSC::DFG::Node::SuccessorsIterable::iterator::iterator):
+        (JSC::DFG::Node::SuccessorsIterable::iterator::operator*):
+        (JSC::DFG::Node::SuccessorsIterable::iterator::operator++):
+        (JSC::DFG::Node::SuccessorsIterable::iterator::operator==):
+        (JSC::DFG::Node::SuccessorsIterable::iterator::operator!=):
+        (JSC::DFG::Node::SuccessorsIterable::begin):
+        (JSC::DFG::Node::SuccessorsIterable::end):
+        (JSC::DFG::Node::successors):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::determineMaterializationPoints):
+        (JSC::DFG::ObjectAllocationSinkingPhase::placeMaterializationPoints):
+        (JSC::DFG::ObjectAllocationSinkingPhase::promoteSunkenFields):
+        * dfg/DFGPhantomRemovalPhase.cpp:
+        (JSC::DFG::PhantomRemovalPhase::run):
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::detectPeepHoleBranch):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStaticExecutionCountEstimationPhase.cpp:
+        (JSC::DFG::StaticExecutionCountEstimationPhase::run):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        * tests/stress/closure-call-exit.js: Added.
+        (foo):
+
 2015-04-21  Basile Clement  <basile_clement@apple.com>
 
         PhantomNewObject should be marked NodeMustGenerate

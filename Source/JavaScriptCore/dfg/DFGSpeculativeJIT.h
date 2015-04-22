@@ -681,7 +681,7 @@ public:
         }
 
         // Check if the lastNode is a branch on this node.
-        Node* lastNode = m_block->last();
+        Node* lastNode = m_block->terminal();
         return lastNode->op() == Branch && lastNode->child1() == m_currentNode ? m_block->size() - 1 : UINT_MAX;
     }
     

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,16 +63,17 @@ public:
             if (!block)
                 continue;
             
-            switch (block->last()->op()) {
+            Node* terminal = block->terminal();
+            switch (terminal->op()) {
             case Branch: {
-                BranchData* data = block->last()->branchData();
+                BranchData* data = terminal->branchData();
                 applyCounts(data->taken);
                 applyCounts(data->notTaken);
                 break;
             }
                 
             case Switch: {
-                SwitchData* data = block->last()->switchData();
+                SwitchData* data = terminal->switchData();
                 for (unsigned i = data->cases.size(); i--;)
                     applyCounts(data->cases[i].target);
                 applyCounts(data->fallThrough);

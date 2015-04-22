@@ -335,8 +335,9 @@ public:
             // seems dangerous because the Upsilon will have a checking UseKind. But, we will not
             // actually be performing the check at the point of the Upsilon; the check will
             // already have been performed at the point where the original SetLocal was.
-            size_t upsilonInsertionPoint = block->size() - 1;
-            NodeOrigin upsilonOrigin = block->last()->origin;
+            NodeAndIndex terminal = block->findTerminal();
+            size_t upsilonInsertionPoint = terminal.index;
+            NodeOrigin upsilonOrigin = terminal.node->origin;
             for (unsigned successorIndex = block->numSuccessors(); successorIndex--;) {
                 BasicBlock* successorBlock = block->successor(successorIndex);
                 for (SSACalculator::Def* phiDef : m_calculator.phisForBlock(successorBlock)) {

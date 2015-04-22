@@ -859,8 +859,11 @@ private:
             DFG_CRASH(m_graph, m_node, "Unrecognized node in FTL backend");
             break;
         }
-
-        if (!m_state.isValid() && !m_node->isTerminal()) {
+        
+        if (m_node->isTerminal())
+            return false;
+        
+        if (!m_state.isValid()) {
             safelyInvalidateAfterTermination();
             return false;
         }

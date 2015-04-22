@@ -189,10 +189,24 @@ public:
                     V_EQUAL((node), m_myRefCounts.get(node), node->adjustedRefCount());
             }
             
-            for (size_t i = 0 ; i < block->size() - 1; ++i) {
+            bool foundTerminal = false;
+            for (size_t i = 0 ; i < block->size(); ++i) {
                 Node* node = block->at(i);
-                VALIDATE((node), !node->isTerminal());
+                if (node->isTerminal()) {
+                    foundTerminal = true;
+                    for (size_t j = i + 1; j < block->size(); ++j) {
+                        node = block->at(j);
+                        VALIDATE((node), node->op() == Phantom || node->op() == PhantomLocal || node->op() == Flush);
+                        m_graph.doToChildren(
+                            node,
+                            [&] (Edge edge) {
+                                VALIDATE((node, edge), shouldNotHaveTypeCheck(edge.useKind()));
+                            });
+                    }
+                    break;
+                }
             }
+            VALIDATE((block), foundTerminal);
             
             for (size_t i = 0; i < block->size(); ++i) {
                 Node* node = block->at(i);

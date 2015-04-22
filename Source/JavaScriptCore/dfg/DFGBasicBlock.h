@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,17 +63,62 @@ struct BasicBlock : RefCounted<BasicBlock> {
     Node* at(size_t i) const { return m_nodes[i]; }
     Node*& operator[](size_t i) { return at(i); }
     Node* operator[](size_t i) const { return at(i); }
-    Node* last() const { return at(size() - 1); }
-    Node* takeLast() { return m_nodes.takeLast(); }
+    
+    // Use this to find both the index of the terminal and the terminal itself in one go. May
+    // return a clear NodeAndIndex if the basic block currently lacks a terminal. That may happen
+    // in the middle of IR transformations within a phase but should never be the case in between
+    // phases.
+    //
+    // The reason why this is more than just "at(size() - 1)" is that we may place non-terminal
+    // liveness marking instructions after the terminal. This is supposed to happen infrequently
+    // but some basic blocks - most notably return blocks - will have liveness markers for all of
+    // the flushed variables right after the return.
+    //
+    // It turns out that doing this linear search is basically perf-neutral, so long as we force
+    // the method to be inlined. Hence the ALWAYS_INLINE.
+    ALWAYS_INLINE NodeAndIndex findTerminal() const
+    {
+        size_t i = size();
+        while (i--) {
+            Node* node = at(i);
+            switch (node->op()) {
+            case Jump:
+            case Branch:
+            case Switch:
+            case Return:
+            case Unreachable:
+                return NodeAndIndex(node, i);
+            // The bitter end can contain Phantoms and the like. There will probably only be one or two nodes after the terminal.
+            case Phantom:
+            case PhantomLocal:
+            case Flush:
+                break;
+            default:
+                return NodeAndIndex();
+            }
+        }
+        return NodeAndIndex();
+    }
+    
+    ALWAYS_INLINE Node* terminal() const
+    {
+        return findTerminal().node;
+    }
+    
     void resize(size_t size) { m_nodes.resize(size); }
     void grow(size_t size) { m_nodes.grow(size); }
     
     void append(Node* node) { m_nodes.append(node); }
-    void insertBeforeLast(Node* node)
+    void insertBeforeTerminal(Node* node)
     {
-        append(last());
-        at(size() - 2) = node;
+        NodeAndIndex result = findTerminal();
+        if (!result)
+            append(node);
+        else
+            m_nodes.insert(result.index, node);
     }
+    
+    void replaceTerminal(Node*);
     
     size_t numNodes() const { return phis.size() + size(); }
     Node* node(size_t i) const
@@ -93,85 +138,20 @@ struct BasicBlock : RefCounted<BasicBlock> {
     Node* firstOriginNode();
     NodeOrigin firstOrigin();
     
-    unsigned numSuccessors() { return last()->numSuccessors(); }
+    unsigned numSuccessors() { return terminal()->numSuccessors(); }
     
     BasicBlock*& successor(unsigned index)
     {
-        return last()->successor(index);
+        return terminal()->successor(index);
     }
     BasicBlock*& successorForCondition(bool condition)
     {
-        return last()->successorForCondition(condition);
+        return terminal()->successorForCondition(condition);
     }
-    
-    class SuccessorsIterable {
-    public:
-        SuccessorsIterable()
-            : m_block(nullptr)
-        {
-        }
-        
-        SuccessorsIterable(BasicBlock* block)
-            : m_block(block)
-        {
-        }
-        
-        class iterator {
-        public:
-            iterator()
-                : m_block(nullptr)
-                , m_index(UINT_MAX)
-            {
-            }
-            
-            iterator(BasicBlock* block, unsigned index)
-                : m_block(block)
-                , m_index(index)
-            {
-            }
-            
-            BasicBlock* operator*()
-            {
-                return m_block->successor(m_index);
-            }
-            
-            iterator& operator++()
-            {
-                m_index++;
-                return *this;
-            }
-            
-            bool operator==(const iterator& other) const
-            {
-                return m_index == other.m_index;
-            }
-            
-            bool operator!=(const iterator& other) const
-            {
-                return !(*this == other);
-            }
-        private:
-            BasicBlock* m_block;
-            unsigned m_index;
-        };
-        
-        iterator begin()
-        {
-            return iterator(m_block, 0);
-        }
-        
-        iterator end()
-        {
-            return iterator(m_block, m_block->numSuccessors());
-        }
-        
-    private:
-        BasicBlock* m_block;
-    };
-    
-    SuccessorsIterable successors()
+
+    Node::SuccessorsIterable successors()
     {
-        return SuccessorsIterable(this);
+        return terminal()->successors();
     }
     
     void removePredecessor(BasicBlock* block);
@@ -182,6 +162,9 @@ struct BasicBlock : RefCounted<BasicBlock> {
     
     template<typename... Params>
     Node* appendNonTerminal(Graph&, SpeculatedType, Params...);
+    
+    template<typename... Params>
+    Node* replaceTerminal(Graph&, SpeculatedType, Params...);
     
     void dump(PrintStream& out) const;
     

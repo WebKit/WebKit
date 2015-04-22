@@ -196,6 +196,9 @@ public:
     
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
     void dump(PrintStream& = WTF::dataFile(), DumpContext* = 0);
+    
+    bool terminalsAreValid();
+    
     enum PhiNodeDumpMode { DumpLivePhisOnly, DumpAllPhis };
     void dumpBlockHeader(PrintStream&, const char* prefix, BasicBlock*, PhiNodeDumpMode, DumpContext*);
     void dump(PrintStream&, Edge);

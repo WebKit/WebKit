@@ -352,7 +352,7 @@ private:
                     // already handled the case where the predecessor has multiple successors.
                     DFG_ASSERT(m_graph, block, block->numSuccessors() == 1);
                     
-                    createMaterialize(allocation, block->last());
+                    createMaterialize(allocation, block->terminal());
                 }
             }
         }
@@ -461,8 +461,9 @@ private:
                 }
             }
             
-            size_t upsilonInsertionPoint = block->size() - 1;
-            Node* upsilonWhere = block->last();
+            NodeAndIndex terminal = block->findTerminal();
+            size_t upsilonInsertionPoint = terminal.index;
+            Node* upsilonWhere = terminal.node;
             NodeOrigin upsilonOrigin = upsilonWhere->origin;
             for (BasicBlock* successorBlock : block->successors()) {
                 for (SSACalculator::Def* phiDef : m_ssaCalculator.phisForBlock(successorBlock)) {
@@ -708,8 +709,9 @@ private:
             }
             
             // Gotta drop some Upsilons.
-            size_t upsilonInsertionPoint = block->size() - 1;
-            NodeOrigin upsilonOrigin = block->last()->origin;
+            NodeAndIndex terminal = block->findTerminal();
+            size_t upsilonInsertionPoint = terminal.index;
+            NodeOrigin upsilonOrigin = terminal.node->origin;
             for (BasicBlock* successorBlock : block->successors()) {
                 for (SSACalculator::Def* phiDef : m_ssaCalculator.phisForBlock(successorBlock)) {
                     Node* phiNode = phiDef->value();

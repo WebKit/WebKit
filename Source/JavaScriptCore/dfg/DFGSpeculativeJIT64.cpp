@@ -1932,7 +1932,7 @@ void SpeculativeJIT::compile(Node* node)
         noResult(node);
         break;
     }
-
+        
     case SetLocal: {
         switch (node->variableAccessData()->flushFormat()) {
         case FlushedDouble: {

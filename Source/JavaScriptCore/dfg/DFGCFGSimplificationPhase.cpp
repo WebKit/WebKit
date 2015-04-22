@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@ public:
                     continue;
                 ASSERT(block->isReachable);
             
-                switch (block->last()->op()) {
+                switch (block->terminal()->op()) {
                 case Jump: {
                     // Successor with one predecessor -> merge.
                     if (block->successor(0)->predecessors.size() == 1) {
@@ -99,17 +99,19 @@ public:
                             if (extremeLogging)
                                 m_graph.dump();
                             m_graph.dethread();
-                        
-                            ASSERT(block->last()->isTerminal());
-                            NodeOrigin boundaryNodeOrigin = block->last()->origin;
-                            block->last()->convertToPhantom();
-                            ASSERT(block->last()->refCount() == 1);
-                        
+                            
+                            Node* terminal = block->terminal();
+                            ASSERT(terminal->isTerminal());
+                            NodeOrigin boundaryNodeOrigin = terminal->origin;
+
                             jettisonBlock(block, jettisonedBlock, boundaryNodeOrigin);
-                        
-                            block->appendNode(
+
+                            block->replaceTerminal(
                                 m_graph, SpecNone, Jump, boundaryNodeOrigin,
                                 OpInfo(targetBlock));
+                            
+                            ASSERT(block->terminal());
+                        
                         }
                         innerChanged = outerChanged = true;
                         break;
@@ -129,7 +131,7 @@ public:
                 }
                     
                 case Switch: {
-                    SwitchData* data = block->last()->switchData();
+                    SwitchData* data = block->terminal()->switchData();
                     
                     // Prune out cases that end up jumping to default.
                     for (unsigned i = 0; i < data->cases.size(); ++i) {
@@ -149,8 +151,9 @@ public:
                     }
                     
                     // Switch on constant -> jettison all other targets and merge.
-                    if (block->last()->child1()->hasConstant()) {
-                        FrozenValue* value = block->last()->child1()->constant();
+                    Node* terminal = block->terminal();
+                    if (terminal->child1()->hasConstant()) {
+                        FrozenValue* value = terminal->child1()->constant();
                         TriState found = FalseTriState;
                         BasicBlock* targetBlock = 0;
                         for (unsigned i = data->cases.size(); found == FalseTriState && i--;) {
@@ -166,10 +169,9 @@ public:
                         ASSERT(targetBlock);
                         
                         Vector<BasicBlock*, 1> jettisonedBlocks;
-                        for (unsigned i = block->numSuccessors(); i--;) {
-                            BasicBlock* jettisonedBlock = block->successor(i);
-                            if (jettisonedBlock != targetBlock)
-                                jettisonedBlocks.append(jettisonedBlock);
+                        for (BasicBlock* successor : terminal->successors()) {
+                            if (successor != targetBlock)
+                                jettisonedBlocks.append(successor);
                         }
                         
                         if (targetBlock->predecessors.size() == 1) {
@@ -183,11 +185,12 @@ public:
                                 m_graph.dump();
                             m_graph.dethread();
                             
-                            NodeOrigin boundaryNodeOrigin = block->last()->origin;
-                            block->last()->convertToPhantom();
+                            NodeOrigin boundaryNodeOrigin = terminal->origin;
+
                             for (unsigned i = jettisonedBlocks.size(); i--;)
                                 jettisonBlock(block, jettisonedBlocks[i], boundaryNodeOrigin);
-                            block->appendNode(
+                            
+                            block->replaceTerminal(
                                 m_graph, SpecNone, Jump, boundaryNodeOrigin, OpInfo(targetBlock));
                         }
                         innerChanged = outerChanged = true;
@@ -253,13 +256,10 @@ private:
             m_graph.dethread();
             mergeBlocks(block, targetBlock, noBlocks());
         } else {
-            Node* branch = block->last();
-            ASSERT(branch->isTerminal());
+            Node* branch = block->terminal();
             ASSERT(branch->op() == Branch || branch->op() == Switch);
-            branch->convertToPhantom();
-            ASSERT(branch->refCount() == 1);
-            
-            block->appendNode(
+
+            block->replaceTerminal(
                 m_graph, SpecNone, Jump, branch->origin, OpInfo(targetBlock));
         }
     }
@@ -318,10 +318,11 @@ private:
         
         // Remove the terminal of firstBlock since we don't need it anymore. Well, we don't
         // really remove it; we actually turn it into a Phantom.
-        ASSERT(firstBlock->last()->isTerminal());
-        NodeOrigin boundaryNodeOrigin = firstBlock->last()->origin;
-        firstBlock->last()->convertToPhantom();
-        ASSERT(firstBlock->last()->refCount() == 1);
+        Node* terminal = firstBlock->terminal();
+        ASSERT(terminal->isTerminal());
+        NodeOrigin boundaryNodeOrigin = terminal->origin;
+        terminal->convertToPhantom();
+        ASSERT(terminal->refCount() == 1);
         
         for (unsigned i = jettisonedBlocks.size(); i--;) {
             BasicBlock* jettisonedBlock = jettisonedBlocks[i];
@@ -342,7 +343,7 @@ private:
         for (size_t i = 0; i < secondBlock->size(); ++i)
             firstBlock->append(secondBlock->at(i));
         
-        ASSERT(firstBlock->last()->isTerminal());
+        ASSERT(firstBlock->terminal()->isTerminal());
         
         // Fix the predecessors of my new successors. This is tricky, since we are going to reset
         // all predecessors anyway due to reachability analysis. But we need to fix the

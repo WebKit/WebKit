@@ -441,8 +441,9 @@ public:
                 } }
             }
             
-            size_t upsilonInsertionPoint = block->size() - 1;
-            NodeOrigin upsilonOrigin = block->last()->origin;
+            NodeAndIndex terminal = block->findTerminal();
+            size_t upsilonInsertionPoint = terminal.index;
+            NodeOrigin upsilonOrigin = terminal.node->origin;
             for (BasicBlock* successorBlock : block->successors()) {
                 for (SSACalculator::Def* phiDef : ssaCalculator.phisForBlock(successorBlock)) {
                     Node* phiNode = phiDef->value();

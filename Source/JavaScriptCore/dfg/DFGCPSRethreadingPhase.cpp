@@ -363,6 +363,10 @@ private:
                 m_availableForOSR.operand(node->unlinkedLocal()) = node->child1();
                 break;
                 
+            case ZombieHint:
+                m_availableForOSR.operand(node->unlinkedLocal()) = Edge();
+                break;
+                
             default:
                 break;
             }

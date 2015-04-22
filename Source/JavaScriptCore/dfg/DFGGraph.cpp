@@ -365,6 +365,15 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
     out.print("\n");
 }
 
+bool Graph::terminalsAreValid()
+{
+    for (BasicBlock* block : blocksInNaturalOrder()) {
+        if (!block->terminal())
+            return false;
+    }
+    return true;
+}
+
 void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* block, PhiNodeDumpMode phiNodeDumpMode, DumpContext* context)
 {
     out.print(prefix, "Block ", *block, " (", inContext(block->at(0)->origin.semantic, context), "):", block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "", "\n");
@@ -375,13 +384,16 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* bl
         out.print(" ", *block->predecessors[i]);
     out.print("\n");
     out.print(prefix, "  Successors:");
-    for (BasicBlock* successor : block->successors()) {
-        out.print(" ", *successor);
-        if (m_prePostNumbering.isValid())
-            out.print(" (", m_prePostNumbering.edgeKind(block, successor), ")");
-    }
+    if (block->terminal()) {
+        for (BasicBlock* successor : block->successors()) {
+            out.print(" ", *successor);
+            if (m_prePostNumbering.isValid())
+                out.print(" (", m_prePostNumbering.edgeKind(block, successor), ")");
+        }
+    } else
+        out.print(" <invalid>");
     out.print("\n");
-    if (m_dominators.isValid()) {
+    if (m_dominators.isValid() && terminalsAreValid()) {
         out.print(prefix, "  Dominated by: ", m_dominators.dominatorsOf(block), "\n");
         out.print(prefix, "  Dominates: ", m_dominators.blocksDominatedBy(block), "\n");
         out.print(prefix, "  Dominance Frontier: ", m_dominators.dominanceFrontierOf(block), "\n");

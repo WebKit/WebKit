@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,9 +103,10 @@ public:
                 break;
             }
             
-            if (block->last()->op() == Return) {
+            NodeAndIndex terminal = block->findTerminal();
+            if (terminal.node->op() == Return) {
                 insertionSet.insertNode(
-                    block->size() - 1, SpecNone, CheckTierUpAtReturn, block->last()->origin);
+                    terminal.index, SpecNone, CheckTierUpAtReturn, terminal.node->origin);
             }
             
             insertionSet.execute(block);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,6 +69,19 @@ void BasicBlock::ensureLocals(unsigned newNumLocals)
     valuesAtHead.ensureLocals(newNumLocals);
     valuesAtTail.ensureLocals(newNumLocals);
     intersectionOfPastValuesAtHead.ensureLocals(newNumLocals, AbstractValue::fullTop());
+}
+
+void BasicBlock::replaceTerminal(Node* node)
+{
+    NodeAndIndex result = findTerminal();
+    if (!result)
+        append(node);
+    else {
+        m_nodes.insert(result.index + 1, node);
+        result.node->convertToPhantom();
+    }
+    
+    ASSERT(terminal());
 }
 
 bool BasicBlock::isInPhis(Node* node) const

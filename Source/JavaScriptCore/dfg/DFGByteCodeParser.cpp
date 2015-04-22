@@ -1,4 +1,4 @@
- /*
+/*
  * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -622,40 +622,40 @@ private:
         return data;
     }
     
+    Node* addToGraph(Node* node)
+    {
+        if (Options::verboseDFGByteCodeParsing())
+            dataLog("        appended ", node, " ", Graph::opName(node->op()), "\n");
+        m_currentBlock->append(node);
+        return node;
+    }
+    
     Node* addToGraph(NodeType op, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
             SpecNone, op, currentNodeOrigin(), Edge(child1), Edge(child2),
             Edge(child3));
-        ASSERT(op != Phi);
-        m_currentBlock->append(result);
-        return result;
+        return addToGraph(result);
     }
     Node* addToGraph(NodeType op, Edge child1, Edge child2 = Edge(), Edge child3 = Edge())
     {
         Node* result = m_graph.addNode(
             SpecNone, op, currentNodeOrigin(), child1, child2, child3);
-        ASSERT(op != Phi);
-        m_currentBlock->append(result);
-        return result;
+        return addToGraph(result);
     }
     Node* addToGraph(NodeType op, OpInfo info, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
             SpecNone, op, currentNodeOrigin(), info, Edge(child1), Edge(child2),
             Edge(child3));
-        ASSERT(op != Phi);
-        m_currentBlock->append(result);
-        return result;
+        return addToGraph(result);
     }
     Node* addToGraph(NodeType op, OpInfo info1, OpInfo info2, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
             SpecNone, op, currentNodeOrigin(), info1, info2,
             Edge(child1), Edge(child2), Edge(child3));
-        ASSERT(op != Phi);
-        m_currentBlock->append(result);
-        return result;
+        return addToGraph(result);
     }
     
     Node* addToGraph(Node::VarArgTag, NodeType op, OpInfo info1, OpInfo info2)
@@ -663,8 +663,7 @@ private:
         Node* result = m_graph.addNode(
             SpecNone, Node::VarArg, op, currentNodeOrigin(), info1, info2,
             m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs);
-        ASSERT(op != Phi);
-        m_currentBlock->append(result);
+        addToGraph(result);
         
         m_numPassedVarArgs = 0;
         
@@ -1360,7 +1359,10 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
     // If there was a return, but no early returns, then we're done. We allow parsing of
     // the caller to continue in whatever basic block we're in right now.
     if (!inlineStackEntry.m_didEarlyReturn && inlineStackEntry.m_didReturn) {
-        ASSERT(lastBlock->isEmpty() || !lastBlock->last()->isTerminal());
+        if (Options::verboseDFGByteCodeParsing())
+            dataLog("    Allowing parsing to continue in last inlined block.\n");
+        
+        ASSERT(lastBlock->isEmpty() || !lastBlock->terminal());
         
         // If we created new blocks then the last block needs linking, but in the
         // caller. It doesn't need to be linked to, but it needs outgoing links.
@@ -1368,6 +1370,8 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
             // For debugging purposes, set the bytecodeBegin. Note that this doesn't matter
             // for release builds because this block will never serve as a potential target
             // in the linker's binary search.
+            if (Options::verboseDFGByteCodeParsing())
+                dataLog("        Repurposing last block from ", lastBlock->bytecodeBegin, " to ", m_currentIndex, "\n");
             lastBlock->bytecodeBegin = m_currentIndex;
             if (callerLinkability == CallerDoesNormalLinking) {
                 if (verbose)
@@ -1380,8 +1384,11 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
         return;
     }
     
+    if (Options::verboseDFGByteCodeParsing())
+        dataLog("    Creating new block after inlining.\n");
+
     // If we get to this point then all blocks must end in some sort of terminals.
-    ASSERT(lastBlock->last()->isTerminal());
+    ASSERT(lastBlock->terminal());
 
     // Need to create a new basic block for the continuation at the caller.
     RefPtr<BasicBlock> block = adoptRef(new BasicBlock(nextOffset, m_numArguments, m_numLocals, PNaN));
@@ -1392,7 +1399,7 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
             continue;
         BasicBlock* blockToLink = inlineStackEntry.m_unlinkedBlocks[i].m_block;
         ASSERT(!blockToLink->isLinked);
-        Node* node = blockToLink->last();
+        Node* node = blockToLink->terminal();
         ASSERT(node->op() == Jump);
         ASSERT(!node->targetBlock());
         node->targetBlock() = block.get();
@@ -1803,7 +1810,7 @@ bool ByteCodeParser::handleInlining(
     m_currentBlock = continuationBlock.get();
     
     for (unsigned i = landingBlocks.size(); i--;)
-        landingBlocks[i]->last()->targetBlock() = continuationBlock.get();
+        landingBlocks[i]->terminal()->targetBlock() = continuationBlock.get();
     
     m_currentIndex = oldOffset;
     
@@ -3129,9 +3136,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jmp: {
             int relativeOffset = currentInstruction[1].u.operand;
+            addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));
             if (relativeOffset <= 0)
                 flushForTerminal();
-            addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));
             LAST_OPCODE(op_jmp);
         }
 
@@ -3251,8 +3258,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     continue;
                 data.cases.append(SwitchCase::withBytecodeIndex(m_graph.freeze(jsNumber(static_cast<int32_t>(table.min + i))), target));
             }
-            flushIfTerminal(data);
             addToGraph(Switch, OpInfo(&data), get(VirtualRegister(currentInstruction[3].u.operand)));
+            flushIfTerminal(data);
             LAST_OPCODE(op_switch_imm);
         }
             
@@ -3271,8 +3278,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 data.cases.append(
                     SwitchCase::withBytecodeIndex(LazyJSValue::singleCharacterString(table.min + i), target));
             }
-            flushIfTerminal(data);
             addToGraph(Switch, OpInfo(&data), get(VirtualRegister(currentInstruction[3].u.operand)));
+            flushIfTerminal(data);
             LAST_OPCODE(op_switch_char);
         }
 
@@ -3291,14 +3298,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 data.cases.append(
                     SwitchCase::withBytecodeIndex(LazyJSValue::knownStringImpl(iter->key.get()), target));
             }
-            flushIfTerminal(data);
             addToGraph(Switch, OpInfo(&data), get(VirtualRegister(currentInstruction[3].u.operand)));
+            flushIfTerminal(data);
             LAST_OPCODE(op_switch_string);
         }
 
         case op_ret:
-            flushForReturn();
             if (inlineCallFrame()) {
+                flushForReturn();
                 if (m_inlineStackTop->m_returnValue.isValid())
                     setDirect(m_inlineStackTop->m_returnValue, get(VirtualRegister(currentInstruction[1].u.operand)), ImmediateSetWithFlush);
                 m_inlineStackTop->m_didReturn = true;
@@ -3322,12 +3329,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 LAST_OPCODE(op_ret);
             }
             addToGraph(Return, get(VirtualRegister(currentInstruction[1].u.operand)));
+            flushForReturn();
             LAST_OPCODE(op_ret);
             
         case op_end:
-            flushForReturn();
             ASSERT(!inlineCallFrame());
             addToGraph(Return, get(VirtualRegister(currentInstruction[1].u.operand)));
+            flushForReturn();
             LAST_OPCODE(op_end);
 
         case op_throw:
@@ -3854,7 +3862,7 @@ void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BasicBlock*>& possibleT
 {
     ASSERT(!block->isLinked);
     ASSERT(!block->isEmpty());
-    Node* node = block->last();
+    Node* node = block->terminal();
     ASSERT(node->isTerminal());
     
     switch (node->op()) {
@@ -4134,10 +4142,13 @@ void ByteCodeParser::parseCodeBlock()
             // are at the end of an inline function, or we realized that we
             // should stop parsing because there was a return in the first
             // basic block.
-            ASSERT(m_currentBlock->isEmpty() || m_currentBlock->last()->isTerminal() || (m_currentIndex == codeBlock->instructions().size() && inlineCallFrame()) || !shouldContinueParsing);
+            ASSERT(m_currentBlock->isEmpty() || m_currentBlock->terminal() || (m_currentIndex == codeBlock->instructions().size() && inlineCallFrame()) || !shouldContinueParsing);
 
-            if (!shouldContinueParsing)
+            if (!shouldContinueParsing) {
+                if (Options::verboseDFGByteCodeParsing())
+                    dataLog("Done parsing ", *codeBlock, "\n");
                 return;
+            }
             
             m_currentBlock = 0;
         } while (m_currentIndex < limit);
@@ -4145,6 +4156,9 @@ void ByteCodeParser::parseCodeBlock()
 
     // Should have reached the end of the instructions.
     ASSERT(m_currentIndex == codeBlock->instructions().size());
+    
+    if (Options::verboseDFGByteCodeParsing())
+        dataLog("Done parsing ", *codeBlock, " (fell off end)\n");
 }
 
 bool ByteCodeParser::parse()

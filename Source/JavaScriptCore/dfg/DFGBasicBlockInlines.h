@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,15 @@ template<typename... Params>
 Node* BasicBlock::appendNonTerminal(Graph& graph, SpeculatedType type, Params... params)
 {
     Node* result = graph.addNode(type, params...);
-    insertBeforeLast(result);
+    insertBeforeTerminal(result);
+    return result;
+}
+
+template<typename... Params>
+Node* BasicBlock::replaceTerminal(Graph& graph, SpeculatedType type, Params... params)
+{
+    Node* result = graph.addNode(type, params...);
+    replaceTerminal(result);
     return result;
 }
 

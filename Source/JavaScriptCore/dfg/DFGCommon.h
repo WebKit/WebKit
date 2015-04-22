@@ -274,6 +274,29 @@ void startCrashing();
 
 JS_EXPORT_PRIVATE bool isCrashing();
 
+struct NodeAndIndex {
+    NodeAndIndex()
+        : node(nullptr)
+        , index(UINT_MAX)
+    {
+    }
+    
+    NodeAndIndex(Node* node, unsigned index)
+        : node(node)
+        , index(index)
+    {
+        ASSERT(!node == (index == UINT_MAX));
+    }
+    
+    bool operator!() const
+    {
+        return !node;
+    }
+    
+    Node* node;
+    unsigned index;
+};
+
 } } // namespace JSC::DFG
 
 namespace WTF {

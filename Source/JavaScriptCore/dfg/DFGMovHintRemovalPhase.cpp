@@ -82,7 +82,7 @@ private:
         
         for (unsigned i = m_state.size(); i--;) {
             VirtualRegister reg = m_state.virtualRegisterForIndex(i);
-            if (m_graph.isLiveInBytecode(reg, block->last()->origin.forExit))
+            if (m_graph.isLiveInBytecode(reg, block->terminal()->origin.forExit))
                 m_state[i] = currentEpoch;
             else
                 m_state[i] = Epoch();

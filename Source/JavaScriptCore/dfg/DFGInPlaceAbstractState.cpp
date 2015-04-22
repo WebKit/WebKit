@@ -361,7 +361,7 @@ bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
 
 inline bool InPlaceAbstractState::mergeToSuccessors(BasicBlock* basicBlock)
 {
-    Node* terminal = basicBlock->last();
+    Node* terminal = basicBlock->terminal();
     
     ASSERT(terminal->isTerminal());
     

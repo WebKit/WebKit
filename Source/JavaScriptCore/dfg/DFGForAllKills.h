@@ -48,13 +48,13 @@ void forAllLiveNodesAtTail(Graph& graph, BasicBlock* block, const Functor& funct
             functor(node);
     }
     
-    DFG_ASSERT(graph, block->last(), block->last()->origin.forExit.isSet());
+    DFG_ASSERT(graph, block->terminal(), block->terminal()->origin.forExit.isSet());
     
     AvailabilityMap& availabilityMap = block->ssa->availabilityAtTail;
     for (unsigned i = availabilityMap.m_locals.size(); i--;) {
         VirtualRegister reg = availabilityMap.m_locals.virtualRegisterForIndex(i);
         
-        if (!graph.isLiveInBytecode(reg, block->last()->origin.forExit))
+        if (!graph.isLiveInBytecode(reg, block->terminal()->origin.forExit))
             continue;
         
         availabilityMap.closeStartingWithLocal(

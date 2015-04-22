@@ -90,6 +90,9 @@ public:
                     Node* lastNode = nullptr;
                     if (sourceIndex > 1) {
                         lastNode = block->at(sourceIndex - 2);
+                        
+                        // This doesn't need to specialize for Phantom. lastNode could be any node
+                        // that isn't subject to DCE. But we keep it simple for now.
                         if (lastNode->op() != Phantom
                             || lastNode->origin.forExit != node->origin.forExit)
                             lastNode = nullptr;
