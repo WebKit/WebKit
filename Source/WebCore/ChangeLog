@@ -1,3 +1,20 @@
+2015-04-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] When computing visible rects for tiling, stop searching at UIWindows
+        https://bugs.webkit.org/show_bug.cgi?id=144022
+        <rdar://problem/18327227>
+
+        Reviewed by Simon Fraser.
+
+        [WAKWindow _visibleRectRespectingMasksToBounds:] computes a visible rect which we use
+        to determine which tiles to create. We do this by finding the frame of the _hostLayer,
+        and then walking up the CALayer hierarchy converting each rect into its parent's
+        coordinate system (all the while clipping to bounds if necessary). This walk up the
+        layer hierarchy should stop at a layer associated with a UIWindow.
+
+        * platform/ios/wak/WAKWindow.mm:
+        (-[WAKWindow _visibleRectRespectingMasksToBounds:]):
+
 2015-04-21  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [Cairo] Implement Path::addPath

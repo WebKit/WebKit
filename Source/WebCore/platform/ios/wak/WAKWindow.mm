@@ -440,7 +440,9 @@ static id<OrientationProvider> gOrientationProvider;
     CGRect rect = bounds;
     CALayer* superlayer = [layer superlayer];
 
-    while (superlayer && layer != _rootLayer) {
+    static Class windowClass = NSClassFromString(@"UIWindow");
+
+    while (superlayer && layer != _rootLayer && (!layer.delegate || ![layer.delegate isKindOfClass:windowClass])) {
         CGRect rectInSuper = [superlayer convertRect:rect fromLayer:layer];
         if ([superlayer masksToBounds] || !respectsMasksToBounds)
             rect = CGRectIntersection([superlayer bounds], rectInSuper);
