@@ -159,6 +159,14 @@ using namespace WebKit;
 
 int main(int argc, char** argv)
 {
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    // Workaround for <rdar://problem/20653234>, make XPC transactions work after re-exec.
+    xpc_track_activity();
+#pragma clang diagnostic pop
+#endif
+
     xpc_main(XPCServiceEventHandler);
     return 0;
 }

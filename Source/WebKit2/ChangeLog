@@ -1,3 +1,14 @@
+2015-04-22  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] In nightlies and local builds, WebKit services can get terminated under memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=144052
+        rdar://problem/19754404
+
+        Reviewed by Darin Adler.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm:
+        (main): Make XPC transaction tracking work again after a re-exec.
+
 2015-04-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Have API::Array creation methods return Ref<>
