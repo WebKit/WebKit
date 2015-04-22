@@ -987,9 +987,14 @@ webkit.org/b/132248 media/media-fragments/TC0054.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0055.html [ Failure Pass Timeout ]
 webkit.org/b/132248 media/media-fragments/TC0058.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0059.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0061.html [ Timeout Pass ]
+webkit.org/b/132248 media/media-fragments/TC0063.html [ Failure Pass ]
+webkit.org/b/143709 media/media-fragments/TC0064.html [ Timeout Pass ]
+webkit.org/b/132248 media/media-fragments/TC0067.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0072.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0078.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0079.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0080.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0082.html [ Timeout Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0085.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0086.html [ Failure Timeout Pass ]
@@ -998,6 +1003,7 @@ webkit.org/b/132248 media/media-fragments/TC0088.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0089.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0090.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0091.html [ Failure Pass ]
+
 
 webkit.org/b/132249 http/tests/media/video-cookie.html [ Timeout Failure Pass ]
 
@@ -1130,14 +1136,14 @@ webkit.org/b/136070 fast/forms/label/label-becomes-visible-while-clicking-on-lab
 
 webkit.org/b/136580 media/context-menu-actions.html [ Timeout Pass ]
 
-webkit.org/b/136581 editing/pasteboard/drag-drop-dead-frame.html [ Timeout Pass ]
+webkit.org/b/136581 editing/pasteboard/drag-drop-dead-frame.html [ Failure Timeout Pass ]
 
 webkit.org/b/139359 inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure Pass ]
 
 webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Failure Pass ]
 
 webkit.org/b/143472 media/track/track-cue-mutable-fragment.html [ Failure Pass ]
-webkit.org/b/143475 media/audio-repaint.html [ Failure ImageOnlyFailure Pass ]
+webkit.org/b/143475 media/audio-repaint.html [ Timeout Failure ImageOnlyFailure Pass ]
 webkit.org/b/143478 media/video-page-load-preload-none.html [ Failure Pass ]
 
 webkit.org/b/131545 media/media-event-listeners.html [ Failure Pass ]
@@ -1148,6 +1154,12 @@ webkit.org/b/143704 media/media-source/media-source-append-media-segment-without
 webkit.org/b/139364 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure Pass ]
 webkit.org/b/143876 css3/viewport-percentage-lengths/vh-resize.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/143983 fast/hidpi/image-srcset-svg-canvas.html [ ImageOnlyFailure Pass ]
+webkit.org/b/143985 editing/pasteboard/drop-text-events.html [ Failure Timeout Crash ]
+
+webkit.org/b/143988 css3/masking/mask-svg-no-fragmentId.html [ ImageOnlyFailure Pass ]
+webkit.org/b/143991 fast/table/multiple-captions-crash3.html [ ImageOnlyFailure Pass ]
+webkit.org/b/143995 fast/canvas/canvas-composite-text-alpha.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1211,7 +1223,7 @@ Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconw
 Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html [ Pass Slow ] 
 
 Bug(GTK) http/tests/media/video-preload.html [ Pass Slow ]
-Bug(GTK) http/tests/media/hls/video-controls-live-stream.html [ Pass Slow ]
+webkit.org/b/143989  http/tests/media/hls/video-controls-live-stream.html [ Pass Slow Failure ]
 
 webkit.org/b/116958 http/tests/navigation/slowmetaredirect-basic.html [ Pass Slow ]
 webkit.org/b/116958 http/tests/navigation/slowtimerredirect-basic.html [ Pass Slow ]
@@ -1346,10 +1358,14 @@ webkit.org/b/143477 fast/writing-mode/broken-ideograph-small-caps.html [ Timeout
 webkit.org/b/143706 media/media-source/media-source-end-of-stream-readyState.html [ Timeout Pass ]
 webkit.org/b/143707 media/track/track-cue-rendering-on-resize.html [ Timeout Pass ]
 webkit.org/b/143708 media/track/track-cue-container-rendering-position.html [ Timeout Pass ]
-webkit.org/b/143709 media/media-fragments/TC0064.html [ Timeout Pass ]
 
 webkit.org/b/143873 media/track/track-css-property-whitelist.html [ Timeout Pass ]
 webkit.org/b/143875 media/track/track-css-matching.html [ Timeout Pass ]
+
+webkit.org/b/143986 fast/dom/Node/mutation-blur.html [ Timeout Pass ]
+webkit.org/b/143987 media/auto-play-in-sandbox-with-allow-scripts.html [ Timeout Pass ]
+webkit.org/b/143990 media/track/track-css-matching-timestamps.html [ Timeout Pass ]
+webkit.org/b/143992 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1398,7 +1414,6 @@ webkit.org/b/63706 editing/pasteboard/drag-selected-image-to-contenteditable.htm
 webkit.org/b/63706 editing/pasteboard/drop-file-svg.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/drop-inputtext-acquires-style.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/drop-link.html [ Failure ]
-webkit.org/b/63706 editing/pasteboard/drop-text-events.html [ Failure Timeout ]
 webkit.org/b/63706 editing/pasteboard/drop-text-without-selection.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/get-data-text-plain-drop.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/smart-drag-drop.html [ Failure ]

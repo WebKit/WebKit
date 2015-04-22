@@ -1,3 +1,12 @@
+2015-04-22  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+        [GTK] Gardening 21st April.
+        https://bugs.webkit.org/show_bug.cgi?id=143982.
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations:
+
 2015-04-21  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [Cairo] Implement Path::addPath
