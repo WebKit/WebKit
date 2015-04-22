@@ -1,5 +1,16 @@
 2015-04-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [CMake] Use lowercase for local variables in macros
+        https://bugs.webkit.org/show_bug.cgi?id=144059
+
+        Reviewed by Martin Robinson.
+
+        Convert some variable names to lowercase.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
+2015-04-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [CMake] Features list should print dots every other row
         https://bugs.webkit.org/show_bug.cgi?id=143832
 
