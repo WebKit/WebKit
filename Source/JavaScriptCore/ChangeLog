@@ -1,5 +1,25 @@
 2015-04-22  Mark Lam  <mark.lam@apple.com>
 
+        SparseArrayEntry's write barrier owner should be the SparseArrayValueMap.
+        https://bugs.webkit.org/show_bug.cgi?id=144067
+
+        Reviewed by Michael Saboff.
+
+        Currently, there are a few places where the JSObject that owns the
+        SparseArrayValueMap is designated as the owner of the SparseArrayEntry
+        write barrier.  This is a bug and can result in the GC collecting the
+        SparseArrayEntry even though it is being referenced by the
+        SparseArrayValueMap.  This patch fixes the bug.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists):
+        (JSC::JSObject::putIndexedDescriptor):
+        * tests/stress/sparse-array-entry-update-144067.js: Added.
+        (useMemoryToTriggerGCs):
+        (foo):
+
+2015-04-22  Mark Lam  <mark.lam@apple.com>
+
         Give the heap object iterators the ability to return early.
         https://bugs.webkit.org/show_bug.cgi?id=144011
 
