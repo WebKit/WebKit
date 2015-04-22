@@ -1833,14 +1833,17 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case MovHint: {
-        RELEASE_ASSERT_NOT_REACHED();
+        compileMovHint(m_currentNode);
+        noResult(node);
         break;
     }
         
-    case ZombieHint:
+    case ZombieHint: {
         recordSetLocal(m_currentNode->unlinkedLocal(), VirtualRegister(), DataFormatDead);
+        noResult(node);
         break;
-
+    }
+        
     case SetLocal: {
         switch (node->variableAccessData()->flushFormat()) {
         case FlushedDouble: {

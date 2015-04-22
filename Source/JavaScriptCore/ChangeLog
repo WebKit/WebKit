@@ -1,5 +1,12 @@
 2015-04-21  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix 32-bit. Forgot to make this simple change to 32_64 as well.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2015-04-21  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should allow Phantoms after terminals
         https://bugs.webkit.org/show_bug.cgi?id=126778
 
