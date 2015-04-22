@@ -1,5 +1,12 @@
 2015-04-22  Andy Estes  <aestes@apple.com>
 
+        Rebaseline video-controls-live-stream-expected.txt on safari-600.6-branch.
+
+        * platform/mac/http/tests/media/hls/video-controls-live-stream-expected.txt:
+        The -webkit-media-controls-panel-composited-parent line is no longer present on trunk, either.
+
+2015-04-22  Andy Estes  <aestes@apple.com>
+
         Tests added in r174489 have image and text differences in safari-600.5-branch
         https://bugs.webkit.org/show_bug.cgi?id=144044
 
