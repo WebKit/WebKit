@@ -4008,6 +4008,12 @@
     <ClCompile Include="..\html\ResetInputType.cpp">
       <Filter>html</Filter>
     </ClCompile>
+    <ClCompile Include="..\html\RubyElement.cpp">
+      <Filter>html</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\RubyTextElement.cpp">
+      <Filter>html</Filter>
+    </ClCompile>
     <ClCompile Include="..\html\SearchInputType.cpp">
       <Filter>html</Filter>
     </ClCompile>
@@ -11170,6 +11176,12 @@
       <Filter>html</Filter>
     </ClInclude>
     <ClInclude Include="..\html\ResetInputType.h">
+      <Filter>html</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\RubyElement.h">
+      <Filter>html</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\RubyTextElement.h">
       <Filter>html</Filter>
     </ClInclude>
     <ClInclude Include="..\html\SearchInputType.h">

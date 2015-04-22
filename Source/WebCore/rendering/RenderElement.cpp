@@ -158,15 +158,6 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, Ref<RenderSt
         return WTF::move(image);
     }
 
-    if (element.hasTagName(HTMLNames::rubyTag)) {
-        if (style.get().display() == INLINE)
-            return createRenderer<RenderRubyAsInline>(element, WTF::move(style));
-        if (style.get().display() == BLOCK || style.get().display() == INLINE_BLOCK)
-            return createRenderer<RenderRubyAsBlock>(element, WTF::move(style));
-    }
-    // treat <rt> as ruby text ONLY if the parent is ruby.
-    if (element.hasTagName(HTMLNames::rtTag) && element.parentElement() && isRuby(element.parentElement()->renderer()))
-        return createRenderer<RenderRubyText>(element, WTF::move(style));
     switch (style.get().display()) {
     case NONE:
         return nullptr;

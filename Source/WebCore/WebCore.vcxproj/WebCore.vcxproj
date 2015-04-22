@@ -16244,6 +16244,8 @@
     <ClCompile Include="..\html\RangeInputType.cpp" />
     <ClCompile Include="..\html\RelList.cpp" />
     <ClCompile Include="..\html\ResetInputType.cpp" />
+    <ClCompile Include="..\html\RubyElement.cpp" />
+    <ClCompile Include="..\html\RubyTextElement.cpp" />
     <ClCompile Include="..\html\SearchInputType.cpp" />
     <ClCompile Include="..\html\StepRange.cpp" />
     <ClCompile Include="..\html\SubmitInputType.cpp" />
@@ -21278,6 +21280,8 @@
     <ClInclude Include="..\html\RangeInputType.h" />
     <ClInclude Include="..\html\RelList.h" />
     <ClInclude Include="..\html\ResetInputType.h" />
+    <ClInclude Include="..\html\RubyElement.h" />
+    <ClInclude Include="..\html\RubyTextElement.h" />
     <ClInclude Include="..\html\SearchInputType.h" />
     <ClInclude Include="..\html\StepRange.h" />
     <ClInclude Include="..\html\SubmitInputType.h" />

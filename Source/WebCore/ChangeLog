@@ -1,3 +1,30 @@
+2015-04-22  Zalan Bujtas  <zalan@apple.com>
+
+        Move render ruby initialization logic from RenderElement::createFor() to *::createElementRenderer()
+        https://bugs.webkit.org/show_bug.cgi?id=144058
+
+        Reviewed by Darin Adler.
+
+        No change in functionality.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLTagNames.in:
+        * html/RubyElement.cpp: Added.
+        (WebCore::RubyElement::RubyElement):
+        (WebCore::RubyElement::create):
+        (WebCore::RubyElement::createElementRenderer):
+        * html/RubyElement.h: Added.
+        * html/RubyTextElement.cpp: Added.
+        (WebCore::RubyTextElement::RubyTextElement):
+        (WebCore::RubyTextElement::create):
+        (WebCore::RubyTextElement::createElementRenderer):
+        * html/RubyTextElement.h: Added.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor):
+
 2015-04-22  Roger Fong  <roger_fong@apple.com>
 
         Show correct wireless play placard on iOS.

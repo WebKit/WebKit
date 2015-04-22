@@ -2117,6 +2117,10 @@
 		580371611A66F00A00BAF519 /* ClipRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5803715F1A66F00A00BAF519 /* ClipRect.cpp */; };
 		580371621A66F00A00BAF519 /* ClipRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 580371601A66F00A00BAF519 /* ClipRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		580371641A66F1D300BAF519 /* LayerFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 580371631A66F1D300BAF519 /* LayerFragment.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5824ABA21AE81116009074B7 /* RubyElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5824ABA01AE81116009074B7 /* RubyElement.cpp */; };
+		5824ABA31AE81116009074B7 /* RubyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5824ABA11AE81116009074B7 /* RubyElement.h */; };
+		5824ABA61AE81384009074B7 /* RubyTextElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5824ABA41AE81384009074B7 /* RubyTextElement.cpp */; };
+		5824ABA71AE81384009074B7 /* RubyTextElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5824ABA51AE81384009074B7 /* RubyTextElement.h */; };
 		582CB0531A78A14B00AFFCC4 /* SimpleLineLayoutTextFragmentIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 582CB0521A78A14B00AFFCC4 /* SimpleLineLayoutTextFragmentIterator.h */; };
 		582CB0551A78A2B200AFFCC4 /* SimpleLineLayoutTextFragmentIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 582CB0541A78A2B200AFFCC4 /* SimpleLineLayoutTextFragmentIterator.cpp */; };
 		585D6DFC1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 585D6DFB1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp */; };
@@ -9328,6 +9332,10 @@
 		5803715F1A66F00A00BAF519 /* ClipRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClipRect.cpp; sourceTree = "<group>"; };
 		580371601A66F00A00BAF519 /* ClipRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClipRect.h; sourceTree = "<group>"; };
 		580371631A66F1D300BAF519 /* LayerFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFragment.h; sourceTree = "<group>"; };
+		5824ABA01AE81116009074B7 /* RubyElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RubyElement.cpp; sourceTree = "<group>"; };
+		5824ABA11AE81116009074B7 /* RubyElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RubyElement.h; sourceTree = "<group>"; };
+		5824ABA41AE81384009074B7 /* RubyTextElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RubyTextElement.cpp; sourceTree = "<group>"; };
+		5824ABA51AE81384009074B7 /* RubyTextElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RubyTextElement.h; sourceTree = "<group>"; };
 		582CB0521A78A14B00AFFCC4 /* SimpleLineLayoutTextFragmentIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutTextFragmentIterator.h; sourceTree = "<group>"; };
 		582CB0541A78A2B200AFFCC4 /* SimpleLineLayoutTextFragmentIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutTextFragmentIterator.cpp; sourceTree = "<group>"; };
 		585D6DFB1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutResolver.cpp; sourceTree = "<group>"; };
@@ -17909,6 +17917,10 @@
 		93EEC1EC09C2877700C515D1 /* html */ = {
 			isa = PBXGroup;
 			children = (
+				5824ABA01AE81116009074B7 /* RubyElement.cpp */,
+				5824ABA11AE81116009074B7 /* RubyElement.h */,
+				5824ABA41AE81384009074B7 /* RubyTextElement.cpp */,
+				5824ABA51AE81384009074B7 /* RubyTextElement.h */,
 				49484FAE102CF01E00187DD3 /* canvas */,
 				1A88A90117553CD7000C74F9 /* forms */,
 				97C1F5511228558800EDE616 /* parser */,
@@ -25473,6 +25485,7 @@
 				A83B79020CCAFF15000B0825 /* JSSVGFontFaceNameElement.h in Headers */,
 				A83B78FE0CCAFF15000B0825 /* JSSVGFontFaceSrcElement.h in Headers */,
 				A83B78FC0CCAFF15000B0825 /* JSSVGFontFaceUriElement.h in Headers */,
+				5824ABA31AE81116009074B7 /* RubyElement.h in Headers */,
 				B2FA3D990AB75A6F000E5AC4 /* JSSVGForeignObjectElement.h in Headers */,
 				B2FA3D9B0AB75A6F000E5AC4 /* JSSVGGElement.h in Headers */,
 				724ED3321A3A8B2300F5F13C /* JSEXTBlendMinMax.h in Headers */,
@@ -26706,6 +26719,7 @@
 				83C1D436178D5AB500141E68 /* SVGPathSegMovetoRel.h in Headers */,
 				082DE42D1292621600D923DF /* SVGPathSegWithContext.h in Headers */,
 				84300BD8120C9AD40021954A /* SVGPathSource.h in Headers */,
+				5824ABA71AE81384009074B7 /* RubyTextElement.h in Headers */,
 				8419D2BA120E0C7600141F8F /* SVGPathStringBuilder.h in Headers */,
 				84300BD6120C9AAC0021954A /* SVGPathStringSource.h in Headers */,
 				84C5B2FB1216DC810088B53A /* SVGPathTraversalStateBuilder.h in Headers */,
@@ -28892,6 +28906,7 @@
 				E51A81DF17298D7700BFCA61 /* JSPerformance.cpp in Sources */,
 				8A9A587011E84C36008ACFD1 /* JSPerformanceNavigation.cpp in Sources */,
 				0F43C85F189E15A600019AE2 /* JSPerformanceTiming.cpp in Sources */,
+				5824ABA61AE81384009074B7 /* RubyTextElement.cpp in Sources */,
 				FDEA6246152102FC00479DF0 /* JSPeriodicWave.cpp in Sources */,
 				93B70D6B09EB0C7C009D8468 /* JSPluginElementFunctions.cpp in Sources */,
 				5189F01D10B37BD900F3C739 /* JSPopStateEvent.cpp in Sources */,
@@ -29827,6 +29842,7 @@
 				FD00D7A414A3F61900734011 /* SincResampler.cpp in Sources */,
 				51327D6111A33A2B004F9D65 /* SinkDocument.cpp in Sources */,
 				49E911CC0EF86D47009D0CAF /* SkewTransformOperation.cpp in Sources */,
+				5824ABA21AE81116009074B7 /* RubyElement.cpp in Sources */,
 				4150F9F212B6E0E70008C860 /* SliderThumbElement.cpp in Sources */,
 				1C0939EA1A13E12900B788E5 /* CachedSVGFont.cpp in Sources */,
 				4B6FA6F70C39E4A100087011 /* SmartReplaceCF.cpp in Sources */,

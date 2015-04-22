@@ -1688,6 +1688,8 @@ set(WebCore_SOURCES
     html/RangeInputType.cpp
     html/RelList.cpp
     html/ResetInputType.cpp
+    html/RubyElement.cpp
+    html/RubyTextElement.cpp
     html/SearchInputType.cpp
     html/StepRange.cpp
     html/SubmitInputType.cpp
