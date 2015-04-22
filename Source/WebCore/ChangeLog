@@ -1,3 +1,41 @@
+2015-04-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Rename hasOverride{Height,Width}() to hasOverrideLogicalContent{Height,Width}()
+        https://bugs.webkit.org/show_bug.cgi?id=143984
+
+        Reviewed by Darin Adler.
+
+        This patch is renaming these LayoutBox methods, because of their names
+        don't match with the getters and setters, which is confusing. Specially
+        now that we also have hasOverrideContainingBlockLogical{Height,Width}().
+
+        No new tests (this is just a refactoring).
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::fitBorderToLinesIfNeeded):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::updateRubyForJustifiedText):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::hasOverrideLogicalContentHeight):
+        (WebCore::RenderBox::hasOverrideLogicalContentWidth):
+        (WebCore::RenderBox::overrideLogicalContentWidth):
+        (WebCore::RenderBox::overrideLogicalContentHeight):
+        (WebCore::RenderBox::perpendicularContainingBlockLogicalHeight):
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        * rendering/RenderBox.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::contentWidthForChild):
+        (WebCore::contentHeightForChild):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::preferredMainAxisContentExtentForChild):
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::adjustInlineDirectionLineBounds):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+
 2015-04-21  Jer Noble  <jer.noble@apple.com>
 
         [Mac][MediaSource] Crash when SourceBuffer::provideMediaData() is called re-entrantly.

@@ -652,7 +652,7 @@ LayoutUnit RenderFlexibleBox::mainAxisScrollbarExtentForChild(RenderBox& child) 
 
 LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForChild(RenderBox& child, bool hasInfiniteLineLength)
 {
-    bool hasOverrideSize = child.hasOverrideWidth() || child.hasOverrideHeight();
+    bool hasOverrideSize = child.hasOverrideLogicalContentWidth() || child.hasOverrideLogicalContentHeight();
     if (hasOverrideSize)
         child.clearOverrideSize();
 

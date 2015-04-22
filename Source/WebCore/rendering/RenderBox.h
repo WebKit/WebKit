@@ -319,8 +319,8 @@ public:
     // include the scrollbar height/width.
     LayoutUnit overrideLogicalContentWidth() const;
     LayoutUnit overrideLogicalContentHeight() const;
-    bool hasOverrideHeight() const;
-    bool hasOverrideWidth() const;
+    bool hasOverrideLogicalContentHeight() const;
+    bool hasOverrideLogicalContentWidth() const;
     void setOverrideLogicalContentHeight(LayoutUnit);
     void setOverrideLogicalContentWidth(LayoutUnit);
     void clearOverrideSize();

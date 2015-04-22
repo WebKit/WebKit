@@ -2938,7 +2938,7 @@ void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutU
 
 void RenderBlockFlow::fitBorderToLinesIfNeeded()
 {
-    if (style().borderFit() == BorderFitBorder || hasOverrideWidth())
+    if (style().borderFit() == BorderFitBorder || hasOverrideLogicalContentWidth())
         return;
 
     // Walk any normal flow lines to snugly fit.
