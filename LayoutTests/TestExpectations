@@ -151,3 +151,7 @@ webkit.org/b/136078 fast/borders/border-painting-double.html [ ImageOnlyFailure 
 webkit.org/b/144043 fast/multicol/clip-in-columns.html [ ImageOnlyFailure ]
 webkit.org/b/144043 fast/multicol/filter-in-columns.html [ ImageOnlyFailure ]
 
+# Tests added in r174489 have image and text differences in safari-600.5-branch
+webkit.org/b/144044 fast/ruby/ruby-justification-hittest.html [ Failure ]
+webkit.org/b/144044 fast/ruby/ruby-justification.html [ ImageOnlyFailure ]
+
