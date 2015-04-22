@@ -146,9 +146,10 @@ static RenderElement* inFlowPositionedInlineAncestor(RenderElement* p)
     return 0;
 }
 
-static void updateStyleOfAnonymousBlockContinuations(RenderBlock& block, const RenderStyle* newStyle, const RenderStyle* oldStyle)
+static void updateStyleOfAnonymousBlockContinuations(const RenderBlock& block, const RenderStyle* newStyle, const RenderStyle* oldStyle)
 {
-    for (RenderBox* box = &block; box && box->isAnonymousBlock(); box = box->nextSiblingBox()) {
+    // If any descendant blocks exist then they will be in the next anonymous block and its siblings.
+    for (RenderBox* box = block.nextSiblingBox(); box && box->isAnonymousBlock(); box = box->nextSiblingBox()) {
         if (box->style().position() == newStyle->position())
             continue;
         
@@ -192,13 +193,8 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         // If an inline's in-flow positioning has changed and it is part of an active continuation as a descendant of an anonymous containing block,
         // then any descendant blocks will need to change their in-flow positioning accordingly.
         // Do this by updating the position of the descendant blocks' containing anonymous blocks - there may be more than one.
-        if (containingBlock()->isAnonymousBlock() && oldStyle && newStyle.position() != oldStyle->position() && (newStyle.hasInFlowPosition() || oldStyle->hasInFlowPosition())) {
-            // If any descendant blocks exist then they will be in the next anonymous block and its siblings.
-            ASSERT(containingBlock()->nextSibling());
-            RenderBlock& block = toRenderBlock(*containingBlock()->nextSibling());
-            ASSERT(block.isAnonymousBlock());
-            updateStyleOfAnonymousBlockContinuations(block, &newStyle, oldStyle);
-        }
+        if (containingBlock()->isAnonymousBlock() && oldStyle && newStyle.position() != oldStyle->position() && (newStyle.hasInFlowPosition() || oldStyle->hasInFlowPosition()))
+            updateStyleOfAnonymousBlockContinuations(*containingBlock(), &newStyle, oldStyle);
     }
 
     if (!alwaysCreateLineBoxes()) {
