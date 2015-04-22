@@ -97,6 +97,7 @@ public:
     WEBCORE_EXPORT virtual void preparedToReturnToInline(bool visible, const IntRect& inlineRect);
 
     HTMLMediaElement::VideoFullscreenMode mode() const { return m_mode; }
+    bool allowOptimizedFullscreen() const { return m_allowOptimizedFullscreen; }
     void setIsOptimized(bool);
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoOptimized() const;
     void fullscreenMayReturnToInline(std::function<void(bool)> callback);
@@ -127,19 +128,20 @@ protected:
     RetainPtr<AVPlayerViewController> m_playerViewController;
     RetainPtr<CALayer> m_videoLayer;
     RetainPtr<WebAVVideoLayer> m_videoLayerContainer;
-    WebVideoFullscreenModel* m_videoFullscreenModel;
-    WebVideoFullscreenChangeObserver* m_fullscreenChangeObserver;
+    WebVideoFullscreenModel* m_videoFullscreenModel { nullptr };
+    WebVideoFullscreenChangeObserver* m_fullscreenChangeObserver { nullptr };
 
     // These are only used when fullscreen is presented in a separate window.
     RetainPtr<UIWindow> m_window;
     RetainPtr<UIViewController> m_viewController;
     RetainPtr<UIView> m_parentView;
     RetainPtr<UIWindow> m_parentWindow;
-    HTMLMediaElement::VideoFullscreenMode m_mode;
+    HTMLMediaElement::VideoFullscreenMode m_mode { HTMLMediaElement::VideoFullscreenModeNone };
     std::function<void(bool)> m_prepareToInlineCallback;
-    bool m_exitRequested;
-    bool m_exitCompleted;
-    bool m_enterRequested;
+    bool m_allowOptimizedFullscreen { false };
+    bool m_exitRequested { false };
+    bool m_exitCompleted { false };
+    bool m_enterRequested { false };
 
     void doEnterFullscreen();
 };

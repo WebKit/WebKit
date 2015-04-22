@@ -552,6 +552,11 @@ static const char* boolString(bool val)
 {
     return [NSSet setWithObjects:@"externalPlaybackActive", nil];
 }
+
+- (BOOL)isOptimizedFullscreenPossible
+{
+    return self.fullscreenInterface->allowOptimizedFullscreen();
+}
 @end
 
 @interface WebAVMediaSelectionOption : NSObject
@@ -691,16 +696,21 @@ static const char* boolString(bool val)
     return _videoLayerGravity;
 }
 
+- (void)enterOptimizedFullScreenModeRedirectingVideoToLayer:(CALayer *)layer
+{
+    [_videoSublayer removeFromSuperlayer];
+    [layer addSublayer:_videoSublayer.get()];
+}
+
+- (void)leaveOptimizedFullScreenMode
+{
+    [_videoSublayer removeFromSuperlayer];
+    [self addSublayer:_videoSublayer.get()];
+}
 @end
 
 WebVideoFullscreenInterfaceAVKit::WebVideoFullscreenInterfaceAVKit()
     : m_playerController(adoptNS([[WebAVPlayerController alloc] init]))
-    , m_videoFullscreenModel(nullptr)
-    , m_fullscreenChangeObserver(nullptr)
-    , m_mode(HTMLMediaElement::VideoFullscreenModeNone)
-    , m_exitRequested(false)
-    , m_exitCompleted(false)
-    , m_enterRequested(false)
 {
     [m_playerController setFullscreenInterface:this];
 }
@@ -903,6 +913,8 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreenInternal(PlatformLayer& vi
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::setupFullscreenInternal(%p)", this);
     UNUSED_PARAM(videoLayer);
     UNUSED_PARAM(mode);
+
+    m_allowOptimizedFullscreen = allowOptimizedFullscreen;
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -1322,6 +1334,5 @@ void WebVideoFullscreenInterfaceAVKit::clearMode(HTMLMediaElement::VideoFullscre
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->fullscreenModeChanged(m_mode);
 }
-
 
 #endif

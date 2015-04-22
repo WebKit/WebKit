@@ -1,3 +1,29 @@
+2015-04-22  Jer Noble  <jer.noble@apple.com>
+
+        Add new optimized fullscreen delegate methods
+        https://bugs.webkit.org/show_bug.cgi?id=144071
+
+        Reviewed by Eric Carlson.
+
+        AVPlayerViewController requires three new delegate methods to be implemented by WebKit which
+        notify the delegates exactly when the owning view will enter and leave fullscreen mode. One
+        of the delegate methods (-enterOptimizedFullScreenModeRedirectingVideoToLayer:) gives the
+        delegate an opportunity to move the video sublayer into a new CALayer. The matching delegate
+        (-leaveOptimizedFullScreenMode), allows us to return our sublayer back to its original parent.
+        The third delegate (-isOptimizedFullscreenPossible) is required so the AVPlayerViewController
+        knows whether to allow a standard -> optimized fullscreen transition.
+
+        Drive-by fix: initialize ivars at declaration time.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController isOptimizedFullscreenPossible]):
+        (-[WebAVVideoLayer enterOptimizedFullScreenModeRedirectingVideoToLayer:]):
+        (-[WebAVVideoLayer leaveOptimizedFullScreenMode]):
+        (WebVideoFullscreenInterfaceAVKit::WebVideoFullscreenInterfaceAVKit):
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreenInternal):
+        (+[WebAVPlayerController keyPathsForValuesAffectingPlayingOnExternalScreen]): Deleted.
+
 2015-04-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Caret does not line up with text when using the system font
