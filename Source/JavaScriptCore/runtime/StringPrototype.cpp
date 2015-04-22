@@ -56,6 +56,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(StringPrototype);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToString(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncCodePointAt(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncConcat(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState*);
@@ -108,6 +109,7 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_INTRINSIC_FUNCTION(vm.propertyNames->valueOf, stringProtoFuncToString, DontEnum, 0, StringPrototypeValueOfIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION("charAt", stringProtoFuncCharAt, DontEnum, 1, CharAtIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION("charCodeAt", stringProtoFuncCharCodeAt, DontEnum, 1, CharCodeAtIntrinsic);
+    JSC_NATIVE_FUNCTION("codePointAt", stringProtoFuncCodePointAt, DontEnum, 1);
     JSC_NATIVE_FUNCTION("concat", stringProtoFuncConcat, DontEnum, 1);
     JSC_NATIVE_FUNCTION("indexOf", stringProtoFuncIndexOf, DontEnum, 1);
     JSC_NATIVE_FUNCTION("lastIndexOf", stringProtoFuncLastIndexOf, DontEnum, 1);
@@ -809,6 +811,42 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState* exec)
     if (dpos >= 0 && dpos < len)
         return JSValue::encode(jsNumber(s[static_cast<int>(dpos)]));
     return JSValue::encode(jsNaN());
+}
+
+static inline UChar32 codePointAt(const String& string, unsigned position, unsigned length)
+{
+    RELEASE_ASSERT(position < length);
+    if (string.is8Bit())
+        return string.characters8()[position];
+    UChar32 character;
+    U16_NEXT(string.characters16(), position, length, character);
+    return character;
+}
+
+EncodedJSValue JSC_HOST_CALL stringProtoFuncCodePointAt(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    if (!checkObjectCoercible(thisValue))
+        return throwVMTypeError(exec);
+
+    String string = thisValue.toWTFString(exec);
+    unsigned length = string.length();
+
+    JSValue argument0 = exec->argument(0);
+    if (argument0.isUInt32()) {
+        unsigned position = argument0.asUInt32();
+        if (position < length)
+            return JSValue::encode(jsNumber(codePointAt(string, position, length)));
+        return JSValue::encode(jsUndefined());
+    }
+
+    if (UNLIKELY(exec->hadException()))
+        return JSValue::encode(jsUndefined());
+
+    double doublePosition = argument0.toInteger(exec);
+    if (doublePosition >= 0 && doublePosition < length)
+        return JSValue::encode(jsNumber(codePointAt(string, static_cast<unsigned>(doublePosition), length)));
+    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncConcat(ExecState* exec)

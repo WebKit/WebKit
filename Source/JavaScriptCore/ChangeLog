@@ -1,3 +1,18 @@
+2015-04-22  Benjamin Poulain  <benjamin@webkit.org>
+
+        Implement String.codePointAt()
+        https://bugs.webkit.org/show_bug.cgi?id=143934
+
+        Reviewed by Darin Adler.
+
+        This patch adds String.codePointAt() as defined by ES6.
+        I opted for a C++ implementation for now.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::codePointAt):
+        (JSC::stringProtoFuncCodePointAt):
+
 2015-04-22  Mark Lam  <mark.lam@apple.com>
 
         SparseArrayEntry's write barrier owner should be the SparseArrayValueMap.
