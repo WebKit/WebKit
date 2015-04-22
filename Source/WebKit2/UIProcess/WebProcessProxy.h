@@ -108,6 +108,7 @@ public:
     void updateTextCheckerState();
 
     void registerNewWebBackForwardListItem(WebBackForwardListItem*);
+    void removeBackForwardItem(uint64_t);
 
     void willAcquireUniversalFileReadSandboxExtension() { m_mayHaveUniversalFileReadSandboxExtension = true; }
     void assumeReadAccessToBaseURL(const String&);

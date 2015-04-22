@@ -432,7 +432,6 @@ Vector<BackForwardListItemState> WebBackForwardList::itemStates() const
 
 void WebBackForwardList::didRemoveItem(WebBackForwardListItem& backForwardListItem)
 {
-    // FIXME: This should really also delete the item from the map.
     m_page->backForwardRemovedItem(backForwardListItem.itemID());
 
     backForwardListItem.setSnapshot(nullptr);

@@ -281,6 +281,11 @@ void WebProcessProxy::registerNewWebBackForwardListItem(WebBackForwardListItem* 
     m_backForwardListItemMap.set(item->itemID(), item);
 }
 
+void WebProcessProxy::removeBackForwardItem(uint64_t itemID)
+{
+    m_backForwardListItemMap.remove(itemID);
+}
+
 void WebProcessProxy::assumeReadAccessToBaseURL(const String& urlString)
 {
     URL url(URL(), urlString);
