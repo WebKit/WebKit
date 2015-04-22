@@ -1,3 +1,15 @@
+2015-04-22  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Device picker menu is positioned incorrectly in WK1
+        https://bugs.webkit.org/show_bug.cgi?id=144049
+        <rdar://problem/20493101>
+
+        Reviewed by Dean Jackson.
+
+        * WebView/WebView.mm:
+        (-[WebView _showPlaybackTargetPicker:location:hasVideo:]): Mouse location is already in
+            window coordinates so don't call convertRect:toView:nil.
+
 2015-04-21  Brent Fulgham  <bfulgham@apple.com>
 
         Extend action menus to support PDF
