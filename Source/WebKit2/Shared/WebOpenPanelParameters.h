@@ -44,8 +44,8 @@ public:
     ~WebOpenPanelParameters();
 
     bool allowMultipleFiles() const { return m_settings.allowsMultipleFiles; }
-    PassRefPtr<API::Array> acceptMIMETypes() const;
-    PassRefPtr<API::Array> selectedFileNames() const;
+    Ref<API::Array> acceptMIMETypes() const;
+    Ref<API::Array> selectedFileNames() const;
 #if ENABLE(MEDIA_CAPTURE)
     bool capture() const;
 #endif

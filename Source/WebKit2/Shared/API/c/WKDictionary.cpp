@@ -58,6 +58,5 @@ size_t WKDictionaryGetSize(WKDictionaryRef dictionaryRef)
 
 WKArrayRef WKDictionaryCopyKeys(WKDictionaryRef dictionaryRef)
 {
-    RefPtr<API::Array> keys = toImpl(dictionaryRef)->keys();
-    return toAPI(keys.release().leakRef());
+    return toAPI(&toImpl(dictionaryRef)->keys().leakRef());
 }

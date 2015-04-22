@@ -116,7 +116,7 @@ void WebCookieManagerProxy::didGetHostnamesWithCookies(const Vector<String>& hos
         return;
     }
 
-    callback->performCallbackWithReturnValue(API::Array::createStringArray(hostnames).get());
+    callback->performCallbackWithReturnValue(API::Array::createStringArray(hostnames).ptr());
 }
 
 void WebCookieManagerProxy::deleteCookiesForHostname(const String& hostname)

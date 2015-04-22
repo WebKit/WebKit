@@ -202,7 +202,7 @@ void WebOriginDataManagerProxy::didGetOrigins(IPC::Connection& connection, const
     for (const auto& originIdentifier : originIdentifiers)
         securityOrigins.uncheckedAppend(API::SecurityOrigin::create(originIdentifier.securityOrigin()));
 
-    callback->performCallbackWithReturnValue(API::Array::create(WTF::move(securityOrigins)).get());
+    callback->performCallbackWithReturnValue(API::Array::create(WTF::move(securityOrigins)).ptr());
 }
 
 void WebOriginDataManagerProxy::deleteEntriesForOrigin(WKOriginDataTypes types, API::SecurityOrigin* origin, std::function<void (CallbackBase::Error)> callbackFunction)

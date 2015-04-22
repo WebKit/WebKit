@@ -49,7 +49,7 @@ WebOpenPanelParameters::~WebOpenPanelParameters()
 {
 }
 
-PassRefPtr<API::Array> WebOpenPanelParameters::acceptMIMETypes() const
+Ref<API::Array> WebOpenPanelParameters::acceptMIMETypes() const
 {
     return API::Array::createStringArray(m_settings.acceptMIMETypes);
 }
@@ -61,7 +61,7 @@ bool WebOpenPanelParameters::capture() const
 }
 #endif
 
-PassRefPtr<API::Array> WebOpenPanelParameters::selectedFileNames() const
+Ref<API::Array> WebOpenPanelParameters::selectedFileNames() const
 {
     return API::Array::createStringArray(m_settings.selectedFiles);
 }

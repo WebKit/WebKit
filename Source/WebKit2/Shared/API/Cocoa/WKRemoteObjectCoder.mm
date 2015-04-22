@@ -92,10 +92,10 @@ static void ensureObjectStream(WKRemoteObjectEncoder *encoder)
     if (encoder->_objectStream)
         return;
 
-    RefPtr<API::Array> objectStream = API::Array::create();
-    encoder->_objectStream = objectStream.get();
+    Ref<API::Array> objectStream = API::Array::create();
+    encoder->_objectStream = objectStream.ptr();
 
-    encoder->_rootDictionary->set(objectStreamKey, objectStream.release());
+    encoder->_rootDictionary->set(objectStreamKey, WTF::move(objectStream));
 }
 
 static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, id value)

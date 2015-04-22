@@ -165,7 +165,7 @@ void WebPluginSiteDataManager::didGetSitesWithData(const Vector<String>& sites, 
         return;
     }
 
-    callback->performCallbackWithReturnValue(API::Array::createStringArray(sites).get());
+    callback->performCallbackWithReturnValue(API::Array::createStringArray(sites).ptr());
 }
 
 void WebPluginSiteDataManager::clearSiteData(API::Array* sites, uint64_t flags, uint64_t maxAgeInSeconds, std::function<void (CallbackBase::Error)> callbackFunction)

@@ -33,7 +33,7 @@ using namespace WebKit;
 
 WKMutableArrayRef WKMutableArrayCreate()
 {
-    return const_cast<WKMutableArrayRef>(toAPI(API::Array::create().leakRef()));
+    return const_cast<WKMutableArrayRef>(toAPI(&API::Array::create().leakRef()));
 }
 
 void WKArrayAppendItem(WKMutableArrayRef arrayRef, WKTypeRef itemRef)

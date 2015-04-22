@@ -30,17 +30,17 @@
 
 namespace API {
 
-PassRefPtr<Array> Array::create()
+Ref<Array> Array::create()
 {
     return create(Vector<RefPtr<Object>>());
 }
 
-PassRefPtr<Array> Array::create(Vector<RefPtr<Object>>&& elements)
+Ref<Array> Array::create(Vector<RefPtr<Object>>&& elements)
 {
     return adoptRef(*new Array(WTF::move(elements)));
 }
 
-PassRefPtr<Array> Array::createStringArray(const Vector<WTF::String>& strings)
+Ref<Array> Array::createStringArray(const Vector<WTF::String>& strings)
 {
     Vector<RefPtr<Object>> elements;
     elements.reserveInitialCapacity(strings.size());
@@ -69,13 +69,13 @@ Ref<API::Array> Array::copy()
 {
     size_t size = this->size();
     if (!size)
-        return *Array::create();
+        return Array::create();
 
     Vector<RefPtr<Object>> elements;
     elements.reserveInitialCapacity(size);
     for (const auto& entry : this->elements())
         elements.uncheckedAppend(entry);
-    return *Array::create(WTF::move(elements));
+    return Array::create(WTF::move(elements));
 }
 
 Array::~Array()

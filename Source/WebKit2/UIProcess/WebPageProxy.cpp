@@ -3934,7 +3934,7 @@ void WebPageProxy::didFindStringMatches(const String& string, const Vector<Vecto
         matches.uncheckedAppend(API::Array::create(WTF::move(apiRects)));
     }
 
-    m_findMatchesClient.didFindStringMatches(this, string, API::Array::create(WTF::move(matches)).get(), firstIndexAfterSelection);
+    m_findMatchesClient.didFindStringMatches(this, string, API::Array::create(WTF::move(matches)).ptr(), firstIndexAfterSelection);
 }
 
 void WebPageProxy::didFailToFindString(const String& string)

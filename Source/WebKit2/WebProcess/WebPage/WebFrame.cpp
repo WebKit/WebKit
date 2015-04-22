@@ -445,7 +445,7 @@ WebFrame* WebFrame::parentFrame() const
     return WebFrame::fromCoreFrame(*m_coreFrame->ownerElement()->document().frame());
 }
 
-PassRefPtr<API::Array> WebFrame::childFrames()
+Ref<API::Array> WebFrame::childFrames()
 {
     if (!m_coreFrame)
         return API::Array::create();

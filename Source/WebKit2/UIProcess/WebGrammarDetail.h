@@ -41,7 +41,7 @@ public:
 
     int location() const { return m_grammarDetail.location; }
     int length() const { return m_grammarDetail.length; }
-    PassRefPtr<API::Array> guesses() const;
+    Ref<API::Array> guesses() const;
     const String& userDescription() const { return m_grammarDetail.userDescription; }
 
     const WebCore::GrammarDetail& grammarDetail() { return m_grammarDetail; }

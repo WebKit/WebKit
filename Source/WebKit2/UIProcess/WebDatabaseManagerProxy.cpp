@@ -200,7 +200,7 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
         result.uncheckedAppend(API::Dictionary::create(WTF::move(originAndDatabasesMap)));
     }
 
-    callback->performCallbackWithReturnValue(API::Array::create(WTF::move(result)).get());
+    callback->performCallbackWithReturnValue(API::Array::create(WTF::move(result)).ptr());
 }
 
 void WebDatabaseManagerProxy::getDatabaseOrigins(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
@@ -226,7 +226,7 @@ void WebDatabaseManagerProxy::didGetDatabaseOrigins(const Vector<String>& origin
     for (const auto& originIdentifier : originIdentifiers)
         securityOrigins.uncheckedAppend(API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier)));
 
-    callback->performCallbackWithReturnValue(API::Array::create(WTF::move(securityOrigins)).get());
+    callback->performCallbackWithReturnValue(API::Array::create(WTF::move(securityOrigins)).ptr());
 }
 
 void WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, API::SecurityOrigin* origin)

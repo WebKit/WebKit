@@ -57,7 +57,7 @@ public:
     bool isInPageCache() const { return m_item->isInPageCache(); }
     bool hasCachedPageExpired() const { return m_item->hasCachedPageExpired(); }
 
-    PassRefPtr<API::Array> children() const;
+    Ref<API::Array> children() const;
 
 private:
     InjectedBundleBackForwardListItem(PassRefPtr<WebCore::HistoryItem> item) : m_item(item) { }

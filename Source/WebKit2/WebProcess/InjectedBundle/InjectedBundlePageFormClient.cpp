@@ -169,7 +169,7 @@ void InjectedBundlePageFormClient::didAssociateFormControls(WebPage* page, const
     for (const auto& element : elements)
         elementHandles.uncheckedAppend(InjectedBundleNodeHandle::getOrCreate(element.get()));
 
-    m_client.didAssociateFormControls(toAPI(page), toAPI(API::Array::create(WTF::move(elementHandles)).get()), m_client.base.clientInfo);
+    m_client.didAssociateFormControls(toAPI(page), toAPI(API::Array::create(WTF::move(elementHandles)).ptr()), m_client.base.clientInfo);
 }
 
 bool InjectedBundlePageFormClient::shouldNotifyOnFormChanges(WebPage* page)

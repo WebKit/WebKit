@@ -50,7 +50,7 @@ Dictionary::~Dictionary()
 {
 }
 
-PassRefPtr<Array> Dictionary::keys() const
+Ref<Array> Dictionary::keys() const
 {
     if (m_map.isEmpty())
         return API::Array::create();

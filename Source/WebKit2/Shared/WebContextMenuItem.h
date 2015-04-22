@@ -57,7 +57,7 @@ public:
     static PassRefPtr<WebContextMenuItem> create(const String& title, bool enabled, API::Array* submenuItems);
     static WebContextMenuItem* separatorItem();
 
-    PassRefPtr<API::Array> submenuItemsAsAPIArray() const;
+    Ref<API::Array> submenuItemsAsAPIArray() const;
 
     API::Object* userData() const;
     void setUserData(API::Object*);

@@ -143,7 +143,7 @@ bool WKContextMenuItemGetChecked(WKContextMenuItemRef itemRef)
 WKArrayRef WKContextMenuCopySubmenuItems(WKContextMenuItemRef itemRef)
 {
 #if ENABLE(CONTEXT_MENUS)
-    return toAPI(toImpl(itemRef)->submenuItemsAsAPIArray().leakRef());
+    return toAPI(&toImpl(itemRef)->submenuItemsAsAPIArray().leakRef());
 #else
     UNUSED_PARAM(itemRef);
     return 0;

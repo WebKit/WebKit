@@ -98,7 +98,7 @@ void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginD
         securityOrigins.uncheckedAppend(WTF::move(origin));
     }
 
-    callback->performCallbackWithReturnValue(API::Array::create(WTF::move(securityOrigins)).get());
+    callback->performCallbackWithReturnValue(API::Array::create(WTF::move(securityOrigins)).ptr());
 }
 
 bool operator==(const SecurityOriginData& a, const SecurityOriginData& b)

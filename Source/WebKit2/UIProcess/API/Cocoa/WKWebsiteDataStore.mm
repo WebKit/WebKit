@@ -85,7 +85,7 @@ static std::chrono::system_clock::time_point toSystemClockTime(NSDate *date)
         for (auto& websiteDataRecord : websiteDataRecords)
             elements.uncheckedAppend(API::WebsiteDataRecord::create(WTF::move(websiteDataRecord)));
 
-        completionHandlerCopy(wrapper(*API::Array::create(WTF::move(elements))));
+        completionHandlerCopy(wrapper(API::Array::create(WTF::move(elements))));
 
         Block_release(completionHandlerCopy);
     });

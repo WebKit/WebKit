@@ -98,7 +98,7 @@ void WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache(const Vector<Strin
         return;
     }
 
-    callback->performCallbackWithReturnValue(API::Array::createStringArray(hostnames).get());
+    callback->performCallbackWithReturnValue(API::Array::createStringArray(hostnames).ptr());
 }
 
 void WebMediaCacheManagerProxy::clearCacheForHostname(const String& hostname)

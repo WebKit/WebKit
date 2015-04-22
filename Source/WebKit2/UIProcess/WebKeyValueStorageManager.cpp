@@ -93,7 +93,7 @@ void WebKeyValueStorageManager::getKeyValueStorageOrigins(std::function<void (AP
     StorageManager* storageManager = processPool()->websiteDataStore().websiteDataStore().storageManager();
     if (!storageManager) {
         RunLoop::main().dispatch([callbackFunction] {
-            callbackFunction(API::Array::create().get(), CallbackBase::Error::None);
+            callbackFunction(API::Array::create().ptr(), CallbackBase::Error::None);
         });
         return;
     }
@@ -104,7 +104,7 @@ void WebKeyValueStorageManager::getKeyValueStorageOrigins(std::function<void (AP
         for (auto& origin : securityOrigins)
             webSecurityOrigins.uncheckedAppend(API::SecurityOrigin::create(WTF::move(origin)));
 
-        callbackFunction(API::Array::create(WTF::move(webSecurityOrigins)).get(), CallbackBase::Error::None);
+        callbackFunction(API::Array::create(WTF::move(webSecurityOrigins)).ptr(), CallbackBase::Error::None);
     });
 }
 
@@ -113,7 +113,7 @@ void WebKeyValueStorageManager::getStorageDetailsByOrigin(std::function<void (AP
     StorageManager* storageManager = processPool()->websiteDataStore().websiteDataStore().storageManager();
     if (!storageManager) {
         RunLoop::main().dispatch([callbackFunction] {
-            callbackFunction(API::Array::create().get(), CallbackBase::Error::None);
+            callbackFunction(API::Array::create().ptr(), CallbackBase::Error::None);
         });
         return;
     }
@@ -137,7 +137,7 @@ void WebKeyValueStorageManager::getStorageDetailsByOrigin(std::function<void (AP
             result.uncheckedAppend(API::Dictionary::create(WTF::move(detailsMap)));
         }
 
-        callbackFunction(API::Array::create(WTF::move(result)).get(), CallbackBase::Error::None);
+        callbackFunction(API::Array::create(WTF::move(result)).ptr(), CallbackBase::Error::None);
     });
 }
 

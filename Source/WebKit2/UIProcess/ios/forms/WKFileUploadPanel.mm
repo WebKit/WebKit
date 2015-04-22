@@ -338,14 +338,14 @@ static UIImage* iconForFile(NSURL *file)
     urls.reserveInitialCapacity(count);
     for (NSURL *fileURL in fileURLs)
         urls.uncheckedAppend(adoptRef(toImpl(WKURLCreateWithCFURL((CFURLRef)fileURL))));
-    RefPtr<API::Array> fileURLsRef = API::Array::create(WTF::move(urls));
+    Ref<API::Array> fileURLsRef = API::Array::create(WTF::move(urls));
 
     NSData *jpeg = UIImageJPEGRepresentation(iconImage, 1.0);
     RefPtr<API::Data> iconImageDataRef = adoptRef(toImpl(WKDataCreate(reinterpret_cast<const unsigned char*>([jpeg bytes]), [jpeg length])));
 
     RefPtr<API::String> displayStringRef = adoptRef(toImpl(WKStringCreateWithCFString((CFStringRef)displayString)));
 
-    _listener->chooseFiles(fileURLsRef.get(), displayStringRef.get(), iconImageDataRef.get());
+    _listener->chooseFiles(fileURLsRef.ptr(), displayStringRef.get(), iconImageDataRef.get());
     [self _dispatchDidDismiss];
 }
 
@@ -359,7 +359,7 @@ static UIImage* iconForFile(NSURL *file)
     _allowMultipleFiles = parameters->allowMultipleFiles();
     _interactionPoint = [_view lastInteractionLocation];
 
-    RefPtr<API::Array> acceptMimeTypes = parameters->acceptMIMETypes();
+    Ref<API::Array> acceptMimeTypes = parameters->acceptMIMETypes();
     NSMutableArray *mimeTypes = [NSMutableArray arrayWithCapacity:acceptMimeTypes->size()];
     for (const auto& mimeType : acceptMimeTypes->elementsOfType<API::String>())
         [mimeTypes addObject:mimeType->string()];

@@ -56,7 +56,7 @@ int WKGrammarDetailGetLength(WKGrammarDetailRef grammarDetailRef)
 
 WKArrayRef WKGrammarDetailCopyGuesses(WKGrammarDetailRef grammarDetailRef)
 {
-    return toAPI(toImpl(grammarDetailRef)->guesses().leakRef());
+    return toAPI(&toImpl(grammarDetailRef)->guesses().leakRef());
 }
 
 WKStringRef WKGrammarDetailCopyUserDescription(WKGrammarDetailRef grammarDetailRef)

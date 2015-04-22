@@ -66,11 +66,11 @@ public:
     int backListCount() const;
     int forwardListCount() const;
 
-    PassRefPtr<API::Array> backList() const;
-    PassRefPtr<API::Array> forwardList() const;
+    Ref<API::Array> backList() const;
+    Ref<API::Array> forwardList() const;
 
-    PassRefPtr<API::Array> backListAsAPIArrayWithLimit(unsigned limit) const;
-    PassRefPtr<API::Array> forwardListAsAPIArrayWithLimit(unsigned limit) const;
+    Ref<API::Array> backListAsAPIArrayWithLimit(unsigned limit) const;
+    Ref<API::Array> forwardListAsAPIArrayWithLimit(unsigned limit) const;
 
     BackForwardListState backForwardListState(const std::function<bool (WebBackForwardListItem&)>&) const;
     void restoreFromState(BackForwardListState);

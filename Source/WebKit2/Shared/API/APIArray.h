@@ -30,7 +30,6 @@
 #include <wtf/Forward.h>
 #include <wtf/IteratorAdaptors.h>
 #include <wtf/IteratorRange.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
 namespace API {
@@ -51,9 +50,9 @@ private:
     using ElementsOfTypeRange = WTF::IteratorRange<WTF::TransformIterator<GetObjectTransform<T>, WTF::FilterIterator<IsTypePredicate<T>, Vector<RefPtr<Object>>::const_iterator>>>;
 
 public:
-    static PassRefPtr<Array> create();
-    static PassRefPtr<Array> create(Vector<RefPtr<Object>>&&);
-    static PassRefPtr<Array> createStringArray(const Vector<WTF::String>&);
+    static Ref<Array> create();
+    static Ref<Array> create(Vector<RefPtr<Object>>&&);
+    static Ref<Array> createStringArray(const Vector<WTF::String>&);
     Vector<WTF::String> toStringVector();
     Ref<Array> copy();
 

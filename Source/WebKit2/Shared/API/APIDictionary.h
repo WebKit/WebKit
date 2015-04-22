@@ -70,7 +70,7 @@ public:
         return it->value.get();
     }
 
-    PassRefPtr<Array> keys() const;
+    Ref<Array> keys() const;
 
     bool add(const WTF::String& key, PassRefPtr<Object>);
     bool set(const WTF::String& key, PassRefPtr<Object>);

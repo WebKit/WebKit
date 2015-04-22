@@ -79,6 +79,6 @@ bool WKBundleBackForwardListItemHasCachedPageExpired(WKBundleBackForwardListItem
 
 WKArrayRef WKBundleBackForwardListItemCopyChildren(WKBundleBackForwardListItemRef itemRef)
 {
-    return toAPI(toImpl(itemRef)->children().leakRef());
+    return toAPI(&toImpl(itemRef)->children().leakRef());
 }
 

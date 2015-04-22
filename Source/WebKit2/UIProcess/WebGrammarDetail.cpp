@@ -55,7 +55,7 @@ WebGrammarDetail::WebGrammarDetail(int location, int length, API::Array* guesses
     m_grammarDetail.userDescription = userDescription;
 }
 
-PassRefPtr<API::Array> WebGrammarDetail::guesses() const
+Ref<API::Array> WebGrammarDetail::guesses() const
 {
     size_t numGuesses = m_grammarDetail.guesses.size();
     Vector<RefPtr<API::Object> > wkGuesses(numGuesses);

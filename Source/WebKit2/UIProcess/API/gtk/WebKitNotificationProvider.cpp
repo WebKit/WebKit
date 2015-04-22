@@ -91,7 +91,7 @@ void WebKitNotificationProvider::notificationCloseCallback(WebKitNotification* n
     uint64_t notificationID = webkit_notification_get_id(notification);
     Vector<RefPtr<API::Object>> arrayIDs;
     arrayIDs.append(API::UInt64::create(notificationID));
-    provider->m_notificationManager->providerDidCloseNotifications(API::Array::create(WTF::move(arrayIDs)).get());
+    provider->m_notificationManager->providerDidCloseNotifications(API::Array::create(WTF::move(arrayIDs)).ptr());
     provider->m_notifications.remove(notificationID);
 }
 

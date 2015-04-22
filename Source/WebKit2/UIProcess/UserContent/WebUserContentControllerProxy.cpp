@@ -51,7 +51,7 @@ static uint64_t generateIdentifier()
 
 WebUserContentControllerProxy::WebUserContentControllerProxy()
     : m_identifier(generateIdentifier())
-    , m_userScripts(*API::Array::create())
+    , m_userScripts(API::Array::create())
 {
 }
 

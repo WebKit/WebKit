@@ -32,7 +32,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<API::Array> InjectedBundleBackForwardListItem::children() const
+Ref<API::Array> InjectedBundleBackForwardListItem::children() const
 {
     Vector<RefPtr<API::Object>> children;
     children.reserveInitialCapacity(m_item->children().size());

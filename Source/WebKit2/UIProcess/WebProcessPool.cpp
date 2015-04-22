@@ -1419,7 +1419,7 @@ void WebProcessPool::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
         plugins.uncheckedAppend(API::Dictionary::create(WTF::move(map)));
     }
 
-    m_client.plugInInformationBecameAvailable(this, API::Array::create(WTF::move(plugins)).get());
+    m_client.plugInInformationBecameAvailable(this, API::Array::create(WTF::move(plugins)).ptr());
 }
 
 void WebProcessPool::setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy policy, const String& host, const String& bundleIdentifier, const String& versionString)

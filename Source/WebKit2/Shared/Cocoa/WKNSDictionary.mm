@@ -71,7 +71,7 @@ using namespace WebKit;
 
 - (NSEnumerator *)keyEnumerator
 {
-    return [wrapper(*_dictionary->keys()) objectEnumerator];
+    return [wrapper(_dictionary->keys()) objectEnumerator];
 }
 
 #pragma mark NSCopying protocol implementation

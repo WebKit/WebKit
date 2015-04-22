@@ -45,7 +45,7 @@ bool WKOpenPanelParametersGetAllowsMultipleFiles(WKOpenPanelParametersRef parame
 
 WKArrayRef WKOpenPanelParametersCopyAcceptedMIMETypes(WKOpenPanelParametersRef parametersRef)
 {
-    return toAPI(toImpl(parametersRef)->acceptMIMETypes().leakRef());
+    return toAPI(&toImpl(parametersRef)->acceptMIMETypes().leakRef());
 }
 
 // Deprecated.
@@ -66,5 +66,5 @@ bool WKOpenPanelParametersGetCaptureEnabled(WKOpenPanelParametersRef parametersR
 
 WKArrayRef WKOpenPanelParametersCopySelectedFileNames(WKOpenPanelParametersRef parametersRef)
 {
-    return toAPI(toImpl(parametersRef)->selectedFileNames().leakRef());
+    return toAPI(&toImpl(parametersRef)->selectedFileNames().leakRef());
 }

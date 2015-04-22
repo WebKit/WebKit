@@ -346,7 +346,7 @@ void InjectedBundlePageLoaderClient::featuresUsedInPage(WebPage* page, const Vec
     if (!m_client.featuresUsedInPage)
         return;
 
-    return m_client.featuresUsedInPage(toAPI(page), toAPI(API::Array::createStringArray(features).get()), m_client.base.clientInfo);
+    return m_client.featuresUsedInPage(toAPI(page), toAPI(API::Array::createStringArray(features).ptr()), m_client.base.clientInfo);
 }
 
 API::String* InjectedBundlePageLoaderClient::userAgentForURL(WebFrame* frame, API::URL* url) const

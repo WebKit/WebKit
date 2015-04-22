@@ -68,7 +68,7 @@ WebContextMenuItem* WebContextMenuItem::separatorItem()
     return separatorItem;
 }
 
-PassRefPtr<API::Array> WebContextMenuItem::submenuItemsAsAPIArray() const
+Ref<API::Array> WebContextMenuItem::submenuItemsAsAPIArray() const
 {
     if (m_webContextMenuItemData.type() != WebCore::SubmenuType)
         return API::Array::create();

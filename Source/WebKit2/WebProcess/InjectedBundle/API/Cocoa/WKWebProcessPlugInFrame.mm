@@ -90,7 +90,7 @@ using namespace WebKit;
 
 - (NSArray *)childFrames
 {
-    return [wrapper(*_frame->childFrames().leakRef()) autorelease];
+    return [wrapper(_frame->childFrames().leakRef()) autorelease];
 }
 
 - (BOOL)containsAnyFormElements
