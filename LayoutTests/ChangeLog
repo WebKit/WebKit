@@ -1,5 +1,20 @@
 2015-04-22  Alexey Proskuryakov  <ap@apple.com>
 
+        Update results for two CSS tests affected by new fonts in OS X 10.10.3.
+
+        * platform/mac-mavericks/css2.1: Added.
+        * platform/mac-mavericks/css2.1/t1202-counter-04-b-expected.png: Copied from LayoutTests/platform/mac/css2.1/t1202-counter-04-b-expected.png.
+        * platform/mac-mavericks/css2.1/t1202-counter-04-b-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t1202-counter-04-b-expected.txt.
+        * platform/mac-mavericks/css2.1/t1202-counters-04-b-expected.png: Copied from LayoutTests/platform/mac/css2.1/t1202-counters-04-b-expected.png.
+        * platform/mac-mavericks/css2.1/t1202-counters-04-b-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t1202-counters-04-b-expected.txt.
+        * platform/mac/TestExpectations:
+        * platform/mac/css2.1/t1202-counter-04-b-expected.png:
+        * platform/mac/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/mac/css2.1/t1202-counters-04-b-expected.png:
+        * platform/mac/css2.1/t1202-counters-04-b-expected.txt:
+
+2015-04-22  Alexey Proskuryakov  <ap@apple.com>
+
         fast/text/emoji.html passes on OS X 10.10.3 and higher.
 
         * platform/mac/TestExpectations: Mark it as such.
