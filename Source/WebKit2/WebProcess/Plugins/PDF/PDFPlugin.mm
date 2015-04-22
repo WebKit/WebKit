@@ -1564,13 +1564,17 @@ bool PDFPlugin::handlesPageScaleFactor()
 
 void PDFPlugin::clickedLink(NSURL *url)
 {
+    URL coreURL = url;
+    if (protocolIsJavaScript(coreURL))
+        return;
+
     Frame* frame = webFrame()->coreFrame();
 
     RefPtr<Event> coreEvent;
     if (m_lastMouseEvent.type() != WebEvent::NoType)
         coreEvent = MouseEvent::create(eventNames().clickEvent, frame->document()->defaultView(), platform(m_lastMouseEvent), 0, 0);
 
-    frame->loader().urlSelected(url, emptyString(), coreEvent.get(), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer);
+    frame->loader().urlSelected(coreURL, emptyString(), coreEvent.get(), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer);
 }
 
 void PDFPlugin::setActiveAnnotation(PDFAnnotation *annotation)

@@ -1,5 +1,21 @@
 2015-04-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r182746. rdar://problem/20645260
+
+    2015-04-13  Timothy Horton  <timothy_horton@apple.com>
+
+            javascript: links in inline PDFs shouldn't execute JavaScript in the context of the host website
+            https://bugs.webkit.org/show_bug.cgi?id=143642
+            <rdar://problem/18259355>
+
+            Reviewed by Darin Adler.
+
+            * WebProcess/Plugins/PDF/PDFPlugin.mm:
+            (WebKit::PDFPlugin::clickedLink):
+            Don't follow javascript: URLs.
+
+2015-04-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r182084. rdar://problem/20557359
 
     2015-03-27  Andreas Kling  <akling@apple.com>
