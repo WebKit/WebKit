@@ -251,6 +251,7 @@ webkit.org/b/140217 http/tests/navigation/forward-and-cancel.html [ Pass Failure
 
 # These tests always time out.
 webkit.org/b/127473 editing/selection/context-menu-text-selection.html [ Skip ]
+webkit.org/b/127473 editing/selection/context-menu-text-selection-lookup.html [ Skip ]
 webkit.org/b/143380 fast/events/context-nodrag.html [ Skip ]
 
 ### END OF (1) Classified failures with bug reports

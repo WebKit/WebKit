@@ -1572,6 +1572,7 @@ Bug(GTK) plugins/resize-from-plugin.html [ Failure ]
 
 # Selection doesn't work properly.
 Bug(GTK) editing/selection/context-menu-text-selection.html [ Failure Pass ]
+Bug(GTK) editing/selection/context-menu-text-selection-lookup.html [ Failure Pass ]
 
 # An oncontextmenu attribute is not called.
 Bug(GTK) editing/spelling/spellcheck-input-search-crash.html [ Failure ]

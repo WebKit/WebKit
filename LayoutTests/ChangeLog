@@ -1,5 +1,23 @@
 2015-04-22  Brent Fulgham  <bfulgham@apple.com>
 
+        Context menu doesn't account for selection semantics
+​        https://bugs.webkit.org/show_bug.cgi?id=143958
+        <rdar://problem/19735706>
+
+        Unreviewed test fix.
+        
+        The new 'context-menu-text-selection-lookup.html' test added in this
+        bug was based on a test that does not work properly on some ports.
+        Skipping/failing this test in the same places as the original
+        'context-menu-text-selection.html' test.
+
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
+2015-04-22  Brent Fulgham  <bfulgham@apple.com>
+
         Unreviewed test fix after r183138.
 
         * editing/selection/context-menu-text-selection-lookup-expected.txt: The wrong
