@@ -275,6 +275,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/speech/SpeechSynthesisVoice.idl
 
     Modules/streams/ReadableStream.idl
+    Modules/streams/ReadableStreamController.idl
     Modules/streams/ReadableStreamReader.idl
 
     Modules/vibration/NavigatorVibration.idl
@@ -1155,6 +1156,7 @@ set(WebCore_SOURCES
     bindings/js/JSRTCSessionDescriptionCustom.cpp
     bindings/js/JSRTCStatsResponseCustom.cpp
     bindings/js/JSReadableStreamCustom.cpp
+    bindings/js/JSReadableStreamControllerCustom.cpp
     bindings/js/JSReadableStreamReaderCustom.cpp
     bindings/js/ReadableStreamJSSource.cpp
     bindings/js/JSRequestAnimationFrameCallbackCustom.cpp

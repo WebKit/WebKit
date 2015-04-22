@@ -69,13 +69,6 @@ static inline JSValue getPropertyFromObject(ExecState* exec, JSObject* object, c
     return object->get(exec, Identifier::fromString(exec, identifier));
 }
 
-static inline void setPropertyToObject(ExecState* exec, JSValue objectValue, const char* name, JSValue value)
-{
-    JSObject* object = objectValue.toObject(exec);
-    PutPropertySlot propertySlot(objectValue);
-    object->put(object, exec, Identifier::fromString(exec, name), value, propertySlot);
-}
-
 static inline JSValue callFunction(ExecState* exec, JSValue jsFunction, JSValue thisValue, const ArgList& arguments, JSValue* exception)
 {
     CallData callData;
@@ -95,25 +88,10 @@ ReadableStreamJSSource::ReadableStreamJSSource(JSC::ExecState* exec)
     m_source.set(exec->vm(), source);
 }
 
-static EncodedJSValue JSC_HOST_CALL notImplementedFunction(ExecState*)
+ReadableStreamJSSource::~ReadableStreamJSSource()
 {
-    notImplemented();
-    return JSValue::encode(jsUndefined());
-}
-
-static inline JSFunction* createReadableStreamEnqueueFunction(ExecState* exec)
-{
-    return JSFunction::create(exec->vm(), exec->callee()->globalObject(), 1, String(), notImplementedFunction);
-}
-
-static inline JSFunction* createReadableStreamCloseFunction(ExecState* exec)
-{
-    return JSFunction::create(exec->vm(), exec->callee()->globalObject(), 0, String(), notImplementedFunction);
-}
-
-static inline JSFunction* createReadableStreamErrorFunction(ExecState* exec)
-{
-    return JSFunction::create(exec->vm(), exec->callee()->globalObject(), 1, String(), notImplementedFunction);
+    if (m_controller)
+        m_controller.get()->impl().resetStream();
 }
 
 static void startReadableStreamAsync(ReadableStream& readableStream)
@@ -124,24 +102,12 @@ static void startReadableStreamAsync(ReadableStream& readableStream)
     });
 }
 
-static inline JSObject* createReadableStreamController(JSC::ExecState* exec)
-{
-    JSFunction* enqueueFunction = createReadableStreamEnqueueFunction(exec);
-    JSFunction* closeFunction = createReadableStreamCloseFunction(exec);
-    JSFunction* errorFunction = createReadableStreamErrorFunction(exec);
-
-    JSObject* controller =  JSFinalObject::create(exec->vm(), JSFinalObject::createStructure(exec->vm(), exec->callee()->globalObject(), jsNull(), 3));
-    setPropertyToObject(exec, controller, "enqueue", enqueueFunction);
-    setPropertyToObject(exec, controller, "close", closeFunction);
-    setPropertyToObject(exec, controller, "error", errorFunction);
-    return controller;
-}
-
 void ReadableStreamJSSource::start(JSC::ExecState* exec, JSReadableStream* readableStream)
 {
     JSLockHolder lock(exec);
 
-    m_controller.set(exec->vm(), createReadableStreamController(exec));
+    Ref<ReadableStreamController> controller = ReadableStreamController::create(static_cast<ReadableJSStream&>(readableStream->impl()));
+    m_controller.set(exec->vm(), jsDynamicCast<JSReadableStreamController*>(toJS(exec, readableStream->globalObject(), controller)));
 
     JSValue startFunction = getPropertyFromObject(exec, m_source.get(), "start");
     if (!startFunction.isFunction()) {

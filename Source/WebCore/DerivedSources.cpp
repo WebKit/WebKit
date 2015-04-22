@@ -305,6 +305,7 @@
 #include "JSRangeException.cpp"
 #if ENABLE(STREAMS_API)
 #include "JSReadableStream.cpp"
+#include "JSReadableStreamController.cpp"
 #include "JSReadableStreamReader.cpp"
 #endif
 #include "JSRect.cpp"

@@ -112,6 +112,7 @@
 #include "JSPluginElementFunctions.cpp"
 #include "JSPopStateEventCustom.cpp"
 #if ENABLE(STREAMS_API)
+#include "JSReadableStreamControllerCustom.cpp"
 #include "JSReadableStreamCustom.cpp"
 #include "JSReadableStreamReaderCustom.cpp"
 #include "ReadableStreamJSSource.cpp"

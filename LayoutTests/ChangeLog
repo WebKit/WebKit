@@ -1,3 +1,21 @@
+2015-04-22  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Implement ReadableStreamController
+        https://bugs.webkit.org/show_bug.cgi?id=143608
+
+        Reviewed by Benjamin Poulain.
+
+        Updated expectations as more tests are passed.
+        ReadableStreamController constructor tests fail due to the custom constructor being not implemented yet.
+        Added a test to ensure that calling a controller method when its stream is collected is throwing an error.
+
+        * streams/readable-stream.html:
+        * streams/readable-stream-expected.txt:
+        * streams/reference-implementation/bad-underlying-sources-expected.txt:
+        * streams/reference-implementation/brand-checks-expected.txt:
+        * streams/reference-implementation/count-queuing-strategy-expected.txt:
+        * streams/reference-implementation/readable-stream-expected.txt:
+
 2015-04-22  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         [GTK] Gardening 21st April.

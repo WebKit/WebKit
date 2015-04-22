@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2O15 Canon Inc. 2015
- * Copyright (C) 2015 Igalia S.L. 2015
+ * Copyright (C) 2015 Canon Inc.
+ * Copyright (C) 2015 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -27,61 +27,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ReadableStreamJSSource_h
-#define ReadableStreamJSSource_h
+#ifndef ReadableStreamController_h
+#define ReadableStreamController_h
 
 #if ENABLE(STREAMS_API)
 
-#include "JSReadableStreamController.h"
-#include "ReadableStream.h"
-#include "ReadableStreamReader.h"
-#include "ReadableStreamSource.h"
-#include <heap/Strong.h>
-#include <heap/StrongInlines.h>
-#include <runtime/JSCJSValue.h>
-#include <runtime/PrivateName.h>
 #include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class JSReadableStream;
+class ReadableJSStream;
 
-class ReadableStreamJSSource: public ReadableStreamSource {
+// This class is only used for JS source readable streams to allow enqueuing, closing or erroring a readable stream.
+// Its definition is at https://streams.spec.whatwg.org/#rs-controller-class.
+// Note that its constructor is taking a ReadableJSStream as it should only be used for JS sources.
+class ReadableStreamController : public RefCounted<ReadableStreamController> {
 public:
-    static Ref<ReadableStreamJSSource> create(JSC::ExecState*);
-    ~ReadableStreamJSSource();
+    static Ref<ReadableStreamController> create(ReadableJSStream& stream)
+    {
+        auto controller = adoptRef(*new ReadableStreamController(stream));
+        return controller;
+    }
+    ~ReadableStreamController() { }
 
-    void start(JSC::ExecState*, JSReadableStream*);
+    void resetStream() { m_stream = nullptr; }
+    ReadableJSStream* stream() { return m_stream; }
 
 private:
-    ReadableStreamJSSource(JSC::ExecState*);
+    ReadableStreamController(ReadableJSStream& stream) { m_stream = &stream; }
 
-    // Object passed to constructor.
-    JSC::Strong<JSC::JSObject> m_source;
-
-    JSC::Strong<JSReadableStreamController> m_controller;
+    ReadableJSStream* m_stream;
 };
 
-class ReadableJSStream: public ReadableStream {
-public:
-    static Ref<ReadableJSStream> create(ScriptExecutionContext&, Ref<ReadableStreamJSSource>&&);
-    virtual Ref<ReadableStreamReader> createReader() override;
-private:
-    ReadableJSStream(ScriptExecutionContext&, Ref<ReadableStreamJSSource>&&);
-};
+}
 
-class ReadableJSStreamReader: public ReadableStreamReader {
-public:
-    static Ref<ReadableJSStreamReader> create(ReadableJSStream&);
-private:
-    ReadableJSStreamReader(ReadableJSStream&);
-};
+#endif
 
-void setInternalSlotToObject(JSC::ExecState*, JSC::JSValue, JSC::PrivateName&, JSC::JSValue);
-JSC::JSValue getInternalSlotFromObject(JSC::ExecState*, JSC::JSValue, JSC::PrivateName&);
-
-} // namespace WebCore
-
-#endif // ENABLE(STREAMS_API)
-
-#endif // ReadableStreamJSSource_h
+#endif // ReadableStream_h

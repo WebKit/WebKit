@@ -14,12 +14,12 @@ FAIL ReadableStream: should not call pull until the previous pull call's promise
 FAIL ReadableStream: should not call pull after start if the stream is now closed read is not implemented
 FAIL ReadableStream: should call pull after enqueueing from inside pull (with no read requests), if strategy allows assert_equals: pull() should have been called four times expected 4 but got 0
 TIMEOUT ReadableStream pull should be able to close a stream. Test timed out
-FAIL ReadableStream: enqueue should throw when the stream is readable but draining assert_equals: the first enqueue should return true expected (boolean) true but got (undefined) undefined
+FAIL ReadableStream: enqueue should throw when the stream is readable but draining assert_equals: the first enqueue should return true expected true but got false
 FAIL ReadableStream: enqueue should throw when the stream is closed assert_throws: enqueue after close should throw a TypeError function "function () { c.enqueue('a'); }" did not throw
 FAIL ReadableStream: enqueue should throw the stored error when the stream is errored assert_throws: enqueue after error should throw that error function "function () { c.enqueue('a'); }" did not throw
 FAIL ReadableStream: should call underlying source methods as methods read is not implemented
-FAIL ReadableStream strategies: the default strategy should return false for all but the first enqueue call assert_equals: first enqueue should return true expected (boolean) true but got (undefined) undefined
-FAIL ReadableStream strategies: the default strategy should continue returning true from enqueue if the chunks are read immediately assert_equals: first enqueue should return true expected (boolean) true but got (undefined) undefined
+FAIL ReadableStream strategies: the default strategy should return false for all but the first enqueue call assert_equals: first enqueue should return true expected true but got false
+FAIL ReadableStream strategies: the default strategy should continue returning true from enqueue if the chunks are read immediately assert_equals: first enqueue should return true expected true but got false
 FAIL ReadableStream integration test: adapting a random push source read is not implemented
 FAIL ReadableStream integration test: adapting a sync pull source read is not implemented
 FAIL ReadableStream integration test: adapting an async pull source read is not implemented
