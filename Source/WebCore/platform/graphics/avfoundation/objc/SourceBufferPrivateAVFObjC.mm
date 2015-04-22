@@ -1087,8 +1087,13 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(int trackID)
         return;
     }
 
-    if (m_client)
-        m_client->sourceBufferPrivateDidBecomeReadyForMoreSamples(this, AtomicString::number(trackID));
+    // FIXME(rdar://problem/20635969): Remove this dispatch_async() when the aforementioned radar is resolved
+    auto weakThis = createWeakPtr();
+    dispatch_async(dispatch_get_main_queue(), [weakThis, trackID] {
+        if (!weakThis || !weakThis->m_client)
+            return;
+        weakThis->m_client->sourceBufferPrivateDidBecomeReadyForMoreSamples(weakThis.get(), AtomicString::number(trackID));
+    });
 }
 
 void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(AtomicString trackIDString)
