@@ -77,6 +77,12 @@ public:
         return m_allocationProfileWatchpoint;
     }
 
+    void clear(const char* reason);
+
+    void initialize(VM&, JSObject* prototype, size_t inlineCapacity);
+
+    bool isInitialized() { return !m_allocationProfile.isNull(); }
+
 protected:
     FunctionRareData(VM&);
     ~FunctionRareData();

@@ -112,7 +112,9 @@ public:
     FunctionRareData* rareData(ExecState* exec, unsigned inlineCapacity)
     {
         if (UNLIKELY(!m_rareData))
-            return createRareData(exec, inlineCapacity);
+            return allocateAndInitializeRareData(exec, inlineCapacity);
+        if (UNLIKELY(!m_rareData->isInitialized()))
+            return initializeRareData(exec, inlineCapacity);
         return m_rareData.get();
     }
 
@@ -138,7 +140,8 @@ protected:
     void finishCreation(VM&, NativeExecutable*, int length, const String& name);
     using Base::finishCreation;
 
-    FunctionRareData* createRareData(ExecState*, size_t inlineCapacity);
+    FunctionRareData* allocateAndInitializeRareData(ExecState*, size_t inlineCapacity);
+    FunctionRareData* initializeRareData(ExecState*, size_t inlineCapacity);
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode = EnumerationMode());

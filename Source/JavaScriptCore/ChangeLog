@@ -1,3 +1,27 @@
+2015-04-22  Basile Clement  <basile_clement@apple.com>
+ 
+        Don't de-allocate FunctionRareData
+        https://bugs.webkit.org/show_bug.cgi?id=144000
+
+        Reviewed by Michael Saboff.
+
+        A function rare data (containing most notably its allocation profile) is currently
+        freed and re-allocated each time the function's prototype is cleared.
+        This is not optimal as it means we are invalidating the watchpoint and recompiling the
+        scope each time the prototype is cleared.
+
+        This makes it so that a single rare data is reused, clearing the underlying
+        ObjectAllocationProfile instead of throwing away the whole rare data on
+        .prototype updates.
+
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::create):
+        (JSC::FunctionRareData::finishCreation):
+        * runtime/FunctionRareData.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::allocateAndInitializeRareData):
+        (JSC::JSFunction::initializeRareData):
+
 2015-04-21  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix 32-bit. Forgot to make this simple change to 32_64 as well.

@@ -108,14 +108,26 @@ JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* execut
     return function;
 }
 
-FunctionRareData* JSFunction::createRareData(ExecState* exec, size_t inlineCapacity)
+FunctionRareData* JSFunction::allocateAndInitializeRareData(ExecState* exec, size_t inlineCapacity)
 {
+    ASSERT(!m_rareData);
     VM& vm = exec->vm();
     JSObject* prototype = jsDynamicCast<JSObject*>(get(exec, vm.propertyNames->prototype));
     if (!prototype)
         prototype = globalObject()->objectPrototype();
     FunctionRareData* rareData = FunctionRareData::create(vm, prototype, inlineCapacity);
     m_rareData.set(vm, this, rareData);
+    return m_rareData.get();
+}
+
+FunctionRareData* JSFunction::initializeRareData(ExecState* exec, size_t inlineCapacity)
+{
+    ASSERT(!!m_rareData);
+    VM& vm = exec->vm();
+    JSObject* prototype = jsDynamicCast<JSObject*>(get(exec, vm.propertyNames->prototype));
+    if (!prototype)
+        prototype = globalObject()->objectPrototype();
+    m_rareData->initialize(globalObject()->vm(), prototype, inlineCapacity);
     return m_rareData.get();
 }
 
@@ -389,10 +401,8 @@ void JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         // following the rules set out in ECMA-262 8.12.9.
         PropertySlot slot(thisObject);
         thisObject->methodTable(exec->vm())->getOwnPropertySlot(thisObject, exec, propertyName, slot);
-        if (thisObject->m_rareData) {
-            thisObject->m_rareData->allocationProfileWatchpointSet().fireAll("Store to prototype property of a function");
-            thisObject->m_rareData.clear();
-        }
+        if (thisObject->m_rareData)
+            thisObject->m_rareData->clear("Store to prototype property of a function");
         // Don't allow this to be cached, since a [[Put]] must clear m_rareData.
         PutPropertySlot dontCache(thisObject);
         Base::put(thisObject, exec, propertyName, value, dontCache);
@@ -438,10 +448,8 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
         // following the rules set out in ECMA-262 8.12.9.
         PropertySlot slot(thisObject);
         thisObject->methodTable(exec->vm())->getOwnPropertySlot(thisObject, exec, propertyName, slot);
-        if (thisObject->m_rareData) {
-            thisObject->m_rareData->allocationProfileWatchpointSet().fireAll("Store to prototype property of a function");
-            thisObject->m_rareData.clear();
-        }
+        if (thisObject->m_rareData)
+            thisObject->m_rareData->clear("Store to prototype property of a function");
         return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
     }
 

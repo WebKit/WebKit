@@ -744,6 +744,7 @@ _llint_op_create_this:
     btpz t4, .opCreateThisSlow
     loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_allocator[t4], t1
     loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_structure[t4], t2
+    btpz t1, .opCreateThisSlow
     allocateJSObject(t1, t2, t0, t3, .opCreateThisSlow)
     loadi 4[PC], t1
     storei CellTag, TagOffset[cfr, t1, 8]

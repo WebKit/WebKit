@@ -80,7 +80,18 @@ FunctionRareData::~FunctionRareData()
 void FunctionRareData::finishCreation(VM& vm, JSObject* prototype, size_t inlineCapacity)
 {
     Base::finishCreation(vm);
+    initialize(vm, prototype, inlineCapacity);
+}
+
+void FunctionRareData::initialize(VM& vm, JSObject* prototype, size_t inlineCapacity)
+{
     m_allocationProfile.initialize(vm, this, prototype, inlineCapacity);
+}
+
+void FunctionRareData::clear(const char* reason)
+{
+    m_allocationProfile.clear();
+    m_allocationProfileWatchpoint.fireAll(reason);
 }
 
 }
