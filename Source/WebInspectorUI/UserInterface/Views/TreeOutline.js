@@ -974,17 +974,18 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
             this.treeOutline._childrenListNode.focus();
 
         // Focusing on another node may detach "this" from tree.
-        if (!this.treeOutline)
+        var treeOutline = this.treeOutline;
+        if (!treeOutline)
             return;
 
-        this.treeOutline.processingSelectionChange = true;
+        treeOutline.processingSelectionChange = true;
 
         if (!this.selected) {
-            if (this.treeOutline.selectedTreeElement)
-                this.treeOutline.selectedTreeElement.deselect(suppressOnDeselect);
+            if (treeOutline.selectedTreeElement)
+                treeOutline.selectedTreeElement.deselect(suppressOnDeselect);
 
             this.selected = true;
-            this.treeOutline.selectedTreeElement = this;
+            treeOutline.selectedTreeElement = this;
 
             if (this._listItemNode)
                 this._listItemNode.classList.add("selected");
@@ -993,10 +994,10 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
         if (this.onselect && !suppressOnSelect)
             this.onselect(this, selectedByUser);
 
-        if (this.treeOutline.onselect && !suppressOnSelect)
-            this.treeOutline.onselect(this, selectedByUser);
+        if (treeOutline.onselect && !suppressOnSelect)
+            treeOutline.onselect(this, selectedByUser);
 
-        delete this.treeOutline.processingSelectionChange;
+        treeOutline.processingSelectionChange = false;
     }
 
     revealAndSelect(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect)
