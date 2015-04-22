@@ -41,7 +41,7 @@ class DisplayRefreshMonitorClient;
 
 class DisplayRefreshMonitor : public RefCounted<DisplayRefreshMonitor> {
 public:
-    static PassRefPtr<DisplayRefreshMonitor> create(DisplayRefreshMonitorClient*);
+    static RefPtr<DisplayRefreshMonitor> create(DisplayRefreshMonitorClient*);
     virtual ~DisplayRefreshMonitor();
     
     // Return true if callback request was scheduled, false if it couldn't be

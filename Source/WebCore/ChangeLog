@@ -1,5 +1,68 @@
 2015-04-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r181656. rdar://problem/20545362
+
+    2015-03-17  Timothy Horton  <timothy_horton@apple.com>
+
+            Reproducible null deref under ScriptedAnimationController::createDisplayRefreshMonitor
+            https://bugs.webkit.org/show_bug.cgi?id=142776
+            <rdar://problem/18921338>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Test: fast/animation/request-animation-frame-unparented-iframe-crash.html
+
+            In some cases (like the new test), we can end up trying to start
+            requestAnimationFrame on a Document that has no Page. Most paths null-checked
+            the Page and did the right thing, but one failed to do so. In addition,
+            the current fallback (when Page is null) can result in us constructing
+            the wrong kind of DisplayRefreshMonitor, which could lead to trouble
+            down the road when it's reused. Instead, just completely avoid making a
+            DisplayRefreshMonitor in the null-page case.
+
+            * dom/ScriptedAnimationController.cpp:
+            (WebCore::ScriptedAnimationController::createDisplayRefreshMonitor):
+            If the page is null, bail.
+
+            * dom/ScriptedAnimationController.h:
+            * platform/graphics/DisplayRefreshMonitor.cpp:
+            (WebCore::DisplayRefreshMonitor::create):
+            Use Optional<> to make it easy to distinguish between ChromeClient
+            being unreachable (because we don't have a Page for some reason) and
+            ChromeClient declaring that it doesn't want to override the type of
+            DisplayRefreshMonitor that is created.
+
+            If ChromeClient was unreachable for some reason, we'll get back an engaged
+            nullptr and return it (instead of creating a DisplayRefreshMonitor based
+            on the platform). This avoids creating the wrong type of DisplayRefreshMonitor
+            in the rare case where we can't reach the ChromeClient (e.g. a freshly unparented
+            IFrame).
+
+            If instead the client returns a disengaged Nullopt, we'll interpret that as
+            "construct the default type", which falls back on the platform #ifdefs to
+            decide what to make.
+
+            * platform/graphics/DisplayRefreshMonitorManager.cpp:
+            (WebCore::DisplayRefreshMonitorManager::ensureMonitorForClient):
+            (WebCore::DisplayRefreshMonitorManager::scheduleAnimation):
+            Silently handle the case where we failed to make a DisplayRefreshMonitor.
+
+            * platform/graphics/DisplayRefreshMonitor.h:
+            * platform/graphics/DisplayRefreshMonitorClient.h:
+            * platform/graphics/GraphicsLayerUpdater.cpp:
+            (WebCore::GraphicsLayerUpdater::createDisplayRefreshMonitor):
+            * platform/graphics/GraphicsLayerUpdater.h:
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::createDisplayRefreshMonitor):
+            * rendering/RenderLayerCompositor.h:
+            Adjust to the new signature of createDisplayRefreshMonitor, and return
+            an engaged (nullptr) Optional if we can't get to ChromeClient for any reason.
+
+            * page/ChromeClient.h:
+            Return Nullopt (indicating a lack of override) by default.
+
+2015-04-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r180520. rdar://problem/20545427
 
     2015-02-22  Dean Jackson  <dino@apple.com>

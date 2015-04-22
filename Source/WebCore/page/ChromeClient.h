@@ -39,6 +39,7 @@
 #include "WebCoreKeyboardUIMode.h"
 #include <runtime/ConsoleTypes.h>
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
@@ -295,7 +296,7 @@ public:
     virtual GraphicsLayerFactory* graphicsLayerFactory() const { return nullptr; }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    virtual PassRefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const { return nullptr; }
+    virtual Optional<RefPtr<DisplayRefreshMonitor>> createDisplayRefreshMonitor(PlatformDisplayID) const { return Nullopt; }
 #endif
 
     // Pass 0 as the GraphicsLayer to detatch the root layer.

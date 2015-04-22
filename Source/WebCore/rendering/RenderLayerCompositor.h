@@ -390,7 +390,7 @@ private:
     ScrollingCoordinator* scrollingCoordinator() const;
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    PassRefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const;
+    Optional<RefPtr<DisplayRefreshMonitor>> createDisplayRefreshMonitor(PlatformDisplayID) const;
 #endif
 
     bool requiresCompositingForAnimation(RenderLayerModelObject&) const;
