@@ -24,6 +24,10 @@
 
 messages -> DatabaseProcessProxy LegacyReceiver {
     DidCreateDatabaseToWebProcessConnection(IPC::Attachment connectionIdentifier)
+
+    DidFetchWebsiteData(uint64_t callbackID, struct WebKit::WebsiteData websiteData)
+    DidDeleteWebsiteData(uint64_t callbackID)
+    DidDeleteWebsiteDataForOrigins(uint64_t callbackID)
 }
 
 #endif // ENABLE(DATABASE_PROCESS)

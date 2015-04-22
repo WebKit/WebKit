@@ -300,6 +300,7 @@ public:
 
 #if ENABLE(DATABASE_PROCESS)
     void ensureDatabaseProcess();
+    DatabaseProcessProxy* databaseProcess() { return m_databaseProcess.get(); }
     void getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>);
     void databaseProcessCrashed(DatabaseProcessProxy*);
 #endif

@@ -35,6 +35,7 @@ NSString * const WKWebsiteDataTypeOfflineWebApplicationCache = @"WKWebsiteDataTy
 NSString * const WKWebsiteDataTypeCookies = @"WKWebsiteDataTypeCookies";
 NSString * const WKWebsiteDataTypeLocalStorage = @"WKWebsiteDataTypeLocalStorage";
 NSString * const WKWebsiteDataTypeWebSQLDatabases = @"WKWebsiteDataTypeWebSQLDatabases";
+NSString * const WKWebsiteDataTypeIndexedDBDatabases = @"WKWebsiteDataTypeIndexedDBDatabases";
 
 @implementation WKWebsiteDataRecord
 
@@ -61,6 +62,8 @@ static NSString *dataTypesToString(NSSet *dataTypes)
         [array addObject:@"Local Storage"];
     if ([dataTypes containsObject:WKWebsiteDataTypeWebSQLDatabases])
         [array addObject:@"Web SQL"];
+    if ([dataTypes containsObject:WKWebsiteDataTypeIndexedDBDatabases])
+        [array addObject:@"IndexedDB"];
 
     return [array componentsJoinedByString:@", "];
 }

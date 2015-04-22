@@ -31,6 +31,7 @@
 #include "WebOriginDataManagerProxy.h"
 #include "WebOriginDataManagerProxyMessages.h"
 #include "WebProcessPool.h"
+#include "WebsiteData.h"
 #include <WebCore/NotImplemented.h>
 
 #if ENABLE(DATABASE_PROCESS)
@@ -38,6 +39,13 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+static uint64_t generateCallbackID()
+{
+    static uint64_t callbackID;
+
+    return ++callbackID;
+}
 
 PassRefPtr<DatabaseProcessProxy> DatabaseProcessProxy::create(WebProcessPool* processPool)
 {
@@ -53,8 +61,10 @@ DatabaseProcessProxy::DatabaseProcessProxy(WebProcessPool* processPool)
 
 DatabaseProcessProxy::~DatabaseProcessProxy()
 {
+    ASSERT(m_pendingFetchWebsiteDataCallbacks.isEmpty());
+    ASSERT(m_pendingDeleteWebsiteDataCallbacks.isEmpty());
+    ASSERT(m_pendingDeleteWebsiteDataForOriginsCallbacks.isEmpty());
 }
-
 
 void DatabaseProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
@@ -73,6 +83,38 @@ void DatabaseProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::M
         m_processPool->supplement<WebOriginDataManagerProxy>()->didReceiveMessage(connection, decoder);
         return;
     }
+}
+
+void DatabaseProcessProxy::fetchWebsiteData(SessionID sessionID, WebsiteDataTypes dataTypes, std::function<void (WebsiteData)> completionHandler)
+{
+    ASSERT(canSendMessage());
+
+    uint64_t callbackID = generateCallbackID();
+    m_pendingFetchWebsiteDataCallbacks.add(callbackID, WTF::move(completionHandler));
+
+    send(Messages::DatabaseProcess::FetchWebsiteData(sessionID, dataTypes, callbackID), 0);
+}
+
+void DatabaseProcessProxy::deleteWebsiteData(WebCore::SessionID sessionID, WebsiteDataTypes dataTypes, std::chrono::system_clock::time_point modifiedSince,  std::function<void ()> completionHandler)
+{
+    auto callbackID = generateCallbackID();
+
+    m_pendingDeleteWebsiteDataCallbacks.add(callbackID, WTF::move(completionHandler));
+    send(Messages::DatabaseProcess::DeleteWebsiteData(sessionID, dataTypes, modifiedSince, callbackID), 0);
+}
+
+void DatabaseProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, WebsiteDataTypes dataTypes, const Vector<RefPtr<WebCore::SecurityOrigin>>& origins, std::function<void ()> completionHandler)
+{
+    ASSERT(canSendMessage());
+
+    uint64_t callbackID = generateCallbackID();
+    m_pendingDeleteWebsiteDataForOriginsCallbacks.add(callbackID, WTF::move(completionHandler));
+
+    Vector<SecurityOriginData> originData;
+    for (auto& origin : origins)
+        originData.append(SecurityOriginData::fromSecurityOrigin(*origin));
+
+    send(Messages::DatabaseProcess::DeleteWebsiteDataForOrigins(sessionID, dataTypes, originData, callbackID), 0);
 }
 
 void DatabaseProcessProxy::getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply> reply)
@@ -102,6 +144,18 @@ void DatabaseProcessProxy::didClose(IPC::Connection&)
 #endif
     }
 
+    for (const auto& callback : m_pendingFetchWebsiteDataCallbacks.values())
+        callback(WebsiteData());
+    m_pendingFetchWebsiteDataCallbacks.clear();
+
+    for (const auto& callback : m_pendingDeleteWebsiteDataCallbacks.values())
+        callback();
+    m_pendingDeleteWebsiteDataCallbacks.clear();
+
+    for (const auto& callback : m_pendingDeleteWebsiteDataForOriginsCallbacks.values())
+        callback();
+    m_pendingDeleteWebsiteDataForOriginsCallbacks.clear();
+
     // Tell ProcessPool to forget about this database process. This may cause us to be deleted.
     m_processPool->databaseProcessCrashed(this);
 }
@@ -123,6 +177,24 @@ void DatabaseProcessProxy::didCreateDatabaseToWebProcessConnection(const IPC::At
 #else
     notImplemented();
 #endif
+}
+
+void DatabaseProcessProxy::didFetchWebsiteData(uint64_t callbackID, const WebsiteData& websiteData)
+{
+    auto callback = m_pendingFetchWebsiteDataCallbacks.take(callbackID);
+    callback(websiteData);
+}
+
+void DatabaseProcessProxy::didDeleteWebsiteData(uint64_t callbackID)
+{
+    auto callback = m_pendingDeleteWebsiteDataCallbacks.take(callbackID);
+    callback();
+}
+
+void DatabaseProcessProxy::didDeleteWebsiteDataForOrigins(uint64_t callbackID)
+{
+    auto callback = m_pendingDeleteWebsiteDataForOriginsCallbacks.take(callbackID);
+    callback();
 }
 
 void DatabaseProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)

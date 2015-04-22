@@ -56,6 +56,8 @@ static inline WebKit::WebsiteDataTypes toWebsiteDataTypes(NSSet *wkWebsiteDataTy
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeLocalStorage;
     if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeWebSQLDatabases])
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeWebSQLDatabases;
+    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeIndexedDBDatabases])
+        websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeIndexedDBDatabases;
 
     return static_cast<WebsiteDataTypes>(websiteDataTypes);
 }
@@ -78,6 +80,8 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(int websiteDataTypes)
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeLocalStorage];
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeWebSQLDatabases)
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeWebSQLDatabases];
+    if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeIndexedDBDatabases)
+        [wkWebsiteDataTypes addObject:WKWebsiteDataTypeIndexedDBDatabases];
 
     return wkWebsiteDataTypes;
 }

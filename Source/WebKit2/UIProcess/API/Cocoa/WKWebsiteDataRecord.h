@@ -38,6 +38,7 @@ WK_EXTERN NSString * const WKWebsiteDataTypeOfflineWebApplicationCache WK_AVAILA
 WK_EXTERN NSString * const WKWebsiteDataTypeCookies WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 WK_EXTERN NSString * const WKWebsiteDataTypeLocalStorage WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 WK_EXTERN NSString * const WKWebsiteDataTypeWebSQLDatabases WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+WK_EXTERN NSString * const WKWebsiteDataTypeIndexedDBDatabases WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 @interface WKWebsiteDataRecord : NSObject

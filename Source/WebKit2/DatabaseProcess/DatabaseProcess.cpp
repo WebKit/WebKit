@@ -38,6 +38,7 @@
 #include "WebOriginDataManager.h"
 #include "WebOriginDataManagerMessages.h"
 #include "WebOriginDataManagerProxyMessages.h"
+#include "WebsiteData.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/TextEncoding.h>
@@ -196,6 +197,115 @@ void DatabaseProcess::createDatabaseToWebProcessConnection()
 #else
     notImplemented();
 #endif
+}
+
+void DatabaseProcess::fetchWebsiteData(SessionID, uint64_t websiteDataTypes, uint64_t callbackID)
+{
+    struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
+        explicit CallbackAggregator(std::function<void (WebsiteData)> completionHandler)
+            : m_completionHandler(WTF::move(completionHandler))
+        {
+        }
+
+        ~CallbackAggregator()
+        {
+            ASSERT(RunLoop::isMain());
+
+            auto completionHandler = WTF::move(m_completionHandler);
+            auto websiteData = WTF::move(m_websiteData);
+
+            RunLoop::main().dispatch([completionHandler, websiteData] {
+                completionHandler(websiteData);
+            });
+        }
+
+        std::function<void (WebsiteData)> m_completionHandler;
+        WebsiteData m_websiteData;
+    };
+
+    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator([this, callbackID](WebsiteData websiteData) {
+        parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidFetchWebsiteData(callbackID, websiteData), 0);
+    }));
+
+    if (websiteDataTypes & WebsiteDataTypeIndexedDBDatabases) {
+        // FIXME: Pick the right database store based on the session ID.
+        postDatabaseTask(std::make_unique<AsyncTask>([callbackAggregator, websiteDataTypes, this] {
+
+            Vector<RefPtr<SecurityOrigin>> securityOrigins;
+
+            for (const auto& originData : getIndexedDatabaseOrigins())
+                securityOrigins.append(originData.securityOrigin());
+
+            RunLoop::main().dispatch([callbackAggregator, securityOrigins] {
+                for (const auto& securityOrigin : securityOrigins)
+                    callbackAggregator->m_websiteData.entries.append(WebsiteData::Entry { securityOrigin, WebsiteDataTypeIndexedDBDatabases });
+            });
+        }));
+    }
+}
+
+void DatabaseProcess::deleteWebsiteData(WebCore::SessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
+{
+    struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
+        explicit CallbackAggregator(std::function<void ()> completionHandler)
+        : m_completionHandler(WTF::move(completionHandler))
+        {
+        }
+
+        ~CallbackAggregator()
+        {
+            ASSERT(RunLoop::isMain());
+
+            RunLoop::main().dispatch(WTF::move(m_completionHandler));
+        }
+
+        std::function<void ()> m_completionHandler;
+    };
+
+    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator([this, callbackID]() {
+        parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidDeleteWebsiteData(callbackID), 0);
+    }));
+
+    if (websiteDataTypes & WebsiteDataTypeIndexedDBDatabases) {
+        postDatabaseTask(std::make_unique<AsyncTask>([this, callbackAggregator, modifiedSince] {
+            double startDate = std::chrono::system_clock::to_time_t(modifiedSince);
+
+            deleteIndexedDatabaseEntriesModifiedBetweenDates(startDate, std::numeric_limits<double>::max());
+            RunLoop::main().dispatch([callbackAggregator] { });
+        }));
+    }
+}
+
+void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID, uint64_t websiteDataTypes, const Vector<SecurityOriginData>& origins, uint64_t callbackID)
+{
+    struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
+        explicit CallbackAggregator(std::function<void ()> completionHandler)
+            : m_completionHandler(WTF::move(completionHandler))
+        {
+        }
+
+        ~CallbackAggregator()
+        {
+            ASSERT(RunLoop::isMain());
+
+            RunLoop::main().dispatch(WTF::move(m_completionHandler));
+        }
+
+        std::function<void ()> m_completionHandler;
+    };
+
+    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator([this, callbackID]() {
+        parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);
+    }));
+
+    if (websiteDataTypes & WebsiteDataTypeIndexedDBDatabases) {
+        postDatabaseTask(std::make_unique<AsyncTask>([this, origins, callbackAggregator] {
+            for (const auto& origin: origins)
+                deleteIndexedDatabaseEntriesForOrigin(origin);
+
+            RunLoop::main().dispatch([callbackAggregator] { });
+        }));
+    }
 }
 
 Vector<SecurityOriginData> DatabaseProcess::getIndexedDatabaseOrigins()
