@@ -1,3 +1,9 @@
+2015-04-21  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the iOS build.
+
+        * platform/spi/cg/CoreGraphicsSPI.h:
+
 2015-04-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVGAnimateElementBase::calculateAnimatedValue() asserts when reinserting an SVG animating element within the same animation limits
