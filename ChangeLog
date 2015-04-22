@@ -1,5 +1,20 @@
 2015-04-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [CMake] Features list should print dots every other row
+        https://bugs.webkit.org/show_bug.cgi?id=143832
+
+        Reviewed by Martin Robinson.
+
+        Discount private options when determining whether to print dots on a given row of the
+        features list. Also, simplify the logic by using only one for loop, and fix a couple errors
+        (inverted use of SHOULD_PRINT_DOTS, one use of the renamed variable SHOULD_PRINT_POINTS that
+        wasn't noticed because it only affects the first line, and use of the variable name as a
+        string in a conditional.)
+
+        * Source/cmake/WebKitFeatures.cmake:
+
+2015-04-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [CMake] Require specifying visibility of WebKit options
         https://bugs.webkit.org/show_bug.cgi?id=143831
 

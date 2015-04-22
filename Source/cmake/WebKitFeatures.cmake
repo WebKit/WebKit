@@ -195,28 +195,24 @@ endmacro()
 macro(PRINT_WEBKIT_OPTIONS)
     message(STATUS "Enabled features:")
 
-    set(_SHOULD_PRINT_POINTS OFF)
+    set(_SHOULD_PRINT_DOTS ON)
     foreach (_name ${_WEBKIT_AVAILABLE_OPTIONS})
-        string(LENGTH ${_name} _NAME_LENGTH)
-
-        set(_MESSAGE " ${_name} ")
-
-        # Print dots on every other row, for readability.
-        if (_SHOULD_PRINT_DOTS)
-            foreach (IGNORE RANGE ${_NAME_LENGTH} ${_MAX_FEATURE_LENGTH})
-                set(_MESSAGE "${_MESSAGE} ")
-            endforeach ()
-            set(_SHOULD_PRINT_DOTS OFF)
-        else ()
-            foreach (IGNORE RANGE ${_NAME_LENGTH} ${_MAX_FEATURE_LENGTH})
-                set(_MESSAGE "${_MESSAGE}.")
-            endforeach ()
-            set(_SHOULD_PRINT_DOTS ON)
-        endif ()
-
-        set(_MESSAGE "${_MESSAGE} ${${_name}}")
-
         if (${_WEBKIT_AVAILABLE_OPTIONS_IS_PUBLIC_${_name}})
+            string(LENGTH ${_name} _NAME_LENGTH)
+            set(_MESSAGE " ${_name} ")
+
+            # Print dots on every other row, for readability.
+            foreach (IGNORE RANGE ${_NAME_LENGTH} ${_MAX_FEATURE_LENGTH})
+                if (${_SHOULD_PRINT_DOTS})
+                    set(_MESSAGE "${_MESSAGE}.")
+                else ()
+                    set(_MESSAGE "${_MESSAGE} ")
+                endif ()
+            endforeach ()
+
+            set(_SHOULD_PRINT_DOTS (NOT ${_SHOULD_PRINT_DOTS}))
+
+            set(_MESSAGE "${_MESSAGE} ${${_name}}")
             message(STATUS "${_MESSAGE}")
         endif ()
     endforeach ()
