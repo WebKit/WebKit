@@ -146,3 +146,8 @@ fast/inline/hidpi-selection-gap-overlaps-inline-selection.html [ Skip ]
 webkit.org/b/136078 fast/borders/border-painting-dashed.html [ ImageOnlyFailure ]
 webkit.org/b/136078 fast/borders/border-painting-dotted.html [ ImageOnlyFailure ]
 webkit.org/b/136078 fast/borders/border-painting-double.html [ ImageOnlyFailure ]
+
+# Tests added in r178380 have image differences in safari-600.5-branch
+webkit.org/b/144043 fast/multicol/clip-in-columns.html [ ImageOnlyFailure ]
+webkit.org/b/144043 fast/multicol/filter-in-columns.html [ ImageOnlyFailure ]
+
