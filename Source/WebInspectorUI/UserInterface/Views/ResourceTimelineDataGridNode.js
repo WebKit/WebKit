@@ -75,7 +75,6 @@ WebInspector.ResourceTimelineDataGridNode.prototype = {
         if (!this._graphOnly) {
             var zeroTime = this.graphDataSource ? this.graphDataSource.zeroTime : 0;
 
-            data.name = WebInspector.displayNameForURL(resource.url, resource.urlComponents);
             data.domain = WebInspector.displayNameForHost(resource.urlComponents.host);
             data.scheme = resource.urlComponents.scheme ? resource.urlComponents.scheme.toUpperCase() : "";
             data.method = resource.requestMethod;
@@ -106,26 +105,6 @@ WebInspector.ResourceTimelineDataGridNode.prototype = {
         var value = this.data[columnIdentifier];
 
         switch (columnIdentifier) {
-        case "name":
-            cell.classList.add(resource.type, WebInspector.ResourceTreeElement.ResourceIconStyleClassName);
-
-            var fragment = document.createDocumentFragment();
-
-            var goToButton = WebInspector.createGoToArrowButton();
-            goToButton.addEventListener("click", this._goToResource.bind(this));
-            fragment.appendChild(goToButton);
-
-            var icon = document.createElement("div");
-            icon.className = WebInspector.ResourceTimelineDataGridNode.IconStyleClassName;
-            fragment.appendChild(icon);
-
-            var text = document.createTextNode(value);
-            fragment.appendChild(text);
-
-            cell.title = resource.url;
-
-            return fragment;
-
         case "type":
             return WebInspector.Resource.displayNameForType(value);
 
@@ -137,7 +116,16 @@ WebInspector.ResourceTimelineDataGridNode.prototype = {
             return value ? WebInspector.UIString("Yes") : WebInspector.UIString("No");
 
         case "domain":
-            return value || emptyValuePlaceholderString;
+            var fragment = document.createDocumentFragment();
+
+            var goToButton = WebInspector.createGoToArrowButton();
+            goToButton.addEventListener("click", this._goToResource.bind(this));
+            fragment.appendChild(goToButton);
+
+            var text = document.createTextNode(value || emptyValuePlaceholderString);
+            fragment.appendChild(text);
+
+            return fragment;
 
         case "size":
         case "transferSize":

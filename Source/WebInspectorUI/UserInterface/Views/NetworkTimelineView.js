@@ -29,8 +29,6 @@ WebInspector.NetworkTimelineView = function(timeline)
 
     console.assert(timeline.type === WebInspector.TimelineRecord.Type.Network);
 
-    this.navigationSidebarTreeOutline.onselect = this._treeElementSelected.bind(this);
-    this.navigationSidebarTreeOutline.ondeselect = this._treeElementDeselected.bind(this);    
     this.navigationSidebarTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
     this.navigationSidebarTreeOutline.element.classList.add(WebInspector.NetworkTimelineView.TreeOutlineStyleClassName);
 
@@ -150,12 +148,31 @@ WebInspector.NetworkTimelineView.prototype = {
 
     // Protected
 
+    showContentViewForTreeElement: function(treeElement)
+    {
+        if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
+            WebInspector.resourceSidebarPanel.showSourceCode(treeElement.representedObject);
+            return true;
+        }
+
+        console.error("Unknown tree element selected.", treeElement);
+        return false;
+    },
+
     treeElementPathComponentSelected: function(event)
     {
         var dataGridNode = this._dataGrid.dataGridNodeForTreeElement(event.data.pathComponent.generalTreeElement);
         if (!dataGridNode)
             return;
         dataGridNode.revealAndSelect();
+    },
+
+    treeElementSelected: function(treeElement, selectedByUser)
+    {
+        if (this._dataGrid.shouldIgnoreSelectionEvent())
+            return false;
+
+        WebInspector.TimelineView.prototype.treeElementSelected.call(this, treeElement, selectedByUser);
     },
 
     // Private
@@ -198,32 +215,6 @@ WebInspector.NetworkTimelineView.prototype = {
     _dataGridNodeSelected: function(event)
     {
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
-    },
-
-    _treeElementDeselected: function(treeElement)
-    {
-        if (treeElement.status)
-            treeElement.status = "";
-    },
-
-    _treeElementSelected: function(treeElement, selectedByUser)
-    {
-        if (this._dataGrid.shouldIgnoreSelectionEvent())
-            return;
-
-        if (!WebInspector.timelineSidebarPanel.canShowDifferentContentView())
-            return;
-
-        if (treeElement instanceof WebInspector.FolderTreeElement)
-            return;
-
-        if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
-            WebInspector.resourceSidebarPanel.showSourceCode(treeElement.representedObject);
-            this._updateTreeElementWithCloseButton(treeElement);
-            return;
-        }
-
-        console.error("Unknown tree element selected.");
     },
 
     _updateTreeElementWithCloseButton: function(treeElement)

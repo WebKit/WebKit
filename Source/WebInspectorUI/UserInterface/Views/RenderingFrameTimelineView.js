@@ -154,6 +154,24 @@ WebInspector.RenderingFrameTimelineView.prototype = {
 
     // Protected
 
+    showContentViewForTreeElement: function(treeElement)
+    {
+        if (treeElement instanceof WebInspector.ProfileNodeTreeElement && treeElement.profileNode.sourceCodeLocation) {
+            WebInspector.resourceSidebarPanel.showOriginalOrFormattedSourceCodeLocation(treeElement.profileNode.sourceCodeLocation);
+            return true;
+        }
+
+        return WebInspector.TimelineView.prototype.showContentViewForTreeElement.call(this, treeElement);
+    },
+
+    treeElementSelected: function(treeElement, selectedByUser)
+    {
+        if (this._dataGrid.shouldIgnoreSelectionEvent())
+            return;
+
+        WebInspector.TimelineView.prototype.treeElementSelected.call(this, treeElement, selectedByUser);
+    },
+
     treeElementPathComponentSelected: function(event)
     {
         var dataGridNode = this._dataGrid.dataGridNodeForTreeElement(event.data.pathComponent.generalTreeElement);

@@ -29,12 +29,10 @@ WebInspector.LayoutTimelineView = function(timeline)
 
     console.assert(timeline.type === WebInspector.TimelineRecord.Type.Layout);
 
-    this.navigationSidebarTreeOutline.onselect = this._treeElementSelected.bind(this);
-    this.navigationSidebarTreeOutline.ondeselect = this._treeElementDeselected.bind(this);
     this.navigationSidebarTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
     this.navigationSidebarTreeOutline.element.classList.add(WebInspector.LayoutTimelineView.TreeOutlineStyleClassName);
 
-    var columns = {eventType: {}, initiatorCallFrame: {}, width: {}, height: {}, startTime: {}, totalTime: {}};
+    var columns = {eventType: {}, location: {}, width: {}, height: {}, startTime: {}, totalTime: {}};
 
     columns.eventType.title = WebInspector.UIString("Type");
     columns.eventType.width = "15%";
@@ -48,8 +46,8 @@ WebInspector.LayoutTimelineView = function(timeline)
     columns.eventType.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("layout", typeToLabelMap);
     columns.eventType.hidden = true;
 
-    columns.initiatorCallFrame.title = WebInspector.UIString("Initiator");
-    columns.initiatorCallFrame.width = "25%";
+    columns.location.title = WebInspector.UIString("Initiator");
+    columns.location.width = "25%";
 
     columns.width.title = WebInspector.UIString("Width");
     columns.width.width = "8%";
@@ -165,6 +163,23 @@ WebInspector.LayoutTimelineView.prototype = {
         dataGridNode.revealAndSelect();
     },
 
+    treeElementDeselected: function(treeElement)
+    {
+        WebInspector.TimelineView.prototype.treeElementDeselected.call(this, treeElement);
+
+        this._updateHighlight();
+    },
+
+    treeElementSelected: function(treeElement, selectedByUser)
+    {
+        if (this._dataGrid.shouldIgnoreSelectionEvent())
+            return;
+
+        WebInspector.TimelineView.prototype.treeElementSelected.call(this, treeElement, selectedByUser);
+
+        this._updateHighlight();
+    },
+
     // Private
 
     _processPendingRecords: function()
@@ -200,62 +215,6 @@ WebInspector.LayoutTimelineView.prototype = {
     _dataGridNodeSelected: function(event)
     {
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
-    },
-
-    _treeElementDeselected: function(treeElement)
-    {
-        if (treeElement.status)
-            treeElement.status = "";
-
-        this._updateHighlight();
-    },
-
-    _treeElementSelected: function(treeElement, selectedByUser)
-    {
-        if (this._dataGrid.shouldIgnoreSelectionEvent())
-            return;
-
-        if (!WebInspector.timelineSidebarPanel.canShowDifferentContentView())
-            return;
-
-        if (treeElement instanceof WebInspector.FolderTreeElement)
-            return;
-
-        if (!(treeElement instanceof WebInspector.TimelineRecordTreeElement)) {
-            console.error("Unknown tree element selected.");
-            return;
-        }
-
-        this._updateHighlight();
-
-        if (!treeElement.record.sourceCodeLocation) {
-            WebInspector.timelineSidebarPanel.showTimelineViewForTimeline(this.representedObject);
-            return;
-        }
-
-        WebInspector.resourceSidebarPanel.showOriginalOrFormattedSourceCodeLocation(treeElement.record.sourceCodeLocation);
-        this._updateTreeElementWithCloseButton(treeElement);
-    },
-
-    _updateTreeElementWithCloseButton: function(treeElement)
-    {
-        if (this._closeStatusButton) {
-            treeElement.status = this._closeStatusButton.element;
-            return;
-        }
-
-        wrappedSVGDocument(platformImagePath("Close.svg"), null, WebInspector.UIString("Close resource view"), function(element) {
-            this._closeStatusButton = new WebInspector.TreeElementStatusButton(element);
-            this._closeStatusButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._closeStatusButtonClicked, this);
-            if (treeElement === this.navigationSidebarTreeOutline.selectedTreeElement)
-                this._updateTreeElementWithCloseButton(treeElement);
-        }.bind(this));
-    },
-
-    _closeStatusButtonClicked: function(event)
-    {
-        this.navigationSidebarTreeOutline.selectedTreeElement.deselect();
-        WebInspector.timelineSidebarPanel.showTimelineViewForTimeline(this.representedObject);
     },
 
     _updateHighlight: function()
