@@ -1,3 +1,63 @@
+2015-04-22  Mark Lam  <mark.lam@apple.com>
+
+        Give the heap object iterators the ability to return early.
+        https://bugs.webkit.org/show_bug.cgi?id=144011
+
+        Reviewed by Michael Saboff.
+
+        JSDollarVMPrototype::isValidCell() uses a heap object iterator to validate
+        candidate cell pointers, and, when in use, is called a lot more often than
+        the normal way those iterators are used.  As a result, I see my instrumented
+        VM killed with a SIGXCPU (CPU time limit exceeded).  This patch gives the
+        callback functor the ability to tell the iterators to return early when the
+        functor no longer needs to continue iterating.  With this, my instrumented
+        VM is useful again for debugging.
+
+        Since heap iteration is not something that we do in a typical fast path,
+        I don't expect this to have any noticeable impact on performance.
+
+        I also renamed ObjectAddressCheckFunctor to CellAddressCheckFunctor since
+        it checks JSCell addresses, not just JSObjects.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/Debugger.cpp:
+        * heap/GCLogging.cpp:
+        (JSC::LoggingFunctor::operator()):
+        * heap/Heap.cpp:
+        (JSC::Zombify::visit):
+        (JSC::Zombify::operator()):
+        * heap/HeapStatistics.cpp:
+        (JSC::StorageStatistics::visit):
+        (JSC::StorageStatistics::operator()):
+        * heap/HeapVerifier.cpp:
+        (JSC::GatherLiveObjFunctor::visit):
+        (JSC::GatherLiveObjFunctor::operator()):
+        * heap/MarkedBlock.cpp:
+        (JSC::SetNewlyAllocatedFunctor::operator()):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::forEachCell):
+        (JSC::MarkedBlock::forEachLiveCell):
+        (JSC::MarkedBlock::forEachDeadCell):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::forEachLiveCell):
+        (JSC::MarkedSpace::forEachDeadCell):
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::TypeRecompiler::visit):
+        (Inspector::TypeRecompiler::operator()):
+        * runtime/IterationStatus.h: Added.
+        * runtime/JSGlobalObject.cpp:
+        * runtime/VM.cpp:
+        (JSC::StackPreservingRecompiler::visit):
+        (JSC::StackPreservingRecompiler::operator()):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::CellAddressCheckFunctor::CellAddressCheckFunctor):
+        (JSC::CellAddressCheckFunctor::operator()):
+        (JSC::JSDollarVMPrototype::isValidCell):
+        (JSC::ObjectAddressCheckFunctor::ObjectAddressCheckFunctor): Deleted.
+        (JSC::ObjectAddressCheckFunctor::operator()): Deleted.
+
 2015-04-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [[Set]] should be properly executed in JS builtins

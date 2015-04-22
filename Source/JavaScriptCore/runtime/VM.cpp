@@ -491,7 +491,7 @@ void VM::clearSourceProviderCaches()
 
 struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {
     HashSet<FunctionExecutable*> currentlyExecutingFunctions;
-    void operator()(JSCell* cell)
+    inline void visit(JSCell* cell)
     {
         if (!cell->inherits(FunctionExecutable::info()))
             return;
@@ -499,6 +499,11 @@ struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {
         if (currentlyExecutingFunctions.contains(executable))
             return;
         executable->clearCodeIfNotCompiling();
+    }
+    IterationStatus operator()(JSCell* cell)
+    {
+        visit(cell);
+        return IterationStatus::Continue;
     }
 };
 

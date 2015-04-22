@@ -63,10 +63,11 @@ public:
         reviveCells();
     }
 
-    void operator()(JSCell* cell)
+    IterationStatus operator()(JSCell* cell)
     {
         m_liveCells.append(cell);
         MarkedBlock::blockFor(cell)->clearMarked(cell);
+        return IterationStatus::Continue;
     }
 
     void log()

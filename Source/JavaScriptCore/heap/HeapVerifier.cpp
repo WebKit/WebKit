@@ -122,12 +122,18 @@ struct GatherLiveObjFunctor : MarkedBlock::CountFunctor {
         ASSERT(!list.liveObjects.size());
     }
 
-    void operator()(JSCell* cell)
+    inline void visit(JSCell* cell)
     {
         if (!cell->isObject())
             return;        
         LiveObjectData data(asObject(cell));
         m_list.liveObjects.append(data);
+    }
+
+    IterationStatus operator()(JSCell* cell)
+    {
+        visit(cell);
+        return IterationStatus::Continue;
     }
 
     LiveObjectList& m_list;

@@ -157,10 +157,11 @@ public:
     {
     }
 
-    void operator()(JSCell* cell)
+    IterationStatus operator()(JSCell* cell)
     {
         ASSERT(MarkedBlock::blockFor(cell) == m_block);
         m_block->setNewlyAllocated(cell);
+        return IterationStatus::Continue;
     }
 
 private:

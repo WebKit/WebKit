@@ -2678,6 +2678,9 @@
     <ClInclude Include="..\runtime\Intrinsic.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\IterationStatus.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\IteratorOperations.h">
       <Filter>runtime</Filter>
     </ClInclude>

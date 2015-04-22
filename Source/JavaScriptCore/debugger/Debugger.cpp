@@ -44,11 +44,13 @@ class Recompiler : public MarkedBlock::VoidFunctor {
 public:
     Recompiler(JSC::Debugger*);
     ~Recompiler();
-    void operator()(JSCell*);
+    IterationStatus operator()(JSCell*);
 
 private:
     typedef HashSet<FunctionExecutable*> FunctionExecutableSet;
     typedef HashMap<SourceProvider*, ExecState*> SourceProviderMap;
+    
+    void visit(JSCell*);
     
     JSC::Debugger* m_debugger;
     FunctionExecutableSet m_functionExecutables;
@@ -69,7 +71,7 @@ inline Recompiler::~Recompiler()
         m_debugger->sourceParsed(iter->value, iter->key, -1, String());
 }
 
-inline void Recompiler::operator()(JSCell* cell)
+inline void Recompiler::visit(JSCell* cell)
 {
     if (!cell->inherits(JSFunction::info()))
         return;
@@ -90,6 +92,12 @@ inline void Recompiler::operator()(JSCell* cell)
     executable->clearUnlinkedCodeForRecompilationIfNotCompiling();
     if (m_debugger == function->scope()->globalObject()->debugger())
         m_sourceProviders.add(executable->source().provider(), exec);
+}
+
+inline IterationStatus Recompiler::operator()(JSCell* cell)
+{
+    visit(cell);
+    return IterationStatus::Continue;
 }
 
 } // namespace

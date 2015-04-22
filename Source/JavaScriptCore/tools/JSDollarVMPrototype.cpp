@@ -152,16 +152,19 @@ bool JSDollarVMPrototype::isInStorageSpace(Heap* heap, void* ptr)
     return heap->storageSpace().contains(candidate);
 }
 
-struct ObjectAddressCheckFunctor : MarkedBlock::CountFunctor {
-    ObjectAddressCheckFunctor(JSCell* candidate)
+struct CellAddressCheckFunctor : MarkedBlock::CountFunctor {
+    CellAddressCheckFunctor(JSCell* candidate)
         : candidate(candidate)
     {
     }
 
-    void operator()(JSCell* cell)
+    IterationStatus operator()(JSCell* cell)
     {
-        if (cell == candidate)
+        if (cell == candidate) {
             found = true;
+            return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
     }
 
     JSCell* candidate;
@@ -171,7 +174,7 @@ struct ObjectAddressCheckFunctor : MarkedBlock::CountFunctor {
 bool JSDollarVMPrototype::isValidCell(Heap* heap, JSCell* candidate)
 {
     HeapIterationScope iterationScope(*heap);
-    ObjectAddressCheckFunctor functor(candidate);
+    CellAddressCheckFunctor functor(candidate);
     heap->objectSpace().forEachLiveCell(iterationScope, functor);
     return functor.found;
 }

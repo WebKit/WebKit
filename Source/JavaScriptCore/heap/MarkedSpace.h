@@ -179,8 +179,10 @@ template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forE
 {
     ASSERT(isIterating());
     BlockIterator end = m_blocks.set().end();
-    for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
-        (*it)->forEachLiveCell(functor);
+    for (BlockIterator it = m_blocks.set().begin(); it != end; ++it) {
+        if ((*it)->forEachLiveCell(functor) == IterationStatus::Done)
+            break;
+    }
     return functor.returnValue();
 }
 
@@ -194,8 +196,10 @@ template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forE
 {
     ASSERT(isIterating());
     BlockIterator end = m_blocks.set().end();
-    for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
-        (*it)->forEachDeadCell(functor);
+    for (BlockIterator it = m_blocks.set().begin(); it != end; ++it) {
+        if ((*it)->forEachDeadCell(functor) == IterationStatus::Done)
+            break;
+    }
     return functor.returnValue();
 }
 

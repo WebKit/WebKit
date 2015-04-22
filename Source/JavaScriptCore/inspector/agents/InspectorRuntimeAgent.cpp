@@ -309,7 +309,7 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& er
 
 class TypeRecompiler : public MarkedBlock::VoidFunctor {
 public:
-    inline void operator()(JSCell* cell)
+    inline void visit(JSCell* cell)
     {
         if (!cell->inherits(FunctionExecutable::info()))
             return;
@@ -317,6 +317,11 @@ public:
         FunctionExecutable* executable = jsCast<FunctionExecutable*>(cell);
         executable->clearCodeIfNotCompiling();
         executable->clearUnlinkedCodeForRecompilationIfNotCompiling();
+    }
+    inline IterationStatus operator()(JSCell* cell)
+    {
+        visit(cell);
+        return IterationStatus::Continue;
     }
 };
 

@@ -167,7 +167,7 @@ class StorageStatistics : public MarkedBlock::VoidFunctor {
 public:
     StorageStatistics();
 
-    void operator()(JSCell*);
+    IterationStatus operator()(JSCell*);
 
     size_t objectWithOutOfLineStorageCount();
     size_t objectCount();
@@ -176,6 +176,8 @@ public:
     size_t storageCapacity();
 
 private:
+    void visit(JSCell*);
+
     size_t m_objectWithOutOfLineStorageCount;
     size_t m_objectCount;
     size_t m_storageSize;
@@ -190,7 +192,7 @@ inline StorageStatistics::StorageStatistics()
 {
 }
 
-inline void StorageStatistics::operator()(JSCell* cell)
+inline void StorageStatistics::visit(JSCell* cell)
 {
     if (!cell->isObject())
         return;
@@ -207,6 +209,12 @@ inline void StorageStatistics::operator()(JSCell* cell)
         ++m_objectWithOutOfLineStorageCount;
     m_storageSize += object->structure()->totalStorageSize() * sizeof(WriteBarrierBase<Unknown>);
     m_storageCapacity += object->structure()->totalStorageCapacity() * sizeof(WriteBarrierBase<Unknown>); 
+}
+
+inline IterationStatus StorageStatistics::operator()(JSCell* cell)
+{
+    visit(cell);
+    return IterationStatus::Continue;
 }
 
 inline size_t StorageStatistics::objectWithOutOfLineStorageCount()
