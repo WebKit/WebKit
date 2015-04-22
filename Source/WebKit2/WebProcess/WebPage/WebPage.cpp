@@ -720,14 +720,16 @@ EditorState WebPage::editorState() const
     if (frame.editor().hasComposition()) {
         RefPtr<Range> compositionRange = frame.editor().compositionRange();
         Vector<WebCore::SelectionRect> compositionRects;
-        compositionRange->collectSelectionRects(compositionRects);
-        if (compositionRects.size())
-            result.firstMarkedRect = compositionRects[0].rect();
-        if (compositionRects.size() > 1)
-            result.lastMarkedRect = compositionRects.last().rect();
-        else
-            result.lastMarkedRect = result.firstMarkedRect;
-        result.markedText = plainTextReplacingNoBreakSpace(compositionRange.get());
+        if (compositionRange) {
+            compositionRange->collectSelectionRects(compositionRects);
+            if (compositionRects.size())
+                result.firstMarkedRect = compositionRects[0].rect();
+            if (compositionRects.size() > 1)
+                result.lastMarkedRect = compositionRects.last().rect();
+            else
+                result.lastMarkedRect = result.firstMarkedRect;
+            result.markedText = plainTextReplacingNoBreakSpace(compositionRange.get());
+        }
     }
     FrameView* view = frame.view();
     if (selection.isCaret()) {
@@ -745,15 +747,19 @@ EditorState WebPage::editorState() const
         result.caretRectAtStart = view->contentsToRootView(VisiblePosition(selection.start()).absoluteCaretBounds());
         result.caretRectAtEnd = view->contentsToRootView(VisiblePosition(selection.end()).absoluteCaretBounds());
         RefPtr<Range> selectedRange = selection.toNormalizedRange();
-        selectedRange->collectSelectionRects(result.selectionRects);
-        convertSelectionRectsToRootView(view, result.selectionRects);
-        String selectedText = plainTextReplacingNoBreakSpace(selectedRange.get(), TextIteratorDefaultBehavior, true);
+        String selectedText;
+        if (selectedRange) {
+            selectedRange->collectSelectionRects(result.selectionRects);
+            convertSelectionRectsToRootView(view, result.selectionRects);
+            selectedText = plainTextReplacingNoBreakSpace(selectedRange.get(), TextIteratorDefaultBehavior, true);
+            result.selectedTextLength = selectedText.length();
+            const int maxSelectedTextLength = 200;
+            if (selectedText.length() <= maxSelectedTextLength)
+                result.wordAtSelection = selectedText;
+        }
+
         // FIXME: We should disallow replace when the string contains only CJ characters.
         result.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.containsOnlyWhitespace();
-        result.selectedTextLength = selectedText.length();
-        const int maxSelectedTextLength = 200;
-        if (selectedText.length() <= maxSelectedTextLength)
-            result.wordAtSelection = selectedText;
     }
     if (!selection.isNone()) {
         Node* nodeToRemove;
