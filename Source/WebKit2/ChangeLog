@@ -1,3 +1,11 @@
+2015-04-23  Enrica Casucci  <enrica@apple.com>
+
+        iOS build fix after r183208.
+
+        Unreviewed.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
 2015-04-22  Alexey Proskuryakov  <ap@apple.com>
 
         [iOS] WebKit services should inherit environment variables for home
