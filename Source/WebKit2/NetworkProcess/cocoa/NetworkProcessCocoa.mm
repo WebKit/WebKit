@@ -33,9 +33,7 @@
 #import "NetworkResourceLoader.h"
 #import "SandboxExtension.h"
 #import <WebCore/CFNetworkSPI.h>
-#import <mach/host_info.h>
-#import <mach/mach.h>
-#import <mach/mach_error.h>
+#import <wtf/RAMSize.h>
 
 namespace WebKit {
 
@@ -94,24 +92,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     _CFURLCacheSetMinSizeForVMCachedResource(cache.get(), NetworkResourceLoader::fileBackedResourceMinimumSize());
 }
 
-static uint64_t memorySize()
-{
-    static host_basic_info_data_t hostInfo;
-
-    static dispatch_once_t once;
-    dispatch_once(&once, ^() {
-        mach_port_t host = mach_host_self();
-        mach_msg_type_number_t count = HOST_BASIC_INFO_COUNT;
-        kern_return_t r = host_info(host, HOST_BASIC_INFO, (host_info_t)&hostInfo, &count);
-        mach_port_deallocate(mach_task_self(), host);
-
-        if (r != KERN_SUCCESS)
-            LOG_ERROR("%s : host_info(%d) : %s.\n", __FUNCTION__, r, mach_error_string(r));
-    });
-
-    return hostInfo.max_mem;
-}
-
 static uint64_t volumeFreeSize(const String& path)
 {
     NSDictionary *fileSystemAttributesDictionary = [[NSFileManager defaultManager] attributesOfFileSystemForPath:(NSString *)path error:NULL];
@@ -120,9 +100,10 @@ static uint64_t volumeFreeSize(const String& path)
 
 void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
 {
+    uint64_t memSize = ramSize() / 1024 / 1024;
+
     // As a fudge factor, use 1000 instead of 1024, in case the reported byte
     // count doesn't align exactly to a megabyte boundary.
-    uint64_t memSize = memorySize() / 1024 / 1000;
     uint64_t diskFreeSize = volumeFreeSize(m_diskCacheDirectory) / 1024 / 1000;
 
     unsigned cacheTotalCapacity = 0;

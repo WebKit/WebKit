@@ -1,3 +1,17 @@
+2015-04-23  Andreas Kling  <akling@apple.com>
+
+        There should only be one way to get the system memory size.
+        <https://webkit.org/b/144081>
+
+        Reviewed by Antti Koivisto.
+
+        * Misc/WebKitSystemBits.h:
+        * Misc/WebKitSystemBits.m:
+        (WebMemorySize): Deleted.
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]):
+        (roundUpToPowerOf2): Deleted.
+
 2015-04-22  Darin Adler  <darin@apple.com>
 
         Remove OwnPtr and PassOwnPtr use from WebKit/cf, WebKit/mac, and WebKit2

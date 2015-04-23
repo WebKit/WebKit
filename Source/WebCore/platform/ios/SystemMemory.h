@@ -33,7 +33,6 @@
 
 namespace WebCore {
 WEBCORE_EXPORT int systemMemoryLevel(); // In [0, 100]
-WEBCORE_EXPORT size_t systemTotalMemory();
 }
 
 #endif

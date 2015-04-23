@@ -1,3 +1,17 @@
+2015-04-23  Andreas Kling  <akling@apple.com>
+
+        There should only be one way to get the system memory size.
+        <https://webkit.org/b/144081>
+
+        Reviewed by Antti Koivisto.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformSetCacheModel):
+        (WebKit::memorySize): Deleted.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformSetCacheModel):
+        (WebKit::memorySize): Deleted.
+
 2015-04-23  Chris Dumez  <cdumez@apple.com>
 
         [WK2] WebDiagnosticLoggingClient is leaking

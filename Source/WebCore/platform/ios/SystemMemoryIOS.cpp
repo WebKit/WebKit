@@ -29,7 +29,6 @@
 #include "config.h"
 #include "SystemMemory.h"
 
-#include <mach/mach.h>
 #include <sys/sysctl.h>
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
@@ -50,37 +49,6 @@ int systemMemoryLevel()
     size_t size = sizeof(memoryFreeLevel);
     sysctlbyname("kern.memorystatus_level", &memoryFreeLevel, &size, nullptr, 0);
     return memoryFreeLevel;
-#endif
-}
-
-#if !PLATFORM(IOS_SIMULATOR)
-static host_basic_info_data_t gHostBasicInfo;
-
-static void initCapabilities(void)
-{
-    // Discover our CPU type
-    mach_port_t host = mach_host_self();
-    mach_msg_type_number_t count = HOST_BASIC_INFO_COUNT;
-    kern_return_t returnValue = host_info(host, HOST_BASIC_INFO, reinterpret_cast<host_info_t>(&gHostBasicInfo), &count);
-    mach_port_deallocate(mach_task_self(), host);
-    if (returnValue != KERN_SUCCESS)
-        LOG_ERROR("%s : host_info(%d) : %s.\n", __FUNCTION__, returnValue, mach_error_string(returnValue));
-}
-#endif
-
-size_t systemTotalMemory()
-{
-#if PLATFORM(IOS_SIMULATOR)
-    return 512 * 1024 * 1024;
-#else
-    // FIXME: Consider using C++11 thread primitives.
-    static pthread_once_t initControl = PTHREAD_ONCE_INIT;
-
-    pthread_once(&initControl, initCapabilities);
-    // The value in gHostBasicInfo.max_mem is often lower than the amount we're
-    // interested in (e.g., does this device have at least 256MB of RAM?)
-    // Round the value to the nearest power of 2.
-    return static_cast<size_t>(exp2(ceil(log2(gHostBasicInfo.max_mem))));
 #endif
 }
 

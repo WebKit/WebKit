@@ -42,6 +42,7 @@
 #import <MediaPlayer/MPVolumeView.h>
 #import <UIKit/UIApplication.h>
 #import <objc/runtime.h>
+#import <wtf/RAMSize.h>
 #import <wtf/RetainPtr.h>
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
@@ -139,8 +140,8 @@ void MediaSessionManageriOS::resetRestrictions()
     if (deviceClass == wkDeviceClassiPhone || deviceClass == wkDeviceClassiPod)
         addRestriction(MediaSession::Video, InlineVideoPlaybackRestricted);
 
-    if (systemTotalMemory() < systemMemoryRequiredForVideoInBackgroundTabs) {
-        LOG(Media, "MediaSessionManageriOS::resetRestrictions - restricting video in background tabs because system memory = %zul", systemTotalMemory());
+    if (ramSize() < systemMemoryRequiredForVideoInBackgroundTabs) {
+        LOG(Media, "MediaSessionManageriOS::resetRestrictions - restricting video in background tabs because system memory = %zul", ramSize());
         addRestriction(MediaSession::Video, BackgroundTabPlaybackRestricted);
     }
 

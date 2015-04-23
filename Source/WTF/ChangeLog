@@ -1,3 +1,24 @@
+2015-04-23  Andreas Kling  <akling@apple.com>
+
+        There should only be one way to get the system memory size.
+        <https://webkit.org/b/144081>
+
+        Reviewed by Antti Koivisto.
+
+        Merge all the logic from other RAM size fetcher helpers into WTF's.
+
+        Darwin ports now use host_info() instead of sysctl(), since that was the more common way
+        of doing this.
+
+        Also bumped the fallback answer from 128 MB to 512 MB to bring it closer to today's hardware.
+
+        Finally, the number is rounded up to the next multiple of 128 MB, to avoid misunderstandings
+        on some systems where the number returned by the kernel is slightly lower than the marketing
+        number. Removed the "fudging" that was used in some places, since this fixes that cleanly.
+
+        * wtf/RAMSize.cpp:
+        (WTF::computeRAMSize):
+
 2015-04-22  Darin Adler  <darin@apple.com>
 
         Eliminate remaining uses of OwnPtr and PassOwnPtr in WebCore outside the editing and platform directories

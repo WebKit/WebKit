@@ -204,6 +204,7 @@
 #import <wtf/HashTraits.h>
 #import <wtf/MainThread.h>
 #import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/RAMSize.h>
 #import <wtf/RefCountedLeakCounter.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
@@ -7718,11 +7719,6 @@ static WebFrameView *containingFrameView(NSView *view)
 }
 #endif
 
-static inline uint64_t roundUpToPowerOf2(uint64_t num)
-{
-    return powf(2.0, ceilf(log2f(num)));
-}
-
 + (void)_setCacheModel:(WebCacheModel)cacheModel
 {
     if (s_didSetCacheModel && cacheModel == s_cacheModel)
@@ -7732,7 +7728,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     if (!nsurlCacheDirectory)
         nsurlCacheDirectory = NSHomeDirectory();
 
-    static uint64_t memSize = roundUpToPowerOf2(WebMemorySize() / 1024 / 1024);
+    static uint64_t memSize = ramSize() / 1024 / 1024;
     unsigned long long diskFreeSize = WebVolumeFreeSize(nsurlCacheDirectory) / 1024 / 1000;
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
 

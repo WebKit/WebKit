@@ -27,10 +27,14 @@
 #include "RAMSize.h"
 
 #include "StdLibExtras.h"
+#include <mutex>
+
 #if OS(DARWIN)
-#include <sys/param.h>
-#include <sys/types.h>
-#include <sys/sysctl.h>
+#import <dispatch/dispatch.h>
+#import <mach/host_info.h>
+#import <mach/mach.h>
+#import <mach/mach_error.h>
+#import <math.h>
 #elif OS(UNIX)
 #include <unistd.h>
 #elif OS(WINDOWS)
@@ -39,22 +43,34 @@
 
 namespace WTF {
 
-static const size_t ramSizeGuess = 128 * MB;
+static const size_t ramSizeGuess = 512 * MB;
 
 static size_t computeRAMSize()
 {
-#if OS(DARWIN)
-    int mib[2];
-    uint64_t ramSize;
-    size_t length;
+#if PLATFORM(IOS_SIMULATOR)
+    // Pretend we have 512MB of memory to make cache sizes behave like on device.
+    return ramSizeGuess;
+#elif OS(DARWIN)
+    host_basic_info_data_t hostInfo;
 
-    mib[0] = CTL_HW;
-    mib[1] = HW_MEMSIZE;
-    length = sizeof(int64_t);
-    int sysctlResult = sysctl(mib, 2, &ramSize, &length, 0, 0);
-    if (sysctlResult == -1)
+    mach_port_t host = mach_host_self();
+    mach_msg_type_number_t count = HOST_BASIC_INFO_COUNT;
+    kern_return_t r = host_info(host, HOST_BASIC_INFO, (host_info_t)&hostInfo, &count);
+    mach_port_deallocate(mach_task_self(), host);
+    if (r != KERN_SUCCESS) {
+        LOG_ERROR("%s : host_info(%d) : %s.\n", __FUNCTION__, r, mach_error_string(r));
         return ramSizeGuess;
-    return ramSize > std::numeric_limits<size_t>::max() ? std::numeric_limits<size_t>::max() : static_cast<size_t>(ramSize);
+    }
+
+    if (hostInfo.max_mem > std::numeric_limits<size_t>::max())
+        return std::numeric_limits<size_t>::max();
+
+    size_t sizeAccordingToKernel = static_cast<size_t>(hostInfo.max_mem);
+    size_t multiple = 128 * MB;
+
+    // Round up the memory size to a multiple of 128MB because max_mem may not be exactly 512MB
+    // (for example) and we have code that depends on those boundaries.
+    return ((sizeAccordingToKernel + multiple - 1) / multiple) * multiple;
 #elif OS(UNIX)
     long pages = sysconf(_SC_PHYS_PAGES);
     long pageSize = sysconf(_SC_PAGE_SIZE);
@@ -73,7 +89,11 @@ static size_t computeRAMSize()
 
 size_t ramSize()
 {
-    static const size_t ramSize = computeRAMSize();
+    static size_t ramSize;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        ramSize = computeRAMSize();
+    });
     return ramSize;
 }
 

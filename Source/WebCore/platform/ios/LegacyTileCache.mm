@@ -42,6 +42,7 @@
 #include "WebCoreSystemInterface.h"
 #include "WebCoreThreadRun.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/RAMSize.h>
 
 @interface WAKView (WebViewExtras)
 - (void)_dispatchTileDidDraw:(CALayer*)tile;
@@ -436,8 +437,7 @@ unsigned LegacyTileCache::tileCapacityForGrid(LegacyTileGrid* grid)
 {
     static unsigned capacity;
     if (!capacity) {
-        size_t totalMemory = systemTotalMemory();
-        totalMemory /= 1024 * 1024;
+        size_t totalMemory = ramSize() / 1024 / 1024;
         if (totalMemory >= 1024)
             capacity = 128 * 1024 * 1024;
         else if (totalMemory >= 512)

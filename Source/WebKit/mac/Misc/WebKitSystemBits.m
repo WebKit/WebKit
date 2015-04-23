@@ -36,46 +36,6 @@
 #import <sys/types.h>
 #import <wtf/Assertions.h>
 
-#if !PLATFORM(IOS_SIMULATOR)
-
-static host_basic_info_data_t gHostBasicInfo;
-static pthread_once_t initControl = PTHREAD_ONCE_INIT;
-
-static void initCapabilities(void)
-{
-    mach_msg_type_number_t  count;
-    kern_return_t r;
-    mach_port_t host;
-
-    /* Discover our CPU type */
-    host = mach_host_self();
-    count = HOST_BASIC_INFO_COUNT;
-    r = host_info(host, HOST_BASIC_INFO, (host_info_t) &gHostBasicInfo, &count);
-    mach_port_deallocate(mach_task_self(), host);
-    if (r != KERN_SUCCESS) {
-        LOG_ERROR("%s : host_info(%d) : %s.\n", __FUNCTION__, r, mach_error_string(r));
-    }
-}
-
-#endif
-
-uint64_t WebMemorySize(void)
-{
-#if PLATFORM(IOS_SIMULATOR)
-    // Pretend we have 512MB of memory to make cache sizes behave like on device
-    return 512 * 1024 * 1024;
-#else
-    pthread_once(&initControl, initCapabilities);
-#if PLATFORM(IOS)
-    // On iOS, round up the memory size to a power of 2 because max_mem may not be exactly 256MB
-    // (for example) and we have code that depends on those boundaries.
-    return powf(2.0, ceilf(log2f(gHostBasicInfo.max_mem)));
-#else
-    return gHostBasicInfo.max_mem;
-#endif
-#endif
-}
-
 int WebNumberOfCPUs(void)
 {
     static int numCPUs = 0;
