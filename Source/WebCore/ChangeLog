@@ -1,3 +1,11 @@
+2015-04-23  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Just shift some CSS around for code cleanup purposes.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (video::-webkit-media-controls-panel):
+        (video::-webkit-media-controls-panel:hover):
+
 2015-04-22  Alexey Proskuryakov  <ap@apple.com>
 
         [iOS] WebKit services should inherit environment variables for home

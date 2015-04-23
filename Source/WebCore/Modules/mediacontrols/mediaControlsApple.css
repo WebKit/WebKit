@@ -92,6 +92,18 @@ audio::-webkit-media-controls-panel {
     transition: opacity 0.25s linear;
 }
 
+video::-webkit-media-controls-panel {
+    cursor: none;
+    opacity: 0;
+}
+
+video::-webkit-media-controls-panel.show,
+video::-webkit-media-controls-panel.paused,
+video::-webkit-media-controls-panel:hover {
+    cursor: inherit;
+    opacity: 1;
+}
+
 video::-webkit-media-controls-panel-background-container,
 audio::-webkit-media-controls-panel-background-container {
     position: absolute;
@@ -129,18 +141,6 @@ audio::-webkit-media-controls-panel-background {
     height: 45px;
     background-color: rgba(30, 30, 30, 0.45);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
-}
-
-video::-webkit-media-controls-panel {
-    cursor: none;
-    opacity: 0;
-}
-
-video::-webkit-media-controls-panel.show,
-video::-webkit-media-controls-panel.paused,
-video::-webkit-media-controls-panel:hover {
-    cursor: inherit;
-    opacity: 1;
 }
 
 video::-webkit-media-controls-panel button,
