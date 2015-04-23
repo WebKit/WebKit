@@ -280,6 +280,7 @@ void HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners(const HTMLMedia
     m_hasPlaybackTargetAvailabilityListeners = hasListeners;
     MediaSessionManager::sharedManager().configureWireLessTargetMonitoring();
 #else
+    UNUSED_PARAM(hasListeners);
     element.document().playbackTargetPickerClientStateDidChange(*this, element.mediaState());
 #endif
 }

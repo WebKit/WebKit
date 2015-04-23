@@ -1,3 +1,10 @@
+2015-04-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed, fix the release build.
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners): Add an UNUSED_PARAM.
+
 2015-04-23  Simon Fraser  <simon.fraser@apple.com>
 
         Remove m_isPageTiledBackingLayer data member from GraphicsLayerCA, just use the layer type instead
