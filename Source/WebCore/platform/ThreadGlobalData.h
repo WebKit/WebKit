@@ -68,18 +68,18 @@ namespace WebCore {
 #endif
 
     private:
-        OwnPtr<CachedResourceRequestInitiators> m_cachedResourceRequestInitiators;
-        OwnPtr<EventNames> m_eventNames;
-        OwnPtr<ThreadTimers> m_threadTimers;
+        std::unique_ptr<CachedResourceRequestInitiators> m_cachedResourceRequestInitiators;
+        std::unique_ptr<EventNames> m_eventNames;
+        std::unique_ptr<ThreadTimers> m_threadTimers;
 
 #ifndef NDEBUG
         bool m_isMainThread;
 #endif
 
-        OwnPtr<ICUConverterWrapper> m_cachedConverterICU;
+        std::unique_ptr<ICUConverterWrapper> m_cachedConverterICU;
 
 #if PLATFORM(MAC)
-        OwnPtr<TECConverterWrapper> m_cachedConverterTEC;
+        std::unique_ptr<TECConverterWrapper> m_cachedConverterTEC;
 #endif
 
         WEBCORE_EXPORT static ThreadSpecific<ThreadGlobalData>* staticData;

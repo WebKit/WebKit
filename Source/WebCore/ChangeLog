@@ -1,3 +1,20 @@
+2015-04-23  Joonghun Park  <jh718.park@samsung.com>
+
+        Use std::unique_ptr instead of OwnPtr in ThreadGlobalData
+        https://bugs.webkit.org/show_bug.cgi?id=141950
+
+        Reviewed by Darin Adler.
+
+        No new tests, no behavior changes.
+
+        * dom/EventNames.h:
+        (WebCore::EventNames::create):
+        * loader/cache/CachedResourceRequestInitiators.h:
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::ThreadGlobalData):
+        (WebCore::ThreadGlobalData::destroy):
+        * platform/ThreadGlobalData.h:
+
 2015-04-23  Eric Carlson  <eric.carlson@apple.com>
 
         Some media tests assert after r183096

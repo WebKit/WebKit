@@ -49,15 +49,15 @@ ThreadGlobalData* ThreadGlobalData::sharedMainThreadStaticData;
 #endif
 
 ThreadGlobalData::ThreadGlobalData()
-    : m_cachedResourceRequestInitiators(adoptPtr(new CachedResourceRequestInitiators))
-    , m_eventNames(adoptPtr(new EventNames))
-    , m_threadTimers(adoptPtr(new ThreadTimers))
+    : m_cachedResourceRequestInitiators(std::make_unique<CachedResourceRequestInitiators>())
+    , m_eventNames(EventNames::create())
+    , m_threadTimers(std::make_unique<ThreadTimers>())
 #ifndef NDEBUG
     , m_isMainThread(isMainThread())
 #endif
-    , m_cachedConverterICU(adoptPtr(new ICUConverterWrapper))
+    , m_cachedConverterICU(std::make_unique<ICUConverterWrapper>())
 #if PLATFORM(MAC)
-    , m_cachedConverterTEC(adoptPtr(new TECConverterWrapper))
+    , m_cachedConverterTEC(std::make_unique<TECConverterWrapper>())
 #endif
 {
     // This constructor will have been called on the main thread before being called on
@@ -75,13 +75,13 @@ ThreadGlobalData::~ThreadGlobalData()
 void ThreadGlobalData::destroy()
 {
 #if PLATFORM(MAC)
-    m_cachedConverterTEC.clear();
+    m_cachedConverterTEC = nullptr;
 #endif
 
-    m_cachedConverterICU.clear();
+    m_cachedConverterICU = nullptr;
 
-    m_eventNames.clear();
-    m_threadTimers.clear();
+    m_eventNames = nullptr;
+    m_threadTimers = nullptr;
 }
 
 #if USE(WEB_THREAD)
