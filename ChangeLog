@@ -1,5 +1,16 @@
 2015-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Add more public options
+        https://bugs.webkit.org/show_bug.cgi?id=144116
+
+        Reviewed by Martin Robinson.
+
+        Add ENABLE_ICONDATABASE, ENABLE_JIT, and USE_SYSTEM_MALLOC as public options.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2015-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [CMake] Some internal variables are not marked as advanced
         https://bugs.webkit.org/show_bug.cgi?id=143595
 
