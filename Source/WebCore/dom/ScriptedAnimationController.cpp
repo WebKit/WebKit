@@ -226,11 +226,9 @@ void ScriptedAnimationController::displayRefreshFired(double monotonicTimeNow)
 
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-Optional<RefPtr<DisplayRefreshMonitor>> ScriptedAnimationController::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
+PassRefPtr<DisplayRefreshMonitor> ScriptedAnimationController::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
 {
-    if (!m_document->page())
-        return Optional<RefPtr<DisplayRefreshMonitor>>(nullptr);
-    return Optional<RefPtr<DisplayRefreshMonitor>>(m_document->page()->chrome().client().createDisplayRefreshMonitor(displayID));
+    return m_document->page()->chrome().client().createDisplayRefreshMonitor(displayID);
 }
 #endif
 

@@ -35,14 +35,12 @@
 
 namespace WebCore {
 
-RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::create(DisplayRefreshMonitorClient* client)
+PassRefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::create(DisplayRefreshMonitorClient* client)
 {
     PlatformDisplayID displayID = client->displayID();
 
-    if (Optional<RefPtr<DisplayRefreshMonitor>> monitor = client->createDisplayRefreshMonitor(displayID))
-        return monitor.value();
-
-    // If ChromeClient returned Nullopt, we'll go ahead and make one of the default type.
+    if (RefPtr<DisplayRefreshMonitor> monitor = client->createDisplayRefreshMonitor(displayID))
+        return monitor.release();
 
 #if PLATFORM(MAC)
     return DisplayRefreshMonitorMac::create(displayID);

@@ -79,11 +79,9 @@ void GraphicsLayerUpdater::displayRefreshFired(double timestamp)
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-Optional<RefPtr<DisplayRefreshMonitor>> GraphicsLayerUpdater::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
+PassRefPtr<DisplayRefreshMonitor> GraphicsLayerUpdater::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
 {
-    if (!m_client)
-        return Optional<RefPtr<DisplayRefreshMonitor>>(nullptr);
-    return m_client->createDisplayRefreshMonitor(displayID);
+    return m_client ? m_client->createDisplayRefreshMonitor(displayID) : nullptr;
 }
 #endif
 
