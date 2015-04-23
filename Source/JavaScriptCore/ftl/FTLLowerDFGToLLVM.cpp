@@ -7199,13 +7199,14 @@ private:
             arguments.append(lowValue.value());
         
         AvailabilityMap availabilityMap = this->availabilityMap();
+        availabilityMap.m_locals.fill(Availability());
         
-        for (unsigned i = 0; i < exit.m_values.size(); ++i) {
-            int operand = exit.m_values.operandForIndex(i);
-            bool isLive = m_graph.isLiveInBytecode(VirtualRegister(operand), codeOrigin);
-            if (!isLive)
-                availabilityMap.m_locals[i] = Availability();
-        }
+        m_graph.forAllLiveInBytecode(
+            codeOrigin,
+            [&] (VirtualRegister reg) {
+                availabilityMap.m_locals.operand(reg) =
+                    this->availabilityMap().m_locals.operand(reg);
+            });
         
         availabilityMap.prune();
         

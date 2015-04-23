@@ -80,13 +80,12 @@ private:
         
         Epoch currentEpoch = Epoch::first();
         
-        for (unsigned i = m_state.size(); i--;) {
-            VirtualRegister reg = m_state.virtualRegisterForIndex(i);
-            if (m_graph.isLiveInBytecode(reg, block->terminal()->origin.forExit))
-                m_state[i] = currentEpoch;
-            else
-                m_state[i] = Epoch();
-        }
+        m_state.fill(Epoch());
+        m_graph.forAllLiveInBytecode(
+            block->terminal()->origin.forExit,
+            [&] (VirtualRegister reg) {
+                m_state.operand(reg) = currentEpoch;
+            });
         
         if (verbose)
             dataLog("    Locals: ", m_state, "\n");
@@ -114,7 +113,7 @@ private:
             
             if (nodeIndex) {
                 forAllKilledOperands(
-                    m_graph, block->at(nodeIndex - 1)->origin.forExit, node,
+                    m_graph, block->at(nodeIndex - 1), node,
                     [&] (VirtualRegister reg) {
                         // This function is a bit sloppy - it might claim to kill a local even if
                         // it's still live after. We need to protect against that.

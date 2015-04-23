@@ -55,8 +55,13 @@ namespace JSC { namespace DFG {
     /* Nodes for local variable access. These nodes are linked together using Phi nodes. */\
     /* Any two nodes that are part of the same Phi graph will share the same */\
     /* VariableAccessData, and thus will share predictions. FIXME: We should come up with */\
-    /* better names for a lot of these. https://bugs.webkit.org/show_bug.cgi?id=137307 */\
-    macro(GetLocal, NodeResultJS) \
+    /* better names for a lot of these. https://bugs.webkit.org/show_bug.cgi?id=137307. */\
+    /* Note that GetLocal is MustGenerate because it's our only way of knowing that some other */\
+    /* basic block might have read a local variable in bytecode. We only remove GetLocals if it */\
+    /* is redundant because of an earlier GetLocal or SetLocal in the same block. We could make */\
+    /* these not MustGenerate and use a more sophisticated analysis to insert PhantomLocals in */\
+    /* the same way that we insert Phantoms. https://bugs.webkit.org/show_bug.cgi?id=144086 */\
+    macro(GetLocal, NodeResultJS | NodeMustGenerate) \
     macro(SetLocal, 0) \
     \
     macro(PutStack, NodeMustGenerate) \

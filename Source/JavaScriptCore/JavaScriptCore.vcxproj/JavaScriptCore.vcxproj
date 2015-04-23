@@ -447,6 +447,7 @@
     <ClCompile Include="..\dfg\DFGObjectAllocationSinkingPhase.cpp" />
     <ClCompile Include="..\dfg\DFGObjectMaterializationData.cpp" />
     <ClCompile Include="..\dfg\DFGPhantomCanonicalizationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGPhantomInsertionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPhantomRemovalPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPhiChildren.cpp" />
@@ -1142,6 +1143,7 @@
     <ClInclude Include="..\dfg\DFGOSRExitJumpPlaceholder.h" />
     <ClInclude Include="..\dfg\DFGOSRExitPreparation.h" />
     <ClInclude Include="..\dfg\DFGPhantomCanonicalizationPhase.h" />
+    <ClInclude Include="..\dfg\DFGPhantomInsertionPhase.h" />
     <ClInclude Include="..\dfg\DFGPhantomRemovalPhase.h" />
     <ClInclude Include="..\dfg\DFGPhase.h" />
     <ClInclude Include="..\dfg\DFGPhiChildren.h" />

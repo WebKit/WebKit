@@ -38,9 +38,7 @@ class FullBytecodeLiveness {
 public:
     const FastBitVector& getLiveness(unsigned bytecodeIndex) const
     {
-        BytecodeToBitmapMap::const_iterator iter = m_map.find(bytecodeIndex);
-        ASSERT(iter != m_map.end());
-        return iter->value;
+        return m_map[bytecodeIndex];
     }
     
     bool operandIsLive(int operand, unsigned bytecodeIndex) const
@@ -51,7 +49,7 @@ public:
 private:
     friend class BytecodeLivenessAnalysis;
     
-    BytecodeToBitmapMap m_map;
+    Vector<FastBitVector, 0, UnsafeVectorOverflow> m_map;
 };
 
 } // namespace JSC

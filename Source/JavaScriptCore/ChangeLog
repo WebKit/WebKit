@@ -1,3 +1,67 @@
+2015-04-22  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should insert Phantoms late using BytecodeKills and block-local OSR availability
+        https://bugs.webkit.org/show_bug.cgi?id=143735
+
+        Reviewed by Geoffrey Garen.
+        
+        We've always had bugs arising from the fact that we would MovHint something into a local,
+        and then fail to keep it alive. We would then try to keep things alive by putting Phantoms
+        on those Nodes that were MovHinted. But this became increasingly tricky. Given the
+        sophistication of the transformations we are doing today, this approach is just not sound
+        anymore.
+        
+        This comprehensively fixes these bugs by having the DFG backend automatically insert
+        Phantoms just before codegen based on bytecode liveness. To make this practical, this also
+        makes it much faster to query bytecode liveness.
+        
+        It's about as perf-neutral as it gets for a change that increases compiler work without
+        actually optimizing anything. Later changes will remove the old Phantom-preserving logic,
+        which should then speed us up. I can't really report concrete slow-down numbers because
+        they are low enough to basically be in the noise. For example, a 20-iteration run of
+        SunSpider yields "maybe 0.8% slower", whatever that means.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::computeFullLiveness):
+        * bytecode/FullBytecodeLiveness.h:
+        (JSC::FullBytecodeLiveness::getLiveness):
+        * bytecode/VirtualRegister.h:
+        (JSC::VirtualRegister::operator+):
+        (JSC::VirtualRegister::operator-):
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllLiveNodesAtTail):
+        (JSC::DFG::forAllKilledOperands):
+        (JSC::DFG::forAllKilledNodesAtNodeIndex):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isLiveInBytecode):
+        (JSC::DFG::Graph::localsLiveInBytecode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::forAllLocalsLiveInBytecode):
+        (JSC::DFG::Graph::forAllLiveInBytecode):
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        * dfg/DFGMovHintRemovalPhase.cpp:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPhantomInsertionPhase.cpp: Added.
+        (JSC::DFG::performPhantomInsertion):
+        * dfg/DFGPhantomInsertionPhase.h: Added.
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGScoreBoard.h:
+        (JSC::DFG::ScoreBoard::sortFree):
+        (JSC::DFG::ScoreBoard::assertClear):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::buildExitArguments):
+        * tests/stress/phantom-inadequacy.js: Added.
+        (bar):
+        (baz):
+        (foo):
+
 2015-04-23  Filip Pizlo  <fpizlo@apple.com>
 
         Rename HardPhantom to MustGenerate.

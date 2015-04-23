@@ -88,6 +88,9 @@ bool mayExit(Graph& graph, Node* node)
     case GetScope:
     case PhantomLocal:
     case CountExecution:
+    case Jump:
+    case Branch:
+    case Unreachable:
         break;
         
     default:

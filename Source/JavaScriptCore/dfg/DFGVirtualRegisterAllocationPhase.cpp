@@ -55,6 +55,10 @@ public:
                 continue;
             if (!block->isReachable)
                 continue;
+            if (!ASSERT_DISABLED) {
+                // Force usage of highest-numbered virtual registers.
+                scoreBoard.sortFree();
+            }
             for (size_t indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
                 Node* node = block->at(indexInBlock);
         

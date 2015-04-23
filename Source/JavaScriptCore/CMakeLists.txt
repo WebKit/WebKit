@@ -203,6 +203,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGObjectMaterializationData.cpp
     dfg/DFGOperations.cpp
     dfg/DFGPhantomCanonicalizationPhase.cpp
+    dfg/DFGPhantomInsertionPhase.cpp
     dfg/DFGPhantomRemovalPhase.cpp
     dfg/DFGPhase.cpp
     dfg/DFGPhiChildren.cpp

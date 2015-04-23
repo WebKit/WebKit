@@ -82,6 +82,14 @@ public:
     {
         return VirtualRegister(offset() - value);
     }
+    VirtualRegister operator+(VirtualRegister value) const
+    {
+        return VirtualRegister(offset() + value.offset());
+    }
+    VirtualRegister operator-(VirtualRegister value) const
+    {
+        return VirtualRegister(offset() - value.offset());
+    }
     VirtualRegister& operator+=(int value)
     {
         return *this = *this + value;

@@ -237,7 +237,7 @@ void BytecodeLivenessAnalysis::computeFullLiveness(FullBytecodeLiveness& result)
 {
     FastBitVector out;
     
-    result.m_map.clear();
+    result.m_map.resize(m_codeBlock->instructions().size());
     
     for (unsigned i = m_basicBlocks.size(); i--;) {
         BytecodeBasicBlock* block = m_basicBlocks[i].get();
@@ -249,7 +249,7 @@ void BytecodeLivenessAnalysis::computeFullLiveness(FullBytecodeLiveness& result)
         for (unsigned i = block->bytecodeOffsets().size(); i--;) {
             unsigned bytecodeOffset = block->bytecodeOffsets()[i];
             stepOverInstruction(m_codeBlock, m_basicBlocks, bytecodeOffset, out);
-            result.m_map.add(bytecodeOffset, out);
+            result.m_map[bytecodeOffset] = out;
         }
     }
 }

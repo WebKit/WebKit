@@ -348,6 +348,8 @@
 		0F620174143FCD330068B77C /* DFGVariableAccessData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F620172143FCD2F0068B77C /* DFGVariableAccessData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F620176143FCD3B0068B77C /* DFGBasicBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F620170143FCD2F0068B77C /* DFGBasicBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F620177143FCD3F0068B77C /* DFGAbstractValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F62016F143FCD2F0068B77C /* DFGAbstractValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F6237971AE45CA700D402EA /* DFGPhantomInsertionPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6237951AE45CA700D402EA /* DFGPhantomInsertionPhase.cpp */; };
+		0F6237981AE45CA700D402EA /* DFGPhantomInsertionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6237961AE45CA700D402EA /* DFGPhantomInsertionPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F63943F15C75F19006A597C /* DFGTypeCheckHoistingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F63943D15C75F14006A597C /* DFGTypeCheckHoistingPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F63944015C75F1D006A597C /* DFGTypeCheckHoistingPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F63943C15C75F14006A597C /* DFGTypeCheckHoistingPhase.cpp */; };
 		0F63945415D07055006A597C /* ArrayProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F63945115D07051006A597C /* ArrayProfile.cpp */; };
@@ -2083,6 +2085,8 @@
 		0F62016F143FCD2F0068B77C /* DFGAbstractValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAbstractValue.h; path = dfg/DFGAbstractValue.h; sourceTree = "<group>"; };
 		0F620170143FCD2F0068B77C /* DFGBasicBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBasicBlock.h; path = dfg/DFGBasicBlock.h; sourceTree = "<group>"; };
 		0F620172143FCD2F0068B77C /* DFGVariableAccessData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVariableAccessData.h; path = dfg/DFGVariableAccessData.h; sourceTree = "<group>"; };
+		0F6237951AE45CA700D402EA /* DFGPhantomInsertionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGPhantomInsertionPhase.cpp; path = dfg/DFGPhantomInsertionPhase.cpp; sourceTree = "<group>"; };
+		0F6237961AE45CA700D402EA /* DFGPhantomInsertionPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPhantomInsertionPhase.h; path = dfg/DFGPhantomInsertionPhase.h; sourceTree = "<group>"; };
 		0F63943C15C75F14006A597C /* DFGTypeCheckHoistingPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGTypeCheckHoistingPhase.cpp; path = dfg/DFGTypeCheckHoistingPhase.cpp; sourceTree = "<group>"; };
 		0F63943D15C75F14006A597C /* DFGTypeCheckHoistingPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGTypeCheckHoistingPhase.h; path = dfg/DFGTypeCheckHoistingPhase.h; sourceTree = "<group>"; };
 		0F63945115D07051006A597C /* ArrayProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayProfile.cpp; sourceTree = "<group>"; };
@@ -5024,6 +5028,8 @@
 				0F235BEA17178E7300690C7F /* DFGOSRExitPreparation.h */,
 				0F7B365F197C525C00ED1DDC /* DFGPhantomCanonicalizationPhase.cpp */,
 				0F7B3660197C525C00ED1DDC /* DFGPhantomCanonicalizationPhase.h */,
+				0F6237951AE45CA700D402EA /* DFGPhantomInsertionPhase.cpp */,
+				0F6237961AE45CA700D402EA /* DFGPhantomInsertionPhase.h */,
 				0FBFDD02196C92BF007A5BFA /* DFGPhantomRemovalPhase.cpp */,
 				0FBFDD03196C92BF007A5BFA /* DFGPhantomRemovalPhase.h */,
 				0FFFC94F14EF909500C72532 /* DFGPhase.cpp */,
@@ -6220,6 +6226,7 @@
 				BC18C42E0E16F5CD00B34460 /* JSWrapperObject.h in Headers */,
 				BCFD8C930EEB2EE700283848 /* JumpTable.h in Headers */,
 				A72FFD64139985A800E5365A /* KeywordLookup.h in Headers */,
+				0F6237981AE45CA700D402EA /* DFGPhantomInsertionPhase.h in Headers */,
 				969A072A0ED1CE6900F1F681 /* Label.h in Headers */,
 				960097A60EBABB58007A7297 /* LabelScope.h in Headers */,
 				0FB5467714F59B5C002C2989 /* LazyOperandValueProfile.h in Headers */,
@@ -7473,6 +7480,7 @@
 				95AB83560DA43C3000BC83F3 /* ProfileNode.cpp in Sources */,
 				0FF729AD166AD35C000F5BA3 /* ProfilerBytecode.cpp in Sources */,
 				0FF729AE166AD35C000F5BA3 /* ProfilerBytecodes.cpp in Sources */,
+				0F6237971AE45CA700D402EA /* DFGPhantomInsertionPhase.cpp in Sources */,
 				0F13912916771C33009CCB07 /* ProfilerBytecodeSequence.cpp in Sources */,
 				0FF729AF166AD35C000F5BA3 /* ProfilerCompilation.cpp in Sources */,
 				0FF729B0166AD35C000F5BA3 /* ProfilerCompilationKind.cpp in Sources */,

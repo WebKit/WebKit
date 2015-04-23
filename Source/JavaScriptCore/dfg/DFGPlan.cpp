@@ -52,6 +52,7 @@
 #include "DFGOSREntrypointCreationPhase.h"
 #include "DFGObjectAllocationSinkingPhase.h"
 #include "DFGPhantomCanonicalizationPhase.h"
+#include "DFGPhantomInsertionPhase.h"
 #include "DFGPhantomRemovalPhase.h"
 #include "DFGPredictionInjectionPhase.h"
 #include "DFGPredictionPropagationPhase.h"
@@ -320,6 +321,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performPhantomRemoval(dfg);
         performCPSRethreading(dfg);
         performDCE(dfg);
+        performPhantomInsertion(dfg);
         performStackLayout(dfg);
         performVirtualRegisterAllocation(dfg);
         performWatchpointCollection(dfg);
