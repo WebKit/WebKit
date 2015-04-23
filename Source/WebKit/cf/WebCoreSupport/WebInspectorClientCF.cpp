@@ -54,7 +54,6 @@
 #include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/Page.h>
 
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

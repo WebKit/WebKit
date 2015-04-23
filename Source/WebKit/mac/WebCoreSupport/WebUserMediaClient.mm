@@ -36,7 +36,6 @@
 #import <WebCore/ScriptExecutionContext.h>
 #import <WebCore/UserMediaRequest.h>
 #import <wtf/HashMap.h>
-#import <wtf/PassOwnPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 

@@ -1,3 +1,34 @@
+2015-04-22  Darin Adler  <darin@apple.com>
+
+        Remove OwnPtr and PassOwnPtr use from WebKit/cf, WebKit/mac, and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=143943
+
+        Reviewed by Anders Carlsson.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertDictationPhrases): Changed this iOS-only
+        function to take a Vector<Vector<String>>&& and not involve PassOwnPtr.
+        (WebCore::Editor::setDictationPhrasesAsChildOfElement): Changed this iOS-only
+        function to take a Vector<Vector<String>> and not involve PassOwnPtr. Also made
+        it take a reference rather than a pointer to the element and simplify the code
+        a bit using modern for loops and auto.
+        * editing/Editor.h: Ditto.
+
+        * editing/ios/DictationCommandIOS.cpp:
+        (WebCore::DictationCommandIOS::DictationCommandIOS): Take
+        a Vector<Vector<String>>&& instead of a PassOwnPtr.
+        (WebCore::DictationCommandIOS::~DictationCommandIOS): Deleted. No need to
+        explicitly define this.
+        (WebCore::DictationCommandIOS::doApply): Updated to use modern for loop and
+        work with a Vector<Vector<String>> instead of an OwnPtr.
+        * editing/ios/DictationCommandIOS.h: Updated to not use PassOwnPtr and OwnPtr.
+        Also modernized a bit by using override.
+
+        * platform/network/ios/QuickLook.h: Return an NSURLRequest * instead of a
+        PassOwnPtr<ResourceRequest> from this iOS-specific function.
+        * platform/network/ios/QuickLook.mm:
+        (WebCore::registerQLPreviewConverterIfNeeded): Ditto.
+
 2015-04-22  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Convert OwnPtr to std::unique_ptr in GraphicsContextCairo.cpp

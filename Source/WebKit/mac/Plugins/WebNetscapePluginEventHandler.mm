@@ -28,20 +28,19 @@
 #import "WebNetscapePluginEventHandler.h"
 
 #import <wtf/Assertions.h>
-#import <wtf/PassOwnPtr.h>
 #import "WebNetscapePluginView.h"
 #import "WebNetscapePluginEventHandlerCarbon.h"
 #import "WebNetscapePluginEventHandlerCocoa.h"
 
-PassOwnPtr<WebNetscapePluginEventHandler> WebNetscapePluginEventHandler::create(WebNetscapePluginView* pluginView)
+std::unique_ptr<WebNetscapePluginEventHandler> WebNetscapePluginEventHandler::create(WebNetscapePluginView *pluginView)
 {
     switch ([pluginView eventModel]) {
 #ifndef NP_NO_CARBON
         case NPEventModelCarbon:
-            return adoptPtr(new WebNetscapePluginEventHandlerCarbon(pluginView));
-#endif // NP_NO_CARBON
+            return std::make_unique<WebNetscapePluginEventHandlerCarbon>(pluginView);
+#endif
         case NPEventModelCocoa:
-            return adoptPtr(new WebNetscapePluginEventHandlerCocoa(pluginView));
+            return std::make_unique<WebNetscapePluginEventHandlerCocoa>(pluginView);
         default:
             ASSERT_NOT_REACHED();
             return nullptr;

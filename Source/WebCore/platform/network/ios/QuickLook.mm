@@ -188,7 +188,7 @@ void WebCore::removeQLPreviewConverterForURL(NSURL *url)
     [QLContentDictionary() removeObjectForKey:url];
 }
 
-PassOwnPtr<ResourceRequest> WebCore::registerQLPreviewConverterIfNeeded(NSURL *url, NSString *mimeType, NSData *data)
+RetainPtr<NSURLRequest> WebCore::registerQLPreviewConverterIfNeeded(NSURL *url, NSString *mimeType, NSData *data)
 {
     RetainPtr<NSString> updatedMIMEType = adoptNS(WebCore::QLTypeCopyBestMimeTypeForURLAndMimeType(url, mimeType));
 
@@ -202,10 +202,10 @@ PassOwnPtr<ResourceRequest> WebCore::registerQLPreviewConverterIfNeeded(NSURL *u
         // the URL that the WebDataSource will see during -dealloc.
         addQLPreviewConverterWithFileForURL([request URL], converter.get(), nil);
 
-        return adoptPtr(new ResourceRequest(request));
+        return request;
     }
 
-    return nullptr;
+    return nil;
 }
 
 const URL WebCore::safeQLURLForDocumentURLAndResourceURL(const URL& documentURL, const String& resourceURL)

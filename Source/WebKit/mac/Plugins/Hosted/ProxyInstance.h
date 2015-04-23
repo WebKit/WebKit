@@ -32,7 +32,6 @@
 #import "WebKitPluginHostTypes.h"
 #import <WebCore/BridgeJSC.h>
 #import <WebCore/runtime_root.h>
-#import <wtf/OwnPtr.h>
 
 namespace WebKit {
 

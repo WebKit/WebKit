@@ -29,18 +29,13 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #import "WebBaseNetscapePluginView.h"
-
 #import "WebNetscapeContainerCheckPrivate.h"
 #import <WebKitLegacy/npfunctions.h>
 #import <WebKitLegacy/npapi.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
-#import <wtf/OwnPtr.h>
 
-@class WebDataSource;
-@class WebFrame;
 @class WebNetscapePluginPackage;
-@class WebView;
 
 class PluginTimer;
 class WebNetscapePluginStream;
@@ -83,7 +78,7 @@ typedef union PluginPort {
     GWorldPtr offscreenGWorld;
 #endif
 
-    OwnPtr<WebNetscapePluginEventHandler> _eventHandler;
+    std::unique_ptr<WebNetscapePluginEventHandler> _eventHandler;
     
     BOOL inSetWindow;
     BOOL shouldStopSoon;

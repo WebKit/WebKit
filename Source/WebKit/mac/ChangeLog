@@ -1,3 +1,49 @@
+2015-04-22  Darin Adler  <darin@apple.com>
+
+        Remove OwnPtr and PassOwnPtr use from WebKit/cf, WebKit/mac, and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=143943
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/Hosted/ProxyInstance.h: Removed unneeded include.
+        * Plugins/WebBaseNetscapePluginView.h: Ditto.
+
+        * Plugins/WebNetscapePluginEventHandler.h: Use unique_ptr instead of
+        PassOwnPtr for the create function. Also tweaked formatting and removed
+        unneeded forward declaration of CGRect.
+        * Plugins/WebNetscapePluginEventHandler.mm:
+        (WebNetscapePluginEventHandler::create): Changed to use unique_ptr and
+        make_unique.
+
+        * Plugins/WebNetscapePluginView.h: Use unique_ptr instead of OwnPtr for
+        the _eventHandler field.
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView destroyPlugin]): Changed code to work with unique_ptr.
+
+        * WebCoreSupport/WebUserMediaClient.mm: Removed unneeded include.
+
+        * WebView/WebDeviceOrientationProviderMock.mm: Changed to use make_unique.
+        * WebView/WebDeviceOrientationProviderMockInternal.h: Changed to use unique_ptr.
+
+        * WebView/WebFrame.mm:
+        (vectorForDictationPhrasesArray): Changed to return Vector<Vector<String>> and
+        not a PassOwnPtr. Also rewrote to be much simpler, although there is still a
+        pre-existing problem here where this could put empty vectors into the result,
+        and I'm pretty sure the client never expects any of the Vector<String> to be empty.
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+        Rewrote logic to involve WebCore types a bit less; old code was round tripping
+        things through WebCore::URL for no obvious reason.
+
+        * WebView/WebFrameInternal.h: Changed vectorForDictationPhrasesArray to return
+        a Vector<Vector<String>> and not a PassOwnPtr.
+
+        * WebView/WebFullScreenController.h: Removed unneeded include.
+
+        * WebView/WebViewData.h: Changed m_alternativeTextUIController to be a
+        m_alternativeTextUIController.
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate init]): Use make_unique to initialize m_alternativeTextUIController.
+
 2015-04-22  Brent Fulgham  <bfulgham@apple.com>
 
         VisibleSelection should only accept Range by reference

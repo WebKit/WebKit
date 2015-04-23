@@ -26,7 +26,6 @@
 #import "WebDeviceOrientationProviderMockInternal.h"
 
 #import "WebDeviceOrientationInternal.h"
-#import <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
 
@@ -37,7 +36,7 @@ using namespace WebCore;
     self = [super init];
     if (!self)
         return nil;
-    m_core = adoptPtr(new DeviceOrientationClientMock());
+    m_core = std::make_unique<DeviceOrientationClientMock>();
     return self;
 }
 

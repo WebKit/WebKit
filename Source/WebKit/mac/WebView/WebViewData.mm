@@ -162,7 +162,7 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
     pluginDatabaseClientCount++;
 
 #if USE(DICTATION_ALTERNATIVES)
-    m_alternativeTextUIController = adoptPtr(new WebCore::AlternativeTextUIController);
+    m_alternativeTextUIController = std::make_unique<WebCore::AlternativeTextUIController>();
 #endif
 
     return self;

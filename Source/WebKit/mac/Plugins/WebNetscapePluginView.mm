@@ -1187,12 +1187,12 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // Setting the window type to 0 ensures that NPP_SetWindow will be called if the plug-in is restarted.
     lastSetWindow.type = (NPWindowType)0;
     
-    _pluginLayer = 0;
+    _pluginLayer = nil;
     
     [self _destroyPlugin];
     [_pluginPackage.get() close];
     
-    _eventHandler.clear();
+    _eventHandler = nullptr;
 }
 
 - (NPEventModel)eventModel

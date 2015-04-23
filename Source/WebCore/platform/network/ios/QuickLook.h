@@ -31,7 +31,6 @@
 #import "QuickLookHandleClient.h"
 #import "ResourceRequest.h"
 #import <objc/objc-runtime.h>
-#import <wtf/PassOwnPtr.h>
 #import <wtf/RefPtr.h>
 
 OBJC_CLASS NSData;
@@ -41,6 +40,7 @@ OBJC_CLASS NSSet;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS NSURLConnection;
+OBJC_CLASS NSURLRequest;
 OBJC_CLASS NSURLResponse;
 OBJC_CLASS QLPreviewConverter;
 
@@ -72,7 +72,7 @@ WEBCORE_EXPORT NSString *qlPreviewConverterFileNameForURL(NSURL *);
 WEBCORE_EXPORT NSString *qlPreviewConverterUTIForURL(NSURL *);
 WEBCORE_EXPORT void removeQLPreviewConverterForURL(NSURL *);
 
-WEBCORE_EXPORT PassOwnPtr<ResourceRequest> registerQLPreviewConverterIfNeeded(NSURL *, NSString *mimeType, NSData *);
+WEBCORE_EXPORT RetainPtr<NSURLRequest> registerQLPreviewConverterIfNeeded(NSURL *, NSString *mimeType, NSData *);
 
 const URL safeQLURLForDocumentURLAndResourceURL(const URL& documentURL, const String& resourceURL);
 

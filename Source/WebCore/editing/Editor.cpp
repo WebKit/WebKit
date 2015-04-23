@@ -388,18 +388,19 @@ void Editor::clearText()
 }
 
 #if PLATFORM(IOS)
-void Editor::insertDictationPhrases(PassOwnPtr<Vector<Vector<String> > > dictationPhrases, RetainPtr<id> metadata)
+
+void Editor::insertDictationPhrases(Vector<Vector<String>>&& dictationPhrases, RetainPtr<id> metadata)
 {
     if (m_frame.selection().isNone())
         return;
-        
-    if (dictationPhrases->isEmpty())
+
+    if (dictationPhrases.isEmpty())
         return;
-        
-    applyCommand(DictationCommandIOS::create(document(), dictationPhrases, metadata));
+
+    applyCommand(DictationCommandIOS::create(document(), WTF::move(dictationPhrases), WTF::move(metadata)));
 }
 
-void Editor::setDictationPhrasesAsChildOfElement(PassOwnPtr<Vector<Vector<String> > > dictationPhrases, RetainPtr<id> metadata, Element* element)
+void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& dictationPhrases, RetainPtr<id> metadata, Element& element)
 {
     // Clear the composition.
     clear();
@@ -410,54 +411,50 @@ void Editor::setDictationPhrasesAsChildOfElement(PassOwnPtr<Vector<Vector<String
     
     m_frame.selection().clear();
     
-    element->removeChildren();
+    element.removeChildren();
     
-    if (dictationPhrases->isEmpty()) {
+    if (dictationPhrases.isEmpty()) {
         client()->respondToChangedContents();
         return;
     }
     
     ExceptionCode ec;    
     RefPtr<Range> context = document().createRange();
-    context->selectNodeContents(element, ec);
-    
+    context->selectNodeContents(&element, ec);
+
     StringBuilder dictationPhrasesBuilder;
-    size_t dictationPhraseCount = dictationPhrases->size();
-    for (size_t i = 0; i < dictationPhraseCount; i++) {
-        const String& firstInterpretation = dictationPhrases->at(i)[0];
-        dictationPhrasesBuilder.append(firstInterpretation);
-    }
-    String serializedDictationPhrases = dictationPhrasesBuilder.toString();
-    
-    element->appendChild(createFragmentFromText(*context.get(), serializedDictationPhrases), ec);
-    
+    for (auto& interpretations : dictationPhrases)
+        dictationPhrasesBuilder.append(interpretations[0]);
+
+    element.appendChild(createFragmentFromText(*context, dictationPhrasesBuilder.toString()), ec);
+
     // We need a layout in order to add markers below.
     document().updateLayout();
-    
-    if (!element->firstChild()->isTextNode()) {
+
+    if (!element.firstChild()->isTextNode()) {
         // Shouldn't happen.
-        ASSERT(element->firstChild()->isTextNode());
+        ASSERT(element.firstChild()->isTextNode());
         return;
     }
-        
-    Text* textNode = static_cast<Text*>(element->firstChild());
+
+    Text& textNode = downcast<Text>(*element.firstChild());
     int previousDictationPhraseStart = 0;
-    for (size_t i = 0; i < dictationPhraseCount; i++) {
-        const Vector<String>& interpretations = dictationPhrases->at(i);
+    for (auto& interpretations : dictationPhrases) {
         int dictationPhraseLength = interpretations[0].length();
         int dictationPhraseEnd = previousDictationPhraseStart + dictationPhraseLength;
         if (interpretations.size() > 1) {
-            RefPtr<Range> dictationPhraseRange = Range::create(document(), textNode, previousDictationPhraseStart, textNode, dictationPhraseEnd);
-            document().markers().addDictationPhraseWithAlternativesMarker(dictationPhraseRange.get(), interpretations);
+            auto dictationPhraseRange = Range::create(document(), &textNode, previousDictationPhraseStart, &textNode, dictationPhraseEnd);
+            document().markers().addDictationPhraseWithAlternativesMarker(dictationPhraseRange.ptr(), interpretations);
         }
         previousDictationPhraseStart = dictationPhraseEnd;
     }
-    
-    RefPtr<Range> resultRange = Range::create(document(), textNode, 0, textNode, textNode->length());
-    document().markers().addDictationResultMarker(resultRange.get(), metadata);
-    
+
+    auto resultRange = Range::create(document(), &textNode, 0, &textNode, textNode.length());
+    document().markers().addDictationResultMarker(resultRange.ptr(), metadata);
+
     client()->respondToChangedContents();
 }
+
 #endif
 
 void Editor::pasteAsPlainText(const String& pastingText, bool smartReplace)

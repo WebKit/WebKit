@@ -24,12 +24,10 @@
  */
 
 #import "WebDeviceOrientationProviderMock.h"
-
 #import <WebCore/DeviceOrientationClientMock.h>
-#import <wtf/OwnPtr.h>
 
 @interface WebDeviceOrientationProviderMockInternal : NSObject {
-    OwnPtr<WebCore::DeviceOrientationClientMock> m_core;
+    std::unique_ptr<WebCore::DeviceOrientationClientMock> m_core;
 }
 
 - (id)init;
