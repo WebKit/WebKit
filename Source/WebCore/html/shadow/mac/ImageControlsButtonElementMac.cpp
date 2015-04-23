@@ -125,7 +125,7 @@ void ImageControlsButtonElementMac::defaultEventHandler(Event* event)
     HTMLDivElement::defaultEventHandler(event);
 }
 
-RenderPtr<RenderElement> ImageControlsButtonElementMac::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> ImageControlsButtonElementMac::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderImageControlsButton>(*this, WTF::move(style));
 }

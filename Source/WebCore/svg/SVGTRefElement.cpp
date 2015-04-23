@@ -195,7 +195,7 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGTextPositioningElement::svgAttributeChanged(attrName);
 }
 
-RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGInline>(*this, WTF::move(style));
 }

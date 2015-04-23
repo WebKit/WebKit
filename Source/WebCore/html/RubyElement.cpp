@@ -43,13 +43,13 @@ Ref<RubyElement> RubyElement::create(const QualifiedName& tagName, Document& doc
     return adoptRef(*new RubyElement(tagName, document));
 }
 
-RenderPtr<RenderElement> RubyElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> RubyElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition& insertionPosition)
 {
     if (style->display() == INLINE)
         return createRenderer<RenderRubyAsInline>(*this, WTF::move(style));
     if (style->display() == BLOCK || style.get().display() == INLINE_BLOCK)
         return createRenderer<RenderRubyAsBlock>(*this, WTF::move(style));
-    return HTMLElement::createElementRenderer(WTF::move(style));
+    return HTMLElement::createElementRenderer(WTF::move(style), insertionPosition);
 }
 
 }

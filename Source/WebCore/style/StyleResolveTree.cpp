@@ -42,7 +42,7 @@
 #include "RenderFullScreen.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderText.h"
-#include "RenderView.h"
+#include "RenderTreePosition.h"
 #include "RenderWidget.h"
 #include "ResourceLoadScheduler.h"
 #include "Settings.h"
@@ -61,31 +61,6 @@ namespace WebCore {
 namespace Style {
 
 enum DetachType { NormalDetach, ReattachDetach };
-
-class RenderTreePosition {
-public:
-    explicit RenderTreePosition(RenderView&);
-    explicit RenderTreePosition(RenderElement& parent);
-    RenderTreePosition(RenderElement& parent, RenderObject* nextSibling);
-
-    RenderElement& parent() { return m_parent; }
-    const RenderElement& parent() const { return m_parent; }
-
-    void insert(RenderObject&);
-    bool canInsert(RenderElement&) const;
-    bool canInsert(RenderText&) const;
-
-    void computeNextSibling(const Node&);
-    void invalidateNextSibling(const RenderObject&);
-
-private:
-    RenderElement& m_parent;
-    RenderObject* m_nextSibling;
-    bool m_hasValidNextSibling;
-#if !ASSERT_DISABLED
-    unsigned m_assertionLimitCounter;
-#endif
-};
 
 static void attachRenderTree(Element&, RenderStyle& inheritedStyle, RenderTreePosition&, PassRefPtr<RenderStyle>);
 static void attachTextRenderer(Text&, RenderTreePosition&);
@@ -150,100 +125,6 @@ Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
     return NoChange;
 }
 
-static bool isRendererReparented(const RenderObject* renderer)
-{
-    if (!renderer->node()->isElementNode())
-        return false;
-    if (renderer->style().hasFlowInto())
-        return true;
-    return false;
-}
-
-static RenderObject* nextSiblingRenderer(const Node& node, const RenderElement& parentRenderer)
-{
-    if (!parentRenderer.element())
-        return nullptr;
-    if (node.isAfterPseudoElement())
-        return nullptr;
-    Node* sibling = node.isBeforePseudoElement() ? NodeRenderingTraversal::firstChild(parentRenderer.element()) : NodeRenderingTraversal::nextSibling(&node);
-    for (; sibling; sibling = NodeRenderingTraversal::nextSibling(sibling)) {
-        RenderObject* renderer = sibling->renderer();
-        if (renderer && !isRendererReparented(renderer))
-            return renderer;
-    }
-    if (PseudoElement* after = parentRenderer.element()->afterPseudoElement())
-        return after->renderer();
-    return nullptr;
-}
-
-RenderTreePosition::RenderTreePosition(RenderView& root)
-    : m_parent(root)
-    , m_nextSibling(nullptr)
-    , m_hasValidNextSibling(true)
-#if !ASSERT_DISABLED
-    , m_assertionLimitCounter(0)
-#endif
-{
-}
-
-RenderTreePosition::RenderTreePosition(RenderElement& parent)
-    : m_parent(parent)
-    , m_nextSibling(nullptr)
-    , m_hasValidNextSibling(false)
-#if !ASSERT_DISABLED
-    , m_assertionLimitCounter(0)
-#endif
-{
-}
-
-RenderTreePosition::RenderTreePosition(RenderElement& parent, RenderObject* nextSibling)
-    : m_parent(parent)
-    , m_nextSibling(nextSibling)
-    , m_hasValidNextSibling(true)
-#if !ASSERT_DISABLED
-    , m_assertionLimitCounter(0)
-#endif
-{
-}
-
-bool RenderTreePosition::canInsert(RenderElement& renderer) const
-{
-    ASSERT(!renderer.parent());
-    return m_parent.isChildAllowed(renderer, renderer.style());
-}
-
-bool RenderTreePosition::canInsert(RenderText& renderer) const
-{
-    ASSERT(!renderer.parent());
-    return m_parent.isChildAllowed(renderer, m_parent.style());
-}
-
-void RenderTreePosition::insert(RenderObject& renderer)
-{
-    ASSERT(m_hasValidNextSibling);
-    m_parent.addChild(&renderer, m_nextSibling);
-}
-
-void RenderTreePosition::computeNextSibling(const Node& node)
-{
-    ASSERT(!node.renderer());
-    if (m_hasValidNextSibling) {
-        // Stop validating at some point so the assert doesn't make us O(N^2) on debug builds.
-        ASSERT(m_parent.isRenderView() || ++m_assertionLimitCounter > 20 || nextSiblingRenderer(node, m_parent) == m_nextSibling);
-        return;
-    }
-    m_nextSibling = nextSiblingRenderer(node, m_parent);
-    m_hasValidNextSibling = true;
-}
-
-void RenderTreePosition::invalidateNextSibling(const RenderObject& siblingRenderer)
-{
-    if (!m_hasValidNextSibling)
-        return;
-    if (m_nextSibling == &siblingRenderer)
-        m_hasValidNextSibling = false;
-}
-
 static bool shouldCreateRenderer(const Element& element, const RenderElement& parentRenderer)
 {
     if (!element.document().shouldCreateRenderers())
@@ -303,7 +184,7 @@ static void createRendererIfNeeded(Element& element, RenderStyle& inheritedStyle
         ? RenderTreePosition(*parentFlowRenderer, parentFlowRenderer->nextRendererForElement(element))
         : renderTreePosition;
 
-    RenderElement* newRenderer = element.createElementRenderer(style.releaseNonNull()).leakPtr();
+    RenderElement* newRenderer = element.createElementRenderer(style.releaseNonNull(), insertionPosition).leakPtr();
     if (!newRenderer)
         return;
     if (!insertionPosition.canInsert(*newRenderer)) {
@@ -336,20 +217,6 @@ static void createRendererIfNeeded(Element& element, RenderStyle& inheritedStyle
     insertionPosition.insert(*newRenderer);
 }
 
-static RenderObject* previousSiblingRenderer(const Text& textNode)
-{
-    if (textNode.renderer())
-        return textNode.renderer()->previousSibling();
-    for (Node* sibling = NodeRenderingTraversal::previousSibling(&textNode); sibling; sibling = NodeRenderingTraversal::previousSibling(sibling)) {
-        RenderObject* renderer = sibling->renderer();
-        if (renderer && !isRendererReparented(renderer))
-            return renderer;
-    }
-    if (PseudoElement* before = textNode.parentElement()->beforePseudoElement())
-        return before->renderer();
-    return nullptr;
-}
-
 static void invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(Node& current)
 {
     if (is<InsertionPoint>(current))
@@ -361,7 +228,7 @@ static void invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(Node& curren
             return;
         if (is<Element>(*sibling)) {
             // Text renderers beyond rendered elements can't be affected.
-            if (!sibling->renderer() || isRendererReparented(sibling->renderer()))
+            if (!sibling->renderer() || RenderTreePosition::isRendererReparented(*sibling->renderer()))
                 continue;
             return;
         }
@@ -393,7 +260,7 @@ static bool textRendererIsNeeded(const Text& textNode, const RenderTreePosition&
     if (parentRenderer.style().preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
         return true;
 
-    RenderObject* previousRenderer = previousSiblingRenderer(textNode);
+    RenderObject* previousRenderer = RenderTreePosition::previousSiblingRenderer(textNode);
     if (previousRenderer && previousRenderer->isBR()) // <span><br/> <br/></span>
         return false;
         
@@ -408,7 +275,7 @@ static bool textRendererIsNeeded(const Text& textNode, const RenderTreePosition&
         RenderObject* first = parentRenderer.firstChild();
         while (first && first->isFloatingOrOutOfFlowPositioned())
             first = first->nextSibling();
-        RenderObject* nextRenderer = nextSiblingRenderer(textNode, parentRenderer);
+        RenderObject* nextRenderer = RenderTreePosition::nextSiblingRenderer(textNode, parentRenderer);
         if (!first || nextRenderer == first) {
             // Whitespace at the start of a block just goes away. Don't even make a render object for this text.
             return false;

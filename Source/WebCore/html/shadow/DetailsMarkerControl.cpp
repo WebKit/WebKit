@@ -50,7 +50,7 @@ DetailsMarkerControl::DetailsMarkerControl(Document& document)
     setPseudo(AtomicString("-webkit-details-marker", AtomicString::ConstructFromLiteral));
 }
 
-RenderPtr<RenderElement> DetailsMarkerControl::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> DetailsMarkerControl::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderDetailsMarker>(*this, WTF::move(style));
 }

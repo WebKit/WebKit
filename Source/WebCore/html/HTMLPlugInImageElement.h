@@ -117,7 +117,7 @@ private:
     virtual void finishParsingChildren() override final;
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) override final;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
     virtual bool childShouldCreateRenderer(const Node&) const override;
     virtual bool willRecalcStyle(Style::Change) override final;
     virtual void didAttachRenderers() override final;

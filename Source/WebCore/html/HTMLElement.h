@@ -79,7 +79,7 @@ public:
     bool ieForbidsInsertHTML() const;
 
     virtual bool rendererIsNeeded(const RenderStyle&) override;
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
     HTMLFormElement* form() const { return virtualForm(); }
 

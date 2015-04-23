@@ -6628,6 +6628,9 @@
     <ClCompile Include="..\style\InlineTextBoxStyle.cpp">
       <Filter>css</Filter>
     </ClCompile>
+    <ClCompile Include="..\style\RenderTreePosition.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
     <ClCompile Include="..\style\StyleFontSizeFunctions.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -14037,6 +14040,9 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\style\InlineTextBoxStyle.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\style\RenderTreePosition.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\style\StyleFontSizeFunctions.h">

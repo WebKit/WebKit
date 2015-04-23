@@ -74,7 +74,7 @@ bool SVGSymbolElement::selfHasRelativeLengths() const
     return hasAttribute(SVGNames::viewBoxAttr);
 }
 
-RenderPtr<RenderElement> SVGSymbolElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> SVGSymbolElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGHiddenContainer>(*this, WTF::move(style));
 }

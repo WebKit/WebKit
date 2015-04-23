@@ -100,7 +100,7 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGGraphicsElement::svgAttributeChanged(attrName);
 }
 
-RenderPtr<RenderElement> SVGEllipseElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> SVGEllipseElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGEllipse>(*this, WTF::move(style));
 }

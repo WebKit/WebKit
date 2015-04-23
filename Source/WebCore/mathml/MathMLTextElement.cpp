@@ -75,14 +75,14 @@ void MathMLTextElement::parseAttribute(const QualifiedName& name, const AtomicSt
     MathMLElement::parseAttribute(name, value);
 }
 
-RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition& insertionPosition)
 {
     if (hasTagName(MathMLNames::moTag))
         return createRenderer<RenderMathMLOperator>(*this, WTF::move(style));
     if (hasTagName(MathMLNames::mspaceTag))
         return createRenderer<RenderMathMLSpace>(*this, WTF::move(style));
     if (hasTagName(MathMLNames::annotationTag))
-        return MathMLElement::createElementRenderer(WTF::move(style));
+        return MathMLElement::createElementRenderer(WTF::move(style), insertionPosition);
 
     ASSERT(hasTagName(MathMLNames::miTag) || hasTagName(MathMLNames::mnTag) || hasTagName(MathMLNames::msTag) || hasTagName(MathMLNames::mtextTag));
 

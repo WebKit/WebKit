@@ -61,7 +61,7 @@ public:
 private:
     SliderThumbElement(Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
     virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
     virtual bool isDisabledFormControl() const override;
     virtual bool matchesReadWritePseudoClass() const override;
@@ -131,7 +131,7 @@ public:
 
 private:
     SliderContainerElement(Document&);
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
     virtual const AtomicString& shadowPseudoId() const override;
 };
 

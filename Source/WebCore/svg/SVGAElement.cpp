@@ -105,7 +105,7 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGGraphicsElement::svgAttributeChanged(attrName);
 }
 
-RenderPtr<RenderElement> SVGAElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> SVGAElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     if (parentNode() && parentNode()->isSVGElement() && downcast<SVGElement>(*parentNode()).isTextContent())
         return createRenderer<RenderSVGInline>(*this, WTF::move(style));

@@ -160,7 +160,7 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
     ASSERT_NOT_REACHED();
 }
 
-RenderPtr<RenderElement> SVGImageElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> SVGImageElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGImage>(*this, WTF::move(style));
 }

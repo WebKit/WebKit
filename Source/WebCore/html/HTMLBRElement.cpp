@@ -70,7 +70,7 @@ void HTMLBRElement::collectStyleForPresentationAttribute(const QualifiedName& na
         HTMLElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-RenderPtr<RenderElement> HTMLBRElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> HTMLBRElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     if (style.get().hasContent())
         return RenderElement::createFor(*this, WTF::move(style));

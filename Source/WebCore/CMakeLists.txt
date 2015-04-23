@@ -2542,6 +2542,7 @@ set(WebCore_SOURCES
     storage/StorageNamespaceProvider.cpp
 
     style/InlineTextBoxStyle.cpp
+    style/RenderTreePosition.cpp
     style/StyleFontSizeFunctions.cpp
     style/StyleResolveForDocument.cpp
     style/StyleResolveTree.cpp

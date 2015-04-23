@@ -102,7 +102,7 @@ void SVGClipPathElement::childrenChanged(const ChildChange& change)
         object->setNeedsLayout();
 }
 
-RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGResourceClipper>(*this, WTF::move(style));
 }

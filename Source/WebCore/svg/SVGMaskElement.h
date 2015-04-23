@@ -55,7 +55,7 @@ private:
 
     HashSet<RenderLayer*> m_clientLayers;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
     virtual bool selfHasRelativeLengths() const override { return true; }
 

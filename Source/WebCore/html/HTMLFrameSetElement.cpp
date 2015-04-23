@@ -157,7 +157,7 @@ bool HTMLFrameSetElement::rendererIsNeeded(const RenderStyle& style)
     return style.isStyleAvailable();
 }
 
-RenderPtr<RenderElement> HTMLFrameSetElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> HTMLFrameSetElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     if (style.get().hasContent())
         return RenderElement::createFor(*this, WTF::move(style));

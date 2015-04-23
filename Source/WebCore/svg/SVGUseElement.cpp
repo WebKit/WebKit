@@ -261,7 +261,7 @@ SVGElement* SVGUseElement::targetClone() const
     return downcast<SVGElement>(root->firstChild());
 }
 
-RenderPtr<RenderElement> SVGUseElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> SVGUseElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGTransformableContainer>(*this, WTF::move(style));
 }

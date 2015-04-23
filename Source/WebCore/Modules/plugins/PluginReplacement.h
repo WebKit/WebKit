@@ -39,6 +39,7 @@ namespace WebCore {
 class HTMLPlugInElement;
 class RenderElement;
 class RenderStyle;
+class RenderTreePosition;
 class ShadowRoot;
 class URL;
 
@@ -50,7 +51,7 @@ public:
     virtual JSC::JSObject* scriptObject() { return 0; }
 
     virtual bool willCreateRenderer() { return false; }
-    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&) = 0;
+    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&, const RenderTreePosition&) = 0;
 
 protected:
     PluginReplacement() { }

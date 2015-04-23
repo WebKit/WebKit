@@ -76,7 +76,7 @@ void SVGStopElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGElement::svgAttributeChanged(attrName);
 }
 
-RenderPtr<RenderElement> SVGStopElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> SVGStopElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGGradientStop>(*this, WTF::move(style));
 }

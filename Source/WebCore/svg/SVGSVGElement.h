@@ -134,7 +134,7 @@ private:
     virtual void didMoveToNewDocument(Document* oldDocument) override;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual bool rendererIsNeeded(const RenderStyle&) override;
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;
     virtual void svgAttributeChanged(const QualifiedName&) override;

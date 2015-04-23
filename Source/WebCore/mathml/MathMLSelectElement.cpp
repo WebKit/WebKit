@@ -51,7 +51,7 @@ Ref<MathMLSelectElement> MathMLSelectElement::create(const QualifiedName& tagNam
     return adoptRef(*new MathMLSelectElement(tagName, document));
 }
 
-RenderPtr<RenderElement> MathMLSelectElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> MathMLSelectElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderMathMLRow>(*this, WTF::move(style));
 }

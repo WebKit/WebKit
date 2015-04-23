@@ -49,6 +49,7 @@ class PlatformMouseEvent;
 class PlatformWheelEvent;
 class PseudoElement;
 class RenderNamedFlowFragment;
+class RenderTreePosition;
 class ShadowRoot;
 
 enum SpellcheckAttributeState {
@@ -242,7 +243,7 @@ public:
 
     virtual void copyNonAttributePropertiesFromElement(const Element&) { }
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&);
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&);
     virtual bool rendererIsNeeded(const RenderStyle&);
 
     WEBCORE_EXPORT ShadowRoot* shadowRoot() const;

@@ -125,7 +125,7 @@ void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName
         object->setNeedsLayout();
 }
 
-RenderPtr<RenderElement> SVGRadialGradientElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> SVGRadialGradientElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGResourceRadialGradient>(*this, WTF::move(style));
 }

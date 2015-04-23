@@ -57,7 +57,7 @@ Ref<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Doc
     return meter;
 }
 
-RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     if (!document().page()->theme().supportsMeter(style.get().appearance()))
         return RenderElement::createFor(*this, WTF::move(style));

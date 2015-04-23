@@ -101,7 +101,7 @@ private:
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
     virtual void didAttachRenderers() override;
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
     void setBestFitURLAndDPRFromImageCandidate(const ImageCandidate&);
 
     virtual bool canStartSelection() const override;

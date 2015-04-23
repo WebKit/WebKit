@@ -1,3 +1,18 @@
+2015-04-22  Zalan Bujtas  <zalan@apple.com>
+
+        Create RenderRubyText for <rt> only when the parent renderer is a RenderRuby.
+        https://bugs.webkit.org/show_bug.cgi?id=144035
+        rdar://problem/20604467
+
+        Reviewed by Darin Adler.
+
+        This patch extends HTMLElement::createElementRenderer()
+        with the render tree insertion point so that we can create different type
+        of renderers based on the render tree context.
+
+        * fast/ruby/ruby-rt-with-region-crash-expected.txt: Added.
+        * fast/ruby/ruby-rt-with-region-crash.html: Added.
+
 2015-04-22  Brent Fulgham  <bfulgham@apple.com>
 
         Context menu doesn't account for selection semantics

@@ -482,7 +482,7 @@ protected:
     void endIgnoringTrackDisplayUpdateRequests();
 #endif
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     bool mediaControlsDependOnPageScaleFactor() const { return m_mediaControlsDependOnPageScaleFactor; }

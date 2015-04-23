@@ -130,12 +130,12 @@ QuickTimePluginReplacement::~QuickTimePluginReplacement()
     m_mediaElement = nullptr;
 }
 
-RenderPtr<RenderElement> QuickTimePluginReplacement::createElementRenderer(HTMLPlugInElement& plugin, Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> QuickTimePluginReplacement::createElementRenderer(HTMLPlugInElement& plugin, Ref<RenderStyle>&& style, const RenderTreePosition& insertionPosition)
 {
     ASSERT_UNUSED(plugin, m_parentElement == &plugin);
 
     if (m_mediaElement)
-        return m_mediaElement->createElementRenderer(WTF::move(style));
+        return m_mediaElement->createElementRenderer(WTF::move(style), insertionPosition);
 
     return nullptr;
 }

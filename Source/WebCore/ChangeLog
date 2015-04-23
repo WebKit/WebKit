@@ -1,3 +1,266 @@
+2015-04-22  Zalan Bujtas  <zalan@apple.com>
+
+        Create RenderRubyText for <rt> only when the parent renderer is a RenderRuby.
+        https://bugs.webkit.org/show_bug.cgi?id=144035
+        rdar://problem/20604467
+
+        Reviewed by Darin Adler.
+
+        This patch extends HTMLElement::createElementRenderer()
+        with the render tree insertion point so that we can create different type
+        of renderers based on the render tree context.
+
+        Test: fast/ruby/ruby-rt-with-region-crash.html
+
+        * CMakeLists.txt:
+        * Modules/plugins/PluginReplacement.h:
+        * Modules/plugins/QuickTimePluginReplacement.h:
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::createElementRenderer):
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::YouTubePluginReplacement::createElementRenderer):
+        * Modules/plugins/YouTubePluginReplacement.h:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.cpp:
+        (WebCore::Element::createElementRenderer):
+        * dom/Element.h:
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::createElementRenderer):
+        * html/HTMLAppletElement.h:
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::createElementRenderer):
+        * html/HTMLAttachmentElement.h:
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::createElementRenderer):
+        * html/HTMLBRElement.h:
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::createElementRenderer):
+        * html/HTMLButtonElement.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createElementRenderer):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::createElementRenderer):
+        * html/HTMLDetailsElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createElementRenderer):
+        * html/HTMLElement.h:
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::createElementRenderer):
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::createElementRenderer):
+        * html/HTMLFrameElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::createElementRenderer):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::createElementRenderer):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::createElementRenderer):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createElementRenderer):
+        * html/HTMLInputElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::createElementRenderer):
+        * html/HTMLMeterElement.h:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::createElementRenderer):
+        * html/HTMLPlugInElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::createElementRenderer):
+        * html/HTMLPlugInImageElement.h:
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::createElementRenderer):
+        * html/HTMLProgressElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::createElementRenderer):
+        * html/HTMLSelectElement.h:
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::createElementRenderer):
+        * html/HTMLSummaryElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::createElementRenderer):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::createElementRenderer):
+        * html/HTMLVideoElement.h:
+        * html/HTMLWBRElement.cpp:
+        (WebCore::HTMLWBRElement::createElementRenderer):
+        * html/HTMLWBRElement.h:
+        * html/RubyElement.cpp:
+        (WebCore::RubyElement::createElementRenderer):
+        * html/RubyElement.h:
+        * html/RubyTextElement.cpp:
+        (WebCore::RubyTextElement::createElementRenderer):
+        * html/RubyTextElement.h:
+        * html/shadow/DetailsMarkerControl.cpp:
+        (WebCore::DetailsMarkerControl::createElementRenderer):
+        * html/shadow/DetailsMarkerControl.h:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineContainerElement::createElementRenderer):
+        (WebCore::MediaControlVolumeSliderContainerElement::createElementRenderer):
+        (WebCore::MediaControlTextTrackContainerElement::createElementRenderer):
+        * html/shadow/MediaControlElements.h:
+        * html/shadow/MeterShadowElement.cpp:
+        (WebCore::MeterInnerElement::createElementRenderer):
+        * html/shadow/MeterShadowElement.h:
+        * html/shadow/ProgressShadowElement.cpp:
+        (WebCore::ProgressInnerElement::createElementRenderer):
+        * html/shadow/ProgressShadowElement.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::createElementRenderer):
+        (WebCore::SliderContainerElement::createElementRenderer):
+        * html/shadow/SliderThumbElement.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerContainer::createElementRenderer):
+        (WebCore::TextControlInnerTextElement::createElementRenderer):
+        * html/shadow/TextControlInnerElements.h:
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp:
+        (WebCore::ImageControlsButtonElementMac::createElementRenderer):
+        * html/shadow/mac/ImageControlsButtonElementMac.h:
+        * html/shadow/mac/ImageControlsRootElementMac.cpp:
+        (WebCore::ImageControlsRootElementMac::createElementRenderer):
+        * html/shadow/mac/ImageControlsRootElementMac.h:
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::createElementRenderer):
+        * html/track/VTTCue.h:
+        * mathml/MathMLInlineContainerElement.cpp:
+        (WebCore::MathMLInlineContainerElement::createElementRenderer):
+        * mathml/MathMLInlineContainerElement.h:
+        * mathml/MathMLMathElement.cpp:
+        (WebCore::MathMLMathElement::createElementRenderer):
+        * mathml/MathMLMathElement.h:
+        * mathml/MathMLMencloseElement.cpp:
+        (WebCore::MathMLMencloseElement::createElementRenderer):
+        * mathml/MathMLMencloseElement.h:
+        * mathml/MathMLSelectElement.cpp:
+        (WebCore::MathMLSelectElement::createElementRenderer):
+        * mathml/MathMLSelectElement.h:
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::createElementRenderer):
+        * mathml/MathMLTextElement.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clone):
+        * rendering/RenderElement.cpp:
+        * rendering/RenderRuby.h:
+        (WebCore::isRuby):
+        * style/RenderTreePosition.cpp: Added.
+        (WebCore::RenderTreePosition::computeNextSibling):
+        (WebCore::RenderTreePosition::invalidateNextSibling):
+        (WebCore::RenderTreePosition::previousSiblingRenderer):
+        (WebCore::RenderTreePosition::nextSiblingRenderer):
+        (WebCore::RenderTreePosition::isRendererReparented):
+        * style/RenderTreePosition.h: Added.
+        (WebCore::RenderTreePosition::RenderTreePosition):
+        (WebCore::RenderTreePosition::parent):
+        (WebCore::RenderTreePosition::canInsert):
+        (WebCore::RenderTreePosition::insert):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::createRendererIfNeeded):
+        (WebCore::Style::invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded):
+        (WebCore::Style::textRendererIsNeeded):
+        (WebCore::Style::RenderTreePosition::parent): Deleted.
+        (WebCore::Style::isRendererReparented): Deleted.
+        (WebCore::Style::nextSiblingRenderer): Deleted.
+        (WebCore::Style::RenderTreePosition::RenderTreePosition): Deleted.
+        (WebCore::Style::RenderTreePosition::canInsert): Deleted.
+        (WebCore::Style::RenderTreePosition::insert): Deleted.
+        (WebCore::Style::RenderTreePosition::computeNextSibling): Deleted.
+        (WebCore::Style::RenderTreePosition::invalidateNextSibling): Deleted.
+        (WebCore::Style::previousSiblingRenderer): Deleted.
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::createElementRenderer):
+        * svg/SVGAElement.h:
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::createElementRenderer):
+        * svg/SVGAltGlyphElement.h:
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::createElementRenderer):
+        * svg/SVGCircleElement.h:
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::createElementRenderer):
+        * svg/SVGClipPathElement.h:
+        * svg/SVGDefsElement.cpp:
+        (WebCore::SVGDefsElement::createElementRenderer):
+        * svg/SVGDefsElement.h:
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::createElementRenderer):
+        * svg/SVGEllipseElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::createElementRenderer):
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::createElementRenderer):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::createElementRenderer):
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::createElementRenderer):
+        * svg/SVGGElement.h:
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::createElementRenderer):
+        * svg/SVGGraphicsElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::createElementRenderer):
+        * svg/SVGImageElement.h:
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::createElementRenderer):
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::createElementRenderer):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::createElementRenderer):
+        * svg/SVGMaskElement.h:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::createElementRenderer):
+        * svg/SVGPathElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::createElementRenderer):
+        * svg/SVGPatternElement.h:
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::createElementRenderer):
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::createElementRenderer):
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::createElementRenderer):
+        * svg/SVGSVGElement.h:
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::createElementRenderer):
+        * svg/SVGStopElement.h:
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::createElementRenderer):
+        * svg/SVGSwitchElement.h:
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::createElementRenderer):
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::createElementRenderer):
+        * svg/SVGTRefElement.h:
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::createElementRenderer):
+        * svg/SVGTSpanElement.h:
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::createElementRenderer):
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::createElementRenderer):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::createElementRenderer):
+        * svg/SVGUseElement.h:
+
 2015-04-22  Brent Fulgham  <bfulgham@apple.com>
 
         VisibleSelection should only accept Range by reference

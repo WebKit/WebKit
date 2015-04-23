@@ -62,6 +62,7 @@
 #include "RenderTableCell.h"
 #include "RenderTextFragment.h"
 #include "RenderTheme.h"
+#include "RenderTreePosition.h"
 #include "RenderView.h"
 #include "SVGTextRunRenderingContext.h"
 #include "Settings.h"
@@ -385,7 +386,8 @@ RenderPtr<RenderBlock> RenderBlock::clone() const
         cloneBlock = RenderPtr<RenderBlock>(createAnonymousBlock());
         cloneBlock->setChildrenInline(childrenInline());
     } else {
-        cloneBlock = static_pointer_cast<RenderBlock>(element()->createElementRenderer(style()));
+        RenderTreePosition insertionPosition(*parent());
+        cloneBlock = static_pointer_cast<RenderBlock>(element()->createElementRenderer(style(), insertionPosition));
         cloneBlock->initializeStyle();
 
         // This takes care of setting the right value of childrenInline in case

@@ -53,7 +53,7 @@ bool HTMLFrameElement::rendererIsNeeded(const RenderStyle&)
     return isURLAllowed();
 }
 
-RenderPtr<RenderElement> HTMLFrameElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> HTMLFrameElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderFrame>(*this, WTF::move(style));
 }

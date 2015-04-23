@@ -28,6 +28,7 @@
 
 #include "RenderRuby.h"
 #include "RenderRubyText.h"
+#include "RenderTreePosition.h"
 
 namespace WebCore {
 
@@ -44,12 +45,12 @@ Ref<RubyTextElement> RubyTextElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new RubyTextElement(tagName, document));
 }
 
-RenderPtr<RenderElement> RubyTextElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> RubyTextElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition& insertionPosition)
 {
-    // Treat <rt> as ruby text ONLY if the parent is ruby.
-    if (parentElement() && isRuby(parentElement()->renderer()))
+    // RenderRubyText requires its parent to be RenderRubyRun.
+    if (isRuby(insertionPosition.parent()))
         return createRenderer<RenderRubyText>(*this, WTF::move(style));
-    return HTMLElement::createElementRenderer(WTF::move(style));
+    return HTMLElement::createElementRenderer(WTF::move(style), insertionPosition);
 }
 
 }

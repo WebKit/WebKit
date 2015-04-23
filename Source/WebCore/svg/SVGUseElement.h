@@ -64,7 +64,7 @@ private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&) override;
     virtual void willAttachRenderers() override;
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
     virtual void toClipPath(Path&) override;
     virtual bool haveLoadedRequiredResources() override;
     virtual void finishParsingChildren() override;

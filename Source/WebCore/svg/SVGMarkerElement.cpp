@@ -213,7 +213,7 @@ void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
     svgAttributeChanged(orientAnglePropertyInfo()->attributeName);
 }
 
-RenderPtr<RenderElement> SVGMarkerElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> SVGMarkerElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGResourceMarker>(*this, WTF::move(style));
 }

@@ -90,7 +90,8 @@ private:
 };
 
 
-inline bool isRuby(const RenderObject* renderer) { return (renderer && (is<RenderRubyAsInline>(renderer) || is<RenderRubyAsBlock>(renderer))); }
+inline bool isRuby(const RenderObject& renderer) { return (is<RenderRubyAsInline>(renderer) || is<RenderRubyAsBlock>(renderer)); }
+inline bool isRuby(const RenderObject* renderer) { return (renderer && isRuby(*renderer)); }
 
 } // namespace WebCore
 

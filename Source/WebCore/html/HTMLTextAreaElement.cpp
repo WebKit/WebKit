@@ -209,7 +209,7 @@ void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const Atomic
         HTMLTextFormControlElement::parseAttribute(name, value);
 }
 
-RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderTextControlMultiLine>(*this, WTF::move(style));
 }

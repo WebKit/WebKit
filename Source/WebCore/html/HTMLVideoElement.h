@@ -76,7 +76,7 @@ public:
     bool shouldDisplayPosterImage() const { return displayMode() == Poster || displayMode() == PosterWaitingForVideo; }
 
     URL posterImageURL() const;
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     bool webkitSupportsPresentationMode(const String&) const;

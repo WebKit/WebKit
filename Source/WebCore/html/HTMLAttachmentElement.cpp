@@ -51,7 +51,7 @@ Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& ta
     return adoptRef(*new HTMLAttachmentElement(tagName, document));
 }
 
-RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderAttachment>(*this, WTF::move(style));
 }

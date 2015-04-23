@@ -102,7 +102,7 @@ ImageControlsRootElementMac::~ImageControlsRootElementMac()
 {
 }
 
-RenderPtr<RenderElement> ImageControlsRootElementMac::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> ImageControlsRootElementMac::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderImageControls>(*this, WTF::move(style));
 }

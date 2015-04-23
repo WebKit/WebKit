@@ -111,7 +111,7 @@ HTMLDetailsElement::HTMLDetailsElement(const QualifiedName& tagName, Document& d
     ASSERT(hasTagName(detailsTag));
 }
 
-RenderPtr<RenderElement> HTMLDetailsElement::createElementRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> HTMLDetailsElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderBlockFlow>(*this, WTF::move(style));
 }

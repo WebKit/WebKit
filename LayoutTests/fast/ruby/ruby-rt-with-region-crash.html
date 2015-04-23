@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText();
+  </script>
+
+  <style>
+	rt {
+      -webkit-flow-into: flowContent;
+	}
+	
+	div {
+	  -webkit-flow-from: flowContent; 
+	}
+  </style>
+</head>
+<body>
+  <div></div>
+  <ruby><rt>Pass if no assert or crash in Debug.</rt></ruby>
+  <script>
+    document.execCommand("SelectAll");
+  </script>
+</body>
+</html>

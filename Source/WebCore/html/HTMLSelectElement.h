@@ -138,7 +138,7 @@ private:
     virtual bool isPresentationAttribute(const QualifiedName&) const override;
 
     virtual bool childShouldCreateRenderer(const Node&) const override;
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
     virtual bool appendFormData(FormDataList&, bool) override;
 
     virtual void reset() override;
