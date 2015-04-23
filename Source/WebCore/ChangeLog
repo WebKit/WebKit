@@ -1,3 +1,20 @@
+2015-04-22  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Convert OwnPtr to std::unique_ptr in GraphicsContextCairo.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=144033
+
+        Reviewed by Darin Adler.
+
+        Use unique_ptr for creating a copy of cairo_path_t and use lambda function
+        for custom deleter, cairo_path_destroy().
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::drawPathShadow): Use std::unique_ptr instead of OwnPtr.
+        (WebCore::GraphicsContext::clip): Call cairo_path_destroy() immediately.
+        * platform/graphics/cairo/OwnPtrCairo.cpp:
+        (WTF::deleteOwnedPtr<cairo_path_t>): Deleted. Remove unnecessary deleter anymore.
+        * platform/graphics/cairo/OwnPtrCairo.h: Ditto.
+
 2015-04-22  Darin Adler  <darin@apple.com>
 
         Eliminate remaining uses of OwnPtr and PassOwnPtr in WebCore outside the editing and platform directories

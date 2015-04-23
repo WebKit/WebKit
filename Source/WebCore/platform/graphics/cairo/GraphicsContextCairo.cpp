@@ -45,7 +45,6 @@
 #include "GraphicsContextPlatformPrivateCairo.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
-#include "OwnPtrCairo.h"
 #include "Path.h"
 #include "Pattern.h"
 #include "PlatformContextCairo.h"
@@ -98,7 +97,9 @@ static inline void drawPathShadow(GraphicsContext* context, PathDrawingStyle dra
 
     // Calculate the extents of the rendered solid paths.
     cairo_t* cairoContext = context->platformContext()->cr();
-    OwnPtr<cairo_path_t> path = adoptPtr(cairo_copy_path(cairoContext));
+    std::unique_ptr<cairo_path_t, void(*)(cairo_path_t*)> path(cairo_copy_path(cairoContext), [](cairo_path_t* path) {
+        cairo_path_destroy(path);
+    });
 
     FloatRect solidFigureExtents;
     double x0 = 0;
@@ -953,10 +954,10 @@ void GraphicsContext::clip(const Path& path, WindRule windRule)
         return;
 
     cairo_t* cr = platformContext()->cr();
-    OwnPtr<cairo_path_t> pathCopy;
     if (!path.isNull()) {
-        pathCopy = adoptPtr(cairo_copy_path(path.platformPath()->context()));
-        cairo_append_path(cr, pathCopy.get());
+        cairo_path_t* pathCopy = cairo_copy_path(path.platformPath()->context());
+        cairo_append_path(cr, pathCopy);
+        cairo_path_destroy(pathCopy);
     }
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     if (windRule == RULE_NONZERO)

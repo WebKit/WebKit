@@ -45,12 +45,6 @@ template <> void deleteOwnedPtr<FcFontSet>(FcFontSet* ptr)
 }
 #endif
 
-template <> void deleteOwnedPtr<cairo_path_t>(cairo_path_t* ptr)
-{
-    if (ptr)
-        cairo_path_destroy(ptr);
-}
-
 } // namespace WTF
 
 #endif // USE(CAIRO)
