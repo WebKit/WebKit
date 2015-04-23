@@ -56,18 +56,21 @@ struct Trigger {
 struct Action {
     Action()
         : m_type(ActionType::InvalidAction)
+        , m_actionID(std::numeric_limits<uint32_t>::max())
     {
     }
 
-    Action(ActionType type, const String& stringArgument)
+    Action(ActionType type, const String& stringArgument, uint32_t actionID = std::numeric_limits<uint32_t>::max())
         : m_type(type)
+        , m_actionID(actionID)
         , m_stringArgument(stringArgument)
     {
         ASSERT(type == ActionType::CSSDisplayNoneSelector || type == ActionType::CSSDisplayNoneStyleSheet);
     }
 
-    Action(ActionType type)
+    Action(ActionType type, uint32_t actionID = std::numeric_limits<uint32_t>::max())
         : m_type(type)
+        , m_actionID(actionID)
     {
         ASSERT(type != ActionType::CSSDisplayNoneSelector && type != ActionType::CSSDisplayNoneStyleSheet);
     }
@@ -75,16 +78,23 @@ struct Action {
     bool operator==(const Action& other) const
     {
         return m_type == other.m_type
+            && m_extensionIdentifier == other.m_extensionIdentifier
+            && m_actionID == other.m_actionID
             && m_stringArgument == other.m_stringArgument;
     }
 
-    static Action deserialize(const SerializedActionByte* actions, const unsigned actionsLength, unsigned location);
+    static Action deserialize(const SerializedActionByte* actions, const unsigned actionsLength, uint32_t location);
 
+    void setExtensionIdentifier(const String& extensionIdentifier) { m_extensionIdentifier = extensionIdentifier; }
+    const String& extensionIdentifier() const { return m_extensionIdentifier; }
     ActionType type() const { return m_type; }
+    uint32_t actionID() const { return m_actionID; }
     const String& stringArgument() const { return m_stringArgument; }
-        
+
 private:
+    String m_extensionIdentifier;
     ActionType m_type;
+    uint32_t m_actionID;
     String m_stringArgument;
 };
     

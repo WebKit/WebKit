@@ -22,60 +22,43 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#include "config.h"
-#include "ContentExtension.h"
-
-#include "CompiledContentExtension.h"
-#include "ContentExtensionsBackend.h"
-#include "StyleSheetContents.h"
-#include <wtf/text/StringBuilder.h>
+#ifndef ContentExtensionStyleSheet_h
+#define ContentExtensionStyleSheet_h
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "CSSStyleSheet.h"
+#include <wtf/HashSet.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
+
+class Document;
+
 namespace ContentExtensions {
 
-RefPtr<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension)
-{
-    return adoptRef(*new ContentExtension(identifier, WTF::move(compiledExtension)));
-}
-
-ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension)
-    : m_identifier(identifier)
-    , m_compiledExtension(WTF::move(compiledExtension))
-    , m_parsedGlobalDisplayNoneStyleSheet(false)
-{
-}
-
-StyleSheetContents* ContentExtension::globalDisplayNoneStyleSheet()
-{
-    if (m_parsedGlobalDisplayNoneStyleSheet)
-        return m_globalDisplayNoneStyleSheet.get();
-
-    m_parsedGlobalDisplayNoneStyleSheet = true;
-
-    Vector<String> selectors = m_compiledExtension->globalDisplayNoneSelectors(m_pagesUsed);
-    if (selectors.isEmpty())
-        return nullptr;
-
-    StringBuilder css;
-    for (auto& selector : selectors) {
-        css.append(selector);
-        css.append("{");
-        css.append(ContentExtensionsBackend::displayNoneCSSRule());
-        css.append("}");
+class ContentExtensionStyleSheet : public RefCounted<ContentExtensionStyleSheet> {
+public:
+    static Ref<ContentExtensionStyleSheet> create(Document& document)
+    {
+        return adoptRef(*new ContentExtensionStyleSheet(document));
     }
 
-    m_globalDisplayNoneStyleSheet = StyleSheetContents::create();
-    m_globalDisplayNoneStyleSheet->setIsUserStyleSheet(true);
-    if (!m_globalDisplayNoneStyleSheet->parseString(css.toString()))
-        m_globalDisplayNoneStyleSheet = nullptr;
+    void addDisplayNoneSelector(const String& selector, uint32_t selectorID);
 
-    return m_globalDisplayNoneStyleSheet.get();
-}
+    CSSStyleSheet& styleSheet() { return m_styleSheet.get(); }
+
+private:
+    ContentExtensionStyleSheet(Document&);
+
+    Ref<CSSStyleSheet> m_styleSheet;
+    HashSet<uint32_t, DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_addedSelectorIDs;
+};
 
 } // namespace ContentExtensions
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
+#endif // ContentExtensionStyleSheet_h

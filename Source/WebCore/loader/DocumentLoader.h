@@ -271,7 +271,7 @@ namespace WebCore {
 
 #if ENABLE(CONTENT_EXTENSIONS)
         void addPendingContentExtensionSheet(const String& identifier, StyleSheetContents&);
-        void addPendingContentExtensionSheet(StyleSheetContents&);
+        void addPendingContentExtensionDisplayNoneSelector(const String& identifier, const String& selector, uint32_t selectorID);
 #endif
 
     protected:
@@ -440,7 +440,7 @@ namespace WebCore {
 
 #if ENABLE(CONTENT_EXTENSIONS)
         HashMap<String, RefPtr<StyleSheetContents>> m_pendingNamedContentExtensionStyleSheets;
-        HashSet<RefPtr<StyleSheetContents>> m_pendingUnnamedContentExtensionStyleSheets;
+        HashMap<String, std::pair<String, uint32_t>> m_pendingContentExtensionDisplayNoneSelectors;
 #endif
 
     };

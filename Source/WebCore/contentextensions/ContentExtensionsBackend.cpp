@@ -105,6 +105,7 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
             // Add actions in reverse order to properly deal with IgnorePreviousRules.
             for (unsigned i = actionLocations.size(); i; i--) {
                 Action action = Action::deserialize(actions, actionsLength, actionLocations[i - 1]);
+                action.setExtensionIdentifier(contentExtension->identifier());
                 if (action.type() == ActionType::IgnorePreviousRules) {
                     sawIgnorePreviousRules = true;
                     break;
@@ -116,12 +117,14 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
             DFABytecodeInterpreter::Actions universalActions = interpreter.actionsFromDFARoot();
             for (auto actionLocation : universalActions) {
                 Action action = Action::deserialize(actions, actionsLength, static_cast<unsigned>(actionLocation));
-                
+                action.setExtensionIdentifier(contentExtension->identifier());
+
                 // CSS selectors were already compiled into a stylesheet using globalDisplayNoneSelectors.
                 if (action.type() != ActionType::CSSDisplayNoneSelector)
                     finalActions.append(action);
             }
             finalActions.append(Action(ActionType::CSSDisplayNoneStyleSheet, contentExtension->identifier()));
+            finalActions.last().setExtensionIdentifier(contentExtension->identifier());
         }
     }
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
@@ -163,8 +166,10 @@ void ContentExtensionsBackend::processContentExtensionRulesForLoad(ResourceReque
             request.setAllowCookies(false);
             break;
         case ContentExtensions::ActionType::CSSDisplayNoneSelector:
-            css.append(action.stringArgument());
-            css.append(displayNoneCSSRule());
+            if (resourceType == ResourceType::Document)
+                initiatingDocumentLoader.addPendingContentExtensionDisplayNoneSelector(action.extensionIdentifier(), action.stringArgument(), action.actionID());
+            else if (currentDocument)
+                currentDocument->styleSheetCollection().addDisplayNoneSelector(action.extensionIdentifier(), action.stringArgument(), action.actionID());
             break;
         case ContentExtensions::ActionType::CSSDisplayNoneStyleSheet: {
             StyleSheetContents* styleSheetContents = globalDisplayNoneStyleSheet(action.stringArgument());
@@ -182,25 +187,13 @@ void ContentExtensionsBackend::processContentExtensionRulesForLoad(ResourceReque
         }
     }
 
-    if (css.length()) {
-        Ref<StyleSheetContents> styleSheet = StyleSheetContents::create();
-        styleSheet->setIsUserStyleSheet(true);
-
-        if (styleSheet->parseString(css.toString())) {
-            if (resourceType == ResourceType::Document)
-                initiatingDocumentLoader.addPendingContentExtensionSheet(styleSheet);
-            else if (currentDocument)
-                currentDocument->styleSheetCollection().addContentExtensionUserSheet(WTF::move(styleSheet));
-        }
-    }
-
     if (willBlockLoad)
         request = ResourceRequest();
 }
 
 const String& ContentExtensionsBackend::displayNoneCSSRule()
 {
-    static NeverDestroyed<const String> rule(ASCIILiteral("{display:none !important;}\n"));
+    static NeverDestroyed<const String> rule(ASCIILiteral("display:none !important;"));
     return rule;
 }
 

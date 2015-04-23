@@ -24,55 +24,33 @@
  */
 
 #include "config.h"
-#include "ContentExtension.h"
-
-#include "CompiledContentExtension.h"
-#include "ContentExtensionsBackend.h"
-#include "StyleSheetContents.h"
-#include <wtf/text/StringBuilder.h>
+#include "ContentExtensionStyleSheet.h"
 
 #if ENABLE(CONTENT_EXTENSIONS)
+
+#include "CSSStyleSheet.h"
+#include "ContentExtensionsBackend.h"
+#include "Document.h"
+#include "StyleSheetContents.h"
 
 namespace WebCore {
 namespace ContentExtensions {
 
-RefPtr<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension)
+ContentExtensionStyleSheet::ContentExtensionStyleSheet(Document& document)
+    : m_styleSheet(CSSStyleSheet::create(StyleSheetContents::create(), &document))
 {
-    return adoptRef(*new ContentExtension(identifier, WTF::move(compiledExtension)));
+    m_styleSheet->contents().setIsUserStyleSheet(true);
 }
 
-ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension)
-    : m_identifier(identifier)
-    , m_compiledExtension(WTF::move(compiledExtension))
-    , m_parsedGlobalDisplayNoneStyleSheet(false)
+void ContentExtensionStyleSheet::addDisplayNoneSelector(const String& selector, uint32_t selectorID)
 {
-}
+    ASSERT(selectorID != std::numeric_limits<uint32_t>::max());
 
-StyleSheetContents* ContentExtension::globalDisplayNoneStyleSheet()
-{
-    if (m_parsedGlobalDisplayNoneStyleSheet)
-        return m_globalDisplayNoneStyleSheet.get();
+    if (!m_addedSelectorIDs.add(selectorID).isNewEntry)
+        return;
 
-    m_parsedGlobalDisplayNoneStyleSheet = true;
-
-    Vector<String> selectors = m_compiledExtension->globalDisplayNoneSelectors(m_pagesUsed);
-    if (selectors.isEmpty())
-        return nullptr;
-
-    StringBuilder css;
-    for (auto& selector : selectors) {
-        css.append(selector);
-        css.append("{");
-        css.append(ContentExtensionsBackend::displayNoneCSSRule());
-        css.append("}");
-    }
-
-    m_globalDisplayNoneStyleSheet = StyleSheetContents::create();
-    m_globalDisplayNoneStyleSheet->setIsUserStyleSheet(true);
-    if (!m_globalDisplayNoneStyleSheet->parseString(css.toString()))
-        m_globalDisplayNoneStyleSheet = nullptr;
-
-    return m_globalDisplayNoneStyleSheet.get();
+    ExceptionCode ec;
+    m_styleSheet->addRule(selector, ContentExtensionsBackend::displayNoneCSSRule(), ec);
 }
 
 } // namespace ContentExtensions

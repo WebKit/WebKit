@@ -832,11 +832,11 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
 
     for (auto& pendingStyleSheet : m_pendingNamedContentExtensionStyleSheets)
         styleSheetCollection.maybeAddContentExtensionSheet(pendingStyleSheet.key, *pendingStyleSheet.value);
-    for (auto& pendingStyleSheet : m_pendingUnnamedContentExtensionStyleSheets)
-        styleSheetCollection.addUserSheet(*pendingStyleSheet);
+    for (auto& pendingSelector : m_pendingContentExtensionDisplayNoneSelectors)
+        styleSheetCollection.addDisplayNoneSelector(pendingSelector.key, pendingSelector.value.first, pendingSelector.value.second);
 
     m_pendingNamedContentExtensionStyleSheets.clear();
-    m_pendingUnnamedContentExtensionStyleSheets.clear();
+    m_pendingContentExtensionDisplayNoneSelectors.clear();
 #endif
 
     ASSERT(m_frame->document()->parsing());
@@ -1558,10 +1558,10 @@ void DocumentLoader::addPendingContentExtensionSheet(const String& identifier, S
     m_pendingNamedContentExtensionStyleSheets.set(identifier, &sheet);
 }
 
-void DocumentLoader::addPendingContentExtensionSheet(StyleSheetContents& sheet)
+void DocumentLoader::addPendingContentExtensionDisplayNoneSelector(const String& identifier, const String& selector, uint32_t selectorID)
 {
     ASSERT(!m_gotFirstByte);
-    m_pendingUnnamedContentExtensionStyleSheets.add(&sheet);
+    m_pendingContentExtensionDisplayNoneSelectors.set(identifier, std::make_pair(selector, selectorID));
 }
 #endif
 

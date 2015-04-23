@@ -37,6 +37,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(CONTENT_EXTENSIONS)
+#include "ContentExtensionStyleSheet.h"
+#endif
+
 namespace WebCore {
 
 class CSSStyleSheet;
@@ -71,8 +75,11 @@ public:
 
     WEBCORE_EXPORT void addAuthorSheet(Ref<StyleSheetContents>&& authorSheet);
     WEBCORE_EXPORT void addUserSheet(Ref<StyleSheetContents>&& userSheet);
-    void addContentExtensionUserSheet(Ref<StyleSheetContents>&& userSheet);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    void addDisplayNoneSelector(const String& identifier, const String& selector, uint32_t selectorID);
     void maybeAddContentExtensionSheet(const String& identifier, StyleSheetContents&);
+#endif
 
     enum UpdateFlag { NoUpdate = 0, OptimizedUpdate, FullUpdate };
 
@@ -152,7 +159,11 @@ private:
 
     Vector<RefPtr<CSSStyleSheet>> m_userStyleSheets;
     Vector<RefPtr<CSSStyleSheet>> m_authorStyleSheets;
+
+#if ENABLE(CONTENT_EXTENSIONS)
     HashMap<String, RefPtr<CSSStyleSheet>> m_contentExtensionSheets;
+    HashMap<String, RefPtr<ContentExtensions::ContentExtensionStyleSheet>> m_contentExtensionSelectorSheets;
+#endif
 
     bool m_hadActiveLoadingStylesheet;
     UpdateFlag m_pendingUpdateType;

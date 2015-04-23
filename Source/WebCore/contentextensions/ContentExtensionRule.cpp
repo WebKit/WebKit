@@ -43,11 +43,11 @@ Action Action::deserialize(const SerializedActionByte* actions, const unsigned a
 {
     switch (static_cast<ActionType>(actions[location])) {
     case ActionType::BlockCookies:
-        return ActionType::BlockCookies;
+        return Action(ActionType::BlockCookies, location);
     case ActionType::BlockLoad:
-        return ActionType::BlockLoad;
+        return Action(ActionType::BlockLoad, location);
     case ActionType::IgnorePreviousRules:
-        return ActionType::IgnorePreviousRules;
+        return Action(ActionType::IgnorePreviousRules, location);
     case ActionType::CSSDisplayNoneSelector: {
         unsigned stringStartIndex = location + sizeof(ActionType) + sizeof(unsigned) + sizeof(bool);
         RELEASE_ASSERT(actionsLength >= stringStartIndex);
@@ -56,10 +56,10 @@ Action Action::deserialize(const SerializedActionByte* actions, const unsigned a
         
         if (wideCharacters) {
             RELEASE_ASSERT(actionsLength >= stringStartIndex + selectorLength * sizeof(UChar));
-            return Action(ActionType::CSSDisplayNoneSelector, String(reinterpret_cast<const UChar*>(&actions[stringStartIndex]), selectorLength));
+            return Action(ActionType::CSSDisplayNoneSelector, String(reinterpret_cast<const UChar*>(&actions[stringStartIndex]), selectorLength), location);
         }
         RELEASE_ASSERT(actionsLength >= stringStartIndex + selectorLength * sizeof(LChar));
-        return Action(ActionType::CSSDisplayNoneSelector, String(reinterpret_cast<const LChar*>(&actions[stringStartIndex]), selectorLength));
+        return Action(ActionType::CSSDisplayNoneSelector, String(reinterpret_cast<const LChar*>(&actions[stringStartIndex]), selectorLength), location);
     }
     case ActionType::CSSDisplayNoneStyleSheet:
     case ActionType::InvalidAction:

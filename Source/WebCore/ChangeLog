@@ -1,3 +1,54 @@
+2015-04-23  Brady Eidson  <beidson@apple.com>
+
+        Content extension with oft-repeated rules can cause slowdown.
+        rdar://problem/20618511 and https://bugs.webkit.org/show_bug.cgi?id=144010
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Behavior covered by existing tests).
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * contentextensions/ContentExtension.cpp:
+        (WebCore::ContentExtensions::ContentExtension::globalDisplayNoneStyleSheet):
+
+        Add the String identifier for the extension and the rule action ID to Actions:
+        * contentextensions/ContentExtensionRule.cpp:
+        (WebCore::ContentExtensions::Action::deserialize):
+        * contentextensions/ContentExtensionRule.h:
+        (WebCore::ContentExtensions::Action::Action):
+        (WebCore::ContentExtensions::Action::operator==):
+        (WebCore::ContentExtensions::Action::setExtensionIdentifier):
+        (WebCore::ContentExtensions::Action::extensionIdentifier):
+        (WebCore::ContentExtensions::Action::actionID):
+        (WebCore::ContentExtensions::Action::type): Deleted.
+
+        Object to manage a CSSStyleSheet and selectors identified by ID:
+        * contentextensions/ContentExtensionStyleSheet.cpp:
+        (WebCore::ContentExtensions::ContentExtensionStyleSheet::ContentExtensionStyleSheet):
+        (WebCore::ContentExtensions::ContentExtensionStyleSheet::addDisplayNoneSelector):
+        * contentextensions/ContentExtensionStyleSheet.h:
+        (WebCore::ContentExtensions::ContentExtensionStyleSheet::create):
+        (WebCore::ContentExtensions::ContentExtensionStyleSheet::styleSheet):
+
+        Instead of globbing selectors together into a String and making a new stylesheet,
+        add new unique selectors to an already existing sheet:
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentExtensionRulesForLoad):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::displayNoneCSSRule):
+
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::addDisplayNoneSelector):
+        (WebCore::DocumentStyleSheetCollection::addContentExtensionUserSheet): Deleted.
+        * dom/DocumentStyleSheetCollection.h:
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitData):
+        (WebCore::DocumentLoader::addPendingContentExtensionDisplayNoneSelector):
+        (WebCore::DocumentLoader::addPendingContentExtensionSheet): Deleted.
+        * loader/DocumentLoader.h:
+
 2015-04-23  Antti Koivisto  <antti@apple.com>
 
         Memory cache live resources repeatedly purged during painting

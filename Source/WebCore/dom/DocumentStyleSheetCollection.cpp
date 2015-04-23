@@ -49,6 +49,7 @@
 
 namespace WebCore {
 
+using namespace ContentExtensions;
 using namespace HTMLNames;
 
 DocumentStyleSheetCollection::DocumentStyleSheetCollection(Document& document)
@@ -192,10 +193,16 @@ void DocumentStyleSheetCollection::addUserSheet(Ref<StyleSheetContents>&& userSh
     m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
-void DocumentStyleSheetCollection::addContentExtensionUserSheet(Ref<StyleSheetContents>&& userSheet)
+#if ENABLE(CONTENT_EXTENSIONS)
+void DocumentStyleSheetCollection::addDisplayNoneSelector(const String& identifier, const String& selector, uint32_t selectorID)
 {
-    ASSERT(userSheet.get().isUserStyleSheet());
-    m_userStyleSheets.append(CSSStyleSheet::create(WTF::move(userSheet), &m_document));
+    auto result = m_contentExtensionSelectorSheets.add(identifier, nullptr);
+    if (result.isNewEntry) {
+        result.iterator->value = ContentExtensionStyleSheet::create(m_document);
+        m_userStyleSheets.append(&result.iterator->value->styleSheet());
+    }
+
+    result.iterator->value->addDisplayNoneSelector(selector, selectorID);
     m_styleResolverChangedTimer.startOneShot(0);
 }
 
@@ -211,6 +218,7 @@ void DocumentStyleSheetCollection::maybeAddContentExtensionSheet(const String& i
     m_userStyleSheets.append(adoptRef(cssSheet.leakRef()));
     m_styleResolverChangedTimer.startOneShot(0);
 }
+#endif // ENABLE(CONTENT_EXTENSIONS)
 
 void DocumentStyleSheetCollection::styleResolverChangedTimerFired()
 {
