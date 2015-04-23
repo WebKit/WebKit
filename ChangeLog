@@ -1,3 +1,16 @@
+2015-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Fixups for ENABLE_CREDENTIAL_STORAGE
+        https://bugs.webkit.org/show_bug.cgi?id=144102
+
+        Reviewed by Martin Robinson.
+
+        Use WEBKIT_OPTION_DEFAULT_PORT_VALUE to set ENABLE_CREDENTIAL_STORAGE instead of doing so
+        manually. Fail the build if libsecret is not found but ENABLE_CREDENTIAL_STORAGE is set.
+        Also, do not set ENABLE_CREDENTIAL_STORAGE redundantly.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2015-04-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Clean up JSC JIT options
