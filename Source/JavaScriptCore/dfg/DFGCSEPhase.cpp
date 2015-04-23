@@ -235,7 +235,7 @@ private:
             
                 if (m_node->op() == Identity) {
                     m_node->convertToCheck();
-                    m_node->replacement = m_node->child1().node();
+                    m_node->setReplacement(m_node->child1().node());
                     m_changed = true;
                 } else {
                     // This rule only makes sense for local CSE, since in SSA form we have already
@@ -438,7 +438,7 @@ public:
                 
                 if (m_node->op() == Identity) {
                     m_node->convertToCheck();
-                    m_node->replacement = m_node->child1().node();
+                    m_node->setReplacement(m_node->child1().node());
                     m_changed = true;
                 } else
                     clobberize(m_graph, m_node, *this);

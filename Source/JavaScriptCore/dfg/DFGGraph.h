@@ -162,7 +162,7 @@ public:
             return;
         
         // Check if there is any replacement.
-        Node* replacement = child->replacement;
+        Node* replacement = child->replacement();
         if (!replacement)
             return;
         
@@ -563,6 +563,7 @@ public:
     void clearFlagsOnAllNodes(NodeFlags);
     
     void clearReplacements();
+    void clearEpochs();
     void initializeNodeOwners();
     
     BlockList blocksInPreOrder();

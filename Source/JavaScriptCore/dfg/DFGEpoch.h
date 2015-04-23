@@ -41,6 +41,18 @@ public:
     {
     }
     
+    static Epoch fromUnsigned(unsigned value)
+    {
+        Epoch result;
+        result.m_epoch = value;
+        return result;
+    }
+    
+    unsigned toUnsigned() const
+    {
+        return m_epoch;
+    }
+    
     static Epoch first()
     {
         Epoch result;

@@ -832,9 +832,22 @@ void Graph::clearReplacements()
         if (!block)
             continue;
         for (unsigned phiIndex = block->phis.size(); phiIndex--;)
-            block->phis[phiIndex]->replacement = 0;
+            block->phis[phiIndex]->setReplacement(nullptr);
         for (unsigned nodeIndex = block->size(); nodeIndex--;)
-            block->at(nodeIndex)->replacement = 0;
+            block->at(nodeIndex)->setReplacement(nullptr);
+    }
+}
+
+void Graph::clearEpochs()
+{
+    for (BlockIndex blockIndex = numBlocks(); blockIndex--;) {
+        BasicBlock* block = m_blocks[blockIndex].get();
+        if (!block)
+            continue;
+        for (unsigned phiIndex = block->phis.size(); phiIndex--;)
+            block->phis[phiIndex]->setEpoch(Epoch());
+        for (unsigned nodeIndex = block->size(); nodeIndex--;)
+            block->at(nodeIndex)->setEpoch(Epoch());
     }
 }
 

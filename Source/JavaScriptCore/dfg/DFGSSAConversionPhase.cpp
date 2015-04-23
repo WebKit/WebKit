@@ -227,13 +227,13 @@ public:
                     }
                     
                     Node* node = def->value();
-                    if (node->replacement) {
+                    if (node->replacement()) {
                         // This will occur when a SetLocal had a GetLocal as its source. The
                         // GetLocal would get replaced with an actual SSA value by the time we get
                         // here. Note that the SSA value with which the GetLocal got replaced
                         // would not in turn have a replacement.
-                        node = node->replacement;
-                        ASSERT(!node->replacement);
+                        node = node->replacement();
+                        ASSERT(!node->replacement());
                     }
                     if (verbose)
                         dataLog("Mapping: ", VirtualRegister(valueForOperand.operandForIndex(i)), " -> ", node, "\n");
@@ -303,7 +303,7 @@ public:
                     node->convertToPhantom();
                     if (verbose)
                         dataLog("Replacing node ", node, " with ", valueForOperand.operand(variable->local()), "\n");
-                    node->replacement = valueForOperand.operand(variable->local());
+                    node->setReplacement(valueForOperand.operand(variable->local()));
                     break;
                 }
                     

@@ -35,6 +35,7 @@
 #include "DFGArithMode.h"
 #include "DFGArrayMode.h"
 #include "DFGCommon.h"
+#include "DFGEpoch.h"
 #include "DFGLazyJSValue.h"
 #include "DFGNodeFlags.h"
 #include "DFGNodeOrigin.h"
@@ -245,9 +246,9 @@ struct Node {
         , m_virtualRegister(VirtualRegister())
         , m_refCount(1)
         , m_prediction(SpecNone)
-        , replacement(nullptr)
         , owner(nullptr)
     {
+        m_misc.replacement = nullptr;
         setOpAndDefaultFlags(op);
     }
     
@@ -260,9 +261,9 @@ struct Node {
         , m_prediction(SpecNone)
         , m_opInfo(0)
         , m_opInfo2(0)
-        , replacement(nullptr)
         , owner(nullptr)
     {
+        m_misc.replacement = nullptr;
         setOpAndDefaultFlags(op);
         ASSERT(!(m_flags & NodeHasVarArgs));
     }
@@ -276,9 +277,9 @@ struct Node {
         , m_prediction(SpecNone)
         , m_opInfo(0)
         , m_opInfo2(0)
-        , replacement(nullptr)
         , owner(nullptr)
     {
+        m_misc.replacement = nullptr;
         setOpAndDefaultFlags(op);
         setResult(result);
         ASSERT(!(m_flags & NodeHasVarArgs));
@@ -293,9 +294,9 @@ struct Node {
         , m_prediction(SpecNone)
         , m_opInfo(imm.m_value)
         , m_opInfo2(0)
-        , replacement(nullptr)
         , owner(nullptr)
     {
+        m_misc.replacement = nullptr;
         setOpAndDefaultFlags(op);
         ASSERT(!(m_flags & NodeHasVarArgs));
     }
@@ -309,9 +310,9 @@ struct Node {
         , m_prediction(SpecNone)
         , m_opInfo(imm.m_value)
         , m_opInfo2(0)
-        , replacement(nullptr)
         , owner(nullptr)
     {
+        m_misc.replacement = nullptr;
         setOpAndDefaultFlags(op);
         setResult(result);
         ASSERT(!(m_flags & NodeHasVarArgs));
@@ -326,9 +327,9 @@ struct Node {
         , m_prediction(SpecNone)
         , m_opInfo(imm1.m_value)
         , m_opInfo2(imm2.m_value)
-        , replacement(nullptr)
         , owner(nullptr)
     {
+        m_misc.replacement = nullptr;
         setOpAndDefaultFlags(op);
         ASSERT(!(m_flags & NodeHasVarArgs));
     }
@@ -342,9 +343,9 @@ struct Node {
         , m_prediction(SpecNone)
         , m_opInfo(imm1.m_value)
         , m_opInfo2(imm2.m_value)
-        , replacement(nullptr)
         , owner(nullptr)
     {
+        m_misc.replacement = nullptr;
         setOpAndDefaultFlags(op);
         ASSERT(m_flags & NodeHasVarArgs);
     }
@@ -425,7 +426,7 @@ struct Node {
     void replaceWith(Node* other)
     {
         convertToPhantom();
-        replacement = other;
+        setReplacement(other);
     }
 
     void convertToIdentity();
@@ -1936,6 +1937,26 @@ struct Node {
         return reinterpret_cast<BasicBlockLocation*>(m_opInfo);
     }
     
+    Node* replacement() const
+    {
+        return m_misc.replacement;
+    }
+    
+    void setReplacement(Node* replacement)
+    {
+        m_misc.replacement = replacement;
+    }
+    
+    Epoch epoch() const
+    {
+        return Epoch::fromUnsigned(m_misc.epoch);
+    }
+    
+    void setEpoch(Epoch epoch)
+    {
+        m_misc.epoch = epoch.toUnsigned();
+    }
+    
     void dumpChildren(PrintStream& out)
     {
         if (!child1())
@@ -1979,12 +2000,17 @@ public:
     // will tell you which basic block a node belongs to. You cannot rely on this persisting
     // across transformations unless you do the maintenance work yourself. Other phases use
     // Node::replacement, but they do so manually: first you do Graph::clearReplacements()
-    // and then you set, and use, replacement's yourself.
+    // and then you set, and use, replacement's yourself. Same thing for epoch.
     //
     // Bottom line: don't use these fields unless you initialize them yourself, or by
     // calling some appropriate methods that initialize them the way you want. Otherwise,
     // these fields are meaningless.
-    Node* replacement;
+private:
+    union {
+        Node* replacement;
+        unsigned epoch;
+    } m_misc;
+public:
     BasicBlock* owner;
 };
 
