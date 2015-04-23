@@ -1,3 +1,14 @@
+2015-04-23  Alexey Proskuryakov  <ap@apple.com>
+
+        editing/selection/extend-by-character-007.html should pass on OS X 10.10.3.
+
+        Updated the results to match what we get in 10.10.3, and marked as passing.
+
+        * editing/selection/extend-by-character-007-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * platform/mac/editing/selection/extend-by-character-007-expected.png: Added.
+        * platform/mac/editing/selection/extend-by-character-007-expected.txt: Added.
+
 2015-04-23  Jordan Harband  <ljharb@gmail.com>
 
         Implement `Object.assign`
