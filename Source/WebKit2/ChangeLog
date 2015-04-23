@@ -1,3 +1,15 @@
+2015-04-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Changing TiledBacking velocity should schedule a tile revalidation
+        https://bugs.webkit.org/show_bug.cgi?id=144123
+
+        Reviewed by Tim Horton.
+        
+        Drive-by fix: use the FrameView& that we have already.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2015-04-23  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Disable QTKit by default on future OS X.

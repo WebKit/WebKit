@@ -201,7 +201,11 @@ bool TileController::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleR
 
 void TileController::setVelocity(const VelocityData& velocity)
 {
+    bool changeAffectsTileCoverage = m_velocity.velocityOrScaleIsChanging() || velocity.velocityOrScaleIsChanging();
     m_velocity = velocity;
+    
+    if (changeAffectsTileCoverage)
+        setNeedsRevalidateTiles();
 }
 
 void TileController::setTopContentInset(float topContentInset)

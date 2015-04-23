@@ -53,6 +53,11 @@ struct VelocityData  {
         , lastUpdateTime(updateTime)
     {
     }
+    
+    bool velocityOrScaleIsChanging() const
+    {
+        return horizontalVelocity || verticalVelocity || scaleChangeRate;
+    }
 };
 
 class TiledBacking {
