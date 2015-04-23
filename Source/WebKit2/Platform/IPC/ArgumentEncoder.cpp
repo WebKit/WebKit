@@ -70,13 +70,7 @@ ArgumentEncoder::~ArgumentEncoder()
 {
     if (m_buffer != m_inlineBuffer)
         freeBuffer(m_buffer, m_bufferCapacity);
-
-#if !USE(UNIX_DOMAIN_SOCKETS)
     // FIXME: We need to dispose of the attachments in cases of failure.
-#else
-    for (size_t i = 0; i < m_attachments.size(); ++i)
-        m_attachments[i].dispose();
-#endif
 }
 
 static inline size_t roundUpToAlignment(size_t value, unsigned alignment)
@@ -191,16 +185,14 @@ void ArgumentEncoder::encode(double n)
     copyValueToBuffer(n, buffer);
 }
 
-void ArgumentEncoder::addAttachment(const Attachment& attachment)
+void ArgumentEncoder::addAttachment(Attachment&& attachment)
 {
-    m_attachments.append(attachment);
+    m_attachments.append(WTF::move(attachment));
 }
 
 Vector<Attachment> ArgumentEncoder::releaseAttachments()
 {
-    Vector<Attachment> newList;
-    newList.swap(m_attachments);
-    return newList;
+    return WTF::move(m_attachments);
 }
 
 } // namespace IPC

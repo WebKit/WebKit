@@ -52,12 +52,11 @@ SharedMemory::Handle::Handle()
 
 SharedMemory::Handle::~Handle()
 {
-    clear();
 }
 
 void SharedMemory::Handle::clear()
 {
-    m_attachment.dispose();
+    m_attachment = IPC::Attachment();
 }
 
 bool SharedMemory::Handle::isNull() const

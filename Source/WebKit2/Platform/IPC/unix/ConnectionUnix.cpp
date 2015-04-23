@@ -155,23 +155,6 @@ void Connection::platformInvalidate()
     m_isConnected = false;
 }
 
-template<class T, class iterator>
-class AttachmentResourceGuard {
-public:
-    AttachmentResourceGuard(T& attachments)
-        : m_attachments(attachments)
-    {
-    }
-    ~AttachmentResourceGuard()
-    {
-        iterator end = m_attachments.end();
-        for (iterator i = m_attachments.begin(); i != end; ++i)
-            i->dispose();
-    }
-private:
-    T& m_attachments;
-};
-
 bool Connection::processMessage()
 {
     if (m_readBufferSize < sizeof(MessageInfo))
@@ -214,7 +197,6 @@ bool Connection::processMessage()
     }
 
     Vector<Attachment> attachments(attachmentCount);
-    AttachmentResourceGuard<Vector<Attachment>, Vector<Attachment>::iterator> attachementDisposer(attachments);
     RefPtr<WebKit::SharedMemory> oolMessageBody;
 
     size_t fdIndex = 0;
@@ -423,8 +405,6 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
     COMPILE_ASSERT(sizeof(MessageInfo) + attachmentMaxAmount * sizeof(size_t) <= messageMaxSize, AttachmentsFitToMessageInline);
 
     Vector<Attachment> attachments = encoder->releaseAttachments();
-    AttachmentResourceGuard<Vector<Attachment>, Vector<Attachment>::iterator> attachementDisposer(attachments);
-
     if (attachments.size() > (attachmentMaxAmount - 1)) {
         ASSERT_NOT_REACHED();
         return false;

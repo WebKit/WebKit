@@ -67,13 +67,10 @@ Attachment& Attachment::operator=(Attachment&& attachment)
     return *this;
 }
 
-void Attachment::dispose()
+Attachment::~Attachment()
 {
-    if (m_fileDescriptor == -1)
-        return;
-
-    closeWithRetry(m_fileDescriptor);
-    m_fileDescriptor = -1;
+    if (m_fileDescriptor != -1)
+        closeWithRetry(m_fileDescriptor);
 }
 
 } // namespace IPC

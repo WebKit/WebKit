@@ -47,13 +47,7 @@ ArgumentDecoder::~ArgumentDecoder()
 {
     ASSERT(m_buffer);
     free(m_buffer);
-#if !USE(UNIX_DOMAIN_SOCKETS)
     // FIXME: We need to dispose of the mach ports in cases of failure.
-#else
-    Vector<Attachment>::iterator end = m_attachments.end();
-    for (Vector<Attachment>::iterator it = m_attachments.begin(); it != end; ++it)
-        it->dispose();
-#endif
 }
 
 static inline uint8_t* roundUpToAlignment(uint8_t* ptr, unsigned alignment)
@@ -219,8 +213,7 @@ bool ArgumentDecoder::removeAttachment(Attachment& attachment)
     if (m_attachments.isEmpty())
         return false;
 
-    attachment = m_attachments.last();
-    m_attachments.removeLast();
+    attachment = m_attachments.takeLast();
     return true;
 }
 

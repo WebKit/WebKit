@@ -486,7 +486,7 @@ void WebInspectorProxy::createInspectorPage(IPC::Attachment connectionIdentifier
         return;
 
     m_underTest = underTest;
-    m_connectionIdentifier = connectionIdentifier;
+    m_connectionIdentifier = WTF::move(connectionIdentifier);
 
     m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(m_connectionIdentifier, m_inspectedPage->pageID(), m_underTest), m_inspectorPage->pageID());
 

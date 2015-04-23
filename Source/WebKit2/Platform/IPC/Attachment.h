@@ -55,10 +55,9 @@ public:
 #elif USE(UNIX_DOMAIN_SOCKETS)
     Attachment(Attachment&&);
     Attachment& operator=(Attachment&&);
-    Attachment(const Attachment&) = default;
-    Attachment& operator=(Attachment&) = default;
     Attachment(int fileDescriptor, size_t);
     Attachment(int fileDescriptor);
+    ~Attachment();
 #endif
 
     Type type() const { return m_type; }
@@ -75,8 +74,6 @@ public:
 
     int releaseFileDescriptor() { int temp = m_fileDescriptor; m_fileDescriptor = -1; return temp; }
     int fileDescriptor() const { return m_fileDescriptor; }
-
-    void dispose();
 #endif
 
     void encode(ArgumentEncoder&) const;

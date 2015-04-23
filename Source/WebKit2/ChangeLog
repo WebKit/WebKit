@@ -1,3 +1,54 @@
+2015-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [UNIX] Do not allow copies of IPC::Attachment
+        https://bugs.webkit.org/show_bug.cgi?id=144096
+
+        Reviewed by Darin Adler.
+
+        It ensures that the file descriptor ownership is always correctly
+        transferred. This way we can remove the dispose() method to
+        explicitly close the file descriptor and always close it in the
+        Attachment destructor (unless explicitly transferred to
+        IPC::Connection or SharedMemory). It simplifies the code and
+        ensure we don't leak file descriptors.
+
+        * Platform/IPC/ArgumentDecoder.cpp:
+        (IPC::ArgumentDecoder::~ArgumentDecoder): Remove the code to
+        explicitly dispose attachments.
+        (IPC::ArgumentDecoder::removeAttachment): Use WTF::move().
+        * Platform/IPC/ArgumentEncoder.cpp:
+        (IPC::ArgumentEncoder::~ArgumentEncoder): Remove the code to
+        explicitly dispose attachments.
+        (IPC::ArgumentEncoder::addAttachment): Use WTF::move().
+        (IPC::ArgumentEncoder::releaseAttachments): Simplify by using WTF::move().
+        * Platform/IPC/ArgumentEncoder.h:
+        * Platform/IPC/Attachment.cpp:
+        (IPC::Attachment::encode): Move a copy of the attachment, and
+        reset the file descriptor, since the ownership is passed to the encoder.
+        * Platform/IPC/Attachment.h: Make copy constructor and assignment
+        private to not allow public copies. The only copy allowed is done
+        by Attachment::encode(). Make m_fileDescriptor mutable so that we
+        can reset it in Attachment::encode() after passing the ownership
+        to the encoder.
+        * Platform/IPC/unix/AttachmentUnix.cpp:
+        (IPC::Attachment::~Attachment): Close the file descriptor if it
+        hasn't been released explicitly.
+        (IPC::Attachment::dispose): Deleted.
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::processMessage): Do not use AttachmentResourceGuard.
+        (IPC::Connection::sendOutgoingMessage): Ditto.
+        (IPC::AttachmentResourceGuard::AttachmentResourceGuard): Deleted.
+        (IPC::AttachmentResourceGuard::~AttachmentResourceGuard): Deleted.
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::Handle::~Handle): Do not call clear().
+        (WebKit::SharedMemory::Handle::clear): Reset the attachment.
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createInspectorPage): Use WTF::move().
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        Call releaseFileDescriptor() instead of fileDescritpro() since the
+        ownership is passed to the connection.
+
 2015-04-23  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.

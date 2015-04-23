@@ -76,13 +76,11 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
 
 #if OS(DARWIN)
     IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
-    if (IPC::Connection::identifierIsNull(connectionIdentifier))
-        return 0;
 #elif USE(UNIX_DOMAIN_SOCKETS)
-    IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.fileDescriptor();
-    if (connectionIdentifier == -1)
-        return 0;
+    IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.releaseFileDescriptor();
 #endif
+    if (IPC::Connection::identifierIsNull(connectionIdentifier))
+        return nullptr;
 
     RefPtr<PluginProcessConnection> pluginProcessConnection = PluginProcessConnection::create(this, pluginProcessToken, connectionIdentifier, supportsAsynchronousInitialization);
     m_pluginProcessConnections.append(pluginProcessConnection);

@@ -65,7 +65,7 @@ public:
     uint8_t* buffer() const { return m_buffer; }
     size_t bufferSize() const { return m_bufferSize; }
 
-    void addAttachment(const Attachment&);
+    void addAttachment(Attachment&&);
     Vector<Attachment> releaseAttachments();
     void reserve(size_t);
 
