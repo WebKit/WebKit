@@ -115,8 +115,9 @@ public:
 
     WEBCORE_EXPORT void evictResources();
     WEBCORE_EXPORT void evictResources(SessionID);
-    
+
     void prune();
+    void pruneSoon();
     unsigned size() const { return m_liveSize + m_deadSize; }
 
     void setDeadDecodedDataDeletionInterval(std::chrono::milliseconds interval) { m_deadDecodedDataDeletionInterval = interval; }
@@ -184,6 +185,7 @@ private:
 
     unsigned liveCapacity() const;
     unsigned deadCapacity() const;
+    bool needsPruning() const;
 
     CachedResource* resourceForRequestImpl(const ResourceRequest&, CachedResourceMap&);
 
@@ -213,6 +215,8 @@ private:
     // referenced by a Web page).
     typedef HashMap<SessionID, std::unique_ptr<CachedResourceMap>> SessionCachedResourceMap;
     SessionCachedResourceMap m_sessionResources;
+
+    bool m_willPruneSoon { false };
 };
 
 }

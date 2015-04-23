@@ -43,6 +43,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 
@@ -50,7 +51,7 @@ namespace WebCore {
 
 static const int cDefaultCacheCapacity = 8192 * 1024;
 static const double cMinDelayBeforeLiveDecodedPrune = 1; // Seconds.
-static const float cTargetPrunePercentage = .95f; // Percentage of capacity toward which we prune, to avoid immediately pruning again.
+static const float cTargetPrunePercentage = 0.8; // Percentage of capacity toward which we prune, to avoid immediately pruning again.
 static const auto defaultDecodedDataDeletionInterval = std::chrono::seconds { 0 };
 
 MemoryCache& MemoryCache::singleton()
@@ -745,13 +746,32 @@ void MemoryCache::evictResources(SessionID sessionID)
     ASSERT(!m_sessionResources.contains(sessionID));
 }
 
+bool MemoryCache::needsPruning() const
+{
+    return m_liveSize + m_deadSize > m_capacity || m_deadSize > m_maxDeadCapacity;
+}
+
 void MemoryCache::prune()
 {
-    if (m_liveSize + m_deadSize <= m_capacity && m_deadSize <= m_maxDeadCapacity) // Fast path.
+    if (!needsPruning())
         return;
-        
+
     pruneDeadResources(); // Prune dead first, in case it was "borrowing" capacity from live.
     pruneLiveResources();
+}
+
+void MemoryCache::pruneSoon()
+{
+    if (m_willPruneSoon)
+        return;
+    if (!needsPruning())
+        return;
+
+    m_willPruneSoon = true;
+    RunLoop::main().dispatch([this] {
+        prune();
+        m_willPruneSoon = false;
+    });
 }
 
 #ifndef NDEBUG
