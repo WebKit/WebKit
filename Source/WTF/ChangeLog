@@ -1,5 +1,11 @@
 2015-04-23  Alexey Proskuryakov  <ap@apple.com>
 
+        Undo the WTF part of the previous build fix, we don't use private headers in WTF.
+
+        * WTF.xcodeproj/project.pbxproj:
+
+2015-04-23  Alexey Proskuryakov  <ap@apple.com>
+
         Build fix.
 
         * WTF.xcodeproj/project.pbxproj: Make RAMSize.h a private header, now that it's used

@@ -42,7 +42,7 @@
 		0FDDBFA81666DFA300C55FEF /* StringPrintStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDDBFA61666DFA300C55FEF /* StringPrintStream.h */; };
 		14022F4118F5C3FC007FF0EB /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14022F4018F5C3FC007FF0EB /* libbmalloc.a */; };
 		143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143F611D1565F0F900DB514A /* RAMSize.cpp */; };
-		143F61201565F0F900DB514A /* RAMSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 143F611E1565F0F900DB514A /* RAMSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		143F61201565F0F900DB514A /* RAMSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 143F611E1565F0F900DB514A /* RAMSize.h */; settings = {ATTRIBUTES = (); }; };
 		1447AEC618FCE57700B3D7FF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1447AEC518FCE57700B3D7FF /* Foundation.framework */; };
 		1447AEC718FCE58000B3D7FF /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D247B6214689B8600E78B76 /* libWTF.a */; };
 		1447AEC918FCE59400B3D7FF /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1447AEC818FCE59400B3D7FF /* mbmalloc.cpp */; };
