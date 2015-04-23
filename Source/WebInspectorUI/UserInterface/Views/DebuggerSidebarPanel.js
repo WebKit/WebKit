@@ -155,7 +155,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         var breakpointsSection = new WebInspector.DetailsSection("scripts", WebInspector.UIString("Scripts"), [breakpointsGroup]);
         this.contentElement.appendChild(breakpointsSection.element);
 
-        this._callStackContentTreeOutline = this.createContentTreeOutline(true);
+        this._callStackContentTreeOutline = this.createContentTreeOutline(true, true);
         this._callStackContentTreeOutline.onselect = this._treeElementSelected.bind(this);
 
         this._callStackRow = new WebInspector.DetailsSectionRow(WebInspector.UIString("No Call Frames"));
