@@ -170,7 +170,7 @@ public:
         
         // There is definitely a replacement. Assert that the replacement does not
         // have a replacement.
-        ASSERT(!child->replacement);
+        ASSERT(!child->replacement());
     }
     
     template<typename... Params>
