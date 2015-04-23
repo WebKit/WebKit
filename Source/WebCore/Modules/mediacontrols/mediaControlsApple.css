@@ -913,6 +913,11 @@ audio::-webkit-media-controls-panel button.exit:active {
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 15" stroke="white" stroke-width="1.25" fill="none"><path d="M 7.5,0.5 L 7.5,6 L 13,6"/><path d="M 0,8 L 5.5,8 L 5.5,13.5"/><path stroke-linecap="round" d="M 7.5,6 L 12.5,1"/><path stroke-linecap="round" d="M 5.5,8 L 0.5,13"/></svg>');
 }
 
+video::-webkit-media-controls-wireless-playback-picker-button:active,
+audio::-webkit-media-controls-wireless-playback-picker-button:active {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 15" stroke="white"><defs> <clipPath fill-rule="evenodd" id="cut-hole"><path d="M 0,0.5 L 16,0.5 L 16,15.5 L 0,15.5 z M 0,14.5 L 16,14.5 L 8,5 z"/></clipPath></defs><rect fill="none" clip-path="url(#cut-hole)" x="0.5" y="2" width="15" height="8"/><path stroke="none" fill="white" d="M 3.5,13.25 L 12.5,13.25 L 8,8 z"/></svg>');
+}
+
 /* ==================== AIRPLAY PLACARD ==================== */
 
 video::-webkit-media-controls-wireless-playback-status,
