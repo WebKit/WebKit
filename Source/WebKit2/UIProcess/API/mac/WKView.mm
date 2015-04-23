@@ -601,8 +601,8 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (void)renewGState
 {
-    // Hide the find indicator.
-    _data->_textIndicatorWindow = nullptr;
+    if (_data->_textIndicatorWindow)
+        [self _dismissContentRelativeChildWindows];
 
     // Update the view frame.
     if ([self window])

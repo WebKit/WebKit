@@ -1,3 +1,19 @@
+2015-04-23  Tim Horton  <timothy_horton@apple.com>
+
+        Quick Look preview popover is not dismissed on scroll in Mail
+        https://bugs.webkit.org/show_bug.cgi?id=144119
+        <rdar://problem/19752045>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView renewGState]):
+        If we have a TextIndicator, dismiss all content relative child windows
+        on renewGState, not just the TextIndicator itself.
+
+        This will fix cases like Mail, where WebKit isn't driving the scrolling,
+        and we have no way (except renewGState) to know that scrolling is happening.
+
 2015-04-23  Simon Fraser  <simon.fraser@apple.com>
 
         Changing TiledBacking velocity should schedule a tile revalidation
