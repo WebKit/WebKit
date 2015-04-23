@@ -1,3 +1,23 @@
+2015-04-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove m_isPageTiledBackingLayer data member from GraphicsLayerCA, just use the layer type instead
+        https://bugs.webkit.org/show_bug.cgi?id=144108
+
+        Reviewed by Dean Jackson.
+
+        No need for the m_isPageTiledBackingLayer data member. We can just check the layer
+        type instead.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::initialize):
+        (WebCore::GraphicsLayerCA::platformCALayerShowRepaintCounter):
+        (WebCore::GraphicsLayerCA::updateContentsScale):
+        (WebCore::GraphicsLayerCA::getDebugBorderInfo):
+        (WebCore::GraphicsLayerCA::requiresTiledLayer):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::isPageTiledBackingLayer):
+
 2015-04-23  Brady Eidson  <beidson@apple.com>
 
         Content extension with oft-repeated rules can cause slowdown.

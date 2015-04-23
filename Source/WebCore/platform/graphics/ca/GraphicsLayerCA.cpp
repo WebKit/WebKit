@@ -352,7 +352,6 @@ PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(Platf
 GraphicsLayerCA::GraphicsLayerCA(Type layerType, GraphicsLayerClient& client)
     : GraphicsLayer(layerType, client)
     , m_contentsLayerPurpose(NoContentsLayer)
-    , m_isPageTiledBackingLayer(false)
     , m_needsFullRepaint(false)
     , m_usingBackdropLayerType(false)
     , m_uncommittedChanges(0)
@@ -362,9 +361,6 @@ GraphicsLayerCA::GraphicsLayerCA(Type layerType, GraphicsLayerClient& client)
 
 void GraphicsLayerCA::initialize(Type layerType)
 {
-    if (layerType == Type::PageTiledBacking)
-        m_isPageTiledBackingLayer = true;
-
     PlatformCALayer::LayerType platformLayerType;
     switch (layerType) {
     case Type::Normal:
@@ -1312,7 +1308,7 @@ bool GraphicsLayerCA::platformCALayerShowRepaintCounter(PlatformCALayer* platfor
 {
     // The repaint counters are painted into the TileController tiles (which have no corresponding platform layer),
     // so we don't want to overpaint the repaint counter when called with the TileController's own layer.
-    if (m_isPageTiledBackingLayer && platformLayer)
+    if (isPageTiledBackingLayer() && platformLayer)
         return false;
 
     return isShowingRepaintCounter();
@@ -3069,7 +3065,7 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
 {
     float contentsScale = pageScaleFactor * deviceScaleFactor();
 
-    if (m_isPageTiledBackingLayer && tiledBacking()) {
+    if (isPageTiledBackingLayer() && tiledBacking()) {
         float zoomedOutScale = m_client.zoomedOutPageScaleFactor() * deviceScaleFactor();
         tiledBacking()->setZoomedOutContentsScale(zoomedOutScale);
     }
@@ -3084,7 +3080,7 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
 
     if (tiledBacking()) {
         // Scale change may swap in a different set of tiles changing the custom child layers.
-        if (m_isPageTiledBackingLayer)
+        if (isPageTiledBackingLayer())
             m_uncommittedChanges |= ChildrenChanged;
         // Tiled backing repaints automatically on scale change.
         return;
@@ -3127,7 +3123,7 @@ void GraphicsLayerCA::setDebugBackgroundColor(const Color& color)
 
 void GraphicsLayerCA::getDebugBorderInfo(Color& color, float& width) const
 {
-    if (m_isPageTiledBackingLayer) {
+    if (isPageTiledBackingLayer()) {
         color = Color(0, 0, 128, 128); // tile cache layer: dark blue
         width = 0.5;
         return;
@@ -3205,7 +3201,7 @@ void GraphicsLayerCA::setCustomAppearance(CustomAppearance customAppearance)
 
 bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 {
-    if (!m_drawsContent || m_isPageTiledBackingLayer)
+    if (!m_drawsContent || isPageTiledBackingLayer())
         return false;
 
     // FIXME: catch zero-size height or width here (or earlier)?

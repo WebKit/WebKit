@@ -267,6 +267,8 @@ private:
 
     WEBCORE_EXPORT virtual void setReplicatedByLayer(GraphicsLayer*) override;
 
+    WEBCORE_EXPORT virtual bool canThrottleLayerFlush() const override;
+
     WEBCORE_EXPORT virtual void getDebugBorderInfo(Color&, float& width) const override;
     WEBCORE_EXPORT virtual void dumpAdditionalProperties(TextStream&, int indent, LayerTreeAsTextBehavior) const override;
 
@@ -283,8 +285,8 @@ private:
     static FloatRect adjustTiledLayerVisibleRect(TiledBacking*, const FloatRect& oldVisibleRect, const FloatRect& newVisibleRect, const FloatSize& oldSize, const FloatSize& newSize);
 
     bool recursiveVisibleRectChangeRequiresFlush(const TransformState&) const;
-
-    WEBCORE_EXPORT virtual bool canThrottleLayerFlush() const override;
+    
+    bool isPageTiledBackingLayer() const { return type() == Type::PageTiledBacking; }
 
     // Used to track the path down the tree for replica layers.
     struct ReplicaState {
@@ -491,7 +493,6 @@ private:
     FloatSize m_sizeAtLastVisibleRectUpdate;
     
     ContentsLayerPurpose m_contentsLayerPurpose;
-    bool m_isPageTiledBackingLayer : 1;
     bool m_needsFullRepaint : 1;
     bool m_usingBackdropLayerType : 1;
 
