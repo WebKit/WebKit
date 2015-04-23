@@ -1,3 +1,17 @@
+2015-04-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r183194.
+        https://bugs.webkit.org/show_bug.cgi?id=144121
+
+        Made multiple tests flaky (Requested by ap_ on #webkit).
+
+        Reverted changeset:
+
+        "Memory cache live resources repeatedly purged during
+        painting"
+        https://bugs.webkit.org/show_bug.cgi?id=144104
+        http://trac.webkit.org/changeset/183194
+
 2015-04-23  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Missed a button in r182900.
