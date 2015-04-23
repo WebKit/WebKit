@@ -55,7 +55,7 @@
 #import <dispatch/dispatch.h>
 #import <objc/runtime.h>
 #import <stdio.h>
-#import <wtf/RamSize.h>
+#import <wtf/RAMSize.h>
 
 #define ENABLE_MANUAL_WEBPROCESS_SANDBOXING !PLATFORM(IOS)
 
