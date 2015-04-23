@@ -1,3 +1,18 @@
+2015-04-23  Jer Noble  <jer.noble@apple.com>
+
+        [WK2][Mac] Tweak the timing curve of the WebKit Fullscreen animation
+        https://bugs.webkit.org/show_bug.cgi?id=144120
+
+        Reviewed by Eric Carlson.
+
+        Tweak the curve to ease-in faster when the fullscreen animation duration is short.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (timingFunctionForDuration):
+        (zoomAnimation):
+        (maskAnimation):
+        (fadeAnimation):
+
 2015-04-23  Enrica Casucci  <enrica@apple.com>
 
         iOS build fix after r183208.
