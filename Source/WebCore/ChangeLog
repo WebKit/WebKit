@@ -1,3 +1,15 @@
+2015-04-23  David Hyatt  <hyatt@apple.com>
+
+        Don't fire a bunch of mouse moveds during scrolling.
+        https://bugs.webkit.org/show_bug.cgi?id=99940
+
+        Reviewed by Simon Fraser.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchFakeMouseMoveEventSoon):
+        Even for the short interval timer, make sure to cancel and restart it instead of allowing the original to
+        complete. This has the effect of preventing fake mouse moves from firing until the scroll stops.
+
 2015-04-23  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, fix the release build.
