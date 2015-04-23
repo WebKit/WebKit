@@ -32,6 +32,8 @@ webkit.org/b/139778 fullscreen/exit-full-screen-iframe.html [ Skip ]
 
 webkit.org/b/139862 editing/spelling/grammar-edit-word.html [ Skip ]
 
+webkit.org/b/144127 compositing/scrolling/touch-scroll-to-clip.html [ Pass Failure ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
