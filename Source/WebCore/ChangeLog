@@ -1,3 +1,11 @@
+2015-04-23  Andreas Kling  <akling@apple.com>
+
+        DOM nodes should be allocated with fastMalloc().
+
+        Unreviewed. This got lost in the TreeShared merge. :|
+
+        * dom/Node.h:
+
 2015-04-23  Chris Dumez  <cdumez@apple.com>
 
         [WK2] WebDiagnosticLoggingClient is leaking

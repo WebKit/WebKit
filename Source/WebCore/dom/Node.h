@@ -112,6 +112,8 @@ private:
 };
 
 class Node : public EventTarget, public ScriptWrappable {
+    WTF_MAKE_FAST_ALLOCATED;
+
     friend class Document;
     friend class TreeScope;
     friend class TreeScopeAdopter;
