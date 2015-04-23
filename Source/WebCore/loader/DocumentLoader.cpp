@@ -140,7 +140,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_dataLoadTimer(*this, &DocumentLoader::handleSubstituteDataLoadNow)
     , m_waitingForContentPolicy(false)
     , m_subresourceLoadersArePageCacheAcceptable(false)
-    , m_applicationCacheHost(adoptPtr(new ApplicationCacheHost(*this)))
+    , m_applicationCacheHost(std::make_unique<ApplicationCacheHost>(*this))
 #if ENABLE(CONTENT_FILTERING)
     , m_contentFilter(!substituteData.isValid() ? ContentFilter::createIfNeeded(std::bind(&DocumentLoader::contentFilterDidDecide, this)) : nullptr)
 #endif
@@ -997,7 +997,7 @@ void DocumentLoader::setArchive(PassRefPtr<Archive> archive)
 void DocumentLoader::addAllArchiveResources(Archive* archive)
 {
     if (!m_archiveResourceCollection)
-        m_archiveResourceCollection = adoptPtr(new ArchiveResourceCollection);
+        m_archiveResourceCollection = std::make_unique<ArchiveResourceCollection>();
         
     ASSERT(archive);
     if (!archive)
@@ -1011,7 +1011,7 @@ void DocumentLoader::addAllArchiveResources(Archive* archive)
 void DocumentLoader::addArchiveResource(PassRefPtr<ArchiveResource> resource)
 {
     if (!m_archiveResourceCollection)
-        m_archiveResourceCollection = adoptPtr(new ArchiveResourceCollection);
+        m_archiveResourceCollection = std::make_unique<ArchiveResourceCollection>();
         
     ASSERT(resource);
     if (!resource)
@@ -1027,7 +1027,7 @@ PassRefPtr<Archive> DocumentLoader::popArchiveForSubframe(const String& frameNam
 
 void DocumentLoader::clearArchiveResources()
 {
-    m_archiveResourceCollection.clear();
+    m_archiveResourceCollection = nullptr;
     m_substituteResourceDeliveryTimer.stop();
 }
 
@@ -1418,7 +1418,7 @@ void DocumentLoader::startLoadingMainResource()
         // If the load was aborted by clearing m_request, it's possible the ApplicationCacheHost
         // is now in a state where starting an empty load will be inconsistent. Replace it with
         // a new ApplicationCacheHost.
-        m_applicationCacheHost = adoptPtr(new ApplicationCacheHost(*this));
+        m_applicationCacheHost = std::make_unique<ApplicationCacheHost>(*this);
         maybeLoadEmpty();
         return;
     }

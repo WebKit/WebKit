@@ -35,7 +35,6 @@ namespace WebCore {
 
     class DataTransfer;
     class Document;
-    class DocumentFragment;
     class DragClient;
     class DragData;
     class Element;
@@ -45,7 +44,6 @@ namespace WebCore {
     class IntRect;
     class Page;
     class PlatformMouseEvent;
-    class Range;
 
     struct DragState;
 
@@ -55,7 +53,7 @@ namespace WebCore {
         DragController(Page&, DragClient&);
         ~DragController();
 
-        static PassOwnPtr<DragController> create(Page*, DragClient*);
+        static std::unique_ptr<DragController> create(Page&, DragClient&);
 
         DragClient& client() const { return m_client; }
 

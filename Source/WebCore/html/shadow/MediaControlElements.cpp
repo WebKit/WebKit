@@ -1081,11 +1081,11 @@ MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement(Doc
     setPseudo(AtomicString("-webkit-media-text-track-container", AtomicString::ConstructFromLiteral));
 }
 
-PassRefPtr<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement::create(Document& document)
+Ref<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement::create(Document& document)
 {
-    RefPtr<MediaControlTextTrackContainerElement> element = adoptRef(new MediaControlTextTrackContainerElement(document));
+    auto element = adoptRef(*new MediaControlTextTrackContainerElement(document));
     element->hide();
-    return element.release();
+    return element;
 }
 
 RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
@@ -1265,7 +1265,7 @@ void MediaControlTextTrackContainerElement::updateTextTrackRepresentation()
         return;
 
     if (!m_textTrackRepresentation) {
-        m_textTrackRepresentation = TextTrackRepresentation::create(this);
+        m_textTrackRepresentation = TextTrackRepresentation::create(*this);
         m_updateTextTrackRepresentationStyle = true;
         mediaElement->setTextTrackRepresentation(m_textTrackRepresentation.get());
     }
@@ -1352,7 +1352,7 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
     m_updateTimer.startOneShot(0);
 }
 
-PassRefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentationImage()
+RefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentationImage()
 {
     if (!hasChildNodes())
         return nullptr;

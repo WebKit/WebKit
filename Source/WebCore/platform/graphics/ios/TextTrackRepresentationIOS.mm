@@ -31,9 +31,9 @@
 
 #include "FloatRect.h"
 #include "GraphicsContextCG.h"
+#include "IntRect.h"
 #include "WebCoreThread.h"
 #include "WebCoreThreadRun.h"
-#include <wtf/OwnPtr.h>
 
 using namespace WebCore;
 
@@ -57,7 +57,7 @@ using namespace WebCore;
 
 - (void)dealloc
 {
-    self.parent = nil;
+    self.parent = nullptr;
     [super dealloc];
 }
 
@@ -83,7 +83,7 @@ using namespace WebCore;
     UNUSED_PARAM(context);
     WebThreadRun(^{
         if (_parent && [keyPath isEqual:@"bounds"] && object == _parent->platformLayer())
-            _parent->client()->textTrackRepresentationBoundsChanged(_parent->bounds());
+            _parent->client().textTrackRepresentationBoundsChanged(_parent->bounds());
     });
 }
 
@@ -97,12 +97,12 @@ using namespace WebCore;
 
 @end
 
-PassOwnPtr<TextTrackRepresentation> TextTrackRepresentation::create(TextTrackRepresentationClient* client)
+std::unique_ptr<TextTrackRepresentation> TextTrackRepresentation::create(TextTrackRepresentationClient& client)
 {
-    return adoptPtr(new TextTrackRepresentationIOS(client));
+    return std::make_unique<TextTrackRepresentationIOS>(client);
 }
 
-TextTrackRepresentationIOS::TextTrackRepresentationIOS(TextTrackRepresentationClient* client)
+TextTrackRepresentationIOS::TextTrackRepresentationIOS(TextTrackRepresentationClient& client)
     : m_client(client)
     , m_layer(adoptNS([[CALayer alloc] init]))
     , m_delegate(adoptNS([[WebCoreTextTrackRepresentationIOSHelper alloc] initWithParent:this]))
@@ -114,12 +114,12 @@ TextTrackRepresentationIOS::TextTrackRepresentationIOS(TextTrackRepresentationCl
 TextTrackRepresentationIOS::~TextTrackRepresentationIOS()
 {
     [m_layer.get() setDelegate:nil];
-    [m_delegate.get() setParent:0];
+    [m_delegate.get() setParent:nullptr];
 }
 
 void TextTrackRepresentationIOS::update()
 {
-    if (RefPtr<Image> representation = m_client->createTextTrackRepresentationImage())
+    if (auto representation = m_client.createTextTrackRepresentationImage())
         [m_layer.get() setContents:(id)representation->getCGImageRef()];
 }
 

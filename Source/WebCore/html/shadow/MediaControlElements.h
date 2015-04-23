@@ -443,7 +443,7 @@ private:
 
 class MediaControlTextTrackContainerElement final : public MediaControlDivElement, public TextTrackRepresentationClient {
 public:
-    static PassRefPtr<MediaControlTextTrackContainerElement> create(Document&);
+    static Ref<MediaControlTextTrackContainerElement> create(Document&);
 
     void updateDisplay();
     void updateSizes(bool forceUpdate = false);
@@ -458,12 +458,12 @@ private:
 
     virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
-    virtual PassRefPtr<Image> createTextTrackRepresentationImage() override;
+    virtual RefPtr<Image> createTextTrackRepresentationImage() override;
     virtual void textTrackRepresentationBoundsChanged(const IntRect&) override;
     void updateTextTrackRepresentation();
     void clearTextTrackRepresentation();
     void updateStyleForTextTrackRepresentation();
-    OwnPtr<TextTrackRepresentation> m_textTrackRepresentation;
+    std::unique_ptr<TextTrackRepresentation> m_textTrackRepresentation;
 
     Timer m_updateTimer;
     IntRect m_videoDisplaySize;

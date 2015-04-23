@@ -39,16 +39,6 @@
 using namespace WTF;
 using namespace Unicode;
 
-namespace WTF {
-
-// allow compilation of OwnPtr<TextLayout> in source files that don't have access to the TextLayout class definition
-template <> void deleteOwnedPtr<WebCore::TextLayout>(WebCore::TextLayout* ptr)
-{
-    WebCore::FontCascade::deleteLayout(ptr);
-}
-
-}
-
 namespace WebCore {
 
 static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontDescription&, PassRefPtr<FontSelector>);
@@ -441,12 +431,13 @@ GlyphData FontCascade::glyphDataForCharacter(UChar32 c, bool mirror, FontVariant
 }
 
 #if !PLATFORM(COCOA)
-PassOwnPtr<TextLayout> FontCascade::createLayout(RenderText*, float, bool) const
+
+std::unique_ptr<TextLayout, TextLayoutDeleter> FontCascade::createLayout(RenderText&, float, bool) const
 {
     return nullptr;
 }
 
-void FontCascade::deleteLayout(TextLayout*)
+void TextLayoutDeleter::operator()(TextLayout*) const
 {
 }
 
@@ -455,9 +446,8 @@ float FontCascade::width(TextLayout&, unsigned, unsigned, HashSet<const Font*>*)
     ASSERT_NOT_REACHED();
     return 0;
 }
+
 #endif
-
-
 
 static const char* fontFamiliesWithInvalidCharWidth[] = {
     "American Typewriter",

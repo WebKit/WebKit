@@ -36,20 +36,17 @@ namespace WebCore {
 class RenderText;
 
 struct RenderTextInfo {
-    // Destruction of m_layout requires TextLayout to be a complete type, so the constructor and destructor are made non-inline to avoid compilation errors.
-    RenderTextInfo();
-    ~RenderTextInfo();
-
-    RenderText* m_text;
-    OwnPtr<TextLayout> m_layout;
-    LazyLineBreakIterator m_lineBreakIterator;
-    const FontCascade* m_font;
+    RenderText* text { nullptr };
+    std::unique_ptr<TextLayout, TextLayoutDeleter> layout;
+    LazyLineBreakIterator lineBreakIterator;
+    const FontCascade* font { nullptr };
 };
 
 class LineBreaker {
 public:
     friend class BreakingContext;
-    LineBreaker(RenderBlockFlow& block)
+
+    explicit LineBreaker(RenderBlockFlow& block)
         : m_block(block)
     {
         reset();

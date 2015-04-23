@@ -27,12 +27,8 @@
 #include "ExceptionCodePlaceholder.h"
 #include "Node.h"
 
-#include <wtf/OwnPtr.h>
-#include <wtf/Vector.h>
-
 namespace WebCore {
 
-class FloatPoint;
 class QualifiedName;
 class RenderElement;
 

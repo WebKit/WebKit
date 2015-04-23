@@ -33,7 +33,6 @@
 #import "SessionID.h"
 #import "SharedBuffer.h"
 #import <wtf/MainThread.h>
-#import <wtf/OwnPtr.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/RefPtr.h>
 
@@ -60,6 +59,7 @@ void DiskCacheMonitor::monitorFileBackingStoreCreation(const ResourceRequest& re
     if (!cachedResponse)
         return;
 
+    // FIXME: It's not good to have the new here, but the delete inside the constructor. Reconsider this design.
     new DiskCacheMonitor(request, sessionID, cachedResponse); // Balanced by adoptPtr in the blocks setup in the constructor, one of which is guaranteed to run.
 }
 
@@ -73,8 +73,8 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, SessionID ses
     __block DiskCacheMonitor* rawMonitor = this;
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * diskCacheMonitorTimeout), dispatch_get_main_queue(), ^{
-        adoptPtr(rawMonitor); // Balanced by `new DiskCacheMonitor` in monitorFileBackingStoreCreation.
-        rawMonitor = 0;
+        delete rawMonitor; // Balanced by "new DiskCacheMonitor" in monitorFileBackingStoreCreation.
+        rawMonitor = nullptr;
     });
 
     // Set up the disk caching callback to create the ShareableResource and send it to the WebProcess.
@@ -85,8 +85,8 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, SessionID ses
         if (!rawMonitor)
             return;
 
-        OwnPtr<DiskCacheMonitor> monitor = adoptPtr(rawMonitor); // Balanced by `new DiskCacheMonitor` in monitorFileBackingStoreCreation.
-        rawMonitor = 0;
+        auto monitor = std::unique_ptr<DiskCacheMonitor>(rawMonitor); // Balanced by "new DiskCacheMonitor" in monitorFileBackingStoreCreation.
+        rawMonitor = nullptr;
 
         RefPtr<SharedBuffer> fileBackedBuffer = DiskCacheMonitor::tryGetFileBackedSharedBufferFromCFURLCachedResponse(cachedResponse);
         if (!fileBackedBuffer)

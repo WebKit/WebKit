@@ -36,20 +36,21 @@
 
 namespace WebCore {
 
-class TextTrackRepresentationIOS : public TextTrackRepresentation {
+class TextTrackRepresentationIOS final : public TextTrackRepresentation {
 public:
-    TextTrackRepresentationIOS(TextTrackRepresentationClient*);
+    explicit TextTrackRepresentationIOS(TextTrackRepresentationClient&);
     virtual ~TextTrackRepresentationIOS();
 
-    virtual void update() override;
+    TextTrackRepresentationClient& client() const { return m_client; }
+
     virtual PlatformLayer* platformLayer() override { return m_layer.get(); }
-    virtual void setContentScale(float) override;
     virtual IntRect bounds() const override;
 
-    TextTrackRepresentationClient* client() const { return m_client; }
-
 private:
-    TextTrackRepresentationClient* m_client;
+    virtual void update() override;
+    virtual void setContentScale(float) override;
+
+    TextTrackRepresentationClient& m_client;
     RetainPtr<CALayer> m_layer;
     RetainPtr<WebCoreTextTrackRepresentationIOSHelper> m_delegate;
 };

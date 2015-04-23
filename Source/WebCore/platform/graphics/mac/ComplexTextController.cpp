@@ -32,25 +32,28 @@
 #include "RenderText.h"
 #include "TextBreakIterator.h"
 #include "TextRun.h"
-#if !PLATFORM(IOS)
-#include <ApplicationServices/ApplicationServices.h>
-#else
-#include <CoreText/CoreText.h>
-#endif
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
+
+#if PLATFORM(IOS)
+#include <CoreText/CoreText.h>
+#endif
+
+#if PLATFORM(MAC)
+#include <ApplicationServices/ApplicationServices.h>
+#endif
 
 namespace WebCore {
 
 class TextLayout {
 public:
-    static bool isNeeded(RenderText* text, const FontCascade& font)
+    static bool isNeeded(RenderText& text, const FontCascade& font)
     {
-        TextRun run = RenderBlock::constructTextRun(text, font, text, text->style());
+        TextRun run = RenderBlock::constructTextRun(&text, font, &text, text.style());
         return font.codePath(run) == FontCascade::Complex;
     }
 
-    TextLayout(RenderText* text, const FontCascade& font, float xPos)
+    TextLayout(RenderText& text, const FontCascade& font, float xPos)
         : m_font(font)
         , m_run(constructTextRun(text, font, xPos))
         , m_controller(std::make_unique<ComplexTextController>(m_font, m_run, true))
@@ -69,12 +72,11 @@ public:
     }
 
 private:
-    static TextRun constructTextRun(RenderText* text, const FontCascade& font, float xPos)
+    static TextRun constructTextRun(RenderText& text, const FontCascade& font, float xPos)
     {
-        TextRun run = RenderBlock::constructTextRun(text, font, text, text->style());
-        run.setCharactersLength(text->textLength());
+        TextRun run = RenderBlock::constructTextRun(&text, font, &text, text.style());
+        run.setCharactersLength(text.textLength());
         ASSERT(run.charactersLength() >= run.length());
-
         run.setXPos(xPos);
         return run;
     }
@@ -85,35 +87,21 @@ private:
     std::unique_ptr<ComplexTextController> m_controller;
 };
 
-PassOwnPtr<TextLayout> FontCascade::createLayout(RenderText* text, float xPos, bool collapseWhiteSpace) const
+void TextLayoutDeleter::operator()(TextLayout* layout) const
+{
+    delete layout;
+}
+
+std::unique_ptr<TextLayout, TextLayoutDeleter> FontCascade::createLayout(RenderText& text, float xPos, bool collapseWhiteSpace) const
 {
     if (!collapseWhiteSpace || !TextLayout::isNeeded(text, *this))
         return nullptr;
-    return adoptPtr(new TextLayout(text, *this, xPos));
-}
-
-void FontCascade::deleteLayout(TextLayout* layout)
-{
-    delete layout;
+    return std::unique_ptr<TextLayout, TextLayoutDeleter>(new TextLayout(text, *this, xPos));
 }
 
 float FontCascade::width(TextLayout& layout, unsigned from, unsigned len, HashSet<const Font*>* fallbackFonts)
 {
     return layout.width(from, len, fallbackFonts);
-}
-
-static inline CGFloat roundCGFloat(CGFloat f)
-{
-    if (sizeof(CGFloat) == sizeof(float))
-        return roundf(static_cast<float>(f));
-    return static_cast<CGFloat>(round(f));
-}
-
-static inline CGFloat ceilCGFloat(CGFloat f)
-{
-    if (sizeof(CGFloat) == sizeof(float))
-        return ceilf(static_cast<float>(f));
-    return static_cast<CGFloat>(ceil(f));
 }
 
 ComplexTextController::ComplexTextController(const FontCascade& font, const TextRun& run, bool mayUseNaturalWritingDirection, HashSet<const Font*>* fallbackFonts, bool forTextEmphasis)
@@ -637,7 +625,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 
         bool lastRun = r + 1 == runCount;
         float spaceWidth = font.spaceWidth() - font.syntheticBoldOffset();
-        CGFloat roundedSpaceWidth = roundCGFloat(spaceWidth);
+        CGFloat roundedSpaceWidth = std::round(spaceWidth);
         const UChar* cp = complexTextRun.characters();
         CGPoint glyphOrigin = CGPointZero;
         CFIndex lastCharacterIndex = m_run.ltr() ? std::numeric_limits<CFIndex>::min() : std::numeric_limits<CFIndex>::max();
@@ -748,14 +736,14 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             // Force characters that are used to determine word boundaries for the rounding hack 
             // to be integer width, so the following words will start on an integer boundary. 
             if (m_run.applyWordRounding() && FontCascade::isRoundingHackCharacter(ch)) 
-                advance.width = ceilCGFloat(advance.width); 
+                advance.width = std::ceil(advance.width);
 
             // Check to see if the next character is a "rounding hack character", if so, adjust the 
             // width so that the total run width will be on an integer boundary.
             bool needsRoundingForCharacter = m_run.applyWordRounding() && !lastGlyph && FontCascade::isRoundingHackCharacter(nextCh);
             if (needsRoundingForCharacter || (m_run.applyRunRounding() && lastGlyph)) {
                 CGFloat totalWidth = widthSinceLastCommit + advance.width; 
-                widthSinceLastCommit = ceilCGFloat(totalWidth); 
+                widthSinceLastCommit = std::ceil(totalWidth);
                 CGFloat extraWidth = widthSinceLastCommit - totalWidth; 
                 if (m_run.ltr()) 
                     advance.width += extraWidth; 

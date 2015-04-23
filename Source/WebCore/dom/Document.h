@@ -55,7 +55,6 @@
 #include <memory>
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/WeakPtr.h>
 

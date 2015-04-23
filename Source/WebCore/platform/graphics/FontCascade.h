@@ -107,6 +107,11 @@ public:
 };
 GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun&, const GlyphBuffer&, int index);
 
+class TextLayoutDeleter {
+public:
+    void operator()(TextLayout*) const;
+};
+
 class FontCascade {
 public:
     WEBCORE_EXPORT FontCascade();
@@ -118,7 +123,6 @@ public:
 #if PLATFORM(IOS)
     FontCascade(const FontPlatformData&, PassRefPtr<FontSelector>);
 #endif
-    ~FontCascade();
 
     FontCascade(const FontCascade&);
     WEBCORE_EXPORT FontCascade& operator=(const FontCascade&);
@@ -143,8 +147,7 @@ public:
     WEBCORE_EXPORT float width(const TextRun&, HashSet<const Font*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     float width(const TextRun&, int& charsConsumed, String& glyphName) const;
 
-    PassOwnPtr<TextLayout> createLayout(RenderText*, float xPos, bool collapseWhiteSpace) const;
-    static void deleteLayout(TextLayout*);
+    std::unique_ptr<TextLayout, TextLayoutDeleter> createLayout(RenderText&, float xPos, bool collapseWhiteSpace) const;
     static float width(TextLayout&, unsigned from, unsigned len, HashSet<const Font*>* fallbackFonts = 0);
 
     int offsetForPosition(const TextRun&, float position, bool includePartialGlyphs) const;
@@ -360,10 +363,6 @@ void pruneUnreferencedEntriesFromFontCascadeCache();
 void pruneSystemFallbackFonts();
 void clearWidthCaches();
 
-inline FontCascade::~FontCascade()
-{
-}
-
 inline const Font& FontCascade::primaryFont() const
 {
     ASSERT(m_fonts);
@@ -395,12 +394,6 @@ inline float FontCascade::tabWidth(const Font& font, unsigned tabSize, float pos
     float tabDeltaWidth = tabWidth - fmodf(position, tabWidth);
     return (tabDeltaWidth < font.spaceWidth() / 2) ? tabWidth : tabDeltaWidth;
 }
-
-}
-
-namespace WTF {
-
-template <> void deleteOwnedPtr<WebCore::TextLayout>(WebCore::TextLayout*);
 
 }
 

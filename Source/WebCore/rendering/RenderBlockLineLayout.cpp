@@ -1204,16 +1204,6 @@ void RenderBlockFlow::layoutRunsAndFloats(LineLayoutState& layoutState, bool has
     repaintDirtyFloats(layoutState.floats());
 }
 
-RenderTextInfo::RenderTextInfo()
-    : m_text(0)
-    , m_font(0)
-{
-}
-
-RenderTextInfo::~RenderTextInfo()
-{
-}
-
 // Before restarting the layout loop with a new logicalHeight, remove all floats that were added and reset the resolver.
 inline const InlineIterator& RenderBlockFlow::restartLayoutRunsAndFloatsInRange(LayoutUnit oldLogicalHeight, LayoutUnit newLogicalHeight,  FloatingObject* lastFloatFromPreviousLine, InlineBidiResolver& resolver,  const InlineIterator& oldEnd)
 {
@@ -1256,8 +1246,8 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
 
         WordMeasurements wordMeasurements;
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
-        cachePriorCharactersIfNeeded(renderTextInfo.m_lineBreakIterator);
-        renderTextInfo.m_lineBreakIterator.resetPriorContext();
+        cachePriorCharactersIfNeeded(renderTextInfo.lineBreakIterator);
+        renderTextInfo.lineBreakIterator.resetPriorContext();
         if (resolver.position().atEnd()) {
             // FIXME: We shouldn't be creating any runs in nextLineBreak to begin with!
             // Once BidiRunList is separated from BidiResolver this will not be needed.

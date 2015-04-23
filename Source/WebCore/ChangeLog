@@ -1,3 +1,108 @@
+2015-04-22  Darin Adler  <darin@apple.com>
+
+        Eliminate remaining uses of OwnPtr and PassOwnPtr in WebCore outside the editing and platform directories
+        https://bugs.webkit.org/show_bug.cgi?id=143949
+
+        Reviewed by Andreas Kling.
+
+        * dom/ContainerNode.h: Removed unneeded includes and forward declarations.
+        * dom/Document.h: Ditto.
+
+        * dom/DocumentParser.h: Fixed comment to not mention PassOwnPtr.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::create): Return a Ref instead of a PassRefPtr.
+        (WebCore::MediaControlTextTrackContainerElement::updateTextTrackRepresentation): Pass a reference
+        rather than a pointer to TextTrackRepresentation::create.
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage): Return a
+        RefPtr instead of a PassRefPtr.
+
+        * html/shadow/MediaControlElements.h: Use unique_ptr for m_textTrackRepresentation.
+        Also fix a couple uses of PassRefPtr.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader): Use make_unique.
+        (WebCore::DocumentLoader::addAllArchiveResources): Ditto.
+        (WebCore::DocumentLoader::addArchiveResource): Ditto.
+        (WebCore::DocumentLoader::clearArchiveResources): Set to nullptr instead of calling clear.
+        (WebCore::DocumentLoader::startLoadingMainResource): Use make_unique.
+        * loader/DocumentLoader.h: Made m_archiveResourceCollection and
+        m_applicationCacheHost use unique_ptr.
+
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData): Use delete here instead
+        of using OwnPtr to do the deletion. Matches the other code nearby.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::disassociateDocumentLoader): Handle case where the host is
+        null; this happens during the DocumentLoader destruction process since unique_ptr sets itself
+        to null before it destroys the object it points to and OwnPtr does not.
+
+        * loader/cocoa/DiskCacheMonitorCocoa.mm:
+        (WebCore::DiskCacheMonitor::monitorFileBackingStoreCreation): Use delete instead of adoptPtr
+        to delete a raw pointer.
+        (WebCore::DiskCacheMonitor::DiskCacheMonitor): Use unique_ptr instead of OwnPtr.
+
+        * page/DragController.h: Removed some unneeded forward declarations and changed the
+        create function to return unique_ptr.
+
+        * platform/LayoutUnit.h: Removed wtf_ceil workaround hack here. Not sure why we ever did it
+        this way!
+
+        * platform/graphics/FontCascade.cpp:
+        (WTF::deleteOwnedPtr<WebCore::TextLayout>): Deleted.
+        (WebCore::FontCascade::createLayout): Changed to return a unique_ptr.
+        (WebCore::FontCascade::deleteLayout): Deleted.
+        * platform/graphics/FontCascade.h: Made the above changes.
+
+        * platform/graphics/ImageBuffer.h: Changed copyImage to return a RefPtr instead of a PassRefPtr.
+
+        * platform/graphics/TextTrackRepresentation.cpp:
+        (WebCore::TextTrackRepresentation::create): Use make_unique and return a unique_ptr.
+        * platform/graphics/TextTrackRepresentation.h: Removed unneeded includes and forward declarations
+        and made create return a unique_ptr.
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::copyImage): Changed to return a RefPtr.
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::copyImage): Changed to return a RefPtr.
+
+        * platform/graphics/ios/TextTrackRepresentationIOS.h: Use reference instead of pointer,
+        made more things private.
+        * platform/graphics/ios/TextTrackRepresentationIOS.mm:
+        (TextTrackRepresentation::create): Use make_unique.
+        (TextTrackRepresentationIOS::TextTrackRepresentationIOS): Take a reference.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::FontCascade::createLayout): Return a unique_ptr with a custom destruction function.
+        The custom destruction function eliminates the need to put TextLayout in a visible header.
+        (WebCore::FontCascade::deleteLayout): Deleted. Use a lambda instead.
+        (WebCore::roundCGFloat): Deleted. Old fashioned way to deal with multiple floating point sizes.
+        Just use std::round instead.
+        (WebCore::ceilCGFloat): Deleted. Same as above. Just use std::ceil instead.
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances): Use std::round and std::ceil.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderTextInfo::RenderTextInfo): Deleted. Can compile constructor and destructor
+        now thanks to use of unique_ptr with a custom deleter.
+        (WebCore::RenderTextInfo::~RenderTextInfo): Deleted. Ditto.
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange): Updated for RenderTextInfo data member
+        name change.
+
+        * rendering/RenderView.h: Removed unneeded include.
+
+        * rendering/line/BreakingContext.h: Removed unneeded include.
+        (WebCore::BreakingContext::handleOutOfFlowPositioned): Updated for RenderTextInfo data member
+        name change.
+        (WebCore::BreakingContext::handleFloat): Ditto.
+        (WebCore::BreakingContext::handleReplaced): Ditto.
+        (WebCore::BreakingContext::handleText): Ditto.
+        (WebCore::BreakingContext::optimalLineBreakLocationForTrailingWord): Ditto.
+
+        * rendering/line/LineBreaker.h: Made the RenderTextInfo struct more like a struct by taking
+        off all the m_ prefixes from the data member names. Initialized all the values in the struct
+        to defaults so we don't need an explicit constructor. We also don't need an explicit destructor
+        any more due to use of a unique_ptr with a deleter.
+
 2015-04-22  Roger Fong  <roger_fong@apple.com>
 
         Volume slider appears/doesn't appear at the wrong times.

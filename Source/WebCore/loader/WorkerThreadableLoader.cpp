@@ -179,8 +179,8 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const char* data, 
     memcpy(vectorPtr->data(), data, dataLength);
     if (!m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, vectorPtr] (ScriptExecutionContext& context) {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        OwnPtr<Vector<char>> vector = adoptPtr(vectorPtr);
-        workerClientWrapper->didReceiveData(vector->data(), vector->size());
+        workerClientWrapper->didReceiveData(vectorPtr->data(), vectorPtr->size());
+        delete vectorPtr;
     }, m_taskMode))
         delete vectorPtr;
 }

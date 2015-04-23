@@ -1,3 +1,14 @@
+2015-04-22  Darin Adler  <darin@apple.com>
+
+        Eliminate remaining uses of OwnPtr and PassOwnPtr in WebCore outside the editing and platform directories
+        https://bugs.webkit.org/show_bug.cgi?id=143949
+
+        Reviewed by Andreas Kling.
+
+        * wtf/MathExtras.h:
+        (wtf_ceil): Deleted. This was a workaround for a bug that was introduced in Leopard and
+        fixed in Snow Leopard <rdar://problem/6286405>, so we don't need the workaround any more.
+
 2015-04-22  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] In nightlies and local builds, WebKit services can get terminated under memory pressure

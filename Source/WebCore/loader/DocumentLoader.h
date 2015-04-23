@@ -401,7 +401,7 @@ namespace WebCore {
         SubstituteResourceMap m_pendingSubstituteResources;
         Timer m_substituteResourceDeliveryTimer;
 
-        OwnPtr<ArchiveResourceCollection> m_archiveResourceCollection;
+        std::unique_ptr<ArchiveResourceCollection> m_archiveResourceCollection;
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
         RefPtr<Archive> m_archive;
         RefPtr<SharedBuffer> m_parsedArchiveData;
@@ -428,7 +428,7 @@ namespace WebCore {
         bool m_subresourceLoadersArePageCacheAcceptable;
 
         friend class ApplicationCacheHost;  // for substitute resource delivery
-        OwnPtr<ApplicationCacheHost> m_applicationCacheHost;
+        std::unique_ptr<ApplicationCacheHost> m_applicationCacheHost;
 
 #if ENABLE(CONTENT_FILTERING)
         std::unique_ptr<ContentFilter> m_contentFilter;

@@ -351,7 +351,8 @@ void ApplicationCacheGroup::disassociateDocumentLoader(DocumentLoader* loader)
     m_associatedDocumentLoaders.remove(loader);
     m_pendingMasterResourceLoaders.remove(loader);
 
-    loader->applicationCacheHost()->setApplicationCache(0); // Will set candidate to 0, too.
+    if (auto* host = loader->applicationCacheHost())
+        host->setApplicationCache(nullptr); // Will set candidate group to null, too.
 
     if (!m_associatedDocumentLoaders.isEmpty() || !m_pendingMasterResourceLoaders.isEmpty())
         return;

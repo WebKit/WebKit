@@ -178,11 +178,7 @@ public:
         returnValue.setRawValue(::abs(m_value));
         return returnValue;
     }
-#if OS(DARWIN)
-    int wtf_ceil() const
-#else
     int ceil() const
-#endif
     {
 #if ENABLE(SATURATED_LAYOUT_ARITHMETIC)
         if (UNLIKELY(m_value >= INT_MAX - kFixedPointDenominator + 1))
