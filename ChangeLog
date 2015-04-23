@@ -1,5 +1,16 @@
 2015-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [CMake] ENABLE_THREADED_COMPOSITOR should not be at the bottom of the options list
+        https://bugs.webkit.org/show_bug.cgi?id=144103
+
+        Reviewed by Martin Robinson.
+
+        Just move ENABLE_THREADED_COMPOSITOR so it's alphabetized properly.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
+2015-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Fixups for ENABLE_CREDENTIAL_STORAGE
         https://bugs.webkit.org/show_bug.cgi?id=144102
 
