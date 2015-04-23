@@ -1,3 +1,18 @@
+2015-04-23  Tim Horton  <timothy_horton@apple.com>
+
+        Yellow highlight has gray background color when invoking Lookup on an address in a Google Maps drop down
+        https://bugs.webkit.org/show_bug.cgi?id=138737
+        <rdar://problem/18904429>
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        Other RenderObjects don't paint box decorations in the selection painting phase,
+        so RenderReplaced probably shouldn't either. This fixes the case where, when doing
+        selection-only painting of a bit of text over top of a RenderReplaced, the RenderReplaced
+        would paint its background, filling the previously transparent bitmap with an unwanted color.
+
 2015-04-23  Roger Fong  <roger_fong@apple.com>
 
         Update media timeline controls when video is paused..
