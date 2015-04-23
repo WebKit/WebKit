@@ -107,9 +107,6 @@
 #if PLATFORM(IOS)
 #include "DocumentLoader.h"
 #include "LegacyTileCache.h"
-#include "MemoryCache.h"
-#include "MemoryPressureHandler.h"
-#include "SystemMemory.h"
 #endif
 
 namespace WebCore {
@@ -4545,54 +4542,8 @@ void FrameView::setCustomSizeForResizeEvent(IntSize customSize)
 
 void FrameView::setScrollVelocity(double horizontalVelocity, double verticalVelocity, double scaleChangeRate, double timestamp)
 {
-    m_horizontalVelocity = horizontalVelocity;
-    m_verticalVelocity = verticalVelocity;
-    m_scaleChangeRate = scaleChangeRate;
-    m_lastVelocityUpdateTime = timestamp;
-}
-
-FloatRect FrameView::computeCoverageRect(double horizontalMargin, double verticalMargin) const
-{
-    FloatRect exposedContentRect = this->exposedContentRect();
-    if (!m_speculativeTilingEnabled || MemoryPressureHandler::singleton().isUnderMemoryPressure())
-        return exposedContentRect;
-
-    double currentTime = monotonicallyIncreasingTime();
-    double timeDelta = currentTime - m_lastVelocityUpdateTime;
-
-    FloatRect futureRect = exposedContentRect;
-    futureRect.setLocation(FloatPoint(futureRect.location().x() + timeDelta * m_horizontalVelocity, futureRect.location().y() + timeDelta * m_verticalVelocity));
-
-    if (m_horizontalVelocity) {
-        futureRect.setWidth(futureRect.width() + horizontalMargin);
-        if (m_horizontalVelocity < 0)
-            futureRect.setX(futureRect.x() - horizontalMargin);
-    }
-
-    if (m_verticalVelocity) {
-        futureRect.setHeight(futureRect.height() + verticalMargin);
-        if (m_verticalVelocity < 0)
-            futureRect.setY(futureRect.y() - verticalMargin);
-    }
-
-    if (m_scaleChangeRate <= 0 && !m_horizontalVelocity && !m_verticalVelocity) {
-        futureRect.setWidth(futureRect.width() + horizontalMargin);
-        futureRect.setHeight(futureRect.height() + verticalMargin);
-        futureRect.setX(futureRect.x() - horizontalMargin / 2);
-        futureRect.setY(futureRect.y() - verticalMargin / 2);
-    }
-
-    IntSize contentSize = contentsSize();
-    if (futureRect.maxX() > contentSize.width())
-        futureRect.setX(contentSize.width() - futureRect.width());
-    if (futureRect.maxY() > contentSize.height())
-        futureRect.setY(contentSize.height() - futureRect.height());
-    if (futureRect.x() < 0)
-        futureRect.setX(0);
-    if (futureRect.y() < 0)
-        futureRect.setY(0);
-
-    return futureRect;
+    if (TiledBacking* tiledBacking = this->tiledBacking())
+        tiledBacking->setVelocity(VelocityData(horizontalVelocity, verticalVelocity, scaleChangeRate, timestamp));
 }
 #endif // PLATFORM(IOS)
 

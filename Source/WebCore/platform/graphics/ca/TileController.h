@@ -139,6 +139,7 @@ private:
     virtual bool tilesWouldChangeForVisibleRect(const FloatRect&) const override;
     virtual void setTiledScrollingIndicatorPosition(const FloatPoint&) override;
     virtual void setTopContentInset(float) override;
+    virtual void setVelocity(const VelocityData&) override;
     virtual void prepopulateRect(const FloatRect&) override;
     virtual void setIsInWindow(bool) override;
     virtual void setTileCoverage(TileCoverage) override;
@@ -182,6 +183,8 @@ private:
     float m_deviceScaleFactor;
 
     TileCoverage m_tileCoverage;
+    
+    VelocityData m_velocity;
 
     // m_marginTop and m_marginBottom are the height in pixels of the top and bottom margin tiles. The width
     // of those tiles will be equivalent to the width of the other tiles in the grid. m_marginRight and

@@ -35,6 +35,7 @@
 #include <wtf/MainThread.h>
 
 #if PLATFORM(IOS)
+#include "MemoryPressureHandler.h"
 #include "TileControllerMemoryHandlerIOS.h"
 #endif
 
@@ -198,6 +199,11 @@ bool TileController::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleR
     return tileGrid().tilesWouldChangeForVisibleRect(newVisibleRect, m_visibleRect);
 }
 
+void TileController::setVelocity(const VelocityData& velocity)
+{
+    m_velocity = velocity;
+}
+
 void TileController::setTopContentInset(float topContentInset)
 {
     m_topContentInset = topContentInset;
@@ -299,14 +305,59 @@ FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisib
     if (!m_isInWindow)
         return visibleRect;
 
+#if PLATFORM(IOS)
+    // FIXME: unify the iOS and Mac code.
+    UNUSED_PARAM(previousVisibleRect);
+    
+    if (m_tileCoverage == CoverageForVisibleArea || MemoryPressureHandler::singleton().isUnderMemoryPressure())
+        return visibleRect;
+
+    double horizontalMargin = defaultTileWidth / tileGrid().scale();
+    double verticalMargin = defaultTileHeight / tileGrid().scale();
+
+    double currentTime = monotonicallyIncreasingTime();
+    double timeDelta = currentTime - m_velocity.lastUpdateTime;
+    
+    FloatRect futureRect = visibleRect;
+    futureRect.setLocation(FloatPoint(
+        futureRect.location().x() + timeDelta * m_velocity.horizontalVelocity,
+        futureRect.location().y() + timeDelta * m_velocity.verticalVelocity));
+
+    if (m_velocity.horizontalVelocity) {
+        futureRect.setWidth(futureRect.width() + horizontalMargin);
+        if (m_velocity.horizontalVelocity < 0)
+            futureRect.setX(futureRect.x() - horizontalMargin);
+    }
+
+    if (m_velocity.verticalVelocity) {
+        futureRect.setHeight(futureRect.height() + verticalMargin);
+        if (m_velocity.verticalVelocity < 0)
+            futureRect.setY(futureRect.y() - verticalMargin);
+    }
+
+    if (m_velocity.scaleChangeRate <= 0 && !m_velocity.horizontalVelocity && !m_velocity.verticalVelocity) {
+        futureRect.setWidth(futureRect.width() + horizontalMargin);
+        futureRect.setHeight(futureRect.height() + verticalMargin);
+        futureRect.setX(futureRect.x() - horizontalMargin / 2);
+        futureRect.setY(futureRect.y() - verticalMargin / 2);
+    }
+
+    IntSize contentSize = bounds().size();
+    if (futureRect.maxX() > contentSize.width())
+        futureRect.setX(contentSize.width() - futureRect.width());
+    if (futureRect.maxY() > contentSize.height())
+        futureRect.setY(contentSize.height() - futureRect.height());
+    if (futureRect.x() < 0)
+        futureRect.setX(0);
+    if (futureRect.y() < 0)
+        futureRect.setY(0);
+
+    return futureRect;
+#else
     // FIXME: look at how far the document can scroll in each dimension.
     float coverageHorizontalSize = visibleRect.width();
     float coverageVerticalSize = visibleRect.height();
 
-#if PLATFORM(IOS)
-    UNUSED_PARAM(previousVisibleRect);
-    return visibleRect;
-#else
     bool largeVisibleRectChange = !previousVisibleRect.isEmpty() && !visibleRect.intersects(previousVisibleRect);
 
     // Inflate the coverage rect so that it covers 2x of the visible width and 3x of the visible height.
@@ -318,7 +369,7 @@ FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisib
 
     if (m_tileCoverage & CoverageForVerticalScrolling && !largeVisibleRectChange)
         coverageVerticalSize *= 3;
-#endif
+
     coverageVerticalSize += topMarginHeight() + bottomMarginHeight();
     coverageHorizontalSize += leftMarginWidth() + rightMarginWidth();
 
@@ -332,6 +383,7 @@ FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisib
     coverageTop = std::max(coverageTop, coverageBounds.y());
 
     return FloatRect(coverageLeft, coverageTop, coverageHorizontalSize, coverageVerticalSize);
+#endif
 }
 
 void TileController::scheduleTileRevalidation(double interval)

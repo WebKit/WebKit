@@ -1,3 +1,39 @@
+2015-04-22  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Move computeCoverageRect code from FrameView into TileController
+        https://bugs.webkit.org/show_bug.cgi?id=144087
+
+        Reviewed by Benjamin Poulain.
+        
+        There is code in four different places that adjusts tiling coverage rect:
+        1. LegacyTileCache. This will remain unchanged.
+        2. FrameView::computeTileCoverageRect(). This was added to do velocity-based
+        page tiled coverage expansion for iOS WK2.
+        3. TileController::computeTileCoverageRect(): this is used for the page tiles
+        on Mac.
+        4. GraphicsLayerCA::adjustTiledLayerVisibleRect(). This is used by non-page
+        tiled layers on both iOS and Mac.
+        
+        This patch reduced this list to 3, coalescing FrameView::computeTileCoverageRect()
+        and TileController::computeTileCoverageRect(). It removes the rect inflation that
+        affects the visibleRect passed into rootLayer->flushCompositingState() for iOS,
+        but the page tiles now do an identical coverage inflation. The visible rect
+        change does affect visible rect computations for non-page tiled backings, but
+        a future patch will restore that.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setScrollVelocity):
+        (WebCore::FrameView::computeCoverageRect): Deleted.
+        * page/FrameView.h:
+        * platform/graphics/TiledBacking.h:
+        (WebCore::VelocityData::VelocityData):
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::setVelocity):
+        (WebCore::TileController::computeTileCoverageRect):
+        * platform/graphics/ca/TileController.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+
 2015-04-22  Darin Adler  <darin@apple.com>
 
         Remove OwnPtr and PassOwnPtr use from WebKit/cf, WebKit/mac, and WebKit2

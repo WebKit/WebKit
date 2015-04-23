@@ -40,6 +40,21 @@ enum ScrollingModeIndication {
     AsyncScrollingIndication
 };
 
+struct VelocityData  {
+    double horizontalVelocity;
+    double verticalVelocity;
+    double scaleChangeRate;
+    double lastUpdateTime;
+    
+    VelocityData(double horizontal = 0, double vertical = 0, double scaleChange = 0, double updateTime = 0)
+        : horizontalVelocity(horizontal)
+        , verticalVelocity(vertical)
+        , scaleChangeRate(scaleChange)
+        , lastUpdateTime(updateTime)
+    {
+    }
+};
+
 class TiledBacking {
 public:
     virtual ~TiledBacking() { }
@@ -50,6 +65,8 @@ public:
 
     virtual void setTiledScrollingIndicatorPosition(const FloatPoint&) = 0;
     virtual void setTopContentInset(float) = 0;
+
+    virtual void setVelocity(const VelocityData&) = 0;
 
     virtual void prepopulateRect(const FloatRect&) = 0;
 
