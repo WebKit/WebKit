@@ -1,5 +1,16 @@
 2015-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Mark as advanced the build options we don't want to expose
+        https://bugs.webkit.org/show_bug.cgi?id=143558
+
+        Reviewed by Martin Robinson.
+
+        Mark various options as private instead of public.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2015-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [CMake] Should be possible for an option to depend on multiple options
         https://bugs.webkit.org/show_bug.cgi?id=143839
 
