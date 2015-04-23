@@ -1,5 +1,15 @@
 2015-04-23  Alexey Proskuryakov  <ap@apple.com>
 
+        [iOS] WebKit services should inherit environment variables for home
+        https://bugs.webkit.org/show_bug.cgi?id=144078
+        rdar://problem/20571678
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/spi/darwin/XPCSPI.h: Added xpc_copy_bootstrap and xpc_dictionary_apply.
+
+2015-04-23  Alexey Proskuryakov  <ap@apple.com>
+
         Undo the WTF part of the previous build fix, we don't use private headers in WTF.
 
         * WTF.xcodeproj/project.pbxproj:

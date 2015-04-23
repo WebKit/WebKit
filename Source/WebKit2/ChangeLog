@@ -1,3 +1,19 @@
+2015-04-22  Alexey Proskuryakov  <ap@apple.com>
+
+        [iOS] WebKit services should inherit environment variables for home
+        https://bugs.webkit.org/show_bug.cgi?id=144078
+        rdar://problem/20571678
+
+        Reviewed by Dan Bernstein.
+
+        Pass current environment variables as XPC bootstrap. Also while at it, made
+        _CFBundleSetupXPCBootstrap not soft linked.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (main):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToService):
+
 2015-04-23  Enrica Casucci  <enrica@apple.com>
 
         Support share button.

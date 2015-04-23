@@ -28,6 +28,7 @@
 
 #import "DynamicLinkerEnvironmentExtractor.h"
 #import "EnvironmentVariables.h"
+#import <WebCore/CFBundleSPI.h>
 #import <WebCore/ServersSPI.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebCoreNSStringExtras.h>
@@ -44,12 +45,6 @@
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
-
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-// FIXME: Soft linking is temporary, make this into a regular function call once this function is available everywhere we need.
-SOFT_LINK_FRAMEWORK(CoreFoundation)
-SOFT_LINK_OPTIONAL(CoreFoundation, _CFBundleSetupXPCBootstrap, void, unused, (xpc_object_t))
-#endif
 
 namespace WebKit {
 
@@ -222,11 +217,20 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     // 1. When the application and system frameworks simply have different localized resources available, we should match the application.
     // 1.1. An important case is WebKitTestRunner, where we should use English localizations for all system frameworks.
     // 2. When AppleLanguages is passed as command line argument for UI process, or set in its preferences, we should respect it in child processes.
-    if (_CFBundleSetupXPCBootstrapPtr()) {
-        auto initializationMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-        _CFBundleSetupXPCBootstrapPtr()(initializationMessage.get());
-        xpc_connection_set_bootstrap(connection.get(), initializationMessage.get());
-    }
+    auto initializationMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    _CFBundleSetupXPCBootstrap(initializationMessage.get());
+#if PLATFORM(IOS)
+    // Clients that set these environment variables explicitly do not have the values automatically forwarded by libxpc.
+    auto containerEnvironmentVariables = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    if (const char* environmentHOME = getenv("HOME"))
+        xpc_dictionary_set_string(containerEnvironmentVariables.get(), "HOME", environmentHOME);
+    if (const char* environmentCFFIXED_USER_HOME = getenv("CFFIXED_USER_HOME"))
+        xpc_dictionary_set_string(containerEnvironmentVariables.get(), "CFFIXED_USER_HOME", environmentCFFIXED_USER_HOME);
+    if (const char* environmentTMPDIR = getenv("TMPDIR"))
+        xpc_dictionary_set_string(containerEnvironmentVariables.get(), "TMPDIR", environmentTMPDIR);
+    xpc_dictionary_set_value(initializationMessage.get(), "ContainerEnvironmentVariables", containerEnvironmentVariables.get());
+#endif
+    xpc_connection_set_bootstrap(connection.get(), initializationMessage.get());
 #endif
 
     // XPC requires having an event handler, even if it is not used.
