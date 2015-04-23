@@ -72,7 +72,6 @@ void SharedMemory::Handle::encode(IPC::ArgumentEncoder& encoder) const
 
 bool SharedMemory::Handle::decode(IPC::ArgumentDecoder& decoder, Handle& handle)
 {
-    ASSERT_ARG(handle, !handle.m_size);
     ASSERT_ARG(handle, handle.isNull());
 
     IPC::Attachment attachment;
@@ -174,7 +173,6 @@ SharedMemory::~SharedMemory()
 
 bool SharedMemory::createHandle(Handle& handle, Protection)
 {
-    ASSERT_ARG(handle, !handle.m_size);
     ASSERT_ARG(handle, handle.isNull());
 
     // FIXME: Handle the case where the passed Protection is ReadOnly.

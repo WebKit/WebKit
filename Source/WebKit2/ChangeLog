@@ -1,3 +1,11 @@
+2015-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix debug build after r183176.
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::Handle::decode):
+        (WebKit::SharedMemory::createHandle):
+
 2015-04-23  Andreas Kling  <akling@apple.com>
 
         There should only be one way to get the system memory size.
