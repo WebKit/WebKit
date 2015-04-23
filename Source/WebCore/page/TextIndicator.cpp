@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,7 +98,7 @@ PassRefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, Tex
         return nullptr;
 
     VisibleSelection oldSelection = frame->selection().selection();
-    frame->selection().setSelection(&range);
+    frame->selection().setSelection(range);
 
     RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*frame, presentationTransition);
 

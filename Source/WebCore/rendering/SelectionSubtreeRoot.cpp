@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +57,7 @@ void SelectionSubtreeRoot::adjustForVisibleSelection(Document& document)
     Position endPosition = createLegacyEditingPosition(m_selectionSubtreeData.selectionEnd()->node(), m_selectionSubtreeData.selectionEndPos());
 
     RefPtr<Range> range = Range::create(document, startPosition.parentAnchoredEquivalent(), endPosition.parentAnchoredEquivalent());
-    VisibleSelection selection(range.get());
+    VisibleSelection selection(*range);
     Position startPos = selection.start();
     Position candidate = startPos.downstream();
     if (candidate.isCandidate())

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,9 +84,9 @@ VisibleSelection::VisibleSelection(const VisiblePosition& base, const VisiblePos
     validate();
 }
 
-VisibleSelection::VisibleSelection(const Range* range, EAffinity affinity, bool isDirectional)
-    : m_base(range->startPosition())
-    , m_extent(range->endPosition())
+VisibleSelection::VisibleSelection(const Range& range, EAffinity affinity, bool isDirectional)
+    : m_base(range.startPosition())
+    , m_extent(range.endPosition())
     , m_affinity(affinity)
     , m_isDirectional(isDirectional)
 {

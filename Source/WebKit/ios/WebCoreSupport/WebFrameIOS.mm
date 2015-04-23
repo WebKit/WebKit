@@ -134,7 +134,7 @@ using namespace WebCore;
 {
     Frame *frame = [self coreFrame];
     Range *markedTextRange = frame->editor().compositionRange().get();
-    VisibleSelection markedTextRangeSelection = VisibleSelection(markedTextRange);
+    VisibleSelection markedTextRangeSelection = markedTextRange ? VisibleSelection(*markedTextRange) : VisibleSelection();
 
     IntRect result;
 

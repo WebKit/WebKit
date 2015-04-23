@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2029,7 +2029,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (!range)
         return nil;
     
-    VisibleSelection selection = VisibleSelection(range.get(), DOWNSTREAM);
+    VisibleSelection selection = VisibleSelection(*range, DOWNSTREAM);
 
     VisiblePosition visiblePosition = selection.visibleStart();
     return [WebAccessibilityTextMarker textMarkerWithVisiblePosition:visiblePosition cache:m_object->axObjectCache()];

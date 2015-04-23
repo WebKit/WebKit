@@ -1017,7 +1017,7 @@ VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(c
 
     NSDictionary *options = nil;
     if (RefPtr<Range> range = rangeForDictionaryLookupAtHitTestResult(result, &options))
-        return VisibleSelection(range.get());
+        return VisibleSelection(*range);
 
     return VisibleSelection();
 }

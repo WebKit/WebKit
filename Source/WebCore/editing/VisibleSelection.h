@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ public:
     VisibleSelection(const Position&, EAffinity, bool isDirectional = false);
     VisibleSelection(const Position&, const Position&, EAffinity = SEL_DEFAULT_AFFINITY, bool isDirectional = false);
 
-    WEBCORE_EXPORT VisibleSelection(const Range*, EAffinity = SEL_DEFAULT_AFFINITY, bool isDirectional = false);
+    WEBCORE_EXPORT VisibleSelection(const Range&, EAffinity = SEL_DEFAULT_AFFINITY, bool isDirectional = false);
     
     WEBCORE_EXPORT VisibleSelection(const VisiblePosition&, bool isDirectional = false);
     WEBCORE_EXPORT VisibleSelection(const VisiblePosition&, const VisiblePosition&, bool isDirectional = false);

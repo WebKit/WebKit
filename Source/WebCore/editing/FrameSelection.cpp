@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008, 2009, 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2008, 2009, 2010, 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1720,7 +1720,7 @@ bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool clo
         return false;
     ASSERT(&range->startContainer()->document() == &range->endContainer()->document());
 
-    VisibleSelection newSelection(range, affinity);
+    VisibleSelection newSelection(*range, affinity);
 
 #if PLATFORM(IOS)
     // FIXME: Why do we need this check only in iOS?
@@ -2169,7 +2169,7 @@ void FrameSelection::expandSelectionToElementContainingCaretSelection()
     RefPtr<Range> range = elementRangeContainingCaretSelection();
     if (!range)
         return;
-    VisibleSelection selection(range.get(), DOWNSTREAM);
+    VisibleSelection selection(*range, DOWNSTREAM);
     setSelection(selection);
 }
 
@@ -2387,7 +2387,7 @@ void FrameSelection::selectRangeOnElement(unsigned location, unsigned length, No
     ASSERT(!ec);
     resultRange->setEnd(node, location + length, ec);
     ASSERT(!ec);
-    VisibleSelection selection = VisibleSelection(resultRange.get(), SEL_DEFAULT_AFFINITY);
+    VisibleSelection selection = VisibleSelection(*resultRange, SEL_DEFAULT_AFFINITY);
     setSelection(selection, true);
 }
 

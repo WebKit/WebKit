@@ -1,3 +1,42 @@
+2015-04-22  Brent Fulgham  <bfulgham@apple.com>
+
+        VisibleSelection should only accept Range by reference
+        https://bugs.webkit.org/show_bug.cgi?id=144047
+
+        Reviewed by Tim Horton.
+
+        Update VisibleSelection to expect a Range reference argument, rather than a
+        Range*. Also update all uses of VisibleSelection to pass a reference instead
+        of a pointer.
+
+        No change in behavior, so new tests.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionForCommand):
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markAndReplaceFor):
+        (WebCore::Editor::transpose):
+        (WebCore::Editor::findString):
+        (WebCore::Editor::rangeOfString):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectedRange):
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::SpellingCorrectionCommand):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::VisibleSelection):
+        * editing/VisibleSelection.h:
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::replaceNodeFromPasteboard):
+        * page/DragController.cpp:
+        (WebCore::selectElement):
+        * page/TextIndicator.cpp:
+        (WebCore::TextIndicator::createWithRange):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::selectClosestWordFromHitTestResultBasedOnLookup):
+        * rendering/SelectionSubtreeRoot.cpp:
+        (WebCore::SelectionSubtreeRoot::adjustForVisibleSelection):
+
 2015-04-22  Roger Fong  <roger_fong@apple.com>
 
         Audio controls should render with a black background.

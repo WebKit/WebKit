@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009, 2010, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -706,7 +706,7 @@ static void selectElement(Element& element)
 {
     RefPtr<Range> range = element.document().createRange();
     range->selectNode(&element);
-    element.document().frame()->selection().setSelection(VisibleSelection(range.get(), DOWNSTREAM));
+    element.document().frame()->selection().setSelection(VisibleSelection(*range, DOWNSTREAM));
 }
 
 static IntPoint dragLocForDHTMLDrag(const IntPoint& mouseDraggedPoint, const IntPoint& dragOrigin, const IntPoint& dragImageOffset, bool isLinkImage)
