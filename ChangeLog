@@ -1,5 +1,15 @@
 2015-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [CMake] Some internal variables are not marked as advanced
+        https://bugs.webkit.org/show_bug.cgi?id=143595
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/FindFreetype2.cmake: Mark internal options as advanced.
+        * Source/cmake/FindHarfBuzz.cmake: Mark HARFBUZZ_ICU_LIBRARIES as advanced.
+
+2015-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Mark as advanced the build options we don't want to expose
         https://bugs.webkit.org/show_bug.cgi?id=143558
 
