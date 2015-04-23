@@ -33,28 +33,29 @@ SVGTextLayoutEngineBaseline::SVGTextLayoutEngineBaseline(const FontCascade& font
 {
 }
 
-float SVGTextLayoutEngineBaseline::calculateBaselineShift(const SVGRenderStyle* style, SVGElement* contextElement) const
+float SVGTextLayoutEngineBaseline::calculateBaselineShift(const SVGRenderStyle& style, SVGElement* context) const
 {
-    if (style->baselineShift() == BS_LENGTH) {
-        SVGLength baselineShiftValueLength = style->baselineShiftValue();
+    if (style.baselineShift() == BS_LENGTH) {
+        SVGLength baselineShiftValueLength = style.baselineShiftValue();
         if (baselineShiftValueLength.unitType() == LengthTypePercentage)
             return baselineShiftValueLength.valueAsPercentage() * m_font.pixelSize();
 
-        SVGLengthContext lengthContext(contextElement);
+        SVGLengthContext lengthContext(context);
         return baselineShiftValueLength.value(lengthContext);
     }
 
-    switch (style->baselineShift()) {
+    switch (style.baselineShift()) {
     case BS_BASELINE:
         return 0;
     case BS_SUB:
         return -m_font.fontMetrics().floatHeight() / 2;
     case BS_SUPER:
         return m_font.fontMetrics().floatHeight() / 2;
-    default:
-        ASSERT_NOT_REACHED();
-        return 0;
+    case BS_LENGTH:
+        break;
     }
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 EAlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBaseline(bool isVerticalText, const RenderObject* textRenderer) const
@@ -102,15 +103,12 @@ EAlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBasel
     }
 }
 
-float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVerticalText, const RenderObject* textRenderer) const
+float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVerticalText, const RenderObject& textRenderer) const
 {
-    ASSERT(textRenderer);
-    ASSERT(textRenderer->parent());
-
-    const RenderObject* textRendererParent = textRenderer->parent();
+    const RenderObject* textRendererParent = textRenderer.parent();
     ASSERT(textRendererParent);
 
-    EAlignmentBaseline baseline = textRenderer->style().svgStyle().alignmentBaseline();
+    EAlignmentBaseline baseline = textRenderer.style().svgStyle().alignmentBaseline();
     if (baseline == AB_AUTO) {
         baseline = dominantBaselineToAlignmentBaseline(isVerticalText, textRendererParent);
         ASSERT(baseline != AB_AUTO);
@@ -145,11 +143,9 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
     }
 }
 
-float SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle(bool isVerticalText, const SVGRenderStyle* style, const UChar& character) const
+float SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle(bool isVerticalText, const SVGRenderStyle& style, const UChar& character) const
 {
-    ASSERT(style);
-
-    switch (isVerticalText ? style->glyphOrientationVertical() : style->glyphOrientationHorizontal()) {
+    switch (isVerticalText ? style.glyphOrientationVertical() : style.glyphOrientationHorizontal()) {
     case GO_AUTO:
         // Spec: Fullwidth ideographic and fullwidth Latin text will be set with a glyph-orientation of 0-degrees.
         // Text which is not fullwidth will be set with a glyph-orientation of 90-degrees.

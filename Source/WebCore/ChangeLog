@@ -1,3 +1,33 @@
+2015-04-23  Daniel Bates  <dabates@apple.com>
+
+        Clean up: Use references instead of pointers in more SVG files
+        https://bugs.webkit.org/show_bug.cgi?id=144045
+
+        Reviewed by Darin Adler.
+
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::layoutCharactersInTextBoxes): Pass reference instead of pointer.
+
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::recordTextFragment): Changed parameter textBox from pointer to reference.
+        (WebCore::SVGTextLayoutEngine::layoutInlineTextBox): Ditto.
+        (WebCore::SVGTextLayoutEngine::currentVisualCharacterMetrics): Changed parameter textBox from pointer to
+        reference and made it const since this function does not modify textBox.
+        (WebCore::SVGTextLayoutEngine::layoutTextOnLineOrPath): Changed parameters from pointers to references.
+        Also, removed comma from comment so that it reads well.
+        * rendering/svg/SVGTextLayoutEngine.h: Updated declarations for the above functions.
+
+        * rendering/svg/SVGTextLayoutEngineBaseline.cpp:
+        (WebCore::SVGTextLayoutEngineBaseline::calculateBaselineShift): Changed parameter style from pointer to reference.
+        Added case BS_LENGTH to switch block and removed default case so that the compiler checks that we handle all cases.
+        Renamed parameter contextElement to context since the name of its data type conveys that it is an element.
+        (WebCore::SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift): Changed parameter textRenderer from
+        pointer to reference and removed runtime assertion that textRenderer is non-null (since it well-formed reference
+        cannot point to a non-existent object).
+        (WebCore::SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle): Changed parameter style from pointer to reference
+        removed runtime assertion that style is non-null.
+        * rendering/svg/SVGTextLayoutEngineBaseline.h: Updated declarations for the above functions.
+
 2015-04-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183194.

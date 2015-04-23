@@ -105,7 +105,7 @@ void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGText
     for (InlineBox* child = start->firstChild(); child; child = child->nextOnLine()) {
         if (is<SVGInlineTextBox>(*child)) {
             ASSERT(is<RenderSVGInlineText>(child->renderer()));
-            characterLayout.layoutInlineTextBox(downcast<SVGInlineTextBox>(child));
+            characterLayout.layoutInlineTextBox(downcast<SVGInlineTextBox>(*child));
         } else {
             // Skip generated content.
             Node* node = child->renderer().node();

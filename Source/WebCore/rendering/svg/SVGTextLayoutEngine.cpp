@@ -110,7 +110,7 @@ void SVGTextLayoutEngine::updateRelativePositionAdjustmentsIfNeeded(float dx, fl
     m_dy = dy;
 }
 
-void SVGTextLayoutEngine::recordTextFragment(SVGInlineTextBox* textBox, Vector<SVGTextMetrics>& textMetricsValues)
+void SVGTextLayoutEngine::recordTextFragment(SVGInlineTextBox& textBox, Vector<SVGTextMetrics>& textMetricsValues)
 {
     ASSERT(!m_currentTextFragment.length);
     ASSERT(m_visualMetricsListOffset > 0);
@@ -137,7 +137,7 @@ void SVGTextLayoutEngine::recordTextFragment(SVGInlineTextBox* textBox, Vector<S
         }
     }
 
-    textBox->textFragments().append(m_currentTextFragment);
+    textBox.textFragments().append(m_currentTextFragment);
     m_currentTextFragment = SVGTextFragment();
 }
 
@@ -210,27 +210,25 @@ void SVGTextLayoutEngine::endTextPathLayout()
     m_textPathScaling = 1;
 }
 
-void SVGTextLayoutEngine::layoutInlineTextBox(SVGInlineTextBox* textBox)
+void SVGTextLayoutEngine::layoutInlineTextBox(SVGInlineTextBox& textBox)
 {
-    ASSERT(textBox);
-
-    RenderSVGInlineText& text = textBox->renderer();
+    RenderSVGInlineText& text = textBox.renderer();
     ASSERT(text.parent());
     ASSERT(text.parent()->element());
     ASSERT(text.parent()->element()->isSVGElement());
 
     const RenderStyle& style = text.style();
 
-    textBox->clearTextFragments();
+    textBox.clearTextFragments();
     m_isVerticalText = style.svgStyle().isVerticalWritingMode();
-    layoutTextOnLineOrPath(textBox, &text, &style);
+    layoutTextOnLineOrPath(textBox, text, style);
 
     if (m_inPathLayout) {
-        m_pathLayoutBoxes.append(textBox);
+        m_pathLayoutBoxes.append(&textBox);
         return;
     }
 
-    m_lineLayoutBoxes.append(textBox);
+    m_lineLayoutBoxes.append(&textBox);
 }
 
 #if DUMP_TEXT_FRAGMENTS > 0
@@ -360,12 +358,12 @@ bool SVGTextLayoutEngine::currentLogicalCharacterMetrics(SVGTextLayoutAttributes
     return true;
 }
 
-bool SVGTextLayoutEngine::currentVisualCharacterMetrics(SVGInlineTextBox* textBox, Vector<SVGTextMetrics>& visualMetricsValues, SVGTextMetrics& visualMetrics)
+bool SVGTextLayoutEngine::currentVisualCharacterMetrics(const SVGInlineTextBox& textBox, Vector<SVGTextMetrics>& visualMetricsValues, SVGTextMetrics& visualMetrics)
 {
     ASSERT(!visualMetricsValues.isEmpty());
     unsigned textMetricsSize = visualMetricsValues.size();
-    unsigned boxStart = textBox->start();
-    unsigned boxLength = textBox->len();
+    unsigned boxStart = textBox.start();
+    unsigned boxLength = textBox.len();
 
     if (m_visualMetricsListOffset == textMetricsSize)
         return false;
@@ -400,28 +398,28 @@ void SVGTextLayoutEngine::advanceToNextVisualCharacter(const SVGTextMetrics& vis
     m_visualCharacterOffset += visualMetrics.length();
 }
 
-void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, RenderSVGInlineText* text, const RenderStyle* style)
+void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, RenderSVGInlineText& text, const RenderStyle& style)
 {
     if (m_inPathLayout && m_textPath.isEmpty())
         return;
 
-    RenderElement* textParent = text->parent();
+    RenderElement* textParent = text.parent();
     ASSERT(textParent);
     SVGElement* lengthContext = downcast<SVGElement>(textParent->element());
     
     bool definesTextLength = parentDefinesTextLength(textParent);
 
-    const SVGRenderStyle& svgStyle = style->svgStyle();
+    const SVGRenderStyle& svgStyle = style.svgStyle();
 
     m_visualMetricsListOffset = 0;
     m_visualCharacterOffset = 0;
 
-    Vector<SVGTextMetrics>& visualMetricsValues = text->layoutAttributes()->textMetricsValues();
+    Vector<SVGTextMetrics>& visualMetricsValues = text.layoutAttributes()->textMetricsValues();
     ASSERT(!visualMetricsValues.isEmpty());
 
-    auto upconvertedCharacters = StringView(text->text()).upconvertedCharacters();
+    auto upconvertedCharacters = StringView(text.text()).upconvertedCharacters();
     const UChar* characters = upconvertedCharacters;
-    const FontCascade& font = style->fontCascade();
+    const FontCascade& font = style.fontCascade();
 
     SVGTextLayoutEngineSpacing spacingLayout(font);
     SVGTextLayoutEngineBaseline baselineLayout(font);
@@ -430,7 +428,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
     bool applySpacingToNextCharacter = false;
 
     float lastAngle = 0;
-    float baselineShift = baselineLayout.calculateBaselineShift(&svgStyle, lengthContext);
+    float baselineShift = baselineLayout.calculateBaselineShift(svgStyle, lengthContext);
     baselineShift -= baselineLayout.calculateAlignmentBaselineShift(m_isVerticalText, text);
 
     // Main layout algorithm.
@@ -463,16 +461,16 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
         float x = data.x;
         float y = data.y;
 
-        // When we've advanced to the box start offset, determine using the original x/y values,
-        // whether this character starts a new text chunk, before doing any further processing.
-        if (m_visualCharacterOffset == textBox->start())
-            textBox->setStartsNewTextChunk(logicalAttributes->context().characterStartsNewTextChunk(m_logicalCharacterOffset));
+        // When we've advanced to the box start offset, determine using the original x/y values
+        // whether this character starts a new text chunk before doing any further processing.
+        if (m_visualCharacterOffset == textBox.start())
+            textBox.setStartsNewTextChunk(logicalAttributes->context().characterStartsNewTextChunk(m_logicalCharacterOffset));
 
         float angle = data.rotate == SVGTextLayoutAttributes::emptyValue() ? 0 : data.rotate;
 
         // Calculate glyph orientation angle.
         const UChar* currentCharacter = characters + m_visualCharacterOffset;
-        float orientationAngle = baselineLayout.calculateGlyphOrientationAngle(m_isVerticalText, &svgStyle, *currentCharacter);
+        float orientationAngle = baselineLayout.calculateGlyphOrientationAngle(m_isVerticalText, svgStyle, *currentCharacter);
 
         // Calculate glyph advance & x/y orientation shifts.
         float xOrientationShift = 0;
