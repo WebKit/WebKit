@@ -1,3 +1,17 @@
+2015-04-23  Andreas Kling  <akling@apple.com>
+
+        Slap Node's reference counting functions with ALWAYS_INLINE stick.
+
+        Speculative fix for weird ~3% regression on Speedometer seen after TreeShared
+        was merged into Node. Since the memory layout didn't change, failure to inline
+        seems like a possible source of regression.
+
+        * dom/Node.h:
+        (WebCore::Node::ref):
+        (WebCore::Node::deref):
+        (WebCore::Node::hasOneRef):
+        (WebCore::Node::refCount):
+
 2015-04-22  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Move computeCoverageRect code from FrameView into TileController
