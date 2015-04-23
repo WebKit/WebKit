@@ -1,3 +1,11 @@
+2015-04-23  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, temporarily skip http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html on Windows.
+
+        It often crashes on Windows.
+
+        * platform/win/TestExpectations:
+
 2015-04-22  Zalan Bujtas  <zalan@apple.com>
 
         Create RenderRubyText for <rt> only when the parent renderer is a RenderRuby.
