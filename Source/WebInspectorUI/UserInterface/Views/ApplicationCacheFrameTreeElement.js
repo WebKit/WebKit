@@ -47,10 +47,18 @@ WebInspector.ApplicationCacheFrameTreeElement = class ApplicationCacheFrameTreeE
         // and it doesn't match the mainTitle.
         var subtitle = WebInspector.displayNameForHost(parsedURL.host);
 
-        // FIXME: This is bad layering. We should not be calling a global object to get this.
-        var manifestTreeElement = WebInspector.resourceSidebarPanel.treeElementForRepresentedObject(this.representedObject.manifest);
+        var manifestTreeElement = null;
+        var currentAncestor = this.parent;
+        while (currentAncestor && !currentAncestor.root) {
+            if (currentAncestor instanceof WebInspector.ApplicationCacheManifestTreeElement) {
+                manifestTreeElement = currentAncestor;
+                break;
+            }
 
-        var subtitleIsDuplicate = subtitle === this._mainTitle || subtitle === manifestTreeElement.subtitle;
+            currentAncestor = currentAncestor.parent;
+        }
+
+        var subtitleIsDuplicate = subtitle === this._mainTitle || manifestTreeElement ? subtitle === manifestTreeElement.subtitle : false;
         this.subtitle = subtitleIsDuplicate ? null : subtitle;
     }
 };

@@ -1,3 +1,14 @@
+2015-04-23  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Fix layering issues with ApplicationCacheFrameTreeElement
+        https://bugs.webkit.org/show_bug.cgi?id=144113
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ApplicationCacheFrameTreeElement.js:
+        (WebInspector.ApplicationCacheFrameTreeElement.prototype.updateTitles):
+        (WebInspector.ApplicationCacheFrameTreeElement):
+
 2015-04-22  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: clicking Timelines tree view nodes should not change the current content view
