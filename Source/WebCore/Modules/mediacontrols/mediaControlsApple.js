@@ -396,6 +396,7 @@ Controller.prototype = {
 
         var muteBox = this.controls.muteBox = document.createElement('div');
         muteBox.classList.add(this.ClassNames.muteBox);
+        this.listenFor(muteBox, 'mouseover', this.handleMuteBoxOver);
 
         var muteButton = this.controls.muteButton = document.createElement('button');
         muteButton.setAttribute('pseudo', '-webkit-media-controls-mute-button');
@@ -924,6 +925,11 @@ Controller.prototype = {
             this.controls.muteButton.setAttribute('aria-label', this.UIString('Unmute'));
         this.drawVolumeBackground();
         return true;
+    },
+
+    handleMuteBoxOver: function(event)
+    {
+        this.drawVolumeBackground();
     },
 
     handleMinButtonClicked: function(event)
