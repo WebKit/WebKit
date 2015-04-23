@@ -103,6 +103,10 @@ audio::-webkit-media-controls-panel-background-container {
     -webkit-clip-path: inset(20px 0px 0px 0px);
 }
 
+audio::-webkit-media-controls-panel-background-container {
+    background-color: black;
+}
+
 video::-webkit-media-controls-panel-tint,
 audio::-webkit-media-controls-panel-tint {
     position: absolute;
@@ -229,6 +233,10 @@ audio::-webkit-media-controls-panel .volume-box {
     /* make zero width (rather than display:none) for AX and FKA */
     width: 0; /* will become 101px when shown */
 
+}
+
+audio::-webkit-media-controls-panel .volume-box {
+    background-color: black;
 }
 
 video::-webkit-media-controls-volume-slider-container-background,
