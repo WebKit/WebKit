@@ -464,7 +464,7 @@ private:
             compilePutStack();
             break;
         case Phantom:
-        case HardPhantom:
+        case MustGenerate:
         case Check:
             compilePhantom();
             break;

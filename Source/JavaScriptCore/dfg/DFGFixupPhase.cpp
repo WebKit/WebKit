@@ -1027,7 +1027,7 @@ private:
         case ConstantStoragePointer:
         case DoubleAsInt32:
         case ValueToInt32:
-        case HardPhantom: // HardPhantom would be trivial to handle but anyway we assert that we won't see it here yet.
+        case MustGenerate: // MustGenerate would be trivial to handle but anyway we assert that we won't see it here yet.
         case DoubleRep:
         case ValueRep:
         case Int52Rep:
@@ -2011,7 +2011,7 @@ private:
         case MovHint:
         case Phantom:
         case Check:
-        case HardPhantom:
+        case MustGenerate:
             DFG_NODE_DO_TO_CHILDREN(m_graph, m_currentNode, fixEdgeRepresentation);
             break;
             

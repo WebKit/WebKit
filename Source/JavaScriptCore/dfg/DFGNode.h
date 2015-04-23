@@ -1543,7 +1543,7 @@ struct Node {
         case ZombieHint:
             return true;
         case Phantom:
-        case HardPhantom:
+        case MustGenerate:
             return child1().useKindUnchecked() != UntypedUse || child2().useKindUnchecked() != UntypedUse || child3().useKindUnchecked() != UntypedUse;
         default:
             return shouldGenerate();

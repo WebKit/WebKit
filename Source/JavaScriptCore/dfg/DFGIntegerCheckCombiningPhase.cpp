@@ -390,7 +390,7 @@ private:
     {
         Node* result = insertAdd(nodeIndex, origin, source, addend);
         m_insertionSet.insertNode(
-            nodeIndex, SpecNone, HardPhantom, origin, result->defaultEdge());
+            nodeIndex, SpecNone, MustGenerate, origin, result->defaultEdge());
         return result;
     }
     

@@ -92,7 +92,7 @@ private:
             switch (node->op()) {
             case Phantom:
             case Check:
-            case HardPhantom:
+            case MustGenerate:
             case MovHint:
             case PutHint:
             case LoadVarargs:
@@ -214,7 +214,7 @@ private:
             switch (node->op()) {
             case Phantom:
             case Check:
-            case HardPhantom:
+            case MustGenerate:
             case MovHint:
             case PutHint:
                 // We don't need to change anything with these.

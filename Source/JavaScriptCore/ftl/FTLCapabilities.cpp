@@ -52,7 +52,7 @@ inline CapabilityLevel canCompile(Node* node)
     case MovHint:
     case ZombieHint:
     case Phantom:
-    case HardPhantom:
+    case MustGenerate:
     case Flush:
     case PhantomLocal:
     case SetArgument:

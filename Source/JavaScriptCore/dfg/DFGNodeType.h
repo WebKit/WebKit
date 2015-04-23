@@ -66,7 +66,7 @@ namespace JSC { namespace DFG {
     macro(MovHint, NodeMustGenerate) \
     macro(ZombieHint, NodeMustGenerate) \
     macro(Phantom, NodeMustGenerate) \
-    macro(HardPhantom, NodeMustGenerate) /* Like Phantom, but we never remove any of its children. */ \
+    macro(MustGenerate, NodeMustGenerate) /* Utility node for making soem not-usually-NodeMustGenerate node become like NodeMustGenerate. */ \
     macro(Check, NodeMustGenerate) /* Used if we want just a type check but not liveness. Non-checking uses will be removed. */\
     macro(Upsilon, NodeRelevantToOSR) \
     macro(Phi, NodeRelevantToOSR) \

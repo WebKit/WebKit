@@ -147,7 +147,7 @@ public:
                     break;
                 }
                     
-                case HardPhantom: {
+                case MustGenerate: {
                     if (node->children.isEmpty()) {
                         m_graph.m_allocator.free(node);
                         continue;

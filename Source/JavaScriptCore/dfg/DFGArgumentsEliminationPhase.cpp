@@ -161,7 +161,7 @@ private:
 
                 case Phantom:
                 case Check:
-                case HardPhantom:
+                case MustGenerate:
                 case MovHint:
                 case PutHint:
                     break;

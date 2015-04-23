@@ -71,7 +71,7 @@ bool mayExit(Graph& graph, Node* node)
     case Flush:
     case Phantom:
     case Check:
-    case HardPhantom:
+    case MustGenerate:
     case GetLocal:
     case LoopHint:
     case Phi:
