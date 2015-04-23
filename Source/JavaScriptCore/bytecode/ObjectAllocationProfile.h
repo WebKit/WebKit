@@ -89,13 +89,23 @@ public:
         if (inlineCapacity > JSFinalObject::maxInlineCapacity())
             inlineCapacity = JSFinalObject::maxInlineCapacity();
 
+        Structure* structure = vm.prototypeMap.emptyObjectStructureForPrototype(prototype, inlineCapacity);
+
+        // Ensure that if another thread sees the structure, it will see it properly created
+        WTF::storeStoreFence();
+
         m_allocator = allocator;
-        m_structure.set(vm, owner,
-            vm.prototypeMap.emptyObjectStructureForPrototype(prototype, inlineCapacity));
+        m_structure.set(vm, owner, structure);
     }
 
-    Structure* structure() { return m_structure.get(); }
-    unsigned inlineCapacity() { return m_structure->inlineCapacity(); }
+    Structure* structure()
+    {
+        Structure* structure = m_structure.get();
+        // Ensure that if we see the structure, it has been properly created
+        WTF::loadLoadFence();
+        return structure;
+    }
+    unsigned inlineCapacity() { return structure()->inlineCapacity(); }
 
     void clear()
     {

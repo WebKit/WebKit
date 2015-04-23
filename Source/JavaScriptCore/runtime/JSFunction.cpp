@@ -116,6 +116,11 @@ FunctionRareData* JSFunction::allocateAndInitializeRareData(ExecState* exec, siz
     if (!prototype)
         prototype = globalObject()->objectPrototype();
     FunctionRareData* rareData = FunctionRareData::create(vm, prototype, inlineCapacity);
+
+    // A DFG compilation thread may be trying to read the rare data
+    // We want to ensure that it sees it properly allocated
+    WTF::storeStoreFence();
+
     m_rareData.set(vm, this, rareData);
     return m_rareData.get();
 }

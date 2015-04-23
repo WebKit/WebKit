@@ -1,3 +1,65 @@
+2015-04-23  Basile Clement  <basile_clement@apple.com>
+
+        Make FunctionRareData allocation thread-safe
+        https://bugs.webkit.org/show_bug.cgi?id=144001
+
+        Reviewed by Mark Lam.
+
+        The two things we want to prevent are:
+
+         1. A thread seeing a pointer to a not-yet-fully-created rare data from
+            a JSFunction
+         2. A thread seeing a pointer to a not-yet-fully-created Structure from
+            an ObjectAllocationProfile
+
+        For 1., only the JS thread can be creating the rare data (in
+        runtime/CommonSlowPaths.cpp or in dfg/DFGOperations.cpp), so we don't need to
+        worry about concurrent writes, and we don't need any fences when *reading* the
+        rare data from the JS thread. Thus we only need a storeStoreFence between the
+        rare data creation and assignment to m_rareData in
+        JSFunction::createAndInitializeRareData() to ensure that when the store to
+        m_rareData is issued, the rare data has been properly created.
+
+        For the DFG compilation threads, the only place they can access the
+        rare data is through JSFunction::rareData(), and so we only need a
+        loadLoadFence there to ensure that when we see a non-null pointer in
+        m_rareData, the pointed object will be seen as a fully created
+        FunctionRareData.
+
+
+        For 2., the structure is created in
+        ObjectAllocationProfile::initialize() (which appears to be called only by the
+        JS thread as well, in bytecode/CodeBlock.cpp and on rare data initialization,
+        which always happen in the JS thread), and read through
+        ObjectAllocationProfile::structure() and
+        ObjectAllocationProfile::inlineCapacity(), so following the same reasoning we
+        put a storeStoreFence in ObjectAllocationProfile::initialize() and a
+        loadLoadFence in ObjectAllocationProfile::structure() (and change
+        ObjectAllocationProfile::inlineCapacity() to go through
+        ObjectAllocationProfile::structure()).
+
+        We don't need a fence in ObjectAllocationProfile::clear() because
+        clearing the structure is already as atomic as it gets.
+
+        Finally, notice that we don't care about the ObjectAllocationProfile's
+        m_allocator as that is only used by ObjectAllocationProfile::initialize() and
+        ObjectAllocationProfile::clear() that are always run in the JS thread.
+        ObjectAllocationProfile::isNull() could cause some trouble, but it is
+        currently only used in the ObjectAllocationProfile::clear()'s ASSERT in the JS
+        thread.  Doing isNull()-style pre-checks would be wrong in any other concurrent
+        thread anyway.
+
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfile::initialize):
+        (JSC::ObjectAllocationProfile::structure):
+        (JSC::ObjectAllocationProfile::inlineCapacity):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::allocateAndInitializeRareData):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::rareData):
+        (JSC::JSFunction::allocationStructure): Deleted.
+        This is no longer used, as all the accesses to the ObjectAllocationProfile go through the rare data.
+
 2015-04-22  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should insert Phantoms late using BytecodeKills and block-local OSR availability

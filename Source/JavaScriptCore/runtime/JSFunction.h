@@ -118,14 +118,15 @@ public:
         return m_rareData.get();
     }
 
-    FunctionRareData* rareData() { return m_rareData.get(); }
-
-    Structure* allocationStructure()
+    FunctionRareData* rareData()
     {
-        if (!m_rareData)
-            return nullptr;
+        FunctionRareData* rareData = m_rareData.get();
 
-        return m_rareData.get()->allocationStructure();
+        // The JS thread may be concurrently creating the rare data
+        // If we see it, we want to ensure it has been properly created
+        WTF::loadLoadFence();
+
+        return rareData;
     }
 
     bool isHostOrBuiltinFunction() const;
