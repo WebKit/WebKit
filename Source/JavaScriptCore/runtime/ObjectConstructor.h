@@ -27,6 +27,10 @@
 
 namespace JSC {
 
+EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertySymbols(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState*);
+
 class ObjectPrototype;
 
 class ObjectConstructor : public InternalFunction {

@@ -1,3 +1,16 @@
+2015-04-23  Jordan Harband  <ljharb@gmail.com>
+
+        Implement `Object.assign`
+        https://bugs.webkit.org/show_bug.cgi?id=143980
+
+        Reviewed by Filip Pizlo.
+
+        * js/Object-assign-expected.txt: Added.
+        * js/Object-assign.html: Added.
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-assign.js: Added.
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2015-04-23  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, temporarily skip http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html on Windows.

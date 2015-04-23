@@ -264,6 +264,9 @@
     macro(deferred) \
     macro(countdownHolder) \
     macro(Object) \
+    macro(objectKeys) \
+    macro(objectGetOwnPropertyDescriptor) \
+    macro(objectGetOwnPropertySymbols) \
     macro(Number) \
     macro(Array) \
     macro(abs) \
