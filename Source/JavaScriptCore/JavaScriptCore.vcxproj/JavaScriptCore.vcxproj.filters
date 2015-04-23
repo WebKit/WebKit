@@ -1047,6 +1047,9 @@
     <ClCompile Include="..\bytecode\DeferredCompilationCallback.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
+    <ClCompile Include="..\bytecode\DeferredSourceDump.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
     <ClCompile Include="..\dfg\DFGCompilationKey.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -3316,6 +3319,9 @@
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\bytecode\DeferredCompilationCallback.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\DeferredSourceDump.h">
       <Filter>bytecode</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGCompilationKey.h">

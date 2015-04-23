@@ -326,6 +326,7 @@
     <ClCompile Include="..\bytecode\ComplexGetStatus.cpp" />
     <ClCompile Include="..\bytecode\ConstantStructureCheck.cpp" />
     <ClCompile Include="..\bytecode\DeferredCompilationCallback.cpp" />
+    <ClCompile Include="..\bytecode\DeferredSourceDump.cpp" />
     <ClCompile Include="..\bytecode\DFGExitProfile.cpp" />
     <ClCompile Include="..\bytecode\ExecutionCounter.cpp" />
     <ClCompile Include="..\bytecode\ExitKind.cpp" />
@@ -977,6 +978,7 @@
     <ClInclude Include="..\bytecode\ConstantStructureCheck.h" />
     <ClInclude Include="..\bytecode\DataFormat.h" />
     <ClInclude Include="..\bytecode\DeferredCompilationCallback.h" />
+    <ClInclude Include="..\bytecode\DeferredSourceDump.h" />
     <ClInclude Include="..\bytecode\DFGExitProfile.h" />
     <ClInclude Include="..\bytecode\EvalCodeCache.h" />
     <ClInclude Include="..\bytecode\ExecutionCounter.h" />

@@ -35,6 +35,8 @@ DeferredCompilationCallback::~DeferredCompilationCallback() { }
 
 void DeferredCompilationCallback::compilationDidComplete(CodeBlock* codeBlock, CompilationResult result)
 {
+    dumpCompiledSourcesIfNeeded();
+
     switch (result) {
     case CompilationFailed:
     case CompilationInvalidated:
@@ -44,6 +46,26 @@ void DeferredCompilationCallback::compilationDidComplete(CodeBlock* codeBlock, C
         break;
     case CompilationDeferred:
         RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+Vector<DeferredSourceDump>& DeferredCompilationCallback::ensureDeferredSourceDump()
+{
+    if (!m_deferredSourceDump)
+        m_deferredSourceDump = std::make_unique<Vector<DeferredSourceDump>>();
+    return *m_deferredSourceDump;
+}
+
+void DeferredCompilationCallback::dumpCompiledSourcesIfNeeded()
+{
+    if (!m_deferredSourceDump)
+        return;
+
+    ASSERT(Options::dumpSourceAtDFGTime());
+    unsigned index = 0;
+    for (auto& info : *m_deferredSourceDump) {
+        dataLog("[", ++index, "] ");
+        info.dump();
     }
 }
 

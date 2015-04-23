@@ -80,6 +80,7 @@ set(JavaScriptCore_SOURCES
     bytecode/ConstantStructureCheck.cpp
     bytecode/DFGExitProfile.cpp
     bytecode/DeferredCompilationCallback.cpp
+    bytecode/DeferredSourceDump.cpp
     bytecode/ExecutionCounter.cpp
     bytecode/ExitKind.cpp
     bytecode/ExitingJITType.cpp

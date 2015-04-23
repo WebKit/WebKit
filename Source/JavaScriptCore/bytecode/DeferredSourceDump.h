@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,40 +20,33 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeferredCompilationCallback_h
-#define DeferredCompilationCallback_h
+#ifndef DeferredSourceDump_h
+#define DeferredSourceDump_h
 
-#include "CompilationResult.h"
-#include "DeferredSourceDump.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#include "CodeOrigin.h"
+#include "JITCode.h"
 
 namespace JSC {
 
 class CodeBlock;
 
-class DeferredCompilationCallback : public RefCounted<DeferredCompilationCallback> {
-protected:
-    DeferredCompilationCallback();
-
+class DeferredSourceDump {
 public:
-    virtual ~DeferredCompilationCallback();
+    DeferredSourceDump(CodeBlock*);
+    DeferredSourceDump(CodeBlock*, CodeBlock* rootCodeBlock, JITCode::JITType rootJITType, CodeOrigin callerCodeOrigin);
 
-    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*) = 0;
-    virtual void compilationDidComplete(CodeBlock*, CompilationResult);
-
-    Vector<DeferredSourceDump>& ensureDeferredSourceDump();
+    void dump();
 
 private:
-    void dumpCompiledSourcesIfNeeded();
-
-    std::unique_ptr<Vector<DeferredSourceDump>> m_deferredSourceDump;
+    CodeBlock* m_codeBlock;
+    CodeBlock* m_rootCodeBlock;
+    JITCode::JITType m_rootJITType;
+    CodeOrigin m_callerCodeOrigin;
 };
 
 } // namespace JSC
 
-#endif // DeferredCompilationCallback_h
-
+#endif // DeferredSourceDump_h

@@ -1,3 +1,45 @@
+2015-04-22  Mark Lam  <mark.lam@apple.com>
+
+        Fix assertion failure and race condition in Options::dumpSourceAtDFGTime().
+        https://bugs.webkit.org/show_bug.cgi?id=143898
+
+        Reviewed by Filip Pizlo.
+
+        CodeBlock::dumpSource() will access SourceCode strings in a way that requires
+        ref'ing of the underlying StringImpls. This is unsafe to do from arbitrary
+        compilation threads because StringImpls are not thread safe. As a result, we get
+        an assertion failure when we run with JSC_dumpSourceAtDFGTime=true on a debug
+        build.
+
+        This patch fixes the issue by only collecting the CodeBlock (and associated info)
+        into a DeferredSourceDump record while compiling, and stashing it away in a
+        deferredSourceDump list in the DeferredCompilationCallback object to be dumped
+        later.
+
+        When compilation is done, the callback object will be notified that
+        compilationDidComplete().  We will dump the SourceCode strings from there. 
+        Since compilationDidComplete() is guaranteed to only be called on the thread
+        doing JS execution, it is safe to access the SourceCode strings there and ref
+        their underlying StringImpls as needed.        
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/DeferredCompilationCallback.cpp:
+        (JSC::DeferredCompilationCallback::compilationDidComplete):
+        (JSC::DeferredCompilationCallback::sourceDumpInfo):
+        (JSC::DeferredCompilationCallback::dumpCompiledSources):
+        * bytecode/DeferredCompilationCallback.h:
+        * bytecode/DeferredSourceDump.cpp: Added.
+        (JSC::DeferredSourceDump::DeferredSourceDump):
+        (JSC::DeferredSourceDump::dump):
+        * bytecode/DeferredSourceDump.h: Added.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+
 2015-04-22  Benjamin Poulain  <benjamin@webkit.org>
 
         Implement String.codePointAt()

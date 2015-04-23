@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,40 +20,47 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeferredCompilationCallback_h
-#define DeferredCompilationCallback_h
-
-#include "CompilationResult.h"
+#include "config.h"
 #include "DeferredSourceDump.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+
+#include "CodeBlock.h"
+#include "CodeBlockWithJITType.h"
 
 namespace JSC {
 
-class CodeBlock;
+DeferredSourceDump::DeferredSourceDump(CodeBlock* codeBlock)
+    : m_codeBlock(codeBlock)
+    , m_rootCodeBlock(nullptr)
+    , m_rootJITType(JITCode::None)
+{
+}
 
-class DeferredCompilationCallback : public RefCounted<DeferredCompilationCallback> {
-protected:
-    DeferredCompilationCallback();
+DeferredSourceDump::DeferredSourceDump(CodeBlock* codeBlock, CodeBlock* rootCodeBlock, JITCode::JITType rootJITType, CodeOrigin callerCodeOrigin)
+    : m_codeBlock(codeBlock)
+    , m_rootCodeBlock(rootCodeBlock)
+    , m_rootJITType(rootJITType)
+    , m_callerCodeOrigin(callerCodeOrigin)
+{
+}
 
-public:
-    virtual ~DeferredCompilationCallback();
+void DeferredSourceDump::dump()
+{
+    bool isInlinedFrame = !!m_rootCodeBlock;
+    if (isInlinedFrame)
+        dataLog("Inlined ");
+    else
+        dataLog("Compiled ");
+    dataLog(*m_codeBlock);
 
-    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*) = 0;
-    virtual void compilationDidComplete(CodeBlock*, CompilationResult);
+    if (isInlinedFrame)
+        dataLog(" at ", CodeBlockWithJITType(m_rootCodeBlock, m_rootJITType), " ", m_callerCodeOrigin);
 
-    Vector<DeferredSourceDump>& ensureDeferredSourceDump();
-
-private:
-    void dumpCompiledSourcesIfNeeded();
-
-    std::unique_ptr<Vector<DeferredSourceDump>> m_deferredSourceDump;
-};
+    dataLog("\n'''");
+    m_codeBlock->dumpSource();
+    dataLog("'''\n");
+}
 
 } // namespace JSC
-
-#endif // DeferredCompilationCallback_h
-

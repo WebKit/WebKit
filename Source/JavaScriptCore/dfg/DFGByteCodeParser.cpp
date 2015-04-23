@@ -4051,9 +4051,16 @@ void ByteCodeParser::parseCodeBlock()
             *m_vm->m_perBytecodeProfiler, m_inlineStackTop->m_profiledBlock);
     }
     
-    bool shouldDumpSource = Options::dumpSourceAtDFGTime();
-    bool shouldDumpBytecode = Options::dumpBytecodeAtDFGTime();
-    if (shouldDumpSource || shouldDumpBytecode) {
+    if (UNLIKELY(Options::dumpSourceAtDFGTime())) {
+        Vector<DeferredSourceDump>& deferredSourceDump = m_graph.m_plan.callback->ensureDeferredSourceDump();
+        if (inlineCallFrame()) {
+            DeferredSourceDump dump(codeBlock->baselineVersion(), m_codeBlock, JITCode::DFGJIT, inlineCallFrame()->caller);
+            deferredSourceDump.append(dump);
+        } else
+            deferredSourceDump.append(DeferredSourceDump(codeBlock->baselineVersion()));
+    }
+
+    if (Options::dumpBytecodeAtDFGTime()) {
         dataLog("Parsing ", *codeBlock);
         if (inlineCallFrame()) {
             dataLog(
@@ -4063,16 +4070,8 @@ void ByteCodeParser::parseCodeBlock()
         dataLog(
             ": needsActivation = ", codeBlock->needsActivation(),
             ", isStrictMode = ", codeBlock->ownerExecutable()->isStrictMode(), "\n");
-    }
-
-    if (shouldDumpSource) {
-        dataLog("==== begin source ====\n");
-        codeBlock->baselineVersion()->dumpSource();
-        dataLog("\n==== end source ====\n\n");
-    }
-    
-    if (shouldDumpBytecode)
         codeBlock->baselineVersion()->dumpBytecode();
+    }
     
     Vector<unsigned, 32> jumpTargets;
     computePreciseJumpTargets(codeBlock, jumpTargets);

@@ -101,9 +101,9 @@ static CompilationResult compileImpl(
     RefPtr<Plan> plan = adoptRef(
         new Plan(codeBlock, profiledDFGCodeBlock, mode, osrEntryBytecodeIndex, mustHandleValues));
     
+    plan->callback = callback;
     if (Options::enableConcurrentJIT()) {
         Worklist* worklist = ensureGlobalWorklistFor(mode);
-        plan->callback = callback;
         if (logCompilationChanges(mode))
             dataLog("Deferring DFG compilation of ", *codeBlock, " with queue length ", worklist->queueLength(), ".\n");
         worklist->enqueue(plan);

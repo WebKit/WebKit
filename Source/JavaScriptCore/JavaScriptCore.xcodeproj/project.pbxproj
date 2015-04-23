@@ -1661,6 +1661,8 @@
 		FE4BFF2B1AD476E700088F87 /* FunctionOverrides.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */; };
 		FE4BFF2C1AD476E700088F87 /* FunctionOverrides.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */; };
 		FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4D55B71AE716CA0052E459 /* IterationStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE5068651AE246390009DAB7 /* DeferredSourceDump.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5068641AE246390009DAB7 /* DeferredSourceDump.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE5068671AE25E280009DAB7 /* DeferredSourceDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE5068661AE25E280009DAB7 /* DeferredSourceDump.cpp */; };
 		FE5932A7183C5A2600A1ECCC /* VMEntryScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */; };
 		FE5932A8183C5A2600A1ECCC /* VMEntryScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE7BA60F1A1A7CEC00F1F7B4 /* HeapVerifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE7BA60D1A1A7CEC00F1F7B4 /* HeapVerifier.cpp */; };
@@ -3182,7 +3184,7 @@
 		A7C1E8C8112E701C00A37F98 /* JITPropertyAccess32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITPropertyAccess32_64.cpp; sourceTree = "<group>"; };
 		A7C1EAEA17987AB600299DB2 /* CallFrameInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallFrameInlines.h; sourceTree = "<group>"; };
 		A7C1EAEB17987AB600299DB2 /* JSStackInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStackInlines.h; sourceTree = "<group>"; };
-		A7C1EAEC17987AB600299DB2 /* StackVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = StackVisitor.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		A7C1EAEC17987AB600299DB2 /* StackVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = StackVisitor.cpp; sourceTree = "<group>"; };
 		A7C1EAED17987AB600299DB2 /* StackVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackVisitor.h; sourceTree = "<group>"; };
 		A7C225CC139981F100FF1662 /* KeywordLookupGenerator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = KeywordLookupGenerator.py; sourceTree = "<group>"; };
 		A7C225CD1399849C00FF1662 /* KeywordLookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeywordLookup.h; sourceTree = "<group>"; };
@@ -3454,6 +3456,8 @@
 		FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionOverrides.cpp; sourceTree = "<group>"; };
 		FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionOverrides.h; sourceTree = "<group>"; };
 		FE4D55B71AE716CA0052E459 /* IterationStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IterationStatus.h; sourceTree = "<group>"; };
+		FE5068641AE246390009DAB7 /* DeferredSourceDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeferredSourceDump.h; sourceTree = "<group>"; };
+		FE5068661AE25E280009DAB7 /* DeferredSourceDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferredSourceDump.cpp; sourceTree = "<group>"; };
 		FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMEntryScope.cpp; sourceTree = "<group>"; };
 		FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMEntryScope.h; sourceTree = "<group>"; };
 		FE7BA60D1A1A7CEC00F1F7B4 /* HeapVerifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapVerifier.cpp; sourceTree = "<group>"; };
@@ -5306,6 +5310,8 @@
 				0FF60AC016740F8100029779 /* ReduceWhitespace.h */,
 				1429D8830ED21C3D00B89619 /* SamplingTool.cpp */,
 				1429D8840ED21C3D00B89619 /* SamplingTool.h */,
+				FE5068661AE25E280009DAB7 /* DeferredSourceDump.cpp */,
+				FE5068641AE246390009DAB7 /* DeferredSourceDump.h */,
 				0F5541AF1613C1FB00CE3E25 /* SpecialPointer.cpp */,
 				0F5541B01613C1FB00CE3E25 /* SpecialPointer.h */,
 				0FD82E84141F3FDA00179C94 /* SpeculatedType.cpp */,
@@ -5592,6 +5598,7 @@
 				0FE050281AA9095600D33B33 /* ScopedArguments.h in Headers */,
 				52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */,
 				FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */,
+				FE5068651AE246390009DAB7 /* DeferredSourceDump.h in Headers */,
 				C442CB251A6CDB8C005D3D7C /* JSInputs.json in Headers */,
 				52678F911A04177C006A306D /* ControlFlowProfiler.h in Headers */,
 				52678F8F1A031009006A306D /* BasicBlockLocation.h in Headers */,
@@ -7122,6 +7129,7 @@
 				A7D89CFD17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.cpp in Sources */,
 				0FD82E56141DAF0800179C94 /* DFGOSREntry.cpp in Sources */,
 				0FD8A32517D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.cpp in Sources */,
+				FE5068671AE25E280009DAB7 /* DeferredSourceDump.cpp in Sources */,
 				0FC09791146A6F7100CF2442 /* DFGOSRExit.cpp in Sources */,
 				0F235BEB17178E7300690C7F /* DFGOSRExitBase.cpp in Sources */,
 				0FC09792146A6F7300CF2442 /* DFGOSRExitCompiler.cpp in Sources */,
