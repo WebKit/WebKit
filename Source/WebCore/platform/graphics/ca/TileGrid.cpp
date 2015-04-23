@@ -304,7 +304,7 @@ void TileGrid::removeTilesInCohort(TileCohort cohort)
     removeTiles(tilesToRemove);
 }
 
-void TileGrid::revalidateTiles(unsigned validationPolicy)
+void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
 {
     FloatRect visibleRect = m_controller.visibleRect();
     IntRect bounds = m_controller.bounds();
