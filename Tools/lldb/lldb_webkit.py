@@ -142,6 +142,8 @@ def btjs(debugger, command, result, internal_dict):
             callFrame = frame.GetSP()
             JSFrameDescription = frame.EvaluateExpression("((JSC::ExecState*)0x%x)->describeFrame()" % frame.GetFP()).GetSummary()
             if not JSFrameDescription:
+                JSFrameDescription = frame.EvaluateExpression("((JSC::CallFrame*)0x%x)->describeFrame()" % frame.GetFP()).GetSummary()
+            if not JSFrameDescription:
                 JSFrameDescription = frame.EvaluateExpression("(char*)_ZN3JSC9ExecState13describeFrameEv(0x%x)" % frame.GetFP()).GetSummary()
             if JSFrameDescription:
                 JSFrameDescription = string.strip(JSFrameDescription, '"')
