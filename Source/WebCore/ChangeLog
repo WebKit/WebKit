@@ -1,3 +1,23 @@
+2015-04-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Some media tests assert after r183096
+        https://bugs.webkit.org/show_bug.cgi?id=144098
+
+        Reviewed by Darin Adler.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removePlaybackTargetPickerClient): Don't assert if the client has already
+            been removed from the map. This happens when a media element is removed from the document
+            before its destructor runs and is not an error.
+        (WebCore::Document::showPlaybackTargetPicker): It is an error to call this after the client 
+            has been removed from the map so leave the assert in a debug build, but return early
+            so a release build doesn't crash.
+        (WebCore::Document::playbackTargetPickerClientStateDidChange): Ditto.
+        (WebCore::Document::playbackTargetAvailabilityDidChange): Use "auto" for the map iterator variable.
+        (WebCore::Document::setPlaybackTarget): Ditto.
+        (WebCore::Document::setShouldPlayToPlaybackTarget): Ditto.
+        * dom/Document.h: Fix map typedef names.
+
 2015-04-23  Andreas Kling  <akling@apple.com>
 
         DOM nodes should be allocated with fastMalloc().

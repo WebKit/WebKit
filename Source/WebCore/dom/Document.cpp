@@ -6550,15 +6550,18 @@ void Document::addPlaybackTargetPickerClient(MediaPlaybackTargetClient& client)
 
 void Document::removePlaybackTargetPickerClient(MediaPlaybackTargetClient& client)
 {
-    ASSERT(m_clientToIDMap.contains(&client));
-    uint64_t contextId = m_clientToIDMap.get(&client);
-    m_idToClientMap.remove(contextId);
-    m_clientToIDMap.remove(&client);
+    const auto& it = m_clientToIDMap.find(&client);
+    if (it == m_clientToIDMap.end())
+        return;
+
+    uint64_t clientId = it->value;
+    m_idToClientMap.remove(clientId);
+    m_clientToIDMap.remove(it);
 
     Page* page = this->page();
     if (!page)
         return;
-    page->removePlaybackTargetPickerClient(contextId);
+    page->removePlaybackTargetPickerClient(clientId);
 }
 
 void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool isVideo)
@@ -6567,8 +6570,12 @@ void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool 
     if (!page)
         return;
 
-    ASSERT(m_clientToIDMap.contains(&client));
-    page->showPlaybackTargetPicker(m_clientToIDMap.get(&client), view()->lastKnownMousePosition(), isVideo);
+    const auto& it = m_clientToIDMap.find(&client);
+    ASSERT(it != m_clientToIDMap.end());
+    if (it == m_clientToIDMap.end())
+        return;
+
+    page->showPlaybackTargetPicker(it->value, view()->lastKnownMousePosition(), isVideo);
 }
 
 void Document::playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClient& client, MediaProducer::MediaStateFlags state)
@@ -6577,13 +6584,17 @@ void Document::playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClien
     if (!page)
         return;
 
-    ASSERT(m_clientToIDMap.contains(&client));
-    page->playbackTargetPickerClientStateDidChange(m_clientToIDMap.get(&client), state);
+    const auto& it = m_clientToIDMap.find(&client);
+    ASSERT(it != m_clientToIDMap.end());
+    if (it == m_clientToIDMap.end())
+        return;
+
+    page->playbackTargetPickerClientStateDidChange(it->value, state);
 }
 
 void Document::playbackTargetAvailabilityDidChange(uint64_t clientId, bool available)
 {
-    TargetClientToIdMap::iterator it = m_idToClientMap.find(clientId);
+    const auto& it = m_idToClientMap.find(clientId);
     if (it == m_idToClientMap.end())
         return;
 
@@ -6592,7 +6603,7 @@ void Document::playbackTargetAvailabilityDidChange(uint64_t clientId, bool avail
 
 void Document::setPlaybackTarget(uint64_t clientId, Ref<MediaPlaybackTarget>&& target)
 {
-    TargetClientToIdMap::iterator it = m_idToClientMap.find(clientId);
+    const auto& it = m_idToClientMap.find(clientId);
     if (it == m_idToClientMap.end())
         return;
 
@@ -6601,7 +6612,7 @@ void Document::setPlaybackTarget(uint64_t clientId, Ref<MediaPlaybackTarget>&& t
 
 void Document::setShouldPlayToPlaybackTarget(uint64_t clientId, bool shouldPlay)
 {
-    TargetClientToIdMap::iterator it = m_idToClientMap.find(clientId);
+    const auto& it = m_idToClientMap.find(clientId);
     if (it == m_idToClientMap.end())
         return;
 
