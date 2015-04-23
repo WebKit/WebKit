@@ -812,7 +812,7 @@ GraphicsLayerFactory* WebChromeClient::graphicsLayerFactory() const
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-PassRefPtr<WebCore::DisplayRefreshMonitor> WebChromeClient::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
+RefPtr<WebCore::DisplayRefreshMonitor> WebChromeClient::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
 {
     return m_page->drawingArea()->createDisplayRefreshMonitor(displayID);
 }

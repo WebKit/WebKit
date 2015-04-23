@@ -35,19 +35,20 @@
 
 namespace WebCore {
 
-PassRefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::create(DisplayRefreshMonitorClient* client)
+RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
-    PlatformDisplayID displayID = client->displayID();
-
-    if (RefPtr<DisplayRefreshMonitor> monitor = client->createDisplayRefreshMonitor(displayID))
-        return monitor.release();
-
 #if PLATFORM(MAC)
     return DisplayRefreshMonitorMac::create(displayID);
 #endif
 #if PLATFORM(IOS)
     return DisplayRefreshMonitorIOS::create(displayID);
 #endif
+    return nullptr;
+}
+
+RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::create(DisplayRefreshMonitorClient& client)
+{
+    return client.createDisplayRefreshMonitor(client.displayID());
 }
 
 DisplayRefreshMonitor::DisplayRefreshMonitor(PlatformDisplayID displayID)
@@ -71,16 +72,16 @@ void DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread(void*
     monitor->displayDidRefresh();
 }
 
-void DisplayRefreshMonitor::addClient(DisplayRefreshMonitorClient* client)
+void DisplayRefreshMonitor::addClient(DisplayRefreshMonitorClient& client)
 {
-    m_clients.add(client);
+    m_clients.add(&client);
 }
 
-bool DisplayRefreshMonitor::removeClient(DisplayRefreshMonitorClient* client)
+bool DisplayRefreshMonitor::removeClient(DisplayRefreshMonitorClient& client)
 {
     if (m_clientsToBeNotified)
-        m_clientsToBeNotified->remove(client);
-    return m_clients.remove(client);
+        m_clientsToBeNotified->remove(&client);
+    return m_clients.remove(&client);
 }
 
 void DisplayRefreshMonitor::displayDidRefresh()
@@ -124,7 +125,7 @@ void DisplayRefreshMonitor::displayDidRefresh()
         m_previousFrameDone = true;
     }
     
-    DisplayRefreshMonitorManager::sharedManager().displayDidRefresh(this);
+    DisplayRefreshMonitorManager::sharedManager().displayDidRefresh(*this);
 }
 
 }

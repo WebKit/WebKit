@@ -78,23 +78,23 @@ private:
     CallbackList m_callbacks;
 
     Document* m_document;
-    CallbackId m_nextCallbackId;
-    int m_suspendCount;
+    CallbackId m_nextCallbackId { 0 };
+    int m_suspendCount { 0 };
 
     void scheduleAnimation();
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
     void animationTimerFired(Timer&);
     Timer m_animationTimer;
-    double m_lastAnimationFrameTimeMonotonic;
+    double m_lastAnimationFrameTimeMonotonic { 0 };
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     // Override for DisplayRefreshMonitorClient
     virtual void displayRefreshFired(double timestamp) override;
-    virtual PassRefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
+    virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
 
-    bool m_isUsingTimer;
-    bool m_isThrottled;
+    bool m_isUsingTimer { false };
+    bool m_isThrottled { false };
 #endif
 #endif
 };

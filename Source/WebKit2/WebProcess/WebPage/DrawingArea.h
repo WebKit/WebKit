@@ -105,7 +105,7 @@ public:
     virtual void scheduleCompositingLayerFlushImmediately() = 0;
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    virtual PassRefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID);
+    virtual RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID);
 #endif
 
 #if USE(COORDINATED_GRAPHICS)

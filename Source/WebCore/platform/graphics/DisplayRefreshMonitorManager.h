@@ -41,20 +41,20 @@ class DisplayRefreshMonitorManager {
 public:
     static DisplayRefreshMonitorManager& sharedManager();
     
-    void registerClient(DisplayRefreshMonitorClient*);
-    void unregisterClient(DisplayRefreshMonitorClient*);
+    void registerClient(DisplayRefreshMonitorClient&);
+    void unregisterClient(DisplayRefreshMonitorClient&);
 
-    bool scheduleAnimation(DisplayRefreshMonitorClient*);
-    void windowScreenDidChange(PlatformDisplayID, DisplayRefreshMonitorClient*);
+    bool scheduleAnimation(DisplayRefreshMonitorClient&);
+    void windowScreenDidChange(PlatformDisplayID, DisplayRefreshMonitorClient&);
 
 private:
     friend class DisplayRefreshMonitor;
-    void displayDidRefresh(DisplayRefreshMonitor*);
+    void displayDidRefresh(DisplayRefreshMonitor&);
     
     DisplayRefreshMonitorManager() { }
     virtual ~DisplayRefreshMonitorManager();
 
-    DisplayRefreshMonitor* ensureMonitorForClient(DisplayRefreshMonitorClient*);
+    DisplayRefreshMonitor* createMonitorForClient(DisplayRefreshMonitorClient&);
 
     Vector<RefPtr<DisplayRefreshMonitor>> m_monitors;
 };

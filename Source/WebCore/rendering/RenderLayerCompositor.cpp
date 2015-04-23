@@ -268,7 +268,6 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     , m_updateCompositingLayersTimer(this, &RenderLayerCompositor::updateCompositingLayersTimerFired)
     , m_hasAcceleratedCompositing(true)
     , m_compositingTriggers(static_cast<ChromeClient::CompositingTriggerFlags>(ChromeClient::AllTriggers))
-    , m_compositedLayerCount(0)
     , m_showDebugBorders(false)
     , m_showRepaintCounter(false)
     , m_acceleratedDrawingEnabled(false)
@@ -281,20 +280,12 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     , m_inPostLayoutUpdate(false)
     , m_subframeScrollLayersNeedReattach(false)
     , m_isTrackingRepaints(false)
-    , m_layersWithTiledBackingCount(0)
     , m_rootLayerAttachment(RootLayerUnattached)
     , m_layerFlushTimer(this, &RenderLayerCompositor::layerFlushTimerFired)
     , m_layerFlushThrottlingEnabled(false)
     , m_layerFlushThrottlingTemporarilyDisabledForInteraction(false)
     , m_hasPendingLayerFlush(false)
     , m_paintRelatedMilestonesTimer(this, &RenderLayerCompositor::paintRelatedMilestonesTimerFired)
-#if !LOG_DISABLED
-    , m_rootLayerUpdateCount(0)
-    , m_obligateCompositedLayerCount(0)
-    , m_secondaryCompositedLayerCount(0)
-    , m_obligatoryBackingStoreBytes(0)
-    , m_secondaryBackingStoreBytes(0)
-#endif
 {
 }
 
@@ -479,6 +470,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
         client->didFlushCompositingLayers();
 #endif
 
+    ++m_layerFlushCount;
     startLayerFlushTimerIfNeeded();
 }
 
@@ -596,13 +588,13 @@ void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*
         if (Page* page = this->page())
             displayID = page->chrome().displayID();
 
-        m_layerUpdater = std::make_unique<GraphicsLayerUpdater>(this, displayID);
+        m_layerUpdater = std::make_unique<GraphicsLayerUpdater>(*this, displayID);
     }
     
     m_layerUpdater->scheduleUpdate();
 }
 
-void RenderLayerCompositor::flushLayersSoon(GraphicsLayerUpdater*)
+void RenderLayerCompositor::flushLayersSoon(GraphicsLayerUpdater&)
 {
     scheduleLayerFlush(true);
 }
@@ -4034,15 +4026,28 @@ void RenderLayerCompositor::paintRelatedMilestonesTimerFired(Timer&)
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-PassRefPtr<DisplayRefreshMonitor> RenderLayerCompositor::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
+RefPtr<DisplayRefreshMonitor> RenderLayerCompositor::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
 {
     Frame& frame = m_renderView.frameView().frame();
     Page* page = frame.page();
     if (!page)
         return nullptr;
 
-    return page->chrome().client().createDisplayRefreshMonitor(displayID);
+    if (auto monitor = page->chrome().client().createDisplayRefreshMonitor(displayID))
+        return monitor;
+
+    return DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor(displayID);
 }
 #endif
+
+void RenderLayerCompositor::startTrackingLayerFlushes()
+{
+    m_layerFlushCount = 0;
+}
+
+unsigned RenderLayerCompositor::layerFlushCount() const
+{
+    return m_layerFlushCount;
+}
 
 } // namespace WebCore
