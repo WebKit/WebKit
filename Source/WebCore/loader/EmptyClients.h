@@ -634,6 +634,8 @@ class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
     virtual void logDiagnosticMessage(const String&, const String&, ShouldSample) override { }
     virtual void logDiagnosticMessageWithResult(const String&, const String&, DiagnosticLoggingResultType, ShouldSample) override { }
     virtual void logDiagnosticMessageWithValue(const String&, const String&, const String&, ShouldSample) override { }
+
+    virtual void mainFrameDestroyed() override { }
 };
 
 void fillWithEmptyClients(PageConfiguration&);

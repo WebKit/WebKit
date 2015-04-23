@@ -71,4 +71,9 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(const String& mes
     m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithValue(message, description, value, shouldSample == WebCore::ShouldSample::Yes));
 }
 
+void WebDiagnosticLoggingClient::mainFrameDestroyed()
+{
+    delete this;
+}
+
 } // namespace WebKit
