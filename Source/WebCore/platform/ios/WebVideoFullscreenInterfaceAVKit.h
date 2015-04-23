@@ -44,6 +44,7 @@ OBJC_CLASS UIWindow;
 OBJC_CLASS UIView;
 OBJC_CLASS CALayer;
 OBJC_CLASS WebAVVideoLayer;
+OBJC_CLASS WebCALayerHostWrapper;
 
 namespace WTF {
 class String;
@@ -128,6 +129,7 @@ protected:
     RetainPtr<AVPlayerViewController> m_playerViewController;
     RetainPtr<CALayer> m_videoLayer;
     RetainPtr<WebAVVideoLayer> m_videoLayerContainer;
+    RetainPtr<WebCALayerHostWrapper> m_layerHostWrapper;
     WebVideoFullscreenModel* m_videoFullscreenModel { nullptr };
     WebVideoFullscreenChangeObserver* m_fullscreenChangeObserver { nullptr };
 

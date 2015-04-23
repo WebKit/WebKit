@@ -304,7 +304,8 @@ void WebVideoFullscreenModelVideoElement::setVideoLayerFrame(FloatRect rect)
 {
     m_videoFrame = rect;
     [m_videoFullscreenLayer setBounds:CGRect(rect)];
-    m_videoElement->setVideoFullscreenFrame(rect);
+    if (m_videoElement)
+        m_videoElement->setVideoFullscreenFrame(rect);
 }
 
 FloatRect WebVideoFullscreenModelVideoElement::videoLayerFrame() const

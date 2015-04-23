@@ -1,3 +1,31 @@
+2015-04-23  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Add a wrapper around the hosted AVPlayerLayer to intercept -setBounds:
+        https://bugs.webkit.org/show_bug.cgi?id=144129
+
+        Reviewed by Simon Fraser.
+
+        When passing the hosted AVPlayerLayer to the fullscreen controller, the new superlayer will
+        resize the hosted layer with a call to -setBounds:. But because this is a hosted layer, the
+        bonuds change has no effect. Instead, wrap the CALayerHost in another CALayer whose job it is
+        to intercept -setBounds: in the same way that WebAVVideoLayer did. In fact, we should just use
+        that wrapper class inside WebAVVideoLayer as well, to avoid duplicating code.
+
+        Drive-by Fix: Null-check m_videoElement in setVideoLayerFrame().
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebCALayerHostWrapper setVideoSublayer:]):
+        (-[WebCALayerHostWrapper videoSublayer]):
+        (-[WebCALayerHostWrapper setBounds:]): Moved from WebAVVideoLayer.
+        (-[WebCALayerHostWrapper resolveBounds]): Ditto.
+        (-[WebAVVideoLayer setBounds:]): Moved to WebCALayerHostWrapper.
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreenInternal): Create the wrapper.
+        (WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal): Clear the wrapper.
+        (-[WebAVVideoLayer resolveBounds]): Deleted. Moved to WebCALayerHostWrapper.
+        * platform/ios/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::setVideoLayerFrame): Null-check m_videoElement.
+
 2015-04-23  Tim Horton  <timothy_horton@apple.com>
 
         Yellow highlight has gray background color when invoking Lookup on an address in a Google Maps drop down

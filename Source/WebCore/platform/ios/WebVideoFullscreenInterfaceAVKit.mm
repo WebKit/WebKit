@@ -566,6 +566,74 @@ static const char* boolString(bool val)
 @implementation WebAVMediaSelectionOption
 @end
 
+
+@interface WebCALayerHostWrapper : CALayer
+@property (assign) WebVideoFullscreenModel* model;
+@end
+
+@implementation WebCALayerHostWrapper {
+    RetainPtr<CALayer> _videoSublayer;
+}
+
+- (void)setVideoSublayer:(CALayer*)videoSublayer
+{
+    _videoSublayer = videoSublayer;
+    [self addSublayer:videoSublayer];
+}
+
+- (CALayer*)videoSublayer
+{
+    return _videoSublayer.get();
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+    if (CGRectEqualToRect(bounds, self.bounds))
+        return;
+
+    [super setBounds:bounds];
+
+    [_videoSublayer setPosition:CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds))];
+
+    if (!self.model)
+        return;
+
+    FloatRect videoFrame = self.model->videoLayerFrame();
+    FloatRect targetFrame;
+    switch (self.model->videoLayerGravity()) {
+    case WebCore::WebVideoFullscreenModel::VideoGravityResize:
+        targetFrame = bounds;
+        break;
+    case WebCore::WebVideoFullscreenModel::VideoGravityResizeAspect:
+        targetFrame = largestRectWithAspectRatioInsideRect(videoFrame.size().aspectRatio(), bounds);
+        break;
+    case WebCore::WebVideoFullscreenModel::VideoGravityResizeAspectFill:
+        targetFrame = smallestRectWithAspectRatioAroundRect(videoFrame.size().aspectRatio(), bounds);
+        break;
+    }
+    CATransform3D transform = CATransform3DMakeScale(targetFrame.width() / videoFrame.width(), targetFrame.height() / videoFrame.height(), 1);
+    [_videoSublayer setSublayerTransform:transform];
+
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
+    [self performSelector:@selector(resolveBounds) withObject:nil afterDelay:[CATransaction animationDuration] + 0.1];
+}
+
+- (void)resolveBounds
+{
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
+    if (!self.model)
+        return;
+
+    [CATransaction begin];
+    [CATransaction setAnimationDuration:0];
+
+    [_videoSublayer setSublayerTransform:CATransform3DIdentity];
+    self.model->setVideoLayerFrame([self bounds]);
+    
+    [CATransaction commit];
+}
+@end
+
 @interface WebAVVideoLayer : CALayer <AVVideoLayer>
 +(WebAVVideoLayer *)videoLayer;
 @property (nonatomic) AVVideoLayerGravity videoLayerGravity;
@@ -632,43 +700,7 @@ static const char* boolString(bool val)
     [super setBounds:bounds];
 
     [_videoSublayer setPosition:CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds))];
-
-    if (![_avPlayerController delegate] || !_avPlayerViewController)
-        return;
-
-    FloatRect videoFrame = [_avPlayerController delegate]->videoLayerFrame();
-    FloatRect targetFrame;
-    switch ([_avPlayerController delegate]->videoLayerGravity()) {
-    case WebCore::WebVideoFullscreenModel::VideoGravityResize:
-        targetFrame = bounds;
-        break;
-    case WebCore::WebVideoFullscreenModel::VideoGravityResizeAspect:
-        targetFrame = largestRectWithAspectRatioInsideRect(videoFrame.size().aspectRatio(), bounds);
-        break;
-    case WebCore::WebVideoFullscreenModel::VideoGravityResizeAspectFill:
-        targetFrame = smallestRectWithAspectRatioAroundRect(videoFrame.size().aspectRatio(), bounds);
-        break;
-    }
-    CATransform3D transform = CATransform3DMakeScale(targetFrame.width() / videoFrame.width(), targetFrame.height() / videoFrame.height(), 1);
-    [_videoSublayer setSublayerTransform:transform];
-
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
-    [self performSelector:@selector(resolveBounds) withObject:nil afterDelay:[CATransaction animationDuration] + 0.1];
-}
-
-- (void)resolveBounds
-{
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
-    if (!_avPlayerController || ![_avPlayerController delegate])
-        return;
-
-    [CATransaction begin];
-    [CATransaction setAnimationDuration:0];
-
-    [_videoSublayer setSublayerTransform:CATransform3DIdentity];
-    [_avPlayerController delegate]->setVideoLayerFrame([self bounds]);
-
-    [CATransaction commit];
+    [_videoSublayer setBounds:bounds];
 }
 
 - (void)setVideoLayerGravity:(AVVideoLayerGravity)videoLayerGravity
@@ -932,9 +964,13 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreenInternal(PlatformLayer& vi
 
     [m_videoLayer removeFromSuperlayer];
 
+    m_layerHostWrapper = adoptNS([[WebCALayerHostWrapper alloc] init]);
+    [m_layerHostWrapper setModel:m_videoFullscreenModel];
+    [m_layerHostWrapper setVideoSublayer:m_videoLayer.get()];
+
     m_videoLayerContainer = [WebAVVideoLayer videoLayer];
     [m_videoLayerContainer setHidden:[m_playerController isExternalPlaybackActive]];
-    [m_videoLayerContainer setVideoSublayer:m_videoLayer.get()];
+    [m_videoLayerContainer setVideoSublayer:m_layerHostWrapper.get()];
 
     CGSize videoSize = [m_playerController contentDimensions];
     CGRect videoRect = CGRectMake(0, 0, videoSize.width, videoSize.height);
@@ -1122,7 +1158,8 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal()
     [m_videoLayerContainer removeFromSuperlayer];
     [m_videoLayerContainer setPlayerViewController:nil];
     [[m_viewController view] removeFromSuperview];
-    
+
+    m_layerHostWrapper = nil;
     m_videoLayer = nil;
     m_videoLayerContainer = nil;
     m_playerViewController = nil;
