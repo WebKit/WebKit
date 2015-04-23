@@ -1,3 +1,14 @@
+2015-04-23  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Disable QTKit by default on future OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=144082
+
+        Reviewed by Darin Adler.
+
+        Settings::gQTKitEnabled defaults to false.
+
+        * page/Settings.cpp:
+
 2015-04-23  Daniel Bates  <dabates@apple.com>
 
         Clean up: Use references instead of pointers in more SVG files

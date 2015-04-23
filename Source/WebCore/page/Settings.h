@@ -205,6 +205,8 @@ public:
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static void setQTKitEnabled(bool flag);
     static bool isQTKitEnabled() { return gQTKitEnabled; }
+#else
+    static bool isQTKitEnabled() { return false; }
 #endif
 
     static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;

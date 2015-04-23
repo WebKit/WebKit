@@ -1,5 +1,16 @@
 2015-04-23  Jer Noble  <jer.noble@apple.com>
 
+        [Mac] Disable QTKit by default on future OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=144082
+
+        Reviewed by Darin Adler.
+
+        QTKitEnabled defaults to false.
+
+        * Shared/WebPreferencesDefinitions.h:
+
+2015-04-23  Jer Noble  <jer.noble@apple.com>
+
         [WK2][Mac] Tweak the timing curve of the WebKit Fullscreen animation
         https://bugs.webkit.org/show_bug.cgi?id=144120
 
