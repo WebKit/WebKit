@@ -28,15 +28,14 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "DFANode.h"
-#include <wtf/Vector.h>
-
 namespace WebCore {
 namespace ContentExtensions {
 
+struct DFA;
+
 class DFAMinimizer {
 public:
-    WEBCORE_EXPORT static unsigned minimize(Vector<DFANode>& dfaGraph, unsigned rootNode);
+    WEBCORE_EXPORT static void minimize(DFA&);
 };
 
 } // namespace ContentExtensions

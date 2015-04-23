@@ -63,6 +63,7 @@ public:
 #else
     void addRuleId(unsigned, uint64_t) { }
 #endif
+    size_t memoryUsed() const;
 
 private:
     friend class NFAToDFA;

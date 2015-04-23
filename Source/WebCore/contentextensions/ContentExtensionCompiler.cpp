@@ -134,6 +134,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
     Vector<SerializedActionByte> actions;
     Vector<unsigned> actionLocations = serializeActions(parsedRuleList, actions);
     client.writeActions(WTF::move(actions));
+    LOG_LARGE_STRUCTURES(actions, actions.capacity() * sizeof(SerializedActionByte));
     actions.clear();
 
     HashSet<uint64_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> universalActionLocations;
@@ -164,6 +165,8 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
         if (contentExtensionRule.action().type() == ActionType::IgnorePreviousRules)
             ignorePreviousRulesSeen = true;
     }
+    LOG_LARGE_STRUCTURES(parsedRuleList, parsedRuleList.capacity() * sizeof(ContentExtensionRule)); // Doesn't include strings.
+    LOG_LARGE_STRUCTURES(actionLocations, actionLocations.capacity() * sizeof(unsigned));
     parsedRuleList.clear();
     actionLocations.clear();
 
@@ -177,6 +180,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
 #endif
 
     Vector<NFA> nfas = combinedURLFilters.createNFAs();
+    LOG_LARGE_STRUCTURES(combinedURLFilters, combinedURLFilters.memoryUsed());
     combinedURLFilters.clear();
     if (!nfas.size() && universalActionLocations.size())
         nfas.append(NFA());
@@ -204,6 +208,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
         double dfaBuildTimeStart = monotonicallyIncreasingTime();
 #endif
         DFA dfa = NFAToDFA::convert(nfas[i]);
+        LOG_LARGE_STRUCTURES(dfa, dfa.memoryUsed());
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
         double dfaBuildTimeEnd = monotonicallyIncreasingTime();
         dataLogF("    Time spent building the DFA %zu: %f\n", i, (dfaBuildTimeEnd - dfaBuildTimeStart));
@@ -222,16 +227,22 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
         WTFLogAlways("DFA %zu", i);
         dfa.debugPrintDot();
 #endif
-
-        ASSERT_WITH_MESSAGE(!dfa.nodeAt(dfa.root()).actions.size(), "All actions on the DFA root should come from regular expressions that match everything.");
+        ASSERT_WITH_MESSAGE(!dfa.nodes[dfa.root].hasActions(), "All actions on the DFA root should come from regular expressions that match everything.");
         if (!i) {
             // Put all the universal actions on the first DFA.
+            unsigned actionsStart = dfa.actions.size();
+            dfa.actions.reserveCapacity(dfa.actions.size() + universalActionLocations.size());
             for (uint64_t actionLocation : universalActionLocations)
-                dfa.nodeAt(dfa.root()).actions.append(actionLocation);
+                dfa.actions.uncheckedAppend(actionLocation);
+            unsigned actionsEnd = dfa.actions.size();
+            unsigned actionsLength = actionsEnd - actionsStart;
+            RELEASE_ASSERT_WITH_MESSAGE(actionsLength < std::numeric_limits<uint16_t>::max(), "Too many uncombined actions that match everything");
+            dfa.nodes[dfa.root].setActions(actionsStart, static_cast<uint16_t>(actionsLength));
         }
         DFABytecodeCompiler compiler(dfa, bytecode);
         compiler.compile();
     }
+    LOG_LARGE_STRUCTURES(universalActionLocations, universalActionLocations.capacity() * sizeof(unsigned));
     universalActionLocations.clear();
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
@@ -240,9 +251,15 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
     dataLogF("    Bytecode size %zu\n", bytecode.size());
     dataLogF("    DFA count %zu\n", nfas.size());
 #endif
+    size_t nfaMemoryUsed = 0;
+    for (const NFA& nfa : nfas)
+        nfaMemoryUsed += sizeof(NFA) + nfa.memoryUsed();
+    LOG_LARGE_STRUCTURES(nfas, nfaMemoryUsed);
     nfas.clear();
 
+    LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));
     client.writeBytecode(WTF::move(bytecode));
+    bytecode.clear();
 
     return { };
 }

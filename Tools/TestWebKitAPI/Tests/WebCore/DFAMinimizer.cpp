@@ -46,8 +46,8 @@ public:
 unsigned countLiveNodes(const ContentExtensions::DFA& dfa)
 {
     unsigned counter = 0;
-    for (unsigned i = 0; i < dfa.size(); ++i) {
-        if (!dfa.nodeAt(i).isKilled)
+    for (const auto& node : dfa.nodes) {
+        if (!node.isKilled())
             ++counter;
     }
     return counter;

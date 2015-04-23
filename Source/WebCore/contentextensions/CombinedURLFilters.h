@@ -47,6 +47,8 @@ public:
     Vector<NFA> createNFAs() const;
     void clear();
 
+    size_t memoryUsed() const;
+    
 private:
     std::unique_ptr<PrefixTreeVertex> m_prefixTreeRoot;
 };

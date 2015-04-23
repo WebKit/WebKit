@@ -43,6 +43,21 @@ struct PrefixTreeVertex {
     bool inVariableLengthPrefix { false };
 };
 
+static size_t recursiveMemoryUsed(const std::unique_ptr<PrefixTreeVertex>& node)
+{
+    size_t size = sizeof(PrefixTreeVertex)
+        + node->edges.capacity() * sizeof(std::pair<Term, std::unique_ptr<PrefixTreeVertex>>)
+        + node->finalActions.capacity() * sizeof(uint64_t);
+    for (const auto& child : node->edges.values())
+        size += recursiveMemoryUsed(child);
+    return size;
+}
+
+size_t CombinedURLFilters::memoryUsed() const
+{
+    return recursiveMemoryUsed(m_prefixTreeRoot);
+}
+    
 CombinedURLFilters::CombinedURLFilters()
     : m_prefixTreeRoot(std::make_unique<PrefixTreeVertex>())
 {

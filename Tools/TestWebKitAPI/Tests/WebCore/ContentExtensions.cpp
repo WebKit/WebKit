@@ -487,6 +487,7 @@ TEST_F(ContentExtensionTest, ResourceOrLoadTypeMatchingEverything)
 TEST_F(ContentExtensionTest, MultiDFA)
 {
     // Make an NFA with about 1400 nodes.
+    // FIXME: This does not make multiple DFAs anymore. Add a test that does.
     StringBuilder ruleList;
     ruleList.append('[');
     for (char c1 = 'A'; c1 <= 'Z'; ++c1) {

@@ -35,7 +35,7 @@ namespace WebCore {
 
 namespace ContentExtensions {
 
-class DFA;
+struct DFA;
 class DFANode;
 
 class DFABytecodeCompiler {

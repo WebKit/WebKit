@@ -37,28 +37,19 @@ namespace WebCore {
 namespace ContentExtensions {
 
 // The DFA abstract a partial DFA graph in a compact form.
-class WEBCORE_EXPORT DFA {
-public:
-    DFA();
-    DFA(Vector<DFANode>&& nodes, unsigned rootIndex);
-    DFA(const DFA& dfa);
-
-    DFA& operator=(const DFA&);
-
-    unsigned root() const { return m_root; }
-    unsigned size() const { return m_nodes.size(); }
-    const DFANode& nodeAt(unsigned i) const { return m_nodes[i]; }
-    DFANode& nodeAt(unsigned i) { return m_nodes[i]; }
-
+struct WEBCORE_EXPORT DFA {
     void minimize();
+    size_t memoryUsed() const;
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
     void debugPrintDot() const;
 #endif
-
-private:
-    Vector<DFANode> m_nodes;
-    unsigned m_root;
+    
+    Vector<uint64_t> actions;
+    // FIXME: transitions could be two Vectors to save even more memory.
+    Vector<std::pair<uint8_t, uint32_t>> transitions;
+    Vector<DFANode> nodes;
+    unsigned root { 0 };
 };
 
 }

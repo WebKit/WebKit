@@ -1,3 +1,65 @@
+2015-04-23  Alex Christensen  <achristensen@webkit.org>
+
+        Use less memory when compiling content extensions.
+        https://bugs.webkit.org/show_bug.cgi?id=144051
+
+        Reviewed by Darin Adler and Benjamin Poulain.
+
+        No change in functionality, correctness already covered by existing tests.
+
+        Before this patch, a DFANode contained a HashSet of transitions.
+        Large vectors of DFANodes made many small HashSets, which was inefficient use of memory.
+        We now put all the actions and transitions into one big compact Vector and each node owns ranges in that vector.
+
+        * contentextensions/CombinedURLFilters.cpp:
+        (WebCore::ContentExtensions::recursiveMemoryUsed):
+        (WebCore::ContentExtensions::CombinedURLFilters::memoryUsed):
+        * contentextensions/CombinedURLFilters.h:
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionsDebugging.h:
+        * contentextensions/DFA.cpp:
+        (WebCore::ContentExtensions::DFA::memoryUsed):
+        (WebCore::ContentExtensions::DFANode::actions):
+        (WebCore::ContentExtensions::DFANode::transitions):
+        (WebCore::ContentExtensions::DFANode::fallbackTransitionDestination):
+        (WebCore::ContentExtensions::DFANode::changeFallbackTransition):
+        (WebCore::ContentExtensions::DFANode::addFallbackTransition):
+        (WebCore::ContentExtensions::DFANode::containsTransition):
+        (WebCore::ContentExtensions::DFANode::kill):
+        (WebCore::ContentExtensions::DFA::minimize):
+        (WebCore::ContentExtensions::DFA::DFA): Deleted.
+        (WebCore::ContentExtensions::DFA::operator=): Deleted.
+        * contentextensions/DFA.h:
+        * contentextensions/DFABytecodeCompiler.cpp:
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compileNode):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compileNodeTransitions):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compile):
+        * contentextensions/DFABytecodeCompiler.h:
+        * contentextensions/DFAMinimizer.cpp:
+        (WebCore::ContentExtensions::DFAMinimizer::minimize):
+        * contentextensions/DFAMinimizer.h:
+        * contentextensions/DFANode.h:
+        (WebCore::ContentExtensions::DFANode::isKilled):
+        (WebCore::ContentExtensions::DFANode::hasFallbackTransition):
+        (WebCore::ContentExtensions::DFANode::hasActions):
+        (WebCore::ContentExtensions::DFANode::transitionsLength):
+        (WebCore::ContentExtensions::DFANode::actionsLength):
+        (WebCore::ContentExtensions::DFANode::actionsStart):
+        (WebCore::ContentExtensions::DFANode::setActions):
+        (WebCore::ContentExtensions::DFANode::setTransitions):
+        (WebCore::ContentExtensions::DFANode::resetTransitions):
+        (WebCore::ContentExtensions::DFANode::transitionsStart):
+        (WebCore::ContentExtensions::DFANode::setHasFallbackTransitionWithoutChangingDFA):
+        * contentextensions/NFA.cpp:
+        (WebCore::ContentExtensions::NFA::memoryUsed):
+        * contentextensions/NFA.h:
+        * contentextensions/NFAToDFA.cpp:
+        (WebCore::ContentExtensions::NodeIdSetToUniqueNodeIdSetSource::NodeIdSetToUniqueNodeIdSetSource):
+        (WebCore::ContentExtensions::NodeIdSetToUniqueNodeIdSetTranslator::translate):
+        (WebCore::ContentExtensions::getOrCreateDFANode):
+        (WebCore::ContentExtensions::NFAToDFA::convert):
+
 2015-04-23  David Hyatt  <hyatt@apple.com>
 
         Don't fire a bunch of mouse moveds during scrolling.

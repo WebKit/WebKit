@@ -28,8 +28,12 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "DFA.h"
+#include "DFANode.h"
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/StringHasher.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 namespace ContentExtensions {
@@ -39,20 +43,22 @@ namespace {
 // simplifyTransitions() tries to collapse individual transitions into fallback transitions.
 // After simplifyTransitions(), you can also make the assumption that a fallback transition target will never be
 // also the target of an individual transition.
-static void simplifyTransitions(Vector<DFANode>& dfaGraph)
+static void simplifyTransitions(DFA& dfa)
 {
-    for (DFANode& dfaNode : dfaGraph) {
-        if (!dfaNode.hasFallbackTransition
-            && ((dfaNode.transitions.size() == 126 && !dfaNode.transitions.contains(0))
-                || (dfaNode.transitions.size() == 127 && dfaNode.transitions.contains(0)))) {
+    for (DFANode& dfaNode : dfa.nodes) {
+        bool addingFallback = false;
+        uint32_t newFallbackDestination = std::numeric_limits<uint32_t>::max();
+        if (!dfaNode.hasFallbackTransition()
+            && ((dfaNode.transitionsLength() == 126 && !dfaNode.containsTransition(0, dfa))
+                || (dfaNode.transitionsLength() == 127 && dfaNode.containsTransition(0, dfa)))) {
             unsigned bestTarget = std::numeric_limits<unsigned>::max();
             unsigned bestTargetScore = 0;
             HashMap<unsigned, unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> targetHistogram;
-            for (const auto& transition : dfaNode.transitions) {
-                if (!transition.key)
+            for (const auto& transition : dfaNode.transitions(dfa)) {
+                if (!transition.first)
                     continue;
 
-                unsigned transitionTarget = transition.value;
+                unsigned transitionTarget = transition.second;
                 auto addResult = targetHistogram.add(transitionTarget, 1);
                 if (!addResult.isNewEntry)
                     addResult.iterator->value++;
@@ -64,20 +70,44 @@ static void simplifyTransitions(Vector<DFANode>& dfaGraph)
             }
             ASSERT_WITH_MESSAGE(bestTargetScore, "There should be at least one valid target since having transitions is a precondition to enter this path.");
 
-            dfaNode.hasFallbackTransition = true;
-            dfaNode.fallbackTransition = bestTarget;
+            newFallbackDestination = bestTarget;
+            addingFallback = true;
         }
+        
+        // Use the same location to write new transitions possibly followed by unused memory.
+        // We can do this because we are always decreasing the amount of memory used.
+        // We will probably need something like setHasFallbackTransitionWithoutChangingDFA to do that.
 
-        if (dfaNode.hasFallbackTransition) {
-            Vector<uint16_t, 128> keys;
-            DFANodeTransitions& transitions = dfaNode.transitions;
-            copyKeysToVector(transitions, keys);
-
-            for (uint16_t key : keys) {
-                auto transitionIterator = transitions.find(key);
-                if (transitionIterator->value == dfaNode.fallbackTransition)
-                    transitions.remove(transitionIterator);
+        unsigned oldFallbackTransition = std::numeric_limits<uint32_t>::max();
+        bool hadFallbackTransition = dfaNode.hasFallbackTransition();
+        if (hadFallbackTransition)
+            oldFallbackTransition = dfaNode.fallbackTransitionDestination(dfa);
+        
+        newFallbackDestination = (newFallbackDestination == std::numeric_limits<uint32_t>::max() ? oldFallbackTransition : newFallbackDestination);
+        ASSERT(!addingFallback || (newFallbackDestination != std::numeric_limits<uint32_t>::max() && oldFallbackTransition == std::numeric_limits<uint32_t>::max()));
+        bool willHaveFallback = newFallbackDestination != std::numeric_limits<uint32_t>::max();
+        dfaNode.setHasFallbackTransitionWithoutChangingDFA(willHaveFallback);
+        
+        if (willHaveFallback) {
+            Vector<std::pair<uint8_t, uint32_t>> transitions = dfaNode.transitions(dfa);
+            unsigned availableSlotCount = transitions.size() + hadFallbackTransition;
+            for (unsigned i = 0; i < transitions.size(); ++i) {
+                if (transitions[i].second == newFallbackDestination)
+                    transitions.remove(i--);
             }
+        
+            RELEASE_ASSERT(transitions.size() + willHaveFallback <= availableSlotCount);
+        
+            unsigned firstSlot = dfaNode.transitionsStart();
+            dfaNode.resetTransitions(firstSlot, transitions.size());
+            for (unsigned i = 0; i < transitions.size(); ++i)
+                dfa.transitions[firstSlot + i] = transitions[i];
+            for (unsigned i = transitions.size(); i < availableSlotCount; ++i) {
+                // Invalidate now-unused memory to make finding bugs easier.
+                dfa.transitions[firstSlot + i] = std::make_pair(std::numeric_limits<uint8_t>::max(), std::numeric_limits<uint32_t>::max());
+            }
+            if (willHaveFallback)
+                dfa.transitions[firstSlot + transitions.size()] = std::make_pair(std::numeric_limits<uint8_t>::max(), newFallbackDestination);
         }
     }
 }
@@ -221,24 +251,24 @@ private:
 
 class FullGraphPartition {
 public:
-    FullGraphPartition(const Vector<DFANode>& dfaGraph)
+    FullGraphPartition(const DFA& dfa)
     {
-        m_nodePartition.initialize(dfaGraph.size());
+        m_nodePartition.initialize(dfa.nodes.size());
 
-        m_flattenedTransitionsStartOffsetPerNode.resize(dfaGraph.size());
+        m_flattenedTransitionsStartOffsetPerNode.resize(dfa.nodes.size());
         for (unsigned& counter : m_flattenedTransitionsStartOffsetPerNode)
             counter = 0;
 
-        m_flattenedFallbackTransitionsStartOffsetPerNode.resize(dfaGraph.size());
+        m_flattenedFallbackTransitionsStartOffsetPerNode.resize(dfa.nodes.size());
         for (unsigned& counter : m_flattenedFallbackTransitionsStartOffsetPerNode)
             counter = 0;
 
         // Count the number of incoming transitions per node.
-        for (const DFANode& dfaNode : dfaGraph) {
-            for (const auto& transition : dfaNode.transitions)
-                ++m_flattenedTransitionsStartOffsetPerNode[transition.value];
-            if (dfaNode.hasFallbackTransition)
-                ++m_flattenedFallbackTransitionsStartOffsetPerNode[dfaNode.fallbackTransition];
+        for (const DFANode& dfaNode : dfa.nodes) {
+            for (const auto& transition : dfaNode.transitions(dfa))
+                ++m_flattenedTransitionsStartOffsetPerNode[transition.second];
+            if (dfaNode.hasFallbackTransition())
+                ++m_flattenedFallbackTransitionsStartOffsetPerNode[dfaNode.fallbackTransitionDestination(dfa)];
         }
 
         // Accumulate the offsets.
@@ -259,11 +289,11 @@ public:
         unsigned flattenedFallbackTransitionsSize = fallbackTransitionAccumulator;
 
         // Next, let's fill the transition table and set up the size of each group at the same time.
-        m_flattenedTransitionsSizePerNode.resize(dfaGraph.size());
+        m_flattenedTransitionsSizePerNode.resize(dfa.nodes.size());
         for (unsigned& counter : m_flattenedTransitionsSizePerNode)
             counter = 0;
 
-        m_flattenedFallbackTransitionsSizePerNode.resize(dfaGraph.size());
+        m_flattenedFallbackTransitionsSizePerNode.resize(dfa.nodes.size());
         for (unsigned& counter : m_flattenedFallbackTransitionsSizePerNode)
             counter = 0;
 
@@ -271,20 +301,20 @@ public:
 
         m_flattenedFallbackTransitions.resize(flattenedFallbackTransitionsSize);
 
-        for (unsigned i = 0; i < dfaGraph.size(); ++i) {
-            const DFANode& dfaNode = dfaGraph[i];
-            for (const auto& transition : dfaNode.transitions) {
-                unsigned targetNodeIndex = transition.value;
+        for (unsigned i = 0; i < dfa.nodes.size(); ++i) {
+            const DFANode& dfaNode = dfa.nodes[i];
+            for (const auto& transition : dfaNode.transitions(dfa)) {
+                unsigned targetNodeIndex = transition.second;
 
                 unsigned start = m_flattenedTransitionsStartOffsetPerNode[targetNodeIndex];
                 unsigned offset = m_flattenedTransitionsSizePerNode[targetNodeIndex];
 
-                m_flattenedTransitions[start + offset] = Transition({ i, targetNodeIndex, transition.key });
+                m_flattenedTransitions[start + offset] = Transition({ i, targetNodeIndex, transition.first });
 
                 ++m_flattenedTransitionsSizePerNode[targetNodeIndex];
             }
-            if (dfaNode.hasFallbackTransition) {
-                unsigned targetNodeIndex = dfaNode.fallbackTransition;
+            if (dfaNode.hasFallbackTransition()) {
+                unsigned targetNodeIndex = dfaNode.fallbackTransitionDestination(dfa);
 
                 unsigned start = m_flattenedFallbackTransitionsStartOffsetPerNode[targetNodeIndex];
                 unsigned offset = m_flattenedFallbackTransitionsSizePerNode[targetNodeIndex];
@@ -403,20 +433,25 @@ struct ActionKey {
     enum EmptyValueTag { EmptyValue };
     explicit ActionKey(EmptyValueTag) { state = Empty; }
 
-    explicit ActionKey(const Vector<uint64_t>& actions)
-        : actions(&actions)
-        , state(Valid)
+    explicit ActionKey(const DFA* dfa, uint32_t actionsStart, uint16_t actionsLength)
+        : dfa(dfa)
+        , actionsStart(actionsStart)
+        , actionsLength(actionsLength)
     {
         StringHasher hasher;
-        hasher.addCharactersAssumingAligned(reinterpret_cast<const UChar*>(actions.data()), actions.size() * sizeof(uint64_t) / sizeof(UChar));
+        hasher.addCharactersAssumingAligned(reinterpret_cast<const UChar*>(&dfa->actions[actionsStart]), actionsLength * sizeof(uint64_t) / sizeof(UChar));
         hash = hasher.hash();
     }
 
     bool isEmptyValue() const { return state == Empty; }
     bool isDeletedValue() const { return state == Deleted; }
 
-    const Vector<uint64_t>* actions;
     unsigned hash;
+    
+    const DFA* dfa;
+    uint32_t actionsStart;
+    uint16_t actionsLength;
+    
     enum {
         Valid,
         Empty,
@@ -430,9 +465,18 @@ struct ActionKeyHash {
         return actionKey.hash;
     }
 
-    static bool equal(const ActionKey& a, const ActionKey& b)
+    // FIXME: Release builds on Mavericks fail with this inlined.
+    __attribute__((noinline)) static bool equal(const ActionKey& a, const ActionKey& b)
     {
-        return a.state == b.state && *a.actions == *b.actions;
+        if (a.state != b.state
+            || a.dfa != b.dfa
+            || a.actionsLength != b.actionsLength)
+            return false;
+        for (uint16_t i = 0; i < a.actionsLength; ++i) {
+            if (a.dfa->actions[a.actionsStart + i] != a.dfa->actions[b.actionsStart + i])
+                return false;
+        }
+        return true;
     }
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
@@ -443,21 +487,21 @@ struct ActionKeyHashTraits : public WTF::CustomHashTraits<ActionKey> {
 
 } // anonymous namespace.
 
-unsigned DFAMinimizer::minimize(Vector<DFANode>& dfaGraph, unsigned root)
+void DFAMinimizer::minimize(DFA& dfa)
 {
-    simplifyTransitions(dfaGraph);
+    simplifyTransitions(dfa);
 
-    FullGraphPartition fullGraphPartition(dfaGraph);
+    FullGraphPartition fullGraphPartition(dfa);
 
     // Unlike traditional minimization final states can be differentiated by their action.
     // Instead of creating a single set for the final state, we partition by actions from
     // the start.
     HashMap<ActionKey, Vector<unsigned>, ActionKeyHash, ActionKeyHashTraits> finalStates;
-    for (unsigned i = 0; i < dfaGraph.size(); ++i) {
-        Vector<uint64_t>& actions = dfaGraph[i].actions;
-        if (actions.size()) {
-            std::sort(actions.begin(), actions.end());
-            auto addResult = finalStates.add(ActionKey(actions), Vector<unsigned>());
+    for (unsigned i = 0; i < dfa.nodes.size(); ++i) {
+        const DFANode& node = dfa.nodes[i];
+        if (node.hasActions()) {
+            // FIXME: Sort the actions in the dfa to make nodes that have the same actions in different order equal.
+            auto addResult = finalStates.add(ActionKey(&dfa, node.actionsStart(), node.actionsLength()), Vector<unsigned>());
             addResult.iterator->value.append(i);
         }
     }
@@ -481,36 +525,32 @@ unsigned DFAMinimizer::minimize(Vector<DFANode>& dfaGraph, unsigned root)
     fullGraphPartition.splitByFallbackTransitions();
 
     Vector<unsigned> relocationVector;
-    relocationVector.reserveInitialCapacity(dfaGraph.size());
-    for (unsigned i = 0; i < dfaGraph.size(); ++i)
-        relocationVector.append(i);
+    relocationVector.reserveInitialCapacity(dfa.nodes.size());
+    for (unsigned i = 0; i < dfa.nodes.size(); ++i)
+        relocationVector.uncheckedAppend(i);
 
     // Kill the useless nodes and keep track of the new node transitions should point to.
-    for (unsigned i = 0; i < dfaGraph.size(); ++i) {
+    for (unsigned i = 0; i < dfa.nodes.size(); ++i) {
         unsigned replacement = fullGraphPartition.nodeReplacement(i);
         if (i != replacement) {
             relocationVector[i] = replacement;
-
-            DFANode& node = dfaGraph[i];
-            node.actions.clear();
-            node.transitions.clear();
-            node.hasFallbackTransition = false;
-            node.isKilled = true;
+            dfa.nodes[i].kill(dfa);
         }
     }
 
-    for (DFANode& node : dfaGraph) {
-        for (auto& transition : node.transitions)
-            transition.value = relocationVector[transition.value];
-        if (node.hasFallbackTransition)
-            node.fallbackTransition = relocationVector[node.fallbackTransition];
+    for (DFANode& node : dfa.nodes) {
+        auto nodeTransitions = node.transitions(dfa);
+        for (unsigned i = 0; i < node.transitionsLength(); ++i)
+            dfa.transitions[node.transitionsStart() + i].second = relocationVector[nodeTransitions[i].second];
+        if (node.hasFallbackTransition())
+            node.changeFallbackTransition(dfa, relocationVector[node.fallbackTransitionDestination(dfa)]);
     }
 
     // After minimizing, there is no guarantee individual transition are still poiting to different states.
     // The state pointed by one individual transition and the fallback states may have been merged.
-    simplifyTransitions(dfaGraph);
+    simplifyTransitions(dfa);
 
-    return relocationVector[root];
+    dfa.root = relocationVector[dfa.root];
 }
 
 } // namespace ContentExtensions

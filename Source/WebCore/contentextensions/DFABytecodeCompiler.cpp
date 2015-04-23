@@ -95,8 +95,8 @@ void DFABytecodeCompiler::emitTerminate()
 
 void DFABytecodeCompiler::compileNode(unsigned index, bool root)
 {
-    const DFANode& node = m_dfa.nodeAt(index);
-    if (node.isKilled) {
+    const DFANode& node = m_dfa.nodes[index];
+    if (node.isKilled()) {
         m_nodeStartOffsets[index] = std::numeric_limits<unsigned>::max();
         return;
     }
@@ -105,7 +105,7 @@ void DFABytecodeCompiler::compileNode(unsigned index, bool root)
     if (!root)
         m_nodeStartOffsets[index] = m_bytecode.size();
 
-    for (uint64_t action : node.actions) {
+    for (uint64_t action : node.actions(m_dfa)) {
         // High bits are used to store flags. See compileRuleList.
         if (action & 0xFFFF00000000)
             emitTestFlagsAndAppendAction(static_cast<uint16_t>(action >> 32), static_cast<unsigned>(action));
@@ -123,14 +123,14 @@ void DFABytecodeCompiler::compileNode(unsigned index, bool root)
 
 void DFABytecodeCompiler::compileNodeTransitions(const DFANode& node)
 {
-    unsigned destinations[128];
-    const unsigned noDestination = std::numeric_limits<unsigned>::max();
-    for (uint16_t i = 0; i < 128; i++) {
-        auto it = node.transitions.find(i);
-        if (it == node.transitions.end())
-            destinations[i] = noDestination;
-        else
-            destinations[i] = it->value;
+    uint32_t destinations[128];
+    memset(destinations, 0xff, sizeof(destinations));
+    const uint32_t noDestination = std::numeric_limits<uint32_t>::max();
+
+    for (const auto& pair : node.transitions(m_dfa)) {
+        RELEASE_ASSERT(pair.first < WTF_ARRAY_LENGTH(destinations));
+        ASSERT_WITH_MESSAGE(destinations[pair.first] == noDestination, "Transitions should be unique");
+        destinations[pair.first] = pair.second;
     }
 
     Vector<Range> ranges;
@@ -138,7 +138,7 @@ void DFABytecodeCompiler::compileNodeTransitions(const DFANode& node)
     bool hasRangeMin = false;
     for (uint8_t i = 0; i < 128; i++) {
         if (hasRangeMin) {
-            ASSERT_WITH_MESSAGE(!(node.hasFallbackTransition && node.fallbackTransition == destinations[rangeMin]), "Individual transitions to the fallback transitions should have been eliminated by the optimizer.");
+            ASSERT_WITH_MESSAGE(!(node.hasFallbackTransition() && node.fallbackTransitionDestination(m_dfa) == destinations[rangeMin]), "Individual transitions to the fallback transitions should have been eliminated by the optimizer.");
             if (destinations[i] != destinations[rangeMin]) {
 
                 // This is the end of a range. Check if it can be case insensitive.
@@ -186,8 +186,8 @@ void DFABytecodeCompiler::compileNodeTransitions(const DFANode& node)
 
     for (const auto& range : ranges)
         compileCheckForRange(range);
-    if (node.hasFallbackTransition)
-        emitJump(node.fallbackTransition);
+    if (node.hasFallbackTransition())
+        emitJump(node.fallbackTransitionDestination(m_dfa));
     else
         emitTerminate();
 }
@@ -208,12 +208,12 @@ void DFABytecodeCompiler::compile()
     // DFA header.
     unsigned startLocation = m_bytecode.size();
     append<unsigned>(m_bytecode, 0);
-    m_nodeStartOffsets.resize(m_dfa.size());
+    m_nodeStartOffsets.resize(m_dfa.nodes.size());
     
     // Make sure the root is always at the beginning of the bytecode.
-    compileNode(m_dfa.root(), true);
-    for (unsigned i = 0; i < m_dfa.size(); i++) {
-        if (i != m_dfa.root())
+    compileNode(m_dfa.root, true);
+    for (unsigned i = 0; i < m_dfa.nodes.size(); i++) {
+        if (i != m_dfa.root)
             compileNode(i, false);
     }
 

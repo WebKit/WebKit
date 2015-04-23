@@ -35,6 +35,12 @@
 #define CONTENT_EXTENSIONS_MEMORY_REPORTING 0
 #define CONTENT_EXTENSIONS_PAGE_SIZE 16384
 
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+#define LOG_LARGE_STRUCTURES(name, size) if (size > 1000000) { WTFLogAlways("NAME: %s SIZE %d", #name, (int)(size)); };
+#else
+#define LOG_LARGE_STRUCTURES(name, size)
+#endif
+
 #endif // ENABLE(CONTENT_EXTENSIONS)
 
 #endif // ContentExtensionsDebugging_h

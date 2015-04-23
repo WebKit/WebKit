@@ -47,6 +47,18 @@ unsigned NFA::createNode()
     return nextId;
 }
 
+size_t NFA::memoryUsed() const
+{
+    size_t size = 0;
+    for (const NFANode& node : m_nodes) {
+        size += sizeof(node)
+            + node.transitions.capacity() * sizeof(std::pair<uint16_t, NFANodeIndexSet>)
+            + node.transitionsOnAnyCharacter.capacity() * sizeof(unsigned)
+            + node.finalRuleIds.size() * sizeof(uint64_t);
+    }
+    return size;
+}
+
 void NFA::addTransition(unsigned from, unsigned to, char character)
 {
     ASSERT(from < m_nodes.size());
