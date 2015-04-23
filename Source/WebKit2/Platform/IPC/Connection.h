@@ -129,7 +129,7 @@ public:
     pid_t remoteProcessID() const;
 #elif USE(UNIX_DOMAIN_SOCKETS)
     typedef int Identifier;
-    static bool identifierIsNull(Identifier identifier) { return !identifier; }
+    static bool identifierIsNull(Identifier identifier) { return identifier == -1; }
 
     struct SocketPair {
         int client;

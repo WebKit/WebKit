@@ -53,6 +53,10 @@ public:
 #if OS(DARWIN)
     Attachment(mach_port_name_t port, mach_msg_type_name_t disposition);
 #elif USE(UNIX_DOMAIN_SOCKETS)
+    Attachment(Attachment&&);
+    Attachment& operator=(Attachment&&);
+    Attachment(const Attachment&) = default;
+    Attachment& operator=(Attachment&) = default;
     Attachment(int fileDescriptor, size_t);
     Attachment(int fileDescriptor);
 #endif
@@ -85,7 +89,7 @@ private:
     mach_port_name_t m_port;
     mach_msg_type_name_t m_disposition;
 #elif USE(UNIX_DOMAIN_SOCKETS)
-    int m_fileDescriptor;
+    int m_fileDescriptor { -1 };
     size_t m_size;
 #endif
 };

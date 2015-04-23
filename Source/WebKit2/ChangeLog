@@ -1,3 +1,50 @@
+2015-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [UNIX] Simplify the file descriptor handling in SharedMemory
+        https://bugs.webkit.org/show_bug.cgi?id=144046
+
+        Reviewed by Darin Adler.
+
+        Simplify the file descriptor handling and clarify its ownership by
+        using IPC::Attachment in SharedMemory::Handle instead of fd and
+        size members. SharedMemory::Handle::adoptFromAttachment() has been
+        renamed as SharedMemory::Handle::adoptAttachment() and receives an
+        IPC::Attachment. And SharedMemory::Handle::releaseToAttachment()
+        has been renamed as SharedMemory::Handle::releaseAttachment().
+
+        * Platform/IPC/Attachment.h: Add move constructor and move assigned operator.
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::identifierIsNull): A file descriptor is null
+        when it's -1 no 0.
+        * Platform/IPC/unix/AttachmentUnix.cpp:
+        (IPC::Attachment::Attachment):
+        (IPC::Attachment::operator=):
+        (IPC::Attachment::dispose): Reset the file descriptor after
+        closing it.
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::processMessage): Use
+        SharedMemory::Handle::adoptAttachment() that receives an
+        IPC::Attachment now.
+        (IPC::Connection::sendOutgoingMessage): Use
+        SharedMemory::Handle::releaseAttachment().
+        * Platform/SharedMemory.h:
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::Handle::Handle): Remove initializers for
+        file descriptor and size members.
+        (WebKit::SharedMemory::Handle::clear): Dispose the attachment.
+        (WebKit::SharedMemory::Handle::isNull): Handle is null if the
+        attachment file descriptor is -1.
+        (WebKit::SharedMemory::Handle::encode): Use releaseAttachment().
+        (WebKit::SharedMemory::Handle::decode): Use adoptAttachment().
+        (WebKit::SharedMemory::Handle::releaseAttachment): Implement it
+        using move.
+        (WebKit::SharedMemory::Handle::adoptAttachment): Ditto.
+        (WebKit::SharedMemory::map): Use
+        IPC::Attachment::releaseFileDescriptor() instead of manually
+        changing the member.
+        (WebKit::SharedMemory::createHandle): Initialize the handle
+        attachment with the duplicated file descriptor and size.
+
 2015-04-22  Darin Adler  <darin@apple.com>
 
         Remove OwnPtr and PassOwnPtr use from WebKit/cf, WebKit/mac, and WebKit2

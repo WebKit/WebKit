@@ -247,7 +247,7 @@ bool Connection::processMessage()
         }
 
         WebKit::SharedMemory::Handle handle;
-        handle.adoptFromAttachment(m_fileDescriptors[attachmentFileDescriptorCount - 1], attachmentInfo[attachmentCount].getSize());
+        handle.adoptAttachment(IPC::Attachment(m_fileDescriptors[attachmentFileDescriptorCount - 1], attachmentInfo[attachmentCount].getSize()));
 
         oolMessageBody = WebKit::SharedMemory::map(handle, WebKit::SharedMemory::Protection::ReadOnly);
         if (!oolMessageBody) {
@@ -445,7 +445,7 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
 
         memcpy(oolMessageBody->data(), encoder->buffer(), encoder->bufferSize());
 
-        attachments.append(handle.releaseToAttachment());
+        attachments.append(handle.releaseAttachment());
     }
 
     struct msghdr message;

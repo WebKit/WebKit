@@ -69,17 +69,17 @@ public:
         static bool decode(IPC::ArgumentDecoder&, Handle&);
 
 #if USE(UNIX_DOMAIN_SOCKETS)
-        IPC::Attachment releaseToAttachment() const;
-        void adoptFromAttachment(int fileDescriptor, size_t);
+        IPC::Attachment releaseAttachment() const;
+        void adoptAttachment(IPC::Attachment&&);
 #endif
     private:
         friend class SharedMemory;
 #if OS(DARWIN)
         mutable mach_port_t m_port;
-#elif USE(UNIX_DOMAIN_SOCKETS)
-        mutable int m_fileDescriptor;
-#endif
         size_t m_size;
+#elif USE(UNIX_DOMAIN_SOCKETS)
+        mutable IPC::Attachment m_attachment;
+#endif
     };
 
     static RefPtr<SharedMemory> allocate(size_t);

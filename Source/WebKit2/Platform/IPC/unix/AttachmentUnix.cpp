@@ -45,10 +45,35 @@ Attachment::Attachment(int fileDescriptor)
 {
 }
 
+Attachment::Attachment(Attachment&& attachment)
+    : m_type(attachment.m_type)
+    , m_fileDescriptor(attachment.m_fileDescriptor)
+    , m_size(attachment.m_size)
+{
+    attachment.m_type = Uninitialized;
+    attachment.m_fileDescriptor = -1;
+    attachment.m_size = 0;
+}
+
+Attachment& Attachment::operator=(Attachment&& attachment)
+{
+    m_type = attachment.m_type;
+    attachment.m_type = Uninitialized;
+    m_fileDescriptor = attachment.m_fileDescriptor;
+    attachment.m_fileDescriptor = -1;
+    m_size = attachment.m_size;
+    attachment.m_size = 0;
+
+    return *this;
+}
+
 void Attachment::dispose()
 {
-    if (m_fileDescriptor != -1)
-        closeWithRetry(m_fileDescriptor);
+    if (m_fileDescriptor == -1)
+        return;
+
+    closeWithRetry(m_fileDescriptor);
+    m_fileDescriptor = -1;
 }
 
 } // namespace IPC
