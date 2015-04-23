@@ -1,3 +1,16 @@
+2015-04-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed, make a suggested change I overlooked in Darin's review of
+        https://bugs.webkit.org/show_bug.cgi?id=144098
+
+        * dom/Document.cpp:
+        (WebCore::Document::removePlaybackTargetPickerClient): const auto& -> auto
+        (WebCore::Document::showPlaybackTargetPicker): Ditto.
+        (WebCore::Document::playbackTargetPickerClientStateDidChange): Ditto.
+        (WebCore::Document::playbackTargetAvailabilityDidChange): Ditto.
+        (WebCore::Document::setPlaybackTarget): Ditto.
+        (WebCore::Document::setShouldPlayToPlaybackTarget): Ditto.
+
 2015-04-23  Joonghun Park  <jh718.park@samsung.com>
 
         Use std::unique_ptr instead of OwnPtr in ThreadGlobalData

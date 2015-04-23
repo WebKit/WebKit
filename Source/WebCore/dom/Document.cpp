@@ -6550,7 +6550,7 @@ void Document::addPlaybackTargetPickerClient(MediaPlaybackTargetClient& client)
 
 void Document::removePlaybackTargetPickerClient(MediaPlaybackTargetClient& client)
 {
-    const auto& it = m_clientToIDMap.find(&client);
+    auto it = m_clientToIDMap.find(&client);
     if (it == m_clientToIDMap.end())
         return;
 
@@ -6570,7 +6570,7 @@ void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool 
     if (!page)
         return;
 
-    const auto& it = m_clientToIDMap.find(&client);
+    auto it = m_clientToIDMap.find(&client);
     ASSERT(it != m_clientToIDMap.end());
     if (it == m_clientToIDMap.end())
         return;
@@ -6584,7 +6584,7 @@ void Document::playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClien
     if (!page)
         return;
 
-    const auto& it = m_clientToIDMap.find(&client);
+    auto it = m_clientToIDMap.find(&client);
     ASSERT(it != m_clientToIDMap.end());
     if (it == m_clientToIDMap.end())
         return;
@@ -6594,7 +6594,7 @@ void Document::playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClien
 
 void Document::playbackTargetAvailabilityDidChange(uint64_t clientId, bool available)
 {
-    const auto& it = m_idToClientMap.find(clientId);
+    auto it = m_idToClientMap.find(clientId);
     if (it == m_idToClientMap.end())
         return;
 
@@ -6603,7 +6603,7 @@ void Document::playbackTargetAvailabilityDidChange(uint64_t clientId, bool avail
 
 void Document::setPlaybackTarget(uint64_t clientId, Ref<MediaPlaybackTarget>&& target)
 {
-    const auto& it = m_idToClientMap.find(clientId);
+    auto it = m_idToClientMap.find(clientId);
     if (it == m_idToClientMap.end())
         return;
 
@@ -6612,7 +6612,7 @@ void Document::setPlaybackTarget(uint64_t clientId, Ref<MediaPlaybackTarget>&& t
 
 void Document::setShouldPlayToPlaybackTarget(uint64_t clientId, bool shouldPlay)
 {
-    const auto& it = m_idToClientMap.find(clientId);
+    auto it = m_idToClientMap.find(clientId);
     if (it == m_idToClientMap.end())
         return;
 
