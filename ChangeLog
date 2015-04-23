@@ -1,5 +1,19 @@
 2015-04-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [CMake] Clean up JSC JIT options
+        https://bugs.webkit.org/show_bug.cgi?id=143998
+
+        Reviewed by Filip Pizlo.
+
+        * Source/cmake/OptionsEfl.cmake: Remove handling of ENABLE_LLINT_C_LOOP and preprocessor
+          define for ENABLE_FTL_NATIVE_CALL_INLINING.
+        * Source/cmake/OptionsMac.cmake: Remove override of ENABLE_LLINT_C_LOOP
+        * Source/cmake/WebKitFeatures.cmake: Remove ENABLE_LLINT_C_LOOP. Add ENABLE_DFG_JIT and
+          ENABLE_FTL_NATIVE_CALL_INLINING. Specify proper dependencies for these features.
+        * Source/cmakeconfig.h.cmake: Remove ENABLE_LLINT_C_LOOP and add ENABLE_DFG_JIT.
+
+2015-04-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [CMake] Use lowercase for local variables in macros
         https://bugs.webkit.org/show_bug.cgi?id=144059
 

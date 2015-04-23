@@ -145,7 +145,6 @@ my (
     $xhrTimeoutSupport,
     $xsltSupport,
     $ftlJITSupport,
-    $forceCLoop,
 );
 
 my @features = (
@@ -433,9 +432,6 @@ my @features = (
 
     { option => "ftl-jit", desc => "Toggle FTLJIT support",
       define => "ENABLE_FTL_JIT", default => 0, value => \$ftlJITSupport },
-
-    { option => "cloop", desc => "Force use of the llint c loop",
-      define => "ENABLE_LLINT_C_LOOP", default => 0, value => \$forceCLoop },
 );
 
 sub getFeatureOptionList()

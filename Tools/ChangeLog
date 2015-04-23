@@ -1,3 +1,13 @@
+2015-04-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Clean up JSC JIT options
+        https://bugs.webkit.org/show_bug.cgi?id=143998
+
+        Reviewed by Filip Pizlo.
+
+        * Scripts/build-jsc: Do not use -ENABLE_LLINT_C_LOOP on CMake ports.
+        * Scripts/webkitperl/FeatureList.pm: Remove ENABLE_LLINT_C_LOOP.
+
 2015-04-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Extend action menus to support PDF
