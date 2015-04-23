@@ -1,3 +1,21 @@
+2015-04-22  Jer Noble  <jer.noble@apple.com>
+
+        [Mac][MediaSource] Crash when SourceBuffer::provideMediaData() is called re-entrantly.
+        https://bugs.webkit.org/show_bug.cgi?id=144023
+
+        Reviewed by Darin Adler.
+
+        Partially revert r183097 (as it was not sufficient to protect against re-entrancy). Instead,
+        protect against re-entrancy in provideMediaData() directly by removing the first sample
+        from the TrackBuffer's decodeQueue at a time. If provideMediaData() is called re-entrantly,
+        or if any other method which modifies the decodeQueue is called from inside
+        provideMediaData, no iterators will be invalidated.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::provideMediaData):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples):
+
 2015-04-22  Zalan Bujtas  <zalan@apple.com>
 
         Create RenderRubyText for <rt> only when the parent renderer is a RenderRuby.

@@ -1793,14 +1793,18 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, AtomicString track
     unsigned enqueuedSamples = 0;
 #endif
 
-    auto sampleIt = trackBuffer.decodeQueue.begin();
-    for (auto sampleEnd = trackBuffer.decodeQueue.end(); sampleIt != sampleEnd; ++sampleIt) {
+    while (!trackBuffer.decodeQueue.empty()) {
         if (!m_private->isReadyForMoreSamples(trackID)) {
             m_private->notifyClientWhenReadyForMoreSamples(trackID);
             break;
         }
 
-        RefPtr<MediaSample> sample = sampleIt->second;
+        // FIXME(rdar://problem/20635969): Remove this re-entrancy protection when the aforementioned radar is resolved; protecting
+        // against re-entrancy introduces a small inefficency when removing appended samples from the decode queue one at a time
+        // rather than when all samples have been enqueued.
+        RefPtr<MediaSample> sample = trackBuffer.decodeQueue.begin()->second;
+        trackBuffer.decodeQueue.erase(trackBuffer.decodeQueue.begin());
+
         // Do not enqueue samples spanning a significant unbuffered gap.
         // NOTE: one second is somewhat arbitrary. MediaSource::monitorSourceBuffers() is run
         // on the playbackTimer, which is effectively every 350ms. Allowing > 350ms gap between
@@ -1818,9 +1822,7 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, AtomicString track
 #if !LOG_DISABLED
         ++enqueuedSamples;
 #endif
-
     }
-    trackBuffer.decodeQueue.erase(trackBuffer.decodeQueue.begin(), sampleIt);
 
     LOG(MediaSource, "SourceBuffer::provideMediaData(%p) - Enqueued %u samples", this, enqueuedSamples);
 }
