@@ -1,3 +1,27 @@
+2015-04-24  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Use @memoized for property IOSSimulator.testing_device
+        https://bugs.webkit.org/show_bug.cgi?id=141715
+
+        Reviewed by Darin Adler.
+
+        Simplify the caching of the result of IOSSimulator.testing_device
+        and make the code more readable by making use of the @memoized declarator
+        instead of explicitly managing a private instance variable,
+        IOSSimulator._testing_device, for the cached result.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.determine_full_port_name):
+        (IOSSimulatorPort.__init__): Delete instance variable IOSSimulatorPort._testing_device.
+        (IOSSimulatorPort):
+        (IOSSimulatorPort.testing_device): No need to cache the created device object in
+        IOSSimulatorPort._testing_device since we are marking this function @memoized.
+        (IOSSimulatorPort.reset_preferences): Code style fix; inline self.testing_device.path instead
+        of caching in local variable since we only make use of this value exactly once in this function.
+        (IOSPort.__init__): Deleted; The instance variable IOSPort._testing_device has never
+        been used since being added in r178622. So, we can remove this constructor since
+        it's the trivial constructor once we remove the instance variable IOSPort._testing_device.
+
 2015-04-24  Anders Carlsson  <andersca@apple.com>
 
         Rename -[WKWebsiteDataStore isNonPersistent] to -[WKWebsiteDataStore isPersistent]

@@ -60,11 +60,6 @@ class IOSPort(ApplePort):
             port_name = port_name + '-' + major_version_number
         return port_name
 
-    def __init__(self, *args, **kwargs):
-        super(IOSPort, self).__init__(*args, **kwargs)
-
-        self._testing_device = None
-
     # Despite their names, these flags do not actually get passed all the way down to webkit-build.
     def _build_driver_flags(self):
         return ['--sdk', 'iphoneos'] + (['ARCHS=%s' % self.architecture()] if self.architecture() else [])
@@ -92,8 +87,6 @@ class IOSSimulatorPort(Port):
             # DumpRenderTree slows down noticably if we run more than about 1000 tests in a batch
             # with MallocStackLogging enabled.
             self.set_option_default("batch_size", 1000)
-
-        self._testing_device = None
 
     def driver_name(self):
         if self.get_option('driver_name'):
@@ -328,11 +321,9 @@ class IOSSimulatorPort(Port):
         return stderr, crash_log
 
     @property
+    @memoized
     def testing_device(self):
-        if self._testing_device is not None:
-            return self._testing_device
-        self._testing_device = Simulator().lookup_or_create_device(self.simulator_device_type.name + ' WebKit Tester', self.simulator_device_type, self.simulator_runtime)
-        return self.testing_device
+        return Simulator().lookup_or_create_device(self.simulator_device_type.name + ' WebKit Tester', self.simulator_device_type, self.simulator_runtime)
 
     def look_for_new_crash_logs(self, crashed_processes, start_time):
         crash_logs = {}
@@ -385,8 +376,7 @@ class IOSSimulatorPort(Port):
         return self._image_differ.diff_image(expected_contents, actual_contents, tolerance)
 
     def reset_preferences(self):
-        simulator_path = self.testing_device.path
-        data_path = os.path.join(simulator_path, 'data')
+        data_path = os.path.join(self.testing_device.path, 'data')
         if os.path.isdir(data_path):
             shutil.rmtree(data_path)
 
