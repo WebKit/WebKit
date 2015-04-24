@@ -51,7 +51,7 @@ public:
 
     void backingStoreWasCreated(RemoteLayerBackingStore&);
     void backingStoreWillBeDestroyed(RemoteLayerBackingStore&);
-    void backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
+    bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
 
     WebCore::LayerPool& layerPool() { return m_layerPool; }
 

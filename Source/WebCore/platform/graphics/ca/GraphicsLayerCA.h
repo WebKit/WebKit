@@ -363,6 +363,7 @@ private:
     void updateBackfaceVisibility();
     void updateStructuralLayer();
     void updateDrawsContent();
+    void updateBackingStoreAttachment();
     void updateBackgroundColor();
 
     void updateContentsImage();

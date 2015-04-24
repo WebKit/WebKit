@@ -89,6 +89,9 @@ public:
 
     virtual void setHidden(bool) override;
 
+    virtual void setBackingStoreAttached(bool) override;
+    virtual bool backingStoreAttached() const override;
+
     WEBCORE_EXPORT virtual void setGeometryFlipped(bool) override;
 
     virtual bool isDoubleSided() const override;

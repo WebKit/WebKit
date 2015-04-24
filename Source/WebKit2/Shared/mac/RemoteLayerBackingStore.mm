@@ -66,6 +66,7 @@ RemoteLayerBackingStore::~RemoteLayerBackingStore()
 
     if (!m_layer)
         return;
+
     if (RemoteLayerTreeContext* context = m_layer->context())
         context->backingStoreWillBeDestroyed(*this);
 }
@@ -206,8 +207,9 @@ bool RemoteLayerBackingStore::display()
 
     m_lastDisplayTime = std::chrono::steady_clock::now();
 
+    bool needToEncodeBackingStore = false;
     if (RemoteLayerTreeContext* context = m_layer->context())
-        context->backingStoreWillBeDisplayed(*this);
+        needToEncodeBackingStore = context->backingStoreWillBeDisplayed(*this);
 
     // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
     setBufferVolatility(BufferType::Front, false);
@@ -215,7 +217,7 @@ bool RemoteLayerBackingStore::display()
     IntSize expandedScaledSize = backingStoreSize();
 
     if (m_dirtyRegion.isEmpty() || expandedScaledSize.isEmpty())
-        return false;
+        return needToEncodeBackingStore;
 
     IntRect layerBounds(IntPoint(), expandedIntSize(m_size));
     if (!hasFrontBuffer())

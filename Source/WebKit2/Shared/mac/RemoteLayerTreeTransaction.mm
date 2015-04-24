@@ -98,6 +98,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
     , blendMode(BlendModeNormal)
     , windRule(RULE_NONZERO)
     , hidden(false)
+    , backingStoreAttached(true)
     , geometryFlipped(false)
     , doubleSided(true)
     , masksToBounds(false)
@@ -134,6 +135,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , blendMode(other.blendMode)
     , windRule(other.windRule)
     , hidden(other.hidden)
+    , backingStoreAttached(other.backingStoreAttached)
     , geometryFlipped(other.geometryFlipped)
     , doubleSided(other.doubleSided)
     , masksToBounds(other.masksToBounds)
@@ -254,6 +256,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
         if (hasFrontBuffer)
             encoder << *backingStore;
     }
+
+    if (changedProperties & BackingStoreAttachmentChanged)
+        encoder << backingStoreAttached;
 
     if (changedProperties & FiltersChanged)
         encoder << *filters;
@@ -452,6 +457,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
             result.backingStore = WTF::move(backingStore);
         } else
             result.backingStore = nullptr;
+    }
+
+    if (result.changedProperties & BackingStoreAttachmentChanged) {
+        if (!decoder.decode(result.backingStoreAttached))
+            return false;
     }
 
     if (result.changedProperties & FiltersChanged) {
@@ -1180,6 +1190,9 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTr
             else
                 dumpProperty(ts, "backingStore", "removed");
         }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BackingStoreAttachmentChanged)
+            dumpProperty(ts, "backingStoreAttached", layerProperties.backingStoreAttached);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::FiltersChanged)
             dumpProperty(ts, "filters", layerProperties.filters ? *layerProperties.filters : FilterOperations());

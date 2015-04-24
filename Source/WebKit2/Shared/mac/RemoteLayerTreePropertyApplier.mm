@@ -233,8 +233,11 @@ static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTre
     if (properties.changedProperties & RemoteLayerTreeTransaction::TimeOffsetChanged)
         layer.timeOffset = properties.timeOffset;
 
-    if (properties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
-        if (RemoteLayerBackingStore* backingStore = properties.backingStore.get())
+    if (properties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged
+        || properties.changedProperties & RemoteLayerTreeTransaction::BackingStoreAttachmentChanged)
+    {
+        RemoteLayerBackingStore* backingStore = properties.backingStore.get();
+        if (backingStore && properties.backingStoreAttached)
             backingStore->applyBackingStoreToLayer(layer);
         else {
             layer.contents = nil;

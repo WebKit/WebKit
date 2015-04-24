@@ -153,7 +153,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
         m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);
     }
 
-    if (m_properties.backingStore && m_properties.backingStore->display())
+    if (m_properties.backingStore && m_properties.backingStoreAttached && m_properties.backingStore->display())
         m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);
 
     if (m_properties.changedProperties != RemoteLayerTreeTransaction::NoChange) {
@@ -500,6 +500,20 @@ void PlatformCALayerRemote::setHidden(bool value)
 {
     m_properties.hidden = value;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::HiddenChanged);
+}
+
+void PlatformCALayerRemote::setBackingStoreAttached(bool value)
+{
+    if (m_properties.backingStoreAttached == value)
+        return;
+
+    m_properties.backingStoreAttached = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreAttachmentChanged);
+}
+
+bool PlatformCALayerRemote::backingStoreAttached() const
+{
+    return m_properties.backingStoreAttached;
 }
 
 void PlatformCALayerRemote::setGeometryFlipped(bool value)

@@ -81,10 +81,11 @@ public:
         SpeedChanged                    = 1LLU << 28,
         TimeOffsetChanged               = 1LLU << 29,
         BackingStoreChanged             = 1LLU << 30,
-        FiltersChanged                  = 1LLU << 31,
-        AnimationsChanged               = 1LLU << 32,
-        EdgeAntialiasingMaskChanged     = 1LLU << 33,
-        CustomAppearanceChanged         = 1LLU << 34
+        BackingStoreAttachmentChanged   = 1LLU << 31,
+        FiltersChanged                  = 1LLU << 32,
+        AnimationsChanged               = 1LLU << 33,
+        EdgeAntialiasingMaskChanged     = 1LLU << 34,
+        CustomAppearanceChanged         = 1LLU << 35,
     };
     typedef uint64_t LayerChange;
 
@@ -156,6 +157,7 @@ public:
         WebCore::BlendMode blendMode;
         WebCore::WindRule windRule;
         bool hidden;
+        bool backingStoreAttached;
         bool geometryFlipped;
         bool doubleSided;
         bool masksToBounds;

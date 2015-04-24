@@ -38,7 +38,6 @@ namespace WebKit {
 
 RemoteLayerBackingStoreCollection::RemoteLayerBackingStoreCollection()
     : m_volatilityTimer(*this, &RemoteLayerBackingStoreCollection::volatilityTimerFired)
-    , m_inLayerFlush(false)
 {
 }
 
@@ -88,16 +87,18 @@ void RemoteLayerBackingStoreCollection::backingStoreWillBeDestroyed(RemoteLayerB
     m_unparentedBackingStore.remove(&backingStore);
 }
 
-void RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerBackingStore& backingStore)
+bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerBackingStore& backingStore)
 {
     ASSERT(m_inLayerFlush);
     m_reachableBackingStoreInLatestFlush.add(&backingStore);
 
     auto backingStoreIter = m_unparentedBackingStore.find(&backingStore);
     if (backingStoreIter == m_unparentedBackingStore.end())
-        return;
+        return false;
+
     m_liveBackingStore.add(&backingStore);
     m_unparentedBackingStore.remove(backingStoreIter);
+    return true;
 }
 
 bool RemoteLayerBackingStoreCollection::markBackingStoreVolatileImmediately(RemoteLayerBackingStore& backingStore, VolatilityMarkingFlags volatilityMarkingFlags)
@@ -140,10 +141,6 @@ void RemoteLayerBackingStoreCollection::backingStoreBecameUnreachable(RemoteLaye
         return;
     m_unparentedBackingStore.add(&backingStore);
     m_liveBackingStore.remove(backingStoreIter);
-
-    // If a layer with backing store is removed from the tree, mark it as having changed backing store, so that
-    // on the commit which returns it to the tree, we serialize the backing store (despite possibly not painting).
-    backingStore.layer()->properties().notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);
 
     // This will not succeed in marking all buffers as volatile, because the commit unparenting the layer hasn't
     // made it to the UI process yet. The volatility timer will finish marking the remaining buffers later.

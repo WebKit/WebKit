@@ -594,6 +594,16 @@ void PlatformCALayerMac::setHidden(bool value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+void PlatformCALayerMac::setBackingStoreAttached(bool)
+{
+    // We could throw away backing store here with setContents:nil.
+}
+
+bool PlatformCALayerMac::backingStoreAttached() const
+{
+    return true;
+}
+
 void PlatformCALayerMac::setGeometryFlipped(bool value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS

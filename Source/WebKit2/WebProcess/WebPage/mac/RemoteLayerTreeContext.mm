@@ -94,9 +94,9 @@ void RemoteLayerTreeContext::backingStoreWillBeDestroyed(RemoteLayerBackingStore
     m_backingStoreCollection.backingStoreWillBeDestroyed(backingStore);
 }
 
-void RemoteLayerTreeContext::backingStoreWillBeDisplayed(RemoteLayerBackingStore& backingStore)
+bool RemoteLayerTreeContext::backingStoreWillBeDisplayed(RemoteLayerBackingStore& backingStore)
 {
-    m_backingStoreCollection.backingStoreWillBeDisplayed(backingStore);
+    return m_backingStoreCollection.backingStoreWillBeDisplayed(backingStore);
 }
 
 std::unique_ptr<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(WebCore::GraphicsLayer::Type layerType, GraphicsLayerClient& client)

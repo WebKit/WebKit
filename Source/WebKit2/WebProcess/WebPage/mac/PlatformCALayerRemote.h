@@ -94,6 +94,9 @@ public:
 
     virtual void setHidden(bool) override;
 
+    virtual void setBackingStoreAttached(bool) override;
+    virtual bool backingStoreAttached() const override;
+
     virtual void setGeometryFlipped(bool) override;
 
     virtual bool isDoubleSided() const override;

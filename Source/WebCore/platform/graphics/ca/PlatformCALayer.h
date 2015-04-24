@@ -176,6 +176,9 @@ public:
 
     virtual void setContentsRect(const FloatRect&) = 0;
 
+    virtual void setBackingStoreAttached(bool) = 0;
+    virtual bool backingStoreAttached() const = 0;
+
     virtual void setMinificationFilter(FilterType) = 0;
     virtual void setMagnificationFilter(FilterType) = 0;
 

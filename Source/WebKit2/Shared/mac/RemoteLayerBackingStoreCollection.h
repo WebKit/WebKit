@@ -45,7 +45,8 @@ public:
     void backingStoreWasCreated(RemoteLayerBackingStore&);
     void backingStoreWillBeDestroyed(RemoteLayerBackingStore&);
 
-    void backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
+    // Return value indicates whether the backing store needs to be included in the transaction.
+    bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
 
     void willFlushLayers();
@@ -67,11 +68,13 @@ private:
 
     HashSet<RemoteLayerBackingStore*> m_liveBackingStore;
     HashSet<RemoteLayerBackingStore*> m_unparentedBackingStore;
+
+    // Only used during a single flush.
     HashSet<RemoteLayerBackingStore*> m_reachableBackingStoreInLatestFlush;
 
     WebCore::Timer m_volatilityTimer;
 
-    bool m_inLayerFlush;
+    bool m_inLayerFlush { false };
 };
 
 } // namespace WebKit
