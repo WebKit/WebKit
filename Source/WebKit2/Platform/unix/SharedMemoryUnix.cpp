@@ -83,7 +83,6 @@ bool SharedMemory::Handle::decode(IPC::ArgumentDecoder& decoder, Handle& handle)
 
 IPC::Attachment SharedMemory::Handle::releaseAttachment() const
 {
-    ASSERT(!isNull());
     return WTF::move(m_attachment);
 }
 

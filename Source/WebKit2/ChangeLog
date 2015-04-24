@@ -1,3 +1,12 @@
+2015-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Remove incorrect ASSERT added in r183176.
+
+        We allow to encode null attachments.
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::Handle::releaseAttachment):
+
 2015-04-23  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/20680694> Framework header postprocessing isn’t removing WK_DEPRECATED macros when it should.
