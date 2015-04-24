@@ -1,3 +1,97 @@
+2015-04-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard should automatically detect regressions
+        https://bugs.webkit.org/show_bug.cgi?id=141443
+
+        Reviewed by Anders Carlsson.
+
+        Added a node.js script detect-changes.js to detect potential regressions and progressions
+        on the graphs tracked on v2 dashboards.
+
+        * init-database.sql: Added analysis_strategies table and task_segmentation and task_test_range
+        columns to analysis_tasks to keep the segmentation and test range selection strategies used
+        to create an analysis task.
+
+        * public/api/analysis-tasks.php:
+        (format_task): Include task_segmentation and analysis_tasks in the results.
+
+        * public/include/json-header.php:
+        (remote_user_name): Returns null when the privileged API is authenticated as a slave instead
+        of a CSRF prevention token.
+        (should_authenticate_as_slave): Added.
+        (ensure_privileged_api_data_and_token_or_slave): Added. Authenticate as a slave if slaveName
+        and slavePassword are specified. Since detect-changes.js and other slaves are not susceptible
+        to a CSRF attack, we don't need to check a CSRF token.
+
+        * public/privileged-api/create-analysis-task.php:
+        (main): Use ensure_privileged_api_data_and_token_or_slave to let detect-changes.js create new
+        analysis task. Also add or find segmentation and test range selection strategies if specified.
+
+        * public/privileged-api/create-test-group.php:
+        (main): Use ensure_privileged_api_data_and_token_or_slave.
+
+        * public/privileged-api/generate-csrf-token.php:
+
+        * public/v2/app.js:
+        (App.Pane._computeMovingAverageAndOutliers): _executeStrategy has been moved to Statistics.
+
+        * public/v2/data.js: Export Measurement, RunsData, TimeSeries. Used in detect-changes.js.
+        (Array.prototype.find): Added a polyfill to be used in node.js.
+        (RunsData.fetchRuns):
+        (RunsData.pathForFetchingRuns): Extracted from fetchRuns. Used in detect-changes.js.
+        (RunsData.createRunsDataInResponse): Extracted from App.Manifest._formatFetchedData to use it
+        in detect-changes.js.
+        (RunsData.unitFromMetricName): Ditto.
+        (RunsData.isSmallerBetter): Ditto.
+        (RunsData.prototype._timeSeriesByTimeInternal): Added secondaryTime to sort points when commit
+        times are identical.
+        (TimeSeries): When commit times are identical, order points based on build time. This is needed
+        for when we trigger two builds at two different OS versions with the same WebKit revision since
+        OS versions don't change the commit times.
+        (TimeSeries.prototype.findPointByIndex): Added.
+        (TimeSeries.prototype.rawValues): Added.
+
+        * public/v2/js/statistics.js:
+        (Statistics.TestRangeSelectionStrategies.[0]): Use the 99% two-sided probability as claimed in the
+        description of this strategy instead of the default probability. Also fixed a bug that debugging
+        code was referring to non-existent variables.
+        (Statistics.executeStrategy): Moved from App.Pane (app.js).
+
+        * public/v2/manifest.js:
+        (App.Manifest._formatFetchedData): Various code has been extracted into RunsData in data.js to be
+        used in detect-changes.js.
+
+        * tools/detect-changes.js: Added. The script fetches the manifest JSON, analyzes each graph in
+        the v2 dashboards, and creates an analysis task for the latest regression or progression detected.
+        It also schedules an A/B testing if possible and notifies another server; e.g. to send an email. 
+        (main): Loads the settings JSON specified in the argument.
+        (fetchManifestAndAnalyzeData): The main loop that periodically wakes up to do the analysis.
+        (mapInOrder): Executes callback sequentially (i.e. blocking) on each item in the array.
+        (configurationsForTesting): Finds every (platform, metric) pair to analyze in the v2 dashbaords,
+        and computes various values for when statistically significant changes are detected later.
+        (analyzeConfiguration): Finds potential regressions and progression in the last X days where X
+        is the specified maximum number of days using the specified strategies. Sort the resultant ranges
+        in chronological order and create a new analysis task for the very last change we detected. We'll
+        eventually create an analysis task for all detected changes since we're repeating the analysis in
+        fetchManifestAndAnalyzeData after some time.
+        (computeRangesForTesting): Fetch measured values and compute ranges to test using the specified
+        segmentation and test range selection strategies. Once ranges are found, find overlapping analysis
+        tasks as they need to be filtered out in analyzeConfiguration to avoid creating multiple analysis
+        tasks for the same range (e.g. humans may create one before the script gets to do it).
+        (createAnalysisTaskAndNotify): Create a new analysis task for the specified range, trigger an A/B
+        testing if available, and notify another server with a HTML message as specified.
+        (findStrategyByLabel):
+        (changeTypeForRange): A change is a regression if values are getting larger in a smaller-is-better
+        test or values are getting smaller in a larger-is-better test and vice versa.
+        (summarizeRange): Create a human readable string that summarizes the change detected. e.g.
+        "Potential 3.2% regression detected between 2015-04-20 12:00 and 17:00".
+        (formatTimeRange):
+        (getJSON):
+        (postJSON):
+        (postNotification): Recursively replaces $title and $massage in the specified JSON template.
+        (instantiateNotificationTemplate):
+        (fetchJSON):
+
 2015-04-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard should have UI to set status on analysis tasks

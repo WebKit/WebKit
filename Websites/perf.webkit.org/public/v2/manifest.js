@@ -317,17 +317,8 @@ App.Manifest = Ember.Controller.extend({
     },
     _formatFetchedData: function (metricName, configurations)
     {
-        var suffix = metricName.match('([A-z][a-z]+|FrameRate)$')[0];
-        var unit = {
-            'FrameRate': 'fps',
-            'Runs': '/s',
-            'Time': 'ms',
-            'Malloc': 'bytes',
-            'Heap': 'bytes',
-            'Allocations': 'bytes'
-        }[suffix];
-
-        var smallerIsBetter = unit != 'fps' && unit != '/s'; // Assume smaller is better for unit-less metrics.
+        var unit = RunsData.unitFromMetricName(metricName);
+        var smallerIsBetter = RunsData.isSmallerBetter(unit);
 
         var useSI = unit == 'bytes';
         var unitSuffix = unit ? ' ' + unit : '';

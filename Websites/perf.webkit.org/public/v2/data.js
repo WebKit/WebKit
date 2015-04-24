@@ -1,5 +1,15 @@
 // We don't use DS.Model for these object types because we can't afford to process millions of them.
 
+if (!Array.prototype.find) {
+    Array.prototype.find = function (callback) {
+        for (var item of this) {
+            if (callback(item))
+                return item;
+        }
+        return undefined;
+    }
+}
+
 var PrivilegedAPI = {
     _token: null,
     _expiration: null,
@@ -333,6 +343,7 @@ RunsData.prototype._timeSeriesByTimeInternal = function (useCommitType, includeO
         series.push({
             measurement: measurement,
             time: useCommitType ? measurement.latestCommitTime() : measurement.buildTime(),
+            secondaryTime: measurement.buildTime(),
             value: measurement.mean(),
             interval: measurement.confidenceInterval(),
             markedOutlier: measurement.markedOutlier(),
@@ -345,28 +356,14 @@ RunsData.prototype._timeSeriesByTimeInternal = function (useCommitType, includeO
 // we don't have to fetch the entire time series to just show the last 3 days.
 RunsData.fetchRuns = function (platformId, metricId, testGroupId, useCache)
 {
-    var url = useCache ? '../data/' : '../api/runs/';
-
-    url += platformId + '-' + metricId + '.json';
-    if (testGroupId)
-        url += '?testGroup=' + testGroupId;
-
+    var url = this.pathForFetchingRuns(platformId, metricId, testGroupId, useCache);
     return new Ember.RSVP.Promise(function (resolve, reject) {
         $.getJSON(url, function (response) {
             if (response.status != 'OK') {
                 reject(response.status);
                 return;
             }
-            delete response.status;
-
-            var data = response.configurations;
-            for (var config in data)
-                data[config] = new RunsData(data[config]);
-            
-            if (response.lastModified)
-                response.lastModified = new Date(response.lastModified);
-
-            resolve(response);
+            resolve(RunsData.createRunsDataInResponse(response));
         }).fail(function (xhr, status, error) {
             if (xhr.status == 404 && useCache)
                 resolve(null);
@@ -376,9 +373,58 @@ RunsData.fetchRuns = function (platformId, metricId, testGroupId, useCache)
     });
 }
 
+RunsData.pathForFetchingRuns = function (platformId, metricId, testGroupId, useCache)
+{
+    var path = useCache ? '/data/' : '/api/runs/';
+
+    path += platformId + '-' + metricId + '.json';
+    if (testGroupId)
+        path += '?testGroup=' + testGroupId;
+
+    return path;
+}
+
+RunsData.createRunsDataInResponse = function (response)
+{
+    delete response.status;
+
+    var data = response.configurations;
+    for (var config in data)
+        data[config] = new RunsData(data[config]);
+
+    if (response.lastModified)
+        response.lastModified = new Date(response.lastModified);
+
+    return response;
+}
+
+// FIXME: It was a mistake to put this in the client side. We should put this back in the JSON.
+RunsData.unitFromMetricName = function (metricName)
+{
+    var suffix = metricName.match('([A-z][a-z]+|FrameRate)$')[0];
+    var unit = {
+        'FrameRate': 'fps',
+        'Runs': '/s',
+        'Time': 'ms',
+        'Malloc': 'bytes',
+        'Heap': 'bytes',
+        'Allocations': 'bytes'
+    }[suffix];
+    return unit;
+}
+
+RunsData.isSmallerBetter = function (unit)
+{
+    return unit != 'fps' && unit != '/s';
+}
+
 function TimeSeries(series)
 {
-    this._series = series.sort(function (a, b) { return a.time - b.time; });
+    this._series = series.sort(function (a, b) {
+        var diff = a.time - b.time;
+        return diff ? diff : a.secondaryTime - b.secondaryTime;
+    });
+
     var self = this;
     var min = undefined;
     var max = undefined;
@@ -392,6 +438,13 @@ function TimeSeries(series)
     });
     this._min = min;
     this._max = max;
+}
+
+TimeSeries.prototype.findPointByIndex = function (index)
+{
+    if (!this._series || index < 0 || index >= this._series.length)
+        return null;
+    return this._series[index];
 }
 
 TimeSeries.prototype.findPointByBuild = function (buildId)
@@ -462,6 +515,11 @@ TimeSeries.prototype.minMaxForTimeRange = function (startTime, endTime, ignoreOu
 
 TimeSeries.prototype.series = function () { return this._series; }
 
+TimeSeries.prototype.rawValues = function ()
+{
+    return this._series.map(function (point) { return point.value });
+}
+
 TimeSeries.prototype.lastPoint = function ()
 {
     if (!this._series || !this._series.length)
@@ -481,4 +539,11 @@ TimeSeries.prototype.nextPoint = function (point)
     if (!point.seriesIndex)
         return null;
     return this._series[point.seriesIndex + 1];
+}
+
+if (typeof module != 'undefined') {
+    Statistics = require('./js/statistics.js');
+    module.exports.Measurement = Measurement;
+    module.exports.RunsData = RunsData;
+    module.exports.TimeSeries = TimeSeries;
 }

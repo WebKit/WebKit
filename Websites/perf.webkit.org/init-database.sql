@@ -174,11 +174,17 @@ CREATE TABLE reports (
     report_failure varchar(64),
     report_failure_details text);
 
+CREATE TABLE analysis_strategies (
+    strategy_id serial PRIMARY KEY,
+    strategy_name varchar(64) NOT NULL);
+
 CREATE TYPE analysis_task_result_type as ENUM ('progression', 'regression', 'unchanged', 'inconclusive');
 CREATE TABLE analysis_tasks (
     task_id serial PRIMARY KEY,
     task_name varchar(256) NOT NULL,
     task_author varchar(256),
+    task_segmentation integer REFERENCES analysis_strategies,
+    task_test_range integer REFERENCES analysis_strategies,
     task_created_at timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
     task_platform integer REFERENCES platforms NOT NULL,
     task_metric integer REFERENCES test_metrics NOT NULL,

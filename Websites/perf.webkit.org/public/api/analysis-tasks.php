@@ -81,6 +81,8 @@ function format_task($task_row) {
         'id' => $task_row['task_id'],
         'name' => $task_row['task_name'],
         'author' => $task_row['task_author'],
+        'segmentationStrategy' => $task_row['task_segmentation'],
+        'testRangeStragegy' => $task_row['task_test_range'],
         'createdAt' => strtotime($task_row['task_created_at']) * 1000,
         'platform' => $task_row['task_platform'],
         'metric' => $task_row['task_metric'],

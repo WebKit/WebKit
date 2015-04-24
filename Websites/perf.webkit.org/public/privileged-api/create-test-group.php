@@ -3,9 +3,9 @@
 require_once('../include/json-header.php');
 
 function main() {
-    $data = ensure_privileged_api_data_and_token();
-
-    $author = remote_user_name();
+    $db = connect();
+    $data = ensure_privileged_api_data_and_token_or_slave($db);
+    $author = remote_user_name($data);
 
     $task_id = array_get($data, 'task');
     $name = array_get($data, 'name');
@@ -19,7 +19,6 @@ function main() {
     if ($repetition_count < 1)
         exit_with_error('InvalidRepetitionCount', array('repetitionCount' => $repetition_count));
 
-    $db = connect();
     $task = $db->select_first_row('analysis_tasks', 'task', array('id' => $task_id));
     if (!$task)
         exit_with_error('InvalidTask', array('task' => $task_id));

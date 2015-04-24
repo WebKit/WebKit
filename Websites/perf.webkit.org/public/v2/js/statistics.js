@@ -487,7 +487,7 @@ var Statistics = new (function () {
                     for (var leftEdge = i - 2, rightEdge = i + 2; leftEdge >= 0 && rightEdge <= values.length; leftEdge--, rightEdge++) {
                         if (segmentedValues[leftEdge] != previousMean || segmentedValues[rightEdge - 1] != currentMean)
                             break;
-                        var result = Statistics.computeWelchsT(values, leftEdge, i - leftEdge, values, i, rightEdge - i);
+                        var result = Statistics.computeWelchsT(values, leftEdge, i - leftEdge, values, i, rightEdge - i, 0.98);
                         if (result.significantlyDifferent) {
                             selectedRanges.push([leftEdge, rightEdge - 1]);
                             found = true;
@@ -495,7 +495,7 @@ var Statistics = new (function () {
                         }
                     }
                     if (!found && Statistics.debuggingTestingRangeNomination)
-                        console.log('Failed to find a testing range at', i, 'changing from', previousValue, 'to', currentValue);
+                        console.log('Failed to find a testing range at', i, 'changing from', previousMean, 'to', currentMean);
                     previousMean = currentMean;
                 }
                 return selectedRanges;
@@ -564,6 +564,16 @@ var Statistics = new (function () {
             }
         },
     ]
+
+    this.executeStrategy = function (strategy, rawValues, additionalArguments)
+    {
+        var parameters = (strategy.parameterList || []).map(function (param) {
+            var parsed = parseFloat(param.value);
+            return Math.min(param.max || Infinity, Math.max(param.min || -Infinity, isNaN(parsed) ? 0 : parsed));
+        });
+        parameters.push(rawValues);
+        return strategy.execute.apply(strategy, parameters.concat(additionalArguments));
+    };
 
 })();
 
