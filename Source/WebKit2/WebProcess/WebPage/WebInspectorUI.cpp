@@ -256,7 +256,7 @@ void WebInspectorUI::evaluateCommandOnLoad(const String& command, const String& 
 
 void WebInspectorUI::evaluateCommandOnLoad(const String& command, bool argument)
 {
-    evaluateCommandOnLoad(command, ASCIILiteral(argument ? "true" : "false"));
+    evaluateExpressionOnLoad(makeString("InspectorFrontendAPI.dispatch([\"", command, "\", ", ASCIILiteral(argument ? "true" : "false"), "])"));
 }
 
 void WebInspectorUI::evaluateExpressionOnLoad(const String& expression)

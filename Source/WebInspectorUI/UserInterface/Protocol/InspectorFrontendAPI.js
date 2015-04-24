@@ -44,7 +44,7 @@ InspectorFrontendAPI = {
 
     setTimelineProfilingEnabled: function(enabled)
     {
-        if (WebInspector.timelineManager.isCapturing() !== enabled)
+        if (WebInspector.timelineManager.isCapturing() === enabled)
             return;
 
         if (enabled) {

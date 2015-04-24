@@ -1,3 +1,14 @@
+2015-04-24  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION: Web Inspector: Start Timeline Recording in Develop menu broken
+        https://bugs.webkit.org/show_bug.cgi?id=144150
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setTimelineProfilingEnabled): Change !== to === when
+        checking enabled to isCapturing().
+
 2015-04-23  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: run a customizable bootstrap function after the UI has fully loaded

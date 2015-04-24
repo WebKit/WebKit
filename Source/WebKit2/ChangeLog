@@ -1,3 +1,14 @@
+2015-04-24  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION: Web Inspector: Start Timeline Recording in Develop menu broken
+        https://bugs.webkit.org/show_bug.cgi?id=144150
+
+        Reviewed by Brian Burg.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::evaluateCommandOnLoad): Properly treat bools as literals
+        instead of strings by not using the string version of evaluateCommandOnLoad.
+
 2015-04-23  Anders Carlsson  <andersca@apple.com>
 
         Add headerdocs for WKWebsiteDataRecord and WKWebsiteDataStore
