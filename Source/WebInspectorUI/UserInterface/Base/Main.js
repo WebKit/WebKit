@@ -356,6 +356,8 @@ WebInspector.contentLoaded = function()
         this.showSplitConsole();
 
     this._contentLoaded = true;
+
+    this.runBootstrapOperations();
 };
 
 WebInspector.activateExtraDomains = function(domains)

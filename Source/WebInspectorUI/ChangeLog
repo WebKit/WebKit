@@ -1,3 +1,23 @@
+2015-04-23  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: run a customizable bootstrap function after the UI has fully loaded
+        https://bugs.webkit.org/show_bug.cgi?id=144124
+
+        Reviewed by Joseph Pecoraro.
+
+        It can be really annoying to click through the Inspector UI dozens of times to debug one
+        interaction or iterate on a specific widget.
+
+        This patch adds a blank "bootstrap" function that can be used to hard-wire commands to
+        automate repetitive UI state setup. The function is run immediately after the inspector loads.
+        Setup commands can be shared as bug report reproduction steps.
+
+        * UserInterface/Base/Bootstrap.js: Added.
+        (WebInspector.runBootstrapOperations): Added.
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded): Bootstrap after setting up everything and restoring view state from cookie.
+        * UserInterface/Main.html:
+
 2015-04-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Adopt Object.assign and improve its display in Console
