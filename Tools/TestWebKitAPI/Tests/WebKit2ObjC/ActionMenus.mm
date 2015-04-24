@@ -438,7 +438,7 @@ static NSPoint windowPointForTarget(TargetType target)
         contentPoint = NSMakePoint(200, 350);
         break;
     case TargetType::PDFEmbed:
-        contentPoint = NSMakePoint(410, 420);
+        contentPoint = NSMakePoint(522, 363);
         break;
     case TargetType::PDFDocument:
         contentPoint = NSMakePoint(141, 374);
@@ -734,14 +734,13 @@ TEST(WebKit2, ActionMenusTest)
         EXPECT_FALSE(callJavaScriptReturningBool([wkView pageRef], "wasFailCalled()"));
     }];
 
-    // FIXME(144149): Hit testing for embedded PDFs are not finding the right content. Temporarily skipping.
     // PDF text content
-    //[wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::PDFEmbed) preDidCloseMenuHandler:^() {
-    //    EXPECT_EQ(kWKActionMenuReadOnlyText, [wkView _actionMenuResult].type);
-    //    EXPECT_WK_STREQ("Test", WKHitTestResultCopyLookupText([wkView _actionMenuResult].hitTestResult.get()));
-    //
-    //    // FIXME(144008): You cannot copy from PDFs hosted in <embed> tags. When this is fixed, we should test it works here.
-    //}];
+    [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::PDFEmbed) preDidCloseMenuHandler:^() {
+        EXPECT_EQ(kWKActionMenuReadOnlyText, [wkView _actionMenuResult].type);
+        EXPECT_WK_STREQ("separation", WKHitTestResultCopyLookupText([wkView _actionMenuResult].hitTestResult.get()));
+    
+        // FIXME(144008): You cannot copy from PDFs hosted in <embed> tags. When this is fixed, we should test it works here.
+    }];
 
     // Clients should be able to customize the menu by overriding WKView's _actionMenuItemsForHitTestResult.
     // http://trac.webkit.org/changeset/174908

@@ -1,3 +1,17 @@
+2015-04-24  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION: WebKit2.ActionMenusTest API test fails
+        https://bugs.webkit.org/show_bug.cgi?id=144149
+        <rdar://problem/20677770>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKit2/action-menu-targets.html: Revise to use the same test PDF
+        as the 'ActionMenusPDFTest'.
+        * TestWebKitAPI/Tests/WebKit2ObjC/ActionMenus.mm:
+        (TestWebKitAPI::TEST): Unskip the PDF portion of ActionMenusTest, and revise its expected output
+        to match the hit test on the 'action-menu-target.pdf' test file.
+
 2015-04-24  Daniel Bates  <dabates@apple.com>
 
         Cleanup: Use @memoized for property IOSSimulator.testing_device

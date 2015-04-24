@@ -1846,14 +1846,14 @@ String PDFPlugin::getSelectionForWordAtPoint(const WebCore::FloatPoint& point) c
     return [selectionForWord string];
 }
 
-bool PDFPlugin::existingSelectionContainsPoint(const WebCore::FloatPoint& point) const
+bool PDFPlugin::existingSelectionContainsPoint(const WebCore::FloatPoint& locationInViewCoordinates) const
 {
     PDFSelection *currentSelection = [m_pdfLayerController currentSelection];
     if (!currentSelection)
         return false;
     
-    IntPoint pointInView = convertFromPluginToPDFView(roundedIntPoint(point));
-    PDFSelection *selectionForWord = [m_pdfLayerController getSelectionForWordAtPoint:pointInView];
+    IntPoint pointInPDFView = convertFromPluginToPDFView(convertFromRootViewToPlugin(roundedIntPoint(locationInViewCoordinates)));
+    PDFSelection *selectionForWord = [m_pdfLayerController getSelectionForWordAtPoint:pointInPDFView];
 
     NSUInteger currentPageIndex = [m_pdfLayerController currentPageIndex];
     
@@ -1896,35 +1896,35 @@ String PDFPlugin::lookupTextAtLocation(const WebCore::FloatPoint& locationInView
 
     selection = [m_pdfLayerController currentSelection];
     if (existingSelectionContainsPoint(locationInViewCoordinates))
-        return [selection string];
+        return selection.string;
         
-    IntPoint pointInView = convertFromPluginToPDFView(roundedIntPoint(locationInViewCoordinates));
-    selection = [m_pdfLayerController getSelectionForWordAtPoint:pointInView];
+    IntPoint pointInPDFView = convertFromPluginToPDFView(convertFromRootViewToPlugin(roundedIntPoint(locationInViewCoordinates)));
+    selection = [m_pdfLayerController getSelectionForWordAtPoint:pointInPDFView];
     if (!selection)
         return @"";
 
-    NSPoint pointInLayoutSpace = pointInLayoutSpaceForPointInWindowSpace(m_pdfLayerController.get(), pointInView);
+    NSPoint pointInLayoutSpace = pointInLayoutSpaceForPointInWindowSpace(m_pdfLayerController.get(), pointInPDFView);
 
     PDFPage *currentPage = [[m_pdfLayerController layout] pageNearestPoint:pointInLayoutSpace currentPage:[m_pdfLayerController currentPage]];
     
     NSPoint pointInPageSpace = [[m_pdfLayerController layout] convertPoint:pointInLayoutSpace toPage:currentPage forScaleFactor:1.0];
     
-    for (PDFAnnotation *annotation in [currentPage annotations]) {
+    for (PDFAnnotation *annotation in currentPage.annotations) {
         if (![annotation isKindOfClass:pdfAnnotationLinkClass()])
             continue;
     
-        NSRect bounds = [annotation bounds];
+        NSRect bounds = annotation.bounds;
         if (!NSPointInRect(pointInPageSpace, bounds))
             continue;
         
         PDFAnnotationLink *linkAnnotation = (PDFAnnotationLink *)annotation;
-        NSURL *url = [linkAnnotation URL];
+        NSURL *url = linkAnnotation.URL;
         if (!url)
             continue;
         
-        data.absoluteLinkURL = [url absoluteString];
-        data.linkLabel = [selection string];
-        return [selection string];
+        data.absoluteLinkURL = url.absoluteString;
+        data.linkLabel = selection.string;
+        return selection.string;
     }
     
     NSString *lookupText = dictionaryLookupForPDFSelection(selection, options);

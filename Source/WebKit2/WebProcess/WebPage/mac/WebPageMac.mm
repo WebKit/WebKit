@@ -1166,7 +1166,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
             // FIXME: We don't have API to identify images inside PDFs based on position.
             NSDictionary *options = nil;
             PDFSelection *selection = nil;
-            String selectedText = pdfPugin->lookupTextAtLocation(locationInContentCoordinates, actionMenuResult, &selection, &options);
+            String selectedText = pdfPugin->lookupTextAtLocation(locationInViewCoordinates, actionMenuResult, &selection, &options);
             if (!selectedText.isEmpty()) {
                 if (element->document().isPluginDocument()) {
                     // FIXME(144030): Focus does not seem to get set to the PDF when invoking the menu.
