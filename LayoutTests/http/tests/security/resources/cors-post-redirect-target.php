@@ -1,10 +1,11 @@
 <?php
+header("Cache-Control: no-store");
+
 $sawOrigin = false;
-foreach (getallheaders() as $name => $value) {
-    if (strtolower($name) == "origin") {
-        echo "Origin header value: $value";
-        $sawOrigin = true;
-    }
+$originHeader = $_SERVER['HTTP_ORIGIN'];
+if ($originHeader) {
+    echo "Origin header value: $originHeader";
+    $sawOrigin = true;
 }
 
 if (!$sawOrigin)
