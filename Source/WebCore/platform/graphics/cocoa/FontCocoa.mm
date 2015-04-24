@@ -325,7 +325,7 @@ PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float sc
 #if USE(APPKIT)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    FontPlatformData scaledFontData([[NSFontManager sharedFontManager] convertFont:m_platformData.nsFont() toSize:size], size, false, false, m_platformData.orientation());
+    FontPlatformData scaledFontData(reinterpret_cast<CTFontRef>([[NSFontManager sharedFontManager] convertFont:m_platformData.nsFont() toSize:size]), size, false, false, m_platformData.orientation());
 
     if (scaledFontData.font()) {
         NSFontManager *fontManager = [NSFontManager sharedFontManager];
@@ -571,7 +571,7 @@ const Font* Font::compositeFontReferenceFont(NSFont *key) const
         bool syntheticBold = platformData().syntheticBold() && !(traits & kCTFontBoldTrait);
         bool syntheticOblique = platformData().syntheticOblique() && !(traits & kCTFontItalicTrait);
 
-        FontPlatformData substitutePlatform(substituteFont, platformData().size(), syntheticBold, syntheticOblique, platformData().orientation(), platformData().widthVariant());
+        FontPlatformData substitutePlatform(reinterpret_cast<CTFontRef>(substituteFont), platformData().size(), syntheticBold, syntheticOblique, platformData().orientation(), platformData().widthVariant());
         addResult.iterator->value = Font::create(substitutePlatform, isCustomFont());
     }
     return addResult.iterator->value.get();

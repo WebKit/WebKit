@@ -1,3 +1,53 @@
+2015-04-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Start cleaning up FontPlatformData
+        https://bugs.webkit.org/show_bug.cgi?id=144133
+
+        Reviewed by Enrica Casucci.
+
+        This is the start of a crusade to ultimately remove one of the CTFontRefs which we have inside
+        FontPlatformData. This patch starts this effort out by removing the FontPlatformData
+        constructor which accepts an NSFont. This constructor simply casts the NSFont to a CTFontRef,
+        and forwards to another constructor. This patch moves this cast to callers of this constructor,
+        thereby enumerating the places we have left that use NSFont with FontPlatformData.
+
+        This patch also cleans up two of the constructors in FontPlatformData.cpp to forward on to
+        a common constructor.
+
+        This patch also collects places inside FontPlatformDataCocoa.mm where we check if a pointer is
+        not 0 and not -1, and puts this common code inside a new function,
+        FontPlatformData::isValidCTFontRef().
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontPlatformData.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Coalesce constructors.
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::isValidCTFontRef): Check if a pointer is not 0 and not -1.
+        (WebCore::FontPlatformData::hashTableDeletedFontValue): Deleted.
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformCreateScaledFont): Receive cast which has been hoisted from the deleted
+        FontPlatformData constructor.
+        (WebCore::Font::compositeFontReferenceFont): Ditto.
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::~FontPlatformData): Use isValidCTFontRef().
+        (WebCore::FontPlatformData::platformDataInit): Ditto.
+        (WebCore::FontPlatformData::platformDataAssign): Ditto.
+        (WebCore::FontPlatformData::platformIsEqual): Simplify preprocessor macros.
+        (WebCore::FontPlatformData::allowsLigatures): Remove unnecessary NSFont use.
+        (WebCore::FontPlatformData::FontPlatformData): Deleted.
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters): Remove unnecessary
+        NSFont use.
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::systemFallbackForCharacters): Receive cast which has been hoisted from the
+        deleted FontPlatformData constructor.
+        (WebCore::FontCache::createFontPlatformData): Ditto.
+        * platform/mac/DragImageMac.mm:
+        (WebCore::fontFromNSFont): Ditto.
+        (WebCore::widthWithFont): Ditto.
+        (WebCore::drawAtPoint): Ditto.
+
 2015-04-24  Doug Russell  <d_russell@apple.com>
 
         AX: richer text change notifications (142719)

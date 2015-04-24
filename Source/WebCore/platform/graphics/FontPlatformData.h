@@ -86,10 +86,6 @@ public:
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT FontPlatformData(CTFontRef, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = Horizontal, FontWidthVariant = RegularWidth);
-#if USE(APPKIT)
-    // FIXME: Remove this when all NSFont usage is removed.
-    WEBCORE_EXPORT FontPlatformData(NSFont *, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = Horizontal, FontWidthVariant = RegularWidth);
-#endif
 #endif
 
 #if USE(CG)
@@ -206,6 +202,7 @@ private:
     const FontPlatformData& platformDataAssign(const FontPlatformData&);
 #if PLATFORM(COCOA)
     static CTFontRef hashTableDeletedFontValue() { return reinterpret_cast<CTFontRef>(-1); }
+    static bool isValidCTFontRef(CTFontRef font) { return font && font != hashTableDeletedFontValue(); }
 #endif
 #if PLATFORM(WIN)
     void platformDataInit(HFONT, float size, HDC, WCHAR* faceName);

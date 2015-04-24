@@ -403,7 +403,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     substituteFontTraits = [fontManager traitsOfFont:substituteFont];
     substituteFontWeight = [fontManager weightOfFont:substituteFont];
 
-    FontPlatformData alternateFont(substituteFont, platformData.size(),
+    FontPlatformData alternateFont(reinterpret_cast<CTFontRef>(substituteFont), platformData.size(),
         !isPlatformFont && isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(substituteFontWeight),
         !isPlatformFont && (traits & NSFontItalicTrait) && !(substituteFontTraits & NSFontItalicTrait),
         platformData.m_orientation);
@@ -512,7 +512,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool syntheticBold = isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(actualWeight);
     bool syntheticOblique = (traits & NSFontItalicTrait) && !(actualTraits & NSFontItalicTrait);
 
-    return std::make_unique<FontPlatformData>(platformFont, size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant());
+    return std::make_unique<FontPlatformData>(reinterpret_cast<CTFontRef>(platformFont), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant());
 }
 
 } // namespace WebCore

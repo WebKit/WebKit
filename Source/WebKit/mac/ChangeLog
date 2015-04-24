@@ -1,3 +1,19 @@
+2015-04-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Start cleaning up FontPlatformData
+        https://bugs.webkit.org/show_bug.cgi?id=144133
+
+        Reviewed by Enrica Casucci.
+
+        Receive casts which have been hoisted from the deleted FontPlatformData constructor.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:allowingFontSmoothing:]): Receive cast which has
+        been hoisted from the deleted FontPlatformData constructor.
+        (-[NSString _web_widthWithFont:]): Ditto.
+        * Misc/WebStringTruncator.mm:
+        (fontFromNSFont): Ditto.
+
 2015-04-24  Doug Russell  <d_russell@apple.com>
 
         AX: richer text change notifications (142719)
