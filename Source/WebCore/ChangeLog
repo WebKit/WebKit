@@ -1,3 +1,20 @@
+2015-04-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove "layer" from GraphicsLayerCA member function names
+        https://bugs.webkit.org/show_bug.cgi?id=144139
+
+        Reviewed by Myles Maxfield.
+
+        Rename "updateLayer*" to "update*" in GraphicsLayerCA.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateNames):
+        (WebCore::GraphicsLayerCA::updateDrawsContent):
+        (WebCore::GraphicsLayerCA::updateLayerNames): Deleted.
+        (WebCore::GraphicsLayerCA::updateLayerDrawsContent): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2015-04-23  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/20663758> Fix the build after AVPlayerViewController API change

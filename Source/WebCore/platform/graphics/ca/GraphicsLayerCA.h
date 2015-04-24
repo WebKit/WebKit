@@ -352,7 +352,7 @@ private:
     FloatPoint positionForCloneRootLayer() const;
 
     // All these "update" methods will be called inside a BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS block.
-    void updateLayerNames();
+    void updateNames();
     void updateSublayerList(bool maxLayerDepthReached = false);
     void updateGeometry(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     void updateTransform();
@@ -362,7 +362,7 @@ private:
     void updateContentsOpaque(float pageScaleFactor);
     void updateBackfaceVisibility();
     void updateStructuralLayer();
-    void updateLayerDrawsContent();
+    void updateDrawsContent();
     void updateBackgroundColor();
 
     void updateContentsImage();

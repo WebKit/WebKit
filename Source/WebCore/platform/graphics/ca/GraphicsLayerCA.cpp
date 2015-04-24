@@ -1390,10 +1390,10 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
         updateGeometry(pageScaleFactor, positionRelativeToBase);
 
     if (m_uncommittedChanges & DrawsContentChanged)
-        updateLayerDrawsContent();
+        updateDrawsContent();
 
     if (m_uncommittedChanges & NameChanged)
-        updateLayerNames();
+        updateNames();
 
     if (m_uncommittedChanges & ContentsImageChanged) // Needs to happen before ChildrenChanged
         updateContentsImage();
@@ -1518,7 +1518,7 @@ void GraphicsLayerCA::commitLayerChangesAfterSublayers(CommitState& commitState)
     m_uncommittedChanges = NoChange;
 }
 
-void GraphicsLayerCA::updateLayerNames()
+void GraphicsLayerCA::updateNames()
 {
     switch (structuralLayerPurpose()) {
     case StructuralLayerForPreserves3D:
@@ -1916,7 +1916,7 @@ GraphicsLayerCA::StructuralLayerPurpose GraphicsLayerCA::structuralLayerPurpose(
     return NoStructuralLayer;
 }
 
-void GraphicsLayerCA::updateLayerDrawsContent()
+void GraphicsLayerCA::updateDrawsContent()
 {
     if (m_drawsContent)
         m_layer->setNeedsDisplay();
