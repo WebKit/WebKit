@@ -1,3 +1,10 @@
+2015-04-23  Andy Estes  <aestes@apple.com>
+
+        Fix the iOS build after r183234.
+
+        * platform/ios/LegacyTileCache.mm:
+        (WebCore::LegacyTileCache::commitScaleChange):
+
 2015-04-23  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Windows build.

@@ -225,7 +225,7 @@ void LegacyTileCache::commitScaleChange()
     }
     
     if (!m_keepsZoomedOutTiles) {
-        ASSERT(activeTileGrid() == m_zoomedOutTileGrid);
+        ASSERT(activeTileGrid() == m_zoomedOutTileGrid.get());
         if (m_pendingScale) {
             m_currentScale = m_pendingScale;
             m_zoomedOutTileGrid->setScale(m_currentScale);
