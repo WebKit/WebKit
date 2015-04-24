@@ -94,7 +94,7 @@ RemoteInspector& RemoteInspector::singleton()
             if ([NSThread isMainThread])
                 initialize();
             else
-                dispatch_async(dispatch_get_main_queue(), initialize);
+                dispatch_sync(dispatch_get_main_queue(), initialize);
         }
     });
 
