@@ -1,3 +1,42 @@
+2015-04-24  Antti Koivisto  <antti@apple.com>
+
+        CrashTracer: [USER] com.apple.WebKit.Networking at com.apple.WebKit: WebKit::NetworkResourceLoader::~NetworkResourceLoader + 14
+        https://bugs.webkit.org/show_bug.cgi?id=144147
+
+        Reviewed by Chris Dumez.
+
+        Storage::storeBodyAsBlob copies the std::function callback for handling mapped bodies in a thread.
+        This is thread safe only if the function copy is thread safe. It is currently not as we are capturing
+        RefPtr<NetworkResourceLoader> and NetworkResourceLoader doesn't use thread safe refcounting.
+
+        Fix by avoiding copying of the callback. Use same apporach for WriteOperation as we already use for
+        ReadOperation: count the active operations in progress and delete WriteOperation when everything is
+        finished. This way we don't need to copy the function out from WriteOperation.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::ReadOperation::ReadOperation):
+        (WebKit::NetworkCache::Storage::WriteOperation::WriteOperation):
+
+            Move definition here from the header.
+
+        (WebKit::NetworkCache::Storage::~Storage):
+        (WebKit::NetworkCache::Storage::storeBodyAsBlob):
+
+            Increment the operation count when storing a blob, call finishWriteOperation when done.
+
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::Storage::finishReadOperation):
+
+            Count active operations instead of finished operations. This makes the code clearer.
+
+        (WebKit::NetworkCache::Storage::dispatchWriteOperation):
+        (WebKit::NetworkCache::Storage::finishWriteOperation):
+
+            Mirror the way ReadOperations work.
+
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::ReadOperation::ReadOperation): Deleted.
+
 2015-04-24  Timothy Hatcher  <timothy@apple.com>
 
         REGRESSION: Web Inspector: Start Timeline Recording in Develop menu broken
