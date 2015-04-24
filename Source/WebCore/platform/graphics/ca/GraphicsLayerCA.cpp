@@ -1208,7 +1208,8 @@ FloatRect GraphicsLayerCA::computeVisibleRect(TransformState& state, ComputeVisi
     
     if (masksToBounds()) {
         ASSERT(accumulation == TransformState::FlattenTransform);
-        // Replace the quad in the TransformState with one that is clipped to this layer's bounds
+        // Flatten, and replace the quad in the TransformState with one that is clipped to this layer's bounds.
+        state.flatten();
         state.setQuad(clipRectForSelf);
     }
 

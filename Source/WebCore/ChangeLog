@@ -1,3 +1,36 @@
+2015-04-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to map a secondary quad through TransformState
+        https://bugs.webkit.org/show_bug.cgi?id=144156
+
+        Reviewed by Dean Jackson.
+
+        A future patch will need to map two quads simultaneously through TransformState,
+        so add the ability to provide an optional secondary quad.
+        
+        This patch also firms up the setQuad() contract, fixing webkit.org/b/106680,
+        requiring the state to be flattened when setting the quad (and now, the secondary quad).
+        Previously, setQuad implicitly flattened but failed to update m_mapPoint when
+        doing so.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::computeVisibleRect): Now we have to explicitly flatten
+        before setting the quad.
+        * platform/graphics/ca/GraphicsLayerCA.h: Drive-up #include removal.
+        * platform/graphics/transforms/TransformState.cpp:
+        (WebCore::TransformState::operator=): Copy the secondary quad if we have one.
+        (WebCore::TransformState::translateMappedCoordinates): Move the secondary quad
+        if we have one.
+        (WebCore::TransformState::mappedQuad): Code factored into mapQuad().
+        (WebCore::TransformState::mappedSecondaryQuad): Return the secondary quad mapped
+        into the state's current coordinate space.
+        (WebCore::TransformState::mapQuad): Factored code.
+        * platform/graphics/transforms/TransformState.h:
+        (WebCore::TransformState::setQuad): Make the contract more explicit with assertions.
+        (WebCore::TransformState::setSecondaryQuad): Ditto when setting the secondary quad.
+        (WebCore::TransformState::lastPlanarSecondaryQuad):
+        (WebCore::TransformState::lastPlanarQuad): Deleted.
+
 2015-04-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Reimplement r182512 and r183153 in a cleaner way

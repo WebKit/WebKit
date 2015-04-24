@@ -35,8 +35,14 @@ TransformState& TransformState::operator=(const TransformState& other)
     m_mapQuad = other.m_mapQuad;
     if (m_mapPoint)
         m_lastPlanarPoint = other.m_lastPlanarPoint;
-    if (m_mapQuad)
+    if (m_mapQuad) {
         m_lastPlanarQuad = other.m_lastPlanarQuad;
+        if (other.m_lastPlanarSecondaryQuad)
+            m_lastPlanarSecondaryQuad = std::make_unique<FloatQuad>(*other.m_lastPlanarSecondaryQuad);
+        else
+            m_lastPlanarSecondaryQuad = nullptr;
+        
+    }
     m_accumulatingTransform = other.m_accumulatingTransform;
     m_direction = other.m_direction;
     
@@ -61,8 +67,11 @@ void TransformState::translateMappedCoordinates(const LayoutSize& offset)
     LayoutSize adjustedOffset = (m_direction == ApplyTransformDirection) ? offset : -offset;
     if (m_mapPoint)
         m_lastPlanarPoint.move(adjustedOffset);
-    if (m_mapQuad)
+    if (m_mapQuad) {
         m_lastPlanarQuad.move(adjustedOffset);
+        if (m_lastPlanarSecondaryQuad)
+            m_lastPlanarSecondaryQuad->move(adjustedOffset);
+    }
 }
 
 void TransformState::move(const LayoutSize& offset, TransformAccumulation accumulate)
@@ -171,14 +180,33 @@ FloatQuad TransformState::mappedQuad(bool* wasClamped) const
         *wasClamped = false;
 
     FloatQuad quad = m_lastPlanarQuad;
+    mapQuad(quad, wasClamped);
+    return quad;
+}
+
+std::unique_ptr<FloatQuad> TransformState::mappedSecondaryQuad(bool* wasClamped) const
+{
+    if (wasClamped)
+        *wasClamped = false;
+
+    if (!m_lastPlanarSecondaryQuad)
+        return nullptr;
+
+    FloatQuad quad = *m_lastPlanarSecondaryQuad;
+    mapQuad(quad, wasClamped);
+    return std::make_unique<FloatQuad>(quad);
+}
+
+void TransformState::mapQuad(FloatQuad& quad, bool* wasClamped) const
+{
     quad.move((m_direction == ApplyTransformDirection) ? m_accumulatedOffset : -m_accumulatedOffset);
     if (!m_accumulatedTransform)
-        return quad;
+        return;
 
     if (m_direction == ApplyTransformDirection)
-        return m_accumulatedTransform->mapQuad(quad);
+        quad = m_accumulatedTransform->mapQuad(quad);
 
-    return m_accumulatedTransform->inverse().projectQuad(quad, wasClamped);
+    quad = m_accumulatedTransform->inverse().projectQuad(quad, wasClamped);
 }
 
 void TransformState::flattenWithTransform(const TransformationMatrix& t, bool* wasClamped)

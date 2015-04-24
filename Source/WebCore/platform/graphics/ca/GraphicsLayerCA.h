@@ -35,10 +35,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringHash.h>
 
-#if PLATFORM(COCOA)
-#include "TileController.h"
-#endif
-
 // Enable this to add a light red wash over the visible portion of Tiled Layers, as computed
 // by flushCompositingState().
 // #define VISIBLE_TILE_WASH
