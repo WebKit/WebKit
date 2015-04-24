@@ -31,20 +31,35 @@
 
 WK_ASSUME_NONNULL_BEGIN
 
+/*! @constant WKWebsiteDataTypeDiskCache On-disk caches. */
 WK_EXTERN NSString * const WKWebsiteDataTypeDiskCache WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+/*! @constant WKWebsiteDataTypeMemoryCache In-memory caches. */
 WK_EXTERN NSString * const WKWebsiteDataTypeMemoryCache WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+/*! @constant WKWebsiteDataTypeOfflineWebApplicationCache HTML offline web application caches. */
 WK_EXTERN NSString * const WKWebsiteDataTypeOfflineWebApplicationCache WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
+/*! @constant WKWebsiteDataTypeCookies Cookies. */
 WK_EXTERN NSString * const WKWebsiteDataTypeCookies WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+/*! @constant WKWebsiteDataTypeLocalStorage HTML local storage. */
 WK_EXTERN NSString * const WKWebsiteDataTypeLocalStorage WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+/*! @constant WKWebsiteDataTypeWebSQLDatabases WebSQL databases. */
 WK_EXTERN NSString * const WKWebsiteDataTypeWebSQLDatabases WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+/*! @constant WKWebsiteDataTypeIndexedDBDatabases IndexedDB databases. */
 WK_EXTERN NSString * const WKWebsiteDataTypeIndexedDBDatabases WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
+/*! A WKWebsiteDataRecord represents website data, grouped by domain name using the public suffix list. */
 WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 @interface WKWebsiteDataRecord : NSObject
 
+/*! @abstract The display name for the data record. This is usually the domain name. */
 @property (nonatomic, readonly, copy) NSString *displayName;
 
+/*! @abstract The various types of website data that exist for this data record. */
 @property (nonatomic, readonly, copy) WK_SET(NSString *) *dataTypes;
 
 @end

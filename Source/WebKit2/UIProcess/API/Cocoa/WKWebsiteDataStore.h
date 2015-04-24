@@ -31,23 +31,48 @@
 
 WK_ASSUME_NONNULL_BEGIN
 
+/*! A WKWebsiteDataStore represents various types of data that a website might
+ make use of. This includes cookies, disk and memory caches, and persistent data such as
+ WebSQL and IndexedDB databases and local storage.
+ */
 WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 @interface WKWebsiteDataStore : NSObject
 
-// Returns the shared default data store.
+/* @abstract Returns the default data store. */
 + (WKWebsiteDataStore *)defaultDataStore;
 
-// Returns a new non-persistent data store.
+/** @abstract Returns a new non-persistent data store.
+ @discussion If a WKWebView is associated with a non-persistent data store, no data will
+ be written to the file system. This is useful for implementing "private browsing" in a web view.
+*/
 + (WKWebsiteDataStore *)nonPersistentDataStore;
 
 - (instancetype)init WK_UNAVAILABLE;
 
+/*! @abstract Whether the data store is non-persistent or not. */
 @property (readonly, getter=isNonPersistent) BOOL nonPersistent;
 
+/*! @abstract Returns a set of all available website data types. */
 + (WK_SET(NSString *) *)allWebsiteDataTypes;
 
-- (void)fetchDataRecordsOfTypes:(WK_SET(NSString *) *)websiteDataTypes completionHandler:(void (^)(WK_ARRAY(WKWebsiteDataRecord *) *))completionHandler;
-- (void)removeDataOfTypes:(WK_SET(NSString *) *)websiteDataTypes forDataRecords:(WK_ARRAY(WKWebsiteDataRecord *) *)dataRecords completionHandler:(void (^)(void))completionHandler;
+/*! @abstract Fetches data records containing the given website data types.
+  @param dataTypes The website data types to fetch records for.
+  @param completionHandler A block to invoke when the data records have been fetched.
+*/
+- (void)fetchDataRecordsOfTypes:(WK_SET(NSString *) *)dataTypes completionHandler:(void (^)(WK_ARRAY(WKWebsiteDataRecord *) *))completionHandler;
+
+/*! @abstract Removes website data of the given types for the given data records.
+ @param dataTypes The website data types that should be removed.
+ @param dataRecords The website data records to delete website data for.
+ @param completionHandler A block to invoke when the website data for the records has been removed.
+*/
+- (void)removeDataOfTypes:(WK_SET(NSString *) *)dataTypes forDataRecords:(WK_ARRAY(WKWebsiteDataRecord *) *)dataRecords completionHandler:(void (^)(void))completionHandler;
+
+/*! @abstract Removes all website data of the given types that has been modified since the given date.
+ @param dataTypes The website data types that should be removed.
+ @param date A date. All website data modified after this date will be removed.
+ @param completionHandler A block to invoke when the website data has been removed.
+*/
 - (void)removeDataOfTypes:(WK_SET(NSString *) *)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)(void))completionHandler;
 
 @end
