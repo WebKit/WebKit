@@ -40,7 +40,7 @@ public:
     static RefPtr<WebsiteDataStore> create(WebKit::WebsiteDataStore::Configuration);
     virtual ~WebsiteDataStore();
 
-    bool isNonPersistent();
+    bool isPersistent();
 
     WebKit::WebsiteDataStore& websiteDataStore() { return *m_websiteDataStore; }
 

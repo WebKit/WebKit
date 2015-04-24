@@ -50,9 +50,9 @@
     [super dealloc];
 }
 
-- (BOOL)isNonPersistent
+- (BOOL)isPersistent
 {
-    return _websiteDataStore->isNonPersistent();
+    return _websiteDataStore->isPersistent();
 }
 
 + (NSSet *)allWebsiteDataTypes

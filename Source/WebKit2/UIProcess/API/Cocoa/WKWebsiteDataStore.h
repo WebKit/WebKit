@@ -49,8 +49,8 @@ WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 
 - (instancetype)init WK_UNAVAILABLE;
 
-/*! @abstract Whether the data store is non-persistent or not. */
-@property (readonly, getter=isNonPersistent) BOOL nonPersistent;
+/*! @abstract Whether the data store is persistent or not. */
+@property (nonatomic, readonly, getter=isPersistent) BOOL persistent;
 
 /*! @abstract Returns a set of all available website data types. */
 + (WK_SET(NSString *) *)allWebsiteDataTypes;

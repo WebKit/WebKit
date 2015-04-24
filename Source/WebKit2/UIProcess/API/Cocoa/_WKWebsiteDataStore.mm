@@ -75,6 +75,11 @@ static RetainPtr<NSSet> toWKWebsiteDataTypes(_WKWebsiteDataTypes websiteDataType
     return (_WKWebsiteDataStore *)[WKWebsiteDataStore nonPersistentDataStore];
 }
 
+- (BOOL)isNonPersistent
+{
+    return !self.persistent;
+}
+
 - (void)fetchDataRecordsOfTypes:(WKWebsiteDataTypes)websiteDataTypes completionHandler:(void (^)(NSArray *))completionHandler
 {
     [super fetchDataRecordsOfTypes:toWKWebsiteDataTypes(websiteDataTypes).get() completionHandler:completionHandler];

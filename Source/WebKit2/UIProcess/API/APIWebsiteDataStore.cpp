@@ -61,9 +61,9 @@ WebsiteDataStore::~WebsiteDataStore()
 {
 }
 
-bool WebsiteDataStore::isNonPersistent()
+bool WebsiteDataStore::isPersistent()
 {
-    return m_websiteDataStore->isNonPersistent();
+    return !m_websiteDataStore->isNonPersistent();
 }
 
 #if !PLATFORM(COCOA)

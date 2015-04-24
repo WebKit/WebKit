@@ -1,3 +1,23 @@
+2015-04-24  Anders Carlsson  <andersca@apple.com>
+
+        Rename -[WKWebsiteDataStore isNonPersistent] to -[WKWebsiteDataStore isPersistent]
+        https://bugs.webkit.org/show_bug.cgi?id=144158
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::isPersistent):
+        (API::WebsiteDataStore::isNonPersistent): Deleted.
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore isPersistent]):
+        (-[WKWebsiteDataStore isNonPersistent]): Deleted.
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        (-[_WKWebsiteDataStore isNonPersistent]):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2015-04-24  Brent Fulgham  <bfulgham@apple.com>
 
         Immediate action not functional for embedded PDFs

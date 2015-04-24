@@ -57,6 +57,7 @@ public:
 
     uint64_t identifier() const { return m_identifier; }
 
+    // FIXME: Change this to isPersistent() and update callers.
     bool isNonPersistent() const { return m_sessionID.isEphemeral(); }
     WebCore::SessionID sessionID() const { return m_sessionID; }
 
