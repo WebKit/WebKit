@@ -42,7 +42,7 @@ namespace WebCore {
 enum TextSpacingCTFeatureSelector { TextSpacingProportional, TextSpacingFullWidth, TextSpacingHalfWidth, TextSpacingThirdWidth, TextSpacingQuarterWidth };
 
 FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
-    : FontPlatformData(adoptCF(CTFontCopyGraphicsFont(font, NULL)), size, syntheticBold, syntheticOblique, orientation, widthVariant)
+    : FontPlatformData(adoptCF(CTFontCopyGraphicsFont(font, NULL)).get(), size, syntheticBold, syntheticOblique, orientation, widthVariant)
 {
     ASSERT_ARG(font, font);
     m_font = font;
