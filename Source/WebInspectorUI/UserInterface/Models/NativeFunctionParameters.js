@@ -28,6 +28,7 @@
 
 WebInspector.NativeConstructorFunctionParameters = {
     Object: {
+        assign: "target, ...sources",
         create: "prototype, [propertiesObject]",
         defineProperty: "object, propertyName, descriptor",
         defineProperties: "object, properties",
@@ -2066,11 +2067,6 @@ WebInspector.NativePrototypeFunctionParameters.WeakMap = WebInspector.NativeProt
 WebInspector.NativePrototypeFunctionParameters.WeakSet = WebInspector.NativePrototypeFunctionParameters.Set;
 
 (function() {
-    function mixin(o, mixin) {
-        for (var p in mixin)
-            o[p] = mixin[p];
-    }
-
     var EventTarget = {
         addEventListener: "type, listener, [useCapture=false]",
         removeEventListener: "type, listener, [useCapture=false]",
@@ -2087,7 +2083,7 @@ WebInspector.NativePrototypeFunctionParameters.WeakSet = WebInspector.NativeProt
     ];
 
     for (var type of eventTargetTypes)
-        mixin(WebInspector.NativePrototypeFunctionParameters[type], EventTarget);
+        Object.assign(WebInspector.NativePrototypeFunctionParameters[type], EventTarget);
 
     var ElementQueries = {
         getElementsByClassName: "classNames",
@@ -2097,6 +2093,6 @@ WebInspector.NativePrototypeFunctionParameters.WeakSet = WebInspector.NativeProt
         querySelectorAll: "selectors",
     };
 
-    mixin(WebInspector.NativePrototypeFunctionParameters.Element, ElementQueries);
-    mixin(WebInspector.NativePrototypeFunctionParameters.Document, ElementQueries);
+    Object.assign(WebInspector.NativePrototypeFunctionParameters.Element, ElementQueries);
+    Object.assign(WebInspector.NativePrototypeFunctionParameters.Document, ElementQueries);
 })();
