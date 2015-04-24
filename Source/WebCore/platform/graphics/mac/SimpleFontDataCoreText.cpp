@@ -46,10 +46,7 @@ CFDictionaryRef Font::getCFStringAttributes(TypesettingFeatures typesettingFeatu
     attributesDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 4, &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CFMutableDictionaryRef mutableAttributes = (CFMutableDictionaryRef)attributesDictionary.get();
 
-    // m_platformData.font() returns the original font that was passed into the FontPlatformData constructor. In the case of fonts that have custom tracking,
-    // the custom tracking does not survive the transformation to either m_platformData.cgFont() nor m_platformData.ctFont(), so we must use the original
-    // font() that was passed in. However, for web fonts, m_platformData.font() is null, so we must use m_platformData.ctFont() for those cases.
-    CFDictionarySetValue(mutableAttributes, kCTFontAttributeName, hasCustomTracking() ? platformData().font() : platformData().ctFont());
+    CFDictionarySetValue(mutableAttributes, kCTFontAttributeName, platformData().ctFont());
 
     if (!(typesettingFeatures & Kerning)) {
         const float zero = 0;

@@ -203,6 +203,7 @@ private:
 #if PLATFORM(COCOA)
     static CTFontRef hashTableDeletedFontValue() { return reinterpret_cast<CTFontRef>(-1); }
     static bool isValidCTFontRef(CTFontRef font) { return font && font != hashTableDeletedFontValue(); }
+    CGFloat ctFontSize() const;
 #endif
 #if PLATFORM(WIN)
     void platformDataInit(HFONT, float size, HDC, WCHAR* faceName);

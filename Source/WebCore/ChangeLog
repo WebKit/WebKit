@@ -1,5 +1,46 @@
 2015-04-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [iOS] Reimplement r182512 and r183153 in a cleaner way
+        https://bugs.webkit.org/show_bug.cgi?id=144151
+
+        Reviewed by Enrica Casucci.
+
+        On iOS, we create FontPlatformData's ctFont() by round tripping it through a CGFontRef.
+        This causes the resultant ctFont() to lose system-font-ness. Patches r182512 and r183153
+        react to this fact by making users of a FontPlatformData use the original font passed in
+        to the FontPlatformData instead of the FontPlatformData's ctFont(), but only if we
+        detect that the FontPlatformData represents a system font (the underlying APIs have
+        different behavior for system fonts and non-system-fonts).
+
+        However, on OS X, we create a FontPlatformData's ctFont() directly from the original
+        font passed in to the constructor. This preserves system-font-ness (because it no
+        longer has the CGFontRef in the middle of the transformation). Therefore, OS X has the
+        correct behavior regarding system fonts.
+
+        The difference between the two ctFont() creation codepaths seems to be historical
+        rather than intentional. Rather than change all the call sites of ctFont() to use a
+        different platform font object if a system font is detected, a cleaner solution is to
+        simply unify the two ctFont() creation codepaths to the version which preserves system-
+        font-ness. Doing this will make all users of FontPlatformData automatically have the
+        correct behavior with no updates.
+
+        This patch reverts the relevant parts of r182512 and r183153 in favor of this new
+        solution.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::hashTableDeletedFontValue): Deleted.
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformWidthForGlyph):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::ctFontSize):
+        (WebCore::FontPlatformData::ctFont):
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        (WebCore::Font::getCFStringAttributes):
+
+2015-04-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Unreviewed build fix.
 
         * platform/graphics/cocoa/FontPlatformDataCocoa.mm:

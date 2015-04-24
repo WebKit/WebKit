@@ -221,13 +221,22 @@ static CTFontDescriptorRef cascadeToLastResortAndDisableSwashesFontDescriptor()
     return descriptor;
 }
 
+CGFloat FontPlatformData::ctFontSize() const
+{
+#if PLATFORM(IOS)
+    // Apple Color Emoji size is adjusted (and then re-adjusted by Core Text) and capped.
+    return !m_isEmoji ? m_size : m_size <= 15 ? 4 * (m_size + 2) / static_cast<CGFloat>(5) : 16;
+#else
+    return m_size;
+#endif
+}
+
 CTFontRef FontPlatformData::ctFont() const
 {
     if (m_ctFont)
         return m_ctFont.get();
 
     ASSERT(m_cgFont.get());
-#if !PLATFORM(IOS)
     m_ctFont = m_font;
     if (m_ctFont) {
         CTFontDescriptorRef fontDescriptor;
@@ -237,20 +246,9 @@ CTFontRef FontPlatformData::ctFont() const
             fontDescriptor = cascadeToLastResortAndDisableSwashesFontDescriptor();
         else
             fontDescriptor = cascadeToLastResortFontDescriptor();
-        m_ctFont = adoptCF(CTFontCreateCopyWithAttributes(m_ctFont.get(), m_size, 0, fontDescriptor));
+        m_ctFont = adoptCF(CTFontCreateCopyWithAttributes(m_ctFont.get(), ctFontSize(), 0, fontDescriptor));
     } else
-        m_ctFont = adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, cascadeToLastResortFontDescriptor()));
-#else
-    // Apple Color Emoji size is adjusted (and then re-adjusted by Core Text) and capped.
-    CGFloat size = !m_isEmoji ? m_size : m_size <= 15 ? 4 * (m_size + 2) / static_cast<CGFloat>(5) : 16;
-    CTFontDescriptorRef fontDescriptor;
-    const char* postScriptName = CGFontGetPostScriptName(m_cgFont.get());
-    if (postScriptName && (!strcmp(postScriptName, "HoeflerText-Italic") || !strcmp(postScriptName, "HoeflerText-BlackItalic")))
-        fontDescriptor = cascadeToLastResortAndDisableSwashesFontDescriptor();
-    else
-        fontDescriptor = cascadeToLastResortFontDescriptor();
-    m_ctFont = adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), size, 0, fontDescriptor));
-#endif // !PLATFORM(IOS)
+        m_ctFont = adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), ctFontSize(), 0, cascadeToLastResortFontDescriptor()));
 
     if (m_widthVariant != RegularWidth) {
         int featureTypeValue = kTextSpacingType;
