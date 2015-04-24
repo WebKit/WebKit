@@ -192,10 +192,10 @@ bool Storage::mayContain(const Key& key) const
     return !m_recordFilter || m_recordFilter->mayContain(key.hash());
 }
 
-static String partitionPathForKey(const Key& key, const String& cachePath)
+String Storage::partitionPathForKey(const Key& key) const
 {
     ASSERT(!key.partition().isEmpty());
-    return WebCore::pathByAppendingComponent(cachePath, key.partition());
+    return WebCore::pathByAppendingComponent(recordsPath(), key.partition());
 }
 
 static String fileNameForKey(const Key& key)
@@ -203,9 +203,9 @@ static String fileNameForKey(const Key& key)
     return key.hashAsString();
 }
 
-static String recordPathForKey(const Key& key, const String& cachePath)
+String Storage::recordPathForKey(const Key& key) const
 {
-    return WebCore::pathByAppendingComponent(partitionPathForKey(key, cachePath), fileNameForKey(key));
+    return WebCore::pathByAppendingComponent(partitionPathForKey(key), fileNameForKey(key));
 }
 
 static String bodyPathForRecordPath(const String& recordPath)
@@ -213,9 +213,9 @@ static String bodyPathForRecordPath(const String& recordPath)
     return recordPath + bodyPostfix;
 }
 
-static String bodyPathForKey(const Key& key, const String& cachePath)
+String Storage::bodyPathForKey(const Key& key) const
 {
-    return bodyPathForRecordPath(recordPathForKey(key, cachePath));
+    return bodyPathForRecordPath(recordPathForKey(key));
 }
 
 static unsigned hashData(const Data& data)
@@ -353,7 +353,7 @@ static Data encodeRecordMetaData(const RecordMetaData& metaData)
 
 Optional<BlobStorage::Blob> Storage::storeBodyAsBlob(const Record& record, const MappedBodyHandler& mappedBodyHandler)
 {
-    auto bodyPath = bodyPathForKey(record.key, recordsPath());
+    auto bodyPath = bodyPathForKey(record.key);
 
     // Store the body.
     auto blob = m_blobStorage.add(bodyPath, record.body);
@@ -404,9 +404,8 @@ void Storage::remove(const Key& key)
     // The next synchronization will update everything.
 
     serialBackgroundIOQueue().dispatch([this, key] {
-        auto recordsPath = this->recordsPath();
-        WebCore::deleteFile(recordPathForKey(key, recordsPath));
-        m_blobStorage.remove(bodyPathForKey(key, recordsPath));
+        WebCore::deleteFile(recordPathForKey(key));
+        m_blobStorage.remove(bodyPathForKey(key));
     });
 }
 
@@ -423,7 +422,7 @@ void Storage::dispatchReadOperation(ReadOperation& readOperation)
     ASSERT(RunLoop::isMain());
     ASSERT(m_activeReadOperations.contains(&readOperation));
 
-    auto recordPath = recordPathForKey(readOperation.key, recordsPath());
+    auto recordPath = recordPathForKey(readOperation.key);
 
     RefPtr<IOChannel> channel = IOChannel::open(recordPath, IOChannel::Type::Read);
     channel->read(0, std::numeric_limits<size_t>::max(), &ioQueue(), [this, &readOperation](const Data& fileData, int error) {
@@ -440,7 +439,7 @@ void Storage::dispatchReadOperation(ReadOperation& readOperation)
 
     // Read the body blob in parallel with the record read.
     ioQueue().dispatch([this, &readOperation] {
-        auto bodyPath = bodyPathForKey(readOperation.key, this->recordsPath());
+        auto bodyPath = bodyPathForKey(readOperation.key);
         readOperation.resultBodyBlob = m_blobStorage.get(bodyPath);
         finishReadOperation(readOperation);
     });
@@ -463,7 +462,7 @@ void Storage::finishReadOperation(ReadOperation& readOperation)
 
         bool success = readOperation.completionHandler(WTF::move(readOperation.resultRecord));
         if (success)
-            updateFileModificationTime(recordPathForKey(readOperation.key, recordsPath()));
+            updateFileModificationTime(recordPathForKey(readOperation.key));
         else
             remove(readOperation.key);
         ASSERT(m_activeReadOperations.contains(&readOperation));
@@ -544,9 +543,8 @@ void Storage::dispatchWriteOperation(const WriteOperation& writeOperation)
     addToRecordFilter(writeOperation.record.key);
 
     backgroundIOQueue().dispatch([this, &writeOperation] {
-        auto recordsPath = this->recordsPath();
-        auto partitionPath = partitionPathForKey(writeOperation.record.key, recordsPath);
-        auto recordPath = recordPathForKey(writeOperation.record.key, recordsPath);
+        auto partitionPath = partitionPathForKey(writeOperation.record.key);
+        auto recordPath = recordPathForKey(writeOperation.record.key);
 
         WebCore::makeAllDirectories(partitionPath);
 

@@ -1,3 +1,26 @@
+2015-04-24  Antti Koivisto  <antti@apple.com>
+
+        Network Cache: Make path functions members
+        https://bugs.webkit.org/show_bug.cgi?id=144146
+
+        Reviewed by Carlos Garcia Campos.
+
+        This simplifies the code.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::partitionPathForKey):
+        (WebKit::NetworkCache::Storage::recordPathForKey):
+        (WebKit::NetworkCache::Storage::bodyPathForKey):
+        (WebKit::NetworkCache::Storage::storeBodyAsBlob):
+        (WebKit::NetworkCache::Storage::remove):
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::Storage::finishReadOperation):
+        (WebKit::NetworkCache::Storage::dispatchWriteOperation):
+        (WebKit::NetworkCache::partitionPathForKey): Deleted.
+        (WebKit::NetworkCache::recordPathForKey): Deleted.
+        (WebKit::NetworkCache::bodyPathForKey): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2015-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Remove incorrect assert after r183189.

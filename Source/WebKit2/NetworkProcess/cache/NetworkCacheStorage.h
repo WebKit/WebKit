@@ -90,6 +90,10 @@ public:
 private:
     Storage(const String& directoryPath);
 
+    String partitionPathForKey(const Key&) const;
+    String recordPathForKey(const Key&) const;
+    String bodyPathForKey(const Key&) const;
+
     void synchronize();
     void deleteOldVersions();
     void shrinkIfNeeded();
