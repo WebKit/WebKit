@@ -1,6 +1,6 @@
 2015-04-23  Dan Bernstein  <mitz@apple.com>
 
-        Fixed a bug where framework header postprocessing wasn’t removing WK_DEPRECATED macros when it should have.
+        <rdar://problem/20680694> Framework header postprocessing isn’t removing WK_DEPRECATED macros when it should.
 
         Reviewed by Andy Estes.
 
