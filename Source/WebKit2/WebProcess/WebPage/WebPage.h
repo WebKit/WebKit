@@ -146,6 +146,7 @@ namespace WebKit {
 class DrawingArea;
 class InjectedBundleBackForwardList;
 class NotificationPermissionRequestManager;
+class PDFPlugin;
 class PageBanner;
 class PluginView;
 class VisibleContentRectUpdateInfo;
@@ -1013,6 +1014,9 @@ private:
     void performDictionaryLookupOfCurrentSelection();
     void performDictionaryLookupForRange(WebCore::Frame*, WebCore::Range&, NSDictionary *options, WebCore::TextIndicatorPresentationTransition);
     DictionaryPopupInfo dictionaryPopupInfoForRange(WebCore::Frame* frame, WebCore::Range& range, NSDictionary **options, WebCore::TextIndicatorPresentationTransition presentationTransition);
+#if ENABLE(PDFKIT_PLUGIN)
+    DictionaryPopupInfo dictionaryPopupInfoForPDFSelectionInPluginView(PDFSelection *, PDFPlugin&, NSDictionary **options, WebCore::TextIndicatorPresentationTransition);
+#endif
 
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& windowFrameInUnflippedScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
 

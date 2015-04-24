@@ -1009,16 +1009,6 @@ bool PluginView::existingSelectionContainsPoint(const WebCore::FloatPoint& point
     return m_plugin->existingSelectionContainsPoint(point);
 }
 
-#if PLATFORM(COCOA)
-String PluginView::lookupTextAtLocation(const WebCore::FloatPoint& point, WebHitTestResult::Data& data, PDFSelection **selection, NSDictionary **options) const
-{
-    if (!m_isInitialized || !m_plugin)
-        return String();
-
-    return m_plugin->lookupTextAtLocation(point, data, selection, options);
-}
-#endif
-
 void PluginView::notifyWidget(WidgetNotification notification)
 {
     switch (notification) {

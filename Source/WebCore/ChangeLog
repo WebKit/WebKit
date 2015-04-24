@@ -1,3 +1,19 @@
+2015-04-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Immediate action not functional for embedded PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=143952
+        <rdar://problem/19842365>        
+
+        Reviewed by Tim Horton.
+
+        Add a dictionary lookup method to allow us to retrieve
+        relevant information for PDFs.
+
+        * editing/mac/DictionaryLookup.mm:
+        (WebCore::dictionaryLookupForPDFSelection): Updated to properly handle cases
+        where the Lookup engine selects a smaller range than the initial automatic
+        selection performed on clicking.
+
 2015-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to map a secondary quad through TransformState

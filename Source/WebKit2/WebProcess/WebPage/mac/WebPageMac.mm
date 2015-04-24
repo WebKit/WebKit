@@ -35,6 +35,7 @@
 #import "EditorState.h"
 #import "InjectedBundleHitTestResult.h"
 #import "PDFKitImports.h"
+#import "PDFPlugin.h"
 #import "PageBanner.h"
 #import "PluginView.h"
 #import "PrintInfo.h"
@@ -586,6 +587,49 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame* frame, Range& ra
     return dictionaryPopupInfo;
 }
 
+#if ENABLE(PDFKIT_PLUGIN)
+DictionaryPopupInfo WebPage::dictionaryPopupInfoForPDFSelectionInPluginView(PDFSelection *selection, PDFPlugin& pdfPlugin, NSDictionary **options, WebCore::TextIndicatorPresentationTransition presentationTransition)
+{
+    DictionaryPopupInfo dictionaryPopupInfo;
+    if (!selection.string.length)
+        return dictionaryPopupInfo;
+
+    NSRect rangeRect = pdfPlugin.viewRectForSelection(selection);
+
+    dictionaryPopupInfo.origin = rangeRect.origin;
+    dictionaryPopupInfo.options = (CFDictionaryRef)*options;
+    
+    NSAttributedString *nsAttributedString = selection.attributedString;
+    
+    RetainPtr<NSMutableAttributedString> scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
+    
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    
+    [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
+        RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
+        
+        NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
+        if (font) {
+            font = [fontManager convertFont:font toSize:[font pointSize] * pageScaleFactor()];
+            [scaledAttributes setObject:font forKey:NSFontAttributeName];
+        }
+        
+        [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
+    }];
+
+    TextIndicatorData dataForSelection;
+    dataForSelection.selectionRectInRootViewCoordinates = rangeRect;
+    dataForSelection.textBoundingRectInRootViewCoordinates = rangeRect;
+    dataForSelection.contentImageScaleFactor = 1.0;
+    dataForSelection.presentationTransition = presentationTransition;
+    
+    dictionaryPopupInfo.textIndicator = dataForSelection;
+    dictionaryPopupInfo.attributedString.string = scaledNSAttributedString;
+    
+    return dictionaryPopupInfo;
+}
+#endif
+
 void WebPage::performDictionaryLookupForRange(Frame* frame, Range& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
 {
     DictionaryPopupInfo dictionaryPopupInfo = dictionaryPopupInfoForRange(frame, range, &options, presentationTransition);
@@ -1013,6 +1057,15 @@ static TextIndicatorPresentationTransition textIndicatorTransitionForActionMenu(
     return forImmediateAction ? TextIndicatorPresentationTransition::FadeIn : TextIndicatorPresentationTransition::Bounce;
 }
 
+#if ENABLE(PDFKIT_PLUGIN)
+static TextIndicatorPresentationTransition textIndicatorTransitionForActionMenu(bool forImmediateAction, bool forDataDetectors)
+{
+    if (forDataDetectors && !forImmediateAction)
+        return forImmediateAction ? TextIndicatorPresentationTransition::Crossfade : TextIndicatorPresentationTransition::BounceAndCrossfade;
+    return forImmediateAction ? TextIndicatorPresentationTransition::FadeIn : TextIndicatorPresentationTransition::Bounce;
+}
+#endif
+
 void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInViewCoordinates, bool forImmediateAction)
 {
     layoutIfNeeded();
@@ -1106,11 +1159,14 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     // See if we have a PDF
     if (element && is<HTMLPlugInImageElement>(*element)) {
         HTMLPlugInImageElement& pluginImageElement = downcast<HTMLPlugInImageElement>(*element);
-        if (PluginView* pluginView = reinterpret_cast<PluginView*>(pluginImageElement.pluginWidget())) {
+        PluginView* pluginView = reinterpret_cast<PluginView*>(pluginImageElement.pluginWidget());
+        Plugin* plugin = pluginView ? pluginView->plugin() : nullptr;
+        if (is<PDFPlugin>(plugin)) {
+            PDFPlugin* pdfPugin = downcast<PDFPlugin>(plugin);
             // FIXME: We don't have API to identify images inside PDFs based on position.
             NSDictionary *options = nil;
             PDFSelection *selection = nil;
-            String selectedText = pluginView->lookupTextAtLocation(locationInContentCoordinates, actionMenuResult, &selection, &options);
+            String selectedText = pdfPugin->lookupTextAtLocation(locationInContentCoordinates, actionMenuResult, &selection, &options);
             if (!selectedText.isEmpty()) {
                 if (element->document().isPluginDocument()) {
                     // FIXME(144030): Focus does not seem to get set to the PDF when invoking the menu.
@@ -1119,8 +1175,11 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
                 }
 
                 actionMenuResult.lookupText = selectedText;
+                actionMenuResult.isTextNode = true;
                 actionMenuResult.isSelected = true;
                 actionMenuResult.allowsCopy = true;
+
+                actionMenuResult.dictionaryPopupInfo = dictionaryPopupInfoForPDFSelectionInPluginView(selection, *pdfPugin, &options, textIndicatorTransitionForActionMenu(forImmediateAction, false));
             }
         }
     }

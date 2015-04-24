@@ -58,7 +58,8 @@ PassRefPtr<NetscapePlugin> NetscapePlugin::create(PassRefPtr<NetscapePluginModul
 }
     
 NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
-    : m_nextRequestID(0)
+    : Plugin(NetscapePluginType)
+    , m_nextRequestID(0)
     , m_pluginModule(pluginModule)
     , m_npWindow()
     , m_isStarted(false)

@@ -395,6 +395,7 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
 @interface PDFViewLayout
 - (NSPoint)convertPoint:(NSPoint)point toPage:(PDFPage *)page forScaleFactor:(CGFloat)scaleFactor;
+- (NSRect)convertRect:(NSRect)rect fromPage:(PDFPage *) page forScaleFactor:(CGFloat) scaleFactor;
 - (PDFPage *)pageNearestPoint:(NSPoint)point currentPage:(PDFPage *)currentPage;
 @end
 
@@ -504,7 +505,8 @@ PassRefPtr<PDFPlugin> PDFPlugin::create(WebFrame* frame)
 }
 
 PDFPlugin::PDFPlugin(WebFrame* frame)
-    : m_frame(frame)
+    : Plugin(PDFPluginType)
+    , m_frame(frame)
     , m_isPostScript(false)
     , m_pdfDocumentWasMutated(false)
     , m_containerLayer(adoptNS([[CALayer alloc] init]))
@@ -1931,6 +1933,38 @@ String PDFPlugin::lookupTextAtLocation(const WebCore::FloatPoint& locationInView
 
     [m_pdfLayerController setCurrentSelection:selection];
     return lookupText;
+}
+
+static NSRect rectInViewSpaceForRectInLayoutSpace(PDFLayerController* pdfLayerController, NSRect layoutSpaceRect)
+{
+    CGRect newRect = NSRectToCGRect(layoutSpaceRect);
+    CGFloat scaleFactor = pdfLayerController.contentScaleFactor;
+    CGPoint scrollOffset = pdfLayerController.scrollPosition;
+
+    scrollOffset.y = pdfLayerController.contentSizeRespectingZoom.height - NSRectToCGRect(pdfLayerController.frame).size.height - scrollOffset.y;
+
+    newRect.origin.x *= scaleFactor;
+    newRect.origin.y *= scaleFactor;
+    newRect.size.width *= scaleFactor;
+    newRect.size.height *= scaleFactor;
+
+    newRect.origin.x -= scrollOffset.x;
+    newRect.origin.y -= scrollOffset.y;
+
+    return NSRectFromCGRect(newRect);
+}
+
+WebCore::FloatRect PDFPlugin::viewRectForSelection(PDFSelection *selection) const
+{
+    PDFPage *currentPage = [m_pdfLayerController currentPage];
+    
+    NSRect rectInPageSpace = [selection boundsForPage:currentPage];
+    NSRect rectInLayoutSpace = [[m_pdfLayerController layout] convertRect:rectInPageSpace fromPage:currentPage forScaleFactor:1.0];
+    NSRect rectInView = rectInViewSpaceForRectInLayoutSpace(m_pdfLayerController.get(), rectInLayoutSpace);
+
+    rectInView.origin = convertFromPDFViewToRootView(IntPoint(rectInView.origin));
+
+    return WebCore::FloatRect(rectInView);
 }
 
 void PDFPlugin::performWebSearch(NSString *string)

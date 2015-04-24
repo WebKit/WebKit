@@ -104,6 +104,9 @@ public:
     
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
 
+    String lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResult::Data&, PDFSelection **, NSDictionary **) const;
+    WebCore::FloatRect viewRectForSelection(PDFSelection *) const;
+
 private:
     explicit PDFPlugin(WebFrame*);
 
@@ -170,7 +173,6 @@ private:
     String getSelectionString() const override;
     String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;
-    String lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResult::Data&, PDFSelection **, NSDictionary **) const override;
 
     virtual bool shouldAllowScripting() override { return false; }
     virtual bool shouldAllowNavigationFromDrags() override { return true; }
@@ -307,6 +309,8 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_PLUGIN(PDFPlugin, PDFPluginType)
 
 #endif // ENABLE(PDFKIT_PLUGIN)
 

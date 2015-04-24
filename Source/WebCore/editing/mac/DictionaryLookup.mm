@@ -203,10 +203,8 @@ NSString *dictionaryLookupForPDFSelection(PDFSelection *selection, NSDictionary 
     if (extractedRange.location == NSNotFound)
         return selection.string;
     
-    NSInteger lookupAddedBefore = (extractedRange.location < rangeToPass.location) ? rangeToPass.location - extractedRange.location : 0;
-    NSInteger lookupAddedAfter = 0;
-    if ((extractedRange.location + extractedRange.length) > (rangeToPass.location + originalLength))
-        lookupAddedAfter = (extractedRange.location + extractedRange.length) - (rangeToPass.location + originalLength);
+    NSInteger lookupAddedBefore = rangeToPass.location - extractedRange.location;
+    NSInteger lookupAddedAfter = (extractedRange.location + extractedRange.length) - (rangeToPass.location + originalLength);
     
     [selection extendSelectionAtStart:lookupAddedBefore];
     [selection extendSelectionAtEnd:lookupAddedAfter];

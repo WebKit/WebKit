@@ -123,7 +123,6 @@ private:
     virtual uint64_t pluginComplexTextInputIdentifier() const override;
     virtual void sendComplexTextInput(const String& textInput) override;
     virtual void setLayerHostingMode(LayerHostingMode) override;
-    String lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResult::Data&, PDFSelection**, NSDictionary**) const override { return String(); }
 #endif
 
     virtual void contentsScaleFactorChanged(float) override;
@@ -236,6 +235,8 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_PLUGIN(PluginProxy, PluginProxyType)
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 

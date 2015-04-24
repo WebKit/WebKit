@@ -62,7 +62,8 @@ PassRefPtr<PluginProxy> PluginProxy::create(uint64_t pluginProcessToken, bool is
 }
 
 PluginProxy::PluginProxy(uint64_t pluginProcessToken, bool isRestartedProcess)
-    : m_pluginProcessToken(pluginProcessToken)
+    : Plugin(PluginProxyType)
+    , m_pluginProcessToken(pluginProcessToken)
     , m_pluginInstanceID(generatePluginInstanceID())
     , m_pluginBackingStoreContainsValidData(false)
     , m_isStarted(false)

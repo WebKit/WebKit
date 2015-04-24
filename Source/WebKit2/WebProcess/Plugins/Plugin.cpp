@@ -76,8 +76,9 @@ bool Plugin::Parameters::decode(IPC::ArgumentDecoder& decoder, Parameters& param
     return true;
 }
 
-Plugin::Plugin()
-    : m_pluginController(0)
+Plugin::Plugin(PluginType type)
+    : m_type(type)
+    , m_pluginController(0)
 {
 }
 

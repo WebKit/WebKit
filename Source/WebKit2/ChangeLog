@@ -1,3 +1,38 @@
+2015-04-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Immediate action not functional for embedded PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=143952
+        <rdar://problem/19842365>        
+
+        Reviewed by Tim Horton.
+
+        Add a new method to retrieve appropriate dictionary lookup content and update the
+        hit test result with relevant dictionary content and the bounding rect of the
+        selection.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h: Add stub.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp: Initialize plugin type.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::rectInWindowSpaceForRectInLayoutSpace): New helper function to
+        convert PDF 'in page' units to the equivalent view units.
+        (WebKit::PDFPlugin::PDFPlugin): Initialize plugin type.
+        (WebKit::PDFPlugin::viewRectForSelection): Query a provided PDFSelection for
+        its bounding rect and return the result in view units.
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.cpp: Initialize plugin type.
+        * WebProcess/Plugins/PluginProxy.h: Add stub.
+        * WebProcess/Plugins/PluginView.cpp: 
+        (WebKit::PluginView::viewRectForSelection): Added.
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::dictionaryPopupInfoForPDFSelectionInPluginView): Added.
+        (WebKit::textIndicatorTransitionForActionMenu): Added helper function.
+        (WebKit::WebPage::performActionMenuHitTestAtLocation): Update the hit test information
+        with relevant dictionary lookup content, and mark the result as a text node (if
+        appropriate).
+
 2015-04-24  Jer Noble  <jer.noble@apple.com>
 
         [WK2] Only issue a isPlayingAudioDidChange() notification if the audio playing state actually changed.

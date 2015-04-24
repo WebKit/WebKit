@@ -241,7 +241,6 @@ private:
     void setComplexTextInputEnabled(bool);
 
     void updatePluginLayer();
-    String lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResult::Data&, PDFSelection** selection, NSDictionary**) const override { return String(); }
 #endif
 
     virtual void contentsScaleFactorChanged(float) override;
@@ -400,6 +399,8 @@ public: // Need to call it in the NPN_GetValue browser callback.
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_PLUGIN(NetscapePlugin, NetscapePluginType)
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 

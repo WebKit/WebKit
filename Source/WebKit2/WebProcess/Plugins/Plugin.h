@@ -74,6 +74,12 @@ class WebWheelEvent;
     
 class PluginController;
 
+enum PluginType {
+    PluginProxyType,
+    NetscapePluginType,
+    PDFPluginType,
+};
+
 class Plugin : public ThreadSafeRefCounted<Plugin> {
 public:
     struct Parameters {
@@ -104,6 +110,8 @@ public:
     const PluginController* controller() const { return m_pluginController; }
 
     virtual ~Plugin();
+
+    PluginType type() const { return m_type; }
 
 private:
 
@@ -282,21 +290,25 @@ public:
     virtual String getSelectionString() const = 0;
     virtual String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const = 0;
     virtual bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const = 0;
-#if PLATFORM(COCOA)
-    virtual String lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResult::Data&, PDFSelection**, NSDictionary**) const = 0;
-#endif
 
     virtual WebCore::AudioHardwareActivityType audioHardwareActivity() const { return WebCore::AudioHardwareActivityType::Unknown; }
 
     virtual void mutedStateChanged(bool) { }
 
 protected:
-    Plugin();
+    Plugin(PluginType);
+
+    PluginType m_type;
 
 private:
     PluginController* m_pluginController;
 };
     
 } // namespace WebKit
+
+#define SPECIALIZE_TYPE_TRAITS_PLUGIN(ToValueTypeName, SpecificPluginType) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ToValueTypeName) \
+static bool isType(const WebKit::Plugin& plugin) { return plugin.type() == WebKit::SpecificPluginType; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // Plugin_h
