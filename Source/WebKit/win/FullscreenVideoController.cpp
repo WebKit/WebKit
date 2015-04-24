@@ -43,8 +43,6 @@
 #include <WebCore/TextRun.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <windowsx.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace std;
@@ -245,9 +243,9 @@ FullscreenVideoController::FullscreenVideoController()
     , m_hitWidget(0)
     , m_movingWindow(false)
     , m_timer(*this, &FullscreenVideoController::timerFired)
-    , m_layerClient(adoptPtr(new LayerClient(this)))
+    , m_layerClient(std::make_unique<LayerClient>(this))
     , m_rootChild(PlatformCALayerWin::create(PlatformCALayer::LayerTypeLayer, m_layerClient.get()))
-    , m_fullscreenWindow(adoptPtr(new MediaPlayerPrivateFullscreenWindow(this)))
+    , m_fullscreenWindow(std::make_unique<MediaPlayerPrivateFullscreenWindow>(this))
 {
 }
 
@@ -298,8 +296,7 @@ void FullscreenVideoController::exitFullscreen()
 {
     SetWindowLongPtr(m_hudWindow, 0, 0);
 
-    if (m_fullscreenWindow)
-        m_fullscreenWindow = nullptr;
+    m_fullscreenWindow = nullptr;
 
     ASSERT(!IsWindow(m_hudWindow));
     m_hudWindow = 0;

@@ -28,7 +28,6 @@
 
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/ProcessID.h>
 
 #if PLATFORM(COCOA)
@@ -45,10 +44,10 @@ NetworkStorageSession::NetworkStorageSession(RetainPtr<CFURLStorageSessionRef> p
 {
 }
 
-static OwnPtr<NetworkStorageSession>& defaultNetworkStorageSession()
+static std::unique_ptr<NetworkStorageSession>& defaultNetworkStorageSession()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<OwnPtr<NetworkStorageSession>> session;
+    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
     return session;
 }
 
@@ -57,16 +56,16 @@ void NetworkStorageSession::switchToNewTestingSession()
     // Session name should be short enough for shared memory region name to be under the limit, otehrwise sandbox rules won't work (see <rdar://problem/13642852>).
     String sessionName = String::format("WebKit Test-%u", static_cast<uint32_t>(getCurrentProcessID()));
 #if PLATFORM(COCOA)
-    defaultNetworkStorageSession() = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get()))));
+    defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get())));
 #else
-    defaultNetworkStorageSession() = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get(), defaultNetworkStorageSession()->platformSession()))));
+    defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get(), defaultNetworkStorageSession()->platformSession())));
 #endif
 }
 
 NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
 {
     if (!defaultNetworkStorageSession())
-        defaultNetworkStorageSession() = adoptPtr(new NetworkStorageSession(0));
+        defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(nullptr);
     return *defaultNetworkStorageSession();
 }
 

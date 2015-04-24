@@ -31,6 +31,7 @@
 #include "ResourceRequest.h"
 #include "AuthenticationChallenge.h"
 #include "Timer.h"
+#include <wtf/OwnPtr.h>
 
 #if USE(CFNETWORK)
 #include "ResourceHandleCFURLConnectionDelegate.h"

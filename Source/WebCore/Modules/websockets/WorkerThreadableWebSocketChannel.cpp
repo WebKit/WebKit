@@ -288,14 +288,16 @@ void WorkerThreadableWebSocketChannel::Peer::didReceiveMessage(const String& mes
     }, m_taskMode);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData(PassOwnPtr<Vector<char>> binaryData)
+void WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData(Vector<char>&& binaryData)
 {
     ASSERT(isMainThread());
 
     RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper = m_workerClientWrapper;
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, binaryData] (ScriptExecutionContext& context) {
+    Vector<char>* capturedData = new Vector<char>(WTF::move(binaryData));
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, capturedData] (ScriptExecutionContext& context) {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        workerClientWrapper->didReceiveBinaryData(binaryData);
+        workerClientWrapper->didReceiveBinaryData(WTF::move(*capturedData));
+        delete capturedData;
     }, m_taskMode);
 }
 

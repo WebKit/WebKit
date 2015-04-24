@@ -39,7 +39,6 @@
 #include "ScrollbarTheme.h"
 #include "ScrollbarThemeMac.h"
 #include "WebCoreSystemInterface.h"
-#include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
 

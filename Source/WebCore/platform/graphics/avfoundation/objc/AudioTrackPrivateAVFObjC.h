@@ -29,7 +29,6 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "AudioTrackPrivateAVF.h"
-#include <wtf/OwnPtr.h>
 
 OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVPlayerItem;

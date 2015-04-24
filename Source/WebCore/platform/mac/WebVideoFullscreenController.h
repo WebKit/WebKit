@@ -27,7 +27,6 @@
 
 #import <AppKit/NSWindowController.h>
 #import <AppKit/NSScreen.h>
-#import <wtf/OwnPtr.h>
 #import <wtf/RefPtr.h>
 
 namespace WebCore {

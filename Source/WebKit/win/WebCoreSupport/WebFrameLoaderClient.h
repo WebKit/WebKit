@@ -199,7 +199,7 @@ public:
 
 protected:
     class WebFramePolicyListenerPrivate;
-    OwnPtr<WebFramePolicyListenerPrivate> m_policyListenerPrivate;
+    std::unique_ptr<WebFramePolicyListenerPrivate> m_policyListenerPrivate;
 
 private:
     PassRefPtr<WebCore::Frame> createFrame(const WebCore::URL&, const WTF::String& name, WebCore::HTMLFrameOwnerElement*, const WTF::String& referrer);

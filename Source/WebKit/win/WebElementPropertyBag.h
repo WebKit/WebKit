@@ -27,7 +27,6 @@
 #define WebElementPropertyBag_H
 
 #include <ocidl.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
     class HitTestResult;
@@ -59,7 +58,7 @@ public:
         /* [in] */ VARIANT *pVar);
 
 private:
-    OwnPtr<WebCore::HitTestResult> m_result;
+    std::unique_ptr<WebCore::HitTestResult> m_result;
     ULONG m_refCount;
 };
 

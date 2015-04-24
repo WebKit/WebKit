@@ -36,7 +36,6 @@
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -321,7 +320,7 @@ namespace WebCore {
         bool m_isWaitingToStart;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-        OwnPtr<PluginMessageThrottlerWin> m_messageThrottler;
+        std::unique_ptr<PluginMessageThrottlerWin> m_messageThrottler;
         WNDPROC m_pluginWndProc;
         unsigned m_lastMessage;
         bool m_isCallingPluginWndProc;

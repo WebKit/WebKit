@@ -1,3 +1,186 @@
+2015-04-23  Darin Adler  <darin@apple.com>
+
+        Another round of removing use of OwnPtr, PassOwnPtr, and deleteOwnedPtr
+        https://bugs.webkit.org/show_bug.cgi?id=144090
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/encryptedmedia/CDMPrivateMediaPlayer.h: Removed unneeded include.
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.h: Removed include of
+        RefCountedSupplement.h.
+
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData):
+        Pass data using rvalue references, and use new/delete to pass it across
+        threads, rather than using PassOwnPtr.
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h: Pass data
+        in an rvalue reference instead of PassOwnPtr.
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didReceiveBinaryData): Take an rvalue reference
+        instead of a PassOwnPtr.
+        * Modules/websockets/WebSocket.h: Ditto.
+        * Modules/websockets/WebSocketChannel.cpp: Ditto.
+        (WebCore::WebSocketChannel::processFrame): Ditto.
+        * Modules/websockets/WebSocketChannelClient.h:
+        (WebCore::WebSocketChannelClient::didReceiveBinaryData): Ditto.
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData):
+        Ditto.
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h: Ditto.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed RefCountedSupplement.h.
+
+        * loader/cocoa/DiskCacheMonitorCocoa.mm:
+        (WebCore::DiskCacheMonitor::monitorFileBackingStoreCreation): Fixed comment
+        to not mention adoptPtr.
+
+        * page/make_settings.pl:
+        (generateInternalSettingsHeaderFile): Removed include of RefCountedSupplement.h.
+
+        * platform/ColorChooserClient.h: Removed unneded include.
+        * platform/ContextMenuItem.h: Ditto.
+
+        * platform/RefCountedSupplement.h: Removed.
+
+        * platform/ScrollAnimator.cpp: Removed unneeded include.
+        * platform/ScrollAnimatorNone.h: Ditto.
+
+        * platform/ThreadGlobalData.cpp: Added now-needed include of PassOwnPtr.h.
+
+        * platform/graphics/GlyphMetricsMap.h: Ditto.
+        * platform/graphics/MediaPlayer.h: Ditto.
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.h: Ditto.
+        * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp: Ditto.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp: Ditto.
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.h: Ditto.
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.h: Ditto.
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h: Ditto.
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h: Ditto.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer): Use make_unique instead of adoptPtr.
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::ImageBufferData::getData): Return a RefPtr instead of a PassRefPtr.
+        * platform/graphics/cg/ImageBufferDataCG.h: Streamlined the header a bit,
+        use unique_ptr instead of OwnPtr and RefPtr instead of PassRefPtr.
+
+        * platform/graphics/cocoa/IOSurface.h: Use unique_ptr instead of OwnPtr.
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::ensureGraphicsContext): Use make_unique instead of adoptPtr.
+
+        * platform/graphics/egl/GLContextEGL.cpp: Removed unneeded includes.
+        * platform/graphics/filters/FilterOperation.h: Ditto.
+        * platform/graphics/harfbuzz/HarfBuzzShaper.h: Ditto.
+        * platform/ios/DeviceMotionClientIOS.h: Ditto.
+        * platform/ios/DeviceOrientationClientIOS.h: Ditto.
+
+        * platform/ios/LegacyTileCache.h: Use unique_ptr instead of OwnPtr.
+        * platform/ios/LegacyTileCache.mm:
+        (WebCore::LegacyTileCache::LegacyTileCache): Use make_unique instead of
+        a create function, and also get rid of unneeded initialization to null.
+        (WebCore::LegacyTileCache::commitScaleChange): Ditto.
+
+        * platform/ios/LegacyTileGrid.h: Made constructor public and got rid of create
+        function. Made constructor take a reference to the tile cache, and make both
+        tileCache() and m_tileCache be references too.
+
+        * platform/ios/LegacyTileGrid.mm:
+        (WebCore::LegacyTileGrid::LegacyTileGrid): Updated to use reference.
+        (WebCore::LegacyTileGrid::visibleRect): Ditto.
+        (WebCore::LegacyTileGrid::tileByteSize) Ditto.:
+        (WebCore::LegacyTileGrid::dropDistantTiles): Ditto.
+        (WebCore::LegacyTileGrid::updateTileOpacity): Ditto.
+        (WebCore::LegacyTileGrid::updateTileBorderVisibility): Ditto.
+        (WebCore::LegacyTileGrid::updateHostLayerSize): Ditto.
+        (WebCore::LegacyTileGrid::invalidateTiles): Ditto.
+        (WebCore::LegacyTileGrid::shouldUseMinimalTileCoverage): Ditto.
+        (WebCore::LegacyTileGrid::tileDistance2): Ditto.
+        (WebCore::LegacyTileGrid::createTiles): Ditto.
+        * platform/ios/LegacyTileGridTile.mm:
+        (WebCore::LegacyTileGridTile::LegacyTileGridTile): Ditto.
+        (WebCore::LegacyTileGridTile::invalidateRect): Ditto.
+        (WebCore::LegacyTileGridTile::showBorder): Ditto.
+        * platform/ios/LegacyTileLayer.mm:
+        (-[LegacyTileHostLayer renderInContext:]): Ditto.
+        (-[LegacyTileLayer layoutSublayers]): Ditto.
+        (-[LegacyTileLayer drawInContext:]): Ditto.
+
+        * platform/ios/LegacyTileLayerPool.h: Removed unneeded include.
+        * platform/ios/ScrollAnimatorIOS.mm: Ditto.
+        * platform/mac/ScrollAnimatorMac.mm: Ditto.
+        * platform/mac/WebVideoFullscreenController.h: Ditto.
+        * platform/network/BlobData.cpp: Ditto.
+
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::ResourceHandle): Use make_unique instead of adoptPtr.
+        * platform/network/ResourceHandle.h: Use unique_ptr instead of OwnPtr.
+
+        * platform/network/ResourceHandleInternal.h: Added now-needed include.
+
+        * platform/network/ResourceResponseBase.h: Removed unneeded includes and
+        tweaked formatting a bit.
+
+        * platform/network/SynchronousLoaderClient.h: Removed the create function and
+        the private constructor. Used data member initialize to make the default
+        empty constructor automatically get generated (and be public now).
+
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::formFinishFinalizationOnMainThread): Use delete instead of adoptPtr
+        to delete the context argument.
+
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::defaultNetworkStorageSession): Return a unique_ptr& instead of an OwnPtr&.
+        (WebCore::NetworkStorageSession::switchToNewTestingSession): Use make_unique
+        instead of adoptPtr.
+        (WebCore::NetworkStorageSession::defaultStorageSession): Ditto.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously): Use a
+        SynchronousLoaderClient on the stack instead of putting one on the heap with adoptPtr.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously): Ditto.
+
+        * platform/text/TextCodec.h: Removed unneeded include.
+        * platform/win/CursorWin.cpp: Ditto.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects): Use move instead of release since
+        we are using RefPtr&& instead of PassRefPtr.
+
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayer::FilterInfo::setRenderer): Use RefPtr&& instead of PassRefPtr.
+        (WebCore::RenderLayer::FilterInfo::updateReferenceFilterClients): Streamlined to use
+        modern for loops and auto.
+        (WebCore::RenderLayer::FilterInfo::removeReferenceFilterClients): Ditto.
+
+        * rendering/RenderLayerFilterInfo.h: Streamlined code and removed some stuff that
+        I think is unneeded on iOS; there is no unused private field and I suspect the problem
+        that led to the warning is gone. Deleted friending of deleteOwnedPtr.
+
+        * rendering/RenderLayerMaskImageInfo.cpp: Removed unneeded includes. Moved private
+        client classes in here from the header and made them members of MaskImageInfo.
+        Streamlined them a bit in other ways.
+        (WebCore::RenderLayer::MaskImageInfo::getIfExists): Use nullptr.
+        (WebCore::RenderLayer::MaskImageInfo::MaskImageInfo): Use member initialization
+        and also pass the layer in rather than the MaskImageInfo.
+        (WebCore::RenderLayer::MaskImageInfo::notifyFinished): Deleted. Moved the code
+        into the SVGDocumentClient.
+        (WebCore::RenderLayer::MaskImageInfo::imageChanged): Deleted. Moved the code into
+        the ImageClient.
+        (WebCore::RenderLayer::MaskImageInfo::updateMaskImageClients): Streamlined a bit
+        to use a for loop.
+        (WebCore::RenderLayer::MaskImageInfo::removeMaskImageClients): Ditto.
+
+        * rendering/RenderLayerMaskImageInfo.h: Reduced unneeded includes. Got rid of
+        definitions of private member classes here in the header; they can be in the cpp
+        file instead. Also cut down from three classes to two, and gave the classes less
+        redundant names since they are already members of MaskImageInfo. Removed some
+        unneeded functions and friending of deleteOwnedPtr.
+
+        * testing/InternalSettings.cpp: Got rid of comment about RefCountedSupplement
+        since no code anywhere was using it, so not using it here was not remarkable.
+
 2015-04-23  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Add a wrapper around the hosted AVPlayerLayer to intercept -setBounds:

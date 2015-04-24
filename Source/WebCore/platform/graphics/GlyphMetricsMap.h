@@ -32,8 +32,6 @@
 #include "Glyph.h"
 #include <array>
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

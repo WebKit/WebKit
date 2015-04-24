@@ -1,3 +1,39 @@
+2015-04-23  Darin Adler  <darin@apple.com>
+
+        Another round of removing use of OwnPtr, PassOwnPtr, and deleteOwnedPtr
+        https://bugs.webkit.org/show_bug.cgi?id=144090
+
+        Reviewed by Anders Carlsson.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::FullscreenVideoController):
+        (FullscreenVideoController::exitFullscreen):
+        * FullscreenVideoController.h:
+        * Plugins/PluginView.h:
+        * Plugins/PluginViewWin.cpp:
+        (WebCore::PluginView::wndProc):
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::WebChromeClient):
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::WebFrameLoaderClient):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::highlight):
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebElementPropertyBag.cpp:
+        (WebElementPropertyBag::WebElementPropertyBag):
+        * WebElementPropertyBag.h:
+        * WebFrame.h:
+        * WebHistoryItem.cpp:
+        * WebNodeHighlight.cpp:
+        * WebNotificationCenter.cpp:
+        (WebNotificationCenter::WebNotificationCenter):
+        * WebNotificationCenter.h:
+        Use make_unique and unique_ptr instead of adoptPtr and OwnPtr.
+
 2015-04-23  Andreas Kling  <akling@apple.com>
 
         There should only be one way to get the system memory size.

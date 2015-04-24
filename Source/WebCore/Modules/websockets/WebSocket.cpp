@@ -547,19 +547,19 @@ void WebSocket::didReceiveMessage(const String& msg)
     dispatchEvent(MessageEvent::create(msg, SecurityOrigin::create(m_url)->toString()));
 }
 
-void WebSocket::didReceiveBinaryData(PassOwnPtr<Vector<char>> binaryData)
+void WebSocket::didReceiveBinaryData(Vector<char>&& binaryData)
 {
-    LOG(Network, "WebSocket %p didReceiveBinaryData() %lu byte binary message", this, static_cast<unsigned long>(binaryData->size()));
+    LOG(Network, "WebSocket %p didReceiveBinaryData() %lu byte binary message", this, static_cast<unsigned long>(binaryData.size()));
     switch (m_binaryType) {
     case BinaryTypeBlob: {
         // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
-        RefPtr<Blob> blob = Blob::create(WTF::move(*binaryData), emptyString());
+        RefPtr<Blob> blob = Blob::create(WTF::move(binaryData), emptyString());
         dispatchEvent(MessageEvent::create(blob.release(), SecurityOrigin::create(m_url)->toString()));
         break;
     }
 
     case BinaryTypeArrayBuffer:
-        dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData->data(), binaryData->size()), SecurityOrigin::create(m_url)->toString()));
+        dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData.data(), binaryData.size()), SecurityOrigin::create(m_url)->toString()));
         break;
     }
 }

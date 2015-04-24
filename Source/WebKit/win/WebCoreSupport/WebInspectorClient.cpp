@@ -34,7 +34,6 @@
 #include "WebMutableURLRequest.h"
 #include "WebNodeHighlight.h"
 #include "WebView.h"
-
 #include <WebCore/BString.h>
 #include <WebCore/Element.h>
 #include <WebCore/FloatRect.h>
@@ -44,7 +43,6 @@
 #include <WebCore/Page.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/WindowMessageBroadcaster.h>
-
 #include <inspector/InspectorAgentBase.h>
 #include <wchar.h>
 #include <wtf/RetainPtr.h>
@@ -189,7 +187,7 @@ void WebInspectorClient::highlight()
     bool creatingHighlight = !m_highlight;
 
     if (creatingHighlight)
-        m_highlight = adoptPtr(new WebNodeHighlight(m_inspectedWebView));
+        m_highlight = std::make_unique<WebNodeHighlight>(m_inspectedWebView);
 
     if (m_highlight->isShowing())
         m_highlight->update();

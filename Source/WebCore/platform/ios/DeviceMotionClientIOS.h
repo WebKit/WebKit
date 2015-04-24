@@ -29,7 +29,6 @@
 #include "DeviceMotionClient.h"
 #include "DeviceMotionController.h"
 #include "DeviceMotionData.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 #ifdef __OBJC__

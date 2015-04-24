@@ -34,9 +34,6 @@
 #include "IntSize.h"
 #include "LegacyTileCache.h"
 #include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>
 
@@ -49,15 +46,13 @@ namespace WebCore {
 class LegacyTileGridTile;
 
 class LegacyTileGrid {
-    WTF_MAKE_NONCOPYABLE(LegacyTileGrid);
 public:
     typedef IntPoint TileIndex;
 
-    static PassOwnPtr<LegacyTileGrid> create(LegacyTileCache* cache, const IntSize& tileSize) { return adoptPtr(new LegacyTileGrid(cache, tileSize)); }
-
+    LegacyTileGrid(LegacyTileCache&, const IntSize&);
     ~LegacyTileGrid();
 
-    LegacyTileCache* tileCache() const { return m_tileCache; }
+    LegacyTileCache& tileCache() const { return m_tileCache; }
 
     CALayer *tileHostLayer() const;
     IntRect bounds() const;
@@ -111,9 +106,7 @@ private:
     bool shouldUseMinimalTileCoverage() const;
 
 private:        
-    LegacyTileGrid(LegacyTileCache*, const IntSize&);
-
-    LegacyTileCache* m_tileCache;
+    LegacyTileCache& m_tileCache;
     RetainPtr<CALayer> m_tileHostLayer;
 
     IntPoint m_origin;

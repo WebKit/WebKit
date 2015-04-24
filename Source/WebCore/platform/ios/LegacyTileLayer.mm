@@ -54,7 +54,7 @@
 {
     if (pthread_main_np())
         WebThreadLock();
-    _tileGrid->tileCache()->doLayoutTiles();
+    _tileGrid->tileCache().doLayoutTiles();
     [super renderInContext:context];
 }
 @end
@@ -77,13 +77,13 @@ static LegacyTileLayer *layerBeingPainted;
         WebThreadLock();
     // This may trigger WebKit layout and generate more repaint rects.
     if (_tileGrid)
-        _tileGrid->tileCache()->prepareToDraw();
+        _tileGrid->tileCache().prepareToDraw();
 }
 
 - (void)drawInContext:(CGContextRef)context
 {
     if (_tileGrid)
-        _tileGrid->tileCache()->drawLayer(self, context);
+        _tileGrid->tileCache().drawLayer(self, context);
 }
 
 - (id<CAAction>)actionForKey:(NSString *)key

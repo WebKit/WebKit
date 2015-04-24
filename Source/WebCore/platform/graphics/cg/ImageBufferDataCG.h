@@ -30,13 +30,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA) && USE(CA)
-#if !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(COCOA) && USE(CA) && !PLATFORM(IOS_SIMULATOR)
 #define WTF_USE_IOSURFACE_CANVAS_BACKING_STORE 1
-#endif // !PLATFORM(IOS_SIMULATOR)
 #endif
 
-typedef struct __IOSurface *IOSurfaceRef;
 typedef struct CGColorSpace *CGColorSpaceRef;
 typedef struct CGDataProvider *CGDataProviderRef;
 typedef uint32_t CGBitmapInfo;
@@ -44,7 +41,6 @@ typedef uint32_t CGBitmapInfo;
 namespace WebCore {
 
 class IOSurface;
-class IntSize;
 
 struct ImageBufferData {
     ~ImageBufferData();
@@ -53,18 +49,18 @@ struct ImageBufferData {
     Checked<unsigned, RecordOverflow> bytesPerRow;
     CGColorSpaceRef colorSpace;
 
-    // Only for Software ImageBuffers.
+    // Only for software ImageBuffers.
     void* data { nullptr };
     RetainPtr<CGDataProviderRef> dataProvider;
     CGBitmapInfo bitmapInfo;
-    OwnPtr<GraphicsContext> context;
+    std::unique_ptr<GraphicsContext> context;
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    // Only for Accelerated ImageBuffers.
+    // Only for accelerated ImageBuffers.
     std::unique_ptr<IOSurface> surface;
 #endif
 
-    PassRefPtr<Uint8ClampedArray> getData(const IntRect&, const IntSize&, bool accelerateRendering, bool unmultiplied, float resolutionScale) const;
+    RefPtr<Uint8ClampedArray> getData(const IntRect&, const IntSize&, bool accelerateRendering, bool unmultiplied, float resolutionScale) const;
     void putData(Uint8ClampedArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize&, bool accelerateRendering, bool unmultiplied, float resolutionScale);
 };
 

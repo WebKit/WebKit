@@ -155,11 +155,11 @@ private:
     GDIObject<HBITMAP> m_bitmap;
     WebCore::IntSize m_fullscreenSize;
     WebCore::IntPoint m_hudPosition;
-    OwnPtr<WebCore::MediaPlayerPrivateFullscreenWindow> m_fullscreenWindow;
+    std::unique_ptr<WebCore::MediaPlayerPrivateFullscreenWindow> m_fullscreenWindow;
 
     class LayerClient;
     friend class LayerClient;
-    OwnPtr<LayerClient> m_layerClient;
+    std::unique_ptr<LayerClient> m_layerClient;
     RefPtr<WebCore::PlatformCALayer> m_rootChild;
 
     HUDButton m_playPauseButton;

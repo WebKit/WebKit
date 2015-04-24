@@ -179,6 +179,6 @@ private:
     WebView* m_webView;
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    OwnPtr<WebDesktopNotificationsDelegate> m_notificationsDelegate;
+    std::unique_ptr<WebDesktopNotificationsDelegate> m_notificationsDelegate;
 #endif
 };

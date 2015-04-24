@@ -22,7 +22,6 @@
 #if USE(EGL)
 
 #include "GraphicsContext3D.h"
-#include <wtf/OwnPtr.h>
 
 #if USE(CAIRO)
 #include <cairo.h>

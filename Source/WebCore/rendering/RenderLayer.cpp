@@ -6881,7 +6881,7 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
         filterRenderer->setFilterScale(renderer().frame().page()->deviceScaleFactor());
         RenderingMode renderingMode = renderer().frame().settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
         filterRenderer->setRenderingMode(renderingMode);
-        filterInfo.setRenderer(filterRenderer.release());
+        filterInfo.setRenderer(WTF::move(filterRenderer));
         
         // We can optimize away code paths in other places if we know that there are no software filters.
         renderer().view().setHasSoftwareFilters(true);

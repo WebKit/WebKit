@@ -30,7 +30,6 @@
 
 #include "AudioTrackPrivate.h"
 #include "VideoTrackPrivate.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 

@@ -36,7 +36,6 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollableArea.h"
 #include <algorithm>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

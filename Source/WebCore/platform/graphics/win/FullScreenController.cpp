@@ -36,6 +36,7 @@
 #include "MediaPlayerPrivateFullscreenWindow.h"
 #include "Timer.h"
 #include "WebCoreInstanceHandle.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 using namespace WebCore;

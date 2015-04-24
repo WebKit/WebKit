@@ -109,13 +109,13 @@ static void premultitplyScanline(void* data, size_t tileNumber)
 #endif // USE(IOSURFACE_CANVAS_BACKING_STORE)
 #endif // USE(ACCELERATE)
 
-PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale) const
+RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale) const
 {
     Checked<unsigned, RecordOverflow> area = 4;
     area *= rect.width();
     area *= rect.height();
     if (area.hasOverflowed())
-        return 0;
+        return nullptr;
 
     RefPtr<Uint8ClampedArray> result = Uint8ClampedArray::createUninitialized(area.unsafeGet());
     unsigned char* resultData = result->data();
@@ -202,7 +202,7 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
 
             vImageUnpremultiplyData_RGBA8888(&src, &dst, kvImageNoFlags);
 #endif
-            return result.release();
+            return result;
         }
 #endif
         if (resolutionScale != 1) {
@@ -212,7 +212,7 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
             CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
             CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
             if (!unmultiplied)
-                return result.release();
+                return result;
 
             srcRows = destRows;
             srcBytesPerRow = destBytesPerRow;
@@ -378,7 +378,7 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
 #endif // USE(IOSURFACE_CANVAS_BACKING_STORE)
     }
     
-    return result.release();
+    return result;
 }
 
 void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale)

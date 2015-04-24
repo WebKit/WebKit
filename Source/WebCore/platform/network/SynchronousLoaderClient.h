@@ -32,13 +32,8 @@
 
 namespace WebCore {
 
-class SynchronousLoaderClient : public ResourceHandleClient {
+class SynchronousLoaderClient final : public ResourceHandleClient {
 public:
-    static PassOwnPtr<SynchronousLoaderClient> create()
-    {
-        return adoptPtr(new SynchronousLoaderClient);
-    }
-
     virtual ~SynchronousLoaderClient();
 
     void setAllowStoredCredentials(bool allow) { m_allowStoredCredentials = allow; }
@@ -50,12 +45,6 @@ public:
     WEBCORE_EXPORT static ResourceError platformBadResponseError();
 
 private:
-    SynchronousLoaderClient()
-        : m_allowStoredCredentials(false)
-        , m_isDone(false)
-    {
-    }
-
     virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& /*redirectResponse*/) override;
     virtual bool shouldUseCredentialStorage(ResourceHandle*) override;
     virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) override;
@@ -67,11 +56,11 @@ private:
     virtual bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace&) override;
 #endif
 
-    bool m_allowStoredCredentials;
+    bool m_allowStoredCredentials { false };
     ResourceResponse m_response;
     Vector<char> m_data;
     ResourceError m_error;
-    bool m_isDone;
+    bool m_isDone { false };
 };
 }
 

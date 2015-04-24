@@ -389,8 +389,7 @@ sub generateInternalSettingsHeaderFile($)
 #ifndef InternalSettingsGenerated_h
 #define InternalSettingsGenerated_h
 
-#include "RefCountedSupplement.h"
-#include <wtf/PassRefPtr.h>
+#include "Supplementable.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

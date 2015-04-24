@@ -27,50 +27,14 @@
 #ifndef RenderLayerMaskImageInfo_h
 #define RenderLayerMaskImageInfo_h
 
-#include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
-#include "CachedSVGDocumentClient.h"
-#include "MaskImageOperation.h"
 #include "RenderLayer.h"
-#include <memory>
 
 namespace WebCore {
 
 class Element;
 
 class RenderLayer::MaskImageInfo final {
-private:
-    class MaskResourceClient {
-    public:
-        MaskResourceClient(RenderLayer::MaskImageInfo* maskImageInfo)
-            : m_maskImageInfo(maskImageInfo)
-        {
-            ASSERT(m_maskImageInfo);
-        }
-    protected:
-        RenderLayer::MaskImageInfo* m_maskImageInfo;
-    };
-    
-    class MaskSVGDocumentClient : public MaskResourceClient, public CachedSVGDocumentClient {
-    public:
-        MaskSVGDocumentClient(RenderLayer::MaskImageInfo* maskImageInfo)
-            : MaskResourceClient(maskImageInfo)
-        {
-        }
-        
-        virtual void notifyFinished(CachedResource* resource) override { m_maskImageInfo->notifyFinished(resource); }
-    };
-    
-    class MaskImageClient : public MaskResourceClient, public CachedImageClient {
-    public:
-        MaskImageClient(RenderLayer::MaskImageInfo* maskImageInfo)
-            : MaskResourceClient(maskImageInfo)
-        {
-        }
-        
-        virtual void imageChanged(CachedImage* image, const IntRect* rect = nullptr) override { m_maskImageInfo->imageChanged(image, rect); }
-    };
-
 public:
     static MaskImageInfo& get(RenderLayer&);
     static MaskImageInfo* getIfExists(const RenderLayer&);
@@ -83,19 +47,17 @@ public:
     void removeMaskImageClients(const RenderStyle& oldStyle);
 
 private:
-    friend void WTF::deleteOwnedPtr<MaskImageInfo>(MaskImageInfo*);
-
-    void notifyFinished(CachedResource*);
-    void imageChanged(CachedImage*, const IntRect*);
-
     static HashMap<const RenderLayer*, std::unique_ptr<MaskImageInfo>>& layerToMaskMap();
+
+    class ImageClient;
+    class SVGDocumentClient;
 
     RenderLayer& m_layer;
 
     Vector<RefPtr<Element>> m_internalSVGReferences;
     Vector<CachedResourceHandle<CachedSVGDocument>> m_externalSVGReferences;
-    std::unique_ptr<MaskSVGDocumentClient> m_svgDocumentClient;
-    std::unique_ptr<MaskImageClient> m_imageClient;
+    std::unique_ptr<SVGDocumentClient> m_svgDocumentClient;
+    std::unique_ptr<ImageClient> m_imageClient;
 };
 
 } // namespace WebCore

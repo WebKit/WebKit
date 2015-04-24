@@ -180,12 +180,14 @@ void ThreadableWebSocketChannelClientWrapper::didReceiveMessage(const String& me
         processPendingTasks();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData(PassOwnPtr<Vector<char>> binaryData)
+void ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData(Vector<char>&& binaryData)
 {
     ref();
-    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([this, binaryData] (ScriptExecutionContext&) {
+    Vector<char>* capturedData = new Vector<char>(WTF::move(binaryData));
+    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([this, capturedData] (ScriptExecutionContext&) {
         if (m_client)
-            m_client->didReceiveBinaryData(binaryData);
+            m_client->didReceiveBinaryData(WTF::move(*capturedData));
+        delete capturedData;
         deref();
     }));
 

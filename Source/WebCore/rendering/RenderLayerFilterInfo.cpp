@@ -29,15 +29,11 @@
  */
 
 #include "config.h"
-
 #include "RenderLayerFilterInfo.h"
 
 #include "CachedSVGDocument.h"
-#include "CachedSVGDocumentReference.h"
 #include "FilterEffectRenderer.h"
-#include "SVGElement.h"
-#include "SVGFilter.h"
-#include "SVGFilterPrimitiveStandardAttributes.h"
+#include "RenderSVGResourceFilter.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -85,7 +81,7 @@ RenderLayer::FilterInfo::~FilterInfo()
     removeReferenceFilterClients();
 }
 
-void RenderLayer::FilterInfo::setRenderer(PassRefPtr<FilterEffectRenderer> renderer)
+void RenderLayer::FilterInfo::setRenderer(RefPtr<FilterEffectRenderer>&& renderer)
 { 
     m_renderer = renderer; 
 }
@@ -98,23 +94,18 @@ void RenderLayer::FilterInfo::notifyFinished(CachedResource*)
 void RenderLayer::FilterInfo::updateReferenceFilterClients(const FilterOperations& operations)
 {
     removeReferenceFilterClients();
-    for (size_t i = 0, size = operations.size(); i < size; ++i) {
-        FilterOperation& filterOperation = *operations.operations()[i];
-        if (!is<ReferenceFilterOperation>(filterOperation))
+    for (auto& operation : operations.operations()) {
+        if (!is<ReferenceFilterOperation>(*operation))
             continue;
-        ReferenceFilterOperation& referenceFilterOperation = downcast<ReferenceFilterOperation>(filterOperation);
-        auto* documentReference = referenceFilterOperation.cachedSVGDocumentReference();
-        CachedSVGDocument* cachedSVGDocument = documentReference ? documentReference->document() : nullptr;
-
-        if (cachedSVGDocument) {
+        auto& referenceOperation = downcast<ReferenceFilterOperation>(*operation);
+        auto* documentReference = referenceOperation.cachedSVGDocumentReference();
+        if (auto* cachedSVGDocument = documentReference ? documentReference->document() : nullptr) {
             // Reference is external; wait for notifyFinished().
             cachedSVGDocument->addClient(this);
             m_externalSVGReferences.append(cachedSVGDocument);
         } else {
-            // Reference is internal; add layer as a client so we can trigger
-            // filter repaint on SVG attribute change.
-            Element* filter = m_layer.renderer().document().getElementById(referenceFilterOperation.fragment());
-
+            // Reference is internal; add layer as a client so we can trigger filter repaint on SVG attribute change.
+            Element* filter = m_layer.renderer().document().getElementById(referenceOperation.fragment());
             if (!filter || !is<RenderSVGResourceFilter>(filter->renderer()))
                 continue;
             downcast<RenderSVGResourceFilter>(*filter->renderer()).addClientRenderLayer(&m_layer);
@@ -128,10 +119,10 @@ void RenderLayer::FilterInfo::removeReferenceFilterClients()
     for (auto& resourceHandle : m_externalSVGReferences)
         resourceHandle->removeClient(this);
     m_externalSVGReferences.clear();
-    for (const auto& filter : m_internalSVGReferences) {
-        if (!filter->renderer())
-            continue;
-        downcast<RenderSVGResourceContainer>(*filter->renderer()).removeClientRenderLayer(&m_layer);
+
+    for (auto& filter : m_internalSVGReferences) {
+        if (auto* renderer = filter->renderer())
+            downcast<RenderSVGResourceContainer>(*renderer).removeClientRenderLayer(&m_layer);
     }
     m_internalSVGReferences.clear();
 }

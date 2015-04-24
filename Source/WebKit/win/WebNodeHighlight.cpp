@@ -37,7 +37,6 @@
 #include <WebCore/Page.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/win/GDIObject.h>
 
 using namespace WebCore;

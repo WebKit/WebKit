@@ -34,7 +34,6 @@
 #if ENABLE(WEB_SOCKETS)
 
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -44,7 +43,7 @@ namespace WebCore {
         virtual ~WebSocketChannelClient() { }
         virtual void didConnect() { }
         virtual void didReceiveMessage(const String&) { }
-        virtual void didReceiveBinaryData(PassOwnPtr<Vector<char>>) { }
+        virtual void didReceiveBinaryData(Vector<char>&&) { }
         virtual void didReceiveMessageError() { }
         virtual void didUpdateBufferedAmount(unsigned long /* bufferedAmount */) { }
         virtual void didStartClosingHandshake() { }

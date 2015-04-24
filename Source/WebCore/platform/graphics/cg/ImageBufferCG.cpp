@@ -140,7 +140,7 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
         if (!cgContext)
             return;
 
-        m_data.context = adoptPtr(new GraphicsContext(cgContext.get()));
+        m_data.context = std::make_unique<GraphicsContext>(cgContext.get());
     }
 
     context()->scale(FloatSize(1, -1));

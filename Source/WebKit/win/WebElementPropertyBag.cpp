@@ -43,7 +43,7 @@ using namespace WebCore;
 
 // WebElementPropertyBag -----------------------------------------------
 WebElementPropertyBag::WebElementPropertyBag(const HitTestResult& result)
-    : m_result(adoptPtr(new HitTestResult(result)))
+    : m_result(std::make_unique<HitTestResult>(result))
     , m_refCount(0)
 {
     gClassCount++;

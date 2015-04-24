@@ -37,7 +37,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/SchedulePair.h>
 #include <wtf/StdLibExtras.h>
@@ -210,9 +209,10 @@ static void* formCreate(CFReadStreamRef stream, void* context)
 
 static void formFinishFinalizationOnMainThread(void* context)
 {
-    OwnPtr<FormStreamFields> form = adoptPtr(static_cast<FormStreamFields*>(context));
+    auto* form = static_cast<FormStreamFields*>(context);
 
-    closeCurrentStream(form.get());
+    closeCurrentStream(form);
+    delete form;
 }
 
 static void formFinalize(CFReadStreamRef stream, void* context)

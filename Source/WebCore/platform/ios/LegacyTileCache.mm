@@ -82,15 +82,13 @@ LegacyTileCache::LegacyTileCache(WAKWindow* window)
     , m_acceleratedDrawingEnabled(false)
     , m_isSpeculativeTileCreationEnabled(true)
     , m_didCallWillStartScrollingOrZooming(false)
-    , m_zoomedOutTileGrid(PassOwnPtr<LegacyTileGrid>())
-    , m_zoomedInTileGrid(PassOwnPtr<LegacyTileGrid>())
+    , m_zoomedOutTileGrid(std::make_unique<LegacyTileGrid>(*this, m_tileSize))
     , m_tileCreationTimer(*this, &LegacyTileCache::tileCreationTimerFired)
     , m_currentScale(1.f)
     , m_pendingScale(0)
     , m_pendingZoomedOutScale(0)
     , m_tileControllerShouldUseLowScaleTiles(false)
 {
-    m_zoomedOutTileGrid = LegacyTileGrid::create(this, m_tileSize);
     [hostLayer() insertSublayer:m_zoomedOutTileGrid->tileHostLayer() atIndex:0];
     hostLayerSizeChanged();
 }
@@ -133,7 +131,7 @@ LegacyTileGrid* LegacyTileCache::activeTileGrid() const
 
 LegacyTileGrid* LegacyTileCache::inactiveTileGrid() const
 {
-    return activeTileGrid() == m_zoomedOutTileGrid ? m_zoomedInTileGrid.get() : m_zoomedOutTileGrid.get();
+    return activeTileGrid() == m_zoomedOutTileGrid.get() ? m_zoomedInTileGrid.get() : m_zoomedOutTileGrid.get();
 }
 
 void LegacyTileCache::setTilesOpaque(bool opaque)
@@ -243,7 +241,7 @@ void LegacyTileCache::commitScaleChange()
 
     if (m_currentScale != m_zoomedOutTileGrid->scale()) {
         if (!m_zoomedInTileGrid) {
-            m_zoomedInTileGrid = LegacyTileGrid::create(this, m_tileSize);
+            m_zoomedInTileGrid = std::make_unique<LegacyTileGrid>(*this, m_tileSize);
             [hostLayer() addSublayer:m_zoomedInTileGrid->tileHostLayer()];
             hostLayerSizeChanged();
         }
@@ -335,7 +333,7 @@ void LegacyTileCache::removeAllNonVisibleTiles()
 void LegacyTileCache::removeAllNonVisibleTilesInternal()
 {
     LegacyTileGrid* activeGrid = activeTileGrid();
-    if (keepsZoomedOutTiles() && activeGrid == m_zoomedInTileGrid && activeGrid->hasTiles())
+    if (keepsZoomedOutTiles() && activeGrid == m_zoomedInTileGrid.get() && activeGrid->hasTiles())
         m_zoomedOutTileGrid->dropAllTiles();
 
     IntRect activeTileBounds = activeGrid->bounds();
@@ -401,11 +399,11 @@ void LegacyTileCache::finishedCreatingTiles(bool didCreateTiles, bool createMore
         flushSavedDisplayRects();
 
     if (keepsZoomedOutTiles()) {
-        if (m_zoomedInTileGrid && activeTileGrid() == m_zoomedOutTileGrid && m_tilingMode != Zooming && m_zoomedInTileGrid->hasTiles()) {
+        if (m_zoomedInTileGrid && activeTileGrid() == m_zoomedOutTileGrid.get() && m_tilingMode != Zooming && m_zoomedInTileGrid->hasTiles()) {
             // This CA transaction will cover the screen with top level tiles.
             // We can remove zoomed-in tiles without flashing.
             m_zoomedInTileGrid->dropAllTiles();
-        } else if (activeTileGrid() == m_zoomedInTileGrid) {
+        } else if (activeTileGrid() == m_zoomedInTileGrid.get()) {
             // Pass the minimum possible distance to consider all tiles, even visible ones.
             m_zoomedOutTileGrid->dropDistantTiles(0, std::numeric_limits<double>::min());
         }
@@ -458,8 +456,8 @@ unsigned LegacyTileCache::tileCapacityForGrid(LegacyTileGrid* grid)
     else
         gridCapacity = capacity;
 
-    if (keepsZoomedOutTiles() && grid == m_zoomedOutTileGrid) {
-        if (activeTileGrid() == m_zoomedOutTileGrid)
+    if (keepsZoomedOutTiles() && grid == m_zoomedOutTileGrid.get()) {
+        if (activeTileGrid() == m_zoomedOutTileGrid.get())
             return gridCapacity;
         return gridCapacity / 4;
     }
@@ -468,7 +466,7 @@ unsigned LegacyTileCache::tileCapacityForGrid(LegacyTileGrid* grid)
 
 Color LegacyTileCache::colorForGridTileBorder(LegacyTileGrid* grid) const
 {
-    if (grid == m_zoomedOutTileGrid)
+    if (grid == m_zoomedOutTileGrid.get())
         return Color(.3f, .0f, 0.4f, 0.5f);
 
     return Color(.0f, .0f, 0.4f, 0.5f);
@@ -635,7 +633,7 @@ void LegacyTileCache::invalidateTiles(const IntRect& dirtyRect)
     FloatRect scaledRect = dirtyRect;
     scaledRect.scale(zoomedOutScale() / currentScale());
     IntRect zoomedOutDirtyRect = enclosingIntRect(scaledRect);
-    if (activeGrid == m_zoomedOutTileGrid) {
+    if (activeGrid == m_zoomedOutTileGrid.get()) {
         bool dummy;
         IntRect coverRect = m_zoomedOutTileGrid->calculateCoverRect(m_zoomedOutTileGrid->visibleRect(), dummy);
         // Instead of repainting a tile outside the cover rect, just remove it.
@@ -805,13 +803,13 @@ void LegacyTileCache::dumpTiles()
 {
     NSLog(@"=================");
     NSLog(@"ZOOMED OUT");
-    if (m_zoomedOutTileGrid == activeTileGrid())
+    if (m_zoomedOutTileGrid.get() == activeTileGrid())
         NSLog(@"<ACTIVE>");
     m_zoomedOutTileGrid->dumpTiles();
     NSLog(@"=================");
     if (m_zoomedInTileGrid) {
         NSLog(@"ZOOMED IN");
-        if (m_zoomedInTileGrid == activeTileGrid())
+        if (m_zoomedInTileGrid.get() == activeTileGrid())
             NSLog(@"<ACTIVE>");
         m_zoomedInTileGrid->dumpTiles();
         NSLog(@"=================");

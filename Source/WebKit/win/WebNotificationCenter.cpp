@@ -33,7 +33,6 @@
 #include <wchar.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -55,7 +54,7 @@ IWebNotificationCenter* WebNotificationCenter::m_defaultCenter = 0;
 
 WebNotificationCenter::WebNotificationCenter()
     : m_refCount(0)
-    , d(adoptPtr(new WebNotificationCenterPrivate))
+    , d(std::make_unique<WebNotificationCenterPrivate>())
 {
     gClassCount++;
     gClassNameCount().add("WebNotificationCenter");

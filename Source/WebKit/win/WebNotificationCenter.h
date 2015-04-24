@@ -27,7 +27,6 @@
 #define WebNotificationCenter_H
 
 #include "WebKit.h"
-#include <wtf/OwnPtr.h>
 
 struct WebNotificationCenterPrivate;
 
@@ -73,7 +72,7 @@ public:
 
 protected:
     ULONG m_refCount;
-    OwnPtr<WebNotificationCenterPrivate> d;
+    std::unique_ptr<WebNotificationCenterPrivate> d;
     static IWebNotificationCenter* m_defaultCenter;
 };
 

@@ -30,7 +30,6 @@
 #include "Page.h"
 #include "RenderLayer.h"
 #include "ScrollableArea.h"
-#include <wtf/PassOwnPtr.h>
 
 #if ENABLE(TOUCH_EVENTS)
 #include "PlatformTouchEventIOS.h"

@@ -30,7 +30,6 @@
 #include "HTTPHeaderMap.h"
 #include "ResourceHandleTypes.h"
 #include "ResourceLoadPriority.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
@@ -284,7 +283,7 @@ static void getConnectionTimingData(NSDictionary *timingData, ResourceLoadTiming
 #endif
 
     friend class ResourceHandleInternal;
-    OwnPtr<ResourceHandleInternal> d;
+    std::unique_ptr<ResourceHandleInternal> d;
 
 #if USE(QUICK_LOOK)
     std::unique_ptr<QuickLookHandle> m_quickLook;

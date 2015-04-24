@@ -31,7 +31,6 @@
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/IteratorRange.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

@@ -30,7 +30,6 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include "PlatformMenuDescription.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)

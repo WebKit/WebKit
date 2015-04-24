@@ -41,7 +41,6 @@
 #include "FloatPoint.h"
 #include "ScrollAnimator.h"
 #include "Timer.h"
-#include <wtf/OwnPtr.h>
 
 class ScrollAnimatorNoneTest;
 

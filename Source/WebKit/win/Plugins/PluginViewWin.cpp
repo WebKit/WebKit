@@ -316,7 +316,7 @@ PluginView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     if (message == WM_USER + 1 &&
         m_plugin->quirks().contains(PluginQuirkThrottleWMUserPlusOneMessages)) {
         if (!m_messageThrottler)
-            m_messageThrottler = adoptPtr(new PluginMessageThrottlerWin(this));
+            m_messageThrottler = std::make_unique<PluginMessageThrottlerWin>(this);
 
         m_messageThrottler->appendMessage(hWnd, message, wParam, lParam);
         return 0;

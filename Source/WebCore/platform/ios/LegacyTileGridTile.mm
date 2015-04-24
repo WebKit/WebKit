@@ -50,7 +50,7 @@ LegacyTileGridTile::LegacyTileGridTile(LegacyTileGrid* tileGrid, const IntRect& 
 {
     ASSERT(!tileRect.isEmpty());
     IntSize pixelSize(m_rect.size());
-    const CGFloat screenScale = m_tileGrid->tileCache()->screenScale();
+    const CGFloat screenScale = m_tileGrid->tileCache().screenScale();
     pixelSize.scale(screenScale);
     m_tileLayer = LegacyTileLayerPool::sharedPool()->takeLayerWithSize(pixelSize);
     if (!m_tileLayer) {
@@ -61,18 +61,18 @@ LegacyTileGridTile::LegacyTileGridTile(LegacyTileGrid* tileGrid, const IntRect& 
     }
     LegacyTileLayer* layer = m_tileLayer.get();
     [layer setTileGrid:tileGrid];
-    [layer setOpaque:m_tileGrid->tileCache()->tilesOpaque()];
+    [layer setOpaque:m_tileGrid->tileCache().tilesOpaque()];
     [layer setEdgeAntialiasingMask:0];
     [layer setNeedsLayoutOnGeometryChange:NO];
     [layer setContentsScale:screenScale];
-    [layer setAcceleratesDrawing:m_tileGrid->tileCache()->acceleratedDrawingEnabled()];
+    [layer setAcceleratesDrawing:m_tileGrid->tileCache().acceleratedDrawingEnabled()];
 
     // Host layer may have other sublayers. Keep the tile layers at the beginning of the array
     // so they are painted behind everything else.
     [tileGrid->tileHostLayer() insertSublayer:layer atIndex:tileGrid->tileCount()];
     [layer setFrame:m_rect];
     invalidateRect(m_rect);
-    showBorder(m_tileGrid->tileCache()->tileBordersVisible());
+    showBorder(m_tileGrid->tileCache().tileBordersVisible());
 
 #if LOG_TILING
     ++totalTileCount;
@@ -99,7 +99,7 @@ void LegacyTileGridTile::invalidateRect(const IntRect& windowDirtyRect)
     dirtyRect.move(IntPoint() - m_rect.location());
     [tileLayer() setNeedsDisplayInRect:dirtyRect];
 
-    if (m_tileGrid->tileCache()->tilePaintCountersVisible())
+    if (m_tileGrid->tileCache().tilePaintCountersVisible())
         [tileLayer() setNeedsDisplayInRect:CGRectMake(0, 0, 46, 25)];
 }
 
@@ -117,7 +117,7 @@ void LegacyTileGridTile::showBorder(bool flag)
 {
     LegacyTileLayer* layer = m_tileLayer.get();
     if (flag) {
-        [layer setBorderColor:cachedCGColor(m_tileGrid->tileCache()->colorForGridTileBorder(m_tileGrid), ColorSpaceDeviceRGB)];
+        [layer setBorderColor:cachedCGColor(m_tileGrid->tileCache().colorForGridTileBorder(m_tileGrid), ColorSpaceDeviceRGB)];
         [layer setBorderWidth:0.5f];
     } else {
         [layer setBorderColor:nil];

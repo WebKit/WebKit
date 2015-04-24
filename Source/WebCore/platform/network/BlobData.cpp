@@ -33,9 +33,6 @@
 
 #include "Blob.h"
 #include "BlobURL.h"
-
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>

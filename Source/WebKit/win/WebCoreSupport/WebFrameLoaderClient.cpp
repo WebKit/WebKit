@@ -107,7 +107,7 @@ public:
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame* webFrame)
     : m_webFrame(webFrame)
     , m_manualLoader(0)
-    , m_policyListenerPrivate(adoptPtr(new WebFramePolicyListenerPrivate))
+    , m_policyListenerPrivate(std::make_unique<WebFramePolicyListenerPrivate>())
     , m_hasSentResponseToPlugin(false) 
 {
 }

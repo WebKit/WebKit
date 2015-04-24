@@ -28,13 +28,42 @@
 #include "RenderLayerMaskImageInfo.h"
 
 #include "CachedSVGDocument.h"
-#include "CachedSVGDocumentReference.h"
-#include "RenderSVGResourceContainer.h"
-#include "SVGElement.h"
 #include "SVGMaskElement.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+class RenderLayer::MaskImageInfo::SVGDocumentClient : public CachedSVGDocumentClient {
+public:
+    SVGDocumentClient(RenderLayer& layer)
+        : m_layer(layer)
+    {
+    }
+
+private:
+    virtual void notifyFinished(CachedResource*) override
+    {
+        m_layer.renderer().repaint();
+    }
+
+    RenderLayer& m_layer;
+};
+
+class RenderLayer::MaskImageInfo::ImageClient : public CachedImageClient {
+public:
+    ImageClient(RenderLayer& layer)
+        : m_layer(layer)
+    {
+    }
+
+private:
+    virtual void imageChanged(CachedImage*, const IntRect*) override
+    {
+        m_layer.renderer().repaint();
+    }
+
+    RenderLayer& m_layer;
+};
 
 HashMap<const RenderLayer*, std::unique_ptr<RenderLayer::MaskImageInfo>>& RenderLayer::MaskImageInfo::layerToMaskMap()
 {
@@ -45,7 +74,7 @@ HashMap<const RenderLayer*, std::unique_ptr<RenderLayer::MaskImageInfo>>& Render
 RenderLayer::MaskImageInfo* RenderLayer::MaskImageInfo::getIfExists(const RenderLayer& layer)
 {
     ASSERT(layer.m_hasMaskImageInfo == layerToMaskMap().contains(&layer));
-    return layer.m_hasMaskImageInfo ? layerToMaskMap().get(&layer) : 0;
+    return layer.m_hasMaskImageInfo ? layerToMaskMap().get(&layer) : nullptr;
 }
 
 RenderLayer::MaskImageInfo& RenderLayer::MaskImageInfo::get(RenderLayer& layer)
@@ -70,9 +99,9 @@ void RenderLayer::MaskImageInfo::remove(RenderLayer& layer)
 
 RenderLayer::MaskImageInfo::MaskImageInfo(RenderLayer& layer)
     : m_layer(layer)
+    , m_svgDocumentClient(std::make_unique<SVGDocumentClient>(layer))
+    , m_imageClient(std::make_unique<ImageClient>(layer))
 {
-    m_svgDocumentClient = std::make_unique<MaskSVGDocumentClient>(this);
-    m_imageClient = std::make_unique<MaskImageClient>(this);
 }
 
 RenderLayer::MaskImageInfo::~MaskImageInfo()
@@ -80,60 +109,43 @@ RenderLayer::MaskImageInfo::~MaskImageInfo()
     removeMaskImageClients(m_layer.renderer().style());
 }
 
-void RenderLayer::MaskImageInfo::notifyFinished(CachedResource*)
-{
-    m_layer.renderer().repaint();
-}
-
-void RenderLayer::MaskImageInfo::imageChanged(CachedImage*, const IntRect*)
-{
-    m_layer.renderer().repaint();
-}
-
 void RenderLayer::MaskImageInfo::updateMaskImageClients()
 {
     removeMaskImageClients(m_layer.renderer().style());
     
-    const FillLayer* maskLayer = m_layer.renderer().style().maskLayers();
-    while (maskLayer) {
+    for (auto* maskLayer = m_layer.renderer().style().maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
         const RefPtr<MaskImageOperation> maskImage = maskLayer->maskImage();
         maskImage->setRenderLayerImageClient(m_imageClient.get());
         CachedSVGDocumentReference* documentReference = maskImage->cachedSVGDocumentReference();
         CachedSVGDocument* cachedSVGDocument = documentReference ? documentReference->document() : nullptr;
         
         if (cachedSVGDocument) {
-            // Reference is external; wait for notifyFinished().
+            // Reference is external; wait for notifyFinished and then repaint.
             cachedSVGDocument->addClient(m_svgDocumentClient.get());
             m_externalSVGReferences.append(cachedSVGDocument);
         } else {
-            // Reference is internal; add layer as a client so we can trigger
-            // mask repaint on SVG attribute change.
+            // Reference is internal; add layer as a client so we can trigger mask repaint on SVG attribute change.
             Element* masker = m_layer.renderer().document().getElementById(maskImage->fragment());
-            if (masker && is<SVGMaskElement>(masker)) {
-                downcast<SVGMaskElement>(masker)->addClientRenderLayer(&m_layer);
+            if (is<SVGMaskElement>(masker)) {
+                downcast<SVGMaskElement>(*masker).addClientRenderLayer(&m_layer);
                 m_internalSVGReferences.append(masker);
             }
         }
-        
-        maskLayer = maskLayer->next();
     }
 }
 
 void RenderLayer::MaskImageInfo::removeMaskImageClients(const RenderStyle& oldStyle)
 {
-    const FillLayer* maskLayer = oldStyle.maskLayers();
-    while (maskLayer) {
-        if (maskLayer->maskImage())
-            maskLayer->maskImage()->setRenderLayerImageClient(nullptr);
-
-        maskLayer = maskLayer->next();
+    for (auto* maskLayer = oldStyle.maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
+        if (auto& image = maskLayer->maskImage())
+            image->setRenderLayerImageClient(nullptr);
     }
     
-    for (auto externalSVGReference : m_externalSVGReferences)
+    for (auto& externalSVGReference : m_externalSVGReferences)
         externalSVGReference->removeClient(m_svgDocumentClient.get());
     m_externalSVGReferences.clear();
     
-    for (auto internalSVGReference : m_internalSVGReferences)
+    for (auto& internalSVGReference : m_internalSVGReferences)
         downcast<SVGMaskElement>(internalSVGReference.get())->removeClientRenderLayer(&m_layer);
     m_internalSVGReferences.clear();
 }

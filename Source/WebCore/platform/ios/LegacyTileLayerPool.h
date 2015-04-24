@@ -34,7 +34,6 @@
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>

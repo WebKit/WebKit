@@ -30,8 +30,7 @@
 #if ENABLE(NAVIGATOR_CONTENT_UTILS)
 
 #include "NavigatorContentUtilsClient.h"
-#include "RefCountedSupplement.h"
-#include <wtf/PassRefPtr.h>
+#include "Supplementable.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

@@ -29,7 +29,6 @@
 #include "WebKit.h"
 #include <WebCore/EditorClient.h>
 #include <WebCore/TextCheckerClient.h>
-#include <wtf/OwnPtr.h>
 
 class WebView;
 class WebNotification;

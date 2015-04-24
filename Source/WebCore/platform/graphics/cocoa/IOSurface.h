@@ -94,7 +94,7 @@ private:
     IntSize m_contextSize;
     size_t m_totalBytes;
 
-    OwnPtr<GraphicsContext> m_graphicsContext;
+    std::unique_ptr<GraphicsContext> m_graphicsContext;
     RetainPtr<CGContextRef> m_cgContext;
 
     RetainPtr<IOSurfaceRef> m_surface;

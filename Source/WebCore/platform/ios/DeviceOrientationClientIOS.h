@@ -29,7 +29,6 @@
 #include "DeviceOrientationClient.h"
 #include "DeviceOrientationController.h"
 #include "DeviceOrientationData.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 #ifdef __OBJC__

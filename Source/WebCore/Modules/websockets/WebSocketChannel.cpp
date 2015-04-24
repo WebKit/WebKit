@@ -571,22 +571,20 @@ bool WebSocketChannel::processFrame()
             // so we should pretend that we have finished to read this frame and
             // make sure that the member variables are in a consistent state before
             // the handler is invoked.
-            // Vector<char>::swap() is used here to clear m_continuousFrameData.
-            OwnPtr<Vector<char>> continuousFrameData = adoptPtr(new Vector<char>);
-            m_continuousFrameData.swap(*continuousFrameData);
+            Vector<char> continuousFrameData = WTF::move(m_continuousFrameData);
             m_hasContinuousFrame = false;
             if (m_continuousFrameOpCode == WebSocketFrame::OpCodeText) {
                 String message;
-                if (continuousFrameData->size())
-                    message = String::fromUTF8(continuousFrameData->data(), continuousFrameData->size());
+                if (continuousFrameData.size())
+                    message = String::fromUTF8(continuousFrameData.data(), continuousFrameData.size());
                 else
-                    message = "";
+                    message = emptyString();
                 if (message.isNull())
                     fail("Could not decode a text frame as UTF-8.");
                 else
                     m_client->didReceiveMessage(message);
             } else if (m_continuousFrameOpCode == WebSocketFrame::OpCodeBinary)
-                m_client->didReceiveBinaryData(continuousFrameData.release());
+                m_client->didReceiveBinaryData(WTF::move(continuousFrameData));
         }
         break;
 
@@ -596,7 +594,7 @@ bool WebSocketChannel::processFrame()
             if (frame.payloadLength)
                 message = String::fromUTF8(frame.payload, frame.payloadLength);
             else
-                message = "";
+                message = emptyString();
             skipBuffer(frameEnd - m_buffer.data());
             if (message.isNull())
                 fail("Could not decode a text frame as UTF-8.");
@@ -613,10 +611,10 @@ bool WebSocketChannel::processFrame()
 
     case WebSocketFrame::OpCodeBinary:
         if (frame.final) {
-            OwnPtr<Vector<char>> binaryData = adoptPtr(new Vector<char>(frame.payloadLength));
-            memcpy(binaryData->data(), frame.payload, frame.payloadLength);
+            Vector<char> binaryData(frame.payloadLength);
+            memcpy(binaryData.data(), frame.payload, frame.payloadLength);
             skipBuffer(frameEnd - m_buffer.data());
-            m_client->didReceiveBinaryData(binaryData.release());
+            m_client->didReceiveBinaryData(WTF::move(binaryData));
         } else {
             m_hasContinuousFrame = true;
             m_continuousFrameOpCode = WebSocketFrame::OpCodeBinary;
@@ -646,7 +644,7 @@ bool WebSocketChannel::processFrame()
         if (frame.payloadLength >= 3)
             m_closeEventReason = String::fromUTF8(&frame.payload[2], frame.payloadLength - 2);
         else
-            m_closeEventReason = "";
+            m_closeEventReason = emptyString();
         skipBuffer(frameEnd - m_buffer.data());
         m_receivedClosingHandshake = true;
         startClosingHandshake(m_closeEventCode, m_closeEventReason);

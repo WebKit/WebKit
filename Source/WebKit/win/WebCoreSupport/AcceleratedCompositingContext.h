@@ -36,7 +36,6 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/TextureMapperFPSCounter.h>
 #include <WebCore/Timer.h>
-#include <wtf/PassOwnPtr.h>
 
 class WebView;
 

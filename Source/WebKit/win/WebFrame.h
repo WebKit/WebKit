@@ -30,16 +30,13 @@
 #include "WebDataSource.h"
 
 #include "AccessibleDocument.h"
-
 #include <WebCore/AdjustViewSizeOrNot.h>
 #include <WebCore/FrameWin.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/URL.h>
 #include <WebCore/ResourceHandleClient.h>
-
-#include <WTF/RefPtr.h>
-#include <WTF/HashMap.h>
-#include <WTF/OwnPtr.h>
+#include <WebCore/URL.h>
+#include <wtf/HashMap.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

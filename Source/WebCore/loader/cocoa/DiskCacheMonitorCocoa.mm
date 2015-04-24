@@ -60,7 +60,7 @@ void DiskCacheMonitor::monitorFileBackingStoreCreation(const ResourceRequest& re
         return;
 
     // FIXME: It's not good to have the new here, but the delete inside the constructor. Reconsider this design.
-    new DiskCacheMonitor(request, sessionID, cachedResponse); // Balanced by adoptPtr in the blocks setup in the constructor, one of which is guaranteed to run.
+    new DiskCacheMonitor(request, sessionID, cachedResponse); // Balanced by delete and unique_ptr in the blocks set up in the constructor, one of which is guaranteed to run.
 }
 
 DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, SessionID sessionID, CFCachedURLResponseRef cachedResponse)

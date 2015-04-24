@@ -166,9 +166,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     RuntimeEnabledFeatures::sharedFeatures().setPluginReplacementEnabled(m_pluginReplacementEnabled);
 }
 
-// We can't use RefCountedSupplement because that would try to make InternalSettings RefCounted
-// and InternalSettings is already RefCounted via its base class, InternalSettingsGenerated.
-// Instead, we manually make InternalSettings supplement Page.
 class InternalSettingsWrapper : public Supplement<Page> {
 public:
     explicit InternalSettingsWrapper(Page* page)
