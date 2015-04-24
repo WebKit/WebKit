@@ -268,12 +268,7 @@ public:
         Node* left = add->child1().node();
         Node* right = add->child2().node();
 
-        bool speculation;
-        if (add->op() == ValueAdd)
-            speculation = Node::shouldSpeculateMachineInt(left, right);
-        else
-            speculation = Node::shouldSpeculateMachineInt(left, right);
-
+        bool speculation = Node::shouldSpeculateMachineInt(left, right);
         return speculation && !hasExitSite(add, Int52Overflow);
     }
     

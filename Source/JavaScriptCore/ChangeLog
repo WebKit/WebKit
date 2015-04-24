@@ -1,3 +1,14 @@
+2015-04-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove a useless branch on DFGGraph::addShouldSpeculateMachineInt()
+        https://bugs.webkit.org/show_bug.cgi?id=144118
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addShouldSpeculateMachineInt):
+        Both block do the same thing.
+
 2015-04-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Speculative fix for non-main thread auto-attach failures
