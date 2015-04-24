@@ -1,5 +1,27 @@
 2015-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Use a webkit subdirectory for the disk cache
+        https://bugs.webkit.org/show_bug.cgi?id=144048
+
+        Reviewed by Martin Robinson.
+
+        Recent versions of libsoup remove any file in cache dir not
+        referenced by the index when the cache is loaded to workaround
+        leaked resources when load/dump is unbalanced for whatever reason,
+        like a crash. We currently use $XDG_CACHE_HOME/app-name as default
+        disk cache directory, but that directory could be used by apps to
+        cache other things, and the soup cache might end up deleting other
+        stuff. The soup cache assumes the given directory is only for the
+        disk cache, so we should ensure that.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess): Append
+        webkit to the given disk cache and clear the previous soup cache if it exists.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess): Ditto.
+
+2015-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Remove incorrect ASSERT added in r183176.
 
         We allow to encode null attachments.

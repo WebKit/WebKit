@@ -1,3 +1,18 @@
+2015-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Use a webkit subdirectory for the disk cache
+        https://bugs.webkit.org/show_bug.cgi?id=144048
+
+        Reviewed by Martin Robinson.
+
+        Add a static method to SoupNetworkSession to clear a soup cache
+        given its directory.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::strIsNumeric):
+        (WebCore::SoupNetworkSession::clearCache):
+        * platform/network/soup/SoupNetworkSession.h:
+
 2015-04-23  Andy Estes  <aestes@apple.com>
 
         Fix the iOS build after r183234.
