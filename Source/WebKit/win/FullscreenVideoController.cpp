@@ -245,7 +245,7 @@ FullscreenVideoController::FullscreenVideoController()
     , m_timer(*this, &FullscreenVideoController::timerFired)
     , m_layerClient(std::make_unique<LayerClient>(this))
     , m_rootChild(PlatformCALayerWin::create(PlatformCALayer::LayerTypeLayer, m_layerClient.get()))
-    , m_fullscreenWindow(std::make_unique<MediaPlayerPrivateFullscreenWindow>(this))
+    , m_fullscreenWindow(std::make_unique<MediaPlayerPrivateFullscreenWindow>(static_cast<MediaPlayerPrivateFullscreenClient*>(this)))
 {
 }
 

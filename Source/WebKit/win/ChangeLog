@@ -1,3 +1,11 @@
+2015-04-23  Andy Estes  <aestes@apple.com>
+
+        Try to fix the Windows build after r183234.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::FullscreenVideoController): FullscreenVideoController inherits privately from
+        WebCore::MediaPlayerPrivateFullscreenClient, so make_unique isn't allowed to upcast. Add an explicit upcast.
+
 2015-04-23  Darin Adler  <darin@apple.com>
 
         Another round of removing use of OwnPtr, PassOwnPtr, and deleteOwnedPtr
