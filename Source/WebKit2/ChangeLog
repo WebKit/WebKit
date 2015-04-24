@@ -1,3 +1,11 @@
+2015-04-23  Dan Bernstein  <mitz@apple.com>
+
+        Fixed a bug where framework header postprocessing wasn’t removing WK_DEPRECATED macros when it should have.
+
+        Reviewed by Andy Estes.
+
+        * mac/postprocess-framework-headers.sh:
+
 2015-04-23  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to detach GraphicsLayerCA backing store
