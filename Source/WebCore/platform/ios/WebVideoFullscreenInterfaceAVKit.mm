@@ -1148,7 +1148,7 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal()
     if (hasMode(HTMLMediaElement::VideoFullscreenModeOptimized))
         [m_playerViewController cancelOptimizedFullscreen];
     if (hasMode(HTMLMediaElement::VideoFullscreenModeStandard))
-        [m_playerViewController exitFullScreenAnimated:NO completionHandler:nil];
+        [m_playerViewController exitFullScreenAnimated:NO completionHandler:[] (BOOL, NSError *) { }];
     
     [[m_playerViewController view] removeFromSuperview];
     if (m_viewController)
