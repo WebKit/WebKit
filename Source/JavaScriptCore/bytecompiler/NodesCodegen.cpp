@@ -2821,22 +2821,6 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         generator.emitReturn(r0);
         return;
     }
-
-    // If there is a return statment, and it is the only statement in the function, check if this is a numeric compare.
-    if (static_cast<BlockNode*>(singleStatement)->singleStatement()) {
-        ExpressionNode* returnValueExpression = returnNode->value();
-        if (returnValueExpression && returnValueExpression->isSubtract()) {
-            ExpressionNode* lhsExpression = static_cast<SubNode*>(returnValueExpression)->lhs();
-            ExpressionNode* rhsExpression = static_cast<SubNode*>(returnValueExpression)->rhs();
-            if (lhsExpression->isResolveNode()
-                && rhsExpression->isResolveNode()
-                && generator.isArgumentNumber(static_cast<ResolveNode*>(lhsExpression)->identifier(), 0)
-                && generator.isArgumentNumber(static_cast<ResolveNode*>(rhsExpression)->identifier(), 1)) {
-                
-                generator.setIsNumericCompareFunction(true);
-            }
-        }
-    }
 }
 
 // ------------------------------ FuncDeclNode ---------------------------------

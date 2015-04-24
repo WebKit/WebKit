@@ -54,7 +54,6 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState*);
-EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState*);
@@ -69,21 +68,6 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncEntries(ExecState*);
 #include "ArrayPrototype.lut.h"
 
 namespace JSC {
-
-static inline bool isNumericCompareFunction(ExecState* exec, JSValue function, CallType callType, const CallData& callData)
-{
-    if (callType != CallTypeJS)
-        return false;
-
-    FunctionExecutable* executable = callData.js.functionExecutable;
-    JSScope* scope = callData.js.scope;
-
-    JSObject* error = executable->prepareForExecution(exec, jsCast<JSFunction*>(function), scope, CodeForCall);
-    if (error)
-        return false;
-
-    return executable->codeBlockForCall()->isNumericCompareFunction();
-}
 
 // ------------------------------ ArrayPrototype ----------------------------
 
@@ -652,155 +636,6 @@ inline JSValue getOrHole(JSObject* obj, ExecState* exec, unsigned propertyName)
         return slot.getValue(exec, propertyName);
 
     return JSValue();
-}
-
-static bool attemptFastSort(ExecState* exec, JSObject* thisObj, JSValue function, CallData& callData, CallType& callType)
-{
-    if (thisObj->classInfo() != JSArray::info()
-        || asArray(thisObj)->hasSparseMap()
-        || shouldUseSlowPut(thisObj->indexingType()))
-        return false;
-    
-    if (isNumericCompareFunction(exec, function, callType, callData))
-        asArray(thisObj)->sortNumeric(exec, function, callType, callData);
-    else if (callType != CallTypeNone)
-        asArray(thisObj)->sort(exec, function, callType, callData);
-    else
-        asArray(thisObj)->sort(exec);
-    return true;
-}
-
-static bool performSlowSort(ExecState* exec, JSObject* thisObj, unsigned length, JSValue function, CallData& callData, CallType& callType)
-{
-    // "Min" sort. Not the fastest, but definitely less code than heapsort
-    // or quicksort, and much less swapping than bubblesort/insertionsort.
-    for (unsigned i = 0; i < length - 1; ++i) {
-        JSValue iObj = getOrHole(thisObj, exec, i);
-        if (exec->hadException())
-            return false;
-        unsigned themin = i;
-        JSValue minObj = iObj;
-        for (unsigned j = i + 1; j < length; ++j) {
-            JSValue jObj = getOrHole(thisObj, exec, j);
-            if (exec->hadException())
-                return false;
-            double compareResult;
-            if (!jObj)
-                compareResult = 1;
-            else if (!minObj)
-                compareResult = -1;
-            else if (jObj.isUndefined())
-                compareResult = 1; // don't check minObj because there's no need to differentiate == (0) from > (1)
-            else if (minObj.isUndefined())
-                compareResult = -1;
-            else if (callType != CallTypeNone) {
-                MarkedArgumentBuffer l;
-                l.append(jObj);
-                l.append(minObj);
-                compareResult = call(exec, function, callType, callData, jsUndefined(), l).toNumber(exec);
-            } else
-                compareResult = codePointCompareLessThan(jObj.toWTFStringInline(exec), minObj.toWTFStringInline(exec)) ? -1 : 1;
-
-            if (compareResult < 0) {
-                themin = j;
-                minObj = jObj;
-            }
-        }
-        // Swap themin and i
-        if (themin > i) {
-            if (minObj) {
-                thisObj->methodTable(exec->vm())->putByIndex(thisObj, exec, i, minObj, true);
-                if (exec->hadException())
-                    return false;
-            } else if (!thisObj->methodTable(exec->vm())->deletePropertyByIndex(thisObj, exec, i)) {
-                throwTypeError(exec, ASCIILiteral("Unable to delete property."));
-                return false;
-            }
-            if (iObj) {
-                thisObj->methodTable(exec->vm())->putByIndex(thisObj, exec, themin, iObj, true);
-                if (exec->hadException())
-                    return false;
-            } else if (!thisObj->methodTable(exec->vm())->deletePropertyByIndex(thisObj, exec, themin)) {
-                throwTypeError(exec, ASCIILiteral("Unable to delete property."));
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
-{
-    JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = getLength(exec, thisObj);
-    if (!length || exec->hadException())
-        return JSValue::encode(thisObj);
-
-    JSValue function = exec->argument(0);
-    CallData callData;
-    CallType callType = getCallData(function, callData);
-
-    if (attemptFastSort(exec, thisObj, function, callData, callType))
-        return JSValue::encode(thisObj);
-    
-    // Assume that for small-ish arrays, doing the slow sort directly is better.
-    if (length < 1000)
-        return performSlowSort(exec, thisObj, length, function, callData, callType) ? JSValue::encode(thisObj) : JSValue::encode(jsUndefined());
-    
-    JSGlobalObject* globalObject = JSGlobalObject::create(
-        exec->vm(), JSGlobalObject::createStructure(exec->vm(), jsNull()));
-    JSArray* flatArray = constructEmptyArray(globalObject->globalExec(), nullptr);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-    
-    PropertyNameArray nameArray(exec);
-    thisObj->methodTable(exec->vm())->getPropertyNames(thisObj, exec, nameArray, EnumerationMode(DontEnumPropertiesMode::Include));
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    Vector<uint32_t, 0, UnsafeVectorOverflow> keys;
-    for (size_t i = 0; i < nameArray.size(); ++i) {
-        PropertyName name = nameArray[i];
-        Optional<uint32_t> optionalIndex = parseIndex(name);
-        if (!optionalIndex)
-            continue;
-
-        uint32_t index = optionalIndex.value();
-        JSValue value = getOrHole(thisObj, exec, index);
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
-        if (!value)
-            continue;
-        keys.append(index);
-        flatArray->push(exec, value);
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
-    }
-    
-    if (!attemptFastSort(exec, flatArray, function, callData, callType)
-        && !performSlowSort(exec, flatArray, flatArray->length(), function, callData, callType))
-        return JSValue::encode(jsUndefined());
-    
-    for (size_t i = 0; i < keys.size(); ++i) {
-        size_t index = keys[i];
-        if (index < flatArray->length())
-            continue;
-        
-        if (!thisObj->methodTable(exec->vm())->deletePropertyByIndex(thisObj, exec, index)) {
-            throwTypeError(exec, ASCIILiteral("Unable to delete property."));
-            return JSValue::encode(jsUndefined());
-        }
-    }
-    
-    for (size_t i = flatArray->length(); i--;) {
-        JSValue value = getOrHole(flatArray, exec, i);
-        RELEASE_ASSERT(value);
-        thisObj->methodTable(exec->vm())->putByIndex(thisObj, exec, i, value, true);
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
-    }
-    
-    return JSValue::encode(thisObj);
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)

@@ -1,3 +1,19 @@
+2015-04-21  Geoffrey Garen  <ggaren@apple.com>
+
+        It shouldn't take 1846 lines of code and 5 FIXMEs to sort an array.
+        https://bugs.webkit.org/show_bug.cgi?id=144013
+
+        Reviewed by Mark Lam.
+
+        Remove this custom tree implementation because it is unused. (It was
+        previously used to achieve a stable array sort in certain cases.)
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/AVLTree.h: Removed.
+        * wtf/CMakeLists.txt:
+
 2015-04-24  Darin Adler  <darin@apple.com>
 
         Convert OwnPtr and PassOwnPtr uses to std::unique_ptr

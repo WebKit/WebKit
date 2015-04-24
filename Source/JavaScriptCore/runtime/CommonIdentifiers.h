@@ -269,9 +269,12 @@
     macro(objectGetOwnPropertySymbols) \
     macro(Number) \
     macro(Array) \
+    macro(String) \
     macro(abs) \
     macro(floor) \
     macro(isFinite) \
+    macro(getPrototypeOf) \
+    macro(getOwnPropertyNames) \
     macro(TypeError) \
     macro(undefined) \
     macro(BuiltinLog) \

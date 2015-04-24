@@ -96,6 +96,9 @@ void ObjectConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Obj
 
     if (!globalObject->runtimeFlags().isSymbolDisabled())
         JSC_NATIVE_FUNCTION("getOwnPropertySymbols", objectConstructorGetOwnPropertySymbols, DontEnum, 1);
+
+    JSC_NATIVE_FUNCTION(vm.propertyNames->getPrototypeOfPrivateName, objectConstructorGetPrototypeOf, DontEnum, 1);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->getOwnPropertyNamesPrivateName, objectConstructorGetOwnPropertyNames, DontEnum, 1);
 }
 
 bool ObjectConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
