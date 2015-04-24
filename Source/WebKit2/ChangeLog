@@ -1,5 +1,11 @@
 2015-04-24  Anders Carlsson  <andersca@apple.com>
 
+        Address a review comment from Joe Pecoraro.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h:
+
+2015-04-24  Anders Carlsson  <andersca@apple.com>
+
         Rename -[WKWebsiteDataStore isNonPersistent] to -[WKWebsiteDataStore isPersistent]
         https://bugs.webkit.org/show_bug.cgi?id=144158
 
