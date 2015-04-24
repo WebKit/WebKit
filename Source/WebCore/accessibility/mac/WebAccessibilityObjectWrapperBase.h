@@ -56,8 +56,9 @@ class VisiblePosition;
 - (NSString *)ariaLandmarkRoleDescription;
 
 - (id)attachmentView;
-// Used to inform an element when a notification is posted for it. Used by DRT.
+// Used to inform an element when a notification is posted for it. Used by tests.
 - (void)accessibilityPostedNotification:(NSString *)notificationName;
+- (void)accessibilityPostedNotification:(NSString *)notificationName userInfo:(NSDictionary *)userInfo;
 
 - (CGPathRef)convertPathToScreenSpace:(WebCore::Path &)path;
 - (CGPoint)convertPointToScreenSpace:(WebCore::FloatPoint &)point;

@@ -44,7 +44,6 @@ private:
     DictationCommandIOS(Document&, Vector<Vector<String>>&& dictationPhrases, RetainPtr<id> metadata);
 
     virtual void doApply() override;
-    virtual EditAction editingAction() const override { return EditActionDictation; }
 
     Vector<Vector<String>> m_dictationPhrases;
     RetainPtr<id> m_metadata;

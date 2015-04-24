@@ -123,9 +123,8 @@ RefPtr<HTMLElement> createStyleSpanElement(Document& document)
 }
 
 ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* style, EditAction editingAction, EPropertyLevel propertyLevel)
-    : CompositeEditCommand(document)
+    : CompositeEditCommand(document, editingAction)
     , m_style(style->copy())
-    , m_editingAction(editingAction)
     , m_propertyLevel(propertyLevel)
     , m_start(endingSelection().start().downstream())
     , m_end(endingSelection().end().upstream())
@@ -136,9 +135,8 @@ ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* sty
 }
 
 ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* style, const Position& start, const Position& end, EditAction editingAction, EPropertyLevel propertyLevel)
-    : CompositeEditCommand(document)
+    : CompositeEditCommand(document, editingAction)
     , m_style(style->copy())
-    , m_editingAction(editingAction)
     , m_propertyLevel(propertyLevel)
     , m_start(start)
     , m_end(end)
@@ -149,9 +147,8 @@ ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* sty
 }
 
 ApplyStyleCommand::ApplyStyleCommand(PassRefPtr<Element> element, bool removeOnly, EditAction editingAction)
-    : CompositeEditCommand(element->document())
+    : CompositeEditCommand(element->document(), editingAction)
     , m_style(EditingStyle::create())
-    , m_editingAction(editingAction)
     , m_propertyLevel(PropertyDefault)
     , m_start(endingSelection().start().downstream())
     , m_end(endingSelection().end().upstream())
@@ -163,9 +160,8 @@ ApplyStyleCommand::ApplyStyleCommand(PassRefPtr<Element> element, bool removeOnl
 }
 
 ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction editingAction)
-    : CompositeEditCommand(document)
+    : CompositeEditCommand(document, editingAction)
     , m_style(style->copy())
-    , m_editingAction(editingAction)
     , m_propertyLevel(PropertyDefault)
     , m_start(endingSelection().start().downstream())
     , m_end(endingSelection().end().upstream())
@@ -224,11 +220,6 @@ void ApplyStyleCommand::doApply()
         applyBlockStyle(m_style.get());
         break;
     }
-}
-
-EditAction ApplyStyleCommand::editingAction() const
-{
-    return m_editingAction;
 }
 
 void ApplyStyleCommand::applyBlockStyle(EditingStyle *style)

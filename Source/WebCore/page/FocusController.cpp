@@ -340,8 +340,10 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
     if (caretBrowsing) {
         Position position = firstPositionInOrBeforeNode(element.get());
         VisibleSelection newSelection(position, position, DOWNSTREAM);
-        if (frame.selection().shouldChangeSelection(newSelection))
-            frame.selection().setSelection(newSelection);
+        if (frame.selection().shouldChangeSelection(newSelection)) {
+            AXTextStateChangeIntent intent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown });
+            frame.selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered), intent);
+        }
     }
 
     element->focus(false, direction);

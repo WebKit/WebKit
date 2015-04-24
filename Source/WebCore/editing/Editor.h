@@ -174,7 +174,7 @@ public:
 #endif
 
     WEBCORE_EXPORT bool deleteWithDirection(SelectionDirection, TextGranularity, bool killRing, bool isTypingAction);
-    WEBCORE_EXPORT void deleteSelectionWithSmartDelete(bool smartDelete);
+    WEBCORE_EXPORT void deleteSelectionWithSmartDelete(bool smartDelete, EditAction = EditActionDelete);
     void clearText();
 #if PLATFORM(IOS)
     WEBCORE_EXPORT void removeUnchangeableStyles();
@@ -382,8 +382,8 @@ public:
     void textDidChangeInTextArea(Element*);
     WEBCORE_EXPORT WritingDirection baseWritingDirectionForSelectionStart() const;
 
-    WEBCORE_EXPORT void replaceSelectionWithFragment(PassRefPtr<DocumentFragment>, bool selectReplacement, bool smartReplace, bool matchStyle, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
-    WEBCORE_EXPORT void replaceSelectionWithText(const String&, bool selectReplacement, bool smartReplace);
+    WEBCORE_EXPORT void replaceSelectionWithFragment(PassRefPtr<DocumentFragment>, bool selectReplacement, bool smartReplace, bool matchStyle, EditAction = EditActionInsert, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
+    WEBCORE_EXPORT void replaceSelectionWithText(const String&, bool selectReplacement, bool smartReplace, EditAction = EditActionInsert);
     WEBCORE_EXPORT bool selectionStartHasMarkerFor(DocumentMarker::MarkerType, int from, int length) const;
     void updateMarkersForWordsAffectedByEditing(bool onlyHandleWordsContainingSelection);
     void deletedAutocorrectionAtPosition(const Position&, const String& originalString);
@@ -468,7 +468,7 @@ private:
     enum SetCompositionMode { ConfirmComposition, CancelComposition };
     void setComposition(const String&, SetCompositionMode);
 
-    void changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions);
+    void changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions, AXTextStateChangeIntent = AXTextStateChangeIntent());
 
     enum EditorActionSpecifier { CutAction, CopyAction };
     void performCutOrCopy(EditorActionSpecifier);

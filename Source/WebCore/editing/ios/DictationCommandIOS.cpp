@@ -38,7 +38,7 @@
 namespace WebCore {
 
 DictationCommandIOS::DictationCommandIOS(Document& document, Vector<Vector<String>>&& dictationPhrases, RetainPtr<id> metadata)
-    : CompositeEditCommand(document)
+    : CompositeEditCommand(document, EditActionDictation)
     , m_dictationPhrases(WTF::move(dictationPhrases))
     , m_metadata(WTF::move(metadata))
 {

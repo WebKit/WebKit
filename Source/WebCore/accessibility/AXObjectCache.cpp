@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,6 +90,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+// Post value change notifications for password fields or elements contained in password fields at a 40hz interval to thwart analysis of typing cadence
+static double AccessibilityPasswordValueChangeNotificationInterval = 0.025;
+
 AccessibilityObjectInclusion AXComputedObjectAttributeCache::getIgnored(AXID id) const
 {
     HashMap<AXID, CachedAXObjectAttributes>::const_iterator it = m_idMapping.find(id);
@@ -129,6 +132,7 @@ void AXObjectCache::setEnhancedUserInterfaceAccessibility(bool flag)
 AXObjectCache::AXObjectCache(Document& document)
     : m_document(document)
     , m_notificationPostTimer(*this, &AXObjectCache::notificationPostTimerFired)
+    , m_passwordNotificationPostTimer(*this, &AXObjectCache::passwordNotificationPostTimerFired)
 {
 }
 
@@ -705,7 +709,7 @@ void AXObjectCache::notificationPostTimerFired()
     Ref<Document> protectorForCacheOwner(m_document);
     m_notificationPostTimer.stop();
     
-    // In DRT, posting notifications has a tendency to immediately queue up other notifications, which can lead to unexpected behavior
+    // In tests, posting notifications has a tendency to immediately queue up other notifications, which can lead to unexpected behavior
     // when the notification list is cleared at the end. Instead copy this list at the start.
     auto notifications = WTF::move(m_notificationsToPost);
     
@@ -741,6 +745,20 @@ void AXObjectCache::notificationPostTimerFired()
         if (notification == AXChildrenChanged && obj->parentObjectIfExists() && obj->lastKnownIsIgnoredValue() != obj->accessibilityIsIgnored())
             childrenChanged(obj->parentObject());
     }
+}
+
+void AXObjectCache::passwordNotificationPostTimerFired()
+{
+#if PLATFORM(COCOA)
+    m_passwordNotificationPostTimer.stop();
+
+    // In tests, posting notifications has a tendency to immediately queue up other notifications, which can lead to unexpected behavior
+    // when the notification list is cleared at the end. Instead copy this list at the start.
+    auto notifications = WTF::move(m_passwordNotificationsToPost);
+
+    for (const auto& notification : notifications)
+        postTextStateChangePlatformNotification(notification.get(), AXTextEditTypeInsert, " ", VisiblePosition());
+#endif
 }
     
 void AXObjectCache::postNotification(RenderObject* renderer, AXNotification notification, PostTarget postTarget, PostType postType)
@@ -850,16 +868,223 @@ void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
     postNotification(renderer, AXSelectedChildrenChanged, TargetObservableParent);
 }
 
-void AXObjectCache::nodeTextChangeNotification(Node* node, AXTextChange textChange, unsigned offset, const String& text)
+#ifndef NDEBUG
+void AXObjectCache::showIntent(const AXTextStateChangeIntent &intent)
+{
+    switch (intent.type) {
+    case AXTextStateChangeTypeUnknown:
+        dataLog("Unknown");
+        break;
+    case AXTextStateChangeTypeEdit:
+        dataLog("Edit::");
+        break;
+    case AXTextStateChangeTypeSelectionMove:
+        dataLog("Move::");
+        break;
+    case AXTextStateChangeTypeSelectionExtend:
+        dataLog("Extend::");
+        break;
+    }
+    switch (intent.type) {
+    case AXTextStateChangeTypeUnknown:
+        break;
+    case AXTextStateChangeTypeEdit:
+        switch (intent.change) {
+        case AXTextEditTypeUnknown:
+            dataLog("Unknown");
+            break;
+        case AXTextEditTypeDelete:
+            dataLog("Delete");
+            break;
+        case AXTextEditTypeInsert:
+            dataLog("Insert");
+            break;
+        case AXTextEditTypeDictation:
+            dataLog("DictationInsert");
+            break;
+        case AXTextEditTypeTyping:
+            dataLog("TypingInsert");
+            break;
+        case AXTextEditTypeCut:
+            dataLog("Cut");
+            break;
+        case AXTextEditTypePaste:
+            dataLog("Paste");
+            break;
+        }
+        break;
+    case AXTextStateChangeTypeSelectionMove:
+    case AXTextStateChangeTypeSelectionExtend:
+        switch (intent.selection.direction) {
+        case AXTextSelectionDirectionUnknown:
+            dataLog("Unknown::");
+            break;
+        case AXTextSelectionDirectionBeginning:
+            dataLog("Beginning::");
+            break;
+        case AXTextSelectionDirectionEnd:
+            dataLog("End::");
+            break;
+        case AXTextSelectionDirectionPrevious:
+            dataLog("Previous::");
+            break;
+        case AXTextSelectionDirectionNext:
+            dataLog("Next::");
+            break;
+        case AXTextSelectionDirectionDiscontiguous:
+            dataLog("Discontiguous::");
+            break;
+        }
+        switch (intent.selection.direction) {
+        case AXTextSelectionDirectionUnknown:
+        case AXTextSelectionDirectionBeginning:
+        case AXTextSelectionDirectionEnd:
+        case AXTextSelectionDirectionPrevious:
+        case AXTextSelectionDirectionNext:
+            switch (intent.selection.granularity) {
+            case AXTextSelectionGranularityUnknown:
+                dataLog("Unknown");
+                break;
+            case AXTextSelectionGranularityCharacter:
+                dataLog("Character");
+                break;
+            case AXTextSelectionGranularityWord:
+                dataLog("Word");
+                break;
+            case AXTextSelectionGranularityLine:
+                dataLog("Line");
+                break;
+            case AXTextSelectionGranularitySentence:
+                dataLog("Sentence");
+                break;
+            case AXTextSelectionGranularityParagraph:
+                dataLog("Paragraph");
+                break;
+            case AXTextSelectionGranularityPage:
+                dataLog("Page");
+                break;
+            case AXTextSelectionGranularityDocument:
+                dataLog("Document");
+                break;
+            case AXTextSelectionGranularityAll:
+                dataLog("All");
+                break;
+            }
+            break;
+        case AXTextSelectionDirectionDiscontiguous:
+            break;
+        }
+        break;
+    }
+    if (intent.isSynchronizing)
+        dataLog("-Sync");
+    dataLog("\n");
+}
+#endif
+
+void AXObjectCache::setTextSelectionIntent(AXTextStateChangeIntent intent)
+{
+    m_textSelectionIntent = intent;
+}
+
+static bool isPasswordFieldOrContainedByPasswordField(AccessibilityObject* object)
+{
+    return object && (object->isPasswordField() || object->isContainedByPasswordField());
+}
+
+void AXObjectCache::postTextStateChangeNotification(Node* node, AXTextStateChangeIntent intent, const VisibleSelection& selection)
 {
     if (!node)
         return;
 
+#if PLATFORM(COCOA)
+    if (intent.type == AXTextStateChangeTypeUnknown)
+        intent = m_textSelectionIntent;
+
     stopCachingComputedObjectAttributes();
 
-    // Delegate on the right platform
-    AccessibilityObject* obj = getOrCreate(node);
-    nodeTextChangePlatformNotification(obj, textChange, offset, text);
+    AccessibilityObject* object = getOrCreate(node);
+    if (object) {
+        if (isPasswordFieldOrContainedByPasswordField(object))
+            return;
+        object = object->observableObject();
+    }
+
+    postTextStateChangePlatformNotification(object, intent, selection);
+#else
+    postNotification(node->renderer(), AXObjectCache::AXSelectedTextChanged, TargetObservableParent);
+    UNUSED_PARAM(intent);
+    UNUSED_PARAM(selection);
+#endif
+
+    setTextSelectionIntent(AXTextStateChangeIntent());
+}
+
+void AXObjectCache::postTextStateChangeNotification(Node* node, AXTextEditType type, const String& text, const VisiblePosition& position)
+{
+    if (!node)
+        return;
+    ASSERT(type != AXTextEditTypeUnknown);
+
+    stopCachingComputedObjectAttributes();
+
+    AccessibilityObject* object = getOrCreate(node);
+#if PLATFORM(COCOA)
+    if (object) {
+        if (enqueuePasswordValueChangeNotification(object))
+            return;
+        object = object->observableObject();
+    }
+
+    postTextStateChangePlatformNotification(object, type, text, position);
+#else
+    nodeTextChangePlatformNotification(object, textChangeForEditType(type), position.deepEquivalent().deprecatedEditingOffset(), text);
+#endif
+}
+
+void AXObjectCache::postTextReplacementNotification(Node* node, AXTextEditType deletionType, const String& deletedText, AXTextEditType insertionType, const String& insertedText, const VisiblePosition& position)
+{
+    if (!node)
+        return;
+    ASSERT(deletionType == AXTextEditTypeDelete);
+    ASSERT(insertionType == AXTextEditTypeInsert || insertionType == AXTextEditTypeTyping || insertionType == AXTextEditTypeDictation || insertionType == AXTextEditTypePaste);
+
+    stopCachingComputedObjectAttributes();
+
+    AccessibilityObject* object = getOrCreate(node);
+#if PLATFORM(COCOA)
+    if (object) {
+        if (enqueuePasswordValueChangeNotification(object))
+            return;
+        object = object->observableObject();
+    }
+
+    postTextReplacementPlatformNotification(object, deletionType, deletedText, insertionType, insertedText, position);
+#else
+    nodeTextChangePlatformNotification(object, textChangeForEditType(deletionType), position.deepEquivalent().deprecatedEditingOffset(), deletedText);
+    nodeTextChangePlatformNotification(object, textChangeForEditType(insertionType), position.deepEquivalent().deprecatedEditingOffset(), insertedText);
+#endif
+}
+
+bool AXObjectCache::enqueuePasswordValueChangeNotification(AccessibilityObject* object)
+{
+    if (!isPasswordFieldOrContainedByPasswordField(object))
+        return false;
+
+    AccessibilityObject* observableObject = object->observableObject();
+    if (!observableObject) {
+        ASSERT_NOT_REACHED();
+        // return true even though the enqueue didn't happen because this is a password field and caller shouldn't post a notification
+        return true;
+    }
+
+    if (!m_passwordNotificationsToPost.contains(observableObject)) {
+        m_passwordNotificationsToPost.append(observableObject);
+        if (!m_passwordNotificationPostTimer.isActive())
+            m_passwordNotificationPostTimer.startOneShot(AccessibilityPasswordValueChangeNotificationInterval);
+    }
+
+    return true;
 }
 
 void AXObjectCache::frameLoadingEventNotification(Frame* frame, AXLoadingEvent loadingEvent)
@@ -1084,6 +1309,14 @@ bool isNodeAriaVisible(Node* node)
     return false;
 }
 
+AccessibilityObject* AXObjectCache::rootWebArea()
+{
+    AccessibilityObject* rootObject = this->rootObject();
+    if (!rootObject || !rootObject->isAccessibilityScrollView())
+        return nullptr;
+    return downcast<AccessibilityScrollView>(*rootObject).webAreaObject();
+}
+
 AXAttributeCacheEnabler::AXAttributeCacheEnabler(AXObjectCache* cache)
     : m_cache(cache)
 {
@@ -1096,6 +1329,26 @@ AXAttributeCacheEnabler::~AXAttributeCacheEnabler()
     if (m_cache)
         m_cache->stopCachingComputedObjectAttributes();
 }
+
+#if !PLATFORM(COCOA)
+AXTextChange AXObjectCache::textChangeForEditType(AXTextEditType type)
+{
+    switch (type) {
+    case AXTextEditTypeCut:
+    case AXTextEditTypeDelete:
+        return AXTextDeleted;
+    case AXTextEditTypeInsert:
+    case AXTextEditTypeDictation:
+    case AXTextEditTypeTyping:
+    case AXTextEditTypePaste:
+        return AXTextInserted;
+    case AXTextEditTypeUnknown:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return AXTextInserted;
+}
+#endif
     
 } // namespace WebCore
 

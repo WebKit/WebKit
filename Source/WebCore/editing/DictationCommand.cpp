@@ -115,7 +115,7 @@ void DictationCommand::insertTextRunWithoutNewlines(size_t lineStart, size_t lin
 {
     Vector<DictationAlternative> alternativesInLine;
     collectDictationAlternativesInRange(lineStart, lineLength, alternativesInLine);
-    RefPtr<InsertTextCommand> command = InsertTextCommand::createWithMarkerSupplier(document(), m_textToInsert.substring(lineStart, lineLength), DictationMarkerSupplier::create(alternativesInLine));
+    RefPtr<InsertTextCommand> command = InsertTextCommand::createWithMarkerSupplier(document(), m_textToInsert.substring(lineStart, lineLength), DictationMarkerSupplier::create(alternativesInLine), EditActionDictation);
     applyCommandToComposite(command, endingSelection());
 }
 
@@ -124,7 +124,7 @@ void DictationCommand::insertParagraphSeparator()
     if (!canAppendNewLineFeedToSelection(endingSelection()))
         return;
 
-    applyCommandToComposite(InsertParagraphSeparatorCommand::create(document()));
+    applyCommandToComposite(InsertParagraphSeparatorCommand::create(document(), false, false, EditActionDictation));
 }
 
 void DictationCommand::collectDictationAlternativesInRange(size_t rangeStart, size_t rangeLength, Vector<DictationAlternative>& alternatives)

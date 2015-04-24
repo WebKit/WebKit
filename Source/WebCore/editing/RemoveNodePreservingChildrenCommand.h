@@ -32,13 +32,13 @@ namespace WebCore {
 
 class RemoveNodePreservingChildrenCommand : public CompositeEditCommand {
 public:
-    static Ref<RemoveNodePreservingChildrenCommand> create(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
+    static Ref<RemoveNodePreservingChildrenCommand> create(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction)
     {
-        return adoptRef(*new RemoveNodePreservingChildrenCommand(node, shouldAssumeContentIsAlwaysEditable));
+        return adoptRef(*new RemoveNodePreservingChildrenCommand(node, shouldAssumeContentIsAlwaysEditable, editingAction));
     }
 
 private:
-    explicit RemoveNodePreservingChildrenCommand(PassRefPtr<Node>, ShouldAssumeContentIsAlwaysEditable);
+    explicit RemoveNodePreservingChildrenCommand(PassRefPtr<Node>, ShouldAssumeContentIsAlwaysEditable, EditAction);
 
     virtual void doApply();
 

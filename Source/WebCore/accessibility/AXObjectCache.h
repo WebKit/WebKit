@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2007, 2008, 2009, 2010, 2011, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef AXObjectCache_h
 #define AXObjectCache_h
 
+#include "AXTextStateChangeIntent.h"
 #include "AccessibilityObject.h"
 #include "Timer.h"
 #include <limits.h>
@@ -66,6 +67,10 @@ private:
 
     HashMap<AXID, CachedAXObjectAttributes> m_idMapping;
 };
+
+#if !PLATFORM(COCOA)
+enum AXTextChange { AXTextInserted, AXTextDeleted };
+#endif
 
 enum PostTarget { TargetElement, TargetObservableParent };
 
@@ -189,12 +194,15 @@ public:
     void postNotification(Node*, AXNotification, PostTarget = TargetElement, PostType = PostAsynchronously);
     void postNotification(AccessibilityObject*, Document*, AXNotification, PostTarget = TargetElement, PostType = PostAsynchronously);
 
-    enum AXTextChange {
-        AXTextInserted,
-        AXTextDeleted,
-    };
+#ifndef NDEBUG
+    void showIntent(const AXTextStateChangeIntent&);
+#endif
 
-    void nodeTextChangeNotification(Node*, AXTextChange, unsigned offset, const String&);
+    void setTextSelectionIntent(AXTextStateChangeIntent);
+
+    void postTextStateChangeNotification(Node*, AXTextEditType, const String&, const VisiblePosition&);
+    void postTextReplacementNotification(Node*, AXTextEditType deletionType, const String& deletedText, AXTextEditType insertionType, const String& insertedText, const VisiblePosition&);
+    void postTextStateChangeNotification(Node*, AXTextStateChangeIntent, const VisibleSelection&);
 
     enum AXLoadingEvent {
         AXLoadingStarted,
@@ -213,12 +221,24 @@ public:
     AXComputedObjectAttributeCache* computedObjectAttributeCache() { return m_computedObjectAttributeCache.get(); }
 
     Document& document() const { return m_document; }
-    
+
+#if PLATFORM(MAC)
+    static void setShouldRepostNotificationsForTests(bool value);
+#endif
+
 protected:
     void postPlatformNotification(AccessibilityObject*, AXNotification);
     void platformHandleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode);
 
-    void nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned offset, const String&);
+#if PLATFORM(COCOA)
+    void postTextStateChangePlatformNotification(AccessibilityObject*, AXTextStateChangeIntent, const VisibleSelection&);
+    void postTextStateChangePlatformNotification(AccessibilityObject*, AXTextEditType, const String&, const VisiblePosition&);
+    void postTextReplacementPlatformNotification(AccessibilityObject*, AXTextEditType, const String&, AXTextEditType, const String&, const VisiblePosition&);
+#else
+    static AXTextChange textChangeForEditType(AXTextEditType);
+    void nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&);
+#endif
+
     void frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent);
     void textChanged(AccessibilityObject*);
     void labelChanged(Element*);
@@ -229,6 +249,8 @@ protected:
     bool isNodeInUse(Node* n) { return m_textMarkerNodes.contains(n); }
 
 private:
+    AccessibilityObject* rootWebArea();
+    
     Document& m_document;
     HashMap<AXID, RefPtr<AccessibilityObject>> m_objects;
     HashMap<RenderObject*, AXID> m_renderObjectMapping;
@@ -244,6 +266,11 @@ private:
     Timer m_notificationPostTimer;
     Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>> m_notificationsToPost;
     void notificationPostTimerFired();
+
+    Timer m_passwordNotificationPostTimer;
+    Vector<RefPtr<AccessibilityObject>> m_passwordNotificationsToPost;
+    void passwordNotificationPostTimerFired();
+
     void handleMenuOpened(Node*);
     void handleLiveRegionCreated(Node*);
     void handleMenuItemSelected(Node*);
@@ -251,6 +278,10 @@ private:
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
     
     AXID getAXID(AccessibilityObject*);
+
+    bool enqueuePasswordValueChangeNotification(AccessibilityObject*);
+
+    AXTextStateChangeIntent m_textSelectionIntent;
 };
 
 class AXAttributeCacheEnabler
@@ -308,8 +339,9 @@ inline void AXObjectCache::handleScrollbarUpdate(ScrollView*) { }
 inline void AXObjectCache::handleAttributeChanged(const QualifiedName&, Element*) { }
 inline void AXObjectCache::recomputeIsIgnored(RenderObject*) { }
 inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
-inline void AXObjectCache::nodeTextChangeNotification(Node*, AXTextChange, unsigned, const String&) { }
-inline void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) { }
+inline void AXObjectCache::postTextStateChangeNotification(Node*, AXTextStateChangeIntent, const VisibleSelection&) { }
+inline void AXObjectCache::postTextStateChangeNotification(Node*, AXTextEditType, const String&, const VisiblePosition&) { }
+inline void AXObjectCache::postTextReplacementNotification(Node*, AXTextEditType, const String&, AXTextEditType, const String&, const VisiblePosition&) { }
 inline void AXObjectCache::postNotification(AccessibilityObject*, Document*, AXNotification, PostTarget, PostType) { }
 inline void AXObjectCache::postNotification(RenderObject*, AXNotification, PostTarget, PostType) { }
 inline void AXObjectCache::postNotification(Node*, AXNotification, PostTarget, PostType) { }
@@ -320,6 +352,14 @@ inline void AXObjectCache::remove(Node*) { }
 inline void AXObjectCache::remove(Widget*) { }
 inline void AXObjectCache::selectedChildrenChanged(RenderObject*) { }
 inline void AXObjectCache::selectedChildrenChanged(Node*) { }
+#if PLATFORM(COCOA)
+inline void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*, AXTextStateChangeIntent, const VisibleSelection&) { }
+inline void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*, AXTextEditType, const String&, const VisiblePosition&) { }
+inline void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject*, AXTextEditType, const String&, AXTextEditType, const String&, const VisiblePosition&) { }
+#else
+inline AXTextChange AXObjectCache::textChangeForEditType(AXTextEditType) { return AXTextInserted; }
+inline void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) { }
+#endif
 #endif
 
 }

@@ -37,16 +37,16 @@
 
 namespace WebCore {
 
-InsertTextCommand::InsertTextCommand(Document& document, const String& text, bool selectInsertedText, RebalanceType rebalanceType)
-    : CompositeEditCommand(document)
+InsertTextCommand::InsertTextCommand(Document& document, const String& text, bool selectInsertedText, RebalanceType rebalanceType, EditAction editingAction)
+    : CompositeEditCommand(document, editingAction)
     , m_text(text)
     , m_selectInsertedText(selectInsertedText)
     , m_rebalanceType(rebalanceType)
 {
 }
 
-InsertTextCommand::InsertTextCommand(Document& document, const String& text, PassRefPtr<TextInsertionMarkerSupplier> markerSupplier)
-    : CompositeEditCommand(document)
+InsertTextCommand::InsertTextCommand(Document& document, const String& text, PassRefPtr<TextInsertionMarkerSupplier> markerSupplier, EditAction editingAction)
+    : CompositeEditCommand(document, editingAction)
     , m_text(text)
     , m_selectInsertedText(false)
     , m_rebalanceType(RebalanceLeadingAndTrailingWhitespaces)

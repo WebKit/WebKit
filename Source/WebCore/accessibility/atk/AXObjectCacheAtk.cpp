@@ -268,10 +268,10 @@ void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* obje
     // Select the right signal to be emitted
     CString detail;
     switch (textChange) {
-    case AXObjectCache::AXTextInserted:
+    case AXTextInserted:
         detail = "text-insert";
         break;
-    case AXObjectCache::AXTextDeleted:
+    case AXTextDeleted:
         detail = "text-remove";
         break;
     }

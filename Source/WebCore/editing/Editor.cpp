@@ -208,12 +208,12 @@ bool Editor::handleTextEvent(TextEvent* event)
             if (client()->performsTwoStepPaste(event->pastingFragment()))
                 return true;
 #endif
-            replaceSelectionWithFragment(event->pastingFragment(), false, event->shouldSmartReplace(), event->shouldMatchStyle(), event->mailBlockquoteHandling());
+            replaceSelectionWithFragment(event->pastingFragment(), false, event->shouldSmartReplace(), event->shouldMatchStyle(), EditActionPaste, event->mailBlockquoteHandling());
 #if PLATFORM(IOS)
         }
 #endif
         else 
-            replaceSelectionWithText(event->data(), false, event->shouldSmartReplace());
+            replaceSelectionWithText(event->data(), false, event->shouldSmartReplace(), EditActionPaste);
         return true;
     }
 
@@ -374,12 +374,12 @@ bool Editor::deleteWithDirection(SelectionDirection direction, TextGranularity g
     return true;
 }
 
-void Editor::deleteSelectionWithSmartDelete(bool smartDelete)
+void Editor::deleteSelectionWithSmartDelete(bool smartDelete, EditAction editingAction)
 {
     if (m_frame.selection().isNone())
         return;
 
-    applyCommand(DeleteSelectionCommand::create(document(), smartDelete));
+    applyCommand(DeleteSelectionCommand::create(document(), smartDelete, true, false, false, true, editingAction));
 }
 
 void Editor::clearText()
@@ -520,7 +520,7 @@ bool Editor::shouldInsertFragment(PassRefPtr<DocumentFragment> fragment, PassRef
     return client()->shouldInsertNode(fragment.get(), replacingDOMRange.get(), givenAction);
 }
 
-void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment, bool selectReplacement, bool smartReplace, bool matchStyle, MailBlockquoteHandling mailBlockquoteHandling)
+void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment, bool selectReplacement, bool smartReplace, bool matchStyle, EditAction editingAction, MailBlockquoteHandling mailBlockquoteHandling)
 {
     VisibleSelection selection = m_frame.selection().selection();
     if (selection.isNone() || !selection.isContentEditable() || !fragment)
@@ -536,7 +536,7 @@ void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment,
     if (mailBlockquoteHandling == MailBlockquoteHandling::IgnoreBlockquote)
         options |= ReplaceSelectionCommand::IgnoreMailBlockquote;
 
-    applyCommand(ReplaceSelectionCommand::create(document(), fragment, options, EditActionPaste));
+    applyCommand(ReplaceSelectionCommand::create(document(), fragment, options, editingAction));
     revealSelectionAfterEditingOperation();
 
     selection = m_frame.selection().selection();
@@ -550,13 +550,13 @@ void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment,
     m_spellChecker->requestCheckingFor(SpellCheckRequest::create(resolveTextCheckingTypeMask(TextCheckingTypeSpelling | TextCheckingTypeGrammar), TextCheckingProcessBatch, rangeToCheck, rangeToCheck));
 }
 
-void Editor::replaceSelectionWithText(const String& text, bool selectReplacement, bool smartReplace)
+void Editor::replaceSelectionWithText(const String& text, bool selectReplacement, bool smartReplace, EditAction editingAction)
 {
     RefPtr<Range> range = selectedRange();
     if (!range)
         return;
 
-    replaceSelectionWithFragment(createFragmentFromText(*range, text), selectReplacement, smartReplace, true);
+    replaceSelectionWithFragment(createFragmentFromText(*range, text), selectReplacement, smartReplace, true, editingAction);
 }
 
 PassRefPtr<Range> Editor::selectedRange()
@@ -998,7 +998,8 @@ void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
 
     // Don't clear the typing style with this selection change.  We do those things elsewhere if necessary.
     FrameSelection::SetSelectionOptions options = cmd->isDictationCommand() ? FrameSelection::DictationTriggered : 0;
-    changeSelectionAfterCommand(newSelection, options);
+    
+    changeSelectionAfterCommand(newSelection, options, cmd->applyEditType());
     dispatchEditableContentChangedEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement());
 
     updateEditorUINowIfScheduled();
@@ -1029,7 +1030,7 @@ void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
     notifyTextFromControls(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
 
     VisibleSelection newSelection(cmd->startingSelection());
-    changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions());
+    changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions(), cmd->unapplyEditType());
     dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
 
     updateEditorUINowIfScheduled();
@@ -1263,7 +1264,7 @@ void Editor::performCutOrCopy(EditorActionSpecifier action)
 
     didWriteSelectionToPasteboard();
     if (action == CutAction)
-        deleteSelectionWithSmartDelete(canSmartCopyOrDelete());
+        deleteSelectionWithSmartDelete(canSmartCopyOrDelete(), EditActionCut);
 }
 
 void Editor::paste()
@@ -2235,7 +2236,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
 
         if (!m_frame.editor().shouldInsertText(autocorrectedString, misspellingRange.get(), EditorInsertActionTyped))
             return;
-        m_frame.editor().replaceSelectionWithText(autocorrectedString, false, false);
+        m_frame.editor().replaceSelectionWithText(autocorrectedString, false, false, EditActionInsert);
 
         // Reset the charet one character further.
         m_frame.selection().moveTo(m_frame.selection().selection().end());
@@ -2581,7 +2582,7 @@ void Editor::changeBackToReplacedString(const String& replacedString)
     
     m_alternativeTextController->recordAutocorrectionResponseReversed(replacedString, selection);
     TextCheckingParagraph paragraph(selection);
-    replaceSelectionWithText(replacedString, false, false);
+    replaceSelectionWithText(replacedString, false, false, EditActionInsert);
     RefPtr<Range> changedRange = paragraph.subrange(paragraph.checkingStart(), replacedString.length());
     changedRange->startContainer()->document().markers().addMarker(changedRange.get(), DocumentMarker::Replacement, String());
     m_alternativeTextController->markReversed(changedRange.get());
@@ -2815,7 +2816,7 @@ void Editor::transpose()
     // Insert the transposed characters.
     if (!shouldInsertText(transposed, range.get(), EditorInsertActionTyped))
         return;
-    replaceSelectionWithText(transposed, false, false);
+    replaceSelectionWithText(transposed, false, false, EditActionInsert);
 }
 
 void Editor::addToKillRing(Range* range, bool prepend)
@@ -2847,7 +2848,7 @@ void Editor::dismissCorrectionPanelAsIgnored()
     m_alternativeTextController->dismiss(ReasonForDismissingAlternativeTextIgnored);
 }
 
-void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection,  FrameSelection::SetSelectionOptions options)
+void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions options, AXTextStateChangeIntent intent)
 {
     // If the new selection is orphaned, then don't update the selection.
     if (newSelection.start().isOrphan() || newSelection.end().isOrphan())
@@ -2859,7 +2860,7 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection,  
     // See <rdar://problem/5729315> Some shouldChangeSelectedDOMRange contain Ranges for selections that are no longer valid
     bool selectionDidNotChangeDOMPosition = newSelection == m_frame.selection().selection();
     if (selectionDidNotChangeDOMPosition || m_frame.selection().shouldChangeSelection(newSelection))
-        m_frame.selection().setSelection(newSelection, options);
+        m_frame.selection().setSelection(newSelection, options, intent);
 
     // Some editing operations change the selection visually without affecting its position within the DOM.
     // For example when you press return in the following (the caret is marked by ^):

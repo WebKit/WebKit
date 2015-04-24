@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InsertIntoTextNodeCommand_h
-#define InsertIntoTextNodeCommand_h
+#include "config.h"
+#include "ReplaceDeleteFromTextNodeCommand.h"
 
-#include "EditCommand.h"
+#include "Text.h"
 
 namespace WebCore {
-
-class Text;
-
-class InsertIntoTextNodeCommand : public SimpleEditCommand {
-public:
-    static Ref<InsertIntoTextNodeCommand> create(RefPtr<Text>&& node, unsigned offset, const String& text, EditAction editingAction = EditActionInsert)
-    {
-        return adoptRef(*new InsertIntoTextNodeCommand(WTF::move(node), offset, text, editingAction));
-    }
-
-    const String& insertedText();
-
-protected:
-    InsertIntoTextNodeCommand(RefPtr<Text>&& node, unsigned offset, const String& text, EditAction editingAction);
-
-private:
-    virtual void doApply() override;
-    virtual void doUnapply() override;
-#if PLATFORM(IOS)
-    virtual void doReapply() override;
-#endif
     
-#ifndef NDEBUG
-    virtual void getNodesInCommand(HashSet<Node*>&) override;
-#endif
-    
-    RefPtr<Text> m_node;
-    unsigned m_offset;
-    String m_text;
-};
-
-inline const String& InsertIntoTextNodeCommand::insertedText()
+ReplaceDeleteFromTextNodeCommand::ReplaceDeleteFromTextNodeCommand(RefPtr<Text>&& text, unsigned offset, unsigned count)
+    : DeleteFromTextNodeCommand(WTF::move(text), offset, count, EditActionDelete)
 {
-    return m_text;
+}
+
+void ReplaceDeleteFromTextNodeCommand::notifyAccessibilityForTextChange(Node*, AXTextEditType, const String&, const VisiblePosition&)
+{
 }
 
 } // namespace WebCore
-
-#endif // InsertIntoTextNodeCommand_h
