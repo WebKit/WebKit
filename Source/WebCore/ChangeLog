@@ -1,3 +1,12 @@
+2015-04-24  David Kilzer  <ddkilzer@apple.com>
+
+        Fix iOS EWS builds after updating to iOS 8.3 SDK
+
+        * platform/spi/cocoa/CoreTextSPI.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::updateCachedSystemFontDescription):
+        - Update __IPHONE_OS_VERSION_MIN_REQUIRED for these constants.
+
 2015-04-24  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed iOS build fix; add declarations to AVKitSPI.h
