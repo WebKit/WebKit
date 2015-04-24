@@ -23,6 +23,7 @@
 #include "config.h"
 #include "PopupMenuWin.h"
 
+#include "BString.h"
 #include "BitmapInfo.h"
 #include "Document.h"
 #include "FloatRect.h"
@@ -43,6 +44,7 @@
 #include "RenderView.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
+#include "ScrollbarThemeWin.h"
 #include "TextRun.h"
 #include "WebCoreInstanceHandle.h"
 #include <wtf/WindowsExtras.h>
@@ -748,6 +750,32 @@ IntRect PopupMenuWin::scrollableAreaBoundingBox() const
     return m_windowRect;
 }
 
+bool PopupMenuWin::onGetObject(WPARAM wParam, LPARAM lParam, LRESULT& lResult)
+{
+    lResult = 0;
+
+    if (static_cast<LONG>(lParam) != OBJID_CLIENT)
+        return false;
+
+    if (!m_accessiblePopupMenu)
+        m_accessiblePopupMenu = new AccessiblePopupMenu(*this);
+
+    static HMODULE accessibilityLib = nullptr;
+    if (!accessibilityLib) {
+        if (!(accessibilityLib = ::LoadLibraryW(L"oleacc.dll")))
+            return false;
+    }
+
+    static LPFNLRESULTFROMOBJECT procPtr = reinterpret_cast<LPFNLRESULTFROMOBJECT>(::GetProcAddress(accessibilityLib, "LresultFromObject"));
+    if (!procPtr)
+        return false;
+
+    // LresultFromObject returns a reference to the accessible object, stored
+    // in an LRESULT. If this call is not successful, Windows will handle the
+    // request through DefWindowProc.
+    return SUCCEEDED(lResult = procPtr(__uuidof(IAccessible), wParam, m_accessiblePopupMenu.get()));
+}
+
 void PopupMenuWin::registerClass()
 {
     static bool haveRegisteredWindowClass = false;
@@ -1050,11 +1078,325 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
         case WM_PRINTCLIENT:
             paint(clientRect(), (HDC)wParam);
             break;
+        case WM_GETOBJECT:
+            onGetObject(wParam, lParam, lResult);
+            break;
         default:
             lResult = DefWindowProc(hWnd, message, wParam, lParam);
     }
 
     return lResult;
+}
+
+AccessiblePopupMenu::AccessiblePopupMenu(const PopupMenuWin& popupMenu)
+    : m_refCount(0)
+    , m_popupMenu(popupMenu)
+{
+}
+
+AccessiblePopupMenu::~AccessiblePopupMenu()
+{
+}
+
+HRESULT AccessiblePopupMenu::QueryInterface(REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject)
+{
+    if (IsEqualGUID(riid, __uuidof(IAccessible)))
+        *ppvObject = static_cast<IAccessible*>(this);
+    else if (IsEqualGUID(riid, __uuidof(IDispatch)))
+        *ppvObject = static_cast<IAccessible*>(this);
+    else if (IsEqualGUID(riid, __uuidof(IUnknown)))
+        *ppvObject = static_cast<IAccessible*>(this);
+    else {
+        *ppvObject = 0;
+        return E_NOINTERFACE;
+    }
+    AddRef();
+    return S_OK;
+}
+
+ULONG AccessiblePopupMenu::AddRef()
+{
+    return ++m_refCount;
+}
+
+ULONG AccessiblePopupMenu::Release()
+{
+    int refCount = --m_refCount;
+    if (!refCount)
+        delete this;
+    return refCount;
+}
+
+HRESULT AccessiblePopupMenu::GetTypeInfoCount(UINT* count)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::GetTypeInfo(UINT, LCID, ITypeInfo** ppTInfo)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::GetIDsOfNames(REFIID, LPOLESTR*, UINT, LCID, DISPID*)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::Invoke(DISPID, REFIID, LCID, WORD, DISPPARAMS*, VARIANT*, EXCEPINFO*, UINT*)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::get_accParent(IDispatch**)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::get_accChildCount(long* count)
+{
+    if (!count)
+        return E_POINTER;
+
+    *count = m_popupMenu.visibleItems();
+    return S_OK;
+}
+
+HRESULT AccessiblePopupMenu::get_accChild(VARIANT vChild, IDispatch** ppChild)
+{
+    if (!ppChild)
+        return E_POINTER;
+
+    if (vChild.vt != VT_I4) {
+        *ppChild = nullptr;
+        return E_INVALIDARG;
+    }
+    *ppChild = nullptr;
+    return S_FALSE;
+}
+
+HRESULT AccessiblePopupMenu::get_accName(VARIANT vChild, BSTR* name)
+{
+    return get_accValue(vChild, name);
+}
+
+HRESULT AccessiblePopupMenu::get_accValue(VARIANT vChild, BSTR* value)
+{
+    if (!value)
+        return E_POINTER;
+
+    if (vChild.vt != VT_I4)
+        return E_INVALIDARG;
+
+    int index = vChild.lVal - 1;
+
+    if (index < 0)
+        return E_INVALIDARG;
+
+    BString itemText(m_popupMenu.client()->itemText(index));
+    *value = itemText.release();
+
+    return S_OK;
+}
+
+HRESULT AccessiblePopupMenu::get_accDescription(VARIANT, BSTR*)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::get_accRole(VARIANT vChild, VARIANT* pvRole)
+{
+    if (!pvRole)
+        return E_POINTER;
+
+    if (vChild.vt != VT_I4)
+        return E_INVALIDARG;
+
+    // Scrollbar parts are encoded as negative values.
+    if (vChild.lVal < 0) {
+        V_VT(pvRole) = VT_I4;
+        V_I4(pvRole) = ROLE_SYSTEM_SCROLLBAR;
+    } else {
+        V_VT(pvRole) = VT_I4;
+        V_I4(pvRole) = ROLE_SYSTEM_LISTITEM;
+    }
+
+    return S_OK;
+}
+
+HRESULT AccessiblePopupMenu::get_accState(VARIANT vChild, VARIANT* pvState)
+{
+    if (!pvState)
+        return E_POINTER;
+
+    if (vChild.vt != VT_I4)
+        return E_INVALIDARG;
+
+    V_VT(pvState) = VT_I4;
+    V_I4(pvState) = 0; // STATE_SYSTEM_NORMAL
+    
+    return S_OK;
+}
+
+HRESULT AccessiblePopupMenu::get_accHelp(VARIANT vChild, BSTR* helpText)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::get_accKeyboardShortcut(VARIANT vChild, BSTR*)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::get_accFocus(VARIANT* pvFocusedChild)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::get_accSelection(VARIANT* pvSelectedChild)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::get_accDefaultAction(VARIANT vChild, BSTR* actionDescription)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::accSelect(long selectionFlags, VARIANT vChild)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::accLocation(long* left, long* top, long* width, long* height, VARIANT vChild)
+{
+    if (!left || !top || !width || !height)
+        return E_POINTER;
+
+    if (vChild.vt != VT_I4)
+        return E_INVALIDARG;
+
+    const IntRect& windowRect = m_popupMenu.windowRect();
+
+    // Scrollbar parts are encoded as negative values.
+    if (vChild.lVal < 0) {
+        if (!m_popupMenu.scrollbar())
+            return E_FAIL;
+
+        WebCore::ScrollbarPart part = static_cast<WebCore::ScrollbarPart>(-vChild.lVal);
+
+        ScrollbarThemeWin* theme = static_cast<ScrollbarThemeWin*>(m_popupMenu.scrollbar()->theme());
+        if (!theme)
+            return E_FAIL;
+
+        IntRect partRect;
+
+        switch (part) {
+        case BackTrackPart:
+        case BackButtonStartPart:
+            partRect = theme->backButtonRect(m_popupMenu.scrollbar(), WebCore::BackTrackPart);
+            break;
+        case ThumbPart:
+            partRect = theme->thumbRect(m_popupMenu.scrollbar());
+            break;
+        case ForwardTrackPart:
+        case ForwardButtonEndPart:
+            partRect = theme->forwardButtonRect(m_popupMenu.scrollbar(), WebCore::ForwardTrackPart);
+            break;
+        case ScrollbarBGPart:
+            partRect = theme->trackRect(m_popupMenu.scrollbar());
+            break;
+        default:
+            return E_FAIL;
+        }
+
+        partRect.move(windowRect.x(), windowRect.y());
+
+        *left = partRect.x();
+        *top = partRect.y();
+        *width = partRect.width();
+        *height = partRect.height();
+
+        return S_OK;
+    }
+
+    int index = vChild.lVal - 1;
+
+    if (index < 0)
+        return E_INVALIDARG;
+
+    *left = windowRect.x();
+    *top = windowRect.y() + (index - m_popupMenu.m_scrollOffset) * m_popupMenu.itemHeight();
+    *width = windowRect.width();
+    *height = m_popupMenu.itemHeight();
+
+    return S_OK;
+}
+
+HRESULT AccessiblePopupMenu::accNavigate(long direction, VARIANT vFromChild, VARIANT* pvNavigatedTo)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::accHitTest(long x, long y, VARIANT* pvChildAtPoint)
+{
+    if (!pvChildAtPoint)
+        return E_POINTER;
+
+    ::VariantInit(pvChildAtPoint);
+
+    IntRect windowRect = m_popupMenu.windowRect();
+
+    IntPoint pt(x - windowRect.x(), y - windowRect.y());
+
+    IntRect scrollRect;
+
+    if (m_popupMenu.scrollbar())
+        scrollRect = m_popupMenu.scrollbar()->frameRect();
+
+    if (m_popupMenu.scrollbar() && scrollRect.contains(pt)) {
+        if (!m_popupMenu.scrollbar()->theme())
+            return E_FAIL;
+
+        pt.move(-scrollRect.x(), -scrollRect.y());
+
+        WebCore::ScrollbarPart part = m_popupMenu.scrollbar()->theme()->hitTest(m_popupMenu.scrollbar(), pt);
+
+        V_VT(pvChildAtPoint) = VT_I4;
+        V_I4(pvChildAtPoint) = -part; // Scrollbar parts are encoded as negative, to avoid mixup with item indexes.
+        return S_OK;
+    }
+
+    int index = m_popupMenu.listIndexAtPoint(pt);
+
+    if (index < 0) {
+        V_VT(pvChildAtPoint) = VT_EMPTY;
+        return S_OK;
+    }
+
+    V_VT(pvChildAtPoint) = VT_I4;
+    V_I4(pvChildAtPoint) = index + 1; // CHILDID_SELF is 0, need to add 1.
+
+    return S_OK;
+}
+
+HRESULT AccessiblePopupMenu::accDoDefaultAction(VARIANT vChild)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::put_accName(VARIANT, BSTR)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::put_accValue(VARIANT, BSTR)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessiblePopupMenu::get_accHelpTopic(BSTR* helpFile, VARIANT, long* topicID)
+{
+    return E_NOTIMPL;
 }
 
 }

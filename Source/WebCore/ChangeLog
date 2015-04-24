@@ -1,3 +1,49 @@
+2015-04-24  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Popup menu is not accessible.
+        https://bugs.webkit.org/show_bug.cgi?id=141704
+
+        Reviewed by Brent Fulgham.
+
+        Get accessibility information for items in popup menus.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::onGetObject):
+        (WebCore::PopupMenuWin::wndProc):
+        (WebCore::AccessiblePopupMenu::AccessiblePopupMenu):
+        (WebCore::AccessiblePopupMenu::~AccessiblePopupMenu):
+        (WebCore::AccessiblePopupMenu::QueryInterface):
+        (WebCore::AccessiblePopupMenu::AddRef):
+        (WebCore::AccessiblePopupMenu::Release):
+        (WebCore::AccessiblePopupMenu::GetTypeInfoCount):
+        (WebCore::AccessiblePopupMenu::GetTypeInfo):
+        (WebCore::AccessiblePopupMenu::GetIDsOfNames):
+        (WebCore::AccessiblePopupMenu::Invoke):
+        (WebCore::AccessiblePopupMenu::get_accParent):
+        (WebCore::AccessiblePopupMenu::get_accChildCount):
+        (WebCore::AccessiblePopupMenu::get_accChild):
+        (WebCore::AccessiblePopupMenu::get_accName):
+        (WebCore::AccessiblePopupMenu::get_accValue):
+        (WebCore::AccessiblePopupMenu::get_accDescription):
+        (WebCore::AccessiblePopupMenu::get_accRole):
+        (WebCore::AccessiblePopupMenu::get_accState):
+        (WebCore::AccessiblePopupMenu::get_accHelp):
+        (WebCore::AccessiblePopupMenu::get_accKeyboardShortcut):
+        (WebCore::AccessiblePopupMenu::get_accFocus):
+        (WebCore::AccessiblePopupMenu::get_accSelection):
+        (WebCore::AccessiblePopupMenu::get_accDefaultAction):
+        (WebCore::AccessiblePopupMenu::accSelect):
+        (WebCore::AccessiblePopupMenu::accLocation):
+        (WebCore::AccessiblePopupMenu::accNavigate):
+        (WebCore::AccessiblePopupMenu::accHitTest):
+        (WebCore::AccessiblePopupMenu::accDoDefaultAction):
+        (WebCore::AccessiblePopupMenu::put_accName):
+        (WebCore::AccessiblePopupMenu::put_accValue):
+        (WebCore::AccessiblePopupMenu::get_accHelpTopic):
+        * platform/win/PopupMenuWin.h:
+        * platform/win/ScrollbarThemeWin.h:
+        (WebCore::ScrollbarThemeWin::hasButtons): Deleted.
+
 2015-04-23  Antti Koivisto  <antti@apple.com>
 
         Memory cache live resources repeatedly purged during painting
