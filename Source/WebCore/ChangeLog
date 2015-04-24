@@ -1,5 +1,14 @@
 2015-04-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix Windows build.
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::setBackingStoreAttached):
+        (PlatformCALayerWin::backingStoreAttached):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+
+2015-04-23  Simon Fraser  <simon.fraser@apple.com>
+
         Make it possible to detach GraphicsLayerCA backing store
         https://bugs.webkit.org/show_bug.cgi?id=144140
 

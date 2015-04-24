@@ -428,6 +428,15 @@ void PlatformCALayerWin::setHidden(bool value)
     setNeedsCommit();
 }
 
+void PlatformCALayerWin::setBackingStoreAttached(bool)
+{
+}
+
+bool PlatformCALayerWin::backingStoreAttached() const
+{
+    return true;
+}
+
 void PlatformCALayerWin::setGeometryFlipped(bool value)
 {
     CACFLayerSetGeometryFlipped(m_layer.get(), value);
