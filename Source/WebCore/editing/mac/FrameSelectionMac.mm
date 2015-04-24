@@ -47,13 +47,13 @@ static CGRect accessibilityConvertScreenRect(CGRect bounds)
 #endif // !PLATFORM(IOS)
     
     
-void FrameSelection::notifyAccessibilityForSelectionChange(AXTextStateChangeIntent intent)
+void FrameSelection::notifyAccessibilityForSelectionChange()
 {
     Document* document = m_frame->document();
 
     if (m_selection.start().isNotNull() && m_selection.end().isNotNull()) {
         if (AXObjectCache* cache = document->existingAXObjectCache())
-            cache->postTextStateChangeNotification(m_selection.start().deprecatedNode(), intent, m_selection);
+            cache->postNotification(m_selection.start().deprecatedNode()->renderer(), AXObjectCache::AXSelectedTextChanged, TargetObservableParent);
     }
 
 #if !PLATFORM(IOS)

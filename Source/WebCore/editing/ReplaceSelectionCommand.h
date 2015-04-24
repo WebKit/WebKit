@@ -48,16 +48,17 @@ public:
 
     typedef unsigned CommandOptions;
 
-    static Ref<ReplaceSelectionCommand> create(Document& document, RefPtr<DocumentFragment>&& fragment, CommandOptions options, EditAction editingAction = EditActionInsert)
+    static Ref<ReplaceSelectionCommand> create(Document& document, PassRefPtr<DocumentFragment> fragment, CommandOptions options, EditAction action = EditActionPaste)
     {
-        return adoptRef(*new ReplaceSelectionCommand(document, WTF::move(fragment), options, editingAction));
+        return adoptRef(*new ReplaceSelectionCommand(document, fragment, options, action));
     }
 
 private:
-    ReplaceSelectionCommand(Document&, RefPtr<DocumentFragment>&&, CommandOptions, EditAction);
+    ReplaceSelectionCommand(Document&, PassRefPtr<DocumentFragment>, CommandOptions, EditAction);
 
     virtual void doApply();
-
+    virtual EditAction editingAction() const;
+    
     class InsertedNodes {
     public:
         void respondToNodeInsertion(Node*);
@@ -119,6 +120,7 @@ private:
     RefPtr<DocumentFragment> m_documentFragment;
     bool m_preventNesting;
     bool m_movingParagraph;
+    EditAction m_editAction;
     bool m_sanitizeFragment;
     bool m_shouldMergeEnd;
     bool m_ignoreMailBlockquote;

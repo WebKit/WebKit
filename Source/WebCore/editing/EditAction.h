@@ -29,7 +29,6 @@
 namespace WebCore {
     typedef enum {
         EditActionUnspecified,
-        EditActionInsert,
         EditActionSetColor,
         EditActionSetBackgroundColor,
         EditActionTurnOffKerning,

@@ -32,23 +32,22 @@ namespace WebCore {
 
 class InsertNodeBeforeCommand : public SimpleEditCommand {
 public:
-    static Ref<InsertNodeBeforeCommand> create(RefPtr<Node>&& childToInsert, RefPtr<Node>&& childToInsertBefore,
-        ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction = EditActionInsert)
+    static Ref<InsertNodeBeforeCommand> create(PassRefPtr<Node> childToInsert, PassRefPtr<Node> childToInsertBefore,
+        ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
     {
-        return adoptRef(*new InsertNodeBeforeCommand(WTF::move(childToInsert), WTF::move(childToInsertBefore), shouldAssumeContentIsAlwaysEditable, editingAction));
+        return adoptRef(*new InsertNodeBeforeCommand(childToInsert, childToInsertBefore, shouldAssumeContentIsAlwaysEditable));
     }
 
-protected:
-    InsertNodeBeforeCommand(RefPtr<Node>&& childToInsert, RefPtr<Node>&& childToInsertBefore, ShouldAssumeContentIsAlwaysEditable, EditAction);
-
 private:
+    InsertNodeBeforeCommand(PassRefPtr<Node> childToInsert, PassRefPtr<Node> childToInsertBefore, ShouldAssumeContentIsAlwaysEditable);
+
     virtual void doApply() override;
     virtual void doUnapply() override;
-
+    
 #ifndef NDEBUG
     virtual void getNodesInCommand(HashSet<Node*>&) override;
 #endif
-
+    
     RefPtr<Node> m_insertChild;
     RefPtr<Node> m_refChild;
     ShouldAssumeContentIsAlwaysEditable m_shouldAssumeContentIsAlwaysEditable;

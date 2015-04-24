@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,17 +34,14 @@ class Text;
 
 class DeleteFromTextNodeCommand : public SimpleEditCommand {
 public:
-    static Ref<DeleteFromTextNodeCommand> create(RefPtr<Text>&& node, unsigned offset, unsigned count, EditAction editingAction = EditActionDelete)
+    static Ref<DeleteFromTextNodeCommand> create(PassRefPtr<Text> node, unsigned offset, unsigned count)
     {
-        return adoptRef(*new DeleteFromTextNodeCommand(WTF::move(node), offset, count, editingAction));
+        return adoptRef(*new DeleteFromTextNodeCommand(node, offset, count));
     }
 
-    const String& deletedText();
-
-protected:
-    DeleteFromTextNodeCommand(RefPtr<Text>&&, unsigned offset, unsigned count, EditAction);
-
 private:
+    DeleteFromTextNodeCommand(PassRefPtr<Text>, unsigned offset, unsigned count);
+
     virtual void doApply() override;
     virtual void doUnapply() override;
     
@@ -57,11 +54,6 @@ private:
     unsigned m_count;
     String m_text;
 };
-
-inline const String& DeleteFromTextNodeCommand::deletedText()
-{
-    return m_text;
-}
 
 } // namespace WebCore
 

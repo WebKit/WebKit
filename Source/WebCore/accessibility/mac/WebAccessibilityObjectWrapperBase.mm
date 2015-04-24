@@ -383,69 +383,13 @@ static BOOL accessibilityShouldRepostNotifications;
 + (void)accessibilitySetShouldRepostNotifications:(BOOL)repost
 {
     accessibilityShouldRepostNotifications = repost;
-#if PLATFORM(MAC)
-    AXObjectCache::setShouldRepostNotificationsForTests(repost);
-#endif
 }
 
 - (void)accessibilityPostedNotification:(NSString *)notificationName
 {
-    if (accessibilityShouldRepostNotifications)
-        [self accessibilityPostedNotification:notificationName userInfo:nil];
-}
-
-static NSArray *arrayRemovingNonJSONTypes(NSArray *array)
-{
-    ASSERT([array isKindOfClass:[NSArray class]]);
-    NSMutableArray *mutableArray = [array mutableCopy];
-    for (NSUInteger i = 0; i < [mutableArray count];) {
-        id value = mutableArray[i];
-        if ([value isKindOfClass:[NSDictionary class]])
-            [mutableArray replaceObjectAtIndex:i withObject:dictionaryRemovingNonJSONTypes(value)];
-        else if ([value isKindOfClass:[NSArray class]])
-            [mutableArray replaceObjectAtIndex:i withObject:arrayRemovingNonJSONTypes(value)];
-        else if (!([value isKindOfClass:[NSString class]] || [value isKindOfClass:[NSNumber class]])) {
-            [mutableArray removeObjectAtIndex:i];
-            continue;
-        }
-        i++;
-    }
-    return [mutableArray autorelease];
-}
-
-static NSDictionary *dictionaryRemovingNonJSONTypes(NSDictionary *dictionary)
-{
-    ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
-    NSMutableDictionary *mutableDictionary = [dictionary mutableCopy];
-    for (NSString *key in dictionary) {
-        id value = dictionary[key];
-        if ([value isKindOfClass:[NSDictionary class]])
-            mutableDictionary[key] = dictionaryRemovingNonJSONTypes(value);
-        else if ([value isKindOfClass:[NSArray class]])
-            mutableDictionary[key] = arrayRemovingNonJSONTypes(value);
-        else if (!([value isKindOfClass:[NSString class]] || [value isKindOfClass:[NSNumber class]]))
-            [mutableDictionary removeObjectForKey:key];
-    }
-    return [mutableDictionary autorelease];
-}
-
-- (void)accessibilityPostedNotification:(NSString *)notificationName userInfo:(NSDictionary *)userInfo
-{
     if (accessibilityShouldRepostNotifications) {
-        ASSERT(notificationName);
-        NSDictionary *info = nil;
-        if (userInfo) {
-            NSData *userInfoData = [NSJSONSerialization dataWithJSONObject:dictionaryRemovingNonJSONTypes(userInfo) options:(NSJSONWritingOptions)0 error:nil];
-            if (userInfoData) {
-                NSString *userInfoString = [[NSString alloc] initWithData:userInfoData encoding:NSUTF8StringEncoding];
-                if (userInfoString)
-                    info = @{@"notificationName" : notificationName, @"userInfo" : userInfoString};
-                [userInfoString release];
-            }
-        }
-        if (!info)
-            info = @{@"notificationName" : notificationName};
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"AXDRTNotification" object:self userInfo:info];
+        NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:notificationName, @"notificationName", nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"AXDRTNotification" object:self userInfo:userInfo];
     }
 }
 

@@ -43,8 +43,6 @@ public:
     virtual ~AccessibilityScrollView();
     virtual void detach(AccessibilityDetachmentType, AXObjectCache*) override;
 
-    AccessibilityObject* webAreaObject() const;
-
 private:
     explicit AccessibilityScrollView(ScrollView*);
     
@@ -73,6 +71,7 @@ private:
     virtual AccessibilityObject* parentObject() const override;
     virtual AccessibilityObject* parentObjectIfExists() const override;
     
+    AccessibilityObject* webAreaObject() const;
     virtual AccessibilityObject* firstChild() const override { return webAreaObject(); }
     AccessibilityScrollbar* addChildScrollbar(Scrollbar*);
     void removeChildScrollbar(AccessibilityObject*);

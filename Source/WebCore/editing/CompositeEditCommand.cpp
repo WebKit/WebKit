@@ -58,8 +58,6 @@
 #include "RenderBlockFlow.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
-#include "ReplaceDeleteFromTextNodeCommand.h"
-#include "ReplaceInsertIntoTextNodeCommand.h"
 #include "ReplaceNodeWithSpanCommand.h"
 #include "ReplaceSelectionCommand.h"
 #include "ScopedEventQueue.h"
@@ -164,31 +162,13 @@ void EditCommandComposition::getNodesInCommand(HashSet<Node*>& nodes)
 }
 #endif
 
-AXTextEditType EditCommandComposition::unapplyEditType() const
-{
-    switch (editingAction()) {
-    case EditActionCut:
-    case EditActionDelete:
-        return AXTextEditTypeInsert;
-    case EditActionDictation:
-    case EditActionInsert:
-    case EditActionPaste:
-    case EditActionTyping:
-        return AXTextEditTypeDelete;
-    // Include default case for unhandled EditAction cases.
-    default:
-        break;
-    }
-    return AXTextEditTypeUnknown;
-}
-
 void applyCommand(PassRefPtr<CompositeEditCommand> command)
 {
     command->apply();
 }
 
-CompositeEditCommand::CompositeEditCommand(Document& document, EditAction editingAction)
-    : EditCommand(document, editingAction)
+CompositeEditCommand::CompositeEditCommand(Document& document)
+    : EditCommand(document)
 {
 }
 
@@ -207,7 +187,6 @@ void CompositeEditCommand::apply()
         case EditActionSetWritingDirection:
         case EditActionCut:
         case EditActionUnspecified:
-        case EditActionInsert:
         case EditActionDelete:
         case EditActionDictation:
             break;
@@ -317,7 +296,7 @@ void CompositeEditCommand::removeStyledElement(PassRefPtr<Element> element)
 
 void CompositeEditCommand::insertParagraphSeparator(bool useDefaultParagraphElement, bool pasteBlockqutoeIntoUnquotedArea)
 {
-    applyCommandToComposite(InsertParagraphSeparatorCommand::create(document(), useDefaultParagraphElement, pasteBlockqutoeIntoUnquotedArea, editingAction()));
+    applyCommandToComposite(InsertParagraphSeparatorCommand::create(document(), useDefaultParagraphElement, pasteBlockqutoeIntoUnquotedArea));
 }
 
 void CompositeEditCommand::insertLineBreak()
@@ -343,7 +322,7 @@ bool CompositeEditCommand::isRemovableBlock(const Node* node)
 
 void CompositeEditCommand::insertNodeBefore(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
 {
-    applyCommandToComposite(InsertNodeBeforeCommand::create(insertChild, refChild, shouldAssumeContentIsAlwaysEditable, editingAction()));
+    applyCommandToComposite(InsertNodeBeforeCommand::create(insertChild, refChild, shouldAssumeContentIsAlwaysEditable));
 }
 
 void CompositeEditCommand::insertNodeAfter(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild)
@@ -394,7 +373,7 @@ void CompositeEditCommand::insertNodeAt(PassRefPtr<Node> insertChild, const Posi
 void CompositeEditCommand::appendNode(PassRefPtr<Node> node, PassRefPtr<ContainerNode> parent)
 {
     ASSERT(canHaveChildrenForEditing(parent.get()));
-    applyCommandToComposite(AppendNodeCommand::create(parent, node, editingAction()));
+    applyCommandToComposite(AppendNodeCommand::create(parent, node));
 }
 
 void CompositeEditCommand::removeChildrenInRange(PassRefPtr<Node> node, unsigned from, unsigned to)
@@ -418,7 +397,7 @@ void CompositeEditCommand::removeNode(PassRefPtr<Node> node, ShouldAssumeContent
 
 void CompositeEditCommand::removeNodePreservingChildren(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
 {
-    applyCommandToComposite(RemoveNodePreservingChildrenCommand::create(node, shouldAssumeContentIsAlwaysEditable, editingAction()));
+    applyCommandToComposite(RemoveNodePreservingChildrenCommand::create(node, shouldAssumeContentIsAlwaysEditable));
 }
 
 void CompositeEditCommand::removeNodeAndPruneAncestors(PassRefPtr<Node> node)
@@ -546,21 +525,20 @@ void CompositeEditCommand::inputText(const String& text, bool selectInsertedText
 void CompositeEditCommand::insertTextIntoNode(PassRefPtr<Text> node, unsigned offset, const String& text)
 {
     if (!text.isEmpty())
-        applyCommandToComposite(InsertIntoTextNodeCommand::create(node, offset, text, editingAction()));
+        applyCommandToComposite(InsertIntoTextNodeCommand::create(node, offset, text));
 }
 
 void CompositeEditCommand::deleteTextFromNode(PassRefPtr<Text> node, unsigned offset, unsigned count)
 {
-    applyCommandToComposite(DeleteFromTextNodeCommand::create(node, offset, count, editingAction()));
+    applyCommandToComposite(DeleteFromTextNodeCommand::create(node, offset, count));
 }
 
 void CompositeEditCommand::replaceTextInNode(PassRefPtr<Text> prpNode, unsigned offset, unsigned count, const String& replacementText)
 {
     RefPtr<Text> node(prpNode);
-    RefPtr<DeleteFromTextNodeCommand> deleteCommand = ReplaceDeleteFromTextNodeCommand::create(WTF::move(node), offset, count);
-    applyCommandToComposite(deleteCommand);
+    applyCommandToComposite(DeleteFromTextNodeCommand::create(node, offset, count));
     if (!replacementText.isEmpty())
-        applyCommandToComposite(ReplaceInsertIntoTextNodeCommand::create(WTF::move(node), offset, replacementText, deleteCommand->deletedText(), editingAction()));
+        applyCommandToComposite(InsertIntoTextNodeCommand::create(node, offset, replacementText));
 }
 
 Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
@@ -1311,7 +1289,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     ReplaceSelectionCommand::CommandOptions options = ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::MovingParagraph;
     if (!preserveStyle)
         options |= ReplaceSelectionCommand::MatchStyle;
-    applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTF::move(fragment), options));
+    applyCommandToComposite(ReplaceSelectionCommand::create(document(), fragment, options));
 
     frame().editor().markMisspellingsAndBadGrammar(endingSelection());
 

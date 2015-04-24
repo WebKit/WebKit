@@ -78,7 +78,7 @@ static void maybeEmitTextFocusChange(PassRefPtr<AccessibilityObject> prpObject)
 }
 
 
-void FrameSelection::notifyAccessibilityForSelectionChange(AXTextStateChangeIntent)
+void FrameSelection::notifyAccessibilityForSelectionChange()
 {
     if (!AXObjectCache::accessibilityEnabled())
         return;

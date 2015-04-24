@@ -26,7 +26,6 @@
 #include "config.h"
 #include "FrameSelection.h"
 
-#include "AXObjectCache.h"
 #include "CharacterData.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
@@ -140,7 +139,7 @@ Element* FrameSelection::rootEditableElementOrDocumentElement() const
 void FrameSelection::moveTo(const VisiblePosition &pos, EUserTriggered userTriggered, CursorAlignOnScroll align)
 {
     setSelection(VisibleSelection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity(), m_selection.isDirectional()),
-        defaultSetSelectionOptions(userTriggered), AXTextStateChangeIntent(), align);
+        defaultSetSelectionOptions(userTriggered), align);
 }
 
 void FrameSelection::moveTo(const VisiblePosition &base, const VisiblePosition &extent, EUserTriggered userTriggered)
@@ -171,8 +170,7 @@ void FrameSelection::moveWithoutValidationTo(const Position& base, const Positio
     VisibleSelection newSelection;
     newSelection.setWithoutValidation(base, extent);
     newSelection.setIsDirectional(selectionHasDirection);
-    AXTextStateChangeIntent intent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown });
-    setSelection(newSelection, defaultSetSelectionOptions() | (shouldSetFocus ? 0 : DoNotSetFocus), intent);
+    setSelection(newSelection, defaultSetSelectionOptions() | (shouldSetFocus ? 0 : DoNotSetFocus));
 }
 
 void DragCaretController::setCaretPosition(const VisiblePosition& position)
@@ -256,13 +254,7 @@ void FrameSelection::setSelectionByMouseIfDifferent(const VisibleSelection& pass
     if (m_selection == newSelection || !shouldChangeSelection(newSelection))
         return;
 
-    
-    AXTextStateChangeIntent intent;
-    if (AXObjectCache::accessibilityEnabled() && newSelection.isCaret())
-        intent = AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown });
-    else
-        intent = AXTextStateChangeIntent();
-    setSelection(newSelection, defaultSetSelectionOptions() | FireSelectEvent, intent, AlignCursorOnScrollIfNeeded, granularity);
+    setSelection(newSelection, defaultSetSelectionOptions() | FireSelectEvent, AlignCursorOnScrollIfNeeded, granularity);
 }
 
 bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelection& newSelectionPossiblyWithoutDirection, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity)
@@ -284,7 +276,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     if (Document* newSelectionDocument = newSelection.base().document()) {
         if (RefPtr<Frame> newSelectionFrame = newSelectionDocument->frame()) {
             if (newSelectionFrame != m_frame && newSelectionDocument != m_frame->document()) {
-                newSelectionFrame->selection().setSelection(newSelection, options, AXTextStateChangeIntent(), align, granularity);
+                newSelectionFrame->selection().setSelection(newSelection, options, align, granularity);
                 // It's possible that during the above set selection, this FrameSelection has been modified by
                 // selectFrameElementInParentIfFullySelected, but that the selection is no longer valid since
                 // the frame is about to be destroyed. If this is the case, clear our selection.
@@ -328,7 +320,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     return true;
 }
 
-void FrameSelection::setSelection(const VisibleSelection& selection, SetSelectionOptions options, AXTextStateChangeIntent intent, CursorAlignOnScroll align, TextGranularity granularity)
+void FrameSelection::setSelection(const VisibleSelection& selection, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity)
 {
     if (!setSelectionWithoutUpdatingAppearance(selection, options, align, granularity))
         return;
@@ -349,7 +341,7 @@ void FrameSelection::setSelection(const VisibleSelection& selection, SetSelectio
     if (frameView && frameView->layoutPending())
         return;
 
-    updateAndRevealSelection(intent);
+    updateAndRevealSelection();
 }
 
 static void updateSelectionByUpdatingLayoutOrStyle(Frame& frame)
@@ -368,7 +360,7 @@ void FrameSelection::setNeedsSelectionUpdate()
         view->clearSelection();
 }
 
-void FrameSelection::updateAndRevealSelection(AXTextStateChangeIntent intent)
+void FrameSelection::updateAndRevealSelection()
 {
     if (!m_pendingSelectionUpdate)
         return;
@@ -388,7 +380,7 @@ void FrameSelection::updateAndRevealSelection(AXTextStateChangeIntent intent)
         revealSelection(alignment, RevealExtent);
     }
 
-    notifyAccessibilityForSelectionChange(intent);
+    notifyAccessibilityForSelectionChange();
 
     if (auto* client = m_frame->editor().client())
         client->didChangeSelectionAndUpdateLayout();
@@ -1029,75 +1021,7 @@ VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity
 static bool isBoundary(TextGranularity granularity)
 {
     return granularity == LineBoundary || granularity == ParagraphBoundary || granularity == DocumentBoundary;
-}
-
-AXTextStateChangeIntent FrameSelection::textSelectionIntent(EAlteration alter, SelectionDirection direction, TextGranularity granularity)
-{
-    AXTextStateChangeIntent intent = AXTextStateChangeIntent();
-    bool flip = false;
-    if (alter == FrameSelection::AlterationMove) {
-        intent.type = AXTextStateChangeTypeSelectionMove;
-        flip = isRange() && directionOfSelection() == RTL;
-    } else
-        intent.type = AXTextStateChangeTypeSelectionExtend;
-    switch (granularity) {
-    case CharacterGranularity:
-        intent.selection.granularity = AXTextSelectionGranularityCharacter;
-        break;
-    case WordGranularity:
-        intent.selection.granularity = AXTextSelectionGranularityWord;
-        break;
-    case SentenceGranularity:
-    case SentenceBoundary:
-        intent.selection.granularity = AXTextSelectionGranularitySentence;
-        break;
-    case LineGranularity:
-    case LineBoundary:
-        intent.selection.granularity = AXTextSelectionGranularityLine;
-        break;
-    case ParagraphGranularity:
-    case ParagraphBoundary:
-        intent.selection.granularity = AXTextSelectionGranularityParagraph;
-        break;
-    case DocumentGranularity:
-    case DocumentBoundary:
-        intent.selection.granularity = AXTextSelectionGranularityDocument;
-        break;
-    }
-    bool boundary = false;
-    switch (granularity) {
-    case CharacterGranularity:
-    case WordGranularity:
-    case SentenceGranularity:
-    case LineGranularity:
-    case ParagraphGranularity:
-    case DocumentGranularity:
-        break;
-    case SentenceBoundary:
-    case LineBoundary:
-    case ParagraphBoundary:
-    case DocumentBoundary:
-        boundary = true;
-        break;
-    }
-    switch (direction) {
-    case DirectionRight:
-    case DirectionForward:
-        if (boundary)
-            intent.selection.direction = flip ? AXTextSelectionDirectionBeginning : AXTextSelectionDirectionEnd;
-        else
-            intent.selection.direction = flip ? AXTextSelectionDirectionPrevious : AXTextSelectionDirectionNext;
-        break;
-    case DirectionLeft:
-    case DirectionBackward:
-        if (boundary)
-            intent.selection.direction = flip ? AXTextSelectionDirectionEnd : AXTextSelectionDirectionBeginning;
-        else
-            intent.selection.direction = flip ? AXTextSelectionDirectionNext : AXTextSelectionDirectionPrevious;
-        break;
-    }
-    return intent;
-}
+}    
 
 bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, TextGranularity granularity, EUserTriggered userTriggered)
 {
@@ -1152,11 +1076,6 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
     if (isSpatialNavigationEnabled(m_frame))
         if (!wasRange && alter == AlterationMove && position == originalStartPosition)
             return false;
-
-    if (m_frame && AXObjectCache::accessibilityEnabled()) {
-        if (AXObjectCache* cache = m_frame->document()->existingAXObjectCache())
-            cache->setTextSelectionIntent(textSelectionIntent(alter, direction, granularity));
-    }
 
     // Some of the above operations set an xPosForVerticalArrowNavigation.
     // Setting a selection will clear it, so save it to possibly restore later.
@@ -1791,10 +1710,8 @@ void FrameSelection::selectAll()
 
     VisibleSelection newSelection(VisibleSelection::selectionFromContentsOfNode(root.get()));
 
-    if (shouldChangeSelection(newSelection)) {
-        AXTextStateChangeIntent intent(AXTextStateChangeTypeSelectionExtend, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityAll });
-        setSelection(newSelection, defaultSetSelectionOptions() | FireSelectEvent, intent);
-    }
+    if (shouldChangeSelection(newSelection))
+        setSelection(newSelection, defaultSetSelectionOptions() | FireSelectEvent);
 }
 
 bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool closeTyping)
@@ -2506,7 +2423,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
 
     VisibleSelection newSelection = frameSelection.selection();
     newSelection.expandUsingGranularity(WordGranularity);
-    frameSelection.setSelection(newSelection, defaultSetSelectionOptions(), AXTextStateChangeIntent(), AlignCursorOnScrollIfNeeded, frameSelection.granularity());
+    frameSelection.setSelection(newSelection, defaultSetSelectionOptions(), AlignCursorOnScrollIfNeeded, frameSelection.granularity());
 
     Position startPos(frameSelection.selection().start());
     Position endPos(frameSelection.selection().end());

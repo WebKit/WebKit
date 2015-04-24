@@ -26,7 +26,6 @@
 #include "config.h"
 #include "EditCommand.h"
 
-#include "AXObjectCache.h"
 #include "CompositeEditCommand.h"
 #include "Document.h"
 #include "Editor.h"
@@ -38,10 +37,9 @@
 
 namespace WebCore {
 
-EditCommand::EditCommand(Document& document, EditAction editingAction)
+EditCommand::EditCommand(Document& document)
     : m_document(document)
     , m_parent(0)
-    , m_editingAction(editingAction)
 {
     ASSERT(document.frame());
     setStartingSelection(m_document->frame()->selection().selection());
@@ -69,7 +67,7 @@ Frame& EditCommand::frame()
 
 EditAction EditCommand::editingAction() const
 {
-    return m_editingAction;
+    return EditActionUnspecified;
 }
 
 static inline EditCommandComposition* compositionIfPossible(EditCommand* command)
@@ -114,50 +112,6 @@ void EditCommand::setParent(CompositeEditCommand* parent)
     }
 }
 
-AXTextEditType EditCommand::applyEditType() const
-{
-    switch (editingAction()) {
-    case EditActionCut:
-        return AXTextEditTypeCut;
-    case EditActionDelete:
-        return AXTextEditTypeDelete;
-    case EditActionDictation:
-        return AXTextEditTypeDictation;
-    case EditActionInsert:
-        return AXTextEditTypeInsert;
-    case EditActionPaste:
-        return AXTextEditTypePaste;
-    case EditActionTyping:
-        return AXTextEditTypeTyping;
-    // Include default case for unhandled EditAction cases.
-    default:
-        break;
-    }
-    return AXTextEditTypeUnknown;
-}
-
-AXTextEditType EditCommand::unapplyEditType() const
-{
-    switch (applyEditType()) {
-    case AXTextEditTypeUnknown:
-        return AXTextEditTypeUnknown;
-    case AXTextEditTypeDelete:
-    case AXTextEditTypeCut:
-        return AXTextEditTypeInsert;
-    case AXTextEditTypeInsert:
-    case AXTextEditTypeTyping:
-    case AXTextEditTypeDictation:
-    case AXTextEditTypePaste:
-        return AXTextEditTypeDelete;
-    }
-    return AXTextEditTypeUnknown;
-}
-
-SimpleEditCommand::SimpleEditCommand(Document& document, EditAction editingAction)
-    : EditCommand(document, editingAction)
-{
-}
-
 void SimpleEditCommand::doReapply()
 {
     doApply();
@@ -170,15 +124,5 @@ void SimpleEditCommand::addNodeAndDescendants(Node* startNode, HashSet<Node*>& n
         nodes.add(node);
 }
 #endif
-
-void SimpleEditCommand::notifyAccessibilityForTextChange(Node* node, AXTextEditType type, const String& text, const VisiblePosition& position)
-{
-    if (!AXObjectCache::accessibilityEnabled())
-        return;
-    AXObjectCache* cache = document().existingAXObjectCache();
-    if (!cache)
-        return;
-    cache->postTextStateChangeNotification(node, type, text, position);
-}
 
 } // namespace WebCore

@@ -30,13 +30,12 @@
 #include "Document.h"
 #include "ExceptionCodePlaceholder.h"
 #include "RenderElement.h"
-#include "Text.h"
 #include "htmlediting.h"
 
 namespace WebCore {
 
-AppendNodeCommand::AppendNodeCommand(PassRefPtr<ContainerNode> parent, PassRefPtr<Node> node, EditAction editingAction)
-    : SimpleEditCommand(parent->document(), editingAction)
+AppendNodeCommand::AppendNodeCommand(PassRefPtr<ContainerNode> parent, PassRefPtr<Node> node)
+    : SimpleEditCommand(parent->document())
     , m_parent(parent)
     , m_node(node)
 {
@@ -47,23 +46,15 @@ AppendNodeCommand::AppendNodeCommand(PassRefPtr<ContainerNode> parent, PassRefPt
     ASSERT(m_parent->hasEditableStyle() || !m_parent->renderer());
 }
 
-static void sendAXTextChangedIgnoringLineBreaks(Node* node, AXTextEditType type)
+static void sendAXTextChangedIgnoringLineBreaks(Node* node, AXObjectCache::AXTextChange textChange)
 {
-    if (!node)
-        return;
-
-    if (!AXObjectCache::accessibilityEnabled())
-        return;
-
-    String text = node->nodeValue();
+    String nodeValue = node->nodeValue();
     // Don't consider linebreaks in this command
-    if (text == "\n")
+    if (nodeValue == "\n")
       return;
 
-    if (AXObjectCache* cache = node->document().existingAXObjectCache()) {
-        Position position = is<Text>(node) ? Position(downcast<Text>(node), 0) : createLegacyEditingPosition(node, 0);
-        cache->postTextStateChangeNotification(node, type, text, VisiblePosition(position));
-    }
+    if (AXObjectCache* cache = node->document().existingAXObjectCache())
+        cache->nodeTextChangeNotification(node, textChange, 0, nodeValue);
 }
 
 void AppendNodeCommand::doApply()
@@ -73,16 +64,18 @@ void AppendNodeCommand::doApply()
 
     m_parent->appendChild(m_node.get(), IGNORE_EXCEPTION);
 
-    sendAXTextChangedIgnoringLineBreaks(m_node.get(), applyEditType());
+    if (AXObjectCache::accessibilityEnabled())
+        sendAXTextChangedIgnoringLineBreaks(m_node.get(), AXObjectCache::AXTextInserted);
 }
 
 void AppendNodeCommand::doUnapply()
 {
     if (!m_parent->hasEditableStyle())
         return;
-
+        
     // Need to notify this before actually deleting the text
-    sendAXTextChangedIgnoringLineBreaks(m_node.get(), unapplyEditType());
+    if (AXObjectCache::accessibilityEnabled())
+        sendAXTextChangedIgnoringLineBreaks(m_node.get(), AXObjectCache::AXTextDeleted);
 
     m_node->remove(IGNORE_EXCEPTION);
 }

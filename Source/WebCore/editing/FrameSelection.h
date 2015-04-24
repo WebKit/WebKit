@@ -26,7 +26,6 @@
 #ifndef FrameSelection_h
 #define FrameSelection_h
 
-#include "AXTextStateChangeIntent.h"
 #include "EditingStyle.h"
 #include "IntRect.h"
 #include "LayoutRect.h"
@@ -145,7 +144,7 @@ public:
     void moveWithoutValidationTo(const Position&, const Position&, bool selectionHasDirection, bool shouldSetFocus);
 
     const VisibleSelection& selection() const { return m_selection; }
-    WEBCORE_EXPORT void setSelection(const VisibleSelection&, SetSelectionOptions = defaultSetSelectionOptions(), AXTextStateChangeIntent = AXTextStateChangeIntent(), CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity);
+    WEBCORE_EXPORT void setSelection(const VisibleSelection&, SetSelectionOptions = defaultSetSelectionOptions(), CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity);
     WEBCORE_EXPORT bool setSelectedRange(Range*, EAffinity, bool closeTyping);
     WEBCORE_EXPORT void selectAll();
     WEBCORE_EXPORT void clear();
@@ -273,7 +272,7 @@ public:
 private:
     enum EPositionType { START, END, BASE, EXTENT };
 
-    void updateAndRevealSelection(AXTextStateChangeIntent = AXTextStateChangeIntent());
+    void updateAndRevealSelection();
     void updateDataDetectorsForSelection();
 
     bool setSelectionWithoutUpdatingAppearance(const VisibleSelection&, SetSelectionOptions, CursorAlignOnScroll, TextGranularity);
@@ -298,11 +297,10 @@ private:
 
     LayoutUnit lineDirectionPointForBlockDirectionNavigation(EPositionType);
 
-    AXTextStateChangeIntent textSelectionIntent(EAlteration, SelectionDirection, TextGranularity);
 #if HAVE(ACCESSIBILITY)
-    void notifyAccessibilityForSelectionChange(AXTextStateChangeIntent = AXTextStateChangeIntent());
+    void notifyAccessibilityForSelectionChange();
 #else
-    void notifyAccessibilityForSelectionChange(AXTextSelectionIntent) { }
+    void notifyAccessibilityForSelectionChange() { }
 #endif
 
     void updateSelectionCachesIfSelectionIsInsideTextFormControl(EUserTriggered);
@@ -369,7 +367,7 @@ inline void FrameSelection::setTypingStyle(PassRefPtr<EditingStyle> style)
 
 #if !(PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(EFL))
 #if HAVE(ACCESSIBILITY)
-inline void FrameSelection::notifyAccessibilityForSelectionChange(AXTextStateChangeIntent)
+inline void FrameSelection::notifyAccessibilityForSelectionChange()
 {
 }
 #endif

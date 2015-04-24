@@ -548,26 +548,16 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
         return;
 
     ASSERT(isTextFormControl());
-    String previousValue = innerTextValueFrom(*innerText);
-    bool textIsChanged = value != previousValue;
+    bool textIsChanged = value != innerTextValueFrom(*innerText);
     if (textIsChanged || !innerText->hasChildNodes()) {
-#if HAVE(ACCESSIBILITY) && !PLATFORM(COCOA)
         if (textIsChanged && renderer()) {
             if (AXObjectCache* cache = document().existingAXObjectCache())
                 cache->postNotification(this, AXObjectCache::AXValueChanged, TargetObservableParent);
         }
-#endif
         innerText->setInnerText(value, ASSERT_NO_EXCEPTION);
 
         if (value.endsWith('\n') || value.endsWith('\r'))
             innerText->appendChild(HTMLBRElement::create(document()), ASSERT_NO_EXCEPTION);
-
-#if HAVE(ACCESSIBILITY) && PLATFORM(COCOA)
-        if (textIsChanged && renderer()) {
-            if (AXObjectCache* cache = document().existingAXObjectCache())
-                cache->postTextReplacementNotification(this, AXTextEditTypeDelete, previousValue, AXTextEditTypeInsert, value, VisiblePosition(Position(this, Position::PositionIsBeforeAnchor)));
-        }
-#endif
     }
 
     setFormControlValueMatchesRenderer(true);

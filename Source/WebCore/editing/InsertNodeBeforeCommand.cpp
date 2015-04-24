@@ -29,13 +29,13 @@
 #include "AXObjectCache.h"
 #include "Document.h"
 #include "ExceptionCodePlaceholder.h"
-#include "Text.h"
 #include "htmlediting.h"
 
 namespace WebCore {
 
-InsertNodeBeforeCommand::InsertNodeBeforeCommand(RefPtr<Node>&& insertChild, RefPtr<Node>&& refChild, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction)
-    : SimpleEditCommand(refChild->document(), editingAction)
+InsertNodeBeforeCommand::InsertNodeBeforeCommand(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild,
+    ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
+    : SimpleEditCommand(refChild->document())
     , m_insertChild(insertChild)
     , m_refChild(refChild)
     , m_shouldAssumeContentIsAlwaysEditable(shouldAssumeContentIsAlwaysEditable)
@@ -57,10 +57,8 @@ void InsertNodeBeforeCommand::doApply()
 
     parent->insertBefore(m_insertChild.get(), m_refChild.get(), IGNORE_EXCEPTION);
 
-    if (AXObjectCache::accessibilityEnabled()) {
-        Position position = is<Text>(m_insertChild.get()) ? Position(downcast<Text>(m_insertChild.get()), 0) : createLegacyEditingPosition(m_insertChild.get(), 0);
-        notifyAccessibilityForTextChange(m_insertChild.get(), applyEditType(), m_insertChild->nodeValue(), VisiblePosition(position));
-    }
+    if (AXObjectCache* cache = document().existingAXObjectCache())
+        cache->nodeTextChangeNotification(m_insertChild.get(), AXObjectCache::AXTextInserted, 0, m_insertChild->nodeValue());
 }
 
 void InsertNodeBeforeCommand::doUnapply()
@@ -69,10 +67,8 @@ void InsertNodeBeforeCommand::doUnapply()
         return;
 
     // Need to notify this before actually deleting the text
-    if (AXObjectCache::accessibilityEnabled()) {
-        Position position = is<Text>(m_insertChild.get()) ? Position(downcast<Text>(m_insertChild.get()), 0) : createLegacyEditingPosition(m_insertChild.get(), 0);
-        notifyAccessibilityForTextChange(m_insertChild.get(), unapplyEditType(), m_insertChild->nodeValue(), VisiblePosition(position));
-    }
+    if (AXObjectCache* cache = document().existingAXObjectCache())
+        cache->nodeTextChangeNotification(m_insertChild.get(), AXObjectCache::AXTextDeleted, 0, m_insertChild->nodeValue());
 
     m_insertChild->remove(IGNORE_EXCEPTION);
 }

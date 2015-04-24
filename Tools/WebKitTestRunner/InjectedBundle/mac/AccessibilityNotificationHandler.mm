@@ -125,30 +125,19 @@
     if (m_platformElement && m_platformElement != [notification object])
         return;
 
-    NSString *userInfoJSONValue = notification.userInfo[@"userInfo"];
-
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(WTR::InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
 
     JSRetainPtr<JSStringRef> jsNotification(Adopt, [notificationName createJSStringRef]);
     JSValueRef notificationNameArgument = JSValueMakeString(context, jsNotification.get());
-    JSValueRef userInfoJSONValueArgument = nil;
-    if ([userInfoJSONValue length]) {
-        JSRetainPtr<JSStringRef> jsUserInfoJSONValue(Adopt, [userInfoJSONValue createJSStringRef]);
-        userInfoJSONValueArgument = JSValueMakeFromJSONString(context, jsUserInfoJSONValue.get());
-    }
     if (m_platformElement) {
-        // Listener for one element gets the notification name and userInfo.
-        JSValueRef arguments[2];
-        arguments[0] = notificationNameArgument;
-        arguments[1] = userInfoJSONValueArgument;
-        JSObjectCallAsFunction(context, const_cast<JSObjectRef>(m_notificationFunctionCallback), 0, 2, arguments, 0);
+        // Listener for one element just gets one argument, the notification name.
+        JSObjectCallAsFunction(context, const_cast<JSObjectRef>(m_notificationFunctionCallback), 0, 1, &notificationNameArgument, 0);
     } else {
-        // A global listener gets the element, notification name and userInfo.
-        JSValueRef arguments[3];
+        // A global listener gets the element and the notification name as arguments.
+        JSValueRef arguments[2];
         arguments[0] = toJS(context, WTF::getPtr(WTR::AccessibilityUIElement::create([notification object])));
         arguments[1] = notificationNameArgument;
-        arguments[2] = userInfoJSONValueArgument;
         JSObjectCallAsFunction(context, const_cast<JSObjectRef>(m_notificationFunctionCallback), 0, 2, arguments, 0);
     }
 }

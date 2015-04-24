@@ -3239,8 +3239,7 @@ static void setInitialKeyboardSelection(Frame& frame, SelectionDirection directi
         break;
     }
 
-    AXTextStateChangeIntent intent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown });
-    selection.setSelection(visiblePosition, FrameSelection::defaultSetSelectionOptions(UserTriggered), intent);
+    selection.setSelection(visiblePosition, FrameSelection::defaultSetSelectionOptions(UserTriggered));
 }
 
 static void handleKeyboardSelectionMovement(Frame& frame, KeyboardEvent* event)

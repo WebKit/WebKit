@@ -524,7 +524,7 @@ bool DragController::concludeEditDrag(DragData& dragData)
                     options |= ReplaceSelectionCommand::SmartReplace;
                 if (chosePlainText)
                     options |= ReplaceSelectionCommand::MatchStyle;
-                applyCommand(ReplaceSelectionCommand::create(*m_documentUnderMouse, WTF::move(fragment), options));
+                applyCommand(ReplaceSelectionCommand::create(*m_documentUnderMouse, fragment, options));
             }
         }
     } else {

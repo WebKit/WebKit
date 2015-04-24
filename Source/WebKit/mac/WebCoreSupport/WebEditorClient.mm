@@ -546,7 +546,6 @@ static NSString* undoNameForEditAction(EditAction editAction)
     // FIXME: This is identical to code in WebKit2's WebEditCommandProxy class; would be nice to share the strings instead of having two copies.
     switch (editAction) {
         case EditActionUnspecified: return nil;
-        case EditActionInsert: return nil;
         case EditActionSetColor: return UI_STRING_KEY_INTERNAL("Set Color", "Set Color (Undo action name)", "Undo action name");
         case EditActionSetBackgroundColor: return UI_STRING_KEY_INTERNAL("Set Background Color", "Set Background Color (Undo action name)", "Undo action name");
         case EditActionTurnOffKerning: return UI_STRING_KEY_INTERNAL("Turn Off Kerning", "Turn Off Kerning (Undo action name)", "Undo action name");

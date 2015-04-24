@@ -42,7 +42,6 @@
 - (void)setPlatformElement:(id)platformElement;
 - (void)setCallback:(JSObjectRef)callback;
 - (void)startObserving;
-- (void)stopObserving;
 
 @end
 

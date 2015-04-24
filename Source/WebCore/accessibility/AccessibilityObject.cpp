@@ -2646,17 +2646,4 @@ void AccessibilityObject::setPreventKeyboardDOMEventDispatch(bool on)
 }
 #endif
 
-bool AccessibilityObject::isContainedByPasswordField() const
-{
-    Node* node = this->node();
-    if (!node)
-        return false;
-    
-    if (ariaRoleAttribute() != UnknownRole)
-        return false;
-
-    Element* element = node->shadowHost();
-    return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(*element).isPasswordField();
-}
-
 } // namespace WebCore

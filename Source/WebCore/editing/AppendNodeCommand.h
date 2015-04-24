@@ -32,13 +32,13 @@ namespace WebCore {
 
 class AppendNodeCommand : public SimpleEditCommand {
 public:
-    static Ref<AppendNodeCommand> create(PassRefPtr<ContainerNode> parent, PassRefPtr<Node> node, EditAction editingAction)
+    static Ref<AppendNodeCommand> create(PassRefPtr<ContainerNode> parent, PassRefPtr<Node> node)
     {
-        return adoptRef(*new AppendNodeCommand(parent, node, editingAction));
+        return adoptRef(*new AppendNodeCommand(parent, node));
     }
 
 private:
-    AppendNodeCommand(PassRefPtr<ContainerNode> parent, PassRefPtr<Node>, EditAction);
+    AppendNodeCommand(PassRefPtr<ContainerNode> parent, PassRefPtr<Node>);
 
     virtual void doApply() override;
     virtual void doUnapply() override;

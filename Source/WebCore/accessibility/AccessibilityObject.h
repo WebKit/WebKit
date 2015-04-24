@@ -463,8 +463,6 @@ public:
     virtual bool isNativeImage() const { return false; }
     virtual bool isImageButton() const { return false; }
     virtual bool isPasswordField() const { return false; }
-    bool isContainedByPasswordField() const;
-    virtual AccessibilityObject* passwordFieldOrContainingPasswordField() { return nullptr; }
     virtual bool isNativeTextControl() const { return false; }
     virtual bool isSearchField() const { return false; }
     bool isWebArea() const { return roleValue() == WebAreaRole; }

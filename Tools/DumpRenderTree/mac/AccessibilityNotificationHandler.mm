@@ -104,11 +104,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_notificationReceived:) name:@"AXDRTNotification" object:nil];
 }
 
-- (void)stopObserving
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
 - (void)_notificationReceived:(NSNotification *)notification
 {
     NSString *notificationName = [[notification userInfo] objectForKey:@"notificationName"];
@@ -117,27 +112,16 @@
     if (m_platformElement && m_platformElement != [notification object])
         return;
 
-    NSString *userInfoJSONValue = notification.userInfo[@"userInfo"];
-
     JSRetainPtr<JSStringRef> jsNotification(Adopt, [notificationName createJSStringRef]);
     JSValueRef notificationNameArgument = JSValueMakeString([mainFrame globalContext], jsNotification.get());
-    JSValueRef userInfoJSONValueArgument = nil;
-    if ([userInfoJSONValue length]) {
-        JSRetainPtr<JSStringRef> jsUserInfoJSONValue(Adopt, [userInfoJSONValue createJSStringRef]);
-        userInfoJSONValueArgument = JSValueMakeFromJSONString([mainFrame globalContext], jsUserInfoJSONValue.get());
-    }
     if (m_platformElement) {
-        // Listener for one element gets the notification name and userInfo.
-        JSValueRef arguments[2];
-        arguments[0] = notificationNameArgument;
-        arguments[1] = userInfoJSONValueArgument;
-        JSObjectCallAsFunction([mainFrame globalContext], m_notificationFunctionCallback, 0, 2, arguments, 0);
+        // Listener for one element just gets one argument, the notification name.
+        JSObjectCallAsFunction([mainFrame globalContext], m_notificationFunctionCallback, 0, 1, &notificationNameArgument, 0);
     } else {
-        // A global listener gets the element, notification name and userInfo.
-        JSValueRef arguments[3];
+        // A global listener gets the element and the notification name as arguments.
+        JSValueRef arguments[2];
         arguments[0] = AccessibilityUIElement::makeJSAccessibilityUIElement([mainFrame globalContext], AccessibilityUIElement([notification object]));
         arguments[1] = notificationNameArgument;
-        arguments[2] = userInfoJSONValueArgument;
         JSObjectCallAsFunction([mainFrame globalContext], m_notificationFunctionCallback, 0, 2, arguments, 0);
     }
 }

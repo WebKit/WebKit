@@ -59,8 +59,8 @@ static Element* highestVisuallyEquivalentDivBelowRoot(Element* startBlock)
     return curBlock;
 }
 
-InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand(Document& document, bool mustUseDefaultParagraphElement, bool pasteBlockqutoeIntoUnquotedArea, EditAction editingAction)
-    : CompositeEditCommand(document, editingAction)
+InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand(Document& document, bool mustUseDefaultParagraphElement, bool pasteBlockqutoeIntoUnquotedArea)
+    : CompositeEditCommand(document)
     , m_mustUseDefaultParagraphElement(mustUseDefaultParagraphElement)
     , m_pasteBlockqutoeIntoUnquotedArea(pasteBlockqutoeIntoUnquotedArea)
 {
