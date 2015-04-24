@@ -1,3 +1,22 @@
+2015-04-24  Andreas Kling  <akling@apple.com>
+
+        Purge PassRefPtr from NamedNodeMap.
+        <https://webkit.org/b/144091>
+
+        Reviewed by Antti Koivisto.
+
+        Use RefPtr instead of PassRefPtr in NamedNodeMap.
+
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::getNamedItem):
+        (WebCore::NamedNodeMap::getNamedItemNS):
+        (WebCore::NamedNodeMap::removeNamedItem):
+        (WebCore::NamedNodeMap::removeNamedItemNS):
+        (WebCore::NamedNodeMap::setNamedItem):
+        (WebCore::NamedNodeMap::setNamedItemNS):
+        (WebCore::NamedNodeMap::item):
+        * dom/NamedNodeMap.h:
+
 2015-04-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183266.
