@@ -801,6 +801,9 @@ private:
 
 EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
 {
+    if (exec->thisValue().isUndefinedOrNull()) 
+        return throwVMError(exec, createTypeError(exec, "Can't convert undefined or null to object"));
+
     JSObject* thisObject = jsDynamicCast<JSObject*>(exec->thisValue().toThis(exec, NotStrictMode));
 
     if (!thisObject)
@@ -841,6 +844,9 @@ private:
 
 EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
 {
+    if (exec->thisValue().isUndefinedOrNull()) 
+        return throwVMError(exec, createTypeError(exec, "Can't convert undefined or null to object"));
+
     JSValue value = exec->argument(0);
 
     JSObject* thisObject = jsDynamicCast<JSObject*>(exec->thisValue().toThis(exec, NotStrictMode));
