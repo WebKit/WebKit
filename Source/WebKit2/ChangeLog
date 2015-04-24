@@ -1,5 +1,21 @@
 2015-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Remove incorrect assert after r183189.
+
+        In this case the assert was already there, but it's incorrect
+        because we are handling uninitialized attachments below in the
+        same function, and also when sending messages. So, if it's ok to
+        send uninitialized attachments, it's ok to receive them. This
+        didn't fail before r183189, because we were only invaliding the
+        attachments by setting the file descriptor to -1, and they were
+        handled as null attachments. After r183189, the move operator
+        resets the moved attachment leaving it uninitialized again.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::processMessage):
+
+2015-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Use a webkit subdirectory for the disk cache
         https://bugs.webkit.org/show_bug.cgi?id=144048
 

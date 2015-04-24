@@ -187,7 +187,6 @@ bool Connection::processMessage()
                 break;
             case Attachment::Uninitialized:
             default:
-                ASSERT_NOT_REACHED();
                 break;
             }
         }
