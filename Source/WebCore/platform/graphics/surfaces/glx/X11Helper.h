@@ -27,7 +27,6 @@
 #define X11Helper_h
 
 #include "IntRect.h"
-#include "OwnPtrX11.h"
 
 #if USE(EGL)
 #include <opengl/GLDefs.h>
@@ -43,8 +42,16 @@
 
 namespace WebCore {
 
-class X11Helper {
+class X11Deleter {
+public:
+    template<typename T> void operator()(T* resource)
+    {
+        if (resource)
+            XFree(resource);
+    }
+};
 
+class X11Helper {
 public:
     static void createPixmap(Pixmap*, const XVisualInfo&, const IntSize& = IntSize(1, 1));
     static void createOffScreenWindow(uint32_t*, const XVisualInfo&, const IntSize& = IntSize(1, 1));
@@ -61,7 +68,6 @@ public:
 };
 
 class ScopedXPixmapCreationErrorHandler {
-
 public:
     ScopedXPixmapCreationErrorHandler();
     ~ScopedXPixmapCreationErrorHandler();

@@ -30,8 +30,6 @@ namespace WTF {
 
 class String;
 
-template<typename T> class OwnPtr;
-
 template<typename T> struct HashTraits;
 
 template<bool isInteger, typename T> struct GenericHashTraitsBase;
@@ -120,17 +118,8 @@ template<typename T, typename Deleter> struct HashTraits<std::unique_ptr<T, Dele
     static T* peek(std::nullptr_t) { return nullptr; }
 };
 
-template<typename T> struct HashTraits<OwnPtr<T>> : SimpleClassHashTraits<OwnPtr<T>> {
-    typedef std::nullptr_t EmptyValueType;
-    static EmptyValueType emptyValue() { return nullptr; }
-
-    typedef T* PeekType;
-    static T* peek(const OwnPtr<T>& value) { return value.get(); }
-    static T* peek(std::nullptr_t) { return nullptr; }
-};
-
 template<typename P> struct HashTraits<RefPtr<P>> : SimpleClassHashTraits<RefPtr<P>> {
-    static P* emptyValue() { return 0; }
+    static P* emptyValue() { return nullptr; }
 
     typedef P* PeekType;
     static PeekType peek(const RefPtr<P>& value) { return value.get(); }

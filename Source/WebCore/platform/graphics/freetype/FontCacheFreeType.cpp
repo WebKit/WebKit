@@ -23,7 +23,6 @@
 #include "FontCache.h"
 
 #include "Font.h"
-#include "OwnPtrCairo.h"
 #include "RefPtrCairo.h"
 #include "UTF16UChar32Iterator.h"
 #include <cairo-ft.h>

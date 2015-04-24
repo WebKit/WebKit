@@ -27,7 +27,6 @@
 #define HistoryDelegate_h
 
 #include <WebKit/WebKit.h>
-#include <wtf/OwnPtr.h>
 
 class HistoryDelegate : public IWebHistoryDelegate {
 public:

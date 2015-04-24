@@ -33,7 +33,6 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
@@ -107,14 +106,6 @@ namespace WebCore {
         WEBCORE_EXPORT static Type copy(const T& refPtr)
         {
             return refPtr;
-        }
-    };
-
-    template<typename T> struct CrossThreadCopierBase<false, false, PassOwnPtr<T>> {
-        typedef PassOwnPtr<T> Type;
-        static Type copy(Type ownPtr)
-        {
-            return ownPtr;
         }
     };
 

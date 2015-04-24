@@ -31,7 +31,6 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
-#include "OwnPtrCairo.h"
 #include "PlatformPathCairo.h"
 #include "StrokeStyleApplier.h"
 #include <cairo.h>
@@ -59,8 +58,9 @@ Path::Path(const Path& other)
         return;
 
     cairo_t* cr = ensurePlatformPath()->context();
-    OwnPtr<cairo_path_t> pathCopy = adoptPtr(cairo_copy_path(other.platformPath()->context()));
-    cairo_append_path(cr, pathCopy.get());
+    auto pathCopy = cairo_copy_path(other.platformPath()->context());
+    cairo_append_path(cr, pathCopy);
+    cairo_path_destroy(pathCopy);
 }
 
 PlatformPathPtr Path::ensurePlatformPath()
@@ -83,8 +83,9 @@ Path& Path::operator=(const Path& other)
     } else {
         clear();
         cairo_t* cr = ensurePlatformPath()->context();
-        OwnPtr<cairo_path_t> pathCopy = adoptPtr(cairo_copy_path(other.platformPath()->context()));
-        cairo_append_path(cr, pathCopy.get());
+        auto pathCopy = cairo_copy_path(other.platformPath()->context());
+        cairo_append_path(cr, pathCopy);
+        cairo_path_destroy(pathCopy);
     }
 
     return *this;
@@ -323,11 +324,10 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
     cairo_t* cr = path.platformPath()->context();
     cairo_save(cr);
     cairo_transform(cr, &matrix);
-    std::unique_ptr<cairo_path_t, void(*)(cairo_path_t*)> pathCopy(cairo_copy_path(cr), [](cairo_path_t* path) {
-        cairo_path_destroy(path);
-    });
+    auto pathCopy = cairo_copy_path(cr);
     cairo_restore(cr);
-    cairo_append_path(ensurePlatformPath()->context(), pathCopy.get());
+    cairo_append_path(ensurePlatformPath()->context(), pathCopy);
+    cairo_path_destroy(pathCopy);
 }
 
 void Path::closeSubpath()
@@ -396,7 +396,7 @@ void Path::apply(void* info, PathApplierFunction function) const
         return;
 
     cairo_t* cr = platformPath()->context();
-    OwnPtr<cairo_path_t> pathCopy = adoptPtr(cairo_copy_path(cr));
+    auto pathCopy = cairo_copy_path(cr);
     cairo_path_data_t* data;
     PathElement pelement;
     FloatPoint points[3];
@@ -428,6 +428,7 @@ void Path::apply(void* info, PathApplierFunction function) const
             break;
         }
     }
+    cairo_path_destroy(pathCopy);
 }
 
 void Path::transform(const AffineTransform& trans)

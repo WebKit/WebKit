@@ -26,8 +26,6 @@
 #include <string.h>
 #include <webkit2/webkit-web-extension.h>
 #include <wtf/Deque.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/ProcessID.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
@@ -83,7 +81,7 @@ struct DelayedSignal {
     CString uri;
 };
 
-Deque<OwnPtr<DelayedSignal>> delayedSignalsQueue;
+Deque<DelayedSignal> delayedSignalsQueue;
 
 static void emitDocumentLoaded(GDBusConnection* connection)
 {
@@ -115,7 +113,7 @@ static void documentLoadedCallback(WebKitWebPage* webPage, WebKitWebExtension* e
     if (data)
         emitDocumentLoaded(G_DBUS_CONNECTION(data));
     else
-        delayedSignalsQueue.append(adoptPtr(new DelayedSignal(DocumentLoadedSignal)));
+        delayedSignalsQueue.append(DelayedSignal(DocumentLoadedSignal));
 }
 
 static void emitURIChanged(GDBusConnection* connection, const char* uri)
@@ -137,7 +135,7 @@ static void uriChangedCallback(WebKitWebPage* webPage, GParamSpec* pspec, WebKit
     if (data)
         emitURIChanged(G_DBUS_CONNECTION(data), webkit_web_page_get_uri(webPage));
     else
-        delayedSignalsQueue.append(adoptPtr(new DelayedSignal(URIChangedSignal, webkit_web_page_get_uri(webPage))));
+        delayedSignalsQueue.append(DelayedSignal(URIChangedSignal, webkit_web_page_get_uri(webPage)));
 }
 
 static gboolean sendRequestCallback(WebKitWebPage*, WebKitURIRequest* request, WebKitURIResponse* redirectResponse, gpointer)
@@ -330,13 +328,13 @@ static void busAcquiredCallback(GDBusConnection* connection, const char* name, g
 
     g_object_set_data(G_OBJECT(userData), "dbus-connection", connection);
     while (delayedSignalsQueue.size()) {
-        OwnPtr<DelayedSignal> delayedSignal = delayedSignalsQueue.takeFirst();
-        switch (delayedSignal->type) {
+        DelayedSignal delayedSignal = delayedSignalsQueue.takeFirst();
+        switch (delayedSignal.type) {
         case DocumentLoadedSignal:
             emitDocumentLoaded(connection);
             break;
         case URIChangedSignal:
-            emitURIChanged(connection, delayedSignal->uri.data());
+            emitURIChanged(connection, delayedSignal.uri.data());
             break;
         }
     }

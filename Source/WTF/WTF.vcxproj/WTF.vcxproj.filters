@@ -528,12 +528,6 @@
     <ClInclude Include="..\wtf\OSRandomSource.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\OwnPtr.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\OwnPtrCommon.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\PackedIntVector.h">
       <Filter>wtf</Filter>
     </ClInclude>
@@ -556,9 +550,6 @@
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\ParallelJobsOpenMP.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\PassOwnPtr.h">
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\PassRefPtr.h">

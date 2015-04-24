@@ -31,8 +31,6 @@
 
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace TestWebKitAPI {
 
@@ -44,7 +42,7 @@ public:
     }
 
     WKRetainPtr<WKContextRef> context;
-    OwnPtr<PlatformWebView> webView;
+    std::unique_ptr<PlatformWebView> webView;
 
     WKRetainPtr<WKStringRef> messageName;
     WKRetainPtr<WKTypeRef> messageBody;
@@ -74,7 +72,7 @@ public:
         context = adoptWK(Util::createContextForInjectedBundleTest("WillLoadTest"));
         setInjectedBundleClient(context.get(), this);
 
-        webView = adoptPtr(new PlatformWebView(context.get()));
+        webView = std::make_unique<PlatformWebView>(context.get());
 
         didReceiveMessage = false;
     }

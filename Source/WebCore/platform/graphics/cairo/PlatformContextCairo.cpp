@@ -33,7 +33,6 @@
 #include "CairoUtilities.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
-#include "OwnPtrCairo.h"
 #include "Pattern.h"
 #include <cairo.h>
 
@@ -306,7 +305,7 @@ void PlatformContextCairo::clipForPatternFilling(const GraphicsContextState& sta
     ASSERT(state.fillPattern);
 
     // Hold current cairo path in a variable for restoring it after configuring the pattern clip rectangle.
-    OwnPtr<cairo_path_t> currentPath = adoptPtr(cairo_copy_path(m_cr.get()));
+    auto currentPath = cairo_copy_path(m_cr.get());
     cairo_new_path(m_cr.get());
 
     // Initialize clipping extent from current cairo clip extents, then shrink if needed according to pattern.
@@ -337,7 +336,8 @@ void PlatformContextCairo::clipForPatternFilling(const GraphicsContextState& sta
     }
 
     // Restoring cairo path.
-    cairo_append_path(m_cr.get(), currentPath.get());
+    cairo_append_path(m_cr.get(), currentPath);
+    cairo_path_destroy(currentPath);
 }
 
 } // namespace WebCore

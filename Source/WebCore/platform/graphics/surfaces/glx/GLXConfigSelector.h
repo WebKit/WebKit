@@ -140,14 +140,13 @@ private:
     GLXFBConfig findMatchingConfig(const int attributes[], int depth = 32)
     {
         int numAvailableConfigs;
-        OwnPtrX11<GLXFBConfig> temp(glXChooseFBConfig(X11Helper::nativeDisplay(), DefaultScreen(X11Helper::nativeDisplay()), attributes, &numAvailableConfigs));
+        std::unique_ptr<GLXFBConfig[], X11Deleter> temp(glXChooseFBConfig(X11Helper::nativeDisplay(), DefaultScreen(X11Helper::nativeDisplay()), attributes, &numAvailableConfigs));
 
         if (!numAvailableConfigs || !temp.get())
             return 0;
 
-        OwnPtrX11<XVisualInfo> scopedVisualInfo;
         for (int i = 0; i < numAvailableConfigs; ++i) {
-            scopedVisualInfo = glXGetVisualFromFBConfig(X11Helper::nativeDisplay(), temp[i]);
+            std::unique_ptr<XVisualInfo, X11Deleter> scopedVisualInfo { glXGetVisualFromFBConfig(X11Helper::nativeDisplay(), temp[i]) };
             if (!scopedVisualInfo.get())
                 continue;
 
@@ -169,7 +168,7 @@ private:
         }
 
         // Did not find any visual supporting alpha, select the first available config.
-        scopedVisualInfo = glXGetVisualFromFBConfig(X11Helper::nativeDisplay(), temp[0]);
+        std::unique_ptr<XVisualInfo, X11Deleter> scopedVisualInfo { glXGetVisualFromFBConfig(X11Helper::nativeDisplay(), temp[0]) };
 
         if ((m_attributes & GLPlatformSurface::SupportAlpha) && (scopedVisualInfo->depth != 32))
             m_attributes &= ~GLPlatformSurface::SupportAlpha;
@@ -180,14 +179,13 @@ private:
     GLXFBConfig findMatchingConfigWithVisualId(const int attributes[], int depth, VisualID id)
     {
         int numAvailableConfigs;
-        OwnPtrX11<GLXFBConfig> temp(glXChooseFBConfig(X11Helper::nativeDisplay(), DefaultScreen(X11Helper::nativeDisplay()), attributes, &numAvailableConfigs));
+        std::unique_ptr<GLXFBConfig[], X11Deleter> temp(glXChooseFBConfig(X11Helper::nativeDisplay(), DefaultScreen(X11Helper::nativeDisplay()), attributes, &numAvailableConfigs));
 
         if (!numAvailableConfigs || !temp.get())
             return 0;
 
-        OwnPtrX11<XVisualInfo> scopedVisualInfo;
         for (int i = 0; i < numAvailableConfigs; ++i) {
-            scopedVisualInfo = glXGetVisualFromFBConfig(X11Helper::nativeDisplay(), temp[i]);
+            std::unique_ptr<XVisualInfo, X11Deleter> scopedVisualInfo { glXGetVisualFromFBConfig(X11Helper::nativeDisplay(), temp[i]) };
             if (!scopedVisualInfo.get())
                 continue;
 

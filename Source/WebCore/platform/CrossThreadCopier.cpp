@@ -179,18 +179,4 @@ COMPILE_ASSERT((std::is_same<
                   >::value),
                RawPointerRefCountedTest);
 
-// Verify that PassOwnPtr gets passed through.
-COMPILE_ASSERT((std::is_same<
-                  PassOwnPtr<float>,
-                  CrossThreadCopier<PassOwnPtr<float>>::Type
-                  >::value),
-               PassOwnPtrTest);
-
-// Verify that PassOwnPtr does not get passed through.
-COMPILE_ASSERT((std::is_same<
-                  int,
-                  CrossThreadCopier<OwnPtr<float>>::Type
-                  >::value),
-               OwnPtrTest);
-
 } // namespace WebCore

@@ -237,8 +237,6 @@
     <ClInclude Include="..\wtf\Noncopyable.h" />
     <ClInclude Include="..\wtf\NumberOfCores.h" />
     <ClInclude Include="..\wtf\OSRandomSource.h" />
-    <ClInclude Include="..\wtf\OwnPtr.h" />
-    <ClInclude Include="..\wtf\OwnPtrCommon.h" />
     <ClInclude Include="..\wtf\PackedIntVector.h" />
     <ClInclude Include="..\wtf\PageAllocation.h" />
     <ClInclude Include="..\wtf\PageBlock.h" />
@@ -247,7 +245,6 @@
     <ClInclude Include="..\wtf\ParallelJobsGeneric.h" />
     <ClInclude Include="..\wtf\ParallelJobsLibdispatch.h" />
     <ClInclude Include="..\wtf\ParallelJobsOpenMP.h" />
-    <ClInclude Include="..\wtf\PassOwnPtr.h" />
     <ClInclude Include="..\wtf\PassRefPtr.h" />
     <ClInclude Include="..\wtf\Platform.h" />
     <ClInclude Include="..\wtf\PrintStream.h" />

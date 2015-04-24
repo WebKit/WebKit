@@ -29,7 +29,6 @@
 #include <WebCore/COMPtr.h>
 #include <WebKit/WebKit.h>
 #include <WebKit/WebKitCOMAPI.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace TestWebKitAPI {
 

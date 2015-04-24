@@ -31,7 +31,6 @@
 #include "ResourceRequest.h"
 #include "AuthenticationChallenge.h"
 #include "Timer.h"
-#include <wtf/OwnPtr.h>
 
 #if USE(CFNETWORK)
 #include "ResourceHandleCFURLConnectionDelegate.h"
@@ -163,7 +162,7 @@ namespace WebCore {
         unsigned m_sslErrors;
         Vector<char> m_postBytes;
 
-        OwnPtr<MultipartHandle> m_multipartHandle;
+        std::unique_ptr<MultipartHandle> m_multipartHandle;
 #endif
 #if USE(SOUP)
         GRefPtr<SoupMessage> m_soupMessage;

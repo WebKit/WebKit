@@ -33,7 +33,6 @@
 #include <type_traits>
 #include <utility>
 #include <wtf/Assertions.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -55,7 +54,6 @@ struct SameSizeAsRefCounted {
 };
 #endif
 
-static_assert(sizeof(OwnPtr<int>) == sizeof(int*), "OwnPtr should stay small!");
 static_assert(sizeof(PassRefPtr<RefCounted<int>>) == sizeof(int*), "PassRefPtr should stay small!");
 static_assert(sizeof(RefCounted<int>) == sizeof(SameSizeAsRefCounted), "RefCounted should stay small!");
 static_assert(sizeof(RefPtr<RefCounted<int>>) == sizeof(int*), "RefPtr should stay small!");

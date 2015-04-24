@@ -29,7 +29,7 @@
 #if ENABLE(NETWORK_CACHE)
 
 #include "NetworkCacheCoder.h"
-
+#include <wtf/HashFunctions.h>
 #include <wtf/StringHasher.h>
 #include <wtf/Vector.h>
 

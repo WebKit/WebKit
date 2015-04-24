@@ -37,11 +37,6 @@
 
 namespace WebCore {
 
-PassOwnPtr<MultipartHandle> MultipartHandle::create(ResourceHandle* handle, const String& boundary)
-{
-    return adoptPtr(new MultipartHandle(handle, boundary));
-}
-
 bool MultipartHandle::extractBoundary(const String& contentType, String& boundary)
 {
     static const size_t length = strlen("boundary=");

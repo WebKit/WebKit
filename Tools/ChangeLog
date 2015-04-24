@@ -1,3 +1,29 @@
+2015-04-24  Darin Adler  <darin@apple.com>
+
+        Convert OwnPtr and PassOwnPtr uses to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=128007
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/HistoryDelegate.h: Removed unneeded include.
+        * DumpRenderTree/win/UIDelegate.h: Ditto.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp: Removed OwnPtr-specific test cases.
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp: Ditto.
+
+        * TestWebKitAPI/Tests/WebKit/win/WebViewDestruction.cpp: Removed unneeded include.
+
+        * TestWebKitAPI/Tests/WebKit2/UserMessage.cpp: Use unique_ptr.
+        (TestWebKitAPI::WebKit2UserMessageRoundTripTest::SetUp): Use make_unique.
+        * TestWebKitAPI/Tests/WebKit2/WillLoad.cpp: Ditto.
+        (TestWebKitAPI::WebKit2WillLoadTest::SetUp): Ditto.
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMDOMWindowTest.cpp:
+        (WebKitDOMDOMWindowTest::create): Ditto.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (documentLoadedCallback): Use a queue of DelayedSignal objects instead
+        of smart pointers to DelayedSIgnal objects.
+        (uriChangedCallback): Ditto.
+
 2015-04-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Unreviewed test fix.

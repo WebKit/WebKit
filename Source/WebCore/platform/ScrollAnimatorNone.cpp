@@ -41,7 +41,6 @@
 #include "ScrollbarTheme.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
-#include <wtf/PassOwnPtr.h>
 
 using namespace std;
 

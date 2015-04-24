@@ -34,7 +34,6 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "IntRect.h"
-#include "OwnPtrCairo.h"
 #include "Path.h"
 #include "PlatformPathCairo.h"
 #include "RefPtrCairo.h"
@@ -73,8 +72,9 @@ void setSourceRGBAFromColor(cairo_t* context, const Color& color)
 
 void appendPathToCairoContext(cairo_t* to, cairo_t* from)
 {
-    OwnPtr<cairo_path_t> cairoPath = adoptPtr(cairo_copy_path(from));
-    cairo_append_path(to, cairoPath.get());
+    auto cairoPath = cairo_copy_path(from);
+    cairo_append_path(to, cairoPath);
+    cairo_path_destroy(cairoPath);
 }
 
 void setPathOnCairoContext(cairo_t* to, cairo_t* from)

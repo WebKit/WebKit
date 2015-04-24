@@ -1,3 +1,13 @@
+2015-04-24  Darin Adler  <darin@apple.com>
+
+        Convert OwnPtr and PassOwnPtr uses to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=128007
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/cache/NetworkCacheEncoder.h: Added an include now
+        needed that was inherited from OwnPtr.h before.
+
 2015-04-24  Antti Koivisto  <antti@apple.com>
 
         Network Cache: Make path functions members

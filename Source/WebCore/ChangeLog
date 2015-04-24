@@ -1,3 +1,94 @@
+2015-04-24  Darin Adler  <darin@apple.com>
+
+        Convert OwnPtr and PassOwnPtr uses to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=128007
+
+        Reviewed by Anders Carlsson.
+
+        * PlatformEfl.cmake: Removed OwnPtrCairo source files.
+        * PlatformGTK.cmake: Ditto.
+        * PlatformWinCairo.cmake: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+
+        * platform/CrossThreadCopier.cpp: Removed OwnPtr specialization.
+        * platform/CrossThreadCopier.h: Ditto.
+
+        * platform/ScrollAnimatorNone.cpp: Removed unneeded include.
+        * platform/ThreadGlobalData.cpp: Ditto.
+        * platform/ThreadGlobalData.h: Ditto.
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.h: Ditto.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::processNotification): Use unique_ptr.
+        (WebCore::AVFWrapper::notificationCallback): Use make_unique.
+        (WebCore::AVFWrapper::platformLayer): Ditto.
+
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::appendPathToCairoContext): Use cairo_path_destroy directly
+        instead of a smart pointer; the code path is simple enough that it is
+        clear this way.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::ImageBuffer): Use make_unique.
+        * platform/graphics/cairo/ImageBufferDataCairo.h: Use unique_ptr.
+
+        * platform/graphics/cairo/OwnPtrCairo.cpp: Removed.
+        * platform/graphics/cairo/OwnPtrCairo.h: Removed.
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::Path): Use cairo_path_destroy directly instead of a
+        smart pointer; the code path is simple enough that it is clear this way.
+        (WebCore::Path::operator=): Ditto.
+        (WebCore::Path::addPath): Ditto.
+        (WebCore::Path::apply): Ditto.
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::clipForPatternFilling): Ditto.
+
+        * platform/graphics/freetype/FontCacheFreeType.cpp: Removed unneeded include.
+        * platform/graphics/glx/GLContextGLX.cpp: Ditto.
+
+        * platform/graphics/surfaces/egl/EGLSurface.cpp:
+        (WebCore::EGLOffScreenSurface::EGLOffScreenSurface): Use make_unique.
+
+        * platform/graphics/surfaces/glx/GLXConfigSelector.h:
+        (WebCore::GLXConfigSelector::findMatchingConfig): Use unique_ptr with X11Deleter.
+        (WebCore::GLXConfigSelector::findMatchingConfigWithVisualId): Ditto.
+        * platform/graphics/surfaces/glx/GLXSurface.cpp:
+        (WebCore::GLXTransportSurface::GLXTransportSurface): Ditto.
+        (WebCore::GLXOffScreenSurface::initialize): Ditto.
+
+        * platform/graphics/surfaces/glx/OwnPtrX11.h: Removed.
+
+        * platform/graphics/surfaces/glx/X11Helper.cpp:
+        (WebCore::X11Helper::createOffScreenWindow): Use unique_ptr with X11Deleter.
+        (WebCore::X11Helper::createPixmap): Ditto.
+
+        * platform/graphics/surfaces/glx/X11Helper.h: Added X11Deleter,
+        which can be used with unique_ptr to make it call XFree instead of delete.
+
+        * platform/graphics/win/FullScreenController.cpp: Use unique_ptr.
+        (FullScreenController::FullScreenController): Use make_unique.
+        (FullScreenController::enterFullScreen): Ditto.
+        * platform/graphics/win/FullScreenController.h: Use unique_ptr.
+
+        * platform/graphics/win/GraphicsContext3DWin.cpp: Removed unneeded includes.
+
+        * platform/graphics/win/WKCAImageQueue.cpp:
+        (WebCore::WKCAImageQueue::WKCAImageQueue): Use make_unique.
+        * platform/graphics/win/WKCAImageQueue.h: Use unique_ptr.
+
+        * platform/network/NetworkStorageSessionStub.cpp: Removed unneeded include.
+
+        * platform/network/ResourceHandleInternal.h: Use unique_ptr.
+
+        * platform/network/curl/MultipartHandle.cpp:
+        (WebCore::MultipartHandle::create): Deleted.
+        * platform/network/curl/MultipartHandle.h: Deleted the create function.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::headerCallback): Use make_unique.
+
 2015-04-24  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Popup menu is not accessible.

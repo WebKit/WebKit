@@ -31,7 +31,6 @@
 
 #include <WebCore/COMPtr.h>
 #include <WebKit/WebKit.h>
-#include <wtf/OwnPtr.h>
 #include <windef.h>
 
 class DRTUndoManager;

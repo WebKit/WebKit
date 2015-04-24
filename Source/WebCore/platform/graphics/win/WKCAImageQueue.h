@@ -29,8 +29,8 @@
 typedef const void * CFTypeRef;
 typedef const struct __CFDictionary * CFDictionaryRef;
 
+#include <memory>
 #include <stdint.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -80,7 +80,7 @@ public:
 private:
     WKCAImageQueue(const WKCAImageQueue&);
     WKCAImageQueue& operator=(const WKCAImageQueue&);
-    OwnPtr<WKCAImageQueuePrivate> m_private;
+    std::unique_ptr<WKCAImageQueuePrivate> m_private;
 };
 
 }

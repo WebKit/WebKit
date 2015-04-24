@@ -30,8 +30,6 @@
 #include "RefLogger.h"
 #include <string>
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {
@@ -172,101 +170,6 @@ TEST(WTF_HashMap, EfficientGetter)
         EXPECT_EQ(0U, CopyMoveCounter::copyCount);
         EXPECT_EQ(1U, CopyMoveCounter::moveCount);
     }
-}
-
-TEST(WTF_HashMap, OwnPtrKey)
-{
-    ConstructorDestructorCounter::TestingScope scope;
-
-    HashMap<OwnPtr<ConstructorDestructorCounter>, int> map;
-
-    OwnPtr<ConstructorDestructorCounter> ownPtr = adoptPtr(new ConstructorDestructorCounter);
-    map.add(WTF::move(ownPtr), 2);
-
-    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
-    EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
-
-    map.clear();
-    
-    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
-    EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
-}
-
-TEST(WTF_HashMap, OwnPtrKey_FindUsingRawPointer)
-{
-    HashMap<OwnPtr<int>, int> map;
-
-    OwnPtr<int> ownPtr = adoptPtr(new int(5));
-    int* ptr = ownPtr.get();
-    map.add(WTF::move(ownPtr), 2);
-
-    auto it = map.find(ptr);
-    ASSERT_TRUE(it != map.end());
-    EXPECT_EQ(ptr, it->key.get());
-    EXPECT_EQ(2, it->value);
-}
-
-TEST(WTF_HashMap, OwnPtrKey_ContainsUsingRawPointer)
-{
-    HashMap<OwnPtr<int>, int> map;
-
-    OwnPtr<int> ownPtr = adoptPtr(new int(5));
-    int* ptr = ownPtr.get();
-    map.add(WTF::move(ownPtr), 2);
-
-    EXPECT_EQ(true, map.contains(ptr));
-}
-
-TEST(WTF_HashMap, OwnPtrKey_GetUsingRawPointer)
-{
-    HashMap<OwnPtr<int>, int> map;
-
-    OwnPtr<int> ownPtr = adoptPtr(new int(5));
-    int* ptr = ownPtr.get();
-    map.add(WTF::move(ownPtr), 2);
-
-    int value = map.get(ptr);
-    EXPECT_EQ(2, value);
-}
-
-TEST(WTF_HashMap, OwnPtrKey_RemoveUsingRawPointer)
-{
-    ConstructorDestructorCounter::TestingScope scope;
-
-    HashMap<OwnPtr<ConstructorDestructorCounter>, int> map;
-
-    OwnPtr<ConstructorDestructorCounter> ownPtr = adoptPtr(new ConstructorDestructorCounter);
-    ConstructorDestructorCounter* ptr = ownPtr.get();
-    map.add(WTF::move(ownPtr), 2);
-
-    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
-    EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
-
-    bool result = map.remove(ptr);
-    EXPECT_EQ(true, result);
-
-    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
-    EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
-}
-
-TEST(WTF_HashMap, OwnPtrKey_TakeUsingRawPointer)
-{
-    ConstructorDestructorCounter::TestingScope scope;
-
-    HashMap<OwnPtr<ConstructorDestructorCounter>, int> map;
-
-    OwnPtr<ConstructorDestructorCounter> ownPtr = adoptPtr(new ConstructorDestructorCounter);
-    ConstructorDestructorCounter* ptr = ownPtr.get();
-    map.add(WTF::move(ownPtr), 2);
-
-    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
-    EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
-
-    int result = map.take(ptr);
-    EXPECT_EQ(2, result);
-
-    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
-    EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 }
 
 TEST(WTF_HashMap, UniquePtrKey)

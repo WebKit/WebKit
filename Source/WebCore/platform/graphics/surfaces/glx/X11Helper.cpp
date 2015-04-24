@@ -240,7 +240,7 @@ void X11Helper::createOffScreenWindow(uint32_t* handleId, const EGLint id, bool 
     memset(&visualInfoTemplate, 0, sizeof(XVisualInfo));
     visualInfoTemplate.visualid = visualId;
     int matchingCount = 0;
-    OwnPtrX11<XVisualInfo> matchingVisuals(XGetVisualInfo(nativeDisplay(), VisualIDMask, &visualInfoTemplate, &matchingCount));
+    std::unique_ptr<XVisualInfo, X11Deleter> matchingVisuals(XGetVisualInfo(nativeDisplay(), VisualIDMask, &visualInfoTemplate, &matchingCount));
     XVisualInfo* foundVisual = 0;
 
     if (matchingVisuals) {
@@ -277,7 +277,7 @@ void X11Helper::createPixmap(Pixmap* handleId, const EGLint id, bool hasAlpha, c
     memset(&visualInfoTemplate, 0, sizeof(XVisualInfo));
     visualInfoTemplate.visualid = visualId;
     int matchingCount = 0;
-    OwnPtrX11<XVisualInfo> matchingVisuals(XGetVisualInfo(nativeDisplay(), VisualIDMask, &visualInfoTemplate, &matchingCount));
+    std::unique_ptr<XVisualInfo, X11Deleter> matchingVisuals(XGetVisualInfo(nativeDisplay(), VisualIDMask, &visualInfoTemplate, &matchingCount));
     XVisualInfo* foundVisual = 0;
     int requiredDepth = hasAlpha ? 32 : 24;
 

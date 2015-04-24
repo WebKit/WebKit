@@ -21,7 +21,6 @@
 #ifndef WTF_VectorTraits_h
 #define WTF_VectorTraits_h
 
-#include <wtf/OwnPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <utility>
@@ -66,22 +65,13 @@ namespace WTF {
         static const bool canCompareWithMemcmp = true;
     };
 
-    // We know OwnPtr and RefPtr are simple enough that initializing to 0 and moving with memcpy
-    // (and then not destructing the original) will totally work
-    template<typename P>
-    struct VectorTraits<RefPtr<P>> : SimpleClassVectorTraits { };
+    // We know smart pointers are simple enough that initializing to 0 and moving with memcpy
+    // (and then not destructing the original) will work.
 
-    template<typename P>
-    struct VectorTraits<OwnPtr<P>> : SimpleClassVectorTraits { };
-
-    template<typename P>
-    struct VectorTraits<std::unique_ptr<P>> : SimpleClassVectorTraits { };
-
-    template<typename P>
-    struct VectorTraits<Ref<P>> : SimpleClassVectorTraits { };
-
-    template<>
-    struct VectorTraits<AtomicString> : SimpleClassVectorTraits { };
+    template<typename P> struct VectorTraits<RefPtr<P>> : SimpleClassVectorTraits { };
+    template<typename P> struct VectorTraits<std::unique_ptr<P>> : SimpleClassVectorTraits { };
+    template<typename P> struct VectorTraits<Ref<P>> : SimpleClassVectorTraits { };
+    template<> struct VectorTraits<AtomicString> : SimpleClassVectorTraits { };
 
     template<typename First, typename Second>
     struct VectorTraits<std::pair<First, Second>>

@@ -27,7 +27,6 @@
 #define CDMSessionAVFoundationCF_h
 
 #include "CDMSession.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(ENCRYPTED_MEDIA_V2)

@@ -50,7 +50,7 @@ public:
 
     RefPtr<cairo_surface_t> m_surface;
     PlatformContextCairo m_platformContext;
-    OwnPtr<GraphicsContext> m_context;
+    std::unique_ptr<GraphicsContext> m_context;
     IntSize m_size;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)

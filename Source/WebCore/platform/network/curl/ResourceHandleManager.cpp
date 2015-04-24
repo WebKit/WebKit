@@ -515,7 +515,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
             String boundary;
             bool parsed = MultipartHandle::extractBoundary(d->m_response.httpHeaderField(HTTPHeaderName::ContentType), boundary);
             if (parsed)
-                d->m_multipartHandle = MultipartHandle::create(job, boundary);
+                d->m_multipartHandle = std::make_unique<MultipartHandle>(job, boundary);
         }
 
 #if ENABLE(WEB_TIMING)

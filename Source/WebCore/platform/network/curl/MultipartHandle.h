@@ -28,17 +28,13 @@
 
 #include "HTTPHeaderMap.h"
 #include "ResourceHandle.h"
-
-#include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class MultipartHandle {
-
 public:
-    static PassOwnPtr<MultipartHandle> create(ResourceHandle* handle, const String& boundary);
     static bool extractBoundary(const String& contentType, String& boundary);
 
     MultipartHandle(ResourceHandle* handle, const String& boundary)

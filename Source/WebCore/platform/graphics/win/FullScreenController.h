@@ -28,7 +28,7 @@
 
 #if ENABLE(FULLSCREEN_API)
 
-#include <wtf/OwnPtr.h>
+#include <memory>
 
 namespace WebCore {
 
@@ -54,7 +54,7 @@ protected:
 
     class Private;
     friend class Private;
-    OwnPtr<FullScreenController::Private> m_private;
+    std::unique_ptr<FullScreenController::Private> m_private;
 };
 
 }

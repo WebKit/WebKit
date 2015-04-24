@@ -30,7 +30,6 @@
 #include "NetworkStorageSession.h"
 
 #include "NetworkingContext.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

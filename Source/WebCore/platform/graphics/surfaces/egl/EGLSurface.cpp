@@ -130,7 +130,7 @@ EGLOffScreenSurface::EGLOffScreenSurface(SurfaceAttributes surfaceAttributes)
     if (m_sharedDisplay == EGL_NO_DISPLAY)
         return;
 
-    m_configSelector = adoptPtr(new EGLConfigSelector(surfaceAttributes));
+    m_configSelector = std::make_unique<EGLConfigSelector>(surfaceAttributes);
 }
 
 EGLOffScreenSurface::~EGLOffScreenSurface()

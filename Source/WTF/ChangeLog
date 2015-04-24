@@ -1,3 +1,25 @@
+2015-04-24  Darin Adler  <darin@apple.com>
+
+        Convert OwnPtr and PassOwnPtr uses to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=128007
+
+        Reviewed by Anders Carlsson.
+
+        * WTF.vcxproj/WTF.vcxproj: Removed OwnPtr source files.
+        * WTF.vcxproj/WTF.vcxproj.filters: Ditto.
+        * WTF.xcodeproj/project.pbxproj: Ditto.
+        * wtf/CMakeLists.txt: Ditto.
+
+        * wtf/Forward.h: Removed OwnPtr and PassOwnPtr.
+        * wtf/HashTraits.h: Ditto.
+
+        * wtf/OwnPtr.h: Removed.
+        * wtf/OwnPtrCommon.h: Removed.
+        * wtf/PassOwnPtr.h: Removed.
+
+        * wtf/SizeLimits.cpp: Removed OwnPtr.
+        * wtf/VectorTraits.h: Removed OwnPtr specialization.
+
 2015-04-23  Jer Noble  <jer.noble@apple.com>
 
         Disable HAVE_AVKIT on AppleTV

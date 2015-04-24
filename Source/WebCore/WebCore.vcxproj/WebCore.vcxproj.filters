@@ -1584,9 +1584,6 @@
     <ClCompile Include="..\platform\graphics\cairo\IntRectCairo.cpp">
       <Filter>platform\graphics\cairo</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\cairo\OwnPtrCairo.cpp">
-      <Filter>platform\graphics\cairo</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\cairo\PathCairo.cpp">
       <Filter>platform\graphics\cairo</Filter>
     </ClCompile>
@@ -15369,9 +15366,6 @@
       <Filter>platform\graphics\cairo</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\graphics\cairo\GraphicsContextPlatformPrivateCairo.h">
-      <Filter>platform\graphics\cairo</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\platform\graphics\cairo\OwnPtrCairo.h">
       <Filter>platform\graphics\cairo</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\graphics\cairo\PlatformPathCairo.h">

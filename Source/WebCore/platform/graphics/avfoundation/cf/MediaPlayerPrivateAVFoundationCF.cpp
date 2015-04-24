@@ -189,7 +189,7 @@ private:
     mutable RetainPtr<CACFLayerRef> m_caVideoLayer;
     RefPtr<PlatformCALayer> m_videoLayerWrapper;
 
-    OwnPtr<LayerClient> m_layerClient;
+    std::unique_ptr<LayerClient> m_layerClient;
     COMPtr<IDirect3DDevice9Ex> m_d3dDevice;
 
     InbandTextTrackPrivateAVF* m_currentTextTrack;
@@ -1623,7 +1623,7 @@ void AVFWrapper::processNotification(void* context)
     if (!context)
         return;
 
-    OwnPtr<NotificationCallbackData> notificationData = adoptPtr(reinterpret_cast<NotificationCallbackData*>(context));
+    std::unique_ptr<NotificationCallbackData> notificationData { static_cast<NotificationCallbackData*>(context) };
 
     MutexLocker locker(mapLock());
     AVFWrapper* self = avfWrapperForCallbackContext(notificationData->m_context);
@@ -1673,9 +1673,9 @@ void AVFWrapper::notificationCallback(CFNotificationCenterRef, void* observer, C
     LOG(Media, "AVFWrapper::notificationCallback(if=%d) %s", reinterpret_cast<uintptr_t>(observer), notificationName);
 #endif
 
-    OwnPtr<NotificationCallbackData> notificationData = adoptPtr(new NotificationCallbackData(propertyName, observer));
+    auto notificationData = std::make_unique<NotificationCallbackData>(propertyName, observer);
 
-    dispatch_async_f(dispatch_get_main_queue(), notificationData.leakPtr(), processNotification);
+    dispatch_async_f(dispatch_get_main_queue(), notificationData.release(), processNotification);
 }
 
 void AVFWrapper::loadPlayableCompletionCallback(AVCFAssetRef, void* context)
@@ -1917,7 +1917,7 @@ PlatformLayer* AVFWrapper::platformLayer()
         return 0;
 
     // Create a PlatformCALayer so we can resize the video layer to match the element size.
-    m_layerClient = adoptPtr(new LayerClient(this));
+    m_layerClient = std::make_unique<LayerClient>(this);
     if (!m_layerClient)
         return 0;
 
