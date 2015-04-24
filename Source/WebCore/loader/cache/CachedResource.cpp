@@ -460,7 +460,7 @@ void CachedResource::removeClient(CachedResourceClient* client)
             // We allow non-secure content to be reused in history, but we do not allow secure content to be reused.
             memoryCache.remove(*this);
         }
-        memoryCache.pruneSoon();
+        memoryCache.prune();
     }
     // This object may be dead here.
 }
@@ -557,7 +557,7 @@ void CachedResource::didAccessDecodedData(double timeStamp)
             memoryCache.removeFromLiveDecodedResourcesList(*this);
             memoryCache.insertInLiveDecodedResourcesList(*this);
         }
-        memoryCache.pruneSoon();
+        memoryCache.prune();
     }
 }
     

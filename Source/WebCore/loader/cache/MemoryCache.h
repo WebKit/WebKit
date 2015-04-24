@@ -28,7 +28,6 @@
 #include "NativeImagePtr.h"
 #include "SecurityOriginHash.h"
 #include "SessionID.h"
-#include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -118,7 +117,6 @@ public:
     WEBCORE_EXPORT void evictResources(SessionID);
     
     void prune();
-    void pruneSoon();
     unsigned size() const { return m_liveSize + m_deadSize; }
 
     void setDeadDecodedDataDeletionInterval(std::chrono::milliseconds interval) { m_deadDecodedDataDeletionInterval = interval; }
@@ -186,8 +184,6 @@ private:
 
     unsigned liveCapacity() const;
     unsigned deadCapacity() const;
-    bool needsPruning() const;
-    void pruneTimerFired();
 
     CachedResource* resourceForRequestImpl(const ResourceRequest&, CachedResourceMap&);
 
@@ -217,8 +213,6 @@ private:
     // referenced by a Web page).
     typedef HashMap<SessionID, std::unique_ptr<CachedResourceMap>> SessionCachedResourceMap;
     SessionCachedResourceMap m_sessionResources;
-
-    Timer m_pruneTimer;
 };
 
 }

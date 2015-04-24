@@ -69,9 +69,6 @@ function loadResource(test, onload)
 
 function loadResources(tests, completetion)
 {
-    // Otherwise we just get responses from the memory cache.
-    internals.clearMemoryCache();
-    
     var pendingCount = tests.length;
     for (var i = 0; i < tests.length; ++i) {
         loadResource(tests[i], function (ev) {
@@ -100,6 +97,8 @@ function printResults(tests)
 function runTests(tests, completionHandler)
 {
     loadResources(tests, function () {
+        // Otherwise we just get responses from the memory cache.
+        internals.clearMemoryCache();
         // Wait a bit so things settle down in the disk cache.
         setTimeout(function () {
             loadResources(tests, function () {

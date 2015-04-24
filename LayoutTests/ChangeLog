@@ -1,5 +1,18 @@
 2015-04-24  Antti Koivisto  <antti@apple.com>
 
+        Unreviewed, rolling out r183259.
+
+        Wrong ChangeLog.
+
+        Reverted changeset:
+
+        "Memory cache live resources repeatedly purged during
+        painting"
+        https://bugs.webkit.org/show_bug.cgi?id=144104
+        http://trac.webkit.org/changeset/183259
+
+2015-04-24  Antti Koivisto  <antti@apple.com>
+
         Memory cache live resources repeatedly purged during painting
         https://bugs.webkit.org/show_bug.cgi?id=144104
 

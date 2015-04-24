@@ -69,7 +69,6 @@ MemoryCache::MemoryCache()
     , m_deadDecodedDataDeletionInterval(defaultDecodedDataDeletionInterval)
     , m_liveSize(0)
     , m_deadSize(0)
-    , m_pruneTimer(*this, &MemoryCache::pruneTimerFired)
 {
 }
 
@@ -746,32 +745,13 @@ void MemoryCache::evictResources(SessionID sessionID)
     ASSERT(!m_sessionResources.contains(sessionID));
 }
 
-bool MemoryCache::needsPruning() const
-{
-    return m_liveSize + m_deadSize > m_capacity || m_deadSize > m_maxDeadCapacity;
-}
-
 void MemoryCache::prune()
 {
-    if (!needsPruning())
+    if (m_liveSize + m_deadSize <= m_capacity && m_deadSize <= m_maxDeadCapacity) // Fast path.
         return;
         
     pruneDeadResources(); // Prune dead first, in case it was "borrowing" capacity from live.
     pruneLiveResources();
-}
-
-void MemoryCache::pruneTimerFired()
-{
-    prune();
-}
-
-void MemoryCache::pruneSoon()
-{
-     if (m_pruneTimer.isActive())
-        return;
-     if (!needsPruning())
-         return;
-     m_pruneTimer.startOneShot(0);
 }
 
 #ifndef NDEBUG
