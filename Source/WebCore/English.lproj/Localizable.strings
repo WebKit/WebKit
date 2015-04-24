@@ -1108,3 +1108,8 @@
 /* accessibility label for video element controller */
 "video playback" = "video playback";
 
+/* PDF password failure alert message */
+"The document could not be opened with that password." = "The document could not be opened with that password.";
+
+/* OK button label in PDF password failure alert */
+"OK (PDF password failure alert)" = "OK";

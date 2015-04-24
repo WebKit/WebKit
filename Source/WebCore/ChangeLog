@@ -1,3 +1,14 @@
+2015-04-24  Tim Horton  <timothy_horton@apple.com>
+
+        WKPDFView does not support password-protected PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=144162
+        <rdar://problem/18411512>
+
+        Reviewed by Andy Estes.
+
+        * English.lproj/Localizable.strings:
+        Add some localizable strings.
+
 2015-04-24  David Kilzer  <ddkilzer@apple.com>
 
         Fix iOS EWS builds after updating to iOS 8.3 SDK

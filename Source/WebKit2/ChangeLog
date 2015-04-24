@@ -1,3 +1,54 @@
+2015-04-24  Tim Horton  <timothy_horton@apple.com>
+
+        WKPDFView does not support password-protected PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=144162
+        <rdar://problem/18411512>
+
+        Reviewed by Andy Estes.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Add some SPI.
+
+        * UIProcess/ios/WKPDFView.h:
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _didLoadPDFDocument]):
+        (-[WKPDFView web_setContentProviderData:suggestedFilename:]):
+        Move creation of the UIPDFDocument (only possible if the CGPDFDocument is unlocked)
+        and initial setup of the page views out into _didLoadPDFDocument.
+
+        If the CGPDFDocument is locked, we'll show some UI to unlock it; otherwise
+        we'll continue on to _didLoadPDFDocument as previously.
+
+        (-[WKPDFView web_setMinimumSize:]):
+        Resize the password UI instead of the PDF pages if we have it.
+
+        (-[WKPDFView _computePageAndDocumentFrames]):
+        Don't bother doing any work revalidating PDF pages if the document is locked.
+
+        (-[WKPDFView _updatePasswordEntryField]):
+        Make sure that the UIDocumentPassword view is always the size of the scrollview.
+        This takes care of rotation.
+
+        (-[WKPDFView _keyboardDidShow:]):
+        Make sure that we scroll the password field around, if necessary, to keep it
+        on screen when editing begins.
+
+        (-[WKPDFView _showPasswordEntryField]):
+        (-[WKPDFView _hidePasswordEntryField]):
+        Adjust the background color (to match the UIDocumentPasswordView) and disable zooming
+        while it's up. The UIDocumentPassword view is installed into the scroll view
+        to match UIWebView behavior.
+
+        (-[WKPDFView userDidEnterPassword:forPasswordView:]):
+        (-[WKPDFView didBeginEditingPassword:inView:]):
+        (-[WKPDFView didEndEditingPassword:inView:]):
+        (-[WKPDFView _didFailToUnlock]):
+        Pop up a dialog informing the user that they entered the wrong password.
+
+        (-[WKPDFView _tryToUnlockWithPassword:]):
+        Try to unlock the document. If it succeeds, hide the unlock UI and go back to
+        _didLoadPDFDocument.
+
 2015-04-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183266.

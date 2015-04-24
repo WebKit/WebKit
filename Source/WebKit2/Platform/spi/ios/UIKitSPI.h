@@ -32,6 +32,7 @@
 #import <UIKit/UIBarButtonItem_Private.h>
 #import <UIKit/UIDatePicker_Private.h>
 #import <UIKit/UIDevice_Private.h>
+#import <UIKit/UIDocumentPasswordView.h>
 #import <UIKit/UIFont_Private.h>
 #import <UIKit/UIGeometry_Private.h>
 #import <UIKit/UIGestureRecognizer_Private.h>
@@ -674,6 +675,33 @@ typedef enum {
 
 @interface UIDocumentMenuViewController (Details)
 @property (nonatomic, assign, setter = _setIgnoreApplicationEntitlementForImport:, getter = _ignoreApplicationEntitlementForImport) BOOL _ignoreApplicationEntitlementForImport;
+@end
+
+@protocol UIDocumentPasswordViewDelegate;
+
+@interface UIDocumentPasswordView : UIView <UITextFieldDelegate>
+@end
+
+@interface UIDocumentPasswordView (Details)
+
+- (id)initWithDocumentName:(NSString *)documentName;
+
+@property (nonatomic, assign) NSObject<UIDocumentPasswordViewDelegate> *passwordDelegate;
+@property (nonatomic, readonly) UITextField *passwordField;
+
+@end
+
+@protocol UIDocumentPasswordViewDelegate
+
+@required
+
+- (void)userDidEnterPassword:(NSString *)password forPasswordView:(UIDocumentPasswordView *)passwordView;
+
+@optional
+
+- (void)didBeginEditingPassword:(UITextField *)passwordField inView:(UIDocumentPasswordView *)passwordView;
+- (void)didEndEditingPassword:(UITextField *)passwordField inView:(UIDocumentPasswordView *)passwordView;
+
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
