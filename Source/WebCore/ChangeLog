@@ -1,3 +1,40 @@
+2015-04-23  Antti Koivisto  <antti@apple.com>
+
+        Memory cache live resources repeatedly purged during painting
+        https://bugs.webkit.org/show_bug.cgi?id=144104
+        <rdar://problem/20667695>
+
+        Reviewed by Chris Dumez.
+
+        On some PLT pages (like nytimes.com) we get into state where painting repeatedly purges live bitmaps.
+        This slows down page loads significantly.
+
+        This might have regressed because improvements in page caching keep more pages and so resources 'live'.
+
+        With this path we do all regular cache pruning asynchronously. If memory is really critical
+        the low memory handling code will still prune synchronously.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::removeClient):
+        (WebCore::CachedResource::didAccessDecodedData):
+
+            prune() -> pruneSoon()
+
+        * loader/cache/MemoryCache.cpp:
+
+            Decrease the pruning size target from 0.95 to 0.8 so we don't need to prune so often.
+
+        (WebCore::MemoryCache::needsPruning):
+
+            Factor into a function.
+
+        (WebCore::MemoryCache::prune):
+        (WebCore::MemoryCache::pruneSoon):
+
+            Prune asynchronously.
+
+        * loader/cache/MemoryCache.h:
+
 2015-04-24  Antti Koivisto  <antti@apple.com>
 
         Unreviewed, rolling out r183259.
