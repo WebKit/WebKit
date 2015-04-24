@@ -1,3 +1,32 @@
+2015-04-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] When inserting a NaN into a Int32 array, we convert it to DoubleArray then to ContiguousArray
+        https://bugs.webkit.org/show_bug.cgi?id=144169
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::convertInt32ForValue):
+        DoubleArray do not store NaN, they are used for holes.
+        What happened was:
+        1) We fail to insert the NaN in the Int32 array because it is a double.
+        2) We were converting the array to DoubleArray.
+        3) We were trying to insert the value again. We would fail again because
+           DoubleArray does not store NaN.
+        4) We would convert the DoubleArrayt to Contiguous Array, converting the values
+           to boxed values.
+
+        * tests/stress/int32array-transition-on-nan.js: Added.
+        The behavior is not really observable. This only test nothing crashes in those
+        cases.
+
+        (insertNaNWhileFilling):
+        (testInsertNaNWhileFilling):
+        (insertNaNAfterFilling):
+        (testInsertNaNAfterFilling):
+        (pushNaNWhileFilling):
+        (testPushNaNWhileFilling):
+
 2015-04-21  Geoffrey Garen  <ggaren@apple.com>
 
         It shouldn't take 1846 lines of code and 5 FIXMEs to sort an array.
