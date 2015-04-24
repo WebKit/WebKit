@@ -25,6 +25,10 @@
         testRunner.notifyDone();
     }
   }
+
+  setTimeout(function() {
+    parent.document.getElementById('result').innerHTML = "Test timed out. Resized " + resizeCounter + " times, got " + resizeEventCounter + " events.";
+  }, 20000);
   
 </script>
 </head>

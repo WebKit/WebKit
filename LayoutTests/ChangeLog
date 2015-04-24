@@ -1,3 +1,16 @@
+2015-04-24  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/frames/flattening/iframe-flattening-resize-event-count.html times out on Yosemite WK2
+        https://bugs.webkit.org/show_bug.cgi?id=144155
+
+        Reviewed by Anders Carlsson.
+
+        Cleaned the test up a little, and added logging to collect some information about
+        why it fails.
+
+        * fast/frames/flattening/iframe-flattening-resize-event-count.html:
+        * fast/frames/flattening/resources/iframe-to-resize.html:
+
 2015-04-24  Doug Russell  <d_russell@apple.com>
 
         AX: richer text change notifications (142719)

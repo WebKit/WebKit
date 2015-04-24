@@ -2,20 +2,18 @@
 <html>
 <head>
 <script>
-  function start() {
-    if (window.internals)
-      internals.settings.setFrameFlatteningEnabled(true);
-      
-    if (window.testRunner) {
-      testRunner.dumpAsText();
-      testRunner.waitUntilDone();
-    }
-  }
+if (window.internals)
+    internals.settings.setFrameFlatteningEnabled(true);
+  
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
 </script>
 </head>
 <body>
   <p>This tests the number of resize events dispatched to JavaScript.</p>
   <p id='result'></p>
-  <iframe onload='start();' frameborder=0; src='resources/iframe-to-resize.html'>
+  <iframe frameborder='0' src='resources/iframe-to-resize.html'></iframe>
 </body>
 </html>
