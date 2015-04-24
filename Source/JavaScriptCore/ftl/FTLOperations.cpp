@@ -92,7 +92,25 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
     
         return result;
     }
-        
+
+    case PhantomNewFunction: {
+        // Figure out what the executable and activation are
+        FunctionExecutable* executable = nullptr;
+        JSScope* activation = nullptr;
+        for (unsigned i = materialization->properties().size(); i--;) {
+            const ExitPropertyValue& property = materialization->properties()[i];
+            if (property.location() == PromotedLocationDescriptor(FunctionExecutablePLoc))
+                executable = jsCast<FunctionExecutable*>(JSValue::decode(values[i]));
+            if (property.location() == PromotedLocationDescriptor(FunctionActivationPLoc))
+                activation = jsCast<JSScope*>(JSValue::decode(values[i]));
+        }
+        RELEASE_ASSERT(executable && activation);
+
+        JSFunction* result = JSFunction::create(vm, executable, activation);
+
+        return result;
+    }
+
     case PhantomDirectArguments:
     case PhantomClonedArguments: {
         if (!materialization->origin().inlineCallFrame) {

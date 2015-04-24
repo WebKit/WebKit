@@ -246,6 +246,7 @@ namespace JSC { namespace DFG {
     macro(PutHint, NodeMustGenerate) \
     macro(CheckStructureImmediate, NodeMustGenerate) \
     macro(MaterializeNewObject, NodeResultJS | NodeHasVarArgs) \
+    macro(PhantomNewFunction, NodeResultJS | NodeMustGenerate) \
     \
     /* Nodes for misc operations. */\
     macro(Breakpoint, NodeMustGenerate) \

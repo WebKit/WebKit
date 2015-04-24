@@ -4741,6 +4741,7 @@ void SpeculativeJIT::compile(Node* node)
     case CheckBadCell:
     case BottomValue:
     case PhantomNewObject:
+    case PhantomNewFunction:
     case GetMyArgumentByVal:
     case PutHint:
     case CheckStructureImmediate:

@@ -1,5 +1,85 @@
 2015-04-23  Basile Clement  <basile_clement@apple.com>
 
+        Allow function allocation sinking
+        https://bugs.webkit.org/show_bug.cgi?id=144016
+
+        Reviewed by Filip Pizlo.
+
+        This adds the ability to sink function allocations in the
+        DFGObjectAllocationSinkingPhase.
+
+        In order to enable this, we add a new PhantomNewFunction node that is
+        used similarily to the PhantomNewObject node, i.e. as a placeholder to replace
+        a sunk NewFunction and keep track of the allocations that have to be performed
+        in case of OSR exit after the sunk allocation but before the real one.
+        The FunctionExecutable and JSLexicalEnvironment (activation) of the function
+        are stored onto the PhantomNewFunction through PutHints in order for them
+        to be recovered on OSR exit.
+
+        Contrary to sunk object allocations, sunk function allocations do not
+        support any kind of operations (e.g. storing into a field) ; any such operation
+        will mark the function allocation as escaping and trigger materialization. As
+        such, function allocations can only be sunk to places where it would have been
+        correct to syntactically move them, and we don't need a special
+        MaterializeNewFunction node to recover possible operations on the function. A
+        sunk NewFunction node will simply create new NewFunction nodes, then replace
+        itself with a PhantomNewFunction node.
+
+        In itself, this change is not expected to have a significant impact on
+        performances other than in degenerate cases (see e.g.
+        JSRegress/sink-function), but it is a step towards being able to sink recursive
+        closures onces we support CreateActivation sinking as well as allocation cycles
+        sinking.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPhantomNewFunction):
+        (JSC::DFG::Node::isPhantomAllocation):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::lowerNonReadingOperationsOnPhantomAllocations):
+        (JSC::DFG::ObjectAllocationSinkingPhase::handleNode):
+        (JSC::DFG::ObjectAllocationSinkingPhase::createMaterialize):
+        (JSC::DFG::ObjectAllocationSinkingPhase::populateMaterialize):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGPromotedHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGPromotedHeapLocation.h:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validateCPS):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * tests/stress/function-sinking-no-double-allocate.js: Added.
+        (call):
+        (.f):
+        (sink):
+        * tests/stress/function-sinking-osrexit.js: Added.
+        (.g):
+        (sink):
+        * tests/stress/function-sinking-put.js: Added.
+        (.g):
+        (sink):
+
+2015-04-23  Basile Clement  <basile_clement@apple.com>
+
         Make FunctionRareData allocation thread-safe
         https://bugs.webkit.org/show_bug.cgi?id=144001
 

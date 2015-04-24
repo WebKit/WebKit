@@ -40,7 +40,10 @@ enum PromotedLocationKind {
     NamedPropertyPLoc,
     ArgumentPLoc,
     ArgumentCountPLoc,
-    ArgumentsCalleePLoc
+    ArgumentsCalleePLoc,
+
+    FunctionExecutablePLoc,
+    FunctionActivationPLoc,
 };
 
 class PromotedLocationDescriptor {

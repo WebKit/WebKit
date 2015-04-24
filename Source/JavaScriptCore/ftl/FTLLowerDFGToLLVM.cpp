@@ -849,6 +849,7 @@ private:
         case MovHint:
         case ZombieHint:
         case PhantomNewObject:
+        case PhantomNewFunction:
         case PhantomDirectArguments:
         case PhantomClonedArguments:
         case PutHint:

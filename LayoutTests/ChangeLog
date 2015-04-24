@@ -1,3 +1,35 @@
+2015-04-23  Basile Clement  <basile_clement@apple.com>
+
+        Allow function allocation sinking
+        https://bugs.webkit.org/show_bug.cgi?id=144016
+
+        Reviewed by Filip Pizlo.
+
+        Add a new test in JSRegress to check function sinking is being
+        performed.
+
+        * js/regress/script-tests/sink-function.js: Added.
+        (foo.f1):
+        (foo.f2):
+        (foo.f3):
+        (foo.f4):
+        (foo.f5):
+        (foo.f6):
+        (foo.f7):
+        (foo.f8):
+        (foo.f9):
+        (foo.f10):
+        (foo.f11):
+        (foo.f12):
+        (foo.f13):
+        (foo.f14):
+        (foo.f15):
+        (foo.f16):
+        (foo.f17):
+        (foo.f18):
+        (foo.f19):
+        (foo):
+
 2015-04-23  Alexey Proskuryakov  <ap@apple.com>
 
         Test compositing/scrolling/touch-scroll-to-clip.html fails in WK1

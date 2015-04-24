@@ -180,6 +180,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ToIndexString:
     case BottomValue:
     case PhantomNewObject:
+    case PhantomNewFunction:
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeNewObject:

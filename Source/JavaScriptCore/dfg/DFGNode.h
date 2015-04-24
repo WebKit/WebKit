@@ -581,7 +581,17 @@ struct Node {
         m_opInfo2 = 0;
         children = AdjacencyList();
     }
-    
+
+    void convertToPhantomNewFunction()
+    {
+        ASSERT(m_op == NewFunction);
+        m_op = PhantomNewFunction;
+        m_flags |= NodeMustGenerate;
+        m_opInfo = 0;
+        m_opInfo2 = 0;
+        children = AdjacencyList();
+    }
+
     void convertPhantomToPhantomLocal()
     {
         ASSERT(m_op == Phantom && (child1()->op() == Phi || child1()->op() == SetLocal || child1()->op() == SetArgument));
@@ -1427,6 +1437,7 @@ struct Node {
         case PhantomNewObject:
         case PhantomDirectArguments:
         case PhantomClonedArguments:
+        case PhantomNewFunction:
             return true;
         default:
             return false;

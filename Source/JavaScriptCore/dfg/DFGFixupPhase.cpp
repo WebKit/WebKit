@@ -1035,6 +1035,7 @@ private:
         case Identity: // This should have been cleaned up.
         case BooleanToNumber:
         case PhantomNewObject:
+        case PhantomNewFunction:
         case PhantomDirectArguments:
         case PhantomClonedArguments:
         case ForwardVarargs:

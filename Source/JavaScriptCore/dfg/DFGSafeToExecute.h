@@ -272,6 +272,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetEnumeratorGenericPname:
     case ToIndexString:
     case PhantomNewObject:
+    case PhantomNewFunction:
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeNewObject:

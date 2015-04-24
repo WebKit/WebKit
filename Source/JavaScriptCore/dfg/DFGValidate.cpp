@@ -452,6 +452,7 @@ private:
                 case Upsilon:
                 case CheckInBounds:
                 case PhantomNewObject:
+                case PhantomNewFunction:
                 case GetMyArgumentByVal:
                 case PutHint:
                 case CheckStructureImmediate:
