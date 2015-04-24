@@ -45,7 +45,6 @@ class VisibleSelection;
 bool isPositionInRange(const VisiblePosition&, Range*);
 bool shouldUseSelection(const VisiblePosition&, const VisibleSelection&);
 
-PassRefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition&, int numberOfCharactersToExpand);
 WEBCORE_EXPORT PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection&, NSDictionary **options);
 WEBCORE_EXPORT PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult&, NSDictionary **options);
 WEBCORE_EXPORT NSString *dictionaryLookupForPDFSelection(PDFSelection *, NSDictionary **options);

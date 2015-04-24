@@ -105,6 +105,8 @@ WEBCORE_EXPORT int distanceBetweenPositions(const VisiblePosition&, const Visibl
 WEBCORE_EXPORT PassRefPtr<Range> wordRangeFromPosition(const VisiblePosition& position);
 WEBCORE_EXPORT VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position);
 WEBCORE_EXPORT void charactersAroundPosition(const VisiblePosition&, UChar32& oneAfter, UChar32& oneBefore, UChar32& twoBefore);
+WEBCORE_EXPORT PassRefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition&, int numberOfCharactersToExpand);
+
 } // namespace WebCore
 
 #endif // VisibleUnits_h

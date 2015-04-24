@@ -78,18 +78,6 @@ bool shouldUseSelection(const VisiblePosition& position, const VisibleSelection&
     return isPositionInRange(position, selectedRange.get());
 }
 
-PassRefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition& position, int numberOfCharactersToExpand)
-{
-    Position start = position.deepEquivalent();
-    Position end = position.deepEquivalent();
-    for (int i = 0; i < numberOfCharactersToExpand; ++i) {
-        start = start.previous(Character);
-        end = end.next(Character);
-    }
-
-    return makeRange(start, end);
-}
-
 PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection& selection, NSDictionary **options)
 {
     RefPtr<Range> selectedRange = selection.toNormalizedRange();

@@ -1,3 +1,21 @@
+2015-04-24  Enrica Casucci  <enrica@apple.com>
+
+        Make rangeExpandedAroundPositionByCharacters to all platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=144161
+
+        Reviewed by Tim Horton.
+
+        No change in functionality, simply making this available
+        to all platforms.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::rangeExpandedAroundPositionByCharacters):
+        * editing/VisibleUnits.h:
+        * editing/mac/DataDetection.mm:
+        * editing/mac/DictionaryLookup.h:
+        * editing/mac/DictionaryLookup.mm:
+        (WebCore::rangeExpandedAroundPositionByCharacters): Deleted.
+
 2015-04-24  Andreas Kling  <akling@apple.com>
 
         Purge PassRefPtr from NamedNodeMap.
