@@ -15,16 +15,13 @@ debug("Setting cookie and loading");
 document.cookie = "cookie=value";
 loadResources(tests, function () {
     printResults(tests);
-    internals.clearMemoryCache();
     debug("Loading again");
     loadResources(tests, function () {
         printResults(tests);
-        internals.clearMemoryCache();
         debug("Changing cookie and loading");
         document.cookie = "cookie=othervalue";
         loadResources(tests, function () {
             printResults(tests);
-            internals.clearMemoryCache()
             debug("Loading again");
             loadResources(tests, function () {
                printResults(tests);

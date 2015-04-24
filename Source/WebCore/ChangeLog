@@ -1,3 +1,34 @@
+2015-04-24  Antti Koivisto  <antti@apple.com>
+
+        CrashTracer: WebProcess at com.apple.WebCore: WebCore::toScriptElementIfPossible + 4
+        https://bugs.webkit.org/show_bug.cgi?id=144050
+
+        Reviewed by Chris Dumez.
+
+        We are seeing null Element pointer crashes with this stack:
+
+        47 com.apple.WebCore:  WebCore::toScriptElementIfPossible + 4 <==
+        47 com.apple.WebCore:  WebCore::ScriptRunner::timerFired + 452
+        47 com.apple.WebCore:  WebCore::ThreadTimers::sharedTimerFiredInternal + 175
+
+        The most likely cause seems to be that this code
+
+            ASSERT(m_pendingAsyncScripts.contains(scriptElement));
+            m_scriptsToExecuteSoon.append(m_pendingAsyncScripts.take(scriptElement));
+
+        in ScriptRunner::notifyScriptReady fails to find scriptElement and we are left with null entry in
+        m_scriptsToExecuteSoon. However I haven't managed to repro this or find the exact path how this
+        could happen. The related code is fragile with lot of state (especially in ScriptElement class)
+        and involves many opportunities for re-entry via scripts.
+
+        No repro, no test case.
+
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::timerFired):
+
+            Paper this over by adding a null check. We could check m_pendingAsyncScripts.take() above
+            but this also covers possibility this is caused by something else.
+
 2015-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Use a webkit subdirectory for the disk cache
