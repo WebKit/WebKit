@@ -61,12 +61,16 @@ PASS Page did not receive wheel events.
   (anchor 0.00 0.00)
   (bounds 2008.00 2326.00)
   (visible rect 0.00, 0.00 785.00 x 585.00)
+  (coverage rect 0.00, 0.00 785.00 x 585.00)
+  (intersects coverage rect 1)
   (contentsScale 1.00)
   (children 1
     (GraphicsLayer
       (bounds 2008.00 2326.00)
       (contentsOpaque 1)
       (visible rect 0.00, 0.00 785.00 x 585.00)
+      (coverage rect 0.00, 0.00 785.00 x 585.00)
+      (intersects coverage rect 1)
       (contentsScale 1.00)
       (tile cache coverage 0, 0 2008 x 2048)
       (tile size 512 x 512)
