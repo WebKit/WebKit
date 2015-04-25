@@ -351,11 +351,9 @@ PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(Platf
 
 GraphicsLayerCA::GraphicsLayerCA(Type layerType, GraphicsLayerClient& client)
     : GraphicsLayer(layerType, client)
-    , m_contentsLayerPurpose(NoContentsLayer)
     , m_needsFullRepaint(false)
     , m_usingBackdropLayerType(false)
-    , m_uncommittedChanges(0)
-    , m_isCommittingChanges(false)
+    , m_intersectsCoverageRect(true)
 {
 }
 
@@ -1077,6 +1075,8 @@ FloatPoint GraphicsLayerCA::computePositionRelativeToBase(float& pageScale) cons
 void GraphicsLayerCA::flushCompositingState(const FloatRect& clipRect)
 {
     TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(clipRect));
+    FloatQuad coverageQuad(clipRect);
+    state.setSecondaryQuad(&coverageQuad);
     recursiveCommitChanges(CommitState(), state);
 }
 
@@ -1211,9 +1211,45 @@ FloatRect GraphicsLayerCA::computeVisibleRect(TransformState& state, ComputeVisi
         // Flatten, and replace the quad in the TransformState with one that is clipped to this layer's bounds.
         state.flatten();
         state.setQuad(clipRectForSelf);
+        if (state.lastPlanarSecondaryQuad()) {
+            FloatQuad secondaryQuad(clipRectForSelf);
+            state.setSecondaryQuad(&secondaryQuad);
+        }
     }
 
     return clipRectForSelf;
+}
+
+void GraphicsLayerCA::setVisibleAndCoverageRects(const FloatRect& visibleRect, const FloatRect& coverageRect)
+{
+    bool visibleRectChanged = visibleRect != m_visibleRect;
+    bool coverageRectChanged = coverageRect != m_coverageRect;
+    if (!visibleRectChanged && !coverageRectChanged)
+        return;
+
+    if (visibleRectChanged) {
+        m_uncommittedChanges |= VisibleRectChanged;
+        m_visibleRect = visibleRect;
+        
+        if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
+            // FIXME: this assumes that the mask layer has the same geometry as this layer (which is currently always true).
+            maskLayer->m_uncommittedChanges |= VisibleRectChanged;
+            maskLayer->m_visibleRect = visibleRect;
+        }
+    }
+
+    if (coverageRectChanged) {
+        m_uncommittedChanges |= CoverageRectChanged;
+        m_coverageRect = coverageRect;
+
+        // FIXME: we need to take reflections into account when determining whether this layer intersects the coverage rect.
+        m_intersectsCoverageRect = m_coverageRect.intersects(FloatRect(m_boundsOrigin, size()));
+
+        if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
+            maskLayer->m_uncommittedChanges |= CoverageRectChanged;
+            maskLayer->m_coverageRect = coverageRect;
+        }
+    }
 }
 
 // rootRelativeTransformForScaling is a transform from the root, but for layers with transform animations, it cherry-picked the state of the
@@ -1225,17 +1261,12 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
     bool affectedByTransformAnimation = commitState.ancestorHasTransformAnimation;
     
     FloatRect visibleRect = computeVisibleRect(localState);
+    FloatRect coverageRect = visibleRect;
+    if (std::unique_ptr<FloatQuad> quad = localState.mappedSecondaryQuad())
+        coverageRect = quad->boundingBox();
+
     FloatRect oldVisibleRect = m_visibleRect;
-    if (visibleRect != m_visibleRect) {
-        m_uncommittedChanges |= VisibleRectChanged;
-        m_visibleRect = visibleRect;
-        
-        if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
-            // FIXME: this assumes that the mask layer has the same geometry as this layer (which is currently always true).
-            maskLayer->m_uncommittedChanges |= VisibleRectChanged;
-            maskLayer->m_visibleRect = visibleRect;
-        }
-    }
+    setVisibleAndCoverageRects(visibleRect, coverageRect);
 
 #ifdef VISIBLE_TILE_WASH
     // Use having a transform as a key to making the tile wash layer. If every layer gets a wash,
@@ -1457,6 +1488,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
 
     if (m_uncommittedChanges & VisibleRectChanged)
         updateVisibleRect(oldVisibleRect);
+    
+    if (m_uncommittedChanges & CoverageRectChanged)
+        updateBackingStoreAttachment();
 
     if (m_uncommittedChanges & TilingAreaChanged) // Needs to happen after VisibleRectChanged, ContentsScaleChanged
         updateTiles();
@@ -1928,6 +1962,16 @@ void GraphicsLayerCA::updateDrawsContent()
             for (LayerMap::const_iterator it = m_layerClones->begin(); it != end; ++it)
                 it->value->setContents(0);
         }
+    }
+}
+
+void GraphicsLayerCA::updateBackingStoreAttachment()
+{
+    m_layer->setBackingStoreAttached(m_intersectsCoverageRect);
+    if (m_layerClones) {
+        LayerMap::const_iterator end = m_layerClones->end();
+        for (LayerMap::const_iterator it = m_layerClones->begin(); it != end; ++it)
+            it->value->setBackingStoreAttached(m_intersectsCoverageRect);
     }
 }
 
@@ -3133,7 +3177,6 @@ void GraphicsLayerCA::getDebugBorderInfo(Color& color, float& width) const
     GraphicsLayer::getDebugBorderInfo(color, width);
 }
 
-
 static void dumpInnerLayer(TextStream& textStream, String label, PlatformCALayer* layer, int indent, LayerTreeAsTextBehavior behavior)
 {
     if (!layer)
@@ -3152,6 +3195,12 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, int inden
     if (behavior & LayerTreeAsTextIncludeVisibleRects) {
         writeIndent(textStream, indent + 1);
         textStream << "(visible rect " << m_visibleRect.x() << ", " << m_visibleRect.y() << " " << m_visibleRect.width() << " x " << m_visibleRect.height() << ")\n";
+
+        writeIndent(textStream, indent + 1);
+        textStream << "(coverage rect " << m_coverageRect.x() << ", " << m_coverageRect.y() << " " << m_coverageRect.width() << " x " << m_coverageRect.height() << ")\n";
+
+        writeIndent(textStream, indent + 1);
+        textStream << "(intersects coverage rect " << m_intersectsCoverageRect << ")\n";
 
         writeIndent(textStream, indent + 1);
         textStream << "(contentsScale " << m_layer->contentsScale() << ")\n";

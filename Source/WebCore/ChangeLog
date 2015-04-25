@@ -1,3 +1,37 @@
+2015-04-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Track a coverage rect through GraphicsLayerCA flushes, use it to mark backing store attached
+        https://bugs.webkit.org/show_bug.cgi?id=144165
+
+        Reviewed by Dean Jackson.
+        
+        Push in the clipRect as the secondary rect when doing a GraphicsLayerCA flush,
+        which maps this rect through all the layers. Each layer tests intersection with
+        this rect to determine if its backing store should be attached.
+        
+        This will cause us to drop backing store for layers that don't intersect the
+        visible part of the view, which is too aggressive. A future patch will add
+        some padding.
+
+        Tests: compositing/visible-rect/coverage-clipped.html
+               compositing/visible-rect/coverage-scrolling.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA): Remove initialization of things with
+        C++11 initializers. Initialize the new m_intersectsCoverageRect bit.
+        (WebCore::GraphicsLayerCA::flushCompositingState): Push the clipRect in as the
+        secondary coverage rect. A future patch will inflate this on the way down the tree.
+        (WebCore::GraphicsLayerCA::computeVisibleRect): If we're clipping, and
+        we have a secondary coverage rect, that rect can be clipped to us too.
+        (WebCore::GraphicsLayerCA::setVisibleAndCoverageRects):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateBackingStoreAttachment):
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties):
+        * platform/graphics/ca/GraphicsLayerCA.h: New CoverageRectChanged bit.
+        Use more C++11 initializers.
+        (WebCore::GraphicsLayerCA::coverageRect):
+
 2015-04-24  Dean Jackson  <dino@apple.com>
 
         AnimationController::scrollWasUpdated() shows up in scrolling profiles on pages that don't use scroll triggers

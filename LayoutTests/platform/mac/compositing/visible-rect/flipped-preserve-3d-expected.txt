@@ -8,12 +8,16 @@ Some text here.
   (anchor 0.00 0.00)
   (bounds 785.00 615.00)
   (visible rect 0.00, 0.00 785.00 x 600.00)
+  (coverage rect 0.00, 0.00 785.00 x 600.00)
+  (intersects coverage rect 1)
   (contentsScale 1.00)
   (children 1
     (GraphicsLayer
       (bounds 785.00 615.00)
       (contentsOpaque 1)
       (visible rect 0.00, 0.00 785.00 x 600.00)
+      (coverage rect 0.00, 0.00 785.00 x 600.00)
+      (intersects coverage rect 1)
       (contentsScale 1.00)
       (children 1
         (GraphicsLayer
@@ -21,6 +25,8 @@ Some text here.
           (bounds 602.00 602.00)
           (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 -0.00] [0.00 0.00 0.00 1.00])
           (visible rect 0.00, 0.00 602.00 x 587.00)
+          (coverage rect 0.00, -13.00 785.00 x 600.00)
+          (intersects coverage rect 1)
           (contentsScale 1.00)
           (children 1
             (GraphicsLayer
@@ -30,6 +36,8 @@ Some text here.
               (preserves3D 1)
               (transform [-1.00 0.00 -0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 -1.00 0.00] [0.00 0.00 0.00 1.00])
               (visible rect 0.00, 0.00 440.00 x 440.00)
+              (coverage rect -184.00, -114.00 785.00 x 600.00)
+              (intersects coverage rect 1)
               (contentsScale 1.00)
               (children 1
                 (GraphicsLayer
@@ -37,11 +45,15 @@ Some text here.
                   (contentsOpaque 1)
                   (transform [-1.00 0.00 -0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 -1.00 0.00] [0.00 0.00 0.00 1.00])
                   (visible rect 0.00, 0.00 420.00 x 420.00)
+                  (coverage rect -181.00, -114.00 785.00 x 600.00)
+                  (intersects coverage rect 1)
                   (contentsScale 1.00)
                   (children 1
                     (GraphicsLayer
                       (bounds 420.00 420.00)
                       (visible rect 0.00, 0.00 420.00 x 420.00)
+                      (coverage rect 0.00, 0.00 420.00 x 420.00)
+                      (intersects coverage rect 1)
                       (contentsScale 1.00)
                       (children 1
                         (GraphicsLayer
@@ -49,11 +61,15 @@ Some text here.
                           (bounds 418.00 510.00)
                           (contentsOpaque 1)
                           (visible rect 0.00, 90.00 418.00 x 420.00)
+                          (coverage rect 0.00, 90.00 420.00 x 420.00)
+                          (intersects coverage rect 1)
                           (contentsScale 1.00)
                           (children 1
                             (GraphicsLayer
                               (bounds 418.00 510.00)
                               (visible rect 0.00, 90.00 418.00 x 420.00)
+                              (coverage rect 0.00, 90.00 418.00 x 420.00)
+                              (intersects coverage rect 1)
                               (contentsScale 1.00)
                               (children 3
                                 (GraphicsLayer
@@ -63,6 +79,8 @@ Some text here.
                                   (usingTiledLayer 1)
                                   (drawsContent 1)
                                   (visible rect 3000.00, 90.00 418.00 x 30.00)
+                                  (coverage rect 3000.00, 90.00 418.00 x 420.00)
+                                  (intersects coverage rect 1)
                                   (contentsScale 1.00)
                                 )
                                 (GraphicsLayer
@@ -72,6 +90,8 @@ Some text here.
                                   (usingTiledLayer 1)
                                   (drawsContent 1)
                                   (visible rect 3000.00, 0.00 418.00 x 120.00)
+                                  (coverage rect 3000.00, -30.00 418.00 x 420.00)
+                                  (intersects coverage rect 1)
                                   (contentsScale 1.00)
                                 )
                                 (GraphicsLayer
@@ -81,6 +101,8 @@ Some text here.
                                   (usingTiledLayer 1)
                                   (drawsContent 1)
                                   (visible rect 3000.00, 0.00 418.00 x 120.00)
+                                  (coverage rect 3000.00, -150.00 418.00 x 420.00)
+                                  (intersects coverage rect 1)
                                   (contentsScale 1.00)
                                 )
                               )

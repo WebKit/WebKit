@@ -276,7 +276,11 @@ private:
     enum ComputeVisibleRectFlag { RespectAnimatingTransforms = 1 << 0 };
     typedef unsigned ComputeVisibleRectFlags;
     FloatRect computeVisibleRect(TransformState&, ComputeVisibleRectFlags = RespectAnimatingTransforms) const;
+
     const FloatRect& visibleRect() const { return m_visibleRect; }
+    const FloatRect& coverageRect() const { return m_coverageRect; }
+
+    void setVisibleAndCoverageRects(const FloatRect& visibleRect, const FloatRect& coverageRect);
     
     static FloatRect adjustTiledLayerVisibleRect(TiledBacking*, const FloatRect& oldVisibleRect, const FloatRect& newVisibleRect, const FloatSize& oldSize, const FloatSize& newSize);
 
@@ -447,15 +451,16 @@ private:
         ContentsScaleChanged =          1LLU << 24,
         ContentsVisibilityChanged =     1LLU << 25,
         VisibleRectChanged =            1LLU << 26,
-        FiltersChanged =                1LLU << 27,
-        BackdropFiltersChanged =        1LLU << 28,
-        TilingAreaChanged =             1LLU << 29,
-        TilesAdded =                    1LLU << 30,
-        DebugIndicatorsChanged =        1LLU << 31,
-        CustomAppearanceChanged =       1LLU << 32,
-        BlendModeChanged =              1LLU << 33,
-        ShapeChanged =                  1LLU << 34,
-        WindRuleChanged =               1LLU << 35,
+        CoverageRectChanged =           1LLU << 27,
+        FiltersChanged =                1LLU << 28,
+        BackdropFiltersChanged =        1LLU << 29,
+        TilingAreaChanged =             1LLU << 30,
+        TilesAdded =                    1LLU << 31,
+        DebugIndicatorsChanged =        1LLU << 32,
+        CustomAppearanceChanged =       1LLU << 33,
+        BlendModeChanged =              1LLU << 34,
+        ShapeChanged =                  1LLU << 35,
+        WindRuleChanged =               1LLU << 36,
     };
     typedef uint64_t LayerChangeFlags;
     enum ScheduleFlushOrNot { ScheduleFlush, DontScheduleFlush };
@@ -488,10 +493,13 @@ private:
 #endif
     FloatRect m_visibleRect;
     FloatSize m_sizeAtLastVisibleRectUpdate;
+
+    FloatRect m_coverageRect; // Area for which we should maintain backing store, in the coordinate space of this layer.
     
-    ContentsLayerPurpose m_contentsLayerPurpose;
+    ContentsLayerPurpose m_contentsLayerPurpose { NoContentsLayer };
     bool m_needsFullRepaint : 1;
     bool m_usingBackdropLayerType : 1;
+    bool m_intersectsCoverageRect : 1;
 
     Color m_contentsSolidColor;
 
@@ -542,8 +550,8 @@ private:
 
     FloatSize m_pixelAlignmentOffset;
 
-    LayerChangeFlags m_uncommittedChanges;
-    bool m_isCommittingChanges;
+    LayerChangeFlags m_uncommittedChanges { 0 };
+    bool m_isCommittingChanges { false };
 };
 
 } // namespace WebCore
