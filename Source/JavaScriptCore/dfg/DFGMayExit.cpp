@@ -45,7 +45,21 @@ public:
     
     void operator()(Node*, Edge edge)
     {
-        m_result |= edge.willHaveCheck();
+        if (edge.willHaveCheck()) {
+            m_result = true;
+            return;
+        }
+
+        switch (edge.useKind()) {
+        case ObjectUse:
+        case ObjectOrOtherUse:
+        case StringObjectUse:
+        case StringOrStringObjectUse:
+            m_result = true;
+            break;
+        default:
+            break;
+        }
     }
     
     bool result() const { return m_result; }
