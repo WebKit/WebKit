@@ -1,3 +1,26 @@
+2015-04-24  Brent Fulgham  <bfulgham@apple.com>
+
+        TextIndicator for embedded PDFs is slightly offset
+        https://bugs.webkit.org/show_bug.cgi?id=144172
+        <rdar://problem/20691304>
+
+        Reviewed by Tim Horton.
+
+        When I converted the existing DOM Range logic to work with PDFSelections, I omitted the
+        step where the font ascent was used to adjust the origin used for the TextIndicator. This
+        patch determines the correct ascent for the range of characters in the selection, and
+        adjusts the offset by the difference between the ascent and the height of the selection rect.
+        
+        Also, since the PDFSelection only supplies the bounding rect for the selection, I calculate
+        an equivalent text bounding box by insetting the rect by half the size of the ascent.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::scaleFactor): Add accessor for PDF scale factor.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::dictionaryPopupInfoForPDFSelectionInPluginView): Adjusted to take the
+        font ascent and scale factor into account.
+
 2015-04-24  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r183293): Fix iOS EWS build by adding SPI declaration for +[UIPeripheralHost visiblePeripheralFrame]

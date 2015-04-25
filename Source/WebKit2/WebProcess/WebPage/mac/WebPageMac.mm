@@ -588,7 +588,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame* frame, Range& ra
 }
 
 #if ENABLE(PDFKIT_PLUGIN)
-DictionaryPopupInfo WebPage::dictionaryPopupInfoForPDFSelectionInPluginView(PDFSelection *selection, PDFPlugin& pdfPlugin, NSDictionary **options, WebCore::TextIndicatorPresentationTransition presentationTransition)
+DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelection *selection, PDFPlugin& pdfPlugin, NSDictionary **options, WebCore::TextIndicatorPresentationTransition presentationTransition)
 {
     DictionaryPopupInfo dictionaryPopupInfo;
     if (!selection.string.length)
@@ -596,33 +596,41 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForPDFSelectionInPluginView(PDFS
 
     NSRect rangeRect = pdfPlugin.viewRectForSelection(selection);
 
-    dictionaryPopupInfo.origin = rangeRect.origin;
-    dictionaryPopupInfo.options = (CFDictionaryRef)*options;
-    
     NSAttributedString *nsAttributedString = selection.attributedString;
     
     RetainPtr<NSMutableAttributedString> scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
     
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    
+
+    CGFloat scaleFactor = pdfPlugin.scaleFactor();
+
+    __block CGFloat maxAscender = 0;
     [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
         RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
         
         NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
         if (font) {
-            font = [fontManager convertFont:font toSize:[font pointSize] * pageScaleFactor()];
+            maxAscender = std::max(maxAscender, font.ascender * scaleFactor);
+            font = [fontManager convertFont:font toSize:[font pointSize] * scaleFactor];
             [scaledAttributes setObject:font forKey:NSFontAttributeName];
         }
         
         [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
     }];
 
+    CGFloat textInset = rangeRect.size.height - maxAscender;
+    rangeRect.origin.y -= textInset;
+    
     TextIndicatorData dataForSelection;
     dataForSelection.selectionRectInRootViewCoordinates = rangeRect;
-    dataForSelection.textBoundingRectInRootViewCoordinates = rangeRect;
-    dataForSelection.contentImageScaleFactor = 1.0;
+
+    CGFloat insetAmount = 0.5 * textInset;
+    dataForSelection.textBoundingRectInRootViewCoordinates = NSInsetRect(rangeRect, insetAmount, insetAmount);
+    dataForSelection.contentImageScaleFactor = scaleFactor;
     dataForSelection.presentationTransition = presentationTransition;
     
+    dictionaryPopupInfo.origin = rangeRect.origin;
+    dictionaryPopupInfo.options = (CFDictionaryRef)*options;
     dictionaryPopupInfo.textIndicator = dataForSelection;
     dictionaryPopupInfo.attributedString.string = scaledNSAttributedString;
     
@@ -1179,7 +1187,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
                 actionMenuResult.isSelected = true;
                 actionMenuResult.allowsCopy = true;
 
-                actionMenuResult.dictionaryPopupInfo = dictionaryPopupInfoForPDFSelectionInPluginView(selection, *pdfPugin, &options, textIndicatorTransitionForActionMenu(forImmediateAction, false));
+                actionMenuResult.dictionaryPopupInfo = dictionaryPopupInfoForSelectionInPDFPlugin(selection, *pdfPugin, &options, textIndicatorTransitionForActionMenu(forImmediateAction, false));
             }
         }
     }

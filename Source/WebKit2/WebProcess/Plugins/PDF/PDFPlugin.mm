@@ -1967,6 +1967,11 @@ WebCore::FloatRect PDFPlugin::viewRectForSelection(PDFSelection *selection) cons
     return WebCore::FloatRect(rectInView);
 }
 
+CGFloat PDFPlugin::scaleFactor() const
+{
+    return [m_pdfLayerController contentScaleFactor];
+}
+
 void PDFPlugin::performWebSearch(NSString *string)
 {
     webFrame()->page()->send(Messages::WebPageProxy::SearchTheWeb(string));

@@ -1015,7 +1015,7 @@ private:
     void performDictionaryLookupForRange(WebCore::Frame*, WebCore::Range&, NSDictionary *options, WebCore::TextIndicatorPresentationTransition);
     DictionaryPopupInfo dictionaryPopupInfoForRange(WebCore::Frame* frame, WebCore::Range& range, NSDictionary **options, WebCore::TextIndicatorPresentationTransition presentationTransition);
 #if ENABLE(PDFKIT_PLUGIN)
-    DictionaryPopupInfo dictionaryPopupInfoForPDFSelectionInPluginView(PDFSelection *, PDFPlugin&, NSDictionary **options, WebCore::TextIndicatorPresentationTransition);
+    DictionaryPopupInfo dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelection *, PDFPlugin&, NSDictionary **options, WebCore::TextIndicatorPresentationTransition);
 #endif
 
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& windowFrameInUnflippedScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);

@@ -107,6 +107,8 @@ public:
     String lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResult::Data&, PDFSelection **, NSDictionary **) const;
     WebCore::FloatRect viewRectForSelection(PDFSelection *) const;
 
+    CGFloat scaleFactor() const;
+
 private:
     explicit PDFPlugin(WebFrame*);
 
