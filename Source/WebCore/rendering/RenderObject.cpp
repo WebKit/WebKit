@@ -1658,7 +1658,7 @@ void RenderObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformSt
 
 bool RenderObject::shouldUseTransformFromContainer(const RenderObject* containerObject) const
 {
-#if ENABLE(3D_RENDERING)
+#if ENABLE(3D_TRANSFORMS)
     return hasTransform() || (containerObject && containerObject->style().hasPerspective());
 #else
     UNUSED_PARAM(containerObject);
@@ -1674,7 +1674,7 @@ void RenderObject::getTransformFromContainer(const RenderObject* containerObject
     if (hasLayer() && (layer = downcast<RenderLayerModelObject>(*this).layer()) && layer->transform())
         transform.multiply(layer->currentTransform());
     
-#if ENABLE(3D_RENDERING)
+#if ENABLE(3D_TRANSFORMS)
     if (containerObject && containerObject->hasLayer() && containerObject->style().hasPerspective()) {
         // Perpsective on the container affects us, so we have to factor it in here.
         ASSERT(containerObject->hasLayer());

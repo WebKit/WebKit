@@ -1091,7 +1091,7 @@ bool GraphicsContext::isAcceleratedContext() const
     return cairo_surface_get_type(cairo_get_target(platformContext()->cr())) == CAIRO_SURFACE_TYPE_GL;
 }
 
-#if ENABLE(3D_RENDERING) && USE(TEXTURE_MAPPER)
+#if ENABLE(3D_TRANSFORMS) && USE(TEXTURE_MAPPER)
 TransformationMatrix GraphicsContext::get3DTransform() const
 {
     // FIXME: Can we approximate the transformation better than this?
@@ -1107,7 +1107,7 @@ void GraphicsContext::set3DTransform(const TransformationMatrix& transform)
 {
     setCTM(transform.toAffineTransform());
 }
-#endif // ENABLE(3D_RENDERING) && USE(TEXTURE_MAPPER)
+#endif // ENABLE(3D_TRANSFORMS) && USE(TEXTURE_MAPPER)
 
 } // namespace WebCore
 

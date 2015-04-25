@@ -75,7 +75,7 @@
 #include "RenderTreeAsText.h"
 #endif
 
-#if ENABLE(3D_RENDERING)
+#if ENABLE(3D_TRANSFORMS)
 // This symbol is used to determine from a script whether 3D rendering is enabled (via 'nm').
 WEBCORE_EXPORT bool WebCoreHas3DRendering = true;
 #endif

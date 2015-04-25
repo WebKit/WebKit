@@ -42,7 +42,7 @@ BEGIN {
 }
 
 my (
-    $threeDRenderingSupport,
+    $threeDTransformsSupport,
     $accelerated2DCanvasSupport,
     $attachmentElementSupport,
     $batteryStatusSupport,
@@ -149,7 +149,7 @@ my (
 
 my @features = (
     { option => "3d-rendering", desc => "Toggle 3D Rendering support",
-      define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() || isIOSWebKit() || isGtk() || isEfl()), value => \$threeDRenderingSupport },
+      define => "ENABLE_3D_TRANSFORMS", default => (isAppleMacWebKit() || isIOSWebKit() || isGtk() || isEfl()), value => \$threeDTransformsSupport },
 
     { option => "accelerated-2d-canvas", desc => "Toggle Accelerated 2D Canvas support",
       define => "ENABLE_ACCELERATED_2D_CANVAS", default => isGtk(), value => \$accelerated2DCanvasSupport },

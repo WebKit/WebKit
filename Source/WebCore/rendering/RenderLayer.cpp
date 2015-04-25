@@ -250,7 +250,7 @@ private:
 
 void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)
 {
-#if !ENABLE(3D_RENDERING)
+#if !ENABLE(3D_TRANSFORMS)
     UNUSED_PARAM(has3DRendering);
     matrix.makeAffine();
 #else

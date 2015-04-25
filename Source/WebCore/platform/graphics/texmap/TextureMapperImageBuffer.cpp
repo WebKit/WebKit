@@ -45,14 +45,14 @@ void TextureMapperImageBuffer::beginClip(const TransformationMatrix& matrix, con
     GraphicsContext* context = currentContext();
     if (!context)
         return;
-#if ENABLE(3D_RENDERING)
+#if ENABLE(3D_TRANSFORMS)
     TransformationMatrix previousTransform = context->get3DTransform();
 #else
     AffineTransform previousTransform = context->getCTM();
 #endif
     context->save();
 
-#if ENABLE(3D_RENDERING)
+#if ENABLE(3D_TRANSFORMS)
     context->concat3DTransform(matrix);
 #else
     context->concatCTM(matrix.toAffineTransform());
@@ -60,7 +60,7 @@ void TextureMapperImageBuffer::beginClip(const TransformationMatrix& matrix, con
 
     context->clip(rect);
 
-#if ENABLE(3D_RENDERING)
+#if ENABLE(3D_TRANSFORMS)
     context->set3DTransform(previousTransform);
 #else
     context->setCTM(previousTransform);
@@ -78,7 +78,7 @@ void TextureMapperImageBuffer::drawTexture(const BitmapTexture& texture, const F
     context->save();
     context->setCompositeOperation(isInMaskMode() ? CompositeDestinationIn : CompositeSourceOver);
     context->setAlpha(opacity);
-#if ENABLE(3D_RENDERING)
+#if ENABLE(3D_TRANSFORMS)
     context->concat3DTransform(matrix);
 #else
     context->concatCTM(matrix.toAffineTransform());
@@ -95,7 +95,7 @@ void TextureMapperImageBuffer::drawSolidColor(const FloatRect& rect, const Trans
 
     context->save();
     context->setCompositeOperation(isInMaskMode() ? CompositeDestinationIn : CompositeSourceOver);
-#if ENABLE(3D_RENDERING)
+#if ENABLE(3D_TRANSFORMS)
     context->concat3DTransform(matrix);
 #else
     context->concatCTM(matrix.toAffineTransform());

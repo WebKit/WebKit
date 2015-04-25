@@ -431,7 +431,7 @@ namespace WebCore {
         enum IncludeDeviceScale { DefinitelyIncludeDeviceScale, PossiblyIncludeDeviceScale };
         AffineTransform getCTM(IncludeDeviceScale includeScale = PossiblyIncludeDeviceScale) const;
 
-#if ENABLE(3D_RENDERING) && USE(TEXTURE_MAPPER)
+#if ENABLE(3D_TRANSFORMS) && USE(TEXTURE_MAPPER)
         // This is needed when using accelerated-compositing in software mode, like in TextureMapper.
         void concat3DTransform(const TransformationMatrix&);
         void set3DTransform(const TransformationMatrix&);

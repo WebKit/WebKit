@@ -1,3 +1,13 @@
+2015-04-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Rename ENABLE_3D_RENDERING to ENABLE_3D_TRANSFORMS
+        https://bugs.webkit.org/show_bug.cgi?id=144182
+
+        Reviewed by Simon Fraser.
+
+        * win/tools/vsprops/FeatureDefines.props: Replace all instances of 3D_RENDERING with 3D_TRANSFORMS.
+        * win/tools/vsprops/FeatureDefinesCairo.props: Replace all instances of 3D_RENDERING with 3D_TRANSFORMS.
+
 2015-04-17  Daniel Bates  <dabates@apple.com>
 
         Not able to build WebKit against iOS Simulator 8.3 SDK

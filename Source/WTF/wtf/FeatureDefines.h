@@ -313,8 +313,8 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 /* ENABLE macro defaults for WebCore */
 /* Do not use PLATFORM() tests in this section ! */
 
-#if !defined(ENABLE_3D_RENDERING)
-#define ENABLE_3D_RENDERING 0
+#if !defined(ENABLE_3D_TRANSFORMS)
+#define ENABLE_3D_TRANSFORMS 0
 #endif
 
 #if !defined(ENABLE_ACCELERATED_2D_CANVAS)

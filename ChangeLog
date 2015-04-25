@@ -1,3 +1,16 @@
+2015-04-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Rename ENABLE_3D_RENDERING to ENABLE_3D_TRANSFORMS
+        https://bugs.webkit.org/show_bug.cgi?id=144182
+
+        Reviewed by Simon Fraser.
+
+        * Source/cmake/OptionsEfl.cmake: Replace all instances of 3D_RENDERING with 3D_TRANSFORMS.
+        * Source/cmake/OptionsGTK.cmake: Replace all instances of 3D_RENDERING with 3D_TRANSFORMS.
+        * Source/cmake/OptionsMac.cmake: Replace all instances of 3D_RENDERING with 3D_TRANSFORMS.
+        * Source/cmake/WebKitFeatures.cmake: Replace all instances of 3D_RENDERING with 3D_TRANSFORMS.
+        * Source/cmakeconfig.h.cmake: Replace all instances of 3D_RENDERING with 3D_TRANSFORMS.
+
 2015-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Add more public options
