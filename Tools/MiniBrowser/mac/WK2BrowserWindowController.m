@@ -78,7 +78,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         return nil;
 
     _configuration = [configuration copy];
-    _isPrivateBrowsingWindow = _configuration.websiteDataStore.isNonPersistent;
+    _isPrivateBrowsingWindow = !_configuration.websiteDataStore.isPersistent;
 
     return self;
 }
