@@ -1,0 +1,12 @@
+{
+    "osx": {
+        "chrome": {
+            "moduleName": "OSXChromeDriver", 
+            "filePath": "browser_driver.osx_chrome_driver"
+        }, 
+        "safari": {
+            "moduleName": "OSXSafariDriver", 
+            "filePath": "browser_driver.osx_safari_driver"
+        }
+    } 
+}

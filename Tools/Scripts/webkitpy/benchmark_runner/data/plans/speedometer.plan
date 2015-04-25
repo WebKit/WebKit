@@ -1,0 +1,14 @@
+{
+    "benchmarks": [
+        {
+            "benchmark_builder": "GenericBenchmarkBuilder",
+            "benchmark_patch": "data/patches/Speedometer.patch",
+            "original_benchmark": "../../../../PerformanceTests/Speedometer",
+            "count": 5,
+            "entry_point": "Speedometer/Full.html",
+            "output_file": "speedometer.result",
+            "timeout": 600
+        }
+    ],
+    "http_server_driver": "SimpleHTTPServerDriver"
+}

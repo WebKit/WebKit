@@ -1,0 +1,10 @@
+{
+    "GenericBenchmarkBuilder": {
+        "filePath": "benchmark_builder.generic_benchmark_builder",
+        "moduleName": "GenericBenchmarkBuilder"
+    },
+    "JetStreamBenchmarkBuilder": {
+        "filePath": "benchmark_builder.jetstream_benchmark_builder",
+        "moduleName": "JetStreamBenchmarkBuilder"
+    }
+}

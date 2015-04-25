@@ -1,3 +1,94 @@
+2015-04-25  Dewei Zhu  <dewei_zhu@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=144038
+
+        Reviewed by Ryosuke Niwa
+
+        Add a script to run Speedometer and JetStream on a browser.
+
+        * Scripts/run-benchmark: Wrapper script to run benchmark.
+        (main):
+        * Scripts/webkitpy/benchmark_runner/README.md: Introduction of this script.
+        * Scripts/webkitpy/benchmark_runner/__init__.py: Added.
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/__init__.py: Added.
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/benchmark_builder_factory.py: Added.
+        (BenchmarkBuilderFactory):
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/benchmark_builders.json: Added.
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/generic_benchmark_builder.py: Added.
+        (GenericBenchmarkBuilder):
+        (GenericBenchmarkBuilder.prepare):
+        (GenericBenchmarkBuilder._copyBenchmarkToTempDir):
+        (GenericBenchmarkBuilder._applyPatch):
+        (GenericBenchmarkBuilder.clean):
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/jetstream_benchmark_builder.py: Added.
+        (JetStreamBenchmarkBuilder):
+        (JetStreamBenchmarkBuilder.prepare):
+        (JetStreamBenchmarkBuilder._runCreateScript):
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py: Main module that masters all the processes of benchmark running.
+        (BenchmarkRunner):
+        (BenchmarkRunner.__init__):
+        (BenchmarkRunner.execute):
+        (BenchmarkRunner.dump):
+        (BenchmarkRunner.wrap):
+        (BenchmarkRunner.merge):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/__init__.py: Added.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver.py: Added.
+        (BrowserDriver):
+        (BrowserDriver.prepareEnv):
+        (BrowserDriver.launchUrl):
+        (BrowserDriver.closeBrowser):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver_factory.py: Added.
+        (BrowserDriverFactory):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_drivers.json: Added.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py: Added.
+        (OSXChromeDriver):
+        (OSXChromeDriver.prepareEnv):
+        (OSXChromeDriver.launchUrl):
+        (OSXChromeDriver.closeBrowsers):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py: Added.
+        (OSXSafariDriver):
+        (OSXSafariDriver.prepareEnv):
+        (OSXSafariDriver.launchUrl):
+        (OSXSafariDriver.closeBrowsers):
+        * Scripts/webkitpy/benchmark_runner/data/patches/JetStream.patch: Patch that makes JetStream compatible with this script.
+        * Scripts/webkitpy/benchmark_runner/data/patches/Speedometer.patch: Patch that makes Speedometer compatible with this scritp.
+        * Scripts/webkitpy/benchmark_runner/data/plans/jetstream.plan: Added.
+        * Scripts/webkitpy/benchmark_runner/data/plans/speedometer.plan: Added.
+        * Scripts/webkitpy/benchmark_runner/generic_factory.py: Factory for generic purpose.
+        (GenericFactory):
+        (GenericFactory.iterateGetItem):
+        (GenericFactory.create):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/__init__.py: Added.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/twisted_http_server.py: Added.
+        (ServerControl):
+        (ServerControl.render_GET):
+        (ServerControl.render_POST):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server_driver.py: Added.
+        (HTTPServerDriver):
+        (HTTPServerDriver.serve):
+        (HTTPServerDriver.fetchResult):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server_driver_factory.py: Added.
+        (HTTPServerDriverFactory):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server_drivers.json: Added.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py: Added.
+        (SimpleHTTPServerDriver):
+        (SimpleHTTPServerDriver.depends):
+        (SimpleHTTPServerDriver.__init__):
+        (SimpleHTTPServerDriver.serve):
+        (SimpleHTTPServerDriver.baseUrl):
+        (SimpleHTTPServerDriver.fetchResult):
+        * Scripts/webkitpy/benchmark_runner/utils.py: Utility module.
+        (ModuleNotFoundError):
+        (loadModule):
+        (getPathFromProjectRoot):
+        (loadJSONFromFile):
+        (TimeoutError):
+        (timeout):
+        (timeout.__init__):
+        (timeout.handle_timeout):
+        (timeout.__enter__):
+        (timeout.__exit__):
+
 2015-04-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183303.
