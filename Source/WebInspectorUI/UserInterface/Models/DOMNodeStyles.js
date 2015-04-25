@@ -569,7 +569,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         var id = payload.styleId;
         var mapKey = id ? id.styleSheetId + ":" + id.ordinal : null;
 
-        if (type == WebInspector.CSSStyleDeclaration.Type.Attribute)
+        if (type === WebInspector.CSSStyleDeclaration.Type.Attribute)
             mapKey = node.id + ":attribute";
 
         var styleDeclaration = rule ? rule.style : null;
@@ -655,8 +655,11 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         }
 
         var styleSheet = id ? WebInspector.cssStyleManager.styleSheetForIdentifier(id.styleSheetId) : null;
-        if (styleSheet)
+        if (styleSheet) {
+            if (type === WebInspector.CSSStyleDeclaration.Type.Inline)
+                styleSheet.markAsInlineStyle();
             styleSheet.addEventListener(WebInspector.CSSStyleSheet.Event.ContentDidChange, this._styleSheetContentDidChange, this);
+        }
 
         styleDeclaration = new WebInspector.CSSStyleDeclaration(this, styleSheet, id, type, node, inherited, text, properties, styleSheetTextRange);
 

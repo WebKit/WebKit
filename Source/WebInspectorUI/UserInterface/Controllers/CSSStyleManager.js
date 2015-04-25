@@ -126,12 +126,14 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
     styleSheetChanged(styleSheetIdentifier)
     {
         // Called from WebInspector.CSSObserver.
-
         var styleSheet = this.styleSheetForIdentifier(styleSheetIdentifier);
         console.assert(styleSheet);
 
-        styleSheet.noteContentDidChange();
+        // Do not observe inline styles
+        if (styleSheet.isInlineStyle())
+            return;
 
+        styleSheet.noteContentDidChange();
         this._updateResourceContent(styleSheet);
     }
 

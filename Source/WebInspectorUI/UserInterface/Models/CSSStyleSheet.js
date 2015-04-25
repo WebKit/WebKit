@@ -25,15 +25,15 @@
 
 WebInspector.CSSStyleSheet = class CSSStyleSheet extends WebInspector.SourceCode
 {
-    constructor(id, url, parentFrame)
+    constructor(id)
     {
         super();
 
         console.assert(id);
 
         this._id = id || null;
-
-        this.updateInfo(url, parentFrame);
+        this._url = null;
+        this._parentFrame = null;
     }
 
     // Static
@@ -82,6 +82,16 @@ WebInspector.CSSStyleSheet = class CSSStyleSheet extends WebInspector.SourceCode
             this._uniqueDisplayNameNumber = this.constructor._nextUniqueDisplayNameNumber++;
 
         return WebInspector.UIString("Anonymous StyleSheet %d").format(this._uniqueDisplayNameNumber);
+    }
+
+    isInlineStyle()
+    {
+        return !!this._inlineStyle;
+    }
+
+    markAsInlineStyle()
+    {
+        this._inlineStyle = true;
     }
 
     // Protected

@@ -1,3 +1,23 @@
+2015-04-25  Tobias Reiss  <tobi+webkit@basecode.de>
+
+        Web Inspector: assertion failure when editing inline styles
+        https://bugs.webkit.org/show_bug.cgi?id=143939
+
+        Reviewed by Timothy Hatcher.
+
+        Prevent "_updateResourceContent" from being called on inline style changes.
+        Introduce a flag that marks a CSSStyleSheet as a representation of an
+        "ElementCSSInlineStyle" (DOM Level 2 spec) and return early.
+
+        * UserInterface/Controllers/CSSStyleManager.js:
+        (WebInspector.CSSStyleManager.prototype.styleSheetChanged):
+        * UserInterface/Models/CSSStyleSheet.js:
+        (WebInspector.CSSStyleSheet):
+        (WebInspector.CSSStyleSheet.isInlineStyle):
+        (WebInspector.CSSStyleSheet.prototype.markAsInlineStyle):
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype._parseStyleDeclarationPayload):
+
 2015-04-24  Timothy Hatcher  <timothy@apple.com>
 
         REGRESSION: Web Inspector: Start Timeline Recording in Develop menu broken
