@@ -1,5 +1,6 @@
 set(WTF_HEADERS
     ASCIICType.h
+    AVLTree.h
     Assertions.h
     Atomics.h
     Bag.h

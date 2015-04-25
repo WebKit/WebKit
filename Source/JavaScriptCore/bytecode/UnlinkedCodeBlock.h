@@ -344,6 +344,9 @@ public:
     unsigned jumpTarget(int index) const { return m_jumpTargets[index]; }
     unsigned lastJumpTarget() const { return m_jumpTargets.last(); }
 
+    void setIsNumericCompareFunction(bool isNumericCompareFunction) { m_isNumericCompareFunction = isNumericCompareFunction; }
+    bool isNumericCompareFunction() const { return m_isNumericCompareFunction; }
+
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
 
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
@@ -533,6 +536,7 @@ private:
 
     unsigned m_needsFullScopeChain : 1;
     unsigned m_usesEval : 1;
+    unsigned m_isNumericCompareFunction : 1;
     unsigned m_isStrictMode : 1;
     unsigned m_isConstructor : 1;
     unsigned m_hasCapturedVariables : 1;

@@ -2603,6 +2603,11 @@ RegisterID* BytecodeGenerator::emitThrowExpressionTooDeepException()
     return newTemporary();
 }
 
+void BytecodeGenerator::setIsNumericCompareFunction(bool isNumericCompareFunction)
+{
+    m_codeBlock->setIsNumericCompareFunction(isNumericCompareFunction);
+}
+
 bool BytecodeGenerator::isArgumentNumber(const Identifier& ident, int argumentNumber)
 {
     RegisterID* registerID = variable(ident).local();

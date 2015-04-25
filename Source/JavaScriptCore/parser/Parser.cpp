@@ -288,6 +288,7 @@ String Parser<LexerType>::parseInner()
         features |= ModifiedArgumentsFeature;
     Vector<RefPtr<StringImpl>> closedVariables;
     if (m_parsingBuiltin) {
+        RELEASE_ASSERT(!capturedVariables.size());
         IdentifierSet usedVariables;
         scope->getUsedVariables(usedVariables);
         for (const auto& variable : usedVariables) {

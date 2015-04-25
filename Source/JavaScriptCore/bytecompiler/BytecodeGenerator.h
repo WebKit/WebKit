@@ -276,6 +276,8 @@ namespace JSC {
 
         bool isArgumentNumber(const Identifier&, int);
 
+        void setIsNumericCompareFunction(bool isNumericCompareFunction);
+
         Variable variable(const Identifier&);
         
         // Ignores the possibility of intervening scopes.

@@ -70,6 +70,10 @@ public:
     // OK to use on new arrays, but not if it might be a RegExpMatchArray.
     JS_EXPORT_PRIVATE bool setLength(ExecState*, unsigned, bool throwException = false);
 
+    JS_EXPORT_PRIVATE void sort(ExecState*);
+    JS_EXPORT_PRIVATE void sort(ExecState*, JSValue compareFunction, CallType, const CallData&);
+    JS_EXPORT_PRIVATE void sortNumeric(ExecState*, JSValue compareFunction, CallType, const CallData&);
+
     JS_EXPORT_PRIVATE void push(ExecState*, JSValue);
     JS_EXPORT_PRIVATE JSValue pop(ExecState*);
 
@@ -159,8 +163,20 @@ private:
     bool unshiftCountWithArrayStorage(ExecState*, unsigned startIndex, unsigned count, ArrayStorage*);
     bool unshiftCountSlowCase(VM&, bool, unsigned);
 
+    template<IndexingType indexingType>
+    void sortNumericVector(ExecState*, JSValue compareFunction, CallType, const CallData&);
+        
+    template<IndexingType indexingType, typename StorageType>
+    void sortCompactedVector(ExecState*, ContiguousData<StorageType>, unsigned relevantLength);
+        
+    template<IndexingType indexingType>
+    void sortVector(ExecState*, JSValue compareFunction, CallType, const CallData&);
+
     bool setLengthWithArrayStorage(ExecState*, unsigned newLength, bool throwException, ArrayStorage*);
     void setLengthWritable(ExecState*, bool writable);
+        
+    template<IndexingType indexingType>
+    void compactForSorting(unsigned& numDefined, unsigned& newRelevantLength);
 };
 
 inline Butterfly* createContiguousArrayButterfly(VM& vm, JSCell* intendedOwner, unsigned length, unsigned& vectorLength)

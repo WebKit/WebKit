@@ -381,6 +381,9 @@
     <ClInclude Include="..\wtf\Atomics.h">
       <Filter>wtf</Filter>
     </ClInclude>
+    <ClInclude Include="..\wtf\AVLTree.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
     <ClInclude Include="..\wtf\Bitmap.h">
       <Filter>wtf</Filter>
     </ClInclude>

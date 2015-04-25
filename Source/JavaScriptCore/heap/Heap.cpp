@@ -481,6 +481,17 @@ void Heap::addReference(JSCell* cell, ArrayBuffer* buffer)
     }
 }
 
+void Heap::pushTempSortVector(Vector<ValueStringPair, 0, UnsafeVectorOverflow>* tempVector)
+{
+    m_tempSortingVectors.append(tempVector);
+}
+
+void Heap::popTempSortVector(Vector<ValueStringPair, 0, UnsafeVectorOverflow>* tempVector)
+{
+    ASSERT_UNUSED(tempVector, tempVector == m_tempSortingVectors.last());
+    m_tempSortingVectors.removeLast();
+}
+
 void Heap::harvestWeakReferences()
 {
     m_slotVisitor.harvestWeakReferences();
@@ -560,6 +571,7 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
         visitSmallStrings();
         visitConservativeRoots(conservativeRoots);
         visitProtectedObjects(heapRootVisitor);
+        visitTempSortVectors(heapRootVisitor);
         visitArgumentBuffers(heapRootVisitor);
         visitException(heapRootVisitor);
         visitStrongHandles(heapRootVisitor);
@@ -694,6 +706,23 @@ void Heap::visitProtectedObjects(HeapRootVisitor& heapRootVisitor)
 
     if (Options::logGC() == GCLogging::Verbose)
         dataLog("Protected Objects:\n", m_slotVisitor);
+
+    m_slotVisitor.donateAndDrain();
+}
+
+void Heap::visitTempSortVectors(HeapRootVisitor& heapRootVisitor)
+{
+    GCPHASE(VisitTempSortVectors);
+
+    for (auto* vector : m_tempSortingVectors) {
+        for (auto& valueStringPair : *vector) {
+            if (valueStringPair.first)
+                heapRootVisitor.visit(&valueStringPair.first);
+        }
+    }
+
+    if (Options::logGC() == GCLogging::Verbose)
+        dataLog("Temp Sort Vectors:\n", m_slotVisitor);
 
     m_slotVisitor.donateAndDrain();
 }

@@ -241,6 +241,7 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     , m_globalObjectRegister(VirtualRegister())
     , m_needsFullScopeChain(info.needsActivation())
     , m_usesEval(info.usesEval())
+    , m_isNumericCompareFunction(false)
     , m_isStrictMode(info.isStrictMode())
     , m_isConstructor(info.isConstructor())
     , m_hasCapturedVariables(false)

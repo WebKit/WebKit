@@ -249,6 +249,8 @@ public:
         return static_cast<Instruction*>(returnAddress) - instructions().begin();
     }
 
+    bool isNumericCompareFunction() { return m_unlinkedCode->isNumericCompareFunction(); }
+
     unsigned numberOfInstructions() const { return m_instructions.size(); }
     RefCountedArray<Instruction>& instructions() { return m_instructions; }
     const RefCountedArray<Instruction>& instructions() const { return m_instructions; }

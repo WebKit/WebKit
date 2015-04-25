@@ -163,6 +163,7 @@
     <ClInclude Include="..\wtf\Assertions.h" />
     <ClInclude Include="..\wtf\Atomics.h" />
     <ClInclude Include="..\wtf\AutodrainedPool.h" />
+    <ClInclude Include="..\wtf\AVLTree.h" />
     <ClInclude Include="..\wtf\Bag.h" />
     <ClInclude Include="..\wtf\BagToHashMap.h" />
     <ClInclude Include="..\wtf\Bitmap.h" />
