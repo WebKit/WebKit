@@ -75,6 +75,10 @@ IDBTransactionBackend::IDBTransactionBackend(IDBDatabaseBackend* databaseBackend
             return;
         }
 
+        // Handle the case where the transaction was aborted before the server connection finished opening the transaction.
+        if (backend->m_state == Finished)
+            return;
+
         backend->m_state = Unused;
         if (backend->hasPendingTasks())
             backend->start();

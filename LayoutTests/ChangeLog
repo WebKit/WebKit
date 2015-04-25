@@ -1,3 +1,14 @@
+2015-04-25  Darin Adler  <darin@apple.com>
+
+        Crash if IDBTransaction is aborted right after it's created
+        https://bugs.webkit.org/show_bug.cgi?id=144199
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac-wk2/TestExpectations: Unskip storage/indexeddb/transaction-abort.html.
+        * storage/indexeddb/transaction-abort-expected.txt: Updated since the exact text of
+        the execptions is different from what was marked here as expected.
+
 2015-04-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         class methods should be non-enumerable
