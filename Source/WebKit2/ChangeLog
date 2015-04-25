@@ -1,3 +1,19 @@
+2015-04-24  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r183293): Fix iOS EWS build by adding SPI declaration for +[UIPeripheralHost visiblePeripheralFrame]
+
+        Fixes the following build failures:
+
+            WebKit2/UIProcess/ios/WKPDFView.mm:740:45: error: class method '+visiblePeripheralFrame' not found (return type defaults to 'id') [-Werror,-Wobjc-method-access]
+                CGRect keyboardRect = [UIPeripheralHost visiblePeripheralFrame];
+                                                        ^~~~~~~~~~~~~~~~~~~~~~
+            WebKit2/UIProcess/ios/WKPDFView.mm:740:12: error: no viable conversion from 'id' to 'CGRect'
+                CGRect keyboardRect = [UIPeripheralHost visiblePeripheralFrame];
+                       ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        * Platform/spi/ios/UIKitSPI.h:
+        (+[UIPeripheralHost visiblePeripheralFrame]): Add declaration.
+
 2015-04-24  Anders Carlsson  <andersca@apple.com>
 
         Change _WKWebsiteDataStore to hold on to an internal WKWebsiteDataStore

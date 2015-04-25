@@ -195,6 +195,7 @@ typedef enum {
 @interface UIPeripheralHost (Details)
 + (UIPeripheralHost *)sharedInstance;
 + (UIPeripheralHost *)activeInstance;
++ (CGRect)visiblePeripheralFrame;
 - (BOOL)isOnScreen;
 - (UIKeyboardRotationState *)rotationState;
 @end
