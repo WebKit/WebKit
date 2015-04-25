@@ -766,7 +766,7 @@ TEST(WebKit2, ActionMenusTest)
     }];
 }
 
-TEST(WebKit2, ActionMenusPDFTest)
+TEST(WebKit2, DISABLED_ActionMenusPDFTest)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("ActionMenusTest"));
     
