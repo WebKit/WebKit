@@ -1,3 +1,12 @@
+2015-04-25  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/frames/flattening/iframe-flattening-resize-event-count.html times out on Yosemite WK2
+        https://bugs.webkit.org/show_bug.cgi?id=144155
+
+        Unreviewed. Add more temporary logging to figure out what's going on with the test on bots.
+
+        * fast/frames/flattening/resources/iframe-to-resize.html:
+
 2015-04-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183288.
