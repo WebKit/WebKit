@@ -229,6 +229,11 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                 LOG(Animations, "%p AnimationState %s -> AnimationState::PausedNew", this, nameForState(m_animationState));
                 m_animationState = AnimationState::PausedNew;
             }
+
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+            if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger())
+                m_compositeAnimation->animationController()->addToAnimationsDependentOnScroll(this);
+#endif
             break;
         case AnimationState::StartWaitTimer:
             ASSERT(input == AnimationStateInput::StartTimerFired || input == AnimationStateInput::PlayStatePaused);

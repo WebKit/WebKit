@@ -1,3 +1,32 @@
+2015-04-24  Dean Jackson  <dino@apple.com>
+
+        AnimationController::scrollWasUpdated() shows up in scrolling profiles on pages that don't use scroll triggers
+        https://bugs.webkit.org/show_bug.cgi?id=144173
+        <rdar://problem/20526168>
+
+        Reviewed by Simon Fraser.
+
+        Keep a list of Animations that care about scroll updates, and only
+        run the animation update if the list is not empty.
+
+        Covered by existing tests.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine): Tell the AnimationController
+        if this is an animation that depends on scrolling.
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::animationWillBeRemoved): Call the
+        new removeFromAnimationsDependentOnScroll as this animation is deleted.
+        (WebCore::AnimationControllerPrivate::addToAnimationsDependentOnScroll):
+        (WebCore::AnimationControllerPrivate::removeFromAnimationsDependentOnScroll):
+        (WebCore::AnimationControllerPrivate::scrollWasUpdated): Only update if
+        there are animations that care.
+        (WebCore::AnimationController::wantsScrollUpdates): Helper to expose this
+        value to FrameView.
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h:
+        (WebCore::AnimationControllerPrivate::wantsScrollUpdates):
+
 2015-04-24  Tim Horton  <timothy_horton@apple.com>
 
         WKPDFView does not support password-protected PDFs

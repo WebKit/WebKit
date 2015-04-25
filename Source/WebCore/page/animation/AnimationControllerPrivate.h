@@ -118,6 +118,10 @@ public:
     void setAllowsNewAnimationsWhileSuspended(bool);
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    bool wantsScrollUpdates() const { return !m_animationsDependentOnScroll.isEmpty(); }
+    void addToAnimationsDependentOnScroll(AnimationBase*);
+    void removeFromAnimationsDependentOnScroll(AnimationBase*);
+
     void scrollWasUpdated();
     float scrollPosition() const { return m_scrollPosition; }
 #endif
@@ -147,9 +151,9 @@ private:
     
     double m_beginAnimationUpdateTime;
 
-    typedef HashSet<RefPtr<AnimationBase>> WaitingAnimationsSet;
-    WaitingAnimationsSet m_animationsWaitingForStyle;
-    WaitingAnimationsSet m_animationsWaitingForStartTimeResponse;
+    typedef HashSet<RefPtr<AnimationBase>> AnimationsSet;
+    AnimationsSet m_animationsWaitingForStyle;
+    AnimationsSet m_animationsWaitingForStartTimeResponse;
 
     int m_beginAnimationUpdateCount;
 
@@ -162,7 +166,8 @@ private:
     bool m_allowsNewAnimationsWhileSuspended;
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    float m_scrollPosition = 0;
+    AnimationsSet m_animationsDependentOnScroll;
+    float m_scrollPosition { 0 };
 #endif
 };
 

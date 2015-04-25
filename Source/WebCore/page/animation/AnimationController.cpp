@@ -514,15 +514,33 @@ void AnimationControllerPrivate::animationWillBeRemoved(AnimationBase* animation
 {
     removeFromAnimationsWaitingForStyle(animation);
     removeFromAnimationsWaitingForStartTimeResponse(animation);
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    removeFromAnimationsDependentOnScroll(animation);
+#endif
 }
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+void AnimationControllerPrivate::addToAnimationsDependentOnScroll(AnimationBase* animation)
+{
+    m_animationsDependentOnScroll.add(animation);
+}
+
+void AnimationControllerPrivate::removeFromAnimationsDependentOnScroll(AnimationBase* animation)
+{
+    m_animationsDependentOnScroll.remove(animation);
+}
+
 void AnimationControllerPrivate::scrollWasUpdated()
 {
     auto* view = m_frame.view();
-    if (!view)
+    if (!view || !wantsScrollUpdates())
         return;
     m_scrollPosition = view->scrollOffsetForFixedPosition().height().toFloat();
+
+    // FIXME: This is updating all the animations, rather than just the ones
+    // that are dependent on scroll. We to go from our AnimationBase to its CompositeAnimation
+    // so we can execute code similar to updateAnimations.
+    // https://bugs.webkit.org/show_bug.cgi?id=144170
     updateAnimations(CallSetChanged);
 }
 #endif
@@ -714,6 +732,11 @@ bool AnimationController::supportsAcceleratedAnimationOfProperty(CSSPropertyID p
 }
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+bool AnimationController::wantsScrollUpdates() const
+{
+    return m_data->wantsScrollUpdates();
+}
+
 void AnimationController::scrollWasUpdated()
 {
     m_data->scrollWasUpdated();
