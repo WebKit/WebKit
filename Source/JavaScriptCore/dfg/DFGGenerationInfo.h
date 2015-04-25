@@ -153,8 +153,6 @@ public:
     
     void noticeOSRBirth(VariableEventStream& stream, Node* node, VirtualRegister virtualRegister)
     {
-        if (m_isConstant)
-            return;
         if (m_node != node)
             return;
         if (!alive())
@@ -164,7 +162,9 @@ public:
         
         m_bornForOSR = true;
         
-        if (m_registerFormat != DataFormatNone)
+        if (m_isConstant)
+            appendBirth(stream);
+        else if (m_registerFormat != DataFormatNone)
             appendFill(BirthToFill, stream);
         else if (m_spillFormat != DataFormatNone)
             appendSpill(BirthToSpill, stream, virtualRegister);
@@ -379,6 +379,11 @@ public:
     }
 
 private:
+    void appendBirth(VariableEventStream& stream)
+    {
+        stream.appendAndLog(VariableEvent::birth(MinifiedID(m_node)));
+    }
+    
     void appendFill(VariableEventKind kind, VariableEventStream& stream)
     {
         ASSERT(m_bornForOSR);

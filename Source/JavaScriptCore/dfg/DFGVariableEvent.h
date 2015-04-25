@@ -47,6 +47,7 @@ enum VariableEventKind {
     // that we start to care about this node.
     BirthToFill,
     BirthToSpill,
+    Birth,
     
     // Events related to how a node is represented.
     Fill,
@@ -133,6 +134,14 @@ public:
         return event;
     }
     
+    static VariableEvent birth(MinifiedID id)
+    {
+        VariableEvent event;
+        event.m_which.id = id.bits();
+        event.m_kind = Birth;
+        return event;
+    }
+    
     static VariableEvent spill(VariableEventKind kind, MinifiedID id, VirtualRegister virtualRegister, DataFormat format)
     {
         ASSERT(kind == BirthToSpill || kind == Spill);
@@ -179,17 +188,17 @@ public:
     
     MinifiedID id() const
     {
-        ASSERT(m_kind == BirthToFill || m_kind == Fill
-               || m_kind == BirthToSpill || m_kind == Spill
-               || m_kind == Death || m_kind == MovHintEvent);
+        ASSERT(
+            m_kind == BirthToFill || m_kind == Fill || m_kind == BirthToSpill || m_kind == Spill
+            || m_kind == Death || m_kind == MovHintEvent || m_kind == Birth);
         return MinifiedID::fromBits(m_which.id);
     }
     
     DataFormat dataFormat() const
     {
-        ASSERT(m_kind == BirthToFill || m_kind == Fill
-               || m_kind == BirthToSpill || m_kind == Spill
-               || m_kind == SetLocalEvent);
+        ASSERT(
+            m_kind == BirthToFill || m_kind == Fill || m_kind == BirthToSpill || m_kind == Spill
+            || m_kind == SetLocalEvent);
         return static_cast<DataFormat>(m_dataFormat);
     }
     

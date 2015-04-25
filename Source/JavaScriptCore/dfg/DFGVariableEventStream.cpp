@@ -48,11 +48,14 @@ namespace {
 
 struct MinifiedGenerationInfo {
     bool filled; // true -> in gpr/fpr/pair, false -> spilled
+    bool alive;
     VariableRepresentation u;
     DataFormat format;
     
     MinifiedGenerationInfo()
-        : format(DataFormatNone)
+        : filled(false)
+        , alive(false)
+        , format(DataFormatNone)
     {
     }
     
@@ -62,13 +65,19 @@ struct MinifiedGenerationInfo {
         case BirthToFill:
         case Fill:
             filled = true;
+            alive = true;
             break;
         case BirthToSpill:
         case Spill:
             filled = false;
+            alive = true;
             break;
+        case Birth:
+            alive = true;
+            return;
         case Death:
             format = DataFormatNone;
+            alive = false;
             return;
         default:
             return;
@@ -146,7 +155,8 @@ void VariableEventStream::reconstruct(
             // nothing to do.
             break;
         case BirthToFill:
-        case BirthToSpill: {
+        case BirthToSpill:
+        case Birth: {
             MinifiedGenerationInfo info;
             info.update(event);
             generationInfos.add(event.id(), info);
@@ -185,14 +195,14 @@ void VariableEventStream::reconstruct(
         
         ASSERT(source.kind() == HaveNode);
         MinifiedNode* node = graph.at(source.id());
-        if (tryToSetConstantRecovery(valueRecoveries[i], node))
-            continue;
-        
         MinifiedGenerationInfo info = generationInfos.get(source.id());
-        if (info.format == DataFormatNone) {
+        if (!info.alive) {
             valueRecoveries[i] = ValueRecovery::constant(jsUndefined());
             continue;
         }
+
+        if (tryToSetConstantRecovery(valueRecoveries[i], node))
+            continue;
         
         ASSERT(info.format != DataFormatNone);
         

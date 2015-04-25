@@ -46,6 +46,9 @@ void VariableEvent::dump(PrintStream& out) const
     case BirthToSpill:
         dumpSpillInfo("BirthToSpill", out);
         break;
+    case Birth:
+        out.print("Birth(", id(), ")");
+        break;
     case Fill:
         dumpFillInfo("Fill", out);
         break;
