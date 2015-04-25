@@ -1,3 +1,15 @@
+2015-04-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement String.fromCodePoint
+        https://bugs.webkit.org/show_bug.cgi?id=144160
+
+        Reviewed by Darin Adler.
+
+        Add String.fromCodePoint.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2015-04-25  Alexey Proskuryakov  <ap@apple.com>
 
         Mavericks fix - no window.performance there.

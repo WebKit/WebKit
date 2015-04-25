@@ -21,6 +21,7 @@
 #include "config.h"
 #include "StringConstructor.h"
 
+#include "Error.h"
 #include "Executable.h"
 #include "JITCode.h"
 #include "JSFunction.h"
@@ -31,6 +32,7 @@
 namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState*);
+static EncodedJSValue JSC_HOST_CALL stringFromCodePoint(ExecState*);
 
 }
 
@@ -43,6 +45,7 @@ const ClassInfo StringConstructor::s_info = { "Function", &InternalFunction::s_i
 /* Source for StringConstructor.lut.h
 @begin stringConstructorTable
   fromCharCode          stringFromCharCode         DontEnum|Function 1
+  fromCodePoint         stringFromCodePoint        DontEnum|Function 1
 @end
 */
 
@@ -89,6 +92,33 @@ JSCell* JSC_HOST_CALL stringFromCharCode(ExecState* exec, int32_t arg)
     return jsSingleCharacterString(exec, arg);
 }
 
+static EncodedJSValue JSC_HOST_CALL stringFromCodePoint(ExecState* exec)
+{
+    unsigned length = exec->argumentCount();
+    StringBuilder builder;
+    builder.reserveCapacity(length);
+
+    for (unsigned i = 0; i < length; ++i) {
+        double codePointAsDouble = exec->uncheckedArgument(i).toNumber(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+
+        uint32_t codePoint = static_cast<uint32_t>(codePointAsDouble);
+
+        if (codePoint != codePointAsDouble || codePoint > 0x10FFFF)
+            return throwVMError(exec, createRangeError(exec, ASCIILiteral("Arguments contain a value that is out of range of code points")));
+
+        if (U_IS_BMP(codePoint))
+            builder.append(static_cast<UChar>(codePoint));
+        else {
+            builder.append(U16_LEAD(codePoint));
+            builder.append(U16_TRAIL(codePoint));
+        }
+    }
+
+    return JSValue::encode(jsString(exec, builder.toString()));
+}
+
 static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* exec)
 {
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
@@ -96,7 +126,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* ex
 
     if (!exec->argumentCount())
         return JSValue::encode(StringObject::create(vm, globalObject->stringObjectStructure()));
-    
+
     return JSValue::encode(StringObject::create(vm, globalObject->stringObjectStructure(), exec->uncheckedArgument(0).toString(exec)));
 }
 

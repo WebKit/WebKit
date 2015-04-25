@@ -1,3 +1,27 @@
+2015-04-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement String.fromCodePoint
+        https://bugs.webkit.org/show_bug.cgi?id=144160
+
+        Reviewed by Darin Adler.
+
+        This patch implements String.fromCodePoint.
+        It accepts multiple code points and generates a string that consists of given code points.
+        The range [0x0000 - 0x10FFFF] is valid for code points.
+        If the given value is out of range, throw a range error.
+
+        When a 0xFFFF <= valid code point is given,
+        String.fromCodePoint generates a string that contains surrogate pairs.
+
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCodePoint):
+        (JSC::constructWithStringConstructor):
+        * tests/stress/string-from-code-point.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (toCodePoints):
+        (passThrough):
+
 2015-04-25  Martin Robinson  <mrobinson@igalia.com>
 
         Rename ENABLE_3D_RENDERING to ENABLE_3D_TRANSFORMS
