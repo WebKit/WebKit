@@ -1761,6 +1761,13 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     setConstantRegisters(unlinkedCodeBlock->constantRegisters(), unlinkedCodeBlock->constantsSourceCodeRepresentation());
     if (unlinkedCodeBlock->usesGlobalObject())
         m_constantRegisters[unlinkedCodeBlock->globalObjectRegister().toConstantIndex()].set(*m_vm, ownerExecutable, m_globalObject.get());
+
+    for (unsigned i = 0; i < LinkTimeConstantCount; i++) {
+        LinkTimeConstant type = static_cast<LinkTimeConstant>(i);
+        if (unsigned registerIndex = unlinkedCodeBlock->registerIndexForLinkTimeConstant(type))
+            m_constantRegisters[registerIndex].set(*m_vm, ownerExecutable, m_globalObject->jsCellForLinkTimeConstant(type));
+    }
+
     m_functionDecls.resizeToFit(unlinkedCodeBlock->numberOfFunctionDecls());
     for (size_t count = unlinkedCodeBlock->numberOfFunctionDecls(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);

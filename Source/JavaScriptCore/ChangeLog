@@ -1,3 +1,49 @@
+2015-04-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        class methods should be non-enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=143181
+
+        Reviewed by Darin Adler.
+
+        Fixed the bug by using Object.defineProperty to define methods.
+
+        This patch adds the concept of link time constants and uses it to resolve Object.defineProperty
+        inside CodeBlock's constructor since bytecode can be linked against multiple global objects.
+
+        * bytecode/CodeBlock.cpp: 
+        (JSC::CodeBlock::CodeBlock): Resolve link time constants that are used. Ignore ones with register
+        index of zero.
+        * bytecode/SpecialPointer.h: Added a new enum for link time constants. It currently contains
+        exactly one entry for Object.defineProperty.
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::addConstant): Added. Like addConstant that takes JSValue, allocate a new
+        constant register for the link time constant we're adding.
+        (JSC::UnlinkedCodeBlock::registerIndexForLinkTimeConstant): Added.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitMoveLinkTimeConstant): Added. Like addConstantValue, allocate a new
+        register for the specified link time constant and notify UnlinkedCodeBlock about it.
+        (JSC::BytecodeGenerator::emitCallDefineProperty): Added. Create a new property descriptor and call
+        Object.defineProperty with it.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode): Make static and non-static getters and setters for classes
+        non-enumerable by using emitCallDefineProperty to define them.
+        (JSC::PropertyListNode::emitPutConstantProperty): Ditto for a non-accessor properties.
+        (JSC::ClassExprNode::emitBytecode): Make prototype.constructor non-enumerable and make prototype
+        property on the class non-writable, non-configurable, and non-enumerable by using defineProperty.
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Set m_definePropertyFunction.
+        (JSC::JSGlobalObject::visitChildren): Visit m_definePropertyFunction.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::definePropertyFunction): Added.
+        (JSC::JSGlobalObject::actualPointerFor): Added a variant that takes LinkTimeConstant.
+        (JSC::JSGlobalObject::jsCellForLinkTimeConstant): Like actualPointerFor, takes LinkTimeConstant and
+        returns a JSCell; e.g. Object.defineProperty.
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::addDefineProperty): Added. Returns Object.defineProperty.
+        * runtime/ObjectConstructor.h:
+
 2015-04-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement String.fromCodePoint

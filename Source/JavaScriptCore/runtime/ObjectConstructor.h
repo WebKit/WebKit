@@ -54,6 +54,8 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
+    JSFunction* addDefineProperty(ExecState*, JSGlobalObject*);
+
 protected:
     void finishCreation(VM&, JSGlobalObject*, ObjectPrototype*);
 

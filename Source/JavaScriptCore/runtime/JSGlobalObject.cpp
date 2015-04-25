@@ -332,6 +332,10 @@ m_ ## properName ## Structure.set(vm, this, instanceType::createStructure(vm, th
     
     ObjectConstructor* objectConstructor = ObjectConstructor::create(vm, this, ObjectConstructor::createStructure(vm, this, m_functionPrototype.get()), m_objectPrototype.get());
     m_objectConstructor.set(vm, this, objectConstructor);
+
+    JSFunction* definePropertyFunction = m_objectConstructor->addDefineProperty(exec, this);
+    m_definePropertyFunction.set(vm, this, definePropertyFunction);
+
     JSCell* functionConstructor = FunctionConstructor::create(vm, FunctionConstructor::createStructure(vm, this, m_functionPrototype.get()), m_functionPrototype.get());
     JSCell* arrayConstructor = ArrayConstructor::create(vm, ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_arrayPrototype.get());
     
@@ -458,7 +462,9 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     m_specialPointers[Special::ApplyFunction] = m_applyFunction.get();
     m_specialPointers[Special::ObjectConstructor] = objectConstructor;
     m_specialPointers[Special::ArrayConstructor] = arrayConstructor;
-    
+
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::DefinePropertyFunction)] = m_definePropertyFunction.get();
+
     ConsolePrototype* consolePrototype = ConsolePrototype::create(vm, this, ConsolePrototype::createStructure(vm, this, m_objectPrototype.get()));
     m_consoleStructure.set(vm, this, JSConsole::createStructure(vm, this, consolePrototype));
     JSConsole* consoleObject = JSConsole::create(vm, m_consoleStructure.get());
@@ -717,6 +723,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_evalFunction);
     visitor.append(&thisObject->m_callFunction);
     visitor.append(&thisObject->m_applyFunction);
+    visitor.append(&thisObject->m_definePropertyFunction);
     visitor.append(&thisObject->m_arrayProtoValuesFunction);
     visitor.append(&thisObject->m_throwTypeErrorGetterSetter);
 

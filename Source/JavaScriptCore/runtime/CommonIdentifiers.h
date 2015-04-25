@@ -91,6 +91,7 @@
     macro(constructor) \
     macro(count) \
     macro(counters) \
+    macro(defineProperty) \
     macro(description) \
     macro(descriptions) \
     macro(displayName) \

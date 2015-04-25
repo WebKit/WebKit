@@ -362,7 +362,8 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             }
 
             RegisterID* value = generator.emitNode(node->m_assign);
-            if (node->needsSuperBinding())
+            bool isClassProperty = node->needsSuperBinding();
+            if (isClassProperty)
                 emitPutHomeObject(generator, value, dst);
 
             // This is a get/set property, find its entry in the map.
@@ -403,10 +404,16 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 }
             }
 
-            if (pair.second && pair.second->needsSuperBinding())
+            ASSERT(!pair.second || isClassProperty == pair.second->needsSuperBinding());
+            if (isClassProperty && pair.second)
                 emitPutHomeObject(generator, secondReg, dst);
 
-            generator.emitPutGetterSetter(dst, *node->name(), getterReg.get(), setterReg.get());
+            if (isClassProperty) {
+                RefPtr<RegisterID> propertyNameRegister = generator.emitLoad(generator.newTemporary(), *node->name());
+                generator.emitCallDefineProperty(dst, propertyNameRegister.get(),
+                    nullptr, getterReg.get(), setterReg.get(), BytecodeGenerator::PropertyConfigurable, m_position);
+            } else
+                generator.emitPutGetterSetter(dst, *node->name(), getterReg.get(), setterReg.get());
         }
     }
 
@@ -416,8 +423,19 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
 void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, RegisterID* newObj, PropertyNode& node)
 {
     RefPtr<RegisterID> value = generator.emitNode(node.m_assign);
-    if (node.needsSuperBinding())
+    if (node.needsSuperBinding()) {
         emitPutHomeObject(generator, value.get(), newObj);
+
+        RefPtr<RegisterID> propertyNameRegister;
+        if (node.name())
+            propertyNameRegister = generator.emitLoad(generator.newTemporary(), *node.name());
+        else
+            propertyNameRegister = generator.emitNode(node.m_expression);
+
+        generator.emitCallDefineProperty(newObj, propertyNameRegister.get(),
+            value.get(), nullptr, nullptr, BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable, m_position);
+        return;
+    }
     if (node.name()) {
         generator.emitDirectPutById(newObj, *node.name(), value.get(), node.putType());
         return;
@@ -2871,7 +2889,6 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
     }
 
     RefPtr<RegisterID> constructor;
-    RefPtr<RegisterID> prototype;
 
     // FIXME: Make the prototype non-configurable & non-writable.
     if (m_constructorExpression)
@@ -2881,7 +2898,8 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
             m_classHeritage ? ConstructorKind::Derived : ConstructorKind::Base, m_name);
     }
 
-    prototype = generator.emitGetById(generator.newTemporary(), constructor.get(), generator.propertyNames().prototype);
+    const auto& propertyNames = generator.propertyNames();
+    RefPtr<RegisterID> prototype = generator.emitNewObject(generator.newTemporary());
 
     if (superclass) {
         RefPtr<RegisterID> protoParent = generator.newTemporary();
@@ -2909,6 +2927,13 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 
         emitPutHomeObject(generator, constructor.get(), prototype.get());
     }
+
+    RefPtr<RegisterID> constructorNameRegister = generator.emitLoad(generator.newTemporary(), propertyNames.constructor);
+    generator.emitCallDefineProperty(prototype.get(), constructorNameRegister.get(), constructor.get(), nullptr, nullptr,
+        BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable, m_position);
+
+    RefPtr<RegisterID> prototypeNameRegister = generator.emitLoad(generator.newTemporary(), propertyNames.prototype);
+    generator.emitCallDefineProperty(constructor.get(), prototypeNameRegister.get(), prototype.get(), nullptr, nullptr, 0, m_position);
 
     if (m_staticMethods)
         generator.emitNode(constructor.get(), m_staticMethods);

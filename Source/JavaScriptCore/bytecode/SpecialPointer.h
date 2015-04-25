@@ -41,6 +41,11 @@ enum Pointer {
 };
 } // namespace Special
 
+enum class LinkTimeConstant {
+    DefinePropertyFunction,
+};
+const unsigned LinkTimeConstantCount = 1;
+
 inline bool pointerIsFunction(Special::Pointer pointer)
 {
     ASSERT_UNUSED(pointer, pointer < Special::TableSize);

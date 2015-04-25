@@ -25,7 +25,7 @@ PASS x = class extends null { constructor() { } }; x.__proto__ is Function.proto
 PASS x.__proto__ is Function.prototype
 PASS x = class extends 3 { constructor() { } }; x.__proto__ threw exception TypeError: The superclass is not an object..
 PASS x = class extends "abc" { constructor() { } }; x.__proto__ threw exception TypeError: The superclass is not an object..
-PASS baseWithBadPrototype = class { constructor() { } }; baseWithBadPrototype.prototype = 3 did not throw exception.
+PASS baseWithBadPrototype = function () {}; baseWithBadPrototype.prototype = 3; new baseWithBadPrototype did not throw exception.
 PASS x = class extends baseWithBadPrototype { constructor() { } } threw exception TypeError: The superclass's prototype is not an object..
 PASS baseWithBadPrototype.prototype = "abc" did not throw exception.
 PASS x = class extends baseWithBadPrototype { constructor() { } } threw exception TypeError: The superclass's prototype is not an object..

@@ -98,6 +98,14 @@ void ObjectConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Obj
         JSC_NATIVE_FUNCTION("getOwnPropertySymbols", objectConstructorGetOwnPropertySymbols, DontEnum, 1);
 }
 
+JSFunction* ObjectConstructor::addDefineProperty(ExecState* exec, JSGlobalObject* globalObject)
+{
+    VM& vm = exec->vm();
+    JSFunction* definePropertyFunction = JSFunction::create(vm, globalObject, 3, vm.propertyNames->defineProperty.string(), objectConstructorDefineProperty);
+    putDirectWithoutTransition(vm, vm.propertyNames->defineProperty, definePropertyFunction, DontEnum);
+    return definePropertyFunction;
+}
+
 bool ObjectConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
     return getStaticFunctionSlot<JSObject>(exec, objectConstructorTable, jsCast<ObjectConstructor*>(object), propertyName, slot);

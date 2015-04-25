@@ -1,3 +1,20 @@
+2015-04-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        class methods should be non-enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=143181
+
+        Reviewed by Darin Adler.
+
+        Added a regression test.
+
+        Also fixed a test that previously relied on "prototype" property being writable
+        since this is no longer the case.
+
+        * js/class-syntax-extends-expected.txt:
+        * js/class-syntax-prototype.html: Added.
+        * js/script-tests/class-syntax-extends.js:
+        * js/script-tests/class-syntax-prototype.js: Added.
+
 2015-04-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement String.fromCodePoint

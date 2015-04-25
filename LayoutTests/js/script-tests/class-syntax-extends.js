@@ -38,7 +38,7 @@ shouldBe('x = class extends null { constructor() { } }; x.__proto__', 'Function.
 shouldBe('x.__proto__', 'Function.prototype');
 shouldThrow('x = class extends 3 { constructor() { } }; x.__proto__', '"TypeError: The superclass is not an object."');
 shouldThrow('x = class extends "abc" { constructor() { } }; x.__proto__', '"TypeError: The superclass is not an object."');
-shouldNotThrow('baseWithBadPrototype = class { constructor() { } }; baseWithBadPrototype.prototype = 3');
+shouldNotThrow('baseWithBadPrototype = function () {}; baseWithBadPrototype.prototype = 3; new baseWithBadPrototype');
 shouldThrow('x = class extends baseWithBadPrototype { constructor() { } }', '"TypeError: The superclass\'s prototype is not an object."');
 shouldNotThrow('baseWithBadPrototype.prototype = "abc"');
 shouldThrow('x = class extends baseWithBadPrototype { constructor() { } }', '"TypeError: The superclass\'s prototype is not an object."');
