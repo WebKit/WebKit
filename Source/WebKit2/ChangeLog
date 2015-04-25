@@ -1,3 +1,20 @@
+2015-04-24  Andreas Kling  <akling@apple.com>
+
+        theverge.com burning 100% CPU on iPad (due to window.screenX/Y)
+        <https://webkit.org/b/144175>
+        <rdar://problem/20694585>
+
+        Reviewed by Anders Carlsson.
+
+        Return an empty window rect on iOS WK2 builds. This avoids sending a synchronous
+        IPC request to the UI process that would give the same result, but spend way
+        more time and CPU cycles to do so.
+
+        With this change, theverge.com CPU usage goes from 100% to ~20% when idle.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::windowRect):
+
 2015-04-24  Brent Fulgham  <bfulgham@apple.com>
 
         TextIndicator for embedded PDFs is slightly offset

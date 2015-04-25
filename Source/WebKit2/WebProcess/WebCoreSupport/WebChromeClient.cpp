@@ -129,7 +129,10 @@ void WebChromeClient::setWindowRect(const FloatRect& windowFrame)
 
 FloatRect WebChromeClient::windowRect()
 {
-#if PLATFORM(COCOA)
+#if PLATFORM(IOS)
+    return FloatRect();
+#else
+#if PLATFORM(MAC)
     if (m_page->hasCachedWindowFrame())
         return m_page->windowFrameInUnflippedScreenCoordinates();
 #endif
@@ -140,6 +143,7 @@ FloatRect WebChromeClient::windowRect()
         return FloatRect();
 
     return newWindowFrame;
+#endif
 }
 
 FloatRect WebChromeClient::pageRect()
