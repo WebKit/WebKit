@@ -256,6 +256,7 @@
 		1A4832D61A9CDF96008B4DFE /* WebsiteData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A4832D41A9CDF96008B4DFE /* WebsiteData.cpp */; };
 		1A4832D71A9CDF96008B4DFE /* WebsiteData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4832D51A9CDF96008B4DFE /* WebsiteData.h */; };
 		1A4832D91A9D1FD2008B4DFE /* WebsiteDataRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A4832D81A9D1FD2008B4DFE /* WebsiteDataRecord.cpp */; };
+		1A4A93B71AEB08EA00150E9C /* _WKWebsiteDataStoreInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A93B61AEB08EA00150E9C /* _WKWebsiteDataStoreInternal.h */; };
 		1A4A9C5512B816CF008FE984 /* NetscapePluginModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A4A9C5312B816CF008FE984 /* NetscapePluginModule.cpp */; };
 		1A4A9C5612B816CF008FE984 /* NetscapePluginModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A9C5412B816CF008FE984 /* NetscapePluginModule.h */; };
 		1A4A9C9A12B821CD008FE984 /* NetscapePluginModuleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4A9C9912B821CD008FE984 /* NetscapePluginModuleMac.mm */; };
@@ -2376,6 +2377,7 @@
 		1A4832D41A9CDF96008B4DFE /* WebsiteData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebsiteData.cpp; sourceTree = "<group>"; };
 		1A4832D51A9CDF96008B4DFE /* WebsiteData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteData.h; sourceTree = "<group>"; };
 		1A4832D81A9D1FD2008B4DFE /* WebsiteDataRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebsiteDataRecord.cpp; sourceTree = "<group>"; };
+		1A4A93B61AEB08EA00150E9C /* _WKWebsiteDataStoreInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsiteDataStoreInternal.h; sourceTree = "<group>"; };
 		1A4A9C5312B816CF008FE984 /* NetscapePluginModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePluginModule.cpp; sourceTree = "<group>"; };
 		1A4A9C5412B816CF008FE984 /* NetscapePluginModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePluginModule.h; sourceTree = "<group>"; };
 		1A4A9C9912B821CD008FE984 /* NetscapePluginModuleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetscapePluginModuleMac.mm; sourceTree = "<group>"; };
@@ -4446,6 +4448,7 @@
 				1AFB4C6C1ADF0C7800B33339 /* _WKWebsiteDataRecord.h */,
 				1AFB4C701ADF155D00B33339 /* _WKWebsiteDataStore.h */,
 				1AFB4C6F1ADF155D00B33339 /* _WKWebsiteDataStore.mm */,
+				1A4A93B61AEB08EA00150E9C /* _WKWebsiteDataStoreInternal.h */,
 				BC59548815C7868500FD1E3E /* WebKit2.h */,
 				BCBAAC6C144E61910053F82F /* WKBrowsingContextController.h */,
 				BCBAAC6D144E61920053F82F /* WKBrowsingContextController.mm */,
@@ -7678,6 +7681,7 @@
 				F6113E25126CE1820057D0A7 /* APIUserContentURLPattern.h in Headers */,
 				7C89D2941A67122F003A5FDE /* APIUserScript.h in Headers */,
 				C5E1AFED16B21017006CC1F2 /* APIWebArchive.h in Headers */,
+				1A4A93B71AEB08EA00150E9C /* _WKWebsiteDataStoreInternal.h in Headers */,
 				C5E1AFEF16B21029006CC1F2 /* APIWebArchiveResource.h in Headers */,
 				1A4832C81A9BC13C008B4DFE /* APIWebsiteDataRecord.h in Headers */,
 				1A3635AA1A3144A300ED6197 /* APIWebsiteDataStore.h in Headers */,

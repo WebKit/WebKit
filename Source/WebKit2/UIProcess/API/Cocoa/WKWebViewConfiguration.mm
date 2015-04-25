@@ -35,7 +35,7 @@
 #import "WKWebViewContentProviderRegistry.h"
 #import "WeakObjCPtr.h"
 #import "_WKVisitedLinkProvider.h"
-#import "_WKWebsiteDataStore.h"
+#import "_WKWebsiteDataStoreInternal.h"
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
@@ -220,12 +220,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (_WKWebsiteDataStore *)_websiteDataStore
 {
-    return (_WKWebsiteDataStore *)self.websiteDataStore;
+    return self.websiteDataStore ? adoptNS([[_WKWebsiteDataStore alloc] initWithDataStore:self.websiteDataStore]).autorelease() : nullptr;
 }
 
 - (void)_setWebsiteDataStore:(_WKWebsiteDataStore *)websiteDataStore
 {
-    self.websiteDataStore = websiteDataStore;
+    self.websiteDataStore = websiteDataStore ? websiteDataStore->_dataStore.get() : nullptr;
 }
 
 #pragma clang diagnostic pop

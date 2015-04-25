@@ -23,29 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import "_WKWebsiteDataStore.h"
 
 #if WK_API_ENABLED
 
-#import <WebKit/WKWebsiteDataStore.h>
+#import <wtf/RetainPtr.h>
 
-typedef NS_OPTIONS(NSUInteger, WKWebsiteDataTypes) {
-    WKWebsiteDataTypeAll = NSUIntegerMax,
-} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@class WKWebsiteDataStore;
 
+@interface _WKWebsiteDataStore () {
+@package
+    RetainPtr<WKWebsiteDataStore> _dataStore;
+}
 
-WK_CLASS_DEPRECATED(10_10, WK_MAC_TBA, 8_0, WK_IOS_TBA, "Please use WKWebsiteDataStore instead")
-@interface _WKWebsiteDataStore : NSObject
-
-+ (_WKWebsiteDataStore *)defaultDataStore;
-+ (_WKWebsiteDataStore *)nonPersistentDataStore;
-
-@property (readonly, getter=isNonPersistent) BOOL nonPersistent;
-
-- (void)fetchDataRecordsOfTypes:(WKWebsiteDataTypes)websiteDataTypes completionHandler:(void (^)(NSArray *))completionHandler;
-- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes forDataRecords:(NSArray *)dataRecords completionHandler:(void (^)(void))completionHandler;
-- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)(void))completionHandler;
+- (instancetype)initWithDataStore:(WKWebsiteDataStore *)dataStore;
 
 @end
 
-#endif
+#endif // WK_API_ENABLED

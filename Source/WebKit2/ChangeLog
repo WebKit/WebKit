@@ -1,3 +1,25 @@
+2015-04-24  Anders Carlsson  <andersca@apple.com>
+
+        Change _WKWebsiteDataStore to hold on to an internal WKWebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=144171
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _websiteDataStore]):
+        (-[WKWebViewConfiguration _setWebsiteDataStore:]):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        (-[_WKWebsiteDataStore initWithDataStore:]):
+        (+[_WKWebsiteDataStore defaultDataStore]):
+        (+[_WKWebsiteDataStore nonPersistentDataStore]):
+        (-[_WKWebsiteDataStore isNonPersistent]):
+        (-[_WKWebsiteDataStore fetchDataRecordsOfTypes:completionHandler:]):
+        (-[_WKWebsiteDataStore removeDataOfTypes:forDataRecords:completionHandler:]):
+        (-[_WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:]):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreInternal.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKWebsiteDataStore.h.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-04-24  Tim Horton  <timothy_horton@apple.com>
 
         WKPDFView does not support password-protected PDFs
