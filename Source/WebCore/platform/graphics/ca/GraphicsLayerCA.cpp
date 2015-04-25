@@ -3677,6 +3677,9 @@ double GraphicsLayerCA::backingStoreMemoryEstimate() const
     if (TiledBacking* tiledBacking = this->tiledBacking())
         return tiledBacking->retainedTileBackingStoreMemory();
 
+    if (!m_layer->backingContributesToMemoryEstimate())
+        return 0;
+
     return 4.0 * size().width() * m_layer->contentsScale() * size().height() * m_layer->contentsScale();
 }
 

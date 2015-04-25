@@ -1,5 +1,18 @@
 2015-04-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Have the web inspector report accurate memory use for layers with detached backing store
+        https://bugs.webkit.org/show_bug.cgi?id=144179
+
+        Reviewed by Dean Jackson.
+
+        Only report memory use for layers whose backing store is attached.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/ca/PlatformCALayer.h: Add backingContributesToMemoryEstimate()
+        which platforms can override if they allow backing store detaching.
+
+2015-04-24  Simon Fraser  <simon.fraser@apple.com>
+
         Track a coverage rect through GraphicsLayerCA flushes, use it to mark backing store attached
         https://bugs.webkit.org/show_bug.cgi?id=144165
 

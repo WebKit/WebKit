@@ -96,6 +96,7 @@ public:
 
     virtual void setBackingStoreAttached(bool) override;
     virtual bool backingStoreAttached() const override;
+    virtual bool backingContributesToMemoryEstimate() const override { return backingStoreAttached(); }
 
     virtual void setGeometryFlipped(bool) override;
 
