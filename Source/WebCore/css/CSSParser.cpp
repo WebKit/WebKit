@@ -1982,6 +1982,10 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             return false;
         return parseFontWeight(important);
     }
+
+    case CSSPropertyFontSynthesis: // none | [ weight || style ]
+        return parseFontSynthesis(important);
+
     case CSSPropertyBorderSpacing: {
         if (num == 1) {
             ShorthandScope scope(this, CSSPropertyBorderSpacing);
@@ -6767,6 +6771,41 @@ bool CSSParser::parseFontWeight(bool important)
         }
     }
     return false;
+}
+
+bool CSSParser::parseFontSynthesis(bool important)
+{
+    // none | [ weight || style ]
+    CSSParserValue* value = m_valueList->current();
+    if (value && value->id == CSSValueNone) {
+        addProperty(CSSPropertyFontSynthesis, cssValuePool().createIdentifierValue(CSSValueNone), important);
+        m_valueList->next();
+        return true;
+    }
+
+    bool encounteredWeight = false;
+    bool encounteredStyle = false;
+    while (value) {
+        switch (value->id) {
+        case CSSValueWeight:
+            encounteredWeight = true;
+            break;
+        case CSSValueStyle:
+            encounteredStyle = true;
+            break;
+        default:
+            return false;
+        }
+        value = m_valueList->next();
+    }
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    if (encounteredWeight)
+        list->append(cssValuePool().createIdentifierValue(CSSValueWeight));
+    if (encounteredStyle)
+        list->append(cssValuePool().createIdentifierValue(CSSValueStyle));
+    addProperty(CSSPropertyFontSynthesis, list.release(), important);
+    return true;
 }
 
 bool CSSParser::parseFontFaceSrcURI(CSSValueList& valueList)

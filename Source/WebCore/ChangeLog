@@ -1,3 +1,38 @@
+2015-04-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement parsing support for font-synthesis CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=144180
+        <rdar://problem/20692791>
+        <rdar://problem/20625024>
+
+        Reviewed by Tim Horton.
+
+        See http://www.w3.org/TR/css-fonts-3/#font-synthesis-prop
+
+        This property allows web authors to opt out of font synthesis. This patch only
+        implements parsing support for the property.
+
+        Test: fast/css3-text/font-synthesis-parse.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::fontSynthesisFromStyle): Create a CSSValue for the existing style object.
+        (WebCore::ComputedStyleExtractor::propertyValue): Call fontSynthesisFromStyle().
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Call parseFontSynthesis().
+        (WebCore::CSSParser::parseFontSynthesis): Accept the grammar
+        "none | [ weight || style ]"
+        * css/CSSParser.h: Function signature.
+        * css/CSSPropertyNames.in: New CSS property name.
+        * css/CSSValueKeywords.in: New CSS value names.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueFontSynthesis): Construct an internal
+        representation of font-synthesis for a given CSSValue.
+        * rendering/style/RenderStyle.h: Function signature.
+        * rendering/style/RenderStyleConstants.h: Internal representation of
+        font-synthesis.
+        * rendering/style/StyleRareInheritedData.h: Where we actually store the bits
+        related to this internal representation.
+
 2015-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         Have the web inspector report accurate memory use for layers with detached backing store

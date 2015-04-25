@@ -1611,6 +1611,19 @@ static Ref<CSSPrimitiveValue> fontWeightFromStyle(RenderStyle* style)
     return cssValuePool().createIdentifierValue(CSSValueNormal);
 }
 
+static Ref<CSSValue> fontSynthesisFromStyle(RenderStyle& style)
+{
+    if (style.fontSynthesis() == FontSynthesisNone)
+        return cssValuePool().createIdentifierValue(CSSValueNone);
+
+    auto list = CSSValueList::createSpaceSeparated();
+    if (style.fontSynthesis() & FontSynthesisStyle)
+        list.get().append(cssValuePool().createIdentifierValue(CSSValueStyle));
+    if (style.fontSynthesis() & FontSynthesisWeight)
+        list.get().append(cssValuePool().createIdentifierValue(CSSValueWeight));
+    return Ref<CSSValue>(list.get());
+}
+
 typedef const Length& (RenderStyle::*RenderStyleLengthGetter)() const;
 typedef LayoutUnit (RenderBoxModelObject::*RenderBoxComputedCSSValueGetter)() const;
 
@@ -2234,6 +2247,8 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return fontVariantFromStyle(style.get());
         case CSSPropertyFontWeight:
             return fontWeightFromStyle(style.get());
+        case CSSPropertyFontSynthesis:
+            return fontSynthesisFromStyle(*style.get());
         case CSSPropertyWebkitFontFeatureSettings: {
             const FontFeatureSettings* featureSettings = style->fontDescription().featureSettings();
             if (!featureSettings || !featureSettings->size())

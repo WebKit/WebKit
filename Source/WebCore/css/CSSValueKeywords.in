@@ -1111,3 +1111,7 @@ from-intrinsic
 // -apple-trailing-word
 -webkit-partially-balanced
 #endif
+
+// font-synthesis
+weight
+style
