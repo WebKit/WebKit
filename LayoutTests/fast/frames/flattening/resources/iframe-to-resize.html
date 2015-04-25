@@ -21,7 +21,8 @@
   
     if (++resizeCounter < 100) {
       currentTimerID = setTimeout('resizeMe();', 0);
-      timerScheduleTimes.push(performance.now());
+      if (window.performance)
+          timerScheduleTimes.push(performance.now());
       if (window.internals && internals.isTimerThrottled(currentTimerID))
         console.log("Timer " + currentTimerID + " is throttled, resizeCounter = " + resizeCounter);
     } else {
@@ -35,7 +36,8 @@
     console.log("Test timed out. Resized " + resizeCounter + " times, got " + resizeEventCounter + " events.");
     if (window.internals && internals.isTimerThrottled(currentTimerID))
       console.log("Timer was throttled.");
-    console.log("Timers were scheduled at: " + timerScheduleTimes);
+    if (window.performance)
+      console.log("Timers were scheduled at: " + timerScheduleTimes);
     if (window.testRunner)
       testRunner.notifyDone();
   }, 20000);
