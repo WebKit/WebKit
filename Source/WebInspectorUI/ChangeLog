@@ -1,3 +1,28 @@
+2015-04-18  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Disable global keyboard shortcuts for background tabs
+        https://bugs.webkit.org/show_bug.cgi?id=143918
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser):
+        (WebInspector.ContentBrowser.prototype.shown): Added.
+        (WebInspector.ContentBrowser.prototype.hidden): Added.
+        Disable shortcuts on the browser and find banner.
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WebInspector.ContentBrowserTabContentView.prototype.shown): Added.
+        (WebInspector.ContentBrowserTabContentView.prototype.hidden): Added.
+        Tell the content browser we were shown or hidden.
+
+        * UserInterface/Views/FindBanner.js:
+        (WebInspector.FindBanner):
+        (WebInspector.FindBanner.prototype.show):
+        (WebInspector.FindBanner.prototype.enableKeyboardShortcuts): Added.
+        (WebInspector.FindBanner.prototype.disableKeyboardShortcuts): Added.
+        Support disabling or enabling the keyboard shortcuts.
+
 2015-04-17  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Add TabBrowser and TabContentView

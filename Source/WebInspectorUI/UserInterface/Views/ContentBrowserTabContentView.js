@@ -91,8 +91,17 @@ WebInspector.ContentBrowserTabContentView.prototype = {
     {
         WebInspector.TabContentView.prototype.shown.call(this);
 
+        this._contentBrowser.shown();
+
         if (this.navigationSidebarPanel && !this._contentBrowser.currentContentView)
             this.navigationSidebarPanel.showDefaultContentView();
+    },
+
+    hidden: function()
+    {
+        WebInspector.TabContentView.prototype.hidden.call(this);
+
+        this._contentBrowser.hidden();
     },
 
     closed: function()

@@ -39,16 +39,23 @@ WebInspector.ContentBrowser = function(element, delegate, disableBackForward)
     this._element.appendChild(this._contentViewContainer.element);
 
     this._findBanner = new WebInspector.FindBanner(this);
-    this._findKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "F", this._showFindBanner.bind(this));
     this._findBanner.addEventListener(WebInspector.FindBanner.Event.DidShow, this._findBannerDidShow, this);
     this._findBanner.addEventListener(WebInspector.FindBanner.Event.DidHide, this._findBannerDidHide, this);
 
+    this._findKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "F", this._showFindBanner.bind(this));
     this._saveKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "S", this._save.bind(this));
     this._saveAsKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "S", this._saveAs.bind(this));
+
+    this._findKeyboardShortcut.disabled = true;
+    this._saveKeyboardShortcut.disabled = true;
+    this._saveAsKeyboardShortcut.disabled = true;
 
     if (!disableBackForward) {
         this._backKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Left, this._backButtonClicked.bind(this));
         this._forwardKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Right, this._forwardButtonClicked.bind(this));
+
+        this._backKeyboardShortcut.disabled = true;
+        this._forwardKeyboardShortcut.disabled = true;
 
         var forwardArrow, backArrow;
         if (WebInspector.Platform.isLegacyMacOS) {
@@ -269,6 +276,38 @@ WebInspector.ContentBrowser.prototype = {
             return;
 
         currentContentView.revealNextSearchResult(!findBanner.showing);
+    },
+
+    shown: function()
+    {
+        this._contentViewContainer.shown();
+
+        if (this._backKeyboardShortcut)
+            this._backKeyboardShortcut.disabled = false;
+        if (this._forwardKeyboardShortcut)
+            this._forwardKeyboardShortcut.disabled = false;
+
+        this._findKeyboardShortcut.disabled = false;
+        this._saveKeyboardShortcut.disabled = false;
+        this._saveAsKeyboardShortcut.disabled = false;
+
+        this._findBanner.enableKeyboardShortcuts();
+    },
+
+    hidden: function()
+    {
+        this._contentViewContainer.hidden();
+
+        if (this._backKeyboardShortcut)
+            this._backKeyboardShortcut.disabled = false;
+        if (this._forwardKeyboardShortcut)
+            this._forwardKeyboardShortcut.disabled = true;
+
+        this._findKeyboardShortcut.disabled = true;
+        this._saveKeyboardShortcut.disabled = true;
+        this._saveAsKeyboardShortcut.disabled = true;
+
+        this._findBanner.disableKeyboardShortcuts();
     },
 
     // Private

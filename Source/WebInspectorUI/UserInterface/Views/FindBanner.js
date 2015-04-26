@@ -86,6 +86,8 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.Object
         this._findNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._nextResultButtonClicked.bind(this));
         this._findPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._previousResultButtonClicked.bind(this));
 
+        this.disableKeyboardShortcuts();
+
         this._generateButtonsGlyphsIfNeeded();
     }
 
@@ -205,7 +207,7 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.Object
         }
 
         // Delay adding the classes in case the target element and/or the find banner were just added to
-        // the document. Adding the class right away will prevent the animation from working the firs time.
+        // the document. Adding the class right away will prevent the animation from working the first time.
         setTimeout(delayedWork.bind(this), 0);
 
         this.dispatchEventToListeners(WebInspector.FindBanner.Event.DidShow);
@@ -223,6 +225,20 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.Object
         this._element.classList.remove(WebInspector.FindBanner.ShowingStyleClassName);
 
         this.dispatchEventToListeners(WebInspector.FindBanner.Event.DidHide);
+    }
+
+    enableKeyboardShortcuts()
+    {
+        this._populateFindKeyboardShortcut.disabled = false;
+        this._findNextKeyboardShortcut.disabled = false;
+        this._findPreviousKeyboardShortcut.disabled = false;
+    }
+
+    disableKeyboardShortcuts()
+    {
+        this._populateFindKeyboardShortcut.disabled = true;
+        this._findNextKeyboardShortcut.disabled = true;
+        this._findPreviousKeyboardShortcut.disabled = true;
     }
 
     // Private
