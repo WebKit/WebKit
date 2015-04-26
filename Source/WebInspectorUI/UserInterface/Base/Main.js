@@ -274,6 +274,7 @@ WebInspector.contentLoaded = function()
     this._downloadToolbarButton = new WebInspector.ButtonToolbarItem("download", WebInspector.UIString("Download Web Archive"), null, "Images/DownloadArrow.svg");
     this._downloadToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._downloadWebArchive, this);
 
+    this._updateReloadToolbarButton();
     this._updateDownloadToolbarButton();
 
     // The toolbar button for node inspection.
@@ -325,7 +326,14 @@ WebInspector.contentLoaded = function()
     this._updateDockNavigationItems();
     this._updateToolbarHeight();
 
+    this._pendingOpenTabTypes = [];
+
     for (var tabType of this._openTabsSetting.value) {
+        if (!this._isTabTypeAllowed(tabType)) {
+            this._pendingOpenTabTypes.push(tabType);
+            continue;
+        }
+
         var tabContentView = this._tabContentViewForType(tabType);
         if (!tabContentView)
             continue;
@@ -359,6 +367,18 @@ WebInspector.contentLoaded = function()
     this._contentLoaded = true;
 
     this.runBootstrapOperations();
+};
+
+WebInspector._isTabTypeAllowed = function(tabType)
+{
+    switch (tabType) {
+    case WebInspector.ElementsTabContentView.Type:
+        return !!window.DOMAgent;
+    case WebInspector.TimelineTabContentView.Type:
+        return !!window.TimelineAgent;
+    }
+
+    return true;
 };
 
 WebInspector._tabContentViewForType = function(tabType)
@@ -411,6 +431,27 @@ WebInspector.activateExtraDomains = function(domains)
     this.notifications.dispatchEventToListeners(WebInspector.Notification.ExtraDomainsActivated, {"domains": domains});
 
     WebInspector.CSSCompletions.requestCSSNameCompletions();
+
+    this._updateReloadToolbarButton();
+    this._updateDownloadToolbarButton();
+
+    var stillPendingOpenTabTypes = [];
+    for (var tabType of this._pendingOpenTabTypes) {
+        if (!this._isTabTypeAllowed(tabType)) {
+            stillPendingOpenTabTypes.push(tabType);
+            continue;
+        }
+
+        var tabContentView = this._tabContentViewForType(tabType);
+        if (!tabContentView)
+            continue;
+
+        this.tabBrowser.addTabForContentView(tabContentView, true);
+
+        tabContentView.restoreStateFromCookie();
+    }
+
+    this._pendingOpenTabTypes = stillPendingOpenTabTypes;
 };
 
 WebInspector.contentBrowserTreeElementForRepresentedObject = function(contentBrowser, representedObject)
@@ -1387,9 +1428,19 @@ WebInspector._reloadPageIgnoringCache = function(event)
     PageAgent.reload(true);
 };
 
+WebInspector._updateReloadToolbarButton = function()
+{
+    if (!window.PageAgent || !PageAgent.reload) {
+        this._reloadToolbarButton.hidden = true;
+        return;
+    }
+
+    this._reloadToolbarButton.hidden = false;
+};
+
 WebInspector._updateDownloadToolbarButton = function()
 {
-    if (!PageAgent.archive || this.debuggableType !== WebInspector.DebuggableType.Web) {
+    if (!window.PageAgent || !PageAgent.archive || this.debuggableType !== WebInspector.DebuggableType.Web) {
         this._downloadToolbarButton.hidden = true;
         return;
     }
