@@ -3,24 +3,32 @@
   (anchor 0.00 0.00)
   (bounds 800.00 4021.00)
   (visible rect 0.00, 0.00 800.00 x 600.00)
+  (coverage rect 0.00, 0.00 800.00 x 600.00)
+  (intersects coverage rect 1)
   (contentsScale 2.00)
   (children 1
     (GraphicsLayer
       (bounds 800.00 4021.00)
       (contentsOpaque 1)
       (visible rect 0.00, 0.00 800.00 x 600.00)
+      (coverage rect 0.00, 0.00 800.00 x 600.00)
+      (intersects coverage rect 1)
       (contentsScale 2.00)
       (children 1
         (GraphicsLayer
           (position 28.00 33.00)
           (bounds 202.00 202.00)
           (visible rect 0.00, 0.00 202.00 x 202.00)
+          (coverage rect -28.00, -33.00 800.00 x 600.00)
+          (intersects coverage rect 1)
           (contentsScale 2.00)
           (children 1
             (GraphicsLayer
               (position 1.00 1.00)
               (bounds 200.00 200.00)
               (visible rect 0.00, 0.00 200.00 x 200.00)
+              (coverage rect 0.00, 0.00 200.00 x 200.00)
+              (intersects coverage rect 1)
               (contentsScale 2.00)
               (children 9
                 (GraphicsLayer
@@ -28,6 +36,8 @@
                   (bounds 128.00 128.00)
                   (drawsContent 1)
                   (visible rect 0.00, 0.00 0.00 x 0.00)
+                  (coverage rect 264.00, -22.00 200.00 x 200.00)
+                  (intersects coverage rect 0)
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
@@ -35,6 +45,8 @@
                   (bounds 128.00 128.00)
                   (drawsContent 1)
                   (visible rect 0.00, 0.00 0.00 x 0.00)
+                  (coverage rect 140.00, -22.00 200.00 x 200.00)
+                  (intersects coverage rect 0)
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
@@ -42,6 +54,8 @@
                   (bounds 128.00 128.00)
                   (drawsContent 1)
                   (visible rect 16.00, 0.00 112.00 x 128.00)
+                  (coverage rect 16.00, -22.00 200.00 x 200.00)
+                  (intersects coverage rect 1)
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
@@ -49,6 +63,8 @@
                   (bounds 128.00 128.00)
                   (drawsContent 1)
                   (visible rect 0.00, 0.00 92.00 x 128.00)
+                  (coverage rect -108.00, -22.00 200.00 x 200.00)
+                  (intersects coverage rect 1)
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
@@ -56,6 +72,8 @@
                   (bounds 128.00 128.00)
                   (drawsContent 1)
                   (visible rect 0.00, 0.00 0.00 x 0.00)
+                  (coverage rect -232.00, -22.00 200.00 x 200.00)
+                  (intersects coverage rect 0)
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
@@ -63,6 +81,8 @@
                   (bounds 128.00 128.00)
                   (drawsContent 1)
                   (visible rect 0.00, 0.00 0.00 x 0.00)
+                  (coverage rect -356.00, -22.00 200.00 x 200.00)
+                  (intersects coverage rect 0)
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
@@ -70,6 +90,8 @@
                   (bounds 128.00 128.00)
                   (drawsContent 1)
                   (visible rect 0.00, 0.00 0.00 x 0.00)
+                  (coverage rect -480.00, -22.00 200.00 x 200.00)
+                  (intersects coverage rect 0)
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
@@ -77,6 +99,8 @@
                   (bounds 128.00 128.00)
                   (drawsContent 1)
                   (visible rect 0.00, 0.00 0.00 x 0.00)
+                  (coverage rect -604.00, -22.00 200.00 x 200.00)
+                  (intersects coverage rect 0)
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
@@ -84,6 +108,8 @@
                   (bounds 128.00 128.00)
                   (drawsContent 1)
                   (visible rect 0.00, 0.00 0.00 x 0.00)
+                  (coverage rect 264.00, -167.00 200.00 x 200.00)
+                  (intersects coverage rect 0)
                   (contentsScale 2.00)
                 )
               )

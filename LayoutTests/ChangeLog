@@ -1,5 +1,26 @@
 2015-04-26  Simon Fraser  <simon.fraser@apple.com>
 
+        New baselines for iOS.
+
+        * platform/ios-simulator-wk2/compositing/contents-scale/rounded-contents-scale-expected.txt:
+        * platform/ios-simulator-wk2/compositing/contents-scale/scaled-ancestor-expected.txt:
+        * platform/ios-simulator-wk2/compositing/contents-scale/simple-scale-expected.txt:
+        * platform/ios-simulator-wk2/compositing/contents-scale/z-translate-expected.txt:
+        * platform/ios-simulator-wk2/compositing/repaint/invalidations-on-composited-layers-expected.txt:
+        * platform/ios-simulator-wk2/compositing/tiling/tile-cache-zoomed-expected.txt:
+        * platform/ios-simulator-wk2/compositing/visible-rect/2d-transformed-expected.txt:
+        * platform/ios-simulator-wk2/compositing/visible-rect/3d-transformed-expected.txt:
+        * platform/ios-simulator-wk2/compositing/visible-rect/clipped-by-viewport-expected.txt:
+        * platform/ios-simulator-wk2/compositing/visible-rect/clipped-visible-rect-expected.txt:
+        * platform/ios-simulator-wk2/compositing/visible-rect/coverage-clipped-expected.txt:
+        * platform/ios-simulator-wk2/compositing/visible-rect/coverage-scrolling-expected.txt:
+        * platform/ios-simulator-wk2/compositing/visible-rect/flipped-preserve-3d-expected.txt:
+        * platform/ios-simulator-wk2/compositing/visible-rect/iframe-and-layers-expected.txt:
+        * platform/ios-simulator-wk2/compositing/visible-rect/nested-transform-expected.txt:
+        * platform/ios-simulator-wk2/compositing/visible-rect/scrolled-expected.txt:
+
+2015-04-26  Simon Fraser  <simon.fraser@apple.com>
+
         New WK1 results for this test.
 
         * platform/mac-wk1/compositing/tiling/transform-origin-tiled-expected.txt: Added.
