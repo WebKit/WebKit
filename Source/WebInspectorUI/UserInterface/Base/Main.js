@@ -332,6 +332,8 @@ WebInspector.contentLoaded = function()
         this.tabBrowser.addTabForContentView(tabContentView, true);
     }
 
+    this._restoreCookieForOpenTabs();
+
     this.tabBar.selectedTabBarItem = this._selectedTabIndexSetting.value;
 
     if (!this.tabBar.selectedTabBarItem)
@@ -997,6 +999,8 @@ WebInspector._mainResourceDidChange = function(event)
 
     this._inProvisionalLoad = false;
 
+    this._restoreCookieForOpenTabs();
+
     this._updateDownloadToolbarButton();
 
     this.updateWindowTitle();
@@ -1007,7 +1011,25 @@ WebInspector._provisionalLoadStarted = function(event)
     if (!event.target.isMainFrame())
         return;
 
+    this._saveCookieForOpenTabs();
+
     this._inProvisionalLoad = true;
+};
+
+WebInspector._restoreCookieForOpenTabs = function(causedByReload)
+{
+    for (var tabBarItem of this.tabBar.tabBarItems) {
+        var tabContentView = tabBarItem.representedObject;
+        tabContentView.restoreStateFromCookie(causedByReload);
+    }
+};
+
+WebInspector._saveCookieForOpenTabs = function()
+{
+    for (var tabBarItem of this.tabBar.tabBarItems) {
+        var tabContentView = tabBarItem.representedObject;
+        tabContentView.saveStateToCookie();
+    }
 };
 
 WebInspector._windowFocused = function(event)
@@ -1065,7 +1087,7 @@ WebInspector._mouseMoved = function(event)
 
 WebInspector._pageHidden = function(event)
 {
-    // FIXME: Save inspector state.
+    this._saveCookieForOpenTabs();
 };
 
 WebInspector._undock = function(event)

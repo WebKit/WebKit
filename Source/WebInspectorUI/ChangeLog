@@ -1,5 +1,24 @@
 2015-04-25  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Save and restore tab state on reload and between sessions
+        https://bugs.webkit.org/show_bug.cgi?id=144202
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector._mainResourceDidChange):
+        (WebInspector._provisionalLoadStarted):
+        (WebInspector._restoreCookieForOpenTabs):
+        (WebInspector._saveCookieForOpenTabs):
+        (WebInspector._pageHidden):
+        * UserInterface/Views/TabContentView.js:
+        (WebInspector.TabContentView):
+        (WebInspector.TabContentView.prototype.restoreStateFromCookie):
+        (WebInspector.TabContentView.prototype.saveStateToCookie):
+
+2015-04-25  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Split search from ResourceSidebarPanel into a Search tab and sidebar
         https://bugs.webkit.org/show_bug.cgi?id=144197
 

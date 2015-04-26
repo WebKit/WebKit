@@ -49,6 +49,8 @@ WebInspector.TabContentView = function(identifier, styleClassNames, tabBarItem, 
 
     this._detailsSidebarCollapsedSetting = new WebInspector.Setting(identifier + "-details-sidebar-collapsed", true);
     this._detailsSidebarSelectedPanelSetting = new WebInspector.Setting(identifier + "-details-sidebar-selected-panel", null);
+
+    this._cookieSetting = new WebInspector.Setting(identifier + "-tab-cookie", {});
 };
 
 WebInspector.TabContentView.prototype = {
@@ -103,6 +105,28 @@ WebInspector.TabContentView.prototype = {
     {
         // Implemented by subclasses.
         return false;
+    },
+
+    restoreStateFromCookie: function(causedByReload)
+    {
+        if (!this.navigationSidebarPanel)
+            return;
+
+        var matchTypeOnlyDelayForReload = 2000;
+        var matchTypeOnlyDelayForReopen = 1000;
+
+        var relaxMatchDelay = causedByReload ? matchTypeOnlyDelayForReload : matchTypeOnlyDelayForReopen;
+        this.navigationSidebarPanel.restoreStateFromCookie(this._cookieSetting.value || {}, relaxMatchDelay);
+    },
+
+    saveStateToCookie: function()
+    {
+        if (!this.navigationSidebarPanel)
+            return;
+
+        var cookie = this._cookieSetting.value || {};
+        this.navigationSidebarPanel.saveStateToCookie(cookie);
+        this._cookieSetting.value = cookie;
     },
 
     get navigationSidebarPanel()
