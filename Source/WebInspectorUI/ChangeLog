@@ -1,3 +1,54 @@
+2015-04-22  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Support passing extra arguments to ContentViews during construction
+        https://bugs.webkit.org/show_bug.cgi?id=144055
+
+        This allows us to pass the TimelineSidebarPanel to Timeline views since in the future
+        there could be multiple timeline sidebars, one per tab. So the global instance will
+        be going away.
+
+        This also removes the exception catching in ContentViewContainer. It doesn't really
+        help us and it makes debugging an exception harder.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype.showContentViewForRepresentedObject):
+        (WebInspector.ContentBrowser.prototype.contentViewForRepresentedObject):
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView):
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype.contentViewForRepresentedObject):
+        (WebInspector.ContentViewContainer.prototype.showContentViewForRepresentedObject):
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView.prototype._dataGridFiltersDidChange):
+        (WebInspector.LayoutTimelineView.prototype._treeElementSelected):
+        (WebInspector.LayoutTimelineView.prototype._closeStatusButtonClicked):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView.prototype._dataGridFiltersDidChange):
+        (WebInspector.NetworkTimelineView.prototype._treeElementSelected):
+        (WebInspector.NetworkTimelineView.prototype._closeStatusButtonClicked):
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView.prototype._treeElementSelected):
+        (WebInspector.OverviewTimelineView.prototype._closeStatusButtonClicked):
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView):
+        * UserInterface/Views/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView):
+        (WebInspector.ScriptTimelineView.prototype._dataGridFiltersDidChange):
+        (WebInspector.ScriptTimelineView.prototype._treeElementSelected):
+        (WebInspector.ScriptTimelineView.prototype._closeStatusButtonClicked):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._contentViewSelectionPathComponentDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimes):
+        (WebInspector.TimelineRecordingContentView.prototype._timeRangeSelectionChanged):
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView):
+        (WebInspector.TimelineView.prototype.get timelineSidebarPanel):
+
 2015-04-18  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Disable global keyboard shortcuts for background tabs

@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RenderingFrameTimelineView = function(timeline)
+WebInspector.RenderingFrameTimelineView = function(timeline, extraArguments)
 {
-    WebInspector.TimelineView.call(this, timeline);
+    WebInspector.TimelineView.call(this, timeline, extraArguments);
 
     console.assert(WebInspector.TimelineRecord.Type.RenderingFrame);
 

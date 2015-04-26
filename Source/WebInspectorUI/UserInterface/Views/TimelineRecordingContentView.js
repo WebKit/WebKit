@@ -24,11 +24,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineRecordingContentView = function(recording)
+WebInspector.TimelineRecordingContentView = function(recording, extraArguments)
 {
+    console.assert(extraArguments);
+    console.assert(extraArguments.timelineSidebarPanel instanceof WebInspector.TimelineSidebarPanel);
+
     WebInspector.ContentView.call(this, recording);
 
     this._recording = recording;
+    this._timelineSidebarPanel = extraArguments.timelineSidebarPanel;
 
     this.element.classList.add(WebInspector.TimelineRecordingContentView.StyleClassName);
 
@@ -49,7 +53,7 @@ WebInspector.TimelineRecordingContentView = function(recording)
     this._clearTimelineNavigationItem = new WebInspector.ButtonNavigationItem("clear-timeline", WebInspector.UIString("Clear Timeline"), trashImage.src, trashImage.width, trashImage.height);
     this._clearTimelineNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearTimeline, this);
 
-    this._overviewTimelineView = new WebInspector.OverviewTimelineView(recording);
+    this._overviewTimelineView = new WebInspector.OverviewTimelineView(recording, {timelineSidebarPanel: this._timelineSidebarPanel});
     this._overviewTimelineView.secondsPerPixel = this._timelineOverview.secondsPerPixel;
 
     this._timelineViewMap = new Map;
@@ -315,8 +319,8 @@ WebInspector.TimelineRecordingContentView.prototype = {
     {
         var timelineView = this.currentTimelineView;
         if (timelineView) {
-            WebInspector.timelineSidebarPanel.contentTreeOutline = timelineView.navigationSidebarTreeOutline;
-            WebInspector.timelineSidebarPanel.contentTreeOutlineLabel = timelineView.navigationSidebarTreeOutlineLabel;
+            this._timelineSidebarPanel.contentTreeOutline = timelineView.navigationSidebarTreeOutline;
+            this._timelineSidebarPanel.contentTreeOutlineLabel = timelineView.navigationSidebarTreeOutlineLabel;
 
             timelineView.startTime = this._timelineOverview.selectionStartTime;
             timelineView.endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
@@ -329,7 +333,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
 
     _pathComponentSelected: function(event)
     {
-        WebInspector.timelineSidebarPanel.showTimelineViewForTimeline(event.data.pathComponent.representedObject);
+        this._timelineSidebarPanel.showTimelineViewForTimeline(event.data.pathComponent.representedObject);
     },
 
     _contentViewSelectionPathComponentDidChange: function(event)
@@ -395,7 +399,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
         if (this.currentTimelineView)
             this.currentTimelineView.currentTime = currentTime;
 
-        WebInspector.timelineSidebarPanel.updateFilter();
+        this._timelineSidebarPanel.updateFilter();
 
         // Force a layout now since we are already in an animation frame and don't need to delay it until the next.
         this._timelineOverview.updateLayoutIfNeeded();
@@ -502,7 +506,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
 
         console.assert(!this._timelineViewMap.has(timeline), timeline);
 
-        this._timelineViewMap.set(timeline, new WebInspector.ContentView(timeline));
+        this._timelineViewMap.set(timeline, new WebInspector.ContentView(timeline, {timelineSidebarPanel: this._timelineSidebarPanel}));
 
         var pathComponent = new WebInspector.HierarchicalPathComponent(timeline.displayName, timeline.iconClassName, timeline);
         pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
@@ -592,7 +596,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
             var selectedTreeElement = this.currentTimelineView && this.currentTimelineView.navigationSidebarTreeOutline ? this.currentTimelineView.navigationSidebarTreeOutline.selectedTreeElement : null;
             var selectionWasHidden = selectedTreeElement && selectedTreeElement.hidden;
 
-            WebInspector.timelineSidebarPanel.updateFilter();
+            this._timelineSidebarPanel.updateFilter();
 
             if (selectedTreeElement && selectedTreeElement.hidden !== selectionWasHidden)
                 this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);

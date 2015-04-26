@@ -171,9 +171,9 @@ WebInspector.ContentBrowser.prototype = {
         this._contentViewContainer.updateLayout();
     },
 
-    showContentViewForRepresentedObject: function(representedObject, cookie)
+    showContentViewForRepresentedObject: function(representedObject, cookie, extraArguments)
     {
-        var contentView = this.contentViewForRepresentedObject(representedObject);
+        var contentView = this.contentViewForRepresentedObject(representedObject, false, extraArguments);
         return this._contentViewContainer.showContentView(contentView, cookie);
     },
 
@@ -182,9 +182,9 @@ WebInspector.ContentBrowser.prototype = {
         return this._contentViewContainer.showContentView(contentView, cookie);
     },
 
-    contentViewForRepresentedObject: function(representedObject, onlyExisting)
+    contentViewForRepresentedObject: function(representedObject, onlyExisting, extraArguments)
     {
-        return this._contentViewContainer.contentViewForRepresentedObject(representedObject, onlyExisting);
+        return this._contentViewContainer.contentViewForRepresentedObject(representedObject, onlyExisting, extraArguments);
     },
 
     canGoBack: function()

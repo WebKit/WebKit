@@ -423,7 +423,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         for (var timeline of recording.timelines.values())
             this._timelineAdded(timeline);
 
-        this._displayedContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(this._displayedRecording);
+        this._displayedContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(this._displayedRecording, false, {timelineSidebarPanel: this});
         if (this.selected)
             WebInspector.contentBrowser.showContentView(this._displayedContentView);
     }

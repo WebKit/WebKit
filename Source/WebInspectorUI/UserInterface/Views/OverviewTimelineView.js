@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.OverviewTimelineView = function(recording)
+WebInspector.OverviewTimelineView = function(recording, extraArguments)
 {
-    WebInspector.TimelineView.call(this, recording);
+    WebInspector.TimelineView.call(this, recording, extraArguments);
 
     this.navigationSidebarTreeOutline.onselect = this._treeElementSelected.bind(this);
     this.navigationSidebarTreeOutline.ondeselect = this._treeElementDeselected.bind(this);
@@ -38,7 +38,7 @@ WebInspector.OverviewTimelineView = function(recording)
     this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
     this._dataGrid.element.classList.add("no-header");
 
-    this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(this._contentTreeOutline, this._dataGrid);
+    this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(this.navigationSidebarTreeOutline, this._dataGrid);
 
     this._timelineRuler = new WebInspector.TimelineRuler;
     this._timelineRuler.allowsClippedLabels = true;
@@ -333,7 +333,7 @@ WebInspector.OverviewTimelineView.prototype = {
 
     _treeElementSelected: function(treeElement, selectedByUser)
     {
-        if (!WebInspector.timelineSidebarPanel.canShowDifferentContentView())
+        if (!this.timelineSidebarPanel.canShowDifferentContentView())
             return;
 
         if (treeElement instanceof WebInspector.FolderTreeElement)
@@ -351,7 +351,7 @@ WebInspector.OverviewTimelineView.prototype = {
         }
 
         if (!treeElement.sourceCodeTimeline.sourceCodeLocation) {
-            WebInspector.timelineSidebarPanel.showTimelineOverview();
+            this.timelineSidebarPanel.showTimelineOverview();
             this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
             return;
         }
@@ -378,6 +378,6 @@ WebInspector.OverviewTimelineView.prototype = {
     _closeStatusButtonClicked: function(event)
     {
         this.navigationSidebarTreeOutline.selectedTreeElement.deselect();
-        WebInspector.timelineSidebarPanel.showTimelineOverview();
+        this.timelineSidebarPanel.showTimelineOverview();
     }
 };

@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayoutTimelineView = function(timeline)
+WebInspector.LayoutTimelineView = function(timeline, extraArguments)
 {
-    WebInspector.TimelineView.call(this, timeline);
+    WebInspector.TimelineView.call(this, timeline, extraArguments);
 
     console.assert(timeline.type === WebInspector.TimelineRecord.Type.Layout);
 
@@ -209,7 +209,7 @@ WebInspector.LayoutTimelineView.prototype = {
 
     _dataGridFiltersDidChange: function(event)
     {
-        WebInspector.timelineSidebarPanel.updateFilter();
+        this.timelineSidebarPanel.updateFilter();
     },
 
     _dataGridNodeSelected: function(event)

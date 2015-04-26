@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ContentView = function(representedObject)
+WebInspector.ContentView = function(representedObject, extraArguments)
 {
     if (this.constructor === WebInspector.ContentView) {
         // When instantiated directly return an instance of a type-based concrete subclass.
@@ -31,64 +31,64 @@ WebInspector.ContentView = function(representedObject)
         console.assert(representedObject);
 
         if (representedObject instanceof WebInspector.Frame)
-            return new WebInspector.FrameContentView(representedObject);
+            return new WebInspector.FrameContentView(representedObject, extraArguments);
 
         if (representedObject instanceof WebInspector.Resource)
-            return new WebInspector.ResourceClusterContentView(representedObject);
+            return new WebInspector.ResourceClusterContentView(representedObject, extraArguments);
 
         if (representedObject instanceof WebInspector.Script)
-            return new WebInspector.ScriptContentView(representedObject);
+            return new WebInspector.ScriptContentView(representedObject, extraArguments);
 
         if (representedObject instanceof WebInspector.TimelineRecording)
-            return new WebInspector.TimelineRecordingContentView(representedObject);
+            return new WebInspector.TimelineRecordingContentView(representedObject, extraArguments);
 
         if (representedObject instanceof WebInspector.Timeline) {
             var timelineType = representedObject.type;
             if (timelineType === WebInspector.TimelineRecord.Type.Network)
-                return new WebInspector.NetworkTimelineView(representedObject);
+                return new WebInspector.NetworkTimelineView(representedObject, extraArguments);
 
             if (timelineType === WebInspector.TimelineRecord.Type.Layout)
-                return new WebInspector.LayoutTimelineView(representedObject);
+                return new WebInspector.LayoutTimelineView(representedObject, extraArguments);
 
             if (timelineType === WebInspector.TimelineRecord.Type.Script)
-                return new WebInspector.ScriptTimelineView(representedObject);
+                return new WebInspector.ScriptTimelineView(representedObject, extraArguments);
 
             if (timelineType === WebInspector.TimelineRecord.Type.RenderingFrame)
-                return new WebInspector.RenderingFrameTimelineView(representedObject);
+                return new WebInspector.RenderingFrameTimelineView(representedObject, extraArguments);
         }
 
         if (representedObject instanceof WebInspector.DOMStorageObject)
-            return new WebInspector.DOMStorageContentView(representedObject);
+            return new WebInspector.DOMStorageContentView(representedObject, extraArguments);
 
         if (representedObject instanceof WebInspector.CookieStorageObject)
-            return new WebInspector.CookieStorageContentView(representedObject);
+            return new WebInspector.CookieStorageContentView(representedObject, extraArguments);
 
         if (representedObject instanceof WebInspector.DatabaseTableObject)
-            return new WebInspector.DatabaseTableContentView(representedObject);
+            return new WebInspector.DatabaseTableContentView(representedObject, extraArguments);
 
         if (representedObject instanceof WebInspector.DatabaseObject)
-            return new WebInspector.DatabaseContentView(representedObject);
+            return new WebInspector.DatabaseContentView(representedObject, extraArguments);
 
         if (representedObject instanceof WebInspector.IndexedDatabaseObjectStore)
-            return new WebInspector.IndexedDatabaseObjectStoreContentView(representedObject);
+            return new WebInspector.IndexedDatabaseObjectStoreContentView(representedObject, extraArguments);
 
         if (representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex)
-            return new WebInspector.IndexedDatabaseObjectStoreContentView(representedObject);
+            return new WebInspector.IndexedDatabaseObjectStoreContentView(representedObject, extraArguments);
 
         if (representedObject instanceof WebInspector.ApplicationCacheFrame)
-            return new WebInspector.ApplicationCacheFrameContentView(representedObject);
+            return new WebInspector.ApplicationCacheFrameContentView(representedObject, extraArguments);
 
         if (representedObject instanceof WebInspector.DOMTree)
-            return new WebInspector.FrameDOMTreeContentView(representedObject);
+            return new WebInspector.FrameDOMTreeContentView(representedObject, extraArguments);
 
         if (representedObject instanceof WebInspector.LogObject)
-            return new WebInspector.LogContentView(representedObject);
+            return new WebInspector.LogContentView(representedObject, extraArguments);
 
         if (representedObject instanceof WebInspector.ContentFlow)
-            return new WebInspector.ContentFlowDOMTreeContentView(representedObject);
+            return new WebInspector.ContentFlowDOMTreeContentView(representedObject, extraArguments);
 
         if (typeof representedObject === "string" || representedObject instanceof String)
-            return new WebInspector.TextContentView(representedObject);
+            return new WebInspector.TextContentView(representedObject, extraArguments);
 
         console.assert(!WebInspector.ContentView.isViewable(representedObject));
 

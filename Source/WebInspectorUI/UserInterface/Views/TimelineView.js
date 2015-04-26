@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2015 University of Washington.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,26 +24,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineView = function(representedObject)
+WebInspector.TimelineView = function(representedObject, extraArguments)
 {
     // This class should not be instantiated directly. Create a concrete subclass instead.
     console.assert(this.constructor !== WebInspector.TimelineView && this instanceof WebInspector.TimelineView);
 
+    console.assert(extraArguments);
+    console.assert(extraArguments.timelineSidebarPanel instanceof WebInspector.TimelineSidebarPanel);
+
     WebInspector.ContentView.call(this, representedObject);
 
-    this._contentTreeOutline = WebInspector.timelineSidebarPanel.createContentTreeOutline();
+    this._timelineSidebarPanel = extraArguments.timelineSidebarPanel;
+
+    this._contentTreeOutline = this._timelineSidebarPanel.createContentTreeOutline();
     this._contentTreeOutline.onselect = this.treeElementSelected.bind(this);
     this._contentTreeOutline.ondeselect = this.treeElementDeselected.bind(this);
 
-    this.element.classList.add(WebInspector.TimelineView.StyleClassName);
+    this.element.classList.add("timeline-view");
 
     this._zeroTime = 0;
     this._startTime = 0;
     this._endTime = 5;
     this._currentTime = 0;
 };
-
-WebInspector.TimelineView.StyleClassName = "timeline-view";
 
 WebInspector.TimelineView.prototype = {
     constructor: WebInspector.TimelineView,
@@ -60,6 +63,11 @@ WebInspector.TimelineView.prototype = {
     {
         // Implemented by sub-classes if needed.
         return null;
+    },
+
+    get timelineSidebarPanel()
+    {
+        return this._timelineSidebarPanel;
     },
 
     get selectionPathComponents()
@@ -194,7 +202,7 @@ WebInspector.TimelineView.prototype = {
 
         var sourceCodeLocation = treeElement.record.sourceCodeLocation;
         if (!sourceCodeLocation) {
-            WebInspector.timelineSidebarPanel.showTimelineViewForTimeline(this.representedObject);
+            this._timelineSidebarPanel.showTimelineViewForTimeline(this.representedObject);
             return true;
         }
 
@@ -219,7 +227,7 @@ WebInspector.TimelineView.prototype = {
     {
         // Implemented by sub-classes if needed.
 
-        if (!WebInspector.timelineSidebarPanel.canShowDifferentContentView())
+        if (!this._timelineSidebarPanel.canShowDifferentContentView())
             return;
 
         if (treeElement instanceof WebInspector.FolderTreeElement)
@@ -249,7 +257,7 @@ WebInspector.TimelineView.prototype = {
         if (this.navigationSidebarTreeOutline.selectedTreeElement)
             this.navigationSidebarTreeOutline.selectedTreeElement.deselect();
 
-        WebInspector.timelineSidebarPanel.showTimelineViewForTimeline(this.representedObject);
+        this._timelineSidebarPanel.showTimelineViewForTimeline(this.representedObject);
     },
 
     _updateTreeElementWithCloseButton: function(treeElement)

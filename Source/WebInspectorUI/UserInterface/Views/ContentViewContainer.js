@@ -82,7 +82,7 @@ WebInspector.ContentViewContainer.prototype = {
             currentContentView.updateLayout();
     },
 
-    contentViewForRepresentedObject: function(representedObject, onlyExisting)
+    contentViewForRepresentedObject: function(representedObject, onlyExisting, extraArguments)
     {
         console.assert(representedObject);
         if (!representedObject)
@@ -107,13 +107,12 @@ WebInspector.ContentViewContainer.prototype = {
         if (onlyExisting)
             return null;
 
-        try {
-            // No existing content view found, make a new one.
-            contentView = new WebInspector.ContentView(representedObject);
-        } catch (e) {
-            console.error(e);
+        // No existing content view found, make a new one.
+        contentView = new WebInspector.ContentView(representedObject, extraArguments);
+
+        console.assert(contentView, "Unknown representedObject", representedObject);
+        if (!contentView)
             return null;
-        }
 
         // Remember this content view for future calls.
         if (!representedObject.__contentViews)
@@ -123,9 +122,9 @@ WebInspector.ContentViewContainer.prototype = {
         return contentView;
     },
 
-    showContentViewForRepresentedObject: function(representedObject)
+    showContentViewForRepresentedObject: function(representedObject, extraArguments)
     {
-        var contentView = this.contentViewForRepresentedObject(representedObject);
+        var contentView = this.contentViewForRepresentedObject(representedObject, false, extraArguments);
         if (!contentView)
             return null;
 
