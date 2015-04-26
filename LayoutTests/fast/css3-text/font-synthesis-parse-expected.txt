@@ -5,7 +5,7 @@ PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "none"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('font-synthesis') is "initial"
-PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "none"
+PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "style weight"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('font-synthesis') is "weight"

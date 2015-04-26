@@ -1,3 +1,15 @@
+2015-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-synthesis's initial value is "style weight"
+        https://bugs.webkit.org/show_bug.cgi?id=144195
+
+        Reviewed by Darin Adler.
+
+        Updating test.
+
+        * fast/css3-text/font-synthesis-parse-expected.txt:
+        * fast/css3-text/font-synthesis-parse.html:
+
 2015-04-25  Jordan Harband  <ljharb@gmail.com>
 
         Set#keys !== Set#values

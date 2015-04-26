@@ -2064,7 +2064,7 @@ public:
     static BlendMode initialBlendMode() { return BlendModeNormal; }
     static Isolation initialIsolation() { return IsolationAuto; }
 #endif
-    static FontSynthesis initialFontSynthesis() { return FontSynthesisNone; }
+    static FontSynthesis initialFontSynthesis() { return FontSynthesisStyle | FontSynthesisWeight; }
 
     static ptrdiff_t noninheritedFlagsMemoryOffset() { return OBJECT_OFFSETOF(RenderStyle, noninherited_flags); }
 

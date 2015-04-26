@@ -18,14 +18,14 @@
       stylesheet.deleteRule(0);
     }
 
-    function testInitialIsNone(stylesheet, target) {
+    function testInitialIsBoth(stylesheet, target) {
       cssRule = stylesheet.cssRules.item(0);
       shouldBe("cssRule.type", "cssRule.STYLE_RULE");
       declaration = cssRule.style;
       shouldBe("declaration.length", "1");
       shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "initial");
       computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "none");
+      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "style weight");
       stylesheet.deleteRule(0);
     }
 
@@ -82,7 +82,7 @@
     testEmptyIsNone(stylesheet, target);
 
     stylesheet.insertRule("#p { font-synthesis: initial; }", 0);
-    testInitialIsNone(stylesheet, target);
+    testInitialIsBoth(stylesheet, target);
 
     stylesheet.insertRule("#p { font-synthesis: weight }", 0);
     testWeight(stylesheet, target);
