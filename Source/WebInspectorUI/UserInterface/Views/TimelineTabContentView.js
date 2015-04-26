@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,60 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.CodeMirror {
-    z-index: 0;
-}
+WebInspector.TimelineTabContentView = function(identifier)
+{
+    var tabBarItem = new WebInspector.TabBarItem("Images/Timeline.svg", WebInspector.UIString("Timelines"));
+    var detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel, WebInspector.renderingFrameDetailsSidebarPanel];
 
-.CodeMirror,
-.CodeMirror * {
-    box-sizing: content-box;
-}
+    // FIME: Until TimelineSidebarPanel supports instantiating after inspector launch, disable closing.
+    tabBarItem.hideCloseButton = true;
 
-.CodeMirror .CodeMirror-lines {
- /* One pixel bottom padding needed to show the bottom border for matching brackets and search matches. */
-    padding: 0 0 1px 0;
-}
+    WebInspector.ContentBrowserTabContentView.call(this, identifier || "timeline", "timeline", tabBarItem, WebInspector.TimelineSidebarPanel, detailsSidebarPanels);
+};
 
-.CodeMirror pre {
-    padding: 1px 3px 1px 7px;
-}
+WebInspector.TimelineTabContentView.prototype = {
+    constructor: WebInspector.TimelineTabContentView,
+    __proto__: WebInspector.ContentBrowserTabContentView.prototype,
 
-.CodeMirror .CodeMirror-selected {
-    background-color: rgb(212, 212, 212);
-}
+    // Public
 
-.CodeMirror.CodeMirror-focused .CodeMirror-selected {
-    background-color: highlight;
-}
+    get type()
+    {
+        return WebInspector.TimelineTabContentView.Type;
+    },
 
-.CodeMirror .CodeMirror-cursor {
-    pointer-events: none;
-}
+    canShowRepresentedObject: function(representedObject)
+    {
+        return representedObject instanceof WebInspector.TimelineRecording;
+    },
 
-.CodeMirror .CodeMirror-lines .CodeMirror-matchingbracket {
-    color: inherit;
-    background-color: rgba(100, 130, 235, 0.2);
-    border-bottom: 1px dotted rgb(20, 20, 235);
-}
+    get supportsSplitContentBrowser()
+    {
+        return false;
+    }
+};
 
-.CodeMirror .CodeMirror-lines .CodeMirror-nonmatchingbracket {
-    color: inherit;
-    background-color: rgba(235, 30, 20, 0.2);
-    border-bottom: 1px dotted rgb(235, 30, 20);
-}
-
-.CodeMirror .CodeMirror-gutters {
-    background-color: rgb(247, 247, 247);
-    border-right: 1px solid rgb(231, 231, 231);
-}
-
-.CodeMirror .CodeMirror-linenumber {
-    padding: 0 2px;
-    min-width: 22px;
-
-    color: rgb(146, 146, 146);
-
-    font-size: 9px;
-    line-height: 13px;
-    text-align: right;
-}
+WebInspector.TimelineTabContentView.Type = "timeline";

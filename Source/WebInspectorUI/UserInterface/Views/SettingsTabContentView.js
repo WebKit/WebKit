@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,60 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.CodeMirror {
-    z-index: 0;
-}
+WebInspector.SettingsTabContentView = function(identifier)
+{
+    var tabBarItem = new WebInspector.TabBarItem("Images/Gear.svg", WebInspector.UIString("Settings"), true);
 
-.CodeMirror,
-.CodeMirror * {
-    box-sizing: content-box;
-}
+    WebInspector.TabContentView.call(this, identifier || "settings", "settings", tabBarItem);
+};
 
-.CodeMirror .CodeMirror-lines {
- /* One pixel bottom padding needed to show the bottom border for matching brackets and search matches. */
-    padding: 0 0 1px 0;
-}
+WebInspector.SettingsTabContentView.prototype = {
+    constructor: WebInspector.SettingsTabContentView,
+    __proto__: WebInspector.TabContentView.prototype,
 
-.CodeMirror pre {
-    padding: 1px 3px 1px 7px;
-}
+    // Public
 
-.CodeMirror .CodeMirror-selected {
-    background-color: rgb(212, 212, 212);
-}
+    get type()
+    {
+        return WebInspector.SettingsTabContentView.Type;
+    }
+};
 
-.CodeMirror.CodeMirror-focused .CodeMirror-selected {
-    background-color: highlight;
-}
-
-.CodeMirror .CodeMirror-cursor {
-    pointer-events: none;
-}
-
-.CodeMirror .CodeMirror-lines .CodeMirror-matchingbracket {
-    color: inherit;
-    background-color: rgba(100, 130, 235, 0.2);
-    border-bottom: 1px dotted rgb(20, 20, 235);
-}
-
-.CodeMirror .CodeMirror-lines .CodeMirror-nonmatchingbracket {
-    color: inherit;
-    background-color: rgba(235, 30, 20, 0.2);
-    border-bottom: 1px dotted rgb(235, 30, 20);
-}
-
-.CodeMirror .CodeMirror-gutters {
-    background-color: rgb(247, 247, 247);
-    border-right: 1px solid rgb(231, 231, 231);
-}
-
-.CodeMirror .CodeMirror-linenumber {
-    padding: 0 2px;
-    min-width: 22px;
-
-    color: rgb(146, 146, 146);
-
-    font-size: 9px;
-    line-height: 13px;
-    text-align: right;
-}
+WebInspector.SettingsTabContentView.Type = "settings";

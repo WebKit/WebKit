@@ -240,6 +240,12 @@ WebInspector.contentLoaded = function()
     this.detailsSidebar.addEventListener(WebInspector.Sidebar.Event.WidthDidChange, this._sidebarWidthDidChange, this);
     this.detailsSidebar.addEventListener(WebInspector.Sidebar.Event.SidebarPanelSelected, this._detailsSidebarPanelSelected, this);
 
+    this.navigationSidebarKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "0", this.toggleNavigationSidebar.bind(this));
+    this.detailsSidebarKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Option, "0", this.toggleDetailsSidebar.bind(this));
+
+    this.tabBrowser = new WebInspector.TabBrowser(document.getElementById("tab-browser"), this.tabBar, this.navigationSidebar, this.detailsSidebar);
+    this.tabBrowser.addEventListener(WebInspector.TabBrowser.Event.SelectedTabContentViewDidChange, this._tabBrowserSelectedTabContentViewDidChange, this);
+
     this._reloadPageKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "R", this._reloadPage.bind(this));
     this._reloadPageIgnoringCacheKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "R", this._reloadPageIgnoringCache.bind(this));
 
@@ -689,6 +695,30 @@ WebInspector.restoreFocusFromElement = function(element)
 {
     if (element && element.isSelfOrAncestor(this.currentFocusElement))
         this.previousFocusElement.focus();
+};
+
+WebInspector.toggleNavigationSidebar = function(event)
+{
+    if (!this.navigationSidebar.collapsed || !this.navigationSidebar.sidebarPanels.length) {
+        this.navigationSidebar.collapsed = true;
+        return;
+    }
+
+    if (!this.navigationSidebar.selectedSidebarPanel)
+        this.navigationSidebar.selectedSidebarPanel = this.navigationSidebar.sidebarPanels[0];
+    this.navigationSidebar.collapsed = false;
+};
+
+WebInspector.toggleDetailsSidebar = function(event)
+{
+    if (!this.detailsSidebar.collapsed || !this.detailsSidebar.sidebarPanels.length) {
+        this.detailsSidebar.collapsed = true;
+        return;
+    }
+
+    if (!this.detailsSidebar.selectedSidebarPanel)
+        this.detailsSidebar.selectedSidebarPanel = this.detailsSidebar.sidebarPanels[0];
+    this.detailsSidebar.collapsed = false;
 };
 
 WebInspector._focusChanged = function(event)

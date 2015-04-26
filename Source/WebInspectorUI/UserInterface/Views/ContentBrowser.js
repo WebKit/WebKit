@@ -78,7 +78,8 @@ WebInspector.ContentBrowser = function(element, delegate, disableBackForward)
 
     this._contentViewSelectionPathNavigationItem = new WebInspector.HierarchicalPathNavigationItem;
 
-    this._navigationBar.addNavigationItem(new WebInspector.FlexibleSpaceNavigationItem);
+    this._dividingFlexibleSpaceNavigationItem = new WebInspector.FlexibleSpaceNavigationItem;
+    this._navigationBar.addNavigationItem(this._dividingFlexibleSpaceNavigationItem);
 
     WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
     WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
@@ -415,7 +416,7 @@ WebInspector.ContentBrowser.prototype = {
             return;
         }
 
-        var insertionIndex = navigationBar.navigationItems.length;
+        var insertionIndex = navigationBar.navigationItems.indexOf(this._dividingFlexibleSpaceNavigationItem) + 1;
         console.assert(insertionIndex >= 0);
 
         // Keep track of items we'll be adding to the navigation bar.

@@ -97,7 +97,7 @@ WebInspector.ContentView = function(representedObject)
 
     // Concrete object instantiation.
     console.assert(this.constructor !== WebInspector.ContentView && this instanceof WebInspector.ContentView);
-    console.assert(WebInspector.ContentView.isViewable(representedObject));
+    console.assert(!representedObject || WebInspector.ContentView.isViewable(representedObject));
 
     // FIXME: Convert this to a WebInspector.Object subclass, and call super().
     // WebInspector.Object.call(this);

@@ -1,3 +1,92 @@
+2015-04-17  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Add TabBrowser and TabContentView
+        https://bugs.webkit.org/show_bug.cgi?id=143886
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/Debugger.svg: Added.
+        * UserInterface/Images/Elements.svg: Added.
+        * UserInterface/Images/Gear.svg: Added.
+        * UserInterface/Images/NewTabPlus.svg: Added.
+        * UserInterface/Images/Resources.svg:
+        * UserInterface/Images/Timeline.svg: Added.
+        * UserInterface/Images/ToggleLeftSidebar.svg: Added.
+        * UserInterface/Images/ToggleRightSidebar.svg: Added.
+
+        * UserInterface/Views/ContentBrowserTabContentView.css: Added.
+        (.content-browser.tab.content-view > .content-browser):
+
+        * UserInterface/Views/ContentBrowserTabContentView.js: Added.
+        (WebInspector.ContentBrowserTabContentView):
+        (WebInspector.ContentBrowserTabContentView.prototype.get contentBrowser):
+        (WebInspector.ContentBrowserTabContentView.prototype.shown):
+        (WebInspector.ContentBrowserTabContentView.prototype.hidden):
+        (WebInspector.ContentBrowserTabContentView.prototype.closed):
+        (WebInspector.ContentBrowserTabContentView.prototype.updateLayout):
+        (WebInspector.ContentBrowserTabContentView.prototype.get managesDetailsSidebarPanels):
+        (WebInspector.ContentBrowserTabContentView.prototype.showDetailsSidebarPanels):
+        (WebInspector.ContentBrowserTabContentView.prototype.contentBrowserTreeElementForRepresentedObject):
+        (WebInspector.ContentBrowserTabContentView.prototype._navigationSidebarCollapsedStateDidChange):
+        (WebInspector.ContentBrowserTabContentView.prototype._detailsSidebarCollapsedStateDidChange):
+        (WebInspector.ContentBrowserTabContentView.prototype._detailsSidebarPanelSelected):
+        (WebInspector.ContentBrowserTabContentView.prototype._contentBrowserRepresentedObjectsDidChange):
+        (WebInspector.ContentBrowserTabContentView.prototype._contentBrowserCurrentContentViewDidChange):
+        (WebInspector.ContentBrowserTabContentView.prototype._revealAndSelectRepresentedObjectInNavigationSidebar):
+
+        * UserInterface/Views/DebuggerTabContentView.js: Added.
+        (WebInspector.DebuggerTabContentView):
+
+        * UserInterface/Views/ElementsTabContentView.js: Added.
+        (WebInspector.ElementsTabContentView):
+        (WebInspector.ElementsTabContentView.prototype._mainFrameDidChange):
+
+        * UserInterface/Views/ResourcesTabContentView.js: Added.
+        (WebInspector.ResourcesTabContentView):
+
+        * UserInterface/Views/SettingsTabContentView.js: Added.
+        (WebInspector.SettingsTabContentView):
+
+        * UserInterface/Views/TabBrowser.css: Added.
+        (.tab-browser):
+        (.tab-browser > .tab-bar):
+        (.tab-browser > .content-view-container):
+        (.tab-browser > .tab-bar + .content-view-container):
+
+        * UserInterface/Views/TabBrowser.js: Added.
+        (WebInspector.TabBrowser):
+        (WebInspector.TabBrowser.prototype.get tabBar):
+        (WebInspector.TabBrowser.prototype.get navigationSidebar):
+        (WebInspector.TabBrowser.prototype.get detailsSidebar):
+        (WebInspector.TabBrowser.prototype.get selectedTabContentView):
+        (WebInspector.TabBrowser.prototype.updateLayout):
+        (WebInspector.TabBrowser.prototype.bestTabContentViewForRepresentedObject):
+        (WebInspector.TabBrowser.prototype.addTabForContentView):
+        (WebInspector.TabBrowser.prototype.showTabForContentView):
+        (WebInspector.TabBrowser.prototype.closeTabForContentView):
+        (WebInspector.TabBrowser.prototype._tabBarItemSelected):
+        (WebInspector.TabBrowser.prototype._sidebarPanelSelected):
+        (WebInspector.TabBrowser.prototype._sidebarCollapsedStateDidChange):
+        (WebInspector.TabBrowser.prototype._showNavigationSidebarPanelForTabContentView):
+        (WebInspector.TabBrowser.prototype._showDetailsSidebarPanelsForTabContentView):
+
+        * UserInterface/Views/TabContentView.js: Added.
+        (WebInspector.TabContentView):
+        (WebInspector.TabContentView.prototype.get parentTabBrowser):
+        (WebInspector.TabContentView.prototype.set parentTabBrowser):
+        (WebInspector.TabContentView.prototype.get tabBarItem):
+        (WebInspector.TabContentView.prototype.get managesDetailsSidebarPanels):
+        (WebInspector.TabContentView.prototype.showDetailsSidebarPanels):
+        (WebInspector.TabContentView.prototype.canShowRepresentedObject):
+        (WebInspector.TabContentView.prototype.get navigationSidebarPanel):
+        (WebInspector.TabContentView.prototype.get navigationSidebarCollapsedSetting):
+        (WebInspector.TabContentView.prototype.get detailsSidebarPanels):
+        (WebInspector.TabContentView.prototype.get detailsSidebarCollapsedSetting):
+        (WebInspector.TabContentView.prototype.get detailsSidebarSelectedPanelSetting):
+
+        * UserInterface/Views/TimelineTabContentView.js: Added.
+        (WebInspector.TimelineTabContentView):
+
 2015-04-06  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Add a WebInspector.TabBar class
