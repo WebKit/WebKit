@@ -47,7 +47,7 @@
                       (drawsContent 1)
                       (transform [0.17 0.00 -0.98 0.00] [0.00 1.00 0.00 0.00] [0.98 0.00 0.17 0.00] [0.00 0.00 0.00 1.00])
                       (visible rect 0.00, 0.00 2800.00 x 300.00)
-                      (coverage rect -1562500.00, -1562500.00 1563571.88 x 1562694.63)
+                      (coverage rect 0.00, 0.00 2800.00 x 300.00)
                       (intersects coverage rect 1)
                       (contentsScale 1.00)
                       (tile cache coverage 0, 0 2800 x 300)

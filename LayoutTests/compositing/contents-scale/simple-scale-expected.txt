@@ -23,7 +23,7 @@ Box
           (drawsContent 1)
           (transform [2.00 0.00 0.00 0.00] [0.00 2.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
           (visible rect 0.00, 0.00 100.00 x 100.00)
-          (coverage rect 0.00, 0.00 800.00 x 600.00)
+          (coverage rect -9.00, -5.00 400.00 x 300.00)
           (intersects coverage rect 1)
           (contentsScale 1.00)
         )

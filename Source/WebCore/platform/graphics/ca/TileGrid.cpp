@@ -185,15 +185,12 @@ void TileGrid::updateTileLayerProperties()
     }
 }
 
-bool TileGrid::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleRect, const FloatRect& oldVisibleRect) const
+bool TileGrid::tilesWouldChangeForCoverageRect(const FloatRect& coverageRect) const
 {
-    FloatRect visibleRect = newVisibleRect;
-
-    if (visibleRect.isEmpty())
+    if (coverageRect.isEmpty())
         return false;
-        
-    FloatRect currentTileCoverageRect = m_controller.computeTileCoverageRect(oldVisibleRect, newVisibleRect);
-    FloatRect scaledRect(currentTileCoverageRect);
+
+    FloatRect scaledRect(coverageRect);
     scaledRect.scale(m_scale);
     IntRect currentCoverageRectInTileCoords(enclosingIntRect(scaledRect));
 
@@ -201,9 +198,9 @@ bool TileGrid::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleRect, c
     TileIndex bottomRight;
     getTileIndexRangeForRect(currentCoverageRectInTileCoords, topLeft, bottomRight);
 
-    IntRect coverageRect = rectForTileIndex(topLeft);
-    coverageRect.unite(rectForTileIndex(bottomRight));
-    return coverageRect != m_primaryTileCoverageRect;
+    IntRect tileCoverageRect = rectForTileIndex(topLeft);
+    tileCoverageRect.unite(rectForTileIndex(bottomRight));
+    return tileCoverageRect != m_primaryTileCoverageRect;
 }
 
 bool TileGrid::prepopulateRect(const FloatRect& rect)
@@ -306,14 +303,13 @@ void TileGrid::removeTilesInCohort(TileCohort cohort)
 
 void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
 {
-    FloatRect visibleRect = m_controller.visibleRect();
+    FloatRect coverageRect = m_controller.coverageRect();
     IntRect bounds = m_controller.bounds();
 
-    if (visibleRect.isEmpty() || bounds.isEmpty())
+    if (coverageRect.isEmpty() || bounds.isEmpty())
         return;
 
-    FloatRect tileCoverageRect = m_controller.computeTileCoverageRect(m_controller.visibleRectAtLastRevalidate(), visibleRect);
-    FloatRect scaledRect(tileCoverageRect);
+    FloatRect scaledRect(coverageRect);
     scaledRect.scale(m_scale);
     IntRect coverageRectInTileCoords(enclosingIntRect(scaledRect));
 
@@ -378,7 +374,7 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
     }
 
     // Ensure primary tile coverage tiles.
-    m_primaryTileCoverageRect = ensureTilesForRect(tileCoverageRect, CoverageType::PrimaryTiles);
+    m_primaryTileCoverageRect = ensureTilesForRect(coverageRect, CoverageType::PrimaryTiles);
 
     if (validationPolicy & PruneSecondaryTiles) {
         removeAllSecondaryTiles();

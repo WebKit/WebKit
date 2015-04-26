@@ -36,6 +36,7 @@ TileCoverageMap::TileCoverageMap(const TileController& controller)
     : m_controller(controller)
     , m_layer(*controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeSimpleLayer, this))
     , m_visibleRectIndicatorLayer(*controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr))
+    , m_coverageRectIndicatorLayer(*controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr))
     , m_position(FloatPoint(0, controller.topContentInset()))
 {
     m_layer.get().setOpacity(0.75);
@@ -44,10 +45,16 @@ TileCoverageMap::TileCoverageMap(const TileController& controller)
     m_layer.get().setBorderWidth(1);
     m_layer.get().setPosition(FloatPoint(2, 2));
     m_layer.get().setContentsScale(m_controller.deviceScaleFactor());
+
     m_visibleRectIndicatorLayer.get().setBorderWidth(2);
     m_visibleRectIndicatorLayer.get().setAnchorPoint(FloatPoint3D());
     m_visibleRectIndicatorLayer.get().setBorderColor(Color(255, 0, 0));
+    
+    m_coverageRectIndicatorLayer.get().setBorderWidth(2);
+    m_coverageRectIndicatorLayer.get().setAnchorPoint(FloatPoint3D());
+    m_coverageRectIndicatorLayer.get().setBorderColor(Color(0, 0, 128));
 
+    m_layer.get().appendSublayer(m_coverageRectIndicatorLayer);
     m_layer.get().appendSublayer(m_visibleRectIndicatorLayer);
 
     update();
@@ -62,16 +69,19 @@ void TileCoverageMap::update()
 {
     FloatRect containerBounds = m_controller.bounds();
     FloatRect visibleRect = m_controller.visibleRect();
+    FloatRect coverageRect = m_controller.coverageRect();
     visibleRect.contract(4, 4); // Layer is positioned 2px from top and left edges.
 
     float widthScale = 1;
     float scale = 1;
     if (!containerBounds.isEmpty()) {
         widthScale = std::min<float>(visibleRect.width() / containerBounds.width(), 0.1);
-        scale = std::min(widthScale, visibleRect.height() / containerBounds.height());
+        float visibleHeight = visibleRect.height() - std::min(m_controller.topContentInset(), visibleRect.y());
+        scale = std::min(widthScale, visibleHeight / containerBounds.height());
     }
 
     float indicatorScale = scale * m_controller.tileGrid().scale();
+
     FloatRect mapBounds = containerBounds;
     mapBounds.scale(indicatorScale, indicatorScale);
 
@@ -83,6 +93,11 @@ void TileCoverageMap::update()
     visibleRect.expand(2, 2);
     m_visibleRectIndicatorLayer->setPosition(visibleRect.location());
     m_visibleRectIndicatorLayer->setBounds(FloatRect(FloatPoint(), visibleRect.size()));
+
+    coverageRect.scale(indicatorScale, indicatorScale);
+    coverageRect.expand(2, 2);
+    m_coverageRectIndicatorLayer->setPosition(coverageRect.location());
+    m_coverageRectIndicatorLayer->setBounds(FloatRect(FloatPoint(), coverageRect.size()));
 
     Color visibleRectIndicatorColor;
     switch (m_controller.indicatorMode()) {

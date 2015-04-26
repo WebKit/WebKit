@@ -182,21 +182,27 @@ void TileController::setTilesOpaque(bool opaque)
     tileGrid().updateTileLayerProperties();
 }
 
-void TileController::setVisibleRect(const FloatRect& visibleRect)
+void TileController::setVisibleRect(const FloatRect& rect)
+{
+    m_visibleRect = rect;
+}
+
+void TileController::setCoverageRect(const FloatRect& rect)
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
-    if (m_visibleRect == visibleRect)
+    if (m_coverageRect == rect)
         return;
 
-    m_visibleRect = visibleRect;
+    m_coverageRect = rect;
     setNeedsRevalidateTiles();
 }
 
-bool TileController::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleRect) const
+bool TileController::tilesWouldChangeForCoverageRect(const FloatRect& rect) const
 {
     if (bounds().isEmpty())
         return false;
-    return tileGrid().tilesWouldChangeForVisibleRect(newVisibleRect, m_visibleRect);
+
+    return tileGrid().tilesWouldChangeForCoverageRect(rect);
 }
 
 void TileController::setVelocity(const VelocityData& velocity)
@@ -256,7 +262,6 @@ void TileController::revalidateTiles()
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
     tileGrid().revalidateTiles(0);
-    m_visibleRectAtLastRevalidate = m_visibleRect;
 }
 
 void TileController::forceRepaint()
@@ -282,13 +287,18 @@ void TileController::setTileDebugBorderColor(Color borderColor)
     tileGrid().updateTileLayerProperties();
 }
 
-IntRect TileController::bounds() const
+IntRect TileController::boundsForSize(const FloatSize& size) const
 {
     IntPoint boundsOriginIncludingMargin(-leftMarginWidth(), -topMarginHeight());
-    IntSize boundsSizeIncludingMargin = expandedIntSize(m_tileCacheLayer->bounds().size());
+    IntSize boundsSizeIncludingMargin = expandedIntSize(size);
     boundsSizeIncludingMargin.expand(leftMarginWidth() + rightMarginWidth(), topMarginHeight() + bottomMarginHeight());
 
     return IntRect(boundsOriginIncludingMargin, boundsSizeIncludingMargin);
+}
+
+IntRect TileController::bounds() const
+{
+    return boundsForSize(m_tileCacheLayer->bounds().size());
 }
 
 IntRect TileController::boundsWithoutMargin() const
@@ -303,7 +313,7 @@ IntRect TileController::boundsAtLastRevalidateWithoutMargin() const
     return boundsWithoutMargin;
 }
 
-FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisibleRect, const FloatRect& visibleRect) const
+FloatRect TileController::computeTileCoverageRect(const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& visibleRect) const
 {
     // If the page is not in a window (for example if it's in a background tab), we limit the tile coverage rect to the visible rect.
     if (!m_isInWindow)
@@ -346,7 +356,9 @@ FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisib
         futureRect.setY(futureRect.y() - verticalMargin / 2);
     }
 
-    IntSize contentSize = bounds().size();
+    // Can't use m_tileCacheLayer->bounds() here, because the size of the underlying platform layer
+    // hasn't been updated for the current commit.
+    IntSize contentSize = expandedIntSize(newSize);
     if (futureRect.maxX() > contentSize.width())
         futureRect.setX(contentSize.width() - futureRect.width());
     if (futureRect.maxY() > contentSize.height())
@@ -377,7 +389,9 @@ FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisib
     coverageVerticalSize += topMarginHeight() + bottomMarginHeight();
     coverageHorizontalSize += leftMarginWidth() + rightMarginWidth();
 
-    FloatRect coverageBounds = bounds();
+    // Can't use m_tileCacheLayer->bounds() here, because the size of the underlying platform layer
+    // hasn't been updated for the current commit.
+    FloatRect coverageBounds = boundsForSize(newSize);
     float coverageLeft = visibleRect.x() - (coverageHorizontalSize - visibleRect.width()) / 2;
     coverageLeft = std::min(coverageLeft, coverageBounds.maxX() - coverageHorizontalSize);
     coverageLeft = std::max(coverageLeft, coverageBounds.x());
@@ -427,7 +441,6 @@ void TileController::tileRevalidationTimerFired()
 
 void TileController::didRevalidateTiles()
 {
-    m_visibleRectAtLastRevalidate = visibleRect();
     m_boundsAtLastRevalidate = bounds();
 
     updateTileCoverageMap();

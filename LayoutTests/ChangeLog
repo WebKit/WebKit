@@ -1,3 +1,52 @@
+2015-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Expand compositing coverage rect when scrolling and animating
+        https://bugs.webkit.org/show_bug.cgi?id=144214
+        rdar://problem/20695926
+
+        Reviewed by Darin Adler.
+        
+        New baselines for tests dumping layer output, with coverage rect being affected
+        by this changeset. One new test for tiling a layer inside overflow:hidden with transform-origin.
+
+        * compositing/contents-scale/animating-expected.txt:
+        * compositing/contents-scale/rounded-contents-scale-expected.txt:
+        * compositing/contents-scale/scaled-ancestor-expected.txt:
+        * compositing/contents-scale/simple-scale-expected.txt:
+        * compositing/tiling/transform-origin-tiled.html: Added.
+        * platform/mac-wk2/compositing/tiling/rotated-tiled-clamped-expected.txt:
+        * platform/mac-wk2/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt:
+        * platform/mac-wk2/compositing/tiling/tile-cache-zoomed-expected.txt:
+        * platform/mac-wk2/compositing/visible-rect/iframe-no-layers-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-div-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-div-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-select-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-select-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fixed/four-bars-zoomed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/simple-document-with-margin-tiles-expected.txt:
+        * platform/mac-wk2/tiled-drawing/tile-size-slow-zoomed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/tiled-drawing-scroll-position-page-cache-restoration-expected.txt:
+        * platform/mac-wk2/tiled-drawing/tiled-drawing-zoom-expected.txt:
+        * platform/mac-wk2/tiled-drawing/tiled-drawing-zoom-scrolled-expected.txt:
+        * platform/mac/compositing/tiling/rotated-tiled-clamped-expected.txt:
+        * platform/mac/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt:
+        * platform/mac/compositing/tiling/tile-cache-zoomed-expected.txt:
+        * platform/mac/compositing/visible-rect/2d-transformed-expected.txt:
+        * platform/mac/compositing/visible-rect/3d-transformed-expected.txt:
+        * platform/mac/compositing/visible-rect/clipped-by-viewport-expected.txt:
+        * platform/mac/compositing/visible-rect/clipped-visible-rect-expected.txt:
+        * platform/mac/compositing/visible-rect/iframe-and-layers-expected.txt:
+        * platform/mac/compositing/visible-rect/iframe-no-layers-expected.txt:
+        * platform/mac/compositing/visible-rect/scrolled-expected.txt:
+
 2015-04-25  Alexey Proskuryakov  <ap@apple.com>
 
         Mark some tests that take >10 seconds on debug bots as slow.

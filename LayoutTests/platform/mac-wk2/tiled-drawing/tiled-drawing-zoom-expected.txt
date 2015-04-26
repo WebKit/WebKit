@@ -12,7 +12,7 @@
       (contentsOpaque 1)
       (transform [2.30 0.00 0.00 0.00] [0.00 2.30 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
       (visible rect 0.00, 0.00 341.30 x 254.35)
-      (coverage rect 0.00, 0.00 785.00 x 585.00)
+      (coverage rect 0.00, 0.00 341.30 x 254.35)
       (intersects coverage rect 1)
       (contentsScale 2.30)
       (tile cache coverage 0, 0 445 x 445)

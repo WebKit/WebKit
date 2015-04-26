@@ -79,6 +79,7 @@ public:
         m_lastPlanarQuad = quad;
     }
 
+    // FIXME: webkit.org/b/144226 use Optional<FloatQuad>. 
     void setSecondaryQuad(const FloatQuad* quad)
     {
         // We must be in a flattened state (no accumulated offset) when setting this secondary quad.
@@ -88,6 +89,9 @@ public:
         else
             m_lastPlanarSecondaryQuad = nullptr;
     }
+
+    // FIXME: webkit.org/b/144226 use Optional<FloatQuad>.
+    void setLastPlanarSecondaryQuad(const FloatQuad*);
 
     void move(LayoutUnit x, LayoutUnit y, TransformAccumulation accumulate = FlattenTransform)
     {
@@ -103,6 +107,7 @@ public:
     FloatPoint lastPlanarPoint() const { return m_lastPlanarPoint; }
     FloatQuad lastPlanarQuad() const { return m_lastPlanarQuad; }
     FloatQuad* lastPlanarSecondaryQuad() const { return m_lastPlanarSecondaryQuad.get(); }
+    bool isMappingSecondaryQuad() const { return m_lastPlanarSecondaryQuad.get(); }
 
     // Return the point or quad mapped through the current transform
     FloatPoint mappedPoint(bool* wasClamped = nullptr) const;
@@ -115,7 +120,10 @@ private:
     void flattenWithTransform(const TransformationMatrix&, bool* wasClamped);
     void applyAccumulatedOffset();
     
-    void mapQuad(FloatQuad&, bool* clamped) const;
+    TransformDirection direction() const { return m_direction; }
+    TransformDirection inverseDirection() const;
+
+    void mapQuad(FloatQuad&, TransformDirection, bool* clamped = nullptr) const;
     
     FloatPoint m_lastPlanarPoint;
     FloatQuad m_lastPlanarQuad;
@@ -129,6 +137,11 @@ private:
     bool m_mapQuad;
     TransformDirection m_direction;
 };
+
+inline TransformState::TransformDirection TransformState::inverseDirection() const
+{
+    return m_direction == ApplyTransformDirection ? UnapplyInverseTransformDirection : ApplyTransformDirection;
+}
 
 } // namespace WebCore
 

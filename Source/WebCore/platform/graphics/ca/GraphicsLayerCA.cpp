@@ -1088,11 +1088,16 @@ void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
     CommitState commitState;
 
     FloatPoint offset = computePositionRelativeToBase(pageScaleFactor);
-    commitLayerChangesBeforeSublayers(commitState, pageScaleFactor, offset, m_visibleRect);
+    commitLayerChangesBeforeSublayers(commitState, pageScaleFactor, offset);
     commitLayerChangesAfterSublayers(commitState);
 
     if (hadChanges)
         client().didCommitChangesForLayer(this);
+}
+
+static inline bool accumulatesTransform(const GraphicsLayerCA& layer)
+{
+    return layer.preserves3D() || (layer.parent() && layer.parent()->preserves3D());
 }
 
 bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const TransformState& state) const
@@ -1101,13 +1106,12 @@ bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const TransformSta
     
     // This may be called at times when layout has not been updated, so we want to avoid calling out to the client
     // for animating transforms.
-    FloatRect newVisibleRect = computeVisibleRect(localState, 0);
-    if (m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
-        newVisibleRect = adjustTiledLayerVisibleRect(tiledBacking(), m_visibleRect, newVisibleRect, m_sizeAtLastVisibleRectUpdate, m_size);
+    VisibleAndCoverageRects rects = computeVisibleAndCoverageRect(localState, accumulatesTransform(*this), 0);
+    adjustCoverageRect(rects, m_visibleRect);
 
-    if (newVisibleRect != m_visibleRect) {
+    if (rects.coverageRect != m_coverageRect) {
         if (TiledBacking* tiledBacking = this->tiledBacking()) {
-            if (tiledBacking->tilesWouldChangeForVisibleRect(newVisibleRect))
+            if (tiledBacking->tilesWouldChangeForCoverageRect(rects.coverageRect))
                 return true;
         }
     }
@@ -1174,11 +1178,8 @@ TransformationMatrix GraphicsLayerCA::layerTransform(const FloatPoint& position,
     return transform;
 }
 
-FloatRect GraphicsLayerCA::computeVisibleRect(TransformState& state, ComputeVisibleRectFlags flags) const
+GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCoverageRect(TransformState& state, bool preserves3D, ComputeVisibleRectFlags flags) const
 {
-    bool preserve3D = preserves3D() || (parent() ? parent()->preserves3D() : false);
-    TransformState::TransformAccumulation accumulation = preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
-
     FloatPoint position = m_position;
     client().customPositionForVisibleRectComputation(this, position);
 
@@ -1190,6 +1191,7 @@ FloatRect GraphicsLayerCA::computeVisibleRect(TransformState& state, ComputeVisi
         layerTransform = this->layerTransform(position);
 
     bool applyWasClamped;
+    TransformState::TransformAccumulation accumulation = preserves3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
     state.applyTransform(layerTransform, accumulation, &applyWasClamped);
 
     bool mapWasClamped;
@@ -1211,43 +1213,73 @@ FloatRect GraphicsLayerCA::computeVisibleRect(TransformState& state, ComputeVisi
         // Flatten, and replace the quad in the TransformState with one that is clipped to this layer's bounds.
         state.flatten();
         state.setQuad(clipRectForSelf);
-        if (state.lastPlanarSecondaryQuad()) {
+        if (state.isMappingSecondaryQuad()) {
             FloatQuad secondaryQuad(clipRectForSelf);
             state.setSecondaryQuad(&secondaryQuad);
         }
     }
 
-    return clipRectForSelf;
+    FloatRect coverageRect = clipRectForSelf;
+    std::unique_ptr<FloatQuad> quad = state.mappedSecondaryQuad(&mapWasClamped);
+    if (quad && !mapWasClamped && !applyWasClamped)
+        coverageRect = quad->boundingBox();
+
+    return VisibleAndCoverageRects(clipRectForSelf, coverageRect);
 }
 
-void GraphicsLayerCA::setVisibleAndCoverageRects(const FloatRect& visibleRect, const FloatRect& coverageRect)
+bool GraphicsLayerCA::adjustCoverageRect(VisibleAndCoverageRects& rects, const FloatRect& oldVisibleRect) const
 {
-    bool visibleRectChanged = visibleRect != m_visibleRect;
-    bool coverageRectChanged = coverageRect != m_coverageRect;
+    FloatRect coverageRect = rects.coverageRect;
+
+    // FIXME: TileController's computeTileCoverageRect() code should move here, and we should unify these different
+    // ways of computing coverage.
+    switch (type()) {
+    case Type::PageTiledBacking:
+        coverageRect = tiledBacking()->computeTileCoverageRect(size(), oldVisibleRect, rects.visibleRect);
+        break;
+    case Type::Normal:
+        if (m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
+            coverageRect.unite(adjustTiledLayerVisibleRect(tiledBacking(), oldVisibleRect, rects.visibleRect, m_sizeAtLastCoverageRectUpdate, m_size));
+        break;
+    default:
+        break;
+    }
+    
+    if (rects.coverageRect == coverageRect)
+        return false;
+
+    rects.coverageRect = coverageRect;
+    return true;
+}
+
+void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& rects)
+{
+    bool visibleRectChanged = rects.visibleRect != m_visibleRect;
+    bool coverageRectChanged = rects.coverageRect != m_coverageRect;
     if (!visibleRectChanged && !coverageRectChanged)
         return;
 
     if (visibleRectChanged) {
-        m_uncommittedChanges |= VisibleRectChanged;
-        m_visibleRect = visibleRect;
+        m_uncommittedChanges |= CoverageRectChanged;
+        m_visibleRect = rects.visibleRect;
         
         if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
             // FIXME: this assumes that the mask layer has the same geometry as this layer (which is currently always true).
-            maskLayer->m_uncommittedChanges |= VisibleRectChanged;
-            maskLayer->m_visibleRect = visibleRect;
+            maskLayer->m_uncommittedChanges |= CoverageRectChanged;
+            maskLayer->m_visibleRect = rects.visibleRect;
         }
     }
 
     if (coverageRectChanged) {
         m_uncommittedChanges |= CoverageRectChanged;
-        m_coverageRect = coverageRect;
+        m_coverageRect = rects.coverageRect;
 
         // FIXME: we need to take reflections into account when determining whether this layer intersects the coverage rect.
         m_intersectsCoverageRect = m_coverageRect.intersects(FloatRect(m_boundsOrigin, size()));
 
         if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
             maskLayer->m_uncommittedChanges |= CoverageRectChanged;
-            maskLayer->m_coverageRect = coverageRect;
+            maskLayer->m_coverageRect = rects.coverageRect;
         }
     }
 }
@@ -1259,14 +1291,16 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
     TransformState localState = state;
     CommitState childCommitState = commitState;
     bool affectedByTransformAnimation = commitState.ancestorHasTransformAnimation;
-    
-    FloatRect visibleRect = computeVisibleRect(localState);
-    FloatRect coverageRect = visibleRect;
-    if (std::unique_ptr<FloatQuad> quad = localState.mappedSecondaryQuad())
-        coverageRect = quad->boundingBox();
 
-    FloatRect oldVisibleRect = m_visibleRect;
-    setVisibleAndCoverageRects(visibleRect, coverageRect);
+    bool accumulateTransform = accumulatesTransform(*this);
+    VisibleAndCoverageRects rects = computeVisibleAndCoverageRect(localState, accumulateTransform);
+    if (adjustCoverageRect(rects, m_visibleRect)) {
+        if (state.isMappingSecondaryQuad()) {
+            FloatQuad secondaryQuad(rects.coverageRect);
+            localState.setLastPlanarSecondaryQuad(&secondaryQuad);
+        }
+    }
+    setVisibleAndCoverageRects(rects);
 
 #ifdef VISIBLE_TILE_WASH
     // Use having a transform as a key to making the tile wash layer. If every layer gets a wash,
@@ -1303,7 +1337,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
     if (affectedByPageScale)
         baseRelativePosition += m_position;
     
-    commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, oldVisibleRect);
+    commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition);
 
     if (isRunningTransformAnimation()) {
         childCommitState.ancestorHasTransformAnimation = true;
@@ -1311,7 +1345,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
     }
 
     if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer))
-        maskLayer->commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, oldVisibleRect);
+        maskLayer->commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition);
 
     const Vector<GraphicsLayer*>& childLayers = children();
     size_t numChildren = childLayers.size();
@@ -1386,7 +1420,7 @@ static bool isCustomBackdropLayerType(PlatformCALayer::LayerType layerType)
     return layerType == PlatformCALayer::LayerTypeLightSystemBackdropLayer || layerType == PlatformCALayer::LayerTypeDarkSystemBackdropLayer;
 }
 
-void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, const FloatRect& oldVisibleRect)
+void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
     TemporaryChange<bool> committingChangesChange(m_isCommittingChanges, true);
 
@@ -1486,13 +1520,10 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & ContentsScaleChanged)
         updateContentsScale(pageScaleFactor);
 
-    if (m_uncommittedChanges & VisibleRectChanged)
-        updateVisibleRect(oldVisibleRect);
-    
     if (m_uncommittedChanges & CoverageRectChanged)
-        updateBackingStoreAttachment();
+        updateCoverage();
 
-    if (m_uncommittedChanges & TilingAreaChanged) // Needs to happen after VisibleRectChanged, ContentsScaleChanged
+    if (m_uncommittedChanges & TilingAreaChanged) // Needs to happen after CoverageRectChanged, ContentsScaleChanged
         updateTiles();
 
     if (m_uncommittedChanges & DirtyRectsChanged)
@@ -1965,14 +1996,22 @@ void GraphicsLayerCA::updateDrawsContent()
     }
 }
 
-void GraphicsLayerCA::updateBackingStoreAttachment()
+void GraphicsLayerCA::updateCoverage()
 {
+    // FIXME: Need to set coverage on clone layers too.
+    if (TiledBacking* backing = tiledBacking()) {
+        backing->setVisibleRect(m_visibleRect);
+        backing->setCoverageRect(m_coverageRect);
+    }
+
     m_layer->setBackingStoreAttached(m_intersectsCoverageRect);
     if (m_layerClones) {
         LayerMap::const_iterator end = m_layerClones->end();
         for (LayerMap::const_iterator it = m_layerClones->begin(); it != end; ++it)
             it->value->setBackingStoreAttached(m_intersectsCoverageRect);
     }
+
+    m_sizeAtLastCoverageRectUpdate = m_size;
 }
 
 void GraphicsLayerCA::updateAcceleratesDrawing()
@@ -2088,20 +2127,6 @@ FloatRect GraphicsLayerCA::adjustTiledLayerVisibleRect(TiledBacking* tiledBackin
     
     expandedRect.intersect(tiledBacking->boundsWithoutMargin());
     return expandedRect;
-}
-
-void GraphicsLayerCA::updateVisibleRect(const FloatRect& oldVisibleRect)
-{
-    if (!m_layer->usesTiledBackingLayer())
-        return;
-
-    FloatRect tileArea = m_visibleRect;
-    if (m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
-        tileArea = adjustTiledLayerVisibleRect(tiledBacking(), oldVisibleRect, tileArea, m_sizeAtLastVisibleRectUpdate, m_size);
-
-    tiledBacking()->setVisibleRect(tileArea);
-
-    m_sizeAtLastVisibleRectUpdate = m_size;
 }
 
 void GraphicsLayerCA::updateTiles()
@@ -3312,7 +3337,7 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | DebugIndicatorsChanged;
     
     if (m_usingTiledBacking)
-        m_uncommittedChanges |= VisibleRectChanged;
+        m_uncommittedChanges |= CoverageRectChanged;
 
 #ifndef NDEBUG
     String name = String::format("%sCALayer(%p) GraphicsLayer(%p, %llu) ", (newLayerType == PlatformCALayer::LayerTypeWebTiledLayer) ? "Tiled " : "", m_layer->platformLayer(), this, primaryLayerID()) + m_name;

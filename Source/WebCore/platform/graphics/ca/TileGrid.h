@@ -73,7 +73,7 @@ public:
     typedef unsigned TileValidationPolicy;
     void revalidateTiles(TileValidationPolicy);
 
-    bool tilesWouldChangeForVisibleRect(const FloatRect& newVisibleRect, const FloatRect& oldVisibleRect) const;
+    bool tilesWouldChangeForCoverageRect(const FloatRect&) const;
 
     IntRect tileCoverageRect() const;
     IntRect extent() const;

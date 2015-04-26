@@ -65,6 +65,7 @@ private:
 
     Ref<PlatformCALayer> m_layer;
     Ref<PlatformCALayer> m_visibleRectIndicatorLayer;
+    Ref<PlatformCALayer> m_coverageRectIndicatorLayer;
 
     FloatPoint m_position;
 };

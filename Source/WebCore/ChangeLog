@@ -1,3 +1,95 @@
+2015-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Expand compositing coverage rect when scrolling and animating
+        https://bugs.webkit.org/show_bug.cgi?id=144214
+        rdar://problem/20695926
+
+        Reviewed by Darin Adler.
+        
+        r183300 added a secondary rect that gets mapped through graphics layers during
+        layer flushing, which represents a rect, in layer coordinates, that represents
+        the portion of this layer that's visible in the viewport.
+        
+        This patch extends that rect based on scrolling and animating, with the extended
+        coverage rect being mapped into descendants (where it's used to determine whether
+        they should detach their backing store). This required moving the responsibility for
+        extending the coverage rect from TileController (where it was used to compute
+        tiled extent), to GraphicsLayerCA. Thus, GraphicsLayerCA now owns the concept
+        of coverage rect, and pushes it onto TileControllers.
+
+        Test: compositing/tiling/transform-origin-tiled.html
+
+        * platform/graphics/TiledBacking.h: Coverage rect is now pushed onto
+        TiledBacking from outside; new functions reflect that.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::flushCompositingStateForThisLayerOnly): No need to pass
+        old visible rect to commitLayerChangesBeforeSublayers.
+        (WebCore::accumulatesTransform):
+        (WebCore::GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush): Now calls computeVisibleAndCoverageRect(),
+        then adjustCoverageRect() which adjusts for scrolling and animations.
+        (WebCore::GraphicsLayerCA::computeVisibleAndCoverageRect): Fetch the coverage rect from the
+        TransformState, but we can only use this if mapping it through various transforms didn't clamp
+        it (which can happen with severe rotations in perspective).
+        (WebCore::GraphicsLayerCA::adjustCoverageRect): If this layer represents the page tiled backing,
+        ask the TileController to do coverage adjustment (code which should move into here eventually).
+        For other tiled layers, do motion-based adjustment. This should really be done for all layers
+        (an animating non-tiled layer may contain a tiled layer).
+        (WebCore::GraphicsLayerCA::setVisibleAndCoverageRects): The VisibleRectChanged wasn't needed
+        any more; layers only react to changed in coverage rect now.
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges): If adjustCoverageRect() changed the
+        coverage rect, here we push the new rect back into the TransformState so it will affect
+        descendants.
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateCoverage): Coverage and backing store attachment go
+        hand-in-hand now.
+        (WebCore::GraphicsLayerCA::changeLayerTypeTo):
+        (WebCore::GraphicsLayerCA::computeVisibleRect): Deleted.
+        (WebCore::GraphicsLayerCA::updateBackingStoreAttachment): Deleted.
+        (WebCore::GraphicsLayerCA::updateVisibleRect): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::setVisibleRect): Visible rect is only used for scroll performance
+        logging now.
+        (WebCore::TileController::setCoverageRect):
+        (WebCore::TileController::tilesWouldChangeForCoverageRect):
+        (WebCore::TileController::revalidateTiles):
+        (WebCore::TileController::boundsForSize): This is required because when computeTileCoverageRect()
+        is called at the top of committing the owning layer, we haven't yet pushed a new size to the
+        underlying platform layer (which TileController::bounds() consults).
+        (WebCore::TileController::bounds):
+        (WebCore::TileController::computeTileCoverageRect): Have to push the new size in, since the
+        underlying layer hasn't been updated yet.
+        (WebCore::TileController::didRevalidateTiles):
+        (WebCore::TileController::tilesWouldChangeForVisibleRect): Deleted.
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileCoverageMap.cpp:
+        (WebCore::TileCoverageMap::TileCoverageMap): Add a layer to the tile map that shows 
+        a dark blue outline for the coverage rect.
+        (WebCore::TileCoverageMap::update): Fix some minor issues with map position when top
+        content inset is non-zero.
+        * platform/graphics/ca/TileCoverageMap.h:
+        * platform/graphics/ca/TileGrid.cpp: Everything is in terms of coverage rect now.
+        (WebCore::TileGrid::tilesWouldChangeForCoverageRect):
+        (WebCore::TileGrid::revalidateTiles):
+        (WebCore::TileGrid::tilesWouldChangeForVisibleRect): Deleted.
+        * platform/graphics/ca/TileGrid.h:
+        * platform/graphics/transforms/TransformState.cpp:
+        (WebCore::TransformState::operator=):
+        (WebCore::TransformState::mappedQuad): Pass direction into mapQuad().
+        (WebCore::TransformState::mappedSecondaryQuad): Ditto.
+        (WebCore::TransformState::setLastPlanarSecondaryQuad): This function allows a caller
+        to pass in a secondary quad, and get it mapped into the coordinate space of the last
+        "flattening" state (since the TransformState may have in-flight XY offset, or transform).
+        This mapping is achieved by re-using mapQuad(), but in the inverse direction.
+        (WebCore::TransformState::mapQuad): Make direction a parameter.
+        (WebCore::TransformState::flattenWithTransform): This code omitted to map the secondary
+        quad. Failure was detected by tests.
+        * platform/graphics/transforms/TransformState.h:
+        (WebCore::TransformState::isMappingSecondaryQuad):
+        (WebCore::TransformState::direction):
+        (WebCore::TransformState::inverseDirection):
+        (WebCore::TransformState::lastPlanarSecondaryQuad): Deleted.
+
 2015-04-25  Dan Bernstein  <mitz@apple.com>
 
         Updated expected bindings generation test results after r183343.
