@@ -135,21 +135,6 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
     {
         // Immediate superclasses are skipped, since Frames handle their own SourceMapResources.
         WebInspector.GeneralTreeElement.prototype.onattach.call(this);
-
-        if (this._frame.isMainFrame()) {
-            WebInspector.notifications.addEventListener(WebInspector.Notification.PageArchiveStarted, this._pageArchiveStarted, this);
-            WebInspector.notifications.addEventListener(WebInspector.Notification.PageArchiveEnded, this._pageArchiveEnded, this);
-        }
-    }
-
-    ondetach()
-    {
-        WebInspector.ResourceTreeElement.prototype.ondetach.call(this);
-
-        if (this._frame.isMainFrame()) {
-            WebInspector.notifications.removeEventListener(WebInspector.Notification.PageArchiveStarted, this._pageArchiveStarted, this);
-            WebInspector.notifications.removeEventListener(WebInspector.Notification.PageArchiveEnded, this._pageArchiveEnded, this);
-        }
     }
 
     // Overrides from FolderizedTreeElement (Protected).
@@ -173,52 +158,6 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         // Non-resources should appear before the resources.
         // FIXME: There should be a better way to group the elements by their type.
         return aIsResource ? 1 : -1;
-    }
-
-    // Called from ResourceTreeElement.
-
-    updateStatusForMainFrame()
-    {
-        function loadedImages()
-        {
-            if (!this._reloadButton || !this._downloadButton)
-                return;
-
-            var fragment = document.createDocumentFragment("div");
-            fragment.appendChild(this._downloadButton.element);
-            fragment.appendChild(this._reloadButton.element);
-            this.status = fragment;
-
-            delete this._loadingMainFrameButtons;
-        }
-
-        if (this._reloadButton && this._downloadButton) {
-            loadedImages.call(this);
-            return;
-        }
-
-        if (!this._loadingMainFrameButtons) {
-            this._loadingMainFrameButtons = true;
-
-            var tooltip;
-            if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript)
-                tooltip = WebInspector.UIString("Restart (%s)").format(WebInspector._reloadPageKeyboardShortcut.displayName);
-            else
-                tooltip = WebInspector.UIString("Reload page (%s)\nReload ignoring cache (%s)").format(WebInspector._reloadPageKeyboardShortcut.displayName, WebInspector._reloadPageIgnoringCacheKeyboardShortcut.displayName);
-
-            wrappedSVGDocument(platformImagePath("Reload.svg"), null, tooltip, function(element) {
-                this._reloadButton = new WebInspector.TreeElementStatusButton(element);
-                this._reloadButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._reloadPageClicked, this);
-                loadedImages.call(this);
-            }.bind(this));
-
-            wrappedSVGDocument(platformImagePath("DownloadArrow.svg"), null, WebInspector.UIString("Download Web Archive"), function(element) {
-                this._downloadButton = new WebInspector.TreeElementStatusButton(element);
-                this._downloadButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._downloadButtonClicked, this);
-                this._updateDownloadButton();
-                loadedImages.call(this);
-            }.bind(this));
-        }
     }
 
     // Overrides from TreeElement (Private).
@@ -288,9 +227,6 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         // shouldRefreshChildren will call onpopulate if expanded is true.
         this._updateExpandedSetting();
 
-        if (this._frame.isMainFrame())
-            this._updateDownloadButton();
-
         this.shouldRefreshChildren = true;
     }
 
@@ -328,47 +264,5 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
     {
         if (this.expanded)
             this._frame.domTree.requestContentFlowList();
-    }
-
-    _reloadPageClicked(event)
-    {
-        // Ignore cache when the shift key is pressed.
-        PageAgent.reload(event.data.shiftKey);
-    }
-
-    _downloadButtonClicked(event)
-    {
-        WebInspector.archiveMainFrame();
-    }
-
-    _updateDownloadButton()
-    {
-        console.assert(this._frame.isMainFrame());
-        if (!this._downloadButton)
-            return;
-
-        if (!PageAgent.archive || WebInspector.debuggableType !== WebInspector.DebuggableType.Web) {
-            this._downloadButton.hidden = true;
-            return;
-        }
-
-        if (this._downloadingPage) {
-            this._downloadButton.enabled = false;
-            return;
-        }
-
-        this._downloadButton.enabled = WebInspector.canArchiveMainFrame();
-    }
-
-    _pageArchiveStarted(event)
-    {
-        this._downloadingPage = true;
-        this._updateDownloadButton();
-    }
-
-    _pageArchiveEnded(event)
-    {
-        this._downloadingPage = false;
-        this._updateDownloadButton();
     }
 };

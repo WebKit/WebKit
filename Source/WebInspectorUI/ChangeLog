@@ -1,5 +1,18 @@
 2015-04-22  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Remove Reload and Download Web Archive buttons from FrameTreeElement
+        https://bugs.webkit.org/show_bug.cgi?id=144064
+
+        The will be global toolbar items soon.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/FrameTreeElement.js:
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype._updateStatus):
+
+2015-04-22  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Remove time and weight from the dashboard
         https://bugs.webkit.org/show_bug.cgi?id=144063
 

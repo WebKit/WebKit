@@ -160,12 +160,8 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
             this.removeClassName(WebInspector.ResourceTreeElement.FailedStyleClassName);
 
         if (this._resource.finished || this._resource.failed) {
-            // Remove the spinner and replace with a reload button in case it's the main frame's main resource.
-            var frame = this._resource.parentFrame;
-            if (this._resource.isMainResource() && frame && frame.isMainFrame() && this instanceof WebInspector.FrameTreeElement)
-                this.updateStatusForMainFrame();
-            else
-                this.status = "";
+            // Remove the spinner.
+            this.status = "";
         } else {
             var spinner = new WebInspector.IndeterminateProgressSpinner;
             this.status = spinner.element;
