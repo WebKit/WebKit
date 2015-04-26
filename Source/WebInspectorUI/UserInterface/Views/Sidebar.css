@@ -42,6 +42,14 @@ body.mac-platform.legacy.window-inactive .sidebar {
     background-color: rgb(231, 231, 231);
 }
 
+.sidebar > .navigation-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    align-content: center;
+}
+
 .sidebar > .panel {
     position: absolute;
     top: 0;
@@ -54,6 +62,10 @@ body.mac-platform.legacy.window-inactive .sidebar {
     overflow: hidden;
 
     z-index: 0; /* Workaround so that scroll bars appear above position:sticky section headers. */
+}
+
+.sidebar.has-navigation-bar > .panel {
+    top: 29px;
 }
 
 .sidebar > .panel.selected {

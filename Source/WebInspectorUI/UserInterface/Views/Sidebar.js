@@ -25,7 +25,7 @@
 
 WebInspector.Sidebar = class Sidebar extends WebInspector.Object
 {
-    constructor(element, side, sidebarPanels, role, label)
+    constructor(element, side, sidebarPanels, role, label, hasNavigationBar)
     {
         super();
 
@@ -38,6 +38,14 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.Object
         this._element.setAttribute("role", role || "group");
         if (label)
             this._element.setAttribute("aria-label", label);
+
+        if (hasNavigationBar) {
+            this._element.classList.add("has-navigation-bar");
+
+            this._navigationBar = new WebInspector.NavigationBar(null, null, "tablist");
+            this._navigationBar.addEventListener(WebInspector.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
+            this._element.appendChild(this._navigationBar.element);
+        }
 
         this._resizer = new WebInspector.Resizer(WebInspector.Resizer.RuleOrientation.Vertical, this);
         this._element.insertBefore(this._resizer.element, this._element.firstChild);
@@ -67,6 +75,11 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.Object
         this._sidebarPanels.push(sidebarPanel);
         this._element.appendChild(sidebarPanel.element);
 
+        if (this._navigationBar) {
+            console.assert(sidebarPanel.navigationItem);
+            this._navigationBar.addNavigationItem(sidebarPanel.navigationItem);
+        }
+
         sidebarPanel.added();
 
         return sidebarPanel;
@@ -89,6 +102,11 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.Object
 
         this._sidebarPanels.remove(sidebarPanel);
         this._element.removeChild(sidebarPanel.element);
+
+        if (this._navigationBar) {
+            console.assert(sidebarPanel.navigationItem);
+            this._navigationBar.removeNavigationItem(sidebarPanel.navigationItem);
+        }
 
         sidebarPanel.removed();
 
@@ -119,6 +137,9 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.Object
 
         this._selectedSidebarPanel = sidebarPanel || null;
 
+        if (this._navigationBar)
+            this._navigationBar.selectedNavigationItem = sidebarPanel ? sidebarPanel.navigationItem : null;
+
         if (this._selectedSidebarPanel) {
             this._selectedSidebarPanel.selected = true;
 
@@ -133,6 +154,8 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.Object
 
     get minimumWidth()
     {
+        if (this._navigationBar)
+            return Math.max(WebInspector.Sidebar.AbsoluteMinimumWidth, this._navigationBar.minimumWidth);
         return WebInspector.Sidebar.AbsoluteMinimumWidth;
     }
 
@@ -157,6 +180,9 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.Object
 
         this._element.style.width = newWidth + "px";
 
+        if (!this.collapsed && this._navigationBar)
+            this._navigationBar.updateLayout();
+
         if (!this.collapsed && this._selectedSidebarPanel)
             this._selectedSidebarPanel.widthDidChange();
 
@@ -175,8 +201,12 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.Object
 
         if (flag)
             this._element.classList.add(WebInspector.Sidebar.CollapsedStyleClassName);
-        else
+        else {
             this._element.classList.remove(WebInspector.Sidebar.CollapsedStyleClassName);
+
+            if (this._navigationBar)
+                this._navigationBar.updateLayout();
+        }
 
         if (this._selectedSidebarPanel) {
             if (this._selectedSidebarPanel.visible)

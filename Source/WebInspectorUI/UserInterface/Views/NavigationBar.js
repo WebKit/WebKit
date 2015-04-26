@@ -109,7 +109,7 @@ WebInspector.NavigationBar.prototype = {
         return navigationItem;
     },
 
-    removeNavigationItem: function(navigationItemOrIdentifierOrIndex, index)
+    removeNavigationItem: function(navigationItemOrIdentifierOrIndex)
     {
         var navigationItem = this._findNavigationItem(navigationItemOrIdentifierOrIndex);
         if (!navigationItem)

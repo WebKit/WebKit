@@ -30,9 +30,16 @@ WebInspector.DetailsSidebarPanel = class DetailsSidebarPanel extends WebInspecto
         super(identifier, displayName, element);
 
         this.element.classList.add("details");
+
+        this._navigationItem = new WebInspector.RadioButtonNavigationItem(identifier, displayName);
     }
 
     // Public
+
+    get navigationItem()
+    {
+        return this._navigationItem;
+    }
 
     inspect(objects)
     {
