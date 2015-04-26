@@ -1,5 +1,30 @@
 2015-04-26  Darin Adler  <darin@apple.com>
 
+        REGRESSION (r176751): line-height ignored in <button> elements
+        https://bugs.webkit.org/show_bug.cgi?id=144234
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/forms/button-line-height.html
+
+        * platform/Theme.h: Changed controlFont to return an Optional so we can tell
+        when the theme is overriding the font. Otherwise if the font from the user-agent
+        style sheet and the font from the theme are the same, we will think we are not
+        overriding the font when we actually are.
+
+        * platform/mac/ThemeMac.h: Updated controlFont to return Optional.
+        * platform/mac/ThemeMac.mm:
+        (WebCore::ThemeMac::controlFont): Ditto.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle): Set line height only if the font is
+        overriden by the theme, all the time for PushButtonPart on Mac, and not at all
+        for other parts. Also tightened up the logic a little since RenderStyle's
+        setFontDescription already does an "==" comparison; we don't have to do
+        that twice.
+
+2015-04-26  Darin Adler  <darin@apple.com>
+
         REGRESSION (r173801): Use after free in WebCore::NotificationCenter::~NotificationCenter
         https://bugs.webkit.org/show_bug.cgi?id=137163
 

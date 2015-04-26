@@ -170,14 +170,12 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
             style.setMinHeight(minControlSize.height());
                 
         // Font
-        FontDescription controlFont = m_theme->controlFont(part, style.fontCascade(), style.effectiveZoom());
-        if (controlFont != style.fontCascade().fontDescription()) {
-            // Now update our font.
-            if (style.setFontDescription(controlFont))
-                style.fontCascade().update(0);
+        if (auto themeFont = m_theme->controlFont(part, style.fontCascade(), style.effectiveZoom())) {
+            // If overriding the specified font with the theme font, also override the line height with the standard line height.
+            style.setLineHeight(RenderStyle::initialLineHeight());
+            if (style.setFontDescription(themeFont.value()))
+                style.fontCascade().update(nullptr);
         }
-        // Reset our line-height
-        style.setLineHeight(RenderStyle::initialLineHeight());
         style.setInsideDefaultButton(part == DefaultButtonPart);
     }
     break;

@@ -34,6 +34,7 @@
 #include "LengthSize.h"
 #include "ThemeTypes.h"
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -82,9 +83,9 @@ public:
     // Methods used to adjust the RenderStyles of controls.
     
     // The font description result should have a zoomed font size.
-    virtual FontDescription controlFont(ControlPart, const FontCascade& font, float /*zoomFactor*/) const { return font.fontDescription(); }
+    virtual Optional<FontDescription> controlFont(ControlPart, const FontCascade&, float /*zoomFactor*/) const { return Nullopt; }
     
-    // The size here is in zoomed coordinates already.  If a new size is returned, it also needs to be in zoomed coordinates.
+    // The size here is in zoomed coordinates already. If a new size is returned, it also needs to be in zoomed coordinates.
     virtual LengthSize controlSize(ControlPart, const FontCascade&, const LengthSize& zoomedSize, float /*zoomFactor*/) const { return zoomedSize; }
     
     // Returns the minimum size for a control in zoomed coordinates.  
