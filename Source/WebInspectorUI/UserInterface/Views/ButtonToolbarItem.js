@@ -25,15 +25,15 @@
 
 WebInspector.ButtonToolbarItem = function(identifier, toolTip, label, image, suppressEmboss, role)
 {
-    WebInspector.ButtonNavigationItem.call(this, identifier, toolTip, image, 32, 32, suppressEmboss, role);
+    WebInspector.ButtonNavigationItem.call(this, identifier, toolTip, image, 16, 16, suppressEmboss, role);
 
-    console.assert(label);
+    if (typeof label === "string") {
+        this._labelElement = document.createElement("div");
+        this._labelElement.className = WebInspector.ButtonToolbarItem.LabelStyleClassName;
+        this._element.appendChild(this._labelElement);
 
-    this._labelElement = document.createElement("div");
-    this._labelElement.className = WebInspector.ButtonToolbarItem.LabelStyleClassName;
-    this._element.appendChild(this._labelElement);
-
-    this.label = label;
+        this.label = label;
+    }
 };
 
 WebInspector.ButtonToolbarItem.LabelStyleClassName = "label";
@@ -51,7 +51,7 @@ WebInspector.ButtonToolbarItem.prototype = {
     set label(newLabel)
     {
         console.assert(newLabel);
-        if (!newLabel)
+        if (!newLabel || !this._labelElement)
             return;
 
         this._labelElement.textContent = newLabel;

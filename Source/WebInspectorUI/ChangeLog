@@ -1,5 +1,72 @@
 2015-04-25  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: New Toolbar UI for tabs
+        https://bugs.webkit.org/show_bug.cgi?id=144185
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/ImageUtilities.js:
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        (WebInspector.contentLoaded):
+        (WebInspector.updateDockedState):
+        (WebInspector._captureDidStart):
+        (WebInspector._debuggerDidPause):
+        (WebInspector._debuggerDidResume):
+        (WebInspector._mainFrameDidChange):
+        (WebInspector._mainResourceDidChange):
+        (WebInspector._windowKeyDown):
+        (WebInspector._windowKeyUp):
+        (WebInspector._pageHidden):
+        (WebInspector._undock):
+        (WebInspector._dockBottom):
+        (WebInspector._dockRight):
+        (WebInspector._updateDockNavigationItems):
+        (WebInspector._domNodeWasInspected):
+        (WebInspector._inspectModeStateChanged):
+        (WebInspector._toggleInspectMode):
+        (WebInspector._downloadWebArchive):
+        (WebInspector._reloadPageClicked):
+        (WebInspector._updateDownloadToolbarButton):
+        (WebInspector.archiveMainFrame):
+        (WebInspector.canArchiveMainFrame):
+        * UserInterface/Images/Crosshair.svg:
+        * UserInterface/Images/DockBottom.svg:
+        * UserInterface/Images/DockRight.svg:
+        * UserInterface/Images/DownloadArrow.svg:
+        * UserInterface/Images/ReloadToolbar.svg: Added.
+        * UserInterface/Images/Undock.svg:
+        * UserInterface/Views/ActivateButtonToolbarItem.js:
+        (WebInspector.ActivateButtonToolbarItem):
+        (WebInspector.ActivateButtonToolbarItem.prototype.set label):
+        * UserInterface/Views/ButtonToolbarItem.css:
+        (.toolbar .item.button):
+        (body.window-inactive .toolbar .item.button):
+        (.toolbar.small-size .item.button > .glyph):
+        * UserInterface/Views/ButtonToolbarItem.js:
+        (WebInspector.ButtonToolbarItem):
+        (WebInspector.ButtonToolbarItem.prototype.set label):
+        * UserInterface/Views/DashboardContainerView.css:
+        (.toolbar .dashboard-container):
+        * UserInterface/Views/Main.css:
+        (body.docked.bottom):
+        * UserInterface/Views/Toolbar.css:
+        (.toolbar):
+        (body.mac-platform:not(.legacy, .docked) .toolbar):
+        (.toolbar .control-section):
+        (.toolbar .item-section):
+        (.toolbar .item-section.left):
+        (.toolbar .item-section.center-left):
+        (.toolbar .item-section.center-right):
+        (.toolbar .item-section.right):
+        * UserInterface/Views/Toolbar.js:
+        (WebInspector.Toolbar):
+        (WebInspector.Toolbar.prototype.customUpdateLayout.isOverflowingToolbar):
+        (WebInspector.Toolbar.prototype.customUpdateLayout):
+        (WebInspector.Toolbar.prototype.addToolbarItem):
+
+2015-04-25  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Add NavigationBar to the details sidebar
         https://bugs.webkit.org/show_bug.cgi?id=144191
 

@@ -137,19 +137,8 @@ WebInspector.loaded = function()
     document.addEventListener("DOMContentLoaded", this.contentLoaded.bind(this));
 
     // Create settings.
-    this._toolbarDockedRightDisplayModeSetting = new WebInspector.Setting("toolbar-docked-right-display-mode", WebInspector.Toolbar.DisplayMode.IconAndLabelVertical);
-    this._toolbarDockedRightSizeModeSetting = new WebInspector.Setting("toolbar-docked-right-size-mode",WebInspector.Toolbar.SizeMode.Normal);
-
-    this._toolbarDockedBottomDisplayModeSetting = new WebInspector.Setting("toolbar-docked-display-mode", WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal);
-    this._toolbarDockedBottomSizeModeSetting = new WebInspector.Setting("toolbar-docked-size-mode",WebInspector.Toolbar.SizeMode.Small);
-
-    this._toolbarUndockedDisplayModeSetting = new WebInspector.Setting("toolbar-undocked-display-mode", WebInspector.Toolbar.DisplayMode.IconAndLabelVertical);
-    this._toolbarUndockedSizeModeSetting = new WebInspector.Setting("toolbar-undocked-size-mode",WebInspector.Toolbar.SizeMode.Normal);
-
     this._showingSplitConsoleSetting = new WebInspector.Setting("showing-split-console", false);
     this._splitConsoleHeightSetting = new WebInspector.Setting("split-console-height", 150);
-
-    this._dockButtonToggledSetting = new WebInspector.Setting("dock-button-toggled", false);
 
     this._openTabsSetting = new WebInspector.Setting("open-tabs", ["elements", "resources", "timeline", "debugger", "console"]);
     this._selectedTabIndexSetting = new WebInspector.Setting("selected-tab-index", 0);
@@ -203,9 +192,9 @@ WebInspector.contentLoaded = function()
     document.body.classList.add(this.debuggableType);
 
     // Create the user interface elements.
-    this.toolbar = new WebInspector.Toolbar(document.getElementById("toolbar"));
-    this.toolbar.addEventListener(WebInspector.Toolbar.Event.DisplayModeDidChange, this._toolbarDisplayModeDidChange, this);
-    this.toolbar.addEventListener(WebInspector.Toolbar.Event.SizeModeDidChange, this._toolbarSizeModeDidChange, this);
+    this.toolbar = new WebInspector.Toolbar(document.getElementById("toolbar"), null, true);
+    this.toolbar.displayMode = WebInspector.Toolbar.DisplayMode.IconOnly;
+    this.toolbar.sizeMode = WebInspector.Toolbar.SizeMode.Small;
 
     this.tabBar = new WebInspector.TabBar(document.getElementById("tab-bar"));
 
@@ -259,19 +248,56 @@ WebInspector.contentLoaded = function()
     this.stepIntoAlternateKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Semicolon, this.debuggerStepInto.bind(this));
     this.stepOutAlternateKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Semicolon, this.debuggerStepOut.bind(this));
 
-    this.undockButtonNavigationItem = new WebInspector.ToggleControlToolbarItem("undock", WebInspector.UIString("Detach into separate window"), "", platformImagePath("Undock.svg"), "", 16, 14);
-    this.undockButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._undock, this);
+    this._closeToolbarButton = new WebInspector.ControlToolbarItem("dock-close", WebInspector.UIString("Close"), platformImagePath("Close.svg"), 16, 14);
+    this._closeToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this.close, this);
 
-    this.closeButtonNavigationItem = new WebInspector.ControlToolbarItem("dock-close", WebInspector.UIString("Close"), platformImagePath("Close.svg"), 16, 14);
-    this.closeButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this.close, this);
+    this._undockToolbarButton = new WebInspector.ButtonToolbarItem("undock", WebInspector.UIString("Detach into separate window"), null, "Images/Undock.svg");
+    this._undockToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._undock, this);
 
-    this.toolbar.addToolbarItem(this.closeButtonNavigationItem, WebInspector.Toolbar.Section.Control);
-    this.toolbar.addToolbarItem(this.undockButtonNavigationItem, WebInspector.Toolbar.Section.Control);
+    this._dockRightToolbarButton = new WebInspector.ButtonToolbarItem("dock-right", WebInspector.UIString("Dock to right of window"), null, "Images/DockRight.svg");
+    this._dockRightToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._dockRight, this);
 
-    this.dashboardContainer = new WebInspector.DashboardContainerView;
-    this.dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.default);
+    this._dockBottomToolbarButton = new WebInspector.ButtonToolbarItem("dock-bottom", WebInspector.UIString("Dock to bottom of window"), null, "Images/DockBottom.svg");
+    this._dockBottomToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._dockBottom, this);
 
-    this.toolbar.addToolbarItem(this.dashboardContainer.toolbarItem, WebInspector.Toolbar.Section.Center);
+    var toolTip;
+    if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript)
+        toolTip = WebInspector.UIString("Restart (%s)").format(this._reloadPageKeyboardShortcut.displayName);
+    else
+        toolTip = WebInspector.UIString("Reload page (%s)\nReload ignoring cache (%s)").format(this._reloadPageKeyboardShortcut.displayName, this._reloadPageIgnoringCacheKeyboardShortcut.displayName);
+
+    this._reloadToolbarButton = new WebInspector.ButtonToolbarItem("reload", toolTip, null, "Images/ReloadToolbar.svg");
+    this._reloadToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._reloadPageClicked, this);
+
+    this._downloadToolbarButton = new WebInspector.ButtonToolbarItem("download", WebInspector.UIString("Download Web Archive"), null, "Images/DownloadArrow.svg");
+    this._downloadToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._downloadWebArchive, this);
+
+    this._updateDownloadToolbarButton();
+
+    // The toolbar button for node inspection.
+    if (this.debuggableType === WebInspector.DebuggableType.Web) {
+        var toolTip = WebInspector.UIString("Enable point to inspect mode (%s)").format(WebInspector._inspectModeKeyboardShortcut.displayName);
+        var activatedToolTip = WebInspector.UIString("Disable point to inspect mode (%s)").format(WebInspector._inspectModeKeyboardShortcut.displayName);
+        this._inspectModeToolbarButton = new WebInspector.ActivateButtonToolbarItem("inspect", toolTip, activatedToolTip, null, "Images/Crosshair.svg");
+        this._inspectModeToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleInspectMode, this);
+    }
+
+    this._dashboardContainer = new WebInspector.DashboardContainerView;
+    this._dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.default);
+
+    this.toolbar.addToolbarItem(this._closeToolbarButton, WebInspector.Toolbar.Section.Control);
+
+    this.toolbar.addToolbarItem(this._undockToolbarButton, WebInspector.Toolbar.Section.Left);
+    this.toolbar.addToolbarItem(this._dockRightToolbarButton, WebInspector.Toolbar.Section.Left);
+    this.toolbar.addToolbarItem(this._dockBottomToolbarButton, WebInspector.Toolbar.Section.Left);
+
+    this.toolbar.addToolbarItem(this._reloadToolbarButton, WebInspector.Toolbar.Section.CenterLeft);
+    this.toolbar.addToolbarItem(this._downloadToolbarButton, WebInspector.Toolbar.Section.CenterLeft);
+
+    this.toolbar.addToolbarItem(this._dashboardContainer.toolbarItem, WebInspector.Toolbar.Section.Center);
+
+    if (this._inspectModeToolbarButton)
+        this.toolbar.addToolbarItem(this._inspectModeToolbarButton, WebInspector.Toolbar.Section.CenterRight);
 
     this.resourceDetailsSidebarPanel = new WebInspector.ResourceDetailsSidebarPanel;
     this.domNodeDetailsSidebarPanel = new WebInspector.DOMNodeDetailsSidebarPanel;
@@ -427,26 +453,15 @@ WebInspector.updateDockedState = function(side)
     if (side === "bottom") {
         document.body.classList.add("docked", "bottom");
         document.body.classList.remove("window-inactive", "right");
-
-        this.toolbar.displayMode = this._toolbarDockedBottomDisplayModeSetting.value;
-        this.toolbar.sizeMode = this._toolbarDockedBottomSizeModeSetting.value;
     } else if (side === "right") {
         document.body.classList.add("docked", "right");
         document.body.classList.remove("window-inactive", "bottom");
-
-        this.toolbar.displayMode = this._toolbarDockedRightDisplayModeSetting.value;
-        this.toolbar.sizeMode = this._toolbarDockedRightSizeModeSetting.value;
-    } else {
+    } else
         document.body.classList.remove("docked", "right", "bottom");
-
-        this.toolbar.displayMode = this._toolbarUndockedDisplayModeSetting.value;
-        this.toolbar.sizeMode = this._toolbarUndockedSizeModeSetting.value;
-    }
 
     this._ignoreToolbarModeDidChangeEvents = false;
 
     this._updateDockNavigationItems();
-    this._updateToolbarHeight();
 };
 
 WebInspector.handlePossibleLinkClick = function(event, frame, alwaysOpenExternally)
@@ -906,21 +921,21 @@ WebInspector._dragOver = function(event)
 
 WebInspector._captureDidStart = function(event)
 {
-    this.dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.replay);
+    this._dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.replay);
 };
 
 WebInspector._debuggerDidPause = function(event)
 {
     this.showDebuggerTab();
 
-    this.dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.debugger);
+    this._dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.debugger);
 
     InspectorFrontendHost.bringToFront();
 };
 
 WebInspector._debuggerDidResume = function(event)
 {
-    this.dashboardContainer.closeDashboardViewForRepresentedObject(this.dashboardManager.dashboards.debugger);
+    this._dashboardContainer.closeDashboardViewForRepresentedObject(this.dashboardManager.dashboards.debugger);
 };
 
 WebInspector._frameWasAdded = function(event)
@@ -937,6 +952,8 @@ WebInspector._frameWasAdded = function(event)
 
 WebInspector._mainFrameDidChange = function(event)
 {
+    this._updateDownloadToolbarButton();
+
     this.updateWindowTitle();
 };
 
@@ -946,6 +963,8 @@ WebInspector._mainResourceDidChange = function(event)
         return;
 
     this._inProvisionalLoad = false;
+
+    this._updateDownloadToolbarButton();
 
     this.updateWindowTitle();
 };
@@ -995,17 +1014,11 @@ WebInspector._updateModifierKeys = function(event)
 WebInspector._windowKeyDown = function(event)
 {
     this._updateModifierKeys(event);
-
-    var opposite = !this._dockButtonToggledSetting.value;
-    this.undockButtonNavigationItem.toggled = (event.altKey && !event.metaKey && !event.shiftKey) ? opposite : !opposite;
 };
 
 WebInspector._windowKeyUp = function(event)
 {
     this._updateModifierKeys(event);
-
-    var opposite = !this._dockButtonToggledSetting.value;
-    this.undockButtonNavigationItem.toggled = (event.altKey && !event.metaKey && !event.shiftKey) ? opposite : !opposite;
 };
 
 WebInspector._mouseMoved = function(event)
@@ -1019,31 +1032,30 @@ WebInspector._mouseMoved = function(event)
 
 WebInspector._pageHidden = function(event)
 {
+    // FIXME: Save inspector state.
 };
 
 WebInspector._undock = function(event)
 {
-    this._dockButtonToggledSetting.value = this.undockButtonNavigationItem.toggled;
+    InspectorFrontendHost.requestSetDockSide("undocked");
+};
 
-    if (this.undockButtonNavigationItem.toggled)
-        InspectorFrontendHost.requestSetDockSide(this._dockSide === "bottom" ? "right" : "bottom");
-    else
-        InspectorFrontendHost.requestSetDockSide("undocked");
+WebInspector._dockBottom = function(event)
+{
+    InspectorFrontendHost.requestSetDockSide("bottom");
+};
+
+WebInspector._dockRight = function(event)
+{
+    InspectorFrontendHost.requestSetDockSide("right");
 };
 
 WebInspector._updateDockNavigationItems = function()
 {
-    // The close and undock buttons are only available when docked.
-    var docked = this.docked;
-    this.closeButtonNavigationItem.hidden = !docked;
-    this.undockButtonNavigationItem.hidden = !docked;
-
-    if (docked) {
-        this.undockButtonNavigationItem.alternateImage = this._dockSide === "bottom" ? platformImagePath("DockRight.svg") : platformImagePath("DockBottom.svg");
-        this.undockButtonNavigationItem.alternateToolTip = this._dockSide === "bottom" ? WebInspector.UIString("Dock to right of window") : WebInspector.UIString("Dock to bottom of window");
-    }
-
-    this.undockButtonNavigationItem.toggled = this._dockButtonToggledSetting.value;
+    this._closeToolbarButton.hidden = !this.docked;
+    this._undockToolbarButton.hidden = this._dockSide === "undocked";
+    this._dockBottomToolbarButton.hidden = this._dockSide === "bottom";
+    this._dockRightToolbarButton.hidden = this._dockSide === "right";
 };
 
 WebInspector._tabBrowserSizeDidChange = function()
@@ -1067,36 +1079,6 @@ WebInspector._updateToolbarHeight = function()
 {
     if (WebInspector.Platform.isLegacyMacOS)
         InspectorFrontendHost.setToolbarHeight(this.toolbar.element.offsetHeight);
-};
-
-WebInspector._toolbarDisplayModeDidChange = function(event)
-{
-    if (this._ignoreToolbarModeDidChangeEvents)
-        return;
-
-    if (this._dockSide === "bottom")
-        this._toolbarDockedBottomDisplayModeSetting.value = this.toolbar.displayMode;
-    else if (this._dockSide === "right")
-        this._toolbarDockedRightDisplayModeSetting.value = this.toolbar.displayMode;
-    else
-        this._toolbarUndockedDisplayModeSetting.value = this.toolbar.displayMode;
-
-    this._updateToolbarHeight();
-};
-
-WebInspector._toolbarSizeModeDidChange = function(event)
-{
-    if (this._ignoreToolbarModeDidChangeEvents)
-        return;
-
-    if (this._dockSide === "bottom")
-        this._toolbarDockedBottomSizeModeSetting.value = this.toolbar.sizeMode;
-    else if (this._dockSide === "right")
-        this._toolbarDockedRightSizeModeSetting.value = this.toolbar.sizeMode;
-    else
-        this._toolbarUndockedSizeModeSetting.value = this.toolbar.sizeMode;
-
-    this._updateToolbarHeight();
 };
 
 WebInspector._tabBrowserSelectedTabContentViewDidChange = function(event)
@@ -1311,21 +1293,26 @@ WebInspector._storageWasInspected = function(event)
 
 WebInspector._domNodeWasInspected = function(event)
 {
-    WebInspector.domTreeManager.highlightDOMNodeForTwoSeconds(event.data.node.id);
+    this.domTreeManager.highlightDOMNodeForTwoSeconds(event.data.node.id);
 
     InspectorFrontendHost.bringToFront();
 
-    this.showMainFrameDOMTree(event.data.node);
+    this.showMainFrameDOMTree(event.data.node, true);
 };
 
 WebInspector._inspectModeStateChanged = function(event)
 {
-//    this._inspectModeToolbarButton.activated = WebInspector.domTreeManager.inspectModeEnabled;
+    this._inspectModeToolbarButton.activated = this.domTreeManager.inspectModeEnabled;
 };
 
 WebInspector._toggleInspectMode = function(event)
 {
-    WebInspector.domTreeManager.inspectModeEnabled = !WebInspector.domTreeManager.inspectModeEnabled;
+    this.domTreeManager.inspectModeEnabled = !this.domTreeManager.inspectModeEnabled;
+};
+
+WebInspector._downloadWebArchive = function(event)
+{
+    this.archiveMainFrame();
 };
 
 WebInspector._reloadPage = function(event)
@@ -1333,9 +1320,30 @@ WebInspector._reloadPage = function(event)
     PageAgent.reload();
 };
 
+WebInspector._reloadPageClicked = function(event)
+{
+    // Ignore cache when the shift key is pressed.
+    PageAgent.reload(window.event ? window.event.shiftKey : false);
+};
+
 WebInspector._reloadPageIgnoringCache = function(event)
 {
     PageAgent.reload(true);
+};
+
+WebInspector._updateDownloadToolbarButton = function()
+{
+    if (!PageAgent.archive || this.debuggableType !== WebInspector.DebuggableType.Web) {
+        this._downloadToolbarButton.hidden = true;
+        return;
+    }
+
+    if (this._downloadingPage) {
+        this._downloadToolbarButton.enabled = false;
+        return;
+    }
+
+    this._downloadToolbarButton.enabled = this.canArchiveMainFrame();
 };
 
 WebInspector._toggleInspectMode = function(event)
@@ -1770,16 +1778,20 @@ WebInspector.revertDomChanges = function(domChanges)
 
 WebInspector.archiveMainFrame = function()
 {
-    this.notifications.dispatchEventToListeners(WebInspector.Notification.PageArchiveStarted, event);
+    this._downloadingPage = true;
+    this._updateDownloadToolbarButton();
 
     PageAgent.archive(function(error, data) {
-        this.notifications.dispatchEventToListeners(WebInspector.Notification.PageArchiveEnded, event);
+        this._downloadingPage = false;
+        this._updateDownloadToolbarButton();
+
         if (error)
             return;
 
         var mainFrame = WebInspector.frameResourceManager.mainFrame;
         var archiveName = mainFrame.mainResource.urlComponents.host || mainFrame.mainResource.displayName || "Archive";
         var url = "web-inspector:///" + encodeURI(archiveName) + ".webarchive";
+
         InspectorFrontendHost.save(url, data, true, true);
     }.bind(this));
 };
@@ -1788,6 +1800,9 @@ WebInspector.canArchiveMainFrame = function()
 {
     if (!PageAgent.archive || this.debuggableType !== WebInspector.DebuggableType.Web)
         return false;
+
+    if (!WebInspector.frameResourceManager.mainFrame || !WebInspector.frameResourceManager.mainFrame.mainResource)
+        return;
 
     return WebInspector.Resource.typeFromMIMEType(WebInspector.frameResourceManager.mainFrame.mainResource.mimeType) === WebInspector.Resource.Type.Document;
 };

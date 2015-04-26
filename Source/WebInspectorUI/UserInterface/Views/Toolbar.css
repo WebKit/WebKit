@@ -29,11 +29,14 @@
     white-space: nowrap;
     overflow: hidden;
 
-    border-bottom: 1px solid rgb(179, 179, 179);
-    background-image: linear-gradient(to bottom, rgb(232, 232, 232), rgb(209, 209, 209));
+    background-image: linear-gradient(to bottom, rgb(237, 237, 237), rgb(222, 222, 222));
     box-shadow: inset rgba(255, 255, 255, 0.5) 0 1px 1px;
 
     outline: none;
+
+    padding-top: 3px;
+    padding-bottom: 3px;
+    height: 36px;
 }
 
 body.window-inactive .toolbar {
@@ -41,42 +44,8 @@ body.window-inactive .toolbar {
     background-color: rgb(246, 246, 246);
 }
 
-.toolbar.icon-and-label-vertical {
-    height: 56px;
-}
-
-.toolbar.icon-and-label-vertical.small-size {
-    height: 48px;
-}
-
-.toolbar.icon-and-label-horizontal,
-.toolbar.icon-only {
-    height: 40px;
-}
-
-.toolbar.icon-and-label-horizontal.small-size,
-.toolbar.icon-only.small-size,
-.toolbar.label-only {
-    height: 32px;
-}
-
 body.mac-platform:not(.legacy, .docked) .toolbar {
-    padding-top: 22px;
-}
-
-body.mac-platform:not(.legacy, .docked) .toolbar.icon-and-label-vertical {
-    height: 78px;
-}
-
-body.mac-platform:not(.legacy, .docked) .toolbar.icon-and-label-vertical.small-size {
-    height: 70px;
-}
-
-body.mac-platform:not(.legacy, .docked) .toolbar:matches(.icon-and-label-horizontal, .icon-only) {
-    height: 62px;
-}
-
-body.mac-platform:not(.legacy, .docked) .toolbar:matches(.icon-and-label-horizontal.small-size, .icon-only.small-size, .label-only) {
+    padding-top: 21px;
     height: 54px;
 }
 
@@ -113,7 +82,7 @@ body.mac-platform.legacy.window-inactive .toolbar {
     justify-content: center;
 
     padding-left: 6px;
-    padding-right: 6px;
+    padding-right: 2px;
 
     min-width: -webkit-min-content;
 }
@@ -124,27 +93,28 @@ body.mac-platform.legacy.window-inactive .toolbar {
 
 .toolbar .item-section {
     display: flex;
-    min-width: -webkit-min-content;
-}
-
-.toolbar .item-section:not(.center) {
     flex: 1;
+    min-width: -webkit-min-content;
 }
 
 .toolbar .item-section.left {
     justify-content: flex-start;
-    margin-right: 12px;
+}
+
+.toolbar .item-section.center-left {
+    justify-content: flex-start;
+}
+
+.toolbar .item-section.center-right {
+    justify-content: flex-end;
 }
 
 .toolbar .item-section.center {
-    flex: 2;
     justify-content: center;
 }
 
 .toolbar .item-section.right {
     justify-content: flex-end;
-    margin-left: 12px;
-    margin-right: 12px;
 }
 
 .toolbar .item {
