@@ -288,20 +288,33 @@ String Parser<LexerType>::parseInner()
         features |= ModifiedArgumentsFeature;
     Vector<RefPtr<StringImpl>> closedVariables;
     if (m_parsingBuiltin) {
-        RELEASE_ASSERT(!capturedVariables.size());
         IdentifierSet usedVariables;
         scope->getUsedVariables(usedVariables);
         for (const auto& variable : usedVariables) {
-            if (scope->hasDeclaredVariable(Identifier::fromUid(m_vm, variable.get())))
+            Identifier identifier = Identifier::fromUid(m_vm, variable.get());
+            if (scope->hasDeclaredVariable(identifier))
                 continue;
             
-            if (scope->hasDeclaredParameter(Identifier::fromUid(m_vm, variable.get())))
+            if (scope->hasDeclaredParameter(identifier))
                 continue;
 
             if (variable == m_vm->propertyNames->arguments.impl())
                 continue;
 
             closedVariables.append(variable);
+        }
+
+        if (!capturedVariables.isEmpty()) {
+            for (const auto& capturedVariable : capturedVariables) {
+                Identifier identifier = Identifier::fromUid(m_vm, capturedVariable.get());
+                if (scope->hasDeclaredVariable(identifier))
+                    continue;
+
+                if (scope->hasDeclaredParameter(identifier))
+                    continue;
+
+                RELEASE_ASSERT_NOT_REACHED();
+            }
         }
     }
     didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), features,

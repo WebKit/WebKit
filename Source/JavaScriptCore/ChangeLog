@@ -1,3 +1,42 @@
+2015-04-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Array.from need to accept iterables
+        https://bugs.webkit.org/show_bug.cgi?id=141055
+
+        Reviewed by Darin Adler.
+
+        ES6 spec requires that Array.from accepts iterable objects.
+        This patch introduces this functionality, Array.from accepting iterable objects.
+
+        Currently, `isConstructor` is not used. Instead of it, `typeof thiObj === "function"` is used.
+        However, it doesn't conform to the spec. While `isConstructor` queries the given object has `[[Construct]]`,
+        `typeof thisObj === "function"` queries the given object has `[[Call]]`.
+        This will be fixed in the subsequent patch[1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=144093
+
+        * builtins/ArrayConstructor.js:
+        (from):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * tests/stress/array-from-with-iterable.js: Added.
+        (shouldBe):
+        (.set for):
+        (.set var):
+        (.get var):
+        (argumentsGenerators):
+        (.set shouldBe):
+        (.set new):
+        * tests/stress/array-from-with-iterator.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (createIterator.iterator.return):
+        (createIterator):
+        (.):
+
 2015-04-25  Jordan Harband  <ljharb@gmail.com>
 
         Set#keys !== Set#values

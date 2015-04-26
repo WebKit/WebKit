@@ -23,15 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function from(arrayLike /*, mapFn, thisArg */) {
+function from(items /*, mapFn, thisArg */) {
     "use strict";
-
-    if (arrayLike == null)
-        throw new @TypeError("Array.from requires an array-like object - not null or undefined");
 
     var thisObj = this;
 
-    var items = @Object(arrayLike);
     var mapFn = arguments.length > 1 ? arguments[1] : undefined;
 
     var thisArg;
@@ -44,8 +40,45 @@ function from(arrayLike /*, mapFn, thisArg */) {
             thisArg = arguments[2];
     }
 
+    if (items == null)
+        throw new @TypeError("Array.from requires an array-like object - not null or undefined");
+
+    var iteratorMethod = items[@symbolIterator];
+    if (iteratorMethod != null) {
+        if (typeof iteratorMethod !== "function")
+            throw new @TypeError("Array.from requires that the property of the first argument, items[Symbol.iterator], when exists, be a function");
+
+        // TODO: Need isConstructor(thisObj) instead of typeof "function" check.
+        var result = (typeof thisObj === "function") ? @Object(new thisObj()) : [];
+
+        var k = 0;
+        var iterator = iteratorMethod.@call(items);
+
+        // Since for-of loop once more looks up the @@iterator property of a given iterable,
+        // it could be observable if the user defines a getter for @@iterator.
+        // To avoid this situation, we define a wrapper object that @@iterator just returns a given iterator.
+        var wrapper = {
+            [@symbolIterator]() {
+                return iterator;
+            }
+        };
+
+        for (var value of wrapper) {
+            if (mapFn)
+                @putByValDirect(result, k, thisArg === undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k));
+            else
+                @putByValDirect(result, k, value);
+            k += 1;
+        }
+
+        result.length = k;
+        return result;
+    }
+
+    var arrayLike = @Object(items);
+
     var maxSafeInteger = 9007199254740991;
-    var numberValue = @Number(items.length);
+    var numberValue = @Number(arrayLike.length);
     var lengthValue;
     if (numberValue != numberValue) {  // isNaN(numberValue)
         lengthValue = 0;
@@ -55,20 +88,21 @@ function from(arrayLike /*, mapFn, thisArg */) {
         lengthValue = (numberValue > 0 ? 1 : -1) * @floor(@abs(numberValue));
     }
     // originally Math.min(Math.max(length, 0), maxSafeInteger));
-    var itemsLength = lengthValue > 0 ? (lengthValue < maxSafeInteger ? lengthValue : maxSafeInteger) : 0;
+    var arrayLikeLength = lengthValue > 0 ? (lengthValue < maxSafeInteger ? lengthValue : maxSafeInteger) : 0;
 
-    var result = (typeof thisObj === "function") ? @Object(new thisObj(itemsLength)) : new @Array(itemsLength);
+    // TODO: Need isConstructor(thisObj) instead of typeof "function" check.
+    var result = (typeof thisObj === "function") ? @Object(new thisObj(arrayLikeLength)) : new @Array(arrayLikeLength);
 
     var k = 0;
-    while (k < itemsLength) {
-        var value = items[k];
+    while (k < arrayLikeLength) {
+        var value = arrayLike[k];
         if (mapFn)
-            @putByValDirect(result, k, typeof thisArg === "undefined" ? mapFn(value, k) : mapFn.@call(thisArg, value, k));
+            @putByValDirect(result, k, thisArg === undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k));
         else
             @putByValDirect(result, k, value);
         k += 1;
     }
 
-    result.length = itemsLength;
+    result.length = arrayLikeLength;
     return result;
 }
