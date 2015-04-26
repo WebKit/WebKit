@@ -7,6 +7,11 @@
 
         Test: fast/forms/button-line-height.html
 
+        The theme code was overriding line heights on all themed form controls.
+        Instead it should have only overridden line height when the theme overrides the font.
+        For <input type=button> on Mac, the theme always overrides the font, but for
+        other elements like <button> it does not.
+
         * platform/Theme.h: Changed controlFont to return an Optional so we can tell
         when the theme is overriding the font. Otherwise if the font from the user-agent
         style sheet and the font from the theme are the same, we will think we are not
