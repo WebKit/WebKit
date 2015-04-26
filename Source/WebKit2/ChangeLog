@@ -1,3 +1,11 @@
+2015-04-26  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _showDocumentPickerMenu]): Suppressed deprecation warnings around use
+        of -[UIDocumentMenuViewController _setIgnoreApplicationEntitlementForImport:].
+
 2015-04-25  Tim Horton  <timothy_horton@apple.com>
 
         Further update gesture swipe shadow style

@@ -509,7 +509,10 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
     // FIXME: We call -_setIgnoreApplicationEntitlementForImport: before initialization, because the assertion we're trying
     // to suppress is in the initializer. <rdar://problem/20137692> tracks doing this with a private initializer.
     _documentMenuController = adoptNS([UIDocumentMenuViewController alloc]);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [_documentMenuController _setIgnoreApplicationEntitlementForImport:YES];
+#pragma clang diagnostic pop
     [_documentMenuController initWithDocumentTypes:[self _documentPickerMenuMediaTypes] inMode:UIDocumentPickerModeImport];
     [_documentMenuController setDelegate:self];
 
