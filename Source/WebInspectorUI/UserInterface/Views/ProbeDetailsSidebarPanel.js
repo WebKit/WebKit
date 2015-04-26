@@ -28,7 +28,7 @@ WebInspector.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends W
 {
     constructor()
     {
-        super("probe", WebInspector.UIString("Probes"), WebInspector.UIString("Probes"), "Images/NavigationItemProbes.svg", "6");
+        super("probe", WebInspector.UIString("Probes"), WebInspector.UIString("Probes"));
 
         WebInspector.probeManager.addEventListener(WebInspector.ProbeManager.Event.ProbeSetAdded, this._probeSetAdded, this);
         WebInspector.probeManager.addEventListener(WebInspector.ProbeManager.Event.ProbeSetRemoved, this._probeSetRemoved, this);

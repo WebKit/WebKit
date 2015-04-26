@@ -27,7 +27,7 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
 {
     constructor()
     {
-        super("layer-tree", WebInspector.UIString("Layers"), WebInspector.UIString("Layer"), "Images/NavigationItemLayers.svg", "3");
+        super("layer-tree", WebInspector.UIString("Layers"), WebInspector.UIString("Layer"));
 
         this._dataGridNodesByLayerId = {};
 

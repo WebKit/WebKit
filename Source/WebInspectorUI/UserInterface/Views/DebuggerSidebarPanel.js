@@ -27,7 +27,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 {
     constructor()
     {
-        super("debugger", WebInspector.UIString("Debugger"), "Images/NavigationItemBug.svg", "3", true);
+        super("debugger", WebInspector.UIString("Debugger"), true);
 
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceChanged, this);
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceAdded, this);

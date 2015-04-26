@@ -27,7 +27,7 @@ WebInspector.RenderingFrameDetailsSidebarPanel = class RenderingFrameDetailsSide
 {
     constructor()
     {
-        super("rendering-frame-details", WebInspector.UIString("Frames"), WebInspector.UIString("Frames"), "Images/NavigationItemDoughnutChart.svg");
+        super("rendering-frame-details", WebInspector.UIString("Frames"));
 
         this._frameRangeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Frames"));
         this._timeRangeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Time"));

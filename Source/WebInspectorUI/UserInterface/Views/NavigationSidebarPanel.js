@@ -25,31 +25,11 @@
 
 WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebInspector.SidebarPanel
 {
-    constructor(identifier, displayName, image, keyboardShortcutKey, autoPruneOldTopLevelResourceTreeElements, autoHideToolbarItemWhenEmpty, wantsTopOverflowShadow, element, role, label)
+    constructor(identifier, displayName, autoPruneOldTopLevelResourceTreeElements, wantsTopOverflowShadow, element, role, label)
     {
-        var keyboardShortcut = null;
-        if (keyboardShortcutKey)
-            keyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, keyboardShortcutKey);
-
-        if (keyboardShortcut) {
-            var showToolTip = WebInspector.UIString("Show the %s navigation sidebar (%s)").format(displayName, keyboardShortcut.displayName);
-            var hideToolTip = WebInspector.UIString("Hide the %s navigation sidebar (%s)").format(displayName, keyboardShortcut.displayName);
-        } else {
-            var showToolTip = WebInspector.UIString("Show the %s navigation sidebar").format(displayName);
-            var hideToolTip = WebInspector.UIString("Hide the %s navigation sidebar").format(displayName);
-        }
-
-        super(identifier, displayName, showToolTip, hideToolTip, image, element, role, label || displayName);
+        super(identifier, displayName, element, role, label || displayName);
 
         this.element.classList.add("navigation");
-
-        this._keyboardShortcut = keyboardShortcut;
-        this._keyboardShortcut.callback = this.toggle.bind(this);
-
-        this._autoHideToolbarItemWhenEmpty = autoHideToolbarItemWhenEmpty || false;
-
-        if (autoHideToolbarItemWhenEmpty)
-            this.toolbarItem.hidden = true;
 
         this._visibleContentTreeOutlines = new Set;
 
@@ -244,7 +224,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         this._finalAttemptToRestoreViewStateTimeout = setTimeout(finalAttemptToRestoreViewStateFromCookie.bind(this), relaxedMatchDelay);
     }
 
-    showEmptyContentPlaceholder(message, hideToolbarItem)
+    showEmptyContentPlaceholder(message)
     {
         console.assert(message);
 
@@ -254,8 +234,6 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         this._emptyContentPlaceholderMessageElement.textContent = message;
         this.element.appendChild(this._emptyContentPlaceholderElement);
 
-        this._hideToolbarItemWhenEmpty = hideToolbarItem || false;
-        this._updateToolbarItemVisibility();
         this._updateContentOverflowShadowVisibility();
     }
 
@@ -266,15 +244,11 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
         this._emptyContentPlaceholderElement.parentNode.removeChild(this._emptyContentPlaceholderElement);
 
-        this._hideToolbarItemWhenEmpty = false;
-        this._updateToolbarItemVisibility();
         this._updateContentOverflowShadowVisibility();
     }
 
     updateEmptyContentPlaceholder(message)
     {
-        this._updateToolbarItemVisibility();
-
         if (!this._contentTreeOutline.children.length) {
             // No tree elements, so no results.
             this.showEmptyContentPlaceholder(message);
@@ -398,27 +372,16 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         if (!this.parentSidebar)
             return;
 
-        WebInspector.SidebarPanel.prototype.show.call(this);
+        super.show();
 
         this.contentTreeOutlineElement.focus();
     }
 
     shown()
     {
-        WebInspector.SidebarPanel.prototype.shown.call(this);
+        super.shown();
 
         this._updateContentOverflowShadowVisibility();
-
-        // Force the navigation item to be visible. This makes sure it is
-        // always visible when the panel is shown.
-        this.toolbarItem.hidden = false;
-    }
-
-    hidden()
-    {
-        WebInspector.SidebarPanel.prototype.hidden.call(this);
-
-        this._updateToolbarItemVisibility();
     }
 
     // Private
@@ -458,13 +421,6 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         if (this._topOverflowShadowElement)
             this._topOverflowShadowElement.style.opacity = (topCoverage / edgeThreshold).toFixed(1);
         this._bottomOverflowShadowElement.style.opacity = (1 - (bottomCoverage / edgeThreshold)).toFixed(1);
-    }
-
-    _updateToolbarItemVisibility()
-    {
-        // Hide the navigation item if requested or auto-hiding and we are not visible and we are empty.
-        var shouldHide = ((this._hideToolbarItemWhenEmpty || this._autoHideToolbarItemWhenEmpty) && !this.selected && !this._contentTreeOutline.children.length);
-        this.toolbarItem.hidden = shouldHide;
     }
 
     _checkForEmptyFilterResults()

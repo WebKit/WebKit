@@ -27,7 +27,7 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 {
     constructor()
     {
-        super("css-style", WebInspector.UIString("Styles"), WebInspector.UIString("Style"), "Images/NavigationItemBrushAndRuler.svg", "4");
+        super("css-style", WebInspector.UIString("Styles"), WebInspector.UIString("Style"));
 
         this._selectedPanel = null;
 

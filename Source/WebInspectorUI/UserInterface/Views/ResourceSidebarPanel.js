@@ -27,7 +27,7 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
 {
     constructor()
     {
-        super("resource", WebInspector.UIString("Resources"), "Images/NavigationItemStorage.svg", "1", true, false, true);
+        super("resource", WebInspector.UIString("Resources"), true, true);
 
         var searchElement = document.createElement("div");
         searchElement.classList.add("search-bar");

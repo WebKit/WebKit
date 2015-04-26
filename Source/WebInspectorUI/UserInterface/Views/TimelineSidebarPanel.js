@@ -27,7 +27,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 {
     constructor()
     {
-        super("timeline", WebInspector.UIString("Timelines"), "Images/NavigationItemStopwatch.svg", "2");
+        super("timeline", WebInspector.UIString("Timelines"));
 
         this._timelineEventsTitleBarElement = document.createElement("div");
         this._timelineEventsTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TitleBarStyleClass);
@@ -129,7 +129,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
     shown()
     {
-        WebInspector.NavigationSidebarPanel.prototype.shown.call(this);
+        super.shown();
 
         if (this._displayedContentView)
             WebInspector.contentBrowser.showContentView(this._displayedContentView);
@@ -254,7 +254,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
     updateFilter()
     {
-        WebInspector.NavigationSidebarPanel.prototype.updateFilter.call(this);
+        super.updateFilter();
 
         this._displayedContentView.filterDidChange();
     }

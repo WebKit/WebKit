@@ -27,7 +27,7 @@ WebInspector.ApplicationCacheDetailsSidebarPanel = class ApplicationCacheDetails
 {
     constructor()
     {
-        super("application-cache-details", WebInspector.UIString("Storage"), WebInspector.UIString("Storage"), "Images/NavigationItemStorage.svg");
+        super("application-cache-details", WebInspector.UIString("Storage"), WebInspector.UIString("Storage"));
 
         this.element.classList.add("application-cache");
 
