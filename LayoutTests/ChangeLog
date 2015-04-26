@@ -1,3 +1,14 @@
+2015-04-25  Jordan Harband  <ljharb@gmail.com>
+
+        Set#keys !== Set#values
+        https://bugs.webkit.org/show_bug.cgi?id=144190
+
+        Reviewed by Darin Adler.
+
+        * js/script-tests/set-keys.js: Added.
+        * js/set-keys-expected.txt: Added.
+        * js/set-keys.html: Added.
+
 2015-04-25  Darin Adler  <darin@apple.com>
 
         Crash if IDBTransaction is aborted right after it's created

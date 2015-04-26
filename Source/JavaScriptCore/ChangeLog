@@ -1,3 +1,19 @@
+2015-04-25  Jordan Harband  <ljharb@gmail.com>
+
+        Set#keys !== Set#values
+        https://bugs.webkit.org/show_bug.cgi?id=144190
+
+        Reviewed by Darin Adler.
+
+        per https://people.mozilla.org/~jorendorff/es6-draft.html#sec-set.prototype.keys
+        Set#keys should === Set#values
+
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        (JSC::setProtoFuncValues):
+        (JSC::setProtoFuncEntries):
+        (JSC::setProtoFuncKeys): Deleted.
+
 2015-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Allow for pausing a JSContext when opening a Web Inspector
