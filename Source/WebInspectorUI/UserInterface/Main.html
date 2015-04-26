@@ -52,6 +52,7 @@
     <link rel="stylesheet" href="Views/ConsoleMessageView.css">
     <link rel="stylesheet" href="Views/ConsolePrompt.css">
     <link rel="stylesheet" href="Views/ContentBrowser.css">
+    <link rel="stylesheet" href="Views/ContentBrowserTabContentView.css">
     <link rel="stylesheet" href="Views/ContentFlowIcon.css">
     <link rel="stylesheet" href="Views/ContentView.css">
     <link rel="stylesheet" href="Views/ContentViewContainer.css">
@@ -64,14 +65,14 @@
     <link rel="stylesheet" href="Views/DOMTreeDataGrid.css">
     <link rel="stylesheet" href="Views/DOMTreeOutline.css">
     <link rel="stylesheet" href="Views/DashboardContainerView.css">
-    <link rel="stylesheet" href="Views/DebuggerDashboardView.css">
-    <link rel="stylesheet" href="Views/DefaultDashboardView.css">
     <link rel="stylesheet" href="Views/DataGrid.css">
     <link rel="stylesheet" href="Views/DatabaseContentView.css">
     <link rel="stylesheet" href="Views/DatabaseIcon.css">
     <link rel="stylesheet" href="Views/DatabaseTableContentView.css">
     <link rel="stylesheet" href="Views/DatabaseTableIcon.css">
+    <link rel="stylesheet" href="Views/DebuggerDashboardView.css">
     <link rel="stylesheet" href="Views/DebuggerSidebarPanel.css">
+    <link rel="stylesheet" href="Views/DefaultDashboardView.css">
     <link rel="stylesheet" href="Views/DetailsSection.css">
     <link rel="stylesheet" href="Views/DividerNavigationItem.css">
     <link rel="stylesheet" href="Views/Editing.css">
@@ -101,10 +102,10 @@
     <link rel="stylesheet" href="Views/NetworkTimelineOverviewGraph.css">
     <link rel="stylesheet" href="Views/NetworkTimelineView.css">
     <link rel="stylesheet" href="Views/ObjectPreviewView.css">
-    <link rel="stylesheet" href="Views/ObjectTreeView.css">
     <link rel="stylesheet" href="Views/ObjectTreeArrayIndexTreeElement.css">
     <link rel="stylesheet" href="Views/ObjectTreeMapEntryTreeElement.css">
     <link rel="stylesheet" href="Views/ObjectTreePropertyTreeElement.css">
+    <link rel="stylesheet" href="Views/ObjectTreeView.css">
     <link rel="stylesheet" href="Views/OverviewTimelineView.css">
     <link rel="stylesheet" href="Views/PathComponentIcons.css">
     <link rel="stylesheet" href="Views/Popover.css">
@@ -133,6 +134,8 @@
     <link rel="stylesheet" href="Views/SourceCodeTextEditor.css">
     <link rel="stylesheet" href="Views/StyleRuleIcons.css">
     <link rel="stylesheet" href="Views/SyntaxHighlightingDefaultTheme.css">
+    <link rel="stylesheet" href="Views/TabBar.css">
+    <link rel="stylesheet" href="Views/TabBrowser.css">
     <link rel="stylesheet" href="Views/TextContentView.css">
     <link rel="stylesheet" href="Views/TextEditor.css">
     <link rel="stylesheet" href="Views/TextResourceContentView.css">
@@ -311,6 +314,9 @@
     <script src="Views/Section.js"></script>
     <script src="Views/SidebarPanel.js"></script>
     <script src="Views/StyleDetailsPanel.js"></script>
+    <script src="Views/TabBar.js"></script>
+    <script src="Views/TabBarItem.js"></script>
+    <script src="Views/TabBrowser.js"></script>
     <script src="Views/TextEditor.js"></script>
     <script src="Views/TimelineOverviewGraph.js"></script>
     <script src="Views/TimelineView.js"></script>
@@ -323,19 +329,27 @@
     <script src="Views/NavigationSidebarPanel.js"></script>
     <script src="Views/PropertiesSection.js"></script>
     <script src="Views/ResourceContentView.js"></script>
+    <script src="Views/TabContentView.js"></script>
     <script src="Views/TimelineDataGrid.js"></script>
     <script src="Views/TimelineDataGridNode.js"></script>
 
+    <script src="Views/ContentBrowserTabContentView.js"></script>
     <script src="Views/DOMDetailsSidebarPanel.js"></script>
-    <script src="Views/ObjectTreeBaseTreeElement.js"></script>
     <script src="Views/FolderTreeElement.js"></script>
     <script src="Views/FolderizedTreeElement.js"></script>
+    <script src="Views/ObjectTreeBaseTreeElement.js"></script>
     <script src="Views/SourceCodeTreeElement.js"></script>
     <script src="Views/StorageTreeElement.js"></script>
     <script src="Views/TimelineRecordTreeElement.js"></script>
 
+    <script src="Views/ConsoleTabContentView.js"></script>
+    <script src="Views/DebuggerTabContentView.js"></script>
     <script src="Views/DebuggerTreeElement.js"></script>
+    <script src="Views/ElementsTabContentView.js"></script>
     <script src="Views/ResourceTreeElement.js"></script>
+    <script src="Views/ResourcesTabContentView.js"></script>
+    <script src="Views/SettingsTabContentView.js"></script>
+    <script src="Views/TimelineTabContentView.js"></script>
 
     <script src="Views/DetailsSection.js"></script>
     <script src="Views/DetailsSectionDataGridRow.js"></script>
@@ -545,10 +559,11 @@
 <body>
 <div id="docked-resizer"></div>
 <div id="toolbar"></div>
+<div id="tab-bar"></div>
 <div id="main">
     <div id="navigation-sidebar"></div>
     <div id="content">
-        <div id="content-browser"></div>
+        <div id="tab-browser"></div>
         <div id="split-content-browser" class="hidden"></div>
         <div id="quick-console"></div>
     </div>

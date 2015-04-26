@@ -151,6 +151,9 @@ WebInspector.loaded = function()
 
     this._dockButtonToggledSetting = new WebInspector.Setting("dock-button-toggled", false);
 
+    this._openTabsSetting = new WebInspector.Setting("open-tabs", ["elements", "resources", "timeline", "debugger", "console"]);
+    this._selectedTabIndexSetting = new WebInspector.Setting("selected-tab-index", 0);
+
     this.showShadowDOMSetting = new WebInspector.Setting("show-shadow-dom", false);
     this.showReplayInterfaceSetting = new WebInspector.Setting("show-web-replay", false);
 
@@ -203,6 +206,8 @@ WebInspector.contentLoaded = function()
     this.toolbar = new WebInspector.Toolbar(document.getElementById("toolbar"));
     this.toolbar.addEventListener(WebInspector.Toolbar.Event.DisplayModeDidChange, this._toolbarDisplayModeDidChange, this);
     this.toolbar.addEventListener(WebInspector.Toolbar.Event.SizeModeDidChange, this._toolbarSizeModeDidChange, this);
+
+    this.tabBar = new WebInspector.TabBar(document.getElementById("tab-bar"));
 
     var contentElement = document.getElementById("content");
     contentElement.setAttribute("role", "main");
@@ -287,6 +292,23 @@ WebInspector.contentLoaded = function()
     this._updateDockNavigationItems();
     this._updateToolbarHeight();
 
+    for (var tabType of this._openTabsSetting.value) {
+        var tabContentView = this._tabContentViewForType(tabType);
+        if (!tabContentView)
+            continue;
+        this.tabBrowser.addTabForContentView(tabContentView, true);
+    }
+
+    this.tabBar.selectedTabBarItem = this._selectedTabIndexSetting.value;
+
+    if (!this.tabBar.selectedTabBarItem)
+        this.tabBar.selectedTabBarItem = 0;
+
+    // Listen to the events after restoring the saved tabs to avoid recursion.
+    this.tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemAdded, this._rememberOpenTabs, this);
+    this.tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemRemoved, this._rememberOpenTabs, this);
+    this.tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemsReordered, this._rememberOpenTabs, this);
+
     // Signal that the frontend is now ready to receive messages.
     InspectorFrontendAPI.loadCompleted();
 
@@ -302,6 +324,41 @@ WebInspector.contentLoaded = function()
     this._contentLoaded = true;
 
     this.runBootstrapOperations();
+};
+
+WebInspector._tabContentViewForType = function(tabType)
+{
+    switch (tabType) {
+    case WebInspector.ElementsTabContentView.Type:
+        return new WebInspector.ElementsTabContentView;
+    case WebInspector.ResourcesTabContentView.Type:
+        return new WebInspector.ResourcesTabContentView;
+    case WebInspector.TimelineTabContentView.Type:
+        return new WebInspector.TimelineTabContentView;
+    case WebInspector.DebuggerTabContentView.Type:
+        return new WebInspector.DebuggerTabContentView;
+    case WebInspector.ConsoleTabContentView.Type:
+        return new WebInspector.ConsoleTabContentView;
+    default:
+        console.error("Unknown tab type", tabType);
+    }
+
+    return null;
+};
+
+WebInspector._rememberOpenTabs = function()
+{
+    var openTabs = [];
+
+    for (var tabBarItem of this.tabBar.tabBarItems) {
+        var tabContentView = tabBarItem.representedObject;
+        if (tabContentView instanceof WebInspector.SettingsTabContentView)
+            continue;
+        console.assert(tabContentView.type, "Tab type can't be null, undefined, or empty string", tabContentView.type, tabContentView);
+        openTabs.push(tabContentView.type);
+    }
+
+    this._openTabsSetting.value = openTabs;
 };
 
 WebInspector.activateExtraDomains = function(domains)
@@ -922,8 +979,7 @@ WebInspector._windowBlurred = function(event)
 WebInspector._windowResized = function(event)
 {
     this.toolbar.updateLayout();
-
-    this._contentBrowserSizeDidChange(event);
+    this._tabBrowserSizeDidChange();
 };
 
 WebInspector._updateModifierKeys = function(event)
@@ -990,21 +1046,21 @@ WebInspector._updateDockNavigationItems = function()
     this.undockButtonNavigationItem.toggled = this._dockButtonToggledSetting.value;
 };
 
-WebInspector._contentBrowserSizeDidChange = function(event)
+WebInspector._tabBrowserSizeDidChange = function()
 {
-    this.contentBrowser.updateLayout();
+    this.tabBrowser.updateLayout();
     this.splitContentBrowser.updateLayout();
     this.quickConsole.updateLayout();
 };
 
 WebInspector._quickConsoleDidResize = function(event)
 {
-    this.contentBrowser.updateLayout();
+    this.tabBrowser.updateLayout();
 };
 
 WebInspector._sidebarWidthDidChange = function(event)
 {
-    this._contentBrowserSizeDidChange(event);
+    this._tabBrowserSizeDidChange();
 };
 
 WebInspector._updateToolbarHeight = function()
@@ -1041,6 +1097,18 @@ WebInspector._toolbarSizeModeDidChange = function(event)
         this._toolbarUndockedSizeModeSetting.value = this.toolbar.sizeMode;
 
     this._updateToolbarHeight();
+};
+
+WebInspector._tabBrowserSelectedTabContentViewDidChange = function(event)
+{
+    if (this.tabBar.selectedTabBarItem)
+        this._selectedTabIndexSetting.value = this.tabBar.tabBarItems.indexOf(this.tabBar.selectedTabBarItem);
+
+    if (!this.doesCurrentTabSupportSplitContentBrowser())
+        this.hideSplitConsole();
+
+    if (!this.isShowingSplitConsole())
+        this.quickConsole.consoleLogVisibilityChanged(this.isShowingConsoleTab());
 };
 
 WebInspector._initializeWebSocketIfNeeded = function()
@@ -1252,7 +1320,7 @@ WebInspector._domNodeWasInspected = function(event)
 
 WebInspector._inspectModeStateChanged = function(event)
 {
-    this._inspectModeToolbarButton.activated = WebInspector.domTreeManager.inspectModeEnabled;
+//    this._inspectModeToolbarButton.activated = WebInspector.domTreeManager.inspectModeEnabled;
 };
 
 WebInspector._toggleInspectMode = function(event)
@@ -1282,8 +1350,8 @@ WebInspector._showConsoleTab = function(event)
 
 WebInspector._focusedContentView = function()
 {
-    if (this.contentBrowser.element.isSelfOrAncestor(this.currentFocusElement))
-        return this.contentBrowser.currentContentView;
+    if (this.tabBrowser.element.isSelfOrAncestor(this.currentFocusElement))
+        return this.tabBrowser.selectedTabContentView;
     if (this.splitContentBrowser.element.isSelfOrAncestor(this.currentFocusElement))
         return  this.splitContentBrowser.currentContentView;
     return null;

@@ -148,7 +148,7 @@ body.docked.right #navigation-sidebar.collapsed > .resizer {
     flex: 1;
 }
 
-#content-browser {
+#tab-browser {
     flex: 1;
 }
 
