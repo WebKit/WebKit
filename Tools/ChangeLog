@@ -1,3 +1,12 @@
+2015-04-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [CMake][EFL] Remove unnecessary include, library path in WebKitTestRunner/PlatformEfl.cmake 
+        https://bugs.webkit.org/show_bug.cgi?id=144217
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/PlatformEfl.cmake:
+
 2015-04-26  Doug Russell  <d_russell@apple.com>
 
         AX: richer text change notifications (142719)
