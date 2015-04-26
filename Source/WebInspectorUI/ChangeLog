@@ -1,5 +1,44 @@
 2015-04-23  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Make Console work in a tab world
+        https://bugs.webkit.org/show_bug.cgi?id=144112
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector.isShowingConsoleTab):
+        (WebInspector.UIString):
+        (WebInspector.toggleNavigationSidebar):
+        (WebInspector.toggleDetailsSidebar):
+        (WebInspector.tabContentViewClassForRepresentedObject):
+        (WebInspector.linkifyStringAsFragment):
+        * UserInterface/Images/Console.svg: Added.
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.showConsole):
+        * UserInterface/Views/ConsoleTabContentView.js: Added.
+        (WebInspector.ConsoleTabContentView):
+        (WebInspector.ConsoleTabContentView.prototype.shown):
+        (WebInspector.ConsoleTabContentView.prototype.showRepresentedObject):
+        (WebInspector.ConsoleTabContentView.prototype.canShowRepresentedObject):
+        (WebInspector.ConsoleTabContentView.prototype.get supportsSplitContentBrowser):
+        * UserInterface/Views/DefaultDashboardView.js:
+        (WebInspector.DefaultDashboardView.prototype._consoleItemWasClicked):
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView):
+        (WebInspector.LogContentView.prototype.get navigationItems):
+        (WebInspector.LogContentView.prototype.shown):
+        (WebInspector.LogContentView.prototype.didAppendConsoleMessageView):
+        (WebInspector.LogContentView.prototype._showConsoleTab):
+        * UserInterface/Views/LogIcon.css:
+        (.log-icon .icon):
+        * UserInterface/Views/Main.css:
+        (#split-content-browser .hierarchical-path-component.log-icon .icon):
+        (#split-content-browser .hierarchical-path-component.log-icon .title):
+        (#split-content-browser .hierarchical-path-component.log-icon select):
+
+2015-04-23  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Make showing a content view work in the tab world
         https://bugs.webkit.org/show_bug.cgi?id=144110
 

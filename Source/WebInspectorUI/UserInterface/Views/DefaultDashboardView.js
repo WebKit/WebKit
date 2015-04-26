@@ -122,7 +122,7 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
 
     _consoleItemWasClicked(scope)
     {
-        WebInspector.showConsoleView(scope);
+        WebInspector.showConsoleTab(scope);
     }
 
     _setConsoleItemValue(itemName, newValue)

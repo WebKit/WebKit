@@ -63,7 +63,7 @@ InspectorFrontendAPI = {
 
     showConsole: function()
     {
-        WebInspector.showConsoleView();
+        WebInspector.showConsoleTab();
 
         WebInspector.quickConsole.prompt.focus();
 

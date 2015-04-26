@@ -227,7 +227,7 @@ WebInspector.contentLoaded = function()
 
     this._consoleRepresentedObject = new WebInspector.LogObject;
     this._consoleTreeElement = new WebInspector.LogTreeElement(this._consoleRepresentedObject);
-    this.consoleContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(this._consoleRepresentedObject);
+    this.consoleContentView = WebInspector.splitContentBrowser.contentViewForRepresentedObject(this._consoleRepresentedObject);
     this.consoleLogViewController = this.consoleContentView.logViewController;
 
     // FIXME: The sidebars should be flipped in RTL languages.
@@ -250,7 +250,7 @@ WebInspector.contentLoaded = function()
     this._reloadPageKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "R", this._reloadPage.bind(this));
     this._reloadPageIgnoringCacheKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "R", this._reloadPageIgnoringCache.bind(this));
 
-    this._consoleKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Option | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "C", this.toggleConsoleView.bind(this));
+    this._consoleKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Option | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "C", this._showConsoleTab.bind(this));
 
     this._inspectModeKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "C", this._toggleInspectMode.bind(this));
 
@@ -427,12 +427,8 @@ WebInspector.sidebarPanelForRepresentedObject = function(representedObject)
 WebInspector.contentBrowserTreeElementForRepresentedObject = function(contentBrowser, representedObject)
 {
     // The console does not have a sidebar, so return a tree element here so something is shown.
-    if (representedObject instanceof WebInspector.LogObject)
+    if (representedObject === this._consoleRepresentedObject)
         return this._consoleTreeElement;
-
-    var sidebarPanel = this.sidebarPanelForRepresentedObject(representedObject);
-    if (sidebarPanel)
-        return sidebarPanel.treeElementForRepresentedObject(representedObject);
     return null;
 };
 
@@ -575,16 +571,16 @@ WebInspector.isShowingSplitConsole = function()
     return !this.splitContentBrowser.element.classList.contains("hidden");
 };
 
-WebInspector.currentViewSupportsSplitContentBrowser = function()
+WebInspector.doesCurrentTabSupportSplitContentBrowser = function()
 {
-    var currentContentView = this.contentBrowser.currentContentView;
+    var currentContentView = this.tabBrowser.selectedTabContentView;
     return !currentContentView || currentContentView.supportsSplitContentBrowser;
 };
 
 WebInspector.toggleSplitConsole = function()
 {
-    if (!this.currentViewSupportsSplitContentBrowser()) {
-        this.toggleConsoleView();
+    if (!this.doesCurrentTabSupportSplitContentBrowser()) {
+        this.showConsoleTab();
         return;
     }
 
@@ -596,8 +592,8 @@ WebInspector.toggleSplitConsole = function()
 
 WebInspector.showSplitConsole = function()
 {
-    if (!this.currentViewSupportsSplitContentBrowser()) {
-        this.showFullHeightConsole();
+    if (!this.doesCurrentTabSupportSplitContentBrowser()) {
+        this.showConsoleTab();
         return;
     }
 
@@ -606,18 +602,14 @@ WebInspector.showSplitConsole = function()
     this._showingSplitConsoleSetting.value = true;
 
     if (this.splitContentBrowser.currentContentView !== this.consoleContentView) {
-        var wasShowingFullConsole = this.isShowingConsoleView();
-
-        // Be sure to close any existing log view in the main content browser before showing it in the
+        // Be sure to close the view in the tab content browser before showing it in the
         // split content browser. We can only show a content view in one browser at a time.
-        this.contentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.LogContentView);
+        if (this.consoleContentView.parentContainer)
+            this.consoleContentView.parentContainer.closeContentView(this.consoleContentView);
         this.splitContentBrowser.showContentView(this.consoleContentView);
-
-        if (wasShowingFullConsole && !this.contentBrowser.currentContentView)
-            this.resourceSidebarPanel.showDefaultContentView();
     } else {
         // This causes the view to know it was shown and focus the prompt.
-        this.splitContentBrowser.contentViewContainer.shown();
+        this.splitContentBrowser.shown();
     }
 
     this.quickConsole.consoleLogVisibilityChanged(true);
@@ -625,63 +617,40 @@ WebInspector.showSplitConsole = function()
 
 WebInspector.hideSplitConsole = function()
 {
+    if (!this.isShowingSplitConsole())
+        return;
+
     this.splitContentBrowser.element.classList.add("hidden");
 
     this._showingSplitConsoleSetting.value = false;
 
     // This causes the view to know it was hidden.
-    this.splitContentBrowser.contentViewContainer.hidden();
+    this.splitContentBrowser.hidden();
 
     this.quickConsole.consoleLogVisibilityChanged(false);
 };
 
-WebInspector.showFullHeightConsole = function(requestedScope)
+WebInspector.showConsoleTab = function(requestedScope)
 {
-    this.splitContentBrowser.element.classList.add("hidden");
-
-    this._showingSplitConsoleSetting.value = false;
+    this.hideSplitConsole();
 
     var scope = requestedScope || WebInspector.LogContentView.Scopes.All;
 
     // If the requested scope is already selected and the console is showing, then switch back to All.
-    if (this.isShowingConsoleView() && this.consoleContentView.scopeBar.item(scope).selected)
+    if (this.isShowingConsoleTab() && this.consoleContentView.scopeBar.item(scope).selected)
         scope = WebInspector.LogContentView.Scopes.All;
 
     if (requestedScope || !this.consoleContentView.scopeBar.selectedItems.length)
         this.consoleContentView.scopeBar.item(scope).selected = true;
 
-    if (!this.contentBrowser.currentContentView || this.contentBrowser.currentContentView !== this.consoleContentView) {
-        // Be sure to close any existing log view in the split content browser before showing it in the
-        // main content browser. We can only show a content view in one browser at a time.
-        this.splitContentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.LogContentView);
-        this.contentBrowser.showContentView(this.consoleContentView);
-    }
+    this.showRepresentedObject(this._consoleRepresentedObject);
 
-    console.assert(this.isShowingConsoleView());
-    console.assert(this._consoleToolbarButton.activated);
-
-    this.quickConsole.consoleLogVisibilityChanged(true);
+    console.assert(this.isShowingConsoleTab());
 };
 
-WebInspector.isShowingConsoleView = function()
+WebInspector.isShowingConsoleTab = function()
 {
-    return this.contentBrowser.currentContentView instanceof WebInspector.LogContentView;
-};
-
-WebInspector.showConsoleView = function(scope)
-{
-    this.showFullHeightConsole(scope);
-};
-
-WebInspector.toggleConsoleView = function()
-{
-    if (this.isShowingConsoleView()) {
-        if (this.contentBrowser.canGoBack())
-            this.contentBrowser.goBack();
-        else
-            this.resourceSidebarPanel.showDefaultContentView();
-    } else
-        this.showFullHeightConsole();
+    return this.tabBrowser.selectedTabContentView instanceof WebInspector.ConsoleTabContentView;
 };
 
 WebInspector.UIString = function(string, vararg)
@@ -1659,6 +1628,11 @@ WebInspector._reloadPageIgnoringCache = function(event)
 WebInspector._toggleInspectMode = function(event)
 {
     this.domTreeManager.inspectModeEnabled = !this.domTreeManager.inspectModeEnabled;
+};
+
+WebInspector._showConsoleTab = function(event)
+{
+    this.showConsoleTab();
 };
 
 WebInspector._focusedContentView = function()

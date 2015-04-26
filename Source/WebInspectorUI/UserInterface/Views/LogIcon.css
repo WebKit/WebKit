@@ -24,5 +24,5 @@
  */
 
 .log-icon .icon {
-    content: -webkit-image-set(url(../Images/Log.png) 1x, url(../Images/Log@2x.png) 2x);
+    content: url(../Images/Console.svg);
 }
