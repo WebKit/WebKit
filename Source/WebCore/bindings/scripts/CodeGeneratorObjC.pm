@@ -217,6 +217,8 @@ my $implementationLicenseTemplate = << "EOF";
  */
 EOF
 
+my $TBDAvailabilityVersion = "9876_5";
+
 # Default constructor
 sub new
 {
@@ -297,7 +299,7 @@ sub ReadPublicInterfaces
 
     # If this class was not found in PublicDOMInterfaces.h then it should be considered as an entirely new public class.
     $newPublicClass = !$found;
-    $interfaceAvailabilityVersion = "TBD" if $newPublicClass;
+    $interfaceAvailabilityVersion = $TBDAvailabilityVersion if $newPublicClass;
 }
 
 sub AddMethodsConstantsAndAttributesFromParentInterfaces

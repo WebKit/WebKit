@@ -202,7 +202,7 @@ WEBKIT_LEGACY_PRIVATE_HEADERS = $(addprefix $(PRIVATE_HEADERS_DIR)/, $(filter-ou
 WEBKIT_LEGACY_HEADER_REPLACE_RULES = -e s/\<WebKitLegacy/\<WebKit/
 WEBKIT_LEGACY_HEADER_MIGRATE_CMD = sed $(WEBKIT_LEGACY_HEADER_REPLACE_RULES) $< > $@
 
-PUBLIC_HEADER_CHECK_CMD = @if grep -q "AVAILABLE.*TBD" "$<"; then line=$$(awk "/AVAILABLE.*TBD/ { print FNR; exit }" "$<" ); echo "$<:$$line: error: A class within a public header has unspecified availability."; false; fi
+PUBLIC_HEADER_CHECK_CMD = @if grep -q "AVAILABLE.*9876_5" "$<"; then line=$$(awk "/AVAILABLE.*9876_5/ { print FNR; exit }" "$<" ); echo "$<:$$line: error: A class within a public header has unspecified availability."; false; fi
 
 $(PUBLIC_HEADERS_DIR)/% : $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/% MigrateHeadersFromWebKitLegacy.make
 	$(PUBLIC_HEADER_CHECK_CMD)

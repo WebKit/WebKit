@@ -1,3 +1,20 @@
+2015-04-25  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of <rdar://problem/20697966> Avoid using TBD as an argument to NS_AVAILABLE
+        https://bugs.webkit.org/show_bug.cgi?id=144201
+
+        Reviewed by Darin Adler.
+
+        Instead of TBD, use the high version number to which it corresponds in CFAvailability.h,
+        9876.5.
+
+        * bindings/objc/WebKitAvailability.h: Added a definition of __NSi_9876_5, so that we can
+        use 9876_5 in availability macros. Removed the definition of
+        __AVAILABILITY_INTERNAL__MAC_TBD, which will no longer be used.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (ReadPublicInterfaces): Use 9876_5 instead of TBD.
+
 2015-04-25  Timothy Hatcher  <timothy@apple.com>
 
         Update localized strings.
