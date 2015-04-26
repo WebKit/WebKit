@@ -138,7 +138,11 @@ public:
     LValue bitNot(LValue value) { return buildNot(m_builder, value); }
     
     LValue insertElement(LValue vector, LValue element, LValue index) { return buildInsertElement(m_builder, vector, element, index); }
-    
+
+    LValue ctlz32(LValue xOperand, LValue yOperand)
+    {
+        return call(ctlz32Intrinsic(), xOperand, yOperand);
+    }
     LValue addWithOverflow32(LValue left, LValue right)
     {
         return call(addWithOverflow32Intrinsic(), left, right);

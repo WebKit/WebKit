@@ -46,6 +46,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncATanh(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncATan2(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncCbrt(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncCeil(ExecState*);
+EncodedJSValue JSC_HOST_CALL mathProtoFuncClz32(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncCos(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncCosh(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncExp(ExecState*);
@@ -106,6 +107,7 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "atan2"), 2, mathProtoFuncATan2, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "cbrt"), 1, mathProtoFuncCbrt, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "ceil"), 1, mathProtoFuncCeil, CeilIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "clz32"), 1, mathProtoFuncClz32, Clz32Intrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "cos"), 1, mathProtoFuncCos, CosIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "cosh"), 1, mathProtoFuncCosh, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "exp"), 1, mathProtoFuncExp, ExpIntrinsic, DontEnum | Function);
@@ -164,6 +166,14 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncATan2(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL mathProtoFuncCeil(ExecState* exec)
 {
     return JSValue::encode(jsNumber(ceil(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncClz32(ExecState* exec)
+{
+    uint32_t value = exec->argument(0).toUInt32(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsNull());
+    return JSValue::encode(JSValue(clz32(value)));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncCos(ExecState* exec)

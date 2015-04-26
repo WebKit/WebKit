@@ -1,3 +1,29 @@
+2015-04-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Implement Math.clz32(), remove Number.clz()
+        https://bugs.webkit.org/show_bug.cgi?id=144205
+
+        Reviewed by Michael Saboff.
+
+        Basic conformance tests.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/math-clz32-expected.txt: Added.
+        * js/math-clz32.html: Renamed from LayoutTests/js/number-clz.html.
+        * js/number-clz-expected.txt: Removed.
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/math-clz32.js: Added.
+        (objectConvertToString.toString):
+        (objectRecordToStringCall.toString):
+        (objectThrowOnToString.toString):
+        (objectWithValueOf.valueOf):
+        (objectThrowOnValueOf.valueOf):
+        (objectThrowOnValueOf.toString):
+        (objectRecordValueOfCall.valueOf):
+        (objectRecordConversionCalls.toString):
+        (objectRecordConversionCalls.valueOf):
+        * js/script-tests/number-clz.js: Removed.
+
 2015-04-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Array.from need to accept iterables

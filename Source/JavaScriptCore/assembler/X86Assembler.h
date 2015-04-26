@@ -263,6 +263,7 @@ private:
         OP2_3BYTE_ESCAPE    = 0xAE,
         OP2_IMUL_GvEv       = 0xAF,
         OP2_MOVZX_GvEb      = 0xB6,
+        OP2_BSR             = 0xBD,
         OP2_MOVSX_GvEb      = 0xBE,
         OP2_MOVZX_GvEw      = 0xB7,
         OP2_MOVSX_GvEw      = 0xBF,
@@ -819,6 +820,11 @@ public:
     }
 
 #endif
+
+    void bsr_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_BSR, dst, src);
+    }
 
     void sarl_i8r(int imm, RegisterID dst)
     {

@@ -35,6 +35,7 @@ enum Intrinsic {
     MaxIntrinsic,
     SqrtIntrinsic,
     SinIntrinsic,
+    Clz32Intrinsic,
     CosIntrinsic,
     ArrayPushIntrinsic,
     ArrayPopIntrinsic,

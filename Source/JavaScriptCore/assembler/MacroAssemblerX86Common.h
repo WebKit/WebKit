@@ -183,6 +183,18 @@ public:
         and32(imm, dest);
     }
 
+    void countLeadingZeros32(RegisterID src, RegisterID dst)
+    {
+        m_assembler.bsr_rr(src, dst);
+        Jump srcIsNonZero = m_assembler.jCC(x86Condition(NonZero));
+        move(TrustedImm32(32), dst);
+
+        Jump skipNonZeroCase = jump();
+        srcIsNonZero.link(this);
+        xor32(TrustedImm32(0x1f), dst);
+        skipNonZeroCase.link(this);
+    }
+
     void lshift32(RegisterID shift_amount, RegisterID dest)
     {
         ASSERT(shift_amount != dest);

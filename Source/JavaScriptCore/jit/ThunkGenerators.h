@@ -120,6 +120,7 @@ MacroAssemblerCodeRef baselineSetterReturnThunkGenerator(VM* vm);
 
 MacroAssemblerCodeRef charCodeAtThunkGenerator(VM*);
 MacroAssemblerCodeRef charAtThunkGenerator(VM*);
+MacroAssemblerCodeRef clz32ThunkGenerator(VM*);
 MacroAssemblerCodeRef fromCharCodeThunkGenerator(VM*);
 MacroAssemblerCodeRef absThunkGenerator(VM*);
 MacroAssemblerCodeRef ceilThunkGenerator(VM*);

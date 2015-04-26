@@ -132,6 +132,7 @@ namespace JSC { namespace DFG {
     \
     /* Nodes for arithmetic operations. */\
     macro(ArithAdd, NodeResultNumber) \
+    macro(ArithClz32, NodeResultInt32) \
     macro(ArithSub, NodeResultNumber) \
     macro(ArithNegate, NodeResultNumber) \
     macro(ArithMul, NodeResultNumber) \

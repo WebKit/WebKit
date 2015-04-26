@@ -2011,6 +2011,10 @@ void SpeculativeJIT::compile(Node* node)
         compileAdd(node);
         break;
 
+    case ArithClz32:
+        compileArithClz32(node);
+        break;
+
     case MakeRope:
         compileMakeRope(node);
         break;

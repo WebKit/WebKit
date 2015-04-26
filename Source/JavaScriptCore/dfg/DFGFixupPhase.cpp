@@ -119,6 +119,12 @@ private:
             node->child2().setUseKind(Int32Use);
             break;
         }
+
+        case ArithClz32: {
+            fixIntConvertingEdge(node->child1());
+            node->setArithMode(Arith::Unchecked);
+            break;
+        }
             
         case UInt32ToNumber: {
             fixIntConvertingEdge(node->child1());

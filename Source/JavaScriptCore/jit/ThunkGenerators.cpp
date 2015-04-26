@@ -646,6 +646,27 @@ MacroAssemblerCodeRef fromCharCodeThunkGenerator(VM* vm)
     return jit.finalize(vm->jitStubs->ctiNativeTailCall(vm), "fromCharCode");
 }
 
+MacroAssemblerCodeRef clz32ThunkGenerator(VM* vm)
+{
+    SpecializedThunkJIT jit(vm, 1);
+    MacroAssembler::Jump nonIntArgJump;
+    jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntArgJump);
+
+    SpecializedThunkJIT::Label convertedArgumentReentry(&jit);
+    jit.countLeadingZeros32(SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
+    jit.returnInt32(SpecializedThunkJIT::regT1);
+
+    if (jit.supportsFloatingPointTruncate()) {
+        nonIntArgJump.link(&jit);
+        jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
+        jit.branchTruncateDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::BranchIfTruncateSuccessful).linkTo(convertedArgumentReentry, &jit);
+        jit.appendFailure(jit.jump());
+    } else
+        jit.appendFailure(nonIntArgJump);
+
+    return jit.finalize(vm->jitStubs->ctiNativeTailCall(vm), "clz32");
+}
+
 MacroAssemblerCodeRef sqrtThunkGenerator(VM* vm)
 {
     SpecializedThunkJIT jit(vm, 1);

@@ -478,6 +478,9 @@ private:
         case ArithSub:
             compileArithAddOrSub();
             break;
+        case ArithClz32:
+            compileArithClz32();
+            break;
         case ArithMul:
             compileArithMul();
             break;
@@ -1318,6 +1321,13 @@ private:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             break;
         }
+    }
+
+    void compileArithClz32()
+    {
+        LValue operand = lowInt32(m_node->child1());
+        LValue isZeroUndef = m_out.booleanFalse;
+        setInt32(m_out.ctlz32(operand, isZeroUndef));
     }
     
     void compileArithMul()

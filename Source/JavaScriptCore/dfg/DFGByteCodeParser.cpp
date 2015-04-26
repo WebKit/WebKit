@@ -2000,6 +2000,16 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         set(VirtualRegister(resultOperand), charCode);
         return true;
     }
+    case Clz32Intrinsic: {
+        insertChecks();
+        if (argumentCountIncludingThis == 1)
+            set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_graph.freeze(jsNumber(32)))));
+        else {
+            Node* operand = get(virtualRegisterForArgument(1, registerOffset));
+            set(VirtualRegister(resultOperand), addToGraph(ArithClz32, operand));
+        }
+        return true;
+    }
     case FromCharCodeIntrinsic: {
         if (argumentCountIncludingThis != 2)
             return false;

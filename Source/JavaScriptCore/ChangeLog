@@ -1,3 +1,97 @@
+2015-04-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Implement Math.clz32(), remove Number.clz()
+        https://bugs.webkit.org/show_bug.cgi?id=144205
+
+        Reviewed by Michael Saboff.
+
+        This patch adds the ES6 function Math.clz32(), and remove the non-standard
+        Number.clz(). Number.clz() probably came from an older draft.
+
+        The new function has a corresponding instrinsic: Clz32Intrinsic,
+        and a corresponding DFG node: ArithClz32, optimized all the way to LLVM.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::countLeadingZeros32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::bsr_rr):
+        The x86 assembler did not have countLeadingZeros32() because there is
+        no native CLZ instruction on that architecture.
+
+        I have added the version with bsr + branches for the case of zero.
+        An other popular version uses cmov to handle the case of zero. I kept
+        it simple since the Assembler has no support for cmov.
+
+        It is unlikely to matter much. If the code is hot enough, LLVM picks
+        something good based on the surrounding code.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        Constant handling + effect propagation. The node only produces integer (between 0 and 32).
+
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        Thanks to the definition of toUint32(), we can ignore plenty of details
+        from doubles.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithClz32):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileArithClz32):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::ctlz32):
+        * jit/ThunkGenerators.cpp:
+        (JSC::clz32ThunkGenerator):
+        * jit/ThunkGenerators.h:
+        * runtime/Intrinsic.h:
+        * runtime/MathCommon.h:
+        (JSC::clz32):
+        Fun fact: InstCombine does not recognize this pattern to eliminate
+        the branch which makes our FTL version better than the C version.
+
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        (JSC::mathProtoFuncClz32):
+        * runtime/NumberPrototype.cpp:
+        (JSC::clz): Deleted.
+        (JSC::numberProtoFuncClz): Deleted.
+        * runtime/VM.cpp:
+        (JSC::thunkGeneratorForIntrinsic):
+        * tests/stress/math-clz32-basics.js: Added.
+        (mathClz32OnInteger):
+        (testMathClz32OnIntegers):
+        (verifyMathClz32OnIntegerWithOtherTypes):
+        (mathClz32OnDouble):
+        (testMathClz32OnDoubles):
+        (verifyMathClz32OnDoublesWithOtherTypes):
+        (mathClz32NoArguments):
+        (mathClz32TooManyArguments):
+        (testMathClz32OnConstants):
+        (mathClz32StructTransition):
+        (Math.clz32):
+
 2015-04-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Array.from need to accept iterables

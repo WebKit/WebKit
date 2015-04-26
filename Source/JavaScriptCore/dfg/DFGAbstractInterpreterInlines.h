@@ -425,7 +425,18 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         }
         break;
     }
-        
+
+    case ArithClz32: {
+        JSValue operand = forNode(node->child1()).value();
+        if (operand && operand.isNumber()) {
+            uint32_t value = toUInt32(operand.asNumber());
+            setConstant(node, jsNumber(clz32(value)));
+            break;
+        }
+        forNode(node).setType(SpecInt32);
+        break;
+    }
+
     case MakeRope: {
         forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
         break;
