@@ -993,7 +993,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             }
         }
 
-        WebInspector.resourceSidebarPanel.showSourceCodeLocation(sourceCodeLocation);
+        WebInspector.showSourceCodeLocation(sourceCodeLocation);
     }
 
     tokenTrackingControllerNewHighlightCandidate(tokenTrackingController, candidate)

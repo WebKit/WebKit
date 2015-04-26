@@ -92,8 +92,7 @@ InspectorFrontendAPI = {
     showMainResourceForFrame: function(frameIdentifier)
     {
         WebInspector.ignoreLastContentCookie = true;
-        WebInspector.navigationSidebar.selectedSidebarPanel = WebInspector.resourceSidebarPanel;
-        WebInspector.resourceSidebarPanel.showSourceCodeForFrame(frameIdentifier, true);
+        WebInspector.showSourceCodeForFrame(frameIdentifier, true);
     },
 
     contextMenuItemSelected: function(id)

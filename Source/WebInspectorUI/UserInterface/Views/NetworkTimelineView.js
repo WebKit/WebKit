@@ -151,7 +151,7 @@ WebInspector.NetworkTimelineView.prototype = {
     showContentViewForTreeElement: function(treeElement)
     {
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
-            WebInspector.resourceSidebarPanel.showSourceCode(treeElement.representedObject);
+            WebInspector.showSourceCode(treeElement.representedObject);
             return true;
         }
 

@@ -206,7 +206,7 @@ WebInspector.TimelineView.prototype = {
             return true;
         }
 
-        WebInspector.resourceSidebarPanel.showOriginalOrFormattedSourceCodeLocation(sourceCodeLocation);
+        WebInspector.showOriginalOrFormattedSourceCodeLocation(sourceCodeLocation);
         return true;
     },
 

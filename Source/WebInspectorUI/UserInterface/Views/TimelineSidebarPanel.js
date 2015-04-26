@@ -25,9 +25,11 @@
 
 WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspector.NavigationSidebarPanel
 {
-    constructor()
+    constructor(contentBrowser)
     {
         super("timeline", WebInspector.UIString("Timelines"));
+
+        this.contentBrowser = contentBrowser;
 
         this._timelineEventsTitleBarElement = document.createElement("div");
         this._timelineEventsTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TitleBarStyleClass);
@@ -120,7 +122,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingCreated, this._recordingCreated, this);
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingLoaded, this._recordingLoaded, this);
 
-        WebInspector.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
+        this.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStarted, this._capturingStarted, this);
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
     }
@@ -132,7 +134,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         super.shown();
 
         if (this._displayedContentView)
-            WebInspector.contentBrowser.showContentView(this._displayedContentView);
+            this.contentBrowser.showContentView(this._displayedContentView);
     }
 
     showDefaultContentView()
@@ -236,7 +238,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             this._timelinesTreeOutline.selectedTreeElement.deselect();
 
         this._displayedContentView.showOverviewTimelineView();
-        WebInspector.contentBrowser.showContentView(this._displayedContentView);
+        this.contentBrowser.showContentView(this._displayedContentView);
     }
 
     showTimelineViewForTimeline(timeline)
@@ -284,7 +286,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
     {
         console.assert(cookie);
 
-        cookie[WebInspector.TimelineSidebarPanel.ShowingTimelineRecordingContentViewCookieKey] = WebInspector.contentBrowser.currentContentView instanceof WebInspector.TimelineRecordingContentView;
+        cookie[WebInspector.TimelineSidebarPanel.ShowingTimelineRecordingContentViewCookieKey] = this.contentBrowser.currentContentView instanceof WebInspector.TimelineRecordingContentView;
 
         var selectedTreeElement = this._timelinesTreeOutline.selectedTreeElement;
         if (selectedTreeElement)
@@ -356,12 +358,12 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         console.assert(this._displayedRecording.timelines.get(timeline.type) === timeline, timeline);
 
         this._displayedContentView.showTimelineViewForTimeline(timeline);
-        WebInspector.contentBrowser.showContentView(this._displayedContentView);
+        this.contentBrowser.showContentView(this._displayedContentView);
     }
 
     _contentBrowserCurrentContentViewDidChange(event)
     {
-        var didShowTimelineRecordingContentView = WebInspector.contentBrowser.currentContentView instanceof WebInspector.TimelineRecordingContentView;
+        var didShowTimelineRecordingContentView = this.contentBrowser.currentContentView instanceof WebInspector.TimelineRecordingContentView;
         this.element.classList.toggle(WebInspector.TimelineSidebarPanel.TimelineRecordingContentViewShowingStyleClass, didShowTimelineRecordingContentView);
     }
 
@@ -423,9 +425,9 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         for (var timeline of recording.timelines.values())
             this._timelineAdded(timeline);
 
-        this._displayedContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(this._displayedRecording, false, {timelineSidebarPanel: this});
+        this._displayedContentView = this.contentBrowser.contentViewForRepresentedObject(this._displayedRecording, false, {timelineSidebarPanel: this});
         if (this.selected)
-            WebInspector.contentBrowser.showContentView(this._displayedContentView);
+            this.contentBrowser.showContentView(this._displayedContentView);
     }
 
     _recordingLoaded(event)

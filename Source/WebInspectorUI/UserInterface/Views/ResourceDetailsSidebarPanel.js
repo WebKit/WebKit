@@ -398,7 +398,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
     _goToRequestDataClicked()
     {
-        WebInspector.resourceSidebarPanel.showResourceRequest(this._resource);
+        WebInspector.showResourceRequest(this._resource);
     }
 
     _refreshRequestDataSection()

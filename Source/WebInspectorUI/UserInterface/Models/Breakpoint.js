@@ -241,7 +241,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 
         function revealOriginalSourceCodeLocation()
         {
-            WebInspector.resourceSidebarPanel.showOriginalOrFormattedSourceCodeLocation(this._sourceCodeLocation);
+            WebInspector.showOriginalOrFormattedSourceCodeLocation(this._sourceCodeLocation);
         }
 
         if (WebInspector.debuggerManager.isBreakpointEditable(this))

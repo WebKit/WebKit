@@ -76,6 +76,16 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
     // Public
 
+    get contentBrowser()
+    {
+        return this._contentBrowser;
+    }
+
+    set contentBrowser(contentBrowser)
+    {
+        this._contentBrowser = contentBrowser || null;
+    }
+
     get contentTreeOutlineElement()
     {
         return this._contentTreeOutline.element;
@@ -477,8 +487,9 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         this._updateContentOverflowShadowVisibility();
 
         // Filter may have hidden the selected resource in the timeline view, which should now notify its listeners.
+        // FIXME: This is a layering violation. This should at least be in TimelineSidebarPanel.
         if (selectedTreeElement && selectedTreeElement.hidden !== selectionWasHidden) {
-            var currentContentView = WebInspector.contentBrowser.currentContentView;
+            var currentContentView = this.contentBrowser.currentContentView;
             if (currentContentView instanceof WebInspector.TimelineRecordingContentView && typeof currentContentView.currentTimelineView.filterUpdated === "function")
                 currentContentView.currentTimelineView.filterUpdated();
         }

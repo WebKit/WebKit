@@ -83,6 +83,6 @@ WebInspector.DOMTreeDataGridNode.prototype = {
 
     _goToArrowWasClicked: function()
     {
-        WebInspector.resourceSidebarPanel.showMainFrameDOMTree(this._domNode, true);
+        WebInspector.showMainFrameDOMTree(this._domNode);
     }
 };

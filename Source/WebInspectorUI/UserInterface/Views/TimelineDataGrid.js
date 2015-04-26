@@ -487,6 +487,6 @@ WebInspector.TimelineDataGrid.prototype = {
         if (!callFrame.sourceCodeLocation)
             return;
 
-        WebInspector.resourceSidebarPanel.showSourceCodeLocation(callFrame.sourceCodeLocation);
+        WebInspector.showSourceCodeLocation(callFrame.sourceCodeLocation);
     }
 };

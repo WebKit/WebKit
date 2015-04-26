@@ -187,6 +187,12 @@ WebInspector.ContentBrowser.prototype = {
         return this._contentViewContainer.contentViewForRepresentedObject(representedObject, onlyExisting, extraArguments);
     },
 
+    updateHierarchicalPathForCurrentContentView: function()
+    {
+        var currentContentView = this.currentContentView;
+        this._updateHierarchicalPathNavigationItem(currentContentView ? currentContentView.representedObject : null);
+    },
+
     canGoBack: function()
     {
         var currentContentView = this.currentContentView;

@@ -128,6 +128,7 @@ WebInspector.loaded = function()
     this.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.InspectModeStateChanged, this._inspectModeStateChanged, this);
     this.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.DOMNodeWasInspected, this._domNodeWasInspected, this);
     this.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
+    this.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.FrameWasAdded, this._frameWasAdded, this);
 
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
@@ -547,7 +548,7 @@ WebInspector.openURL = function(url, frame, alwaysOpenExternally, lineNumber)
     var resource = frame.url === url ? frame.mainResource : frame.resourceForURL(url, searchChildFrames);
     if (resource) {
         var position = new WebInspector.SourceCodePosition(lineNumber, 0);
-        this.resourceSidebarPanel.showSourceCode(resource, position);
+        this.showSourceCode(resource, position);
         return;
     }
 
@@ -732,6 +733,141 @@ WebInspector.toggleDetailsSidebar = function(event)
     this.detailsSidebar.collapsed = false;
 };
 
+WebInspector.tabContentViewClassForRepresentedObject = function(representedObject)
+{
+    if (representedObject instanceof WebInspector.DOMTree)
+        return WebInspector.ElementsTabContentView;
+
+    if (representedObject instanceof WebInspector.TimelineRecording)
+        return WebInspector.TimelineTabContentView;
+
+    // We only support one console tab right now. So this isn't an instanceof check.
+    if (representedObject === this._consoleRepresentedObject)
+        return WebInspector.ConsoleTabContentView;
+
+    if (WebInspector.debuggerManager.paused) {
+        if (representedObject instanceof WebInspector.Script)
+            return WebInspector.DebuggerTabContentView;
+
+        if (representedObject instanceof WebInspector.Resource && (representedObject.type === WebInspector.Resource.Type.Document || representedObject.type === WebInspector.Resource.Type.Script))
+            return WebInspector.DebuggerTabContentView;
+    }
+
+    if (representedObject instanceof WebInspector.Frame || representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Script)
+        return WebInspector.ResourcesTabContentView;
+
+    // FIXME: Move Content Flows to the Elements tab?
+    if (representedObject instanceof WebInspector.ContentFlow)
+        return WebInspector.ResourcesTabContentView;
+
+    // FIXME: Move these to a Storage tab.
+    if (representedObject instanceof WebInspector.DOMStorageObject || representedObject instanceof WebInspector.CookieStorageObject ||
+        representedObject instanceof WebInspector.DatabaseTableObject || representedObject instanceof WebInspector.DatabaseObject ||
+        representedObject instanceof WebInspector.ApplicationCacheFrame || representedObject instanceof WebInspector.IndexedDatabaseObjectStore ||
+        representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex)
+        return WebInspector.ResourcesTabContentView;
+
+    return null;
+};
+
+WebInspector.tabContentViewForRepresentedObject = function(representedObject)
+{
+    var tabContentView = this.tabBrowser.bestTabContentViewForRepresentedObject(representedObject);
+    if (tabContentView)
+        return tabContentView;
+
+    var tabContentViewClass = this.tabContentViewClassForRepresentedObject(representedObject);
+    if (!tabContentViewClass) {
+        console.error("Unknown representedObject, couldn't create TabContentView.", representedObject);
+        return null;
+    }
+
+    tabContentView = new tabContentViewClass;
+
+    this.tabBrowser.addTabForContentView(tabContentView);
+
+    return tabContentView;
+};
+
+WebInspector.showRepresentedObject = function(representedObject, cookie, forceShowTab)
+{
+    var tabContentView = this.tabContentViewForRepresentedObject(representedObject);
+    console.assert(tabContentView);
+    if (!tabContentView)
+        return;
+
+    if (window.event || forceShowTab)
+        this.tabBrowser.showTabForContentView(tabContentView);
+
+    tabContentView.showRepresentedObject(representedObject, cookie);
+};
+
+WebInspector.showMainFrameDOMTree = function(nodeToSelect, forceShowTab)
+{
+    console.assert(WebInspector.frameResourceManager.mainFrame);
+    if (!WebInspector.frameResourceManager.mainFrame)
+        return;
+    this.showRepresentedObject(WebInspector.frameResourceManager.mainFrame.domTree, {nodeToSelect}, forceShowTab);
+};
+
+WebInspector.showContentFlowDOMTree = function(contentFlow, nodeToSelect, forceShowTab)
+{
+    this.showRepresentedObject(contentFlow, {nodeToSelect}, forceShowTab);
+};
+
+WebInspector.showSourceCodeForFrame = function(frameIdentifier, forceShowTab)
+{
+    var frame = WebInspector.frameResourceManager.frameForIdentifier(frameIdentifier);
+    if (!frame) {
+        this._frameIdentifierToShowSourceCodeWhenAvailable = frameIdentifier;
+        return;
+    }
+
+    this._frameIdentifierToShowSourceCodeWhenAvailable = undefined;
+
+    this.showRepresentedObject(frame, null, forceShowTab);
+};
+
+WebInspector.showSourceCode = function(sourceCode, positionToReveal, textRangeToSelect, forceUnformatted, forceShowTab)
+{
+    console.assert(!positionToReveal || positionToReveal instanceof WebInspector.SourceCodePosition, positionToReveal);
+    var representedObject = sourceCode;
+
+    if (representedObject instanceof WebInspector.Script) {
+        // A script represented by a resource should always show the resource.
+        representedObject = representedObject.resource || representedObject;
+    }
+
+    var cookie = positionToReveal ? {lineNumber: positionToReveal.lineNumber, columnNumber: positionToReveal.columnNumber} : {};
+    this.showRepresentedObject(representedObject, cookie, forceShowTab);
+};
+
+WebInspector.showSourceCodeLocation = function(sourceCodeLocation, forceShowTab)
+{
+    this.showSourceCode(sourceCodeLocation.displaySourceCode, sourceCodeLocation.displayPosition(), null, false, forceShowTab);
+};
+
+WebInspector.showOriginalUnformattedSourceCodeLocation = function(sourceCodeLocation, forceShowTab)
+{
+    this.showSourceCode(sourceCodeLocation.sourceCode, sourceCodeLocation.position(), null, true);
+};
+
+WebInspector.showOriginalOrFormattedSourceCodeLocation = function(sourceCodeLocation, forceShowTab)
+{
+    this.showSourceCode(sourceCodeLocation.sourceCode, sourceCodeLocation.formattedPosition(), null, false, forceShowTab);
+};
+
+WebInspector.showOriginalOrFormattedSourceCodeTextRange = function(sourceCodeTextRange, forceShowTab)
+{
+    var textRangeToSelect = sourceCodeTextRange.formattedTextRange;
+    this.showSourceCode(sourceCodeTextRange.sourceCode, textRangeToSelect.startPosition(), textRangeToSelect, false, forceShowTab);
+};
+
+WebInspector.showResourceRequest = function(resource, forceShowTab)
+{
+    this.showRepresentedObject(resource, {[WebInspector.ResourceClusterContentView.ContentViewIdentifierCookieKey]: WebInspector.ResourceClusterContentView.RequestIdentifier}, forceShowTab);
+};
+
 WebInspector.debuggerToggleBreakpoints = function(event)
 {
     WebInspector.debuggerManager.breakpointsEnabled = !WebInspector.debuggerManager.breakpointsEnabled;
@@ -831,6 +967,18 @@ WebInspector._debuggerDidPause = function(event)
 WebInspector._debuggerDidResume = function(event)
 {
     this.dashboardContainer.closeDashboardViewForRepresentedObject(this.dashboardManager.dashboards.debugger);
+};
+
+WebInspector._frameWasAdded = function(event)
+{
+    if (!this._frameIdentifierToShowSourceCodeWhenAvailable)
+        return;
+
+    var frame = event.data.frame;
+    if (frame.id !== this._frameIdentifierToShowSourceCodeWhenAvailable)
+        return;
+
+    this.showSourceCodeForFrame(frame.id);
 };
 
 WebInspector._mainFrameDidChange = function(event)
@@ -1696,9 +1844,9 @@ WebInspector.createSourceCodeLocationLink = function(sourceCodeLocation, dontFlo
         event.preventDefault();
 
         if (event.metaKey)
-            this.resourceSidebarPanel.showOriginalUnformattedSourceCodeLocation(sourceCodeLocation);
+            this.showOriginalUnformattedSourceCodeLocation(sourceCodeLocation);
         else
-            this.resourceSidebarPanel.showSourceCodeLocation(sourceCodeLocation);
+            this.showSourceCodeLocation(sourceCodeLocation);
     }
 
     var linkElement = document.createElement("a");

@@ -25,9 +25,11 @@
 
 WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspector.NavigationSidebarPanel
 {
-    constructor()
+    constructor(contentBrowser)
     {
         super("debugger", WebInspector.UIString("Debugger"), true);
+
+        this.contentBrowser = contentBrowser;
 
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceChanged, this);
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceAdded, this);
@@ -179,7 +181,15 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
     showDefaultContentView()
     {
-        WebInspector.resourceSidebarPanel.showDefaultContentView();
+        var currentTreeElement = this._contentTreeOutline.children[0];
+        while (currentTreeElement && !currentTreeElement.root) {
+            if (currentTreeElement instanceof WebInspector.ResourceTreeElement || currentTreeElement instanceof WebInspector.ScriptTreeElement) {
+                currentTreeElement.revealAndSelect();
+                return;
+            }
+
+            currentTreeElement = currentTreeElement.traverseNextTreeElement(false, null, true);
+        }
     }
 
     treeElementForRepresentedObject(representedObject)
@@ -304,6 +314,11 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
                 treeElement = new WebInspector.ResourceTreeElement(sourceCode);
             else if (sourceCode instanceof WebInspector.Script)
                 treeElement = new WebInspector.ScriptTreeElement(sourceCode);
+        }
+
+        if (!treeElement) {
+            console.error("Unknown sourceCode instance", sourceCode);
+            return;
         }
 
         if (!treeElement.parent) {
@@ -578,7 +593,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
             deselectCallStackContentTreeElements.call(this);
             deselectPauseReasonContentTreeElements.call(this);
-            WebInspector.resourceSidebarPanel.showSourceCode(treeElement.representedObject);
+            WebInspector.showSourceCode(treeElement.representedObject);
             return;
         }
 
@@ -589,14 +604,14 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
             var callFrame = treeElement.callFrame;
             WebInspector.debuggerManager.activeCallFrame = callFrame;
-            WebInspector.resourceSidebarPanel.showSourceCodeLocation(callFrame.sourceCodeLocation);
+            WebInspector.showSourceCodeLocation(callFrame.sourceCodeLocation);
             return;
         }
 
         if (treeElement instanceof WebInspector.IssueTreeElement) {
             deselectCallStackContentTreeElements.call(this);
             deselectPauseReasonContentTreeElements.call(this);
-            WebInspector.resourceSidebarPanel.showSourceCodeLocation(treeElement.issueMessage.sourceCodeLocation);
+            WebInspector.showSourceCodeLocation(treeElement.issueMessage.sourceCodeLocation);
             return;
         }
 
@@ -613,7 +628,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         var breakpoint = treeElement.breakpoint;
         if (treeElement.treeOutline === this._pauseReasonTreeOutline) {
-            WebInspector.resourceSidebarPanel.showSourceCodeLocation(breakpoint.sourceCodeLocation);
+            WebInspector.showSourceCodeLocation(breakpoint.sourceCodeLocation);
             return;
         }
 
@@ -624,7 +639,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (!(treeElement.parent.representedObject instanceof WebInspector.SourceCode))
             return;
 
-        WebInspector.resourceSidebarPanel.showSourceCodeLocation(breakpoint.sourceCodeLocation);
+        WebInspector.showSourceCodeLocation(breakpoint.sourceCodeLocation);
     }
 
     _compareTopLevelTreeElements(a, b)
@@ -761,6 +776,9 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
     _addIssue(issueMessage)
     {
         var parentTreeElement = this._addTreeElementForSourceCodeToContentTreeOutline(issueMessage.sourceCodeLocation.sourceCode);
+        if (!parentTreeElement)
+            return null;
+
         var issueTreeElement = new WebInspector.IssueTreeElement(issueMessage);
 
         parentTreeElement.insertChild(issueTreeElement, insertionIndexForObjectInListSortedByFunction(issueTreeElement, parentTreeElement.children, this._compareDebuggerTreeElements));
@@ -775,7 +793,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         var issue = event.data.issue;
 
         // We only want to show issues originating from JavaScript source code.
-        if (!issue.lineNumber || (issue.source !== "javascript" && issue.source !== "console-api"))
+        if (!issue.sourceCodeLocation || !issue.sourceCodeLocation.sourceCode || (issue.source !== "javascript" && issue.source !== "console-api"))
             return;
 
         this._addIssue(issue);

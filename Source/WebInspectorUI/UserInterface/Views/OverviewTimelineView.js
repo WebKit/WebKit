@@ -340,7 +340,7 @@ WebInspector.OverviewTimelineView.prototype = {
             return;
 
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
-            WebInspector.resourceSidebarPanel.showSourceCode(treeElement.representedObject);
+            WebInspector.showSourceCode(treeElement.representedObject);
             this._updateTreeElementWithCloseButton(treeElement);
             return;
         }
@@ -356,7 +356,7 @@ WebInspector.OverviewTimelineView.prototype = {
             return;
         }
 
-        WebInspector.resourceSidebarPanel.showOriginalOrFormattedSourceCodeLocation(treeElement.sourceCodeTimeline.sourceCodeLocation);
+        WebInspector.showOriginalOrFormattedSourceCodeLocation(treeElement.sourceCodeTimeline.sourceCodeLocation);
         this._updateTreeElementWithCloseButton(treeElement);
     },
 

@@ -31,7 +31,7 @@ WebInspector.ContentView = function(representedObject, extraArguments)
         console.assert(representedObject);
 
         if (representedObject instanceof WebInspector.Frame)
-            return new WebInspector.FrameContentView(representedObject, extraArguments);
+            return new WebInspector.ResourceClusterContentView(representedObject.mainResource, extraArguments);
 
         if (representedObject instanceof WebInspector.Resource)
             return new WebInspector.ResourceClusterContentView(representedObject, extraArguments);

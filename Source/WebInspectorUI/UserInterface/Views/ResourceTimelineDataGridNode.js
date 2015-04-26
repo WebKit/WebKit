@@ -169,7 +169,7 @@ WebInspector.ResourceTimelineDataGridNode.prototype = {
 
     _goToResource: function(event)
     {
-        WebInspector.resourceSidebarPanel.showSourceCode(this._resource);
+        WebInspector.showSourceCode(this._resource);
     },
 
     _timelineRecordUpdated: function(event)

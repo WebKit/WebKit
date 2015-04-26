@@ -162,7 +162,7 @@ WebInspector.LayerTreeDataGridNode.prototype = {
     _goToArrowWasClicked: function()
     {
         var domNode = WebInspector.domTreeManager.nodeForId(this._layer.nodeId);
-        WebInspector.resourceSidebarPanel.showMainFrameDOMTree(domNode, true);
+        WebInspector.showMainFrameDOMTree(domNode);
     }
 };
 

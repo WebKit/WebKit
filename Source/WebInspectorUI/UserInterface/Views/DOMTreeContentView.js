@@ -140,6 +140,18 @@ WebInspector.DOMTreeContentView.prototype = {
         return pathComponents;
     },
 
+    restoreFromCookie: function(cookie)
+    {
+        if (!cookie || !cookie.nodeToSelect)
+            return;
+
+        this.selectAndRevealDOMNode(cookie.nodeToSelect);
+
+        // Because nodeToSelect is ephemeral, we don't want to keep
+        // it around in the back-forward history entries.
+        cookie.nodeToSelect = undefined;
+    },
+
     selectAndRevealDOMNode: function(domNode, preventFocusChange)
     {
         this._domTreeOutline.selectDOMNode(domNode, !preventFocusChange);
