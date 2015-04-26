@@ -65,7 +65,7 @@ WebInspector.ApplicationCacheFrameContentView.prototype = {
 
     closed: function()
     {
-        WebInspector.applicationCacheManager.removeEventListener(WebInspector.ApplicationCacheManager.Event.FrameManifestStatusChanged, this._updateStatus, this);
+        WebInspector.applicationCacheManager.removeEventListener(null, null, this);
     },
 
     updateLayout: function()

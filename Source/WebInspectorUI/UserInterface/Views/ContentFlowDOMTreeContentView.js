@@ -47,8 +47,8 @@ WebInspector.ContentFlowDOMTreeContentView.prototype = {
 
     closed: function()
     {
-        this.representedObject.removeEventListener(WebInspector.ContentFlow.Event.ContentNodeWasAdded, this._contentNodeWasAdded, this);
-        this.representedObject.removeEventListener(WebInspector.ContentFlow.Event.ContentNodeWasRemoved, this._contentNodeWasRemoved, this);
+        this.representedObject.removeEventListener(null, null, this);
+
         WebInspector.DOMTreeContentView.prototype.closed.call(this);
     },
 

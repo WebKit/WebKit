@@ -84,9 +84,7 @@ WebInspector.ClusterContentView.prototype = {
     {
         this._contentViewContainer.closeAllContentViews();
 
-        WebInspector.ContentView.removeEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
-        WebInspector.ContentView.removeEventListener(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
-        WebInspector.ContentView.removeEventListener(WebInspector.ContentView.Event.NumberOfSearchResultsDidChange, this._contentViewNumberOfSearchResultsDidChange, this);
+        WebInspector.ContentView.removeEventListener(null, null, this);
     },
 
     canGoBack: function()

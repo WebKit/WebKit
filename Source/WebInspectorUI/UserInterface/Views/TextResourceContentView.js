@@ -121,7 +121,7 @@ WebInspector.TextResourceContentView.prototype = {
     {
         WebInspector.ResourceContentView.prototype.closed.call(this);
 
-        this.resource.removeEventListener(WebInspector.SourceCode.Event.ContentDidChange, this._sourceCodeContentDidChange, this);
+        this.resource.removeEventListener(null, null, this);
 
         this._textEditor.close();
     },

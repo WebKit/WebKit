@@ -188,8 +188,11 @@ WebInspector.TimelineRecordingContentView.prototype = {
     {
         this._contentViewContainer.closeAllContentViews();
 
-        WebInspector.ContentView.removeEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
-        WebInspector.ContentView.removeEventListener(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
+        this._recording.removeEventListener(null, null, this);
+
+        WebInspector.timelineManager.removeEventListener(null, null, this);
+        WebInspector.debuggerManager.removeEventListener(null, null, this);
+        WebInspector.ContentView.removeEventListener(null, null, this);
     },
 
     canGoBack: function()

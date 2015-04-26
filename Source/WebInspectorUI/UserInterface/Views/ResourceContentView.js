@@ -79,7 +79,7 @@ WebInspector.ResourceContentView.prototype = {
     closed: function()
     {
         if (!this.managesOwnIssues)
-            WebInspector.issueManager.removeEventListener(WebInspector.IssueManager.Event.IssueWasAdded, this._issueWasAdded, this);
+            WebInspector.issueManager.removeEventListener(null, null, this);
     },
 
     // Private

@@ -55,6 +55,7 @@ WebInspector.FrameDOMTreeContentView.prototype = {
     closed: function()
     {
         this._domTree.removeEventListener(null, null, this);
+
         WebInspector.DOMTreeContentView.prototype.closed.call(this);
     },
 
