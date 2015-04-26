@@ -220,6 +220,8 @@ WebInspector.contentLoaded = function()
     this.detailsSidebar = new WebInspector.Sidebar(document.getElementById("details-sidebar"), WebInspector.Sidebar.Sides.Right, null, null, WebInspector.UIString("Details"), true);
     this.detailsSidebar.addEventListener(WebInspector.Sidebar.Event.WidthDidChange, this._sidebarWidthDidChange, this);
 
+    this.searchKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "F", this._focusSearchField.bind(this));
+
     this.navigationSidebarKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "0", this.toggleNavigationSidebar.bind(this));
     this.detailsSidebarKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Option, "0", this.toggleDetailsSidebar.bind(this));
 
@@ -285,6 +287,9 @@ WebInspector.contentLoaded = function()
     this._dashboardContainer = new WebInspector.DashboardContainerView;
     this._dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.default);
 
+    this._searchToolbarItem = new WebInspector.SearchBar("inspector-search", WebInspector.UIString("Search"), null, true);
+    this._searchToolbarItem.addEventListener(WebInspector.SearchBar.Event.TextChanged, this._searchTextDidChange, this);
+
     this.toolbar.addToolbarItem(this._closeToolbarButton, WebInspector.Toolbar.Section.Control);
 
     this.toolbar.addToolbarItem(this._undockToolbarButton, WebInspector.Toolbar.Section.Left);
@@ -298,6 +303,8 @@ WebInspector.contentLoaded = function()
 
     if (this._inspectModeToolbarButton)
         this.toolbar.addToolbarItem(this._inspectModeToolbarButton, WebInspector.Toolbar.Section.CenterRight);
+
+    this.toolbar.addToolbarItem(this._searchToolbarItem, WebInspector.Toolbar.Section.Right);
 
     this.resourceDetailsSidebarPanel = new WebInspector.ResourceDetailsSidebarPanel;
     this.domNodeDetailsSidebarPanel = new WebInspector.DOMNodeDetailsSidebarPanel;
@@ -365,6 +372,8 @@ WebInspector._tabContentViewForType = function(tabType)
         return new WebInspector.DebuggerTabContentView;
     case WebInspector.ConsoleTabContentView.Type:
         return new WebInspector.ConsoleTabContentView;
+    case WebInspector.SearchTabContentView.Type:
+        return new WebInspector.SearchTabContentView;
     default:
         console.error("Unknown tab type", tabType);
     }
@@ -868,6 +877,30 @@ WebInspector.debuggerStepOut = function(event)
     WebInspector.debuggerManager.stepOut();
 };
 
+WebInspector._searchTextDidChange = function(event)
+{
+    var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.SearchTabContentView);
+    if (!tabContentView)
+        tabContentView = new WebInspector.SearchTabContentView;
+
+    var searchQuery = this._searchToolbarItem.text;
+    this._searchToolbarItem.text = "";
+
+    this.tabBrowser.showTabForContentView(tabContentView);
+
+    tabContentView.performSearch(searchQuery);
+};
+
+WebInspector._focusSearchField = function(event)
+{
+    if (this.tabBrowser.selectedTabContentView instanceof WebInspector.SearchTabContentView) {
+        this.tabBrowser.selectedTabContentView.focusSearchField();
+        return;
+    }
+
+    this._searchToolbarItem.focus();
+};
+
 WebInspector._focusChanged = function(event)
 {
     // Make a caret selection inside the focused element if there isn't a range selection and there isn't already
@@ -1297,6 +1330,7 @@ WebInspector._domNodeWasInspected = function(event)
 
     InspectorFrontendHost.bringToFront();
 
+    this.showElementsTab();
     this.showMainFrameDOMTree(event.data.node, true);
 };
 

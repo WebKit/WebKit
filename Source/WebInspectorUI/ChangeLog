@@ -1,5 +1,97 @@
 2015-04-25  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Split search from ResourceSidebarPanel into a Search tab and sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=144197
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector._tabContentViewForType):
+        (WebInspector._searchTextDidChange):
+        (WebInspector._focusSearchField):
+        (WebInspector._domNodeWasInspected):
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.get knownNonResourceScripts):
+        * UserInterface/Images/SearchResults.svg: Added.
+        * UserInterface/Main.html:
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype.showDefaultContentView):
+        (WebInspector.ResourceSidebarPanel.prototype.treeElementForRepresentedObject):
+        (WebInspector.ResourceSidebarPanel.prototype._mainFrameDidChange):
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasAdded):
+        (WebInspector.ResourceSidebarPanel.prototype._treeElementSelected):
+        (WebInspector.ResourceSidebarPanel.prototype._addStorageChild):
+        (WebInspector.ResourceSidebarPanel.prototype._extraDomainsActivated):
+        (WebInspector.ResourceSidebarPanel.prototype.get contentTreeOutlineToAutoPrune): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype.performSearch.updateEmptyContentPlaceholderSoon): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype.performSearch.updateEmptyContentPlaceholder): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype.performSearch.forEachMatch): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype.performSearch.resourceCallback): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype.performSearch.resourcesCallback): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype.performSearch.searchScripts.scriptCallback): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype.performSearch.searchScripts): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype.performSearch.domSearchResults): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype.performSearch.domCallback): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype.performSearch): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._showResourcesContentTreeOutline): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._showSearchContentTreeOutline): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._searchFieldChanged): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._searchFieldInput): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._searchTreeElementForResource): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._searchTreeElementForScript): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._focusSearchField): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._scriptsToSearch): Deleted.
+        * UserInterface/Views/SearchBar.js:
+        (WebInspector.SearchBar):
+        * UserInterface/Views/SearchSidebarPanel.css: Renamed from Source/WebInspectorUI/UserInterface/Views/ResourceSidebarPanel.css.
+        (.sidebar > .panel.navigation.search > :matches(.content, .empty-content-placeholder)):
+        (body.mac-platform.legacy .sidebar > .panel.navigation.search > :matches(.content, .empty-content-placeholder)):
+        (.sidebar > .panel.navigation.search > .search-bar):
+        (body.mac-platform.legacy .sidebar > .panel.navigation.search > .search-bar):
+        (.sidebar > .panel.navigation.search > .search-bar > input[type="search"]):
+        (body.mac-platform.legacy .sidebar > .panel.navigation.search > .search-bar > input[type="search"]):
+        * UserInterface/Views/SearchSidebarPanel.js: Added.
+        (WebInspector.SearchSidebarPanel):
+        (WebInspector.SearchSidebarPanel.prototype.closed):
+        (WebInspector.SearchSidebarPanel.prototype.focusSearchField):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.updateEmptyContentPlaceholderSoon):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.updateEmptyContentPlaceholder):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.forEachMatch):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.resourceCallback):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.resourcesCallback):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.searchScripts.scriptCallback):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.searchScripts):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.domSearchResults):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.domCallback):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch):
+        (WebInspector.SearchSidebarPanel.prototype._searchFieldChanged):
+        (WebInspector.SearchSidebarPanel.prototype._searchFieldInput):
+        (WebInspector.SearchSidebarPanel.prototype._searchTreeElementForResource):
+        (WebInspector.SearchSidebarPanel.prototype._searchTreeElementForScript):
+        (WebInspector.SearchSidebarPanel.prototype._mainResourceDidChange.delayedWork):
+        (WebInspector.SearchSidebarPanel.prototype._mainResourceDidChange):
+        (WebInspector.SearchSidebarPanel.prototype._treeElementSelected):
+        * UserInterface/Views/SearchTabContentView.js: Added.
+        (WebInspector.SearchTabContentView):
+        (WebInspector.SearchTabContentView.prototype.get type):
+        (WebInspector.SearchTabContentView.prototype.shown):
+        (WebInspector.SearchTabContentView.prototype.closed):
+        (WebInspector.SearchTabContentView.prototype.canShowRepresentedObject):
+        (WebInspector.SearchTabContentView.prototype.focusSearchField):
+        (WebInspector.SearchTabContentView.prototype.performSearch):
+        * UserInterface/Views/Toolbar.css:
+        (.toolbar .item-section.center-right):
+        (.toolbar .item-section.right):
+        (.toolbar .search-bar):
+        (.toolbar .search-bar > input[type="search"]):
+        (.toolbar .search-bar > input[type="search"]::-webkit-textfield-decoration-container):
+        (body.window-inactive .toolbar .search-bar > input[type="search"]):
+        (.toolbar .item): Deleted.
+
+2015-04-25  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: New Toolbar UI for tabs
         https://bugs.webkit.org/show_bug.cgi?id=144185
 

@@ -310,6 +310,21 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         DebuggerAgent.continueToLocation({scriptId: scriptIdentifier, lineNumber, columnNumber});
     }
 
+    get knownNonResourceScripts()
+    {
+        var knownScripts = [];
+        for (var id in this._scriptIdMap) {
+            var script = this._scriptIdMap[id];
+            if (script.resource)
+                continue;
+            if (script.url && script.url.startsWith("__WebInspector"))
+                continue;
+            knownScripts.push(script);
+        }
+
+        return knownScripts;
+    }
+
     addBreakpoint(breakpoint, skipEventDispatch, shouldSpeculativelyResolve)
     {
         console.assert(breakpoint instanceof WebInspector.Breakpoint, "Bad argument to DebuggerManger.addBreakpoint: ", breakpoint);

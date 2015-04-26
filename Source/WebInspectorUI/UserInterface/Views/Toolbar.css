@@ -106,7 +106,7 @@ body.mac-platform.legacy.window-inactive .toolbar {
 }
 
 .toolbar .item-section.center-right {
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 .toolbar .item-section.center {
@@ -115,9 +115,48 @@ body.mac-platform.legacy.window-inactive .toolbar {
 
 .toolbar .item-section.right {
     justify-content: flex-end;
+    padding-right: 4px;
 }
 
 .toolbar .item {
     display: flex;
     outline: none;
+}
+
+.toolbar .search-bar {
+    width: 100%;
+    min-width: 100px;
+}
+
+.toolbar .search-bar > input[type="search"] {
+    width: 100%;
+
+    font-size: 12px;
+
+    border-radius: 4px;
+    background-color: rgb(252, 252, 252) !important;
+
+    border: 1px solid transparent;
+    border-top-color: white;
+
+    box-shadow: rgba(0, 0, 0, 0.15) 0 1px 0;
+
+    background-clip: initial;
+
+    margin: 4px;
+}
+
+.toolbar .search-bar > input[type="search"]:focus {
+    outline: auto 5px -webkit-focus-ring-color;
+    outline-offset: -2px
+}
+
+.toolbar .search-bar > input[type="search"]::-webkit-textfield-decoration-container {
+    margin-left: 4px;
+}
+
+body.window-inactive .toolbar .search-bar > input[type="search"] {
+    border: 1px solid rgb(220, 220, 220);
+    background-color: rgb(246, 246, 246);
+    box-shadow: none;
 }

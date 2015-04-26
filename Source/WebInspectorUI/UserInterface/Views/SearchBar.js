@@ -25,7 +25,7 @@
 
 WebInspector.SearchBar = class SearchBar extends WebInspector.NavigationItem
 {
-    constructor(identifier, placeholder, delegate)
+    constructor(identifier, placeholder, delegate, supressIncremental)
     {
         super(identifier);
 
@@ -39,7 +39,7 @@ WebInspector.SearchBar = class SearchBar extends WebInspector.NavigationItem
         this._searchInput = this._element.appendChild(document.createElement("input"));
         this._searchInput.type = "search";
         this._searchInput.spellcheck = false;
-        this._searchInput.incremental = true;
+        this._searchInput.incremental = !supressIncremental;
         this._searchInput.setAttribute("results", 5);
         this._searchInput.setAttribute("autosave", identifier + "-autosave");
         this._searchInput.setAttribute("placeholder", placeholder);

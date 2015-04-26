@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.sidebar > .panel.navigation.resource > :matches(.content, .empty-content-placeholder) {
+.sidebar > .panel.navigation.search > :matches(.content, .empty-content-placeholder) {
     top: 28px;
 }
 
-body.mac-platform.legacy .sidebar > .panel.navigation.resource > :matches(.content, .empty-content-placeholder) {
+body.mac-platform.legacy .sidebar > .panel.navigation.search > :matches(.content, .empty-content-placeholder) {
     top: 21px;
 }
 
-.sidebar > .panel.navigation.resource > .search-bar {
+.sidebar > .panel.navigation.search > .search-bar {
     position: absolute;
     top: 0;
     left: 0;
@@ -47,11 +47,11 @@ body.mac-platform.legacy .sidebar > .panel.navigation.resource > :matches(.conte
     overflow: hidden;
 }
 
-body.mac-platform.legacy .sidebar > .panel.navigation.resource > .search-bar {
+body.mac-platform.legacy .sidebar > .panel.navigation.search > .search-bar {
     height: 21px;
 }
 
-.sidebar > .panel.navigation.resource > .search-bar > input[type="search"] {
+.sidebar > .panel.navigation.search > .search-bar > input[type="search"] {
     display: flex;
     flex: 1;
 
@@ -59,7 +59,7 @@ body.mac-platform.legacy .sidebar > .panel.navigation.resource > .search-bar {
     padding-left: 4px;
 }
 
-body.mac-platform.legacy .sidebar > .panel.navigation.resource > .search-bar > input[type="search"] {
+body.mac-platform.legacy .sidebar > .panel.navigation.search > .search-bar > input[type="search"] {
     margin: 1px 6px;
     padding-left: 0;
 }
