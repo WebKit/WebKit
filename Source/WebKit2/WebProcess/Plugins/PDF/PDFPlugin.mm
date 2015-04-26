@@ -66,6 +66,7 @@
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLFormElement.h>
+#import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
@@ -687,12 +688,12 @@ IntRect PDFPlugin::convertFromScrollbarToContainingView(const Scrollbar* scrollb
     IntRect rect = scrollbarRect;
     rect.move(scrollbar->location() - pluginView()->location());
 
-    return pluginView()->frame()->view()->convertFromRendererToContainingView(pluginView()->renderer(), rect);
+    return pluginView()->frame()->view()->convertFromRendererToContainingView(pluginView()->pluginElement()->renderer(), rect);
 }
 
 IntRect PDFPlugin::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntRect& parentRect) const
 {
-    IntRect rect = pluginView()->frame()->view()->convertFromContainingViewToRenderer(pluginView()->renderer(), parentRect);
+    IntRect rect = pluginView()->frame()->view()->convertFromContainingViewToRenderer(pluginView()->pluginElement()->renderer(), parentRect);
     rect.move(pluginView()->location() - scrollbar->location());
 
     return rect;
@@ -703,12 +704,12 @@ IntPoint PDFPlugin::convertFromScrollbarToContainingView(const Scrollbar* scroll
     IntPoint point = scrollbarPoint;
     point.move(scrollbar->location() - pluginView()->location());
 
-    return pluginView()->frame()->view()->convertFromRendererToContainingView(pluginView()->renderer(), point);
+    return pluginView()->frame()->view()->convertFromRendererToContainingView(pluginView()->pluginElement()->renderer(), point);
 }
 
 IntPoint PDFPlugin::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntPoint& parentPoint) const
 {
-    IntPoint point = pluginView()->frame()->view()->convertFromContainingViewToRenderer(pluginView()->renderer(), parentPoint);
+    IntPoint point = pluginView()->frame()->view()->convertFromContainingViewToRenderer(pluginView()->pluginElement()->renderer(), parentPoint);
     point.move(pluginView()->location() - scrollbar->location());
     
     return point;

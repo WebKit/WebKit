@@ -465,11 +465,6 @@ void PluginView::manualLoadDidFail(const ResourceError& error)
     m_plugin->manualStreamDidFail(error.isCancellation());
 }
 
-RenderBoxModelObject* PluginView::renderer() const
-{
-    return downcast<RenderBoxModelObject>(m_pluginElement->renderer());
-}
-
 void PluginView::pageScaleFactorDidChange()
 {
     viewGeometryDidChange();
