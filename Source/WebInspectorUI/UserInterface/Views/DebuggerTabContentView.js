@@ -54,6 +54,15 @@ WebInspector.DebuggerTabContentView.prototype = {
             return false;
 
         return representedObject.type === WebInspector.Resource.Type.Document || representedObject.type === WebInspector.Resource.Type.Script;
+    },
+
+    revealAndSelectBreakpoint: function(breakpoint)
+    {
+        console.assert(breakpoint instanceof WebInspector.Breakpoint);
+
+        var treeElement = this.navigationSidebarPanel.treeElementForRepresentedObject(breakpoint);
+        if (treeElement)
+            treeElement.revealAndSelect();
     }
 };
 

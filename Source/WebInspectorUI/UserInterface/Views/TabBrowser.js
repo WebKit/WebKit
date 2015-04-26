@@ -92,6 +92,18 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.Object
         this._contentViewContainer.updateLayout();
     }
 
+    bestTabContentViewForClass(constructor)
+    {
+        console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
+
+        for (var tabContentView of this._recentTabContentViews) {
+            if (tabContentView instanceof constructor)
+                return tabContentView;
+        }
+
+        return null;
+    }
+
     bestTabContentViewForRepresentedObject(representedObject)
     {
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);

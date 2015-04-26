@@ -48,8 +48,7 @@ InspectorFrontendAPI = {
             return;
 
         if (enabled) {
-            WebInspector.navigationSidebar.selectedSidebarPanel = WebInspector.timelineSidebarPanel;
-            WebInspector.timelineSidebarPanel.showTimelineOverview();
+            WebInspector.showTimelineTab();
             WebInspector.timelineManager.startCapturing();
         } else {
             WebInspector.timelineManager.stopCapturing();
@@ -84,14 +83,11 @@ InspectorFrontendAPI = {
 
     showResources: function()
     {
-        WebInspector.ignoreLastContentCookie = true;
-        WebInspector.navigationSidebar.selectedSidebarPanel = WebInspector.resourceSidebarPanel;
-        WebInspector.navigationSidebar.collapsed = false;
+        WebInspector.showResourcesTab();
     },
 
     showMainResourceForFrame: function(frameIdentifier)
     {
-        WebInspector.ignoreLastContentCookie = true;
         WebInspector.showSourceCodeForFrame(frameIdentifier, true);
     },
 

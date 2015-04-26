@@ -33,19 +33,19 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
 
         this._items = {
             resourcesCount: {
-                tooltip: WebInspector.UIString("Total number of resources, click to show the Resources navigation sidebar"),
+                tooltip: WebInspector.UIString("Total number of resources, click to show the Resources tab"),
                 handler: this._resourcesWasClicked
             },
             logs: {
-                tooltip: WebInspector.UIString("Console logs, click to show the Console"),
+                tooltip: WebInspector.UIString("Console logs, click to show the Console tab"),
                 handler: this._consoleItemWasClicked.bind(this, WebInspector.LogContentView.Scopes.Logs)
             },
             errors: {
-                tooltip: WebInspector.UIString("Console errors, click to show the Console"),
+                tooltip: WebInspector.UIString("Console errors, click to show the Console tab"),
                 handler: this._consoleItemWasClicked.bind(this, WebInspector.LogContentView.Scopes.Errors)
             },
             issues: {
-                tooltip: WebInspector.UIString("Console warnings, click to show the Console"),
+                tooltip: WebInspector.UIString("Console warnings, click to show the Console tab"),
                 handler: this._consoleItemWasClicked.bind(this, WebInspector.LogContentView.Scopes.Warnings)
             }
         };
@@ -111,13 +111,7 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
 
     _resourcesWasClicked()
     {
-        WebInspector.navigationSidebar.selectedSidebarPanel = WebInspector.resourceSidebarPanel;
-        WebInspector.navigationSidebar.collapsed = false;
-    }
-
-    _networkItemWasClicked()
-    {
-        WebInspector.navigationSidebar.selectedSidebarPanel = WebInspector.timelineSidebarPanel;
+        WebInspector.showResourcesTab();
     }
 
     _consoleItemWasClicked(scope)

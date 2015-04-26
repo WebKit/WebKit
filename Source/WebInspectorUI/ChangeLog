@@ -1,5 +1,38 @@
 2015-04-23  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Change more places that changed WebInspector.navigationSidebar.selectedSidebarPanel to tabs
+        https://bugs.webkit.org/show_bug.cgi?id=144125
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        (WebInspector.toggleDetailsSidebar):
+        (WebInspector.tabContentViewClassForRepresentedObject):
+        (WebInspector._updateModifierKeys):
+        (WebInspector._consoleResizerMouseDown.dockedResizerDragEnd):
+        (WebInspector._consoleResizerMouseDown):
+        (WebInspector.linkifyURLAsNode):
+        (WebInspector.linkifyStringAsFragmentWithCustomLinkifier):
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setTimelineProfilingEnabled):
+        (InspectorFrontendAPI.showConsole):
+        (InspectorFrontendAPI.showResources):
+        * UserInterface/Protocol/InspectorObserver.js:
+        (WebInspector.InspectorObserver.prototype.inspect):
+        * UserInterface/Views/DebuggerTabContentView.js:
+        (WebInspector.DebuggerTabContentView.prototype.canShowRepresentedObject):
+        (WebInspector.DebuggerTabContentView.prototype.revealAndSelectBreakpoint):
+        * UserInterface/Views/DefaultDashboardView.js:
+        (WebInspector.DefaultDashboardView):
+        (WebInspector.DefaultDashboardView.prototype._resourcesWasClicked):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorGutterContextMenu.revealInSidebar):
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser.bestTabContentViewForClass):
+
+2015-04-23  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Make Console work in a tab world
         https://bugs.webkit.org/show_bug.cgi?id=144112
 

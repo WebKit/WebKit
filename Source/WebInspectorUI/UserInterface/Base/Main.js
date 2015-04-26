@@ -127,6 +127,8 @@ WebInspector.loaded = function()
     this.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, this._debuggerDidResume, this);
     this.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.InspectModeStateChanged, this._inspectModeStateChanged, this);
     this.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.DOMNodeWasInspected, this._domNodeWasInspected, this);
+    this.storageManager.addEventListener(WebInspector.StorageManager.Event.DOMStorageObjectWasInspected, this._storageWasInspected, this);
+    this.storageManager.addEventListener(WebInspector.StorageManager.Event.DatabaseWasInspected, this._storageWasInspected, this);
     this.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
     this.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.FrameWasAdded, this._frameWasAdded, this);
 
@@ -653,6 +655,42 @@ WebInspector.isShowingConsoleTab = function()
     return this.tabBrowser.selectedTabContentView instanceof WebInspector.ConsoleTabContentView;
 };
 
+WebInspector.showElementsTab = function()
+{
+    var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.ElementsTabContentView);
+    if (!tabContentView)
+        tabContentView = new WebInspector.ElementsTabContentView;
+    this.tabBrowser.showTabForContentView(tabContentView);
+};
+
+WebInspector.showDebuggerTab = function(breakpointToSelect)
+{
+    var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.DebuggerTabContentView);
+    if (!tabContentView)
+        tabContentView = new WebInspector.DebuggerTabContentView;
+
+    if (breakpointToSelect instanceof WebInspector.Breakpoint)
+        tabContentView.revealAndSelectBreakpoint(breakpointToSelect);
+
+    this.tabBrowser.showTabForContentView(tabContentView);
+};
+
+WebInspector.showResourcesTab = function()
+{
+    var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.ResourcesTabContentView);
+    if (!tabContentView)
+        tabContentView = new WebInspector.ResourcesTabContentView;
+    this.tabBrowser.showTabForContentView(tabContentView);
+};
+
+WebInspector.showTimelineTab = function()
+{
+    var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.TimelineTabContentView);
+    if (!tabContentView)
+        tabContentView = new WebInspector.TimelineTabContentView;
+    this.tabBrowser.showTabForContentView(tabContentView);
+};
+
 WebInspector.UIString = function(string, vararg)
 {
     if (WebInspector.dontLocalizeUserInterface)
@@ -923,12 +961,9 @@ WebInspector._captureDidStart = function(event)
 
 WebInspector._debuggerDidPause = function(event)
 {
-    this.debuggerSidebarPanel.show();
-    this.dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.debugger);
+    this.showDebuggerTab();
 
-    // Since the Scope Chain details sidebar panel might not be in the sidebar yet,
-    // set a flag to select and show it when it does become available.
-    this._selectAndShowScopeChainDetailsSidebarPanelWhenAvailable = true;
+    this.dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.debugger);
 
     InspectorFrontendHost.bringToFront();
 };
@@ -1167,17 +1202,6 @@ WebInspector._navigationSidebarPanelSelected = function(event)
         return;
 
     this._updateContentViewForCurrentNavigationSidebar();
-};
-
-WebInspector._domNodeWasInspected = function(event)
-{
-    WebInspector.domTreeManager.highlightDOMNodeForTwoSeconds(event.data.node.id);
-
-    // Select the Style details sidebar panel if one of the DOM details sidebar panels isn't already selected.
-    if (!(this.detailsSidebar.selectedSidebarPanel instanceof WebInspector.DOMDetailsSidebarPanel))
-        this.detailsSidebar.selectedSidebarPanel = this.cssStyleDetailsSidebarPanel;
-
-    InspectorFrontendHost.bringToFront();
 };
 
 WebInspector._contentBrowserSizeDidChange = function(event)
@@ -1603,6 +1627,21 @@ WebInspector._moveWindowMouseDown = function(event)
     }
 
     WebInspector.elementDragStart(event.target, toolbarDrag, toolbarDragEnd, event, "default");
+};
+
+WebInspector._storageWasInspected = function(event)
+{
+    // FIXME: This should show a Storage tab when we have one.
+    this.showResourcesTab();
+};
+
+WebInspector._domNodeWasInspected = function(event)
+{
+    WebInspector.domTreeManager.highlightDOMNodeForTwoSeconds(event.data.node.id);
+
+    InspectorFrontendHost.bringToFront();
+
+    this.showMainFrameDOMTree(event.data.node);
 };
 
 WebInspector._inspectModeStateChanged = function(event)

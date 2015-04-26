@@ -42,7 +42,6 @@ WebInspector.InspectorObserver = class InspectorObserver
         var remoteObject = WebInspector.RemoteObject.fromPayload(payload);
         if (remoteObject.subtype === "node") {
             WebInspector.domTreeManager.inspectNodeObject(remoteObject);
-            WebInspector.navigationSidebar.selectedSidebarPanel = WebInspector.resourceSidebarPanel;
             return;
         }
 
@@ -50,8 +49,6 @@ WebInspector.InspectorObserver = class InspectorObserver
             WebInspector.storageManager.inspectDatabase(hints.databaseId);
         else if (hints.domStorageId)
             WebInspector.storageManager.inspectDOMStorage(hints.domStorageId);
-
-        WebInspector.navigationSidebar.selectedSidebarPanel = WebInspector.resourceSidebarPanel;
 
         remoteObject.release();
     }
