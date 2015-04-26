@@ -8,6 +8,33 @@
         added to the same object. TimelineRecordingContentView also had a leak where
         TimelineManager and DebuggerManager listeners were not being removed.
 
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        (WebInspector.ApplicationCacheFrameContentView.prototype.closed):
+        * UserInterface/Views/ClusterContentView.js:
+        (WebInspector.ClusterContentView.prototype.closed):
+        * UserInterface/Views/ContentFlowDOMTreeContentView.js:
+        (WebInspector.ContentFlowDOMTreeContentView.prototype.closed):
+        * UserInterface/Views/FrameDOMTreeContentView.js:
+        (WebInspector.FrameDOMTreeContentView.prototype.closed):
+        * UserInterface/Views/ResourceContentView.js:
+        (WebInspector.ResourceContentView.prototype.closed):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView.prototype.closed):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype.closed):
+
+2015-04-25  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Make closing ContentViews more leak proof
+        https://bugs.webkit.org/show_bug.cgi?id=144200
+
+        Remove all listeners on the target objects in close that match the this object.
+        This makes things more foolproof when something changes or a new listener is
+        added to the same object. TimelineRecordingContentView also had a leak where
+        TimelineManager and DebuggerManager listeners were not being removed.
+
         Reviewed by Darin Adler.
 
         * UserInterface/Views/ApplicationCacheFrameContentView.js:
