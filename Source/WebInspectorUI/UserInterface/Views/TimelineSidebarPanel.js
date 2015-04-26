@@ -276,7 +276,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
     canShowDifferentContentView()
     {
-        if (WebInspector.contentBrowser.currentContentView instanceof WebInspector.TimelineRecordingContentView)
+        if (this.contentBrowser.currentContentView instanceof WebInspector.TimelineRecordingContentView)
             return false;
 
         return !this.restoringState || !this._restoredShowingTimelineRecordingContentView;

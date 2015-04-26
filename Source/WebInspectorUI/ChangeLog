@@ -1,3 +1,14 @@
+2015-04-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught exception using WebInspector.contentBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=144206
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.showTimelineViewForTimeline.this._timelineTreeElementMap.get select):
+        Use the current tab's content browser since a global one no longer exists.
+
 2015-04-25  Timothy Hatcher  <timothy@apple.com>
 
         Update localized strings.
