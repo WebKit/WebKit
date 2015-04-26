@@ -1136,14 +1136,14 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
     return [attrString autorelease];
 }
 
-static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosition startPosition, VisiblePosition endPosition)
+static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const VisiblePosition& startPosition, const VisiblePosition& endPosition)
 {
     id startTextMarker = textMarkerForVisiblePosition(cache, startPosition);
     id endTextMarker = textMarkerForVisiblePosition(cache, endPosition);
     return textMarkerRangeFromMarkers(startTextMarker, endTextMarker);
 }
 
-- (id)textMarkerRangeFromVisiblePositions:(VisiblePosition)startPosition endPosition:(VisiblePosition)endPosition
+- (id)textMarkerRangeFromVisiblePositions:(const VisiblePosition&)startPosition endPosition:(const VisiblePosition&)endPosition
 {
     return textMarkerRangeFromVisiblePositions(m_object->axObjectCache(), startPosition, endPosition);
 }

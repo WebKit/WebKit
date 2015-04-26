@@ -1,3 +1,28 @@
+2015-04-26  Doug Russell  <d_russell@apple.com>
+
+        AX: richer text change notifications (142719)
+        https://bugs.webkit.org/show_bug.cgi?id=142719
+
+        Reviewed by Darin Adler.
+
+        Richer accessibility value change notifications. Introduce AXTextEditType,
+        postTextStateChangeNotification and postTextReplacementNotification to give assistive
+        tech apps more reliable context for responding to changes in web content. Also implement
+        a mechanism to post value changes in password form fields in coalesced ticks to thwart
+        analyzing the cadence of changes.
+
+        Richer accessibility selection change notifications. Introduce AXTextStateChangeIntent,
+        and an overload of postTextReplacementNotification to give assistive tech apps more
+        reliable context for responding to changes in web content selection. Also block posting
+        selection changes on password fields.
+
+        * platform/mac/accessibility/input-replacevalue-userinfo-expected.txt: Added.
+        * platform/mac/accessibility/input-replacevalue-userinfo.html: Added.
+        * platform/mac/accessibility/selection-change-userinfo-expected.txt: Added.
+        * platform/mac/accessibility/selection-change-userinfo.html: Added.
+        * platform/mac/accessibility/value-change-userinfo-expected.txt: Added.
+        * platform/mac/accessibility/value-change-userinfo.html: Added.
+
 2015-04-26  Darin Adler  <darin@apple.com>
 
         REGRESSION (r176751): line-height ignored in <button> elements

@@ -47,6 +47,8 @@
 #include "RenderInline.h"
 #include "RenderObject.h"
 #include "RenderText.h"
+#include "ReplaceDeleteFromTextNodeCommand.h"
+#include "ReplaceInsertIntoTextNodeCommand.h"
 #include "SimplifyMarkupCommand.h"
 #include "SmartReplace.h"
 #include "StyleProperties.h"
@@ -368,15 +370,14 @@ inline void ReplaceSelectionCommand::InsertedNodes::didReplaceNode(Node* node, N
         m_lastNodeInserted = newNode;
 }
 
-ReplaceSelectionCommand::ReplaceSelectionCommand(Document& document, PassRefPtr<DocumentFragment> fragment, CommandOptions options, EditAction editAction)
-    : CompositeEditCommand(document)
+ReplaceSelectionCommand::ReplaceSelectionCommand(Document& document, RefPtr<DocumentFragment>&& fragment, CommandOptions options, EditAction editAction)
+    : CompositeEditCommand(document, editAction)
     , m_selectReplacement(options & SelectReplacement)
     , m_smartReplace(options & SmartReplace)
     , m_matchStyle(options & MatchStyle)
     , m_documentFragment(fragment)
     , m_preventNesting(options & PreventNesting)
     , m_movingParagraph(options & MovingParagraph)
-    , m_editAction(editAction)
     , m_sanitizeFragment(options & SanitizeFragment)
     , m_shouldMergeEnd(false)
     , m_ignoreMailBlockquote(options & IgnoreMailBlockquote)
@@ -1425,11 +1426,6 @@ void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, P
 
         removeNode(next.ptr());
     }
-}
-
-EditAction ReplaceSelectionCommand::editingAction() const
-{
-    return m_editAction;
 }
 
 // If the user is inserting a list into an existing list, instead of nesting the list,

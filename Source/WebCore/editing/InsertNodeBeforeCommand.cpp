@@ -29,13 +29,13 @@
 #include "AXObjectCache.h"
 #include "Document.h"
 #include "ExceptionCodePlaceholder.h"
+#include "Text.h"
 #include "htmlediting.h"
 
 namespace WebCore {
 
-InsertNodeBeforeCommand::InsertNodeBeforeCommand(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild,
-    ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
-    : SimpleEditCommand(refChild->document())
+InsertNodeBeforeCommand::InsertNodeBeforeCommand(RefPtr<Node>&& insertChild, RefPtr<Node>&& refChild, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction)
+    : SimpleEditCommand(refChild->document(), editingAction)
     , m_insertChild(insertChild)
     , m_refChild(refChild)
     , m_shouldAssumeContentIsAlwaysEditable(shouldAssumeContentIsAlwaysEditable)
@@ -57,8 +57,10 @@ void InsertNodeBeforeCommand::doApply()
 
     parent->insertBefore(m_insertChild.get(), m_refChild.get(), IGNORE_EXCEPTION);
 
-    if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->nodeTextChangeNotification(m_insertChild.get(), AXObjectCache::AXTextInserted, 0, m_insertChild->nodeValue());
+    if (AXObjectCache::accessibilityEnabled()) {
+        Position position = is<Text>(m_insertChild.get()) ? Position(downcast<Text>(m_insertChild.get()), 0) : createLegacyEditingPosition(m_insertChild.get(), 0);
+        notifyAccessibilityForTextChange(m_insertChild.get(), applyEditType(), m_insertChild->nodeValue(), VisiblePosition(position));
+    }
 }
 
 void InsertNodeBeforeCommand::doUnapply()
@@ -67,8 +69,10 @@ void InsertNodeBeforeCommand::doUnapply()
         return;
 
     // Need to notify this before actually deleting the text
-    if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->nodeTextChangeNotification(m_insertChild.get(), AXObjectCache::AXTextDeleted, 0, m_insertChild->nodeValue());
+    if (AXObjectCache::accessibilityEnabled()) {
+        Position position = is<Text>(m_insertChild.get()) ? Position(downcast<Text>(m_insertChild.get()), 0) : createLegacyEditingPosition(m_insertChild.get(), 0);
+        notifyAccessibilityForTextChange(m_insertChild.get(), unapplyEditType(), m_insertChild->nodeValue(), VisiblePosition(position));
+    }
 
     m_insertChild->remove(IGNORE_EXCEPTION);
 }

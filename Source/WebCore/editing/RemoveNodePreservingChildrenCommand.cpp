@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
-    : CompositeEditCommand(node->document())
+RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction)
+    : CompositeEditCommand(node->document(), editingAction)
     , m_node(node)
     , m_shouldAssumeContentIsAlwaysEditable(shouldAssumeContentIsAlwaysEditable)
 {

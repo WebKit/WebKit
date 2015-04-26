@@ -374,7 +374,7 @@ void TypingCommand::insertText(const String &text, bool selectInsertedText)
 void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool selectInsertedText)
 {
     RefPtr<InsertTextCommand> command = InsertTextCommand::create(document(), text, selectInsertedText,
-        m_compositionType == TextCompositionNone ? InsertTextCommand::RebalanceLeadingAndTrailingWhitespaces : InsertTextCommand::RebalanceAllWhitespaces);
+        m_compositionType == TextCompositionNone ? InsertTextCommand::RebalanceLeadingAndTrailingWhitespaces : InsertTextCommand::RebalanceAllWhitespaces, EditActionTyping);
 
     applyCommandToComposite(command, endingSelection());
 
@@ -395,7 +395,7 @@ void TypingCommand::insertParagraphSeparator()
     if (!canAppendNewLineFeedToSelection(endingSelection()))
         return;
 
-    applyCommandToComposite(InsertParagraphSeparatorCommand::create(document()));
+    applyCommandToComposite(InsertParagraphSeparatorCommand::create(document(), false, false, EditActionTyping));
     typingAddedToOpenCommand(InsertParagraphSeparator);
 }
 

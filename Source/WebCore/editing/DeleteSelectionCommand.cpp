@@ -72,8 +72,8 @@ static bool isTableRowEmpty(Node* row)
     return true;
 }
 
-DeleteSelectionCommand::DeleteSelectionCommand(Document& document, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool sanitizeMarkup)
-    : CompositeEditCommand(document)
+DeleteSelectionCommand::DeleteSelectionCommand(Document& document, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool sanitizeMarkup, EditAction editingAction)
+    : CompositeEditCommand(document, editingAction)
     , m_hasSelectionToDelete(false)
     , m_smartDelete(smartDelete)
     , m_mergeBlocksAfterDelete(mergeBlocksAfterDelete)
@@ -90,8 +90,8 @@ DeleteSelectionCommand::DeleteSelectionCommand(Document& document, bool smartDel
 {
 }
 
-DeleteSelectionCommand::DeleteSelectionCommand(const VisibleSelection& selection, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool sanitizeMarkup)
-    : CompositeEditCommand(selection.start().anchorNode()->document())
+DeleteSelectionCommand::DeleteSelectionCommand(const VisibleSelection& selection, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool sanitizeMarkup, EditAction editingAction)
+    : CompositeEditCommand(selection.start().anchorNode()->document(), editingAction)
     , m_hasSelectionToDelete(true)
     , m_smartDelete(smartDelete)
     , m_mergeBlocksAfterDelete(mergeBlocksAfterDelete)
@@ -882,14 +882,6 @@ void DeleteSelectionCommand::doApply()
 
     setEndingSelection(VisibleSelection(m_endingPosition, affinity, endingSelection().isDirectional()));
     clearTransientState();
-}
-
-EditAction DeleteSelectionCommand::editingAction() const
-{
-    // Note that DeleteSelectionCommand is also used when the user presses the Delete key,
-    // but in that case there's a TypingCommand that supplies the editingAction(), so
-    // the Undo menu correctly shows "Undo Typing"
-    return EditActionCut;
 }
 
 // Normally deletion doesn't preserve the typing style that was present before it.  For example,

@@ -95,8 +95,19 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
     [obj->wrapper() accessibilityPostedNotification:notificationString];
 }
 
-void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&)
+void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent&, const VisibleSelection&)
 {
+    postPlatformNotification(object, AXSelectedTextChanged);
+}
+
+void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, AXTextEditType, const String&, const VisiblePosition&)
+{
+    postPlatformNotification(object, AXValueChanged);
+}
+
+void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject* object, AXTextEditType, const String&, AXTextEditType, const String&, const VisiblePosition&)
+{
+    postPlatformNotification(object, AXValueChanged);
 }
 
 void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* axFrameObject, AXLoadingEvent loadingEvent)

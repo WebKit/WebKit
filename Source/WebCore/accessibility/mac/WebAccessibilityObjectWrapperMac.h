@@ -33,6 +33,9 @@
 
 @interface WebAccessibilityObjectWrapper : WebAccessibilityObjectWrapperBase
 
+- (id)textMarkerRangeFromVisiblePositions:(const WebCore::VisiblePosition&)startPosition endPosition:(const WebCore::VisiblePosition&)endPosition;
+- (id)textMarkerForVisiblePosition:(const WebCore::VisiblePosition&)visiblePos;
+
 @end
 
 #endif // WebAccessibilityObjectWrapper_h

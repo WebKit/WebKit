@@ -72,7 +72,6 @@ private:
     ApplyStyleCommand(Document&, const EditingStyle*, bool (*isInlineElementToRemove)(const Element*), EditAction);
 
     virtual void doApply() override;
-    virtual EditAction editingAction() const override;
 
     // style-removal helpers
     bool isStyledInlineElementToRemove(Element*) const;
@@ -122,7 +121,6 @@ private:
     Position endPosition();
 
     RefPtr<EditingStyle> m_style;
-    EditAction m_editingAction;
     EPropertyLevel m_propertyLevel;
     Position m_start;
     Position m_end;

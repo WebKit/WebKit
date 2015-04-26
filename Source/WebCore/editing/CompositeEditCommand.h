@@ -59,6 +59,8 @@ public:
     virtual void getNodesInCommand(HashSet<Node*>&);
 #endif
 
+    AXTextEditType unapplyEditType() const;
+
 private:
     EditCommandComposition(Document&, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction);
 
@@ -89,7 +91,7 @@ public:
     virtual bool shouldStopCaretBlinking() const { return false; }
 
 protected:
-    explicit CompositeEditCommand(Document&);
+    explicit CompositeEditCommand(Document&, EditAction = EditActionUnspecified);
 
     //
     // sugary-sweet convenience functions to help create and apply edit commands in composite commands

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InsertIntoTextNodeCommand_h
-#define InsertIntoTextNodeCommand_h
+#ifndef ReplaceDeleteFromTextNodeCommand_h
+#define ReplaceDeleteFromTextNodeCommand_h
 
-#include "EditCommand.h"
+#include "DeleteFromTextNodeCommand.h"
 
 namespace WebCore {
 
-class Text;
-
-class InsertIntoTextNodeCommand : public SimpleEditCommand {
+class ReplaceDeleteFromTextNodeCommand final : public DeleteFromTextNodeCommand {
 public:
-    static Ref<InsertIntoTextNodeCommand> create(RefPtr<Text>&& node, unsigned offset, const String& text, EditAction editingAction = EditActionInsert)
+    static Ref<ReplaceDeleteFromTextNodeCommand> create(RefPtr<Text>&& text, unsigned offset, unsigned count)
     {
-        return adoptRef(*new InsertIntoTextNodeCommand(WTF::move(node), offset, text, editingAction));
+        return adoptRef(*new ReplaceDeleteFromTextNodeCommand(WTF::move(text), offset, count));
     }
 
-    const String& insertedText();
-
-protected:
-    InsertIntoTextNodeCommand(RefPtr<Text>&& node, unsigned offset, const String& text, EditAction editingAction);
-
 private:
-    virtual void doApply() override;
-    virtual void doUnapply() override;
-#if PLATFORM(IOS)
-    virtual void doReapply() override;
-#endif
-    
-#ifndef NDEBUG
-    virtual void getNodesInCommand(HashSet<Node*>&) override;
-#endif
-    
-    RefPtr<Text> m_node;
-    unsigned m_offset;
-    String m_text;
+    ReplaceDeleteFromTextNodeCommand(RefPtr<Text>&&, unsigned, unsigned);
+    virtual void notifyAccessibilityForTextChange(Node*, AXTextEditType, const String&, const VisiblePosition&) override;
 };
-
-inline const String& InsertIntoTextNodeCommand::insertedText()
-{
-    return m_text;
-}
 
 } // namespace WebCore
 
-#endif // InsertIntoTextNodeCommand_h
+#endif // ReplaceDeleteFromTextNodeCommand_h

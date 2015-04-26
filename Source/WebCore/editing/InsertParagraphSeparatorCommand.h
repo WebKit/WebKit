@@ -34,13 +34,13 @@ class EditingStyle;
 
 class InsertParagraphSeparatorCommand : public CompositeEditCommand {
 public:
-    static Ref<InsertParagraphSeparatorCommand> create(Document& document, bool useDefaultParagraphElement = false, bool pasteBlockqutoeIntoUnquotedArea = false)
+    static Ref<InsertParagraphSeparatorCommand> create(Document& document, bool useDefaultParagraphElement = false, bool pasteBlockqutoeIntoUnquotedArea = false, EditAction editingAction = EditActionInsert)
     {
-        return adoptRef(*new InsertParagraphSeparatorCommand(document, useDefaultParagraphElement, pasteBlockqutoeIntoUnquotedArea));
+        return adoptRef(*new InsertParagraphSeparatorCommand(document, useDefaultParagraphElement, pasteBlockqutoeIntoUnquotedArea, editingAction));
     }
 
 private:
-    InsertParagraphSeparatorCommand(Document&, bool useDefaultParagraphElement, bool pasteBlockqutoeIntoUnquotedArea);
+    InsertParagraphSeparatorCommand(Document&, bool useDefaultParagraphElement, bool pasteBlockqutoeIntoUnquotedArea, EditAction);
 
     virtual void doApply();
 

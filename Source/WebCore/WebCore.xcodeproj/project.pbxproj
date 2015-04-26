@@ -3250,6 +3250,7 @@
 		9001774112E0347800648462 /* OESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001773E12E0347800648462 /* OESStandardDerivatives.h */; };
 		9001788012E0370700648462 /* JSOESStandardDerivatives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */; };
 		9001788112E0370700648462 /* JSOESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001787F12E0370700648462 /* JSOESStandardDerivatives.h */; };
+		91C9F2F91AE3BEB00095B61C /* AXTextStateChangeIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = 91C9F2F81AE3BE240095B61C /* AXTextStateChangeIntent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */; };
 		9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 9302B0BE0D79F82C00C7EE83 /* PageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9305B24D098F1B6B00C28855 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9305B24C098F1B6B00C28855 /* Timer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6395,6 +6396,10 @@
 		F52AD5E41534245F0059FBE6 /* EmptyClients.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F52AD5E31534245F0059FBE6 /* EmptyClients.cpp */; };
 		F544F78815CFB2A800AF33A8 /* PlatformLocale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F544F78615CFB2A800AF33A8 /* PlatformLocale.cpp */; };
 		F544F78915CFB2A800AF33A8 /* PlatformLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = F544F78715CFB2A800AF33A8 /* PlatformLocale.h */; };
+		F5528DA51AC1033E000EF7AD /* ReplaceDeleteFromTextNodeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = F5528DA31AC1033E000EF7AD /* ReplaceDeleteFromTextNodeCommand.h */; };
+		F5528DA61AC1033E000EF7AD /* ReplaceDeleteFromTextNodeCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5528DA41AC1033E000EF7AD /* ReplaceDeleteFromTextNodeCommand.cpp */; };
+		F5528DA91AC109DF000EF7AD /* ReplaceInsertIntoTextNodeCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5528DA71AC109DF000EF7AD /* ReplaceInsertIntoTextNodeCommand.cpp */; };
+		F5528DAA1AC109DF000EF7AD /* ReplaceInsertIntoTextNodeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = F5528DA81AC109DF000EF7AD /* ReplaceInsertIntoTextNodeCommand.h */; };
 		F55B3DAD1251F12D003EF269 /* BaseTextInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55B3D791251F12D003EF269 /* BaseTextInputType.cpp */; };
 		F55B3DAE1251F12D003EF269 /* BaseTextInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D7A1251F12D003EF269 /* BaseTextInputType.h */; };
 		F55B3DAF1251F12D003EF269 /* ButtonInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55B3D7B1251F12D003EF269 /* ButtonInputType.cpp */; };
@@ -10500,6 +10505,7 @@
 		9001773F12E0347800648462 /* OESStandardDerivatives.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = OESStandardDerivatives.idl; path = canvas/OESStandardDerivatives.idl; sourceTree = "<group>"; };
 		9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESStandardDerivatives.cpp; sourceTree = "<group>"; };
 		9001787F12E0370700648462 /* JSOESStandardDerivatives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESStandardDerivatives.h; sourceTree = "<group>"; };
+		91C9F2F81AE3BE240095B61C /* AXTextStateChangeIntent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXTextStateChangeIntent.h; sourceTree = "<group>"; };
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
 		9302B0BE0D79F82C00C7EE83 /* PageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroup.h; sourceTree = "<group>"; };
 		9305B24C098F1B6B00C28855 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
@@ -14040,6 +14046,10 @@
 		F52AD5E31534245F0059FBE6 /* EmptyClients.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmptyClients.cpp; sourceTree = "<group>"; };
 		F544F78615CFB2A800AF33A8 /* PlatformLocale.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformLocale.cpp; sourceTree = "<group>"; };
 		F544F78715CFB2A800AF33A8 /* PlatformLocale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformLocale.h; sourceTree = "<group>"; };
+		F5528DA31AC1033E000EF7AD /* ReplaceDeleteFromTextNodeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaceDeleteFromTextNodeCommand.h; sourceTree = "<group>"; };
+		F5528DA41AC1033E000EF7AD /* ReplaceDeleteFromTextNodeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReplaceDeleteFromTextNodeCommand.cpp; sourceTree = "<group>"; };
+		F5528DA71AC109DF000EF7AD /* ReplaceInsertIntoTextNodeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReplaceInsertIntoTextNodeCommand.cpp; sourceTree = "<group>"; };
+		F5528DA81AC109DF000EF7AD /* ReplaceInsertIntoTextNodeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaceInsertIntoTextNodeCommand.h; sourceTree = "<group>"; };
 		F55B3D791251F12D003EF269 /* BaseTextInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseTextInputType.cpp; sourceTree = "<group>"; };
 		F55B3D7A1251F12D003EF269 /* BaseTextInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTextInputType.h; sourceTree = "<group>"; };
 		F55B3D7B1251F12D003EF269 /* ButtonInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ButtonInputType.cpp; sourceTree = "<group>"; };
@@ -15661,6 +15671,7 @@
 				29A812130FBB9C1D00510293 /* AccessibilityTableRow.h */,
 				2981CAAF131822EC00D12F2A /* AXObjectCache.cpp */,
 				29A8121A0FBB9C1D00510293 /* AXObjectCache.h */,
+				91C9F2F81AE3BE240095B61C /* AXTextStateChangeIntent.h */,
 			);
 			path = accessibility;
 			sourceTree = "<group>";
@@ -17794,6 +17805,10 @@
 				93309DB8099E64910056E581 /* RemoveNodePreservingChildrenCommand.h */,
 				9B32CDA813DF7FA900F34D13 /* RenderedPosition.cpp */,
 				9B32CDA713DF7FA900F34D13 /* RenderedPosition.h */,
+				F5528DA41AC1033E000EF7AD /* ReplaceDeleteFromTextNodeCommand.cpp */,
+				F5528DA31AC1033E000EF7AD /* ReplaceDeleteFromTextNodeCommand.h */,
+				F5528DA71AC109DF000EF7AD /* ReplaceInsertIntoTextNodeCommand.cpp */,
+				F5528DA81AC109DF000EF7AD /* ReplaceInsertIntoTextNodeCommand.h */,
 				A89CCC500F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp */,
 				A89CCC510F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.h */,
 				93309DBA099E64910056E581 /* ReplaceSelectionCommand.cpp */,
@@ -23728,6 +23743,7 @@
 				6C568CB119DAFEA000430CA2 /* MaskImageOperation.h in Headers */,
 				0F580FAF149800D400FB5BD8 /* AnimationUtilities.h in Headers */,
 				4A4F65721AA997F100E38CDD /* RealtimeMediaSourceCapabilities.h in Headers */,
+				F5528DA51AC1033E000EF7AD /* ReplaceDeleteFromTextNodeCommand.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
 				1A8F6BBD0DB55CDC001DB794 /* ApplicationCache.h in Headers */,
 				1A8F6BBF0DB55CDC001DB794 /* ApplicationCacheGroup.h in Headers */,
@@ -25653,6 +25669,7 @@
 				BC60DA3A0D2A302800B9918F /* JSXMLHttpRequestException.h in Headers */,
 				F916C48E0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h in Headers */,
 				BCDFD4960E30592F009D10AD /* JSXMLHttpRequestUpload.h in Headers */,
+				F5528DAA1AC109DF000EF7AD /* ReplaceInsertIntoTextNodeCommand.h in Headers */,
 				1ACE53F70A8D19470022947D /* JSXMLSerializer.h in Headers */,
 				1A762C740A074F2600989F5B /* JSXPathEvaluator.h in Headers */,
 				BC60DB4A0D2A3D1E00B9918F /* JSXPathException.h in Headers */,
@@ -26706,6 +26723,7 @@
 				7C4C96DD1AD4483500365A50 /* JSReadableStream.h in Headers */,
 				83C1D428178D5AB400141E68 /* SVGPathSegCurvetoCubicRel.h in Headers */,
 				B2227A690D00BF220071B782 /* SVGPathSegCurvetoCubicSmooth.h in Headers */,
+				91C9F2F91AE3BEB00095B61C /* AXTextStateChangeIntent.h in Headers */,
 				83C1D429178D5AB400141E68 /* SVGPathSegCurvetoCubicSmoothAbs.h in Headers */,
 				83C1D42A178D5AB400141E68 /* SVGPathSegCurvetoCubicSmoothRel.h in Headers */,
 				B2227A6D0D00BF220071B782 /* SVGPathSegCurvetoQuadratic.h in Headers */,
@@ -28464,6 +28482,7 @@
 				510192D118B6B9AB007FC7A1 /* ImageControlsRootElementMac.cpp in Sources */,
 				A77979190D6B9D0C003851B9 /* ImageData.cpp in Sources */,
 				97205AB51239291000B17380 /* ImageDocument.cpp in Sources */,
+				F5528DA61AC1033E000EF7AD /* ReplaceDeleteFromTextNodeCommand.cpp in Sources */,
 				F55B3DC11251F12D003EF269 /* ImageInputType.cpp in Sources */,
 				089582550E857A7E00F82C83 /* ImageLoader.cpp in Sources */,
 				B275357B0B053814002CE64F /* ImageMac.mm in Sources */,
@@ -29911,6 +29930,7 @@
 				FE36FD1616C7826500F887C1 /* SQLTransactionStateMachine.cpp in Sources */,
 				1A2E6E590CC55213004A2062 /* SQLValue.cpp in Sources */,
 				4476531B133170990006B789 /* SSLKeyGeneratorIOS.cpp in Sources */,
+				F5528DA91AC109DF000EF7AD /* ReplaceInsertIntoTextNodeCommand.cpp in Sources */,
 				93F19AE608245E59001E9ABC /* SSLKeyGeneratorMac.cpp in Sources */,
 				BC7FA62E0D1F0EFF00DB22A9 /* StaticNodeList.cpp in Sources */,
 				A5AFB34F115151A700B045CB /* StepRange.cpp in Sources */,

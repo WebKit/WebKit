@@ -74,6 +74,8 @@ String WebEditCommandProxy::nameForEditAction(EditAction editAction)
     switch (editAction) {
     case EditActionUnspecified:
         return String();
+    case EditActionInsert:
+        return String();
     case EditActionSetColor:
         return WEB_UI_STRING_KEY("Set Color", "Set Color (Undo action name)", "Undo action name");
     case EditActionSetBackgroundColor:

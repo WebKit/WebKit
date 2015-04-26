@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InsertIntoTextNodeCommand_h
-#define InsertIntoTextNodeCommand_h
+#ifndef ReplaceInsertIntoTextNodeCommand_h
+#define ReplaceInsertIntoTextNodeCommand_h
 
-#include "EditCommand.h"
+#include "InsertIntoTextNodeCommand.h"
 
 namespace WebCore {
 
-class Text;
-
-class InsertIntoTextNodeCommand : public SimpleEditCommand {
+class ReplaceInsertIntoTextNodeCommand final : public InsertIntoTextNodeCommand {
 public:
-    static Ref<InsertIntoTextNodeCommand> create(RefPtr<Text>&& node, unsigned offset, const String& text, EditAction editingAction = EditActionInsert)
+    static Ref<ReplaceInsertIntoTextNodeCommand> create(RefPtr<Text>&& node, unsigned offset, const String& text, const String& deletedText, EditAction editingAction)
     {
-        return adoptRef(*new InsertIntoTextNodeCommand(WTF::move(node), offset, text, editingAction));
+        return adoptRef(*new ReplaceInsertIntoTextNodeCommand(WTF::move(node), offset, text, deletedText, editingAction));
     }
 
-    const String& insertedText();
-
-protected:
-    InsertIntoTextNodeCommand(RefPtr<Text>&& node, unsigned offset, const String& text, EditAction editingAction);
-
 private:
-    virtual void doApply() override;
-    virtual void doUnapply() override;
-#if PLATFORM(IOS)
-    virtual void doReapply() override;
-#endif
-    
-#ifndef NDEBUG
-    virtual void getNodesInCommand(HashSet<Node*>&) override;
-#endif
-    
-    RefPtr<Text> m_node;
-    unsigned m_offset;
-    String m_text;
-};
+    ReplaceInsertIntoTextNodeCommand(RefPtr<Text>&&, unsigned, const String&, const String&, EditAction);
+    virtual void notifyAccessibilityForTextChange(Node*, AXTextEditType, const String&, const VisiblePosition&) override;
 
-inline const String& InsertIntoTextNodeCommand::insertedText()
-{
-    return m_text;
-}
+    String m_deletedText;
+};
 
 } // namespace WebCore
 
-#endif // InsertIntoTextNodeCommand_h
+#endif // ReplaceInsertIntoTextNodeCommand_h

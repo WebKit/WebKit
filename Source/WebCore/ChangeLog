@@ -1,3 +1,240 @@
+2015-04-26  Doug Russell  <d_russell@apple.com>
+
+        AX: richer text change notifications (142719)
+        https://bugs.webkit.org/show_bug.cgi?id=142719
+
+        Reviewed by Darin Adler.
+
+        Richer accessibility value change notifications. Introduce AXTextEditType,
+        postTextStateChangeNotification and postTextReplacementNotification to give assistive
+        tech apps more reliable context for responding to changes in web content. Also implement
+        a mechanism to post value changes in password form fields in coalesced ticks to thwart
+        analyzing the cadence of changes.
+
+        Richer accessibility selection change notifications. Introduce AXTextStateChangeIntent,
+        and an overload of postTextReplacementNotification to give assistive tech apps more
+        reliable context for responding to changes in web content selection. Also block posting
+        selection changes on password fields.
+
+        Tests: platform/mac/accessibility/input-replacevalue-userinfo.html
+               platform/mac/accessibility/selection-change-userinfo.html
+               platform/mac/accessibility/value-change-userinfo.html
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::AXObjectCache):
+        (WebCore::AXObjectCache::notificationPostTimerFired):
+        (WebCore::AXObjectCache::passwordNotificationPostTimerFired):
+        (WebCore::AXObjectCache::showIntent):
+        (WebCore::AXObjectCache::setTextSelectionIntent):
+        (WebCore::isPasswordFieldOrContainedByPasswordField):
+        (WebCore::AXObjectCache::postTextStateChangeNotification):
+        (WebCore::AXObjectCache::postTextReplacementNotification):
+        (WebCore::AXObjectCache::enqueuePasswordValueChangeNotification):
+        (WebCore::AXObjectCache::rootWebArea):
+        (WebCore::AXObjectCache::textChangeForEditType):
+        (WebCore::AXObjectCache::selectedChildrenChanged): Deleted.
+        (WebCore::AXObjectCache::frameLoadingEventNotification): Deleted.
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::postTextStateChangeNotification):
+        (WebCore::AXObjectCache::postTextReplacementNotification):
+        (WebCore::AXObjectCache::postTextStateChangePlatformNotification):
+        (WebCore::AXObjectCache::postTextReplacementPlatformNotification):
+        (WebCore::AXObjectCache::textChangeForEditType):
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification):
+        (WebCore::AXObjectCache::computedObjectAttributeCache): Deleted.
+        (WebCore::AXObjectCache::getOrCreate): Deleted.
+        (WebCore::AXObjectCache::attachWrapper): Deleted.
+        * accessibility/AXTextStateChangeIntent.h: Added.
+        (WebCore::AXTextStateChangeIntent::AXTextStateChangeIntent):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::passwordFieldOrContainingPasswordField):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isContainedByPasswordField):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::passwordFieldOrContainingPasswordField):
+        (WebCore::AccessibilityObject::isPasswordField): Deleted.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setSelectedTextRange):
+        (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange):
+        * accessibility/AccessibilityScrollView.h:
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification):
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::postTextStateChangePlatformNotification):
+        (WebCore::AXObjectCache::postTextReplacementPlatformNotification):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::setShouldRepostNotificationsForTests):
+        (WebCore::AXPostNotificationWithUserInfo):
+        (WebCore::AXObjectCache::postPlatformNotification):
+        (WebCore::AXObjectCache::postTextStateChangePlatformNotification):
+        (WebCore::textReplacementChangeDictionary):
+        (WebCore::AXObjectCache::postTextReplacementPlatformNotification):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (+[WebAccessibilityObjectWrapperBase accessibilitySetShouldRepostNotifications:]):
+        (-[WebAccessibilityObjectWrapperBase accessibilityPostedNotification:]):
+        (arrayRemovingNonJSONTypes):
+        (dictionaryRemovingNonJSONTypes):
+        (-[WebAccessibilityObjectWrapperBase accessibilityPostedNotification:userInfo:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (textMarkerRangeFromVisiblePositions):
+        (-[WebAccessibilityObjectWrapper textMarkerRangeFromVisiblePositions:endPosition:]):
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::AppendNodeCommand):
+        (WebCore::sendAXTextChangedIgnoringLineBreaks):
+        (WebCore::AppendNodeCommand::doApply):
+        (WebCore::AppendNodeCommand::doUnapply):
+        * editing/AppendNodeCommand.h:
+        (WebCore::AppendNodeCommand::create):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::ApplyStyleCommand):
+        (WebCore::ApplyStyleCommand::applyBlockStyle): Deleted.
+        * editing/ApplyStyleCommand.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::unapplyEditType):
+        (WebCore::CompositeEditCommand::CompositeEditCommand):
+        (WebCore::CompositeEditCommand::apply):
+        (WebCore::CompositeEditCommand::insertParagraphSeparator):
+        (WebCore::CompositeEditCommand::insertNodeBefore):
+        (WebCore::CompositeEditCommand::appendNode):
+        (WebCore::CompositeEditCommand::removeNodePreservingChildren):
+        (WebCore::CompositeEditCommand::insertTextIntoNode):
+        (WebCore::CompositeEditCommand::deleteTextFromNode):
+        (WebCore::CompositeEditCommand::replaceTextInNode):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        (WebCore::EditCommandComposition::getNodesInCommand): Deleted.
+        (WebCore::CompositeEditCommand::applyStyle): Deleted.
+        (WebCore::CompositeEditCommand::insertLineBreak): Deleted.
+        (WebCore::CompositeEditCommand::insertNodeAt): Deleted.
+        (WebCore::CompositeEditCommand::removeChildrenInRange): Deleted.
+        (WebCore::CompositeEditCommand::inputText): Deleted.
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::DeleteFromTextNodeCommand):
+        (WebCore::DeleteFromTextNodeCommand::doApply):
+        (WebCore::DeleteFromTextNodeCommand::doUnapply):
+        * editing/DeleteFromTextNodeCommand.h:
+        (WebCore::DeleteFromTextNodeCommand::create):
+        (WebCore::DeleteFromTextNodeCommand::deletedText):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::DeleteSelectionCommand):
+        (WebCore::DeleteSelectionCommand::preservesTypingStyle): Deleted.
+        * editing/DeleteSelectionCommand.h:
+        (WebCore::DeleteSelectionCommand::create):
+        * editing/DictationCommand.cpp:
+        (WebCore::DictationCommand::insertTextRunWithoutNewlines):
+        (WebCore::DictationCommand::insertParagraphSeparator):
+        * editing/EditAction.h:
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::EditCommand):
+        (WebCore::EditCommand::editingAction):
+        (WebCore::EditCommand::applyEditType):
+        (WebCore::EditCommand::unapplyEditType):
+        (WebCore::SimpleEditCommand::SimpleEditCommand):
+        (WebCore::SimpleEditCommand::notifyAccessibilityForTextChange):
+        (WebCore::EditCommand::setParent): Deleted.
+        * editing/EditCommand.h:
+        * editing/EditingAllInOne.cpp:
+        * editing/Editor.cpp:
+        (WebCore::Editor::handleTextEvent):
+        (WebCore::Editor::deleteSelectionWithSmartDelete):
+        (WebCore::Editor::replaceSelectionWithFragment):
+        (WebCore::Editor::replaceSelectionWithText):
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::unappliedEditing):
+        (WebCore::Editor::performCutOrCopy):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::changeBackToReplacedString):
+        (WebCore::Editor::transpose):
+        (WebCore::Editor::changeSelectionAfterCommand):
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::executeInsertFragment):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::moveTo):
+        (WebCore::FrameSelection::moveWithoutValidationTo):
+        (WebCore::FrameSelection::setSelectionByMouseIfDifferent):
+        (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance):
+        (WebCore::FrameSelection::setSelection):
+        (WebCore::FrameSelection::updateAndRevealSelection):
+        (WebCore::isBoundary):
+        (WebCore::FrameSelection::textSelectionIntent):
+        (WebCore::FrameSelection::modify):
+        (WebCore::FrameSelection::selectAll):
+        (WebCore::FrameSelection::wordSelectionContainingCaretSelection):
+        (WebCore::FrameSelection::modifyMovingBackward): Deleted.
+        (WebCore::FrameSelection::selectFrameElementInParentIfFullySelected): Deleted.
+        (WebCore::FrameSelection::selectionAtWordStart): Deleted.
+        * editing/FrameSelection.h:
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        (WebCore::FrameSelection::selection): Deleted.
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::InsertIntoTextNodeCommand):
+        (WebCore::InsertIntoTextNodeCommand::doApply):
+        (WebCore::InsertIntoTextNodeCommand::doUnapply):
+        * editing/InsertIntoTextNodeCommand.h:
+        (WebCore::InsertIntoTextNodeCommand::create):
+        (WebCore::InsertIntoTextNodeCommand::insertedText):
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::InsertNodeBeforeCommand):
+        (WebCore::InsertNodeBeforeCommand::doApply):
+        (WebCore::InsertNodeBeforeCommand::doUnapply):
+        * editing/InsertNodeBeforeCommand.h:
+        (WebCore::InsertNodeBeforeCommand::create):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand):
+        * editing/InsertParagraphSeparatorCommand.h:
+        (WebCore::InsertParagraphSeparatorCommand::create):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::InsertTextCommand):
+        * editing/InsertTextCommand.h:
+        (WebCore::InsertTextCommand::create):
+        (WebCore::InsertTextCommand::createWithMarkerSupplier):
+        * editing/MoveSelectionCommand.cpp:
+        (WebCore::MoveSelectionCommand::doApply):
+        * editing/RemoveNodePreservingChildrenCommand.cpp:
+        (WebCore::RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand):
+        * editing/RemoveNodePreservingChildrenCommand.h:
+        (WebCore::RemoveNodePreservingChildrenCommand::create):
+        * editing/ReplaceDeleteFromTextNodeCommand.cpp: Copied from Source/WebCore/editing/AppendNodeCommand.h.
+        (WebCore::ReplaceDeleteFromTextNodeCommand::ReplaceDeleteFromTextNodeCommand):
+        (WebCore::ReplaceDeleteFromTextNodeCommand::notifyAccessibilityForTextChange):
+        * editing/ReplaceDeleteFromTextNodeCommand.h: Copied from Source/WebCore/editing/AppendNodeCommand.h.
+        * editing/ReplaceInsertIntoTextNodeCommand.cpp: Added.
+        (WebCore::ReplaceInsertIntoTextNodeCommand::ReplaceInsertIntoTextNodeCommand):
+        (WebCore::ReplaceInsertIntoTextNodeCommand::notifyAccessibilityForTextChange):
+        * editing/ReplaceInsertIntoTextNodeCommand.h: Copied from Source/WebCore/editing/RemoveNodePreservingChildrenCommand.h.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::ReplaceSelectionCommand):
+        (WebCore::ReplaceSelectionCommand::InsertedNodes::didReplaceNode): Deleted.
+        (WebCore::ReplaceSelectionCommand::insertAsListItems): Deleted.
+        * editing/ReplaceSelectionCommand.h:
+        (WebCore::ReplaceSelectionCommand::create):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::insertTextRunWithoutNewlines):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        * editing/atk/FrameSelectionAtk.cpp:
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * editing/ios/DictationCommandIOS.cpp:
+        (WebCore::DictationCommandIOS::DictationCommandIOS):
+        * editing/ios/DictationCommandIOS.h:
+        * editing/mac/FrameSelectionMac.mm:
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setInnerTextValue):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        * page/EventHandler.cpp:
+        (WebCore::setInitialKeyboardSelection):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+
 2015-04-26  Darin Adler  <darin@apple.com>
 
         REGRESSION (r176751): line-height ignored in <button> elements
